@@ -1,0 +1,30 @@
+name: checks
+on: [push, pull_request]
+jobs:
+  mechanics:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.10', '3.12']
+    env:
+      HF_HUB_OFFLINE: '1'
+      TRANSFORMERS_OFFLINE: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - run: python -m pip install -e '.[ar,diffusion,train,dev]'
+      - run: pytest -q
+      - run: ruff check .
+      - run: ruff format --check .
+      - run: python -m build
+      - run: python examples/custom_adapter.py
+      - run: python examples/ar_debug.py
+      - run: python examples/diffusion_debug.py
+      - run: python examples/causal_panel.py
+      - run: python examples/reversible_training.py
+      - run: python examples/shared_memory.py
+      - run: saturn-pub debug --family ar --script examples/debug_commands.txt

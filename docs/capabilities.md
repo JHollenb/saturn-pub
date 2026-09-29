@@ -1,0 +1,35 @@
+# Capability and numerical boundaries
+
+| Surface | V1 support | Boundary |
+| --- | --- | --- |
+| Core | JSON/tensor state, isolated branches, Acts, commit/restore, receipts | Trusted in-process runtime; no OS sandbox |
+| Qwen | Qwen2/Qwen2.5, eager full attention, batch one, greedy token/layer cuts | Configured context limit; no padding, beam search, sliding windows |
+| Diffusion | DDIM eta-zero, native UNet steps, optional Stable Diffusion VAE | No CFG, multistep solvers, SDXL, or FLUX adapter |
+| Investigation | Same-parent panels, dose grids, custom control arms | Per-arm errors retained; no automatic semantic certificate |
+| Program | Ordered measured pre-continuation Acts, exact parent/context binding | In-process; no learned/general compiler or cross-model portability |
+| Training | Registered PyTorch mutable closure and isolated evaluation | Accepted snapshot in memory; rejected evidence retained |
+| LocalStore | Verified JSON/safetensors execution cuts and immutable receipts | Local filesystem; no object store or remote transaction |
+| DependencyGraph | Declared DAG dirty closure and exact local memoization | Caller owns dependency completeness and implementation versioning |
+| Shared memory | One real Qwen ancestor plus private tails, portable segmented attention | Experimental; full attention work, no production speedup claim |
+| PhaseLaw | Exact modular 32-bit transport and local-frame score reference | Quantized frequency law; floating decoded rotations |
+
+CPU mechanics and native parity are tested. Other devices may run but need their own numerical
+validation. The tests use tiny randomly initialized models; pretrained recipes are not a tested
+semantic capability battery. Cross-kernel, cross-dtype, cross-version, and cross-device byte parity
+is not assumed. Separate branches may choose different tokens near a close logit boundary.
+
+Qwen's decomposed lane is checked against native logits within `rtol=1e-5, atol=1e-7` on tiny
+FP32 CPU specimens. Same-program replay uses exact payload comparisons. DDIM deterministic
+trajectory replay is checked for tensor equality on the same CPU program. Phase transport is
+integer exact within the frequency quantization law; trigonometric decoding gets float tolerances.
+Memory uses a different global-softmax reduction order, so native logits are compared numerically.
+Memory accounting covers the supplied branch family; retained branches outside that list and
+temporary numerical buffers require separate accounting. Empty private tails allocate lazily.
+
+No claims of unlimited dense context, universal tensor semantics, semantic circuit portability,
+general intelligence improvement, or serving acceleration are made. A consumer score is an
+observation; a repeated direction is a trend; terminal certification requires a separate named
+experiment with calibrated controls and held-out evidence.
+
+The original final-boss, Mimas, Hyperion, Model OS, VM, and memory investigations inspired these
+interfaces. Their historical results are not bundled as a capability guarantee for this toolkit.
