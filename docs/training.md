@@ -69,3 +69,15 @@ probes are mechanics illustrations, not evidence of general capability learning.
 Never mutate a resident inference adapter's model in place. Train a separate component or create
 a fresh adapter after changing weights so model identity and state compatibility remain correct.
 External API calls, files written by user callbacks, and undeclared Python state are outside rollback.
+
+## Parameter-free structural state
+
+`TrainingStateBoundary` also accepts `optimizer=None` when the supplied `torch.nn.Module` has no
+parameters. This supports exact snapshots of caller-owned structural state—such as a graph, rules,
+memory, and cursor—through `cursor_capture` and `cursor_restore`. The snapshot payload can be
+rehydrated with `TrainingStateSnapshot.from_state_dict` and restored after graph edits in a fresh
+runtime. Any nonempty optimizer state is refused for an optimizer-free snapshot.
+
+Run `python examples/structural_rewind.py` for a parent/candidate/cold-payload round trip. This
+establishes structural custody and rollback mechanics. It does not establish learned growth,
+functional preservation after mutation, or usefulness of a structural policy.

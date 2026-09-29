@@ -884,8 +884,12 @@ class TrainingStateSnapshot:
             else (_validate_name(str(group), label="optimizer parameter name"),)
             for group in topology
         )
-        if not normalized_topology or any(not group for group in normalized_topology):
+        if any(not group for group in normalized_topology):
             raise TrainingCheckpointError("training snapshot optimizer topology is empty")
+        if not normalized_topology and (
+            optimizer_state != {"state": {}, "param_groups": []} or optimizer_defaults != {}
+        ):
+            raise TrainingCheckpointError("optimizer-free snapshot contains optimizer state")
         flattened = tuple(name for group in normalized_topology for name in group)
         if len(set(flattened)) != len(flattened):
             raise TrainingCheckpointError(
@@ -955,7 +959,7 @@ class TrainingStateBoundary:
         self,
         *,
         model: torch.nn.Module,
-        optimizer: torch.optim.Optimizer,
+        optimizer: torch.optim.Optimizer | None,
         cursor_capture: CursorCapture,
         cursor_restore: CursorRestore,
         torch_generators: Mapping[str, torch.Generator] | None = None,
@@ -972,16 +976,21 @@ class TrainingStateBoundary:
         self.cursor_capture = cursor_capture
         self.cursor_restore = cursor_restore
         self.torch_generators = MappingProxyType(generators)
-        _optimizer_parameter_topology(self.model, self.optimizer)
+        if self.optimizer is not None:
+            _optimizer_parameter_topology(self.model, self.optimizer)
 
     def _state_parts(self) -> dict[str, Any]:
         return {
             "model_state": self.model.state_dict(),
-            "optimizer_state": self.optimizer.state_dict(),
-            "optimizer_defaults": self.optimizer.defaults,
+            "optimizer_state": self.optimizer.state_dict()
+            if self.optimizer is not None
+            else {"state": {}, "param_groups": []},
+            "optimizer_defaults": self.optimizer.defaults if self.optimizer is not None else {},
             "optimizer_parameter_topology": _optimizer_parameter_topology(
                 self.model, self.optimizer
-            ),
+            )
+            if self.optimizer is not None
+            else (),
             "gradients": {
                 name: parameter.grad for name, parameter in self.model.named_parameters()
             },
@@ -1007,7 +1016,11 @@ class TrainingStateBoundary:
         model_state = _clone_state(live_parts["model_state"])
         optimizer_state = _clone_state(live_parts["optimizer_state"])
         optimizer_defaults = _clone_state(live_parts["optimizer_defaults"])
-        optimizer_topology = _optimizer_parameter_topology(self.model, self.optimizer)
+        optimizer_topology = (
+            _optimizer_parameter_topology(self.model, self.optimizer)
+            if self.optimizer is not None
+            else ()
+        )
         gradients = _parameter_gradients(self.model)
         nonpersistent = {
             name: _clone_state(value) for name, value in _nonpersistent_buffers(self.model).items()
@@ -1076,14 +1089,17 @@ class TrainingStateBoundary:
         return self._capture_snapshot(expected_fingerprint=expected_fingerprint)
 
     def _restore_snapshot(self, snapshot: TrainingStateSnapshot) -> str:
+        if (self.optimizer is None) != (not snapshot._optimizer_topology):
+            raise TrainingCheckpointError("optimizer presence changed across the state boundary")
         self.model.load_state_dict(_clone_state(snapshot._model_state), strict=True)
-        _restore_optimizer(
-            self.model,
-            self.optimizer,
-            state=snapshot._optimizer_state,
-            defaults=snapshot._optimizer_defaults,
-            topology=snapshot._optimizer_topology,
-        )
+        if self.optimizer is not None:
+            _restore_optimizer(
+                self.model,
+                self.optimizer,
+                state=snapshot._optimizer_state,
+                defaults=snapshot._optimizer_defaults,
+                topology=snapshot._optimizer_topology,
+            )
         _restore_parameter_flags(self.model, snapshot._parameter_flags)
         _restore_parameter_gradients(self.model, snapshot._gradients)
         _restore_nonpersistent_buffers(self.model, snapshot._nonpersistent_buffers)
@@ -1241,7 +1257,7 @@ class DeterministicCheckpointController(TrainingStateBoundary):
         *,
         controller_id: str,
         model: torch.nn.Module,
-        optimizer: torch.optim.Optimizer,
+        optimizer: torch.optim.Optimizer | None,
         policy: PromotionPolicy,
         cursor_capture: CursorCapture,
         cursor_restore: CursorRestore,

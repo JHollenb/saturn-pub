@@ -44,6 +44,35 @@ The planner sets `terminal_status=not-assessed`. A continuation policy chooses a
 it is not an authority on whether a scientific effect exists. Keep mechanics, instrument validity,
 trends, and terminal claims distinct when writing your own report.
 
+## Causal-path evidence maps
+
+`CausalPath` records the executable chain as named source, address, writer, carrier, and consumer
+nodes. `PortObservation` binds each raw observation to a model identity, common root parent,
+supported ExecutionPoint clock, exact StateCut, and producing Receipt. Construction refuses rows
+from another model, parent, or undeclared clock.
+
+```python
+from saturn_pub.causal import CausalPath, PortObservation
+
+row = PortObservation.record(
+    "native-consumer", "readout", metrics, candidate, receipt, parent=parent.fingerprint
+)
+path = CausalPath.from_observations(
+    source="input.row",
+    address="hidden[0]",
+    writer="masked-add",
+    carrier="hidden",
+    consumer="readout",
+    observations=(source_row, address_row, writer_row, carrier_row, row),
+)
+```
+
+Port rows (`source`, `address`, `writer`, `carrier`, `consumer`) describe the route. Effect rows
+(`first-divergence`, `repair`, `collateral`, `native-consumer`) remain separate in the emitted
+graph. A change at the carrier is not substituted for the native consumer, and a repair score is
+not substituted for collateral or continuation. The map validates evidence support and preserves
+links; it does not issue a scientific pass/fail verdict.
+
 ## Programs
 
 Program.compile accepts a completed measured arm and the corresponding ordered Acts. V1
@@ -55,7 +84,10 @@ not semantic certification.
 Callable Acts execute trusted caller code. Bind a custom implementation version and its payload
 in `Act.parameters`; the runtime cannot certify an arbitrary Python closure's semantics. Built-in
 Acts bind their payload fingerprint and dose. Programs are in-process objects, not serialized
-Python functions. Durable executable packages and learned temporal lowering are future work.
+Python functions. `ReplayBundle` can seal a measured Program manifest, local cut ancestry,
+receipts, environment, and adapter-factory provenance. State pages are included only when
+`include_data=True`, and restore requires `allow_data=True`; model weights are not inferred.
+Learned temporal lowering remains future work.
 
 ## Incremental execution
 

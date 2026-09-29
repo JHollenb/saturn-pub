@@ -59,11 +59,13 @@ Exactness means a named state boundary and numerical program, not agreement acro
 ```bash
 python examples/ar_debug.py
 python examples/debugger_replay.py
+python examples/software_debugger.py
 python examples/diffusion_debug.py
 python examples/causal_panel.py
 python examples/measured_program.py
 python examples/dependency_reuse.py
 python examples/reversible_training.py
+python examples/structural_rewind.py
 python examples/shared_memory.py
 saturn-pub debug --family ar
 ```
@@ -76,6 +78,13 @@ grammar; their adapters own different physical state. Images and receipts go to 
 futures, commits and restores, and verifies both futures from a saved cut in a fresh process.
 Read `outputs/debugger-replay/walkthrough.md` after running it. The random diffusion images
 are 8×8 mechanics fixtures; use the pretrained recipe for meaningful generated images.
+
+`software_debugger.py` is the broad no-download proof: a parameter-free graph machine exposes
+typed execution points and ports, fires branch-local watches at retained cuts, patches one live
+memory cell while preserving the rest, compares native/candidate consumers, compiles measured
+replay, emits a cut/receipt-linked causal path, deduplicates state pages, and restores a
+data-bearing ReplayBundle into a fresh store. `structural_rewind.py` separately snapshots and
+reopens graph/rules/memory/cursor futures through an empty-model, optimizer-free training boundary.
 
 ## Research tools
 
@@ -98,9 +107,12 @@ It loads pinned Hugging Face checkpoints or your local cache. The
 | --- | --- |
 | Session, Frame, Act, StateCut, Receipt | Native execution, declared changes, branches, custody |
 | Local debugger | Step, inspect, read, capture, fork, intervene, continue, compare, restore |
+| Observer and WatchEvent | Branch-local change/threshold/nonfinite watches with retained safe-point cuts |
+| CausalPath and PortObservation | Model/parent/clock-validated route and effect evidence graph |
 | FLUX.2 Klein adapter | Step native joint/single blocks, write text/image carriers, replay saved suffixes |
 | Investigation | Same-parent causal panels with per-arm evidence and errors |
 | Program | Replay measured interventions within explicit recipient/context support |
+| ReplayBundle | Seal a measured program, local cut graph, receipts, environment and adapter provenance |
 | DependencyGraph | Declared dirty closure and exact instance-local reuse |
 | TrainingTransaction | Inspect candidate updates; promote or restore the registered closure |
 | Experimental memory | Immutable shared Qwen ancestry, private tails, modular phase transport |

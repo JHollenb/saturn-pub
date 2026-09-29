@@ -19,21 +19,34 @@ addresses and continuation boundaries. A Session captures the parent, forks isol
 applies declared changes, runs the native suffix, and records decisions. The same process can
 inspect inference, build experiments, and evaluate candidate training updates.
 
-## Six primary concepts
+## Primary concepts
 
 | Concept | Responsibility |
 | --- | --- |
 | Adapter | Validate family state; expose addresses; execute one native transition |
 | Session | Own branch state and transaction lifecycle around one resident adapter |
-| Frame | Describe the current boundary and slot fingerprints |
+| ExecutionPoint | Identify the typed logical step, phase, operator, edge, and local clock |
+| SurfaceManifest | Declare slot roles, write authority, persistence, producer, and consumer |
+| Frame | Describe the current boundary, execution point, surface, and slot fingerprints |
 | Act | Declare reads, writes, invalidations, parameters, and numerical intent |
 | StateCut | Seal a restorable state closure to model, execution, and parent identity |
-| Receipt | Preserve immutable JSON evidence about an operation |
+| Receipt | Preserve immutable JSON evidence about an operation and execution point |
 
 Descriptors are frozen, but Python tensors are mutable. Public payload/read methods return
 copies; sealed cuts verify content before use. Direct access to private fields is outside the API.
 Adapters are trusted in-process code, and callable Acts can execute Python. Declared input
 visibility is not an OS sandbox or a security boundary against hostile code.
+Surface manifests enforce the exact slot closure; each adapter validates the slot values,
+geometry, dtype, device, and family-specific invariants. Native numerical contracts bind the
+framework and Python versions, kernel, tensor strides, device, batch, and numerical settings.
+Changing those settings or the frozen configuration requires a new adapter identity.
+Native wrappers also guard tensor objects, storage, and PyTorch mutation versions. Callers
+must keep wrapped model weights frozen: unversioned writes through `.data` or raw storage are
+outside this contract. Saturn does not rehash every model weight at every microstep.
+
+Durable tensor custody preserves owned dense values, dtype, shape, and safe dense strides.
+Device belongs to the execution contract. Sparse/quantized layouts, cross-slot storage aliasing,
+storage offsets, autograd state, and conjugate/negative view metadata are outside this snapshot ABI.
 
 ## AR and diffusion
 
@@ -77,6 +90,11 @@ Explicit `capture()` retains the cut in Session.history. Internal transition boo
 fingerprints in receipts rather than accumulating every dense state payload. Discard unneeded
 branch objects and clear history when their snapshots are no longer required.
 
+Observers sit beside Session. They read declared ports and retain a cut when a diagnostic
+predicate fires, but they cannot commit, abort, or assign semantic meaning. CausalPath sits in the
+evidence layer: it checks model/parent/clock support and links route/effect observations to cuts
+and receipts. Neither component introduces a second executor.
+
 ## Memory hierarchy
 
 Experimental shared memory represents `history = actual ancestor + private tail`. It stores
@@ -91,7 +109,7 @@ Independently compiling A and B then mounting their pages generally differs from
 B's hidden states depend on A. Correct rotation cannot reconstruct that causal interaction.
 Selected-context memory therefore requires a separate consumer experiment and quality policy.
 
-## What is intentionally outside v1
+## What stays outside the public runtime
 
 The public repository excludes the historical experiment fleet, advanced Hyperion atlases,
 learned Registrar, Black Mamba, CUDA virtual-address aliasing, continuous batching, arbitrary

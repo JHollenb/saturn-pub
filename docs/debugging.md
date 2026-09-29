@@ -1,8 +1,8 @@
 # Local debugger
 
 `saturn-pub debug --family ar` starts a random offline Qwen model. Use `--family diffusion`
-for a random UNet/DDIM trajectory. The process owns one resident adapter and named branches.
-There is no remote attachment protocol or hosted service.
+for a random UNet/DDIM trajectory. The process owns one resident adapter, named branches, and
+a standalone Observer. There is no remote attachment protocol or hosted service.
 
 For executable cell-by-cell walkthroughs, start with the
 [debugger notebooks](../notebooks/README.md). The notebook command parser is identical
@@ -23,12 +23,54 @@ until layer:2 4
 `breakpoints` lists them, and `delete PATTERN` or `delete all` removes them.
 With breakpoints installed, bare `continue` advances until the next matching boundary,
 with a default limit of 1,000 transitions. It advances before checking, so continuing
-from a breakpoint makes forward progress. `continue N` always advances exactly N
-transitions. Without breakpoints, bare `continue` retains its one-transition behavior.
+from a breakpoint makes forward progress. `continue N` advances exactly N transitions unless a
+watch fires; installed boundary breakpoints affect bare `continue` and `until`, not an explicit
+budget. Without stops installed, bare `continue`
+retains its one-transition behavior; with watches installed, it searches up to the default limit.
 `until PATTERN [MAX_STEPS]` performs a bounded search independently of installed breaks.
-Its result reports `breakpoint` or `step-limit`; completed transitions and receipts remain
+Its result reports `breakpoint`, `watchpoint`, or `step-limit`; completed transitions and receipts remain
 available when a limit is reached. Native adapter errors propagate and do not masquerade
-as a breakpoint. The debugger has no Python-source breakpoints or value-change watchpoints.
+as a breakpoint. The debugger has no Python-source breakpoints.
+
+## Typed watchpoints and traces
+
+Watchpoints inspect a public state address after every micro-transition. `change` compares
+content fingerprints against a branch-local baseline. `gt` and `lt` fire if any numeric element
+satisfies the stated threshold; `nonfinite` detects NaN or infinity. Restoring a cut resets that
+branch's baseline at the restored safe point, while other branches retain their own baselines.
+
+```text
+watch hidden change
+watch logits gt 20
+watch hidden nonfinite
+watchpoints
+continue
+unwatch watch-1
+trace 4
+```
+
+A fire captures one retained StateCut shared by all predicates that fired at that safe point.
+Each typed WatchEvent includes the watch specification, branch, cut fingerprint, execution point,
+before/after summaries, and transition receipt. The cut fingerprint is also a debugger cut name,
+so it can be restored or replayed. Fires are diagnostic triage events. They do not decide whether
+a mechanism exists, a branch is useful, or a candidate should be promoted.
+
+Observer is also usable without the command parser:
+
+```python
+from saturn_pub.observers import Observer
+
+observer = Observer()
+observer.add("hidden", "change")
+observer.sync(session, "candidate")
+receipt = session.step()
+events = observer.evaluate(session, "candidate", receipt=receipt)
+```
+
+`Session.step()` advances one adapter transition. The command debugger uses it internally even
+for bounded `continue`, so no intermediate watchable point is skipped. `Session.continue_(N)`
+retains its atomic legacy contract for callers that want one published N-transition operation.
+`trace N` returns the Frame, receipt, and any watch events for each completed transition.
 
 An AR session:
 
@@ -91,6 +133,11 @@ saturn-pub debug --family ar --script examples/debug_commands.txt
 `abort BRANCH` records a discard decision without changing the current parent. The candidate
 remains inspectable as evidence but is refused by commit.
 
+`replay CUT [STEPS] [BRANCH]` forks and advances a named future without moving the selected
+branch's cursor. `diff BRANCH_OR_CUT` compares it with the selected branch. `inspect` reports
+the adapter's ExecutionPoint and SurfaceManifest as well as slot fingerprints. A custom JSON
+adapter does not need a `.device` attribute to use debugger save/load.
+
 All commands delegate to Session, Act, and LocalStore. The same debugger is usable from Python:
 
 ```python
@@ -99,3 +146,9 @@ from saturn_pub.cli import Debugger
 debugger = Debugger(session)
 debugger.execute("capture parent")
 ```
+
+Run `python examples/software_debugger.py` for one broad parameter-free demonstration of
+execution points, surfaces, watches, masked live-state writes, preservation checks, trace/diff/
+replay semantics, measured programs, causal-path evidence, content-addressed deduplication, and
+a data-bearing ReplayBundle restored into a fresh store. Its arithmetic graph is caller supplied;
+the report makes no learned semantic claim.

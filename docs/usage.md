@@ -13,14 +13,18 @@ are not automatically enabled in every Session.
 | Your task | Use | Automatic within that API | Runnable starting point |
 |---|---|---|---|
 | Inspect an inference failure | Session or Debugger | Native transitions, validation and receipts | [AR debugger notebook](../notebooks/01_debugger.ipynb), [CLI guide](debugging.md) |
+| Stop on a live value anomaly | Observer or debugger watch commands | Per-branch baselines, microstep evaluation, retained safe-point cuts | `python examples/software_debugger.py` |
 | Compare a changed carrier with native execution | Capture one parent, fork, apply an Act, continue | Branch isolation, declared writes, parent-bound commit | `python examples/ar_debug.py`, `python examples/diffusion_debug.py` |
 | Keep and replay an execution state | LocalStore save/load | Content verification on full load, identity/execution compatibility on Session restore | `python examples/debugger_replay.py` |
+| Package measured replay and local ancestry | ReplayBundle | Program, environment and factory sealing; opt-in data export/import | `python examples/software_debugger.py` |
 | Explore doses and controls | Investigation | Common-parent arms, private evaluator branch, per-arm errors and retained measurements | `python examples/causal_panel.py` |
+| Map route and effect evidence | CausalPath and PortObservation | Model/parent/clock support and cut/receipt links | `python examples/software_debugger.py` |
 | Replay an already measured write sequence | Program | Exact parent, context, Act descriptors and continuation-budget checks | `python examples/measured_program.py` |
 | Reuse unchanged declared computation | DependencyGraph | Content/version cache checks; final consumer always executes | `python examples/dependency_reuse.py` |
 | Share one causal KV prefix across suffix branches | SharedQwenMemory | Shared ancestor, private tails, global-softmax segmented attention | `python examples/shared_memory.py`, [memory notebook](../notebooks/03_model_os_memory.ipynb) |
 | Study modular phase transport | PhaseLaw | Integer composition under its quantized frequency law | `python examples/shared_memory.py` |
 | Evaluate short reversible training futures | TrainingTransaction | Registered closure snapshots, isolated evaluation, restore on rejection or interval errors | `python examples/reversible_training.py` |
+| Rewind a parameter-free structural future | TrainingStateBoundary with `optimizer=None` | Graph/rules/memory/cursor plus empty-model RNG/mode closure | `python examples/structural_rewind.py` |
 | Build and debug a pretrained writer end to end | FLUX.2 writer experiment | Three-stage construction, native feedback, rollback, fresh-process replay verification | `python experiments/flux2_writer/run.py` |
 | Integrate another numerical program | Implement Adapter | Session lifecycle once the adapter declares/validates its state | `python examples/custom_adapter.py`, [adapter guide](adapters.md) |
 
@@ -36,6 +40,11 @@ compatible cut. Save it with `LocalStore.save(cut)` when it must survive process
 The cut includes execution tensors and weight identity, not model weights. Reconstruct
 the same weights and execution contract separately before loading and restoring.
 Metadata-only `saturn-pub inspect` does not load or verify the tensor blob; full load does.
+
+`Session.replay(cut, steps=N)` returns an advanced child and leaves the selected Session at its
+current cursor. LocalStore uses content-addressed slot pages and tensor blobs, so saving an
+identical cut again reuses the same identities. ReplayBundle exports only local ancestors that
+are actually present; it does not invent a complete history.
 
 Clear unneeded history and release branches when investigating large models. Branches
 retain state in memory even after an abort decision. No eviction/paging policy is inferred.

@@ -14,7 +14,9 @@ from transformers import AttentionInterface
 from transformers.cache_utils import Cache
 from transformers.masking_utils import ALL_MASK_ATTENTION_FUNCTIONS, AttentionMaskInterface
 
-from ..values import describe, digest
+from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest
+from ..core import Adapter, Session
+from ..values import clone, describe, digest
 
 
 @dataclass(frozen=True)
@@ -102,6 +104,54 @@ class SharedCache(Cache):
             )
             child._lengths[index] = length
         return child
+
+    @classmethod
+    def from_segments(
+        cls,
+        keys: tuple[torch.Tensor, ...],
+        values: tuple[torch.Tensor, ...],
+        delta_keys: tuple[torch.Tensor, ...],
+        delta_values: tuple[torch.Tensor, ...],
+        *,
+        capacity: int,
+    ) -> SharedCache:
+        if len(delta_keys) != len(keys) or len(delta_values) != len(keys):
+            raise ValueError("private delta must cover every ancestor layer")
+        cache = cls(keys, values, capacity=capacity)
+        lengths = {value.shape[-2] for value in (*delta_keys, *delta_values)}
+        if len(lengths) != 1:
+            raise ValueError("private K/V deltas must have one complete causal length")
+        length = lengths.pop()
+        if length > capacity:
+            raise ValueError("private delta exceeds declared capacity")
+        if length:
+            for index, (key, value) in enumerate(zip(delta_keys, delta_values)):
+                cache._delta_keys[index] = torch.empty(
+                    (*key.shape[:2], capacity, key.shape[-1]),
+                    device=key.device,
+                    dtype=key.dtype,
+                )
+                cache._delta_values[index] = torch.empty_like(cache._delta_keys[index])
+                cache._delta_keys[index][:, :, :length].copy_(key)
+                cache._delta_values[index][:, :, :length].copy_(value)
+                cache._lengths[index] = length
+        return cache
+
+    def segments(self) -> tuple[tuple[torch.Tensor, ...], tuple[torch.Tensor, ...]]:
+        if len(set(self._lengths)) != 1:
+            raise ValueError("cannot persist an incomplete layer update")
+        self.verify()
+        keys, values = [], []
+        for index, length in enumerate(self._lengths):
+            ancestor = self._keys[index]
+            if not length:
+                shape = (*ancestor.shape[:2], 0, ancestor.shape[-1])
+                keys.append(torch.empty(shape, device=ancestor.device, dtype=ancestor.dtype))
+                values.append(torch.empty(shape, device=ancestor.device, dtype=ancestor.dtype))
+            else:
+                keys.append(self._delta_keys[index][:, :, :length].detach().clone())
+                values.append(self._delta_values[index][:, :, :length].detach().clone())
+        return tuple(keys), tuple(values)
 
     def update(
         self,
@@ -230,3 +280,352 @@ class SharedQwenMemory:
             "reduced_attention_work_claim": False,
             "temporary_attention_copies": "head-repeat and float32 casts; no full KV join",
         }
+
+
+class SharedQwenAdapter(Adapter):
+    """Durable exact-history cuts for the bounded segmented-attention reference ABI.
+
+    The ancestor and private delta are both authoritative payload. In-process `SharedCache`
+    forks pointer-share the ancestor; durable Session cuts clone it so they remain standalone.
+    This adapter therefore claims exact history and continuation, not zero-copy durable forks.
+    """
+
+    def __init__(self, adapter: Any, *, capacity: int = 64):
+        if capacity < 1:
+            raise ValueError("private capacity must be positive")
+        if adapter.model.config._attn_implementation != "eager":
+            raise ValueError("shared history requires an eager Qwen2 source adapter")
+        self.source = adapter
+        self.model = adapter.model
+        self.device = adapter.device
+        self.dtype = adapter.dtype
+        self.layers = adapter.layers
+        self.capacity = capacity
+        self._declared_capacity = capacity
+        self.model_identity = digest(
+            {
+                "source_model_identity": adapter.model_identity,
+                "shared_history": {"capacity": capacity, "attention": _ATTENTION_NAME},
+            }
+        )
+        self._frozen_versions = tuple(
+            (name, value._version)
+            for name, value in (*self.model.named_parameters(), *self.model.named_buffers())
+        )
+        self.execution = {
+            "family": "qwen2-shared-exact-history",
+            "adapter": "segmented-history-v1",
+            "granularity": "token",
+            "environment_versions": dict(adapter.execution["environment_versions"]),
+            "model_program": "native_prefill->segmented_global_softmax->native_suffix->greedy",
+            "kernel": {
+                "attention": _ATTENTION_NAME,
+                "accumulation": "float32-segmented-online-softmax",
+            },
+            "batch": {"size": 1, "query_tokens": 1, "padding": False},
+            "device": {"type": self.device.type, "index": self.device.index},
+            "dtype": str(self.dtype),
+            "numeric_scope": {
+                "ancestor_positions": "native-post-rope-immutable",
+                "phase_relocation": False,
+                "private_capacity": capacity,
+                "temporary_attention_copies": "head-repeat-and-float32-casts",
+                "tf32_matmul": bool(torch.backends.cuda.matmul.allow_tf32),
+                "torch_num_threads": torch.get_num_threads(),
+                "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
+                "float32_matmul_precision": torch.get_float32_matmul_precision(),
+                "tensor_layout": "state-slot-bound-stride",
+            },
+            "resource_scope": {
+                "durable_storage": "content-addressed-ancestor-pages-dedup-eligible",
+                "live_session_ram": "dense-clone-not-shared",
+                "attention_compute": "all-ancestor-and-private-rows",
+            },
+            "sampler": "greedy",
+            "parity": "bounded-logits-separate-numerical-abi",
+        }
+        AttentionInterface.register(_ATTENTION_NAME, segmented_attention)
+        AttentionMaskInterface.register(_ATTENTION_NAME, ALL_MASK_ATTENTION_FUNCTIONS["eager"])
+
+    def validate_execution(self) -> None:
+        self.source.validate_execution()
+        if self.capacity != self._declared_capacity:
+            raise ValueError("shared-history configuration changed after identity freeze; rewrap")
+        current = tuple(
+            (name, value._version)
+            for name, value in (*self.model.named_parameters(), *self.model.named_buffers())
+        )
+        if current != self._frozen_versions:
+            raise ValueError(
+                "model parameters or buffers changed after adapter identity was frozen; "
+                "rewrap the model in a new adapter"
+            )
+        expected = self.execution["numeric_scope"]
+        live = {
+            "tf32_matmul": bool(torch.backends.cuda.matmul.allow_tf32),
+            "torch_num_threads": torch.get_num_threads(),
+            "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
+            "float32_matmul_precision": torch.get_float32_matmul_precision(),
+        }
+        if any(expected[name] != value for name, value in live.items()):
+            raise ValueError("live numerical environment drifted from the execution ABI; rewrap")
+
+    @torch.inference_mode()
+    def session(self, prefix: list[int], pending_token: int) -> Session:
+        self.validate_execution()
+        if not prefix:
+            raise ValueError("a nonempty native ancestor is required")
+        if len(prefix) + self.capacity > self.model.config.max_position_embeddings:
+            raise ValueError("ancestor and private capacity exceed the configured context")
+        tokens = torch.tensor([prefix], dtype=torch.long, device=self.device)
+        if bool((tokens < 0).any()) or bool((tokens >= self.model.config.vocab_size).any()):
+            raise ValueError("ancestor token outside vocabulary")
+        if not 0 <= pending_token < self.model.config.vocab_size:
+            raise ValueError("pending token outside vocabulary")
+        native = self.model(tokens, use_cache=True)
+        ancestor_keys = tuple(
+            layer.keys.detach().clone() for layer in native.past_key_values.layers
+        )
+        ancestor_values = tuple(
+            layer.values.detach().clone() for layer in native.past_key_values.layers
+        )
+        shape = (*ancestor_keys[0].shape[:2], 0, ancestor_keys[0].shape[-1])
+        empty = tuple(
+            torch.empty(shape, device=self.device, dtype=self.dtype) for _ in range(self.layers)
+        )
+        all_tokens = torch.tensor([prefix + [pending_token]], dtype=torch.long, device=self.device)
+        return Session(
+            self,
+            {
+                "tokens": all_tokens,
+                "ancestor_keys": ancestor_keys,
+                "ancestor_values": ancestor_values,
+                "delta_keys": empty,
+                "delta_values": tuple(value.clone() for value in empty),
+                "ancestor_length": len(prefix),
+                "capacity": self.capacity,
+                "logits": None,
+            },
+        )
+
+    def boundary(self, state):
+        return f"shared-token:{state['tokens'].shape[1] - 1}/before:decode"
+
+    def point(self, state):
+        return ExecutionPoint(
+            family="qwen2-shared-exact-history",
+            logical_step=state["tokens"].shape[1] - 1,
+            phase="decode",
+            operator="segmented_attention_native_suffix",
+            edge="before",
+            next_operation="decode_and_greedy_commit",
+            local_clock=state["delta_keys"][0].shape[-2],
+        )
+
+    def surface(self, state):
+        def sequence_schema(values):
+            return {
+                "kind": "tensor_sequence",
+                "length": self.layers,
+                "shapes": [list(value.shape) for value in values],
+                "strides": [list(value.stride()) for value in values],
+                "dtype": str(self.dtype),
+                "device": str(self.device),
+            }
+
+        return SurfaceManifest(
+            slots=(
+                SlotSpec(
+                    "tokens",
+                    role="cursor",
+                    producer="greedy_commit",
+                    consumer="decode",
+                    schema={
+                        "kind": "tensor",
+                        "shape": list(state["tokens"].shape),
+                        "stride": list(state["tokens"].stride()),
+                        "dtype": "torch.int64",
+                        "device": str(self.device),
+                    },
+                ),
+                SlotSpec(
+                    "ancestor_keys",
+                    role="immutable-cache",
+                    producer="native_prefill",
+                    consumer="segmented_attention",
+                    schema=sequence_schema(state["ancestor_keys"]),
+                ),
+                SlotSpec(
+                    "ancestor_values",
+                    role="immutable-cache",
+                    producer="native_prefill",
+                    consumer="segmented_attention",
+                    schema=sequence_schema(state["ancestor_values"]),
+                ),
+                SlotSpec(
+                    "delta_keys",
+                    role="private-cache",
+                    producer="decode",
+                    consumer="segmented_attention",
+                    schema=sequence_schema(state["delta_keys"]),
+                ),
+                SlotSpec(
+                    "delta_values",
+                    role="private-cache",
+                    producer="decode",
+                    consumer="segmented_attention",
+                    schema=sequence_schema(state["delta_values"]),
+                ),
+                SlotSpec(
+                    "ancestor_length",
+                    role="clock",
+                    producer="native_prefill",
+                    consumer="runtime",
+                    schema={"kind": "integer", "minimum": 1},
+                ),
+                SlotSpec(
+                    "capacity",
+                    role="limit",
+                    producer="adapter",
+                    consumer="runtime",
+                    schema={"kind": "integer", "minimum": 1},
+                ),
+                SlotSpec(
+                    "logits",
+                    role="observation",
+                    producer="native_readout",
+                    consumer="greedy",
+                    persistence="evidence",
+                    schema={"kind": "tensor", "optional": state["logits"] is None},
+                ),
+            ),
+            state_schema="saturn-pub-qwen2-shared-history-v1",
+            consumer="native-qwen2-segmented-suffix",
+            horizon="bounded-native-autoregressive-suffix",
+        )
+
+    def addresses(self, state):
+        return ("tokens",) + (("logits",) if state["logits"] is not None else ())
+
+    def write(self, state, writes, invalidates):
+        raise ValueError("shared exact-history cuts are read-only; fork from a different ancestor")
+
+    def accounting(self, state):
+        self.validate(state)
+
+        def size(values):
+            return sum(value.numel() * value.element_size() for value in values)
+
+        ancestor = size((*state["ancestor_keys"], *state["ancestor_values"]))
+        private = size((*state["delta_keys"], *state["delta_values"]))
+        rows = state["ancestor_length"] + state["delta_keys"][0].shape[-2]
+        return {
+            "ancestor_payload_bytes": ancestor,
+            "private_payload_bytes": private,
+            "logical_payload_bytes": ancestor + private,
+            "attention_rows": rows,
+            "durable_ancestor_dedup_eligible": True,
+            "live_session_ancestor_shared": False,
+            "reduced_attention_work_claim": False,
+            "temporary_attention_copies": "head-repeat and float32 casts; no full KV join",
+        }
+
+    def validate(self, state):
+        self.validate_execution()
+        required = {
+            "tokens",
+            "ancestor_keys",
+            "ancestor_values",
+            "delta_keys",
+            "delta_values",
+            "ancestor_length",
+            "capacity",
+            "logits",
+        }
+        if set(state) != required:
+            raise ValueError("shared-history state schema keys differ from the contract")
+        tokens = state["tokens"]
+        if (
+            tokens.ndim != 2
+            or tuple(tokens.shape[:1]) != (1,)
+            or tokens.dtype != torch.long
+            or tokens.device != self.device
+        ):
+            raise ValueError("invalid shared-history token geometry/dtype/device")
+        if bool((tokens < 0).any()) or bool((tokens >= self.model.config.vocab_size).any()):
+            raise ValueError("shared-history token outside vocabulary")
+        if type(state["ancestor_length"]) is not int or state["ancestor_length"] < 1:
+            raise ValueError("invalid ancestor length")
+        if state["capacity"] != self.capacity:
+            raise ValueError("shared-history capacity differs from the execution contract")
+        groups = (
+            state["ancestor_keys"],
+            state["ancestor_values"],
+            state["delta_keys"],
+            state["delta_values"],
+        )
+        if any(len(group) != self.layers for group in groups):
+            raise ValueError("shared-history cache must cover every decoder layer")
+        delta_lengths = set()
+        for index in range(self.layers):
+            key, value = state["ancestor_keys"][index], state["ancestor_values"][index]
+            delta_key, delta_value = state["delta_keys"][index], state["delta_values"][index]
+            base = (1, self.model.config.num_key_value_heads)
+            width = self.model.config.hidden_size // self.model.config.num_attention_heads
+            if (
+                tuple(key.shape) != (*base, state["ancestor_length"], width)
+                or value.shape != key.shape
+            ):
+                raise ValueError("invalid shared ancestor K/V geometry")
+            if tuple(delta_key.shape[:2]) != base or delta_key.shape[-1] != width:
+                raise ValueError("invalid private delta geometry")
+            if delta_value.shape != delta_key.shape:
+                raise ValueError("private K/V geometry mismatch")
+            for tensor in (key, value, delta_key, delta_value):
+                if tensor.dtype != self.dtype or tensor.device != self.device:
+                    raise ValueError("shared-history cache dtype/device mismatch")
+                if not torch.isfinite(tensor).all():
+                    raise ValueError("non-finite shared-history cache")
+            delta_lengths.add(delta_key.shape[-2])
+        if len(delta_lengths) != 1:
+            raise ValueError("private cache layers have different clocks")
+        delta_length = delta_lengths.pop()
+        if delta_length > self.capacity:
+            raise ValueError("private delta exceeds capacity")
+        if tokens.shape[1] != state["ancestor_length"] + delta_length + 1:
+            raise ValueError("token and cache clocks disagree")
+        logits = state["logits"]
+        if logits is not None and (
+            tuple(logits.shape) != (1, self.model.config.vocab_size)
+            or logits.dtype != self.dtype
+            or logits.device != self.device
+            or not torch.isfinite(logits).all()
+        ):
+            raise ValueError("invalid shared-history logits")
+
+    @torch.inference_mode()
+    def advance(self, state):
+        self.validate(state)
+        if state["delta_keys"][0].shape[-2] >= self.capacity:
+            raise ValueError("private delta capacity reached")
+        cache = SharedCache.from_segments(
+            tuple(state["ancestor_keys"]),
+            tuple(state["ancestor_values"]),
+            tuple(state["delta_keys"]),
+            tuple(state["delta_values"]),
+            capacity=self.capacity,
+        )
+        original = self.model.config._attn_implementation
+        try:
+            self.model.config._attn_implementation = _ATTENTION_NAME
+            logits = self.model(
+                state["tokens"][:, -1:], past_key_values=cache, use_cache=True
+            ).logits[:, -1]
+        finally:
+            self.model.config._attn_implementation = original
+        delta_keys, delta_values = cache.segments()
+        out = clone(state)
+        out["delta_keys"], out["delta_values"] = delta_keys, delta_values
+        out["logits"] = logits
+        out["tokens"] = torch.cat((state["tokens"], logits.argmax(-1, keepdim=True)), dim=-1)
+        return out

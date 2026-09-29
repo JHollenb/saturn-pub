@@ -6,18 +6,43 @@ Uses the pinned diffusers modules directly, without replaying an executed block 
 
 from __future__ import annotations
 
+import platform
 from collections.abc import Mapping
 from typing import Any
 
+import diffusers
 import torch
 from diffusers import FlowMatchEulerDiscreteScheduler, Flux2Transformer2DModel
 
+from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest
 from ..core import Adapter, Session
-from ..values import clone, identity
+from ..values import clone, digest, identity
+
+
+def _stable_configuration(value: Any, *, key: str = "") -> Any:
+    if isinstance(value, Mapping):
+        return {name: _stable_configuration(item, key=name) for name, item in value.items()}
+    if isinstance(value, (tuple, list)):
+        items = [_stable_configuration(item) for item in value]
+        return sorted(items) if key == "_use_default_values" else items
+    return value
+
+
+def _tensor_guards(module: Any, *, prefix: str = "") -> tuple[tuple[Any, ...], ...]:
+    return tuple(
+        (
+            f"{prefix}{name}",
+            id(value),
+            value._version,
+            value.data_ptr(),
+            value.untyped_storage().data_ptr(),
+        )
+        for name, value in (*module.named_parameters(), *module.named_buffers())
+    )
 
 
 class Flux2KleinAdapter(Adapter):
-    def __init__(self, transformer, scheduler, *, pipeline=None):
+    def __init__(self, transformer, scheduler, *, pipeline=None, granularity="block"):
         if not isinstance(transformer, Flux2Transformer2DModel):
             raise ValueError("expected a native Flux2Transformer2DModel")
         if transformer.config.guidance_embeds:
@@ -26,7 +51,10 @@ class Flux2KleinAdapter(Adapter):
             raise ValueError("expected flow Euler scheduler")
         if scheduler.config.stochastic_sampling:
             raise ValueError("stochastic flow is outside this deterministic closure")
+        if granularity not in {"block", "operation"}:
+            raise ValueError("granularity must be 'block' or 'operation'")
         self.model = transformer.eval()
+        self.granularity = granularity
         self.pipeline = pipeline
         self.device = next(transformer.parameters()).device
         self.dtype = next(transformer.parameters()).dtype
@@ -38,14 +66,49 @@ class Flux2KleinAdapter(Adapter):
         configuration = {"model": dict(transformer.config), "scheduler": self.scheduler_config}
         if pipeline is not None:
             if pipeline.vae.bn.running_var.device.type != "cpu":
-                raise ValueError("wrap with VAE on CPU to bind native phase-offloaded normalization")
+                raise ValueError(
+                    "wrap with VAE on CPU to bind native phase-offloaded normalization"
+                )
             configuration["vae"] = identity(pipeline.vae, dict(pipeline.vae.config))
-        self.model_identity = identity(transformer, configuration)
+        configuration_manifest = {
+            "model": dict(transformer.config),
+            "scheduler": self.scheduler_config,
+            "vae": None if pipeline is None else dict(pipeline.vae.config),
+        }
+        self._configuration_fingerprint = digest(_stable_configuration(configuration_manifest))
+        self.model_identity = identity(transformer, _stable_configuration(configuration))
+        self._frozen_versions = _tensor_guards(transformer, prefix="transformer.") + (
+            () if pipeline is None else _tensor_guards(pipeline.vae, prefix="vae.")
+        )
         self.execution = {
             "family": "flux2-klein",
-            "adapter": "native-block-v1",
+            "adapter": "native-boundary-v2",
+            "granularity": granularity,
             "dtype": str(self.dtype),
-            "device_type": self.device.type,
+            "device": {"type": self.device.type, "index": self.device.index},
+            "batch": {"size": 1, "guidance": 1.0, "reference_images": False},
+            "environment_versions": {
+                "torch": torch.__version__,
+                "diffusers": diffusers.__version__,
+                "python": platform.python_version(),
+            },
+            "model_program": (
+                "project->joint_block[*]->single_block[*]->norm/proj_readout->flow_commit"
+            ),
+            "kernel": {
+                "transformer": "Flux2Transformer2DModel",
+                "scheduler": "FlowMatchEulerDiscreteScheduler",
+            },
+            "numeric_scope": {
+                "inference_mode": True,
+                "autocast": False,
+                "stochastic_sampling": False,
+                "tf32_matmul": bool(torch.backends.cuda.matmul.allow_tf32),
+                "torch_num_threads": torch.get_num_threads(),
+                "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
+                "float32_matmul_precision": torch.get_float32_matmul_precision(),
+                "tensor_layout": "state-slot-bound-stride",
+            },
             "guidance": 1.0,
             "reference_images": False,
             "decoder_normalization_device": "cpu",
@@ -53,17 +116,22 @@ class Flux2KleinAdapter(Adapter):
         }
 
     @classmethod
-    def from_pipeline(cls, pipeline):
+    def from_pipeline(cls, pipeline, *, granularity="block"):
         from diffusers import Flux2KleinPipeline
 
         if not isinstance(pipeline, Flux2KleinPipeline) or not pipeline.config.is_distilled:
             raise ValueError("only distilled Flux2KleinPipeline is supported")
         if any(hasattr(module, "_hf_hook") for module in pipeline.transformer.modules()):
             raise ValueError("remove CPU-offload hooks and place the transformer before wrapping")
-        return cls(pipeline.transformer, pipeline.scheduler, pipeline=pipeline)
+        return cls(
+            pipeline.transformer,
+            pipeline.scheduler,
+            pipeline=pipeline,
+            granularity=granularity,
+        )
 
     @classmethod
-    def tiny(cls, seed=7):
+    def tiny(cls, seed=7, *, granularity="block"):
         with torch.random.fork_rng():
             torch.manual_seed(seed)
             model = Flux2Transformer2DModel(
@@ -77,9 +145,41 @@ class Flux2KleinAdapter(Adapter):
                 axes_dims_rope=(4, 4, 4, 4),
                 guidance_embeds=False,
             )
-        return cls(model, FlowMatchEulerDiscreteScheduler())
+        return cls(model, FlowMatchEulerDiscreteScheduler(), granularity=granularity)
+
+    def _verify_frozen_model(self):
+        current = _tensor_guards(self.model, prefix="transformer.") + (
+            () if self.pipeline is None else _tensor_guards(self.pipeline.vae, prefix="vae.")
+        )
+        if current != self._frozen_versions:
+            raise ValueError(
+                "model parameters or buffers changed after adapter identity was frozen; "
+                "rewrap the model in a new adapter"
+            )
+
+    def validate_execution(self):
+        self._verify_frozen_model()
+        configuration_manifest = {
+            "model": dict(self.model.config),
+            "scheduler": self.scheduler_config,
+            "vae": None if self.pipeline is None else dict(self.pipeline.vae.config),
+        }
+        if digest(_stable_configuration(configuration_manifest)) != self._configuration_fingerprint:
+            raise ValueError(
+                "model configuration changed after adapter identity was frozen; rewrap"
+            )
+        expected = self.execution["numeric_scope"]
+        current = {
+            "tf32_matmul": bool(torch.backends.cuda.matmul.allow_tf32),
+            "torch_num_threads": torch.get_num_threads(),
+            "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
+            "float32_matmul_precision": torch.get_float32_matmul_precision(),
+        }
+        if any(expected[name] != value for name, value in current.items()):
+            raise ValueError("live numerical environment drifted from the execution ABI; rewrap")
 
     def session(self, *, latent, conditioning, img_ids, txt_ids, timesteps, sigmas):
+        self.validate_execution()
         return Session(
             self,
             {
@@ -95,23 +195,162 @@ class Flux2KleinAdapter(Adapter):
                 "context": None,
                 "text": None,
                 "image": None,
+                "noise_prediction": None,
             },
         )
 
     def boundary(self, state):
         prefix = f"diffusion-step:{state['step']}"
         phase, cursor = state["phase"], state["cursor"]
+        if self.granularity == "operation":
+            if phase == "joint":
+                return f"{prefix}/joint:{cursor}"
+            if phase == "single":
+                return f"{prefix}/single:{cursor}"
+            return f"{prefix}/{phase}"
         if phase == "joint" and cursor:
             return f"{prefix}/after:joint.{cursor - 1}"
         if phase == "single":
             return f"{prefix}/after:single.{cursor - 1}"
         return f"{prefix}/{phase}"
 
+    def point(self, state):
+        phase, cursor = state["phase"], state["cursor"]
+        operator = phase
+        index = cursor if phase in {"joint", "single"} else None
+        next_operation = {
+            "project": "native_input_projection",
+            "readout": "norm_and_projection",
+            "scheduler": "flow_scheduler_commit",
+        }.get(phase, f"{phase}_block.{cursor}")
+        return ExecutionPoint(
+            family="flux2-klein",
+            logical_step=state["step"],
+            phase=phase,
+            operator=operator,
+            index=index,
+            edge="before",
+            next_operation=next_operation,
+            local_clock=cursor,
+        )
+
+    def surface(self, state):
+        def tensor_schema(value, *, optional=False):
+            if value is None:
+                return {"kind": "tensor", "optional": optional}
+            return {
+                "kind": "tensor",
+                "shape": list(value.shape),
+                "stride": list(value.stride()),
+                "dtype": str(value.dtype),
+                "device": str(value.device),
+                "optional": optional,
+            }
+
+        slots = []
+        definitions = (
+            ("latent", "carrier", state["phase"] == "project", "flow_scheduler", "transformer"),
+            ("conditioning", "conditioning", state["phase"] == "project", "caller", "transformer"),
+            ("img_ids", "address", False, "caller", "rope"),
+            ("txt_ids", "address", False, "caller", "rope"),
+            ("timesteps", "schedule", False, "caller", "transformer_and_scheduler"),
+            ("sigmas", "schedule", False, "caller", "scheduler"),
+            (
+                "text",
+                "carrier",
+                state["phase"] in {"joint", "single"},
+                "native_block",
+                "native_suffix",
+            ),
+            (
+                "image",
+                "carrier",
+                state["phase"] in {"joint", "single"},
+                "native_block",
+                "native_suffix",
+            ),
+            ("noise_prediction", "derived", False, "norm_and_projection", "flow_scheduler"),
+        )
+        for name, role, writable, producer, consumer in definitions:
+            if name == "conditioning" and state["phase"] != "project":
+                writable = True
+            invalidates = ()
+            slots.append(
+                SlotSpec(
+                    name,
+                    role=role,
+                    writable=writable,
+                    producer=producer,
+                    consumer=consumer,
+                    invalidates=invalidates,
+                    schema=tensor_schema(state[name], optional=state[name] is None),
+                )
+            )
+        slots.extend(
+            (
+                SlotSpec(
+                    "context",
+                    role="closure",
+                    producer="project",
+                    consumer="native_suffix",
+                    schema={"kind": "tensor_mapping", "optional": state["context"] is None},
+                ),
+                SlotSpec(
+                    "step",
+                    role="clock",
+                    producer="flow_scheduler",
+                    consumer="runtime",
+                    schema={"kind": "integer", "minimum": 0, "maximum": len(state["timesteps"])},
+                ),
+                SlotSpec(
+                    "phase",
+                    role="clock",
+                    producer="runtime",
+                    consumer="runtime",
+                    schema={
+                        "kind": "enum",
+                        "values": ["project", "joint", "single", "readout", "scheduler"],
+                    },
+                ),
+                SlotSpec(
+                    "cursor",
+                    role="clock",
+                    producer="native_block",
+                    consumer="runtime",
+                    schema={"kind": "integer", "minimum": 0},
+                ),
+            )
+        )
+        return SurfaceManifest(
+            slots=tuple(slots),
+            state_schema="saturn-pub-flux2-klein-state-v2",
+            consumer="native-flux2-suffix",
+            horizon="native-diffusion-suffix",
+        )
+
     def addresses(self, state):
         slots = ("latent", "conditioning")
         return slots + (("text", "image") if state["text"] is not None else ())
 
     def validate(self, state: Mapping[str, Any]):
+        self._verify_frozen_model()
+        expected_keys = {
+            "latent",
+            "conditioning",
+            "img_ids",
+            "txt_ids",
+            "timesteps",
+            "sigmas",
+            "step",
+            "phase",
+            "cursor",
+            "context",
+            "text",
+            "image",
+            "noise_prediction",
+        }
+        if set(state) != expected_keys:
+            raise ValueError("FLUX state schema keys differ from the execution contract")
         latent, conditioning = state["latent"], state["conditioning"]
         for tensor, dimension in (
             (latent, self.model.config.in_channels),
@@ -124,6 +363,8 @@ class Flux2KleinAdapter(Adapter):
         for name, length in (("img_ids", latent.shape[1]), ("txt_ids", conditioning.shape[1])):
             if tuple(state[name].shape) != (1, length, 4):
                 raise ValueError("invalid FLUX position IDs")
+            if state[name].device != self.device or not torch.isfinite(state[name]).all():
+                raise ValueError("invalid FLUX position ID dtype/device/value")
         steps = len(state["timesteps"])
         if not steps or state["sigmas"].shape != (steps + 1,):
             raise ValueError("invalid flow schedule geometry")
@@ -133,14 +374,22 @@ class Flux2KleinAdapter(Adapter):
         if type(state["step"]) is not int or not 0 <= state["step"] <= steps:
             raise ValueError("invalid flow step cursor")
         phase, cursor = state["phase"], state["cursor"]
-        if phase not in ("project", "joint", "single") or type(cursor) is not int:
+        allowed_phases = {"project", "joint", "single"}
+        if self.granularity == "operation":
+            allowed_phases |= {"readout", "scheduler"}
+        if phase not in allowed_phases or type(cursor) is not int:
             raise ValueError("invalid block cursor")
         if phase == "project":
             if cursor != 0 or any(state[name] is not None for name in ("text", "image", "context")):
                 raise ValueError("invalid projection closure")
         else:
             limit = self.joint_layers if phase == "joint" else self.single_layers
-            if not 0 <= cursor <= limit or (phase == "single" and not cursor):
+            zero_single = phase == "single" and not cursor and self.granularity != "operation"
+            if (
+                not 0 <= cursor <= limit
+                or zero_single
+                or (phase in {"readout", "scheduler"} and not cursor)
+            ):
                 raise ValueError("invalid block cursor")
             if state["step"] == steps or not isinstance(state["context"], dict):
                 raise ValueError("missing live transformer closure")
@@ -153,6 +402,16 @@ class Flux2KleinAdapter(Adapter):
                     raise ValueError("invalid route geometry")
                 if value.dtype != self.dtype or value.device != self.device:
                     raise ValueError("route dtype/device mismatch")
+        prediction = state["noise_prediction"]
+        if prediction is not None and (
+            prediction.shape != latent.shape
+            or prediction.dtype != self.dtype
+            or prediction.device != self.device
+            or not torch.isfinite(prediction).all()
+        ):
+            raise ValueError("invalid FLUX readout prediction")
+        if (phase == "scheduler") != (prediction is not None):
+            raise ValueError("FLUX prediction exists only at the scheduler boundary")
 
         def finite(value):
             if isinstance(value, torch.Tensor) and not torch.isfinite(value).all():
@@ -169,6 +428,8 @@ class Flux2KleinAdapter(Adapter):
     def write(self, state, writes, invalidates):
         if invalidates:
             raise ValueError("FLUX closure must remain complete")
+        if state["phase"] in {"readout", "scheduler"}:
+            raise ValueError("readout and scheduler boundaries are read-only")
         allowed = {"latent", "conditioning"} if state["phase"] == "project" else {"text", "image"}
         if not set(writes) <= allowed:
             raise ValueError("write would invalidate the captured transformer closure")
@@ -214,6 +475,8 @@ class Flux2KleinAdapter(Adapter):
                 joint_attention_kwargs=None,
             )
             out["cursor"] += 1
+            if self.granularity == "operation" and out["cursor"] == self.joint_layers:
+                out["phase"], out["cursor"] = "single", 0
         elif phase == "joint" or cursor < self.single_layers:
             index = 0 if phase == "joint" else cursor
             context = out["context"]
@@ -227,8 +490,17 @@ class Flux2KleinAdapter(Adapter):
             )
             out["text"], out["image"] = combined[:, :text_length], combined[:, text_length:]
             out["phase"], out["cursor"] = "single", index + 1
+            if self.granularity == "operation" and out["cursor"] == self.single_layers:
+                out["phase"] = "readout"
+        elif self.granularity == "operation" and phase == "readout":
+            out["noise_prediction"] = model.proj_out(
+                model.norm_out(out["image"], out["context"]["temb"])
+            )
+            out["phase"] = "scheduler"
         else:
-            noise = model.proj_out(model.norm_out(out["image"], out["context"]["temb"]))
+            noise = out["noise_prediction"]
+            if noise is None:
+                noise = model.proj_out(model.norm_out(out["image"], out["context"]["temb"]))
             scheduler = FlowMatchEulerDiscreteScheduler.from_config(self.scheduler_config)
             scheduler.timesteps, scheduler.sigmas = out["timesteps"], out["sigmas"]
             scheduler.set_begin_index(out["step"])
@@ -238,6 +510,7 @@ class Flux2KleinAdapter(Adapter):
             out["step"] += 1
             out["phase"], out["cursor"] = "project", 0
             out["text"], out["image"], out["context"] = None, None, None
+            out["noise_prediction"] = None
         return out
 
     def finish(self, session):

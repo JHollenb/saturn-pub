@@ -9,8 +9,8 @@ from fnmatch import fnmatchcase
 from typing import Any
 
 from .core import Act, Session
+from .observers import Observer, WatchEvent
 from .store import LocalStore
-from .values import describe
 
 
 class Debugger:
@@ -19,28 +19,94 @@ class Debugger:
         self.active = "root"
         self.cuts = {}
         self.breakpoints: list[str] = []
+        self.observer = Observer()
+        self.watch_events: list[WatchEvent] = []
         self.max_continue_steps = 1000
-
-    def _until(self, patterns: list[str], limit: int) -> dict[str, Any]:
-        if limit < 1:
-            raise ValueError("continue limit must be positive")
-        # Advance first: continuing from a breakpoint must make forward progress.
-        for steps in range(1, limit + 1):
-            self.session.continue_()
-            boundary = self.session.inspect().boundary
-            matches = [pattern for pattern in patterns if fnmatchcase(boundary, pattern)]
-            if matches:
-                return {
-                    "stop": "breakpoint",
-                    "steps": steps,
-                    "matched": matches,
-                    "frame": self.execute("inspect"),
-                }
-        return {"stop": "step-limit", "steps": limit, "frame": self.execute("inspect")}
 
     @property
     def session(self) -> Session:
         return self.branches[self.active]
+
+    def _frame(self) -> dict[str, Any]:
+        frame = self.session.inspect()
+        result = {"branch": self.active, "boundary": frame.boundary, "slots": dict(frame.slots)}
+        point = getattr(frame, "execution_point", None)
+        surface = getattr(frame, "surface", None)
+        if point is not None:
+            result["execution_point"] = dict(point)
+        if surface is not None:
+            result["surface"] = dict(surface)
+        return result
+
+    def _observe(self, receipt: Any) -> tuple[WatchEvent, ...]:
+        events = self.observer.evaluate(self.session, self.active, receipt=receipt)
+        for event in events:
+            self.cuts[event.cut.fingerprint] = event.cut
+        self.watch_events.extend(events)
+        return events
+
+    def _step(self) -> Any:
+        step = getattr(self.session, "step", None)
+        return step() if step is not None else self.session.continue_()
+
+    def advance(
+        self,
+        steps: int = 1,
+        *,
+        patterns: list[str] | None = None,
+        stop_on_breakpoint: bool = False,
+        trace: bool = False,
+    ) -> dict[str, Any]:
+        """Advance one micro-transition at a time so watches see every safe point."""
+        if isinstance(steps, bool) or not isinstance(steps, int) or steps < 1:
+            raise ValueError("continue limit must be positive")
+        patterns = patterns or []
+        rows = []
+        receipts = []
+        for completed in range(1, steps + 1):
+            receipt = self._step()
+            receipts.append(receipt.to_dict())
+            events = self._observe(receipt)
+            frame = self._frame()
+            if trace:
+                rows.append(
+                    {
+                        "step": completed,
+                        "frame": frame,
+                        "receipt": receipt.to_dict(),
+                        "watch_events": [event.to_dict() for event in events],
+                    }
+                )
+            if events:
+                return {
+                    "stop": "watchpoint",
+                    "steps": completed,
+                    "events": [event.to_dict() for event in events],
+                    "frame": frame,
+                    "receipts": receipts,
+                    **({"trace": rows} if trace else {}),
+                }
+            matches = [pattern for pattern in patterns if fnmatchcase(frame["boundary"], pattern)]
+            if matches and stop_on_breakpoint:
+                return {
+                    "stop": "breakpoint",
+                    "steps": completed,
+                    "matched": matches,
+                    "frame": frame,
+                    "receipts": receipts,
+                    **({"trace": rows} if trace else {}),
+                }
+        return {
+            "stop": "step-limit",
+            "steps": steps,
+            "frame": self._frame(),
+            "receipts": receipts,
+            **({"trace": rows} if trace else {}),
+        }
+
+    def _until(self, patterns: list[str], limit: int) -> dict[str, Any]:
+        # Advance first: continuing from a breakpoint must make forward progress.
+        return self.advance(limit, patterns=patterns, stop_on_breakpoint=True)
 
     def execute(self, line: str) -> Any:
         args = shlex.split(line)
@@ -48,8 +114,7 @@ class Debugger:
             return None
         command, *rest = args
         if command in ("inspect", "where") and not rest:
-            frame = self.session.inspect()
-            return {"branch": self.active, "boundary": frame.boundary, "slots": dict(frame.slots)}
+            return self._frame()
         if command == "read" and len(rest) == 1:
             value = self.session.read(rest[0])
             return value.tolist() if hasattr(value, "tolist") else value
@@ -71,8 +136,29 @@ class Debugger:
             )
         if command == "continue" and not rest and self.breakpoints:
             return self._until(self.breakpoints, self.max_continue_steps)
+        if command == "continue" and not rest and self.observer.watchpoints:
+            return self.advance(self.max_continue_steps)
         if command in ("step", "next", "continue") and len(rest) <= 1:
-            return self.session.continue_(int(rest[0]) if rest else 1).to_dict()
+            steps = int(rest[0]) if rest else 1
+            # An explicit budget preserves the legacy exact-N breakpoint behavior. Watches
+            # still stop at a retained safe point; bare continue handles installed breaks above.
+            return self.advance(steps)
+        if command == "trace" and len(rest) <= 1:
+            return self.advance(int(rest[0]) if rest else 1, trace=True)
+        if command == "watch" and len(rest) in (2, 3):
+            threshold = float(rest[2]) if len(rest) == 3 else None
+            watch = self.observer.add(rest[0], rest[1], threshold)
+            # Establish change-watch semantics at the command's current branch and safe point.
+            self.observer.sync(self.session, self.active)
+            return watch.to_dict()
+        if command == "watchpoints" and not rest:
+            return {"watchpoints": [watch.to_dict() for watch in self.observer.watchpoints]}
+        if command == "unwatch" and len(rest) == 1:
+            if rest[0] == "all":
+                self.observer.clear()
+            else:
+                self.observer.remove(rest[0])
+            return {"watchpoints": [watch.to_dict() for watch in self.observer.watchpoints]}
         if command == "capture" and len(rest) == 1:
             self.cuts[rest[0]] = self.session.capture()
             return {"cut": rest[0], "fingerprint": self.cuts[rest[0]].fingerprint}
@@ -87,9 +173,17 @@ class Debugger:
             if rest[0] not in self.branches:
                 raise ValueError("unknown branch")
             self.active = rest[0]
+            # A new branch gets a baseline at its selected cursor. Existing branches retain theirs.
+            if not self.observer.has_baseline(self.active):
+                self.observer.sync(self.session, self.active)
             return {"active": self.active}
         if command == "zero" and len(rest) == 1:
-            return self.session.apply(Act.zero(rest[0])).to_dict()
+            receipt = self.session.apply(Act.zero(rest[0]))
+            events = self._observe(receipt)
+            result = receipt.to_dict()
+            if events:
+                result["watch_events"] = [event.to_dict() for event in events]
+            return result
         if command in ("add", "replace") and len(rest) == 2:
             value = json.loads(rest[1])
             current = self.session.read(rest[0])
@@ -100,11 +194,40 @@ class Debugger:
                 if command == "add" and value.ndim == 0:
                     value = torch.ones_like(current) * value
             act = Act.add(rest[0], value) if command == "add" else Act.replace(rest[0], value)
-            return self.session.apply(act).to_dict()
+            receipt = self.session.apply(act)
+            events = self._observe(receipt)
+            result = receipt.to_dict()
+            if events:
+                result["watch_events"] = [event.to_dict() for event in events]
+            return result
         if command == "restore" and len(rest) == 1:
-            return self.session.restore(self.cuts[rest[0]]).to_dict()
-        if command == "compare" and len(rest) == 1:
-            return self.session.compare(self.branches[rest[0]])
+            result = self.session.restore(self.cuts[rest[0]]).to_dict()
+            self.observer.sync(self.session, self.active)
+            return result
+        if command in ("compare", "diff") and len(rest) == 1:
+            if rest[0] in self.branches:
+                other = self.branches[rest[0]]
+            elif rest[0] in self.cuts:
+                other = self.session.fork(self.cuts[rest[0]])
+            else:
+                raise ValueError("unknown branch or cut")
+            return self.session.compare(other)
+        if command == "replay" and 1 <= len(rest) <= 3:
+            cut_name = rest[0]
+            steps = int(rest[1]) if len(rest) >= 2 else 1
+            name = rest[2] if len(rest) == 3 else f"replay-{len(self.branches)}"
+            if name in self.branches:
+                raise ValueError("branch name already exists")
+            replay = getattr(self.session, "replay", None)
+            branch = (
+                replay(self.cuts[cut_name], steps=steps)
+                if replay
+                else self.session.fork(self.cuts[cut_name])
+            )
+            if replay is None:
+                branch.continue_(steps)
+            self.branches[name] = branch
+            return {"branch": name, "steps": steps, "frame": self._frame_for(name)}
         if command == "commit" and len(rest) == 1:
             return self.session.commit(self.branches[rest[0]]).to_dict()
         if command == "abort" and len(rest) == 1:
@@ -112,7 +235,12 @@ class Debugger:
         if command == "save" and len(rest) == 2:
             return {"saved": LocalStore(rest[0]).save(self.cuts[rest[1]])}
         if command == "load" and len(rest) == 3:
-            cut = LocalStore(rest[0]).load(rest[1], device=str(self.session.adapter.device))
+            device = getattr(self.session.adapter, "device", None)
+            cut = (
+                LocalStore(rest[0]).load(rest[1], device=str(device))
+                if device is not None
+                else LocalStore(rest[0]).load(rest[1])
+            )
             self.session._compatible(cut)
             self.cuts[rest[2]] = cut
             return {"cut": rest[2], "fingerprint": cut.fingerprint}
@@ -120,12 +248,21 @@ class Debugger:
             return (
                 "inspect / where | read ADDRESS | step / next [N] | break BOUNDARY_PATTERN | "
                 "breakpoints | delete PATTERN / all | continue [N] | until PATTERN [MAX_STEPS] | "
-                "capture NAME | fork BRANCH [CUT] | "
+                "watch ADDRESS change / nonfinite | watch ADDRESS gt / lt THRESHOLD | "
+                "watchpoints | unwatch ID / all | trace [N] | capture NAME | fork BRANCH [CUT] | "
                 "use BRANCH | zero ADDRESS | add ADDRESS JSON | replace ADDRESS JSON | "
-                "compare BRANCH | commit BRANCH | abort BRANCH | restore CUT | save DIRECTORY CUT | "
-                "load DIRECTORY DIGEST NAME | quit"
+                "compare / diff BRANCH_OR_CUT | replay CUT [STEPS] [BRANCH] | commit BRANCH | "
+                "abort BRANCH | restore CUT | save DIRECTORY CUT | load DIRECTORY DIGEST NAME | quit"
             )
         raise ValueError("unknown command or wrong arguments; use help")
+
+    def _frame_for(self, branch: str) -> dict[str, Any]:
+        active = self.active
+        self.active = branch
+        try:
+            return self._frame()
+        finally:
+            self.active = active
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -156,7 +293,7 @@ def main(argv: list[str] | None = None) -> int:
         for line in Path(args.script).read_text().splitlines():
             if line.strip() in ("quit", "exit"):
                 break
-            print(json.dumps(describe(debugger.execute(line)), indent=2))
+            print(json.dumps(debugger.execute(line), indent=2))
         return 0
     print("Saturn local debugger. Random offline model. Type help or quit.")
     while True:
@@ -164,7 +301,7 @@ def main(argv: list[str] | None = None) -> int:
             line = input(f"{debugger.active}> ")
             if line.strip() in ("quit", "exit"):
                 return 0
-            print(json.dumps(describe(debugger.execute(line)), indent=2))
+            print(json.dumps(debugger.execute(line), indent=2))
         except (EOFError, KeyboardInterrupt):
             print()
             return 0

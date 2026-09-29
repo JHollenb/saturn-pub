@@ -69,3 +69,48 @@ The new `measured_program.py` and `dependency_reuse.py` examples were run locall
 random native CPU Qwen. They verify exact measured-payload replay and unsupported
 context/parent refusal, plus declared cell reuse/recomputation with the final native
 readout executed on every run. They make no semantic portability or speedup claim.
+
+## Typed execution, custody, debugger, and structural extension
+
+Version **0.2.0** was validated locally on macOS arm64 with Python 3.12.13 and CPU execution
+on 2026-09-29:
+
+- **79 tests passed**, including fresh-interpreter Qwen/DDIM/FLUX suffix replay, typed seal
+  tampering, failed publication rollback, numerical/configuration drift, same-version weight
+  replacement refusal, and operation identity across different source paths.
+- **11 offline example scripts passed**; the two pretrained FLUX scripts were excluded from
+  this no-download lane. The updated shared-memory example verifies both durable segmented
+  suffix replay and phase-origin replay with unchanged key bytes.
+- **All three notebooks executed** with no error outputs; the AR notebook verifies exact
+  fresh-process native and candidate replay.
+- Ruff lint, formatting, and `git diff --check` passed. Source distribution and wheel builds
+  passed; their contents exclude outputs, virtual environments, credentials, and private repos.
+- The bare wheel installed in a fresh environment and ran a JSON capture/continue/restore
+  transaction without torch, transformers, Saturn's private repo, manalysis, or mrun installed.
+
+The new release checks use Torch 2.14.0, Transformers 5.14.1, and Diffusers 0.39.0. They do
+not extend the historical pretrained CUDA evidence above, certify new semantic capabilities,
+or establish cross-device/kernel equality or a speedup. The new APIs were not rerun on Python
+3.10 in this release lane.
+
+| Feature | Executed proof surface | Claim boundary |
+|---|---|---|
+| ExecutionPoint, SurfaceManifest, StateAddress | Tiny random native Qwen, DDIM, and FLUX CPU adapters plus a parameter-free graph adapter | Typed boundaries and same-program mechanics; no pretrained semantic claim |
+| Microstep and macro-step execution | Operation-level and family-level CPU transitions, exact rewind, and fresh-process suffix replay | Exactness is bound to the declared program/device contract |
+| Act identity, preconditions, masked patching, preservation | Registered pure built-ins on tiny CPU tensors; masked graph-memory write preserves unselected cells and declared ports | Caller supplies address, mask, value, and preservation set |
+| Observer, WatchEvent, debugger commands | Branch-local change/threshold/nonfinite predicates, trace/diff/replay, safe-point cuts, and generic-adapter load | A fire is diagnostic triage, not a semantic or promotion verdict |
+| CausalPath and PortObservation | Synthetic source/address/writer/carrier/consumer graph with cut/receipt-bound divergence, repair, collateral, and native-consumer rows | Validates evidence support and separation; does not discover a mechanism |
+| LocalStore and ReplayBundle | Content-addressed JSON/tensor pages, repeated-save deduplication, local ancestry, adapter provenance, and opt-in import into a fresh store | No remote store, bundled checkpoint weights, or inferred missing ancestors |
+| Optimizer-free structural boundary | Empty `torch.nn.Module` with JSON graph/rules/memory/cursor parent, candidate, reopen, and cold-payload restore | Structural custody only; no learned growth or preserved function claim |
+| PhaseLaw | Synthetic integer phase origin and composition fixture | Does not establish a native checkpoint's learned phase semantics |
+| SharedQwenMemory | Tiny random Qwen segmented-attention ABI, shared ancestor, private tails, and accounting | The segmented ABI excludes Hugging Face kernel exactness and live Session copy-on-write integration |
+
+`python examples/software_debugger.py` runs the broad parameter-free debugger/evidence proof on
+CPU without downloads. `python examples/structural_rewind.py` runs the optimizer-free structural
+snapshot proof. Their reports distinguish supplied state, exact same-program replay, unassessed
+cross-device/kernel parity, and unassessed semantic capability.
+
+The release notebook run caught and corrected a debugger regression: an installed boundary
+breakpoint stopped explicit `continue N` before N transitions. Explicit budgets now preserve
+their exact transition count unless a watchpoint fires; bare continue and until remain
+breakpoint-aware. A dedicated regression test preserves this distinction.

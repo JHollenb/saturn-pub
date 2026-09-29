@@ -8,12 +8,14 @@ Run scripts from the checkout root. Results go to ignored `outputs/` directories
 | `custom_adapter.py` | Add your own JSON-only execution machine | None |
 | `ar_debug.py` | Capture, change a Qwen carrier, compare and rewind | `ar` |
 | `debugger_replay.py` | Inspect native layers/KV and verify durable fresh-process replay | `ar` |
+| `software_debugger.py` | Exercise typed microsteps, live watches, masked writes, replay bundle, and a causal map on a parameter-free graph | `torch` |
 | `diffusion_debug.py` | Compare branched DDIM latents | `diffusion` |
 | `causal_panel.py` | Run a dose/control grid and compile one measured arm | `ar` |
 | `measured_program.py` | Replay an exact measured program and see unsupported-use refusal | `ar` |
 | `dependency_reuse.py` | Inspect which declared cells are reused/recomputed | `ar` |
 | `shared_memory.py` | Compare shared-prefix attention and separate phase mechanics | `ar` |
 | `reversible_training.py` | Train a small writer with native feedback and reject/restore a harmful future | `ar,train` |
+| `structural_rewind.py` | Reopen graph/rules/memory/cursor futures with an empty model and no optimizer | `train` |
 | `flux2_build_writer.py` | Fit a writer from freshly paired pretrained block states | `diffusion` |
 | `flux2_hotfix.py` | Evaluate a supplied writer through native images and replay | `diffusion,train` |
 

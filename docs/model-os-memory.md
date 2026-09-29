@@ -14,9 +14,10 @@ be chosen explicitly, and provides runnable examples for each capability.
 | Branch history | Captured ancestry, retained futures, durable local cuts | Full Thott/Future Forest orchestration |
 | Measured programs | `Program`: measured ordered Acts bound to an exact recipient parent and context | Learned Registrar, general temporal compiler, full Hyperion atlases |
 | VM partial evaluation | `DependencyGraph`: declared dependencies, versioned implementations, dirty closure | Full private Saturn VM and arbitrary program execution |
-| Shared KV memory | `SharedQwenMemory`: one actual ancestor, independent private tails, segmented global-softmax attention | CUDA virtual-address aliasing, eviction, page faults, allocator/scheduler integration |
-| Phase transport | `PhaseLaw`: exact modular integer composition and local-frame reference scores | Integration into the shared Qwen cache and a validated production phase ABI |
-| Model debugger | Boundary breakpoints, step/next, bounded continue, read, branch, intervention, commit/restore, save/load | Remote attach, Python-source breakpoints, value-change watchpoints |
+| Shared KV memory | `SharedQwenMemory`: pointer-shared live ancestor and private tails; `SharedQwenAdapter`: durable ancestor-plus-delta cuts under a separate segmented-attention ABI | CUDA virtual-address aliasing, eviction, page faults, allocator/scheduler integration |
+| Phase transport | `PhaseLaw`: exact modular composition and local-frame scores; `PhaseOriginAdapter`: durable metadata-only origin-shift cuts with unchanged keys | Integration into the shared Qwen cache and a validated production phase ABI |
+| Model debugger | Typed execution points/surfaces, boundary breakpoints, branch-local value watches, trace/diff/replay, intervention, commit/restore, save/load | Remote attach and Python-source breakpoints |
+| Evidence map | Source/address/writer/carrier/consumer graph with separate divergence, repair, collateral and native-consumer rows | Automatic causal discovery or semantic verdicts |
 
 Model OS authority lives in the Session; these modules do not introduce a second
 neural executor. Read copies and declared write addresses make changes explicit.
@@ -25,14 +26,20 @@ Callable Acts and adapters remain trusted Python code, not an OS security sandbo
 Shared memory preserves the original causal ancestor and post-RoPE positions.
 Both branches attend to that ancestor plus their own appended rows. Physical storage
 sharing does not imply fewer attention rows, unlimited context, or faster serving.
-The configured checkpoint position limit still applies. The portable attention reduction
+The configured checkpoint position limit still applies. The segmented reference attention
 can differ numerically from native attention, so the notebook reports the actual logit error.
 
-The shared-memory object is a separate experimental consumer, not integrated into
-the standard Qwen Session's durable cut format. Do not infer shared-cache durability
-from the debugger's Qwen Session replay demonstration. Likewise, phase transport and
-memory sharing are separate examples; arbitrary independently compiled histories cannot
-be composed just by repositioning their keys.
+The standard Qwen Session still does not turn its ordinary cache into shared memory.
+`SharedQwenAdapter` is the explicit bridge: its cut stores the native ancestor and private
+delta and replays them under its own segmented-attention numerical ABI. Session branches
+clone those tensors in live RAM; they do not claim zero-copy residency. `LocalStore` may
+deduplicate identical ancestor pages by content, which is a durable-storage property rather
+than a live-memory property. Every attention step still consumes all ancestor and private
+rows, so neither bridge claims reduced attention compute.
+
+`PhaseOriginAdapter` similarly makes metadata-only phase movement capturable and restorable
+while preserving local key bytes. Phase transport and memory sharing remain separate ABIs;
+arbitrary independently compiled histories cannot be composed just by repositioning keys.
 
 ## Hands-on entry points
 
