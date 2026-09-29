@@ -100,6 +100,7 @@ the behavioral authority. A failed exploratory score does not erase a measured t
 - [Reversible training](docs/training.md)
 - [Write an adapter](docs/adapters.md)
 - [Pretrained model recipes](docs/pretrained.md)
+- [Build a writer, debug its futures, and replay](docs/writer-demo.md)
 - [Capabilities and numerical contracts](docs/capabilities.md)
 - [Release validation](docs/validation.md)
 - [Extraction provenance](PROVENANCE.md)
