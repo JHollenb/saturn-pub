@@ -1,0 +1,82 @@
+{
+  "schema": "saturn-pub-reference-observation-v1",
+  "source_job": "job-90c58216fa46",
+  "collection_recovery_job": "job-ce37204ce6d8",
+  "mechanics_status": "verified",
+  "terminal_status": "not-assessed",
+  "specimens": {
+    "donor": {
+      "model": "black-forest-labs/FLUX.2-klein-base-4B",
+      "revision": "a3b4f4849157f664bdbc776fd7453c2783562f4d",
+      "cut": "18f66bf49dca74c98e3e0ee6ecdb4a49f93a79a9f382b971bcfc7c77dd484645",
+      "native_prefix_exact": true,
+      "observed_count": 5
+    },
+    "recipient": {
+      "model": "black-forest-labs/FLUX.2-klein-4B",
+      "revision": "e7b7dc27f91deacad38e78976d1f2b499d76a294",
+      "cut": "864a57e80be76b3715affd840101a7902f403eb7df1fe29718de0e7b6b47e3df",
+      "native_prefix_exact": true
+    }
+  },
+  "writer": {
+    "schema": "saturn-pub-low-rank-writer-v1",
+    "recipe": "centered recipient PCA followed by ridge residual regression",
+    "address": "text",
+    "rank": 8,
+    "ridge": 0.001,
+    "recipient_cut": "864a57e80be76b3715affd840101a7902f403eb7df1fe29718de0e7b6b47e3df",
+    "donor_cut": "18f66bf49dca74c98e3e0ee6ecdb4a49f93a79a9f382b971bcfc7c77dd484645",
+    "recipient_model": "ff05fc8ae21c6e62eb57581028906f60597716355f110400efdc251456bd3a6e",
+    "donor_model": "069b0f3f91b8d8de163a303f33ee3b8bded1d43f5ea8890f39c406d55159a63e",
+    "recipient_boundary": "diffusion-step:0/after:joint.2",
+    "donor_boundary": "diffusion-step:0/after:joint.2",
+    "rows": 512,
+    "dimension": 3072,
+    "fit_mse": 58.4967155456543,
+    "target_delta_rms": 18.89029220653925,
+    "relative_fit_mse": 0.1639283736918282,
+    "claim_boundary": "One paired trace; reconstruction does not establish consumer capability.",
+    "package_sha256": "fa2f5be370d99ce661b1671cc5566546064553c835b3214fda08257440564eac",
+    "package_bytes": 104044,
+    "serving_scalar_count": 55297,
+    "serving_dtype": "float16"
+  },
+  "dose": 2.0,
+  "counts": {
+    "native": 3,
+    "feedback-1-dose-0": 3,
+    "feedback-2-dose-0.5": 3,
+    "feedback-3-dose-1": 3,
+    "feedback-4-dose-2": 5,
+    "feedback-5-dose-4": 3,
+    "patched": 5,
+    "zero-dose": 3,
+    "wrong-time": 3,
+    "uninstalled": 3
+  },
+  "ordinary_pipeline_rgb_exact": true,
+  "zero_dose_exact": true,
+  "uninstall_exact": true,
+  "rejected_dose_4_rollback": {
+    "required": true,
+    "verified_exact": true
+  },
+  "fresh_process_exact_replay": {
+    "native": true,
+    "patched": true,
+    "zero-dose": true,
+    "uninstalled": true
+  },
+  "resources": {
+    "lease_elapsed_seconds": 356.82,
+    "peak_rss_mb": 18806.2,
+    "peak_vram_mb": 8320.0,
+    "device": "CUDA RTX 4080",
+    "dtype": "bfloat16"
+  },
+  "reference_image_sha256": "af2da89b8e24d3bb9ea04e261891f3f078471fab605a6c71929ec25ef335248c",
+  "collection_note": "Scientific execution and replay completed; the outer lease then failed an inherited 32 MiB archive cap. A collection-only lease recovered the existing evidence. No model rerun occurred.",
+  "validation_scope": "Measured three-stage scientific scripts; the new standalone wrapper was checked separately without rerunning real models.",
+  "claim_boundary": "One labelled development context at a supplied site; generalization and collateral unassessed."
+}

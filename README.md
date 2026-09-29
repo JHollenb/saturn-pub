@@ -77,6 +77,16 @@ are 8×8 mechanics fixtures; use the pretrained recipe for meaningful generated 
 
 ## Research tools
 
+Run the [complete writer experiment](experiments/flux2_writer/README.md), including
+construction, native-image feedback, rollback, and fresh-process replay, without a scheduler:
+
+```bash
+python experiments/flux2_writer/run.py
+```
+
+It loads pinned Hugging Face checkpoints or your local cache. The
+[experiment catalog](experiments/README.md) includes the measured reference results.
+
 | Tool | Purpose |
 | --- | --- |
 | Session, Frame, Act, StateCut, Receipt | Native execution, declared changes, branches, custody |

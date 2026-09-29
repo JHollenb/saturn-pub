@@ -5,6 +5,15 @@ It then uses real recipient images to select a dose, retains rejected futures, r
 the accepted writer, and verifies serving from a durable cut in another interpreter.
 Requires CUDA and separately acquired base and distilled Klein 4B checkpoints.
 
+The [public experiment](../experiments/flux2_writer/README.md) runs all three stages
+and verifies the replay automatically, using pinned Hugging Face checkpoints:
+
+```bash
+python experiments/flux2_writer/run.py
+```
+
+The individual stages below are useful when inspecting or changing the experiment.
+
 ```bash
 PROMPT='A clean flat illustration on a pure white background showing exactly five separate red apples arranged in a single horizontal row with equal spacing. No other objects, fruit, marks, or text.'
 python examples/flux2_build_writer.py \

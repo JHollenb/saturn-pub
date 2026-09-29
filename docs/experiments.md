@@ -1,5 +1,10 @@
 # Causal experiments and measured programs
 
+For a complete pretrained experiment, run the
+[FLUX.2 writer recipe](../experiments/flux2_writer/README.md). It builds the writer,
+compares native image futures, restores rejected updates, and checks fresh-process replay.
+It needs only the public package, model checkpoints, and CUDA; no fleet runner is required.
+
 Start with one specimen, one parent, a bounded continuation horizon, and the actual consumer.
 The execution grammar is `producer → address → payload → carrier → consumer → future`.
 
