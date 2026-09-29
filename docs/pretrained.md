@@ -52,3 +52,44 @@ This uses supplied prompt conditioning and guidance scale one. It does not repro
 pipeline's default CFG settings. Use a checkpoint whose license permits your intended use.
 Memory needs depend on model, dtype, resolution, captured cuts, and retained branches.
 CPU is the reference device; validate another backend's numerical behavior separately.
+
+## FLUX.2 Klein: inspect and replay a supplied hotfix
+
+`Flux2KleinAdapter` executes the native distilled transformer one projection/block/readout at a
+time, followed by the native deterministic flow Euler update. It supports text-only, batch-one,
+guidance-one execution. It does not support reference images, reference KV, CFG, LoRA, or
+offload hooks during block execution. Place the transformer on the execution device and the
+VAE on CPU before wrapping it; decoder normalization is bound to the native phase-offloaded
+CPU-statistics program. The example moves VAE weights only during decoding.
+
+The supplied-writer example takes a checkpoint and an NPZ containing `mean`, `basis`, `weights`,
+and `bias`. It does not bundle a patch or a model. The operation is
+`text += dose * (((text - mean) @ basis) @ weights + bias)` at `step:0/after:joint.2`.
+Its labelled feedback selects a scalar dose; the writer payload itself is supplied.
+
+```bash
+python examples/flux2_hotfix.py \
+  --model /path/to/FLUX.2-klein-4B --revision YOUR_REVISION \
+  --package /path/to/writer.npz --prompt 'Your development prompt' \
+  --expected-count 5 --seed 611 --local-files-only
+```
+
+This real-model example uses CUDA and counts red connected components in the rendered RGB.
+Use it only for tasks appropriate to that instrument, inspect the images, and replace the
+evaluator for another task. It compares against an ordinary pipeline render, records short
+feedback-controlled dose proposals, preserves rejected measurements, and checks zero dose,
+wrong timing, commit, exact restore, and uninstall.
+
+Outputs include `report.json`, images, receipts, and a content-addressed cut under `state/`.
+Replay a saved cut in a separate process using its digest and the previously selected dose:
+
+```bash
+python examples/flux2_hotfix.py \
+  --model /path/to/FLUX.2-klein-4B --revision YOUR_REVISION \
+  --package /path/to/writer.npz --prompt 'Unused during replay' \
+  --local-files-only --replay CUT_DIGEST --dose SELECTED_DOSE
+```
+
+Replay loads supplied conditioning from the cut and skips prompt encoding and feedback selection.
+The model and VAE are content-bound; weights must be reconstructed separately. Same-program
+replay is an exactness claim; repair quality and portability need their own evidence.

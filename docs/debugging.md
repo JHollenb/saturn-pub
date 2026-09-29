@@ -43,6 +43,19 @@ it does not verify the tensor blob. Full verification occurs on load.
 
 Put commands into a text file and pass `--script FILE` for a reproducible debugger session.
 Script errors stop execution with a nonzero exit; interactive errors leave the debugger open.
+
+For a narrated demonstration with actual measurements and durable replay, run:
+
+```bash
+python examples/debugger_replay.py
+```
+
+This writes `outputs/debugger-replay/walkthrough.md` and the complete `report.json`.
+It steps the native layers, inspects hidden RMS and each layer's KV length, compares two-token
+futures, commits and restores, then checks every declared state payload against a fresh-process
+replay from disk. Model weights are reconstructed from the same seed; the cut stores execution
+state and model identity, not the weights. The example is a random-model mechanics check.
+
 The checkout includes `examples/debug_commands.txt`:
 
 ```bash

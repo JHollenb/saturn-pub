@@ -4,7 +4,8 @@
 | --- | --- | --- |
 | Core | JSON/tensor state, isolated branches, Acts, commit/restore, receipts | Trusted in-process runtime; no OS sandbox |
 | Qwen | Qwen2/Qwen2.5, eager full attention, batch one, greedy token/layer cuts | Configured context limit; no padding, beam search, sliding windows |
-| Diffusion | DDIM eta-zero, native UNet steps, optional Stable Diffusion VAE | No CFG, multistep solvers, SDXL, or FLUX adapter |
+| Diffusion | DDIM eta-zero, native UNet steps, optional Stable Diffusion VAE | No CFG, multistep solvers, or SDXL |
+| FLUX.2 Klein | Distilled native joint/single block cuts, deterministic flow Euler, native VAE | Batch one, text-only, guidance one; no reference KV, CFG, LoRA, or offload hooks during block execution |
 | Investigation | Same-parent panels, dose grids, custom control arms | Per-arm errors retained; no automatic semantic certificate |
 | Program | Ordered measured pre-continuation Acts, exact parent/context binding | In-process; no learned/general compiler or cross-model portability |
 | Training | Registered PyTorch mutable closure and isolated evaluation | Accepted snapshot in memory; rejected evidence retained |

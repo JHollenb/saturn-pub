@@ -21,3 +21,26 @@ private-tail accounting, and immutable-key phase relocation.
 
 Pretrained weights, CUDA/MPS numerical parity, remote services, and semantic benchmark results
 were not part of this validation. The included GitHub Actions workflow has not been run remotely.
+
+## FLUX.2 Klein extension
+
+The subsequent extension passes 38 local Python 3.12 tests, including FP32/BF16 native flow
+parity, transposed pipeline latent layouts, block cuts, durable replay, and invalid writes.
+
+CUDA job `job-2e7068ce1663` on an RTX 4080 replayed a supplied historical 104,044-byte writer
+with the cached distilled Klein 4B revision `e7b7dc27f91deacad38e78976d1f2b499d76a294`.
+The four-step, 512×512, seed-611 native and dose-2 outputs match the historical PNG pixels
+exactly. Every transformer block at the first denoising step and the ordinary pipeline's
+complete RGB output match exactly.
+Native/zero-dose/wrong-time/uninstalled counts are 3; dose 2 gives 5; dose 4 returns 3 and the
+controller restores dose 2 with its registered training closure verified exactly.
+
+Native, patched, zero-dose, and uninstalled final latent/pixel records replay exactly in a
+second interpreter using a saved cut, with no prompt encoding or feedback selection there.
+The finite lease took 253.57 seconds, sampled peak RSS 17,700.2 MB and VRAM 8,314 MB.
+
+This is one previously selected development context and supplied writer, not a learned new
+payload or a held-out semantic battery. Only the scalar dose is selected by labelled image
+feedback. The historical patch's broad collateral problems remain outside this reproduction.
+Other devices, normalization placements, model revisions, and cross-version replay need their
+own numerical validation.

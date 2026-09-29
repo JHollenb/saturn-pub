@@ -58,6 +58,7 @@ Exactness means a named state boundary and numerical program, not agreement acro
 
 ```bash
 python examples/ar_debug.py
+python examples/debugger_replay.py
 python examples/diffusion_debug.py
 python examples/causal_panel.py
 python examples/reversible_training.py
@@ -69,12 +70,18 @@ The tiny examples demonstrate mechanics on random native models and supplied syn
 They do not demonstrate pretrained semantic capabilities. AR and diffusion share the session
 grammar; their adapters own different physical state. Images and receipts go to `outputs/`.
 
+`debugger_replay.py` records a readable layer-by-layer debugger walkthrough, compares two
+futures, commits and restores, and verifies both futures from a saved cut in a fresh process.
+Read `outputs/debugger-replay/walkthrough.md` after running it. The random diffusion images
+are 8×8 mechanics fixtures; use the pretrained recipe for meaningful generated images.
+
 ## Research tools
 
 | Tool | Purpose |
 | --- | --- |
 | Session, Frame, Act, StateCut, Receipt | Native execution, declared changes, branches, custody |
 | Local debugger | Step, inspect, read, capture, fork, intervene, continue, compare, restore |
+| FLUX.2 Klein adapter | Step native joint/single blocks, write text/image carriers, replay saved suffixes |
 | Investigation | Same-parent causal panels with per-arm evidence and errors |
 | Program | Replay measured interventions within explicit recipient/context support |
 | DependencyGraph | Declared dirty closure and exact instance-local reuse |
