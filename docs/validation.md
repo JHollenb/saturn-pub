@@ -44,3 +44,28 @@ payload or a held-out semantic battery. Only the scalar dose is selected by labe
 feedback. The historical patch's broad collateral problems remain outside this reproduction.
 Other devices, normalization placements, model revisions, and cross-version replay need their
 own numerical validation.
+
+## Writer construction, standalone experiment, and debugger notebooks
+
+The later public extensions pass 45 local Python 3.12 tests, including standalone
+experiment replay-mismatch handling, preservation of existing evidence, boundary
+breakpoints, bounded continue, and exact debugger rewind. Lint and package builds pass.
+These newer checks do not extend the initial Python 3.10 validation to every new feature.
+
+CUDA job `job-90c58216fa46` built a new rank-eight writer from fresh base/recipient
+conditional block cuts, verified both prefixes against native execution, and reproduced
+the three-to-five apple development result. Dose four regressed and the controller
+restored dose two exactly. Four branches replayed exactly in a fresh interpreter.
+The outer wrapper failed its inherited archive-size limit after the scientific checks;
+collection-only job `job-ce37204ce6d8` recovered the existing evidence without model reruns.
+The [public reference](../experiments/flux2_writer/reference-result.json) preserves this scope.
+
+All three notebooks executed successfully on CPU: AR debugging with fresh-process replay,
+diffusion branching and durable load, and shared KV memory/phase mechanics. The separate
+standalone experiment wrapper was checked with dry-run and orchestration mechanics tests;
+no paid Hugging Face cloud job was launched.
+
+The new `measured_program.py` and `dependency_reuse.py` examples were run locally on
+random native CPU Qwen. They verify exact measured-payload replay and unsupported
+context/parent refusal, plus declared cell reuse/recomputation with the final native
+readout executed on every run. They make no semantic portability or speedup claim.

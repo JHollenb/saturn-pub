@@ -43,6 +43,12 @@ The evaluator returns EvaluationScores with nonempty `validation`, `autonomous_r
 they do not require every measurement to improve. Lexicographic and Pareto continuation policies
 are supported. Tolerances are operational guardbands, not scientific calibration.
 
+`PromotionPolicy.require_all_score_sources` controls which score sources must appear
+in the policy's objectives; it does not enable checkpointing or rollback. Its default
+is false so an objective can select one relevant metric while EvaluationScores still
+retains all three measurement views. Set it true only when your continuation policy
+explicitly requires objectives from all three sources.
+
 Use frozen recipient continuation to evaluate a trained writer where possible. Trace imitation
 can initialize a candidate; native behavior decides whether it is useful. The offline example
 trains a small hidden-state writer through frozen Qwen readout, measures generated continuation,

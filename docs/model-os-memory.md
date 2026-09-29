@@ -4,6 +4,9 @@ The public repo contains small executable foundations from these investigations.
 It does not contain the entire private workbench. Names below describe concrete
 mechanisms, not guarantees about all historical Saturn prototypes.
 
+The [usage guide](usage.md) explains which mechanics are automatic, which APIs must
+be chosen explicitly, and provides runnable examples for each capability.
+
 | Area | Included and runnable | Remaining outside this release |
 |---|---|---|
 | Model OS execution | Adapter transitions, typed state addresses, declared Acts, model/execution identity checks | Arbitrary model lowering and a production permission service |

@@ -1,5 +1,9 @@
 # Causal experiments and measured programs
 
+Run `python examples/measured_program.py` for a minimal measured replay with context
+and parent refusal, or `python examples/dependency_reuse.py` for declared native-cell
+reuse. The [usage guide](usage.md) explains when to choose these APIs.
+
 For a complete pretrained experiment, run the
 [FLUX.2 writer recipe](../experiments/flux2_writer/README.md). It builds the writer,
 compares native image futures, restores rejected updates, and checks fresh-process replay.

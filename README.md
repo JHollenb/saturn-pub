@@ -61,6 +61,8 @@ python examples/ar_debug.py
 python examples/debugger_replay.py
 python examples/diffusion_debug.py
 python examples/causal_panel.py
+python examples/measured_program.py
+python examples/dependency_reuse.py
 python examples/reversible_training.py
 python examples/shared_memory.py
 saturn-pub debug --family ar
@@ -108,6 +110,9 @@ not copies of the entire private research workbench. The native downstream consu
 the behavioral authority. A failed exploratory score does not erase a measured trend.
 
 ## Guides
+
+Start with [when and how to use each capability](docs/usage.md), then choose a
+[runnable example](examples/README.md) or [notebook](notebooks/README.md).
 
 - [Architecture and scope](docs/architecture.md)
 - [Debugger](docs/debugging.md)
