@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import json
 import shlex
+from fnmatch import fnmatchcase
 from typing import Any
 
 from .core import Act, Session
@@ -17,6 +18,25 @@ class Debugger:
         self.branches = {"root": session}
         self.active = "root"
         self.cuts = {}
+        self.breakpoints: list[str] = []
+        self.max_continue_steps = 1000
+
+    def _until(self, patterns: list[str], limit: int) -> dict[str, Any]:
+        if limit < 1:
+            raise ValueError("continue limit must be positive")
+        # Advance first: continuing from a breakpoint must make forward progress.
+        for steps in range(1, limit + 1):
+            self.session.continue_()
+            boundary = self.session.inspect().boundary
+            matches = [pattern for pattern in patterns if fnmatchcase(boundary, pattern)]
+            if matches:
+                return {
+                    "stop": "breakpoint",
+                    "steps": steps,
+                    "matched": matches,
+                    "frame": self.execute("inspect"),
+                }
+        return {"stop": "step-limit", "steps": limit, "frame": self.execute("inspect")}
 
     @property
     def session(self) -> Session:
@@ -27,13 +47,31 @@ class Debugger:
         if not args:
             return None
         command, *rest = args
-        if command == "inspect":
+        if command in ("inspect", "where") and not rest:
             frame = self.session.inspect()
             return {"branch": self.active, "boundary": frame.boundary, "slots": dict(frame.slots)}
         if command == "read" and len(rest) == 1:
             value = self.session.read(rest[0])
             return value.tolist() if hasattr(value, "tolist") else value
-        if command in ("step", "continue") and len(rest) <= 1:
+        if command == "break" and len(rest) == 1:
+            if rest[0] not in self.breakpoints:
+                self.breakpoints.append(rest[0])
+            return {"breakpoints": list(self.breakpoints)}
+        if command == "breakpoints" and not rest:
+            return {"breakpoints": list(self.breakpoints)}
+        if command == "delete" and len(rest) == 1:
+            if rest[0] == "all":
+                self.breakpoints.clear()
+            else:
+                self.breakpoints.remove(rest[0])
+            return {"breakpoints": list(self.breakpoints)}
+        if command == "until" and len(rest) in (1, 2):
+            return self._until(
+                [rest[0]], int(rest[1]) if len(rest) == 2 else self.max_continue_steps
+            )
+        if command == "continue" and not rest and self.breakpoints:
+            return self._until(self.breakpoints, self.max_continue_steps)
+        if command in ("step", "next", "continue") and len(rest) <= 1:
             return self.session.continue_(int(rest[0]) if rest else 1).to_dict()
         if command == "capture" and len(rest) == 1:
             self.cuts[rest[0]] = self.session.capture()
@@ -80,7 +118,9 @@ class Debugger:
             return {"cut": rest[2], "fingerprint": cut.fingerprint}
         if command == "help":
             return (
-                "inspect | read ADDRESS | step [N] | capture NAME | fork BRANCH [CUT] | "
+                "inspect / where | read ADDRESS | step / next [N] | break BOUNDARY_PATTERN | "
+                "breakpoints | delete PATTERN / all | continue [N] | until PATTERN [MAX_STEPS] | "
+                "capture NAME | fork BRANCH [CUT] | "
                 "use BRANCH | zero ADDRESS | add ADDRESS JSON | replace ADDRESS JSON | "
                 "compare BRANCH | commit BRANCH | abort BRANCH | restore CUT | save DIRECTORY CUT | "
                 "load DIRECTORY DIGEST NAME | quit"

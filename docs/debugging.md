@@ -4,6 +4,32 @@
 for a random UNet/DDIM trajectory. The process owns one resident adapter and named branches.
 There is no remote attachment protocol or hosted service.
 
+For executable cell-by-cell walkthroughs, start with the
+[debugger notebooks](../notebooks/README.md). The notebook command parser is identical
+to the terminal CLI. `next` aliases `step`, and `where` aliases `inspect`.
+
+```text
+break layer:1
+continue
+where
+capture parent
+next
+restore parent
+delete all
+until layer:2 4
+```
+
+`break PATTERN` adds a boundary breakpoint; shell-style wildcards are supported.
+`breakpoints` lists them, and `delete PATTERN` or `delete all` removes them.
+With breakpoints installed, bare `continue` advances until the next matching boundary,
+with a default limit of 1,000 transitions. It advances before checking, so continuing
+from a breakpoint makes forward progress. `continue N` always advances exactly N
+transitions. Without breakpoints, bare `continue` retains its one-transition behavior.
+`until PATTERN [MAX_STEPS]` performs a bounded search independently of installed breaks.
+Its result reports `breakpoint` or `step-limit`; completed transitions and receipts remain
+available when a limit is reached. Native adapter errors propagate and do not masquerade
+as a breakpoint. The debugger has no Python-source breakpoints or value-change watchpoints.
+
 An AR session:
 
 ```text

@@ -77,6 +77,11 @@ are 8×8 mechanics fixtures; use the pretrained recipe for meaningful generated 
 
 ## Research tools
 
+[Hands-on notebooks](notebooks/README.md) show GDB-style model stepping, boundary
+breakpoints, state inspection, intervention, rewind, and fresh-process replay.
+[Model OS and memory scope](docs/model-os-memory.md) maps what is included and what
+remains outside this release.
+
 Run the [complete writer experiment](experiments/flux2_writer/README.md), including
 construction, native-image feedback, rollback, and fresh-process replay, without a scheduler:
 
