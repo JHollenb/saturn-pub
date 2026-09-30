@@ -1,5 +1,8 @@
 # Local debugger
 
+For qualified symbols, native-operation provenance, temporal trajectory comparisons, and
+a complete repair demonstration, see [symbols and causal paths](debug-symbols-paths.md).
+
 `saturn-pub debug --family ar` starts a random offline Qwen model. Use `--family diffusion`
 for a random UNet/DDIM trajectory. The process owns one resident adapter, named branches, and
 a standalone Observer. There is no remote attachment protocol or hosted service.

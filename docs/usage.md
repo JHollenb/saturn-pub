@@ -19,6 +19,7 @@ are not automatically enabled in every Session.
 | Package measured replay and local ancestry | ReplayBundle | Program, environment and factory sealing; opt-in data export/import | `python examples/software_debugger.py` |
 | Explore doses and controls | Investigation | Common-parent arms, private evaluator branch, per-arm errors and retained measurements | `python examples/causal_panel.py` |
 | Map route and effect evidence | CausalPath and PortObservation | Model/parent/clock support and cut/receipt links | `python examples/software_debugger.py` |
+| Follow deletion, later repair, and collateral | SymbolTable, Trajectory, PathSchedule and Debugger | Qualified resolution, native footprints, exact common-parent alignment, retained event cuts | [Repair notebook](../notebooks/04_debugging_repair.ipynb), [guide](debug-symbols-paths.md) |
 | Replay an already measured write sequence | Program | Exact parent, context, Act descriptors and continuation-budget checks | `python examples/measured_program.py` |
 | Reuse unchanged declared computation | DependencyGraph | Content/version cache checks; final consumer always executes | `python examples/dependency_reuse.py` |
 | Share one causal KV prefix across suffix branches | SharedQwenMemory | Shared ancestor, private tails, global-softmax segmented attention | `python examples/shared_memory.py`, [memory notebook](../notebooks/03_model_os_memory.ipynb) |
@@ -48,6 +49,65 @@ are actually present; it does not invent a complete history.
 
 Clear unneeded history and release branches when investigating large models. Branches
 retain state in memory even after an abort decision. No eviction/paging policy is inferred.
+
+## Future forests: alternative model continuations
+
+A future forest is a collection of branches from captured model states. Capture a
+common parent, keep a native continuation, try interventions on other branches, and
+fork again at any captured intermediate state. Each branch has its own mutable
+execution state and receipts. The researcher chooses what to inspect and measure.
+These mechanics are available through Session and the debugger; no feature flag is needed.
+
+For example, start the tiny Qwen debugger as described in the [CLI guide](debugging.md),
+then run:
+
+```text
+step
+step
+capture parent
+fork native parent
+use native
+continue 6
+capture native_head
+use root
+fork candidate parent
+use candidate
+zero hidden
+capture edited
+continue 6
+capture candidate_head
+compare native
+fork another_future edited
+use another_future
+step
+inspect
+use root
+replay parent 6 replayed_native
+```
+
+The first two steps pause after embedding and the first decoder layer. The native
+and edited branches then run the same six native operations from that parent.
+`another_future` branches from the edited intermediate cut; `replayed_native` reruns
+the original parent. The root remains available for further experiments. Use watches,
+symbols, and trajectory comparisons to find divergence, later repair, and collateral
+inside these futures, as shown in the [repair guide](debug-symbols-paths.md).
+
+Save selected cuts with `LocalStore` or the debugger's `save` command to revisit them
+in another process. Save their intermediate ancestors too when you want a durable
+branch graph. A ReplayBundle packages a measured Program, named branch heads, the
+available local ancestry, and provenance. See `examples/debugger_replay.py` for
+fresh-process replay and `examples/software_debugger.py` for bundle export.
+
+“Multiple versions” here means alternative execution states under the same model
+weights and execution contract. Different trained checkpoints are separate model
+identities: reconstruct each model separately and compare their observations. A cut
+does not carry weights or migrate state between incompatible models. For reversible
+parameter updates, use [TrainingTransaction](training.md) with its registered training
+closure and explicitly retain the parameter snapshots you need.
+
+The public library supplies these future-forest building blocks. The private Thott /
+Future Forest search controller, automatic branch scheduling, and pruning policies
+are outside this release; you can implement your own exploration policy over Sessions.
 
 ## Measured programs
 

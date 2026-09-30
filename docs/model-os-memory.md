@@ -11,7 +11,7 @@ be chosen explicitly, and provides runnable examples for each capability.
 |---|---|---|
 | Model OS execution | Adapter transitions, typed state addresses, declared Acts, model/execution identity checks | Arbitrary model lowering and a production permission service |
 | Change authority | Isolated preview, parent-bound commit, abort, exact restore, immutable receipts | Remote admission and deployment services |
-| Branch history | Captured ancestry, retained futures, durable local cuts | Full Thott/Future Forest orchestration |
+| Future-forest building blocks | Nested forks, replay, retained cuts, named branch heads, durable local ancestry; [usage](usage.md#future-forests-alternative-model-continuations) | Full Thott/Future Forest search orchestration |
 | Measured programs | `Program`: measured ordered Acts bound to an exact recipient parent and context | Learned Registrar, general temporal compiler, full Hyperion atlases |
 | VM partial evaluation | `DependencyGraph`: declared dependencies, versioned implementations, dirty closure | Full private Saturn VM and arbitrary program execution |
 | Shared KV memory | `SharedQwenMemory`: pointer-shared live ancestor and private tails; `SharedQwenAdapter`: durable ancestor-plus-delta cuts under a separate segmented-attention ABI | CUDA virtual-address aliasing, eviction, page faults, allocator/scheduler integration |

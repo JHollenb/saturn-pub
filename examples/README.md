@@ -9,6 +9,8 @@ Run scripts from the checkout root. Results go to ignored `outputs/` directories
 | `ar_debug.py` | Capture, change a Qwen carrier, compare and rewind | `ar` |
 | `debugger_replay.py` | Inspect native layers/KV and verify durable fresh-process replay | `ar` |
 | `software_debugger.py` | Exercise typed microsteps, live watches, masked writes, replay bundle, and a causal map on a parameter-free graph | `torch` |
+| `debugging_repair.py` | Resolve symbols, trace early deletion and later repair, suppress repair, measure collateral, and replay in fresh processes | `torch` |
+| `explore_debugger.py` | Audit numerical versus token effects in tiny Qwen, edit timing in DDIM, repeated repair windows, and durable KV-history continuation | `ar,diffusion` |
 | `diffusion_debug.py` | Compare branched DDIM latents | `diffusion` |
 | `causal_panel.py` | Run a dose/control grid and compile one measured arm | `ar` |
 | `measured_program.py` | Replay an exact measured program and see unsupported-use refusal | `ar` |

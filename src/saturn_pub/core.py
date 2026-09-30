@@ -11,7 +11,14 @@ from dataclasses import dataclass, field
 from types import CodeType, MappingProxyType
 from typing import Any
 
-from .contracts import ExecutionPoint, NumericalContract, SlotSpec, StateAddress, SurfaceManifest
+from .contracts import (
+    ExecutionPoint,
+    NumericalContract,
+    SlotSpec,
+    StateAddress,
+    SurfaceManifest,
+    TransitionSpec,
+)
 from .values import clone, describe, digest, tensor
 
 _OPERATION_REGISTRY: dict[tuple[str, str], tuple[str, Callable[..., Any], bool]] = {}
@@ -558,6 +565,10 @@ class Adapter(ABC):
     def numerical_contract(self) -> NumericalContract:
         return NumericalContract(program=str(self.execution.get("adapter", "custom-adapter")))
 
+    def transition(self, state: Mapping[str, Any]) -> TransitionSpec:
+        """Describe the next safe transition; unspecified footprints stay unknown."""
+        return TransitionSpec(self.point(state).next_operation or "advance")
+
     def read(self, state: Mapping[str, Any], address: str) -> Any:
         if address not in self.addresses(state):
             raise ValueError(f"unsupported address at {self.boundary(state)}: {address}")
@@ -831,12 +842,42 @@ class Session:
             transitions = []
             for _ in range(steps):
                 entry = self.adapter.point(candidate).to_dict()
+                spec = self.adapter.transition(candidate)
+                slots = {slot.name for slot in self.adapter.surface(candidate).slots}
+                if set(spec.reads + spec.writes + spec.invalidates) - slots:
+                    raise ValueError("transition footprint contains undeclared slots")
+                preserved = (
+                    {
+                        name: describe(value)
+                        for name, value in candidate.items()
+                        if name not in set(spec.writes + spec.invalidates)
+                    }
+                    if spec.footprint == "declared"
+                    else {}
+                )
                 candidate = dict(self.adapter.advance(candidate))
+                for name, expected in preserved.items():
+                    if name not in candidate or describe(candidate[name]) != expected:
+                        raise ValueError(f"native transition changed undeclared slot: {name}")
                 self.adapter.validate(candidate)
                 self.adapter.surface(candidate).validate(candidate)
                 self.adapter.validate_execution()
                 transitions.append(
-                    {"before": entry, "after": self.adapter.point(candidate).to_dict()}
+                    {
+                        "before": entry,
+                        "after": self.adapter.point(candidate).to_dict(),
+                        "native_operation": spec.to_dict(),
+                        "structural_operation": spec.operation,
+                        "occurrence": digest(
+                            {
+                                "entry": entry,
+                                "operation": spec.operation,
+                                "transaction_parent": before.fingerprint,
+                                "transition_index": len(transitions),
+                                "execution": dict(self.adapter.execution),
+                            }
+                        ),
+                    }
                 )
             return self._record(
                 "continue", before, state=candidate, steps=steps, transitions=transitions

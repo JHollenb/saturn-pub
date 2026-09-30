@@ -101,6 +101,37 @@ class SurfaceManifest:
 
 
 @dataclass(frozen=True)
+class TransitionSpec:
+    """Adapter-declared native footprint, never an executable second graph."""
+
+    operation: str
+    reads: tuple[str, ...] = ()
+    writes: tuple[str, ...] = ()
+    invalidates: tuple[str, ...] = ()
+    consumer: str = "native-suffix"
+    footprint: str = "unknown"
+
+    def __post_init__(self):
+        if not self.operation or self.footprint not in {"unknown", "declared"}:
+            raise ValueError("transition requires an operation and footprint status")
+        for name in ("reads", "writes", "invalidates"):
+            object.__setattr__(self, name, tuple(getattr(self, name)))
+        for group in (self.reads, self.writes, self.invalidates):
+            if len(set(group)) != len(group) or any(not name for name in group):
+                raise ValueError("transition slots must be unique nonempty names")
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "operation": self.operation,
+            "reads": list(self.reads),
+            "writes": list(self.writes),
+            "invalidates": list(self.invalidates),
+            "consumer": self.consumer,
+            "footprint": self.footprint,
+        }
+
+
+@dataclass(frozen=True)
 class StateAddress:
     """A context-bound port and optional integer tensor/list coordinates."""
 
@@ -111,6 +142,7 @@ class StateAddress:
     state_schema: str | None = None
 
     def __post_init__(self):
+        object.__setattr__(self, "selector", tuple(self.selector))
         if not self.slot or any(type(index) is not int for index in self.selector):
             raise ValueError("address requires a slot and integer selector")
 

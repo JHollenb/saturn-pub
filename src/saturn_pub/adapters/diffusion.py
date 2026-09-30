@@ -10,7 +10,7 @@ import diffusers
 import torch
 from diffusers import DDIMScheduler, UNet2DModel
 
-from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest
+from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest, TransitionSpec
 from ..core import Adapter, Session
 from ..values import clone, digest, identity
 
@@ -224,6 +224,25 @@ class DiffusionAdapter(Adapter):
                 "native_unet_denoiser" if state["phase"] == "denoiser" else "ddim_scheduler_commit"
             ),
             local_clock=state["step"],
+        )
+
+    def transition(self, state: Mapping[str, Any]) -> TransitionSpec:
+        reads = ("latent", "step", "timesteps", "inference_steps")
+        if state["phase"] == "denoiser":
+            reads += ("conditioning",)
+        else:
+            reads += ("noise_prediction",)
+        writes = (
+            ("noise_prediction", "phase")
+            if self.granularity == "operation" and state["phase"] == "denoiser"
+            else ("latent", "noise_prediction", "phase", "step")
+        )
+        return TransitionSpec(
+            self.point(state).next_operation,
+            reads,
+            writes,
+            consumer="native-diffusion-suffix",
+            footprint="declared",
         )
 
     def surface(self, state: Mapping[str, Any]) -> SurfaceManifest:

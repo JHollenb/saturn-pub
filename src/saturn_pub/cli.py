@@ -9,8 +9,10 @@ from fnmatch import fnmatchcase
 from typing import Any
 
 from .core import Act, Session
-from .observers import Observer, WatchEvent
+from .observers import ObservationError, Observer, WatchEvent
+from .paths import Trajectory, compare_trajectories
 from .store import LocalStore
+from .symbols import SymbolTable, backtrace, structural_symbols
 
 
 class Debugger:
@@ -19,13 +21,23 @@ class Debugger:
         self.active = "root"
         self.cuts = {}
         self.breakpoints: list[str] = []
-        self.observer = Observer()
+        self.observer = Observer(reader=self._read_observed)
         self.watch_events: list[WatchEvent] = []
+        self.watch_errors: list[dict[str, Any]] = []
         self.max_continue_steps = 1000
+        self.symbols = SymbolTable()
+        self.symbol_context = ""
+        self.trajectories: dict[str, Trajectory] = {}
 
     @property
     def session(self) -> Session:
         return self.branches[self.active]
+
+    def _read_observed(self, session: Session, address: str) -> Any:
+        if address.startswith("symbol:"):
+            binding = self.symbols.resolve(session, address[7:], context=self.symbol_context)
+            return tuple(session.read_port(location) for location in binding.locations)
+        return session.read(address)
 
     def _frame(self) -> dict[str, Any]:
         frame = self.session.inspect()
@@ -39,7 +51,20 @@ class Debugger:
         return result
 
     def _observe(self, receipt: Any) -> tuple[WatchEvent, ...]:
-        events = self.observer.evaluate(self.session, self.active, receipt=receipt)
+        try:
+            events = self.observer.evaluate(self.session, self.active, receipt=receipt)
+        except ObservationError as exc:
+            self.cuts[exc.cut.fingerprint] = exc.cut
+            self.watch_events.extend(exc.events)
+            self.watch_errors.append(
+                {
+                    "branch": self.active,
+                    "cut": exc.cut.fingerprint,
+                    "receipt": receipt.fingerprint,
+                    "errors": list(exc.errors),
+                }
+            )
+            raise
         for event in events:
             self.cuts[event.cut.fingerprint] = event.cut
         self.watch_events.extend(events)
@@ -113,9 +138,41 @@ class Debugger:
         if not args:
             return None
         command, *rest = args
+        if command == "info" and rest == ["steps"]:
+            cut = self.session.capture(retain=False)
+            state, _ = self.session._cut_state(cut)
+            return {
+                "point": dict(cut.execution_point or {}),
+                "next_transition": self.session.adapter.transition(state).to_dict(),
+            }
+        if command == "info" and rest == ["symbols"]:
+            return {
+                "structural": structural_symbols(self.session),
+                "qualified": [row.to_dict() for row in self.symbols.bindings],
+            }
+        if command == "resolve" and len(rest) == 1:
+            binding = self.symbols.resolve(self.session, rest[0], context=self.symbol_context)
+            return binding.to_dict()
+        if command == "backtrace" and len(rest) == 1:
+            if rest[0].startswith("symbol:"):
+                binding = self.symbols.resolve(
+                    self.session, rest[0][7:], context=self.symbol_context
+                )
+                return {
+                    "binding": binding.to_dict(),
+                    "provenance": [backtrace(self.session, loc.slot) for loc in binding.locations],
+                    "granularity": "slot-level-dependencies",
+                }
+            return backtrace(self.session, rest[0])
+        if command == "diff" and len(rest) == 3 and rest[2] == "--first-divergence":
+            return compare_trajectories(self.trajectories[rest[0]], self.trajectories[rest[1]])
         if command in ("inspect", "where") and not rest:
             return self._frame()
         if command == "read" and len(rest) == 1:
+            if rest[0].startswith("symbol:"):
+                from .values import describe
+
+                return describe(self._read_observed(self.session, rest[0]))
             value = self.session.read(rest[0])
             return value.tolist() if hasattr(value, "tolist") else value
         if command == "break" and len(rest) == 1:
@@ -149,7 +206,11 @@ class Debugger:
             threshold = float(rest[2]) if len(rest) == 3 else None
             watch = self.observer.add(rest[0], rest[1], threshold)
             # Establish change-watch semantics at the command's current branch and safe point.
-            self.observer.sync(self.session, self.active)
+            try:
+                self.observer.sync(self.session, self.active)
+            except Exception:
+                self.observer.remove(watch.identifier)
+                raise
             return watch.to_dict()
         if command == "watchpoints" and not rest:
             return {"watchpoints": [watch.to_dict() for watch in self.observer.watchpoints]}
@@ -247,11 +308,13 @@ class Debugger:
         if command == "help":
             return (
                 "inspect / where | read ADDRESS | step / next [N] | break BOUNDARY_PATTERN | "
+                "info steps / symbols | resolve SYMBOL | backtrace SLOT | "
                 "breakpoints | delete PATTERN / all | continue [N] | until PATTERN [MAX_STEPS] | "
                 "watch ADDRESS change / nonfinite | watch ADDRESS gt / lt THRESHOLD | "
                 "watchpoints | unwatch ID / all | trace [N] | capture NAME | fork BRANCH [CUT] | "
                 "use BRANCH | zero ADDRESS | add ADDRESS JSON | replace ADDRESS JSON | "
                 "compare / diff BRANCH_OR_CUT | replay CUT [STEPS] [BRANCH] | commit BRANCH | "
+                "diff NATIVE_TRACE CANDIDATE_TRACE --first-divergence | "
                 "abort BRANCH | restore CUT | save DIRECTORY CUT | load DIRECTORY DIGEST NAME | quit"
             )
         raise ValueError("unknown command or wrong arguments; use help")

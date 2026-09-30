@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import math
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from dataclasses import dataclass, field
 from types import MappingProxyType
 from typing import Any
@@ -12,6 +12,7 @@ from .core import Receipt, Session, StateCut
 from .values import clone, describe, digest, tensor
 
 _PREDICATES = frozenset({"change", "gt", "lt", "nonfinite"})
+_UNSET = object()
 
 
 def _describe(value: Any) -> Any:
@@ -19,9 +20,14 @@ def _describe(value: Any) -> Any:
     if isinstance(value, float) and not math.isfinite(value):
         return {"nonfinite": repr(value)}
     if isinstance(value, Mapping):
-        return {key: _describe(item) for key, item in value.items()}
+        items = [{"key": describe(key), "value": _describe(item)} for key, item in value.items()]
+        items.sort(key=lambda item: digest(item["key"]))
+        return {"kind": "mapping", "items": items}
     if isinstance(value, (tuple, list)):
-        return [_describe(item) for item in value]
+        return {
+            "kind": "tuple" if isinstance(value, tuple) else "list",
+            "items": [_describe(item) for item in value],
+        }
     return describe(value)
 
 
@@ -75,6 +81,10 @@ class WatchEvent:
         self.cut.verify()
         point = clone(dict(self.execution_point))
         object.__setattr__(self, "execution_point", MappingProxyType(point))
+        object.__setattr__(self, "previous", clone(self.previous))
+        object.__setattr__(self, "current", clone(self.current))
+        if self.cut.execution_point is not None and point != dict(self.cut.execution_point):
+            raise ValueError("watch execution point does not match cut")
         object.__setattr__(
             self,
             "fingerprint",
@@ -93,6 +103,7 @@ class WatchEvent:
         )
 
     def to_dict(self) -> dict[str, Any]:
+        self.verify()
         return {
             "schema": "saturn-pub-watch-event-v1",
             "fingerprint": self.fingerprint,
@@ -106,6 +117,31 @@ class WatchEvent:
             "receipt": self.receipt,
             "authority": "diagnostic-only",
         }
+
+    def verify(self) -> None:
+        self.cut.verify()
+        body = {
+            "schema": "saturn-pub-watch-event-v1",
+            "watchpoint": self.watchpoint.to_dict(),
+            "branch": self.branch,
+            "cut": self.cut.fingerprint,
+            "execution_point": dict(self.execution_point),
+            "previous": _describe(self.previous),
+            "current": _describe(self.current),
+            "receipt": self.receipt,
+        }
+        if digest(body) != self.fingerprint:
+            raise ValueError("watch event content changed")
+
+
+class ObservationError(ValueError):
+    """One broken watch does not erase completed fires from other watches."""
+
+    def __init__(self, errors, events, cut):
+        super().__init__("; ".join(f"{row['address']}: {row['reason']}" for row in errors))
+        self.errors = tuple(errors)
+        self.events = tuple(events)
+        self.cut = cut
 
 
 def _samples(value: Any) -> list[float]:
@@ -131,7 +167,7 @@ def _samples(value: Any) -> list[float]:
 
 def _fires(watch: Watchpoint, previous: Any, current: Any) -> bool:
     if watch.predicate == "change":
-        return previous is not None and _describe(previous) != _describe(current)
+        return previous is not _UNSET and _describe(previous) != _describe(current)
     values = _samples(current)
     if not values:
         return False
@@ -145,10 +181,11 @@ def _fires(watch: Watchpoint, previous: Any, current: Any) -> bool:
 class Observer:
     """Own watch specifications and per-branch baselines outside Session."""
 
-    def __init__(self) -> None:
+    def __init__(self, reader: Callable[[Session, str], Any] | None = None) -> None:
         self._watches: dict[str, Watchpoint] = {}
         self._baselines: dict[tuple[str, str], Any] = {}
         self._next_identifier = 1
+        self._read = reader or (lambda session, address: session.read(address))
 
     @property
     def watchpoints(self) -> tuple[Watchpoint, ...]:
@@ -192,9 +229,12 @@ class Observer:
 
     def sync(self, session: Session, branch: str) -> None:
         """Reset a branch after restore/rewind and seed every current watch."""
+        values = {
+            (branch, watch.identifier): clone(self._read(session, watch.address))
+            for watch in self._watches.values()
+        }
         self._baselines = {key: value for key, value in self._baselines.items() if key[0] != branch}
-        for watch in self._watches.values():
-            self._baselines[(branch, watch.identifier)] = session.read(watch.address)
+        self._baselines.update(values)
 
     def evaluate(
         self,
@@ -204,14 +244,28 @@ class Observer:
         receipt: Receipt | None = None,
     ) -> tuple[WatchEvent, ...]:
         fired: list[tuple[Watchpoint, Any, Any]] = []
+        current_values = {}
+        errors = []
         for watch in self._watches.values():
             key = (branch, watch.identifier)
-            current = session.read(watch.address)
-            previous = self._baselines.get(key)
-            if _fires(watch, previous, current):
-                fired.append((watch, previous, current))
-            self._baselines[key] = clone(current)
-        if not fired:
+            try:
+                current = self._read(session, watch.address)
+                previous = self._baselines.get(key, _UNSET)
+                fires = _fires(watch, previous, current)
+            except Exception as exc:
+                errors.append(
+                    {
+                        "identifier": watch.identifier,
+                        "address": watch.address,
+                        "reason": f"{type(exc).__name__}: {exc}",
+                    }
+                )
+                continue
+            if fires:
+                fired.append((watch, None if previous is _UNSET else previous, current))
+            current_values[key] = clone(current)
+        if not fired and not errors:
+            self._baselines.update(current_values)
             return ()
         # One retained cut is the shared safe point for every predicate fired by this transition.
         cut = session.capture()
@@ -220,10 +274,16 @@ class Observer:
             frame = session.inspect()
             point = getattr(frame, "execution_point", {"boundary": frame.boundary})
         receipt_id = None if receipt is None else receipt.fingerprint
-        return tuple(
+        if receipt is not None and receipt.to_dict().get("result") != cut.fingerprint:
+            raise ValueError("watch receipt does not produce the observed cut")
+        events = tuple(
             WatchEvent(watch, branch, cut, point, previous, current, receipt_id)
             for watch, previous, current in fired
         )
+        self._baselines.update(current_values)
+        if errors:
+            raise ObservationError(errors, events, cut)
+        return events
 
 
-__all__ = ["Observer", "WatchEvent", "Watchpoint"]
+__all__ = ["Observer", "WatchEvent", "Watchpoint", "ObservationError"]

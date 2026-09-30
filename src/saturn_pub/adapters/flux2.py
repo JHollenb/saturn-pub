@@ -14,7 +14,7 @@ import diffusers
 import torch
 from diffusers import FlowMatchEulerDiscreteScheduler, Flux2Transformer2DModel
 
-from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest
+from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest, TransitionSpec
 from ..core import Adapter, Session
 from ..values import clone, digest, identity
 
@@ -232,6 +232,44 @@ class Flux2KleinAdapter(Adapter):
             edge="before",
             next_operation=next_operation,
             local_clock=cursor,
+        )
+
+    def transition(self, state):
+        phase, cursor = state["phase"], state["cursor"]
+        if phase == "project":
+            reads = ("timesteps", "step", "img_ids", "txt_ids", "latent", "conditioning")
+            writes = ("context", "image", "text", "phase")
+        elif phase in {"joint", "single"} and (phase == "joint" or cursor < self.single_layers):
+            reads = ("context", "image", "text", "phase", "cursor")
+            writes = ("image", "text", "phase", "cursor")
+        elif self.granularity == "operation" and phase == "readout":
+            reads, writes = ("image", "context"), ("noise_prediction", "phase")
+        else:
+            reads = (
+                "noise_prediction",
+                "image",
+                "context",
+                "latent",
+                "timesteps",
+                "sigmas",
+                "step",
+            )
+            writes = (
+                "latent",
+                "step",
+                "phase",
+                "cursor",
+                "text",
+                "image",
+                "context",
+                "noise_prediction",
+            )
+        return TransitionSpec(
+            self.point(state).next_operation,
+            reads,
+            writes,
+            consumer="native-flux-suffix",
+            footprint="declared",
         )
 
     def surface(self, state):
