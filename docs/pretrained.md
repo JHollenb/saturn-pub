@@ -27,6 +27,36 @@ The budget is fixed; this helper does not stop on EOS. Inspect/capture layer bou
 `session.continue_()`. For low-overhead uninstrumented serving, call the native loaded model's
 `generate` API; the proof-oriented session intentionally copies and fingerprints state.
 
+## Other decoder families and Mamba via `load`
+
+`saturn_pub.adapters.load` selects a native adapter by `model_type`. Autoregressive decoder
+families (gpt2, gpt_neox/Pythia, phi, llama, mistral, mixtral, gemma-1, qwen2, qwen3) resolve to
+the generic `DecoderAdapter`; `mamba` resolves to `MambaAdapter`. Same session grammar as above.
+
+```python
+from saturn_pub.adapters import load
+
+adapter = load("EleutherAI/pythia-70m")  # gpt_neox: parallel residual, partial rotary
+session = adapter.session([101, 202, 303])
+adapter.generate(session, tokens=16)
+```
+
+```python
+from saturn_pub.adapters import load
+
+adapter = load("state-spaces/mamba-130m-hf")  # per-layer conv + recurrent state cuts
+session = adapter.session([101, 202, 303])
+adapter.generate(session, tokens=16)
+```
+
+`load` requires eager attention (forced on load) and refuses an unregistered `model_type` or a
+config outside a family's registered rule, naming the rule. Gemma applies its embedding normalizer
+inside the native scaled embedding; GPT-2 adds native learned position embeddings; Mistral is
+accepted only while the context stays within `sliding_window`; Mixtral MoE parity is bounded, not
+bit-exact. Construct a specific adapter directly (`DecoderAdapter.from_pretrained(path)`,
+`MambaAdapter.from_pretrained(path)`) when you want to pin the class. Qwen2/Qwen2.5 also work
+through the dedicated `QwenAdapter` and through the generic `DecoderAdapter`.
+
 ## Your Stable Diffusion checkpoint
 
 ```python

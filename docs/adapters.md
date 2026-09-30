@@ -42,3 +42,20 @@ one mutable resident model across concurrent debugger/training sessions.
 Supported adapters should name exact versus bounded numerical parity. Do not silently accept a
 new model family because its tensors have the same shapes. Source addresses and lowering remain
 family-local even when operation names are shared.
+
+## Shipped native adapters
+
+`adapters/qwen.py` is the reference decoder adapter. `adapters/decoder.py` generalizes it to a
+per-family spec registry (gpt2, gpt_neox, phi, llama, mistral, mixtral, gemma-1, qwen2, qwen3):
+same state grammar, surface manifest, execution/numerical contract, frozen-model guards,
+`validate`/`write` rules, layer/operation granularity, and `generate`/`native_logits`. Each family
+declares its module paths and position style (absolute learned embeddings for gpt2, rotary
+otherwise), and a fail-closed config validator that refuses an out-of-rule checkpoint by naming the
+rule (for example gpt2 requires `gelu_new` and head-dim scaling; llama requires `pretraining_tp==1`;
+gpt_neox and phi require untied embeddings; qwen3 requires attention qk-norm; mixtral requires a
+valid routed-expert count; gemma-1 requires `gelu_pytorch_tanh` and biasless projections). Eager
+attention is required and single-token decode runs `attention_mask=None` over an external
+`DynamicCache`; the prefix is prefilled by one native full forward. `adapters/mamba.py` is a
+separate adapter for Mamba-1: it cuts the native `MambaBlock` stack per token and per layer over
+external causal-convolution and recurrent-state slots. Use `saturn_pub.adapters.load(path_or_model)`
+to dispatch by `model_type`. See [pretrained recipes](pretrained.md) for one-line usage.
