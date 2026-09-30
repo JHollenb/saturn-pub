@@ -4,6 +4,8 @@
 | --- | --- | --- |
 | Core | JSON/tensor state, isolated branches, Acts, commit/restore, receipts | Trusted in-process runtime; no OS sandbox |
 | Qwen | Qwen2/Qwen2.5, eager full attention, batch one, greedy token/layer cuts | Configured context limit; no padding, beam search, sliding windows |
+| Decoder | gpt2, gpt_neox (Pythia), phi, llama, mistral, mixtral, gemma-1, qwen2, qwen3 native layer/operation cuts, eager attention, batch one, greedy | Configured context; no padding/beam; Mistral only while context <= sliding_window; Mixtral MoE bounded parity; unregistered/out-of-rule config refused |
+| Mamba | Mamba-1 selective scan, per-layer causal-conv and recurrent-state cuts, batch one, greedy | No attention or positions; numeric (not bit-exact) cached-step vs full-scan parity; Mamba-2/SSM variants refused |
 | Diffusion | DDIM eta-zero, native UNet steps, optional Stable Diffusion VAE | No CFG, multistep solvers, or SDXL |
 | FLUX.2 Klein | Distilled native joint/single block cuts, deterministic flow Euler, native VAE | Batch one, text-only, guidance one; no reference KV, CFG, LoRA, or offload hooks during block execution |
 | Investigation | Same-parent panels, dose grids, custom control arms | Per-arm errors retained; no automatic semantic certificate |
@@ -20,7 +22,12 @@ semantic capability battery. Cross-kernel, cross-dtype, cross-version, and cross
 is not assumed. Separate branches may choose different tokens near a close logit boundary.
 
 Qwen's decomposed lane is checked against native logits within `rtol=1e-5, atol=1e-7` on tiny
-FP32 CPU specimens. Same-program replay uses exact payload comparisons. DDIM deterministic
+FP32 CPU specimens. The generic decoder families and Mamba are checked against native logits
+within `rtol=1e-4, atol=1e-5` on tiny FP32 CPU specimens (measured max absolute logit delta on the
+tiny fixtures is a few ulps for the decoder families and ~2e-7 for Mamba); the Mamba single-token
+zero-state step reproduces the native prefill bit-for-bit. Greedy layer/operation stepping matches
+native `generate` token-for-token on the fixtures. Real-checkpoint numbers with job ids are in the
+README. Same-program replay uses exact payload comparisons. DDIM deterministic
 trajectory replay is checked for tensor equality on the same CPU program. Phase transport is
 integer exact within the frequency quantization law; trigonometric decoding gets float tolerances.
 Memory uses a different global-softmax reduction order, so native logits are compared numerically.

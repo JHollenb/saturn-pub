@@ -54,6 +54,35 @@ Steps are adapter micro-transitions; `adapter.generate` is an AR token-budget he
 Captured state includes model identity, execution contract, and all declared continuation state.
 Exactness means a named state boundary and numerical program, not agreement across all kernels.
 
+## Supported models
+
+`saturn_pub.adapters.load(path_or_model)` dispatches by `model_type`. Autoregressive decoder
+families run through `adapters/decoder.py` (Qwen2 also through the dedicated `adapters/qwen.py`);
+Mamba-1 runs through `adapters/mamba.py`. Every adapter uses eager attention, batch one, and greedy
+decoding, and refuses an out-of-rule config by naming the rule. Real-weight rows below were
+measured fp32, `tf32` off; each reproduced the native 16-token greedy decode exactly and replayed a
+mid-layer cut exactly in a fresh interpreter. Full numbers are in
+[`experiments/family_validation/results.json`](experiments/family_validation/results.json).
+
+| Family | Adapter | Real-weight checkpoints (max abs logit Δ vs native) | Parity | Limits |
+| --- | --- | --- | --- | --- |
+| gpt2 | Decoder | gpt2 — MacBook CPU (1.8e-4) | 16/16 greedy exact, fresh-process replay exact | learned absolute positions; gelu_new; eager |
+| gpt_neox (Pythia) | Decoder | pythia-70m/160m/410m — `job-beeea1a95e3c` (1.6e-5 / 1.7e-6 / 3.8e-6) | 16/16 greedy exact, replay exact | MHA, parallel residual, partial rotary; untied |
+| llama | Decoder | SmolLM2-360M — `job-d75df96810fe` (2.2e-5) | 16/16 greedy exact, replay exact | `pretraining_tp==1`; default RoPE |
+| qwen2 | Qwen / Decoder | Qwen2.5-0.5B — `job-d75df96810fe` (1.8e-5) | 16/16 greedy exact, replay exact | full attention only, no sliding window |
+| qwen3 | Decoder | Qwen3-0.6B — `job-d75df96810fe` (1.4e-5) | 16/16 greedy exact, replay exact | attention qk-norm required |
+| mamba (Mamba-1) | Mamba | mamba-130m/370m-hf — `job-d75df96810fe` (1.0e-4 / 9.4e-5) | 16/16 greedy exact, replay exact; single-token zero-state step bit-exact | no attention/positions; numeric (not bit-exact) parity |
+| phi | Decoder | tiny fixture only | tiny-fixture parity | no cached checkpoint available |
+| mistral | Decoder | tiny fixture only | tiny-fixture parity | only Mistral-7B cached (exceeds the 4080 VRAM guardrail); accepted only while context <= `sliding_window` |
+| mixtral | Decoder | tiny fixture only | bounded MoE parity | no cached checkpoint available |
+| gemma (Gemma-1) | Decoder | tiny fixture only | tiny-fixture parity | no cached checkpoint available |
+
+Real-weight runs used cached Beast (RTX 4080) checkpoints via one batched mrun job plus a
+supplementary pythia lease; gpt2 was measured on the MacBook CPU because it is not cached on Beast.
+phi, gemma, mixtral, and mistral have no usable cached checkpoint (mistral only as a 7B that exceeds
+the VRAM budget), so they are exercised by the tiny-fixture suite only. See
+[family validation](experiments/family_validation/README.md).
+
 ## Run offline examples
 
 ```bash
