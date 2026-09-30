@@ -344,7 +344,16 @@ def stage_full(args):
     if args.tiny:
         streamed_adapter, enc_s, _ = build_tiny(family, "streamed", device)
     else:
-        pipe, streamed_adapter = load_denoise_pipeline(family, args.model, "streamed", device)
+        try:
+            pipe, streamed_adapter = load_denoise_pipeline(family, args.model, "streamed", device)
+        except (ValueError, SystemExit) as exc:
+            # A refused family (e.g. a 9B-KV pipeline) records a clean refusal, not a crash.
+            report["refused"] = str(exc)
+            report["elapsed_s"] = time.perf_counter() - started
+            report["peak_rss_mb"] = _rss_mb()
+            (output / "report.json").write_text(json.dumps(report, indent=2))
+            print(json.dumps(report, indent=2))
+            return report
         enc_s = enc
     cut_at = max(1, len(enc_s["timesteps"]) // 2)
     streamed_session, streamed_steps, cut_digest = adapter_trajectory(
