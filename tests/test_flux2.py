@@ -63,6 +63,30 @@ def test_native_flow_parity_and_block_replay(tmp_path, dtype):
     assert session.restore(parent).to_dict()["verified_exact"]
 
 
+def test_streamed_matches_resident_and_preserves_resident_contract():
+    resident, inputs_r, _ = fixture()
+    streamed = Flux2KleinAdapter.tiny(residency="streamed", device="cpu")
+    _, inputs_s, _ = fixture()
+    # Resident execution keeps the historical contract verbatim (no residency field),
+    # so existing 4B cuts and receipts are unaffected; streamed declares its mode.
+    assert "residency" not in resident.execution
+    assert streamed.execution["residency"]["mode"] == "streamed"
+    left = resident.session(**inputs_r)
+    right = streamed.session(**inputs_s)
+    resident.finish(left)
+    streamed.finish(right)
+    assert torch.equal(left.read("latent"), right.read("latent"))
+    streamed.validate_execution()  # host weights never moved; frozen guard holds
+
+
+def test_refuses_klein_kv_pipeline_with_reason():
+    class Flux2KleinKVPipeline:  # stand-in: the real class needs 9B-KV weights
+        pass
+
+    with pytest.raises(ValueError, match="distinct trajectory ABI"):
+        Flux2KleinAdapter.from_pipeline(Flux2KleinKVPipeline())
+
+
 def test_wrong_boundary_write_and_incomplete_closure():
     adapter, inputs, _ = fixture()
     session = adapter.session(**inputs)
