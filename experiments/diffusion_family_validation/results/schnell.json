@@ -1,0 +1,51 @@
+{
+  "schema": "saturn-pub-diffusion-family-v1",
+  "family": "schnell",
+  "tiny": false,
+  "encode_rss_mb": 15584.08984375,
+  "streamed": {
+    "residency": {
+      "mode": "streamed",
+      "device": {
+        "type": "cuda",
+        "index": 0
+      },
+      "host_pinned": false
+    },
+    "per_step_digests": [
+      "80d87c26d6ab055e417dfd329e3e3afffcb6eb259134a2c2a96621b091f0a700",
+      "862e338fe0f5318ee1dc049853ad9fa17c449cb2f5a08ed806d77468d98e8e98",
+      "42016fb90d4af289e79b561a4d00796019c06e8678afd84aa4864104b4ec5e26",
+      "5ca96206701b501f8ac08e027f81e8ee095daf50863c7b76dc70bc9015ae21d0"
+    ],
+    "final_digest": "5ca96206701b501f8ac08e027f81e8ee095daf50863c7b76dc70bc9015ae21d0",
+    "peak_vram_mb": 830.57763671875,
+    "wall_s": 78.8614995079115,
+    "cut_digest": "2747cff949f16135e014e181fc064a175a8692cdcde71fc890d362e48a567976",
+    "cut_at_step": 2,
+    "model_identity": "3a4591872f18060fc618f3613e767cafccfa409952fdd484a5e935f08fda61a9"
+  },
+  "image": {
+    "path": "schnell.png",
+    "pixels_sha256": "e9de2f1299974523fe230ef9a6ca3030ce9d1db874f76efe8465cd0e46e813ee",
+    "thumb_px": 256
+  },
+  "native": {
+    "per_step_digests": [
+      "80d87c26d6ab055e417dfd329e3e3afffcb6eb259134a2c2a96621b091f0a700",
+      "862e338fe0f5318ee1dc049853ad9fa17c449cb2f5a08ed806d77468d98e8e98",
+      "42016fb90d4af289e79b561a4d00796019c06e8678afd84aa4864104b4ec5e26",
+      "5ca96206701b501f8ac08e027f81e8ee095daf50863c7b76dc70bc9015ae21d0"
+    ],
+    "peak_vram_mb": 238.94873046875,
+    "wall_s": 16.536704760976136
+  },
+  "stepped_vs_native_exact": true,
+  "fresh_process_replay": {
+    "exact": true,
+    "mode": "subprocess",
+    "final_digest": "5ca96206701b501f8ac08e027f81e8ee095daf50863c7b76dc70bc9015ae21d0"
+  },
+  "elapsed_s": 180.36463950481266,
+  "peak_rss_mb": 26976.21484375
+}

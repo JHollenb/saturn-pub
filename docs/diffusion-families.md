@@ -62,9 +62,16 @@ Klein-9B and FLUX.1-schnell reference via accelerate sequential CPU offload). Re
 bitwise-identical streamed-vs-resident trajectory on Klein-4B. Replay hydrates a mid-trajectory
 `StateCut` in a separate interpreter and finishes it.
 
-<!-- MEASURED_RESULTS -->
-_Measured numbers, job ids, peak VRAM/RSS, and thumbnails are recorded in
-`experiments/diffusion_family_validation/results/` once the Beast validation completes._
+| Family | Job | Stepped = native | Streamed = resident | Fresh-process replay | Streamed peak VRAM | Peak RSS |
+| --- | --- | --- | --- | --- | --- | --- |
+| Klein-4B | `job-ece5315bc64b` | exact | exact | exact | 0.65 GB | 9.3 GB |
+| Klein-9B | `job-6be0bc01cc95` | exact | — | exact | 1.07 GB | 22.2 GB |
+| FLUX.1-schnell | `job-69b0e456925b` | exact | — | exact | 0.81 GB | 26.3 GB |
+
+512×512, 4 steps, seed 611; "exact" means every per-step latent digest (or the replayed final
+digest) is equal. Klein-9B and schnell encode the prompt on CPU because their text encoders
+peaked at 4.8 / 5.6 GB even through sequential offload. Full reports, job ids, source
+revisions, and thumbnails are in `experiments/diffusion_family_validation/results/`.
 
 Same-program replay is an exactness claim about mechanics; image quality, prompt adherence, and
 portability across kernels, dtypes, and devices are not claimed and need their own evidence.

@@ -38,11 +38,12 @@ python experiments/diffusion_family_validation/run.py \
 
 The prompt is encoded by an encoder-only pipeline (the transformer is skipped with
 `transformer=None`); the encoders are freed before a transformer+VAE pipeline is loaded, so
-the process never holds two large models at once. Block-streamed residency keeps the
+the process never holds two large models at once. Klein-4B encodes on the GPU; Klein-9B
+(Qwen3-8B, 16 GB bf16) and FLUX.1-schnell (T5-XXL + CLIP) encode on CPU, since even
+sequential offload peaked at 4.8 / 5.6 GB of VRAM. Block-streamed residency keeps the
 transformer weights in host memory and copies one native module to the GPU at a time, so
 peak VRAM is a single block plus activations rather than the whole transformer.
 
 Measured results and the mrun launch/collect scripts for the RTX 4080 (16 GB) validation
-live outside this public package under
-`research/runs/saturn-pub-diffusion-families/` (private); the measured `results/` JSON and
+live outside this public package; the measured [`results/`](results/README.md) JSON and
 thumbnails committed here are the public record.
