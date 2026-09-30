@@ -114,3 +114,30 @@ The release notebook run caught and corrected a debugger regression: an installe
 breakpoint stopped explicit `continue N` before N transitions. Explicit budgets now preserve
 their exact transition count unless a watchpoint fires; bare continue and until remain
 breakpoint-aware. A dedicated regression test preserves this distinction.
+
+## Autoregressive model families and Mamba
+
+The generic decoder adapter (gpt2, gpt_neox, phi, llama, mistral, mixtral, gemma-1, qwen2, qwen3)
+and the Mamba-1 adapter were validated locally on macOS arm64 with Python 3.12 and CPU execution
+on 2026-09-30:
+
+- **The full suite is 152 tests** (53 new in `tests/test_families.py`): per-family stepped-vs-native
+  logit parity, greedy equality vs native `generate`, same-program replay, fork isolation with a
+  measurable intervention, operation-granularity phases, capture -> `LocalStore` -> fresh-process
+  continuation across every family, incompatible-adapter refusal, `load()` dispatch, and fail-closed
+  config refusals. Ruff lint and format pass on the added modules and tests.
+- Tiny fp32 CPU fixtures: greedy stepping matches native `generate` token-for-token for all
+  families; stepped-vs-native max absolute logit delta is a few ulps for the decoder families and
+  ~2e-7 for Mamba; the Mamba single-token zero-state step is bit-exact vs the native prefill.
+
+Real-weight validation ran on cached checkpoints (fp32, `tf32` off, batch one, greedy, eager;
+`experiments/family_validation/run.py`). CUDA job `job-d75df96810fe` (RTX 4080) validated
+SmolLM2-360M (llama), Qwen2.5-0.5B (qwen2), Qwen3-0.6B (qwen3), and Mamba-130m/370m; supplementary
+CUDA job `job-beeea1a95e3c` validated pythia-70m/160m/410m (gpt_neox); gpt2 was validated on the
+MacBook CPU because it is not cached on Beast. Every validated checkpoint reproduced the native
+16-token greedy decode exactly and replayed a mid-layer cut exactly in a fresh interpreter; the
+max absolute logit delta ranged from 1.7e-6 to 1.8e-4 and peak VRAM stayed at or below 2.4 GB.
+phi, gemma, mixtral, and mistral had no usable cached checkpoint (mistral only as a 7B that exceeds
+the VRAM guardrail) and were left to the tiny-fixture suite. Measured rows and job ids are in
+`experiments/family_validation/results.json`. These runs do not establish cross-device or
+cross-kernel byte equality or any semantic capability.
