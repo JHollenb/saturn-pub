@@ -162,10 +162,19 @@ def _session_keys(adapter):
 # --------------------------------------------------------------------------------------
 # Encode (encoder-only pipeline) — real weights
 # --------------------------------------------------------------------------------------
+def _encode_device(family):
+    # Klein-4B's encoder fits the 16 GB card and keeps the resident CUDA encode that produced
+    # its measured result. Klein-9B's Qwen3-8B (16 GB bf16) and schnell's T5-XXL + CLIP do
+    # not: even accelerate sequential CPU offload peaked at 4.8 / 5.6 GB on Beast
+    # (job-ae99a277e513, job-98d8bfa8554e). They encode the single prompt on CPU instead;
+    # stepped and native trajectories share these embeddings, so parity is unaffected.
+    return "cuda" if family == "klein4b" else "cpu"
+
+
 def encode_real(family, model_path, prompt, seed, size, steps, guidance_scale):
     import numpy as np
 
-    device = "cuda"
+    device = _encode_device(family)
     config = json.loads((Path(model_path) / "transformer" / "config.json").read_text())
     in_channels = int(config["in_channels"])
     if family == "schnell":
