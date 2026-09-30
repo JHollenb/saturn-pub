@@ -169,6 +169,7 @@ Start with [when and how to use each capability](docs/usage.md), then choose a
 - [Experiments and programs](docs/experiments.md)
 - [Reversible training](docs/training.md)
 - [Write an adapter](docs/adapters.md)
+- [SAELens and TransformerLens interop](docs/interop.md)
 - [Pretrained model recipes](docs/pretrained.md)
 - [Build a writer, debug its futures, and replay](docs/writer-demo.md)
 - [Capabilities and numerical contracts](docs/capabilities.md)
