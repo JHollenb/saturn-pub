@@ -1,0 +1,6 @@
+Saturn public toolkit
+Copyright 2026 Jake Holl
+
+Includes an adapted deterministic training-state controller from the author's
+Saturn research runtime. See PROVENANCE.md for extraction details.
+No model weights or third-party source trees are bundled.

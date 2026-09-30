@@ -1,0 +1,16 @@
+# Reproducible experiments
+
+These recipes run with the public package and public framework dependencies. Model
+weights are acquired separately. No private checkout, fleet service, or job scheduler is required.
+Generated states and results belong in `outputs/`, which is ignored by Git.
+
+| Experiment | Process | Consumer |
+|---|---|---|
+| [FLUX.2 writer](flux2_writer/README.md) | Capture paired states, fit a writer, evaluate futures, restore, replay | Native rendered RGB |
+| [AR family validation](family_validation/README.md) | Step each decoder family and Mamba-1 on real checkpoints; greedy decode and fresh-process replay vs native | Native logits and 16-token greedy decode |
+| [Diffusion family validation](diffusion_family_validation/README.md) | Step FLUX.2 Klein-4B/9B and FLUX.1-schnell resident or block-streamed; replay a mid-trajectory cut in a fresh process | Native diffusers per-step latents and VAE decode |
+| [Debugging repair](debugging_repair/README.md) | Follow a deletion, native repair, repair suppression, and collateral; replay suffixes in fresh processes | Supplied neural circuit's threshold consumer |
+
+Each recipe declares supplied inputs, fitted quantities, observations, exact mechanics,
+and the scope of its claims. Reference results illustrate one measured development
+context; they are not an expected universal outcome or a gate for your experiments.

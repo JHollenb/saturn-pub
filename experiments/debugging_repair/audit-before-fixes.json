@@ -1,0 +1,13 @@
+{
+  "date": "2026-09-29",
+  "stage": "before-audit-fixes",
+  "specimen": "public JSON-only adapters and supplied RepairCircuit",
+  "observations": [
+    {"probe": "invalid-watch-registration", "before_count": 0, "error": "unsupported address at writer.first: missing", "after_count": 1},
+    {"probe": "batched-backtrace", "operation_positions": [3, 2, 1], "all_rows_claimed_final_cut": true},
+    {"probe": "list-to-tuple-change-watch", "before": [1], "after_type": "tuple", "fires": 0},
+    {"probe": "foreign-producing-receipt", "accepted": true},
+    {"probe": "mutated-watch-event", "original_current": [2], "mutated_current": [2, 3], "serialization_refused": false}
+  ],
+  "interpretation": "Engineering integrity/usability defects, not scientific nulls. This historical reproduction is retained unchanged; corrected behavior is tested separately."
+}

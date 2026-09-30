@@ -1,0 +1,23 @@
+step 2
+watch hidden change
+watchpoints
+trace 1
+unwatch all
+capture parent
+fork candidate parent
+use candidate
+zero hidden
+continue 2
+read tokens
+use root
+fork native parent
+use native
+continue 2
+compare candidate
+diff candidate
+use root
+replay parent 2 replayed
+commit candidate
+restore parent
+save outputs/debug parent
+quit

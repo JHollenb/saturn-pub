@@ -1,0 +1,62 @@
+{
+  "schema": "saturn-pub-diffusion-family-v1",
+  "family": "klein4b",
+  "tiny": false,
+  "encode_rss_mb": 5674.87109375,
+  "streamed": {
+    "residency": {
+      "mode": "streamed",
+      "device": {
+        "type": "cuda",
+        "index": 0
+      },
+      "host_pinned": false
+    },
+    "per_step_digests": [
+      "08f1bdc64a94c2b4b98754685233647dd98b4a3bf6623f01570647ed913a97f0",
+      "83127da8291110bcafe9f1379218d1e8d48a4a688ef63f2710faf9de78335330",
+      "8a4102df2c04118beaa59ade2e05ebcacf4b07451fa2b6ed2fb21af64552e4e9",
+      "613dc99f139a34e225ab4e93bba5a7cbfcdaeb7ca05881e4311251ad96a1ca22"
+    ],
+    "final_digest": "613dc99f139a34e225ab4e93bba5a7cbfcdaeb7ca05881e4311251ad96a1ca22",
+    "peak_vram_mb": 665.4912109375,
+    "wall_s": 25.639691046904773,
+    "cut_digest": "1af908fe9fc0c627ba5accdb189d07092311af723880edb853bcd3cd3be8456b",
+    "cut_at_step": 2,
+    "model_identity": "a09191c5ff813af77bf89d8e4b9a07237befb67c1aef3e722322d3491250fcd0"
+  },
+  "image": {
+    "path": "klein4b.png",
+    "pixels_sha256": "51bf040d39e2472a90aeae842540a5b159209d97bb1d6fffe80537f5b897c310",
+    "thumb_px": 256
+  },
+  "resident": {
+    "per_step_digests": [
+      "08f1bdc64a94c2b4b98754685233647dd98b4a3bf6623f01570647ed913a97f0",
+      "83127da8291110bcafe9f1379218d1e8d48a4a688ef63f2710faf9de78335330",
+      "8a4102df2c04118beaa59ade2e05ebcacf4b07451fa2b6ed2fb21af64552e4e9",
+      "613dc99f139a34e225ab4e93bba5a7cbfcdaeb7ca05881e4311251ad96a1ca22"
+    ],
+    "peak_vram_mb": 7681.56640625,
+    "wall_s": 20.163200988899916
+  },
+  "streamed_equals_resident_exact": true,
+  "native": {
+    "per_step_digests": [
+      "08f1bdc64a94c2b4b98754685233647dd98b4a3bf6623f01570647ed913a97f0",
+      "83127da8291110bcafe9f1379218d1e8d48a4a688ef63f2710faf9de78335330",
+      "8a4102df2c04118beaa59ade2e05ebcacf4b07451fa2b6ed2fb21af64552e4e9",
+      "613dc99f139a34e225ab4e93bba5a7cbfcdaeb7ca05881e4311251ad96a1ca22"
+    ],
+    "peak_vram_mb": 7622.1435546875,
+    "wall_s": 0.5275326890405267
+  },
+  "stepped_vs_native_exact": true,
+  "fresh_process_replay": {
+    "exact": true,
+    "mode": "subprocess",
+    "final_digest": "613dc99f139a34e225ab4e93bba5a7cbfcdaeb7ca05881e4311251ad96a1ca22"
+  },
+  "elapsed_s": 184.32194452709518,
+  "peak_rss_mb": 9556.52734375
+}
