@@ -15,6 +15,7 @@ Run scripts from the checkout root. Results go to ignored `outputs/` directories
 | `causal_panel.py` | Run a dose/control grid and compile one measured arm | `ar` |
 | `measured_program.py` | Replay an exact measured program and see unsupported-use refusal | `ar` |
 | `dependency_reuse.py` | Inspect which declared cells are reused/recomputed | `ar` |
+| `interop_saelens.py` | Find an SAE feature with TransformerLens/SAELens, ablate it on Saturn's aligned carrier, and replay the receipt | `interop` |
 | `shared_memory.py` | Compare shared-prefix attention and separate phase mechanics | `ar` |
 | `reversible_training.py` | Train a small writer with native feedback and reject/restore a harmful future | `ar,train` |
 | `structural_rewind.py` | Reopen graph/rules/memory/cursor futures with an empty model and no optimizer | `train` |
