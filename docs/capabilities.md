@@ -7,7 +7,9 @@
 | Decoder | gpt2, gpt_neox (Pythia), phi, llama, mistral, mixtral, gemma-1, qwen2, qwen3 native layer/operation cuts, eager attention, batch one, greedy | Configured context; no padding/beam; Mistral only while context <= sliding_window; Mixtral MoE bounded parity; unregistered/out-of-rule config refused |
 | Mamba | Mamba-1 selective scan, per-layer causal-conv and recurrent-state cuts, batch one, greedy | No attention or positions; numeric (not bit-exact) cached-step vs full-scan parity; Mamba-2/SSM variants refused |
 | Diffusion | DDIM eta-zero, native UNet steps, optional Stable Diffusion VAE | No CFG, multistep solvers, or SDXL |
-| FLUX.2 Klein | Distilled native joint/single block cuts, deterministic flow Euler, native VAE | Batch one, text-only, guidance one; no reference KV, CFG, LoRA, or offload hooks during block execution |
+| FLUX.2 Klein | Distilled 4B/9B native joint/single block cuts, deterministic flow Euler, native VAE | Batch one, text-only, guidance one; no reference KV, CFG, LoRA, or accelerate offload hooks during block execution; 9B-KV refused |
+| FLUX.1 | schnell/dev native joint/single block cuts, T5+CLIP conditioner, flow Euler, native VAE | Batch one, text-only; dev guidance embed tested on tiny fixture only (no real dev checkpoint); no reference images, CFG, or LoRA |
+| Block-streamed residency | Frozen host weights, one native block copied to device per step; declared in the execution contract | Streamed output equals resident bitwise on the same device; host weights never move; pinning optional and off by default for the large transformers |
 | Investigation | Same-parent panels, dose grids, custom control arms | Per-arm errors retained; no automatic semantic certificate |
 | Program | Ordered measured pre-continuation Acts, exact parent/context binding | In-process; no learned/general compiler or cross-model portability |
 | Training | Registered PyTorch mutable closure and isolated evaluation | Accepted snapshot in memory; rejected evidence retained |

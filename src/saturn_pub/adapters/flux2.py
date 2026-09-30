@@ -17,6 +17,7 @@ from diffusers import FlowMatchEulerDiscreteScheduler, Flux2Transformer2DModel
 from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest, TransitionSpec
 from ..core import Adapter, Session
 from ..values import clone, digest, identity
+from ._residency import BlockResidency
 
 
 def _stable_configuration(value: Any, *, key: str = "") -> Any:
@@ -42,7 +43,17 @@ def _tensor_guards(module: Any, *, prefix: str = "") -> tuple[tuple[Any, ...], .
 
 
 class Flux2KleinAdapter(Adapter):
-    def __init__(self, transformer, scheduler, *, pipeline=None, granularity="block"):
+    def __init__(
+        self,
+        transformer,
+        scheduler,
+        *,
+        pipeline=None,
+        granularity="block",
+        residency="resident",
+        device=None,
+        pin_host=False,
+    ):
         if not isinstance(transformer, Flux2Transformer2DModel):
             raise ValueError("expected a native Flux2Transformer2DModel")
         if transformer.config.guidance_embeds:
@@ -56,8 +67,17 @@ class Flux2KleinAdapter(Adapter):
         self.model = transformer.eval()
         self.granularity = granularity
         self.pipeline = pipeline
-        self.device = next(transformer.parameters()).device
         self.dtype = next(transformer.parameters()).dtype
+        if residency == "streamed":
+            target = (
+                device if device is not None else ("cuda" if torch.cuda.is_available() else "cpu")
+            )
+            self._residency = BlockResidency(target, mode="streamed", pin_host=pin_host)
+        else:
+            target = device if device is not None else next(transformer.parameters()).device
+            self._residency = BlockResidency(target, mode="resident")
+        self._residency.place(transformer)
+        self.device = self._residency.device
         self.scheduler_config = dict(scheduler.config)
         self.joint_layers = len(transformer.transformer_blocks)
         self.single_layers = len(transformer.single_transformer_blocks)
@@ -114,24 +134,45 @@ class Flux2KleinAdapter(Adapter):
             "decoder_normalization_device": "cpu",
             "parity": "same-program-exact",
         }
+        # Resident execution keeps the historical contract verbatim; only streamed
+        # residency adds a field, so existing resident receipts stay byte-identical.
+        if self._residency.mode == "streamed":
+            self.execution["residency"] = self._residency.to_dict()
 
     @classmethod
-    def from_pipeline(cls, pipeline, *, granularity="block"):
+    def from_pipeline(
+        cls, pipeline, *, granularity="block", residency="resident", device=None, pin_host=False
+    ):
         from diffusers import Flux2KleinPipeline
 
+        if type(pipeline).__name__ == "Flux2KleinKVPipeline":
+            raise ValueError(
+                "Flux2KleinKVPipeline (Klein 9B-KV) uses a distinct trajectory ABI: reference "
+                "tokens are ordered before target tokens with cached reference key/values and "
+                "extract-mode causal attention. This text-only, reference-free adapter cannot "
+                "reproduce it exactly; wrap only the plain distilled Flux2KleinPipeline"
+            )
         if not isinstance(pipeline, Flux2KleinPipeline) or not pipeline.config.is_distilled:
             raise ValueError("only distilled Flux2KleinPipeline is supported")
         if any(hasattr(module, "_hf_hook") for module in pipeline.transformer.modules()):
-            raise ValueError("remove CPU-offload hooks and place the transformer before wrapping")
+            raise ValueError(
+                "remove CPU-offload hooks and place the transformer before wrapping; "
+                "block-streamed residency is adapter-owned (pass residency='streamed')"
+            )
         return cls(
             pipeline.transformer,
             pipeline.scheduler,
             pipeline=pipeline,
             granularity=granularity,
+            residency=residency,
+            device=device,
+            pin_host=pin_host,
         )
 
     @classmethod
-    def tiny(cls, seed=7, *, granularity="block"):
+    def tiny(
+        cls, seed=7, *, granularity="block", residency="resident", device=None, pin_host=False
+    ):
         with torch.random.fork_rng():
             torch.manual_seed(seed)
             model = Flux2Transformer2DModel(
@@ -145,7 +186,14 @@ class Flux2KleinAdapter(Adapter):
                 axes_dims_rope=(4, 4, 4, 4),
                 guidance_embeds=False,
             )
-        return cls(model, FlowMatchEulerDiscreteScheduler(), granularity=granularity)
+        return cls(
+            model,
+            FlowMatchEulerDiscreteScheduler(),
+            granularity=granularity,
+            residency=residency,
+            device=device,
+            pin_host=pin_host,
+        )
 
     def _verify_frozen_model(self):
         current = _tensor_guards(self.model, prefix="transformer.") + (
@@ -480,31 +528,32 @@ class Flux2KleinAdapter(Adapter):
         self.validate(state)
         if state["step"] == len(state["timesteps"]):
             raise ValueError("trajectory already complete")
-        out, model = clone(state), self.model
+        out, model, run = clone(state), self.model, self._residency.run
         phase, cursor = out["phase"], out["cursor"]
         if phase == "project":
             timestep = out["timesteps"][out["step"]].expand(1).to(self.dtype)
             # Match the native forward's /1000 then *1000, including dtype rounding.
-            temb = model.time_guidance_embed((timestep / 1000).to(self.dtype) * 1000, None)
+            temb = run(model.time_guidance_embed, (timestep / 1000).to(self.dtype) * 1000, None)
             img_rope, txt_rope = (
-                model.pos_embed(out["img_ids"][0]),
-                model.pos_embed(out["txt_ids"][0]),
+                run(model.pos_embed, out["img_ids"][0]),
+                run(model.pos_embed, out["txt_ids"][0]),
             )
             out["context"] = {
                 "temb": temb,
-                "img_mod": model.double_stream_modulation_img(temb),
-                "txt_mod": model.double_stream_modulation_txt(temb),
-                "single_mod": model.single_stream_modulation(temb),
+                "img_mod": run(model.double_stream_modulation_img, temb),
+                "txt_mod": run(model.double_stream_modulation_txt, temb),
+                "single_mod": run(model.single_stream_modulation, temb),
                 "rope": tuple(
                     torch.cat([text, image], dim=0) for text, image in zip(txt_rope, img_rope)
                 ),
             }
-            out["image"] = model.x_embedder(out["latent"])
-            out["text"] = model.context_embedder(out["conditioning"])
+            out["image"] = run(model.x_embedder, out["latent"])
+            out["text"] = run(model.context_embedder, out["conditioning"])
             out["phase"] = "joint"
         elif phase == "joint" and cursor < self.joint_layers:
             context = out["context"]
-            out["text"], out["image"] = model.transformer_blocks[cursor](
+            out["text"], out["image"] = run(
+                model.transformer_blocks[cursor],
                 hidden_states=out["image"],
                 encoder_hidden_states=out["text"],
                 temb_mod_img=context["img_mod"],
@@ -519,7 +568,8 @@ class Flux2KleinAdapter(Adapter):
             index = 0 if phase == "joint" else cursor
             context = out["context"]
             text_length = out["text"].shape[1]
-            combined = model.single_transformer_blocks[index](
+            combined = run(
+                model.single_transformer_blocks[index],
                 hidden_states=torch.cat([out["text"], out["image"]], dim=1),
                 encoder_hidden_states=None,
                 temb_mod=context["single_mod"],
@@ -531,14 +581,16 @@ class Flux2KleinAdapter(Adapter):
             if self.granularity == "operation" and out["cursor"] == self.single_layers:
                 out["phase"] = "readout"
         elif self.granularity == "operation" and phase == "readout":
-            out["noise_prediction"] = model.proj_out(
-                model.norm_out(out["image"], out["context"]["temb"])
+            out["noise_prediction"] = run(
+                model.proj_out, run(model.norm_out, out["image"], out["context"]["temb"])
             )
             out["phase"] = "scheduler"
         else:
             noise = out["noise_prediction"]
             if noise is None:
-                noise = model.proj_out(model.norm_out(out["image"], out["context"]["temb"]))
+                noise = run(
+                    model.proj_out, run(model.norm_out, out["image"], out["context"]["temb"])
+                )
             scheduler = FlowMatchEulerDiscreteScheduler.from_config(self.scheduler_config)
             scheduler.timesteps, scheduler.sigmas = out["timesteps"], out["sigmas"]
             scheduler.set_begin_index(out["step"])
