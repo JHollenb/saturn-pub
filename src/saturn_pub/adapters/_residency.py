@@ -33,7 +33,12 @@ class BlockResidency:
     def __init__(self, device: Any, *, mode: str = "resident", pin_host: bool = False):
         if mode not in {"resident", "streamed"}:
             raise ValueError("residency mode must be 'resident' or 'streamed'")
-        self.device = torch.device(device)
+        device = torch.device(device)
+        if device.type == "cuda" and device.index is None:
+            # A bare "cuda" has index None, but tensors moved to it become "cuda:N";
+            # resolve the concrete index so state device checks compare equal.
+            device = torch.device("cuda", torch.cuda.current_device())
+        self.device = device
         self.mode = mode
         self.pin_host = bool(pin_host)
         if pin_host and mode != "streamed":

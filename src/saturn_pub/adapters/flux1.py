@@ -80,7 +80,8 @@ class Flux1Adapter(Adapter):
             )
             self._residency = BlockResidency(target, mode="streamed", pin_host=pin_host)
         else:
-            self._residency = BlockResidency(next(transformer.parameters()).device, mode="resident")
+            target = device if device is not None else next(transformer.parameters()).device
+            self._residency = BlockResidency(target, mode="resident")
         self._residency.place(transformer)
         self.device = self._residency.device
         self.guidance_embeds = bool(transformer.config.guidance_embeds)
