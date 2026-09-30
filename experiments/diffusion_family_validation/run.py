@@ -350,9 +350,12 @@ def stage_full(args):
     streamed_session, streamed_steps, cut_digest = adapter_trajectory(
         streamed_adapter, enc_s, cut_at=cut_at, store=store
     )
+    streamed_final_latent = streamed_session.read("latent")
+    streamed_final_digest = _digest(streamed_final_latent)
     report["streamed"] = {
         "residency": streamed_adapter.execution["residency"],
         "per_step_digests": streamed_steps,
+        "final_digest": streamed_final_digest,
         "peak_vram_mb": _peak_vram_mb(),
         "wall_s": time.perf_counter() - t0,
         "cut_digest": cut_digest,
@@ -360,52 +363,7 @@ def stage_full(args):
         "model_identity": streamed_adapter.model_identity,
     }
 
-    # Native reference: the diffusers forward. 4B fits resident; 9B/schnell stream via
-    # accelerate sequential offload only for this comparison.
-    if not args.tiny and family != "klein4b":
-        pipe.enable_sequential_cpu_offload()
-    _reset_peak()
-    t0 = time.perf_counter()
-    native_final, native_steps = native_trajectory(
-        streamed_adapter, enc_s, _clone_scheduler(streamed_adapter, enc_s, scheduler), family
-    )
-    report["native"] = {
-        "per_step_digests": native_steps,
-        "peak_vram_mb": _peak_vram_mb(),
-        "wall_s": time.perf_counter() - t0,
-    }
-    report["stepped_vs_native_exact"] = streamed_steps == native_steps
-    if not report["stepped_vs_native_exact"]:
-        report["stepped_vs_native_final_max_abs"] = _max_abs(
-            streamed_session.read("latent"), native_final
-        )
-    if not args.tiny and family != "klein4b":
-        pipe.remove_all_hooks()
-        _free()
-
-    # Klein-4B residency claim: resident vs streamed, bitwise identical full trajectory.
-    if family == "klein4b" or (args.tiny and args.residency_check):
-        _reset_peak()
-        t0 = time.perf_counter()
-        if not args.tiny:
-            resident_adapter = type(streamed_adapter).from_pipeline(
-                pipe, residency="resident", device=device
-            )
-        resident_session, resident_steps, _ = adapter_trajectory(resident_adapter, enc_s)
-        report["resident"] = {
-            "per_step_digests": resident_steps,
-            "peak_vram_mb": _peak_vram_mb(),
-            "wall_s": time.perf_counter() - t0,
-        }
-        report["streamed_equals_resident_exact"] = streamed_steps == resident_steps
-
-    # Fresh-process replay from the saved mid-trajectory cut.
-    if cut_digest is not None:
-        report["fresh_process_replay"] = _replay_check(
-            args, family, cut_digest, streamed_session, store
-        )
-
-    # Decode the streamed final latent to a small PNG (real runs only).
+    # Decode the streamed final latent (before any offload perturbs the frozen model).
     if not args.tiny:
         image = streamed_adapter.decode(streamed_session, height=args.size, width=args.size)
         thumb = image.convert("RGB")
@@ -417,6 +375,58 @@ def stage_full(args):
             "pixels_sha256": hashlib.sha256(image.tobytes()).hexdigest(),
             "thumb_px": args.thumb,
         }
+
+    # Klein-4B residency claim: resident vs streamed, bitwise identical full trajectory.
+    # Building a resident adapter moves the transformer onto the card, so this runs after
+    # the streamed decode and gives the native reference a resident (on-card) model.
+    if family == "klein4b" or (args.tiny and args.residency_check):
+        _reset_peak()
+        t0 = time.perf_counter()
+        if not args.tiny:
+            resident_adapter = type(streamed_adapter).from_pipeline(
+                pipe, residency="resident", device=device
+            )
+        _, resident_steps, _ = adapter_trajectory(resident_adapter, enc_s)
+        report["resident"] = {
+            "per_step_digests": resident_steps,
+            "peak_vram_mb": _peak_vram_mb(),
+            "wall_s": time.perf_counter() - t0,
+        }
+        report["streamed_equals_resident_exact"] = streamed_steps == resident_steps
+
+    # Native reference: the ordinary diffusers forward (one full transformer call per step).
+    # 4B/tiny run resident; 9B and schnell do not fit, so this comparison alone uses
+    # accelerate sequential CPU offload. It runs last because offload hooks perturb the
+    # frozen transformer, which no adapter reuses afterwards.
+    native_adapter = resident_adapter if (family == "klein4b" or args.tiny) else streamed_adapter
+    if not args.tiny and family != "klein4b":
+        pipe.enable_sequential_cpu_offload()
+    _reset_peak()
+    t0 = time.perf_counter()
+    native_final, native_steps = native_trajectory(
+        native_adapter, enc_s, _clone_scheduler(native_adapter, enc_s, scheduler), family
+    )
+    report["native"] = {
+        "per_step_digests": native_steps,
+        "peak_vram_mb": _peak_vram_mb(),
+        "wall_s": time.perf_counter() - t0,
+    }
+    report["stepped_vs_native_exact"] = streamed_steps == native_steps
+    if not report["stepped_vs_native_exact"]:
+        report["stepped_vs_native_final_max_abs"] = _max_abs(streamed_final_latent, native_final)
+    if not args.tiny and family != "klein4b":
+        pipe.remove_all_hooks()
+
+    # Free the large models before the fresh-process replay so two transformers are never
+    # co-resident, then hydrate the mid-trajectory cut in a separate interpreter.
+    if cut_digest is not None:
+        if not args.tiny:
+            streamed_session = streamed_adapter = native_adapter = pipe = None
+            resident_adapter = None
+            _free()
+        report["fresh_process_replay"] = _replay_check(
+            args, family, cut_digest, streamed_final_digest, store
+        )
 
     report["elapsed_s"] = time.perf_counter() - started
     report["peak_rss_mb"] = _rss_mb()
@@ -445,12 +455,11 @@ def _max_abs(a, b):
     return float((a.detach().float().cpu() - b.detach().float().cpu()).abs().max())
 
 
-def _replay_check(args, family, cut_digest, in_process_session, store):
+def _replay_check(args, family, cut_digest, in_process_final, store):
     """Run a fresh interpreter (subprocess) that hydrates the cut and finishes it."""
     import subprocess
     import sys
 
-    in_process_final = _digest(in_process_session.read("latent"))
     if args.tiny:
         # No subprocess needed for tiny: hydrate in a fresh adapter object here.
         fresh_adapter, enc, _ = build_tiny(family, "streamed", "cpu")
