@@ -28,6 +28,7 @@ The checkout selects Python 3.12 for uv; the package also supports Python 3.10+.
 The checked-in lockfile pins a development environment; `pip` installs the public dependencies.
 Install only `.[ar]`, `.[diffusion]`, or `.[train]` when you need one lane. Bare installation
 supports metadata inspection and JSON-only custom adapters without importing PyTorch.
+Add `.[interop]` for the SAELens / TransformerLens example.
 
 ## One complete transaction
 
@@ -66,7 +67,7 @@ mid-layer cut exactly in a fresh interpreter. Full numbers are in
 
 | Family | Adapter | Real-weight checkpoints (max abs logit Δ vs native) | Parity | Limits |
 | --- | --- | --- | --- | --- |
-| gpt2 | Decoder | gpt2 — MacBook CPU (1.8e-4) | 16/16 greedy exact, fresh-process replay exact | learned absolute positions; gelu_new; eager |
+| gpt2 | Decoder | gpt2 — macOS arm64 CPU (1.8e-4) | 16/16 greedy exact, fresh-process replay exact | learned absolute positions; gelu_new; eager |
 | gpt_neox (Pythia) | Decoder | pythia-70m/160m/410m — `job-beeea1a95e3c` (1.6e-5 / 1.7e-6 / 3.8e-6) | 16/16 greedy exact, replay exact | MHA, parallel residual, partial rotary; untied |
 | llama | Decoder | SmolLM2-360M — `job-d75df96810fe` (2.2e-5) | 16/16 greedy exact, replay exact | `pretraining_tp==1`; default RoPE |
 | qwen2 | Qwen / Decoder | Qwen2.5-0.5B — `job-d75df96810fe` (1.8e-5) | 16/16 greedy exact, replay exact | full attention only, no sliding window |
@@ -77,11 +78,28 @@ mid-layer cut exactly in a fresh interpreter. Full numbers are in
 | mixtral | Decoder | tiny fixture only | bounded MoE parity | no cached checkpoint available |
 | gemma (Gemma-1) | Decoder | tiny fixture only | tiny-fixture parity | no cached checkpoint available |
 
-Real-weight runs used cached Beast (RTX 4080) checkpoints via one batched mrun job plus a
-supplementary pythia lease; gpt2 was measured on the MacBook CPU because it is not cached on Beast.
+Real-weight runs used cached checkpoints on an RTX 4080 (16 GB) host via one batched job plus a
+supplementary pythia job; gpt2 was measured on macOS arm64 CPU because it was not cached on that host.
 phi, gemma, mixtral, and mistral have no usable cached checkpoint (mistral only as a 7B that exceeds
 the VRAM budget), so they are exercised by the tiny-fixture suite only. See
 [family validation](experiments/family_validation/README.md).
+
+Diffusion adapters step the native FLUX transformer one projection / joint block / single block /
+readout at a time with the native flow Euler update and VAE. A transformer that does not fit the
+card runs **block-streamed**: weights stay in host memory and one native block is copied to the
+device at a time. Rows below were measured bf16, 512×512, 4 steps on an RTX 4080 (16 GB); "exact"
+means every per-step latent digest is equal. Reports and thumbnails are in
+[`experiments/diffusion_family_validation/results/`](experiments/diffusion_family_validation/results/README.md).
+
+| Family | Adapter | Real-weight checkpoint | Stepped = native | Streamed = resident | Fresh-process replay | Streamed peak VRAM |
+| --- | --- | --- | --- | --- | --- | --- |
+| FLUX.2 Klein-4B | `Flux2KleinAdapter` | `job-ece5315bc64b` | exact | exact | exact | 0.65 GB |
+| FLUX.2 Klein-9B | `Flux2KleinAdapter` | `job-6be0bc01cc95` | exact | — (does not fit resident) | exact | 1.07 GB |
+| FLUX.1-schnell | `Flux1Adapter` | `job-69b0e456925b` | exact | — (does not fit resident) | exact | 0.81 GB |
+| FLUX.1-dev | `Flux1Adapter` | tiny fixture only | tiny-fixture parity | — | — | no real checkpoint available |
+| FLUX.2 Klein 9B-KV | — | refused with a reason | — | — | — | reference-KV trajectory ABI |
+
+Text-only, batch one; no reference images, CFG, or LoRA. See [FLUX diffusion families](docs/diffusion-families.md).
 
 ## Run offline examples
 
@@ -146,7 +164,9 @@ It loads pinned Hugging Face checkpoints or your local cache. The
 | CausalPath and PortObservation | Model/parent/clock-validated route and effect evidence graph |
 | SymbolBinding and SymbolTable | Context/clock-qualified read-only debug symbols and sealed sidecars |
 | Trajectory and PathSchedule | Bounded temporal assays, first recorded divergence, observable recovery |
-| FLUX.2 Klein adapter | Step native joint/single blocks, write text/image carriers, replay saved suffixes |
+| FLUX.2 Klein and FLUX.1 adapters | Step native joint/single blocks resident or block-streamed, write text/image carriers, replay saved suffixes |
+| Model loader | `adapters.load()` dispatches decoder, Mamba-1, and Qwen checkpoints by `model_type` |
+| SAELens / TransformerLens interop | Find a feature with their hooks, intervene on Saturn's aligned carrier, replay the receipt |
 | Investigation | Same-parent causal panels with per-arm evidence and errors |
 | Program | Replay measured interventions within explicit recipient/context support |
 | ReplayBundle | Seal a measured program, local cut graph, receipts, environment and adapter provenance |
@@ -170,6 +190,7 @@ Start with [when and how to use each capability](docs/usage.md), then choose a
 - [Reversible training](docs/training.md)
 - [Write an adapter](docs/adapters.md)
 - [SAELens and TransformerLens interop](docs/interop.md)
+- [FLUX diffusion families and block-streamed residency](docs/diffusion-families.md)
 - [Pretrained model recipes](docs/pretrained.md)
 - [Build a writer, debug its futures, and replay](docs/writer-demo.md)
 - [Capabilities and numerical contracts](docs/capabilities.md)

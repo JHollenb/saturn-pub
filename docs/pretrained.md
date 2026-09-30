@@ -138,9 +138,11 @@ from diffusers import Flux2KleinPipeline
 from saturn_pub.adapters.flux2 import Flux2KleinAdapter
 
 pipe = Flux2KleinPipeline.from_pretrained("/path/to/FLUX.2-klein-9B", torch_dtype=torch.bfloat16)
-prompt_embeds = pipe.encode_prompt(prompt="a small red boat", device="cuda", num_images_per_prompt=1)[0]
-# Free the Qwen text encoder before the transformer loop, then keep the transformer in host memory.
-pipe.text_encoder.to("cpu")
+# The Qwen3-8B encoder is 16 GB in bf16; on a 16 GB card encode the one prompt on CPU.
+prompt_embeds = pipe.encode_prompt(
+    prompt="a small red boat", device="cpu", num_images_per_prompt=1
+)[0]
+# Keep the transformer in host memory; the adapter streams one block at a time.
 pipe.vae.to("cpu")
 adapter = Flux2KleinAdapter.from_pipeline(pipe, residency="streamed", device="cuda")
 ```
@@ -164,18 +166,23 @@ from saturn_pub.adapters.flux1 import Flux1Adapter
 
 pipe = FluxPipeline.from_pretrained("/path/to/FLUX.1-schnell", torch_dtype=torch.bfloat16)
 prompt_embeds, pooled, text_ids = pipe.encode_prompt(
-    prompt="a small red boat", prompt_2="a small red boat", device="cuda",
-    num_images_per_prompt=1, max_sequence_length=512,
+    prompt="a small red boat",
+    prompt_2="a small red boat",
+    device="cpu",  # T5-XXL + CLIP do not fit beside other work on a 16 GB card
+    num_images_per_prompt=1,
+    max_sequence_length=512,
 )
-# Encode once, then free T5-XXL and CLIP before loading/streaming the transformer.
-pipe.text_encoder.to("cpu")
-pipe.text_encoder_2.to("cpu")
 pipe.vae.to("cpu")
 adapter = Flux1Adapter.from_pipeline(pipe, residency="streamed", device="cuda")
 session = adapter.session(
-    latent=latent, conditioning=prompt_embeds, pooled=pooled,
-    img_ids=latent_image_ids.unsqueeze(0), txt_ids=text_ids.unsqueeze(0),
-    timesteps=timesteps, sigmas=pipe.scheduler.sigmas, guidance=None,
+    latent=latent,
+    conditioning=prompt_embeds,
+    pooled=pooled,
+    img_ids=latent_image_ids.unsqueeze(0),
+    txt_ids=text_ids.unsqueeze(0),
+    timesteps=timesteps,
+    sigmas=pipe.scheduler.sigmas,
+    guidance=None,
 )
 adapter.finish(session)
 image = adapter.decode(session, height=512, width=512)
@@ -185,4 +192,7 @@ image = adapter.decode(session, height=512, width=512)
 recipe end to end (prepare latents, ids, and schedule; stepped-vs-native parity; fresh-process
 replay; decode). Use `--local-files-only` with a local checkpoint whose license permits your use.
 The full transformer does not fit a 16 GB card resident; block streaming is required there, and
-CUDA is required for the real checkpoints.
+CUDA is required for the real checkpoints. Measured on an RTX 4080 (16 GB): encoding through
+accelerate sequential offload still peaked at 4.8 GB (Klein-9B) and 5.6 GB (schnell), so both encode
+on CPU; the streamed 4-step trajectory then peaked at 1.07 GB and 0.81 GB of VRAM with 22–26 GB of
+host RSS. See [measured results](../experiments/diffusion_family_validation/results/README.md).

@@ -134,10 +134,48 @@ Real-weight validation ran on cached checkpoints (fp32, `tf32` off, batch one, g
 `experiments/family_validation/run.py`). CUDA job `job-d75df96810fe` (RTX 4080) validated
 SmolLM2-360M (llama), Qwen2.5-0.5B (qwen2), Qwen3-0.6B (qwen3), and Mamba-130m/370m; supplementary
 CUDA job `job-beeea1a95e3c` validated pythia-70m/160m/410m (gpt_neox); gpt2 was validated on the
-MacBook CPU because it is not cached on Beast. Every validated checkpoint reproduced the native
+macOS arm64 CPU because it was not cached on the RTX 4080 host. Every validated checkpoint reproduced the native
 16-token greedy decode exactly and replayed a mid-layer cut exactly in a fresh interpreter; the
 max absolute logit delta ranged from 1.7e-6 to 1.8e-4 and peak VRAM stayed at or below 2.4 GB.
 phi, gemma, mixtral, and mistral had no usable cached checkpoint (mistral only as a 7B that exceeds
 the VRAM guardrail) and were left to the tiny-fixture suite. Measured rows and job ids are in
 `experiments/family_validation/results.json`. These runs do not establish cross-device or
 cross-kernel byte equality or any semantic capability.
+
+## FLUX diffusion families and block-streamed residency
+
+The FLUX.1 adapter, Klein-9B support, and block-streamed residency were validated on
+2026-09-30. Tiny-fixture tests cover stepped-vs-native flow parity, streamed-vs-resident bitwise
+equality, the frozen-model guard under streaming, the 9B-KV refusal, and FLUX.1 guidance gating.
+
+Real-weight validation (`experiments/diffusion_family_validation/run.py`, bf16, 512×512, 4 steps,
+seed 611, RTX 4080 16 GB) ran one family per job so only one large model was resident at a time:
+
+- Klein-4B (`job-ece5315bc64b`): stepped, resident, and native per-step latent digests are all
+  equal; streamed peak VRAM 0.65 GB against 7.5 GB resident.
+- Klein-9B (`job-6be0bc01cc95`) and FLUX.1-schnell (`job-69b0e456925b`): the streamed trajectory
+  equals the diffusers forward (run through accelerate sequential offload) at every step; streamed
+  peak VRAM 1.07 GB and 0.81 GB, host RSS 22.2 GB and 26.3 GB. Both encode the prompt on CPU;
+  sequential-offload encoding on the GPU peaked at 4.8 GB and 5.6 GB.
+- All three replay the step-2 `StateCut` in a fresh interpreter to the in-process final digest.
+
+An earlier Klein-4B job reported success while the runner inside it had failed on a device
+mismatch; the device resolution was fixed and the launch wrapper now fails the job when any family
+errors or any check is not exact. FLUX.1-dev was not validated on real weights. These runs do not
+establish image quality, prompt adherence, or cross-device/kernel byte equality.
+
+## SAELens and TransformerLens interop
+
+`examples/interop_saelens.py` ran on macOS arm64 CPU (fp32, GPT-2 small, `gpt2-small-res-jb`
+layer 6) and was reproduced by an independent rerun: Saturn's `layer:6` carrier matches
+TransformerLens `blocks.6.hook_resid_pre` within 2.2e-5; ablating SAE feature 14344 flips the next
+token from " London" to " Paris", and the same ablation through a TransformerLens hook agrees on
+next-token logits within 1.9e-4; both
+branches replay byte-for-byte in a fresh process. The feature was chosen from 12 prompt/layer
+configurations, and the dose response is not monotone (over-ablation returns " London").
+
+## Integrated release suite
+
+With the AR families, interop, and diffusion families merged, the full suite is **165 tests**,
+all passing on macOS arm64, Python 3.12, CPU, with the `ar`, `diffusion`, `train`, `interop`, and
+`dev` extras installed; none are skipped.

@@ -20,15 +20,15 @@ in this directory holds the merged measured table and the job ids.
 
 ## What ran where
 
-- **Beast (RTX 4080, fp32/cuda):** llama (SmolLM2-360M), qwen2 (Qwen2.5-0.5B), qwen3 (Qwen3-0.6B),
+- **RTX 4080 host (fp32/cuda):** llama (SmolLM2-360M), qwen2 (Qwen2.5-0.5B), qwen3 (Qwen3-0.6B),
   mamba-1 (mamba-130m-hf, mamba-370m-hf); gpt_neox (pythia-70m/160m/410m) in a supplementary lease
   because the Hugging Face hub `main` ref for those repos resolved to a snapshot without a weights
   file, so the run pinned the fully-cached step-revision snapshot directories.
-- **MacBook (CPU, fp32):** gpt2 (not cached on Beast; validated locally instead of copying weights).
+- **macOS arm64 (CPU, fp32):** gpt2 (not cached on the RTX 4080 host; validated locally instead of copying weights).
 
 ## Not validated on real weights (tiny-fixture parity only)
 
-- **phi, gemma, mixtral** -- no usable checkpoint cached on Beast.
+- **phi, gemma, mixtral** -- no usable checkpoint cached on the RTX 4080 host.
 - **mistral** -- only Mistral-7B-v0.1 is cached; its fp32/fp16 weights exceed the RTX 4080 VRAM
   guardrail, so it is left to the tiny fixture rather than risking an out-of-memory lease.
 

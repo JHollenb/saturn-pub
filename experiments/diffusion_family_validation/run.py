@@ -61,7 +61,7 @@ def _rss_mb() -> float | None:
         import sys
 
         peak = resource.getrusage(resource.RUSAGE_SELF).ru_maxrss
-        # macOS reports ru_maxrss in bytes; Linux (Beast) reports kibibytes.
+        # macOS reports ru_maxrss in bytes; Linux reports kibibytes.
         return peak / 2**20 if sys.platform == "darwin" else peak / 2**10
     except Exception:
         return None
@@ -165,7 +165,7 @@ def _session_keys(adapter):
 def _encode_device(family):
     # Klein-4B's encoder fits the 16 GB card and keeps the resident CUDA encode that produced
     # its measured result. Klein-9B's Qwen3-8B (16 GB bf16) and schnell's T5-XXL + CLIP do
-    # not: even accelerate sequential CPU offload peaked at 4.8 / 5.6 GB on Beast
+    # not: even accelerate sequential CPU offload peaked at 4.8 / 5.6 GB on an RTX 4080
     # (job-ae99a277e513, job-98d8bfa8554e). They encode the single prompt on CPU instead;
     # stepped and native trajectories share these embeddings, so parity is unaffected.
     return "cuda" if family == "klein4b" else "cpu"

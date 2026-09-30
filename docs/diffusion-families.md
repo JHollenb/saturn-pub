@@ -38,7 +38,7 @@ from saturn_pub.adapters.flux2 import Flux2KleinAdapter
 
 pipe = Flux2KleinPipeline.from_pretrained("/path/to/FLUX.2-klein-9B", torch_dtype=torch.bfloat16)
 pipe.remove_all_hooks()
-pipe.text_encoder.to("cpu")   # encode once, free before the transformer loop
+pipe.text_encoder.to("cpu")  # 16 GB Qwen3-8B: encode the prompt on CPU on a 16 GB card
 pipe.vae.to("cpu")
 adapter = Flux2KleinAdapter.from_pipeline(pipe, residency="streamed", device="cuda")
 ```

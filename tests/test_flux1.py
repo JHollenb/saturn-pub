@@ -96,7 +96,7 @@ def test_streamed_matches_resident_and_declares_residency(guidance):
     resident.finish(left)
     streamed.finish(right)
     # CPU-only equality exercises the streaming call path; cross-device bit-identity
-    # is validated on GPU (Beast). Same seed gives both adapters identical weights.
+    # is validated on GPU (RTX 4080). Same seed gives both adapters identical weights.
     assert torch.equal(left.read("latent"), right.read("latent"))
     # Host weights never moved, so the frozen-model guard still holds after streaming.
     streamed.validate_execution()

@@ -1,8 +1,8 @@
 # Measured results — RTX 4080 (16 GB), bf16, batch 1
 
 Real weights, 512×512, 4 steps, seed 611, prompt `a single small red boat on a plain white
-background`, diffusers 0.39.0 / transformers 5.14.1 / accelerate 1.14.0, run on Beast through
-mrun. Each `<family>.json` is the runner's full report (per-step latent digests for every
+background`, diffusers 0.39.0 / transformers 5.14.1 / accelerate 1.14.0, run on an RTX 4080
+host. Each `<family>.json` is the runner's full report (per-step latent digests for every
 trajectory, model identity, cut digest, peak memory); each `<family>.png` is a 256 px
 thumbnail of the decoded streamed trajectory.
 
