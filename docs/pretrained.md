@@ -93,3 +93,66 @@ python examples/flux2_hotfix.py \
 Replay loads supplied conditioning from the cut and skips prompt encoding and feedback selection.
 The model and VAE are content-bound; weights must be reconstructed separately. Same-program
 replay is an exactness claim; repair quality and portability need their own evidence.
+
+## FLUX.2 Klein-9B: block-streamed residency
+
+Klein-9B is a plain distilled `Flux2KleinPipeline` (8 joint + 24 single blocks, width 4096) whose
+17 GB transformer does not fit a 16 GB card resident. `Flux2KleinAdapter` streams it one native
+block at a time from host memory (`residency="streamed"`), so peak device memory is a single block
+plus activations. The 4B behavior, API, and receipts are unchanged; only streamed residency adds a
+declared field to the execution contract.
+
+```python
+import torch
+from diffusers import Flux2KleinPipeline
+from saturn_pub.adapters.flux2 import Flux2KleinAdapter
+
+pipe = Flux2KleinPipeline.from_pretrained("/path/to/FLUX.2-klein-9B", torch_dtype=torch.bfloat16)
+prompt_embeds = pipe.encode_prompt(prompt="a small red boat", device="cuda", num_images_per_prompt=1)[0]
+# Free the Qwen text encoder before the transformer loop, then keep the transformer in host memory.
+pipe.text_encoder.to("cpu")
+pipe.vae.to("cpu")
+adapter = Flux2KleinAdapter.from_pipeline(pipe, residency="streamed", device="cuda")
+```
+
+`Flux2KleinKVPipeline` (9B-KV reference-conditioned serving) is refused with a reason; see
+[FLUX diffusion families](diffusion-families.md).
+
+## FLUX.1-schnell: block-streamed residency
+
+`Flux1Adapter` steps the native `FluxTransformer2DModel` at the same projection/joint/single/readout
+cuts, with the native flow Euler update and VAE. FLUX.1 carries two conditioners: a T5-XXL sequence
+(`encoder_hidden_states`) and a CLIP pooled vector (`pooled_projections`). `schnell` has no guidance
+embedding; guidance-distilled variants (`dev`) gate one on `config.guidance_embeds` (tested on a
+tiny fixture; a real `dev` checkpoint was not available for this release). The 23 GB schnell
+transformer is streamed one block at a time.
+
+```python
+import torch
+from diffusers import FluxPipeline
+from saturn_pub.adapters.flux1 import Flux1Adapter
+
+pipe = FluxPipeline.from_pretrained("/path/to/FLUX.1-schnell", torch_dtype=torch.bfloat16)
+prompt_embeds, pooled, text_ids = pipe.encode_prompt(
+    prompt="a small red boat", prompt_2="a small red boat", device="cuda",
+    num_images_per_prompt=1, max_sequence_length=512,
+)
+# Encode once, then free T5-XXL and CLIP before loading/streaming the transformer.
+pipe.text_encoder.to("cpu")
+pipe.text_encoder_2.to("cpu")
+pipe.vae.to("cpu")
+adapter = Flux1Adapter.from_pipeline(pipe, residency="streamed", device="cuda")
+session = adapter.session(
+    latent=latent, conditioning=prompt_embeds, pooled=pooled,
+    img_ids=latent_image_ids.unsqueeze(0), txt_ids=text_ids.unsqueeze(0),
+    timesteps=timesteps, sigmas=pipe.scheduler.sigmas, guidance=None,
+)
+adapter.finish(session)
+image = adapter.decode(session, height=512, width=512)
+```
+
+`experiments/diffusion_family_validation/run.py` runs the memory-disciplined encode-then-stream
+recipe end to end (prepare latents, ids, and schedule; stepped-vs-native parity; fresh-process
+replay; decode). Use `--local-files-only` with a local checkpoint whose license permits your use.
+The full transformer does not fit a 16 GB card resident; block streaming is required there, and
+CUDA is required for the real checkpoints.
