@@ -10,7 +10,7 @@ import torch
 import transformers
 from transformers import DynamicCache, Qwen2Config, Qwen2ForCausalLM
 
-from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest
+from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest, TransitionSpec
 from ..core import Adapter, Session
 from ..values import clone, digest, identity
 
@@ -228,6 +228,34 @@ class QwenAdapter(Adapter):
             edge="before",
             next_operation=next_operation,
             local_clock=state["layer"],
+        )
+
+    def transition(self, state: Mapping[str, Any]) -> TransitionSpec:
+        phase = state["phase"]
+        if state["hidden"] is None:
+            reads, writes = ("tokens",), ("hidden", "logits", "phase")
+        elif state["layer"] < self.layers:
+            reads = ("tokens", "hidden", "keys", "values", "layer")
+            writes = ("hidden", "keys", "values", "layer", "phase")
+        elif self.granularity == "operation":
+            reads, writes = {
+                "normalization": (("hidden",), ("hidden", "phase")),
+                "readout": (("hidden",), ("logits", "phase")),
+                "sample": (("logits",), ("sampled_token", "phase")),
+                "commit": (
+                    ("tokens", "sampled_token"),
+                    ("tokens", "hidden", "sampled_token", "layer", "phase"),
+                ),
+            }[phase]
+        else:
+            reads = ("hidden", "tokens")
+            writes = ("logits", "tokens", "hidden", "layer", "phase")
+        return TransitionSpec(
+            self.point(state).next_operation,
+            reads,
+            writes,
+            consumer="native-qwen2-suffix",
+            footprint="declared",
         )
 
     def surface(self, state: Mapping[str, Any]) -> SurfaceManifest:

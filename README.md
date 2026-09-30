@@ -60,6 +60,7 @@ Exactness means a named state boundary and numerical program, not agreement acro
 python examples/ar_debug.py
 python examples/debugger_replay.py
 python examples/software_debugger.py
+python examples/debugging_repair.py
 python examples/diffusion_debug.py
 python examples/causal_panel.py
 python examples/measured_program.py
@@ -86,6 +87,11 @@ replay, emits a cut/receipt-linked causal path, deduplicates state pages, and re
 data-bearing ReplayBundle into a fresh store. `structural_rewind.py` separately snapshots and
 reopens graph/rules/memory/cursor futures through an empty-model, optimizer-free training boundary.
 
+`debugging_repair.py` follows an early deletion through a supplied redundant-writer neural
+circuit, observes native repair, suppresses that repair, measures collateral, and replays both
+suffixes in fresh processes. [Symbols and causal paths](docs/debug-symbols-paths.md) explains
+qualified symbols, operation backtraces, temporal schedules, and recovery-window comparisons.
+
 ## Research tools
 
 [Hands-on notebooks](notebooks/README.md) show GDB-style model stepping, boundary
@@ -109,6 +115,8 @@ It loads pinned Hugging Face checkpoints or your local cache. The
 | Local debugger | Step, inspect, read, capture, fork, intervene, continue, compare, restore |
 | Observer and WatchEvent | Branch-local change/threshold/nonfinite watches with retained safe-point cuts |
 | CausalPath and PortObservation | Model/parent/clock-validated route and effect evidence graph |
+| SymbolBinding and SymbolTable | Context/clock-qualified read-only debug symbols and sealed sidecars |
+| Trajectory and PathSchedule | Bounded temporal assays, first recorded divergence, observable recovery |
 | FLUX.2 Klein adapter | Step native joint/single blocks, write text/image carriers, replay saved suffixes |
 | Investigation | Same-parent causal panels with per-arm evidence and errors |
 | Program | Replay measured interventions within explicit recipient/context support |
@@ -128,6 +136,7 @@ Start with [when and how to use each capability](docs/usage.md), then choose a
 
 - [Architecture and scope](docs/architecture.md)
 - [Debugger](docs/debugging.md)
+- [Symbols, provenance, and debugging repair](docs/debug-symbols-paths.md)
 - [Experiments and programs](docs/experiments.md)
 - [Reversible training](docs/training.md)
 - [Write an adapter](docs/adapters.md)

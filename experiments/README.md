@@ -7,6 +7,7 @@ Generated states and results belong in `outputs/`, which is ignored by Git.
 | Experiment | Process | Consumer |
 |---|---|---|
 | [FLUX.2 writer](flux2_writer/README.md) | Capture paired states, fit a writer, evaluate futures, restore, replay | Native rendered RGB |
+| [Debugging repair](debugging_repair/README.md) | Follow a deletion, native repair, repair suppression, and collateral; replay suffixes in fresh processes | Supplied neural circuit's threshold consumer |
 
 Each recipe declares supplied inputs, fitted quantities, observations, exact mechanics,
 and the scope of its claims. Reference results illustrate one measured development

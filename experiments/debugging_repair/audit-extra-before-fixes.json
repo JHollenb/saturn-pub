@@ -1,0 +1,9 @@
+{
+  "date": "2026-09-29",
+  "stage": "additional-before-audit-fixes",
+  "observations": [
+    {"probe": "false-temporal-offsets", "accepted_offsets": [100, 101, 102, 103], "verification_refused": false},
+    {"probe": "already-qualified-stale-address", "incoming_point": "wrong-clock", "incoming_schema": "wrong-schema", "silently_rebound": true}
+  ],
+  "interpretation": "Historical engineering reproductions. Corrected behavior is tested separately."
+}
