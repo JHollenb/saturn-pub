@@ -3,6 +3,7 @@
 Tiny random UNet on CPU in fp32; no checkpoints. The rule mirrors the autoregressive lane:
 hash only at explicit cuts, keep denoising-step branching bit-exact.
 """
+
 from __future__ import annotations
 
 import pytest

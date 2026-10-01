@@ -4,6 +4,7 @@ Fast skips the per-transition defensive re-verification (an O(state) content has
 unwritten slot each step) and trusts a registered adapter's ``advance``; it must still produce
 identical tokens, logits, receipt cut fingerprints, and fresh-process replay.
 """
+
 from __future__ import annotations
 
 import pytest

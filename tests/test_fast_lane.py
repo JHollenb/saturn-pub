@@ -4,6 +4,7 @@ Every fixture is a tiny random-config model on CPU in fp32; no checkpoints are d
 Real-model GPU throughput and parity are measured on a scheduler (see
 experiments/2026-09-30-saturn-pub-fast-lane).
 """
+
 from __future__ import annotations
 
 import pytest

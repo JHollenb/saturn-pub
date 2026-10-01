@@ -657,7 +657,9 @@ class Session:
         self.attempts: list[Receipt] = []
         seed = adapter.custody_seed(state)
         self._custody = (
-            seed if seed is not None else digest({"schema": _TOKEN_CUSTODY_SCHEMA, "parent": parent})
+            seed
+            if seed is not None
+            else digest({"schema": _TOKEN_CUSTODY_SCHEMA, "parent": parent})
         )
 
     def inspect(self) -> Frame:
@@ -956,9 +958,7 @@ class Session:
             self._failed("continue", before, exc)
             raise
 
-    def generate(
-        self, count: int, *, sampler: Any = "greedy", seed: int | None = None
-    ) -> Receipt:
+    def generate(self, count: int, *, sampler: Any = "greedy", seed: int | None = None) -> Receipt:
         """Native fast lane: roughly one native forward per token, not per layer.
 
         Custody between cuts is token-level only -- a sha256 hash chain over the generated
