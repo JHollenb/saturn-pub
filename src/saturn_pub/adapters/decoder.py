@@ -1173,31 +1173,27 @@ class DecoderAdapter(Adapter):
         logits = out.logits[:, -1]
         cache = out.past_key_values
         cache_len = pad_to
-        generated: list[list[int]] = [[] for _ in range(batch)]
-        current = self._sample(logits, sampler, generator)
-        for index in range(batch):
-            generated[index].append(int(current[index, 0]))
+        current = self._sample(logits, sampler, generator)  # (B, 1): first token from prefill
+        collected = [current]
+        # position of the first fed token per row = its prompt length (positions 0..len-1 used);
+        # kept as a tensor and incremented in place to avoid per-step Python work.
+        positions = torch.tensor([[length] for length in lengths], device=self.device)
         for _ in range(count - 1):
-            step_positions = torch.tensor(
-                [[lengths[index] + len(generated[index]) - 1] for index in range(batch)],
-                dtype=torch.long,
-                device=self.device,
-            )
             mask[:, cache_len] = 1
             out = self.model(
                 input_ids=current,
                 attention_mask=mask[:, : cache_len + 1],
-                position_ids=step_positions,
+                position_ids=positions,
                 past_key_values=cache,
                 use_cache=True,
                 cache_position=torch.tensor([cache_len], device=self.device),
             )
-            logits = out.logits[:, -1]
             cache = out.past_key_values
             cache_len += 1
-            current = self._sample(logits, sampler, generator)
-            for index in range(batch):
-                generated[index].append(int(current[index, 0]))
+            positions = positions + 1
+            current = self._sample(out.logits[:, -1], sampler, generator)
+            collected.append(current)
+        generated: list[list[int]] = torch.cat(collected, dim=1).tolist()
         custody = []
         for row, row_tokens in zip(rows, generated):
             head = digest(
