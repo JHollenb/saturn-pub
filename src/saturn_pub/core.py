@@ -1025,6 +1025,55 @@ class Session:
         self.receipts.append(receipt)
         return receipt
 
+    def run_native(
+        self, until: Callable[[Mapping[str, Any]], bool], *, max_steps: int = 1_000_000
+    ) -> Receipt:
+        """Fast lane for adapters whose ``advance`` step is already their native granularity
+        (e.g. diffusion denoise blocks): run ``advance`` back to back until ``until(state)``,
+        without the per-step capture/_cut/describe that :meth:`continue_` does.
+
+        ``continue_`` sha256-hashes the full state (a GPU->CPU copy of every tensor, incl. the
+        latent and conditioning) twice per step plus the declared-footprint re-hash; this skips
+        all of it. Custody between cuts is step-level only -- a sha256 chain over cheap
+        execution-point descriptors, no tensor content -- and one receipt summarizes the span.
+        Explicit cuts (capture/fork/step/restore) still fingerprint tensors, so denoising-step
+        branching via :meth:`fork`/:meth:`step` stays bit-exact; this is the 'hash only at cuts'
+        bulk-run path.
+        """
+        if not callable(until):
+            raise ValueError("run_native requires an `until(state)` stop predicate")
+        self._activate()
+        self.adapter.validate_execution()
+        parent_custody = self._custody
+        head = parent_custody
+        state: Mapping[str, Any] = self._state
+        steps = 0
+        while not until(state):
+            if steps >= max_steps:
+                raise ValueError("run_native exceeded max_steps before the stop predicate")
+            point = self.adapter.point(state).to_dict()
+            state = dict(self.adapter.advance(state))
+            head = fold_custody(head, f"advance:{digest(point)}")
+            steps += 1
+        self.adapter.validate(state)
+        receipt = Receipt.make(
+            operation="run_native",
+            lane="native-fast",
+            parent_custody=parent_custody,
+            result_custody=head,
+            steps=steps,
+            model_identity=self.adapter.model_identity,
+            execution=dict(self.adapter.execution),
+            boundary=self.adapter.boundary(state),
+            execution_point=dict(self.adapter.point(state).to_dict()),
+            numerical_contract=self.adapter.numerical_contract().to_dict(),
+        )
+        self._state = clone(state) if state is self._state else state
+        self._external_state = clone(self.adapter.capture_external())
+        self._custody = head
+        self.receipts.append(receipt)
+        return receipt
+
     def step(self, *, granularity: str = "transition", max_steps: int = 10000) -> Receipt:
         if granularity == "transition":
             return self.continue_(1)

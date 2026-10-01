@@ -604,10 +604,15 @@ class Flux2KleinAdapter(Adapter):
         return out
 
     def finish(self, session):
+        """Run the remaining trajectory on the native fast lane (hash only at cuts).
+
+        Uses ``Session.run_native`` so the bulk denoise does not sha256 the full latent +
+        conditioning per block the way ``continue_`` does; capture/fork/step still fingerprint
+        tensors, so denoising-step branching stays bit-exact.
+        """
         if session.adapter is not self:
             raise ValueError("session belongs to another adapter")
-        while session._state["step"] < len(session._state["timesteps"]):
-            session.continue_()
+        return session.run_native(lambda state: state["step"] == len(state["timesteps"]))
 
     @torch.inference_mode()
     def decode(self, session, *, height, width):

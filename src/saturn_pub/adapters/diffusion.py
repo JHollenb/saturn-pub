@@ -436,6 +436,17 @@ class DiffusionAdapter(Adapter):
             out["step"] += 1
         return out
 
+    def finish(self, session: Session):
+        """Run the remaining denoise trajectory on the native fast lane (hash only at cuts).
+
+        Uses ``Session.run_native`` so the bulk denoise does not sha256 the full latent +
+        conditioning per step the way ``continue_`` does; capture/fork/step still fingerprint
+        tensors, so denoising-step branching stays bit-exact.
+        """
+        if session.adapter is not self:
+            raise ValueError("session belongs to another adapter")
+        return session.run_native(lambda state: state["step"] == len(state["timesteps"]))
+
     @torch.inference_mode()
     def decode(self, session: Session) -> torch.Tensor:
         if session.adapter is not self or session._state["step"] != len(
