@@ -441,6 +441,12 @@ class DecoderAdapter(Adapter):
         config = model.config
         self.backbone = getattr(model, spec.backbone)
         self._layer_modules = getattr(self.backbone, spec.layers)
+        # Resolve the output projection the transformers-standard way instead of hardcoding
+        # ``lm_head``: some families/versions name it differently (e.g. GPT-NeoX exposes it as
+        # ``embed_out`` on transformers<=5.13), and ``get_output_embeddings`` returns the right module.
+        self._lm_head = model.get_output_embeddings()
+        if self._lm_head is None:
+            raise ValueError("model exposes no output embedding projection (get_output_embeddings)")
         self.layers = len(self._layer_modules)
         self.hidden_size = config.hidden_size
         self.vocab_size = config.vocab_size
@@ -810,13 +816,14 @@ class DecoderAdapter(Adapter):
         if set(state) != expected_keys:
             raise ValueError("decoder state schema keys differ from the execution contract")
         tokens = state["tokens"]
-        if (
-            tokens.ndim != 2
-            or tokens.shape[0] != 1
-            or tokens.dtype != torch.long
-            or tokens.device != self.device
-        ):
+        if tokens.ndim != 2 or tokens.shape[0] != 1 or tokens.dtype != torch.long:
             raise ValueError("decoder state requires batch-one integer tokens")
+        if tokens.device != self.device:
+            raise ValueError(
+                f"state tensors are on {tokens.device} but the adapter is on {self.device}; "
+                f"hydrate the cut onto the adapter's device, e.g. "
+                f"LocalStore.load(cut_id, device='{self.device.type}')"
+            )
         if not 0 < tokens.shape[1] <= self.max_positions:
             raise ValueError("token count outside configured context")
         self._guard_window(tokens.shape[1])
@@ -926,7 +933,7 @@ class DecoderAdapter(Adapter):
             out["hidden"] = getattr(self.backbone, self.spec.final_norm)(hidden)
             out["phase"] = "readout"
         elif self.granularity == "operation" and out["phase"] == "readout":
-            out["logits"] = self.model.lm_head(hidden)[:, -1]
+            out["logits"] = self._lm_head(hidden)[:, -1]
             out["phase"] = "sample"
         elif self.granularity == "operation" and out["phase"] == "sample":
             out["sampled_token"] = out["logits"].argmax(-1, keepdim=True)
@@ -939,7 +946,7 @@ class DecoderAdapter(Adapter):
             out["phase"] = "embed"
         else:
             final_norm = getattr(self.backbone, self.spec.final_norm)
-            logits = self.model.lm_head(final_norm(hidden))[:, -1]
+            logits = self._lm_head(final_norm(hidden))[:, -1]
             out["logits"] = logits
             out["tokens"] = torch.cat((tokens, logits.argmax(-1, keepdim=True)), dim=-1)
             out["hidden"] = None

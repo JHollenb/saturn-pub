@@ -107,6 +107,10 @@ Scientific metrics belong in an evaluator; a state difference alone is not a cap
 requires the exact current shape and dtype. Quote a JSON array containing spaces.
 Unknown addresses, read-only state, or invalid shapes are refused by the adapter.
 
+`LocalStore.load(cut_id, device=...)` hydrates the cut's tensors onto a device (default `"cpu"`).
+For a fresh-process replay on GPU, rebuild the model on the same device **and** load the cut with
+`device="cuda"`; otherwise `Session.from_cut` refuses the state and names the device mismatch.
+
 `load DIRECTORY DIGEST NAME` loads a durable cut, verifies payload and compatibility, and
 names it without modifying the current branch. `restore NAME` then restores it explicitly.
 `saturn-pub inspect DIRECTORY DIGEST` verifies only the descriptor without loading torch;
