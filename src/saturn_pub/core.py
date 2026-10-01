@@ -23,6 +23,19 @@ from .values import clone, describe, digest, tensor
 
 _OPERATION_REGISTRY: dict[tuple[str, str], tuple[str, Callable[..., Any], bool]] = {}
 
+_TOKEN_CUSTODY_SCHEMA = "saturn-pub-token-custody-v1"
+
+
+def fold_custody(head: str, event: str) -> str:
+    """Advance a token-level sha256 hash chain by one event.
+
+    The native fast lane uses this instead of per-step tensor fingerprints: custody between
+    explicit cuts is a chain over generated token ids and events (``generate``/``commit``),
+    carrying no tensor content. It is reproducible across processes because it depends only on
+    the seed and the ordered events.
+    """
+    return hashlib.sha256((head + "\x1e" + event).encode()).hexdigest()
+
 
 def _portable_code(code: CodeType) -> CodeType:
     """Remove source-location metadata while preserving executable semantics."""
@@ -565,6 +578,29 @@ class Adapter(ABC):
     def numerical_contract(self) -> NumericalContract:
         return NumericalContract(program=str(self.execution.get("adapter", "custom-adapter")))
 
+    def custody_seed(self, state: Mapping[str, Any]) -> str | None:
+        """Seed for the token-level custody chain (no tensor fingerprints).
+
+        Returning ``None`` (the default) means the adapter has no token-level lane; the Session
+        seeds a bare chain from its parent so the field is always present.
+        """
+        return None
+
+    def at_native_boundary(self, state: Mapping[str, Any]) -> bool:
+        """True when the native fast lane (:meth:`Session.generate`) may run from this state.
+
+        Adapters with a ``native_decode`` method override this to mark the boundary their fast
+        lane starts from (e.g. a decoder token boundary). Default: no fast lane.
+        """
+        return False
+
+    def boundary_token_count(self, state: Mapping[str, Any]) -> int:
+        """Monotonic token counter used to detect when a mid-token completion finishes.
+
+        Only consulted by the fast lane for adapters that expose ``native_decode``.
+        """
+        raise NotImplementedError("adapter does not define a token boundary counter")
+
     def transition(self, state: Mapping[str, Any]) -> TransitionSpec:
         """Describe the next safe transition; unspecified footprints stay unknown."""
         return TransitionSpec(self.point(state).next_operation or "advance")
@@ -619,6 +655,10 @@ class Session:
         self.receipts: list[Receipt] = []
         self.history: list[StateCut] = []
         self.attempts: list[Receipt] = []
+        seed = adapter.custody_seed(state)
+        self._custody = (
+            seed if seed is not None else digest({"schema": _TOKEN_CUSTODY_SCHEMA, "parent": parent})
+        )
 
     def inspect(self) -> Frame:
         self._activate()
@@ -915,6 +955,75 @@ class Session:
             self.adapter.restore_external(external)
             self._failed("continue", before, exc)
             raise
+
+    def generate(
+        self, count: int, *, sampler: Any = "greedy", seed: int | None = None
+    ) -> Receipt:
+        """Native fast lane: roughly one native forward per token, not per layer.
+
+        Custody between cuts is token-level only -- a sha256 hash chain over the generated
+        token ids -- so no tensor is hashed or cloned per token. Materialize and fingerprint
+        tensors on demand with :meth:`capture`/:meth:`fork`/:meth:`restore`/:meth:`compare`;
+        :meth:`continue_` remains the fine-grained path for stopping *inside* a token.
+
+        ``sampler`` is ``"greedy"`` (default) or a mapping of sampling parameters
+        (``temperature``/``top_k``/``top_p``). With ``seed`` the sampler is replayable: the seed
+        is recorded in the receipt and drives a ``torch.Generator`` so a fresh-process replay
+        reproduces the tokens. If the session is mid-token, the current token is first completed
+        on the fine-grained path (honoring any mid-token intervention) before the lane engages.
+        """
+        if isinstance(count, bool) or not isinstance(count, int) or count < 1:
+            raise ValueError("generation budget must be a positive integer")
+        if not hasattr(self.adapter, "native_decode"):
+            raise ValueError("this adapter has no native fast lane; use continue_()/step()")
+        self._activate()
+        self.adapter.validate_execution()
+        remaining = count
+        last_receipt: Receipt | None = None
+        while remaining > 0 and not self.adapter.at_native_boundary(self._state):
+            start = self.adapter.boundary_token_count(self._state)
+            guard = 0
+            while self.adapter.boundary_token_count(self._state) == start:
+                last_receipt = self.continue_()
+                guard += 1
+                if guard > 1_000_000:
+                    raise ValueError("token boundary not reached within the step budget")
+            remaining -= 1
+        if remaining < 1:
+            return last_receipt
+        parent_custody = self._custody
+        generator = None
+        if seed is not None:
+            import torch
+
+            generator = torch.Generator()
+            generator.manual_seed(int(seed) & 0x7FFFFFFFFFFFFFFF)
+        new_state, info = self.adapter.native_decode(
+            self._state, remaining, sampler=sampler, generator=generator
+        )
+        head = parent_custody
+        for token_id in info["generated"]:
+            head = fold_custody(head, f"generate:{int(token_id)}")
+        receipt = Receipt.make(
+            operation="generate",
+            lane="native-fast",
+            parent_custody=parent_custody,
+            result_custody=head,
+            model_identity=self.adapter.model_identity,
+            execution=dict(self.adapter.execution),
+            boundary=self.adapter.boundary(new_state),
+            execution_point=dict(self.adapter.point(new_state).to_dict()),
+            numerical_contract=self.adapter.numerical_contract().to_dict(),
+            tokens_generated=[int(token_id) for token_id in info["generated"]],
+            count=remaining,
+            sampler=info.get("sampler", "custom"),
+            seed=seed,
+        )
+        self._state = new_state
+        self._external_state = clone(self.adapter.capture_external())
+        self._custody = head
+        self.receipts.append(receipt)
+        return receipt
 
     def step(self, *, granularity: str = "transition", max_steps: int = 10000) -> Receipt:
         if granularity == "transition":

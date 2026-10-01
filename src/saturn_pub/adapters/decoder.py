@@ -23,7 +23,7 @@ import transformers
 from transformers import DynamicCache
 
 from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest, TransitionSpec
-from ..core import Adapter, Session
+from ..core import Adapter, Receipt, Session, fold_custody
 from ..values import clone, digest, identity
 
 
@@ -992,13 +992,259 @@ class DecoderAdapter(Adapter):
             out["phase"] = "embed"
         return out
 
-    def generate(self, session: Session, tokens: int = 1) -> None:
-        if tokens < 1:
-            raise ValueError("generation budget must be positive")
-        for _ in range(tokens):
-            initial = session.read("tokens").shape[1]
-            while session.read("tokens").shape[1] == initial:
-                session.continue_()
+    # --- native fast lane ---------------------------------------------------------------
+
+    def at_native_boundary(self, state: Mapping[str, Any]) -> bool:
+        return state["hidden"] is None and state["layer"] == 0 and state["phase"] == "embed"
+
+    def boundary_token_count(self, state: Mapping[str, Any]) -> int:
+        return int(state["tokens"].shape[1])
+
+    def custody_seed(self, state: Mapping[str, Any]) -> str:
+        return digest(
+            {
+                "schema": "saturn-pub-decoder-token-custody-v1",
+                "model_identity": self.model_identity,
+                "tokens": state["tokens"][0].tolist(),
+            }
+        )
+
+    def _sample(
+        self, logits: torch.Tensor, sampler: Any, generator: torch.Generator | None
+    ) -> torch.Tensor:
+        """``logits`` is (B, vocab); returns (B, 1) long token ids.
+
+        Greedy argmax runs on-device and is bit-exact and deterministic. A sampling mapping
+        (``temperature``/``top_k``/``top_p``) draws with ``torch.multinomial`` on CPU under the
+        given generator so that a fresh-process replay with the same seed reproduces the draw.
+        """
+        if sampler is None or sampler == "greedy":
+            return logits.argmax(dim=-1, keepdim=True)
+        if not isinstance(sampler, Mapping):
+            raise ValueError("sampler must be 'greedy' or a mapping of sampling parameters")
+        temperature = float(sampler.get("temperature", 1.0))
+        if temperature <= 0:
+            return logits.argmax(dim=-1, keepdim=True)
+        scaled = logits.float() / temperature
+        top_k = sampler.get("top_k")
+        if top_k:
+            k = min(int(top_k), scaled.shape[-1])
+            kth = scaled.topk(k, dim=-1).values[:, -1, None]
+            scaled = scaled.masked_fill(scaled < kth, float("-inf"))
+        top_p = sampler.get("top_p")
+        if top_p is not None and 0 < float(top_p) < 1:
+            ordered, order = torch.sort(scaled, descending=True, dim=-1)
+            cumulative = torch.softmax(ordered, dim=-1).cumsum(dim=-1)
+            drop = cumulative - torch.softmax(ordered, dim=-1) > float(top_p)
+            ordered = ordered.masked_fill(drop, float("-inf"))
+            scaled = torch.empty_like(scaled).scatter(-1, order, ordered)
+        probs = torch.softmax(scaled, dim=-1).to("cpu")
+        choice = torch.multinomial(probs, num_samples=1, generator=generator)
+        return choice.to(logits.device)
+
+    @torch.inference_mode()
+    def native_decode(
+        self,
+        state: Mapping[str, Any],
+        count: int,
+        *,
+        sampler: Any = "greedy",
+        generator: torch.Generator | None = None,
+    ) -> tuple[dict[str, Any], dict[str, Any]]:
+        """Run ``count`` native incremental-decode steps from a token boundary.
+
+        One full native forward per token over the external KV cache (``use_cache=True``), not
+        one layer per :meth:`Session.continue_`. Returns ``(new_state, info)`` where ``new_state``
+        is a valid token-boundary state (the cache holds every token except the final generated
+        one, exactly as the fine-grained path leaves it) and ``info['generated']`` is the ordered
+        list of generated token ids. Clones the cache once, at the end -- never per token.
+        """
+        self.validate(state)
+        if not self.at_native_boundary(state):
+            raise ValueError("native fast lane requires a token boundary (phase='embed')")
+        tokens = state["tokens"].to(self.device)
+        cache = self._cache(state["keys"], state["values"])
+        cache_len = cache.get_seq_length()
+        if cache_len != tokens.shape[1] - 1:
+            raise ValueError("KV cache length is inconsistent with the token boundary")
+        current = tokens[:, -1:]
+        generated: list[int] = []
+        last_logits: torch.Tensor | None = None
+        for _ in range(count):
+            if tokens.shape[1] >= self.max_positions:
+                raise ValueError("context capacity reached")
+            position = torch.tensor([[cache_len]], device=self.device)
+            out = self.model(
+                current,
+                past_key_values=cache,
+                use_cache=True,
+                position_ids=position,
+                cache_position=torch.tensor([cache_len], device=self.device),
+            )
+            last_logits = out.logits[:, -1]
+            next_token = self._sample(last_logits, sampler, generator)
+            cache = out.past_key_values
+            cache_len += 1
+            tokens = torch.cat((tokens, next_token), dim=-1)
+            current = next_token
+            generated.append(int(next_token))
+        keys, values = self._cache_values(cache)
+        # Leave the final token's logits in the boundary state, exactly as the fused
+        # readout/commit of the fine-grained path does, so the two paths are payload-identical.
+        new_state = {
+            "tokens": tokens,
+            "keys": keys,
+            "values": values,
+            "layer": 0,
+            "phase": "embed",
+            "hidden": None,
+            "logits": None if last_logits is None else last_logits.clone(),
+            "sampled_token": None,
+        }
+        self.validate(new_state)
+        return new_state, {
+            "generated": generated,
+            "sampler": sampler if isinstance(sampler, str) else "custom",
+        }
+
+    @torch.inference_mode()
+    def batch_generate(
+        self,
+        prompts: Sequence[Sequence[int]],
+        count: int,
+        *,
+        sampler: Any = "greedy",
+        seed: int | None = None,
+    ) -> dict[str, Any]:
+        """Decode ``B`` prompts in one native batch for throughput (left-padded).
+
+        Each row gets its own attention-mask row and explicit RoPE/absolute positions, exactly
+        like a single-row decode, so unequal-length prompts are supported. Returns the generated
+        token rows and a per-row token-level custody chain -- no tensor fingerprints.
+
+        Numerical contract: batched-kernel numerics. Greedy argmax can differ from a B=1 decode
+        on near-ties, and run-to-run CUDA determinism is not claimed; pair any published number
+        with a B=1 parity subset. A single row can be reopened for fine-grained debugging with
+        ``adapter.session(prompt + generated[:-1])`` (an exact re-prefill).
+        """
+        if isinstance(count, bool) or not isinstance(count, int) or count < 1:
+            raise ValueError("generation budget must be a positive integer")
+        rows = [list(prompt) for prompt in prompts]
+        if not rows:
+            raise ValueError("batch_generate requires at least one prompt")
+        self.validate_execution()
+        lengths = [len(row) for row in rows]
+        if any(length < 1 for length in lengths):
+            raise ValueError("every prompt needs at least one token")
+        batch = len(rows)
+        pad_to = max(lengths)
+        if pad_to + count > self.max_positions:
+            raise ValueError("prompt + generation budget exceeds the configured context")
+        generator = None
+        if seed is not None:
+            generator = torch.Generator()
+            generator.manual_seed(int(seed) & 0x7FFFFFFFFFFFFFFF)
+        input_ids = torch.zeros((batch, pad_to), dtype=torch.long, device=self.device)
+        mask = torch.zeros((batch, pad_to + count), dtype=torch.long, device=self.device)
+        for index, (row, length) in enumerate(zip(rows, lengths)):
+            if min(row) < 0 or max(row) >= self.vocab_size:
+                raise ValueError("prompt token id outside vocabulary")
+            input_ids[index, pad_to - length :] = torch.tensor(row, device=self.device)
+            mask[index, pad_to - length : pad_to] = 1
+        prefill_mask = mask[:, :pad_to]
+        positions = (prefill_mask.cumsum(dim=1) - 1).clamp(min=0)
+        cache = DynamicCache(config=self.model.config)
+        out = self.model(
+            input_ids=input_ids,
+            attention_mask=prefill_mask,
+            position_ids=positions,
+            past_key_values=cache,
+            use_cache=True,
+        )
+        logits = out.logits[:, -1]
+        cache = out.past_key_values
+        cache_len = pad_to
+        generated: list[list[int]] = [[] for _ in range(batch)]
+        current = self._sample(logits, sampler, generator)
+        for index in range(batch):
+            generated[index].append(int(current[index, 0]))
+        for _ in range(count - 1):
+            step_positions = torch.tensor(
+                [[lengths[index] + len(generated[index]) - 1] for index in range(batch)],
+                dtype=torch.long,
+                device=self.device,
+            )
+            mask[:, cache_len] = 1
+            out = self.model(
+                input_ids=current,
+                attention_mask=mask[:, : cache_len + 1],
+                position_ids=step_positions,
+                past_key_values=cache,
+                use_cache=True,
+                cache_position=torch.tensor([cache_len], device=self.device),
+            )
+            logits = out.logits[:, -1]
+            cache = out.past_key_values
+            cache_len += 1
+            current = self._sample(logits, sampler, generator)
+            for index in range(batch):
+                generated[index].append(int(current[index, 0]))
+        custody = []
+        for row, row_tokens in zip(rows, generated):
+            head = digest(
+                {
+                    "schema": "saturn-pub-decoder-token-custody-v1",
+                    "model_identity": self.model_identity,
+                    "tokens": row,
+                }
+            )
+            for token_id in row_tokens:
+                head = fold_custody(head, f"generate:{int(token_id)}")
+            custody.append(head)
+        sampler_name = sampler if isinstance(sampler, str) else "custom"
+        receipt = Receipt.make(
+            operation="batch_generate",
+            lane="native-fast-batch",
+            model_identity=self.model_identity,
+            execution=dict(self.execution),
+            numerical_contract=self.numerical_contract().to_dict(),
+            batch=batch,
+            count=count,
+            padding="left",
+            sampler=sampler_name,
+            seed=seed,
+            prompt_lengths=lengths,
+            tokens_generated=generated,
+            result_custody=custody,
+        )
+        return {
+            "tokens": generated,
+            "prompt_lengths": lengths,
+            "custody": custody,
+            "batch": batch,
+            "count": count,
+            "sampler": sampler_name,
+            "seed": seed,
+            "padding": "left",
+            "numerical_contract": (
+                "batched-kernel numerics; token custody only; greedy may differ from B=1 on "
+                "near-ties"
+            ),
+            "receipt": receipt,
+        }
+
+    def generate(
+        self, session: Session, tokens: int = 1, *, sampler: Any = "greedy", seed: int | None = None
+    ) -> None:
+        """Generate ``tokens`` new tokens on the native fast lane (see :meth:`Session.generate`).
+
+        Works from a token boundary or mid-token (the partial token is completed on the
+        fine-grained path first, honoring any intervention). Kept for call-site compatibility;
+        new code can call ``session.generate(tokens)`` directly.
+        """
+        if isinstance(tokens, bool) or not isinstance(tokens, int) or tokens < 1:
+            raise ValueError("generation budget must be a positive integer")
+        session.generate(tokens, sampler=sampler, seed=seed)
 
     @torch.inference_mode()
     def native_logits(self, tokens: Sequence[int]) -> torch.Tensor:
