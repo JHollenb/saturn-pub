@@ -415,10 +415,37 @@ SUPPORTED_FAMILIES = (
 )
 
 
+_TRANSFORMERS_RANGE = ((5, 13), (5, 15))  # [low, high): measured working on 5.13.1 and 5.14.1
+_transformers_version_checked = False
+
+
+def _check_transformers_version() -> None:
+    global _transformers_version_checked
+    if _transformers_version_checked:
+        return
+    _transformers_version_checked = True
+    try:
+        parts = tuple(int(p) for p in transformers.__version__.split(".")[:2])
+    except Exception:
+        return
+    low, high = _TRANSFORMERS_RANGE
+    if not (low <= parts < high):
+        import warnings
+
+        warnings.warn(
+            f"saturn_pub native decoders are validated on transformers "
+            f">={low[0]}.{low[1]},<{high[0]}.{high[1]} (5.13.1 and 5.14.1 measured); installed "
+            f"{transformers.__version__} is outside that range and native parity is unverified",
+            RuntimeWarning,
+            stacklevel=2,
+        )
+
+
 class DecoderAdapter(Adapter):
     """Generic native decoder adapter. Same session grammar as ``QwenAdapter``."""
 
     def __init__(self, model: Any, *, granularity: str = "layer"):
+        _check_transformers_version()
         model_type = getattr(model.config, "model_type", None)
         spec = families().get(model_type)
         if spec is None:
@@ -515,7 +542,7 @@ class DecoderAdapter(Adapter):
 
     @classmethod
     def from_pretrained(
-        cls, path: str, *, granularity: str = "layer", **kwargs: Any
+        cls, path: str, *, granularity: str = "layer", device: Any = None, **kwargs: Any
     ) -> DecoderAdapter:
         from transformers import AutoConfig
 
@@ -527,6 +554,8 @@ class DecoderAdapter(Adapter):
                 f"supported families are {', '.join(SUPPORTED_FAMILIES)}"
             )
         model = spec.model_cls.from_pretrained(path, attn_implementation="eager", **kwargs)
+        if device is not None:
+            model = model.to(device)
         return cls(model, granularity=granularity)
 
     # --- frozen-model guards (identical policy to QwenAdapter) --------------------------
@@ -794,7 +823,9 @@ class DecoderAdapter(Adapter):
         )
 
     def addresses(self, state: Mapping[str, Any]) -> tuple[str, ...]:
-        result = ("tokens",)
+        # keys/values are readable observations at every boundary (the KV cache); they are not
+        # writable here (see write() for why, and the interop guide for live interventions).
+        result = ("tokens", "keys", "values")
         if state["hidden"] is not None:
             result += ("hidden",)
         if state["logits"] is not None:
@@ -902,6 +933,12 @@ class DecoderAdapter(Adapter):
             raise ValueError("logits are observations; intervene on hidden before readout")
         if "sampled_token" in writes:
             raise ValueError("sampled tokens are decisions; intervene on logits upstream")
+        if "keys" in writes or "values" in writes:
+            raise ValueError(
+                "the key/value cache is a read-only observation here; intervene on the hidden "
+                "carrier at a layer boundary, or use an interop library's hook on the native "
+                "model (see docs/interop.md) and capture/replay around it"
+            )
         if invalidates:
             raise ValueError(
                 "decoder derived state is recomputed automatically; no manual invalidation"

@@ -196,3 +196,11 @@ CUDA is required for the real checkpoints. Measured on an RTX 4080 (16 GB): enco
 accelerate sequential offload still peaked at 4.8 GB (Klein-9B) and 5.6 GB (schnell), so both encode
 on CPU; the streamed 4-step trajectory then peaked at 1.07 GB and 0.81 GB of VRAM with 22–26 GB of
 host RSS. See [measured results](../experiments/diffusion_family_validation/results/README.md).
+
+## Placing the model on a device
+
+`adapters.load(path, device="cuda")` (or `DecoderAdapter.from_pretrained(path, device="cuda")`) places the
+model on that device before the adapter freezes its identity. Without it the model stays where
+Hugging Face put it (CPU for a plain `from_pretrained`), so pass `device="cuda"` for a GPU run
+rather than discovering a slow CPU run after the fact. The adapter keeps eager attention and
+batch-one; it does not add accelerate offload hooks.

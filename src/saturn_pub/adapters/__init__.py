@@ -50,14 +50,37 @@ def _adapter_class(model_type: str | None) -> type:
     )
 
 
-def load(path_or_model: Any, *, granularity: str = "layer", **kwargs: Any) -> Any:
-    """Return a native adapter for a checkpoint path or an already-loaded HF model."""
+def resolve_device(device: Any) -> Any:
+    """``"auto"`` (the default) selects CUDA when available, else leaves placement unchanged."""
+    if device == "auto":
+        import torch
+
+        return "cuda" if torch.cuda.is_available() else None
+    return device
+
+
+def load(
+    path_or_model: Any, *, granularity: str = "layer", device: Any = "auto", **kwargs: Any
+) -> Any:
+    """Return a native adapter for a checkpoint path or an already-loaded HF model.
+
+    ``device`` places the model on that device before the adapter freezes its identity. The
+    default ``"auto"`` uses CUDA when available (so a GPU host is used by default instead of an
+    accidental slow CPU run); pass ``device="cpu"`` to force CPU or ``None`` to keep Hugging
+    Face's placement.
+    """
+    device = resolve_device(device)
     if isinstance(path_or_model, (str, os.PathLike)):
         from transformers import AutoConfig
 
         peek = {key: kwargs[key] for key in _PEEK_KEYS if key in kwargs}
         model_type = AutoConfig.from_pretrained(str(path_or_model), **peek).model_type
         adapter_class = _adapter_class(model_type)
-        return adapter_class.from_pretrained(str(path_or_model), granularity=granularity, **kwargs)
-    model_type = getattr(getattr(path_or_model, "config", None), "model_type", None)
-    return _adapter_class(model_type)(path_or_model, granularity=granularity)
+        return adapter_class.from_pretrained(
+            str(path_or_model), granularity=granularity, device=device, **kwargs
+        )
+    model = path_or_model
+    if device is not None:
+        model = model.to(device)
+    model_type = getattr(getattr(model, "config", None), "model_type", None)
+    return _adapter_class(model_type)(model, granularity=granularity)

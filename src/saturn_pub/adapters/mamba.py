@@ -110,9 +110,12 @@ class MambaAdapter(Adapter):
 
     @classmethod
     def from_pretrained(
-        cls, path: str, *, granularity: str = "layer", **kwargs: Any
+        cls, path: str, *, granularity: str = "layer", device: Any = None, **kwargs: Any
     ) -> MambaAdapter:
-        return cls(MambaForCausalLM.from_pretrained(path, **kwargs), granularity=granularity)
+        model = MambaForCausalLM.from_pretrained(path, **kwargs)
+        if device is not None:
+            model = model.to(device)
+        return cls(model, granularity=granularity)
 
     # --- frozen-model guards ------------------------------------------------------------
 
