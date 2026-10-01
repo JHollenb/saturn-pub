@@ -59,8 +59,30 @@ def resolve_device(device: Any) -> Any:
     return device
 
 
+def _apply_lora(base: Any, lora: Any) -> Any:
+    """Merge a PEFT/LoRA adapter into ``base`` and return a plain, concrete HF model.
+
+    Uses peft's ``PeftModel`` (never a hand-rolled LoRA) and ``merge_and_unload`` so the Saturn
+    adapter freezes one concrete model whose weights already include the LoRA -- exactly what
+    capture/replay should seal. peft is an optional extra.
+    """
+    try:
+        from peft import PeftModel
+    except ImportError as exc:  # pragma: no cover - exercised without the extra installed
+        raise ImportError(
+            "loading a LoRA requires the optional 'peft' extra: pip install 'saturn-pub[lora]'"
+        ) from exc
+    merged = PeftModel.from_pretrained(base, str(lora)).merge_and_unload()
+    return merged
+
+
 def load(
-    path_or_model: Any, *, granularity: str = "layer", device: Any = "auto", **kwargs: Any
+    path_or_model: Any,
+    *,
+    granularity: str = "layer",
+    device: Any = "auto",
+    lora: Any = None,
+    **kwargs: Any,
 ) -> Any:
     """Return a native adapter for a checkpoint path or an already-loaded HF model.
 
@@ -68,8 +90,29 @@ def load(
     default ``"auto"`` uses CUDA when available (so a GPU host is used by default instead of an
     accidental slow CPU run); pass ``device="cpu"`` to force CPU or ``None`` to keep Hugging
     Face's placement.
+
+    ``lora`` is a path to a PEFT/LoRA adapter to merge into the base model via peft before the
+    Saturn adapter freezes its identity (decoder families; requires the optional ``peft`` extra).
     """
     device = resolve_device(device)
+    if lora is not None:
+        if isinstance(path_or_model, (str, os.PathLike)):
+            from transformers import AutoConfig
+
+            peek = {key: kwargs[key] for key in _PEEK_KEYS if key in kwargs}
+            model_type = AutoConfig.from_pretrained(str(path_or_model), **peek).model_type
+            if model_type not in _DECODER_FAMILIES:
+                raise ValueError("lora= is supported for decoder families")
+            from .decoder import DecoderAdapter
+
+            base = DecoderAdapter.load_model(str(path_or_model), **kwargs)
+        else:
+            base = path_or_model
+        model = _apply_lora(base, lora)
+        if device is not None:
+            model = model.to(device)
+        model_type = getattr(getattr(model, "config", None), "model_type", None)
+        return _adapter_class(model_type)(model, granularity=granularity)
     if isinstance(path_or_model, (str, os.PathLike)):
         from transformers import AutoConfig
 

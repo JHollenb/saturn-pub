@@ -541,9 +541,12 @@ class DecoderAdapter(Adapter):
             return cls(spec.model_cls(config), granularity=granularity)
 
     @classmethod
-    def from_pretrained(
-        cls, path: str, *, granularity: str = "layer", device: Any = None, **kwargs: Any
-    ) -> DecoderAdapter:
+    def load_model(cls, path: str, *, device: Any = None, **kwargs: Any) -> Any:
+        """Load the raw eager HF model for ``path`` (no adapter wrap).
+
+        Shared by ``from_pretrained`` and by ``adapters.load(..., lora=...)``, which needs the
+        base model to wrap with a PEFT adapter before freezing the adapter's identity.
+        """
         from transformers import AutoConfig
 
         model_type = AutoConfig.from_pretrained(path).model_type
@@ -556,7 +559,13 @@ class DecoderAdapter(Adapter):
         model = spec.model_cls.from_pretrained(path, attn_implementation="eager", **kwargs)
         if device is not None:
             model = model.to(device)
-        return cls(model, granularity=granularity)
+        return model
+
+    @classmethod
+    def from_pretrained(
+        cls, path: str, *, granularity: str = "layer", device: Any = None, **kwargs: Any
+    ) -> DecoderAdapter:
+        return cls(cls.load_model(path, device=device, **kwargs), granularity=granularity)
 
     # --- frozen-model guards (identical policy to QwenAdapter) --------------------------
 

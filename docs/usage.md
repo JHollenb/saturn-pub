@@ -189,8 +189,8 @@ dev = adapter.session(tokens, verify="strict")  # per-transition footprint verif
 ## Installation and runners
 
 From the public checkout, `pip install -e '.[ar,diffusion,train]'` covers the model examples.
-Add `interop` for SAELens / TransformerLens, `notebooks` for Jupyter, and `dev` for
-tests/build tools. The core and JSON-only custom
+Add `lora` for merging PEFT/LoRA adapters, `interop` for SAELens / TransformerLens, `notebooks`
+for Jupyter, and `dev` for tests/build tools. The core and JSON-only custom
 adapter require no model frameworks. Tiny examples are random native CPU mechanics and
 need no downloads; pretrained semantic behavior is shown separately in the writer experiment.
 

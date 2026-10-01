@@ -28,7 +28,7 @@ The checkout selects Python 3.12 for uv; the package also supports Python 3.10+.
 The checked-in lockfile pins a development environment; `pip` installs the public dependencies.
 Install only `.[ar]`, `.[diffusion]`, or `.[train]` when you need one lane. Bare installation
 supports metadata inspection and JSON-only custom adapters without importing PyTorch.
-Add `.[interop]` for the SAELens / TransformerLens example.
+Add `.[lora]` to merge PEFT/LoRA adapters and `.[interop]` for the SAELens / TransformerLens example.
 
 ## One complete transaction
 

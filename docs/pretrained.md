@@ -204,3 +204,24 @@ model on that device before the adapter freezes its identity. Without it the mod
 Hugging Face put it (CPU for a plain `from_pretrained`), so pass `device="cuda"` for a GPU run
 rather than discovering a slow CPU run after the fact. The adapter keeps eager attention and
 batch-one; it does not add accelerate offload hooks.
+
+## Loading a LoRA adapter
+
+`adapters.load(base, lora=<path>)` merges a PEFT/LoRA adapter into the base decoder before the
+Saturn adapter freezes its identity, so capture/replay seal one concrete model whose weights
+already include the LoRA. It uses peft's `PeftModel` and `merge_and_unload` (Saturn never
+reimplements LoRA) and needs the optional extra:
+
+```bash
+pip install -e '.[lora]'   # adds peft
+```
+
+```python
+from saturn_pub.adapters import load
+
+adapter = load("<base-checkpoint>", lora="<lora-adapter-dir>", device="auto")
+session = adapter.session(prompt_ids)
+session.generate(64)
+```
+
+Supported for the decoder families; pass an already-loaded base model or a checkpoint path.

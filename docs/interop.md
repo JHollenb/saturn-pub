@@ -11,6 +11,35 @@ pip install -e '.[interop]'   # sae-lens==6.51.3, transformer-lens==3.9.0
 python examples/interop_saelens.py
 ```
 
+## Use an intervention library; use Saturn for capture / fork / replay
+
+Saturn does not ship hook-based activation patching, ablation, activation caching, or circuit
+scoring — [nnsight](https://nnsight.net), [TransformerLens](https://transformerlensorg.github.io/TransformerLens/),
+[pyvene](https://github.com/stanfordnlp/pyvene), and ACDC already do those well. Saturn's niche is
+the transaction around them: exact capture / fork / restore / commit of running state, sealed
+receipts, bit-exact fresh-process replay, and denoising-step branching. Do the intervention with
+the library you like on `adapter.model` (the plain HF model), and let Saturn make it a branchable,
+replayable transaction:
+
+```python
+from saturn_pub.adapters import load
+
+adapter = load("gpt2")  # the same HF weights, as a native adapter
+session = adapter.session(prompt_ids)
+parent = session.capture()  # seal the pre-intervention state
+
+branch = session.fork(parent)  # an isolated branch to intervene on
+# ... run your nnsight / TransformerLens / pyvene intervention on `adapter.model` here,
+#     or edit the residual carrier directly with an Act (see below) ...
+branch.generate(32)  # native fast lane; token-level custody
+
+# LocalStore seals parent + branch cuts and receipts; a fresh process reloads and
+# reproduces the continuation byte-for-byte.
+```
+
+The rest of this page shows the aligned-address version, where Saturn edits its own residual
+carrier so the intervention point is a measured match for TransformerLens' `hook_resid_pre`.
+
 ## Division of labor
 
 1. **TransformerLens + SAELens (feature discovery).**
