@@ -81,8 +81,8 @@ class Repair(Adapter):
         result["cursor"] += 1
         return result
 
-    def session(self):
-        return Session(self, {"source": 7, "value": 0, "output": 0, "cursor": 0})
+    def session(self, verify="fast"):
+        return Session(self, {"source": 7, "value": 0, "output": 0, "cursor": 0}, verify=verify)
 
 
 def bind(session):
@@ -226,7 +226,7 @@ def test_native_footprint_violation_is_atomic_and_evidenced():
         def transition(self, state):
             return TransitionSpec("bad-write", ("source",), ("cursor",), footprint="declared")
 
-    session = Broken().session()
+    session = Broken().session(verify="strict")  # per-transition footprint guard is a strict check
     parent = session.capture()
     with pytest.raises(ValueError, match="undeclared slot: value"):
         session.step()

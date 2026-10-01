@@ -643,7 +643,7 @@ class DecoderAdapter(Adapter):
     # --- session / grammar --------------------------------------------------------------
 
     @torch.inference_mode()
-    def session(self, token_ids: Sequence[int]) -> Session:
+    def session(self, token_ids: Sequence[int], *, verify: str = "fast") -> Session:
         self.validate_execution()
         tokens = torch.tensor([list(token_ids)], dtype=torch.long, device=self.device)
         if tokens.shape[-1] < 1:
@@ -665,6 +665,7 @@ class DecoderAdapter(Adapter):
                 "logits": None,
                 "sampled_token": None,
             },
+            verify=verify,
         )
 
     def _guard_window(self, count: int) -> None:

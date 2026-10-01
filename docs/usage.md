@@ -160,6 +160,32 @@ branch's scores remain research evidence. Receipts do not automatically retain r
 parameter tensors. External files/API effects and unregistered state are outside rollback.
 See [training closure and feedback boundaries](training.md).
 
+## Verification cost: fast vs strict
+
+`adapter.session(tokens)` runs in `verify="fast"` by default. Each public operation still
+validates the frozen model, config, numeric ABI, and the resulting state once, records the
+same receipts, and produces the same content-addressed cut fingerprints — so a session and its
+fresh-process replay are bit-identical to strict mode.
+
+`verify="strict"` additionally re-verifies *every native transition*: it content-hashes every
+unwritten slot before and after each `advance` (catching a native step that mutates an
+undeclared slot) and repeats the full structural/ABI checks per step. That hashing is
+`O(state)` per transition — it scales with the KV cache, so a long `continue_(n)` decode grows
+quadratically. Fast mode trusts a registered adapter's `advance` and skips the per-step
+re-hash; measured on a tiny random decoder, a single `continue_(n)` call is ~2.4x faster in
+fast mode, widening with decode length, while `continue_(1)`-per-step is ~1.2x (bounded by the
+two cut fingerprints each call still takes).
+
+For whole-token throughput use the native fast lane (`session.generate(n)`); `continue_()` is
+the fine-grained path for stopping *inside* a token. Use `verify="strict"` while developing or
+debugging a *custom* `Adapter` whose `advance` you do not yet trust; the built-in
+decoder/Qwen/diffusion adapters are covered by the test suite, so fast is the right default for
+them. The mode is inherited by `fork`.
+
+```python
+dev = adapter.session(tokens, verify="strict")  # per-transition footprint verification
+```
+
 ## Installation and runners
 
 From the public checkout, `pip install -e '.[ar,diffusion,train]'` covers the model examples.

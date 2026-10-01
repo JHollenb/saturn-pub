@@ -138,12 +138,12 @@ def test_external_closure_rolls_back_if_publication_fails(operation):
     original = session._cut
     calls = 0
 
-    def fail_publication(state, ancestry):
+    def fail_publication(state, ancestry, **kwargs):
         nonlocal calls
         calls += 1
         if calls == 3:
             raise RuntimeError("publication fault")
-        return original(state, ancestry)
+        return original(state, ancestry, **kwargs)
 
     session._cut = fail_publication
     with pytest.raises(RuntimeError, match="publication fault"):

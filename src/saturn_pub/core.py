@@ -596,11 +596,21 @@ class Adapter(ABC):
 class Session:
     """Resident native executor with isolated branches and explicit commit."""
 
-    def __init__(self, adapter: Adapter, state: Mapping[str, Any], *, parent: str | None = None):
+    def __init__(
+        self,
+        adapter: Adapter,
+        state: Mapping[str, Any],
+        *,
+        parent: str | None = None,
+        verify: str = "fast",
+    ):
+        if verify not in {"fast", "strict"}:
+            raise ValueError("verify must be 'fast' or 'strict'")
         adapter.validate_execution()
         adapter.validate(state)
         adapter.surface(state).validate(state)
         self.adapter = adapter
+        self._verify = verify
         self._state = clone(state)
         self._external_state = clone(adapter.capture_external())
         self._parent = parent
@@ -661,13 +671,22 @@ class Session:
                 raise ValueError("state port selector is outside support") from exc
         return clone(value)
 
-    def _cut(self, state: Mapping[str, Any], parent: str | None) -> StateCut:
-        self.adapter.validate_execution()
+    def _cut(
+        self, state: Mapping[str, Any], parent: str | None, *, revalidate: bool = True
+    ) -> StateCut:
+        # ``revalidate`` re-checks the frozen model/config/numeric ABI. A single public
+        # operation validates once at its ``before`` capture; the closing ``_record`` cut
+        # skips the redundant walk (nothing external runs between them). The final state's
+        # structural ``validate``/``surface`` checks below always run.
+        if revalidate:
+            self.adapter.validate_execution()
         self.adapter.validate(state)
         surface = self.adapter.surface(state)
         surface.validate(state)
         external = clone(self.adapter.capture_external())
-        payload = clone(dict(state))
+        # StateCut deep-clones its payload when sealing, so a shallow dict here is enough;
+        # avoids a redundant second deep clone of the whole state (incl. the KV cache) per cut.
+        payload = dict(state)
         if "__saturn_external__" in payload:
             raise ValueError("reserved external closure slot used by adapter")
         if external is not None:
@@ -748,7 +767,7 @@ class Session:
         try:
             if external is not None:
                 self.adapter.restore_external(clone(external))
-            return Session(self.adapter, state, parent=cut.fingerprint)
+            return Session(self.adapter, state, parent=cut.fingerprint, verify=self._verify)
         finally:
             self.adapter.restore_external(current)
 
@@ -761,7 +780,7 @@ class Session:
         **details: Any,
     ) -> Receipt:
         candidate = self._state if state is None else state
-        after = self._cut(candidate, before.fingerprint)
+        after = self._cut(candidate, before.fingerprint, revalidate=False)
         receipt = Receipt.make(
             operation=operation,
             parent=before.fingerprint,
@@ -840,28 +859,38 @@ class Session:
         try:
             candidate = clone(self._state)
             transitions = []
+            # ``verify="strict"`` re-verifies the native transition per step: the declared
+            # footprint, a content hash of every unwritten slot before/after ``advance`` (so a
+            # native step that mutates an undeclared slot is caught), and the full structural
+            # and ABI checks. That hashing is O(state) per step and dominates a long decode, so
+            # the default ``"fast"`` trusts a registered adapter's ``advance`` and structurally
+            # validates only the resulting state once, at the closing cut. Receipts, cut
+            # fingerprints and fresh-process replay are identical in both modes.
+            strict = self._verify == "strict"
             for _ in range(steps):
                 entry = self.adapter.point(candidate).to_dict()
                 spec = self.adapter.transition(candidate)
-                slots = {slot.name for slot in self.adapter.surface(candidate).slots}
-                if set(spec.reads + spec.writes + spec.invalidates) - slots:
-                    raise ValueError("transition footprint contains undeclared slots")
-                preserved = (
-                    {
-                        name: describe(value)
-                        for name, value in candidate.items()
-                        if name not in set(spec.writes + spec.invalidates)
-                    }
-                    if spec.footprint == "declared"
-                    else {}
-                )
+                if strict:
+                    slots = {slot.name for slot in self.adapter.surface(candidate).slots}
+                    if set(spec.reads + spec.writes + spec.invalidates) - slots:
+                        raise ValueError("transition footprint contains undeclared slots")
+                    preserved = (
+                        {
+                            name: describe(value)
+                            for name, value in candidate.items()
+                            if name not in set(spec.writes + spec.invalidates)
+                        }
+                        if spec.footprint == "declared"
+                        else {}
+                    )
                 candidate = dict(self.adapter.advance(candidate))
-                for name, expected in preserved.items():
-                    if name not in candidate or describe(candidate[name]) != expected:
-                        raise ValueError(f"native transition changed undeclared slot: {name}")
-                self.adapter.validate(candidate)
-                self.adapter.surface(candidate).validate(candidate)
-                self.adapter.validate_execution()
+                if strict:
+                    for name, expected in preserved.items():
+                        if name not in candidate or describe(candidate[name]) != expected:
+                            raise ValueError(f"native transition changed undeclared slot: {name}")
+                    self.adapter.validate(candidate)
+                    self.adapter.surface(candidate).validate(candidate)
+                    self.adapter.validate_execution()
                 transitions.append(
                     {
                         "before": entry,
