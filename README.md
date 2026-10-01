@@ -51,7 +51,12 @@ session.commit(candidate)  # explicit decision; no automatic scientific verdict
 session.restore(parent)  # verified restoration; retained futures stay intact
 ```
 
-Steps are adapter micro-transitions; `adapter.generate` is an AR token-budget helper.
+Steps are adapter micro-transitions; `continue_()` stops *inside* a token. For whole-token
+throughput the native decoder adapter has a fast lane: `session.generate(n)` runs one native
+forward per token (not per layer) with token-level custody — no per-token tensor hashing — and
+`adapters/decoder.py` `batch_generate` decodes `B` prompts in one batch. Tensors are
+fingerprinted only on demand (`capture`/`fork`/`restore`/`compare`); the diffusion/FLUX adapters'
+`finish()` applies the same rule to a denoise trajectory. See [docs/usage.md](docs/usage.md).
 Captured state includes model identity, execution contract, and all declared continuation state.
 Exactness means a named state boundary and numerical program, not agreement across all kernels.
 
@@ -159,6 +164,7 @@ It loads pinned Hugging Face checkpoints or your local cache. The
 | Tool | Purpose |
 | --- | --- |
 | Session, Frame, Act, StateCut, Receipt | Native execution, declared changes, branches, custody |
+| Native fast lane | `session.generate(n)` / decoder `batch_generate` / diffusion `finish()`: one native forward per token/step, token-level custody, tensors hashed only at cuts |
 | Local debugger | Step, inspect, read, capture, fork, intervene, continue, compare, restore |
 | Observer and WatchEvent | Branch-local change/threshold/nonfinite watches with retained safe-point cuts |
 | CausalPath and PortObservation | Model/parent/clock-validated route and effect evidence graph |

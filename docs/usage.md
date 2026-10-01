@@ -160,6 +160,39 @@ branch's scores remain research evidence. Receipts do not automatically retain r
 parameter tensors. External files/API effects and unregistered state are outside rollback.
 See [training closure and feedback boundaries](training.md).
 
+## Fast generation (native lane)
+
+For whole-token throughput, `session.generate(n)` runs the native fast lane: one native forward
+per token over the external KV cache (not one forward per layer as `continue_()` does). Custody
+between cuts is token-level only — a sha256 hash chain over the generated token ids — so no tensor
+is hashed or cloned per token. Tensors are materialized and fingerprinted only when you ask for a
+cut (`capture`/`fork`/`restore`/`compare`).
+
+```python
+adapter = load("<decoder-checkpoint>")
+session = adapter.session(prompt_ids)
+session.generate(128)  # fast lane; greedy by default
+cut = session.capture()  # on-demand tensor seal, verifies + replays bit-exactly
+branch = session.fork(cut)  # branch and keep going
+session.continue_()  # or switch to layer stepping inside the next token
+```
+
+`sampler={"temperature": t, "top_k": k, "top_p": p}` with `seed=` draws replayably (the seed is
+recorded in the receipt and drives a `torch.Generator`; a fresh-process replay reproduces the
+tokens). `adapter.generate(session, n)` is the call-site-compatible wrapper and also completes a
+mid-token intervention on the fine-grained path before the lane engages.
+
+`adapter.batch_generate(prompts, n)` decodes `B` prompts in one native batch (left-padded, per-row
+attention mask and explicit positions) for throughput, returning the generated token rows and a
+per-row token custody chain. **Numerical contract:** fp32 greedy on the fast lane is bit-exact to
+layer stepping, but batched kernels (`B > 1`, or bf16) can differ from a `B=1` decode on near-ties;
+pair any published number with a `B=1` fp32 parity subset.
+
+The diffusion and FLUX adapters apply the same rule to a full denoise trajectory: `finish()` runs
+the remaining steps on the native lane (`Session.run_native`) without per-step tensor hashing,
+while `continue_()`/`step()`/`fork()` still fingerprint tensors so denoising-step branching stays
+bit-exact.
+
 ## Verification cost: fast vs strict
 
 `adapter.session(tokens)` runs in `verify="fast"` by default. Each public operation still
