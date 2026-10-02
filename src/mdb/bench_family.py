@@ -6,6 +6,7 @@ published as a durable cut. Publication failure restores the complete parent.
 from dataclasses import dataclass, field
 from functools import wraps
 from hashlib import sha256
+from copy import deepcopy
 from pathlib import Path
 from threading import RLock
 import fcntl
@@ -85,7 +86,8 @@ class FamilyBenchSession:
     def __init__(self, model, tokenizer=None, *, root, family, model_id=None, revision="local",
                  model_sha256=None, session_id="bench", lane="virtual", resident_kv_bytes=64 << 20,
                  resident_state_bytes=None, continuation_capacity=128, attention_backend=None,
-                 publication_mode="journal", _writer=None, _adapter=None):
+                 publication_mode="journal", _writer=None, _adapter=None,
+                 _legacy_numerical_environment=None):
         if lane not in {"native", "virtual"}: raise BenchError("unsupported numerical lane")
         self.root = Path(root).expanduser().resolve()
         self.root.mkdir(parents=True, exist_ok=True)
@@ -140,6 +142,13 @@ class FamilyBenchSession:
                 "cuda_version": torch.version.cuda if cuda_lane else None,
                 "cudnn_version": torch.backends.cudnn.version() if cuda_lane else None,
                 "cuda_device": torch.cuda.get_device_name(self.adapter.device) if cuda_lane else None}
+            self.legacy_numerical_environment = deepcopy(_legacy_numerical_environment)
+            if self.legacy_numerical_environment is not None:
+                if family != "mamba" or self.identity["numerical_environment"] != self.legacy_numerical_environment:
+                    raise BenchError("legacy numerical environment does not match the resident lane")
+                # Retain the old ABI/CAS identity; the explicit qualification is
+                # bound separately in the enclosing manifest for future resumes.
+                del self.identity["numerical_environment"]
             self.model_abi = content_digest(self.identity)
             with self.publication.initializing():
                 self.pages = BenchPages(self.root/"payloads", device=self.adapter.device,
@@ -230,12 +239,15 @@ class FamilyBenchSession:
         return backend.output, receipt, result.receipt
 
     def _manifest(self):
-        return {"schema": SCHEMA, "session_id": self.session_id, "identity": self.identity, "family": self.family,
+        manifest = {"schema": SCHEMA, "session_id": self.session_id, "identity": self.identity, "family": self.family,
             "lane": self.lane, "capacity": self.capacity, "resident_state_bytes": self.pages.budget,
             "numerical_contract": self.adapter.contract, "active": self.active,
             "branches": {name: vars(b) for name, b in self.branches.items()}, "cuts": self.cuts,
             "events": self.events, "memory_events": self.pages.events, "capabilities": self.capabilities(),
             "source_root": self.source_root, "publication_mode": self.publication.mode}
+        if self.legacy_numerical_environment is not None:
+            manifest["legacy_numerical_environment"] = self.legacy_numerical_environment
+        return manifest
 
     def _publish(self):
         ref = self.artifacts.put(self._manifest())
@@ -644,7 +656,8 @@ class FamilyBenchSession:
         return {"root": str(target), "cut": self.branch.cut, "manifest": json.loads((target/"selected.json").read_text())["manifest"]}
 
     @classmethod
-    def resume(cls, model, tokenizer=None, *, root, family, model_sha256=None, _writer=None, _manifest=None, _adapter=None):
+    def resume(cls, model, tokenizer=None, *, root, family, model_sha256=None, _writer=None,
+               _manifest=None, _adapter=None, legacy_numerical_environment=None):
         root = Path(root)
         if _writer is None:
             _writer, selected = recover_locked(root)
@@ -653,10 +666,17 @@ class FamilyBenchSession:
         except BaseException: _writer.close(); raise
         if manifest.get("schema") not in {SCHEMA, "saturn-open-bench-v2"} or manifest["family"] != family:
             _writer.close(); raise BenchError("incompatible session family/schema")
+        saved_qualification = manifest.get("legacy_numerical_environment")
+        if saved_qualification is not None and legacy_numerical_environment is not None and saved_qualification != legacy_numerical_environment:
+            _writer.close(); raise BenchError("legacy numerical qualification changed")
+        qualification = legacy_numerical_environment if legacy_numerical_environment is not None else saved_qualification
+        if qualification is not None and (family != "mamba" or "numerical_environment" in manifest["identity"]):
+            _writer.close(); raise BenchError("legacy qualification requires an older Mamba identity")
         result = cls(model, tokenizer, root=root, family=family, model_id=manifest["identity"]["model_id"],
             revision=manifest["identity"]["revision"], model_sha256=model_sha256,
             session_id=manifest["session_id"], lane=manifest["lane"], resident_state_bytes=manifest["resident_state_bytes"],
-            continuation_capacity=manifest["capacity"], publication_mode=manifest.get("publication_mode", "journal"), _writer=_writer, _adapter=_adapter)
+            continuation_capacity=manifest["capacity"], publication_mode=manifest.get("publication_mode", "journal"),
+            _writer=_writer, _adapter=_adapter, _legacy_numerical_environment=qualification)
         try:
             if result.identity != manifest["identity"]:
                 changed = {k: {"expected": manifest["identity"].get(k), "actual": result.identity.get(k)}

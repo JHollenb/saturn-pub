@@ -28,6 +28,9 @@ def main(argv=None):
         p.add_argument("--root", required=True, help="durable absolute directory on the selected worker host")
         if action == "open":
             p.add_argument("--prompt", required=True)
+        else:
+            p.add_argument("--legacy-numerical-environment", type=Path,
+                           help="explicit qualified environment JSON for older Mamba identities")
         p.add_argument("--lane", choices=("virtual", "native"), default="virtual")
         p.add_argument("--capacity", type=int, default=128)
         p.add_argument("--kv-budget-bytes", type=int, default=64 << 20)
@@ -77,6 +80,8 @@ def main(argv=None):
         "resident_state_bytes": args.state_budget_bytes, "seed": args.seed, "height": args.height,
         "width": args.width, "num_inference_steps": args.steps, "guidance_scale": args.guidance_scale,
         "commands": json.loads(args.commands.read_text()) if args.commands else None}
+    if getattr(args, "legacy_numerical_environment", None) is not None:
+        config["legacy_numerical_environment"] = json.loads(args.legacy_numerical_environment.read_text())
     if resource_basis and resource_basis.get("phase_vram_budget_decimal_mb") is not None:
         config["phase_vram_budget_mb"] = resource_basis["phase_vram_budget_decimal_mb"]
     raw = (json.dumps(config, sort_keys=True)+"\n").encode()

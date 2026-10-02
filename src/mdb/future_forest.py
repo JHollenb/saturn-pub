@@ -19,6 +19,7 @@ import re
 import tempfile
 from collections.abc import Mapping, Sequence
 from contextlib import contextmanager
+from contextvars import ContextVar
 from pathlib import Path
 from typing import Any, Literal
 
@@ -31,6 +32,7 @@ HEAD_SCHEMA = "saturn-future-head-v1"
 
 Decision = Literal["promote", "prune", "retain"]
 _DIGEST_RE = re.compile(r"^[0-9a-f]{64}$")
+_CLOSURE_SNAPSHOT = ContextVar("mdb_forest_closure_snapshot", default=None)
 _NAME_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._/-]{0,255}$")
 _MEDIA_TYPE_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9.+_-]*/[A-Za-z0-9][A-Za-z0-9.+_-]*$")
 
@@ -352,6 +354,10 @@ class PersistentFutureForest:
 
     def verify_node(self, node_id: str, *, _visiting: set[str] | None = None) -> dict[str, Any]:
         node_id = _require_digest(node_id, label="node_id")
+        snapshot = _CLOSURE_SNAPSHOT.get()
+        verified = snapshot[1] if snapshot is not None and snapshot[0] is self else None
+        if verified is not None and node_id in verified:
+            return verified[node_id]
         node = self._read_json(self.nodes / f"{node_id}.json")
         declared = self._verify_seal(node, schema=NODE_SCHEMA, label="future node")
         if declared != node_id or node.get("forest_id") != self.forest_id:
@@ -376,13 +382,21 @@ class PersistentFutureForest:
             raise FutureForestError("future node diff_refs must be an object")
         self._normalize_refs(refs, label="verified node diff")
         visiting.remove(node_id)
+        if verified is not None:
+            verified[node_id] = node
         return node
 
     def effective_state(self, node_id: str) -> dict[str, dict[str, Any]]:
         node = self.verify_node(node_id)
+        snapshot = _CLOSURE_SNAPSHOT.get()
+        states = snapshot[2] if snapshot is not None and snapshot[0] is self else None
+        if states is not None and node_id in states:
+            return dict(states[node_id])
         primary = node.get("primary_parent")
         state = {} if primary is None else self.effective_state(str(primary))
         state.update({key: dict(value) for key, value in node["diff_refs"].items()})
+        if states is not None:
+            states[node_id] = dict(state)
         return dict(sorted(state.items()))
 
     def observe(
@@ -636,6 +650,16 @@ class PersistentFutureForest:
         return sorted(path.stem for path in self.nodes.glob("*.json"))
 
     def verify_closure(self) -> dict[str, Any]:
+        # The caller serializes writers. Verify each immutable node once in this
+        # read snapshot rather than rereading every ancestor for every state.
+        # Context-local caches never escape this call or survive a later audit.
+        token = _CLOSURE_SNAPSHOT.set((self, {}, {}))
+        try:
+            return self._verify_closure()
+        finally:
+            _CLOSURE_SNAPSHOT.reset(token)
+
+    def _verify_closure(self) -> dict[str, Any]:
         nodes = self.list_nodes()
         referenced_objects: set[str] = set()
         for node_id in nodes:

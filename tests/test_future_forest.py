@@ -19,6 +19,29 @@ def _forest(tmp_path: Path) -> tuple[PersistentFutureForest, str, dict, dict, di
     return forest, root, base, ability_a, ability_b
 
 
+def test_closure_snapshot_reads_each_node_once_and_does_not_hide_later_corruption(tmp_path, monkeypatch):
+    forest, root, base, ability_a, ability_b = _forest(tmp_path)
+    parent = root
+    for index in range(12):
+        parent = forest.fork(parent, transition={"kind": "step", "index": index},
+                             diff_refs={"model/base": base, "a": ability_a, "b": ability_b})
+    expected = forest._verify_closure()
+    original = forest._read_json
+    reads = []
+    def tracked(path):
+        if path.parent == forest.nodes: reads.append(path)
+        return original(path)
+    monkeypatch.setattr(forest, "_read_json", tracked)
+    assert forest.verify_closure() == expected
+    assert len(reads) == expected["nodes"]
+    assert len(set(reads)) == expected["nodes"]
+    path = forest.nodes / f"{root}.json"
+    body = json.loads(path.read_text())
+    body["metadata"]["step"] = 99
+    path.write_text(json.dumps(body))
+    with pytest.raises(FutureForestError): forest.verify_closure()
+
+
 def test_branches_share_parent_and_rejected_evidence_survives(tmp_path: Path) -> None:
     forest, root, _base, ability_a, ability_b = _forest(tmp_path)
     branch_a = forest.fork(

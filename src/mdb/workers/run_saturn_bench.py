@@ -31,7 +31,8 @@ def main():
     spec, model, tokenizer = load_bench_model(config["model"], device="cuda")
     root = Path(config["root"])
     kwargs = {"resident_state_bytes": config.get("resident_state_bytes", 512 << 20)} if spec.family != "qwen2" else {}
-    bench = (BenchSession.resume(model, tokenizer, root=root) if config["action"] == "resume" else
+    bench = (BenchSession.resume(model, tokenizer, root=root,
+        legacy_numerical_environment=config.get("legacy_numerical_environment")) if config["action"] == "resume" else
         BenchSession.from_resident(model, tokenizer, root=root, model_id=spec.model_id,
             revision=spec.revision, session_id=f"bench-{os.environ['MRUN_JOB_ID']}", lane=config["lane"],
             continuation_capacity=config["capacity"], resident_kv_bytes=config["resident_kv_bytes"], **kwargs))

@@ -4,8 +4,9 @@ Standalone model virtual memory and reversible model debugger, extracted from
 Saturn's Open Bench. MDB owns the runtime source. It does not import Saturn or
 Saturn-pub. `mrun` provides model resolution, resource admission and resident jobs.
 
-**Extraction status:** local qualification is in progress. Upstream model-backed
-results do not yet certify this distribution. No fleet service has been deployed.
+**Extraction status:** installed-wheel mechanics pass; model-backed qualification
+is in progress. Upstream results do not certify this distribution. See the
+[qualification record](docs/QUALIFICATION.md). No fleet service has been deployed.
 
 Install the offline tools with `pip install .`. For caller-owned language models,
 install `.[autoregressive]`; for diffusion, `.[diffusion]`. Scheduler launches also

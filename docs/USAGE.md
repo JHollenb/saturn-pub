@@ -56,6 +56,17 @@ model weights independently available. `BenchSession.resume(model, tokenizer,
 root=...)` validates identity before continuing. `mdb verify --root ...` checks the
 offline closure without loading model weights.
 
+Older Mamba v1 exports using family-manifest schema v2 may omit the numerical environment. Default resume refuses
+that incomplete contract. An independently qualified caller can supply
+`legacy_numerical_environment=expected_environment` to `BenchSession.resume`;
+the resident environment must match every field exactly. The old identity and
+cut addresses remain intact, and the enclosing manifest retains the explicit
+qualification for later resumes. The CLI accepts the same JSON through
+`--legacy-numerical-environment`. A historical file-based checkpoint digest also
+requires the caller's authoritative `model_sha256` in Python; this is distinct
+from the launcher's parameter-based identity. Byte verification alone does not
+qualify that legacy numerical contract.
+
 ## Memory and addresses
 
 Memory inspection reports logical rows, physical sharing, private ownership,

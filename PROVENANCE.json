@@ -157,7 +157,7 @@
       "adapted_after_namespace_extraction": true,
       "extracted_path": "src/mdb/bench.py",
       "extracted_sha256": "d8ef7ffc6e0eadf12c55e952603cd9e6aca04b12492fbcf9c6fc602e64ca945f",
-      "final_sha256": "3df73ec0a8ab7e0cf1a4093b511801731cbf4c438f19788c3c5fc273b2d25823",
+      "final_sha256": "8d77e7b5ed29aa66b70eb1ad71b24baf786512f8ee62d2ed61b7339a6e142171",
       "module": "saturn.bench",
       "original_path": "src/saturn/bench.py",
       "original_sha256": "d8ef7ffc6e0eadf12c55e952603cd9e6aca04b12492fbcf9c6fc602e64ca945f"
@@ -193,7 +193,7 @@
       "adapted_after_namespace_extraction": true,
       "extracted_path": "src/mdb/bench_cli.py",
       "extracted_sha256": "daab342b7fedcabb24609165ed97bc6a36f13c62fa344938f86eca27ee679779",
-      "final_sha256": "3f43c4eb3a5b52689801cd68fcc79af4e96b868e8ea2334c689f7c8e2f1af382",
+      "final_sha256": "1073d2b4fd817846847053e950a5a1db95fc95967e5f0cc10b428ce09b8bd23a",
       "module": "saturn.bench_cli",
       "original_path": "src/saturn/bench_cli.py",
       "original_sha256": "86377965d1807121c0ce353f1d78d40a20fedeb9c33c7ad4a7b5a9611f26b1c4"
@@ -226,10 +226,10 @@
       "original_sha256": "a310348ffdb9a3443479337aaf74515229670c469e72fa2d4062c3bfc600eb19"
     },
     {
-      "adapted_after_namespace_extraction": false,
+      "adapted_after_namespace_extraction": true,
       "extracted_path": "src/mdb/bench_family.py",
       "extracted_sha256": "222bb8e214568800d98a3ea6758c4f9a5883601a87d89f5618b03e82edadc0c3",
-      "final_sha256": "222bb8e214568800d98a3ea6758c4f9a5883601a87d89f5618b03e82edadc0c3",
+      "final_sha256": "51c0713f4b5e96dc434e82bb972b3019c447008cfe11ccee0a1928cda11b8287",
       "module": "saturn.bench_family",
       "original_path": "src/saturn/bench_family.py",
       "original_sha256": "222bb8e214568800d98a3ea6758c4f9a5883601a87d89f5618b03e82edadc0c3"
@@ -559,10 +559,10 @@
       "original_sha256": "1ee10ec1537a1c1d9674276087410e2330e8c0a974883775b13bc44e8fd86c55"
     },
     {
-      "adapted_after_namespace_extraction": false,
+      "adapted_after_namespace_extraction": true,
       "extracted_path": "src/mdb/evidence_specs.py",
       "extracted_sha256": "8c46a6b7e91837d2e91c010586d40cbd4b3c2afd0e3b8024db1b5d9919929933",
-      "final_sha256": "8c46a6b7e91837d2e91c010586d40cbd4b3c2afd0e3b8024db1b5d9919929933",
+      "final_sha256": "2fe3841494fe4718e2c457ed4ef333c4b677b6a17f7effa2ee7d87dbc6e70f11",
       "module": "saturn.evidence_specs",
       "original_path": "src/saturn/evidence_specs.py",
       "original_sha256": "8c46a6b7e91837d2e91c010586d40cbd4b3c2afd0e3b8024db1b5d9919929933"
@@ -577,10 +577,10 @@
       "original_sha256": "05f3aa372334d7ff407d9302ed1199b5e64a734550768715bed7d551ff703db8"
     },
     {
-      "adapted_after_namespace_extraction": false,
+      "adapted_after_namespace_extraction": true,
       "extracted_path": "src/mdb/future_forest.py",
       "extracted_sha256": "039deb750371655eba04db8f3b6d5b0d04278a5954060e3c0bacf77196d5e7a2",
-      "final_sha256": "039deb750371655eba04db8f3b6d5b0d04278a5954060e3c0bacf77196d5e7a2",
+      "final_sha256": "79622e70445ddcd8b74b215c62781aa507fd4fd979ed143c74c9a378fc45f4d5",
       "module": "saturn.future_forest",
       "original_path": "src/saturn/future_forest.py",
       "original_sha256": "039deb750371655eba04db8f3b6d5b0d04278a5954060e3c0bacf77196d5e7a2"
@@ -811,10 +811,10 @@
       "original_sha256": "62ac2d68c976cf45185de82639f895cb1191549bbaf682ac441d7b6a89986c02"
     },
     {
-      "adapted_after_namespace_extraction": false,
+      "adapted_after_namespace_extraction": true,
       "extracted_path": "src/mdb/workers/run_saturn_bench.py",
       "extracted_sha256": "eb64e45c4d693d932324a33e79502ecaf5ae0482f7502bad5ceb8e8d6802b9e1",
-      "final_sha256": "eb64e45c4d693d932324a33e79502ecaf5ae0482f7502bad5ceb8e8d6802b9e1",
+      "final_sha256": "1c460816feb75d1ffa5fd3b9bab44d6ede02736dc058e5403ffa8b355aec466d",
       "original_path": "workers/run_saturn_bench.py",
       "original_sha256": "ea27fc5a931b67d8b3e2c55b91666a63b983104b15d2f985a27c48a2d6322d01"
     },

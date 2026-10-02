@@ -12,6 +12,45 @@ def model():
         num_hidden_layers=2, state_size=4, expand=2, conv_kernel=4)).eval()
 
 
+def test_legacy_mamba_requires_explicit_environment_and_retains_cut_identity(model, tmp_path):
+    import json
+    from mdb.circuit_runtime import DirectoryArtifactStore
+    modern = BenchSession.from_resident(model, root=tmp_path / "modern")
+    environment = dict(modern.identity["numerical_environment"])
+    modern.close()
+    legacy = BenchSession.from_resident(model, root=tmp_path / "legacy",
+        publication_mode="legacy", _legacy_numerical_environment=environment)
+    parent = legacy.prefill([1, 2, 3])
+    expected = [(r["token_id"], r["logits_sha256"]) for r in legacy.generate(2)]
+    legacy.restore(parent)
+    legacy.step("layer")
+    exported = tmp_path / "export"
+    legacy.export(exported)
+    legacy.close()
+    artifacts = DirectoryArtifactStore(exported / "artifacts")
+    selected = json.loads((exported / "selected.json").read_text())
+    manifest = artifacts.get(selected["manifest"])
+    original_cut = manifest["branches"][manifest["active"]]["cut"]
+    identity = manifest["identity"]
+    manifest["schema"] = "saturn-open-bench-v2"
+    manifest.pop("legacy_numerical_environment")
+    selected["manifest"] = artifacts.put(manifest)
+    (exported / "selected.json").write_text(json.dumps(selected))
+    with pytest.raises(BenchError, match="identity mismatch"):
+        BenchSession.resume(model, root=exported)
+    wrong = {**environment, "cpu_threads": environment["cpu_threads"] + 1}
+    with pytest.raises(BenchError, match="legacy numerical environment"):
+        BenchSession.resume(model, root=exported, legacy_numerical_environment=wrong)
+    with BenchSession.resume(model, root=exported, legacy_numerical_environment=environment) as resumed:
+        assert resumed.branch.cut == original_cut
+        assert resumed.identity == identity
+        assert [(r["token_id"], r["logits_sha256"]) for r in resumed.generate(2)] == expected
+    with BenchSession.resume(model, root=exported) as resumed:
+        assert resumed.legacy_numerical_environment == environment
+    with pytest.raises(BenchError, match="qualification changed"):
+        BenchSession.resume(model, root=exported, legacy_numerical_environment=wrong)
+
+
 def test_native_parity_layer_fork_restart(model, tmp_path):
     b = BenchSession.from_resident(model, root=tmp_path/"base")
     b.prefill([1, 2, 3])

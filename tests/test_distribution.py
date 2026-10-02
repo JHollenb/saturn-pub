@@ -21,7 +21,8 @@ class Guard(importlib.abc.MetaPathFinder):
 sys.meta_path.insert(0, Guard())
 import mdb
 from mdb import BenchSession
-import mdb.bench_verify, mdb.evidence_pipeline, mdb.hyperion
+import mdb.bench_verify, mdb.evidence_pipeline, mdb.evidence_specs, mdb.hyperion
+assert not any(name == 'saturn' or name.startswith('saturn.') for name in sys.modules)
 from mdb.cli import main
 assert main(['version']) == 0
 '''

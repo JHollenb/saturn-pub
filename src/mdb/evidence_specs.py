@@ -26,12 +26,9 @@ finding.
 from __future__ import annotations
 
 import argparse
-import importlib
-import importlib.util
 import json
 import re
 import sys
-import types
 from collections.abc import Iterable, Iterator, Mapping, Sequence
 from pathlib import Path
 from typing import Any
@@ -40,44 +37,7 @@ EVIDENCE_PACK_SCHEMA = "saturn-evidence-pack-v1"
 DEFAULT_SAMPLE_RECORDS = 64
 
 
-def _load_saturn_module(name: str) -> Any:
-    """Import a sibling saturn module, package-first with a file-path fallback.
-
-    The fallback keeps this module importable standalone (loaded by file path
-    without the ``saturn`` package, whose ``__init__`` pulls non-stdlib deps):
-    a synthetic parent package with a real ``__path__`` is registered so
-    absolute ``saturn.*`` imports inside the loaded sources still resolve, and
-    each module is registered in ``sys.modules`` BEFORE ``exec_module`` (the
-    py3.14 dataclass-module requirement).
-    """
-
-    full = f"saturn.{name}"
-    if full in sys.modules:
-        return sys.modules[full]
-    try:
-        return importlib.import_module(full)
-    except ImportError:
-        pass
-    if "saturn" not in sys.modules:
-        package = types.ModuleType("saturn")
-        package.__path__ = [str(Path(__file__).resolve().parent)]
-        sys.modules["saturn"] = package
-    path = Path(__file__).resolve().with_name(f"{name}.py")
-    spec = importlib.util.spec_from_file_location(full, path)
-    if spec is None or spec.loader is None:
-        raise ImportError(f"cannot load {full} from {path}")
-    module = importlib.util.module_from_spec(spec)
-    sys.modules[full] = module  # py3.14: register BEFORE exec_module
-    try:
-        spec.loader.exec_module(module)
-    except BaseException:
-        sys.modules.pop(full, None)
-        raise
-    setattr(sys.modules["saturn"], name, module)
-    return module
-
-
-receipt_watch = _load_saturn_module("receipt_watch")
+from . import receipt_watch
 
 
 class EvidenceSpecError(ValueError):
