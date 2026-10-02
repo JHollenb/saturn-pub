@@ -6,6 +6,7 @@ the upstream Saturn assays certify their original source seals, not this package
 | Check | Observed result | Scope |
 |---|---|---|
 | Fresh installed runtime wheel | 185 passed, 5 skipped | Tiny deterministic mechanics, upstream imports blocked, outside the checkout |
+| Package startup follow-up | 10 installed distribution/launch checks passed | Sealed configurable uv link mode; model execution unchanged |
 | Dependency-free wheel | Root/session imports and offline CLI work without Torch or mrun | Metadata and evidence tools; model execution requires extras |
 | Historical exports | Qwen, Mamba, FLUX and SDXL byte closures verify | CAS references, VM bundles, retained cuts and compatible symbols; continuation is separate |
 | Qwen CLI open/resume | Both jobs succeeded, identical session identity | Real BF16/CUDA Qwen, layer cut, inspection, token generation, durable restart |
@@ -49,6 +50,13 @@ Queued replacements `job-0ba89163c9ca` and `job-a3890b08da70` were cancelled bef
 execution to seal the handoff and stage the repaired runtime, respectively. Each
 new assay copies into its own job directory and verifies closure before and after
 continuation. No automatic retries or parallel accelerator suites are enabled.
+
+Probe `job-7d1f866607f8` was cancelled before bootstrap or model loading after
+uv's I/O counters remained unchanged while a thread waited on the fleet cache
+filesystem. The corrected finite probe is `job-6fdd2ba65253`, using an explicitly
+sealed symlink install mode. No performance improvement is claimed until startup
+and model execution are observed. Its package installation completed in 42.29
+seconds and the sealed bootstrap checks passed. Native continuation is pending.
 
 Evidence sweeps over launcher logs currently report `target-streams-only`, with
 no scientific receipts recognized. Their clean exit validates indexing/custody

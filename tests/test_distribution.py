@@ -54,7 +54,18 @@ def test_worker_command_has_no_checkout_paths():
     assert "--no-project" in command
     assert "--offline" in command
     assert "mdb.worker_bootstrap" in command
+    assert "UV_LINK_MODE=symlink" in command
     assert not any("domains/" in item or "common_harness" in item for item in command)
+
+
+def test_worker_link_mode_is_explicit_and_validated(monkeypatch):
+    from mdb.execution_environment import intent
+    monkeypatch.setenv("MDB_WORKER_UV_LINK_MODE", "copy")
+    assert intent()["uv_link_mode"] == "copy"
+    assert "UV_LINK_MODE=copy" in worker_command("worker.py")
+    monkeypatch.setenv("MDB_WORKER_UV_LINK_MODE", "invalid")
+    with pytest.raises(ValueError, match="link mode"):
+        worker_command("worker.py")
 
 
 def test_bootstrap_accepts_sealed_payload_and_rejects_mutation(tmp_path, monkeypatch):

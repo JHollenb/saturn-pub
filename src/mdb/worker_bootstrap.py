@@ -30,7 +30,7 @@ def main():
     environment = request.get("execution_environment")
     if environment:
         import platform
-        for key, field in (("UV_CACHE_DIR", "uv_cache_dir"), ("TORCH_HOME", "torch_home"),
+        for key, field in (("UV_CACHE_DIR", "uv_cache_dir"), ("UV_LINK_MODE", "uv_link_mode"), ("TORCH_HOME", "torch_home"),
                            ("LLM_MODELS_EXTRA_ROOT", "extra_model_roots")):
             if os.environ.get(key) != environment[field]:
                 raise RuntimeError("worker environment intent changed: " + key)

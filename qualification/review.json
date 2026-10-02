@@ -2,9 +2,9 @@
   "status": "reviewed",
   "reviewer": "Luna/max independent configuration review",
   "settings_sha256": [
-    "5e12947905405d56fdb974b624287372edd11554e3b3b731fd29644b6498435f",
-    "c56dd71d9fca62e01d8f25418425c84058e4374163668c793cfbfcdf6a18557f",
-    "7b822e9104b5dc86dcad9f561238f935f7b633250127a5fb8b7e42ad10cc76bb"
+    "efc3348b641d79a397bef38737102f030feb6ed35b323bea62cb1ccf73b16fd8",
+    "c03ade88acd534bc02043595e735cf5203efdb92f73f9260159ce53a3eae0ff7",
+    "bdb2529d20958cf1745a683f4b3e2fe56061834cadc068be93b097cc32e9b011"
   ],
   "source_hashes": {
     "mdb/__init__.py": "e5d7ccb2f034e33c9949b5619ca273950bbd7f0bf5a5da4e4589aa3557bdf575",
@@ -81,7 +81,7 @@
     "mdb/evidence_citations.py": "53d44593f1b23f6f0967845d627b70f69da8472de5096f5507777e69772a5103",
     "mdb/evidence_pipeline.py": "839011c3b961e5f36e4f9d2c2baceda6c34d3c3aa896fb36346ed8257469ff3f",
     "mdb/evidence_specs.py": "2fe3841494fe4718e2c457ed4ef333c4b677b6a17f7effa2ee7d87dbc6e70f11",
-    "mdb/execution_environment.py": "b466a44bdaefd36491a72cadd026230b70e1a13690baabb2b61131e188c07c10",
+    "mdb/execution_environment.py": "8db8f24a591c2884f48a5e17c8316975521888b4bfcc271e23225c36bed42610",
     "mdb/execution_skeleton.py": "05f3aa372334d7ff407d9302ed1199b5e64a734550768715bed7d551ff703db8",
     "mdb/future_forest.py": "79622e70445ddcd8b74b215c62781aa507fd4fd979ed143c74c9a378fc45f4d5",
     "mdb/hyperion.py": "5ff0f8ed6455e442a09df428a428353e2bd2506e1fc0ebfdf3d6b1934675da8d",
@@ -96,7 +96,7 @@
     "mdb/mvm_worker_support.py": "67298e1a6f8ff856403141ef24b8de1c29566438050991926cb87dd233f7a7bf",
     "mdb/object_manifest.py": "e3f58e1ee03061c3360de4d2bbcf8954ca646d0a821a493ce418cd1b0b2ff290",
     "mdb/paths.py": "071b6673cafc94e697e31f6496711a4b0f58efdb78d420b1b0f21011260b0858",
-    "mdb/payload.py": "0ba4dcc67fb314df5b8149f31604269c527ebfe5c7f1073825bd8f4810cee488",
+    "mdb/payload.py": "7c3fda8eb49060c5eb3648aa6fc09add2a0ce7bb869e18d9e22d59217eddebc4",
     "mdb/qwen2_machine.py": "3d16f3a8afa5335374e007e69f68b1eb42413c96a306670646f27b6916f5e6c5",
     "mdb/receipt_watch.py": "baecae21c14b6f79d08c28db0e98fa75da7316b42a66003f193fbebc6eef8b36",
     "mdb/runtime_telemetry.py": "801235c28f4009cab746aa1cd14f681afa32954a5f8e9d9ec6403234bddf4bec",
@@ -113,7 +113,7 @@
     "mdb/vm_cache.py": "0fcce905ee790deb7ab12ac7087816b60701c0416c0a7452bbef8b655e1191a4",
     "mdb/vm_cli.py": "767f34726d79965f73d6af1a56ead2664ac968faffbe089f8906aab359bd495a",
     "mdb/vm_payload_cache.py": "0825823cfdca5be6fce95f9fd8fcab1dfb254b132d1ddd8bf152af436a5d0b44",
-    "mdb/worker_bootstrap.py": "75d3ef23987524f7e2b0092fa3513ae4e75e39c9a3af37760607e7526fb32488",
+    "mdb/worker_bootstrap.py": "61c3fcda01054a23e61c8fac288a852c6ffdba0423ded4ae8ea6fdaac653ef24",
     "mdb/workers/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
     "mdb/workers/run_saturn_bench.py": "1c460816feb75d1ffa5fd3b9bab44d6ede02736dc058e5403ffa8b355aec466d",
     "mdb/workers/run_saturn_mvm_op.py": "b4edb8e9595f6dfb1ae535f436571abb26d8724cadb9383aed6ec672ed4e579e",
@@ -412,7 +412,7 @@
     "mrun/training/paged_lora_parity.py": "9c476da2d43237d71dedfb4e2e4bdb56fcd0e60b0342166f8049c7ffe7110c04",
     "worker.py": "f22cdbf027dbcc048b6bee72becb06f0828e5cb10bfd603f4b5d5e2176a8efc3"
   },
-  "source_hashes_sha256": "ea5e9517409ae83354dc1ca70279664cd04ca98f677fa2bac1fd05a865c2a09a",
+  "source_hashes_sha256": "71f48a3029a4aa93e13183aafc8b3effb0cc4d39b2fc13840d3a5288d3b13910",
   "conditions": [
     "Mamba legacy continuation ABI proof before full admission",
     "sequential offline image pilots before image proof admission",

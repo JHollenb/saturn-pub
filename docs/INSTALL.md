@@ -32,6 +32,11 @@ wheel, request and configuration hashes before executing the worker. It uses an
 offline uv environment without an editable checkout or `PYTHONPATH`. The fleet
 cache defaults can be overridden with `MDB_WORKER_UV_CACHE_DIR` and
 `MDB_WORKER_TORCH_HOME`; their resolved values are bound into the request.
+Workers default to uv symlink installation to avoid cloning large cached Torch
+trees across fleet filesystems. The cache must remain available for the life of
+the worker. `MDB_WORKER_UV_LINK_MODE` can select `copy`, `hardlink` or `clone`;
+the selected mode is sealed and checked by bootstrap, and recorded in the
+environment receipt. Startup timing is separate from model execution timing.
 
 No fleet refresh, remote publication or service deployment is part of this
 extraction. Live broker operation requires an independently qualified deployed

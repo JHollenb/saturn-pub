@@ -93,6 +93,7 @@ def worker_command(worker_name, *, include_observability_extras=False):
     from .execution_environment import intent
     environment = intent()
     command = ["/usr/bin/env", "PYTHONUNBUFFERED=1", "PYTHONNOUSERSITE=1", "PYTHONPATH=",
+        "UV_LINK_MODE=" + environment["uv_link_mode"],
         "UV_CACHE_DIR=" + environment["uv_cache_dir"], "TORCH_HOME=" + environment["torch_home"],
         "LLM_MODELS_EXTRA_ROOT=" + environment["extra_model_roots"],
         "HF_HUB_OFFLINE=1", "TRANSFORMERS_OFFLINE=1", "DIFFUSERS_OFFLINE=1", "TOKENIZERS_PARALLELISM=false",

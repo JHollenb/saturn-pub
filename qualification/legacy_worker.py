@@ -42,6 +42,8 @@ def main():
             prepared_digest = sha256((prepared / "selected.json").read_bytes()).hexdigest()
             if prepared_digest != config["prepared_selected_sha256"]:
                 raise RuntimeError("prepared selected manifest differs from sealed handoff")
+            if prepared_digest != before:
+                raise RuntimeError("prepared handoff differs from the declared original selection")
             # Copy bytes, never hard-link mutable metadata or borrow another job's writer.
             if any(path.is_symlink() for path in prepared.rglob("*")):
                 raise RuntimeError("linked prepared checkpoint member")
@@ -53,6 +55,8 @@ def main():
         finally:
             writer.close()
     else:
+        if any(path.is_symlink() for path in source.rglob("*")):
+            raise RuntimeError("linked legacy checkpoint member")
         shutil.copytree(source, copied)
     closure = verify(copied)
     spec, model, tokenizer, weights, files = load(config)
@@ -66,13 +70,15 @@ def main():
         actual = finish(session, 1 if spec.family == "mamba" else None)
         # Verify under the resident owner's lock before relinquishing this job's writer.
         continued_closure = verify(copied)
+    closed_closure = verify(copied)
     expected = config["expected"]
     if spec.family == "mamba": expected = [tuple(row) for row in expected]
     unchanged = sha256(selected.read_bytes()).hexdigest() == before
     report = {"schema": "mdb-legacy-continuation-v1", "family": spec.family,
               "original_selected_sha256": before, "original_selected_unchanged": unchanged,
               "verification": closure, "identity": identity, "cut_id": cut,
-              "continued_verification": continued_closure, "handoff": handoff,
+              "continued_verification": continued_closure, "closed_verification": closed_closure,
+              "handoff": handoff,
               "actual": actual, "expected": expected, "exact": actual == expected,
               "weight_files": files, "copied_export": str(copied),
               "execution_environment": json.loads(Path("execution-environment.json").read_text())}

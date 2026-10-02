@@ -9,7 +9,11 @@ REQUIREMENTS = ("torch==2.13.0", "diffusers==0.39.0", "transformers==5.14.1", "a
 
 
 def intent():
-    return {"uv_cache_dir": os.environ.get("MDB_WORKER_UV_CACHE_DIR", "/mnt/big/llm-models/.uv-cache"),
+    link_mode = os.environ.get("MDB_WORKER_UV_LINK_MODE", "symlink")
+    if link_mode not in {"symlink", "hardlink", "copy", "clone"}:
+        raise ValueError("invalid MDB worker uv link mode")
+    return {"uv_link_mode": link_mode,
+            "uv_cache_dir": os.environ.get("MDB_WORKER_UV_CACHE_DIR", "/mnt/big/llm-models/.uv-cache"),
             "torch_home": os.environ.get("MDB_WORKER_TORCH_HOME", "/mnt/big/llm-models/.torch-cache"),
             "extra_model_roots": "/mnt/big/llm-models", "python": "3.14.6",
             "requirements": list(REQUIREMENTS)}
@@ -26,4 +30,4 @@ def receipt():
     return {"python": platform.python_version(), "packages": packages,
             "uv": command(["uv", "--version"]),
             "cuda_driver": command(["nvidia-smi", "--query-gpu=name,driver_version", "--format=csv,noheader"]),
-            "resolved": {key: os.environ.get(key) for key in ("UV_CACHE_DIR", "TORCH_HOME", "LLM_MODELS_EXTRA_ROOT")}}
+            "resolved": {key: os.environ.get(key) for key in ("UV_CACHE_DIR", "UV_LINK_MODE", "TORCH_HOME", "LLM_MODELS_EXTRA_ROOT")}}

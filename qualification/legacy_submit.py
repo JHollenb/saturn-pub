@@ -7,7 +7,7 @@ import tempfile
 
 from mdb.bench_resources import diffusion_resources
 from mdb.execution_environment import intent
-from mdb.job_support import guarded_mrun_launch, source_hash_manifest, one_lease_scheduling_contract
+from mdb.job_support import guarded_mrun_launch, source_hash_manifest, one_lease_scheduling_contract, terminal_job
 from mdb.payload import package_files, stage_worker, worker_command
 from mdb.tools import scheduler_api
 
@@ -17,7 +17,36 @@ HERE = Path(__file__).resolve().parent
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("family", choices=("mamba", "flux", "sdxl"))
+    parser.add_argument("--collect", metavar="JOB", help="retain a terminal job and its sealed native report")
     args = parser.parse_args()
+    if args.collect:
+        job_id, job, logs = terminal_job(args.collect, wait=False)
+        output = HERE.parent / "results/qualification" / job_id
+        request = json.loads((output / "request.json").read_text())
+        config = json.loads((output / "config.json").read_text())
+        (output / "job.json").write_text(json.dumps(job, indent=2))
+        (output / "worker.log").write_text(logs)
+        if (config["family"] != args.family or job["config"]["request_sha256"] != request["request_sha256"]
+                or job["config"]["source_hashes"] != request["source_hashes"]
+                or sha256((output / "config.json").read_bytes()).hexdigest() != request["config_bytes_sha256"]):
+            raise RuntimeError("legacy collected job/config/source seal differs")
+        marker = "MDB_LEGACY_REPORT="
+        reports = [json.loads(line[len(marker):]) for line in logs.splitlines() if line.startswith(marker)]
+        env_marker = "MDB_EXECUTION_ENVIRONMENT="
+        environments = [json.loads(line[len(env_marker):]) for line in logs.splitlines() if line.startswith(env_marker)]
+        if len(reports) > 1 or len(environments) > 1:
+            raise RuntimeError("ambiguous legacy worker report/environment")
+        if environments:
+            (output / "execution-environment.json").write_text(json.dumps(environments[0], indent=2))
+        if reports:
+            report = reports[0]
+            if (not environments or report["execution_environment"] != environments[0]
+                    or report["family"] != args.family
+                    or report["identity"]["runtime_sha256"] != config["expected_runtime_sha256"]):
+                raise RuntimeError("legacy report/environment/runtime differs")
+            (output / "report.json").write_text(json.dumps(report, indent=2))
+        print(json.dumps({"job_id": job_id, "state": job["state"], "report": bool(reports)}))
+        return
     config = json.loads((HERE / "legacy-configs.json").read_text())[args.family]
     if config.get("prepared_store"):
         prior_job = Path(config["prepared_store"]).parent.name
