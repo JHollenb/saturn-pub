@@ -1,0 +1,66 @@
+{
+  "schema": "mdb-legacy-byte-proof-v1",
+  "rows": [
+    {
+      "source": "/Users/jakeholl/domains/saturn/results/open-bench-families/job-dbb9cbfa8a7f/durable/exports/case-0",
+      "selected_sha256": "f7b6996a7c97fbf86f38698c009901753cfc54f3c3f46c7dfa8c815e83258982",
+      "verification": {
+        "schema": "saturn-open-bench-verification-v2",
+        "mechanics_status": "valid",
+        "family": "mamba",
+        "session_id": "job-dbb9cbfa8a7f-0",
+        "manifest_ref": "cas://sha256/583cdf7e1732a036297cbd383e88e0862939e00901c54baa0c915698a3e9dad5",
+        "counts": {
+          "json_artifacts": 1852,
+          "payload_references": 1828,
+          "cuts": 663,
+          "symbols": 1,
+          "vm_bundles": 663
+        },
+        "boundary": "byte/reference closure; model-backed native continuation is proved separately",
+        "discovery_contexts": []
+      }
+    },
+    {
+      "source": "/Users/jakeholl/domains/saturn/results/open-bench-families/job-c243fb97139d/durable/exports/case-0",
+      "selected_sha256": "4990cefafa7c1ec23a121654e3630c59f03cca1f0d127a758b32381f4d52ec58",
+      "verification": {
+        "schema": "saturn-open-bench-verification-v2",
+        "mechanics_status": "valid",
+        "family": "flux",
+        "session_id": "job-c243fb97139d-0",
+        "manifest_ref": "cas://sha256/4151da63be40d1ee125715789acf7c19b8bce4a9a7c46e1d9ef9521b69e5448f",
+        "counts": {
+          "json_artifacts": 545,
+          "payload_references": 64,
+          "cuts": 189,
+          "symbols": 1,
+          "vm_bundles": 189
+        },
+        "boundary": "byte/reference closure; model-backed native continuation is proved separately",
+        "discovery_contexts": []
+      }
+    },
+    {
+      "source": "/Users/jakeholl/domains/saturn/results/open-bench-families/job-8fed69b486e1/durable/exports/case-0",
+      "selected_sha256": "615dd37fe1489e487da8a3a4792efb0358f542be4dcc8b1f9222324f7aaa4bde",
+      "verification": {
+        "schema": "saturn-open-bench-verification-v2",
+        "mechanics_status": "valid",
+        "family": "sdxl",
+        "session_id": "job-8fed69b486e1-0",
+        "manifest_ref": "cas://sha256/82c307bf0baa8158ac47d9b61ec03af5dbe2617b3a718b2bc397644c388bf33a",
+        "counts": {
+          "json_artifacts": 455,
+          "payload_references": 49,
+          "cuts": 153,
+          "symbols": 1,
+          "vm_bundles": 153
+        },
+        "boundary": "byte/reference closure; model-backed native continuation is proved separately",
+        "discovery_contexts": []
+      }
+    }
+  ],
+  "boundary": "copied legacy closure; native model continuation is a separate proof"
+}

@@ -1,0 +1,22 @@
+{
+  "experiment": "mdb-standalone-qualification",
+  "task": "execution-memory-debugger-symbols",
+  "model": "qwen2.5-0.5b-instruct",
+  "max_wall_seconds": 840,
+  "durable_root": "/mnt/big/mdb/qualification",
+  "seed": 19,
+  "tokens": 32,
+  "layers": [
+    0,
+    6,
+    12,
+    18,
+    24
+  ],
+  "prompts": [
+    "The capital of France is",
+    "Write a Python function that adds two integers.\n",
+    "Explain why the sky appears blue in two sentences.\n"
+  ],
+  "debugger_mode": "offline-native-protocol"
+}

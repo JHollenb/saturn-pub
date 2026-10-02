@@ -1,0 +1,7 @@
+[
+  {"op": "step", "kind": "block"},
+  {"op": "checkpoint", "label": "partial-block"},
+  {"op": "inspect", "path": "memory"},
+  {"op": "generate"},
+  {"op": "checkpoint", "label": "completed"}
+]

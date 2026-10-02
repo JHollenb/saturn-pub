@@ -1,0 +1,7 @@
+[
+  {"op": "step", "kind": "layer"},
+  {"op": "checkpoint", "label": "partial-layer"},
+  {"op": "inspect", "path": "memory"},
+  {"op": "generate", "max_new_tokens": 2},
+  {"op": "checkpoint", "label": "completed"}
+]

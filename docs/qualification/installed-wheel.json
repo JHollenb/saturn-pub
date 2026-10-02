@@ -1,0 +1,17 @@
+{
+  "schema": "mdb-installed-wheel-mechanics-v1",
+  "wheel_sha256": "4c654ed987ff366db27928ad1af11d0661af394e950316b17af14d81c8faed17",
+  "passed": 182,
+  "skipped": 5,
+  "elapsed_seconds": 105.13,
+  "python": "3.10.14",
+  "torch": "2.13.0",
+  "source_checkout_on_pythonpath": false,
+  "upstream_import_guard": [
+    "saturn",
+    "saturn_pub",
+    "common_harness"
+  ],
+  "command": "env -u PYTHONPATH python -I -m pytest tests -q --tb=short",
+  "terminal_claim": "installed-wheel local mechanics only; model qualification separate"
+}
