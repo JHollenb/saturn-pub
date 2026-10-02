@@ -15,6 +15,8 @@ the upstream Saturn assays certify their original source seals, not this package
 | Retained Qwen cut audit | 1,158 committed cuts agree with expected token and logit bytes; seven closures valid | Offline retained evidence; native comparisons and fresh continuation are separate |
 | Historical Mamba native continuation | Original token-zero cut reproduced token 275 and its FP32/CUDA logits exactly | One-token continuation; continued and closed byte closures valid; outer job timed out after publishing the report |
 | Historical FLUX native continuation | Exact image from the original conditioning cut; successful exit | BF16/CUDA Klein 4B, four denoise steps and native VAE; continued/closed stores and independent post-termination archive verify |
+| Historical SDXL native continuation | Exact image from the original conditioning cut; successful exit | FP16/CUDA Illustrious XL, four denoise steps and native VAE; independent archive matches the closed report |
+| Full Mamba first assay | Native, stepped, replay, fresh resume, debugger and intervention replay passed | Three prompts × 32 tokens; memory test failed to force eviction, so overall qualification remains incomplete |
 
 The full parent assay is `job-697f7259acdb`. Its archive SHA256 is
 `6166ab531a94b09d422eb53853996592d38e9f44fdbde9f2dee9ea03074b8896`.
@@ -44,6 +46,18 @@ one resident model, strict preflight and no automatic retries.
 Remaining work includes native continuation from copied legacy cuts, full family
 assays, their durable restart/eviction panels, evidence custody and final reports.
 Deployed broker validation and Saturn consumer migration remain separate work.
+
+SDXL pilot `job-a87e433db106` completed in 104.28 seconds. The downloaded archive
+independently verifies the same 159 cuts, 97 payload references and closed manifest;
+all ten custody records verify. See the
+[compact record](qualification/sdxl-legacy-continuation.json).
+
+Mamba full assay `job-eb8c686d27ed` completed its execution panels and fresh-process
+resume after source-store removal in 611.42 seconds. Its memory panel retained
+sharing and exact earlier-cut restoration, but recorded zero evictions: the
+9,450,720-byte test budget exceeded the 6,331,200-byte resident allocation.
+The overall failed result is retained. The corrected panel measures each active
+closure before shrinking residency, and continues all three siblings privately.
 
 FLUX pilot `job-b13b8853f65a` used the installed pinned mrun revision and completed
 in 189.54 seconds, including a 40.31-second offline package install, store copy,
