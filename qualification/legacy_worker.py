@@ -5,6 +5,7 @@ import os
 from pathlib import Path
 import re
 import shutil
+import time
 
 from family_helpers import load, finish
 from mdb import BenchSession
@@ -28,6 +29,15 @@ def main():
         raise RuntimeError("legacy selected manifest differs from the declared source")
     root = Path("/mnt/big/mdb/qualification") / os.environ["MRUN_JOB_ID"]
     root.mkdir(exist_ok=False)
+    started = time.monotonic()
+    stages = []
+    def stage(name):
+        row = {"stage": name, "elapsed_seconds": time.monotonic() - started}
+        stages.append(row)
+        with (root / "stages.jsonl").open("a") as handle:
+            handle.write(json.dumps(row) + "\n")
+        print("MDB_LEGACY_STAGE=" + json.dumps(row), flush=True)
+    stage("copy-start")
     copied = root / "export"
     handoff = None
     if config.get("prepared_store"):
@@ -58,25 +68,33 @@ def main():
         if any(path.is_symlink() for path in source.rglob("*")):
             raise RuntimeError("linked legacy checkpoint member")
         shutil.copytree(source, copied)
+    stage("copy-complete")
     closure = verify(copied)
+    stage("initial-closure-valid")
     from mdb.circuit_runtime import DirectoryArtifactStore
     declared_cut = DirectoryArtifactStore(copied / "artifacts").get(config["original_cut_id"])
     if declared_cut["cursor"] != config["expected_cut_cursor"] or declared_cut["intervention_lineage"]:
         raise RuntimeError("legacy reference cut coordinates or intervention lineage differ")
     spec, model, tokenizer, weights, files = load(config)
+    stage("model-loaded")
     with BenchSession.resume(model, tokenizer, root=copied, model_sha256=weights,
                              legacy_numerical_environment=config.get("legacy_numerical_environment")) as session:
         identity, cut = session.identity, session.branch.cut
         if identity["runtime_sha256"] != config["expected_runtime_sha256"]:
             raise RuntimeError("legacy native execution ABI differs from its qualified identity")
         session.restore(config["original_cut_id"])
+        stage("cut-restored")
         if session.cursor() != config["expected_cut_cursor"]:
             raise RuntimeError("legacy restored cursor differs from the declared suffix parent")
         cut = session.branch.cut
         actual = finish(session, 1 if spec.family == "mamba" else None)
+        stage("native-suffix-complete")
         # Verify under the resident owner's lock before relinquishing this job's writer.
         continued_closure = verify(copied)
+        stage("continued-closure-valid")
+    stage("session-closed")
     closed_closure = verify(copied)
+    stage("closed-closure-valid")
     expected = config["expected"]
     if spec.family == "mamba": expected = [tuple(row) for row in expected]
     unchanged = sha256(selected.read_bytes()).hexdigest() == before
@@ -88,6 +106,7 @@ def main():
               "handoff": handoff,
               "actual": actual, "expected": expected, "exact": actual == expected,
               "weight_files": files, "copied_export": str(copied),
+              "stages": stages,
               "execution_environment": json.loads(Path("execution-environment.json").read_text())}
     (root / "report.json").write_text(json.dumps(report, indent=2))
     print("MDB_LEGACY_REPORT=" + json.dumps(report), flush=True)
