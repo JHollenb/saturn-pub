@@ -14,6 +14,7 @@ the upstream Saturn assays certify their original source seals, not this package
 | Full Qwen parent assay | Timed out at 840 seconds during fresh continuation | All six parent lanes ran and seven resume exports remain; no final aggregate report |
 | Retained Qwen cut audit | 1,158 committed cuts agree with expected token and logit bytes; seven closures valid | Offline retained evidence; native comparisons and fresh continuation are separate |
 | Historical Mamba native continuation | Original token-zero cut reproduced token 275 and its FP32/CUDA logits exactly | One-token continuation; continued and closed byte closures valid; outer job timed out after publishing the report |
+| Historical FLUX native continuation | Exact image from the original conditioning cut; successful exit | BF16/CUDA Klein 4B, four denoise steps and native VAE; continued/closed stores and independent post-termination archive verify |
 
 The full parent assay is `job-697f7259acdb`. Its archive SHA256 is
 `6166ab531a94b09d422eb53853996592d38e9f44fdbde9f2dee9ea03074b8896`.
@@ -43,6 +44,20 @@ one resident model, strict preflight and no automatic retries.
 Remaining work includes native continuation from copied legacy cuts, full family
 assays, their durable restart/eviction panels, evidence custody and final reports.
 Deployed broker validation and Saturn consumer migration remain separate work.
+
+FLUX pilot `job-b13b8853f65a` used the installed pinned mrun revision and completed
+in 189.54 seconds, including a 40.31-second offline package install, store copy,
+audits, loading and native continuation. Its post-termination archive matches the
+closed report (195 cuts, 128 payload references). See the
+[compact record](qualification/flux-legacy-continuation.json).
+
+The SDXL pilot's initial queued request `job-09a793644e0f` was cancelled before
+execution to replace its inherited 24GB RAM envelope with a single-case measured
+reservation. The sizing record `job-282335c2f7d2` reports RSS 9,890.4; conservatively
+normalizing that as MiB, adding 30% headroom plus two 512MiB state allowances, and
+rounding to 512MB yields 14,848MB. The replacement `job-a87e433db106` retains the
+11,264MB CUDA reservation, strict preflight and no retries. The full six-case
+reservation remains unchanged. Both requests and the cancellation are retained.
 
 The first Mamba legacy diagnostic (`job-cae29eb76eb6`) verified its copied byte
 closure but refused native resume because the old manifest omitted its numerical

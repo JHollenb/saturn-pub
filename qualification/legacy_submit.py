@@ -4,6 +4,8 @@ from hashlib import sha256
 import json
 from pathlib import Path
 import tempfile
+import math
+from dataclasses import replace
 
 from mdb.bench_resources import diffusion_resources
 from mdb.execution_environment import intent
@@ -62,15 +64,29 @@ def main():
     if args.family != "mamba":
         profile, basis = diffusion_resources(config["model"], height=512, width=512, steps=4,
                                              state_budget_bytes=512 << 20)
+        if args.family == "sdxl":
+            # This finite pilot runs one copied suffix, without the full suite's
+            # six-case archive and fresh-child geometry. Preserve the GPU bound.
+            raw_peak = 9890.4
+            ram = math.ceil((raw_peak * (1 << 20) / 1e6 * 1.3 + 2 * 512 * (1 << 20) / 1e6) / 512) * 512
+            profile = replace(profile, ram_mb=ram)
+            config["pilot_resource_calibration"] = {
+                "sizing_job": "job-282335c2f7d2", "raw_peak_rss_mb": raw_peak,
+                "sizing_job_record_sha256": "1ff63b7e8397cea365fb76b902b0acbd26366df3ed4f46697a477ef898eaddbe",
+                "raw_units": "conservatively normalized as MiB",
+                "ram_reservation_mb": ram,
+                "formula": "ceil512(normalized RSS*1.3 + 2*512 MiB)",
+                "boundary": "one copied SDXL 512px/four-step suffix; full six-case reservation unchanged"}
         if basis.get("phase_vram_budget_decimal_mb"):
             config["phase_vram_budget_mb"] = basis["phase_vram_budget_decimal_mb"]
-            raw = (json.dumps(config, sort_keys=True) + "\n").encode()
+        raw = (json.dumps(config, sort_keys=True) + "\n").encode()
     sources = {package + "/" + relative: path for package in ("mdb", "mrun")
                for relative, path in package_files(package).items()}
     sources.update({"worker.py": worker, "family_helpers.py": extras[0][0]})
     request = {"schema": "mdb-legacy-request-v1", "model": config["model"], "task_family": "forward",
                "device": "cuda", "needs": {"cuda": True}, "execution_environment": intent(),
                "source_hashes": source_hash_manifest(sources),
+               "resource_profile": profile.as_dict() if profile else None,
                "config_bytes_sha256": sha256(raw).hexdigest(),
                "scheduler_endpoint": scheduler_api()._resolve(),
                "scheduling_contract": one_lease_scheduling_contract(logical_operations=1,
