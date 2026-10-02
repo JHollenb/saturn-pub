@@ -12,6 +12,46 @@ def model():
         num_hidden_layers=2, state_size=4, expand=2, conv_kernel=4)).eval()
 
 
+def test_export_audit_shares_source_ancestry_and_rechecks_next_audit(model, tmp_path, monkeypatch):
+    import json
+    from collections import Counter
+    from mdb.bench_verify import verify
+    from mdb.future_forest import PersistentFutureForest, FutureForestError
+    root = tmp_path / "bench"
+    with BenchSession.from_resident(model, root=root) as bench:
+        bench.prefill([1, 2, 3])
+        bench.generate(3)
+        source_nodes = bench.source_frames.register.forest.nodes
+    expected = verify(root)
+    original = PersistentFutureForest._read_json
+    reads = Counter()
+    def tracked(path):
+        if path.parent == source_nodes:
+            reads[path] += 1
+        return original(path)
+    monkeypatch.setattr(PersistentFutureForest, "_read_json", staticmethod(tracked))
+    from mdb.source_frame_stack import SourceFrameStack
+    SourceFrameStack(root / "source-frames")
+    constructor_reads = reads.copy()
+    reads.clear()
+    assert verify(root) == expected
+    audit_reads = reads - constructor_reads
+    assert audit_reads and max(audit_reads.values()) == 1
+    path = next(iter(reads))
+    with BenchSession.resume(model, root=root):
+        # An active owner prevents journal recovery from healing this materialized
+        # file. A separate audit must re-read it rather than retain cached trust.
+        original_bytes = path.read_bytes()
+        node = json.loads(original_bytes)
+        node["metadata"]["corrupted_after_audit"] = True
+        path.write_text(json.dumps(node))
+        try:
+            with pytest.raises(FutureForestError):
+                verify(root)
+        finally:
+            path.write_bytes(original_bytes)
+
+
 def test_legacy_mamba_requires_explicit_environment_and_retains_cut_identity(model, tmp_path):
     import json
     from mdb.circuit_runtime import DirectoryArtifactStore

@@ -19,5 +19,30 @@
     "elapsed_seconds": 0.95,
     "scope": "installed distribution and launch checks after sealed uv link-mode change"
   },
+  "pinned_dependency_followup": {
+    "wheel_sha256": "9f95b058a2c58925256b51820226c09592818e3458ec8bedf4eb934444a7c072",
+    "mrun_revision": "f002ce776e14143114e232ed6af872808a3de160",
+    "passed": 191,
+    "skipped": 5,
+    "full_suite_elapsed_seconds": 110.91,
+    "example_fixture_followup_elapsed_seconds": 2.95,
+    "scope": "installed wheels outside checkout; full run passed 189 with two missing copied example fixtures; those two passed after copying the fixtures; no runtime edits"
+  },
+  "admission_hardening_full_suite": {
+    "wheel_sha256": "ce5103071bfddc1f43f60f5a99a0bb503ade4cad2edb0c4997f57ef36f0065e0",
+    "mrun_revision": "f002ce776e14143114e232ed6af872808a3de160",
+    "passed": 193,
+    "skipped": 5,
+    "elapsed_seconds": 111.66,
+    "scope": "one full installed-wheel run outside checkout, fixtures included; stale non-needs and submit-only client paths fail closed"
+  },
+  "published_dependency_metadata_followup": {
+    "wheel_sha256": "79ecd236fdcec08e6f51233ace0ffa97a56f654ddf9a84a778deb12be8eb27cf",
+    "passed": 15,
+    "elapsed_seconds": 0.92,
+    "mrun_revision": "f002ce776e14143114e232ed6af872808a3de160",
+    "manalysis_revision": "2ea2eedca427a59b742cf2d2c5249183ece3ef01",
+    "scope": "installed distribution, launch identity and admission compatibility after replacing an unpublished transitive dependency pin; runtime source unchanged"
+  },
   "terminal_claim": "installed-wheel local mechanics only; model qualification separate"
 }

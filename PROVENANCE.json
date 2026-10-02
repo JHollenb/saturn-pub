@@ -328,7 +328,7 @@
       "adapted_after_namespace_extraction": true,
       "extracted_path": "src/mdb/bench_verify.py",
       "extracted_sha256": "87e56b9ed45e19eb499fb295ca130658d5c6815ddee3eecd2dbe0f597d81391c",
-      "final_sha256": "60f63d5d899cf9ca16124f791940128f2d4852a94797047597831f1ec464065c",
+      "final_sha256": "db9d4bf7bee87b34f539ae9323ffd137734da7e0791208c6fb6a14ce1b858bb4",
       "module": "saturn.bench_verify",
       "original_path": "src/saturn/bench_verify.py",
       "original_sha256": "0eba49f1b74f798e4459828180873870459801e5a093f262541a96ae41d66a00"
@@ -580,7 +580,7 @@
       "adapted_after_namespace_extraction": true,
       "extracted_path": "src/mdb/future_forest.py",
       "extracted_sha256": "039deb750371655eba04db8f3b6d5b0d04278a5954060e3c0bacf77196d5e7a2",
-      "final_sha256": "79622e70445ddcd8b74b215c62781aa507fd4fd979ed143c74c9a378fc45f4d5",
+      "final_sha256": "6b3c017ba9ef3bada3a4f092feea7e6ecc17e71f7fa7e0eaaeb21dca84bf9420",
       "module": "saturn.future_forest",
       "original_path": "src/saturn/future_forest.py",
       "original_sha256": "039deb750371655eba04db8f3b6d5b0d04278a5954060e3c0bacf77196d5e7a2"
@@ -918,7 +918,7 @@
     },
     {
       "path": "src/mdb/job_support.py",
-      "sha256": "e3b26a95f8c9c608ec1931882b20fa9b0958d75c424da50b7b9fe42832a76459"
+      "sha256": "9ad31f069b6ac385571a9995817fa471eae0ff25e4b270652b028e330f82cdb5"
     },
     {
       "path": "src/mdb/paths.py",

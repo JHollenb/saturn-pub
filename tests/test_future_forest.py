@@ -32,7 +32,11 @@ def test_closure_snapshot_reads_each_node_once_and_does_not_hide_later_corruptio
         if path.parent == forest.nodes: reads.append(path)
         return original(path)
     monkeypatch.setattr(forest, "_read_json", tracked)
-    assert forest.verify_closure() == expected
+    with forest.verification_snapshot():
+        assert forest.verify_closure() == expected
+        for node in forest.list_nodes():
+            forest.verify_node(node)
+            forest.effective_state(node)
     assert len(reads) == expected["nodes"]
     assert len(set(reads)) == expected["nodes"]
     path = forest.nodes / f"{root}.json"
@@ -40,6 +44,20 @@ def test_closure_snapshot_reads_each_node_once_and_does_not_hide_later_corruptio
     body["metadata"]["step"] = 99
     path.write_text(json.dumps(body))
     with pytest.raises(FutureForestError): forest.verify_closure()
+
+
+def test_verification_snapshot_resets_after_exception(tmp_path):
+    forest, root, *_ = _forest(tmp_path)
+    with pytest.raises(RuntimeError, match="stop audit"):
+        with forest.verification_snapshot():
+            forest.verify_node(root)
+            raise RuntimeError("stop audit")
+    path = forest.nodes / f"{root}.json"
+    body = json.loads(path.read_text())
+    body["metadata"]["tampered"] = True
+    path.write_text(json.dumps(body))
+    with pytest.raises(FutureForestError):
+        forest.verify_node(root)
 
 
 def test_branches_share_parent_and_rejected_evidence_survives(tmp_path: Path) -> None:

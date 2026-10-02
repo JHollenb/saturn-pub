@@ -104,12 +104,13 @@ def _verify(root):
     forest.verify_closure()
     from .source_frame_stack import SourceFrameStack
     sources = SourceFrameStack(root/"source-frames")
-    sources.register.forest.verify_closure()
-    for ref in manifest["cuts"]:
-        frame = artifacts.get(ref).get("source_frames")
-        if frame:
-            sources.inspect(frame["active"])
-            sources.cuts.verify_or_raise(frame["statecut_ref"])
+    with sources.register.forest.verification_snapshot():
+        sources.register.forest.verify_closure()
+        for ref in manifest["cuts"]:
+            frame = artifacts.get(ref).get("source_frames")
+            if frame:
+                sources.inspect(frame["active"])
+                sources.cuts.verify_or_raise(frame["statecut_ref"])
     read_program_record(root/"programs.json")
     return {"schema": "saturn-open-bench-verification-v1", "mechanics_status": "valid",
             "session_id": manifest["session_id"], "manifest_ref": manifest_ref, "counts": counts,
@@ -142,17 +143,18 @@ def verify_family(root, artifacts, manifest_ref, manifest):
             counts["symbols"] += 1
     from .source_frame_stack import SourceFrameStack
     sources = SourceFrameStack(root/"source-frames")
-    sources.register.forest.verify_closure()
-    for ref, record in manifest["cuts"].items():
-        cut = artifacts.get(ref)
-        if any(cut[key] != manifest[key] for key in ("identity", "family", "lane", "numerical_contract")):
-            raise ValueError("family cut identity differs from manifest")
-        if cut["mutable_closure"] != manifest["capabilities"]["mutable_closure"]:
-            raise ValueError("cut mutable closure differs from capabilities")
-        if cut.get("parent_cut"): artifacts.get(cut["parent_cut"])
-        if cut.get("receipt_ref"): artifacts.get(cut["receipt_ref"])
-        if record.get("source_frame"): sources.inspect(record["source_frame"])
-        counts["cuts"] += 1
+    with sources.register.forest.verification_snapshot():
+        sources.register.forest.verify_closure()
+        for ref, record in manifest["cuts"].items():
+            cut = artifacts.get(ref)
+            if any(cut[key] != manifest[key] for key in ("identity", "family", "lane", "numerical_contract")):
+                raise ValueError("family cut identity differs from manifest")
+            if cut["mutable_closure"] != manifest["capabilities"]["mutable_closure"]:
+                raise ValueError("cut mutable closure differs from capabilities")
+            if cut.get("parent_cut"): artifacts.get(cut["parent_cut"])
+            if cut.get("receipt_ref"): artifacts.get(cut["receipt_ref"])
+            if record.get("source_frame"): sources.inspect(record["source_frame"])
+            counts["cuts"] += 1
     for branch in manifest["branches"].values(): artifacts.get(branch["cut"])
     vm = VMCacheStore(root/"vm-cache")
     for path in vm.bundles.glob("*.json"):

@@ -649,15 +649,23 @@ class PersistentFutureForest:
     def list_nodes(self) -> list[str]:
         return sorted(path.stem for path in self.nodes.glob("*.json"))
 
-    def verify_closure(self) -> dict[str, Any]:
-        # The caller serializes writers. Verify each immutable node once in this
-        # read snapshot rather than rereading every ancestor for every state.
-        # Context-local caches never escape this call or survive a later audit.
+    @contextmanager
+    def verification_snapshot(self):
+        """Share verified ancestry within one read-only, writer-serialized audit."""
+        current = _CLOSURE_SNAPSHOT.get()
+        if current is not None and current[0] is self:
+            yield
+            return
         token = _CLOSURE_SNAPSHOT.set((self, {}, {}))
         try:
-            return self._verify_closure()
+            yield
         finally:
             _CLOSURE_SNAPSHOT.reset(token)
+
+    def verify_closure(self) -> dict[str, Any]:
+        # Cache only inside this audit (or its enclosing serialized source audit).
+        with self.verification_snapshot():
+            return self._verify_closure()
 
     def _verify_closure(self) -> dict[str, Any]:
         nodes = self.list_nodes()

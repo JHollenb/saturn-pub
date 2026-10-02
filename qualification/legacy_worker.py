@@ -59,6 +59,10 @@ def main():
             raise RuntimeError("linked legacy checkpoint member")
         shutil.copytree(source, copied)
     closure = verify(copied)
+    from mdb.circuit_runtime import DirectoryArtifactStore
+    declared_cut = DirectoryArtifactStore(copied / "artifacts").get(config["original_cut_id"])
+    if declared_cut["cursor"] != config["expected_cut_cursor"] or declared_cut["intervention_lineage"]:
+        raise RuntimeError("legacy reference cut coordinates or intervention lineage differ")
     spec, model, tokenizer, weights, files = load(config)
     with BenchSession.resume(model, tokenizer, root=copied, model_sha256=weights,
                              legacy_numerical_environment=config.get("legacy_numerical_environment")) as session:
@@ -66,6 +70,8 @@ def main():
         if identity["runtime_sha256"] != config["expected_runtime_sha256"]:
             raise RuntimeError("legacy native execution ABI differs from its qualified identity")
         session.restore(config["original_cut_id"])
+        if session.cursor() != config["expected_cut_cursor"]:
+            raise RuntimeError("legacy restored cursor differs from the declared suffix parent")
         cut = session.branch.cut
         actual = finish(session, 1 if spec.family == "mamba" else None)
         # Verify under the resident owner's lock before relinquishing this job's writer.
@@ -77,6 +83,7 @@ def main():
     report = {"schema": "mdb-legacy-continuation-v1", "family": spec.family,
               "original_selected_sha256": before, "original_selected_unchanged": unchanged,
               "verification": closure, "identity": identity, "cut_id": cut,
+              "original_cut_id": config["original_cut_id"], "original_cursor": declared_cut["cursor"],
               "continued_verification": continued_closure, "closed_verification": closed_closure,
               "handoff": handoff,
               "actual": actual, "expected": expected, "exact": actual == expected,

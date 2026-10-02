@@ -27,8 +27,8 @@ def _reject_nested_submission() -> None:
 def _mrun_launch() -> Any:
     """Return the newest mrun launcher, with a compatibility bridge for older clients.
 
-    Saturn stages the current mrun source into remote workers, but the local
-    control process may still have an older editable/installed client. Keep
+    MDB stages installed mrun bytes into remote workers. The local
+    control process may have an older installed client. Keep
     the intent-first launch contract here so a stale client cannot turn a
     valid dry-run into an import error or silently drop CUDA admission.
     """
@@ -40,38 +40,46 @@ def _mrun_launch() -> Any:
         if 'guarded' not in supported and (not accepts_kwargs):
             raise RuntimeError('mrun client launcher lacks guarded submission support; refusing ordinary append-only Saturn submission')
         if 'needs' not in supported and (not accepts_kwargs):
-
-            def compatibility_launch(command: list[str], **kwargs: Any) -> Any:
-                declared_needs = {key: value for (key, value) in dict(kwargs.get('needs') or {}).items() if bool(value)}
-                unsupported = {key: value for (key, value) in declared_needs.items() if key != 'cuda'}
-                if unsupported:
-                    names = ', '.join(sorted(unsupported))
-                    raise RuntimeError(f'mrun client launcher cannot preserve required job capabilities: {names}; upgrade mrun instead of silently weakening admission')
-                if declared_needs.get('cuda') and (not kwargs.get('gpu')):
-                    raise RuntimeError('mrun client launcher cannot preserve needs.cuda without gpu=True')
-                translated = {key: value for (key, value) in kwargs.items() if key in supported}
-                return launch(command, **translated)
-            return compatibility_launch
+            raise RuntimeError('mrun client launcher lacks explicit needs support; upgrade mrun instead of weakening admission')
+        extensions = {'disk_gb', 'cpu_threads', 'est_wall_s'} - set(supported)
+        if extensions and not accepts_kwargs:
+            def reservation_compatibility_launch(command: list[str], **kwargs: Any) -> Any:
+                active = {key: kwargs.get(key) for key in extensions if kwargs.get(key) is not None}
+                if not active:
+                    return launch(command, **{key: value for key, value in kwargs.items()
+                                               if key not in extensions})
+                submit = getattr(module, 'submit', None)
+                if not callable(submit):
+                    raise RuntimeError('mrun client cannot preserve declared resource reservations')
+                parameters = inspect.signature(submit).parameters
+                variadic = any(p.kind is inspect.Parameter.VAR_KEYWORD for p in parameters.values())
+                required = {'reservation', 'guarded', 'needs', 'preflight', 'retry_on_kill', 'prefer_host'}
+                if not variadic and not required.issubset(parameters):
+                    raise RuntimeError('mrun submitter cannot preserve resource/admission controls')
+                cpu, wall = kwargs.get('cpu_threads'), kwargs.get('est_wall_s')
+                if cpu is not None and (isinstance(cpu, bool) or not isinstance(cpu, int) or cpu < 1):
+                    raise ValueError('cpu_threads must be a positive integer')
+                import math
+                if wall is not None and (isinstance(wall, bool) or not isinstance(wall, (int, float))
+                                         or not math.isfinite(wall) or wall <= 0):
+                    raise ValueError('est_wall_s must be positive and finite')
+                if (cpu is not None or wall is not None) and kwargs.get('ram_mb') is None:
+                    raise ValueError('cpu_threads and est_wall_s require a declared ram_mb')
+                reservation = {'ram_mb': kwargs.get('ram_mb'), 'vram_mb': kwargs.get('vram_mb') or 0.0}
+                reservation.update({key: kwargs[key] for key in ('disk_gb', 'cpu_threads', 'est_wall_s')
+                                    if kwargs.get(key) is not None})
+                needs = dict(kwargs.get('needs') or {})
+                if kwargs.get('gpu'):
+                    needs['cuda'] = True
+                translated = {key: kwargs.get(key) for key in ('experiment', 'config', 'payload',
+                    'prefer_host', 'env_alias', 'model', 'task', 'timeout_s', 'priority', 'note',
+                    'retry_on_kill', 'api', 'preflight', 'guarded', 'guarded_ttl_s') if key in kwargs}
+                translated.update(cmd=command, host=kwargs.get('pin'), reservation=reservation, needs=needs)
+                job_id = submit(**translated)
+                return job_id if kwargs.get('detach', False) else module.attach(job_id, api=kwargs.get('api'))
+            return reservation_compatibility_launch
         return launch
-    submit = getattr(module, 'submit', None)
-    if not callable(submit):
-        raise RuntimeError('mrun client exposes neither launch() nor submit()')
-    supported = inspect.signature(submit).parameters
-    legacy_estimator = 'prefer_host' not in supported
-
-    def compatibility_launch(command: list[str], **kwargs: Any) -> Any:
-        if kwargs.get('guarded') and 'guarded' not in supported:
-            raise RuntimeError('mrun client submitter lacks guarded submission support; refusing ordinary append-only Saturn submission')
-        translated = {'experiment': kwargs.get('experiment'), 'cmd': command, 'config': kwargs.get('config'), 'reservation': {'ram_mb': kwargs.get('ram_mb'), 'vram_mb': kwargs.get('vram_mb', 0.0)} if kwargs.get('ram_mb') is not None or kwargs.get('vram_mb') is not None else None, 'payload': kwargs.get('payload'), 'env_alias': kwargs.get('env_alias'), 'model': None if legacy_estimator else kwargs.get('model'), 'timeout_s': kwargs.get('timeout_s'), 'api': kwargs.get('api'), 'guarded': kwargs.get('guarded'), 'guarded_ttl_s': kwargs.get('guarded_ttl_s')}
-        needs = dict(kwargs.get('needs') or {})
-        if kwargs.get('gpu'):
-            needs['cuda'] = True
-        host = kwargs.get('pin') or kwargs.get('prefer_host')
-        if host:
-            needs['host'] = host
-        translated['needs'] = needs or None
-        return submit(**{key: value for (key, value) in translated.items() if key in supported})
-    return compatibility_launch
+    raise RuntimeError('mrun client exposes no qualified launch() API; upgrade mrun instead of weakening admission')
 
 def reject_staged_target_collisions(staging: Path, sources: Iterable[tuple[Path, Path]], *, reserved_targets: Iterable[Path]=()) -> tuple[tuple[Path, Path], ...]:
     """Validate and normalize source files before copying them into a stage.
