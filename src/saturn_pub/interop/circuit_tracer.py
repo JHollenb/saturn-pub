@@ -473,7 +473,9 @@ def native_edge_test(
     top_k: int = 20,
     decision_rule: DecisionRule | None = None,
     operators: Sequence[str] = ("carrier", "residual_hook"),
+    max_carrier_edges: int | None = None,
     influence: Any | None = None,
+    selection: GraphInfluence | None = None,
     prompt_text: str = "",
     target_text: str = "",
     subject_position: int | None = None,
@@ -488,6 +490,16 @@ def native_edge_test(
     the transcoder's residual-space write directions for a feature, one ``(write_layer,
     direction)`` pair per layer it writes to (one pair for a per-layer transcoder).
 
+    Pass ``graph`` to select edges here, or a precomputed ``selection`` (a
+    :class:`GraphInfluence`, e.g. ranked with circuit-tracer's own influence then kept while the
+    heavy replacement model is freed) to run only the native test. The two are mutually
+    sufficient; ``graph`` may be ``None`` when ``selection`` is given.
+
+    ``max_carrier_edges`` caps how many (top-ranked, last-position, single-write-layer) edges use
+    the heavier ``carrier``+``arbitrate`` path (which forks several native continuations for its
+    sealed receipt + exact-replay gate); edges past the cap fall through to the single-forward
+    ``residual_hook``, so every edge still gets a native verdict under the same frozen rule.
+
     Every selected feature becomes a :func:`Reading.from_external` asserting the edge is
     load-bearing, graded under the frozen ``decision_rule``: ``survives`` (native consumer
     agrees), ``collapses`` (native consumer shows no effect), or ``inconclusive``. Transcoder
@@ -500,7 +512,10 @@ def native_edge_test(
     rule = decision_rule or default_edge_rule()
     tokens = [int(t) for t in prompt_tokens]
     last_pos = len(tokens) - 1
-    selection = select_edges(graph, top_k=top_k, influence=influence)
+    if selection is None:
+        if graph is None:
+            raise ValueError("native_edge_test needs either a graph or a precomputed selection")
+        selection = select_edges(graph, top_k=top_k, influence=influence)
 
     with torch.inference_mode():
         clean_logits = adapter.model(torch.tensor([tokens], device=adapter.device)).logits[:, -1]
@@ -508,6 +523,7 @@ def native_edge_test(
     use_carrier = "carrier" in operators
     use_hook = "residual_hook" in operators
     rows: list[EdgeRow] = []
+    carrier_used = 0
 
     for edge in selection.edges:
         writes = [(int(wl), d) for wl, d in decoder_writes(edge.layer, edge.feature)]
@@ -545,9 +561,15 @@ def native_edge_test(
             )
             continue
 
-        carrier_ok = use_carrier and len(writes) == 1 and writes[0][0] == edge.layer and \
-            edge.position == last_pos
+        carrier_ok = (
+            use_carrier
+            and len(writes) == 1
+            and writes[0][0] == edge.layer
+            and edge.position == last_pos
+            and (max_carrier_edges is None or carrier_used < max_carrier_edges)
+        )
         if carrier_ok:
+            carrier_used += 1
             direction = writes[0][1]
             trial_row, meas = _carrier_effect(
                 adapter, edge, direction, target_token, rule, reading, tokens
