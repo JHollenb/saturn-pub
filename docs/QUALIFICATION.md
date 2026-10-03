@@ -13,6 +13,7 @@ the upstream Saturn assays certify their original source seals, not this package
 | Qwen CLI open/resume | Both jobs succeeded, identical session identity | Real BF16/CUDA Qwen, layer cut, inspection, token generation, durable restart |
 | Full Qwen parent assay | Timed out at 840 seconds during fresh continuation | All six parent lanes ran and seven resume exports remain; no final aggregate report |
 | Retained Qwen cut audit | 1,158 committed cuts agree with expected token and logit bytes; seven closures valid | Offline retained evidence; native comparisons and fresh continuation are separate |
+| Qwen portable follow-up | Seven continuations exact, three stock-native comparisons exact; successful exit | Source-deleted parent exports, native and virtual lanes each compared to their own reference |
 | Historical Mamba native continuation | Original token-zero cut reproduced token 275 and its FP32/CUDA logits exactly | One-token continuation; continued and closed byte closures valid; outer job timed out after publishing the report |
 | Historical FLUX native continuation | Exact image from the original conditioning cut; successful exit | BF16/CUDA Klein 4B, four denoise steps and native VAE; continued/closed stores and independent post-termination archive verify |
 | Historical SDXL native continuation | Exact image from the original conditioning cut; successful exit | FP16/CUDA Illustrious XL, four denoise steps and native VAE; independent archive matches the closed report |
@@ -28,9 +29,11 @@ result directories are excluded from Git.
 The portable continuation follow-up copies the parent
 exports, validates their closures, checks retained histories, then continues the
 saved cuts with the same checkpoint and qualified numerical lane. It does not
-repeat the full parent suite. Its outcome is pending. Initial queued job
+repeat the full parent suite. Follow-up `job-4c79dfdd2e7f` succeeded: all seven
+continuations and all three stock-native comparisons were exact. See its
+[compact record](qualification/qwen-portable-continuation.json). Initial queued job
 `job-804bf88da38a` was cancelled before execution to enforce sequential accelerator
-assays; continuation is submitted after the active pilots finish.
+assays. The original parent's missing aggregate timing remains unavailable.
 
 The Qwen launcher jobs are `job-da82afae3ee0` (open) and `job-7011a334c1c9`
 (resume). They share session `bench-job-da82afae3ee0`.

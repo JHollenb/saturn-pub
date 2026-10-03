@@ -1,0 +1,143 @@
+{
+  "archive_sha256": "d6846cc6f4b7739b2270be455e14a47a70eb83df1c5e26d2c11d68db47c72d26",
+  "posttermination_closures": [
+    {
+      "root": "memory-export",
+      "manifest_ref": "cas://sha256/8e4d16db9cbc4ccd4b7b891adc8b02d76714e202906f76e7491a7391ce1e6bc1",
+      "counts": {
+        "json_artifacts": 52,
+        "payload_references": 20,
+        "cuts": 15,
+        "symbols": 0,
+        "vm_bundles": 9
+      }
+    },
+    {
+      "root": "resume-case-0-native",
+      "manifest_ref": "cas://sha256/d56b40114be76401cf22d9310a729e33904122a73ca5e4b549c38b60da194a21",
+      "counts": {
+        "json_artifacts": 619,
+        "payload_references": 118,
+        "cuts": 233,
+        "symbols": 0,
+        "vm_bundles": 32
+      }
+    },
+    {
+      "root": "resume-case-0-virtual",
+      "manifest_ref": "cas://sha256/54369968ca40eb8f50289e7b05c13942f5987fd14602c5594b05780e9b66df4c",
+      "counts": {
+        "json_artifacts": 619,
+        "payload_references": 118,
+        "cuts": 233,
+        "symbols": 0,
+        "vm_bundles": 32
+      }
+    },
+    {
+      "root": "resume-case-1-native",
+      "manifest_ref": "cas://sha256/d1937bf2736db17c32b8b368d1ee71009460e2964b382c7bd934f6a0e43c6aee",
+      "counts": {
+        "json_artifacts": 619,
+        "payload_references": 118,
+        "cuts": 233,
+        "symbols": 0,
+        "vm_bundles": 32
+      }
+    },
+    {
+      "root": "resume-case-1-virtual",
+      "manifest_ref": "cas://sha256/eca30fd4df0f6fd0c51791a82a62581bab2cc52538aa7447dc63d020674ccf77",
+      "counts": {
+        "json_artifacts": 619,
+        "payload_references": 118,
+        "cuts": 233,
+        "symbols": 0,
+        "vm_bundles": 32
+      }
+    },
+    {
+      "root": "resume-case-2-native",
+      "manifest_ref": "cas://sha256/8d6b58be33c78800abfe67eac3e9c805b39e0604d821161572c7c33625a1bfd9",
+      "counts": {
+        "json_artifacts": 619,
+        "payload_references": 118,
+        "cuts": 233,
+        "symbols": 0,
+        "vm_bundles": 32
+      }
+    },
+    {
+      "root": "resume-case-2-virtual",
+      "manifest_ref": "cas://sha256/7f5ed5da3ed2a000c7e2032400acbe505aee890271e1ed577fd625c94d779b98",
+      "counts": {
+        "json_artifacts": 619,
+        "payload_references": 118,
+        "cuts": 233,
+        "symbols": 0,
+        "vm_bundles": 32
+      }
+    }
+  ],
+  "schema": "mdb-qwen-continuation-summary-v1",
+  "job_id": "job-4c79dfdd2e7f",
+  "parent_job": "job-697f7259acdb",
+  "scheduler_state": "succeeded",
+  "report_sha256": "76242b18689bcdc5aec035b90ea08689db93fdaa37fcaafc33be7ee0329b54c9",
+  "mechanics_status": "valid",
+  "elapsed_seconds": 304.8629343509674,
+  "rows": [
+    {
+      "case": 0,
+      "lane": "native",
+      "cut_id": "cas://sha256/76642618c0f2dfc34e5264561ec90364d01245a6874a1cf244d5dc95f0e20439",
+      "exact": true,
+      "stock_native_exact": true
+    },
+    {
+      "case": 0,
+      "lane": "virtual",
+      "cut_id": "cas://sha256/6bef348d3e3f35824cf09cbbceaf2b2e65c09f9017054022a2e6addf54dbce45",
+      "exact": true,
+      "stock_native_exact": null
+    },
+    {
+      "case": 1,
+      "lane": "native",
+      "cut_id": "cas://sha256/d59708f9437578f10ad3da8f936cfff0f4a8ae60cc602c99655c2a8b05d05ac6",
+      "exact": true,
+      "stock_native_exact": true
+    },
+    {
+      "case": 1,
+      "lane": "virtual",
+      "cut_id": "cas://sha256/995084c05f86382ae8d3f2f84a0b11a529fecb3f4750875d960d309fba240eb3",
+      "exact": true,
+      "stock_native_exact": null
+    },
+    {
+      "case": 2,
+      "lane": "native",
+      "cut_id": "cas://sha256/2a69c2b25d063e58ad387cdefbb59d691c01a108d9d2d13d7c87bfd6bad39dc0",
+      "exact": true,
+      "stock_native_exact": true
+    },
+    {
+      "case": 2,
+      "lane": "virtual",
+      "cut_id": "cas://sha256/4b06072f6d804c6b4a90ab7740f547123349878fe2340fa58a1f297453e001e3",
+      "exact": true,
+      "stock_native_exact": null
+    },
+    {
+      "case": "memory",
+      "lane": "virtual",
+      "cut_id": "cas://sha256/84bc608c916a70fa4aa3c6255539166aead629287bdf923c41ea22e731465367",
+      "exact": true,
+      "stock_native_exact": null
+    }
+  ],
+  "weights_sha256": "2b226fe4944dc744596b1142a15d6676160e9d06f245d31c1a36633f6c86baa3",
+  "parent_committed_cuts_checked": 1158,
+  "boundary": "parent timed out; this follow-up certifies retained committed-cut bytes, native comparisons and portable continuation; original timing/aggregate report unavailable"
+}
