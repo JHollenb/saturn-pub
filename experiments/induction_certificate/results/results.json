@@ -1,0 +1,281 @@
+{
+  "schema": "saturn-pub-induction-certificate-validation-v1",
+  "policy": {
+    "min_panels": 2,
+    "confidence_z": 1.96,
+    "clean_min_accuracy": 0.85,
+    "source_closure_slack": 0.03,
+    "match_min_accuracy": 0.85,
+    "match_max_clean_drop": 0.1,
+    "repair_max_clean_drop": 0.03,
+    "wrong_repair_slack": 0.05,
+    "repair_specificity_min": 0.75,
+    "replay_max_correctness_mismatch": 0.01,
+    "replay_max_margin_mae": 1.0,
+    "consumer": {
+      "consumer": "native_final_norm_lm_head",
+      "backends": null,
+      "device_prefixes": null
+    }
+  },
+  "examples_per_panel": 192,
+  "panels_per_model": 2,
+  "device_name": "NVIDIA GeForce RTX 4080",
+  "versions": {
+    "torch": "2.13.0",
+    "transformers": "5.14.1",
+    "safetensors": "0.8.0",
+    "numpy": "2.5.2"
+  },
+  "cuda_version": "13.0",
+  "models": [
+    {
+      "label": "qwen2.5-0.5b",
+      "model_id": "Qwen/Qwen2.5-0.5B",
+      "model_type": "qwen2",
+      "adapter": "DecoderAdapter",
+      "architecture": {
+        "layers": 24,
+        "query_heads": 14,
+        "kv_heads": 2,
+        "head_dim": 64,
+        "hidden_size": 896,
+        "full_direct_source_edges": 336
+      },
+      "execution": {
+        "device": "cuda",
+        "dtype": "float32",
+        "attention": "eager",
+        "backend": "native-decoder-v1",
+        "model_identity": "af16588799f66c651c537291bbb291b173f61a5c54edb139196fe0d186656680"
+      },
+      "certificate": {
+        "schema": "saturn-pub-induction-certificate-v1",
+        "policy": {
+          "min_panels": 2,
+          "confidence_z": 1.96,
+          "clean_min_accuracy": 0.85,
+          "source_closure_slack": 0.03,
+          "match_min_accuracy": 0.85,
+          "match_max_clean_drop": 0.1,
+          "repair_max_clean_drop": 0.03,
+          "wrong_repair_slack": 0.05,
+          "repair_specificity_min": 0.75,
+          "replay_max_correctness_mismatch": 0.01,
+          "replay_max_margin_mae": 1.0,
+          "consumer": {
+            "consumer": "native_final_norm_lm_head",
+            "backends": null,
+            "device_prefixes": null
+          }
+        },
+        "panel_count": 2,
+        "panels": [
+          {
+            "panel_id": "confirmation-length12-seed20260812",
+            "examples": 192,
+            "classes": 48,
+            "chance_accuracy": 0.020833333333333332,
+            "metrics": {
+              "clean_accuracy": 0.9739583333333334,
+              "clean_mean_margin": 6.917748404045899,
+              "source_deletion_accuracy": 0.0,
+              "source_deletion_mean_margin": -9.873382146159807,
+              "source_deletion_upper_confidence_bound": 0.019615852811660034,
+              "match_deletion_accuracy": 0.9583333333333334,
+              "match_deletion_mean_margin": 5.308007364471753,
+              "correct_repair_accuracy": 0.9739583333333334,
+              "correct_repair_mean_margin": 6.917748404045899,
+              "wrong_repair_accuracy": 0.0,
+              "wrong_repair_mean_margin": -11.571080505847931,
+              "wrong_repair_upper_confidence_bound": 0.019615852811660034,
+              "repair_specificity_margin": 0.9739583333333334,
+              "repair_correctness_mismatch_fraction": 0.0,
+              "repair_margin_mae": 0.0
+            },
+            "gates": {
+              "clean_behavior": true,
+              "source_necessity": true,
+              "position_specificity": true,
+              "correct_repair_sufficiency": true,
+              "wrong_donor_specificity": true,
+              "repair_replay_fidelity": true,
+              "native_consumer_continuation": true
+            },
+            "certified": true
+          },
+          {
+            "panel_id": "confirmation-length16-seed20260813",
+            "examples": 192,
+            "classes": 48,
+            "chance_accuracy": 0.020833333333333332,
+            "metrics": {
+              "clean_accuracy": 0.984375,
+              "clean_mean_margin": 7.065488710999489,
+              "source_deletion_accuracy": 0.005208333333333333,
+              "source_deletion_mean_margin": -9.456882325311502,
+              "source_deletion_upper_confidence_bound": 0.028908220213880856,
+              "match_deletion_accuracy": 0.9739583333333334,
+              "match_deletion_mean_margin": 5.731753709415595,
+              "correct_repair_accuracy": 0.984375,
+              "correct_repair_mean_margin": 7.065488710999489,
+              "wrong_repair_accuracy": 0.005208333333333333,
+              "wrong_repair_mean_margin": -11.47247772415479,
+              "wrong_repair_upper_confidence_bound": 0.028908220213880856,
+              "repair_specificity_margin": 0.9791666666666666,
+              "repair_correctness_mismatch_fraction": 0.0,
+              "repair_margin_mae": 0.0
+            },
+            "gates": {
+              "clean_behavior": true,
+              "source_necessity": true,
+              "position_specificity": true,
+              "correct_repair_sufficiency": true,
+              "wrong_donor_specificity": true,
+              "repair_replay_fidelity": true,
+              "native_consumer_continuation": true
+            },
+            "certified": true
+          }
+        ],
+        "gates": {
+          "replication": true,
+          "all_panels_certified": true
+        },
+        "certified": true,
+        "claim_boundary": "bounded direct-source attention circuit for the declared arbitrary-token relational-induction workload, model bytes, route family, prompt panels, native lexical consumer, and thresholds; not a globally minimal, unique, natural-language-general, or architecture-universal circuit",
+        "content_sha256": "84dc2a27680bcf048f849ab66966c98c2a38663a70a61d8e6b55c7f0698cfc3d"
+      },
+      "certified": true,
+      "wall_s": 7.51,
+      "peak_vram_mb": 4549.6
+    },
+    {
+      "label": "smollm2-360m",
+      "model_id": "HuggingFaceTB/SmolLM2-360M",
+      "model_type": "llama",
+      "adapter": "DecoderAdapter",
+      "architecture": {
+        "layers": 32,
+        "query_heads": 15,
+        "kv_heads": 5,
+        "head_dim": 64,
+        "hidden_size": 960,
+        "full_direct_source_edges": 480
+      },
+      "execution": {
+        "device": "cuda",
+        "dtype": "float32",
+        "attention": "eager",
+        "backend": "native-decoder-v1",
+        "model_identity": "3b1dbab8eb8a78c6fe460503df79a27ff4bf44fdb21868b6b77e9e3e135c472a"
+      },
+      "certificate": {
+        "schema": "saturn-pub-induction-certificate-v1",
+        "policy": {
+          "min_panels": 2,
+          "confidence_z": 1.96,
+          "clean_min_accuracy": 0.85,
+          "source_closure_slack": 0.03,
+          "match_min_accuracy": 0.85,
+          "match_max_clean_drop": 0.1,
+          "repair_max_clean_drop": 0.03,
+          "wrong_repair_slack": 0.05,
+          "repair_specificity_min": 0.75,
+          "replay_max_correctness_mismatch": 0.01,
+          "replay_max_margin_mae": 1.0,
+          "consumer": {
+            "consumer": "native_final_norm_lm_head",
+            "backends": null,
+            "device_prefixes": null
+          }
+        },
+        "panel_count": 2,
+        "panels": [
+          {
+            "panel_id": "confirmation-length12-seed20260812",
+            "examples": 192,
+            "classes": 48,
+            "chance_accuracy": 0.020833333333333332,
+            "metrics": {
+              "clean_accuracy": 0.9635416666666666,
+              "clean_mean_margin": 6.361946264902751,
+              "source_deletion_accuracy": 0.0,
+              "source_deletion_mean_margin": -7.819959029555321,
+              "source_deletion_upper_confidence_bound": 0.019615852811660034,
+              "match_deletion_accuracy": 0.921875,
+              "match_deletion_mean_margin": 5.374443000803391,
+              "correct_repair_accuracy": 0.9635416666666666,
+              "correct_repair_mean_margin": 6.361946264902751,
+              "wrong_repair_accuracy": 0.0,
+              "wrong_repair_mean_margin": -12.28560085222125,
+              "wrong_repair_upper_confidence_bound": 0.019615852811660034,
+              "repair_specificity_margin": 0.9635416666666666,
+              "repair_correctness_mismatch_fraction": 0.0,
+              "repair_margin_mae": 0.0
+            },
+            "gates": {
+              "clean_behavior": true,
+              "source_necessity": true,
+              "position_specificity": true,
+              "correct_repair_sufficiency": true,
+              "wrong_donor_specificity": true,
+              "repair_replay_fidelity": true,
+              "native_consumer_continuation": true
+            },
+            "certified": true
+          },
+          {
+            "panel_id": "confirmation-length16-seed20260813",
+            "examples": 192,
+            "classes": 48,
+            "chance_accuracy": 0.020833333333333332,
+            "metrics": {
+              "clean_accuracy": 0.9583333333333334,
+              "clean_mean_margin": 7.589234568178654,
+              "source_deletion_accuracy": 0.0,
+              "source_deletion_mean_margin": -7.887063771486282,
+              "source_deletion_upper_confidence_bound": 0.019615852811660034,
+              "match_deletion_accuracy": 0.96875,
+              "match_deletion_mean_margin": 6.676584579050541,
+              "correct_repair_accuracy": 0.9583333333333334,
+              "correct_repair_mean_margin": 7.589234568178654,
+              "wrong_repair_accuracy": 0.0,
+              "wrong_repair_mean_margin": -13.112022195011377,
+              "wrong_repair_upper_confidence_bound": 0.019615852811660034,
+              "repair_specificity_margin": 0.9583333333333334,
+              "repair_correctness_mismatch_fraction": 0.0,
+              "repair_margin_mae": 0.0
+            },
+            "gates": {
+              "clean_behavior": true,
+              "source_necessity": true,
+              "position_specificity": true,
+              "correct_repair_sufficiency": true,
+              "wrong_donor_specificity": true,
+              "repair_replay_fidelity": true,
+              "native_consumer_continuation": true
+            },
+            "certified": true
+          }
+        ],
+        "gates": {
+          "replication": true,
+          "all_panels_certified": true
+        },
+        "certified": true,
+        "claim_boundary": "bounded direct-source attention circuit for the declared arbitrary-token relational-induction workload, model bytes, route family, prompt panels, native lexical consumer, and thresholds; not a globally minimal, unique, natural-language-general, or architecture-universal circuit",
+        "content_sha256": "983b00ce660a0ddadba9a4997471a7b1812b3e6043f7b37bcb440881f85d105b"
+      },
+      "certified": true,
+      "wall_s": 5.44,
+      "peak_vram_mb": 2337.3
+    }
+  ],
+  "gates": {
+    "both_models_completed": true,
+    "cross_model_induction_certified": true,
+    "certified_model_count": 2
+  },
+  "wall_s": 13.28
+}
