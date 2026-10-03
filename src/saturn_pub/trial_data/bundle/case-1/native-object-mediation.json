@@ -1,0 +1,713 @@
+{
+  "axis": "subject",
+  "case": "flux2-native-object-mediation-fox-cat",
+  "claim_boundary": "necessity/sufficiency/rescue under one prompt pair and seed; rescue is mediated-route evidence, not an edge certificate. Promotion needs multi-seed + multi-axis replication.",
+  "execution": {
+    "device": "cuda",
+    "dtype": "bfloat16",
+    "elapsed_s": 16.491556813940406,
+    "peak_rss_mb": 17263.52734375,
+    "peak_vram_mb": 8149.8525390625
+  },
+  "panel": {
+    "baseline_fox_cat_mad": 51.7631950378418,
+    "branches": [
+      {
+        "branch_id": "sufficiency:joint.2@0",
+        "donor_like_image": true,
+        "donor_progress": 0.4190144289625407,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 30.07366943359375,
+        "final_rgb_mad_vs_red": 30.3111572265625,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.6076881885528564,
+        "return_progress": 0.39014163613319397,
+        "sites": [
+          "joint.2"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 0
+      },
+      {
+        "branch_id": "sufficiency:joint.3@0",
+        "donor_like_image": true,
+        "donor_progress": 0.4281981363449706,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 29.598291397094727,
+        "final_rgb_mad_vs_red": 30.707260131835938,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.611503005027771,
+        "return_progress": 0.3934977054595947,
+        "sites": [
+          "joint.3"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 0
+      },
+      {
+        "branch_id": "sufficiency:joint.4@0",
+        "donor_like_image": false,
+        "donor_progress": 0.35776409172686885,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 33.24418258666992,
+        "final_rgb_mad_vs_red": 27.674072265625,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.5783311128616333,
+        "return_progress": 0.3618524372577667,
+        "sites": [
+          "joint.4"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 0
+      },
+      {
+        "branch_id": "sufficiency:single.0@0",
+        "donor_like_image": false,
+        "donor_progress": 0.2820932317461642,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 37.16114807128906,
+        "final_rgb_mad_vs_red": 24.669775009155273,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.527944028377533,
+        "return_progress": 0.31679511070251465,
+        "sites": [
+          "single.0"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 0
+      },
+      {
+        "branch_id": "necessity:joint.2@0",
+        "donor_like_image": false,
+        "donor_progress": 0.22177558053478286,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 40.283382415771484,
+        "final_rgb_mad_vs_red": 18.220544815063477,
+        "kind": "necessity",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.6322830319404602,
+        "return_progress": 0.4368061423301697,
+        "sites": [
+          "joint.2"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 0
+      },
+      {
+        "branch_id": "necessity:joint.3@0",
+        "donor_like_image": false,
+        "donor_progress": 0.22343549045980826,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 40.19746017456055,
+        "final_rgb_mad_vs_red": 18.288970947265625,
+        "kind": "necessity",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.6329652070999146,
+        "return_progress": 0.4378688335418701,
+        "sites": [
+          "joint.3"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 0
+      },
+      {
+        "branch_id": "necessity:joint.4@0",
+        "donor_like_image": false,
+        "donor_progress": 0.2245161563779654,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 40.14152145385742,
+        "final_rgb_mad_vs_red": 18.52376365661621,
+        "kind": "necessity",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.6332818269729614,
+        "return_progress": 0.43735629320144653,
+        "sites": [
+          "joint.4"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 0
+      },
+      {
+        "branch_id": "necessity:single.0@0",
+        "donor_like_image": false,
+        "donor_progress": 0.26758199025145524,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 37.912296295166016,
+        "final_rgb_mad_vs_red": 21.180099487304688,
+        "kind": "necessity",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.6718349456787109,
+        "return_progress": 0.48626646399497986,
+        "sites": [
+          "single.0"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 0
+      },
+      {
+        "branch_id": "sufficiency:joint.2@1",
+        "donor_like_image": false,
+        "donor_progress": 0.09171422417531727,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 47.01577377319336,
+        "final_rgb_mad_vs_red": 10.179326057434082,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.3744339048862457,
+        "return_progress": 0.15985505282878876,
+        "sites": [
+          "joint.2"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 1
+      },
+      {
+        "branch_id": "sufficiency:joint.3@1",
+        "donor_like_image": false,
+        "donor_progress": 0.09144066771812964,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 47.02993392944336,
+        "final_rgb_mad_vs_red": 10.273930549621582,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.3766952455043793,
+        "return_progress": 0.16142567992210388,
+        "sites": [
+          "joint.3"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 1
+      },
+      {
+        "branch_id": "sufficiency:joint.4@1",
+        "donor_like_image": false,
+        "donor_progress": 0.09208122610333302,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 46.99677658081055,
+        "final_rgb_mad_vs_red": 10.09620189666748,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.38541343808174133,
+        "return_progress": 0.16485495865345,
+        "sites": [
+          "joint.4"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 1
+      },
+      {
+        "branch_id": "sufficiency:single.0@1",
+        "donor_like_image": false,
+        "donor_progress": 0.05499044892053795,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 48.91671371459961,
+        "final_rgb_mad_vs_red": 6.7973175048828125,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.3089737594127655,
+        "return_progress": 0.09417296946048737,
+        "sites": [
+          "single.0"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 1
+      },
+      {
+        "branch_id": "necessity:joint.2@1",
+        "donor_like_image": true,
+        "donor_progress": 0.6933068613519022,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 15.87541675567627,
+        "final_rgb_mad_vs_red": 44.63492965698242,
+        "kind": "necessity",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.8177096247673035,
+        "return_progress": 0.7092642784118652,
+        "sites": [
+          "joint.2"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 1
+      },
+      {
+        "branch_id": "necessity:joint.3@1",
+        "donor_like_image": true,
+        "donor_progress": 0.6895150792332783,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 16.071691513061523,
+        "final_rgb_mad_vs_red": 44.45621109008789,
+        "kind": "necessity",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.8167704343795776,
+        "return_progress": 0.7073565721511841,
+        "sites": [
+          "joint.3"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 1
+      },
+      {
+        "branch_id": "necessity:joint.4@1",
+        "donor_like_image": true,
+        "donor_progress": 0.7165790947553266,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 14.670771598815918,
+        "final_rgb_mad_vs_red": 45.08015441894531,
+        "kind": "necessity",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.8355579376220703,
+        "return_progress": 0.7278740406036377,
+        "sites": [
+          "joint.4"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 1
+      },
+      {
+        "branch_id": "necessity:single.0@1",
+        "donor_like_image": true,
+        "donor_progress": 0.7447999217260788,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 13.20997142791748,
+        "final_rgb_mad_vs_red": 45.8315315246582,
+        "kind": "necessity",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.8708760738372803,
+        "return_progress": 0.7731122970581055,
+        "sites": [
+          "single.0"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 1
+      },
+      {
+        "branch_id": "sufficiency:joint.2@2",
+        "donor_like_image": false,
+        "donor_progress": 0.05681867860531997,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 48.822078704833984,
+        "final_rgb_mad_vs_red": 7.1373748779296875,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.33813369274139404,
+        "return_progress": 0.11047575622797012,
+        "sites": [
+          "joint.2"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 2
+      },
+      {
+        "branch_id": "sufficiency:joint.3@2",
+        "donor_like_image": false,
+        "donor_progress": 0.05729696023440067,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 48.79732131958008,
+        "final_rgb_mad_vs_red": 7.216033935546875,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.33535343408584595,
+        "return_progress": 0.11005745828151703,
+        "sites": [
+          "joint.3"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 2
+      },
+      {
+        "branch_id": "sufficiency:joint.4@2",
+        "donor_like_image": false,
+        "donor_progress": 0.06499117776380048,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 48.399044036865234,
+        "final_rgb_mad_vs_red": 7.964991092681885,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.3459014296531677,
+        "return_progress": 0.11566375195980072,
+        "sites": [
+          "joint.4"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 2
+      },
+      {
+        "branch_id": "sufficiency:single.0@2",
+        "donor_like_image": false,
+        "donor_progress": 0.05928591907681369,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 48.694366455078125,
+        "final_rgb_mad_vs_red": 7.766326904296875,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.32492557168006897,
+        "return_progress": 0.10479002445936203,
+        "sites": [
+          "single.0"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 2
+      },
+      {
+        "branch_id": "necessity:joint.2@2",
+        "donor_like_image": true,
+        "donor_progress": 0.8412618830998724,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 8.216792106628418,
+        "final_rgb_mad_vs_red": 50.00619125366211,
+        "kind": "necessity",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.9416198134422302,
+        "return_progress": 0.9009720087051392,
+        "sites": [
+          "joint.2"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 2
+      },
+      {
+        "branch_id": "necessity:joint.3@2",
+        "donor_like_image": true,
+        "donor_progress": 0.838355253623296,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 8.36724853515625,
+        "final_rgb_mad_vs_red": 50.04988479614258,
+        "kind": "necessity",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.9413548111915588,
+        "return_progress": 0.8989239931106567,
+        "sites": [
+          "joint.3"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 2
+      },
+      {
+        "branch_id": "necessity:joint.4@2",
+        "donor_like_image": true,
+        "donor_progress": 0.8477422491218767,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 7.88134765625,
+        "final_rgb_mad_vs_red": 49.7596435546875,
+        "kind": "necessity",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.9419792890548706,
+        "return_progress": 0.8994513154029846,
+        "sites": [
+          "joint.4"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 2
+      },
+      {
+        "branch_id": "necessity:single.0@2",
+        "donor_like_image": true,
+        "donor_progress": 0.8693476084070633,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 6.7629852294921875,
+        "final_rgb_mad_vs_red": 50.38131332397461,
+        "kind": "necessity",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.9554503560066223,
+        "return_progress": 0.9209747314453125,
+        "sites": [
+          "single.0"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 2
+      },
+      {
+        "branch_id": "sufficiency:joint.2@3",
+        "donor_like_image": false,
+        "donor_progress": 0.049232645580001955,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 49.21475601196289,
+        "final_rgb_mad_vs_red": 9.399673461914062,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.3484581708908081,
+        "return_progress": 0.13928444683551788,
+        "sites": [
+          "joint.2"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 3
+      },
+      {
+        "branch_id": "sufficiency:joint.3@3",
+        "donor_like_image": false,
+        "donor_progress": 0.04870977837532897,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 49.2418212890625,
+        "final_rgb_mad_vs_red": 9.387654304504395,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.350831538438797,
+        "return_progress": 0.14034001529216766,
+        "sites": [
+          "joint.3"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 3
+      },
+      {
+        "branch_id": "sufficiency:joint.4@3",
+        "donor_like_image": false,
+        "donor_progress": 0.04704330958050562,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 49.32808303833008,
+        "final_rgb_mad_vs_red": 9.813151359558105,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.34823206067085266,
+        "return_progress": 0.14012345671653748,
+        "sites": [
+          "joint.4"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 3
+      },
+      {
+        "branch_id": "sufficiency:single.0@3",
+        "donor_like_image": false,
+        "donor_progress": 0.05904655717677454,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 48.706756591796875,
+        "final_rgb_mad_vs_red": 9.85693359375,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.3535449802875519,
+        "return_progress": 0.1389620304107666,
+        "sites": [
+          "single.0"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 3
+      },
+      {
+        "branch_id": "necessity:joint.2@3",
+        "donor_like_image": true,
+        "donor_progress": 0.843115961364223,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 8.120819091796875,
+        "final_rgb_mad_vs_red": 50.3857536315918,
+        "kind": "necessity",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.9274667501449585,
+        "return_progress": 0.8667958378791809,
+        "sites": [
+          "joint.2"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 3
+      },
+      {
+        "branch_id": "necessity:joint.3@3",
+        "donor_like_image": true,
+        "donor_progress": 0.843258432544411,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 8.113444328308105,
+        "final_rgb_mad_vs_red": 50.239654541015625,
+        "kind": "necessity",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.9284531474113464,
+        "return_progress": 0.8670486807823181,
+        "sites": [
+          "joint.3"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 3
+      },
+      {
+        "branch_id": "necessity:joint.4@3",
+        "donor_like_image": true,
+        "donor_progress": 0.8433674092715302,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 8.107803344726562,
+        "final_rgb_mad_vs_red": 50.24569320678711,
+        "kind": "necessity",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.9289674758911133,
+        "return_progress": 0.867986261844635,
+        "sites": [
+          "joint.4"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 3
+      },
+      {
+        "branch_id": "necessity:single.0@3",
+        "donor_like_image": true,
+        "donor_progress": 0.8472693196042462,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 7.90582799911499,
+        "final_rgb_mad_vs_red": 50.65439224243164,
+        "kind": "necessity",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.9319564700126648,
+        "return_progress": 0.8720831274986267,
+        "sites": [
+          "single.0"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 3
+      },
+      {
+        "branch_id": "rescue:joint.2->joint.3@2",
+        "donor_like_image": true,
+        "donor_progress": 0.9913682325653359,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 0.446807861328125,
+        "final_rgb_mad_vs_red": 51.7542839050293,
+        "kind": "mediation_rescue",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.9998103380203247,
+        "return_progress": 1.0001537799835205,
+        "sites": [
+          "joint.2",
+          "joint.3"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 2
+      },
+      {
+        "branch_id": "rescue:joint.3->joint.4@2",
+        "donor_like_image": true,
+        "donor_progress": 0.9818309968039607,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 0.9404856562614441,
+        "final_rgb_mad_vs_red": 51.89173889160156,
+        "kind": "mediation_rescue",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.998910129070282,
+        "return_progress": 0.9987062811851501,
+        "sites": [
+          "joint.3",
+          "joint.4"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 2
+      },
+      {
+        "branch_id": "rescue:joint.4->single.0@2",
+        "donor_like_image": true,
+        "donor_progress": 0.9689034886135822,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 1.6096547842025757,
+        "final_rgb_mad_vs_red": 51.477359771728516,
+        "kind": "mediation_rescue",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.9964686036109924,
+        "return_progress": 0.9910537600517273,
+        "sites": [
+          "joint.4",
+          "single.0"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 2
+      }
+    ],
+    "exact_validation": [
+      {
+        "branch_id": "exact::sufficiency:joint.4@2",
+        "donor_like_image": false,
+        "donor_progress": 0.06548169279048177,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 48.373653411865234,
+        "final_rgb_mad_vs_red": 8.025416374206543,
+        "kind": "sufficiency",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.34487903118133545,
+        "return_progress": 0.11504609137773514,
+        "screen_branch_id": "sufficiency:joint.4@2",
+        "sites": [
+          "joint.4"
+        ],
+        "source_checkpoint": "red",
+        "target_step": 2
+      },
+      {
+        "branch_id": "exact::rescue:joint.2->joint.3@2",
+        "donor_like_image": true,
+        "donor_progress": 0.9908910811207191,
+        "execution": {},
+        "final_rgb_mad_vs_blue": 0.4715067446231842,
+        "final_rgb_mad_vs_red": 51.73756790161133,
+        "kind": "mediation_rescue",
+        "red_blue_baseline_mad": 51.7631950378418,
+        "return_alignment_to_red_blue": 0.9997811317443848,
+        "return_progress": 0.9999510049819946,
+        "screen_branch_id": "rescue:joint.2->joint.3@2",
+        "sites": [
+          "joint.2",
+          "joint.3"
+        ],
+        "source_checkpoint": "blue",
+        "target_step": 2
+      }
+    ],
+    "mediation_summary": [
+      {
+        "downstream": "joint.3",
+        "downstream_donor_patch_rescue_mad": 0.446807861328125,
+        "interpretation": "rescue is evidence for downstream mediation only after exact scalar replication; it is not by itself an edge certificate",
+        "rescue_fraction": 0.9456225903021307,
+        "upstream": "joint.2",
+        "upstream_blue_ablation_mad": 8.216792106628418
+      },
+      {
+        "downstream": "joint.4",
+        "downstream_donor_patch_rescue_mad": 0.9404856562614441,
+        "interpretation": "rescue is evidence for downstream mediation only after exact scalar replication; it is not by itself an edge certificate",
+        "rescue_fraction": 0.8875991717963384,
+        "upstream": "joint.3",
+        "upstream_blue_ablation_mad": 8.36724853515625
+      },
+      {
+        "downstream": "single.0",
+        "downstream_donor_patch_rescue_mad": 1.6096547842025757,
+        "interpretation": "rescue is evidence for downstream mediation only after exact scalar replication; it is not by itself an edge certificate",
+        "rescue_fraction": 0.7957640162106362,
+        "upstream": "joint.4",
+        "upstream_blue_ablation_mad": 7.88134765625
+      }
+    ]
+  },
+  "prompts": {
+    "cat": "a photorealistic red cat sitting in fresh snow at dawn, soft red light",
+    "fox": "a photorealistic red fox sitting in fresh snow at dawn, soft red light"
+  },
+  "recipe": {
+    "candidate_sites": [
+      "joint.2",
+      "joint.3",
+      "joint.4",
+      "single.0"
+    ],
+    "mediation_step": 2,
+    "resolution": [
+      256,
+      256
+    ],
+    "seed": 7217,
+    "steps": 4
+  },
+  "schema": "saturn-native-object-mediation-v1",
+  "status": "exploratory",
+  "verdict": {
+    "joint.4_necessity": "weak/not necessary",
+    "joint.4_necessity_damage_mad": 0.0,
+    "joint.4_sufficiency_mad_to_cat": 0.0,
+    "reading": "partial: see per-site rows; object circuit not fully certified at this seed",
+    "rescue_route_holds": true,
+    "route_rescue_fractions": {
+      "joint.2->joint.3": 0.9456225903021307,
+      "joint.3->joint.4": 0.8875991717963384,
+      "joint.4->single.0": 0.7957640162106362
+    }
+  }
+}

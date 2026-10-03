@@ -1,0 +1,456 @@
+{
+  "branches": [
+    {
+      "image_progress": 0.06336769299600853,
+      "label": "E2a:repair_subject_rows",
+      "mad_vs_base": 17.105737686157227,
+      "mad_vs_target": 63.77566909790039,
+      "numerical_contract": "exact_scalar_native_call",
+      "roi": {
+        "fox": {
+          "mad_vs_base": 9.208170890808105,
+          "progress": 0.05317290005346498,
+          "rgb": [
+            212.70751953125,
+            158.615234375,
+            167.56689453125
+          ]
+        }
+      },
+      "seed": 7217
+    },
+    {
+      "image_progress": 0.06336769299600853,
+      "label": "E2a:repair_subject+color",
+      "mad_vs_base": 17.105737686157227,
+      "mad_vs_target": 63.77566909790039,
+      "numerical_contract": "exact_scalar_native_call",
+      "roi": {
+        "fox": {
+          "mad_vs_base": 9.208170890808105,
+          "progress": 0.05317290005346498,
+          "rgb": [
+            212.70751953125,
+            158.615234375,
+            167.56689453125
+          ]
+        }
+      },
+      "seed": 7217
+    },
+    {
+      "image_progress": 0.08156966963244372,
+      "label": "E2a:repair_window\u00b13",
+      "mad_vs_base": 19.859848022460938,
+      "mad_vs_target": 62.53628921508789,
+      "numerical_contract": "exact_scalar_native_call",
+      "roi": {
+        "fox": {
+          "mad_vs_base": 12.712890625,
+          "progress": 0.08118244041781242,
+          "rgb": [
+            214.0537109375,
+            155.82763671875,
+            162.1865234375
+          ]
+        }
+      },
+      "seed": 7217
+    },
+    {
+      "image_progress": 0.8915198137473045,
+      "label": "E2a:repair_active_rows",
+      "mad_vs_base": 69.21305847167969,
+      "mad_vs_target": 7.3864593505859375,
+      "numerical_contract": "exact_scalar_native_call",
+      "roi": {
+        "fox": {
+          "mad_vs_base": 88.75048828125,
+          "progress": 0.9337986237468404,
+          "rgb": [
+            177.89697265625,
+            58.888671875,
+            70.73095703125
+          ]
+        }
+      },
+      "seed": 7217
+    },
+    {
+      "image_progress": 0.007297575594726102,
+      "label": "E2a:sham_noise_subject_rows",
+      "mad_vs_base": 10.240498542785645,
+      "mad_vs_target": 67.593505859375,
+      "numerical_contract": "exact_scalar_native_call",
+      "roi": {
+        "fox": {
+          "mad_vs_base": 11.068360328674316,
+          "progress": 0.031033337192991728,
+          "rgb": [
+            200.6826171875,
+            157.96435546875,
+            171.515625
+          ]
+        }
+      },
+      "seed": 7217
+    },
+    {
+      "image_progress": 0.09270164034817951,
+      "label": "E3:transplant_foreign_subject_into_native",
+      "mad_vs_base": 21.861541748046875,
+      "mad_vs_target": 61.7783088684082,
+      "numerical_contract": "exact_scalar_native_call",
+      "roi": {
+        "fox": {
+          "mad_vs_base": 60.68001174926758,
+          "progress": 0.5790146184147171,
+          "rgb": [
+            202.75048828125,
+            128.72802734375,
+            124.91259765625
+          ]
+        }
+      },
+      "seed": 7217
+    },
+    {
+      "image_progress": 0.09844421338443687,
+      "label": "E3:transplant_foreign_window_into_native",
+      "mad_vs_base": 27.515670776367188,
+      "mad_vs_target": 61.38729476928711,
+      "numerical_contract": "exact_scalar_native_call",
+      "roi": {
+        "fox": {
+          "mad_vs_base": 62.041831970214844,
+          "progress": 0.5870977548838401,
+          "rgb": [
+            202.74609375,
+            130.421875,
+            121.248046875
+          ]
+        }
+      },
+      "seed": 7217
+    },
+    {
+      "image_progress": 0.046202216561947784,
+      "label": "E2b:route_repair_subject_rows",
+      "mad_vs_base": 13.555343627929688,
+      "mad_vs_target": 64.94447326660156,
+      "numerical_contract": "exact_scalar_native_call",
+      "roi": {
+        "fox": {
+          "mad_vs_base": 10.009765625,
+          "progress": 0.06760737525319005,
+          "rgb": [
+            211.8125,
+            157.1259765625,
+            165.97216796875
+          ]
+        }
+      },
+      "seed": 7217
+    },
+    {
+      "image_progress": 0.07431231280494788,
+      "label": "E2a:repair_subject_rows",
+      "mad_vs_base": 15.781890869140625,
+      "mad_vs_target": 64.6642837524414,
+      "numerical_contract": "exact_scalar_native_call",
+      "roi": {
+        "fox": {
+          "mad_vs_base": 29.40104103088379,
+          "progress": 0.11803655628738341,
+          "rgb": [
+            155.94189453125,
+            107.65966796875,
+            130.98779296875
+          ]
+        }
+      },
+      "seed": 31337
+    },
+    {
+      "image_progress": 0.07431231280494788,
+      "label": "E2a:repair_subject+color",
+      "mad_vs_base": 15.781890869140625,
+      "mad_vs_target": 64.6642837524414,
+      "numerical_contract": "exact_scalar_native_call",
+      "roi": {
+        "fox": {
+          "mad_vs_base": 29.40104103088379,
+          "progress": 0.11803655628738341,
+          "rgb": [
+            155.94189453125,
+            107.65966796875,
+            130.98779296875
+          ]
+        }
+      },
+      "seed": 31337
+    },
+    {
+      "image_progress": 0.1060888784883397,
+      "label": "E2a:repair_window\u00b13",
+      "mad_vs_base": 19.17710304260254,
+      "mad_vs_target": 62.44451904296875,
+      "numerical_contract": "exact_scalar_native_call",
+      "roi": {
+        "fox": {
+          "mad_vs_base": 30.22298240661621,
+          "progress": 0.1150104646918565,
+          "rgb": [
+            161.69873046875,
+            107.00341796875,
+            128.74365234375
+          ]
+        }
+      },
+      "seed": 31337
+    },
+    {
+      "image_progress": 0.8198072359116053,
+      "label": "E2a:repair_active_rows",
+      "mad_vs_base": 68.61310577392578,
+      "mad_vs_target": 12.587437629699707,
+      "numerical_contract": "exact_scalar_native_call",
+      "roi": {
+        "fox": {
+          "mad_vs_base": 92.16130065917969,
+          "progress": 0.8271021380474206,
+          "rgb": [
+            97.716796875,
+            25.17138671875,
+            36.73388671875
+          ]
+        }
+      },
+      "seed": 31337
+    },
+    {
+      "image_progress": 0.003360387609501192,
+      "label": "E2a:sham_noise_subject_rows",
+      "mad_vs_base": 10.177973747253418,
+      "mad_vs_target": 69.62065887451172,
+      "numerical_contract": "exact_scalar_native_call",
+      "roi": {
+        "fox": {
+          "mad_vs_base": 15.225749969482422,
+          "progress": -0.007000558973086823,
+          "rgb": [
+            157.6728515625,
+            115.10205078125,
+            144.33349609375
+          ]
+        }
+      },
+      "seed": 31337
+    },
+    {
+      "image_progress": 0.14109924917989292,
+      "label": "E3:transplant_foreign_subject_into_native",
+      "mad_vs_base": 42.53306579589844,
+      "mad_vs_target": 59.99885559082031,
+      "numerical_contract": "exact_scalar_native_call",
+      "roi": {
+        "fox": {
+          "mad_vs_base": 64.40804290771484,
+          "progress": 0.4769199085619039,
+          "rgb": [
+            127.91796875,
+            71.12109375,
+            102.17822265625
+          ]
+        }
+      },
+      "seed": 31337
+    },
+    {
+      "image_progress": 0.13972404381124603,
+      "label": "E3:transplant_foreign_window_into_native",
+      "mad_vs_base": 50.43796920776367,
+      "mad_vs_target": 60.09492111206055,
+      "numerical_contract": "exact_scalar_native_call",
+      "roi": {
+        "fox": {
+          "mad_vs_base": 65.93717193603516,
+          "progress": 0.46196679851928535,
+          "rgb": [
+            129.95654296875,
+            70.92822265625,
+            101.92578125
+          ]
+        }
+      },
+      "seed": 31337
+    },
+    {
+      "image_progress": 0.04791533776906176,
+      "label": "E2b:route_repair_subject_rows",
+      "mad_vs_base": 13.887516975402832,
+      "mad_vs_target": 66.50825500488281,
+      "numerical_contract": "exact_scalar_native_call",
+      "roi": {
+        "fox": {
+          "mad_vs_base": 21.429363250732422,
+          "progress": 0.11559247492159752,
+          "rgb": [
+            153.765625,
+            101.34130859375,
+            122.775390625
+          ]
+        }
+      },
+      "seed": 31337
+    }
+  ],
+  "fox_prompt": "a photorealistic red fox sitting in fresh snow at dawn, soft red light",
+  "gates": {
+    "foreign_determinism_31337": 0.0,
+    "foreign_determinism_7217": 0.0
+  },
+  "model": {
+    "guidance": 1.0,
+    "height": 256,
+    "mapper_fit": {
+      "batch_size": 4,
+      "loss_final": 1.9915603399276733,
+      "loss_first": 3.0175435543060303,
+      "objective": "contrast-centered-native-template-residual-v1",
+      "parameter_count": 21074176,
+      "steps": 900,
+      "template_token_cosine": 0.8622464537620544,
+      "template_token_mse": 0.943676233291626,
+      "train_token_cosine": 0.8602403402328491,
+      "train_token_mse": 0.9526237845420837
+    },
+    "mapper_steps": 900,
+    "model_id": "black-forest-labs/FLUX.2-klein-4B",
+    "source": {
+      "device": "cpu",
+      "dtype": "float32",
+      "sequence_length": 512,
+      "source_family": "SmolLM2-1.7B",
+      "source_feature_shape": [
+        38,
+        512,
+        8192
+      ],
+      "source_feature_width": 8192,
+      "source_hidden_size_per_layer": 2048,
+      "source_layers_requested": [
+        6,
+        12,
+        18,
+        -1
+      ],
+      "source_layers_resolved": [
+        6,
+        12,
+        18,
+        24
+      ]
+    },
+    "steps": 4,
+    "width": 256
+  },
+  "peak_rss_mb": 22743.4,
+  "peak_vram_mb": 7998.3,
+  "readout": {
+    "carrier_raw": {
+      "cat": 0.9406908750534058,
+      "coyote": 0.9068663120269775,
+      "deer": 0.9413381218910217,
+      "dog": 0.9464192986488342,
+      "fox": 0.9461608529090881,
+      "horse": 0.944759726524353,
+      "tiger": 0.9365198016166687,
+      "wolf": 0.9462881088256836
+    },
+    "carrier_resid": {
+      "cat": 0.05267247557640076,
+      "coyote": 0.053975868970155716,
+      "deer": 0.19867068529129028,
+      "dog": 0.003106845309957862,
+      "fox": 0.12574465572834015,
+      "horse": -0.023929063230752945,
+      "tiger": 0.10811936110258102,
+      "wolf": 0.10440473258495331
+    },
+    "resid_floor_deer_vs_tiger": 0.186477392911911
+  },
+  "rois": {
+    "31337": {
+      "fox": [
+        204,
+        219,
+        18,
+        203,
+        220,
+        2,
+        49,
+        187
+      ]
+    },
+    "7217": {
+      "fox": [
+        189,
+        85,
+        84,
+        221,
+        81,
+        68,
+        69,
+        66
+      ]
+    }
+  },
+  "rows": {
+    "active_len": 28,
+    "by_animal": {
+      "cat": [
+        7,
+        8
+      ],
+      "coyote": [
+        7,
+        8,
+        9
+      ],
+      "deer": [
+        7,
+        8
+      ],
+      "dog": [
+        7,
+        8
+      ],
+      "fox": [
+        7,
+        8
+      ],
+      "horse": [
+        7,
+        8
+      ],
+      "tiger": [
+        7,
+        8
+      ],
+      "wolf": [
+        7,
+        8
+      ]
+    },
+    "fox": [
+      7,
+      8
+    ],
+    "fox_color": [
+      7
+    ]
+  },
+  "schema": "saturn-object-xcond-diagnosis-v1",
+  "wall_s_total": 331.94
+}

@@ -1,0 +1,119 @@
+{
+  "claim_status": "development_observation_only",
+  "content_sha256": "24e0e81ead246aced149931c4e0cf516ef585c7d000ddd91020fffebe3add64f",
+  "experiment": "qwen-address-whitening",
+  "gates": {
+    "all_transforms_computed": true,
+    "finite": true,
+    "parity_reproduced": true
+  },
+  "max_context": 512,
+  "model_reports": [
+    {
+      "all_transforms_computed": true,
+      "discovery_task_count": 3,
+      "eval_task_count": 6,
+      "final_layer_index": 23,
+      "hidden_size": 1024,
+      "layers_with_direction": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23
+      ],
+      "model": "Qwen3.5-0.8B-Base",
+      "num_hidden_layers": 24,
+      "parity_abs_delta_max": 0.0,
+      "parity_position_match_fraction": 1.0,
+      "parity_within_tolerance": true,
+      "specimen": {
+        "architecture": "Qwen3_5ForConditionalGeneration",
+        "architecture_profile": {
+          "architectures": [
+            "Qwen3_5ForConditionalGeneration"
+          ],
+          "attention_ratio": null,
+          "model_type": "qwen3_5",
+          "parameter_count": null,
+          "tie_word_embeddings": true
+        },
+        "complete": true,
+        "config_sha256": "b90b86f35c8e6925ef74ee04d0e758f0a845c83a42089ad82bbaa948de9b4204",
+        "dense_or_moe": "dense",
+        "evidence_refs": [],
+        "family": "qwen3.5",
+        "generation": "qwen3.5",
+        "model_type": "qwen3_5",
+        "name": "Qwen3.5-0.8B-Base",
+        "schema": "saturn-qwen-specimen-v1",
+        "specialization": "general",
+        "tokenizer_sha256": "fe000e3ed39ed12b8d2481d527d44f93c65d37e87645d2dcc80d1bf9d50d2927",
+        "weight_index_sha256": "ce9a885efdf27d3664fdef5d512ad365216f1074051ef840c7cd8e5431495d0a",
+        "weight_manifest": [
+          {
+            "bytes": 1746942600,
+            "name": "model.safetensors-00001-of-00001.safetensors",
+            "sha256": "c2b1e5a17d9c1e27685d92ed9b382911ebb99955ecd89052d1721241adfbab6c"
+          }
+        ],
+        "weight_sha256": "49719f055993eccfe3f8c6c86f2fb07c274e6e8109efe6458150cce8ca365875"
+      },
+      "transform_negative_fraction_overall": {
+        "centered": 0.0,
+        "diagonal": 0.0,
+        "raw": 0.0,
+        "zca": 0.0
+      },
+      "zca_shrinkage_lambda": 0.1
+    }
+  ],
+  "models": [
+    "Qwen3.5-0.8B-Base"
+  ],
+  "models_completed": [
+    "Qwen3.5-0.8B-Base"
+  ],
+  "output_sha256": "e0b91b9c96846c34de9f4c8ed3e0531e51d9b061d0b63b872a500870646fcf42",
+  "parity_tolerance": 0.001,
+  "per_model_parity_within_tolerance": {
+    "Qwen3.5-0.8B-Base": true
+  },
+  "program_schema": "saturn-qwen-generational-program-v1",
+  "row_count": 840,
+  "rows_per_capability": 1,
+  "schema": "saturn-qwen-address-whitening-report-v1",
+  "splits": [
+    "discovery",
+    "heldout",
+    "external"
+  ],
+  "terminal_opened": false,
+  "transforms": [
+    "raw",
+    "centered",
+    "diagonal",
+    "zca"
+  ],
+  "workload_seed": 1811,
+  "zca_shrinkage_lambda": 0.1
+}

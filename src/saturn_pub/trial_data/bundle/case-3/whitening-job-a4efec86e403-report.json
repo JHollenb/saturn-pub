@@ -1,0 +1,154 @@
+{
+  "claim_status": "development_observation_only",
+  "content_sha256": "58822ea8b98cb0305cde0be3782de4f38f77191693f9f2d6b2fdd9ac265e0963",
+  "experiment": "qwen-address-whitening",
+  "gates": {
+    "all_transforms_computed": true,
+    "finite": true,
+    "parity_reproduced": true
+  },
+  "max_context": 512,
+  "model_reports": [
+    {
+      "all_transforms_computed": true,
+      "discovery_task_count": 3,
+      "eval_task_count": 6,
+      "final_layer_index": 35,
+      "hidden_size": 2560,
+      "layers_with_direction": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        14,
+        15,
+        16,
+        17,
+        18,
+        19,
+        20,
+        21,
+        22,
+        23,
+        24,
+        25,
+        26,
+        27,
+        28,
+        29,
+        30,
+        31,
+        32,
+        33,
+        34,
+        35
+      ],
+      "model": "Qwen3-4B-Base",
+      "num_hidden_layers": 36,
+      "parity_abs_delta_max": 0.0,
+      "parity_position_match_fraction": 1.0,
+      "parity_within_tolerance": true,
+      "specimen": {
+        "architecture": "Qwen3ForCausalLM",
+        "architecture_profile": {
+          "architectures": [
+            "Qwen3ForCausalLM"
+          ],
+          "attention_bias": false,
+          "attention_ratio": 4.0,
+          "head_dim": 128,
+          "hidden_act": "silu",
+          "hidden_size": 2560,
+          "intermediate_size": 9728,
+          "max_position_embeddings": 32768,
+          "model_type": "qwen3",
+          "num_attention_heads": 32,
+          "num_hidden_layers": 36,
+          "num_key_value_heads": 8,
+          "parameter_count": null,
+          "rope_theta": 1000000,
+          "sliding_window": null,
+          "tie_word_embeddings": true,
+          "use_sliding_window": false,
+          "vocab_size": 151936
+        },
+        "complete": true,
+        "config_sha256": "304b2545a258d35620f1d4bf46940c0471d9baa00715ff8e77f84c2fca5057c1",
+        "dense_or_moe": "dense",
+        "evidence_refs": [],
+        "family": "qwen3",
+        "generation": "qwen3",
+        "model_type": "qwen3",
+        "name": "Qwen3-4B-Base",
+        "schema": "saturn-qwen-specimen-v1",
+        "specialization": "general",
+        "tokenizer_sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539",
+        "weight_index_sha256": "d6c42883a895dfef5b0080ed2116a1bcd764f558406b98923d675978a1abf29c",
+        "weight_manifest": [
+          {
+            "bytes": 3957900840,
+            "name": "model-00001-of-00003.safetensors",
+            "sha256": "4c807e2503d68ae373d508689d00a41f4b33f33c2536da97ab81a20caddc1241"
+          },
+          {
+            "bytes": 3987450520,
+            "name": "model-00002-of-00003.safetensors",
+            "sha256": "f4707585548b2fc75a6b1d732e8465c62040a8699903c32850781beeb9b27826"
+          },
+          {
+            "bytes": 99630640,
+            "name": "model-00003-of-00003.safetensors",
+            "sha256": "c7b1aa8fb672de2e00423c99876926022e50b18d4f0d140670788510a27f9965"
+          }
+        ],
+        "weight_sha256": "27a435648af99169daf8dff84794a2fbeb39387396ab8cc5665bbbffe8e5ef4d"
+      },
+      "transform_negative_fraction_overall": {
+        "centered": 0.0,
+        "diagonal": 0.0,
+        "raw": 0.9537037037037037,
+        "zca": 0.0
+      },
+      "zca_shrinkage_lambda": 0.1
+    }
+  ],
+  "models": [
+    "Qwen3-4B-Base"
+  ],
+  "models_completed": [
+    "Qwen3-4B-Base"
+  ],
+  "output_sha256": "2e72ef8eefe71e99e7eb8b41c89eafc26d294de98baad2ff7500ade82262fb62",
+  "parity_tolerance": 0.001,
+  "per_model_parity_within_tolerance": {
+    "Qwen3-4B-Base": true
+  },
+  "program_schema": "saturn-qwen-generational-program-v1",
+  "row_count": 1260,
+  "rows_per_capability": 1,
+  "schema": "saturn-qwen-address-whitening-report-v1",
+  "splits": [
+    "discovery",
+    "heldout",
+    "external"
+  ],
+  "terminal_opened": false,
+  "transforms": [
+    "raw",
+    "centered",
+    "diagonal",
+    "zca"
+  ],
+  "workload_seed": 1811,
+  "zca_shrinkage_lambda": 0.1
+}

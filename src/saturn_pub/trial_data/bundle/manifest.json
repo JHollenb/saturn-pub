@@ -1,0 +1,15 @@
+{
+  "case-1/circuit-panel-ledger.json": "7f4cb5a4ff3d50c44f2be9a08d9f13e157cf60d64b43550f8f8b572a34d9e810",
+  "case-1/native-object-mediation.json": "54c44e44f1153e45ac131a869ed7dee4d817b7ae05d0a15001cfc1bf03ab7d41",
+  "case-2/probe-job-f58bcd26f295-report.json": "9f7f7472b3bebcc97b031929bc53ed5cc7964fedbf895b1e7b4100e820d1298e",
+  "case-2/xcond-job-e1ba0cbed889-report.json": "f03b384bc1286d15a80960e6a7f58441dd977e35bf0f73f2db02caa96e41c8e5",
+  "case-3/whitening-job-9863fc324498-report.json": "8fb24c4a745bf7995648096840807935328884ad6f0355408460d7bf5dbc5297",
+  "case-3/whitening-job-a4efec86e403-report.json": "0dd2699d3def21a33b535037a412b3aadb84ee7d5924d942f9b9ba5f62916844",
+  "case-4/tecm-v2-job-3a259f6d1b9e-report.json": "f61a0c24e5df0d847c7494fffdce253c08f3e271e7c0ed9d4904baec8effe674",
+  "case-4/tecm-v3-job-354897b161f9-report.json": "4f378f70f0dda6d2b74a72c85875e491ce7556b0506031bb17984393fab972a6",
+  "case-5/mediation-job-3cd13239dd91-report.json": "8ca255b1c720cb4d64e393d470dc9754e653e817baa70641108bbacd96446d14",
+  "case-5/mediation-job-8a6bacbfdecc-report.json": "76c42d47fa82858395ea5d714c50bf032cadee2dc7eb660d66ca86b70b58dee1",
+  "case-5/mediation-job-90b5344defe7-report.json": "598efbc122670948315822d6c86a590ae4120e24bfc96b2210ab52265cdae084",
+  "grading/grader-raw.json": "41af7f7eb30b23cdc2099ba587923a393f9a29c9f17886fd307d7168ac6bcda7",
+  "grading/grades-mapped.json": "a5ab948630101976b249ba0a7330793ac5c16d2f9afd587d213a16f7768f3886"
+}
