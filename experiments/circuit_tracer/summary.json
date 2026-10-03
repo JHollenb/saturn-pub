@@ -1,296 +1,2400 @@
 {
-  "schema": "saturn-pub-circuit-tracer-summary-v2",
+  "schema": "saturn-pub-circuit-tracer-summary-v3",
   "model": "google/gemma-2-2b",
   "transcoder_set": "gemma (Gemma Scope per-layer transcoders)",
+  "panel_sha256": "f787b9cf0c1d873a88fc3e5d657e1f06fb85936ec632227dd454f4e2dd98d0b6",
   "top_k": 20,
-  "jobs": {
-    "smoke": "job-52f930db443a",
-    "full": "job-9d26c9585494"
-  },
-  "elapsed_s_full": 277.3,
-  "phase_a_peak_vram_mb": 8252.1,
-  "family_validation": {
-    "max_abs_logit_delta": 3.814697265625e-05,
-    "greedy_exact": true,
-    "greedy_agreement": 1.0,
-    "fresh_process_replay_exact": true
-  },
-  "carrier_vs_resid_post_max_abs": {
-    "two_hop_dallas": 3.0517578125e-05,
-    "identity_fox": 6.103515625e-05,
-    "eiffel_paris": 7.62939453125e-05,
-    "opposite_hot": 3.0517578125e-05,
-    "japan_tokyo": 3.0517578125e-05,
-    "jupiter_largest": 4.57763671875e-05
-  },
+  "jobs": [
+    "job-01a88f477ae1",
+    "job-781c923e71d9",
+    "job-aa81c5787522",
+    "job-b7cbdb109dc5",
+    "job-d449b03eb717"
+  ],
   "decision_rule": {
     "metric": "consumer_logprob_drop",
     "native_necessary_ge": 0.5,
     "native_effect_absent_le": 0.1,
     "units": "nats"
   },
-  "graph_vs_native_axis": "agree_small/agree_large vs invert vs mixed, comparing circuit-tracer feature_intervention predicted drop on the replacement model to the native drop on real weights",
-  "group_interventions": "topk_ablate (multiplier 0) and topk_steer_-2x (multiplier -2) over the top-k feature set, paper-style",
-  "totals": {
-    "n_feature_edges": 120,
-    "n_native_necessary": 0,
-    "n_native_effect_absent": 119,
-    "n_inconclusive": 1,
-    "n_agree_with_graph": 97,
-    "n_invert_vs_graph": 1,
-    "n_mixed_vs_graph": 22
+  "admission": {
+    "n_candidates": 56,
+    "n_admitted": 50,
+    "n_dropped": 6,
+    "dropped": {
+      "ant_happy": {
+        "family": "antonyms",
+        "reason": "bf16_prefilter",
+        "native_top1_id": null,
+        "clean_top1_text": " not"
+      },
+      "ant_light": {
+        "family": "antonyms",
+        "reason": "native_admission",
+        "native_top1_id": 22945,
+        "clean_top1_text": null
+      },
+      "tr_es_water": {
+        "family": "translation",
+        "reason": "bf16_prefilter",
+        "native_top1_id": null,
+        "clean_top1_text": " "
+      },
+      "cat_trumpet": {
+        "family": "category_rhyme",
+        "reason": "bf16_prefilter",
+        "native_top1_id": null,
+        "clean_top1_text": " wind"
+      },
+      "rh_cat": {
+        "family": "category_rhyme",
+        "reason": "bf16_prefilter",
+        "native_top1_id": null,
+        "clean_top1_text": " a"
+      },
+      "rh_light": {
+        "family": "category_rhyme",
+        "reason": "bf16_prefilter",
+        "native_top1_id": null,
+        "clean_top1_text": " a"
+      }
+    },
+    "per_family": {
+      "multi_hop_factual": {
+        "candidates": 8,
+        "admitted": 8
+      },
+      "capitals": {
+        "candidates": 8,
+        "admitted": 8
+      },
+      "antonyms": {
+        "candidates": 8,
+        "admitted": 6
+      },
+      "translation": {
+        "candidates": 8,
+        "admitted": 7
+      },
+      "acronym_abbreviation": {
+        "candidates": 8,
+        "admitted": 8
+      },
+      "arithmetic_sequence": {
+        "candidates": 8,
+        "admitted": 8
+      },
+      "category_rhyme": {
+        "candidates": 8,
+        "admitted": 5
+      }
+    }
   },
+  "adapter_validation": {
+    "max_abs_logit_delta": 4.506111145019531e-05,
+    "greedy_exact": true,
+    "greedy_agreement": 1.0,
+    "fresh_process_replay_exact": true
+  },
+  "residency_check": {
+    "device": "cuda",
+    "resident": {
+      "greedy_16_equals_hf_generate": true,
+      "peak_vram_mb": 10580.919296
+    },
+    "streamed": {
+      "greedy_16_equals_hf_generate": true,
+      "mid_layer_cut_fresh_process_replay_exact": true,
+      "peak_vram_mb": 2397.264384,
+      "execution_residency": {
+        "mode": "streamed",
+        "device": {
+          "type": "cuda",
+          "index": 0
+        },
+        "host_pinned": false
+      }
+    },
+    "streamed_vs_resident": {
+      "greedy_16_tokens_bit_exact": true,
+      "max_abs_logit_delta": 0.0,
+      "logits_bit_identical": true
+    }
+  },
+  "phase_a_peak_vram_mb": 8129.064448,
+  "environment": {
+    "transformers_phase_b": "4.57.3",
+    "torch": "2.13.0+cu130",
+    "ct_version": "?"
+  },
+  "single_feature": {
+    "overall": {
+      "n_edges": 1000,
+      "n_with_prediction": 1000,
+      "agree_rate": {
+        "point": 0.857,
+        "lo": 0.835,
+        "hi": 0.879,
+        "n": 1000
+      },
+      "invert_rate": {
+        "point": 0.016,
+        "lo": 0.009,
+        "hi": 0.024,
+        "n": 1000
+      },
+      "mixed_rate": {
+        "point": 0.127,
+        "lo": 0.106,
+        "hi": 0.148,
+        "n": 1000
+      },
+      "n_native_necessary": 0,
+      "n_native_effect_absent": 985,
+      "n_inconclusive": 15
+    },
+    "by_family": {
+      "acronym_abbreviation": {
+        "n_prompts": 8,
+        "n_edges": 160,
+        "agree_rate": {
+          "point": 0.99375,
+          "lo": 0.98125,
+          "hi": 1.0,
+          "n": 160
+        },
+        "invert": 0,
+        "mixed": 1
+      },
+      "antonyms": {
+        "n_prompts": 6,
+        "n_edges": 120,
+        "agree_rate": {
+          "point": 0.8833333333333333,
+          "lo": 0.825,
+          "hi": 0.9333333333333333,
+          "n": 120
+        },
+        "invert": 0,
+        "mixed": 14
+      },
+      "arithmetic_sequence": {
+        "n_prompts": 8,
+        "n_edges": 160,
+        "agree_rate": {
+          "point": 0.9375,
+          "lo": 0.9,
+          "hi": 0.975,
+          "n": 160
+        },
+        "invert": 0,
+        "mixed": 10
+      },
+      "capitals": {
+        "n_prompts": 8,
+        "n_edges": 160,
+        "agree_rate": {
+          "point": 0.96875,
+          "lo": 0.9375,
+          "hi": 0.99375,
+          "n": 160
+        },
+        "invert": 0,
+        "mixed": 5
+      },
+      "category_rhyme": {
+        "n_prompts": 5,
+        "n_edges": 100,
+        "agree_rate": {
+          "point": 0.92,
+          "lo": 0.86,
+          "hi": 0.97,
+          "n": 100
+        },
+        "invert": 0,
+        "mixed": 8
+      },
+      "multi_hop_factual": {
+        "n_prompts": 8,
+        "n_edges": 160,
+        "agree_rate": {
+          "point": 0.6375,
+          "lo": 0.5625,
+          "hi": 0.7125,
+          "n": 160
+        },
+        "invert": 6,
+        "mixed": 52
+      },
+      "translation": {
+        "n_prompts": 7,
+        "n_edges": 140,
+        "agree_rate": {
+          "point": 0.6642857142857143,
+          "lo": 0.5857142857142857,
+          "hi": 0.7358928571428546,
+          "n": 140
+        },
+        "invert": 10,
+        "mixed": 37
+      }
+    }
+  },
+  "group_interventions": {
+    "agreement": {
+      "topk_steer_-2x": {
+        "n_prompts": 50,
+        "agree_rate_default_mode": {
+          "point": 0.5,
+          "lo": 0.36,
+          "hi": 0.64,
+          "n": 50
+        },
+        "n_invert": 4,
+        "n_mixed": 21,
+        "n_agree_large": 15,
+        "n_agree_small": 10,
+        "n_flip_native_top1": 12
+      },
+      "topk_zero_ablate": {
+        "n_prompts": 50,
+        "agree_rate_default_mode": {
+          "point": 0.34,
+          "lo": 0.22,
+          "hi": 0.48,
+          "n": 50
+        },
+        "n_invert": 13,
+        "n_mixed": 20,
+        "n_agree_large": 1,
+        "n_agree_small": 16,
+        "n_flip_native_top1": 0
+      }
+    },
+    "diagnosis_by_mode": {
+      "topk_steer_-2x": {
+        "frozen_attention_iterative": {
+          "mean_abs_pred_minus_native": 2.3091847846098243,
+          "median_abs_pred_minus_native": 0.8481637835502625,
+          "n_overpredict_gt_0p4": 28,
+          "n": 50
+        },
+        "unconstrained_iterative": {
+          "mean_abs_pred_minus_native": 1.5390073008090257,
+          "median_abs_pred_minus_native": 0.4863419644534588,
+          "n_overpredict_gt_0p4": 25,
+          "n": 50
+        },
+        "direct_effects": {
+          "mean_abs_pred_minus_native": 2.4870374247245493,
+          "median_abs_pred_minus_native": 1.196983054280281,
+          "n_overpredict_gt_0p4": 36,
+          "n": 50
+        },
+        "invert_prompts": [
+          {
+            "name": "ac_dna",
+            "native": 0.0021655000746250153,
+            "pred_frozen": 1.2045441959053278,
+            "pred_unconstrained": 0.41051233746111393,
+            "pred_direct_effects": 3.308380851522088
+          },
+          {
+            "name": "ac_phd",
+            "native": 0.003528207540512085,
+            "pred_frozen": 1.3883375898003578,
+            "pred_unconstrained": 0.44727782160043716,
+            "pred_direct_effects": 0.4098098650574684
+          },
+          {
+            "name": "tr_es_house",
+            "native": -0.0424119234085083,
+            "pred_frozen": 1.2953462600708008,
+            "pred_unconstrained": 0.5019981861114502,
+            "pred_direct_effects": 2.8968939781188965
+          },
+          {
+            "name": "tr_fr_cat",
+            "native": 0.06873226165771484,
+            "pred_frozen": 4.393126487731934,
+            "pred_unconstrained": 2.6953797340393066,
+            "pred_direct_effects": 3.5384626388549805
+          }
+        ]
+      },
+      "topk_zero_ablate": {
+        "frozen_attention_iterative": {
+          "mean_abs_pred_minus_native": 1.0863364632427692,
+          "median_abs_pred_minus_native": 0.18316177278757095,
+          "n_overpredict_gt_0p4": 19,
+          "n": 50
+        },
+        "unconstrained_iterative": {
+          "mean_abs_pred_minus_native": 0.7336440222803503,
+          "median_abs_pred_minus_native": 0.13463231921195984,
+          "n_overpredict_gt_0p4": 15,
+          "n": 50
+        },
+        "direct_effects": {
+          "mean_abs_pred_minus_native": 1.6733885868825018,
+          "median_abs_pred_minus_native": 0.6807337403297424,
+          "n_overpredict_gt_0p4": 33,
+          "n": 50
+        },
+        "invert_prompts": [
+          {
+            "name": "ac_dna",
+            "native": 0.00028487108647823334,
+            "pred_frozen": 0.5682584140449762,
+            "pred_unconstrained": 0.1667447928339243,
+            "pred_direct_effects": 2.4108290765434504
+          },
+          {
+            "name": "ac_phd",
+            "native": 0.0007593352347612381,
+            "pred_frozen": 0.5860655084252357,
+            "pred_unconstrained": 0.18248993903398514,
+            "pred_direct_effects": 0.23088441044092178
+          },
+          {
+            "name": "mh_chicago",
+            "native": 0.0968475341796875,
+            "pred_frozen": 3.933640480041504,
+            "pred_unconstrained": 3.883411407470703,
+            "pred_direct_effects": 2.4565577507019043
+          },
+          {
+            "name": "mh_houston",
+            "native": 0.03297746181488037,
+            "pred_frozen": 5.211220026016235,
+            "pred_unconstrained": 4.618065118789673,
+            "pred_direct_effects": 4.25316309928894
+          },
+          {
+            "name": "mh_la",
+            "native": 0.03618967533111572,
+            "pred_frozen": 1.8847242593765259,
+            "pred_unconstrained": 1.4764705896377563,
+            "pred_direct_effects": 1.8245841264724731
+          },
+          {
+            "name": "mh_miami",
+            "native": 0.07928746938705444,
+            "pred_frozen": 2.747647523880005,
+            "pred_unconstrained": 2.4483609199523926,
+            "pred_direct_effects": 3.851609706878662
+          },
+          {
+            "name": "mh_nyc",
+            "native": 0.03606271743774414,
+            "pred_frozen": 1.654901921749115,
+            "pred_unconstrained": 1.1106935143470764,
+            "pred_direct_effects": 1.9674686789512634
+          },
+          {
+            "name": "mh_seattle",
+            "native": 0.08620589971542358,
+            "pred_frozen": 4.386747986078262,
+            "pred_unconstrained": 3.7477714121341705,
+            "pred_direct_effects": 2.87471666932106
+          },
+          {
+            "name": "mh_sf",
+            "native": 0.05540883541107178,
+            "pred_frozen": 3.160149395465851,
+            "pred_unconstrained": 2.0950759053230286,
+            "pred_direct_effects": 2.599309027194977
+          },
+          {
+            "name": "tr_es_dog",
+            "native": -0.4051056504249573,
+            "pred_frozen": 1.5255717039108276,
+            "pred_unconstrained": 0.16978859901428223,
+            "pred_direct_effects": 5.039307475090027
+          },
+          {
+            "name": "tr_es_house",
+            "native": -0.02609121799468994,
+            "pred_frozen": 1.6856489181518555,
+            "pred_unconstrained": 0.6720948219299316,
+            "pred_direct_effects": 3.2704362869262695
+          },
+          {
+            "name": "tr_fr_cat",
+            "native": 0.04709339141845703,
+            "pred_frozen": 4.149158000946045,
+            "pred_unconstrained": 2.53041410446167,
+            "pred_direct_effects": 3.1699604988098145
+          },
+          {
+            "name": "tr_fr_water",
+            "native": -0.19862067699432373,
+            "pred_frozen": 1.4063456058502197,
+            "pred_unconstrained": 0.7423276901245117,
+            "pred_direct_effects": 5.404580354690552
+          }
+        ]
+      }
+    }
+  },
+  "error_node_influence_share": {
+    "min": 0.11394235204898841,
+    "median": 0.13990024256460493,
+    "max": 0.1847180734853909,
+    "mean": 0.14241558415762173,
+    "n": 50
+  },
+  "bundle_verify_failures": [],
   "prompts": {
-    "two_hop_dallas": {
-      "prompt": "Fact: the capital of the state containing Dallas is",
-      "target_text": " Austin",
-      "native_top1_text": " Austin",
-      "native_top1_is_target": true,
+    "ac_cpu": {
+      "family": "acronym_abbreviation",
+      "prompt": "The abbreviation CPU stands for Central Processing",
+      "target_text": " Unit",
       "n_feature_edges": 20,
-      "n_covered": 20,
-      "native_necessity": {
-        "necessary": 0,
-        "effect_absent": 20,
-        "inconclusive": 0
-      },
-      "graph_vs_native": {
-        "agree": 10,
-        "invert": 1,
-        "mixed": 9,
-        "n_with_prediction": 20
-      },
-      "error_node_influence_share": 0.1577152465171406,
-      "n_error_nodes": 286,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.16085853031201494,
+      "n_error_nodes": 208,
+      "bundle_sha256": "b6586a86c1efb02d8bfc03838bd48ce419f10a567a0a6dba778ab768d69cc84b",
+      "fingerprint": "777593cb0661c33265721c5e3e39ff7d1fdf7a5a3e1e190d6ef4f4b3c79cc729",
       "groups": {
-        "topk_ablate": {
+        "topk_zero_ablate": {
           "multiplier": 0.0,
-          "native_logit_delta": 0.1259804368019104,
-          "graph_predicted_delta": 3.370579779148102,
-          "graph_vs_native": "mixed",
-          "verdict": "inconclusive",
-          "top_token_flip": false
-        },
-        "topk_steer_-2x": {
-          "multiplier": -2.0,
-          "native_logit_delta": 0.4830891489982605,
-          "graph_predicted_delta": 4.424281179904938,
-          "graph_vs_native": "mixed",
-          "verdict": "inconclusive",
-          "top_token_flip": false
-        }
-      },
-      "bundle_sha256": "389fa710f6116696bf1ef997b482aebba838f013ca55b74735a07c382a731c70",
-      "fingerprint": "65402e667dc4affa432a8ad05961cabadba54d7500c8b14b8c6058acdecc9f75"
-    },
-    "identity_fox": {
-      "prompt": "A photorealistic fox sitting in a forest. The animal in this picture is a",
-      "target_text": " fox",
-      "native_top1_text": " fox",
-      "native_top1_is_target": true,
-      "n_feature_edges": 20,
-      "n_covered": 20,
-      "native_necessity": {
-        "necessary": 0,
-        "effect_absent": 20,
-        "inconclusive": 0
-      },
-      "graph_vs_native": {
-        "agree": 18,
-        "invert": 0,
-        "mixed": 2,
-        "n_with_prediction": 20
-      },
-      "error_node_influence_share": 0.1752867621866351,
-      "n_error_nodes": 442,
-      "groups": {
-        "topk_ablate": {
-          "multiplier": 0.0,
-          "native_logit_delta": -0.038527846336364746,
-          "graph_predicted_delta": 0.080253005027771,
-          "graph_vs_native": "agree_small",
+          "native_logit_delta": 0.0013309549540281296,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.10970370657742023,
+            "unconstrained_iterative": 0.10497845895588398,
+            "direct_effects": 0.36571032740175724
+          },
+          "graph_vs_native_default": "mixed",
           "verdict": "native_effect_absent",
           "top_token_flip": false
         },
         "topk_steer_-2x": {
           "multiplier": -2.0,
-          "native_logit_delta": -0.1099247932434082,
-          "graph_predicted_delta": 0.006820321083068848,
-          "graph_vs_native": "agree_small",
+          "native_logit_delta": 0.014765623025596142,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.2972294483333826,
+            "unconstrained_iterative": 0.3248697016388178,
+            "direct_effects": 0.944559583440423
+          },
+          "graph_vs_native_default": "mixed",
           "verdict": "native_effect_absent",
           "top_token_flip": false
         }
-      },
-      "bundle_sha256": "eced69ad01a9eee2ef7f0cc214cb4f6c55133a553ac1e5b2a4039d04445c5fad",
-      "fingerprint": "b399a5bfd79a4667fd9ef83584ba83805fe0fdcb09a9f6d4ed0cb2f9b588a1a5"
+      }
     },
-    "eiffel_paris": {
-      "prompt": "The Eiffel Tower is located in the city of",
-      "target_text": " Paris",
-      "native_top1_text": " Paris",
-      "native_top1_is_target": true,
+    "ac_dna": {
+      "family": "acronym_abbreviation",
+      "prompt": "The abbreviation DNA stands for deoxyribonucleic",
+      "target_text": " acid",
       "n_feature_edges": 20,
-      "n_covered": 20,
-      "native_necessity": {
-        "necessary": 0,
-        "effect_absent": 20,
-        "inconclusive": 0
-      },
-      "graph_vs_native": {
-        "agree": 20,
-        "invert": 0,
-        "mixed": 0,
-        "n_with_prediction": 20
-      },
-      "error_node_influence_share": 0.16697875241925772,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.15149797157310105,
+      "n_error_nodes": 234,
+      "bundle_sha256": "adea5fdfb21d87345ba5c855e547062e58661dd62305bc284141909613e5c1c3",
+      "fingerprint": "81d1dc8e90282f5cd5c38197e6eeab0184c008b7383efd77930b673cb28b0e65",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.00028487108647823334,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.5682584140449762,
+            "unconstrained_iterative": 0.1667447928339243,
+            "direct_effects": 2.4108290765434504
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.0021655000746250153,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 1.2045441959053278,
+            "unconstrained_iterative": 0.41051233746111393,
+            "direct_effects": 3.308380851522088
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "ac_fbi": {
+      "family": "acronym_abbreviation",
+      "prompt": "The abbreviation FBI stands for the Federal Bureau of",
+      "target_text": " Investigation",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.1588088217896104,
       "n_error_nodes": 260,
+      "bundle_sha256": "cf668ef3e140039ef759ce27462bc66beeecd1821eeecff4f015ea87576fe0df",
+      "fingerprint": "dbd2501a27f22ad0b075ca7b60fe4e60a983951c85df4d31ba66234f97ef332b",
       "groups": {
-        "topk_ablate": {
+        "topk_zero_ablate": {
           "multiplier": 0.0,
-          "native_logit_delta": -0.000830039381980896,
-          "graph_predicted_delta": 0.0797484926879406,
-          "graph_vs_native": "agree_small",
+          "native_logit_delta": 0.0018164664506912231,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.05460284650325775,
+            "unconstrained_iterative": 0.07668053358793259,
+            "direct_effects": 0.4823458716273308
+          },
+          "graph_vs_native_default": "agree_small",
           "verdict": "native_effect_absent",
           "top_token_flip": false
         },
         "topk_steer_-2x": {
           "multiplier": -2.0,
-          "native_logit_delta": 2.3156404495239258e-05,
-          "graph_predicted_delta": 0.12935474142432213,
-          "graph_vs_native": "mixed",
+          "native_logit_delta": 0.006062299013137817,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.0725347027182579,
+            "unconstrained_iterative": 0.09271832555532455,
+            "direct_effects": 0.7043562456965446
+          },
+          "graph_vs_native_default": "agree_small",
           "verdict": "native_effect_absent",
           "top_token_flip": false
         }
-      },
-      "bundle_sha256": "1cc06f9cb1681b93ae6c17f94fbd7d28180df6613aff6759cc761f95e62a31ec",
-      "fingerprint": "4de1b901af48cede2dc968519ce1dcda6df91603027894801e30c88b8b50d27f"
+      }
     },
-    "opposite_hot": {
+    "ac_nasa": {
+      "family": "acronym_abbreviation",
+      "prompt": "NASA stands for the National Aeronautics and Space",
+      "target_text": " Administration",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.16576222529907353,
+      "n_error_nodes": 234,
+      "bundle_sha256": "12131f998b01030f1e089dae534668137f4c660ffac904c3ab45adc21d88451a",
+      "fingerprint": "f649efdca1953a75955c985947079fc45fb259a623adbd3b604c03c30b6a126f",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.0041267722845077515,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.34759684279561043,
+            "unconstrained_iterative": 0.2770301587879658,
+            "direct_effects": 1.5259779877960682
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.009174402803182602,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.47415610030293465,
+            "unconstrained_iterative": 0.5197599120438099,
+            "direct_effects": 2.0990139432251453
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "ac_nba": {
+      "family": "acronym_abbreviation",
+      "prompt": "The abbreviation NBA stands for the National Basketball",
+      "target_text": " Association",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.1548842737986421,
+      "n_error_nodes": 234,
+      "bundle_sha256": "39b62bf1a36c264301ed30a1dba5f92a8c6523379b8abc012a563f661ebd949c",
+      "fingerprint": "4bb10e925ff2df780d3de8864a90ecd46e2c1d7b003ea1ff2a34a55532d466a3",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.0003281915560364723,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.033004194498062134,
+            "unconstrained_iterative": 0.03889024630188942,
+            "direct_effects": 0.07921751588582993
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.00027612224221229553,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.058445043861866,
+            "unconstrained_iterative": 0.06125972419977188,
+            "direct_effects": 0.10923224687576294
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "ac_phd": {
+      "family": "acronym_abbreviation",
+      "prompt": "The abbreviation PhD stands for Doctor of",
+      "target_text": " Philosophy",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.15784975734228496,
+      "n_error_nodes": 208,
+      "bundle_sha256": "2d3f3cb3ca98f267970d83353c05511d96d07a845db094b5af571757e4b40c64",
+      "fingerprint": "cc0fa2fc2818cef7909d67d24fd8502341d81bf1102a25390aff91eb4d37a8d5",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.0007593352347612381,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.5860655084252357,
+            "unconstrained_iterative": 0.18248993903398514,
+            "direct_effects": 0.23088441044092178
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.003528207540512085,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 1.3883375898003578,
+            "unconstrained_iterative": 0.44727782160043716,
+            "direct_effects": 0.4098098650574684
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "ac_uk": {
+      "family": "acronym_abbreviation",
+      "prompt": "The abbreviation UK stands for the United",
+      "target_text": " Kingdom",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.11952155508534573,
+      "n_error_nodes": 208,
+      "bundle_sha256": "ce426d08fcac784a3d2f2900abcdf4a4d2705ed57f428da602a350ce63f7050a",
+      "fingerprint": "1bb6edee9924cfe8fc391b89a1ec0edc893542666731787c79e1501300534a05",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.003122013993561268,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.16830783244222403,
+            "unconstrained_iterative": 0.04098607134073973,
+            "direct_effects": 4.23409182485193
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.003130274824798107,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.08259495254606009,
+            "unconstrained_iterative": 0.029952983371913433,
+            "direct_effects": 3.858253545127809
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "ac_usa": {
+      "family": "acronym_abbreviation",
+      "prompt": "The abbreviation USA stands for the United States of",
+      "target_text": " America",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.13573078258770396,
+      "n_error_nodes": 260,
+      "bundle_sha256": "a761e720400f1c8e4c870edda7398547e5b0b7c919c5e5642e8c3cb957315d5a",
+      "fingerprint": "862e1e59b8792a9cd22b3f3dab8fd8afddbf5d6c41c7b66fad0989ff35fdbd29",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 4.102475941181183e-05,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.0006723804399371147,
+            "unconstrained_iterative": -0.0033331173472106457,
+            "direct_effects": 0.4090478979051113
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.00021905452013015747,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.0006745066493749619,
+            "unconstrained_iterative": -0.003511630930006504,
+            "direct_effects": 0.4406351409852505
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "ant_big": {
+      "family": "antonyms",
+      "prompt": "The opposite of big is",
+      "target_text": " small",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.14209509144862845,
+      "n_error_nodes": 156,
+      "bundle_sha256": "24f0336317f794edca015ee234334f9445cdd19ddfc4c3d89587f040b46ab8b4",
+      "fingerprint": "be1519055cc34d7fb8a869f4cc4145e0c9be5946c1c462c051b53d70f97e3ca0",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.1271953582763672,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": -0.002617180347442627,
+            "unconstrained_iterative": -0.27419260144233704,
+            "direct_effects": -0.04975491762161255
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 10.774725794792175,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 7.234473526477814,
+            "unconstrained_iterative": 14.882562458515167,
+            "direct_effects": 1.242495357990265
+          },
+          "graph_vs_native_default": "agree_large",
+          "verdict": "native_necessary",
+          "top_token_flip": true
+        }
+      }
+    },
+    "ant_black": {
+      "family": "antonyms",
+      "prompt": "The opposite of black is",
+      "target_text": " white",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 16,
+      "inconclusive": 4,
+      "error_node_influence_share": 0.11448954629452686,
+      "n_error_nodes": 156,
+      "bundle_sha256": "25f102f103dd5ca49cd4ae61e502d82cf03f0cfa0df9b303a90fa2bd4ce685d9",
+      "fingerprint": "39e3d88dccc96d3be9e929c4e45e0245ac50fb26145fa7b9685b985a61beeb01",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.9008238911628723,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.9046461582183838,
+            "unconstrained_iterative": 0.061384499073028564,
+            "direct_effects": 4.302876234054565
+          },
+          "graph_vs_native_default": "agree_large",
+          "verdict": "native_necessary",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 9.588513672351837,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 24.501452207565308,
+            "unconstrained_iterative": 16.504502058029175,
+            "direct_effects": 18.220478773117065
+          },
+          "graph_vs_native_default": "agree_large",
+          "verdict": "native_necessary",
+          "top_token_flip": true
+        }
+      }
+    },
+    "ant_fast": {
+      "family": "antonyms",
+      "prompt": "The opposite of fast is",
+      "target_text": " slow",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.12005955619584369,
+      "n_error_nodes": 156,
+      "bundle_sha256": "93ae8ff5f973e2252b4123eaebe52d81b83bed4371d5fa272521f24966f92d36",
+      "fingerprint": "96ee77020e7781aa9691e1be45fa300326a049c1d2914a57df12aae806c3e430",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.059034526348114014,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.015136301517486572,
+            "unconstrained_iterative": -0.18906819820404053,
+            "direct_effects": -0.1157647967338562
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.3229341506958008,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 2.1025357246398926,
+            "unconstrained_iterative": 0.5881234407424927,
+            "direct_effects": -0.10004431009292603
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        }
+      }
+    },
+    "ant_hot": {
+      "family": "antonyms",
       "prompt": "The opposite of hot is",
       "target_text": " cold",
-      "native_top1_text": " cold",
-      "native_top1_is_target": true,
       "n_feature_edges": 20,
-      "n_covered": 20,
-      "native_necessity": {
-        "necessary": 0,
-        "effect_absent": 19,
-        "inconclusive": 1
-      },
-      "graph_vs_native": {
-        "agree": 17,
-        "invert": 0,
-        "mixed": 3,
-        "n_with_prediction": 20
-      },
-      "error_node_influence_share": 0.11398362089222576,
+      "necessary": 0,
+      "effect_absent": 19,
+      "inconclusive": 1,
+      "error_node_influence_share": 0.11394235204898841,
       "n_error_nodes": 156,
+      "bundle_sha256": "ce9f1aa1c6ebb9fb29726a0dfbc10fbe2a2e157e14cf16de93cdabbaef75354c",
+      "fingerprint": "b483afe301ec72f564ca60c663920fa7370830cf0538963406cf4f5aa0ac151e",
       "groups": {
-        "topk_ablate": {
+        "topk_zero_ablate": {
           "multiplier": 0.0,
           "native_logit_delta": -0.11381062865257263,
-          "graph_predicted_delta": 0.19572359323501587,
-          "graph_vs_native": "mixed",
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.19572359323501587,
+            "unconstrained_iterative": -0.028769373893737793,
+            "direct_effects": 0.4018523097038269
+          },
+          "graph_vs_native_default": "mixed",
           "verdict": "native_effect_absent",
           "top_token_flip": false
         },
         "topk_steer_-2x": {
           "multiplier": -2.0,
           "native_logit_delta": 6.110964894294739,
-          "graph_predicted_delta": 4.644037365913391,
-          "graph_vs_native": "agree_large",
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 4.644037365913391,
+            "unconstrained_iterative": 6.388775944709778,
+            "direct_effects": 1.5020672082901
+          },
+          "graph_vs_native_default": "agree_large",
           "verdict": "native_necessary",
           "top_token_flip": true
         }
-      },
-      "bundle_sha256": "80257ec62796c0eeb473807eec98a7b96b84cd3018e1195f374ec0d5bb3e3d48",
-      "fingerprint": "2474213acb38291a17bc20ea0fccde26ecb6597f9ad05e38b08d24e25faa6639"
+      }
     },
-    "japan_tokyo": {
+    "ant_open": {
+      "family": "antonyms",
+      "prompt": "The opposite of open is",
+      "target_text": " closed",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.13092403148102683,
+      "n_error_nodes": 156,
+      "bundle_sha256": "071595279ff025712ba74f1fe63f8e72839bbf693fa516f55f829c791d96a706",
+      "fingerprint": "a85192b26e6ad0862b74830143a23aa75cc6b4042bf9c0af0e7600cfc5701e50",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.10340601205825806,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.07828694581985474,
+            "unconstrained_iterative": 0.012731611728668213,
+            "direct_effects": 0.8610349297523499
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 11.01370120048523,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 12.557360231876373,
+            "unconstrained_iterative": 15.268483698368073,
+            "direct_effects": 6.58129221200943
+          },
+          "graph_vs_native_default": "agree_large",
+          "verdict": "native_necessary",
+          "top_token_flip": true
+        }
+      }
+    },
+    "ant_up": {
+      "family": "antonyms",
+      "prompt": "The opposite of up is",
+      "target_text": " down",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.12703160664524593,
+      "n_error_nodes": 156,
+      "bundle_sha256": "7956e8af4880f5959331be945e9d39843e837b6caefd5cfb63060b4be3418e81",
+      "fingerprint": "543dbe89956ded36bb6eb4293d194cda1b0f66f3c7d6014c3d69b96a6f6e401a",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.4363168329000473,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.2053702175617218,
+            "unconstrained_iterative": 0.22355082631111145,
+            "direct_effects": 1.2109839022159576
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 11.610572561621666,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 22.256385952234268,
+            "unconstrained_iterative": 13.213139683008194,
+            "direct_effects": 12.442482143640518
+          },
+          "graph_vs_native_default": "agree_large",
+          "verdict": "native_necessary",
+          "top_token_flip": true
+        }
+      }
+    },
+    "ar_10m3": {
+      "family": "arithmetic_sequence",
+      "prompt": "10 - 3 =",
+      "target_text": " 7",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.1283315708831665,
+      "n_error_nodes": 182,
+      "bundle_sha256": "ed2c30e22fe60870957dbc7852603c2d317b42fc9fe432b3faab4a1dd8eeb8f0",
+      "fingerprint": "3c8ae9e3f16e471e433804c26141ddb8e7724aa8d2d2c278c9359114e494a406",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.21015915274620056,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.09892541170120239,
+            "unconstrained_iterative": 0.03808903694152832,
+            "direct_effects": 0.27206629514694214
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.310350239276886,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 1.5417559742927551,
+            "unconstrained_iterative": 1.3047441840171814,
+            "direct_effects": 1.3445726037025452
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        }
+      }
+    },
+    "ar_2p2": {
+      "family": "arithmetic_sequence",
+      "prompt": "2 + 2 =",
+      "target_text": " 4",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.12963377602176182,
+      "n_error_nodes": 156,
+      "bundle_sha256": "b7390c426288024b5f009f5168d2443461d9c13578a7f4a0440ec30fe760a4a5",
+      "fingerprint": "724cdd0737acf5ce7abb6a06281228bcd578b4568ecdeb8b38ccbf6a5771ff28",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.20394384860992432,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.3117636740207672,
+            "unconstrained_iterative": 0.3236832320690155,
+            "direct_effects": 0.2149389088153839
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.7071113586425781,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 1.3459490835666656,
+            "unconstrained_iterative": 1.3452955782413483,
+            "direct_effects": 2.4507329761981964
+          },
+          "graph_vs_native_default": "agree_large",
+          "verdict": "native_necessary",
+          "top_token_flip": false
+        }
+      }
+    },
+    "ar_3p4": {
+      "family": "arithmetic_sequence",
+      "prompt": "3 + 4 =",
+      "target_text": " 7",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 19,
+      "inconclusive": 1,
+      "error_node_influence_share": 0.13532714461664527,
+      "n_error_nodes": 156,
+      "bundle_sha256": "53ce9ca947d6d7245b5f1a253a25cca7fba9295169654afc08000306ff98947f",
+      "fingerprint": "99af99078c4eb0875def5108813e8a39810eb4e6fb6ecc4d4ba403071c65de3e",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.12464764714241028,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.25262945890426636,
+            "unconstrained_iterative": 0.13952964544296265,
+            "direct_effects": 0.016943782567977905
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.7722502946853638,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 1.5325968861579895,
+            "unconstrained_iterative": 1.4358903765678406,
+            "direct_effects": 0.7216921448707581
+          },
+          "graph_vs_native_default": "agree_large",
+          "verdict": "native_necessary",
+          "top_token_flip": false
+        }
+      }
+    },
+    "ar_5p5": {
+      "family": "arithmetic_sequence",
+      "prompt": "5 + 5 =",
+      "target_text": " 10",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 18,
+      "inconclusive": 2,
+      "error_node_influence_share": 0.127148216367217,
+      "n_error_nodes": 156,
+      "bundle_sha256": "2aef41a04a496e8ee427c5df418dc84062dcd78d6177beae416c6138647a7d4d",
+      "fingerprint": "eb0ecb05b48acc5950f3e6f706991ae42fa7162001fa2bbcdee8dd7882e26d5b",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.3415682911872864,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.4236762523651123,
+            "unconstrained_iterative": 0.4299139380455017,
+            "direct_effects": 0.05083321034908295
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 1.8046225905418396,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 2.1554192304611206,
+            "unconstrained_iterative": 1.6472736597061157,
+            "direct_effects": 1.8216060400009155
+          },
+          "graph_vs_native_default": "agree_large",
+          "verdict": "native_necessary",
+          "top_token_flip": true
+        }
+      }
+    },
+    "ar_after7": {
+      "family": "arithmetic_sequence",
+      "prompt": "The number that comes right after 7 is",
+      "target_text": " 8",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.15915745493723102,
+      "n_error_nodes": 260,
+      "bundle_sha256": "b940cd7c7116178d08df88b7622b1cade98106c58c17681fe7b1f4507968d048",
+      "fingerprint": "486df50da3dc92bf281936b680c64fa9568c2cf14894ab35cefdb43deff1f9e3",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.049207329750061035,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.3710026741027832,
+            "unconstrained_iterative": 0.19609135389328003,
+            "direct_effects": 0.30889707803726196
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.19638723134994507,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.12566322088241577,
+            "unconstrained_iterative": -0.03005659580230713,
+            "direct_effects": 0.38704466819763184
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "ar_count": {
+      "family": "arithmetic_sequence",
+      "prompt": "1, 2, 3, 4,",
+      "target_text": " 5",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.1386099924478492,
+      "n_error_nodes": 312,
+      "bundle_sha256": "756afbd4224a1703b941b0a7a2961e4fcadf07e74adedcf84b66ed0fc7223168",
+      "fingerprint": "3c266b349a640c332998a7f837d35e58e4f01898aa88ca30e182169728340696",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.010763879865407944,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": -0.019093569368124008,
+            "unconstrained_iterative": -0.020112916827201843,
+            "direct_effects": 0.04024876654148102
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.016883864998817444,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": -0.03786833584308624,
+            "unconstrained_iterative": -0.0346846729516983,
+            "direct_effects": 0.011268578469753265
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "ar_days": {
+      "family": "arithmetic_sequence",
+      "prompt": "Monday, Tuesday,",
+      "target_text": " Wednesday",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 19,
+      "inconclusive": 1,
+      "error_node_influence_share": 0.12298874901778965,
+      "n_error_nodes": 130,
+      "bundle_sha256": "845885412aeaf5fa5f218e731adbf75194f5e2384354e2538fb92ce128a4a480",
+      "fingerprint": "5200d2fb311f6fa389de059fee6e63444a08c55437fe9c284e579de2cbc767c9",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.3705526292324066,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.3658013939857483,
+            "unconstrained_iterative": 0.28840649127960205,
+            "direct_effects": 0.3316727876663208
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 3.526605874300003,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 3.7329496145248413,
+            "unconstrained_iterative": 2.5149954557418823,
+            "direct_effects": 2.317669987678528
+          },
+          "graph_vs_native_default": "agree_large",
+          "verdict": "native_necessary",
+          "top_token_flip": true
+        }
+      }
+    },
+    "ar_even": {
+      "family": "arithmetic_sequence",
+      "prompt": "2, 4, 6, 8,",
+      "target_text": " 10",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.12542629915319686,
+      "n_error_nodes": 312,
+      "bundle_sha256": "7eca8695884c071d52199e504af494e15f364715d68f72444d3a54ce92486585",
+      "fingerprint": "f91e8d2dd5bf5919a01a736522330971c84887bddf1b314c090f527b1b38d3e7",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.008327513933181763,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.009583428502082825,
+            "unconstrained_iterative": 0.0022883564233779907,
+            "direct_effects": 0.039760224521160126
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.008947707712650299,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.004217565059661865,
+            "unconstrained_iterative": 0.001279972493648529,
+            "direct_effects": 0.0775221660733223
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "cap_china": {
+      "family": "capitals",
+      "prompt": "The capital of China is the city of",
+      "target_text": " Beijing",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.13524790056821642,
+      "n_error_nodes": 234,
+      "bundle_sha256": "efc5ec533ae8d2512481f83607f7a211caf2da0e554e5f2777ec94aab193da28",
+      "fingerprint": "30ac851eb4a54a3b6421a58dd7dd1cc8c5d092454c7905ce471cbc36bfffc7a8",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.018405064940452576,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.08958041667938232,
+            "unconstrained_iterative": -0.04251931607723236,
+            "direct_effects": 0.17497828602790833
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.045668065547943115,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.16340726613998413,
+            "unconstrained_iterative": -0.04273347556591034,
+            "direct_effects": 0.2638886570930481
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "cap_egypt": {
+      "family": "capitals",
+      "prompt": "The capital of Egypt is the city of",
+      "target_text": " Cairo",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.1541841130224107,
+      "n_error_nodes": 234,
+      "bundle_sha256": "fd0f3401d72cc87dfd009d02c857c9fd1ffe2fb26e04eb3a7d6a53d5d616026f",
+      "fingerprint": "fbb32ce92433247c26f05bf00597cefeb671eb36b0fbfba1cd735e41edc2fc5d",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.00046631693840026855,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.08231906592845917,
+            "unconstrained_iterative": 0.02175164222717285,
+            "direct_effects": 1.0111958235502243
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.004717543721199036,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.15593580901622772,
+            "unconstrained_iterative": 0.06184913218021393,
+            "direct_effects": 2.0361689776182175
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "cap_france": {
+      "family": "capitals",
+      "prompt": "The capital of France is the city of",
+      "target_text": " Paris",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.14166747794566228,
+      "n_error_nodes": 234,
+      "bundle_sha256": "3c703cea6a78013f6e09a32d348744585511f45df94e5730170a08614c393caa",
+      "fingerprint": "bf052b3b185f3835c54c0cbbe5c4a0835a14aada573b2d4bc094a8f8eaccbb8b",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.026401638984680176,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.0022431910037994385,
+            "unconstrained_iterative": -0.10572013258934021,
+            "direct_effects": 0.8091171085834503
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.06910377740859985,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.07015818357467651,
+            "unconstrained_iterative": -0.05717116594314575,
+            "direct_effects": 0.8126685917377472
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "cap_germany": {
+      "family": "capitals",
+      "prompt": "The capital of Germany is the city of",
+      "target_text": " Berlin",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.13780544782093054,
+      "n_error_nodes": 234,
+      "bundle_sha256": "0afa5501245381c96a21c87d900d535aa7aed1cab3b46493e3ece8fdc34adb39",
+      "fingerprint": "c99324d543f3bd4d8094a46e7d76281a0664eb548a221c4c59b35c5c6073ae0e",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.013088665902614594,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.11361034214496613,
+            "unconstrained_iterative": 0.025127753615379333,
+            "direct_effects": 0.3229496479034424
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.0588524267077446,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.23865732550621033,
+            "unconstrained_iterative": 0.10466286540031433,
+            "direct_effects": 0.5863400399684906
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "cap_italy": {
+      "family": "capitals",
+      "prompt": "The capital of Italy is the city of",
+      "target_text": " Rome",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.13770792922425895,
+      "n_error_nodes": 234,
+      "bundle_sha256": "2407cbad6b27719ee8a1fafd559936659b6bb36040d3c65aa48abfcb48d8acdc",
+      "fingerprint": "54e2abb83c206a7aed85433f608b8a9b1c50b883c556ad281e47dba645b1c972",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.003131881356239319,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.17892032861709595,
+            "unconstrained_iterative": -0.031148865818977356,
+            "direct_effects": 0.42486926913261414
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.005581513047218323,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.29300299286842346,
+            "unconstrained_iterative": 0.0023682862520217896,
+            "direct_effects": 0.4931200444698334
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "cap_japan": {
+      "family": "capitals",
       "prompt": "The capital of Japan is the city of",
       "target_text": " Tokyo",
-      "native_top1_text": " Tokyo",
-      "native_top1_is_target": true,
       "n_feature_edges": 20,
-      "n_covered": 20,
-      "native_necessity": {
-        "necessary": 0,
-        "effect_absent": 20,
-        "inconclusive": 0
-      },
-      "graph_vs_native": {
-        "agree": 20,
-        "invert": 0,
-        "mixed": 0,
-        "n_with_prediction": 20
-      },
-      "error_node_influence_share": 0.12338270876238142,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.12329224037207297,
       "n_error_nodes": 234,
+      "bundle_sha256": "5a980a5327f838cd53532a5f1faeb37e3cc3fd32da02ce5e932288ebe959428e",
+      "fingerprint": "7ca083111be9c3e2415dced37f097052bdb1d156f157950c5d9bbce1fe635ce3",
       "groups": {
-        "topk_ablate": {
+        "topk_zero_ablate": {
           "multiplier": 0.0,
           "native_logit_delta": 0.015588551759719849,
-          "graph_predicted_delta": 0.06257911026477814,
-          "graph_vs_native": "agree_small",
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.06257911026477814,
+            "unconstrained_iterative": -0.013167336583137512,
+            "direct_effects": 0.5057893842458725
+          },
+          "graph_vs_native_default": "agree_small",
           "verdict": "native_effect_absent",
           "top_token_flip": false
         },
         "topk_steer_-2x": {
           "multiplier": -2.0,
           "native_logit_delta": 7.146745055913925,
-          "graph_predicted_delta": 2.4562744349241257,
-          "graph_vs_native": "agree_large",
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 2.4562744349241257,
+            "unconstrained_iterative": 0.3887961357831955,
+            "direct_effects": 2.6634599417448044
+          },
+          "graph_vs_native_default": "agree_large",
           "verdict": "native_necessary",
           "top_token_flip": true
         }
-      },
-      "bundle_sha256": "5d3e05037a5c72a1178de6dea683643bdadec16e26a20b0860aee9f7dc7454c9",
-      "fingerprint": "a2c91c90f173b3a300064c959be14f36feb1c4ac6cb55a165fa803583d4e586d"
+      }
     },
-    "jupiter_largest": {
-      "prompt": "The largest planet in the solar system is",
-      "target_text": " Jupiter",
-      "native_top1_text": " Jupiter",
-      "native_top1_is_target": true,
+    "cap_russia": {
+      "family": "capitals",
+      "prompt": "The capital of Russia is the city of",
+      "target_text": " Moscow",
       "n_feature_edges": 20,
-      "n_covered": 20,
-      "native_necessity": {
-        "necessary": 0,
-        "effect_absent": 20,
-        "inconclusive": 0
-      },
-      "graph_vs_native": {
-        "agree": 12,
-        "invert": 0,
-        "mixed": 8,
-        "n_with_prediction": 20
-      },
-      "error_node_influence_share": 0.14413701217155428,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.13153212279198823,
       "n_error_nodes": 234,
+      "bundle_sha256": "3651ba31f69a0b840d5bb2d25a7c2611371bfb9ec3eea2e7c3227f88c2b997c2",
+      "fingerprint": "99f8a4ecfddb2032885b5c87689f9de2e58ee6b0ed4c2cc4a097c35570622448",
       "groups": {
-        "topk_ablate": {
+        "topk_zero_ablate": {
           "multiplier": 0.0,
-          "native_logit_delta": -0.07695460319519043,
-          "graph_predicted_delta": 0.6581457853317261,
-          "graph_vs_native": "invert",
+          "native_logit_delta": -0.02831590175628662,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": -0.07889080047607422,
+            "unconstrained_iterative": -0.09595895558595657,
+            "direct_effects": 0.40331344306468964
+          },
+          "graph_vs_native_default": "agree_small",
           "verdict": "native_effect_absent",
           "top_token_flip": false
         },
         "topk_steer_-2x": {
           "multiplier": -2.0,
-          "native_logit_delta": -0.2160799503326416,
-          "graph_predicted_delta": 0.8305283784866333,
-          "graph_vs_native": "invert",
+          "native_logit_delta": -0.06966745853424072,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.061756834387779236,
+            "unconstrained_iterative": -0.06777116656303406,
+            "direct_effects": 0.9867501705884933
+          },
+          "graph_vs_native_default": "agree_small",
           "verdict": "native_effect_absent",
           "top_token_flip": false
         }
-      },
-      "bundle_sha256": "9cf07e8a20899aa5038b0728bc86657d6d0f45ac413c0468b7d4de516f2a8cdc",
-      "fingerprint": "c9c9ee203c3115bbdd036bba69321f48e9f4ecab966fc806ca597cc426ce9f02"
+      }
+    },
+    "cap_spain": {
+      "family": "capitals",
+      "prompt": "The capital of Spain is the city of",
+      "target_text": " Madrid",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.1411696646357809,
+      "n_error_nodes": 234,
+      "bundle_sha256": "443107f89fb53627eb158a844766ee978a8658345622051fdbcf78a473f3de21",
+      "fingerprint": "ca8bb306cb4bc74e267e0aa98c2f96df3359486423f0345d093ab85d8ad4381f",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.03694957494735718,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": -0.0785740539431572,
+            "unconstrained_iterative": -0.11130037531256676,
+            "direct_effects": 0.27865850925445557
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.08248251676559448,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": -0.04811203479766846,
+            "unconstrained_iterative": -0.13122950866818428,
+            "direct_effects": 0.14509934186935425
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "cat_apple": {
+      "family": "category_rhyme",
+      "prompt": "An apple is a kind of",
+      "target_text": " fruit",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.1405305092271827,
+      "n_error_nodes": 182,
+      "bundle_sha256": "dce053e6c79df674b6faa4d2e3e8385b96d25480fc41fdb21dd3d27a53468206",
+      "fingerprint": "30d5afeb1643ee1c16bfef80c4371a5c1b2299197479333f48787feb5f1e47ad",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.030631601810455322,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.14694330096244812,
+            "unconstrained_iterative": 0.020800292491912842,
+            "direct_effects": 0.223251610994339
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.04828059673309326,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.23470363020896912,
+            "unconstrained_iterative": 0.044961363077163696,
+            "direct_effects": 0.44232138991355896
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "cat_hammer": {
+      "family": "category_rhyme",
+      "prompt": "A hammer is a kind of",
+      "target_text": " tool",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.16994625129683852,
+      "n_error_nodes": 182,
+      "bundle_sha256": "e74530fa428566905153606ed944c9353ee17a971f72bc27d3068d7288a346fe",
+      "fingerprint": "7cb620aeaaf5c22a49686bed941ad3f77f696236790645eafd263806485e77b2",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.022665739059448242,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.20693707466125488,
+            "unconstrained_iterative": 0.028590083122253418,
+            "direct_effects": -0.059289753437042236
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.2199050784111023,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.8224282264709473,
+            "unconstrained_iterative": 0.39862966537475586,
+            "direct_effects": 0.08835047483444214
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        }
+      }
+    },
+    "cat_robin": {
+      "family": "category_rhyme",
+      "prompt": "A robin is a kind of",
+      "target_text": " bird",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.13940925199303172,
+      "n_error_nodes": 182,
+      "bundle_sha256": "ef1e6271b789b1e10c1d43a53ed6c2b4b02d1fa3a74b76620543b5b3c364271a",
+      "fingerprint": "1f79f655285ec5ccceac893c2753f08fd5d1dd741ae48ab2a97025f1ae42b83a",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.22250992059707642,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": -0.20366984605789185,
+            "unconstrained_iterative": -0.3617408871650696,
+            "direct_effects": 1.2994391918182373
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.40572017431259155,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": -0.12747922539710999,
+            "unconstrained_iterative": -0.37088124454021454,
+            "direct_effects": 0.3151010274887085
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "cat_rose": {
+      "family": "category_rhyme",
+      "prompt": "A rose is a kind of",
+      "target_text": " flower",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 19,
+      "inconclusive": 1,
+      "error_node_influence_share": 0.14716241148315623,
+      "n_error_nodes": 182,
+      "bundle_sha256": "0103e20d2d28ac3073c497c18b9d944b9c64760a44120e2b6e4c960b27ae7d6f",
+      "fingerprint": "d325fb7c95217df5e767ebf16c45caa8a5936ff8a6df7191b5a529aaf3293de3",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.23609447479248047,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.04903149604797363,
+            "unconstrained_iterative": -0.14330565929412842,
+            "direct_effects": 0.3677440881729126
+          },
+          "graph_vs_native_default": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.4107675552368164,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.1784229278564453,
+            "unconstrained_iterative": -0.13123822212219238,
+            "direct_effects": 0.3636057376861572
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "cat_salmon": {
+      "family": "category_rhyme",
+      "prompt": "A salmon is a kind of",
+      "target_text": " fish",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.14039123313617816,
+      "n_error_nodes": 182,
+      "bundle_sha256": "759f4d31cdf02982a1b2862ccb1193354518649844ec9d7571309b276aa4044e",
+      "fingerprint": "2bf99fc8a8f82a4c50ae787333602d96bc991722bb92e9478d3d39cde14e95d9",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.10945643484592438,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.29305556416511536,
+            "unconstrained_iterative": 0.11964306235313416,
+            "direct_effects": 2.122866541147232
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.10978874564170837,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 0.31160804629325867,
+            "unconstrained_iterative": 0.08401355147361755,
+            "direct_effects": 1.0752414762973785
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "mh_chicago": {
+      "family": "multi_hop_factual",
+      "prompt": "Fact: the capital of the state containing Chicago is",
+      "target_text": " Springfield",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.18442155477253552,
+      "n_error_nodes": 286,
+      "bundle_sha256": "fd0b58dd01f537e58f4139f7d5a893f606125f6d53e02d57cfd6c11bd7f17bde",
+      "fingerprint": "6c2c3ddba9898db12ef3542dd0d430b57d36927416006ab7ad5f8cde8f9d3110",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.0968475341796875,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 3.933640480041504,
+            "unconstrained_iterative": 3.883411407470703,
+            "direct_effects": 2.4565577507019043
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.359275221824646,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 4.757905006408691,
+            "unconstrained_iterative": 4.993788719177246,
+            "direct_effects": 2.8078856468200684
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": true
+        }
+      }
+    },
+    "mh_dallas": {
+      "family": "multi_hop_factual",
+      "prompt": "Fact: the capital of the state containing Dallas is",
+      "target_text": " Austin",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.1577718580886575,
+      "n_error_nodes": 286,
+      "bundle_sha256": "a9a2ca208de4a89d92524e9b502efa758310eff9638148293a71f8ee1c8a4b0d",
+      "fingerprint": "713713801c56ff0d78211d44af624b492ea3ac33024b69e8c51bb7fd62c06551",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.1259804368019104,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 3.370579779148102,
+            "unconstrained_iterative": 2.6060569882392883,
+            "direct_effects": 3.0505982041358948
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.4830891489982605,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 4.424281179904938,
+            "unconstrained_iterative": 3.78861004114151,
+            "direct_effects": 3.9226775765419006
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        }
+      }
+    },
+    "mh_houston": {
+      "family": "multi_hop_factual",
+      "prompt": "Fact: the capital of the state containing Houston is",
+      "target_text": " Austin",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.15934895289013296,
+      "n_error_nodes": 286,
+      "bundle_sha256": "530f90469e9dc42e1ea6445523ca17324d33a31d003b36a540011802d5396ede",
+      "fingerprint": "253f4c6741c496f5734227c0e9b4c0d193bb7da54bf2e907700d14e6d4e6ab0b",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.03297746181488037,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 5.211220026016235,
+            "unconstrained_iterative": 4.618065118789673,
+            "direct_effects": 4.25316309928894
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.15277576446533203,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 6.412694692611694,
+            "unconstrained_iterative": 5.895863771438599,
+            "direct_effects": 5.41321873664856
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        }
+      }
+    },
+    "mh_la": {
+      "family": "multi_hop_factual",
+      "prompt": "Fact: the capital of the state containing Los Angeles is",
+      "target_text": " Sacramento",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.15520160716955128,
+      "n_error_nodes": 312,
+      "bundle_sha256": "66d3ef61c3667fe3dbf76c4fa440bd8999923b9097ab6ad23ff1b2f7916e017e",
+      "fingerprint": "dc19c46353ee261f41739f713a1a2f86c3ab6b362058fff517203dc67f368ff7",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.03618967533111572,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 1.8847242593765259,
+            "unconstrained_iterative": 1.4764705896377563,
+            "direct_effects": 1.8245841264724731
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.15821242332458496,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 3.081435799598694,
+            "unconstrained_iterative": 2.123729109764099,
+            "direct_effects": 2.547608494758606
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        }
+      }
+    },
+    "mh_miami": {
+      "family": "multi_hop_factual",
+      "prompt": "Fact: the capital of the state containing Miami is",
+      "target_text": " Tallahassee",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.16146340698781061,
+      "n_error_nodes": 286,
+      "bundle_sha256": "b4c3d00b9178bb76b8447a6ad22467a1e1b7b74236ed8278564803b02b6471d5",
+      "fingerprint": "cb00e36396f74676c6f18df2de006740aae2e17e2fab9752fb4c00293a638eaf",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.07928746938705444,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 2.747647523880005,
+            "unconstrained_iterative": 2.4483609199523926,
+            "direct_effects": 3.851609706878662
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.34228515625,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 4.198698043823242,
+            "unconstrained_iterative": 4.024816989898682,
+            "direct_effects": 5.332880020141602
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        }
+      }
+    },
+    "mh_nyc": {
+      "family": "multi_hop_factual",
+      "prompt": "Fact: the capital of the state containing New York City is",
+      "target_text": " Albany",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.16766304888375538,
+      "n_error_nodes": 338,
+      "bundle_sha256": "d1de990292f27035ae5eb7996d18ab321fc7341342133977122453c378103243",
+      "fingerprint": "4620655cb3b38f04cea0519592353f5aad055ca0163689d72a8889f2f5cecc24",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.03606271743774414,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 1.654901921749115,
+            "unconstrained_iterative": 1.1106935143470764,
+            "direct_effects": 1.9674686789512634
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.13606977462768555,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 2.240841805934906,
+            "unconstrained_iterative": 1.7633416056632996,
+            "direct_effects": 2.5639213919639587
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        }
+      }
+    },
+    "mh_seattle": {
+      "family": "multi_hop_factual",
+      "prompt": "Fact: the capital of the state containing Seattle is",
+      "target_text": " Olympia",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.1847180734853909,
+      "n_error_nodes": 286,
+      "bundle_sha256": "49febb2ae6250ae318756a0276a53f4792f5fa0b9c0e782d8bf6fa4c4c9375e0",
+      "fingerprint": "4caecdae24a95cf55a8ee5979941a1817aad8b43d3f29d1611ea88ce7cf6138b",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.08620589971542358,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 4.386747986078262,
+            "unconstrained_iterative": 3.7477714121341705,
+            "direct_effects": 2.87471666932106
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.320062518119812,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 5.611786037683487,
+            "unconstrained_iterative": 4.689639240503311,
+            "direct_effects": 3.501190096139908
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        }
+      }
+    },
+    "mh_sf": {
+      "family": "multi_hop_factual",
+      "prompt": "Fact: the capital of the state containing San Francisco is",
+      "target_text": " Sacramento",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.14794703723303354,
+      "n_error_nodes": 312,
+      "bundle_sha256": "aaadc328eb148e606bb4243337fc9983810cdffb353180111890fd92c51d09a2",
+      "fingerprint": "8d4374d82706d175228ccec959fda97837c474c5102c48ab2ffebf5c352ca1e1",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.05540883541107178,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 3.160149395465851,
+            "unconstrained_iterative": 2.0950759053230286,
+            "direct_effects": 2.599309027194977
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.1968069076538086,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 4.345193922519684,
+            "unconstrained_iterative": 2.9263325333595276,
+            "direct_effects": 3.451698362827301
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        }
+      }
+    },
+    "tr_de_yes": {
+      "family": "translation",
+      "prompt": "The German word for yes is",
+      "target_text": " ja",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.1548501556250285,
+      "n_error_nodes": 182,
+      "bundle_sha256": "b61a86bfc3dc0428c0ce7101221104022f7d5410acebf0d9076b9d82a9bb7f9b",
+      "fingerprint": "c76c1cadeb5ce6020d5bfba8fe06a2ec5486f47feb16f10d0a500a863630985f",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.12270247936248779,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 4.069676995277405,
+            "unconstrained_iterative": 2.838913083076477,
+            "direct_effects": 2.516380190849304
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.5915234088897705,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 5.922864556312561,
+            "unconstrained_iterative": 4.6760536432266235,
+            "direct_effects": 3.5558286905288696
+          },
+          "graph_vs_native_default": "agree_large",
+          "verdict": "native_necessary",
+          "top_token_flip": false
+        }
+      }
+    },
+    "tr_es_cat": {
+      "family": "translation",
+      "prompt": "The Spanish word for cat is",
+      "target_text": " gato",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 19,
+      "inconclusive": 1,
+      "error_node_influence_share": 0.1280698617925765,
+      "n_error_nodes": 182,
+      "bundle_sha256": "cc3f396d0c7edce4d353b3fc1da2e51f28fd7a6069f2eb01df657f1961335e12",
+      "fingerprint": "d847ff00567f4d47d0ca7b6a04d565b424fc8c367f94406c4e6fa1730d09b591",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.14463496208190918,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 6.438862562179565,
+            "unconstrained_iterative": 2.1687815189361572,
+            "direct_effects": 8.735062837600708
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.5431315898895264,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 10.582125902175903,
+            "unconstrained_iterative": 4.330894708633423,
+            "direct_effects": 12.16631817817688
+          },
+          "graph_vs_native_default": "agree_large",
+          "verdict": "native_necessary",
+          "top_token_flip": false
+        }
+      }
+    },
+    "tr_es_dog": {
+      "family": "translation",
+      "prompt": "The Spanish word for dog is",
+      "target_text": " perro",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.13802815679190353,
+      "n_error_nodes": 182,
+      "bundle_sha256": "29fecb33e1f65553fb22a06ebc089d64433d742f78b91678f203694dbfcda267",
+      "fingerprint": "cc5ceece5c61c5726ced8c0400c39988e90f06f9dee887f2f7773f778b208c26",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.4051056504249573,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 1.5255717039108276,
+            "unconstrained_iterative": 0.16978859901428223,
+            "direct_effects": 5.039307475090027
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.9442715048789978,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 1.880252480506897,
+            "unconstrained_iterative": 1.7368196249008179,
+            "direct_effects": 1.82469642162323
+          },
+          "graph_vs_native_default": "agree_large",
+          "verdict": "native_necessary",
+          "top_token_flip": true
+        }
+      }
+    },
+    "tr_es_house": {
+      "family": "translation",
+      "prompt": "The Spanish word for house is",
+      "target_text": " casa",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 20,
+      "inconclusive": 0,
+      "error_node_influence_share": 0.11873207784534698,
+      "n_error_nodes": 182,
+      "bundle_sha256": "9ff49229c9f544556090c012fdb6e8b607fe3832874c2016359c974bd60a53de",
+      "fingerprint": "0b1d020167d49c40dc67bf84ed8e2387fb214eb3d629343353cfbcd1700ee350",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.02609121799468994,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 1.6856489181518555,
+            "unconstrained_iterative": 0.6720948219299316,
+            "direct_effects": 3.2704362869262695
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.0424119234085083,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 1.2953462600708008,
+            "unconstrained_iterative": 0.5019981861114502,
+            "direct_effects": 2.8968939781188965
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "tr_fr_cat": {
+      "family": "translation",
+      "prompt": "The French word for cat is",
+      "target_text": " chat",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 19,
+      "inconclusive": 1,
+      "error_node_influence_share": 0.1538647074535672,
+      "n_error_nodes": 182,
+      "bundle_sha256": "bbfdd9084c76996ec1bb755be9f3b2fa8cef2262c1c4f1401af6875c6f3c0297",
+      "fingerprint": "f49aac4cbdcb3c159be96335f4d754f5092dfff2aed9f4ff9e21d673be7b078e",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.04709339141845703,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 4.149158000946045,
+            "unconstrained_iterative": 2.53041410446167,
+            "direct_effects": 3.1699604988098145
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.06873226165771484,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 4.393126487731934,
+            "unconstrained_iterative": 2.6953797340393066,
+            "direct_effects": 3.5384626388549805
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      }
+    },
+    "tr_fr_dog": {
+      "family": "translation",
+      "prompt": "The French word for dog is",
+      "target_text": " chien",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 19,
+      "inconclusive": 1,
+      "error_node_influence_share": 0.13089125831136533,
+      "n_error_nodes": 182,
+      "bundle_sha256": "3cb786f6f0d9dd544487c299d5eb4c5a76d5bdf9157741084fa13e50770ad620",
+      "fingerprint": "83a75da576b16be82d08e7992f9bc6706fcff47f4d5a603dadf16d907d816439",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.27321839332580566,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 3.788900315761566,
+            "unconstrained_iterative": 2.0132078528404236,
+            "direct_effects": 7.756884515285492
+          },
+          "graph_vs_native_default": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 1.8460938334465027,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 7.755304276943207,
+            "unconstrained_iterative": 5.259400308132172,
+            "direct_effects": 9.489431321620941
+          },
+          "graph_vs_native_default": "agree_large",
+          "verdict": "native_necessary",
+          "top_token_flip": true
+        }
+      }
+    },
+    "tr_fr_water": {
+      "family": "translation",
+      "prompt": "The French word for water is",
+      "target_text": " eau",
+      "n_feature_edges": 20,
+      "necessary": 0,
+      "effect_absent": 18,
+      "inconclusive": 2,
+      "error_node_influence_share": 0.11768159168582866,
+      "n_error_nodes": 182,
+      "bundle_sha256": "365b093dc68adc12fc0bdb7a06b2c3b260ea5d21e1fbd86bbc11d114433c0df7",
+      "fingerprint": "7c2fe5d4e677b2577f603b668c06dfd6092adf235fe436a9f7afb7d5ce429671",
+      "groups": {
+        "topk_zero_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.19862067699432373,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 1.4063456058502197,
+            "unconstrained_iterative": 0.7423276901245117,
+            "direct_effects": 5.404580354690552
+          },
+          "graph_vs_native_default": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.8894873857498169,
+          "graph_predicted_delta_by_mode": {
+            "frozen_attention_iterative": 6.540762186050415,
+            "unconstrained_iterative": 3.8587610721588135,
+            "direct_effects": 9.937081575393677
+          },
+          "graph_vs_native_default": "agree_large",
+          "verdict": "native_necessary",
+          "top_token_flip": true
+        }
+      }
     }
-  },
-  "environment": {
-    "phase_a": "circuit-tracer + nnsight, transformers 4.57.3, bf16, CUDA",
-    "phase_b": "saturn_pub native Gemma-2 adapter, fp32, CPU, eager, greedy",
-    "torch": "2.13.0+cu130"
   }
 }

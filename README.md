@@ -220,6 +220,24 @@ It loads pinned Hugging Face checkpoints or your local cache. The
 | Evidence plane (`saturn_pub.evidence`) | Stdlib-only, torch-free: first-divergence bisect over a cut lattice, hash-chained claim registry with drift audit, SQLite cross-reference index, and index-ready citations |
 | Metadata-delta route (`saturn_pub.route`) | Payload-free catalog of candidate deltas: select by tag before hydrating any bytes, resolve the chosen delta through a caller-owned content-verified resolver (deduplicated, byte-accounted), then apply, replay vs native, and roll back exactly |
 
+The circuit-tracer interop is exercised as a flagship on real `google/gemma-2-2b` weights with
+the Gemma Scope transcoders, against a panel preregistered before the run (56 candidates / 7 task
+families; admission = native greedy top-1 equals the target; `top_k = 20`; thresholds frozen).
+**50 of 56 prompts admitted**; on **1000 single-feature edges**, native effects agree with
+circuit-tracer's own predicted drop **85.7 % of the time (95 % CI 83.5–87.9 %)**, with a **1.6 %**
+inversion rate — agreement is near-total on direct-recall families and lowest on compositional
+ones (multi-hop 63.7 %, translation 66.4 %). The paper-style **−2× group steer flips the native
+top-1 on 12 of 50 prompts**; joint zero-ablation never does, yet the graph predicts a large drop
+on 13 — a graph over-prediction that, recomputed under circuit-tracer's unconstrained vs
+direct-effects intervention modes, is shown to be genuine for multi-hop prompts but a
+prediction-mode artifact for acronym/translation ones. Transcoder **error nodes** carry 11–19 % of
+node influence the feature circuit never exposes. Limits: single-GPU, greedy, batch-one, fp32
+native vs bf16 replacement; agreement is measured against circuit-tracer's *own* predicted drop,
+not ground-truth causal necessity. Every number, CI, and job id is in
+[`experiments/circuit_tracer/`](experiments/circuit_tracer/README.md); the adapter's
+block-streamed path reproduces the resident forward **bitwise** on these weights (max logit Δ 0.0,
+2.4 GB vs 10.6 GB peak VRAM).
+
 Investigation and Program are small public mechanisms,
 not copies of the entire private research workbench. The native downstream consumer remains
 the behavioral authority. A failed exploratory score does not erase a measured trend.

@@ -134,35 +134,47 @@ native-vs-graph columns and the group rows, and re-derives them in-process.
 
 ## Real-weight results (Gemma-2-2B, Gemma Scope transcoders)
 
-Measured, `top_k = 20`, **six prompts whose native top-1 is the target** (jobs
-`job-52f930db443a` smoke, `job-9d26c9585494` full, 277 s, phase-A peak 8.25 GB VRAM); 120
-single-feature edges + 12 group interventions. The native Gemma-2 adapter validated on the real
-weights first: stepped-vs-native max-abs logit Δ **3.8e-5**, 16/16 greedy exact, mid-layer cut
-**fresh-process replay exact**; carrier↔`resid_post` alignment **3.0e-5 – 7.6e-5**.
+Measured over a **preregistered** panel (`experiments/circuit_tracer/panel.json`, sha256 frozen
+and committed before the run): 56 candidate prompts across 7 task families, admission = native
+fp32 greedy top-1 equals the target, `top_k = 20`, thresholds 0.5 / 0.1 nats. **50 of 56
+admitted** (6 dropped, recorded, never replaced); 1000 single-feature edges + 100 group
+interventions. Five RTX-4080 jobs, ≤11 min each (ids in
+[`experiments/circuit_tracer/summary.json`](../experiments/circuit_tracer/summary.json)). The
+native Gemma-2 adapter validated on the real weights first: stepped-vs-native max-abs logit Δ
+**4.5e-5**, 16/16 greedy exact, mid-layer cut **fresh-process replay exact**; `streamed` **==
+`resident` bitwise** (max logit Δ **0.0**), peak VRAM **2.4 GB streamed vs 10.6 GB resident**.
 
-**Single features.** 0 of 120 were individually `native_necessary` — *expected* under a
+**Single features (1000 edges).** 0 were individually `native_necessary` — *expected* under a
 redundant circuit, so not by itself evidence against the graph. The fair test is agreement with
-circuit-tracer's own predicted drop: **97 of 120 agree** (overwhelmingly `agree_small`: the
-replacement model also predicts a small drop), **1 is a genuine `invert`**, 22 are `mixed`. So
-the graph and the real model mostly concur that single features carry little alone — a "collapse"
-reading would have overstated it.
+circuit-tracer's own predicted drop: **agreement 0.857, 95% CI [0.835, 0.879]** (overwhelmingly
+`agree_small`), invert **0.016 [0.009, 0.024]** (16 edges), mixed 0.127. Agreement is near-total
+on direct-recall families (acronym 0.994, capitals 0.969) and lowest on the compositional ones
+(multi-hop 0.637 [0.562, 0.713], translation 0.664 [0.586, 0.736]).
 
-**Group interventions (paper-style).** Steering the whole top-k set to −2× activation moves the
-real model hard on 2 of 6 prompts and the graph *agrees* there:
+**Group interventions (paper-style), 50 prompts.** Steering the whole top-20 set to −2×
+activation — the intervention the attribution-graphs paper uses — flips the native top-1 on
+**12 of 50** prompts (graph agrees `agree_large` on 15; agreement 0.50 [0.36, 0.64]). Joint
+zero-ablation never flips the top-1 (agreement 0.34 [0.22, 0.48]) yet the graph predicts a large
+drop on **13** prompts — the "Dallas-type" overprediction at scale.
 
-| prompt | −2× group steer: native Δ / graph-pred (nats) | tag | flips native top-1 |
-| --- | --- | --- | :-: |
-| `opposite_hot` → ` cold` | 6.111 / 4.644 | agree_large (native_necessary) | yes |
-| `japan_tokyo` → ` Tokyo` | 7.147 / 2.456 | agree_large (native_necessary) | yes |
-| `two_hop_dallas` → ` Austin` | 0.483 / 4.424 | mixed | no |
-| `jupiter_largest` → ` Jupiter` | −0.216 / 0.831 | **invert** | no |
-| `eiffel_paris` / `identity_fox` | ≈0 / small | agree_small / mixed | no |
+**Does the inversion survive the prediction mode?** circuit-tracer's own intervention demos use
+the frozen-attention default, which is what the tags above use. Recomputing every group
+prediction under all three modes (mean |graph−native|, nats) separates the two causes:
 
-`jupiter_largest` is the clearest group **inversion** (graph predicts ~0.7–0.8 nats the real
-model does not show). Transcoder **error** nodes carried **11–18%** of node influence the feature
-circuit never exposes (`uncovered`, never dropped). Per-prompt tables, every job id, and per-edge
-numbers are in [`experiments/circuit_tracer/README.md`](../experiments/circuit_tracer/README.md)
-and [`experiments/circuit_tracer/summary.json`](../experiments/circuit_tracer/summary.json).
+| group | frozen-attention | unconstrained | direct-effects |
+| --- | :-: | :-: | :-: |
+| zero-ablate | 1.086 | 0.734 | 1.673 |
+| −2× steer | 2.309 | 1.539 | 2.487 |
+
+The **multi-hop** zero-ablate inversions are a genuine *graph* overprediction (they persist
+unconstrained: `mh_houston` native 0.03 vs 5.21 frozen / 4.62 unconstrained). The **acronym** and
+**translation** ones are largely a *prediction-mode* artifact (under unconstrained propagation
+`ac_dna` 0.57 → 0.17, `ac_phd` 0.59 → 0.18 fall below the 0.5 line). The fully-linearized
+direct-effects regime over-predicts the most. Transcoder **error** nodes carried **11.4–18.5 %**
+(median 14.0 %) of node influence the feature circuit never exposes (`uncovered`, never dropped).
+Per-prompt tables, CIs, and every job id are in
+[`experiments/circuit_tracer/README.md`](../experiments/circuit_tracer/README.md) and
+[`summary.json`](../experiments/circuit_tracer/summary.json).
 
 ## Reproduce
 
