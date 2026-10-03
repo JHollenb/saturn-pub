@@ -173,6 +173,7 @@ It loads pinned Hugging Face checkpoints or your local cache. The
 | DependencyGraph | Declared dirty closure and exact instance-local reuse |
 | TrainingTransaction | Inspect candidate updates; promote or restore the registered closure |
 | Experimental memory | Immutable shared Qwen ancestry, private tails, modular phase transport |
+| Evidence plane (`saturn_pub.evidence`) | Stdlib-only, torch-free: first-divergence bisect over a cut lattice, hash-chained claim registry with drift audit, SQLite cross-reference index, and index-ready citations |
 
 Investigation and Program are small public mechanisms,
 not copies of the entire private research workbench. The native downstream consumer remains
@@ -194,6 +195,7 @@ Start with [when and how to use each capability](docs/usage.md), then choose a
 - [Pretrained model recipes](docs/pretrained.md)
 - [Build a writer, debug its futures, and replay](docs/writer-demo.md)
 - [Capabilities and numerical contracts](docs/capabilities.md)
+- [The evidence plane: bisect, claims, xref, cite](docs/evidence.md)
 - [Release validation](docs/validation.md)
 - [Extraction provenance](PROVENANCE.md)
 

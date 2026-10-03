@@ -21,6 +21,30 @@ The corresponding original mechanics tests were adapted to the public import nam
 This retains tested handling of optimizer topology, tied tensors, gradients, nonpersistent buffers,
 module modes, RNG, evaluation isolation, state drift, rollback, and immutable decision receipts.
 
+`saturn_pub/evidence/` adapts the author's private evidence-plane modules, which the original
+working tree keeps stdlib-only and import-clean (no torch/transformers/scheduler/object-store).
+Near-identical extracted copies existed in two private trees; the cleaner originals were adapted:
+
+- `evidence/bisect.py` and `evidence/_canonical.py` adapt `divergence_bisect.py`.
+  Source SHA-256: `031b15ad2d9ffc23587442e068e38c55cc3bccc383741c4a12c6444281d8d661`.
+- `evidence/claims.py` adapts `claims_registry.py`.
+  Source SHA-256: `5a7ee4d0f4bcd59b4950d7f92baa85fda10703101f0eceaf2626082f9b279215`.
+- `evidence/xref.py` adapts `xref_index.py`.
+  Source SHA-256: `62ac2d68c976cf45185de82639f895cb1191549bbaf682ac441d7b6a89986c02`.
+- `evidence/citations.py` adapts `evidence_citations.py`.
+  Source SHA-256: `53d44593f1b23f6f0967845d627b70f69da8472de5096f5507777e69772a5103`.
+
+Public changes rename schema IDs to the `saturn-pub-*` family and the citation marker to
+`saturn_pub_citation`; factor the shared canonical-JSON/sha256 custody idiom into a self-contained
+`_canonical` module; remove workspace-specific default paths and comments (the registry and index
+require explicit paths); and replace the private checkout's repo-root/repo-src declared-reference
+resolution ladder with a neutral receipt-directory + optional `base_root` resolution. The bisect
+gains a caller-callback integration form (`first_divergence_pairs`) and probes-versus-linear
+economics; nothing in the subpackage imports torch or the rest of `saturn_pub`. The corresponding
+original mechanics tests were adapted to the public import namespace, dropping fixtures that pointed
+at private host paths or real private result trees. The subpackage is kept self-contained so it can
+later move into a neutral base package shared by more than one toolkit.
+
 ## Independent small implementations
 
 Core transactions, native adapters, local storage, debugger, investigations, measured programs,
