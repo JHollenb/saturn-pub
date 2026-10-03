@@ -25,6 +25,7 @@ from transformers import DynamicCache
 from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest, TransitionSpec
 from ..core import Adapter, Session
 from ..values import clone, digest, identity
+from ._residency import BlockResidency
 
 
 def _stable_configuration(value: Any, *, key: str = "") -> Any:
@@ -418,7 +419,15 @@ SUPPORTED_FAMILIES = (
 class DecoderAdapter(Adapter):
     """Generic native decoder adapter. Same session grammar as ``QwenAdapter``."""
 
-    def __init__(self, model: Any, *, granularity: str = "layer"):
+    def __init__(
+        self,
+        model: Any,
+        *,
+        granularity: str = "layer",
+        residency: str = "resident",
+        device: Any = None,
+        pin_host: bool = False,
+    ):
         model_type = getattr(model.config, "model_type", None)
         spec = families().get(model_type)
         if spec is None:
@@ -436,7 +445,17 @@ class DecoderAdapter(Adapter):
         self.spec = spec
         self.model = model.eval()
         self.granularity = granularity
-        self.device = next(model.parameters()).device
+        # Block-streamed residency parks frozen weights in host memory and copies one native
+        # module to the execution device at a time; resident keeps the historical zero-overhead
+        # path. place() must run before the frozen guard because host pinning reassigns storage.
+        if residency == "streamed":
+            target = device if device is not None else ("cuda" if torch.cuda.is_available() else "cpu")
+            self._residency = BlockResidency(target, mode="streamed", pin_host=pin_host)
+        else:
+            target = device if device is not None else next(model.parameters()).device
+            self._residency = BlockResidency(target, mode="resident")
+        self._residency.place(self.model)
+        self.device = self._residency.device
         self.dtype = next(model.parameters()).dtype
         config = model.config
         self.backbone = getattr(model, spec.backbone)
@@ -490,13 +509,26 @@ class DecoderAdapter(Adapter):
             "sampler": "greedy",
             "parity": parity,
         }
+        # Resident execution keeps the historical contract verbatim; only streamed residency
+        # adds a field, so existing resident receipts stay byte-identical.
+        if self._residency.mode == "streamed":
+            self.execution["residency"] = self._residency.to_dict()
 
     def _model_program(self) -> str:
         embed = "embed+abs_pos" if self.spec.position == "absolute" else "embed"
         return f"{embed}->decoder_layer[*]->final_norm->lm_head->greedy_argmax->token_commit"
 
     @classmethod
-    def tiny(cls, family: str, seed: int = 7, *, granularity: str = "layer") -> DecoderAdapter:
+    def tiny(
+        cls,
+        family: str,
+        seed: int = 7,
+        *,
+        granularity: str = "layer",
+        residency: str = "resident",
+        device: Any = None,
+        pin_host: bool = False,
+    ) -> DecoderAdapter:
         spec = families().get(family)
         if spec is None:
             raise ValueError(
@@ -505,11 +537,24 @@ class DecoderAdapter(Adapter):
         with torch.random.fork_rng():
             torch.manual_seed(seed)
             config = spec.config_cls(**dict(spec.tiny_config))
-            return cls(spec.model_cls(config), granularity=granularity)
+            return cls(
+                spec.model_cls(config),
+                granularity=granularity,
+                residency=residency,
+                device=device,
+                pin_host=pin_host,
+            )
 
     @classmethod
     def from_pretrained(
-        cls, path: str, *, granularity: str = "layer", **kwargs: Any
+        cls,
+        path: str,
+        *,
+        granularity: str = "layer",
+        residency: str = "resident",
+        device: Any = None,
+        pin_host: bool = False,
+        **kwargs: Any,
     ) -> DecoderAdapter:
         from transformers import AutoConfig
 
@@ -521,7 +566,13 @@ class DecoderAdapter(Adapter):
                 f"supported families are {', '.join(SUPPORTED_FAMILIES)}"
             )
         model = spec.model_cls.from_pretrained(path, attn_implementation="eager", **kwargs)
-        return cls(model, granularity=granularity)
+        return cls(
+            model,
+            granularity=granularity,
+            residency=residency,
+            device=device,
+            pin_host=pin_host,
+        )
 
     # --- frozen-model guards (identical policy to QwenAdapter) --------------------------
 
@@ -580,13 +631,20 @@ class DecoderAdapter(Adapter):
         return keys, values
 
     def _embed(self, tokens: torch.Tensor) -> torch.Tensor:
+        run = self._residency.run
         embed_module = getattr(self.backbone, self.spec.embed)
-        hidden = embed_module(tokens[:, -1:])
+        hidden = run(embed_module, tokens[:, -1:])
         if self.spec.position == "absolute":
             position = tokens.shape[1] - 1
             positions = torch.tensor([[position]], device=self.device)
-            hidden = hidden + getattr(self.backbone, self.spec.abs_pos)(positions)
+            hidden = hidden + run(getattr(self.backbone, self.spec.abs_pos), positions)
         return hidden
+
+    def _layer_kwargs(self, index: int, kwargs: dict[str, Any]) -> dict[str, Any]:
+        if self._layer_forward_kwargs:
+            return kwargs
+        signature = inspect.signature(self._layer_modules[index].forward)
+        return {k: v for k, v in kwargs.items() if k in signature.parameters}
 
     def _run_layer(
         self, index: int, hidden: torch.Tensor, cache: DynamicCache, position: int
@@ -595,15 +653,54 @@ class DecoderAdapter(Adapter):
         kwargs: dict[str, Any] = {self.spec.cache_kwarg: cache, "use_cache": True}
         if self.spec.position == "rotary":
             kwargs["position_ids"] = positions
-            kwargs["position_embeddings"] = self.rotary(hidden, positions)
+            kwargs["position_embeddings"] = self._residency.run(self.rotary, hidden, positions)
             kwargs["attention_mask"] = None
         else:
             kwargs["attention_mask"] = None
-        if not self._layer_forward_kwargs:
-            signature = inspect.signature(self._layer_modules[index].forward)
-            kwargs = {k: v for k, v in kwargs.items() if k in signature.parameters}
-        result = self._layer_modules[index](hidden, **kwargs)
+        kwargs = self._layer_kwargs(index, kwargs)
+        result = self._residency.run(self._layer_modules[index], hidden, **kwargs)
         return result[0] if isinstance(result, tuple) else result
+
+    def _streamed_backbone(
+        self, tokens: torch.Tensor
+    ) -> tuple[torch.Tensor, DynamicCache]:
+        """Block-streamed replica of the native backbone forward over a full token span.
+
+        Streams the embedding, rotary, and every decoder layer one module at a time while the
+        model's own ``create_causal_mask`` builds the eager attention mask. Because the copies
+        are byte-preserving and ``functional_call`` substitutes without mutating the module, the
+        returned hidden state and key/value cache are bitwise-identical to a resident
+        ``model(tokens)`` forward on the same device (proven by tests and measured on real
+        weights). Used only in streamed residency, where the whole model cannot fit the device.
+        """
+        from transformers.masking_utils import create_causal_mask
+
+        run = self._residency.run
+        length = tokens.shape[1]
+        hidden = run(getattr(self.backbone, self.spec.embed), tokens)
+        position_ids = torch.arange(length, device=self.device).unsqueeze(0)
+        if self.spec.position == "absolute":
+            hidden = hidden + run(getattr(self.backbone, self.spec.abs_pos), position_ids)
+        cache = DynamicCache(config=self.model.config)
+        mask = create_causal_mask(
+            config=self.model.config,
+            inputs_embeds=hidden,
+            attention_mask=None,
+            past_key_values=cache,
+            position_ids=position_ids,
+        )
+        kwargs: dict[str, Any] = {
+            self.spec.cache_kwarg: cache,
+            "use_cache": True,
+            "attention_mask": mask,
+        }
+        if self.spec.position == "rotary":
+            kwargs["position_ids"] = position_ids
+            kwargs["position_embeddings"] = run(self.rotary, hidden, position_ids)
+        for index in range(self.layers):
+            result = run(self._layer_modules[index], hidden, **self._layer_kwargs(index, kwargs))
+            hidden = result[0] if isinstance(result, tuple) else result
+        return hidden, cache
 
     # --- session / grammar --------------------------------------------------------------
 
@@ -616,7 +713,10 @@ class DecoderAdapter(Adapter):
         self._guard_window(tokens.shape[-1])
         cache = DynamicCache(config=self.model.config)
         if tokens.shape[-1] > 1:
-            cache = self.model(tokens[:, :-1], use_cache=True).past_key_values
+            if self._residency.mode == "streamed":
+                cache = self._streamed_backbone(tokens[:, :-1])[1]
+            else:
+                cache = self.model(tokens[:, :-1], use_cache=True).past_key_values
         keys, values = self._cache_values(cache)
         return Session(
             self,
@@ -923,10 +1023,12 @@ class DecoderAdapter(Adapter):
             if self.granularity == "operation" and out["layer"] == self.layers:
                 out["phase"] = "normalization"
         elif self.granularity == "operation" and out["phase"] == "normalization":
-            out["hidden"] = getattr(self.backbone, self.spec.final_norm)(hidden)
+            out["hidden"] = self._residency.run(
+                getattr(self.backbone, self.spec.final_norm), hidden
+            )
             out["phase"] = "readout"
         elif self.granularity == "operation" and out["phase"] == "readout":
-            out["logits"] = self.model.lm_head(hidden)[:, -1]
+            out["logits"] = self._residency.run(self.model.lm_head, hidden)[:, -1]
             out["phase"] = "sample"
         elif self.granularity == "operation" and out["phase"] == "sample":
             out["sampled_token"] = out["logits"].argmax(-1, keepdim=True)
@@ -939,7 +1041,8 @@ class DecoderAdapter(Adapter):
             out["phase"] = "embed"
         else:
             final_norm = getattr(self.backbone, self.spec.final_norm)
-            logits = self.model.lm_head(final_norm(hidden))[:, -1]
+            run = self._residency.run
+            logits = run(self.model.lm_head, run(final_norm, hidden))[:, -1]
             out["logits"] = logits
             out["tokens"] = torch.cat((tokens, logits.argmax(-1, keepdim=True)), dim=-1)
             out["hidden"] = None
@@ -957,8 +1060,18 @@ class DecoderAdapter(Adapter):
 
     @torch.inference_mode()
     def native_logits(self, tokens: Sequence[int]) -> torch.Tensor:
-        """Uninstrumented full forward used as the numerical comparator."""
-        return self.model(torch.tensor([list(tokens)], device=self.device)).logits[:, -1]
+        """Uninstrumented full forward used as the numerical comparator.
+
+        In streamed residency the full forward is itself block-streamed (the whole model may
+        not fit the device), reproducing the resident ``model(tokens)`` logits bitwise.
+        """
+        sequence = torch.tensor([list(tokens)], device=self.device)
+        if self._residency.mode == "streamed":
+            hidden, _ = self._streamed_backbone(sequence)
+            final_norm = getattr(self.backbone, self.spec.final_norm)
+            run = self._residency.run
+            return run(self.model.lm_head, run(final_norm, hidden))[:, -1]
+        return self.model(sequence).logits[:, -1]
 
 
 def _accepts_kwargs(function: Callable[..., Any]) -> bool:

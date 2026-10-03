@@ -1,0 +1,4 @@
+[
+  {"family": "qwen2", "label": "Qwen2.5-0.5B", "path": "Qwen/Qwen2.5-0.5B", "dtype": "float32", "compare": "resident"},
+  {"family": "qwen3", "label": "Qwen3-8B", "path": "Qwen/Qwen3-8B", "dtype": "bfloat16", "compare": "reference"}
+]

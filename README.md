@@ -84,6 +84,38 @@ phi, gemma, mixtral, and mistral have no usable cached checkpoint (mistral only 
 the VRAM budget), so they are exercised by the tiny-fixture suite only. See
 [family validation](experiments/family_validation/README.md).
 
+### Block-streamed residency (debug a model larger than the card)
+
+Every decoder family, the dedicated Qwen adapter, and Mamba take `residency="streamed"` (via
+`load(path, residency="streamed", device="cuda")` or an adapter's `from_pretrained`/`tiny`). Frozen
+weights stay in host memory and one native block -- embedding, each decoder/mixer layer, final
+norm, lm_head -- is copied to the device at a time, so a 7B+ LM can be stepped and debugged layer
+by layer on a 16 GB card. The key/value (Mamba conv/recurrent) cache stays resident on the
+execution device; only frozen weights stream. The session grammar is unchanged
+(capture/fork/Act/compare/commit/restore and fresh-process replay). Resident execution keeps the
+historical zero-overhead path and byte-identical receipts; streamed execution adds a `residency`
+field to the contract. Because `Tensor.to` is a byte-preserving move and `functional_call`
+substitutes without mutating the module, **streamed output equals resident bitwise on the same
+device wherever the model fits resident**. Rows measured fp32/bf16, `tf32` off, on an RTX 4080
+(16 GB); exactness checks the 16-token greedy decode and a mid-layer fresh-process replay. Full
+numbers and the plain-Python runner are in
+[`experiments/lm_block_residency/`](experiments/lm_block_residency/README.md).
+
+| Model | Adapter | Fits resident? | Streamed == native | Fresh-process replay | Peak VRAM (resident / streamed) | Job |
+| --- | --- | --- | --- | --- | --- | --- |
+| Qwen2.5-0.5B (fp32) | Decoder (qwen2) | yes | bitwise equal to resident (0.0 logit Δ), 16/16 greedy exact | exact | 1.90 GB / 0.53 GB (3.5x) | `job-16a9286db5ab` |
+| Qwen3-8B (bf16) | Decoder (qwen3) | no (15.26 GB weights vs 15.54 GB usable) | 16/16 greedy exact vs accelerate CPU-offload reference | exact | — / 1.21 GB | `job-6afb6e14cc9a` |
+
+The 8 B weights (15.26 GB) leave no room for the CUDA context, activations, and key/value cache on
+the 15.54 GB usable card, so resident inference is infeasible; streamed, its decode peaks at
+**1.21 GB**. For a model that does not fit resident the reference is HF Transformers `generate` with
+accelerate `device_map` CPU-offload (eager, same checkpoint and dtype, greedy) and the check is
+exact equality of the generated token ids. Streaming trades speed for footprint: the per-layer
+Python stepping over an external cache is already slower than a fused forward, and the host->device
+copy adds more (0.5 tok/s for the streamed 8 B here), so it is a debugging/inspection path, not a
+serving path. Streamed-vs-resident bitwise equality is proven on tiny fixtures for all families
+(`tests/test_residency.py`) and on the resident-fitting real model above.
+
 Diffusion adapters step the native FLUX transformer one projection / joint block / single block /
 readout at a time with the native flow Euler update and VAE. A transformer that does not fit the
 card runs **block-streamed**: weights stay in host memory and one native block is copied to the
@@ -173,7 +205,7 @@ It loads pinned Hugging Face checkpoints or your local cache. The
 | SymbolBinding and SymbolTable | Context/clock-qualified read-only debug symbols and sealed sidecars |
 | Trajectory and PathSchedule | Bounded temporal assays, first recorded divergence, observable recovery |
 | FLUX.2 Klein and FLUX.1 adapters | Step native joint/single blocks resident or block-streamed, write text/image carriers, replay saved suffixes |
-| Model loader | `adapters.load()` dispatches decoder, Mamba-1, and Qwen checkpoints by `model_type` |
+| Model loader | `adapters.load()` dispatches decoder, Mamba-1, and Qwen checkpoints by `model_type`; `residency="streamed"` steps a model larger than the device one native block at a time |
 | SAELens / TransformerLens interop | Find a feature with their hooks, intervene on Saturn's aligned carrier, replay the receipt |
 | Investigation | Same-parent causal panels with per-arm evidence and errors |
 | Instrument Trial (`saturn_pub.trial`) | Arbitrate a standard-instrument reading (patching/probe/cosine/SAE) against native continuation into an agree/invert/inconclusive row with a frozen decision rule; offline `verify_bundle` re-derives the six case verdicts from a hash-pinned bundle |

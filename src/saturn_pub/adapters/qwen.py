@@ -13,6 +13,7 @@ from transformers import DynamicCache, Qwen2Config, Qwen2ForCausalLM
 from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest, TransitionSpec
 from ..core import Adapter, Session
 from ..values import clone, digest, identity
+from ._residency import BlockResidency
 
 
 def _stable_configuration(value: Any, *, key: str = "") -> Any:
@@ -38,7 +39,15 @@ def _tensor_guards(module: Any, *, prefix: str = "") -> tuple[tuple[Any, ...], .
 
 
 class QwenAdapter(Adapter):
-    def __init__(self, model: Qwen2ForCausalLM, *, granularity: str = "layer"):
+    def __init__(
+        self,
+        model: Qwen2ForCausalLM,
+        *,
+        granularity: str = "layer",
+        residency: str = "resident",
+        device: Any = None,
+        pin_host: bool = False,
+    ):
         if model.config.model_type != "qwen2":
             raise ValueError("v1 supports Qwen2/Qwen2.5 full-attention models")
         if getattr(model.config, "use_sliding_window", False):
@@ -49,7 +58,17 @@ class QwenAdapter(Adapter):
             raise ValueError("granularity must be 'layer' or 'operation'")
         self.model = model.eval()
         self.granularity = granularity
-        self.device = next(model.parameters()).device
+        # Block-streamed residency parks frozen weights in host memory and copies one native
+        # module to the execution device at a time; place() precedes the frozen guard because
+        # host pinning reassigns parameter storage.
+        if residency == "streamed":
+            target = device if device is not None else ("cuda" if torch.cuda.is_available() else "cpu")
+            self._residency = BlockResidency(target, mode="streamed", pin_host=pin_host)
+        else:
+            target = device if device is not None else next(model.parameters()).device
+            self._residency = BlockResidency(target, mode="resident")
+        self._residency.place(self.model)
+        self.device = self._residency.device
         self.dtype = next(model.parameters()).dtype
         self.layers = len(model.model.layers)
         configuration = _stable_configuration(model.config.to_dict())
@@ -85,9 +104,21 @@ class QwenAdapter(Adapter):
             "sampler": "greedy",
             "parity": "bounded-logits",
         }
+        # Resident execution keeps the historical contract verbatim; only streamed residency
+        # adds a field, so existing resident receipts stay byte-identical.
+        if self._residency.mode == "streamed":
+            self.execution["residency"] = self._residency.to_dict()
 
     @classmethod
-    def tiny(cls, seed: int = 7, *, granularity: str = "layer") -> QwenAdapter:
+    def tiny(
+        cls,
+        seed: int = 7,
+        *,
+        granularity: str = "layer",
+        residency: str = "resident",
+        device: Any = None,
+        pin_host: bool = False,
+    ) -> QwenAdapter:
         with torch.random.fork_rng():
             torch.manual_seed(seed)
             config = Qwen2Config(
@@ -101,15 +132,31 @@ class QwenAdapter(Adapter):
                 max_position_embeddings=128,
                 attn_implementation="eager",
             )
-            return cls(Qwen2ForCausalLM(config), granularity=granularity)
+            return cls(
+                Qwen2ForCausalLM(config),
+                granularity=granularity,
+                residency=residency,
+                device=device,
+                pin_host=pin_host,
+            )
 
     @classmethod
     def from_pretrained(
-        cls, path: str, *, granularity: str = "layer", **kwargs: Any
+        cls,
+        path: str,
+        *,
+        granularity: str = "layer",
+        residency: str = "resident",
+        device: Any = None,
+        pin_host: bool = False,
+        **kwargs: Any,
     ) -> QwenAdapter:
         return cls(
             Qwen2ForCausalLM.from_pretrained(path, attn_implementation="eager", **kwargs),
             granularity=granularity,
+            residency=residency,
+            device=device,
+            pin_host=pin_host,
         )
 
     def _verify_frozen_model(self) -> None:
@@ -167,6 +214,42 @@ class QwenAdapter(Adapter):
             )
         return keys, values
 
+    def _streamed_backbone(self, tokens: torch.Tensor) -> tuple[torch.Tensor, DynamicCache]:
+        """Block-streamed replica of the Qwen2 backbone forward over a full token span.
+
+        Streams the embedding, rotary, and every decoder layer one module at a time while the
+        model's own ``create_causal_mask`` builds the eager mask. Byte-preserving copies and
+        ``functional_call`` substitution make the returned hidden state and key/value cache
+        bitwise-identical to a resident ``model(tokens)`` forward on the same device. Used only
+        in streamed residency, where the whole model may not fit the device.
+        """
+        from transformers.masking_utils import create_causal_mask
+
+        run = self._residency.run
+        length = tokens.shape[1]
+        hidden = run(self.model.model.embed_tokens, tokens)
+        position_ids = torch.arange(length, device=self.device).unsqueeze(0)
+        cache = DynamicCache(config=self.model.config)
+        mask = create_causal_mask(
+            config=self.model.config,
+            inputs_embeds=hidden,
+            attention_mask=None,
+            past_key_values=cache,
+            position_ids=position_ids,
+        )
+        position_embeddings = run(self.model.model.rotary_emb, hidden, position_ids)
+        for layer in self.model.model.layers:
+            hidden = run(
+                layer,
+                hidden,
+                attention_mask=mask,
+                position_ids=position_ids,
+                past_key_values=cache,
+                position_embeddings=position_embeddings,
+                use_cache=True,
+            )
+        return hidden, cache
+
     @torch.inference_mode()
     def session(self, token_ids: Sequence[int]) -> Session:
         self.validate_execution()
@@ -175,7 +258,10 @@ class QwenAdapter(Adapter):
             raise ValueError("at least one pending token is required")
         cache = DynamicCache(config=self.model.config)
         if tokens.shape[-1] > 1:
-            cache = self.model(tokens[:, :-1], use_cache=True).past_key_values
+            if self._residency.mode == "streamed":
+                cache = self._streamed_backbone(tokens[:, :-1])[1]
+            else:
+                cache = self.model(tokens[:, :-1], use_cache=True).past_key_values
         keys, values = self._cache_values(cache)
         return Session(
             self,
@@ -463,11 +549,12 @@ class QwenAdapter(Adapter):
     def advance(self, state: Mapping[str, Any]) -> Mapping[str, Any]:
         self.validate(state)
         out = clone(state)
+        run = self._residency.run
         tokens = out["tokens"].to(self.device)
         if out["hidden"] is None:
             if tokens.shape[1] >= self.model.config.max_position_embeddings:
                 raise ValueError("context capacity reached")
-            out["hidden"] = self.model.model.embed_tokens(tokens[:, -1:])
+            out["hidden"] = run(self.model.model.embed_tokens, tokens[:, -1:])
             out["logits"] = None
             out["phase"] = "layer"
             return out
@@ -476,8 +563,9 @@ class QwenAdapter(Adapter):
         if layer < self.layers:
             cache = self._cache(out["keys"], out["values"])
             positions = torch.tensor([[tokens.shape[1] - 1]], device=self.device)
-            embeddings = self.model.model.rotary_emb(hidden, positions)
-            out["hidden"] = self.model.model.layers[layer](
+            embeddings = run(self.model.model.rotary_emb, hidden, positions)
+            out["hidden"] = run(
+                self.model.model.layers[layer],
                 hidden,
                 attention_mask=None,
                 position_ids=positions,
@@ -490,10 +578,10 @@ class QwenAdapter(Adapter):
             if self.granularity == "operation" and out["layer"] == self.layers:
                 out["phase"] = "normalization"
         elif self.granularity == "operation" and out["phase"] == "normalization":
-            out["hidden"] = self.model.model.norm(hidden)
+            out["hidden"] = run(self.model.model.norm, hidden)
             out["phase"] = "readout"
         elif self.granularity == "operation" and out["phase"] == "readout":
-            out["logits"] = self.model.lm_head(hidden)[:, -1]
+            out["logits"] = run(self.model.lm_head, hidden)[:, -1]
             out["phase"] = "sample"
         elif self.granularity == "operation" and out["phase"] == "sample":
             out["sampled_token"] = out["logits"].argmax(-1, keepdim=True)
@@ -505,7 +593,7 @@ class QwenAdapter(Adapter):
             out["layer"] = 0
             out["phase"] = "embed"
         else:
-            logits = self.model.lm_head(self.model.model.norm(hidden))[:, -1]
+            logits = run(self.model.lm_head, run(self.model.model.norm, hidden))[:, -1]
             out["logits"] = logits
             out["tokens"] = torch.cat((tokens, logits.argmax(-1, keepdim=True)), dim=-1)
             out["hidden"] = None
@@ -523,5 +611,14 @@ class QwenAdapter(Adapter):
 
     @torch.inference_mode()
     def native_logits(self, tokens: Sequence[int]) -> torch.Tensor:
-        """Uninstrumented full forward used as the numerical comparator."""
-        return self.model(torch.tensor([list(tokens)], device=self.device)).logits[:, -1]
+        """Uninstrumented full forward used as the numerical comparator.
+
+        In streamed residency the full forward is itself block-streamed (the whole model may
+        not fit the device), reproducing the resident ``model(tokens)`` logits bitwise.
+        """
+        sequence = torch.tensor([list(tokens)], device=self.device)
+        if self._residency.mode == "streamed":
+            hidden, _ = self._streamed_backbone(sequence)
+            run = self._residency.run
+            return run(self.model.lm_head, run(self.model.model.norm, hidden))[:, -1]
+        return self.model(sequence).logits[:, -1]

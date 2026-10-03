@@ -164,6 +164,32 @@ mismatch; the device resolution was fixed and the launch wrapper now fails the j
 errors or any check is not exact. FLUX.1-dev was not validated on real weights. These runs do not
 establish image quality, prompt adherence, or cross-device/kernel byte equality.
 
+## LM block-streamed residency
+
+Block-streamed residency for the decoder LM adapters (every decoder family, the dedicated Qwen
+adapter, and Mamba) was validated on an RTX 4080 (16 GB) with `tf32` off, eager attention, batch
+one, greedy (`experiments/lm_block_residency/run.py`). Tiny-fixture tests
+(`tests/test_residency.py`) cover streamed-vs-resident bitwise equality of a greedy decode and the
+`native_logits` comparator, cache residency, capture/fork/Act/compare/store round-trip/fresh-process
+replay under streaming, the streamed-cut-vs-resident-adapter incompatibility, and the
+`BlockResidency` guards, across all families on CPU.
+
+- **Qwen2.5-0.5B, fp32 (`job-16a9286db5ab`).** The streamed 16-token greedy decode is **bitwise
+  identical** to a resident adapter on the same card: identical tokens, bit-equal final logits, and
+  a bit-equal `native_logits` comparator (max absolute logit delta 0.0). A mid-layer `StateCut`
+  captured under streaming replays exactly in a fresh interpreter. Peak VRAM 1.90 GB resident vs
+  0.53 GB streamed (3.5x); greedy rate 2.60 tok/s resident vs 1.91 tok/s streamed.
+- **Qwen3-8B, bf16 (`job-6afb6e14cc9a`).** The 15.26 GB of weights leave no room for the CUDA
+  context, activations, and key/value cache on the 15.54 GB usable card, so resident inference is
+  infeasible. Streamed, the 16-token greedy decode runs at a **1.21 GB** peak and reproduces, token
+  for token, a reference run of the same checkpoint and dtype through HF Transformers `generate`
+  with accelerate `device_map` CPU-offload (10 GiB GPU cap), eager attention, greedy. A mid-layer
+  cut replays exactly in a fresh process. Greedy rate 0.54 tok/s; one lease, 95 s wall.
+
+The key/value cache stays resident on the execution device throughout; only frozen weights stream.
+These runs establish exact streamed-vs-resident (and streamed-vs-offload-reference) decode on one
+host; they do not establish cross-device/kernel byte equality or a serving-grade throughput.
+
 ## SAELens and TransformerLens interop
 
 `examples/interop_saelens.py` ran on macOS arm64 CPU (fp32, GPT-2 small, `gpt2-small-res-jb`

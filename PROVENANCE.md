@@ -89,4 +89,10 @@ The phase reference implements the mathematical modular law directly. It does no
 tensor format, its block formats, kernels, or MIT-licensed source. The shared-history reference has no Triton or
 scheduler dependency. Optional upstream frameworks are installed separately and keep their own licenses.
 
+The adapter-owned block-streamed residency (`adapters/_residency.py`, originally written for this
+repository's FLUX adapters) was extended here to the decoder, Qwen, and Mamba LM adapters so a
+model larger than the device can be stepped one native block at a time. This reuses `torch.func`
+and the model's own forward and masking; it does not vendor the private paged key/value engine or
+any scheduler, which remain outside this repository.
+
 All bundled owned code is Apache 2.0. No historical scientific result is granted by source extraction.

@@ -24,13 +24,22 @@ from transformers import DynamicCache, MambaConfig, MambaForCausalLM
 from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest, TransitionSpec
 from ..core import Adapter, Session
 from ..values import clone, digest, identity
+from ._residency import BlockResidency
 from .decoder import _stable_configuration, _tensor_guards
 
 _MAX_CONTEXT = 1 << 20
 
 
 class MambaAdapter(Adapter):
-    def __init__(self, model: MambaForCausalLM, *, granularity: str = "layer"):
+    def __init__(
+        self,
+        model: MambaForCausalLM,
+        *,
+        granularity: str = "layer",
+        residency: str = "resident",
+        device: Any = None,
+        pin_host: bool = False,
+    ):
         if model.config.model_type != "mamba":
             raise ValueError("MambaAdapter supports Mamba-1 (MambaForCausalLM) models")
         if type(model).__name__ != "MambaForCausalLM":
@@ -48,7 +57,17 @@ class MambaAdapter(Adapter):
         config = model.config
         self.model = model.eval()
         self.granularity = granularity
-        self.device = next(model.parameters()).device
+        # Block-streamed residency parks frozen weights in host memory and copies one native
+        # mixer block to the execution device at a time; place() precedes the frozen guard
+        # because host pinning reassigns parameter storage.
+        if residency == "streamed":
+            target = device if device is not None else ("cuda" if torch.cuda.is_available() else "cpu")
+            self._residency = BlockResidency(target, mode="streamed", pin_host=pin_host)
+        else:
+            target = device if device is not None else next(model.parameters()).device
+            self._residency = BlockResidency(target, mode="resident")
+        self._residency.place(self.model)
+        self.device = self._residency.device
         self.dtype = next(model.parameters()).dtype
         self.backbone = model.backbone
         self.layers = len(self.backbone.layers)
@@ -92,9 +111,21 @@ class MambaAdapter(Adapter):
             "sampler": "greedy",
             "parity": "bounded-recurrence",
         }
+        # Resident execution keeps the historical contract verbatim; only streamed residency
+        # adds a field, so existing resident receipts stay byte-identical.
+        if self._residency.mode == "streamed":
+            self.execution["residency"] = self._residency.to_dict()
 
     @classmethod
-    def tiny(cls, seed: int = 7, *, granularity: str = "layer") -> MambaAdapter:
+    def tiny(
+        cls,
+        seed: int = 7,
+        *,
+        granularity: str = "layer",
+        residency: str = "resident",
+        device: Any = None,
+        pin_host: bool = False,
+    ) -> MambaAdapter:
         with torch.random.fork_rng():
             torch.manual_seed(seed)
             config = MambaConfig(
@@ -106,13 +137,32 @@ class MambaAdapter(Adapter):
                 expand=2,
                 time_step_rank=4,
             )
-            return cls(MambaForCausalLM(config), granularity=granularity)
+            return cls(
+                MambaForCausalLM(config),
+                granularity=granularity,
+                residency=residency,
+                device=device,
+                pin_host=pin_host,
+            )
 
     @classmethod
     def from_pretrained(
-        cls, path: str, *, granularity: str = "layer", **kwargs: Any
+        cls,
+        path: str,
+        *,
+        granularity: str = "layer",
+        residency: str = "resident",
+        device: Any = None,
+        pin_host: bool = False,
+        **kwargs: Any,
     ) -> MambaAdapter:
-        return cls(MambaForCausalLM.from_pretrained(path, **kwargs), granularity=granularity)
+        return cls(
+            MambaForCausalLM.from_pretrained(path, **kwargs),
+            granularity=granularity,
+            residency=residency,
+            device=device,
+            pin_host=pin_host,
+        )
 
     # --- frozen-model guards ------------------------------------------------------------
 
@@ -196,6 +246,22 @@ class MambaAdapter(Adapter):
 
     # --- session / grammar --------------------------------------------------------------
 
+    def _streamed_prefill(self, tokens: torch.Tensor) -> DynamicCache:
+        """Block-streamed replica of the Mamba backbone forward over a prefix token span.
+
+        Streams the embedding and every mixer block one module at a time, populating a fresh
+        recurrent cache. Byte-preserving copies and ``functional_call`` substitution make the
+        resulting conv/recurrent states bitwise-identical to a resident ``model(tokens)``
+        prefill on the same device. Used only in streamed residency.
+        """
+        run = self._residency.run
+        hidden = run(self.backbone.embeddings, tokens)
+        cache = DynamicCache(config=self.model.config)
+        for block in self.backbone.layers:
+            result = run(block, hidden, cache_params=cache, attention_mask=None)
+            hidden = result[0] if isinstance(result, tuple) else result
+        return cache
+
     @torch.inference_mode()
     def session(self, token_ids: Sequence[int]) -> Session:
         self.validate_execution()
@@ -203,7 +269,10 @@ class MambaAdapter(Adapter):
         if tokens.shape[-1] < 1:
             raise ValueError("at least one pending token is required")
         if tokens.shape[-1] > 1:
-            cache = self.model(tokens[:, :-1], use_cache=True).cache_params
+            if self._residency.mode == "streamed":
+                cache = self._streamed_prefill(tokens[:, :-1])
+            else:
+                cache = self.model(tokens[:, :-1], use_cache=True).cache_params
             conv, recur = self._cache_values(cache)
         else:
             conv, recur = self._zero_state()
@@ -485,9 +554,10 @@ class MambaAdapter(Adapter):
     def advance(self, state: Mapping[str, Any]) -> Mapping[str, Any]:
         self.validate(state)
         out = clone(state)
+        run = self._residency.run
         tokens = out["tokens"].to(self.device)
         if out["hidden"] is None:
-            out["hidden"] = self.backbone.embeddings(tokens[:, -1:])
+            out["hidden"] = run(self.backbone.embeddings, tokens[:, -1:])
             out["logits"] = None
             out["phase"] = "layer"
             return out
@@ -496,7 +566,7 @@ class MambaAdapter(Adapter):
         if layer < self.layers:
             cache = self._hydrate_layer(layer, out["conv"][layer], out["recur"][layer])
             block = self.backbone.layers[layer]
-            result = block(hidden, cache_params=cache, attention_mask=None)
+            result = run(block, hidden, cache_params=cache, attention_mask=None)
             out["hidden"] = result[0] if isinstance(result, tuple) else result
             layer_cache = cache.layers[layer]
             new_conv = list(out["conv"])
@@ -508,10 +578,10 @@ class MambaAdapter(Adapter):
             if self.granularity == "operation" and out["layer"] == self.layers:
                 out["phase"] = "normalization"
         elif self.granularity == "operation" and out["phase"] == "normalization":
-            out["hidden"] = self.backbone.norm_f(hidden)
+            out["hidden"] = run(self.backbone.norm_f, hidden)
             out["phase"] = "readout"
         elif self.granularity == "operation" and out["phase"] == "readout":
-            out["logits"] = self.model.lm_head(hidden)[:, -1]
+            out["logits"] = run(self.model.lm_head, hidden)[:, -1]
             out["phase"] = "sample"
         elif self.granularity == "operation" and out["phase"] == "sample":
             out["sampled_token"] = out["logits"].argmax(-1, keepdim=True)
@@ -523,7 +593,7 @@ class MambaAdapter(Adapter):
             out["layer"] = 0
             out["phase"] = "embed"
         else:
-            logits = self.model.lm_head(self.backbone.norm_f(hidden))[:, -1]
+            logits = run(self.model.lm_head, run(self.backbone.norm_f, hidden))[:, -1]
             out["logits"] = logits
             out["tokens"] = torch.cat((tokens, logits.argmax(-1, keepdim=True)), dim=-1)
             out["hidden"] = None
@@ -541,5 +611,18 @@ class MambaAdapter(Adapter):
 
     @torch.inference_mode()
     def native_logits(self, tokens: Sequence[int]) -> torch.Tensor:
-        """Uninstrumented full forward used as the numerical comparator."""
-        return self.model(torch.tensor([list(tokens)], device=self.device)).logits[:, -1]
+        """Uninstrumented full forward used as the numerical comparator.
+
+        In streamed residency the full forward is itself block-streamed (the whole model may
+        not fit the device), reproducing the resident ``model(tokens)`` logits bitwise.
+        """
+        sequence = torch.tensor([list(tokens)], device=self.device)
+        if self._residency.mode == "streamed":
+            run = self._residency.run
+            hidden = run(self.backbone.embeddings, sequence)
+            cache = DynamicCache(config=self.model.config)
+            for block in self.backbone.layers:
+                result = run(block, hidden, cache_params=cache, attention_mask=None)
+                hidden = result[0] if isinstance(result, tuple) else result
+            return run(self.model.lm_head, run(self.backbone.norm_f, hidden))[:, -1]
+        return self.model(sequence).logits[:, -1]
