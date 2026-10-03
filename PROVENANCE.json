@@ -328,7 +328,7 @@
       "adapted_after_namespace_extraction": true,
       "extracted_path": "src/mdb/bench_verify.py",
       "extracted_sha256": "87e56b9ed45e19eb499fb295ca130658d5c6815ddee3eecd2dbe0f597d81391c",
-      "final_sha256": "db9d4bf7bee87b34f539ae9323ffd137734da7e0791208c6fb6a14ce1b858bb4",
+      "final_sha256": "a0a668acf31556b04d26c9fe81de2a19f479013b599bdf0c67f9765a0bf45215",
       "module": "saturn.bench_verify",
       "original_path": "src/saturn/bench_verify.py",
       "original_sha256": "0eba49f1b74f798e4459828180873870459801e5a093f262541a96ae41d66a00"
@@ -379,10 +379,10 @@
       "original_sha256": "a75221c0dba6eaee9b0ee342c0695991f4f0127c5fce9fe3249dd0ae17913f94"
     },
     {
-      "adapted_after_namespace_extraction": false,
+      "adapted_after_namespace_extraction": true,
       "extracted_path": "src/mdb/causal_radix_store.py",
       "extracted_sha256": "2cef0c082c4f91509e5b1b0e1ea676314ea3effb1ca8b528b8d229e9c8cc6b2c",
-      "final_sha256": "2cef0c082c4f91509e5b1b0e1ea676314ea3effb1ca8b528b8d229e9c8cc6b2c",
+      "final_sha256": "ae0d0fdd6b81dac9d7af3019e1c820e7d6697941ba980a44e0c4e72198b41e79",
       "module": "saturn.causal_radix_store",
       "original_path": "src/saturn/causal_radix_store.py",
       "original_sha256": "42d1671c8024f093befef2f875d08467d641d752edc4847f457be45b9712efc5"
@@ -784,10 +784,10 @@
       "original_sha256": "0fcce905ee790deb7ab12ac7087816b60701c0416c0a7452bbef8b655e1191a4"
     },
     {
-      "adapted_after_namespace_extraction": false,
+      "adapted_after_namespace_extraction": true,
       "extracted_path": "src/mdb/vm_payload_cache.py",
       "extracted_sha256": "0825823cfdca5be6fce95f9fd8fcab1dfb254b132d1ddd8bf152af436a5d0b44",
-      "final_sha256": "0825823cfdca5be6fce95f9fd8fcab1dfb254b132d1ddd8bf152af436a5d0b44",
+      "final_sha256": "671f42bc833c52ac89cc84538be766ddf0e524aa2e27da8163dc865677084b6b",
       "module": "saturn.vm_payload_cache",
       "original_path": "src/saturn/vm_payload_cache.py",
       "original_sha256": "0825823cfdca5be6fce95f9fd8fcab1dfb254b132d1ddd8bf152af436a5d0b44"

@@ -71,6 +71,59 @@ def test_put_is_immutable_and_receipt_is_durable(tmp_path) -> None:
     assert json.loads(receipt_path.read_text(encoding="utf-8"))["schema"]
 
 
+def test_byte_audit_uses_disk_and_preserves_durable_receipts(tmp_path):
+    store = PayloadStore(tmp_path, resident_capacity_bytes=8)
+    ref = store.put_bytes(b"abcdefgh", shape=(8,), dtype="uint8")
+    store.hydrate(ref, native_consumer="native-test")
+    before = {p.name: p.read_bytes() for p in store.receipts.glob("*.json")}
+    result = store.audit(ref, expected_shape=(8,), expected_dtype="uint8", expected_bytes=8)
+    assert result.payload == b"abcdefgh"
+    assert result.source == "disk"
+    assert result.receipt.authority_boundary["native_consumer"] is None
+    assert result.receipt.checksum_verified
+    with pytest.raises(PayloadIntegrityError, match="shape mismatch"):
+        store.audit(ref, expected_shape=(4,))
+    with pytest.raises(PayloadIntegrityError, match="dtype mismatch"):
+        store.audit(ref, expected_dtype="float32")
+    with pytest.raises(PayloadIntegrityError, match="byte count mismatch"):
+        store.audit(ref, expected_bytes=4)
+    store.object_path(ref).write_bytes(b"corrupt!")
+    with pytest.raises(PayloadIntegrityError, match="checksum mismatch"):
+        store.audit(ref)  # Must refuse even though the uncorrupted bytes are resident.
+    with pytest.raises(PayloadCacheMiss):
+        store.audit("cas://vm-payload/sha256/"+"f"*64)
+    assert before == {p.name: p.read_bytes() for p in store.receipts.glob("*.json")}
+    # Consumer hydration still publishes its failure evidence durably.
+    with pytest.raises(PayloadIntegrityError):
+        store.hydrate(ref, prefer_resident=False)
+    assert len(list(store.receipts.glob("*.json"))) > len(before)
+
+
+def test_existing_read_only_audit_is_deterministic_and_never_creates_store(tmp_path):
+    missing = tmp_path / "absent"
+    with pytest.raises(PayloadCacheError) as error:
+        PayloadStore(missing, read_only=True)
+    assert not missing.exists()
+    assert error.value.audit_summary["mechanics_status"] == "invalid"
+    writer = PayloadStore(tmp_path / "store")
+    ref = writer.put_bytes(b"abcd", shape=(4,), dtype="uint8")
+    audits = []
+    before = {p.relative_to(writer.root): p.read_bytes() for p in writer.root.rglob("*") if p.is_file()}
+    for _ in range(2):
+        reader = PayloadStore(writer.root, read_only=True)
+        reader.audit(ref)
+        audits.append(reader.audit_summary())
+        with pytest.raises(PayloadCacheError, match="cannot put"):
+            reader.put_bytes(b"other")
+        with pytest.raises(PayloadCacheError, match="requires audit"):
+            reader.hydrate(ref)
+    assert audits[0] == audits[1]
+    assert audits[0]["unique_payloads"] == audits[0]["checksum_verified"] == audits[0]["geometry_verified"] == 1
+    assert audits[0]["bytes_read"] == audits[0]["unique_verified_bytes"] == 4
+    assert audits[0]["failures"] == audits[0]["misses"] == 0
+    assert before == {p.relative_to(writer.root): p.read_bytes() for p in writer.root.rglob("*") if p.is_file()}
+
+
 def test_bounded_resident_tier_reuses_bytes_and_falls_back_to_disk(tmp_path) -> None:
     store = PayloadStore(tmp_path / "payloads", resident_capacity_bytes=8)
     ref = store.put_bytes(b"abcd", shape=(4,), dtype="uint8")

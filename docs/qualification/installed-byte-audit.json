@@ -1,0 +1,17 @@
+{
+  "schema": "mdb-installed-mechanics-record-v1",
+  "wheel_sha256": "04128737e4248403f2c9ebf8206cc8dac2cf24a6089114b359f9d49d1e7eec37",
+  "passed": 199,
+  "skipped": 5,
+  "warnings": 63,
+  "seconds": 100.72,
+  "python": "3.10.14",
+  "invocation": "python -I -m pytest /private/tmp/mdb-tests-pinned-final -q",
+  "isolation": "Installed wheel and clean pinned mrun; copied tests outside checkout; upstream import guard",
+  "scope": "Tiny deterministic mechanics; full family model qualification remains separate",
+  "sources": {
+    "src/mdb/vm_payload_cache.py": "671f42bc833c52ac89cc84538be766ddf0e524aa2e27da8163dc865677084b6b",
+    "src/mdb/bench_verify.py": "a0a668acf31556b04d26c9fe81de2a19f479013b599bdf0c67f9765a0bf45215",
+    "src/mdb/causal_radix_store.py": "ae0d0fdd6b81dac9d7af3019e1c820e7d6697941ba980a44e0c4e72198b41e79"
+  }
+}

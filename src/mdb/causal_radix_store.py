@@ -53,10 +53,13 @@ class SegmentedRead:
 
 
 class CausalRadixStore:
-    def __init__(self, root: str | Path) -> None:
+    def __init__(self, root: str | Path, *, read_only: bool = False) -> None:
         self.root = Path(root).expanduser().resolve()
-        self.payloads = PayloadStore(self.root / "cas")
-        (self.root / "mounts").mkdir(parents=True, exist_ok=True)
+        self.payloads = PayloadStore(self.root / "cas", read_only=read_only)
+        if read_only:
+            if not (self.root / "mounts").is_dir(): raise RadixStoreError("read-only mounts absent")
+        else:
+            (self.root / "mounts").mkdir(parents=True, exist_ok=True)
 
     def export_mount(self, mount_sha256: str, destination: CausalRadixStore) -> str:
         """Copy a verified immutable mount and its complete byte closure.
@@ -177,7 +180,8 @@ class CausalRadixStore:
             raise RadixStoreError("physical node map changed")
         return mount
 
-    def read(self, mount_sha256: str, page_id: str, *, model_abi_sha256: str) -> SegmentedRead:
+    def read(self, mount_sha256: str, page_id: str, *, model_abi_sha256: str,
+             audit: bool = False) -> SegmentedRead:
         mount = self._mount(mount_sha256)
         plan = mount["plan"]
         if model_abi_sha256 != plan["model_abi_sha256"]:
@@ -195,7 +199,8 @@ class CausalRadixStore:
             if node["required_parent_sha256"] != parent:
                 raise RadixStoreError("wrong parent")
             ref = PayloadRef.from_dict(refs[node_sha])
-            raw = self.payloads.hydrate(ref, native_consumer="radix-segment-reader").payload
+            raw = (self.payloads.audit(ref) if audit else
+                   self.payloads.hydrate(ref, native_consumer="radix-segment-reader")).payload
             if len(raw) != node["payload_bytes"]:
                 raise RadixStoreError("segment byte count changed")
             offset = 0

@@ -21,6 +21,35 @@ def bench(model, root, **kwargs):
     return BenchSession.from_resident(model, root=root, continuation_capacity=8, **kwargs)
 
 
+def test_offline_audit_aggregate_and_durable_invalid_evidence(model, tmp_path):
+    import json
+    from mdb.bench_verify import verify
+    from mdb.vm_payload_cache import PayloadIntegrityError
+    b = bench(model, tmp_path / "session")
+    b.prefill([1, 2, 3]); b.generate(2)
+    payloads = b.root / "vm/radix/cas"
+    before = {p.name: p.read_bytes() for p in (payloads/"receipts").glob("*.json")}
+    first, second = verify(b.root), verify(b.root)
+    assert first["payload_audit"] == second["payload_audit"]
+    aggregate = first["payload_audit"]
+    assert aggregate["manifest_ref"] == first["manifest_ref"]
+    # Qwen's segmented mount reader can add refs outside the JSON artifact walk.
+    assert aggregate["unique_payloads"] >= first["counts"]["payload_references"] > 0
+    assert aggregate["checksum_verified"] == aggregate["geometry_verified"] == aggregate["unique_payloads"]
+    assert aggregate["bytes_read"] >= aggregate["unique_verified_bytes"] > 0
+    assert aggregate["failures"] == aggregate["misses"] == 0
+    assert before == {p.name: p.read_bytes() for p in (payloads/"receipts").glob("*.json")}
+    path = next((payloads/"objects").glob("*.bin")); original = path.read_bytes()
+    path.write_bytes(b"corrupt")
+    with pytest.raises(PayloadIntegrityError): verify(b.root)
+    failures = list((b.root/"byte-audits").glob("*.json"))
+    assert len(failures) == 1
+    failed = json.loads(failures[0].read_text())
+    assert failed["manifest_ref"] == first["manifest_ref"]
+    assert failed["mechanics_status"] == "invalid" and failed["failures"] == 1
+    path.write_bytes(original); b.close()
+
+
 def test_layer_cut_replay_fork_and_pending_accounting(model, tmp_path):
     b = bench(model, tmp_path/"session")
     parent = b.prefill([1, 2, 3])

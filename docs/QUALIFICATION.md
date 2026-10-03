@@ -8,6 +8,7 @@ the upstream Saturn assays certify their original source seals, not this package
 | Fresh installed runtime wheel | 188 passed, 5 skipped before pinned-client follow-up | Tiny deterministic mechanics, upstream imports blocked, outside the checkout |
 | Package startup follow-up | 10 installed distribution/launch checks passed | Sealed configurable uv link mode; model execution unchanged |
 | Clean pinned mrun dependency | 193 passed, 5 skipped in the final full run | Installed MDB plus the declared mrun Git revision; no workspace package on the import path; stale admission fallbacks refused |
+| Installed aggregate byte-audit follow-up | 199 passed, 5 skipped | Final read-only payload-audit path, deterministic aggregate, corruption refusal and durable invalid evidence; installed outside checkout |
 | Dependency-free wheel | Root/session imports and offline CLI work without Torch or mrun | Metadata and evidence tools; model execution requires extras |
 | Historical exports | Qwen, Mamba, FLUX and SDXL byte closures verify | CAS references, VM bundles, retained cuts and compatible symbols; continuation is separate |
 | Qwen CLI open/resume | Both jobs succeeded, identical session identity | Real BF16/CUDA Qwen, layer cut, inspection, token generation, durable restart |
@@ -18,6 +19,7 @@ the upstream Saturn assays certify their original source seals, not this package
 | Historical FLUX native continuation | Exact image from the original conditioning cut; successful exit | BF16/CUDA Klein 4B, four denoise steps and native VAE; continued/closed stores and independent post-termination archive verify |
 | Historical SDXL native continuation | Exact image from the original conditioning cut; successful exit | FP16/CUDA Illustrious XL, four denoise steps and native VAE; independent archive matches the closed report |
 | Full Mamba first assay | Native, stepped, replay, fresh resume, debugger and intervention replay passed | Three prompts × 32 tokens; memory test failed to force eviction, so overall qualification remains incomplete |
+| Mamba corrected memory and recovery | All seven memory/recovery checks pass; independent archive matches closed report | Same native identity as the three-prompt panels; three siblings, 147 evictions, 245 hydrations, exact private suffixes and 32-token fresh continuation after source removal |
 
 The full parent assay is `job-697f7259acdb`. Its archive SHA256 is
 `6166ab531a94b09d422eb53853996592d38e9f44fdbde9f2dee9ea03074b8896`.
@@ -52,12 +54,14 @@ proof source maps and settings. The final
 `qualification/review-ext4-materialized.json` binds the repaired custody guard,
 ext4 store and physically materialized cache. Its operational condition requires
 the sealed inventory and selected roots to remain unchanged through execution.
+`qualification/review-byte-audit.json` then rebinds the final aggregate audit
+source and settings after the 199-test installed run and exact Mamba recovery.
 The one-token Mamba legacy ABI check and sequential offline image pilots passed. Worker
 logs must retain the resolved environment receipt. Long proofs use one lease,
 one resident model, strict preflight and no automatic retries.
 
-Remaining work includes full image-family assays, completion of Mamba's memory
-recovery, their evidence custody and final reports.
+Remaining work includes full image-family assays, their evidence custody and
+final reports.
 Deployed broker validation and Saturn consumer migration remain separate work.
 
 SDXL pilot `job-a87e433db106` completed in 104.28 seconds. The downloaded archive
@@ -95,7 +99,28 @@ refused the new volume because the deletion guard still named only the original
 root. The repaired guard accepts exactly the two dedicated qualification roots
 and retains job-identity, symlink and traversal rejection. Six isolated installed
 guard tests and 21 custody/distribution/launcher checks pass. Continuation
-`job-cd60e8ca599d` uses the retained export without repeating this panel.
+`job-cd60e8ca599d` was stopped before model loading after more than nine minutes
+in its first byte audit. Per-payload durable read receipts serialized filesystem
+commits on the ext4 HDD; three audits could not fit its 840-second lease. Its
+cancelled result and raw record remain in verified custody and evidence indexes.
+The original export and completed memory panel remain available.
+
+The byte-audit path now reads disk directly through the same descriptor,
+checksum, size, type and geometry checks. It returns a deterministic aggregate
+bound to the selected manifest, payload digests, counts and bytes. Failed audits
+persist one invalid aggregate before raising. Audit construction requires an
+existing payload store; normal consumer hydration retains durable per-operation
+receipts. This changes offline audit evidence, not native model execution or
+serialized model addresses. Fresh qualification uses a separately sealed source.
+
+Continuation `job-12a520efb7ff` succeeded using that byte-audit path. Its fresh
+32-token continuation exactly matches the retained reference after removing the
+original private source. All seven memory mechanics checks pass, and the
+independent archive matches the closed 143-cut, 2,498-payload report. The worker
+scope completed in 62.42 seconds, excluding final archive compression. Combine
+this component result with the earlier three-prompt execution panels; their
+original failed/cancelled records are unchanged. See the
+[compact completion record](qualification/mamba-memory-completion.json).
 
 FLUX pilot `job-b13b8853f65a` used the installed pinned mrun revision and completed
 in 189.54 seconds, including a 40.31-second offline package install, store copy,

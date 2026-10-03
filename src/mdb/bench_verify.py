@@ -21,9 +21,29 @@ def verify(root):
         if owner is None or owner.owner_lock is None: raise
         # The resident owner already has the materialized closure. Serialize
         # verification with that owner; recovery never races an active writer.
-        with owner.owner_lock: return _verify_tree(root)
+        with owner.owner_lock:
+            try: return _verify_tree(root)
+            except Exception as exc:
+                _persist_failed_audit(root, exc)
+                raise
     try: return _verify_tree(root)
+    except Exception as exc:
+        _persist_failed_audit(root, exc)
+        raise
     finally: writer.close()
+
+
+def _persist_failed_audit(root, exc):
+    """One durable invalid aggregate, separate from immutable payload objects."""
+    from hashlib import sha256
+    from .vm_payload_cache import PayloadStore
+    summary = getattr(exc, "audit_summary", None)
+    if summary is None: return
+    summary = {**summary, "manifest_ref": json.loads((root/"selected.json").read_text())["manifest"]}
+    raw = json.dumps(summary, sort_keys=True).encode()
+    target = root/"byte-audits"/(sha256(raw).hexdigest()+".json")
+    target.parent.mkdir(exist_ok=True)
+    PayloadStore._atomic_publish(target, raw+b"\n")
 
 
 def _verify_tree(root):
@@ -47,7 +67,7 @@ def _verify(root):
     manifest = artifacts.get(manifest_ref)
     if manifest.get("schema") in {"saturn-open-bench-v2", "saturn-open-bench-v3"}:
         return verify_family(root, artifacts, manifest_ref, manifest)
-    radix = CausalRadixStore(root/"vm/radix")
+    radix = CausalRadixStore(root/"vm/radix", read_only=True)
     counts = {"json_artifacts": 0, "payload_references": 0, "cuts": 0, "symbols": 0, "vm_bundles": 0}
     seen_payloads = set()
 
@@ -56,7 +76,7 @@ def _verify(root):
             if value.get("schema") == PayloadRef.schema:
                 ref = PayloadRef.from_dict(value)
                 if ref.fingerprint not in seen_payloads:
-                    radix.payloads.hydrate(ref, native_consumer="bench-offline-integrity")
+                    radix.payloads.audit(ref)
                     seen_payloads.add(ref.fingerprint)
                     counts["payload_references"] += 1
             for child in value.values():
@@ -85,7 +105,7 @@ def _verify(root):
             raise ValueError("cut model/lane identity differs from manifest")
         checkpoint = vm_artifacts.get(snapshot["vm_checkpoint"])
         radix.read(checkpoint["mount_sha256"], checkpoint["page_id"],
-                   model_abi_sha256=checkpoint["model_abi_sha256"])
+                   model_abi_sha256=checkpoint["model_abi_sha256"], audit=True)
         if snapshot["parent_cut"]:
             artifacts.get(snapshot["parent_cut"])
         counts["cuts"] += 1
@@ -114,12 +134,13 @@ def _verify(root):
     read_program_record(root/"programs.json")
     return {"schema": "saturn-open-bench-verification-v1", "mechanics_status": "valid",
             "session_id": manifest["session_id"], "manifest_ref": manifest_ref, "counts": counts,
+            "payload_audit": {"manifest_ref": manifest_ref, **radix.payloads.audit_summary()},
             "boundary": "byte-integrity and reference closure; native execution is proved separately"}
 
 
 def verify_family(root, artifacts, manifest_ref, manifest):
     from mdb.vm_payload_cache import PayloadStore
-    payloads = PayloadStore(root/"payloads")
+    payloads = PayloadStore(root/"payloads", read_only=True)
     seen = set()
     counts = {"json_artifacts": 0, "payload_references": 0, "cuts": 0, "symbols": 0, "vm_bundles": 0}
     def walk(value):
@@ -127,7 +148,7 @@ def verify_family(root, artifacts, manifest_ref, manifest):
             if value.get("schema") == PayloadRef.schema:
                 ref = PayloadRef.from_dict(value)
                 if ref.fingerprint not in seen:
-                    payloads.hydrate(ref, native_consumer="bench-family-offline-integrity")
+                    payloads.audit(ref)
                     seen.add(ref.fingerprint); counts["payload_references"] += 1
             for child in value.values(): walk(child)
         elif isinstance(value, list):
@@ -167,4 +188,5 @@ def verify_family(root, artifacts, manifest_ref, manifest):
     read_program_record(root/"programs.json")
     return {"schema": "saturn-open-bench-verification-v2", "mechanics_status": "valid",
             "family": manifest["family"], "session_id": manifest["session_id"], "manifest_ref": manifest_ref,
-            "counts": counts, "boundary": "byte/reference closure; model-backed native continuation is proved separately"}
+            "counts": counts, "payload_audit": {"manifest_ref": manifest_ref, **payloads.audit_summary()},
+            "boundary": "byte/reference closure; model-backed native continuation is proved separately"}

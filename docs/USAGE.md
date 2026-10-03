@@ -56,6 +56,13 @@ model weights independently available. `BenchSession.resume(model, tokenizer,
 root=...)` validates identity before continuing. `mdb verify --root ...` checks the
 offline closure without loading model weights.
 
+Byte verification reads payloads from disk and returns a manifest-bound aggregate
+of verified descriptors, payload digests, bytes and integrity checks. It avoids
+per-read durable receipt writes; a failure persists an invalid aggregate under
+`byte-audits/` before refusing the closure. Model-consumer hydration continues to
+publish its normal durable receipts. Preserve the successful verification output
+with your job report or custody record.
+
 Older Mamba v1 exports using family-manifest schema v2 may omit the numerical environment. Default resume refuses
 that incomplete contract. An independently qualified caller can supply
 `legacy_numerical_environment=expected_environment` to `BenchSession.resume`;

@@ -552,7 +552,9 @@ class PayloadStore:
 
     schema: ClassVar[str] = PAYLOAD_CACHE_SCHEMA
 
-    def __init__(self, root: str | Path, *, resident_capacity_bytes: int = 0) -> None:
+    def __init__(self, root: str | Path, *, resident_capacity_bytes: int = 0,
+                 read_only: bool = False) -> None:
+        if not isinstance(read_only, bool): raise PayloadCacheError("read_only must be boolean")
         if (
             isinstance(resident_capacity_bytes, bool)
             or not isinstance(resident_capacity_bytes, int)
@@ -563,12 +565,28 @@ class PayloadStore:
         self.objects = self.root / "objects"
         self.descriptors = self.root / "descriptors"
         self.receipts = self.root / "receipts"
+        self.read_only = read_only
+        self._audit_rows: dict[str, dict[str, Any]] = {}
+        self._audit_errors: list[dict[str, str]] = []
+        self._audit_attempts = self._audit_bytes = self._audit_misses = self._audit_failures = 0
         self.resident_capacity_bytes = resident_capacity_bytes
         self._resident: OrderedDict[str, bytes] = OrderedDict()
         self._resident_pinned: set[str] = set()
         self._resident_bytes = 0
         for directory in (self.objects, self.descriptors, self.receipts):
-            directory.mkdir(parents=True, exist_ok=True)
+            if read_only:
+                if not directory.is_dir():
+                    self._audit_failures += 1
+                    error = PayloadCacheError("read-only payload store is incomplete")
+                    error.audit_summary = self.audit_summary()
+                    raise error
+            else:
+                directory.mkdir(parents=True, exist_ok=True)
+        if read_only and not (self.root / "manifest.json").is_file():
+            self._audit_failures += 1
+            error = PayloadCacheError("read-only payload store manifest is absent")
+            error.audit_summary = self.audit_summary()
+            raise error
         self._stats = {
             "puts": 0,
             "put_hits": 0,
@@ -584,7 +602,12 @@ class PayloadStore:
             "resident_bytes_read": 0,
             "resident_bytes": 0,
         }
-        self._write_store_manifest()
+        try: self._write_store_manifest()
+        except PayloadCacheError as exc:
+            if read_only:
+                self._audit_failures += 1
+                exc.audit_summary = self.audit_summary()
+            raise
 
     def _write_store_manifest(self) -> None:
         body = {
@@ -762,6 +785,7 @@ class PayloadStore:
         return self.descriptors / f"{self._digest_from_ref(value)}.json"
 
     def _write_receipt(self, receipt: PayloadCacheReceipt) -> str:
+        if self.read_only: raise PayloadCacheError("read-only payload store cannot publish receipts")
         target = self.receipts / f"{receipt.fingerprint}.json"
         self._atomic_publish(target, _canonical(receipt.to_dict()) + b"\n")
         return f"{PAYLOAD_REF_PREFIX}{receipt.fingerprint}"
@@ -802,6 +826,7 @@ class PayloadStore:
         role: str = "opaque",
         metadata: Mapping[str, Any] | None = None,
     ) -> PayloadRef:
+        if self.read_only: raise PayloadCacheError("read-only payload store cannot put bytes")
         started = time.perf_counter()
         raw = _bytes_value(payload)
         resolved_shape = _shape(shape)
@@ -951,6 +976,70 @@ class PayloadStore:
         native_consumer: str | None = None,
         prefer_resident: bool = True,
     ) -> PayloadHydration:
+        """Hydrate for a consumer, preserving durable per-operation receipts."""
+        if self.read_only: raise PayloadCacheError("read-only payload store requires audit")
+        return self._hydrate(value, expected_shape=expected_shape, expected_dtype=expected_dtype,
+            expected_bytes=expected_bytes, native_consumer=native_consumer,
+            prefer_resident=prefer_resident, persist_receipt=True)
+
+    def audit(
+        self,
+        value: PayloadRef | Mapping[str, Any] | str | Path,
+        *,
+        expected_shape: Sequence[int] | None = None,
+        expected_dtype: str | None = None,
+        expected_bytes: int | None = None,
+    ) -> PayloadHydration:
+        """Verify disk bytes without publishing a native-consumer receipt.
+
+        The returned measurement remains available to the aggregate audit. It
+        has no native consumer authority and never trusts the resident cache.
+        """
+        self._audit_attempts += 1
+        try:
+            result = self._hydrate(value, expected_shape=expected_shape, expected_dtype=expected_dtype,
+                expected_bytes=expected_bytes, native_consumer=None,
+                prefer_resident=False, persist_receipt=False)
+        except PayloadCacheError as exc:
+            self._audit_failures += 1
+            self._audit_misses += isinstance(exc, PayloadCacheMiss)
+            receipt = getattr(exc, "receipt", None)
+            if receipt: self._audit_bytes += receipt.bytes_read
+            try: failed_ref = self._digest_from_ref(value)
+            except PayloadCacheError: failed_ref = "invalid-reference"
+            self._audit_errors.append({"payload_sha256": failed_ref, "error_type": type(exc).__name__})
+            exc.audit_summary = self.audit_summary()
+            raise
+        self._audit_bytes += result.receipt.bytes_read
+        self._audit_rows[result.ref.fingerprint] = {
+            "descriptor_sha256": _sha256_json(result.ref.to_dict()),
+            "payload_sha256": result.ref.sha256, "bytes": result.ref.bytes}
+        return result
+
+    def audit_summary(self) -> dict[str, Any]:
+        """Deterministic aggregate; no elapsed times or receipt fingerprints."""
+        return {"schema": "mdb-payload-audit-v1",
+            "mechanics_status": "invalid" if self._audit_failures else "valid",
+            "unique_payloads": len(self._audit_rows), "read_attempts": self._audit_attempts,
+            "bytes_read": self._audit_bytes,
+            "unique_verified_bytes": sum(r["bytes"] for r in self._audit_rows.values()),
+            "descriptor_payload_sha256": _sha256_json(self._audit_rows),
+            "failed_payloads": list(self._audit_errors),
+            "checksum_verified": len(self._audit_rows), "geometry_verified": len(self._audit_rows),
+            "misses": self._audit_misses, "failures": self._audit_failures,
+            "authority": "disk-byte-integrity; native consumer not assessed"}
+
+    def _hydrate(
+        self,
+        value: PayloadRef | Mapping[str, Any] | str | Path,
+        *,
+        expected_shape: Sequence[int] | None = None,
+        expected_dtype: str | None = None,
+        expected_bytes: int | None = None,
+        native_consumer: str | None = None,
+        prefer_resident: bool = True,
+        persist_receipt: bool = True,
+    ) -> PayloadHydration:
         """Read and verify one payload, returning measured bytes and receipt.
 
         A ``native_consumer`` label records the external boundary in the
@@ -979,7 +1068,7 @@ class PayloadStore:
                 error=str(exc),
                 native_consumer=native_consumer,
             )
-            self._write_receipt(receipt)
+            if persist_receipt: self._write_receipt(receipt)
             raise PayloadCacheMiss(str(exc), receipt=receipt) from exc
         source = "disk"
         raw = self._resident_get(ref) if prefer_resident else None
@@ -1007,7 +1096,7 @@ class PayloadStore:
                     native_consumer=native_consumer,
                     residency_source="disk",
                 )
-                self._write_receipt(receipt)
+                if persist_receipt: self._write_receipt(receipt)
                 raise PayloadCacheMiss(
                     f"payload bytes are not present: {ref.ref}", receipt=receipt
                 ) from exc
@@ -1073,7 +1162,7 @@ class PayloadStore:
                 residency_source=source,
                 resident_bytes_read=len(raw) if source == "resident" else 0,
             )
-            self._write_receipt(receipt)
+            if persist_receipt: self._write_receipt(receipt)
             raise PayloadIntegrityError(
                 receipt.error or "payload integrity check failed", receipt=receipt
             )
@@ -1099,7 +1188,7 @@ class PayloadStore:
             residency_source=source,
             resident_bytes_read=len(raw) if source == "resident" else 0,
         )
-        self._write_receipt(receipt)
+        if persist_receipt: self._write_receipt(receipt)
         return PayloadHydration(ref=ref, payload=raw, receipt=receipt)
 
     load = hydrate
