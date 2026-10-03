@@ -9,6 +9,10 @@ For a complete pretrained experiment, run the
 compares native image futures, restores rejected updates, and checks fresh-process replay.
 It needs only the public package, model checkpoints, and CUDA; no fleet runner is required.
 
+For an interpretability-tool comparison, the
+[circuit-tracer recipe](../experiments/circuit_tracer/README.md) checks attribution-graph edges
+against native interventions on Gemma-2-2B over a preregistered 50-prompt panel.
+
 Start with one specimen, one parent, a bounded continuation horizon, and the actual consumer.
 The execution grammar is `producer → address → payload → carrier → consumer → future`.
 

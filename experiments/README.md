@@ -13,6 +13,7 @@ Generated states and results belong in `outputs/`, which is ignored by Git.
 | [Debugging repair](debugging_repair/README.md) | Follow a deletion, native repair, repair suppression, and collateral; replay suffixes in fresh processes | Supplied neural circuit's threshold consumer |
 | [Induction certificate](induction_certificate/README.md) | Preregister a full direct-source parent + control arms + sealed panels; run the relational-induction causal battery on two cached decoders and sign (or fail) the certificate | Native final norm + lm head on every branch |
 | [Metadata-delta route](metadata_delta_route/README.md) | Save a measured delta as metadata, select it before hydrating, apply to a held-out parent, replay vs native, roll back exactly | Native carrier continuation and exact-rollback receipt |
+| [circuit-tracer native edges](circuit_tracer/README.md) | Preregister a 56-prompt / 7-family panel; build circuit-tracer attribution graphs on Gemma-2-2B with Gemma Scope transcoders; re-run each top-20 feature edge and the whole group (zero-ablate, −2× steer) as native interventions on the real weights; compare to the graph's own predicted drop under three prediction modes; seal offline-re-derivable bundles | Native final norm + lm head (target log-prob and top-1) |
 
 Each recipe declares supplied inputs, fitted quantities, observations, exact mechanics,
 and the scope of its claims. Reference results illustrate one measured development

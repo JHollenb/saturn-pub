@@ -130,10 +130,10 @@ reading = Reading.from_external(
 )
 ```
 
-This is the seam a future circuit-tracer `native_edge_test` integration would use: take an
-edge attribution from the tracer, express it as a `Reading`, and arbitrate it by native
-continuation exactly as above. The tracer itself is **not** implemented here; only the
-seam is.
+This is the seam the circuit-tracer integration uses: `saturn_pub.interop.circuit_tracer`
+takes each edge attribution from the tracer, expresses it as a `Reading`, and arbitrates it by
+native continuation exactly as above. See [circuit-tracer interop](circuit-tracer.md) for the
+API and the preregistered Gemma-2-2B results.
 
 ## The seven traps
 

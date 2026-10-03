@@ -66,3 +66,9 @@ JSON report at `outputs/interop-saelens/report.json`.
 GPT-2 and a synthetic SAE-like direction (no download) to check the same contract against HF's own
 kernels: Saturn's carrier equals `resid_pre[L]`, and a carrier ablation matches the identical
 intervention applied through an HF forward hook.
+
+## Attribution graphs
+
+For circuit-tracer attribution graphs (Gemma Scope transcoders, Gemma-2-2B), see
+[circuit-tracer interop](circuit-tracer.md): the same carrier-alignment discipline applied to
+every graph edge and to whole top-k groups, with preregistered real-weight results.
