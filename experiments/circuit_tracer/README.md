@@ -14,62 +14,95 @@ loads these bundles, shows each table, and re-derives the verdicts in-process.
 
 Two phases on one GPU host, one model resident at a time:
 
-1. **Attribution graph (circuit-tracer, bf16).** `ReplacementModel.from_pretrained(
-   "google/gemma-2-2b", "gemma", backend="nnsight")` builds an attribution graph targeting the
-   answer token; feature nodes are ranked by `compute_node_influence` and the top-k selected.
-   Each selected feature's transcoder decoder vector + activation are extracted. circuit-tracer
-   runs in its own environment (transformers 4.57.3 + nnsight), which the `saturn-pub[ar]` pin
-   (transformers 5.14.1) conflicts with — hence the two-environment split.
-2. **Native edge test (saturn-pub, fp32).** The real Gemma-2-2B weights are wrapped with the
-   native Gemma-2 `DecoderAdapter` (fp32, tf32 off, eager, batch one, greedy) and validated
-   (stepped == native logits, 16-token greedy == native, mid-layer cut fresh-process replay).
-   Then `native_edge_test` turns each selected edge into a native intervention and arbitrates
-   it against the native consumer under the frozen `default_edge_rule`.
+1. **Attribution graph + graph-side predictions (circuit-tracer, bf16).**
+   `ReplacementModel.from_pretrained("google/gemma-2-2b", "gemma", backend="nnsight")` builds an
+   attribution graph targeting the answer token; feature nodes are ranked by
+   `compute_node_influence` and the top-k selected. For each selected feature we then run
+   circuit-tracer's **own** `feature_intervention` on the replacement model (ablate the feature
+   to zero) and record its predicted target-logprob drop — plus two group predictions (ablate
+   the whole top-k set jointly, and steer it to −2× activation). The transcoder decoder vector +
+   activation are extracted. circuit-tracer runs in its own environment (transformers 4.57.3 +
+   nnsight), which the `saturn-pub[ar]` pin (transformers 5.14.1) conflicts with.
+2. **Native test (saturn-pub, fp32).** The real Gemma-2-2B weights are wrapped with the native
+   Gemma-2 `DecoderAdapter` (fp32, tf32 off, eager, batch one, greedy) and validated (stepped ==
+   native logits, 16-token greedy == native, mid-layer cut fresh-process replay). `native_edge_test`
+   then performs the *same* interventions on the real model and, for each, records the native
+   drop, its neutral **native-necessity** label, and the **graph_vs_native** comparison to the
+   replacement model's predicted drop. `native_group_intervention` does the joint ablate / −2×
+   steer. Only prompts whose native top-1 is the target are tested; others are reported dropped.
 
 ## Prompts
 
-| name | prompt | answer | hops |
-| --- | --- | --- | --- |
-| `two_hop_dallas` | `Fact: the capital of the state containing Dallas is` | ` Austin` | two (Dallas→Texas→Austin) |
-| `one_hop_france` | `The capital of France is` | ` Paris` | one |
-| `identity_fox` | `A photorealistic fox sitting in a forest. The animal in this picture is a` | ` fox` | identity |
+Only prompts whose native top-1 is the target are included in the edge test (a non-top-1 target
+makes every reading ambiguous). The candidate set (phase B drops any whose top-1 is not the
+target, and the drop is reported):
+
+| name | prompt | answer |
+| --- | --- | --- |
+| `two_hop_dallas` | `Fact: the capital of the state containing Dallas is` | ` Austin` |
+| `identity_fox` | `A photorealistic fox sitting in a forest. The animal in this picture is a` | ` fox` |
+| `eiffel_paris` | `The Eiffel Tower is located in the city of` | ` Paris` |
+| `opposite_hot` | `The opposite of hot is` | ` cold` |
+| `japan_tokyo` | `The capital of Japan is the city of` | ` Tokyo` |
+| `jupiter_largest` | `The largest planet in the solar system is` | ` Jupiter` |
+
+(The earlier `one_hop_france` = "The capital of France is" was dropped: Gemma-2-2B's native
+top-1 there is ` a`, not ` Paris`.)
 
 ## Results
 
-Two jobs on an RTX 4080 (16 GB) host: `job-d8761ece96f5` (smoke, 1 prompt) and
-`job-2a43a5ecc5a6` (full, 3 prompts, `top_k = 20`, 162 s, phase-A peak 8.3 GB VRAM). The native
-Gemma-2 adapter was validated on the real weights before any edge test:
+Two jobs on an RTX 4080 (16 GB) host: `job-52f930db443a` (smoke, 1 prompt) and
+`job-9d26c9585494` (full, 6 prompts, `top_k = 20`, 277 s, phase-A peak 8.25 GB VRAM). All six
+candidate prompts had their native top-1 equal to the target, so none were dropped. Adapter
+validation on the real weights: stepped-vs-native max-abs Δ **3.8e-5**, 16/16 greedy exact,
+mid-layer cut **fresh-process replay exact**; carrier↔`resid_post` alignment **3.0e-5 – 7.6e-5**
+across the six prompts.
 
-- stepped logits vs native HF eager: max-abs Δ **3.8e-5**
-- 16-token greedy continuation: **16/16 exact**, agreement 1.0
-- mid-layer `StateCut`: **fresh-process replay exact**
-- carrier (`layer:L+1`, last position) vs HF `resid_post[L]`: max-abs **3.1e-5** (two_hop, L20),
-  **1.1e-4** (one_hop, L25), **6.1e-5** (identity, L22) — the transcoder decoder direction does
-  live at Saturn's carrier.
+### Single-feature edges (120 total: 20 per prompt)
 
-Each prompt ran 6 edges through `carrier`+`arbitrate` (last position, single write layer, sealed
-receipt + replay) and 14 through `residual_hook`. Verdicts under the frozen `default_edge_rule`
-(survive ≥ 0.50 nats, collapse ≤ 0.10 nats):
+Removing one transcoder feature's decoder contribution to zero. Each edge gets a neutral
+native-necessity label *and* a comparison to circuit-tracer's own predicted drop.
 
-| prompt | native top-1 | edges | survive | collapse | inconcl. | logit Δ range (nats) | error-node influence |
-| --- | --- | ---: | ---: | ---: | ---: | --- | --- |
-| `two_hop_dallas` | ` Austin` (= answer) | 20 | 0 | 20 | 0 | −0.015 … 0.082 | 0.158 (286 nodes) |
-| `one_hop_france` | ` a` (≠ ` Paris`) | 20 | 1 | 13 | 6 | −0.501 … 0.616 | 0.128 (156 nodes) |
-| `identity_fox` | ` fox` (= answer) | 20 | 0 | 20 | 0 | −0.058 … 0.022 | 0.175 (442 nodes) |
+| prompt | native top-1 | necessary / absent / inconcl. | agree / invert / mixed vs graph | native Δ range | graph-pred Δ range | error share |
+| --- | --- | --- | --- | --- | --- | --- |
+| `two_hop_dallas` | ` Austin` | 0 / 20 / 0 | 10 / 1 / 9 | −0.015 … 0.082 | −0.058 … 0.635 | 0.158 (286) |
+| `identity_fox` | ` fox` | 0 / 20 / 0 | 18 / 0 / 2 | −0.058 … 0.022 | −0.181 … 0.168 | 0.175 (442) |
+| `eiffel_paris` | ` Paris` | 0 / 20 / 0 | 20 / 0 / 0 | −0.002 … 0.001 | −0.021 … 0.036 | 0.167 (260) |
+| `opposite_hot` | ` cold` | 0 / 19 / 1 | 17 / 0 / 3 | −0.124 … 0.149 | −0.316 … 0.106 | 0.114 (156) |
+| `japan_tokyo` | ` Tokyo` | 0 / 20 / 0 | 20 / 0 / 0 | −0.006 … 0.012 | −0.071 … 0.055 | 0.123 (234) |
+| `jupiter_largest` | ` Jupiter` | 0 / 20 / 0 | 12 / 0 / 8 | −0.021 … 0.011 | −0.162 … 0.314 | 0.144 (234) |
+| **total** | | **0 / 119 / 1** | **97 / 1 / 22** | | | 11–18% |
 
-**1 of 60** graph-selected feature edges survived native continuation. On the two prompts the
-model answers top-1 (`two_hop_dallas`, `identity_fox`), *every* selected feature collapsed:
-removing a single transcoder feature's decoder contribution moved the target log-prob by
-`|Δ| ≤ 0.08` nats, far under the survival bar — high attribution weight did not translate into
-single-feature native necessity. The lone survivor was `one_hop_france` L24 feature 476 (drop
-0.616 nats, no top-token flip); note that prompt's own native top-1 is ` a`, not ` Paris`, so the
-graph was attributed to a non-modal token and its edges mostly fall in the inconclusive band.
-Across all three graphs, transcoder **error** nodes carried **13–18%** of node influence — the
-part of the MLP output the transcoders do not reconstruct as a feature direction, so it has no
-direction to test natively and is reported `uncovered`, never silently dropped.
+No single feature was individually load-bearing (0/120 `native_necessary`) — **expected under a
+redundant circuit, and not evidence against the graph**. The fair comparison is the last
+columns: **97 of 120** edges *agree* with the graph (overwhelmingly `agree_small` — the
+replacement model *also* predicts a small drop), only **1** is a genuine `invert` (the graph
+predicts a large effect the real model does not show), and 22 are `mixed`. This is the
+correction to a naive "collapse" reading: the graph and the real model mostly concur that
+single features carry little alone.
 
-Full headline numbers and the per-edge fingerprints are in
-[`summary.json`](summary.json); the sealed tables are under `bundles/<prompt>/`.
+### Group interventions (paper-style: jointly ablate / steer the top-k set)
+
+`multiplier = 0` ablates the whole top-20 set; `multiplier = -2` steers it to −2× activation.
+
+| prompt | ablate: native Δ / graph-pred → tag | steer −2×: native Δ / graph-pred → tag | steer flips top-1? |
+| --- | --- | --- | --- |
+| `two_hop_dallas` | 0.126 / 3.371 → mixed | 0.483 / 4.424 → mixed | no |
+| `identity_fox` | −0.039 / 0.080 → agree_small | −0.110 / 0.007 → agree_small | no |
+| `eiffel_paris` | −0.001 / 0.080 → agree_small | 0.000 / 0.129 → mixed | no |
+| `opposite_hot` | −0.114 / 0.196 → mixed | **6.111 / 4.644 → agree_large (native_necessary)** | **yes** |
+| `japan_tokyo` | 0.016 / 0.063 → agree_small | **7.147 / 2.456 → agree_large (native_necessary)** | **yes** |
+| `jupiter_largest` | −0.077 / 0.658 → **invert** | −0.216 / 0.831 → **invert** | no |
+
+Steering the whole top-k set to −2× — the intervention the attribution-graphs paper uses —
+moves the real model hard on 2 of 6 prompts (**6.1 and 7.1 nats, flipping the native top-1**),
+and there the graph *agrees* (`agree_large`). `jupiter_largest` is the clearest **group
+inversion**: circuit-tracer predicts a 0.66–0.83-nat drop that the real model does not show.
+Across all six graphs, transcoder **error** nodes carry **11–18%** of node influence — influence
+the feature circuit never exposes, reported `uncovered`, never silently dropped.
+
+Full per-edge numbers and fingerprints are in [`summary.json`](summary.json); the sealed tables
+are under `bundles/<prompt>/`.
 
 ## Reproduce
 

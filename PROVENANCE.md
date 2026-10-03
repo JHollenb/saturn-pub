@@ -92,7 +92,9 @@ scheduler dependency. Optional upstream frameworks are installed separately and 
 The native Gemma-2 decoder adapter and `saturn_pub/interop/circuit_tracer.py` (the attribution-graph native edge
 test) were written for this repository. The edge test reuses circuit-tracer's node-influence algorithm
 (`normalize_matrix` + truncated Neumann series), reimplemented so the module imports no `circuit_tracer`; it does
-not vendor any circuit-tracer code. `circuit_tracer` is an optional, lazily imported dependency. The real-weight
+not vendor any circuit-tracer code. The graph-side predicted drops compared against the native effect were
+produced by calling circuit-tracer's own `ReplacementModel.feature_intervention` in the private runner (not in
+this package). `circuit_tracer` is an optional, lazily imported dependency. The real-weight
 validation ran the attribution graph in a dedicated circuit-tracer environment (transformers 4.57.3 + nnsight)
 and the native edge test through `saturn_pub` on the same public `google/gemma-2-2b` weights (an ungated mirror
 aliased to that name) with the Gemma Scope transcoders; the private runner and scheduler harness are not part of

@@ -4,9 +4,14 @@
 Decode Research) builds **attribution graphs**: it replaces each MLP with a sparse
 transcoder, attributes a target logit to transcoder *feature* nodes (and transcoder *error*
 nodes), and reports which nodes influence the answer. A graph edge is a candidate, not a
-verdict. `saturn_pub.interop.circuit_tracer` takes such a graph and lets the **unchanged
-native consumer** — the real model, run to completion — decide whether each edge *survives*
-or *collapses*, using the `saturn_pub.trial` seam.
+verdict. `saturn_pub.interop.circuit_tracer` takes such a graph and asks the **unchanged
+native consumer** — the real model, run to completion — two honest questions about each edge,
+using the `saturn_pub.trial` seam: (1) is removing this feature *individually* load-bearing on
+the real model (its **native-necessity** label)? and (2) does the native drop *agree* with the
+drop circuit-tracer's own intervention predicts on the replacement model, or does the graph
+predict a large effect the real model does not show (an **inversion**)? The second question is
+the fair test: a single feature that is not individually necessary is expected under a
+redundant circuit and is not, by itself, evidence against the graph.
 
 This is the division of labor from [the SAELens/TransformerLens interop](interop.md), applied
 to a harder tool: circuit-tracer is good at *finding* a sparse circuit; Saturn is good at
@@ -25,7 +30,7 @@ table = native_edge_test(
     decoder_writes=decoder_writes,           # (layer, feature) -> [(write_layer, W_dec[feature])]
     top_k=20,
 )
-print(table.summary())                       # surviving / collapsing / error-node share
+print(table.summary())                       # native-necessity + graph-agreement + error share
 table.seal("bundle/")                        # hash-pinned, offline-re-derivable verdict table
 ```
 
@@ -54,19 +59,37 @@ synthetic graph and re-derive the sealed table with the stdlib-only `verify_edge
    - **`residual_hook`** operator — a feature at any position is re-tested with a real-model
      forward hook that adds the same contribution at each write layer, graded by the same
      frozen rule. This covers the subject-position features an attribution graph cares about.
-4. **Verdict.** `survives` (native consumer agrees the edge is load-bearing), `collapses`
-   (native consumer shows no effect where the graph read one), or `inconclusive` (ambiguity
-   band, a declined reading, or a failed control). The default rule:
+4. **Native-necessity label.** A neutral label about the *real model only*: `native_necessary`
+   (removing this one feature is individually load-bearing), `native_effect_absent` (no
+   individual effect — expected under a redundant circuit, and *not* by itself evidence against
+   the graph), or `inconclusive`. The default rule:
 
    ```text
    metric  = consumer_logprob_drop  = logprob(target|clean) − logprob(target|feature removed)
-   survives  (agree)  if drop ≥ 0.50 nats
-   collapses (invert) if drop ≤ 0.10 nats
-   inconclusive       otherwise
+   native_necessary      if drop ≥ 0.50 nats
+   native_effect_absent  if drop ≤ 0.10 nats
+   inconclusive          otherwise
    ```
 
-Each row reports the graph weight, the native logit Δ, the top-token flip, the verdict, and
-the receipt id. `top_k ≈ 20` matches the SAE-20 arm of the owner's prior head-to-head.
+5. **Graph-vs-native agreement (the fair test).** When each edge carries
+   `graph_predicted_delta` — the drop circuit-tracer's *own* `feature_intervention` predicts on
+   the replacement model for the same ablation — each row gets a `graph_vs_native` tag from
+   [`classify_graph_vs_native`](../src/saturn_pub/interop/circuit_tracer.py): `agree_small`
+   (both drops ≤ 0.10 nats — redundancy, not a graph failure), `agree_large` (both ≥ 0.50),
+   `invert` (graph predicts ≥ 0.50 but the native model shows ≤ 0.10 — a genuine disagreement),
+   or `mixed`. The worker computes `graph_predicted_delta` while the replacement model is still
+   loaded (phase A), so the native test (phase B) needs only the scalars.
+6. **Group interventions (paper-style).** `native_group_intervention` jointly ablates the whole
+   top-k feature set (`multiplier = 0`) and steers it to −2× its natural activation
+   (`multiplier = -2`, matching the attribution-graphs paper's steering), adding
+   `(m − 1)·activation·W_dec` for every member at its write layer, and labels the group under
+   the same rule with the same `graph_vs_native` comparison to circuit-tracer's joint prediction.
+   This is the intervention the paper expects to be strong; a single-feature zero ablation is
+   not.
+
+Each row reports the graph weight, the native logit Δ, the graph-predicted Δ, the
+`graph_vs_native` tag, the top-token flip, the native-necessity label, and the receipt id.
+`top_k ≈ 20` matches the SAE-20 arm of the owner's prior head-to-head.
 
 ## The address alignment is measured, not assumed
 
@@ -101,37 +124,44 @@ part of being honest about what the graph can and cannot carry.
 ## The sealed verdict table re-derives offline
 
 `EdgeVerdictTable.seal(dir)` writes `edge_verdicts.json` + a `manifest.json` of SHA-256
-pins. `verify_edge_bundle(dir)` re-checks the hash and re-derives every covered verdict from
-the sealed `native_logit_delta` scalar and the frozen `DecisionRule` with the same
-`trial.grade` the arbiter uses — **stdlib only, no torch, no model, no circuit_tracer**. The
-shipped notebook `notebooks/05_circuit_tracer_native_edges.ipynb` loads a committed, scrubbed
-bundle, shows the table, and re-derives it in-process.
+pins. `verify_edge_bundle(dir)` re-checks the hash and re-derives, from the sealed scalars and
+the frozen `DecisionRule`, every covered edge's native-necessity label (with the same
+`trial.grade` the arbiter uses), its `graph_vs_native` tag, and every group verdict — **stdlib
+only, no torch, no model, no circuit_tracer**. The shipped notebook
+`notebooks/05_circuit_tracer_native_edges.ipynb` loads the committed, scrubbed bundles, shows the
+native-vs-graph columns and the group rows, and re-derives them in-process.
 
 ## Real-weight results (Gemma-2-2B, Gemma Scope transcoders)
 
-Measured, `top_k = 20`, three prompts, 60 feature edges total (jobs `job-d8761ece96f5` smoke,
-`job-2a43a5ecc5a6` full, 162 s, phase-A peak 8.3 GB VRAM). The native Gemma-2 adapter validated
-on the real weights first: stepped-vs-native max-abs logit Δ **3.8e-5**, 16/16 greedy tokens
-exact, mid-layer cut **fresh-process replay exact**. The carrier↔`resid_post` address alignment
-measured **3.1e-5 / 1.1e-4 / 6.1e-5** across the three prompts. Each prompt ran 6 edges through
-`carrier`+`arbitrate` and 14 through `residual_hook`.
+Measured, `top_k = 20`, **six prompts whose native top-1 is the target** (jobs
+`job-52f930db443a` smoke, `job-9d26c9585494` full, 277 s, phase-A peak 8.25 GB VRAM); 120
+single-feature edges + 12 group interventions. The native Gemma-2 adapter validated on the real
+weights first: stepped-vs-native max-abs logit Δ **3.8e-5**, 16/16 greedy exact, mid-layer cut
+**fresh-process replay exact**; carrier↔`resid_post` alignment **3.0e-5 – 7.6e-5**.
 
-| prompt | native top-1 | edges | survive | collapse | inconcl. | error-node influence |
-| --- | --- | ---: | ---: | ---: | ---: | --- |
-| `two_hop_dallas` → ` Austin` | ` Austin` (= answer) | 20 | 0 | 20 | 0 | 0.158 (286 nodes) |
-| `one_hop_france` → ` Paris` | ` a` (≠ answer) | 20 | 1 | 13 | 6 | 0.128 (156 nodes) |
-| `identity_fox` → ` fox` | ` fox` (= answer) | 20 | 0 | 20 | 0 | 0.175 (442 nodes) |
+**Single features.** 0 of 120 were individually `native_necessary` — *expected* under a
+redundant circuit, so not by itself evidence against the graph. The fair test is agreement with
+circuit-tracer's own predicted drop: **97 of 120 agree** (overwhelmingly `agree_small`: the
+replacement model also predicts a small drop), **1 is a genuine `invert`**, 22 are `mixed`. So
+the graph and the real model mostly concur that single features carry little alone — a "collapse"
+reading would have overstated it.
 
-Honest headline: **1 of 60** graph-selected edges survived the 0.50-nat bar. Removing one
-transcoder feature's decoder contribution moved the native target log-prob by `|Δ| ≤ 0.08` nats
-on the two prompts the model answers top-1, so no single selected feature is individually
-necessary there — high attribution weight did not imply native causal necessity. The lone
-survivor was `one_hop_france` L24 feat 476 (drop 0.616 nats); that prompt's own native top-1 is
-` a`, not ` Paris`, so the graph targeted a non-modal token and most of its edges land in the
-inconclusive band. Error nodes carried **13–18%** of node influence the feature circuit never
-exposes. The verdict tables, job ids, and per-edge numbers are in
-[`experiments/circuit_tracer/README.md`](../experiments/circuit_tracer/README.md) and
-[`experiments/circuit_tracer/summary.json`](../experiments/circuit_tracer/summary.json).
+**Group interventions (paper-style).** Steering the whole top-k set to −2× activation moves the
+real model hard on 2 of 6 prompts and the graph *agrees* there:
+
+| prompt | −2× group steer: native Δ / graph-pred (nats) | tag | flips native top-1 |
+| --- | --- | --- | :-: |
+| `opposite_hot` → ` cold` | 6.111 / 4.644 | agree_large (native_necessary) | yes |
+| `japan_tokyo` → ` Tokyo` | 7.147 / 2.456 | agree_large (native_necessary) | yes |
+| `two_hop_dallas` → ` Austin` | 0.483 / 4.424 | mixed | no |
+| `jupiter_largest` → ` Jupiter` | −0.216 / 0.831 | **invert** | no |
+| `eiffel_paris` / `identity_fox` | ≈0 / small | agree_small / mixed | no |
+
+`jupiter_largest` is the clearest group **inversion** (graph predicts ~0.7–0.8 nats the real
+model does not show). Transcoder **error** nodes carried **11–18%** of node influence the feature
+circuit never exposes (`uncovered`, never dropped). Per-prompt tables, every job id, and per-edge
+numbers are in [`experiments/circuit_tracer/README.md`](../experiments/circuit_tracer/README.md)
+and [`experiments/circuit_tracer/summary.json`](../experiments/circuit_tracer/summary.json).
 
 ## Reproduce
 

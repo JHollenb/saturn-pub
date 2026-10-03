@@ -1,14 +1,14 @@
 {
-  "schema": "saturn-pub-circuit-tracer-summary-v1",
+  "schema": "saturn-pub-circuit-tracer-summary-v2",
   "model": "google/gemma-2-2b",
   "transcoder_set": "gemma (Gemma Scope per-layer transcoders)",
   "top_k": 20,
   "jobs": {
-    "smoke": "job-d8761ece96f5",
-    "full": "job-2a43a5ecc5a6"
+    "smoke": "job-52f930db443a",
+    "full": "job-9d26c9585494"
   },
-  "elapsed_s_full": 162.5,
-  "phase_a_peak_vram_mb": 8262.5,
+  "elapsed_s_full": 277.3,
+  "phase_a_peak_vram_mb": 8252.1,
   "family_validation": {
     "max_abs_logit_delta": 3.814697265625e-05,
     "greedy_exact": true,
@@ -17,87 +17,275 @@
   },
   "carrier_vs_resid_post_max_abs": {
     "two_hop_dallas": 3.0517578125e-05,
-    "one_hop_france": 0.0001068115234375,
-    "identity_fox": 6.103515625e-05
+    "identity_fox": 6.103515625e-05,
+    "eiffel_paris": 7.62939453125e-05,
+    "opposite_hot": 3.0517578125e-05,
+    "japan_tokyo": 3.0517578125e-05,
+    "jupiter_largest": 4.57763671875e-05
   },
   "decision_rule": {
     "metric": "consumer_logprob_drop",
-    "survives_ge": 0.5,
-    "collapses_le": 0.1,
+    "native_necessary_ge": 0.5,
+    "native_effect_absent_le": 0.1,
     "units": "nats"
   },
+  "graph_vs_native_axis": "agree_small/agree_large vs invert vs mixed, comparing circuit-tracer feature_intervention predicted drop on the replacement model to the native drop on real weights",
+  "group_interventions": "topk_ablate (multiplier 0) and topk_steer_-2x (multiplier -2) over the top-k feature set, paper-style",
   "totals": {
-    "n_edges": 60,
-    "n_surviving": 1,
-    "n_collapsing": 53,
-    "n_inconclusive": 6
+    "n_feature_edges": 120,
+    "n_native_necessary": 0,
+    "n_native_effect_absent": 119,
+    "n_inconclusive": 1,
+    "n_agree_with_graph": 97,
+    "n_invert_vs_graph": 1,
+    "n_mixed_vs_graph": 22
   },
   "prompts": {
     "two_hop_dallas": {
       "prompt": "Fact: the capital of the state containing Dallas is",
       "target_text": " Austin",
-      "clean_top1_text": " Austin",
-      "clean_top1_is_answer": true,
+      "native_top1_text": " Austin",
+      "native_top1_is_target": true,
       "n_feature_edges": 20,
       "n_covered": 20,
-      "n_surviving": 0,
-      "n_collapsing": 20,
-      "n_inconclusive": 0,
-      "surviving_fraction": 0.0,
-      "error_node_influence_share": 0.15762241686072526,
+      "native_necessity": {
+        "necessary": 0,
+        "effect_absent": 20,
+        "inconclusive": 0
+      },
+      "graph_vs_native": {
+        "agree": 10,
+        "invert": 1,
+        "mixed": 9,
+        "n_with_prediction": 20
+      },
+      "error_node_influence_share": 0.1577152465171406,
       "n_error_nodes": 286,
-      "operators": {
-        "carrier+arbitrate": 6,
-        "residual_hook": 14
+      "groups": {
+        "topk_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.1259804368019104,
+          "graph_predicted_delta": 3.370579779148102,
+          "graph_vs_native": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 0.4830891489982605,
+          "graph_predicted_delta": 4.424281179904938,
+          "graph_vs_native": "mixed",
+          "verdict": "inconclusive",
+          "top_token_flip": false
+        }
       },
-      "native_logit_delta_min": -0.015150845050811768,
-      "native_logit_delta_max": 0.08193069696426392,
-      "bundle_sha256": "5caeda659a4b8ecbccd7b99088431769f3deb7c0ef938b4721b537762daf8391",
-      "fingerprint": "0b8300a09803621f7610e984891de489c77b8ebbf06c401b154aeab4e4a86bbe"
-    },
-    "one_hop_france": {
-      "prompt": "The capital of France is",
-      "target_text": " Paris",
-      "clean_top1_text": " a",
-      "clean_top1_is_answer": false,
-      "n_feature_edges": 20,
-      "n_covered": 20,
-      "n_surviving": 1,
-      "n_collapsing": 13,
-      "n_inconclusive": 6,
-      "surviving_fraction": 0.05,
-      "error_node_influence_share": 0.12757491647864536,
-      "n_error_nodes": 156,
-      "operators": {
-        "carrier+arbitrate": 6,
-        "residual_hook": 14
-      },
-      "native_logit_delta_min": -0.5007715225219727,
-      "native_logit_delta_max": 0.6160902976989746,
-      "bundle_sha256": "2f10e743d8ee11ffc5705e300525ec9c5e215ac56b7ac861aa3b6e60a65428a7",
-      "fingerprint": "758d63e0529bf32b47dab9918c64beb1297005419562c6104d3308481e29bad7"
+      "bundle_sha256": "389fa710f6116696bf1ef997b482aebba838f013ca55b74735a07c382a731c70",
+      "fingerprint": "65402e667dc4affa432a8ad05961cabadba54d7500c8b14b8c6058acdecc9f75"
     },
     "identity_fox": {
       "prompt": "A photorealistic fox sitting in a forest. The animal in this picture is a",
       "target_text": " fox",
-      "clean_top1_text": " fox",
-      "clean_top1_is_answer": true,
+      "native_top1_text": " fox",
+      "native_top1_is_target": true,
       "n_feature_edges": 20,
       "n_covered": 20,
-      "n_surviving": 0,
-      "n_collapsing": 20,
-      "n_inconclusive": 0,
-      "surviving_fraction": 0.0,
-      "error_node_influence_share": 0.17523206314946402,
-      "n_error_nodes": 442,
-      "operators": {
-        "carrier+arbitrate": 6,
-        "residual_hook": 14
+      "native_necessity": {
+        "necessary": 0,
+        "effect_absent": 20,
+        "inconclusive": 0
       },
-      "native_logit_delta_min": -0.058216094970703125,
-      "native_logit_delta_max": 0.021636962890625,
-      "bundle_sha256": "3bfe2f4c574d56eb631908bac28fcaebdf631a7758283b9db6bb1ee1fd692c86",
-      "fingerprint": "a0801265dff140e0d4761d757af74143158b6ffbe33f67222ad8f84ebf018868"
+      "graph_vs_native": {
+        "agree": 18,
+        "invert": 0,
+        "mixed": 2,
+        "n_with_prediction": 20
+      },
+      "error_node_influence_share": 0.1752867621866351,
+      "n_error_nodes": 442,
+      "groups": {
+        "topk_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.038527846336364746,
+          "graph_predicted_delta": 0.080253005027771,
+          "graph_vs_native": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.1099247932434082,
+          "graph_predicted_delta": 0.006820321083068848,
+          "graph_vs_native": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      },
+      "bundle_sha256": "eced69ad01a9eee2ef7f0cc214cb4f6c55133a553ac1e5b2a4039d04445c5fad",
+      "fingerprint": "b399a5bfd79a4667fd9ef83584ba83805fe0fdcb09a9f6d4ed0cb2f9b588a1a5"
+    },
+    "eiffel_paris": {
+      "prompt": "The Eiffel Tower is located in the city of",
+      "target_text": " Paris",
+      "native_top1_text": " Paris",
+      "native_top1_is_target": true,
+      "n_feature_edges": 20,
+      "n_covered": 20,
+      "native_necessity": {
+        "necessary": 0,
+        "effect_absent": 20,
+        "inconclusive": 0
+      },
+      "graph_vs_native": {
+        "agree": 20,
+        "invert": 0,
+        "mixed": 0,
+        "n_with_prediction": 20
+      },
+      "error_node_influence_share": 0.16697875241925772,
+      "n_error_nodes": 260,
+      "groups": {
+        "topk_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.000830039381980896,
+          "graph_predicted_delta": 0.0797484926879406,
+          "graph_vs_native": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 2.3156404495239258e-05,
+          "graph_predicted_delta": 0.12935474142432213,
+          "graph_vs_native": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      },
+      "bundle_sha256": "1cc06f9cb1681b93ae6c17f94fbd7d28180df6613aff6759cc761f95e62a31ec",
+      "fingerprint": "4de1b901af48cede2dc968519ce1dcda6df91603027894801e30c88b8b50d27f"
+    },
+    "opposite_hot": {
+      "prompt": "The opposite of hot is",
+      "target_text": " cold",
+      "native_top1_text": " cold",
+      "native_top1_is_target": true,
+      "n_feature_edges": 20,
+      "n_covered": 20,
+      "native_necessity": {
+        "necessary": 0,
+        "effect_absent": 19,
+        "inconclusive": 1
+      },
+      "graph_vs_native": {
+        "agree": 17,
+        "invert": 0,
+        "mixed": 3,
+        "n_with_prediction": 20
+      },
+      "error_node_influence_share": 0.11398362089222576,
+      "n_error_nodes": 156,
+      "groups": {
+        "topk_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.11381062865257263,
+          "graph_predicted_delta": 0.19572359323501587,
+          "graph_vs_native": "mixed",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 6.110964894294739,
+          "graph_predicted_delta": 4.644037365913391,
+          "graph_vs_native": "agree_large",
+          "verdict": "native_necessary",
+          "top_token_flip": true
+        }
+      },
+      "bundle_sha256": "80257ec62796c0eeb473807eec98a7b96b84cd3018e1195f374ec0d5bb3e3d48",
+      "fingerprint": "2474213acb38291a17bc20ea0fccde26ecb6597f9ad05e38b08d24e25faa6639"
+    },
+    "japan_tokyo": {
+      "prompt": "The capital of Japan is the city of",
+      "target_text": " Tokyo",
+      "native_top1_text": " Tokyo",
+      "native_top1_is_target": true,
+      "n_feature_edges": 20,
+      "n_covered": 20,
+      "native_necessity": {
+        "necessary": 0,
+        "effect_absent": 20,
+        "inconclusive": 0
+      },
+      "graph_vs_native": {
+        "agree": 20,
+        "invert": 0,
+        "mixed": 0,
+        "n_with_prediction": 20
+      },
+      "error_node_influence_share": 0.12338270876238142,
+      "n_error_nodes": 234,
+      "groups": {
+        "topk_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": 0.015588551759719849,
+          "graph_predicted_delta": 0.06257911026477814,
+          "graph_vs_native": "agree_small",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": 7.146745055913925,
+          "graph_predicted_delta": 2.4562744349241257,
+          "graph_vs_native": "agree_large",
+          "verdict": "native_necessary",
+          "top_token_flip": true
+        }
+      },
+      "bundle_sha256": "5d3e05037a5c72a1178de6dea683643bdadec16e26a20b0860aee9f7dc7454c9",
+      "fingerprint": "a2c91c90f173b3a300064c959be14f36feb1c4ac6cb55a165fa803583d4e586d"
+    },
+    "jupiter_largest": {
+      "prompt": "The largest planet in the solar system is",
+      "target_text": " Jupiter",
+      "native_top1_text": " Jupiter",
+      "native_top1_is_target": true,
+      "n_feature_edges": 20,
+      "n_covered": 20,
+      "native_necessity": {
+        "necessary": 0,
+        "effect_absent": 20,
+        "inconclusive": 0
+      },
+      "graph_vs_native": {
+        "agree": 12,
+        "invert": 0,
+        "mixed": 8,
+        "n_with_prediction": 20
+      },
+      "error_node_influence_share": 0.14413701217155428,
+      "n_error_nodes": 234,
+      "groups": {
+        "topk_ablate": {
+          "multiplier": 0.0,
+          "native_logit_delta": -0.07695460319519043,
+          "graph_predicted_delta": 0.6581457853317261,
+          "graph_vs_native": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        },
+        "topk_steer_-2x": {
+          "multiplier": -2.0,
+          "native_logit_delta": -0.2160799503326416,
+          "graph_predicted_delta": 0.8305283784866333,
+          "graph_vs_native": "invert",
+          "verdict": "native_effect_absent",
+          "top_token_flip": false
+        }
+      },
+      "bundle_sha256": "9cf07e8a20899aa5038b0728bc86657d6d0f45ac413c0468b7d4de516f2a8cdc",
+      "fingerprint": "c9c9ee203c3115bbdd036bba69321f48e9f4ecab966fc806ca597cc426ce9f02"
     }
   },
   "environment": {
