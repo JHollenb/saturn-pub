@@ -8,6 +8,7 @@ Generated states and results belong in `outputs/`, which is ignored by Git.
 |---|---|---|
 | [FLUX.2 writer](flux2_writer/README.md) | Capture paired states, fit a writer, evaluate futures, restore, replay | Native rendered RGB |
 | [AR family validation](family_validation/README.md) | Step each decoder family and Mamba-1 on real checkpoints; greedy decode and fresh-process replay vs native | Native logits and 16-token greedy decode |
+| [LM block residency](lm_block_residency/README.md) | Step a decoder LM with frozen weights streamed one block at a time; streamed==resident bitwise where it fits, else vs an accelerate CPU-offload reference; fresh-process replay | Native 16-token greedy decode and final logits |
 | [Diffusion family validation](diffusion_family_validation/README.md) | Step FLUX.2 Klein-4B/9B and FLUX.1-schnell resident or block-streamed; replay a mid-trajectory cut in a fresh process | Native diffusers per-step latents and VAE decode |
 | [Debugging repair](debugging_repair/README.md) | Follow a deletion, native repair, repair suppression, and collateral; replay suffixes in fresh processes | Supplied neural circuit's threshold consumer |
 
