@@ -255,6 +255,59 @@ def test_refuses_gemma_attention_bias():
         DecoderAdapter(model)
 
 
+# --- Gemma-2 specifics: soft-capped logits + alternating local/global attention -----------
+
+
+def test_gemma2_stepped_matches_native_tightly_and_softcap_is_load_bearing():
+    """The final-logit soft-cap is applied at readout; without it the stepped logits diverge.
+
+    The parametrized parity test already compares stepped vs native under the loose family
+    envelope; this check is tight (the soft-cap moves the tiny-fixture logits by ~2e-3, far
+    above the fp32 round-off floor) so a missing soft-cap would fail here even though it might
+    pass the loose comparison.
+    """
+    adapter = DecoderAdapter.tiny("gemma2")
+    assert adapter.final_logit_softcapping == 2.0
+    session = adapter.session(PROMPT)
+    session.continue_(adapter.layers + 2)
+    native = adapter.native_logits(PROMPT)
+    # soft-capped readout matches the native full forward to the fp32 round-off floor
+    torch.testing.assert_close(session.read("logits"), native, rtol=0, atol=1e-5)
+    # the raw lm_head output (no soft-cap) differs from native well above that floor
+    hidden_session = adapter.session(PROMPT)
+    hidden_session.continue_(adapter.layers + 1)
+    hidden = hidden_session.read("hidden")
+    with torch.inference_mode():
+        raw = adapter.model.lm_head(adapter.backbone.norm(hidden))[:, -1]
+    assert float((raw - native).abs().max()) > 1e-4
+
+
+def test_gemma2_alternates_local_and_global_attention():
+    adapter = DecoderAdapter.tiny("gemma2")
+    windows = [getattr(layer.self_attn, "sliding_window", None) for layer in adapter._layer_modules]
+    # even layers are sliding (local), odd layers are full (global)
+    assert windows[0] == adapter.sliding_window and windows[1] is None
+    assert adapter.execution["attention_schedule"] == "alternating-local-global-sliding-window"
+
+
+def test_refuses_gemma2_wrong_activation():
+    model = _model("gemma2", hidden_activation="gelu", hidden_act="gelu")
+    with pytest.raises(ValueError, match="gelu_pytorch_tanh|GeGLU"):
+        DecoderAdapter(model)
+
+
+def test_refuses_gemma2_attention_bias():
+    model = _model("gemma2", attention_bias=True)
+    with pytest.raises(ValueError, match="biasless"):
+        DecoderAdapter(model)
+
+
+def test_refuses_gemma2_context_beyond_sliding_window():
+    adapter = DecoderAdapter.tiny("gemma2")  # tiny sliding_window = 16
+    with pytest.raises(ValueError, match="sliding-window"):
+        adapter.session(list(range(20)))
+
+
 def test_refuses_mixtral_invalid_topk():
     model = _model("mixtral", num_experts_per_tok=4, num_local_experts=4)
     with pytest.raises(ValueError, match="top-k"):

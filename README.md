@@ -77,6 +77,7 @@ mid-layer cut exactly in a fresh interpreter. Full numbers are in
 | mistral | Decoder | tiny fixture only | tiny-fixture parity | only Mistral-7B cached (exceeds the 4080 VRAM guardrail); accepted only while context <= `sliding_window` |
 | mixtral | Decoder | tiny fixture only | bounded MoE parity | no cached checkpoint available |
 | gemma (Gemma-1) | Decoder | tiny fixture only | tiny-fixture parity | no cached checkpoint available |
+| gemma2 (Gemma-2) | Decoder | gemma-2-2b — `job-9d26c9585494` (3.8e-5) | 16/16 greedy exact, replay exact | soft-capped attention/logits; alternating local/global sliding-window (context ≤ `sliding_window`); GeGLU; pre+post norms; tied, scaled embeddings |
 
 Real-weight runs used cached checkpoints on an RTX 4080 (16 GB) host via one batched job plus a
 supplementary pythia job; gpt2 was measured on macOS arm64 CPU because it was not cached on that host.
@@ -207,6 +208,7 @@ It loads pinned Hugging Face checkpoints or your local cache. The
 | FLUX.2 Klein and FLUX.1 adapters | Step native joint/single blocks resident or block-streamed, write text/image carriers, replay saved suffixes |
 | Model loader | `adapters.load()` dispatches decoder, Mamba-1, and Qwen checkpoints by `model_type`; `residency="streamed"` steps a model larger than the device one native block at a time |
 | SAELens / TransformerLens interop | Find a feature with their hooks, intervene on Saturn's aligned carrier, replay the receipt |
+| circuit-tracer interop (`saturn_pub.interop.circuit_tracer`) | Take an attribution graph, re-run each feature edge (and whole-group ablate / −2× steer) as a native intervention on the real weights at the transcoder's write carrier, label native-necessity and compare it to circuit-tracer's own predicted drop (agree / invert) under a frozen rule, report error nodes as uncovered, seal an offline-re-derivable verdict table |
 | Investigation | Same-parent causal panels with per-arm evidence and errors |
 | Instrument Trial (`saturn_pub.trial`) | Arbitrate a standard-instrument reading (patching/probe/cosine/SAE) against native continuation into an agree/invert/inconclusive row with a frozen decision rule; offline `verify_bundle` re-derives the six case verdicts from a hash-pinned bundle |
 | Induction certificate (`saturn_pub.certificate`) | Freeze a candidate direct-source attention circuit, control arms, held-out panels and thresholds in advance; supply measured outcomes and get a signed (content-hashed) certificate or a named failing gate. Stdlib-only gate; a torch measurement helper runs the relational-induction causal battery on a native decoder adapter; registers as an evidence claim |
@@ -234,6 +236,7 @@ Start with [when and how to use each capability](docs/usage.md), then choose a
 - [Reversible training](docs/training.md)
 - [Write an adapter](docs/adapters.md)
 - [SAELens and TransformerLens interop](docs/interop.md)
+- [circuit-tracer: arbitrate attribution-graph edges against the native consumer](docs/circuit-tracer.md)
 - [FLUX diffusion families and block-streamed residency](docs/diffusion-families.md)
 - [Pretrained model recipes](docs/pretrained.md)
 - [Build a writer, debug its futures, and replay](docs/writer-demo.md)

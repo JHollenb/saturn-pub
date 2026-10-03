@@ -17,7 +17,7 @@ import os
 from typing import Any
 
 _DECODER_FAMILIES = frozenset(
-    {"gpt2", "gpt_neox", "phi", "llama", "mistral", "mixtral", "gemma", "qwen2", "qwen3"}
+    {"gpt2", "gpt_neox", "phi", "llama", "mistral", "mixtral", "gemma", "gemma2", "qwen2", "qwen3"}
 )
 _MAMBA_FAMILIES = frozenset({"mamba"})
 _PEEK_KEYS = (

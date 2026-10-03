@@ -184,6 +184,32 @@ def _validate_gemma(config: Any) -> None:
         raise ValueError("registered Gemma-1 MLP is biasless")
 
 
+def _validate_gemma2(config: Any) -> None:
+    """Gemma-2: GeGLU, soft-capped attention/logits, alternating local/global attention.
+
+    Both logit-softcaps and the sliding window are read from the config and honored by the
+    adapter (final-logit softcap applied at readout, attention softcap inside the native
+    eager layer). Sliding-window attention alternates with full attention layer by layer;
+    the adapter reproduces it exactly while the context stays within one window (full causal
+    and windowed causal coincide there) and refuses a context longer than one window.
+    """
+    _reject_common(config)
+    _reject_scaled_rope(config)
+    act = getattr(config, "hidden_activation", None) or config.hidden_act
+    if act != "gelu_pytorch_tanh":
+        raise ValueError("registered Gemma-2 semantics require gelu_pytorch_tanh (GeGLU)")
+    if getattr(config, "attention_bias", False):
+        raise ValueError("registered Gemma-2 attention is biasless")
+    if getattr(config, "mlp_bias", False):
+        raise ValueError("registered Gemma-2 MLP is biasless")
+    if not getattr(config, "sliding_window", None):
+        raise ValueError(
+            "registered Gemma-2 requires a sliding_window (alternating local/global attention)"
+        )
+    if getattr(config, "query_pre_attn_scalar", None) is None:
+        raise ValueError("registered Gemma-2 requires query_pre_attn_scalar attention scaling")
+
+
 def _validate_qwen2(config: Any) -> None:
     _reject_common(config)
     _reject_scaled_rope(config)
@@ -217,6 +243,8 @@ class _FamilySpec:
 
 def _import_families() -> dict[str, _FamilySpec]:
     from transformers import (
+        Gemma2Config,
+        Gemma2ForCausalLM,
         GemmaConfig,
         GemmaForCausalLM,
         GPT2Config,
@@ -364,6 +392,29 @@ def _import_families() -> dict[str, _FamilySpec]:
             ),
         ),
         _FamilySpec(
+            "gemma2",
+            Gemma2ForCausalLM,
+            Gemma2Config,
+            "model",
+            "layers",
+            "embed_tokens",
+            "norm",
+            "rotary",
+            "past_key_values",
+            _validate_gemma2,
+            tiny_config=dict(
+                **common,
+                num_key_value_heads=2,
+                head_dim=8,
+                hidden_act="gelu_pytorch_tanh",
+                hidden_activation="gelu_pytorch_tanh",
+                sliding_window=16,
+                query_pre_attn_scalar=8,
+                attn_logit_softcapping=4.0,
+                final_logit_softcapping=2.0,
+            ),
+        ),
+        _FamilySpec(
             "qwen2",
             Qwen2ForCausalLM,
             Qwen2Config,
@@ -411,6 +462,7 @@ SUPPORTED_FAMILIES = (
     "mistral",
     "mixtral",
     "gemma",
+    "gemma2",
     "qwen2",
     "qwen3",
 )
@@ -468,8 +520,28 @@ class DecoderAdapter(Adapter):
         self.num_kv_heads = getattr(config, "num_key_value_heads", None) or self.num_heads
         self.head_dim = getattr(config, "head_dim", None) or self.hidden_size // self.num_heads
         self.sliding_window = (
-            getattr(config, "sliding_window", None) if spec.model_type == "mistral" else None
+            getattr(config, "sliding_window", None)
+            if spec.model_type in {"mistral", "gemma2"}
+            else None
         )
+        # Gemma-2 soft-caps the final logits inside the CausalLM (not the lm_head); reproduce it
+        # at readout so the stepped logits match a native full forward. Attention-logit softcap
+        # and query_pre_attn_scalar scaling live inside the native eager layer, unchanged.
+        self.final_logit_softcapping = (
+            getattr(config, "final_logit_softcapping", None)
+            if spec.model_type == "gemma2"
+            else None
+        )
+        # Gemma scales token embeddings by sqrt(hidden_size). transformers>=5 folds that scale
+        # into a scaled-embedding module (``embed_scale``); older transformers apply it in
+        # ``Model.forward`` with a plain ``nn.Embedding``. Detect which, and apply the scale in
+        # ``_embed`` only when the embedding module does not already carry it, so the adapter
+        # reproduces the native forward on either transformers version.
+        self._embed_scale: float | None = None
+        if spec.model_type in {"gemma", "gemma2"}:
+            embed_module = getattr(self.backbone, spec.embed)
+            if getattr(embed_module, "embed_scale", None) is None:
+                self._embed_scale = float(config.hidden_size) ** 0.5
         self.rotary = getattr(self.backbone, "rotary_emb", None)
         if spec.position == "rotary" and self.rotary is None:
             raise ValueError(f"{spec.model_type} backbone is missing rotary_emb")
@@ -513,10 +585,27 @@ class DecoderAdapter(Adapter):
         # adds a field, so existing resident receipts stay byte-identical.
         if self._residency.mode == "streamed":
             self.execution["residency"] = self._residency.to_dict()
+        if spec.model_type == "gemma2":
+            self.execution["logit_softcap"] = {
+                "final": self.final_logit_softcapping,
+                "attention": getattr(config, "attn_logit_softcapping", None),
+            }
+            self.execution["attention_schedule"] = "alternating-local-global-sliding-window"
+            self.execution["sliding_window"] = self.sliding_window
 
     def _model_program(self) -> str:
         embed = "embed+abs_pos" if self.spec.position == "absolute" else "embed"
-        return f"{embed}->decoder_layer[*]->final_norm->lm_head->greedy_argmax->token_commit"
+        readout = "lm_head"
+        if self.spec.model_type == "gemma2" and self.final_logit_softcapping is not None:
+            readout = "lm_head->logit_softcap"
+        return f"{embed}->decoder_layer[*]->final_norm->{readout}->greedy_argmax->token_commit"
+
+    def _apply_logit_softcap(self, logits: torch.Tensor) -> torch.Tensor:
+        """Gemma-2 final-logit soft-cap, applied after ``lm_head`` to match native logits."""
+        cap = self.final_logit_softcapping
+        if cap is None:
+            return logits
+        return torch.tanh(logits / cap) * cap
 
     @classmethod
     def tiny(
@@ -634,6 +723,8 @@ class DecoderAdapter(Adapter):
         run = self._residency.run
         embed_module = getattr(self.backbone, self.spec.embed)
         hidden = run(embed_module, tokens[:, -1:])
+        if self._embed_scale is not None:
+            hidden = hidden * torch.tensor(self._embed_scale, dtype=hidden.dtype)
         if self.spec.position == "absolute":
             position = tokens.shape[1] - 1
             positions = torch.tensor([[position]], device=self.device)
@@ -678,6 +769,8 @@ class DecoderAdapter(Adapter):
         run = self._residency.run
         length = tokens.shape[1]
         hidden = run(getattr(self.backbone, self.spec.embed), tokens)
+        if self._embed_scale is not None:
+            hidden = hidden * torch.tensor(self._embed_scale, dtype=hidden.dtype)
         position_ids = torch.arange(length, device=self.device).unsqueeze(0)
         if self.spec.position == "absolute":
             hidden = hidden + run(getattr(self.backbone, self.spec.abs_pos), position_ids)
@@ -1028,7 +1121,9 @@ class DecoderAdapter(Adapter):
             )
             out["phase"] = "readout"
         elif self.granularity == "operation" and out["phase"] == "readout":
-            out["logits"] = self._residency.run(self.model.lm_head, hidden)[:, -1]
+            out["logits"] = self._apply_logit_softcap(
+                self._residency.run(self.model.lm_head, hidden)[:, -1]
+            )
             out["phase"] = "sample"
         elif self.granularity == "operation" and out["phase"] == "sample":
             out["sampled_token"] = out["logits"].argmax(-1, keepdim=True)
@@ -1042,7 +1137,9 @@ class DecoderAdapter(Adapter):
         else:
             final_norm = getattr(self.backbone, self.spec.final_norm)
             run = self._residency.run
-            logits = run(self.model.lm_head, run(final_norm, hidden))[:, -1]
+            logits = self._apply_logit_softcap(
+                run(self.model.lm_head, run(final_norm, hidden))[:, -1]
+            )
             out["logits"] = logits
             out["tokens"] = torch.cat((tokens, logits.argmax(-1, keepdim=True)), dim=-1)
             out["hidden"] = None
@@ -1070,7 +1167,7 @@ class DecoderAdapter(Adapter):
             hidden, _ = self._streamed_backbone(sequence)
             final_norm = getattr(self.backbone, self.spec.final_norm)
             run = self._residency.run
-            return run(self.model.lm_head, run(final_norm, hidden))[:, -1]
+            return self._apply_logit_softcap(run(self.model.lm_head, run(final_norm, hidden))[:, -1])
         return self.model(sequence).logits[:, -1]
 
 

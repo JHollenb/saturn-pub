@@ -238,6 +238,36 @@ _VERDICTS = frozenset({"agree", "invert", "inconclusive"})
 Driver = Callable[[Session], None]
 
 
+def grade(reading: "Reading", rule: "DecisionRule", effect: float) -> tuple[str, str, str]:
+    """Grade a reading against a consumer effect under a frozen rule, controls aside.
+
+    Returns ``(verdict, classification, reason)``. This is exactly the decision the arbiter
+    applies once its controls pass, factored out so an external operator -- for example the
+    circuit-tracer native edge test, which measures the consumer effect with a forward hook
+    rather than a forked :class:`Session` -- can reach the same verdict under the identical
+    frozen rule. ``classification`` is the rule's ``present``/``absent``/``ambiguous`` class.
+    """
+    classification = rule.classify(effect)
+    if reading.declined:
+        return "inconclusive", classification, "the instrument declined the verdict-grade question"
+    if classification == "ambiguous":
+        return (
+            "inconclusive",
+            classification,
+            "the consumer effect fell in the rule's ambiguity band",
+        )
+    present = classification == "present"
+    if present == reading.asserts_effect:
+        return "agree", classification, "the native consumer agrees with the instrument reading"
+    reason = (
+        "the native consumer shows the carrier is load-bearing where the "
+        "instrument read no effect"
+        if present
+        else "the native consumer shows no effect where the instrument read one"
+    )
+    return "invert", classification, reason
+
+
 @dataclass(frozen=True)
 class Reading:
     """A verdict-grade reading a standard instrument declared before arbitration.
@@ -556,25 +586,8 @@ def arbitrate(
     if not controls_ok:
         verdict = "inconclusive"
         classification = "controls-failed"
-    elif reading.declined:
-        verdict = "inconclusive"
-        reason = "the instrument declined the verdict-grade question"
-    elif classification == "ambiguous":
-        verdict = "inconclusive"
-        reason = "the consumer effect fell in the rule's ambiguity band"
     else:
-        present = classification == "present"
-        if present == reading.asserts_effect:
-            verdict = "agree"
-            reason = "the native consumer agrees with the instrument reading"
-        else:
-            verdict = "invert"
-            reason = (
-                "the native consumer shows the carrier is load-bearing where the "
-                "instrument read no effect"
-                if present
-                else "the native consumer shows no effect where the instrument read one"
-            )
+        verdict, classification, reason = grade(reading, rule, consumer_effect)
 
     receipt = Receipt.make(
         operation="trial.arbitrate",
@@ -725,6 +738,7 @@ __all__ = [
     "TrialRow",
     "Trap",
     "arbitrate",
+    "grade",
     "verify_bundle",
     "traps",
     "TRAPS",
