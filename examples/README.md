@@ -13,6 +13,7 @@ Run scripts from the checkout root. Results go to ignored `outputs/` directories
 | `explore_debugger.py` | Audit numerical versus token effects in tiny Qwen, edit timing in DDIM, repeated repair windows, and durable KV-history continuation | `ar,diffusion` |
 | `diffusion_debug.py` | Compare branched DDIM latents | `diffusion` |
 | `causal_panel.py` | Run a dose/control grid and compile one measured arm | `ar` |
+| `induction_certificate.py` | Freeze a circuit policy + sealed panels, run the relational-induction causal battery on a tiny decoder, and read the signed gate verdict (random weights -> honest FAIL) | `ar` |
 | `measured_program.py` | Replay an exact measured program and see unsupported-use refusal | `ar` |
 | `dependency_reuse.py` | Inspect which declared cells are reused/recomputed | `ar` |
 | `interop_saelens.py` | Find an SAE feature with TransformerLens/SAELens, ablate it on Saturn's aligned carrier, and replay the receipt | `interop` |
