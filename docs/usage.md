@@ -30,6 +30,7 @@ are not automatically enabled in every Session.
 | Rewind a parameter-free structural future | TrainingStateBoundary with `optimizer=None` | Graph/rules/memory/cursor plus empty-model RNG/mode closure | `python examples/structural_rewind.py` |
 | Build and debug a pretrained writer end to end | FLUX.2 writer experiment | Three-stage construction, native feedback, rollback, fresh-process replay verification | `python experiments/flux2_writer/run.py` |
 | Integrate another numerical program | Implement Adapter | Session lifecycle once the adapter declares/validates its state | `python examples/custom_adapter.py`, [adapter guide](adapters.md) |
+| Audit the record after a run | Evidence plane (`saturn-pub evidence`) | Hash-chained probe/claim ledgers, drift-aware verification, SQLite cross-reference index — stdlib only, no torch | `python examples/evidence_bisect.py`, [evidence guide](evidence.md) |
 
 ## Retention, durability, and rewind
 
@@ -182,6 +183,31 @@ and exact rejection rollback. Promotion selects the next reversible branch; a re
 branch's scores remain research evidence. Receipts do not automatically retain rejected
 parameter tensors. External files/API effects and unregistered state are outside rollback.
 See [training closure and feedback boundaries](training.md).
+
+## Audit the record: the evidence plane
+
+`saturn_pub.evidence` is a stdlib-only subpackage (no torch, no imports from the
+rest of the toolkit) that treats the experimental record as a queryable,
+self-auditing object. It reaches a live run only through caller callbacks, so the
+same four verbs serve token cuts, layer cuts, denoising steps, and training
+intervals. Use `bisect` to search backward to the first cut where two retained
+branches diverge (probed in logarithmic replays, with probes-used reported
+against a linear scan); `claims` to hash-chain a claim to the evidence receipts
+it rests on and auto-stale it when those bytes drift; `xref` to index every
+address receipts cite into SQLite; and `cite` to bind model and input to an
+address at write time. All four share one canonical-JSON + sha256 custody idiom
+with tamper-evident re-verification, and `verify --check` keeps CI from mutating
+the ledger it judges.
+
+```bash
+saturn-pub evidence bisect verify receipt.json
+saturn-pub evidence claims verify --check --registry claims.jsonl
+saturn-pub evidence xref query ar://decode/step/1/site/hidden --db xref.sqlite
+```
+
+The example records a native and a perturbed branch of a tiny offline model,
+bisects to the first divergent cut, registers a claim citing the receipt, and
+verifies it. See [the evidence plane](evidence.md).
 
 ## Installation and runners
 

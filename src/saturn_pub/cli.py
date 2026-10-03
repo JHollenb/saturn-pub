@@ -337,7 +337,15 @@ def main(argv: list[str] | None = None) -> int:
     inspect = sub.add_parser("inspect", help="verify a saved metadata descriptor without torch")
     inspect.add_argument("directory")
     inspect.add_argument("digest")
+    evidence = sub.add_parser(
+        "evidence", help="offline evidence plane: bisect | claims | xref | cite"
+    )
+    evidence.add_argument("evidence_args", nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
+    if args.command == "evidence":
+        from .evidence.cli import main as evidence_main
+
+        return evidence_main(args.evidence_args)
     if args.command == "inspect":
         print(json.dumps(LocalStore(args.directory).inspect(args.digest), indent=2))
         return 0
