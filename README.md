@@ -48,6 +48,14 @@ Restore requires the same qualified model identity and numerical contract.
 See [installation](docs/INSTALL.md), [usage and boundaries](docs/USAGE.md) and
 [extraction provenance](PROVENANCE.json).
 
+Try the [experiment walkthroughs](docs/EXPERIMENTS.md) for layer rewind/replay,
+residual preview/abort/commit, sibling memory, circuit measurement and diffusion
+block replay. A tiny CPU demonstration requires no downloaded model or fleet:
+
+```sh
+python -I "$PWD/examples/resident_lab.py" --tiny qwen2 --out ./results/first-lab
+```
+
 ## Compatibility
 
 Legacy schema names, content-addressed identifiers and debugger protocol markers
