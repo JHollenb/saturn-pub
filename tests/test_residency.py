@@ -214,3 +214,35 @@ def test_host_pinning_requires_streamed_cuda():
 def test_adapter_rejects_host_pinning_on_cpu_execution():
     with pytest.raises(ValueError, match="CUDA"):
         DecoderAdapter.tiny("qwen2", residency="streamed", device="cpu", pin_host=True)
+
+
+def test_causal_mask_kwargs_is_transformers_version_robust():
+    """The streamed backbone builds create_causal_mask kwargs that work on either transformers
+    major: 5.x takes ``inputs_embeds`` and no ``cache_position``; 4.x takes ``input_embeds`` plus
+    a required ``cache_position``. The real-weight Gemma-2 run surfaced the 4.x breakage (the
+    local suite runs on 5.x), so this pins the version branch offline."""
+    from saturn_pub.adapters.decoder import _causal_mask_kwargs
+
+    def tf5(config, inputs_embeds, attention_mask, past_key_values, position_ids=None):
+        return "tf5"
+
+    def tf4(
+        config, input_embeds, attention_mask, cache_position, past_key_values, position_ids=None
+    ):
+        return "tf4"
+
+    sentinel = object()
+    k5 = _causal_mask_kwargs(
+        tf5, config="c", hidden=sentinel, cache="kv", position_ids="p", cache_position="cp"
+    )
+    assert "inputs_embeds" in k5 and k5["inputs_embeds"] is sentinel
+    assert "cache_position" not in k5 and "input_embeds" not in k5
+    assert tf5(**k5) == "tf5"  # no unexpected-keyword TypeError
+
+    k4 = _causal_mask_kwargs(
+        tf4, config="c", hidden=sentinel, cache="kv", position_ids="p", cache_position="cp"
+    )
+    assert "input_embeds" in k4 and k4["input_embeds"] is sentinel
+    assert "inputs_embeds" not in k4
+    assert k4["cache_position"] == "cp"
+    assert tf4(**k4) == "tf4"  # the 4.x breakage the real-weight run hit

@@ -81,6 +81,40 @@ def _partial_rotary_factor(config: Any) -> float | None:
     return None if factor is None else float(factor)
 
 
+def _causal_mask_kwargs(
+    create_fn: Callable[..., Any],
+    *,
+    config: Any,
+    hidden: Any,
+    cache: Any,
+    position_ids: Any,
+    cache_position: Any,
+) -> dict[str, Any]:
+    """Version-robust keyword set for ``transformers`` ``create_causal_mask``.
+
+    The streamed backbone (unlike the resident path) builds the eager attention mask itself,
+    and ``create_causal_mask``'s signature differs across transformers majors:
+
+    * transformers 5.x: ``(config, inputs_embeds, attention_mask, past_key_values, position_ids)``
+    * transformers 4.x: ``(config, input_embeds, attention_mask, cache_position, past_key_values,
+      position_ids)`` -- the embeds keyword loses its ``s`` and ``cache_position`` is required.
+
+    Inspecting the live signature keeps the streamed path bitwise-correct on either major (the
+    resident path is unaffected -- it never calls ``create_causal_mask``).
+    """
+    params = inspect.signature(create_fn).parameters
+    kwargs: dict[str, Any] = {
+        "config": config,
+        "attention_mask": None,
+        "past_key_values": cache,
+        "position_ids": position_ids,
+    }
+    kwargs["inputs_embeds" if "inputs_embeds" in params else "input_embeds"] = hidden
+    if "cache_position" in params:
+        kwargs["cache_position"] = cache_position
+    return kwargs
+
+
 # --- per-family config validators (ported semantic rules from the private registry) ----
 
 
@@ -775,12 +809,16 @@ class DecoderAdapter(Adapter):
         if self.spec.position == "absolute":
             hidden = hidden + run(getattr(self.backbone, self.spec.abs_pos), position_ids)
         cache = DynamicCache(config=self.model.config)
+        cache_position = torch.arange(length, device=self.device)
         mask = create_causal_mask(
-            config=self.model.config,
-            inputs_embeds=hidden,
-            attention_mask=None,
-            past_key_values=cache,
-            position_ids=position_ids,
+            **_causal_mask_kwargs(
+                create_causal_mask,
+                config=self.model.config,
+                hidden=hidden,
+                cache=cache,
+                position_ids=position_ids,
+                cache_position=cache_position,
+            )
         )
         kwargs: dict[str, Any] = {
             self.spec.cache_kwarg: cache,

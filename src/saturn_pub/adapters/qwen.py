@@ -14,6 +14,7 @@ from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest, TransitionSpe
 from ..core import Adapter, Session
 from ..values import clone, digest, identity
 from ._residency import BlockResidency
+from .decoder import _causal_mask_kwargs
 
 
 def _stable_configuration(value: Any, *, key: str = "") -> Any:
@@ -232,12 +233,16 @@ class QwenAdapter(Adapter):
         hidden = run(self.model.model.embed_tokens, tokens)
         position_ids = torch.arange(length, device=self.device).unsqueeze(0)
         cache = DynamicCache(config=self.model.config)
+        cache_position = torch.arange(length, device=self.device)
         mask = create_causal_mask(
-            config=self.model.config,
-            inputs_embeds=hidden,
-            attention_mask=None,
-            past_key_values=cache,
-            position_ids=position_ids,
+            **_causal_mask_kwargs(
+                create_causal_mask,
+                config=self.model.config,
+                hidden=hidden,
+                cache=cache,
+                position_ids=position_ids,
+                cache_position=cache_position,
+            )
         )
         position_embeddings = run(self.model.model.rotary_emb, hidden, position_ids)
         for layer in self.model.model.layers:
