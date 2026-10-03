@@ -216,6 +216,7 @@ It loads pinned Hugging Face checkpoints or your local cache. The
 | TrainingTransaction | Inspect candidate updates; promote or restore the registered closure |
 | Experimental memory | Immutable shared Qwen ancestry, private tails, modular phase transport |
 | Evidence plane (`saturn_pub.evidence`) | Stdlib-only, torch-free: first-divergence bisect over a cut lattice, hash-chained claim registry with drift audit, SQLite cross-reference index, and index-ready citations |
+| Metadata-delta route (`saturn_pub.route`) | Payload-free catalog of candidate deltas: select by tag before hydrating any bytes, resolve the chosen delta through a caller-owned content-verified resolver (deduplicated, byte-accounted), then apply, replay vs native, and roll back exactly |
 
 Investigation and Program are small public mechanisms,
 not copies of the entire private research workbench. The native downstream consumer remains
@@ -240,6 +241,7 @@ Start with [when and how to use each capability](docs/usage.md), then choose a
 - [Induction certificate: preregister, measure, and sign a bounded circuit claim](docs/certificate.md)
 - [Capabilities and numerical contracts](docs/capabilities.md)
 - [The evidence plane: bisect, claims, xref, cite](docs/evidence.md)
+- [The metadata-delta route: select a delta before hydrating, apply, roll back](docs/route.md)
 - [Release validation](docs/validation.md)
 - [Extraction provenance](PROVENANCE.md)
 

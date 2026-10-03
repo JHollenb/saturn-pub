@@ -341,11 +341,19 @@ def main(argv: list[str] | None = None) -> int:
         "evidence", help="offline evidence plane: bisect | claims | xref | cite"
     )
     evidence.add_argument("evidence_args", nargs=argparse.REMAINDER)
+    route = sub.add_parser(
+        "route", help="offline metadata-delta route: validate | select | show"
+    )
+    route.add_argument("route_args", nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
     if args.command == "evidence":
         from .evidence.cli import main as evidence_main
 
         return evidence_main(args.evidence_args)
+    if args.command == "route":
+        from .route import main as route_main
+
+        return route_main(args.route_args)
     if args.command == "inspect":
         print(json.dumps(LocalStore(args.directory).inspect(args.digest), indent=2))
         return 0

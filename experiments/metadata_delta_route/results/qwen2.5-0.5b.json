@@ -1,0 +1,106 @@
+{
+  "adapter": "decoder",
+  "device": "cuda",
+  "dtype": "float32",
+  "execution": {
+    "adapter": "native-decoder-v1",
+    "attention": "eager",
+    "batch": {
+      "padding": false,
+      "size": 1
+    },
+    "device": {
+      "index": 0,
+      "type": "cuda"
+    },
+    "dtype": "torch.float32",
+    "environment_versions": {
+      "python": "3.14.6",
+      "torch": "2.13.0+cu130",
+      "transformers": "5.14.1"
+    },
+    "family": "qwen2",
+    "granularity": "layer",
+    "kernel": {
+      "attention": "transformers-eager",
+      "cache": "DynamicCache"
+    },
+    "model_program": "embed->decoder_layer[*]->final_norm->lm_head->greedy_argmax->token_commit",
+    "numeric_scope": {
+      "autocast": false,
+      "deterministic_algorithms": false,
+      "float32_matmul_precision": "highest",
+      "inference_mode": true,
+      "tensor_layout": "state-slot-bound-stride",
+      "tf32_matmul": false,
+      "torch_num_threads": 4
+    },
+    "parity": "bounded-logits",
+    "position": "rotary",
+    "sampler": "greedy"
+  },
+  "host": "rtx4080-host",
+  "job_id": "job-926bdacce54c",
+  "limitations": [
+    "Exactness is about the mechanics of one program on one device and dtype.",
+    "The measured effect is a carrier change signal, not a semantic label.",
+    "Decoder prompts are fixed token ids, not a tokenized natural-language battery."
+  ],
+  "model_identity": "c5200ab5b5f9c3af390374d36073a8711298ab6f5fc8f6def8f3bc2cf11cc611",
+  "peak_rss_mb": 3556.39453125,
+  "peak_vram_mb": 1896.54931640625,
+  "residency": null,
+  "route": {
+    "address": "hidden",
+    "artifact_ref": {
+      "bytes": 3584,
+      "dtype": "torch.float32",
+      "sha256": "1617458a60e9d3a39bab74cc3bdd27246ec83707d7c70de36772afc9d9e6f06f",
+      "shape": [
+        1,
+        1,
+        896
+      ]
+    },
+    "card_fingerprint": "b1313dfc8528721790b1224d0078098c052f9d1359a11839795f00ea9676755e",
+    "changed_vs_native": true,
+    "dedup_ok": true,
+    "effect_carrier_l2": 12.202929496765137,
+    "raw_payloads_embedded": false,
+    "rollback": {
+      "matches_parent": true,
+      "restored_elements": 31622,
+      "restored_slots": 50,
+      "verified_exact": true
+    },
+    "route_fingerprint": "dfc2174e488d1fc81ee93ec558db4134ee37c55f1b60fea8948cb027f4c2c4b2",
+    "route_receipt": {
+      "cache": {
+        "artifact_cache_hits": 1,
+        "artifact_hydrations": 1,
+        "artifact_requests": 2,
+        "declared_bytes_requested": 7168,
+        "hydrated_bytes": 3584,
+        "metadata_queries": 1,
+        "metadata_rows_returned": 1
+      },
+      "card_count": 1,
+      "declared_total_bytes": 3584,
+      "raw_payloads_embedded": false,
+      "route_fingerprint": "dfc2174e488d1fc81ee93ec558db4134ee37c55f1b60fea8948cb027f4c2c4b2",
+      "schema": "saturn-pub-route-execution-v1",
+      "transport": {
+        "dense_bytes_estimate": 229376,
+        "estimated_reduction": 0.984375,
+        "policy": "metadata_plus_selected_delta",
+        "selected_bytes_estimate": 3584
+      }
+    },
+    "selected": [
+      "decoder-layer:0-hidden"
+    ]
+  },
+  "schema": "saturn-pub-metadata-delta-route-validation-v1",
+  "tiny": false,
+  "wall_s": 13.579
+}

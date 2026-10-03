@@ -12,6 +12,7 @@
 | Block-streamed residency | Frozen host weights, one native block (FLUX transformer block, or decoder/Qwen/Mamba embedding, layer, norm, lm_head) copied to device per step; declared in the execution contract | Streamed output equals resident bitwise on the same device; the key/value (Mamba conv/recurrent) cache stays resident on the device, only frozen weights stream; host weights never move; pinning optional and off by default |
 | Investigation | Same-parent panels, dose grids, custom control arms | Per-arm errors retained; no automatic semantic certificate |
 | Program | Ordered measured pre-continuation Acts, exact parent/context binding | In-process; no learned/general compiler or cross-model portability |
+| Metadata-delta route | Tensor-free catalog of candidate deltas, tag selection before hydration, content-verified deduplicated resolver seam, apply/compare/exact-rollback receipt | Selection and accounting are torch-free; a card binds a builtin add/replace/zero operation and verifies resolved bytes by sha256; effect is a change signal, not a semantic label |
 | Training | Registered PyTorch mutable closure and isolated evaluation | Accepted snapshot in memory; rejected evidence retained |
 | LocalStore | Verified JSON/safetensors execution cuts and immutable receipts | Local filesystem; no object store or remote transaction |
 | DependencyGraph | Declared DAG dirty closure and exact local memoization | Caller owns dependency completeness and implementation versioning |

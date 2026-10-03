@@ -205,3 +205,38 @@ configurations, and the dose response is not monotone (over-ablation returns " L
 With the AR families, interop, and diffusion families merged, the full suite is **165 tests**,
 all passing on macOS arm64, Python 3.12, CPU, with the `ar`, `diffusion`, `train`, `interop`, and
 `dev` extras installed; none are skipped.
+
+## Metadata-delta route extension
+
+The metadata-delta route (`saturn_pub.route`) adds a payload-free catalog of candidate deltas with
+selection before hydration, a content-verified deduplicated resolver seam, and an
+apply/replay-vs-native/exact-rollback receipt. It passes **12 local Python 3.12 tests**: the
+stdlib-only metadata plane (payload-free guards, tensor-like rejection, round-trip fingerprints,
+metadata-only selection equal to a dense scan, tag intersection, tamper detection, transport
+accounting, and the `saturn-pub route` CLI) runs torch-free, and a torch lifecycle suite applies a
+hydrated delta to a held-out decoder and a tiny FLUX block suffix, confirming a measured change and
+a bit-exact rollback. With these, the integrated suite is **357 tests**, one skipped (the
+pre-existing interop case).
+
+Two CUDA leases on an RTX 4080 validated the route on real cached weights. Each saves a measured
+carrier delta from a donor parent, selects it from metadata only (no bytes touched), hydrates it
+twice through a content-verified resolver (sha256 + shape + dtype), applies it to a held-out
+recipient parent, replays against the native continuation, and restores the parent cut.
+
+CUDA job `job-926bdacce54c` ran qwen2 (Qwen2.5-0.5B, fp32) in 13.6 s at 1,897 MB peak VRAM. The
+`hidden` delta (896 floats, 3,584 bytes) selected and hydrated with one resolver call for two
+requests (`artifact_cache_hits` 1, `hydrated_bytes` 3,584 of 7,168 requested), changed the carrier
+from the native continuation (L2 12.20), and rolled back bit-for-bit: `verified_exact` with the
+restored fingerprint equal to the parent across all 31,622 restored tensor elements.
+
+CUDA job `job-465b710d1fcf` ran flux2-klein (FLUX.2 Klein-4B, bfloat16, block-streamed) in 31.8 s at
+11,310 MB peak VRAM. The `text` delta (a 1x512x3072 carrier, 3,145,728 bytes) selected and hydrated
+once for two requests, changed the carrier from the native continuation (L2 2,321.99), and rolled
+back bit-for-bit across all 9,230,345 restored tensor elements. Both runs report
+`estimated_reduction` 0.984 for metadata-plus-selected-delta vs a dense catalog and carry no
+embedded payloads.
+
+These are exactness claims about the mechanics of one program on one device and dtype: a selected,
+content-verified delta applied and rolled back exactly. The measured effect is a carrier change
+signal, not a semantic label, and no cross-family or image-quality claim is made. Decoder prompts
+are fixed token ids, not a tokenized natural-language battery.

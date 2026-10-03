@@ -1,0 +1,116 @@
+{
+  "adapter": "flux2",
+  "device": "cuda",
+  "dtype": "torch.bfloat16",
+  "execution": {
+    "adapter": "native-boundary-v2",
+    "batch": {
+      "guidance": 1.0,
+      "reference_images": false,
+      "size": 1
+    },
+    "decoder_normalization_device": "cpu",
+    "device": {
+      "index": 0,
+      "type": "cuda"
+    },
+    "dtype": "torch.bfloat16",
+    "environment_versions": {
+      "diffusers": "0.39.0",
+      "python": "3.14.6",
+      "torch": "2.13.0+cu130"
+    },
+    "family": "flux2-klein",
+    "granularity": "block",
+    "guidance": 1.0,
+    "kernel": {
+      "scheduler": "FlowMatchEulerDiscreteScheduler",
+      "transformer": "Flux2Transformer2DModel"
+    },
+    "model_program": "project->joint_block[*]->single_block[*]->norm/proj_readout->flow_commit",
+    "numeric_scope": {
+      "autocast": false,
+      "deterministic_algorithms": false,
+      "float32_matmul_precision": "highest",
+      "inference_mode": true,
+      "stochastic_sampling": false,
+      "tensor_layout": "state-slot-bound-stride",
+      "tf32_matmul": false,
+      "torch_num_threads": 4
+    },
+    "parity": "same-program-exact",
+    "reference_images": false,
+    "residency": {
+      "device": {
+        "index": 0,
+        "type": "cuda"
+      },
+      "host_pinned": false,
+      "mode": "streamed"
+    }
+  },
+  "host": "rtx4080-host",
+  "job_id": "job-465b710d1fcf",
+  "limitations": [
+    "Exactness is about the mechanics of one program on one device and dtype.",
+    "The measured effect is a carrier change signal, not a semantic label.",
+    "Decoder prompts are fixed token ids, not a tokenized natural-language battery."
+  ],
+  "model_identity": "a09191c5ff813af77bf89d8e4b9a07237befb67c1aef3e722322d3491250fcd0",
+  "peak_rss_mb": 9064.4375,
+  "peak_vram_mb": 11310.35546875,
+  "residency": "streamed",
+  "route": {
+    "address": "text",
+    "artifact_ref": {
+      "bytes": 3145728,
+      "dtype": "torch.bfloat16",
+      "sha256": "d39f742cff3cf539533897ac5aba09804d1638c9c89d1443f6d27e57f7bd9f1c",
+      "shape": [
+        1,
+        512,
+        3072
+      ]
+    },
+    "card_fingerprint": "41ca060fb6d22357cb2d4dfa1884e16620d81c43e4f9c0d79b665de5e1ab8a81",
+    "changed_vs_native": true,
+    "dedup_ok": true,
+    "effect_carrier_l2": 2321.994140625,
+    "raw_payloads_embedded": false,
+    "rollback": {
+      "matches_parent": true,
+      "restored_elements": 9230345,
+      "restored_slots": 14,
+      "verified_exact": true
+    },
+    "route_fingerprint": "c721a096fa214cfd104140aa01a6edb36520080d894d47bedb1ea44645a5a642",
+    "route_receipt": {
+      "cache": {
+        "artifact_cache_hits": 1,
+        "artifact_hydrations": 1,
+        "artifact_requests": 2,
+        "declared_bytes_requested": 6291456,
+        "hydrated_bytes": 3145728,
+        "metadata_queries": 1,
+        "metadata_rows_returned": 1
+      },
+      "card_count": 1,
+      "declared_total_bytes": 3145728,
+      "raw_payloads_embedded": false,
+      "route_fingerprint": "c721a096fa214cfd104140aa01a6edb36520080d894d47bedb1ea44645a5a642",
+      "schema": "saturn-pub-route-execution-v1",
+      "transport": {
+        "dense_bytes_estimate": 201326592,
+        "estimated_reduction": 0.984375,
+        "policy": "metadata_plus_selected_delta",
+        "selected_bytes_estimate": 3145728
+      }
+    },
+    "selected": [
+      "flux2-klein-joint.2-text"
+    ]
+  },
+  "schema": "saturn-pub-metadata-delta-route-validation-v1",
+  "tiny": false,
+  "wall_s": 31.818
+}

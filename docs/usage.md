@@ -31,6 +31,7 @@ are not automatically enabled in every Session.
 | Build and debug a pretrained writer end to end | FLUX.2 writer experiment | Three-stage construction, native feedback, rollback, fresh-process replay verification | `python experiments/flux2_writer/run.py` |
 | Integrate another numerical program | Implement Adapter | Session lifecycle once the adapter declares/validates its state | `python examples/custom_adapter.py`, [adapter guide](adapters.md) |
 | Audit the record after a run | Evidence plane (`saturn-pub evidence`) | Hash-chained probe/claim ledgers, drift-aware verification, SQLite cross-reference index — stdlib only, no torch | `python examples/evidence_bisect.py`, [evidence guide](evidence.md) |
+| Choose which measured delta to apply before paying for its bytes | Metadata-delta route (`saturn_pub.route`) | Tensor-free tag selection, content-verified deduplicated resolver, apply/compare/exact-rollback receipt | `python examples/metadata_delta_route.py`, [route guide](route.md) |
 
 ## Retention, durability, and rewind
 
