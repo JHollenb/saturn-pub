@@ -1,7 +1,8 @@
 # Qualification record
 
-MDB's standalone extraction is committed. Model-backed qualification is ongoing;
-the upstream Saturn assays certify their original source seals, not this package.
+MDB's standalone extraction has bounded model-backed qualification for Qwen,
+Mamba v1, FLUX and SDXL. The results below bind this package's installed sources;
+upstream Saturn assays certify their original source seals separately.
 
 | Check | Observed result | Scope |
 |---|---|---|
@@ -20,6 +21,8 @@ the upstream Saturn assays certify their original source seals, not this package
 | Historical SDXL native continuation | Exact image from the original conditioning cut; successful exit | FP16/CUDA Illustrious XL, four denoise steps and native VAE; independent archive matches the closed report |
 | Full Mamba first assay | Native, stepped, replay, fresh resume, debugger and intervention replay passed | Three prompts × 32 tokens; memory test failed to force eviction, so overall qualification remains incomplete |
 | Mamba corrected memory and recovery | All seven memory/recovery checks pass; independent archive matches closed report | Same native identity as the three-prompt panels; three siblings, 147 evictions, 245 hydrations, exact private suffixes and 32-token fresh continuation after source removal |
+| Full FLUX assay | Six native comparisons, stepped/replayed cuts, no-op edits, debugger and intervention replay exact | Klein 4B distilled, BF16/CUDA, three prompts × two seeds, 512×512, four denoise steps; three private siblings, 48 evictions and 27 hydrations; source-deleted fresh continuation |
+| Full SDXL assay | Six native comparisons, stepped/replayed cuts, no-op edits, debugger and intervention replay exact | Illustrious XL, FP16/CUDA, three prompts × two seeds, 512×512, four denoise steps; three private siblings, 59 evictions and 44 hydrations; source-deleted fresh continuation |
 
 The full parent assay is `job-697f7259acdb`. Its archive SHA256 is
 `6166ab531a94b09d422eb53853996592d38e9f44fdbde9f2dee9ea03074b8896`.
@@ -60,9 +63,42 @@ The one-token Mamba legacy ABI check and sequential offline image pilots passed.
 logs must retain the resolved environment receipt. Long proofs use one lease,
 one resident model, strict preflight and no automatic retries.
 
-Remaining work includes full image-family assays, their evidence custody and
-final reports.
 Deployed broker validation and Saturn consumer migration remain separate work.
+
+## Completed image-family proofs
+
+FLUX `job-f603a2fd06a2` and SDXL `job-2b53684db1af` succeeded under the final
+independent source/configuration review. All seven named runtime mechanics checks
+passed in each family. Their downloaded archives independently verify the five
+later-case stores and the exported first-case closure. Reports, configuration,
+source/model identities, resolved environments and archives have verified local
+custody; evidence run and verify complete cleanly. See the compact
+[FLUX record](qualification/flux-full-proof.json) and
+[SDXL record](qualification/sdxl-full-proof.json).
+
+The FLUX worker scope took 684.49 seconds; total scheduler wall time was 1,379.16
+seconds. Archive publication on the ext4 HDD accounts for much of that difference.
+The SDXL worker scope took 312.27 seconds and scheduler wall time was 336.67 seconds.
+Worker scope includes the proof panels
+and fresh continuation but excludes final archive compression; scheduler wall
+time also includes bootstrap and publication. These are qualification workloads,
+not ordinary image-generation latency.
+
+Prepared FLUX bench execution took 2.43–5.61 seconds per image; its instrumented
+native path took 0.58–0.60 seconds. Prepared SDXL bench execution took 2.03–5.10
+seconds; its native path took 0.23–0.28 seconds. Bench preparation is recorded
+separately. Native image timing excludes conditioner encoding and includes latent
+sampling, denoising, VAE execution and latent callback copies. These scopes do not
+establish a speedup or a fair bare-pipeline ratio. Checkpoint durability,
+inspection and evidence retain substantial overhead.
+
+Qualification is checkpoint-, backend- and numerical-contract-specific. It does
+not qualify every diffusion pipeline, Mamba2/hybrid architecture or cross-device
+restore. Logical paging, eviction and hydration are demonstrated; integrated CUDA
+VMM and production batching remain extension points. Discovery preserves measured
+candidate interventions and controls, without certifying universal semantic
+reasoning circuits. The in-process debugger protocol is exercised; deployed fleet
+live attach remains unqualified.
 
 SDXL pilot `job-a87e433db106` completed in 104.28 seconds. The downloaded archive
 independently verifies the same 159 cuts, 97 payload references and closed manifest;
