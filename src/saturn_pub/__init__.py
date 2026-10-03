@@ -10,7 +10,7 @@ from .contracts import (
 )
 from .core import Act, Adapter, Frame, Receipt, Session, StateCut
 
-__version__ = "0.2.0"
+__version__ = "0.3.0"
 __all__ = [
     "Act",
     "Adapter",
