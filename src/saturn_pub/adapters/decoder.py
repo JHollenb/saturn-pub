@@ -513,6 +513,16 @@ class DecoderAdapter(Adapter):
             if spec.model_type == "gemma2"
             else None
         )
+        # Gemma scales token embeddings by sqrt(hidden_size). transformers>=5 folds that scale
+        # into a scaled-embedding module (``embed_scale``); older transformers apply it in
+        # ``Model.forward`` with a plain ``nn.Embedding``. Detect which, and apply the scale in
+        # ``_embed`` only when the embedding module does not already carry it, so the adapter
+        # reproduces the native forward on either transformers version.
+        self._embed_scale: float | None = None
+        if spec.model_type in {"gemma", "gemma2"}:
+            embed_module = getattr(self.backbone, spec.embed)
+            if getattr(embed_module, "embed_scale", None) is None:
+                self._embed_scale = float(config.hidden_size) ** 0.5
         self.rotary = getattr(self.backbone, "rotary_emb", None)
         if spec.position == "rotary" and self.rotary is None:
             raise ValueError(f"{spec.model_type} backbone is missing rotary_emb")
@@ -661,6 +671,8 @@ class DecoderAdapter(Adapter):
     def _embed(self, tokens: torch.Tensor) -> torch.Tensor:
         embed_module = getattr(self.backbone, self.spec.embed)
         hidden = embed_module(tokens[:, -1:])
+        if self._embed_scale is not None:
+            hidden = hidden * torch.tensor(self._embed_scale, dtype=hidden.dtype)
         if self.spec.position == "absolute":
             position = tokens.shape[1] - 1
             positions = torch.tensor([[position]], device=self.device)
