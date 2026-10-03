@@ -1,43 +1,116 @@
 {
   "config": {
-    "experiment": "mdb-standalone-qualification",
-    "prompts": [
-      "A red cube on a white table.",
-      "A blue sphere beside a yellow cube.",
-      "A small tree under a clear sky."
-    ],
     "ar_prompts": [
       "The capital of France is",
       "Explain why the sky is blue in one sentence.",
       "Count from one to five:"
     ],
+    "cpu_threads": 4,
+    "debugger_mode": "offline-native-protocol",
+    "durable_root": "/mnt/big/mdb/qualification",
+    "expected_weights_sha256": "dd976d67036c4a0a55642f702dcb3740ba7a4f367557596572baac168330904f",
+    "experiment": "mdb-standalone-qualification",
+    "family": "flux",
+    "height": 512,
+    "max_wall_seconds": 6000,
+    "model": "flux2-klein-4b-distilled",
+    "prompts": [
+      "A red cube on a white table.",
+      "A blue sphere beside a yellow cube.",
+      "A small tree under a clear sky."
+    ],
     "seeds": [
       17,
       29
     ],
-    "tokens": 32,
-    "height": 512,
-    "width": 512,
-    "steps": 4,
     "state_budget_bytes": 536870912,
-    "cpu_threads": 4,
-    "max_wall_seconds": 6000,
-    "durable_root": "/mnt/big/mdb/qualification",
-    "debugger_mode": "offline-native-protocol",
-    "model": "flux2-klein-4b-distilled",
-    "family": "flux",
-    "expected_weights_sha256": "dd976d67036c4a0a55642f702dcb3740ba7a4f367557596572baac168330904f"
+    "steps": 4,
+    "tokens": 32,
+    "width": 512
   },
   "request": {
-    "schema": "mdb-qualification-request-v1",
-    "model": "flux2-klein-4b-distilled",
-    "family": "flux",
-    "task_family": "forward",
+    "config_bytes_sha256": "0393168260be7f5505920f19c0860151df96ecc0ea22bffd50ea8d6ab03f8e40",
     "device": "cuda",
+    "execution_environment": {
+      "extra_model_roots": "/mnt/big/llm-models",
+      "python": "3.14.6",
+      "requirements": [
+        "torch==2.13.0",
+        "diffusers==0.39.0",
+        "transformers==5.14.1",
+        "accelerate==1.14.0",
+        "safetensors>=0.5",
+        "numpy>=2.0",
+        "pyyaml>=6.0",
+        "psutil>=5.9",
+        "pillow>=10.0"
+      ],
+      "torch_home": "/mnt/big/llm-models/.torch-cache",
+      "uv_cache_dir": "/mnt/big/llm-models/.uv-cache",
+      "uv_link_mode": "symlink"
+    },
+    "family": "flux",
+    "geometry": {
+      "height": 512,
+      "prompts": 3,
+      "seeds": 2,
+      "simultaneous_models": 1,
+      "steps": 4,
+      "tokens": null,
+      "width": 512
+    },
+    "model": "flux2-klein-4b-distilled",
     "needs": {
       "cuda": true
     },
-    "config_bytes_sha256": "0393168260be7f5505920f19c0860151df96ecc0ea22bffd50ea8d6ab03f8e40",
+    "resource_basis": {
+      "phase_vram_budget_decimal_mb": null,
+      "policy": "resident phase-CUDA model envelope with retained capture disk"
+    },
+    "resource_profile": {
+      "capture_sites": true,
+      "cpu_threads": 4,
+      "disk_gb": 22,
+      "height": 512,
+      "model_id": "flux2-klein-4b-distilled",
+      "phase_cuda": true,
+      "ram_mb": 20000,
+      "steps": 4,
+      "task": "capture",
+      "vram_mb": 13000,
+      "width": 512
+    },
+    "scheduler_endpoint": "http://192.168.68.68:9025",
+    "scheduling_contract": {
+      "additional_scheduler_submissions": 0,
+      "checkpoint_artifact_policy": "download_once_reuse_lease_local",
+      "checkpoint_policy": "sequential resident parent and fresh child; no retry",
+      "collection_policy": "direct_job_only",
+      "control_plane": "mrun_outer_lease",
+      "data_plane": "resident_worker",
+      "execution_model": "finite_sequential_restart_proof",
+      "interactive": false,
+      "lease_scope": "entire-restart-proof-worker",
+      "logical_checkpoint_replays": 64,
+      "logical_operations": 128,
+      "max_local_work_items": 256,
+      "max_mrun_submissions": 1,
+      "model_loads": 2,
+      "mrun_retry_policy": "none_for_finite_lease",
+      "nested_mrun_submissions": 0,
+      "per_branch_mrun_submissions": 0,
+      "per_transition_mrun_submissions": 0,
+      "registered_checkpoint_downloads": 1,
+      "replay_policy": "local_checkpoint_restore",
+      "resident_model_concurrency": 1,
+      "schema": "saturn-single-lease-restart-proof-scheduling-contract-v1",
+      "student_process_execution": "sequential_subprocesses",
+      "student_process_reconstructions": 2,
+      "subprocess_retry_policy": "none",
+      "task_family": "student-restart-proof"
+    },
+    "schema": "mdb-qualification-request-v1",
+    "settings_sha256": "a1f746c485b07930cba87da5f3830820e494849829f23af08f57bf6f44bece52",
     "source_hashes": {
       "mdb/__init__.py": "e5d7ccb2f034e33c9949b5619ca273950bbd7f0bf5a5da4e4589aa3557bdf575",
       "mdb/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
@@ -440,82 +513,9 @@
       "mrun/training/logging.py": "7a5b83e3ec3bbc51b6b5cb538f29dc3279b88fbbc48e38f8c15628ab4b8015d5",
       "mrun/training/paged_lora.py": "514c71a921d58a173f994b6275983880f0bfd9f864407dfd8c4a22b684a3e504",
       "mrun/training/paged_lora_parity.py": "9c476da2d43237d71dedfb4e2e4bdb56fcd0e60b0342166f8049c7ffe7110c04",
-      "worker.py": "f22cdbf027dbcc048b6bee72becb06f0828e5cb10bfd603f4b5d5e2176a8efc3"
+      "worker.py": "43e3b39957f1b492d2de3eb6dc82c22641759009920e72cff80133f19904a294"
     },
-    "resource_basis": {
-      "policy": "resident phase-CUDA model envelope with retained capture disk",
-      "phase_vram_budget_decimal_mb": null
-    },
-    "resource_profile": {
-      "model_id": "flux2-klein-4b-distilled",
-      "task": "capture",
-      "ram_mb": 20000,
-      "vram_mb": 13000,
-      "cpu_threads": 4,
-      "disk_gb": 22,
-      "height": 512,
-      "width": 512,
-      "steps": 4,
-      "phase_cuda": true,
-      "capture_sites": true
-    },
-    "scheduler_endpoint": "http://192.168.68.68:9025",
-    "geometry": {
-      "simultaneous_models": 1,
-      "tokens": null,
-      "prompts": 3,
-      "seeds": 2,
-      "height": 512,
-      "width": 512,
-      "steps": 4
-    },
-    "timeout_s": 6000,
-    "execution_environment": {
-      "uv_link_mode": "symlink",
-      "uv_cache_dir": "/mnt/big/llm-models/.uv-cache",
-      "torch_home": "/mnt/big/llm-models/.torch-cache",
-      "extra_model_roots": "/mnt/big/llm-models",
-      "python": "3.14.6",
-      "requirements": [
-        "torch==2.13.0",
-        "diffusers==0.39.0",
-        "transformers==5.14.1",
-        "accelerate==1.14.0",
-        "safetensors>=0.5",
-        "numpy>=2.0",
-        "pyyaml>=6.0",
-        "psutil>=5.9",
-        "pillow>=10.0"
-      ]
-    },
-    "scheduling_contract": {
-      "schema": "saturn-single-lease-restart-proof-scheduling-contract-v1",
-      "lease_scope": "entire-restart-proof-worker",
-      "execution_model": "finite_sequential_restart_proof",
-      "task_family": "student-restart-proof",
-      "max_mrun_submissions": 1,
-      "per_branch_mrun_submissions": 0,
-      "per_transition_mrun_submissions": 0,
-      "additional_scheduler_submissions": 0,
-      "nested_mrun_submissions": 0,
-      "student_process_reconstructions": 2,
-      "model_loads": 2,
-      "resident_model_concurrency": 1,
-      "registered_checkpoint_downloads": 1,
-      "student_process_execution": "sequential_subprocesses",
-      "checkpoint_artifact_policy": "download_once_reuse_lease_local",
-      "subprocess_retry_policy": "none",
-      "max_local_work_items": 256,
-      "control_plane": "mrun_outer_lease",
-      "data_plane": "resident_worker",
-      "replay_policy": "local_checkpoint_restore",
-      "mrun_retry_policy": "none_for_finite_lease",
-      "collection_policy": "direct_job_only",
-      "interactive": false,
-      "checkpoint_policy": "sequential resident parent and fresh child; no retry",
-      "logical_operations": 128,
-      "logical_checkpoint_replays": 64
-    },
-    "settings_sha256": "93e905a0dad5b84b7100d7983f6704333a9528cf3fbe7020d3578faba49acda1"
+    "task_family": "forward",
+    "timeout_s": 6000
   }
 }

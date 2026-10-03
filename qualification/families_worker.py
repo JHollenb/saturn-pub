@@ -192,13 +192,45 @@ def produce(config, root):
             shared = any(len(r["owners"]) >= 3 for r in b.inspect("memory")["unique_allocations"])
             from mdb.bench_pages import allocations
             measured = sum(allocations(b.state).values())
-            forced_budget = max(measured*3, 8 << 20)
-            if forced_budget > config["state_budget_bytes"]:
-                raise RuntimeError("forced memory panel exceeds admitted state budget")
-            b.pages.budget = forced_budget
-            b.pages.admit(b.state); b.step()
-            b.checkout("memory-b"); b.step(); b.checkout("main"); b.restore(parent)
+            panel_event_start = len(b.pages.events)
+            # Execute under the admitted ceiling, then shrink residency around
+            # the actual active closure. An ancestor-size multiplier can leave
+            # every retained assembly resident and never exercise eviction.
+            private_cuts = {}
+            forced_budgets = {}
+            resident_unions = {}
+            for branch in ("main", "memory-b", "memory-c"):
+                b.pages.budget = config["state_budget_bytes"]
+                b.checkout(branch)
+                b.step()
+                private_cuts[branch] = b.checkpoint(f"{branch}-private")
+                active_bytes = sum(allocations(b.state).values())
+                forced_budget = active_bytes + b.pages.page_bytes
+                if forced_budget > config["state_budget_bytes"]:
+                    raise RuntimeError("forced memory panel exceeds admitted state budget")
+                union = allocations(list(b.pages.pool.values()))
+                union.update(allocations(b.state))
+                resident_unions[branch] = sum(union.values())
+                if resident_unions[branch] <= forced_budget:
+                    raise RuntimeError("forced budget does not pressure the measured resident union")
+                b.pages.budget = forced_budget
+                b.pages.admit(b.state)
+                forced_budgets[branch] = forced_budget
+            private_replays = {}
+            for branch, private_cut in private_cuts.items():
+                b.pages.budget = config["state_budget_bytes"]
+                b.checkout(branch); b.restore(private_cut)
+                actual = finish(b, count-1 if family == "mamba" else None)
+                private_replays[branch] = {"cut": private_cut,
+                    "exact": actual == (baseline[1:] if family == "mamba" else baseline)}
+            b.pages.budget = config["state_budget_bytes"]
+            b.checkout("main"); b.restore(parent)
+            panel_events = b.pages.events[panel_event_start:]
             row["memory"] = {"shared": shared, "ancestor_measured_bytes": measured, "forced_budget_bytes": forced_budget,
+                "forced_budgets_bytes": forced_budgets, "private_cuts": private_cuts,
+                "resident_unions_bytes": resident_unions, "private_replays": private_replays,
+                "panel_evictions": sum(e["kind"] == "evict" for e in panel_events),
+                "panel_hydrations": sum(e["kind"] == "hydrate" for e in panel_events),
                 "inspection": b.inspect("memory"), "earlier_restore_exact": finish(b, count) == baseline}
             b.pages.budget = config["state_budget_bytes"]
             selected = cuts["layer-12"] if family == "mamba" else cuts[next(k for k in cuts if k.startswith("block-"))]
@@ -252,7 +284,10 @@ def main():
         "debugger_identity": report["cases"][0]["debugger"]["same_python_identity"],
         "intervention_replay": report["cases"][0]["discovery_replay"]["exact"],
         "existing_native_parity": all(c.get("existing_model_os_bridge", c.get("existing_native_checkpoint"))["exact"] for c in report["cases"]),
-        "memory": report["cases"][0]["memory"]["shared"] and report["cases"][0]["memory"]["earlier_restore_exact"] and report["cases"][0]["memory"]["inspection"]["evictions"] > 0}
+        "memory": report["cases"][0]["memory"]["shared"] and report["cases"][0]["memory"]["earlier_restore_exact"]
+            and report["cases"][0]["memory"]["panel_evictions"] > 0
+            and report["cases"][0]["memory"]["panel_hydrations"] > 0
+            and all(r["exact"] for r in report["cases"][0]["memory"]["private_replays"].values())}
     report.update(schema="saturn-open-bench-family-proof-v2", request_sha256=request["request_sha256"],
         source_hashes=request["source_hashes"], artifact_directory=str(root), elapsed_seconds=time.monotonic()-start,
         parent_pid=os.getpid(), original_first_store_removed=True, mechanics=mechanics,

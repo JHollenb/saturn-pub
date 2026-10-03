@@ -1,43 +1,101 @@
 {
   "config": {
-    "experiment": "mdb-standalone-qualification",
-    "prompts": [
-      "A red cube on a white table.",
-      "A blue sphere beside a yellow cube.",
-      "A small tree under a clear sky."
-    ],
     "ar_prompts": [
       "The capital of France is",
       "Explain why the sky is blue in one sentence.",
       "Count from one to five:"
     ],
+    "cpu_threads": 4,
+    "debugger_mode": "offline-native-protocol",
+    "durable_root": "/mnt/big/mdb/qualification",
+    "expected_weights_sha256": "afde3cdedd34132cfe0653204f1066abf4489aaa1c737bddeba03a4b599855b8",
+    "experiment": "mdb-standalone-qualification",
+    "family": "mamba",
+    "height": 512,
+    "max_wall_seconds": 6000,
+    "model": "mamba-130m",
+    "prompts": [
+      "A red cube on a white table.",
+      "A blue sphere beside a yellow cube.",
+      "A small tree under a clear sky."
+    ],
     "seeds": [
       17,
       29
     ],
-    "tokens": 32,
-    "height": 512,
-    "width": 512,
-    "steps": 4,
     "state_budget_bytes": 536870912,
-    "cpu_threads": 4,
-    "max_wall_seconds": 6000,
-    "durable_root": "/mnt/big/mdb/qualification",
-    "debugger_mode": "offline-native-protocol",
-    "model": "mamba-130m",
-    "family": "mamba",
-    "expected_weights_sha256": "afde3cdedd34132cfe0653204f1066abf4489aaa1c737bddeba03a4b599855b8"
+    "steps": 4,
+    "tokens": 32,
+    "width": 512
   },
   "request": {
-    "schema": "mdb-qualification-request-v1",
-    "model": "mamba-130m",
-    "family": "mamba",
-    "task_family": "forward",
+    "config_bytes_sha256": "3c62e40679f37415b40002a219c0349f93e935c6aa6a4dad50fccc53eabc44c3",
     "device": "cuda",
+    "execution_environment": {
+      "extra_model_roots": "/mnt/big/llm-models",
+      "python": "3.14.6",
+      "requirements": [
+        "torch==2.13.0",
+        "diffusers==0.39.0",
+        "transformers==5.14.1",
+        "accelerate==1.14.0",
+        "safetensors>=0.5",
+        "numpy>=2.0",
+        "pyyaml>=6.0",
+        "psutil>=5.9",
+        "pillow>=10.0"
+      ],
+      "torch_home": "/mnt/big/llm-models/.torch-cache",
+      "uv_cache_dir": "/mnt/big/llm-models/.uv-cache",
+      "uv_link_mode": "symlink"
+    },
+    "family": "mamba",
+    "geometry": {
+      "height": 512,
+      "prompts": 3,
+      "seeds": 1,
+      "simultaneous_models": 1,
+      "steps": 4,
+      "tokens": 32,
+      "width": 512
+    },
+    "model": "mamba-130m",
     "needs": {
       "cuda": true
     },
-    "config_bytes_sha256": "3c62e40679f37415b40002a219c0349f93e935c6aa6a4dad50fccc53eabc44c3",
+    "resource_basis": "intent-first model planning",
+    "resource_profile": null,
+    "scheduler_endpoint": "http://192.168.68.68:9025",
+    "scheduling_contract": {
+      "additional_scheduler_submissions": 0,
+      "checkpoint_artifact_policy": "download_once_reuse_lease_local",
+      "checkpoint_policy": "sequential resident parent and fresh child; no retry",
+      "collection_policy": "direct_job_only",
+      "control_plane": "mrun_outer_lease",
+      "data_plane": "resident_worker",
+      "execution_model": "finite_sequential_restart_proof",
+      "interactive": false,
+      "lease_scope": "entire-restart-proof-worker",
+      "logical_checkpoint_replays": 64,
+      "logical_operations": 128,
+      "max_local_work_items": 256,
+      "max_mrun_submissions": 1,
+      "model_loads": 2,
+      "mrun_retry_policy": "none_for_finite_lease",
+      "nested_mrun_submissions": 0,
+      "per_branch_mrun_submissions": 0,
+      "per_transition_mrun_submissions": 0,
+      "registered_checkpoint_downloads": 1,
+      "replay_policy": "local_checkpoint_restore",
+      "resident_model_concurrency": 1,
+      "schema": "saturn-single-lease-restart-proof-scheduling-contract-v1",
+      "student_process_execution": "sequential_subprocesses",
+      "student_process_reconstructions": 2,
+      "subprocess_retry_policy": "none",
+      "task_family": "student-restart-proof"
+    },
+    "schema": "mdb-qualification-request-v1",
+    "settings_sha256": "d42234f38865fab1c90dfdae48f967f9867ec5f8339ae6011eec3a1ce6eec245",
     "source_hashes": {
       "mdb/__init__.py": "e5d7ccb2f034e33c9949b5619ca273950bbd7f0bf5a5da4e4589aa3557bdf575",
       "mdb/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
@@ -440,67 +498,9 @@
       "mrun/training/logging.py": "7a5b83e3ec3bbc51b6b5cb538f29dc3279b88fbbc48e38f8c15628ab4b8015d5",
       "mrun/training/paged_lora.py": "514c71a921d58a173f994b6275983880f0bfd9f864407dfd8c4a22b684a3e504",
       "mrun/training/paged_lora_parity.py": "9c476da2d43237d71dedfb4e2e4bdb56fcd0e60b0342166f8049c7ffe7110c04",
-      "worker.py": "f22cdbf027dbcc048b6bee72becb06f0828e5cb10bfd603f4b5d5e2176a8efc3"
+      "worker.py": "43e3b39957f1b492d2de3eb6dc82c22641759009920e72cff80133f19904a294"
     },
-    "resource_basis": "intent-first model planning",
-    "resource_profile": null,
-    "scheduler_endpoint": "http://192.168.68.68:9025",
-    "geometry": {
-      "simultaneous_models": 1,
-      "tokens": 32,
-      "prompts": 3,
-      "seeds": 1,
-      "height": 512,
-      "width": 512,
-      "steps": 4
-    },
-    "timeout_s": 6000,
-    "execution_environment": {
-      "uv_link_mode": "symlink",
-      "uv_cache_dir": "/mnt/big/llm-models/.uv-cache",
-      "torch_home": "/mnt/big/llm-models/.torch-cache",
-      "extra_model_roots": "/mnt/big/llm-models",
-      "python": "3.14.6",
-      "requirements": [
-        "torch==2.13.0",
-        "diffusers==0.39.0",
-        "transformers==5.14.1",
-        "accelerate==1.14.0",
-        "safetensors>=0.5",
-        "numpy>=2.0",
-        "pyyaml>=6.0",
-        "psutil>=5.9",
-        "pillow>=10.0"
-      ]
-    },
-    "scheduling_contract": {
-      "schema": "saturn-single-lease-restart-proof-scheduling-contract-v1",
-      "lease_scope": "entire-restart-proof-worker",
-      "execution_model": "finite_sequential_restart_proof",
-      "task_family": "student-restart-proof",
-      "max_mrun_submissions": 1,
-      "per_branch_mrun_submissions": 0,
-      "per_transition_mrun_submissions": 0,
-      "additional_scheduler_submissions": 0,
-      "nested_mrun_submissions": 0,
-      "student_process_reconstructions": 2,
-      "model_loads": 2,
-      "resident_model_concurrency": 1,
-      "registered_checkpoint_downloads": 1,
-      "student_process_execution": "sequential_subprocesses",
-      "checkpoint_artifact_policy": "download_once_reuse_lease_local",
-      "subprocess_retry_policy": "none",
-      "max_local_work_items": 256,
-      "control_plane": "mrun_outer_lease",
-      "data_plane": "resident_worker",
-      "replay_policy": "local_checkpoint_restore",
-      "mrun_retry_policy": "none_for_finite_lease",
-      "collection_policy": "direct_job_only",
-      "interactive": false,
-      "checkpoint_policy": "sequential resident parent and fresh child; no retry",
-      "logical_operations": 128,
-      "logical_checkpoint_replays": 64
-    },
-    "settings_sha256": "c388bfc249ff3e1e82d9931521db6b1cca33044714617c026222be8c84b317b5"
+    "task_family": "forward",
+    "timeout_s": 6000
   }
 }
