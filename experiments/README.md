@@ -11,6 +11,7 @@ Generated states and results belong in `outputs/`, which is ignored by Git.
 | [LM block residency](lm_block_residency/README.md) | Step a decoder LM with frozen weights streamed one block at a time; streamed==resident bitwise where it fits, else vs an accelerate CPU-offload reference; fresh-process replay | Native 16-token greedy decode and final logits |
 | [Diffusion family validation](diffusion_family_validation/README.md) | Step FLUX.2 Klein-4B/9B and FLUX.1-schnell resident or block-streamed; replay a mid-trajectory cut in a fresh process | Native diffusers per-step latents and VAE decode |
 | [Debugging repair](debugging_repair/README.md) | Follow a deletion, native repair, repair suppression, and collateral; replay suffixes in fresh processes | Supplied neural circuit's threshold consumer |
+| [Induction certificate](induction_certificate/README.md) | Preregister a full direct-source parent + control arms + sealed panels; run the relational-induction causal battery on two cached decoders and sign (or fail) the certificate | Native final norm + lm head on every branch |
 
 Each recipe declares supplied inputs, fitted quantities, observations, exact mechanics,
 and the scope of its claims. Reference results illustrate one measured development

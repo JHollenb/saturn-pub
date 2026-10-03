@@ -54,6 +54,33 @@ confirmed to still re-derive from the scrubbed bundle under the frozen rules. Th
 roughly 22 MB to 1.6 MB. The receipts remain on public weights (FLUX.2 Klein 4B and Qwen-family
 models); no private hostnames, paths, usernames, scheduler names, or codenames remain.
 
+`certificate/gate.py` adapts the author's private autoregressive induction-circuit certificate,
+a runtime-neutral fail-closed gate over preregistered relational-induction panels. The seven
+per-panel gates, the two set-level gates, the Wilson upper-bound necessity/specificity tests, the
+repair-replay fidelity test, and the content-seal are ported directly. Source SHA-256 (Saturn
+research working tree):
+
+- private induction-circuit certificate module: `4f6e1d6b388f53444773df7f46a575759acb7bdffbfa3f7b27c729c3fabad023`
+- its mechanics test: `29b4c58182540219f79214d326d6527c1b4a7149c061947e0a5a3961891fd150`
+
+Public changes rename the schema IDs and classes to the public namespace and replace the source's
+hard-wired framework/accelerator consumer check with a declarable `ConsumerContract` (consumer
+identity always checked; backend/device allow-lists optional and frozen in advance) so the same
+policy certifies a CPU specimen and a GPU run. The source mechanics tests were adapted to the public
+namespace and extended with consumer-contract, workload, and custody-binding tests.
+
+`certificate/workload.py` and `certificate/panel.py` re-implement, against the public decoder
+adapter and torch only, the relational-induction workload and the five-branch causal battery whose
+private originals are a benchmark module (workload + exact direct-source extraction, SHA-256
+`3be94a1b81f5e18c1ba620f2ee77565930074bbf5c835e2ef22971b08bf91568`) and a discovery/confirmation
+worker (SHA-256 `ae02eb1110ce9a53bde100fa804af58b321bbce6ef78ca8c47141c1abec60e85`). The private
+workload used a numpy RNG and a private model engine, job scheduler, and activation-capture library;
+the public version uses a stdlib `random` RNG and applies the attention-edge deletion and
+pre-`o_proj` repair as forward-hook contexts on the public decoder adapter's resident native model.
+The source's compressed-envelope discovery/selection stage is intentionally omitted; the public
+module certifies the full direct-source parent only. No scheduler, engine, or capture-library code
+is vendored.
+
 `saturn_pub/evidence/` adapts the author's private evidence-plane modules, which the original
 working tree keeps stdlib-only and import-clean (no torch/transformers/scheduler/object-store).
 Near-identical extracted copies existed in two private trees; the cleaner originals were adapted:

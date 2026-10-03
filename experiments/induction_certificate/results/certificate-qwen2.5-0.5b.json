@@ -1,0 +1,97 @@
+{
+  "schema": "saturn-pub-induction-certificate-v1",
+  "policy": {
+    "min_panels": 2,
+    "confidence_z": 1.96,
+    "clean_min_accuracy": 0.85,
+    "source_closure_slack": 0.03,
+    "match_min_accuracy": 0.85,
+    "match_max_clean_drop": 0.1,
+    "repair_max_clean_drop": 0.03,
+    "wrong_repair_slack": 0.05,
+    "repair_specificity_min": 0.75,
+    "replay_max_correctness_mismatch": 0.01,
+    "replay_max_margin_mae": 1.0,
+    "consumer": {
+      "consumer": "native_final_norm_lm_head",
+      "backends": null,
+      "device_prefixes": null
+    }
+  },
+  "panel_count": 2,
+  "panels": [
+    {
+      "panel_id": "confirmation-length12-seed20260812",
+      "examples": 192,
+      "classes": 48,
+      "chance_accuracy": 0.020833333333333332,
+      "metrics": {
+        "clean_accuracy": 0.9739583333333334,
+        "clean_mean_margin": 6.917748404045899,
+        "source_deletion_accuracy": 0.0,
+        "source_deletion_mean_margin": -9.873382146159807,
+        "source_deletion_upper_confidence_bound": 0.019615852811660034,
+        "match_deletion_accuracy": 0.9583333333333334,
+        "match_deletion_mean_margin": 5.308007364471753,
+        "correct_repair_accuracy": 0.9739583333333334,
+        "correct_repair_mean_margin": 6.917748404045899,
+        "wrong_repair_accuracy": 0.0,
+        "wrong_repair_mean_margin": -11.571080505847931,
+        "wrong_repair_upper_confidence_bound": 0.019615852811660034,
+        "repair_specificity_margin": 0.9739583333333334,
+        "repair_correctness_mismatch_fraction": 0.0,
+        "repair_margin_mae": 0.0
+      },
+      "gates": {
+        "clean_behavior": true,
+        "source_necessity": true,
+        "position_specificity": true,
+        "correct_repair_sufficiency": true,
+        "wrong_donor_specificity": true,
+        "repair_replay_fidelity": true,
+        "native_consumer_continuation": true
+      },
+      "certified": true
+    },
+    {
+      "panel_id": "confirmation-length16-seed20260813",
+      "examples": 192,
+      "classes": 48,
+      "chance_accuracy": 0.020833333333333332,
+      "metrics": {
+        "clean_accuracy": 0.984375,
+        "clean_mean_margin": 7.065488710999489,
+        "source_deletion_accuracy": 0.005208333333333333,
+        "source_deletion_mean_margin": -9.456882325311502,
+        "source_deletion_upper_confidence_bound": 0.028908220213880856,
+        "match_deletion_accuracy": 0.9739583333333334,
+        "match_deletion_mean_margin": 5.731753709415595,
+        "correct_repair_accuracy": 0.984375,
+        "correct_repair_mean_margin": 7.065488710999489,
+        "wrong_repair_accuracy": 0.005208333333333333,
+        "wrong_repair_mean_margin": -11.47247772415479,
+        "wrong_repair_upper_confidence_bound": 0.028908220213880856,
+        "repair_specificity_margin": 0.9791666666666666,
+        "repair_correctness_mismatch_fraction": 0.0,
+        "repair_margin_mae": 0.0
+      },
+      "gates": {
+        "clean_behavior": true,
+        "source_necessity": true,
+        "position_specificity": true,
+        "correct_repair_sufficiency": true,
+        "wrong_donor_specificity": true,
+        "repair_replay_fidelity": true,
+        "native_consumer_continuation": true
+      },
+      "certified": true
+    }
+  ],
+  "gates": {
+    "replication": true,
+    "all_panels_certified": true
+  },
+  "certified": true,
+  "claim_boundary": "bounded direct-source attention circuit for the declared arbitrary-token relational-induction workload, model bytes, route family, prompt panels, native lexical consumer, and thresholds; not a globally minimal, unique, natural-language-general, or architecture-universal circuit",
+  "content_sha256": "84dc2a27680bcf048f849ab66966c98c2a38663a70a61d8e6b55c7f0698cfc3d"
+}
