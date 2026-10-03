@@ -78,6 +78,29 @@ original mechanics tests were adapted to the public import namespace, dropping f
 at private host paths or real private result trees. The subpackage is kept self-contained so it can
 later move into a neutral base package shared by more than one toolkit.
 
+`saturn_pub/route.py` adapts the concept and payload-free discipline of the author's private
+metadata-plus-delta route, which in the research tree was scoped to one diffusion family and built
+on a diffusion-specific route register. Source SHA-256 of the adapted files:
+
+- `src/saturn/metadata_delta_route.py`: `6d7cbecc6bde27885c15dd2fd84391bd53f74a4431a9dd0ef3a97e584a5827c1`.
+- `src/saturn/temporal_route_register.py`: `edae9d9dcd28e4d9e44a868ef5d26d3ba92198965876253e6b67a80e9c47e611`.
+
+What is kept is the genuinely new mechanism: a tensor-free, content-addressed catalog of candidate
+deltas that is queried (`select`) before any heavy state is hydrated, a caller-owned resolver seam
+with deduplicated, content-verified, byte-accounted hydration, and a custody receipt that embeds no
+payloads. The public version is a thin, adapter-neutral layer over this repository's existing
+`Session`/`Act`/`Receipt`: a `DeltaCard` binds a measured builtin operation to a recipient cut and
+references its delta bytes by sha256 + shape + dtype; `apply_delta` composes the existing fork /
+apply / continue / compare / restore lifecycle into one route-execution receipt whose
+`rollback.verified_exact` is the public analog of the private demonstrated exact rollback. Public
+changes rename the schema IDs to the `saturn-pub-*` family; drop the diffusion-only register builder
+(`build_route_register_from_family_delta_report`) and the private route coordinate, contract,
+knowledge-bundle, and codename vocabulary; generalize the selection coordinate to free-form tags so
+the same card drives a decoder (`hidden`) and a FLUX block suffix (`image`/`text`); and verify
+resolved bytes by exact content address rather than shape/dtype alone. No private register, report,
+object-store client, or result archive is vendored; the module imports no torch to build or query a
+route.
+
 ## Independent small implementations
 
 Core transactions, native adapters, local storage, debugger, investigations, measured programs,
