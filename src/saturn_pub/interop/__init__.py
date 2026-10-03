@@ -15,14 +15,18 @@ from .circuit_tracer import (
     EdgeVerdictTable,
     SyntheticAttributionGraph,
     build_synthetic_graph,
+    classify_graph_vs_native,
     default_edge_rule,
     native_edge_test,
+    native_group_intervention,
     select_edges,
     verify_edge_bundle,
 )
 
 __all__ = [
     "native_edge_test",
+    "native_group_intervention",
+    "classify_graph_vs_native",
     "verify_edge_bundle",
     "select_edges",
     "default_edge_rule",

@@ -50,16 +50,28 @@ from ..values import canonical, describe, digest
 # one pair per layer it writes to. ``direction`` is a 1-D residual-space tensor (d_model).
 DecoderWrites = Callable[[int, int], Sequence[tuple[int, Any]]]
 
-_VERDICT_FROM_TRIAL = {"agree": "survives", "invert": "collapses", "inconclusive": "inconclusive"}
+# Neutral native-necessity labels. The native drop measures only whether removing *this*
+# feature's contribution is individually load-bearing on the real model -- it is NOT a verdict
+# on the attribution graph. Agreement with the graph is a separate axis (``graph_vs_native``,
+# which needs the graph's own predicted drop); see :func:`classify_graph_vs_native`.
+_VERDICT_FROM_TRIAL = {
+    "agree": "native_necessary",
+    "invert": "native_effect_absent",
+    "inconclusive": "inconclusive",
+}
 
 
 def default_edge_rule() -> DecisionRule:
-    """The frozen rule the native edge test grades every edge under.
+    """The frozen rule the native edge test labels every edge under.
 
-    ``consumer_logprob_drop`` is ``logprob(target | clean) - logprob(target | feature
-    removed)`` in nats: higher means removing the feature hurt the answer more, i.e. the
-    edge is load-bearing. An attribution edge *asserts* the feature is load-bearing, so a
-    large drop is ``agree`` (survives) and a negligible drop is ``invert`` (collapses).
+    ``consumer_logprob_drop`` is ``logprob(target | clean) - logprob(target | intervention)``
+    in nats: higher means the intervention hurt the answer more. The label is about the
+    *native* model only: ``native_necessary`` (drop >= 0.5 nats, removing this contribution is
+    individually load-bearing), ``native_effect_absent`` (drop <= 0.1 nats, no individual
+    effect), or ``inconclusive``. A single feature showing ``native_effect_absent`` is NOT by
+    itself evidence against the graph -- under a redundant circuit many features each carry
+    little alone. Whether that disagrees with the graph is the separate ``graph_vs_native``
+    axis, which compares this drop to the replacement model's own predicted drop.
     """
     return DecisionRule(
         name="circuit-tracer-native-edge",
@@ -69,11 +81,36 @@ def default_edge_rule() -> DecisionRule:
         absent_threshold=0.1,
         require_exact_gate=True,
         description=(
-            "An attribution-graph edge survives iff removing the transcoder feature's decoder "
-            "contribution on the real model drops the target log-prob by >= 0.5 nats; it "
-            "collapses iff the drop is <= 0.1 nats; the band between is inconclusive."
+            "Native-necessity of one transcoder feature on the real model: native_necessary iff "
+            "removing its decoder contribution drops the target log-prob by >= 0.5 nats; "
+            "native_effect_absent iff the drop is <= 0.1 nats; inconclusive between. This labels "
+            "the native model's response to the intervention, not the attribution graph."
         ),
     )
+
+
+def classify_graph_vs_native(
+    graph_delta: float | None, native_delta: float | None, rule: DecisionRule
+) -> str:
+    """Compare the graph's predicted target-logprob drop to the native one, same intervention.
+
+    This is the scientific axis the single native label cannot answer: does the replacement
+    model (where the graph lives) *predict* a large effect where the real model shows none (a
+    genuine ``invert``, i.e. the graph is wrong), or do both show a small effect (``agree_small``
+    -- redundancy, not a graph failure), or both large (``agree_large``)?
+    """
+    if graph_delta is None or native_delta is None:
+        return "no_graph_prediction"
+    present, absent = rule.present_threshold, rule.absent_threshold
+    g_large, g_small = graph_delta >= present, graph_delta <= absent
+    n_large, n_small = native_delta >= present, native_delta <= absent
+    if g_small and n_small:
+        return "agree_small"
+    if g_large and n_large:
+        return "agree_large"
+    if g_large and n_small:
+        return "invert"  # graph predicts necessity the native model does not show
+    return "mixed"
 
 
 # --------------------------------------------------------------------------------------
@@ -146,6 +183,10 @@ class _SelectedEdge:
     feature: int
     activation: float
     graph_weight: float
+    # The replacement model's own predicted target-logprob drop for this feature's zero
+    # ablation, measured with circuit-tracer's feature_intervention (filled by the caller that
+    # still holds the replacement model). ``None`` when not supplied.
+    graph_predicted_delta: float | None = None
 
 
 @dataclass(frozen=True)
@@ -239,6 +280,11 @@ class EdgeRow:
     rule_fingerprint: str | None
     receipt: str | None
     measurements: Mapping[str, Any] = field(default_factory=dict)
+    # Graph side: the replacement model's predicted drop for the same intervention, and how it
+    # compares to the native drop (see :func:`classify_graph_vs_native`). ``None`` when the
+    # caller did not supply a graph prediction.
+    graph_predicted_delta: float | None = None
+    graph_vs_native: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         body = {
@@ -254,6 +300,8 @@ class EdgeRow:
             "covered": self.covered,
             "verdict": self.verdict,
             "native_logit_delta": self.native_logit_delta,
+            "graph_predicted_delta": self.graph_predicted_delta,
+            "graph_vs_native": self.graph_vs_native,
             "clean_logprob": self.clean_logprob,
             "ablated_logprob": self.ablated_logprob,
             "top_token_clean": self.top_token_clean,
@@ -286,24 +334,36 @@ class EdgeVerdictTable:
     graph_summary: Mapping[str, Any]
     environment: Mapping[str, Any]
     custody: Mapping[str, Any]
+    # Group interventions (joint ablation / steering of a supernode or the top-k feature set);
+    # each dict carries native_delta, graph_predicted_delta, verdict, graph_vs_native, members.
+    group_interventions: tuple[Mapping[str, Any], ...] = ()
 
     def summary(self) -> dict[str, Any]:
         covered = [r for r in self.rows if r.covered]
-        surviving = [r for r in covered if r.verdict == "survives"]
-        collapsing = [r for r in covered if r.verdict == "collapses"]
+        necessary = [r for r in covered if r.verdict == "native_necessary"]
+        absent = [r for r in covered if r.verdict == "native_effect_absent"]
         inconclusive = [r for r in covered if r.verdict == "inconclusive"]
         n_feature = sum(1 for r in self.rows if r.node_kind == "feature")
+        with_graph = [r for r in covered if r.graph_vs_native not in (None, "no_graph_prediction")]
+        agree = [r for r in with_graph if r.graph_vs_native in ("agree_small", "agree_large")]
+        invert = [r for r in with_graph if r.graph_vs_native == "invert"]
+        mixed = [r for r in with_graph if r.graph_vs_native == "mixed"]
         return {
             "n_edges": len(self.rows),
             "n_feature_edges": n_feature,
             "n_error_nodes_reported": sum(1 for r in self.rows if r.node_kind == "error"),
             "n_covered": len(covered),
-            "n_surviving": len(surviving),
-            "n_collapsing": len(collapsing),
+            "n_native_necessary": len(necessary),
+            "n_native_effect_absent": len(absent),
             "n_inconclusive": len(inconclusive),
             "n_uncovered": sum(1 for r in self.rows if not r.covered),
             "covered_fraction": (len(covered) / n_feature) if n_feature else 0.0,
-            "surviving_fraction": (len(surviving) / len(covered)) if covered else 0.0,
+            "native_necessary_fraction": (len(necessary) / len(covered)) if covered else 0.0,
+            "n_with_graph_prediction": len(with_graph),
+            "n_agree_with_graph": len(agree),
+            "n_invert_vs_graph": len(invert),
+            "n_mixed_vs_graph": len(mixed),
+            "graph_agreement_fraction": (len(agree) / len(with_graph)) if with_graph else None,
             "error_node_influence_share": self.graph_summary.get("error_node_influence_share"),
         }
 
@@ -322,6 +382,7 @@ class EdgeVerdictTable:
             "graph_summary": dict(self.graph_summary),
             "summary": self.summary(),
             "rows": [r.to_dict() for r in self.rows],
+            "group_interventions": [dict(g) for g in self.group_interventions],
             "environment": dict(self.environment),
             "custody": dict(self.custody),
             "arbiter": "unchanged native consumer; an attribution edge is a candidate, not a verdict",
@@ -463,6 +524,105 @@ def _carrier_effect(
     return row, dict(row.measurements)
 
 
+def native_group_intervention(
+    adapter: Any,
+    tokens: Sequence[int],
+    members: Sequence[Mapping[str, Any]],
+    target_token: int,
+    *,
+    name: str,
+    multiplier: float,
+    graph_predicted_delta: float | None = None,
+    decision_rule: DecisionRule | None = None,
+    clean_logits: Any | None = None,
+) -> dict[str, Any]:
+    """Jointly intervene on a whole feature set (a supernode / the top-k) on the real model.
+
+    This matches the attribution-graphs paper's group interventions: instead of zeroing one
+    feature, we steer the whole set at once. ``members`` is a list of
+    ``{layer, position, feature, activation, writes:[(write_layer, direction), ...]}``. The
+    ``multiplier`` m sets each feature's new value to ``m * activation`` (``m = 0`` ablates the
+    set; ``m = -2`` steers it to minus twice its natural activation, as the paper does); the
+    change added to the residual at each member's write layer and position is therefore
+    ``(m - 1) * activation * direction``. The group is graded for native necessity under the
+    frozen rule and compared to the replacement model's own predicted drop.
+    """
+    import torch
+
+    rule = decision_rule or default_edge_rule()
+    tokens = [int(t) for t in tokens]
+    if clean_logits is None:
+        with torch.inference_mode():
+            clean_logits = adapter.model(
+                torch.tensor([tokens], device=adapter.device)
+            ).logits[:, -1]
+
+    by_layer: dict[int, list[tuple[int, Any]]] = {}
+    member_ids = []
+    for m in members:
+        act = float(m["activation"])
+        pos = int(m["position"])
+        member_ids.append({"layer": int(m["layer"]), "position": pos,
+                            "feature": int(m["feature"]), "activation": act})
+        for write_layer, direction in m["writes"]:
+            vec = (float(multiplier) - 1.0) * act * direction.to(adapter.dtype).reshape(-1)
+            by_layer.setdefault(int(write_layer), []).append((pos, vec))
+
+    def _hook_for(entries: list[tuple[int, Any]]):
+        def hook(_module, _inputs, output):
+            hidden = output[0] if isinstance(output, tuple) else output
+            hidden = hidden.clone()
+            for pos, vec in entries:
+                hidden[:, pos, :] = hidden[:, pos, :] + vec.to(hidden.device)
+            if isinstance(output, tuple):
+                return (hidden, *output[1:])
+            return hidden
+        return hook
+
+    handles = []
+    try:
+        for write_layer, entries in by_layer.items():
+            handles.append(
+                adapter._layer_modules[write_layer].register_forward_hook(_hook_for(entries))
+            )
+        with torch.inference_mode():
+            steered = adapter.model(torch.tensor([tokens], device=adapter.device)).logits[:, -1]
+    finally:
+        for h in handles:
+            h.remove()
+
+    clean_lp, clean_top = _target_logprob(clean_logits, target_token)
+    steered_lp, steered_top = _target_logprob(steered, target_token)
+    drop = clean_lp - steered_lp
+    reading = Reading.from_external(
+        "circuit-tracer",
+        claim=f"group '{name}' ({len(member_ids)} features, multiplier {multiplier}) "
+              "is jointly load-bearing for the target logit",
+        asserts_effect=True,
+        detail={"name": name, "multiplier": multiplier, "n_members": len(member_ids)},
+    )
+    verdict, _classification, reason = grade(reading, rule, drop)
+    return {
+        "name": name,
+        "multiplier": float(multiplier),
+        "operator": "group_residual_hook",
+        "n_members": len(member_ids),
+        "members": member_ids,
+        "verdict": _VERDICT_FROM_TRIAL[verdict],
+        "native_logit_delta": drop,
+        "graph_predicted_delta": graph_predicted_delta,
+        "graph_vs_native": classify_graph_vs_native(graph_predicted_delta, drop, rule),
+        "clean_logprob": clean_lp,
+        "steered_logprob": steered_lp,
+        "top_token_clean": clean_top,
+        "top_token_steered": steered_top,
+        "top_token_flip": clean_top != steered_top,
+        "reason": reason,
+        "reading_fingerprint": reading.fingerprint,
+        "rule_fingerprint": rule.fingerprint,
+    }
+
+
 def native_edge_test(
     graph: Any,
     adapter: Any,
@@ -480,6 +640,7 @@ def native_edge_test(
     target_text: str = "",
     subject_position: int | None = None,
     graph_scores: Mapping[str, Any] | None = None,
+    group_interventions: Sequence[Mapping[str, Any]] = (),
     store: Any | None = None,
 ) -> EdgeVerdictTable:
     """Turn each selected attribution edge into a native verdict on the real model.
@@ -501,11 +662,18 @@ def native_edge_test(
     ``residual_hook``, so every edge still gets a native verdict under the same frozen rule.
 
     Every selected feature becomes a :func:`Reading.from_external` asserting the edge is
-    load-bearing, graded under the frozen ``decision_rule``: ``survives`` (native consumer
-    agrees), ``collapses`` (native consumer shows no effect), or ``inconclusive``. Transcoder
-    error nodes are reported as ``uncovered`` with their influence share. The result is a
-    :class:`EdgeVerdictTable` whose :meth:`~EdgeVerdictTable.seal` writes a hash-pinned,
-    offline-re-derivable bundle.
+    load-bearing, graded under the frozen ``decision_rule`` into a **native-necessity** label
+    (about the real model only): ``native_necessary`` (removing this one feature is individually
+    load-bearing), ``native_effect_absent`` (no individual effect -- under a redundant circuit
+    this is expected and is *not* by itself evidence against the graph), or ``inconclusive``.
+    When ``selection`` edges carry ``graph_predicted_delta`` (the replacement model's own
+    predicted drop for the same intervention), each row also gets a ``graph_vs_native`` tag
+    (:func:`classify_graph_vs_native`): ``invert`` means the graph predicted a large effect the
+    native model does not show (a real disagreement), ``agree_small``/``agree_large`` mean both
+    agree. ``group_interventions`` (built with :func:`native_group_intervention`) seal joint
+    ablation/steering of whole supernodes or the top-k set. Transcoder error nodes are reported
+    ``uncovered`` with their influence share. The result is a :class:`EdgeVerdictTable` whose
+    :meth:`~EdgeVerdictTable.seal` writes a hash-pinned, offline-re-derivable bundle.
     """
     import torch
 
@@ -594,6 +762,10 @@ def native_edge_test(
                     covered=True,
                     verdict=_VERDICT_FROM_TRIAL[trial_row.verdict],
                     native_logit_delta=trial_row.consumer_effect,
+                    graph_predicted_delta=edge.graph_predicted_delta,
+                    graph_vs_native=classify_graph_vs_native(
+                        edge.graph_predicted_delta, trial_row.consumer_effect, rule
+                    ),
                     clean_logprob=meas.get("clean_logprob"),
                     ablated_logprob=meas.get("ablated_logprob"),
                     top_token_clean=meas.get("top_token_clean"),
@@ -642,6 +814,10 @@ def native_edge_test(
                     covered=True,
                     verdict=_VERDICT_FROM_TRIAL[verdict],
                     native_logit_delta=effect,
+                    graph_predicted_delta=edge.graph_predicted_delta,
+                    graph_vs_native=classify_graph_vs_native(
+                        edge.graph_predicted_delta, effect, rule
+                    ),
                     clean_logprob=hook["clean_logprob"],
                     ablated_logprob=hook["ablated_logprob"],
                     top_token_clean=hook["top_token_clean"],
@@ -728,6 +904,7 @@ def native_edge_test(
             **{k: v for k, v in dict(adapter.execution.get("environment_versions", {})).items()},
         },
         custody=dict(store) if isinstance(store, Mapping) else {},
+        group_interventions=tuple(dict(g) for g in group_interventions),
     )
     return table
 
@@ -820,21 +997,44 @@ def verify_edge_bundle(bundle: str | Path) -> dict[str, Any]:
         )
         derived, _classification, _reason = grade(reading, rule, float(row["native_logit_delta"]))
         derived_verdict = _VERDICT_FROM_TRIAL[derived]
-        ok = derived_verdict == row["verdict"]
+        derived_gvn = classify_graph_vs_native(
+            row.get("graph_predicted_delta"), float(row["native_logit_delta"]), rule
+        )
+        ok = derived_verdict == row["verdict"] and derived_gvn == row.get("graph_vs_native")
         verdict_ok = verdict_ok and ok
         verdicts.append(
-            {"row": _row_id(row), "ok": ok, "derived": derived_verdict, "stored": row["verdict"]}
+            {"row": _row_id(row), "ok": ok, "derived": derived_verdict,
+             "stored": row["verdict"], "derived_graph_vs_native": derived_gvn}
         )
 
+    group_ok = True
+    group_checks: list[dict[str, Any]] = []
+    for g in table.get("group_interventions", []):
+        g_reading = Reading(
+            instrument="external:circuit-tracer", claim=g.get("reason") or "group intervention",
+            asserts_effect=True, source="circuit-tracer",
+        )
+        g_derived, _c, _r = grade(g_reading, rule, float(g["native_logit_delta"]))
+        g_verdict = _VERDICT_FROM_TRIAL[g_derived]
+        g_gvn = classify_graph_vs_native(
+            g.get("graph_predicted_delta"), float(g["native_logit_delta"]), rule
+        )
+        ok = g_verdict == g["verdict"] and g_gvn == g.get("graph_vs_native")
+        group_ok = group_ok and ok
+        group_checks.append({"group": g.get("name"), "ok": ok, "derived": g_verdict,
+                             "stored": g["verdict"], "derived_graph_vs_native": g_gvn})
+
     return {
-        "ok": bool(hash_ok and fingerprint_ok and rule_fp_ok and verdict_ok),
+        "ok": bool(hash_ok and fingerprint_ok and rule_fp_ok and verdict_ok and group_ok),
         "hash_ok": bool(hash_ok),
         "fingerprint_ok": bool(fingerprint_ok),
         "rule_fingerprint_ok": bool(rule_fp_ok),
         "verdict_ok": bool(verdict_ok),
+        "group_ok": bool(group_ok),
         "bundle": str(directory),
         "summary": table.get("summary"),
         "verdicts": verdicts,
+        "group_checks": group_checks,
     }
 
 
@@ -921,6 +1121,8 @@ def build_synthetic_graph(
 
 __all__ = [
     "native_edge_test",
+    "native_group_intervention",
+    "classify_graph_vs_native",
     "verify_edge_bundle",
     "select_edges",
     "default_edge_rule",
