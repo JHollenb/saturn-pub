@@ -53,3 +53,17 @@ embedded payloads) fails.
 Exactness here is about the mechanics of one program on one device and dtype: a selected,
 content-verified delta applied and rolled back exactly. The measured effect is a carrier change
 signal, not a semantic label, and no cross-family or image-quality claim is made.
+
+## Reference results
+
+Measured on an RTX 4080 with cached weights, offline. One model at a time; scratch and outputs on
+a scratch SSD; weights read-only. The scrubbed reports are in `results/`.
+
+| Adapter | Model | Device / dtype | Delta carrier (bytes) | Hydration | Effect L2 | Exact rollback | Elements | Reduction | Wall | Peak VRAM | Job |
+|---|---|---|---|---|---:|---|---:|---:|---:|---:|---|
+| decoder | Qwen2.5-0.5B | cuda / fp32 | `hidden` (3,584) | 1 resolve / 2 requests | 12.20 | verified_exact | 31,622 | 0.984 | 13.6 s | 1,897 MB | `job-926bdacce54c` |
+| flux2 | FLUX.2 Klein-4B | cuda / bf16 streamed | `text` (3,145,728) | 1 resolve / 2 requests | 2,321.99 | verified_exact | 9,230,345 | 0.984 | 31.8 s | 11,310 MB | `job-465b710d1fcf` |
+
+Both runs: `changed_vs_native` true, `raw_payloads_embedded` false, the restored fingerprint equals
+the recipient parent, and the deduplicated resolver served the repeat request from cache. These
+illustrate one measured context, not an expected universal outcome.
