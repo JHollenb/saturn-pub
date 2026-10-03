@@ -1,0 +1,108 @@
+{
+  "schema": "saturn-pub-circuit-tracer-summary-v1",
+  "model": "google/gemma-2-2b",
+  "transcoder_set": "gemma (Gemma Scope per-layer transcoders)",
+  "top_k": 20,
+  "jobs": {
+    "smoke": "job-d8761ece96f5",
+    "full": "job-2a43a5ecc5a6"
+  },
+  "elapsed_s_full": 162.5,
+  "phase_a_peak_vram_mb": 8262.5,
+  "family_validation": {
+    "max_abs_logit_delta": 3.814697265625e-05,
+    "greedy_exact": true,
+    "greedy_agreement": 1.0,
+    "fresh_process_replay_exact": true
+  },
+  "carrier_vs_resid_post_max_abs": {
+    "two_hop_dallas": 3.0517578125e-05,
+    "one_hop_france": 0.0001068115234375,
+    "identity_fox": 6.103515625e-05
+  },
+  "decision_rule": {
+    "metric": "consumer_logprob_drop",
+    "survives_ge": 0.5,
+    "collapses_le": 0.1,
+    "units": "nats"
+  },
+  "totals": {
+    "n_edges": 60,
+    "n_surviving": 1,
+    "n_collapsing": 53,
+    "n_inconclusive": 6
+  },
+  "prompts": {
+    "two_hop_dallas": {
+      "prompt": "Fact: the capital of the state containing Dallas is",
+      "target_text": " Austin",
+      "clean_top1_text": " Austin",
+      "clean_top1_is_answer": true,
+      "n_feature_edges": 20,
+      "n_covered": 20,
+      "n_surviving": 0,
+      "n_collapsing": 20,
+      "n_inconclusive": 0,
+      "surviving_fraction": 0.0,
+      "error_node_influence_share": 0.15762241686072526,
+      "n_error_nodes": 286,
+      "operators": {
+        "carrier+arbitrate": 6,
+        "residual_hook": 14
+      },
+      "native_logit_delta_min": -0.015150845050811768,
+      "native_logit_delta_max": 0.08193069696426392,
+      "bundle_sha256": "5caeda659a4b8ecbccd7b99088431769f3deb7c0ef938b4721b537762daf8391",
+      "fingerprint": "0b8300a09803621f7610e984891de489c77b8ebbf06c401b154aeab4e4a86bbe"
+    },
+    "one_hop_france": {
+      "prompt": "The capital of France is",
+      "target_text": " Paris",
+      "clean_top1_text": " a",
+      "clean_top1_is_answer": false,
+      "n_feature_edges": 20,
+      "n_covered": 20,
+      "n_surviving": 1,
+      "n_collapsing": 13,
+      "n_inconclusive": 6,
+      "surviving_fraction": 0.05,
+      "error_node_influence_share": 0.12757491647864536,
+      "n_error_nodes": 156,
+      "operators": {
+        "carrier+arbitrate": 6,
+        "residual_hook": 14
+      },
+      "native_logit_delta_min": -0.5007715225219727,
+      "native_logit_delta_max": 0.6160902976989746,
+      "bundle_sha256": "2f10e743d8ee11ffc5705e300525ec9c5e215ac56b7ac861aa3b6e60a65428a7",
+      "fingerprint": "758d63e0529bf32b47dab9918c64beb1297005419562c6104d3308481e29bad7"
+    },
+    "identity_fox": {
+      "prompt": "A photorealistic fox sitting in a forest. The animal in this picture is a",
+      "target_text": " fox",
+      "clean_top1_text": " fox",
+      "clean_top1_is_answer": true,
+      "n_feature_edges": 20,
+      "n_covered": 20,
+      "n_surviving": 0,
+      "n_collapsing": 20,
+      "n_inconclusive": 0,
+      "surviving_fraction": 0.0,
+      "error_node_influence_share": 0.17523206314946402,
+      "n_error_nodes": 442,
+      "operators": {
+        "carrier+arbitrate": 6,
+        "residual_hook": 14
+      },
+      "native_logit_delta_min": -0.058216094970703125,
+      "native_logit_delta_max": 0.021636962890625,
+      "bundle_sha256": "3bfe2f4c574d56eb631908bac28fcaebdf631a7758283b9db6bb1ee1fd692c86",
+      "fingerprint": "a0801265dff140e0d4761d757af74143158b6ffbe33f67222ad8f84ebf018868"
+    }
+  },
+  "environment": {
+    "phase_a": "circuit-tracer + nnsight, transformers 4.57.3, bf16, CUDA",
+    "phase_b": "saturn_pub native Gemma-2 adapter, fp32, CPU, eager, greedy",
+    "torch": "2.13.0+cu130"
+  }
+}
