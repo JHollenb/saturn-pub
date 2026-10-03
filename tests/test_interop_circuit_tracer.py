@@ -110,15 +110,22 @@ def test_native_edge_test_verdicts_and_error_nodes(adapter):
         top_k=10,
         prompt_text="synthetic",
     )
-    rows = {(_r["node_kind"], _r["layer"], _r["position"], _r["feature"]): _r
-            for _r in (r.to_dict() for r in table.rows)}
+    rows = {
+        (_r["node_kind"], _r["layer"], _r["position"], _r["feature"]): _r
+        for _r in (r.to_dict() for r in table.rows)
+    }
     # last-position features go through the carrier + arbitrate path with a receipt
     carrier = rows[("feature", 0, LAST, 0)]
     assert carrier["operator"] == "carrier+arbitrate"
     assert carrier["covered"] and carrier["receipt"] is not None
     assert carrier["verdict"] in {"native_necessary", "native_effect_absent", "inconclusive"}
     # carrier and residual-hook operators intervene at the same point -> same measured drop
-    assert abs(carrier["native_logit_delta"] - carrier["measurements"]["residual_hook_crosscheck_drop"]) < 1e-4
+    assert (
+        abs(
+            carrier["native_logit_delta"] - carrier["measurements"]["residual_hook_crosscheck_drop"]
+        )
+        < 1e-4
+    )
     # an earlier-position feature is covered by the residual hook (any position)
     hook = rows[("feature", 0, 0, 2)]
     assert hook["operator"] == "residual_hook" and hook["covered"]
@@ -182,8 +189,12 @@ def test_seal_and_offline_fresh_process_rederivation(adapter, tmp_path):
     with torch.inference_mode():
         target = int(adapter.model(torch.tensor([PROMPT])).logits[0, -1].argmax())
     table = native_edge_test(
-        graph, adapter, prompt_tokens=PROMPT, target_token=target,
-        decoder_writes=decoder_writes, top_k=10,
+        graph,
+        adapter,
+        prompt_tokens=PROMPT,
+        target_token=target,
+        decoder_writes=decoder_writes,
+        top_k=10,
     )
     sealed = table.seal(tmp_path)
     assert sealed["fingerprint"]
@@ -201,21 +212,27 @@ def test_seal_and_offline_fresh_process_rederivation(adapter, tmp_path):
 def test_verify_detects_tampered_verdict(adapter, tmp_path):
     decoder_writes, _ = _decoder_matrix(adapter)
     graph = build_synthetic_graph(
-        n_layers=adapter.layers, input_tokens=PROMPT,
+        n_layers=adapter.layers,
+        input_tokens=PROMPT,
         features=[(0, LAST, 0, 2.0)],
     )
     with torch.inference_mode():
         target = int(adapter.model(torch.tensor([PROMPT])).logits[0, -1].argmax())
     table = native_edge_test(
-        graph, adapter, prompt_tokens=PROMPT, target_token=target,
-        decoder_writes=decoder_writes, top_k=5,
+        graph,
+        adapter,
+        prompt_tokens=PROMPT,
+        target_token=target,
+        decoder_writes=decoder_writes,
+        top_k=5,
     )
     table.seal(tmp_path)
     body = json.loads((tmp_path / "edge_verdicts.json").read_text())
     for row in body["rows"]:
         if row["node_kind"] == "feature":
             row["verdict"] = (
-                "native_necessary" if row["verdict"] != "native_necessary"
+                "native_necessary"
+                if row["verdict"] != "native_necessary"
                 else "native_effect_absent"
             )
     (tmp_path / "edge_verdicts.json").write_text(json.dumps(body))
@@ -227,7 +244,8 @@ def _selection_with_predictions(adapter, decoder_writes, preds):
     import dataclasses
 
     graph = build_synthetic_graph(
-        n_layers=adapter.layers, input_tokens=PROMPT,
+        n_layers=adapter.layers,
+        input_tokens=PROMPT,
         features=[(0, LAST, 0, 2.0), (1, LAST, 1, 1.5), (0, 0, 2, 1.0)],
     )
     selection = select_edges(graph, top_k=10)
@@ -239,7 +257,7 @@ def _selection_with_predictions(adapter, decoder_writes, preds):
 
 def test_classify_graph_vs_native_is_deterministic():
     rule = default_edge_rule()
-    assert classify_graph_vs_native(5.0, 0.0, rule) == "invert"      # graph predicts, native none
+    assert classify_graph_vs_native(5.0, 0.0, rule) == "invert"  # graph predicts, native none
     assert classify_graph_vs_native(0.0, 0.0, rule) == "agree_small"  # both small = redundancy
     assert classify_graph_vs_native(1.0, 1.0, rule) == "agree_large"  # both load-bearing
     assert classify_graph_vs_native(0.3, 0.0, rule) == "mixed"
@@ -248,24 +266,45 @@ def test_classify_graph_vs_native_is_deterministic():
 
 def test_graph_prediction_and_group_intervention(adapter):
     decoder_writes, _ = _decoder_matrix(adapter)
-    graph, selection = _selection_with_predictions(adapter, decoder_writes, {0: 5.0, 1: 0.0, 2: 0.0})
+    graph, selection = _selection_with_predictions(
+        adapter, decoder_writes, {0: 5.0, 1: 0.0, 2: 0.0}
+    )
     with torch.inference_mode():
         target = int(adapter.model(torch.tensor([PROMPT])).logits[0, -1].argmax())
     members = [
-        {"layer": e.layer, "position": e.position, "feature": e.feature,
-         "activation": e.activation, "writes": decoder_writes(e.layer, e.feature)}
+        {
+            "layer": e.layer,
+            "position": e.position,
+            "feature": e.feature,
+            "activation": e.activation,
+            "writes": decoder_writes(e.layer, e.feature),
+        }
         for e in selection.edges
     ]
     group = native_group_intervention(
-        adapter, PROMPT, members, target, name="topk_ablate", multiplier=0.0,
+        adapter,
+        PROMPT,
+        members,
+        target,
+        name="topk_ablate",
+        multiplier=0.0,
         graph_predicted_delta=3.0,
     )
     steer = native_group_intervention(
-        adapter, PROMPT, members, target, name="topk_steer_-2x", multiplier=-2.0,
+        adapter,
+        PROMPT,
+        members,
+        target,
+        name="topk_steer_-2x",
+        multiplier=-2.0,
     )
     table = native_edge_test(
-        graph, adapter, prompt_tokens=PROMPT, target_token=target,
-        decoder_writes=decoder_writes, selection=selection,
+        graph,
+        adapter,
+        prompt_tokens=PROMPT,
+        target_token=target,
+        decoder_writes=decoder_writes,
+        selection=selection,
         group_interventions=[group, steer],
     )
     d = table.to_dict()
@@ -285,21 +324,38 @@ def test_graph_prediction_and_group_intervention(adapter):
 
 def test_groups_and_predictions_rederive_offline(adapter, tmp_path):
     decoder_writes, _ = _decoder_matrix(adapter)
-    graph, selection = _selection_with_predictions(adapter, decoder_writes, {0: 5.0, 1: 0.0, 2: 0.0})
+    graph, selection = _selection_with_predictions(
+        adapter, decoder_writes, {0: 5.0, 1: 0.0, 2: 0.0}
+    )
     with torch.inference_mode():
         target = int(adapter.model(torch.tensor([PROMPT])).logits[0, -1].argmax())
     members = [
-        {"layer": e.layer, "position": e.position, "feature": e.feature,
-         "activation": e.activation, "writes": decoder_writes(e.layer, e.feature)}
+        {
+            "layer": e.layer,
+            "position": e.position,
+            "feature": e.feature,
+            "activation": e.activation,
+            "writes": decoder_writes(e.layer, e.feature),
+        }
         for e in selection.edges
     ]
     group = native_group_intervention(
-        adapter, PROMPT, members, target, name="topk_ablate", multiplier=0.0,
+        adapter,
+        PROMPT,
+        members,
+        target,
+        name="topk_ablate",
+        multiplier=0.0,
         graph_predicted_delta=3.0,
     )
     table = native_edge_test(
-        graph, adapter, prompt_tokens=PROMPT, target_token=target,
-        decoder_writes=decoder_writes, selection=selection, group_interventions=[group],
+        graph,
+        adapter,
+        prompt_tokens=PROMPT,
+        target_token=target,
+        decoder_writes=decoder_writes,
+        selection=selection,
+        group_interventions=[group],
     )
     table.seal(tmp_path)
     result = verify_edge_bundle(tmp_path)
@@ -310,11 +366,15 @@ def test_groups_and_predictions_rederive_offline(adapter, tmp_path):
 
 def test_import_is_torch_free():
     proc = subprocess.run(
-        [sys.executable, "-c",
-         "import sys; import saturn_pub.interop.circuit_tracer as m; "
-         "assert 'torch' not in sys.modules; assert 'circuit_tracer' not in sys.modules; "
-         "print('OK')"],
-        capture_output=True, text=True,
+        [
+            sys.executable,
+            "-c",
+            "import sys; import saturn_pub.interop.circuit_tracer as m; "
+            "assert 'torch' not in sys.modules; assert 'circuit_tracer' not in sys.modules; "
+            "print('OK')",
+        ],
+        capture_output=True,
+        text=True,
     )
     assert proc.returncode == 0, proc.stderr
     assert proc.stdout.strip() == "OK"

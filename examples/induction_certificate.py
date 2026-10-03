@@ -40,10 +40,12 @@ def main() -> None:
     # 1. Freeze the decision rule and the sealed panels in advance.
     policy = InductionCircuitPolicy()  # default thresholds; native-consumer contract
     specs = [
-        InductionPanelSpec("demo-len4-seed1", seed=1, examples=48, length=4, classes=16,
-                           token_low=4, token_high=60),
-        InductionPanelSpec("demo-len5-seed2", seed=2, examples=48, length=5, classes=16,
-                           token_low=4, token_high=60),
+        InductionPanelSpec(
+            "demo-len4-seed1", seed=1, examples=48, length=4, classes=16, token_low=4, token_high=60
+        ),
+        InductionPanelSpec(
+            "demo-len5-seed2", seed=2, examples=48, length=5, classes=16, token_low=4, token_high=60
+        ),
     ]
 
     # 2+3. Measure the battery on a native decoder adapter and apply the frozen gate.
@@ -61,7 +63,9 @@ def main() -> None:
         "repair_replay_fidelity",
         "native_consumer_continuation",
     ]
-    print(f"certificate certified: {certificate['certified']}  (tiny random weights -> expected FAIL)")
+    print(
+        f"certificate certified: {certificate['certified']}  (tiny random weights -> expected FAIL)"
+    )
     print(f"content sha256: {certificate['content_sha256']}")
     header = "panel".ljust(22) + "  " + "  ".join(c[:10].rjust(10) for c in columns)
     print(header)
@@ -87,8 +91,10 @@ def main() -> None:
         OUTPUT / "certificate.json",
         worker="examples/induction_certificate.py",
     )
-    print(f"registered claim {row.claim_id!r} with status {row.status!r}; chain ok: "
-          f"{registry.verify_chain()}")
+    print(
+        f"registered claim {row.claim_id!r} with status {row.status!r}; chain ok: "
+        f"{registry.verify_chain()}"
+    )
 
     report = {
         "schema": "saturn-pub-induction-certificate-demo-v1",

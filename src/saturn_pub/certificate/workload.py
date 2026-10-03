@@ -64,7 +64,9 @@ class InductionPanelSpec:
         }
 
 
-def build_relational_induction_workload(spec: InductionPanelSpec) -> tuple[list[dict[str, Any]], int]:
+def build_relational_induction_workload(
+    spec: InductionPanelSpec,
+) -> tuple[list[dict[str, Any]], int]:
     """Build the exact arbitrary-token content-addressed retrieval assay for one panel.
 
     Returns ``(items, classes)``. Each item carries ``tokens`` (the input IDs),

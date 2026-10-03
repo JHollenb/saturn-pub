@@ -341,9 +341,7 @@ def main(argv: list[str] | None = None) -> int:
         "evidence", help="offline evidence plane: bisect | claims | xref | cite"
     )
     evidence.add_argument("evidence_args", nargs=argparse.REMAINDER)
-    route = sub.add_parser(
-        "route", help="offline metadata-delta route: validate | select | show"
-    )
+    route = sub.add_parser("route", help="offline metadata-delta route: validate | select | show")
     route.add_argument("route_args", nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
     if args.command == "evidence":

@@ -108,10 +108,18 @@ from saturn_pub.paths import PathSchedule, TimedAct, Trajectory, compare_traject
 
 parent = session.capture()
 native = Trajectory.run(
-    session, name="native", parent=parent, steps=3, ports=("hidden",),
+    session,
+    name="native",
+    parent=parent,
+    steps=3,
+    ports=("hidden",),
 )
 candidate = Trajectory.run(
-    session, name="candidate", parent=parent, steps=3, ports=("hidden",),
+    session,
+    name="candidate",
+    parent=parent,
+    steps=3,
+    ports=("hidden",),
     schedule=PathSchedule((TimedAct(1, Act.zero("hidden")),)),
 )
 comparison = compare_trajectories(native, candidate)

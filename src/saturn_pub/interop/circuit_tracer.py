@@ -402,8 +402,11 @@ class EdgeVerdictTable:
         (directory / "edge_verdicts.json").write_bytes(body)
         manifest = {"edge_verdicts.json": hashlib.sha256(body).hexdigest()}
         (directory / "manifest.json").write_bytes(canonical(manifest))
-        return {"bundle": str(directory), "fingerprint": self.to_dict()["fingerprint"],
-                "manifest": manifest}
+        return {
+            "bundle": str(directory),
+            "fingerprint": self.to_dict()["fingerprint"],
+            "manifest": manifest,
+        }
 
 
 # --------------------------------------------------------------------------------------
@@ -453,9 +456,9 @@ def _residual_hook_effect(
             )
             handles.append(handle)
         with torch.inference_mode():
-            ablated = adapter.model(
-                torch.tensor([list(tokens)], device=adapter.device)
-            ).logits[:, -1]
+            ablated = adapter.model(torch.tensor([list(tokens)], device=adapter.device)).logits[
+                :, -1
+            ]
     finally:
         for handle in handles:
             handle.remove()
@@ -489,7 +492,9 @@ def _carrier_effect(
     session.continue_(write_boundary_steps)  # now at layer:(L+1); hidden == resid_post[L], last pos
     parent = session.capture(retain=False)
     vec = direction.to(adapter.dtype).reshape(1, 1, -1)
-    act = Act.add("hidden", vec, dose=-float(edge.activation), name="circuit-tracer-feature-ablation")
+    act = Act.add(
+        "hidden", vec, dose=-float(edge.activation), name="circuit-tracer-feature-ablation"
+    )
 
     def native_driver(branch: Any) -> None:
         adapter.generate(branch, 1)
@@ -553,17 +558,23 @@ def native_group_intervention(
     tokens = [int(t) for t in tokens]
     if clean_logits is None:
         with torch.inference_mode():
-            clean_logits = adapter.model(
-                torch.tensor([tokens], device=adapter.device)
-            ).logits[:, -1]
+            clean_logits = adapter.model(torch.tensor([tokens], device=adapter.device)).logits[
+                :, -1
+            ]
 
     by_layer: dict[int, list[tuple[int, Any]]] = {}
     member_ids = []
     for m in members:
         act = float(m["activation"])
         pos = int(m["position"])
-        member_ids.append({"layer": int(m["layer"]), "position": pos,
-                            "feature": int(m["feature"]), "activation": act})
+        member_ids.append(
+            {
+                "layer": int(m["layer"]),
+                "position": pos,
+                "feature": int(m["feature"]),
+                "activation": act,
+            }
+        )
         for write_layer, direction in m["writes"]:
             vec = (float(multiplier) - 1.0) * act * direction.to(adapter.dtype).reshape(-1)
             by_layer.setdefault(int(write_layer), []).append((pos, vec))
@@ -577,6 +588,7 @@ def native_group_intervention(
             if isinstance(output, tuple):
                 return (hidden, *output[1:])
             return hidden
+
         return hook
 
     handles = []
@@ -597,7 +609,7 @@ def native_group_intervention(
     reading = Reading.from_external(
         "circuit-tracer",
         claim=f"group '{name}' ({len(member_ids)} features, multiplier {multiplier}) "
-              "is jointly load-bearing for the target logit",
+        "is jointly load-bearing for the target logit",
         asserts_effect=True,
         detail={"name": name, "multiplier": multiplier, "n_members": len(member_ids)},
     )
@@ -723,7 +735,11 @@ def native_edge_test(
         if not in_range:
             rows.append(
                 _uncovered_row(
-                    edge, write_layers, feature_type, reading, rule,
+                    edge,
+                    write_layers,
+                    feature_type,
+                    reading,
+                    rule,
                     reason="transcoder write layer is outside the model's layer range",
                 )
             )
@@ -834,7 +850,11 @@ def native_edge_test(
 
         rows.append(
             _uncovered_row(
-                edge, write_layers, feature_type, reading, rule,
+                edge,
+                write_layers,
+                feature_type,
+                reading,
+                rule,
                 reason="no enabled operator covers this edge (not last position; hook disabled)",
             )
         )
@@ -969,8 +989,16 @@ def verify_edge_bundle(bundle: str | Path) -> dict[str, Any]:
     fingerprint_ok = digest(recomputed) == stored_fp
 
     _rule_fields = {
-        "name", "version", "metric", "present_threshold", "absent_threshold",
-        "require_exact_gate", "require_sham_flat", "sham_metric", "sham_tolerance", "description",
+        "name",
+        "version",
+        "metric",
+        "present_threshold",
+        "absent_threshold",
+        "require_exact_gate",
+        "require_sham_flat",
+        "sham_metric",
+        "sham_tolerance",
+        "description",
     }
     rule_body = {k: v for k, v in table["decision_rule"].items() if k in _rule_fields}
     rule = DecisionRule(**rule_body)
@@ -982,7 +1010,9 @@ def verify_edge_bundle(bundle: str | Path) -> dict[str, Any]:
         stored = {k: v for k, v in row.items() if k != "fingerprint"}
         if digest(stored) != row.get("fingerprint"):
             verdict_ok = False
-            verdicts.append({"row": _row_id(row), "ok": False, "reason": "row fingerprint mismatch"})
+            verdicts.append(
+                {"row": _row_id(row), "ok": False, "reason": "row fingerprint mismatch"}
+            )
             continue
         if not row["covered"]:
             ok = row["verdict"] == "uncovered"
@@ -1003,16 +1033,23 @@ def verify_edge_bundle(bundle: str | Path) -> dict[str, Any]:
         ok = derived_verdict == row["verdict"] and derived_gvn == row.get("graph_vs_native")
         verdict_ok = verdict_ok and ok
         verdicts.append(
-            {"row": _row_id(row), "ok": ok, "derived": derived_verdict,
-             "stored": row["verdict"], "derived_graph_vs_native": derived_gvn}
+            {
+                "row": _row_id(row),
+                "ok": ok,
+                "derived": derived_verdict,
+                "stored": row["verdict"],
+                "derived_graph_vs_native": derived_gvn,
+            }
         )
 
     group_ok = True
     group_checks: list[dict[str, Any]] = []
     for g in table.get("group_interventions", []):
         g_reading = Reading(
-            instrument="external:circuit-tracer", claim=g.get("reason") or "group intervention",
-            asserts_effect=True, source="circuit-tracer",
+            instrument="external:circuit-tracer",
+            claim=g.get("reason") or "group intervention",
+            asserts_effect=True,
+            source="circuit-tracer",
         )
         g_derived, _c, _r = grade(g_reading, rule, float(g["native_logit_delta"]))
         g_verdict = _VERDICT_FROM_TRIAL[g_derived]
@@ -1021,8 +1058,15 @@ def verify_edge_bundle(bundle: str | Path) -> dict[str, Any]:
         )
         ok = g_verdict == g["verdict"] and g_gvn == g.get("graph_vs_native")
         group_ok = group_ok and ok
-        group_checks.append({"group": g.get("name"), "ok": ok, "derived": g_verdict,
-                             "stored": g["verdict"], "derived_graph_vs_native": g_gvn})
+        group_checks.append(
+            {
+                "group": g.get("name"),
+                "ok": ok,
+                "derived": g_verdict,
+                "stored": g["verdict"],
+                "derived_graph_vs_native": g_gvn,
+            }
+        )
 
     return {
         "ok": bool(hash_ok and fingerprint_ok and rule_fp_ok and verdict_ok and group_ok),
@@ -1105,7 +1149,9 @@ def build_synthetic_graph(
     err_start = n_feat
     for j in range(n_err):
         adjacency[logit_row, err_start + j] = 0.3 + 0.01 * (torch.rand((), generator=g).item())
-    active = torch.tensor([[layer, pos, feat] for (layer, pos, feat, _a) in features], dtype=torch.long)
+    active = torch.tensor(
+        [[layer, pos, feat] for (layer, pos, feat, _a) in features], dtype=torch.long
+    )
     activation_values = torch.tensor([a for (_l, _p, _f, a) in features], dtype=torch.float32)
     return SyntheticAttributionGraph(
         active_features=active,

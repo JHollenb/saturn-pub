@@ -110,6 +110,7 @@ The committed bundles re-derive with plain Python, no model:
 
 ```python
 from saturn_pub.interop.circuit_tracer import verify_edge_bundle
+
 result = verify_edge_bundle("experiments/circuit_tracer/bundles/two_hop_dallas")
 assert result["ok"]
 ```

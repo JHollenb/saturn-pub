@@ -128,7 +128,9 @@ def _source_deletion(
     head_list = list(heads)
     for layer in range(adapter.layers):
 
-        def pre(module: Any, args: tuple, kwargs: dict, *, _items=items, _last=last, _key=position_key):
+        def pre(
+            module: Any, args: tuple, kwargs: dict, *, _items=items, _last=last, _key=position_key
+        ):
             attention_mask = kwargs.get("attention_mask")
             if attention_mask is None:
                 raise RuntimeError("eager attention did not expose attention_mask as a keyword")
@@ -188,9 +190,9 @@ def _repair_context(
             clean = context[_layer]
             for head in head_list:
                 segment = _head_slice(adapter, head)
-                changed[rows, last, segment] = clean[
-                    source_rows, last[source_rows], segment
-                ].to(changed.dtype)
+                changed[rows, last, segment] = clean[source_rows, last[source_rows], segment].to(
+                    changed.dtype
+                )
             return (changed, *args[1:])
 
         handles.append(_out_proj(adapter, layer).register_forward_pre_hook(pre))

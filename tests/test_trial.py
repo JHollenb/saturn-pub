@@ -139,7 +139,12 @@ def test_verify_detects_a_wrong_expected_verdict(tmp_path):
 def test_naive_single_site_reading_inverts():
     reading = Reading("single-site activation patching", "no necessary component", False)
     row = arbitrate(
-        StoreCircuit().session(), reading, NECESSITY, effect=_effect, candidate=_delete_both, steps=3
+        StoreCircuit().session(),
+        reading,
+        NECESSITY,
+        effect=_effect,
+        candidate=_delete_both,
+        steps=3,
     )
     assert isinstance(row, TrialRow)
     assert row.verdict == "invert"
@@ -152,7 +157,12 @@ def test_naive_single_site_reading_inverts():
 def test_consumer_gated_reading_agrees():
     reading = Reading("consumer-gated all-step ablation", "carrier store is load-bearing", True)
     row = arbitrate(
-        StoreCircuit().session(), reading, NECESSITY, effect=_effect, candidate=_delete_both, steps=3
+        StoreCircuit().session(),
+        reading,
+        NECESSITY,
+        effect=_effect,
+        candidate=_delete_both,
+        steps=3,
     )
     assert row.verdict == "agree"
     assert row.classification == "present"
@@ -161,7 +171,12 @@ def test_consumer_gated_reading_agrees():
 def test_declined_reading_is_inconclusive():
     reading = Reading("single-step mediation", "holds at the measured step", True, declined=True)
     row = arbitrate(
-        StoreCircuit().session(), reading, NECESSITY, effect=_effect, candidate=_delete_both, steps=3
+        StoreCircuit().session(),
+        reading,
+        NECESSITY,
+        effect=_effect,
+        candidate=_delete_both,
+        steps=3,
     )
     assert row.verdict == "inconclusive"
     assert "declined" in row.reason
@@ -188,13 +203,24 @@ def test_ambiguity_band_is_inconclusive():
 
 def test_sham_control_is_recorded():
     rule = DecisionRule(
-        "necessity-sham", "1", "effect", 0.5, 0.15,
-        require_sham_flat=True, sham_metric="sham_effect", sham_tolerance=0.1,
+        "necessity-sham",
+        "1",
+        "effect",
+        0.5,
+        0.15,
+        require_sham_flat=True,
+        sham_metric="sham_effect",
+        sham_tolerance=0.1,
     )
     reading = Reading("single-site activation patching", "no necessary component", False)
     row = arbitrate(
-        StoreCircuit().session(), reading, rule, effect=_effect,
-        candidate=_delete_both, sham=_noop, steps=3,
+        StoreCircuit().session(),
+        reading,
+        rule,
+        effect=_effect,
+        candidate=_delete_both,
+        sham=_noop,
+        steps=3,
     )
     assert row.controls["sham_flat"] is True
     assert row.controls["sham_value"] == 0.0
@@ -206,8 +232,13 @@ def test_arbitrate_from_adapter_and_parent():
     parent = session.capture()
     reading = Reading("consumer-gated all-step ablation", "load-bearing", True)
     row = arbitrate(
-        StoreCircuit(), reading, NECESSITY, effect=_effect,
-        candidate=_delete_both, steps=3, parent=parent,
+        StoreCircuit(),
+        reading,
+        NECESSITY,
+        effect=_effect,
+        candidate=_delete_both,
+        steps=3,
+        parent=parent,
     )
     assert row.verdict == "agree"
 
@@ -215,14 +246,20 @@ def test_arbitrate_from_adapter_and_parent():
 def test_arbitrate_from_adapter_without_parent_refuses():
     reading = Reading("probe", "no content", False)
     with pytest.raises(ValueError, match="requires a parent"):
-        arbitrate(StoreCircuit(), reading, NECESSITY, effect=_effect, candidate=_delete_both, steps=3)
+        arbitrate(
+            StoreCircuit(), reading, NECESSITY, effect=_effect, candidate=_delete_both, steps=3
+        )
 
 
 def test_single_act_intervention_is_accepted():
     reading = Reading("ablation", "a single carrier zero has no effect (it is repaired)", False)
     row = arbitrate(
-        StoreCircuit().session(), reading, NECESSITY, effect=_effect,
-        candidate=Act.zero("carrier"), steps=3,
+        StoreCircuit().session(),
+        reading,
+        NECESSITY,
+        effect=_effect,
+        candidate=Act.zero("carrier"),
+        steps=3,
     )
     # One zero at the parent is reconstructed by the redundant writers; the consumer never changes.
     assert row.classification == "absent"

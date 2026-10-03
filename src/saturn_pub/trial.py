@@ -260,8 +260,7 @@ def grade(reading: "Reading", rule: "DecisionRule", effect: float) -> tuple[str,
     if present == reading.asserts_effect:
         return "agree", classification, "the native consumer agrees with the instrument reading"
     reason = (
-        "the native consumer shows the carrier is load-bearing where the "
-        "instrument read no effect"
+        "the native consumer shows the carrier is load-bearing where the instrument read no effect"
         if present
         else "the native consumer shows no effect where the instrument read one"
     )
@@ -470,9 +469,7 @@ class TrialRow:
 def _as_driver(spec: Act | Sequence[Act] | Driver, steps: int) -> Driver:
     if isinstance(spec, Act):
         acts: tuple[Act, ...] = (spec,)
-    elif (
-        isinstance(spec, (tuple, list)) and spec and all(isinstance(item, Act) for item in spec)
-    ):
+    elif isinstance(spec, (tuple, list)) and spec and all(isinstance(item, Act) for item in spec):
         acts = tuple(spec)
     elif callable(spec):
         return spec
@@ -634,7 +631,12 @@ class Trap:
     gate: str
 
     def to_dict(self) -> dict[str, Any]:
-        return {"number": self.number, "name": self.name, "failure": self.failure, "gate": self.gate}
+        return {
+            "number": self.number,
+            "name": self.name,
+            "failure": self.failure,
+            "gate": self.gate,
+        }
 
 
 TRAPS: tuple[Trap, ...] = (

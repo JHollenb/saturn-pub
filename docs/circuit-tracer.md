@@ -22,16 +22,17 @@ letting the downstream consumer arbitrate it.
 from saturn_pub.adapters import load
 from saturn_pub.interop.circuit_tracer import native_edge_test
 
-adapter = load("google/gemma-2-2b")          # native Gemma-2 decoder adapter, real weights
+adapter = load("google/gemma-2-2b")  # native Gemma-2 decoder adapter, real weights
 table = native_edge_test(
-    graph, adapter,                          # a circuit-tracer Graph + the real model
+    graph,
+    adapter,  # a circuit-tracer Graph + the real model
     prompt_tokens=graph.input_tokens.tolist(),
     target_token=answer_id,
-    decoder_writes=decoder_writes,           # (layer, feature) -> [(write_layer, W_dec[feature])]
+    decoder_writes=decoder_writes,  # (layer, feature) -> [(write_layer, W_dec[feature])]
     top_k=20,
 )
-print(table.summary())                       # native-necessity + graph-agreement + error share
-table.seal("bundle/")                        # hash-pinned, offline-re-derivable verdict table
+print(table.summary())  # native-necessity + graph-agreement + error share
+table.seal("bundle/")  # hash-pinned, offline-re-derivable verdict table
 ```
 
 `circuit_tracer` is an **optional** dependency, imported lazily. Importing this module needs

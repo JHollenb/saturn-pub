@@ -233,8 +233,9 @@ class DeltaCard:
                 raise RouteError(f"tag {key!r} must be a string or integer")
         object.__setattr__(self, "tags", tags)
         object.__setattr__(self, "operation", _operation_spec(self.operation))
-        refs = tuple(_reference(ref, label=f"artifact_refs[{i}]")
-                     for i, ref in enumerate(self.artifact_refs))
+        refs = tuple(
+            _reference(ref, label=f"artifact_refs[{i}]") for i, ref in enumerate(self.artifact_refs)
+        )
         roles = [ref["role"] for ref in refs]
         if len(set(roles)) != len(roles):
             raise RouteError("artifact_refs roles must be unique")
@@ -245,7 +246,9 @@ class DeltaCard:
             raise RouteError("zero operation does not reference any artifact")
         object.__setattr__(self, "artifact_refs", refs)
         if self.act_manifest is not None:
-            object.__setattr__(self, "act_manifest", _payload_free(self.act_manifest, "act_manifest"))
+            object.__setattr__(
+                self, "act_manifest", _payload_free(self.act_manifest, "act_manifest")
+            )
         object.__setattr__(self, "effect", _payload_free(self.effect or {}, "effect"))
         object.__setattr__(self, "claim_boundary", _text(self.claim_boundary, "claim_boundary"))
         limitations = tuple(_text(item, "limitations") for item in self.limitations)
@@ -318,7 +321,9 @@ class DeltaCard:
         as an artifact reference that a resolver fetches at hydration time.
         """
         operation_id = act.operation_id
-        kind = next((name for name, oid in _BUILTIN_OPERATIONS.items() if oid == operation_id), None)
+        kind = next(
+            (name for name, oid in _BUILTIN_OPERATIONS.items() if oid == operation_id), None
+        )
         if kind is None:
             raise RouteError(
                 "from_act supports the builtin add/replace/zero operations; for a custom "
@@ -342,7 +347,9 @@ class DeltaCard:
                     "shape": list(described["shape"]),
                     "dtype": str(described["dtype"]),
                     "source_handle": source_handle,
-                    "bytes": _declared_bytes({"shape": described["shape"], "dtype": described["dtype"]}),
+                    "bytes": _declared_bytes(
+                        {"shape": described["shape"], "dtype": described["dtype"]}
+                    ),
                 }
             )
         return cls(
@@ -528,11 +535,17 @@ class MetadataDeltaRoute:
         if not isinstance(summary, Mapping) or summary.get("kind") != "tensor":
             raise RouteError(f"resolved artifact {ref['role']!r} is not a tensor")
         if summary["sha256"] != ref["sha256"]:
-            raise RouteError(f"resolved artifact {ref['role']!r} content does not match its address")
+            raise RouteError(
+                f"resolved artifact {ref['role']!r} content does not match its address"
+            )
         if ref.get("shape") is not None and list(summary["shape"]) != list(ref["shape"]):
-            raise RouteError(f"resolved artifact {ref['role']!r} shape does not match its reference")
+            raise RouteError(
+                f"resolved artifact {ref['role']!r} shape does not match its reference"
+            )
         if ref.get("dtype") and str(summary["dtype"]) != str(ref["dtype"]):
-            raise RouteError(f"resolved artifact {ref['role']!r} dtype does not match its reference")
+            raise RouteError(
+                f"resolved artifact {ref['role']!r} dtype does not match its reference"
+            )
 
     @staticmethod
     def _build(card: DeltaCard, values: Mapping[str, Any]) -> Act:

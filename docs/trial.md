@@ -14,7 +14,7 @@ The module has two independent jobs. Importing it never imports torch.
 ```python
 from saturn_pub.trial import verify_bundle
 
-result = verify_bundle()          # checks the bundle shipped inside the package
+result = verify_bundle()  # checks the bundle shipped inside the package
 assert result["ok"]
 ```
 
@@ -44,17 +44,21 @@ from saturn_pub.trial import Reading, DecisionRule, arbitrate
 reading = Reading(
     instrument="single-site activation patching",
     claim="no necessary component: single-site ablation leaves the output intact",
-    asserts_effect=False,      # the instrument says the carrier is NOT load-bearing
+    asserts_effect=False,  # the instrument says the carrier is NOT load-bearing
 )
 
 rule = DecisionRule(
-    name="consumer-necessity", version="1",
-    metric="target_removed",   # key the effect evaluator returns; higher = more "present"
-    present_threshold=0.5, absent_threshold=0.15,
-    require_sham_flat=True, sham_metric="sham_removed",
+    name="consumer-necessity",
+    version="1",
+    metric="target_removed",  # key the effect evaluator returns; higher = more "present"
+    present_threshold=0.5,
+    absent_threshold=0.15,
+    require_sham_flat=True,
+    sham_metric="sham_removed",
 )
 
-def effect(branches):          # consumer closure: read the finished branches
+
+def effect(branches):  # consumer closure: read the finished branches
     native = branches["native"].read("output").tolist()[0]
     candidate = branches["candidate"].read("output").tolist()[0]
     out = {"target_removed": native - candidate}
@@ -62,10 +66,17 @@ def effect(branches):          # consumer closure: read the finished branches
         out["sham_removed"] = native - branches["sham"].read("output").tolist()[0]
     return out
 
-row = arbitrate(session, reading, rule,
-                effect=effect, candidate=ablate_across_steps,
-                sham=single_site_ablation, steps=3)
-print(row.verdict)             # "invert", "agree", or "inconclusive"
+
+row = arbitrate(
+    session,
+    reading,
+    rule,
+    effect=effect,
+    candidate=ablate_across_steps,
+    sham=single_site_ablation,
+    steps=3,
+)
+print(row.verdict)  # "invert", "agree", or "inconclusive"
 ```
 
 `arbitrate` forks the parent into a native arm, a candidate arm (your instrument's
@@ -131,6 +142,7 @@ now gated against, are available as a programmatic checklist:
 
 ```python
 from saturn_pub.trial import traps
+
 for trap in traps():
     print(trap.number, trap.name, "->", trap.gate)
 ```

@@ -17,7 +17,9 @@ from saturn_pub.evidence.citations import (
     validate_address,
 )
 
-MODULE_PATH = Path(__file__).resolve().parents[1] / "src" / "saturn_pub" / "evidence" / "citations.py"
+MODULE_PATH = (
+    Path(__file__).resolve().parents[1] / "src" / "saturn_pub" / "evidence" / "citations.py"
+)
 ADDRESS = "ar://residual/layer/12/site/x"
 
 

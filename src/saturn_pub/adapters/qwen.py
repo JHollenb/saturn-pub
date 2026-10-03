@@ -62,7 +62,9 @@ class QwenAdapter(Adapter):
         # module to the execution device at a time; place() precedes the frozen guard because
         # host pinning reassigns parameter storage.
         if residency == "streamed":
-            target = device if device is not None else ("cuda" if torch.cuda.is_available() else "cpu")
+            target = (
+                device if device is not None else ("cuda" if torch.cuda.is_available() else "cpu")
+            )
             self._residency = BlockResidency(target, mode="streamed", pin_host=pin_host)
         else:
             target = device if device is not None else next(model.parameters()).device

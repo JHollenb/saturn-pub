@@ -25,8 +25,12 @@ from saturn_pub.certificate import (
 from saturn_pub.certificate.panel import certify_decoder_induction, measure_induction_panel
 
 # small, fast alphabet; length >= 2, classes >= length, vocab is 64 on the tiny fixtures
-_SPEC_A = InductionPanelSpec("tiny-a", seed=1, examples=24, length=4, classes=16, token_low=4, token_high=60)
-_SPEC_B = InductionPanelSpec("tiny-b", seed=2, examples=24, length=5, classes=16, token_low=4, token_high=60)
+_SPEC_A = InductionPanelSpec(
+    "tiny-a", seed=1, examples=24, length=4, classes=16, token_low=4, token_high=60
+)
+_SPEC_B = InductionPanelSpec(
+    "tiny-b", seed=2, examples=24, length=5, classes=16, token_low=4, token_high=60
+)
 
 
 @pytest.mark.parametrize("family", ["qwen2", "llama"])
@@ -95,9 +99,7 @@ def test_certify_decoder_induction_round_trip():
     assert cert["gates"]["replication"] is True  # two distinct panels supplied
     assert len(cert["content_sha256"]) == 64
     # mechanical repair identity holds on both panels regardless of (random) certification
-    assert all(
-        p["metrics"]["repair_correctness_mismatch_fraction"] == 0.0 for p in cert["panels"]
-    )
+    assert all(p["metrics"]["repair_correctness_mismatch_fraction"] == 0.0 for p in cert["panels"])
 
 
 def test_unsupported_attention_family_is_refused():
@@ -108,6 +110,8 @@ def test_unsupported_attention_family_is_refused():
 
 def test_candidate_token_outside_vocab_is_refused():
     adapter = DecoderAdapter.tiny("qwen2", seed=10)  # tiny vocab is 64
-    spec = InductionPanelSpec("oob", seed=1, examples=8, length=4, classes=16, token_low=60, token_high=200)
+    spec = InductionPanelSpec(
+        "oob", seed=1, examples=8, length=4, classes=16, token_low=60, token_high=200
+    )
     with pytest.raises(ValueError, match="vocabulary"):
         measure_induction_panel(adapter, spec, batch_size=8)

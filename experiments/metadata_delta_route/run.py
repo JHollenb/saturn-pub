@@ -326,7 +326,9 @@ def main() -> None:
     parser.add_argument("--seed", type=int, default=611)
     parser.add_argument("--size", type=int, default=512)
     parser.add_argument("--steps", type=int, default=4)
-    parser.add_argument("--prompt", default="a photorealistic red fox sitting in fresh snow at dawn")
+    parser.add_argument(
+        "--prompt", default="a photorealistic red fox sitting in fresh snow at dawn"
+    )
     parser.add_argument("--output", default="metadata-delta-route")
     args = parser.parse_args()
 

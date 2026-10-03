@@ -133,13 +133,19 @@ def test_pinned_backend_and_device_are_enforced():
         consumer=ConsumerContract(backends=("native-decoder-v1",), device_prefixes=("cuda",)),
     )
     cpu_panel = _panel("on-cpu")
-    assert certify_induction_route([cpu_panel], policy)["panels"][0]["gates"][
-        "native_consumer_continuation"
-    ] is False
+    assert (
+        certify_induction_route([cpu_panel], policy)["panels"][0]["gates"][
+            "native_consumer_continuation"
+        ]
+        is False
+    )
     gpu_panel = _panel("on-gpu", execution=_execution(device="cuda:0"))
-    assert certify_induction_route([gpu_panel], policy)["panels"][0]["gates"][
-        "native_consumer_continuation"
-    ] is True
+    assert (
+        certify_induction_route([gpu_panel], policy)["panels"][0]["gates"][
+            "native_consumer_continuation"
+        ]
+        is True
+    )
 
 
 def test_duplicate_panel_ids_are_refused():

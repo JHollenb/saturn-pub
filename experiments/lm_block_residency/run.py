@@ -86,7 +86,9 @@ def _peak_vram_mb() -> float | None:
     return round(torch.cuda.max_memory_allocated() / 2**20, 1)
 
 
-def _greedy_decode(adapter, prompt: list[int], new_tokens: int) -> tuple[list[int], torch.Tensor, float]:
+def _greedy_decode(
+    adapter, prompt: list[int], new_tokens: int
+) -> tuple[list[int], torch.Tensor, float]:
     session = adapter.session(prompt)
     start = time.perf_counter()
     adapter.generate(session, new_tokens)
@@ -111,8 +113,16 @@ def _replay_verify(path, workdir, label, identifier, expected, device, dtype, st
     """Rebuild the streamed adapter in a fresh interpreter, restore the cut, and compare."""
     proc = subprocess.run(
         [
-            sys.executable, "-c", _FRESH, path, str(workdir / label), identifier,
-            device, dtype, str(steps), json.dumps(expected),
+            sys.executable,
+            "-c",
+            _FRESH,
+            path,
+            str(workdir / label),
+            identifier,
+            device,
+            dtype,
+            str(steps),
+            json.dumps(expected),
         ],
         capture_output=True,
         text=True,
@@ -178,8 +188,9 @@ def validate_one(entry, *, device, new_tokens, workdir) -> dict:
         # Resident run (the historical zero-overhead path).
         if device == "cuda":
             torch.cuda.reset_peak_memory_stats()
-        resident = load(path, residency="resident", device=device, dtype=torch_dtype,
-                        local_files_only=True)
+        resident = load(
+            path, residency="resident", device=device, dtype=torch_dtype, local_files_only=True
+        )
         record["adapter"] = type(resident).__name__
         record["parity_contract"] = resident.execution["parity"]
         res_tokens, res_logits, res_decode_s = _greedy_decode(resident, prompt, new_tokens)
@@ -194,8 +205,9 @@ def validate_one(entry, *, device, new_tokens, workdir) -> dict:
         # Streamed run (frozen weights in host memory, one block to the device at a time).
         if device == "cuda":
             torch.cuda.reset_peak_memory_stats()
-        streamed = load(path, residency="streamed", device=device, dtype=torch_dtype,
-                        local_files_only=True)
+        streamed = load(
+            path, residency="streamed", device=device, dtype=torch_dtype, local_files_only=True
+        )
         record["residency"] = streamed.execution["residency"]
         str_tokens, str_logits, str_decode_s = _greedy_decode(streamed, prompt, new_tokens)
         str_native = streamed.native_logits(prompt)
@@ -226,12 +238,15 @@ def validate_one(entry, *, device, new_tokens, workdir) -> dict:
 
     elif compare == "reference":
         # The model does not fit the card resident; reference is accelerate CPU-offload.
-        ref_tokens = _accelerate_reference(path, prompt, torch_dtype, device, new_tokens, model_type)
+        ref_tokens = _accelerate_reference(
+            path, prompt, torch_dtype, device, new_tokens, model_type
+        )
 
         if device == "cuda":
             torch.cuda.reset_peak_memory_stats()
-        streamed = load(path, residency="streamed", device=device, dtype=torch_dtype,
-                        local_files_only=True)
+        streamed = load(
+            path, residency="streamed", device=device, dtype=torch_dtype, local_files_only=True
+        )
         record["adapter"] = type(streamed).__name__
         record["parity_contract"] = streamed.execution["parity"]
         record["residency"] = streamed.execution["residency"]
@@ -269,8 +284,9 @@ def validate_one(entry, *, device, new_tokens, workdir) -> dict:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--checkpoints", required=True,
-                        help="JSON list of {family,label,path,dtype,compare}")
+    parser.add_argument(
+        "--checkpoints", required=True, help="JSON list of {family,label,path,dtype,compare}"
+    )
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--new-tokens", type=int, default=16)
     parser.add_argument("--output", default="lm-residency.json")
@@ -286,8 +302,9 @@ def main() -> None:
     results = []
     for entry in checkpoints:
         try:
-            record = validate_one(entry, device=args.device, new_tokens=args.new_tokens,
-                                  workdir=workdir)
+            record = validate_one(
+                entry, device=args.device, new_tokens=args.new_tokens, workdir=workdir
+            )
             results.append(record)
             print(f"OK {entry['label']}: {record}", flush=True)
             # Per-row marker so a wall-clock kill still yields the rows already finished.
@@ -296,12 +313,14 @@ def main() -> None:
         except Exception as exc:  # noqa: BLE001 - one failure must not sink the batch
             import traceback
 
-            results.append({
-                "family": entry.get("family"),
-                "label": entry.get("label"),
-                "path": entry.get("path"),
-                "error": f"{type(exc).__name__}: {exc}",
-            })
+            results.append(
+                {
+                    "family": entry.get("family"),
+                    "label": entry.get("label"),
+                    "path": entry.get("path"),
+                    "error": f"{type(exc).__name__}: {exc}",
+                }
+            )
             print(f"FAIL {entry.get('label')}: {exc}", flush=True)
             traceback.print_exc()
             gc.collect()

@@ -58,6 +58,7 @@ session = adapter.session([5, 7, 11])
 session.continue_(2)
 parent = session.capture()  # the cut both arms share at step 0
 
+
 def digests(cut):
     native = session.fork(parent)
     perturbed = session.fork(parent)
@@ -69,6 +70,7 @@ def digests(cut):
         native.capture(retain=False).fingerprint,
         perturbed.capture(retain=False).fingerprint,
     )
+
 
 result = first_divergence_pairs(make_cuts(24, prefix="decode-step"), digests)
 print(result.first_true_index, probe_economics(result))

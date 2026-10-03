@@ -422,7 +422,9 @@ def build_index(
                     ),
                 )
                 for table in ("files", "refs", "receipts"):
-                    connection.execute(f"DELETE FROM {table} WHERE path = ?", (relative.as_posix(),))
+                    connection.execute(
+                        f"DELETE FROM {table} WHERE path = ?", (relative.as_posix(),)
+                    )
                 continue
             stored = connection.execute(
                 "SELECT mtime, size FROM files WHERE path = ?", (relative.as_posix(),)
@@ -566,9 +568,7 @@ def dedup_refs(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
     """
 
     reported = {
-        (row["address"], _job_dir(row["path"]))
-        for row in rows
-        if row["path_class"] == "report"
+        (row["address"], _job_dir(row["path"])) for row in rows if row["path_class"] == "report"
     }
     return [
         row

@@ -501,7 +501,9 @@ class DecoderAdapter(Adapter):
         # module to the execution device at a time; resident keeps the historical zero-overhead
         # path. place() must run before the frozen guard because host pinning reassigns storage.
         if residency == "streamed":
-            target = device if device is not None else ("cuda" if torch.cuda.is_available() else "cpu")
+            target = (
+                device if device is not None else ("cuda" if torch.cuda.is_available() else "cpu")
+            )
             self._residency = BlockResidency(target, mode="streamed", pin_host=pin_host)
         else:
             target = device if device is not None else next(model.parameters()).device
@@ -752,9 +754,7 @@ class DecoderAdapter(Adapter):
         result = self._residency.run(self._layer_modules[index], hidden, **kwargs)
         return result[0] if isinstance(result, tuple) else result
 
-    def _streamed_backbone(
-        self, tokens: torch.Tensor
-    ) -> tuple[torch.Tensor, DynamicCache]:
+    def _streamed_backbone(self, tokens: torch.Tensor) -> tuple[torch.Tensor, DynamicCache]:
         """Block-streamed replica of the native backbone forward over a full token span.
 
         Streams the embedding, rotary, and every decoder layer one module at a time while the
@@ -1167,7 +1167,9 @@ class DecoderAdapter(Adapter):
             hidden, _ = self._streamed_backbone(sequence)
             final_norm = getattr(self.backbone, self.spec.final_norm)
             run = self._residency.run
-            return self._apply_logit_softcap(run(self.model.lm_head, run(final_norm, hidden))[:, -1])
+            return self._apply_logit_softcap(
+                run(self.model.lm_head, run(final_norm, hidden))[:, -1]
+            )
         return self.model(sequence).logits[:, -1]
 
 

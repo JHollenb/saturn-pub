@@ -20,10 +20,24 @@ from saturn_pub.certificate.panel import certify_decoder_induction
 torch.backends.cuda.matmul.allow_tf32 = False
 device = "cuda" if torch.cuda.is_available() else "cpu"
 specs = [
-    InductionPanelSpec("confirmation-length12-seed20260812", seed=20260812, examples=192,
-                       length=12, classes=48, token_low=1000, token_high=20000),
-    InductionPanelSpec("confirmation-length16-seed20260813", seed=20260813, examples=192,
-                       length=16, classes=48, token_low=1000, token_high=20000),
+    InductionPanelSpec(
+        "confirmation-length12-seed20260812",
+        seed=20260812,
+        examples=192,
+        length=12,
+        classes=48,
+        token_low=1000,
+        token_high=20000,
+    ),
+    InductionPanelSpec(
+        "confirmation-length16-seed20260813",
+        seed=20260813,
+        examples=192,
+        length=16,
+        classes=48,
+        token_low=1000,
+        token_high=20000,
+    ),
 ]
 for model_id in ("Qwen/Qwen2.5-0.5B", "HuggingFaceTB/SmolLM2-360M"):
     model = (
@@ -33,7 +47,7 @@ for model_id in ("Qwen/Qwen2.5-0.5B", "HuggingFaceTB/SmolLM2-360M"):
         .to(device)
         .eval()
     )
-    adapter = load(model)                       # the native decoder adapter is the runtime
+    adapter = load(model)  # the native decoder adapter is the runtime
     bundle = certify_decoder_induction(adapter, specs, InductionCircuitPolicy(), batch_size=24)
     print(model_id, bundle["certificate"]["certified"], bundle["certificate"]["content_sha256"])
 ```

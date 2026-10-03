@@ -58,7 +58,13 @@ def _card(
     return DeltaCard(
         card_id=card_id,
         recipient=_recipient(),
-        tags={"family": family, "site": site, "stream": stream, "step": step, "role": "family_delta"},
+        tags={
+            "family": family,
+            "site": site,
+            "stream": stream,
+            "step": step,
+            "role": "family_delta",
+        },
         operation=operation,
         artifact_refs=refs,
     )
@@ -129,9 +135,7 @@ def _catalog() -> MetadataDeltaRoute:
     for family in ("qwen2", "flux2-klein"):
         for site in ("layer:0", "layer:1", "joint.2"):
             for step in (0, 1):
-                cards.append(
-                    _card(f"{family}-{site}-{step}", family=family, site=site, step=step)
-                )
+                cards.append(_card(f"{family}-{site}-{step}", family=family, site=site, step=step))
     return MetadataDeltaRoute(cards, transport={"dense_bytes_estimate": 1_000_000})
 
 

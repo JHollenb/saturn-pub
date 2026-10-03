@@ -25,9 +25,9 @@ The module has three layers. Importing the package never imports torch.
 ```python
 from saturn_pub.certificate import InductionCircuitPolicy, certify_induction_route
 
-policy = InductionCircuitPolicy()          # frozen thresholds + native-consumer contract
+policy = InductionCircuitPolicy()  # frozen thresholds + native-consumer contract
 certificate = certify_induction_route(panels, policy)
-assert certificate["certified"] is True    # or read certificate["panels"][i]["gates"]
+assert certificate["certified"] is True  # or read certificate["panels"][i]["gates"]
 ```
 
 Each panel supplies five aligned per-example branches -- `clean`, `source_deletion`,
@@ -57,6 +57,7 @@ name it:
 
 ```python
 from saturn_pub.certificate import ConsumerContract
+
 policy = InductionCircuitPolicy(
     consumer=ConsumerContract(backends=("native-decoder-v1",), device_prefixes=("cuda",)),
 )
@@ -100,7 +101,7 @@ the [evidence plane](evidence.md) directly:
 from saturn_pub.evidence import ClaimsRegistry
 from saturn_pub.certificate import register_certificate_claim, certificate_receipt
 
-receipt = certificate_receipt(certificate)          # a core.Receipt seal
+receipt = certificate_receipt(certificate)  # a core.Receipt seal
 registry = ClaimsRegistry("claims.jsonl")
 register_certificate_claim(registry, certificate, "induction-cert", "...", "certificate.json")
 ```
