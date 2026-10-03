@@ -49,6 +49,14 @@ the worker. `MDB_WORKER_UV_LINK_MODE` can select `copy`, `hardlink` or `clone`;
 the selected mode is sealed and checked by bootstrap, and recorded in the
 environment receipt. Startup timing is separate from model execution timing.
 
+The qualification fleet's FUSE/NTFS volume later refused new export and cache
+files despite available bytes. Remaining proofs use an ext4 durable root and
+`MDB_WORKER_UV_CACHE_DIR=/mnt/hdd8tb/mdb/uv-cache`. A cache with linked archive
+roots was not installable by uv; `qualification/materialize_cache.py` copies
+the recorded runtime's selected archives into real ext4 directories. This is
+an operational cache repair, not a requirement to copy model weights or run a
+Saturn checkout. Keep the setup inventories and failed bootstrap records.
+
 No fleet refresh, remote publication or service deployment is part of this
 extraction. Live broker operation requires an independently qualified deployed
 mrun service. Finite scripts exercise the same session operations without that

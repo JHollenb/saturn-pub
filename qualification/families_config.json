@@ -21,6 +21,6 @@
   "state_budget_bytes": 536870912,
   "cpu_threads": 4,
   "max_wall_seconds": 3600,
-  "durable_root": "/mnt/big/mdb/qualification",
+  "durable_root": "/mnt/hdd8tb/mdb/qualification",
   "debugger_mode": "offline-native-protocol"
 }

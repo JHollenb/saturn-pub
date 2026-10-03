@@ -8,7 +8,8 @@ import shutil
 def remove_source_store(path, job_root):
     root = Path(job_root)
     source = Path(path)
-    if root.parent != Path("/mnt/big/mdb/qualification") or not re.fullmatch(r"job-[0-9a-f]{12}", root.name):
+    allowed = {Path("/mnt/big/mdb/qualification"), Path("/mnt/hdd8tb/mdb/qualification")}
+    if root.parent not in allowed or not re.fullmatch(r"job-[0-9a-f]{12}", root.name):
         raise ValueError("source deletion requires a canonical assay job root")
     if source.is_symlink() or source.resolve() == root.resolve() or not source.resolve().is_relative_to(root.resolve()):
         raise ValueError("source deletion is outside the private assay store")

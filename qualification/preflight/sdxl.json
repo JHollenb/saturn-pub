@@ -7,7 +7,7 @@
     ],
     "cpu_threads": 4,
     "debugger_mode": "offline-native-protocol",
-    "durable_root": "/mnt/big/mdb/qualification",
+    "durable_root": "/mnt/hdd8tb/mdb/qualification",
     "expected_weights_sha256": "7927c57ac742f6cb244638e01553d0ce7b4df2e699ea8a55c2e8b93170c0ae74",
     "experiment": "mdb-standalone-qualification",
     "family": "sdxl",
@@ -30,7 +30,11 @@
     "width": 512
   },
   "request": {
-    "config_bytes_sha256": "0c3e800e348e9d901199539c0d4cab45ab1b712aa4f81ed1c07ea827152c62a5",
+    "cache_materialization": {
+      "path": "/mnt/hdd8tb/mdb/cache-materialization-v2.json",
+      "sha256": "f388e335b87c3e4c7caa59b328e80b1c1c16394ad4242ea23f2e4ec46315a88e"
+    },
+    "config_bytes_sha256": "31bb6d4551d3c426c2a8f3719e20c3fa07058440e95d34dbf8e0f21dff6e92ad",
     "device": "cuda",
     "execution_environment": {
       "extra_model_roots": "/mnt/big/llm-models",
@@ -47,7 +51,7 @@
         "pillow>=10.0"
       ],
       "torch_home": "/mnt/big/llm-models/.torch-cache",
-      "uv_cache_dir": "/mnt/big/llm-models/.uv-cache",
+      "uv_cache_dir": "/mnt/hdd8tb/mdb/uv-cache",
       "uv_link_mode": "symlink"
     },
     "family": "sdxl",
@@ -123,7 +127,7 @@
       "task_family": "student-restart-proof"
     },
     "schema": "mdb-qualification-request-v1",
-    "settings_sha256": "09a7e8273a0dcd70680ec3888a0257e28af2740d25af2cb74784fd2410fc9973",
+    "settings_sha256": "063f013ee5ac2d1f99bf544c7ffac901cfed6a047512ba2868a4dbea46c8d287",
     "source_hashes": {
       "mdb/__init__.py": "e5d7ccb2f034e33c9949b5619ca273950bbd7f0bf5a5da4e4589aa3557bdf575",
       "mdb/__main__.py": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d",
@@ -146,7 +150,7 @@
       "mdb/ar/source_set.py": "d686a215519589c412ab458c634fb4972d11bad960b2439b9baa2fc3994af86d",
       "mdb/ar/training.py": "eb9eb1e93901c69954944e5ca3a2b8fd9046e7e9fb9eb531043ae537bc374615",
       "mdb/artifact_custody.py": "18887720cbb91ac04c45509d8e1fa220c78eccbcae40094f1c250999d0bc1405",
-      "mdb/assay_custody.py": "dd4b5a7d846cc9cf2a733e609bdafc670eb94c9a9b43114e360baba423496ca0",
+      "mdb/assay_custody.py": "fd758477c7b3a8a3c6aba999c7cd32ad82c9443811e7d44a369ec905a3f58398",
       "mdb/authoritative_dependency.py": "74aa50d5bb1f14c9ffce123513351d330af2ce0c860117c12a4504578ee7880e",
       "mdb/bench.py": "8d77e7b5ed29aa66b70eb1ad71b24baf786512f8ee62d2ed61b7339a6e142171",
       "mdb/bench_adapters.py": "ecf776f5880377c459e73d0eab0db1447f98b9f7794b280ff90888716af4de12",
@@ -526,7 +530,7 @@
       "mrun/training/logging.py": "7a5b83e3ec3bbc51b6b5cb538f29dc3279b88fbbc48e38f8c15628ab4b8015d5",
       "mrun/training/paged_lora.py": "514c71a921d58a173f994b6275983880f0bfd9f864407dfd8c4a22b684a3e504",
       "mrun/training/paged_lora_parity.py": "9c476da2d43237d71dedfb4e2e4bdb56fcd0e60b0342166f8049c7ffe7110c04",
-      "worker.py": "43e3b39957f1b492d2de3eb6dc82c22641759009920e72cff80133f19904a294"
+      "worker.py": "486844a0242cbc0167652129e10d257f20a40e080ed251bb4e5c3fc2bbf51847"
     },
     "task_family": "forward",
     "timeout_s": 6000

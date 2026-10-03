@@ -38,16 +38,26 @@ assays. The original parent's missing aggregate timing remains unavailable.
 The Qwen launcher jobs are `job-da82afae3ee0` (open) and `job-7011a334c1c9`
 (resume). They share session `bench-job-da82afae3ee0`.
 
+The retained 32-token references differ across Qwen lanes. Native versus virtual
+has 8, 16 and 32 equal token positions across the three prompts; none of the
+96 logit digests match across lanes. These are direct comparisons of the parent
+resume specification, not a claim about error magnitude or model quality.
+Both lanes reproduce their own references in the portable follow-up; cross-lane
+equivalence is not established, and cuts cannot be exchanged without conversion.
+
 ## Remaining qualification
 
-The independent review in `qualification/review.json` binds the current Mamba,
-FLUX and SDXL proof source maps and settings. Full admission is conditional on
-the one-token Mamba legacy ABI check and sequential offline image pilots. Worker
+The original independent review in `qualification/review.json` bound the initial
+proof source maps and settings. The final
+`qualification/review-ext4-materialized.json` binds the repaired custody guard,
+ext4 store and physically materialized cache. Its operational condition requires
+the sealed inventory and selected roots to remain unchanged through execution.
+The one-token Mamba legacy ABI check and sequential offline image pilots passed. Worker
 logs must retain the resolved environment receipt. Long proofs use one lease,
 one resident model, strict preflight and no automatic retries.
 
-Remaining work includes native continuation from copied legacy cuts, full family
-assays, their durable restart/eviction panels, evidence custody and final reports.
+Remaining work includes full image-family assays, completion of Mamba's memory
+recovery, their evidence custody and final reports.
 Deployed broker validation and Saturn consumer migration remain separate work.
 
 SDXL pilot `job-a87e433db106` completed in 104.28 seconds. The downloaded archive
@@ -61,6 +71,31 @@ sharing and exact earlier-cut restoration, but recorded zero evictions: the
 9,450,720-byte test budget exceeded the 6,331,200-byte resident allocation.
 The overall failed result is retained. The corrected panel measures each active
 closure before shrinking residency, and continues all three siblings privately.
+
+Revised Mamba `job-3148583403bb` reached independent export after its panels but
+failed copying receipts on the FUSE/NTFS store with `ENOSPC`. Its intact source
+closure independently verifies 427 cuts; its unselected partial export is
+explicitly incomplete. The source and failure record are in verified custody.
+The host reported 184GB available, so no byte-capacity exhaustion or mrun quota
+claim is made. Remaining durable stores use `/mnt/hdd8tb/mdb/qualification` on
+ext4, with roughly 3.2TB and 236 million inodes available at preflight.
+
+Focused memory startup `job-8aea8286f1ef` encountered the same FUSE cache-write
+error before model loading. `job-f783f97792e2` rejected linked archive roots
+before model loading. Both are null model evidence. The corrected ext4 cache
+contains physical copies of the successful runtime's selected dependency
+archives, with the initial overlay and both materialization inventories retained.
+Its inventory digest is bound into the new request and checked before execution.
+
+Focused Mamba `job-d6aa0de67add` completed the corrected memory panel: all three
+private suffixes matched, the parent remained unchanged, and the panel recorded
+147 evictions and 245 hydrations. Each active 3,150,240-byte closure displaced
+inactive state from a 6,300,480-byte union. Export completed, but source removal
+refused the new volume because the deletion guard still named only the original
+root. The repaired guard accepts exactly the two dedicated qualification roots
+and retains job-identity, symlink and traversal rejection. Six isolated installed
+guard tests and 21 custody/distribution/launcher checks pass. Continuation
+`job-cd60e8ca599d` uses the retained export without repeating this panel.
 
 FLUX pilot `job-b13b8853f65a` used the installed pinned mrun revision and completed
 in 189.54 seconds, including a 40.31-second offline package install, store copy,

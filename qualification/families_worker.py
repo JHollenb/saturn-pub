@@ -205,7 +205,10 @@ def produce(config, root):
                 b.step()
                 private_cuts[branch] = b.checkpoint(f"{branch}-private")
                 active_bytes = sum(allocations(b.state).values())
-                forced_budget = active_bytes + b.pages.page_bytes
+                # This admission is read-only with respect to native execution;
+                # no spare working space is needed. Even a small SDXL latent
+                # must pressure residency rather than fit inside page headroom.
+                forced_budget = active_bytes
                 if forced_budget > config["state_budget_bytes"]:
                     raise RuntimeError("forced memory panel exceeds admitted state budget")
                 union = allocations(list(b.pages.pool.values()))
@@ -235,6 +238,8 @@ def produce(config, root):
             b.pages.budget = config["state_budget_bytes"]
             selected = cuts["layer-12"] if family == "mamba" else cuts[next(k for k in cuts if k.startswith("block-"))]
             b.restore(selected)
+            (root/f"case-{index}-preexport.json").write_text(json.dumps({
+                "publication_status": "panels-complete; export-and-close-pending", "case": row}, indent=2))
             destination = root/"exports"/f"case-{index}"; b.export(destination)
             exports.append({"root": str(destination), "expected": baseline, "count": count, "cut": selected})
         row["memory_final"] = b.inspect("memory")
@@ -262,14 +267,19 @@ def main():
         print("BENCH_FAMILY_FRESH="+json.dumps(rows), flush=True); return
     raw = Path(os.environ["SATURN_RUN_CONFIG"]).read_bytes()
     request = json.loads(Path(os.environ["SATURN_DEBUG_REQUEST"]).read_text())
+    if request.get("cache_materialization"):
+        cache = request["cache_materialization"]
+        cache_bytes = Path(cache["path"]).read_bytes()
+        if sha256(cache_bytes).hexdigest() != cache["sha256"] or json.loads(cache_bytes)["missing"]:
+            raise RuntimeError("runtime cache materialization differs from the admitted request")
     if sha256(raw).hexdigest() != request["config_bytes_sha256"]: raise RuntimeError("configuration seal changed")
     config = json.loads(raw)
-    if Path(config["durable_root"]) != Path("/mnt/big/mdb/qualification"):
+    if Path(config["durable_root"]) != Path("/mnt/hdd8tb/mdb/qualification"):
         raise RuntimeError("proof durable root is outside the canonical assay store")
     import re
     if not re.fullmatch(r"job-[0-9a-f]{12}", os.environ["MRUN_JOB_ID"]):
         raise RuntimeError("proof job identity is invalid")
-    root = Path("/mnt/big/mdb/qualification")/os.environ["MRUN_JOB_ID"]
+    root = Path(config["durable_root"])/os.environ["MRUN_JOB_ID"]
     root.mkdir(parents=True, exist_ok=False)
     start = time.monotonic(); report, exports = produce(config, root)
     gc.collect(); torch.cuda.empty_cache()

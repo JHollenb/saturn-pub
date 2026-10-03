@@ -56,6 +56,10 @@ def specification(family):
         "scheduling_contract": one_lease_restart_proof_scheduling_contract(
             student_process_reconstructions=2, logical_operations=128, logical_checkpoint_replays=64,
             max_local_work_items=256, checkpoint_policy="sequential resident parent and fresh child; no retry")}
+    if request["execution_environment"]["uv_cache_dir"] == "/mnt/hdd8tb/mdb/uv-cache":
+        inventory = ROOT/"results/qualification/cache-materialization-v2.json"
+        request["cache_materialization"] = {"path": "/mnt/hdd8tb/mdb/cache-materialization-v2.json",
+                                           "sha256": sha256(inventory.read_bytes()).hexdigest()}
     request["settings_sha256"] = sha256(json.dumps(request, sort_keys=True).encode()).hexdigest()
     return config, raw, request, worker, extras, profile
 
@@ -73,10 +77,17 @@ def main():
         output.mkdir(parents=True, exist_ok=True)
         (output / "job.json").write_text(json.dumps(job, indent=2))
         (output / "worker.log").write_text(logs)
+        environment_marker = "MDB_EXECUTION_ENVIRONMENT="
+        environment = next((json.loads(line[len(environment_marker):])
+            for line in logs.splitlines() if line.startswith(environment_marker)), None)
+        if environment:
+            (output / "execution-environment.json").write_text(json.dumps(environment, indent=2))
         marker = "SATURN_BENCH_PROOF_REPORT=" if args.family == "qwen" else "BENCH_FAMILY_REPORT="
         report = next((json.loads(line[len(marker):]) for line in logs.splitlines() if line.startswith(marker)), None)
         if report:
             request = json.loads((output / "request.json").read_text())
+            if request.get("execution_environment") and environment is None:
+                raise RuntimeError("qualification report lacks its worker environment receipt")
             if report["request_sha256"] != request["request_sha256"] or report["source_hashes"] != request["source_hashes"]:
                 raise RuntimeError("qualification report/source seal mismatch")
             (output / "report.json").write_text(json.dumps(report, indent=2))
