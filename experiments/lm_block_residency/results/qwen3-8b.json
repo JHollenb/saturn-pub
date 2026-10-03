@@ -1,0 +1,78 @@
+{
+  "schema": "saturn-pub-lm-block-residency-v1",
+  "device": "cuda",
+  "new_tokens": 16,
+  "torch": "2.13.0+cu130",
+  "transformers": "5.14.1",
+  "cuda_device": "NVIDIA GeForce RTX 4080",
+  "tf32": false,
+  "results": [
+    {
+      "family": "qwen3",
+      "label": "Qwen3-8B",
+      "path": "Qwen/Qwen3-8B",
+      "dtype": "bfloat16",
+      "compare": "reference",
+      "model_type": "qwen3",
+      "prompt_len": 10,
+      "new_tokens": 16,
+      "adapter": "DecoderAdapter",
+      "parity_contract": "bounded-logits",
+      "residency": {
+        "mode": "streamed",
+        "device": {
+          "type": "cuda",
+          "index": 0
+        },
+        "host_pinned": false
+      },
+      "resident_weight_bytes": 16381470720,
+      "resident_weight_gb": 15.26,
+      "device_total_vram_gb": 15.54,
+      "fits_resident": true,
+      "streamed_peak_vram_mb": 1210.8,
+      "streamed_tokens_per_s": 0.542,
+      "reference": "HF AutoModelForCausalLM.generate, accelerate device_map CPU-offload (max_memory 10GiB GPU), eager attention, same checkpoint/dtype, greedy",
+      "greedy_tokens_equal_reference": true,
+      "streamed_tokens": [
+        705,
+        279,
+        3729,
+        13,
+        576,
+        14796,
+        374,
+        6884,
+        323,
+        279,
+        21271,
+        374,
+        16217,
+        13,
+        576,
+        3283
+      ],
+      "reference_tokens": [
+        705,
+        279,
+        3729,
+        13,
+        576,
+        14796,
+        374,
+        6884,
+        323,
+        279,
+        21271,
+        374,
+        16217,
+        13,
+        576,
+        3283
+      ],
+      "fresh_process_replay_exact": true,
+      "wall_s": 95.431
+    }
+  ],
+  "job_id": "job-6afb6e14cc9a"
+}

@@ -57,6 +57,28 @@ bit-exact. Construct a specific adapter directly (`DecoderAdapter.from_pretraine
 `MambaAdapter.from_pretrained(path)`) when you want to pin the class. Qwen2/Qwen2.5 also work
 through the dedicated `QwenAdapter` and through the generic `DecoderAdapter`.
 
+### Step a model larger than the card
+
+For a model that does not fit the device resident, pass `residency="streamed"`: the frozen weights
+stay in host memory and one native block (embedding, each decoder/mixer layer, final norm, lm_head)
+is copied to the execution device at a time. The key/value (Mamba conv/recurrent) cache stays
+resident on the device. The session grammar is unchanged; only the frozen weights stream.
+
+```python
+import torch
+from saturn_pub.adapters import load
+
+# Load on CPU (host), step on cuda one block at a time.
+adapter = load("Qwen/Qwen3-8B", residency="streamed", device="cuda", dtype=torch.bfloat16)
+session = adapter.session([101, 202, 303])
+adapter.generate(session, tokens=16)  # peaks at ~1.2 GB VRAM for the 8B weights' 15 GB
+```
+
+Wherever the model also fits resident, the streamed decode is bitwise identical to the resident one
+(same dtype and eager kernels, same device). Streaming trades speed for footprint -- the per-layer
+Python stepping plus the host->device copy is a debugging/inspection path, not a serving path. Pass
+`pin_host=True` to pin the host weights for asynchronous copies (CUDA only).
+
 ## Your Stable Diffusion checkpoint
 
 ```python
