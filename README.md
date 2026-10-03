@@ -115,7 +115,9 @@ python examples/dependency_reuse.py
 python examples/reversible_training.py
 python examples/structural_rewind.py
 python examples/shared_memory.py
+python examples/instrument_trial.py
 saturn-pub debug --family ar
+saturn-pub-trial-verify
 ```
 
 The tiny examples demonstrate mechanics on random native models and supplied synthetic tasks.
@@ -138,6 +140,12 @@ reopens graph/rules/memory/cursor futures through an empty-model, optimizer-free
 circuit, observes native repair, suppresses that repair, measures collateral, and replays both
 suffixes in fresh processes. [Symbols and causal paths](docs/debug-symbols-paths.md) explains
 qualified symbols, operation backtraces, temporal schedules, and recovery-window comparisons.
+
+`instrument_trial.py` re-derives the six shipped Instrument Trial case verdicts from a
+hash-pinned receipt bundle (stdlib, no torch), then arbitrates the same distributed-store
+ablation on the supplied redundant-writer circuit under two declared readings: a naive
+single-site patching reading inverts against the native consumer, and a consumer-gated
+reading agrees. See [the trial guide](docs/trial.md).
 
 ## Research tools
 
@@ -168,6 +176,7 @@ It loads pinned Hugging Face checkpoints or your local cache. The
 | Model loader | `adapters.load()` dispatches decoder, Mamba-1, and Qwen checkpoints by `model_type` |
 | SAELens / TransformerLens interop | Find a feature with their hooks, intervene on Saturn's aligned carrier, replay the receipt |
 | Investigation | Same-parent causal panels with per-arm evidence and errors |
+| Instrument Trial (`saturn_pub.trial`) | Arbitrate a standard-instrument reading (patching/probe/cosine/SAE) against native continuation into an agree/invert/inconclusive row with a frozen decision rule; offline `verify_bundle` re-derives the six case verdicts from a hash-pinned bundle |
 | Program | Replay measured interventions within explicit recipient/context support |
 | ReplayBundle | Seal a measured program, local cut graph, receipts, environment and adapter provenance |
 | DependencyGraph | Declared dirty closure and exact instance-local reuse |
@@ -193,6 +202,7 @@ Start with [when and how to use each capability](docs/usage.md), then choose a
 - [FLUX diffusion families and block-streamed residency](docs/diffusion-families.md)
 - [Pretrained model recipes](docs/pretrained.md)
 - [Build a writer, debug its futures, and replay](docs/writer-demo.md)
+- [Instrument Trial: arbitrate a reading against the native consumer](docs/trial.md)
 - [Capabilities and numerical contracts](docs/capabilities.md)
 - [Release validation](docs/validation.md)
 - [Extraction provenance](PROVENANCE.md)

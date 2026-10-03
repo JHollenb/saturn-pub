@@ -18,6 +18,8 @@ are not automatically enabled in every Session.
 | Keep and replay an execution state | LocalStore save/load | Content verification on full load, identity/execution compatibility on Session restore | `python examples/debugger_replay.py` |
 | Package measured replay and local ancestry | ReplayBundle | Program, environment and factory sealing; opt-in data export/import | `python examples/software_debugger.py` |
 | Explore doses and controls | Investigation | Common-parent arms, private evaluator branch, per-arm errors and retained measurements | `python examples/causal_panel.py` |
+| Arbitrate a standard-instrument reading against the consumer | `saturn_pub.trial` (`Reading`, `DecisionRule`, `arbitrate`) | Native/candidate/sham forks, exact-replay and sham controls, frozen decision rule recorded on the row | `python examples/instrument_trial.py`, [guide](trial.md) |
+| Re-derive the Instrument Trial case verdicts offline | `saturn_pub.trial.verify_bundle` / `saturn-pub-trial-verify` | SHA-256 manifest check plus frozen mechanical verdict re-derivation; stdlib, no torch | `saturn-pub-trial-verify` |
 | Map route and effect evidence | CausalPath and PortObservation | Model/parent/clock support and cut/receipt links | `python examples/software_debugger.py` |
 | Follow deletion, later repair, and collateral | SymbolTable, Trajectory, PathSchedule and Debugger | Qualified resolution, native footprints, exact common-parent alignment, retained event cuts | [Repair notebook](../notebooks/04_debugging_repair.ipynb), [guide](debug-symbols-paths.md) |
 | Replay an already measured write sequence | Program | Exact parent, context, Act descriptors and continuation-budget checks | `python examples/measured_program.py` |
@@ -120,6 +122,27 @@ This v1 program cannot automatically transfer to a new prompt or checkpoint, sch
 nonzero-delay writes, or serialize arbitrary Python Act closures. Re-measure the desired
 context or build a separately validated compiler. A completed exploratory arm is evidence
 for structural replay support, not a general semantic capability certificate.
+
+## Instrument Trial: readings vs the native consumer
+
+Use `saturn_pub.trial` when you have a verdict from a standard instrument (activation
+patching, a linear or dictionary probe, a cosine readout, an SAE ablation) and want the
+unchanged native consumer to arbitrate it. You declare the reading and its direction
+(`Reading`), a frozen mechanical `DecisionRule`, and a consumer-closure evaluator;
+`arbitrate` forks native/candidate/sham branches from one parent, runs the real remaining
+model on each, and returns a `TrialRow` whose verdict is `agree`, `invert`, or
+`inconclusive`, with the decision rule's fingerprint recorded. Controls (exact-replay
+gate, optional sham) are part of the verdict: a result whose controls fail is
+`inconclusive`, never a verdict. A reading is a candidate; only the consumer decides.
+
+`Reading.from_external` is the seam for a reading produced by another tool (a future
+circuit-tracer `native_edge_test`): it keeps the tool's provenance on the row and is
+arbitrated the same way. The tracer itself is not part of this release.
+
+`verify_bundle()` (and the `saturn-pub-trial-verify` command) re-derive the six shipped
+case verdicts from the hash-pinned receipt bundle with those same frozen rules; it is
+stdlib-only and imports no model framework. The seven measurement traps are available as a
+programmatic checklist via `saturn_pub.trial.traps()`. See [the trial guide](trial.md).
 
 ## Dependency reuse
 
