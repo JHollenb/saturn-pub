@@ -225,7 +225,19 @@ def select_edges(graph: Any, *, top_k: int, influence: Any | None = None) -> Gra
     influence = influence.float()
     feat_infl = influence[:n_feat]
     err_infl = influence[n_feat : n_feat + n_err]
-    af = view.active_features[view.selected_features]  # [n_feat, 3]
+    sel = view.selected_features
+    af = view.active_features[sel]  # [n_feat, 3]
+    # circuit-tracer's Graph.activation_values aligns with active_features (it is
+    # activation_matrix.values()), NOT with selected_features. The i-th selected feature's clean
+    # activation is therefore activation_values[selected_features[i]]; indexing by i directly
+    # mis-reads the activation (and so mis-doses any downstream -activation*W_dec ablation/steer)
+    # whenever the graph pruned some active features out of the selection. Assert the alignment so
+    # a layout change is caught rather than silently mis-doses.
+    if int(view.activation_values.shape[0]) != int(view.active_features.shape[0]):
+        raise ValueError(
+            "attribution graph activation_values must align with active_features "
+            f"({int(view.activation_values.shape[0])} vs {int(view.active_features.shape[0])})"
+        )
     order = torch.argsort(feat_infl, descending=True).tolist()
     edges = []
     for rank, i in enumerate(order[: int(top_k)]):
@@ -236,7 +248,7 @@ def select_edges(graph: Any, *, top_k: int, influence: Any | None = None) -> Gra
                 layer=layer,
                 position=pos,
                 feature=feat,
-                activation=float(view.activation_values[i]),
+                activation=float(view.activation_values[int(sel[i])]),
                 graph_weight=float(feat_infl[i]),
             )
         )
