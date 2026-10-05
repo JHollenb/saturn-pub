@@ -1,0 +1,26 @@
+{
+  "experiment": "mdb-standalone-qualification",
+  "prompts": [
+    "A red cube on a white table.",
+    "A blue sphere beside a yellow cube.",
+    "A small tree under a clear sky."
+  ],
+  "ar_prompts": [
+    "The capital of France is",
+    "Explain why the sky is blue in one sentence.",
+    "Count from one to five:"
+  ],
+  "seeds": [
+    17,
+    29
+  ],
+  "tokens": 32,
+  "height": 512,
+  "width": 512,
+  "steps": 4,
+  "state_budget_bytes": 536870912,
+  "cpu_threads": 4,
+  "max_wall_seconds": 3600,
+  "durable_root": "/mnt/hdd8tb/mdb/qualification",
+  "debugger_mode": "offline-native-protocol"
+}

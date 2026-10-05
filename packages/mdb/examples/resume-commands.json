@@ -1,0 +1,6 @@
+[
+  {"op": "inspect", "path": "status"},
+  {"op": "generate", "max_new_tokens": 2},
+  {"op": "checkpoint", "label": "resumed-two-tokens"},
+  {"op": "inspect", "path": "memory"}
+]

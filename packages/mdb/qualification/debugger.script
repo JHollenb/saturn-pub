@@ -1,0 +1,18 @@
+guided
+break layer 6
+step layer 6
+inspect residual
+inspect memory
+checkpoint debug-parent
+fork debug-candidate
+set residual 0.9 scale
+preview
+abort
+set residual 0.9 scale
+preview
+commit
+step token
+restore debug-parent
+replay debug-parent
+inspect cursor
+continue

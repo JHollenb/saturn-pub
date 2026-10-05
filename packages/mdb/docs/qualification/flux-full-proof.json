@@ -1,0 +1,362 @@
+{
+  "schema": "mdb-family-proof-summary-v2",
+  "family": "flux",
+  "job_id": "job-f603a2fd06a2",
+  "scheduler_state": "succeeded",
+  "report_sha256": "8d1163e59e11883e335a835107c6f27e86c81300b86144e6f471739f98fc61fb",
+  "request_sha256": "4f930e146255ad8386ea3dd0b701572745a715a86311dc3896a58c3d2f88f9b5",
+  "source_map_sha256": "eac6713b98f9ebb23b261ceeda66a7badfd5e4b124fc68c909addeed525bdfdb",
+  "archive": {
+    "sha256": "ffb0a5f8553a6c6d82b630f830133176e397bb59078e8ad3da549cdfcb283c57",
+    "bytes": 2833793581,
+    "members": 117130
+  },
+  "mechanics": {
+    "native_parity": true,
+    "stepped_replay": true,
+    "fresh_resume": true,
+    "debugger_identity": true,
+    "intervention_replay": true,
+    "existing_native_parity": true,
+    "memory": true
+  },
+  "elapsed_seconds": 684.4924736078829,
+  "identity": {
+    "model_id": "black-forest-labs/FLUX.2-klein-4B",
+    "revision": "local-materialized",
+    "family": "flux",
+    "weights_sha256": "dd976d67036c4a0a55642f702dcb3740ba7a4f367557596572baac168330904f",
+    "config_sha256": "fa1394b16f6fcfc45201f616899fed260793d9667af66ac31aa9b4c07f9568d9",
+    "tokenizer_sha256": "pipeline-owned-or-token-ids",
+    "dtype": "torch.bfloat16",
+    "device": "cuda",
+    "runtime_sha256": "c829bb2d6f8ef184b5a86ff279e3dba06d191fb9e5279170fe3423af15b7735d",
+    "numerical_environment": {
+      "deterministic_algorithms": true,
+      "matmul_precision": "highest",
+      "cpu_threads": null,
+      "cudnn_deterministic": true,
+      "cudnn_benchmark": false,
+      "cudnn_tf32": false,
+      "matmul_tf32": false,
+      "cublas_workspace": ":4096:8",
+      "cuda_version": "13.0",
+      "cudnn_version": 92000,
+      "cuda_device": "NVIDIA GeForce RTX 4080"
+    }
+  },
+  "source_store_removed": true,
+  "fresh_exact": true,
+  "memory": {
+    "shared": true,
+    "panel_evictions": 48,
+    "panel_hydrations": 27,
+    "forced_budgets_bytes": {
+      "main": 8180756,
+      "memory-b": 8180756,
+      "memory-c": 8180756
+    },
+    "resident_unions_bytes": {
+      "main": 78014462,
+      "memory-b": 8447992,
+      "memory-c": 8447992
+    },
+    "private_replays": {
+      "main": {
+        "cut": "cas://sha256/07707abed6d8a60c4168dc9698639f74f3decf4c5f129d8aec973f1fd08c5111",
+        "exact": true
+      },
+      "memory-b": {
+        "cut": "cas://sha256/61092c1d7397ee9de5d38186b80f5c3a687f51f71eb5bbdafc9e917c11f406ca",
+        "exact": true
+      },
+      "memory-c": {
+        "cut": "cas://sha256/6c80bb4958b60b2390b11b7ffe415c9e18f5e01bbc8b4832245eb9c03c258c54",
+        "exact": true
+      }
+    },
+    "earlier_restore_exact": true
+  },
+  "cases": [
+    {
+      "index": 0,
+      "prompt": "A red cube on a white table.",
+      "seed": 17,
+      "native_exact": true,
+      "stepped_exact": true,
+      "noop_exact": true,
+      "prepare_seconds": 13.16764593613334,
+      "native_seconds": 0.5983038889244199,
+      "bench_seconds": 5.607928670942783
+    },
+    {
+      "index": 1,
+      "prompt": "A red cube on a white table.",
+      "seed": 29,
+      "native_exact": true,
+      "stepped_exact": true,
+      "noop_exact": true,
+      "prepare_seconds": 5.489870814140886,
+      "native_seconds": 0.5848986159544438,
+      "bench_seconds": 3.5314505889546126
+    },
+    {
+      "index": 2,
+      "prompt": "A blue sphere beside a yellow cube.",
+      "seed": 17,
+      "native_exact": true,
+      "stepped_exact": true,
+      "noop_exact": true,
+      "prepare_seconds": 5.249310506973416,
+      "native_seconds": 0.5851931148208678,
+      "bench_seconds": 2.7995235337875783
+    },
+    {
+      "index": 3,
+      "prompt": "A blue sphere beside a yellow cube.",
+      "seed": 29,
+      "native_exact": true,
+      "stepped_exact": true,
+      "noop_exact": true,
+      "prepare_seconds": 3.8493456160649657,
+      "native_seconds": 0.5803128930274397,
+      "bench_seconds": 2.782837982987985
+    },
+    {
+      "index": 4,
+      "prompt": "A small tree under a clear sky.",
+      "seed": 17,
+      "native_exact": true,
+      "stepped_exact": true,
+      "noop_exact": true,
+      "prepare_seconds": 5.5997728139627725,
+      "native_seconds": 0.5804757559671998,
+      "bench_seconds": 3.7110848010051996
+    },
+    {
+      "index": 5,
+      "prompt": "A small tree under a clear sky.",
+      "seed": 29,
+      "native_exact": true,
+      "stepped_exact": true,
+      "noop_exact": true,
+      "prepare_seconds": 5.538060076069087,
+      "native_seconds": 0.5775467359926552,
+      "bench_seconds": 2.4313651320990175
+    }
+  ],
+  "independent_archive": [
+    {
+      "root": "case-1",
+      "verification": {
+        "schema": "saturn-open-bench-verification-v2",
+        "mechanics_status": "valid",
+        "family": "flux",
+        "session_id": "job-f603a2fd06a2-1",
+        "manifest_ref": "cas://sha256/e5d40e1618ca2790a73e14b895cc8cb39a69a227665c07e282a64d464b1136a4",
+        "counts": {
+          "json_artifacts": 212,
+          "payload_references": 3825,
+          "cuts": 65,
+          "symbols": 0,
+          "vm_bundles": 65
+        },
+        "payload_audit": {
+          "manifest_ref": "cas://sha256/e5d40e1618ca2790a73e14b895cc8cb39a69a227665c07e282a64d464b1136a4",
+          "schema": "mdb-payload-audit-v1",
+          "mechanics_status": "valid",
+          "unique_payloads": 3825,
+          "read_attempts": 3825,
+          "bytes_read": 249975818,
+          "unique_verified_bytes": 249975818,
+          "descriptor_payload_sha256": "a3d956b6b343ac8adadb5246592f555313ba69a64c7e8f3a036bf1a8e7d902ba",
+          "failed_payloads": [],
+          "checksum_verified": 3825,
+          "geometry_verified": 3825,
+          "misses": 0,
+          "failures": 0,
+          "authority": "disk-byte-integrity; native consumer not assessed"
+        },
+        "boundary": "byte/reference closure; model-backed native continuation is proved separately",
+        "discovery_contexts": []
+      }
+    },
+    {
+      "root": "case-2",
+      "verification": {
+        "schema": "saturn-open-bench-verification-v2",
+        "mechanics_status": "valid",
+        "family": "flux",
+        "session_id": "job-f603a2fd06a2-2",
+        "manifest_ref": "cas://sha256/7eb2b83e97980f97689d76ec417db1fbc909f31d9e3d89b68c91fdc6ef6eb072",
+        "counts": {
+          "json_artifacts": 212,
+          "payload_references": 3825,
+          "cuts": 65,
+          "symbols": 0,
+          "vm_bundles": 65
+        },
+        "payload_audit": {
+          "manifest_ref": "cas://sha256/7eb2b83e97980f97689d76ec417db1fbc909f31d9e3d89b68c91fdc6ef6eb072",
+          "schema": "mdb-payload-audit-v1",
+          "mechanics_status": "valid",
+          "unique_payloads": 3825,
+          "read_attempts": 3825,
+          "bytes_read": 249975818,
+          "unique_verified_bytes": 249975818,
+          "descriptor_payload_sha256": "696a098ff8ab2518c5f0ef8486b9243c4aa00f74d396f9ba4703cdda4d652a81",
+          "failed_payloads": [],
+          "checksum_verified": 3825,
+          "geometry_verified": 3825,
+          "misses": 0,
+          "failures": 0,
+          "authority": "disk-byte-integrity; native consumer not assessed"
+        },
+        "boundary": "byte/reference closure; model-backed native continuation is proved separately",
+        "discovery_contexts": []
+      }
+    },
+    {
+      "root": "case-3",
+      "verification": {
+        "schema": "saturn-open-bench-verification-v2",
+        "mechanics_status": "valid",
+        "family": "flux",
+        "session_id": "job-f603a2fd06a2-3",
+        "manifest_ref": "cas://sha256/c8b06575c7760e56ee971231cb8b1716aab3b19b038aef19ebcd38a89625e394",
+        "counts": {
+          "json_artifacts": 212,
+          "payload_references": 3825,
+          "cuts": 65,
+          "symbols": 0,
+          "vm_bundles": 65
+        },
+        "payload_audit": {
+          "manifest_ref": "cas://sha256/c8b06575c7760e56ee971231cb8b1716aab3b19b038aef19ebcd38a89625e394",
+          "schema": "mdb-payload-audit-v1",
+          "mechanics_status": "valid",
+          "unique_payloads": 3825,
+          "read_attempts": 3825,
+          "bytes_read": 249975818,
+          "unique_verified_bytes": 249975818,
+          "descriptor_payload_sha256": "3bf1687d7ad6e8e6ff161fe643688301050f97aefc9cf52592a8fca5345db0da",
+          "failed_payloads": [],
+          "checksum_verified": 3825,
+          "geometry_verified": 3825,
+          "misses": 0,
+          "failures": 0,
+          "authority": "disk-byte-integrity; native consumer not assessed"
+        },
+        "boundary": "byte/reference closure; model-backed native continuation is proved separately",
+        "discovery_contexts": []
+      }
+    },
+    {
+      "root": "case-4",
+      "verification": {
+        "schema": "saturn-open-bench-verification-v2",
+        "mechanics_status": "valid",
+        "family": "flux",
+        "session_id": "job-f603a2fd06a2-4",
+        "manifest_ref": "cas://sha256/fc828b8bde275d5d42b21c69fe89d9f1e71635b3cbd8c5032d4d3125ce98adbc",
+        "counts": {
+          "json_artifacts": 212,
+          "payload_references": 3825,
+          "cuts": 65,
+          "symbols": 0,
+          "vm_bundles": 65
+        },
+        "payload_audit": {
+          "manifest_ref": "cas://sha256/fc828b8bde275d5d42b21c69fe89d9f1e71635b3cbd8c5032d4d3125ce98adbc",
+          "schema": "mdb-payload-audit-v1",
+          "mechanics_status": "valid",
+          "unique_payloads": 3825,
+          "read_attempts": 3825,
+          "bytes_read": 249975818,
+          "unique_verified_bytes": 249975818,
+          "descriptor_payload_sha256": "2401a187be7c47e1e002921d9be4e7517304a88286b4fd69915b262d4be04eb8",
+          "failed_payloads": [],
+          "checksum_verified": 3825,
+          "geometry_verified": 3825,
+          "misses": 0,
+          "failures": 0,
+          "authority": "disk-byte-integrity; native consumer not assessed"
+        },
+        "boundary": "byte/reference closure; model-backed native continuation is proved separately",
+        "discovery_contexts": []
+      }
+    },
+    {
+      "root": "case-5",
+      "verification": {
+        "schema": "saturn-open-bench-verification-v2",
+        "mechanics_status": "valid",
+        "family": "flux",
+        "session_id": "job-f603a2fd06a2-5",
+        "manifest_ref": "cas://sha256/3ea95124e33ca1a1a4dfdbe5a272e6266375236233350d74ce214993bd291ba6",
+        "counts": {
+          "json_artifacts": 212,
+          "payload_references": 3825,
+          "cuts": 65,
+          "symbols": 0,
+          "vm_bundles": 65
+        },
+        "payload_audit": {
+          "manifest_ref": "cas://sha256/3ea95124e33ca1a1a4dfdbe5a272e6266375236233350d74ce214993bd291ba6",
+          "schema": "mdb-payload-audit-v1",
+          "mechanics_status": "valid",
+          "unique_payloads": 3825,
+          "read_attempts": 3825,
+          "bytes_read": 249975818,
+          "unique_verified_bytes": 249975818,
+          "descriptor_payload_sha256": "489502264e8a8a1efd92dcb3d8508e9863549235456458c8361e128a77ec3d33",
+          "failed_payloads": [],
+          "checksum_verified": 3825,
+          "geometry_verified": 3825,
+          "misses": 0,
+          "failures": 0,
+          "authority": "disk-byte-integrity; native consumer not assessed"
+        },
+        "boundary": "byte/reference closure; model-backed native continuation is proved separately",
+        "discovery_contexts": []
+      }
+    },
+    {
+      "root": "exports/case-0",
+      "verification": {
+        "schema": "saturn-open-bench-verification-v2",
+        "mechanics_status": "valid",
+        "family": "flux",
+        "session_id": "job-f603a2fd06a2-0",
+        "manifest_ref": "cas://sha256/030c15bbe2788bb91d23ac5bf043176969a8527862f925cc1588ca25a2d3510c",
+        "counts": {
+          "json_artifacts": 444,
+          "payload_references": 4225,
+          "cuts": 140,
+          "symbols": 1,
+          "vm_bundles": 140
+        },
+        "payload_audit": {
+          "manifest_ref": "cas://sha256/030c15bbe2788bb91d23ac5bf043176969a8527862f925cc1588ca25a2d3510c",
+          "schema": "mdb-payload-audit-v1",
+          "mechanics_status": "valid",
+          "unique_payloads": 4225,
+          "read_attempts": 4225,
+          "bytes_read": 276190218,
+          "unique_verified_bytes": 276190218,
+          "descriptor_payload_sha256": "65b17297a5e289a5d7fbdab17a77b10e470e93f8c552537c6eb9c8cd5adc810d",
+          "failed_payloads": [],
+          "checksum_verified": 4225,
+          "geometry_verified": 4225,
+          "misses": 0,
+          "failures": 0,
+          "authority": "disk-byte-integrity; native consumer not assessed"
+        },
+        "boundary": "byte/reference closure; model-backed native continuation is proved separately",
+        "discovery_contexts": []
+      }
+    }
+  ],
+  "debugger_status": "in-process protocol; deployed fleet broker pending",
+  "boundary": "Qualified checkpoint/numerical lane and bounded native-consumer mechanics. Discovery signed observations retained; discovery quality and deployed broker qualification are separate."
+}

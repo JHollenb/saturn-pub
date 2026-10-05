@@ -1,0 +1,17 @@
+[
+  {"op": "inspect", "path": "status"},
+  {"op": "step", "kind": "embedding"},
+  {"op": "step", "kind": "layer"},
+  {"op": "checkpoint", "label": "common-layer-parent"},
+  {"op": "fork", "name": "baseline"},
+  {"op": "generate", "max_new_tokens": 4},
+  {"op": "checkpoint", "label": "baseline-end"},
+  {"op": "checkout", "name": "main"},
+  {"op": "fork", "name": "replayed"},
+  {"op": "generate", "max_new_tokens": 4},
+  {"op": "checkpoint", "label": "replayed-end"},
+  {"op": "inspect", "path": "memory"},
+  {"op": "inspect", "path": "frames"},
+  {"op": "inspect", "path": "symbols"},
+  {"op": "inspect", "path": "performance"}
+]

@@ -1,0 +1,61 @@
+{
+  "schema": "mdb-family-proof-summary-v1",
+  "job_id": "job-eb8c686d27ed",
+  "family": "mamba",
+  "scheduler_state": "failed",
+  "report_sha256": "fd9a1f9bb97e5cc82d088b9e353f0cce5d97aeeddd6e2ce6b460a0a49433b68c",
+  "mechanics": {
+    "native_parity": true,
+    "stepped_replay": true,
+    "fresh_resume": true,
+    "debugger_identity": true,
+    "intervention_replay": true,
+    "existing_native_parity": true,
+    "memory": false
+  },
+  "elapsed_seconds": 611.4220630691852,
+  "source_store_removed": true,
+  "cases": [
+    {
+      "index": 0,
+      "prompt": "The capital of France is",
+      "seed": 17,
+      "native_exact": true,
+      "stepped_exact": true,
+      "noop_exact": true,
+      "prepare_seconds": 1.0465966660995036,
+      "bench_seconds": 25.00828373595141,
+      "native_seconds": 0.45228849118575454
+    },
+    {
+      "index": 1,
+      "prompt": "Explain why the sky is blue in one sentence.",
+      "seed": 17,
+      "native_exact": true,
+      "stepped_exact": true,
+      "noop_exact": true,
+      "prepare_seconds": 1.1389737939462066,
+      "bench_seconds": 30.623551017139107,
+      "native_seconds": 0.5119865289889276
+    },
+    {
+      "index": 2,
+      "prompt": "Count from one to five:",
+      "seed": 17,
+      "native_exact": true,
+      "stepped_exact": true,
+      "noop_exact": true,
+      "prepare_seconds": 0.8827952081337571,
+      "bench_seconds": 25.002114141127095,
+      "native_seconds": 0.3329556239768863
+    }
+  ],
+  "fresh_exact": true,
+  "memory_diagnostic": {
+    "shared": true,
+    "evictions": 0,
+    "budget_bytes": 9450720,
+    "resident_bytes": 6331200
+  },
+  "boundary": "Execution panels passed; inherited forced-eviction instrument underfilled its budget. Overall mechanics invalid, preserved as diagnostic. Corrected memory panel requires independent review and a new specimen."
+}

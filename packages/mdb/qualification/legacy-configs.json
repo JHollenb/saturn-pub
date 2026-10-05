@@ -1,0 +1,61 @@
+{
+  "mamba": {
+    "model": "mamba-130m",
+    "family": "mamba",
+    "cpu_threads": 4,
+    "expected_weights_sha256": "afde3cdedd34132cfe0653204f1066abf4489aaa1c737bddeba03a4b599855b8",
+    "legacy_export": "/mnt/big/saturn-open-bench-families/job-dbb9cbfa8a7f/exports/case-0",
+    "selected_sha256": "f7b6996a7c97fbf86f38698c009901753cfc54f3c3f46c7dfa8c815e83258982",
+    "expected": [
+      [
+        275,
+        "02d62039f012d845e968fa58cae02071dbf27fcfa71f4359bce9c27e062c16fc"
+      ]
+    ],
+    "durable_root": "/mnt/big/mdb/qualification",
+    "expected_runtime_sha256": "f3ee928ff1561705a90b3aaa9b37f6706df8ea1e437401487a5e93b98985bcf0",
+    "original_cut_id": "cas://sha256/c525defef6422c85487e2b50a5473bbefc6d9c46381089734b0eedfd61678cc8",
+    "expected_cut_cursor": {"token": 0, "phase": "token", "next_layer": null, "pending_token": 275},
+    "prepared_store": "/mnt/big/mdb/qualification/job-cae29eb76eb6/export",
+    "prepared_selected_sha256": "f7b6996a7c97fbf86f38698c009901753cfc54f3c3f46c7dfa8c815e83258982",
+    "legacy_numerical_environment": {
+      "deterministic_algorithms": true,
+      "matmul_precision": "highest",
+      "cpu_threads": null,
+      "cudnn_deterministic": true,
+      "cudnn_benchmark": false,
+      "cudnn_tf32": false,
+      "matmul_tf32": false,
+      "cublas_workspace": ":4096:8",
+      "cuda_version": "13.0",
+      "cudnn_version": 92000,
+      "cuda_device": "NVIDIA GeForce RTX 4080"
+    }
+  },
+  "flux": {
+    "model": "flux2-klein-4b-distilled",
+    "family": "flux",
+    "cpu_threads": 4,
+    "expected_weights_sha256": "dd976d67036c4a0a55642f702dcb3740ba7a4f367557596572baac168330904f",
+    "legacy_export": "/mnt/big/saturn-open-bench-families/job-c243fb97139d/exports/case-0",
+    "selected_sha256": "4990cefafa7c1ec23a121654e3630c59f03cca1f0d127a758b32381f4d52ec58",
+    "expected": "43e4a54f2f93a3225024931a6b611637e78d29645f60027ef0ad022187b2ef73",
+    "durable_root": "/mnt/big/mdb/qualification",
+    "expected_runtime_sha256": "c829bb2d6f8ef184b5a86ff279e3dba06d191fb9e5279170fe3423af15b7735d",
+    "original_cut_id": "cas://sha256/9c8ad1217d3fe566213300b4265fad742fccb3c4c8b00a922ef2954de870cb70",
+    "expected_cut_cursor": {"block": null, "phase": "conditioner", "step": 0, "total_steps": 4}
+  },
+  "sdxl": {
+    "model": "illustrious-xl",
+    "family": "sdxl",
+    "cpu_threads": 4,
+    "expected_weights_sha256": "7927c57ac742f6cb244638e01553d0ce7b4df2e699ea8a55c2e8b93170c0ae74",
+    "legacy_export": "/mnt/big/saturn-open-bench-families/job-8fed69b486e1/exports/case-0",
+    "selected_sha256": "615dd37fe1489e487da8a3a4792efb0358f542be4dcc8b1f9222324f7aaa4bde",
+    "expected": "b01732dcd7a3a7e501fede1d69be83e7870635e27e065d434c12a8f8835c081c",
+    "durable_root": "/mnt/big/mdb/qualification",
+    "expected_runtime_sha256": "49ac597f4e7391ea8e6f7c1c61776309c7f46a9e1fce94d01d869400f1203121",
+    "original_cut_id": "cas://sha256/b0e462745d52652c0488491861d2dbef83f1a993b01869782aaa0b197684e97c",
+    "expected_cut_cursor": {"block": null, "phase": "conditioner", "step": 0, "total_steps": 4}
+  }
+}

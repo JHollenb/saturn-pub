@@ -1,0 +1,986 @@
+{
+  "files": [
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/causal_context_qwen.py",
+      "extracted_sha256": "ef00ab14e0d1423e9e5893a8306c994a1fe9213debb702103ad28980118bad74",
+      "final_sha256": "ef00ab14e0d1423e9e5893a8306c994a1fe9213debb702103ad28980118bad74",
+      "module": "saturn.ar.causal_context_qwen",
+      "original_path": "src/saturn/ar/causal_context_qwen.py",
+      "original_sha256": "cb237aa4d8c6e530c5498b62628521d6d12c5d787163f2edf5c37e8cdac2be83"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/embedding.py",
+      "extracted_sha256": "a7ee13463f025659ac4310076a3b9454c0c9920311ccb118615f97218496e5fb",
+      "final_sha256": "a7ee13463f025659ac4310076a3b9454c0c9920311ccb118615f97218496e5fb",
+      "module": "saturn.ar.embedding",
+      "original_path": "src/saturn/ar/embedding.py",
+      "original_sha256": "f848b5655661059f4d985ecd6423586dd2498e1429968a4aedb95b7acd1f696d"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/mamba_state_program.py",
+      "extracted_sha256": "a8c9e37ecf2eaae2c93d5371a63bf8affe43e7ca85788b4d366c85516f4bde50",
+      "final_sha256": "a8c9e37ecf2eaae2c93d5371a63bf8affe43e7ca85788b4d366c85516f4bde50",
+      "module": "saturn.ar.mamba_state_program",
+      "original_path": "src/saturn/ar/mamba_state_program.py",
+      "original_sha256": "62c881371d446bf7f4fd144230baccb327038e91cba123274f86d2f489a6cc5c"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/mamba_state_runtime.py",
+      "extracted_sha256": "3566b2e8a78c9ebb4aed00d15e82dc8092c6b379e2a4d85e3964accd915f630a",
+      "final_sha256": "3566b2e8a78c9ebb4aed00d15e82dc8092c6b379e2a4d85e3964accd915f630a",
+      "module": "saturn.ar.mamba_state_runtime",
+      "original_path": "src/saturn/ar/mamba_state_runtime.py",
+      "original_sha256": "7228b7c0ff6c2e83776d040cba093503a044b1abd2fdb6c65466dbb1c16a90a2"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/model.py",
+      "extracted_sha256": "56da077f6ac987be75458071a5034ede2ab9c7fca205968c3b80b74310bc4233",
+      "final_sha256": "56da077f6ac987be75458071a5034ede2ab9c7fca205968c3b80b74310bc4233",
+      "module": "saturn.ar.model",
+      "original_path": "src/saturn/ar/model.py",
+      "original_sha256": "1a950890cc5d6743fe9e1a316dd85447f4d8bf52c8565a624078caf6f428438e"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/observe.py",
+      "extracted_sha256": "5d412746c1d16dc1b195ae14c6699cd948d58a642702a56186e2381067812e53",
+      "final_sha256": "5d412746c1d16dc1b195ae14c6699cd948d58a642702a56186e2381067812e53",
+      "module": "saturn.ar.observe",
+      "original_path": "src/saturn/ar/observe.py",
+      "original_sha256": "f28c1ec68995419351528906daefc40fe3c4e6e4153b1f75ec0d1bee8076e288"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/paged_kv.py",
+      "extracted_sha256": "e6b68490048ab5f95a028943841c76558ab7031f8f4d920654135b924cdb1f29",
+      "final_sha256": "e6b68490048ab5f95a028943841c76558ab7031f8f4d920654135b924cdb1f29",
+      "module": "saturn.ar.paged_kv",
+      "original_path": "src/saturn/ar/paged_kv.py",
+      "original_sha256": "90d586095ab432f3b367562502b0aa5f0741ac2759676128f1b4aeaf71c37d03"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/persistent_kv_history.py",
+      "extracted_sha256": "97b4256a2de917aa00dd808263dd146aaf3eceaa54923af5423d1bddd8543946",
+      "final_sha256": "97b4256a2de917aa00dd808263dd146aaf3eceaa54923af5423d1bddd8543946",
+      "module": "saturn.ar.persistent_kv_history",
+      "original_path": "src/saturn/ar/persistent_kv_history.py",
+      "original_sha256": "46047ff43a4477fdafe2efc2110c30104d1da388120235c8173fdfd9cf2f469a"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/prefix_program.py",
+      "extracted_sha256": "855aa880fcb42d20486f7d8b8501ffd8142e0deb5e9b57f4fb934c7c8e4c4272",
+      "final_sha256": "855aa880fcb42d20486f7d8b8501ffd8142e0deb5e9b57f4fb934c7c8e4c4272",
+      "module": "saturn.ar.prefix_program",
+      "original_path": "src/saturn/ar/prefix_program.py",
+      "original_sha256": "cc6c7804934aa721e401445f653f31e0b9f7069d06384e2013b19ceb64615459"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/program_record.py",
+      "extracted_sha256": "a7b056308e815a9b15aaef905321db35191b90f3d04a528811d66064b1efbf86",
+      "final_sha256": "a7b056308e815a9b15aaef905321db35191b90f3d04a528811d66064b1efbf86",
+      "module": "saturn.ar.program_record",
+      "original_path": "src/saturn/ar/program_record.py",
+      "original_sha256": "aceffed3e2c97e21a375fb81df3475812038bbcd5bcdae0c1aab5718a77625d7"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/qwen_joint_value_output.py",
+      "extracted_sha256": "3cc98c4c4da3486aa5d500783ea0787fb73a56ce0796fdd0da012acbd7b12f85",
+      "final_sha256": "3cc98c4c4da3486aa5d500783ea0787fb73a56ce0796fdd0da012acbd7b12f85",
+      "module": "saturn.ar.qwen_joint_value_output",
+      "original_path": "src/saturn/ar/qwen_joint_value_output.py",
+      "original_sha256": "3cc98c4c4da3486aa5d500783ea0787fb73a56ce0796fdd0da012acbd7b12f85"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/qwen_joint_value_output_fused.py",
+      "extracted_sha256": "51eb7393e399b61a52971c560da2e376203f9c478e9ab41797aad0d82b740e2c",
+      "final_sha256": "51eb7393e399b61a52971c560da2e376203f9c478e9ab41797aad0d82b740e2c",
+      "module": "saturn.ar.qwen_joint_value_output_fused",
+      "original_path": "src/saturn/ar/qwen_joint_value_output_fused.py",
+      "original_sha256": "d2bed74b6bf61bfd5b786e3d8e43f0167495687c047b71d45a7d9a8dbdc8813b"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/qwen_shared_ancestor_attention.py",
+      "extracted_sha256": "8749a280b622fabd007b9cc5677e50846b4a029c78a681ef3713b244a354c235",
+      "final_sha256": "8749a280b622fabd007b9cc5677e50846b4a029c78a681ef3713b244a354c235",
+      "module": "saturn.ar.qwen_shared_ancestor_attention",
+      "original_path": "src/saturn/ar/qwen_shared_ancestor_attention.py",
+      "original_sha256": "0313aeb483d7f6b78b5572944a434861b84052aa1e028021db4c7d68c154e2f2"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/source_set.py",
+      "extracted_sha256": "d686a215519589c412ab458c634fb4972d11bad960b2439b9baa2fc3994af86d",
+      "final_sha256": "d686a215519589c412ab458c634fb4972d11bad960b2439b9baa2fc3994af86d",
+      "module": "saturn.ar.source_set",
+      "original_path": "src/saturn/ar/source_set.py",
+      "original_sha256": "87fd306954213c6d8f51ddd9b38080764ed83c9c6bc2dfc83c6fd70569bd8ca3"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/training.py",
+      "extracted_sha256": "eb9eb1e93901c69954944e5ca3a2b8fd9046e7e9fb9eb531043ae537bc374615",
+      "final_sha256": "eb9eb1e93901c69954944e5ca3a2b8fd9046e7e9fb9eb531043ae537bc374615",
+      "module": "saturn.ar.training",
+      "original_path": "src/saturn/ar/training.py",
+      "original_sha256": "eb9eb1e93901c69954944e5ca3a2b8fd9046e7e9fb9eb531043ae537bc374615"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/artifact_custody.py",
+      "extracted_sha256": "18887720cbb91ac04c45509d8e1fa220c78eccbcae40094f1c250999d0bc1405",
+      "final_sha256": "18887720cbb91ac04c45509d8e1fa220c78eccbcae40094f1c250999d0bc1405",
+      "module": "saturn.artifact_custody",
+      "original_path": "src/saturn/artifact_custody.py",
+      "original_sha256": "18887720cbb91ac04c45509d8e1fa220c78eccbcae40094f1c250999d0bc1405"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/authoritative_dependency.py",
+      "extracted_sha256": "74aa50d5bb1f14c9ffce123513351d330af2ce0c860117c12a4504578ee7880e",
+      "final_sha256": "74aa50d5bb1f14c9ffce123513351d330af2ce0c860117c12a4504578ee7880e",
+      "module": "saturn.authoritative_dependency",
+      "original_path": "src/saturn/authoritative_dependency.py",
+      "original_sha256": "74aa50d5bb1f14c9ffce123513351d330af2ce0c860117c12a4504578ee7880e"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/bench.py",
+      "extracted_sha256": "d8ef7ffc6e0eadf12c55e952603cd9e6aca04b12492fbcf9c6fc602e64ca945f",
+      "final_sha256": "8d77e7b5ed29aa66b70eb1ad71b24baf786512f8ee62d2ed61b7339a6e142171",
+      "module": "saturn.bench",
+      "original_path": "src/saturn/bench.py",
+      "original_sha256": "d8ef7ffc6e0eadf12c55e952603cd9e6aca04b12492fbcf9c6fc602e64ca945f"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/bench_adapters.py",
+      "extracted_sha256": "ecf776f5880377c459e73d0eab0db1447f98b9f7794b280ff90888716af4de12",
+      "final_sha256": "ecf776f5880377c459e73d0eab0db1447f98b9f7794b280ff90888716af4de12",
+      "module": "saturn.bench_adapters",
+      "original_path": "src/saturn/bench_adapters.py",
+      "original_sha256": "ecf776f5880377c459e73d0eab0db1447f98b9f7794b280ff90888716af4de12"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/bench_admission.py",
+      "extracted_sha256": "e0940e522e31c02f8cf96de64e78545054affbc82335ae717f58eb64f53fe076",
+      "final_sha256": "e0940e522e31c02f8cf96de64e78545054affbc82335ae717f58eb64f53fe076",
+      "module": "saturn.bench_admission",
+      "original_path": "src/saturn/bench_admission.py",
+      "original_sha256": "3b41eea4cfe56da67f6db8e08c517c2c1d823bf54b41eabf5d30deef8131c71b"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/bench_circuit_measurement.py",
+      "extracted_sha256": "504ec645b4bda8153b09cf1dcd74d497d070e1c2b0b2c70179346dafdf8d932e",
+      "final_sha256": "504ec645b4bda8153b09cf1dcd74d497d070e1c2b0b2c70179346dafdf8d932e",
+      "module": "saturn.bench_circuit_measurement",
+      "original_path": "src/saturn/bench_circuit_measurement.py",
+      "original_sha256": "b8714b11d0c51fd8b29e94bf8a3de23ae7fc8fa2ba3c8816f04974af52726317"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/bench_cli.py",
+      "extracted_sha256": "daab342b7fedcabb24609165ed97bc6a36f13c62fa344938f86eca27ee679779",
+      "final_sha256": "1073d2b4fd817846847053e950a5a1db95fc95967e5f0cc10b428ce09b8bd23a",
+      "module": "saturn.bench_cli",
+      "original_path": "src/saturn/bench_cli.py",
+      "original_sha256": "86377965d1807121c0ce353f1d78d40a20fedeb9c33c7ad4a7b5a9611f26b1c4"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/bench_debugger.py",
+      "extracted_sha256": "ba5aba2a1a1da0ee02eae374ecb30694e4f1a013a4c74df6fe6c856ec5f69945",
+      "final_sha256": "ba5aba2a1a1da0ee02eae374ecb30694e4f1a013a4c74df6fe6c856ec5f69945",
+      "module": "saturn.bench_debugger",
+      "original_path": "src/saturn/bench_debugger.py",
+      "original_sha256": "2c17a03685654c0fd851ddc2cf81cfe66b8e026269442c4dfab4c963ba7a7459"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/bench_diffusion.py",
+      "extracted_sha256": "b675e399435649b513d5c2b0e20da10946af6784d5d398f8924dc3e52d6db818",
+      "final_sha256": "b675e399435649b513d5c2b0e20da10946af6784d5d398f8924dc3e52d6db818",
+      "module": "saturn.bench_diffusion",
+      "original_path": "src/saturn/bench_diffusion.py",
+      "original_sha256": "b675e399435649b513d5c2b0e20da10946af6784d5d398f8924dc3e52d6db818"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/bench_discovery.py",
+      "extracted_sha256": "a310348ffdb9a3443479337aaf74515229670c469e72fa2d4062c3bfc600eb19",
+      "final_sha256": "a310348ffdb9a3443479337aaf74515229670c469e72fa2d4062c3bfc600eb19",
+      "module": "saturn.bench_discovery",
+      "original_path": "src/saturn/bench_discovery.py",
+      "original_sha256": "a310348ffdb9a3443479337aaf74515229670c469e72fa2d4062c3bfc600eb19"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/bench_family.py",
+      "extracted_sha256": "222bb8e214568800d98a3ea6758c4f9a5883601a87d89f5618b03e82edadc0c3",
+      "final_sha256": "51c0713f4b5e96dc434e82bb972b3019c447008cfe11ccee0a1928cda11b8287",
+      "module": "saturn.bench_family",
+      "original_path": "src/saturn/bench_family.py",
+      "original_sha256": "222bb8e214568800d98a3ea6758c4f9a5883601a87d89f5618b03e82edadc0c3"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/bench_family_symbols.py",
+      "extracted_sha256": "c274ffd8e5f01c424bb56c7880c1ac301e197bae7b95f62c32992075a903ddac",
+      "final_sha256": "c274ffd8e5f01c424bb56c7880c1ac301e197bae7b95f62c32992075a903ddac",
+      "module": "saturn.bench_family_symbols",
+      "original_path": "src/saturn/bench_family_symbols.py",
+      "original_sha256": "c274ffd8e5f01c424bb56c7880c1ac301e197bae7b95f62c32992075a903ddac"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/bench_loading.py",
+      "extracted_sha256": "02f5296bccd466b6136818e0b3edc6d8f4fcb651755a24f14b18de4954446589",
+      "final_sha256": "721262c613929b0db44f5297fdb18916c07a636edaa32a856135ac1617af9ee9",
+      "module": "saturn.bench_loading",
+      "original_path": "src/saturn/bench_loading.py",
+      "original_sha256": "02f5296bccd466b6136818e0b3edc6d8f4fcb651755a24f14b18de4954446589"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/bench_mamba.py",
+      "extracted_sha256": "29565b04fad3d2df130a8e53bd5fb4345c0ce122beaa4627a2f011eeeebe9146",
+      "final_sha256": "29565b04fad3d2df130a8e53bd5fb4345c0ce122beaa4627a2f011eeeebe9146",
+      "module": "saturn.bench_mamba",
+      "original_path": "src/saturn/bench_mamba.py",
+      "original_sha256": "29565b04fad3d2df130a8e53bd5fb4345c0ce122beaa4627a2f011eeeebe9146"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/bench_metrics.py",
+      "extracted_sha256": "9761e0c541a08a108e56d7475bf2f671c7c3fb7acdb6fe3b99307a6f0c3c7ef0",
+      "final_sha256": "9761e0c541a08a108e56d7475bf2f671c7c3fb7acdb6fe3b99307a6f0c3c7ef0",
+      "module": "saturn.bench_metrics",
+      "original_path": "src/saturn/bench_metrics.py",
+      "original_sha256": "9761e0c541a08a108e56d7475bf2f671c7c3fb7acdb6fe3b99307a6f0c3c7ef0"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/bench_native_forward.py",
+      "extracted_sha256": "e9f5b0e026f76a17fa24c648e051a1d64fd146dbf4dbdfe30a611afb23e9e0f2",
+      "final_sha256": "e9f5b0e026f76a17fa24c648e051a1d64fd146dbf4dbdfe30a611afb23e9e0f2",
+      "module": "saturn.bench_native_forward",
+      "original_path": "src/saturn/bench_native_forward.py",
+      "original_sha256": "e9f5b0e026f76a17fa24c648e051a1d64fd146dbf4dbdfe30a611afb23e9e0f2"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/bench_pages.py",
+      "extracted_sha256": "d354257645c853e9544e42f3cd3cae62e9179f513c8a033a21b4e1542b8d3d93",
+      "final_sha256": "d354257645c853e9544e42f3cd3cae62e9179f513c8a033a21b4e1542b8d3d93",
+      "module": "saturn.bench_pages",
+      "original_path": "src/saturn/bench_pages.py",
+      "original_sha256": "d354257645c853e9544e42f3cd3cae62e9179f513c8a033a21b4e1542b8d3d93"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/bench_publication.py",
+      "extracted_sha256": "d0157f8b61f971f4f2cae2246566cabf4de9cbb4e7b973bcea4105b84c25550a",
+      "final_sha256": "e109f7c5935d914e4ec6bb9be0656074f556c00433a5b6e72f0dba29ac4d7654",
+      "module": "saturn.bench_publication",
+      "original_path": "src/saturn/bench_publication.py",
+      "original_sha256": "d0157f8b61f971f4f2cae2246566cabf4de9cbb4e7b973bcea4105b84c25550a"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/bench_qwen.py",
+      "extracted_sha256": "1592dc0ceba3476e64e688f150b82dfeb85e841d0c6ebd6f4a0c6deeb64b0c23",
+      "final_sha256": "aeeb118d31bd643117dc2dfbee408017dc56099bea823b079b877bb29f898351",
+      "module": "saturn.bench_qwen",
+      "original_path": "src/saturn/bench_qwen.py",
+      "original_sha256": "9069df833742700d0b78793dc4902edca3ea6de02e598a039165d2a51e84de9c"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/bench_resources.py",
+      "extracted_sha256": "b958427b4fbcc0e3274387231b64328eab1a99b3c678ea22b4ec6c448dbad7c3",
+      "final_sha256": "b958427b4fbcc0e3274387231b64328eab1a99b3c678ea22b4ec6c448dbad7c3",
+      "module": "saturn.bench_resources",
+      "original_path": "src/saturn/bench_resources.py",
+      "original_sha256": "b958427b4fbcc0e3274387231b64328eab1a99b3c678ea22b4ec6c448dbad7c3"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/bench_symbols.py",
+      "extracted_sha256": "4e3a483f8e11a7cd6707268e8e62636b3f0085026ca6c65370dcb7a1999cfc54",
+      "final_sha256": "4e3a483f8e11a7cd6707268e8e62636b3f0085026ca6c65370dcb7a1999cfc54",
+      "module": "saturn.bench_symbols",
+      "original_path": "src/saturn/bench_symbols.py",
+      "original_sha256": "42947b078901f7558615eecc02233d74fb87bd60723b93c336b2a3374b5f8d85"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/bench_verify.py",
+      "extracted_sha256": "87e56b9ed45e19eb499fb295ca130658d5c6815ddee3eecd2dbe0f597d81391c",
+      "final_sha256": "a0a668acf31556b04d26c9fe81de2a19f479013b599bdf0c67f9765a0bf45215",
+      "module": "saturn.bench_verify",
+      "original_path": "src/saturn/bench_verify.py",
+      "original_sha256": "0eba49f1b74f798e4459828180873870459801e5a093f262541a96ae41d66a00"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/bisect_adapters.py",
+      "extracted_sha256": "5e26f66983d45ef0bc5227fc3b0ed2392d9eabebfca955345a9495323204a111",
+      "final_sha256": "5e26f66983d45ef0bc5227fc3b0ed2392d9eabebfca955345a9495323204a111",
+      "module": "saturn.bisect_adapters",
+      "original_path": "src/saturn/bisect_adapters.py",
+      "original_sha256": "2da808190eb694ce3793a380405911678ce1420dfd640ce4e6447372a8c18f60"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/causal_context_vm.py",
+      "extracted_sha256": "92a93d4fb435cc205e8a9538339c2d226720a60d1e292dbb55cbb86e91cdc07f",
+      "final_sha256": "92a93d4fb435cc205e8a9538339c2d226720a60d1e292dbb55cbb86e91cdc07f",
+      "module": "saturn.causal_context_vm",
+      "original_path": "src/saturn/causal_context_vm.py",
+      "original_sha256": "f3f0ba0e78267da390d84ee11d1bbe86e1b126bcfb36770cbf3cb62d17b49d06"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/causal_page_dag.py",
+      "extracted_sha256": "af3bdf93a59744172f95789b0a4e05289402ea5fe3f28151e9d8b4b06ad2dae8",
+      "final_sha256": "af3bdf93a59744172f95789b0a4e05289402ea5fe3f28151e9d8b4b06ad2dae8",
+      "module": "saturn.causal_page_dag",
+      "original_path": "src/saturn/causal_page_dag.py",
+      "original_sha256": "af3bdf93a59744172f95789b0a4e05289402ea5fe3f28151e9d8b4b06ad2dae8"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/causal_page_store.py",
+      "extracted_sha256": "a0cd0fff726c6b5dbc2f7a097198eb7093a15ade3728347848e48b07d8cd1b10",
+      "final_sha256": "a0cd0fff726c6b5dbc2f7a097198eb7093a15ade3728347848e48b07d8cd1b10",
+      "module": "saturn.causal_page_store",
+      "original_path": "src/saturn/causal_page_store.py",
+      "original_sha256": "8d7c7557ae25f6a908265615962840215aa3b2af0b3a76ead4af2552b2aefc34"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/causal_radix_dag.py",
+      "extracted_sha256": "9a53aedd107d9191dfca8781df9c9d68fe6d29319cbba5ab66351e1117137798",
+      "final_sha256": "9a53aedd107d9191dfca8781df9c9d68fe6d29319cbba5ab66351e1117137798",
+      "module": "saturn.causal_radix_dag",
+      "original_path": "src/saturn/causal_radix_dag.py",
+      "original_sha256": "a75221c0dba6eaee9b0ee342c0695991f4f0127c5fce9fe3249dd0ae17913f94"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/causal_radix_store.py",
+      "extracted_sha256": "2cef0c082c4f91509e5b1b0e1ea676314ea3effb1ca8b528b8d229e9c8cc6b2c",
+      "final_sha256": "ae0d0fdd6b81dac9d7af3019e1c820e7d6697941ba980a44e0c4e72198b41e79",
+      "module": "saturn.causal_radix_store",
+      "original_path": "src/saturn/causal_radix_store.py",
+      "original_sha256": "42d1671c8024f093befef2f875d08467d641d752edc4847f457be45b9712efc5"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/circuit_incremental.py",
+      "extracted_sha256": "7ad0d57e139120dd29a1aaebdbdba40ad39e916632562b726728dd6674d80bea",
+      "final_sha256": "7ad0d57e139120dd29a1aaebdbdba40ad39e916632562b726728dd6674d80bea",
+      "module": "saturn.circuit_incremental",
+      "original_path": "src/saturn/circuit_incremental.py",
+      "original_sha256": "080a9a4e424a8d6d8f92756f030aef23ca96935a0c19f6284282db9831a9c2fd"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/circuit_residency.py",
+      "extracted_sha256": "92ab78868d5034e9850a80593e6458b65960cacbd4d54f07986e7b35a906e7ac",
+      "final_sha256": "92ab78868d5034e9850a80593e6458b65960cacbd4d54f07986e7b35a906e7ac",
+      "module": "saturn.circuit_residency",
+      "original_path": "src/saturn/circuit_residency.py",
+      "original_sha256": "92ab78868d5034e9850a80593e6458b65960cacbd4d54f07986e7b35a906e7ac"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/circuit_runtime.py",
+      "extracted_sha256": "54abe8d23fe7705b22983090bb2f60dee20c255951e0c205712a1c0e9691ce9a",
+      "final_sha256": "54abe8d23fe7705b22983090bb2f60dee20c255951e0c205712a1c0e9691ce9a",
+      "module": "saturn.circuit_runtime",
+      "original_path": "src/saturn/circuit_runtime.py",
+      "original_sha256": "0ebf1603255979663bebe10135329abe88b277f5d5f03830d63b058387e18b28"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/circuit_thought_trace.py",
+      "extracted_sha256": "510655c0ef2e9c67f1f4d3c038073cd0c681928da8a4c8c4972da063b37df45f",
+      "final_sha256": "510655c0ef2e9c67f1f4d3c038073cd0c681928da8a4c8c4972da063b37df45f",
+      "module": "saturn.circuit_thought_trace",
+      "original_path": "src/saturn/circuit_thought_trace.py",
+      "original_sha256": "510655c0ef2e9c67f1f4d3c038073cd0c681928da8a4c8c4972da063b37df45f"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/claims_registry.py",
+      "extracted_sha256": "5a7ee4d0f4bcd59b4950d7f92baa85fda10703101f0eceaf2626082f9b279215",
+      "final_sha256": "3b735a2adb8abfc7c80b1c9a9dfbe2b761c184c39e5e511b02dab0451741be95",
+      "module": "saturn.claims_registry",
+      "original_path": "src/saturn/claims_registry.py",
+      "original_sha256": "5a7ee4d0f4bcd59b4950d7f92baa85fda10703101f0eceaf2626082f9b279215"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/context_register.py",
+      "extracted_sha256": "7f4fdd550bf98f74e580691c749fe3ed37ba84a9427a08457254717bdcdf073c",
+      "final_sha256": "7f4fdd550bf98f74e580691c749fe3ed37ba84a9427a08457254717bdcdf073c",
+      "module": "saturn.context_register",
+      "original_path": "src/saturn/context_register.py",
+      "original_sha256": "0ccdc89f0262098f4ab7ac17b54d94cdba5ab612aa6ca7a0f2e26eb2e70a3ade"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/debugger_adapters.py",
+      "extracted_sha256": "4365baf80cf80da27ba7f4451c6d28e4612e22dd720a43a6ca1ad71f96c1bf17",
+      "final_sha256": "4365baf80cf80da27ba7f4451c6d28e4612e22dd720a43a6ca1ad71f96c1bf17",
+      "module": "saturn.debugger_adapters",
+      "original_path": "src/saturn/debugger_adapters.py",
+      "original_sha256": "4365baf80cf80da27ba7f4451c6d28e4612e22dd720a43a6ca1ad71f96c1bf17"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/debugger_algebra.py",
+      "extracted_sha256": "cb88a9e791a728bb9b3a85f2ca9b6aef7f489d9a9b1c2f225f52be3af2aac81f",
+      "final_sha256": "cb88a9e791a728bb9b3a85f2ca9b6aef7f489d9a9b1c2f225f52be3af2aac81f",
+      "module": "saturn.debugger_algebra",
+      "original_path": "src/saturn/debugger_algebra.py",
+      "original_sha256": "cb88a9e791a728bb9b3a85f2ca9b6aef7f489d9a9b1c2f225f52be3af2aac81f"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/debugger_cli.py",
+      "extracted_sha256": "c156b4604c981fc18f4f32c98e53136851d594e6f1545094df686175fdb96e03",
+      "final_sha256": "e46ba1f22d84e0a93b66e28a9ee58f131fc261bb1a3a95548d97abb71f7016ba",
+      "module": "saturn.debugger_cli",
+      "original_path": "src/saturn/debugger_cli.py",
+      "original_sha256": "0d86fb6395aa765b33d4af501606b17c29e801adcf28853a2eba8652b93d4369"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/debugger_console.py",
+      "extracted_sha256": "b10133bb305f8bc4eb44df80dde8d1847f1ad275d3e9ce66f927cbf1ef1a325f",
+      "final_sha256": "b10133bb305f8bc4eb44df80dde8d1847f1ad275d3e9ce66f927cbf1ef1a325f",
+      "module": "saturn.debugger_console",
+      "original_path": "src/saturn/debugger_console.py",
+      "original_sha256": "b10133bb305f8bc4eb44df80dde8d1847f1ad275d3e9ce66f927cbf1ef1a325f"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/debugger_features.py",
+      "extracted_sha256": "d66ec24669a746cdbb8f157aa135ab459cf0a78d0289ad7a1048ccf6ab1e17b8",
+      "final_sha256": "d66ec24669a746cdbb8f157aa135ab459cf0a78d0289ad7a1048ccf6ab1e17b8",
+      "module": "saturn.debugger_features",
+      "original_path": "src/saturn/debugger_features.py",
+      "original_sha256": "d66ec24669a746cdbb8f157aa135ab459cf0a78d0289ad7a1048ccf6ab1e17b8"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/debugger_protocol.py",
+      "extracted_sha256": "c6b49b2637555d1dc317be0c6e12e2816d0d629a48eccd4c4637b280f4c212a0",
+      "final_sha256": "c6b49b2637555d1dc317be0c6e12e2816d0d629a48eccd4c4637b280f4c212a0",
+      "module": "saturn.debugger_protocol",
+      "original_path": "src/saturn/debugger_protocol.py",
+      "original_sha256": "c6b49b2637555d1dc317be0c6e12e2816d0d629a48eccd4c4637b280f4c212a0"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/debugger_runtime.py",
+      "extracted_sha256": "85bbf112158fbd04aec36eebbe004fcded14241934fc11d8de066b92b89f7626",
+      "final_sha256": "85bbf112158fbd04aec36eebbe004fcded14241934fc11d8de066b92b89f7626",
+      "module": "saturn.debugger_runtime",
+      "original_path": "src/saturn/debugger_runtime.py",
+      "original_sha256": "85bbf112158fbd04aec36eebbe004fcded14241934fc11d8de066b92b89f7626"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/debugger_session.py",
+      "extracted_sha256": "0a578755dad9807094ce9b9b938e379fc2d5e1cf76801281b92ba3d19ca9cb49",
+      "final_sha256": "0a578755dad9807094ce9b9b938e379fc2d5e1cf76801281b92ba3d19ca9cb49",
+      "module": "saturn.debugger_session",
+      "original_path": "src/saturn/debugger_session.py",
+      "original_sha256": "0a578755dad9807094ce9b9b938e379fc2d5e1cf76801281b92ba3d19ca9cb49"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/debugger_structs.py",
+      "extracted_sha256": "b630e238bb9280b3846d4f5899aa3cf686162eeb0a563966128d5a5b2ea76f21",
+      "final_sha256": "b630e238bb9280b3846d4f5899aa3cf686162eeb0a563966128d5a5b2ea76f21",
+      "module": "saturn.debugger_structs",
+      "original_path": "src/saturn/debugger_structs.py",
+      "original_sha256": "b630e238bb9280b3846d4f5899aa3cf686162eeb0a563966128d5a5b2ea76f21"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/debugger_worker.py",
+      "extracted_sha256": "242086d0195dc7f032298ddb9a05387617a1250409bdc84f9703d67b007a059c",
+      "final_sha256": "242086d0195dc7f032298ddb9a05387617a1250409bdc84f9703d67b007a059c",
+      "module": "saturn.debugger_worker",
+      "original_path": "src/saturn/debugger_worker.py",
+      "original_sha256": "242086d0195dc7f032298ddb9a05387617a1250409bdc84f9703d67b007a059c"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/divergence_bisect.py",
+      "extracted_sha256": "031b15ad2d9ffc23587442e068e38c55cc3bccc383741c4a12c6444281d8d661",
+      "final_sha256": "031b15ad2d9ffc23587442e068e38c55cc3bccc383741c4a12c6444281d8d661",
+      "module": "saturn.divergence_bisect",
+      "original_path": "src/saturn/divergence_bisect.py",
+      "original_sha256": "031b15ad2d9ffc23587442e068e38c55cc3bccc383741c4a12c6444281d8d661"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/evidence_citations.py",
+      "extracted_sha256": "53d44593f1b23f6f0967845d627b70f69da8472de5096f5507777e69772a5103",
+      "final_sha256": "53d44593f1b23f6f0967845d627b70f69da8472de5096f5507777e69772a5103",
+      "module": "saturn.evidence_citations",
+      "original_path": "src/saturn/evidence_citations.py",
+      "original_sha256": "53d44593f1b23f6f0967845d627b70f69da8472de5096f5507777e69772a5103"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/evidence_pipeline.py",
+      "extracted_sha256": "1ee10ec1537a1c1d9674276087410e2330e8c0a974883775b13bc44e8fd86c55",
+      "final_sha256": "839011c3b961e5f36e4f9d2c2baceda6c34d3c3aa896fb36346ed8257469ff3f",
+      "module": "saturn.evidence_pipeline",
+      "original_path": "src/saturn/evidence_pipeline.py",
+      "original_sha256": "1ee10ec1537a1c1d9674276087410e2330e8c0a974883775b13bc44e8fd86c55"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/evidence_specs.py",
+      "extracted_sha256": "8c46a6b7e91837d2e91c010586d40cbd4b3c2afd0e3b8024db1b5d9919929933",
+      "final_sha256": "2fe3841494fe4718e2c457ed4ef333c4b677b6a17f7effa2ee7d87dbc6e70f11",
+      "module": "saturn.evidence_specs",
+      "original_path": "src/saturn/evidence_specs.py",
+      "original_sha256": "8c46a6b7e91837d2e91c010586d40cbd4b3c2afd0e3b8024db1b5d9919929933"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/execution_skeleton.py",
+      "extracted_sha256": "05f3aa372334d7ff407d9302ed1199b5e64a734550768715bed7d551ff703db8",
+      "final_sha256": "05f3aa372334d7ff407d9302ed1199b5e64a734550768715bed7d551ff703db8",
+      "module": "saturn.execution_skeleton",
+      "original_path": "src/saturn/execution_skeleton.py",
+      "original_sha256": "05f3aa372334d7ff407d9302ed1199b5e64a734550768715bed7d551ff703db8"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/future_forest.py",
+      "extracted_sha256": "039deb750371655eba04db8f3b6d5b0d04278a5954060e3c0bacf77196d5e7a2",
+      "final_sha256": "6b3c017ba9ef3bada3a4f092feea7e6ecc17e71f7fa7e0eaaeb21dca84bf9420",
+      "module": "saturn.future_forest",
+      "original_path": "src/saturn/future_forest.py",
+      "original_sha256": "039deb750371655eba04db8f3b6d5b0d04278a5954060e3c0bacf77196d5e7a2"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/hyperion.py",
+      "extracted_sha256": "5ff0f8ed6455e442a09df428a428353e2bd2506e1fc0ebfdf3d6b1934675da8d",
+      "final_sha256": "5ff0f8ed6455e442a09df428a428353e2bd2506e1fc0ebfdf3d6b1934675da8d",
+      "module": "saturn.hyperion",
+      "original_path": "src/saturn/hyperion.py",
+      "original_sha256": "5ff0f8ed6455e442a09df428a428353e2bd2506e1fc0ebfdf3d6b1934675da8d"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/live_statecut.py",
+      "extracted_sha256": "e75ff48ae18776cf40e8550d8e312ad239c021dadc995b09f9b849272cacfdf0",
+      "final_sha256": "e75ff48ae18776cf40e8550d8e312ad239c021dadc995b09f9b849272cacfdf0",
+      "module": "saturn.live_statecut",
+      "original_path": "src/saturn/live_statecut.py",
+      "original_sha256": "e75ff48ae18776cf40e8550d8e312ad239c021dadc995b09f9b849272cacfdf0"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/mamba_state_vm.py",
+      "extracted_sha256": "b3d6634cacd1c0a9f3f8dd225842abf13afa1d1675960bb13a7970f12c1d567d",
+      "final_sha256": "b3d6634cacd1c0a9f3f8dd225842abf13afa1d1675960bb13a7970f12c1d567d",
+      "module": "saturn.mamba_state_vm",
+      "original_path": "src/saturn/mamba_state_vm.py",
+      "original_sha256": "0f875fc81ac50306d78268dd166d388c2899185d5c27621d2d3019f430d92358"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/model_os_causal_context.py",
+      "extracted_sha256": "7d41308d3fc15c487254aec288e90d336fd9aeda25d2e98cff95bb99cf42f403",
+      "final_sha256": "7d41308d3fc15c487254aec288e90d336fd9aeda25d2e98cff95bb99cf42f403",
+      "module": "saturn.model_os_causal_context",
+      "original_path": "src/saturn/model_os_causal_context.py",
+      "original_sha256": "f680192873615fc7729e2056191262dff80e7a1170fc5f4c84de9b0e94efcacc"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/model_os_contracts.py",
+      "extracted_sha256": "6f92ca5f08f304dddd7313264cb474cde7f2b2b31bd89d9df75448067ce3cc8f",
+      "final_sha256": "6f92ca5f08f304dddd7313264cb474cde7f2b2b31bd89d9df75448067ce3cc8f",
+      "module": "saturn.model_os_contracts",
+      "original_path": "src/saturn/model_os_contracts.py",
+      "original_sha256": "6f92ca5f08f304dddd7313264cb474cde7f2b2b31bd89d9df75448067ce3cc8f"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/model_os_kernel.py",
+      "extracted_sha256": "84473e7d911135e3d66157889f8e8130e9e1da30692ec45aa4c2a40f26b948c8",
+      "final_sha256": "84473e7d911135e3d66157889f8e8130e9e1da30692ec45aa4c2a40f26b948c8",
+      "module": "saturn.model_os_kernel",
+      "original_path": "src/saturn/model_os_kernel.py",
+      "original_sha256": "a0a97a3c1919d53f677a205dabdc3d9cd99ec4110b2397a874fc2273ad7c3ac9"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/model_os_mamba_state.py",
+      "extracted_sha256": "e3fe26c67b73127ce58ebd5e82918d0780b09ab3a628c2f0fa090c1699b2241f",
+      "final_sha256": "e3fe26c67b73127ce58ebd5e82918d0780b09ab3a628c2f0fa090c1699b2241f",
+      "module": "saturn.model_os_mamba_state",
+      "original_path": "src/saturn/model_os_mamba_state.py",
+      "original_sha256": "37a54f461e45f2f0c85a739f38055817e73b7b9d01e75aec34cd5a3d27bcd478"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/mvm_worker_support.py",
+      "extracted_sha256": "67298e1a6f8ff856403141ef24b8de1c29566438050991926cb87dd233f7a7bf",
+      "final_sha256": "67298e1a6f8ff856403141ef24b8de1c29566438050991926cb87dd233f7a7bf",
+      "module": "saturn.mvm_worker_support",
+      "original_path": "src/saturn/mvm_worker_support.py",
+      "original_sha256": "97ef08c97a7312875430cc58929d95e993b9c361c3875f5c5e1e1d1616cbfed0"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/object_manifest.py",
+      "extracted_sha256": "e3f58e1ee03061c3360de4d2bbcf8954ca646d0a821a493ce418cd1b0b2ff290",
+      "final_sha256": "e3f58e1ee03061c3360de4d2bbcf8954ca646d0a821a493ce418cd1b0b2ff290",
+      "module": "saturn.object_manifest",
+      "original_path": "src/saturn/object_manifest.py",
+      "original_sha256": "e3f58e1ee03061c3360de4d2bbcf8954ca646d0a821a493ce418cd1b0b2ff290"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/qwen2_machine.py",
+      "extracted_sha256": "3d16f3a8afa5335374e007e69f68b1eb42413c96a306670646f27b6916f5e6c5",
+      "final_sha256": "3d16f3a8afa5335374e007e69f68b1eb42413c96a306670646f27b6916f5e6c5",
+      "module": "saturn.qwen2_machine",
+      "original_path": "src/saturn/qwen2_machine.py",
+      "original_sha256": "8abcb5f2ee4bd86cadfef75784636a0626b64d00b4c7e8391a3b2960ca9278a5"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/receipt_watch.py",
+      "extracted_sha256": "baecae21c14b6f79d08c28db0e98fa75da7316b42a66003f193fbebc6eef8b36",
+      "final_sha256": "baecae21c14b6f79d08c28db0e98fa75da7316b42a66003f193fbebc6eef8b36",
+      "module": "saturn.receipt_watch",
+      "original_path": "src/saturn/receipt_watch.py",
+      "original_sha256": "baecae21c14b6f79d08c28db0e98fa75da7316b42a66003f193fbebc6eef8b36"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/runtime_telemetry.py",
+      "extracted_sha256": "801235c28f4009cab746aa1cd14f681afa32954a5f8e9d9ec6403234bddf4bec",
+      "final_sha256": "801235c28f4009cab746aa1cd14f681afa32954a5f8e9d9ec6403234bddf4bec",
+      "module": "saturn.runtime_telemetry",
+      "original_path": "src/saturn/runtime_telemetry.py",
+      "original_sha256": "801235c28f4009cab746aa1cd14f681afa32954a5f8e9d9ec6403234bddf4bec"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/scheduling_contract.py",
+      "extracted_sha256": "867384e84ef206b5706ed675b5dc8aa0a4495b8c79d2107a8a8e9630c09518a4",
+      "final_sha256": "867384e84ef206b5706ed675b5dc8aa0a4495b8c79d2107a8a8e9630c09518a4",
+      "module": "saturn.scheduling_contract",
+      "original_path": "src/saturn/scheduling_contract.py",
+      "original_sha256": "867384e84ef206b5706ed675b5dc8aa0a4495b8c79d2107a8a8e9630c09518a4"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/semantic_binding.py",
+      "extracted_sha256": "d553a2fc1e595961ba5c61964ec7597197686641de242891549fca5a0f7a29f4",
+      "final_sha256": "d553a2fc1e595961ba5c61964ec7597197686641de242891549fca5a0f7a29f4",
+      "module": "saturn.semantic_binding",
+      "original_path": "src/saturn/semantic_binding.py",
+      "original_sha256": "d553a2fc1e595961ba5c61964ec7597197686641de242891549fca5a0f7a29f4"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/source_frame_stack.py",
+      "extracted_sha256": "23e5dd0d6287ef72c77998676ba3977d783717c80310e945af6d7e5a35f22928",
+      "final_sha256": "23e5dd0d6287ef72c77998676ba3977d783717c80310e945af6d7e5a35f22928",
+      "module": "saturn.source_frame_stack",
+      "original_path": "src/saturn/source_frame_stack.py",
+      "original_sha256": "23e5dd0d6287ef72c77998676ba3977d783717c80310e945af6d7e5a35f22928"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/source_program_surface.py",
+      "extracted_sha256": "630af99621750444045b172a6ae718b5daa8e4b152b441e148b41250d1f6ac25",
+      "final_sha256": "f7394fa9cf1369e9874c703cd001a0352b47d2ffc93bedf57e8ba1cc40a32fbe",
+      "module": "saturn.source_program_surface",
+      "original_path": "src/saturn/source_program_surface.py",
+      "original_sha256": "1dda5695a9cf505b6cefee3fb9349e364b812ee6c241842738c5857120c42891"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/spectral_address.py",
+      "extracted_sha256": "b4fd6be9962a848efc1a08451bfdcbc63d3e424e23930ee1b01522f0877cb9b5",
+      "final_sha256": "0d13218f6595a25c7d98e899b92c6d37bbe83afadb76d8dc097e1e443884905f",
+      "module": "saturn.spectral_address",
+      "original_path": "src/saturn/spectral_address.py",
+      "original_sha256": "b4fd6be9962a848efc1a08451bfdcbc63d3e424e23930ee1b01522f0877cb9b5"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/statecut_checkpoint.py",
+      "extracted_sha256": "f996ddcf6f3f2218bbc928eddd21c45a5838bdb86567ec9510cf6237890cc3c0",
+      "final_sha256": "f996ddcf6f3f2218bbc928eddd21c45a5838bdb86567ec9510cf6237890cc3c0",
+      "module": "saturn.statecut_checkpoint",
+      "original_path": "src/saturn/statecut_checkpoint.py",
+      "original_sha256": "f996ddcf6f3f2218bbc928eddd21c45a5838bdb86567ec9510cf6237890cc3c0"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/tensor_hash.py",
+      "extracted_sha256": "5e37cc1e34f4b49c97f026b861af8cbb8d47697931743b19e3fd506c9932f3f4",
+      "final_sha256": "5e37cc1e34f4b49c97f026b861af8cbb8d47697931743b19e3fd506c9932f3f4",
+      "module": "saturn.tensor_hash",
+      "original_path": "src/saturn/tensor_hash.py",
+      "original_sha256": "5e37cc1e34f4b49c97f026b861af8cbb8d47697931743b19e3fd506c9932f3f4"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/thought_route_graph.py",
+      "extracted_sha256": "4e9822bc2327bcd43268e0bc6c31a7915267e3cbbc9840d72fd006637ad767db",
+      "final_sha256": "4e9822bc2327bcd43268e0bc6c31a7915267e3cbbc9840d72fd006637ad767db",
+      "module": "saturn.thought_route_graph",
+      "original_path": "src/saturn/thought_route_graph.py",
+      "original_sha256": "4e9822bc2327bcd43268e0bc6c31a7915267e3cbbc9840d72fd006637ad767db"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/titan.py",
+      "extracted_sha256": "7fd41ee1b4631f1e05e5ab197dca2206e3848bbe62ec33915f8f4e31d2552761",
+      "final_sha256": "7fd41ee1b4631f1e05e5ab197dca2206e3848bbe62ec33915f8f4e31d2552761",
+      "module": "saturn.titan",
+      "original_path": "src/saturn/titan.py",
+      "original_sha256": "42b55ccb9185e87357bb40ad9b3162d1fe3407148f7087c52b18e2920e8eef01"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/vm_cache.py",
+      "extracted_sha256": "0fcce905ee790deb7ab12ac7087816b60701c0416c0a7452bbef8b655e1191a4",
+      "final_sha256": "0fcce905ee790deb7ab12ac7087816b60701c0416c0a7452bbef8b655e1191a4",
+      "module": "saturn.vm_cache",
+      "original_path": "src/saturn/vm_cache.py",
+      "original_sha256": "0fcce905ee790deb7ab12ac7087816b60701c0416c0a7452bbef8b655e1191a4"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/vm_payload_cache.py",
+      "extracted_sha256": "0825823cfdca5be6fce95f9fd8fcab1dfb254b132d1ddd8bf152af436a5d0b44",
+      "final_sha256": "671f42bc833c52ac89cc84538be766ddf0e524aa2e27da8163dc865677084b6b",
+      "module": "saturn.vm_payload_cache",
+      "original_path": "src/saturn/vm_payload_cache.py",
+      "original_sha256": "0825823cfdca5be6fce95f9fd8fcab1dfb254b132d1ddd8bf152af436a5d0b44"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/workspace_raw_artifact.py",
+      "extracted_sha256": "5a366b462fe40c1f08eee24d9b71a9b1ec3b8e61da841f04bc97f416884103f5",
+      "final_sha256": "5a366b462fe40c1f08eee24d9b71a9b1ec3b8e61da841f04bc97f416884103f5",
+      "module": "saturn.workspace_raw_artifact",
+      "original_path": "src/saturn/workspace_raw_artifact.py",
+      "original_sha256": "5a366b462fe40c1f08eee24d9b71a9b1ec3b8e61da841f04bc97f416884103f5"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/xref_index.py",
+      "extracted_sha256": "318828474f18e03e45322b38e8e10c9a03fd6b829d9d48ca7bd493d882dbe8df",
+      "final_sha256": "b0efa346899c5bca59b27985d2e9144e04937e8f95a559a089da664c0ba4b451",
+      "module": "saturn.xref_index",
+      "original_path": "src/saturn/xref_index.py",
+      "original_sha256": "62ac2d68c976cf45185de82639f895cb1191549bbaf682ac441d7b6a89986c02"
+    },
+    {
+      "adapted_after_namespace_extraction": true,
+      "extracted_path": "src/mdb/workers/run_saturn_bench.py",
+      "extracted_sha256": "eb64e45c4d693d932324a33e79502ecaf5ae0482f7502bad5ceb8e8d6802b9e1",
+      "final_sha256": "1c460816feb75d1ffa5fd3b9bab44d6ede02736dc058e5403ffa8b355aec466d",
+      "original_path": "workers/run_saturn_bench.py",
+      "original_sha256": "ea27fc5a931b67d8b3e2c55b91666a63b983104b15d2f985a27c48a2d6322d01"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/workers/run_saturn_mvm_op.py",
+      "extracted_sha256": "b4edb8e9595f6dfb1ae535f436571abb26d8724cadb9383aed6ec672ed4e579e",
+      "final_sha256": "b4edb8e9595f6dfb1ae535f436571abb26d8724cadb9383aed6ec672ed4e579e",
+      "original_path": "workers/run_saturn_mvm_op.py",
+      "original_sha256": "d5741f901139ccb6bad7b8f0f5847d1b877ef2c12074d00fb035db504c30bf84"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/capability_source_write.py",
+      "extracted_sha256": "fd708a5572127e1dfc53a0dff25844e78c456eb6644542962491e4f5fae5b376",
+      "final_sha256": "fd708a5572127e1dfc53a0dff25844e78c456eb6644542962491e4f5fae5b376",
+      "module": "saturn.ar.capability_source_write",
+      "original_path": "src/saturn/ar/capability_source_write.py",
+      "original_sha256": "fc20d420c5dd269bd0de9b3a1fba7a4ef450933e8663dedd656eb0ea2a8a282d"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/ar/source_address_policy.py",
+      "extracted_sha256": "8f6adff8f861fe39d071fac32d76d383a0ae041c59ea11d9132dca635816e265",
+      "final_sha256": "8f6adff8f861fe39d071fac32d76d383a0ae041c59ea11d9132dca635816e265",
+      "module": "saturn.ar.source_address_policy",
+      "original_path": "src/saturn/ar/source_address_policy.py",
+      "original_sha256": "7da99002fa1452b05ab42d2e9669de83ec5f2b8cf991e3ef9b459410df036ff6"
+    },
+    {
+      "adapted_after_namespace_extraction": false,
+      "extracted_path": "src/mdb/local_data_plane.py",
+      "extracted_sha256": "da0a4467cca68371fb7b5de2d34758fdc59401d8a3ba47f08cc607ae852867de",
+      "final_sha256": "da0a4467cca68371fb7b5de2d34758fdc59401d8a3ba47f08cc607ae852867de",
+      "module": "saturn.local_data_plane",
+      "original_path": "src/saturn/local_data_plane.py",
+      "original_sha256": "da0a4467cca68371fb7b5de2d34758fdc59401d8a3ba47f08cc607ae852867de"
+    }
+  ],
+  "launch_helpers": {
+    "extracted_path": "src/mdb/job_support.py",
+    "extracted_sha256": "e3b26a95f8c9c608ec1931882b20fa9b0958d75c424da50b7b9fe42832a76459",
+    "functions": [
+      "_mrun_launch",
+      "_reject_nested_submission",
+      "_request_sha256",
+      "decode_marker",
+      "guarded_job_receipt",
+      "guarded_mrun_launch",
+      "one_lease_restart_proof_scheduling_contract",
+      "one_lease_scheduling_contract",
+      "one_lease_sequential_models_scheduling_contract",
+      "reject_staged_target_collisions",
+      "request_sha256",
+      "source_hash_manifest",
+      "terminal_job"
+    ],
+    "original_path": "src/saturn/job_support.py",
+    "original_sha256": "9b338fd0d07078930070f7e1112100e7040453a9cca6639a1d0a07edf2683b38"
+  },
+  "mdb_owned_files": [
+    {
+      "path": "src/mdb/__init__.py",
+      "sha256": "e5d7ccb2f034e33c9949b5619ca273950bbd7f0bf5a5da4e4589aa3557bdf575"
+    },
+    {
+      "path": "src/mdb/__main__.py",
+      "sha256": "935a1c1166b0c1ea35a82256345000bf2c73ded718d77773bc27a71ecce28f7d"
+    },
+    {
+      "path": "src/mdb/ar/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "path": "src/mdb/assay_custody.py",
+      "sha256": "fd758477c7b3a8a3c6aba999c7cd32ad82c9443811e7d44a369ec905a3f58398"
+    },
+    {
+      "path": "src/mdb/bench_circuit_verify.py",
+      "sha256": "64e5a720d90bc61ebe78bae74d5a4f204e29bfdbc6d5eb3cde73bcf47146d1cf"
+    },
+    {
+      "path": "src/mdb/capabilities.py",
+      "sha256": "be153f54d0122e169dfa5e6205b3243751132c23d540a40131d066d90922cb33"
+    },
+    {
+      "path": "src/mdb/cli.py",
+      "sha256": "db8085be5d59561b6d23b3211cfb845156982b96af93cf99d9b1dcd731ad3f19"
+    },
+    {
+      "path": "src/mdb/context_cli.py",
+      "sha256": "bede948bf8bef6364c67ca1c30336c1258b45c6250c0feaec1f40376a0aec604"
+    },
+    {
+      "path": "src/mdb/errors.py",
+      "sha256": "c29151711a5e71d7a7925d79783d835d2480361be2e21d032daa284c5f52d148"
+    },
+    {
+      "path": "src/mdb/execution_environment.py",
+      "sha256": "8db8f24a591c2884f48a5e17c8316975521888b4bfcc271e23225c36bed42610"
+    },
+    {
+      "path": "src/mdb/job_support.py",
+      "sha256": "9ad31f069b6ac385571a9995817fa471eae0ff25e4b270652b028e330f82cdb5"
+    },
+    {
+      "path": "src/mdb/paths.py",
+      "sha256": "071b6673cafc94e697e31f6496711a4b0f58efdb78d420b1b0f21011260b0858"
+    },
+    {
+      "path": "src/mdb/payload.py",
+      "sha256": "7c3fda8eb49060c5eb3648aa6fc09add2a0ce7bb869e18d9e22d59217eddebc4"
+    },
+    {
+      "path": "src/mdb/tools/__init__.py",
+      "sha256": "a68bd6dca8846c9de0db13ea47a83cb8da5b1f5b127a42d5ee8616e62e4b4918"
+    },
+    {
+      "path": "src/mdb/vm_cli.py",
+      "sha256": "767f34726d79965f73d6af1a56ead2664ac968faffbe089f8906aab359bd495a"
+    },
+    {
+      "path": "src/mdb/worker_bootstrap.py",
+      "sha256": "61c3fcda01054a23e61c8fac288a852c6ffdba0423ded4ae8ea6fdaac653ef24"
+    },
+    {
+      "path": "src/mdb/workers/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    }
+  ],
+  "replaced_workflow_modules": [
+    "saturn",
+    "saturn.debug",
+    "saturn.job_support",
+    "saturn.tools"
+  ],
+  "runtime_boundary": "installed mdb package; optional installed mrun; no Saturn or common checkout lookup",
+  "schema": "mdb-extraction-provenance-v1",
+  "source_kind": "working-tree-including-required-untracked-files",
+  "source_revision": "da8aa689bde73f1710afb110776dfb24460575f0",
+  "source_roots": [
+    "bench",
+    "bench_cli",
+    "bench_debugger",
+    "bench_verify",
+    "causal_context_vm",
+    "mamba_state_vm",
+    "mvm_worker_support",
+    "vm_cache",
+    "vm_payload_cache",
+    "debugger_cli",
+    "debugger_runtime",
+    "evidence_pipeline",
+    "bisect_adapters",
+    "evidence_citations",
+    "hyperion",
+    "model_os_kernel",
+    "source_frame_stack",
+    "context_register",
+    "future_forest",
+    "receipt_watch",
+    "claims_registry",
+    "xref_index",
+    "evidence_specs",
+    "divergence_bisect",
+    "artifact_custody",
+    "scheduling_contract"
+  ]
+}
