@@ -62,6 +62,28 @@ def test_select_edges_ranks_by_influence_and_counts_error_nodes(adapter):
     assert 0.0 < selection.error_node_influence_share < 1.0
 
 
+def test_selected_activation_is_indexed_through_active_features():
+    # circuit-tracer stores activation_values per *active* feature; when attribution selects a
+    # subset, each selected node's activation must be read through selected_features.
+    graph = build_synthetic_graph(
+        n_layers=2,
+        input_tokens=PROMPT,
+        features=[(0, LAST, 0, 49.75), (1, LAST, 1, 7.0)],
+        unselected=[(0, 0, 5, 1.93), (1, 0, 6, 0.5), (0, 1, 7, 0.25)],
+    )
+    selection = select_edges(graph, top_k=10)
+    assert [(e.feature, e.activation) for e in selection.edges] == [(0, 49.75), (1, 7.0)]
+
+
+def test_misaligned_activation_values_are_refused():
+    graph = build_synthetic_graph(
+        n_layers=2, input_tokens=PROMPT, features=[(0, LAST, 0, 2.0)], unselected=[(0, 0, 5, 1.0)]
+    )
+    graph.activation_values = graph.activation_values[graph.selected_features]
+    with pytest.raises(ValueError, match="align with active_features"):
+        select_edges(graph, top_k=1)
+
+
 def test_carrier_boundary_equals_hf_resid_post(adapter):
     # Saturn's layer:(L+1) carrier (last position) is HF resid_post[L] = the transcoder's write
     # point (feature_output_hook = hook_mlp_out, which flows into resid_post). Capture each layer

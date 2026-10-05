@@ -143,7 +143,7 @@ class _GraphView:
 
     active_features: Any  # [n_active, 3] int: (layer, pos, feature_idx)
     selected_features: Any  # [n_sel] int: indices into active_features
-    activation_values: Any  # [n_sel] float: clean activation of each selected feature
+    activation_values: Any  # [n_active] float: clean activation, aligned with active_features
     adjacency_matrix: Any  # [n_nodes, n_nodes]
     logit_probabilities: Any  # [n_logit]
     n_pos: int
@@ -163,10 +163,19 @@ def _as_view(graph: Any) -> _GraphView:
         raise ValueError("attribution graph must expose cfg.n_layers (or n_layers)")
     tokens = getattr(graph, "input_tokens")
     tokens = tokens.tolist() if hasattr(tokens, "tolist") else list(tokens)
+    active = _t(graph.active_features).long()
+    values = _t(graph.activation_values).float()
+    # circuit-tracer stores one activation per *active* feature (the sparse activation
+    # matrix's values), not one per selected node; index it through selected_features.
+    if int(values.shape[0]) != int(active.shape[0]):
+        raise ValueError(
+            "attribution graph activation_values must align with active_features "
+            f"({int(values.shape[0])} values for {int(active.shape[0])} active features)"
+        )
     return _GraphView(
-        active_features=_t(graph.active_features).long(),
+        active_features=active,
         selected_features=_t(graph.selected_features).long(),
-        activation_values=_t(graph.activation_values).float(),
+        activation_values=values,
         adjacency_matrix=_t(graph.adjacency_matrix).float(),
         logit_probabilities=_t(graph.logit_probabilities).float(),
         n_pos=int(getattr(graph, "n_pos", len(tokens))),
@@ -230,13 +239,14 @@ def select_edges(graph: Any, *, top_k: int, influence: Any | None = None) -> Gra
     edges = []
     for rank, i in enumerate(order[: int(top_k)]):
         layer, pos, feat = (int(x) for x in af[i].tolist())
+        active_index = int(view.selected_features[i])
         edges.append(
             _SelectedEdge(
                 rank=rank,
                 layer=layer,
                 position=pos,
                 feature=feat,
-                activation=float(view.activation_values[i]),
+                activation=float(view.activation_values[active_index]),
                 graph_weight=float(feat_infl[i]),
             )
         )
@@ -1124,12 +1134,17 @@ def build_synthetic_graph(
     features: Sequence[tuple[int, int, int, float]],
     logit_weights: Sequence[float] = (1.0,),
     seed: int = 0,
+    unselected: Sequence[tuple[int, int, int, float]] = (),
 ) -> SyntheticAttributionGraph:
     """Build a synthetic graph whose feature nodes feed the logit with decreasing influence.
 
     ``features`` is a list of ``(layer, position, feature_idx, activation)``. Earlier entries
     are given larger edges to the (single) logit node so the influence ranking is
     deterministic. The adjacency matrix is wired features -> logit directly.
+
+    ``unselected`` adds active features that attribution did not select. As in circuit-tracer,
+    ``active_features`` and ``activation_values`` then cover every active feature (unselected
+    first), and ``selected_features`` indexes the selected ones within them.
     """
     import torch
 
@@ -1149,13 +1164,15 @@ def build_synthetic_graph(
     err_start = n_feat
     for j in range(n_err):
         adjacency[logit_row, err_start + j] = 0.3 + 0.01 * (torch.rand((), generator=g).item())
+    every = list(unselected) + list(features)
     active = torch.tensor(
-        [[layer, pos, feat] for (layer, pos, feat, _a) in features], dtype=torch.long
+        [[layer, pos, feat] for (layer, pos, feat, _a) in every], dtype=torch.long
     )
-    activation_values = torch.tensor([a for (_l, _p, _f, a) in features], dtype=torch.float32)
+    activation_values = torch.tensor([a for (_l, _p, _f, a) in every], dtype=torch.float32)
+    n_skip = len(unselected)
     return SyntheticAttributionGraph(
         active_features=active,
-        selected_features=torch.arange(n_feat, dtype=torch.long),
+        selected_features=torch.arange(n_skip, n_skip + n_feat, dtype=torch.long),
         activation_values=activation_values,
         adjacency_matrix=adjacency,
         logit_probabilities=torch.tensor(list(logit_weights), dtype=torch.float32),
