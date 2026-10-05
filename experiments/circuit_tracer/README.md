@@ -19,7 +19,7 @@ the aggregate tables — it runs offline.
 ## What ran
 
 Two models, one resident at a time, on one GPU host (RTX 4080, 16 GB), split into
-≤11-minute jobs:
+≤12-minute jobs:
 
 1. **Attribution graph + graph-side predictions (circuit-tracer, bf16, GPU).**
    `ReplacementModel.from_pretrained("google/gemma-2-2b", "gemma", backend="nnsight")` builds an
@@ -55,94 +55,117 @@ replaced):
 Dropped: `ant_happy`, `tr_es_water`, `cat_trumpet`, `rh_cat`, `rh_light` (native top-1 ≠ target
 at the bf16 pre-filter) and `ant_light` (bf16 top-1 matched but fp32 native top-1 did not).
 
+## Correction (2026-10-05)
+
+The first published run of this experiment dosed every native intervention with the wrong
+activation. circuit-tracer's `Graph.activation_values` holds one value per *active* feature,
+aligned with `active_features`; the edge selector read it by the *selected*-node position. Whenever
+attribution kept only a subset of the active features (44 of the 50 admitted prompts hit the
+4,096-node cap), each edge carried another feature's activation, typically far smaller (the
+`mh_dallas` top feature: true 49.75, recorded 1.93). Graph-side zero-ablation predictions do not
+use the activation and were unaffected; native ablations, both −2× steers, and the −2× graph
+predictions were. `select_edges` now indexes through `selected_features` and refuses a graph
+whose activations are not aligned with its active features (regression tests added). The whole
+panel was rerun with the fix under the same frozen panel, rule, and `top_k`; every number below
+is from the corrected run. The earlier headline (0 / 50 zero-ablation flips, 13 "Dallas-type"
+graph over-predictions, a genuine multi-hop over-prediction) was an artifact of the bug and is
+withdrawn. Two independent reimplementations of the corrected native arm agree with these
+numbers (15 / 50 zero-ablation flips in each).
+
 ## Adapter validation (real fp32 weights)
 
-stepped-vs-native max-abs logit Δ **4.5e-5**, 16/16 greedy exact, mid-layer cut **fresh-process
+stepped-vs-native max-abs logit Δ **1.6e-5**, 16/16 greedy exact, mid-layer cut **fresh-process
 replay exact**. Residency (fp32, CUDA): `streamed` **== `resident` bitwise** (max logit Δ
 **0.0**, logits bit-identical), 16-token greedy decode equals `model.generate` for both,
 mid-layer cut fresh-process replay exact; **peak VRAM 2.4 GB streamed vs 10.6 GB resident**.
 
 ## Single-feature edges (1000 = 50 prompts × top-20)
 
-Zero-ablating one transcoder feature's decoder contribution. Each edge gets a neutral
-native-necessity label *and* a comparison to circuit-tracer's own predicted drop
+Zero-ablating one transcoder feature's decoder contribution at its clean activation. Each edge
+gets a neutral native-necessity label *and* a comparison to circuit-tracer's own predicted drop
 (frozen-attention mode).
 
-- **0 / 1000** edges were individually `native_necessary` (985 `native_effect_absent`, 15
-  `inconclusive`) — *expected* under a redundant circuit, and **not** by itself evidence against
-  the graph.
-- The fair test, graph agreement: **857 / 1000 agree** (rate **0.857**, 95% CI **[0.835,
-  0.879]**), **16 invert** (0.016 [0.009, 0.024]), 127 mixed (0.127 [0.106, 0.148]). Agreement is
-  overwhelmingly `agree_small` (the replacement model *also* predicts a small single-feature drop).
+- **13 / 1000** edges are individually `native_necessary` (873 `native_effect_absent`, 114
+  `inconclusive`); all 13 are on multi-hop (6) and translation (7) prompts.
+- Graph agreement: **846 / 1000 agree** (rate **0.846**, 95% CI **[0.824, 0.868]**), **1 invert**
+  (0.001 [0.000, 0.003]), 153 mixed (0.153 [0.131, 0.175]). Agreement is mostly `agree_small`:
+  the replacement model also predicts a small single-feature drop.
 
 Per family (bootstrap 95% CI over edges):
 
 | family | prompts | edges | agree (95% CI) | invert | mixed |
 | --- | --- | --- | --- | --- | --- |
 | acronym_abbreviation | 8 | 160 | 0.994 [0.981, 1.000] | 0 | 1 |
-| capitals | 8 | 160 | 0.969 [0.938, 0.994] | 0 | 5 |
-| arithmetic_sequence | 8 | 160 | 0.938 [0.900, 0.975] | 0 | 10 |
-| category_rhyme | 5 | 100 | 0.920 [0.860, 0.970] | 0 | 8 |
-| antonyms | 6 | 120 | 0.883 [0.825, 0.933] | 0 | 14 |
-| translation | 7 | 140 | 0.664 [0.586, 0.736] | 10 | 37 |
-| multi_hop_factual | 8 | 160 | 0.637 [0.562, 0.713] | 6 | 52 |
+| capitals | 8 | 160 | 0.963 [0.931, 0.988] | 0 | 6 |
+| arithmetic_sequence | 8 | 160 | 0.925 [0.881, 0.963] | 0 | 12 |
+| category_rhyme | 5 | 100 | 0.910 [0.850, 0.960] | 0 | 9 |
+| antonyms | 6 | 120 | 0.875 [0.817, 0.933] | 0 | 15 |
+| translation | 7 | 140 | 0.686 [0.607, 0.757] | 1 | 43 |
+| multi_hop_factual | 8 | 160 | 0.581 [0.506, 0.656] | 0 | 67 |
 
-Single-feature agreement is high on direct-recall families and lowest on the compositional
-(multi-hop, translation) ones — where the graph more often predicts a single-feature effect the
-real model does not show.
+Agreement is high on direct-recall families and lowest on the compositional ones (multi-hop,
+translation), where the disagreements are almost all `mixed` rather than inversions.
 
-## Group interventions (paper-style) and the Dallas-type gap
+## Group interventions (paper-style)
 
 Over 50 prompts (bootstrap 95% CI over prompts), graph prediction in the frozen-attention mode:
 
 | group | agree (95% CI) | agree_large | agree_small | invert | mixed | flips native top-1 |
 | --- | --- | :-: | :-: | :-: | :-: | :-: |
-| −2× steer (`m = -2`) | 0.50 [0.36, 0.64] | 15 | 10 | 4 | 21 | **12 / 50** |
-| zero-ablate (`m = 0`) | 0.34 [0.22, 0.48] | 1 | 16 | 13 | 20 | 0 |
+| −2× steer (`m = -2`) | 0.96 [0.90, 1.00] | 47 | 1 | 0 | 2 | **45 / 50** |
+| zero-ablate (`m = 0`) | 0.56 [0.42, 0.70] | 16 | 12 | 1 | 21 | **15 / 50** |
 
-Steering the whole top-20 set to −2× — the intervention the attribution-graphs paper uses —
-moves the real model hard and **flips the native top-1 on 12 of 50 prompts**, with the graph
-agreeing (`agree_large`) on 15. Joint zero-ablation rarely moves the real model (0 flips) yet the
-graph predicts a large drop on **13** prompts (the "Dallas-type" overprediction at scale).
+Steering the whole top-20 set to −2× (the multiplier circuit-tracer's tutorial applies to
+supernodes) flips the native top-1 on **45 of 50** prompts; graph and native both show a large
+drop on 47.
+Zero-ablating the same 20 features flips **15 of 50**: every multi-hop prompt (8 / 8), 5 / 7
+translation and 2 / 8 acronym prompts, and none of the capitals, antonyms, arithmetic, or
+category-rhyme prompts.
 
-**Which prediction mode, and does the inversion survive it?** circuit-tracer's own intervention
-demos call `feature_intervention` with its defaults (`freeze_attention=True,
-constrained_layers=None`) — the frozen-attention mode, which is what the `graph_vs_native` tags
-above use. Recomputing every group prediction under all three modes (mean |graph_pred − native|,
-nats):
+**Is the graph's set special, or would any 20 features do?** A separate run on the same panel
+(same rebuilt graphs, top-20 identical to these bundles on all 50 prompts) compared the graph's
+top-20 with a matched-random set of 20 active features from the same prompt, matched on layer,
+position, and activation band and excluding the graph's picks. Mean native drop, graph vs random:
+zero-ablation 1.93 [0.93, 3.27] vs 0.09 [0.04, 0.15] nats (flips 15 vs 5 of 50); −2× steer 18.51
+[14.72, 22.46] vs 1.42 [0.99, 1.90] nats (flips 45 vs 20 of 50). The graph's selection is
+specifically causal; part of the raw −2× flip count (20 / 50 for random) is generic steering
+damage. Jobs `job-7c5949fd0d09` (smoke), `job-a3cacc860c09`, `job-693a029d160e`,
+`job-fc1b97f31e10`, `job-20c58a384add`; this control is not part of the sealed bundles.
+
+**Where the graph is wrong, it under-predicts.** The only inversion is `tr_es_dog` (native
+−0.004 nats against 1.53 frozen-attention), and it is a prediction-mode artifact: unconstrained
+propagation predicts 0.17. Everywhere else the graph's errors run the other way. The native drop
+exceeds the frozen-attention prediction by more than 0.4 nats on 11 prompts for zero-ablation
+and 12 for the −2× steer. On every multi-hop prompt the real model loses more than the graph
+predicts (`mh_houston` native 12.20 vs 5.21 frozen / 4.62 unconstrained; `mh_seattle` 6.95 vs
+4.39 / 3.75); `ac_uk` loses 26.22 nats against a 0.17 prediction.
+
+Mean |graph_pred − native| (nats) under each of circuit-tracer's intervention modes:
 
 | group | frozen-attention | unconstrained | direct-effects |
 | --- | :-: | :-: | :-: |
-| zero-ablate | 1.086 (median 0.183; 19/50 over-predict > 0.4) | 0.734 (0.135; 15/50) | 1.673 (0.681; 33/50) |
-| −2× steer | 2.309 (0.848; 28/50) | 1.539 (0.486; 25/50) | 2.487 (1.197; 36/50) |
+| zero-ablate | 1.292 (median 0.182; 6/50 over-predict > 0.4) | 1.274 (0.133; 0/50) | 1.820 (0.503; 17/50) |
+| −2× steer | 2.955 (1.786; 26/50) | 2.524 (1.951; 15/50) | 7.330 (5.346; 8/50) |
 
-The verdict is **mixed, and it depends on the family**:
-
-- The **multi-hop** zero-ablate inversions are a genuine *graph* overprediction — they persist
-  under unconstrained propagation (e.g. `mh_houston` native 0.03 vs 5.21 frozen / 4.62
-  unconstrained; `mh_seattle` 0.09 vs 4.39 / 3.75).
-- The **acronym** and **translation** inversions are largely a *prediction-mode* artifact — under
-  unconstrained propagation they fall toward native (`ac_dna` 0.57 → 0.17; `ac_phd` 0.59 → 0.18,
-  both below the 0.5 "present" line; translation `tr_es_dog` 1.53 → 0.17).
-- **direct-effects** (the fully linearized regime the graph *edges* are computed in) over-predicts
-  the most (33/50 and 36/50 over 0.4 nats).
-
-So "the graph over-predicts the joint effect" is true under the paper-matching frozen-attention
-setting, and for multi-hop prompts it is a property of the graph, not the prediction mode.
+Unconstrained propagation is the most accurate mode and never over-predicts zero-ablation by
+more than 0.4 nats; the fully linearized direct-effects regime, in which the graph's edges are
+computed, is the least accurate.
 
 ## Error nodes
 
-Transcoder **error** nodes — the MLP output the transcoders do not reconstruct as a feature
-direction — carry **11.4 % – 18.5 %** of node influence (median 14.0 %, mean 14.2 % over the 50
+Transcoder **error** nodes, the MLP output the transcoders do not reconstruct as a feature
+direction, carry **11.4 % – 18.5 %** of node influence (median 14.0 %, mean 14.2 % over the 50
 admitted prompts). They have no direction to write as a native Act, so they are reported
-`uncovered`, never silently dropped.
+`uncovered`, never silently dropped. (Influence is computed from the graph alone and was not
+affected by the dosing bug.)
 
 ## Jobs
 
-Panel split into four ≤11-min chunks plus one residency job on an RTX 4080 host:
-`job-01a88f477ae1` (prompts 0–13 + residency, 653 s), `job-d449b03eb717` (14–27, 433 s),
-`job-b7cbdb109dc5` (28–41, 451 s), `job-781c923e71d9` (42–55, 408 s), and `job-aa81c5787522`
-(residency validation of record). Phase-A peak 8.1 GB VRAM; phase-B fp32 on CPU.
+Corrected run on an RTX 4080 host: `job-5cf546c13cad` (smoke on two prompts + residency
+validation of record, 213 s), `job-a356191720e2` (prompts 0–17, 719 s), `job-e3031f8a2944`
+(18–36, 582 s), `job-d3c6b4221dc5` (37–55, 563 s). Phase-A peak 9.0 GB VRAM; phase-B fp32 on
+CPU. The withdrawn first run was `job-01a88f477ae1`, `job-d449b03eb717`, `job-b7cbdb109dc5`,
+`job-781c923e71d9`, `job-aa81c5787522`; its adapter and residency validation are unaffected.
 
 ## Reproduce
 

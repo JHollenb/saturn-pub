@@ -223,15 +223,17 @@ It loads pinned Hugging Face checkpoints or your local cache. The
 The circuit-tracer interop is exercised as a flagship on real `google/gemma-2-2b` weights with
 the Gemma Scope transcoders, against a panel preregistered before the run (56 candidates / 7 task
 families; admission = native greedy top-1 equals the target; `top_k = 20`; thresholds frozen).
-**50 of 56 prompts admitted**; on **1000 single-feature edges**, native effects agree with
-circuit-tracer's own predicted drop **85.7 % of the time (95 % CI 83.5–87.9 %)**, with a **1.6 %**
-inversion rate — agreement is near-total on direct-recall families and lowest on compositional
-ones (multi-hop 63.7 %, translation 66.4 %). The paper-style **−2× group steer flips the native
-top-1 on 12 of 50 prompts**; joint zero-ablation never does, yet the graph predicts a large drop
-on 13 — a graph over-prediction that, recomputed under circuit-tracer's unconstrained vs
-direct-effects intervention modes, is shown to be genuine for multi-hop prompts but a
-prediction-mode artifact for acronym/translation ones. Transcoder **error nodes** carry 11–19 % of
-node influence the feature circuit never exposes. Limits: single-GPU, greedy, batch-one, fp32
+**50 of 56 prompts admitted**. Steering the graph's top-20 features to −2× flips the native top-1
+on **45 of 50** prompts, and zero-ablating them flips **15 of 50** (every multi-hop prompt); a
+matched-random set of 20 features flips 20 and 5. On **1000 single-feature edges** native effects
+agree with circuit-tracer's own predicted drop **84.6 % of the time (95 % CI 82.4–86.8 %)** with
+a single inversion; agreement is near-total on direct-recall families and lowest on compositional
+ones (multi-hop 58.1 %, translation 68.6 %). Where the graph's group predictions miss, they
+mostly *under*-predict the real model, worst on multi-hop prompts; circuit-tracer's unconstrained
+intervention mode is the most accurate and its direct-effects mode the least. Transcoder **error
+nodes** carry 11–19 % of node influence the feature circuit never exposes. A first published run
+mis-dosed the native interventions (an activation-indexing bug, now fixed and regression-tested)
+and its group conclusions were withdrawn; see the correction note in the experiment. Limits: single-GPU, greedy, batch-one, fp32
 native vs bf16 replacement; agreement is measured against circuit-tracer's *own* predicted drop,
 not ground-truth causal necessity. Every number, CI, and job id is in
 [`experiments/circuit_tracer/`](experiments/circuit_tracer/README.md); the adapter's

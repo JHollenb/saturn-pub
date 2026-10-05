@@ -82,7 +82,7 @@ synthetic graph and re-derive the sealed table with the stdlib-only `verify_edge
    loaded (phase A), so the native test (phase B) needs only the scalars.
 6. **Group interventions (paper-style).** `native_group_intervention` jointly ablates the whole
    top-k feature set (`multiplier = 0`) and steers it to −2× its natural activation
-   (`multiplier = -2`, matching the attribution-graphs paper's steering), adding
+   (`multiplier = -2`, the multiplier circuit-tracer's tutorial applies to supernodes), adding
    `(m − 1)·activation·W_dec` for every member at its write layer, and labels the group under
    the same rule with the same `graph_vs_native` comparison to circuit-tracer's joint prediction.
    This is the intervention the paper expects to be strong; a single-feature zero ablation is
@@ -138,42 +138,45 @@ Measured over a **preregistered** panel (`experiments/circuit_tracer/panel.json`
 and committed before the run): 56 candidate prompts across 7 task families, admission = native
 fp32 greedy top-1 equals the target, `top_k = 20`, thresholds 0.5 / 0.1 nats. **50 of 56
 admitted** (6 dropped, recorded, never replaced); 1000 single-feature edges + 100 group
-interventions. Five RTX-4080 jobs, ≤11 min each (ids in
+interventions. Four RTX-4080 jobs of the corrected run, ≤12 min each (ids in
 [`experiments/circuit_tracer/summary.json`](../experiments/circuit_tracer/summary.json)). The
 native Gemma-2 adapter validated on the real weights first: stepped-vs-native max-abs logit Δ
-**4.5e-5**, 16/16 greedy exact, mid-layer cut **fresh-process replay exact**; `streamed` **==
+**1.6e-5**, 16/16 greedy exact, mid-layer cut **fresh-process replay exact**; `streamed` **==
 `resident` bitwise** (max logit Δ **0.0**), peak VRAM **2.4 GB streamed vs 10.6 GB resident**.
 
-**Single features (1000 edges).** 0 were individually `native_necessary` — *expected* under a
-redundant circuit, so not by itself evidence against the graph. The fair test is agreement with
-circuit-tracer's own predicted drop: **agreement 0.857, 95% CI [0.835, 0.879]** (overwhelmingly
-`agree_small`), invert **0.016 [0.009, 0.024]** (16 edges), mixed 0.127. Agreement is near-total
-on direct-recall families (acronym 0.994, capitals 0.969) and lowest on the compositional ones
-(multi-hop 0.637 [0.562, 0.713], translation 0.664 [0.586, 0.736]).
+**Single features (1000 edges).** 13 were individually `native_necessary`, all on multi-hop
+and translation prompts. Agreement with circuit-tracer's own predicted drop: **0.846, 95% CI
+[0.824, 0.868]** (mostly `agree_small`), invert **0.001** (one edge), mixed 0.153. Agreement is
+near-total on direct-recall families (acronym 0.994, capitals 0.963) and lowest on the
+compositional ones (multi-hop 0.581 [0.506, 0.656], translation 0.686 [0.607, 0.757]).
 
-**Group interventions (paper-style), 50 prompts.** Steering the whole top-20 set to −2×
-activation — the intervention the attribution-graphs paper uses — flips the native top-1 on
-**12 of 50** prompts (graph agrees `agree_large` on 15; agreement 0.50 [0.36, 0.64]). Joint
-zero-ablation never flips the top-1 (agreement 0.34 [0.22, 0.48]) yet the graph predicts a large
-drop on **13** prompts — the "Dallas-type" overprediction at scale.
+**Group interventions, 50 prompts.** Steering the whole top-20 set to −2× flips the native top-1
+on **45 of 50** prompts (agreement 0.96 [0.90, 1.00]). Joint zero-ablation flips **15 of 50**
+(all 8 multi-hop, 5 of 7 translation, 2 of 8 acronym; agreement 0.56 [0.42, 0.70]). A
+matched-random control of 20 active features (same layer, position, and activation band) flips
+20 and 5, with mean drops of 1.42 vs 18.51 nats (−2×) and 0.09 vs 1.93 nats (zero): the
+graph's selection is specifically causal.
 
-**Does the inversion survive the prediction mode?** circuit-tracer's own intervention demos use
-the frozen-attention default, which is what the tags above use. Recomputing every group
-prediction under all three modes (mean |graph−native|, nats) separates the two causes:
+**Which way is the graph wrong?** The one zero-ablation inversion (`tr_es_dog`) is a
+frozen-attention artifact (unconstrained prediction 0.17 nats). Otherwise the graph mostly
+*under*-predicts: the native drop exceeds the frozen-attention prediction by more than 0.4 nats
+on 11 prompts (zero) and 12 (−2×), including every multi-hop prompt (`mh_houston` native 12.20
+vs 5.21). Mean |graph − native| (nats) by prediction mode:
 
 | group | frozen-attention | unconstrained | direct-effects |
 | --- | :-: | :-: | :-: |
-| zero-ablate | 1.086 | 0.734 | 1.673 |
-| −2× steer | 2.309 | 1.539 | 2.487 |
+| zero-ablate | 1.292 | 1.274 | 1.820 |
+| −2× steer | 2.955 | 2.524 | 7.330 |
 
-The **multi-hop** zero-ablate inversions are a genuine *graph* overprediction (they persist
-unconstrained: `mh_houston` native 0.03 vs 5.21 frozen / 4.62 unconstrained). The **acronym** and
-**translation** ones are largely a *prediction-mode* artifact (under unconstrained propagation
-`ac_dna` 0.57 → 0.17, `ac_phd` 0.59 → 0.18 fall below the 0.5 line). The fully-linearized
-direct-effects regime over-predicts the most. Transcoder **error** nodes carried **11.4–18.5 %**
-(median 14.0 %) of node influence the feature circuit never exposes (`uncovered`, never dropped).
-Per-prompt tables, CIs, and every job id are in
-[`experiments/circuit_tracer/README.md`](../experiments/circuit_tracer/README.md) and
+Transcoder **error** nodes carried **11.4–18.5 %** (median 14.0 %) of node influence the feature
+circuit never exposes (`uncovered`, never dropped).
+
+**Correction.** The first published run read circuit-tracer's `activation_values` (aligned with
+`active_features`) by selected-node position, so native interventions on 44 of 50 prompts used
+another feature's activation. Its group conclusions (0 / 50 zero-ablation flips, a multi-hop
+graph over-prediction) were artifacts and are withdrawn. `select_edges` now indexes through
+`selected_features` and refuses misaligned graphs. Per-prompt tables, CIs, and every job id are
+in [`experiments/circuit_tracer/README.md`](../experiments/circuit_tracer/README.md) and
 [`summary.json`](../experiments/circuit_tracer/summary.json).
 
 ## Reproduce

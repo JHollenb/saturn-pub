@@ -210,16 +210,17 @@ versions (4.57.3 and 5.x take different keyword arguments). Tiny-fixture tests c
 parity, that soft-capping is load-bearing, local/global alternation, and config refusals.
 
 Real-weight validation on `google/gemma-2-2b` (fp32, CUDA, RTX 4080, batch one, greedy) ran as
-part of the circuit-tracer flagship: stepped-vs-native max absolute logit delta 4.5e-5, 16/16
+part of the circuit-tracer flagship: stepped-vs-native max absolute logit delta 1.6e-5 (4.5e-5 in the withdrawn first run), 16/16
 greedy tokens exact, a mid-layer cut replays exactly in a fresh interpreter. Streamed residency
 equals resident **bitwise** (max logit delta 0.0), both 16-token decodes equal `model.generate`,
 and peak VRAM is 2.4 GB streamed vs 10.6 GB resident.
 
-The flagship itself (`experiments/circuit_tracer/`) ran five CUDA jobs against a panel whose
-sha256 was committed before the first job. Its results are summarized in
+The flagship itself (`experiments/circuit_tracer/`) ran four CUDA jobs against a panel whose
+sha256 was committed before the first job. A first run mis-dosed its native interventions (an
+activation-indexing bug in `select_edges`, fixed with regression tests) and was rerun in full. Its results are summarized in
 [circuit-tracer interop](circuit-tracer.md#real-weight-results-gemma-2-2b-gemma-scope-transcoders);
 every number, CI, and job id is in `experiments/circuit_tracer/summary.json`. The integrated suite
-is now **480 tests**, one skipped (the pre-existing interop case). These runs make no claim about
+is now **482 tests**, one skipped (the pre-existing interop case). These runs make no claim about
 cross-device byte equality or about Gemma-2 contexts longer than the sliding window.
 
 ## Integrated release suite
