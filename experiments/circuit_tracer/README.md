@@ -132,6 +132,11 @@ specifically causal; part of the raw −2× flip count (20 / 50 for random) is g
 damage. Jobs `job-7c5949fd0d09` (smoke), `job-a3cacc860c09`, `job-693a029d160e`,
 `job-fc1b97f31e10`, `job-20c58a384add`; this control is not part of the sealed bundles.
 
+Dose curves (k = 5–100, factors 0 to −4), calibration over all cells, pruned-circuit and supernode
+arms, and an independent precision check are in
+[`docs/related-experiments.md`](../../docs/related-experiments.md), with result files in
+[`followups/`](followups/).
+
 **Where the graph is wrong, it under-predicts.** The only inversion is `tr_es_dog` (native
 −0.004 nats against 1.53 frozen-attention), and it is a prediction-mode artifact: unconstrained
 propagation predicts 0.17. Everywhere else the graph's errors run the other way. The native drop

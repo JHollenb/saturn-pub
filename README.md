@@ -257,6 +257,7 @@ Start with [when and how to use each capability](docs/usage.md), then choose a
 - [Write an adapter](docs/adapters.md)
 - [SAELens and TransformerLens interop](docs/interop.md)
 - [circuit-tracer: arbitrate attribution-graph edges against the native consumer](docs/circuit-tracer.md)
+- [Related experiments and papers: circuit-tracer follow-ups and the research papers](docs/related-experiments.md)
 - [FLUX diffusion families and block-streamed residency](docs/diffusion-families.md)
 - [Pretrained model recipes](docs/pretrained.md)
 - [Build a writer, debug its futures, and replay](docs/writer-demo.md)
