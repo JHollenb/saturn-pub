@@ -298,7 +298,11 @@ class DebuggerAdapter(ABC):
         part of the common adapter ABI.
         """
 
-        if name in {"measure_circuit", "replay_circuit"} and self.capabilities.family not in {
+        ar_operations = {
+            "measure_circuit", "replay_circuit", "memory_read", "memory_write",
+            "memory_diff", "memory_probe",
+        }
+        if name in ar_operations and self.capabilities.family not in {
             "autoregressive",
             "qwen2",
             "mamba",
@@ -332,10 +336,17 @@ class DebuggerAdapter(ABC):
             "promote",
             "measure_circuit",
             "replay_circuit",
+            "memory_read",
+            "memory_write",
+            "memory_diff",
+            "memory_probe",
             "register_struct",
             "register_address",
         )
-        circuit_ops = {"measure_circuit", "replay_circuit"}
+        circuit_ops = {
+            "measure_circuit", "replay_circuit", "memory_read", "memory_write",
+            "memory_diff", "memory_probe",
+        }
         return tuple(
             name
             for name in names

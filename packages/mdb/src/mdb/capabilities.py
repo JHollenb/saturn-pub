@@ -10,4 +10,4 @@ def inventory():
         "history": ["thott", "future-forest", "program-recorder", "retained-rejected-futures"],
         "evidence": ["bisect", "xref", "claims", "watch", "custody", "cite", "run", "verify"],
         "authority": "Call session.capabilities() for the resident's actual stages, writes, closure and numerical contract.",
-        "limits": ["single writer and serialized execution", "exactness is family/checkpoint/toolchain/lane bound", "Qwen KV interventions are read-only observations", "circuit measurement is Qwen/Mamba journal-only", "deployed broker qualification requires separately available mrun routes", "no integrated CUDA VMM or universal semantic reasoning detector"]}
+        "limits": ["single writer and serialized execution", "exactness is family/checkpoint/toolchain/lane bound", "Qwen KV reads and bounded row/depth/component writes require journal mode and committed token boundaries", "circuit measurement is Qwen/Mamba journal-only", "deployed broker qualification requires separately available mrun routes", "no integrated CUDA VMM or universal semantic reasoning detector"]}

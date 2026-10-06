@@ -47,6 +47,11 @@ class BenchDebuggerAdapter(CallbackDebuggerAdapter):
                 callbacks["measure_circuit"] = measure
             if callable(replay):
                 callbacks["replay_circuit"] = replay
+        if family in {"qwen2", "mamba"}:
+            for operation in ("memory_read", "memory_write", "memory_diff", "memory_probe"):
+                callback = getattr(bench, operation, None)
+                if callable(callback):
+                    callbacks[operation] = callback
         super().__init__(caps, **callbacks)
 
     def _checkpoint(self, name):

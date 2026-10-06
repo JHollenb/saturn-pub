@@ -322,6 +322,36 @@ class DebugSession:
             raise ValueError("replay_circuit evidence_ref must be a non-empty string")
         return self.call("replay_circuit", {"evidence_ref": evidence_ref.strip()})
 
+    def _resolve_memory_spec(self, spec: dict[str, Any] | None) -> dict[str, Any]:
+        if spec is None:
+            return {}
+        if not isinstance(spec, dict):
+            raise ValueError("memory spec must be a JSON object")
+        resolved = dict(spec)
+        for field in ("cut_id", "donor_cut", "left_cut", "right_cut"):
+            value = resolved.get(field)
+            if isinstance(value, str):
+                resolved[field] = self.resolve_cut(value)
+        intervention = resolved.get("intervention")
+        if isinstance(intervention, dict):
+            resolved["intervention"] = self._resolve_memory_spec(intervention)
+        return resolved
+
+    def memory_read(self, spec: dict[str, Any] | None = None) -> dict[str, Any]:
+        selected = self._current_cut
+        result = self.call("memory_read", {"spec": self._resolve_memory_spec(spec)})
+        self._current_cut = selected
+        return result
+
+    def memory_write(self, spec: dict[str, Any]) -> dict[str, Any]:
+        return self.call("memory_write", {"spec": self._resolve_memory_spec(spec)})
+
+    def memory_diff(self, spec: dict[str, Any]) -> dict[str, Any]:
+        return self.call("memory_diff", {"spec": self._resolve_memory_spec(spec)})
+
+    def memory_probe(self, spec: dict[str, Any]) -> dict[str, Any]:
+        return self.call("memory_probe", {"spec": self._resolve_memory_spec(spec)})
+
     def add_breakpoint(self, spec: BreakpointSpec) -> dict[str, Any]:
         return self.call("breakpoint.add", spec.to_dict())
 

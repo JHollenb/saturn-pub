@@ -383,6 +383,155 @@ def test_mamba_measurement_records_memory_transfer_and_restore(model, family, tm
         b.close()
 
 
+def test_qwen_measurement_transfers_and_restores_complete_successor_kv(model, family, tmp_path):
+    if family != "qwen2":
+        pytest.skip("successor KV interchange is a Qwen-specific closure")
+    b = _bench(model, tmp_path)
+    try:
+        b.prefill([1, 2, 3])
+        report, rows = _measurement_rows(b.measure_circuit(_spec(
+            family, memory_mediation=True,
+            memory_selector={"layers": [0, 1], "row_start": 0, "row_stop": 4,
+                             "components": ["key", "value"]},
+        )))
+        assert report["memory_mediation"] is True
+        memory_rows = [row for row in rows if _role(row["role"]) in {"memory-transfer", "memory-restore"}]
+        assert memory_rows
+        assert all(row["metrics"]["paired_future"]["closure_exact"] for row in memory_rows)
+        assert all(row["masked_locality"]["masked_locality_exact"] for row in memory_rows)
+        assert all(row["first"]["kind"] == "recipient-boundary-snapshot" for row in memory_rows)
+        assert all(row["metrics"]["first_effect"]["native_output_measured"] is False
+                   for row in memory_rows)
+        assert all(row["recipient_policy"].endswith("fixed-query-before-consumer")
+                   for row in memory_rows)
+    finally:
+        b.close()
+
+
+def test_qwen_successor_kv_export_verifies_typed_receipt_and_rejects_tampering(
+    model, family, tmp_path
+):
+    if family != "qwen2":
+        pytest.skip("successor KV interchange is a Qwen-specific closure")
+    b = _bench(model, tmp_path)
+    export_root = tmp_path / "export"
+    try:
+        b.prefill([1, 2, 3])
+        report, _ = _measurement_rows(
+            b.measure_circuit(_spec(family, memory_mediation=True))
+        )
+        act = _memory_row(report)["act"]
+        b.export(export_root)
+        from mdb.bench_circuit_verify import _verify_act
+        from mdb.bench_verify import verify
+        from mdb.model_os_contracts import content_digest
+
+        assert verify(export_root)["mechanics_status"] == "valid"
+        _verify_act(act, b.artifacts)
+
+        class ReceiptOverlay:
+            def __init__(self, receipt):
+                self.receipt = receipt
+
+            def get(self, ref):
+                return self.receipt if ref == act["receipt_ref"] else b.artifacts.get(ref)
+
+        def reseal(receipt):
+            body = dict(receipt)
+            body.pop("content_sha256", None)
+            receipt["content_sha256"] = content_digest(body)
+            return receipt
+
+        tampered = deepcopy(b.artifacts.get(act["receipt_ref"]))
+        tampered["continuation"]["donor_cut"] = act["parent_cut"]
+        with pytest.raises(ValueError, match="receipt closure"):
+            _verify_act(act, ReceiptOverlay(reseal(tampered)))
+
+        malformed = deepcopy(b.artifacts.get(act["receipt_ref"]))
+        malformed["backend"].pop("native_statecut")
+        with pytest.raises(ValueError, match="receipt closure"):
+            _verify_act(act, ReceiptOverlay(reseal(malformed)))
+    finally:
+        b.close()
+
+
+def test_qwen_successor_kv_selector_has_exact_masked_locality_and_preserves_sibling(
+    model, family, tmp_path
+):
+    if family != "qwen2":
+        pytest.skip("successor KV interchange is a Qwen-specific closure")
+    b = _bench(model, tmp_path)
+    try:
+        b.prefill([1, 2, 3])
+        report, _ = _measurement_rows(b.measure_circuit(_spec(family, memory_mediation=True)))
+        transfer = _memory_row(report)
+        recipient_cut, donor_cut = transfer["recipient_cut"], transfer["donor_cut"]
+        b.fork("sibling", cut=recipient_cut)
+        b.checkout("main")
+        sibling = b.branches["sibling"].cut
+        b.restore(donor_cut)
+        donor = {f"{kind}.{layer}": b.resolve_value(f"kv_cache.layer_{layer:03d}.{kind}").cpu()
+                 for layer in range(2) for kind in ("key", "value")}
+        b.restore(recipient_cut)
+        before = {f"{kind}.{layer}": b.resolve_value(f"kv_cache.layer_{layer:03d}.{kind}").cpu()
+                  for layer in range(2) for kind in ("key", "value")}
+        act = b._circuit_memory_act(donor_cut, {
+            "layers": [1], "row_start": 3, "row_stop": 4, "components": ["value"],
+        })
+        after = {f"{kind}.{layer}": b.resolve_value(f"kv_cache.layer_{layer:03d}.{kind}").cpu()
+                 for layer in range(2) for kind in ("key", "value")}
+        assert act["locality"]["masked_locality_exact"] is True
+        assert act["locality"]["selected_payload_exact"] is True
+        assert torch.equal(after["value.1"][:, :, 3:4], donor["value.1"][:, :, 3:4])
+        for address in ("key.0", "value.0", "key.1"):
+            assert torch.equal(after[address], before[address])
+        assert torch.equal(after["value.1"][:, :, :3], before["value.1"][:, :, :3])
+        assert b.branches["sibling"].cut == sibling
+        b.checkout("sibling")
+        sibling_value = b.resolve_value("kv_cache.layer_001.value").cpu()
+        assert torch.equal(sibling_value, before["value.1"])
+    finally:
+        b.close()
+
+
+def test_qwen_successor_kv_publication_failure_restores_recipient(
+    model, family, tmp_path, monkeypatch
+):
+    if family != "qwen2":
+        pytest.skip("successor KV interchange is a Qwen-specific closure")
+    b = _bench(model, tmp_path)
+    try:
+        b.prefill([1, 2, 3])
+        report, _ = _measurement_rows(b.measure_circuit(_spec(family, memory_mediation=True)))
+        transfer = _memory_row(report)
+        recipient_cut, donor_cut = transfer["recipient_cut"], transfer["donor_cut"]
+        b.restore(recipient_cut)
+        before = {f"{kind}.{layer}": b.resolve_value(f"kv_cache.layer_{layer:03d}.{kind}").cpu()
+                  for layer in range(2) for kind in ("key", "value")}
+        events, lineage = deepcopy(b.events), list(b.branch.intervention_lineage)
+        original_checkpoint = b.checkpoint
+
+        def fail_commit(label=None):
+            if label == "successor-kv-committed":
+                raise OSError("injected successor KV publication failure")
+            return original_checkpoint(label)
+
+        monkeypatch.setattr(b, "checkpoint", fail_commit)
+        with pytest.raises(OSError, match="successor KV publication"):
+            b._circuit_memory_act(donor_cut)
+        assert b.branch.cut == recipient_cut
+        assert b.events == events
+        assert b.branch.intervention_lineage == lineage
+        for layer in range(2):
+            for kind in ("key", "value"):
+                assert torch.equal(
+                    b.resolve_value(f"kv_cache.layer_{layer:03d}.{kind}").cpu(),
+                    before[f"{kind}.{layer}"],
+                )
+    finally:
+        b.close()
+
+
 def test_measure_circuit_rejects_invalid_requests_before_forward(
     model, family, tmp_path, monkeypatch
 ):

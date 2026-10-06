@@ -94,6 +94,13 @@ def _verify(root):
                 from .bench_circuit_verify import verify_artifact
                 if verify_artifact(value, artifacts, manifest, vm_artifacts):
                     counts["circuit_artifacts"] = counts.get("circuit_artifacts", 0)+1
+                from .bench_memory_probe import verify_artifact as verify_memory_probe
+                if verify_memory_probe(value, artifacts, manifest, vm_artifacts):
+                    counts["memory_probes"] = counts.get("memory_probes", 0)+1
+                from .bench_hidden_memory import WRITE_SCHEMA, verify_write_act
+                if isinstance(value, dict) and value.get("schema") == WRITE_SCHEMA and value.get("cut_id"):
+                    verify_write_act(value, artifacts, vm_artifacts)
+                    counts["memory_writes"] = counts.get("memory_writes", 0)+1
             if isinstance(value, dict) and value.get("schema") == HYPERION_REPORT_SCHEMA:
                 verify_hyperion_report(value)
                 for row in value["observations"]:

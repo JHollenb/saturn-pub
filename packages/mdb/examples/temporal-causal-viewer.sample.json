@@ -1,0 +1,42 @@
+{
+  "schema": "mdb-dual-time-causal-events-v1",
+  "binding": {
+    "model_identity": {"model_id": "sample/offline"},
+    "input_binding": {"input_sha256": "sample-input"},
+    "numerical_contract": {"dtype": "float32"},
+    "parent_cut": "cas://sha256/sample-parent"
+  },
+  "branches": [
+    {"branch_id": "native", "role": "native", "arm_kind": "native"},
+    {"branch_id": "ablation", "role": "candidate", "arm_kind": "ablation"}
+  ],
+  "events": [
+    {
+      "event_id": "producer-0",
+      "token_time": 3,
+      "layer_depth": 1,
+      "stage": "formation",
+      "event_kind": "producer",
+      "branch_id": "native",
+      "evidence_class": "observation",
+      "logical_address": "sample.source",
+      "physical_address": {"layer": 1},
+      "payload": {"sha256": "sample-payload"}
+    },
+    {
+      "event_id": "read-0",
+      "token_time": 5,
+      "layer_depth": 3,
+      "stage": "binding",
+      "event_kind": "read",
+      "branch_id": "ablation",
+      "evidence_class": "causal_evidence",
+      "same_parent": true,
+      "native_consumer_executed": true,
+      "effect": {"signed_effect": -0.75},
+      "dose": {"mode": "scale", "value": 0.0},
+      "native_margin": {"future": 1.25},
+      "refs": {"receipt_ref": "cas://sha256/sample-receipt"}
+    }
+  ]
+}

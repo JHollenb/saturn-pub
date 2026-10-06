@@ -151,6 +151,18 @@ qualify that legacy numerical contract.
 
 ## Memory and addresses
 
+For causal inspection and intervention on Qwen committed K/V rows, use
+`memory_read(spec)`, `memory_write(spec)`, `memory_diff(spec)`, and
+`memory_probe(spec)`. The corresponding debugger commands are
+`memory read|write|diff|probe SPEC|@FILE`. Selectors name native layers, a
+half-open token-row span, and K/V components. Reads include decoded token text,
+addresses, tensor summaries, and bounded numeric contents. Writes atomically
+copy, zero, scale, or replace the selection through Model OS. A probe runs the
+same fixed query through untouched, candidate, and exact-reinstall native
+futures and restores the selected parent before returning. See
+[Reading and writing hidden memory](HIDDEN-MEMORY.md) for the complete loaded-model
+example, exact JSON schemas, budgets, outputs, and evidence boundary.
+
 Memory inspection reports logical rows, physical sharing, private ownership,
 resident/backed allocations, capacity, transfers and eviction/hydration events.
 Model weights and workspace are distinct from virtual state. Copy-on-write and
@@ -195,9 +207,13 @@ available where the resident catalog advertises them. Diffusion timesteps are no
 given autoregressive token semantics. Candidate evidence does not establish a
 universal semantic circuit or a complete explanation of reasoning.
 
-`mdb attach JOB_ID` speaks the existing mrun debugger protocol. In-process protocol
-mechanics and deployed broker qualification are separate. This extraction includes
-no fleet refresh; live deployment proof remains pending.
+`mdb attach JOB_ID` speaks the existing mrun debugger protocol. The corresponding
+Saturn surface is live-qualified through the deployed broker on one
+Qwen2.5-1.5B CUDA BF16 job, including read, atomic write, diff, three unique
+fixed-query probes, exact reinstall, parent restoration, export and offline
+verification. See the [hidden-memory guide](HIDDEN-MEMORY.md) for the retained
+transcript, client correction and repeated-panel plan variance. The MDB package
+does not itself deploy or administer the fleet service.
 
 ## Offline tools
 

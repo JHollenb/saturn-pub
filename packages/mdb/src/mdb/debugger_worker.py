@@ -109,7 +109,11 @@ class DebugWorkerController:
                 # subclasses for refused or incompatible measurements. Keep
                 # legacy adapter error behavior while converting these two
                 # new control operations into protocol refusals.
-                if request.operation not in {"measure_circuit", "replay_circuit"}:
+                serializable_runtime_errors = {
+                    "measure_circuit", "replay_circuit", "memory_read", "memory_write",
+                    "memory_diff", "memory_probe",
+                }
+                if request.operation not in serializable_runtime_errors:
                     raise
                 response = DebugResponse(request.request_id, self._sequence, False, error=str(exc))
             self._last_request[request.request_id] = response
@@ -500,6 +504,44 @@ class DebugWorkerController:
                 )
             result = dict(self.adapter.optional_operation(operation, evidence_ref.strip()))
             self._remember_cut(result)
+            return result
+        if operation in {"memory_read", "memory_write", "memory_diff", "memory_probe"}:
+            if operation not in self.adapter.optional_operations():
+                raise DebuggerProtocolError(
+                    f"adapter {self.capability.family} does not expose debugger operation: "
+                    f"{operation}"
+                )
+            if operation in {"memory_write", "memory_probe"}:
+                if not self._paused:
+                    raise DebuggerProtocolError(
+                        f"{operation} requires a paused worker at a typed StateCut"
+                    )
+                if self._pending_act_id is not None:
+                    raise DebuggerProtocolError(
+                        f"cannot {operation} with a pending Act; commit or abort it first"
+                    )
+            spec = payload.get("spec", {})
+            if not isinstance(spec, Mapping):
+                raise DebuggerProtocolError(f"{operation} requires a JSON object spec")
+            try:
+                spec = json.loads(json.dumps(dict(spec), allow_nan=False))
+            except (TypeError, ValueError) as exc:
+                raise DebuggerProtocolError(
+                    f"{operation} spec must contain JSON values only"
+                ) from exc
+            def resolve_cuts(value: Any) -> Any:
+                if not isinstance(value, dict):
+                    return value
+                output = dict(value)
+                for field in ("cut_id", "donor_cut", "left_cut", "right_cut"):
+                    if isinstance(output.get(field), str):
+                        output[field] = self._cut_id(output[field])
+                if isinstance(output.get("intervention"), dict):
+                    output["intervention"] = resolve_cuts(output["intervention"])
+                return output
+            result = dict(self.adapter.optional_operation(operation, resolve_cuts(spec)))
+            if operation in {"memory_write", "memory_probe"}:
+                self._remember_cut(result)
             return result
         if operation == "frames":
             if self.source_frame_stack is None:

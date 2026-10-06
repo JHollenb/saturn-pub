@@ -47,6 +47,7 @@ HELP = """Saturn debugger commands:
   preview | commit | abort | abort-all
   replay CUT_ID | reverse-step | reverse-continue PREDICATE
   measure-circuit SPEC|@FILE | replay-circuit EVIDENCE_REF
+  memory [read] [SPEC|@FILE] | memory write|diff|probe SPEC|@FILE
   history | repeat [N] | alias NAME COMMAND | let NAME VALUE
   save-session FILE | load-session FILE | reconnect | finish [DIR]
   recipe list | recipe run NAME | complete PREFIX
@@ -72,6 +73,101 @@ def _json_payload(raw: str, *, label: str) -> dict[str, Any]:
     if not isinstance(value, dict):
         raise ValueError(f"{label} requires a JSON object")
     return value
+
+
+def _memory_table(result: dict[str, Any]) -> str:
+    """Render compact measured memory evidence for an interactive human."""
+
+    def scalar(value: Any) -> str:
+        if value is None:
+            return "-"
+        if isinstance(value, float):
+            return f"{value:+.6g}"
+        if isinstance(value, (dict, list)):
+            return json.dumps(value, sort_keys=True, separators=(",", ":"))
+        return str(value)
+
+    payload = result.get("report") if isinstance(result.get("report"), dict) else result
+    rows = payload.get("rows")
+    if isinstance(rows, list) and rows:
+        first_components = rows[0].get("components") or {}
+        first_component = next(iter(first_components.values()), {})
+        if isinstance(first_component, dict) and "delta" in first_component:
+            lines = ["layer row component  left_norm  right_norm  delta_norm  max_abs  equal"]
+            for row in rows:
+                components = row.get("components")
+                if isinstance(components, dict):
+                    items = components.items()
+                else:
+                    items = [(row.get("component", "-"), row)]
+                for component, values in items:
+                    values = values if isinstance(values, dict) else {}
+                    left = values.get("left") if isinstance(values.get("left"), dict) else {}
+                    right = values.get("right") if isinstance(values.get("right"), dict) else {}
+                    delta = values.get("delta") if isinstance(values.get("delta"), dict) else {}
+                    layer = scalar(values.get("layer", row.get("layer")))
+                    component_name = str(values.get("component", component))
+                    lines.append(
+                        f"{layer:>5} {scalar(row.get('row')):>3} "
+                        f"{component_name:>9}  {scalar(left.get('norm')):>9}  "
+                        f"{scalar(right.get('norm')):>10}  {scalar(delta.get('norm')):>10}  "
+                        f"{scalar(delta.get('max_abs')):>7}  {scalar(values.get('equal')):>5}"
+                    )
+            if payload.get("truncated"):
+                lines.append(f"… truncated; next row_start={payload.get('next_row_start')}")
+            return "\n".join(lines)
+        lines = ["layer row token  component  norm  shape  sha256  values"]
+        for row in rows:
+            components = row.get("components") or {}
+            for component, values in components.items():
+                values = values if isinstance(values, dict) else {}
+                digest = str(values.get("sha256", "-"))
+                layer = scalar(values.get("layer", row.get("layer")))
+                token = scalar(row.get("token_text") or row.get("token_id"))
+                component_name = str(values.get("component", component))
+                lines.append(
+                    f"{layer:>5} {scalar(row.get('row')):>3} "
+                    f"{token:>5}  {component_name:>9}  "
+                    f"{scalar(values.get('norm')):>9}  {scalar(values.get('shape')):>8}  "
+                    f"{digest[:12]:>12}  {scalar(values.get('values'))}"
+                )
+        if payload.get("truncated"):
+            lines.append(f"… truncated; next row_start={payload.get('next_row_start')}")
+        return "\n".join(lines)
+    if any(key in payload for key in ("native", "candidate", "restored", "reinstall")):
+        lines = ["arm        answer  token_ids  observable"]
+        for arm in ("native", "candidate", "restored", "reinstall"):
+            value = payload.get(arm)
+            if not isinstance(value, dict):
+                continue
+            answer = value.get(
+                "answer_text", value.get("answer", value.get("text", value.get("output")))
+            )
+            tokens = value.get("answer_token_ids", value.get("token_ids"))
+            readout = (
+                value.get("first_readout")
+                if isinstance(value.get("first_readout"), dict) else {}
+            )
+            observable = readout.get(
+                "raw_logit_margin", value.get("observable", value.get("token_margin"))
+            )
+            label = "restored" if arm == "reinstall" else arm
+            lines.append(
+                f"{label:<9}  {scalar(answer)}  {scalar(tokens)}  {scalar(observable)}"
+            )
+        effect = payload.get("effect") if isinstance(payload.get("effect"), dict) else {}
+        if "signed_effect" in effect:
+            lines.append(f"signed_raw_logit_contrast: {scalar(effect['signed_effect'])}")
+        if "selected_parent_restored_exact" in payload:
+            restored = scalar(payload["selected_parent_restored_exact"])
+            lines.append(f"selected_parent_restored_exact: {restored}")
+        for key in ("signed_raw_logit_contrast", "closure_equal", "logits_equal", "cut_id"):
+            if key in result:
+                lines.append(f"{key}: {scalar(result[key])}")
+        return "\n".join(lines)
+    fields = ("op", "mode", "parent_cut", "cut_id", "receipt_ref")
+    rendered = [f"{field}: {scalar(result[field])}" for field in fields if field in result]
+    return "\n".join(rendered) if rendered else json.dumps(result, indent=2, sort_keys=True)
 
 
 def _sign(args: list[str], *, default: str = "replace") -> tuple[list[str], str]:
@@ -137,7 +233,7 @@ class DebugShell:
                 line = self.history[index - 1]
             line = Template(line).safe_substitute(self.variables)
             raw_command, separator, raw_remainder = line.partition(" ")
-            if raw_command in {"measure-circuit", "measure_circuit"}:
+            if raw_command in {"measure-circuit", "measure_circuit", "memory"}:
                 # Keep JSON punctuation and its quoted object keys intact;
                 # shlex would strip the inner quotes from an unquoted object.
                 remainder = raw_remainder.strip() if separator else ""
@@ -148,7 +244,17 @@ class DebugShell:
                         quoted = []
                     if len(quoted) == 1:
                         remainder = quoted[0]
-                argv = [raw_command] + ([remainder] if remainder else [])
+                if raw_command == "memory" and remainder:
+                    action, action_separator, payload = remainder.partition(" ")
+                    if action in {"read", "write", "diff", "probe"}:
+                        payload_args = (
+                            [payload.strip()] if action_separator and payload.strip() else []
+                        )
+                        argv = [raw_command, action, *payload_args]
+                    else:
+                        argv = [raw_command, remainder]
+                else:
+                    argv = [raw_command] + ([remainder] if remainder else [])
             elif raw_command in {"python", "py", "console"}:
                 # shlex is correct for debugger arguments, but it would strip
                 # the quotes that belong to read("logical.address") in the
@@ -192,7 +298,10 @@ class DebugShell:
                     "commit",
                 }:
                     result = self._with_displays(result)
-                self.emit(result)
+                if command == "memory" and not self.json_output:
+                    self.emit(_memory_table(result))
+                else:
+                    self.emit(result)
             # Script commands can return a structured failure without raising
             # (notably ``source FILE`` aggregates failures from its child
             # commands). Preserve that status for batch callers.
@@ -502,6 +611,19 @@ class DebugShell:
             if len(args) != 1:
                 raise ValueError("replay-circuit requires EVIDENCE_REF")
             return self.session.replay_circuit(args[0])
+        if command == "memory":
+            action = args[0].replace("-", "_") if args else "read"
+            if action not in {"read", "write", "diff", "probe"}:
+                action = "read"
+                payload_args = args
+            else:
+                payload_args = args[1:]
+            if action != "read" and not payload_args:
+                raise ValueError(f"memory {action} requires a JSON object spec or @FILE")
+            if len(payload_args) > 1:
+                raise ValueError(f"memory {action} accepts one JSON object spec or @FILE")
+            spec = _json_payload(payload_args[0], label=f"memory {action}") if payload_args else {}
+            return getattr(self.session, f"memory_{action}")(spec)
         if command == "reverse-step":
             parent = self.session.resolve_cut("@parent")
             if not parent:
@@ -694,6 +816,7 @@ class DebugShell:
             "replay",
             "measure-circuit",
             "replay-circuit",
+            "memory",
             "reverse-step",
             "reverse-continue",
             "first-divergence",
@@ -775,6 +898,7 @@ class DebugShell:
             "first-divergence": cut_candidates,
             "bisect": cut_candidates,
             "promote": cut_candidates,
+            "memory": ["read", "write", "diff", "probe"],
             "conditioner": ["inspect", "set", "write", "calc", "expr"],
             "struct": ["list", "add", "load"],
             "address": ["list", "add", "load"],

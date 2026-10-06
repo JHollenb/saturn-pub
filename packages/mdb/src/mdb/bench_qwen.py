@@ -241,11 +241,21 @@ class QwenBenchSession:
             "mutable_closure": ["residual", "staged_kv", "pending_token", "committed_history", "cursor"],
             "operations": ["prefill", "step", "generate", "inspect", "checkpoint", "fork", "checkout",
                 "restore", "replay", "compare", "export", "close", "discover", "bind_symbol", "stage_input", "replay_observation",
-                *(["measure_circuit", "replay_circuit"] if self.publication.mode == "journal" else [])],
+                *(["memory_read", "memory_write", "memory_diff", "memory_probe",
+                   "measure_circuit", "replay_circuit"] if self.publication.mode == "journal" else [])],
+            "hidden_memory": {"protocol": "saturn-bench-hidden-memory-v1",
+                "available": self.publication.mode == "journal", "publication_mode_required": "journal",
+                "components": ["key", "value"], "selectors": ["layers", "row_start", "row_stop", "components"],
+                "write_modes": ["copy", "zero", "scale", "replace"],
+                "values_default": True, "default_max_values": 16, "max_values": 256,
+                "default_max_rows": 32, "max_rows": 256,
+                "boundary": "committed-token", "authority": "model-os",
+                "publication": "single-atomic-journal-selection"},
             "circuit_measurement": {"protocol": "saturn-bench-circuit-measurement-v1", "available": self.publication.mode == "journal",
                 "publication_mode_required": "journal",
-                "observable": "token_margin", "start_boundary": "committed-token", "memory_mediation": False,
-                "semantic_reasoning_detector": False, "memory_policy": "read-only KV observations"},
+                "observable": "token_margin", "start_boundary": "committed-token", "memory_mediation": True,
+                "semantic_reasoning_detector": False,
+                "memory_policy": "typed row/depth/component successor-KV interchange; fixed recipient input"},
             "integrations": {"model_os": "token-admission-and-commit", "virtual_memory": "resident-and-durable",
                 "hyperion": "context-bound-native-consumer-contrasts", "future_forest": "persistent",
                 "program_recorder": "persistent", "source_frames": "attached" if self.source_frames else "available-on-attach",
@@ -826,6 +836,26 @@ class QwenBenchSession:
         return replay_observation(self, evidence_ref)
 
     @_serialized
+    def memory_read(self, spec=None):
+        from .bench_hidden_memory import memory_read
+        return memory_read(self, spec)
+
+    @_serialized
+    def memory_write(self, spec):
+        from .bench_hidden_memory import memory_write
+        return memory_write(self, spec)
+
+    @_serialized
+    def memory_diff(self, spec):
+        from .bench_hidden_memory import memory_diff
+        return memory_diff(self, spec)
+
+    @_serialized
+    def memory_probe(self, spec):
+        from .bench_memory_probe import atomic_probe
+        return atomic_probe(self, spec)
+
+    @_serialized
     def measure_circuit(self, spec):
         from .bench_circuit_measurement import atomic_measurement, measure_circuit
         return atomic_measurement(self, measure_circuit, spec)
@@ -834,6 +864,48 @@ class QwenBenchSession:
     def replay_circuit(self, evidence_ref):
         from .bench_circuit_measurement import atomic_measurement, replay_circuit
         return atomic_measurement(self, replay_circuit, evidence_ref)
+
+    def _circuit_memory_act(self, donor_cut, selector=None):
+        """Install one typed donor KV selection at a committed successor cut."""
+        if self._edit or self._backend().execution is not None or self.cursor()["phase"] != "token":
+            raise BenchError("successor KV interchange requires a committed Qwen token boundary")
+        donor = self.artifacts.get(donor_cut)
+        if (donor.get("schema") != BENCH_CUT_SCHEMA
+                or donor.get("identity") != self.identity
+                or donor.get("lane") != self.lane
+                or donor.get("numerical_contract") != self.vm.package.model_abi.fingerprint
+                or donor.get("execution") is not None):
+            raise BenchError("incompatible Qwen successor KV donor closure")
+        if (donor.get("token_ids") != self.branch.token_ids
+                or donor.get("prompt_length") != self.branch.prompt_length):
+            raise BenchError("Qwen successor KV interchange requires identical committed history")
+        parent = self.branch.cut
+        previous_lineage = list(self.branch.intervention_lineage)
+        previous_events = list(self.events)
+        from .bench_qwen_memory import transaction
+        kernel, updates, plan = transaction(self, parent_cut=parent, donor_cut=donor_cut,
+                                            donor=donor, selector=selector)
+        try:
+            result = kernel.execute(updates=updates, horizon=0,
+                metadata={"session_id": self.session_id, "branch": self.active,
+                          "parent_cut": parent, "donor_cut": donor_cut})
+            if result.receipt.decision != "commit":
+                raise BenchError("successor KV Act did not commit")
+            receipt_ref = self.artifacts.put(result.receipt.to_payload())
+            self.branch.intervention_lineage.append(plan["act_id"])
+            self.events.append({"kind": "successor-kv-act", "parent": parent,
+                "donor_cut": donor_cut, "act_id": plan["act_id"], "receipt_ref": receipt_ref,
+                "selector": plan["selector"], "pending_token_policy": plan["pending_token_policy"]})
+            cut = self.checkpoint("successor-kv-committed")
+            return {**plan, "cut_id": cut, "receipt_ref": receipt_ref,
+                    "parent_cut": parent, "donor_cut": donor_cut,
+                    "plan": {"writes": ["successor_kv"], "authority": "model-os",
+                             "selector": plan["selector"]}}
+        except BaseException:
+            self.branch.intervention_lineage = previous_lineage
+            self.events = previous_events
+            self._restore(parent)
+            raise
 
     @_serialized
     def attach_source_frames(self, stack):

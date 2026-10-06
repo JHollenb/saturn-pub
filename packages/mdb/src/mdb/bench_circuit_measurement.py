@@ -21,9 +21,10 @@ OBSERVATION_SCHEMA = "saturn-bench-circuit-observation-v1"
 def capabilities(family):
     return {"protocol": SCHEMA, "available": family in {"qwen2", "mamba"},
         "observable": "token_margin", "start_boundary": "committed-token",
-        "memory_mediation": family == "mamba", "semantic_reasoning_detector": False,
+        "memory_mediation": family in {"qwen2", "mamba"}, "semantic_reasoning_detector": False,
         "memory_policy": "complete recurrent pages and flags; fixed recipient input" if family == "mamba"
-            else "read-only KV observations" if family == "qwen2" else "not-qualified"}
+            else "typed row/depth/component successor-KV interchange; fixed recipient input"
+            if family == "qwen2" else "not-qualified"}
 
 
 def _family(bench):
@@ -59,7 +60,7 @@ def _validate(bench, spec):
     try: spec = json.loads(json.dumps(spec, allow_nan=False))
     except (TypeError, ValueError): raise BenchError("circuit spec must be finite JSON") from None
     allowed = {"name", "sites", "contrasts", "observable", "query_token_ids", "continuation_tokens",
-               "memory_mediation", "max_native_operations", "max_capture_bytes", "seed"}
+               "memory_mediation", "memory_selector", "max_native_operations", "max_capture_bytes", "seed"}
     if set(spec)-allowed: raise BenchError("unknown circuit spec fields")
     sites = spec.get("sites", [])
     if (not isinstance(sites, list) or not 1 <= len(sites) <= 8
@@ -97,8 +98,18 @@ def _validate(bench, spec):
     if type(horizon) is not int or not 1 <= horizon <= 8: raise BenchError("continuation budget must be 1..8")
     mediation = spec.setdefault("memory_mediation", False)
     if type(mediation) is not bool: raise BenchError("memory_mediation must be boolean")
-    if mediation and (_family(bench) != "mamba" or not query):
-        raise BenchError("memory mediation requires Mamba complete pages and an explicit fixed query input")
+    if mediation and not query:
+        raise BenchError("memory mediation requires an explicit fixed query input")
+    selector = spec.get("memory_selector")
+    if selector is not None and not mediation:
+        raise BenchError("memory_selector requires memory_mediation")
+    if _family(bench) == "qwen2":
+        from .bench_qwen_memory import normalize_selector
+        if selector is not None or mediation:
+            spec["memory_selector"] = normalize_selector(selector, layers=_layers(bench),
+                rows=len(_tokens(bench)) + 1)
+    elif selector is not None:
+        raise BenchError("memory_selector is only qualified for Qwen successor KV")
     if (not isinstance(spec.setdefault("name", "state-path"), str)
         or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_.:/@+-]*", spec["name"])):
         raise BenchError("circuit name must be a safe symbol identifier")
@@ -379,7 +390,9 @@ def measure_circuit(bench, spec):
                         ("memory-restore", first["successor_cut"], baseline["successor_cut"], baseline_future)):
                         bench.restore(recipient)
                         try:
-                            memory_act = bench._circuit_memory_act(donor)
+                            memory_act = (bench._circuit_memory_act(donor, spec.get("memory_selector"))
+                                          if _family(bench) == "qwen2"
+                                          else bench._circuit_memory_act(donor))
                         except MemoryInterchangeError as error:
                             bench.restore(recipient)
                             record({**common, "name": memory_role+":"+name, "role": memory_role,
@@ -397,7 +410,10 @@ def measure_circuit(bench, spec):
                         record({**common, "name": memory_role+":"+name, "role": memory_role,
                             "replay_cut": memory_act["cut_id"], "replay_stage": "successor", "act": memory_act,
                             "donor_cut": donor, "recipient_cut": recipient,
-                            "recipient_policy": "preserve-history-pending-logits; supply-fixed-query-before-consumer",
+                            "recipient_policy": memory_act.get("pending_token_policy",
+                                "preserve-history-pending-logits; supply-fixed-query-before-consumer"),
+                            "memory_selector": memory_act.get("selector"),
+                            "masked_locality": memory_act.get("locality"),
                             "pending_token_match": first["closure"]["cursor"]["pending_token"] == baseline["closure"]["cursor"]["pending_token"],
                             "first": transferred_first, "future": transferred_future,
                             "metrics": {"residual": None, "memory": _memory_delta(transferred, baseline_memory),
@@ -421,7 +437,8 @@ def measure_circuit(bench, spec):
             "memory distances are diagnostics, not measured task collateral",
             "memory interchange uses caller-supplied future inputs; it does not prove autonomous reasoning",
             "residual restoration occurs before the next native layer; it proves edit reversibility",
-            "Qwen KV is measured read-only; diffusion successor mediation is not qualified"]}
+            "Qwen partial KV selection measures the selected carrier and need not reproduce a complete candidate future",
+            "diffusion successor mediation is not qualified"]}
     # Existing symbols receive actual observations, visibly scoped as a measured
     # response rather than an inferred universal semantic name.
     from .hyperion import HyperionObservation, compile_dynamic_circuit
@@ -531,7 +548,9 @@ def replay_circuit(bench, evidence_ref):
         if evidence["replay_stage"] == "successor":
             _verify_act(evidence["act"], bench.artifacts)
             bench.restore(evidence["recipient_cut"])
-            replayed_act = bench._circuit_memory_act(evidence["donor_cut"])
+            replayed_act = (bench._circuit_memory_act(evidence["donor_cut"], evidence.get("memory_selector"))
+                            if _family(bench) == "qwen2"
+                            else bench._circuit_memory_act(evidence["donor_cut"]))
         else: bench.restore(evidence["replay_cut"])
         if evidence["replay_stage"] == "site": first, _, _ = _first(bench, evidence["spec"])
         elif evidence["replay_stage"] == "successor":
@@ -556,17 +575,8 @@ def replay_circuit(bench, evidence_ref):
 
 
 def _verify_act(act, artifacts):
-    cut = artifacts.get(act["cut_id"])
-    receipt = artifacts.get(act["receipt_ref"])
-    body = dict(receipt); digest = body.pop("content_sha256")
-    if content_digest(body) != digest or receipt["decision"] != "commit":
-        raise ValueError("circuit Act receipt is not a valid commit")
-    if cut.get("receipt_ref") and cut["receipt_ref"] != act["receipt_ref"]:
-        raise ValueError("circuit Act cut/receipt mismatch")
-    if act.get("donor_cut"):
-        output = receipt["continuation"]["output"]
-        if output["act_id"] != act["act_id"] or output["donor_cut"] != act["donor_cut"]:
-            raise ValueError("circuit memory Act donor/receipt mismatch")
+    from .bench_circuit_verify import _verify_act as verify_act
+    return verify_act(act, artifacts)
 
 
 def verify_artifact(value, artifacts, manifest, vm_artifacts=None):

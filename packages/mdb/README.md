@@ -4,10 +4,18 @@ Standalone model virtual memory and reversible model debugger, extracted from
 Saturn's Open Bench. MDB owns the runtime source. It does not import Saturn or
 Saturn-pub. `mrun` provides model resolution, resource admission and resident jobs.
 
+Committed Qwen K/V memory is directly readable and writable through `memory_read`,
+`memory_write`, `memory_diff`, and `memory_probe`. Select native layers, token rows,
+and K/V components; inspect bounded numeric values and token text; apply atomic
+copy/zero/scale/replace Acts; and compare paired native futures with exact parent
+restore. Start with the [hidden-memory walkthrough](docs/HIDDEN-MEMORY.md).
+
 **Extraction status:** installed-wheel mechanics and bounded model-backed proofs
 pass for Qwen, Mamba v1, FLUX and SDXL. Independent archive checks, custody and
 evidence sweeps accompany the proofs. See the [qualification record](docs/QUALIFICATION.md)
-for exact checkpoints, numerical lanes and limits. No fleet service has been deployed.
+for exact checkpoints, numerical lanes and limits. The corresponding Saturn
+hidden-memory CLI is live-qualified through the deployed broker on one
+Qwen2.5-1.5B CUDA BF16 job; this package does not deploy the fleet service.
 
 Install the offline tools with `pip install .`. For caller-owned language models,
 install `.[autoregressive]`; for diffusion, `.[diffusion]`. Scheduler launches also
