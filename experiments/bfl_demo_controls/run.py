@@ -100,6 +100,11 @@ EXP2_VIAB_SEEDS = (
     8101, 8111, 8117, 8123, 8147, 8161, 8167, 8171,
     8179, 8191, 8209, 8219, 8221, 8231, 8233, 8237,
 )
+# Variant B passed the coordinator's viability gate (left ~14/16, right ~15/16); A not used.
+# Neutral = the Variant B sentence without the action/side clause (same structure).
+EXP2B_NEUTRAL = (
+    "a photo of a person seated at a wooden table between two large cameras on separate tripods"
+)
 
 
 # --------------------------------------------------------------------------------------
@@ -709,17 +714,20 @@ def exp2_arms(h_L, h_R, pred_mask, device):
     return arms
 
 
-def exp2_run(args, report, out_dir, device):
+def exp2_run(args, report, out_dir, device, prompts=EXP2_PROMPTS, predicate=EXP2_PREDICATE,
+             seeds=EXP2_SEEDS):
     pipe_enc = load_encoder_pipeline(args.model, device)
     tok = pipe_enc.tokenizer
-    conds = {name: encode_prompt(pipe_enc, p, device) for name, p in EXP2_PROMPTS.items()}
-    rows_L, dec_L = resolve_predicate_rows(tok, EXP2_PROMPTS["left"], EXP2_PREDICATE)
-    rows_R, dec_R = resolve_predicate_rows(tok, EXP2_PROMPTS["right"], EXP2_PREDICATE)
+    conds = {name: encode_prompt(pipe_enc, p, device) for name, p in prompts.items()}
+    rows_L, dec_L = resolve_predicate_rows(tok, prompts["left"], predicate)
+    rows_R, dec_R = resolve_predicate_rows(tok, prompts["right"], predicate)
     if rows_L != rows_R:
         raise SystemExit(f"predicate rows differ between left/right: {rows_L} vs {rows_R}")
     del pipe_enc
     _free()
     report["encode_rss_mb"] = _rss_mb()
+    report["prompts"] = dict(prompts)
+    report["predicate"] = predicate
     report["predicate_rows"] = rows_L
     report["predicate_tokens"] = dec_L
 
@@ -735,7 +743,7 @@ def exp2_run(args, report, out_dir, device):
     report["seq_len"] = int(seq_len)
 
     # ---- smoke gate on first seed ----
-    seed0 = EXP2_SEEDS[0]
+    seed0 = seeds[0]
     lat, img_ids, timesteps, sigmas = prepare_sampling(
         pipe, seed0, args.size, args.steps, device, in_channels
     )
@@ -770,7 +778,7 @@ def exp2_run(args, report, out_dir, device):
     vram = []
     rng = np.random.default_rng(0xBF1C0)
 
-    for seed in EXP2_SEEDS:
+    for seed in seeds:
         lat, img_ids, timesteps, sigmas = prepare_sampling(
             pipe, seed, args.size, args.steps, device, in_channels
         )
@@ -817,9 +825,9 @@ def exp2_run(args, report, out_dir, device):
     sheets = []
     for i in range(0, len(ids), per_sheet):
         chunk = ids[i : i + per_sheet]
-        sp = out_dir / f"contact-sheet-exp2-{i // per_sheet:02d}.png"
+        sp = out_dir / f"contact-sheet-{args.experiment}-{i // per_sheet:02d}.png"
         contact_sheet(
-            [id_to_arr[j] for j in chunk], sp, cols=4, cell_px=224, labels=chunk
+            [id_to_arr[j] for j in chunk], sp, cols=4, cell_px=200, labels=chunk
         )
         sheets.append(sp.name)
 
@@ -830,7 +838,7 @@ def exp2_run(args, report, out_dir, device):
         [id_to_arr[j] for j, _ in nat_ids],
         out_dir / "native-left-right-viability.png",
         cols=4,
-        cell_px=224,
+        cell_px=188,
         labels=[f"s{v['seed']} {v['arm'].split('_')[1]}" for _, v in nat_ids],
     )
 
@@ -844,11 +852,26 @@ def exp2_run(args, report, out_dir, device):
     for jid, meta in key.items():
         side_map[meta["arm"]] = meta["requested_side"]
     report["arms"] = {a: {"requested_side": side_map[a], "n": len(per_arm_files[a])} for a in per_arm_files}
-    report["seeds"] = list(EXP2_SEEDS)
+    report["seeds"] = list(seeds)
     report["n_images"] = len(key)
     report["peak_vram_mb"] = max([v for v in vram if v] or [0])
     report["judging"] = "blinded; not judged by worker; primary=M±D_rest requested-side contact"
     return True
+
+
+def exp2b_run(args, report, out_dir, device):
+    """Full 8-arm blinded run on the coordinator-approved Variant B prompts + 16 fresh seeds."""
+    v = EXP2_RETRY_VARIANTS["B"]
+    prompts = {"neutral": EXP2B_NEUTRAL, "left": v["left"], "right": v["right"]}
+    report["variant"] = "B"
+    report["gate_decision"] = (
+        "Variant B passed (coordinator non-blinded read: left ~14/16, right ~15/16); "
+        "Variant A not used (crowded/ambiguous)."
+    )
+    return exp2_run(
+        args, report, out_dir, device,
+        prompts=prompts, predicate=v["predicate"], seeds=EXP2_VIAB_SEEDS,
+    )
 
 
 # --------------------------------------------------------------------------------------
@@ -969,7 +992,7 @@ def exp2viab_run(args, report, out_dir, device):
 # --------------------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--experiment", choices=["exp1", "exp2", "exp2viab"], required=True)
+    ap.add_argument("--experiment", choices=["exp1", "exp2", "exp2viab", "exp2b"], required=True)
     ap.add_argument("--model", default="")
     ap.add_argument("--size", type=int, default=None)
     ap.add_argument("--steps", type=int, default=4)
@@ -1018,7 +1041,12 @@ def main():
     report["size"] = args.size
     report["steps"] = args.steps
     device = "cuda" if _cuda() else "cpu"
-    runner = {"exp1": exp1_run, "exp2": exp2_run, "exp2viab": exp2viab_run}[args.experiment]
+    runner = {
+        "exp1": exp1_run,
+        "exp2": exp2_run,
+        "exp2viab": exp2viab_run,
+        "exp2b": exp2b_run,
+    }[args.experiment]
     ok = runner(args, report, out_dir, device)
     report["elapsed_s"] = time.perf_counter() - started
     report["peak_rss_mb"] = _rss_mb()

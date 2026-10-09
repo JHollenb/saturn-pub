@@ -29,7 +29,7 @@ SCRATCH = "<scratch-root>/bfl-controls"
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--experiment", choices=["exp1", "exp2", "exp2viab"], required=True)
+    ap.add_argument("--experiment", choices=["exp1", "exp2", "exp2viab", "exp2b"], required=True)
     ap.add_argument("--vram-mb", type=int, required=True)
     ap.add_argument("--ram-mb", type=int, required=True)
     ap.add_argument("--wall-s", type=int, default=900)

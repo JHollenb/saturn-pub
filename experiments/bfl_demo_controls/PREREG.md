@@ -148,6 +148,24 @@ Deliverable: one non-blinded viability sheet per variant (labelled seed + side),
 not judge; the coordinator applies the ≥ 10/16-each gate and decides whether (and with which
 variant) to authorize the full 8-arm run.
 
+**Gate decision (coordinator, non-blinded read of the viability sheets):** **Variant B PASSES**
+(left ≈ 14/16, right ≈ 15/16 requested-side contact; clean single-person layouts). Variant A not
+used (crowded, multiple people, ambiguous hands). Authorized the full 8-arm blinded run on
+Variant B + the same 16 fresh seeds `8101…8237`.
+
+**Full 8-arm blinded run on Variant B (`--experiment exp2b`):** prompts =
+- left: `…reaching out with one hand and firmly gripping the lens of the camera on the left side of the image`
+- right: `… on the right side of the image`
+- neutral (Variant B without the action/side clause, same structure):
+  `a photo of a person seated at a wooden table between two large cameras on separate tripods`
+
+Arms: `neutral`, `native left`, `native right`, `M`, `M+D_rest (→right)`, `M−D_rest (→left)`,
+`M+D_pred (→right)`, `M−D_pred (→left)`. Predicate rows `[28,29,30,31]`=`[' firmly',' gripping',
+' the',' lens']`; interventions overwrite the full `joint.3` text each of the 4 steps on the
+neutral-conditioned trajectory. 512², 16 seeds `8101…8237`. Same mechanics smoke gate; same
+blinding (random ids, separate `judge-key.json`, shuffled sheets labelled by id only). Metrics
+and sign convention unchanged from the Experiment 2 section above. Worker does not judge.
+
 ## Recording
 
 Per experiment: backend, device, dtype, model/revision, adapter identity, torch/diffusers
