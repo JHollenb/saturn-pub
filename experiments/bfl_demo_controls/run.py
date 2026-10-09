@@ -425,20 +425,21 @@ def run_tiny_selftest():
     swap0, _, _ = drive(adapter, src, swap=swap)
     assert _digest(swap0["latent"]) == _digest(donor_final["latent"]), "cut0 swap == donor"
 
-    # M/D/P arithmetic (joint.0 as the exp2-style site)
-    step0 = 0
-    H_L = h_src[(step0, "after:joint.0")]
-    H_R = h_donor[(step0, "after:joint.0")]
-    M = (H_L + H_R) / 2
-    D = (H_R - H_L) / 2
-    assert torch.allclose(M + D, H_R) and torch.allclose(M - D, H_L)
-    rows = [1]
-    Dpred = D.clone()
-    mask = torch.ones(D.shape[1], dtype=torch.bool)
-    mask[rows] = False
-    Dpred[:, mask, :] = 0
-    Drest = D - Dpred
-    assert torch.allclose(Dpred + Drest, D)
+    # M/D/P arithmetic through the real exp2 functions (joint.0 as the exp2-style site)
+    site = "after:joint.0"
+    hL_step = {s: h_src[(s, si)] for (s, si) in h_src if si == site}
+    hR_step = {s: h_donor[(s, si)] for (s, si) in h_donor if si == site}
+    seq_len = hL_step[0].shape[1]
+    pred_mask = _projector(seq_len, [1])
+    arms = exp2_arms(hL_step, hR_step, pred_mask, "cpu")
+    HR = hR_step[0]
+    HL = hL_step[0]
+    # (M+D_rest) + D_pred == H_R and (M-D_rest) + (-D_pred) == H_L, with D_pred=(M+D_pred)-M
+    M0 = (HL + HR) / 2
+    assert torch.allclose(arms["M"][1][0], M0)
+    assert torch.allclose(arms["M+D_rest"][1][0] + (arms["M+D_pred"][1][0] - M0), HR)
+    assert torch.allclose(arms["M-D_rest"][1][0] + (arms["M-D_pred"][1][0] - M0), HL)
+    assert arms["M+D_rest"][0] == "right" and arms["M-D_rest"][0] == "left"
     # scoring plumbing
     s_img, d_img, r_img = tiny_image(src_final), tiny_image(donor_final), tiny_image(dose1)
     p = progress(r_img, s_img, d_img)
@@ -646,19 +647,24 @@ def exp1_run(args, report, out_dir, device):
 # --------------------------------------------------------------------------------------
 # Experiment 2
 # --------------------------------------------------------------------------------------
-def _projector(width, rows):
-    mask = torch.zeros(width, dtype=torch.bool)
+def _projector(seq_len, rows):
+    """Boolean mask over the sequence (token-row) dimension; True at predicate rows."""
+    mask = torch.zeros(seq_len, dtype=torch.bool)
     mask[rows] = True
-    return mask  # True at predicate rows
+    return mask
 
 
 def exp2_arms(h_L, h_R, pred_mask, device):
-    """Yield (arm_name, requested_side, {step: joint3_text_vector}) for M and M±D arms."""
-    steps = sorted({s for (s, _) in h_L})
+    """Return {arm_name: (requested_side, {step: joint3_text_vector})} for M and M±D arms.
+
+    h_L / h_R are {step: text-state tensor}; pred_mask is a bool mask over token rows.
+    Sign convention follows D=(H_R-H_L)/2 so M+D = H_R (right); M-D = H_L (left).
+    """
+    steps = sorted(h_L)
     M, Dpred, Drest = {}, {}, {}
     for s in steps:
-        HL = h_L[(s, EXP2_SITE)].to(device)
-        HR = h_R[(s, EXP2_SITE)].to(device)
+        HL = h_L[s].to(device)
+        HR = h_R[s].to(device)
         M[s] = (HL + HR) / 2
         D = (HR - HL) / 2
         dp = D.clone()
@@ -693,10 +699,12 @@ def exp2_run(args, report, out_dir, device):
     pipe, adapter = load_denoise_pipeline(args.model, device)
     in_channels = adapter.model.config.in_channels
     width = adapter.model.config.num_attention_heads * adapter.model.config.attention_head_dim
-    pred_mask = _projector(width, rows_L)
+    seq_len = conds["left"][0].shape[1]
+    pred_mask = _projector(seq_len, rows_L)  # mask over the 512 token rows
     report["adapter_identity"] = adapter.model_identity
     report["execution"] = dict(adapter.execution)
     report["text_width"] = width
+    report["seq_len"] = int(seq_len)
 
     # ---- smoke gate on first seed ----
     seed0 = EXP2_SEEDS[0]
@@ -753,7 +761,9 @@ def exp2_run(args, report, out_dir, device):
         }
         sides = {"neutral": "none", "native_left": "left", "native_right": "right"}
 
-        arms = exp2_arms(hL, hR, pred_mask, device)
+        hL_step = {s: hL[(s, EXP2_SITE)] for (s, _) in hL}
+        hR_step = {s: hR[(s, EXP2_SITE)] for (s, _) in hR}
+        arms = exp2_arms(hL_step, hR_step, pred_mask, device)
         for arm, (side, byd) in arms.items():
             def patch(step, site, text, byd=byd):
                 return byd[step].to(device) if site == EXP2_SITE and step in byd else None
