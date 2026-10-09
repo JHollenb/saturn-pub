@@ -73,6 +73,34 @@ EXP2_SEEDS = (
     7103, 7109, 7121, 7127, 7129, 7151, 7159, 7177,
 )
 
+# --- Exp2 viability retry (gate-first): stronger, side-explicit, tripod-contact prompts ---
+# Predicate span = the action phrase; left/right differ only at the side token.
+EXP2_RETRY_VARIANTS = {
+    "A": {
+        "predicate": "adjusting its focus ring",
+        "left": "a photo of a person seated at a wooden table between two large cameras on "
+        "tripods, reaching out with one hand and touching the camera on the left side of the "
+        "image, adjusting its focus ring",
+        "right": "a photo of a person seated at a wooden table between two large cameras on "
+        "tripods, reaching out with one hand and touching the camera on the right side of the "
+        "image, adjusting its focus ring",
+    },
+    "B": {
+        "predicate": "firmly gripping the lens",
+        "left": "a photo of a person seated at a wooden table between two large cameras on "
+        "separate tripods, reaching out with one hand and firmly gripping the lens of the "
+        "camera on the left side of the image",
+        "right": "a photo of a person seated at a wooden table between two large cameras on "
+        "separate tripods, reaching out with one hand and firmly gripping the lens of the "
+        "camera on the right side of the image",
+    },
+}
+# 16 fresh seeds (disjoint from EXP2_SEEDS and the historical 26091741 set).
+EXP2_VIAB_SEEDS = (
+    8101, 8111, 8117, 8123, 8147, 8161, 8167, 8171,
+    8179, 8191, 8209, 8219, 8221, 8231, 8233, 8237,
+)
+
 
 # --------------------------------------------------------------------------------------
 # memory / digest helpers
@@ -824,11 +852,124 @@ def exp2_run(args, report, out_dir, device):
 
 
 # --------------------------------------------------------------------------------------
+# Experiment 2 — viability retry (gate-first: native left/right only, 2 prompt variants)
+# --------------------------------------------------------------------------------------
+def exp2viab_run(args, report, out_dir, device):
+    pipe_enc = load_encoder_pipeline(args.model, device)
+    tok = pipe_enc.tokenizer
+    conds, variants_meta = {}, {}
+    for vname, v in EXP2_RETRY_VARIANTS.items():
+        conds[(vname, "left")] = encode_prompt(pipe_enc, v["left"], device)
+        conds[(vname, "right")] = encode_prompt(pipe_enc, v["right"], device)
+        rL, dL = resolve_predicate_rows(tok, v["left"], v["predicate"])
+        rR, dR = resolve_predicate_rows(tok, v["right"], v["predicate"])
+        if rL != rR:
+            raise SystemExit(f"variant {vname}: predicate rows differ L={rL} R={rR}")
+        il = tok(
+            tok.apply_chat_template(
+                [{"role": "user", "content": v["left"]}],
+                tokenize=False, add_generation_prompt=True, enable_thinking=False,
+            ),
+            padding="max_length", truncation=True, max_length=512,
+        )["input_ids"]
+        ir = tok(
+            tok.apply_chat_template(
+                [{"role": "user", "content": v["right"]}],
+                tokenize=False, add_generation_prompt=True, enable_thinking=False,
+            ),
+            padding="max_length", truncation=True, max_length=512,
+        )["input_ids"]
+        diff = [i for i, (a, b) in enumerate(zip(il, ir)) if a != b]
+        if len(diff) != 1:
+            raise SystemExit(f"variant {vname}: left/right differ at {diff}, expected 1 side token")
+        variants_meta[vname] = {
+            "predicate": v["predicate"],
+            "predicate_rows": rL,
+            "predicate_tokens": dL,
+            "side_token_position": diff[0],
+            "left": v["left"],
+            "right": v["right"],
+        }
+    del pipe_enc
+    _free()
+    report["encode_rss_mb"] = _rss_mb()
+    report["variants"] = variants_meta
+
+    _reset_peak()
+    pipe, adapter = load_denoise_pipeline(args.model, device)
+    in_channels = adapter.model.config.in_channels
+    report["adapter_identity"] = adapter.model_identity
+    report["execution"] = dict(adapter.execution)
+
+    # smoke gate on variant A / left / first viability seed
+    seed0 = EXP2_VIAB_SEEDS[0]
+    lat, img_ids, timesteps, sigmas = prepare_sampling(
+        pipe, seed0, args.size, args.steps, device, in_channels
+    )
+    base0 = dict(latent=lat, img_ids=img_ids, timesteps=timesteps, sigmas=sigmas)
+    s0 = init_state(adapter, conditioning=conds[("A", "left")][0], txt_ids=conds[("A", "left")][1], **base0)
+    checks = {}
+    _, _, a_steps = drive(adapter, s0)
+    _, n_steps = native_trajectory(adapter, s0)
+    checks["stepped_vs_native_exact"] = a_steps == n_steps
+    rd, _, _ = statecut_resume_final(adapter, s0, 2)
+    checks["statecut_resume_exact"] = rd == n_steps[-1]
+    lf_un, hc, _ = drive(adapter, s0, capture_sites=(EXP2_SITE,))
+    def writeback(step, site, text):
+        return hc[(step, site)].to(device) if site == EXP2_SITE else None
+    lf_wb, _, _ = drive(adapter, s0, patch=writeback)
+    checks["writeback_bytes_exact"] = _digest(lf_wb["latent"]) == _digest(lf_un["latent"])
+    checks["passed"] = bool(
+        checks["stepped_vs_native_exact"]
+        and checks["statecut_resume_exact"]
+        and checks["writeback_bytes_exact"]
+    )
+    report["smoke"] = checks
+    if not checks["passed"]:
+        return False
+
+    # render native left/right per variant across the 16 fresh seeds; one sheet per variant
+    sheets, vram = {}, []
+    images_dir = out_dir / "images"
+    images_dir.mkdir(parents=True, exist_ok=True)
+    for vname in EXP2_RETRY_VARIANTS:
+        cells, labels = [], []
+        for seed in EXP2_VIAB_SEEDS:
+            lat, img_ids, timesteps, sigmas = prepare_sampling(
+                pipe, seed, args.size, args.steps, device, in_channels
+            )
+            base = dict(latent=lat, img_ids=img_ids, timesteps=timesteps, sigmas=sigmas)
+            for side in ("left", "right"):
+                st = init_state(
+                    adapter, conditioning=conds[(vname, side)][0],
+                    txt_ids=conds[(vname, side)][1], **base,
+                )
+                fin, _, _ = drive(adapter, st)
+                img = decode_image(adapter, fin, args.size)
+                cells.append(img)
+                labels.append(f"s{seed} {side}")
+                save_png(img, images_dir / f"variant{vname}-s{seed}-{side}.png", max_px=args.judge_px)
+            vram.append(_peak_vram_mb())
+        sp = out_dir / f"viability-variant-{vname}.png"
+        contact_sheet(cells, sp, cols=4, cell_px=200, labels=labels)
+        sheets[vname] = sp.name
+    report["viability_sheets"] = sheets
+    report["seeds"] = list(EXP2_VIAB_SEEDS)
+    report["peak_vram_mb"] = max([v for v in vram if v] or [0])
+    report["note"] = (
+        "native left/right only, 2 prompt variants, 16 fresh seeds; gate-first retry after the "
+        "coordinator's viability gate failed the first scene (L~0/16, R~4/16). No M/D arms, no "
+        "blinded judging. Stop for coordinator to apply the >=10/16-each gate."
+    )
+    return True
+
+
+# --------------------------------------------------------------------------------------
 # main
 # --------------------------------------------------------------------------------------
 def main():
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--experiment", choices=["exp1", "exp2"], required=True)
+    ap.add_argument("--experiment", choices=["exp1", "exp2", "exp2viab"], required=True)
     ap.add_argument("--model", default="")
     ap.add_argument("--size", type=int, default=None)
     ap.add_argument("--steps", type=int, default=4)
@@ -877,7 +1018,8 @@ def main():
     report["size"] = args.size
     report["steps"] = args.steps
     device = "cuda" if _cuda() else "cpu"
-    ok = (exp1_run if args.experiment == "exp1" else exp2_run)(args, report, out_dir, device)
+    runner = {"exp1": exp1_run, "exp2": exp2_run, "exp2viab": exp2viab_run}[args.experiment]
+    ok = runner(args, report, out_dir, device)
     report["elapsed_s"] = time.perf_counter() - started
     report["peak_rss_mb"] = _rss_mb()
     report["ok"] = bool(ok)
