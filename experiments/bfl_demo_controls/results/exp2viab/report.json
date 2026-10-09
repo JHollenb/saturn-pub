@@ -1,0 +1,130 @@
+{
+  "schema": "bfl-demo-controls-v1",
+  "experiment": "exp2viab",
+  "model_id": "black-forest-labs/FLUX.2-klein-4B",
+  "revision": "e7b7dc27f91deacad38e78976d1f2b499d76a294",
+  "device": "cuda",
+  "dtype": "bfloat16",
+  "backend": "diffusers-native-flux2-klein",
+  "versions": {
+    "torch": "2.13.0+cu130",
+    "python": "3.14.6",
+    "diffusers": "0.39.0"
+  },
+  "source_sha256": "f4e5a627036b6e61b77bd8a6859b573196355bdc38ba4c61909635abe45abfa0",
+  "tiny": false,
+  "size": 512,
+  "steps": 4,
+  "encode_rss_mb": 5677.69921875,
+  "variants": {
+    "A": {
+      "predicate": "adjusting its focus ring",
+      "predicate_rows": [
+        38,
+        39,
+        40,
+        41
+      ],
+      "predicate_tokens": [
+        " adjusting",
+        " its",
+        " focus",
+        " ring"
+      ],
+      "side_token_position": 32,
+      "left": "a photo of a person seated at a wooden table between two large cameras on tripods, reaching out with one hand and touching the camera on the left side of the image, adjusting its focus ring",
+      "right": "a photo of a person seated at a wooden table between two large cameras on tripods, reaching out with one hand and touching the camera on the right side of the image, adjusting its focus ring"
+    },
+    "B": {
+      "predicate": "firmly gripping the lens",
+      "predicate_rows": [
+        28,
+        29,
+        30,
+        31
+      ],
+      "predicate_tokens": [
+        " firmly",
+        " gripping",
+        " the",
+        " lens"
+      ],
+      "side_token_position": 37,
+      "left": "a photo of a person seated at a wooden table between two large cameras on separate tripods, reaching out with one hand and firmly gripping the lens of the camera on the left side of the image",
+      "right": "a photo of a person seated at a wooden table between two large cameras on separate tripods, reaching out with one hand and firmly gripping the lens of the camera on the right side of the image"
+    }
+  },
+  "adapter_identity": "a09191c5ff813af77bf89d8e4b9a07237befb67c1aef3e722322d3491250fcd0",
+  "execution": {
+    "family": "flux2-klein",
+    "adapter": "native-boundary-v2",
+    "granularity": "block",
+    "dtype": "torch.bfloat16",
+    "device": {
+      "type": "cuda",
+      "index": 0
+    },
+    "batch": {
+      "size": 1,
+      "guidance": 1.0,
+      "reference_images": false
+    },
+    "environment_versions": {
+      "torch": "2.13.0+cu130",
+      "diffusers": "0.39.0",
+      "python": "3.14.6"
+    },
+    "model_program": "project->joint_block[*]->single_block[*]->norm/proj_readout->flow_commit",
+    "kernel": {
+      "transformer": "Flux2Transformer2DModel",
+      "scheduler": "FlowMatchEulerDiscreteScheduler"
+    },
+    "numeric_scope": {
+      "inference_mode": true,
+      "autocast": false,
+      "stochastic_sampling": false,
+      "tf32_matmul": false,
+      "torch_num_threads": 4,
+      "deterministic_algorithms": false,
+      "float32_matmul_precision": "highest",
+      "tensor_layout": "state-slot-bound-stride"
+    },
+    "guidance": 1.0,
+    "reference_images": false,
+    "decoder_normalization_device": "cpu",
+    "parity": "same-program-exact"
+  },
+  "smoke": {
+    "stepped_vs_native_exact": true,
+    "statecut_resume_exact": true,
+    "writeback_bytes_exact": true,
+    "passed": true
+  },
+  "viability_sheets": {
+    "A": "viability-variant-A.png",
+    "B": "viability-variant-B.png"
+  },
+  "seeds": [
+    8101,
+    8111,
+    8117,
+    8123,
+    8147,
+    8161,
+    8167,
+    8171,
+    8179,
+    8191,
+    8209,
+    8219,
+    8221,
+    8231,
+    8233,
+    8237
+  ],
+  "peak_vram_mb": 7674.9755859375,
+  "note": "native left/right only, 2 prompt variants, 16 fresh seeds; gate-first retry after the coordinator's viability gate failed the first scene (L~0/16, R~4/16). No M/D arms, no blinded judging. Stop for coordinator to apply the >=10/16-each gate.",
+  "elapsed_s": 346.9925095360086,
+  "peak_rss_mb": 8843.9609375,
+  "ok": true
+}
