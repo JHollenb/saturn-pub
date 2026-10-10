@@ -216,6 +216,7 @@ class QwenBenchSession:
             self.source_frames = SourceFrameStack(self.root / "source-frames")
         self.safe_point = None
         self.last_logits = None
+        self._mlp_memory = None  # (MLPMemory, Installation, path, install act ref) while live
 
     def _check(self):
         if self.closed:
@@ -269,7 +270,10 @@ class QwenBenchSession:
                 "resident_kv_bytes": self.vm.resident_kv_bytes, "active": self.active,
                 "branches": {name: vars(branch) for name, branch in self.branches.items()},
                 "cuts": self.cuts, "events": self.events, "vm_events": self.vm.memory_events,
-                "capabilities": self.capabilities(), "publication_mode": self.publication.mode}
+                "capabilities": self.capabilities(), "publication_mode": self.publication.mode,
+                **({"mlp_memory": {"digest": self._mlp_memory[1].digest, "path": self._mlp_memory[2],
+                                   "act_ref": self._mlp_memory[3]}}
+                   if self._mlp_memory is not None else {})}
 
     def _publish(self):
         ref = self.artifacts.put(self._manifest())
@@ -470,6 +474,8 @@ class QwenBenchSession:
                 "source_frames": source_view,
                 "logits": self._tensor_ref(self.last_logits) if self.last_logits is not None else None,
                 "execution": None}
+            if self._mlp_memory is not None:
+                snapshot["mlp_memory"] = self._mlp_memory[1].digest
             if backend.execution:
                 execution = backend.execution
                 snapshot["execution"] = {"token_id": execution.token_id, "next_layer": execution.next_layer,
@@ -522,6 +528,8 @@ class QwenBenchSession:
                 layers=tuple(tuple(t.detach().cpu().contiguous() for t in pair) for pair in mount.ancestor),
                 admitted=tuple(True for _ in self.branch.token_ids))
             store_id = f"prompt-{content_digest(self.branch.token_ids)[:16]}"
+            if self._mlp_memory is not None:  # same prompt, different effective model
+                store_id += f"-mlp-{self.mlp_memory_digest[:16]}"
             artifacts[store_id] = artifact_from_ar_source_set(source, store_id=store_id)
         stack.push(label=label, statecut_ref=live.ref, artifacts=artifacts,
                    evidence={"session_id": self.session_id, "vm_checkpoint": vm_checkpoint})
@@ -532,6 +540,9 @@ class QwenBenchSession:
         if (snapshot.get("schema") != BENCH_CUT_SCHEMA or snapshot["identity"] != self.identity
                 or snapshot["lane"] != self.lane or snapshot["numerical_contract"] != self.vm.package.model_abi.fingerprint):
             raise BenchError("checkpoint model, numerical lane or schema is incompatible")
+        if snapshot.get("mlp_memory") != self.mlp_memory_digest:
+            raise BenchError("checkpoint was cut under a different MLP memory overlay; "
+                             "install or remove that overlay first")
         tokens, pending, prompt_length = snapshot["token_ids"], snapshot["pending"], snapshot["prompt_length"]
         if (type(pending) is not int or not 0 <= pending < self.model.config.vocab_size
                 or type(prompt_length) is not int or not 0 < prompt_length <= len(tokens)
@@ -855,6 +866,20 @@ class QwenBenchSession:
         from .bench_memory_probe import atomic_probe
         return atomic_probe(self, spec)
 
+    @property
+    def mlp_memory_digest(self):
+        return None if self._mlp_memory is None else self._mlp_memory[1].digest
+
+    @_serialized
+    def mlp_memory_install(self, memory):
+        from .bench_mlp_memory import install
+        return install(self, memory)
+
+    @_serialized
+    def mlp_memory_remove(self):
+        from .bench_mlp_memory import remove
+        return remove(self)
+
     @_serialized
     def measure_circuit(self, spec):
         from .bench_circuit_measurement import atomic_measurement, measure_circuit
@@ -948,6 +973,9 @@ class QwenBenchSession:
             snapshot = result.artifacts.get(branch["cut"])
             result.vm.resume_session(name, snapshot["vm_checkpoint"])
         result.active = manifest["active"]
+        if manifest.get("mlp_memory"):
+            from .bench_mlp_memory import reinstall
+            reinstall(result, manifest["mlp_memory"])
         with result.publication.transaction(): result._restore(result.branches[result.active].cut)
         return result
 
@@ -963,6 +991,8 @@ class QwenBenchSession:
                 for name in list(self.vm._sessions):
                     self.vm._session(name).backend.cancel_execution() if self.vm._session(name).backend else None
                     self.vm.close_session(name)
+                if self._mlp_memory is not None:  # the resident model is caller owned
+                    self._mlp_memory[1].remove()
                 self.closed = True
             self._writer.close()
 

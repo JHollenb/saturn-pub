@@ -190,6 +190,111 @@ available during the relevant layer/block execution, and the final image is
 available only after native VAE and commit. The allocation table links payload
 digests, tensor geometry and owners; a spectral address names the logical source.
 
+## Fact editing (MEMIT, AlphaEdit)
+
+`mdb.memit` is the default editing method. It ports MEMIT (Meng et al., ICLR 2023) and
+AlphaEdit (Fang et al., ICLR 2025) with EasyEdit's Qwen2.5 hyperparameters, and applies the
+weight update as a removable `down_proj` overlay. AlphaEdit projects each update onto the
+null space of the preserved-key statistics C0, so preserved keys are left approximately
+unchanged, and it accounts for earlier batches when editing sequentially.
+
+```python
+from mdb.memit import (AlphaEditHyperParams, MEMITHyperParams, alphaedit,
+                       layer_second_moments, memit)
+
+C0, n = layer_second_moments(model, tok, wiki_texts, [4, 5, 6, 7, 8], n_tokens=1_000_000)
+reqs = [{"prompt": "The capital of {} is", "subject": "France", "target_new": " Tokyo"}]
+patch, diag = memit(model, tok, reqs, C0, MEMITHyperParams())
+# patch, diag = alphaedit(model, tok, reqs, C0, AlphaEditHyperParams())
+# sequential: patch2, _ = alphaedit(model, tok, more_reqs, C0, hp, base=patch)
+with patch.install(model):   # exact undo on exit; bench: bench.mlp_memory_install(patch)
+    ...
+```
+
+Measured on Qwen2.5-1.5B, capital edits. Paraphrases are T1 "X's capital city is" /
+T2 "The capital city of X is" / T3 "Q: What is the capital of X?":
+
+| Method | Edits | Efficacy | Paraphrases T1 / T2 / T3 | Locality | Same-subject other relations |
+|---|---:|---:|---|---:|---:|
+| MEMIT | 12 | 12/12 | 5 / 12 / 12 | 0.92 | 0.50-1.00 (mean 0.65) |
+| MEMIT | 44 | 44/44 | 25 / 44 / 44 | 0.94 | 0.36-1.00 |
+| AlphaEdit | 12 | 12/12 | 5 / 12 / 12 | 0.91 | 0.08-1.00 (mean 0.50) |
+| AlphaEdit | 44 | 44/44 | 30 / 44 / 44 | 0.62 | 0.16-1.00 (mean 0.42) |
+| MEMIT, 4 sequential batches of 11 | 44 | 39/44 | 20 / 38 / 36 | 0.75 | 0.34-1.00 (mean 0.53) |
+| AlphaEdit, 4 sequential batches of 11 | 44 | 44/44 | 26 / 44 / 44 | 0.88 | 0.25-1.00 (mean 0.49) |
+
+Use MEMIT for a single batch. Use AlphaEdit when edits arrive in batches over time: that is
+where its null-space projection measurably helps. At the default threshold, single-batch
+AlphaEdit lost locality on Qwen2.5-1.5B.
+
+Neither method protects the edited subject's other facts (language, currency). Check them
+explicitly, or use the relation-gated `MLPMemory` below. The full guide (algorithms,
+hyperparameters, deviations from the reference code, sequential editing, bench integration,
+limits) is [Fact editing](FACT-EDITING.md).
+
+## MLP associative memory
+
+`mdb.mlp_memory.MLPMemory` adds a removable linear readout to the MLP output at chosen
+decoder layers. It never writes model parameters.
+
+- **Edits.** An edit names a prompt position and a target. The target is either a donor
+  prompt's native MLP output there, or explicit per-layer vectors.
+- **Preservation prompts.** These ask every row to keep its native output.
+- **Fitting.** Layers are fitted in order (weighted ridge on normalized MLP inputs). Each
+  layer's keys are captured with the lower layers' readouts installed.
+- **Incremental writes.** `insert` and `delete` update a float64 inverse Gram matrix exactly
+  (Sherman-Morrison-Woodbury) without a refit. `save` and `load` use safetensors plus a
+  content-digested manifest.
+
+```python
+from mdb.mlp_memory import MLPMemory
+
+edits = [{"id": "france", "ids": france_ids, "position": subject_last,
+          "donor_ids": japan_ids, "donor_position": japan_subject_last}]
+memory = MLPMemory.fit(model, edits, preserve=other_prompt_ids,
+                       layers=[0, 1, 2, 3, 4, 19], alpha=1e-4, edit_weight=1.0)
+with memory.install(model):      # hooks; leaving the block is exact undo
+    ...
+memory.insert(model, more_edits)  # native model required (no overlay installed)
+memory.delete("france")
+```
+
+In a Qwen bench session, `bench.mlp_memory_install(memory)` and `bench.mlp_memory_remove()`
+are lineage Acts:
+
+- Cuts taken while an overlay is live record its digest, and a cut can only be restored under
+  the overlay it was cut under.
+- History committed before the install keeps its native K/V rows.
+- Removal witnesses bit-identical native probe logits.
+- `resume` reinstalls a persisted overlay, and `close` removes its hooks from the caller's model.
+
+Qualified on Qwen2.5-1.5B for 12 country-to-capital edits at layers 0-4 and 19:
+- 11/12 efficacy, 24/36 paraphrase generalization and 1.00 locality;
+- exact undo;
+- insert and delete within 4e-8 of a batch fit;
+- bench and HF logits identical under BF16.
+
+How to make a fact edit, not a subject swap (measured, Qwen2.5-1.5B, 12 edits):
+
+- **A donor target is a subject swap.** It changed all 12 edited countries' official-language
+  answers too.
+- **Don't add zero rows for the edited subject's other relations under a linear key.** Store
+  keys are about 97% subject + relation, so this is an XOR problem. The fit solves it only
+  through the small interaction residue, at 4-10x gain, and held-out prompts collapse
+  (locality 0.36).
+- **Make the value relation-specific instead.** Optimize per-layer deltas with
+  `attribute_delta(model, ids, pos, new_token, keep=[same subject, other relations],
+  also=[other phrasings of this relation], layers=...)`, then fit them as `deltas` edits with a
+  linear key. Result: 12/12 edits, 23/24 paraphrases, locality 0.97, other relations 0.75-1.00.
+- **Conjunctive keys** stop the collapse. `fit_spectral_readers` trains calibrated subject and
+  relation posteriors on several wordings per relation and binds them as spectral addresses
+  (`phase(symbol) + phase(role)`, magnitude = confidence). With a donor target: 11/12 edits,
+  21/24 paraphrases (T2+T3), locality 1.00, other relations 1.00. The older
+  `fit_address_readers` phasor keys (one wording per relation) bind the prompt wording
+  instead ("capital city of" is not "capital of").
+
+Validate every edit on held-out prompts.
+
 ## Debugger, symbols and circuits
 
 The debugger adapter uses the session's cut registry. Layer/token or block/step

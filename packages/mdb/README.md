@@ -10,6 +10,10 @@ and K/V components; inspect bounded numeric values and token text; apply atomic
 copy/zero/scale/replace Acts; and compare paired native futures with exact parent
 restore. Start with the [hidden-memory walkthrough](docs/HIDDEN-MEMORY.md).
 
+Factual associations can be edited with MEMIT and AlphaEdit (`mdb.memit`), applied as
+removable `down_proj` overlays that install into a bench session as lineage Acts. Removal is
+exact. See [fact editing](docs/FACT-EDITING.md).
+
 **Extraction status:** installed-wheel mechanics and bounded model-backed proofs
 pass for Qwen, Mamba v1, FLUX and SDXL. Independent archive checks, custody and
 evidence sweeps accompany the proofs. See the [qualification record](docs/QUALIFICATION.md)
