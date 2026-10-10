@@ -185,7 +185,7 @@ class CustodyRecord:
         if not isinstance(self.origin_path, str) or not self.origin_path:
             raise ArtifactCustodyError("custody origin_path cannot be empty")
         _require_safe_component(self.category, label="custody category")
-        if self.action not in ("copied", "reused"):
+        if self.action not in ("copied", "cloned", "reused"):
             raise ArtifactCustodyError("custody action must be 'copied' or 'reused'")
 
     def to_json_dict(self) -> dict[str, Any]:
@@ -317,6 +317,37 @@ def custody_manifest(job_dir: str | Path) -> CustodyManifest:
     return CustodyManifest(job_dir)
 
 
+def _clone_file(source: Path, destination: Path) -> bool:
+    """Copy-on-write clone (APFS clonefile / Linux FICLONE); False when unsupported.
+
+    A clone is a separate inode — later writes to either side never touch the other —
+    but shares data blocks, so custody of a large artifact costs no extra disk.
+    """
+
+    import platform
+
+    try:
+        if platform.system() == "Darwin":
+            import ctypes
+
+            libc = ctypes.CDLL("libc.dylib", use_errno=True)
+            return libc.clonefile(os.fsencode(source), os.fsencode(destination), 0) == 0
+        if platform.system() == "Linux":
+            import fcntl as _fcntl
+
+            ficlone = 0x40049409
+            with source.open("rb") as reader, destination.open("xb") as writer:
+                try:
+                    _fcntl.ioctl(writer.fileno(), ficlone, reader.fileno())
+                    return True
+                except OSError:
+                    pass
+            destination.unlink(missing_ok=True)
+    except (OSError, AttributeError):
+        destination.unlink(missing_ok=True)
+    return False
+
+
 def take_custody(
     src_path: str | Path,
     job_dir: str | Path,
@@ -366,23 +397,33 @@ def take_custody(
         descriptor, temporary_name = tempfile.mkstemp(prefix=f".{target_name}.", dir=target_dir)
         temporary = Path(temporary_name)
         try:
-            copied = hashlib.sha256()
-            copied_size = 0
-            with os.fdopen(descriptor, "wb") as writer, source.open("rb") as reader:
-                while chunk := reader.read(_CHUNK_BYTES):
-                    copied.update(chunk)
-                    copied_size += len(chunk)
-                    writer.write(chunk)
-                writer.flush()
-                os.fsync(writer.fileno())
-            if copied.hexdigest() != sha256 or copied_size != size:
-                raise ArtifactCustodyError(
-                    f"custody source changed while being copied: {source}"
-                )
+            os.close(descriptor)
+            temporary.unlink()
+            if _clone_file(source, temporary):
+                # copy-on-write clone: separate inode, shared blocks, no extra disk
+                action = "cloned"
+                if temporary.stat().st_size != size or sha256_file(temporary) != sha256:
+                    raise ArtifactCustodyError(
+                        f"custody source changed while being cloned: {source}"
+                    )
+            else:
+                action = "copied"
+                copied = hashlib.sha256()
+                copied_size = 0
+                with temporary.open("xb") as writer, source.open("rb") as reader:
+                    while chunk := reader.read(_CHUNK_BYTES):
+                        copied.update(chunk)
+                        copied_size += len(chunk)
+                        writer.write(chunk)
+                    writer.flush()
+                    os.fsync(writer.fileno())
+                if copied.hexdigest() != sha256 or copied_size != size:
+                    raise ArtifactCustodyError(
+                        f"custody source changed while being copied: {source}"
+                    )
             os.replace(temporary, target)
         finally:
             temporary.unlink(missing_ok=True)
-        action = "copied"
 
     record = CustodyRecord(
         relative_path=relative_path,
