@@ -1,9 +1,17 @@
 # BFL demo controls (FLUX.2 Klein 4B)
 
 Two small, public-repo-reproducible control experiments that harden two existing BFL demo
-pages. All GPU compute runs on a GPU worker (RTX 4080) through the public `mrun` client; the model
+pages. All GPU compute runs on a single RTX 4080 (16 GB) through the public `mrun` client; the model
 is `black-forest-labs/FLUX.2-klein-4B` (rev `e7b7dc27f91deacad38e78976d1f2b499d76a294`), BF16,
 guidance 1.0, 4 steps, text-only, via `saturn_pub.adapters.flux2.Flux2KleinAdapter`.
+
+**Status (2026-10-09).** Exp 1 is scored: the route edit reproduced the original panel within 0.01;
+the pre-registered verdict is "partial" at both cuts (an early route edit is a near-complete prompt
+swap). Exp 2: the first scene failed its pre-registered viability check (`results/exp2/VIABILITY-FAILED.md`);
+the retry prompt (Variant B) passed and the full blinded run (`results/exp2b/`) completed but was
+deliberately left unscored, because the camera-steering intervention reduces to a prompt swap by
+construction. See the BFL demo pages "Forking a generation mid-flight" and "Scene relations: three
+lessons from a result we demoted".
 
 - **Exp 1 — "Is a route edit more than a prompt swap?"** Reproduces the
   counterfactual-diffusion-futures route arm (text-state substitution at `joint.2/3/4` and
@@ -20,13 +28,13 @@ guidance 1.0, 4 steps, text-only, via `saturn_pub.adapters.flux2.Flux2KleinAdapt
 
 - `PREREG.md` — pre-registration (committed before the scored jobs): prompts, route sites,
   cut steps, scores, decision rule, sign convention, blinding, smoke gate.
-- `run.py` — the worker. `--experiment {exp1,exp2}` runs the frozen mechanics smoke gate in
+- `run.py` — the worker. `--experiment {exp1,exp2,exp2viab,exp2b}` runs the frozen mechanics smoke gate in
   process, aborts on failure (non-zero exit → failed job), else runs the full panel and
   writes `report.json`, images, and contact sheet(s). `--tiny` runs the identical control
   flow on the adapter's tiny CPU fixtures (no weights/GPU) as the local unit test.
 - `launch.py` — submits one experiment to a GPU worker through `mrun.client.submit.launch`
-  (mrun-pub). Offline `uv` overlay on the operator `mrun` env; scratch/outputs on
-  `<scratch-root>`; weights from `<model-root>`; `retry_on_kill=False`.
+  (mrun-pub). Offline `uv` overlay on the operator `mrun` env; scratch, outputs and
+  weights on worker paths set by `BFL_SCRATCH`, `BFL_MODEL_DIR`, `BFL_CACHE_ROOT`; `retry_on_kill=False`.
 - `results/` — collected `report.json`, images, contact sheets, and (Exp 2) `judge/` +
   `judge-key.json`.
 
@@ -39,13 +47,13 @@ PYTHONPATH=src python experiments/bfl_demo_controls/run.py --experiment exp1 --t
   --output /tmp/exp1-tiny
 ```
 
-Scored run (a GPU worker, through mrun):
+Scored run (GPU worker, through mrun):
 
 ```sh
-MRUN_URL=http://<mrun-host>:9025 \
+MRUN_URL=http://<mrun-host>:9025 BFL_MODEL_DIR=<worker model dir> BFL_SCRATCH=<worker scratch> \
 /path/to/mrun-pub/.venv/bin/python experiments/bfl_demo_controls/launch.py \
   --experiment exp1 --vram-mb 14200 --ram-mb 28000 --wall-s 600 --timeout-s 1800
-# then rsync <worker>:<scratch-root>/bfl-controls/<label>/ into results/exp1/
+# then copy <worker scratch>/<label>/ into results/exp1/
 ```
 
 The worker never judges Exp 2 contact; it emits blinded sheets + a key for the coordinator.

@@ -1,11 +1,11 @@
 """Submit one BFL demo-control experiment to a GPU worker through the public mrun client.
 
 Reuses the saturn-pub diffusion-families submission pattern (one finite CUDA lease, offline
-uv overlay on the operator ``mrun`` env, scratch/outputs on /mnt, weights from <model-root>) but
+uv overlay on the operator ``mrun`` env, scratch/outputs and weights on worker paths set by environment variables) but
 runs ``run.py`` directly so a non-zero worker exit fails the job (no exit-code swallowing).
 
 Usage (from the worktree, with the mrun-pub client):
-    MRUN_URL=http://<mrun-host>:9025 \
+    MRUN_URL=http://<mrun-host>:9025 BFL_MODEL_DIR=<worker model dir> BFL_SCRATCH=<worker scratch> \
     /path/to/mrun-pub/.venv/bin/python experiments/bfl_demo_controls/launch.py \
         --experiment exp1 --vram-mb 14200 --ram-mb 28000 --wall-s 600 --timeout-s 1800
 """
@@ -13,6 +13,7 @@ Usage (from the worktree, with the mrun-pub client):
 from __future__ import annotations
 
 import argparse
+import os
 import hashlib
 import json
 import shutil
@@ -23,8 +24,10 @@ from mrun.client.submit import launch
 
 HERE = Path(__file__).resolve().parent
 WORKTREE = HERE.parents[1]
-MODEL = "<model-root>/FLUX.2-klein-4B"
-SCRATCH = "<scratch-root>/bfl-controls"
+MODEL = os.environ.get("BFL_MODEL_DIR", "FLUX.2-klein-4B")
+SCRATCH = os.environ.get("BFL_SCRATCH", "bfl-controls")
+CACHE_ROOT = os.environ.get("BFL_CACHE_ROOT", f"{SCRATCH}/cache")
+PREFER_HOST = os.environ.get("MRUN_PREFER_HOST") or None
 
 
 def main() -> None:
@@ -79,8 +82,8 @@ def main() -> None:
         "DIFFUSERS_OFFLINE=1",
         "TOKENIZERS_PARALLELISM=false",
         "TQDM_DISABLE=1",
-        "UV_CACHE_DIR=<model-root>/.uv-cache",
-        "HF_HOME=<model-root>/hf",
+        f"UV_CACHE_DIR={CACHE_ROOT}/uv",
+        f"HF_HOME={CACHE_ROOT}/hf",
         f"TORCH_HOME={SCRATCH}/cache/torch",
         f"XDG_CACHE_HOME={SCRATCH}/cache",
         f"TMPDIR={SCRATCH}/tmp",
@@ -122,7 +125,7 @@ def main() -> None:
         f"BFL demo control {args.experiment} on FLUX.2 Klein 4B (rev e7b7dc27), BF16, 4 steps, "
         f"{size}px, guidance 1.0. Smoke gate first (stepped-vs-native + StateCut resume + "
         f"zero-dose identity), abort on failure (non-zero exit fails job), else full panel. "
-        f"Outputs under {out_dir} on <scratch-root>; weights from <model-root>; one model load. "
+        f"Outputs under {out_dir}; one model load. "
         f"Stop condition: single finite pass, no retry."
     )
 
@@ -130,7 +133,7 @@ def main() -> None:
         command,
         experiment=f"bfl-demo-controls-{args.experiment}",
         payload=staging,
-        prefer_host=None,
+        prefer_host=PREFER_HOST,
         needs={"cuda": True},
         config=config,
         ram_mb=args.ram_mb,

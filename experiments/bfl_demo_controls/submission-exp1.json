@@ -2,15 +2,15 @@
   "job_id": "job-a5764a38963c",
   "label": "exp1-e34b1e",
   "experiment": "exp1",
-  "output_dir": "<scratch-root>/bfl-controls/exp1-e34b1e",
+  "output_dir": "<scratch>/bfl-controls/exp1-e34b1e",
   "size": 256,
   "config": {
     "experiment": "exp1",
-    "model": "<model-root>/FLUX.2-klein-4B",
+    "model": "<model-dir>/FLUX.2-klein-4B",
     "revision": "e7b7dc27f91deacad38e78976d1f2b499d76a294",
     "size": 256,
     "steps": 4,
-    "output": "<scratch-root>/bfl-controls/exp1-e34b1e",
+    "output": "<scratch>/bfl-controls/exp1-e34b1e",
     "execution": {
       "device": "cuda",
       "dtype": "bfloat16",

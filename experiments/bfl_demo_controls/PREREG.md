@@ -1,11 +1,11 @@
 # Pre-registration — BFL demo controls (FLUX.2 Klein 4B)
 
 Written and committed before the scored mrun jobs. Two control experiments that
-harden two existing public demo pages. All compute on a GPU worker (RTX 4080) through mrun.
+harden two existing public demo pages. All compute on a single RTX 4080 (16 GB) through mrun.
 
 - Model: `black-forest-labs/FLUX.2-klein-4B`, pinned revision
   `e7b7dc27f91deacad38e78976d1f2b499d76a294`, materialized at
-  `<model-root>/FLUX.2-klein-4B` (flat snapshot).
+  a local flat snapshot of the pinned revision.
 - Precision BF16, guidance 1.0, 4 denoising steps, batch 1, text-only (no reference image).
 - Adapter: `saturn_pub.adapters.flux2.Flux2KleinAdapter`, block granularity, resident.
   Transformer has 5 joint blocks (`joint.0..4`) and 20 single blocks (`single.0..19`);
