@@ -69,8 +69,22 @@ EXP2_PROMPTS = {
 }
 EXP2_PREDICATE = "adjusts the focus"
 EXP2_SEEDS = (
-    7001, 7013, 7027, 7039, 7043, 7057, 7069, 7079,
-    7103, 7109, 7121, 7127, 7129, 7151, 7159, 7177,
+    7001,
+    7013,
+    7027,
+    7039,
+    7043,
+    7057,
+    7069,
+    7079,
+    7103,
+    7109,
+    7121,
+    7127,
+    7129,
+    7151,
+    7159,
+    7177,
 )
 
 # --- Exp2 viability retry (gate-first): stronger, side-explicit, tripod-contact prompts ---
@@ -97,8 +111,22 @@ EXP2_RETRY_VARIANTS = {
 }
 # 16 fresh seeds (disjoint from EXP2_SEEDS and the historical 26091741 set).
 EXP2_VIAB_SEEDS = (
-    8101, 8111, 8117, 8123, 8147, 8161, 8167, 8171,
-    8179, 8191, 8209, 8219, 8221, 8231, 8233, 8237,
+    8101,
+    8111,
+    8117,
+    8123,
+    8147,
+    8161,
+    8167,
+    8171,
+    8179,
+    8191,
+    8209,
+    8219,
+    8221,
+    8231,
+    8233,
+    8237,
 )
 # Variant B passed the coordinator's viability gate (left ~14/16, right ~15/16); A not used.
 # Neutral = the Variant B sentence without the action/side clause (same structure).
@@ -280,7 +308,9 @@ def drive(adapter, state, *, patch=None, capture_sites=(), swap=None):
     if swap is not None:
         newc = swap(0, "project", state)
         if newc is not None:
-            state["conditioning"] = newc.to(state["conditioning"].device, state["conditioning"].dtype)
+            state["conditioning"] = newc.to(
+                state["conditioning"].device, state["conditioning"].dtype
+            )
     while state["step"] < total:
         state = adapter.advance(state)
         step, site = state["step"], _site_of(adapter, state)
@@ -338,8 +368,12 @@ def statecut_resume_final(adapter, state, cut_step):
     """Advance to the project boundary of ``cut_step`` with the Session, capture a StateCut,
     restore it into a fresh Session, finish via raw drive, return final-latent digest."""
     session = adapter.session(
-        latent=state["latent"], conditioning=state["conditioning"], img_ids=state["img_ids"],
-        txt_ids=state["txt_ids"], timesteps=state["timesteps"], sigmas=state["sigmas"],
+        latent=state["latent"],
+        conditioning=state["conditioning"],
+        img_ids=state["img_ids"],
+        txt_ids=state["txt_ids"],
+        timesteps=state["timesteps"],
+        sigmas=state["sigmas"],
     )
     # drive the session cheaply to the cut boundary using raw advance on its state
     s = clone(session._state)
@@ -396,7 +430,6 @@ def build_tiny():
     adapter = Flux2KleinAdapter.tiny(residency="resident", device="cpu")
     scheduler = FlowMatchEulerDiscreteScheduler()
     scheduler.set_timesteps(3)
-    g = torch.Generator().manual_seed(11)
 
     def inputs(seed):
         gg = torch.Generator().manual_seed(seed)
@@ -497,8 +530,13 @@ def exp1_smoke(adapter, pipe, size, steps, device, in_channels, src_cond, src_tx
         pipe, spec["seed"], size, steps, device, in_channels
     )
     state = init_state(
-        adapter, latent=lat, conditioning=src_cond, img_ids=img_ids,
-        txt_ids=src_txt, timesteps=timesteps, sigmas=sigmas,
+        adapter,
+        latent=lat,
+        conditioning=src_cond,
+        img_ids=img_ids,
+        txt_ids=src_txt,
+        timesteps=timesteps,
+        sigmas=sigmas,
     )
     checks = {}
     # 1. unpatched stepped-vs-native parity
@@ -511,8 +549,10 @@ def exp1_smoke(adapter, pipe, size, steps, device, in_channels, src_cond, src_tx
     checks["cut_boundary"] = cut_boundary
     # 3. zero-dose identity (route dose 0 == unpatched)
     unp_final, _, _ = drive(adapter, state)
+
     def zero_patch(step, site, text):
         return text * 1.0 if site in EXP1_SITES else None
+
     z_final, _, _ = drive(adapter, state, patch=zero_patch)
     checks["zero_dose_bytes_exact"] = _digest(z_final["latent"]) == _digest(unp_final["latent"])
     checks["passed"] = bool(
@@ -525,7 +565,6 @@ def exp1_smoke(adapter, pipe, size, steps, device, in_channels, src_cond, src_tx
 
 def exp1_run(args, report, out_dir, device):
     pipe_enc = load_encoder_pipeline(args.model, device)
-    tok = pipe_enc.tokenizer
     conds = {}
     for name, prompt in EXP1_PROMPTS.items():
         conds[name] = encode_prompt(pipe_enc, prompt, device)
@@ -540,8 +579,14 @@ def exp1_run(args, report, out_dir, device):
     report["execution"] = dict(adapter.execution)
 
     report["smoke"] = exp1_smoke(
-        adapter, pipe, args.size, args.steps, device, in_channels,
-        conds["source"][0], conds["source"][1],
+        adapter,
+        pipe,
+        args.size,
+        args.steps,
+        device,
+        in_channels,
+        conds["source"][0],
+        conds["source"][1],
     )
     if not report["smoke"]["passed"]:
         return False
@@ -549,7 +594,6 @@ def exp1_run(args, report, out_dir, device):
     images_dir = out_dir / "images"
     images_dir.mkdir(parents=True, exist_ok=True)
     cut_steps = [0, 2]
-    doses = {"route": 1.0}
     specimens_out = []
     sheet_cells, sheet_labels = [], []
 
@@ -584,23 +628,24 @@ def exp1_run(args, report, out_dir, device):
                     return None
                 a, b = hA[(step, site)].to(device), hB[(step, site)].to(device)
                 return a + dose * (b - a)
+
             return patch
 
         def swap_fn(donor_c):
             def swap(step, site, state):
                 return donor_c if step >= swap.cut else None
+
             return swap
 
         rows = {}
         images = {"src": I_src, "donor": I_donor, "hostile_donor": I_host}
         for cut in cut_steps:
             # (a) ROUTE dose 1 toward axis donor
-            r_final, _, _ = drive(
-                adapter, src_state, patch=route_patch(h_src, h_donor, 1.0, cut)
-            )
+            r_final, _, _ = drive(adapter, src_state, patch=route_patch(h_src, h_donor, 1.0, cut))
             I_route = decode_image(adapter, r_final, args.size)
             # (b) PROMPT-SWAP toward axis donor
-            sw = swap_fn(axis_cond[0]); sw.cut = cut
+            sw = swap_fn(axis_cond[0])
+            sw.cut = cut
             if cut == 0:
                 I_swap = I_donor  # swap at cut 0 is the pure donor generation
             else:
@@ -646,8 +691,11 @@ def exp1_run(args, report, out_dir, device):
                 "id": spec["id"],
                 "axis": spec["axis"],
                 "seed": spec["seed"],
-                "prompts": {"source": EXP1_PROMPTS["source"], "donor": EXP1_PROMPTS[spec["donor"]],
-                            "hostile": EXP1_PROMPTS["hostile"]},
+                "prompts": {
+                    "source": EXP1_PROMPTS["source"],
+                    "donor": EXP1_PROMPTS[spec["donor"]],
+                    "hostile": EXP1_PROMPTS["hostile"],
+                },
                 "cuts": rows,
                 "hostile_cut0": hostile,
                 "rollback_latent_bytes_exact": bool(rollback_exact),
@@ -663,7 +711,9 @@ def exp1_run(args, report, out_dir, device):
         rows = [s["cuts"][key] for s in specimens_out]
         approx = all(abs(r["P_route"] - r["P_swap"]) <= 0.05 and r["d"] <= 0.10 for r in rows)
         differs = sum(r["d"] > 0.25 for r in rows) >= 3
-        decisions[key] = "route≈prompt-swap" if approx else ("route-differs" if differs else "partial")
+        decisions[key] = (
+            "route≈prompt-swap" if approx else ("route-differs" if differs else "partial")
+        )
     report["specimens"] = specimens_out
     report["decisions"] = decisions
     report["route_sites"] = list(EXP1_SITES)
@@ -714,8 +764,9 @@ def exp2_arms(h_L, h_R, pred_mask, device):
     return arms
 
 
-def exp2_run(args, report, out_dir, device, prompts=EXP2_PROMPTS, predicate=EXP2_PREDICATE,
-             seeds=EXP2_SEEDS):
+def exp2_run(
+    args, report, out_dir, device, prompts=EXP2_PROMPTS, predicate=EXP2_PREDICATE, seeds=EXP2_SEEDS
+):
     pipe_enc = load_encoder_pipeline(args.model, device)
     tok = pipe_enc.tokenizer
     conds = {name: encode_prompt(pipe_enc, p, device) for name, p in prompts.items()}
@@ -757,8 +808,10 @@ def exp2_run(args, report, out_dir, device, prompts=EXP2_PROMPTS, predicate=EXP2
     checks["statecut_resume_exact"] = rd == n_steps[-1]
     # zero-dose identity: writing captured H_L back at joint.3 must reproduce native-left bytes
     lf_un, hL0, _ = drive(adapter, left0, capture_sites=(EXP2_SITE,))
+
     def writeback(step, site, text):
         return hL0[(step, site)].to(device) if site == EXP2_SITE else None
+
     lf_wb, _, _ = drive(adapter, left0, patch=writeback)
     checks["writeback_bytes_exact"] = _digest(lf_wb["latent"]) == _digest(lf_un["latent"])
     checks["passed"] = bool(
@@ -783,9 +836,13 @@ def exp2_run(args, report, out_dir, device, prompts=EXP2_PROMPTS, predicate=EXP2
             pipe, seed, args.size, args.steps, device, in_channels
         )
         base = dict(latent=lat, img_ids=img_ids, timesteps=timesteps, sigmas=sigmas)
-        neu = init_state(adapter, conditioning=conds["neutral"][0], txt_ids=conds["neutral"][1], **base)
+        neu = init_state(
+            adapter, conditioning=conds["neutral"][0], txt_ids=conds["neutral"][1], **base
+        )
         left = init_state(adapter, conditioning=conds["left"][0], txt_ids=conds["left"][1], **base)
-        right = init_state(adapter, conditioning=conds["right"][0], txt_ids=conds["right"][1], **base)
+        right = init_state(
+            adapter, conditioning=conds["right"][0], txt_ids=conds["right"][1], **base
+        )
 
         lf, hL, _ = drive(adapter, left, capture_sites=(EXP2_SITE,))
         rf, hR, _ = drive(adapter, right, capture_sites=(EXP2_SITE,))
@@ -801,8 +858,10 @@ def exp2_run(args, report, out_dir, device, prompts=EXP2_PROMPTS, predicate=EXP2
         hR_step = {s: hR[(s, EXP2_SITE)] for (s, _) in hR}
         arms = exp2_arms(hL_step, hR_step, pred_mask, device)
         for arm, (side, byd) in arms.items():
+
             def patch(step, site, text, byd=byd):
                 return byd[step].to(device) if site == EXP2_SITE and step in byd else None
+
             af, _, _ = drive(adapter, neu, patch=patch)
             images[arm] = decode_image(adapter, af, args.size)
             sides[arm] = side
@@ -819,6 +878,7 @@ def exp2_run(args, report, out_dir, device, prompts=EXP2_PROMPTS, predicate=EXP2
     rng.shuffle(ids)
     id_to_arr = {}
     from PIL import Image
+
     for jid in ids:
         id_to_arr[jid] = np.asarray(Image.open(judge_dir / f"{jid}.png").convert("RGB"))
     per_sheet = 16
@@ -826,9 +886,7 @@ def exp2_run(args, report, out_dir, device, prompts=EXP2_PROMPTS, predicate=EXP2
     for i in range(0, len(ids), per_sheet):
         chunk = ids[i : i + per_sheet]
         sp = out_dir / f"contact-sheet-{args.experiment}-{i // per_sheet:02d}.png"
-        contact_sheet(
-            [id_to_arr[j] for j in chunk], sp, cols=4, cell_px=200, labels=chunk
-        )
+        contact_sheet([id_to_arr[j] for j in chunk], sp, cols=4, cell_px=200, labels=chunk)
         sheets.append(sp.name)
 
     # non-blinded native-left/right viability sheet for the coordinator's scene gate
@@ -851,7 +909,9 @@ def exp2_run(args, report, out_dir, device, prompts=EXP2_PROMPTS, predicate=EXP2
     side_map = {}
     for jid, meta in key.items():
         side_map[meta["arm"]] = meta["requested_side"]
-    report["arms"] = {a: {"requested_side": side_map[a], "n": len(per_arm_files[a])} for a in per_arm_files}
+    report["arms"] = {
+        a: {"requested_side": side_map[a], "n": len(per_arm_files[a])} for a in per_arm_files
+    }
     report["seeds"] = list(seeds)
     report["n_images"] = len(key)
     report["peak_vram_mb"] = max([v for v in vram if v] or [0])
@@ -869,8 +929,13 @@ def exp2b_run(args, report, out_dir, device):
         "Variant A not used (crowded/ambiguous)."
     )
     return exp2_run(
-        args, report, out_dir, device,
-        prompts=prompts, predicate=v["predicate"], seeds=EXP2_VIAB_SEEDS,
+        args,
+        report,
+        out_dir,
+        device,
+        prompts=prompts,
+        predicate=v["predicate"],
+        seeds=EXP2_VIAB_SEEDS,
     )
 
 
@@ -891,16 +956,24 @@ def exp2viab_run(args, report, out_dir, device):
         il = tok(
             tok.apply_chat_template(
                 [{"role": "user", "content": v["left"]}],
-                tokenize=False, add_generation_prompt=True, enable_thinking=False,
+                tokenize=False,
+                add_generation_prompt=True,
+                enable_thinking=False,
             ),
-            padding="max_length", truncation=True, max_length=512,
+            padding="max_length",
+            truncation=True,
+            max_length=512,
         )["input_ids"]
         ir = tok(
             tok.apply_chat_template(
                 [{"role": "user", "content": v["right"]}],
-                tokenize=False, add_generation_prompt=True, enable_thinking=False,
+                tokenize=False,
+                add_generation_prompt=True,
+                enable_thinking=False,
             ),
-            padding="max_length", truncation=True, max_length=512,
+            padding="max_length",
+            truncation=True,
+            max_length=512,
         )["input_ids"]
         diff = [i for i, (a, b) in enumerate(zip(il, ir)) if a != b]
         if len(diff) != 1:
@@ -930,7 +1003,9 @@ def exp2viab_run(args, report, out_dir, device):
         pipe, seed0, args.size, args.steps, device, in_channels
     )
     base0 = dict(latent=lat, img_ids=img_ids, timesteps=timesteps, sigmas=sigmas)
-    s0 = init_state(adapter, conditioning=conds[("A", "left")][0], txt_ids=conds[("A", "left")][1], **base0)
+    s0 = init_state(
+        adapter, conditioning=conds[("A", "left")][0], txt_ids=conds[("A", "left")][1], **base0
+    )
     checks = {}
     _, _, a_steps = drive(adapter, s0)
     _, n_steps = native_trajectory(adapter, s0)
@@ -938,8 +1013,10 @@ def exp2viab_run(args, report, out_dir, device):
     rd, _, _ = statecut_resume_final(adapter, s0, 2)
     checks["statecut_resume_exact"] = rd == n_steps[-1]
     lf_un, hc, _ = drive(adapter, s0, capture_sites=(EXP2_SITE,))
+
     def writeback(step, site, text):
         return hc[(step, site)].to(device) if site == EXP2_SITE else None
+
     lf_wb, _, _ = drive(adapter, s0, patch=writeback)
     checks["writeback_bytes_exact"] = _digest(lf_wb["latent"]) == _digest(lf_un["latent"])
     checks["passed"] = bool(
@@ -964,14 +1041,18 @@ def exp2viab_run(args, report, out_dir, device):
             base = dict(latent=lat, img_ids=img_ids, timesteps=timesteps, sigmas=sigmas)
             for side in ("left", "right"):
                 st = init_state(
-                    adapter, conditioning=conds[(vname, side)][0],
-                    txt_ids=conds[(vname, side)][1], **base,
+                    adapter,
+                    conditioning=conds[(vname, side)][0],
+                    txt_ids=conds[(vname, side)][1],
+                    **base,
                 )
                 fin, _, _ = drive(adapter, st)
                 img = decode_image(adapter, fin, args.size)
                 cells.append(img)
                 labels.append(f"s{seed} {side}")
-                save_png(img, images_dir / f"variant{vname}-s{seed}-{side}.png", max_px=args.judge_px)
+                save_png(
+                    img, images_dir / f"variant{vname}-s{seed}-{side}.png", max_px=args.judge_px
+                )
             vram.append(_peak_vram_mb())
         sp = out_dir / f"viability-variant-{vname}.png"
         contact_sheet(cells, sp, cols=4, cell_px=200, labels=labels)
