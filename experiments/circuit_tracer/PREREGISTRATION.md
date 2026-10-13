@@ -85,3 +85,14 @@ weights: stepped (layer-by-layer) logits vs a native full forward (max-abs Δ), 
 greedy decode equals `model.generate` greedy, and a mid-layer cut replays exactly in a fresh
 process. Separately, `residency="streamed"` vs `"resident"` is checked on the real weights
 (16-token greedy bit-exact, max logit Δ, mid-layer fresh-process replay, peak VRAM).
+
+## Amendment 2026-10-05 (implementation fix; plan unchanged)
+
+The first run's native interventions read circuit-tracer's `activation_values` by selected-node
+position, but that array is aligned with `active_features`; on 44 of 50 admitted prompts every
+native ablation and −2× steer (and the −2× graph prediction) used another feature's activation.
+The selector was fixed (`activation_values[selected_features[i]]`, misaligned graphs refused,
+regression tests added) and the whole panel rerun once under this unchanged plan: same frozen
+panel and sha256, admission rule, `top_k`, thresholds, prediction modes, and statistics. The
+first run's results are withdrawn; its job ids are listed in the README for the record. No
+prompt, threshold, or rule was changed after seeing the corrected results.

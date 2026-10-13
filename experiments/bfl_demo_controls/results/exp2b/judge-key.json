@@ -1,0 +1,642 @@
+{
+  "e96655d6672e": {
+    "arm": "neutral",
+    "seed": 8101,
+    "requested_side": "none"
+  },
+  "d3378e79394a": {
+    "arm": "native_left",
+    "seed": 8101,
+    "requested_side": "left"
+  },
+  "2b12b9df3cbe": {
+    "arm": "native_right",
+    "seed": 8101,
+    "requested_side": "right"
+  },
+  "cc2f3d3c0f24": {
+    "arm": "M",
+    "seed": 8101,
+    "requested_side": "left"
+  },
+  "869c1b51ef1f": {
+    "arm": "M+D_rest",
+    "seed": 8101,
+    "requested_side": "right"
+  },
+  "2665e9d0ed52": {
+    "arm": "M-D_rest",
+    "seed": 8101,
+    "requested_side": "left"
+  },
+  "96ad91a791ea": {
+    "arm": "M+D_pred",
+    "seed": 8101,
+    "requested_side": "right"
+  },
+  "54faa0326004": {
+    "arm": "M-D_pred",
+    "seed": 8101,
+    "requested_side": "left"
+  },
+  "a97c6012de8c": {
+    "arm": "neutral",
+    "seed": 8111,
+    "requested_side": "none"
+  },
+  "98ba8dd179d5": {
+    "arm": "native_left",
+    "seed": 8111,
+    "requested_side": "left"
+  },
+  "a3a232a1dd1b": {
+    "arm": "native_right",
+    "seed": 8111,
+    "requested_side": "right"
+  },
+  "6098d47390e3": {
+    "arm": "M",
+    "seed": 8111,
+    "requested_side": "left"
+  },
+  "82b140e2cd07": {
+    "arm": "M+D_rest",
+    "seed": 8111,
+    "requested_side": "right"
+  },
+  "80cf1f8a6540": {
+    "arm": "M-D_rest",
+    "seed": 8111,
+    "requested_side": "left"
+  },
+  "63fe6567e813": {
+    "arm": "M+D_pred",
+    "seed": 8111,
+    "requested_side": "right"
+  },
+  "abcf0152f6c7": {
+    "arm": "M-D_pred",
+    "seed": 8111,
+    "requested_side": "left"
+  },
+  "bcc4c9f6ffc8": {
+    "arm": "neutral",
+    "seed": 8117,
+    "requested_side": "none"
+  },
+  "457240e51213": {
+    "arm": "native_left",
+    "seed": 8117,
+    "requested_side": "left"
+  },
+  "2ffa3b74c4d7": {
+    "arm": "native_right",
+    "seed": 8117,
+    "requested_side": "right"
+  },
+  "07b5ede9fcca": {
+    "arm": "M",
+    "seed": 8117,
+    "requested_side": "left"
+  },
+  "6990deab485a": {
+    "arm": "M+D_rest",
+    "seed": 8117,
+    "requested_side": "right"
+  },
+  "6b93403087d8": {
+    "arm": "M-D_rest",
+    "seed": 8117,
+    "requested_side": "left"
+  },
+  "78509fcb0be4": {
+    "arm": "M+D_pred",
+    "seed": 8117,
+    "requested_side": "right"
+  },
+  "0290ec1b5240": {
+    "arm": "M-D_pred",
+    "seed": 8117,
+    "requested_side": "left"
+  },
+  "d727a56e5b54": {
+    "arm": "neutral",
+    "seed": 8123,
+    "requested_side": "none"
+  },
+  "8a561fd06a62": {
+    "arm": "native_left",
+    "seed": 8123,
+    "requested_side": "left"
+  },
+  "5f2fffab169a": {
+    "arm": "native_right",
+    "seed": 8123,
+    "requested_side": "right"
+  },
+  "f873e277792b": {
+    "arm": "M",
+    "seed": 8123,
+    "requested_side": "left"
+  },
+  "d5b817c68898": {
+    "arm": "M+D_rest",
+    "seed": 8123,
+    "requested_side": "right"
+  },
+  "9c4a9665cad9": {
+    "arm": "M-D_rest",
+    "seed": 8123,
+    "requested_side": "left"
+  },
+  "4690d7584196": {
+    "arm": "M+D_pred",
+    "seed": 8123,
+    "requested_side": "right"
+  },
+  "0516aa23103a": {
+    "arm": "M-D_pred",
+    "seed": 8123,
+    "requested_side": "left"
+  },
+  "c500e1df1e57": {
+    "arm": "neutral",
+    "seed": 8147,
+    "requested_side": "none"
+  },
+  "6e00a90fafdb": {
+    "arm": "native_left",
+    "seed": 8147,
+    "requested_side": "left"
+  },
+  "ce7526742b10": {
+    "arm": "native_right",
+    "seed": 8147,
+    "requested_side": "right"
+  },
+  "e49ae77b6dba": {
+    "arm": "M",
+    "seed": 8147,
+    "requested_side": "left"
+  },
+  "0fcb5301e48f": {
+    "arm": "M+D_rest",
+    "seed": 8147,
+    "requested_side": "right"
+  },
+  "0a3fb4674950": {
+    "arm": "M-D_rest",
+    "seed": 8147,
+    "requested_side": "left"
+  },
+  "de32205dc7a5": {
+    "arm": "M+D_pred",
+    "seed": 8147,
+    "requested_side": "right"
+  },
+  "5f7b77e2fbb1": {
+    "arm": "M-D_pred",
+    "seed": 8147,
+    "requested_side": "left"
+  },
+  "7f7a5527274c": {
+    "arm": "neutral",
+    "seed": 8161,
+    "requested_side": "none"
+  },
+  "4c1ab6f7636c": {
+    "arm": "native_left",
+    "seed": 8161,
+    "requested_side": "left"
+  },
+  "b01216f1af33": {
+    "arm": "native_right",
+    "seed": 8161,
+    "requested_side": "right"
+  },
+  "a958a5ca0204": {
+    "arm": "M",
+    "seed": 8161,
+    "requested_side": "left"
+  },
+  "dd5a1e23fe1e": {
+    "arm": "M+D_rest",
+    "seed": 8161,
+    "requested_side": "right"
+  },
+  "42fb7055100a": {
+    "arm": "M-D_rest",
+    "seed": 8161,
+    "requested_side": "left"
+  },
+  "247e804936bf": {
+    "arm": "M+D_pred",
+    "seed": 8161,
+    "requested_side": "right"
+  },
+  "ea5792339d53": {
+    "arm": "M-D_pred",
+    "seed": 8161,
+    "requested_side": "left"
+  },
+  "99498315bc03": {
+    "arm": "neutral",
+    "seed": 8167,
+    "requested_side": "none"
+  },
+  "06e506784338": {
+    "arm": "native_left",
+    "seed": 8167,
+    "requested_side": "left"
+  },
+  "7a97e1169432": {
+    "arm": "native_right",
+    "seed": 8167,
+    "requested_side": "right"
+  },
+  "4a4b5dcd49df": {
+    "arm": "M",
+    "seed": 8167,
+    "requested_side": "left"
+  },
+  "ce080bfb503d": {
+    "arm": "M+D_rest",
+    "seed": 8167,
+    "requested_side": "right"
+  },
+  "5a64fa5158cd": {
+    "arm": "M-D_rest",
+    "seed": 8167,
+    "requested_side": "left"
+  },
+  "63a8234c978c": {
+    "arm": "M+D_pred",
+    "seed": 8167,
+    "requested_side": "right"
+  },
+  "766460d66528": {
+    "arm": "M-D_pred",
+    "seed": 8167,
+    "requested_side": "left"
+  },
+  "754bfad672ee": {
+    "arm": "neutral",
+    "seed": 8171,
+    "requested_side": "none"
+  },
+  "41c4e3d74e69": {
+    "arm": "native_left",
+    "seed": 8171,
+    "requested_side": "left"
+  },
+  "1ccc22be2442": {
+    "arm": "native_right",
+    "seed": 8171,
+    "requested_side": "right"
+  },
+  "0c495dd37273": {
+    "arm": "M",
+    "seed": 8171,
+    "requested_side": "left"
+  },
+  "1d9c626a4ce8": {
+    "arm": "M+D_rest",
+    "seed": 8171,
+    "requested_side": "right"
+  },
+  "0d600dac76a4": {
+    "arm": "M-D_rest",
+    "seed": 8171,
+    "requested_side": "left"
+  },
+  "71779d9a86e4": {
+    "arm": "M+D_pred",
+    "seed": 8171,
+    "requested_side": "right"
+  },
+  "864fcc4f7dd3": {
+    "arm": "M-D_pred",
+    "seed": 8171,
+    "requested_side": "left"
+  },
+  "20e0f32bbe89": {
+    "arm": "neutral",
+    "seed": 8179,
+    "requested_side": "none"
+  },
+  "08b43b44259c": {
+    "arm": "native_left",
+    "seed": 8179,
+    "requested_side": "left"
+  },
+  "f1c493e35c4e": {
+    "arm": "native_right",
+    "seed": 8179,
+    "requested_side": "right"
+  },
+  "bbd369c704b8": {
+    "arm": "M",
+    "seed": 8179,
+    "requested_side": "left"
+  },
+  "26939ddf257a": {
+    "arm": "M+D_rest",
+    "seed": 8179,
+    "requested_side": "right"
+  },
+  "b3a0e5da5bc2": {
+    "arm": "M-D_rest",
+    "seed": 8179,
+    "requested_side": "left"
+  },
+  "391a40512051": {
+    "arm": "M+D_pred",
+    "seed": 8179,
+    "requested_side": "right"
+  },
+  "48c13a09b105": {
+    "arm": "M-D_pred",
+    "seed": 8179,
+    "requested_side": "left"
+  },
+  "304e543e50f6": {
+    "arm": "neutral",
+    "seed": 8191,
+    "requested_side": "none"
+  },
+  "3782370c9129": {
+    "arm": "native_left",
+    "seed": 8191,
+    "requested_side": "left"
+  },
+  "5affd452d07f": {
+    "arm": "native_right",
+    "seed": 8191,
+    "requested_side": "right"
+  },
+  "c9f9fb46dcc2": {
+    "arm": "M",
+    "seed": 8191,
+    "requested_side": "left"
+  },
+  "300ae0c646f6": {
+    "arm": "M+D_rest",
+    "seed": 8191,
+    "requested_side": "right"
+  },
+  "61ec249bdcdb": {
+    "arm": "M-D_rest",
+    "seed": 8191,
+    "requested_side": "left"
+  },
+  "2003712ac770": {
+    "arm": "M+D_pred",
+    "seed": 8191,
+    "requested_side": "right"
+  },
+  "1bb32df5476f": {
+    "arm": "M-D_pred",
+    "seed": 8191,
+    "requested_side": "left"
+  },
+  "985959c1cf95": {
+    "arm": "neutral",
+    "seed": 8209,
+    "requested_side": "none"
+  },
+  "9e9a08ee35e8": {
+    "arm": "native_left",
+    "seed": 8209,
+    "requested_side": "left"
+  },
+  "ab872d7c141f": {
+    "arm": "native_right",
+    "seed": 8209,
+    "requested_side": "right"
+  },
+  "8638c4ab0799": {
+    "arm": "M",
+    "seed": 8209,
+    "requested_side": "left"
+  },
+  "9506fe66f65b": {
+    "arm": "M+D_rest",
+    "seed": 8209,
+    "requested_side": "right"
+  },
+  "9cc166376bb8": {
+    "arm": "M-D_rest",
+    "seed": 8209,
+    "requested_side": "left"
+  },
+  "656eaf431aab": {
+    "arm": "M+D_pred",
+    "seed": 8209,
+    "requested_side": "right"
+  },
+  "217fba4d38e9": {
+    "arm": "M-D_pred",
+    "seed": 8209,
+    "requested_side": "left"
+  },
+  "0ba076a5c7d4": {
+    "arm": "neutral",
+    "seed": 8219,
+    "requested_side": "none"
+  },
+  "0b6f6eec758e": {
+    "arm": "native_left",
+    "seed": 8219,
+    "requested_side": "left"
+  },
+  "ada9d8e61cd0": {
+    "arm": "native_right",
+    "seed": 8219,
+    "requested_side": "right"
+  },
+  "1bd4f4e36554": {
+    "arm": "M",
+    "seed": 8219,
+    "requested_side": "left"
+  },
+  "b1d6bebc2bb0": {
+    "arm": "M+D_rest",
+    "seed": 8219,
+    "requested_side": "right"
+  },
+  "a174a7e71fa1": {
+    "arm": "M-D_rest",
+    "seed": 8219,
+    "requested_side": "left"
+  },
+  "21ff06a11f96": {
+    "arm": "M+D_pred",
+    "seed": 8219,
+    "requested_side": "right"
+  },
+  "800f69a2ae39": {
+    "arm": "M-D_pred",
+    "seed": 8219,
+    "requested_side": "left"
+  },
+  "47bf7e6c61c5": {
+    "arm": "neutral",
+    "seed": 8221,
+    "requested_side": "none"
+  },
+  "b74446fb9ca2": {
+    "arm": "native_left",
+    "seed": 8221,
+    "requested_side": "left"
+  },
+  "613474db0135": {
+    "arm": "native_right",
+    "seed": 8221,
+    "requested_side": "right"
+  },
+  "494cce7ec092": {
+    "arm": "M",
+    "seed": 8221,
+    "requested_side": "left"
+  },
+  "11680b1ddb06": {
+    "arm": "M+D_rest",
+    "seed": 8221,
+    "requested_side": "right"
+  },
+  "c013037e79c9": {
+    "arm": "M-D_rest",
+    "seed": 8221,
+    "requested_side": "left"
+  },
+  "f14b2c56bc0c": {
+    "arm": "M+D_pred",
+    "seed": 8221,
+    "requested_side": "right"
+  },
+  "c6b9b5cf6f90": {
+    "arm": "M-D_pred",
+    "seed": 8221,
+    "requested_side": "left"
+  },
+  "e932937dccb8": {
+    "arm": "neutral",
+    "seed": 8231,
+    "requested_side": "none"
+  },
+  "998b5fcbd691": {
+    "arm": "native_left",
+    "seed": 8231,
+    "requested_side": "left"
+  },
+  "8711116eee41": {
+    "arm": "native_right",
+    "seed": 8231,
+    "requested_side": "right"
+  },
+  "2e42b3ed3d60": {
+    "arm": "M",
+    "seed": 8231,
+    "requested_side": "left"
+  },
+  "619538c71a43": {
+    "arm": "M+D_rest",
+    "seed": 8231,
+    "requested_side": "right"
+  },
+  "c6b04a8c8a64": {
+    "arm": "M-D_rest",
+    "seed": 8231,
+    "requested_side": "left"
+  },
+  "56f3b39fdef5": {
+    "arm": "M+D_pred",
+    "seed": 8231,
+    "requested_side": "right"
+  },
+  "c249c0720783": {
+    "arm": "M-D_pred",
+    "seed": 8231,
+    "requested_side": "left"
+  },
+  "ff0ba0cf18db": {
+    "arm": "neutral",
+    "seed": 8233,
+    "requested_side": "none"
+  },
+  "794d0e14458e": {
+    "arm": "native_left",
+    "seed": 8233,
+    "requested_side": "left"
+  },
+  "8a24c28f9687": {
+    "arm": "native_right",
+    "seed": 8233,
+    "requested_side": "right"
+  },
+  "60c26b4ac66a": {
+    "arm": "M",
+    "seed": 8233,
+    "requested_side": "left"
+  },
+  "0f1e16ee5722": {
+    "arm": "M+D_rest",
+    "seed": 8233,
+    "requested_side": "right"
+  },
+  "3d4f9eec1428": {
+    "arm": "M-D_rest",
+    "seed": 8233,
+    "requested_side": "left"
+  },
+  "85522661f570": {
+    "arm": "M+D_pred",
+    "seed": 8233,
+    "requested_side": "right"
+  },
+  "423be9760b43": {
+    "arm": "M-D_pred",
+    "seed": 8233,
+    "requested_side": "left"
+  },
+  "d0a992c4eb49": {
+    "arm": "neutral",
+    "seed": 8237,
+    "requested_side": "none"
+  },
+  "ddac2b49eb7f": {
+    "arm": "native_left",
+    "seed": 8237,
+    "requested_side": "left"
+  },
+  "16d7bbed00a7": {
+    "arm": "native_right",
+    "seed": 8237,
+    "requested_side": "right"
+  },
+  "693dcb24b962": {
+    "arm": "M",
+    "seed": 8237,
+    "requested_side": "left"
+  },
+  "b817a75eca03": {
+    "arm": "M+D_rest",
+    "seed": 8237,
+    "requested_side": "right"
+  },
+  "4ab0a89e0c90": {
+    "arm": "M-D_rest",
+    "seed": 8237,
+    "requested_side": "left"
+  },
+  "07976a4b345a": {
+    "arm": "M+D_pred",
+    "seed": 8237,
+    "requested_side": "right"
+  },
+  "e3337c442008": {
+    "arm": "M-D_pred",
+    "seed": 8237,
+    "requested_side": "left"
+  }
+}

@@ -1,0 +1,964 @@
+{
+ "per_prompt": [
+  {
+   "name": "ac_cpu",
+   "family": "acronym_abbreviation",
+   "subject_substring": "CPU",
+   "subject_pieces": [
+    " CPU"
+   ],
+   "final_piece": " Processing",
+   "n_top20": 20,
+   "subject": 0,
+   "final": 20,
+   "other": 0,
+   "subject_positions": [
+    3
+   ]
+  },
+  {
+   "name": "ac_dna",
+   "family": "acronym_abbreviation",
+   "subject_substring": "DNA",
+   "subject_pieces": [
+    " DNA"
+   ],
+   "final_piece": "bonucleic",
+   "n_top20": 20,
+   "subject": 0,
+   "final": 20,
+   "other": 0,
+   "subject_positions": [
+    3
+   ]
+  },
+  {
+   "name": "ac_fbi",
+   "family": "acronym_abbreviation",
+   "subject_substring": "FBI",
+   "subject_pieces": [
+    " FBI"
+   ],
+   "final_piece": " of",
+   "n_top20": 20,
+   "subject": 1,
+   "final": 19,
+   "other": 0,
+   "subject_positions": [
+    3
+   ]
+  },
+  {
+   "name": "ac_nasa",
+   "family": "acronym_abbreviation",
+   "subject_substring": "NASA",
+   "subject_pieces": [
+    "NASA"
+   ],
+   "final_piece": " Space",
+   "n_top20": 20,
+   "subject": 0,
+   "final": 20,
+   "other": 0,
+   "subject_positions": [
+    1
+   ]
+  },
+  {
+   "name": "ac_nba",
+   "family": "acronym_abbreviation",
+   "subject_substring": "NBA",
+   "subject_pieces": [
+    " NBA"
+   ],
+   "final_piece": " Basketball",
+   "n_top20": 20,
+   "subject": 0,
+   "final": 20,
+   "other": 0,
+   "subject_positions": [
+    3
+   ]
+  },
+  {
+   "name": "ac_phd",
+   "family": "acronym_abbreviation",
+   "subject_substring": "PhD",
+   "subject_pieces": [
+    " PhD"
+   ],
+   "final_piece": " of",
+   "n_top20": 20,
+   "subject": 0,
+   "final": 20,
+   "other": 0,
+   "subject_positions": [
+    3
+   ]
+  },
+  {
+   "name": "ac_uk",
+   "family": "acronym_abbreviation",
+   "subject_substring": "UK",
+   "subject_pieces": [
+    " UK"
+   ],
+   "final_piece": " United",
+   "n_top20": 20,
+   "subject": 0,
+   "final": 20,
+   "other": 0,
+   "subject_positions": [
+    3
+   ]
+  },
+  {
+   "name": "ac_usa",
+   "family": "acronym_abbreviation",
+   "subject_substring": "USA",
+   "subject_pieces": [
+    " USA"
+   ],
+   "final_piece": " of",
+   "n_top20": 20,
+   "subject": 1,
+   "final": 17,
+   "other": 2,
+   "subject_positions": [
+    3
+   ]
+  },
+  {
+   "name": "ant_big",
+   "family": "antonyms",
+   "subject_substring": "big",
+   "subject_pieces": [
+    " big"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 7,
+   "final": 12,
+   "other": 1,
+   "subject_positions": [
+    4
+   ]
+  },
+  {
+   "name": "ant_black",
+   "family": "antonyms",
+   "subject_substring": "black",
+   "subject_pieces": [
+    " black"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 11,
+   "final": 8,
+   "other": 1,
+   "subject_positions": [
+    4
+   ]
+  },
+  {
+   "name": "ant_fast",
+   "family": "antonyms",
+   "subject_substring": "fast",
+   "subject_pieces": [
+    " fast"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 12,
+   "final": 7,
+   "other": 1,
+   "subject_positions": [
+    4
+   ]
+  },
+  {
+   "name": "ant_hot",
+   "family": "antonyms",
+   "subject_substring": "hot",
+   "subject_pieces": [
+    " hot"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 7,
+   "final": 12,
+   "other": 1,
+   "subject_positions": [
+    4
+   ]
+  },
+  {
+   "name": "ant_open",
+   "family": "antonyms",
+   "subject_substring": "open",
+   "subject_pieces": [
+    " open"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 10,
+   "final": 9,
+   "other": 1,
+   "subject_positions": [
+    4
+   ]
+  },
+  {
+   "name": "ant_up",
+   "family": "antonyms",
+   "subject_substring": "up",
+   "subject_pieces": [
+    " up"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 6,
+   "final": 13,
+   "other": 1,
+   "subject_positions": [
+    4
+   ]
+  },
+  {
+   "name": "ar_10m3",
+   "family": "arithmetic_sequence",
+   "subject_substring": "(all operands)",
+   "subject_pieces": [
+    "1",
+    "0",
+    " -",
+    " ",
+    "3"
+   ],
+   "final_piece": " =",
+   "n_top20": 20,
+   "subject": 7,
+   "final": 13,
+   "other": 0,
+   "subject_positions": [
+    1,
+    2,
+    3,
+    4,
+    5
+   ]
+  },
+  {
+   "name": "ar_2p2",
+   "family": "arithmetic_sequence",
+   "subject_substring": "(all operands)",
+   "subject_pieces": [
+    "2",
+    " +",
+    " ",
+    "2"
+   ],
+   "final_piece": " =",
+   "n_top20": 20,
+   "subject": 6,
+   "final": 14,
+   "other": 0,
+   "subject_positions": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "name": "ar_3p4",
+   "family": "arithmetic_sequence",
+   "subject_substring": "(all operands)",
+   "subject_pieces": [
+    "3",
+    " +",
+    " ",
+    "4"
+   ],
+   "final_piece": " =",
+   "n_top20": 20,
+   "subject": 7,
+   "final": 13,
+   "other": 0,
+   "subject_positions": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "name": "ar_5p5",
+   "family": "arithmetic_sequence",
+   "subject_substring": "(all operands)",
+   "subject_pieces": [
+    "5",
+    " +",
+    " ",
+    "5"
+   ],
+   "final_piece": " =",
+   "n_top20": 20,
+   "subject": 5,
+   "final": 15,
+   "other": 0,
+   "subject_positions": [
+    1,
+    2,
+    3,
+    4
+   ]
+  },
+  {
+   "name": "ar_after7",
+   "family": "arithmetic_sequence",
+   "subject_substring": "(all operands)",
+   "subject_pieces": [
+    "The",
+    " number",
+    " that",
+    " comes",
+    " right",
+    " after",
+    " ",
+    "7"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 7,
+   "final": 13,
+   "other": 0,
+   "subject_positions": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ]
+  },
+  {
+   "name": "ar_count",
+   "family": "arithmetic_sequence",
+   "subject_substring": "(all operands)",
+   "subject_pieces": [
+    "1",
+    ",",
+    " ",
+    "2",
+    ",",
+    " ",
+    "3",
+    ",",
+    " ",
+    "4"
+   ],
+   "final_piece": ",",
+   "n_top20": 20,
+   "subject": 8,
+   "final": 12,
+   "other": 0,
+   "subject_positions": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+   ]
+  },
+  {
+   "name": "ar_days",
+   "family": "arithmetic_sequence",
+   "subject_substring": "(all operands)",
+   "subject_pieces": [
+    "Monday",
+    ",",
+    " Tuesday"
+   ],
+   "final_piece": ",",
+   "n_top20": 20,
+   "subject": 10,
+   "final": 10,
+   "other": 0,
+   "subject_positions": [
+    1,
+    2,
+    3
+   ]
+  },
+  {
+   "name": "ar_even",
+   "family": "arithmetic_sequence",
+   "subject_substring": "(all operands)",
+   "subject_pieces": [
+    "2",
+    ",",
+    " ",
+    "4",
+    ",",
+    " ",
+    "6",
+    ",",
+    " ",
+    "8"
+   ],
+   "final_piece": ",",
+   "n_top20": 20,
+   "subject": 8,
+   "final": 12,
+   "other": 0,
+   "subject_positions": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+   ]
+  },
+  {
+   "name": "cap_china",
+   "family": "capitals",
+   "subject_substring": "China",
+   "subject_pieces": [
+    " China"
+   ],
+   "final_piece": " of",
+   "n_top20": 20,
+   "subject": 6,
+   "final": 12,
+   "other": 2,
+   "subject_positions": [
+    4
+   ]
+  },
+  {
+   "name": "cap_egypt",
+   "family": "capitals",
+   "subject_substring": "Egypt",
+   "subject_pieces": [
+    " Egypt"
+   ],
+   "final_piece": " of",
+   "n_top20": 20,
+   "subject": 5,
+   "final": 14,
+   "other": 1,
+   "subject_positions": [
+    4
+   ]
+  },
+  {
+   "name": "cap_france",
+   "family": "capitals",
+   "subject_substring": "France",
+   "subject_pieces": [
+    " France"
+   ],
+   "final_piece": " of",
+   "n_top20": 20,
+   "subject": 4,
+   "final": 14,
+   "other": 2,
+   "subject_positions": [
+    4
+   ]
+  },
+  {
+   "name": "cap_germany",
+   "family": "capitals",
+   "subject_substring": "Germany",
+   "subject_pieces": [
+    " Germany"
+   ],
+   "final_piece": " of",
+   "n_top20": 20,
+   "subject": 4,
+   "final": 15,
+   "other": 1,
+   "subject_positions": [
+    4
+   ]
+  },
+  {
+   "name": "cap_italy",
+   "family": "capitals",
+   "subject_substring": "Italy",
+   "subject_pieces": [
+    " Italy"
+   ],
+   "final_piece": " of",
+   "n_top20": 20,
+   "subject": 5,
+   "final": 14,
+   "other": 1,
+   "subject_positions": [
+    4
+   ]
+  },
+  {
+   "name": "cap_japan",
+   "family": "capitals",
+   "subject_substring": "Japan",
+   "subject_pieces": [
+    " Japan"
+   ],
+   "final_piece": " of",
+   "n_top20": 20,
+   "subject": 5,
+   "final": 14,
+   "other": 1,
+   "subject_positions": [
+    4
+   ]
+  },
+  {
+   "name": "cap_russia",
+   "family": "capitals",
+   "subject_substring": "Russia",
+   "subject_pieces": [
+    " Russia"
+   ],
+   "final_piece": " of",
+   "n_top20": 20,
+   "subject": 7,
+   "final": 12,
+   "other": 1,
+   "subject_positions": [
+    4
+   ]
+  },
+  {
+   "name": "cap_spain",
+   "family": "capitals",
+   "subject_substring": "Spain",
+   "subject_pieces": [
+    " Spain"
+   ],
+   "final_piece": " of",
+   "n_top20": 20,
+   "subject": 4,
+   "final": 15,
+   "other": 1,
+   "subject_positions": [
+    4
+   ]
+  },
+  {
+   "name": "cat_apple",
+   "family": "category_rhyme",
+   "subject_substring": "apple",
+   "subject_pieces": [
+    " apple"
+   ],
+   "final_piece": " of",
+   "n_top20": 20,
+   "subject": 4,
+   "final": 16,
+   "other": 0,
+   "subject_positions": [
+    2
+   ]
+  },
+  {
+   "name": "cat_hammer",
+   "family": "category_rhyme",
+   "subject_substring": "hammer",
+   "subject_pieces": [
+    " hammer"
+   ],
+   "final_piece": " of",
+   "n_top20": 20,
+   "subject": 2,
+   "final": 14,
+   "other": 4,
+   "subject_positions": [
+    2
+   ]
+  },
+  {
+   "name": "cat_robin",
+   "family": "category_rhyme",
+   "subject_substring": "robin",
+   "subject_pieces": [
+    " robin"
+   ],
+   "final_piece": " of",
+   "n_top20": 20,
+   "subject": 9,
+   "final": 10,
+   "other": 1,
+   "subject_positions": [
+    2
+   ]
+  },
+  {
+   "name": "cat_rose",
+   "family": "category_rhyme",
+   "subject_substring": "rose",
+   "subject_pieces": [
+    " rose"
+   ],
+   "final_piece": " of",
+   "n_top20": 20,
+   "subject": 6,
+   "final": 13,
+   "other": 1,
+   "subject_positions": [
+    2
+   ]
+  },
+  {
+   "name": "cat_salmon",
+   "family": "category_rhyme",
+   "subject_substring": "salmon",
+   "subject_pieces": [
+    " salmon"
+   ],
+   "final_piece": " of",
+   "n_top20": 20,
+   "subject": 4,
+   "final": 13,
+   "other": 3,
+   "subject_positions": [
+    2
+   ]
+  },
+  {
+   "name": "mh_chicago",
+   "family": "multi_hop_factual",
+   "subject_substring": "Chicago",
+   "subject_pieces": [
+    " Chicago"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 2,
+   "final": 15,
+   "other": 3,
+   "subject_positions": [
+    9
+   ]
+  },
+  {
+   "name": "mh_dallas",
+   "family": "multi_hop_factual",
+   "subject_substring": "Dallas",
+   "subject_pieces": [
+    " Dallas"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 6,
+   "final": 13,
+   "other": 1,
+   "subject_positions": [
+    9
+   ]
+  },
+  {
+   "name": "mh_houston",
+   "family": "multi_hop_factual",
+   "subject_substring": "Houston",
+   "subject_pieces": [
+    " Houston"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 6,
+   "final": 14,
+   "other": 0,
+   "subject_positions": [
+    9
+   ]
+  },
+  {
+   "name": "mh_la",
+   "family": "multi_hop_factual",
+   "subject_substring": "Los Angeles",
+   "subject_pieces": [
+    " Los",
+    " Angeles"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 4,
+   "final": 15,
+   "other": 1,
+   "subject_positions": [
+    9,
+    10
+   ]
+  },
+  {
+   "name": "mh_miami",
+   "family": "multi_hop_factual",
+   "subject_substring": "Miami",
+   "subject_pieces": [
+    " Miami"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 4,
+   "final": 14,
+   "other": 2,
+   "subject_positions": [
+    9
+   ]
+  },
+  {
+   "name": "mh_nyc",
+   "family": "multi_hop_factual",
+   "subject_substring": "New York City",
+   "subject_pieces": [
+    " New",
+    " York",
+    " City"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 5,
+   "final": 14,
+   "other": 1,
+   "subject_positions": [
+    9,
+    10,
+    11
+   ]
+  },
+  {
+   "name": "mh_seattle",
+   "family": "multi_hop_factual",
+   "subject_substring": "Seattle",
+   "subject_pieces": [
+    " Seattle"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 2,
+   "final": 15,
+   "other": 3,
+   "subject_positions": [
+    9
+   ]
+  },
+  {
+   "name": "mh_sf",
+   "family": "multi_hop_factual",
+   "subject_substring": "San Francisco",
+   "subject_pieces": [
+    " San",
+    " Francisco"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 3,
+   "final": 16,
+   "other": 1,
+   "subject_positions": [
+    9,
+    10
+   ]
+  },
+  {
+   "name": "tr_de_yes",
+   "family": "translation",
+   "subject_substring": "yes",
+   "subject_pieces": [
+    " yes"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 1,
+   "final": 18,
+   "other": 1,
+   "subject_positions": [
+    5
+   ]
+  },
+  {
+   "name": "tr_es_cat",
+   "family": "translation",
+   "subject_substring": "cat",
+   "subject_pieces": [
+    " cat"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 6,
+   "final": 13,
+   "other": 1,
+   "subject_positions": [
+    5
+   ]
+  },
+  {
+   "name": "tr_es_dog",
+   "family": "translation",
+   "subject_substring": "dog",
+   "subject_pieces": [
+    " dog"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 9,
+   "final": 10,
+   "other": 1,
+   "subject_positions": [
+    5
+   ]
+  },
+  {
+   "name": "tr_es_house",
+   "family": "translation",
+   "subject_substring": "house",
+   "subject_pieces": [
+    " house"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 7,
+   "final": 12,
+   "other": 1,
+   "subject_positions": [
+    5
+   ]
+  },
+  {
+   "name": "tr_fr_cat",
+   "family": "translation",
+   "subject_substring": "cat",
+   "subject_pieces": [
+    " cat"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 3,
+   "final": 13,
+   "other": 4,
+   "subject_positions": [
+    5
+   ]
+  },
+  {
+   "name": "tr_fr_dog",
+   "family": "translation",
+   "subject_substring": "dog",
+   "subject_pieces": [
+    " dog"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 7,
+   "final": 12,
+   "other": 1,
+   "subject_positions": [
+    5
+   ]
+  },
+  {
+   "name": "tr_fr_water",
+   "family": "translation",
+   "subject_substring": "water",
+   "subject_pieces": [
+    " water"
+   ],
+   "final_piece": " is",
+   "n_top20": 20,
+   "subject": 8,
+   "final": 11,
+   "other": 1,
+   "subject_positions": [
+    5
+   ]
+  }
+ ],
+ "per_family": {
+  "acronym_abbreviation": {
+   "subject": 2,
+   "final": 156,
+   "other": 2,
+   "total": 160,
+   "prompts": 8,
+   "frac_subject": 0.0125,
+   "frac_final": 0.975,
+   "frac_other": 0.0125
+  },
+  "antonyms": {
+   "subject": 53,
+   "final": 61,
+   "other": 6,
+   "total": 120,
+   "prompts": 6,
+   "frac_subject": 0.44166666666666665,
+   "frac_final": 0.5083333333333333,
+   "frac_other": 0.05
+  },
+  "arithmetic_sequence": {
+   "subject": 58,
+   "final": 102,
+   "other": 0,
+   "total": 160,
+   "prompts": 8,
+   "frac_subject": 0.3625,
+   "frac_final": 0.6375,
+   "frac_other": 0.0
+  },
+  "capitals": {
+   "subject": 40,
+   "final": 110,
+   "other": 10,
+   "total": 160,
+   "prompts": 8,
+   "frac_subject": 0.25,
+   "frac_final": 0.6875,
+   "frac_other": 0.0625
+  },
+  "category_rhyme": {
+   "subject": 25,
+   "final": 66,
+   "other": 9,
+   "total": 100,
+   "prompts": 5,
+   "frac_subject": 0.25,
+   "frac_final": 0.66,
+   "frac_other": 0.09
+  },
+  "multi_hop_factual": {
+   "subject": 32,
+   "final": 116,
+   "other": 12,
+   "total": 160,
+   "prompts": 8,
+   "frac_subject": 0.2,
+   "frac_final": 0.725,
+   "frac_other": 0.075
+  },
+  "translation": {
+   "subject": 41,
+   "final": 89,
+   "other": 10,
+   "total": 140,
+   "prompts": 7,
+   "frac_subject": 0.29285714285714287,
+   "frac_final": 0.6357142857142857,
+   "frac_other": 0.07142857142857142
+  }
+ }
+}
