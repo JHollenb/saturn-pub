@@ -1,5 +1,9 @@
 # MDB usage guide
 
+For caller-owned or custom execution backends, see the
+[public backend interface](BACKENDS.md): forward, capture and interventions,
+plus optional native stateful debugger adapters without a scheduler.
+
 MDB runs a model as an inspectable session: pause at a typed execution boundary,
 save a cut, branch a future, inspect or edit permitted state, then replay or
 restore it. Models remain native backend executors; MDB owns the coordinated

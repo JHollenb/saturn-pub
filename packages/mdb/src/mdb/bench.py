@@ -22,6 +22,18 @@ class BenchSession:
     """Factory preserving Qwen v1 callers and dispatching native family adapters."""
 
     @classmethod
+    def from_backend(cls, backend, *, identity, debugger_adapter=None, owns_backend=False,
+                     **backend_options):
+        """Use a caller runner, DebuggerAdapter, or registered backend factory.
+
+        Native cuts stay owned by the supplied debugger adapter. Forward-only
+        runners expose capture/intervention operations without claiming resume.
+        """
+        from .backend_session import BackendBenchSession
+        return BackendBenchSession(backend, identity=identity, debugger_adapter=debugger_adapter,
+                                   owns_backend=owns_backend, backend_options=backend_options)
+
+    @classmethod
     def from_resident(cls, model, tokenizer=None, *, family=None, **kwargs):
         resolved = resident_family(model, family)
         if resolved == "qwen2":

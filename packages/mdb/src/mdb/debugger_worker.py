@@ -65,11 +65,11 @@ class DebugWorkerController:
     has captured a StateCut at the requested boundary.
     """
 
-    def __init__(self, capability: DebugCapability, adapter: DebuggerAdapter, *, source_frame_stack: Any | None = None) -> None:
+    def __init__(self, capability: DebugCapability, adapter: DebuggerAdapter, *, source_frame_stack: Any | None = None, execution_lock: Any | None = None) -> None:
         self.capability = capability
         self.adapter = adapter
         self.source_frame_stack = source_frame_stack
-        self._lock = threading.RLock()
+        self._lock = execution_lock if execution_lock is not None else threading.RLock()
         self._sequence = 0
         self._last_client_sequence = 0
         self._last_request: dict[str, DebugResponse] = {}

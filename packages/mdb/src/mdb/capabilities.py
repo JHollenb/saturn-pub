@@ -2,7 +2,12 @@
 
 
 def inventory():
+    from .backends import available_backends
     return {"schema": "mdb-capability-inventory-v1", "runtime": "0.1.0", "families": ["qwen2", "mamba", "flux", "sdxl"],
+        "backend_extensions": {"constructor": "BenchSession.from_backend", "factories": list(available_backends()),
+            "interface": "ModelRunner", "forward": ["capture", "interventions"],
+            "stateful_interface": "DebuggerAdapter", "stateful_support": "backend-declared",
+            "activation_capture_is_checkpoint": False},
         "session": ["from_resident", "resume", "prefill", "prepare", "step", "generate", "inspect", "stage_input", "checkpoint", "fork", "checkout", "restore", "replay", "compare", "export", "close"],
         "memory": ["shared-ancestors", "private-continuations", "copy-on-write", "durable-pages", "residency-admission", "eviction", "hydration", "ownership-accounting", "four-plane-bundles"],
         "debugger": ["safe-point-breakpoints", "watchpoints", "typed-console", "source-frames", "preview", "commit", "abort", "checkpoint-navigation", "mrun-transport"],

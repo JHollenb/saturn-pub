@@ -21,6 +21,11 @@ of [mrun-pub](https://github.com/JHollenb/mrun-pub); no SSH access, manalysis,
 common workspace, MLflow or MinIO installation is required. The import namespace
 remains mrun.
 
+For caller-owned Transformers or custom framework runners, use
+`BenchSession.from_backend` from the [backend guide](BACKENDS.md).
+`.[transformerlens]` supplies the independent TransformerLens 4.2.0 integration
+environment. A custom dependency-free runner needs only the base MDB package.
+
 MDB preserves guarded admission, CUDA needs, strict preflight, soft host preference
 and retry policy. Unsupported admission controls are refused.
 

@@ -10,6 +10,11 @@ Standalone model virtual memory and reversible model debugger, extracted from
 Saturn's Open Bench. MDB owns the runtime source. It does not import Saturn or
 Saturn-pub. `mrun` provides model resolution, resource admission and resident jobs.
 
+For caller-owned execution, `BenchSession.from_backend` accepts custom runners
+or existing debugger adapters. Built-in Transformers and TransformerLens
+wrappers expose forward passes, activation capture and scoped interventions
+without mrun. See the [backend guide](docs/BACKENDS.md).
+
 Committed Qwen K/V memory is directly readable and writable through `memory_read`,
 `memory_write`, `memory_diff`, and `memory_probe`. Select native layers, token rows,
 and K/V components; inspect bounded numeric values and token text; apply atomic

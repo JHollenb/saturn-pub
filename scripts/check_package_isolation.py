@@ -71,7 +71,7 @@ import pathlib
 import sys
 class Guard(importlib.abc.MetaPathFinder):
     def find_spec(self, fullname, path=None, target=None):
-        if fullname.split('.')[0] in {{'{sibling}', 'saturn', 'torch', 'transformers',
+        if fullname.split('.')[0] in {{'{sibling}', 'saturn', 'torch', 'transformers', 'transformer_lens',
                                       'diffusers', 'mrun', 'manalysis', 'common_harness'}}:
             raise ImportError('bare package attempted forbidden import: ' + fullname)
 sys.meta_path.insert(0, Guard())
@@ -79,6 +79,12 @@ import {namespace} as package
 assert pathlib.Path(package.__file__).is_relative_to(pathlib.Path(sys.prefix))
 if '{namespace}' == 'mdb':
     from mdb import BenchSession
+    from mdb import ModelRunner, RunnerCapabilities, ForwardResult, TransformerLensRunner, TransformersRunner
+    class JsonRunner(ModelRunner):
+        def capabilities(self): return RunnerCapabilities('json')
+        def forward(self, inputs, **kwargs): return ForwardResult(inputs + 1)
+    with BenchSession.from_backend(JsonRunner(), identity={{'model_id': 'json'}}) as session:
+        assert session.forward(2).output == 3
     from mdb.cli import main
     assert main(['version']) == 0
     assert main(['capabilities']) == 0
