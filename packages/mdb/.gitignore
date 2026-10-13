@@ -12,3 +12,5 @@ preflight-receipts/
 *.tar.gz
 *.whl
 *.egg-info/
+.writer.lock
+.accepted.lock

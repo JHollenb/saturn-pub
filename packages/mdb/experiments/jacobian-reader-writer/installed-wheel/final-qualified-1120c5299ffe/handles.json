@@ -1,0 +1,49 @@
+{
+  "application_lane": "cpu-bfloat16-eager",
+  "committed_candidate_ref": "cas://sha256/cea0856b70d5c54dae9c3aad6c57bbc0399484b20c17c1a0e5c9eaaabf87521b",
+  "committed_cut": "cas://sha256/9a96fe85e6e61542424c79485f8a09a128110396791661dc8b6e8a3b314f46e5",
+  "export": {
+    "cut": "cas://sha256/d164fafe623ed82f82b6d1a1626d777fb6d3980774cc2f0fc2034e81e7e78c16",
+    "manifest": "cas://sha256/7f596469979188a7cf98b7eaf6737b3bfe4a9f6f49b120db0acc5322395e584a",
+    "root": "/Users/jakeholl/domains/saturn-pub/packages/mdb/experiments/jacobian-reader-writer/installed-wheel/final-qualified-1120c5299ffe/export"
+  },
+  "lens_fingerprint": "fa4d8e49a1d33395fd7111a0c620bc1d0cbc731c098cbe7e196b4814022f0d9c",
+  "lens_ref": "cas://sha256/7b5ac8936e79092303cfd554ea0a7b638507d661da4398fd2490fd519f00314c",
+  "observation_ref": "cas://sha256/6fdf45a6e22e28f5e4c9a9e9c1c68ea7d1d8902c21d9c407d5febb4c2df05c4d",
+  "processes": {
+    "capture": {
+      "blocked_import_roots": [
+        "common",
+        "common_harness",
+        "mrun",
+        "saturn",
+        "saturn_pub"
+      ],
+      "import_root_verified": true,
+      "installed_target": "/private/tmp/mdb-jacobian-installed-final-target.FHgHfh",
+      "mdb_file": "/private/tmp/mdb-jacobian-installed-final-target.FHgHfh/mdb/__init__.py",
+      "pid": 26066,
+      "python": "/Users/jakeholl/domains/common/.venv/bin/python"
+    }
+  },
+  "schema": "mdb-installed-jacobian-handles-v1",
+  "source_cut": "cas://sha256/f4748eeef67dc57f37f7227914a6a69f427bb9bf3d1b214cff590f9ef13b13fc",
+  "source_residual_sha256": "1c803ff42b18a0138126852f7f0defccedec77b5bd223a7f97c271741d21b815",
+  "standalone": {
+    "execution_binding": {
+      "model_abi_sha256": "4f8c4ed14fbd0d93e0110919f105e5eaeb853010ef0888bb575a545dc96b3961",
+      "numerical_contract": "3345666d4ce570fd9796d82c6b4ca91db1ba1c36b8c06a3762adc264317bcf13",
+      "session_id": "bench"
+    },
+    "lens_manifest_sha256": "52a569eb42876f78bfe54d4ad61d72c6840b0420971374c2b6b8db526b393e62",
+    "native_decoder_view_hash_bound": true,
+    "save_open_validate": [
+      "lens",
+      "steer",
+      "span"
+    ],
+    "span_manifest_sha256": "20786c5c20e518b89956ce9a5190002bb006608f5b6ed4f83f6d679a9f2d2fa6",
+    "steer_manifest_sha256": "0cce0c1d08a69f2324272e6029d4c12922de431d96c2aa30af857949742741fe"
+  },
+  "wheel_sha256": "1120c5299ffe096a76db84ceaa71cd44348db8f03a46e6bf17e72e433b96ea2e"
+}

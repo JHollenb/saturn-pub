@@ -6,6 +6,7 @@ backend owns tensors, and Model OS remains token admission/commit authority.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+from copy import deepcopy
 from functools import wraps
 from hashlib import sha256
 import json
@@ -157,6 +158,9 @@ class QwenBenchSession:
         if isinstance(continuation_capacity, bool) or not isinstance(continuation_capacity, int) or continuation_capacity <= 0:
             raise BenchError("continuation capacity must be positive")
         self.model, self.tokenizer = model, tokenizer
+        self.family = str(getattr(model.config, "model_type", ""))
+        if self.family not in {"qwen2", "qwen3"}:
+            raise BenchError("native Qwen bench supports only qwen2/qwen3")
         self.root = Path(root).expanduser().resolve()
         self.root.mkdir(parents=True, exist_ok=True)
         self._writer = _writer or writer_path(self.root).open("a+")
@@ -210,6 +214,7 @@ class QwenBenchSession:
         self._lock = RLock()
         self.publication.owner_lock = self._lock
         self._edit = None
+        self._jacobian_pending = None
         self.events: list[dict] = []
         from mdb.source_frame_stack import SourceFrameStack
         with self.publication.initializing():
@@ -235,15 +240,17 @@ class QwenBenchSession:
 
     def capabilities(self):
         return {"schema": BENCH_SCHEMA, "session_id": self.session_id, "lane": self.lane,
-            "family": "qwen2", "checkpoint_identity": self.identity["weights_sha256"],
+            "family": self.family, "checkpoint_identity": self.identity["weights_sha256"],
             "model_identity": self.identity, "numerical_contract": self.vm.package.model_abi.numerical_contract,
             "boundaries": ["token", "layer"], "writable": ["residual"],
             "execution_stages": ["token", "embedding", "layer", "readout", "sample", "commit"],
             "mutable_closure": ["residual", "staged_kv", "pending_token", "committed_history", "cursor"],
             "operations": ["prefill", "step", "generate", "inspect", "checkpoint", "fork", "checkout",
                 "restore", "replay", "compare", "export", "close", "discover", "bind_symbol", "stage_input", "replay_observation",
+                "annotate_state", "list_state_annotations", "show_state_annotation", "state_lineage", "verify_state_annotations",
                 *(["memory_read", "memory_write", "memory_diff", "memory_probe",
-                   "measure_circuit", "replay_circuit"] if self.publication.mode == "journal" else [])],
+                   "measure_circuit", "replay_circuit", "pin_jacobian_lens",
+                   "read_jacobian", "preview_jacobian_edit"] if self.publication.mode == "journal" else [])],
             "hidden_memory": {"protocol": "saturn-bench-hidden-memory-v1",
                 "available": self.publication.mode == "journal", "publication_mode_required": "journal",
                 "components": ["key", "value"], "selectors": ["layers", "row_start", "row_stop", "components"],
@@ -279,6 +286,39 @@ class QwenBenchSession:
         ref = self.artifacts.put(self._manifest())
         self.publication.select(ref)
         return ref
+
+    def _state_annotation_store(self):
+        from .state_annotations import StateAnnotationStore
+        return StateAnnotationStore.from_session(self)
+
+    @_serialized
+    def annotate_state(self, label, *, cut_id=None, namespace="default", role, stage,
+                       scientific_source_cut_ids=(), recipient_parent_cut_id=None,
+                       tags=(), native_act_refs=(), consumer_refs=(), geometry=None, details=None,
+                       note=None, producer=None):
+        """Attach descriptive provenance to an immutable cut without changing it."""
+        return self._state_annotation_store().annotate(
+            label, cut_id=cut_id or self.branch.cut, namespace=namespace, role=role, stage=stage,
+            scientific_source_cut_ids=scientific_source_cut_ids,
+            recipient_parent_cut_id=recipient_parent_cut_id, tags=tags,
+            native_act_refs=native_act_refs, consumer_refs=consumer_refs,
+            geometry=geometry, details=details, note=note, producer=producer)
+
+    @_serialized
+    def list_state_annotations(self, **filters):
+        return self._state_annotation_store().list(**filters)
+
+    @_serialized
+    def show_state_annotation(self, reference):
+        return self._state_annotation_store().show(reference)
+
+    @_serialized
+    def state_lineage(self, cut_id=None):
+        return self._state_annotation_store().lineage(cut_id or self.branch.cut)
+
+    @_serialized
+    def verify_state_annotations(self):
+        return self._state_annotation_store().verify()
 
     @_serialized
     @torch.inference_mode()
@@ -514,7 +554,7 @@ class QwenBenchSession:
         cursor = self.cursor()
         state = {"session_id": self.session_id, "branch": self.active, "cursor": cursor,
                  "vm_checkpoint": vm_checkpoint, "bench_parent_cut": self.branch.cut}
-        live = stack.cuts.capture(cut_id=f"bench-{content_digest({'state': state, 'parent': parent})[:24]}", family="qwen2",
+        live = stack.cuts.capture(cut_id=f"bench-{content_digest({'state': state, 'parent': parent})[:24]}", family=self.family,
             state_schema_id=BENCH_CUT_SCHEMA, model_identity=self.identity,
             boundary="layer" if cursor["next_layer"] is not None else "token",
             index=cursor["next_layer"] if cursor["next_layer"] is not None else cursor["token"],
@@ -786,16 +826,26 @@ class QwenBenchSession:
             if not self._edit or self._edit[0] != act_id:
                 raise BenchError("pending Act identity changed")
             _, parent, candidate, kernel, updates = self._edit
+            previous_events, previous_cuts = deepcopy(self.events), deepcopy(self.cuts)
+            jacobian = self._jacobian_pending
+            self._jacobian_pending = None
             self._edit = None
             try:
                 receipt = kernel.execute(updates=updates, horizon=0).receipt
                 receipt_ref = self.artifacts.put(receipt.to_payload())
                 self.branch.intervention_lineage.append(act_id)
-                self.events.append({"kind": "residual-act", "parent": parent, "act_id": act_id,
-                                    "receipt_ref": receipt_ref})
+                event = {"kind": "residual-act", "parent": parent, "act_id": act_id,
+                         "receipt_ref": receipt_ref}
+                if jacobian is not None and jacobian["act_id"] == act_id:
+                    event["jacobian_candidate_ref"] = jacobian["candidate_ref"]
+                self.events.append(event)
                 cut = self.checkpoint("act-committed")
-                return {"act_id": act_id, "cut_id": cut, "receipt_ref": receipt_ref}
+                result = {"act_id": act_id, "cut_id": cut, "receipt_ref": receipt_ref}
+                if "jacobian_candidate_ref" in event:
+                    result["jacobian_candidate_ref"] = event["jacobian_candidate_ref"]
+                return result
             except Exception:
+                self.events, self.cuts = previous_events, previous_cuts
                 self._restore(parent)
                 raise
 
@@ -804,11 +854,22 @@ class QwenBenchSession:
         if not self._edit or self._edit[0] != act_id:
             raise BenchError("pending Act identity changed")
         _, parent, _, kernel, updates = self._edit
+        previous_events, previous_cuts = deepcopy(self.events), deepcopy(self.cuts)
+        jacobian = self._jacobian_pending
         self._edit = None
-        receipt = kernel.execute(updates=updates, horizon=0, verifier=lambda _: False).receipt
-        self.events.append({"kind": "act-rejected", "act_id": act_id, "parent": parent,
-                            "receipt_ref": self.artifacts.put(receipt.to_payload())})
-        return self.restore(parent)
+        self._jacobian_pending = None
+        try:
+            receipt = kernel.execute(updates=updates, horizon=0, verifier=lambda _: False).receipt
+            event = {"kind": "act-rejected", "act_id": act_id, "parent": parent,
+                     "receipt_ref": self.artifacts.put(receipt.to_payload())}
+            if jacobian is not None and jacobian["act_id"] == act_id:
+                event["jacobian_candidate_ref"] = jacobian["candidate_ref"]
+            self.events.append(event)
+            return self.restore(parent)
+        except Exception:
+            self.events, self.cuts = previous_events, previous_cuts
+            self._restore(parent)
+            raise
 
     @_serialized
     def bind_symbol(self, report, *, name=None):
@@ -886,6 +947,22 @@ class QwenBenchSession:
         return atomic_measurement(self, measure_circuit, spec)
 
     @_serialized
+    def pin_jacobian_lens(self, manifest, transport):
+        from .bench_jacobian import atomic_sidecar, pin_lens
+        return atomic_sidecar(self, pin_lens, manifest, transport)
+
+    @_serialized
+    def read_jacobian(self, lens_ref, *, token_subset=None, top_k=10, logical_address=None):
+        from .bench_jacobian import atomic_sidecar, read
+        options = {"token_subset": token_subset, "top_k": top_k, "logical_address": logical_address}
+        return atomic_sidecar(self, read, lens_ref, options)
+
+    @_serialized
+    def preview_jacobian_edit(self, observation_ref, spec):
+        from .bench_jacobian import atomic_sidecar, preview
+        return atomic_sidecar(self, preview, observation_ref, spec)
+
+    @_serialized
     def replay_circuit(self, evidence_ref):
         from .bench_circuit_measurement import atomic_measurement, replay_circuit
         return atomic_measurement(self, replay_circuit, evidence_ref)
@@ -942,6 +1019,8 @@ class QwenBenchSession:
     @_serialized
     def export(self, destination):
         with self._lock:
+            if self._edit:
+                raise BenchError("commit or abort the pending Act before export")
             self.checkpoint("export")
             target = Path(destination).expanduser().resolve()
             if target == self.root or self.root in target.parents:

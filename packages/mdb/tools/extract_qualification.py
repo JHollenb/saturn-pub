@@ -3,12 +3,14 @@ import ast
 import json
 from pathlib import Path
 from extract_runtime import rewrite
+from _upstream import upstream_checkout
 
 root = Path(__file__).resolve().parents[1]
 destination = root / "qualification"
 destination.mkdir(exist_ok=True)
+upstream = upstream_checkout()
 for family, directory in (("qwen", "2026-10-01-open-bench"), ("families", "2026-10-01-open-bench-families")):
-    source = root.parent / "saturn/experiments" / directory
+    source = upstream / "experiments" / directory
     text = rewrite((source / "worker.py").read_text())
     if family == "qwen":
         text = text.replace("from mdb.ar.machine import TokenMachine\n", "")

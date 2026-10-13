@@ -1,6 +1,9 @@
 # Models as software
 
-Saturn gives native execution a small, explicit transaction boundary:
+This guide describes the `saturn_pub` package. See [MDB](mdb.md) for the
+repository's separate durable debugger and model-memory runtime.
+
+The Saturn toolkit gives native execution a small, explicit transaction boundary:
 
 ```mermaid
 flowchart LR
@@ -109,9 +112,15 @@ Independently compiling A and B then mounting their pages generally differs from
 B's hidden states depend on A. Correct rotation cannot reconstruct that causal interaction.
 Selected-context memory therefore requires a separate consumer experiment and quality policy.
 
-## What stays outside the public runtime
+## Package boundaries
 
-The public repository excludes the historical experiment fleet, measured-program atlases,
+The `saturn_pub` package excludes the historical experiment fleet, measured-program atlases,
 learned address registries, private model variants, CUDA virtual-address aliasing, continuous batching, arbitrary
 model lowering, remote stores, and production permission systems. Its extension seam is the
 Adapter protocol, not a promise that every private prototype already has a public implementation.
+
+MDB is independently installed from `packages/mdb`. It owns durable BenchSession
+history, managed execution-state pages, branch ownership and optional mrun worker
+integration. Its [documentation](mdb.md) and [qualification records](../packages/mdb/docs/QUALIFICATION.md)
+define that package's scope. Sharing a repository does not merge the executors or
+make their serialized cuts interchangeable.

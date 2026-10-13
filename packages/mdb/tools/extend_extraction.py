@@ -2,9 +2,10 @@
 import json
 from pathlib import Path
 from extract_runtime import digest, graph, rewrite
+from _upstream import upstream_checkout
 
 root = Path(__file__).resolve().parents[1]
-source = root.parent / "saturn"
+source = upstream_checkout()
 paths, edges = graph(source)
 manifest = json.loads((root / "PROVENANCE.json").read_text())
 pending = ["saturn.local_data_plane", "saturn.ar.source_address_policy"]

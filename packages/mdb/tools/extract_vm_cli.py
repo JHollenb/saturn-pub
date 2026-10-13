@@ -1,9 +1,10 @@
 """Extract only the existing finite Mamba page-op CLI from the research CLI."""
 import ast
 from pathlib import Path
+from _upstream import upstream_checkout
 
 root = Path(__file__).resolve().parents[1]
-source = root.parent / "saturn/src/saturn/debug.py"
+source = upstream_checkout() / "src/saturn/debug.py"
 tree = ast.parse(source.read_text())
 names = {"_vm_build_config", "_vm_request", "_vm_collect", "_vm_submit", "_vm_add_common", "_add_vm_group"}
 nodes = [node for node in tree.body if isinstance(node, ast.FunctionDef) and node.name in names]

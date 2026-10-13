@@ -1,4 +1,4 @@
-"""Exact-history Qwen2 continuation over verified radix K/V segments.
+"""Exact-history Qwen2/Qwen3 continuation over verified radix K/V segments.
 
 The durable radix store owns byte identity and ancestry. This runtime places one
 shared ancestor and private deltas on device, then executes the Qwen2 decoder
@@ -88,8 +88,9 @@ class QwenKVRowCodec:
 
     def __init__(self, model: Any) -> None:
         config = model.config
-        if getattr(config, "model_type", None) != "qwen2":
-            raise CausalContextQwenError("only Qwen2 exact-history K/V is supported")
+        self.model_type = str(getattr(config, "model_type", ""))
+        if self.model_type not in {"qwen2", "qwen3"}:
+            raise CausalContextQwenError("only Qwen2/Qwen3 exact-history K/V is supported")
         self.layers = int(config.num_hidden_layers)
         self.groups = int(config.num_key_value_heads)
         configured_head_dim = getattr(config, "head_dim", None)
@@ -97,11 +98,11 @@ class QwenKVRowCodec:
             hidden_size = int(config.hidden_size)
             query_heads = int(config.num_attention_heads)
             if query_heads <= 0 or hidden_size % query_heads:
-                raise CausalContextQwenError("Qwen2 hidden size is not divisible by query heads")
+                raise CausalContextQwenError("Qwen hidden size is not divisible by query heads")
             configured_head_dim = hidden_size // query_heads
         self.head_dim = int(configured_head_dim)
         if self.head_dim != int(model.model.layers[0].self_attn.head_dim):
-            raise CausalContextQwenError("Qwen2 config and attention head widths disagree")
+            raise CausalContextQwenError("Qwen config and attention head widths disagree")
         self.dtype = next(model.parameters()).dtype
         if self.dtype != torch.bfloat16:
             raise CausalContextQwenError("the current direct-read ABI requires BF16")
@@ -188,6 +189,10 @@ class CausalContextQwenRuntime:
         self.codec = QwenKVRowCodec(model)
         self.model_abi_sha256 = model_abi_sha256
         self.backend = backend
+        if self.codec.model_type == "qwen3" and backend != "native-eager":
+            raise CausalContextQwenError(
+                "Qwen3 exact-history is qualified only for native-eager attention"
+            )
         self.device = next(model.parameters()).device
         if getattr(model.config, "use_sliding_window", False):
             raise CausalContextQwenError("sliding-window Qwen needs a separate mask ABI")
@@ -246,7 +251,7 @@ class CausalContextQwenRuntime:
         *,
         monitor: bool = False,
     ) -> tuple[torch.Tensor, dict[str, Any]]:
-        """Consume one token through all native Qwen2 layers and the frozen head."""
+        """Consume one token through all qualified Qwen layers and the frozen head."""
         if state.model_abi_sha256 != self.model_abi_sha256:
             raise CausalContextQwenError("mounted model ABI changed")
         if state.delta_rows >= state.delta_capacity:
@@ -279,7 +284,10 @@ class CausalContextQwenRuntime:
 
     @torch.inference_mode()
     def advance_token(self, execution: QwenTokenExecution) -> torch.Tensor:
-        from transformers.models.qwen2.modeling_qwen2 import apply_rotary_pos_emb
+        if self.codec.model_type == "qwen2":
+            from transformers.models.qwen2 import modeling_qwen2 as modeling
+        else:
+            from transformers.models.qwen3 import modeling_qwen3 as modeling
         state, hidden, index = execution.state, execution.hidden, execution.next_layer
         if execution.logits is not None or index >= self.codec.layers:
             raise CausalContextQwenError("token has no remaining decoder layer")
@@ -290,20 +298,24 @@ class CausalContextQwenRuntime:
         normalized = layer.input_layernorm(hidden)
         attention = layer.self_attn
         shape = (1, 1, -1, attention.head_dim)
-        query = attention.q_proj(normalized).view(shape).transpose(1, 2).contiguous()
-        key = attention.k_proj(normalized).view(shape).transpose(1, 2)
+        query = attention.q_proj(normalized).view(shape)
+        key = attention.k_proj(normalized).view(shape)
+        if self.codec.model_type == "qwen3":
+            query = attention.q_norm(query)
+            key = attention.k_norm(key)
+        query = query.transpose(1, 2).contiguous()
+        key = key.transpose(1, 2)
         value = attention.v_proj(normalized).view(shape).transpose(1, 2)
-        query, key = apply_rotary_pos_emb(query, key, *rope)
+        query, key = modeling.apply_rotary_pos_emb(query, key, *rope)
         query = query.contiguous()
         delta_key, delta_value = state.delta[index]
         delta_key[:, :, state.delta_rows : state.delta_rows + 1, :].copy_(key)
         delta_value[:, :, state.delta_rows : state.delta_rows + 1, :].copy_(value)
         ancestor_key, ancestor_value = state.ancestor[index]
         if self.backend == "native-eager":
-            from transformers.models.qwen2.modeling_qwen2 import eager_attention_forward
             keys = torch.cat((ancestor_key, delta_key[:, :, :state.delta_rows + 1]), dim=2)
             values = torch.cat((ancestor_value, delta_value[:, :, :state.delta_rows + 1]), dim=2)
-            attended, _ = eager_attention_forward(attention, query, keys, values,
+            attended, _ = modeling.eager_attention_forward(attention, query, keys, values,
                 attention_mask=None, scaling=attention.scaling, dropout=0.0)
             attended = attended.transpose(1, 2)
         else:

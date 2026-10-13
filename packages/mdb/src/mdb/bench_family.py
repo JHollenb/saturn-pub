@@ -183,6 +183,7 @@ class FamilyBenchSession:
                 "mutable_closure": list(self.adapter.closure), "default_step": self.adapter.default_step,
                 "operations": ["prefill" if self.family == "mamba" else "prepare", "step", "generate", "inspect",
                     "checkpoint", "fork", "checkout", "restore", "replay", "compare", "export", "close", "discover", "bind_symbol", "replay_observation",
+                    "annotate_state", "list_state_annotations", "show_state_annotation", "state_lineage", "verify_state_annotations",
                     *(["stage_input"] if self.family == "mamba" else []),
                     *(["measure_circuit", "replay_circuit"] if self.family == "mamba" and self.publication.mode == "journal" else [])],
                 "circuit_measurement": {"protocol": "saturn-bench-circuit-measurement-v1", "available": self.family == "mamba" and self.publication.mode == "journal",
@@ -253,6 +254,39 @@ class FamilyBenchSession:
         ref = self.artifacts.put(self._manifest())
         self.publication.select(ref)
         return ref
+
+    def _state_annotation_store(self):
+        from .state_annotations import StateAnnotationStore
+        return StateAnnotationStore.from_session(self)
+
+    @serialized
+    def annotate_state(self, label, *, cut_id=None, namespace="default", role, stage,
+                       scientific_source_cut_ids=(), recipient_parent_cut_id=None,
+                       tags=(), native_act_refs=(), consumer_refs=(), geometry=None, details=None,
+                       note=None, producer=None):
+        """Attach descriptive provenance to an immutable cut without changing it."""
+        return self._state_annotation_store().annotate(
+            label, cut_id=cut_id or self.branch.cut, namespace=namespace, role=role, stage=stage,
+            scientific_source_cut_ids=scientific_source_cut_ids,
+            recipient_parent_cut_id=recipient_parent_cut_id, tags=tags,
+            native_act_refs=native_act_refs, consumer_refs=consumer_refs,
+            geometry=geometry, details=details, note=note, producer=producer)
+
+    @serialized
+    def list_state_annotations(self, **filters):
+        return self._state_annotation_store().list(**filters)
+
+    @serialized
+    def show_state_annotation(self, reference):
+        return self._state_annotation_store().show(reference)
+
+    @serialized
+    def state_lineage(self, cut_id=None):
+        return self._state_annotation_store().lineage(cut_id or self.branch.cut)
+
+    @serialized
+    def verify_state_annotations(self):
+        return self._state_annotation_store().verify()
 
     @serialized
     def prefill(self, prompt, *, branch="main"):

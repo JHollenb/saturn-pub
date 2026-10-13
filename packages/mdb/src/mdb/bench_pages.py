@@ -9,7 +9,7 @@ import torch
 from hashlib import sha256
 from time import perf_counter
 
-from .bench_qwen import BenchError
+from .errors import BenchError
 from .vm_payload_cache import PayloadStore, PayloadRef
 
 

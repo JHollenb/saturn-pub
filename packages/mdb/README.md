@@ -1,5 +1,11 @@
 # MDB
 
+This is the `mdb-runtime` package in the Saturn repository, at `packages/mdb`.
+Run the commands below from this directory. From the repository root, use
+`pip install ./packages/mdb`. The import name remains `mdb`; installing this
+package does not install `saturn-pub`. See the [MDB overview](../../docs/mdb.md),
+[documentation index](../../docs/README.md) and [repository guide](../../docs/monorepo.md).
+
 Standalone model virtual memory and reversible model debugger, extracted from
 Saturn's Open Bench. MDB owns the runtime source. It does not import Saturn or
 Saturn-pub. `mrun` provides model resolution, resource admission and resident jobs.
@@ -9,6 +15,12 @@ Committed Qwen K/V memory is directly readable and writable through `memory_read
 and K/V components; inspect bounded numeric values and token text; apply atomic
 copy/zero/scale/replace Acts; and compare paired native futures with exact parent
 restore. Start with the [hidden-memory walkthrough](docs/HIDDEN-MEMORY.md).
+
+Frozen Jacobian lenses can read exact residual cuts and prepare signed atom or
+selected-span edits through `pin_jacobian_lens`, `read_jacobian`, and
+`preview_jacobian_edit`. Writes use the existing residual Act commit/abort path.
+See the [Jacobian reader/writer guide](docs/JACOBIAN-WORKSPACE.md) for source
+binding, numerical-lane compatibility, persistence, and the semantic claim boundary.
 
 Factual associations can be edited with MEMIT and AlphaEdit (`mdb.memit`), applied as
 removable `down_proj` overlays that install into a bench session as lineage Acts. Removal is
@@ -67,6 +79,11 @@ block replay. A tiny CPU demonstration requires no downloaded model or fleet:
 ```sh
 python -I "$PWD/examples/resident_lab.py" --tiny qwen2 --out ./results/first-lab
 ```
+
+The [E6/E20 paper assays](experiments/time_circuits/README.md) run the frozen
+native protocols through bounded MDB research sessions, with private tensor
+edits, durable input cuts, native comparison, replay and custody. These research
+adapters have a narrower closure than the interactive BenchSession families.
 
 ## Compatibility
 

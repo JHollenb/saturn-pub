@@ -1,4 +1,5 @@
 import shutil
+import pytest
 import torch
 from diffusers import (Flux2KleinPipeline, Flux2Transformer2DModel, AutoencoderKLFlux2, FlowMatchEulerDiscreteScheduler)
 from transformers import Qwen3Config, Qwen3ForCausalLM, PreTrainedTokenizerFast
@@ -9,6 +10,7 @@ from mdb.bench import BenchSession, tensor_digest
 
 
 def test_tiny_native_flux_rgb_and_block_resume(tmp_path):
+    pytest.importorskip("mrun", reason="image execution requires the optional private mrun adapter")
     torch.manual_seed(43)
     backend = Tokenizer(WordLevel({"<pad>": 0, "<unk>": 1, "a": 2}, unk_token="<unk>"))
     backend.pre_tokenizer = Whitespace()

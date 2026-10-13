@@ -44,35 +44,38 @@ def build_causal_context_package(
     model_id: str,
     tokenizer_identity: str,
 ) -> ModelPackage:
+    family = runtime.codec.model_type
+    consumer_id = CONSUMER_ID if family == "qwen2" else "saturn.qwen3.causal-context-direct-read"
+    schema = SCHEMA if family == "qwen2" else "saturn-model-os-causal-context-qwen3-v1"
     state_schema = StateSchema(
-        name=SCHEMA,
+        name=schema,
         version=1,
         slots=(
             StateSlot(
                 address=CONTEXT_ADDRESS, value_type="verified-radix-mount",
                 owner="causal-context-runtime", dtype="metadata-reference",
-                read_scopes=("model-os", CONSUMER_ID), write_scopes=(CONSUMER_ID,),
+                read_scopes=("model-os", consumer_id), write_scopes=(consumer_id,),
                 lifetime="session", branchable=True, persistable=True,
                 freshness="native-resident", lineage="parent-radix-root",
                 metadata={"tensor_payload": "private", "mode": "exact-history"},
             ),
             StateSlot(
                 address=TOKEN_ADDRESS, value_type="token-id", owner="model-os",
-                dtype="int64", read_scopes=("model-os", CONSUMER_ID),
+                dtype="int64", read_scopes=("model-os", consumer_id),
                 write_scopes=("model-os",), lifetime="token", branchable=True,
                 persistable=False, freshness="candidate", lineage="selected-input",
             ),
             StateSlot(
-                address=NEXT_ADDRESS, value_type="token-id", owner=CONSUMER_ID,
+                address=NEXT_ADDRESS, value_type="token-id", owner=consumer_id,
                 dtype="int64", read_scopes=("model-os",),
-                write_scopes=(CONSUMER_ID,), lifetime="token", branchable=True,
+                write_scopes=(consumer_id,), lifetime="token", branchable=True,
                 persistable=False, freshness="native-produced",
                 lineage="native-consumer-output",
             ),
             StateSlot(
-                address=RECEIPT_ADDRESS, value_type="statecut-receipt", owner=CONSUMER_ID,
+                address=RECEIPT_ADDRESS, value_type="statecut-receipt", owner=consumer_id,
                 dtype="metadata", read_scopes=("model-os",),
-                write_scopes=(CONSUMER_ID,), lifetime="frame", branchable=True,
+                write_scopes=(consumer_id,), lifetime="frame", branchable=True,
                 persistable=False, freshness="native-produced",
                 lineage="native-transaction", metadata={"tensor_payload": "forbidden"},
             ),
@@ -81,18 +84,18 @@ def build_causal_context_package(
     abi = ModelABI(
         model_id=model_id,
         revision=runtime.model_abi_sha256,
-        family="qwen2", backend="causal-context-direct-read",
+        family=family, backend="causal-context-direct-read",
         state_schema=state_schema.fingerprint,
         tokenizer_identity=tokenizer_identity,
         kv_cache_schema="saturn-causal-radix-physical-v1",
         device=str(runtime.device), dtype=str(runtime.codec.dtype),
-        numerical_contract=("qwen2-bf16-hf-eager-v1" if runtime.backend == "native-eager"
+        numerical_contract=(f"{family}-bf16-hf-eager-v1" if runtime.backend == "native-eager"
                             else "qwen2-bf16-segmented-two-pass-v1"),
         checkpoint_sha256=runtime.model_abi_sha256,
-        graph_identity="qwen2-one-token-full-layer-v1",
-        native_consumers=(CONSUMER_ID,),
+        graph_identity=f"{family}-one-token-full-layer-v1",
+        native_consumers=(consumer_id,),
         runtime_fingerprint=content_digest({
-            "consumer": CONSUMER_ID,
+            "consumer": consumer_id,
             "backend": runtime.backend,
             "row_bytes": runtime.codec.row_bytes,
         }),
@@ -100,7 +103,7 @@ def build_causal_context_package(
         capabilities=("exact-history-radix-mount", "shared-ancestor-kv", "private-delta-fork"),
     )
     consumer = ConsumerContract(
-        consumer_id=CONSUMER_ID,
+        consumer_id=consumer_id,
         reads=(CONTEXT_ADDRESS, TOKEN_ADDRESS),
         output_kind="native-next-token", continuation_tokens=1,
         replay_contract="candidate", native=True,
@@ -108,7 +111,7 @@ def build_causal_context_package(
     )
     continuation = ContinuationContract(
         continuation_id="causal-context-qwen-one-token-v1",
-        consumer_id=CONSUMER_ID,
+        consumer_id=consumer_id,
         input_state=(CONTEXT_ADDRESS, TOKEN_ADDRESS),
         output_state=(NEXT_ADDRESS, RECEIPT_ADDRESS),
         horizon=1, replay_contract="candidate", exact=False,
@@ -132,7 +135,7 @@ def build_causal_context_package(
                 instruction_id="continue-direct-read", op="Continue",
                 reads=(CONTEXT_ADDRESS, TOKEN_ADDRESS),
                 outputs=(NEXT_ADDRESS, RECEIPT_ADDRESS),
-                native_consumer=CONSUMER_ID,
+                native_consumer=consumer_id,
                 continuation=continuation.continuation_id,
                 authority="model-os", dose_limit=1.0,
                 replay_contract="candidate",
@@ -146,7 +149,7 @@ def build_causal_context_package(
         claim_level="controlled-mechanics", terminal_claim=False,
     )
     return ModelPackage(
-        package_id="model-os.qwen2.causal-context-direct-read", version=1,
+        package_id=f"model-os.{family}.causal-context-direct-read", version=1,
         model_abi=abi, state_schema=state_schema,
         state_surface=StateSurface.from_schema(
             state_schema, surface_id="qwen-causal-context-state", owner="model-os+saturn",
@@ -160,7 +163,7 @@ def build_causal_context_package(
             "authorities": ["model-os"],
         },
         resource_limits={"horizon": 1, "persisted_tensor_bytes": 0},
-        evidence_refs=("saturn-causal-radix-physical-v1", SCHEMA),
+        evidence_refs=("saturn-causal-radix-physical-v1", schema),
         terminal_claim=False,
     )
 
@@ -181,6 +184,9 @@ class CausalContextQwenModelBackend:
         self.runtime = runtime
         self.model_abi = package.model_abi
         self.state_schema = package.state_schema
+        if len(package.consumers) != 1:
+            raise ModelOSExecutionError("causal-context package needs one native consumer")
+        self.consumer_id = package.consumers[0].consumer_id
         self._cuts: dict[str, ModelOSStateCut] = {}
         self._states: dict[str, CausalContextQwenMount] = {}
         self._tokens: dict[str, int] = {}
@@ -322,7 +328,7 @@ class CausalContextQwenModelBackend:
 
     def continue_execution(self, candidate: ModelOSStateCut, *, consumer, horizon):
         stored = self._require(candidate)
-        if stored.status != "candidate" or consumer.consumer_id != CONSUMER_ID or horizon > 1:
+        if stored.status != "candidate" or consumer.consumer_id != self.consumer_id or horizon > 1:
             raise ModelOSExecutionError("candidate or consumer contract changed")
         logits, trace = self.runtime.step(
             self._states[stored.handle], self._tokens[stored.handle], monitor=True,
@@ -332,7 +338,7 @@ class CausalContextQwenModelBackend:
         raw = logits.detach().contiguous().view(torch.uint8).cpu().numpy().tobytes()
         next_token = int(logits.argmax(dim=-1).item())
         self._next_tokens[stored.handle] = next_token
-        return {"accepted": True, "consumer_id": CONSUMER_ID,
+        return {"accepted": True, "consumer_id": self.consumer_id,
                 "next_token_id": next_token,
                 "logits_sha256": sha256(raw).hexdigest(),
                 "logical_rows_after": self._states[stored.handle].length,

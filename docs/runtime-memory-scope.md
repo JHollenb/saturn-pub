@@ -1,13 +1,15 @@
-# Runtime and memory: public scope
+# Saturn toolkit: runtime and memory scope
 
-The public repo contains small executable foundations from these investigations.
-It does not contain the entire private workbench. Names below describe concrete
-mechanisms, not guarantees about all historical prototypes.
+The `saturn_pub` package contains small executable foundations from these
+investigations. Names below describe its concrete mechanisms and boundaries.
+The same repository also contains [MDB](mdb.md), whose
+[managed branch memory and durable backing](../packages/mdb/docs/USAGE.md#memory-and-addresses)
+have separate runtime and numerical contracts.
 
 The [usage guide](usage.md) explains which mechanics are automatic, which APIs must
 be chosen explicitly, and provides runnable examples for each capability.
 
-| Area | Included and runnable | Remaining outside this release |
+| Area | Included and runnable in `saturn_pub` | Outside this package |
 |---|---|---|
 | Runtime execution | Adapter transitions, typed state addresses, declared Acts, model/execution identity checks | Arbitrary model lowering and a production permission service |
 | Change authority | Isolated preview, parent-bound commit, abort, exact restore, immutable receipts | Remote admission and deployment services |

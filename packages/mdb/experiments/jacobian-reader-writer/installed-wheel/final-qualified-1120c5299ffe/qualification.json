@@ -1,0 +1,104 @@
+{
+  "application_lane": "cpu-bfloat16-eager",
+  "blocked_import_roots": [
+    "common",
+    "common_harness",
+    "mrun",
+    "saturn",
+    "saturn_pub"
+  ],
+  "claim_boundary": "tiny seeded CPU BF16 identity-lens mechanics only; no learned semantic lens, useful writer, real-model behavior, or cross-lane portability claim",
+  "fresh_process": true,
+  "fresh_restore_exact": true,
+  "fresh_zero_span_commit_exact": true,
+  "installed_target": "/private/tmp/mdb-jacobian-installed-final-target.FHgHfh",
+  "instrument_status": "valid",
+  "mechanics_status": "valid",
+  "old_observation_stale_after_new_cut": true,
+  "processes": {
+    "capture": {
+      "blocked_import_roots": [
+        "common",
+        "common_harness",
+        "mrun",
+        "saturn",
+        "saturn_pub"
+      ],
+      "import_root_verified": true,
+      "installed_target": "/private/tmp/mdb-jacobian-installed-final-target.FHgHfh",
+      "mdb_file": "/private/tmp/mdb-jacobian-installed-final-target.FHgHfh/mdb/__init__.py",
+      "pid": 26066,
+      "python": "/Users/jakeholl/domains/common/.venv/bin/python"
+    },
+    "reopen": {
+      "blocked_import_roots": [
+        "common",
+        "common_harness",
+        "mrun",
+        "saturn",
+        "saturn_pub"
+      ],
+      "import_root_verified": true,
+      "installed_target": "/private/tmp/mdb-jacobian-installed-final-target.FHgHfh",
+      "mdb_file": "/private/tmp/mdb-jacobian-installed-final-target.FHgHfh/mdb/__init__.py",
+      "pid": 26907,
+      "python": "/Users/jakeholl/domains/common/.venv/bin/python"
+    }
+  },
+  "reopen_commit_cut": "cas://sha256/11cd24b9e1da68991db96247f5ed2125501c6fdae7520222fb3202efe2f0dac9",
+  "schema": "mdb-installed-jacobian-qualification-v1",
+  "selection_note": "The old source cut is restored explicitly; the selected cut may advance during export, commit, and close and is not required to remain the old source cut.",
+  "semantic_writer_status": "unqualified",
+  "source_cut": "cas://sha256/f4748eeef67dc57f37f7227914a6a69f427bb9bf3d1b214cff590f9ef13b13fc",
+  "standalone": {
+    "execution_binding": {
+      "model_abi_sha256": "4f8c4ed14fbd0d93e0110919f105e5eaeb853010ef0888bb575a545dc96b3961",
+      "numerical_contract": "3345666d4ce570fd9796d82c6b4ca91db1ba1c36b8c06a3762adc264317bcf13",
+      "session_id": "bench"
+    },
+    "lens_manifest_sha256": "52a569eb42876f78bfe54d4ad61d72c6840b0420971374c2b6b8db526b393e62",
+    "native_decoder_view_hash_bound": true,
+    "save_open_validate": [
+      "lens",
+      "steer",
+      "span"
+    ],
+    "span_manifest_sha256": "20786c5c20e518b89956ce9a5190002bb006608f5b6ed4f83f6d679a9f2d2fa6",
+    "steer_manifest_sha256": "0cce0c1d08a69f2324272e6029d4c12922de431d96c2aa30af857949742741fe"
+  },
+  "terminal_status": "installed-wheel-mechanics-qualified",
+  "trend_status": "not-applicable",
+  "verification": {
+    "boundary": "byte-integrity and reference closure; native execution is proved separately",
+    "counts": {
+      "cuts": 7,
+      "jacobian_artifacts": 5,
+      "json_artifacts": 33,
+      "payload_references": 11,
+      "symbols": 0,
+      "vm_bundles": 0
+    },
+    "discovery_contexts": [],
+    "manifest_ref": "cas://sha256/84f300efe6fa599ff7232d5ea508d6cd1cb6b8ad620ac395bc9e9216f0be1a48",
+    "mechanics_status": "valid",
+    "payload_audit": {
+      "authority": "disk-byte-integrity; native consumer not assessed",
+      "bytes_read": 2104,
+      "checksum_verified": 12,
+      "descriptor_payload_sha256": "393d6242db3fc3f87e288358cb0e99b2e574ed929e69a7e4103f932a90db0f76",
+      "failed_payloads": [],
+      "failures": 0,
+      "geometry_verified": 12,
+      "manifest_ref": "cas://sha256/84f300efe6fa599ff7232d5ea508d6cd1cb6b8ad620ac395bc9e9216f0be1a48",
+      "mechanics_status": "valid",
+      "misses": 0,
+      "read_attempts": 18,
+      "schema": "mdb-payload-audit-v1",
+      "unique_payloads": 12,
+      "unique_verified_bytes": 952
+    },
+    "schema": "saturn-open-bench-verification-v1",
+    "session_id": "bench"
+  },
+  "wheel_sha256": "1120c5299ffe096a76db84ceaa71cd44348db8f03a46e6bf17e72e433b96ea2e"
+}

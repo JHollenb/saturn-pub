@@ -14,7 +14,8 @@ numerical contracts; cross-lane restoration requires a qualified conversion.
 
 ## Getting started
 
-From the MDB repository, in an environment with the desired extras installed:
+From `packages/mdb` in the Saturn repository, in an environment with the desired
+extras installed:
 
 ```sh
 python -m pip install '.[all]'
@@ -22,12 +23,11 @@ mdb version
 mdb capabilities
 ```
 
-The `all` extra includes the pinned installed mrun client; GitHub SSH access is
-needed for its private dependencies. Configure mrun's scheduler and credentials
+The `all` extra includes the public mrun-pub client pinned over HTTPS.
+Configure mrun's scheduler and credentials
 through its normal configuration. The [installation guide](INSTALL.md) covers
-smaller installs and the qualified worker environment. In the domains workspace,
-use `common exec` for shared credentials, with the installed MDB interpreter when
-checking checkout independence.
+smaller installs and the qualified worker environment. An independent installed
+MDB environment needs no common workspace or sibling checkout.
 
 To learn without a model download or fleet connection, install the
 `autoregressive` extra and run:
@@ -55,6 +55,12 @@ uses the model or pipeline already loaded by the caller and creates no lease.
 See the [qualification record](QUALIFICATION.md) for measured results and exact
 boundaries. A package capability inventory lists available code; use
 `session.capabilities()` for the loaded resident's actual stages and writes.
+
+For a fitted Jacobian lens, use Qwen `pin_jacobian_lens`, `read_jacobian`, and
+`preview_jacobian_edit`, followed by ordinary residual `commit_edit` or
+`abort_edit`. The [Jacobian reader/writer guide](JACOBIAN-WORKSPACE.md) covers
+exact source binding, safe artifact reopen, compatible numerical lanes, and
+the difference between an explicit tensor edit and a measured semantic writer.
 
 ## Execution and history
 

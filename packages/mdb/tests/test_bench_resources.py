@@ -1,10 +1,21 @@
 from dataclasses import dataclass
+import sys
+from types import ModuleType
 
 from mdb.bench_resources import diffusion_resources
 
 
 def test_measured_envelope_is_limited_to_qualified_geometry(monkeypatch):
-    from mrun.diffusion import resources
+    # The estimator is already supplied by this fixture. Keep the optional
+    # private mrun distribution out of the public mechanics test environment.
+    resources = ModuleType("mrun.diffusion.resources")
+    diffusion = ModuleType("mrun.diffusion")
+    diffusion.resources = resources
+    mrun = ModuleType("mrun")
+    mrun.diffusion = diffusion
+    monkeypatch.setitem(sys.modules, "mrun", mrun)
+    monkeypatch.setitem(sys.modules, "mrun.diffusion", diffusion)
+    monkeypatch.setitem(sys.modules, "mrun.diffusion.resources", resources)
 
     @dataclass
     class Profile:
@@ -13,7 +24,7 @@ def test_measured_envelope_is_limited_to_qualified_geometry(monkeypatch):
         disk_gb: int = 25
         cpu_threads: int = 1
 
-    monkeypatch.setattr(resources, "estimate_diffusion_resources", lambda *a, **k: Profile())
+    resources.estimate_diffusion_resources = lambda *a, **k: Profile()
     measured, basis = diffusion_resources("illustrious-xl", height=512, width=512,
         steps=4, state_budget_bytes=512 << 20)
     assert measured.vram_mb == 11264 and measured.ram_mb == 24000

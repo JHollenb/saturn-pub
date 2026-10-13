@@ -1,14 +1,14 @@
 """Native FLUX/SDXL phase and block continuation behind durable bench cuts."""
-from dataclasses import fields
-from collections.abc import Mapping
-from copy import deepcopy
 import inspect
 import math
+from collections.abc import Mapping
+from copy import deepcopy
+from dataclasses import fields
+
 import torch
 
-from .bench_qwen import BenchError
-from .bench_qwen import tensor_digest
 from .bench_native_forward import NativeForwardMachine
+from .bench_qwen import BenchError, tensor_digest
 
 
 def plain(value):
@@ -172,8 +172,8 @@ class DiffusionBenchAdapter:
                     kwargs["guidance"] = torch.full((latents.shape[0],), c.guidance_scale, device=self.device, dtype=latents.dtype)
             cfg = False; eta = None
         else:
-            from mrun.diffusion.nonflux import _restore_state_inputs, torch_cat
-            _, cond, _ = _restore_state_inputs(self.phase, c, latent_override=None, prompt_embeds_override=None, generator=None)
+            from mrun.diffusion.checkpoint_ops import restore_state_inputs, torch_cat
+            _, cond, _ = restore_state_inputs(self.phase, c, latent_override=None, prompt_embeds_override=None, generator=None)
             self.scheduler_restore(state["scheduler"])
             self.global_rng_restore(state)
             cfg = bool(c.state.metadata.get("cfg_enabled")); eta = c.state.metadata.get("eta")
@@ -207,10 +207,10 @@ class DiffusionBenchAdapter:
         if e["frame"]["done"]:
             noise = e["frame"]["output"][0]
             if e["cfg"]:
-                from mrun.diffusion.nonflux import _rescale_noise_cfg
+                from mrun.diffusion.checkpoint_ops import rescale_noise_cfg
                 uncond, text = noise.chunk(2); c = self.checkpoint_native(state["checkpoint"])
                 noise = uncond+c.guidance_scale*(text-uncond)
-                noise = _rescale_noise_cfg(noise, text, float(c.state.metadata.get("guidance_rescale", 0)))
+                noise = rescale_noise_cfg(noise, text, float(c.state.metadata.get("guidance_rescale", 0)))
             e["noise"] = noise
             state["phase"] = "scheduler"
 
@@ -253,9 +253,9 @@ class DiffusionBenchAdapter:
         if self.family == "flux":
             updated = self.model.scheduler.step(e["noise"], e["timestep"], latents, return_dict=False)[0].to(latents.dtype)
         else:
-            from mrun.diffusion.nonflux import _step_scheduler
+            from mrun.diffusion.checkpoint_ops import step_scheduler
             generator = torch.Generator(device=self.device); generator.set_state(state["rng"].cpu())
-            updated = _step_scheduler(self.model.scheduler, noise=e["noise"], timestep=e["timestep"],
+            updated = step_scheduler(self.model.scheduler, noise=e["noise"], timestep=e["timestep"],
                                       latents=latents, generator=generator, eta=e["eta"])
             state["rng"] = generator.get_state()
         self.set_latents(state, updated)
@@ -267,14 +267,14 @@ class DiffusionBenchAdapter:
         self.phase._ensure_phase("denoise")
         c = self.checkpoint_native(state["checkpoint"])
         if self.family == "sdxl":
-            from mrun.diffusion.nonflux import _decode_sdxl
-            image = _decode_sdxl(self.model, self.latents(state), c, "np")
+            from mrun.diffusion.checkpoint_ops import decode_sdxl
+            image = decode_sdxl(self.model, self.latents(state), c, "np")
         elif type(self.model).__name__ == "FluxPipeline":
-            from mrun.diffusion.phase import _flux1_decode
-            image = _flux1_decode(self.model, self.latents(state), height=c.height, width=c.width, output_type="np")
+            from mrun.diffusion.checkpoint_ops import decode_flux1
+            image = decode_flux1(self.model, self.latents(state), height=c.height, width=c.width, output_type="np")
         else:
-            from mrun.diffusion.phase import _flux2_decode
-            image = _flux2_decode(self.model, self.latents(state), c.latent_ids.to(self.device),
+            from mrun.diffusion.checkpoint_ops import decode_flux2
+            image = decode_flux2(self.model, self.latents(state), c.latent_ids.to(self.device),
                                   height=c.height, width=c.width, output_type="np")
         state["image_candidate"] = torch.from_numpy(image.copy()).to(self.device)
         state["phase"] = "decoded"

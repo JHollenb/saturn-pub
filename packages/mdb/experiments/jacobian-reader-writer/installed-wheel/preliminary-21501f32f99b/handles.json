@@ -1,0 +1,49 @@
+{
+  "application_lane": "cpu-bfloat16-eager",
+  "committed_candidate_ref": "cas://sha256/0f6da6141df9097de8bc5e231a39885702c69b4e170fae17592e672bf24c5438",
+  "committed_cut": "cas://sha256/f3882351dd7e5809447b1dc1821be8d49a156ff5cf8f2b0c3af44ae273308662",
+  "export": {
+    "cut": "cas://sha256/e5739a01dc4eb70f2b5d7ca1c8a1f3b06d50490290c36a9ca42648df4677b5fb",
+    "manifest": "cas://sha256/8c06dac4729d16b23ca2ea91adcd0c54edd32e378c26b0c5791eb1febec30a53",
+    "root": "/private/tmp/mdb-jacobian-installed-build.YVDOFq/dry-run/export"
+  },
+  "lens_fingerprint": "fa4d8e49a1d33395fd7111a0c620bc1d0cbc731c098cbe7e196b4814022f0d9c",
+  "lens_ref": "cas://sha256/7b5ac8936e79092303cfd554ea0a7b638507d661da4398fd2490fd519f00314c",
+  "observation_ref": "cas://sha256/c4b0a9610e45ace8fef68e599e8a7ae3c959c63ef17e2c72a57722222b816a12",
+  "processes": {
+    "capture": {
+      "blocked_import_roots": [
+        "common",
+        "common_harness",
+        "mrun",
+        "saturn",
+        "saturn_pub"
+      ],
+      "import_root_verified": true,
+      "installed_target": "/private/tmp/mdb-jacobian-installed-target.9M8Nse",
+      "mdb_file": "/private/tmp/mdb-jacobian-installed-target.9M8Nse/mdb/__init__.py",
+      "pid": 21924,
+      "python": "/Users/jakeholl/domains/common/.venv/bin/python"
+    }
+  },
+  "schema": "mdb-installed-jacobian-handles-v1",
+  "source_cut": "cas://sha256/9c5c23b553a256ea3cb0b3f581a6e5e8062bc142937652ddbd4df3fa82d7f61b",
+  "source_residual_sha256": "1c803ff42b18a0138126852f7f0defccedec77b5bd223a7f97c271741d21b815",
+  "standalone": {
+    "execution_binding": {
+      "model_abi_sha256": "4f8c4ed14fbd0d93e0110919f105e5eaeb853010ef0888bb575a545dc96b3961",
+      "numerical_contract": "3345666d4ce570fd9796d82c6b4ca91db1ba1c36b8c06a3762adc264317bcf13",
+      "session_id": "bench"
+    },
+    "lens_manifest_sha256": "52a569eb42876f78bfe54d4ad61d72c6840b0420971374c2b6b8db526b393e62",
+    "native_decoder_view_hash_bound": true,
+    "save_open_validate": [
+      "lens",
+      "steer",
+      "span"
+    ],
+    "span_manifest_sha256": "98b77ebafec4d454d733fb183a979994d0d6aaff80b25f90f1843a86f23b2fec",
+    "steer_manifest_sha256": "7537c51ae352de4c8d3ed77d30d1bd5a5563cc98b5e4ff9138bab11a69c88fba"
+  },
+  "wheel_sha256": "21501f32f99bb88eb17dd6beef82c7d189e48f2ff0e26b2dfd01bd3216f3ca18"
+}

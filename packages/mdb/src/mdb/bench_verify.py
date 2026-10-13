@@ -91,6 +91,9 @@ def _verify(root):
             counts["json_artifacts"] += 1
             walk(value)
             if store is artifacts:
+                from .bench_jacobian_verify import verify_artifact as verify_jacobian
+                if verify_jacobian(value, artifacts, manifest):
+                    counts["jacobian_artifacts"] = counts.get("jacobian_artifacts", 0)+1
                 from .bench_circuit_verify import verify_artifact
                 if verify_artifact(value, artifacts, manifest, vm_artifacts):
                     counts["circuit_artifacts"] = counts.get("circuit_artifacts", 0)+1

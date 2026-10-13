@@ -2,9 +2,11 @@
 from pathlib import Path
 import ast
 import re
+from _upstream import upstream_checkout
 
 root = Path(__file__).resolve().parents[1]
-source = root.parent / "saturn" / "tests"
+upstream = upstream_checkout()
+source = upstream / "tests"
 names = sorted(source.glob("test_bench*.py"))
 names += [source / f"test_{name}.py" for name in (
     "causal_context_qwen", "causal_context_vm", "mamba_state_vm",
@@ -15,7 +17,7 @@ for path in names:
         text = re.sub(r"\b(from|import) saturn\b", r"\1 mdb", path.read_text())
         (root / "tests" / path.name).write_text(text)
 
-worker = (root.parent / "saturn/experiments/2026-10-01-open-bench-families/worker.py").read_text()
+worker = (upstream / "experiments/2026-10-01-open-bench-families/worker.py").read_text()
 function = next(node for node in ast.parse(worker).body if isinstance(node, ast.FunctionDef) and node.name == "debugger")
 helper = ast.get_source_segment(worker, function).replace("from saturn.", "from mdb.")
 (root / "tests/debugger_fixture.py").write_text("import os\n\n" + helper + "\n")

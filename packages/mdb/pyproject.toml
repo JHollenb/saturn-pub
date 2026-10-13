@@ -7,10 +7,10 @@ requires-python = ">=3.10"
 dependencies = []
 
 [project.optional-dependencies]
-mrun = ["mrun @ git+ssh://git@github.com/JHollenb/mrun.git@f002ce776e14143114e232ed6af872808a3de160", "manalysis @ git+ssh://git@github.com/JHollenb/manalysis.git@2ea2eedca427a59b742cf2d2c5249183ece3ef01"]
+mrun = ["mrun-pub @ git+https://github.com/JHollenb/mrun-pub.git@3a8ec7ef6f2678a889c0b1415cbf32efca8b8561"]
 autoregressive = ["torch==2.13.0", "numpy>=2.0", "safetensors>=0.5", "transformers==5.14.1", "accelerate==1.14.0"]
-diffusion = ["mrun @ git+ssh://git@github.com/JHollenb/mrun.git@f002ce776e14143114e232ed6af872808a3de160", "manalysis @ git+ssh://git@github.com/JHollenb/manalysis.git@2ea2eedca427a59b742cf2d2c5249183ece3ef01", "torch==2.13.0", "numpy>=2.0", "safetensors>=0.5", "transformers==5.14.1", "accelerate==1.14.0", "diffusers==0.39.0", "pillow>=10.0"]
-all = ["mrun @ git+ssh://git@github.com/JHollenb/mrun.git@f002ce776e14143114e232ed6af872808a3de160", "manalysis @ git+ssh://git@github.com/JHollenb/manalysis.git@2ea2eedca427a59b742cf2d2c5249183ece3ef01", "torch==2.13.0", "numpy>=2.0", "safetensors>=0.5", "transformers==5.14.1", "accelerate==1.14.0", "diffusers==0.39.0", "pillow>=10.0"]
+diffusion = ["mrun-pub @ git+https://github.com/JHollenb/mrun-pub.git@3a8ec7ef6f2678a889c0b1415cbf32efca8b8561", "torch==2.13.0", "numpy>=2.0", "safetensors>=0.5", "transformers==5.14.1", "accelerate==1.14.0", "diffusers==0.39.0", "pillow>=10.0"]
+all = ["mrun-pub @ git+https://github.com/JHollenb/mrun-pub.git@3a8ec7ef6f2678a889c0b1415cbf32efca8b8561", "torch==2.13.0", "numpy>=2.0", "safetensors>=0.5", "transformers==5.14.1", "accelerate==1.14.0", "diffusers==0.39.0", "pillow>=10.0"]
 dev = ["pytest>=8.0", "ruff>=0.5", "hatchling>=1.25"]
 
 [project.scripts]
@@ -33,6 +33,7 @@ pythonpath = ["src"]
 [tool.ruff]
 line-length = 100
 target-version = "py310"
+extend-exclude = ["experiments/time_circuits/vendor"] # Frozen paper source bytes.
 
 [tool.ruff.lint]
 select = ["F", "I"]

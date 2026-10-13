@@ -1,0 +1,47 @@
+{
+  "schema": "mdb-jspace-real-bf16-protocol-v1",
+  "model_id": "Qwen/Qwen2.5-1.5B",
+  "model_path": "/mnt/big/llm-models/Qwen2.5-1.5B",
+  "model_safetensors_sha256": "a961db72e75d52b18e6b0c9d379e51a26973b233385e0e127fdda7d648aec796",
+  "revision": "local-frozen-a961db72e75d52b1",
+  "wheel_sha256": "1120c5299ffe096a76db84ceaa71cd44348db8f03a46e6bf17e72e433b96ea2e",
+  "seed": 20261005,
+  "source_layer": 11,
+  "final_layer": 27,
+  "max_length": 32,
+  "vjp_chunk": 8,
+  "fit_texts": [
+    "The technician inspected the instrument before recording each measurement. She adjusted the screws, checked the alignment, and wrote the results in a notebook so that another team could repeat the procedure the following morning.",
+    "After the rain ended, the streets reflected the evening lights. People returned to the square while a small bus stopped beside the station, and a worker unfolded a map to check the route before departure.",
+    "A library sorts its records by author, title, and publication date. When a reader requests a volume, the catalog identifies its shelf and the librarian checks whether a copy is available or already on loan."
+  ],
+  "assay_rows": [
+    {
+      "id": "cat-to-fox",
+      "recipient_prefix": "This is a short memory task. Keep the stated animal available for the next question. The animal is a cat",
+      "donor_prefix": "This is a short memory task. Keep the stated animal available for the next question. The animal is a fox",
+      "recipient_token": " cat",
+      "donor_token": " fox",
+      "query": ". Question: Which animal? Answer: the"
+    },
+    {
+      "id": "bear-to-lion",
+      "recipient_prefix": "This is a short memory task. Keep the stated animal available for the next question. Remember this animal: bear",
+      "donor_prefix": "This is a short memory task. Keep the stated animal available for the next question. Remember this animal: lion",
+      "recipient_token": " bear",
+      "donor_token": " lion",
+      "query": ". Question: Which animal? Answer: the"
+    }
+  ],
+  "selection_authority": "Host supplies the opened donor contrast and exact boundary; retain all signed outcomes without an effect-size gate.",
+  "execution": {
+    "numerical_lane": "cuda-bfloat16-eager",
+    "model_loads": 1,
+    "parameter_updates": 0,
+    "frozen_parameters": true,
+    "max_wall_s": 840,
+    "max_assay_token_steps": 1024,
+    "max_backward_invocations": 576,
+    "automatic_retries": false
+  }
+}

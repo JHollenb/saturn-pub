@@ -1,0 +1,104 @@
+{
+  "application_lane": "cpu-bfloat16-eager",
+  "blocked_import_roots": [
+    "common",
+    "common_harness",
+    "mrun",
+    "saturn",
+    "saturn_pub"
+  ],
+  "claim_boundary": "tiny seeded CPU BF16 identity-lens mechanics only; no learned semantic lens, useful writer, real-model behavior, or cross-lane portability claim",
+  "fresh_process": true,
+  "fresh_restore_exact": true,
+  "fresh_zero_span_commit_exact": true,
+  "installed_target": "/private/tmp/mdb-jacobian-installed-target.9M8Nse",
+  "instrument_status": "valid",
+  "mechanics_status": "valid",
+  "old_observation_stale_after_new_cut": true,
+  "processes": {
+    "capture": {
+      "blocked_import_roots": [
+        "common",
+        "common_harness",
+        "mrun",
+        "saturn",
+        "saturn_pub"
+      ],
+      "import_root_verified": true,
+      "installed_target": "/private/tmp/mdb-jacobian-installed-target.9M8Nse",
+      "mdb_file": "/private/tmp/mdb-jacobian-installed-target.9M8Nse/mdb/__init__.py",
+      "pid": 21924,
+      "python": "/Users/jakeholl/domains/common/.venv/bin/python"
+    },
+    "reopen": {
+      "blocked_import_roots": [
+        "common",
+        "common_harness",
+        "mrun",
+        "saturn",
+        "saturn_pub"
+      ],
+      "import_root_verified": true,
+      "installed_target": "/private/tmp/mdb-jacobian-installed-target.9M8Nse",
+      "mdb_file": "/private/tmp/mdb-jacobian-installed-target.9M8Nse/mdb/__init__.py",
+      "pid": 22614,
+      "python": "/Users/jakeholl/domains/common/.venv/bin/python"
+    }
+  },
+  "reopen_commit_cut": "cas://sha256/fa02d6ccc869e542a8bf1036a4fb2dc3505008f593a9370dc982bfc43b81d7e6",
+  "schema": "mdb-installed-jacobian-qualification-v1",
+  "selection_note": "The old source cut is restored explicitly; the selected cut may advance during export, commit, and close and is not required to remain the old source cut.",
+  "semantic_writer_status": "unqualified",
+  "source_cut": "cas://sha256/9c5c23b553a256ea3cb0b3f581a6e5e8062bc142937652ddbd4df3fa82d7f61b",
+  "standalone": {
+    "execution_binding": {
+      "model_abi_sha256": "4f8c4ed14fbd0d93e0110919f105e5eaeb853010ef0888bb575a545dc96b3961",
+      "numerical_contract": "3345666d4ce570fd9796d82c6b4ca91db1ba1c36b8c06a3762adc264317bcf13",
+      "session_id": "bench"
+    },
+    "lens_manifest_sha256": "52a569eb42876f78bfe54d4ad61d72c6840b0420971374c2b6b8db526b393e62",
+    "native_decoder_view_hash_bound": true,
+    "save_open_validate": [
+      "lens",
+      "steer",
+      "span"
+    ],
+    "span_manifest_sha256": "98b77ebafec4d454d733fb183a979994d0d6aaff80b25f90f1843a86f23b2fec",
+    "steer_manifest_sha256": "7537c51ae352de4c8d3ed77d30d1bd5a5563cc98b5e4ff9138bab11a69c88fba"
+  },
+  "terminal_status": "installed-wheel-mechanics-qualified",
+  "trend_status": "not-applicable",
+  "verification": {
+    "boundary": "byte-integrity and reference closure; native execution is proved separately",
+    "counts": {
+      "cuts": 7,
+      "jacobian_artifacts": 5,
+      "json_artifacts": 33,
+      "payload_references": 11,
+      "symbols": 0,
+      "vm_bundles": 0
+    },
+    "discovery_contexts": [],
+    "manifest_ref": "cas://sha256/051da40a232788bd5d68b5be090736b576ca4e9aaed8db4b8f8ef6c2c9721b37",
+    "mechanics_status": "valid",
+    "payload_audit": {
+      "authority": "disk-byte-integrity; native consumer not assessed",
+      "bytes_read": 2104,
+      "checksum_verified": 12,
+      "descriptor_payload_sha256": "393d6242db3fc3f87e288358cb0e99b2e574ed929e69a7e4103f932a90db0f76",
+      "failed_payloads": [],
+      "failures": 0,
+      "geometry_verified": 12,
+      "manifest_ref": "cas://sha256/051da40a232788bd5d68b5be090736b576ca4e9aaed8db4b8f8ef6c2c9721b37",
+      "mechanics_status": "valid",
+      "misses": 0,
+      "read_attempts": 18,
+      "schema": "mdb-payload-audit-v1",
+      "unique_payloads": 12,
+      "unique_verified_bytes": 952
+    },
+    "schema": "saturn-open-bench-verification-v1",
+    "session_id": "bench"
+  },
+  "wheel_sha256": "21501f32f99bb88eb17dd6beef82c7d189e48f2ff0e26b2dfd01bd3216f3ca18"
+}

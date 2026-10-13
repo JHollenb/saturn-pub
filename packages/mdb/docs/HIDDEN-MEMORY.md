@@ -132,6 +132,55 @@ Writes stage a private complete mount, verify selected-payload equality and mask
 
 `memory_diff()` compares aligned cuts without checking out either cut. The cuts must have identical committed token history. Each component reports exact equality plus left, right, and signed `right - left` summaries, with the same bounded row paging as `memory_read()`.
 
+## Present edits and historical reconstruction
+
+A hidden-memory write changes state at the selected committed boundary. It does not reconstruct the history that originally produced that state. This matters when an earlier value has already affected later K/V rows, recurrent state, generated tokens, or other descendants: copying the old source row back at the current boundary can restore that row exactly while leaving those descendants changed.
+
+`mdb.statecut_intent` records the intended meaning and binds the declared replay schedule. A `present-state-intervention` binds the current execution-history digest and intervention lineage, applies the edit at the observation cut, and plans only the declared future dependency closure. A `historical-counterfactual-reconstruction` additionally requires a rewind cut and an explicit replay schedule from that cut through the observation boundary. Every replay item says whether its input is caller-supplied or model-generated. A run may compose this record after execution when the actual candidate cut fingerprints are only known from the retained source Act and replay receipts; that post-hoc binding does not claim the plan drove execution. The edit-application cut is the source boundary being changed; donor origin belongs in the separate `provenance` field.
+
+```python
+from mdb.statecut_intent import (
+    HISTORICAL_COUNTERFACTUAL_RECONSTRUCTION,
+    ReplayScheduleItem,
+    StateCutIntent,
+    StateCutRef,
+    plan_statecut_intent,
+)
+
+intent = StateCutIntent(
+    intent_id="rewrite-reasoning-source-and-replay",
+    intent_kind=HISTORICAL_COUNTERFACTUAL_RECONSTRUCTION,
+    edit_application_cut=source_cut,
+    rewind_cut=rewind_cut,             # may be the same cut as source_cut
+    observation_cut=pre_answer_cut,
+    replay_schedule=(
+        ReplayScheduleItem(
+            step_id="reasoning-token-1",
+            sequence=0,
+            input_authority="caller-supplied",
+            input_fingerprint=reasoning_token_sha256,
+            parent_cut=rewind_cut,
+            result_cut=baseline_next_cut,
+            dependency_cells=("writer", "store"),
+        ),
+        # Continue explicitly through pre_answer_cut.
+    ),
+    model_identity_fingerprint=model_sha256,
+    state_schema_fingerprint=state_schema_sha256,
+    numerical_contract=numerical_contract,
+    dependency_contract_fingerprint=dependency_contract.fingerprint,
+    changed_addresses=("reasoning/source",),
+    execution_history_fingerprint=visible_history_sha256,
+    intervention_lineage=(source_edit_act_id,),
+    provenance={"donor_cut": donor_cut_ref},
+    native_consumer="qwen.greedy",
+    continuation_horizon=8,
+)
+plan = plan_statecut_intent(intent, dependency_contract)
+```
+
+The plan reports its declared dependency closure separately from receipt-bound parent links. An ordered list of cut identifiers declares a lineage; parent links carrying externally authenticated cut-receipt fingerprints enter `receipt_bound_parent_linked_closure`. When a schedule item carries that fingerprint, its execution receipt must name the same receipt. The planner does not turn a bare fingerprint into proof of ancestry. Execution receipts bind the declared cells and numerical contract but do not establish that the dependency graph contains every real dependency. Restore parity compares state at the selected boundary. Replay parity compares the subsequent native future, such as token IDs, logits and EOS. Both remain separate measurements, and neither is inferred from a successful plan.
+
 ## Debugger commands
 
 Pause an attached compatible worker at a committed-token boundary before a write or probe. Inline JSON and `@FILE` are accepted:

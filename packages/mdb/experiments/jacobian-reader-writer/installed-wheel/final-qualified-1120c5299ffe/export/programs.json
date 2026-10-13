@@ -1,0 +1,61 @@
+{
+  "authority": {
+    "artifact_only": true,
+    "execution_authorized": false,
+    "native_consumer_validation_required": true,
+    "semantic_equivalence": "not_assessed"
+  },
+  "bindings": [
+    {
+      "call_count": 1,
+      "label": "prefill-main",
+      "program_sha256": "135c7933db004a62c472cb7cc1fadd268ac6eca7971876d92ec1b9891fe32de9",
+      "prompt_sha256s": [
+        "4f6f1e9b8e7389cd920695e1f62808765b07297631ff05574a6dc0e577c1a736"
+      ]
+    }
+  ],
+  "content_sha256": "f051a75cbadb2526f04b622dc488fc8c0d4806cd70b60a46d7ca3a4ada7d44a4",
+  "metadata": {
+    "session_id": "bench"
+  },
+  "programs": [
+    {
+      "declared_content_sha256": null,
+      "program": {
+        "identity": {
+          "config_sha256": "a7056f7e2084cd921cfeab0e4e4d47091efabf9dd77f66399136094f1e8478b0",
+          "dtype": "torch.bfloat16",
+          "model_id": "local-qwen2",
+          "revision": "local",
+          "tokenizer_sha256": "token-ids-only",
+          "weights_sha256": "b94ab89cc1bf5a5d8aa9ec5ab5e2b8a6fd50003eb2e1066623d0f056a15b74b5"
+        },
+        "kind": "bench-prefill",
+        "lane": "native",
+        "mount": "9f1adaa3af7160fe3e417c50d03dfbdedd8c467ccb459e485b37692df1b5509b"
+      },
+      "schema": null,
+      "sha256": "135c7933db004a62c472cb7cc1fadd268ac6eca7971876d92ec1b9891fe32de9"
+    }
+  ],
+  "prompts": [
+    {
+      "sha256": "4f6f1e9b8e7389cd920695e1f62808765b07297631ff05574a6dc0e577c1a736",
+      "text": "[[1, 2, 3]]"
+    }
+  ],
+  "schema": "saturn-ar-program-record-v1",
+  "statistics": {
+    "recorded_calls": 1,
+    "unique_bindings": 1,
+    "unique_programs": 1,
+    "unique_prompts": 1
+  },
+  "storage_contract": {
+    "embedded_prompt_text": "externalized-to-typed-reference",
+    "program": "stored-once-by-canonical-json-sha256",
+    "prompt_text": "stored-once-by-sha256",
+    "tensor_payloads": "not-recorded"
+  }
+}

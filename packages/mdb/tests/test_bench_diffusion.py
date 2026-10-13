@@ -9,6 +9,7 @@ from mdb.bench import BenchSession, BenchError, tensor_digest
 
 @pytest.fixture
 def pipeline(tmp_path):
+    pytest.importorskip("mrun", reason="image execution requires the optional private mrun adapter")
     torch.manual_seed(39)
     vocab = tmp_path/"vocab.json"; merges = tmp_path/"merges.txt"
     vocab.write_text(json.dumps({"<|startoftext|>": 0, "<|endoftext|>": 1, "a</w>": 2, "b</w>": 3}))

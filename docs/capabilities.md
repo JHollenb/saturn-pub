@@ -1,5 +1,10 @@
 # Capability and numerical boundaries
 
+These are the `saturn_pub` package's contracts. MDB has its own
+[usage and capability boundaries](../packages/mdb/docs/USAGE.md) and
+[qualification record](../packages/mdb/docs/QUALIFICATION.md); see the
+[MDB overview](mdb.md) to choose between the packages.
+
 | Surface | V1 support | Boundary |
 | --- | --- | --- |
 | Core | JSON/tensor state, isolated branches, Acts, commit/restore, receipts | Trusted in-process runtime; no OS sandbox |

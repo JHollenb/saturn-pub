@@ -20,7 +20,9 @@ jobs:
       - run: pytest -q
       - run: ruff check .
       - run: ruff format --check .
-      - run: python -m build
+      - run: python -m build --outdir dist/saturn
+      - run: python -m build packages/mdb --outdir packages/mdb/dist
+      - run: python scripts/check_package_isolation.py
       - run: python examples/custom_adapter.py
       - run: python examples/ar_debug.py
       - run: python examples/diffusion_debug.py
@@ -28,3 +30,24 @@ jobs:
       - run: python examples/reversible_training.py
       - run: python examples/shared_memory.py
       - run: saturn-pub debug --family ar --script examples/debug_commands.txt
+  mdb-mechanics:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ['3.10', '3.12']
+    env:
+      HF_HUB_OFFLINE: '1'
+      TRANSFORMERS_OFFLINE: '1'
+      OMP_NUM_THREADS: '1'
+      MKL_NUM_THREADS: '1'
+    defaults:
+      run:
+        working-directory: packages/mdb
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      # Exercise native tiny fixtures without requiring private scheduler repositories.
+      - run: python -m pip install -e '.[autoregressive,dev]' 'diffusers==0.39.0' 'pillow>=10'
+      - run: python -m pytest -q -rs

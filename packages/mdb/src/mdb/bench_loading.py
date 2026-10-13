@@ -1,6 +1,7 @@
 """mrun registry resolution and one resident load, without nested admission."""
-from dataclasses import dataclass, asdict
+from dataclasses import asdict, dataclass
 from pathlib import Path
+
 from .errors import BenchError
 
 
@@ -22,14 +23,21 @@ def resolve_bench_model(name):
 
 
 def local_checkpoint_root(name):
-    from mrun.models import resolve_model, snapshot_dir, models_root, default_hub_root, hub_name, _extra_roots
+    from mrun.models import (
+        default_hub_root,
+        hub_name,
+        model_search_roots,
+        models_root,
+        resolve_model,
+        snapshot_dir,
+    )
     spec = resolve_model(name)
     if spec.family != "flux": return snapshot_dir(name)
     # AR snapshot_dir requires top-level safetensors. Diffusers checkpoints put
     # weights in component directories; resolve their model_index from the same
     # registry/cache authorities, with an explicit revision instead of mixing.
     candidates = [Path(spec.local_path)] if spec.local_path else []
-    candidates += [base/spec.hf_id.rsplit("/", 1)[-1] for base in (models_root(), *_extra_roots())]
+    candidates += [base/spec.hf_id.rsplit("/", 1)[-1] for base in (models_root(), *model_search_roots())]
     candidates += [base/key for base in (models_root(), default_hub_root()) for key in (hub_name(spec), spec.name)]
     for root in candidates:
         if (root/"model_index.json").is_file(): return root
@@ -44,7 +52,7 @@ def local_checkpoint_root(name):
 
 def load_bench_model(name, *, device="cuda"):
     import torch
-    from mrun.models import load_hf_model, load_tokenizer, resolve_model, snapshot_dir
+    from mrun.models import load_hf_model, load_tokenizer, resolve_model
     spec = resolve_bench_model(name)
     if spec.family == "qwen2":
         from .ar.model import load_ar_model

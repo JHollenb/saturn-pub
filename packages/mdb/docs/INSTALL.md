@@ -1,5 +1,9 @@
 # Independent installation
 
+In the Saturn monorepo, run these commands from `packages/mdb`. From the
+repository root, the equivalent base install is `pip install ./packages/mdb`.
+MDB retains its own distribution and does not depend on `saturn-pub`.
+
 MDB's installed runtime never searches for Saturn, Saturn-pub or a workspace
 checkout. Maintainer extraction scripts are not part of the runtime wheel.
 
@@ -9,23 +13,16 @@ mdb capabilities
 mdb verify --root /path/to/export
 ```
 
-The base package has no model-library dependencies. For a caller-owned model,
-install `.[autoregressive]` or `.[diffusion]`. Diffusion also installs mrun's native
-checkpoint/phase adapter, even for a caller-owned pipeline. For scheduler launches, install
-`.[all]`, or install a compatible mrun distribution separately. The optional
-`mrun` extra pins private mrun and manalysis Git revisions; installing it requires
-GitHub SSH access; the diffusion extra uses those same pins. Manalysis is a
-transitive mrun dependency. No Saturn repository is required by either
-installation route.
+The base package has no model-library dependencies. For a caller-owned language
+model, install .[autoregressive]. Diffusion also installs mrun-pub's native
+checkpoint/phase adapter, even for a caller-owned pipeline. For scheduler launches,
+install .[all] or .[mrun]. These extras use an immutable public HTTPS Git revision
+of [mrun-pub](https://github.com/JHollenb/mrun-pub); no SSH access, manalysis,
+common workspace, MLflow or MinIO installation is required. The import namespace
+remains mrun.
 
-The pinned revisions are published Git objects: mrun `f002ce776e14` and
-manalysis `2ea2eedca427`. The later local manalysis tracer change is not needed
-by MDB and is excluded from the installation pin.
-
-The pinned mrun client has an older `launch()` signature. MDB uses its guarded
-`submit()` API when a declared CPU/disk reservation needs that compatibility
-path, preserving CUDA needs, strict preflight, soft host preference and retry
-policy. Unsupported admission controls are refused rather than dropped.
+MDB preserves guarded admission, CUDA needs, strict preflight, soft host preference
+and retry policy. Unsupported admission controls are refused.
 
 The model-backed qualification lane uses Python 3.14.6, Torch 2.13.0,
 Transformers 5.14.1, Diffusers 0.39.0 and Accelerate 1.14.0. Other dependency
@@ -40,9 +37,9 @@ to `~/.local/share/mdb`. Model weights remain in mrun's custody stores.
 Each launch stages deterministic wheels of the installed MDB and mrun packages,
 the selected worker and explicitly declared files. The bootstrap checks source,
 wheel, request and configuration hashes before executing the worker. It uses an
-offline uv environment without an editable checkout or `PYTHONPATH`. The fleet
-cache defaults can be overridden with `MDB_WORKER_UV_CACHE_DIR` and
-`MDB_WORKER_TORCH_HOME`; their resolved values are bound into the request.
+offline uv environment without an editable checkout or `PYTHONPATH`. The portable worker
+cache defaults (~/.cache/mdb) can be overridden with `MDB_WORKER_UV_CACHE_DIR` and
+`MDB_WORKER_TORCH_HOME`; their resolved values are bound into the request. Model roots come from\nMDB_WORKER_MODEL_ROOTS or LLM_MODELS_EXTRA_ROOT. MDB_WORKER_PYTHON overrides\nthe recorded qualification interpreter selection.
 Workers default to uv symlink installation to avoid cloning large cached Torch
 trees across fleet filesystems. The cache must remain available for the life of
 the worker. `MDB_WORKER_UV_LINK_MODE` can select `copy`, `hardlink` or `clone`;

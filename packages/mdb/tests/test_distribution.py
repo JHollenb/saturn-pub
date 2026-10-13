@@ -69,6 +69,7 @@ def test_worker_link_mode_is_explicit_and_validated(monkeypatch):
 
 
 def test_bootstrap_accepts_sealed_payload_and_rejects_mutation(tmp_path, monkeypatch):
+    pytest.importorskip("mrun", reason="worker payload staging requires the optional mrun package")
     from mdb.worker_bootstrap import main
     worker = tmp_path / "worker.py"
     worker.write_text("pass\n")

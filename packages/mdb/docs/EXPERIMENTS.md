@@ -2,10 +2,10 @@
 
 Start with rewind and replay, then change one part of the state from the same
 parent. MDB retains the original future, the candidate and the evidence needed
-to repeat the comparison. These examples use the standalone MDB runtime and
-installed mrun; no Saturn checkout is required.
+to repeat the comparison. These examples use the standalone MDB runtime;
+real-model jobs also use installed mrun.
 
-Commands below start in the MDB repository with MDB installed. See
+Commands below start in `packages/mdb` in the Saturn repository with MDB installed. See
 [installation](INSTALL.md) and the [usage guide](USAGE.md). Real models run in
 an admitted mrun worker. `BenchSession.from_resident` wraps the model already
 loaded there and creates no additional lease.
@@ -16,8 +16,19 @@ loaded there and creates no additional lease.
 | Residual intervention | Does scaling one residual change the native continuation? | Abort closure, signed logit change, tokens and commit receipt |
 | Three sibling futures | Which state is shared and which becomes private? | Owners, backing pages, logical bytes, resident bytes and parent preservation |
 | Circuit measurement | Where does a residual perturbation affect state and a declared output? | Residual/memory deltas, signed token-margin effects and controls |
+| Fitted J-space reader/writer | Does a sealed lens read the exact residual, and does a native write affect the later consumer? | Native readout parity, signed/dose controls, common-parent Acts, successor K/V transfer and exact reinstall |
 | Diffusion block replay | Can we resume a denoiser block and reproduce the final image? | Actual scheduler/RNG closure, image digest, latent and block state |
 | Portable export | Can another process continue without the original session directory? | Export byte audit, exact identity and resumed suffix |
+| Paper E6/E20 | What can sparse features control, and does a residual seed act through formed K/V? | Frozen native protocols, same-run comparison, typed input cuts, controls and custody |
+
+For the paper panels, use the dedicated [E6/E20 guide](../experiments/time_circuits/README.md).
+E20 uses Qwen's FP32 native suffix; E6 uses a separately pinned Gemma
+circuit-tracer consumer. Their research input cuts do not extend the public
+BenchSession family or numerical contracts.
+
+For J-space, use the [reader/writer API](JACOBIAN-WORKSPACE.md) and
+[proof runbook](../experiments/jacobian-reader-writer/README.md). Tiny mechanics,
+installed-wheel qualification and fitted real-model effects have separate records.
 
 ## Run the local mechanics demonstration
 
@@ -161,8 +172,9 @@ session.restore(parent)
 
 `preview_edit` stages an admitted payload; it does not itself run a future.
 Execution waits for commit or abort. Non-finite, wrong-shape, unavailable-boundary
-and undeclared edits are refused. Qwen KV pages are inspectable but not writable
-through this residual interface. Mamba formed recurrent-state edits have their
+and undeclared edits are refused. Qwen KV pages are not writable through this
+residual interface; the circuit instrument has a separate typed successor-KV
+Act at committed token boundaries. Mamba formed recurrent-state edits have their
 own native-consumer validation.
 
 ## Inspect three sibling futures and virtual memory
@@ -202,7 +214,7 @@ panels, see [qualification](QUALIFICATION.md) and its compact memory records.
 ## Measure residual to memory to future response
 
 Use a committed token boundary and journal publication. The current instrument
-supports Qwen and Mamba, with explicit memory mediation only for Mamba. Declare
+supports Qwen and Mamba memory mediation. Declare
 two distinct vocabulary IDs rather than assuming that a word occupies one token:
 
 ```python
@@ -254,6 +266,17 @@ the declared operation budget if the conservative work bound requires it. These
 tokens are supplied inputs, separately labeled from native greedy continuation.
 The panel transfers/restores complete recurrent pages and flags while fixing
 recipient input. Inapplicable rows retain their reason; they do not imply no effect.
+
+Qwen uses the same fixed-query authority with its native BF16 CausalContextVM.
+Omit `memory_selector` to transfer the complete visible successor K/V, or select
+one bounded carrier with `{"layers": [6], "row_start": 12, "row_stop": 13,
+"components": ["value"]}`. The half-open row span is over committed logical
+history. The Act binds checkpoint/numerical ABI, complete geometry, history,
+selector and pending-token policy; it privately stages the replacement and proves
+exact masked locality before one atomic commit. A complete selection may reproduce
+the paired future exactly. A partial selection is measured as a signed native
+output and need not reproduce the complete candidate future. This operation does
+not admit FP32 TokenMachine state into the BF16 lane.
 
 This quantifies a prompt-bound state response. Hyperion may bind that measured
 response to its context, but `semantic_binding` remains false. It does not count

@@ -3,8 +3,9 @@ import ast
 import hashlib
 import json
 from pathlib import Path
+from _upstream import upstream_checkout
 
-source = Path(__file__).resolve().parents[2] / "saturn/src/saturn/job_support.py"
+source = upstream_checkout() / "src/saturn/job_support.py"
 destination = Path(__file__).resolve().parents[1] / "src/mdb/job_support.py"
 names = {
     "_reject_nested_submission", "_mrun_launch", "reject_staged_target_collisions",

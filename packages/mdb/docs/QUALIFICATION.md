@@ -4,6 +4,13 @@ MDB's standalone extraction has bounded model-backed qualification for Qwen,
 Mamba v1, FLUX and SDXL. The results below bind this package's installed sources;
 upstream Saturn assays certify their original source seals separately.
 
+The [E6/E20 paper adapters](../experiments/time_circuits/README.md) have separate
+bounded research-input qualification: E20 reproduces 42 native observable rows
+and three baseline replays; E6 interchange has 1,400 exact native comparisons
+and 40 exact saved-input replays in its deterministic instrument lane. Their
+source/state archives, custody and evidence sweeps verify. They do not add Gemma
+to the interactive BenchSession families or qualify virtual-context Qwen K/V writes.
+
 | Check | Observed result | Scope |
 |---|---|---|
 | Fresh installed runtime wheel | 188 passed, 5 skipped before pinned-client follow-up | Tiny deterministic mechanics, upstream imports blocked, outside the checkout |
@@ -12,6 +19,7 @@ upstream Saturn assays certify their original source seals separately.
 | Installed aggregate byte-audit follow-up | 199 passed, 5 skipped | Final read-only payload-audit path, deterministic aggregate, corruption refusal and durable invalid evidence; installed outside checkout |
 | Dependency-free wheel | Root/session imports and offline CLI work without Torch or mrun | Metadata and evidence tools; model execution requires extras |
 | Historical exports | Qwen, Mamba, FLUX and SDXL byte closures verify | CAS references, VM bundles, retained cuts and compatible symbols; continuation is separate |
+| [J-space reader/writer](../experiments/jacobian-reader-writer/VALIDATION.md) | 38 focused checks; fitted native BF16 evidence has 36 exact zero/reopen future pairs, four exact K/V reinstalls, and 648 valid payload checks | Frozen Qwen2.5-1.5B, boundary 12, two opened animal prompts; separate recovered-evidence qualification after the original finalization timeout; semantic-writer utility unqualified |
 | Qwen CLI open/resume | Both jobs succeeded, identical session identity | Real BF16/CUDA Qwen, layer cut, inspection, token generation, durable restart |
 | Full Qwen parent assay | Timed out at 840 seconds during fresh continuation | All six parent lanes ran and seven resume exports remain; no final aggregate report |
 | Retained Qwen cut audit | 1,158 committed cuts agree with expected token and logit bytes; seven closures valid | Offline retained evidence; native comparisons and fresh continuation are separate |

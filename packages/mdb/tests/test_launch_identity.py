@@ -1,4 +1,5 @@
 import json
+from types import SimpleNamespace
 
 from mdb.bench_cli import main
 from mdb.bench_loading import BenchModelSpec
@@ -14,6 +15,8 @@ def test_model_identity_does_not_replace_planning_registry_name(tmp_path, monkey
         return "test-job"
     monkeypatch.setattr(launch, "guarded_mrun_launch", submit)
     monkeypatch.setattr(launch, "stage_worker", lambda *args, **kwargs: None)
+    monkeypatch.setattr("mdb.tools.scheduler_api",
+                        lambda: SimpleNamespace(_resolve=lambda: "http://scheduler.test"))
     commands = tmp_path / "commands.json"
     commands.write_text("[]")
     assert main(["open", "--root", str(tmp_path / "session"), "--prompt", "hi",

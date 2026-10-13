@@ -1,5 +1,9 @@
 # Choose a capability by the job you are doing
 
+This guide covers the `saturn_pub` package. For durable debugger sessions and
+managed branch memory, see [MDB](mdb.md). The [documentation index](README.md)
+provides entry points for both independent packages.
+
 Start with a family adapter and its Session. Normal runtime mechanics are always
 part of that execution path: state validation, supported write addresses, isolated
 branches, operation receipts, compatibility checks, and verified restoration. There

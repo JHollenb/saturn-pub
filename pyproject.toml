@@ -30,12 +30,16 @@ packages = ["src/saturn_pub"]
 # trial_data/ ships with the package so verify_bundle() works from an installed wheel.
 artifacts = ["src/saturn_pub/trial_data/**"]
 
+[tool.hatch.build.targets.sdist]
+exclude = ["/packages"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 100
 target-version = "py310"
+extend-exclude = ["packages/mdb"]
 
 [tool.ruff.lint]
 select = ["E4", "E7", "E9", "F", "I"]

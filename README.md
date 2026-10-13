@@ -10,8 +10,18 @@ change one carrier, run the real remaining model, compare futures, and commit or
 capture → fork → inspect → intervene → native continuation → compare → commit / restore
 ```
 
-This is the standalone `saturn-pub` toolkit. It has no private repositories, fleet services,
-credentials, model weights, or historical experiment code. The import name is `saturn_pub`.
+This repository contains two independently installable packages:
+
+| Package | Location | Use it for |
+| --- | --- | --- |
+| `saturn-pub` (`saturn_pub`) | Repository root | Local model experiments, causal interventions, interpretability integrations and reversible training |
+| [`mdb-runtime` (`mdb`)](docs/mdb.md) | `packages/mdb` | Durable model debugging, retained branches, memory residency and resumable execution |
+
+The Saturn toolkit uses public dependencies and needs no fleet services or credentials.
+MDB's optional scheduler and diffusion integrations use the public
+[mrun-pub](https://github.com/JHollenb/mrun-pub) execution package. Neither package imports the other, and installing one does not install the other.
+Model weights and local result archives are not bundled. See [the repository guide](docs/monorepo.md)
+for installation, independent validation and migration details.
 
 ## Install
 
@@ -29,6 +39,10 @@ The checked-in lockfile pins a development environment; `pip` installs the publi
 Install only `.[ar]`, `.[diffusion]`, or `.[train]` when you need one lane. Bare installation
 supports metadata inspection and JSON-only custom adapters without importing PyTorch.
 Add `.[interop]` for the SAELens / TransformerLens example.
+
+Install MDB separately from this checkout with `pip install ./packages/mdb`, or
+`pip install './packages/mdb[autoregressive]'` for caller-owned language models.
+See [MDB installation](packages/mdb/docs/INSTALL.md) for its other extras.
 
 ## One complete transaction
 
@@ -243,6 +257,20 @@ not copies of the entire private research workbench. The native downstream consu
 the behavioral authority. A failed exploratory score does not erase a measured trend.
 
 ## Guides
+
+Start with the [documentation index](docs/README.md) to choose a package and workflow.
+
+### MDB
+
+- [Overview, use cases and quickstart](docs/mdb.md)
+- [Installation](packages/mdb/docs/INSTALL.md)
+- [Usage, memory and debugger](packages/mdb/docs/USAGE.md)
+- [Experiment walkthroughs](packages/mdb/docs/EXPERIMENTS.md)
+- [Model-backed qualification and boundaries](packages/mdb/docs/QUALIFICATION.md)
+- [E6/E20 paper experiments](packages/mdb/experiments/time_circuits/README.md)
+- [Repository layout and independent builds](docs/monorepo.md)
+
+### Saturn toolkit
 
 Start with [when and how to use each capability](docs/usage.md), then choose a
 [runnable example](examples/README.md) or [notebook](notebooks/README.md).

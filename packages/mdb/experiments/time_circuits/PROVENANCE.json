@@ -1,0 +1,40 @@
+{
+  "schema": "mdb-frozen-paper-source-v1",
+  "policy": "Explicit frozen experiment copies; no live upstream import or discovery. Legacy serialized markers remain unchanged.",
+  "files": [
+    {
+      "path": "vendor/paper_e20.py",
+      "sha256": "2cbae377351b1c144fef9a00a782ada10d63e88692c4432c19f469ef30aacc02",
+      "source": "saturn/experiments/2026-09-30-full-layer-sweeps/results/e20-source-custody/6582273d5bb91618/worker_e20_mediation.py",
+      "original_job": "job-e1f652e80f43"
+    },
+    {
+      "path": "vendor/run_sae_comparison.py",
+      "sha256": "69c85378077bfa17ababf4bd46c48a41a160c53087c9508169c709a5fb63d1f6",
+      "source": "saturn/experiments/2026-09-30-full-layer-sweeps/results/e20-source-custody/6582273d5bb91618/run_sae_comparison.py"
+    },
+    {
+      "path": "vendor/paper_e6.py",
+      "sha256": "7f9a1e9c2e5bc32af39ce04f9219bb7d2302917ec7701d38ee92dfece89f3742",
+      "source": "saturn/experiments/2026-09-30-circuit-tracer-head-to-head/worker_e6.py",
+      "original_interchange_job": "job-03225ce474d1",
+      "original_ablation_jobs": ["job-08262f0051a8", "job-7bdea520e492"]
+    }
+  ],
+  "models": {
+    "e20": {
+      "id": "Qwen/Qwen2.5-1.5B",
+      "weights_sha256": "a961db72e75d52b18e6b0c9d379e51a26973b233385e0e127fdda7d648aec796",
+      "lane": "CUDA FP32 eager, TF32 disabled"
+    },
+    "e6": {
+      "id": "unsloth/gemma-2-2b",
+      "revision": "25319945f7fd83b8b903e12081777b7eef2ba993",
+      "weights_sha256": "40f7727761523db40b475358377c9a9b0f0d8fcf7ef8b869e71ae4f0ef12a555",
+      "transcoder_id": "mwhanna/gemma-scope-transcoders",
+      "transcoder_revision": "bd5773156dea09893636c801df1237d0410307d2",
+      "instrument_commit": "7f66876689f59e92fc3641650d38b8bd41749ec4",
+      "lane": "CUDA BF16 nnsight, clean reconstruction errors, deterministic algorithms enabled"
+    }
+  }
+}

@@ -7,7 +7,8 @@ import sys
 TOOLS = {"cache": "vm_cache", "hyperion": "hyperion", "context": "context_cli",
     "bisect": "bisect_adapters", "xref": "xref_index", "claims": "claims_registry",
     "watch": "receipt_watch", "custody": "artifact_custody", "cite": "evidence_citations",
-    "evidence": "evidence_pipeline", "vm": "vm_cli"}
+    "evidence": "evidence_pipeline", "states": "state_annotations", "graph": "state_graph",
+    "vm": "vm_cli"}
 
 
 def main(argv=None):
