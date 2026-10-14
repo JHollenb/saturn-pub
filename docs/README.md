@@ -18,6 +18,7 @@ test suites and migration details. Installing one package does not install the o
 - [Installation and optional dependencies](../packages/mdb/docs/INSTALL.md)
 - [Local debugger console: Counter, tiny Qwen and local checkpoints](../packages/mdb/docs/LOCAL-DEBUGGER.md)
 - [Custom backends: forward, capture, intervention and local debugger](../packages/mdb/docs/BACKENDS.md)
+- [Stateful TransformerLens layer debugger](../packages/mdb/docs/TRANSFORMERLENS-DEBUGGER.md)
 - [Usage: execution, history, memory, debugger and offline tools](../packages/mdb/docs/USAGE.md)
 - [Experiment walkthroughs: rewind, residual edits, sibling memory and diffusion replay](../packages/mdb/docs/EXPERIMENTS.md)
 - [J-space reader/writer API](../packages/mdb/docs/JACOBIAN-WORKSPACE.md) and [reproducible proof](../packages/mdb/experiments/jacobian-reader-writer/README.md)

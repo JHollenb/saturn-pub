@@ -96,6 +96,9 @@ class BackendBenchSession:
                     self.adapter = getattr(self.runner, "debugger_adapter", None)
             if self.adapter is not None and not isinstance(self.adapter, DebuggerAdapter):
                 raise BenchError("debugger_adapter must implement the existing DebuggerAdapter ABC")
+            bound_identity = getattr(self.adapter, "identity", None)
+            if bound_identity is not None and bound_identity != self.identity:
+                raise BenchError("session identity must match the stateful adapter's bound identity")
         except BaseException:
             if self.owns_backend:
                 close = getattr(self.backend, "close", None)
@@ -253,9 +256,13 @@ class BackendBenchSession:
                 self._controller = DebugWorkerController(
                     capability, _SessionDebuggerAdapter(self), execution_lock=self._lock
                 )
-                self._debug_session = DebugSession(
-                    InMemoryDebugTransport(self._controller), job_id=self.session_id
-                )
+                transport = InMemoryDebugTransport(self._controller)
+                binder = getattr(self.adapter, "bind_debugger", None)
+                if callable(binder):
+                    transport = binder(self._controller)
+                self._debug_session = DebugSession(transport, job_id=self.session_id)
+                if callable(binder):
+                    self._debug_session.pause()
             return self._debug_session
 
     def safe_point(self, boundary, index, metadata=None):

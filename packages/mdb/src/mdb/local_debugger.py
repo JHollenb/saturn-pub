@@ -100,6 +100,32 @@ def tiny_qwen(*, seed=113, dtype=None):
     return model
 
 
+def tiny_transformerlens(*, seed=113, dtype=None):
+    if dtype not in {None, "fp32"}:
+        raise BenchError("tiny TransformerLens uses CPU FP32; use --dtype fp32")
+    try:
+        import torch
+        from transformer_lens.config import TransformerBridgeConfig
+        from transformer_lens.model_bridge import TransformerBridge
+    except ImportError as exc:
+        raise BenchError("install MDB's transformerlens extra for this demo") from exc
+    torch.set_num_threads(1)
+    return TransformerBridge.boot_native(
+        TransformerBridgeConfig(
+            n_layers=2,
+            d_model=16,
+            n_ctx=256,
+            d_head=8,
+            n_heads=2,
+            d_mlp=32,
+            d_vocab=32,
+            act_fn="relu",
+            device="cpu",
+            seed=seed,
+        )
+    ).eval()
+
+
 class LocalMotion:
     """Advance one native boundary at a time; the existing worker owns stops."""
 
@@ -157,6 +183,10 @@ class LocalMotion:
         if self.counter:
             self.native_step(1)
             return "step", self.cursor()["step"]
+        if self.bench.family == "transformerlens":
+            kind = "embedding" if self.cursor()["phase"] == "input" else "layer"
+            self.native_step(kind, 1)
+            return kind, self.cursor()["next_layer"]
         cursor = self.cursor()
         phase = cursor["phase"]
         if phase == "token":
@@ -191,6 +221,13 @@ class LocalMotion:
         reason = "step-complete"
         try:
             for _ in range(self.max_steps):
+                if (
+                    self.bench is not None
+                    and self.bench.family == "transformerlens"
+                    and self.cursor()["phase"] == "complete"
+                ):
+                    reason = "complete"
+                    break
                 boundary, index = self._primitive()
                 info = self.cut_info()
                 self.worker._remember_cut(info)
@@ -220,6 +257,10 @@ class LocalMotion:
         return self._move(kind, count)
 
     def continue_run(self):
+        if self.bench is not None and self.bench.family == "transformerlens":
+            return self._move(
+                "layer", max(1, self.bench.adapter.n_layers - self.cursor()["next_layer"])
+            )
         return self._move("step" if self.counter else "token", self.max_new_tokens)
 
     def reverse_continue(self, expression):
@@ -284,11 +325,7 @@ class LocalDebugTransport(InMemoryDebugTransport):
                     and self.motion.bench is not None
                 ):
                     bench = self.motion.bench
-                    ids = (
-                        bench.branch.token_ids
-                        if bench.family == "qwen2"
-                        else bench.state["token_ids"]
-                    )
+                    ids = bench.inspect("token_ids")["value"]
                     result["runtime"]["token_count"] = len(ids)
                 if request.operation in {"status", "info"}:
                     result.update(self.motion.cut_info())
@@ -300,6 +337,9 @@ class LocalDebugTransport(InMemoryDebugTransport):
 def connect_local(adapter, *, identity, bench=None, max_steps=1024, max_new_tokens=32):
     from .bench import BenchSession
 
+    if callable(getattr(adapter, "bind_debugger", None)):
+        owner = BenchSession.from_backend(adapter, identity=identity)
+        return owner, owner.debugger(), adapter.motion
     motion = LocalMotion(adapter, bench=bench, max_steps=max_steps, max_new_tokens=max_new_tokens)
     owner = BenchSession.from_backend(adapter, identity=identity)
     session = owner.debugger()

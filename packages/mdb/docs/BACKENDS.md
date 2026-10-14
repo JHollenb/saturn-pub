@@ -118,6 +118,15 @@ Identity is caller-declared, not independently verified weight/tokenizer custody
 
 ## Stateful debugging through existing adapters
 
+TransformerLens now has a concrete cache-free layer adapter:
+`TransformerLensDebuggerAdapter(bridge, tokens, root=...)`. It connects to this
+same runner through `debugger_adapter=adapter`, using `identity=adapter.identity`.
+Try `mdb debug --tiny transformerlens`, or follow the
+[stateful TransformerLens guide](TRANSFORMERLENS-DEBUGGER.md) for durable hook
+specs, forks, export and fresh-process resume. The initial contract is CPU
+eval-only on native TL, GPT-2 and Qwen2/Qwen2.5 bridges; it adds no KV-cache or
+incremental-generation support.
+
 Use MDB's existing `DebuggerAdapter` ABC for native stepping, checkpoints,
 restore, transactional Acts and replay. Supply it directly or alongside a runner:
 

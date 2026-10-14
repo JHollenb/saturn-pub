@@ -16,7 +16,8 @@ class BenchDebuggerAdapter(CallbackDebuggerAdapter):
         default_backend = getattr(runtime, "backend", "native")
         caps = AdapterCapabilities(family="autoregressive" if family in {"qwen2", "mamba"} else family,
             boundaries=tuple(metadata["execution_stages"]),
-            inspectable_slots=("token_ids", "logits", "residual", "cursor", "kv_cache", "memory", "symbols", "circuits", "measurements", "frames") if family == "qwen2" else
+            inspectable_slots=("token_ids", "attention_mask", "logits", "residual", "cursor", "memory", "hooks", "symbols", "frames") if family == "transformerlens" else
+                ("token_ids", "logits", "residual", "cursor", "kv_cache", "memory", "symbols", "circuits", "measurements", "frames") if family == "qwen2" else
                 ("token_ids", "logits", "residual", "cursor", "conv_state", "ssm_state", "memory", "symbols", "circuits", "measurements", "frames") if family == "mamba" else
                 ("latent", "conditioner", "residual", "noise", "image", "image_preview", "cursor", "memory", "symbols", "circuits", "frames"),
             writable_slots=tuple(metadata["writable"]), mutable_closure=tuple(metadata["mutable_closure"]),
@@ -63,8 +64,10 @@ class BenchDebuggerAdapter(CallbackDebuggerAdapter):
             if field not in cursor:
                 raise DebuggerProtocolError(f"unknown cursor field: {field}")
             return cursor[field]
-        if path == "token_ids" and self.native_family in {"qwen2", "mamba"}:
+        if path == "token_ids" and self.native_family in {"qwen2", "mamba", "transformerlens"}:
             return self.bench.inspect("token_ids")["value"]
+        if path == "hooks" and self.native_family == "transformerlens":
+            return self.bench.inspect("hooks")["value"]
         return self.bench.resolve_value(path)
 
     def _checkpoint(self, name):

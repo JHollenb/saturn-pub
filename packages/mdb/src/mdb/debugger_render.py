@@ -11,7 +11,7 @@ GROUP_HELP = """MDB debugger command groups (available before attaching):
   History: cuts, reverse-step, reverse-continue      example: reverse-continue value < 3
   Output:  inspect [PATH] --full | --json; help; quit
 
-Start: mdb debug (pure-Python Counter), mdb debug --tiny qwen2,
+Start: mdb debug (pure-Python Counter), mdb debug --tiny qwen2|transformerlens,
        mdb debug --local CHECKPOINT_DIR, or mdb debug JOB_ID.
 Native Qwen uses layer/token boundaries and residual edits; the Counter uses step/value.
 """

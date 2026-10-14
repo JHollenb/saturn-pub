@@ -30,6 +30,11 @@ or existing debugger adapters. Built-in Transformers and TransformerLens
 wrappers expose forward passes, activation capture and scoped interventions
 without mrun. See the [backend guide](docs/BACKENDS.md).
 
+`TransformerLensDebuggerAdapter` adds stateful CPU layer debugging to the same
+runner: retained residual cuts, staged attention/MLP hook edits, forks and durable
+export/resume. Try `mdb debug --tiny transformerlens` with `.[transformerlens]`.
+See its [scope and walkthrough](docs/TRANSFORMERLENS-DEBUGGER.md).
+
 Committed Qwen K/V memory is directly readable and writable through `memory_read`,
 `memory_write`, `memory_diff`, and `memory_probe`. Select native layers, token rows,
 and K/V components; inspect bounded numeric values and token text; apply atomic

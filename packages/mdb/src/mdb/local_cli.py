@@ -37,7 +37,7 @@ def add_local_options(parser):
         "--tiny",
         nargs="?",
         const="counter",
-        choices=("counter", "qwen2"),
+        choices=("counter", "qwen2", "transformerlens"),
         help="local demo: Counter needs no dependencies; Qwen uses random CPU weights",
     )
     selection.add_argument(
@@ -72,7 +72,7 @@ def add_local_options(parser):
 
 def run_local(args):
     from .debugger_cli import DebugShell
-    from .local_debugger import connect_local, load_checkpoint, tiny_qwen
+    from .local_debugger import connect_local, load_checkpoint, tiny_qwen, tiny_transformerlens
 
     if args.job_id or args.latest:
         raise BenchError("choose local debugging or job attachment")
@@ -99,9 +99,6 @@ def run_local(args):
         identity = {"model_id": "counter-plus-one", "scope": "pure-Python integer demo"}
         banner = "MDB Counter demo: pure Python; no trained model; cuts are in memory."
     else:
-        from .bench import BenchSession
-        from .bench_debugger import BenchDebuggerAdapter
-
         root = args.root.expanduser().resolve() if args.root else None
         if args.resume and (root is None or not (root / "selected.json").is_file()):
             raise BenchError("--resume needs --root pointing to an existing native session")
@@ -112,11 +109,13 @@ def run_local(args):
         if args.local is None:
             if args.device != "cpu" or args.prompt is not None:
                 raise BenchError(
-                    "tiny Qwen uses random CPU weights and token IDs, not a text tokenizer"
+                    "tiny models use random CPU weights and token IDs, not a text tokenizer"
                 )
-            model = tiny_qwen(seed=args.seed, dtype=args.dtype)
-            tokenizer, family = None, "qwen2"
-            model_id = f"tiny-qwen2-seed-{args.seed}"
+            lens = args.tiny == "transformerlens"
+            loader = tiny_transformerlens if lens else tiny_qwen
+            model = loader(seed=args.seed, dtype=args.dtype)
+            tokenizer, family = None, "transformerlens" if lens else "qwen2"
+            model_id = f"tiny-{family}-seed-{args.seed}"
         else:
             loader_ids = args.token_ids
             if args.resume:
@@ -132,36 +131,23 @@ def run_local(args):
             )
             model_id = str(args.local.expanduser().resolve())
         root = root or Path(tempfile.mkdtemp(prefix="mdb-local-")) / "session"
-        try:
-            bench = (
-                BenchSession.resume(model, tokenizer, root=root)
-                if args.resume
-                else BenchSession.from_resident(
-                    model,
-                    tokenizer,
-                    root=root,
-                    model_id=model_id,
-                    continuation_capacity=max(128, args.max_new_tokens),
-                    resident_kv_bytes=64 << 20,
-                )
+        if family == "transformerlens":
+            from .lens_debugger import TransformerLensDebuggerAdapter
+
+            adapter = TransformerLensDebuggerAdapter(
+                model,
+                None if args.resume else args.token_ids or [1, 2, 3],
+                root=root,
+                resume=args.resume,
+                model_id=model_id,
+                max_steps=args.max_steps,
             )
-            if not args.resume:
-                prompt = (
-                    args.token_ids
-                    if args.token_ids is not None
-                    else ([1, 2, 3] if args.local is None else args.prompt or "Explain gravity.")
-                )
-                bench.prefill(prompt)
-        except BaseException:
-            if bench is not None:
-                bench.close()
-            raise
-        adapter, identity = BenchDebuggerAdapter(bench), bench.identity
-        banner = (
-            "MDB tiny Qwen2: random CPU BF16 model; mechanics demo. "
-            if args.local is None
-            else f"MDB local {family}: "
-        ) + f"session={root}"
+            bench, identity = adapter.bench, adapter.identity
+            banner = f"MDB tiny TransformerLens: random CPU FP32, cache-free; session={root}"
+        else:
+            bench, adapter, identity, banner = _open_native(
+                args, model, tokenizer, family, root, model_id
+            )
     try:
         owner, session, motion = connect_local(
             adapter,
@@ -199,6 +185,44 @@ def run_local(args):
             owner.close()
         if bench is not None:
             bench.close()
+
+
+def _open_native(args, model, tokenizer, family, root, model_id):
+    from .bench import BenchSession
+    from .bench_debugger import BenchDebuggerAdapter
+
+    bench = None
+    try:
+        bench = (
+            BenchSession.resume(model, tokenizer, root=root)
+            if args.resume
+            else BenchSession.from_resident(
+                model,
+                tokenizer,
+                root=root,
+                model_id=model_id,
+                continuation_capacity=max(128, args.max_new_tokens),
+                resident_kv_bytes=64 << 20,
+            )
+        )
+        if not args.resume:
+            prompt = (
+                args.token_ids
+                if args.token_ids is not None
+                else ([1, 2, 3] if args.local is None else args.prompt or "Explain gravity.")
+            )
+            bench.prefill(prompt)
+    except BaseException:
+        if bench is not None:
+            bench.close()
+        raise
+    adapter, identity = BenchDebuggerAdapter(bench), bench.identity
+    banner = (
+        "MDB tiny Qwen2: random CPU BF16 model; mechanics demo. "
+        if args.local is None
+        else f"MDB local {family}: "
+    ) + f"session={root}"
+    return bench, adapter, identity, banner
 
 
 def doctor_report(endpoint=None, token=None):

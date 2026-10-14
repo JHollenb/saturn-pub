@@ -105,6 +105,12 @@ command. `--export DIR` exports a native session after successful commands;
 
 ## Open an existing local checkpoint
 
+For TransformerLens's stateful cache-free lane, install `.[transformerlens]`
+and run `mdb debug --tiny transformerlens`. It supports layer cuts and committed
+TransformerLens hook edits in the same console. See the
+[TransformerLens debugger guide](TRANSFORMERLENS-DEBUGGER.md) for its caller-owned
+bridge API, durable resume and CPU/architecture limits.
+
 ```sh
 mdb open --local /absolute/path/to/hf-checkpoint \
   --root ./session --prompt 'Explain gravity.'
