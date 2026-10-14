@@ -148,6 +148,6 @@ def test_debugger_exposes_frames_beside_cuts(tmp_path, capsys):
     assert session.frames()["frames"][0]["node_id"] == root
     assert session.cuts()["source_frames"]["scope_depth"] == 1
     assert "frames" in session.capabilities()["optional_operations"]
-    shell = DebugShell(session)
+    shell = DebugShell(session, json_output=True)
     shell.execute("frames")
     assert json.loads(capsys.readouterr().out)["scope_depth"] == 1

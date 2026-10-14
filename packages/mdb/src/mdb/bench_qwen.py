@@ -161,6 +161,8 @@ class QwenBenchSession:
         self.family = str(getattr(model.config, "model_type", ""))
         if self.family not in {"qwen2", "qwen3"}:
             raise BenchError("native Qwen bench supports only qwen2/qwen3")
+        if next(model.parameters()).dtype != torch.bfloat16:
+            raise BenchError("Qwen stateful debugging requires BF16; use model.to(torch.bfloat16) before opening the session")
         self.root = Path(root).expanduser().resolve()
         self.root.mkdir(parents=True, exist_ok=True)
         self._writer = _writer or writer_path(self.root).open("a+")

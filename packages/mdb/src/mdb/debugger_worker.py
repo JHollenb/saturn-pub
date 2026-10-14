@@ -30,6 +30,7 @@ from .debugger_protocol import (
     WatchSpec,
     now_utc,
 )
+from .errors import BenchError
 
 
 def _watch_signature(value: Any) -> str:
@@ -152,7 +153,7 @@ class DebugWorkerController:
             try:
                 self.adapter.validate_read(spec.path)
                 value = self.adapter.resolve_value(spec.path)
-            except (DebuggerProtocolError, KeyError, TypeError, ValueError):
+            except (BenchError, DebuggerProtocolError, KeyError, TypeError, ValueError):
                 try:
                     inspection = self.adapter.inspect(spec.path)
                     value = inspection.get("value") if isinstance(inspection, Mapping) else None
@@ -353,9 +354,9 @@ class DebugWorkerController:
             count = int(payload.get("count", 1))
             kind = payload.get("kind")
             if kind:
-                try:
+                if "step_kind" in self.adapter.optional_operations():
                     result = self.adapter.optional_operation("step_kind", str(kind), count)
-                except DebuggerProtocolError:
+                else:
                     result = self.adapter.step(count)
                     result = {**dict(result), "requested_boundary": str(kind)}
             else:
@@ -552,6 +553,12 @@ class DebugWorkerController:
             if self.source_frame_stack is not None:
                 result["source_frames"] = self.source_frame_stack.debug_view()
             return result
+        if operation == "export":
+            if "export" not in self.adapter.optional_operations():
+                raise DebuggerProtocolError("this backend does not expose native export")
+            if not self._paused or self._pending_act_id is not None:
+                raise DebuggerProtocolError("export requires a paused worker with no pending Act")
+            return self.adapter.optional_operation("export", str(payload["destination"]))
         if operation == "doctor":
             capability = self._capability_payload()
             checks = {

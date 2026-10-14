@@ -9,12 +9,22 @@ checkout. Maintainer extraction scripts are not part of the runtime wheel.
 
 ```sh
 python -m pip install .
+mdb debug
+mdb doctor
+mdb help
 mdb capabilities
 mdb verify --root /path/to/export
 ```
 
 The base package has no model-library dependencies. For a caller-owned language
-model, install .[autoregressive]. Diffusion also installs mrun-pub's native
+model or the tiny CPU Qwen console, install `.[autoregressive]` and run
+`mdb debug --tiny qwen2`. The default `mdb debug` is a pure-Python Counter demo.
+See the [local debugger guide](LOCAL-DEBUGGER.md) for opening local checkpoints;
+these language-model entry points need no mrun installation or scheduler.
+Qwen stateful execution requires BF16 and checks it before creating the session.
+The model-library extra retains the qualified dependency pins below.
+
+Diffusion also installs mrun-pub's native
 checkpoint/phase adapter, even for a caller-owned pipeline. For scheduler launches,
 install .[all] or .[mrun]. These extras use an immutable public HTTPS Git revision
 of [mrun-pub](https://github.com/JHollenb/mrun-pub); no SSH access, manalysis,

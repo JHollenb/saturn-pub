@@ -18,6 +18,26 @@ numerical contracts; cross-lane restoration requires a qualified conversion.
 
 ## Getting started
 
+The local console works after a base install, without a job or model libraries:
+
+```sh
+python -m pip install .
+mdb debug
+mdb doctor
+mdb help
+```
+
+This opens the pure-Python Counter demo. With `.[autoregressive]`, use
+`mdb debug --tiny qwen2` for random CPU BF16 weights, or
+`mdb open --local /path/to/hf-checkpoint --root ./session` for a supported local
+checkpoint. Both use the same debugger commands and compact frame display;
+`inspect --full` or `inspect --json` exposes the complete response.
+The [local debugger walkthrough](LOCAL-DEBUGGER.md) covers native breakpoints,
+finite continuation, edits, export and resume. Counter cuts are in-memory toy
+state; native session exports retain the existing independent verification path.
+
+For managed fleet execution:
+
 From `packages/mdb` in the Saturn repository, in an environment with the desired
 extras installed:
 

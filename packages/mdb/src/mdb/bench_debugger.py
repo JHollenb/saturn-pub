@@ -31,7 +31,7 @@ class BenchDebuggerAdapter(CallbackDebuggerAdapter):
             return value if isinstance(value, Mapping) else {"value": value}
 
         callbacks = dict(status=lambda: bench.inspect(), inspect=inspect,
-            resolve_value=bench.resolve_value, checkpoint=self._checkpoint, restore=bench.restore,
+            resolve_value=self._resolve, checkpoint=self._checkpoint, restore=bench.restore,
             preview_act=self._preview, commit_act=bench.commit_edit, abort_act=bench.abort_edit,
             replay=self._replay, step=lambda count: self._step(metadata.get("default_step", "token"), count),
             step_kind=self._step, continue_run=lambda: {"session_id": bench.session_id, "state": "running"},
@@ -53,6 +53,19 @@ class BenchDebuggerAdapter(CallbackDebuggerAdapter):
                 if callable(callback):
                     callbacks[operation] = callback
         super().__init__(caps, **callbacks)
+
+    def _resolve(self, path):
+        if path == "cursor":
+            return self.bench.cursor()
+        if path.startswith("cursor."):
+            field = path.removeprefix("cursor.")
+            cursor = self.bench.cursor()
+            if field not in cursor:
+                raise DebuggerProtocolError(f"unknown cursor field: {field}")
+            return cursor[field]
+        if path == "token_ids" and self.native_family in {"qwen2", "mamba"}:
+            return self.bench.inspect("token_ids")["value"]
+        return self.bench.resolve_value(path)
 
     def _checkpoint(self, name):
         ref = self.bench.checkpoint(name)

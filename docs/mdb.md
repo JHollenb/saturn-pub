@@ -10,6 +10,12 @@ Start with [installation](../packages/mdb/docs/INSTALL.md), then the
 [experiment walkthroughs](../packages/mdb/docs/EXPERIMENTS.md).
 The [documentation index](README.md) covers both packages.
 
+For the GDB-style first experience, install the base package and run `mdb debug`.
+It opens a pure-Python Counter with step, break, watch, checkpoint, fork and
+preview/commit/abort. With the autoregressive extra, `mdb debug --tiny qwen2`
+uses random CPU BF16 weights and `mdb open --local CHECKPOINT_DIR` opens a
+supported local model. See the [local console guide](../packages/mdb/docs/LOCAL-DEBUGGER.md).
+
 ## When to choose MDB
 
 | Job | Why MDB fits | Walkthrough |

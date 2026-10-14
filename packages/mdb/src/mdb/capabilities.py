@@ -4,6 +4,10 @@
 def inventory():
     from .backends import available_backends
     return {"schema": "mdb-capability-inventory-v1", "runtime": "0.1.0", "families": ["qwen2", "mamba", "flux", "sdxl"],
+        "local_debugger": {"entry": "mdb debug", "base_demo": "pure-Python Counter (in-memory)",
+            "native_demo": "mdb debug --tiny qwen2", "checkpoint_loader": ["qwen2", "mamba"],
+            "front_doors": ["debug", "open --local", "resume --local"],
+            "output": ["compact frame", "--full", "--json"], "requires_mrun": False},
         "backend_extensions": {"constructor": "BenchSession.from_backend", "factories": list(available_backends()),
             "interface": "ModelRunner", "forward": ["capture", "interventions"],
             "stateful_interface": "DebuggerAdapter", "stateful_support": "backend-declared",

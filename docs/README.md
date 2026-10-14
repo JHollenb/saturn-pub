@@ -16,6 +16,7 @@ test suites and migration details. Installing one package does not install the o
 
 - [Overview, use cases and quickstart](mdb.md)
 - [Installation and optional dependencies](../packages/mdb/docs/INSTALL.md)
+- [Local debugger console: Counter, tiny Qwen and local checkpoints](../packages/mdb/docs/LOCAL-DEBUGGER.md)
 - [Custom backends: forward, capture, intervention and local debugger](../packages/mdb/docs/BACKENDS.md)
 - [Usage: execution, history, memory, debugger and offline tools](../packages/mdb/docs/USAGE.md)
 - [Experiment walkthroughs: rewind, residual edits, sibling memory and diffusion replay](../packages/mdb/docs/EXPERIMENTS.md)

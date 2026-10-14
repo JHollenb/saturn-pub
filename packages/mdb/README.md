@@ -8,7 +8,22 @@ package does not install `saturn-pub`. See the [MDB overview](../../docs/mdb.md)
 
 Standalone model virtual memory and reversible model debugger, extracted from
 Saturn's Open Bench. MDB owns the runtime source. It does not import Saturn or
-Saturn-pub. `mrun` provides model resolution, resource admission and resident jobs.
+Saturn-pub. Optional `mrun` integration provides model resolution, resource admission and resident jobs.
+
+Start the local GDB-style console after a base install:
+
+```sh
+pip install .
+mdb debug                      # pure-Python Counter; no server or model libraries
+mdb doctor                     # local installation check
+mdb help                       # debugger command groups before any session
+```
+
+With `.[autoregressive]`, `mdb debug --tiny qwen2` opens a random CPU BF16
+model. `mdb open --local /path/to/hf-checkpoint --root ./session` opens a
+supported local checkpoint in the same console. Start with the
+[local debugger walkthrough](docs/LOCAL-DEBUGGER.md) for breakpoints, compact
+frames, edits, export and resume.
 
 For caller-owned execution, `BenchSession.from_backend` accepts custom runners
 or existing debugger adapters. Built-in Transformers and TransformerLens
@@ -50,7 +65,8 @@ mdb open --model qwen2.5-0.5b-instruct --prompt 'Explain gravity.' \
   --root /absolute/worker/path/session --dry-run
 ```
 
-`open` and `resume` submit one resident worker through mrun. A caller-owned model
+`open --model` and `resume --model` submit one resident worker through mrun.
+The `--local` and `--tiny` paths create no lease. A caller-owned model
 uses no additional lease:
 
 ```python

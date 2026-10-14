@@ -325,6 +325,7 @@ class DebuggerAdapter(ABC):
         """Return only optional operations backed by an installed native hook."""
 
         names = (
+            "export",
             "step_kind",
             "diff",
             "why",

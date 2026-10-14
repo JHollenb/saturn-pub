@@ -88,6 +88,9 @@ if '{namespace}' == 'mdb':
     from mdb.cli import main
     assert main(['version']) == 0
     assert main(['capabilities']) == 0
+    assert main(['debug', '--tiny', '--command', 'step', '--json']) == 0
+    assert main(['doctor', '--json']) == 0
+    assert main(['help']) == 0
 else:
     from saturn_pub import Act, Session, StateCut
 """

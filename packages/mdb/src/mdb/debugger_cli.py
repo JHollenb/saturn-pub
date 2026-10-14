@@ -24,10 +24,11 @@ from .debugger_protocol import (
     WatchSpec,
     conditioner_row_path,
 )
+from .debugger_render import GROUP_HELP, cheat_sheet, frame, summary
 from .debugger_session import DebugSession
 from .debugger_structs import object_manifest_structs
 
-HELP = """Saturn debugger commands:
+HELP = GROUP_HELP + "\nFull MDB debugger commands:\n" + """
   guided | info | status | doctor | capabilities | breakable | where | frame [ID] | list
   tree [PREFIX] | describe PATH | find TEXT | print PATH [--stats] | inspect PATH
   diff|compare PATH CUT_A CUT_B | display PATH | why PATH | xref PATH | attribute PATH
@@ -50,6 +51,7 @@ HELP = """Saturn debugger commands:
   memory [read] [SPEC|@FILE] | memory write|diff|probe SPEC|@FILE
   history | repeat [N] | alias NAME COMMAND | let NAME VALUE
   save-session FILE | load-session FILE | reconnect | finish [DIR]
+  export DIR (when the native backend supplies durable export)
   recipe list | recipe run NAME | complete PREFIX
   source FILE | record [FILE] | quit
 """
@@ -193,9 +195,12 @@ def _session(job_id: str, endpoint: str | None, token: str | None) -> DebugSessi
 
 
 class DebugShell:
-    def __init__(self, session: DebugSession, *, json_output: bool = False) -> None:
+    def __init__(self, session: DebugSession, *, json_output: bool = False, full_output: bool = False,
+                 counter_demo: bool = False) -> None:
         self.session = session
         self.json_output = json_output
+        self.full_output = full_output
+        self.counter_demo = counter_demo
         self.running = True
         self.history: list[str] = []
         self.variables: dict[str, str] = {}
@@ -209,18 +214,29 @@ class DebugShell:
             inspect=self.session.inspect,
         )
 
-    def emit(self, value: Any) -> None:
-        if self.json_output:
+    def emit(self, value: Any, *, full: bool = False, as_json: bool = False) -> None:
+        if self.json_output or as_json:
             print(json.dumps(value, sort_keys=True))
         elif isinstance(value, str):
             print(value)
-        else:
+        elif self.full_output or full:
             print(json.dumps(value, indent=2, sort_keys=True))
+        else:
+            print(summary(value))
+
+    def emit_frame(self):
+        if self.json_output or self.full_output:
+            return
+        try:
+            print(frame(self.session.status()))
+        except (RuntimeError, ValueError, OSError) as exc:
+            print(f"frame unavailable: {exc}")
 
     def execute(self, line: str) -> bool:
         line = line.strip()
         if not line or line.startswith("#"):
             return True
+        command_full = command_json = False
         try:
             if line == "!!":
                 if not self.last_command:
@@ -273,6 +289,9 @@ class DebugShell:
             if not argv:
                 return True
             command = argv.pop(0)
+            if command in {"inspect", "print", "p", "x", "status", "info", "where", "frame", "list", "capabilities", "doctor", "cuts"}:
+                command_full, command_json = "--full" in argv, "--json" in argv
+                argv = [arg for arg in argv if arg not in {"--full", "--json"}]
             if command in self.session.aliases:
                 expanded = self.session.aliases[command]
                 line = expanded + (
@@ -298,10 +317,12 @@ class DebugShell:
                     "commit",
                 }:
                     result = self._with_displays(result)
-                if command == "memory" and not self.json_output:
+                if command == "memory" and not self.json_output and not self.full_output:
                     self.emit(_memory_table(result))
                 else:
-                    self.emit(result)
+                    self.emit(result, full=command_full, as_json=command_json)
+            if self.running and not command_full and not command_json:
+                self.emit_frame()
             # Script commands can return a structured failure without raising
             # (notably ``source FILE`` aggregates failures from its child
             # commands). Preserve that status for batch callers.
@@ -317,7 +338,9 @@ class DebugShell:
             json.JSONDecodeError,
         ) as exc:
             self.session.record_refusal(line, exc)
-            self.emit({"ok": False, "error": str(exc)})
+            self.emit({"ok": False, "error": str(exc)}, full=command_full, as_json=command_json)
+            if not command_full and not command_json:
+                self.emit_frame()
             return False
 
     def _with_displays(self, result: Any) -> Any:
@@ -367,6 +390,8 @@ class DebugShell:
             return self.session.find(" ".join(args))
         if command in {"print", "inspect", "p", "x"}:
             if not args:
+                if command == "inspect":
+                    return self.session.inspect()
                 raise ValueError("print requires PATH")
             stats = "--stats" in args
             path = next((arg for arg in args if arg != "--stats"), None)
@@ -454,6 +479,10 @@ class DebugShell:
             return self.session.step(count, kind=kind)
         if command == "checkpoint":
             return self.session.checkpoint(args[0] if args else None)
+        if command == "export":
+            if len(args) != 1:
+                raise ValueError("export requires a destination directory")
+            return self.session.call("export", {"destination": args[0]})
         if command in {"restore", "checkout"}:
             if not args:
                 raise ValueError(f"{command} requires CUT_ID")
@@ -795,6 +824,7 @@ class DebugShell:
             "step",
             "next",
             "checkpoint",
+            "export",
             "restore",
             "checkout",
             "fork",
@@ -957,7 +987,9 @@ class DebugShell:
 
     def repl(self) -> int:
         if not self.json_output:
-            print("Saturn debugger; type 'help' for commands.")
+            print("MDB debugger; type 'help' for all commands.")
+            print(cheat_sheet(self.counter_demo))
+            self.emit_frame()
         try:
             import readline
 
@@ -970,7 +1002,11 @@ class DebugShell:
                 line = input("(mdb) ")
             except EOFError:
                 break
-            self.execute(line)
+            try:
+                self.execute(line)
+            except KeyboardInterrupt:
+                self.emit({"interrupted": True})
+                self.emit_frame()
         return 0
 
     def _completion_value(self, text: str) -> str | None:
@@ -1026,11 +1062,18 @@ def _resolve_job_id(args: argparse.Namespace) -> str:
 
 
 def _attach(args: argparse.Namespace) -> int:
+    if getattr(args, "command", None) == "debug" and (args.tiny is not None or args.local is not None or
+                                     (not args.job_id and not args.latest)):
+        from .local_cli import run_local
+        return run_local(args)
+    if getattr(args, "command", None) == "debug" and any(
+        (args.root, args.resume, args.export, args.prompt, args.token_ids, args.dtype)):
+        raise DebuggerProtocolError("local model options cannot be combined with job attachment")
     job_id = _resolve_job_id(args)
     session = _session(job_id, args.endpoint, args.token)
     if getattr(args, "session_dir", None):
         session._session_dir = Path(args.session_dir).expanduser().resolve()  # noqa: SLF001 - CLI owns session placement
-    shell = DebugShell(session, json_output=args.json)
+    shell = DebugShell(session, json_output=args.json, full_output=getattr(args, "full", False))
     if getattr(args, "guided", False):
         ok = shell.execute("guided")
         if not ok:
@@ -1075,10 +1118,13 @@ def _run(args: argparse.Namespace) -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(prog="mdb", description=__doc__)
+    parser = argparse.ArgumentParser(prog="mdb", description=__doc__, epilog=GROUP_HELP,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
     sub = parser.add_subparsers(dest="command", required=True)
     for name in ("attach", "debug"):
-        command = sub.add_parser(name, help="attach to an instrumented mrun job")
+        command = sub.add_parser(name, help="local debugger or job attachment" if name == "debug" else
+                                 "attach to an instrumented mrun job", epilog=GROUP_HELP,
+                                 formatter_class=argparse.RawDescriptionHelpFormatter)
         command.add_argument("job_id", nargs="?")
         command.add_argument(
             "--latest", action="store_true", help="attach to the newest debuggable job"
@@ -1093,6 +1139,10 @@ def build_parser() -> argparse.ArgumentParser:
             "--guided", action="store_true", help="request a first safe pause and show capabilities"
         )
         command.add_argument("--json", action="store_true")
+        command.add_argument("--full", action="store_true", help="full structured output instead of compact frames")
+        if name == "debug":
+            from .local_cli import add_local_options
+            add_local_options(command)
         command.set_defaults(handler=_attach)
     script = sub.add_parser("script", help="run a debugger command script")
     script.add_argument("file", type=Path)
@@ -1151,31 +1201,22 @@ def build_parser() -> argparse.ArgumentParser:
     jobs.add_argument("--json", action="store_true")
     jobs.set_defaults(handler=_jobs)
     doctor = sub.add_parser("doctor", help="check debugger instrumentation and replay readiness")
-    doctor.add_argument("job_id")
+    doctor.add_argument("job_id", nargs="?", help="optional attached job; omit for local install checks")
     doctor.add_argument("--endpoint")
     doctor.add_argument("--token", default=os.environ.get("MRUN_TOKEN"))
     doctor.add_argument("--json", action="store_true")
-    doctor.set_defaults(
-        handler=lambda args: _attach(
-            argparse.Namespace(
-                job_id=args.job_id,
-                endpoint=args.endpoint,
-                token=args.token,
-                command_line="doctor",
-                script=None,
-                record=None,
-                session_dir=None,
-                guided=False,
-                latest=False,
-                json=args.json,
-            )
-        )
-    )
+    doctor.add_argument("--full", action="store_true")
+    from .local_cli import run_doctor
+    doctor.set_defaults(handler=run_doctor, command_line="doctor", script=None, record=None,
+                        session_dir=None, guided=False, latest=False)
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
     raw = argv if argv is not None else sys.argv[1:]
+    if raw and raw[0] == "help":
+        print(HELP)
+        return 0
     if raw and raw[0] == "bench":
         from mdb.bench_cli import main as bench_main
         return bench_main(raw[1:])

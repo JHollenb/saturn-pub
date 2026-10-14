@@ -13,6 +13,14 @@ TOOLS = {"cache": "vm_cache", "hyperion": "hyperion", "context": "context_cli",
 
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] == "help":
+        from .debugger_cli import HELP
+        print(HELP)
+        return 0
+    if argv and argv[0] in {"open", "resume"} and any(
+        item in {"--local", "--tiny"} or item.startswith(("--local=", "--tiny=")) for item in argv):
+        from .debugger_cli import main as debug_main
+        return debug_main(["debug", *argv[1:], *(["--resume"] if argv[0] == "resume" else [])])
     if argv and argv[0] == "version":
         from . import __version__
         print(__version__)
@@ -33,7 +41,7 @@ def main(argv=None):
         print(json.dumps(inventory(), indent=2, sort_keys=True))
         return 0
     parser = argparse.ArgumentParser(prog="mdb", description="Standalone model virtual memory and reversible model debugger")
-    parser.add_argument("command", nargs="?", choices=["open", "resume", "inspect", "verify", "attach", "bench", "vm", "cache", "hyperion", "context", "capabilities", "version", *[k for k in TOOLS if k not in {"vm", "cache", "hyperion", "context"}]])
+    parser.add_argument("command", nargs="?", choices=["open", "resume", "inspect", "verify", "attach", "debug", "doctor", "help", "jobs", "run", "script", "replay", "bench", "vm", "cache", "hyperion", "context", "capabilities", "version", *[k for k in TOOLS if k not in {"vm", "cache", "hyperion", "context"}]])
     parser.parse_args(argv)
     parser.print_help()
     return 0
