@@ -192,6 +192,9 @@ class Project:
         point = metadata.get("execution_point")
         if describe(point) != manifest.get("execution_point"):
             raise ValueError("native execution point differs from its sealed manifest")
+        surface = metadata.get("surface")
+        if (None if surface is None else describe(surface)) != manifest.get("surface"):
+            raise ValueError("native surface differs from its sealed manifest")
         return {
             "fingerprint": cut_id,
             "manifest": manifest,
@@ -199,7 +202,37 @@ class Project:
             "parent": manifest["parent"],
             "boundary": manifest["boundary"],
             "execution_point": point or {},
+            "surface": surface or {},
         }
+
+    def components(self, session_id, *, query=None):
+        """List recorded ports, structural operations and qualified symbols."""
+        from .project_navigation import components
+
+        return components(self, session_id, query=query)
+
+    def xrefs(self, session_id, component, *, relation=None):
+        """Query declared dependencies, never inferred causal effects."""
+        from .project_navigation import xrefs
+
+        return xrefs(self, session_id, component, relation=relation)
+
+    def component(self, session_id, name):
+        from .project_navigation import component
+
+        return component(self, session_id, name)
+
+    def watch_events(self, session_id):
+        events = json.loads(self.session(session_id)["debug_info"]).get("watch_events", [])
+        for event in events:
+            body = {
+                key: value
+                for key, value in event.items()
+                if key not in {"fingerprint", "boundary", "authority"}
+            }
+            if digest(body) != event["fingerprint"]:
+                raise ValueError("project watch event seal changed")
+        return events
 
     def receipts(self, session_id):
         self.session(session_id)
@@ -403,14 +436,7 @@ class Project:
                     metadata=binding,
                     labels=(binding["symbol"],),
                 )
-            for event in json.loads(row["debug_info"]).get("watch_events", []):
-                body = {
-                    key: value
-                    for key, value in event.items()
-                    if key not in {"fingerprint", "boundary", "authority"}
-                }
-                if digest(body) != event["fingerprint"]:
-                    raise ValueError("project watch event seal changed")
+            for event in self.watch_events(sid):
                 output = graph.add_output(
                     output_ref=f"watch://sha256/{event['fingerprint']}",
                     binding=NodeBinding(model=json.loads(row["identity"]), session=sid),
@@ -433,16 +459,38 @@ class Project:
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Inspect a persistent MDB investigation")
     parser.add_argument("root", type=Path)
-    parser.add_argument("action", choices=("sessions", "graph", "annotations"))
+    parser.add_argument(
+        "action",
+        choices=("sessions", "graph", "annotations", "list", "show", "xrefs", "cut", "annotate"),
+    )
+    parser.add_argument("target", nargs="?")
     parser.add_argument("--session-id")
+    parser.add_argument("--query")
+    parser.add_argument("--relation", choices=("reads", "writes", "invalidates"))
+    parser.add_argument("--cut-id")
+    parser.add_argument("--note")
     args = parser.parse_args(argv)
     project = Project(args.root)
-    result = (
-        project.sessions()
-        if args.action == "sessions"
-        else project.annotations(args.session_id)
-        if args.action == "annotations"
-        else project.graph(args.session_id).seal().to_dict()
-    )
+    if args.action in {"list", "show", "xrefs", "cut", "annotate"}:
+        from .project_navigation import execute
+
+        result = execute(
+            project,
+            args.session_id,
+            args.action,
+            args.target,
+            query=args.query,
+            relation=args.relation,
+            cut_id=args.cut_id,
+            note=args.note,
+        )
+    else:
+        result = (
+            project.sessions()
+            if args.action == "sessions"
+            else project.annotations(args.session_id)
+            if args.action == "annotations"
+            else project.graph(args.session_id).seal().to_dict()
+        )
     print(json.dumps(result, indent=2))
     return 0

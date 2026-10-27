@@ -424,6 +424,13 @@ class SaturnPubDebuggerAdapter(CallbackDebuggerAdapter):
 
     def command(self, line):
         args = shlex.split(line)
+        if args and args[0] == "project":
+            if self.project is None:
+                raise ValueError("project navigation requires an attached project")
+            from .project_navigation import command
+
+            self._persist()
+            return command(self.project, self.session_id, args[1:])
         if not args or args[0] not in {
             "info",
             "resolve",

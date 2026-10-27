@@ -298,6 +298,12 @@ from mdb import Project
 project = Project(sys.argv[1])
 assert project.graph().verify().ok
 assert any(row['label'] == sys.argv[2] for row in project.annotations())
+for session in project.sessions():
+    sid = session['session_id']
+    ports = [row for row in project.components(sid) if row['kind'] == 'port']
+    assert ports
+    assert project.component(sid, ports[0]['id'])
+    assert isinstance(project.xrefs(sid, ports[0]['id']), list)
 """
     environment = dict(os.environ)
     environment["PYTHONPATH"] = str(Path(__file__).parents[1] / "src")

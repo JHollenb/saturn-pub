@@ -71,6 +71,38 @@ Project inspection needs no model frameworks:
 mdb project ./investigation sessions
 mdb project ./investigation annotations --session-id trial
 mdb project ./investigation graph
+mdb project ./investigation list --session-id trial --query hidden
+mdb project ./investigation show port:hidden --session-id trial
+mdb project ./investigation xrefs port:hidden --relation writes --session-id trial
+mdb project ./investigation cut CUT_ID --session-id trial
+mdb project ./investigation annotate port:hidden --note 'carrier changed' --cut-id CUT_ID --session-id trial
 ```
+
+Component IDs distinguish `port:NAME`, `operation:NAME`, and `symbol:NAME`.
+Unprefixed names work when unambiguous. Listings cover ports at retained cuts,
+recorded structural operations (with layer/phase positions in their evidence),
+and qualified symbols. `show` joins supporting cuts, annotations and diagnostic
+watch observations. `xrefs` reports reads, writes and invalidations from sealed
+native transition/Act receipts, including private preview transactions. Restore,
+abort and refused attempts do not invent executed reads or writes. Each reference
+includes the receipt and transaction parent/result cuts; intermediate transition
+positions are clocks, not independently retained checkpoints. A preview reference
+does not imply its result was committed to the selected branch.
+
+These are declared dependencies over recorded execution, not measured causal
+effects or a complete static model map. Unknown footprint status stays visible;
+missing references do not establish absence. Symbol references match whole slots,
+not selector-specific dataflow, and preserve the original qualified binding.
+The same Python queries are `project.components(sid)`,
+`project.component(sid, name)`, and `project.xrefs(sid, name, relation="writes")`.
+All metadata navigation remains framework-free, including tensor-backed projects.
+
+The attached MDB shell uses the same queries with `project list`, `project show`,
+`project xrefs`, `project cut`, and `project annotate` (no session option needed).
+For example, follow a writer's `result_cut`, run `restore CUT_ID`, `fork candidate`,
+`set hidden 0`, `commit`, then `project annotate port:hidden --note 'zeroed on fork'`.
+Annotations reuse the existing immutable sidecar format and must refer to a
+supporting retained cut. Existing `backtrace PORT` provides the public runtime's
+backward dependency walk. No graphical interface is required.
 
 This is an initial session/project integration. It adds no automatic semantic discovery, generalized decompiler, collaborative server, or new model-backed qualification.

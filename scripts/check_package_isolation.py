@@ -129,6 +129,9 @@ if '{namespace}' == 'mdb':
     reopened = Project('installed-project')
     assert reopened.graph().verify().ok
     assert reopened.annotations()[0]['label'] == 'installed state'
+    assert any(row['id'] == 'port:value' for row in reopened.components('smoke'))
+    assert reopened.component('smoke', 'port:value')['supporting_cuts']
+    assert isinstance(reopened.xrefs('smoke', 'port:value'), list)
     resumed = reopened.resume('smoke', GenericJSONAdapter(specification))
     assert resumed.session.read('value') == 2
 else:
