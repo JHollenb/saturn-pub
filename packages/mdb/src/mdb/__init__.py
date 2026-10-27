@@ -4,6 +4,8 @@ from importlib import import_module
 __version__ = "0.1.0"
 __all__ = [
     "BenchSession",
+    "SaturnPubDebuggerAdapter",
+    "Project",
     "BenchError",
     "ModelRunner",
     "RunnerCapabilities",
@@ -35,6 +37,8 @@ __all__ = [
 
 _EXPORTS = {
     "BenchSession": ("bench", "BenchSession"),
+    "SaturnPubDebuggerAdapter": ("saturn_pub_adapter", "SaturnPubDebuggerAdapter"),
+    "Project": ("project", "Project"),
     "BenchError": ("errors", "BenchError"),
     "ModelRunner": ("backends", "ModelRunner"),
     "RunnerCapabilities": ("backends", "RunnerCapabilities"),

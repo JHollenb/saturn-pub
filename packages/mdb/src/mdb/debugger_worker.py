@@ -334,6 +334,10 @@ class DebugWorkerController:
             }
         if operation in {"status", "info"}:
             return self.status()
+        if operation == "public.command":
+            if "public_command" not in self.adapter.optional_operations():
+                raise DebuggerProtocolError("this backend does not expose Saturn-pub commands")
+            return dict(self.adapter.optional_operation("public_command", str(payload["command"])))
         if operation == "heartbeat":
             self._last_heartbeat = now_utc()
             return {"alive": True, "last_heartbeat": self._last_heartbeat}

@@ -54,6 +54,7 @@ def test_worker_command_has_no_checkout_paths():
     assert "--no-project" in command
     assert "--offline" in command
     assert "mdb.worker_bootstrap" in command
+    assert any(name.startswith("./saturn_pub-") and name.endswith(".whl") for name in command)
     assert "UV_LINK_MODE=symlink" in command
     assert not any("domains/" in item or "common_harness" in item for item in command)
 
@@ -78,6 +79,9 @@ def test_bootstrap_accepts_sealed_payload_and_rejects_mutation(tmp_path, monkeyp
     request["request_sha256"] = hashlib.sha256(json.dumps(request, sort_keys=True).encode()).hexdigest()
     stage = tmp_path / "stage"
     stage_worker(stage, worker=worker, config={"a": 1}, request=request, config_bytes=raw)
+    seal = json.loads((stage / "payload-seal.json").read_text())
+    assert "saturn_pub" in seal["packages"]
+    assert any(name.startswith("saturn_pub-") for name in seal["wheels"])
     monkeypatch.chdir(stage)
     monkeypatch.setenv("SATURN_RUN_CONFIG", "saturn_run_config.json")
     monkeypatch.setenv("SATURN_DEBUG_REQUEST", "saturn_debug_request.json")

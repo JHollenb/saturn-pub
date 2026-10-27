@@ -49,6 +49,8 @@ HELP = GROUP_HELP + "\nFull MDB debugger commands:\n" + """
   replay CUT_ID | reverse-step | reverse-continue PREDICATE
   measure-circuit SPEC|@FILE | replay-circuit EVIDENCE_REF
   memory [read] [SPEC|@FILE] | memory write|diff|probe SPEC|@FILE
+  info steps|symbols | resolve NAME | read symbol:NAME | backtrace PORT (Saturn-pub)
+  public watch PORT change|nonfinite | public watchpoints | public unwatch ID
   history | repeat [N] | alias NAME COMMAND | let NAME VALUE
   save-session FILE | load-session FILE | reconnect | finish [DIR]
   export DIR (when the native backend supplies durable export)
@@ -350,6 +352,11 @@ class DebugShell:
         return {"result": result, "display": displays}
 
     def _dispatch(self, command: str, args: list[str]) -> Any:
+        if (command in {"public", "read", "resolve", "backtrace", "watchpoints", "unwatch"}
+                or (command == "info" and args in (["steps"], ["symbols"]))
+                or (command == "watch" and args and args[0].startswith("symbol:"))):
+            words = args if command == "public" else [command, *args]
+            return self.session.call("public.command", {"command": shlex.join(words)})
         if command in {"help", "?"}:
             return HELP
         if command in {"quit", "q", "exit"}:

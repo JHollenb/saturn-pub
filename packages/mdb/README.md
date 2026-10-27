@@ -7,8 +7,15 @@ package does not install `saturn-pub`. See the [MDB overview](../../docs/mdb.md)
 [documentation index](../../docs/README.md) and [repository guide](../../docs/monorepo.md).
 
 Standalone model virtual memory and reversible model debugger, extracted from
-Saturn's Open Bench. MDB owns the runtime source. It does not import Saturn or
-Saturn-pub. Optional `mrun` integration provides model resolution, resource admission and resident jobs.
+Saturn's Open Bench. MDB may reuse public `saturn_pub` contracts, adapters and APIs
+through declared package dependencies. Private Saturn and common workspace imports
+remain forbidden. The distribution depends on the public Saturn-pub core.
+Optional `mrun` integration provides model resolution, resource admission and resident jobs.
+
+For a Saturn-pub Session, use `BenchSession.from_saturn_pub(session, project=Project(path))`.
+`mdb public --tiny qwen3 --project ./investigation` opens its decoder in the same
+console. Public symbols, backtraces and watches join durable graphs and annotations
+in one project; see [public-session projects](docs/SATURN-PUB-PROJECTS.md).
 
 Start the local GDB-style console after a base install:
 

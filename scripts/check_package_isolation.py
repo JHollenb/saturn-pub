@@ -1,4 +1,4 @@
-"""Check distribution boundaries and independent bare-wheel imports."""
+"""Check distribution boundaries and installed imports with public dependency reuse."""
 
 from __future__ import annotations
 
@@ -64,20 +64,41 @@ def check_installed(wheels: list[Path]) -> None:
             text=True,
             cwd=root,
         )
+        subprocess.run(
+            [str(python), "-I", "-m", "pip", "check"],
+            check=True,
+            capture_output=True,
+            text=True,
+            cwd=root,
+        )
         for namespace, sibling in (("saturn_pub", "mdb"), ("mdb", "saturn_pub")):
+            blocked = {
+                "saturn",
+                "torch",
+                "transformers",
+                "transformer_lens",
+                "diffusers",
+                "mrun",
+                "manalysis",
+                "common",
+                "common_harness",
+            }
+            if namespace == "saturn_pub":
+                blocked.add("mdb")
             code = f"""
 import importlib.abc
 import pathlib
 import sys
 class Guard(importlib.abc.MetaPathFinder):
     def find_spec(self, fullname, path=None, target=None):
-        if fullname.split('.')[0] in {{'{sibling}', 'saturn', 'torch', 'transformers', 'transformer_lens',
-                                      'diffusers', 'mrun', 'manalysis', 'common_harness'}}:
+        if fullname.split('.')[0] in {tuple(sorted(blocked))!r}:
             raise ImportError('bare package attempted forbidden import: ' + fullname)
 sys.meta_path.insert(0, Guard())
 import {namespace} as package
 assert pathlib.Path(package.__file__).is_relative_to(pathlib.Path(sys.prefix))
 if '{namespace}' == 'mdb':
+    import saturn_pub
+    assert pathlib.Path(saturn_pub.__file__).is_relative_to(pathlib.Path(sys.prefix))
     from mdb import BenchSession
     from mdb import ModelRunner, RunnerCapabilities, ForwardResult, TransformerLensRunner, TransformersRunner
     class JsonRunner(ModelRunner):
@@ -91,6 +112,25 @@ if '{namespace}' == 'mdb':
     assert main(['debug', '--tiny', '--command', 'step', '--json']) == 0
     assert main(['doctor', '--json']) == 0
     assert main(['help']) == 0
+    from saturn_pub import Session
+    from saturn_pub.program import GenericJSONAdapter
+    from mdb import Project
+    specification = {{'kind': 'generic-json', 'model_identity': 'installed-json',
+                      'execution': {{'family': 'json'}}, 'slots': ['value'],
+                      'advance': {{'kind': 'increment', 'slot': 'value', 'amount': 1}}}}
+    native = Session(GenericJSONAdapter(specification), {{'value': 0}})
+    project = Project('installed-project')
+    with BenchSession.from_saturn_pub(native, project=project, session_id='smoke') as owner:
+        debug = owner.debugger()
+        debug.step(2)
+        assert native.read('value') == 2
+        assert debug.call('public.command', {{'command': 'info symbols'}})['structural']
+        project.annotate('smoke', 'installed state')
+    reopened = Project('installed-project')
+    assert reopened.graph().verify().ok
+    assert reopened.annotations()[0]['label'] == 'installed state'
+    resumed = reopened.resume('smoke', GenericJSONAdapter(specification))
+    assert resumed.session.read('value') == 2
 else:
     from saturn_pub import Act, Session, StateCut
 """
@@ -102,7 +142,7 @@ else:
             )
             if result.returncode:
                 raise RuntimeError(f"{namespace} isolated import failed:\n{result.stderr}")
-            print(f"Verified installed {namespace} with model frameworks and {sibling} forbidden")
+            print(f"Verified installed {namespace}; blocked: {', '.join(sorted(blocked))}")
 
 
 def main() -> None:

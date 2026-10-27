@@ -97,7 +97,7 @@ import importlib.abc, sys
 class Guard(importlib.abc.MetaPathFinder):
     def find_spec(self, fullname, path=None, target=None):
         if fullname.split('.')[0] in {'torch', 'transformers', 'transformer_lens',
-                                     'diffusers', 'mrun', 'saturn', 'saturn_pub'}:
+                                     'diffusers', 'mrun', 'saturn'}:
             raise ImportError(fullname)
 sys.meta_path.insert(0, Guard())
 from mdb import (BenchSession, ModelRunner, RunnerCapabilities, ForwardResult,

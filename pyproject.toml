@@ -31,7 +31,7 @@ packages = ["src/saturn_pub"]
 artifacts = ["src/saturn_pub/trial_data/**"]
 
 [tool.hatch.build.targets.sdist]
-exclude = ["/packages"]
+exclude = ["/packages", "/experiments/**/runs"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

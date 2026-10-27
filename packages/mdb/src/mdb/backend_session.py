@@ -48,6 +48,12 @@ class _SessionDebuggerAdapter(CallbackDebuggerAdapter):
     def structs(self):
         return self.session.adapter.structs()
 
+    def validate_read(self, path):
+        # Native adapters can resolve qualified symbols beyond static slots.
+        with self.session._lock:
+            self.session._require_open()
+            return self.session.adapter.validate_read(path)
+
     def optional_operations(self):
         return self.session.adapter.optional_operations()
 

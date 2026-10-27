@@ -19,7 +19,7 @@ This repository contains two independently installable packages:
 
 The Saturn toolkit uses public dependencies and needs no fleet services or credentials.
 MDB's optional scheduler and diffusion integrations use the public
-[mrun-pub](https://github.com/JHollenb/mrun-pub) execution package. Neither package imports the other, and installing one does not install the other.
+[mrun-pub](https://github.com/JHollenb/mrun-pub) execution package. MDB depends on the public `saturn_pub` core and reuses its sessions, symbols and observers; the Saturn-pub core remains independent of MDB.
 Model weights and local result archives are not bundled. See [the repository guide](docs/monorepo.md)
 for installation, independent validation and migration details.
 

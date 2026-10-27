@@ -22,6 +22,14 @@ class BenchSession:
     """Factory preserving Qwen v1 callers and dispatching native family adapters."""
 
     @classmethod
+    def from_saturn_pub(cls, session, *, project=None, session_id=None, max_steps=1000):
+        """Use the public Session executor with MDB's existing debugger protocol."""
+        from .saturn_pub_adapter import SaturnPubDebuggerAdapter
+        adapter = SaturnPubDebuggerAdapter(session, project=project,
+                                           session_id=session_id, max_steps=max_steps)
+        return cls.from_backend(adapter, identity=adapter.identity)
+
+    @classmethod
     def from_backend(cls, backend, *, identity, debugger_adapter=None, owns_backend=False,
                      **backend_options):
         """Use a caller runner, DebuggerAdapter, or registered backend factory.

@@ -68,7 +68,7 @@ def runtime_distributions(*, require_installed=False):
         pass
     else:
         raise RuntimeError("MDB requires mrun-pub without the conflicting private mrun distribution")
-    def version(distribution):
+    def version(distribution, fallback="0.1.0"):
         try:
             return importlib.metadata.version(distribution)
         except importlib.metadata.PackageNotFoundError:
@@ -76,8 +76,9 @@ def runtime_distributions(*, require_installed=False):
                 raise RuntimeError("worker staging requires the installed " + distribution) from None
             # The dependency-free toolkit can describe an inert worker command.
             # Actual staging requires installed bytes and distribution metadata.
-            return "0.1.0"
+            return fallback
     return (("mdb", "mdb-runtime", version("mdb-runtime")),
+            ("saturn_pub", "saturn-pub", version("saturn-pub", "0.4.0")),
             ("mrun", "mrun-pub", version("mrun-pub")))
 
 
@@ -109,7 +110,7 @@ def stage_worker(staging, *, worker, config, request, config_bytes=None, additio
         shutil.copyfile(source, output)
     wheels = [build_runtime_wheel(staging, package=package, distribution=distribution, version=version)
               for package, distribution, version in runtime_distributions(require_installed=True)]
-    seal = {"packages": {name: seal_package(name) for name in ("mdb", "mrun")},
+    seal = {"packages": {name: seal_package(name) for name, _, _ in runtime_distributions(require_installed=True)},
             "config_bytes_sha256": hashlib.sha256(raw).hexdigest(),
             "files": {target.as_posix(): hashlib.sha256((staging / target).read_bytes()).hexdigest()
                       for _, target in sources},

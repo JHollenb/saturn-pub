@@ -2,7 +2,9 @@
 
 In the Saturn monorepo, run these commands from `packages/mdb`. From the
 repository root, the equivalent base install is `pip install ./packages/mdb`.
-MDB retains its own distribution and does not depend on `saturn-pub`.
+MDB retains its own distribution and depends on `saturn-pub>=0.4.0,<0.5`.
+For development from this monorepo, install both local distributions together
+from the repository root: `pip install . ./packages/mdb`.
 
 MDB's installed runtime never searches for Saturn, Saturn-pub or a workspace
 checkout. Maintainer extraction scripts are not part of the runtime wheel.
@@ -49,7 +51,7 @@ Configure mrun's scheduler endpoint and credentials through mrun's normal
 configuration. `MDB_HOME` selects writable local evidence indexes; it defaults
 to `~/.local/share/mdb`. Model weights remain in mrun's custody stores.
 
-Each launch stages deterministic wheels of the installed MDB and mrun packages,
+Each launch stages deterministic wheels of the installed MDB, Saturn-pub and mrun packages,
 the selected worker and explicitly declared files. The bootstrap checks source,
 wheel, request and configuration hashes before executing the worker. It uses an
 offline uv environment without an editable checkout or `PYTHONPATH`. The portable worker

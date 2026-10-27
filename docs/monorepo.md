@@ -3,7 +3,11 @@
 The repository root builds `saturn-pub`, imported as `saturn_pub`. The second
 package lives at `packages/mdb`, builds `mdb-runtime`, and is imported as `mdb`.
 Each has its own `pyproject.toml`, source tree, tests, examples and documentation.
-They have no dependency on each other and retain separate state and numerical contracts.
+MDB may depend on and import the public `saturn_pub` package through declared
+package requirements. The dependency direction is `mdb -> saturn_pub`; the
+Saturn-pub core remains independent of MDB. MDB declares `saturn-pub>=0.4.0,<0.5`
+and retains its existing state and numerical contracts. The new public-session
+adapter delegates execution to Saturn-pub; see [public-session projects](../packages/mdb/docs/SATURN-PUB-PROJECTS.md).
 The [documentation index](README.md) covers both packages; start with the
 [MDB overview](mdb.md) or [Saturn capability guide](usage.md).
 
@@ -16,8 +20,9 @@ python -m pip install '.[ar,diffusion,train]'
 python -m pip install './packages/mdb[autoregressive]'
 ```
 
-These are independent choices. Bare `pip install .` and
-`pip install ./packages/mdb` both install dependency-free metadata/evidence cores.
+MDB installs the Saturn-pub metadata/execution core as a dependency. To use the
+local versions together, install `pip install . ./packages/mdb`. Both bare cores
+remain usable without model frameworks.
 Saturn model extras use public dependencies. MDB's scheduler and diffusion extras
 pin a public mrun-pub Git revision over HTTPS;
 see [MDB installation](../packages/mdb/docs/INSTALL.md).
@@ -48,8 +53,9 @@ python -m build packages/mdb --outdir packages/mdb/dist
 python scripts/check_package_isolation.py
 ```
 
-Run MDB's tests in its own process/environment. Its test import guard rejects
-Saturn, Saturn-pub and common-harness imports; collecting both suites together
+Run MDB's tests in its own process/environment. Its test import guard permits
+public `saturn_pub` imports and rejects private Saturn and common workspace
+imports; collecting both suites together
 would defeat their isolation and can cause test-module name collisions.
 CI runs the suites separately on Python 3.10 and 3.12, then checks the built
 distributions and bare installed imports. Saturn linting excludes the MDB tree;
@@ -63,8 +69,11 @@ does not qualify that private integration or a deployed scheduler.
 
 The isolation check verifies both wheels and source distributions, installs the
 two bare wheels into a fresh environment outside the checkout, and checks each
-API with the other package and model frameworks forbidden. Saturn distributions
-exclude the MDB package; MDB wheels contain only MDB runtime code.
+API with model frameworks and private workspace packages forbidden. MDB may
+import the installed Saturn-pub package; Saturn-pub is checked with MDB forbidden
+to preserve the one-way dependency. Saturn distributions exclude the MDB package;
+MDB wheels contain only MDB runtime code and declare any Saturn-pub dependency
+instead of bundling its source.
 
 ## Migration and compatibility
 
@@ -85,6 +94,9 @@ Maintainer extraction tools that consume the private Saturn research checkout
 require an explicit `--upstream /path/to/saturn`. Do not rerun extraction as part
 of ordinary installation or overwrite adapted runtime modules casually.
 
-Shared contracts or cross-package backends are later changes. Co-location does
-not make cuts interchangeable, merge their executors, or qualify deployed fleet
-debugger attachment.
+Shared contracts and cross-package backends are permitted. Prefer direct reuse
+of public Saturn-pub APIs over copied implementations or a separate bridge solely
+for package isolation. Declare dependencies, reconcile model-library pins, and
+test installed-package integration before relying on a shared execution path.
+Co-location does not make existing cuts interchangeable or qualify deployed
+fleet debugger attachment.
