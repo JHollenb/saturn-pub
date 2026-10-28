@@ -1,0 +1,25 @@
+{
+  "model": "random tiny Qwen3, CPU FP32",
+  "analysis_groups": 3,
+  "writers": [
+    "operation:decoder_layer.0",
+    "operation:model.embed_tokens"
+  ],
+  "trace_nodes": [
+    "operation:decoder_layer.0",
+    "operation:model.embed_tokens",
+    "port:hidden",
+    "port:keys",
+    "port:layer",
+    "port:tokens",
+    "port:values"
+  ],
+  "original_hidden_sha256": "bb3598d9fbbccc0be1fe61f0f972c792446e69b7a57bdc0478ca681a90066270",
+  "edited_hidden_sha256": "38723a2e5e8a17aa7950dc008209944e898f69a7bd10a23c839d341e935fd5ca",
+  "restored_hidden_sha256": "bb3598d9fbbccc0be1fe61f0f972c792446e69b7a57bdc0478ca681a90066270",
+  "restore_exact": true,
+  "finding_id": "state-annotation://sha256/b88cf8b24590b45091a29b2610fc07561c553efe5d090e77429661c1dabe05ca",
+  "finding_kind": "observation",
+  "terminal_status": "not-established",
+  "finding_survived_new_process": true
+}

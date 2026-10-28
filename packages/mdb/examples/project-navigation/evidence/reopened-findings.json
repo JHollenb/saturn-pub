@@ -1,0 +1,70 @@
+[
+  {
+    "annotation_id": "state-annotation://sha256/b88cf8b24590b45091a29b2610fc07561c553efe5d090e77429661c1dabe05ca",
+    "body_sha256": "b88cf8b24590b45091a29b2610fc07561c553efe5d090e77429661c1dabe05ca",
+    "consumer_refs": [],
+    "cut_id": "c1497f50a35cba204d812d39c2eded42811db15f5eee5b3b6e2838c8c5f9293d",
+    "details": {
+      "analysis_id": "0bdae2b0f0e93611394c2d8a74a168975e31f32a8eda34db168ebea4145b2362",
+      "component": "port:hidden",
+      "evidence": [
+        "c1497f50a35cba204d812d39c2eded42811db15f5eee5b3b6e2838c8c5f9293d"
+      ],
+      "kind": "observation",
+      "schema": "mdb-project-finding-v1",
+      "terminal_status": "not-established"
+    },
+    "geometry": {},
+    "immutable_parent_cut_id": "5c3197b2a026b9a7b0bc37ba5ebc190f7cc1775b5275d05f3ff282aa5fdfbbb1",
+    "label": "Zeroed carrier on private fork",
+    "model_input_binding": {
+      "cut_payload_sha256": "ed9cc8911a8525f02bbd2dccbd88e55ebfeddd5885f409772161dcdca15b371d",
+      "kind": "cut-bound"
+    },
+    "namespace": "findings",
+    "native_act_refs": [],
+    "native_writer_clock": {
+      "boundary": "layer",
+      "cursor": {
+        "edge": "before",
+        "family": "qwen3",
+        "index": 1,
+        "local_clock": 1,
+        "logical_step": 2,
+        "next_operation": "decoder_layer.1",
+        "operator": "layer",
+        "phase": "layer"
+      },
+      "index": 1
+    },
+    "note": "Explicit zero write at a retained layer boundary; no downstream capability claim.",
+    "provenance": {
+      "authority": "descriptive-only",
+      "producer": {
+        "id": "demo",
+        "kind": "bench-session",
+        "tool": "mdb"
+      },
+      "schema": "mdb-state-annotation-provenance-v1",
+      "selected_manifest_ref": null,
+      "semantic_claim": false
+    },
+    "qualified_label": "findings::Zeroed carrier on private fork@sha256:b88cf8b24590b45091a29b2610fc07561c553efe5d090e77429661c1dabe05ca",
+    "recipient_parent_cut_id": null,
+    "role": "observation",
+    "schema": "mdb-state-annotation-v1",
+    "scientific_source_cut_ids": [],
+    "session_binding": {
+      "family": "saturn-pub",
+      "lane": "public-session",
+      "model_identity_sha256": "4f02da05e8286cff448273aae608b2b6dbdf3293223086acac7226737708d8f3",
+      "publication_mode": "project",
+      "session_id": "demo"
+    },
+    "stage": "exploration",
+    "tags": [
+      "finding",
+      "port:hidden"
+    ]
+  }
+]

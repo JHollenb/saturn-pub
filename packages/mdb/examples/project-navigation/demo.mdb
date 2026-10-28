@@ -1,0 +1,20 @@
+# A random tiny Qwen3: this demonstrates debugger mechanics, not learned behavior.
+checkpoint origin
+step 2
+checkpoint before-edit
+inspect hidden
+project analyze
+project list --query decoder_layer
+project callers port:hidden
+project trace port:hidden --depth 2
+project backtrace hidden
+fork zero-carrier
+set hidden 0
+commit
+inspect hidden
+project finding port:hidden --title "Zeroed carrier on private fork" --kind observation --note "Explicit zero write at a retained layer boundary; no downstream capability claim."
+project findings
+restore before-edit
+inspect hidden
+project analyze
+project analyses

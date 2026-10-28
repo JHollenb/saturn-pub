@@ -1,0 +1,9 @@
+{
+  "offline_model_imports_blocked": true,
+  "findings": 1,
+  "analysis_history": 3,
+  "finding_title": "Zeroed carrier on private fork",
+  "backtrace_operations": [
+    "restore"
+  ]
+}
