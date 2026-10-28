@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import json
 import sqlite3
+import sys
 from contextlib import contextmanager
 from pathlib import Path
 
@@ -644,19 +645,23 @@ def main(argv=None):
     add_arguments(parser, extra_actions=("sessions", "graph", "annotations"))
     parser.add_argument("--session-id")
     args = parser.parse_args(argv)
-    project = Project(args.root)
-    if args.action in {"sessions", "graph", "annotations"}:
-        result = (
-            project.sessions()
-            if args.action == "sessions"
-            else project.annotations(args.session_id)
-            if args.action == "annotations"
-            else project.graph(args.session_id).seal().to_dict()
-        )
-    else:
-        options = vars(args).copy()
-        options.pop("root")
-        sid = options.pop("session_id")
-        result = execute(project, sid, **options)
+    try:
+        project = Project(args.root)
+        if args.action in {"sessions", "graph", "annotations"}:
+            result = (
+                project.sessions()
+                if args.action == "sessions"
+                else project.annotations(args.session_id)
+                if args.action == "annotations"
+                else project.graph(args.session_id).seal().to_dict()
+            )
+        else:
+            options = vars(args).copy()
+            options.pop("root")
+            sid = options.pop("session_id")
+            result = execute(project, sid, **options)
+    except (ValueError, OSError, sqlite3.Error) as exc:
+        print(f"mdb project: {exc}", file=sys.stderr)
+        return 1
     print(json.dumps(result, indent=2))
     return 0

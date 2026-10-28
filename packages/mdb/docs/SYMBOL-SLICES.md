@@ -38,6 +38,11 @@ session option. Offline commands infer the session only when exactly one exists;
 otherwise supply `--session-id`. `slice symbol:carrier` and `slice port:hidden`
 are shorthand forms. `--cut-id` remains an alias of `--cut`.
 
+Offline project commands return JSON on stdout when successful. Expected
+refusals (including unsupported bindings, changed seals, and unreadable project
+storage) print `mdb project: REASON` to stderr and exit 1, leaving stdout empty.
+Argument syntax errors retain argparse's exit code 2.
+
 ## Qualification and graph scope
 
 Offline resolution checks the sealed binding against the retained cut's model,

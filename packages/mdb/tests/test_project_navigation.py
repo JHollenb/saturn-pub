@@ -159,8 +159,9 @@ def test_cli_queries_share_python_results_and_require_session_selection(tmp_path
     from mdb import SaturnPubDebuggerAdapter
 
     SaturnPubDebuggerAdapter(native(), project=project, session_id="second")
-    with pytest.raises(ValueError, match="session-id"):
-        main(["project", str(project.root), "list"])
+    assert main(["project", str(project.root), "list"]) == 1
+    output = capsys.readouterr()
+    assert not output.out and "session-id" in output.err
     assert main(["project", str(project.root), "list", "--session-id", "experiment"]) == 0
     owner.close()
 
