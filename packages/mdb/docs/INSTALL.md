@@ -2,7 +2,7 @@
 
 In the Saturn monorepo, run these commands from `packages/mdb`. From the
 repository root, the equivalent base install is `pip install ./packages/mdb`.
-MDB retains its own distribution and depends on `saturn-pub>=0.4.0,<0.5`.
+MDB retains its own distribution and depends on `saturn-pub>=0.4.1,<0.5`.
 For development from this monorepo, install both local distributions together
 from the repository root: `pip install . ./packages/mdb`.
 

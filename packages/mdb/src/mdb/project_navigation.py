@@ -1,10 +1,10 @@
 """Framework-free navigation over sealed public execution evidence."""
 
 import argparse
-import json
 
 from saturn_pub.symbols import SymbolBinding
-from saturn_pub.values import digest
+
+from .project_slice import slot_descriptors
 
 
 def _operations(project, sid):
@@ -41,10 +41,7 @@ def _operations(project, sid):
 
 
 def _symbols(project, sid):
-    return [
-        SymbolBinding.from_dict(row).to_dict()
-        for row in json.loads(project.session(sid)["debug_info"]).get("symbols", [])
-    ]
+    return project.symbols(sid)
 
 
 def components(project, sid, *, query=None):
@@ -81,12 +78,24 @@ def components(project, sid, *, query=None):
     for symbol in _symbols(project, sid):
         add("symbol", symbol["symbol"], binding=symbol)
         for identifier, cut in cuts.items():
-            if any(
-                loc["execution_point"] == digest(cut["execution_point"])
-                and loc["state_schema"] == cut["surface"].get("state_schema")
-                for loc in symbol["locations"]
-            ):
-                add("symbol", symbol["symbol"], cut_id=identifier, binding=symbol)
+            try:
+                SymbolBinding.from_dict(symbol).resolve_metadata(
+                    model_identity=cut["model_identity"],
+                    execution=cut["manifest"]["execution"],
+                    execution_point=cut["execution_point"],
+                    surface=cut["surface"],
+                    slots=slot_descriptors(cut),
+                    context=symbol["context"],
+                )
+            except ValueError:
+                continue
+            add(
+                "symbol",
+                symbol["symbol"],
+                cut_id=identifier,
+                binding=symbol,
+                support="metadata-support-verified",
+            )
     return [
         row
         for key, row in sorted(rows.items())
@@ -144,7 +153,8 @@ def component(project, sid, name):
     item = _find(project, sid, name)
     refs = xrefs(project, sid, item["id"])
     cuts = {e["cut_id"] for e in item["evidence"] if "cut_id" in e}
-    cuts.update(r[k] for r in refs for k in ("parent_cut", "result_cut") if r.get(k))
+    if item["kind"] != "symbol":
+        cuts.update(r[k] for r in refs for k in ("parent_cut", "result_cut") if r.get(k))
     retained = set(project.cut_ids(sid))
     return {
         **item,
@@ -173,6 +183,14 @@ def execute(
     evidence=(),
     analyzer="structure",
     version=None,
+    port=None,
+    symbol=None,
+    to_cut=None,
+    context=None,
+    binding_id=None,
+    receipt_id=None,
+    view="declared",
+    slice_id=None,
 ):
     if sid is None:
         sessions = project.sessions()
@@ -188,6 +206,28 @@ def execute(
         return project.findings(sid)
     if action == "list":
         return project.components(sid, query=query)
+    if action == "slice":
+        if view != "declared":
+            raise ValueError("only the declared slice view is implemented")
+        if target:
+            if port or symbol:
+                raise ValueError("select a slice target or --symbol/--port, not both")
+            if target.startswith("symbol:"):
+                symbol = target.removeprefix("symbol:")
+            else:
+                port = target.removeprefix("port:")
+        return project.slice(
+            sid,
+            port=port,
+            symbol=symbol,
+            cut_id=cut_id,
+            to_cut=to_cut,
+            context=context,
+            binding_id=binding_id,
+            receipt_id=receipt_id,
+        )
+    if action == "slice-show":
+        return project.slice_record(sid, target or slice_id)
     if target is None:
         raise ValueError(f"{action} requires a target")
     if action == "show":
@@ -203,7 +243,14 @@ def execute(
         return project.backtrace(sid, target.removeprefix("port:"), cut_id=cut_id)
     if action == "finding":
         return project.finding(
-            sid, target, title, kind=kind, note=note, evidence=evidence, cut_id=cut_id
+            sid,
+            target,
+            title,
+            kind=kind,
+            note=note,
+            evidence=evidence,
+            cut_id=cut_id,
+            slice_id=slice_id,
         )
     if action == "cut":
         return project.cut_descriptor(sid, target)
@@ -234,12 +281,14 @@ def add_arguments(parser, *, extra_actions=()):
             "backtrace",
             "finding",
             "findings",
+            "slice",
+            "slice-show",
         ),
     )
     parser.add_argument("target", nargs="?")
     parser.add_argument("--query")
     parser.add_argument("--relation", choices=("reads", "writes", "invalidates"))
-    parser.add_argument("--cut-id")
+    parser.add_argument("--cut-id", "--cut", dest="cut_id")
     parser.add_argument("--note")
     parser.add_argument("--direction", choices=("upstream", "downstream"), default="upstream")
     parser.add_argument("--depth", type=int, default=4)
@@ -250,6 +299,15 @@ def add_arguments(parser, *, extra_actions=()):
     parser.add_argument("--evidence", action="append", default=[])
     parser.add_argument("--analyzer", default="structure")
     parser.add_argument("--version")
+    source = parser.add_mutually_exclusive_group()
+    source.add_argument("--symbol")
+    source.add_argument("--port")
+    parser.add_argument("--to-cut")
+    parser.add_argument("--context")
+    parser.add_argument("--binding", dest="binding_id")
+    parser.add_argument("--receipt", dest="receipt_id")
+    parser.add_argument("--view", choices=("declared",), default="declared")
+    parser.add_argument("--slice-id")
 
 
 def command(project, sid, words):

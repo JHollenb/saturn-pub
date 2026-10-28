@@ -5,7 +5,7 @@ package lives at `packages/mdb`, builds `mdb-runtime`, and is imported as `mdb`.
 Each has its own `pyproject.toml`, source tree, tests, examples and documentation.
 MDB may depend on and import the public `saturn_pub` package through declared
 package requirements. The dependency direction is `mdb -> saturn_pub`; the
-Saturn-pub core remains independent of MDB. MDB declares `saturn-pub>=0.4.0,<0.5`
+Saturn-pub core remains independent of MDB. MDB declares `saturn-pub>=0.4.1,<0.5`
 and retains its existing state and numerical contracts. The new public-session
 adapter delegates execution to Saturn-pub; see [public-session projects](../packages/mdb/docs/SATURN-PUB-PROJECTS.md).
 The [documentation index](README.md) covers both packages; start with the

@@ -1,0 +1,20 @@
+{
+  "specimen": "random tiny Qwen3; CPU FP32; CLI mechanics only",
+  "native_binding_support": "native-support-verified",
+  "offline_support": "metadata-support-verified",
+  "source_cut": "37b2bdb4b6e802b5c2996c3c48ce3d54fe8fdd504d417a2fa8640c7edb44c4aa",
+  "slice_id": "37a14f302bc63f01380aff13e5331e0d2c1fb9c70704e37ce3eaf8d0c230ecba",
+  "writers": [
+    "decoder_layer.0"
+  ],
+  "consumers_toward_edited_cut": [
+    "replace"
+  ],
+  "binding_refused_after_context_edit": true,
+  "saved_slice_survived_fresh_process": true,
+  "frameworks_blocked": true,
+  "project_graph_verified": true,
+  "finding_id": "state-annotation://sha256/f8bd89123fe3c12dbbbbcec18baee286cb7cad45bee076aa0ed65b9917f97ca5",
+  "authority": "declared-dependency",
+  "causal_effect": "not-established"
+}

@@ -22,6 +22,7 @@ from saturn_pub.paths import (
     compare_trajectories,
 )
 from saturn_pub.symbols import SymbolBinding, SymbolTable, backtrace
+from saturn_pub.values import describe
 
 
 class Repair(Adapter):
@@ -125,6 +126,72 @@ def test_symbols_reject_stale_clock_input_execution_and_ambiguous_support(tmp_pa
         SymbolTable.load(path, cut)
     with pytest.raises(ValueError, match="execution"):
         replace(binding, execution="changed").resolve(other, context="supplied-v1")
+
+
+def test_metadata_symbol_support_shares_native_guards_without_loading_values():
+    session = Repair().session()
+    binding = bind(session)
+
+    def metadata(current):
+        frame = current.inspect()
+        return dict(
+            model_identity=current.adapter.model_identity,
+            execution=dict(current.adapter.execution),
+            execution_point=dict(frame.execution_point),
+            surface=dict(frame.surface),
+            slots=dict(frame.slots),
+            context="supplied-v1",
+        )
+
+    assert binding.resolve_metadata(**metadata(session)) == binding.resolve(
+        session, context="supplied-v1"
+    )
+    changed = Session(session.adapter, {"source": 8, "value": 0, "output": 0, "cursor": 0})
+    with pytest.raises(ValueError, match="input context"):
+        binding.resolve_metadata(**metadata(changed))
+    with pytest.raises(ValueError, match="execution"):
+        binding.resolve_metadata(**{**metadata(session), "execution": {"family": "other"}})
+    with pytest.raises(ValueError, match="context or model"):
+        binding.resolve_metadata(**{**metadata(session), "model_identity": "other"})
+    for field, value in (
+        ("role", "wrong"),
+        ("state_schema", "wrong"),
+        ("execution_point", "wrong"),
+    ):
+        bad = replace(binding, locations=(replace(binding.locations[0], **{field: value}),))
+        with pytest.raises(ValueError, match="mismatch"):
+            bad.resolve_metadata(**metadata(session))
+    abstained = replace(binding, locations=(), status="abstained", abstain_reason="no support")
+    with pytest.raises(ValueError, match="abstained"):
+        abstained.resolve_metadata(**metadata(session))
+    session.step()
+    with pytest.raises(ValueError, match="clock"):
+        binding.resolve_metadata(**metadata(session))
+
+
+def test_metadata_selector_bounds_cover_tensor_list_and_mapping_descriptors():
+    session = Repair().session()
+    binding = bind(session)
+    frame = session.inspect()
+    arguments = dict(
+        model_identity=session.adapter.model_identity,
+        execution=dict(session.adapter.execution),
+        execution_point=dict(frame.execution_point),
+        surface=dict(frame.surface),
+        slots=dict(frame.slots),
+        context="supplied-v1",
+    )
+    for descriptor, selector in (
+        (describe([[1, 2]]), (0, -1)),
+        (describe({3: [7]}), (3, 0)),
+        ({"kind": "tensor", "shape": [2, 3]}, (1, -3)),
+    ):
+        selected = replace(binding, locations=(replace(binding.locations[0], selector=selector),))
+        arguments["slots"]["value"] = descriptor
+        assert selected.resolve_metadata(**arguments)
+        invalid = replace(binding, locations=(replace(binding.locations[0], selector=(99,)),))
+        with pytest.raises(ValueError, match="outside support"):
+            invalid.resolve_metadata(**arguments)
 
 
 def test_trace_measures_recovery_without_equating_ancestry_or_terminal_claims():

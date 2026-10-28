@@ -50,3 +50,33 @@ component-name graph with native-cut and versioned-port DAGs, reports missing
 provenance, and exports a sealed descriptive graph. It currently handles only
 declared single-transition transactions and Act/copy records. See
 [DAG-EXPLORATION.md](../../docs/DAG-EXPLORATION.md) for the findings and corrections.
+
+## Qualified symbol slices
+
+Run the new installed-CLI walkthrough with a new output directory:
+
+```sh
+python run_symbol_slice.py /tmp/mdb-symbol-slice-demo
+```
+
+It names the hidden carrier using native `project symbol-bind`, saves a
+`project slice --symbol demo.carrier`, and joins a finding to that exact slice.
+After a committed zero edit, the original binding refuses the changed input
+context. A bounded downstream slice from the original cut identifies the declared
+`replace` consumer. The original slice and finding reopen in fresh processes,
+including a check with model frameworks blocked. Raw responses, native project
+bytes and a summary remain in the supplied directory.
+
+Executed on 2026-10-28 with random tiny Qwen3, CPU FP32, using installed
+saturn-pub 0.4.1 and mdb-runtime 0.1.0 wheels. The nearest declared writer was
+`decoder_layer.0`. All assertions passed; see the
+[checked summary](evidence/symbol-slice-summary.json). The first two demo-driver
+attempts exposed JSON formatting and session-field assumptions; the corrected
+driver completed, then completed again with the framework-blocked check added.
+Local raw attempts are retained under
+`/Users/jakeholl/domains/artifacts/mdb-symbol-slices-2026-10-28*`.
+
+This verifies CLI and custody mechanics. Slices describe whole-slot declared
+dependencies, and symbol names remain supplied interpretations. No learned
+mechanism or causal effect is established. See [SYMBOL-SLICES.md](../../docs/SYMBOL-SLICES.md)
+for qualification, branch ancestry and frontier semantics.

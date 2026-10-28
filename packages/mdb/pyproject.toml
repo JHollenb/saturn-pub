@@ -4,7 +4,7 @@ version = "0.1.0"
 description = "Standalone typed model virtual memory, reversible sessions and model debugger."
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["saturn-pub>=0.4.0,<0.5"]
+dependencies = ["saturn-pub>=0.4.1,<0.5"]
 
 [project.optional-dependencies]
 mrun = ["mrun-pub @ git+https://github.com/JHollenb/mrun-pub.git@3a8ec7ef6f2678a889c0b1415cbf32efca8b8561"]

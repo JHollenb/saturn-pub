@@ -450,6 +450,10 @@ class SaturnPubDebuggerAdapter(CallbackDebuggerAdapter):
             from .project_navigation import command
 
             self._persist()
+            if len(args) > 1 and args[1] == "symbol-bind":
+                from .project_slice import bind_live_symbol
+
+                return bind_live_symbol(self, args[2:])
             return command(self.project, self.session_id, args[1:])
         if not args or args[0] not in {
             "info",

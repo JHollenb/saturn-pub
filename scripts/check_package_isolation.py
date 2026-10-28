@@ -123,6 +123,13 @@ if '{namespace}' == 'mdb':
     with BenchSession.from_saturn_pub(native, project=project, session_id='smoke') as owner:
         debug = owner.debugger()
         debug.step(2)
+        from saturn_pub import StateAddress
+        from saturn_pub.symbols import SymbolBinding, SymbolTable
+        binding = SymbolBinding.bind(native, 'count', (StateAddress('value'),),
+            context='fixture', context_slots=('value',), evidence=('fixture',), claim='Supplied count')
+        owner.adapter.symbols = SymbolTable((binding,))
+        owner.adapter.symbol_context = 'fixture'
+        owner.adapter.checkpoint()
         assert native.read('value') == 2
         assert debug.call('public.command', {{'command': 'info symbols'}})['structural']
         project.annotate('smoke', 'installed state')
@@ -137,6 +144,11 @@ if '{namespace}' == 'mdb':
     assert reopened.trace('smoke', 'port:value')['authority'] == 'declared-dependency'
     reopened.finding('smoke', 'port:value', 'installed finding')
     assert Project('installed-project').findings('smoke')[0]['label'] == 'installed finding'
+    sliced = reopened.slice('smoke', symbol='count')
+    assert sliced['support'] == 'metadata-support-verified'
+    assert reopened.slice_record('smoke', sliced['slice_id']) == sliced
+    reopened.finding('smoke', 'symbol:count', 'named count', slice_id=sliced['slice_id'])
+    assert Project('installed-project').graph().verify().ok
     resumed = reopened.resume('smoke', GenericJSONAdapter(specification))
     assert resumed.session.read('value') == 2
 else:

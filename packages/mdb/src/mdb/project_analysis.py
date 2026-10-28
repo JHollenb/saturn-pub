@@ -243,7 +243,16 @@ def native_backtrace(project, sid, port, *, cut_id=None):
 
 
 def finding(
-    project, sid, component, title, *, kind="observation", note=None, evidence=(), cut_id=None
+    project,
+    sid,
+    component,
+    title,
+    *,
+    kind="observation",
+    note=None,
+    evidence=(),
+    cut_id=None,
+    slice_id=None,
 ):
     if kind not in {"observation", "inference", "causal-claim"}:
         raise ValueError("unknown finding kind")
@@ -255,6 +264,12 @@ def finding(
         raise ValueError("finding cut must support its component")
     allowed = set(item["supporting_cuts"]) | {r["receipt"] for r in item["xrefs"]}
     allowed.update(e["fingerprint"] for e in item["observations"])
+    sliced = project.slice_record(sid, slice_id) if slice_id else None
+    if sliced:
+        if sliced["component"] != item["id"] or sliced["cut_id"] != cut_id:
+            raise ValueError("finding slice belongs to another component or cut")
+        allowed.update(sliced["evidence"]["receipts"])
+        allowed.update(sliced["evidence"]["cuts"])
     evidence = tuple(evidence) or (cut_id,)
     if not set(evidence) <= allowed:
         raise ValueError(
@@ -276,6 +291,15 @@ def finding(
             "evidence": list(evidence),
             "analysis_id": analysis["analysis_id"],
             "terminal_status": "not-established",
+            **(
+                {
+                    "slice_id": slice_id,
+                    "symbol_binding": sliced["symbol_binding"],
+                    "slice_complete": sliced["complete"],
+                }
+                if sliced
+                else {}
+            ),
         },
     )
 

@@ -58,6 +58,10 @@ HELP = GROUP_HELP + "\nFull MDB debugger commands:\n" + """
   project backtrace PORT [--cut-id CUT_ID]
   project finding COMPONENT --title TEXT [--kind observation|inference|causal-claim]
   project findings
+  project slice --symbol NAME --cut CUT [--context TEXT] [--to-cut FUTURE_CUT]
+  project symbol-bind NAME --port PORT --context TEXT --claim TEXT [--context-slot PORT]
+  project slice --port PORT --cut CUT | project slice-show SLICE_ID
+  project finding COMPONENT --title TEXT [--slice-id SLICE_ID]
   history | repeat [N] | alias NAME COMMAND | let NAME VALUE
   save-session FILE | load-session FILE | reconnect | finish [DIR]
   export DIR (when the native backend supplies durable export)
@@ -924,6 +928,8 @@ class DebugShell:
             "project": [
                 "list", "show", "xrefs", "cut", "annotate", "analyze", "analyses",
                 "callers", "consumers", "trace", "backtrace", "finding", "findings",
+                "slice", "slice-show",
+                "symbol-bind",
             ],
             "print": address_candidates,
             "inspect": address_candidates,

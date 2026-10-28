@@ -78,7 +78,7 @@ def runtime_distributions(*, require_installed=False):
             # Actual staging requires installed bytes and distribution metadata.
             return fallback
     return (("mdb", "mdb-runtime", version("mdb-runtime")),
-            ("saturn_pub", "saturn-pub", version("saturn-pub", "0.4.0")),
+            ("saturn_pub", "saturn-pub", version("saturn-pub", "0.4.1")),
             ("mrun", "mrun-pub", version("mrun-pub")))
 
 

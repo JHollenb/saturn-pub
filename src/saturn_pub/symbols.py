@@ -145,19 +145,88 @@ class SymbolBinding:
             raise ValueError("unsupported symbol schema or fields")
         return result
 
-    def resolve(self, session: Session, *, context: str) -> tuple[StateAddress, ...]:
-        if context != self.context or session.adapter.model_identity != self.model_identity:
+    def _support(self, model_identity, execution, context, slot_digest):
+        if context != self.context or model_identity != self.model_identity:
             raise ValueError("symbol context or model mismatch")
-        if digest(dict(session.adapter.execution)) != self.execution:
+        if digest(dict(execution)) != self.execution:
             raise ValueError("symbol execution mismatch")
         for name, expected in self.context_slots:
-            if digest(describe(session.read(name))) != expected:
+            if slot_digest(name) != expected:
                 raise ValueError(f"symbol input context changed: {name}")
         if self.status == "abstained":
             raise ValueError(f"symbol abstained: {self.abstain_reason}")
+
+    def resolve(self, session: Session, *, context: str) -> tuple[StateAddress, ...]:
+        self._support(
+            session.adapter.model_identity,
+            session.adapter.execution,
+            context,
+            lambda name: digest(describe(session.read(name))),
+        )
         for location in self.locations:
             session.read_port(location)
         return self.locations
+
+    def resolve_metadata(
+        self, *, model_identity, execution, execution_point, surface, slots, context: str
+    ) -> tuple[StateAddress, ...]:
+        """Check support against caller-verified typed descriptors, without a model.
+
+        This checks descriptive support, not live adapter availability, tensor
+        page integrity, semantic truth, or mutation authority. Native reads
+        must still pass ``resolve`` against an executable Session.
+        """
+
+        def slot_digest(name):
+            if name not in slots:
+                raise ValueError(f"symbol context slot unavailable: {name}")
+            return digest(slots[name])
+
+        self._support(model_identity, execution, context, slot_digest)
+        declared = {slot["name"]: slot for slot in surface.get("slots", [])}
+        for location in self.locations:
+            slot = declared.get(location.slot)
+            if slot is None or location.slot not in slots:
+                raise ValueError(f"symbol state port unavailable: {location.slot}")
+            if location.role and slot["role"] != location.role:
+                raise ValueError("state port role mismatch")
+            if location.execution_point != digest(dict(execution_point)):
+                raise ValueError("state port clock mismatch")
+            if location.state_schema != surface.get("state_schema"):
+                raise ValueError("state port schema mismatch")
+            _descriptor_selector(slots[location.slot], location.selector)
+        return self.locations
+
+
+def _descriptor_selector(value, selector):
+    """Bounds-check the integer selectors supported by Session.read_port."""
+    remaining = tuple(selector)
+    while remaining:
+        if value.get("kind") == "tensor":
+            shape = value["shape"]
+            if len(remaining) > len(shape) or any(
+                not -size <= index < size for index, size in zip(remaining, shape)
+            ):
+                raise ValueError("state port selector is outside support")
+            return
+        index, *tail = remaining
+        if value.get("kind") in {"list", "tuple"}:
+            items = value["items"]
+            if not -len(items) <= index < len(items):
+                raise ValueError("state port selector is outside support")
+            value = items[index]
+        elif value.get("kind") == "mapping":
+            matches = [
+                row["value"]
+                for row in value["items"]
+                if row["key"] == {"kind": "scalar", "type": "int", "value": index}
+            ]
+            if len(matches) != 1:
+                raise ValueError("state port selector is outside support")
+            value = matches[0]
+        else:
+            raise ValueError("state port selector is outside support")
+        remaining = tuple(tail)
 
 
 class SymbolTable:

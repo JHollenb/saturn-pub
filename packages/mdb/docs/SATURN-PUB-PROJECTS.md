@@ -110,7 +110,7 @@ backward dependency walk. No graphical interface is required.
 Opening an existing project runs the default `structure` analyzer against the
 current recorded evidence. Identical inputs reuse the sealed result. New cuts,
 receipts, symbols, or selected state produce a new result; prior results remain
-immutable. `project.sqlite` upgrades its index to schema 2 without changing native
+immutable. `project.sqlite` upgrades its index to schema 3 without changing native
 cut, receipt, annotation, or graph identities. Live sessions can refresh explicitly
 with `project analyze`; `project analyses` shows history and whether each input
 binding is current.
@@ -152,6 +152,12 @@ refer to a supporting cut, native receipt, or sealed watch event. With no explic
 references, the supporting cut is retained as evidence. A `causal-claim` label
 records the user's assertion; its terminal status remains `not-established`.
 Saving a finding does not promote it or confer mutation authority.
+
+For exact symbol-to-port joins and branch-specific dataflow, see
+[qualified symbols and port slices](SYMBOL-SLICES.md). `project symbol-bind`
+creates a native binding; `project slice --symbol NAME --cut CUT --context CONTEXT`
+resolves it against a retained cut and saves a declared DAG. `--to-cut FUTURE`
+bounds downstream consumers, and `finding --slice-id ID` preserves the join.
 
 Python callers use `Project.analyze`, `analyses`, `trace`, `backtrace`, `finding`,
 and `findings`. Additional framework-free analyzers can register an

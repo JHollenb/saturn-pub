@@ -348,6 +348,12 @@ for session in project.sessions():
     assert project.trace(sid, ports[0]['id'])['authority'] == 'declared-dependency'
     assert project.backtrace(sid, ports[0]['name'])
     assert isinstance(project.findings(sid), list)
+    for symbol in project.symbols(sid):
+        for cid in project.component(sid, 'symbol:' + symbol['symbol'])['supporting_cuts']:
+            sliced = project.slice(sid, symbol=symbol['symbol'], cut_id=cid,
+                                   context=symbol['context'], binding_id=symbol['fingerprint'])
+            assert project.slice_record(sid, sliced['slice_id']) == sliced
+            break
 """
     environment = dict(os.environ)
     environment["PYTHONPATH"] = str(Path(__file__).parents[1] / "src")

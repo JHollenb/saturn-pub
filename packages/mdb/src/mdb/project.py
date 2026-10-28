@@ -30,7 +30,7 @@ class Project:
         self.store = LocalStore(self.root / "store")
         with self._db() as db:
             version = db.execute("PRAGMA user_version").fetchone()[0]
-            if version not in (0, 1, 2):
+            if version not in (0, 1, 2, 3):
                 raise ValueError("unsupported MDB project schema")
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS sessions (
@@ -48,8 +48,21 @@ class Project:
                     version TEXT NOT NULL, input_digest TEXT NOT NULL, body TEXT NOT NULL);
                 CREATE INDEX IF NOT EXISTS analysis_inputs
                     ON analyses(session_id, analyzer, version, input_digest);
-                PRAGMA user_version = 2;
+                CREATE TABLE IF NOT EXISTS symbols (
+                    session_id TEXT NOT NULL, id TEXT NOT NULL, body TEXT NOT NULL,
+                    PRIMARY KEY(session_id, id));
+                CREATE TABLE IF NOT EXISTS slices (
+                    id TEXT PRIMARY KEY, session_id TEXT NOT NULL, body TEXT NOT NULL);
+                PRAGMA user_version = 3;
             """)
+            for row in db.execute("SELECT * FROM sessions").fetchall():
+                self._save_symbols(
+                    db,
+                    row["id"],
+                    json.loads(row["debug_info"]),
+                    json.loads(row["identity"]),
+                    json.loads(row["execution"]),
+                )
         for session in self.sessions():
             self.analyze(session["session_id"])
 
@@ -99,6 +112,13 @@ class Project:
                     "project session changed in another writer; reopen before continuing"
                 )
             revision = expected_revision + 1
+            self._save_symbols(
+                db,
+                session_id,
+                debug_info or {},
+                session.adapter.model_identity,
+                dict(session.adapter.execution),
+            )
             db.execute(
                 "INSERT INTO sessions VALUES (?, ?, ?, ?, ?, ?) "
                 "ON CONFLICT(id) DO UPDATE SET selected=excluded.selected, "
@@ -137,6 +157,89 @@ class Project:
                 if stored != body:
                     raise ValueError("project receipt index identity collision")
         return revision
+
+    def _save_symbols(self, db, sid, info, identity, execution):
+        for value in info.get("symbols", []):
+            binding = SymbolBinding.from_dict(value)
+            if binding.model_identity != identity or binding.execution != digest(execution):
+                raise ValueError("project symbol belongs to another model or execution")
+            body = self._json(binding.to_dict())
+            db.execute(
+                "INSERT OR IGNORE INTO symbols VALUES (?, ?, ?)", (sid, value["fingerprint"], body)
+            )
+            saved = db.execute(
+                "SELECT body FROM symbols WHERE session_id=? AND id=?", (sid, value["fingerprint"])
+            ).fetchone()[0]
+            if saved != body:
+                raise ValueError("project symbol identity collision")
+
+    def symbols(self, session_id):
+        session = self.session(session_id)
+        with self._db() as db:
+            rows = db.execute(
+                "SELECT id, body FROM symbols WHERE session_id=? ORDER BY rowid", (session_id,)
+            ).fetchall()
+        result = []
+        for row in rows:
+            binding = SymbolBinding.from_dict(json.loads(row["body"]))
+            if binding.to_dict()["fingerprint"] != row["id"]:
+                raise ValueError("project symbol index differs from its seal")
+            if binding.model_identity != json.loads(
+                session["identity"]
+            ) or binding.execution != digest(json.loads(session["execution"])):
+                raise ValueError("project symbol differs from its session binding")
+            result.append(binding.to_dict())
+        return result
+
+    def slice(
+        self,
+        session_id,
+        *,
+        port=None,
+        symbol=None,
+        cut_id=None,
+        to_cut=None,
+        context=None,
+        binding_id=None,
+        receipt_id=None,
+    ):
+        from .project_slice import slice_project
+
+        return slice_project(
+            self,
+            session_id,
+            port=port,
+            symbol=symbol,
+            cut_id=cut_id,
+            to_cut=to_cut,
+            context=context,
+            binding_id=binding_id,
+            receipt_id=receipt_id,
+        )
+
+    def slice_record(self, session_id, identifier):
+        self.session(session_id)
+        with self._db() as db:
+            row = db.execute(
+                "SELECT body FROM slices WHERE session_id=? AND id=?", (session_id, identifier)
+            ).fetchone()
+        if row is None:
+            raise ValueError("slice is not retained in this project session")
+        body = json.loads(row[0])
+        if digest(body) != identifier or body["session_id"] != session_id:
+            raise ValueError("project slice seal changed")
+        GraphSnapshot.from_dict(body["graph"]).verify()
+        return {"slice_id": identifier, **body}
+
+    def slice_ids(self, session_id):
+        self.session(session_id)
+        with self._db() as db:
+            return [
+                r[0]
+                for r in db.execute(
+                    "SELECT id FROM slices WHERE session_id=? ORDER BY rowid", (session_id,)
+                )
+            ]
 
     def sessions(self):
         with self._db() as db:
@@ -472,6 +575,7 @@ class Project:
                         evidence="observed",
                         metadata={"role": "restore-target"},
                     )
+            slice_annotations = []
             for entry in self._annotations(sid).list():
                 annotation = self._annotations(sid).show(entry["annotation_id"])
                 source = graph.add_source(
@@ -481,14 +585,37 @@ class Project:
                     metadata=annotation,
                 )
                 graph.add_edge(source, nodes[entry["cut_id"]], "annotates", graph="knowledge")
-            for binding in json.loads(row["debug_info"]).get("symbols", []):
+                if annotation.get("details", {}).get("slice_id"):
+                    slice_annotations.append((source, annotation["details"]["slice_id"]))
+            symbol_nodes = {}
+            for binding in self.symbols(sid):
                 binding = SymbolBinding.from_dict(binding).to_dict()
-                graph.add_source(
+                symbol_nodes[binding["fingerprint"]] = graph.add_source(
                     source_ref=f"symbol://sha256/{binding['fingerprint']}",
                     binding=NodeBinding(session=sid),
                     metadata=binding,
                     labels=(binding["symbol"],),
                 )
+            for identifier in self.slice_ids(sid):
+                sliced = self.slice_record(sid, identifier)
+                source = graph.add_source(
+                    source_ref=f"slice://sha256/{identifier}",
+                    binding=NodeBinding(session=sid),
+                    labels=(sliced["component"],),
+                    metadata={
+                        "slice_id": identifier,
+                        "graph_snapshot": sliced["graph"]["snapshot_id"],
+                        "support": sliced["support"],
+                        "complete": sliced["complete"],
+                    },
+                )
+                graph.add_edge(source, nodes[sliced["cut_id"]], "describes", graph="knowledge")
+                if sliced["symbol_binding"]:
+                    symbol_node = symbol_nodes[sliced["symbol_binding"]["fingerprint"]]
+                    graph.add_edge(symbol_node, source, "describes", graph="knowledge")
+                for annotation_node, slice_id in slice_annotations:
+                    if slice_id == identifier:
+                        graph.add_edge(annotation_node, source, "related_to", graph="knowledge")
             for event in self.watch_events(sid):
                 output = graph.add_output(
                     output_ref=f"watch://sha256/{event['fingerprint']}",
