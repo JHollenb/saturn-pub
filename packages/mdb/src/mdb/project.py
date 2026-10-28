@@ -30,7 +30,7 @@ class Project:
         self.store = LocalStore(self.root / "store")
         with self._db() as db:
             version = db.execute("PRAGMA user_version").fetchone()[0]
-            if version not in (0, 1):
+            if version not in (0, 1, 2):
                 raise ValueError("unsupported MDB project schema")
             db.executescript("""
                 CREATE TABLE IF NOT EXISTS sessions (
@@ -43,8 +43,15 @@ class Project:
                     session_id TEXT NOT NULL, id TEXT NOT NULL, body TEXT NOT NULL,
                     PRIMARY KEY (session_id, id));
                 CREATE TABLE IF NOT EXISTS imports (id TEXT PRIMARY KEY, body TEXT NOT NULL);
-                PRAGMA user_version = 1;
+                CREATE TABLE IF NOT EXISTS analyses (
+                    id TEXT PRIMARY KEY, session_id TEXT NOT NULL, analyzer TEXT NOT NULL,
+                    version TEXT NOT NULL, input_digest TEXT NOT NULL, body TEXT NOT NULL);
+                CREATE INDEX IF NOT EXISTS analysis_inputs
+                    ON analyses(session_id, analyzer, version, input_digest);
+                PRAGMA user_version = 2;
             """)
+        for session in self.sessions():
+            self.analyze(session["session_id"])
 
     @contextmanager
     def _db(self):
@@ -221,6 +228,36 @@ class Project:
         from .project_navigation import component
 
         return component(self, session_id, name)
+
+    def analyze(self, session_id, *, analyzer="structure", version=None):
+        from .project_analysis import analyze
+
+        return analyze(self, session_id, analyzer=analyzer, version=version)
+
+    def analyses(self, session_id):
+        from .project_analysis import history
+
+        return history(self, session_id)
+
+    def trace(self, session_id, component, *, direction="upstream", depth=4):
+        from .project_analysis import walk
+
+        return walk(self, session_id, component, direction=direction, depth=depth)
+
+    def backtrace(self, session_id, port, *, cut_id=None):
+        from .project_analysis import native_backtrace
+
+        return native_backtrace(self, session_id, port, cut_id=cut_id)
+
+    def finding(self, session_id, component, title, **fields):
+        from .project_analysis import finding
+
+        return finding(self, session_id, component, title, **fields)
+
+    def findings(self, session_id):
+        from .project_analysis import findings
+
+        return findings(self, session_id)
 
     def watch_events(self, session_id):
         events = json.loads(self.session(session_id)["debug_info"]).get("watch_events", [])
@@ -459,32 +496,13 @@ class Project:
 def main(argv=None):
     parser = argparse.ArgumentParser(description="Inspect a persistent MDB investigation")
     parser.add_argument("root", type=Path)
-    parser.add_argument(
-        "action",
-        choices=("sessions", "graph", "annotations", "list", "show", "xrefs", "cut", "annotate"),
-    )
-    parser.add_argument("target", nargs="?")
+    from .project_navigation import add_arguments, execute
+
+    add_arguments(parser, extra_actions=("sessions", "graph", "annotations"))
     parser.add_argument("--session-id")
-    parser.add_argument("--query")
-    parser.add_argument("--relation", choices=("reads", "writes", "invalidates"))
-    parser.add_argument("--cut-id")
-    parser.add_argument("--note")
     args = parser.parse_args(argv)
     project = Project(args.root)
-    if args.action in {"list", "show", "xrefs", "cut", "annotate"}:
-        from .project_navigation import execute
-
-        result = execute(
-            project,
-            args.session_id,
-            args.action,
-            args.target,
-            query=args.query,
-            relation=args.relation,
-            cut_id=args.cut_id,
-            note=args.note,
-        )
-    else:
+    if args.action in {"sessions", "graph", "annotations"}:
         result = (
             project.sessions()
             if args.action == "sessions"
@@ -492,5 +510,10 @@ def main(argv=None):
             if args.action == "annotations"
             else project.graph(args.session_id).seal().to_dict()
         )
+    else:
+        options = vars(args).copy()
+        options.pop("root")
+        sid = options.pop("session_id")
+        result = execute(project, sid, **options)
     print(json.dumps(result, indent=2))
     return 0

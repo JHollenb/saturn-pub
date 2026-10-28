@@ -1,0 +1,455 @@
+{
+  "schema": "mrun.guarded-job-receipt.v2",
+  "job_id": "job-11030cf60aab",
+  "state": "succeeded",
+  "created": null,
+  "idempotent_replay": null,
+  "admission": {
+    "claim_key": "mrun:cf36e5ceffd9248b49f2d7c95b4218bb4bd951662c6624600778043106f8531f",
+    "fencing_epoch": 1,
+    "idempotency_key": "mrun:cf36e5ceffd9248b49f2d7c95b4218bb4bd951662c6624600778043106f8531f",
+    "scope_sha256": "3e7f6a3ccc23c211f60f6a756f9ee061faa4651fdb4b34421568f0b06fdf9e2c"
+  },
+  "submitted_request": {
+    "client_estimate": {
+      "cpu_threads": 4,
+      "ram_mb": 3127.8,
+      "source": "estimated",
+      "vram_mb": 2508.0
+    },
+    "client_run_id": "8022820f3a737dcd",
+    "cmd": [
+      "/usr/bin/env",
+      "PYTHONUNBUFFERED=1",
+      "PYTHONNOUSERSITE=1",
+      "PYTHONPATH=",
+      "UV_LINK_MODE=symlink",
+      "UV_CACHE_DIR=/mnt/hdd8tb/mdb/uv-cache",
+      "TORCH_HOME=/mnt/hdd8tb/mdb/torch",
+      "LLM_MODELS_EXTRA_ROOT=/mnt/big/llm-models",
+      "HF_HUB_OFFLINE=1",
+      "TRANSFORMERS_OFFLINE=1",
+      "DIFFUSERS_OFFLINE=1",
+      "TOKENIZERS_PARALLELISM=false",
+      "SATURN_RESIDENT_WORKER=1",
+      "SATURN_RUN_CONFIG=saturn_run_config.json",
+      "SATURN_DEBUG_REQUEST=saturn_debug_request.json",
+      "uv",
+      "run",
+      "--no-project",
+      "--offline",
+      "--python",
+      "3.14.6",
+      "--with",
+      "./mdb_runtime-0.1.0-py3-none-any.whl",
+      "--with",
+      "./saturn_pub-0.4.0-py3-none-any.whl",
+      "--with",
+      "./mrun_pub-0.1.2-py3-none-any.whl",
+      "--with",
+      "torch==2.13.0",
+      "--with",
+      "diffusers==0.39.0",
+      "--with",
+      "transformers==5.14.1",
+      "--with",
+      "accelerate==1.14.0",
+      "--with",
+      "safetensors>=0.5",
+      "--with",
+      "numpy>=2.0",
+      "--with",
+      "pyyaml>=6.0",
+      "--with",
+      "psutil>=5.9",
+      "--with",
+      "pillow>=10.0",
+      "python",
+      "-u",
+      "-m",
+      "mdb.worker_bootstrap",
+      "project_analysis_worker.py"
+    ],
+    "config": {
+      "backend": "hf",
+      "backend_options": {
+        "full_prefill_logits": false,
+        "physical_batch_size": 1
+      },
+      "device": "cuda",
+      "dtype": "float32",
+      "geometry": {
+        "interventions": 1,
+        "models": 1,
+        "physical_transitions": 8,
+        "prompt_tokens": 8
+      },
+      "model": "qwen2.5-0.5b-instruct",
+      "mrun_guarded_request_sha256": "cf36e5ceffd9248b49f2d7c95b4218bb4bd951662c6624600778043106f8531f",
+      "needs": {
+        "cuda": true
+      },
+      "retry_on_kill": false,
+      "saturn_request_sha256": "11d7dadce2ea3a41c0bd2b0374c6e312e4df12c5ed70218434a2dca004c00993",
+      "scheduling_contract": {
+        "additional_scheduler_submissions": 0,
+        "branch_execution": "in_process",
+        "checkpoint_policy": "one outer Saturn worker lease; all logical branches and analysis remain in process",
+        "collection_policy": "direct_job_only",
+        "control_plane": "mrun_outer_lease",
+        "data_plane": "resident_worker",
+        "execution_model": "finite_local_program",
+        "interactive": false,
+        "lease_scope": "entire-worker",
+        "logical_branches": 2,
+        "logical_checkpoint_replays": 1,
+        "logical_operations": 24,
+        "max_local_work_items": 32,
+        "max_mrun_submissions": 1,
+        "model_loads": 1,
+        "mrun_retry_policy": "none_for_finite_lease",
+        "per_branch_mrun_submissions": 0,
+        "per_transition_mrun_submissions": 0,
+        "replay_policy": "local_checkpoint_restore",
+        "schema": "saturn-single-lease-scheduling-contract-v1"
+      },
+      "schema": "mdb-project-analysis-qualification-request-v1",
+      "seq_len": 8,
+      "task_family": "forward"
+    },
+    "env_alias": null,
+    "experiment": "mdb-project-analysis-qualification",
+    "needs": {
+      "cuda": true,
+      "payload_custody_v2": true,
+      "prefer_host": "beast"
+    },
+    "payload": {
+      "sha256": "d8f1e01408475ef260e0746205768f39fc1234965145a6d3895e69e9888a7c87",
+      "size_bytes": 2816106
+    },
+    "payload_kind": "shipped",
+    "plans": {
+      "beast": {
+        "artifact_id": "artifact:inventory-sha256:043bed134e49a8e5397e70f9b4474eaa89383cdadd4a100f70055895269df0eb",
+        "artifact_kind": "hf-weights",
+        "artifact_locator": {
+          "host": "beast",
+          "mount": "/mnt/big",
+          "path": "/mnt/big/llm-models/Qwen2.5-0.5B-Instruct"
+        },
+        "artifact_mount": "/mnt/big",
+        "backend": "hf",
+        "device": "cuda",
+        "dtype": "float32",
+        "engine_options": {
+          "full_prefill_logits": false,
+          "physical_batch_size": 1
+        },
+        "engine_profile": "hf-reference",
+        "est_ram_mb": 2385.8,
+        "est_vram_mb": 2508.0,
+        "est_wall_s": null,
+        "max_batch": 64,
+        "model": "qwen2.5-0.5b-instruct",
+        "ram_limit_mb": 3127.8,
+        "reasons": [
+          "host=beast ram=66513MB cuda=True mps=False ane=False task=forward",
+          "dtype=float32",
+          "device=cuda (explicit)",
+          "TF32 forced OFF on cuda (breaches 4-decimal stats)",
+          "backend=hf (explicit)",
+          "CUDA HF process/context allowance=512MB (NVML beyond tensor bytes)",
+          "max_batch=64 threads=4 ram_limit=3128MB (est x 1.3)",
+          "artifact bound: artifact:inventory-sha256:043bed134e49a8e5397e70f9b4474eaa89383cdadd4a100f70055895269df0eb",
+          "science runtime envelope: hf"
+        ],
+        "threads": 4,
+        "weights_gb": 1.0
+      }
+    },
+    "priority": 0,
+    "reservation": null,
+    "schema": "mrun.normalized-job-request.v2",
+    "timeout_s": 300.0
+  },
+  "submitted_request_sha256": "7b63a970946c06f81f7c87099fbfd206e0b3d656bb4c5e46fa88d03633d960ed",
+  "resolved_execution": {
+    "reservation": {
+      "ram_mb": 3127.8,
+      "vram_mb": 2508.0,
+      "cpu_threads": 4,
+      "disk_gb": 1.0,
+      "est_wall_s": 21.61,
+      "source": "plan"
+    },
+    "plans": {
+      "beast": {
+        "model": "qwen2.5-0.5b-instruct",
+        "backend": "hf",
+        "dtype": "float32",
+        "device": "cuda",
+        "max_batch": 64,
+        "threads": 4,
+        "ram_limit_mb": 3127.8,
+        "est_ram_mb": 2385.8,
+        "est_vram_mb": 2508.0,
+        "est_wall_s": null,
+        "weights_gb": 1.0,
+        "engine_options": {
+          "physical_batch_size": 1,
+          "full_prefill_logits": false
+        },
+        "reasons": [
+          "host=beast ram=66513MB cuda=True mps=False ane=False task=forward",
+          "dtype=float32",
+          "device=cuda (explicit)",
+          "TF32 forced OFF on cuda (breaches 4-decimal stats)",
+          "backend=hf (explicit)",
+          "CUDA HF process/context allowance=512MB (NVML beyond tensor bytes)",
+          "max_batch=64 threads=4 ram_limit=3128MB (est x 1.3)",
+          "artifact bound: artifact:inventory-sha256:043bed134e49a8e5397e70f9b4474eaa89383cdadd4a100f70055895269df0eb",
+          "science runtime envelope: hf"
+        ],
+        "engine_profile": "hf-reference",
+        "artifact_id": "artifact:inventory-sha256:043bed134e49a8e5397e70f9b4474eaa89383cdadd4a100f70055895269df0eb",
+        "artifact_kind": "hf-weights",
+        "artifact_mount": "/mnt/big",
+        "artifact_locator": {
+          "host": "beast",
+          "mount": "/mnt/big",
+          "path": "/mnt/big/llm-models/Qwen2.5-0.5B-Instruct"
+        }
+      }
+    },
+    "plan_binding": {
+      "assigned_host": "beast",
+      "selected_plan": {
+        "model": "qwen2.5-0.5b-instruct",
+        "backend": "hf",
+        "dtype": "float32",
+        "device": "cuda",
+        "max_batch": 64,
+        "threads": 4,
+        "ram_limit_mb": 3127.8,
+        "est_ram_mb": 2385.8,
+        "est_vram_mb": 2508.0,
+        "est_wall_s": null,
+        "weights_gb": 1.0,
+        "engine_options": {
+          "physical_batch_size": 1,
+          "full_prefill_logits": false
+        },
+        "reasons": [
+          "host=beast ram=66513MB cuda=True mps=False ane=False task=forward",
+          "dtype=float32",
+          "device=cuda (explicit)",
+          "TF32 forced OFF on cuda (breaches 4-decimal stats)",
+          "backend=hf (explicit)",
+          "CUDA HF process/context allowance=512MB (NVML beyond tensor bytes)",
+          "max_batch=64 threads=4 ram_limit=3128MB (est x 1.3)",
+          "artifact bound: artifact:inventory-sha256:043bed134e49a8e5397e70f9b4474eaa89383cdadd4a100f70055895269df0eb",
+          "science runtime envelope: hf"
+        ],
+        "engine_profile": "hf-reference",
+        "artifact_id": "artifact:inventory-sha256:043bed134e49a8e5397e70f9b4474eaa89383cdadd4a100f70055895269df0eb",
+        "artifact_kind": "hf-weights",
+        "artifact_mount": "/mnt/big",
+        "artifact_locator": {
+          "host": "beast",
+          "mount": "/mnt/big",
+          "path": "/mnt/big/llm-models/Qwen2.5-0.5B-Instruct"
+        }
+      },
+      "submitted_plan": {
+        "model": "qwen2.5-0.5b-instruct",
+        "backend": "hf",
+        "dtype": "float32",
+        "device": "cuda",
+        "max_batch": 64,
+        "threads": 4,
+        "ram_limit_mb": 3127.8,
+        "est_ram_mb": 2385.8,
+        "est_vram_mb": 2508.0,
+        "est_wall_s": null,
+        "weights_gb": 1.0,
+        "engine_options": {
+          "physical_batch_size": 1,
+          "full_prefill_logits": false
+        },
+        "reasons": [
+          "host=beast ram=66513MB cuda=True mps=False ane=False task=forward",
+          "dtype=float32",
+          "device=cuda (explicit)",
+          "TF32 forced OFF on cuda (breaches 4-decimal stats)",
+          "backend=hf (explicit)",
+          "CUDA HF process/context allowance=512MB (NVML beyond tensor bytes)",
+          "max_batch=64 threads=4 ram_limit=3128MB (est x 1.3)",
+          "artifact bound: artifact:inventory-sha256:043bed134e49a8e5397e70f9b4474eaa89383cdadd4a100f70055895269df0eb",
+          "science runtime envelope: hf"
+        ],
+        "engine_profile": "hf-reference",
+        "artifact_id": "artifact:inventory-sha256:043bed134e49a8e5397e70f9b4474eaa89383cdadd4a100f70055895269df0eb",
+        "artifact_kind": "hf-weights",
+        "artifact_mount": "/mnt/big",
+        "artifact_locator": {
+          "host": "beast",
+          "mount": "/mnt/big",
+          "path": "/mnt/big/llm-models/Qwen2.5-0.5B-Instruct"
+        }
+      },
+      "submitted_plan_present": true,
+      "matches_submitted_plan": true,
+      "binding_status": "exact_submitted_plan"
+    }
+  },
+  "payload_custody": {
+    "required": true,
+    "declared": {
+      "sha256": "d8f1e01408475ef260e0746205768f39fc1234965145a6d3895e69e9888a7c87",
+      "size_bytes": 2816106
+    },
+    "sealed": {
+      "sha256": "d8f1e01408475ef260e0746205768f39fc1234965145a6d3895e69e9888a7c87",
+      "size_bytes": 2816106,
+      "sealed_ts": 1793168060.7604294
+    },
+    "executed": {
+      "sha256": "d8f1e01408475ef260e0746205768f39fc1234965145a6d3895e69e9888a7c87",
+      "size_bytes": 2816106,
+      "reported_ts": 1793168060.784749,
+      "host": "beast"
+    }
+  },
+  "meta": {
+    "queue_note": "Project CLI qualification: one Qwen0.5B FP32 resident, <=8 prompt tokens, 8 native transitions, 1 intervention, offline framework-free reopen; stop after report or 300s. One lease, no retries.",
+    "observed_peak_rss_mb": 3487.5,
+    "observed_peak_rss_ts": 1793168088.1825643,
+    "observed_peak_vram_mb": 2360.0,
+    "observed_peak_vram_ts": 1793168098.2671268
+  },
+  "assigned_host": "beast",
+  "result": {
+    "status": "ok",
+    "returncode": 0,
+    "elapsed_s": 47.92,
+    "peak_rss_mb": 3487.5,
+    "peak_vram_mb": 2360.0,
+    "executed_payload": {
+      "sha256": "d8f1e01408475ef260e0746205768f39fc1234965145a6d3895e69e9888a7c87",
+      "size_bytes": 2816106,
+      "host": "beast"
+    },
+    "os_memory_limit_backend": "linux-cgroup-v2",
+    "payload_sandbox_backend": "off",
+    "payload_sandbox": {
+      "requested": false
+    },
+    "diagnostics": {
+      "phase": "finished",
+      "phases": [
+        {
+          "name": "payload.prepare",
+          "ts": 1793168060.7768753
+        },
+        {
+          "name": "dispatch.vram_guard",
+          "ts": 1793168060.7920854
+        },
+        {
+          "name": "process.launch",
+          "ts": 1793168060.8076978
+        },
+        {
+          "name": "process.monitor",
+          "ts": 1793168060.812699
+        },
+        {
+          "name": "process.finalize",
+          "ts": 1793168102.8260348
+        },
+        {
+          "name": "finished",
+          "ts": 1793168102.8291843
+        }
+      ],
+      "command": [
+        "/usr/bin/env",
+        "PYTHONUNBUFFERED=1",
+        "PYTHONNOUSERSITE=1",
+        "PYTHONPATH=",
+        "UV_LINK_MODE=symlink",
+        "UV_CACHE_DIR=/mnt/hdd8tb/mdb/uv-cache",
+        "TORCH_HOME=/mnt/hdd8tb/mdb/torch",
+        "LLM_MODELS_EXTRA_ROOT=/mnt/big/llm-models",
+        "HF_HUB_OFFLINE=1",
+        "TRANSFORMERS_OFFLINE=1",
+        "DIFFUSERS_OFFLINE=1",
+        "TOKENIZERS_PARALLELISM=false",
+        "SATURN_RESIDENT_WORKER=1",
+        "SATURN_RUN_CONFIG=saturn_run_config.json",
+        "SATURN_DEBUG_REQUEST=saturn_debug_request.json",
+        "uv",
+        "run",
+        "--no-project",
+        "--offline",
+        "--python",
+        "3.14.6",
+        "--with",
+        "./mdb_runtime-0.1.0-py3-none-any.whl",
+        "--with",
+        "./saturn_pub-0.4.0-py3-none-any.whl",
+        "--with",
+        "./mrun_pub-0.1.2-py3-none-any.whl",
+        "--with",
+        "torch==2.13.0",
+        "--with",
+        "diffusers==0.39.0",
+        "--with",
+        "transformers==5.14.1",
+        "--with",
+        "accelerate==1.14.0",
+        "--with",
+        "safetensors>=0.5",
+        "--with",
+        "numpy>=2.0",
+        "--with",
+        "pyyaml>=6.0",
+        "--with",
+        "psutil>=5.9",
+        "--with",
+        "pillow>=10.0",
+        "python",
+        "-u",
+        "-m",
+        "mdb.worker_bootstrap",
+        "project_analysis_worker.py"
+      ],
+      "cwd": "/mnt/hdd8tb/mrun-work/job-11030cf60aab",
+      "log_path": "/mnt/hdd8tb/mrun-work/job-11030cf60aab/job.log"
+    },
+    "failure": null,
+    "artifacts": {
+      "schema": "mrun.run-artifacts-v1",
+      "job_id": "job-11030cf60aab",
+      "job_status": "ok",
+      "store": {
+        "endpoint": "http://192.168.68.202:9030",
+        "bucket": "mrun",
+        "cas_prefix": "cas/",
+        "runs_prefix": "runs/"
+      },
+      "runs_prefix": "s3://mrun/runs/job-11030cf60aab/",
+      "status": "failed-queued",
+      "errors": [
+        "finish: EndpointConnectionError: Could not connect to the endpoint URL: \"http://192.168.68.202:9030/\""
+      ],
+      "rows": 0,
+      "objects": 0,
+      "objects_pending": 0
+    }
+  },
+  "created_ts": 1793168060.6026094,
+  "started_ts": 1793168060.8108242,
+  "finished_ts": 1793168108.6930742
+}

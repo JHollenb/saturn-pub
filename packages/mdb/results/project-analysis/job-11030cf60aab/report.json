@@ -1,0 +1,94 @@
+{
+  "analysis_binding": {
+    "execution": {
+      "adapter": "native-decoder-v1",
+      "attention": "eager",
+      "batch": {
+        "padding": false,
+        "size": 1
+      },
+      "device": {
+        "index": 0,
+        "type": "cuda"
+      },
+      "dtype": "torch.float32",
+      "environment_versions": {
+        "python": "3.14.6",
+        "torch": "2.13.0+cu130",
+        "transformers": "5.14.1"
+      },
+      "family": "qwen2",
+      "granularity": "layer",
+      "kernel": {
+        "attention": "transformers-eager",
+        "cache": "DynamicCache"
+      },
+      "model_program": "embed->decoder_layer[*]->final_norm->lm_head->greedy_argmax->token_commit",
+      "numeric_scope": {
+        "autocast": false,
+        "deterministic_algorithms": true,
+        "float32_matmul_precision": "highest",
+        "inference_mode": true,
+        "tensor_layout": "state-slot-bound-stride",
+        "tf32_matmul": false,
+        "torch_num_threads": 4
+      },
+      "parity": "bounded-logits",
+      "position": "rotary",
+      "sampler": "greedy"
+    },
+    "model_identity": "57b174290f954e6064efc3cb8771e7048724cff3b148355af9be8370066b1d38",
+    "selected_cut": "6b2a668c0ded99e582d73ad46ffb2cc3ff4f56fc9a7c90801cddfd49b62afdd2"
+  },
+  "analysis_id": "76a1a6d4d89b98eb66fcb26186c4f0397fe1e359d34c28ffcd349e4059d34e14",
+  "commands": [
+    "project analyze",
+    "project callers port:hidden",
+    "project consumers port:hidden",
+    "project trace port:hidden --depth 3",
+    "project backtrace hidden",
+    "fork intervention",
+    "set hidden 0",
+    "commit",
+    "project finding port:hidden --title \"explicit zero write\" --kind observation",
+    "project findings"
+  ],
+  "device": "cuda",
+  "dtype": "float32",
+  "elapsed_seconds": 17.92228800407611,
+  "evidence": {
+    "cuts": [
+      "912f5fbcf512ae71a987c5296aa8aa752111cf6d6a6fc84431263fe55338d08c",
+      "13a7e985a611af65c035d3fa0f7d130cbfe86d9e9c36337f45e593b41f448584",
+      "bee99b7bdc8c5b42cda1141df51a97d990280ddc4084de2af5fe8bcb8837e4b8",
+      "2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c",
+      "6ac4f93233fd1443c69500c1279919b87d121a877d5464872cec1387460bf25c",
+      "c997a6c92cdd50e1d99461836744dfdd2369bc11f5eaba5448ff72b032a8d39e",
+      "d61f659f5e82d983e8b298a5ec1d8f7ad746e43952e5ca6fdfc2d4d99de316ae",
+      "6b2a668c0ded99e582d73ad46ffb2cc3ff4f56fc9a7c90801cddfd49b62afdd2"
+    ],
+    "receipts": [
+      "eb57817cf40fe050533271518673deef5a45de78c51a6b52fc34f33ad987b943",
+      "b8943cce10e9f3667c9addef59b658e3d7784a0a96c1661a54e8bff7db0f926d",
+      "865b5ec3083dcec7bc13839edde061ba7e6ce76c741a6ff3c0c694ea6d270f18",
+      "215cf20d2e94a1d599ee3bb6edbdd84d556e84ee35c76487d4c40438a71290b2",
+      "dfdd4d795f5ffe4b0abd9e4da83eaf6193880a4953372fcd09fb7e941f5ef739",
+      "ebf16cdc86a724c020972e6124a46fe6fbe0f530d71c8aef3982f2e944a068af",
+      "073b1f543b3aa47603ec087a17cc2bebf2ae6ea4893833c98c71ae190109bb48"
+    ],
+    "symbols": []
+  },
+  "finding_id": "state-annotation://sha256/cbd820b84e2ebb50677d944424c0c433d8cedc6bcb0aa5b687198d4665aa3668",
+  "instrument_status": "native-transitions-ran",
+  "mechanics_status": "valid",
+  "model": "qwen2.5-0.5b-instruct",
+  "offline_reopen_without_frameworks": true,
+  "peak_cuda_bytes": 2012951552,
+  "physical_transitions": 8,
+  "project_root": "/mnt/big/mdb/project-analysis/job-11030cf60aab/project",
+  "prompt_tokens": 5,
+  "same_program_hidden_replay": true,
+  "schema": "mdb-project-analysis-qualification-v1",
+  "terminal_status": "bounded-workflow-mechanics-only",
+  "trend_status": "not-evaluated"
+}

@@ -105,4 +105,65 @@ Annotations reuse the existing immutable sidecar format and must refer to a
 supporting retained cut. Existing `backtrace PORT` provides the public runtime's
 backward dependency walk. No graphical interface is required.
 
-This is an initial session/project integration. It adds no automatic semantic discovery, generalized decompiler, collaborative server, or new model-backed qualification.
+## Analysis and findings
+
+Opening an existing project runs the default `structure` analyzer against the
+current recorded evidence. Identical inputs reuse the sealed result. New cuts,
+receipts, symbols, or selected state produce a new result; prior results remain
+immutable. `project.sqlite` upgrades its index to schema 2 without changing native
+cut, receipt, annotation, or graph identities. Live sessions can refresh explicitly
+with `project analyze`; `project analyses` shows history and whether each input
+binding is current.
+
+```sh
+mdb project ./investigation analyze --session-id trial
+mdb project ./investigation callers port:hidden --session-id trial
+mdb project ./investigation consumers port:hidden --session-id trial
+mdb project ./investigation trace port:hidden --depth 4 --session-id trial
+mdb project ./investigation trace port:hidden --direction downstream --session-id trial
+mdb project ./investigation backtrace hidden --cut-id CUT_ID --session-id trial
+mdb project ./investigation finding port:hidden --title 'carrier changed' \
+  --kind observation --note 'Visible after the explicit write' --evidence RECEIPT_ID --session-id trial
+mdb project ./investigation findings --session-id trial
+```
+
+The attached shell accepts the same commands without the root or session option.
+The structural report groups ports and recorded operations by the original typed
+execution point: family, logical step (token position for decoders), phase, and
+index (layer for decoders). Unknown footprints, missing surfaces, unpositioned
+operations and empty transition histories are diagnostics. Unvisited model
+positions remain unknown. This analyzer makes no semantic or causal discovery.
+
+`callers` walks one upstream relationship; `consumers` walks one downstream
+relationship. `trace` follows the bipartite port/operation graph for 1–32 hops,
+with cycle detection and an explicit truncation flag. These queries aggregate
+recorded transactions, including previews, across their positions and branches;
+a structural path does not establish a temporal path in one execution. Every
+edge retains its receipt, transaction cuts, relation, and footprint authority.
+For branch-specific backward provenance, `backtrace` supplies a linked receipt
+chain to Saturn-pub's existing walker. It stops at unknown footprints, restore,
+commit, or unavailable history rather than splicing a sibling future into the
+selected execution. Intermediate transition clocks are not invented checkpoints.
+
+Findings reuse annotation sidecars and appear in the existing project graph.
+They have a title, component, supporting cut, evidence references, analysis ID,
+and a separate `observation`, `inference`, or `causal-claim` kind. Evidence must
+refer to a supporting cut, native receipt, or sealed watch event. With no explicit
+references, the supporting cut is retained as evidence. A `causal-claim` label
+records the user's assertion; its terminal status remains `not-established`.
+Saving a finding does not promote it or confer mutation authority.
+
+Python callers use `Project.analyze`, `analyses`, `trace`, `backtrace`, `finding`,
+and `findings`. Additional framework-free analyzers can register an
+`mdb.project_analysis.Analyzer(name, version, run)`; select `--analyzer NAME
+--version VERSION` explicitly when multiple versions exist. Analyzer output is
+bound to exact model/execution identity and source evidence fingerprints. Changing
+an implementation requires a new version. Analyzer failures preserve earlier
+results and do not create successful result rows.
+
+This integration adds no generalized decompiler, semantic analyzer, or collaborative
+server. The finite pretrained workflow qualification lives in
+`qualification/submit_project_analysis.py`; it checks runtime/CLI mechanics rather
+than a learned mechanism or downstream capability. See
+[the qualification record](PROJECT-ANALYSIS-QUALIFICATION.md) for the completed
+Qwen2.5-0.5B CUDA FP32 run and retained initial failure.

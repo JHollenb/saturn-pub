@@ -18,6 +18,7 @@ from saturn_pub.symbols import SymbolBinding, SymbolTable
 from saturn_pub.values import describe
 
 from .debugger_adapters import AdapterCapabilities, CallbackDebuggerAdapter
+from .debugger_protocol import DebuggerAddressSpec
 
 
 class SaturnPubDebuggerAdapter(CallbackDebuggerAdapter):
@@ -193,6 +194,22 @@ class SaturnPubDebuggerAdapter(CallbackDebuggerAdapter):
             self.public._read_observed(self.session, path)
             return
         return super().validate_read(path)
+
+    def address_specs(self):
+        # Native permissions can change at a boundary (e.g. hidden is absent
+        # before embedding). Live declarations also revoke initially writable
+        # ports after restore; Session.apply remains the mutation authority.
+        return tuple(
+            DebuggerAddressSpec(
+                name=f"public_slot_{index}",
+                kind="native-port",
+                path_template=slot["name"].replace("{", "{{").replace("}", "}}"),
+                writable=slot["writable"],
+                invalidates=tuple(slot["invalidates"]),
+                boundaries=("transition",),
+            )
+            for index, slot in enumerate(self.session.inspect().surface["slots"])
+        )
 
     def _resolve(self, path):
         if path == "cursor":

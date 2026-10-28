@@ -132,6 +132,11 @@ if '{namespace}' == 'mdb':
     assert any(row['id'] == 'port:value' for row in reopened.components('smoke'))
     assert reopened.component('smoke', 'port:value')['supporting_cuts']
     assert isinstance(reopened.xrefs('smoke', 'port:value'), list)
+    assert reopened.analyze('smoke')['result']['authority'] == 'structural-description'
+    assert reopened.analyses('smoke')
+    assert reopened.trace('smoke', 'port:value')['authority'] == 'declared-dependency'
+    reopened.finding('smoke', 'port:value', 'installed finding')
+    assert Project('installed-project').findings('smoke')[0]['label'] == 'installed finding'
     resumed = reopened.resume('smoke', GenericJSONAdapter(specification))
     assert resumed.session.read('value') == 2
 else:

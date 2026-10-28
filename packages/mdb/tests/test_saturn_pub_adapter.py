@@ -304,6 +304,11 @@ for session in project.sessions():
     assert ports
     assert project.component(sid, ports[0]['id'])
     assert isinstance(project.xrefs(sid, ports[0]['id']), list)
+    assert project.analyze(sid)['result']['authority'] == 'structural-description'
+    assert project.analyses(sid)
+    assert project.trace(sid, ports[0]['id'])['authority'] == 'declared-dependency'
+    assert project.backtrace(sid, ports[0]['name'])
+    assert isinstance(project.findings(sid), list)
 """
     environment = dict(os.environ)
     environment["PYTHONPATH"] = str(Path(__file__).parents[1] / "src")

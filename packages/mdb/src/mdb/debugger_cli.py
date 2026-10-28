@@ -53,6 +53,11 @@ HELP = GROUP_HELP + "\nFull MDB debugger commands:\n" + """
   public watch PORT change|nonfinite | public watchpoints | public unwatch ID
   project list [--query TEXT] | project show COMPONENT | project xrefs COMPONENT
   project cut CUT_ID | project annotate COMPONENT --note TEXT [--cut-id CUT_ID]
+  project analyze | project analyses | project callers COMPONENT | project consumers COMPONENT
+  project trace COMPONENT [--direction upstream|downstream] [--depth N]
+  project backtrace PORT [--cut-id CUT_ID]
+  project finding COMPONENT --title TEXT [--kind observation|inference|causal-claim]
+  project findings
   history | repeat [N] | alias NAME COMMAND | let NAME VALUE
   save-session FILE | load-session FILE | reconnect | finish [DIR]
   export DIR (when the native backend supplies durable export)
@@ -806,6 +811,7 @@ class DebugShell:
     def _complete(self, prefix: str) -> dict[str, Any]:
         commands = [
             "help",
+            "project",
             "info",
             "status",
             "doctor",
@@ -915,6 +921,10 @@ class DebugShell:
         except Exception:  # noqa: BLE001 - static symbolic cuts remain useful offline
             pass
         context: dict[str, list[str]] = {
+            "project": [
+                "list", "show", "xrefs", "cut", "annotate", "analyze", "analyses",
+                "callers", "consumers", "trace", "backtrace", "finding", "findings",
+            ],
             "print": address_candidates,
             "inspect": address_candidates,
             "describe": address_candidates,

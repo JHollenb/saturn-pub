@@ -1,0 +1,521 @@
+{
+  "schema": "mrun.guarded-job-receipt.v2",
+  "job_id": "job-fe02ea3228f8",
+  "state": "failed",
+  "created": null,
+  "idempotent_replay": null,
+  "admission": {
+    "claim_key": "mrun:cfba7402103b7816cdd3466402872aa0dc815388b631e47f6e196157700626ed",
+    "fencing_epoch": 1,
+    "idempotency_key": "mrun:cfba7402103b7816cdd3466402872aa0dc815388b631e47f6e196157700626ed",
+    "scope_sha256": "7832df7bb35d30059b0fc43fc26b0b22c8c4e9826f5256e92510676d7c3cdca4"
+  },
+  "submitted_request": {
+    "client_estimate": {
+      "cpu_threads": 4,
+      "ram_mb": 3127.8,
+      "source": "estimated",
+      "vram_mb": 2508.0
+    },
+    "client_run_id": "3c52d6c8099eded2",
+    "cmd": [
+      "/usr/bin/env",
+      "PYTHONUNBUFFERED=1",
+      "PYTHONNOUSERSITE=1",
+      "PYTHONPATH=",
+      "UV_LINK_MODE=symlink",
+      "UV_CACHE_DIR=/mnt/hdd8tb/mdb/uv-cache",
+      "TORCH_HOME=/mnt/hdd8tb/mdb/torch",
+      "LLM_MODELS_EXTRA_ROOT=/mnt/big/llm-models",
+      "HF_HUB_OFFLINE=1",
+      "TRANSFORMERS_OFFLINE=1",
+      "DIFFUSERS_OFFLINE=1",
+      "TOKENIZERS_PARALLELISM=false",
+      "SATURN_RESIDENT_WORKER=1",
+      "SATURN_RUN_CONFIG=saturn_run_config.json",
+      "SATURN_DEBUG_REQUEST=saturn_debug_request.json",
+      "uv",
+      "run",
+      "--no-project",
+      "--offline",
+      "--python",
+      "3.14.6",
+      "--with",
+      "./mdb_runtime-0.1.0-py3-none-any.whl",
+      "--with",
+      "./saturn_pub-0.2.0-py3-none-any.whl",
+      "--with",
+      "./mrun_pub-0.1.2-py3-none-any.whl",
+      "--with",
+      "torch==2.13.0",
+      "--with",
+      "diffusers==0.39.0",
+      "--with",
+      "transformers==5.14.1",
+      "--with",
+      "accelerate==1.14.0",
+      "--with",
+      "safetensors>=0.5",
+      "--with",
+      "numpy>=2.0",
+      "--with",
+      "pyyaml>=6.0",
+      "--with",
+      "psutil>=5.9",
+      "--with",
+      "pillow>=10.0",
+      "python",
+      "-u",
+      "-m",
+      "mdb.worker_bootstrap",
+      "project_analysis_worker.py"
+    ],
+    "config": {
+      "backend": "hf",
+      "backend_options": {
+        "full_prefill_logits": false,
+        "physical_batch_size": 1
+      },
+      "device": "cuda",
+      "dtype": "float32",
+      "geometry": {
+        "interventions": 1,
+        "models": 1,
+        "physical_transitions": 8,
+        "prompt_tokens": 8
+      },
+      "model": "qwen2.5-0.5b-instruct",
+      "mrun_guarded_request_sha256": "cfba7402103b7816cdd3466402872aa0dc815388b631e47f6e196157700626ed",
+      "needs": {
+        "cuda": true
+      },
+      "retry_on_kill": false,
+      "saturn_request_sha256": "11d7dadce2ea3a41c0bd2b0374c6e312e4df12c5ed70218434a2dca004c00993",
+      "scheduling_contract": {
+        "additional_scheduler_submissions": 0,
+        "branch_execution": "in_process",
+        "checkpoint_policy": "one outer Saturn worker lease; all logical branches and analysis remain in process",
+        "collection_policy": "direct_job_only",
+        "control_plane": "mrun_outer_lease",
+        "data_plane": "resident_worker",
+        "execution_model": "finite_local_program",
+        "interactive": false,
+        "lease_scope": "entire-worker",
+        "logical_branches": 2,
+        "logical_checkpoint_replays": 1,
+        "logical_operations": 24,
+        "max_local_work_items": 32,
+        "max_mrun_submissions": 1,
+        "model_loads": 1,
+        "mrun_retry_policy": "none_for_finite_lease",
+        "per_branch_mrun_submissions": 0,
+        "per_transition_mrun_submissions": 0,
+        "replay_policy": "local_checkpoint_restore",
+        "schema": "saturn-single-lease-scheduling-contract-v1"
+      },
+      "schema": "mdb-project-analysis-qualification-request-v1",
+      "seq_len": 8,
+      "task_family": "forward"
+    },
+    "env_alias": null,
+    "experiment": "mdb-project-analysis-qualification",
+    "needs": {
+      "cuda": true,
+      "payload_custody_v2": true,
+      "prefer_host": "beast"
+    },
+    "payload": {
+      "sha256": "f2a328fe68435e883d0aa9a69b3a0be4fd9e1a85146725d4fd667b57c040ee90",
+      "size_bytes": 2815713
+    },
+    "payload_kind": "shipped",
+    "plans": {
+      "beast": {
+        "artifact_id": "artifact:inventory-sha256:043bed134e49a8e5397e70f9b4474eaa89383cdadd4a100f70055895269df0eb",
+        "artifact_kind": "hf-weights",
+        "artifact_locator": {
+          "host": "beast",
+          "mount": "/mnt/big",
+          "path": "/mnt/big/llm-models/Qwen2.5-0.5B-Instruct"
+        },
+        "artifact_mount": "/mnt/big",
+        "backend": "hf",
+        "device": "cuda",
+        "dtype": "float32",
+        "engine_options": {
+          "full_prefill_logits": false,
+          "physical_batch_size": 1
+        },
+        "engine_profile": "hf-reference",
+        "est_ram_mb": 2385.8,
+        "est_vram_mb": 2508.0,
+        "est_wall_s": null,
+        "max_batch": 64,
+        "model": "qwen2.5-0.5b-instruct",
+        "ram_limit_mb": 3127.8,
+        "reasons": [
+          "host=beast ram=66513MB cuda=True mps=False ane=False task=forward",
+          "dtype=float32",
+          "device=cuda (explicit)",
+          "TF32 forced OFF on cuda (breaches 4-decimal stats)",
+          "backend=hf (explicit)",
+          "CUDA HF process/context allowance=512MB (NVML beyond tensor bytes)",
+          "max_batch=64 threads=4 ram_limit=3128MB (est x 1.3)",
+          "artifact bound: artifact:inventory-sha256:043bed134e49a8e5397e70f9b4474eaa89383cdadd4a100f70055895269df0eb",
+          "science runtime envelope: hf"
+        ],
+        "threads": 4,
+        "weights_gb": 1.0
+      }
+    },
+    "priority": 0,
+    "reservation": null,
+    "schema": "mrun.normalized-job-request.v2",
+    "timeout_s": 300.0
+  },
+  "submitted_request_sha256": "54bce8dc494d382d6bdf34657713fdd10edddcad5169f03a84b0b80e2eb1ea69",
+  "resolved_execution": {
+    "reservation": {
+      "ram_mb": 3127.8,
+      "vram_mb": 2508.0,
+      "cpu_threads": 4,
+      "disk_gb": 1.0,
+      "est_wall_s": 21.61,
+      "source": "plan"
+    },
+    "plans": {
+      "beast": {
+        "model": "qwen2.5-0.5b-instruct",
+        "backend": "hf",
+        "dtype": "float32",
+        "device": "cuda",
+        "max_batch": 64,
+        "threads": 4,
+        "ram_limit_mb": 3127.8,
+        "est_ram_mb": 2385.8,
+        "est_vram_mb": 2508.0,
+        "est_wall_s": null,
+        "weights_gb": 1.0,
+        "engine_options": {
+          "physical_batch_size": 1,
+          "full_prefill_logits": false
+        },
+        "reasons": [
+          "host=beast ram=66513MB cuda=True mps=False ane=False task=forward",
+          "dtype=float32",
+          "device=cuda (explicit)",
+          "TF32 forced OFF on cuda (breaches 4-decimal stats)",
+          "backend=hf (explicit)",
+          "CUDA HF process/context allowance=512MB (NVML beyond tensor bytes)",
+          "max_batch=64 threads=4 ram_limit=3128MB (est x 1.3)",
+          "artifact bound: artifact:inventory-sha256:043bed134e49a8e5397e70f9b4474eaa89383cdadd4a100f70055895269df0eb",
+          "science runtime envelope: hf"
+        ],
+        "engine_profile": "hf-reference",
+        "artifact_id": "artifact:inventory-sha256:043bed134e49a8e5397e70f9b4474eaa89383cdadd4a100f70055895269df0eb",
+        "artifact_kind": "hf-weights",
+        "artifact_mount": "/mnt/big",
+        "artifact_locator": {
+          "host": "beast",
+          "mount": "/mnt/big",
+          "path": "/mnt/big/llm-models/Qwen2.5-0.5B-Instruct"
+        }
+      }
+    },
+    "plan_binding": {
+      "assigned_host": "beast",
+      "selected_plan": {
+        "model": "qwen2.5-0.5b-instruct",
+        "backend": "hf",
+        "dtype": "float32",
+        "device": "cuda",
+        "max_batch": 64,
+        "threads": 4,
+        "ram_limit_mb": 3127.8,
+        "est_ram_mb": 2385.8,
+        "est_vram_mb": 2508.0,
+        "est_wall_s": null,
+        "weights_gb": 1.0,
+        "engine_options": {
+          "physical_batch_size": 1,
+          "full_prefill_logits": false
+        },
+        "reasons": [
+          "host=beast ram=66513MB cuda=True mps=False ane=False task=forward",
+          "dtype=float32",
+          "device=cuda (explicit)",
+          "TF32 forced OFF on cuda (breaches 4-decimal stats)",
+          "backend=hf (explicit)",
+          "CUDA HF process/context allowance=512MB (NVML beyond tensor bytes)",
+          "max_batch=64 threads=4 ram_limit=3128MB (est x 1.3)",
+          "artifact bound: artifact:inventory-sha256:043bed134e49a8e5397e70f9b4474eaa89383cdadd4a100f70055895269df0eb",
+          "science runtime envelope: hf"
+        ],
+        "engine_profile": "hf-reference",
+        "artifact_id": "artifact:inventory-sha256:043bed134e49a8e5397e70f9b4474eaa89383cdadd4a100f70055895269df0eb",
+        "artifact_kind": "hf-weights",
+        "artifact_mount": "/mnt/big",
+        "artifact_locator": {
+          "host": "beast",
+          "mount": "/mnt/big",
+          "path": "/mnt/big/llm-models/Qwen2.5-0.5B-Instruct"
+        }
+      },
+      "submitted_plan": {
+        "model": "qwen2.5-0.5b-instruct",
+        "backend": "hf",
+        "dtype": "float32",
+        "device": "cuda",
+        "max_batch": 64,
+        "threads": 4,
+        "ram_limit_mb": 3127.8,
+        "est_ram_mb": 2385.8,
+        "est_vram_mb": 2508.0,
+        "est_wall_s": null,
+        "weights_gb": 1.0,
+        "engine_options": {
+          "physical_batch_size": 1,
+          "full_prefill_logits": false
+        },
+        "reasons": [
+          "host=beast ram=66513MB cuda=True mps=False ane=False task=forward",
+          "dtype=float32",
+          "device=cuda (explicit)",
+          "TF32 forced OFF on cuda (breaches 4-decimal stats)",
+          "backend=hf (explicit)",
+          "CUDA HF process/context allowance=512MB (NVML beyond tensor bytes)",
+          "max_batch=64 threads=4 ram_limit=3128MB (est x 1.3)",
+          "artifact bound: artifact:inventory-sha256:043bed134e49a8e5397e70f9b4474eaa89383cdadd4a100f70055895269df0eb",
+          "science runtime envelope: hf"
+        ],
+        "engine_profile": "hf-reference",
+        "artifact_id": "artifact:inventory-sha256:043bed134e49a8e5397e70f9b4474eaa89383cdadd4a100f70055895269df0eb",
+        "artifact_kind": "hf-weights",
+        "artifact_mount": "/mnt/big",
+        "artifact_locator": {
+          "host": "beast",
+          "mount": "/mnt/big",
+          "path": "/mnt/big/llm-models/Qwen2.5-0.5B-Instruct"
+        }
+      },
+      "submitted_plan_present": true,
+      "matches_submitted_plan": true,
+      "binding_status": "exact_submitted_plan"
+    }
+  },
+  "payload_custody": {
+    "required": true,
+    "declared": {
+      "sha256": "f2a328fe68435e883d0aa9a69b3a0be4fd9e1a85146725d4fd667b57c040ee90",
+      "size_bytes": 2815713
+    },
+    "sealed": {
+      "sha256": "f2a328fe68435e883d0aa9a69b3a0be4fd9e1a85146725d4fd667b57c040ee90",
+      "size_bytes": 2815713,
+      "sealed_ts": 1793167869.5267632
+    },
+    "executed": {
+      "sha256": "f2a328fe68435e883d0aa9a69b3a0be4fd9e1a85146725d4fd667b57c040ee90",
+      "size_bytes": 2815713,
+      "reported_ts": 1793167869.5550547,
+      "host": "beast"
+    }
+  },
+  "meta": {
+    "queue_note": "Project CLI qualification: one Qwen0.5B FP32 resident, <=8 prompt tokens, 8 native transitions, 1 intervention, offline framework-free reopen; stop after report or 300s. One lease, no retries.",
+    "observed_peak_rss_mb": 3273.1,
+    "observed_peak_rss_ts": 1793167901.7508538,
+    "observed_peak_vram_mb": 2360.0,
+    "observed_peak_vram_ts": 1793167921.9072106
+  },
+  "assigned_host": "beast",
+  "result": {
+    "status": "failed",
+    "returncode": 1,
+    "elapsed_s": 68.79,
+    "peak_rss_mb": 3273.1,
+    "peak_vram_mb": 2360.0,
+    "executed_payload": {
+      "sha256": "f2a328fe68435e883d0aa9a69b3a0be4fd9e1a85146725d4fd667b57c040ee90",
+      "size_bytes": 2815713,
+      "host": "beast"
+    },
+    "os_memory_limit_backend": "linux-cgroup-v2",
+    "payload_sandbox_backend": "off",
+    "payload_sandbox": {
+      "requested": false
+    },
+    "diagnostics": {
+      "phase": "finished",
+      "phases": [
+        {
+          "name": "payload.prepare",
+          "ts": 1793167869.5460296
+        },
+        {
+          "name": "dispatch.vram_guard",
+          "ts": 1793167869.5630548
+        },
+        {
+          "name": "process.launch",
+          "ts": 1793167869.5810328
+        },
+        {
+          "name": "process.monitor",
+          "ts": 1793167869.5859609
+        },
+        {
+          "name": "process.finalize",
+          "ts": 1793167931.953813
+        },
+        {
+          "name": "finished",
+          "ts": 1793167931.9571908
+        }
+      ],
+      "command": [
+        "/usr/bin/env",
+        "PYTHONUNBUFFERED=1",
+        "PYTHONNOUSERSITE=1",
+        "PYTHONPATH=",
+        "UV_LINK_MODE=symlink",
+        "UV_CACHE_DIR=/mnt/hdd8tb/mdb/uv-cache",
+        "TORCH_HOME=/mnt/hdd8tb/mdb/torch",
+        "LLM_MODELS_EXTRA_ROOT=/mnt/big/llm-models",
+        "HF_HUB_OFFLINE=1",
+        "TRANSFORMERS_OFFLINE=1",
+        "DIFFUSERS_OFFLINE=1",
+        "TOKENIZERS_PARALLELISM=false",
+        "SATURN_RESIDENT_WORKER=1",
+        "SATURN_RUN_CONFIG=saturn_run_config.json",
+        "SATURN_DEBUG_REQUEST=saturn_debug_request.json",
+        "uv",
+        "run",
+        "--no-project",
+        "--offline",
+        "--python",
+        "3.14.6",
+        "--with",
+        "./mdb_runtime-0.1.0-py3-none-any.whl",
+        "--with",
+        "./saturn_pub-0.2.0-py3-none-any.whl",
+        "--with",
+        "./mrun_pub-0.1.2-py3-none-any.whl",
+        "--with",
+        "torch==2.13.0",
+        "--with",
+        "diffusers==0.39.0",
+        "--with",
+        "transformers==5.14.1",
+        "--with",
+        "accelerate==1.14.0",
+        "--with",
+        "safetensors>=0.5",
+        "--with",
+        "numpy>=2.0",
+        "--with",
+        "pyyaml>=6.0",
+        "--with",
+        "psutil>=5.9",
+        "--with",
+        "pillow>=10.0",
+        "python",
+        "-u",
+        "-m",
+        "mdb.worker_bootstrap",
+        "project_analysis_worker.py"
+      ],
+      "cwd": "/mnt/hdd8tb/mrun-work/job-fe02ea3228f8",
+      "log_path": "/mnt/hdd8tb/mrun-work/job-fe02ea3228f8/job.log"
+    },
+    "failure": {
+      "kind": "process_exit",
+      "phase": "process.finalize",
+      "message": "child exited with return code 1",
+      "observed_ts": 1793167931.9567747,
+      "command": [
+        "/usr/bin/env",
+        "PYTHONUNBUFFERED=1",
+        "PYTHONNOUSERSITE=1",
+        "PYTHONPATH=",
+        "UV_LINK_MODE=symlink",
+        "UV_CACHE_DIR=/mnt/hdd8tb/mdb/uv-cache",
+        "TORCH_HOME=/mnt/hdd8tb/mdb/torch",
+        "LLM_MODELS_EXTRA_ROOT=/mnt/big/llm-models",
+        "HF_HUB_OFFLINE=1",
+        "TRANSFORMERS_OFFLINE=1",
+        "DIFFUSERS_OFFLINE=1",
+        "TOKENIZERS_PARALLELISM=false",
+        "SATURN_RESIDENT_WORKER=1",
+        "SATURN_RUN_CONFIG=saturn_run_config.json",
+        "SATURN_DEBUG_REQUEST=saturn_debug_request.json",
+        "uv",
+        "run",
+        "--no-project",
+        "--offline",
+        "--python",
+        "3.14.6",
+        "--with",
+        "./mdb_runtime-0.1.0-py3-none-any.whl",
+        "--with",
+        "./saturn_pub-0.2.0-py3-none-any.whl",
+        "--with",
+        "./mrun_pub-0.1.2-py3-none-any.whl",
+        "--with",
+        "torch==2.13.0",
+        "--with",
+        "diffusers==0.39.0",
+        "--with",
+        "transformers==5.14.1",
+        "--with",
+        "accelerate==1.14.0",
+        "--with",
+        "safetensors>=0.5",
+        "--with",
+        "numpy>=2.0",
+        "--with",
+        "pyyaml>=6.0",
+        "--with",
+        "psutil>=5.9",
+        "--with",
+        "pillow>=10.0",
+        "python",
+        "-u",
+        "-m",
+        "mdb.worker_bootstrap",
+        "project_analysis_worker.py"
+      ],
+      "cwd": "/mnt/hdd8tb/mrun-work/job-fe02ea3228f8",
+      "returncode": 1,
+      "resources": {
+        "peak_rss_mb": 3273.1,
+        "peak_vram_mb": 2360.0,
+        "ram_ceiling_mb": 3639.8,
+        "vram_ceiling_mb": 2758.8
+      },
+      "log_tail": "8\", \"relation\": \"reads\", \"result_cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"source\": \"port:tokens\", \"target\": \"operation:decoder_layer.1\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 2, \"parent_cut\": \"bee99b7bdc8c5b42cda1141df51a97d990280ddc4084de2af5fe8bcb8837e4b8\", \"receipt\": \"865b5ec3083dcec7bc13839edde061ba7e6ce76c741a6ff3c0c694ea6d270f18\", \"relation\": \"reads\", \"result_cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"source\": \"port:hidden\", \"target\": \"operation:decoder_layer.1\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 2, \"parent_cut\": \"bee99b7bdc8c5b42cda1141df51a97d990280ddc4084de2af5fe8bcb8837e4b8\", \"receipt\": \"865b5ec3083dcec7bc13839edde061ba7e6ce76c741a6ff3c0c694ea6d270f18\", \"relation\": \"reads\", \"result_cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"source\": \"port:keys\", \"target\": \"operation:decoder_layer.1\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 2, \"parent_cut\": \"bee99b7bdc8c5b42cda1141df51a97d990280ddc4084de2af5fe8bcb8837e4b8\", \"receipt\": \"865b5ec3083dcec7bc13839edde061ba7e6ce76c741a6ff3c0c694ea6d270f18\", \"relation\": \"reads\", \"result_cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"source\": \"port:values\", \"target\": \"operation:decoder_layer.1\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 2, \"parent_cut\": \"bee99b7bdc8c5b42cda1141df51a97d990280ddc4084de2af5fe8bcb8837e4b8\", \"receipt\": \"865b5ec3083dcec7bc13839edde061ba7e6ce76c741a6ff3c0c694ea6d270f18\", \"relation\": \"reads\", \"result_cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"source\": \"port:layer\", \"target\": \"operation:decoder_layer.1\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 2, \"parent_cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"receipt\": \"215cf20d2e94a1d599ee3bb6edbdd84d556e84ee35c76487d4c40438a71290b2\", \"relation\": \"reads\", \"result_cut\": \"6ac4f93233fd1443c69500c1279919b87d121a877d5464872cec1387460bf25c\", \"source\": \"port:tokens\", \"target\": \"operation:decoder_layer.2\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 2, \"parent_cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"receipt\": \"215cf20d2e94a1d599ee3bb6edbdd84d556e84ee35c76487d4c40438a71290b2\", \"relation\": \"reads\", \"result_cut\": \"6ac4f93233fd1443c69500c1279919b87d121a877d5464872cec1387460bf25c\", \"source\": \"port:hidden\", \"target\": \"operation:decoder_layer.2\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 2, \"parent_cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"receipt\": \"215cf20d2e94a1d599ee3bb6edbdd84d556e84ee35c76487d4c40438a71290b2\", \"relation\": \"reads\", \"result_cut\": \"6ac4f93233fd1443c69500c1279919b87d121a877d5464872cec1387460bf25c\", \"source\": \"port:keys\", \"target\": \"operation:decoder_layer.2\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 2, \"parent_cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"receipt\": \"215cf20d2e94a1d599ee3bb6edbdd84d556e84ee35c76487d4c40438a71290b2\", \"relation\": \"reads\", \"result_cut\": \"6ac4f93233fd1443c69500c1279919b87d121a877d5464872cec1387460bf25c\", \"source\": \"port:values\", \"target\": \"operation:decoder_layer.2\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 2, \"parent_cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"receipt\": \"215cf20d2e94a1d599ee3bb6edbdd84d556e84ee35c76487d4c40438a71290b2\", \"relation\": \"reads\", \"result_cut\": \"6ac4f93233fd1443c69500c1279919b87d121a877d5464872cec1387460bf25c\", \"source\": \"port:layer\", \"target\": \"operation:decoder_layer.2\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 3, \"parent_cut\": \"13a7e985a611af65c035d3fa0f7d130cbfe86d9e9c36337f45e593b41f448584\", \"receipt\": \"b8943cce10e9f3667c9addef59b658e3d7784a0a96c1661a54e8bff7db0f926d\", \"relation\": \"writes\", \"result_cut\": \"bee99b7bdc8c5b42cda1141df51a97d990280ddc4084de2af5fe8bcb8837e4b8\", \"source\": \"operation:decoder_layer.0\", \"target\": \"port:keys\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 3, \"parent_cut\": \"13a7e985a611af65c035d3fa0f7d130cbfe86d9e9c36337f45e593b41f448584\", \"receipt\": \"b8943cce10e9f3667c9addef59b658e3d7784a0a96c1661a54e8bff7db0f926d\", \"relation\": \"writes\", \"result_cut\": \"bee99b7bdc8c5b42cda1141df51a97d990280ddc4084de2af5fe8bcb8837e4b8\", \"source\": \"operation:decoder_layer.0\", \"target\": \"port:values\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 3, \"parent_cut\": \"13a7e985a611af65c035d3fa0f7d130cbfe86d9e9c36337f45e593b41f448584\", \"receipt\": \"b8943cce10e9f3667c9addef59b658e3d7784a0a96c1661a54e8bff7db0f926d\", \"relation\": \"writes\", \"result_cut\": \"bee99b7bdc8c5b42cda1141df51a97d990280ddc4084de2af5fe8bcb8837e4b8\", \"source\": \"operation:decoder_layer.0\", \"target\": \"port:layer\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 3, \"parent_cut\": \"bee99b7bdc8c5b42cda1141df51a97d990280ddc4084de2af5fe8bcb8837e4b8\", \"receipt\": \"865b5ec3083dcec7bc13839edde061ba7e6ce76c741a6ff3c0c694ea6d270f18\", \"relation\": \"writes\", \"result_cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"source\": \"operation:decoder_layer.1\", \"target\": \"port:keys\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 3, \"parent_cut\": \"bee99b7bdc8c5b42cda1141df51a97d990280ddc4084de2af5fe8bcb8837e4b8\", \"receipt\": \"865b5ec3083dcec7bc13839edde061ba7e6ce76c741a6ff3c0c694ea6d270f18\", \"relation\": \"writes\", \"result_cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"source\": \"operation:decoder_layer.1\", \"target\": \"port:values\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 3, \"parent_cut\": \"bee99b7bdc8c5b42cda1141df51a97d990280ddc4084de2af5fe8bcb8837e4b8\", \"receipt\": \"865b5ec3083dcec7bc13839edde061ba7e6ce76c741a6ff3c0c694ea6d270f18\", \"relation\": \"writes\", \"result_cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"source\": \"operation:decoder_layer.1\", \"target\": \"port:layer\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 3, \"parent_cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"receipt\": \"215cf20d2e94a1d599ee3bb6edbdd84d556e84ee35c76487d4c40438a71290b2\", \"relation\": \"writes\", \"result_cut\": \"6ac4f93233fd1443c69500c1279919b87d121a877d5464872cec1387460bf25c\", \"source\": \"operation:decoder_layer.2\", \"target\": \"port:keys\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 3, \"parent_cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"receipt\": \"215cf20d2e94a1d599ee3bb6edbdd84d556e84ee35c76487d4c40438a71290b2\", \"relation\": \"writes\", \"result_cut\": \"6ac4f93233fd1443c69500c1279919b87d121a877d5464872cec1387460bf25c\", \"source\": \"operation:decoder_layer.2\", \"target\": \"port:values\", \"transition_index\": 0}, {\"footprint\": \"declared\", \"hop\": 3, \"parent_cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"receipt\": \"215cf20d2e94a1d599ee3bb6edbdd84d556e84ee35c76487d4c40438a71290b2\", \"relation\": \"writes\", \"result_cut\": \"6ac4f93233fd1443c69500c1279919b87d121a877d5464872cec1387460bf25c\", \"source\": \"operation:decoder_layer.2\", \"target\": \"port:layer\", \"transition_index\": 0}], \"nodes\": [\"operation:decoder_layer.0\", \"operation:decoder_layer.1\", \"operation:decoder_layer.2\", \"operation:model.embed_tokens\", \"port:hidden\", \"port:keys\", \"port:layer\", \"port:tokens\", \"port:values\"], \"scope\": \"structural reachability across recorded transactions; not a temporal or branch-specific path\", \"truncated\": false}\n{\"authority\": \"declared-provenance-not-semantic-proof\", \"cut_id\": \"6ac4f93233fd1443c69500c1279919b87d121a877d5464872cec1387460bf25c\", \"slot\": \"hidden\", \"unresolved\": [\"keys\", \"layer\", \"tokens\", \"values\"], \"writers\": [{\"cut\": \"6ac4f93233fd1443c69500c1279919b87d121a877d5464872cec1387460bf25c\", \"cut_scope\": \"receipt-reference\", \"enclosing_receipt\": null, \"operation\": \"decoder_layer.2\", \"point\": {\"edge\": \"before\", \"family\": \"qwen2\", \"index\": 3, \"local_clock\": 3, \"logical_step\": 4, \"next_operation\": \"decoder_layer.3\", \"operator\": \"layer\", \"phase\": \"layer\"}, \"reads\": [\"tokens\", \"hidden\", \"keys\", \"values\", \"layer\"], \"receipt\": \"215cf20d2e94a1d599ee3bb6edbdd84d556e84ee35c76487d4c40438a71290b2\", \"receipt_result\": \"6ac4f93233fd1443c69500c1279919b87d121a877d5464872cec1387460bf25c\", \"status\": \"declared-dependency\", \"writes_needed\": [\"hidden\"]}, {\"cut\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"cut_scope\": \"receipt-reference\", \"enclosing_receipt\": null, \"operation\": \"decoder_layer.1\", \"point\": {\"edge\": \"before\", \"family\": \"qwen2\", \"index\": 2, \"local_clock\": 2, \"logical_step\": 4, \"next_operation\": \"decoder_layer.2\", \"operator\": \"layer\", \"phase\": \"layer\"}, \"reads\": [\"tokens\", \"hidden\", \"keys\", \"values\", \"layer\"], \"receipt\": \"865b5ec3083dcec7bc13839edde061ba7e6ce76c741a6ff3c0c694ea6d270f18\", \"receipt_result\": \"2ef8eb63e6429b43f92c6995258ee7700863052394194da7efa1a20fc47df29c\", \"status\": \"declared-dependency\", \"writes_needed\": [\"hidden\", \"keys\", \"layer\", \"values\"]}, {\"cut\": \"bee99b7bdc8c5b42cda1141df51a97d990280ddc4084de2af5fe8bcb8837e4b8\", \"cut_scope\": \"receipt-reference\", \"enclosing_receipt\": null, \"operation\": \"decoder_layer.0\", \"point\": {\"edge\": \"before\", \"family\": \"qwen2\", \"index\": 1, \"local_clock\": 1, \"logical_step\": 4, \"next_operation\": \"decoder_layer.1\", \"operator\": \"layer\", \"phase\": \"layer\"}, \"reads\": [\"tokens\", \"hidden\", \"keys\", \"values\", \"layer\"], \"receipt\": \"b8943cce10e9f3667c9addef59b658e3d7784a0a96c1661a54e8bff7db0f926d\", \"receipt_result\": \"bee99b7bdc8c5b42cda1141df51a97d990280ddc4084de2af5fe8bcb8837e4b8\", \"status\": \"declared-dependency\", \"writes_needed\": [\"hidden\", \"keys\", \"layer\", \"values\"]}, {\"cut\": \"13a7e985a611af65c035d3fa0f7d130cbfe86d9e9c36337f45e593b41f448584\", \"cut_scope\": \"receipt-reference\", \"enclosing_receipt\": null, \"operation\": \"model.embed_tokens\", \"point\": {\"edge\": \"before\", \"family\": \"qwen2\", \"index\": 0, \"local_clock\": 0, \"logical_step\": 4, \"next_operation\": \"decoder_layer.0\", \"operator\": \"layer\", \"phase\": \"layer\"}, \"reads\": [\"tokens\"], \"receipt\": \"eb57817cf40fe050533271518673deef5a45de78c51a6b52fc34f33ad987b943\", \"receipt_result\": \"13a7e985a611af65c035d3fa0f7d130cbfe86d9e9c36337f45e593b41f448584\", \"status\": \"declared-dependency\", \"writes_needed\": [\"hidden\"]}, {\"cut\": \"912f5fbcf512ae71a987c5296aa8aa752111cf6d6a6fc84431263fe55338d08c\", \"operation\": \"restore\", \"receipt\": \"dfdd4d795f5ffe4b0abd9e4da83eaf6193880a4953372fcd09fb7e941f5ef739\", \"status\": \"ancestry-boundary\"}]}\n{\"branch\": \"intervention\", \"cursor\": {\"edge\": \"before\", \"family\": \"qwen2\", \"index\": 3, \"local_clock\": 3, \"logical_step\": 4, \"next_operation\": \"decoder_layer.3\", \"operator\": \"layer\", \"phase\": \"layer\"}, \"cut_id\": \"c997a6c92cdd50e1d99461836744dfdd2369bc11f5eaba5448ff72b032a8d39e\", \"parent_cut\": \"6ac4f93233fd1443c69500c1279919b87d121a877d5464872cec1387460bf25c\"}\n{\"error\": \"path is read-only or outside the declared mutable closure: hidden\", \"ok\": false}\nTraceback (most recent call last):\n  File \"<frozen runpy>\", line 203, in _run_module_as_main\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"/mnt/hdd8tb/mdb/uv-cache/archive-v0/q6ClXpyzpq9cAC4a/lib/python3.14/site-packages/mdb/worker_bootstrap.py\", line 66, in <module>\n    main()\n    ~~~~^^\n  File \"/mnt/hdd8tb/mdb/uv-cache/archive-v0/q6ClXpyzpq9cAC4a/lib/python3.14/site-packages/mdb/worker_bootstrap.py\", line 62, in main\n    runpy.run_path(str(worker), run_name=\"__main__\")\n    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"<frozen runpy>\", line 294, in run_path\n  File \"<frozen runpy>\", line 98, in _run_module_code\n  File \"<frozen runpy>\", line 88, in _run_code\n  File \"project_analysis_worker.py\", line 100, in <module>\n    main()\n    ~~~~^^\n  File \"project_analysis_worker.py\", line 88, in main\n    result = qualify(DecoderAdapter(model), ids, root / \"project\")\n  File \"project_analysis_worker.py\", line 36, in qualify\n    raise RuntimeError(f\"project qualification command failed: {command}\")\nRuntimeError: project qualification command failed: set hidden 0\n"
+    },
+    "artifacts": {
+      "schema": "mrun.run-artifacts-v1",
+      "job_id": "job-fe02ea3228f8",
+      "job_status": "failed",
+      "store": {
+        "endpoint": "http://192.168.68.202:9030",
+        "bucket": "mrun",
+        "cas_prefix": "cas/",
+        "runs_prefix": "runs/"
+      },
+      "runs_prefix": "s3://mrun/runs/job-fe02ea3228f8/",
+      "status": "failed-queued",
+      "errors": [
+        "finish: EndpointConnectionError: Could not connect to the endpoint URL: \"http://192.168.68.202:9030/\""
+      ],
+      "rows": 0,
+      "objects": 0,
+      "objects_pending": 0
+    }
+  },
+  "created_ts": 1793167869.374559,
+  "started_ts": 1793167869.5842166,
+  "finished_ts": 1793167938.3320265
+}

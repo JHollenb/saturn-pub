@@ -157,7 +157,22 @@ def component(project, sid, name):
 
 
 def execute(
-    project, sid, action, target=None, *, query=None, relation=None, cut_id=None, note=None
+    project,
+    sid,
+    action,
+    target=None,
+    *,
+    query=None,
+    relation=None,
+    cut_id=None,
+    note=None,
+    direction="upstream",
+    depth=4,
+    title=None,
+    kind="observation",
+    evidence=(),
+    analyzer="structure",
+    version=None,
 ):
     if sid is None:
         sessions = project.sessions()
@@ -165,6 +180,12 @@ def execute(
             raise ValueError("select --session-id for a project with zero or multiple sessions")
         sid = sessions[0]["session_id"]
     project.session(sid)
+    if action == "analyze":
+        return project.analyze(sid, analyzer=analyzer, version=version)
+    if action == "analyses":
+        return project.analyses(sid)
+    if action == "findings":
+        return project.findings(sid)
     if action == "list":
         return project.components(sid, query=query)
     if target is None:
@@ -173,6 +194,17 @@ def execute(
         return project.component(sid, target)
     if action == "xrefs":
         return project.xrefs(sid, target, relation=relation)
+    if action in {"callers", "consumers", "trace"}:
+        direction = {"callers": "upstream", "consumers": "downstream"}.get(action, direction)
+        return project.trace(
+            sid, target, direction=direction, depth=1 if action != "trace" else depth
+        )
+    if action == "backtrace":
+        return project.backtrace(sid, target.removeprefix("port:"), cut_id=cut_id)
+    if action == "finding":
+        return project.finding(
+            sid, target, title, kind=kind, note=note, evidence=evidence, cut_id=cut_id
+        )
     if action == "cut":
         return project.cut_descriptor(sid, target)
     if action == "annotate":
@@ -184,6 +216,42 @@ def execute(
     raise ValueError(f"unknown project action: {action}")
 
 
+def add_arguments(parser, *, extra_actions=()):
+    parser.add_argument(
+        "action",
+        choices=(
+            *extra_actions,
+            "list",
+            "show",
+            "xrefs",
+            "cut",
+            "annotate",
+            "analyze",
+            "analyses",
+            "callers",
+            "consumers",
+            "trace",
+            "backtrace",
+            "finding",
+            "findings",
+        ),
+    )
+    parser.add_argument("target", nargs="?")
+    parser.add_argument("--query")
+    parser.add_argument("--relation", choices=("reads", "writes", "invalidates"))
+    parser.add_argument("--cut-id")
+    parser.add_argument("--note")
+    parser.add_argument("--direction", choices=("upstream", "downstream"), default="upstream")
+    parser.add_argument("--depth", type=int, default=4)
+    parser.add_argument("--title")
+    parser.add_argument(
+        "--kind", choices=("observation", "inference", "causal-claim"), default="observation"
+    )
+    parser.add_argument("--evidence", action="append", default=[])
+    parser.add_argument("--analyzer", default="structure")
+    parser.add_argument("--version")
+
+
 def command(project, sid, words):
     """Same queries in the attached debugger shell, with no second executor."""
 
@@ -192,12 +260,7 @@ def command(project, sid, words):
             raise ValueError(message)
 
     parser = Parser(prog="project", add_help=False)
-    parser.add_argument("action", choices=("list", "show", "xrefs", "cut", "annotate"))
-    parser.add_argument("target", nargs="?")
-    parser.add_argument("--query")
-    parser.add_argument("--relation", choices=("reads", "writes", "invalidates"))
-    parser.add_argument("--cut-id")
-    parser.add_argument("--note")
+    add_arguments(parser)
     args = vars(parser.parse_args(words))
     result = execute(project, sid, **args)
     return result if isinstance(result, dict) else {"rows": result}
