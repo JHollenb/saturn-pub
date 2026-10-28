@@ -447,15 +447,31 @@ class Project:
                     if data.get("operation") not in {"restore", "abort"} and result != parent
                     else None
                 )
-                graph.add_action(
+                inputs = [nodes[parent]] if parent in nodes else []
+                if data.get("operation") in {"commit", "abort"}:
+                    candidate = nodes.get(data.get("candidate"))
+                    if candidate and candidate not in inputs:
+                        inputs.append(candidate)
+                action = graph.add_action(
                     act_ref=f"cas://sha256/{receipt.fingerprint}",
-                    inputs=(() if parent not in nodes else (nodes[parent],)),
+                    inputs=inputs,
                     output=output,
                     receipt_refs=(f"cas://sha256/{receipt.fingerprint}",),
                     binding=NodeBinding(model=json.loads(row["identity"]), session=sid),
                     metadata={"native_receipt": data},
                     evidence="observed",
                 )
+                if data.get("operation") == "restore" and result in nodes:
+                    # Selection revisits an older cut. Preserve the reference
+                    # outside computation lineage, where it would form a cycle.
+                    graph.add_edge(
+                        action,
+                        nodes[result],
+                        "describes",
+                        graph="knowledge",
+                        evidence="observed",
+                        metadata={"role": "restore-target"},
+                    )
             for entry in self._annotations(sid).list():
                 annotation = self._annotations(sid).show(entry["annotation_id"])
                 source = graph.add_source(

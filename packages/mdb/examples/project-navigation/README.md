@@ -43,3 +43,10 @@ mdb public --tiny qwen3 --project ./project --session-id demo --resume
 
 The separate pretrained qualification is in
 [PROJECT-ANALYSIS-QUALIFICATION.md](../../docs/PROJECT-ANALYSIS-QUALIFICATION.md).
+
+An offline DAG experiment is available as `python explore_dags.py PROJECT
+--session-id demo --out ./dag-output`. It reuses `StateGraph` to compare the cyclic
+component-name graph with native-cut and versioned-port DAGs, reports missing
+provenance, and exports a sealed descriptive graph. It currently handles only
+declared single-transition transactions and Act/copy records. See
+[DAG-EXPLORATION.md](../../docs/DAG-EXPLORATION.md) for the findings and corrections.

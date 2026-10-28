@@ -341,6 +341,9 @@ class SaturnPubDebuggerAdapter(CallbackDebuggerAdapter):
         act = replace(act, invalidates=tuple(slot["invalidates"]))
         branch = self.session.fork(parent)
         try:
+            # Fork capture has its own native lineage identity. Retain the
+            # actual Act parent, not only the pre-fork cut and edited result.
+            self._retain(branch.capture(retain=False))
             branch.apply(act)
             candidate = self._retain(branch.capture(retain=False))
             self._extra_receipts.extend(branch.receipts)

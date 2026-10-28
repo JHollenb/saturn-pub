@@ -139,6 +139,45 @@ def test_mdb_breakpoints_and_native_diff_share_retained_cuts(tmp_path):
     owner.close()
 
 
+def test_intervention_dag_retains_actual_parent_and_commit_candidate(tmp_path):
+    project, adapter, owner, debug = opened(tmp_path)
+    parent = debug.checkpoint("parent")["cut_id"]
+    spec = ActSpec("value", 9, parent_cut=parent)
+    preview = adapter.preview_act(spec)
+    applied = next(
+        r.to_dict() for r in project.receipts("experiment") if r.to_dict()["operation"] == "apply"
+    )
+    actual_parent = project.cut_descriptor("experiment", applied["parent"])
+    assert actual_parent["parent"] == parent
+    assert applied["result"] == preview["candidate_cut"]
+    adapter.commit_act(spec.act_id)
+    graph = project.graph("experiment")
+    committed = next(
+        n
+        for n in graph.nodes.values()
+        if n.kind == "action" and n.content["metadata"]["native_receipt"]["operation"] == "commit"
+    )
+    candidate = next(
+        n
+        for n in graph.nodes.values()
+        if n.content.get("state_fingerprint") == preview["candidate_cut"]
+    )
+    assert candidate.node_id in committed.content["inputs"]
+    ancestors = graph.lineage(committed.node_id)
+    assert any(
+        n.kind == "action" and n.content["metadata"]["native_receipt"]["operation"] == "apply"
+        for n in ancestors
+    )
+    adapter.restore(parent)
+    graph = project.graph("experiment")
+    assert graph.verify().ok
+    assert any(
+        e.graph == "knowledge" and e.metadata.get("role") == "restore-target"
+        for e in graph.edges.values()
+    )
+    owner.close()
+
+
 def test_project_reopen_annotations_graph_and_multiple_sessions(tmp_path):
     project, adapter, owner, debug = opened(tmp_path)
     debug.step(2)

@@ -1,0 +1,64 @@
+{
+  "session": "demo",
+  "cuts": 6,
+  "receipts": 6,
+  "native_graph": {
+    "nodes": 13,
+    "edges": 14,
+    "verified_dag": true,
+    "redundant_execution_edges": 3
+  },
+  "component_graph": {
+    "acyclic": false,
+    "nodes": 10,
+    "cycle": [
+      "port:hidden",
+      "operation:decoder_layer.0",
+      "port:hidden"
+    ]
+  },
+  "versioned_port_graph": {
+    "nodes": 49,
+    "edges": 40,
+    "verified_dag": true,
+    "gaps": [
+      {
+        "kind": "unretained-parent",
+        "receipt": "804ba73ab1a0a19cbec1d79c32c4a5332efdb80dc69d2905c708bb4dbf3cce54"
+      }
+    ]
+  },
+  "missing_receipt_parents": [
+    "752a128f7aa262e4221ceb98a17927c951797c3fffd1def41767d617346406d8"
+  ],
+  "equal_state_different_lineage": [
+    [
+      "37b2bdb4b6e802b5c2996c3c48ce3d54fe8fdd504d417a2fa8640c7edb44c4aa",
+      "5c3197b2a026b9a7b0bc37ba5ebc190f7cc1775b5275d05f3ff282aa5fdfbbb1"
+    ],
+    [
+      "3b5fdd5a601717c5b1542afa94f8422f56b6f006319118610e9ab904dbadcb0e",
+      "c1497f50a35cba204d812d39c2eded42811db15f5eee5b3b6e2838c8c5f9293d"
+    ]
+  ],
+  "operations": {
+    "continue": 2,
+    "apply": 1,
+    "commit": 1,
+    "restore": 2
+  },
+  "commit_candidate_is_graph_input": [
+    false
+  ],
+  "committed_hidden_data_ancestors": [
+    {
+      "commit": "37274c7c00c4511f19874a1c524d74a827928751074950d9fd112111ff870c31",
+      "slots": [
+        "hidden"
+      ],
+      "actions": [
+        "replace"
+      ]
+    }
+  ]
+}
