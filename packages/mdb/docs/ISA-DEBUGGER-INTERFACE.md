@@ -1,7 +1,9 @@
 # MDB discovery debugger interface
 
-Status: draft interface design, 2026-10-30. No commands or capabilities proposed
-here have been implemented by this design change. The
+Status: full interface design, 2026-10-30. The initial executable subset is
+documented in [Discovery debugger](DISCOVERY-DEBUGGER.md). This document also
+specifies future contracts; consult that guide and capability negotiation for
+the implemented surface. The
 [input and capability guide](ISA-DISCOVERY-DEBUGGER.md) describes the current R3
 ISA model and the existing debugger foundations.
 

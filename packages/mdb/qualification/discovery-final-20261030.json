@@ -1,0 +1,170 @@
+{
+  "archive_sha256": "5e15e5dc8e6a5fc5e81e80f806be1c6731c376e5f4fefbda1d91c91cceaf8fe3",
+  "artifact_publication_status": "failed-queued",
+  "backend": "cpu-fp32",
+  "branch_vs_native": {
+    "dest": {
+      "changed": false,
+      "max_abs": 0.0
+    },
+    "flags": {
+      "changed": true,
+      "max_abs": 32.37635803222656
+    },
+    "imm": {
+      "changed": true,
+      "max_abs": 8.099315643310547
+    },
+    "length": {
+      "changed": false,
+      "max_abs": 0.0
+    },
+    "regs": {
+      "changed": true,
+      "max_abs": 8.661873817443848
+    },
+    "src": {
+      "changed": false,
+      "max_abs": 0.0
+    },
+    "store": {
+      "changed": false,
+      "max_abs": 0.0
+    },
+    "store_addr": {
+      "changed": true,
+      "max_abs": 13.254793167114258
+    },
+    "store_value": {
+      "changed": true,
+      "max_abs": 5.134270668029785
+    },
+    "syscall": {
+      "changed": false,
+      "max_abs": 0.0
+    },
+    "width": {
+      "changed": false,
+      "max_abs": 0.0
+    }
+  },
+  "checkpoint_sha256": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+  "cli": {
+    "commands_executed": 14,
+    "handler_hits": 1,
+    "returncode": 0,
+    "work": {
+      "act_commits": 1,
+      "architectural_commits": 0,
+      "branches": 2,
+      "commands": 15,
+      "logical_forward_rows": 1,
+      "model_forwards": 0,
+      "native_operations": 773,
+      "physical_batches": 0,
+      "preparation_operations": 1,
+      "reference_forwards": 0,
+      "reference_native_operations": 0,
+      "replay_attempts": 773,
+      "replay_native_operations": 773
+    }
+  },
+  "cli_journal_records": 15,
+  "four_lane_stops": [
+    {
+      "lane_id": "lane_00",
+      "pc": 369,
+      "stop_causes": [
+        "breakpoint"
+      ]
+    },
+    {
+      "lane_id": "lane_01",
+      "pc": 369,
+      "stop_causes": [
+        "breakpoint"
+      ]
+    },
+    {
+      "lane_id": "lane_02",
+      "pc": 369,
+      "stop_causes": [
+        "breakpoint"
+      ]
+    },
+    {
+      "lane_id": "lane_03",
+      "pc": 369,
+      "stop_causes": [
+        "breakpoint"
+      ]
+    }
+  ],
+  "independent_native_audits": 2,
+  "job_id": "job-eb41365effc0",
+  "law": {
+    "entry": 359,
+    "exit": 369,
+    "inputs": [
+      "v000412"
+    ],
+    "module": "post.1",
+    "name": "mlp_003",
+    "outputs": [
+      "v000430"
+    ],
+    "site_id": "program:73181aecc4f2da50a03fbaf311164fe6c285d5c8f05fd10b8bc8dbfc7c9d6597/site/mlp_003"
+  },
+  "limits": [
+    "capture finishes before replay pause",
+    "resident scalar, no physical batch",
+    "live cuts do not restore across process restart",
+    "no RAM or syscall execution"
+  ],
+  "local_custody": "hash-verified archive recovered from worker log",
+  "main_controller_work": {
+    "act_commits": 1,
+    "architectural_commits": 3,
+    "branches": 6,
+    "commands": 41,
+    "logical_forward_rows": 6,
+    "model_forwards": 6,
+    "native_operations": 5877,
+    "physical_batches": 0,
+    "preparation_operations": 0,
+    "reference_forwards": 6,
+    "reference_native_operations": 3426,
+    "replay_attempts": 2451,
+    "replay_native_operations": 2451
+  },
+  "main_journal_records": 42,
+  "mechanics_status": "valid",
+  "native_all_head_audit_exact": true,
+  "native_controls": 6,
+  "peak_process_tree_rss_mb": 1744.5,
+  "physical_forwards": 14,
+  "predicted_RDI": [
+    252,
+    253,
+    254
+  ],
+  "predicted_offsets": [
+    0,
+    7,
+    14
+  ],
+  "restored_native_all_head_exact": true,
+  "schema": "mdb-discovery-qualification-summary-v1",
+  "scientific_claim": "debugger mechanics and bounded numerical parity",
+  "serving_inputs": "raw bytes and before-state only; no oracle state",
+  "source": {
+    "analyzer_sha256": "a4f934de700805d5932ef87bfb998a986a5c9de6693ec1dd31c07fc5dbd8dbad",
+    "mdb_payload_wheel_sha256": "12582c1cbab95b27c19d34212172d1b21b4cd52c18d59f4418729f9659bb162d",
+    "report_sha256": "6080806cc7672052260c0d9fcc9cbebffe126fb71eb2e294cbb64771559ac252",
+    "request_sha256": "2b97c406cea3aa700731ee0d3891c0471691b9cd632132bfa3be965379aad605",
+    "worker_sha256": "e129b8ea969a129474fb297ce21e6a3c4cf74ef033fe475afe24db952c475993"
+  },
+  "trace_captures": 6,
+  "update_pc": 370,
+  "worker_seconds": 10.705254327971488
+}

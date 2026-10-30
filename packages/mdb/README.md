@@ -3,7 +3,7 @@
 This is the `mdb-runtime` package in the Saturn repository, at `packages/mdb`.
 Run the commands below from this directory. From the repository root, use
 `pip install ./packages/mdb`. The import name remains `mdb`; installing this
-package does not install `saturn-pub`. See the [MDB overview](../../docs/mdb.md),
+package declares the public `saturn-pub` core as a dependency. See the [MDB overview](../../docs/mdb.md),
 [documentation index](../../docs/README.md) and [repository guide](../../docs/monorepo.md).
 
 Standalone model virtual memory and reversible model debugger, extracted from
@@ -21,6 +21,11 @@ in one project; see [public-session projects](docs/SATURN-PUB-PROJECTS.md).
 and retains verified native outcomes. Explicit Python backends execute the plans
 through the public replay APIs; supplied role labels remain distinct from native
 dataflow evidence. See the [circuit explorer](docs/CIRCUIT-EXPLORER.md).
+
+`mdb discovery` adds generic computation names, MLP/math/update stepping,
+breakpoints, resident scalar lanes, branches and bounded action scripts over
+native ATen replay. See the [discovery debugger walkthrough](docs/DISCOVERY-DEBUGGER.md)
+and [executed R3 script](examples/discovery/post1.mdb).
 
 Start the local GDB-style console after a base install:
 

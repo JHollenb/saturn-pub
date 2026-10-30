@@ -1,0 +1,18 @@
+# Executed against the real R3 root recipe by the installed CLI qualification.
+interface mdb-discovery-v1
+alias mlp_focus = module:post.1
+break mlp_focus exit --id post1_exit
+on-hit post1_exit
+    capture at_mlp
+    inspect mlp_focus:output
+    continue --defer
+end
+step forward
+call {"operation":"break","payload":{"action":"disable","id":"post1_exit"}}
+restore at_mlp
+fork zero_post1
+select zero_post1
+call {"operation":"act","payload":{"selector":"mlp_focus:output","value_spec":{"kind":"zeros_like"}}}
+step update
+step forward
+inspect outputs
