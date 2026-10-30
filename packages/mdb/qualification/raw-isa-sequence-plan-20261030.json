@@ -1,0 +1,107 @@
+{
+  "schema": "mdb-raw-isa-sequence-plan-v1",
+  "timestamp": "2026-10-30 23:19:25 UTC",
+  "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+  "execution": {
+    "backend": "cpu",
+    "dtype": "float32",
+    "threads": 1
+  },
+  "frontier": {
+    "kind": "raw-input",
+    "native_prefix_observed": false,
+    "allowed": [
+      "literal fifteen-byte instruction windows",
+      "initial register/flag bits",
+      "all frozen model weights",
+      "declared source equations"
+    ],
+    "forbidden_before_seal": [
+      "all native model calls",
+      "all native internal observations",
+      "all native output heads"
+    ]
+  },
+  "program_hex": "4881ef010000004831f74881c701000000",
+  "supplied_instructions": [
+    "SUB RDI,1 imm32",
+    "XOR RDI,RSI",
+    "ADD RDI,1 imm32"
+  ],
+  "cases": [
+    {
+      "case_id": "rdi_262",
+      "register_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        262
+      ],
+      "flags": [
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "case_id": "rdi_266",
+      "register_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        266
+      ],
+      "flags": [
+        0,
+        0,
+        0,
+        0
+      ]
+    }
+  ],
+  "arms": [
+    "native",
+    "U_swap",
+    "U_swap_P2native"
+  ],
+  "max_instructions": 3,
+  "first_instruction_only": {
+    "U_swap": "zero post.0, replace final out_proj return with frozen FP32 full-equation native U",
+    "U_swap_P2native": "same plus frozen FP32 full-equation native P2"
+  },
+  "continuation": {
+    "forecast": "each branch consumes its own predicted registers, flags and predicted-length offset",
+    "native": "each branch consumes its own actual model state; never recondition a sealed forecast",
+    "effects": "stop before store/syscall commit"
+  },
+  "scope_notes": [
+    "All fifteen window bytes participate; following XOR/ADD bytes change first-step context relative to the older repeated-SUB experiment.",
+    "262 is primary;266 is a shared-low-prefix comparison, not independent RSI mechanism replication.",
+    "Fixed cases chosen before numerical forecast; no forecast-guided selection.",
+    "Full weights and equations are supplied, no compressed model or semantic operation discovery claimed."
+  ],
+  "budgets": {
+    "max_physical_forwards": 24,
+    "max_replay_operations": 20000,
+    "timeout_seconds": 300,
+    "retries": 0
+  },
+  "measurements": [
+    "all eleven numerical heads and sign/argmax choices",
+    "actual decoder/inp/mixer/MLP return ports",
+    "literal per-step root joins",
+    "all register/flag and predicted length offsets",
+    "explicit target/collateral versus native trajectory",
+    "MDB typed replay parity and intervention receipts"
+  ],
+  "terminal_status": "unassessed"
+}

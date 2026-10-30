@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import math
+import sys
 from dataclasses import dataclass
 from typing import Any
 
@@ -51,7 +52,7 @@ class ForwardCapture:
 
 
 class _Recorder(TorchDispatchMode):
-    def __init__(self, model, arguments, max_operations, forward_call):
+    def __init__(self, model, arguments, max_operations, forward_call, capture_ports=False):
         super().__init__()
         self.allowed = {id(value): "input" for value in _leaves(arguments)}
         self.allowed.update({id(value): "parameter" for value in model.parameters()})
@@ -60,9 +61,126 @@ class _Recorder(TorchDispatchMode):
         self.values, self.initial_values, self.observed_values, self.events = {}, {}, {}, []
         self.max_operations, self.forward_call = max_operations, forward_call
         self.modules, self.hooks = [], []
-        for name, module in model.named_modules():
-            self.hooks.append(module.register_forward_pre_hook(self._enter(name or "<root>")))
-            self.hooks.append(module.register_forward_hook(self._leave, always_call=True))
+        self.capture_ports = capture_ports
+        if capture_ports:
+            self._init_ports(model, arguments)
+        else:
+            for name, module in model.named_modules():
+                self.hooks.append(module.register_forward_pre_hook(self._enter(name or "<root>")))
+                self.hooks.append(module.register_forward_hook(self._leave, always_call=True))
+
+    def _init_ports(self, model, arguments):
+        # Keep every declared alias while visiting cyclic module graphs only
+        # once per ancestry path. Hooks attach once per physical module object.
+        declarations, pending = [], [("<root>", model, frozenset())]
+        while pending:
+            name, module, ancestors = pending.pop()
+            declarations.append((name, module))
+            if len(declarations) > 10000:
+                raise ForwardRecordingError("native module declaration bound exceeded")
+            if id(module) in ancestors:
+                continue
+            next_ancestors = ancestors | {id(module)}
+            for child_name, child in reversed(list(module._modules.items())):
+                if child is not None:
+                    path = child_name if name == "<root>" else name + "." + child_name
+                    pending.append((path, child, next_ancestors))
+        self.port_modules, self.port_calls, self.port_state = [], [], {"parameters": [], "buffers": []}
+        self.port_by_object, self.port_objects = {}, {}
+        self.port_stack, self.port_occurrences, self.port_clock = [], {}, 0
+        for name, module in declarations:
+            key = id(module)
+            if key not in self.port_by_object:
+                row = {"id": f"module_{len(self.port_modules):06d}", "canonical_path": name,
+                       "paths": [], "type": type(module).__module__ + "." + type(module).__qualname__}
+                self.port_modules.append(row)
+                self.port_by_object[key], self.port_objects[key] = row, module
+            self.port_by_object[key]["paths"].append(name)
+        # Opt-in capture declares unused roots too; a parameter return or an
+        # identity module must never invent an ATen producer to acquire a port.
+        for value in _leaves(arguments):
+            self.remember(value)
+        for name, module in declarations:
+            for kind, members in (("parameters", module._parameters), ("buffers", module._buffers)):
+                for member, value in members.items():
+                    full_name = member if name == "<root>" else name + "." + member
+                    identifier = None if value is None else self.remember(value)
+                    self.port_state[kind].append({"name": full_name, "value_id": identifier})
+        try:
+            for key, module in self.port_objects.items():
+                self.hooks.append(module.register_forward_pre_hook(self._port_enter(key), with_kwargs=True))
+                self.hooks.append(module.register_forward_hook(self._port_leave, with_kwargs=True, always_call=True))
+            self.port_hook_sets = {key: self._hook_set(module) for key, module in self.port_objects.items()}
+        except BaseException:
+            self.close()
+            raise
+
+    @staticmethod
+    def _hook_set(module):
+        return (tuple((key, id(value)) for key, value in module._forward_pre_hooks.items()),
+                tuple((key, id(value)) for key, value in module._forward_hooks.items()))
+
+    def _port_encode(self, value):
+        from .forward_ports import pack_port_tree
+
+        return pack_port_tree(self.encode(value))
+
+    def _port_enter(self, key):
+        def enter(module, args, kwargs):
+            declaration = self.port_by_object[key]
+            occurrence = self.port_occurrences.get(key, 0)
+            self.port_occurrences[key] = occurrence + 1
+            row = {"id": f"call_{len(self.port_calls):06d}", "module_id": declaration["id"],
+                   "occurrence": occurrence, "parent": None if not self.port_stack else self.port_stack[-1][1]["id"],
+                   "entry_pc": len(self.events), "entry_order": self.port_clock,
+                   "args": self._port_encode(args), "kwargs": self._port_encode(kwargs)}
+            self.port_clock += 1
+            self.port_calls.append(row)
+            self.port_stack.append((module, row, sys.exc_info()[1:]))
+            self.modules.append(declaration["canonical_path"])
+        return enter
+
+    def _port_leave(self, module, args, kwargs, output):
+        del args, kwargs
+        # A prepend prehook can abort before our entry hook (notably a genuine
+        # prefix boundary). Its always-call exit must not pop its parent call.
+        owners = [index for index, entry in enumerate(self.port_stack) if entry[0] is module]
+        if not owners:
+            return
+        # Torch's always_call hooks catch Exception, not BaseException. A
+        # genuine prefix abort intentionally uses BaseException; when its
+        # wrapper returns, inner entered calls are observably unwound, not
+        # successfully returned. Close those frames without inventing outputs.
+        owner = owners[-1]
+        while len(self.port_stack) - 1 > owner:
+            _, abandoned, _ = self.port_stack.pop()
+            self.modules.pop()
+            abandoned.update(exit_pc=len(self.events), exit_order=self.port_clock,
+                             status="aborted", exit_provenance="parent-return-unwind-upper-bound")
+            self.port_clock += 1
+        _, row, entered_exception = self.port_stack.pop()
+        self.modules.pop()
+        current_exception = sys.exc_info()[1:]
+        aborted = (current_exception[0] is not None
+                   and (current_exception[0] is not entered_exception[0]
+                        or current_exception[1] is not entered_exception[1]))
+        row.update(exit_pc=len(self.events), exit_order=self.port_clock,
+                   status="aborted" if aborted else "returned")
+        self.port_clock += 1
+        if aborted:
+            row["exception_type"] = type(current_exception[0]).__module__ + "." + type(current_exception[0]).__qualname__
+        else:
+            row["return"] = self._port_encode(output)
+
+    def port_manifest(self):
+        if self.port_stack:
+            raise ForwardRecordingError("native module invocation did not close")
+        if any(self._hook_set(module) != self.port_hook_sets[key] for key, module in self.port_objects.items()):
+            raise ForwardRecordingError("module hooks changed during native port capture")
+        return {"schema": "mdb-native-ports-v1", "encoding": "trace-tags-with-ordered-dict-pairs-v1",
+                "module_provenance": "declared module graph; hooks identify physical modules, not the attribute alias used",
+                "state_provenance": "declared _parameters/_buffers, including shared aliases and absent entries; read-only roots",
+                "modules": self.port_modules, "calls": self.port_calls, "state": self.port_state}
 
     def _enter(self, name):
         def enter(_module, _args):
@@ -170,23 +288,26 @@ def _references(value):
 
 
 def record_forward(model, args_tuple, kwargs=None, *, model_identity, execution,
-                   input_identity, metadata=None, max_operations=8192):
+                   input_identity, metadata=None, max_operations=8192, capture_ports=False):
     """Observe one unchanged forward; admission accepts no semantic symbol map."""
     from .forward_symbols import seal_trace
 
     if any(module.training for module in model.modules()):
         raise ForwardRecordingError("use a frozen model in evaluation mode")
+    if type(capture_ports) is not bool:
+        raise ForwardRecordingError("capture_ports must be boolean")
     metadata = dict(metadata or {})
     allowed_metadata = {"forward_call", "program_step", "clock_scope", "source_refs", "source_hashes",
                         "checkpoint_sha256", "case_id"}
     if set(metadata) - allowed_metadata:
         raise ForwardRecordingError("recorder metadata admits only clock and source provenance; no label maps")
     recorder = _Recorder(model, (args_tuple, kwargs or {}), max_operations,
-                         int(metadata.get("forward_call", 0)))
+                         int(metadata.get("forward_call", 0)), capture_ports=capture_ports)
     try:
         with torch.no_grad(), recorder:
             output = model(*args_tuple, **(kwargs or {}))
         outputs = recorder.encode(output)
+        ports = {"native_ports": recorder.port_manifest()} if capture_ports else {}
         trace = seal_trace({
             "schema": "mdb-forward-symbols-v1", "model_identity": model_identity,
             "execution": execution, "input_identity": input_identity,
@@ -194,7 +315,7 @@ def record_forward(model, args_tuple, kwargs=None, *, model_identity, execution,
             "capture_status": "complete", "semantic_labels_supplied": False,
             "metadata": {**metadata, "observer": "native-TorchDispatchMode",
                          "value_identity": "run-local-SSA", "replay_roots": "inputs-parameters-native-literals-only",
-                         "semantic_interpretation": "unassigned"},
+                         "semantic_interpretation": "unassigned", **ports},
         })
         return ForwardCapture(trace, recorder.initial_values, recorder.observed_values, output)
     finally:

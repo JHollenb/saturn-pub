@@ -11,7 +11,9 @@ TOOLS = {"cache": "vm_cache", "hyperion": "hyperion", "context": "context_cli",
     "vm": "vm_cli", "public": "saturn_pub_adapter", "project": "project",
     "symbols": "symbol_lifecycle_project", "symbol-trace": "symbol_trace",
     "symbol-producers": "symbol_producers", "forward-symbols": "forward_symbols",
-    "circuits": "circuit_explorer", "discovery": "discovery_cli"}
+    "circuits": "circuit_explorer", "discovery": "discovery_cli",
+    "ports": "forward_ports", "forecast": "forecast_transaction",
+    "equations": "equation_comparison"}
 
 
 def main(argv=None):

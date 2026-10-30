@@ -44,6 +44,11 @@ uses genuine prefix capture and full-weight NumPy equations to predict 32 fresh
 suffix branches before native execution, including register collateral and its
 repair. It qualifies a conditional suffix account and documents the remaining
 MDB workflow gaps.
+The [computation forecast workflow](docs/COMPUTATION-FORECAST-WORKFLOW.md)
+provides actual module/parameter ports, bounded Python forecast scripts with a
+durable seal before native release, and automatic equation/collateral comparisons
+with immutable applicability records. `mdb ports`, `mdb forecast` and
+`mdb equations` expose framework-free evidence inspection.
 
 Start the local GDB-style console after a base install:
 

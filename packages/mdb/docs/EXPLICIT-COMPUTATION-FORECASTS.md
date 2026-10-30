@@ -206,6 +206,13 @@ structural; inferred ISA names are optional.
 
 ## What would make this significantly easier in MDB
 
+Implementation followup: the [computation forecast workflow](COMPUTATION-FORECAST-WORKFLOW.md)
+now supplies opt-in actual module and parameter ports, a scripted forecast
+transaction, and automatic equation/collateral reports with immutable applicability
+records. These passed 111 installed-wheel tests. The list below records the
+friction encountered by this original campaign; compact shared evidence and
+automatic rule induction remain open.
+
 1. **Actual module and named parameter ports.** A structural `dt_proj:output`
    currently identifies an affine operator range that excludes its bias add.
    The actual module output is a later SSA value. Depthwise convolution also
