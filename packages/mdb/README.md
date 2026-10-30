@@ -29,6 +29,7 @@ native ATen replay. Selected alias-aware frontiers support durable resume;
 worker. A separate frozen native forward API batches independent inputs and
 candidate output edits, while component debugging uses scalar replay. See the
 [discovery debugger walkthrough](docs/DISCOVERY-DEBUGGER.md),
+[computation discovery workflow](docs/COMPUTATION-DISCOVERY-WORKFLOW.md),
 [route discovery workflow](docs/ROUTE-DISCOVERY-WORKFLOW.md),
 [measured bottlenecks](docs/DISCOVERY-BOTTLENECKS.md) and
 [executed R3 script](examples/discovery/post1.mdb).

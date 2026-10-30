@@ -1,5 +1,9 @@
 # A working route-discovery session
 
+For the research loop and how MDB, Saturn, mrun and the symbol table fit together,
+start with [Discovering computations with MDB and Saturn](COMPUTATION-DISCOVERY-WORKFLOW.md).
+This guide supplies the executed commands and recovery details.
+
 Implementation: [`562209fc56d563cd345568c5ec04b10ff9656a87`](https://github.com/JHollenb/saturn-pub/commit/562209fc56d563cd345568c5ec04b10ff9656a87).
 This example follows the executed R3 qualification `job-a61b5618e8db`.
 It uses actual model predictions and tensor operations. The
