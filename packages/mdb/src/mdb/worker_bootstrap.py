@@ -59,7 +59,14 @@ def main():
         observed = receipt()
         Path("execution-environment.json").write_text(json.dumps(observed, sort_keys=True) + "\n")
         print("MDB_EXECUTION_ENVIRONMENT=" + json.dumps(observed, sort_keys=True), flush=True)
-    runpy.run_path(str(worker), run_name="__main__")
+    # run_path replaces argv[0] only. Remove the bootstrap's worker argument
+    # so an argparse-based worker sees exactly its own command-line options.
+    bootstrap_argv = sys.argv
+    sys.argv = [str(worker), *bootstrap_argv[2:]]
+    try:
+        runpy.run_path(str(worker), run_name="__main__")
+    finally:
+        sys.argv = bootstrap_argv
 
 
 if __name__ == "__main__":

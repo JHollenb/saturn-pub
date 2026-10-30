@@ -17,6 +17,11 @@ For a Saturn-pub Session, use `BenchSession.from_saturn_pub(session, project=Pro
 console. Public symbols, backtraces and watches join durable graphs and annotations
 in one project; see [public-session projects](docs/SATURN-PUB-PROJECTS.md).
 
+`mdb circuits` browses trace-backed circuits, seals branch plans and predictions,
+and retains verified native outcomes. Explicit Python backends execute the plans
+through the public replay APIs; supplied role labels remain distinct from native
+dataflow evidence. See the [circuit explorer](docs/CIRCUIT-EXPLORER.md).
+
 Start the local GDB-style console after a base install:
 
 ```sh

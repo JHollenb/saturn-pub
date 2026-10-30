@@ -1,0 +1,18 @@
+# Proposed discovery-v1 syntax; the current CLI does not execute this file.
+interface mdb-discovery-v1
+plan load isa-discovery-plan.example.json
+
+# A structural alias. No semantic operation label is required.
+alias mlp_focus = module:post.1
+break mlp_focus exit --id mlp_exit --lanes all
+
+# Run once for each matched occurrence. Continue is queued after the handler.
+on-hit mlp_exit
+    capture auto --restore live
+    log inputs outputs dependencies --source live --summary
+    continue --defer
+end
+
+# This plan specifies four resident scalar lanes, not a physical batch of four.
+run --all --stop-policy lane
+export ./isa-discovery-example

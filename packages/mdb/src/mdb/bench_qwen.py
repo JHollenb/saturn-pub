@@ -5,33 +5,31 @@ backend owns tensors, and Model OS remains token admission/commit authority.
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+import fcntl
+import json
+import shutil
+from contextlib import contextmanager, nullcontext
 from copy import deepcopy
+from dataclasses import dataclass, field
 from functools import wraps
 from hashlib import sha256
-import json
-import fcntl
-import os
 from pathlib import Path
-import shutil
-import tempfile
 from threading import RLock
-from typing import Any, Mapping
-from contextlib import contextmanager
+from typing import Any
 
 import torch
 
 from mdb.ar.causal_context_qwen import QwenTokenExecution
 from mdb.ar.program_record import ProgramRecorder
+from mdb.bench_metrics import BenchMetrics
+from mdb.bench_publication import BenchPublication, recover_locked, writer_path
 from mdb.causal_context_vm import CausalContextVM
 from mdb.circuit_runtime import DirectoryArtifactStore
 from mdb.future_forest import PersistentFutureForest
-from mdb.model_os_causal_context import CausalContextQwenModelBackend, TOKEN_ADDRESS
+from mdb.model_os_causal_context import TOKEN_ADDRESS, CausalContextQwenModelBackend
 from mdb.model_os_contracts import content_digest
 from mdb.model_os_kernel import ModelOSExecutionError
 from mdb.vm_payload_cache import PayloadRef
-from mdb.bench_publication import BenchPublication, recover_locked, writer_path
-from mdb.bench_metrics import BenchMetrics
 
 BENCH_SCHEMA = "saturn-open-bench-v1"
 BENCH_CUT_SCHEMA = "saturn-open-bench-cut-v1"
@@ -49,8 +47,20 @@ def _serialized(method):
     def call(self, *args, **kwargs):
         with self._lock:
             self._check()
-            with self.publication.transaction():
-                return method(self, *args, **kwargs)
+            outer = self._serialization_depth == 0
+            batch = (outer and method.__name__ in {"step", "generate"}
+                     and self._optimized_capture())
+            self._serialization_depth += 1
+            try:
+                with self.publication.transaction():
+                    with self._command_publication() if batch else nullcontext():
+                        result = method(self, *args, **kwargs)
+            finally:
+                self._serialization_depth -= 1
+            if outer and method.__name__ in {"step", "generate", "restore", "fork", "checkout",
+                                   "configure_cot_register", "commit_edit", "abort_edit", "close"}:
+                self._render_cot_panel()
+            return result
     return call
 
 
@@ -217,6 +227,16 @@ class QwenBenchSession:
         self.publication.owner_lock = self._lock
         self._edit = None
         self._jacobian_pending = None
+        self._serialization_depth = 0
+        self._manifest_batch = False
+        self._manifest_dirty = False
+        self._weight_epoch = 0
+        self._frozen_readers = None
+        self._capture_execution = None
+        self._capture_staged = []
+        self._capture_logits = None
+        self._capture_stats = {"staged_tensors_encoded": 0, "staged_tensors_reused": 0,
+                               "logit_refs_reused": 0, "manifests_deferred": 0}
         self.events: list[dict] = []
         from mdb.source_frame_stack import SourceFrameStack
         with self.publication.initializing():
@@ -237,6 +257,9 @@ class QwenBenchSession:
         return self.branches[self.active]
 
     def _backend(self):
+        if self.active not in self.vm._sessions:
+            snapshot = self.artifacts.get(self.branch.cut)
+            self.vm.resume_session(self.active, snapshot["vm_checkpoint"])
         self.vm._resident(self.vm._session(self.active))
         return self.vm._session(self.active).backend
 
@@ -252,7 +275,8 @@ class QwenBenchSession:
                 "annotate_state", "list_state_annotations", "show_state_annotation", "state_lineage", "verify_state_annotations",
                 *(["memory_read", "memory_write", "memory_diff", "memory_probe",
                    "measure_circuit", "replay_circuit", "pin_jacobian_lens",
-                   "read_jacobian", "preview_jacobian_edit"] if self.publication.mode == "journal" else [])],
+                   "read_jacobian", "preview_jacobian_edit", "configure_cot_register",
+                   "cot_register", "cot_graph", "cot_pointer"] if self.publication.mode == "journal" else [])],
             "hidden_memory": {"protocol": "saturn-bench-hidden-memory-v1",
                 "available": self.publication.mode == "journal", "publication_mode_required": "journal",
                 "components": ["key", "value"], "selectors": ["layers", "row_start", "row_stop", "components"],
@@ -285,9 +309,88 @@ class QwenBenchSession:
                    if self._mlp_memory is not None else {})}
 
     def _publish(self):
+        if self._manifest_batch:
+            self._manifest_dirty = True
+            self._capture_stats["manifests_deferred"] += 1
+            return None
         ref = self.artifacts.put(self._manifest())
         self.publication.select(ref)
         return ref
+
+    def _optimized_capture(self):
+        if self._frozen_readers is None or not self._frozen_readers.valid:
+            return False
+        from .bench_cot import _config
+        config, _ = _config(self)
+        return bool(config and config.get("performance", {}).get("capture") == "changed-state-v1")
+
+    @contextmanager
+    def _command_publication(self):
+        previous = (deepcopy(self.branches), dict(self.cuts), list(self.events),
+                    self.active, list(self.vm.memory_events))
+        self._manifest_batch, self._manifest_dirty = True, False
+        try:
+            with self.publication.atomic_selection():
+                yield
+                self._manifest_batch = False
+                if self._manifest_dirty:
+                    self._publish()
+        except BaseException:
+            self._manifest_batch = False
+            (self.branches, self.cuts, self.events,
+             self.active, self.vm.memory_events) = previous
+            self._restore(self.branch.cut)
+            raise
+        finally:
+            self._manifest_batch = self._manifest_dirty = False
+
+    def _invalidate_capture(self):
+        self._capture_execution = None
+        self._capture_staged = []
+        self._capture_logits = None
+
+    @contextmanager
+    def weight_mutation(self):
+        """Exclusive mutation boundary, including untracked .data/custom-kernel writes.
+
+        Fast bindings remain invalid until explicit reconfiguration verifies
+        the new lens/model. Ordinary mutable callers should retain strict mode.
+        """
+        with self._lock:
+            self._check()
+            self._weight_epoch += 1
+            if self._frozen_readers is not None:
+                self._frozen_readers.invalidate()
+            self._invalidate_capture()
+            yield self.model
+
+    def _logits_ref(self, tensor):
+        if tensor is None:
+            return None
+        if not self._optimized_capture():
+            return self._tensor_ref(tensor)
+        if self._capture_logits is not None and self._capture_logits[0] is tensor:
+            self._capture_stats["logit_refs_reused"] += 1
+            return self._capture_logits[1]
+        reference = self._tensor_ref(tensor)
+        self._capture_logits = tensor, reference
+        return reference
+
+    def _staged_refs(self, execution):
+        if not self._optimized_capture():
+            return [[self._tensor_ref(t[:, :, execution.state.delta_rows:execution.state.delta_rows+1])
+                     for t in pair] for pair in execution.state.delta[:execution.next_layer]]
+        if self._capture_execution is not execution:
+            self._capture_execution, self._capture_staged = execution, []
+        saved = self._capture_staged
+        if len(saved) > execution.next_layer:
+            del saved[execution.next_layer:]
+        self._capture_stats["staged_tensors_reused"] += 2 * len(saved)
+        for pair in execution.state.delta[len(saved):execution.next_layer]:
+            saved.append([self._tensor_ref(t[:, :, execution.state.delta_rows:execution.state.delta_rows+1])
+                          for t in pair])
+            self._capture_stats["staged_tensors_encoded"] += 2
+        return deepcopy(saved)
 
     def _state_annotation_store(self):
         from .state_annotations import StateAnnotationStore
@@ -455,11 +558,13 @@ class QwenBenchSession:
                     if backend.execution.next_layer >= self.vm.runtime.codec.layers:
                         raise BenchError("all layers complete; step token to publish")
                     self._native(self.vm.runtime.advance_token, backend.execution)
+                    self._observe_cot_boundary()
                     output.append(self.cursor())
                     self._point("layer", backend.execution.next_layer)
                     continue
                 while backend.execution.next_layer < self.vm.runtime.codec.layers:
                     self._native(self.vm.runtime.advance_token, backend.execution)
+                    self._observe_cot_boundary()
                     self._point("layer", backend.execution.next_layer)
                 parent = self.branch.cut
                 emitted = self.branch.pending
@@ -514,17 +619,15 @@ class QwenBenchSession:
                 "vm_checkpoint": vm_checkpoint, "symbols": dict(branch.symbols),
                 "intervention_lineage": list(branch.intervention_lineage),
                 "source_frames": source_view,
-                "logits": self._tensor_ref(self.last_logits) if self.last_logits is not None else None,
+                "logits": self._logits_ref(self.last_logits),
                 "execution": None}
             if self._mlp_memory is not None:
                 snapshot["mlp_memory"] = self._mlp_memory[1].digest
             if backend.execution:
                 execution = backend.execution
                 snapshot["execution"] = {"token_id": execution.token_id, "next_layer": execution.next_layer,
-                    "hidden": self._tensor_ref(execution.hidden), "staged_kv": [
-                        [self._tensor_ref(t[:, :, execution.state.delta_rows:execution.state.delta_rows+1]) for t in pair]
-                        for pair in execution.state.delta[:execution.next_layer]],
-                    "logits": self._tensor_ref(execution.logits) if execution.logits is not None else None,
+                    "hidden": self._tensor_ref(execution.hidden), "staged_kv": self._staged_refs(execution),
+                    "logits": self._logits_ref(execution.logits),
                     "sampled_token": execution.sampled_token}
             ref = self.artifacts.put(snapshot)
             obj = self.forest.put_json_object({"cut": ref}, media_type="application/json")
@@ -578,6 +681,7 @@ class QwenBenchSession:
         return {"active": stack.current, "statecut_ref": live.ref}
 
     def _restore(self, ref, *, branch=None):
+        self._invalidate_capture()
         snapshot = self.artifacts.get(ref)
         if (snapshot.get("schema") != BENCH_CUT_SCHEMA or snapshot["identity"] != self.identity
                 or snapshot["lane"] != self.lane or snapshot["numerical_contract"] != self.vm.package.model_abi.fingerprint):
@@ -711,12 +815,19 @@ class QwenBenchSession:
         with self._lock:
             if path == "performance":
                 return {**self.metrics.inspect(), "publication": dict(self.publication.stats),
-                        "payload_stats": self.vm.store.payloads.stats.to_dict(), "checkpoint_pages": dict(self.vm.checkpoint_stats)}
+                        "payload_stats": self.vm.store.payloads.stats.to_dict(), "checkpoint_pages": dict(self.vm.checkpoint_stats),
+                        "capture": dict(self._capture_stats),
+                        "reader_binding": dict(self._frozen_readers.stats) if self._frozen_readers else {"mode": "strict"},
+                        "register_index": dict(self._cot_index.stats) if hasattr(self, "_cot_index") else {}}
             if path == "memory":
                 residency = self.vm.residency()
                 pages = {}
+                checkpoints = {}
                 for name in self.branches:
-                    checkpoint = self.vm._session(name).checkpoint_ref
+                    session = self.vm._sessions.get(name)
+                    checkpoint = (session.checkpoint_ref if session else
+                                  self.artifacts.get(self.branches[name].cut)["vm_checkpoint"])
+                    checkpoints[name] = checkpoint
                     if not checkpoint: continue
                     body = self.vm.artifacts.get(checkpoint)
                     for page in body.get("delta_pages", []):
@@ -727,8 +838,8 @@ class QwenBenchSession:
                 return {**residency, "weights_bytes": sum(p.numel()*p.element_size() for p in self.model.parameters()),
                     "weights_in_kv_budget": False, "cuts": len(self.cuts),
                     "branches": {name: {"cut": b.cut, "logical_rows": len(b.token_ids),
-                        "resident": self.vm._session(name).backend is not None,
-                        "checkpoint": self.vm._session(name).checkpoint_ref} for name, b in self.branches.items()},
+                        "resident": name in self.vm._sessions and self.vm._session(name).backend is not None,
+                        "checkpoint": checkpoints[name]} for name, b in self.branches.items()},
                     "row_bytes": self.vm.runtime.codec.row_bytes,
                     "visible_bytes": sum(len(b.token_ids)*self.vm.runtime.codec.row_bytes for b in self.branches.values()),
                     "unique_allocations": self.vm.allocation_map(),
@@ -754,8 +865,15 @@ class QwenBenchSession:
                         "runtime_addresses": ["residual", "logits", "kv_cache"], "cursor": self.cursor()}
                 return bindings
             if path in {None, "status"}:
-                return {"session_id": self.session_id, "branch": self.active, "cursor": self.cursor(),
-                        "cut_id": self.branch.cut, "capabilities": self.capabilities()}
+                result = {"session_id": self.session_id, "branch": self.active, "cursor": self.cursor(),
+                          "cut_id": self.branch.cut, "capabilities": self.capabilities()}
+                if any(event.get("kind") == "cot-register-configured" for event in self.events):
+                    result["cot"] = self.cot_register(limit=3)
+                return result
+            if path == "cot":
+                return self.cot_register()
+            if path == "cot.graph":
+                return self.cot_graph()
             if path == "frames":
                 return self.source_frames.debug_view() if self.source_frames else {"attached": False}
             if path == "measurements":
@@ -965,6 +1083,52 @@ class QwenBenchSession:
         return atomic_sidecar(self, preview, observation_ref, spec)
 
     @_serialized
+    def configure_cot_register(self, lens_refs=None, *, top_k=5, token_subset=None, enabled=True, optimized=False):
+        """Attach a live read-only register to compatible native layer boundaries."""
+        from .bench_cot import configure
+        from .bench_jacobian import atomic_sidecar
+        return atomic_sidecar(self, lambda bench: configure(
+            bench, lens_refs, top_k=top_k, token_subset=token_subset, enabled=enabled, optimized=optimized))
+
+    def _observe_cot_boundary(self):
+        from .bench_cot import observe_boundary
+        observe_boundary(self)
+
+    def _render_cot_panel(self):
+        from .bench_cot import _config, write_live_panel
+        try:
+            if _config(self)[0] is None:
+                return
+            with self.metrics.measure("cot_render"):
+                write_live_panel(self)
+            if self._optimized_capture():
+                from .bench_pointer import emit
+                with self.metrics.measure("cot_pointer"):
+                    self._cot_pointer = emit(self)
+            self._cot_panel_error = None
+        except Exception as exc:
+            self._cot_panel_error = f"{type(exc).__name__}: {exc}"
+
+    @_serialized
+    def cot_register(self, *, limit=8):
+        from .bench_cot import view
+        result = view(self, limit=limit)
+        if getattr(self, "_cot_panel_error", None):
+            result["panel_error"] = self._cot_panel_error
+        return result
+
+    @_serialized
+    def cot_graph(self, *, limit=128):
+        from .bench_cot import graph
+        return graph(self, limit=limit)
+
+    def cot_pointer(self, destination=None):
+        from .bench_pointer import emit
+        with self._lock:
+            self._check()
+            return emit(self, destination)
+
+    @_serialized
     def replay_circuit(self, evidence_ref):
         from .bench_circuit_measurement import atomic_measurement, replay_circuit
         return atomic_measurement(self, replay_circuit, evidence_ref)
@@ -1033,7 +1197,8 @@ class QwenBenchSession:
             return {"root": str(target), "cut": self.branch.cut, "manifest": json.loads((target/"selected.json").read_text())["manifest"]}
 
     @classmethod
-    def resume(cls, model, tokenizer=None, *, root, model_sha256=None, _writer=None, _manifest=None):
+    def resume(cls, model, tokenizer=None, *, root, model_sha256=None, _writer=None, _manifest=None,
+               lazy_branches=False):
         root = Path(root)
         if _writer is None: _writer, selected = recover_locked(root)
         else: selected = json.loads((root/"selected.json").read_text())
@@ -1051,8 +1216,9 @@ class QwenBenchSession:
         result.vm.memory_events = list(manifest.get("vm_events", []))
         for name, branch in manifest["branches"].items():
             result.branches[name] = BenchBranch(**branch)
-            snapshot = result.artifacts.get(branch["cut"])
-            result.vm.resume_session(name, snapshot["vm_checkpoint"])
+            if not lazy_branches:
+                snapshot = result.artifacts.get(branch["cut"])
+                result.vm.resume_session(name, snapshot["vm_checkpoint"])
         result.active = manifest["active"]
         if manifest.get("mlp_memory"):
             from .bench_mlp_memory import reinstall

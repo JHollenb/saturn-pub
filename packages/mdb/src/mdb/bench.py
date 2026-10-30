@@ -1,10 +1,9 @@
 """Family-qualified loading boundary. Resident models stay caller owned."""
 from pathlib import Path
-import json
 
-from .errors import BenchError
-from .circuit_runtime import DirectoryArtifactStore
 from .bench_publication import recover_locked
+from .circuit_runtime import DirectoryArtifactStore
+from .errors import BenchError
 
 
 def resident_family(resident, family=None):
@@ -52,7 +51,7 @@ class BenchSession:
 
     @classmethod
     def resume(cls, model, tokenizer=None, *, root, model_sha256=None, family=None,
-               legacy_numerical_environment=None, _adapter=None):
+               legacy_numerical_environment=None, _adapter=None, lazy_branches=False):
         resolved = resident_family(model, family)
         path = Path(root)
         writer, selected = recover_locked(path)
@@ -64,7 +63,9 @@ class BenchSession:
                 if resolved != "qwen2": raise BenchError("Qwen v1 manifest requires a Qwen2 resident")
                 from .bench_qwen import QwenBenchSession
                 return QwenBenchSession.resume(model, tokenizer, root=root, model_sha256=model_sha256,
-                    _writer=writer, _manifest=manifest)
+                    _writer=writer, _manifest=manifest, lazy_branches=lazy_branches)
+            if lazy_branches:
+                raise BenchError("selected-branch hydration is currently Qwen-specific")
             from .bench_family import FamilyBenchSession
             return FamilyBenchSession.resume(model, tokenizer, root=root,
                 family=resolved, model_sha256=model_sha256, _writer=writer, _manifest=manifest,

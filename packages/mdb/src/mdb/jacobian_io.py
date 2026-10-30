@@ -327,6 +327,7 @@ class JacobianReader:
         final_norm: Callable[[torch.Tensor], torch.Tensor] | None = None,
         output_head: Callable[[torch.Tensor], torch.Tensor] | None = None,
         execution_binding: Mapping[str, Any] | None = None,
+        _frozen_guard: Callable[[], None] | None = None,
     ) -> None:
         if not isinstance(lens, FrozenJacobianLens):
             raise JacobianWorkspaceError("lens must be a FrozenJacobianLens")
@@ -439,6 +440,18 @@ class JacobianReader:
         self.eps = float(eps)
         self.final_norm = final_norm
         self.output_head = output_head
+        self._frozen_guard = _frozen_guard
+        self._resident_transport = None
+        self._verified_identities = None
+        if _frozen_guard is not None:
+            # Session-exclusive weight ownership is a caller contract, not a
+            # conclusion inferred from pointers or Tensor version counters.
+            _frozen_guard()
+            self._resident_transport = lens.transport_for(decoder.device, decoder.dtype)
+            self._verified_identities = {
+                "transport": tensor_payload_identity(self._resident_transport),
+                "decoder_weight": tensor_payload_identity(decoder),
+            }
 
     @property
     def model_identity(self) -> dict[str, Any]:
@@ -453,6 +466,11 @@ class JacobianReader:
         return copy.deepcopy(self._execution_binding)
 
     def _verify_consumer_tensors(self, device: torch.device, dtype: torch.dtype) -> None:
+        if self._frozen_guard is not None:
+            self._frozen_guard()
+            if self._decoder_weight.device != device or self._decoder_weight.dtype != dtype:
+                raise JacobianWorkspaceError("frozen decoder and residual must share device/dtype")
+            return
         if self._native_norm_weight is not None:
             current_norm_weight = getattr(self.final_norm, "weight", None)
             if not isinstance(current_norm_weight, torch.Tensor) or not _same_tensor_view(
@@ -533,7 +551,9 @@ class JacobianReader:
     ) -> JObservation:
         source_payload = self._source(source, residual)
         self._verify_consumer_tensors(residual.device, residual.dtype)
-        transport = self.lens.transport_for(residual.device, residual.dtype)
+        transport = self._resident_transport
+        if transport is None:
+            transport = self.lens.transport_for(residual.device, residual.dtype)
         decoder = self._decoder_weight
         rms = self._rms_weight
         observation = observe_j(
@@ -546,6 +566,7 @@ class JacobianReader:
             top_k=top_k,
             final_norm=self.final_norm,
             output_head=self.output_head,
+            _verified_identities=self._verified_identities,
         )
         metadata = {
             **observation.metadata,

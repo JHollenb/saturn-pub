@@ -1,0 +1,15 @@
+{
+  "binding_fingerprint": "8d49dd8836950313def6d66b3140c7a8d00cb81dff1314843d507d775f529d8b",
+  "frameworks_loaded": [],
+  "instrument_status": "valid",
+  "lifecycle_id": "81bd474c5a5084ff8dc6b5b7ba9c06937937adc834308f77df0210fc143b91cd",
+  "mdb": "/private/var/folders/80/hjcbq_315174q0v54qzdwt_40000gn/T/mdb-symbol-lifecycle-wheel-5d974g_g/venv/lib/python3.14/site-packages/mdb/__init__.py",
+  "mechanics_status": "valid",
+  "native_payload_reads": 0,
+  "parent_cut": "45b9cd505b6d040707df3c6039c12c0b38d4bd6078df6dcbd392fbb5b0581804",
+  "result_cut": "d8b0266b1cf4c8f256eb6fde9bc7aa2d32040be6b57f07d7d13d66b9c1d218d9",
+  "reverse_matches": 1,
+  "saturn_pub": "/private/var/folders/80/hjcbq_315174q0v54qzdwt_40000gn/T/mdb-symbol-lifecycle-wheel-5d974g_g/venv/lib/python3.14/site-packages/saturn_pub/__init__.py",
+  "schema": "mdb-symbol-lifecycle-installed-qualification-v1",
+  "terminal_status": "not-assessed"
+}

@@ -46,7 +46,26 @@ def frame(status):
         fields.append("stop=breakpoint")
     elif reason.get("watches"):
         fields.append("stop=watch")
-    return f"({runtime.get('branch', 'main')}) " + " ".join(fields)
+    text = f"({runtime.get('branch', 'main')}) " + " ".join(fields)
+    cot = runtime.get("cot") or {}
+    if cot.get("enabled"):
+        entries = cot.get("entries") or []
+        if entries:
+            entry = entries[-1]
+            terms = ", ".join(repr(item["text"]) for item in entry["candidates"][:5])
+            text += (f"\nCoT register: token {entry['token_position']}, "
+                     f"after layer {entry['completed_layer_boundary']} [decoded candidates]"
+                     f"\n  Vocabulary readout: {terms}"
+                     "\n  Dependency has not been causally tested.")
+        else:
+            text += "\nCoT register: waiting for a configured layer boundary."
+        if entries and not cot.get("current_boundary_observed"):
+            text += "\n  Historical observation; current boundary has no matching readout."
+        if cot.get("errors"):
+            text += "\n  Observer error: " + cot["errors"][-1]["error"]
+        if cot.get("panel_error"):
+            text += "\n  Graph pane unavailable: " + cot["panel_error"]
+    return text
 
 
 def summary(value, *, depth=0):

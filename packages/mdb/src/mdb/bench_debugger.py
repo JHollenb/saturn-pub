@@ -1,5 +1,6 @@
 """The existing debugger protocol over the bench's authoritative cut registry."""
 from collections.abc import Mapping
+from dataclasses import replace
 
 from mdb.debugger_adapters import AdapterCapabilities, CallbackDebuggerAdapter
 from mdb.debugger_protocol import DebuggerProtocolError
@@ -24,6 +25,9 @@ class BenchDebuggerAdapter(CallbackDebuggerAdapter):
             exact_replay=True, state_schema_id=metadata.get("state_schema_id", "saturn-open-bench-cut-v2" if generic else "saturn-open-bench-cut-v1"),
             backend=metadata.get("backend") or ("native" if generic else default_backend),
             consumer=f"{family}-native-continuation", checkpoint_requires_pause=True)
+        if callable(getattr(bench, "cot_register", None)):
+            caps = replace(caps, inspectable_slots=(*caps.inspectable_slots, "cot"))
+
         def inspect(path=None):
             value = bench.inspect(path)
             # BenchSession exposes journal views such as ``measurements`` as

@@ -242,6 +242,31 @@ class Project:
                 )
             ]
 
+    def save_symbol_lifecycle(self, session_id, lifecycle):
+        from .symbol_lifecycle_project import save_lifecycle
+
+        return save_lifecycle(self, session_id, lifecycle)
+
+    def symbol_lifecycle(self, session_id, identifier):
+        from .symbol_lifecycle_project import load_lifecycle
+
+        return load_lifecycle(self, session_id, identifier)
+
+    def symbol_lifecycles(self, session_id, *, symbol=None, cut_id=None, branch=None):
+        from .symbol_lifecycle_project import list_lifecycles
+
+        return list_lifecycles(self, session_id, symbol=symbol, cut_id=cut_id, branch=branch)
+
+    def symbols_at(self, session_id, port, *, cut_id=None, selector=None, branch=None):
+        from .symbol_lifecycle_project import symbols_at
+
+        return symbols_at(self, session_id, port, cut_id=cut_id, selector=selector, branch=branch)
+
+    def resolve_symbol_address(self, session_id, query, *, cut_id=None, branch=None):
+        from .symbol_lifecycle_project import resolve_address
+
+        return resolve_address(self, session_id, query, cut_id=cut_id, branch=branch)
+
     def sessions(self):
         with self._db() as db:
             return [

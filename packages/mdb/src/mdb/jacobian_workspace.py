@@ -277,10 +277,12 @@ def _validate_observer_tensors(
     residual: torch.Tensor,
     transport: torch.Tensor,
     decoder_weight: torch.Tensor,
+    *, verified_static: bool = False,
 ) -> int:
     _require_tensor(residual, "residual")
-    _require_tensor(transport, "transport", ndim=2)
-    _require_tensor(decoder_weight, "decoder_weight", ndim=2)
+    if not verified_static:
+        _require_tensor(transport, "transport", ndim=2)
+        _require_tensor(decoder_weight, "decoder_weight", ndim=2)
     width = int(residual.shape[-1]) if residual.ndim else 0
     if residual.ndim < 1 or transport.shape != (width, width):
         raise JacobianWorkspaceError(
@@ -336,6 +338,7 @@ def observe_j(
     top_k: int = 10,
     final_norm: Callable[[torch.Tensor], torch.Tensor] | None = None,
     output_head: Callable[[torch.Tensor], torch.Tensor] | None = None,
+    _verified_identities: Mapping[str, Any] | None = None,
 ) -> JObservation:
     """Apply a frozen transport and publish raw and native-normalized readouts.
 
@@ -345,7 +348,10 @@ def observe_j(
     calls ``train()``, ``eval()``, or changes gradient flags on either callable.
     """
 
-    _validate_observer_tensors(residual, transport, decoder_weight)
+    # Private fast path: only the managed frozen reader supplies these identities.
+    # Public mutable callers retain full finite-value and payload verification.
+    _validate_observer_tensors(residual, transport, decoder_weight,
+                              verified_static=_verified_identities is not None)
     if isinstance(top_k, bool) or not isinstance(top_k, int) or top_k < 1:
         raise JacobianWorkspaceError("top_k must be a positive integer")
     if isinstance(eps, bool) or not isinstance(eps, (int, float)) or not math.isfinite(eps) or eps <= 0:
@@ -355,7 +361,7 @@ def observe_j(
     if final_norm is None and rms_weight is None:
         raise JacobianWorkspaceError("supply native final_norm/output_head or rms_weight")
 
-    ids = _token_ids(token_subset, int(decoder_weight.shape[0]))
+    ids = None if token_subset is None else _token_ids(token_subset, int(decoder_weight.shape[0]))
     with torch.inference_mode():
         transported = torch.matmul(residual, transport.transpose(0, 1))
         raw_scores = torch.matmul(transported, decoder_weight.transpose(0, 1))
@@ -376,27 +382,28 @@ def observe_j(
                 normalized_state, decoder_weight.transpose(0, 1)
             )
             decoder_policy = "declared-rmsnorm-weight-and-decoder-matmul"
-        index = torch.tensor(ids, dtype=torch.long, device=residual.device)
-        subset_normalized = normalized_scores.index_select(-1, index)
-        subset_raw = raw_scores.index_select(-1, index)
-        count = min(top_k, len(ids))
+        index = None if ids is None else torch.tensor(ids, dtype=torch.long, device=residual.device)
+        subset_normalized = normalized_scores if index is None else normalized_scores.index_select(-1, index)
+        subset_raw = raw_scores if index is None else raw_scores.index_select(-1, index)
+        candidate_count = int(decoder_weight.shape[0]) if ids is None else len(ids)
+        count = min(top_k, candidate_count)
         selected_values, selected_offsets = torch.topk(
             subset_normalized, k=count, dim=-1, largest=True, sorted=True
         )
-        selected_ids = index[selected_offsets]
+        selected_ids = selected_offsets if index is None else index[selected_offsets]
         selected_raw = subset_raw.gather(-1, selected_offsets)
 
     metadata = {
         "schema": JACOBIAN_OBSERVATION_SCHEMA,
         "activation": tensor_payload_identity(residual),
-        "transport": tensor_payload_identity(transport),
-        "decoder_weight": tensor_payload_identity(decoder_weight),
+        "transport": tensor_payload_identity(transport) if _verified_identities is None else dict(_verified_identities["transport"]),
+        "decoder_weight": tensor_payload_identity(decoder_weight) if _verified_identities is None else dict(_verified_identities["decoder_weight"]),
         "transport_policy": "left-apply-J; transported = residual @ J.T",
         "raw_score_policy": "decoder_weight @ transported; no final normalization",
         "normalized_score_policy": decoder_policy,
         "readout_coverage": "full-vocabulary" if token_subset is None else "declared-subset",
         "ranked_token_count": count,
-        "candidate_token_count": len(ids),
+        "candidate_token_count": candidate_count,
         "vocab_size": int(decoder_weight.shape[0]),
         "sparse_interpretation": "unperformed",
     }

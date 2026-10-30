@@ -1,7 +1,5 @@
 import hashlib
 import json
-import os
-from pathlib import Path
 import subprocess
 import sys
 import zipfile
@@ -85,11 +83,19 @@ def test_bootstrap_accepts_sealed_payload_and_rejects_mutation(tmp_path, monkeyp
     monkeypatch.chdir(stage)
     monkeypatch.setenv("SATURN_RUN_CONFIG", "saturn_run_config.json")
     monkeypatch.setenv("SATURN_DEBUG_REQUEST", "saturn_debug_request.json")
-    monkeypatch.setattr(sys, "argv", ["bootstrap", "worker.py"])
+    monkeypatch.setattr(sys, "argv", ["bootstrap", "worker.py", "--model", "fixture"])
     executed = []
-    monkeypatch.setattr("mdb.worker_bootstrap.runpy.run_path", lambda *a, **kw: executed.append(a))
+    worker_args = []
+
+    def execute(*args, **kwargs):
+        executed.append(args)
+        worker_args.append(list(sys.argv))
+
+    monkeypatch.setattr("mdb.worker_bootstrap.runpy.run_path", execute)
     main()
     assert executed == [("worker.py",)]
+    assert worker_args == [["worker.py", "--model", "fixture"]]
+    assert sys.argv == ["bootstrap", "worker.py", "--model", "fixture"]
     (stage / "saturn_run_config.json").write_text('{"a": 2}')
     with pytest.raises(RuntimeError, match="configuration identity"):
         main()

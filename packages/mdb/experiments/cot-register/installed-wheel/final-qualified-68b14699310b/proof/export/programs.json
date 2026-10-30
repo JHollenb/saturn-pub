@@ -1,0 +1,61 @@
+{
+  "authority": {
+    "artifact_only": true,
+    "execution_authorized": false,
+    "native_consumer_validation_required": true,
+    "semantic_equivalence": "not_assessed"
+  },
+  "bindings": [
+    {
+      "call_count": 1,
+      "label": "prefill-main",
+      "program_sha256": "9d10b206bbb90db8b64d6bb7f87249629500d265c19e50f26dc1e839a63ab8ca",
+      "prompt_sha256s": [
+        "4f6f1e9b8e7389cd920695e1f62808765b07297631ff05574a6dc0e577c1a736"
+      ]
+    }
+  ],
+  "content_sha256": "f71ed45a2765f9878cf6b46b55c9658d259cf555dcdcddbe0097c3b5ebaf3d8c",
+  "metadata": {
+    "session_id": "bench"
+  },
+  "programs": [
+    {
+      "declared_content_sha256": null,
+      "program": {
+        "identity": {
+          "config_sha256": "d8aac1f7108a64b0049314d722e19ce49c92c249a263bb249c2a050bcda44efd",
+          "dtype": "torch.bfloat16",
+          "model_id": "cot-register-mechanics-fixture",
+          "revision": "local",
+          "tokenizer_sha256": "token-ids-only",
+          "weights_sha256": "b94ab89cc1bf5a5d8aa9ec5ab5e2b8a6fd50003eb2e1066623d0f056a15b74b5"
+        },
+        "kind": "bench-prefill",
+        "lane": "native",
+        "mount": "2749796ba978d3d1f9d6101ffd379dd249da358ff960aae75df4a694c42b10c7"
+      },
+      "schema": null,
+      "sha256": "9d10b206bbb90db8b64d6bb7f87249629500d265c19e50f26dc1e839a63ab8ca"
+    }
+  ],
+  "prompts": [
+    {
+      "sha256": "4f6f1e9b8e7389cd920695e1f62808765b07297631ff05574a6dc0e577c1a736",
+      "text": "[[1, 2, 3]]"
+    }
+  ],
+  "schema": "saturn-ar-program-record-v1",
+  "statistics": {
+    "recorded_calls": 1,
+    "unique_bindings": 1,
+    "unique_programs": 1,
+    "unique_prompts": 1
+  },
+  "storage_contract": {
+    "embedded_prompt_text": "externalized-to-typed-reference",
+    "program": "stored-once-by-canonical-json-sha256",
+    "prompt_text": "stored-once-by-sha256",
+    "tensor_payloads": "not-recorded"
+  }
+}

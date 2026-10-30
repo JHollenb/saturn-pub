@@ -8,7 +8,10 @@ TOOLS = {"cache": "vm_cache", "hyperion": "hyperion", "context": "context_cli",
     "bisect": "bisect_adapters", "xref": "xref_index", "claims": "claims_registry",
     "watch": "receipt_watch", "custody": "artifact_custody", "cite": "evidence_citations",
     "evidence": "evidence_pipeline", "states": "state_annotations", "graph": "state_graph",
-    "vm": "vm_cli", "public": "saturn_pub_adapter", "project": "project"}
+    "vm": "vm_cli", "public": "saturn_pub_adapter", "project": "project",
+    "symbols": "symbol_lifecycle_project", "symbol-trace": "symbol_trace",
+    "symbol-producers": "symbol_producers", "forward-symbols": "forward_symbols",
+    "circuits": "circuit_explorer"}
 
 
 def main(argv=None):

@@ -191,6 +191,7 @@ def execute(
     receipt_id=None,
     view="declared",
     slice_id=None,
+    branch=None,
 ):
     if sid is None:
         sessions = project.sessions()
@@ -206,6 +207,16 @@ def execute(
         return project.findings(sid)
     if action == "list":
         return project.components(sid, query=query)
+    if action == "symbol-history":
+        from .symbol_trace import trace_symbol
+
+        if target and symbol:
+            raise ValueError("select a history target or --symbol, not both")
+        name = symbol or target
+        if not name:
+            raise ValueError("symbol-history requires a symbol")
+        return trace_symbol(project, sid, name.removeprefix("symbol:"),
+                            branch=branch, cut_id=cut_id)
     if action == "slice":
         if view != "declared":
             raise ValueError("only the declared slice view is implemented")
@@ -283,6 +294,7 @@ def add_arguments(parser, *, extra_actions=()):
             "findings",
             "slice",
             "slice-show",
+            "symbol-history",
         ),
     )
     parser.add_argument("target", nargs="?")
@@ -308,6 +320,7 @@ def add_arguments(parser, *, extra_actions=()):
     parser.add_argument("--receipt", dest="receipt_id")
     parser.add_argument("--view", choices=("declared",), default="declared")
     parser.add_argument("--slice-id")
+    parser.add_argument("--branch")
 
 
 def command(project, sid, words):

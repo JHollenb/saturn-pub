@@ -68,6 +68,13 @@ def add_local_options(parser):
     parser.add_argument(
         "--export", type=Path, help="export a native session after successful commands"
     )
+    parser.add_argument(
+        "--cot-lens", type=Path, action="append", default=[],
+        help="verified fitted lens directory; automatically render its readouts while stepping Qwen",
+    )
+    parser.add_argument("--cot-top-k", type=int, default=5, help="live CoT candidate count (1..32)")
+    parser.add_argument("--cot-fast", action="store_true",
+                        help="use managed frozen CLI weights, command publication and Thott pointers")
 
 
 def run_local(args):
@@ -84,9 +91,15 @@ def run_local(args):
         raise BenchError("seed must be in 0..2**63-1")
     if args.prompt is not None and args.token_ids is not None:
         raise BenchError("choose --prompt or --token-ids")
+    if not 1 <= args.cot_top_k <= 32:
+        raise BenchError("cot-top-k must be in 1..32")
+    if args.cot_fast and not args.cot_lens:
+        raise BenchError("cot-fast requires at least one cot-lens")
     counter = args.local is None and args.tiny in {None, "counter"}
     bench = owner = None
     if counter:
+        if args.cot_lens:
+            raise BenchError("live CoT lenses require the native Qwen debugger")
         if args.device != "cpu":
             raise BenchError("Counter is a pure-Python demo; it does not use an accelerator")
         if args.root or args.resume or args.export or args.prompt or args.token_ids or args.dtype:
@@ -149,6 +162,21 @@ def run_local(args):
                 args, model, tokenizer, family, root, model_id
             )
     try:
+        if args.cot_lens:
+            if not callable(getattr(bench, "configure_cot_register", None)):
+                raise BenchError("live CoT lenses require the native Qwen debugger")
+            from .jacobian_io import FrozenJacobianLens
+
+            refs = []
+            for path in args.cot_lens:
+                fitted = FrozenJacobianLens.open(path)
+                pin = bench.pin_jacobian_lens(
+                    fitted.manifest, fitted.transport_for(bench.vm.runtime.device))
+                refs.append(pin["lens_ref"])
+            if args.cot_fast:
+                # The local loader owns these frozen weights for this debugger.
+                bench.model.eval().requires_grad_(False)
+            bench.configure_cot_register(refs, top_k=args.cot_top_k, optimized=args.cot_fast)
         owner, session, motion = connect_local(
             adapter,
             identity=identity,

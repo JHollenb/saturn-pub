@@ -1,0 +1,130 @@
+{
+  "mode": "resume",
+  "installed_package": "/private/tmp/mdb-cot-fast-wheel-20261014-v3/installed/mdb/__init__.py",
+  "source_residual_restored_exact": true,
+  "native_logits_equal": true,
+  "native_kv_equal": true,
+  "register_entries": 2,
+  "cot_artifacts": 3,
+  "mechanics_status": "valid",
+  "semantic_cot_qualified": false,
+  "specimen": "untrained tiny CPU BF16 Qwen",
+  "panel": "/private/tmp/mdb-cot-fast-qualification-v3-20261014/source/cot-register.html",
+  "optimized": true,
+  "hydration": {
+    "browse_audit": {
+      "schema": "mdb-payload-audit-v1",
+      "mechanics_status": "valid",
+      "unique_payloads": 0,
+      "read_attempts": 0,
+      "bytes_read": 0,
+      "unique_verified_bytes": 0,
+      "descriptor_payload_sha256": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+      "failed_payloads": [],
+      "checksum_verified": 0,
+      "geometry_verified": 0,
+      "misses": 0,
+      "failures": 0,
+      "authority": "disk-byte-integrity; native consumer not assessed"
+    },
+    "closure_bytes": 320,
+    "residual_bytes": 32,
+    "audit": {
+      "schema": "mdb-payload-audit-v1",
+      "mechanics_status": "valid",
+      "unique_payloads": 1,
+      "read_attempts": 1,
+      "bytes_read": 32,
+      "unique_verified_bytes": 32,
+      "descriptor_payload_sha256": "b03c7664d9aa2a84968a2a4dba5ab538d9dbbbe6a781e78cb9dc9e01fc39c9d4",
+      "failed_payloads": [],
+      "checksum_verified": 1,
+      "geometry_verified": 1,
+      "misses": 0,
+      "failures": 0,
+      "authority": "disk-byte-integrity; native consumer not assessed"
+    }
+  },
+  "performance": {
+    "phases": {
+      "cot_render": {
+        "calls": 3,
+        "wall_seconds": 0.0038505408447235823
+      },
+      "cot_pointer": {
+        "calls": 2,
+        "wall_seconds": 0.010135084041394293
+      },
+      "native_transition": {
+        "calls": 1,
+        "wall_seconds": 0.00023033306933939457
+      },
+      "checkpoint_encode": {
+        "calls": 2,
+        "wall_seconds": 0.0022878750460222363
+      },
+      "jacobian_read": {
+        "calls": 1,
+        "wall_seconds": 0.0003434580285102129
+      },
+      "model_os_transaction": {
+        "calls": 1,
+        "wall_seconds": 0.008860124973580241
+      }
+    },
+    "timing_scope": "since session open; nested host wall durations, CUDA dispatch may be asynchronous; weights excluded",
+    "publication": {
+      "commits": 4,
+      "staged_writes": 103,
+      "staged_bytes": 114578,
+      "pack_bytes": 77553,
+      "pack_bytes_written": 77553,
+      "pack_bytes_flushed": 77553,
+      "file_fsyncs": 8,
+      "directory_fsyncs": 8,
+      "namespace_fsyncs": 2,
+      "identity_fsyncs": 0,
+      "publication_seconds": 0.003942125127650797,
+      "recovered_files": 0,
+      "recovery_issues": [],
+      "quarantined_files": 0
+    },
+    "payload_stats": {
+      "puts": 13,
+      "put_hits": 5,
+      "hydrations": 14,
+      "hits": 14,
+      "misses": 0,
+      "integrity_failures": 0,
+      "bytes_written": 228,
+      "bytes_read": 2048,
+      "resident_hits": 0,
+      "resident_misses": 14,
+      "resident_evictions": 0,
+      "resident_bytes_read": 0,
+      "resident_bytes": 0
+    },
+    "checkpoint_pages": {
+      "encoded_bytes": 64,
+      "reused_bytes": 0,
+      "encoded_pages": 1,
+      "reused_pages": 0
+    },
+    "capture": {
+      "staged_tensors_encoded": 4,
+      "staged_tensors_reused": 0,
+      "logit_refs_reused": 0,
+      "manifests_deferred": 4
+    },
+    "reader_binding": {
+      "reader_builds": 2,
+      "cache_hits": 1,
+      "invalidations": 0
+    },
+    "register_index": {
+      "events_indexed": 9,
+      "cuts_loaded": 6,
+      "observations_verified": 2
+    }
+  }
+}

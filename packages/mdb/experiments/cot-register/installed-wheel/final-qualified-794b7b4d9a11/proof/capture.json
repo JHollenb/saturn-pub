@@ -1,0 +1,16 @@
+{
+  "mode": "capture",
+  "installed_package": "/private/tmp/mdb-cot-fast-wheel-20261014-v2/installed/mdb/__init__.py",
+  "source_residual_sha256": "1c803ff42b18a0138126852f7f0defccedec77b5bd223a7f97c271741d21b815",
+  "register_entries": 1,
+  "mechanics_status": "valid",
+  "semantic_cot_qualified": false,
+  "specimen": "untrained tiny CPU BF16 Qwen",
+  "optimized": true,
+  "pointer": {
+    "path": "/private/tmp/mdb-cot-fast-qualification-v2-20261014/pointer/pointer.json",
+    "pointer_bytes": 253,
+    "catalog_bytes": 3286,
+    "selected_cut": "cas://sha256/fe4235f4bf1cb64a33e64a2fcf190bebae10b638f160c9cf1429824dc3779b76"
+  }
+}

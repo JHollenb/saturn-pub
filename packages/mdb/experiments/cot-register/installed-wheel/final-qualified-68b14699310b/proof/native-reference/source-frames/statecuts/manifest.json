@@ -1,0 +1,1 @@
+{"content_sha256":"a0b318b59ecddda8dbee32701a3fd3743e0d89ebf4b7bc338bf6c6db071c546c","controller_authority":"DebugWorkerController.safe_point","payload_authority":"cache-byte-integrity-only","schema":"saturn-live-statecut-store-v1","storage":"content-addressed-cut-manifest-plus-physical-payload-cas"}

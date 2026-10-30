@@ -99,12 +99,14 @@ def atomic_sidecar(bench, operation, *args):
         deepcopy(bench.events),
         session.checkpoint_ref,
         bench.source_frames.current,
+        getattr(bench, "_frozen_readers", None),
     )
     try:
         with bench.publication.atomic_selection():
             return operation(bench, *args)
     except BaseException:
-        branch.cut, branch.node, bench.cuts, bench.events, session.checkpoint_ref, frame = previous
+        (branch.cut, branch.node, bench.cuts, bench.events,
+         session.checkpoint_ref, frame, bench._frozen_readers) = previous
         bench.source_frames._checkout(frame)
         bench._edit = None
         bench._jacobian_pending = None
@@ -112,6 +114,15 @@ def atomic_sidecar(bench, operation, *args):
 
 
 def _reader(bench, pin_ref):
+    binding = getattr(bench, "_frozen_readers", None)
+    if binding is not None:
+        binding.guard()
+        if pin_ref in binding.readers:
+            binding.stats["cache_hits"] += 1
+            reader, pin = binding.readers[pin_ref]
+            if pin["profile"] != application_profile(bench):
+                raise BenchError("frozen reader numerical profile changed")
+            return reader, pin
     pin = bench.artifacts.get(pin_ref)
     if pin.get("schema") != PIN_SCHEMA or pin["profile"] != application_profile(bench):
         raise BenchError("Jacobian lens pin is incompatible with this resident")
@@ -135,7 +146,11 @@ def _reader(bench, pin_ref):
             "numerical_contract": bench.vm.package.model_abi.fingerprint,
             "session_id": bench.session_id,
         },
+        _frozen_guard=None if binding is None else binding.guard,
     )
+    if binding is not None:
+        binding.readers[pin_ref] = reader, pin
+        binding.stats["reader_builds"] += 1
     return reader, pin
 
 
@@ -229,7 +244,8 @@ def read(bench, pin_ref, options):
     _source(bench, reader)  # Refuse bad coordinates before capturing anything.
     bench.checkpoint("jacobian-source")
     residual, source = _source(bench, reader)
-    observation = reader.read(residual, source=source, **options)
+    with bench.metrics.measure("jacobian_read"):
+        observation = reader.read(residual, source=source, **options)
     tensors = {
         name: bench._tensor_ref(getattr(observation, name))
         for name in (

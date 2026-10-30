@@ -1,0 +1,41 @@
+{
+  "schema": "mdb-discovery-plan-proposal-v1",
+  "interface": "mdb-discovery-v1",
+  "model_binding": "<qualified frozen R3 CPU FP32 binding>",
+  "execution_mode": "record-replay",
+  "cases_file": "isa-discovery-cases.example.json",
+  "lanes": [
+    {"lane_id": "lane_00", "case_id": "input_00"},
+    {"lane_id": "lane_01", "case_id": "input_01"},
+    {"lane_id": "lane_10", "case_id": "input_10"},
+    {"lane_id": "lane_11", "case_id": "input_11"}
+  ],
+  "scheduler": {
+    "mode": "resident-scalar",
+    "max_resident_lanes": 4,
+    "quantum": "safe-boundary",
+    "physical_batch_profile": null
+  },
+  "observation": {
+    "profile": "selected",
+    "sites": ["module:post.1:input", "module:post.1:output", "update:post.1.residual:after"],
+    "native_output_heads": "all",
+    "independent_full_forward_audits": false
+  },
+  "budgets": {
+    "max_instructions_per_lane": 4,
+    "max_model_forwards": 64,
+    "max_logical_forwards": 64,
+    "max_native_operations": 131072,
+    "max_logical_transitions": 131072,
+    "max_branches": 16,
+    "max_commands": 2048,
+    "max_observation_bytes": 67108864,
+    "max_wall_ms": 120000
+  },
+  "restore": {
+    "required_mode": "live",
+    "publish_at_returned_stops": true
+  },
+  "claim_scope": "proposed interface example; no execution or numerical result claimed"
+}

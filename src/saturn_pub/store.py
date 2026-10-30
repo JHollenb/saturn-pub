@@ -28,6 +28,15 @@ def _safe_id(value: str) -> str:
 
 
 def _publish(path: Path, data: bytes) -> bool:
+    try:
+        existing = path.read_bytes()
+    except FileNotFoundError:
+        pass
+    else:
+        if existing != data:
+            raise ValueError("existing artifact does not match its content address")
+        return False
+
     path.parent.mkdir(parents=True, exist_ok=True)
     with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
         temporary = Path(stream.name)

@@ -1,0 +1,38 @@
+{
+  "schema": "mdb-discovery-cases-proposal-v1",
+  "driver": {
+    "kind": "isa-register-flags",
+    "program_hex": "4883c7014883c7014883c7014883c701",
+    "start_byte_offset": 0,
+    "window_bytes": 15,
+    "tail_padding": "zero",
+    "register_order": ["RAX", "RCX", "RDX", "RBX", "RSP", "RBP", "RSI", "RDI"],
+    "flag_order": ["CF", "ZF", "SF", "OF"],
+    "length_policy": "model-argmax-plus-one",
+    "syscall_policy": "stop-before-commit",
+    "store_policy": "stop-before-commit",
+    "end_policy": "stop-at-or-beyond-program-end"
+  },
+  "cases": [
+    {
+      "case_id": "input_00",
+      "register_words": ["0x0000000000000000", "0x0000000000000000", "0x0000000000000000", "0x0000000000000000", "0x0000000000000000", "0x0000000000000000", "0x0000000000000003", "0x00000000000000fc"],
+      "flags": [0, 0, 0, 0]
+    },
+    {
+      "case_id": "input_01",
+      "register_words": ["0x0000000000000000", "0x0000000000000000", "0x0000000000000000", "0x0000000000000000", "0x0000000000000000", "0x0000000000000000", "0x0000000000000003", "0x00000000000000fd"],
+      "flags": [0, 0, 0, 0]
+    },
+    {
+      "case_id": "input_10",
+      "register_words": ["0x0000000000000000", "0x0000000000000000", "0x0000000000000000", "0x0000000000000000", "0x0000000000000000", "0x0000000000000000", "0x0000000000000003", "0x00000000000000fe"],
+      "flags": [0, 0, 0, 0]
+    },
+    {
+      "case_id": "input_11",
+      "register_words": ["0x0000000000000000", "0x0000000000000000", "0x0000000000000000", "0x0000000000000000", "0x0000000000000000", "0x0000000000000000", "0x0000000000000003", "0x00000000000000ff"],
+      "flags": [0, 0, 0, 0]
+    }
+  ]
+}

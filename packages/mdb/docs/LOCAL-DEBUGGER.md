@@ -93,6 +93,8 @@ mdb resume --tiny qwen2 --root ./tiny-session
 mdb verify --root ./tiny-export
 ```
 
+For automatic vocabulary observations during native Qwen stepping, attach compatible fitted artifacts with `--cot-lens DIRECTORY`. The latest readout appears in every normal debugger frame, while the [live CoT register](COT-REGISTER.md) retains a source-bound graph through fork, restore, export and resume. Rich semantic reasoning reconstruction remains experimental.
+
 Offline verification checks exported bytes and mechanics without loading
 weights. Restore and model execution still require matching weights, runtime
 identity and numerical contract. This local mechanics demo adds no new

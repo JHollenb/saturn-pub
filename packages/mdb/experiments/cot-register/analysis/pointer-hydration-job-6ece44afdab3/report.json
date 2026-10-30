@@ -1,0 +1,31 @@
+{
+  "boundary": "metadata rendering and selected residual byte hydration only; no rewind, native continuation, live integration, or speedup claim",
+  "hydration_audit": {
+    "authority": "disk-byte-integrity; native consumer not assessed",
+    "bytes_read": 3072,
+    "checksum_verified": 1,
+    "descriptor_payload_sha256": "80129edbefdc63674d17ed6933241b2b3cf7ece96996e031d7f29c098eab1660",
+    "failed_payloads": [],
+    "failures": 0,
+    "geometry_verified": 1,
+    "mechanics_status": "valid",
+    "misses": 0,
+    "read_attempts": 1,
+    "schema": "mdb-payload-audit-v1",
+    "unique_payloads": 1,
+    "unique_verified_bytes": 3072
+  },
+  "mechanics_status": "valid",
+  "model_execution_calls": 0,
+  "observations": 66,
+  "origin_job": "job-6ece44afdab3",
+  "pointer_json_bytes": 408,
+  "schema": "mdb-cot-pointer-hydration-probe-v1",
+  "selected_residual_bytes": 3072,
+  "selected_residual_sha256": "c7c517adef9e4dc07ef842cbb38e6ad032b85465a13a7c97ecbfedc639946539",
+  "selected_source_cut": "cas://sha256/af2047ff7babc027a9f2e9888a76d48286ec0180ed06a67ffe82623c4f93995c",
+  "source_integrity_checks": "existing DirectoryArtifactStore, Thott node, and PayloadStore",
+  "thin_view_blob_bytes": 94297,
+  "view_native_payload_bytes": 0,
+  "view_payload_reads": 0
+}
