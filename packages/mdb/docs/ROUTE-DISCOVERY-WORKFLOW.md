@@ -192,6 +192,12 @@ it resumed at PC375, ran only 205 suffix primitives and exactly matched all 11
 native heads. It then committed the predicted instruction. No prefix or
 `model.forward` was rerun in that child process.
 
+That child ran on the same Linux CPU platform as the saving worker. The durable
+profile checks Torch version, CPU architecture and endianness, and restores the
+saved thread setting. The collected store can be inspected on the Mac; numerical
+continuation must run on a compatible admitted worker. Cross-architecture replay
+is not established by this result.
+
 By default, elapsed and offline wall time count against the saved allowance.
 An old cut may therefore be inspectable but require new admission to advance.
 Inside a newly admitted mrun continuation worker, explicitly supply:
