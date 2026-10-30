@@ -1,0 +1,2082 @@
+{
+  "backend": "cpu-fp32",
+  "candidate_applicability": {
+    "envelopes": [
+      "6041d8a6f9b8c51c252b74959802add508e8b3e3ed97292dbba2dbe10ecedf46",
+      "d96e8b0e729a4ba4df3553c18a818a5bbb9d630518618cbc752fdf2ced06bc35",
+      "25f74f393119842e20814ead2443d2e2a502f3e5c9a17764dd0e0a3a5ec54c2e",
+      "e387f30f1591099f6357fadaf39aff206ddd7adeadc2a3c69d7ba86be89e3809",
+      "a3ab35fc1421573cf4bf6ab6a4be0dd80648d2410559a35635523b20548db811",
+      "79ddddac1c1529d83da4b73a57fd7f111ed77351ebbb135f4ec650f87a374e41"
+    ],
+    "outside_scope": "abstain; six new operation fixtures do not certify their entire families",
+    "requires": [
+      "exact checkpoint, installed implementation and ABI",
+      "fresh structural resolution of post.0/post.1/post.2 and final mixer operands",
+      "same-context native donors; no cross-input donor",
+      "two instruction calls with literal predicted state and length; hidden reset each call"
+    ],
+    "status": "untested-scope-expansion"
+  },
+  "cases": [
+    {
+      "case_id": "sub_256",
+      "expected_first_rdi": 255,
+      "expected_second_rdi": 254,
+      "flags": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "input_envelope_sha256": "6041d8a6f9b8c51c252b74959802add508e8b3e3ed97292dbba2dbe10ecedf46",
+      "instruction_hex": "4881ef01000000",
+      "instruction_length": 7,
+      "op_label": "sub_r64_32",
+      "program_hex": "4881ef010000004881ef01000000",
+      "reader": {
+        "bit": 8,
+        "head": "regs",
+        "register": 7
+      },
+      "register_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        256
+      ],
+      "sign": -1,
+      "window_hex": "4881ef010000004881ef0100000000"
+    },
+    {
+      "case_id": "sub_254",
+      "expected_first_rdi": 253,
+      "expected_second_rdi": 252,
+      "flags": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "input_envelope_sha256": "d96e8b0e729a4ba4df3553c18a818a5bbb9d630518618cbc752fdf2ced06bc35",
+      "instruction_hex": "4881ef01000000",
+      "instruction_length": 7,
+      "op_label": "sub_r64_32",
+      "program_hex": "4881ef010000004881ef01000000",
+      "reader": {
+        "bit": 0,
+        "head": "regs",
+        "register": 7
+      },
+      "register_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        254
+      ],
+      "sign": 1,
+      "window_hex": "4881ef010000004881ef0100000000"
+    },
+    {
+      "case_id": "xor_252",
+      "expected_first_rdi": 255,
+      "expected_second_rdi": 252,
+      "flags": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "input_envelope_sha256": "25f74f393119842e20814ead2443d2e2a502f3e5c9a17764dd0e0a3a5ec54c2e",
+      "instruction_hex": "4831f7",
+      "instruction_length": 3,
+      "op_label": "xor_r64_r64",
+      "program_hex": "4831f74831f7",
+      "reader": {
+        "bit": 0,
+        "head": "regs",
+        "register": 7
+      },
+      "register_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        252
+      ],
+      "sign": 1,
+      "window_hex": "4831f74831f7000000000000000000"
+    },
+    {
+      "case_id": "xor_255",
+      "expected_first_rdi": 252,
+      "expected_second_rdi": 255,
+      "flags": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "input_envelope_sha256": "e387f30f1591099f6357fadaf39aff206ddd7adeadc2a3c69d7ba86be89e3809",
+      "instruction_hex": "4831f7",
+      "instruction_length": 3,
+      "op_label": "xor_r64_r64",
+      "program_hex": "4831f74831f7",
+      "reader": {
+        "bit": 0,
+        "head": "regs",
+        "register": 7
+      },
+      "register_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        255
+      ],
+      "sign": -1,
+      "window_hex": "4831f74831f7000000000000000000"
+    },
+    {
+      "case_id": "mov_up",
+      "expected_first_rdi": 256,
+      "expected_second_rdi": 256,
+      "flags": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "input_envelope_sha256": "a3ab35fc1421573cf4bf6ab6a4be0dd80648d2410559a35635523b20548db811",
+      "instruction_hex": "4889f7",
+      "instruction_length": 3,
+      "op_label": "mov_r64_r64",
+      "program_hex": "4889f74889f7",
+      "reader": {
+        "bit": 8,
+        "head": "regs",
+        "register": 7
+      },
+      "register_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        256,
+        255
+      ],
+      "sign": 1,
+      "window_hex": "4889f74889f7000000000000000000"
+    },
+    {
+      "case_id": "mov_down",
+      "expected_first_rdi": 255,
+      "expected_second_rdi": 255,
+      "flags": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "input_envelope_sha256": "79ddddac1c1529d83da4b73a57fd7f111ed77351ebbb135f4ec650f87a374e41",
+      "instruction_hex": "4889f7",
+      "instruction_length": 3,
+      "op_label": "mov_r64_r64",
+      "program_hex": "4889f74889f7",
+      "reader": {
+        "bit": 8,
+        "head": "regs",
+        "register": 7
+      },
+      "register_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        255,
+        256
+      ],
+      "sign": -1,
+      "window_hex": "4889f74889f7000000000000000000"
+    }
+  ],
+  "cpu_threads": 1,
+  "empirical_scope": {
+    "flags": [
+      0,
+      0,
+      0,
+      0
+    ],
+    "job_id": "job-c5bfaffc8b0a",
+    "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+    "program_hex": "4881c7010000004881c701000000",
+    "rdi": [
+      252,
+      253,
+      254,
+      255
+    ],
+    "restoration_contexts": [
+      252,
+      255
+    ],
+    "rsi": 3,
+    "source_artifacts": {
+      "followups.json": "74be64e8542ef582fc52faabb371d7905401096161c2858307dd0958ae7fbde9",
+      "report.json": "69ccaed5e4561b91fd5b7f38ef1f3561cc9a4f6365f61c29219a7022af7d46d0",
+      "screen.json": "4bc6aa534d8ddb690970098238a686d18977f53a15db0165ab3c4e2993ea0783"
+    }
+  },
+  "learned_from_old_evidence": [
+    "site-specific ablation response",
+    "projected-versus-skip restoration ranking"
+  ],
+  "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+  "not_claimed": [
+    "training-unseen instructions",
+    "automatic instruction semantics discovery",
+    "universal route law",
+    "persistent internal memory across calls",
+    "terminal certification"
+  ],
+  "patterns": [
+    {
+      "claim": "Zero post.0 preserves the incoming register bank rather than its native update",
+      "id": "pattern_0001",
+      "name": "early-write suppression",
+      "provenance": "screen.json: all four old ADD contexts at dose0 versus dose1",
+      "scope": "old ADD observations; prospective exact-envelope expansion only"
+    },
+    {
+      "claim": "After post.0 removal, restoring final U recovers native register decisions and is closer than restoring S at the selected reader",
+      "id": "route_0002",
+      "name": "projected-write restoration",
+      "old_reader_distances": [
+        {
+          "S": 21.030853271484375,
+          "U": 5.901226043701172,
+          "bit": 0,
+          "rdi": 252
+        },
+        {
+          "S": 28.640533924102783,
+          "U": 4.695281982421875,
+          "bit": 8,
+          "rdi": 255
+        }
+      ],
+      "provenance": "followups.json: context_00/bit0 and context_03/bit8, source post.0",
+      "scope": "two old ADD receiving states; proposed six-envelope transfer"
+    },
+    {
+      "claim": "Zero post.1 or post.2 preserves native register decisions",
+      "id": "pattern_0003",
+      "name": "later-write decision preservation",
+      "provenance": "screen.json: both sites, four old ADD contexts, dose0 versus dose1",
+      "scope": "old ADD observations; no universal necessity or semantic operation claim"
+    }
+  ],
+  "plan_sha256": "259e92e1d92d452b97cc7942309e2dec682d45497b14a3570aa21e82c33f7c6f",
+  "predictions": [
+    {
+      "abstentions": [
+        "skip_native complete first/second state",
+        "flag signs and decisions",
+        "unchanged-reader effect signs",
+        "continuous margin magnitudes",
+        "other-head effect signs",
+        "full-state equivalence of single-operand restores"
+      ],
+      "arms": {
+        "carrier_native": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "flags": "abstain",
+          "length": 7,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            254
+          ]
+        },
+        "identity": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "flags": "abstain",
+          "length": 7,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            254
+          ]
+        },
+        "post0_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            256
+          ],
+          "flags": "abstain",
+          "length": 7,
+          "register_relation_to_native": "prior_state",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ]
+        },
+        "post1_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "flags": "abstain",
+          "length": 7,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            254
+          ]
+        },
+        "post2_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "flags": "abstain",
+          "length": 7,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            254
+          ]
+        },
+        "projection_native": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "flags": "abstain",
+          "length": 7,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            254
+          ]
+        },
+        "projection_sham": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            256
+          ],
+          "flags": "abstain",
+          "length": 7,
+          "register_relation_to_native": "prior_state",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ]
+        },
+        "skip_native": {
+          "exact_margins": "abstain",
+          "first_register_words": null,
+          "flags": "abstain",
+          "length": 7,
+          "register_relation_to_native": "abstain",
+          "second_register_words": null
+        }
+      },
+      "baselines": {
+        "constant_negative_effect": {
+          "post0_zero_minus_identity": -1,
+          "projection_native_minus_post0_zero": -1
+        },
+        "constant_positive_effect": {
+          "post0_zero_minus_identity": 1,
+          "projection_native_minus_post0_zero": 1
+        },
+        "no_effect_at_any_post": {
+          "post0_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "post1_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "post2_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ]
+        },
+        "prior_state_at_every_post": {
+          "post0_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            256
+          ],
+          "post1_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            256
+          ],
+          "post2_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            256
+          ]
+        }
+      },
+      "case_id": "sub_256",
+      "route_ranking": {
+        "expected": true,
+        "formula": "abs(Y(projection_native)-Y(identity)) < abs(Y(skip_native)-Y(identity))",
+        "pattern_id": "route_0002",
+        "reader": {
+          "bit": 8,
+          "head": "regs",
+          "register": 7
+        }
+      },
+      "signed_effects": {
+        "post0_zero_minus_identity": 1,
+        "projection_native_minus_post0_zero": -1
+      }
+    },
+    {
+      "abstentions": [
+        "skip_native complete first/second state",
+        "flag signs and decisions",
+        "unchanged-reader effect signs",
+        "continuous margin magnitudes",
+        "other-head effect signs",
+        "full-state equivalence of single-operand restores"
+      ],
+      "arms": {
+        "carrier_native": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            253
+          ],
+          "flags": "abstain",
+          "length": 7,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ]
+        },
+        "identity": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            253
+          ],
+          "flags": "abstain",
+          "length": 7,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ]
+        },
+        "post0_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            254
+          ],
+          "flags": "abstain",
+          "length": 7,
+          "register_relation_to_native": "prior_state",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            253
+          ]
+        },
+        "post1_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            253
+          ],
+          "flags": "abstain",
+          "length": 7,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ]
+        },
+        "post2_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            253
+          ],
+          "flags": "abstain",
+          "length": 7,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ]
+        },
+        "projection_native": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            253
+          ],
+          "flags": "abstain",
+          "length": 7,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ]
+        },
+        "projection_sham": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            254
+          ],
+          "flags": "abstain",
+          "length": 7,
+          "register_relation_to_native": "prior_state",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            253
+          ]
+        },
+        "skip_native": {
+          "exact_margins": "abstain",
+          "first_register_words": null,
+          "flags": "abstain",
+          "length": 7,
+          "register_relation_to_native": "abstain",
+          "second_register_words": null
+        }
+      },
+      "baselines": {
+        "constant_negative_effect": {
+          "post0_zero_minus_identity": -1,
+          "projection_native_minus_post0_zero": -1
+        },
+        "constant_positive_effect": {
+          "post0_zero_minus_identity": 1,
+          "projection_native_minus_post0_zero": 1
+        },
+        "no_effect_at_any_post": {
+          "post0_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            253
+          ],
+          "post1_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            253
+          ],
+          "post2_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            253
+          ]
+        },
+        "prior_state_at_every_post": {
+          "post0_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            254
+          ],
+          "post1_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            254
+          ],
+          "post2_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            254
+          ]
+        }
+      },
+      "case_id": "sub_254",
+      "route_ranking": {
+        "expected": true,
+        "formula": "abs(Y(projection_native)-Y(identity)) < abs(Y(skip_native)-Y(identity))",
+        "pattern_id": "route_0002",
+        "reader": {
+          "bit": 0,
+          "head": "regs",
+          "register": 7
+        }
+      },
+      "signed_effects": {
+        "post0_zero_minus_identity": -1,
+        "projection_native_minus_post0_zero": 1
+      }
+    },
+    {
+      "abstentions": [
+        "skip_native complete first/second state",
+        "flag signs and decisions",
+        "unchanged-reader effect signs",
+        "continuous margin magnitudes",
+        "other-head effect signs",
+        "full-state equivalence of single-operand restores"
+      ],
+      "arms": {
+        "carrier_native": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ]
+        },
+        "identity": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ]
+        },
+        "post0_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "prior_state",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ]
+        },
+        "post1_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ]
+        },
+        "post2_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ]
+        },
+        "projection_native": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ]
+        },
+        "projection_sham": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "prior_state",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ]
+        },
+        "skip_native": {
+          "exact_margins": "abstain",
+          "first_register_words": null,
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "abstain",
+          "second_register_words": null
+        }
+      },
+      "baselines": {
+        "constant_negative_effect": {
+          "post0_zero_minus_identity": -1,
+          "projection_native_minus_post0_zero": -1
+        },
+        "constant_positive_effect": {
+          "post0_zero_minus_identity": 1,
+          "projection_native_minus_post0_zero": 1
+        },
+        "no_effect_at_any_post": {
+          "post0_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "post1_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "post2_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ]
+        },
+        "prior_state_at_every_post": {
+          "post0_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ],
+          "post1_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ],
+          "post2_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ]
+        }
+      },
+      "case_id": "xor_252",
+      "route_ranking": {
+        "expected": true,
+        "formula": "abs(Y(projection_native)-Y(identity)) < abs(Y(skip_native)-Y(identity))",
+        "pattern_id": "route_0002",
+        "reader": {
+          "bit": 0,
+          "head": "regs",
+          "register": 7
+        }
+      },
+      "signed_effects": {
+        "post0_zero_minus_identity": -1,
+        "projection_native_minus_post0_zero": 1
+      }
+    },
+    {
+      "abstentions": [
+        "skip_native complete first/second state",
+        "flag signs and decisions",
+        "unchanged-reader effect signs",
+        "continuous margin magnitudes",
+        "other-head effect signs",
+        "full-state equivalence of single-operand restores"
+      ],
+      "arms": {
+        "carrier_native": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ]
+        },
+        "identity": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ]
+        },
+        "post0_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "prior_state",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ]
+        },
+        "post1_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ]
+        },
+        "post2_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ]
+        },
+        "projection_native": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ]
+        },
+        "projection_sham": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "prior_state",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ]
+        },
+        "skip_native": {
+          "exact_margins": "abstain",
+          "first_register_words": null,
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "abstain",
+          "second_register_words": null
+        }
+      },
+      "baselines": {
+        "constant_negative_effect": {
+          "post0_zero_minus_identity": -1,
+          "projection_native_minus_post0_zero": -1
+        },
+        "constant_positive_effect": {
+          "post0_zero_minus_identity": 1,
+          "projection_native_minus_post0_zero": 1
+        },
+        "no_effect_at_any_post": {
+          "post0_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ],
+          "post1_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ],
+          "post2_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            252
+          ]
+        },
+        "prior_state_at_every_post": {
+          "post0_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "post1_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ],
+          "post2_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            255
+          ]
+        }
+      },
+      "case_id": "xor_255",
+      "route_ranking": {
+        "expected": true,
+        "formula": "abs(Y(projection_native)-Y(identity)) < abs(Y(skip_native)-Y(identity))",
+        "pattern_id": "route_0002",
+        "reader": {
+          "bit": 0,
+          "head": "regs",
+          "register": 7
+        }
+      },
+      "signed_effects": {
+        "post0_zero_minus_identity": 1,
+        "projection_native_minus_post0_zero": -1
+      }
+    },
+    {
+      "abstentions": [
+        "skip_native complete first/second state",
+        "flag signs and decisions",
+        "unchanged-reader effect signs",
+        "continuous margin magnitudes",
+        "other-head effect signs",
+        "full-state equivalence of single-operand restores"
+      ],
+      "arms": {
+        "carrier_native": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            256
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "identity": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            256
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "post0_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            255
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "prior_state",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "post1_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            256
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "post2_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            256
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "projection_native": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            256
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "projection_sham": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            255
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "prior_state",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "skip_native": {
+          "exact_margins": "abstain",
+          "first_register_words": null,
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "abstain",
+          "second_register_words": null
+        }
+      },
+      "baselines": {
+        "constant_negative_effect": {
+          "post0_zero_minus_identity": -1,
+          "projection_native_minus_post0_zero": -1
+        },
+        "constant_positive_effect": {
+          "post0_zero_minus_identity": 1,
+          "projection_native_minus_post0_zero": 1
+        },
+        "no_effect_at_any_post": {
+          "post0_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            256
+          ],
+          "post1_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            256
+          ],
+          "post2_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            256
+          ]
+        },
+        "prior_state_at_every_post": {
+          "post0_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            255
+          ],
+          "post1_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            255
+          ],
+          "post2_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            256,
+            255
+          ]
+        }
+      },
+      "case_id": "mov_up",
+      "route_ranking": {
+        "expected": true,
+        "formula": "abs(Y(projection_native)-Y(identity)) < abs(Y(skip_native)-Y(identity))",
+        "pattern_id": "route_0002",
+        "reader": {
+          "bit": 8,
+          "head": "regs",
+          "register": 7
+        }
+      },
+      "signed_effects": {
+        "post0_zero_minus_identity": -1,
+        "projection_native_minus_post0_zero": 1
+      }
+    },
+    {
+      "abstentions": [
+        "skip_native complete first/second state",
+        "flag signs and decisions",
+        "unchanged-reader effect signs",
+        "continuous margin magnitudes",
+        "other-head effect signs",
+        "full-state equivalence of single-operand restores"
+      ],
+      "arms": {
+        "carrier_native": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            255
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            255
+          ]
+        },
+        "identity": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            255
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            255
+          ]
+        },
+        "post0_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            256
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "prior_state",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            255
+          ]
+        },
+        "post1_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            255
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            255
+          ]
+        },
+        "post2_zero": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            255
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            255
+          ]
+        },
+        "projection_native": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            255
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "equal",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            255
+          ]
+        },
+        "projection_sham": {
+          "exact_margins": "abstain",
+          "first_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            256
+          ],
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "prior_state",
+          "second_register_words": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            255
+          ]
+        },
+        "skip_native": {
+          "exact_margins": "abstain",
+          "first_register_words": null,
+          "flags": "abstain",
+          "length": 3,
+          "register_relation_to_native": "abstain",
+          "second_register_words": null
+        }
+      },
+      "baselines": {
+        "constant_negative_effect": {
+          "post0_zero_minus_identity": -1,
+          "projection_native_minus_post0_zero": -1
+        },
+        "constant_positive_effect": {
+          "post0_zero_minus_identity": 1,
+          "projection_native_minus_post0_zero": 1
+        },
+        "no_effect_at_any_post": {
+          "post0_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            255
+          ],
+          "post1_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            255
+          ],
+          "post2_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            255
+          ]
+        },
+        "prior_state_at_every_post": {
+          "post0_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            256
+          ],
+          "post1_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            256
+          ],
+          "post2_zero": [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            255,
+            256
+          ]
+        }
+      },
+      "case_id": "mov_down",
+      "route_ranking": {
+        "expected": true,
+        "formula": "abs(Y(projection_native)-Y(identity)) < abs(Y(skip_native)-Y(identity))",
+        "pattern_id": "route_0002",
+        "reader": {
+          "bit": 8,
+          "head": "regs",
+          "register": 7
+        }
+      },
+      "signed_effects": {
+        "post0_zero_minus_identity": 1,
+        "projection_native_minus_post0_zero": -1
+      }
+    }
+  ],
+  "schema": "mdb-predictive-route-plan-v1",
+  "scoring": {
+    "aggregation": "per-case and per-family counts, no scientific stopping threshold",
+    "continuation": "score complete second register vectors, predicted fetch, and own-state local fixture result separately",
+    "controls": "identity exact; no-op equals post0-zero; full carrier restore equals native across all heads",
+    "route": "compare the two absolute reader distances from unchanged native; ties retained",
+    "signed_effect": "sign of raw reader-logit difference; exact zero is a separate outcome",
+    "site": "compare complete eight-register vectors; also retain each wrong bit and native-relative match"
+  },
+  "static_reachability_baseline": {
+    "affected_heads": [
+      "regs",
+      "flags",
+      "imm",
+      "store_addr",
+      "store_value"
+    ],
+    "authority": "architecture/static graph only; not evidence of active causal route or learned semantics",
+    "unchanged_heads": [
+      "dest",
+      "src",
+      "width",
+      "length",
+      "syscall",
+      "store"
+    ]
+  },
+  "supplied": [
+    "operation grammar and six raw programs/states",
+    "reader coordinates",
+    "semantic expected first/second registers and signed directions",
+    "generic pattern hypotheses",
+    "intervention sites/restoration geometry",
+    "baseline and scoring definitions"
+  ]
+}
