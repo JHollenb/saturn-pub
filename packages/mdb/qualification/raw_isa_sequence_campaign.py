@@ -65,8 +65,9 @@ def worker():
     torch.set_num_threads(1)
     model, model_sources = load_r3_mamba_model(config["checkpoint"])
     model.eval().requires_grad_(False)
-    if (model.arch != "mamba" or not model.aligned or not model.store or model.snap
-            or model.regptr or model.relptr or model.maskkey or len(model.mixers) != 3):
+    if (model.arch != "mamba" or not model.aligned or not model.store or model.width != 48
+            or len(model.mixers) != 3 or len(model.post) != 3
+            or any(mixer.state != 4 or mixer.kernel != 3 for mixer in model.mixers)):
         raise ValueError("native configuration differs from raw reference")
     output = Path("sequence-result")
     output.mkdir(exist_ok=False)
