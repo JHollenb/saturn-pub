@@ -1,0 +1,128 @@
+{
+  "schema": "mdb-context-window-plan-v1",
+  "timestamp": "2026-10-30 23:49:16 UTC",
+  "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+  "execution": {
+    "backend": "cpu",
+    "dtype": "float32",
+    "threads": 1
+  },
+  "register_words": [
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    3,
+    262
+  ],
+  "flags": [
+    0,
+    0,
+    0,
+    0
+  ],
+  "first_instruction_hex": "4881ef01000000",
+  "contexts": {
+    "old": {
+      "program_hex": "4881ef010000004881ef01000000",
+      "description": "repeated SUB, zero padded to15bytes"
+    },
+    "new": {
+      "program_hex": "4881ef010000004831f74881c701000000",
+      "description": "mixed SUB XOR ADD; first15bytes participate"
+    }
+  },
+  "fresh_arms": [
+    "old.native",
+    "old.zero",
+    "old.U_swap",
+    "old.U_swap_P2native",
+    "new.zero",
+    "old.U_swap_P2other",
+    "new.U_swap_P2other"
+  ],
+  "prior_arms": [
+    "new.native",
+    "new.U_swap",
+    "new.U_swap_P2native"
+  ],
+  "prior": {
+    "job_id": "job-62804158d4e4",
+    "case_id": "rdi_262",
+    "instruction": 0,
+    "forecast_seal": "986cc001ae5694a0266c354b1144f15e64712e88f929ecd8f1e48440bdb488ea",
+    "event_head": "20bfb677e471ed3a9421db12637c0c4274d27a0f663d2109599da561157c4f9e",
+    "archive_sha256": "71780024152c3adc1f02cf5b2f2364d7e3c129a7ab09dd4010a3ae43cb9a3fc3",
+    "scope": "three source-bound existing first-step rows; do not count fresh or rerun"
+  },
+  "frontier": {
+    "kind": "raw-input",
+    "allowed": [
+      "literal raw15byte windows",
+      "initial registers and flags",
+      "complete frozen parameter dictionary",
+      "source-bound full NumPy equations"
+    ],
+    "excluded": [
+      "new native model calls before global seal",
+      "new native internal activations or outputs before global seal",
+      "prior numeric observations in fresh prediction callback"
+    ],
+    "prior_read_policy": "verify prior file hashes before seal; interpret prior native observations only after seal"
+  },
+  "recipes": {
+    "native": "unchanged full raw-input equation/model",
+    "zero": "zero post.0 return",
+    "U_swap": "post.0 zero; frozen FP32 predicted native final-mixer U for the same context",
+    "U_swap_P2native": "U_swap plus frozen FP32 predicted native P2 for the same context",
+    "U_swap_P2other": "U_swap unchanged recipient roots/zero/U; replace only P2 with frozen FP32 P2hat from other context U_swap forecast"
+  },
+  "cross_payloads": {
+    "P2hat_old_U": "compute old U_swap with staged FP32 native-old U; take predicted P2, stage FP32",
+    "P2hat_new_U": "compute new U_swap with staged FP32 native-new U; take predicted P2, stage FP32"
+  },
+  "readers": [
+    {
+      "head": "regs",
+      "register": 6,
+      "bit": 1
+    },
+    {
+      "head": "regs",
+      "register": 7,
+      "scope": "all64bits"
+    },
+    {
+      "head": "flags",
+      "scope": "all4bits"
+    }
+  ],
+  "horizon": "one first-instruction forward; no successors in this assay",
+  "measurements": [
+    "all11heads and decoded full state",
+    "observed-minus-predicted signed residuals",
+    "actual S/U/M/P2/h/z/input port values and identities",
+    "same-recipient M/z/root/U invariance under cross-P2 transfer",
+    "direct Wreg projection of actual donor difference versus analytic payload residual and native rounding",
+    "primary context contrast and full target/collateral reports",
+    "source-bound prior evidence reuse and exact payload provenance",
+    "phase compute/persist/native/replay timings without conflating compute with I/O"
+  ],
+  "budgets": {
+    "max_physical_forwards": 12,
+    "expected_physical_forwards": 7,
+    "max_replay_operations": 16000,
+    "timeout_seconds": 300,
+    "retries": 0
+  },
+  "limits": [
+    "Only trailing bytes vary; firstSUB and full architectural beforestate fixed.",
+    "Only seven cases are fresh; three new-context controls were already observed.",
+    "Cross-P2 panel uses endogenous natural writes and frozen analytic off-diagonal payloads, not a bit-exact fixed-payload2x2 factorial.",
+    "Do not infer native semantic execution of future instructions from sensitivity to trailing-window bytes.",
+    "All predictions use full supplied source equations and weights; no universal ISA or rule-discovery claim."
+  ],
+  "terminal_status": "unassessed"
+}

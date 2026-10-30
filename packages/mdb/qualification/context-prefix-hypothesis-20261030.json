@@ -1,0 +1,36 @@
+{
+  "schema": "mdb-structural-prefix-hypothesis-v1",
+  "timestamp": "2026-10-30 23:56:00 UTC",
+  "status": "prediction recorded before fresh native release",
+  "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+  "source": {
+    "result_index": "explicit-computation-20261030.json",
+    "result_index_sha256": "4b74304c9d473baa45db5bcdc61e4e0c683e42ab681fc172dbb91f506eb056dc",
+    "observed_case": "sub_258_new",
+    "initial_RDI": 258,
+    "initial_RSI": 3,
+    "program_hex": "4881ef010000004881ef01000000"
+  },
+  "new_case": {
+    "context": "old",
+    "initial_RDI": 262,
+    "initial_RSI": 3,
+    "program_hex": "4881ef010000004881ef01000000"
+  },
+  "applicability": [
+    "Exact checkpoint, frozen implementation and CPU FP32 single-thread execution match.",
+    "All15window bytes and flags match.",
+    "Every register's bits0and1 match.",
+    "Query is register-reader bit1; causal bit-axis mixers and rowwise MLPs apply.",
+    "No implication is made for pooled heads or higher bit positions."
+  ],
+  "mechanism": "Instruction-conditioned register selectors are identical; register reads and input projection are rowwise. Causal mixers cannot import higher-bit state into the row0/row1 prefix. Rowwise MLPs and the register reader preserve this dependency boundary.",
+  "predictions": {
+    "old.native": {"RSI_bit1_logit_approx": 6.551816940307617, "RSI_bit1_sign": 1},
+    "old.U_swap": {"RSI_bit1_logit_approx": -0.6448478698730469, "RSI_bit1_sign": -1},
+    "old.U_swap_P2native": {"RSI_bit1_logit_approx": 1.5392796993255615, "RSI_bit1_sign": 1}
+  },
+  "numerical_scope": "Native prefix invariance follows from source dependencies. Old intervention payloads used equations conditional on an observed prefix; new payloads use complete raw-input equations. Their prefix bytes may differ, so intervention magnitudes are approximate and their signs are prospective predictions. Retain payload-prefix differences and counterexamples.",
+  "claim_scope": "A source-derived applicability hypothesis transferred from existing evidence; no model or equation evaluated to generate this prediction, no fresh observation and no automatic rule induction.",
+  "advisor": "Astra source-causality review"
+}
