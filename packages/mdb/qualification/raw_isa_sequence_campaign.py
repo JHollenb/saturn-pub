@@ -41,6 +41,7 @@ def worker():
     from isa_lab.native_forward_symbol_assay import load_r3_mamba_model
 
     from mdb.discovery_cli import save_capture
+    from mdb.discovery_isa import ISADriver
     from mdb.discovery_runtime import ReplayForward
     from mdb.equation_comparison import EquationCatalog, compare_equations
     from mdb.forecast_transaction import ForecastPayload, ForecastTransaction, verify_transaction
@@ -125,13 +126,17 @@ def worker():
             for arm in plan["arms"]:
                 key = case["case_id"] + "." + arm
                 trajectory = forecasts[key]
-                words, flags, offset = list(case["register_words"]), list(case["flags"]), 0
+                driver = ISADriver(plan["program_hex"], case["register_words"], case["flags"],
+                                   max_instructions=plan["max_instructions"])
                 for step in range(plan["max_instructions"]):
-                    raw = formulas["roots"](plan["program_hex"], words, flags, offset)
+                    if driver.termination:
+                        break
+                    words, flags, offset = list(driver.registers), list(driver.flags), driver.offset
+                    inputs = driver.inputs()
+                    raw = tuple(value.detach().cpu().numpy().copy() for value in inputs)
                     predicted = trajectory["steps"].get(str(step))
                     root_join = predicted is not None and all(np.array_equal(value, predicted["roots"][name])
                         for name, value in zip(("window", "regs", "flags"), raw, strict=True))
-                    inputs = tuple(torch.from_numpy(value.copy()) for value in raw)
                     hooks = []
 
                     def replace(value):
@@ -178,7 +183,10 @@ def worker():
                     if not all(parity.values()):
                         raise ValueError("MDB replay/native instrument mismatch: " + row_id)
                     actual_heads = {name: value.detach().cpu().numpy().copy() for name, value in capture.output.items()}
-                    decoded = formulas["decode"](actual_heads)
+                    native_decode = driver.decode(capture.output)
+                    decoded = {"register_words": [int(word, 16) for word in native_decode["register_words"]],
+                               "flags": native_decode["flags_CF_ZF_SF_OF"], "length": native_decode["length"],
+                               "store": native_decode["store"], "syscall": native_decode["syscall"]}
                     actual_stages = {}
                     references = {}
                     for module, stage in [("decoder", "z"), ("inp", "input"), ("query", "query"),
@@ -210,13 +218,14 @@ def worker():
                     observed_rows[row_id] = result[row_id]
                     all_acts.extend(acts)
                     captures[row_id] = capture.trace["fingerprint"]
-                    if decoded["store"] or decoded["syscall"]:
+                    commit = driver.commit(capture.output)
+                    result[row_id]["driver_commit"] = {name: commit[name] for name in
+                        ("committed", "before", "after", "stop_causes", "overshoot") if name in commit}
+                    if not commit["committed"]:
                         result[row_id]["termination"] = "stop-before-effect-commit"
                         break
-                    words, flags = decoded["register_words"], decoded["flags"]
-                    offset += decoded["length"]
-                    if offset >= len(bytes.fromhex(plan["program_hex"])):
-                        result[row_id]["termination"] = "program-end"
+                    if driver.termination:
+                        result[row_id]["termination"] = driver.termination
                         break
         return result
 
@@ -248,7 +257,11 @@ def worker():
                 binding={"model_identity": plan["model_identity"], "execution": plan["execution"],
                          "input_identity": actual["input_identity"], "frontier": "raw-input",
                          "horizon": plan["max_instructions"], "source_identity": request["source_hashes"]},
-                report=comparison, conditions=[{"field": "architecture", "op": "eq", "value": "r3-mamba-aligned"}],
+                report=comparison, conditions=[
+                    {"field": "architecture", "op": "eq", "value": "r3-mamba-aligned"},
+                    {"field": "checkpoint", "op": "eq", "value": plan["model_identity"]},
+                    {"field": "execution", "op": "eq", "value": plan["execution"]},
+                    {"field": "source_identity", "op": "eq", "value": identity(request["source_hashes"])}],
                 tested_context={"case": case, "arm": arm, "instruction": int(step),
                                 "baseline": "same original state trajectory; later roots may differ"},
                 readers=["regs:7", "regs:6:1", "flags"],
