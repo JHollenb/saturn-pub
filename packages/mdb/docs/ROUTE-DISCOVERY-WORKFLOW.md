@@ -266,7 +266,7 @@ observed at that site. Do not give all occurrences one inferred semantic name.
 
 Current variants show that `post.1` reaches five heads, and its intervention
 responses vary across contexts even when decoded decisions stay unchanged.
-The next useful panel compares the other MLPs and more discriminating receiving
-states, then uses one intermediate restore to separate competing routes.
+The [matched three-MLP follow-up](THREE-POST-MLP-CAMPAIGN.md) now compares the
+other post MLPs and uses a final-mixer operand restoration to separate responses.
 The [bottleneck and discovery plan](DISCOVERY-BOTTLENECKS.md) specifies how to
 choose those experiments and when graph algorithms help.

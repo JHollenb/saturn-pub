@@ -33,6 +33,8 @@ candidate output edits, while component debugging uses scalar replay. See the
 [route discovery workflow](docs/ROUTE-DISCOVERY-WORKFLOW.md),
 [measured bottlenecks](docs/DISCOVERY-BOTTLENECKS.md) and
 [executed R3 script](examples/discovery/post1.mdb).
+The [matched three-MLP campaign](docs/THREE-POST-MLP-CAMPAIGN.md) adds a
+source-bound observation index and native-audited skip/update restoration results.
 
 Start the local GDB-style console after a base install:
 

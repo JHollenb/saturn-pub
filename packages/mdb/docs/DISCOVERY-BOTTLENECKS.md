@@ -81,13 +81,13 @@ logit units, while all flag decisions remain at least 22.69 units from zero.
 This is evidence of a numerical route even though a hard-output-only discovery
 score would miss it.
 
-Next, qualify matched native screens at `post.0` and `post.2` using the same
-contexts/doses. A complete three-site panel has 48 logical rows/12 B4 calls
-before optional reuse of identical controls. Predict structural consumer sets
-from the trace first; retain disagreements with observed effects. Scalar-replay
-the most contrasting responses and use an intermediate restoration to test
-which carrier explains the difference. These additional sites have **not** yet
-been qualified by this upgrade assay.
+The [three-site follow-up](THREE-POST-MLP-CAMPAIGN.md) has now qualified matched
+native screens at all three post MLPs: 48 conditions in 12 B4 calls plus 48 scalar
+controls. It retains 28 independently audited replay/restoration branches and
+own-state successors. A final-mixer skip/update factorial separates conditional
+responses at two selected contexts; the complete campaign used 120 forwards.
+Its generic 76-record index is a first source-bound observation index, while
+cross-run family matching remains open.
 
 Then vary receiving state and input encoding around previously observed carry
 contrasts. Hold one source fixed while changing its receiver, or exchange one

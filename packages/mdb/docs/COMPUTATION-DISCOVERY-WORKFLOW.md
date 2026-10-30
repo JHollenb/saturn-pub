@@ -238,18 +238,18 @@ competing rules disagree.
 the next bounded experiment. Compilation into a reusable operation comes after
 this evidence, with recipient compatibility and abstention where unresolved.
 
-## The next campaign
+## The first matched campaign
 
-Qualify the same four contexts and four doses at `post.0` and `post.2`, alongside
-the existing `post.1` panel. A complete three-site screen is 48 logical rows in
-12 B4 calls before control reuse; qualification and scalar audits are additional
-work. These additional sites were not qualified by the current upgrade assay.
+The [matched three-MLP campaign](THREE-POST-MLP-CAMPAIGN.md) has now run:
+48 conditions in 12 B4 calls, 48 scalar controls, and 28 native-audited scalar
+branches with own-state successors. Its final-mixer skip/update factorial
+exposes context-dependent contributions; its 76-record generic index binds
+observations to raw evidence without assigning semantic operations.
 
-Compare predicted graph consumers with observed response sets. Select one case
-where two MLPs or receiving states disagree, then test one intermediate carrier
-restore. Expand the receiving states or byte encoding only when that comparison
-becomes legible. Keep source formation, route recurrence, payload transfer and
-consumer selectivity as separate fields.
+The next mechanism cut separates recurrent carrier changes from reader/local
+changes within the projected update. Expand the receiving states or byte
+encoding as those comparisons become legible. Keep source formation, route
+recurrence, payload transfer and consumer selectivity as separate fields.
 
 For throughput, measure setup, native execution, replay, serialization, durable
 save, transport and idle time separately. Reuse resident bindings and common
