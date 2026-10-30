@@ -293,7 +293,9 @@ def stage(run_dir, isa_root):
     return {"job_id": str(job), "run_dir": str(run_dir)}
 
 
-def collect(run_dir, job_id):
+def collect(run_dir, job_id, *, max_expanded_bytes=256 * 1024 * 1024):
+    if type(max_expanded_bytes) is not int or not 0 < max_expanded_bytes <= 1024 * 1024 * 1024:
+        raise ValueError("max_expanded_bytes must be a positive integer no greater than 1 GiB")
     from mdb.job_support import decode_marker, terminal_job
 
     _, job, logs = terminal_job(job_id)
@@ -315,7 +317,7 @@ def collect(run_dir, job_id):
         raise ValueError("archive bytes differ")
     with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as archive:
         members = archive.getmembers()
-        if len(members) > 4096 or sum(item.size for item in members) > 256 * 1024 * 1024:
+        if len(members) > 4096 or sum(item.size for item in members) > max_expanded_bytes:
             raise ValueError("archive geometry exceeds finite bound")
         for item in members:
             relative = Path(item.name)

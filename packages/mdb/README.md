@@ -39,6 +39,11 @@ The [prospective new-operation test](docs/PREDICTIVE-ROUTES-NEW-OPS.md) freezes
 generic route forecasts before SUB, XOR and MOV execution, retaining both
 transferred effects and counterexamples. Its site predictor ties the no-effect
 baseline; target repair, full-state preservation and reader response differ.
+The [explicit computation forecast](docs/EXPLICIT-COMPUTATION-FORECASTS.md)
+uses genuine prefix capture and full-weight NumPy equations to predict 32 fresh
+suffix branches before native execution, including register collateral and its
+repair. It qualifies a conditional suffix account and documents the remaining
+MDB workflow gaps.
 
 Start the local GDB-style console after a base install:
 
