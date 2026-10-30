@@ -193,7 +193,10 @@ The [earlier suffix experiment](EXPLICIT-COMPUTATION-FORECASTS.md) motivated the
 features. The next [fixed raw-input sequence plan](../qualification/raw-isa-sequence-plan-20261030.json)
 extends the independent equations backward to instruction bytes and forecasts
 successive architectural updates before any native call. Its equations use the
-complete checkpoint; its actual results must be reported separately after execution.
+complete checkpoint. The [executed result](RAW-INPUT-SEQUENCE-FORECASTS.md)
+matched all eleven head decisions across 18 successive-instruction step records
+without an observed internal prefix, retaining the context-dependent exception
+to the earlier RSI collateral.
 
 Validation for this upgrade: 111 installed-wheel tests passed outside the
 workspace across native ports, transactions, equation records, prefix capture,

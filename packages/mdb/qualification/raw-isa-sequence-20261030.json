@@ -1,0 +1,3121 @@
+{
+  "countertrend": "The previous repeated-SUB RSI bit error does not recur under this mixed-program context; all branches share decoded states.",
+  "phase_events": [
+    {
+      "detail": {},
+      "elapsed_ms": 14815.199760021642,
+      "kind": "opened",
+      "phase": "open",
+      "previous": null,
+      "receipt_id": "862e268724c30d4b8c396cf8c58b9b2535269094493444963f323f60f975fcdf",
+      "schema": "mdb-forecast-phase-event-v1",
+      "sequence": 0,
+      "work": {
+        "actions": 0,
+        "captures": 0,
+        "denied_attempts": 0,
+        "executions": 0,
+        "native_calls": 0,
+        "predictions": 0,
+        "retained_bytes": 1208370
+      }
+    },
+    {
+      "detail": {
+        "name": "raw",
+        "native_calls": 0
+      },
+      "elapsed_ms": 15091.531614074484,
+      "kind": "frontier_published",
+      "phase": "open",
+      "previous": "55519c1f81d8dfc279ad296297d36497ac0d4613d1053141e3b2b3565dc92df2",
+      "receipt_id": "aa918183f00b860c8b330dc5ff8de99f700e7f0f80fe459895508b7fad40bb89",
+      "schema": "mdb-forecast-phase-event-v1",
+      "sequence": 1,
+      "work": {
+        "actions": 1,
+        "captures": 0,
+        "denied_attempts": 0,
+        "executions": 0,
+        "native_calls": 0,
+        "predictions": 0,
+        "retained_bytes": 1213319
+      }
+    },
+    {
+      "detail": {
+        "frontiers": [
+          "raw"
+        ],
+        "name": "campaign"
+      },
+      "elapsed_ms": 140612.92086704634,
+      "kind": "forecast_persisted",
+      "phase": "open",
+      "previous": "cf57fd557f6671f3216b7aa49ce0e8c79d693cb49e91781be10144cb5f5427c4",
+      "receipt_id": "e11e056113bed8832531067dcc3e83fa6bc7a4a4fbb961a7c67216731a5b722c",
+      "schema": "mdb-forecast-phase-event-v1",
+      "sequence": 2,
+      "work": {
+        "actions": 2,
+        "captures": 0,
+        "denied_attempts": 0,
+        "executions": 0,
+        "native_calls": 0,
+        "predictions": 1,
+        "retained_bytes": 35649408
+      }
+    },
+    {
+      "detail": {
+        "seal_sha256": "986cc001ae5694a0266c354b1144f15e64712e88f929ecd8f1e48440bdb488ea"
+      },
+      "elapsed_ms": 141029.8423820641,
+      "kind": "globally_sealed",
+      "phase": "sealed",
+      "previous": "ebc3d4ea8f56db743e4611d5c331db55064ebe3ff6f2bc2b5e15c018e30f8f25",
+      "receipt_id": "1e4143b93555b06a6ead7195d796fd17e7efb1f1fb1b51eb963bad6225b1e412",
+      "schema": "mdb-forecast-phase-event-v1",
+      "sequence": 3,
+      "work": {
+        "actions": 3,
+        "captures": 0,
+        "denied_attempts": 0,
+        "executions": 0,
+        "native_calls": 0,
+        "predictions": 1,
+        "retained_bytes": 35857941
+      }
+    },
+    {
+      "detail": {
+        "seal_sha256": "986cc001ae5694a0266c354b1144f15e64712e88f929ecd8f1e48440bdb488ea"
+      },
+      "elapsed_ms": 141339.54666694626,
+      "kind": "native_execution_released",
+      "phase": "released",
+      "previous": "25a07f0638d0d1f8184399e1672039ff9134507e61797ac063ca65f4a99ee13a",
+      "receipt_id": "9f72c4d0c496b54d3bdb1d79e47328f869c13d1363aa7505d2320a339fe0c475",
+      "schema": "mdb-forecast-phase-event-v1",
+      "sequence": 4,
+      "work": {
+        "actions": 4,
+        "captures": 0,
+        "denied_attempts": 0,
+        "executions": 0,
+        "native_calls": 0,
+        "predictions": 1,
+        "retained_bytes": 35858445
+      }
+    },
+    {
+      "detail": {
+        "name": "native",
+        "seal_sha256": "986cc001ae5694a0266c354b1144f15e64712e88f929ecd8f1e48440bdb488ea"
+      },
+      "elapsed_ms": 186985.557931941,
+      "kind": "observation_persisted",
+      "phase": "execute",
+      "previous": "20e92ad7e9e2b10f962a81e4d745ba4b1556e45b062a5662c54d0f5eded53f18",
+      "receipt_id": "3fc6f17b1f605b9c6f6951cf8abea8c056eb4f468ec5054d26a9a6c1a20e38b0",
+      "schema": "mdb-forecast-phase-event-v1",
+      "sequence": 5,
+      "work": {
+        "actions": 4,
+        "captures": 0,
+        "denied_attempts": 0,
+        "executions": 1,
+        "native_calls": 18,
+        "predictions": 1,
+        "retained_bytes": 40973454
+      }
+    },
+    {
+      "detail": {
+        "name": "native"
+      },
+      "elapsed_ms": 190890.12030209415,
+      "kind": "analysis_persisted",
+      "phase": "execute",
+      "previous": "ca267f54ff8a9b1147e125e5958f311c90d8b66f1a36383c77f1e9da5add9025",
+      "receipt_id": "d41f6d11cf7bf9343bae4ccc089a305c9925aecd6e30583c9730a3238c90067b",
+      "schema": "mdb-forecast-phase-event-v1",
+      "sequence": 6,
+      "work": {
+        "actions": 4,
+        "captures": 0,
+        "denied_attempts": 0,
+        "executions": 1,
+        "native_calls": 18,
+        "predictions": 1,
+        "retained_bytes": 45146525
+      }
+    },
+    {
+      "detail": {
+        "prior_phase": "released"
+      },
+      "elapsed_ms": 191165.7383569982,
+      "kind": "closed",
+      "phase": "closed",
+      "previous": "72e2a18a319548ee826dc0db7947009ed3bdc34cde3ff251e64fc427d519ffdd",
+      "receipt_id": "b20d724027d3c30ea3a40726fa69e199507383ab53e17c520fd3383df13d2895",
+      "schema": "mdb-forecast-phase-event-v1",
+      "sequence": 7,
+      "work": {
+        "actions": 4,
+        "captures": 0,
+        "denied_attempts": 0,
+        "executions": 1,
+        "native_calls": 18,
+        "predictions": 1,
+        "retained_bytes": 45146970
+      }
+    }
+  ],
+  "rows": [
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 3.43100506421385,
+          "observed": 3.4310128688812256
+        },
+        "U_swap_P2native": {
+          "forecast": 5.961758497772541,
+          "observed": 5.961760520935059
+        },
+        "native": {
+          "forecast": 10.275513064158801,
+          "observed": 10.275504112243652
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          261
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 0,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          262
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 1.75421142578125,
+        "imm": 25.655712127685547,
+        "length": 0.0,
+        "regs": 9.006612777709961,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 6.5914764404296875,
+        "store_value": 6.973735809326172,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "f2420dc83ac79b435d9638c2a4d94c826ac29d352bcf1406ac3a8c69ed466dfb",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          261
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 2.9514819246401203e-06,
+        "flags": 7.821141224439998e-06,
+        "imm": 4.248620179225782e-06,
+        "length": 1.3075271603213423e-06,
+        "regs": 9.613789069717882e-06,
+        "src": 3.821278589555277e-06,
+        "store": 1.3824505984416646e-06,
+        "store_addr": 3.839651554926604e-06,
+        "store_value": 5.433555463785211e-06,
+        "syscall": 2.7631585908238776e-07,
+        "width": 2.725533960301618e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 82.50546834841118,
+        "largest": {
+          "coordinate": [
+            138
+          ],
+          "signed": 9.006612777709961
+        },
+        "max_abs": 9.006612777709961,
+        "maximum_signed": 9.006612777709961,
+        "minimum_signed": -6.844491243362427,
+        "nonzero": 448,
+        "shape": [
+          448
+        ],
+        "signed_mean": 3.099917904074703,
+        "signed_sum": 1388.763221025467
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 13.844687654959172,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": -4.920986175537109
+        },
+        "max_abs": 4.920986175537109,
+        "maximum_signed": -0.00701141357421875,
+        "minimum_signed": -4.920986175537109,
+        "nonzero": 64,
+        "shape": [
+          64
+        ],
+        "signed_mean": -1.477167770266533,
+        "signed_sum": -94.5387372970581
+      },
+      "row_id": "rdi_262.U_swap.0"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        },
+        "U_swap_P2native": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        },
+        "native": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 3,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          262
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          261
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 0.0,
+        "imm": 0.0,
+        "length": 0.0,
+        "regs": 0.0,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 0.0,
+        "store_value": 0.0,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "b08e66d9fb848fa49c9f9c7c43d2b638216a95dd5bb403ca69053db22fe62c8c",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 3,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          262
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 6.996202248643613e-06,
+        "flags": 2.7166477650553134e-05,
+        "imm": 5.249443953303512e-06,
+        "length": 4.031703041640355e-06,
+        "regs": 1.502389150864758e-05,
+        "src": 9.640076305217349e-06,
+        "store": 7.913721482566416e-07,
+        "store_addr": 1.662893262732723e-05,
+        "store_value": 5.379528573712378e-06,
+        "syscall": 5.3845826286647025e-06,
+        "width": 2.503449877622188e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          448
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          64
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "row_id": "rdi_262.U_swap.1"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        },
+        "U_swap_P2native": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        },
+        "native": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          263
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 10,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          262
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 0.0,
+        "imm": 0.0,
+        "length": 0.0,
+        "regs": 0.0,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 0.0,
+        "store_value": 0.0,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "23f4bed20d54f1e4b7a478d8c5a563112006e2a1b8e383de5f93a72cbdb7a2aa",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          263
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 6.1663908788034405e-06,
+        "flags": 2.7600212227696375e-05,
+        "imm": 5.711948396935895e-06,
+        "length": 4.235864739854378e-06,
+        "regs": 1.4890921525179124e-05,
+        "src": 7.395556679057336e-06,
+        "store": 1.2155917445966224e-06,
+        "store_addr": 2.4814521669469514e-05,
+        "store_value": 5.359246845415555e-06,
+        "syscall": 4.6785731910858885e-07,
+        "width": 1.2175173651485238e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          448
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          64
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "row_id": "rdi_262.U_swap.2"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 3.43100506421385,
+          "observed": 3.4310128688812256
+        },
+        "U_swap_P2native": {
+          "forecast": 5.961758497772541,
+          "observed": 5.961760520935059
+        },
+        "native": {
+          "forecast": 10.275513064158801,
+          "observed": 10.275504112243652
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          261
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 0,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          262
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 1.6148147583007812,
+        "imm": 18.536556243896484,
+        "length": 0.0,
+        "regs": 5.284215927124023,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 3.9402904510498047,
+        "store_value": 6.340076446533203,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "e79562a2fe3caa553f3884aa1e83aeaa7ec77ccef84eb4efde5eb92c5260a407",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          261
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 2.9514819246401203e-06,
+        "flags": 5.596041098954174e-06,
+        "imm": 3.6165367660601078e-06,
+        "length": 1.3075271603213423e-06,
+        "regs": 7.177380805245548e-06,
+        "src": 3.821278589555277e-06,
+        "store": 1.3824505984416646e-06,
+        "store_addr": 2.761042630083921e-06,
+        "store_value": 3.967872526544625e-06,
+        "syscall": 2.7631585908238776e-07,
+        "width": 2.725533960301618e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 52.715738346079014,
+        "largest": {
+          "coordinate": [
+            179
+          ],
+          "signed": 5.284215927124023
+        },
+        "max_abs": 5.284215927124023,
+        "maximum_signed": 5.284215927124023,
+        "minimum_signed": -4.496847152709961,
+        "nonzero": 448,
+        "shape": [
+          448
+        ],
+        "signed_mean": 1.6586246022156306,
+        "signed_sum": 743.0638217926025
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 6.19971457540137,
+        "largest": {
+          "coordinate": [
+            6
+          ],
+          "signed": -1.1993999481201172
+        },
+        "max_abs": 1.1993999481201172,
+        "maximum_signed": 1.0134601593017578,
+        "minimum_signed": -1.1993999481201172,
+        "nonzero": 64,
+        "shape": [
+          64
+        ],
+        "signed_mean": -0.700274184346199,
+        "signed_sum": -44.81754779815674
+      },
+      "row_id": "rdi_262.U_swap_P2native.0"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        },
+        "U_swap_P2native": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        },
+        "native": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 3,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          262
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          261
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 0.0,
+        "imm": 0.0,
+        "length": 0.0,
+        "regs": 0.0,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 0.0,
+        "store_value": 0.0,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "62c7a534657b388f66890af9213c483351349842ec9452162a59f255a96e4fe2",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 3,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          262
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 6.996202248643613e-06,
+        "flags": 2.7166477650553134e-05,
+        "imm": 5.249443953303512e-06,
+        "length": 4.031703041640355e-06,
+        "regs": 1.502389150864758e-05,
+        "src": 9.640076305217349e-06,
+        "store": 7.913721482566416e-07,
+        "store_addr": 1.662893262732723e-05,
+        "store_value": 5.379528573712378e-06,
+        "syscall": 5.3845826286647025e-06,
+        "width": 2.503449877622188e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          448
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          64
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "row_id": "rdi_262.U_swap_P2native.1"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        },
+        "U_swap_P2native": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        },
+        "native": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          263
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 10,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          262
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 0.0,
+        "imm": 0.0,
+        "length": 0.0,
+        "regs": 0.0,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 0.0,
+        "store_value": 0.0,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "8eb5e4b713f3ceb6051a7a48e584bdbcefbc115bcfd461a08a1d65e2474caa61",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          263
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 6.1663908788034405e-06,
+        "flags": 2.7600212227696375e-05,
+        "imm": 5.711948396935895e-06,
+        "length": 4.235864739854378e-06,
+        "regs": 1.4890921525179124e-05,
+        "src": 7.395556679057336e-06,
+        "store": 1.2155917445966224e-06,
+        "store_addr": 2.4814521669469514e-05,
+        "store_value": 5.359246845415555e-06,
+        "syscall": 4.6785731910858885e-07,
+        "width": 1.2175173651485238e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          448
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          64
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "row_id": "rdi_262.U_swap_P2native.2"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 3.43100506421385,
+          "observed": 3.4310128688812256
+        },
+        "U_swap_P2native": {
+          "forecast": 5.961758497772541,
+          "observed": 5.961760520935059
+        },
+        "native": {
+          "forecast": 10.275513064158801,
+          "observed": 10.275504112243652
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          261
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 0,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          262
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 0.0,
+        "imm": 0.0,
+        "length": 0.0,
+        "regs": 0.0,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 0.0,
+        "store_value": 0.0,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "d489b2b45f99db609dccc84350d4d6342ac5e75c5d96aa8de133bfab6677be84",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          261
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 2.9514819246401203e-06,
+        "flags": 1.9817296447399713e-05,
+        "imm": 8.635839535031664e-06,
+        "length": 1.3075271603213423e-06,
+        "regs": 1.7258645161888353e-05,
+        "src": 3.821278589555277e-06,
+        "store": 1.3824505984416646e-06,
+        "store_addr": 2.6835867565466742e-05,
+        "store_value": 1.365622178184367e-05,
+        "syscall": 2.7631585908238776e-07,
+        "width": 2.725533960301618e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          448
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          64
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "row_id": "rdi_262.native.0"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        },
+        "U_swap_P2native": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        },
+        "native": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 3,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          262
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          261
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 0.0,
+        "imm": 0.0,
+        "length": 0.0,
+        "regs": 0.0,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 0.0,
+        "store_value": 0.0,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "d874ff9609ef258414699fa225f38969d63a17e6f5f6a184cbde15602d28518c",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 3,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          262
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 6.996202248643613e-06,
+        "flags": 2.7166477650553134e-05,
+        "imm": 5.249443953303512e-06,
+        "length": 4.031703041640355e-06,
+        "regs": 1.502389150864758e-05,
+        "src": 9.640076305217349e-06,
+        "store": 7.913721482566416e-07,
+        "store_addr": 1.662893262732723e-05,
+        "store_value": 5.379528573712378e-06,
+        "syscall": 5.3845826286647025e-06,
+        "width": 2.503449877622188e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          448
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          64
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "row_id": "rdi_262.native.1"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        },
+        "U_swap_P2native": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        },
+        "native": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          263
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 10,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          262
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 0.0,
+        "imm": 0.0,
+        "length": 0.0,
+        "regs": 0.0,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 0.0,
+        "store_value": 0.0,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "eeb8a4e8db9ed651d43cf3f3a6f1991395120d0a026385d26707c1eb6c98f523",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          263
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 6.1663908788034405e-06,
+        "flags": 2.7600212227696375e-05,
+        "imm": 5.711948396935895e-06,
+        "length": 4.235864739854378e-06,
+        "regs": 1.4890921525179124e-05,
+        "src": 7.395556679057336e-06,
+        "store": 1.2155917445966224e-06,
+        "store_addr": 2.4814521669469514e-05,
+        "store_value": 5.359246845415555e-06,
+        "syscall": 4.6785731910858885e-07,
+        "width": 1.2175173651485238e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          448
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          64
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "row_id": "rdi_262.native.2"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 3.43100506421385,
+          "observed": 3.4310128688812256
+        },
+        "U_swap_P2native": {
+          "forecast": 5.961758497772541,
+          "observed": 5.961760520935059
+        },
+        "native": {
+          "forecast": 10.275513064158801,
+          "observed": 10.275504112243652
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          265
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 0,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          266
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 1.842803955078125,
+        "imm": 25.655712127685547,
+        "length": 0.0,
+        "regs": 8.968753814697266,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 5.3900651931762695,
+        "store_value": 6.973735809326172,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "999a897482ec43751fc33d63459f334874dd46a18a6a5dd1cd98a015929b0c6c",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          265
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 2.9514819246401203e-06,
+        "flags": 8.93064134999122e-06,
+        "imm": 4.778727273446748e-06,
+        "length": 1.3075271603213423e-06,
+        "regs": 1.0444512808405193e-05,
+        "src": 3.821278589555277e-06,
+        "store": 1.3824505984416646e-06,
+        "store_addr": 4.2154271753247485e-06,
+        "store_value": 4.744980323323489e-06,
+        "syscall": 2.7631585908238776e-07,
+        "width": 2.725533960301618e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 81.57066300604168,
+        "largest": {
+          "coordinate": [
+            138
+          ],
+          "signed": 8.968754291534424
+        },
+        "max_abs": 8.968754291534424,
+        "maximum_signed": 8.968754291534424,
+        "minimum_signed": -6.844491243362427,
+        "nonzero": 448,
+        "shape": [
+          448
+        ],
+        "signed_mean": 3.064467230545623,
+        "signed_sum": 1372.881319284439
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 13.436076904809227,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": -4.920986175537109
+        },
+        "max_abs": 4.920986175537109,
+        "maximum_signed": -0.00701141357421875,
+        "minimum_signed": -4.920986175537109,
+        "nonzero": 64,
+        "shape": [
+          64
+        ],
+        "signed_mean": -1.416347160935402,
+        "signed_sum": -90.64621829986572
+      },
+      "row_id": "rdi_266.U_swap.0"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        },
+        "U_swap_P2native": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        },
+        "native": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 3,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          266
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          265
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 0.0,
+        "imm": 0.0,
+        "length": 0.0,
+        "regs": 0.0,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 0.0,
+        "store_value": 0.0,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "ed50daf1ffe0069e24020cdc22fa169f4427fe053b1d16669043a57bee79581f",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 3,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          266
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 6.996202248643613e-06,
+        "flags": 1.5423489543309188e-05,
+        "imm": 5.237915289058037e-06,
+        "length": 4.031703041640355e-06,
+        "regs": 1.6084741904620614e-05,
+        "src": 9.640076305217349e-06,
+        "store": 7.913721482566416e-07,
+        "store_addr": 1.3161265592032123e-05,
+        "store_value": 3.762683434160863e-06,
+        "syscall": 5.3845826286647025e-06,
+        "width": 2.503449877622188e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          448
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          64
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "row_id": "rdi_266.U_swap.1"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        },
+        "U_swap_P2native": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        },
+        "native": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          267
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 10,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          266
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 0.0,
+        "imm": 0.0,
+        "length": 0.0,
+        "regs": 0.0,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 0.0,
+        "store_value": 0.0,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "9d45cae1817f68ff8454cd31ff6cff3fda63a0956274af4481d31cc2938d822a",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          267
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 6.1663908788034405e-06,
+        "flags": 2.488171915615567e-06,
+        "imm": 8.619778014917756e-06,
+        "length": 4.235864739854378e-06,
+        "regs": 1.8074004380252973e-05,
+        "src": 7.395556679057336e-06,
+        "store": 1.2155917445966224e-06,
+        "store_addr": 1.2311107450813097e-05,
+        "store_value": 5.686165522433839e-06,
+        "syscall": 4.6785731910858885e-07,
+        "width": 1.2175173651485238e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          448
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          64
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "row_id": "rdi_266.U_swap.2"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 3.43100506421385,
+          "observed": 3.4310128688812256
+        },
+        "U_swap_P2native": {
+          "forecast": 5.961758497772541,
+          "observed": 5.961760520935059
+        },
+        "native": {
+          "forecast": 10.275513064158801,
+          "observed": 10.275504112243652
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          265
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 0,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          266
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 1.7057342529296875,
+        "imm": 18.536556243896484,
+        "length": 0.0,
+        "regs": 5.294172286987305,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 3.5589847564697266,
+        "store_value": 6.340076446533203,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "b956f39313cf066929f41f27a230e3bccce7da6eb3105389bc7947d5d5675fde",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          265
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 2.9514819246401203e-06,
+        "flags": 4.866507396172892e-06,
+        "imm": 4.2197851293224176e-06,
+        "length": 1.3075271603213423e-06,
+        "regs": 7.329756009255561e-06,
+        "src": 3.821278589555277e-06,
+        "store": 1.3824505984416646e-06,
+        "store_addr": 3.480506972408648e-06,
+        "store_value": 3.4819217393788904e-06,
+        "syscall": 2.7631585908238776e-07,
+        "width": 2.725533960301618e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 52.70819561679636,
+        "largest": {
+          "coordinate": [
+            179
+          ],
+          "signed": 5.294172286987305
+        },
+        "max_abs": 5.294172286987305,
+        "maximum_signed": 5.294172286987305,
+        "minimum_signed": -4.496847152709961,
+        "nonzero": 448,
+        "shape": [
+          448
+        ],
+        "signed_mean": 1.6669896692037582,
+        "signed_sum": 746.8113718032837
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 6.142285483259618,
+        "largest": {
+          "coordinate": [
+            6
+          ],
+          "signed": -1.1961479187011719
+        },
+        "max_abs": 1.1961479187011719,
+        "maximum_signed": 1.0134601593017578,
+        "minimum_signed": -1.1961479187011719,
+        "nonzero": 64,
+        "shape": [
+          64
+        ],
+        "signed_mean": -0.694341629743576,
+        "signed_sum": -44.43786430358887
+      },
+      "row_id": "rdi_266.U_swap_P2native.0"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        },
+        "U_swap_P2native": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        },
+        "native": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 3,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          266
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          265
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 0.0,
+        "imm": 0.0,
+        "length": 0.0,
+        "regs": 0.0,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 0.0,
+        "store_value": 0.0,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "2cb737455fef3fcd711ffcecd58c61fba5d5aca4022b8908f93b59782ddda027",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 3,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          266
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 6.996202248643613e-06,
+        "flags": 1.5423489543309188e-05,
+        "imm": 5.237915289058037e-06,
+        "length": 4.031703041640355e-06,
+        "regs": 1.6084741904620614e-05,
+        "src": 9.640076305217349e-06,
+        "store": 7.913721482566416e-07,
+        "store_addr": 1.3161265592032123e-05,
+        "store_value": 3.762683434160863e-06,
+        "syscall": 5.3845826286647025e-06,
+        "width": 2.503449877622188e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          448
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          64
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "row_id": "rdi_266.U_swap_P2native.1"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        },
+        "U_swap_P2native": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        },
+        "native": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          267
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 10,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          266
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 0.0,
+        "imm": 0.0,
+        "length": 0.0,
+        "regs": 0.0,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 0.0,
+        "store_value": 0.0,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "a48758668d4edde9929f0591de9197bafd6b6498fb54bad44abf9621efe600fc",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          267
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 6.1663908788034405e-06,
+        "flags": 2.488171915615567e-06,
+        "imm": 8.619778014917756e-06,
+        "length": 4.235864739854378e-06,
+        "regs": 1.8074004380252973e-05,
+        "src": 7.395556679057336e-06,
+        "store": 1.2155917445966224e-06,
+        "store_addr": 1.2311107450813097e-05,
+        "store_value": 5.686165522433839e-06,
+        "syscall": 4.6785731910858885e-07,
+        "width": 1.2175173651485238e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          448
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          64
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "row_id": "rdi_266.U_swap_P2native.2"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 3.43100506421385,
+          "observed": 3.4310128688812256
+        },
+        "U_swap_P2native": {
+          "forecast": 5.961758497772541,
+          "observed": 5.961760520935059
+        },
+        "native": {
+          "forecast": 10.275513064158801,
+          "observed": 10.275504112243652
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          265
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 0,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          266
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 0.0,
+        "imm": 0.0,
+        "length": 0.0,
+        "regs": 0.0,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 0.0,
+        "store_value": 0.0,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "8c9871b5798b2c21a16b18a8ec66df35aaf227a036e9c39d1e372c996df79b61",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          265
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 2.9514819246401203e-06,
+        "flags": 7.845789980365225e-06,
+        "imm": 8.376959069522627e-06,
+        "length": 1.3075271603213423e-06,
+        "regs": 1.5081540809092076e-05,
+        "src": 3.821278589555277e-06,
+        "store": 1.3824505984416646e-06,
+        "store_addr": 1.973852811687493e-05,
+        "store_value": 1.0065333384545738e-05,
+        "syscall": 2.7631585908238776e-07,
+        "width": 2.725533960301618e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          448
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          64
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "row_id": "rdi_266.native.0"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        },
+        "U_swap_P2native": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        },
+        "native": {
+          "forecast": 18.962795930151948,
+          "observed": 18.962791442871094
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 3,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          266
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          265
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 0.0,
+        "imm": 0.0,
+        "length": 0.0,
+        "regs": 0.0,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 0.0,
+        "store_value": 0.0,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "93082196127dc9c8dee2240dd8827e4ea9fb6334bdbc525a1f534470f7e8a421",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 3,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          266
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 6.996202248643613e-06,
+        "flags": 1.5423489543309188e-05,
+        "imm": 5.237915289058037e-06,
+        "length": 4.031703041640355e-06,
+        "regs": 1.6084741904620614e-05,
+        "src": 9.640076305217349e-06,
+        "store": 7.913721482566416e-07,
+        "store_addr": 1.3161265592032123e-05,
+        "store_value": 3.762683434160863e-06,
+        "syscall": 5.3845826286647025e-06,
+        "width": 2.503449877622188e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          448
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          64
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "row_id": "rdi_266.native.1"
+    },
+    {
+      "RSI_bit1": {
+        "U_swap": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        },
+        "U_swap_P2native": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        },
+        "native": {
+          "forecast": 10.494273814413297,
+          "observed": 10.494268417358398
+        }
+      },
+      "actual_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          267
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "actual_port_count": 34,
+      "all_roots_equal": true,
+      "before": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "offset": 10,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          266
+        ]
+      },
+      "effect_vs_native_max_abs": {
+        "dest": 0.0,
+        "flags": 0.0,
+        "imm": 0.0,
+        "length": 0.0,
+        "regs": 0.0,
+        "src": 0.0,
+        "store": 0.0,
+        "store_addr": 0.0,
+        "store_value": 0.0,
+        "syscall": 0.0,
+        "width": 0.0
+      },
+      "equation_record": "6b4105bafbb7472df7821134944457419d4fdd677fde939c864bf253fc09d49d",
+      "forecast_decode": {
+        "flags": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "length": 7,
+        "register_words": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3,
+          267
+        ],
+        "store": false,
+        "syscall": false
+      },
+      "head_decision_differences": {
+        "dest": 0,
+        "flags": 0,
+        "imm": 0,
+        "length": 0,
+        "regs": 0,
+        "src": 0,
+        "store": 0,
+        "store_addr": 0,
+        "store_value": 0,
+        "syscall": 0,
+        "width": 0
+      },
+      "head_max_abs": {
+        "dest": 6.1663908788034405e-06,
+        "flags": 2.488171915615567e-06,
+        "imm": 8.619778014917756e-06,
+        "length": 4.235864739854378e-06,
+        "regs": 1.8074004380252973e-05,
+        "src": 7.395556679057336e-06,
+        "store": 1.2155917445966224e-06,
+        "store_addr": 1.2311107450813097e-05,
+        "store_value": 5.686165522433839e-06,
+        "syscall": 4.6785731910858885e-07,
+        "width": 1.2175173651485238e-06
+      },
+      "native_replay_exact": true,
+      "regs_collateral_effect": {
+        "elements": 448,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          448
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "regs_target_effect": {
+        "elements": 64,
+        "l2": 0.0,
+        "largest": {
+          "coordinate": [
+            0
+          ],
+          "signed": 0.0
+        },
+        "max_abs": 0.0,
+        "maximum_signed": 0.0,
+        "minimum_signed": 0.0,
+        "nonzero": 0,
+        "shape": [
+          64
+        ],
+        "signed_mean": 0.0,
+        "signed_sum": 0.0
+      },
+      "row_id": "rdi_266.native.2"
+    }
+  ],
+  "schema": "mdb-raw-isa-sequence-publication-v1",
+  "scope": "two related starting states x three branches x three successive own-state instructions",
+  "source": {
+    "archive_sha256": "71780024152c3adc1f02cf5b2f2364d7e3c129a7ab09dd4010a3ae43cb9a3fc3",
+    "job_id": "job-62804158d4e4",
+    "plan_file_sha256": "77c70d2a8add9c3962054daf0a68cfe8da57fc718b9cb20ce8b70828f98686f0",
+    "publication_tool_sha256": "c981b51c7122343e4c602eeeeed863553ff771e204664c245d57a6d457111b19",
+    "request_sha256": "c167850943e25cb221ff513b8a718dc2b4a1cd4fe7d95915319f833fa079ab74",
+    "verified_artifact_files": 1423,
+    "verified_source_hashes": {
+      "artifacts/model.pt": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+      "campaign_support.py": "be8ba06b6acd0b696a9723f4f1aef3f6455388e68e60d07045c938f1039589e8",
+      "direct_effect/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "direct_effect/model.py": "202317979d86d043d19a382a5f9f4b0120c7fee7333e53b1c29dd701f3861cc8",
+      "explicit_suffix_equations.py": "fb1d0133ac6ab3d87f8e811cbf3d14ea82880a2b9d0c5d5ca05c03cba5a38f2b",
+      "isa_lab/__init__.py": "10655d03386c6f2be015a52c17c7047a07b30d9ff4ff4baa5d239c6949c26dc4",
+      "isa_lab/native_forward_symbol_assay.py": "6119c4e7837148c8681dae31664c089fd239f4a1213a8a5966e10d000560223e",
+      "isa_lab/ssm.py": "319f942903166039e3f6d25a82b38f87412054ea18bf31e19c77554af6998573",
+      "isa_model_comparison-0.1.0-py3-none-any.whl": "c96cda395e7bb9fb0deb56db52e3dd1105d50812863cc2c37cb78a2f1f68e2d0",
+      "plan.json": "b6523e968dbd9d81b9691e5dd548376f77265d425550b562fbdbc21ad4de5cd7",
+      "preflight.v1.json": "e98c3d5cb28755332e4a3dfb67f52dc51f3c39821728ff2ced8cc5e7172a3db1",
+      "raw_isa_equations.py": "b220a42e431a80ae679dd68196ab32cb0e4de1a23dd6da22c6a60f66434dcdc1",
+      "raw_isa_sequence_campaign.py": "a0d6b1602b5efb75089eff8068a78b189ace96075c71ec160f1ad749cac1245b",
+      "source-manifest.json": "c5ecb38316a84f6ecc56294c6648ab5930c5a4fa219229bedb49f075f19fdf00"
+    }
+  },
+  "summary": {
+    "architectural_correctness": "not an oracle-scored ISA accuracy claim",
+    "counts": {
+      "acts": 10,
+      "physical_forwards": 18,
+      "replay_operations": 10440
+    },
+    "forecast_root_joins": 18,
+    "head_decision_mismatches": 0,
+    "job_id": "job-62804158d4e4",
+    "limits": [
+      "two fixed related initial states, one supplied17byteprogram andthree declaredarms",
+      "full source equations and frozen weights supplied; no semantic operation discovery",
+      "each forecast/native trajectory owns its own prior state; mismatches never recondition forecasts"
+    ],
+    "max_head_abs": 2.7600212227696375e-05,
+    "max_stage_abs": 1.8835115955795345e-05,
+    "mechanics_status": "valid",
+    "request_sha256": "c167850943e25cb221ff513b8a718dc2b4a1cd4fe7d95915319f833fa079ab74",
+    "rows": 18,
+    "schema": "mdb-raw-isa-sequence-result-v1",
+    "terminal_status": "unassessed",
+    "transaction_verification": {
+      "event_head": "20bfb677e471ed3a9421db12637c0c4274d27a0f663d2109599da561157c4f9e",
+      "events": 8,
+      "forecasts": [
+        "campaign"
+      ],
+      "frontiers": [
+        "raw"
+      ],
+      "identity_scope": "externally-pinned",
+      "phase": "closed",
+      "schema": "mdb-forecast-offline-verification-v1",
+      "seal_sha256": "986cc001ae5694a0266c354b1144f15e64712e88f929ecd8f1e48440bdb488ea",
+      "verified": true
+    },
+    "worker_seconds": 191.59691514098085
+  },
+  "timing_scope": "phase differences include equation calculation and durable persistence; no isolated I/O benchmark",
+  "verification": {
+    "event_head": "20bfb677e471ed3a9421db12637c0c4274d27a0f663d2109599da561157c4f9e",
+    "events": 8,
+    "forecasts": [
+      "campaign"
+    ],
+    "frontiers": [
+      "raw"
+    ],
+    "identity_scope": "externally-pinned",
+    "phase": "closed",
+    "schema": "mdb-forecast-offline-verification-v1",
+    "seal_sha256": "986cc001ae5694a0266c354b1144f15e64712e88f929ecd8f1e48440bdb488ea",
+    "verified": true
+  }
+}

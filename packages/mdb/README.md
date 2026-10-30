@@ -49,6 +49,9 @@ provides actual module/parameter ports, bounded Python forecast scripts with a
 durable seal before native release, and automatic equation/collateral comparisons
 with immutable applicability records. `mdb ports`, `mdb forecast` and
 `mdb equations` expose framework-free evidence inspection.
+The [raw-input sequence assay](docs/RAW-INPUT-SEQUENCE-FORECASTS.md) uses this
+workflow to forecast all three mixer/MLP stages and three successive instructions
+without an observed prefix: all 18 step results match all eleven head decisions.
 
 Start the local GDB-style console after a base install:
 
