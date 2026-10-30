@@ -24,6 +24,8 @@ DEBUGGER_PROTOCOL_SCHEMA = "saturn-debugger-protocol-v1"
 DEBUGGER_CAPABILITY_SCHEMA = "saturn-debugger-capability-v1"
 DEBUGGER_REQUEST_SCHEMA = "saturn-debugger-request-v1"
 DEBUGGER_RESPONSE_SCHEMA = "saturn-debugger-response-v1"
+DISCOVERY_RELAY_BINDING_SCHEMA = "mdb-discovery-relay-binding-v1"
+DISCOVERY_RELAY_FIELD = "$discovery_relay"
 
 _SAFE_NAME = re.compile(r"^[A-Za-z][A-Za-z0-9_.:-]*$")
 _SAFE_FIELD = re.compile(r"^[A-Za-z][A-Za-z0-9_]*$")
@@ -516,6 +518,42 @@ class DebugResponse:
 
 class DebugTransport(Protocol):
     def request(self, request: DebugRequest) -> DebugResponse: ...
+
+
+def bind_discovery_relay_request(request: DebugRequest) -> DebugRequest:
+    """Bind relay cache keys to bytes while retaining the logical mutation ID.
+
+    Older mrun brokers cache by request ID before reaching the worker. A content
+    and sequence bound wire ID prevents that cache from hiding changed commands
+    or caching a sequence-refusal forever under a logical mutation identity.
+    """
+    if not request.operation.startswith("discovery."):
+        return request
+    if DISCOVERY_RELAY_FIELD in request.payload:
+        raise DebuggerProtocolError("reserved discovery relay metadata cannot be supplied")
+    binding = {"schema": DISCOVERY_RELAY_BINDING_SCHEMA,
+               "logical_request_id": request.request_id,
+               "command_digest": digest({"operation": request.operation, "payload": request.payload})}
+    wire_id = "discovery-" + digest({"logical_request_id": request.request_id,
+        "operation": request.operation, "payload": request.payload, "sequence": request.sequence})
+    return DebugRequest(request.operation, {**request.payload, DISCOVERY_RELAY_FIELD: binding},
+                        request_id=wire_id, sequence=request.sequence)
+
+
+def unwrap_discovery_relay_request(request: DebugRequest) -> DebugRequest:
+    """Verify optional relay metadata before worker retry/sequence dispatch."""
+    if not request.operation.startswith("discovery.") or DISCOVERY_RELAY_FIELD not in request.payload:
+        return request
+    payload = dict(request.payload)
+    binding = payload.pop(DISCOVERY_RELAY_FIELD)
+    if not isinstance(binding, Mapping) or binding.get("schema") != DISCOVERY_RELAY_BINDING_SCHEMA:
+        raise DebuggerProtocolError("invalid discovery relay binding")
+    logical_id = _id(binding.get("logical_request_id"), "logical discovery request_id")
+    logical = DebugRequest(request.operation, payload, request_id=logical_id, sequence=request.sequence)
+    expected = bind_discovery_relay_request(logical)
+    if request.request_id != expected.request_id or dict(binding) != expected.payload[DISCOVERY_RELAY_FIELD]:
+        raise DebuggerProtocolError("discovery relay content/identity binding differs")
+    return logical
 
 
 class HttpDebugTransport:

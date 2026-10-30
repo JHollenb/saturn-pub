@@ -118,6 +118,8 @@ def compile_command(line):
     if verb in {"capture", "restore", "fork", "select"} and len(args) == 1:
         return {"capture": "checkpoint", "restore": "checkpoint", "fork": "branch", "select": "branch"}[verb], {
             "action": verb, "cut" if verb == "restore" else "name": args[0]}
+    if verb == "save-frontier" and len(args) == 1:
+        return "checkpoint", {"action": "save", "store": args[0]}
     if verb == "inspect" and len(args) == 1:
         return "inspect", {"selector": args[0]}
     raise DiscoveryScriptError(f"unknown command: {line}; use call with a typed JSON payload")

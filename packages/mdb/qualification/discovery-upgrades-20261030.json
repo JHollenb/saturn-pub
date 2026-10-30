@@ -1,0 +1,1090 @@
+{
+  "artifact_publication": {
+    "archive_sha256": "e438e481e7d4a63ef18620d38c9843aa3fc56a226addd2cc74aaa1e7790285c6",
+    "collection": "worker log archive; SHA-256 verified before extraction",
+    "status": "failed-queued"
+  },
+  "batch": {
+    "decoded_B1_B4_parity": "not established by retained numeric summaries",
+    "maximum_all_head_abs_difference": 2.288818359375e-05,
+    "numerical_profile": {
+      "atol": 0.0001,
+      "kind": "bounded-abs-relative",
+      "rtol": 1e-05
+    },
+    "rounds": [
+      {
+        "batch_calls": 1,
+        "batch_native_seconds": 0.0045295581221580505,
+        "batch_seconds": 0.005397230852395296,
+        "execution_order": [
+          "scalar",
+          "batch"
+        ],
+        "logical_rows_each": 4,
+        "round": 0,
+        "scalar_calls": 4,
+        "scalar_native_seconds": 0.009930073749274015,
+        "scalar_seconds": 0.01184673816896975,
+        "throughput_ratio": 2.1949659914421034
+      },
+      {
+        "batch_calls": 1,
+        "batch_native_seconds": 0.004255256149917841,
+        "batch_seconds": 0.0051285079680383205,
+        "execution_order": [
+          "batch",
+          "scalar"
+        ],
+        "logical_rows_each": 4,
+        "round": 1,
+        "scalar_calls": 4,
+        "scalar_native_seconds": 0.008396168006584048,
+        "scalar_seconds": 0.010157279903069139,
+        "throughput_ratio": 1.9805526220044751
+      }
+    ],
+    "work": {
+      "failed_physical_calls": 0,
+      "logical_forward_rows": 36,
+      "padded_rows": 0,
+      "physical_batches": 6,
+      "physical_model_calls": 19
+    }
+  },
+  "bottlenecks": {
+    "comparison_scope": "one cold before/after observation; earlier run later failed in CLI dispatch",
+    "job_elapsed_seconds": 34.82,
+    "new_profile": {
+      "fsync_calls": 12,
+      "fsync_self_seconds": 1.468413543,
+      "profile_seconds": 8.817460695,
+      "top_self_functions": [
+        {
+          "calls": 12,
+          "cumulative_seconds": 1.468413543,
+          "file": "~",
+          "function": "<built-in method posix.fsync>",
+          "line": 0,
+          "primitive_calls": 12,
+          "self_seconds": 1.468413543
+        },
+        {
+          "calls": 960,
+          "cumulative_seconds": 1.461287473,
+          "file": "~",
+          "function": "<built-in method builtins.compile>",
+          "line": 0,
+          "primitive_calls": 960,
+          "self_seconds": 1.461287473
+        },
+        {
+          "calls": 1734,
+          "cumulative_seconds": 1.01943395,
+          "file": "~",
+          "function": "<method '__exit__' of '_io._IOBase' objects>",
+          "line": 0,
+          "primitive_calls": 1734,
+          "self_seconds": 1.01943395
+        },
+        {
+          "calls": 141945,
+          "cumulative_seconds": 0.8914490690000001,
+          "file": "~",
+          "function": "<method 'write' of '_io.TextIOWrapper' objects>",
+          "line": 0,
+          "primitive_calls": 141945,
+          "self_seconds": 0.8914490690000001
+        },
+        {
+          "calls": 396571,
+          "cumulative_seconds": 1.5840780010000002,
+          "file": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/xjsuQmjWQH-XlOge/lib/python3.14/site-packages/saturn_pub/values.py",
+          "function": "describe",
+          "line": 54,
+          "primitive_calls": 45,
+          "self_seconds": 0.49934567300000005
+        },
+        {
+          "calls": 182827,
+          "cumulative_seconds": 0.359090318,
+          "file": "/home/beast/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/json/encoder.py",
+          "function": "iterencode",
+          "line": 207,
+          "primitive_calls": 182827,
+          "self_seconds": 0.35908766200000003
+        },
+        {
+          "calls": 2484252,
+          "cumulative_seconds": 0.36643438700000003,
+          "file": "~",
+          "function": "<built-in method builtins.isinstance>",
+          "line": 0,
+          "primitive_calls": 2484252,
+          "self_seconds": 0.23270014500000002
+        },
+        {
+          "calls": 182825,
+          "cumulative_seconds": 0.7459779910000001,
+          "file": "/home/beast/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/json/__init__.py",
+          "function": "dumps",
+          "line": 185,
+          "primitive_calls": 182825,
+          "self_seconds": 0.22002996100000002
+        },
+        {
+          "calls": 849,
+          "cumulative_seconds": 0.20861272800000003,
+          "file": "~",
+          "function": "<built-in method posix.open>",
+          "line": 0,
+          "primitive_calls": 849,
+          "self_seconds": 0.20860941100000002
+        },
+        {
+          "calls": 5989,
+          "cumulative_seconds": 0.154180811,
+          "file": "~",
+          "function": "<built-in method posix.stat>",
+          "line": 0,
+          "primitive_calls": 5989,
+          "self_seconds": 0.154178868
+        }
+      ]
+    },
+    "new_save_session_seconds": 3.5686080439481884,
+    "observed_save_ratio": 18.857996726517793,
+    "old_profile": {
+      "fsync_calls": 988,
+      "fsync_self_seconds": 64.21753619900001,
+      "profile_seconds": 70.5041468779996,
+      "top_self_functions": [
+        {
+          "calls": 988,
+          "cumulative_seconds": 64.21753619900001,
+          "file": "~",
+          "function": "<built-in method posix.fsync>",
+          "line": 0,
+          "primitive_calls": 988,
+          "self_seconds": 64.21753619900001
+        },
+        {
+          "calls": 960,
+          "cumulative_seconds": 1.4218234650000001,
+          "file": "~",
+          "function": "<built-in method builtins.compile>",
+          "line": 0,
+          "primitive_calls": 960,
+          "self_seconds": 1.4218234650000001
+        },
+        {
+          "calls": 494,
+          "cumulative_seconds": 0.7257286190000001,
+          "file": "~",
+          "function": "<method 'flush' of '_io.BufferedRandom' objects>",
+          "line": 0,
+          "primitive_calls": 494,
+          "self_seconds": 0.7257286190000001
+        },
+        {
+          "calls": 182818,
+          "cumulative_seconds": 0.672947276,
+          "file": "/home/beast/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/json/encoder.py",
+          "function": "iterencode",
+          "line": 207,
+          "primitive_calls": 182818,
+          "self_seconds": 0.672945943
+        },
+        {
+          "calls": 2221,
+          "cumulative_seconds": 0.378694984,
+          "file": "~",
+          "function": "<method '__exit__' of '_io._IOBase' objects>",
+          "line": 0,
+          "primitive_calls": 2221,
+          "self_seconds": 0.378694984
+        },
+        {
+          "calls": 396311,
+          "cumulative_seconds": 1.5838922130000002,
+          "file": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/nqWMxnyNyJGRiVBO/lib/python3.14/site-packages/saturn_pub/values.py",
+          "function": "describe",
+          "line": 54,
+          "primitive_calls": 289,
+          "self_seconds": 0.304373917
+        },
+        {
+          "calls": 2409863,
+          "cumulative_seconds": 0.361287574,
+          "file": "~",
+          "function": "<built-in method builtins.isinstance>",
+          "line": 0,
+          "primitive_calls": 2409863,
+          "self_seconds": 0.225488188
+        },
+        {
+          "calls": 100792,
+          "cumulative_seconds": 0.175919824,
+          "file": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/nqWMxnyNyJGRiVBO/lib/python3.14/site-packages/mdb/forward_symbols.py",
+          "function": "_json_copy",
+          "line": 54,
+          "primitive_calls": 4,
+          "self_seconds": 0.14660752400000002
+        },
+        {
+          "calls": 572032,
+          "cumulative_seconds": 0.150854378,
+          "file": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/nqWMxnyNyJGRiVBO/lib/python3.14/site-packages/saturn_pub/values.py",
+          "function": "tensor",
+          "line": 20,
+          "primitive_calls": 572032,
+          "self_seconds": 0.112894779
+        },
+        {
+          "calls": 182817,
+          "cumulative_seconds": 0.9434690600000001,
+          "file": "/home/beast/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/json/__init__.py",
+          "function": "dumps",
+          "line": 185,
+          "primitive_calls": 182817,
+          "self_seconds": 0.10963372900000001
+        }
+      ]
+    },
+    "old_save_session_seconds": 67.296798811,
+    "peak_process_tree_rss_mb": 1631.7,
+    "phases": [
+      {
+        "phase": "native_batch_qualification",
+        "physical_forwards": 20,
+        "seconds": 0.082308832090348
+      },
+      {
+        "phase": "sixteen_variant_screen",
+        "physical_forwards": 4,
+        "seconds": 0.0263519159052521
+      },
+      {
+        "phase": "capture_and_create_lane",
+        "physical_forwards": 1,
+        "seconds": 4.030141533818096
+      },
+      {
+        "phase": "replay_to_post1_exit",
+        "physical_forwards": 0,
+        "seconds": 0.2609139771666378
+      },
+      {
+        "phase": "durable_save",
+        "physical_forwards": 0,
+        "seconds": 3.5686080439481884
+      },
+      {
+        "phase": "fresh_process_resume_and_suffix",
+        "physical_forwards": 0,
+        "seconds": 2.356378905940801
+      },
+      {
+        "phase": "remote_residency_including_client_wait",
+        "physical_forwards": 0,
+        "seconds": 9.838508986169472
+      }
+    ]
+  },
+  "claim_scope": "bounded CPU R3 mechanics; exploratory computation variants",
+  "client": {
+    "changed_content_refused": true,
+    "cli_result_sha256": "fe74f5bcbe881e9170c99a93f41c2254e24ab7bd778813bf651568e0a1517fa9",
+    "commands_executed": 11,
+    "retry_proof_sha256": "deae773d05e571a2a2d6ec86780316ade74d36b5d22c7e8843ca18227f2d68de",
+    "same_id_same_content_exact_response": true,
+    "verified_journal_records": {
+      "remote": 12,
+      "resumed": 6
+    }
+  },
+  "durable": {
+    "all_native_heads_exact": {
+      "dest": true,
+      "flags": true,
+      "imm": true,
+      "length": true,
+      "regs": true,
+      "src": true,
+      "store": true,
+      "store_addr": true,
+      "store_value": true,
+      "syscall": true,
+      "width": true
+    },
+    "capture_control_exact": {
+      "dest": true,
+      "flags": true,
+      "imm": true,
+      "length": true,
+      "regs": true,
+      "src": true,
+      "store": true,
+      "store_addr": true,
+      "store_value": true,
+      "syscall": true,
+      "width": true
+    },
+    "executed_suffix_primitives": 205,
+    "final_driver": {
+      "binding": "85dc2b5236a26a6cfe7015b19ee202e316ace1aa3663dbd0c3e6888a5a9e8452",
+      "byte_offset": 7,
+      "driver": "r3-predicted-length",
+      "flags_CF_ZF_SF_OF": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "flags_order": [
+        "CF",
+        "ZF",
+        "SF",
+        "OF"
+      ],
+      "instruction_index": 1,
+      "max_instructions": 2,
+      "program_hex": "4881c7010000004881c701000000",
+      "ram_effects": "unavailable",
+      "register_order": [
+        "RAX",
+        "RCX",
+        "RDX",
+        "RBX",
+        "RSP",
+        "RBP",
+        "RSI",
+        "RDI"
+      ],
+      "register_words": [
+        "0000000000000000",
+        "0000000000000000",
+        "0000000000000000",
+        "0000000000000000",
+        "0000000000000000",
+        "0000000000000000",
+        "0000000000000003",
+        "00000000000000fd"
+      ],
+      "store_policy": "stop-before-commit",
+      "syscall_policy": "stop-before-commit",
+      "termination": null
+    },
+    "law": {
+      "availability": "native-replay-safe-point",
+      "dependency_inputs": [
+        "v000418",
+        "v000419",
+        "v000420",
+        "v000425",
+        "v000427",
+        "v000432",
+        "v000434"
+      ],
+      "entry": 365,
+      "exit": 375,
+      "id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_003",
+      "inputs": [
+        "v000418"
+      ],
+      "kind": "mlp",
+      "module": "post.1",
+      "module_path": "post.1",
+      "name": "mlp_003",
+      "outputs": [
+        "v000436"
+      ],
+      "parameters": [
+        "v000419",
+        "v000420",
+        "v000425",
+        "v000427",
+        "v000432",
+        "v000434"
+      ],
+      "parent_scope": null,
+      "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_003",
+      "unit": "law"
+    },
+    "prefix_replayed": false,
+    "resumed_initial_pc": 375,
+    "saved": {
+      "admission": {
+        "admitted_bytes": 4976445,
+        "cut": "f490fb444951660a4d2b2908264ebedb9b04666df77d4b257ee1b0fb2a05e12f",
+        "deduplicated_bytes": 0,
+        "logical_bytes": 4976445,
+        "physical_blobs": 0,
+        "slot_pages": 1
+      },
+      "cut_id": "f490fb444951660a4d2b2908264ebedb9b04666df77d4b257ee1b0fb2a05e12f",
+      "native_cut": "e92ad016813a3f8db2c10f8235925d75b02d68eeb278ff2843d333decfcd614b",
+      "profile": "deterministic-cpu-aten-v1",
+      "restore_mode": "native-durable",
+      "schema": "mdb-discovery-durable-session-v1",
+      "scope": "selected lane/input epoch/branch only",
+      "storage_layout": "bundle-v1",
+      "target": {
+        "branch_id": "main",
+        "epoch_id": "input_00",
+        "lane_id": "research",
+        "revision": 1
+      }
+    }
+  },
+  "job_id": "job-a61b5618e8db",
+  "limits": [
+    "batching is full native screening; component replay remains scalar",
+    "durable restoration selects one branch and requires explicit factory/lease rebinding as applicable",
+    "native first-eager pause is not provided",
+    "four contexts of one byte program; not broad model laws"
+  ],
+  "package_proof": {
+    "module_sha256": {
+      "mdb/__init__.py": "b812b895ae1022578e938bc49f6b9b0720535592671b90888948db444546ad88",
+      "mdb/__main__.py": "2fe8aae57c1ccadb22978376724b46d68badecb1002fba31357bc20bf3b19edc",
+      "mdb/ar/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mdb/ar/capability_source_write.py": "fd708a5572127e1dfc53a0dff25844e78c456eb6644542962491e4f5fae5b376",
+      "mdb/ar/causal_context_qwen.py": "55174256000fb898571f87c0c9f6ce78011622d63126122665ba813bb188ec3a",
+      "mdb/ar/embedding.py": "a7ee13463f025659ac4310076a3b9454c0c9920311ccb118615f97218496e5fb",
+      "mdb/ar/mamba_state_program.py": "a8c9e37ecf2eaae2c93d5371a63bf8affe43e7ca85788b4d366c85516f4bde50",
+      "mdb/ar/mamba_state_runtime.py": "3566b2e8a78c9ebb4aed00d15e82dc8092c6b379e2a4d85e3964accd915f630a",
+      "mdb/ar/model.py": "56da077f6ac987be75458071a5034ede2ab9c7fca205968c3b80b74310bc4233",
+      "mdb/ar/observe.py": "5d412746c1d16dc1b195ae14c6699cd948d58a642702a56186e2381067812e53",
+      "mdb/ar/paged_kv.py": "e6b68490048ab5f95a028943841c76558ab7031f8f4d920654135b924cdb1f29",
+      "mdb/ar/persistent_kv_history.py": "97b4256a2de917aa00dd808263dd146aaf3eceaa54923af5423d1bddd8543946",
+      "mdb/ar/prefix_program.py": "855aa880fcb42d20486f7d8b8501ffd8142e0deb5e9b57f4fb934c7c8e4c4272",
+      "mdb/ar/program_record.py": "a7b056308e815a9b15aaef905321db35191b90f3d04a528811d66064b1efbf86",
+      "mdb/ar/qwen_joint_value_output.py": "3cc98c4c4da3486aa5d500783ea0787fb73a56ce0796fdd0da012acbd7b12f85",
+      "mdb/ar/qwen_joint_value_output_fused.py": "51eb7393e399b61a52971c560da2e376203f9c478e9ab41797aad0d82b740e2c",
+      "mdb/ar/qwen_shared_ancestor_attention.py": "8749a280b622fabd007b9cc5677e50846b4a029c78a681ef3713b244a354c235",
+      "mdb/ar/source_address_policy.py": "8f6adff8f861fe39d071fac32d76d383a0ae041c59ea11d9132dca635816e265",
+      "mdb/ar/source_set.py": "d686a215519589c412ab458c634fb4972d11bad960b2439b9baa2fc3994af86d",
+      "mdb/ar/training.py": "eb9eb1e93901c69954944e5ca3a2b8fd9046e7e9fb9eb531043ae537bc374615",
+      "mdb/artifact_custody.py": "e9eae883663f6306ef3660389015e355f85e06e4b5f79e94faec3198f5b9b8e3",
+      "mdb/assay_custody.py": "fd758477c7b3a8a3c6aba999c7cd32ad82c9443811e7d44a369ec905a3f58398",
+      "mdb/authoritative_dependency.py": "74aa50d5bb1f14c9ffce123513351d330af2ce0c860117c12a4504578ee7880e",
+      "mdb/backend_session.py": "62ed471e419fe453bbb8cdfdb834bd6695e0d47974e6e382176613c85a165e75",
+      "mdb/backend_torch.py": "50300fb122992b8a1084c8dd496451bd4673ee999b7f987d55e7fc91b7069202",
+      "mdb/backends.py": "966ddd74c4b0be431133870ab8a2d4e0535f2ab12db01c1b0c5367bb8a39b0ae",
+      "mdb/bench.py": "4efc0c3a70bd1ade2db801b270b91a0d9fd766d5fa8f57c4e25f4d3057759295",
+      "mdb/bench_adapters.py": "ecf776f5880377c459e73d0eab0db1447f98b9f7794b280ff90888716af4de12",
+      "mdb/bench_admission.py": "e0940e522e31c02f8cf96de64e78545054affbc82335ae717f58eb64f53fe076",
+      "mdb/bench_circuit_measurement.py": "94200b5f92355fdf43715ae55ccc1a6faccf67a7b27abeb25e9ab366b660c9fd",
+      "mdb/bench_circuit_verify.py": "c1c6f24ab8390c29483b29c4573aef6df7166c240a6608d3aac81fbe92232543",
+      "mdb/bench_cli.py": "1073d2b4fd817846847053e950a5a1db95fc95967e5f0cc10b428ce09b8bd23a",
+      "mdb/bench_cot.py": "56b901b88a71a0836a029a35da18423a7d0440724a14cc22daa18c4c3d47e090",
+      "mdb/bench_cot_index.py": "fc7cb45997ad80b0f4d0c62ae30903f3d7c4fc960ec1e4a16f898efd1a768251",
+      "mdb/bench_debugger.py": "114df3941197defe20c1d84d62a43bb9ccde709ec35e5f75afd5b7572917eb3d",
+      "mdb/bench_diffusion.py": "af6e1cb7b151e36d12a5a9da69099d69ac534de97815b3fbede0c79c24001d54",
+      "mdb/bench_discovery.py": "a310348ffdb9a3443479337aaf74515229670c469e72fa2d4062c3bfc600eb19",
+      "mdb/bench_family.py": "328dc3755dd1c3052e0ecdb9a96fde90eaf504ee651c0529a12f89e2abc80d35",
+      "mdb/bench_family_symbols.py": "c274ffd8e5f01c424bb56c7880c1ac301e197bae7b95f62c32992075a903ddac",
+      "mdb/bench_frozen_reader.py": "ecc2df814bb46fabb7df52675d2f8607f69d7903eaf896ac62f21f53f1fb0307",
+      "mdb/bench_hidden_memory.py": "d201df9c081b6df962cd30fdd83bf12f823c061c6ffc3a03c5d70bad73d11a56",
+      "mdb/bench_jacobian.py": "aa35ff87dfdcb702d1288d30cb8a4da2d0e77f17420283631f42376c5bba58c3",
+      "mdb/bench_jacobian_verify.py": "6ee31108edec367b618818a7726bf9dec1e019afd6a356a8ee95a2cf91eb32c7",
+      "mdb/bench_loading.py": "d7fa58e0227d5ff6fa0d0d1dd97896b3e5ba9644691b6be5e5bb4e5d2722f120",
+      "mdb/bench_mamba.py": "29565b04fad3d2df130a8e53bd5fb4345c0ce122beaa4627a2f011eeeebe9146",
+      "mdb/bench_memory_probe.py": "0e1f4b20ba9bb3a8216b455047085598132ea0399f597c37616ec7a40ce9132f",
+      "mdb/bench_metrics.py": "9761e0c541a08a108e56d7475bf2f671c7c3fb7acdb6fe3b99307a6f0c3c7ef0",
+      "mdb/bench_mlp_memory.py": "e86f7245968f085b6e04514eb2f060f1e8e4b08e5da6ce6ae9797fa6a184c434",
+      "mdb/bench_native_forward.py": "e9f5b0e026f76a17fa24c648e051a1d64fd146dbf4dbdfe30a611afb23e9e0f2",
+      "mdb/bench_pages.py": "0c58161541ec6b8d32c9777a1c18bef86ad289b3d2ea2457f6862e8fb5a12210",
+      "mdb/bench_pointer.py": "2030d3750ca304ca8fa83a8e58cf2273775d5674a8420c55d81654ccea71522f",
+      "mdb/bench_publication.py": "e109f7c5935d914e4ec6bb9be0656074f556c00433a5b6e72f0dba29ac4d7654",
+      "mdb/bench_qwen.py": "e91cd5001995bf830bbab17cc9ce5d13b2ddd99766b88e635fe27da35d3090d7",
+      "mdb/bench_qwen_memory.py": "677d6d2fe8a0278e568197cddc50d75a29567c9249dedbcb651b9c0dac4ecb39",
+      "mdb/bench_resources.py": "b958427b4fbcc0e3274387231b64328eab1a99b3c678ea22b4ec6c448dbad7c3",
+      "mdb/bench_symbols.py": "4e3a483f8e11a7cd6707268e8e62636b3f0085026ca6c65370dcb7a1999cfc54",
+      "mdb/bench_verify.py": "6940cb8c937956bd96875379f23e73ed002b5b2aca3eb143ce5e27dfadb827d2",
+      "mdb/bisect_adapters.py": "5e26f66983d45ef0bc5227fc3b0ed2392d9eabebfca955345a9495323204a111",
+      "mdb/capabilities.py": "e55ec822cbf0490f5561df944f1335bc2c5df181ebcf446d1af0f2c04e5f0e70",
+      "mdb/causal_context_vm.py": "92a93d4fb435cc205e8a9538339c2d226720a60d1e292dbb55cbb86e91cdc07f",
+      "mdb/causal_page_dag.py": "af3bdf93a59744172f95789b0a4e05289402ea5fe3f28151e9d8b4b06ad2dae8",
+      "mdb/causal_page_store.py": "a0cd0fff726c6b5dbc2f7a097198eb7093a15ade3728347848e48b07d8cd1b10",
+      "mdb/causal_radix_dag.py": "9a53aedd107d9191dfca8781df9c9d68fe6d29319cbba5ab66351e1117137798",
+      "mdb/causal_radix_store.py": "ae0d0fdd6b81dac9d7af3019e1c820e7d6697941ba980a44e0c4e72198b41e79",
+      "mdb/circuit_explorer.py": "b95e35ab6f2ce8cc546fe7c8ff688958dceb0d47adcb284c66ffdd12312c405a",
+      "mdb/circuit_incremental.py": "7ad0d57e139120dd29a1aaebdbdba40ad39e916632562b726728dd6674d80bea",
+      "mdb/circuit_residency.py": "92ab78868d5034e9850a80593e6458b65960cacbd4d54f07986e7b35a906e7ac",
+      "mdb/circuit_runtime.py": "54abe8d23fe7705b22983090bb2f60dee20c255951e0c205712a1c0e9691ce9a",
+      "mdb/circuit_thought_trace.py": "510655c0ef2e9c67f1f4d3c038073cd0c681928da8a4c8c4972da063b37df45f",
+      "mdb/claims_registry.py": "3b735a2adb8abfc7c80b1c9a9dfbe2b761c184c39e5e511b02dab0451741be95",
+      "mdb/cli.py": "25eb14b7c9efc3de43c86276525dd154299091b51bc3f71ffecb609b53035af8",
+      "mdb/context_cli.py": "bede948bf8bef6364c67ca1c30336c1258b45c6250c0feaec1f40376a0aec604",
+      "mdb/context_register.py": "7f4fdd550bf98f74e580691c749fe3ed37ba84a9427a08457254717bdcdf073c",
+      "mdb/counter_debugger.py": "73c5272bacb14d9f71b3a67b77cb0fa854d658c92cbcd55e33f98ba89dfe5b8b",
+      "mdb/debugger_adapters.py": "c478f577ff63304e61cc23870114a0b89104cd593c6966e6a478317410e411ba",
+      "mdb/debugger_algebra.py": "cb88a9e791a728bb9b3a85f2ca9b6aef7f489d9a9b1c2f225f52be3af2aac81f",
+      "mdb/debugger_cli.py": "bdc711808154a42b7848fd62d0c7b978bafc09540555e39a30ef30a6aff385ab",
+      "mdb/debugger_console.py": "b10133bb305f8bc4eb44df80dde8d1847f1ad275d3e9ce66f927cbf1ef1a325f",
+      "mdb/debugger_features.py": "d66ec24669a746cdbb8f157aa135ab459cf0a78d0289ad7a1048ccf6ab1e17b8",
+      "mdb/debugger_protocol.py": "97b48299bbfcc493438655d0bdbabab456ddb0e034b9bf13bf3cdf04f37f7242",
+      "mdb/debugger_render.py": "6a72674d3a64fd8711f2b50df75bc7a283b91772e5d5c30be3ea333cb10038e9",
+      "mdb/debugger_runtime.py": "85bbf112158fbd04aec36eebbe004fcded14241934fc11d8de066b92b89f7626",
+      "mdb/debugger_session.py": "272a6d62156a434d512de8be028550c86999dba4878a062672a263188d735317",
+      "mdb/debugger_structs.py": "b630e238bb9280b3846d4f5899aa3cf686162eeb0a563966128d5a5b2ea76f21",
+      "mdb/debugger_worker.py": "6a1c39f033ff340452014e233099d15c761d0c3b7263404e4b4f37751a05aad8",
+      "mdb/discovery.py": "47a01d38683275f3173d85fba41b04287b7e5ed8f65e73d5be84bbec1bc14d59",
+      "mdb/discovery_batch.py": "f592beb7c30f9c13b12db7a9d248053c010b2b345c6f326fd9660ddcc8e9a342",
+      "mdb/discovery_catalog.py": "7a3e1fc4acbe578dd6fcd59d9d5510a9bb1ab9f3a0f2a454c6a070b70d94c82f",
+      "mdb/discovery_cli.py": "db06df1ab2f2452cb434f6f8ff50899f0a46ae1203d372f9ea6309fd34dc2ae3",
+      "mdb/discovery_isa.py": "e8b59da01b5b7a048ae93df9555f1a49046f8d14fdfc0c00ade30b82ee47fce7",
+      "mdb/discovery_remote.py": "967fb265f2bad6fceec105673498160804e0e4f3c77612c389c4a40c4f13175d",
+      "mdb/discovery_runtime.py": "dc61bfb48f51dade0609211a002b1492bcd324bb9728b8339010e0d0c2870070",
+      "mdb/discovery_script.py": "cecfe1a02809fb86545283fc6bc31c7084a978b8c017482c648e81d9db3cf45e",
+      "mdb/discovery_storage.py": "36ce63cd0b463969bb7ce77d50c91966b0275780c6258e1bc319edf48e9a748f",
+      "mdb/divergence_bisect.py": "031b15ad2d9ffc23587442e068e38c55cc3bccc383741c4a12c6444281d8d661",
+      "mdb/errors.py": "c29151711a5e71d7a7925d79783d835d2480361be2e21d032daa284c5f52d148",
+      "mdb/evidence_citations.py": "53d44593f1b23f6f0967845d627b70f69da8472de5096f5507777e69772a5103",
+      "mdb/evidence_pipeline.py": "839011c3b961e5f36e4f9d2c2baceda6c34d3c3aa896fb36346ed8257469ff3f",
+      "mdb/evidence_specs.py": "2fe3841494fe4718e2c457ed4ef333c4b677b6a17f7effa2ee7d87dbc6e70f11",
+      "mdb/execution_environment.py": "1726fafb063c7f3892397ba8ad7bf7c7e3097e37a5e7b30e215360e7d2088230",
+      "mdb/execution_skeleton.py": "05f3aa372334d7ff407d9302ed1199b5e64a734550768715bed7d551ff703db8",
+      "mdb/forward_algebra.py": "efab5fcc396d18cf02c7278a5ae133d79d69bbacd80360fb408f3404118ba751",
+      "mdb/forward_debugger.py": "974abb0d24e52aa51d36b384c3d50014c11cde01a030b9f8d6f14816604267ef",
+      "mdb/forward_interventions.py": "27566fc32f2dfcfdcaffd10c03f158f56fdf1a39eaefc5e27cf01c7b23b0e080",
+      "mdb/forward_panels.py": "3a94c06b5d58379a7150ad9e1c1e0eefdbee3f137fd68bb23b7f3b4c6edbfba2",
+      "mdb/forward_readable.py": "71242d103d5a270ea0e073b7c2bca6645e5ec37dce7baefadb48a10f567a02c6",
+      "mdb/forward_recording.py": "f118509e397a4e19108980bd5789f7069e1ab9e4b081d856dd46d1aaed64b30f",
+      "mdb/forward_symbols.py": "69b4b0464c38d634f0479858b5b0f7fbbe8438c141a0a616e6ff65796f254c0b",
+      "mdb/future_forest.py": "6b3c017ba9ef3bada3a4f092feea7e6ecc17e71f7fa7e0eaaeb21dca84bf9420",
+      "mdb/hyperion.py": "5ff0f8ed6455e442a09df428a428353e2bd2506e1fc0ebfdf3d6b1934675da8d",
+      "mdb/jacobian_io.py": "e75215ea4965c77b87071d17f12d6c0e4f34ebbcae06e6e7caabee555b3ab38b",
+      "mdb/jacobian_workspace.py": "b4256b3d3a84dc5eac4b25578efc99d673ed104ff6776ccc220b8bfbe1fc397c",
+      "mdb/job_support.py": "9ad31f069b6ac385571a9995817fa471eae0ff25e4b270652b028e330f82cdb5",
+      "mdb/knowledge_interchange.py": "98e71f354b43afd2055d90120efa71ebd7f9bd1932ac458621aa1ed23bc66802",
+      "mdb/lens_debugger.py": "99004a3648181f24e904a19b3dc1c27695509911bd1aa8231e39730ebbe02dff",
+      "mdb/live_statecut.py": "e75ff48ae18776cf40e8550d8e312ad239c021dadc995b09f9b849272cacfdf0",
+      "mdb/local_cli.py": "cc7f0d17b473f1284c82aeba0e60785b7124697d433d021a362589402056d48a",
+      "mdb/local_data_plane.py": "da0a4467cca68371fb7b5de2d34758fdc59401d8a3ba47f08cc607ae852867de",
+      "mdb/local_debugger.py": "b566834e765438f9b5910bfb63dc1fb13f8803124aeecd00751238cf1c34828c",
+      "mdb/mamba_state_vm.py": "b3d6634cacd1c0a9f3f8dd225842abf13afa1d1675960bb13a7970f12c1d567d",
+      "mdb/memit.py": "d76aa4d9438b40c142077093c71edf202eb9924e56aea7f68a8faf2304d80480",
+      "mdb/mlp_memory.py": "0010d7f39810e1e12617759ba2349661858c006c69839c23419a22c46d3d14e1",
+      "mdb/model_os_causal_context.py": "ce3d60f212686dd87eeb872932e0db41ba096aebdff2d9c97e7e96ccf79f7f67",
+      "mdb/model_os_contracts.py": "6f92ca5f08f304dddd7313264cb474cde7f2b2b31bd89d9df75448067ce3cc8f",
+      "mdb/model_os_kernel.py": "84473e7d911135e3d66157889f8e8130e9e1da30692ec45aa4c2a40f26b948c8",
+      "mdb/model_os_mamba_state.py": "e3fe26c67b73127ce58ebd5e82918d0780b09ab3a628c2f0fa090c1699b2241f",
+      "mdb/mvm_worker_support.py": "67298e1a6f8ff856403141ef24b8de1c29566438050991926cb87dd233f7a7bf",
+      "mdb/object_manifest.py": "e3f58e1ee03061c3360de4d2bbcf8954ca646d0a821a493ce418cd1b0b2ff290",
+      "mdb/pass_causal_state_diff.py": "84256e63a1887729aa7e94e7698d1dd7895853e5df7201f0e958205611a3aa9b",
+      "mdb/paths.py": "071b6673cafc94e697e31f6496711a4b0f58efdb78d420b1b0f21011260b0858",
+      "mdb/payload.py": "e3c77aa02af5f49193d0ccd287308b7d98242ee5c66e859c272129bf04e30196",
+      "mdb/project.py": "97bbd0281d9dce4b6661b2c4cbe2bb102b2e198988e8a40adbbdb0e0e710c5a1",
+      "mdb/project_analysis.py": "968c2715183ad0cfd512a9feb83ff608f4d1d7dd5b5f35eb7f5dfb481bff5664",
+      "mdb/project_navigation.py": "579a43beacf603234acd636fc5ac9347ee8f7128c1cdb25a2c9599f87973a0e0",
+      "mdb/project_slice.py": "1c947954e3e23538754278a53bee279061e94fe8820235148b9360158cca456a",
+      "mdb/public_cot_project.py": "8f74fa7e7b6b54157172f7cc3932623a014fd35cbf1e7119912f0250d014bd8a",
+      "mdb/qwen2_machine.py": "3d16f3a8afa5335374e007e69f68b1eb42413c96a306670646f27b6916f5e6c5",
+      "mdb/receipt_watch.py": "baecae21c14b6f79d08c28db0e98fa75da7316b42a66003f193fbebc6eef8b36",
+      "mdb/research_session.py": "c877c4a60f17aa8093912931e2a61f65123bb47176ebbb19d5edc5c020aeb211",
+      "mdb/runtime_telemetry.py": "801235c28f4009cab746aa1cd14f681afa32954a5f8e9d9ec6403234bddf4bec",
+      "mdb/saturn_pub_adapter.py": "2a098c10ce3837bb32e4a3a0c6aabdfc37f0f230db8cd984d793099203c3fb53",
+      "mdb/scheduling_contract.py": "0ac29bf9a59203ff58421707004a686ab25877477431c04942df9bfbee22f73e",
+      "mdb/semantic_binding.py": "d553a2fc1e595961ba5c61964ec7597197686641de242891549fca5a0f7a29f4",
+      "mdb/source_frame_stack.py": "23e5dd0d6287ef72c77998676ba3977d783717c80310e945af6d7e5a35f22928",
+      "mdb/source_program_surface.py": "f7394fa9cf1369e9874c703cd001a0352b47d2ffc93bedf57e8ba1cc40a32fbe",
+      "mdb/spectral_address.py": "0d13218f6595a25c7d98e899b92c6d37bbe83afadb76d8dc097e1e443884905f",
+      "mdb/state_annotations.py": "8e2751050a0e06ab49eb6822753c6c9014468c496137b731f60c11bef7f7858e",
+      "mdb/state_graph.py": "59b87b428e27365135a7d7645c75301d7707cdd3bccad692974aeed417b78cdc",
+      "mdb/statecut_checkpoint.py": "f996ddcf6f3f2218bbc928eddd21c45a5838bdb86567ec9510cf6237890cc3c0",
+      "mdb/statecut_intent.py": "297ff2b65cdc727da90cdcea50d5f0387bbb30a73886b9733293424cfb39e662",
+      "mdb/symbol_lifecycle.py": "997b18932e29f2f6683c7215b7bfb4cf86872afc9988e20c3b15189574c43b88",
+      "mdb/symbol_lifecycle_project.py": "f8d085cd908b5c976774801102da8830244dc98124c61761810cc27a0b28f661",
+      "mdb/symbol_producers.py": "7d72152c9954fc50659086a425c56ca073b8e201288fc1c81cd02412b0286b4e",
+      "mdb/symbol_sources.py": "c8aed2782e88bbcf82edaf4b40b78741784059d80147dd0b83d1ff00341e1fe0",
+      "mdb/symbol_trace.py": "7e9675a8f4eb81f6f528402cc515c35d915fe8fa4b4ab0529292f6e24a6769fc",
+      "mdb/temporal_causal_viewer.py": "91d39c81c21fc546432db1832f8a4a2f626e98cbe63d276e1d3adeba29d97024",
+      "mdb/tensor_hash.py": "5e37cc1e34f4b49c97f026b861af8cbb8d47697931743b19e3fd506c9932f3f4",
+      "mdb/thought_route_graph.py": "4e9822bc2327bcd43268e0bc6c31a7915267e3cbbc9840d72fd006637ad767db",
+      "mdb/titan.py": "7fd41ee1b4631f1e05e5ab197dca2206e3848bbe62ec33915f8f4e31d2552761",
+      "mdb/tools/__init__.py": "a68bd6dca8846c9de0db13ea47a83cb8da5b1f5b127a42d5ee8616e62e4b4918",
+      "mdb/vm_cache.py": "0fcce905ee790deb7ab12ac7087816b60701c0416c0a7452bbef8b655e1191a4",
+      "mdb/vm_cli.py": "767f34726d79965f73d6af1a56ead2664ac968faffbe089f8906aab359bd495a",
+      "mdb/vm_payload_cache.py": "671f42bc833c52ac89cc84538be766ddf0e524aa2e27da8163dc865677084b6b",
+      "mdb/worker_bootstrap.py": "cd67b03df76ab9d6975400634b24733d078d8084be0c98faf47d5eaf2a4bc7e2",
+      "mdb/workers/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "mdb/workers/run_saturn_bench.py": "1c460816feb75d1ffa5fd3b9bab44d6ede02736dc058e5403ffa8b355aec466d",
+      "mdb/workers/run_saturn_mvm_op.py": "b4edb8e9595f6dfb1ae535f436571abb26d8724cadb9383aed6ec672ed4e579e",
+      "mdb/workspace_raw_artifact.py": "5a366b462fe40c1f08eee24d9b71a9b1ec3b8e61da841f04bc97f416884103f5",
+      "mdb/xref_index.py": "b0efa346899c5bca59b27985d2e9144e04937e8f95a559a089da664c0ba4b451"
+    },
+    "payload_wheel_sha256": "4a84ba538e13216529f69317c039a1b6f36cc7b3285c414f34523cfbefa6b359",
+    "source_installed_payload_equal": true
+  },
+  "physical_model_forwards": 27,
+  "remote": {
+    "independent_native_audit": {
+      "dest": {
+        "exact": true,
+        "max_abs": 0.0
+      },
+      "flags": {
+        "exact": true,
+        "max_abs": 0.0
+      },
+      "imm": {
+        "exact": true,
+        "max_abs": 0.0
+      },
+      "length": {
+        "exact": true,
+        "max_abs": 0.0
+      },
+      "regs": {
+        "exact": true,
+        "max_abs": 0.0
+      },
+      "src": {
+        "exact": true,
+        "max_abs": 0.0
+      },
+      "store": {
+        "exact": true,
+        "max_abs": 0.0
+      },
+      "store_addr": {
+        "exact": true,
+        "max_abs": 0.0
+      },
+      "store_value": {
+        "exact": true,
+        "max_abs": 0.0
+      },
+      "syscall": {
+        "exact": true,
+        "max_abs": 0.0
+      },
+      "width": {
+        "exact": true,
+        "max_abs": 0.0
+      }
+    },
+    "residency": {
+      "control_error": null,
+      "max_commands": 96,
+      "max_wall_ms": 90000,
+      "reason": "closed",
+      "schema": "mdb-discovery-residency-v1",
+      "served_commands": 18,
+      "state_advanced_on_exit": false,
+      "status": {
+        "budgets": {
+          "max_branches": 16,
+          "max_commands": 128,
+          "max_instructions": 1000,
+          "max_model_forwards": 8,
+          "max_native_operations": 131072,
+          "max_wall_ms": 101241
+        },
+        "focus": "research",
+        "lanes": [
+          {
+            "blocking_causes": [],
+            "branch_id": "remote_zero",
+            "clock": {
+              "aten_next": 580,
+              "forward": 0,
+              "instruction": 1
+            },
+            "driver": {
+              "binding": "85dc2b5236a26a6cfe7015b19ee202e316ace1aa3663dbd0c3e6888a5a9e8452",
+              "byte_offset": 7,
+              "driver": "r3-predicted-length",
+              "flags_CF_ZF_SF_OF": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "flags_order": [
+                "CF",
+                "ZF",
+                "SF",
+                "OF"
+              ],
+              "instruction_index": 1,
+              "max_instructions": 2,
+              "program_hex": "4881c7010000004881c701000000",
+              "ram_effects": "unavailable",
+              "register_order": [
+                "RAX",
+                "RCX",
+                "RDX",
+                "RBX",
+                "RSP",
+                "RBP",
+                "RSI",
+                "RDI"
+              ],
+              "register_words": [
+                "0000000000000000",
+                "0000000000000000",
+                "0000000000000000",
+                "0000000000000000",
+                "0000000000000000",
+                "0000000000000000",
+                "0000000000000003",
+                "00000000000000fd"
+              ],
+              "store_policy": "stop-before-commit",
+              "syscall_policy": "stop-before-commit",
+              "termination": null
+            },
+            "epoch_id": "input_00",
+            "forward_index": 0,
+            "head_cut": "cut_000010",
+            "lane_id": "research",
+            "pc": 580,
+            "pending_act": null,
+            "phase": "input_ready",
+            "restore_support": "live",
+            "revision": 12,
+            "status": "paused"
+          }
+        ],
+        "ok": true,
+        "work": {
+          "act_commits": 1,
+          "architectural_commits": 1,
+          "branches": 2,
+          "commands": 17,
+          "logical_forward_rows": 1,
+          "model_forwards": 1,
+          "native_operations": 1161,
+          "physical_batches": 0,
+          "preparation_operations": 1,
+          "reference_forwards": 1,
+          "reference_native_operations": 580,
+          "replay_attempts": 581,
+          "replay_native_operations": 581
+        }
+      }
+    }
+  },
+  "schema": "mdb-discovery-upgrades-analysis-v1",
+  "source": {
+    "analyzer_sha256": "f4fe7c8d3be92734b78234639819b529e4e011c7badab2108242c271ff19a386",
+    "baseline_job": "job-f568e9a320d8",
+    "baseline_profile_sha256": "7c67006e9343fa44abb62b4afd8239f511f0a27975bfcb31c8765116b327209b",
+    "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+    "report_sha256": "c702cfd27acf64ccd0b8daa9b500eb36eb2408b5e4b9effd01b2cd5545ae4c0e",
+    "request_sha256": "740602e714cde5dc7eca80a63fb37c19ed70d1ff2e2c2e48e1705366aac928ba",
+    "trace_fingerprint": "eb87878dff2ed3541fbf6aacc5cf623a9f746c250791b41c9e94d635eb0f7c5d",
+    "worker_sha256": "f72990c5d52a42177a061739b77b742746ed57622e21b17e2c233973596d2a56"
+  },
+  "validation": {
+    "installed_isolated_tests": 152,
+    "ruff": "passed",
+    "same_remote_regression_added_after_payload": true,
+    "test_seconds": 8.76
+  },
+  "variants": {
+    "descendant_events": 154,
+    "distinct_contexts": 4,
+    "dose_levels": [
+      0.0,
+      0.5,
+      1.0,
+      1.5
+    ],
+    "effects": [
+      {
+        "changed_heads": [
+          "flags",
+          "imm",
+          "regs",
+          "store_addr",
+          "store_value"
+        ],
+        "dose": 0.0,
+        "effects_equal_native": true,
+        "flag_max_abs_effect": 32.376373291015625,
+        "flag_min_sign_margin": 26.8453369140625,
+        "flags_equal_native": true,
+        "lane_id": "context_00",
+        "length_equal_native": true,
+        "predicted_RDI": 253,
+        "registers_equal_native": true
+      },
+      {
+        "changed_heads": [
+          "flags",
+          "imm",
+          "regs",
+          "store_addr",
+          "store_value"
+        ],
+        "dose": 0.5,
+        "effects_equal_native": true,
+        "flag_max_abs_effect": 18.11362075805664,
+        "flag_min_sign_margin": 32.70779800415039,
+        "flags_equal_native": true,
+        "lane_id": "context_00",
+        "length_equal_native": true,
+        "predicted_RDI": 253,
+        "registers_equal_native": true
+      },
+      {
+        "changed_heads": [],
+        "dose": 1.0,
+        "effects_equal_native": true,
+        "flag_max_abs_effect": 0.0,
+        "flag_min_sign_margin": 39.35977554321289,
+        "flags_equal_native": true,
+        "lane_id": "context_00",
+        "length_equal_native": true,
+        "predicted_RDI": 253,
+        "registers_equal_native": true
+      },
+      {
+        "changed_heads": [
+          "flags",
+          "imm",
+          "regs",
+          "store_addr",
+          "store_value"
+        ],
+        "dose": 1.5,
+        "effects_equal_native": true,
+        "flag_max_abs_effect": 17.20203399658203,
+        "flag_min_sign_margin": 45.425392150878906,
+        "flags_equal_native": true,
+        "lane_id": "context_00",
+        "length_equal_native": true,
+        "predicted_RDI": 253,
+        "registers_equal_native": true
+      },
+      {
+        "changed_heads": [
+          "flags",
+          "imm",
+          "regs",
+          "store_addr",
+          "store_value"
+        ],
+        "dose": 0.0,
+        "effects_equal_native": true,
+        "flag_max_abs_effect": 32.3172607421875,
+        "flag_min_sign_margin": 27.094066619873047,
+        "flags_equal_native": true,
+        "lane_id": "context_01",
+        "length_equal_native": true,
+        "predicted_RDI": 254,
+        "registers_equal_native": true
+      },
+      {
+        "changed_heads": [
+          "flags",
+          "imm",
+          "regs",
+          "store_addr",
+          "store_value"
+        ],
+        "dose": 0.5,
+        "effects_equal_native": true,
+        "flag_max_abs_effect": 17.725875854492188,
+        "flag_min_sign_margin": 33.30738830566406,
+        "flags_equal_native": true,
+        "lane_id": "context_01",
+        "length_equal_native": true,
+        "predicted_RDI": 254,
+        "registers_equal_native": true
+      },
+      {
+        "changed_heads": [],
+        "dose": 1.0,
+        "effects_equal_native": true,
+        "flag_max_abs_effect": 0.0,
+        "flag_min_sign_margin": 40.02533721923828,
+        "flags_equal_native": true,
+        "lane_id": "context_01",
+        "length_equal_native": true,
+        "predicted_RDI": 254,
+        "registers_equal_native": true
+      },
+      {
+        "changed_heads": [
+          "flags",
+          "imm",
+          "regs",
+          "store_addr",
+          "store_value"
+        ],
+        "dose": 1.5,
+        "effects_equal_native": true,
+        "flag_max_abs_effect": 16.65777587890625,
+        "flag_min_sign_margin": 45.990234375,
+        "flags_equal_native": true,
+        "lane_id": "context_01",
+        "length_equal_native": true,
+        "predicted_RDI": 254,
+        "registers_equal_native": true
+      },
+      {
+        "changed_heads": [
+          "flags",
+          "imm",
+          "regs",
+          "store_addr",
+          "store_value"
+        ],
+        "dose": 0.0,
+        "effects_equal_native": true,
+        "flag_max_abs_effect": 34.796058654785156,
+        "flag_min_sign_margin": 25.92320442199707,
+        "flags_equal_native": true,
+        "lane_id": "context_02",
+        "length_equal_native": true,
+        "predicted_RDI": 255,
+        "registers_equal_native": true
+      },
+      {
+        "changed_heads": [
+          "flags",
+          "imm",
+          "regs",
+          "store_addr",
+          "store_value"
+        ],
+        "dose": 0.5,
+        "effects_equal_native": true,
+        "flag_max_abs_effect": 19.20853042602539,
+        "flag_min_sign_margin": 31.939172744750977,
+        "flags_equal_native": true,
+        "lane_id": "context_02",
+        "length_equal_native": true,
+        "predicted_RDI": 255,
+        "registers_equal_native": true
+      },
+      {
+        "changed_heads": [],
+        "dose": 1.0,
+        "effects_equal_native": true,
+        "flag_max_abs_effect": 0.0,
+        "flag_min_sign_margin": 38.689517974853516,
+        "flags_equal_native": true,
+        "lane_id": "context_02",
+        "length_equal_native": true,
+        "predicted_RDI": 255,
+        "registers_equal_native": true
+      },
+      {
+        "changed_heads": [
+          "flags",
+          "imm",
+          "regs",
+          "store_addr",
+          "store_value"
+        ],
+        "dose": 1.5,
+        "effects_equal_native": true,
+        "flag_max_abs_effect": 15.476005554199219,
+        "flag_min_sign_margin": 44.56380844116211,
+        "flags_equal_native": true,
+        "lane_id": "context_02",
+        "length_equal_native": true,
+        "predicted_RDI": 255,
+        "registers_equal_native": true
+      },
+      {
+        "changed_heads": [
+          "flags",
+          "imm",
+          "regs",
+          "store_addr",
+          "store_value"
+        ],
+        "dose": 0.0,
+        "effects_equal_native": true,
+        "flag_max_abs_effect": 12.587789535522461,
+        "flag_min_sign_margin": 22.68712043762207,
+        "flags_equal_native": true,
+        "lane_id": "context_03",
+        "length_equal_native": true,
+        "predicted_RDI": 256,
+        "registers_equal_native": true
+      },
+      {
+        "changed_heads": [
+          "flags",
+          "imm",
+          "regs",
+          "store_addr",
+          "store_value"
+        ],
+        "dose": 0.5,
+        "effects_equal_native": true,
+        "flag_max_abs_effect": 7.5811767578125,
+        "flag_min_sign_margin": 25.154420852661133,
+        "flags_equal_native": true,
+        "lane_id": "context_03",
+        "length_equal_native": true,
+        "predicted_RDI": 256,
+        "registers_equal_native": true
+      },
+      {
+        "changed_heads": [],
+        "dose": 1.0,
+        "effects_equal_native": true,
+        "flag_max_abs_effect": 0.0,
+        "flag_min_sign_margin": 28.381502151489258,
+        "flags_equal_native": true,
+        "lane_id": "context_03",
+        "length_equal_native": true,
+        "predicted_RDI": 256,
+        "registers_equal_native": true
+      },
+      {
+        "changed_heads": [
+          "flags",
+          "imm",
+          "regs",
+          "store_addr",
+          "store_value"
+        ],
+        "dose": 1.5,
+        "effects_equal_native": true,
+        "flag_max_abs_effect": 5.621486663818359,
+        "flag_min_sign_margin": 32.12504577636719,
+        "flags_equal_native": true,
+        "lane_id": "context_03",
+        "length_equal_native": true,
+        "predicted_RDI": 256,
+        "registers_equal_native": true
+      }
+    ],
+    "interpretation": "consumer-incidence and continuous response; no semantic operation name established",
+    "observed_changed_heads": [
+      "flags",
+      "imm",
+      "regs",
+      "store_addr",
+      "store_value"
+    ],
+    "rows": 16,
+    "structural_and_observed_head_sets_agree": true,
+    "structural_consumer_heads": [
+      "flags",
+      "imm",
+      "regs",
+      "store_addr",
+      "store_value"
+    ],
+    "unchanged_heads": [
+      "dest",
+      "length",
+      "src",
+      "store",
+      "syscall",
+      "width"
+    ]
+  }
+}

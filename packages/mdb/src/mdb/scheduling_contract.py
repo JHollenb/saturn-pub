@@ -19,6 +19,11 @@ RESTART_PROOF_LEASE_CONTRACT_SCHEMA = (
 SEQUENTIAL_MODELS_LEASE_CONTRACT_SCHEMA = (
     "saturn-single-lease-sequential-models-scheduling-contract-v1"
 )
+BOUNDED_DEBUGGER_LEASE_CONTRACT_SCHEMA = (
+    "saturn-single-lease-bounded-debugger-scheduling-contract-v1"
+)
+FINITE_DEBUGGER_EXECUTION_MODEL = "finite_debugger_session"
+BOUNDED_DEBUGGER_LEASE_SCOPE = "entire-bounded-debugger-worker"
 ONE_LEASE_EXECUTION_SCHEMA = "saturn-one-lease-execution-v1"
 FINITE_LOCAL_LEASE_SCOPES = frozenset(
     {
@@ -388,6 +393,8 @@ def validate_single_lease_contract(request: Mapping[str, Any]) -> dict[str, Any]
         raise SchedulingContractError("scheduling_contract must be an object")
 
     contract = dict(raw)
+    if contract.get("schema") == BOUNDED_DEBUGGER_LEASE_CONTRACT_SCHEMA:
+        return validate_bounded_debugger_lease_contract(contract)
     if contract.get("schema") == RESTART_PROOF_LEASE_CONTRACT_SCHEMA:
         return validate_restart_proof_lease_contract(contract)
     if contract.get("schema") == SEQUENTIAL_MODELS_LEASE_CONTRACT_SCHEMA:
@@ -524,6 +531,64 @@ def validate_single_lease_contract(request: Mapping[str, Any]) -> dict[str, Any]
     return contract
 
 
+def validate_bounded_debugger_lease_contract(contract: Mapping[str, Any]) -> dict[str, Any]:
+    """An explicit finite interactive lease, separate from legacy batch workers.
+
+    Interactive commands remain local to one admitted model owner. Mandatory
+    command, time and model-work ceilings make this a bounded debugger session,
+    never an unbounded cross-job serving process.
+    """
+    if not isinstance(contract, Mapping):
+        raise SchedulingContractError("bounded-debugger scheduling contract must be an object")
+    row = dict(contract)
+    for field, expected in {
+        "schema": BOUNDED_DEBUGGER_LEASE_CONTRACT_SCHEMA,
+        "lease_scope": BOUNDED_DEBUGGER_LEASE_SCOPE,
+        "execution_model": FINITE_DEBUGGER_EXECUTION_MODEL,
+        "task_family": "discovery-debugger",
+        "control_plane": OUTER_MRUN_CONTROL_PLANE,
+        "data_plane": RESIDENT_WORKER_DATA_PLANE,
+        "collection_policy": DIRECT_COLLECTION_POLICY,
+        "replay_policy": LOCAL_CHECKPOINT_REPLAY_POLICY,
+        "branch_execution": "in_process",
+    }.items():
+        if row.get(field) != expected:
+            raise SchedulingContractError(f"bounded-debugger {field} must be {expected!r}")
+    if row.get("interactive") is not True:
+        raise SchedulingContractError("bounded debugger must honestly declare interactive=True")
+    for field, expected in (("max_mrun_submissions", 1), ("per_branch_mrun_submissions", 0),
+                            ("per_transition_mrun_submissions", 0),
+                            ("additional_scheduler_submissions", 0), ("nested_mrun_submissions", 0),
+                            ("model_loads", 1), ("resident_model_concurrency", 1)):
+        value = row.get(field)
+        if type(value) is not int or value != expected:
+            raise SchedulingContractError(f"bounded-debugger {field} must be the integer {expected}")
+    for field in ("max_debug_commands", "max_wall_ms", "max_native_operations", "max_model_forwards",
+                  "max_branches"):
+        value = row.get(field)
+        if type(value) is not int or value < 1:
+            raise SchedulingContractError(f"bounded-debugger {field} must be a positive finite integer")
+    if row["max_branches"] > MAX_LOCAL_WORK_ITEMS:
+        raise SchedulingContractError("bounded-debugger max_branches exceeds finite local-work cap")
+    if row.get("retry_on_kill") is not False:
+        raise SchedulingContractError("bounded-debugger retry_on_kill must remain false")
+    if row.get("model_free", False) is not False or row.get("simultaneous_models", False) is not False:
+        raise SchedulingContractError("bounded debugger owns exactly one resident model")
+    checkpoint_policy = row.get("checkpoint_policy")
+    if not isinstance(checkpoint_policy, str) or not checkpoint_policy.strip():
+        raise SchedulingContractError("bounded-debugger checkpoint_policy must be nonempty")
+    if not is_no_automatic_retry_policy(row.get("mrun_retry_policy")):
+        raise SchedulingContractError("bounded debugger must disable automatic retries")
+    # Reuse the existing common scheduler/custody invariants through an internal
+    # validation projection. The published row retains interactive=True and its
+    # distinct schema; legacy contracts never acquire this permission.
+    common = {**row, "schema": SINGLE_LEASE_CONTRACT_SCHEMA,
+              "lease_scope": "entire-worker", "execution_model": FINITE_LOCAL_EXECUTION_MODEL,
+              "interactive": False}
+    validate_single_lease_contract({"scheduling_contract": common})
+    return row
+
+
 def require_single_lease_contract(request: Mapping[str, Any]) -> dict[str, Any]:
     """Require the canonical schema at a live Saturn submission boundary.
 
@@ -542,6 +607,7 @@ def require_single_lease_contract(request: Mapping[str, Any]) -> dict[str, Any]:
         SINGLE_LEASE_CONTRACT_SCHEMA,
         RESTART_PROOF_LEASE_CONTRACT_SCHEMA,
         SEQUENTIAL_MODELS_LEASE_CONTRACT_SCHEMA,
+        BOUNDED_DEBUGGER_LEASE_CONTRACT_SCHEMA,
     }
     if contract.get("schema") not in supported_schemas:
         raise SchedulingContractError(
@@ -575,6 +641,9 @@ __all__ = [
     "SINGLE_LEASE_CONTRACT_SCHEMA",
     "RESTART_PROOF_LEASE_CONTRACT_SCHEMA",
     "SEQUENTIAL_MODELS_LEASE_CONTRACT_SCHEMA",
+    "BOUNDED_DEBUGGER_LEASE_CONTRACT_SCHEMA",
+    "FINITE_DEBUGGER_EXECUTION_MODEL",
+    "BOUNDED_DEBUGGER_LEASE_SCOPE",
     "ONE_LEASE_EXECUTION_SCHEMA",
     "FINITE_LOCAL_LEASE_SCOPES",
     "FINITE_LOCAL_EXECUTION_MODEL",
@@ -601,5 +670,6 @@ __all__ = [
     "validate_single_lease_contract",
     "validate_restart_proof_lease_contract",
     "validate_sequential_models_lease_contract",
+    "validate_bounded_debugger_lease_contract",
     "validate_one_lease_execution",
 ]

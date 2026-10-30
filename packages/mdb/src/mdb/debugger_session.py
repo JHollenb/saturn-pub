@@ -51,11 +51,12 @@ class DebugSession:
     def pending_act(self) -> bool:
         return self._pending_act is not None
 
-    def call(self, operation: str, payload: dict[str, Any] | None = None) -> dict[str, Any]:
+    def call(self, operation: str, payload: dict[str, Any] | None = None, *, request_id: str | None = None) -> dict[str, Any]:
         request_payload = dict(payload or {})
         for attempt in range(2):
             self._sequence += 1
-            request = DebugRequest(operation, request_payload, sequence=self._sequence)
+            request = DebugRequest(operation, request_payload, sequence=self._sequence,
+                                   **({"request_id": request_id} if request_id is not None else {}))
             try:
                 response = self.transport.request(request)
             except Exception as exc:  # noqa: BLE001 - preserve disconnects in custody
@@ -65,7 +66,8 @@ class DebugSession:
                 error = response.error or "debugger operation refused"
                 self._append_receipt(request, response, error=error)
                 expected = self._expected_sequence(error)
-                if expected is not None and attempt == 0:
+                if (expected is not None and attempt == 0 and
+                        (request_id is None or operation.startswith("discovery."))):
                     # A newly opened shell can safely resynchronize against a
                     # resident worker after a session file load or reconnect.
                     self._sequence = expected - 1

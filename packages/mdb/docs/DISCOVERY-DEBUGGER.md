@@ -5,11 +5,12 @@ native computations. The Python API, command-line console and bounded script
 runner share `DiscoverySession.call()`. Existing debugger command semantics are
 unchanged.
 
-The qualified lane is frozen R3 Mamba on CPU FP32, one CPU thread. Native
+The scalar replay lane uses frozen R3 Mamba on CPU FP32, one CPU thread. Native
 capture completes first; the debugger then executes the original ATen operations
 from input and parameter roots. A breakpoint pauses this replay. It does not
-pause the first eager capture. Resident lanes execute sequentially, and the
-capability response advertises no physical batch profile.
+pause the first eager capture. Resident debugger lanes execute sequentially.
+A separate native full-forward screening API physically batches independent
+inputs and per-row output edits; it does not resize a recorded scalar graph.
 
 ## Use it
 
@@ -71,10 +72,12 @@ checks run between primitives, including during larger motions. An interrupted
 law reports `completed_unit: false` and retains executed progress. Reverse
 exploration restores a retained cut; it does not invert an MLP.
 
-On the retained R3 program, `mlp_003` is `post.1`: entry 359, exit 369,
-activation input `v000412`, output `v000430`. Its residual is a separate update
-ending at 370. These coordinates come from module/dataflow metadata and bind to
-that program; they are not a universal model address.
+Prefer `module:post.1` and resolve its ports through the current catalog. In the
+original recorded R3 program, `mlp_003` has entry 359, exit 369, activation input
+`v000412` and output `v000430`; its residual update ends at 370. Recording with
+explicitly frozen parameters (`requires_grad_(False)`) produces entry 365 and
+exit 375. These coordinates and value IDs bind to their respective programs;
+sharing model weights does not make the traces interchangeable.
 
 ## Resident research lanes
 
@@ -126,9 +129,74 @@ leaves uncommitted heads available; `step instruction` consumes them without
 another forward. Predicted stores/syscalls stop before commit under the default
 policy. No RAM or operating-system effect executor is supplied.
 
+## Native physical screening
+
+`mdb.discovery_batch.FrozenNativeBatch` owns an explicitly declared native
+profile and shares an already frozen, evaluation-mode CPU FP32 model. It
+concatenates original B=1 roots, executes one actual native forward for up to
+four rows in the R3 B4 profile, and splits all declared output heads into
+independent B=1 results. The caller declares input/head geometry, model/program identities,
+admitted module output sites and numerical tolerances in `BatchProfile`.
+
+Each `BatchRow` carries lane, input epoch, branch, expected revision and roots.
+Optional `OutputAct` edits replace, add, zero or scale a declared module output
+for that row and invocation. Compatible invocation schedules form separate
+groups; `screen(rows, batch_size=1)` provides the native scalar comparison.
+Paused rows occupy no physical slot. New requests can refill slots with new
+input epochs. Attempt receipts seal the row mapping, root hashes, Act specs and
+physical work; failed groups publish no row outputs.
+
+This API screens complete forwards. Rows declaring component frontiers or
+active component stops return `scalar_required` without native execution. The
+debugger's capability response continues to advertise no batched stepping profile.
+Screen results do not commit architectural state. Before publishing a result,
+the controller must check its lane/epoch/branch/revision binding. For causal
+follow-up, prepare one scalar parent per input, fork the selected edits and
+execute their actual suffixes. See the
+[route discovery workflow](ROUTE-DISCOVERY-WORKFLOW.md) and
+[batch assay helper](../qualification/discovery_batch.py).
+
+## Durable frontiers and remote control
+
+`save_session_frontier(session, lane_id, store)` in `mdb.discovery_storage`
+saves the selected lane/input epoch/branch, architectural driver state and
+native frontier. The default `bundle-v1` layout packs backing storages into a
+CAS tensor bundle while retaining aliases, view geometry, cursor, Acts and
+provenance. The loader also accepts the original `slots-v1` layout. Other
+branches, archived inputs and the request retry cache are outside this snapshot.
+
+```sh
+mdb discovery resume /path/to/store CUT_ID \
+  --script /path/to/suffix.mdb --output /tmp/resumed-investigation
+
+mdb discovery attach JOB_ID \
+  --script examples/discovery/post1.mdb --output /tmp/remote-investigation
+```
+
+Durable resume continues at the saved frontier without executing its prefix.
+It requires the supported CPU/Torch/platform contract and `safetensors`.
+Without a factory, the restored session can finish its saved forward and
+consume those heads. Creating another forward requires an explicitly supplied,
+compatible `factory` through `resume_session_frontier()`. No executable model
+factory is deserialized.
+
+Resuming retains historical work and wall accounting, including offline time.
+A new finite continuation requires explicit admission and complete absolute
+budget ceilings; the API accepts `admission` and `continuation_budget`, and the
+CLI accepts `--admission-id` with `--budget-json`. An mrun admission ID must
+match the current job. Restore does not silently renew a lease.
+
+Remote attachment uses the existing authenticated mrun debugger transport.
+The admitted worker registers with `attach_discovery_from_environment()` and
+services requests with `serve_discovery()` under its finite scheduling contract,
+command, work and wall limits. The client attaches to that already resident
+worker; it does not launch a model. Tensors remain worker-owned, while typed
+JSON commands, observations and receipts cross the control channel. `close`
+ends service without implicitly committing heads or resolving effects.
+
 ## Evidence and current boundaries
 
-The qualification harness is [discovery_isa.py](../qualification/discovery_isa.py).
+The original scalar qualification harness is [discovery_isa.py](../qualification/discovery_isa.py).
 It uses one finite mrun lease, installed public wheels, four actual inputs,
 fresh native controls and a separate hooked native audit of an edited branch.
 It also launches the installed command-line example in a fresh Python process.
@@ -137,15 +205,20 @@ retains all-head parity, physical work, coordinates and source digests. See
 [validation details](../qualification/DISCOVERY-VALIDATION.md) for checks and
 artifact custody.
 
-Live cuts preserve tensor aliases, cursor, Act history and architectural state.
-Root recipes support replay from original roots; metadata journals support
-offline inspection. Paused frontier restoration across process restart is not
-implemented. Only change watches and immediate atomic Acts are implemented;
-Act preview/abort, arbitrary predicates, native eager pause and physical batch
-refill remain future adapters. The larger
-[interface design](ISA-DEBUGGER-INTERFACE.md) retains those future contracts.
-The new dialect runs in its own worker or root-recipe console process; wiring
-it into legacy remote `mdb debug JOB_ID` attachment is still open.
+The upgrade harness is [discovery_upgrades.py](../qualification/discovery_upgrades.py).
+Its source separates native batch screening, scalar replay, durable suffix
+resume and authenticated remote control. Consult its retained results for
+the measured scope; implementation availability alone is not qualification.
+See [measured bottlenecks](DISCOVERY-BOTTLENECKS.md) for performance evidence.
+
+Root recipes restart from original roots; durable frontiers restore selected
+paused state; metadata journals support offline inspection. Only change
+watches and immediate atomic Acts are implemented. Act preview/abort, arbitrary
+predicates, native eager pause and physical batching of component debugger
+steps remain outside this adapter. Discovery attachment uses
+`mdb discovery attach JOB_ID`; legacy `mdb debug JOB_ID` keeps its existing
+console semantics. The larger [interface design](ISA-DEBUGGER-INTERFACE.md)
+retains the broader contracts.
 
 Generic names distinguish observed computations and routes. They do not prove
 that a site implements a semantic instruction. Compare a branch's downstream

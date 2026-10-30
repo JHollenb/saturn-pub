@@ -137,6 +137,8 @@ class DiscoverySession:
     def _new_runtime(self, epoch, driver):
         if driver is not None and driver.termination:
             return None
+        if getattr(epoch.factory, "__discovery_missing_binding__", False):
+            raise DiscoveryError("durable resume requires a supplied qualified factory before another forward")
         if self._wall_exhausted():
             raise DiscoveryError("budget exhausted: max_wall_ms")
         for key, cost in (("max_native_operations", epoch.reference_operations),
@@ -357,7 +359,10 @@ class DiscoverySession:
                 "execution_modes": ["record-replay"], "default_unit": "law",
                 "motion_units": ["op", "math", "law", "update", "forward", "instruction"],
                 "clock_domains": ["aten-event", "forward", "instruction"],
-                "checkpoint_support": ["live"], "resident_scalar_lanes": True,
+                "checkpoint_support": ["live", "native-durable"],
+                "durable_profile": {"name": "deterministic-cpu-aten-v1", "scope": "selected-branch",
+                                    "requires": ["safetensors"], "future_factory": "explicit-rebind"},
+                "resident_scalar_lanes": True,
                 "physical_batch_profiles": [], "direct_eager_pause": False,
                 "instruction_drivers": ["r3-predicted-length"],
                 "durable_retry": False, "arbitrary_python_scripts": False,
@@ -527,6 +532,11 @@ class DiscoverySession:
             if action == "list":
                 return {"ok": True, "cuts": [self._cut_manifest(c) for c in self.cuts.values()
                                              if c["target"]["lane_id"] == lane.id]}
+            if action == "save":
+                from .discovery_storage import save_session_frontier
+
+                durable = save_session_frontier(self, lane.id, payload["store"])
+                return self._result(lane, [], durable=durable)
             if action == "restore":
                 cut = self._get_cut(payload.get("cut", payload.get("name")), lane)
                 self._restore(lane, cut)

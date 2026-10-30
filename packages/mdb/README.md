@@ -24,8 +24,14 @@ dataflow evidence. See the [circuit explorer](docs/CIRCUIT-EXPLORER.md).
 
 `mdb discovery` adds generic computation names, MLP/math/update stepping,
 breakpoints, resident scalar lanes, branches and bounded action scripts over
-native ATen replay. See the [discovery debugger walkthrough](docs/DISCOVERY-DEBUGGER.md)
-and [executed R3 script](examples/discovery/post1.mdb).
+native ATen replay. Selected alias-aware frontiers support durable resume;
+`mdb discovery attach JOB_ID` controls an authenticated, finitely admitted mrun
+worker. A separate frozen native forward API batches independent inputs and
+candidate output edits, while component debugging uses scalar replay. See the
+[discovery debugger walkthrough](docs/DISCOVERY-DEBUGGER.md),
+[route discovery workflow](docs/ROUTE-DISCOVERY-WORKFLOW.md),
+[measured bottlenecks](docs/DISCOVERY-BOTTLENECKS.md) and
+[executed R3 script](examples/discovery/post1.mdb).
 
 Start the local GDB-style console after a base install:
 

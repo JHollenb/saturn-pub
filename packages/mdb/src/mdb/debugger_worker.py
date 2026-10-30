@@ -19,6 +19,7 @@ from .debugger_features import (
     template_tree,
 )
 from .debugger_protocol import (
+    DISCOVERY_RELAY_BINDING_SCHEMA,
     ActSpec,
     BreakpointSpec,
     DebugCapability,
@@ -28,7 +29,9 @@ from .debugger_protocol import (
     DebugRequest,
     DebugResponse,
     WatchSpec,
+    digest,
     now_utc,
+    unwrap_discovery_relay_request,
 )
 from .errors import BenchError
 
@@ -66,14 +69,17 @@ class DebugWorkerController:
     has captured a StateCut at the requested boundary.
     """
 
-    def __init__(self, capability: DebugCapability, adapter: DebuggerAdapter, *, source_frame_stack: Any | None = None, execution_lock: Any | None = None) -> None:
+    def __init__(self, capability: DebugCapability, adapter: DebuggerAdapter, *, source_frame_stack: Any | None = None, execution_lock: Any | None = None, discovery_session: Any | None = None) -> None:
         self.capability = capability
         self.adapter = adapter
         self.source_frame_stack = source_frame_stack
+        self.discovery_session = discovery_session
+        self.discovery_close_requested = False
         self._lock = execution_lock if execution_lock is not None else threading.RLock()
         self._sequence = 0
         self._last_client_sequence = 0
         self._last_request: dict[str, DebugResponse] = {}
+        self._discovery_request_digests: dict[str, str] = {}
         self._breakpoints: dict[str, BreakpointSpec] = {}
         self._watches: dict[str, WatchSpec] = {}
         self._paused = False
@@ -87,13 +93,61 @@ class DebugWorkerController:
         self._watch_previous: dict[str, Any] = {}
 
     def handle(self, request: DebugRequest) -> DebugResponse:
+        wire_id = request.request_id
+        try:
+            if not isinstance(request.operation, str):
+                raise DebuggerProtocolError("debugger operation must be text")
+            if request.operation.startswith("discovery."):
+                if not isinstance(request.payload, Mapping):
+                    raise DebuggerProtocolError("discovery payload must be an object")
+                if request.sequence is not None and type(request.sequence) is not int:
+                    raise DebuggerProtocolError("discovery sequence must be an integer")
+            logical = unwrap_discovery_relay_request(request)
+        except (DebuggerProtocolError, TypeError, ValueError) as error:
+            with self._lock:
+                self._sequence += 1
+                return DebugResponse(wire_id, self._sequence, False, error=str(error))
+        response = self._handle(logical)
+        return replace(response, request_id=wire_id) if wire_id != logical.request_id else response
+
+    def _handle(self, request: DebugRequest) -> DebugResponse:
         with self._lock:
+            discovery = request.operation.startswith("discovery.")
+            request_digest = None
+            if discovery:
+                # The existing envelope/order rules remain unchanged. Discovery
+                # additionally binds retries to command content before a cache
+                # lookup can bypass dispatch; a fresh transport sequence is not
+                # a different mutation.
+                try:
+                    request_digest = digest({"operation": request.operation,
+                                             "payload": request.payload})
+                except (ValueError, TypeError) as error:
+                    self._sequence += 1
+                    return DebugResponse(request.request_id, self._sequence, False,
+                                         error=f"invalid discovery request: {error}")
+                previous = self._discovery_request_digests.get(request.request_id)
+                if (previous is not None and previous != request_digest) or (
+                        request.request_id in self._last_request and previous is None):
+                    self._sequence += 1
+                    return DebugResponse(request.request_id, self._sequence, False,
+                                         error="discovery request ID reused with different command content")
+            elif request.request_id in self._discovery_request_digests:
+                self._sequence += 1
+                return DebugResponse(request.request_id, self._sequence, False,
+                                     error="discovery request ID reused with different command content")
             cached = self._last_request.get(request.request_id)
             if cached is not None:
                 return cached
             self._sequence += 1
+            cache_response = True
             try:
                 if request.sequence is not None and request.sequence <= self._last_client_sequence:
+                    # A discovery sequence refusal proves dispatch never ran.
+                    # Keep its ID/content binding, but permit the same command
+                    # to resynchronize that envelope without caching a refusal
+                    # forever under the caller's stable mutation ID.
+                    cache_response = not discovery
                     raise DebuggerProtocolError(
                         "stale or out-of-order debugger request sequence; "
                         f"expected next sequence {self._last_client_sequence + 1}; "
@@ -101,7 +155,21 @@ class DebugWorkerController:
                     )
                 if request.sequence is not None:
                     self._last_client_sequence = request.sequence
-                result = self._dispatch(request.operation, request.payload)
+                if discovery:
+                    if self.discovery_session is None:
+                        raise DebuggerProtocolError("worker does not expose discovery-v1")
+                    if request.operation == "discovery.close":
+                        self.discovery_close_requested = True
+                        result = {"ok": True, "status": "closing",
+                                  "state_advanced": False,
+                                  "final_status": self.discovery_session.call("status")}
+                    else:
+                        result = self.discovery_session.call(request.operation, request.payload,
+                                                             request_id=request.request_id)
+                        if request.operation == "discovery.capabilities":
+                            result = {**result, "relay_request_binding": DISCOVERY_RELAY_BINDING_SCHEMA}
+                else:
+                    result = self._dispatch(request.operation, request.payload)
                 response = DebugResponse(request.request_id, self._sequence, True, dict(result))
             except (DebuggerProtocolError, KeyError, TypeError, ValueError) as exc:
                 response = DebugResponse(request.request_id, self._sequence, False, error=str(exc))
@@ -114,10 +182,13 @@ class DebugWorkerController:
                     "measure_circuit", "replay_circuit", "memory_read", "memory_write",
                     "memory_diff", "memory_probe",
                 }
-                if request.operation not in serializable_runtime_errors:
+                if request.operation not in serializable_runtime_errors and not discovery:
                     raise
                 response = DebugResponse(request.request_id, self._sequence, False, error=str(exc))
-            self._last_request[request.request_id] = response
+            if cache_response:
+                self._last_request[request.request_id] = response
+            if discovery:
+                self._discovery_request_digests[request.request_id] = str(request_digest)
             return response
 
     def safe_point(
@@ -725,6 +796,9 @@ class DebugWorkerController:
         )
         if self.source_frame_stack is not None and "frames" not in payload["optional_operations"]:
             payload["optional_operations"].append("frames")
+        if self.discovery_session is not None:
+            payload["discovery"] = {**self.discovery_session.capabilities(),
+                                    "relay_request_binding": DISCOVERY_RELAY_BINDING_SCHEMA}
         payload["checkpoint_requires_pause"] = bool(
             payload.get("checkpoint_requires_pause", False)
             or adapter_payload.get("checkpoint_requires_pause", False)
