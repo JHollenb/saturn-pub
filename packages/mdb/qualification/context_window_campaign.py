@@ -397,10 +397,12 @@ def worker():
             try:
                 for selector, _, value in changes(row_id, payloads):
                     module_path = selector[len("module:"):-len(":return")]
-                    frozen = torch.from_numpy(np.array(value, copy=True))
+                    frozen = np.array(value, copy=True)
 
                     def replace(module, args, old, replacement=frozen):
-                        return replacement.clone()
+                        # Construct the tensor while the recorder's dispatch mode
+                        # is active so its explicit lift is admitted as a root.
+                        return torch.from_numpy(np.array(replacement, copy=True))
 
                     hooks.append(model.get_submodule(module_path).register_forward_hook(replace))
                 capture = record_forward(model, inputs, model_identity=plan["model_identity"],
