@@ -1,0 +1,339 @@
+{
+  "account": {
+    "compression_required": false,
+    "implementation": "independent NumPy FP64 equations with sequential recurrence",
+    "native_evaluation": "CPU FP32 native parallel scan",
+    "numerics": "retain every residual; no arbitrary numerical threshold discards scientific rows",
+    "predictions": [
+      "complete suffix intermediate arrays",
+      "all eleven continuous heads",
+      "all decoded registers, flags, length and effect bits",
+      "per-register-bit skip, projection, post-MLP, bias and copy-prior contributions"
+    ]
+  },
+  "arms": [
+    "native",
+    "zero",
+    "U_swap",
+    "S_swap",
+    "both",
+    "sham",
+    "U_swap_P2native",
+    "S_swap_P2native"
+  ],
+  "backend": "cpu-fp32",
+  "cases": [
+    {
+      "case_id": "sub_254_anchor",
+      "explanatory_readers": [
+        {
+          "bit": 1,
+          "register": 6
+        },
+        {
+          "bit": 0,
+          "register": 7
+        },
+        {
+          "bit": 12,
+          "register": 7
+        },
+        {
+          "bit": 13,
+          "register": 7
+        }
+      ],
+      "flags": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "instruction_hex": "4881ef01000000",
+      "program_hex": "4881ef010000004881ef01000000",
+      "register_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        254
+      ],
+      "scope": "previously-observed-explanation",
+      "supplied_family": "sub_r64_32"
+    },
+    {
+      "case_id": "xor_255_anchor",
+      "explanatory_readers": [
+        {
+          "bit": 1,
+          "register": 6
+        },
+        {
+          "bit": 0,
+          "register": 7
+        },
+        {
+          "bit": 12,
+          "register": 7
+        },
+        {
+          "bit": 13,
+          "register": 7
+        }
+      ],
+      "flags": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "instruction_hex": "4831f7",
+      "program_hex": "4831f74831f7",
+      "register_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        255
+      ],
+      "scope": "previously-observed-explanation",
+      "supplied_family": "xor_r64_r64"
+    },
+    {
+      "case_id": "sub_257_new",
+      "explanatory_readers": [
+        {
+          "bit": 1,
+          "register": 6
+        },
+        {
+          "bit": 0,
+          "register": 7
+        },
+        {
+          "bit": 12,
+          "register": 7
+        },
+        {
+          "bit": 13,
+          "register": 7
+        }
+      ],
+      "flags": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "instruction_hex": "4881ef01000000",
+      "program_hex": "4881ef010000004881ef01000000",
+      "register_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        257
+      ],
+      "scope": "fresh-suffix-forecast",
+      "supplied_family": "sub_r64_32"
+    },
+    {
+      "case_id": "sub_258_new",
+      "explanatory_readers": [
+        {
+          "bit": 1,
+          "register": 6
+        },
+        {
+          "bit": 0,
+          "register": 7
+        },
+        {
+          "bit": 12,
+          "register": 7
+        },
+        {
+          "bit": 13,
+          "register": 7
+        }
+      ],
+      "flags": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "instruction_hex": "4881ef01000000",
+      "program_hex": "4881ef010000004881ef01000000",
+      "register_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        258
+      ],
+      "scope": "fresh-suffix-forecast",
+      "supplied_family": "sub_r64_32"
+    },
+    {
+      "case_id": "xor_253_new",
+      "explanatory_readers": [
+        {
+          "bit": 1,
+          "register": 6
+        },
+        {
+          "bit": 0,
+          "register": 7
+        },
+        {
+          "bit": 12,
+          "register": 7
+        },
+        {
+          "bit": 13,
+          "register": 7
+        }
+      ],
+      "flags": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "instruction_hex": "4831f7",
+      "program_hex": "4831f74831f7",
+      "register_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        253
+      ],
+      "scope": "fresh-suffix-forecast",
+      "supplied_family": "xor_r64_r64"
+    },
+    {
+      "case_id": "xor_254_new",
+      "explanatory_readers": [
+        {
+          "bit": 1,
+          "register": 6
+        },
+        {
+          "bit": 0,
+          "register": 7
+        },
+        {
+          "bit": 12,
+          "register": 7
+        },
+        {
+          "bit": 13,
+          "register": 7
+        }
+      ],
+      "flags": [
+        0,
+        0,
+        0,
+        0
+      ],
+      "instruction_hex": "4831f7",
+      "program_hex": "4831f74831f7",
+      "register_words": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        3,
+        254
+      ],
+      "scope": "fresh-suffix-forecast",
+      "supplied_family": "xor_r64_r64"
+    }
+  ],
+  "cpu_threads": 1,
+  "frontier": {
+    "allowed": [
+      "native and post.0-zero prefix state S",
+      "prefix decoder z",
+      "raw initial registers/flags",
+      "complete frozen parameter dictionary",
+      "declared byte programs and numerical execution contract"
+    ],
+    "forbidden_before_forecast_seal": [
+      "native final-mixer body execution",
+      "native post.2 execution",
+      "native final readout execution",
+      "full-model recording",
+      "suffix replay",
+      "native suffix activations or heads"
+    ],
+    "observe": [
+      "decoder"
+    ],
+    "stop_before": "mixers.2"
+  },
+  "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+  "not_claimed": [
+    "full ISA understanding",
+    "compression",
+    "training-unseen inputs",
+    "general semantic operation naming",
+    "cross-instruction latent memory",
+    "native bit-exactness of FP64 equations"
+  ],
+  "plan_sha256": "647991e3e6621dfeb9a9259bbf31e24bec148687916fb8f5a8004c91c38890c9",
+  "recipes": {
+    "S_swap": "post.0-zero prefix; replace M with frozen FP32(native S + predicted edited U)",
+    "S_swap_P2native": "S_swap, then replace P2 with same frozen analytically predicted native P2",
+    "U_swap": "post.0-zero prefix; replace U with frozen FP32 analytically predicted native U",
+    "U_swap_P2native": "U_swap, then replace P2 with frozen FP32 analytically predicted native P2",
+    "both": "post.0-zero prefix; replace M with frozen FP32(native S + predicted native U)",
+    "native": "native prefix S, unmodified suffix",
+    "sham": "post.0-zero prefix; same-value clone of actual U",
+    "zero": "post.0-zero prefix S, unmodified suffix"
+  },
+  "release_order": [
+    "capture all six actual prefixes with downstream execution forbidden",
+    "branch source cuts and compute edited prefixes through MDB replay",
+    "derive all suffix forecasts and exact FP32 intervention payloads from allowed inputs",
+    "seal and persist complete forecast file/payload bytes and pre-release call counters",
+    "release native full captures, MDB suffix branches and independent native audits",
+    "optional successors consume literal predicted state; no full-next-forward numerical forecast claimed"
+  ],
+  "schema": "mdb-explicit-computation-plan-v1",
+  "scientific_question": "Can a complete explicit equation account predict the final mixer, post MLP and all consumers from a real prefix frontier, including conditional edits and collateral?",
+  "scoring": {
+    "causal": "compare hybrid responses with their natural versus common frozen post.2 write",
+    "controls": "prefix exclusion proof, prefix/full trace joins, exact native replay/audit and same-value Act parity",
+    "primary": "fresh and anchor strata reported separately; full heads, stage residuals and all register/flag decisions",
+    "scope": "conditional on observed prefix state; not an end-to-end raw-input computation account",
+    "terminal_status": "unestablished"
+  },
+  "supplied": [
+    "architecture/source equations and full weights",
+    "source removal and hybrid intervention geometry",
+    "prefix boundary",
+    "two retrospective anchors and four fixed new inputs",
+    "consumer coordinates for explanation"
+  ]
+}
