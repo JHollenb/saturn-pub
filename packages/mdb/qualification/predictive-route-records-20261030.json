@@ -1,0 +1,1014 @@
+{
+  "records": [
+    {
+      "id": "computation:733b3f128d18c023184005ec7b2fe5c704b6a2448d3256b01e8ca275e2742b9f",
+      "identity": {
+        "arm": "identity",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "42405a93f0b0162119fe1ba4e0ef8fd9f130461c01d8468c3b1ca839843efa7b",
+        "input_digest": "a101929005c09ecd4c33f8f973f3fbb3c08514cfb4411d30f393c321761f8c6d",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "8b9282d830f665320abae6fb62544d1ad220cbccf8b40b0e347cc0ce2011c456",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:5ea0e840b98922aecf8d28c8fba7d04a1c029320dcff7a578130601a30789ddc",
+        "trace_fingerprint": "c7b8d22b89113f286ced75f551f6904dd40f39dc5912b78c828e5efc09e6cf91"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/sub_256/branches/identity.json",
+        "sha256": "cfebf734602bef31d395839f073b13866d471120e9ec80235c5361ac8348352e"
+      }
+    },
+    {
+      "id": "computation:31f0d083ef6d33412cf14e42dc935e3e22983fe51c8ffa47e5be19a891849464",
+      "identity": {
+        "arm": "post0_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "c8621c2897dc005f0e22c2956ce5a0a7c24d19360ada92f75f5e8108c677b6b6",
+        "input_digest": "a101929005c09ecd4c33f8f973f3fbb3c08514cfb4411d30f393c321761f8c6d",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "8b9282d830f665320abae6fb62544d1ad220cbccf8b40b0e347cc0ce2011c456",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:ec776300ca36008f33fbfc40aca75e2464d0c8902f1d5d72cab0aed7f2d3ac2e",
+        "trace_fingerprint": "c7b8d22b89113f286ced75f551f6904dd40f39dc5912b78c828e5efc09e6cf91"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/sub_256/branches/post0_zero.json",
+        "sha256": "8c522efac65cef7f4f8bc3b7c853f624b4209f810f47116e3efd0b0e668b7366"
+      }
+    },
+    {
+      "id": "computation:cde1bc0f7031e6f271fa5aa2b96e68ed2bc6ae394b0f25d81ef80548729a1e21",
+      "identity": {
+        "arm": "post1_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "049adb5ad651c8e160564a93b70da5842e6870eb02a58ca124733163f5305da2",
+        "input_digest": "a101929005c09ecd4c33f8f973f3fbb3c08514cfb4411d30f393c321761f8c6d",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "3706fa6c5ae7afd20b1e4b2ce2e2ef5f07fbeb1875e1ef856b34ff8026ee6682",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_003",
+        "source_row_id": "variant:612ac94580e2b69d57c523d4c721f0147d62da6e9259a42bf8332b1d609d4b13",
+        "trace_fingerprint": "c7b8d22b89113f286ced75f551f6904dd40f39dc5912b78c828e5efc09e6cf91"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/sub_256/branches/post1_zero.json",
+        "sha256": "cc4355c26dab692c4e7a4c3f6ec29d0e7b1fd6b545765ee518ac6ebe9b108c03"
+      }
+    },
+    {
+      "id": "computation:c17bf1fc9e86a1354a11471e614afc03a97be4b38d09fd0a79c87f661813a759",
+      "identity": {
+        "arm": "post2_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "61f2027ebb80b3ba0237ccfcba422fede5d1cde8ed10f71190f7f4d88a8f728b",
+        "input_digest": "a101929005c09ecd4c33f8f973f3fbb3c08514cfb4411d30f393c321761f8c6d",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "dee276b691fbc76e4989fb325c149ce3730a3c07529495e3003cc92aadeae676",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_004",
+        "source_row_id": "variant:71097a3bdffe027c86fb0cfc6b80faebc121b3049df4077239ca4a9ca63d66c8",
+        "trace_fingerprint": "c7b8d22b89113f286ced75f551f6904dd40f39dc5912b78c828e5efc09e6cf91"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/sub_256/branches/post2_zero.json",
+        "sha256": "678eb0e80b009caec503a8748ffc72d5f835c911c63e818cbf7568f15920352d"
+      }
+    },
+    {
+      "id": "computation:c597f531145f87a8f3efabac82d9352b0b5162dd8c275271fadcb4ec1325545e",
+      "identity": {
+        "arm": "projection_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "8bacff4017de710005d6aad8b19c2baf3f8a188c1c97ff4532929f4eb7a3cf18",
+        "input_digest": "a101929005c09ecd4c33f8f973f3fbb3c08514cfb4411d30f393c321761f8c6d",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "8b9282d830f665320abae6fb62544d1ad220cbccf8b40b0e347cc0ce2011c456",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:15ec9ad77f907b72fe1d3cc544e34f415fff014576c834cae5f639f07350d554",
+        "trace_fingerprint": "c7b8d22b89113f286ced75f551f6904dd40f39dc5912b78c828e5efc09e6cf91"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/sub_256/branches/projection_native.json",
+        "sha256": "7e3b99d178660eb96cfaed921a65df176eea5237a21ffa540d0a37adb7518d2d"
+      }
+    },
+    {
+      "id": "computation:5e713a18d064b08b1c2ffebe62caa3e1d85220774b9ec4298f65e6010abcca5d",
+      "identity": {
+        "arm": "skip_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "6f530d79c14370e89be26675739886349773ab0c19ec9fe8e0fe3dd8db067d31",
+        "input_digest": "a101929005c09ecd4c33f8f973f3fbb3c08514cfb4411d30f393c321761f8c6d",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "8b9282d830f665320abae6fb62544d1ad220cbccf8b40b0e347cc0ce2011c456",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:2119bbeabc03ebe6c3bc25d068fe79a890709a179d7da549278c890de1a8fbd9",
+        "trace_fingerprint": "c7b8d22b89113f286ced75f551f6904dd40f39dc5912b78c828e5efc09e6cf91"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/sub_256/branches/skip_native.json",
+        "sha256": "49d88a0815799bbf808e79265244b0209a60d96524c24ff03af678ccfb8402c5"
+      }
+    },
+    {
+      "id": "computation:02a622f14297ab46dc93f926229dc024e4b140a881c28df32c8608af41b48fef",
+      "identity": {
+        "arm": "carrier_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "42405a93f0b0162119fe1ba4e0ef8fd9f130461c01d8468c3b1ca839843efa7b",
+        "input_digest": "a101929005c09ecd4c33f8f973f3fbb3c08514cfb4411d30f393c321761f8c6d",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "8b9282d830f665320abae6fb62544d1ad220cbccf8b40b0e347cc0ce2011c456",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:f5bdd20c933479fdd07bb468909ced0efc9d10a6e4e4049ddad0da37fc5410a6",
+        "trace_fingerprint": "c7b8d22b89113f286ced75f551f6904dd40f39dc5912b78c828e5efc09e6cf91"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/sub_256/branches/carrier_native.json",
+        "sha256": "4fb03735713ed9e45ef2196373edc7bd9c16ba8ebd0c9e8c51b8793041491cbe"
+      }
+    },
+    {
+      "id": "computation:1357252d12a56afe3c370505cea8d2514335b5c8749f00cb8982537639c46de4",
+      "identity": {
+        "arm": "projection_sham",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "c8621c2897dc005f0e22c2956ce5a0a7c24d19360ada92f75f5e8108c677b6b6",
+        "input_digest": "a101929005c09ecd4c33f8f973f3fbb3c08514cfb4411d30f393c321761f8c6d",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "8b9282d830f665320abae6fb62544d1ad220cbccf8b40b0e347cc0ce2011c456",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:6b9d2af32915b351fb5b84ee118c3c70bcf67962302192d0c6c3d37708dc1248",
+        "trace_fingerprint": "c7b8d22b89113f286ced75f551f6904dd40f39dc5912b78c828e5efc09e6cf91"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/sub_256/branches/projection_sham.json",
+        "sha256": "d5396d425528d421e451fb7a181bc056168d6a2d1647bea65a8f21fcc6cd20f2"
+      }
+    },
+    {
+      "id": "computation:c3f3cb18aa562595fc2a26c8aafe5185f07479e4e6342db160ee43748d3d62b9",
+      "identity": {
+        "arm": "identity",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "5a987dac7acc36e50b518e4c4bd74b37e36e147ffa08224fcd9c6293ae937f91",
+        "input_digest": "beb1bd2d3133e82dbfe2145bab64b53ca1b60388d1b6a5aabae4a177430afe52",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "b0f9568f3e68c07a2e91e2d039dab01ade5a8b0ece2626da35486d6eb8eb61f3",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:778fa31916d6c091c1a0f34e075438677b26bcb6149e4a62db7bc44c28f1c51b",
+        "trace_fingerprint": "887fa12601c6ad7d3bceb0a9549db14f6d3b8d7634ac658f7410e52842904170"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/sub_254/branches/identity.json",
+        "sha256": "d1454e5e7006a68323645a62a48d157fb593b72975e622a1bdf3371215e88716"
+      }
+    },
+    {
+      "id": "computation:08997b7bdbbade9a14a1128f2821d103a1b4c6e34943dc615b40a8c0396ffefa",
+      "identity": {
+        "arm": "post0_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "f6862b927b0bd857a09756c4d8cef07785f8c5432ceddbffd1b986c9cfb58f4b",
+        "input_digest": "beb1bd2d3133e82dbfe2145bab64b53ca1b60388d1b6a5aabae4a177430afe52",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "b0f9568f3e68c07a2e91e2d039dab01ade5a8b0ece2626da35486d6eb8eb61f3",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:327b2fe51de992d9af140c8a49292fd770b5d37f7ceed5d2ad505e1e1d682dfc",
+        "trace_fingerprint": "887fa12601c6ad7d3bceb0a9549db14f6d3b8d7634ac658f7410e52842904170"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/sub_254/branches/post0_zero.json",
+        "sha256": "128d8d330a507225a3d4a33210bcec1d36c822f30398f86ff0447ddc18e4bbc7"
+      }
+    },
+    {
+      "id": "computation:ce8faa0204450ae09394b385d7223c5b519806b426e2484e35aaa9b6782ffb8c",
+      "identity": {
+        "arm": "post1_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "4b096cabd00e703503d899c49bd0e6aee3e828c13b468e53a0239e4704cc3571",
+        "input_digest": "beb1bd2d3133e82dbfe2145bab64b53ca1b60388d1b6a5aabae4a177430afe52",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "1c657b1c9ef0688266cf44fbd55747c8a435660f8bb18aaf60390d51e747ccf5",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_003",
+        "source_row_id": "variant:f72644877ad278bb6436ea50c957d57155dfea0fd4233ee16a91e125be33ac7b",
+        "trace_fingerprint": "887fa12601c6ad7d3bceb0a9549db14f6d3b8d7634ac658f7410e52842904170"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/sub_254/branches/post1_zero.json",
+        "sha256": "576f028bf629d0675d9dfc2ce3ba12412709be7182bd7f1c9576544857652255"
+      }
+    },
+    {
+      "id": "computation:26932d2138a2b08ea7d4f7d0b679b39616aea54b3e7e6174f665e6c4bd000bc7",
+      "identity": {
+        "arm": "post2_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "9258c2ca1f6ebcd96c107bac38ddc170bb46c5cebbe9f7936b24231d8bcce4ec",
+        "input_digest": "beb1bd2d3133e82dbfe2145bab64b53ca1b60388d1b6a5aabae4a177430afe52",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "0602a07d51aaab8038fe2098154e820363ad390ff8bee3c45a7f77ca5744bb7b",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_004",
+        "source_row_id": "variant:a309d3409269e7ba476d2c07133bd0227098e6cb590f11c891ea35e42c618169",
+        "trace_fingerprint": "887fa12601c6ad7d3bceb0a9549db14f6d3b8d7634ac658f7410e52842904170"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/sub_254/branches/post2_zero.json",
+        "sha256": "6fb2fc9b4db75a1e5d5bb64e83bf400d3e0545e02d2b6ec47cd4c7af5ee2094a"
+      }
+    },
+    {
+      "id": "computation:95f849e10e4d3cbd670e27db12f23b052aa7db12043843b12b457acc2650e2a0",
+      "identity": {
+        "arm": "projection_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "91b15905ba9a0d06ecfbc339582651ff2446084dacbf0cc153dc5390c9390f82",
+        "input_digest": "beb1bd2d3133e82dbfe2145bab64b53ca1b60388d1b6a5aabae4a177430afe52",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "b0f9568f3e68c07a2e91e2d039dab01ade5a8b0ece2626da35486d6eb8eb61f3",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:ffb6de411c0a24c5f0faf0456042031fb19ed4ebbc5e08ee5478630007fbda5e",
+        "trace_fingerprint": "887fa12601c6ad7d3bceb0a9549db14f6d3b8d7634ac658f7410e52842904170"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/sub_254/branches/projection_native.json",
+        "sha256": "8c699dd7ded19c973ef497ab78ef6e8bbda5ba63001b93f7baec1591c366e280"
+      }
+    },
+    {
+      "id": "computation:c1089ca0b2ec1b8c923c2501764d7ce8cbc3446450bc6a2a17f060fe6fe79947",
+      "identity": {
+        "arm": "skip_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "a19855e487819364c070f1dcdf91039554d3bb577434a8075eaee59424629471",
+        "input_digest": "beb1bd2d3133e82dbfe2145bab64b53ca1b60388d1b6a5aabae4a177430afe52",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "b0f9568f3e68c07a2e91e2d039dab01ade5a8b0ece2626da35486d6eb8eb61f3",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:3dc3c3e754ba64342aa606f666e2d497142c8d34a9c49b54b7f10a0837e08ed5",
+        "trace_fingerprint": "887fa12601c6ad7d3bceb0a9549db14f6d3b8d7634ac658f7410e52842904170"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/sub_254/branches/skip_native.json",
+        "sha256": "44436a47c3518a52538915ea996a2462fef6f3cf9679a26d07cadc1c7ee209bd"
+      }
+    },
+    {
+      "id": "computation:fe0f8dfb9239811b758b4d354025a3007d90c40c602310fe0087691d78e1c903",
+      "identity": {
+        "arm": "carrier_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "5a987dac7acc36e50b518e4c4bd74b37e36e147ffa08224fcd9c6293ae937f91",
+        "input_digest": "beb1bd2d3133e82dbfe2145bab64b53ca1b60388d1b6a5aabae4a177430afe52",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "b0f9568f3e68c07a2e91e2d039dab01ade5a8b0ece2626da35486d6eb8eb61f3",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:1087b59f4b404d6fea86ba783e59d1b8fb34236f7de9f95c13b6fc042e06b5b5",
+        "trace_fingerprint": "887fa12601c6ad7d3bceb0a9549db14f6d3b8d7634ac658f7410e52842904170"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/sub_254/branches/carrier_native.json",
+        "sha256": "68f0165ca7555f1351396552284edd8e38704e82a7ba3164181404157c392c18"
+      }
+    },
+    {
+      "id": "computation:3cadc9f37436e78134c37c7789a958dd700f1409c240c0d4ed19b336d8048c2a",
+      "identity": {
+        "arm": "projection_sham",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "f6862b927b0bd857a09756c4d8cef07785f8c5432ceddbffd1b986c9cfb58f4b",
+        "input_digest": "beb1bd2d3133e82dbfe2145bab64b53ca1b60388d1b6a5aabae4a177430afe52",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "b0f9568f3e68c07a2e91e2d039dab01ade5a8b0ece2626da35486d6eb8eb61f3",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:bfef82aec5f2674fc44628d7a886762b07b77c61b88941376fb7739396ad6dff",
+        "trace_fingerprint": "887fa12601c6ad7d3bceb0a9549db14f6d3b8d7634ac658f7410e52842904170"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/sub_254/branches/projection_sham.json",
+        "sha256": "d5db85f62c95c71611f4ca12dc3b04c2c58777768b88d30653622b934224a5b5"
+      }
+    },
+    {
+      "id": "computation:5a68637b467a2df33c648d5bd5c9c76c6ee3de5371d5f703f33ab158ead37dc3",
+      "identity": {
+        "arm": "identity",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "76eb038ef30d3eaaa14f3d5879dc770fc9130c2f4df9dc553cfff7b4762c854c",
+        "input_digest": "14c67c842462e82314bcc3196e6601bbdd4db67de5c368c11c89191bde57dd1b",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "010ecf28c04d2d7d58df1dfc7b0e3c6b9a0c430c9206fea02d8e9f293e308ca9",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:dc11cd5f5a14a9091ae38c353d9403306d26e3184cffe8698cef938771a53777",
+        "trace_fingerprint": "2214be9299eee93c287c281902ab86f00638ee0580ccaddcbc795172c58c817a"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/xor_252/branches/identity.json",
+        "sha256": "c1fd797b5a211a561516051b27500e32d9337bc8c4c8e9092dae48f71d634f99"
+      }
+    },
+    {
+      "id": "computation:5c647d0d394e660c41fe5065aa997a14871e2f10c573bf88ff0ba7d317e4b0e4",
+      "identity": {
+        "arm": "post0_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "6bb278ac321d2baff79e907d24f208092634c0d6ec56f4c29ee6f9aa8de5183d",
+        "input_digest": "14c67c842462e82314bcc3196e6601bbdd4db67de5c368c11c89191bde57dd1b",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "010ecf28c04d2d7d58df1dfc7b0e3c6b9a0c430c9206fea02d8e9f293e308ca9",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:7c9cfc0bce010ce26d203b5fa3f9c4c271184bb91ff02c1e41b3de2c15709117",
+        "trace_fingerprint": "2214be9299eee93c287c281902ab86f00638ee0580ccaddcbc795172c58c817a"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/xor_252/branches/post0_zero.json",
+        "sha256": "2114806060d39d01de5a4e6a14c6c9d1450885255cb037e7dc4a1e6eae6cd860"
+      }
+    },
+    {
+      "id": "computation:29a978d6748383d278f339a3346e7be67ee8ace8e041d741bb0a002122fa2fd0",
+      "identity": {
+        "arm": "post1_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "a5bf009a36950bc418f4e35f909bfeae8b17f71cd2675d4ab023c966c2283215",
+        "input_digest": "14c67c842462e82314bcc3196e6601bbdd4db67de5c368c11c89191bde57dd1b",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "e2b36fe6758b8d1cc656b2ce615a4b82f0d2cbf2589c31f0f069c232bfb9c30f",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_003",
+        "source_row_id": "variant:bc02f3e3764ff2888f5ef9f027e4b1db26b10132430156304779da1c095270f4",
+        "trace_fingerprint": "2214be9299eee93c287c281902ab86f00638ee0580ccaddcbc795172c58c817a"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/xor_252/branches/post1_zero.json",
+        "sha256": "e4914d311d24ed1cdb64811ac516246e868635c20236f3a343731f1a367a1d06"
+      }
+    },
+    {
+      "id": "computation:fc0d4efd49339064b40518a4e145a7e1c99d0ec675157813babcd927a940fbae",
+      "identity": {
+        "arm": "post2_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "9973fb7483809186be16bd60292b09e675060aa7c94995fa52ef901e809dedc9",
+        "input_digest": "14c67c842462e82314bcc3196e6601bbdd4db67de5c368c11c89191bde57dd1b",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "1b5c12d1f158b54c4b646eb9e76d23dd5eef5e5329c4ec56e7de3f0b588be90b",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_004",
+        "source_row_id": "variant:3583c835c41d321e8316e46e976480df3d9645eb388578588465a42e754fd3ba",
+        "trace_fingerprint": "2214be9299eee93c287c281902ab86f00638ee0580ccaddcbc795172c58c817a"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/xor_252/branches/post2_zero.json",
+        "sha256": "0f4e795b1fa68c350974978c1e1241ffca16aadb3f66d2501a5ee7afc597be99"
+      }
+    },
+    {
+      "id": "computation:281eddb34d6a6f2ba133a804b2eaea4ec3d2a366a8ee802d0cc02f3f20dbf745",
+      "identity": {
+        "arm": "projection_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "b205d27d97943a494284d074e954188e93e05f61aa81c8447a89ca24e688ed1b",
+        "input_digest": "14c67c842462e82314bcc3196e6601bbdd4db67de5c368c11c89191bde57dd1b",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "010ecf28c04d2d7d58df1dfc7b0e3c6b9a0c430c9206fea02d8e9f293e308ca9",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:05e84b6acf499a7f75806af9400e0cfeb755a3b25c412d3d5d961de66bea390d",
+        "trace_fingerprint": "2214be9299eee93c287c281902ab86f00638ee0580ccaddcbc795172c58c817a"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/xor_252/branches/projection_native.json",
+        "sha256": "39fe2dbf16a102bc35d8a40cd0fa4809452d1557a7cca2b392aa32b4ad1245c7"
+      }
+    },
+    {
+      "id": "computation:cf96f931be8f851bfaafd999ecd0e838f19bebf97ed20af0a5330627e109a10f",
+      "identity": {
+        "arm": "skip_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "d3cb797cee960116d8d7821cd7e29f80e1a040b9451dd4aad41fdf389609aded",
+        "input_digest": "14c67c842462e82314bcc3196e6601bbdd4db67de5c368c11c89191bde57dd1b",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "010ecf28c04d2d7d58df1dfc7b0e3c6b9a0c430c9206fea02d8e9f293e308ca9",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:a37df403ab9355aea6e293bce0fa2e5880b425f20bf0b9d653352e61c13ef401",
+        "trace_fingerprint": "2214be9299eee93c287c281902ab86f00638ee0580ccaddcbc795172c58c817a"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/xor_252/branches/skip_native.json",
+        "sha256": "84a0b40300291e01c44b0033ff3eafe0fe34469a82c7d4d792246d8e5d954a28"
+      }
+    },
+    {
+      "id": "computation:3923111512ab56aa4a2b7b44b0617009c84a54b5d0ac281f686dd74e851ca3f4",
+      "identity": {
+        "arm": "carrier_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "76eb038ef30d3eaaa14f3d5879dc770fc9130c2f4df9dc553cfff7b4762c854c",
+        "input_digest": "14c67c842462e82314bcc3196e6601bbdd4db67de5c368c11c89191bde57dd1b",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "010ecf28c04d2d7d58df1dfc7b0e3c6b9a0c430c9206fea02d8e9f293e308ca9",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:657ddd69dade2af41325d98c2a8d03c3b78827991d80a6cfe194c35cdb4b5dd0",
+        "trace_fingerprint": "2214be9299eee93c287c281902ab86f00638ee0580ccaddcbc795172c58c817a"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/xor_252/branches/carrier_native.json",
+        "sha256": "d4379b395e119668ba74d8e9d0dac10053016781bf36aa05dfac37cffdfeb5fc"
+      }
+    },
+    {
+      "id": "computation:bec5d388d0d20ada2a5da8aed7a985942833b6c6bda43d07a9a99375a4aaecd8",
+      "identity": {
+        "arm": "projection_sham",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "6bb278ac321d2baff79e907d24f208092634c0d6ec56f4c29ee6f9aa8de5183d",
+        "input_digest": "14c67c842462e82314bcc3196e6601bbdd4db67de5c368c11c89191bde57dd1b",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "010ecf28c04d2d7d58df1dfc7b0e3c6b9a0c430c9206fea02d8e9f293e308ca9",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:3653bb3f58811d19a5ac65b3964bfd8ea442f202f75dd888025d2d4d3d77044d",
+        "trace_fingerprint": "2214be9299eee93c287c281902ab86f00638ee0580ccaddcbc795172c58c817a"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/xor_252/branches/projection_sham.json",
+        "sha256": "30df382d68d04e2be72e74ceb1e9eab18328e0a94d2268d628a7545fca7c34a2"
+      }
+    },
+    {
+      "id": "computation:1027f560e6273dc974c1191a8030e6a7605fc5e14daf9a8a7d990826aabee73f",
+      "identity": {
+        "arm": "identity",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "0d641431b78fc97bbd91d1829623a6eb1d3083a82a926c57525f2ec38df7184d",
+        "input_digest": "a687d9e88e871f8a806d7c0ba0fc14d07e9d77709429001d11e62a7c092b3bd7",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "148bf0b47aa8944cde01a83fc6fa6f47f4199732271b8e53d75adbd69a170572",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:603e17a0b260b391ccb94a31612b28ec4e7748de9b5c90efe4ae73916d690a4e",
+        "trace_fingerprint": "466e9e27199c49ef36921c5cf09c18e9547048baf6b133a8d082801b61744348"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/xor_255/branches/identity.json",
+        "sha256": "02756d92843674bbf84b00398d8edf926d63dbac303c9f72a9c336be5e827b8d"
+      }
+    },
+    {
+      "id": "computation:11f60a772bc51d4b50aa473e023f9b6170fb960043818b8bbda4c7da3d5f1ed9",
+      "identity": {
+        "arm": "post0_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "5f6429d7d5a0cffc1eeaef2eff6fe2959186145ee39f60b6661fd6ec9648b61f",
+        "input_digest": "a687d9e88e871f8a806d7c0ba0fc14d07e9d77709429001d11e62a7c092b3bd7",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "148bf0b47aa8944cde01a83fc6fa6f47f4199732271b8e53d75adbd69a170572",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:e53291ba82f86651ad5df5d64afadb7126306d64d25b37acf27cfec18fd4974f",
+        "trace_fingerprint": "466e9e27199c49ef36921c5cf09c18e9547048baf6b133a8d082801b61744348"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/xor_255/branches/post0_zero.json",
+        "sha256": "5c1d4c55566e8fbb5424d48d6f1fe0de014b7551ebc70fa5397fe40aca3d947d"
+      }
+    },
+    {
+      "id": "computation:489cb684b46b7488921a6c46ddcabc1cce3177419bd07a31dca1a706c7157a07",
+      "identity": {
+        "arm": "post1_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "c763a6e8af6597a7b3e8aea58b372eb657dfe3a4904bfd272c7ed6d3ff032ad1",
+        "input_digest": "a687d9e88e871f8a806d7c0ba0fc14d07e9d77709429001d11e62a7c092b3bd7",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "b967f46f0382f097683218218885381cb7b3df0a630a3e3a6f0c3ecde010850e",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_003",
+        "source_row_id": "variant:baba984dc096719a3dc6f5b885bae6deffd97228bc1729a874c791ce9019d621",
+        "trace_fingerprint": "466e9e27199c49ef36921c5cf09c18e9547048baf6b133a8d082801b61744348"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/xor_255/branches/post1_zero.json",
+        "sha256": "583913e390ea729af8de4af108c328a7d5c5e0b089d5b9d24f71e1ff6cfd1e1b"
+      }
+    },
+    {
+      "id": "computation:8002d1026422eea78b4573804413e7c677af9479621f1701862d8969ddea2323",
+      "identity": {
+        "arm": "post2_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "a05149ceab48ae54e4ed280934898944eee18a5fb5aa8fae7dd083097cb9ba33",
+        "input_digest": "a687d9e88e871f8a806d7c0ba0fc14d07e9d77709429001d11e62a7c092b3bd7",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "eab1b1fc4d1e65a4cdf8f25b2e39df644a252737c6d0824fcd79a8c048675316",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_004",
+        "source_row_id": "variant:d9eb55d729fa28a82ddec5c627bf5669b31e8cc89ba1991df7b928bb03a48ae7",
+        "trace_fingerprint": "466e9e27199c49ef36921c5cf09c18e9547048baf6b133a8d082801b61744348"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/xor_255/branches/post2_zero.json",
+        "sha256": "d437d6d594a930888994f439b75131dba0f5b7d417c5d6d94a0c0020abf978e0"
+      }
+    },
+    {
+      "id": "computation:59b84f7a14adfc68f39099ee17175ca5f90f055091e818f1fe1600f3926a6499",
+      "identity": {
+        "arm": "projection_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "10405a2385427bc4320e1f3aeb6b97f861c9fbc27446057314fe422f3daa6467",
+        "input_digest": "a687d9e88e871f8a806d7c0ba0fc14d07e9d77709429001d11e62a7c092b3bd7",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "148bf0b47aa8944cde01a83fc6fa6f47f4199732271b8e53d75adbd69a170572",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:0b485dea405583bf12ff8a6a7927322ebb74a5f77006848937c14da372b1c349",
+        "trace_fingerprint": "466e9e27199c49ef36921c5cf09c18e9547048baf6b133a8d082801b61744348"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/xor_255/branches/projection_native.json",
+        "sha256": "534edbbb54bfd0d9d93d2c6ec681103dfd039196b21a3ef230bb7daea8d4c6ab"
+      }
+    },
+    {
+      "id": "computation:c8ddb2718df0f25b6d35bead54e980ea7274f4971075c9771f8cf4f743304930",
+      "identity": {
+        "arm": "skip_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "807ee2b3d8d0b5ffc9c5020a809f6efb0b1143c7baeec5377346b30034e1a4d0",
+        "input_digest": "a687d9e88e871f8a806d7c0ba0fc14d07e9d77709429001d11e62a7c092b3bd7",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "148bf0b47aa8944cde01a83fc6fa6f47f4199732271b8e53d75adbd69a170572",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:413d56de8642412b070655519a299b7498f130e8fd21e9ec3adaf7837b7fbc26",
+        "trace_fingerprint": "466e9e27199c49ef36921c5cf09c18e9547048baf6b133a8d082801b61744348"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/xor_255/branches/skip_native.json",
+        "sha256": "a99014fa23217dd405c04fab1eeebe3e51f90c90b123a612c4c19e0b6a4914a4"
+      }
+    },
+    {
+      "id": "computation:7ac7d20bd13bc1232c0a7810c52f3574aba73a0f456e4dc1d7b010981ccf8735",
+      "identity": {
+        "arm": "carrier_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "0d641431b78fc97bbd91d1829623a6eb1d3083a82a926c57525f2ec38df7184d",
+        "input_digest": "a687d9e88e871f8a806d7c0ba0fc14d07e9d77709429001d11e62a7c092b3bd7",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "148bf0b47aa8944cde01a83fc6fa6f47f4199732271b8e53d75adbd69a170572",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:de04bd3b6e4594b4935d0a9b95a4ecfb30b3cf213199456aa7dfec48a1ab421a",
+        "trace_fingerprint": "466e9e27199c49ef36921c5cf09c18e9547048baf6b133a8d082801b61744348"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/xor_255/branches/carrier_native.json",
+        "sha256": "673e0dca77605ee13a865f6e63bb68d3f88c4888e930f2bb47933dc11359e6d2"
+      }
+    },
+    {
+      "id": "computation:791e36d62c85e8b1668d2fd9cf81ea6e8b3bb877c9eb1b98679c5521900ca0f2",
+      "identity": {
+        "arm": "projection_sham",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "5f6429d7d5a0cffc1eeaef2eff6fe2959186145ee39f60b6661fd6ec9648b61f",
+        "input_digest": "a687d9e88e871f8a806d7c0ba0fc14d07e9d77709429001d11e62a7c092b3bd7",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "148bf0b47aa8944cde01a83fc6fa6f47f4199732271b8e53d75adbd69a170572",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:fb82b2a120b69b7f142c8efd81b6a6d7a3da6b3e64ee38aeb00f143499a0efab",
+        "trace_fingerprint": "466e9e27199c49ef36921c5cf09c18e9547048baf6b133a8d082801b61744348"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/xor_255/branches/projection_sham.json",
+        "sha256": "15abee892168d8ec0f4d41b7a869cf9ec5be1c800e20529ee97935c94e0dc27c"
+      }
+    },
+    {
+      "id": "computation:9889fc1308ae40110df0d0c5919fe132ee6e11be1f092652dfb6a7ea628622a4",
+      "identity": {
+        "arm": "identity",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "dd76bb970e9d2ec7ed4c77ee57db0376e4edaa8a0e7a55221011347f49f18d05",
+        "input_digest": "fd5b7d1f7bf4af0b008d20a971e5105f2007eb612c1b3d08a912377a8c35ae86",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "6afec3bec8d6786966bdef5594d7b5b73ee48b9ce239b43c41f391f254ca51b4",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:eaac2aaea957c5161f060465cb8668e96b1a8558fcf0754851a047e919585800",
+        "trace_fingerprint": "b13d2c0e7d7c6bc01d7383f250c04c6a732917962a4be40bee6af411652db72c"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/mov_up/branches/identity.json",
+        "sha256": "2e9c2fef638218d7606b0631f22a5afd3bf7bd5dfd1c6598de081d2b13a092d9"
+      }
+    },
+    {
+      "id": "computation:170472d63661b66d4e7857ebec120912a4797d792a08b3c1dd6a90827087962e",
+      "identity": {
+        "arm": "post0_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "77075fab1f15645aa3811459e52f6a3ad88f794823970cd1ccd088b279c0ba92",
+        "input_digest": "fd5b7d1f7bf4af0b008d20a971e5105f2007eb612c1b3d08a912377a8c35ae86",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "6afec3bec8d6786966bdef5594d7b5b73ee48b9ce239b43c41f391f254ca51b4",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:52fde7c515165fbebb56efecae0b4fbf85b9caae6ef75b5df64c2cb694016eff",
+        "trace_fingerprint": "b13d2c0e7d7c6bc01d7383f250c04c6a732917962a4be40bee6af411652db72c"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/mov_up/branches/post0_zero.json",
+        "sha256": "86cc0d7ca2ad4d4c7ab85856b1cdbead5454ebc9632f13126726490fe67b5d9f"
+      }
+    },
+    {
+      "id": "computation:26bbc6ebbc8ee206fb3c20733646a359284890d692ba303c583ede4b07b7b4e2",
+      "identity": {
+        "arm": "post1_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "db1e7c5fc42e959c92434d9cdbedac16821093c9dd271ae79434d64a4f12ff65",
+        "input_digest": "fd5b7d1f7bf4af0b008d20a971e5105f2007eb612c1b3d08a912377a8c35ae86",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "55de5554a781e0dd97ff1b5f1466fa4736455393359e841aacf7a0be1848a298",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_003",
+        "source_row_id": "variant:2e8cdbffa23f309a9e27b474ae46ff4284ad601f027e467b1dd8d1778208eaf6",
+        "trace_fingerprint": "b13d2c0e7d7c6bc01d7383f250c04c6a732917962a4be40bee6af411652db72c"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/mov_up/branches/post1_zero.json",
+        "sha256": "35d33d940a124ea557e4526642234730492afa7c7fbbb79f0f3458b2f76520d5"
+      }
+    },
+    {
+      "id": "computation:048051e26425cb1801cd7f0dffbaad979b30f59685ccbd218327f5d7cbc35185",
+      "identity": {
+        "arm": "post2_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "535744ed562cd9b5f0a09dc726f17f53f16b708e07bfb8280958932e28cc51ff",
+        "input_digest": "fd5b7d1f7bf4af0b008d20a971e5105f2007eb612c1b3d08a912377a8c35ae86",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "99731a253c8a85087be1f7ad5e4439631ee2fbb07fea79c5f2e8b0f17f0dc0d5",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_004",
+        "source_row_id": "variant:8ae71dec9f9e1ab2688749b4ab231b43078a035a21e4199028b54951d3a7e949",
+        "trace_fingerprint": "b13d2c0e7d7c6bc01d7383f250c04c6a732917962a4be40bee6af411652db72c"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/mov_up/branches/post2_zero.json",
+        "sha256": "28ac2d4ed6fae4d90cf302d79af496be57819152bc8ab933f1b718bf4868af54"
+      }
+    },
+    {
+      "id": "computation:95bbc309008420448dd9620c3779db9457b123c69c66dd5149e929c243b9fe1e",
+      "identity": {
+        "arm": "projection_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "75d7cd739d0cfaa19354801ac200c4e2a73f96f6f1e6fdd8a9d1e680838f57f0",
+        "input_digest": "fd5b7d1f7bf4af0b008d20a971e5105f2007eb612c1b3d08a912377a8c35ae86",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "6afec3bec8d6786966bdef5594d7b5b73ee48b9ce239b43c41f391f254ca51b4",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:c639b1f64e369fb365d47d062bbc7268d33c6a487a07c9644f1fda74cca0cd16",
+        "trace_fingerprint": "b13d2c0e7d7c6bc01d7383f250c04c6a732917962a4be40bee6af411652db72c"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/mov_up/branches/projection_native.json",
+        "sha256": "bcf58c7246109ce3eb2717545deb9f064fec01d0525ac55c5fdeaedd319ae216"
+      }
+    },
+    {
+      "id": "computation:91f396819fcdd84938de60e1898f0c29d1d8f4d74f0c6e46cb3e0c2cd794d262",
+      "identity": {
+        "arm": "skip_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "1d3723ea9df424d96ad5394ce938329e8ac65d9d294c3f4e8105b1a223fb3022",
+        "input_digest": "fd5b7d1f7bf4af0b008d20a971e5105f2007eb612c1b3d08a912377a8c35ae86",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "6afec3bec8d6786966bdef5594d7b5b73ee48b9ce239b43c41f391f254ca51b4",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:82411cfce54538f11bb30db68f6e670fae9c767e30b0c2e599e4fb43797bed14",
+        "trace_fingerprint": "b13d2c0e7d7c6bc01d7383f250c04c6a732917962a4be40bee6af411652db72c"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/mov_up/branches/skip_native.json",
+        "sha256": "5e41faaa2afbe66f92a870c4a9d6f835f3bc039406246db29b2344090eb27097"
+      }
+    },
+    {
+      "id": "computation:3998ee952bfdb526cdf60ca95f6bfa2ecd4ec021444393341d453bed8fcb08bd",
+      "identity": {
+        "arm": "carrier_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "dd76bb970e9d2ec7ed4c77ee57db0376e4edaa8a0e7a55221011347f49f18d05",
+        "input_digest": "fd5b7d1f7bf4af0b008d20a971e5105f2007eb612c1b3d08a912377a8c35ae86",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "6afec3bec8d6786966bdef5594d7b5b73ee48b9ce239b43c41f391f254ca51b4",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:945b7dfadb6ad2a7e8069723e647ab9887cd658e135c53662238251f02ae787b",
+        "trace_fingerprint": "b13d2c0e7d7c6bc01d7383f250c04c6a732917962a4be40bee6af411652db72c"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/mov_up/branches/carrier_native.json",
+        "sha256": "2c0b20861d78ffa015d453b22bedf225965cf805daf8badc9ecb5c88595f82cf"
+      }
+    },
+    {
+      "id": "computation:f04fb1e9e5ce2b0964ff6268e53c02604e0eacdbe7c6026f97358768fc92ea04",
+      "identity": {
+        "arm": "projection_sham",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "77075fab1f15645aa3811459e52f6a3ad88f794823970cd1ccd088b279c0ba92",
+        "input_digest": "fd5b7d1f7bf4af0b008d20a971e5105f2007eb612c1b3d08a912377a8c35ae86",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "6afec3bec8d6786966bdef5594d7b5b73ee48b9ce239b43c41f391f254ca51b4",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:17ec84ae92e3834d69ba7899ecb3b9fc673ffb278c6e9eaf3e53c600708b68c4",
+        "trace_fingerprint": "b13d2c0e7d7c6bc01d7383f250c04c6a732917962a4be40bee6af411652db72c"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/mov_up/branches/projection_sham.json",
+        "sha256": "0757bddb8cb8f17b0f1b0ed9dad0e9d673eb63af9ff51a4177d8d3b666baf4d2"
+      }
+    },
+    {
+      "id": "computation:270c4b6fb2b0a8a8740bae554df2678862b12f56e6aa512fe9a5afeafcc91c5f",
+      "identity": {
+        "arm": "identity",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "692a95a4fb7129c586c1496c78f73836009e76d81066e25f4f739332c01a9576",
+        "input_digest": "8491b65aee5212b2d0a79ecbc8be678e70b9f5255c96f3dab3d2324769e6b515",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "467acf0cb429e4608ebd88cff22495eda98cb7acbcee06d1fb3fe90cd19c39ff",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:032098c8a3427e16496bcec9e01d401648619144316f787938855fa78e319c7e",
+        "trace_fingerprint": "677485f55dcc85d18426270fe490ac838269b98249b626307b2c706497c35f9b"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/mov_down/branches/identity.json",
+        "sha256": "5510832a509462648a70ccf12189df0f1ad96689c53b27bbe9f80c8e2e35c86e"
+      }
+    },
+    {
+      "id": "computation:257d40aa915dafd5dff6f018ad4f3350b3a05f0a4a59a9a2aae8c9096dba7b49",
+      "identity": {
+        "arm": "post0_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "b156b1ea88f6a1690ebdb635d552577ec77ee95984e3960d93077d8a6acf13d7",
+        "input_digest": "8491b65aee5212b2d0a79ecbc8be678e70b9f5255c96f3dab3d2324769e6b515",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "467acf0cb429e4608ebd88cff22495eda98cb7acbcee06d1fb3fe90cd19c39ff",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:d7bd550d32e349818a7a3606f3d921c08286df83290a2ab1ecb342223edb11df",
+        "trace_fingerprint": "677485f55dcc85d18426270fe490ac838269b98249b626307b2c706497c35f9b"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/mov_down/branches/post0_zero.json",
+        "sha256": "3c8cca948c0e21e9b9c20546974fe4dd909648df36e79ba06e4b572195f41831"
+      }
+    },
+    {
+      "id": "computation:5cf8278f56e82c89e005eff5a6013c0e9888bae2f7fa6bf5563c96db247fc3a7",
+      "identity": {
+        "arm": "post1_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "50ee0a8696a869fcededfb41068f40ad1c41bb8c380ea8c2caab8002314d2b29",
+        "input_digest": "8491b65aee5212b2d0a79ecbc8be678e70b9f5255c96f3dab3d2324769e6b515",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "6698db3ff6d43c097226b8d9beb59ea5fa3777bda3d5737e45a0b04ef0c3efeb",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_003",
+        "source_row_id": "variant:1688e51ac1ef312100018c3ca65eeb066dbb756f5af3c1cf5cdcaf6322568a52",
+        "trace_fingerprint": "677485f55dcc85d18426270fe490ac838269b98249b626307b2c706497c35f9b"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/mov_down/branches/post1_zero.json",
+        "sha256": "6a5065d3112edbd32d6e970bd0cbf0ab70017219280e89bb4e3d72f7b737403d"
+      }
+    },
+    {
+      "id": "computation:f99e844f352df63675c75b7828b775f563673336748cd0a2209e176f830b21ce",
+      "identity": {
+        "arm": "post2_zero",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "647264f8753cffb4fe5ae010e1260fe320deaa5255e5151759f981a66127cc5c",
+        "input_digest": "8491b65aee5212b2d0a79ecbc8be678e70b9f5255c96f3dab3d2324769e6b515",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "4b824b3f7eb620b1bd144b6b52ed8f625c1d04891e2b7865f57202228cc93ea5",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_004",
+        "source_row_id": "variant:bab97c29fbb476b9d533b64fb21120d00ec5c49c909beb799d298d4ddffdf06f",
+        "trace_fingerprint": "677485f55dcc85d18426270fe490ac838269b98249b626307b2c706497c35f9b"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/mov_down/branches/post2_zero.json",
+        "sha256": "6321a739baf2505c5ff755c517471700a0656aa376422397158115f79bcf5014"
+      }
+    },
+    {
+      "id": "computation:372567a46627dd0e0bc49610cbc53d854e22c93945c73ffbc298c61b6b0be850",
+      "identity": {
+        "arm": "projection_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "aadb14fff4af768a71ff254d241984c91b99e5aaa1eb20500c63582cc548a0e2",
+        "input_digest": "8491b65aee5212b2d0a79ecbc8be678e70b9f5255c96f3dab3d2324769e6b515",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "467acf0cb429e4608ebd88cff22495eda98cb7acbcee06d1fb3fe90cd19c39ff",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:e86543c208a5d91d5c51b00d6955341b25b289262c4b4880ec9cdaae8685cbce",
+        "trace_fingerprint": "677485f55dcc85d18426270fe490ac838269b98249b626307b2c706497c35f9b"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/mov_down/branches/projection_native.json",
+        "sha256": "f3e854d1bcfba9120dc1dd220d432284c2196eeea9dd50c4210dbb613962c1ad"
+      }
+    },
+    {
+      "id": "computation:3991ab45bb0493a9cc1d92300cc234405b5125592126a10d3d2bcd3399d1e902",
+      "identity": {
+        "arm": "skip_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "dc91563d6c13f93b4f0ca2317c9e413e3be7f3353d0244a7bccd86de9c16f299",
+        "input_digest": "8491b65aee5212b2d0a79ecbc8be678e70b9f5255c96f3dab3d2324769e6b515",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "467acf0cb429e4608ebd88cff22495eda98cb7acbcee06d1fb3fe90cd19c39ff",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:c1b7913a606bba44b26c5a278aca33c8a13cba4de13f0d3c1819b2edf12e83d9",
+        "trace_fingerprint": "677485f55dcc85d18426270fe490ac838269b98249b626307b2c706497c35f9b"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/mov_down/branches/skip_native.json",
+        "sha256": "0dab05f56c7504bd802a6805c06fd05996e20b63c55bb6891e6674e37cb8c015"
+      }
+    },
+    {
+      "id": "computation:8b6f358df9263387dfbe6042d56f67085445e59894524357f6a6caa415f8d5d7",
+      "identity": {
+        "arm": "carrier_native",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "692a95a4fb7129c586c1496c78f73836009e76d81066e25f4f739332c01a9576",
+        "input_digest": "8491b65aee5212b2d0a79ecbc8be678e70b9f5255c96f3dab3d2324769e6b515",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "467acf0cb429e4608ebd88cff22495eda98cb7acbcee06d1fb3fe90cd19c39ff",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:e7186876ceab3096460126e68aa4e2bec88727a9e29aa331e14466a1089cfa74",
+        "trace_fingerprint": "677485f55dcc85d18426270fe490ac838269b98249b626307b2c706497c35f9b"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/mov_down/branches/carrier_native.json",
+        "sha256": "5ec26a00f34d6099054a8de14eb2477596e509a49d66f34bf486adddd380b05b"
+      }
+    },
+    {
+      "id": "computation:bfb59200f1d0a084b952559a53dd7011c1c8db8e7d1f313aa71648291947a89d",
+      "identity": {
+        "arm": "projection_sham",
+        "forecast_sha256": "d45a6aefe252886aaf066eb7579fbeca7ebf0732a568868062cb17aa36d93c89",
+        "heads_digest": "b156b1ea88f6a1690ebdb635d552577ec77ee95984e3960d93077d8a6acf13d7",
+        "input_digest": "8491b65aee5212b2d0a79ecbc8be678e70b9f5255c96f3dab3d2324769e6b515",
+        "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+        "parent_fingerprint": "467acf0cb429e4608ebd88cff22495eda98cb7acbcee06d1fb3fe90cd19c39ff",
+        "program_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129",
+        "site_id": "program:0c565fe37bdd4e92f2a783269aa02ad8bf85379000b2ea8800c62573fe6fe129/site/mlp_002",
+        "source_row_id": "variant:8689df0dd898aa691602853b795953a1e35e09ca9d35c643ad37ccc555b324a3",
+        "trace_fingerprint": "677485f55dcc85d18426270fe490ac838269b98249b626307b2c706497c35f9b"
+      },
+      "identity_kind": "traced-scalar-intervention-observation",
+      "semantic_operation": null,
+      "source": {
+        "path": "cases/mov_down/branches/projection_sham.json",
+        "sha256": "6a23f0cd3b398e2345189a55fb731df11a6a5096a7b7b0b4bd27e78905e169a4"
+      }
+    }
+  ],
+  "schema": "mdb-predictive-route-record-index-v1",
+  "scope": "generic immutable content identities; no automatic semantic naming"
+}

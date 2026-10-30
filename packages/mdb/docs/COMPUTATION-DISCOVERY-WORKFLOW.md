@@ -246,10 +246,19 @@ branches with own-state successors. Its final-mixer skip/update factorial
 exposes context-dependent contributions; its 76-record generic index binds
 observations to raw evidence without assigning semantic operations.
 
-The next mechanism cut separates recurrent carrier changes from reader/local
-changes within the projected update. Expand the receiving states or byte
-encoding as those comparisons become legible. Keep source formation, route
-recurrence, payload transfer and consumer selectivity as separate fields.
+The [prospective SUB/XOR/MOV test](PREDICTIVE-ROUTES-NEW-OPS.md) then froze
+three generic patterns before six new-operation fixtures. Early-post removal
+retains prior state in SUB, corrupts extra XOR bits, and preserves MOV decisions.
+Projected-write restoration repairs the target in six cases but preserves the
+complete register bank in five; its predicted reader ranking holds in four.
+The site predictor ties the no-effect baseline at 14/18. These are measured
+applicability limits, rather than a universal dynamic-table predictor.
+
+The next informative contrast is the SUB collateral and XOR reader-ranking
+reversal. Separate recurrent carrier changes from reader/local changes within
+the projected update, then freeze the revised prediction on another state.
+Keep source formation, route recurrence, payload transfer and consumer
+selectivity as separate fields.
 
 For throughput, measure setup, native execution, replay, serialization, durable
 save, transport and idle time separately. Reuse resident bindings and common
