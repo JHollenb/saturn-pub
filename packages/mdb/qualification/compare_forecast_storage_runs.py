@@ -9,6 +9,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import runpy
 from collections import Counter
 from pathlib import Path
 
@@ -89,8 +90,9 @@ def timing(run):
 
 def compare(reference, candidate):
     # These are sibling public qualification helpers, not private runtime imports.
-    from forecast_storage_benchmark import compare_leaves, leaf_manifest
-    from summarize_context_window import source_run
+    benchmark = runpy.run_path(str(Path(__file__).with_name("forecast_storage_benchmark.py")))
+    source_run = runpy.run_path(str(Path(__file__).with_name("summarize_context_window.py")))["source_run"]
+    compare_leaves, leaf_manifest = benchmark["compare_leaves"], benchmark["leaf_manifest"]
 
     runs = [source_run(path, "context-window-result") for path in (reference, candidate)]
     values = [records(run) for run in runs]

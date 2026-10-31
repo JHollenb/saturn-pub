@@ -73,6 +73,7 @@ with ForecastTransaction(
     input_identity=input_sha256, source_identity={"equation": equation_sha256},
     allowed_prefix={"stop_before": "1", "observe": ["0"]},
     denied_modules=("1", "2"),
+    array_storage="bundle-v1",
 ) as transaction:
     transaction.run_script([
         {"op": "capture", "name": "case", "args": inputs},
@@ -96,6 +97,12 @@ Forecast arrays and optional intervention payloads are stored without pickle.
 cast. Record any earlier casts used to construct the value in its provenance.
 `transaction.payload(forecast, name, as_tensor=True)` returns an owned CPU tensor
 for a typed Act. Predictions cannot be edited after sealing.
+
+This example opts into [packed numerical storage](FORECAST-STORAGE.md), which
+amortizes synchronization across a publication while preserving every NPY leaf's
+bytes and hashes. The API default remains `files-v1` for existing readers. Use
+`load_forecast_tree` or `load_forecast_array` for external numerical inspection
+of either layout.
 
 The global seal is published durably before native release. Release checks the
 sealed files and payloads again. Each execution result is persisted before its

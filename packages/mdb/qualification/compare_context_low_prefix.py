@@ -10,9 +10,12 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+from collections.abc import Mapping
 from pathlib import Path
 
 import numpy as np
+
+from mdb.forecast_transaction import load_forecast_array, load_forecast_tree
 
 ARMS = ("native", "U_swap", "U_swap_P2native")
 STAGES = ("S", "U", "M", "P2", "h", "z")
@@ -34,6 +37,8 @@ def find(rows, **fields):
 
 
 def array(root, descriptor):
+    if descriptor.get("storage") == "bundle-v1":
+        return load_forecast_array(root, descriptor)
     relative = Path(descriptor["path"])
     if relative.is_absolute() or ".." in relative.parts:
         raise ValueError("invalid array path")
@@ -51,16 +56,13 @@ def array(root, descriptor):
 
 
 def decode(root, node):
-    kind = node["kind"]
-    if kind == "array":
-        return array(root, node)
-    if kind == "mapping":
-        return {key: decode(root, child) for key, child in node["items"].items()}
-    if kind in ("list", "tuple"):
-        return [decode(root, child) for child in node["items"]]
-    if kind == "scalar":
-        return node["value"]
-    raise ValueError("unsupported transaction encoding")
+    def containers(value):
+        if isinstance(value, Mapping):
+            return {key: containers(child) for key, child in value.items()}
+        if isinstance(value, tuple):
+            return [containers(child) for child in value]
+        return value
+    return containers(load_forecast_tree(root, node))
 
 
 def compare(left, right):
@@ -169,4 +171,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
