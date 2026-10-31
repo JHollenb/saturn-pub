@@ -1,18 +1,23 @@
 """Finite admission and result diagnostics for an own-state image forecast."""
+import ast
 import base64
+import gzip
 import hashlib
 import io
 import json
+import os
 import runpy
 import tarfile
+import time
 from pathlib import Path
+from types import MappingProxyType, SimpleNamespace
 
 import numpy as np
 import pytest
 
 import mdb.job_support
 import mdb.payload
-from mdb.forecast_transaction import ForecastTransaction
+from mdb.forecast_transaction import ForecastTransaction, verify_transaction
 
 QUALIFICATION = Path(__file__).parents[1] / "qualification"
 
@@ -56,16 +61,67 @@ def test_saved_comparison_keeps_signed_error_and_exactness_separate():
         compare(np.array([np.nan]), np.array([0.]))
 
 
-def test_summary_serializes_actual_readonly_transaction_observation(tmp_path):
-    worker = runpy.run_path(str(QUALIFICATION / "flux_trajectory_forecast_campaign.py"))
-    with ForecastTransaction(tmp_path / "tx", model_identity="tiny", input_identity="input",
+def test_complete_publication_serializes_actual_readonly_observation_through_archive(tmp_path, monkeypatch, capsys):
+    path = QUALIFICATION / "flux_trajectory_forecast_campaign.py"
+    worker = runpy.run_path(str(path))
+    emitter = runpy.run_path(str(QUALIFICATION / "discovery_upgrades.py"))
+    output = tmp_path / "result"
+    with ForecastTransaction(output / "transaction", model_identity="tiny", input_identity="input",
                              source_identity="source", frontier={"kind": "empty"}) as tx:
         tx.predict("forecast", lambda context: {"predictions": {"expected": 0.}})
-        tx.seal()
-        tx.execute("native", lambda context: {"pixel_error": {"max_abs": 0., "coordinates": [0, 1]}})
-        readonly = tx.observation("native")
-        worker["save"](tmp_path / "summary.json", {"pixel_error": readonly["pixel_error"]})
-    assert json.loads((tmp_path / "summary.json").read_text()) == {"pixel_error": {"max_abs": 0., "coordinates": [0, 1]}}
+        seal = tx.seal()
+        tx.execute("native", lambda context: {"pixel_error": {"max_abs": 0., "coordinates": [0, 1],
+            "largest_effect": {"coordinate": [0, 0], "native_minus_forecast": 0.}}})
+    observation = tx.observation("native")
+    assert isinstance(observation["pixel_error"], MappingProxyType)
+    assert isinstance(observation["pixel_error"]["largest_effect"], MappingProxyType)
+    assert isinstance(observation["pixel_error"]["coordinates"], tuple)
+    with pytest.raises(TypeError, match="mappingproxy"):
+        json.dumps({"pixel_error": observation["pixel_error"]})
+    verification = verify_transaction(output / "transaction", expected_seal_sha256=seal["seal_sha256"])
+    assert verification["verified"] and tx.report()["phase"] == "closed"
+    original = {p.relative_to(output): hashlib.sha256(p.read_bytes()).hexdigest()
+                for p in (output / "transaction").rglob("*") if p.is_file()}
+
+    # Execute the worker's exact publication statements and nested event helper,
+    # without importing or entering its model-running worker function. This
+    # includes the real shared emitter; save() alone did not cover that sink.
+    tree = ast.parse(path.read_text())
+    event = next(node for node in ast.walk(tree) if isinstance(node, ast.FunctionDef) and node.name == "event")
+    summary = next(node for node in ast.walk(tree) if isinstance(node, ast.Assign)
+                   and any(isinstance(target, ast.Name) and target.id == "summary" for target in node.targets))
+    publication = sorted([summary, *(node for node in ast.walk(tree) if isinstance(node, ast.Expr)
+                                    and summary.end_lineno < node.lineno < next(
+                                        item.lineno for item in ast.walk(tree) if isinstance(item, ast.For)
+                                        and item.lineno > summary.end_lineno))], key=lambda node: node.lineno)
+    assert len(publication) == 6
+    monkeypatch.setenv("MRUN_JOB_ID", "job-report-only-tiny")
+    namespace = {**worker, "output": output, "transaction": tx, "seal": seal, "observation": observation,
+        "verification": verification, "started": time.monotonic(), "timeline": [], "time": time, "os": os,
+        "request": {"request_sha256": "a" * 64}, "source": {"model_identity": "tiny"}, "counts": {},
+        "config": {"arithmetic": "tiny report-only", "scope": "no model execution", "limits": "none",
+                   "max_archive_bytes": 1 << 20},
+        "runpy": SimpleNamespace(run_path=lambda name: emitter if name == "campaign_support.py" else None)}
+    exec(compile(ast.Module(body=[event, *publication], type_ignores=[]), str(path), "exec"), namespace)
+    saved = json.loads((output / "summary.json").read_text())
+    timeline = [json.loads(line) for line in (output / "timeline.jsonl").read_text().splitlines()]
+    assert saved["pixel_error"] == timeline[0]["pixel_error"] == worker["json_value"](observation["pixel_error"])
+    assert timeline[0]["kind"] == "complete"
+    assert json.loads((output / "transaction-report.json").read_text())["phase"] == "closed"
+    lines = capsys.readouterr().out.splitlines()
+    report = json.loads(gzip.decompress(base64.b64decode(next(line.removeprefix(emitter["REPORT"])
+        for line in lines if line.startswith(emitter["REPORT"])))))
+    raw = base64.b64decode(next(line.removeprefix(emitter["ARCHIVE"]) for line in lines if line.startswith(emitter["ARCHIVE"])))
+    assert report["archive_sha256"] == hashlib.sha256(raw).hexdigest()
+    assert {key: value for key, value in report.items() if key != "archive_sha256"} == saved
+    with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as archive:
+        for name in ("summary.json", "transaction-report.json", "timeline.jsonl", "files.json"):
+            member = next(item for item in archive.getmembers() if item.name.endswith("/" + name))
+            assert archive.extractfile(member).read() == (output / name).read_bytes()
+    assert original == {p.relative_to(output): hashlib.sha256(p.read_bytes()).hexdigest()
+                        for p in (output / "transaction").rglob("*") if p.is_file()}
+    assert verify_transaction(output / "transaction", expected_seal_sha256=seal["seal_sha256"])["verified"]
+    assert isinstance(observation["pixel_error"], MappingProxyType)
 
 
 def test_failed_publication_metadata_recovery_requires_explicit_opt_in(tmp_path):

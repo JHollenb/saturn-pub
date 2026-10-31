@@ -388,13 +388,13 @@ def worker():
         weight_check("after-native", expected=weights)
         verification = verify_transaction(output / "transaction", expected_seal_sha256=seal["seal_sha256"])
         observation = transaction.observation("native")
-        summary = {"schema": "mdb-flux-trajectory-result-v1", "job_id": os.environ["MRUN_JOB_ID"],
+        summary = json_value({"schema": "mdb-flux-trajectory-result-v1", "job_id": os.environ["MRUN_JOB_ID"],
             "request_sha256": request["request_sha256"], "mechanics_status": "valid", "terminal_status": "unassessed",
             "model_identity": source["model_identity"], "counts": counts, "seal": seal,
             "transaction_verification": verification, "pixel_error": observation["pixel_error"],
             "worker_seconds": time.monotonic() - started, "RGB_forecast": True,
             "own_state": True, "native_refreshes": 0, "arithmetic": config["arithmetic"],
-            "scope": config["scope"], "limits": config["limits"]}
+            "scope": config["scope"], "limits": config["limits"]})
         save(output / "transaction-report.json", transaction.report())
         save(output / "summary.json", summary)
         event("complete", pixel_error=observation["pixel_error"], counts=counts)
