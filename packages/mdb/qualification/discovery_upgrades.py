@@ -38,7 +38,9 @@ def save(path, value):
         stream.write("\n")
 
 
-def emit(output, report):
+def emit(output, report, *, max_compressed_bytes=64 * 1024 * 1024):
+    if type(max_compressed_bytes) is not int or not 0 < max_compressed_bytes <= 128 * 1024 * 1024:
+        raise ValueError("max_compressed_bytes must be a positive integer no greater than 128 MiB")
     buffer = io.BytesIO()
     with tarfile.open(fileobj=buffer, mode="w:gz") as archive:
         for path in sorted(output.rglob("*")):
@@ -47,7 +49,7 @@ def emit(output, report):
             if path.is_file():
                 archive.add(path, arcname=path.as_posix(), recursive=False)
     raw = buffer.getvalue()
-    if len(raw) > 64 * 1024 * 1024:
+    if len(raw) > max_compressed_bytes:
         raise ValueError("result archive exceeds finite compressed bound")
     report = {**report, "archive_sha256": sha(raw)}
     print(REPORT + base64.b64encode(gzip.compress(json.dumps(report).encode())).decode(), flush=True)
@@ -293,9 +295,12 @@ def stage(run_dir, isa_root):
     return {"job_id": str(job), "run_dir": str(run_dir)}
 
 
-def collect(run_dir, job_id, *, max_expanded_bytes=256 * 1024 * 1024):
+def collect(run_dir, job_id, *, max_expanded_bytes=256 * 1024 * 1024,
+            max_compressed_bytes=64 * 1024 * 1024):
     if type(max_expanded_bytes) is not int or not 0 < max_expanded_bytes <= 1024 * 1024 * 1024:
         raise ValueError("max_expanded_bytes must be a positive integer no greater than 1 GiB")
+    if type(max_compressed_bytes) is not int or not 0 < max_compressed_bytes <= 128 * 1024 * 1024:
+        raise ValueError("max_compressed_bytes must be a positive integer no greater than 128 MiB")
     from mdb.job_support import decode_marker, terminal_job
 
     _, job, logs = terminal_job(job_id)
@@ -313,7 +318,7 @@ def collect(run_dir, job_id, *, max_expanded_bytes=256 * 1024 * 1024):
     if len(lines) != 1:
         raise ValueError("expected one output archive")
     raw = base64.b64decode(lines[0], validate=True)
-    if len(raw) > 64 * 1024 * 1024 or sha(raw) != report["archive_sha256"]:
+    if len(raw) > max_compressed_bytes or sha(raw) != report["archive_sha256"]:
         raise ValueError("archive bytes differ")
     with tarfile.open(fileobj=io.BytesIO(raw), mode="r:gz") as archive:
         members = archive.getmembers()

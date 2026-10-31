@@ -61,6 +61,9 @@ The [state-transition campaign](docs/STATE-TRANSITION-DISCOVERIES.md) follows a
 real RSI divergence through later supplied instruction segments, localizes its
 selected trailing-byte effect, and compares all three MLPs on new operation
 windows. All 28 model rows match sealed forecasts, including native ISA errors.
+The [input generalization campaign](docs/INPUT-GENERALIZATION.md) predicts 42
+additional rows across changed states and byte windows. It retains sign reversals,
+collateral changes, unsuccessful restorations and equivalent-encoding contrasts.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 [Packed forecast storage](docs/FORECAST-STORAGE.md) is the default and preserves the complete

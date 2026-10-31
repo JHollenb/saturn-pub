@@ -35,6 +35,19 @@ def support():
     return runpy.run_path(str(source))
 
 
+def case_program(plan, case):
+    """Select an explicitly supplied case program, preserving legacy plans."""
+    program = case.get("program_hex", plan.get("program_hex"))
+    if not isinstance(program, str) or not bytes.fromhex(program):
+        raise ValueError("case requires nonempty literal program bytes")
+    return program
+
+
+def campaign_geometry(plan):
+    branches = len(plan["cases"]) * len(plan["arms"])
+    return {"branches": branches, "max_rows": branches * plan["max_instructions"]}
+
+
 def worker():
     for name in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
         os.environ[name] = "1"
@@ -53,6 +66,8 @@ def worker():
     formulas = runpy.run_path("raw_isa_equations.py")
     plan_raw = Path("plan.json").read_bytes()
     plan = json.loads(plan_raw)
+    retain = (runpy.run_path("state_transition_equations.py")["retained_prediction"]
+              if plan.get("retained_stage_ports") else lambda value: value)
     config = json.loads(Path(os.environ["SATURN_RUN_CONFIG"]).read_text())
     request = json.loads(Path(os.environ["SATURN_DEBUG_REQUEST"]).read_text())
     if sha(plan_raw) != config["plan_file_sha256"]:
@@ -98,8 +113,9 @@ def worker():
         for case in plan["cases"]:
             for arm in plan["arms"]:
                 key = case["case_id"] + "." + arm
-                trajectory = formulas["forecast_trajectory"](plan["program_hex"], case["register_words"],
+                trajectory = formulas["forecast_trajectory"](case_program(plan, case), case["register_words"],
                     case["flags"], weights, arm=arm, instructions=plan["max_instructions"])
+                trajectory["steps"] = {name: retain(value) for name, value in trajectory["steps"].items()}
                 trajectories[key] = trajectory
                 for name, value in trajectory["payloads"].items():
                     payloads[key + "." + name] = ForecastPayload(value, dtype="float32", provenance={
@@ -125,11 +141,12 @@ def worker():
         payloads = context.payloads["campaign"]
         result = {}
         for case in plan["cases"]:
+            program = case_program(plan, case)
             source = None
             for arm in plan["arms"]:
                 key = case["case_id"] + "." + arm
                 trajectory = forecasts[key]
-                driver = ISADriver(plan["program_hex"], case["register_words"], case["flags"],
+                driver = ISADriver(program, case["register_words"], case["flags"],
                                    max_instructions=plan["max_instructions"])
                 for step in range(plan["max_instructions"]):
                     if driver.termination:
@@ -154,7 +171,7 @@ def worker():
                             if arm == "U_swap_P2native":
                                 hooks.append(model.post[2].register_forward_hook(replace(payloads[key + ".P2_native"])))
                         capture = record_forward(model, inputs, model_identity=plan["model_identity"],
-                            input_identity=identity({"program": plan["program_hex"], "offset": offset,
+                            input_identity=identity({"program": program, "offset": offset,
                                                      "words": words, "flags": flags}),
                             execution=plan["execution"], capture_ports=True,
                             metadata={"case_id": key, "program_step": step}, max_operations=8192)
@@ -208,6 +225,13 @@ def worker():
                             name = f"layer{layer}." + stage
                             actual_stages[name] = port_value(capture, ports, selector)
                             references[name] = ports.resolve(selector)
+                    if plan.get("retained_stage_ports"):
+                        for name, selector in [("tokens", "module:inp:input"),
+                                              ("layer2.h", "module:reg_out:input"),
+                                              *[(f"layer{layer}.S", f"module:mixers.{layer}:input") for layer in range(3)]]:
+                            path = ["args", 0]
+                            actual_stages[name] = port_value(capture, ports, selector, path)
+                            references[name] = ports.resolve(selector, path=path)
                     # Demonstrate actual bias ports; source root bytes bind the full state dictionary.
                     named_bias = ports.resolve("parameter:mixers.2.dt_proj.bias")
                     result[row_id] = {"heads": actual_heads, "stages": actual_stages,
@@ -217,6 +241,10 @@ def worker():
                         "trace_fingerprint": capture.trace["fingerprint"], "input_identity": capture.trace["input_identity"],
                         "capture_manifest": capture_manifest,
                         "actual_ports": references, "named_bias_port": named_bias, "acts": acts,
+                        "program_hex": program,
+                        "lineage": {"program_hex": program, "case_id": case["case_id"], "arm": arm,
+                                    "step": step, "previous_row": None if step == 0 else key + "." + str(step - 1),
+                                    "replay_source_row": case["case_id"] + ".native.0" if step == 0 else row_id},
                         "input_roots": {name: tensor_descriptor(value) for name, value in zip(("window", "regs", "flags"), inputs, strict=True)}}
                     observed_rows[row_id] = result[row_id]
                     all_acts.extend(acts)
@@ -237,7 +265,7 @@ def worker():
         model_identity=plan["model_identity"], input_identity=sha(plan_raw),
         source_identity=request["source_hashes"], frontier=plan["frontier"],
         array_storage=config.get("array_storage", DEFAULT_ARRAY_STORAGE),
-        budgets={"max_native_calls": 24, "max_wall_ms": 240000,
+        budgets={"max_native_calls": plan["budgets"]["max_physical_forwards"], "max_wall_ms": 240000,
                  "max_bytes": 384 * 1024 * 1024, "max_files": 8192})
 
     def analyze(observed):
@@ -257,18 +285,17 @@ def worker():
                 targets={"regs": [[0, 7, bit] for bit in range(64)]},
                 components={"regs": predicted["register_terms"]})
             stage_report = compare_equations({name: predicted["stages"][name] for name in actual["stages"]}, actual["stages"])
+            tested_context = {"architecture": "r3-mamba-aligned", "checkpoint": plan["model_identity"],
+                "execution": plan["execution"], "source_identity": identity(request["source_hashes"]),
+                "case": case, "arm": arm, "instruction": int(step), "program_hex": actual["program_hex"],
+                "before": actual["before"], "input_identity": actual["input_identity"], "horizon": plan["max_instructions"]}
             record = catalog.record(law_id="r3.full-raw-state-transition", route_id=arm,
                 binding={"model_identity": plan["model_identity"], "execution": plan["execution"],
                          "input_identity": actual["input_identity"], "frontier": "raw-input",
                          "horizon": plan["max_instructions"], "source_identity": request["source_hashes"]},
-                report=comparison, conditions=[
-                    {"field": "architecture", "op": "eq", "value": "r3-mamba-aligned"},
-                    {"field": "checkpoint", "op": "eq", "value": plan["model_identity"]},
-                    {"field": "execution", "op": "eq", "value": plan["execution"]},
-                    {"field": "source_identity", "op": "eq", "value": identity(request["source_hashes"])}],
-                tested_context={"case": case, "arm": arm, "instruction": int(step),
-                                "baseline": "same original state trajectory; later roots may differ"},
-                readers=["regs:7", "regs:6:1", "flags"],
+                report=comparison, conditions=[{"field": name, "op": "eq", "value": value}
+                                                for name, value in tested_context.items()],
+                tested_context=tested_context, readers=["regs[7,*]", "regs[6,1]", "flags"],
                 evidence={"forecast_seal": transaction.report()["seal_sha256"], "capture": actual["trace_fingerprint"]})
             reports.append({"row_id": row_id, "forecast_root_join": actual["forecast_root_join"],
                 "forecast_decode": dict(predicted["decoded"]), "actual_decode": dict(actual["decoded"]),
@@ -299,13 +326,14 @@ def worker():
         "max_head_abs": max((row.get("head_report", {}).get("max_abs", 0) for row in reports), default=0),
         "max_stage_abs": max((row.get("stage_report", {}).get("max_abs", 0) for row in reports), default=0),
         "transaction_verification": verified, "architectural_correctness": "not an oracle-scored ISA accuracy claim",
-        "limits": ["two fixed related initial states, one supplied17byteprogram andthree declaredarms",
+        "geometry": campaign_geometry(plan),
+        "limits": ["finite declared input panel; no universal generalization claim",
                    "full source equations and frozen weights supplied; no semantic operation discovery",
                    "each forecast/native trajectory owns its own prior state; mismatches never recondition forecasts"]}
     save(output / "summary.json", summary)
     save(output / "files.json", {path.relative_to(output).as_posix(): sha(path.read_bytes())
                                for path in sorted(output.rglob("*")) if path.is_file()})
-    support()["emit"](output, summary)
+    support()["emit"](output, summary, max_compressed_bytes=plan["budgets"].get("max_archive_bytes", 64 * 1024 * 1024))
 
 
 def stage(run_dir, isa_root, plan_path, array_storage=DEFAULT_ARRAY_STORAGE):
@@ -315,6 +343,7 @@ def stage(run_dir, isa_root, plan_path, array_storage=DEFAULT_ARRAY_STORAGE):
 
     raw_plan = plan_path.read_bytes()
     plan = json.loads(raw_plan)
+    geometry = campaign_geometry(plan)
     run_dir.mkdir(parents=True, exist_ok=False)
     (run_dir / "plan.json").write_bytes(raw_plan)
     upstream = runpy.run_path(str(isa_root / "scripts/native_forward_symbols.py"))
@@ -325,11 +354,12 @@ def stage(run_dir, isa_root, plan_path, array_storage=DEFAULT_ARRAY_STORAGE):
     files += [(wheel, wheel.name), (Path(__file__).with_name("discovery_upgrades.py"), "campaign_support.py"),
               (Path(__file__).with_name("raw_isa_equations.py"), "raw_isa_equations.py"),
               (Path(__file__).with_name("explicit_suffix_equations.py"), "explicit_suffix_equations.py"),
+              (Path(__file__).with_name("state_transition_equations.py"), "state_transition_equations.py"),
               (run_dir / "plan.json", "plan.json")]
     preflight = run_dir / "preflight.v1.json"
     save(preflight, {"schema_version": "mrun-preflight-config-v1", "path_token_allowlist": ["sequence-result"],
         "hashed_roots": ["artifacts", "direct_effect", "isa_lab", wheel.name, "raw_isa_sequence_campaign.py",
-                         "raw_isa_equations.py", "explicit_suffix_equations.py", "campaign_support.py",
+                         "raw_isa_equations.py", "explicit_suffix_equations.py", "state_transition_equations.py", "campaign_support.py",
                          "plan.json", "source-manifest.json", "preflight.v1.json"]})
     files.append((preflight, preflight.name))
     config = {"schema": "mdb-raw-isa-sequence-config-v1", "checkpoint": "artifacts/model.pt",
@@ -337,10 +367,12 @@ def stage(run_dir, isa_root, plan_path, array_storage=DEFAULT_ARRAY_STORAGE):
     request = {"schema": "mdb-raw-isa-sequence-request-v1", "task_family": "mdb-raw-isa-sequence",
         "model_identity": plan["model_identity"], "needs": {"cpu": True}, "config": config,
         "execution_environment": intent(), "source_hashes": {name: sha(path.read_bytes()) for path, name in files},
-        "source_origins": origins, "scheduling_contract": one_lease_scheduling_contract(logical_operations=24,
-            logical_branches=6, logical_checkpoint_replays=18, max_local_work_items=24,
-            extra={"max_replay_native_operations": 20000, "max_physical_model_forwards": 24}),
-        "selection_policy": "two fixed related states xthree arms xthree own-state instructions; all forecasts sealed before any nativecall"}
+        "source_origins": origins, "scheduling_contract": one_lease_scheduling_contract(logical_operations=geometry["max_rows"],
+            logical_branches=geometry["branches"], logical_checkpoint_replays=geometry["max_rows"],
+            max_local_work_items=geometry["max_rows"],
+            extra={"max_replay_native_operations": plan["budgets"]["max_replay_operations"],
+                   "max_physical_model_forwards": plan["budgets"]["max_physical_forwards"]}),
+        "selection_policy": "fixed literal cases x declared arms x bounded own-state instructions; all forecasts sealed before any native call"}
     request["source_hashes"]["raw_isa_sequence_campaign.py"] = sha(Path(__file__).read_bytes())
     request["request_sha256"] = identity(request)
     save(run_dir / "request.json", request)
@@ -351,10 +383,14 @@ def stage(run_dir, isa_root, plan_path, array_storage=DEFAULT_ARRAY_STORAGE):
     if "--offline" in command:
         command.remove("--offline")
     job = guarded_mrun_launch(command, request=request, experiment="mdb-raw-isa-sequence",
-        task="r3-full-raw-equations-three-instruction-forecast", model=None, payload=run_dir / "payload",
+        task="r3-full-raw-equations-input-generalization", model=None, payload=run_dir / "payload",
         prefer_host="beast", gpu=False, needs=request["needs"], ram_mb=2304, cpu_threads=1,
         timeout_s=300, retry_on_kill=False, preflight=True,
-        note="One CPU1 finite full-weight raw-input forecast:2fixedstates x3arms x3instructions;zero nativecalls beforeglobalseal; <=24physical/20k replayops. SUB/XOR/ADD own-state futures,no oracle/no reconditioning/no retries.2304MiB retained measuredCPUparent exception (prior1034.5MiB peak) plus bounded384MiB evidence. Stopafter18comparisons/archive.")
+        note=(f"One CPU1 finite raw-input forecast: {len(plan['cases'])} cases x {len(plan['arms'])} arms x "
+              f"<={plan['max_instructions']} own-state steps; <= {geometry['max_rows']} rows, "
+              f"{plan['budgets']['max_physical_forwards']} native calls / {plan['budgets']['max_replay_operations']} replay ops. "
+              "Global seal before native calls; no oracle inputs/reconditioning/retries. "
+              "2304MiB measured CPU exception (prior1313.8MiB peak), bounded384MiB evidence. Stop at panel/archive."))
     save(run_dir / "submission.json", {"job_id": str(job)})
     return {"job_id": str(job), "run_dir": str(run_dir)}
 
@@ -380,10 +416,13 @@ def main():
                           "job_id": os.environ["MRUN_JOB_ID"], "request_sha256": request["request_sha256"],
                           "error": f"{type(error).__name__}: {error}"}
                 save(output / "failure.json", report)
-                support()["emit"](output, report)
+                plan = json.loads(Path("plan.json").read_text())
+                support()["emit"](output, report, max_compressed_bytes=plan["budgets"].get("max_archive_bytes", 64 * 1024 * 1024))
             raise
     elif args.collect:
-        print(json.dumps(support()["collect"](args.run_dir, args.collect, max_expanded_bytes=512 * 1024 * 1024)))
+        plan = json.loads((args.run_dir / "plan.json").read_text())
+        print(json.dumps(support()["collect"](args.run_dir, args.collect, max_expanded_bytes=512 * 1024 * 1024,
+            max_compressed_bytes=plan["budgets"].get("max_archive_bytes", 64 * 1024 * 1024))))
     else:
         if args.run_dir is None or args.isa_root is None or args.plan is None:
             parser.error("staging requires run-dir, isa-root and plan")

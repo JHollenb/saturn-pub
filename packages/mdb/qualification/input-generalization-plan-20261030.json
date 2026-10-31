@@ -1,0 +1,84 @@
+{
+  "schema": "mdb-raw-isa-sequence-plan-v1",
+  "model_identity": "9399e921776d7a5437c5bbd51bfc1928f09d2ddea444fe2aa1c9cf282baf7f1e",
+  "execution": {"backend": "cpu", "dtype": "float32", "threads": 1},
+  "frontier": {
+    "kind": "raw-input",
+    "native_prefix_observed": false,
+    "allowed": ["literal instruction bytes", "initial register and flag bits", "all frozen model weights", "unchanged independent source equations"],
+    "forbidden_before_seal": ["native calls", "native internal observations", "native output heads", "oracle results"]
+  },
+  "cases": [
+    {
+      "case_id": "sub_zero",
+      "program_hex": "4881ef010000004881ef01000000",
+      "supplied_instructions": ["SUB RDI,1 imm32", "SUB RDI,1 imm32"],
+      "register_words": [0, 0, 0, 0, 0, 0, 0, 0],
+      "flags": [0, 0, 0, 0],
+      "purpose": "zero boundary, underflow and a different RSI pattern"
+    },
+    {
+      "case_id": "sub_lowbits",
+      "program_hex": "4881ef010000004881ef01000000",
+      "supplied_instructions": ["SUB RDI,1 imm32", "SUB RDI,1 imm32"],
+      "register_words": [0, 0, 0, 0, 0, 0, 7, 255],
+      "flags": [0, 0, 0, 0],
+      "purpose": "different low-bit and RSI applicability conditions"
+    },
+    {
+      "case_id": "sub_highbits",
+      "program_hex": "4881ef010000004881ef01000000",
+      "supplied_instructions": ["SUB RDI,1 imm32", "SUB RDI,1 imm32"],
+      "register_words": [17, 85, 1024, 7, 4096, 65535, 1099511627779, 9223372036854776070],
+      "flags": [1, 0, 1, 0],
+      "purpose": "high register bits, non-target register patterns and changed initial flags"
+    },
+    {
+      "case_id": "add_imm15",
+      "program_hex": "4881c70f0000004831f7",
+      "supplied_instructions": ["ADD RDI,15 imm32", "XOR RDI,RSI"],
+      "register_words": [13, 255, 1023, 19, 4096, 65535, 17, 65535],
+      "flags": [1, 1, 1, 1],
+      "purpose": "new immediate, carry boundary and trailing instruction window"
+    },
+    {
+      "case_id": "rax_add_xor",
+      "program_hex": "4801d84831c8",
+      "supplied_instructions": ["ADD RAX,RBX", "XOR RAX,RCX"],
+      "register_words": [1023, 85, 63, 7, 4096, 31, 5, 11],
+      "flags": [0, 1, 0, 1],
+      "purpose": "different destination and source register routes"
+    },
+    {
+      "case_id": "rdi_shifts",
+      "program_hex": "48d1e748d1ef",
+      "supplied_instructions": ["SHL RDI,1", "SHR RDI,1"],
+      "register_words": [3, 5, 7, 11, 4096, 31, 1099511627781, 9223372036854776069],
+      "flags": [1, 0, 0, 1],
+      "purpose": "different operations, high-bit movement and shifted-out bits"
+    }
+  ],
+  "arms": ["native", "U_swap", "U_swap_P2native"],
+  "max_instructions": 2,
+  "retained_stage_ports": true,
+  "first_instruction_only": {
+    "U_swap": "zero post.0 and restore this case's equation-computed native final mixer out_proj return",
+    "U_swap_P2native": "same plus this case's equation-computed native final post.2 return"
+  },
+  "continuation": {
+    "forecast": "consume own predicted registers, flags and predicted-length byte offset",
+    "native": "consume own actual model state, never recondition a sealed forecast",
+    "effects": "stop before store or syscall commit",
+    "scope": "up to two model instructions per branch; second offset follows model length, even when it is architecturally wrong"
+  },
+  "scope_notes": [
+    "Cases selected before their equations or model outputs were computed; all cases and arms share one global seal before any native call.",
+    "Existing equations, weights and operations are supplied; this tests prediction generalization, not discovery of equations from activations.",
+    "This is a newly tested finite panel, not a globally held-out split across all prior workspace experiments.",
+    "Architecture correctness is scored separately and post hoc; incorrect model behavior remains eligible for accurate prediction.",
+    "The intervention's direction and repair behavior may differ by input; preserve counterexamples instead of imposing a universal route rule."
+  ],
+  "budgets": {"max_physical_forwards": 36, "max_replay_operations": 32000, "max_archive_bytes": 134217728, "timeout_seconds": 300, "retries": 0},
+  "measurements": ["all eleven numerical heads and sign/argmax decisions", "39 named module input/return ports", "literal per-step root joins", "own-state continuation closure", "full register/flag and length changes", "signed intervention and repair effects", "typed replay parity and receipts"],
+  "terminal_status": "unassessed"
+}

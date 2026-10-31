@@ -181,3 +181,8 @@ conditioning, then restore both. This would distinguish changed register
 selection from other decoder-conditioned features on the route to the carrier.
 The atlas can retain these candidate families and their boundaries; automatic
 rule induction and applicability expansion remain unfinished.
+
+The subsequent [input-generalization campaign](INPUT-GENERALIZATION.md) first
+tests other architectural states and instruction windows. Its 42 additional rows
+preserve equation prediction while exposing sign reversals, collateral changes
+and limits on native-write restoration.

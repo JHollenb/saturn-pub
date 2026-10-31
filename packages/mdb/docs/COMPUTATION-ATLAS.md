@@ -45,6 +45,12 @@ contrast IDs.
 
 ## Import and query
 
+The [input-generalization follow-up](INPUT-GENERALIZATION.md) builds a separate
+atlas with 42 further observations and four explicitly selected family candidates.
+It retains the RSI-effect sign reversals, incomplete/worsening restorations,
+post-hoc ISA mismatches and repeated-input checks. Its per-case conditions include
+literal programs and before-states; it does not expand the earlier atlas's scope.
+
 ```python
 from mdb.computation_atlas import ComputationAtlas
 
