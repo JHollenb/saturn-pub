@@ -82,6 +82,11 @@ the forecast through 111 own-state transitions and VAE decoding. For one fresh
 seed, all 228 boundary tensor hashes and the final RGB match exactly. This is
 conditional on an observed initial frontier and uses shared CUDA primitive
 kernels; the saved evidence remains auditable despite a later summary-writing failure.
+The [concept-carrier panel](docs/FLUX-CONCEPT-ROUTES.md) then separates stored
+conditioning from working text in 24 native images. First-step text edits preserve
+changed ordering/color assignment through later original conditioning; shape shows
+more mixed later influence. These are whole-field causal functions and candidate
+names, with specific object symbols still unresolved.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 [Packed forecast storage](docs/FORECAST-STORAGE.md) is the default and preserves the complete
