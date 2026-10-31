@@ -57,6 +57,12 @@ hold the first instruction and architectural state fixed, reproduce a collateral
 register error, and predict its repair through a transferred final-MLP write.
 The reciprocal transfer weakens the other context without flipping its bit;
 the receiving state and write jointly determine the outcome.
+The [state-transition campaign](docs/STATE-TRANSITION-DISCOVERIES.md) follows a
+real RSI divergence through later supplied instruction segments, localizes its
+selected trailing-byte effect, and compares all three MLPs on new operation
+windows. All 28 model rows match sealed forecasts, including native ISA errors.
+The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
+records across runs with signed effects, continuation and counterexamples.
 [Packed forecast storage](docs/FORECAST-STORAGE.md) is the default and preserves the complete
 arrays and their hashes while reducing the measured campaign worker time from
 74.35 to 11.74 seconds. Selected-state saves also default to bundles, and native
