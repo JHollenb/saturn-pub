@@ -39,8 +39,8 @@ def save(path, value):
 
 
 def emit(output, report, *, max_compressed_bytes=64 * 1024 * 1024):
-    if type(max_compressed_bytes) is not int or not 0 < max_compressed_bytes <= 128 * 1024 * 1024:
-        raise ValueError("max_compressed_bytes must be a positive integer no greater than 128 MiB")
+    if type(max_compressed_bytes) is not int or not 0 < max_compressed_bytes <= 512 * 1024 * 1024:
+        raise ValueError("max_compressed_bytes must be a positive integer no greater than 512 MiB")
     buffer = io.BytesIO()
     with tarfile.open(fileobj=buffer, mode="w:gz") as archive:
         for path in sorted(output.rglob("*")):
@@ -299,8 +299,8 @@ def collect(run_dir, job_id, *, max_expanded_bytes=256 * 1024 * 1024,
             max_compressed_bytes=64 * 1024 * 1024):
     if type(max_expanded_bytes) is not int or not 0 < max_expanded_bytes <= 1024 * 1024 * 1024:
         raise ValueError("max_expanded_bytes must be a positive integer no greater than 1 GiB")
-    if type(max_compressed_bytes) is not int or not 0 < max_compressed_bytes <= 128 * 1024 * 1024:
-        raise ValueError("max_compressed_bytes must be a positive integer no greater than 128 MiB")
+    if type(max_compressed_bytes) is not int or not 0 < max_compressed_bytes <= 512 * 1024 * 1024:
+        raise ValueError("max_compressed_bytes must be a positive integer no greater than 512 MiB")
     from mdb.job_support import decode_marker, terminal_job
 
     _, job, logs = terminal_job(job_id)

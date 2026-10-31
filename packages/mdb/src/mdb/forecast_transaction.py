@@ -426,7 +426,11 @@ class ForecastTransaction:
         if isinstance(value, (list, tuple)):
             return {"kind": "tuple" if isinstance(value, tuple) else "list",
                     "items": [self._encode(item) for item in value]}
-        if value is None or type(value) in (str, bool, int) or (type(value) is float and math.isfinite(value)):
+        if isinstance(value, str):
+            # Framework metadata can use a str subclass, such as TorchVersion.
+            # Store its JSON string value, without invoking arbitrary reprs.
+            return {"kind": "scalar", "value": str(value)}
+        if value is None or type(value) in (bool, int) or (type(value) is float and math.isfinite(value)):
             return {"kind": "scalar", "value": value}
         raise ForecastTransactionError(f"unsupported stored value: {type(value).__name__}")
 

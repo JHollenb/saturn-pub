@@ -23,21 +23,29 @@ def resolve_bench_model(name):
 
 
 def local_checkpoint_root(name):
+    import os
+
+    import mrun.models as registry
     from mrun.models import (
         default_hub_root,
         hub_name,
-        model_search_roots,
         models_root,
         resolve_model,
         snapshot_dir,
     )
+    # Older public clients expose the default roots but not the additive-roots
+    # helper. Their configured environment remains an explicit path authority.
+    search = getattr(registry, "model_search_roots", None)
+    extra_roots = search() if callable(search) else [
+        Path(value) for value in os.environ.get("LLM_MODELS_EXTRA_ROOT", "").split(os.pathsep) if value.strip()
+    ]
     spec = resolve_model(name)
     if spec.family != "flux": return snapshot_dir(name)
     # AR snapshot_dir requires top-level safetensors. Diffusers checkpoints put
     # weights in component directories; resolve their model_index from the same
     # registry/cache authorities, with an explicit revision instead of mixing.
     candidates = [Path(spec.local_path)] if spec.local_path else []
-    candidates += [base/spec.hf_id.rsplit("/", 1)[-1] for base in (models_root(), *model_search_roots())]
+    candidates += [base/spec.hf_id.rsplit("/", 1)[-1] for base in (models_root(), *extra_roots)]
     candidates += [base/key for base in (models_root(), default_hub_root()) for key in (hub_name(spec), spec.name)]
     for root in candidates:
         if (root/"model_index.json").is_file(): return root

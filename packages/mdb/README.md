@@ -71,6 +71,12 @@ from an observed residual; later generated tokens remain measured outcomes.
 Its [six-prompt replication](docs/QWEN-PROMPT-GENERALIZATION.md) matches all
 24 tested first-token branches, including six shams, and retains both unchanged
 choices and a three-region dose response.
+The [diffusion assay](docs/FLUX-MLP-COMPUTATION-FORECASTS.md) seals two
+FLUX.2 Klein 4B MLP/write forecasts before native release, then renders twelve
+branches through the public Saturn adapter. Copy shams reproduce exact images;
+analytic self-writes and donor transfers retain BF16 discrepancies and native
+image effects. Object ordering stays unchanged at this tested occurrence;
+the structural records do not yet identify object symbols.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 [Packed forecast storage](docs/FORECAST-STORAGE.md) is the default and preserves the complete

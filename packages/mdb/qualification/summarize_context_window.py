@@ -80,7 +80,11 @@ class NumericalTree:
         return self.decode(node)
 
 
-def source_run(root, data_name, *, failed=False):
+def source_run(root, data_name, *, failed=False, max_archive_bytes=128 << 20, max_member_bytes=64 << 20):
+    require(type(max_archive_bytes) is int and 0 < max_archive_bytes <= 512 << 20,
+            "explicit archive allowance must be positive and at most 512 MiB")
+    require(type(max_member_bytes) is int and 0 < max_member_bytes <= 256 << 20,
+            "explicit member allowance must be positive and at most 256 MiB")
     root = Path(root).resolve()
     data = root / "extracted" / data_name
     request, report, job = (read(root / name) for name in ("request.json", "report.json", "job.json"))
@@ -105,7 +109,7 @@ def source_run(root, data_name, *, failed=False):
                 if line.startswith(marker)]
     require(len(archives) == 1, "collector log must contain exactly one result archive")
     archive_raw = base64.b64decode(archives[0], validate=True)
-    require(len(archive_raw) <= 128 * 1024 * 1024 and sha(archive_raw) == report["archive_sha256"],
+    require(len(archive_raw) <= max_archive_bytes and sha(archive_raw) == report["archive_sha256"],
             "result archive bytes differ from collector binding")
     archived = {}
     with tarfile.open(fileobj=io.BytesIO(archive_raw), mode="r:gz") as archive:
@@ -114,7 +118,7 @@ def source_run(root, data_name, *, failed=False):
                 continue
             relative = Path(member.name)
             require(member.isfile() and relative.parts[0] == data_name
-                    and not relative.is_absolute() and ".." not in relative.parts and member.size <= 64 * 1024 * 1024,
+                    and not relative.is_absolute() and ".." not in relative.parts and member.size <= max_member_bytes,
                     "archive contains an unsafe/unexpected member")
             key = Path(*relative.parts[1:]).as_posix()
             require(key not in archived, "duplicate archive member")

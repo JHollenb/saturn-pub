@@ -100,6 +100,20 @@ def test_raw_architectural_frontier_supports_global_trajectory_without_capture(t
     tx.close()
 
 
+def test_string_subclass_metadata_roundtrips_in_cuts_forecasts_and_observations(tmp_path):
+    class Version(str):
+        pass
+
+    with transaction(tmp_path, weights={}) as tx:
+        tx.frontier("cut", {"execution": {"torch": Version("2.13.0")}})
+        tx.predict("metadata", lambda context: {"predictions": context.frontiers["cut"]})
+        seal = tx.seal()
+        tx.execute("native", lambda context: {"version": Version("2.13.0")})
+        assert type(tx.prediction("metadata")["execution"]["torch"]) is str
+        assert tx.observation("native") == {"version": "2.13.0"}
+        assert verify_transaction(tx.root, expected_seal_sha256=seal["seal_sha256"])["verified"]
+
+
 def test_callback_views_are_immutable_and_weights_are_fresh_owned_copies(tmp_path):
     model = Tiny().eval()
     tx = transaction(tmp_path, model=model)
