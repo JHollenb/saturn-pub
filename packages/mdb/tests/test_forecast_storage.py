@@ -5,6 +5,7 @@ import io
 import json
 import os
 import stat
+import struct
 import subprocess
 import sys
 from pathlib import Path
@@ -270,6 +271,127 @@ def test_bundle_is_fsynced_and_linked_before_referencing_forecast_metadata(tmp_p
     assert events[bundle_index - 1:bundle_index + 2] == ["sync-file", "link-bundle", "sync-directory"]
     assert events.index("link-forecast") > bundle_index + 1
     tx.close()
+
+
+def test_transaction_root_and_every_new_directory_entry_are_durable_before_children_publish(tmp_path, monkeypatch):
+    original_mkdir, original_fsync, original_link = os.mkdir, os.fsync, os.link
+    events = []
+
+    def inode(value):
+        return value.st_dev, value.st_ino
+
+    def made(path, *args, **kwargs):
+        result = original_mkdir(path, *args, **kwargs)
+        created = Path(path).resolve()
+        events.append(("mkdir", created, inode(created.parent.stat())))
+        return result
+
+    def synced(fd):
+        result = original_fsync(fd)
+        information = os.fstat(fd)
+        if stat.S_ISDIR(information.st_mode):
+            events.append(("sync-directory", inode(information)))
+        return result
+
+    def linked(source, destination, *args, **kwargs):
+        result = original_link(source, destination, *args, **kwargs)
+        events.append(("publish", Path(destination).resolve()))
+        return result
+
+    monkeypatch.setattr(forecast_module.os, "mkdir", made)
+    monkeypatch.setattr(forecast_module.os, "fsync", synced)
+    monkeypatch.setattr(forecast_module.os, "link", linked)
+    tx = transaction(tmp_path / "new-parent" / "nested" / "tx")
+    tx.frontier("roots", np.array([1], dtype=np.float32))
+    predict(tx)
+    tx.seal()
+    tx.execute("actual", lambda context: np.array([2], dtype=np.float32))
+    tx.close()
+    created = {event[1] for event in events if event[0] == "mkdir"}
+    expected = {tx.root, tx.root.parent, tx.root.parent.parent}
+    expected.update(tx.root / name for name in ("arrays", "frontiers", "forecasts", "observations", "events",
+                                               "custody", "custody/receipts"))
+    assert expected <= created
+    for index, event in enumerate(events):
+        if event[0] != "mkdir":
+            continue
+        directory, parent_inode = event[1:]
+        # A later fsync of the child itself does not persist its name in the
+        # parent. Require the correct parent inode before any child publication.
+        next_child = next((position for position in range(index + 1, len(events))
+            if events[position][0] in {"mkdir", "publish"}
+            and events[position][1].is_relative_to(directory)), len(events))
+        assert any(item[0] == "sync-directory" and item[1] == parent_inode
+                   for item in events[index + 1:next_child]), f"unsynced parent entry for {directory}"
+
+
+@pytest.mark.parametrize("storage", ["files-v1", "bundle-v1"])
+@pytest.mark.parametrize("kind,dtype", [("u", "uint24"), ("f", "float24")])
+def test_rehashed_counterfeit_npy_dtype_is_refused_by_loader_and_stdlib_verifier(tmp_path, storage, kind, dtype):
+    tx = transaction(tmp_path / "tx", storage=storage)
+    record = tx.predict("p", lambda context: {"predictions": np.ones(1, dtype=np.uint8)})
+    original = record["predictions"]
+    tx.seal()
+    tx.close()
+    # This is well-framed NPY with three payload bytes and a forbidden numeric
+    # item size. All file/content/global-seal hashes below are recomputed, so a
+    # checksum mismatch cannot substitute for dtype-format validation.
+    header_text = repr({"descr": "<" + kind + "3", "fortran_order": False, "shape": (1,)})
+    header_length = ((10 + len(header_text) + 1 + 63) // 64) * 64 - 10
+    header = (header_text + " " * (header_length - len(header_text) - 1) + "\n").encode()
+    leaf = b"\x93NUMPY\x01\x00" + struct.pack("<H", len(header)) + header + b"\0\0\0"
+    descriptor = {"kind": "array", "sha256": digest(leaf), "shape": [1], "dtype": dtype,
+                  "content_sha256": digest(b"\0\0\0")}
+    packed = MAGIC + leaf if storage == "bundle-v1" else leaf
+    if storage == "bundle-v1":
+        descriptor.update(storage=storage, bundle_sha256=digest(packed), offset=len(MAGIC), nbytes=len(leaf))
+    descriptor["path"] = "arrays/" + digest(packed) + (".npyb" if storage == "bundle-v1" else ".npy")
+    (tx.root / descriptor["path"]).write_bytes(packed)
+    (tx.root / original["path"]).unlink()
+    record["predictions"] = descriptor
+    forecast_raw = json.dumps(record, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+    (tx.root / "forecasts/p.json").write_bytes(forecast_raw)
+    manifest = json.loads((tx.root / "seal.json").read_text())
+    del manifest["files"][original["path"]]
+    manifest["files"][descriptor["path"]] = {"sha256": digest(packed), "bytes": len(packed)}
+    manifest["files"]["forecasts/p.json"] = {"sha256": digest(forecast_raw), "bytes": len(forecast_raw)}
+    seal_raw = json.dumps(manifest, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+    (tx.root / "seal.json").write_bytes(seal_raw)
+    for relative, reference in manifest["files"].items():
+        raw = (tx.root / relative).read_bytes()
+        assert digest(raw) == reference["sha256"] and len(raw) == reference["bytes"]
+    with pytest.raises(ForecastTransactionError, match="item size|dtype"):
+        load_forecast_array(tx.root, descriptor)
+    code = """
+import builtins, importlib.util, pathlib, sys
+original = builtins.__import__
+def blocked(name, *args, **kwargs):
+    if name.split('.')[0] in {'numpy', 'torch', 'jax', 'tensorflow', 'isa_lab'}:
+        raise RuntimeError('stdlib validation imported ' + name)
+    return original(name, *args, **kwargs)
+builtins.__import__ = blocked
+source = pathlib.Path(sys.argv[1])
+package_spec = importlib.util.spec_from_file_location('mdb', source.with_name('__init__.py'),
+    submodule_search_locations=[str(source.parent)])
+package = importlib.util.module_from_spec(package_spec)
+sys.modules['mdb'] = package
+package_spec.loader.exec_module(package)
+spec = importlib.util.spec_from_file_location('mdb.forecast_transaction', source)
+module = importlib.util.module_from_spec(spec)
+sys.modules[spec.name] = module
+spec.loader.exec_module(module)
+try:
+    module.verify_transaction(sys.argv[2], expected_seal_sha256=sys.argv[3])
+except module.ForecastTransactionError as error:
+    assert 'item size' in str(error) or 'dtype' in str(error), str(error)
+else:
+    raise AssertionError('counterfeit unsupported dtype was admitted')
+assert not set(sys.modules) & {'numpy', 'torch', 'jax', 'tensorflow', 'isa_lab'}
+"""
+    completed = subprocess.run([sys.executable, "-I", "-c", code,
+        str(Path(forecast_module.__file__).resolve()), str(tx.root), digest(seal_raw)],
+        capture_output=True, text=True, timeout=20, env=dict(os.environ))
+    assert completed.returncode == 0, completed.stderr
 
 
 @pytest.mark.parametrize("failed_target", ["arrays", "forecasts"])
