@@ -460,6 +460,7 @@ def worker():
     phase("transaction_initialization", "start", scope="declarations/full-weight publication and guard installation")
     transaction = ForecastTransaction(output / "transaction", model=model,
         model_identity=plan["model_identity"], input_identity=sha(raw_plan), source_identity=request["source_hashes"],
+        array_storage=config.get("array_storage", "files-v1"),
         frontier=plan["frontier"], budgets={"max_native_calls": 12, "max_wall_ms": 240000,
                                          "max_bytes": 128 * 1024 * 1024, "max_files": 4096})
     phase("transaction_initialization", "end")
@@ -500,7 +501,7 @@ def worker():
     support()["emit"](output, summary)
 
 
-def stage(run_dir, isa_root, plan_path, prior_root, hypothesis_path=None):
+def stage(run_dir, isa_root, plan_path, prior_root, hypothesis_path=None, array_storage="files-v1"):
     from mdb.execution_environment import intent
     from mdb.job_support import guarded_mrun_launch, one_lease_scheduling_contract
     from mdb.payload import stage_worker, worker_command
@@ -530,7 +531,8 @@ def stage(run_dir, isa_root, plan_path, prior_root, hypothesis_path=None):
                          "plan.json", "context-prefix-hypothesis.json", "source-manifest.json", "preflight.v1.json"]})
     files.append((preflight, preflight.name))
     config = {"schema": "mdb-context-window-config-v1", "checkpoint": "artifacts/model.pt",
-              "plan_file_sha256": sha(raw_plan), "hypothesis_file_sha256": sha(raw_hypothesis)}
+              "plan_file_sha256": sha(raw_plan), "hypothesis_file_sha256": sha(raw_hypothesis),
+              "array_storage": array_storage}
     request = {"schema": "mdb-context-window-request-v1", "task_family": "mdb-context-window",
         "model_identity": plan["model_identity"], "needs": {"cpu": True}, "config": config,
         "execution_environment": intent(), "source_hashes": {name: sha(path.read_bytes()) for path, name in files},
@@ -565,6 +567,7 @@ def main():
     parser.add_argument("--plan", type=Path)
     parser.add_argument("--prior-root", type=Path)
     parser.add_argument("--hypothesis", type=Path, help="defaults to the dated structural-prefix hypothesis beside this script")
+    parser.add_argument("--array-storage", choices=("files-v1", "bundle-v1"), default="files-v1")
     parser.add_argument("--collect")
     args = parser.parse_args()
     if args.worker:
@@ -586,7 +589,7 @@ def main():
         if any(value is None for value in (args.run_dir, args.isa_root, args.plan, args.prior_root)):
             parser.error("staging requires run-dir, isa-root, plan and prior-root")
         print(json.dumps(stage(args.run_dir.resolve(), args.isa_root.resolve(), args.plan.resolve(), args.prior_root.resolve(),
-                               None if args.hypothesis is None else args.hypothesis.resolve())))
+                               None if args.hypothesis is None else args.hypothesis.resolve(), args.array_storage)))
 
 
 if __name__ == "__main__":

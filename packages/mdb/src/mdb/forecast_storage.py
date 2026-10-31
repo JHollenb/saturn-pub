@@ -54,8 +54,10 @@ def _npy(raw, start=0):
     if match is None:
         raise ForecastStorageError("NPY leaf dtype must be real numeric")
     order, kind, itemsize = match[1], match[2], int(match[3])
-    if itemsize > 16 or (kind == "b" and itemsize != 1):
+    if itemsize not in {"b": (1,), "i": (1, 2, 4, 8), "u": (1, 2, 4, 8), "f": (2, 4, 8, 16)}[kind]:
         raise ForecastStorageError("unsupported numeric NPY item size")
+    if order not in (("|",) if itemsize == 1 else ("<", ">")):
+        raise ForecastStorageError("NPY byte order is not canonical")
     end = data + math.prod(shape) * itemsize
     if end > len(raw):
         raise ForecastStorageError("truncated NPY array data")

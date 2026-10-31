@@ -445,7 +445,7 @@ def stage(run_dir, source_result, current_source, baseline_ref, ram_mb=2304):
     declarations = json.loads((root / "declarations.json").read_text())
     config = {"schema": "mdb-forecast-storage-config-v1", "model_identity": declarations["model_identity"],
               "workload_identity": digest(canonical(manifest))}
-    request = {"schema": "mdb-forecast-storage-request-v1", "task_family": "mdb-forecast-storage",
+    request = {"schema": "mdb-forecast-storage-request-v1", "task_family": "analysis", "analysis_kind": "mdb-forecast-storage",
         "config": config, "needs": {"cpu": True}, "execution_environment": intent(),
         "source_hashes": {name: digest(path.read_bytes()) for path, name in files},
         "input_manifest": manifest,
@@ -457,6 +457,7 @@ def stage(run_dir, source_result, current_source, baseline_ref, ram_mb=2304):
             logical_checkpoint_replays=0, max_local_work_items=3, model_free=True, model_loads=0,
             checkpoint_policy="no model branches or native checkpoints; three sequential finite storage-only helper processes within one outer lease",
             extra={"max_physical_model_forwards": 0, "max_saved_input_bytes": MAX_INPUT_BYTES,
+                   "task_family": "analysis",
                    "sequential_storage_helper_processes": 3, "helper_process_order": list(MODES),
                    "helper_process_scope": "posthoc storage measurement; no model loads or scientific branches"}),
         "selection_policy": "one same-host sequential lease; three isolated storage-only children; default/opt-in storage contrast"}

@@ -96,6 +96,25 @@ def _readonly(value):
     raise ForecastTransactionError(f"unsupported callback value: {type(value).__name__}")
 
 
+def _mkdir_durable(path, *, exist_ok=True):
+    """Persist every new directory entry before publishing files beneath it."""
+    path = Path(path)
+    if path.exists():
+        if not exist_ok:
+            raise FileExistsError(str(path))
+        if path.is_symlink() or not path.is_dir():
+            raise ForecastTransactionError("artifact directory is not a plain directory")
+        return
+    if not path.parent.exists():
+        _mkdir_durable(path.parent)
+    path.mkdir(mode=0o700, exist_ok=exist_ok)
+    descriptor = os.open(path.parent, os.O_RDONLY)
+    try:
+        os.fsync(descriptor)
+    finally:
+        os.close(descriptor)
+
+
 class ForecastTransaction:
     """One process-local transaction with immutable published evidence.
 
@@ -118,7 +137,7 @@ class ForecastTransaction:
                  allowed_prefix=None, denied_modules=(), frontier=None, weights=None,
                  budgets=None, array_storage="files-v1"):
         self.root = Path(root)
-        self.root.mkdir(parents=True, exist_ok=False, mode=0o700)
+        _mkdir_durable(self.root, exist_ok=False)
         self.model = model
         self.phase = "open"
         self.budgets = {**self.DEFAULT_BUDGETS, **(budgets or {})}
@@ -261,7 +280,7 @@ class ForecastTransaction:
             raise ForecastTransactionError("immutable artifact already exists: " + relative)
         if not emergency and self.work["retained_bytes"] + len(raw) > self.budgets["max_bytes"]:
             raise ForecastTransactionError("retained-byte budget exhausted")
-        path.parent.mkdir(parents=True, exist_ok=True)
+        _mkdir_durable(path.parent)
         temporary = path.parent / (".publish-" + uuid.uuid4().hex)
         try:
             with temporary.open("xb") as stream:
@@ -313,6 +332,7 @@ class ForecastTransaction:
                      "elapsed_ms": (time.monotonic() - self._started) * 1000,
                      "detail": _json(detail or {}), "work": dict(self.work)}
             receipt = Receipt.make(operation="mdb.forecast." + kind, status="observed", phase_event=event)
+            _mkdir_durable(self.root / "custody" / "receipts")
             event["receipt_id"] = LocalStore(self.root / "custody").receipt(receipt)
             raw = _canonical(event)
             self._publish(f"events/{len(self._events):06d}.json", raw, emergency=True)

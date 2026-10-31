@@ -14,12 +14,13 @@ import io
 import json
 import sys
 import tarfile
+from collections.abc import Mapping
 from pathlib import Path
 
 import numpy as np
 
 from mdb.discovery_catalog import StructuralCatalog
-from mdb.forecast_transaction import verify_transaction
+from mdb.forecast_transaction import load_forecast_tree, verify_transaction
 from mdb.forward_ports import NativePortCatalog
 from mdb.forward_symbols import verify_trace
 
@@ -61,30 +62,16 @@ def file_path(root, relative):
 
 class NumericalTree:
     def __init__(self, transaction_root):
-        self.root, self.cache = transaction_root, {}
+        self.root = transaction_root
 
     def decode(self, node):
-        kind = node["kind"]
-        if kind == "mapping":
-            return {key: self.decode(value) for key, value in node["items"].items()}
-        if kind in {"tuple", "list"}:
-            return [self.decode(value) for value in node["items"]]
-        if kind == "scalar":
-            return node["value"]
-        if kind != "array":
-            raise ValueError("unknown immutable numerical descriptor")
-        key = node["path"]
-        if key not in self.cache:
-            path = file_path(self.root, key)
-            require(sha(path.read_bytes()) == node["sha256"], "array file seal differs")
-            value = np.load(path, allow_pickle=False)
-            require(value.dtype.kind in "biuf" and np.isfinite(value).all(), "nonfinite or nonnumeric retained array")
-            value.flags.writeable = False
-            self.cache[key] = value
-        value = self.cache[key]
-        require(list(value.shape) == node["shape"] and str(value.dtype) == node["dtype"]
-                and sha(value.tobytes(order="C")) == node["content_sha256"], "array descriptor/content seal differs")
-        return value
+        def containers(value):
+            if isinstance(value, Mapping):
+                return {key: containers(child) for key, child in value.items()}
+            if isinstance(value, tuple):
+                return [containers(child) for child in value]
+            return value
+        return containers(load_forecast_tree(self.root, node))
 
     def select(self, node, path):
         for component in path:
