@@ -244,3 +244,5 @@ wrapper. That feature request is recorded in the Saturn workspace.
 
 Portable results: [selected-logit panel](../qualification/qwen-mlp-forecast-20261030.json)
 and [full-vocabulary panel](../qualification/qwen-full-readout-20261030.json).
+The [six fresh prompt contexts](QWEN-PROMPT-GENERALIZATION.md) extend the same
+experiment across arithmetic, translation, code, recall, sequence and antonym inputs.

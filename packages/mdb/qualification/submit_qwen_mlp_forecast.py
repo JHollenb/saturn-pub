@@ -19,7 +19,11 @@ def save(path, value):
         stream.write("\n")
 
 
-def plan(*, full_readout=False):
+def plan(*, full_readout=False, prompt_panel=None):
+    if prompt_panel not in (None, "language-a", "language-b"):
+        raise ValueError("unknown fixed prompt panel")
+    if prompt_panel is not None and not full_readout:
+        raise ValueError("fresh prompt panels require full-vocabulary readout")
     value = {
         "schema": "mdb-qwen-final-mlp-plan-v1",
         "model": "qwen2.5-0.5b-instruct",
@@ -68,17 +72,37 @@ def plan(*, full_readout=False):
             "bias-free final RMSNorm readout ranks tokens by a_v + dose*b_v; its denominator is shared and positive")
         value["limits"][1] = "Full-vocabulary first-token decisions are forecast; cached later tokens are native observations."
         value["limits"].append("Capital is an explicitly repeated anchor; planet is a fixed new prompt within this campaign.")
+    if prompt_panel is not None:
+        panels = {
+            "language-a": [
+                {"id": "arithmeticchat", "text": "<|im_start|>user\nWhat is 7 times 8?<|im_end|>\n<|im_start|>assistant\n"},
+                {"id": "translation", "text": "English: cat\nFrench:"},
+                {"id": "code", "text": "def square(x):\n    return"},
+            ],
+            "language-b": [
+                {"id": "context", "text": "Alice has a red ball. Bob has a blue ball.\nBob's ball is"},
+                {"id": "sequence", "text": "Continue the sequence: 2, 4, 6, 8,"},
+                {"id": "antonymchat", "text": "<|im_start|>user\nWhat is the opposite of ancient?<|im_end|>\n<|im_start|>assistant\n"},
+            ],
+        }
+        value.update({"prompt_panel": prompt_panel, "prompts": panels[prompt_panel],
+            "arms": {"native": 1., "sham": 1., "zero": 0., "half": .5},
+            "prompt_input_authority": "fixed raw literals, including explicit ChatML where shown; add_special_tokens=False, no implicit chat template",
+            "eos_handling": "fixed budget: three cached successors after the first token, even after EOS; all token IDs/text retained; not EOS-terminated generation"})
+        value["limits"][-1] = (
+            "All six literal prompts in language-a/b are declared before either panel runs; "
+            "fresh assay contexts, no claim of training-data holdout or automatic semantic-law discovery.")
     return value
 
 
-def stage(run_dir, *, full_readout=False):
+def stage(run_dir, *, full_readout=False, prompt_panel=None):
     from mdb.execution_environment import intent
     from mdb.job_support import guarded_mrun_launch, one_lease_scheduling_contract
     from mdb.payload import stage_worker, worker_command
 
     here = Path(__file__).resolve().parent
     run_dir.mkdir(parents=True, exist_ok=False)
-    config = plan(full_readout=full_readout)
+    config = plan(full_readout=full_readout, prompt_panel=prompt_panel)
     save(run_dir / "plan.json", config)
     raw = (json.dumps(config, sort_keys=True) + "\n").encode()
     preflight = run_dir / "preflight.v1.json"
@@ -141,13 +165,14 @@ def main():
     parser.add_argument("run_dir", type=Path)
     parser.add_argument("--collect")
     parser.add_argument("--full-readout", action="store_true")
+    parser.add_argument("--prompt-panel", choices=("language-a", "language-b"))
     args = parser.parse_args()
     if args.collect:
         helper = runpy.run_path(str(Path(__file__).with_name("discovery_upgrades.py")))
         result = helper["collect"](args.run_dir, args.collect, max_compressed_bytes=128 << 20,
                                    max_expanded_bytes=512 << 20)
     else:
-        result = stage(args.run_dir.resolve(), full_readout=args.full_readout)
+        result = stage(args.run_dir.resolve(), full_readout=args.full_readout, prompt_panel=args.prompt_panel)
     print(json.dumps(result))
 
 

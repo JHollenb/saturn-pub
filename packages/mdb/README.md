@@ -68,6 +68,9 @@ The [trained-language-model assay](docs/QWEN-COMPUTATION-FORECASTS.md) applies
 the same capture/predict/seal/execute method to Qwen's final MLP, with native
 token continuations and a full-vocabulary affine readout law. Forecasts start
 from an observed residual; later generated tokens remain measured outcomes.
+Its [six-prompt replication](docs/QWEN-PROMPT-GENERALIZATION.md) matches all
+24 tested first-token branches, including six shams, and retains both unchanged
+choices and a three-region dose response.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 [Packed forecast storage](docs/FORECAST-STORAGE.md) is the default and preserves the complete

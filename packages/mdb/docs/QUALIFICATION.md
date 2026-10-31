@@ -22,6 +22,15 @@ symbol discovery, or complete future-token prediction. See the portable
 [selected-logit](../qualification/qwen-mlp-forecast-20261030.json) and
 [full-readout](../qualification/qwen-full-readout-20261030.json) records.
 
+The [six-prompt replication](QWEN-PROMPT-GENERALIZATION.md) fixes two complete
+panels before execution and retains 24 branches: eighteen distinct prompt/dose
+pairs plus six shams. All full-vocabulary first-token predictions match, with
+maximum absolute logit error `1.35573e-5`. Both audits and the combined evidence
+sweep verify; 59 focused installed-dependency tests pass. Its three-region
+ball-context response is observed at native doses; the intermediate translation
+region and exact switch positions remain analytical forecasts. The same
+conditional-prefix and external-head custody limits apply.
+
 The [E6/E20 paper adapters](../experiments/time_circuits/README.md) have separate
 bounded research-input qualification: E20 reproduces 42 native observable rows
 and three baseline replays; E6 interchange has 1,400 exact native comparisons
