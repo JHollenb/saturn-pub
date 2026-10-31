@@ -31,9 +31,32 @@ Two source-qualified candidate records log this distinction: `flux.route.H01`, *
 
 This gives the time-dependent circuit account a more precise meaning: the same scene contrast has different causal carriers at different depths of one timestep. Working text can still establish the future early; later image state can sustain it through the remaining native computation and three original-prompt rereads. Restoring image state can also restore the original ordering, so this is not an irreversible commitment claim. The [historical relation work](FLUX-CONCEPT-ROUTES.md#the-exact-handoff-explains-the-carrier-lifetime) already motivates early text influence; this assay adds the matched carrier crossover under its own text-only execution contract.
 
-The next cut is within single blocks 0–9. Sample additional boundaries without assuming monotonicity, then separate the relevant attention output from its MLP write under matching state. A later fresh-seed/paraphrase panel should test the resulting applicability rule. Naming a unique MLP, object coordinate or universal `left-of` primitive would require those further measurements.
+The [dense follow-up](#the-dense-sweep-finds-an-intermediate-compatibility-window) now samples every single0–9 exit and resolves a more complicated intermediate regime. The next component cut separates incoming residual, attention and MLP operands at single block 4. A later fresh-seed/paraphrase panel should test the resulting applicability rule. Naming a unique MLP, object coordinate or universal `left-of` primitive would require those further measurements.
 
 The [portable result](../qualification/flux-block-handoff-20261031.json) includes the audit, visual observations, replay joins and candidate records. A separate [offline evidence sweep](../../../../artifacts/mdb-flux-block-handoff-20261031/evidence/checksums.json) validates twelve derived numerical rows with run/verify return codes zero, adding no model execution or semantic certification. Worker execution took 261.93 seconds before archival; scheduler elapsed time was 305.18 seconds. This is execution metadata, not a controlled speed comparison.
+
+## The dense sweep finds an intermediate compatibility window
+
+The denser panel, job `job-482a07f53e27`, renders 24 images at every exit from single blocks 0–9: twenty complementary restores, two references and two controls. Eighteen restoration rows are previously untested; two single9 rows and the references are exact replays of known cases. The independent [audit](../../../../artifacts/mdb-flux-handoff-dense-20261031/run-01/analysis-v2.json) verifies all 2,424 transitions and 25 Acts. Both controls and all repeated known trajectories/PNGs are exact.
+
+| Just completed | Base text restored, changed image retained | Base image restored, changed text retained |
+|---|---|---|
+| Single 0–1 | Base ordering | Changed ordering |
+| Single 2 | Base ordering with rounded shape | Base ordering with rounded shape |
+| Single 3 | Mixed red/blue cube-like object left, blue sphere right | Base ordering |
+| Single 4–9 | Changed ordering | Base ordering |
+
+These descriptions come from assistant inspection of all 24 images and the original-resolution mixed image. The intermediate hybrids do not support a simple instantaneous handoff. Neither preserves the clean changed scene at single2–3. A working inference is a window of cooperation or compatibility between text and image state, followed by image state that can sustain the changed ordering. Hybrid incompatibility remains an alternative to a semantic conjunction mechanism.
+
+![Every native outcome of the dense single-block restoration sweep](assets/flux-handoff-dense-20261031.png)
+
+The uncalibrated midpoint guess was sealed before execution: text-guided ordering through single4, then image-guided ordering from single5. The [inspection-based comparison](../../../../artifacts/mdb-flux-handoff-dense-20261031/prediction-evaluation.json) retains 15 supported predictions, four contradicted predictions and one mixed/uncertain image among the twenty restores. This includes two previously known single9 cases; it is not a held-out accuracy estimate or an equation forecast. The four errors and ambiguous color binding refine the structural hypothesis rather than disappearing into a success count.
+
+Numerical direction and semantics also separate. At single3, restoring base text gives final latent changed-direction projection `0.53732`, yet the image contains a blue rounded cube with a red face left and a blue sphere right. A projection threshold of one half would mislabel that outcome. At single4, the same restore yields projection `0.94593` and a clean flipped ordering. Restoring base image at single4 yields `0.15339` and the original ordering.
+
+![The numerical and visible carrier effects have different transitions](assets/flux-handoff-dense-curves-20261031.png)
+
+The [portable dense record](../qualification/flux-handoff-dense-20261031.json) preserves the predictions, counterexamples, visual observations and repeated-case joins. `H01` and `H02` remain qualified by their measured boundaries; interpolating a single switching depth between them was too simple. Single4 is selected for the [completed native parallel-merge factorial](FLUX-PARALLEL-MERGE.md) because it is the first measured exit where image state supports the clean changed ordering under base-text restoration. That experiment finds a residual/attention coalition while retaining the failed attention-only ordering prediction.
 
 ## Matched histories and restores
 

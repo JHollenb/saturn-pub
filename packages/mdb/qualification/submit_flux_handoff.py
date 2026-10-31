@@ -19,7 +19,29 @@ def save(path, value):
         stream.write("\n")
 
 
-def stage(run_dir, predecessor):
+def configure_panel(config, panel, selection=None):
+    """Choose a bounded panel before any native outcomes are available."""
+    if panel == "coarse":
+        return
+    if panel != "dense" or selection is None:
+        raise ValueError("dense panel requires the prior coarse selection evidence")
+    config.update(panel="dense", max_images=24, max_adapter_steps=3000,
+        boundaries=[{"id": f"after_single{index}",
+            "selector": {"logical_step": 0, "phase": "single", "index": index + 1},
+            "blocks_completed": 6 + index} for index in range(10)],
+        selection_evidence=selection,
+        hypotheses={
+            "H-midpoint": {"basis": "Uncalibrated midpoint guess within the coarse bracket; categorical ordering predictions, not numerical tensor forecasts.",
+                "rows": {f"after_single{index}.restore_{slot}":
+                    ("base" if (index < 5) == (slot == "text") else "changed")
+                    for index in range(10) for slot in ("text", "image")}},
+            "H-controls": "Late sham reproduces changed exactly; restoring both carriers reproduces base exactly.",
+            "H-structure": "The complementary whole-carrier influence changes inside single0–9; reversals and mixed images remain evidence rather than being discarded."},
+        scope="dense depth panel in the known seed31 relation contrast; eighteen previously untested restoration rows plus two repeated single9 rows; presealed midpoint ordering guess; not numerical RGB forecasting",
+    )
+
+
+def stage(run_dir, predecessor, *, panel="coarse"):
     from mdb.execution_environment import intent
     from mdb.job_support import guarded_mrun_launch, one_lease_scheduling_contract
     from mdb.payload import stage_worker, worker_command
@@ -63,11 +85,28 @@ def stage(run_dir, predecessor):
             "H-controls": "Late sham reproduces changed exactly; restoring both carriers reproduces base exactly."},
         scope="single known seed31 relation contrast; whole-carrier causal restores at four block boundaries, not numerical RGB forecasting or minimal semantic localization",
         terminal_status="unassessed")
+    if panel == "dense":
+        index = here / "flux-block-handoff-20261031.json"
+        previous = json.loads(index.read_text())
+        if previous["job_id"] != "job-96ce66d7a371" or previous["audit"]["source"]["archive_sha256"] != "d1d6ac06eb7b72214c41641cff46af0acfa8f4e72b25bd4e6e6c01c133d73ab1":
+            raise ValueError("unexpected coarse selection evidence")
+        selection = {"job_id": previous["job_id"], "portable_sha256": sha(index),
+            "archive_sha256": previous["audit"]["source"]["archive_sha256"],
+            "known_boundaries": ["after_joint4", "after_single9"],
+            "effects": {key: value for key, value in previous["audit"]["comparisons"].items()
+                        if key.startswith(("after_joint4.", "after_single9."))}}
+        save(run_dir / "selection-evidence.json", selection)
+        extras.append((run_dir / "selection-evidence.json", "selection-evidence.json"))
+        configure_panel(config, panel, selection)
+    elif panel != "coarse":
+        raise ValueError("unknown panel")
     save(run_dir / "plan.json", config)
     extras += [(here / "flux_trajectory_forecast_campaign.py", "flux_trajectory_forecast_campaign.py"),
         (here / "discovery_upgrades.py", "campaign_support.py"), (run_dir / "plan.json", "plan.json")]
     worker = here / "flux_handoff_campaign.py"
     roots = [worker.name, "flux_trajectory_forecast_campaign.py", "campaign_support.py", "plan.json", "preflight.v1.json", "input-store"]
+    if panel == "dense":
+        roots.append("selection-evidence.json")
     preflight = run_dir / "preflight.v1.json"
     save(preflight, {"schema_version": "mrun-preflight-config-v1", "hashed_roots": roots,
         "path_token_allowlist": ["flux-handoff-result", "input-store", config["model_path"]]})
@@ -78,12 +117,12 @@ def stage(run_dir, predecessor):
         "device": "cuda", "dtype": "bfloat16", "batch_size": 1, "height": 512, "width": 512,
         "execution_environment": intent(), "config_bytes_sha256": hashlib.sha256(raw).hexdigest(),
         "source_hashes": {name: sha(path) for path, name in [(worker, worker.name), *extras]},
-        "scheduling_contract": one_lease_scheduling_contract(model_loads=1, logical_operations=12,
-            logical_branches=12, logical_checkpoint_replays=12, max_local_work_items=16,
-            checkpoint_policy="reuse two verified projected cuts; two references; eight single-carrier restores; two controls; no retries"),
+        "scheduling_contract": one_lease_scheduling_contract(model_loads=1, logical_operations=config["max_images"],
+            logical_branches=config["max_images"], logical_checkpoint_replays=config["max_images"], max_local_work_items=32,
+            checkpoint_policy="reuse two verified projected cuts; two references; complementary single-carrier restores; two controls; no retries"),
         "resource_exception": {"ram_mb": 32000, "vram_mb": 13000, "calibration_job": "job-c2a467736b50",
             "measured_peak_vram_mb": 9470., "measured_peak_rss_mb": 10697.6, "measured_elapsed_seconds": 736.55,
-            "reason": "same resident512px scalar CUDA BF16 checkpoint; half as many RGB outcomes and zero prompt encodings; automatic VRAM ceiling previously exceeded host"}}
+            "reason": "same resident512px scalar CUDA BF16 checkpoint, at most24RGB and zero prompt encodings; automatic VRAM ceiling previously exceeded host"}}
     request["request_sha256"] = hashlib.sha256(json.dumps(request, sort_keys=True, allow_nan=False).encode()).hexdigest()
     save(run_dir / "request.json", request)
     stage_worker(run_dir / "payload", worker=worker, config=config, request=request, config_bytes=raw, additional_files=extras)
@@ -92,9 +131,10 @@ def stage(run_dir, predecessor):
         command.remove("--offline")
     job = guarded_mrun_launch(command, request=request, model=config["model"], task="forward",
         experiment="mdb-flux-block-handoff", payload=run_dir / "payload", prefer_host="beast", gpu=True,
-        needs=request["needs"], ram_mb=32000, vram_mb=13000, cpu_threads=4, est_wall_s=540,
+        needs=request["needs"], ram_mb=32000, vram_mb=13000, cpu_threads=4, est_wall_s=720 if panel == "dense" else 540,
         timeout_s=840, retry_on_kill=False, preflight=True,
-        note="Klein4B CUDA BF16 B1 512px4steps seed31. Hydrate prior projected base/relation cuts, no encoder/prefix repeat. Working-text-only changed branch vs base; restore text or image after1/5/15/24blocks.2refs+8restores+2controls=12RGB,<=1500native steps. Sealed hypotheses; all signed effects retained. One load; measured prior9470MBVRAM; no retries.")
+        note=("Klein4B CUDA BF16 B1 512px4steps seed31. Dense single0–9 boundary panel, restore text/image at each;18fresh+2repeated restoration rows,2refs+2controls=24RGB. One load, prior projected cuts, no encoder. Presealed midpoint ordering guess; retain errors and collateral. <=3000native steps/840s; measured prior9470MBVRAM; no retries." if panel == "dense" else
+              "Klein4B CUDA BF16 B1 512px4steps seed31. Prior projected cuts, no encoder. Text/image restores after1/5/15/24blocks;2refs+8restores+2controls=12RGB. Presealed hypotheses; <=1500native steps/840s; measured prior9470MBVRAM; no retries."))
     save(run_dir / "submission.json", {"job_id": str(job)})
     return {"job_id": str(job), "run_dir": str(run_dir)}
 
@@ -104,6 +144,7 @@ if __name__ == "__main__":
     parser.add_argument("run_dir", type=Path)
     parser.add_argument("--predecessor", type=Path)
     parser.add_argument("--collect")
+    parser.add_argument("--panel", choices=("coarse", "dense"), default="coarse")
     args = parser.parse_args()
     if args.collect:
         result = runpy.run_path(str(Path(__file__).with_name("discovery_upgrades.py")))["collect"](
@@ -111,5 +152,5 @@ if __name__ == "__main__":
     else:
         if args.predecessor is None:
             parser.error("--predecessor required")
-        result = stage(args.run_dir.resolve(), args.predecessor.resolve())
+        result = stage(args.run_dir.resolve(), args.predecessor.resolve(), panel=args.panel)
     print(json.dumps(result))

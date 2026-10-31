@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import argparse
 import base64
+import gzip
 import hashlib
 import io
 import json
@@ -80,6 +81,23 @@ class NumericalTree:
         return self.decode(node)
 
 
+def collector_log(root, *, max_bytes):
+    """Read a bounded legacy log or verify its lossless compressed custody."""
+    if (root / "worker.log").is_file():
+        require((root / "worker.log").stat().st_size <= max_bytes, "collector log exceeds finite bound")
+        return (root / "worker.log").read_bytes().decode("utf-8")
+    custody = read(root / "log-custody.json")
+    require(custody.get("schema") == "mdb-collector-log-custody-v1" and custody.get("storage") == "gzip", "unknown collector log custody")
+    path = root / "worker.log.gz"
+    require(path.stat().st_size <= max_bytes, "compressed log exceeds finite bound")
+    compressed = path.read_bytes()
+    require(sha(compressed) == custody["compressed_sha256"] and len(compressed) == custody["compressed_bytes"], "compressed log custody differs")
+    with gzip.GzipFile(fileobj=io.BytesIO(compressed)) as stream:
+        raw = stream.read(max_bytes + 1)
+    require(len(raw) <= max_bytes and len(raw) == custody["uncompressed_bytes"] and sha(raw) == custody["uncompressed_sha256"], "uncompressed log custody differs or exceeds bound")
+    return raw.decode("utf-8")
+
+
 def source_run(root, data_name, *, failed=False, max_archive_bytes=128 << 20, max_member_bytes=64 << 20,
                recover_metadata=False):
     require(type(max_archive_bytes) is int and 0 < max_archive_bytes <= 512 << 20,
@@ -106,7 +124,7 @@ def source_run(root, data_name, *, failed=False, max_archive_bytes=128 << 20, ma
     require(inventory == set(manifest) | ({"files.json"} if published_manifest else set()),
             "raw result inventory differs from manifest")
     marker = "MDB_DISCOVERY_UPGRADES_ARCHIVE_V1 "
-    archives = [line[len(marker):].strip() for line in (root / "worker.log").read_text().splitlines()
+    archives = [line[len(marker):].strip() for line in collector_log(root, max_bytes=2 * max_archive_bytes + (16 << 20)).splitlines()
                 if line.startswith(marker)]
     require(len(archives) == 1, "collector log must contain exactly one result archive")
     archive_raw = base64.b64decode(archives[0], validate=True)

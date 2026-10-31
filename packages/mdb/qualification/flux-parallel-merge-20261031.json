@@ -1,0 +1,2824 @@
+{
+  "audit": {
+    "audit_helpers": {
+      "analyze_flux_concept_routes.py": "0fb3e0cb5e23bb98d9780af1b7c591bb1cf291db516fd967ad0951b0f0fd4bfe",
+      "analyze_flux_mlp_forecast.py": "fb5c11feff809f23f65b6c89dda73a589e2a46d11cede60aaf4e04b60d349252",
+      "summarize_context_window.py": "a2aa5d188acfebb7d962656eec7e02b0b1e57360b7955b4851e3bfbc60a913fe"
+    },
+    "auditor_source_sha256": "6f3a9a25897d79bd14cbfaeb9ea91ef391bbe50438d79c29588fdde8067b73a0",
+    "comparisons": {
+      "base": {
+        "rgb": {
+          "base_l2": 0.0,
+          "base_mae": 0.0,
+          "exact_base": true,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": 0.0,
+          "target_l2": 63104.59343027257,
+          "target_mae": 32.29333750406901,
+          "target_projection": 0.0
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 0.0,
+            "base_mae": 0.0,
+            "exact_base": true,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0,
+            "target_l2": 17.477661688644318,
+            "target_mae": 0.024360901676118374,
+            "target_projection": 0.0
+          },
+          "2": {
+            "base_l2": 0.0,
+            "base_mae": 0.0,
+            "exact_base": true,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0,
+            "target_l2": 33.88302517395037,
+            "target_mae": 0.05135228748258669,
+            "target_projection": 0.0
+          },
+          "3": {
+            "base_l2": 0.0,
+            "base_mae": 0.0,
+            "exact_base": true,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0,
+            "target_l2": 75.23223101307092,
+            "target_mae": 0.1192779015400447,
+            "target_projection": 0.0
+          },
+          "4": {
+            "base_l2": 0.0,
+            "base_mae": 0.0,
+            "exact_base": true,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0,
+            "target_l2": 273.09646748489286,
+            "target_mae": 0.45815890532685444,
+            "target_projection": 0.0
+          }
+        }
+      },
+      "changed": {
+        "rgb": {
+          "base_l2": 63104.59343027257,
+          "base_mae": 32.29333750406901,
+          "exact_base": false,
+          "exact_target": true,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -3.336273193359375,
+          "target_l2": 0.0,
+          "target_mae": 0.0,
+          "target_projection": 1.0
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 17.477661688644318,
+            "base_mae": 0.024360901676118374,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00011669209925457835,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "2": {
+            "base_l2": 33.88302517395037,
+            "base_mae": 0.05135228748258669,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00015535524289589375,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "3": {
+            "base_l2": 75.23223101307092,
+            "base_mae": 0.1192779015400447,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00044484372483566403,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "4": {
+            "base_l2": 273.09646748489286,
+            "base_mae": 0.45815890532685444,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0035823856596834958,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          }
+        }
+      },
+      "copy.sham": {
+        "rgb": {
+          "base_l2": 63104.59343027257,
+          "base_mae": 32.29333750406901,
+          "exact_base": false,
+          "exact_target": true,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -3.336273193359375,
+          "target_l2": 0.0,
+          "target_mae": 0.0,
+          "target_projection": 1.0
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 17.477661688644318,
+            "base_mae": 0.024360901676118374,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00011669209925457835,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "2": {
+            "base_l2": 33.88302517395037,
+            "base_mae": 0.05135228748258669,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00015535524289589375,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "3": {
+            "base_l2": 75.23223101307092,
+            "base_mae": 0.1192779015400447,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00044484372483566403,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "4": {
+            "base_l2": 273.09646748489286,
+            "base_mae": 0.45815890532685444,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0035823856596834958,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          }
+        }
+      },
+      "merge.000": {
+        "rgb": {
+          "base_l2": 63104.59343027257,
+          "base_mae": 32.29333750406901,
+          "exact_base": false,
+          "exact_target": true,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -3.336273193359375,
+          "target_l2": 0.0,
+          "target_mae": 0.0,
+          "target_projection": 1.0
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 17.477661688644318,
+            "base_mae": 0.024360901676118374,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00011669209925457835,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "2": {
+            "base_l2": 33.88302517395037,
+            "base_mae": 0.05135228748258669,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00015535524289589375,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "3": {
+            "base_l2": 75.23223101307092,
+            "base_mae": 0.1192779015400447,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00044484372483566403,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "4": {
+            "base_l2": 273.09646748489286,
+            "base_mae": 0.45815890532685444,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0035823856596834958,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          }
+        }
+      },
+      "merge.001": {
+        "rgb": {
+          "base_l2": 63847.53678099101,
+          "base_mae": 32.93076960245768,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -3.7273038228352866,
+          "target_l2": 7111.076078906764,
+          "target_mae": 1.5418841044108074,
+          "target_projection": 1.0054933141266675
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 17.491354061561037,
+            "base_mae": 0.024499638529960066,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -6.247457349672914e-05,
+            "target_l2": 2.450568416765097,
+            "target_mae": 0.002490971004590392,
+            "target_projection": 0.9909541018129491
+          },
+          "2": {
+            "base_l2": 33.88754192563648,
+            "base_mae": 0.05179549937020056,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00029609582270495594,
+            "target_l2": 4.707550136953602,
+            "target_mae": 0.006002361929859035,
+            "target_projection": 0.9904817966888
+          },
+          "3": {
+            "base_l2": 75.2609937038412,
+            "base_mae": 0.12014510203152895,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0007598557276651263,
+            "target_l2": 11.816584456073873,
+            "target_mae": 0.014478217402938753,
+            "target_projection": 0.9880471959710048
+          },
+          "4": {
+            "base_l2": 273.74481427931624,
+            "base_mae": 0.4625014822813682,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.005143471586052328,
+            "target_l2": 50.38598327242636,
+            "target_mae": 0.06751074083149433,
+            "target_projection": 0.9853569636534615
+          }
+        }
+      },
+      "merge.010": {
+        "rgb": {
+          "base_l2": 61397.64050026678,
+          "base_mae": 30.59237289428711,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -1.9213498433430989,
+          "target_l2": 17348.111626341353,
+          "target_mae": 4.317061106363933,
+          "target_projection": 0.935528381727686
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 16.937814241454802,
+            "base_mae": 0.02240670082392171,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0003881045267917216,
+            "target_l2": 6.153473282085945,
+            "target_mae": 0.008035335864406079,
+            "target_projection": 0.9076102592511406
+          },
+          "2": {
+            "base_l2": 32.61123392685403,
+            "base_mae": 0.04731958436605055,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0002945125015685335,
+            "target_l2": 12.65684928894163,
+            "target_mae": 0.017998110124608502,
+            "target_projection": 0.8934015732510765
+          },
+          "3": {
+            "base_l2": 72.52514024414405,
+            "base_mae": 0.11162803217303008,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00037771323695778847,
+            "target_l2": 27.574268147365274,
+            "target_mae": 0.038755531481001526,
+            "target_projection": 0.8974950776347931
+          },
+          "4": {
+            "base_l2": 265.0528122516038,
+            "base_mae": 0.43810533749638125,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0006098426529206336,
+            "target_l2": 104.87862404040845,
+            "target_mae": 0.15579742705449462,
+            "target_projection": 0.897238752618239
+          }
+        }
+      },
+      "merge.011": {
+        "rgb": {
+          "base_l2": 62098.26145714548,
+          "base_mae": 31.334246317545574,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -2.0168965657552085,
+          "target_l2": 10200.076078147653,
+          "target_mae": 2.3340072631835938,
+          "target_projection": 0.9711167467352444
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 17.212804609786676,
+            "base_mae": 0.02325425751041621,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.000240013818256557,
+            "target_l2": 3.8671560866253762,
+            "target_mae": 0.005121211521327496,
+            "target_projection": 0.9604821785706437
+          },
+          "2": {
+            "base_l2": 33.25529809556838,
+            "base_mae": 0.04901831960887648,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00016354458057321608,
+            "target_l2": 7.470600694134773,
+            "target_mae": 0.010892318867263384,
+            "target_projection": 0.9573391330289621
+          },
+          "3": {
+            "base_l2": 73.91963642302288,
+            "base_mae": 0.11479890253394842,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0002545966999605298,
+            "target_l2": 16.757859090546678,
+            "target_mae": 0.02342796215089038,
+            "target_projection": 0.9578965408431246
+          },
+          "4": {
+            "base_l2": 269.2644485986534,
+            "base_mae": 0.4435831207665615,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0019302934524603188,
+            "target_l2": 68.26061968129402,
+            "target_mae": 0.10002921405248344,
+            "target_projection": 0.9548290584032827
+          }
+        }
+      },
+      "merge.100": {
+        "rgb": {
+          "base_l2": 61156.0459807532,
+          "base_mae": 30.027056376139324,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -3.4547526041666665,
+          "target_l2": 27102.189173570463,
+          "target_mae": 8.371205647786459,
+          "target_projection": 0.8773719384768477
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 16.555059136516437,
+            "base_mae": 0.021298226434737444,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00043161073699593544,
+            "target_l2": 7.6518075754312695,
+            "target_mae": 0.009820304927416146,
+            "target_projection": 0.8527691272498182
+          },
+          "2": {
+            "base_l2": 31.558355515189845,
+            "base_mae": 0.04505883244564757,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0005261802580207586,
+            "target_l2": 16.377148553699598,
+            "target_mae": 0.02287299266026821,
+            "target_projection": 0.8169343029121401
+          },
+          "3": {
+            "base_l2": 70.02800996067535,
+            "base_mae": 0.10622625789255835,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0011067504819948226,
+            "target_l2": 39.9356580661522,
+            "target_mae": 0.05741646283422597,
+            "target_projection": 0.79232601889864
+          },
+          "4": {
+            "base_l2": 254.9604380617586,
+            "base_mae": 0.41516521835001186,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.003963152004871517,
+            "target_l2": 156.36973805253552,
+            "target_mae": 0.23775768687482923,
+            "target_projection": 0.7718719241607542
+          }
+        }
+      },
+      "merge.101": {
+        "rgb": {
+          "base_l2": 61791.89868421264,
+          "base_mae": 31.01951726277669,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -1.6826769510904949,
+          "target_l2": 13357.925100853052,
+          "target_mae": 3.213616689046224,
+          "target_projection": 0.9570104444084807
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 16.99448864968759,
+            "base_mae": 0.02238827086694073,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00030311943555716425,
+            "target_l2": 5.651328122333573,
+            "target_mae": 0.007388428450212814,
+            "target_projection": 0.9204607053855504
+          },
+          "2": {
+            "base_l2": 32.88301518243157,
+            "base_mae": 0.04785106696363073,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00020514689094852656,
+            "target_l2": 10.712142721550403,
+            "target_mae": 0.015411742846481502,
+            "target_projection": 0.920946289914247
+          },
+          "3": {
+            "base_l2": 73.16665262402134,
+            "base_mae": 0.11308279540389776,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00028897798620164394,
+            "target_l2": 22.49070061971451,
+            "target_mae": 0.031714293465483934,
+            "target_projection": 0.9282352356037361
+          },
+          "4": {
+            "base_l2": 267.3439673458905,
+            "base_mae": 0.44002480403287336,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00245677592465654,
+            "target_l2": 86.72260364722987,
+            "target_mae": 0.12834121380001307,
+            "target_projection": 0.9287379046632893
+          }
+        }
+      },
+      "merge.110": {
+        "rgb": {
+          "base_l2": 21541.44289503375,
+          "base_mae": 5.6646169026692705,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -1.7580464680989583,
+          "target_l2": 63749.699120858604,
+          "target_mae": 32.61065928141276,
+          "target_projection": 0.04798858965059774
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 4.912545069921765,
+            "base_mae": 0.006306910974672064,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0002466403821017593,
+            "target_l2": 16.71648773535565,
+            "target_mae": 0.022257229400565848,
+            "target_projection": 0.08210465072255797
+          },
+          "2": {
+            "base_l2": 10.719245012697616,
+            "base_mae": 0.01393987939809449,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -5.8632082073017955e-05,
+            "target_l2": 32.154592997659044,
+            "target_mae": 0.047638497620937414,
+            "target_projection": 0.09975257323161055
+          },
+          "3": {
+            "base_l2": 31.075192554293583,
+            "base_mae": 0.04175595851847902,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0010938671766780317,
+            "target_l2": 72.30742982192761,
+            "target_mae": 0.11209333199076355,
+            "target_projection": 0.12342926433072582
+          },
+          "4": {
+            "base_l2": 132.92739747248558,
+            "base_mae": 0.19718556647421792,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0046660100924782455,
+            "target_l2": 263.60262493620314,
+            "target_mae": 0.426964154583402,
+            "target_projection": 0.15261810614594887
+          }
+        }
+      },
+      "merge.111": {
+        "rgb": {
+          "base_l2": 22173.264441664876,
+          "base_mae": 5.734718322753906,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -1.7945353190104167,
+          "target_l2": 63229.36529809547,
+          "target_mae": 32.31222025553385,
+          "target_projection": 0.05975239333348968
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 5.219180921767748,
+            "base_mae": 0.006641299376497045,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0002643947082106024,
+            "target_l2": 16.69588205314761,
+            "target_mae": 0.022140208777273074,
+            "target_projection": 0.088316802121958
+          },
+          "2": {
+            "base_l2": 11.762010069325811,
+            "base_mae": 0.014956599217839539,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00014864897821098566,
+            "target_l2": 32.132013704906754,
+            "target_mae": 0.04757487871393096,
+            "target_projection": 0.11059443971134957
+          },
+          "3": {
+            "base_l2": 32.025063096991026,
+            "base_mae": 0.0415294056001585,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0009816494712140411,
+            "target_l2": 72.27138708042962,
+            "target_mae": 0.11212300471379422,
+            "target_projection": 0.12918450933650746
+          },
+          "4": {
+            "base_l2": 133.55089580944463,
+            "base_mae": 0.19350289885187522,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.004896461439784616,
+            "target_l2": 263.69982832828833,
+            "target_mae": 0.4289960862370208,
+            "target_projection": 0.15338835686122726
+          }
+        }
+      }
+    },
+    "counts": {
+      "acts": 9,
+      "adapter_steps": 1113,
+      "images": 11,
+      "physical_batch": 1,
+      "projection_evaluations": 8,
+      "prompt_encodings": 0,
+      "receipt_emissions": 1122
+    },
+    "image_diagnostics": {
+      "base": {
+        "blue": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              261,
+              161,
+              439,
+              355
+            ],
+            "centroid_xy": [
+              350.55007768388344,
+              254.55621660540376
+            ],
+            "pixels": 26389
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                261,
+                161,
+                439,
+                355
+              ],
+              "centroid_xy": [
+                350.55007768388344,
+                254.55621660540376
+              ],
+              "pixels": 26389
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 26389
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              71,
+              197,
+              213,
+              351
+            ],
+            "centroid_xy": [
+              142.51910845639068,
+              272.6716995741386
+            ],
+            "pixels": 18081
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                71,
+                197,
+                213,
+                351
+              ],
+              "centroid_xy": [
+                142.51910845639068,
+                272.6716995741386
+              ],
+              "pixels": 18081
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 18081
+        },
+        "red_minus_blue_normalized_x": -0.4063104867724468,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "changed": {
+        "blue": {
+          "components": 3,
+          "largest": {
+            "bbox_xyxy": [
+              59,
+              159,
+              248,
+              369
+            ],
+            "centroid_xy": [
+              152.9241399880692,
+              259.7550540200172
+            ],
+            "pixels": 30174
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                59,
+                159,
+                248,
+                369
+              ],
+              "centroid_xy": [
+                152.9241399880692,
+                259.7550540200172
+              ],
+              "pixels": 30174
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 30176
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              295,
+              186,
+              457,
+              356
+            ],
+            "centroid_xy": [
+              375.6510662471596,
+              269.9687554623318
+            ],
+            "pixels": 22884
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                295,
+                186,
+                457,
+                356
+              ],
+              "centroid_xy": [
+                375.6510662471596,
+                269.9687554623318
+              ],
+              "pixels": 22884
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 22884
+        },
+        "red_minus_blue_normalized_x": 0.4350135278497859,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "copy.sham": {
+        "blue": {
+          "components": 3,
+          "largest": {
+            "bbox_xyxy": [
+              59,
+              159,
+              248,
+              369
+            ],
+            "centroid_xy": [
+              152.9241399880692,
+              259.7550540200172
+            ],
+            "pixels": 30174
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                59,
+                159,
+                248,
+                369
+              ],
+              "centroid_xy": [
+                152.9241399880692,
+                259.7550540200172
+              ],
+              "pixels": 30174
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 30176
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              295,
+              186,
+              457,
+              356
+            ],
+            "centroid_xy": [
+              375.6510662471596,
+              269.9687554623318
+            ],
+            "pixels": 22884
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                295,
+                186,
+                457,
+                356
+              ],
+              "centroid_xy": [
+                375.6510662471596,
+                269.9687554623318
+              ],
+              "pixels": 22884
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 22884
+        },
+        "red_minus_blue_normalized_x": 0.4350135278497859,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "merge.000": {
+        "blue": {
+          "components": 3,
+          "largest": {
+            "bbox_xyxy": [
+              59,
+              159,
+              248,
+              369
+            ],
+            "centroid_xy": [
+              152.9241399880692,
+              259.7550540200172
+            ],
+            "pixels": 30174
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                59,
+                159,
+                248,
+                369
+              ],
+              "centroid_xy": [
+                152.9241399880692,
+                259.7550540200172
+              ],
+              "pixels": 30174
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 30176
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              295,
+              186,
+              457,
+              356
+            ],
+            "centroid_xy": [
+              375.6510662471596,
+              269.9687554623318
+            ],
+            "pixels": 22884
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                295,
+                186,
+                457,
+                356
+              ],
+              "centroid_xy": [
+                375.6510662471596,
+                269.9687554623318
+              ],
+              "pixels": 22884
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 22884
+        },
+        "red_minus_blue_normalized_x": 0.4350135278497859,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "merge.001": {
+        "blue": {
+          "components": 4,
+          "largest": {
+            "bbox_xyxy": [
+              59,
+              158,
+              252,
+              371
+            ],
+            "centroid_xy": [
+              154.88448413331207,
+              260.61291660022323
+            ],
+            "pixels": 31355
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                59,
+                158,
+                252,
+                371
+              ],
+              "centroid_xy": [
+                154.88448413331207,
+                260.61291660022323
+              ],
+              "pixels": 31355
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 31358
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              295,
+              187,
+              457,
+              356
+            ],
+            "centroid_xy": [
+              375.8133474669847,
+              270.0673115145091
+            ],
+            "pixels": 22641
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                295,
+                187,
+                457,
+                356
+              ],
+              "centroid_xy": [
+                375.8133474669847,
+                270.0673115145091
+              ],
+              "pixels": 22641
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 22641
+        },
+        "red_minus_blue_normalized_x": 0.4315016861985793,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "merge.010": {
+        "blue": {
+          "components": 2,
+          "largest": {
+            "bbox_xyxy": [
+              59,
+              161,
+              240,
+              358
+            ],
+            "centroid_xy": [
+              149.6730959265088,
+              256.53793507301543
+            ],
+            "pixels": 27323
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                59,
+                161,
+                240,
+                358
+              ],
+              "centroid_xy": [
+                149.6730959265088,
+                256.53793507301543
+              ],
+              "pixels": 27323
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 27324
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              290,
+              182,
+              448,
+              353
+            ],
+            "centroid_xy": [
+              368.725395977932,
+              267.2359850507208
+            ],
+            "pixels": 22476
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                290,
+                182,
+                448,
+                353
+              ],
+              "centroid_xy": [
+                368.725395977932,
+                267.2359850507208
+              ],
+              "pixels": 22476
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 22476
+        },
+        "red_minus_blue_normalized_x": 0.42783652353793594,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "merge.011": {
+        "blue": {
+          "components": 2,
+          "largest": {
+            "bbox_xyxy": [
+              59,
+              160,
+              242,
+              359
+            ],
+            "centroid_xy": [
+              150.5055200257244,
+              256.3619636285684
+            ],
+            "pixels": 27989
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                59,
+                160,
+                242,
+                359
+              ],
+              "centroid_xy": [
+                150.5055200257244,
+                256.3619636285684
+              ],
+              "pixels": 27989
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 27990
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              293,
+              187,
+              456,
+              355
+            ],
+            "centroid_xy": [
+              374.1226824457594,
+              269.6308130615823
+            ],
+            "pixels": 22815
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                293,
+                187,
+                456,
+                355
+              ],
+              "centroid_xy": [
+                374.1226824457594,
+                269.6308130615823
+              ],
+              "pixels": 22815
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 22815
+        },
+        "red_minus_blue_normalized_x": 0.43675227035163083,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "merge.100": {
+        "blue": {
+          "components": 4,
+          "largest": {
+            "bbox_xyxy": [
+              59,
+              162,
+              238,
+              359
+            ],
+            "centroid_xy": [
+              148.23021233720192,
+              256.73075344254954
+            ],
+            "pixels": 26797
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                59,
+                162,
+                238,
+                359
+              ],
+              "centroid_xy": [
+                148.23021233720192,
+                256.73075344254954
+              ],
+              "pixels": 26797
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 26801
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              278,
+              165,
+              445,
+              355
+            ],
+            "centroid_xy": [
+              361.0266613450409,
+              258.91925763320694
+            ],
+            "pixels": 25055
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                278,
+                165,
+                445,
+                355
+              ],
+              "centroid_xy": [
+                361.0266613450409,
+                258.91925763320694
+              ],
+              "pixels": 25055
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 25055
+        },
+        "red_minus_blue_normalized_x": 0.4156180644684355,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "merge.101": {
+        "blue": {
+          "components": 2,
+          "largest": {
+            "bbox_xyxy": [
+              59,
+              160,
+              240,
+              357
+            ],
+            "centroid_xy": [
+              149.43289680078794,
+              255.69306533396565
+            ],
+            "pixels": 27413
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                59,
+                160,
+                240,
+                357
+              ],
+              "centroid_xy": [
+                149.43289680078794,
+                255.69306533396565
+              ],
+              "pixels": 27413
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 27414
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              292,
+              187,
+              454,
+              354
+            ],
+            "centroid_xy": [
+              372.84084228997585,
+              269.4228120201799
+            ],
+            "pixels": 22795
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                292,
+                187,
+                454,
+                354
+              ],
+              "centroid_xy": [
+                372.84084228997585,
+                269.4228120201799
+              ],
+              "pixels": 22795
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 22795
+        },
+        "red_minus_blue_normalized_x": 0.43634364353357014,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "merge.110": {
+        "blue": {
+          "components": 4,
+          "largest": {
+            "bbox_xyxy": [
+              265,
+              164,
+              438,
+              356
+            ],
+            "centroid_xy": [
+              351.8728530440593,
+              257.26439492198244
+            ],
+            "pixels": 25443
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                265,
+                164,
+                438,
+                356
+              ],
+              "centroid_xy": [
+                351.8728530440593,
+                257.26439492198244
+              ],
+              "pixels": 25443
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 25446
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              70,
+              164,
+              217,
+              350
+            ],
+            "centroid_xy": [
+              144.32330331649462,
+              256.27296288161654
+            ],
+            "pixels": 22765
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                70,
+                164,
+                217,
+                350
+              ],
+              "centroid_xy": [
+                144.32330331649462,
+                256.27296288161654
+              ],
+              "pixels": 22765
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 22765
+        },
+        "red_minus_blue_normalized_x": -0.40537021431164977,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "merge.111": {
+        "blue": {
+          "components": 3,
+          "largest": {
+            "bbox_xyxy": [
+              265,
+              164,
+              438,
+              354
+            ],
+            "centroid_xy": [
+              351.56282046186254,
+              256.4634524424659
+            ],
+            "pixels": 25159
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                265,
+                164,
+                438,
+                354
+              ],
+              "centroid_xy": [
+                351.56282046186254,
+                256.4634524424659
+              ],
+              "pixels": 25159
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 25161
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              69,
+              164,
+              218,
+              348
+            ],
+            "centroid_xy": [
+              144.29659875765606,
+              255.12736197384996
+            ],
+            "pixels": 23021
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                69,
+                164,
+                218,
+                348
+              ],
+              "centroid_xy": [
+                144.29659875765606,
+                255.12736197384996
+              ],
+              "pixels": 23021
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 23021
+        },
+        "red_minus_blue_normalized_x": -0.4048168392660283,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      }
+    },
+    "instrument_limitations": "Projection outputs are retained actual shared-kernel calculations, not recomputed offline from the external weight matrix. Offline audit verifies native port hashes, operand selection, BF16 residual equations, typed state closure and full numerical/RGB futures. No independent mathematical forecast of edited images.",
+    "mechanics_status": "valid",
+    "model_identity": "a09191c5ff813af77bf89d8e4b9a07237befb67c1aef3e722322d3491250fcd0",
+    "native_merge_equation_checks": {
+      "base": true,
+      "changed": true
+    },
+    "receipt_emissions": 1122,
+    "recipe_checks": {
+      "merge.000": {
+        "operands_and_residual_equation_verified": true,
+        "text_rows_exact_changed": true
+      },
+      "merge.001": {
+        "operands_and_residual_equation_verified": true,
+        "text_rows_exact_changed": true
+      },
+      "merge.010": {
+        "operands_and_residual_equation_verified": true,
+        "text_rows_exact_changed": true
+      },
+      "merge.011": {
+        "operands_and_residual_equation_verified": true,
+        "text_rows_exact_changed": true
+      },
+      "merge.100": {
+        "operands_and_residual_equation_verified": true,
+        "text_rows_exact_changed": true
+      },
+      "merge.101": {
+        "operands_and_residual_equation_verified": true,
+        "text_rows_exact_changed": true
+      },
+      "merge.110": {
+        "operands_and_residual_equation_verified": true,
+        "text_rows_exact_changed": true
+      },
+      "merge.111": {
+        "operands_and_residual_equation_verified": true,
+        "text_rows_exact_changed": true
+      }
+    },
+    "schema": "mdb-flux-merge-audit-v1",
+    "scope": "one selected block, known seed31 relation histories; image-row residual/attention/MLP factorial with fixed recipient post-block text; six new mixed operand combinations, observed native ports and shared projection kernels; not independent image forecasting",
+    "sealed_hypotheses": {
+      "H-attention": "Replacing image-row attention operands with base values moves the final latent toward base more than replacing MLP operands alone (projection010 < projection001).",
+      "H-controls": "Native copy sham and self merge000 reproduce changed exactly; merge111 reconstructs native base image state at the block exit, while keeping changed text.",
+      "H-ordering": {
+        "merge.001": "changed",
+        "merge.010": "base",
+        "merge.110": "base"
+      },
+      "H-residual": "The incoming residual also carries prior scene information; it need not be erased by one changed branch operand."
+    },
+    "selected_block": 4,
+    "source": {
+      "archive_sha256": "0b4dd1ade5b0df8fbf07c5ee3374d3dc46a848a9b034f134d9e0ed52140ce223",
+      "artifact_inventory_authority": "published manifest plus retained archive",
+      "job_id": "job-33bac115bde8",
+      "manifest_sha256": "51b89fc21d4a0dc5c939c69697bd56f73be4f42b133877f61cb102e84ceea0ed",
+      "report_file_sha256": "524c1f15e25037a51746a78f7b2ece900dc3f0bd9f4985de5c0ab12b18c101ad",
+      "request_file_sha256": "62e47a07bd39fe7d1efb1fffff2cd5f0f5aa407a2e0408aaa35f94b521ef7209",
+      "request_sha256": "12555c8f8cb2b31455f929857a45eba71d37d1f3ff01ddfcd6b33a9524f37fae",
+      "transaction": {
+        "event_head": "9893f739418ba30b3a2215778974e24052ae05105c2b12a4105692345440f5c5",
+        "events": 6,
+        "forecasts": [
+          "merge_hypotheses"
+        ],
+        "frontiers": [],
+        "identity_scope": "externally-pinned",
+        "phase": "closed",
+        "schema": "mdb-forecast-offline-verification-v1",
+        "seal_sha256": "2da077a2edcd09a94ecc393582118c29689b0e51f1520479bf5293f445b9a3c7",
+        "verified": true
+      },
+      "verified_artifact_files": 1178,
+      "verified_source_hashes": {
+        "campaign_support.py": "f28d62ed7b469760b62a96cc476c1fda86bcb6776b55f13e6f71a20856ae0d4f",
+        "flux_merge_campaign.py": "edd179c4e8bf9008ee3fb5637bcd4f7a2676dbce638043e39ccde489728fe0d3",
+        "flux_parallel_merge.py": "8f14ca81706031c7351da2b0ff651fa7b7684ae9d16de116a0255959e43bf994",
+        "flux_trajectory_forecast_campaign.py": "c04737976a28b5c2008944e1e6f609190f9e430c8ddefc1f70348e701133de72",
+        "input-store/blobs/0000302ddc2fe3841fd4882149ecd983bd56f370b68a0a4d599f7d7c5cb9aec8.safetensors": "0000302ddc2fe3841fd4882149ecd983bd56f370b68a0a4d599f7d7c5cb9aec8",
+        "input-store/blobs/23a59628d83d3920bf93f10d7e2f955cd3c3d46dead93239840f502e1402e0a4.safetensors": "23a59628d83d3920bf93f10d7e2f955cd3c3d46dead93239840f502e1402e0a4",
+        "input-store/blobs/2a8428ecd6a852c172c1b105d053e1422df9f9159c059d4c528e41b72126faaf.safetensors": "2a8428ecd6a852c172c1b105d053e1422df9f9159c059d4c528e41b72126faaf",
+        "input-store/blobs/2cd8bdbd0a997e0c1b083c027a05c4ff7b428edbd6fbebcee3347b6a21de988d.safetensors": "2cd8bdbd0a997e0c1b083c027a05c4ff7b428edbd6fbebcee3347b6a21de988d",
+        "input-store/blobs/2e442df76d7044215ffbf984997ffe1789fd622d8b66a98b3d8c24edb7fc0c84.safetensors": "2e442df76d7044215ffbf984997ffe1789fd622d8b66a98b3d8c24edb7fc0c84",
+        "input-store/blobs/34c8692938e0ea8f97f09b53d4a16153408472d562bfbdf6c3beef43e4a3f686.safetensors": "34c8692938e0ea8f97f09b53d4a16153408472d562bfbdf6c3beef43e4a3f686",
+        "input-store/blobs/490f29b1ca6151d1d77bce1d6ecad10f5a3b236ce2170dbac1e615a951386dda.safetensors": "490f29b1ca6151d1d77bce1d6ecad10f5a3b236ce2170dbac1e615a951386dda",
+        "input-store/blobs/51a8545dc82dd0b100aba7bf0562c2b822e5e2a83846e358fefb9b9132f42b00.safetensors": "51a8545dc82dd0b100aba7bf0562c2b822e5e2a83846e358fefb9b9132f42b00",
+        "input-store/blobs/8aa82a90aa1a3eee55e33e75d8450f9155bc2247a19476b94c1567258b23d74e.safetensors": "8aa82a90aa1a3eee55e33e75d8450f9155bc2247a19476b94c1567258b23d74e",
+        "input-store/blobs/ca06606666220221e96c926e2ebce009c6bcdcde7164040c174bcbce89f4c6a6.safetensors": "ca06606666220221e96c926e2ebce009c6bcdcde7164040c174bcbce89f4c6a6",
+        "input-store/blobs/e0b9c68f5d722bcc52bf2ad2b587fc80c4725ef1ecdca478447c6b58e16fbf65.safetensors": "e0b9c68f5d722bcc52bf2ad2b587fc80c4725ef1ecdca478447c6b58e16fbf65",
+        "input-store/cuts/bf2486c36be9231c04be89188ad16d15266c5181b089bad394a0caa25ea0cdc4.json": "b4e552bf1a9acf659f17eb5326d6e9690172151ae1722526a28a9faecf25ea68",
+        "input-store/cuts/c076930ec2c1619a8bfa8cf958836927a6af6c9f2d7b64591fc21c302450603e.json": "81707ab91763d1e760575ff8fdb6166c5d758198b96b35a1e6b98b05cbc0d504",
+        "input-store/pages/09b30d7571db51b1e5a6e3101c9a680093864da6cab4c81047a6c9111086bfe8.json": "09b30d7571db51b1e5a6e3101c9a680093864da6cab4c81047a6c9111086bfe8",
+        "input-store/pages/10b70bc9ae5b92dbc78bba8ab97fac2b951302b04971b72409e85f34dd6920f0.json": "10b70bc9ae5b92dbc78bba8ab97fac2b951302b04971b72409e85f34dd6920f0",
+        "input-store/pages/1e8d2a6663924798743e7dd350fea2a5b9d275a6a31fbfce8c3e45146b80d551.json": "1e8d2a6663924798743e7dd350fea2a5b9d275a6a31fbfce8c3e45146b80d551",
+        "input-store/pages/23704b5e0b7d84f00c1a91f6d2d867c375bfc483dea5dd63410db8c2a657f582.json": "23704b5e0b7d84f00c1a91f6d2d867c375bfc483dea5dd63410db8c2a657f582",
+        "input-store/pages/26c3d4abba9fef62d25fb3799b5698044faa10a6d9b1b38d979532ded41b51d0.json": "26c3d4abba9fef62d25fb3799b5698044faa10a6d9b1b38d979532ded41b51d0",
+        "input-store/pages/2bce2353cd5200d063353ead7eaa10270a8570022c877f731a3856d273ff9b18.json": "2bce2353cd5200d063353ead7eaa10270a8570022c877f731a3856d273ff9b18",
+        "input-store/pages/3f8c25a069a463b69eb36a66913c7e75ada5139129706bf5609738f4cc4a541e.json": "3f8c25a069a463b69eb36a66913c7e75ada5139129706bf5609738f4cc4a541e",
+        "input-store/pages/44ee63c9154c855b88270e9c946f0b10dead7f2bb407ebe3d8e1c70ffb5d5a3d.json": "44ee63c9154c855b88270e9c946f0b10dead7f2bb407ebe3d8e1c70ffb5d5a3d",
+        "input-store/pages/500c84fc2df67e6a87bdae7d53e81fa2a12c6ccb866cfa470edd6295243f8171.json": "500c84fc2df67e6a87bdae7d53e81fa2a12c6ccb866cfa470edd6295243f8171",
+        "input-store/pages/8cd94cd5f4a3d8df53fe25467e043aeb55e2eb1601f4d9ce7b51c15c8133ceee.json": "8cd94cd5f4a3d8df53fe25467e043aeb55e2eb1601f4d9ce7b51c15c8133ceee",
+        "input-store/pages/9e3ab429fa5a88bb86c263e92e5af1d79e4de95de4949d8205562c3e6002c972.json": "9e3ab429fa5a88bb86c263e92e5af1d79e4de95de4949d8205562c3e6002c972",
+        "input-store/pages/a35d30e9f469e74e01856f7788f524b6afbeb6e1e0f81e8ed7091e552948ecdd.json": "a35d30e9f469e74e01856f7788f524b6afbeb6e1e0f81e8ed7091e552948ecdd",
+        "input-store/pages/ae88fdb6f7c1124b98c14414e474b7a8c10d0be5a67681140b02aaca4e055e25.json": "ae88fdb6f7c1124b98c14414e474b7a8c10d0be5a67681140b02aaca4e055e25",
+        "input-store/pages/dcd38988a941ec8432ca5c6a5d1b5684ad9d7bf284230912e4f0f17115d1e56d.json": "dcd38988a941ec8432ca5c6a5d1b5684ad9d7bf284230912e4f0f17115d1e56d",
+        "input-store/pages/fc3b0a5dfbf3dd297aa00174749d465132b91366f6dddc78f28b2fb2361c32e4.json": "fc3b0a5dfbf3dd297aa00174749d465132b91366f6dddc78f28b2fb2361c32e4",
+        "plan.json": "c30de0345d85cf01ad5b2a40e205b985dbb11cfcc8bd0585a0939e49c31045ee",
+        "preflight.v1.json": "7d60202514bd4ff9ff95ebe08fb472f14c27b7737fa36ab410f496fd10f8475c",
+        "selection-audit.json": "9d8d483593674c375907ba6dc43788f559f979b16ecd9539876820d0f7f1f75e"
+      }
+    },
+    "terminal_status": "unassessed",
+    "typed_store": {
+      "cuts": 12,
+      "pages": 26,
+      "tensor_blobs": 21
+    },
+    "unique_receipts": 1021
+  },
+  "compact_custody": {
+    "compact_archive_sha256": "f4914dd952634773626fa8465c607a12a0d52d37b42e3e0647381c0b701ae67b",
+    "job_id": "job-ea9956ad5c20",
+    "producer_archive_sha256": "0b4dd1ade5b0df8fbf07c5ee3374d3dc46a848a9b034f134d9e0ed52140ce223",
+    "producer_audit_sha256": "fef273186b8a3ffd9c45e656c0e53a4ba0741a2b1255cf031749f313c841e6ff",
+    "producer_job_id": "job-33bac115bde8",
+    "raw_store": {
+      "host": "beast",
+      "log_custody_sha256": "61a29966e2b8d1c79dffcebf2d5817da31d4fc625201490ca177f38d4594ed1d",
+      "path": "/mnt/hdd8tb/mdb/evidence/flux-merge/job-33bac115bde8"
+    },
+    "schema": "mdb-flux-compact-custody-verification-v1",
+    "scope": "local compact view and original image bytes verified; full arrays verified by the pinned separate CPU audit on the storage host",
+    "verified": true,
+    "verified_compact_files": 33
+  },
+  "computation_record": {
+    "applicability": {
+      "checkpoint_sha256": "dd976d67036c4a0a55642f702dcb3740ba7a4f367557596572baac168330904f",
+      "contract": "CUDA BF16 B1 512x512 4steps seed31",
+      "contrast": "known red-cube/blue-sphere left/right histories with base stored conditioning",
+      "intervention": "image-row R/A/M operands from base or changed; recipient changed post-block text fixed",
+      "model_identity": "a09191c5ff813af77bf89d8e4b9a07237befb67c1aef3e722322d3491250fcd0",
+      "post_cuts": {
+        "base": "c92e6f1eb564af0f52e200b4b0ee09a1acae9382e66a99320d2943bda85bdf26",
+        "changed": "b6cd3a2e7536cce24d643f7438cace0bc36d44380c04c7186936cbb89ed1211d"
+      },
+      "pre_cuts": {
+        "base": "c076930ec2c1619a8bfa8cf958836927a6af6c9f2d7b64591fc21c302450603e",
+        "changed": "bf2486c36be9231c04be89188ad16d15266c5181b089bad394a0caa25ea0cdc4"
+      },
+      "single_block": 4,
+      "step": 0
+    },
+    "candidate_alias": "residual and attention coalition",
+    "consumer": "remaining native denoiser, three later original-prompt rereads, schedulers and VAE",
+    "counterexamples": {
+      "attention_larger_directional_effect_than_mlp": true,
+      "consumer_R_A_interaction_with_changed_M": -0.5164925706330443,
+      "counterexample": "Attention replacement alone does not restore base ordering, contrary to the sealed categorical prediction.",
+      "countertrend": {
+        "attention_only": 0.897238752618239,
+        "attention_plus_base_MLP": 0.9548290584032827,
+        "interpretation": "Installing the base MLP operand moves these two partially restored futures back toward changed, not monotonically toward base.",
+        "residual_only": 0.7718719241607542,
+        "residual_plus_base_MLP": 0.9287379046632893
+      },
+      "interaction_scope": "signed final-latent projection; downstream nonlinear consumer effect, not a discovered Boolean AND gate",
+      "rows": {
+        "merge.001": {
+          "inspection": "changed",
+          "prediction": "changed",
+          "supported": true
+        },
+        "merge.010": {
+          "inspection": "changed",
+          "prediction": "base",
+          "supported": false
+        },
+        "merge.110": {
+          "inspection": "base",
+          "prediction": "base",
+          "supported": true
+        }
+      },
+      "schema": "mdb-flux-merge-prediction-evaluation-v1"
+    },
+    "developmental_stage": "candidate extracted from one contrast/seed; frozen new-context rule validation pending",
+    "effects": {
+      "base": {
+        "rgb": {
+          "base_l2": 0.0,
+          "base_mae": 0.0,
+          "exact_base": true,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": 0.0,
+          "target_l2": 63104.59343027257,
+          "target_mae": 32.29333750406901,
+          "target_projection": 0.0
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 0.0,
+            "base_mae": 0.0,
+            "exact_base": true,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0,
+            "target_l2": 17.477661688644318,
+            "target_mae": 0.024360901676118374,
+            "target_projection": 0.0
+          },
+          "2": {
+            "base_l2": 0.0,
+            "base_mae": 0.0,
+            "exact_base": true,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0,
+            "target_l2": 33.88302517395037,
+            "target_mae": 0.05135228748258669,
+            "target_projection": 0.0
+          },
+          "3": {
+            "base_l2": 0.0,
+            "base_mae": 0.0,
+            "exact_base": true,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0,
+            "target_l2": 75.23223101307092,
+            "target_mae": 0.1192779015400447,
+            "target_projection": 0.0
+          },
+          "4": {
+            "base_l2": 0.0,
+            "base_mae": 0.0,
+            "exact_base": true,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0,
+            "target_l2": 273.09646748489286,
+            "target_mae": 0.45815890532685444,
+            "target_projection": 0.0
+          }
+        }
+      },
+      "changed": {
+        "rgb": {
+          "base_l2": 63104.59343027257,
+          "base_mae": 32.29333750406901,
+          "exact_base": false,
+          "exact_target": true,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -3.336273193359375,
+          "target_l2": 0.0,
+          "target_mae": 0.0,
+          "target_projection": 1.0
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 17.477661688644318,
+            "base_mae": 0.024360901676118374,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00011669209925457835,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "2": {
+            "base_l2": 33.88302517395037,
+            "base_mae": 0.05135228748258669,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00015535524289589375,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "3": {
+            "base_l2": 75.23223101307092,
+            "base_mae": 0.1192779015400447,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00044484372483566403,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "4": {
+            "base_l2": 273.09646748489286,
+            "base_mae": 0.45815890532685444,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0035823856596834958,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          }
+        }
+      },
+      "copy.sham": {
+        "rgb": {
+          "base_l2": 63104.59343027257,
+          "base_mae": 32.29333750406901,
+          "exact_base": false,
+          "exact_target": true,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -3.336273193359375,
+          "target_l2": 0.0,
+          "target_mae": 0.0,
+          "target_projection": 1.0
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 17.477661688644318,
+            "base_mae": 0.024360901676118374,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00011669209925457835,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "2": {
+            "base_l2": 33.88302517395037,
+            "base_mae": 0.05135228748258669,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00015535524289589375,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "3": {
+            "base_l2": 75.23223101307092,
+            "base_mae": 0.1192779015400447,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00044484372483566403,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "4": {
+            "base_l2": 273.09646748489286,
+            "base_mae": 0.45815890532685444,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0035823856596834958,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          }
+        }
+      },
+      "merge.000": {
+        "rgb": {
+          "base_l2": 63104.59343027257,
+          "base_mae": 32.29333750406901,
+          "exact_base": false,
+          "exact_target": true,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -3.336273193359375,
+          "target_l2": 0.0,
+          "target_mae": 0.0,
+          "target_projection": 1.0
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 17.477661688644318,
+            "base_mae": 0.024360901676118374,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00011669209925457835,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "2": {
+            "base_l2": 33.88302517395037,
+            "base_mae": 0.05135228748258669,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00015535524289589375,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "3": {
+            "base_l2": 75.23223101307092,
+            "base_mae": 0.1192779015400447,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00044484372483566403,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "4": {
+            "base_l2": 273.09646748489286,
+            "base_mae": 0.45815890532685444,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0035823856596834958,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          }
+        }
+      },
+      "merge.001": {
+        "rgb": {
+          "base_l2": 63847.53678099101,
+          "base_mae": 32.93076960245768,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -3.7273038228352866,
+          "target_l2": 7111.076078906764,
+          "target_mae": 1.5418841044108074,
+          "target_projection": 1.0054933141266675
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 17.491354061561037,
+            "base_mae": 0.024499638529960066,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -6.247457349672914e-05,
+            "target_l2": 2.450568416765097,
+            "target_mae": 0.002490971004590392,
+            "target_projection": 0.9909541018129491
+          },
+          "2": {
+            "base_l2": 33.88754192563648,
+            "base_mae": 0.05179549937020056,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00029609582270495594,
+            "target_l2": 4.707550136953602,
+            "target_mae": 0.006002361929859035,
+            "target_projection": 0.9904817966888
+          },
+          "3": {
+            "base_l2": 75.2609937038412,
+            "base_mae": 0.12014510203152895,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0007598557276651263,
+            "target_l2": 11.816584456073873,
+            "target_mae": 0.014478217402938753,
+            "target_projection": 0.9880471959710048
+          },
+          "4": {
+            "base_l2": 273.74481427931624,
+            "base_mae": 0.4625014822813682,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.005143471586052328,
+            "target_l2": 50.38598327242636,
+            "target_mae": 0.06751074083149433,
+            "target_projection": 0.9853569636534615
+          }
+        }
+      },
+      "merge.010": {
+        "rgb": {
+          "base_l2": 61397.64050026678,
+          "base_mae": 30.59237289428711,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -1.9213498433430989,
+          "target_l2": 17348.111626341353,
+          "target_mae": 4.317061106363933,
+          "target_projection": 0.935528381727686
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 16.937814241454802,
+            "base_mae": 0.02240670082392171,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0003881045267917216,
+            "target_l2": 6.153473282085945,
+            "target_mae": 0.008035335864406079,
+            "target_projection": 0.9076102592511406
+          },
+          "2": {
+            "base_l2": 32.61123392685403,
+            "base_mae": 0.04731958436605055,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0002945125015685335,
+            "target_l2": 12.65684928894163,
+            "target_mae": 0.017998110124608502,
+            "target_projection": 0.8934015732510765
+          },
+          "3": {
+            "base_l2": 72.52514024414405,
+            "base_mae": 0.11162803217303008,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00037771323695778847,
+            "target_l2": 27.574268147365274,
+            "target_mae": 0.038755531481001526,
+            "target_projection": 0.8974950776347931
+          },
+          "4": {
+            "base_l2": 265.0528122516038,
+            "base_mae": 0.43810533749638125,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0006098426529206336,
+            "target_l2": 104.87862404040845,
+            "target_mae": 0.15579742705449462,
+            "target_projection": 0.897238752618239
+          }
+        }
+      },
+      "merge.011": {
+        "rgb": {
+          "base_l2": 62098.26145714548,
+          "base_mae": 31.334246317545574,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -2.0168965657552085,
+          "target_l2": 10200.076078147653,
+          "target_mae": 2.3340072631835938,
+          "target_projection": 0.9711167467352444
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 17.212804609786676,
+            "base_mae": 0.02325425751041621,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.000240013818256557,
+            "target_l2": 3.8671560866253762,
+            "target_mae": 0.005121211521327496,
+            "target_projection": 0.9604821785706437
+          },
+          "2": {
+            "base_l2": 33.25529809556838,
+            "base_mae": 0.04901831960887648,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00016354458057321608,
+            "target_l2": 7.470600694134773,
+            "target_mae": 0.010892318867263384,
+            "target_projection": 0.9573391330289621
+          },
+          "3": {
+            "base_l2": 73.91963642302288,
+            "base_mae": 0.11479890253394842,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0002545966999605298,
+            "target_l2": 16.757859090546678,
+            "target_mae": 0.02342796215089038,
+            "target_projection": 0.9578965408431246
+          },
+          "4": {
+            "base_l2": 269.2644485986534,
+            "base_mae": 0.4435831207665615,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0019302934524603188,
+            "target_l2": 68.26061968129402,
+            "target_mae": 0.10002921405248344,
+            "target_projection": 0.9548290584032827
+          }
+        }
+      },
+      "merge.100": {
+        "rgb": {
+          "base_l2": 61156.0459807532,
+          "base_mae": 30.027056376139324,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -3.4547526041666665,
+          "target_l2": 27102.189173570463,
+          "target_mae": 8.371205647786459,
+          "target_projection": 0.8773719384768477
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 16.555059136516437,
+            "base_mae": 0.021298226434737444,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00043161073699593544,
+            "target_l2": 7.6518075754312695,
+            "target_mae": 0.009820304927416146,
+            "target_projection": 0.8527691272498182
+          },
+          "2": {
+            "base_l2": 31.558355515189845,
+            "base_mae": 0.04505883244564757,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0005261802580207586,
+            "target_l2": 16.377148553699598,
+            "target_mae": 0.02287299266026821,
+            "target_projection": 0.8169343029121401
+          },
+          "3": {
+            "base_l2": 70.02800996067535,
+            "base_mae": 0.10622625789255835,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0011067504819948226,
+            "target_l2": 39.9356580661522,
+            "target_mae": 0.05741646283422597,
+            "target_projection": 0.79232601889864
+          },
+          "4": {
+            "base_l2": 254.9604380617586,
+            "base_mae": 0.41516521835001186,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.003963152004871517,
+            "target_l2": 156.36973805253552,
+            "target_mae": 0.23775768687482923,
+            "target_projection": 0.7718719241607542
+          }
+        }
+      },
+      "merge.101": {
+        "rgb": {
+          "base_l2": 61791.89868421264,
+          "base_mae": 31.01951726277669,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -1.6826769510904949,
+          "target_l2": 13357.925100853052,
+          "target_mae": 3.213616689046224,
+          "target_projection": 0.9570104444084807
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 16.99448864968759,
+            "base_mae": 0.02238827086694073,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00030311943555716425,
+            "target_l2": 5.651328122333573,
+            "target_mae": 0.007388428450212814,
+            "target_projection": 0.9204607053855504
+          },
+          "2": {
+            "base_l2": 32.88301518243157,
+            "base_mae": 0.04785106696363073,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00020514689094852656,
+            "target_l2": 10.712142721550403,
+            "target_mae": 0.015411742846481502,
+            "target_projection": 0.920946289914247
+          },
+          "3": {
+            "base_l2": 73.16665262402134,
+            "base_mae": 0.11308279540389776,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00028897798620164394,
+            "target_l2": 22.49070061971451,
+            "target_mae": 0.031714293465483934,
+            "target_projection": 0.9282352356037361
+          },
+          "4": {
+            "base_l2": 267.3439673458905,
+            "base_mae": 0.44002480403287336,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00245677592465654,
+            "target_l2": 86.72260364722987,
+            "target_mae": 0.12834121380001307,
+            "target_projection": 0.9287379046632893
+          }
+        }
+      },
+      "merge.110": {
+        "rgb": {
+          "base_l2": 21541.44289503375,
+          "base_mae": 5.6646169026692705,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -1.7580464680989583,
+          "target_l2": 63749.699120858604,
+          "target_mae": 32.61065928141276,
+          "target_projection": 0.04798858965059774
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 4.912545069921765,
+            "base_mae": 0.006306910974672064,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0002466403821017593,
+            "target_l2": 16.71648773535565,
+            "target_mae": 0.022257229400565848,
+            "target_projection": 0.08210465072255797
+          },
+          "2": {
+            "base_l2": 10.719245012697616,
+            "base_mae": 0.01393987939809449,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -5.8632082073017955e-05,
+            "target_l2": 32.154592997659044,
+            "target_mae": 0.047638497620937414,
+            "target_projection": 0.09975257323161055
+          },
+          "3": {
+            "base_l2": 31.075192554293583,
+            "base_mae": 0.04175595851847902,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0010938671766780317,
+            "target_l2": 72.30742982192761,
+            "target_mae": 0.11209333199076355,
+            "target_projection": 0.12342926433072582
+          },
+          "4": {
+            "base_l2": 132.92739747248558,
+            "base_mae": 0.19718556647421792,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0046660100924782455,
+            "target_l2": 263.60262493620314,
+            "target_mae": 0.426964154583402,
+            "target_projection": 0.15261810614594887
+          }
+        }
+      },
+      "merge.111": {
+        "rgb": {
+          "base_l2": 22173.264441664876,
+          "base_mae": 5.734718322753906,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -1.7945353190104167,
+          "target_l2": 63229.36529809547,
+          "target_mae": 32.31222025553385,
+          "target_projection": 0.05975239333348968
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 5.219180921767748,
+            "base_mae": 0.006641299376497045,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0002643947082106024,
+            "target_l2": 16.69588205314761,
+            "target_mae": 0.022140208777273074,
+            "target_projection": 0.088316802121958
+          },
+          "2": {
+            "base_l2": 11.762010069325811,
+            "base_mae": 0.014956599217839539,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00014864897821098566,
+            "target_l2": 32.132013704906754,
+            "target_mae": 0.04757487871393096,
+            "target_projection": 0.11059443971134957
+          },
+          "3": {
+            "base_l2": 32.025063096991026,
+            "base_mae": 0.0415294056001585,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0009816494712140411,
+            "target_l2": 72.27138708042962,
+            "target_mae": 0.11212300471379422,
+            "target_projection": 0.12918450933650746
+          },
+          "4": {
+            "base_l2": 133.55089580944463,
+            "base_mae": 0.19350289885187522,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.004896461439784616,
+            "target_l2": 263.69982832828833,
+            "target_mae": 0.4289960862370208,
+            "target_projection": 0.15338835686122726
+          }
+        }
+      }
+    },
+    "equation": "R_next = R + gate * Linear(concat(A,M), W_merge, bias)",
+    "id": "flux.merge.S04",
+    "observed_rule": "Base residual and attention jointly restore base ordering in this factorial; neither alone does so. MLP-only replacement preserves changed ordering.",
+    "route": "incoming image residual and attention-result columns through the original parallel output projection",
+    "schema": "mdb-native-causal-computation-candidate-v1",
+    "terminal_status": "unassessed"
+  },
+  "current_tool_sources": {
+    "docs/FLUX-BLOCK-HANDOFF.md": "7ff0c96480f780a6cb95a066628d221eb7818f525d89620c91c8e6128a616811",
+    "docs/FLUX-PARALLEL-MERGE.md": "f6eb7a76669444b914569472af0be4a91417d7374c4d2379d2e7a9fdcde9d80a",
+    "qualification/analyze_flux_merge.py": "6f3a9a25897d79bd14cbfaeb9ea91ef391bbe50438d79c29588fdde8067b73a0",
+    "qualification/discovery_upgrades.py": "44f46e79a36de7e80254e210bf4414c35ccb2fb777a779e05c277cf40414de65",
+    "qualification/flux_merge_campaign.py": "edd179c4e8bf9008ee3fb5637bcd4f7a2676dbce638043e39ccde489728fe0d3",
+    "qualification/flux_parallel_merge.py": "8f14ca81706031c7351da2b0ff651fa7b7684ae9d16de116a0255959e43bf994",
+    "qualification/remote_flux_audit.py": "492a7e9ddc38491326d7aa1f68563642acf98b68202823a0b471f32e95da823e",
+    "qualification/submit_flux_handoff.py": "fad5325f10ac01525792d47e9c1199fa52c8d54efd187d3197fb2891532fcab6",
+    "qualification/submit_flux_merge.py": "bd415a07712b93700645fd37580567f02f6076692b2d1679836d1ab5ed3183fe",
+    "qualification/summarize_context_window.py": "a2aa5d188acfebb7d962656eec7e02b0b1e57360b7955b4851e3bfbc60a913fe"
+  },
+  "evidence": {
+    "checksum_file_sha256": "5d07292540fa7a7422cdc743b7943002cbbf652350d3b06bb638bfc335c06a65",
+    "rows": 11,
+    "run_verify_returncodes": [
+      0,
+      0
+    ]
+  },
+  "figures": {
+    "figures": [
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-parallel-merge-20261031/flux-parallel-merge-20261031.png",
+        "sha256": "c7603db855d57dfd959f7c54179bc55529d636e96f012e1c85ab51cf48d22944"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-parallel-merge-20261031/flux-parallel-merge-factors-20261031.png",
+        "sha256": "47d706c9bf32637c21276a71ed3b4117f7ecdee6aead09306340e43bd9e90d83"
+      }
+    ],
+    "schema": "mdb-flux-merge-figures-v1",
+    "source_audit_sha256": "fef273186b8a3ffd9c45e656c0e53a4ba0741a2b1255cf031749f313c841e6ff",
+    "sources": [
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-parallel-merge-20261031/offline-audit-04/extracted/offline-audit-result/base.png",
+        "row": "base",
+        "sha256": "34a4657679c9ae6f5d0af8da7dd4b86883be72078545a2b5240bf53c51592132"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-parallel-merge-20261031/offline-audit-04/extracted/offline-audit-result/changed.png",
+        "row": "changed",
+        "sha256": "7c34170291394fb86d12f0d9ffb74f6bdd6e533a58dd0d1812744efd2d528ecd"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-parallel-merge-20261031/offline-audit-04/extracted/offline-audit-result/copy.sham.png",
+        "row": "copy.sham",
+        "sha256": "7c34170291394fb86d12f0d9ffb74f6bdd6e533a58dd0d1812744efd2d528ecd"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-parallel-merge-20261031/offline-audit-04/extracted/offline-audit-result/merge.000.png",
+        "row": "merge.000",
+        "sha256": "7c34170291394fb86d12f0d9ffb74f6bdd6e533a58dd0d1812744efd2d528ecd"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-parallel-merge-20261031/offline-audit-04/extracted/offline-audit-result/merge.001.png",
+        "row": "merge.001",
+        "sha256": "e11facceaf6620b9dba12fbdbc3210facc879b733bb400ab8e466631308f7007"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-parallel-merge-20261031/offline-audit-04/extracted/offline-audit-result/merge.010.png",
+        "row": "merge.010",
+        "sha256": "7fc4072f5ea92405261c8d140717efae4dc00fb3c54143da76c87f839aa771da"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-parallel-merge-20261031/offline-audit-04/extracted/offline-audit-result/merge.011.png",
+        "row": "merge.011",
+        "sha256": "b6ea7f490481a92e687db7359a58ae62580d1f52141c7a73a39ba5196af0d329"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-parallel-merge-20261031/offline-audit-04/extracted/offline-audit-result/merge.100.png",
+        "row": "merge.100",
+        "sha256": "9786f43544486caebe84599c523ba524180b9f1351b287dbfe8e18b383dcff14"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-parallel-merge-20261031/offline-audit-04/extracted/offline-audit-result/merge.101.png",
+        "row": "merge.101",
+        "sha256": "2201b46390645a065986d11c39ef3de221b187c0c6a752ef4abef3e1ce796354"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-parallel-merge-20261031/offline-audit-04/extracted/offline-audit-result/merge.110.png",
+        "row": "merge.110",
+        "sha256": "a7cce75a218a36d772d135455b3193f065efa6bb6f6b2809a97973800265818b"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-parallel-merge-20261031/offline-audit-04/extracted/offline-audit-result/merge.111.png",
+        "row": "merge.111",
+        "sha256": "8d3e26550c835abc00b2ba9f32ac873f14e3d02ae4a5f160965c68d89c3de328"
+      }
+    ]
+  },
+  "installed_tests": {
+    "command": [
+      "/private/tmp/mdb-flux-forecast-installed-20261030/bin/python",
+      "-I",
+      "-m",
+      "pytest",
+      "-q",
+      "-c",
+      "/dev/null",
+      "/private/tmp/mdb-flux-dense-tests-20261031/tests",
+      "/private/tmp/mdb-flux-handoff-tests-20261031/test_native_navigation.py",
+      "/private/tmp/mdb-flux-concept-tests-20261030",
+      "/private/tmp/mdb-flux-trajectory-tests-20261030"
+    ],
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "........................................................                 [100%]\n56 passed in 4.66s\n"
+  },
+  "predictions": {
+    "attention_larger_directional_effect_than_mlp": true,
+    "consumer_R_A_interaction_with_changed_M": -0.5164925706330443,
+    "counterexample": "Attention replacement alone does not restore base ordering, contrary to the sealed categorical prediction.",
+    "countertrend": {
+      "attention_only": 0.897238752618239,
+      "attention_plus_base_MLP": 0.9548290584032827,
+      "interpretation": "Installing the base MLP operand moves these two partially restored futures back toward changed, not monotonically toward base.",
+      "residual_only": 0.7718719241607542,
+      "residual_plus_base_MLP": 0.9287379046632893
+    },
+    "interaction_scope": "signed final-latent projection; downstream nonlinear consumer effect, not a discovered Boolean AND gate",
+    "rows": {
+      "merge.001": {
+        "inspection": "changed",
+        "prediction": "changed",
+        "supported": true
+      },
+      "merge.010": {
+        "inspection": "changed",
+        "prediction": "base",
+        "supported": false
+      },
+      "merge.110": {
+        "inspection": "base",
+        "prediction": "base",
+        "supported": true
+      }
+    },
+    "schema": "mdb-flux-merge-prediction-evaluation-v1"
+  },
+  "replay_joins": {
+    "joins": {
+      "base": {
+        "PNG_bytes_exact": true,
+        "dense_row": "base",
+        "scheduler_file_hashes_exact": {
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true
+        }
+      },
+      "changed": {
+        "PNG_bytes_exact": true,
+        "dense_row": "changed",
+        "scheduler_file_hashes_exact": {
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true
+        }
+      },
+      "merge.111": {
+        "PNG_bytes_exact": true,
+        "dense_row": "after_single4.restore_image",
+        "scheduler_file_hashes_exact": {
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true
+        }
+      }
+    },
+    "schema": "mdb-flux-merge-replay-joins-v1",
+    "scope": "Producer arrays were verified by separate CPU audit; local comparison joins their file hashes to the locally audited dense run and directly checks original PNG bytes."
+  },
+  "schema": "mdb-flux-parallel-merge-portable-v1",
+  "scope": "full arrays audited by a pinned separate CPU job on Beast; local compact view verifies original image bytes and source bindings; six new mixed R/A/M combinations; known scene/seed; no independent edited-image forecast",
+  "storage_host_audit_receipt": {
+    "job_id": "job-ea9956ad5c20",
+    "mechanics_status": "valid",
+    "model_forwards": 0,
+    "producer_archive_sha256": "0b4dd1ade5b0df8fbf07c5ee3374d3dc46a848a9b034f134d9e0ed52140ce223",
+    "producer_audit_sha256": "fef273186b8a3ffd9c45e656c0e53a4ba0741a2b1255cf031749f313c841e6ff",
+    "producer_job_id": "job-33bac115bde8",
+    "raw_store": {
+      "host": "beast",
+      "log_custody_sha256": "61a29966e2b8d1c79dffcebf2d5817da31d4fc625201490ca177f38d4594ed1d",
+      "path": "/mnt/hdd8tb/mdb/evidence/flux-merge/job-33bac115bde8"
+    },
+    "request_sha256": "9b629affeba3a3003953d68758e500eb1b06d38190b43671515ee76bd0956de3",
+    "schema": "mdb-flux-remote-offline-audit-v1",
+    "scope": "separate CPU process verifies full source archive, typed arrays, equations and futures on storage host; returned view retains original PNG bytes and compact records; full port/latent/CAS data remain in the declared raw store and original producer archive",
+    "terminal_status": "unassessed"
+  },
+  "terminal_status": "unassessed",
+  "visual_review": {
+    "evaluator": "assistant inspection of all eleven original-PNG contact-sheet outcomes",
+    "figure_sha256": "c7603db855d57dfd959f7c54179bc55529d636e96f012e1c85ab51cf48d22944",
+    "instrument_status": "informal visual observation; no independent human labels or calibrated classifier",
+    "rows": {
+      "base": {
+        "collateral": "Some object rounding, pose and size shifts; merge110 sphere has a visible band/seam. Ordering does not certify isolated control.",
+        "description": "Red cube left, blue sphere right.",
+        "ordering": "base"
+      },
+      "changed": {
+        "collateral": "Some object rounding, pose and size shifts; merge110 sphere has a visible band/seam. Ordering does not certify isolated control.",
+        "description": "Blue sphere left, red cube right.",
+        "ordering": "changed"
+      },
+      "copy.sham": {
+        "collateral": "Some object rounding, pose and size shifts; merge110 sphere has a visible band/seam. Ordering does not certify isolated control.",
+        "description": "Blue sphere left, red cube right.",
+        "ordering": "changed"
+      },
+      "merge.000": {
+        "collateral": "Some object rounding, pose and size shifts; merge110 sphere has a visible band/seam. Ordering does not certify isolated control.",
+        "description": "Blue sphere left, red cube right.",
+        "ordering": "changed"
+      },
+      "merge.001": {
+        "collateral": "Some object rounding, pose and size shifts; merge110 sphere has a visible band/seam. Ordering does not certify isolated control.",
+        "description": "Blue sphere left, red cube right.",
+        "ordering": "changed"
+      },
+      "merge.010": {
+        "collateral": "Some object rounding, pose and size shifts; merge110 sphere has a visible band/seam. Ordering does not certify isolated control.",
+        "description": "Blue sphere left, red cube right.",
+        "ordering": "changed"
+      },
+      "merge.011": {
+        "collateral": "Some object rounding, pose and size shifts; merge110 sphere has a visible band/seam. Ordering does not certify isolated control.",
+        "description": "Blue sphere left, red cube right.",
+        "ordering": "changed"
+      },
+      "merge.100": {
+        "collateral": "Some object rounding, pose and size shifts; merge110 sphere has a visible band/seam. Ordering does not certify isolated control.",
+        "description": "Blue sphere left, red cube right.",
+        "ordering": "changed"
+      },
+      "merge.101": {
+        "collateral": "Some object rounding, pose and size shifts; merge110 sphere has a visible band/seam. Ordering does not certify isolated control.",
+        "description": "Blue sphere left, red cube right.",
+        "ordering": "changed"
+      },
+      "merge.110": {
+        "collateral": "Some object rounding, pose and size shifts; merge110 sphere has a visible band/seam. Ordering does not certify isolated control.",
+        "description": "Red cube left, blue sphere right.",
+        "ordering": "base"
+      },
+      "merge.111": {
+        "collateral": "Some object rounding, pose and size shifts; merge110 sphere has a visible band/seam. Ordering does not certify isolated control.",
+        "description": "Red cube left, blue sphere right.",
+        "ordering": "base"
+      }
+    },
+    "schema": "mdb-flux-merge-visual-review-v1"
+  }
+}

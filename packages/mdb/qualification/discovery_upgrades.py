@@ -295,19 +295,78 @@ def stage(run_dir, isa_root):
     return {"job_id": str(job), "run_dir": str(run_dir)}
 
 
+def save_collector_log(run_dir, logs, storage):
+    raw = logs.encode("utf-8")
+    if storage == "plain":
+        (run_dir / "worker.log").write_bytes(raw)
+    elif storage == "gzip":
+        compressed = gzip.compress(raw, mtime=0)
+        (run_dir / "worker.log.gz").write_bytes(compressed)
+        save(run_dir / "log-custody.json", {"schema": "mdb-collector-log-custody-v1", "storage": "gzip",
+            "uncompressed_sha256": sha(raw), "uncompressed_bytes": len(raw),
+            "compressed_sha256": sha(compressed), "compressed_bytes": len(compressed),
+            "scope": "lossless encoding of the collector UTF-8 log text, including the complete archive marker"})
+    else:
+        raise ValueError("unknown collector log storage")
+
+
+def compress_existing_log(run_dir):
+    """Losslessly re-encode a retained plain log after streaming readback proof."""
+    source, target = run_dir / "worker.log", run_dir / "worker.log.gz"
+    if source.is_symlink() or not source.is_file() or target.exists() or (run_dir / "log-custody.json").exists():
+        raise ValueError("requires an uncompacted regular plain log")
+
+    def digest(path):
+        result = hashlib.sha256()
+        with path.open("rb") as stream:
+            for chunk in iter(lambda: stream.read(8 << 20), b""):
+                result.update(chunk)
+        return result.hexdigest()
+
+    raw_hash, size = hashlib.sha256(), 0
+    with source.open("rb") as incoming, target.open("xb") as outgoing:
+        try:
+            with gzip.GzipFile(fileobj=outgoing, mode="wb", mtime=0) as encoded:
+                for chunk in iter(lambda: incoming.read(8 << 20), b""):
+                    raw_hash.update(chunk)
+                    size += len(chunk)
+                    encoded.write(chunk)
+            outgoing.flush()
+            os.fsync(outgoing.fileno())
+        except BaseException:
+            target.unlink(missing_ok=True)
+            raise
+    checked, checked_size = hashlib.sha256(), 0
+    with gzip.open(target, "rb") as stream:
+        for chunk in iter(lambda: stream.read(8 << 20), b""):
+            checked.update(chunk)
+            checked_size += len(chunk)
+    if checked.hexdigest() != raw_hash.hexdigest() or checked_size != size or digest(source) != raw_hash.hexdigest():
+        raise ValueError("log readback/source stability failed; original retained")
+    custody = {"schema": "mdb-collector-log-custody-v1", "storage": "gzip",
+        "uncompressed_sha256": raw_hash.hexdigest(), "uncompressed_bytes": size,
+        "compressed_sha256": digest(target), "compressed_bytes": target.stat().st_size,
+        "scope": "lossless re-encoding of retained plain log bytes; full streaming readback and unchanged original verified before removing redundant plain encoding"}
+    save(run_dir / "log-custody.json", custody)
+    source.unlink()
+    return custody
+
+
 def collect(run_dir, job_id, *, max_expanded_bytes=256 * 1024 * 1024,
-            max_compressed_bytes=64 * 1024 * 1024):
+            max_compressed_bytes=64 * 1024 * 1024, log_storage="plain"):
     if type(max_expanded_bytes) is not int or not 0 < max_expanded_bytes <= 1024 * 1024 * 1024:
         raise ValueError("max_expanded_bytes must be a positive integer no greater than 1 GiB")
     if type(max_compressed_bytes) is not int or not 0 < max_compressed_bytes <= 512 * 1024 * 1024:
         raise ValueError("max_compressed_bytes must be a positive integer no greater than 512 MiB")
+    if log_storage not in {"plain", "gzip"}:
+        raise ValueError("unknown collector log storage")
     from mdb.job_support import decode_marker, terminal_job
 
     _, job, logs = terminal_job(job_id)
     if job["state"] not in {"succeeded", "failed", "timeout", "cancelled", "lost", "killed_ram", "killed_vram"}:
         return {"job_id": job_id, "state": job["state"], "ready": "MDB_DISCOVERY_UPGRADES_READY " in logs}
     save(run_dir / "job.json", job)
-    (run_dir / "worker.log").write_text(logs)
+    save_collector_log(run_dir, logs, log_storage)
     report = decode_marker(logs, REPORT)
     if report is None:
         return {"job_id": job_id, "state": job["state"], "report": False}

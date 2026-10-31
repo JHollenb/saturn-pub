@@ -92,6 +92,11 @@ working-text-guided to image-state-guided ordering to single blocks 0–9 of the
 first timestep, using twelve matched native image futures in one known contrast.
 Its `NativeCutNavigator` supports bounded Python breakpoints over public Saturn
 Sessions using receipt cursors, avoiding extra captures just to inspect the clock.
+The dense follow-up finds an intermediate mixed-binding window. A
+[single-block factorial](docs/FLUX-PARALLEL-MERGE.md) then restores ordering through
+an incoming-residual plus attention coalition, retaining the attention-only
+prediction miss and the MLP's conditional effects. Full evidence can be audited
+on its storage host with a separate model-free CPU lease and a verified compact view.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 [Packed forecast storage](docs/FORECAST-STORAGE.md) is the default and preserves the complete
