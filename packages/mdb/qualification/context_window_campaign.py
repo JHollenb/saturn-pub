@@ -488,6 +488,7 @@ def worker():
     observed = transaction.observation("native")
     mismatches = [row for row in FRESH if observed[row]["mechanics_status"] != "valid"]
     summary = {"schema": "mdb-context-window-result-v1", "job_id": os.environ["MRUN_JOB_ID"],
+        "execution_role": config.get("purpose", "discovery"),
         "request_sha256": request["request_sha256"], "counts": counters, "fresh_arms": list(FRESH), "prior_arms": list(PRIOR),
         "mechanics_status": "valid" if not mismatches else "instrument-mismatch", "instrument_mismatch_rows": mismatches,
         "terminal_status": "unassessed", "worker_seconds": time.monotonic() - started,
@@ -501,7 +502,7 @@ def worker():
     support()["emit"](output, summary)
 
 
-def stage(run_dir, isa_root, plan_path, prior_root, hypothesis_path=None, array_storage="files-v1"):
+def stage(run_dir, isa_root, plan_path, prior_root, hypothesis_path=None, array_storage="files-v1", purpose="discovery"):
     from mdb.execution_environment import intent
     from mdb.job_support import guarded_mrun_launch, one_lease_scheduling_contract
     from mdb.payload import stage_worker, worker_command
@@ -532,7 +533,7 @@ def stage(run_dir, isa_root, plan_path, prior_root, hypothesis_path=None, array_
     files.append((preflight, preflight.name))
     config = {"schema": "mdb-context-window-config-v1", "checkpoint": "artifacts/model.pt",
               "plan_file_sha256": sha(raw_plan), "hypothesis_file_sha256": sha(raw_hypothesis),
-              "array_storage": array_storage}
+              "array_storage": array_storage, "purpose": purpose}
     request = {"schema": "mdb-context-window-request-v1", "task_family": "mdb-context-window",
         "model_identity": plan["model_identity"], "needs": {"cpu": True}, "config": config,
         "execution_environment": intent(), "source_hashes": {name: sha(path.read_bytes()) for path, name in files},
@@ -540,7 +541,9 @@ def stage(run_dir, isa_root, plan_path, prior_root, hypothesis_path=None, array_
         "scheduling_contract": one_lease_scheduling_contract(logical_operations=12, logical_branches=10,
             logical_checkpoint_replays=10, max_local_work_items=32,
             extra={"max_replay_native_operations": 16000, "max_physical_model_forwards": 12}),
-        "selection_policy": "seven fresh first-step calls; three explicitly reused prior controls; global raw-equation forecast seal"}
+        "selection_policy": ("seven known-case performance reproduction calls; three explicitly reused prior controls; no new discovery claim"
+                             if purpose == "performance-reproduction" else
+                             "seven fresh first-step calls; three explicitly reused prior controls; global raw-equation forecast seal")}
     request["source_hashes"]["context_window_campaign.py"] = sha(Path(__file__).read_bytes())
     request["request_sha256"] = identity(request)
     save(run_dir / "request.json", request)
@@ -554,7 +557,7 @@ def stage(run_dir, isa_root, plan_path, prior_root, hypothesis_path=None, array_
         task="r3-trailing-window-first-step-cross-p2-transfer", model=None, payload=run_dir / "payload",
         prefer_host="beast", gpu=False, needs=request["needs"], ram_mb=2304, cpu_threads=1,
         timeout_s=300, retry_on_kill=False, preflight=True,
-        note="One CPU1 finite assay:exactly7fresh first-instruction records plus3prior recipes; <=12physical/16k replayops. Raw equations globally sealed beforefresh native. Old/repeatedSUB vsnew/mixedcontext; two matched frozenanalytic crossP2 transfers,no successor/no retries.2304MiB measuredparent exception (prior962MiB telemetry); compact36ports only. Stopafter10rows/archive.")
+        note=f"One CPU1 finite {purpose}:7 first-instruction records plus3prior recipes; <=12physical/16k replayops. Raw equations globally sealed before this execution. Old/repeatedSUB vsnew/mixedcontext; two matched frozenanalytic crossP2 transfers,no successor/no retries.2304MiB measuredparent exception (prior1028.2MiB telemetry); compact36ports only. Storage={array_storage}. Stopafter10rows/archive.")
     save(run_dir / "submission.json", {"job_id": str(job)})
     return {"job_id": str(job), "run_dir": str(run_dir)}
 
@@ -568,6 +571,7 @@ def main():
     parser.add_argument("--prior-root", type=Path)
     parser.add_argument("--hypothesis", type=Path, help="defaults to the dated structural-prefix hypothesis beside this script")
     parser.add_argument("--array-storage", choices=("files-v1", "bundle-v1"), default="files-v1")
+    parser.add_argument("--purpose", choices=("discovery", "performance-reproduction"), default="discovery")
     parser.add_argument("--collect")
     args = parser.parse_args()
     if args.worker:
@@ -589,7 +593,7 @@ def main():
         if any(value is None for value in (args.run_dir, args.isa_root, args.plan, args.prior_root)):
             parser.error("staging requires run-dir, isa-root, plan and prior-root")
         print(json.dumps(stage(args.run_dir.resolve(), args.isa_root.resolve(), args.plan.resolve(), args.prior_root.resolve(),
-                               None if args.hypothesis is None else args.hypothesis.resolve(), args.array_storage)))
+                               None if args.hypothesis is None else args.hypothesis.resolve(), args.array_storage, args.purpose)))
 
 
 if __name__ == "__main__":

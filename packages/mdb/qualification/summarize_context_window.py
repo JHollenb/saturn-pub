@@ -784,7 +784,9 @@ def audit(run_dir, prior_run_dir, *, previous_attempt=None):
         "generic_records": [generic_record(run, name, observations[name], proofs[name], payloads) for name in sorted(observations)],
         "phase_timings": timings, "transaction_events": run["events"],
         "previous_instrument_attempt": reattempt,
-        "scope": "One fixed SUB input architecture, two literal15-byte windows, seven fresh and three source-bound reused controls. All equations and full weights supplied; no operation-rule discovery or future-instruction semantic claim.",
+        "scope": ("Performance reproduction of seven already-tested native cases and three source-bound prior controls; no first-exposure or new discovery claim."
+                  if summary.get("execution_role") == "performance-reproduction" else
+                  "One fixed SUB input architecture, two literal15-byte windows, seven fresh and three source-bound reused controls. All equations and full weights supplied; no operation-rule discovery or future-instruction semantic claim."),
         "mechanics_status": "valid" if not native_mismatches else "instrument-mismatch",
         "instrument_status": {"custody": "verified", "native_replay_mismatch_rows": native_mismatches},
         "trend_status": "per-row signed observations retained; no scientific acceptance threshold",
@@ -812,7 +814,7 @@ def main():
         result["analysis_source"] = {"snapshot": snapshot.name, "sha256": sha(raw_source),
             "python_version": sys.version, "numpy_version": np.__version__,
             "public_metadata_modules": {module: sha(Path(sys.modules[module].__file__).read_bytes()) for module in
-                ("mdb.forecast_transaction", "mdb.forward_ports", "mdb.forward_symbols", "mdb.discovery_catalog")}}
+                ("mdb.forecast_transaction", "mdb.forecast_storage", "mdb.forward_ports", "mdb.forward_symbols", "mdb.discovery_catalog")}}
         with args.output.open("x") as stream:
             json.dump(result, stream, sort_keys=True, indent=2, allow_nan=False)
             stream.write("\n")
