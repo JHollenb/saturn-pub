@@ -52,6 +52,11 @@ with immutable applicability records. `mdb ports`, `mdb forecast` and
 The [raw-input sequence assay](docs/RAW-INPUT-SEQUENCE-FORECASTS.md) uses this
 workflow to forecast all three mixer/MLP stages and three successive instructions
 without an observed prefix: all 18 step results match all eleven head decisions.
+The [matched-context and MLP-write transfers](docs/CONTEXT-AND-WRITE-TRANSFERS.md)
+hold the first instruction and architectural state fixed, reproduce a collateral
+register error, and predict its repair through a transferred final-MLP write.
+The reciprocal transfer weakens the other context without flipping its bit;
+the receiving state and write jointly determine the outcome.
 
 Start the local GDB-style console after a base install:
 

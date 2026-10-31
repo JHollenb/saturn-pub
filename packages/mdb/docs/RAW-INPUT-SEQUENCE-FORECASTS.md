@@ -108,6 +108,9 @@ holds RDI=262, RSI=3, flags and the first SUB instruction fixed, changes only th
 trailing window to the old repeated-SUB bytes, and compares native with U_swap.
 The current-window counterparts already exist. That cut would isolate the
 effect of trailing-byte context rather than rerunning the full sequence campaign.
+That [matched-context follow-up](CONTEXT-AND-WRITE-TRANSFERS.md) has now run:
+the old RSI error recurs, and reciprocal predicted final-MLP writes separate the
+write contribution from the receiving margin.
 
 ## How the new MDB features were used
 
