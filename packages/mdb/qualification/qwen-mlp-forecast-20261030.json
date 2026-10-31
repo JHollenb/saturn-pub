@@ -1,0 +1,3973 @@
+{
+  "artifact_reference_base": "supplied campaign root",
+  "candidate_ids": [
+    20,
+    19,
+    21,
+    12095,
+    59604,
+    7148,
+    39572,
+    9255,
+    87072,
+    4017,
+    10622,
+    13,
+    198
+  ],
+  "candidate_literal_labels": {
+    "10622": [
+      "hot"
+    ],
+    "12095": [
+      " Paris"
+    ],
+    "13": [
+      "."
+    ],
+    "19": [
+      "4"
+    ],
+    "198": [
+      "\n"
+    ],
+    "20": [
+      "5"
+    ],
+    "21": [
+      "6"
+    ],
+    "39572": [
+      "London"
+    ],
+    "4017": [
+      " hot"
+    ],
+    "59604": [
+      "Paris"
+    ],
+    "7148": [
+      " London"
+    ],
+    "87072": [
+      "cold"
+    ],
+    "9255": [
+      " cold"
+    ]
+  },
+  "candidate_text_tokenization": {
+    "\n": [
+      198
+    ],
+    " 4": [
+      220,
+      19
+    ],
+    " 5": [
+      220,
+      20
+    ],
+    " London": [
+      7148
+    ],
+    " Paris": [
+      12095
+    ],
+    " cold": [
+      9255
+    ],
+    " hot": [
+      4017
+    ],
+    ".": [
+      13
+    ],
+    "4": [
+      19
+    ],
+    "5": [
+      20
+    ],
+    "6": [
+      21
+    ],
+    "London": [
+      39572
+    ],
+    "Paris": [
+      59604
+    ],
+    "cold": [
+      87072
+    ],
+    "hot": [
+      10622
+    ]
+  },
+  "checkpoint_files": {
+    ".cache/huggingface/trees/7ae557604adf67be50417f59c2c2f167def9a775.json": {
+      "bytes": 1251,
+      "sha256": "239a6e2f056c95d690248c1f7df3d926989441c1cdbd893765adb12791e7e31a"
+    },
+    "config.json": {
+      "bytes": 659,
+      "sha256": "18e18afcaccafade98daf13a54092927904649e1dd4eba8299ab717d5d94ff45"
+    },
+    "generation_config.json": {
+      "bytes": 242,
+      "sha256": "e558847a8b4402616f1273797b015104dc266fe4b520056fca88823ba8f8ebe6"
+    },
+    "merges.txt": {
+      "bytes": 1671839,
+      "sha256": "599bab54075088774b1733fde865d5bd747cbcc7a547c5bc12610e874e26f5e3"
+    },
+    "model.safetensors": {
+      "bytes": 988097824,
+      "sha256": "fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe"
+    },
+    "tokenizer.json": {
+      "bytes": 7031645,
+      "sha256": "c0382117ea329cdf097041132f6d735924b697924d6f6fc3945713e96ce87539"
+    },
+    "tokenizer_config.json": {
+      "bytes": 7305,
+      "sha256": "5b5d4f65d0acd3b2d56a35b56d374a36cbc1c8fa5cf3b3febbbfabf22f359583"
+    },
+    "vocab.json": {
+      "bytes": 2776833,
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    }
+  },
+  "counts": {
+    "acts": 9,
+    "denied_calls": 0,
+    "final_mlp_entries": 60,
+    "final_norm_entries": 60,
+    "final_postnorm_entries": 60,
+    "full_model_calls": 48,
+    "physical_attempts": 63,
+    "prefix_calls": 3,
+    "replay_primitives": 372,
+    "suffix_records": 12
+  },
+  "equation_evaluations": 0,
+  "installed_model_sources": {
+    "/mnt/hdd8tb/mdb/uv-cache/archive-v0/sTS3dMGwT96iHDL9/transformers/models/qwen2/configuration_qwen2.py": "281986fef33b2c5226389a479113eb963c8336467e76e1b8d49fd3d18ee4a882",
+    "/mnt/hdd8tb/mdb/uv-cache/archive-v0/sTS3dMGwT96iHDL9/transformers/models/qwen2/modeling_qwen2.py": "99fa98c5676604cf6ef505892b70fda5c1c4cd835971459f38d61090cccab1e4",
+    "/mnt/hdd8tb/mdb/uv-cache/archive-v0/sTS3dMGwT96iHDL9/transformers/models/qwen2/tokenization_qwen2.py": "fac4e6576bfe2369731be147a4e530f262bdf32f2ac50436f96f0d8bdd2fc628"
+  },
+  "limits": [
+    "Prefix and full weights are supplied; no learned semantic law or compressed model claim.",
+    "FP64 NumPy formulas forecast fixed selected vocabulary rows; full-vocabulary greedy token is observed only.",
+    "Native dose scales actual FP32 MLP return; rounding residuals against FP64 are retained, not a science gate.",
+    "Fresh native prefills own their KV; typed common-parent branches cover the selected suffix only.",
+    "Cached continuations are native measurements after first-step edit removal; no future forecast or cache restore claim.",
+    "Instrumentation guards ordinary module calls; trusted Python is not an OS isolation boundary.",
+    "Genuine native prefixes supply the cut; this is not a raw-token/full-LM forecast.",
+    "Only selected fixed vocabulary rows are forecast; full-vocabulary greedy tokens and subsequent text are native observations.",
+    "No model, source equations, native replay or tokenizer executed during this saved-array audit.",
+    "Checkpoint-to-selected-weight extraction is source-bound worker provenance; full checkpoint numerical tensors are not reloaded by this audit.",
+    "Installed HF source SHA inventories are archive-bound worker observations; external installed files are not refetched by this audit.",
+    "Same-KV/same-first-token continuation closure is a mechanics diagnostic, not a forecast or independent scientific certification."
+  ],
+  "mechanics_status": "valid",
+  "model_identity": {
+    "attention": "eager",
+    "backend": "cpu",
+    "checkpoint_files_sha256": "dcc86696d4d57a80d56252d32d9fbd8981a9f15ce2367bedcf2642664849dfed",
+    "config_sha256": "daea74e6dd2130c47422486c7522bd5b77ae635639852e7e6f188177e4b5d646",
+    "dtype": "float32",
+    "model_name": "qwen2.5-0.5b-instruct",
+    "model_type": "qwen2",
+    "weights_sha256": "2b226fe4944dc744596b1142a15d6676160e9d06f245d31c1a36633f6c86baa3"
+  },
+  "native_weight_binding": {
+    "provenance": "actual native parameters shared by suffix; selected head rows copied before all prefixes",
+    "selected_head": {
+      "candidate_ids": [
+        20,
+        19,
+        21,
+        12095,
+        59604,
+        7148,
+        39572,
+        9255,
+        87072,
+        4017,
+        10622,
+        13,
+        198
+      ],
+      "descriptor": {
+        "dtype": "torch.float32",
+        "preview": [
+          -0.0081787109375,
+          -0.00830078125,
+          -0.020263671875,
+          -0.01031494140625,
+          -0.01312255859375,
+          0.0146484375,
+          -0.00457763671875,
+          -0.0169677734375
+        ],
+        "sha256": "1e0ea449e2ed38e0e8ccea847f420cced93119a7d98d5c4bdca8bc49829f5797",
+        "shape": [
+          13,
+          896
+        ]
+      },
+      "exact_native_selected_rows": true,
+      "native_name": "lm_head.weight"
+    },
+    "shared_parameters": {
+      "finalnorm.weight": {
+        "descriptor": {
+          "dtype": "torch.float32",
+          "preview": [
+            7.59375,
+            6.875,
+            7.25,
+            7.0,
+            6.65625,
+            6.75,
+            6.9375,
+            6.71875
+          ],
+          "sha256": "93a01a6db3419e85320a244bbf8ae81c43033b1d10c342bea3797ff2ce348390",
+          "shape": [
+            896
+          ]
+        },
+        "exact_native": true,
+        "native_name": "model.norm.weight"
+      },
+      "mlp.down_proj.weight": {
+        "descriptor": {
+          "dtype": "torch.float32",
+          "preview": [
+            0.013671875,
+            0.005706787109375,
+            0.010009765625,
+            0.00823974609375,
+            -0.00994873046875,
+            0.001678466796875,
+            -0.0218505859375,
+            -0.0004749298095703125
+          ],
+          "sha256": "87cc4f47e370d1c7db73eb9af8b61a6f9103e7017c633ddf5ebba7afcc91aaa0",
+          "shape": [
+            896,
+            4864
+          ]
+        },
+        "exact_native": true,
+        "native_name": "model.layers.23.mlp.down_proj.weight"
+      },
+      "mlp.gate_proj.weight": {
+        "descriptor": {
+          "dtype": "torch.float32",
+          "preview": [
+            -0.0201416015625,
+            0.003692626953125,
+            -0.0264892578125,
+            0.0198974609375,
+            -0.0400390625,
+            0.0211181640625,
+            -0.0029296875,
+            0.0546875
+          ],
+          "sha256": "e2591e948e36e3ae12996f5e9430cfe1936d79556ae93b39aeb15712a94cf861",
+          "shape": [
+            4864,
+            896
+          ]
+        },
+        "exact_native": true,
+        "native_name": "model.layers.23.mlp.gate_proj.weight"
+      },
+      "mlp.up_proj.weight": {
+        "descriptor": {
+          "dtype": "torch.float32",
+          "preview": [
+            0.020263671875,
+            0.0024871826171875,
+            0.004730224609375,
+            -0.00080108642578125,
+            0.0162353515625,
+            0.0031585693359375,
+            -0.00982666015625,
+            0.01348876953125
+          ],
+          "sha256": "e1984ca02bfda010302bca2c63b1351cbe3590b903cfcc40e0439fc129e76687",
+          "shape": [
+            4864,
+            896
+          ]
+        },
+        "exact_native": true,
+        "native_name": "model.layers.23.mlp.up_proj.weight"
+      },
+      "postnorm.weight": {
+        "descriptor": {
+          "dtype": "torch.float32",
+          "preview": [
+            3.109375,
+            2.21875,
+            2.59375,
+            2.25,
+            2.1875,
+            2.484375,
+            2.125,
+            2.1875
+          ],
+          "sha256": "60e1f5e6310c3a531c554a6bb7cd883aed58db1e51853f739436ea461c1843d7",
+          "shape": [
+            896
+          ]
+        },
+        "exact_native": true,
+        "native_name": "model.layers.23.post_attention_layernorm.weight"
+      }
+    }
+  },
+  "new_model_calls": 0,
+  "pre_release_counters": {
+    "acts": 0,
+    "denied_calls": 0,
+    "final_mlp_entries": 0,
+    "final_norm_entries": 0,
+    "final_postnorm_entries": 0,
+    "full_model_calls": 0,
+    "physical_attempts": 3,
+    "prefix_calls": 3,
+    "replay_primitives": 0,
+    "suffix_records": 0
+  },
+  "prefixes": {
+    "antonym": {
+      "cut": {
+        "dtype": "torch.float32",
+        "sha256": "b515556613a4e6e485c3f9e432385ae2e87b28eaf59b1df6974373715fe98a83",
+        "shape": [
+          1,
+          1,
+          896
+        ]
+      },
+      "errors": [],
+      "input_identity": "3968a6b9f0e125891590365ed1405fcb56addf4eab386ad077d1b9bd445fbfe4",
+      "prefix_contract": {
+        "completion_scope": "prefix wrapper only; native forward aborted at boundary",
+        "execution_extent": "prefix-wrapper",
+        "full_model_outputs_computed": false,
+        "observations": {},
+        "occurrence": 0,
+        "output_abi": "boundary-args-kwargs-and-completed-module-observations-v1",
+        "schema": "mdb-native-prefix-boundary-v1",
+        "stop_before": "layers.23.post_attention_layernorm",
+        "stop_edge": "before-local-prehooks-and-module-body",
+        "wrapper_stop_before": "native.layers.23.post_attention_layernorm"
+      },
+      "prompt": {
+        "id": "antonym",
+        "text": "The opposite of hot is"
+      },
+      "token_ids": [
+        [
+          785,
+          14002,
+          315,
+          4017,
+          374
+        ]
+      ],
+      "trace_fingerprint": "2e9f6979f1f57084c94394086a87ea1bfcb57fbae07b6eb30dca05ec2458215f"
+    },
+    "arithmetic": {
+      "cut": {
+        "dtype": "torch.float32",
+        "sha256": "2e4aef01c118937dd0de59dd9fb380b3726951f4c09fa96fc30945f9bf61372d",
+        "shape": [
+          1,
+          1,
+          896
+        ]
+      },
+      "errors": [],
+      "input_identity": "92a8e41f67d948a8348eda3e5ec68ee6e36b476db2dac8ea2733ec31d8742027",
+      "prefix_contract": {
+        "completion_scope": "prefix wrapper only; native forward aborted at boundary",
+        "execution_extent": "prefix-wrapper",
+        "full_model_outputs_computed": false,
+        "observations": {},
+        "occurrence": 0,
+        "output_abi": "boundary-args-kwargs-and-completed-module-observations-v1",
+        "schema": "mdb-native-prefix-boundary-v1",
+        "stop_before": "layers.23.post_attention_layernorm",
+        "stop_edge": "before-local-prehooks-and-module-body",
+        "wrapper_stop_before": "native.layers.23.post_attention_layernorm"
+      },
+      "prompt": {
+        "id": "arithmetic",
+        "text": "Complete the equation: 2 + 3 = "
+      },
+      "token_ids": [
+        [
+          12548,
+          279,
+          23606,
+          25,
+          220,
+          17,
+          488,
+          220,
+          18,
+          284,
+          220
+        ]
+      ],
+      "trace_fingerprint": "a40f05c17dfbd9a83609df66bcce8893e20eadeb958804eb85736f94b005c0f0"
+    },
+    "capital": {
+      "cut": {
+        "dtype": "torch.float32",
+        "sha256": "987b4b37db8434f4d5c6c5848806b8e34be9ad1ac20f2f607d67f087cab0daaa",
+        "shape": [
+          1,
+          1,
+          896
+        ]
+      },
+      "errors": [],
+      "input_identity": "b27f97002e7c3276300b2f5474d53bd37e3ebfad9469aab30171f0fb38ec37b8",
+      "prefix_contract": {
+        "completion_scope": "prefix wrapper only; native forward aborted at boundary",
+        "execution_extent": "prefix-wrapper",
+        "full_model_outputs_computed": false,
+        "observations": {},
+        "occurrence": 0,
+        "output_abi": "boundary-args-kwargs-and-completed-module-observations-v1",
+        "schema": "mdb-native-prefix-boundary-v1",
+        "stop_before": "layers.23.post_attention_layernorm",
+        "stop_edge": "before-local-prehooks-and-module-body",
+        "wrapper_stop_before": "native.layers.23.post_attention_layernorm"
+      },
+      "prompt": {
+        "id": "capital",
+        "text": "The capital of France is"
+      },
+      "token_ids": [
+        [
+          785,
+          6722,
+          315,
+          9625,
+          374
+        ]
+      ],
+      "trace_fingerprint": "1944c1528307a90af96f549e6623a30bda67c6553bda98aedd498f85f56c7a92"
+    }
+  },
+  "previous_attempt": {
+    "counter_authority": "source-bound refusal before worker scientific imports/model load; no native work ledger exists",
+    "job_id": "job-ee2bb06fc2f8",
+    "model_calls": 0,
+    "reason": "worker configuration differs from sealed request",
+    "references": {
+      "job": {
+        "path": "run-01/job.json",
+        "sha256": "259321534e94120fe7b95081892e610d3ba15f83a6f01af91d13a73e16493433"
+      },
+      "request": {
+        "path": "run-01/request.json",
+        "sha256": "30e3a86a0408989937e26f9e2b7b408a37f7f3d7794e8105e35ed3a3d83fbb05"
+      },
+      "worker_log": {
+        "path": "run-01/worker.log",
+        "sha256": "bf5aed1ab4511bcfc828e90484ebc1be1ed8cbf049d5ddeb23f3ec4bbd43691c"
+      },
+      "worker_source": {
+        "path": "run-01/payload/qwen_mlp_forecast_campaign.py",
+        "sha256": "4a2ec1fce883d59fb99eafc505a7ff6d0eece66d946f370d364efed0b1383e12"
+      }
+    },
+    "retry_scope": "new explicit repaired submission; failed attempt retained",
+    "scheduler_state": "failed",
+    "status": "pre-model worker configuration refusal"
+  },
+  "publisher_source_sha256": "344ecbbee443572ffaa986785c7a0a8f1721dc1457e1fdec265b952047cb1f6d",
+  "references": {
+    "audit": {
+      "path": "run-02/analysis-v1.json",
+      "sha256": "b08c5720064add8b368de0bc95e5f899366a19fffa6c77f64bbc3f561182e939"
+    },
+    "auditor_source": {
+      "path": "run-02/analysis-v1-source.py",
+      "sha256": "213d96371a3c78024ddb9736dc1b7fcc1fea57e175177961a68203f47fb622ab"
+    },
+    "source": {
+      "path": "run-02/extracted/qwen-mlp-result/source.json",
+      "sha256": "2580972d6f8b5f7d2fb6c387af314c4f891e03106dd1df909ea1f436340ba8da"
+    },
+    "summary": {
+      "path": "run-02/extracted/qwen-mlp-result/summary.json",
+      "sha256": "93341df6b1b41fe27586d683c79fbb711a85153f03c6884182195eec5b96fae1"
+    },
+    "timeline": {
+      "path": "run-02/extracted/qwen-mlp-result/timeline.jsonl",
+      "sha256": "b1f664e98fd146c0e22514b9575af9d169a8129f89a9e5a8b2d3715e205a4472"
+    },
+    "transaction_report": {
+      "path": "run-02/extracted/qwen-mlp-result/transaction-report.json",
+      "sha256": "363296da2cf983f67c5bd2640f6aa94fb9271c2c56f47ae1661994f64b5904f9"
+    },
+    "weight_binding": {
+      "path": "run-02/extracted/qwen-mlp-result/weight-binding.json",
+      "sha256": "0368e0bd92b6b91038aa46ade2254af41eaca18a9e40ddfdc6dd1c0321f0d221"
+    }
+  },
+  "rows": {
+    "antonym.half": {
+      "actual_selected_logits": [
+        2.5521762371063232,
+        3.248243570327759,
+        2.1915225982666016,
+        1.9725322723388672,
+        -3.588204860687256,
+        2.6028003692626953,
+        -1.3281311988830566,
+        16.682048797607422,
+        10.417594909667969,
+        10.627758026123047,
+        3.483506679534912,
+        9.545601844787598,
+        14.070695877075195
+      ],
+      "arm": "half",
+      "candidate_comparison": {
+        "candidate_argmax_matches": true,
+        "forecast": {
+          "candidate_index": 7,
+          "logit": 16.682046494695207,
+          "token_id": 9255,
+          "top_two_margin": 2.6113552972585943
+        },
+        "observed": {
+          "candidate_index": 7,
+          "logit": 16.68204689025879,
+          "token_id": 9255,
+          "top_two_margin": 2.6113548278808594
+        },
+        "per_candidate_signed_residual": [
+          2.7706011302974787e-06,
+          1.0275697572836862e-06,
+          2.074641316074377e-06,
+          -8.991839182126427e-07,
+          -6.777598251517247e-07,
+          -7.275109359383691e-07,
+          -1.3922598030013944e-06,
+          3.955635818897463e-07,
+          -1.5898571312789045e-06,
+          -2.131152090356636e-06,
+          -6.981355147317458e-07,
+          7.618204413972762e-07,
+          8.649413167916009e-07
+        ],
+        "residual": {
+          "changed_elements": 13,
+          "elements": 13,
+          "l2": 5.080711464033248e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "signed": 2.7706011302974787e-06
+          },
+          "max_abs": 2.7706011302974787e-06,
+          "maximum_signed": 2.7706011302974787e-06,
+          "minimum_signed": -2.131152090356636e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": -1.6978590379788617e-08,
+          "signed_sum": -2.2072167493725203e-07
+        },
+        "scope": "argmax over predeclared selected rows; not a full-vocabulary token forecast"
+      },
+      "candidate_coverage": {
+        "full_native_greedy_token": 1304,
+        "global_winner_in_candidates": false,
+        "scope": "candidate winner accuracy does not certify full-vocabulary winner accuracy"
+      },
+      "computation_id": "qwen2.final-MLP.SwiGLU.residual.RMSNorm.selected-readout",
+      "continuation_check": {
+        "closure_applicable": true,
+        "diagnostics": [],
+        "errors": [],
+        "same_first_token": true,
+        "same_future_tokens": true,
+        "same_prefill_KV": true,
+        "scope": "observed native continuation only; no future-token forecast or restored-cache claim"
+      },
+      "dose": 0.5,
+      "dose_effect_vs_native": {
+        "actual_selected_logit_effect": [
+          -2.029834508895874,
+          -2.062385320663452,
+          -1.928715705871582,
+          -1.082909107208252,
+          -1.1018345355987549,
+          -1.3458929061889648,
+          -0.9698790311813354,
+          -1.0883846282958984,
+          -0.1417703628540039,
+          -1.1332893371582031,
+          -0.35330772399902344,
+          -2.8807640075683594,
+          -3.253629684448242
+        ],
+        "forecast_selected_logit_effect": [
+          -2.029832408032345,
+          -2.0623832179503037,
+          -1.9287129026293308,
+          -1.0829103917858334,
+          -1.1018351750631625,
+          -1.3458915625504524,
+          -0.9698784651755781,
+          -1.0883835225425855,
+          -0.14177147008594382,
+          -1.1332912137001685,
+          -0.35330866585971377,
+          -2.880765224356555,
+          -3.253629650290055
+        ],
+        "scope": "same observed prefix cut; full native logits versus independent selected suffix dose equations"
+      },
+      "explicit_conditions": {
+        "candidate_ids": [
+          20,
+          19,
+          21,
+          12095,
+          59604,
+          7148,
+          39572,
+          9255,
+          87072,
+          4017,
+          10622,
+          13,
+          198
+        ],
+        "execution": {
+          "backend": "cpu",
+          "dtype": "float32",
+          "threads": 4,
+          "torch": "2.13.0+cu130",
+          "transformers": "5.14.1"
+        },
+        "frontier": "observed last-token post-attention residual",
+        "horizon": "final MLP and fixed selected-vocabulary readout",
+        "model_identity": {
+          "attention": "eager",
+          "backend": "cpu",
+          "checkpoint_files_sha256": "dcc86696d4d57a80d56252d32d9fbd8981a9f15ce2367bedcf2642664849dfed",
+          "config_sha256": "daea74e6dd2130c47422486c7522bd5b77ae635639852e7e6f188177e4b5d646",
+          "dtype": "float32",
+          "model_name": "qwen2.5-0.5b-instruct",
+          "model_type": "qwen2",
+          "weights_sha256": "2b226fe4944dc744596b1142a15d6676160e9d06f245d31c1a36633f6c86baa3"
+        },
+        "native_dose_policy": "scale actual native MLP return; frozen predicted FP32 deltas retained but not used"
+      },
+      "forecast_selected_logits": [
+        2.552175612272405,
+        3.2482430195951597,
+        2.191521477299602,
+        1.9725317410113108,
+        -3.58820442134601,
+        2.602800619936473,
+        -1.3281302834604118,
+        16.682046494695207,
+        10.41759363850215,
+        10.627756342577872,
+        3.4835064239961104,
+        9.54560012929284,
+        14.070691197436613
+      ],
+      "native_wrapper_residuals": {
+        "MLP_delta": {
+          "changed_elements": 855,
+          "elements": 896,
+          "l2": 1.7359832162075198e-05,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              490
+            ],
+            "signed": -1.33514404296875e-05
+          },
+          "max_abs": 1.33514404296875e-05,
+          "maximum_signed": 3.814697265625e-06,
+          "minimum_signed": -1.33514404296875e-05,
+          "shape": [
+            1,
+            1,
+            896
+          ],
+          "signed_mean": -1.0740872572309205e-08,
+          "signed_sum": -9.623821824789047e-06
+        },
+        "selected_logits": {
+          "changed_elements": 13,
+          "elements": 13,
+          "l2": 7.144605667005394e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              9
+            ],
+            "signed": 3.814697265625e-06
+          },
+          "max_abs": 3.814697265625e-06,
+          "maximum_signed": 3.814697265625e-06,
+          "minimum_signed": -2.1457672119140625e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": 1.0270338792067307e-06,
+          "signed_sum": 1.33514404296875e-05
+        }
+      },
+      "observed_continuation": [
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 1304,
+          "full_logits_sha256": "470c64b2e93a3c36e7f69fe8ecd310c9c8a4b9ca2088706781526c31aa7d1963",
+          "greedy_text": "__\n",
+          "greedy_token": 12148,
+          "step": 1
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 12148,
+          "full_logits_sha256": "59bb0e082fc71792f95e13ea54b18444daeb252449ad1b6abdf9b8f4766d5c6e",
+          "greedy_text": "A",
+          "greedy_token": 32,
+          "step": 2
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 32,
+          "full_logits_sha256": "75b43233258dc504184d2ef1db1da8f4d07b22a9793d06c4e0587d0c3f904122",
+          "greedy_text": ".",
+          "greedy_token": 13,
+          "step": 3
+        }
+      ],
+      "observed_generated_text": " ____\nA.",
+      "observed_generated_token_ids": [
+        1304,
+        12148,
+        32,
+        13
+      ],
+      "observed_greedy_text": " __",
+      "prefix_binding": "2e9f6979f1f57084c94394086a87ea1bfcb57fbae07b6eb30dca05ec2458215f",
+      "prompt_id": "antonym",
+      "stage_max_abs": {
+        "delta": 5.034363105949069e-06,
+        "final_norm": 2.4747126174395895e-05,
+        "logits": 2.7706011302974787e-06,
+        "postnorm": 1.2284610821922115e-06,
+        "residual": 5.034363105949069e-06
+      },
+      "trace_fingerprint": "9ee17d3f2ef21f839ecc2d3eecf7b505ffaf2a0d754b1ce90bfa8e1811aa1da6",
+      "typed_acts": 1,
+      "typed_transitions": 31
+    },
+    "antonym.native": {
+      "actual_selected_logits": [
+        4.582010746002197,
+        5.310628890991211,
+        4.120238304138184,
+        3.055441379547119,
+        -2.486370325088501,
+        3.94869327545166,
+        -0.3582521677017212,
+        17.77043342590332,
+        10.559365272521973,
+        11.76104736328125,
+        3.8368144035339355,
+        12.426365852355957,
+        17.324325561523438
+      ],
+      "arm": "native",
+      "candidate_comparison": {
+        "candidate_argmax_matches": true,
+        "forecast": {
+          "candidate_index": 7,
+          "logit": 17.770430017237793,
+          "token_id": 9255,
+          "top_two_margin": 0.446109169511125
+        },
+        "observed": {
+          "candidate_index": 7,
+          "logit": 17.770427703857422,
+          "token_id": 9255,
+          "top_two_margin": 0.4461078643798828
+        },
+        "per_candidate_signed_residual": [
+          2.7256974473033324e-06,
+          2.6534457475690942e-06,
+          3.447372092679757e-06,
+          -1.7069243414269408e-06,
+          -2.0324799701043617e-06,
+          1.392904183106225e-07,
+          -3.0912305470920387e-06,
+          -2.3133803708219602e-06,
+          -4.604437704003317e-06,
+          -1.1466711065111213e-06,
+          -1.639996205060612e-06,
+          2.4060551950810805e-06,
+          -1.0082491286311779e-06
+        ],
+        "residual": {
+          "changed_elements": 13,
+          "elements": 13,
+          "l2": 8.963087319863033e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              8
+            ],
+            "signed": -4.604437704003317e-06
+          },
+          "max_abs": 4.604437704003317e-06,
+          "maximum_signed": 3.447372092679757e-06,
+          "minimum_signed": -4.604437704003317e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": -4.74731420977511e-07,
+          "signed_sum": -6.171508472707643e-06
+        },
+        "scope": "argmax over predeclared selected rows; not a full-vocabulary token forecast"
+      },
+      "candidate_coverage": {
+        "full_native_greedy_token": 1304,
+        "global_winner_in_candidates": false,
+        "scope": "candidate winner accuracy does not certify full-vocabulary winner accuracy"
+      },
+      "computation_id": "qwen2.final-MLP.SwiGLU.residual.RMSNorm.selected-readout",
+      "continuation_check": {
+        "closure_applicable": true,
+        "diagnostics": [],
+        "errors": [],
+        "same_first_token": true,
+        "same_future_tokens": true,
+        "same_prefill_KV": true,
+        "scope": "observed native continuation only; no future-token forecast or restored-cache claim"
+      },
+      "dose": 1.0,
+      "dose_effect_vs_native": {
+        "actual_selected_logit_effect": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "forecast_selected_logit_effect": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scope": "same observed prefix cut; full native logits versus independent selected suffix dose equations"
+      },
+      "explicit_conditions": {
+        "candidate_ids": [
+          20,
+          19,
+          21,
+          12095,
+          59604,
+          7148,
+          39572,
+          9255,
+          87072,
+          4017,
+          10622,
+          13,
+          198
+        ],
+        "execution": {
+          "backend": "cpu",
+          "dtype": "float32",
+          "threads": 4,
+          "torch": "2.13.0+cu130",
+          "transformers": "5.14.1"
+        },
+        "frontier": "observed last-token post-attention residual",
+        "horizon": "final MLP and fixed selected-vocabulary readout",
+        "model_identity": {
+          "attention": "eager",
+          "backend": "cpu",
+          "checkpoint_files_sha256": "dcc86696d4d57a80d56252d32d9fbd8981a9f15ce2367bedcf2642664849dfed",
+          "config_sha256": "daea74e6dd2130c47422486c7522bd5b77ae635639852e7e6f188177e4b5d646",
+          "dtype": "float32",
+          "model_name": "qwen2.5-0.5b-instruct",
+          "model_type": "qwen2",
+          "weights_sha256": "2b226fe4944dc744596b1142a15d6676160e9d06f245d31c1a36633f6c86baa3"
+        },
+        "native_dose_policy": "scale actual native MLP return; frozen predicted FP32 deltas retained but not used"
+      },
+      "forecast_selected_logits": [
+        4.58200802030475,
+        5.310626237545463,
+        4.120234379928933,
+        3.055442132797144,
+        -2.4863692462828473,
+        3.9486921824869254,
+        -0.35825181828483377,
+        17.770430017237793,
+        10.559365108588095,
+        11.76104755627804,
+        3.836815089855824,
+        12.426365353649395,
+        17.324320847726668
+      ],
+      "native_wrapper_residuals": {
+        "MLP_delta": {
+          "changed_elements": 855,
+          "elements": 896,
+          "l2": 3.4719664324150395e-05,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              490
+            ],
+            "signed": -2.6702880859375e-05
+          },
+          "max_abs": 2.6702880859375e-05,
+          "maximum_signed": 7.62939453125e-06,
+          "minimum_signed": -2.6702880859375e-05,
+          "shape": [
+            1,
+            1,
+            896
+          ],
+          "signed_mean": -2.148174514461841e-08,
+          "signed_sum": -1.9247643649578094e-05
+        },
+        "selected_logits": {
+          "changed_elements": 11,
+          "elements": 13,
+          "l2": 1.02054570798037e-05,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              7
+            ],
+            "signed": 5.7220458984375e-06
+          },
+          "max_abs": 5.7220458984375e-06,
+          "maximum_signed": 5.7220458984375e-06,
+          "minimum_signed": -1.9073486328125e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": 1.714779780461238e-06,
+          "signed_sum": 2.2292137145996094e-05
+        }
+      },
+      "observed_continuation": [
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 1304,
+          "full_logits_sha256": "470c64b2e93a3c36e7f69fe8ecd310c9c8a4b9ca2088706781526c31aa7d1963",
+          "greedy_text": "__\n",
+          "greedy_token": 12148,
+          "step": 1
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 12148,
+          "full_logits_sha256": "59bb0e082fc71792f95e13ea54b18444daeb252449ad1b6abdf9b8f4766d5c6e",
+          "greedy_text": "A",
+          "greedy_token": 32,
+          "step": 2
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 32,
+          "full_logits_sha256": "75b43233258dc504184d2ef1db1da8f4d07b22a9793d06c4e0587d0c3f904122",
+          "greedy_text": ".",
+          "greedy_token": 13,
+          "step": 3
+        }
+      ],
+      "observed_generated_text": " ____\nA.",
+      "observed_generated_token_ids": [
+        1304,
+        12148,
+        32,
+        13
+      ],
+      "observed_greedy_text": " __",
+      "prefix_binding": "2e9f6979f1f57084c94394086a87ea1bfcb57fbae07b6eb30dca05ec2458215f",
+      "prompt_id": "antonym",
+      "stage_max_abs": {
+        "delta": 1.0068726211898138e-05,
+        "final_norm": 4.905095325469233e-05,
+        "logits": 4.604437704003317e-06,
+        "postnorm": 1.2284610821922115e-06,
+        "residual": 1.0068726211898138e-05
+      },
+      "trace_fingerprint": "10b32b82d42811030027167c56aa6b2c3e57717a974d4848fd6967cf26b64308",
+      "typed_acts": 0,
+      "typed_transitions": 31
+    },
+    "antonym.sham": {
+      "actual_selected_logits": [
+        4.582010746002197,
+        5.310628890991211,
+        4.120238304138184,
+        3.055441379547119,
+        -2.486370325088501,
+        3.94869327545166,
+        -0.3582521677017212,
+        17.77043342590332,
+        10.559365272521973,
+        11.76104736328125,
+        3.8368144035339355,
+        12.426365852355957,
+        17.324325561523438
+      ],
+      "arm": "sham",
+      "candidate_comparison": {
+        "candidate_argmax_matches": true,
+        "forecast": {
+          "candidate_index": 7,
+          "logit": 17.770430017237793,
+          "token_id": 9255,
+          "top_two_margin": 0.446109169511125
+        },
+        "observed": {
+          "candidate_index": 7,
+          "logit": 17.770427703857422,
+          "token_id": 9255,
+          "top_two_margin": 0.4461078643798828
+        },
+        "per_candidate_signed_residual": [
+          2.7256974473033324e-06,
+          2.6534457475690942e-06,
+          3.447372092679757e-06,
+          -1.7069243414269408e-06,
+          -2.0324799701043617e-06,
+          1.392904183106225e-07,
+          -3.0912305470920387e-06,
+          -2.3133803708219602e-06,
+          -4.604437704003317e-06,
+          -1.1466711065111213e-06,
+          -1.639996205060612e-06,
+          2.4060551950810805e-06,
+          -1.0082491286311779e-06
+        ],
+        "residual": {
+          "changed_elements": 13,
+          "elements": 13,
+          "l2": 8.963087319863033e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              8
+            ],
+            "signed": -4.604437704003317e-06
+          },
+          "max_abs": 4.604437704003317e-06,
+          "maximum_signed": 3.447372092679757e-06,
+          "minimum_signed": -4.604437704003317e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": -4.74731420977511e-07,
+          "signed_sum": -6.171508472707643e-06
+        },
+        "scope": "argmax over predeclared selected rows; not a full-vocabulary token forecast"
+      },
+      "candidate_coverage": {
+        "full_native_greedy_token": 1304,
+        "global_winner_in_candidates": false,
+        "scope": "candidate winner accuracy does not certify full-vocabulary winner accuracy"
+      },
+      "computation_id": "qwen2.final-MLP.SwiGLU.residual.RMSNorm.selected-readout",
+      "continuation_check": {
+        "closure_applicable": true,
+        "diagnostics": [],
+        "errors": [],
+        "same_first_token": true,
+        "same_future_tokens": true,
+        "same_prefill_KV": true,
+        "scope": "observed native continuation only; no future-token forecast or restored-cache claim"
+      },
+      "dose": 1.0,
+      "dose_effect_vs_native": {
+        "actual_selected_logit_effect": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "forecast_selected_logit_effect": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scope": "same observed prefix cut; full native logits versus independent selected suffix dose equations"
+      },
+      "explicit_conditions": {
+        "candidate_ids": [
+          20,
+          19,
+          21,
+          12095,
+          59604,
+          7148,
+          39572,
+          9255,
+          87072,
+          4017,
+          10622,
+          13,
+          198
+        ],
+        "execution": {
+          "backend": "cpu",
+          "dtype": "float32",
+          "threads": 4,
+          "torch": "2.13.0+cu130",
+          "transformers": "5.14.1"
+        },
+        "frontier": "observed last-token post-attention residual",
+        "horizon": "final MLP and fixed selected-vocabulary readout",
+        "model_identity": {
+          "attention": "eager",
+          "backend": "cpu",
+          "checkpoint_files_sha256": "dcc86696d4d57a80d56252d32d9fbd8981a9f15ce2367bedcf2642664849dfed",
+          "config_sha256": "daea74e6dd2130c47422486c7522bd5b77ae635639852e7e6f188177e4b5d646",
+          "dtype": "float32",
+          "model_name": "qwen2.5-0.5b-instruct",
+          "model_type": "qwen2",
+          "weights_sha256": "2b226fe4944dc744596b1142a15d6676160e9d06f245d31c1a36633f6c86baa3"
+        },
+        "native_dose_policy": "scale actual native MLP return; frozen predicted FP32 deltas retained but not used"
+      },
+      "forecast_selected_logits": [
+        4.58200802030475,
+        5.310626237545463,
+        4.120234379928933,
+        3.055442132797144,
+        -2.4863692462828473,
+        3.9486921824869254,
+        -0.35825181828483377,
+        17.770430017237793,
+        10.559365108588095,
+        11.76104755627804,
+        3.836815089855824,
+        12.426365353649395,
+        17.324320847726668
+      ],
+      "native_wrapper_residuals": {
+        "MLP_delta": {
+          "changed_elements": 855,
+          "elements": 896,
+          "l2": 3.4719664324150395e-05,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              490
+            ],
+            "signed": -2.6702880859375e-05
+          },
+          "max_abs": 2.6702880859375e-05,
+          "maximum_signed": 7.62939453125e-06,
+          "minimum_signed": -2.6702880859375e-05,
+          "shape": [
+            1,
+            1,
+            896
+          ],
+          "signed_mean": -2.148174514461841e-08,
+          "signed_sum": -1.9247643649578094e-05
+        },
+        "selected_logits": {
+          "changed_elements": 11,
+          "elements": 13,
+          "l2": 1.02054570798037e-05,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              7
+            ],
+            "signed": 5.7220458984375e-06
+          },
+          "max_abs": 5.7220458984375e-06,
+          "maximum_signed": 5.7220458984375e-06,
+          "minimum_signed": -1.9073486328125e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": 1.714779780461238e-06,
+          "signed_sum": 2.2292137145996094e-05
+        }
+      },
+      "observed_continuation": [
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 1304,
+          "full_logits_sha256": "470c64b2e93a3c36e7f69fe8ecd310c9c8a4b9ca2088706781526c31aa7d1963",
+          "greedy_text": "__\n",
+          "greedy_token": 12148,
+          "step": 1
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 12148,
+          "full_logits_sha256": "59bb0e082fc71792f95e13ea54b18444daeb252449ad1b6abdf9b8f4766d5c6e",
+          "greedy_text": "A",
+          "greedy_token": 32,
+          "step": 2
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 32,
+          "full_logits_sha256": "75b43233258dc504184d2ef1db1da8f4d07b22a9793d06c4e0587d0c3f904122",
+          "greedy_text": ".",
+          "greedy_token": 13,
+          "step": 3
+        }
+      ],
+      "observed_generated_text": " ____\nA.",
+      "observed_generated_token_ids": [
+        1304,
+        12148,
+        32,
+        13
+      ],
+      "observed_greedy_text": " __",
+      "prefix_binding": "2e9f6979f1f57084c94394086a87ea1bfcb57fbae07b6eb30dca05ec2458215f",
+      "prompt_id": "antonym",
+      "stage_max_abs": {
+        "delta": 1.0068726211898138e-05,
+        "final_norm": 4.905095325469233e-05,
+        "logits": 4.604437704003317e-06,
+        "postnorm": 1.2284610821922115e-06,
+        "residual": 1.0068726211898138e-05
+      },
+      "trace_fingerprint": "ed5d676a9467cb0f5ab9a0f7209411a773edf9938cb567d1e6fcc05e37ee0d07",
+      "typed_acts": 1,
+      "typed_transitions": 31
+    },
+    "antonym.zero": {
+      "actual_selected_logits": [
+        0.5875319242477417,
+        1.1561871767044067,
+        0.35893478989601135,
+        0.8349602222442627,
+        -3.926557779312134,
+        1.1668323278427124,
+        -1.8939118385314941,
+        13.386816024780273,
+        8.781410217285156,
+        8.183634757995605,
+        2.6966159343719482,
+        5.890190124511719,
+        9.460582733154297
+      ],
+      "arm": "zero",
+      "candidate_comparison": {
+        "candidate_argmax_matches": true,
+        "forecast": {
+          "candidate_index": 7,
+          "logit": 13.386817046654132,
+          "token_id": 9255,
+          "top_two_margin": 3.926234733707828
+        },
+        "observed": {
+          "candidate_index": 7,
+          "logit": 13.38681697845459,
+          "token_id": 9255,
+          "top_two_margin": 3.926236152648926
+        },
+        "per_candidate_signed_residual": [
+          2.3400038595688955e-07,
+          -1.8888478892087335e-07,
+          -3.746188211306567e-07,
+          1.9276038398796658e-07,
+          7.437282514288768e-07,
+          -3.4382324320958446e-07,
+          -3.337878839992925e-07,
+          -6.819954201375822e-08,
+          3.7380424089406006e-07,
+          -3.636425951469846e-07,
+          6.535643297667093e-07,
+          6.437727435582019e-07,
+          -1.4871406399663556e-06
+        ],
+        "residual": {
+          "changed_elements": 13,
+          "elements": 13,
+          "l2": 2.0929604973628654e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              12
+            ],
+            "signed": -1.4871406399663556e-06
+          },
+          "max_abs": 1.4871406399663556e-06,
+          "maximum_signed": 7.437282514288768e-07,
+          "minimum_signed": -1.4871406399663556e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": -2.4497475291907787e-08,
+          "signed_sum": -3.1846717879480124e-07
+        },
+        "scope": "argmax over predeclared selected rows; not a full-vocabulary token forecast"
+      },
+      "candidate_coverage": {
+        "full_native_greedy_token": 1304,
+        "global_winner_in_candidates": false,
+        "scope": "candidate winner accuracy does not certify full-vocabulary winner accuracy"
+      },
+      "computation_id": "qwen2.final-MLP.SwiGLU.residual.RMSNorm.selected-readout",
+      "continuation_check": {
+        "closure_applicable": true,
+        "diagnostics": [],
+        "errors": [],
+        "same_first_token": true,
+        "same_future_tokens": true,
+        "same_prefill_KV": true,
+        "scope": "observed native continuation only; no future-token forecast or restored-cache claim"
+      },
+      "dose": 0.0,
+      "dose_effect_vs_native": {
+        "actual_selected_logit_effect": [
+          -3.9944788217544556,
+          -4.154441714286804,
+          -3.7613035142421722,
+          -2.2204811573028564,
+          -1.4401874542236328,
+          -2.7818609476089478,
+          -1.535659670829773,
+          -4.383617401123047,
+          -1.7779550552368164,
+          -3.5774126052856445,
+          -1.1401984691619873,
+          -6.536175727844238,
+          -7.863742828369141
+        ],
+        "forecast_selected_logit_effect": [
+          -3.994475972429526,
+          -4.154440064049163,
+          -3.7612997816582254,
+          -2.2204818052900417,
+          -1.4401880846646424,
+          -2.781859749239549,
+          -1.535659805668066,
+          -4.383612970583661,
+          -1.7779562187814957,
+          -3.5774152956627887,
+          -1.1401995706296266,
+          -6.536174442398945,
+          -7.863738534780364
+        ],
+        "scope": "same observed prefix cut; full native logits versus independent selected suffix dose equations"
+      },
+      "explicit_conditions": {
+        "candidate_ids": [
+          20,
+          19,
+          21,
+          12095,
+          59604,
+          7148,
+          39572,
+          9255,
+          87072,
+          4017,
+          10622,
+          13,
+          198
+        ],
+        "execution": {
+          "backend": "cpu",
+          "dtype": "float32",
+          "threads": 4,
+          "torch": "2.13.0+cu130",
+          "transformers": "5.14.1"
+        },
+        "frontier": "observed last-token post-attention residual",
+        "horizon": "final MLP and fixed selected-vocabulary readout",
+        "model_identity": {
+          "attention": "eager",
+          "backend": "cpu",
+          "checkpoint_files_sha256": "dcc86696d4d57a80d56252d32d9fbd8981a9f15ce2367bedcf2642664849dfed",
+          "config_sha256": "daea74e6dd2130c47422486c7522bd5b77ae635639852e7e6f188177e4b5d646",
+          "dtype": "float32",
+          "model_name": "qwen2.5-0.5b-instruct",
+          "model_type": "qwen2",
+          "weights_sha256": "2b226fe4944dc744596b1142a15d6676160e9d06f245d31c1a36633f6c86baa3"
+        },
+        "native_dose_policy": "scale actual native MLP return; frozen predicted FP32 deltas retained but not used"
+      },
+      "forecast_selected_logits": [
+        0.5875320478752244,
+        1.1561861734963002,
+        0.3589345982707071,
+        0.8349603275071026,
+        -3.9265573309474897,
+        1.1668324332473765,
+        -1.8939116239528997,
+        13.386817046654132,
+        8.781408889806599,
+        8.183632260615251,
+        2.6966155192261976,
+        5.89019091125045,
+        9.460582312946304
+      ],
+      "native_wrapper_residuals": {
+        "MLP_delta": {
+          "changed_elements": 0,
+          "elements": 896,
+          "l2": 0.0,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "signed": 0.0
+          },
+          "max_abs": 0.0,
+          "maximum_signed": 0.0,
+          "minimum_signed": 0.0,
+          "shape": [
+            1,
+            1,
+            896
+          ],
+          "signed_mean": 0.0,
+          "signed_sum": 0.0
+        },
+        "selected_logits": {
+          "changed_elements": 13,
+          "elements": 13,
+          "l2": 4.3813468460028145e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              9
+            ],
+            "signed": 2.86102294921875e-06
+          },
+          "max_abs": 2.86102294921875e-06,
+          "maximum_signed": 2.86102294921875e-06,
+          "minimum_signed": -1.430511474609375e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": 2.590509561391977e-07,
+          "signed_sum": 3.3676624298095703e-06
+        }
+      },
+      "observed_continuation": [
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 1304,
+          "full_logits_sha256": "470c64b2e93a3c36e7f69fe8ecd310c9c8a4b9ca2088706781526c31aa7d1963",
+          "greedy_text": "__\n",
+          "greedy_token": 12148,
+          "step": 1
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 12148,
+          "full_logits_sha256": "59bb0e082fc71792f95e13ea54b18444daeb252449ad1b6abdf9b8f4766d5c6e",
+          "greedy_text": "A",
+          "greedy_token": 32,
+          "step": 2
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 32,
+          "full_logits_sha256": "75b43233258dc504184d2ef1db1da8f4d07b22a9793d06c4e0587d0c3f904122",
+          "greedy_text": ".",
+          "greedy_token": 13,
+          "step": 3
+        }
+      ],
+      "observed_generated_text": " ____\nA.",
+      "observed_generated_token_ids": [
+        1304,
+        12148,
+        32,
+        13
+      ],
+      "observed_greedy_text": " __",
+      "prefix_binding": "2e9f6979f1f57084c94394086a87ea1bfcb57fbae07b6eb30dca05ec2458215f",
+      "prompt_id": "antonym",
+      "stage_max_abs": {
+        "delta": 0.0,
+        "final_norm": 2.9170693593982833e-06,
+        "logits": 1.4871406399663556e-06,
+        "postnorm": 1.2284610821922115e-06,
+        "residual": 0.0
+      },
+      "trace_fingerprint": "7b4441bde083b592218c3af3217161828a971b01287bf0d897b072b016892ecd",
+      "typed_acts": 1,
+      "typed_transitions": 31
+    },
+    "arithmetic.half": {
+      "actual_selected_logits": [
+        17.10030174255371,
+        14.016517639160156,
+        13.386199951171875,
+        1.6407520771026611,
+        -2.1890926361083984,
+        -0.4176650643348694,
+        -4.103154182434082,
+        -2.499631404876709,
+        -6.290053367614746,
+        1.4673699140548706,
+        -3.8538222312927246,
+        0.42473673820495605,
+        0.28766965866088867
+      ],
+      "arm": "half",
+      "candidate_comparison": {
+        "candidate_argmax_matches": true,
+        "forecast": {
+          "candidate_index": 0,
+          "logit": 17.100299833599696,
+          "token_id": 20,
+          "top_two_margin": 3.0837829764142732
+        },
+        "observed": {
+          "candidate_index": 0,
+          "logit": 17.100299835205078,
+          "token_id": 20,
+          "top_two_margin": 3.083782196044922
+        },
+        "per_candidate_signed_residual": [
+          1.6053824936079764e-09,
+          7.819747338544403e-07,
+          -7.902585998920131e-07,
+          -4.432024374168009e-07,
+          -4.028693956215079e-07,
+          -9.478284878072785e-07,
+          -6.944115380491667e-07,
+          -8.973747092078099e-07,
+          -3.416938305633721e-07,
+          -4.145849392678258e-07,
+          7.789691531812082e-07,
+          3.077899423664654e-06,
+          3.325816769539358e-06
+        ],
+        "residual": {
+          "changed_elements": 13,
+          "elements": 13,
+          "l2": 5.021010435765821e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              12
+            ],
+            "signed": 3.325816769539358e-06
+          },
+          "max_abs": 3.325816769539358e-06,
+          "maximum_signed": 3.325816769539358e-06,
+          "minimum_signed": -9.478284878072785e-07,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": 2.3338780960826875e-07,
+          "signed_sum": 3.0340415249074937e-06
+        },
+        "scope": "argmax over predeclared selected rows; not a full-vocabulary token forecast"
+      },
+      "candidate_coverage": {
+        "full_native_greedy_token": 20,
+        "global_winner_in_candidates": true,
+        "scope": "candidate winner accuracy does not certify full-vocabulary winner accuracy"
+      },
+      "computation_id": "qwen2.final-MLP.SwiGLU.residual.RMSNorm.selected-readout",
+      "continuation_check": {
+        "closure_applicable": true,
+        "diagnostics": [],
+        "errors": [],
+        "same_first_token": true,
+        "same_future_tokens": true,
+        "same_prefill_KV": true,
+        "scope": "observed native continuation only; no future-token forecast or restored-cache claim"
+      },
+      "dose": 0.5,
+      "dose_effect_vs_native": {
+        "actual_selected_logit_effect": [
+          -2.483339309692383,
+          -3.50445556640625,
+          -3.47930908203125,
+          -0.30342066287994385,
+          0.32950568199157715,
+          -0.6742131114006042,
+          -0.27076005935668945,
+          -0.3697316646575928,
+          0.42669677734375,
+          -0.25711071491241455,
+          -0.06449174880981445,
+          1.4720044136047363,
+          1.5424754619598389
+        ],
+        "forecast_selected_logit_effect": [
+          -2.4833475650689856,
+          -3.5044571458349054,
+          -3.4793050986334784,
+          -0.303419828543263,
+          0.32950524510743673,
+          -0.6742130187357261,
+          -0.27075922629246296,
+          -0.36973085625159063,
+          0.4266991719558746,
+          -0.2571091581383511,
+          -0.06449173717370815,
+          1.472003764689477,
+          1.5424757784054026
+        ],
+        "scope": "same observed prefix cut; full native logits versus independent selected suffix dose equations"
+      },
+      "explicit_conditions": {
+        "candidate_ids": [
+          20,
+          19,
+          21,
+          12095,
+          59604,
+          7148,
+          39572,
+          9255,
+          87072,
+          4017,
+          10622,
+          13,
+          198
+        ],
+        "execution": {
+          "backend": "cpu",
+          "dtype": "float32",
+          "threads": 4,
+          "torch": "2.13.0+cu130",
+          "transformers": "5.14.1"
+        },
+        "frontier": "observed last-token post-attention residual",
+        "horizon": "final MLP and fixed selected-vocabulary readout",
+        "model_identity": {
+          "attention": "eager",
+          "backend": "cpu",
+          "checkpoint_files_sha256": "dcc86696d4d57a80d56252d32d9fbd8981a9f15ce2367bedcf2642664849dfed",
+          "config_sha256": "daea74e6dd2130c47422486c7522bd5b77ae635639852e7e6f188177e4b5d646",
+          "dtype": "float32",
+          "model_name": "qwen2.5-0.5b-instruct",
+          "model_type": "qwen2",
+          "weights_sha256": "2b226fe4944dc744596b1142a15d6676160e9d06f245d31c1a36633f6c86baa3"
+        },
+        "native_dose_policy": "scale actual native MLP return; frozen predicted FP32 deltas retained but not used"
+      },
+      "forecast_selected_logits": [
+        17.100299833599696,
+        14.016516857185422,
+        13.386202648779108,
+        1.6407522818865194,
+        -2.1890936637504774,
+        -0.4176652489946323,
+        -4.103152534348228,
+        -2.4996305075019998,
+        -6.290052549083757,
+        1.4673704478490994,
+        -3.8538220565875614,
+        0.4247348523984279,
+        0.28766919386706835
+      ],
+      "native_wrapper_residuals": {
+        "MLP_delta": {
+          "changed_elements": 855,
+          "elements": 896,
+          "l2": 1.2832059196593003e-05,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              490
+            ],
+            "signed": -2.86102294921875e-06
+          },
+          "max_abs": 2.86102294921875e-06,
+          "maximum_signed": 2.86102294921875e-06,
+          "minimum_signed": -2.86102294921875e-06,
+          "shape": [
+            1,
+            1,
+            896
+          ],
+          "signed_mean": -1.2145132391846606e-08,
+          "signed_sum": -1.0882038623094559e-05
+        },
+        "selected_logits": {
+          "changed_elements": 11,
+          "elements": 13,
+          "l2": 4.7253365458199e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              12
+            ],
+            "signed": -2.86102294921875e-06
+          },
+          "max_abs": 2.86102294921875e-06,
+          "maximum_signed": 1.9073486328125e-06,
+          "minimum_signed": -2.86102294921875e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": -2.88853278526893e-07,
+          "signed_sum": -3.7550926208496094e-06
+        }
+      },
+      "observed_continuation": [
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 20,
+          "full_logits_sha256": "c15028a9f5ff219faec3bf0dcf33e8269d95a0b9712ebc4c552d4eb06f9584ce",
+          "greedy_text": "\n\n",
+          "greedy_token": 271,
+          "step": 1
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 271,
+          "full_logits_sha256": "d7436735c5e47f6291f71a256706efd24eea7588d66bd1a565c3776d4ecadf1a",
+          "greedy_text": "To",
+          "greedy_token": 1249,
+          "step": 2
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 1249,
+          "full_logits_sha256": "49dca5c49bb42d570fce04e29a2bacf18be145ac1b3354ce05b39713aefb8013",
+          "greedy_text": " complete",
+          "greedy_token": 4583,
+          "step": 3
+        }
+      ],
+      "observed_generated_text": "5\n\nTo complete",
+      "observed_generated_token_ids": [
+        20,
+        271,
+        1249,
+        4583
+      ],
+      "observed_greedy_text": "5",
+      "prefix_binding": "a40f05c17dfbd9a83609df66bcce8893e20eadeb958804eb85736f94b005c0f0",
+      "prompt_id": "arithmetic",
+      "stage_max_abs": {
+        "delta": 3.4332287803806594e-06,
+        "final_norm": 1.6095996002718493e-05,
+        "logits": 3.325816769539358e-06,
+        "postnorm": 8.876102093324789e-07,
+        "residual": 4.386903100339623e-06
+      },
+      "trace_fingerprint": "b2aeb8ed6e2d0b828c8077b70f6f77029fcc11bdc5efe44edcb73cf9755a91cf",
+      "typed_acts": 1,
+      "typed_transitions": 31
+    },
+    "arithmetic.native": {
+      "actual_selected_logits": [
+        19.583641052246094,
+        17.520973205566406,
+        16.865509033203125,
+        1.944172739982605,
+        -2.5185983180999756,
+        0.25654804706573486,
+        -3.8323941230773926,
+        -2.129899740219116,
+        -6.716750144958496,
+        1.7244806289672852,
+        -3.78933048248291,
+        -1.0472676753997803,
+        -1.2548058032989502
+      ],
+      "arm": "native",
+      "candidate_comparison": {
+        "candidate_argmax_matches": true,
+        "forecast": {
+          "candidate_index": 0,
+          "logit": 19.58364739866868,
+          "token_id": 20,
+          "top_two_margin": 2.0626733956483534
+        },
+        "observed": {
+          "candidate_index": 0,
+          "logit": 19.58364486694336,
+          "token_id": 20,
+          "top_two_margin": 2.062671661376953
+        },
+        "per_candidate_signed_residual": [
+          -2.531725321830436e-06,
+          -7.974539215638288e-07,
+          1.285790538929632e-06,
+          -1.2777958102727638e-06,
+          -3.2239393270572236e-06,
+          -6.465473529893018e-07,
+          -1.2918587861676656e-06,
+          1.4944987203335813e-07,
+          -3.31267496989085e-07,
+          -1.3612059563961054e-06,
+          -1.1167433733305643e-06,
+          2.9058213226740293e-06,
+          2.927006595987436e-06
+        ],
+        "residual": {
+          "changed_elements": 13,
+          "elements": 13,
+          "l2": 6.561671182042571e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              4
+            ],
+            "signed": -3.2239393270572236e-06
+          },
+          "max_abs": 3.2239393270572236e-06,
+          "maximum_signed": 2.927006595987436e-06,
+          "minimum_signed": -3.2239393270572236e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": -4.0849761669019375e-07,
+          "signed_sum": -5.310469016972519e-06
+        },
+        "scope": "argmax over predeclared selected rows; not a full-vocabulary token forecast"
+      },
+      "candidate_coverage": {
+        "full_native_greedy_token": 20,
+        "global_winner_in_candidates": true,
+        "scope": "candidate winner accuracy does not certify full-vocabulary winner accuracy"
+      },
+      "computation_id": "qwen2.final-MLP.SwiGLU.residual.RMSNorm.selected-readout",
+      "continuation_check": {
+        "closure_applicable": true,
+        "diagnostics": [],
+        "errors": [],
+        "same_first_token": true,
+        "same_future_tokens": true,
+        "same_prefill_KV": true,
+        "scope": "observed native continuation only; no future-token forecast or restored-cache claim"
+      },
+      "dose": 1.0,
+      "dose_effect_vs_native": {
+        "actual_selected_logit_effect": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "forecast_selected_logit_effect": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scope": "same observed prefix cut; full native logits versus independent selected suffix dose equations"
+      },
+      "explicit_conditions": {
+        "candidate_ids": [
+          20,
+          19,
+          21,
+          12095,
+          59604,
+          7148,
+          39572,
+          9255,
+          87072,
+          4017,
+          10622,
+          13,
+          198
+        ],
+        "execution": {
+          "backend": "cpu",
+          "dtype": "float32",
+          "threads": 4,
+          "torch": "2.13.0+cu130",
+          "transformers": "5.14.1"
+        },
+        "frontier": "observed last-token post-attention residual",
+        "horizon": "final MLP and fixed selected-vocabulary readout",
+        "model_identity": {
+          "attention": "eager",
+          "backend": "cpu",
+          "checkpoint_files_sha256": "dcc86696d4d57a80d56252d32d9fbd8981a9f15ce2367bedcf2642664849dfed",
+          "config_sha256": "daea74e6dd2130c47422486c7522bd5b77ae635639852e7e6f188177e4b5d646",
+          "dtype": "float32",
+          "model_name": "qwen2.5-0.5b-instruct",
+          "model_type": "qwen2",
+          "weights_sha256": "2b226fe4944dc744596b1142a15d6676160e9d06f245d31c1a36633f6c86baa3"
+        },
+        "native_dose_policy": "scale actual native MLP return; frozen predicted FP32 deltas retained but not used"
+      },
+      "forecast_selected_logits": [
+        19.58364739866868,
+        17.520974003020328,
+        16.865507747412586,
+        1.9441721104297824,
+        -2.518598908857914,
+        0.25654776974109383,
+        -3.8323933080557646,
+        -2.129899651250409,
+        -6.716751721039632,
+        1.7244796059874505,
+        -3.7893303194138532,
+        -1.0472689122910492,
+        -1.2548065845383343
+      ],
+      "native_wrapper_residuals": {
+        "MLP_delta": {
+          "changed_elements": 855,
+          "elements": 896,
+          "l2": 2.5664118393186006e-05,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              490
+            ],
+            "signed": -5.7220458984375e-06
+          },
+          "max_abs": 5.7220458984375e-06,
+          "maximum_signed": 5.7220458984375e-06,
+          "minimum_signed": -5.7220458984375e-06,
+          "shape": [
+            1,
+            1,
+            896
+          ],
+          "signed_mean": -2.4290264783693212e-08,
+          "signed_sum": -2.1764077246189117e-05
+        },
+        "selected_logits": {
+          "changed_elements": 11,
+          "elements": 13,
+          "l2": 7.176421508405966e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "signed": -3.814697265625e-06
+          },
+          "max_abs": 3.814697265625e-06,
+          "maximum_signed": 3.814697265625e-06,
+          "minimum_signed": -3.814697265625e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": 3.461654369647686e-07,
+          "signed_sum": 4.500150680541992e-06
+        }
+      },
+      "observed_continuation": [
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 20,
+          "full_logits_sha256": "c15028a9f5ff219faec3bf0dcf33e8269d95a0b9712ebc4c552d4eb06f9584ce",
+          "greedy_text": "\n\n",
+          "greedy_token": 271,
+          "step": 1
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 271,
+          "full_logits_sha256": "d7436735c5e47f6291f71a256706efd24eea7588d66bd1a565c3776d4ecadf1a",
+          "greedy_text": "To",
+          "greedy_token": 1249,
+          "step": 2
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 1249,
+          "full_logits_sha256": "49dca5c49bb42d570fce04e29a2bacf18be145ac1b3354ce05b39713aefb8013",
+          "greedy_text": " complete",
+          "greedy_token": 4583,
+          "step": 3
+        }
+      ],
+      "observed_generated_text": "5\n\nTo complete",
+      "observed_generated_token_ids": [
+        20,
+        271,
+        1249,
+        4583
+      ],
+      "observed_greedy_text": "5",
+      "prefix_binding": "a40f05c17dfbd9a83609df66bcce8893e20eadeb958804eb85736f94b005c0f0",
+      "prompt_id": "arithmetic",
+      "stage_max_abs": {
+        "delta": 6.866457560761319e-06,
+        "final_norm": 2.6511332443135416e-05,
+        "logits": 3.2239393270572236e-06,
+        "postnorm": 8.876102093324789e-07,
+        "residual": 6.140433003842816e-06
+      },
+      "trace_fingerprint": "3385d221506897251214d72ce08523bd03336628159fed870104fc08c9d221c4",
+      "typed_acts": 0,
+      "typed_transitions": 31
+    },
+    "arithmetic.sham": {
+      "actual_selected_logits": [
+        19.583641052246094,
+        17.520973205566406,
+        16.865509033203125,
+        1.944172739982605,
+        -2.5185983180999756,
+        0.25654804706573486,
+        -3.8323941230773926,
+        -2.129899740219116,
+        -6.716750144958496,
+        1.7244806289672852,
+        -3.78933048248291,
+        -1.0472676753997803,
+        -1.2548058032989502
+      ],
+      "arm": "sham",
+      "candidate_comparison": {
+        "candidate_argmax_matches": true,
+        "forecast": {
+          "candidate_index": 0,
+          "logit": 19.58364739866868,
+          "token_id": 20,
+          "top_two_margin": 2.0626733956483534
+        },
+        "observed": {
+          "candidate_index": 0,
+          "logit": 19.58364486694336,
+          "token_id": 20,
+          "top_two_margin": 2.062671661376953
+        },
+        "per_candidate_signed_residual": [
+          -2.531725321830436e-06,
+          -7.974539215638288e-07,
+          1.285790538929632e-06,
+          -1.2777958102727638e-06,
+          -3.2239393270572236e-06,
+          -6.465473529893018e-07,
+          -1.2918587861676656e-06,
+          1.4944987203335813e-07,
+          -3.31267496989085e-07,
+          -1.3612059563961054e-06,
+          -1.1167433733305643e-06,
+          2.9058213226740293e-06,
+          2.927006595987436e-06
+        ],
+        "residual": {
+          "changed_elements": 13,
+          "elements": 13,
+          "l2": 6.561671182042571e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              4
+            ],
+            "signed": -3.2239393270572236e-06
+          },
+          "max_abs": 3.2239393270572236e-06,
+          "maximum_signed": 2.927006595987436e-06,
+          "minimum_signed": -3.2239393270572236e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": -4.0849761669019375e-07,
+          "signed_sum": -5.310469016972519e-06
+        },
+        "scope": "argmax over predeclared selected rows; not a full-vocabulary token forecast"
+      },
+      "candidate_coverage": {
+        "full_native_greedy_token": 20,
+        "global_winner_in_candidates": true,
+        "scope": "candidate winner accuracy does not certify full-vocabulary winner accuracy"
+      },
+      "computation_id": "qwen2.final-MLP.SwiGLU.residual.RMSNorm.selected-readout",
+      "continuation_check": {
+        "closure_applicable": true,
+        "diagnostics": [],
+        "errors": [],
+        "same_first_token": true,
+        "same_future_tokens": true,
+        "same_prefill_KV": true,
+        "scope": "observed native continuation only; no future-token forecast or restored-cache claim"
+      },
+      "dose": 1.0,
+      "dose_effect_vs_native": {
+        "actual_selected_logit_effect": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "forecast_selected_logit_effect": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scope": "same observed prefix cut; full native logits versus independent selected suffix dose equations"
+      },
+      "explicit_conditions": {
+        "candidate_ids": [
+          20,
+          19,
+          21,
+          12095,
+          59604,
+          7148,
+          39572,
+          9255,
+          87072,
+          4017,
+          10622,
+          13,
+          198
+        ],
+        "execution": {
+          "backend": "cpu",
+          "dtype": "float32",
+          "threads": 4,
+          "torch": "2.13.0+cu130",
+          "transformers": "5.14.1"
+        },
+        "frontier": "observed last-token post-attention residual",
+        "horizon": "final MLP and fixed selected-vocabulary readout",
+        "model_identity": {
+          "attention": "eager",
+          "backend": "cpu",
+          "checkpoint_files_sha256": "dcc86696d4d57a80d56252d32d9fbd8981a9f15ce2367bedcf2642664849dfed",
+          "config_sha256": "daea74e6dd2130c47422486c7522bd5b77ae635639852e7e6f188177e4b5d646",
+          "dtype": "float32",
+          "model_name": "qwen2.5-0.5b-instruct",
+          "model_type": "qwen2",
+          "weights_sha256": "2b226fe4944dc744596b1142a15d6676160e9d06f245d31c1a36633f6c86baa3"
+        },
+        "native_dose_policy": "scale actual native MLP return; frozen predicted FP32 deltas retained but not used"
+      },
+      "forecast_selected_logits": [
+        19.58364739866868,
+        17.520974003020328,
+        16.865507747412586,
+        1.9441721104297824,
+        -2.518598908857914,
+        0.25654776974109383,
+        -3.8323933080557646,
+        -2.129899651250409,
+        -6.716751721039632,
+        1.7244796059874505,
+        -3.7893303194138532,
+        -1.0472689122910492,
+        -1.2548065845383343
+      ],
+      "native_wrapper_residuals": {
+        "MLP_delta": {
+          "changed_elements": 855,
+          "elements": 896,
+          "l2": 2.5664118393186006e-05,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              490
+            ],
+            "signed": -5.7220458984375e-06
+          },
+          "max_abs": 5.7220458984375e-06,
+          "maximum_signed": 5.7220458984375e-06,
+          "minimum_signed": -5.7220458984375e-06,
+          "shape": [
+            1,
+            1,
+            896
+          ],
+          "signed_mean": -2.4290264783693212e-08,
+          "signed_sum": -2.1764077246189117e-05
+        },
+        "selected_logits": {
+          "changed_elements": 11,
+          "elements": 13,
+          "l2": 7.176421508405966e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "signed": -3.814697265625e-06
+          },
+          "max_abs": 3.814697265625e-06,
+          "maximum_signed": 3.814697265625e-06,
+          "minimum_signed": -3.814697265625e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": 3.461654369647686e-07,
+          "signed_sum": 4.500150680541992e-06
+        }
+      },
+      "observed_continuation": [
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 20,
+          "full_logits_sha256": "c15028a9f5ff219faec3bf0dcf33e8269d95a0b9712ebc4c552d4eb06f9584ce",
+          "greedy_text": "\n\n",
+          "greedy_token": 271,
+          "step": 1
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 271,
+          "full_logits_sha256": "d7436735c5e47f6291f71a256706efd24eea7588d66bd1a565c3776d4ecadf1a",
+          "greedy_text": "To",
+          "greedy_token": 1249,
+          "step": 2
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 1249,
+          "full_logits_sha256": "49dca5c49bb42d570fce04e29a2bacf18be145ac1b3354ce05b39713aefb8013",
+          "greedy_text": " complete",
+          "greedy_token": 4583,
+          "step": 3
+        }
+      ],
+      "observed_generated_text": "5\n\nTo complete",
+      "observed_generated_token_ids": [
+        20,
+        271,
+        1249,
+        4583
+      ],
+      "observed_greedy_text": "5",
+      "prefix_binding": "a40f05c17dfbd9a83609df66bcce8893e20eadeb958804eb85736f94b005c0f0",
+      "prompt_id": "arithmetic",
+      "stage_max_abs": {
+        "delta": 6.866457560761319e-06,
+        "final_norm": 2.6511332443135416e-05,
+        "logits": 3.2239393270572236e-06,
+        "postnorm": 8.876102093324789e-07,
+        "residual": 6.140433003842816e-06
+      },
+      "trace_fingerprint": "d0377ac16b0dacd1e46da538f623e6fb24bad9f6192b2ccbee57fe589b6985d4",
+      "typed_acts": 1,
+      "typed_transitions": 31
+    },
+    "arithmetic.zero": {
+      "actual_selected_logits": [
+        12.684240341186523,
+        8.939212799072266,
+        8.405801773071289,
+        1.1523938179016113,
+        -1.612261176109314,
+        -1.0390043258666992,
+        -3.903480052947998,
+        -2.581195592880249,
+        -5.148684024810791,
+        1.0447559356689453,
+        -3.477932929992676,
+        1.836903691291809,
+        1.785412073135376
+      ],
+      "arm": "zero",
+      "candidate_comparison": {
+        "candidate_argmax_matches": true,
+        "forecast": {
+          "candidate_index": 0,
+          "logit": 12.684239945460712,
+          "token_id": 20,
+          "top_two_margin": 3.745026307718666
+        },
+        "observed": {
+          "candidate_index": 0,
+          "logit": 12.684237480163574,
+          "token_id": 20,
+          "top_two_margin": 3.745023727416992
+        },
+        "per_candidate_signed_residual": [
+          -2.465297137987932e-06,
+          1.1500453567236946e-07,
+          -1.2013809662647645e-06,
+          -2.874438584932193e-07,
+          -3.0146910079409395e-08,
+          3.319642891685959e-07,
+          -2.140604227207632e-07,
+          5.913432068460622e-07,
+          -8.140244531773533e-07,
+          1.259895445748782e-07,
+          -4.103163626645312e-07,
+          -2.3377161983972883e-07,
+          2.634934057610394e-07
+        ],
+        "residual": {
+          "changed_elements": 13,
+          "elements": 13,
+          "l2": 3.0156957134829644e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "signed": -2.465297137987932e-06
+          },
+          "max_abs": 2.465297137987932e-06,
+          "maximum_signed": 5.913432068460622e-07,
+          "minimum_signed": -2.465297137987932e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": -3.2528051916959663e-07,
+          "signed_sum": -4.228646749204756e-06
+        },
+        "scope": "argmax over predeclared selected rows; not a full-vocabulary token forecast"
+      },
+      "candidate_coverage": {
+        "full_native_greedy_token": 20,
+        "global_winner_in_candidates": true,
+        "scope": "candidate winner accuracy does not certify full-vocabulary winner accuracy"
+      },
+      "computation_id": "qwen2.final-MLP.SwiGLU.residual.RMSNorm.selected-readout",
+      "continuation_check": {
+        "closure_applicable": true,
+        "diagnostics": [],
+        "errors": [],
+        "same_first_token": true,
+        "same_future_tokens": true,
+        "same_prefill_KV": true,
+        "scope": "observed native continuation only; no future-token forecast or restored-cache claim"
+      },
+      "dose": 0.0,
+      "dose_effect_vs_native": {
+        "actual_selected_logit_effect": [
+          -6.89940071105957,
+          -8.58176040649414,
+          -8.459707260131836,
+          -0.7917789220809937,
+          0.9063371419906616,
+          -1.295552372932434,
+          -0.07108592987060547,
+          -0.4512958526611328,
+          1.568066120147705,
+          -0.6797246932983398,
+          0.3113975524902344,
+          2.8841713666915894,
+          3.040217876434326
+        ],
+        "forecast_selected_logit_effect": [
+          -6.899407453207969,
+          -8.581760365278281,
+          -8.45970477296033,
+          -0.7917784819214708,
+          0.906337047639773,
+          -1.2955523083627927,
+          -0.07108676925038981,
+          -0.4512962945544676,
+          1.5680680334161359,
+          -0.6797241539359185,
+          0.3113980381561192,
+          2.884173194982347,
+          3.040218632598884
+        ],
+        "scope": "same observed prefix cut; full native logits versus independent selected suffix dose equations"
+      },
+      "explicit_conditions": {
+        "candidate_ids": [
+          20,
+          19,
+          21,
+          12095,
+          59604,
+          7148,
+          39572,
+          9255,
+          87072,
+          4017,
+          10622,
+          13,
+          198
+        ],
+        "execution": {
+          "backend": "cpu",
+          "dtype": "float32",
+          "threads": 4,
+          "torch": "2.13.0+cu130",
+          "transformers": "5.14.1"
+        },
+        "frontier": "observed last-token post-attention residual",
+        "horizon": "final MLP and fixed selected-vocabulary readout",
+        "model_identity": {
+          "attention": "eager",
+          "backend": "cpu",
+          "checkpoint_files_sha256": "dcc86696d4d57a80d56252d32d9fbd8981a9f15ce2367bedcf2642664849dfed",
+          "config_sha256": "daea74e6dd2130c47422486c7522bd5b77ae635639852e7e6f188177e4b5d646",
+          "dtype": "float32",
+          "model_name": "qwen2.5-0.5b-instruct",
+          "model_type": "qwen2",
+          "weights_sha256": "2b226fe4944dc744596b1142a15d6676160e9d06f245d31c1a36633f6c86baa3"
+        },
+        "native_dose_policy": "scale actual native MLP return; frozen predicted FP32 deltas retained but not used"
+      },
+      "forecast_selected_logits": [
+        12.684239945460712,
+        8.939213637742046,
+        8.405802974452255,
+        1.1523936285083116,
+        -1.6122618612181412,
+        -1.0390045386216988,
+        -3.9034800773061544,
+        -2.5811959458048768,
+        -5.148683687623496,
+        1.044755452051532,
+        -3.477932281257734,
+        1.8369042826912976,
+        1.7854120480605493
+      ],
+      "native_wrapper_residuals": {
+        "MLP_delta": {
+          "changed_elements": 0,
+          "elements": 896,
+          "l2": 0.0,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "signed": 0.0
+          },
+          "max_abs": 0.0,
+          "maximum_signed": 0.0,
+          "minimum_signed": 0.0,
+          "shape": [
+            1,
+            1,
+            896
+          ],
+          "signed_mean": 0.0,
+          "signed_sum": 0.0
+        },
+        "selected_logits": {
+          "changed_elements": 12,
+          "elements": 13,
+          "l2": 3.2494099546525504e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "signed": 2.86102294921875e-06
+          },
+          "max_abs": 2.86102294921875e-06,
+          "maximum_signed": 2.86102294921875e-06,
+          "minimum_signed": -9.5367431640625e-07,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": 2.292486337515024e-07,
+          "signed_sum": 2.9802322387695312e-06
+        }
+      },
+      "observed_continuation": [
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 20,
+          "full_logits_sha256": "c15028a9f5ff219faec3bf0dcf33e8269d95a0b9712ebc4c552d4eb06f9584ce",
+          "greedy_text": "\n\n",
+          "greedy_token": 271,
+          "step": 1
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 271,
+          "full_logits_sha256": "d7436735c5e47f6291f71a256706efd24eea7588d66bd1a565c3776d4ecadf1a",
+          "greedy_text": "To",
+          "greedy_token": 1249,
+          "step": 2
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 1249,
+          "full_logits_sha256": "49dca5c49bb42d570fce04e29a2bacf18be145ac1b3354ce05b39713aefb8013",
+          "greedy_text": " complete",
+          "greedy_token": 4583,
+          "step": 3
+        }
+      ],
+      "observed_generated_text": "5\n\nTo complete",
+      "observed_generated_token_ids": [
+        20,
+        271,
+        1249,
+        4583
+      ],
+      "observed_greedy_text": "5",
+      "prefix_binding": "a40f05c17dfbd9a83609df66bcce8893e20eadeb958804eb85736f94b005c0f0",
+      "prompt_id": "arithmetic",
+      "stage_max_abs": {
+        "delta": 0.0,
+        "final_norm": 4.6768854176093555e-06,
+        "logits": 2.465297137987932e-06,
+        "postnorm": 8.876102093324789e-07,
+        "residual": 0.0
+      },
+      "trace_fingerprint": "79c4be2dd4bbaac3b4af01d846f366529aaae1e3de5e91ce2d31a134aaecc079",
+      "typed_acts": 1,
+      "typed_transitions": 31
+    },
+    "capital.half": {
+      "actual_selected_logits": [
+        0.3532066345214844,
+        -0.760403037071228,
+        -0.4274052381515503,
+        16.748079299926758,
+        10.157346725463867,
+        8.628233909606934,
+        4.239193439483643,
+        2.1891698837280273,
+        -2.0363621711730957,
+        4.242221832275391,
+        0.5015146732330322,
+        9.9605131149292,
+        12.15237808227539
+      ],
+      "arm": "half",
+      "candidate_comparison": {
+        "candidate_argmax_matches": true,
+        "forecast": {
+          "candidate_index": 3,
+          "logit": 16.748079808206427,
+          "token_id": 12095,
+          "top_two_margin": 4.5957034176584095
+        },
+        "observed": {
+          "candidate_index": 3,
+          "logit": 16.748077392578125,
+          "token_id": 12095,
+          "top_two_margin": 4.595703125
+        },
+        "per_candidate_signed_residual": [
+          -1.912958349725713e-06,
+          -1.923703403683419e-06,
+          -5.23142104080776e-07,
+          -2.4156283018328395e-06,
+          1.035454605613495e-06,
+          1.5357985798658547e-06,
+          1.2397305884093157e-06,
+          -2.8308070509908134e-07,
+          8.942979690118591e-09,
+          -1.272339282820667e-07,
+          5.563410394593404e-07,
+          -2.6640528538734998e-06,
+          -2.1229698923264095e-06
+        ],
+        "residual": {
+          "changed_elements": 13,
+          "elements": 13,
+          "l2": 5.517866879146516e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              11
+            ],
+            "signed": -2.6640528538734998e-06
+          },
+          "max_abs": 2.6640528538734998e-06,
+          "maximum_signed": 1.5357985798658547e-06,
+          "minimum_signed": -2.6640528538734998e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": -5.843462881435139e-07,
+          "signed_sum": -7.59650174586568e-06
+        },
+        "scope": "argmax over predeclared selected rows; not a full-vocabulary token forecast"
+      },
+      "candidate_coverage": {
+        "full_native_greedy_token": 12095,
+        "global_winner_in_candidates": true,
+        "scope": "candidate winner accuracy does not certify full-vocabulary winner accuracy"
+      },
+      "computation_id": "qwen2.final-MLP.SwiGLU.residual.RMSNorm.selected-readout",
+      "continuation_check": {
+        "closure_applicable": true,
+        "diagnostics": [],
+        "errors": [],
+        "same_first_token": true,
+        "same_future_tokens": true,
+        "same_prefill_KV": true,
+        "scope": "observed native continuation only; no future-token forecast or restored-cache claim"
+      },
+      "dose": 0.5,
+      "dose_effect_vs_native": {
+        "actual_selected_logit_effect": [
+          -2.1190898418426514,
+          -2.187928795814514,
+          -2.3079038858413696,
+          -0.4692058563232422,
+          0.6825027465820312,
+          -2.538201332092285,
+          -1.3703670501708984,
+          -0.8384428024291992,
+          0.4834921360015869,
+          -0.5365066528320312,
+          0.5461897850036621,
+          -2.4027490615844727,
+          -2.166807174682617
+        ],
+        "forecast_selected_logit_effect": [
+          -2.1190887275818078,
+          -2.1879281950386558,
+          -2.307903261674688,
+          -0.46920519426721086,
+          0.6825024716930947,
+          -2.538205518822716,
+          -1.3703694292529995,
+          -0.8384434350609467,
+          0.4834902745417007,
+          -0.5365044005140458,
+          0.5461904384075077,
+          -2.4027519280270973,
+          -2.166809019060274
+        ],
+        "scope": "same observed prefix cut; full native logits versus independent selected suffix dose equations"
+      },
+      "explicit_conditions": {
+        "candidate_ids": [
+          20,
+          19,
+          21,
+          12095,
+          59604,
+          7148,
+          39572,
+          9255,
+          87072,
+          4017,
+          10622,
+          13,
+          198
+        ],
+        "execution": {
+          "backend": "cpu",
+          "dtype": "float32",
+          "threads": 4,
+          "torch": "2.13.0+cu130",
+          "transformers": "5.14.1"
+        },
+        "frontier": "observed last-token post-attention residual",
+        "horizon": "final MLP and fixed selected-vocabulary readout",
+        "model_identity": {
+          "attention": "eager",
+          "backend": "cpu",
+          "checkpoint_files_sha256": "dcc86696d4d57a80d56252d32d9fbd8981a9f15ce2367bedcf2642664849dfed",
+          "config_sha256": "daea74e6dd2130c47422486c7522bd5b77ae635639852e7e6f188177e4b5d646",
+          "dtype": "float32",
+          "model_name": "qwen2.5-0.5b-instruct",
+          "model_type": "qwen2",
+          "weights_sha256": "2b226fe4944dc744596b1142a15d6676160e9d06f245d31c1a36633f6c86baa3"
+        },
+        "native_dose_policy": "scale actual native MLP return; frozen predicted FP32 deltas retained but not used"
+      },
+      "forecast_selected_logits": [
+        0.3532071169683595,
+        -0.7604026630885885,
+        -0.4274039997537089,
+        16.748079808206427,
+        10.157347597357894,
+        8.628234281156987,
+        4.239192199753054,
+        2.1891723125759444,
+        -2.0363621801160754,
+        4.242222913183635,
+        0.5015154281941778,
+        9.960514825307737,
+        12.152376390548017
+      ],
+      "native_wrapper_residuals": {
+        "MLP_delta": {
+          "changed_elements": 861,
+          "elements": 896,
+          "l2": 1.1864419844617048e-05,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              827
+            ],
+            "signed": -2.384185791015625e-06
+          },
+          "max_abs": 2.384185791015625e-06,
+          "maximum_signed": 1.9073486328125e-06,
+          "minimum_signed": -2.384185791015625e-06,
+          "shape": [
+            1,
+            1,
+            896
+          ],
+          "signed_mean": -4.917507924671684e-09,
+          "signed_sum": -4.406087100505829e-06
+        },
+        "selected_logits": {
+          "changed_elements": 11,
+          "elements": 13,
+          "l2": 6.2103349102168585e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              12
+            ],
+            "signed": 3.814697265625e-06
+          },
+          "max_abs": 3.814697265625e-06,
+          "maximum_signed": 3.814697265625e-06,
+          "minimum_signed": -2.1457672119140625e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": 5.501967210036058e-08,
+          "signed_sum": 7.152557373046875e-07
+        }
+      },
+      "observed_continuation": [
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 12095,
+          "full_logits_sha256": "cc966c9e6424cf02c1c576d9a1d1250ba90904ef6f1497099abd1ba51481c83c",
+          "greedy_text": ".",
+          "greedy_token": 13,
+          "step": 1
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 13,
+          "full_logits_sha256": "338e14575be9657611568bc9263a2e71a6c715518ff1cff6a486024728833ea9",
+          "greedy_text": " It",
+          "greedy_token": 1084,
+          "step": 2
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 1084,
+          "full_logits_sha256": "3db398ba28144d8ad35d95a745811fd0f23f27aae3ea9f39e30fb17862e86347",
+          "greedy_text": " is",
+          "greedy_token": 374,
+          "step": 3
+        }
+      ],
+      "observed_generated_text": " Paris. It is",
+      "observed_generated_token_ids": [
+        12095,
+        13,
+        1084,
+        374
+      ],
+      "observed_greedy_text": " Paris",
+      "prefix_binding": "1944c1528307a90af96f549e6623a30bda67c6553bda98aedd498f85f56c7a92",
+      "prompt_id": "capital",
+      "stage_max_abs": {
+        "delta": 6.019106752574999e-06,
+        "final_norm": 2.2787752740782707e-05,
+        "logits": 2.6640528538734998e-06,
+        "postnorm": 1.0208508474107703e-06,
+        "residual": 6.019106749022285e-06
+      },
+      "trace_fingerprint": "653a02cb81272456570a7312dc019540f80533a324ce597f90a87b88c8de417e",
+      "typed_acts": 1,
+      "typed_transitions": 31
+    },
+    "capital.native": {
+      "actual_selected_logits": [
+        2.4722964763641357,
+        1.4275257587432861,
+        1.8804986476898193,
+        17.21728515625,
+        9.474843978881836,
+        11.166435241699219,
+        5.609560489654541,
+        3.0276126861572266,
+        -2.5198543071746826,
+        4.778728485107422,
+        -0.04467511177062988,
+        12.363262176513672,
+        14.319185256958008
+      ],
+      "arm": "native",
+      "candidate_comparison": {
+        "candidate_argmax_matches": true,
+        "forecast": {
+          "candidate_index": 3,
+          "logit": 17.217285002473638,
+          "token_id": 12095,
+          "top_two_margin": 2.8980995928653464
+        },
+        "observed": {
+          "candidate_index": 3,
+          "logit": 17.21728515625,
+          "token_id": 12095,
+          "top_two_margin": 2.898101806640625
+        },
+        "per_candidate_signed_residual": [
+          -1.5139532436592162e-06,
+          -3.4686947574247284e-06,
+          -3.8328819778055134e-06,
+          1.5377636231050928e-07,
+          7.605656691112017e-07,
+          -7.435832181101887e-07,
+          2.198508594730697e-06,
+          1.4684733384839888e-06,
+          7.700874635752086e-07,
+          -7.359388920491483e-07,
+          6.733030820660346e-07,
+          -7.62123896436151e-07,
+          -2.0599989163372356e-06
+        ],
+        "residual": {
+          "changed_elements": 13,
+          "elements": 13,
+          "l2": 6.6009215613676245e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              2
+            ],
+            "signed": -3.8328819778055134e-06
+          },
+          "max_abs": 3.8328819778055134e-06,
+          "maximum_signed": 2.198508594730697e-06,
+          "minimum_signed": -3.8328819778055134e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": -5.455738762726571e-07,
+          "signed_sum": -7.092460391544542e-06
+        },
+        "scope": "argmax over predeclared selected rows; not a full-vocabulary token forecast"
+      },
+      "candidate_coverage": {
+        "full_native_greedy_token": 12095,
+        "global_winner_in_candidates": true,
+        "scope": "candidate winner accuracy does not certify full-vocabulary winner accuracy"
+      },
+      "computation_id": "qwen2.final-MLP.SwiGLU.residual.RMSNorm.selected-readout",
+      "continuation_check": {
+        "closure_applicable": true,
+        "diagnostics": [],
+        "errors": [],
+        "same_first_token": true,
+        "same_future_tokens": true,
+        "same_prefill_KV": true,
+        "scope": "observed native continuation only; no future-token forecast or restored-cache claim"
+      },
+      "dose": 1.0,
+      "dose_effect_vs_native": {
+        "actual_selected_logit_effect": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "forecast_selected_logit_effect": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scope": "same observed prefix cut; full native logits versus independent selected suffix dose equations"
+      },
+      "explicit_conditions": {
+        "candidate_ids": [
+          20,
+          19,
+          21,
+          12095,
+          59604,
+          7148,
+          39572,
+          9255,
+          87072,
+          4017,
+          10622,
+          13,
+          198
+        ],
+        "execution": {
+          "backend": "cpu",
+          "dtype": "float32",
+          "threads": 4,
+          "torch": "2.13.0+cu130",
+          "transformers": "5.14.1"
+        },
+        "frontier": "observed last-token post-attention residual",
+        "horizon": "final MLP and fixed selected-vocabulary readout",
+        "model_identity": {
+          "attention": "eager",
+          "backend": "cpu",
+          "checkpoint_files_sha256": "dcc86696d4d57a80d56252d32d9fbd8981a9f15ce2367bedcf2642664849dfed",
+          "config_sha256": "daea74e6dd2130c47422486c7522bd5b77ae635639852e7e6f188177e4b5d646",
+          "dtype": "float32",
+          "model_name": "qwen2.5-0.5b-instruct",
+          "model_type": "qwen2",
+          "weights_sha256": "2b226fe4944dc744596b1142a15d6676160e9d06f245d31c1a36633f6c86baa3"
+        },
+        "native_dose_policy": "scale actual native MLP return; frozen predicted FP32 deltas retained but not used"
+      },
+      "forecast_selected_logits": [
+        2.4722958445501675,
+        1.4275255319500675,
+        1.8804992619209793,
+        17.217285002473638,
+        9.4748451256648,
+        11.166439799979702,
+        5.609561629006054,
+        3.027615747636891,
+        -2.519852454657776,
+        4.778727313697681,
+        -0.04467501021332987,
+        12.363266753334834,
+        14.319185409608291
+      ],
+      "native_wrapper_residuals": {
+        "MLP_delta": {
+          "changed_elements": 861,
+          "elements": 896,
+          "l2": 2.3728839689234096e-05,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              827
+            ],
+            "signed": -4.76837158203125e-06
+          },
+          "max_abs": 4.76837158203125e-06,
+          "maximum_signed": 3.814697265625e-06,
+          "minimum_signed": -4.76837158203125e-06,
+          "shape": [
+            1,
+            1,
+            896
+          ],
+          "signed_mean": -9.835015849343368e-09,
+          "signed_sum": -8.812174201011658e-06
+        },
+        "selected_logits": {
+          "changed_elements": 12,
+          "elements": 13,
+          "l2": 1.0381650874199671e-05,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              7
+            ],
+            "signed": -4.5299530029296875e-06
+          },
+          "max_abs": 4.5299530029296875e-06,
+          "maximum_signed": 3.6954879760742188e-06,
+          "minimum_signed": -4.5299530029296875e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": -6.098013657789963e-07,
+          "signed_sum": -7.927417755126953e-06
+        }
+      },
+      "observed_continuation": [
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 12095,
+          "full_logits_sha256": "cc966c9e6424cf02c1c576d9a1d1250ba90904ef6f1497099abd1ba51481c83c",
+          "greedy_text": ".",
+          "greedy_token": 13,
+          "step": 1
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 13,
+          "full_logits_sha256": "338e14575be9657611568bc9263a2e71a6c715518ff1cff6a486024728833ea9",
+          "greedy_text": " It",
+          "greedy_token": 1084,
+          "step": 2
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 1084,
+          "full_logits_sha256": "3db398ba28144d8ad35d95a745811fd0f23f27aae3ea9f39e30fb17862e86347",
+          "greedy_text": " is",
+          "greedy_token": 374,
+          "step": 3
+        }
+      ],
+      "observed_generated_text": " Paris. It is",
+      "observed_generated_token_ids": [
+        12095,
+        13,
+        1084,
+        374
+      ],
+      "observed_greedy_text": " Paris",
+      "prefix_binding": "1944c1528307a90af96f549e6623a30bda67c6553bda98aedd498f85f56c7a92",
+      "prompt_id": "capital",
+      "stage_max_abs": {
+        "delta": 1.2038213505149997e-05,
+        "final_norm": 3.341807342849279e-05,
+        "logits": 3.8328819778055134e-06,
+        "postnorm": 1.0208508474107703e-06,
+        "residual": 1.2038213505149997e-05
+      },
+      "trace_fingerprint": "fee01073e3ac4cc960068480188b0f9002e349b156b6248cfd6b10e27651c398",
+      "typed_acts": 0,
+      "typed_transitions": 31
+    },
+    "capital.sham": {
+      "actual_selected_logits": [
+        2.4722964763641357,
+        1.4275257587432861,
+        1.8804986476898193,
+        17.21728515625,
+        9.474843978881836,
+        11.166435241699219,
+        5.609560489654541,
+        3.0276126861572266,
+        -2.5198543071746826,
+        4.778728485107422,
+        -0.04467511177062988,
+        12.363262176513672,
+        14.319185256958008
+      ],
+      "arm": "sham",
+      "candidate_comparison": {
+        "candidate_argmax_matches": true,
+        "forecast": {
+          "candidate_index": 3,
+          "logit": 17.217285002473638,
+          "token_id": 12095,
+          "top_two_margin": 2.8980995928653464
+        },
+        "observed": {
+          "candidate_index": 3,
+          "logit": 17.21728515625,
+          "token_id": 12095,
+          "top_two_margin": 2.898101806640625
+        },
+        "per_candidate_signed_residual": [
+          -1.5139532436592162e-06,
+          -3.4686947574247284e-06,
+          -3.8328819778055134e-06,
+          1.5377636231050928e-07,
+          7.605656691112017e-07,
+          -7.435832181101887e-07,
+          2.198508594730697e-06,
+          1.4684733384839888e-06,
+          7.700874635752086e-07,
+          -7.359388920491483e-07,
+          6.733030820660346e-07,
+          -7.62123896436151e-07,
+          -2.0599989163372356e-06
+        ],
+        "residual": {
+          "changed_elements": 13,
+          "elements": 13,
+          "l2": 6.6009215613676245e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              2
+            ],
+            "signed": -3.8328819778055134e-06
+          },
+          "max_abs": 3.8328819778055134e-06,
+          "maximum_signed": 2.198508594730697e-06,
+          "minimum_signed": -3.8328819778055134e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": -5.455738762726571e-07,
+          "signed_sum": -7.092460391544542e-06
+        },
+        "scope": "argmax over predeclared selected rows; not a full-vocabulary token forecast"
+      },
+      "candidate_coverage": {
+        "full_native_greedy_token": 12095,
+        "global_winner_in_candidates": true,
+        "scope": "candidate winner accuracy does not certify full-vocabulary winner accuracy"
+      },
+      "computation_id": "qwen2.final-MLP.SwiGLU.residual.RMSNorm.selected-readout",
+      "continuation_check": {
+        "closure_applicable": true,
+        "diagnostics": [],
+        "errors": [],
+        "same_first_token": true,
+        "same_future_tokens": true,
+        "same_prefill_KV": true,
+        "scope": "observed native continuation only; no future-token forecast or restored-cache claim"
+      },
+      "dose": 1.0,
+      "dose_effect_vs_native": {
+        "actual_selected_logit_effect": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "forecast_selected_logit_effect": [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        "scope": "same observed prefix cut; full native logits versus independent selected suffix dose equations"
+      },
+      "explicit_conditions": {
+        "candidate_ids": [
+          20,
+          19,
+          21,
+          12095,
+          59604,
+          7148,
+          39572,
+          9255,
+          87072,
+          4017,
+          10622,
+          13,
+          198
+        ],
+        "execution": {
+          "backend": "cpu",
+          "dtype": "float32",
+          "threads": 4,
+          "torch": "2.13.0+cu130",
+          "transformers": "5.14.1"
+        },
+        "frontier": "observed last-token post-attention residual",
+        "horizon": "final MLP and fixed selected-vocabulary readout",
+        "model_identity": {
+          "attention": "eager",
+          "backend": "cpu",
+          "checkpoint_files_sha256": "dcc86696d4d57a80d56252d32d9fbd8981a9f15ce2367bedcf2642664849dfed",
+          "config_sha256": "daea74e6dd2130c47422486c7522bd5b77ae635639852e7e6f188177e4b5d646",
+          "dtype": "float32",
+          "model_name": "qwen2.5-0.5b-instruct",
+          "model_type": "qwen2",
+          "weights_sha256": "2b226fe4944dc744596b1142a15d6676160e9d06f245d31c1a36633f6c86baa3"
+        },
+        "native_dose_policy": "scale actual native MLP return; frozen predicted FP32 deltas retained but not used"
+      },
+      "forecast_selected_logits": [
+        2.4722958445501675,
+        1.4275255319500675,
+        1.8804992619209793,
+        17.217285002473638,
+        9.4748451256648,
+        11.166439799979702,
+        5.609561629006054,
+        3.027615747636891,
+        -2.519852454657776,
+        4.778727313697681,
+        -0.04467501021332987,
+        12.363266753334834,
+        14.319185409608291
+      ],
+      "native_wrapper_residuals": {
+        "MLP_delta": {
+          "changed_elements": 861,
+          "elements": 896,
+          "l2": 2.3728839689234096e-05,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              827
+            ],
+            "signed": -4.76837158203125e-06
+          },
+          "max_abs": 4.76837158203125e-06,
+          "maximum_signed": 3.814697265625e-06,
+          "minimum_signed": -4.76837158203125e-06,
+          "shape": [
+            1,
+            1,
+            896
+          ],
+          "signed_mean": -9.835015849343368e-09,
+          "signed_sum": -8.812174201011658e-06
+        },
+        "selected_logits": {
+          "changed_elements": 12,
+          "elements": 13,
+          "l2": 1.0381650874199671e-05,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              7
+            ],
+            "signed": -4.5299530029296875e-06
+          },
+          "max_abs": 4.5299530029296875e-06,
+          "maximum_signed": 3.6954879760742188e-06,
+          "minimum_signed": -4.5299530029296875e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": -6.098013657789963e-07,
+          "signed_sum": -7.927417755126953e-06
+        }
+      },
+      "observed_continuation": [
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 12095,
+          "full_logits_sha256": "cc966c9e6424cf02c1c576d9a1d1250ba90904ef6f1497099abd1ba51481c83c",
+          "greedy_text": ".",
+          "greedy_token": 13,
+          "step": 1
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 13,
+          "full_logits_sha256": "338e14575be9657611568bc9263a2e71a6c715518ff1cff6a486024728833ea9",
+          "greedy_text": " It",
+          "greedy_token": 1084,
+          "step": 2
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 1084,
+          "full_logits_sha256": "3db398ba28144d8ad35d95a745811fd0f23f27aae3ea9f39e30fb17862e86347",
+          "greedy_text": " is",
+          "greedy_token": 374,
+          "step": 3
+        }
+      ],
+      "observed_generated_text": " Paris. It is",
+      "observed_generated_token_ids": [
+        12095,
+        13,
+        1084,
+        374
+      ],
+      "observed_greedy_text": " Paris",
+      "prefix_binding": "1944c1528307a90af96f549e6623a30bda67c6553bda98aedd498f85f56c7a92",
+      "prompt_id": "capital",
+      "stage_max_abs": {
+        "delta": 1.2038213505149997e-05,
+        "final_norm": 3.341807342849279e-05,
+        "logits": 3.8328819778055134e-06,
+        "postnorm": 1.0208508474107703e-06,
+        "residual": 1.2038213505149997e-05
+      },
+      "trace_fingerprint": "1bf13241e1a7005df3bc186ea322d9c27d49a8b7e6e4662a2c808bcaf34c454f",
+      "typed_acts": 1,
+      "typed_transitions": 31
+    },
+    "capital.zero": {
+      "actual_selected_logits": [
+        -1.4477558135986328,
+        -2.4279367923736572,
+        -2.250298261642456,
+        13.505500793457031,
+        8.985180854797363,
+        5.071305751800537,
+        2.3903253078460693,
+        1.1269757747650146,
+        -1.2918082475662231,
+        3.077810525894165,
+        0.8646232485771179,
+        6.287570476531982,
+        8.299324035644531
+      ],
+      "arm": "zero",
+      "candidate_comparison": {
+        "candidate_argmax_matches": true,
+        "forecast": {
+          "candidate_index": 3,
+          "logit": 13.50550209302044,
+          "token_id": 12095,
+          "top_two_margin": 4.520319733025257
+        },
+        "observed": {
+          "candidate_index": 3,
+          "logit": 13.505498886108398,
+          "token_id": 12095,
+          "top_two_margin": 4.520317077636719
+        },
+        "per_candidate_signed_residual": [
+          -1.4160524635098426e-06,
+          6.60410307773418e-07,
+          3.0869452594117774e-07,
+          -3.206912040809584e-06,
+          -5.515235024233789e-07,
+          -2.026436245472496e-07,
+          -4.056374738325985e-07,
+          -3.46657214045365e-08,
+          4.3018296480568097e-07,
+          -7.699377486680703e-07,
+          1.5306290124250665e-07,
+          -3.1725392677373065e-06,
+          -6.473482514479656e-07
+        ],
+        "residual": {
+          "changed_elements": 13,
+          "elements": 13,
+          "l2": 4.9615788336306565e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              3
+            ],
+            "signed": -3.206912040809584e-06
+          },
+          "max_abs": 3.206912040809584e-06,
+          "maximum_signed": 6.60410307773418e-07,
+          "minimum_signed": -3.206912040809584e-06,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": -6.811468765090576e-07,
+          "signed_sum": -8.85490939461775e-06
+        },
+        "scope": "argmax over predeclared selected rows; not a full-vocabulary token forecast"
+      },
+      "candidate_coverage": {
+        "full_native_greedy_token": 1304,
+        "global_winner_in_candidates": false,
+        "scope": "candidate winner accuracy does not certify full-vocabulary winner accuracy"
+      },
+      "computation_id": "qwen2.final-MLP.SwiGLU.residual.RMSNorm.selected-readout",
+      "continuation_check": {
+        "closure_applicable": false,
+        "diagnostics": [],
+        "errors": [],
+        "same_first_token": false,
+        "same_future_tokens": false,
+        "same_prefill_KV": true,
+        "scope": "observed native continuation only; no future-token forecast or restored-cache claim"
+      },
+      "dose": 0.0,
+      "dose_effect_vs_native": {
+        "actual_selected_logit_effect": [
+          -3.9200522899627686,
+          -3.8554625511169434,
+          -4.130796909332275,
+          -3.7117843627929688,
+          -0.48966312408447266,
+          -6.095129489898682,
+          -3.2192351818084717,
+          -1.900636911392212,
+          1.2280460596084595,
+          -1.7009179592132568,
+          0.9092983603477478,
+          -6.0756916999816895,
+          -6.019861221313477
+        ],
+        "forecast_selected_logit_effect": [
+          -3.9200526262821276,
+          -3.855462507896874,
+          -4.13079830909512,
+          -3.7117829094531984,
+          -0.48966276566961753,
+          -6.095134799209857,
+          -3.219236869196827,
+          -1.9006396997875759,
+          1.2280443729550359,
+          -1.700917209958663,
+          0.9092976884950331,
+          -6.075695488449375,
+          -6.019861680289825
+        ],
+        "scope": "same observed prefix cut; full native logits versus independent selected suffix dose equations"
+      },
+      "explicit_conditions": {
+        "candidate_ids": [
+          20,
+          19,
+          21,
+          12095,
+          59604,
+          7148,
+          39572,
+          9255,
+          87072,
+          4017,
+          10622,
+          13,
+          198
+        ],
+        "execution": {
+          "backend": "cpu",
+          "dtype": "float32",
+          "threads": 4,
+          "torch": "2.13.0+cu130",
+          "transformers": "5.14.1"
+        },
+        "frontier": "observed last-token post-attention residual",
+        "horizon": "final MLP and fixed selected-vocabulary readout",
+        "model_identity": {
+          "attention": "eager",
+          "backend": "cpu",
+          "checkpoint_files_sha256": "dcc86696d4d57a80d56252d32d9fbd8981a9f15ce2367bedcf2642664849dfed",
+          "config_sha256": "daea74e6dd2130c47422486c7522bd5b77ae635639852e7e6f188177e4b5d646",
+          "dtype": "float32",
+          "model_name": "qwen2.5-0.5b-instruct",
+          "model_type": "qwen2",
+          "weights_sha256": "2b226fe4944dc744596b1142a15d6676160e9d06f245d31c1a36633f6c86baa3"
+        },
+        "native_dose_policy": "scale actual native MLP return; frozen predicted FP32 deltas retained but not used"
+      },
+      "forecast_selected_logits": [
+        -1.4477567817319603,
+        -2.427936975946807,
+        -2.25029904717414,
+        13.50550209302044,
+        8.985182359995182,
+        5.071305000769845,
+        2.3903247598092268,
+        1.1269760478493152,
+        -1.2918080817027402,
+        3.077810103739018,
+        0.8646226782817032,
+        6.287571264885459,
+        8.299323729318466
+      ],
+      "native_wrapper_residuals": {
+        "MLP_delta": {
+          "changed_elements": 0,
+          "elements": 896,
+          "l2": 0.0,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "signed": 0.0
+          },
+          "max_abs": 0.0,
+          "maximum_signed": 0.0,
+          "minimum_signed": 0.0,
+          "shape": [
+            1,
+            1,
+            896
+          ],
+          "signed_mean": 0.0,
+          "signed_sum": 0.0
+        },
+        "selected_logits": {
+          "changed_elements": 13,
+          "elements": 13,
+          "l2": 4.594199817786964e-06,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "signed": 2.384185791015625e-06
+          },
+          "max_abs": 2.384185791015625e-06,
+          "maximum_signed": 2.384185791015625e-06,
+          "minimum_signed": -9.5367431640625e-07,
+          "shape": [
+            1,
+            1,
+            13
+          ],
+          "signed_mean": 7.198407099797175e-07,
+          "signed_sum": 9.357929229736328e-06
+        }
+      },
+      "observed_continuation": [
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 1304,
+          "full_logits_sha256": "6e84a861e05ef495b0d5bfc1f63a1885f8d326e0c01ad4fc09118f9d3b97e3ec",
+          "greedy_text": "__\n",
+          "greedy_token": 12148,
+          "step": 1
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 12148,
+          "full_logits_sha256": "91584be761ec6c75ab072651001a077aff248de28ab5548d9390c93357d24a84",
+          "greedy_text": "A",
+          "greedy_token": 32,
+          "step": 2
+        },
+        {
+          "authority": "unedited native cached continuation; measured after release, not forecast",
+          "consumed_token": 32,
+          "full_logits_sha256": "2d7a4844958ee43bea0c9b64590d90251861bc61dd32e7821b384336e0935ef2",
+          "greedy_text": ".",
+          "greedy_token": 13,
+          "step": 3
+        }
+      ],
+      "observed_generated_text": " ____\nA.",
+      "observed_generated_token_ids": [
+        1304,
+        12148,
+        32,
+        13
+      ],
+      "observed_greedy_text": " __",
+      "prefix_binding": "1944c1528307a90af96f549e6623a30bda67c6553bda98aedd498f85f56c7a92",
+      "prompt_id": "capital",
+      "stage_max_abs": {
+        "delta": 0.0,
+        "final_norm": 3.6641961784766863e-06,
+        "logits": 3.206912040809584e-06,
+        "postnorm": 1.0208508474107703e-06,
+        "residual": 0.0
+      },
+      "trace_fingerprint": "fb92c66a9b55073f75543ed50966e5dc598aca3d6ac48125d43ca660e0e5984c",
+      "typed_acts": 1,
+      "typed_transitions": 31
+    }
+  },
+  "schema": "mdb-qwen-mlp-forecast-publication-v1",
+  "scientific_summary": {
+    "continuation_closure_applicable": 11,
+    "continuation_closure_diagnostics": {},
+    "global_winner_outside_rows": [
+      "antonym.half",
+      "antonym.native",
+      "antonym.sham",
+      "antonym.zero",
+      "capital.zero"
+    ],
+    "global_winners_inside_candidates": 7,
+    "global_winners_outside_candidates": 5,
+    "max_selected_logit_abs_residual": 4.604437704003317e-06,
+    "rows": 12,
+    "selected_candidate_argmax_matches": 12
+  },
+  "source": {
+    "archive_sha256": "edfb6570f28313594a6af6eb2cb29fcd2d6f10dc85c770bd4864bd280ca019ff",
+    "artifact_inventory_authority": "published manifest plus retained archive",
+    "job_id": "job-83d0cb219f85",
+    "manifest_sha256": "b8b5f2452acd05d6dd01f70bc4e79df2ba730e6072938cff00f7e2c9c622ad4e",
+    "report_file_sha256": "fc249b670656eaf5ff37bd22566049aef196264a9b1b05c227f7ccc6baea4aff",
+    "request_file_sha256": "10bbc3ba00f51dbea2eb5922cafbd61cf4df71e60e505770877e345692275987",
+    "request_sha256": "16befb79446f0019d3769069c112d8f60c4e153e653747037e1e0b988181e99a",
+    "transaction": {
+      "event_head": "5918826b3f620fae15dd3d5c1944e6bc6dd426dff6c87a23b7160224358509cd",
+      "events": 8,
+      "forecasts": [
+        "campaign"
+      ],
+      "frontiers": [
+        "prefixes",
+        "exclusion"
+      ],
+      "identity_scope": "externally-pinned",
+      "phase": "closed",
+      "schema": "mdb-forecast-offline-verification-v1",
+      "seal_sha256": "99a29043792363edb78ff70786931d54b56e222405b14f7f5c91121774158da0",
+      "verified": true
+    },
+    "verified_artifact_files": 48,
+    "verified_source_hashes": {
+      "campaign_support.py": "615b3c8232da6c90c4985024a59fb594a0930b4cbfd369a6c3387214c6edeb1d",
+      "plan.json": "70c6aedf049a8ba084c69eb79aa037d9bbd0c62e512e3210e3599227299fc48a",
+      "preflight.v1.json": "7fa46ccfb2cfbd5861b016a9f51fd573d9fb4b1e03be5312d3b879e0353d82d5",
+      "qwen_mlp_equations.py": "2d1ec43d28d8c190becf7616d401c18a3a8ebc8a09cdeaa55baa694faa112212",
+      "qwen_mlp_forecast_campaign.py": "4a2ec1fce883d59fb99eafc505a7ff6d0eece66d946f370d364efed0b1383e12"
+    }
+  },
+  "terminal_status": "unassessed",
+  "transaction_phase_receipts": [
+    {
+      "detail": {},
+      "elapsed_ms": 1895.2090819366276,
+      "kind": "opened",
+      "phase": "open",
+      "previous": null,
+      "receipt_id": "112ebad5fb03833f2a8efa78bf23b15fc1a4b134b5c15edb6ad973cde48a83c9",
+      "schema": "mdb-forecast-phase-event-v1",
+      "sequence": 0,
+      "work": {
+        "actions": 0,
+        "captures": 0,
+        "denied_attempts": 0,
+        "executions": 0,
+        "native_calls": 0,
+        "predictions": 0,
+        "retained_bytes": 52356902
+      }
+    },
+    {
+      "detail": {
+        "name": "prefixes",
+        "native_calls": 0
+      },
+      "elapsed_ms": 2312.2349979821593,
+      "kind": "frontier_published",
+      "phase": "open",
+      "previous": "98f44c44a3259425f652b477f42412fd2782d84ff142ad1d4ea77061367c3cbf",
+      "receipt_id": "b6d97200d77c71a6a5932f3a09571826a31f6213c26e2fd577315a41f52dbfb3",
+      "schema": "mdb-forecast-phase-event-v1",
+      "sequence": 1,
+      "work": {
+        "actions": 1,
+        "captures": 0,
+        "denied_attempts": 0,
+        "executions": 0,
+        "native_calls": 0,
+        "predictions": 0,
+        "retained_bytes": 52454430
+      }
+    },
+    {
+      "detail": {
+        "name": "exclusion",
+        "native_calls": 0
+      },
+      "elapsed_ms": 2596.700316062197,
+      "kind": "frontier_published",
+      "phase": "open",
+      "previous": "8cf1b5c7b03e4166e63a7d335d03f6f0d10137b42fefc282d39db377bbca2fe4",
+      "receipt_id": "c1449868eab89222ad36f17938ce57996687e8061e3646a7ec425712148d5db3",
+      "schema": "mdb-forecast-phase-event-v1",
+      "sequence": 2,
+      "work": {
+        "actions": 2,
+        "captures": 0,
+        "denied_attempts": 0,
+        "executions": 0,
+        "native_calls": 0,
+        "predictions": 0,
+        "retained_bytes": 52455695
+      }
+    },
+    {
+      "detail": {
+        "frontiers": [
+          "prefixes",
+          "exclusion"
+        ],
+        "name": "campaign"
+      },
+      "elapsed_ms": 3173.416113946587,
+      "kind": "forecast_persisted",
+      "phase": "open",
+      "previous": "e3454b4910fea49d7787dbaeec524edee136627855b72488e6a81fa4050fea85",
+      "receipt_id": "43ea4dbe92208d4e39c2816852984a04e701e3415be1bf6c9eeff19ac88a6742",
+      "schema": "mdb-forecast-phase-event-v1",
+      "sequence": 3,
+      "work": {
+        "actions": 3,
+        "captures": 0,
+        "denied_attempts": 0,
+        "executions": 0,
+        "native_calls": 0,
+        "predictions": 1,
+        "retained_bytes": 53178867
+      }
+    },
+    {
+      "detail": {
+        "seal_sha256": "99a29043792363edb78ff70786931d54b56e222405b14f7f5c91121774158da0"
+      },
+      "elapsed_ms": 3598.3058200217783,
+      "kind": "globally_sealed",
+      "phase": "sealed",
+      "previous": "ee887b1e7ea2b0ee2bcc02b5ae0ff37bfd046e7de6e4f0a4293f44850ffbe60b",
+      "receipt_id": "535f25d495389419c98a872ed27f6e8b588caab0beb2fd2011bb02ee8fc68462",
+      "schema": "mdb-forecast-phase-event-v1",
+      "sequence": 4,
+      "work": {
+        "actions": 4,
+        "captures": 0,
+        "denied_attempts": 0,
+        "executions": 0,
+        "native_calls": 0,
+        "predictions": 1,
+        "retained_bytes": 53186545
+      }
+    },
+    {
+      "detail": {
+        "seal_sha256": "99a29043792363edb78ff70786931d54b56e222405b14f7f5c91121774158da0"
+      },
+      "elapsed_ms": 3882.3437800165266,
+      "kind": "native_execution_released",
+      "phase": "released",
+      "previous": "fe7c9846a2ba24a18d40ef1a035884e53b3181ad7cef1b6da6f15cc8545d2856",
+      "receipt_id": "e4310e2de665447ac5de62f6be545197565fb1667e9c9128f7aa88da1cccebaf",
+      "schema": "mdb-forecast-phase-event-v1",
+      "sequence": 5,
+      "work": {
+        "actions": 5,
+        "captures": 0,
+        "denied_attempts": 0,
+        "executions": 0,
+        "native_calls": 0,
+        "predictions": 1,
+        "retained_bytes": 53187050
+      }
+    },
+    {
+      "detail": {
+        "name": "native",
+        "seal_sha256": "99a29043792363edb78ff70786931d54b56e222405b14f7f5c91121774158da0"
+      },
+      "elapsed_ms": 12524.288293905556,
+      "kind": "observation_persisted",
+      "phase": "execute",
+      "previous": "b20ccc14020566edc915e87dc2ba6ef4dc40c297dc6e70d6ffd51891b783e617",
+      "receipt_id": "7e02b9a72b801cda812160072c91d90519eb38ed2b3d6948ac363139efccec7d",
+      "schema": "mdb-forecast-phase-event-v1",
+      "sequence": 6,
+      "work": {
+        "actions": 6,
+        "captures": 0,
+        "denied_attempts": 0,
+        "executions": 1,
+        "native_calls": 12,
+        "predictions": 1,
+        "retained_bytes": 53999249
+      }
+    },
+    {
+      "detail": {
+        "prior_phase": "released"
+      },
+      "elapsed_ms": 12792.759937001392,
+      "kind": "closed",
+      "phase": "closed",
+      "previous": "ea3d16031ae3d62df9f2106667606052640e3ec43b510524c2e8e9dd6a374d1e",
+      "receipt_id": "d542bb045dbcc6de11c88b106cef8766c750bdba7ad8e07e33585096fdbc4e6a",
+      "schema": "mdb-forecast-phase-event-v1",
+      "sequence": 7,
+      "work": {
+        "actions": 6,
+        "captures": 0,
+        "denied_attempts": 0,
+        "executions": 1,
+        "native_calls": 12,
+        "predictions": 1,
+        "retained_bytes": 53999778
+      }
+    }
+  ],
+  "transaction_work": {
+    "actions": 6,
+    "captures": 0,
+    "denied_attempts": 0,
+    "executions": 1,
+    "native_calls": 12,
+    "predictions": 1,
+    "retained_bytes": 54000219
+  },
+  "trend_status": "per-row continuous residuals, margins and text retained"
+}

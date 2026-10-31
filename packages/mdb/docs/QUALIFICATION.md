@@ -4,6 +4,24 @@ MDB's standalone extraction has bounded model-backed qualification for Qwen,
 Mamba v1, FLUX and SDXL. The results below bind this package's installed sources;
 upstream Saturn assays certify their original source seals separately.
 
+The [trained-Qwen computation forecast](QWEN-COMPUTATION-FORECASTS.md) adds a
+separate CPU FP32 qualification on Qwen2.5-0.5B-Instruct. From genuine observed
+final-MLP boundaries, all twelve selected-logit branches match the sealed
+candidate winner; a follow-up predicts all 151,936 first-token logits and the
+global greedy token in ten of ten branches, including sham controls. Maximum
+full-vocabulary logit error is `8.75655e-6`. Later tokens are native observations.
+Fifty-six focused tests pass outside the workspace with installed public
+dependencies. Both archived panels independently audit and complete their
+derived-target-stream Saturn evidence sweeps and verification.
+
+This qualification binds the supplied checkpoint, prefix, source and numerical
+lane. The complete readout matrix is externally checkpoint-bound rather than
+archived; the offline audit verifies worker provenance and sealed/output arrays.
+It does not qualify raw-prompt forecasting, arbitrary model families, semantic
+symbol discovery, or complete future-token prediction. See the portable
+[selected-logit](../qualification/qwen-mlp-forecast-20261030.json) and
+[full-readout](../qualification/qwen-full-readout-20261030.json) records.
+
 The [E6/E20 paper adapters](../experiments/time_circuits/README.md) have separate
 bounded research-input qualification: E20 reproduces 42 native observable rows
 and three baseline replays; E6 interchange has 1,400 exact native comparisons

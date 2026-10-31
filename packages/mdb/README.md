@@ -64,6 +64,10 @@ windows. All 28 model rows match sealed forecasts, including native ISA errors.
 The [input generalization campaign](docs/INPUT-GENERALIZATION.md) predicts 42
 additional rows across changed states and byte windows. It retains sign reversals,
 collateral changes, unsuccessful restorations and equivalent-encoding contrasts.
+The [trained-language-model assay](docs/QWEN-COMPUTATION-FORECASTS.md) applies
+the same capture/predict/seal/execute method to Qwen's final MLP, with native
+token continuations and a full-vocabulary affine readout law. Forecasts start
+from an observed residual; later generated tokens remain measured outcomes.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 [Packed forecast storage](docs/FORECAST-STORAGE.md) is the default and preserves the complete
