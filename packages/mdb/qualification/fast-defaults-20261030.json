@@ -1,0 +1,79 @@
+{
+  "schema": "mdb-fast-defaults-qualification-v1",
+  "date": "2026-10-30",
+  "mechanics_status": "valid",
+  "scope": "Installed-wheel default-format change, tiny CPU composition, and offline legacy/packed evidence compatibility",
+  "defaults": {
+    "native_screen": "largest admitted compatible batch; existing default",
+    "selected_frontier": "bundle-v1; existing default",
+    "forecast_transaction": "bundle-v1",
+    "context_window_campaign": "bundle-v1",
+    "raw_isa_sequence_campaign": "bundle-v1",
+    "component_stepping": "scalar replay"
+  },
+  "explicit_alternatives": {
+    "native_screen": "batch_size=1",
+    "selected_frontier": "storage_layout=slots-v1",
+    "forecast_transaction": "array_storage=files-v1",
+    "campaign_cli": "--array-storage files-v1"
+  },
+  "installed_wheel": {
+    "sha256": "5ca23fac95e130b8c486ce1ffbe6dc4a403a722a5d89a0caa4cbfc62690b5092",
+    "source_wheel_installed_modules_equal": 174,
+    "test_execution_root": "/private/tmp/mdb-fast-defaults-20261030",
+    "private_import_guard": "tests/conftest.py blocks saturn, common and common_harness",
+    "passed_tests": 144,
+    "tests": {
+      "discovery_batch": 11,
+      "discovery_fast_defaults": 9,
+      "discovery_storage": 16,
+      "equation_comparison": 19,
+      "forecast_storage": 52,
+      "forecast_transaction": 16,
+      "forward_ports": 15,
+      "forward_prefix": 6
+    },
+    "report": {
+      "path": "artifacts/mdb-fast-defaults-20261030/installed-tests-final.xml",
+      "sha256": "d7801e4eff7024c53e73117595591d533a4b20258403811733897d50e2aea990"
+    },
+    "package_proof": {
+      "path": "artifacts/mdb-fast-defaults-20261030/package-proof.json",
+      "sha256": "c1887589cd388685c56b255a7c46406d43959d061e51dee26228ce2be79207f2"
+    }
+  },
+  "shared_environment": {
+    "installed": "common/.venv",
+    "python": "3.10.14",
+    "default": "bundle-v1",
+    "tiny_transaction_verified": true,
+    "receipt": {
+      "path": "artifacts/mdb-fast-defaults-20261030/shared-environment-smoke.json",
+      "sha256": "d9fada27bbbdd14532f685f4f9e67b2c0f532e75d5f0ba954f36144ca0889579"
+    }
+  },
+  "offline_retained_evidence": {
+    "layout_comparison": {
+      "path": "artifacts/mdb-fast-defaults-20261030/retained-layout-comparison.json",
+      "sha256": "808211845e2bf7711a09ab4d4e00bb3effdc05b09ecc283be6467301e2931711",
+      "reference_job": "job-053353849ab7",
+      "candidate_job": "job-69bf68a89381",
+      "original_npy_occurrences": 1161,
+      "byte_identity_differences": 0,
+      "leaf_manifest_sha256": "a59f13f544a82308af182d9eeea632a8cc7c6aff63094de93f80ead74b266d57"
+    },
+    "legacy_sequence_audit": {
+      "path": "artifacts/mdb-fast-defaults-20261030/legacy-sequence-reader-audit.json",
+      "sha256": "a106ba19e0fa73cbd6a8c83a823377395683d6366e44f86be79bc68257b79309",
+      "job": "job-62804158d4e4",
+      "rows": 18,
+      "head_decision_mismatches": 0
+    }
+  },
+  "limits": [
+    "No new real-model calls or performance measurements; prior speed ratios remain scoped to their original runs.",
+    "Tiny composition verifies API mechanics, not arbitrary model or backend batching parity.",
+    "Existing transactions and historical source-bound receipts are not rewritten.",
+    "Packed descriptors require public numerical readers; explicit legacy writing remains available."
+  ]
+}

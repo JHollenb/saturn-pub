@@ -3,14 +3,14 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import io
 import json
+from collections.abc import Mapping
 from pathlib import Path
 
 import numpy as np
 
 from mdb.equation_comparison import EquationCatalog
-from mdb.forecast_transaction import verify_transaction
+from mdb.forecast_transaction import load_forecast_tree, verify_transaction
 from mdb.forward_ports import NativePortCatalog
 
 
@@ -20,6 +20,18 @@ def sha(raw):
 
 def read(path):
     return json.loads(path.read_text())
+
+
+def decode_tree(root, node):
+    """Use the public reader for either numerical layout, decoding each bundle once."""
+    def containers(value):
+        if isinstance(value, Mapping):
+            return {key: containers(child) for key, child in value.items()}
+        if isinstance(value, tuple):
+            return [containers(child) for child in value]
+        return value
+
+    return containers(load_forecast_tree(root, node))
 
 
 def audit(run_dir):
@@ -43,30 +55,8 @@ def audit(run_dir):
     sealed_event = next(event for event in transaction["events"] if event["kind"] == "globally_sealed")
     assert all(event["work"]["native_calls"] == 0 for event in transaction["events"]
                if event["sequence"] <= sealed_event["sequence"])
-    cache = {}
-
-    def decode(node):
-        kind = node["kind"]
-        if kind == "mapping":
-            return {key: decode(value) for key, value in node["items"].items()}
-        if kind in ("list", "tuple"):
-            return [decode(value) for value in node["items"]]
-        if kind == "scalar":
-            return node["value"]
-        if kind == "array":
-            path = tx / node["path"]
-            if node["path"] not in cache:
-                raw = path.read_bytes()
-                assert sha(raw) == node["sha256"]
-                array = np.load(io.BytesIO(raw), allow_pickle=False)
-                assert list(array.shape) == node["shape"] and str(array.dtype) == node["dtype"]
-                assert sha(array.tobytes(order="C")) == node["content_sha256"]
-                cache[node["path"]] = array
-            return cache[node["path"]]
-        raise ValueError("unknown numerical descriptor")
-
-    forecasts = decode(read(tx / "forecasts/campaign.json")["predictions"])
-    actual = decode(read(tx / "observations/native.json")["value"])
+    forecasts = decode_tree(tx, read(tx / "forecasts/campaign.json")["predictions"])
+    actual = decode_tree(tx, read(tx / "observations/native.json")["value"])
     comparisons = {row["row_id"]: row for row in read(data / "comparisons.json")["rows"]}
     catalog = EquationCatalog(data / "equations")
     rows = []

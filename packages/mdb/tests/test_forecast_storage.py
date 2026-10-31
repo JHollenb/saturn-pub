@@ -24,7 +24,7 @@ from mdb.forecast_transaction import (
 )
 
 
-def transaction(root, *, storage="bundle-v1", **kwargs):
+def transaction(root, *, storage=None, **kwargs):
     if storage is not None:
         kwargs["array_storage"] = storage
     return ForecastTransaction(root, model_identity="tiny-numeric-contract", input_identity="raw",
@@ -422,20 +422,44 @@ def test_atomic_publication_failure_never_exposes_a_partial_forecast(tmp_path, m
     tx.close()
 
 
-def test_default_and_explicit_legacy_keep_original_npy_descriptor_bytes(tmp_path):
+def test_default_matches_explicit_bundle_and_preserves_legacy_leaf_identities(tmp_path):
+    value = np.arange(12, dtype=np.float64).reshape(3, 4)
+    records = {}
+    for label, storage in (("default", None), ("explicit", "bundle-v1"), ("legacy", "files-v1")):
+        tx = transaction(tmp_path / label, storage=storage, weights={"W": value.copy()})
+        record = predict(tx, value)
+        records[label] = record
+        tx.seal()
+        tx.execute("actual", lambda context: context.predictions["p"]["a"] + 1)
+        np.testing.assert_array_equal(tx.observation("actual"), value + 1)
+        tx.close()
+        assert verify_transaction(tx.root, expected_seal_sha256=tx.report()["seal_sha256"],
+                                  expected_event_head=tx.report()["event_head"])["verified"]
+        if label != "legacy":
+            assert tx.declarations["array_storage"] == "bundle-v1"
+            assert list((tx.root / "arrays").glob("*.npyb"))
+            assert not list((tx.root / "arrays").glob("*.npy"))
+    assert records["default"] == records["explicit"]
+    for packed, legacy in zip(descriptors(records["default"]), descriptors(records["legacy"]), strict=True):
+        assert packed["storage"] == "bundle-v1"
+        assert {key: packed[key] for key in ("sha256", "content_sha256", "shape", "dtype")} == {
+            key: legacy[key] for key in ("sha256", "content_sha256", "shape", "dtype")}
+
+
+def test_explicit_legacy_keeps_original_npy_descriptor_bytes(tmp_path):
     value = np.array([[1.25, -2.5], [0., 7.]], dtype=np.float32)
     raw = npy_bytes(value)
     expected = {"kind": "array", "path": "arrays/" + digest(raw) + ".npy", "sha256": digest(raw),
                 "content_sha256": digest(value.tobytes()), "shape": [2, 2], "dtype": "float32"}
-    for label, storage in (("default", None), ("explicit", "files-v1")):
-        tx = transaction(tmp_path / label, storage=storage)
-        record = predict(tx, value)
-        assert array_descriptor(record) == expected
-        assert (tx.root / expected["path"]).read_bytes() == raw
-        np.testing.assert_array_equal(load_forecast_array(tx.root, expected), value)
-        tx.seal()
-        tx.close()
-        assert verify_transaction(tx.root)["verified"]
+    tx = transaction(tmp_path / "legacy", storage="files-v1")
+    record = predict(tx, value)
+    assert "array_storage" not in tx.declarations
+    assert array_descriptor(record) == expected
+    assert (tx.root / expected["path"]).read_bytes() == raw
+    np.testing.assert_array_equal(load_forecast_array(tx.root, expected), value)
+    tx.seal()
+    tx.close()
+    assert verify_transaction(tx.root)["verified"]
 
 
 @pytest.mark.parametrize("storage", ["files-v1", "bundle-v1"])

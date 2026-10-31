@@ -142,6 +142,7 @@ Each `BatchRow` carries lane, input epoch, branch, expected revision and roots.
 Optional `OutputAct` edits replace, add, zero or scale a declared module output
 for that row and invocation. Compatible invocation schedules form separate
 groups; `screen(rows, batch_size=1)` provides the native scalar comparison.
+Omitting `batch_size` uses the profile's largest admitted batch by default.
 Paused rows occupy no physical slot. New requests can refill slots with new
 input epochs. Attempt receipts seal the row mapping, root hashes, Act specs and
 physical work; failed groups publish no row outputs.
@@ -164,6 +165,10 @@ native frontier. The default `bundle-v1` layout packs backing storages into a
 CAS tensor bundle while retaining aliases, view geometry, cursor, Acts and
 provenance. The loader also accepts the original `slots-v1` layout. Other
 branches, archived inputs and the request retry cache are outside this snapshot.
+
+Forecast transactions likewise default to immutable numerical bundles; the
+[storage guide](FORECAST-STORAGE.md) lists the composed defaults and explicit
+legacy/scalar alternatives. Component stepping remains scalar replay.
 
 ```sh
 mdb discovery resume /path/to/store CUT_ID \

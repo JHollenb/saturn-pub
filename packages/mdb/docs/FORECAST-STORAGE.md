@@ -1,9 +1,9 @@
 # Packed forecast storage
 
-`ForecastTransaction` can publish its numerical arrays in immutable bundles.
+`ForecastTransaction` publishes its numerical arrays in immutable bundles by default.
 This amortizes file and directory synchronization across a complete publication,
 while preserving the original NPY bytes, array hashes, values and explicit casts.
-The existing individual-file format remains the default.
+Existing individual-file transactions remain readable.
 
 ```python
 with ForecastTransaction(
@@ -13,7 +13,6 @@ with ForecastTransaction(
     input_identity=input_sha256,
     source_identity=source_hashes,
     frontier={"kind": "raw-input"},
-    array_storage="bundle-v1",
 ) as transaction:
     # frontier -> predict -> seal -> execute uses the same API and guards.
     ...
@@ -22,7 +21,38 @@ with ForecastTransaction(
 Use `array_storage="files-v1"` for the legacy layout. Existing transactions remain
 readable and keep their original identities. Packed descriptors require the new
 public readers; external scripts that call `np.load(root / descriptor["path"])`
-directly must migrate before opting in.
+directly must switch to `load_forecast_tree` or `load_forecast_array`, or explicitly
+select the legacy writer.
+
+## Defaults across discovery
+
+The default changes apply to new publications, without rewriting retained evidence.
+
+| Operation | Default | Explicit alternative |
+|---|---|---|
+| `FrozenNativeBatch.screen(rows)` | Largest admitted compatible batch, up to four in the qualified R3 profile | `batch_size=1` for scalar screening |
+| `save_frontier` / `save_session_frontier` | Packed backing storages, `bundle-v1` | `storage_layout="slots-v1"` |
+| `ForecastTransaction` | Packed numerical publications, `bundle-v1` | `array_storage="files-v1"` |
+| Context-window and raw-input sequence campaigns | Packed numerical publications, `bundle-v1` | `--array-storage files-v1` |
+
+Native screening and selected-state saving already used these defaults; forecast
+transactions now do so too. Component stops and stepping continue through scalar
+replay. No profile is inferred for an arbitrary model, and screening never commits
+architectural state. Campaign prior-array readers accept both numerical layouts.
+
+These choices can be used in one discovery workflow. Their separately measured
+phase gains are not a measured combined campaign multiplier. In particular, the
+58.64× publication, 6.34× worker and 3.24× whole-job ratios below are nested views
+of the same forecast-storage reproduction.
+
+The [default-change validation](../qualification/fast-defaults-20261030.json)
+records 144 installed-wheel tests outside the workspace. It includes one tiny
+CPU composition check (B4 screening → selected B1 replay → bundled cut restore
+→ default bundled forecast → sealed suffix execution), both campaign CLI defaults
+and legacy overrides, and both campaign numerical readers. Offline rechecks
+retain all 1,161 original NPY identities and audit the eighteen historical
+raw-input sequence rows. These are engineering and reader checks; no new
+real-model execution or combined speed measurement is claimed.
 
 ## Publication and integrity
 
@@ -85,9 +115,9 @@ measured separately. Retain the complete transaction or every referenced bundle:
 later records may refer to arrays published in earlier phases.
 
 The [computation workflow](COMPUTATION-FORECAST-WORKFLOW.md) uses the same
-transaction methods. The matched-context campaign accepts
-`--array-storage bundle-v1`; its plan, equations, native inputs and intervention
-recipes remain unchanged.
+transaction methods. The matched-context and raw-input sequence campaigns default
+to bundles and accept `--array-storage files-v1`; their plans, equations, native
+inputs and intervention recipes remain unchanged.
 
 ## Measured storage benchmark
 
@@ -165,8 +195,9 @@ The separate context auditor verifies all eleven heads, literal roots, native
 ports, typed Acts and replay receipts. Its numerical residuals are identical to
 the previous report.
 
-The installed qualification wheel, benchmark payload, reproduction payload and
-working source match across 174 runtime modules. There are 107 focused
+At the measured revision, the installed qualification wheel, benchmark payload,
+reproduction payload and working source matched across 174 runtime modules. That
+qualification contains 107 focused
 installed-wheel tests: 51 storage tests, 16 transaction tests and 40 prefix/port/
 equation tests, run outside the workspace. Coverage includes directory-entry
 durability, interrupted publication, malformed or rehashed counterfeit NPY,

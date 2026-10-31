@@ -57,10 +57,13 @@ hold the first instruction and architectural state fixed, reproduce a collateral
 register error, and predict its repair through a transferred final-MLP write.
 The reciprocal transfer weakens the other context without flipping its bit;
 the receiving state and write jointly determine the outcome.
-Opt-in [packed forecast storage](docs/FORECAST-STORAGE.md) preserves the complete
+[Packed forecast storage](docs/FORECAST-STORAGE.md) is the default and preserves the complete
 arrays and their hashes while reducing the measured campaign worker time from
-74.35 to 11.74 seconds. Legacy files remain supported; external array inspection
-uses the public readers for either format.
+74.35 to 11.74 seconds. Selected-state saves also default to bundles, and native
+screening uses the admitted profile's largest batch. These defaults compose;
+component stepping retains scalar replay. Legacy files remain available with
+`array_storage="files-v1"`; external array inspection uses the public readers
+for either format.
 
 Start the local GDB-style console after a base install:
 

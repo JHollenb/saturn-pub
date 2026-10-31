@@ -12,7 +12,10 @@ import json
 import os
 import runpy
 import time
+from collections.abc import Mapping
 from pathlib import Path
+
+from mdb.forecast_transaction import DEFAULT_ARRAY_STORAGE
 
 FRESH = ("old.native", "old.zero", "old.U_swap", "old.U_swap_P2native", "new.zero",
          "old.U_swap_P2other", "new.U_swap_P2other")
@@ -78,30 +81,16 @@ def array_references(value):
 
 def decode_tree(value, root):
     """Decode a selected prior numeric subtree only after the new global seal."""
-    import numpy as np
+    from mdb.forecast_transaction import load_forecast_tree
 
-    kind = value["kind"]
-    if kind == "array":
-        relative = Path(value["path"])
-        if relative.is_absolute() or ".." in relative.parts or relative.parts[0] != "arrays":
-            raise ValueError("invalid prior array path")
-        path = root / relative
-        if path.is_symlink() or sha(path.read_bytes()) != value["sha256"]:
-            raise ValueError("prior array bytes differ")
-        array = np.load(path, allow_pickle=False)
-        if list(array.shape) != value["shape"] or str(array.dtype) != value["dtype"]:
-            raise ValueError("prior array geometry differs")
-        if sha(array.tobytes()) != value["content_sha256"] or not np.isfinite(array).all():
-            raise ValueError("prior array content differs")
-        return array.copy()
-    if kind == "mapping":
-        return {key: decode_tree(child, root) for key, child in value["items"].items()}
-    if kind in ("tuple", "list"):
-        items = [decode_tree(child, root) for child in value["items"]]
-        return tuple(items) if kind == "tuple" else items
-    if kind == "scalar":
-        return value["value"]
-    raise ValueError("unsupported prior tree kind")
+    def containers(item):
+        if isinstance(item, Mapping):
+            return {key: containers(child) for key, child in item.items()}
+        if isinstance(item, tuple):
+            return [containers(child) for child in item]
+        return item
+
+    return containers(load_forecast_tree(root, value))
 
 
 def stage_prior(root, plan, destination):
@@ -460,7 +449,7 @@ def worker():
     phase("transaction_initialization", "start", scope="declarations/full-weight publication and guard installation")
     transaction = ForecastTransaction(output / "transaction", model=model,
         model_identity=plan["model_identity"], input_identity=sha(raw_plan), source_identity=request["source_hashes"],
-        array_storage=config.get("array_storage", "files-v1"),
+        array_storage=config.get("array_storage", DEFAULT_ARRAY_STORAGE),
         frontier=plan["frontier"], budgets={"max_native_calls": 12, "max_wall_ms": 240000,
                                          "max_bytes": 128 * 1024 * 1024, "max_files": 4096})
     phase("transaction_initialization", "end")
@@ -502,7 +491,7 @@ def worker():
     support()["emit"](output, summary)
 
 
-def stage(run_dir, isa_root, plan_path, prior_root, hypothesis_path=None, array_storage="files-v1", purpose="discovery"):
+def stage(run_dir, isa_root, plan_path, prior_root, hypothesis_path=None, array_storage=DEFAULT_ARRAY_STORAGE, purpose="discovery"):
     from mdb.execution_environment import intent
     from mdb.job_support import guarded_mrun_launch, one_lease_scheduling_contract
     from mdb.payload import stage_worker, worker_command
@@ -570,7 +559,8 @@ def main():
     parser.add_argument("--plan", type=Path)
     parser.add_argument("--prior-root", type=Path)
     parser.add_argument("--hypothesis", type=Path, help="defaults to the dated structural-prefix hypothesis beside this script")
-    parser.add_argument("--array-storage", choices=("files-v1", "bundle-v1"), default="files-v1")
+    parser.add_argument("--array-storage", choices=("files-v1", "bundle-v1"), default=DEFAULT_ARRAY_STORAGE,
+                        help="numerical layout (default: %(default)s); files-v1 selects legacy individual files")
     parser.add_argument("--purpose", choices=("discovery", "performance-reproduction"), default="discovery")
     parser.add_argument("--collect")
     args = parser.parse_args()

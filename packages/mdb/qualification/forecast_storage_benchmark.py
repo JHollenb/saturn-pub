@@ -1,7 +1,8 @@
 """Finite saved-array forecast-storage benchmark; no model or equation execution.
 
 One lease runs three isolated children sequentially: frozen old files-v1,
-current files-v1, and opt-in current bundle-v1. Filesystem cache/order effects
+current files-v1, and current bundle-v1. Both current modes are selected explicitly;
+the benchmark does not depend on the writer's default. Filesystem cache/order effects
 are retained; warm reads are explicitly labeled. Staging submits a job, so
 invoke it only after reviewing the frozen input and runtime source snapshots.
 """
@@ -460,7 +461,7 @@ def stage(run_dir, source_result, current_source, baseline_ref, ram_mb=2304):
                    "task_family": "analysis",
                    "sequential_storage_helper_processes": 3, "helper_process_order": list(MODES),
                    "helper_process_scope": "posthoc storage measurement; no model loads or scientific branches"}),
-        "selection_policy": "one same-host sequential lease; three isolated storage-only children; default/opt-in storage contrast"}
+        "selection_policy": "one same-host sequential lease; three isolated storage-only children; explicit files/bundle storage contrast"}
     request["source_hashes"]["forecast_storage_benchmark.py"] = digest(Path(__file__).read_bytes())
     request["request_sha256"] = digest(json.dumps(request, sort_keys=True, allow_nan=False).encode())
     save(run_dir / "request.json", request)

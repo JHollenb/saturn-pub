@@ -25,6 +25,7 @@ from types import MappingProxyType
 from typing import Any
 
 SCHEMA = "mdb-forecast-transaction-v1"
+DEFAULT_ARRAY_STORAGE = "bundle-v1"
 _NAME = re.compile(r"^[A-Za-z][A-Za-z0-9_.-]{0,63}$")
 
 
@@ -126,6 +127,9 @@ class ForecastTransaction:
     Scripts contain already-bound trusted Python callables, not import names or
     serialized executable code. Wall limits are cooperative checks at operations
     and instrumented module entries; callbacks are not forcibly preempted.
+
+    Numerical publications use immutable bundles by default. Select
+    ``array_storage='files-v1'`` for the legacy individual-NPY layout.
     """
 
     DEFAULT_BUDGETS = {"max_actions": 512, "max_captures": 64, "max_predictions": 128,
@@ -135,7 +139,7 @@ class ForecastTransaction:
 
     def __init__(self, root, *, model=None, model_identity, input_identity, source_identity,
                  allowed_prefix=None, denied_modules=(), frontier=None, weights=None,
-                 budgets=None, array_storage="files-v1"):
+                 budgets=None, array_storage=DEFAULT_ARRAY_STORAGE):
         self.root = Path(root)
         _mkdir_durable(self.root, exist_ok=False)
         self.model = model

@@ -10,6 +10,8 @@ import runpy
 import time
 from pathlib import Path
 
+from mdb.forecast_transaction import DEFAULT_ARRAY_STORAGE
+
 
 def sha(raw):
     return hashlib.sha256(raw).hexdigest()
@@ -234,6 +236,7 @@ def worker():
     transaction = ForecastTransaction(output / "transaction", model=model,
         model_identity=plan["model_identity"], input_identity=sha(plan_raw),
         source_identity=request["source_hashes"], frontier=plan["frontier"],
+        array_storage=config.get("array_storage", DEFAULT_ARRAY_STORAGE),
         budgets={"max_native_calls": 24, "max_wall_ms": 240000,
                  "max_bytes": 384 * 1024 * 1024, "max_files": 8192})
 
@@ -305,7 +308,7 @@ def worker():
     support()["emit"](output, summary)
 
 
-def stage(run_dir, isa_root, plan_path):
+def stage(run_dir, isa_root, plan_path, array_storage=DEFAULT_ARRAY_STORAGE):
     from mdb.execution_environment import intent
     from mdb.job_support import guarded_mrun_launch, one_lease_scheduling_contract
     from mdb.payload import stage_worker, worker_command
@@ -330,7 +333,7 @@ def stage(run_dir, isa_root, plan_path):
                          "plan.json", "source-manifest.json", "preflight.v1.json"]})
     files.append((preflight, preflight.name))
     config = {"schema": "mdb-raw-isa-sequence-config-v1", "checkpoint": "artifacts/model.pt",
-              "plan_file_sha256": sha(raw_plan)}
+              "plan_file_sha256": sha(raw_plan), "array_storage": array_storage}
     request = {"schema": "mdb-raw-isa-sequence-request-v1", "task_family": "mdb-raw-isa-sequence",
         "model_identity": plan["model_identity"], "needs": {"cpu": True}, "config": config,
         "execution_environment": intent(), "source_hashes": {name: sha(path.read_bytes()) for path, name in files},
@@ -362,6 +365,8 @@ def main():
     parser.add_argument("--run-dir", type=Path)
     parser.add_argument("--isa-root", type=Path)
     parser.add_argument("--plan", type=Path)
+    parser.add_argument("--array-storage", choices=("files-v1", "bundle-v1"), default=DEFAULT_ARRAY_STORAGE,
+                        help="numerical layout (default: %(default)s); files-v1 selects legacy individual files")
     parser.add_argument("--collect")
     args = parser.parse_args()
     if args.worker:
@@ -382,7 +387,7 @@ def main():
     else:
         if args.run_dir is None or args.isa_root is None or args.plan is None:
             parser.error("staging requires run-dir, isa-root and plan")
-        print(json.dumps(stage(args.run_dir.resolve(), args.isa_root.resolve(), args.plan.resolve())))
+        print(json.dumps(stage(args.run_dir.resolve(), args.isa_root.resolve(), args.plan.resolve(), args.array_storage)))
 
 
 if __name__ == "__main__":
