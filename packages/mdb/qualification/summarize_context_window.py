@@ -80,7 +80,8 @@ class NumericalTree:
         return self.decode(node)
 
 
-def source_run(root, data_name, *, failed=False, max_archive_bytes=128 << 20, max_member_bytes=64 << 20):
+def source_run(root, data_name, *, failed=False, max_archive_bytes=128 << 20, max_member_bytes=64 << 20,
+               recover_metadata=False):
     require(type(max_archive_bytes) is int and 0 < max_archive_bytes <= 512 << 20,
             "explicit archive allowance must be positive and at most 512 MiB")
     require(type(max_member_bytes) is int and 0 < max_member_bytes <= 256 << 20,
@@ -125,8 +126,28 @@ def source_run(root, data_name, *, failed=False, max_archive_bytes=128 << 20, ma
             archived[key] = sha(archive.extractfile(member).read())
     require(set(archived) == inventory and all(sha(file_path(data, name).read_bytes()) == digest
                 for name, digest in archived.items()), "extracted result differs from retained archive")
-    tx_report = read(data / "transaction-report.json")
     tx = data / "transaction"
+    recovered = {}
+    if not (data / "transaction-report.json").is_file():
+        require(failed and recover_metadata, "missing transaction report requires explicit failed-publication metadata recovery")
+        # The raw archive has already been checked. Reconstruct reporting fields
+        # from the public sealed transaction without altering any raw file.
+        checked = verify_transaction(tx)
+        saved_events = [read(path) for path in sorted((tx / "events").glob("*.json"))]
+        require(saved_events and checked["phase"] == "closed"
+                and any(row["kind"] == "observation_persisted" for row in saved_events)
+                and not any(row["kind"] in {"failed", "violation"} for row in saved_events),
+                "metadata recovery requires a closed transaction with recorded observation and no transaction failure")
+        tx_report = {"schema": "mdb-forecast-transaction-v1", "phase": checked["phase"],
+            "seal_sha256": checked["seal_sha256"], "event_head": checked["event_head"],
+            "events": saved_events, "work": saved_events[-1]["work"], "failure": None,
+            "violations": read(tx / "seal.json")["violations"],
+            "frontiers": sorted(path.stem for path in (tx / "frontiers").glob("*.json")),
+            "forecasts": sorted(path.stem for path in (tx / "forecasts").glob("*.json")),
+            "observations": sorted(path.stem for path in (tx / "observations").glob("*.json"))}
+        recovered["transaction_report"] = "derived from verified durable public transaction and phase receipts"
+    else:
+        tx_report = read(data / "transaction-report.json")
     verification = verify_transaction(tx, expected_seal_sha256=tx_report["seal_sha256"],
                                       expected_event_head=tx_report["event_head"])
     events = [read(path) for path in sorted((tx / "events").glob("*.json"))]
@@ -148,9 +169,18 @@ def source_run(root, data_name, *, failed=False, max_archive_bytes=128 << 20, ma
         "manifest_sha256": sha((data / "files.json").read_bytes()) if published_manifest else None,
         "artifact_inventory_authority": "published manifest plus retained archive" if published_manifest else "failed-attempt retained archive; no completed result manifest",
         "transaction": verification}
+    if (data / "plan.json").is_file():
+        plan = read(data / "plan.json")
+    else:
+        require(failed and recover_metadata, "missing raw plan requires explicit failed-publication metadata recovery")
+        plan = read(root / "plan.json")
+        require(plan == request["config"], "recovered plan differs from request-bound submitted configuration")
+        recovered["plan"] = "request-bound submitted configuration; no raw plan was published"
+    if recovered:
+        source["metadata_recovery"] = recovered
     return {"root": root, "data": data, "request": request, "report": report, "manifest": manifest,
             "transaction": tx, "transaction_report": tx_report, "seal": seal, "events": events,
-            "source": source, "tree": NumericalTree(tx), "plan": read(data / "plan.json")}
+            "source": source, "tree": NumericalTree(tx), "plan": plan}
 
 
 def difference(observed, reference):

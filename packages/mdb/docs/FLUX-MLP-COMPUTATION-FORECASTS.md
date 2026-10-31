@@ -4,6 +4,16 @@ This finite assay extends MDB's capture → predict → seal → execute workflo
 
 The completed panel retained all twelve native images with valid saved-array mechanics. Native/sham final latents and PNGs match exactly. The independent FP64 forecast approximates the local BF16 computation with measurable rounding residuals; donor writes change pixels but do not reverse the recipient's object ordering in either scene. These are bounded numerical and native-consumer observations, not an RGB forecast or a discovered object program.
 
+## Numerical coverage and the image continuation
+
+The current ISA equation account forecasts complete forwards and bounded architectural continuations from raw instruction inputs. The Qwen account forecasts the final MLP and vocabulary readout from an observed residual. This first FLUX account forecasts one image MLP and its local residual update from an observed prefix. The twelve rendered images are native continuations, rather than independently forecast images.
+
+The symbol table records values and data flow; the equations use state and weights to calculate predictions. FLUX's selected boundary carries continuous image features. Subsequent transformer computation produces a flow update, the scheduler changes the latent, later timesteps consume that changed latent, and the VAE decodes the final latent into RGB. No image logits occur at the tested MLP boundary.
+
+The donor transfer was an extra semantic-control experiment. A full numerical continuation needs no donor: calculate the remaining state transitions from one initial frontier, seal the intermediate forecasts and final image, then execute the native suffix for comparison. Every predicted transition must consume its own predicted state. Refreshing from native intermediate states would establish separate local forecasts, rather than one complete trajectory forecast.
+
+A [subsequent functional experiment](FLUX-TRAJECTORY-FORECASTS.md) now covers that complete continuation for one fresh-seed case. Starting before joint block zero, it predicts all 111 remaining transitions and VAE decoding; all 228 tensor hashes and final RGB match native execution exactly. It shares low-level CUDA kernels and observes the initial frontier. The local FP64 assay below remains the earlier, distinct numerical comparison.
+
 ## Specimen and prediction boundary
 
 The specimen is `flux2-klein-4b-distilled`, loaded from the pinned local pipeline inventory with digest `dd976d67036c4a0a55642f702dcb3740ba7a4f367557596572baac168330904f`. The public `saturn_pub` FLUX.2 adapter retains the native transformer, flow scheduler and VAE as the downstream consumer. Execution uses CUDA BF16, batch one, 512 × 512 pixels, four diffusion steps, seed 17 and guidance scale 1. The text encoder prepares both conditions before being parked on CPU; the transformer remains resident for the branch panel.

@@ -77,6 +77,11 @@ branches through the public Saturn adapter. Copy shams reproduce exact images;
 analytic self-writes and donor transfers retain BF16 discrepancies and native
 image effects. Object ordering stays unchanged at this tested occurrence;
 the structural records do not yet identify object symbols.
+The [full diffusion continuation](docs/FLUX-TRAJECTORY-FORECASTS.md) extends
+the forecast through 111 own-state transitions and VAE decoding. For one fresh
+seed, all 228 boundary tensor hashes and the final RGB match exactly. This is
+conditional on an observed initial frontier and uses shared CUDA primitive
+kernels; the saved evidence remains auditable despite a later summary-writing failure.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 [Packed forecast storage](docs/FORECAST-STORAGE.md) is the default and preserves the complete
