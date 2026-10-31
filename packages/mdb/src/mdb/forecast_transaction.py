@@ -116,7 +116,7 @@ class ForecastTransaction:
 
     def __init__(self, root, *, model=None, model_identity, input_identity, source_identity,
                  allowed_prefix=None, denied_modules=(), frontier=None, weights=None,
-                 budgets=None):
+                 budgets=None, array_storage="files-v1"):
         self.root = Path(root)
         self.root.mkdir(parents=True, exist_ok=False, mode=0o700)
         self.model = model
@@ -135,10 +135,15 @@ class ForecastTransaction:
         self._failure = None
         self._weights = {}
         self._model_signature = None
+        self.array_storage = array_storage
+        self._array_descriptors, self._pending_arrays = {}, {}
+        self._pending_array_bytes = 0
         self.allowed_prefix = _json(allowed_prefix) if allowed_prefix is not None else None
         self.denied_modules = tuple(denied_modules)
         self.declarations = {}
         try:
+            if array_storage not in ("files-v1", "bundle-v1"):
+                raise ForecastTransactionError("unsupported array storage format")
             for key, value in self.budgets.items():
                 if key not in self.DEFAULT_BUDGETS or type(value) is not int or value < 1:
                     raise ForecastTransactionError(f"invalid positive finite budget: {key}")
@@ -170,6 +175,8 @@ class ForecastTransaction:
                 if self.denied_modules:
                     raise ForecastTransactionError("denied module guards require a bound model")
                 self._weights = _readonly(weights or {})
+            weight_manifest = self._encode(self._weights)
+            self._flush_arrays()
             self.declarations = _json({"schema": SCHEMA, "model_identity": model_identity,
                 "input_identity": input_identity, "source_identity": source_identity,
                 "allowed_prefix": self.allowed_prefix, "frontier": frontier,
@@ -179,7 +186,9 @@ class ForecastTransaction:
                 "guard_limits": ["direct .forward calls may bypass hooks", "other model objects are not instrumented",
                     "arbitrary Python and external side effects are not sandboxed",
                     "callbacks must join background work before returning; wall checks are cooperative"],
-                "actual_weight_manifest": self._encode(self._weights)})
+                "actual_weight_manifest": weight_manifest})
+            if array_storage != "files-v1":
+                self.declarations["array_storage"] = array_storage
             self._write_json("declarations.json", self.declarations)
             self._event("opened")
         except BaseException as error:
@@ -241,8 +250,11 @@ class ForecastTransaction:
 
     def _publish(self, relative, raw, *, deduplicate=False, emergency=False):
         path = self.root / relative
-        if path.is_symlink():
-            raise ForecastTransactionError("artifact path is a symbolic link")
+        current = self.root
+        for component in Path(relative).parts:
+            current = current / component
+            if current.is_symlink():
+                raise ForecastTransactionError("artifact path contains a symbolic link")
         if path.exists():
             if deduplicate and path.read_bytes() == raw:
                 return
@@ -267,7 +279,29 @@ class ForecastTransaction:
             temporary.unlink(missing_ok=True)
 
     def _write_json(self, relative, value, *, emergency=False):
+        self._flush_arrays()
         self._publish(relative, _canonical(value), emergency=emergency)
+
+    def _flush_arrays(self):
+        """Publish one closed pack before any metadata can reference it."""
+        if not self._pending_arrays:
+            return
+        from mdb.forecast_storage import BUNDLE_MAGIC
+
+        pieces, offset = [BUNDLE_MAGIC], len(BUNDLE_MAGIC)
+        for identifier, (raw, descriptor) in sorted(self._pending_arrays.items()):
+            descriptor["offset"], descriptor["nbytes"] = offset, len(raw)
+            offset += len(raw)
+            pieces.append(raw)
+        bundle = b"".join(pieces)
+        identifier = _sha(bundle)
+        relative = "arrays/" + identifier + ".npyb"
+        self._publish(relative, bundle, deduplicate=True)
+        for _, descriptor in self._pending_arrays.values():
+            descriptor["path"] = relative
+            descriptor["bundle_sha256"] = identifier
+        self._pending_arrays.clear()
+        self._pending_array_bytes = 0
 
     def _event(self, kind, *, detail=None):
         from saturn_pub import Receipt
@@ -334,15 +368,33 @@ class ForecastTransaction:
             value = value.detach().cpu().numpy()
         if isinstance(value, np.ndarray):
             array = _readonly(value)
+            content = array.tobytes(order="C")
+            content_sha = _sha(content)
+            key = (array.dtype.str, array.shape, content_sha)
+            # Snapshot and hash every supplied array. Object-identity caching
+            # would miss a callback mutating and reusing the same ndarray.
+            if key in self._array_descriptors:
+                return self._array_descriptors[key]
             buffer = io.BytesIO()
             np.save(buffer, array, allow_pickle=False)
             raw = buffer.getvalue()
             identifier = _sha(raw)
             relative = "arrays/" + identifier + ".npy"
-            self._publish(relative, raw, deduplicate=True)
-            return {"kind": "array", "path": relative, "sha256": identifier,
-                    "shape": list(array.shape), "dtype": str(array.dtype),
-                    "content_sha256": _sha(array.tobytes(order="C"))}
+            descriptor = {"kind": "array", "path": relative, "sha256": identifier,
+                          "shape": list(array.shape), "dtype": str(array.dtype),
+                          "content_sha256": content_sha}
+            if self.array_storage == "bundle-v1":
+                from mdb.forecast_storage import BUNDLE_MAGIC
+
+                if self.work["retained_bytes"] + len(BUNDLE_MAGIC) + self._pending_array_bytes + len(raw) > self.budgets["max_bytes"]:
+                    raise ForecastTransactionError("retained-byte budget exhausted")
+                descriptor.update(storage="bundle-v1")
+                self._pending_arrays[identifier] = (raw, descriptor)
+                self._pending_array_bytes += len(raw)
+            else:
+                self._publish(relative, raw, deduplicate=True)
+            self._array_descriptors[key] = descriptor
+            return descriptor
         if isinstance(value, Mapping):
             if any(not isinstance(key, str) for key in value):
                 raise ForecastTransactionError("stored mappings require string keys")
@@ -355,28 +407,7 @@ class ForecastTransaction:
         raise ForecastTransactionError(f"unsupported stored value: {type(value).__name__}")
 
     def _decode(self, encoded):
-        import numpy as np
-
-        kind = encoded["kind"]
-        if kind == "array":
-            path = self.root / encoded["path"]
-            if path.is_symlink():
-                raise ForecastTransactionError("array path is a symbolic link")
-            raw = path.read_bytes()
-            if _sha(raw) != encoded["sha256"]:
-                raise ForecastTransactionError("stored array seal differs")
-            array = np.load(io.BytesIO(raw), allow_pickle=False)
-            if (list(array.shape) != encoded["shape"] or str(array.dtype) != encoded["dtype"]
-                    or _sha(array.tobytes(order="C")) != encoded["content_sha256"]):
-                raise ForecastTransactionError("stored array descriptor differs")
-            return _readonly(array)
-        if kind == "mapping":
-            return MappingProxyType({key: self._decode(item) for key, item in encoded["items"].items()})
-        if kind in ("list", "tuple"):
-            return tuple(self._decode(item) for item in encoded["items"])
-        if kind == "scalar":
-            return encoded["value"]
-        raise ForecastTransactionError("unknown stored descriptor")
+        return load_forecast_tree(self.root, encoded)
 
     @staticmethod
     def _select(value, path):
@@ -532,6 +563,8 @@ class ForecastTransaction:
                 raise ForecastTransactionError("a global seal requires at least one persisted forecast")
             self.phase = "sealing"
             self._check()
+            _verify_numerical_records(self.root, self.declarations,
+                                      list(self._frontiers.values()), list(self._predictions.values()))
             manifest = {"schema": "mdb-global-forecast-seal-v1", "transaction_schema": SCHEMA,
                         "declarations": self.declarations, "files": self._files(),
                         "frontiers": list(self._frontiers), "forecasts": list(self._predictions),
@@ -661,6 +694,62 @@ class ForecastTransaction:
         self.close()
 
 
+def load_forecast_array(root, descriptor):
+    """Read one sealed NPY leaf in either storage format, returning an owned view.
+
+    The byte-backed NumPy result is immutable. This validates content integrity;
+    authenticate its descriptor using an externally pinned transaction or archive.
+    """
+    from mdb.forecast_storage import ArrayReader
+
+    try:
+        return ArrayReader(root).array(descriptor)
+    except (OSError, ValueError, KeyError, TypeError, OverflowError, RuntimeError) as error:
+        raise ForecastTransactionError(str(error)) from error
+
+
+def load_forecast_tree(root, descriptor):
+    """Decode a numerical tree with one per-call verified-bundle byte cache."""
+    from mdb.forecast_storage import ArrayReader
+
+    try:
+        return ArrayReader(root).tree(descriptor)
+    except (OSError, ValueError, KeyError, TypeError, OverflowError, RuntimeError) as error:
+        raise ForecastTransactionError(str(error)) from error
+
+
+def _verify_numerical_records(root, declarations, frontiers, forecasts):
+    """Check every referenced numerical leaf with stdlib-only storage validation."""
+    from mdb.forecast_storage import ArrayReader
+
+    reader = ArrayReader(root)
+
+    def visit(value):
+        if isinstance(value, Mapping):
+            if value.get("kind") == "array":
+                reader.raw(value)
+            else:
+                for child in value.values():
+                    visit(child)
+        elif isinstance(value, (tuple, list)):
+            for child in value:
+                visit(child)
+
+    try:
+        visit(declarations["actual_weight_manifest"])
+        for record in frontiers:
+            visit(record["value"])
+            if "roots" in record:
+                visit(record["roots"])
+        for record in forecasts:
+            visit(record["predictions"])
+            for payload in record["payloads"].values():
+                visit(payload["value"])
+                visit(payload["original"])
+    except (OSError, ValueError, KeyError, TypeError, OverflowError, RuntimeError) as error:
+        raise ForecastTransactionError(str(error)) from error
+
+
 def verify_transaction(root, *, expected_seal_sha256=None, expected_event_head=None,
                        max_files=8192, max_bytes=1024 * 1024 * 1024):
     """Verify metadata/bytes without importing NumPy, Torch, or model code.
@@ -700,6 +789,12 @@ def verify_transaction(root, *, expected_seal_sha256=None, expected_event_head=N
         actual = path_for(relative).read_bytes()
         if len(actual) != reference["bytes"] or _sha(actual) != reference["sha256"]:
             raise ForecastTransactionError("sealed artifact changed: " + relative)
+    frontiers, forecasts = [], []
+    for relative in manifest["files"]:
+        kind = relative.split("/", 1)[0]
+        if relative.endswith(".json") and kind in ("frontiers", "forecasts"):
+            (frontiers if kind == "frontiers" else forecasts).append(json.loads(path_for(relative).read_bytes()))
+    _verify_numerical_records(root, manifest["declarations"], frontiers, forecasts)
     previous, events = None, []
     for index, path in enumerate(sorted((root / "events").glob("*.json"))):
         raw = path_for(str(path.relative_to(root))).read_bytes()
