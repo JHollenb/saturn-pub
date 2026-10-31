@@ -97,7 +97,7 @@ The top 10% of spatial rows contain 24.1–30.6% of write-contrast energy. The [
 
 The generic records remain `stored-conditioning-reread`, `within-step-working-text` and `joint0-time-gated-image-ff-write`. Two additional coarse candidate aliases are `early-layout-and-color-binding` for the first-step window and `later-shape-refinement` for the shape-responsive continuation. They describe this contrast family; they are working inferences rather than isolated learned functions or universal semantic instructions.
 
-The next discriminating cut is inside step zero. Swap working text after selected joint/single blocks, then restore recipient or donor image state from the same parent. That separates a still-needed text reader from a scene-dependent image state that already carries the changed future. Only after localizing that handoff should individual attention outputs and MLP writes receive more specific functional names. More seeds, paraphrases and different scene identities are also needed before expanding applicability.
+The [next cut is now measured inside step zero](FLUX-BLOCK-HANDOFF.md). Twelve native outcomes restore matched base text or image at four block boundaries. Working text determines ordering in the two early hybrids; image state determines it in the two late hybrids. This narrows the crossover to single blocks 0–9 for the known seed31 relation contrast. Only after further localization should individual attention outputs and MLP writes receive more specific functional names. More seeds, paraphrases and different scene identities are also needed before expanding applicability.
 
 ## Measurements and naming policy
 

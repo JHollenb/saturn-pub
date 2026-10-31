@@ -87,6 +87,11 @@ conditioning from working text in 24 native images. First-step text edits preser
 changed ordering/color assignment through later original conditioning; shape shows
 more mixed later influence. These are whole-field causal functions and candidate
 names, with specific object symbols still unresolved.
+The [block-boundary assay](docs/FLUX-BLOCK-HANDOFF.md) narrows a crossover from
+working-text-guided to image-state-guided ordering to single blocks 0–9 of the
+first timestep, using twelve matched native image futures in one known contrast.
+Its `NativeCutNavigator` supports bounded Python breakpoints over public Saturn
+Sessions using receipt cursors, avoiding extra captures just to inspect the clock.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 [Packed forecast storage](docs/FORECAST-STORAGE.md) is the default and preserves the complete

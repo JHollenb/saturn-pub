@@ -1,0 +1,2678 @@
+{
+  "RGB_forecast": false,
+  "audit": {
+    "audit_helpers": {
+      "analyze_flux_concept_routes.py": "0fb3e0cb5e23bb98d9780af1b7c591bb1cf291db516fd967ad0951b0f0fd4bfe",
+      "analyze_flux_mlp_forecast.py": "fb5c11feff809f23f65b6c89dda73a589e2a46d11cede60aaf4e04b60d349252",
+      "summarize_context_window.py": "fdbb1b07b26e2f4f9aa68747fde2e93640e9bd10edd1d9b56c3a521e038937fb"
+    },
+    "auditor_source_sha256": "5610f1c31c9d8139f767b0d79dcd45c214dda5232427c947ae864fd62b24dbba",
+    "comparisons": {
+      "after_joint0.restore_image": {
+        "rgb": {
+          "base_l2": 63070.841376978635,
+          "base_mae": 32.28866068522135,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -3.3438796997070312,
+          "target_l2": 535.051399400095,
+          "target_mae": 0.1550750732421875,
+          "target_projection": 0.999429339091216
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 17.483063722968755,
+            "base_mae": 0.024374022003030404,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00012045775656588376,
+            "target_l2": 0.43527770055680964,
+            "target_mae": 0.0003198863414581865,
+            "target_projection": 0.9999990054005456
+          },
+          "2": {
+            "base_l2": 33.894712757988756,
+            "base_mae": 0.0513853216834832,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00016711765783838928,
+            "target_l2": 0.738593816535514,
+            "target_mae": 0.0008518897084286436,
+            "target_projection": 1.0001074148181157
+          },
+          "3": {
+            "base_l2": 75.2603026182925,
+            "base_mae": 0.1193230792414397,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00046209467109292746,
+            "target_l2": 1.2308166472608468,
+            "target_mae": 0.0019315785611979663,
+            "target_projection": 1.0002393737380064
+          },
+          "4": {
+            "base_l2": 273.2149865135809,
+            "base_mae": 0.45861903176410124,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0037699598469771445,
+            "target_l2": 4.464185070454159,
+            "target_mae": 0.008137306664139032,
+            "target_projection": 1.0003004716051827
+          }
+        }
+      },
+      "after_joint0.restore_text": {
+        "rgb": {
+          "base_l2": 2781.4674184681726,
+          "base_mae": 0.4303881327311198,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": 0.09414037068684895,
+          "target_l2": 63081.02278023082,
+          "target_mae": 32.22228876749674,
+          "target_projection": 0.0013448427592140794
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 0.43698373158027665,
+            "base_mae": 0.0003214816315448843,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -2.7181107725482434e-05,
+            "target_l2": 17.47750680179191,
+            "target_mae": 0.024374042033741716,
+            "target_projection": 0.0003214223005861243
+          },
+          "2": {
+            "base_l2": 1.096720982126118,
+            "base_mae": 0.0011889479355886579,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -6.7622167989611626e-06,
+            "target_l2": 33.88105822899312,
+            "target_mae": 0.05135672430333216,
+            "target_projection": 0.0005818885071009047
+          },
+          "3": {
+            "base_l2": 3.044685007872698,
+            "base_mae": 0.003639270842541009,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -7.5132702477276325e-06,
+            "target_l2": 75.23917788030181,
+            "target_mae": 0.11934127542190254,
+            "target_projection": 0.0007265869086137465
+          },
+          "4": {
+            "base_l2": 15.236271095485185,
+            "base_mae": 0.01820705467252992,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -1.8257851479575038e-05,
+            "target_l2": 273.1111116722009,
+            "target_mae": 0.4585540658736136,
+            "target_projection": 0.0015026826235057065
+          }
+        }
+      },
+      "after_joint4.restore_image": {
+        "rgb": {
+          "base_l2": 61793.795279137856,
+          "base_mae": 30.90700912475586,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -1.6158536275227864,
+          "target_l2": 14791.541941258187,
+          "target_mae": 3.415625254313151,
+          "target_projection": 0.9519728694934663
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 17.128331785844438,
+            "base_mae": 0.02291721000801772,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00017965375445783138,
+            "target_l2": 4.906033308238205,
+            "target_mae": 0.00669806997757405,
+            "target_projection": 0.940815415593108
+          },
+          "2": {
+            "base_l2": 33.057221367597215,
+            "base_mae": 0.048488961707334965,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00010636181104928255,
+            "target_l2": 10.328545521693966,
+            "target_mae": 0.015387761741294526,
+            "target_projection": 0.9294642926576975
+          },
+          "3": {
+            "base_l2": 73.48975035208032,
+            "base_mae": 0.11369852937059477,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.000314389995764941,
+            "target_l2": 23.284126773757084,
+            "target_mae": 0.03361799742560834,
+            "target_projection": 0.9292127641534105
+          },
+          "4": {
+            "base_l2": 267.5987033042512,
+            "base_mae": 0.441399936506059,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00011224654735997319,
+            "target_l2": 90.64633865767364,
+            "target_mae": 0.1370020203758031,
+            "target_projection": 0.9249857795391083
+          }
+        }
+      },
+      "after_joint4.restore_text": {
+        "rgb": {
+          "base_l2": 20777.035255300503,
+          "base_mae": 5.130350748697917,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -2.9391606648763022,
+          "target_l2": 63598.86406218274,
+          "target_mae": 32.862403869628906,
+          "target_projection": 0.04633875112577761
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 2.4708197753564676,
+            "base_mae": 0.0030590567621402442,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00010647001909092069,
+            "target_l2": 17.56902505277931,
+            "target_mae": 0.024342091288417578,
+            "target_projection": 0.004751661230716016
+          },
+          "2": {
+            "base_l2": 9.726934414487628,
+            "base_mae": 0.01139601384056732,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 8.778850315138698e-05,
+            "target_l2": 33.513428724178794,
+            "target_mae": 0.05047353576810565,
+            "target_projection": 0.052054250728937
+          },
+          "3": {
+            "base_l2": 30.020207154288794,
+            "base_mae": 0.03863378567621112,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0008342583896592259,
+            "target_l2": 74.13639446424006,
+            "target_mae": 0.11632554553216323,
+            "target_projection": 0.09407397521862856
+          },
+          "4": {
+            "base_l2": 130.9259525154243,
+            "base_mae": 0.19244322826853022,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.002470809791702777,
+            "target_l2": 268.16433536068604,
+            "target_mae": 0.4411938034463674,
+            "target_projection": 0.13281528847659752
+          }
+        }
+      },
+      "after_single18.restore_image": {
+        "rgb": {
+          "base_l2": 391.74353855551976,
+          "base_mae": 0.13468551635742188,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": 0.05876286824544271,
+          "target_l2": 63136.9504569234,
+          "target_mae": 32.27613957722982,
+          "target_projection": -0.0004936151068033295
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 0.3807004383949131,
+            "base_mae": 0.00024861397105269134,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -2.926096203736961e-05,
+            "target_l2": 17.477642514454587,
+            "target_mae": 0.024341662734514102,
+            "target_projection": 0.0002383273366461909
+          },
+          "2": {
+            "base_l2": 0.663385822600746,
+            "base_mae": 0.0007214415236376226,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -1.888611586764455e-05,
+            "target_l2": 33.88099784823461,
+            "target_mae": 0.051334319068701006,
+            "target_projection": 0.00025149417297143785
+          },
+          "3": {
+            "base_l2": 1.1407374950556108,
+            "base_mae": 0.0017723907949402928,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 5.39922621101141e-06,
+            "target_l2": 75.2231201761085,
+            "target_mae": 0.11917592393001541,
+            "target_projection": 0.00023605201481905226
+          },
+          "4": {
+            "base_l2": 4.581699946819381,
+            "base_mae": 0.007938363356515765,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00012569432146847248,
+            "target_l2": 273.0249819478447,
+            "target_mae": 0.457734742842149,
+            "target_projection": 0.00040245646829079355
+          }
+        }
+      },
+      "after_single18.restore_text": {
+        "rgb": {
+          "base_l2": 63095.98562507761,
+          "base_mae": 32.303436279296875,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -3.4003728230794272,
+          "target_l2": 374.4889851517665,
+          "target_mae": 0.13646443684895834,
+          "target_projection": 0.9998459952829089
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 17.473694308231618,
+            "base_mae": 0.02432339779625181,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -8.476154471281916e-05,
+            "target_l2": 0.38988853146834096,
+            "target_mae": 0.0002621359162731096,
+            "target_projection": 0.9995242091382545
+          },
+          "2": {
+            "base_l2": 33.879384207513915,
+            "base_mae": 0.051306137116625905,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00019600876839831471,
+            "target_l2": 0.6807971769735685,
+            "target_mae": 0.0007571455935249105,
+            "target_projection": 0.9996906930697499
+          },
+          "3": {
+            "base_l2": 75.21881418652416,
+            "base_mae": 0.11915759813564364,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0004542106034932658,
+            "target_l2": 1.0807050052777418,
+            "target_mae": 0.001702755325823091,
+            "target_projection": 0.9997185016242979
+          },
+          "4": {
+            "base_l2": 273.08586686520283,
+            "base_mae": 0.45785908901598305,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.003612797474488616,
+            "target_l2": 3.918149082473438,
+            "target_mae": 0.007366489910054952,
+            "target_projection": 0.9998582643667745
+          }
+        }
+      },
+      "after_single9.restore_image": {
+        "rgb": {
+          "base_l2": 21850.861539078956,
+          "base_mae": 5.594932556152344,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -1.9866256713867188,
+          "target_l2": 63290.63787006732,
+          "target_mae": 32.404396057128906,
+          "target_projection": 0.056996910347098
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 5.316463053522451,
+            "base_mae": 0.0067848070175386965,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00024938955903053284,
+            "target_l2": 16.70084419103704,
+            "target_mae": 0.022019961616024375,
+            "target_projection": 0.08972318330355339
+          },
+          "2": {
+            "base_l2": 11.639321814528376,
+            "base_mae": 0.01482242402562406,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -1.8834121874533594e-05,
+            "target_l2": 32.12823415513915,
+            "target_mae": 0.04730941925663501,
+            "target_projection": 0.1094498152365678
+          },
+          "3": {
+            "base_l2": 31.530884302536407,
+            "base_mae": 0.041244647349230945,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0010627723531797528,
+            "target_l2": 72.0898969946113,
+            "target_mae": 0.1113597058574669,
+            "target_projection": 0.1287244420088439
+          },
+          "4": {
+            "base_l2": 132.23599791681139,
+            "base_mae": 0.19491592480335385,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00527672388125211,
+            "target_l2": 262.6707233186045,
+            "target_mae": 0.4261748438584618,
+            "target_projection": 0.1546769303002757
+          }
+        }
+      },
+      "after_single9.restore_text": {
+        "rgb": {
+          "base_l2": 63236.283469223585,
+          "base_mae": 31.96910222371419,
+          "exact_base": false,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -3.055070241292318,
+          "target_l2": 7279.198925706042,
+          "target_mae": 2.271656036376953,
+          "target_projection": 0.9954360660052853
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 16.642988386498715,
+            "base_mae": 0.02216788660734892,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0002776671899482608,
+            "target_l2": 4.7505676315757315,
+            "target_mae": 0.0063200214062817395,
+            "target_projection": 0.9164439834698425
+          },
+          "2": {
+            "base_l2": 32.71646858679605,
+            "base_mae": 0.04865996484295465,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0002546301402617246,
+            "target_l2": 7.540098453978514,
+            "target_mae": 0.01069249508145731,
+            "target_projection": 0.9414032220647295
+          },
+          "3": {
+            "base_l2": 73.61086922870037,
+            "base_mae": 0.11528822331456468,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.0005664749187417328,
+            "target_l2": 17.194547860973977,
+            "target_mae": 0.023390538059175014,
+            "target_projection": 0.9525625829158477
+          },
+          "4": {
+            "base_l2": 269.161972302676,
+            "base_mae": 0.4464881829335354,
+            "exact_base": false,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.000347581401001662,
+            "target_l2": 70.22358695357035,
+            "target_mae": 0.09894107561558485,
+            "target_projection": 0.9526367243864154
+          }
+        }
+      },
+      "base": {
+        "rgb": {
+          "base_l2": 0.0,
+          "base_mae": 0.0,
+          "exact_base": true,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": 0.0,
+          "target_l2": 63104.59343027257,
+          "target_mae": 32.29333750406901,
+          "target_projection": 0.0
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 0.0,
+            "base_mae": 0.0,
+            "exact_base": true,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0,
+            "target_l2": 17.477661688644318,
+            "target_mae": 0.024360901676118374,
+            "target_projection": 0.0
+          },
+          "2": {
+            "base_l2": 0.0,
+            "base_mae": 0.0,
+            "exact_base": true,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0,
+            "target_l2": 33.88302517395037,
+            "target_mae": 0.05135228748258669,
+            "target_projection": 0.0
+          },
+          "3": {
+            "base_l2": 0.0,
+            "base_mae": 0.0,
+            "exact_base": true,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0,
+            "target_l2": 75.23223101307092,
+            "target_mae": 0.1192779015400447,
+            "target_projection": 0.0
+          },
+          "4": {
+            "base_l2": 0.0,
+            "base_mae": 0.0,
+            "exact_base": true,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0,
+            "target_l2": 273.09646748489286,
+            "target_mae": 0.45815890532685444,
+            "target_projection": 0.0
+          }
+        }
+      },
+      "changed": {
+        "rgb": {
+          "base_l2": 63104.59343027257,
+          "base_mae": 32.29333750406901,
+          "exact_base": false,
+          "exact_target": true,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -3.336273193359375,
+          "target_l2": 0.0,
+          "target_mae": 0.0,
+          "target_projection": 1.0
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 17.477661688644318,
+            "base_mae": 0.024360901676118374,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00011669209925457835,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "2": {
+            "base_l2": 33.88302517395037,
+            "base_mae": 0.05135228748258669,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00015535524289589375,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "3": {
+            "base_l2": 75.23223101307092,
+            "base_mae": 0.1192779015400447,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00044484372483566403,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "4": {
+            "base_l2": 273.09646748489286,
+            "base_mae": 0.45815890532685444,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0035823856596834958,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          }
+        }
+      },
+      "late.restore_both": {
+        "rgb": {
+          "base_l2": 0.0,
+          "base_mae": 0.0,
+          "exact_base": true,
+          "exact_target": false,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": 0.0,
+          "target_l2": 63104.59343027257,
+          "target_mae": 32.29333750406901,
+          "target_projection": 0.0
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 0.0,
+            "base_mae": 0.0,
+            "exact_base": true,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0,
+            "target_l2": 17.477661688644318,
+            "target_mae": 0.024360901676118374,
+            "target_projection": 0.0
+          },
+          "2": {
+            "base_l2": 0.0,
+            "base_mae": 0.0,
+            "exact_base": true,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0,
+            "target_l2": 33.88302517395037,
+            "target_mae": 0.05135228748258669,
+            "target_projection": 0.0
+          },
+          "3": {
+            "base_l2": 0.0,
+            "base_mae": 0.0,
+            "exact_base": true,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0,
+            "target_l2": 75.23223101307092,
+            "target_mae": 0.1192779015400447,
+            "target_projection": 0.0
+          },
+          "4": {
+            "base_l2": 0.0,
+            "base_mae": 0.0,
+            "exact_base": true,
+            "exact_target": false,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0,
+            "target_l2": 273.09646748489286,
+            "target_mae": 0.45815890532685444,
+            "target_projection": 0.0
+          }
+        }
+      },
+      "late.sham": {
+        "rgb": {
+          "base_l2": 63104.59343027257,
+          "base_mae": 32.29333750406901,
+          "exact_base": false,
+          "exact_target": true,
+          "scope": "full numerical arrays; target projection is not a semantic correctness score",
+          "signed_mean": -3.336273193359375,
+          "target_l2": 0.0,
+          "target_mae": 0.0,
+          "target_projection": 1.0
+        },
+        "scheduler_trajectory": {
+          "1": {
+            "base_l2": 17.477661688644318,
+            "base_mae": 0.024360901676118374,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": -0.00011669209925457835,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "2": {
+            "base_l2": 33.88302517395037,
+            "base_mae": 0.05135228748258669,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00015535524289589375,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "3": {
+            "base_l2": 75.23223101307092,
+            "base_mae": 0.1192779015400447,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.00044484372483566403,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          },
+          "4": {
+            "base_l2": 273.09646748489286,
+            "base_mae": 0.45815890532685444,
+            "exact_base": false,
+            "exact_target": true,
+            "scope": "full numerical arrays; target projection is not a semantic correctness score",
+            "signed_mean": 0.0035823856596834958,
+            "target_l2": 0.0,
+            "target_mae": 0.0,
+            "target_projection": 1.0
+          }
+        }
+      }
+    },
+    "control_observations": {
+      "restore_both_base_exact": true,
+      "sham_changed_exact": true
+    },
+    "counts": {
+      "acts": 13,
+      "adapter_steps": 1194,
+      "images": 12,
+      "physical_batch": 1,
+      "prompt_encodings": 0
+    },
+    "equations_or_models_executed": false,
+    "frontiers": {
+      "base": {
+        "after_joint0": "da7f1057e704afb8531eb2f0a7605e65c9b7128c7ef04603e7ccd5dc5be7322c",
+        "after_joint4": "a66330b116497a8f7fdfb01fd6c000f7fee16ac2a0f9eea1a1483f5dd8a17f7a",
+        "after_single18": "cb05b95a5fc7a1e0bff14897c7870e30c1b925f2c5126029e620ef43d43861e4",
+        "after_single9": "08806278cfd4609bf35bf1985cc0a7274c374af0b60024ee7c9866a7aac250ed"
+      },
+      "changed": {
+        "after_joint0": "b38efaaab3027e89d9217a65c6a50f801969ed896565b2c345b8cfc58276cd52",
+        "after_joint4": "12681fddf6eda6641f9c9abdb1dad0ffb8cb52dbcd174edc6f1c1d32430aa918",
+        "after_single18": "e6b1fa99b1ddde8001ca5dbfcb55fa136002586655b57d98ebebbb00a8baddd0",
+        "after_single9": "09b405f0587c7117a93a92534a2139b9654fa9925e5dbb0ed53ea82527543a09"
+      }
+    },
+    "image_diagnostics": {
+      "after_joint0.restore_image": {
+        "blue": {
+          "components": 3,
+          "largest": {
+            "bbox_xyxy": [
+              59,
+              159,
+              248,
+              369
+            ],
+            "centroid_xy": [
+              152.8076400172431,
+              259.75106940345523
+            ],
+            "pixels": 30157
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                59,
+                159,
+                248,
+                369
+              ],
+              "centroid_xy": [
+                152.8076400172431,
+                259.75106940345523
+              ],
+              "pixels": 30157
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 30159
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              295,
+              186,
+              457,
+              356
+            ],
+            "centroid_xy": [
+              375.62227169547754,
+              269.9677405273267
+            ],
+            "pixels": 22908
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                295,
+                186,
+                457,
+                356
+              ],
+              "centroid_xy": [
+                375.62227169547754,
+                269.9677405273267
+              ],
+              "pixels": 22908
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 22908
+        },
+        "red_minus_blue_normalized_x": 0.43518482749655163,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "after_joint0.restore_text": {
+        "blue": {
+          "components": 4,
+          "largest": {
+            "bbox_xyxy": [
+              262,
+              161,
+              439,
+              355
+            ],
+            "centroid_xy": [
+              350.73962765957447,
+              254.76162613981762
+            ],
+            "pixels": 26320
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                262,
+                161,
+                439,
+                355
+              ],
+              "centroid_xy": [
+                350.73962765957447,
+                254.76162613981762
+              ],
+              "pixels": 26320
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 26323
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              71,
+              196,
+              213,
+              351
+            ],
+            "centroid_xy": [
+              142.8881456300033,
+              272.19366158570017
+            ],
+            "pixels": 18238
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                71,
+                196,
+                213,
+                351
+              ],
+              "centroid_xy": [
+                142.8881456300033,
+                272.19366158570017
+              ],
+              "pixels": 18238
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 18238
+        },
+        "red_minus_blue_normalized_x": -0.4059599258390062,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "after_joint4.restore_image": {
+        "blue": {
+          "components": 2,
+          "largest": {
+            "bbox_xyxy": [
+              60,
+              160,
+              242,
+              359
+            ],
+            "centroid_xy": [
+              150.94455800609646,
+              256.95743231127847
+            ],
+            "pixels": 27885
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                60,
+                160,
+                242,
+                359
+              ],
+              "centroid_xy": [
+                150.94455800609646,
+                256.95743231127847
+              ],
+              "pixels": 27885
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 27886
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              293,
+              186,
+              448,
+              351
+            ],
+            "centroid_xy": [
+              370.8321127282841,
+              267.8069435431538
+            ],
+            "pixels": 21574
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                293,
+                186,
+                448,
+                351
+              ],
+              "centroid_xy": [
+                370.8321127282841,
+                267.8069435431538
+              ],
+              "pixels": 21574
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 21574
+        },
+        "red_minus_blue_normalized_x": 0.4294678803167727,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "after_joint4.restore_text": {
+        "blue": {
+          "components": 2,
+          "largest": {
+            "bbox_xyxy": [
+              264,
+              159,
+              442,
+              357
+            ],
+            "centroid_xy": [
+              353.13110005199434,
+              254.2977419594444
+            ],
+            "pixels": 26926
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                264,
+                159,
+                442,
+                357
+              ],
+              "centroid_xy": [
+                353.13110005199434,
+                254.2977419594444
+              ],
+              "pixels": 26926
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 26927
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              69,
+              162,
+              217,
+              350
+            ],
+            "centroid_xy": [
+              144.17064861323433,
+              255.86298318410132
+            ],
+            "pixels": 22895
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                69,
+                162,
+                217,
+                350
+              ],
+              "centroid_xy": [
+                144.17064861323433,
+                255.86298318410132
+              ],
+              "pixels": 22895
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 22895
+        },
+        "red_minus_blue_normalized_x": -0.40812588171632813,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "after_single18.restore_image": {
+        "blue": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              261,
+              161,
+              439,
+              355
+            ],
+            "centroid_xy": [
+              350.5410084479297,
+              254.476607190211
+            ],
+            "pixels": 26397
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                261,
+                161,
+                439,
+                355
+              ],
+              "centroid_xy": [
+                350.5410084479297,
+                254.476607190211
+              ],
+              "pixels": 26397
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 26397
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              71,
+              197,
+              213,
+              351
+            ],
+            "centroid_xy": [
+              142.49441495244415,
+              272.6724729042247
+            ],
+            "pixels": 18084
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                71,
+                197,
+                213,
+                351
+              ],
+              "centroid_xy": [
+                142.49441495244415,
+                272.6724729042247
+              ],
+              "pixels": 18084
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 18084
+        },
+        "red_minus_blue_normalized_x": -0.4063410029208702,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "after_single18.restore_text": {
+        "blue": {
+          "components": 3,
+          "largest": {
+            "bbox_xyxy": [
+              59,
+              159,
+              248,
+              369
+            ],
+            "centroid_xy": [
+              152.89450498492928,
+              259.8200125865324
+            ],
+            "pixels": 30191
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                59,
+                159,
+                248,
+                369
+              ],
+              "centroid_xy": [
+                152.89450498492928,
+                259.8200125865324
+              ],
+              "pixels": 30191
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 30193
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              295,
+              186,
+              457,
+              356
+            ],
+            "centroid_xy": [
+              375.6502839667977,
+              269.96299694189605
+            ],
+            "pixels": 22890
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                295,
+                186,
+                457,
+                356
+              ],
+              "centroid_xy": [
+                375.6502839667977,
+                269.96299694189605
+              ],
+              "pixels": 22890
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 22890
+        },
+        "red_minus_blue_normalized_x": 0.43506988082396175,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "after_single9.restore_image": {
+        "blue": {
+          "components": 3,
+          "largest": {
+            "bbox_xyxy": [
+              265,
+              164,
+              438,
+              355
+            ],
+            "centroid_xy": [
+              351.5579350502169,
+              256.7403571847278
+            ],
+            "pixels": 25589
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                265,
+                164,
+                438,
+                355
+              ],
+              "centroid_xy": [
+                351.5579350502169,
+                256.7403571847278
+              ],
+              "pixels": 25589
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 25591
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              69,
+              164,
+              217,
+              347
+            ],
+            "centroid_xy": [
+              143.88578768614474,
+              254.91583209962553
+            ],
+            "pixels": 22966
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                69,
+                164,
+                217,
+                347
+              ],
+              "centroid_xy": [
+                143.88578768614474,
+                254.91583209962553
+              ],
+              "pixels": 22966
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 22966
+        },
+        "red_minus_blue_normalized_x": -0.4056096628204534,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "after_single9.restore_text": {
+        "blue": {
+          "components": 3,
+          "largest": {
+            "bbox_xyxy": [
+              61,
+              160,
+              248,
+              365
+            ],
+            "centroid_xy": [
+              154.31641586867306,
+              259.0237004103967
+            ],
+            "pixels": 29240
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                61,
+                160,
+                248,
+                365
+              ],
+              "centroid_xy": [
+                154.31641586867306,
+                259.0237004103967
+              ],
+              "pixels": 29240
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 29242
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              294,
+              185,
+              456,
+              354
+            ],
+            "centroid_xy": [
+              375.2374445121421,
+              268.66363478109497
+            ],
+            "pixels": 22978
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                294,
+                185,
+                456,
+                354
+              ],
+              "centroid_xy": [
+                375.2374445121421,
+                268.66363478109497
+              ],
+              "pixels": 22978
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 22978
+        },
+        "red_minus_blue_normalized_x": 0.4314863840692754,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "base": {
+        "blue": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              261,
+              161,
+              439,
+              355
+            ],
+            "centroid_xy": [
+              350.55007768388344,
+              254.55621660540376
+            ],
+            "pixels": 26389
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                261,
+                161,
+                439,
+                355
+              ],
+              "centroid_xy": [
+                350.55007768388344,
+                254.55621660540376
+              ],
+              "pixels": 26389
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 26389
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              71,
+              197,
+              213,
+              351
+            ],
+            "centroid_xy": [
+              142.51910845639068,
+              272.6716995741386
+            ],
+            "pixels": 18081
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                71,
+                197,
+                213,
+                351
+              ],
+              "centroid_xy": [
+                142.51910845639068,
+                272.6716995741386
+              ],
+              "pixels": 18081
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 18081
+        },
+        "red_minus_blue_normalized_x": -0.4063104867724468,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "changed": {
+        "blue": {
+          "components": 3,
+          "largest": {
+            "bbox_xyxy": [
+              59,
+              159,
+              248,
+              369
+            ],
+            "centroid_xy": [
+              152.9241399880692,
+              259.7550540200172
+            ],
+            "pixels": 30174
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                59,
+                159,
+                248,
+                369
+              ],
+              "centroid_xy": [
+                152.9241399880692,
+                259.7550540200172
+              ],
+              "pixels": 30174
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 30176
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              295,
+              186,
+              457,
+              356
+            ],
+            "centroid_xy": [
+              375.6510662471596,
+              269.9687554623318
+            ],
+            "pixels": 22884
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                295,
+                186,
+                457,
+                356
+              ],
+              "centroid_xy": [
+                375.6510662471596,
+                269.9687554623318
+              ],
+              "pixels": 22884
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 22884
+        },
+        "red_minus_blue_normalized_x": 0.4350135278497859,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "late.restore_both": {
+        "blue": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              261,
+              161,
+              439,
+              355
+            ],
+            "centroid_xy": [
+              350.55007768388344,
+              254.55621660540376
+            ],
+            "pixels": 26389
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                261,
+                161,
+                439,
+                355
+              ],
+              "centroid_xy": [
+                350.55007768388344,
+                254.55621660540376
+              ],
+              "pixels": 26389
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 26389
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              71,
+              197,
+              213,
+              351
+            ],
+            "centroid_xy": [
+              142.51910845639068,
+              272.6716995741386
+            ],
+            "pixels": 18081
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                71,
+                197,
+                213,
+                351
+              ],
+              "centroid_xy": [
+                142.51910845639068,
+                272.6716995741386
+              ],
+              "pixels": 18081
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 18081
+        },
+        "red_minus_blue_normalized_x": -0.4063104867724468,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      },
+      "late.sham": {
+        "blue": {
+          "components": 3,
+          "largest": {
+            "bbox_xyxy": [
+              59,
+              159,
+              248,
+              369
+            ],
+            "centroid_xy": [
+              152.9241399880692,
+              259.7550540200172
+            ],
+            "pixels": 30174
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                59,
+                159,
+                248,
+                369
+              ],
+              "centroid_xy": [
+                152.9241399880692,
+                259.7550540200172
+              ],
+              "pixels": 30174
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 30176
+        },
+        "policy": {
+          "blue_hue_degrees": [
+            [
+              190,
+              260
+            ]
+          ],
+          "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+          "component_connectivity": 4,
+          "minimum_alpha": 0.5,
+          "minimum_saturation": 0.3,
+          "minimum_value": 0.25,
+          "red_hue_degrees": [
+            [
+              0,
+              25
+            ],
+            [
+              335,
+              360
+            ]
+          ],
+          "reported_component_minimum_pixels": 16
+        },
+        "red": {
+          "components": 1,
+          "largest": {
+            "bbox_xyxy": [
+              295,
+              186,
+              457,
+              356
+            ],
+            "centroid_xy": [
+              375.6510662471596,
+              269.9687554623318
+            ],
+            "pixels": 22884
+          },
+          "reported_components": [
+            {
+              "bbox_xyxy": [
+                295,
+                186,
+                457,
+                356
+              ],
+              "centroid_xy": [
+                375.6510662471596,
+                269.9687554623318
+              ],
+              "pixels": 22884
+            }
+          ],
+          "status": "color-region-observed",
+          "threshold_pixel_count": 22884
+        },
+        "red_minus_blue_normalized_x": 0.4350135278497859,
+        "semantic_gate": false,
+        "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+      }
+    },
+    "interpretation_limits": "Whole-field interventions, known seed31 contrast; no minimal writer, object masks, numerical image prediction or general semantic rule claim.",
+    "mechanics_status": "valid",
+    "schema": "mdb-flux-handoff-audit-v1",
+    "scope": "single known seed31 relation contrast; whole-carrier causal restores at four block boundaries, not numerical RGB forecasting or minimal semantic localization",
+    "sealed_hypotheses": {
+      "H-controls": "Late sham reproduces changed exactly; restoring both carriers reproduces base exactly.",
+      "H-handoff": "The relative influence of image versus text restoration shifts across the four boundaries; monotonicity is a hypothesis, not a gate.",
+      "H-image": "After the late boundary, restoring base text will retain the changed spatial relation: image state carries the future.",
+      "H-text": "At the early boundary, restoring base image will retain the changed spatial relation: remaining working text can still write it."
+    },
+    "source": {
+      "archive_sha256": "d1d6ac06eb7b72214c41641cff46af0acfa8f4e72b25bd4e6e6c01c133d73ab1",
+      "artifact_inventory_authority": "published manifest plus retained archive",
+      "job_id": "job-96ce66d7a371",
+      "manifest_sha256": "5e9dd802dc7ff4f2a0b993d7c82ea647909aec3d7775fecb0e361797ca9e6db7",
+      "report_file_sha256": "bd99760a26f94a4a968c124ee8ca405b3b2346f0f4e6ce1172b73608b95e9e15",
+      "request_file_sha256": "97e2a8bb24f7553a0e77a963be1464b042ef3bb8b7d386de950bdebe43aa7b2c",
+      "request_sha256": "366f14646d17c08030c59da798e804b3ceae41d53880f5f22109da318ee0e02c",
+      "transaction": {
+        "event_head": "b0bf303959d5734e4dd5e636890f186688308d2289cf3ac9a547fd6662096aad",
+        "events": 6,
+        "forecasts": [
+          "handoff_hypotheses"
+        ],
+        "frontiers": [],
+        "identity_scope": "externally-pinned",
+        "phase": "closed",
+        "schema": "mdb-forecast-offline-verification-v1",
+        "seal_sha256": "51f8e951b17fb7c290a03efb5a70998b280cfeb16bb52c31d20b3429df9241ff",
+        "verified": true
+      },
+      "verified_artifact_files": 1383,
+      "verified_source_hashes": {
+        "campaign_support.py": "f28d62ed7b469760b62a96cc476c1fda86bcb6776b55f13e6f71a20856ae0d4f",
+        "flux_handoff_campaign.py": "bd339e186658b3274f32b31c684684a527cb23eb092daa385bd9c68a971752e1",
+        "flux_trajectory_forecast_campaign.py": "c04737976a28b5c2008944e1e6f609190f9e430c8ddefc1f70348e701133de72",
+        "input-store/blobs/0000302ddc2fe3841fd4882149ecd983bd56f370b68a0a4d599f7d7c5cb9aec8.safetensors": "0000302ddc2fe3841fd4882149ecd983bd56f370b68a0a4d599f7d7c5cb9aec8",
+        "input-store/blobs/05f36651a1d65f2a9aeecfef6e2d70ef5ea07c84759e7a0a73e4d1bdcaf65648.safetensors": "05f36651a1d65f2a9aeecfef6e2d70ef5ea07c84759e7a0a73e4d1bdcaf65648",
+        "input-store/blobs/23a59628d83d3920bf93f10d7e2f955cd3c3d46dead93239840f502e1402e0a4.safetensors": "23a59628d83d3920bf93f10d7e2f955cd3c3d46dead93239840f502e1402e0a4",
+        "input-store/blobs/2e442df76d7044215ffbf984997ffe1789fd622d8b66a98b3d8c24edb7fc0c84.safetensors": "2e442df76d7044215ffbf984997ffe1789fd622d8b66a98b3d8c24edb7fc0c84",
+        "input-store/blobs/34c8692938e0ea8f97f09b53d4a16153408472d562bfbdf6c3beef43e4a3f686.safetensors": "34c8692938e0ea8f97f09b53d4a16153408472d562bfbdf6c3beef43e4a3f686",
+        "input-store/blobs/490f29b1ca6151d1d77bce1d6ecad10f5a3b236ce2170dbac1e615a951386dda.safetensors": "490f29b1ca6151d1d77bce1d6ecad10f5a3b236ce2170dbac1e615a951386dda",
+        "input-store/blobs/4a5db62f09983e8916c373b4de8c273dea8f1de97e7cfd64d47fd341ddc7098b.safetensors": "4a5db62f09983e8916c373b4de8c273dea8f1de97e7cfd64d47fd341ddc7098b",
+        "input-store/blobs/51a8545dc82dd0b100aba7bf0562c2b822e5e2a83846e358fefb9b9132f42b00.safetensors": "51a8545dc82dd0b100aba7bf0562c2b822e5e2a83846e358fefb9b9132f42b00",
+        "input-store/blobs/82f747a9a808772660016caa04ab61c783aaebc09e032b9b9e406b27b9ea6157.safetensors": "82f747a9a808772660016caa04ab61c783aaebc09e032b9b9e406b27b9ea6157",
+        "input-store/blobs/84be855564e80d571944c5f81ece77585f5549ff6f4145f7a360323be8135e6a.safetensors": "84be855564e80d571944c5f81ece77585f5549ff6f4145f7a360323be8135e6a",
+        "input-store/blobs/8aa82a90aa1a3eee55e33e75d8450f9155bc2247a19476b94c1567258b23d74e.safetensors": "8aa82a90aa1a3eee55e33e75d8450f9155bc2247a19476b94c1567258b23d74e",
+        "input-store/cuts/0954fae94d6b533dc506fd240098f9cc06a228ac1967c1417e55f382a063cf1c.json": "501b242e641e875bc86fbef1f04a4094ffe2cbb733cdba7a539b71451e716413",
+        "input-store/cuts/ee47bc4f7ecfdcb50410b270db5296765f39003d03fab55b0c88514c9d446a69.json": "ac6ac1b5f3fb64db223a846d0b89ace026d0e8a775b3441cb9ada5763796be5d",
+        "input-store/pages/09b30d7571db51b1e5a6e3101c9a680093864da6cab4c81047a6c9111086bfe8.json": "09b30d7571db51b1e5a6e3101c9a680093864da6cab4c81047a6c9111086bfe8",
+        "input-store/pages/1e8d2a6663924798743e7dd350fea2a5b9d275a6a31fbfce8c3e45146b80d551.json": "1e8d2a6663924798743e7dd350fea2a5b9d275a6a31fbfce8c3e45146b80d551",
+        "input-store/pages/26c3d4abba9fef62d25fb3799b5698044faa10a6d9b1b38d979532ded41b51d0.json": "26c3d4abba9fef62d25fb3799b5698044faa10a6d9b1b38d979532ded41b51d0",
+        "input-store/pages/3f8c25a069a463b69eb36a66913c7e75ada5139129706bf5609738f4cc4a541e.json": "3f8c25a069a463b69eb36a66913c7e75ada5139129706bf5609738f4cc4a541e",
+        "input-store/pages/44ee63c9154c855b88270e9c946f0b10dead7f2bb407ebe3d8e1c70ffb5d5a3d.json": "44ee63c9154c855b88270e9c946f0b10dead7f2bb407ebe3d8e1c70ffb5d5a3d",
+        "input-store/pages/51fd896959c669d9844c8bd18099406097f25e8ae74387827df9084da185f397.json": "51fd896959c669d9844c8bd18099406097f25e8ae74387827df9084da185f397",
+        "input-store/pages/75bc70582d55035ff50c4d23ca3cfd51bcb3da5eee6b1db036751364aea43157.json": "75bc70582d55035ff50c4d23ca3cfd51bcb3da5eee6b1db036751364aea43157",
+        "input-store/pages/8ece3f94b1fde7f94ced5f9cc07387c02b7e1449ceff1c119bed6ea459583e3d.json": "8ece3f94b1fde7f94ced5f9cc07387c02b7e1449ceff1c119bed6ea459583e3d",
+        "input-store/pages/9e3ab429fa5a88bb86c263e92e5af1d79e4de95de4949d8205562c3e6002c972.json": "9e3ab429fa5a88bb86c263e92e5af1d79e4de95de4949d8205562c3e6002c972",
+        "input-store/pages/a2d5572adead85b848c24cc8eec287cb72d33935722ff6c7bea90dfe4c9ba171.json": "a2d5572adead85b848c24cc8eec287cb72d33935722ff6c7bea90dfe4c9ba171",
+        "input-store/pages/a35d30e9f469e74e01856f7788f524b6afbeb6e1e0f81e8ed7091e552948ecdd.json": "a35d30e9f469e74e01856f7788f524b6afbeb6e1e0f81e8ed7091e552948ecdd",
+        "input-store/pages/ad9b3e75e68ae6f9bbaf0a87b99628a8e9e67b91acacda47cde0f68c87db54d8.json": "ad9b3e75e68ae6f9bbaf0a87b99628a8e9e67b91acacda47cde0f68c87db54d8",
+        "input-store/pages/ae88fdb6f7c1124b98c14414e474b7a8c10d0be5a67681140b02aaca4e055e25.json": "ae88fdb6f7c1124b98c14414e474b7a8c10d0be5a67681140b02aaca4e055e25",
+        "input-store/pages/fc3b0a5dfbf3dd297aa00174749d465132b91366f6dddc78f28b2fb2361c32e4.json": "fc3b0a5dfbf3dd297aa00174749d465132b91366f6dddc78f28b2fb2361c32e4",
+        "plan.json": "8c18abbdbf33d0e94b37ee65db41a7b92d610c36b0e02ce25b355d7fb82c73a2",
+        "preflight.v1.json": "ddac8556981b74d23c6fed70c0ada5bf779d74f3c497ce732228697a768c0a83"
+      }
+    },
+    "terminal_status": "unassessed",
+    "typed_store": {
+      "counts": {
+        "cuts": 21,
+        "pages": 34,
+        "tensor_blobs": 27
+      }
+    }
+  },
+  "evidence": {
+    "checksum_file_sha256": "9fa89223d0e529d92244417fb7ad3b1aa2ce493594cba3d02a992a8ce8760e57",
+    "derived_rows": 12,
+    "run_returncode": 0,
+    "verify_returncode": 0
+  },
+  "execution": {
+    "checkpoint": "FLUX.2 Klein4B distilled",
+    "device": "cuda",
+    "dtype": "bfloat16",
+    "physical_batch": 1,
+    "scheduler_seconds": 305.17765283584595,
+    "worker_seconds": 261.92784222005866
+  },
+  "figures": {
+    "figures": [
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-block-handoff-20261031/flux-block-handoff-20261031.png",
+        "sha256": "d36d7f4bec399e590cb4daa0b16d03cd414768122e8c2c44e876b76f66e937f7"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-block-handoff-20261031/flux-block-handoff-curves-20261031.png",
+        "sha256": "4a6d83d5a5e2458af9321344e7bb5f266ce0d1fc0532209c87d326686201862a"
+      }
+    ],
+    "schema": "mdb-flux-handoff-figures-v1",
+    "source_analysis_sha256": "a6331605e4448069719a2df0403983be86afb0e4e62c10b52e78286b7f0a2696",
+    "sources": [
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-block-handoff-20261031/run-01/extracted/flux-handoff-result/base.png",
+        "row": "base",
+        "sha256": "34a4657679c9ae6f5d0af8da7dd4b86883be72078545a2b5240bf53c51592132"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-block-handoff-20261031/run-01/extracted/flux-handoff-result/changed.png",
+        "row": "changed",
+        "sha256": "7c34170291394fb86d12f0d9ffb74f6bdd6e533a58dd0d1812744efd2d528ecd"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-block-handoff-20261031/run-01/extracted/flux-handoff-result/late.sham.png",
+        "row": "late.sham",
+        "sha256": "7c34170291394fb86d12f0d9ffb74f6bdd6e533a58dd0d1812744efd2d528ecd"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-block-handoff-20261031/run-01/extracted/flux-handoff-result/late.restore_both.png",
+        "row": "late.restore_both",
+        "sha256": "34a4657679c9ae6f5d0af8da7dd4b86883be72078545a2b5240bf53c51592132"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-block-handoff-20261031/run-01/extracted/flux-handoff-result/after_joint0.restore_text.png",
+        "row": "after_joint0.restore_text",
+        "sha256": "fabd975a0a85a20e67849640813a60981afb54025412f2ea2661f1700a7b464c"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-block-handoff-20261031/run-01/extracted/flux-handoff-result/after_joint4.restore_text.png",
+        "row": "after_joint4.restore_text",
+        "sha256": "c0e3478a2fc056aae304309afcdad2c100153317a9abf2da231287aa90fca6e2"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-block-handoff-20261031/run-01/extracted/flux-handoff-result/after_single9.restore_text.png",
+        "row": "after_single9.restore_text",
+        "sha256": "3b0de36507bd9a3359415c8462b8377909735ad1d8476910ea87a17f60477d60"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-block-handoff-20261031/run-01/extracted/flux-handoff-result/after_single18.restore_text.png",
+        "row": "after_single18.restore_text",
+        "sha256": "1a31ac86841dc201e3efce7c32a32697fcd6c7b22e89e3f2fae6c90aa467b2b5"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-block-handoff-20261031/run-01/extracted/flux-handoff-result/after_joint0.restore_image.png",
+        "row": "after_joint0.restore_image",
+        "sha256": "02c26ed7aeb06ba481dfa3bc3c6e57f93b35175426416cad1851c7960ee5c088"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-block-handoff-20261031/run-01/extracted/flux-handoff-result/after_joint4.restore_image.png",
+        "row": "after_joint4.restore_image",
+        "sha256": "d709035bd4cb4a2cd30ceb7d7f54f0a4dceb95ba166558d226cb846afa0544e1"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-block-handoff-20261031/run-01/extracted/flux-handoff-result/after_single9.restore_image.png",
+        "row": "after_single9.restore_image",
+        "sha256": "988f232689fe314c60c3c0d4dd410fdd203f3d0d2ce4689339bf02fb2ed9f973"
+      },
+      {
+        "path": "/Users/jakeholl/domains/artifacts/mdb-flux-block-handoff-20261031/run-01/extracted/flux-handoff-result/after_single18.restore_image.png",
+        "row": "after_single18.restore_image",
+        "sha256": "b5df17369218e73d9948e9d383cab63161cf5e9a44d0cef03dc9780314e06b84"
+      }
+    ]
+  },
+  "job_id": "job-96ce66d7a371",
+  "navigation_qualification": {
+    "command": "python -I -m pytest -q -c /dev/null /private/tmp/mdb-flux-handoff-tests-20261031/test_native_navigation.py /private/tmp/mdb-flux-concept-tests-20261030 /private/tmp/mdb-flux-trajectory-tests-20261030",
+    "installed_wheel_tests_passed": 49,
+    "installed_worker_source_sha256": "5fc49831de98641858344280316826f12c563aefb5ef521f787282e33556cca8",
+    "scope": "three navigator mechanics tests plus existing public-package diffusion qualification regressions; outside-workspace installed wheels"
+  },
+  "predecessor_joins": {
+    "current_job": "job-96ce66d7a371",
+    "joins": {
+      "base": {
+        "PNG_bytes_exact": true,
+        "previous_row": "base.native",
+        "shared_scheduler_file_bytes_exact": {
+          "2": true,
+          "3": true,
+          "4": true
+        }
+      },
+      "changed": {
+        "PNG_bytes_exact": true,
+        "previous_row": "step0.relation.text",
+        "shared_scheduler_file_bytes_exact": {
+          "1": true,
+          "2": true,
+          "3": true,
+          "4": true
+        }
+      }
+    },
+    "previous_job": "job-c2a467736b50",
+    "schema": "mdb-flux-handoff-predecessor-joins-v1",
+    "scope": "Exact replay joins on reused known reference states; these are not independent new scenes.",
+    "source_audit_sha256": "a6331605e4448069719a2df0403983be86afb0e4e62c10b52e78286b7f0a2696"
+  },
+  "route_records": {
+    "atlas_status": "standalone native causal records; not equation-forecast observations",
+    "records": [
+      {
+        "applicability": {
+          "checkpoint": "dd976d67036c4a0a55642f702dcb3740ba7a4f367557596572baac168330904f",
+          "contract": "CUDA BF16 B1 512x512 4 steps seed31",
+          "contrast": "red cube left/right of blue sphere, same initial latent and base stored conditioning",
+          "exact_cuts": {
+            "base": {
+              "after_joint0": "da7f1057e704afb8531eb2f0a7605e65c9b7128c7ef04603e7ccd5dc5be7322c",
+              "after_joint4": "a66330b116497a8f7fdfb01fd6c000f7fee16ac2a0f9eea1a1483f5dd8a17f7a"
+            },
+            "changed": {
+              "after_joint0": "b38efaaab3027e89d9217a65c6a50f801969ed896565b2c345b8cfc58276cd52",
+              "after_joint4": "12681fddf6eda6641f9c9abdb1dad0ffb8cb52dbcd174edc6f1c1d32430aa918"
+            }
+          },
+          "model_identity": "a09191c5ff813af77bf89d8e4b9a07237befb67c1aef3e722322d3491250fcd0",
+          "observed_boundaries": [
+            "after_joint0",
+            "after_joint4"
+          ],
+          "step": 0
+        },
+        "candidate_alias": "working-text-guided continuation",
+        "carrier": "text",
+        "consumer": "remaining native denoiser, schedulers and VAE",
+        "counterexamples_and_limits": [
+          "The opposite regime is observed at the other tested depths.",
+          "Numerical residuals and shape/pose/scale collateral remain.",
+          "This is not a minimal writer, feature coordinate or universal semantic operator."
+        ],
+        "developmental_stage": "candidate rule extracted from this panel; new-context validation pending",
+        "effects": {
+          "after_joint0.restore_image": {
+            "rgb": {
+              "base_l2": 63070.841376978635,
+              "base_mae": 32.28866068522135,
+              "exact_base": false,
+              "exact_target": false,
+              "scope": "full numerical arrays; target projection is not a semantic correctness score",
+              "signed_mean": -3.3438796997070312,
+              "target_l2": 535.051399400095,
+              "target_mae": 0.1550750732421875,
+              "target_projection": 0.999429339091216
+            },
+            "scheduler_trajectory": {
+              "1": {
+                "base_l2": 17.483063722968755,
+                "base_mae": 0.024374022003030404,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -0.00012045775656588376,
+                "target_l2": 0.43527770055680964,
+                "target_mae": 0.0003198863414581865,
+                "target_projection": 0.9999990054005456
+              },
+              "2": {
+                "base_l2": 33.894712757988756,
+                "base_mae": 0.0513853216834832,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": 0.00016711765783838928,
+                "target_l2": 0.738593816535514,
+                "target_mae": 0.0008518897084286436,
+                "target_projection": 1.0001074148181157
+              },
+              "3": {
+                "base_l2": 75.2603026182925,
+                "base_mae": 0.1193230792414397,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": 0.00046209467109292746,
+                "target_l2": 1.2308166472608468,
+                "target_mae": 0.0019315785611979663,
+                "target_projection": 1.0002393737380064
+              },
+              "4": {
+                "base_l2": 273.2149865135809,
+                "base_mae": 0.45861903176410124,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": 0.0037699598469771445,
+                "target_l2": 4.464185070454159,
+                "target_mae": 0.008137306664139032,
+                "target_projection": 1.0003004716051827
+              }
+            }
+          },
+          "after_joint0.restore_text": {
+            "rgb": {
+              "base_l2": 2781.4674184681726,
+              "base_mae": 0.4303881327311198,
+              "exact_base": false,
+              "exact_target": false,
+              "scope": "full numerical arrays; target projection is not a semantic correctness score",
+              "signed_mean": 0.09414037068684895,
+              "target_l2": 63081.02278023082,
+              "target_mae": 32.22228876749674,
+              "target_projection": 0.0013448427592140794
+            },
+            "scheduler_trajectory": {
+              "1": {
+                "base_l2": 0.43698373158027665,
+                "base_mae": 0.0003214816315448843,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -2.7181107725482434e-05,
+                "target_l2": 17.47750680179191,
+                "target_mae": 0.024374042033741716,
+                "target_projection": 0.0003214223005861243
+              },
+              "2": {
+                "base_l2": 1.096720982126118,
+                "base_mae": 0.0011889479355886579,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -6.7622167989611626e-06,
+                "target_l2": 33.88105822899312,
+                "target_mae": 0.05135672430333216,
+                "target_projection": 0.0005818885071009047
+              },
+              "3": {
+                "base_l2": 3.044685007872698,
+                "base_mae": 0.003639270842541009,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -7.5132702477276325e-06,
+                "target_l2": 75.23917788030181,
+                "target_mae": 0.11934127542190254,
+                "target_projection": 0.0007265869086137465
+              },
+              "4": {
+                "base_l2": 15.236271095485185,
+                "base_mae": 0.01820705467252992,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -1.8257851479575038e-05,
+                "target_l2": 273.1111116722009,
+                "target_mae": 0.4585540658736136,
+                "target_projection": 0.0015026826235057065
+              }
+            }
+          },
+          "after_joint4.restore_image": {
+            "rgb": {
+              "base_l2": 61793.795279137856,
+              "base_mae": 30.90700912475586,
+              "exact_base": false,
+              "exact_target": false,
+              "scope": "full numerical arrays; target projection is not a semantic correctness score",
+              "signed_mean": -1.6158536275227864,
+              "target_l2": 14791.541941258187,
+              "target_mae": 3.415625254313151,
+              "target_projection": 0.9519728694934663
+            },
+            "scheduler_trajectory": {
+              "1": {
+                "base_l2": 17.128331785844438,
+                "base_mae": 0.02291721000801772,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -0.00017965375445783138,
+                "target_l2": 4.906033308238205,
+                "target_mae": 0.00669806997757405,
+                "target_projection": 0.940815415593108
+              },
+              "2": {
+                "base_l2": 33.057221367597215,
+                "base_mae": 0.048488961707334965,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -0.00010636181104928255,
+                "target_l2": 10.328545521693966,
+                "target_mae": 0.015387761741294526,
+                "target_projection": 0.9294642926576975
+              },
+              "3": {
+                "base_l2": 73.48975035208032,
+                "base_mae": 0.11369852937059477,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -0.000314389995764941,
+                "target_l2": 23.284126773757084,
+                "target_mae": 0.03361799742560834,
+                "target_projection": 0.9292127641534105
+              },
+              "4": {
+                "base_l2": 267.5987033042512,
+                "base_mae": 0.441399936506059,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": 0.00011224654735997319,
+                "target_l2": 90.64633865767364,
+                "target_mae": 0.1370020203758031,
+                "target_projection": 0.9249857795391083
+              }
+            }
+          },
+          "after_joint4.restore_text": {
+            "rgb": {
+              "base_l2": 20777.035255300503,
+              "base_mae": 5.130350748697917,
+              "exact_base": false,
+              "exact_target": false,
+              "scope": "full numerical arrays; target projection is not a semantic correctness score",
+              "signed_mean": -2.9391606648763022,
+              "target_l2": 63598.86406218274,
+              "target_mae": 32.862403869628906,
+              "target_projection": 0.04633875112577761
+            },
+            "scheduler_trajectory": {
+              "1": {
+                "base_l2": 2.4708197753564676,
+                "base_mae": 0.0030590567621402442,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -0.00010647001909092069,
+                "target_l2": 17.56902505277931,
+                "target_mae": 0.024342091288417578,
+                "target_projection": 0.004751661230716016
+              },
+              "2": {
+                "base_l2": 9.726934414487628,
+                "base_mae": 0.01139601384056732,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": 8.778850315138698e-05,
+                "target_l2": 33.513428724178794,
+                "target_mae": 0.05047353576810565,
+                "target_projection": 0.052054250728937
+              },
+              "3": {
+                "base_l2": 30.020207154288794,
+                "base_mae": 0.03863378567621112,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": 0.0008342583896592259,
+                "target_l2": 74.13639446424006,
+                "target_mae": 0.11632554553216323,
+                "target_projection": 0.09407397521862856
+              },
+              "4": {
+                "base_l2": 130.9259525154243,
+                "base_mae": 0.19244322826853022,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": 0.002470809791702777,
+                "target_l2": 268.16433536068604,
+                "target_mae": 0.4411938034463674,
+                "target_projection": 0.13281528847659752
+              }
+            }
+          }
+        },
+        "id": "flux.route.H01",
+        "observed_rule": "At these tested boundaries, final ordering follows this carrier in the two complementary whole-field restoration hybrids.",
+        "source_audit_sha256": "a6331605e4448069719a2df0403983be86afb0e4e62c10b52e78286b7f0a2696",
+        "terminal_status": "unassessed"
+      },
+      {
+        "applicability": {
+          "checkpoint": "dd976d67036c4a0a55642f702dcb3740ba7a4f367557596572baac168330904f",
+          "contract": "CUDA BF16 B1 512x512 4 steps seed31",
+          "contrast": "red cube left/right of blue sphere, same initial latent and base stored conditioning",
+          "exact_cuts": {
+            "base": {
+              "after_single18": "cb05b95a5fc7a1e0bff14897c7870e30c1b925f2c5126029e620ef43d43861e4",
+              "after_single9": "08806278cfd4609bf35bf1985cc0a7274c374af0b60024ee7c9866a7aac250ed"
+            },
+            "changed": {
+              "after_single18": "e6b1fa99b1ddde8001ca5dbfcb55fa136002586655b57d98ebebbb00a8baddd0",
+              "after_single9": "09b405f0587c7117a93a92534a2139b9654fa9925e5dbb0ed53ea82527543a09"
+            }
+          },
+          "model_identity": "a09191c5ff813af77bf89d8e4b9a07237befb67c1aef3e722322d3491250fcd0",
+          "observed_boundaries": [
+            "after_single9",
+            "after_single18"
+          ],
+          "step": 0
+        },
+        "candidate_alias": "image-state-guided continuation",
+        "carrier": "image",
+        "consumer": "remaining native denoiser, schedulers and VAE",
+        "counterexamples_and_limits": [
+          "The opposite regime is observed at the other tested depths.",
+          "Numerical residuals and shape/pose/scale collateral remain.",
+          "This is not a minimal writer, feature coordinate or universal semantic operator."
+        ],
+        "developmental_stage": "candidate rule extracted from this panel; new-context validation pending",
+        "effects": {
+          "after_single18.restore_image": {
+            "rgb": {
+              "base_l2": 391.74353855551976,
+              "base_mae": 0.13468551635742188,
+              "exact_base": false,
+              "exact_target": false,
+              "scope": "full numerical arrays; target projection is not a semantic correctness score",
+              "signed_mean": 0.05876286824544271,
+              "target_l2": 63136.9504569234,
+              "target_mae": 32.27613957722982,
+              "target_projection": -0.0004936151068033295
+            },
+            "scheduler_trajectory": {
+              "1": {
+                "base_l2": 0.3807004383949131,
+                "base_mae": 0.00024861397105269134,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -2.926096203736961e-05,
+                "target_l2": 17.477642514454587,
+                "target_mae": 0.024341662734514102,
+                "target_projection": 0.0002383273366461909
+              },
+              "2": {
+                "base_l2": 0.663385822600746,
+                "base_mae": 0.0007214415236376226,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -1.888611586764455e-05,
+                "target_l2": 33.88099784823461,
+                "target_mae": 0.051334319068701006,
+                "target_projection": 0.00025149417297143785
+              },
+              "3": {
+                "base_l2": 1.1407374950556108,
+                "base_mae": 0.0017723907949402928,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": 5.39922621101141e-06,
+                "target_l2": 75.2231201761085,
+                "target_mae": 0.11917592393001541,
+                "target_projection": 0.00023605201481905226
+              },
+              "4": {
+                "base_l2": 4.581699946819381,
+                "base_mae": 0.007938363356515765,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": 0.00012569432146847248,
+                "target_l2": 273.0249819478447,
+                "target_mae": 0.457734742842149,
+                "target_projection": 0.00040245646829079355
+              }
+            }
+          },
+          "after_single18.restore_text": {
+            "rgb": {
+              "base_l2": 63095.98562507761,
+              "base_mae": 32.303436279296875,
+              "exact_base": false,
+              "exact_target": false,
+              "scope": "full numerical arrays; target projection is not a semantic correctness score",
+              "signed_mean": -3.4003728230794272,
+              "target_l2": 374.4889851517665,
+              "target_mae": 0.13646443684895834,
+              "target_projection": 0.9998459952829089
+            },
+            "scheduler_trajectory": {
+              "1": {
+                "base_l2": 17.473694308231618,
+                "base_mae": 0.02432339779625181,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -8.476154471281916e-05,
+                "target_l2": 0.38988853146834096,
+                "target_mae": 0.0002621359162731096,
+                "target_projection": 0.9995242091382545
+              },
+              "2": {
+                "base_l2": 33.879384207513915,
+                "base_mae": 0.051306137116625905,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": 0.00019600876839831471,
+                "target_l2": 0.6807971769735685,
+                "target_mae": 0.0007571455935249105,
+                "target_projection": 0.9996906930697499
+              },
+              "3": {
+                "base_l2": 75.21881418652416,
+                "base_mae": 0.11915759813564364,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": 0.0004542106034932658,
+                "target_l2": 1.0807050052777418,
+                "target_mae": 0.001702755325823091,
+                "target_projection": 0.9997185016242979
+              },
+              "4": {
+                "base_l2": 273.08586686520283,
+                "base_mae": 0.45785908901598305,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": 0.003612797474488616,
+                "target_l2": 3.918149082473438,
+                "target_mae": 0.007366489910054952,
+                "target_projection": 0.9998582643667745
+              }
+            }
+          },
+          "after_single9.restore_image": {
+            "rgb": {
+              "base_l2": 21850.861539078956,
+              "base_mae": 5.594932556152344,
+              "exact_base": false,
+              "exact_target": false,
+              "scope": "full numerical arrays; target projection is not a semantic correctness score",
+              "signed_mean": -1.9866256713867188,
+              "target_l2": 63290.63787006732,
+              "target_mae": 32.404396057128906,
+              "target_projection": 0.056996910347098
+            },
+            "scheduler_trajectory": {
+              "1": {
+                "base_l2": 5.316463053522451,
+                "base_mae": 0.0067848070175386965,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -0.00024938955903053284,
+                "target_l2": 16.70084419103704,
+                "target_mae": 0.022019961616024375,
+                "target_projection": 0.08972318330355339
+              },
+              "2": {
+                "base_l2": 11.639321814528376,
+                "base_mae": 0.01482242402562406,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -1.8834121874533594e-05,
+                "target_l2": 32.12823415513915,
+                "target_mae": 0.04730941925663501,
+                "target_projection": 0.1094498152365678
+              },
+              "3": {
+                "base_l2": 31.530884302536407,
+                "base_mae": 0.041244647349230945,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": 0.0010627723531797528,
+                "target_l2": 72.0898969946113,
+                "target_mae": 0.1113597058574669,
+                "target_projection": 0.1287244420088439
+              },
+              "4": {
+                "base_l2": 132.23599791681139,
+                "base_mae": 0.19491592480335385,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": 0.00527672388125211,
+                "target_l2": 262.6707233186045,
+                "target_mae": 0.4261748438584618,
+                "target_projection": 0.1546769303002757
+              }
+            }
+          },
+          "after_single9.restore_text": {
+            "rgb": {
+              "base_l2": 63236.283469223585,
+              "base_mae": 31.96910222371419,
+              "exact_base": false,
+              "exact_target": false,
+              "scope": "full numerical arrays; target projection is not a semantic correctness score",
+              "signed_mean": -3.055070241292318,
+              "target_l2": 7279.198925706042,
+              "target_mae": 2.271656036376953,
+              "target_projection": 0.9954360660052853
+            },
+            "scheduler_trajectory": {
+              "1": {
+                "base_l2": 16.642988386498715,
+                "base_mae": 0.02216788660734892,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -0.0002776671899482608,
+                "target_l2": 4.7505676315757315,
+                "target_mae": 0.0063200214062817395,
+                "target_projection": 0.9164439834698425
+              },
+              "2": {
+                "base_l2": 32.71646858679605,
+                "base_mae": 0.04865996484295465,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -0.0002546301402617246,
+                "target_l2": 7.540098453978514,
+                "target_mae": 0.01069249508145731,
+                "target_projection": 0.9414032220647295
+              },
+              "3": {
+                "base_l2": 73.61086922870037,
+                "base_mae": 0.11528822331456468,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -0.0005664749187417328,
+                "target_l2": 17.194547860973977,
+                "target_mae": 0.023390538059175014,
+                "target_projection": 0.9525625829158477
+              },
+              "4": {
+                "base_l2": 269.161972302676,
+                "base_mae": 0.4464881829335354,
+                "exact_base": false,
+                "exact_target": false,
+                "scope": "full numerical arrays; target projection is not a semantic correctness score",
+                "signed_mean": -0.000347581401001662,
+                "target_l2": 70.22358695357035,
+                "target_mae": 0.09894107561558485,
+                "target_projection": 0.9526367243864154
+              }
+            }
+          }
+        },
+        "id": "flux.route.H02",
+        "observed_rule": "At these tested boundaries, final ordering follows this carrier in the two complementary whole-field restoration hybrids.",
+        "source_audit_sha256": "a6331605e4448069719a2df0403983be86afb0e4e62c10b52e78286b7f0a2696",
+        "terminal_status": "unassessed"
+      }
+    ],
+    "schema": "mdb-native-causal-route-candidates-v1",
+    "source_archive_sha256": "d1d6ac06eb7b72214c41641cff46af0acfa8f4e72b25bd4e6e6c01c133d73ab1"
+  },
+  "schema": "mdb-flux-block-handoff-portable-v1",
+  "source_files": {
+    "README.md": "b7ef6b79d2ffc6224e7141e7d5c71ced4ee287aec15bc3a8eac958e047e31e48",
+    "docs/FLUX-BLOCK-HANDOFF.md": "094ed0359111150d088c24760d3b453b1eeddfee96b50401cb092cdd94239770",
+    "qualification/analyze_flux_handoff.py": "5610f1c31c9d8139f767b0d79dcd45c214dda5232427c947ae864fd62b24dbba",
+    "qualification/flux_handoff_campaign.py": "bd339e186658b3274f32b31c684684a527cb23eb092daa385bd9c68a971752e1",
+    "qualification/submit_flux_handoff.py": "ba2a34c2b57d6727236fec303a4750e67c6effd4eff1a0b95790ea4411f80715",
+    "src/mdb/native_navigation.py": "5fc49831de98641858344280316826f12c563aefb5ef521f787282e33556cca8",
+    "tests/test_native_navigation.py": "9019fddf52bbb8459e213417ed57e1b68a1f7e55eeb2542ba9670dfc2ac3c8ef"
+  },
+  "terminal_status": "unassessed",
+  "visual_review": {
+    "collateral": "Ordering follows the carrier crossover; shape, pose and size vary in intermediate hybrids. No exact semantic isolation claim.",
+    "evaluator": "assistant inspection of all twelve contact-sheet images",
+    "instrument_status": "informal visual inspection; no calibrated classifier or independent human labels",
+    "labels_are_supplied": "red/cube/blue/sphere/left/right describe prompt contrasts and inspected objects, not discovered primitive labels",
+    "rows": {
+      "after_joint0.restore_image": "Blue sphere left, red cube right; changed ordering preserved.",
+      "after_joint0.restore_text": "Red cube left, blue sphere right; original ordering restored.",
+      "after_joint4.restore_image": "Blue sphere left, red cube right; changed ordering with some shape/pose/scale variation.",
+      "after_joint4.restore_text": "Red cube left, blue sphere right; red cube orientation and scale differ from base.",
+      "after_single18.restore_image": "Red cube left, blue sphere right; visually close to base reference.",
+      "after_single18.restore_text": "Blue sphere left, red cube right; visually close to changed reference.",
+      "after_single9.restore_image": "Red cube left, blue sphere right; base ordering with shape/pose variation.",
+      "after_single9.restore_text": "Blue sphere left, red cube with rounded edges right; changed ordering preserved.",
+      "base": "Red cube left, blue sphere right.",
+      "changed": "Blue sphere left, red cube right.",
+      "late.restore_both": "Red cube left, blue sphere right; visually matches base reference.",
+      "late.sham": "Blue sphere left, red cube right; visually matches changed reference."
+    },
+    "schema": "mdb-flux-handoff-visual-review-v1",
+    "source_figure_sha256": "d36d7f4bec399e590cb4daa0b16d03cd414768122e8c2c44e876b76f66e937f7"
+  },
+  "working_inference": "In this known seed31 relation contrast, the tested restoration hybrids change from working-text-guided to image-state-guided ordering between after joint4 and after single9. Single0\u20139 is the next causal window; no first-write or unique MLP localization."
+}
