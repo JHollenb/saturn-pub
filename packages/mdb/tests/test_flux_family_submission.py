@@ -38,7 +38,7 @@ def test_one_resident_job_keeps_all_rows_offline_wheels_and_physical_memory_marg
     def launch(command, **kwargs):
         calls.append(kwargs)
         assert "--offline" in command
-        assert kwargs["ram_mb"] == 32000 and kwargs["vram_mb"] == 13000 and kwargs["cpu_threads"] == 4
+        assert kwargs["ram_mb"] == 18432 and kwargs["vram_mb"] == 13000 and kwargs["cpu_threads"] == 4
         assert kwargs["timeout_s"] == 3300 and kwargs["est_wall_s"] == 1800
         assert kwargs["preflight"] is True and kwargs["retry_on_kill"] is False
         assert kwargs["gpu"] and kwargs["needs"] == {"cuda": True} and kwargs["prefer_host"] == "beast"
@@ -54,7 +54,7 @@ def test_one_resident_job_keeps_all_rows_offline_wheels_and_physical_memory_marg
         from mrun.protocol import RAM_KILL_FACTOR, kill_ceiling_mb
 
         assert memory["ram_kill_factor"] == RAM_KILL_FACTOR
-        assert memory["ram_kill_ceiling_mb"] == kill_ceiling_mb(32000) < memory["reference_host_available_mb"]
+        assert memory["ram_kill_ceiling_mb"] == kill_ceiling_mb(18432) < memory["reference_host_available_mb"]
         unsigned = {key: value for key, value in request.items() if key != "request_sha256"}
         assert hashlib.sha256(json.dumps(unsigned, sort_keys=True, allow_nan=False).encode()).hexdigest() == request["request_sha256"]
         return "job-tiny-no-real-submission"
@@ -83,8 +83,8 @@ def test_ram_kill_ceiling_not_just_reservation_must_fit():
 
     resource = runpy.run_path(str(QUALIFICATION / "submit_flux_family.py"))["resource_envelope"]
     assert resource()["ram_kill_factor"] == RAM_KILL_FACTOR
-    assert resource()["ram_kill_ceiling_mb"] == kill_ceiling_mb(32000)
-    assert resource(kill_factor=1.3)["ram_kill_ceiling_mb"] == 41600
+    assert resource()["ram_kill_ceiling_mb"] == kill_ceiling_mb(18432)
+    assert resource(kill_factor=1.3)["ram_kill_ceiling_mb"] == pytest.approx(23961.6)
     with pytest.raises(ValueError, match="kill ceiling"):
         resource(55000, kill_factor=1.3)
 

@@ -14,7 +14,7 @@ NOTE = ("One resident Klein4B CUDA BF16 B1,47 dependent512px/4step RGB futures a
         "K/V/Q sources,R/A merge,contrast specificity,heldout resolver,support omission/rescue,records. "
         "Prefix-only supports;development fit then heldout seal before heldout suffixes. "
         "One lease/load,no per-row jobs,no retries;max10000 adapter steps,3000s worker. "
-        "Measured32GBRAM/13GBVRAM,cpu4;stop after all47 rows and bounded multipart archive.")
+        "Calibrated18GiBRAM/13GBVRAM,cpu4;stop after all47 rows and bounded multipart archive.")
 
 
 def require(condition, message):
@@ -44,7 +44,7 @@ def make_plan(prior_path):
     return result
 
 
-def resource_envelope(ram_mb=32000, *, kill_factor=None, reference_host_mb=66512, margin=.05):
+def resource_envelope(ram_mb=18432, *, kill_factor=None, reference_host_mb=66512, margin=.05):
     if kill_factor is None:
         from mrun.protocol import RAM_KILL_FACTOR, kill_ceiling_mb
 
@@ -94,8 +94,10 @@ def stage(run_dir, plan_path):
             logical_checkpoint_replays=47, max_local_work_items=64,
             checkpoint_policy="one resident model;development and heldout local phases;47dependent scalar futures;no scheduler per transition/row"),
         "resource_exception": {**envelope, "vram_mb": 13000, "cpu_threads": 4, "calibration_job": "job-230b7bf6de6d",
-            "measured_peak_rss_mb_approx": 10000, "measured_peak_vram_mb_approx": 9500,
-            "reason": "same resident512px B1CUDA BF16checkpoint;sequential futures and boundedCPUport/cache storage"},
+            "measured_peak_rss_mb": 11954, "scheduler_peak_rss_mb": 10055.8, "measured_peak_vram_mb_approx": 9500,
+            "source_cache_bytes_from_declared_shapes": 566286336,
+            "sizing_status": "conservative extrapolation from prior measured worker; exact47-row peak not yet measured",
+            "reason": "same resident512px B1CUDA BF16checkpoint;540MiB sourcecache,one-at-a-time transients,metadata-only transactions,disk-streamed custody;independently reviewed18GiB envelope"},
         "selection_policy": "all47 frozen dependent rows;heldout responses never select supports or train resolver;retain all counterexamples"}
     request["request_sha256"] = hashlib.sha256(json.dumps(request, sort_keys=True, allow_nan=False).encode()).hexdigest()
     save(run_dir / "request.json", request)
@@ -103,7 +105,7 @@ def stage(run_dir, plan_path):
     command = worker_command(WORKERS[0])
     # Public wheel installation and offline execution remain the payload helper's contract.
     job = guarded_mrun_launch(command, request=request, experiment="mdb-flux-six-panel-family", task="forward", model=config["model"],
-        payload=run_dir / "payload", prefer_host="beast", gpu=True, needs=request["needs"], ram_mb=32000, vram_mb=13000,
+        payload=run_dir / "payload", prefer_host="beast", gpu=True, needs=request["needs"], ram_mb=envelope["ram_mb"], vram_mb=13000,
         cpu_threads=4, est_wall_s=1800, timeout_s=3300, retry_on_kill=False, preflight=True, note=NOTE)
     save(run_dir / "submission.json", {"job_id": str(job)})
     return {"job_id": str(job), "run_dir": str(run_dir), "rows": 47, "model_loads": 1}
