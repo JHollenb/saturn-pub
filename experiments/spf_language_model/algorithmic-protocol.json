@@ -1,0 +1,14 @@
+{
+  "schema": "spf-algorithmic-discovery-protocol-v1",
+  "order": ["conditioning", "continuation", "memory capacity", "source/carrier/consumer causality", "replication"],
+  "conditioning": "Same Transformer weights and parameter count, fixed sinusoid scales 1 and .02; measure actual input RMS and text learning curves.",
+  "primary_continuation": "Equal completed update budgets with public Saturn inspection, immutable closures and three score views; quality does not block this diagnostic lane.",
+  "future_contrast": "At update128, two 64-step LR siblings share an exact parent, sampler and RNG; inspect16/32/64; return parent without changing the primary trajectory.",
+  "memory": "Learned raw-byte delayed recall with balanced A-D payloads, IID lowercase distractors, common query byte, query-only loss mask; no source labels or roles in model input.",
+  "curriculum": "Prespecified thirds: delays0/4/8, then4/8/16, then8/16/32; all arms see identical sampled sequences.",
+  "controls": "SPF all-token state reset, actual native packed word clear/half-clear/donor transplant, same-parent no-op/repair/restore; target and collateral retained.",
+  "selection_data": "Text feedback seeds811/821/839 and memory feedback stream; previous text test is not reopened; cold memory audit only on explicitly frozen run.",
+  "instruments": "Raw256-byte loss and accuracy plus conditional A-D bits and mass; balanced current-query-only reference25%,2bitsconditional; revision old-only reference33.3% when old!=new.",
+  "interpretation": "Separate input conditioning, controller choices, vocabulary learning, memory use, extrapolation and arithmetic; preserve negative intermediate and heterogeneous controls.",
+  "terminal_status": "not requested"
+}

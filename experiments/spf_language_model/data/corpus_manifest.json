@@ -1,0 +1,51 @@
+{
+  "limitations": "Contiguous text holdout; repeated phrases and characters can occur across spans; not a document- or author-generalization claim.",
+  "raw_bytes": 1115394,
+  "raw_sha256": "86c4e6aa9db7c042ec79f339dcb96d42b0075e16b8fc2e86bf0ca57e2dc565ed",
+  "schema": "spf-byte-corpus-v1",
+  "source": {
+    "bytes": 1115394,
+    "license": "public-domain-literary-text; distribution-license-unspecified",
+    "license_scope": "Do not infer a corpus license from nanoGPT's MIT-licensed preparation code.",
+    "name": "tiny_shakespeare",
+    "revision": "370cbcd448eb7daf32f21a6be560b70e0b33c4e3",
+    "rights": "Underlying Shakespeare works are public domain; source repository supplies no separate corpus/formatting license.",
+    "sha256": "86c4e6aa9db7c042ec79f339dcb96d42b0075e16b8fc2e86bf0ca57e2dc565ed",
+    "url": "https://raw.githubusercontent.com/karpathy/char-rnn/370cbcd448eb7daf32f21a6be560b70e0b33c4e3/data/tinyshakespeare/input.txt"
+  },
+  "split_fractions": {
+    "feedback": 0.05,
+    "sealed_test": 0.049999999999999975,
+    "train": 0.9
+  },
+  "split_policy": "contiguous-disjoint-raw-spans-90-5-5-default",
+  "splits": {
+    "feedback": {
+      "raw_bytes": 55769,
+      "sealed": false,
+      "sha256": "2005a733cb87b490f256a123d9dc47073809546e912a45fd9a0eb504f7562f3e",
+      "start_inclusive": 1003854,
+      "stop_exclusive": 1059623
+    },
+    "sealed_test": {
+      "raw_bytes": 55771,
+      "sealed": true,
+      "sha256": "2762f01f8b72c92df265d3f3d1f16606421d6c7d11ae688a065f6a421915e43c",
+      "start_inclusive": 1059623,
+      "stop_exclusive": 1115394
+    },
+    "train": {
+      "raw_bytes": 1003854,
+      "sealed": false,
+      "sha256": "a9e24e23a1ec77744dad26844bfd5a09b6e041954e1eef0000e7f24cba6db735",
+      "start_inclusive": 0,
+      "stop_exclusive": 1003854
+    }
+  },
+  "tokenizer": {
+    "kind": "identity-raw-byte",
+    "normalization": "none",
+    "special_tokens": [],
+    "vocab_size": 256
+  }
+}

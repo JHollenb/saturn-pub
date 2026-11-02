@@ -1,0 +1,16 @@
+{
+  "schema": "spf-layer0-transport-control-v1",
+  "stage": "exploratory",
+  "selection_source": "Frozen 2x2 memory feedback/components: short recall retained, longer delays show large address gradients and payload still reaches the reader",
+  "question": "Does variable transition rotation in the first layer contribute to the long-delay optimization difficulty?",
+  "parent": {"seed": 17, "updates": 128, "complete_public_training_closure": true},
+  "controlled_change": "Set layer0 transition_frequencies buffer to zero; leave layer1 frequency one, B/C phases, trainable weights, decay, gains, V, D, head and optimizer state unchanged",
+  "zero_update_observation": "Score and microscope the surgically changed parent before any new training",
+  "continuations": {"learning_rate": 0.003, "schedule": [0,4,8,16,32], "updates_per_arm": 256, "batch": 8, "same_raw_inputs": true},
+  "observe_at": [16,32,64,128,256],
+  "unchanged_control": "Full endpoint closure must reproduce the earlier stationary-lr-003 continuation; preserve a discrepancy as an instrument observation",
+  "prediction": "If variable first-layer transport rotation contributes, longer-delay learning and native donor utility may improve and long-delay address gradient magnitude may decrease. A zero-update shock can worsen the old readout and is measured separately.",
+  "alternatives": ["filler-write interference", "second-layer transition/read coupling", "insufficient optimization budget", "gradient clipping/optimizer conditioning"],
+  "interpretation": "A controlled parameterization contrast on one selected seed; removing rotation is a diagnostic, not an architectural improvement claim",
+  "heldout": "Cold audit and text test remain closed; no terminal promotion"
+}

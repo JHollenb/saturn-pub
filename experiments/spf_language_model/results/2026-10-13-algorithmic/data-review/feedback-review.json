@@ -1,0 +1,1125 @@
+{
+  "conditioning": {
+    "all_256_training_input_hashes_identical": true,
+    "final_panel_delta_scaled_minus_unit": [
+      -0.8327739238739014,
+      -0.8253436088562012,
+      -0.738274335861206
+    ],
+    "initial_sampler_and_rng_fingerprints_identical": true,
+    "initial_scale_002": {
+      "combined_input_rms": 0.024378519505262375,
+      "embedding_rms": 0.02010759897530079,
+      "input_shape": [
+        8,
+        64
+      ],
+      "position_rms": 0.01414213515818119,
+      "position_to_embedding_rms_ratio": 0.7033228874206543,
+      "positional_scale": 0.019999999552965164,
+      "targets_used": false,
+      "unscaled_position_rms": 0.7071067690849304
+    },
+    "initial_scale_1": {
+      "combined_input_rms": 0.7070389986038208,
+      "embedding_rms": 0.02010759897530079,
+      "input_shape": [
+        8,
+        64
+      ],
+      "position_rms": 0.7071067690849304,
+      "position_to_embedding_rms_ratio": 35.16614532470703,
+      "positional_scale": 1.0,
+      "targets_used": false,
+      "unscaled_position_rms": 0.7071067690849304
+    },
+    "initial_tensor_weights_identical": true,
+    "mean_delta_scaled_minus_unit": -0.7987972895304362,
+    "model_state_fingerprint": "9fec02cd63adaff6a958871adae6646b64a55a5e265f2b8237529bbe78c09ca1"
+  },
+  "job_id": "job-5030a6108d9c",
+  "limits": [
+    "One initialization/data seed; nearby parameter budgets, untuned common recipe, no architecture ranking.",
+    "Three text feedback panels can share/overlap windows; not three independent training replicates.",
+    "Early memory observations use eight fixed query rows per delay; final grids use 32 rows per delay.",
+    "Delay-zero has four unique raw inputs, repeated eight times in the final 32-row cell.",
+    "Delay cells are paired by payload and nested distractor prefixes, so their errors are correlated.",
+    "Delay64 was absent from the training curriculum and is feedback extrapolation, not cold certification.",
+    "Raw256 loss separates vocabulary mass from conditional A-D discrimination; neither alone certifies long-memory mechanisms.",
+    "Short recall degrades after curriculum shifts, but delay8 remains trained throughout; removal of delay0 is insufficient as the sole explanation."
+  ],
+  "memory_all_384_input_hashes_identical_between_arms": true,
+  "memory_final_feedback_grids": {
+    "mamba": [
+      {
+        "conditional_payload_accuracy": 1.0,
+        "conditional_payload_bits": 0.0029948450392112136,
+        "delay": 0,
+        "query_accuracy_raw256": 1.0,
+        "query_bits_per_byte": 0.004905265988782048,
+        "query_targets": 32
+      },
+      {
+        "conditional_payload_accuracy": 1.0,
+        "conditional_payload_bits": 0.0025151248555630445,
+        "delay": 4,
+        "query_accuracy_raw256": 1.0,
+        "query_bits_per_byte": 0.005017620627768338,
+        "query_targets": 32
+      },
+      {
+        "conditional_payload_accuracy": 1.0,
+        "conditional_payload_bits": 0.0021565742790699005,
+        "delay": 8,
+        "query_accuracy_raw256": 1.0,
+        "query_bits_per_byte": 0.0044812270207330585,
+        "query_targets": 32
+      },
+      {
+        "conditional_payload_accuracy": 1.0,
+        "conditional_payload_bits": 0.0022538009798154235,
+        "delay": 16,
+        "query_accuracy_raw256": 1.0,
+        "query_bits_per_byte": 0.004406596068292856,
+        "query_targets": 32
+      },
+      {
+        "conditional_payload_accuracy": 1.0,
+        "conditional_payload_bits": 0.0036183453630656004,
+        "delay": 32,
+        "query_accuracy_raw256": 1.0,
+        "query_bits_per_byte": 0.005275716772302985,
+        "query_targets": 32
+      },
+      {
+        "conditional_payload_accuracy": 1.0,
+        "conditional_payload_bits": 0.06728598196059465,
+        "delay": 64,
+        "query_accuracy_raw256": 1.0,
+        "query_bits_per_byte": 0.06871586572378874,
+        "query_targets": 32
+      }
+    ],
+    "phase_reference": [
+      {
+        "conditional_payload_accuracy": 0.0,
+        "conditional_payload_bits": 2.1162086725234985,
+        "delay": 0,
+        "query_accuracy_raw256": 0.0,
+        "query_bits_per_byte": 2.121884822845459,
+        "query_targets": 32
+      },
+      {
+        "conditional_payload_accuracy": 0.375,
+        "conditional_payload_bits": 1.988448053598404,
+        "delay": 4,
+        "query_accuracy_raw256": 0.375,
+        "query_bits_per_byte": 1.9943512678146362,
+        "query_targets": 32
+      },
+      {
+        "conditional_payload_accuracy": 0.15625,
+        "conditional_payload_bits": 2.0529122352600098,
+        "delay": 8,
+        "query_accuracy_raw256": 0.15625,
+        "query_bits_per_byte": 2.0598727464675903,
+        "query_targets": 32
+      },
+      {
+        "conditional_payload_accuracy": 0.1875,
+        "conditional_payload_bits": 2.047162175178528,
+        "delay": 16,
+        "query_accuracy_raw256": 0.1875,
+        "query_bits_per_byte": 2.0536054372787476,
+        "query_targets": 32
+      },
+      {
+        "conditional_payload_accuracy": 0.25,
+        "conditional_payload_bits": 2.0231974720954895,
+        "delay": 32,
+        "query_accuracy_raw256": 0.25,
+        "query_bits_per_byte": 2.0315305292606354,
+        "query_targets": 32
+      },
+      {
+        "conditional_payload_accuracy": 0.34375,
+        "conditional_payload_bits": 2.0597965717315674,
+        "delay": 64,
+        "query_accuracy_raw256": 0.34375,
+        "query_bits_per_byte": 2.133513331413269,
+        "query_targets": 32
+      }
+    ],
+    "transformer_pos002": [
+      {
+        "conditional_payload_accuracy": 1.0,
+        "conditional_payload_bits": 0.004165102727711201,
+        "delay": 0,
+        "query_accuracy_raw256": 1.0,
+        "query_bits_per_byte": 0.00606888928450644,
+        "query_targets": 32
+      },
+      {
+        "conditional_payload_accuracy": 1.0,
+        "conditional_payload_bits": 0.0041814676951617,
+        "delay": 4,
+        "query_accuracy_raw256": 1.0,
+        "query_bits_per_byte": 0.006047053262591362,
+        "query_targets": 32
+      },
+      {
+        "conditional_payload_accuracy": 1.0,
+        "conditional_payload_bits": 0.004076600424014032,
+        "delay": 8,
+        "query_accuracy_raw256": 1.0,
+        "query_bits_per_byte": 0.006005163653753698,
+        "query_targets": 32
+      },
+      {
+        "conditional_payload_accuracy": 1.0,
+        "conditional_payload_bits": 0.004107403801754117,
+        "delay": 16,
+        "query_accuracy_raw256": 1.0,
+        "query_bits_per_byte": 0.006010707817040384,
+        "query_targets": 32
+      },
+      {
+        "conditional_payload_accuracy": 1.0,
+        "conditional_payload_bits": 0.003912768908776343,
+        "delay": 32,
+        "query_accuracy_raw256": 1.0,
+        "query_bits_per_byte": 0.006021504406817257,
+        "query_targets": 32
+      },
+      {
+        "conditional_payload_accuracy": 1.0,
+        "conditional_payload_bits": 0.004242111346684396,
+        "delay": 64,
+        "query_accuracy_raw256": 1.0,
+        "query_bits_per_byte": 0.006145701161585748,
+        "query_targets": 32
+      }
+    ]
+  },
+  "memory_training_counts": {
+    "mamba": {
+      "input_bytes": 41920,
+      "queries_by_payload_byte": {
+        "65": 768,
+        "66": 768,
+        "67": 768,
+        "68": 768
+      },
+      "queries_by_training_delay": {
+        "0": 336,
+        "4": 688,
+        "8": 1024,
+        "16": 688,
+        "32": 336
+      },
+      "query_targets": 3072,
+      "updates": 384
+    },
+    "phase_reference": {
+      "input_bytes": 41920,
+      "queries_by_payload_byte": {
+        "65": 768,
+        "66": 768,
+        "67": 768,
+        "68": 768
+      },
+      "queries_by_training_delay": {
+        "0": 336,
+        "4": 688,
+        "8": 1024,
+        "16": 688,
+        "32": 336
+      },
+      "query_targets": 3072,
+      "updates": 384
+    },
+    "transformer_pos002": {
+      "input_bytes": 41920,
+      "queries_by_payload_byte": {
+        "65": 768,
+        "66": 768,
+        "67": 768,
+        "68": 768
+      },
+      "queries_by_training_delay": {
+        "0": 336,
+        "4": 688,
+        "8": 1024,
+        "16": 688,
+        "32": 336
+      },
+      "query_targets": 3072,
+      "updates": 384
+    }
+  },
+  "phase_feedback_checkpoint_rows": [
+    {
+      "conditional_payload_bits": 2.1082651615142822,
+      "correct": 0,
+      "delay": 0,
+      "payload_mass_mean": 0.019929513335227966,
+      "query_targets": 8,
+      "raw256_query_bpb": 7.758203506469727,
+      "update": 0
+    },
+    {
+      "conditional_payload_bits": 2.1907215118408203,
+      "correct": 0,
+      "delay": 8,
+      "payload_mass_mean": 0.01760872034355998,
+      "query_targets": 8,
+      "raw256_query_bpb": 8.03753662109375,
+      "update": 0
+    },
+    {
+      "conditional_payload_bits": 2.248073101043701,
+      "correct": 0,
+      "delay": 32,
+      "payload_mass_mean": 0.018026200821623206,
+      "query_targets": 8,
+      "raw256_query_bpb": 8.050933837890625,
+      "update": 0
+    },
+    {
+      "conditional_payload_bits": 2.004138708114624,
+      "correct": 2,
+      "delay": 0,
+      "payload_mass_mean": 0.2671860530972481,
+      "query_targets": 8,
+      "raw256_query_bpb": 3.9089012145996094,
+      "update": 16
+    },
+    {
+      "conditional_payload_bits": 2.2442595958709717,
+      "correct": 2,
+      "delay": 8,
+      "payload_mass_mean": 0.25902461633086205,
+      "query_targets": 8,
+      "raw256_query_bpb": 4.193436145782471,
+      "update": 16
+    },
+    {
+      "conditional_payload_bits": 2.2687623500823975,
+      "correct": 2,
+      "delay": 32,
+      "payload_mass_mean": 0.24806356243789196,
+      "query_targets": 8,
+      "raw256_query_bpb": 4.283358573913574,
+      "update": 16
+    },
+    {
+      "conditional_payload_bits": 1.416659951210022,
+      "correct": 4,
+      "delay": 0,
+      "payload_mass_mean": 0.7440838813781738,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.8437573909759521,
+      "update": 32
+    },
+    {
+      "conditional_payload_bits": 2.0199947357177734,
+      "correct": 2,
+      "delay": 8,
+      "payload_mass_mean": 0.7386904284358025,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.4571166038513184,
+      "update": 32
+    },
+    {
+      "conditional_payload_bits": 2.198896884918213,
+      "correct": 2,
+      "delay": 32,
+      "payload_mass_mean": 0.732398085296154,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.648746967315674,
+      "update": 32
+    },
+    {
+      "conditional_payload_bits": 1.0697811841964722,
+      "correct": 8,
+      "delay": 0,
+      "payload_mass_mean": 0.9120756983757019,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.2026597261428833,
+      "update": 48
+    },
+    {
+      "conditional_payload_bits": 2.2102150917053223,
+      "correct": 1,
+      "delay": 8,
+      "payload_mass_mean": 0.9171595349907875,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.335045337677002,
+      "update": 48
+    },
+    {
+      "conditional_payload_bits": 2.335658311843872,
+      "correct": 1,
+      "delay": 32,
+      "payload_mass_mean": 0.9048618599772453,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.4800808429718018,
+      "update": 48
+    },
+    {
+      "conditional_payload_bits": 0.48496073484420776,
+      "correct": 8,
+      "delay": 0,
+      "payload_mass_mean": 0.9086689651012421,
+      "query_targets": 8,
+      "raw256_query_bpb": 0.6234608292579651,
+      "update": 64
+    },
+    {
+      "conditional_payload_bits": 1.9091445207595825,
+      "correct": 3,
+      "delay": 8,
+      "payload_mass_mean": 0.9530292004346848,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.9785882234573364,
+      "update": 64
+    },
+    {
+      "conditional_payload_bits": 1.9670231342315674,
+      "correct": 2,
+      "delay": 32,
+      "payload_mass_mean": 0.9158826693892479,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.0978569984436035,
+      "update": 64
+    },
+    {
+      "conditional_payload_bits": 0.26241451501846313,
+      "correct": 8,
+      "delay": 0,
+      "payload_mass_mean": 0.9431303888559341,
+      "query_targets": 8,
+      "raw256_query_bpb": 0.346912145614624,
+      "update": 80
+    },
+    {
+      "conditional_payload_bits": 2.2894697189331055,
+      "correct": 4,
+      "delay": 8,
+      "payload_mass_mean": 0.9452801793813705,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.372529983520508,
+      "update": 80
+    },
+    {
+      "conditional_payload_bits": 2.8673512935638428,
+      "correct": 1,
+      "delay": 32,
+      "payload_mass_mean": 0.928400069475174,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.9761173725128174,
+      "update": 80
+    },
+    {
+      "conditional_payload_bits": 0.14762648940086365,
+      "correct": 8,
+      "delay": 0,
+      "payload_mass_mean": 0.9517703503370285,
+      "query_targets": 8,
+      "raw256_query_bpb": 0.21909408271312714,
+      "update": 96
+    },
+    {
+      "conditional_payload_bits": 2.336418390274048,
+      "correct": 4,
+      "delay": 8,
+      "payload_mass_mean": 0.9683202803134918,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.3830411434173584,
+      "update": 96
+    },
+    {
+      "conditional_payload_bits": 3.178215980529785,
+      "correct": 2,
+      "delay": 32,
+      "payload_mass_mean": 0.8816784061491489,
+      "query_targets": 8,
+      "raw256_query_bpb": 3.3908042907714844,
+      "update": 96
+    },
+    {
+      "conditional_payload_bits": 0.11916938424110413,
+      "correct": 8,
+      "delay": 0,
+      "payload_mass_mean": 0.9713210612535477,
+      "query_targets": 8,
+      "raw256_query_bpb": 0.16118170320987701,
+      "update": 112
+    },
+    {
+      "conditional_payload_bits": 2.465639352798462,
+      "correct": 3,
+      "delay": 8,
+      "payload_mass_mean": 0.9830691069364548,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.4903080463409424,
+      "update": 112
+    },
+    {
+      "conditional_payload_bits": 3.4720704555511475,
+      "correct": 2,
+      "delay": 32,
+      "payload_mass_mean": 0.9644951596856117,
+      "query_targets": 8,
+      "raw256_query_bpb": 3.5243208408355713,
+      "update": 112
+    },
+    {
+      "conditional_payload_bits": 0.10135230422019958,
+      "correct": 8,
+      "delay": 0,
+      "payload_mass_mean": 0.9877625703811646,
+      "query_targets": 8,
+      "raw256_query_bpb": 0.11912236362695694,
+      "update": 128
+    },
+    {
+      "conditional_payload_bits": 1.652174949645996,
+      "correct": 3,
+      "delay": 8,
+      "payload_mass_mean": 0.9819448217749596,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.6786508560180664,
+      "update": 128
+    },
+    {
+      "conditional_payload_bits": 2.1791675090789795,
+      "correct": 4,
+      "delay": 32,
+      "payload_mass_mean": 0.9819323718547821,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.205489158630371,
+      "update": 128
+    },
+    {
+      "conditional_payload_bits": 1.1640231609344482,
+      "correct": 6,
+      "delay": 0,
+      "payload_mass_mean": 0.9926308542490005,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.1746971607208252,
+      "update": 144
+    },
+    {
+      "conditional_payload_bits": 2.1609127521514893,
+      "correct": 3,
+      "delay": 8,
+      "payload_mass_mean": 0.9913956671953201,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.173382520675659,
+      "update": 144
+    },
+    {
+      "conditional_payload_bits": 2.9370014667510986,
+      "correct": 3,
+      "delay": 32,
+      "payload_mass_mean": 0.9861794635653496,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.957095146179199,
+      "update": 144
+    },
+    {
+      "conditional_payload_bits": 1.0672385692596436,
+      "correct": 8,
+      "delay": 0,
+      "payload_mass_mean": 0.9942340105772018,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.0755813121795654,
+      "update": 160
+    },
+    {
+      "conditional_payload_bits": 1.4884631633758545,
+      "correct": 5,
+      "delay": 8,
+      "payload_mass_mean": 0.9923109486699104,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.4996038675308228,
+      "update": 160
+    },
+    {
+      "conditional_payload_bits": 1.4677519798278809,
+      "correct": 6,
+      "delay": 32,
+      "payload_mass_mean": 0.9878930896520615,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.4853383302688599,
+      "update": 160
+    },
+    {
+      "conditional_payload_bits": 1.660980224609375,
+      "correct": 6,
+      "delay": 0,
+      "payload_mass_mean": 0.9943327754735947,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.6691796779632568,
+      "update": 176
+    },
+    {
+      "conditional_payload_bits": 1.931490182876587,
+      "correct": 4,
+      "delay": 8,
+      "payload_mass_mean": 0.9927231967449188,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.942029595375061,
+      "update": 176
+    },
+    {
+      "conditional_payload_bits": 1.956573486328125,
+      "correct": 3,
+      "delay": 32,
+      "payload_mass_mean": 0.9922219812870026,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.9678395986557007,
+      "update": 176
+    },
+    {
+      "conditional_payload_bits": 1.401914119720459,
+      "correct": 8,
+      "delay": 0,
+      "payload_mass_mean": 0.9940763711929321,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.4104856252670288,
+      "update": 192
+    },
+    {
+      "conditional_payload_bits": 2.0598556995391846,
+      "correct": 3,
+      "delay": 8,
+      "payload_mass_mean": 0.9937634393572807,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.0688815116882324,
+      "update": 192
+    },
+    {
+      "conditional_payload_bits": 2.1748580932617188,
+      "correct": 2,
+      "delay": 32,
+      "payload_mass_mean": 0.9921982064843178,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.186159372329712,
+      "update": 192
+    },
+    {
+      "conditional_payload_bits": 1.911147117614746,
+      "correct": 2,
+      "delay": 0,
+      "payload_mass_mean": 0.9942745119333267,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.9194308519363403,
+      "update": 208
+    },
+    {
+      "conditional_payload_bits": 2.079342842102051,
+      "correct": 1,
+      "delay": 8,
+      "payload_mass_mean": 0.9935417920351028,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.088691234588623,
+      "update": 208
+    },
+    {
+      "conditional_payload_bits": 1.9617457389831543,
+      "correct": 3,
+      "delay": 32,
+      "payload_mass_mean": 0.9913628101348877,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.9742772579193115,
+      "update": 208
+    },
+    {
+      "conditional_payload_bits": 1.9339061975479126,
+      "correct": 6,
+      "delay": 0,
+      "payload_mass_mean": 0.9944942742586136,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.941871166229248,
+      "update": 224
+    },
+    {
+      "conditional_payload_bits": 2.161094903945923,
+      "correct": 2,
+      "delay": 8,
+      "payload_mass_mean": 0.9938511326909065,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.1699936389923096,
+      "update": 224
+    },
+    {
+      "conditional_payload_bits": 1.8919388055801392,
+      "correct": 4,
+      "delay": 32,
+      "payload_mass_mean": 0.9926206991076469,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.9026275873184204,
+      "update": 224
+    },
+    {
+      "conditional_payload_bits": 1.873117446899414,
+      "correct": 4,
+      "delay": 0,
+      "payload_mass_mean": 0.9944712221622467,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.8811161518096924,
+      "update": 240
+    },
+    {
+      "conditional_payload_bits": 2.2868435382843018,
+      "correct": 1,
+      "delay": 8,
+      "payload_mass_mean": 0.9932729825377464,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.2965846061706543,
+      "update": 240
+    },
+    {
+      "conditional_payload_bits": 1.9746313095092773,
+      "correct": 1,
+      "delay": 32,
+      "payload_mass_mean": 0.9936585649847984,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.983809471130371,
+      "update": 240
+    },
+    {
+      "conditional_payload_bits": 1.9172954559326172,
+      "correct": 4,
+      "delay": 0,
+      "payload_mass_mean": 0.9945163428783417,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.9252283573150635,
+      "update": 256
+    },
+    {
+      "conditional_payload_bits": 2.0627458095550537,
+      "correct": 0,
+      "delay": 8,
+      "payload_mass_mean": 0.9940849244594574,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.0713050365448,
+      "update": 256
+    },
+    {
+      "conditional_payload_bits": 1.9992873668670654,
+      "correct": 2,
+      "delay": 32,
+      "payload_mass_mean": 0.9931721016764641,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.009172201156616,
+      "update": 256
+    },
+    {
+      "conditional_payload_bits": 1.7750983238220215,
+      "correct": 4,
+      "delay": 0,
+      "payload_mass_mean": 0.9950895458459854,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.7821999788284302,
+      "update": 272
+    },
+    {
+      "conditional_payload_bits": 1.946851372718811,
+      "correct": 3,
+      "delay": 8,
+      "payload_mass_mean": 0.9947385415434837,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.9544621706008911,
+      "update": 272
+    },
+    {
+      "conditional_payload_bits": 2.0661487579345703,
+      "correct": 1,
+      "delay": 32,
+      "payload_mass_mean": 0.9937212988734245,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.0752367973327637,
+      "update": 272
+    },
+    {
+      "conditional_payload_bits": 1.8803776502609253,
+      "correct": 6,
+      "delay": 0,
+      "payload_mass_mean": 0.9952208548784256,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.8872891664505005,
+      "update": 288
+    },
+    {
+      "conditional_payload_bits": 1.8743058443069458,
+      "correct": 3,
+      "delay": 8,
+      "payload_mass_mean": 0.9947203099727631,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.8819427490234375,
+      "update": 288
+    },
+    {
+      "conditional_payload_bits": 1.984675407409668,
+      "correct": 2,
+      "delay": 32,
+      "payload_mass_mean": 0.9921364858746529,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.996093988418579,
+      "update": 288
+    },
+    {
+      "conditional_payload_bits": 1.9726965427398682,
+      "correct": 2,
+      "delay": 0,
+      "payload_mass_mean": 0.9953836798667908,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.9793717861175537,
+      "update": 304
+    },
+    {
+      "conditional_payload_bits": 2.0702645778656006,
+      "correct": 1,
+      "delay": 8,
+      "payload_mass_mean": 0.9951167330145836,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.077326774597168,
+      "update": 304
+    },
+    {
+      "conditional_payload_bits": 1.8619383573532104,
+      "correct": 2,
+      "delay": 32,
+      "payload_mass_mean": 0.9931720569729805,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.8718409538269043,
+      "update": 304
+    },
+    {
+      "conditional_payload_bits": 1.9864245653152466,
+      "correct": 2,
+      "delay": 0,
+      "payload_mass_mean": 0.9955410361289978,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.9928717613220215,
+      "update": 320
+    },
+    {
+      "conditional_payload_bits": 2.035700559616089,
+      "correct": 2,
+      "delay": 8,
+      "payload_mass_mean": 0.9946386069059372,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.0434603691101074,
+      "update": 320
+    },
+    {
+      "conditional_payload_bits": 2.2147769927978516,
+      "correct": 1,
+      "delay": 32,
+      "payload_mass_mean": 0.9943158105015755,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.223001003265381,
+      "update": 320
+    },
+    {
+      "conditional_payload_bits": 1.8108981847763062,
+      "correct": 6,
+      "delay": 0,
+      "payload_mass_mean": 0.9957408457994461,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.8170559406280518,
+      "update": 336
+    },
+    {
+      "conditional_payload_bits": 2.112926721572876,
+      "correct": 1,
+      "delay": 8,
+      "payload_mass_mean": 0.9948247447609901,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.1204135417938232,
+      "update": 336
+    },
+    {
+      "conditional_payload_bits": 2.2764391899108887,
+      "correct": 0,
+      "delay": 32,
+      "payload_mass_mean": 0.995266892015934,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.2832841873168945,
+      "update": 336
+    },
+    {
+      "conditional_payload_bits": 1.8999745845794678,
+      "correct": 6,
+      "delay": 0,
+      "payload_mass_mean": 0.9958433955907822,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.9059836864471436,
+      "update": 352
+    },
+    {
+      "conditional_payload_bits": 2.149689197540283,
+      "correct": 0,
+      "delay": 8,
+      "payload_mass_mean": 0.9954540655016899,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.1562626361846924,
+      "update": 352
+    },
+    {
+      "conditional_payload_bits": 2.0851402282714844,
+      "correct": 3,
+      "delay": 32,
+      "payload_mass_mean": 0.9943305104970932,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.0933454036712646,
+      "update": 352
+    },
+    {
+      "conditional_payload_bits": 2.028535842895508,
+      "correct": 2,
+      "delay": 0,
+      "payload_mass_mean": 0.9959142059087753,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.03444242477417,
+      "update": 368
+    },
+    {
+      "conditional_payload_bits": 2.0863821506500244,
+      "correct": 1,
+      "delay": 8,
+      "payload_mass_mean": 0.9957554638385773,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.0925185680389404,
+      "update": 368
+    },
+    {
+      "conditional_payload_bits": 2.0142698287963867,
+      "correct": 2,
+      "delay": 32,
+      "payload_mass_mean": 0.9870463535189629,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.03332781791687,
+      "update": 368
+    },
+    {
+      "conditional_payload_bits": 2.116208791732788,
+      "correct": 0,
+      "delay": 0,
+      "payload_mass_mean": 0.9960732907056808,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.121884822845459,
+      "update": 384
+    },
+    {
+      "conditional_payload_bits": 1.9877076148986816,
+      "correct": 1,
+      "delay": 8,
+      "payload_mass_mean": 0.9944534972310066,
+      "query_targets": 8,
+      "raw256_query_bpb": 1.9957414865493774,
+      "update": 384
+    },
+    {
+      "conditional_payload_bits": 2.0070619583129883,
+      "correct": 1,
+      "delay": 32,
+      "payload_mass_mean": 0.9925767853856087,
+      "query_targets": 8,
+      "raw256_query_bpb": 2.0178630352020264,
+      "update": 384
+    }
+  ],
+  "quarantine": {
+    "analysis_reads": "feedback summaries/curves, raw training records, baseline tensor archives only",
+    "cold_audit_opened": false,
+    "text_test_opened": false
+  },
+  "request": {
+    "arm_specs": {
+      "mamba": {
+        "d_model": 20
+      },
+      "phase_reference": {
+        "d_model": 24
+      },
+      "transformer": {
+        "d_model": 18,
+        "n_heads": 2
+      }
+    },
+    "batch_size": 4,
+    "cold_audit": false,
+    "cpu_threads": 1,
+    "d_model": 24,
+    "device": "cpu",
+    "discovery_stage": "exploratory",
+    "dtype": "float32",
+    "future_parent_step": 128,
+    "heldout_used_for_selection": false,
+    "interval_steps": 16,
+    "learning_rate": 0.003,
+    "memory_steps": 384,
+    "model_weight_downloads": 0,
+    "n_layers": 2,
+    "one_resident_worker": true,
+    "physical_geometry": {
+      "future_siblings": {
+        "conditions": [
+          "phase_reference",
+          "transformer_pos1"
+        ],
+        "first_seed_only": true,
+        "horizon": 64,
+        "learning_rates": [
+          0.003,
+          0.001
+        ],
+        "observe_at": [
+          16,
+          32,
+          64
+        ],
+        "parent_update": 128
+      },
+      "memory_feedback": {
+        "batch": 8,
+        "delays": [
+          0,
+          8,
+          32
+        ]
+      },
+      "memory_final": {
+        "delays": [
+          0,
+          4,
+          8,
+          16,
+          32,
+          64
+        ],
+        "examples_per_delay": 32
+      },
+      "memory_train": {
+        "batch": 8,
+        "updates_per_condition": 384,
+        "variable_length": [
+          3,
+          7,
+          11,
+          19,
+          35
+        ]
+      },
+      "native_mdb": {
+        "clocked_max_delay": 16,
+        "delays": [
+          0,
+          8,
+          32
+        ],
+        "examples_per_delay": 8,
+        "packed_prefix_state": true
+      },
+      "text_feedback": {
+        "batch": 8,
+        "length": 64,
+        "panels": 3
+      },
+      "text_train": {
+        "batch": 4,
+        "length": 64,
+        "updates_per_condition": 256
+      }
+    },
+    "schema": "spf-byte-lm-request-v1",
+    "seeds": [
+      17
+    ],
+    "sequence_length": 64,
+    "source_manifest_sha256": "b9a3f820ebbb689b9d54dd3bf699e7a50147658c916d6d943194fbe137b258b5",
+    "stage": "algorithmic",
+    "state_size": 8,
+    "steps": 256,
+    "studies": [
+      "text",
+      "memory"
+    ]
+  },
+  "schema": "spf-algorithmic-scout-feedback-data-review-v1",
+  "seed": 17,
+  "smallest_next_run": {
+    "avoid_inference": "Do not infer missing memory capacity from the final phase score or choose changes using audit results.",
+    "first": "Freeze existing phase checkpoints128 and160 plus final384; score fresh feedback seeds on32/64 balanced examples per delay and source/reset/donor controls. No new training is needed to test whether transient learning generalizes beyond the eight-row observer.",
+    "then": "If early useful memory repeats, reopen one exact checkpoint128 parent for bounded same-data LR.003/.001 siblings with delays0/4/8/16 retained, observing16/32/64 steps. Separate curriculum interference from optimization, retaining every branch; cold audit stays shut."
+  },
+  "source_summary_sha256": {
+    "memory/mamba": "b74df028ef4d489ae03277cf6572b2f4f7701a2ef6dda23547537837df5b5ffe",
+    "memory/phase_reference": "eecf04698440d738da1632c68e081ac005d05b84f0c9178dab73ddc2ee420050",
+    "memory/transformer_pos002": "79e1f546f80598d6675307eaad72dbb2d72add1fe1100b14ef41259990e64707",
+    "text/mamba": "c77ae2c5567b94f3d41cafb3da89ae1090ef23d6057901a5ede37e98b3bcd88b",
+    "text/phase_reference": "93d2d76f438a3bd0112e11258fb865f29d497f24d9681cd6ed832dc93907da61",
+    "text/transformer_pos002": "2c7dd20d512cbfb5ffa6f0463f35c45615f3644f5a76c7a6fca04ff991aaab75",
+    "text/transformer_pos1": "e0cc3ff19bc9ae4e86509240ca96897b9bbdb7824a532a42450087b04b06312e"
+  },
+  "terminal_status": "not-assessed",
+  "text_final_feedback": {
+    "mamba": {
+      "panel_bpb": [
+        3.206993579864502,
+        3.254626750946045,
+        3.27847957611084
+      ],
+      "panel_mean_bpb": 3.2466999689737954,
+      "parameters": 17900,
+      "physical_updates_including_futures": 256,
+      "primary_supervised_bytes": 65536,
+      "primary_updates": 256,
+      "teacher_accuracy_mean": 0.3815104166666667
+    },
+    "phase_reference": {
+      "panel_bpb": [
+        3.9753589630126953,
+        4.207849502563477,
+        3.9847192764282227
+      ],
+      "panel_mean_bpb": 4.055975914001465,
+      "parameters": 17890,
+      "physical_updates_including_futures": 384,
+      "primary_supervised_bytes": 65536,
+      "primary_updates": 256,
+      "teacher_accuracy_mean": 0.24869791666666666
+    },
+    "transformer_pos002": {
+      "panel_bpb": [
+        3.6803300380706787,
+        3.9299678802490234,
+        3.7688000202178955
+      ],
+      "panel_mean_bpb": 3.793032646179199,
+      "parameters": 17172,
+      "physical_updates_including_futures": 256,
+      "primary_supervised_bytes": 65536,
+      "primary_updates": 256,
+      "teacher_accuracy_mean": 0.2669270833333333
+    },
+    "transformer_pos1": {
+      "panel_bpb": [
+        4.51310396194458,
+        4.755311489105225,
+        4.507074356079102
+      ],
+      "panel_mean_bpb": 4.591829935709636,
+      "parameters": 17172,
+      "physical_updates_including_futures": 384,
+      "primary_supervised_bytes": 65536,
+      "primary_updates": 256,
+      "teacher_accuracy_mean": 0.17708333333333334
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "schema": "spf-byte-lm-discovery-protocol-v1",
+  "question": "Can the causal sparse phase-feature recurrence learn next-byte language prediction, and how does arithmetic change its learned native consumer?",
+  "stage": "exploratory",
+  "tokenizer": "all 256 raw byte values, no supplied syntax roles",
+  "split_policy": "non-overlapping contiguous train, feedback, sealed_test spans; windows stay entirely inside their span",
+  "selection": "public Saturn short candidate intervals; feedback bits per byte selects continuation; generated-history rollout and component traces are retained diagnostics",
+  "heldout": "opened only for final frozen-candidate measurements; no heldout-driven training or selection",
+  "comparators": ["learned sparse phase-character reference", "transformers Mamba v1", "pre-norm causal Transformer"],
+  "controls": ["same-parent MDB zero/half/no-op carrier interventions and repair", "native packed SPF32 recurrence", "native phase-clock retained records", "causal prefix and chunk mechanics"],
+  "fairness": "shared bytes, context, update attempts, optimizer and evaluation examples; widths chosen for nearby parameter counts; report exact counts, accepted bytes, compute and storage independently",
+  "limits": "small untuned byte-LM pilot, hybrid float embedding/readout, differentiable Cartesian update path, no full Mamba/Hydra quality or speed claim; bidirectional Hydra requires a separate matched-visibility task",
+  "mechanics_status": "identity, source hashes, finite values, causal visibility, exact same-parent restore/no-op",
+  "instrument_status": "record applicable arithmetic and instrument execution separately",
+  "trend_status": "retain curves, signed effects, seed differences and rejected futures; metrics never certify scientific absence",
+  "terminal_status": "not requested"
+}

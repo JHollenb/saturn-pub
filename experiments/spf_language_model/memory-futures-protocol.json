@@ -1,0 +1,20 @@
+{
+  "schema": "spf-memory-continuation-protocol-v1",
+  "stage": "exploratory",
+  "question": "Which reversible continuation preserves and extends the recall observed before the curriculum shifted?",
+  "selection_source": "Scouting feedback curves only; no cold audit opened",
+  "parent": {"source": "algorithmic-scout-01", "seed": 17, "updates": 128, "closure": "model, optimizer, gradients, buffers, sampler cursor, diagnostics, modes, RNG"},
+  "factors": {"schedule": ["original thirds over384", "stationary delays0,4,8,16,32"], "learning_rate": [0.003, 0.001]},
+  "future_updates_per_arm": 256,
+  "observe_at": [16, 32, 64, 128, 256],
+  "training_geometry": {"batch": 8, "query_targets_per_update": 8, "maximum_sequence_length": 35, "maximum_input_bytes_per_update": 280},
+  "observational_geometry": {"delays": [0, 4, 8, 16, 32, 64], "feedback_seeds": [81103, 81107, 81119], "examples_per_seed_delay": 8},
+  "quality_policy": "Mean raw256 query bits on feedback delays0,4,8,16,32; explicit continuation diagnostic only. Delay64 remains an extrapolation observation.",
+  "continuation": "Archive every endpoint, including rejected futures; restore parent after all candidates; no endpoint is promoted to canonical model",
+  "controlled_pairing": "LR pairs share exact raw bytes for each schedule. Schedule arms share parent, sampler positions, payloads and distractor prefixes, but change delay exposure and physical input bytes.",
+  "frozen_native_mdb": "Original cuts128,160,384 and every complete endpoint: full/chunk, prefix donor/clear, no-op/repair/restore and component diagnostics",
+  "mechanics": "Verify immutable source/checkpoint checksums and public complete closure restoration; finite losses/gradients. Diagnose instruments per row.",
+  "replay_control": "Original schedule LR.003 should reproduce source384 model/cursor; preserve any discrepancy as an instrument result",
+  "heldout": "Cold memory audit and text test stay closed throughout selection and this panel",
+  "limitations": ["One scout-selected seed and parent", "Finite four-payload grammar with repeated delay0 strings", "Schedule changes exposure distribution; not equal input-byte compute", "No terminal architecture, general language or speed claim"]
+}
