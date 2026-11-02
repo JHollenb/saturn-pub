@@ -13,7 +13,7 @@ TOOLS = {"cache": "vm_cache", "hyperion": "hyperion", "context": "context_cli",
     "symbol-producers": "symbol_producers", "forward-symbols": "forward_symbols",
     "circuits": "circuit_explorer", "discovery": "discovery_cli",
     "ports": "forward_ports", "forecast": "forecast_transaction",
-    "equations": "equation_comparison"}
+    "equations": "equation_comparison", "compiled-state": "compiled_state"}
 
 
 def main(argv=None):
