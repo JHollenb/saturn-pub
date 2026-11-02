@@ -178,11 +178,15 @@ def measure(model, family: PromptFamily, prefix_ids: Sequence[int], fit: Rows, e
     W = {k: torch.as_tensor(m.weights, device=dev) for k, m in maps.items()}
     n_r2 = len(evaluate) if r2_rows is None else min(int(r2_rows), len(evaluate))
     acc = {k: ResidualAccumulator(T, D) for k in maps}
-    native_top, comp_top = [], {k: [] for k in maps}
+    native_top, comp_top, control = [], {k: [] for k in maps}, {}
     for st in range(0, len(evaluate), batch):
         rows = evaluate.take(slice(st, st + batch))
         logits, cap = run.forward(rows.input_ids, capture=layers, keep=keep)
         native_top.append(logits[:, score].argmax(-1).cpu().numpy())
+        if st == 0:  # positive control: splicing the captured native state must reproduce native logits
+            for L in layers:
+                out, _ = run.forward(rows.input_ids, splice=(L, cap[L]), keep=keep)
+                control[str(L)] = float((out[:, score].float() - logits[:, score].float()).abs().max())
         P = masked(rows.values)
         r2_take = max(0, min(len(rows), n_r2 - st))
         for (f, L), w in W.items():
@@ -197,6 +201,13 @@ def measure(model, family: PromptFamily, prefix_ids: Sequence[int], fit: Rows, e
                 acc[(f, L)].add_moments(r2_take, *(m.cpu().numpy() for m in mom))
     native_top = np.concatenate(native_top)
     ref = None if evaluate.reference is None else np.asarray(evaluate.reference)
+    # noise ceiling: native against itself with every batch boundary shifted by half a batch
+    shifted, cuts = [], [0, *range(max(1, batch // 2), len(evaluate), batch), len(evaluate)]
+    for a, b in zip(cuts[:-1], cuts[1:]):
+        if b > a:
+            logits, _ = run.forward(evaluate.take(slice(a, b)).input_ids, keep=keep)
+            shifted.append(logits[:, score].argmax(-1).cpu().numpy())
+    ceiling = agreement(native_top, np.concatenate(shifted), ref)
 
     by_fset = {}
     for f in fsets:
@@ -222,6 +233,10 @@ def measure(model, family: PromptFamily, prefix_ids: Sequence[int], fit: Rows, e
         "lam": float(lam), "threshold": float(threshold), "layers": layers,
         "rows": {"fit": len(fit), "eval": len(evaluate), "r2": n_r2},
         "native": agreement(native_top, native_top, ref),
+        "native_splice_control": {"rows": min(batch, len(evaluate)), "max_abs_dlogit": control},
+        "noise_ceiling": {"definition": "native top-1 vs native top-1 with batch boundaries shifted by batch // 2; "
+                                        "error_recall here is the ceiling for any compiler's error recall",
+                          **ceiling},
         "feature_sets": by_fset})
     return report, maps
 

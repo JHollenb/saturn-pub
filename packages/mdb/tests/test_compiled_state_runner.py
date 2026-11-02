@@ -60,6 +60,8 @@ def test_measure_reproduces_exact_embedding_layer_and_seals_maps(model, tmp_path
     report, maps = measure(model, fam, PREFIX, rows(4), rows(), layers=[0, 1, 2], lam=1e-6, threshold=0.99,
                            batch=5, model_identity={"name": "tiny-qwen2"})
     verify_report(report)
+    assert report["native_splice_control"]["max_abs_dlogit"] == {"0": 0.0, "1": 0.0, "2": 0.0}
+    assert report["noise_ceiling"]["row_agreement"] == 1.0 and report["noise_ceiling"]["n"] == 9
     digits = report["feature_sets"]["digits"]
     # the residual entering layer 0 is the token embedding: exactly linear in the visible digits
     assert digits["layers"]["0"]["agreement"]["row_agreement"] == 1.0

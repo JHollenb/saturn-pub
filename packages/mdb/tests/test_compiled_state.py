@@ -228,6 +228,8 @@ def synthetic_report(fam):
     return seal_report({"family": {**fam.to_dict(), "width": fam.width}, "model": {"name": "toy"},
                         "lam": 1.0, "threshold": 0.95, "layers": [1, 2],
                         "rows": {"fit": 9, "eval": 8, "r2": 8},
+                        "noise_ceiling": {"n": 8, "row_agreement": 1.0, "error_recall": 0.75},
+                        "native_splice_control": {"rows": 8, "max_abs_dlogit": {"1": 0.0, "2": 0.0}},
                         "feature_sets": {"digits": {"horizon": horizon({1: 0.99, 2: 0.5}, 0.95),
                                                     "layers": {"1": layer(0.99), "2": layer(0.5)}, "maps": {}}}})
 
@@ -240,6 +242,7 @@ def test_report_seal_render_and_cli(tmp_path, capsys):
         verify_report({**report, "lam": 2.0})
     text = render(report)
     assert "[digits] horizon L1  first break L2" in text and "R2@op" in text
+    assert "error recall 0.750" in text and "max |dlogit| 0 over 8 rows" in text
     assert "0.100" in render(report, position="y", layer=2)
     with pytest.raises(CompiledStateError):
         render(report, position="nope")

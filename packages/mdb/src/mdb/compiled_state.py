@@ -534,6 +534,13 @@ def render(report: Mapping[str, Any], *, feature_set: str | None = None, layer: 
     lines = [f"family {fam['name']}  ({fam['fingerprint'][:12]})  model {report.get('model', {}).get('name', '?')}",
              f"rows fit {report['rows']['fit']}  eval {report['rows']['eval']}  r2 {report['rows']['r2']}  "
              f"lambda {report['lam']}  threshold {report['threshold']}"]
+    nc, ctl = report.get("noise_ceiling"), report.get("native_splice_control")
+    if nc:
+        lines.append(f"noise ceiling (native vs batch-shifted native): agreement {_fmt(nc['row_agreement'])}  "
+                     f"error recall {_fmt(nc.get('error_recall'))}")
+    if ctl and ctl["max_abs_dlogit"]:
+        lines.append(f"native splice control: max |dlogit| {max(ctl['max_abs_dlogit'].values()):.3g} "
+                     f"over {ctl['rows']} rows")
     names = fam["positions"]
     score = [names[p] for p in fam["score_positions"]]
     for fname, fs in report["feature_sets"].items():
