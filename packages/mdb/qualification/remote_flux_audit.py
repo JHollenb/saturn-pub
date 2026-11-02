@@ -34,22 +34,31 @@ def worker():
         os.environ[key] = "2"
     raw = Path(config["store_path"])
     if raw.exists():
-        raise ValueError("refusing to overwrite existing retained evidence")
-    shutil.copytree("input-run", raw)
+        if not config.get("reuse_collected"):
+            raise ValueError("refusing to overwrite existing retained evidence")
+    else:
+        if config.get("reuse_collected"):
+            raise ValueError("declared retained producer evidence does not exist")
+        shutil.copytree("input-run", raw)
     submitted = json.loads((raw / "request.json").read_text())
     if submitted["request_sha256"] != config["model_request_sha256"]:
         raise ValueError("producer request differs")
     support = runpy.run_path("discovery_upgrades.py")
-    collected = support["collect"](raw, config["model_job"], max_compressed_bytes=256 << 20,
-        max_expanded_bytes=512 << 20, log_storage="gzip")
+    if config.get("reuse_collected"):
+        collected = {"state": json.loads((raw / "job.json").read_text())["state"]}
+    else:
+        collected = support["collect"](raw, config["model_job"], max_compressed_bytes=config.get("max_archive_bytes", 256 << 20),
+            max_expanded_bytes=config.get("max_expanded_bytes", 512 << 20), log_storage="gzip")
     if collected["state"] != "succeeded":
         raise ValueError("producer not successful; raw evidence retained")
     analysis = runpy.run_path("analyze_flux_merge.py")["analyze"](raw)
-    save(raw / "analysis-v1.json", analysis)
+    analysis_path = raw / ("analysis-" + os.environ["MRUN_JOB_ID"] + ".json" if config.get("reuse_collected") else "analysis-v1.json")
+    save(analysis_path, analysis)
     output = Path("offline-audit-result")
     output.mkdir(exist_ok=False)
-    for name in ("request.json", "report.json", "job.json", "log-custody.json", "analysis-v1.json"):
+    for name in ("request.json", "report.json", "job.json", "log-custody.json"):
         shutil.copyfile(raw / name, output / ("producer-" + name))
+    shutil.copyfile(analysis_path, output / "producer-analysis-v1.json")
     data = raw / "extracted/flux-merge-result"
     for name in ("source.json", "plan.json", "summary.json", "files.json", "transaction-report.json"):
         shutil.copyfile(data / name, output / name)
@@ -61,7 +70,7 @@ def worker():
         shutil.copyfile(data / row["image"]["path"], output / row["image"]["path"])
     summary = {"schema": "mdb-flux-remote-offline-audit-v1", "job_id": os.environ["MRUN_JOB_ID"],
         "request_sha256": request["request_sha256"], "producer_job_id": config["model_job"],
-        "producer_archive_sha256": analysis["source"]["archive_sha256"], "producer_audit_sha256": sha(raw / "analysis-v1.json"),
+        "producer_archive_sha256": analysis["source"]["archive_sha256"], "producer_audit_sha256": sha(analysis_path),
         "raw_store": {"host": "beast", "path": str(raw), "log_custody_sha256": sha(raw / "log-custody.json")},
         "mechanics_status": "valid", "terminal_status": "unassessed", "model_forwards": 0,
         "scope": "separate CPU process verifies full source archive, typed arrays, equations and futures on storage host; returned view retains original PNG bytes and compact records; full port/latent/CAS data remain in the declared raw store and original producer archive"}
@@ -69,7 +78,7 @@ def worker():
     support["emit"](output, summary)
 
 
-def stage(run_dir, original):
+def stage(run_dir, original, *, reuse_collected=False):
     from mdb.execution_environment import intent
     from mdb.job_support import guarded_mrun_launch, one_lease_scheduling_contract
     from mdb.payload import stage_worker, worker_command
@@ -79,7 +88,10 @@ def stage(run_dir, original):
     producer = json.loads((original / "submission.json").read_text())["job_id"]
     config = {"schema": "mdb-flux-remote-audit-plan-v1", "model_job": producer,
         "model_request_sha256": source["request_sha256"], "endpoint": "http://192.168.68.68:9025",
-        "store_path": "/mnt/hdd8tb/mdb/evidence/flux-merge/" + producer}
+        "store_path": "/mnt/hdd8tb/mdb/evidence/flux-merge/" + producer,
+        "max_archive_bytes": source["config"].get("max_archive_bytes", 256 << 20),
+        "max_expanded_bytes": 1024 << 20 if source["config"].get("fresh_context") else 512 << 20,
+        "reuse_collected": reuse_collected}
     run_dir.mkdir(parents=True, exist_ok=False)
     save(run_dir / "plan.json", config)
     extras = [(original / "request.json", "input-run/request.json")]
@@ -106,12 +118,10 @@ def stage(run_dir, original):
     save(run_dir / "request.json", request)
     stage_worker(run_dir / "payload", worker=worker_path, config=config, request=request, additional_files=extras)
     command = worker_command(worker_path.name)
-    if "--offline" in command:
-        command.remove("--offline")
     job = guarded_mrun_launch(command, request=request, model=None, task="offline-audit", experiment="mdb-flux-remote-audit",
-        payload=run_dir / "payload", pin="beast", gpu=False, needs=request["needs"], ram_mb=4096, cpu_threads=2,
+        payload=run_dir / "payload", pin="beast", gpu=False, needs=request["needs"], ram_mb=6144 if source["config"].get("fresh_context") else 4096, cpu_threads=2,
         timeout_s=180, retry_on_kill=False, preflight=True,
-        note="CPU2 offline merge evidence audit;0model loads/forwards. Fetch completed producer archive, verify full CAS/ports/merge equations/latents/PNGs, retain raw tree on Beast HDD and return only compact audit+original11PNGs. 4GB bounds compressedlog+archive/NumPy working set. Host pin required for durable host-local storage; no retries.")
+        note="CPU2 offline merge evidence audit;0model loads/forwards. Fetch producer archive, verify full CAS/ports/source selection/merge equations/latents/PNGs; retain full tree on Beast HDD,return compact audit+original PNGs. Bounded compressedlog/archive/NumPy working set. Host pin required for durable host-local storage; no retries.")
     save(run_dir / "submission.json", {"job_id": str(job)})
     return {"job_id": str(job), "run_dir": str(run_dir)}
 
@@ -176,6 +186,7 @@ if __name__ == "__main__":
         parser.add_argument("--producer", type=Path)
         parser.add_argument("--collect")
         parser.add_argument("--verify", action="store_true")
+        parser.add_argument("--reuse-collected", action="store_true", help="re-audit existing immutable host-local producer evidence")
         args = parser.parse_args()
         if args.verify:
             result = verify_compact(args.run_dir.resolve())
@@ -186,5 +197,5 @@ if __name__ == "__main__":
         else:
             if args.producer is None:
                 parser.error("--producer required")
-            result = stage(args.run_dir.resolve(), args.producer.resolve())
+            result = stage(args.run_dir.resolve(), args.producer.resolve(), reuse_collected=args.reuse_collected)
         print(json.dumps(result))

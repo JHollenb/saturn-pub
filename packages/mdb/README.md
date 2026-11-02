@@ -97,6 +97,11 @@ The dense follow-up finds an intermediate mixed-binding window. A
 an incoming-residual plus attention coalition, retaining the attention-only
 prediction miss and the MLP's conditional effects. Full evidence can be audited
 on its storage host with a separate model-free CPU lease and a verified compact view.
+The [prospective route replication](docs/FLUX-ROUTE-REPLICATION.md) tests three new
+seed/wording contexts with 39 native image outcomes. All 18 frozen ordering
+predictions agree with inspection. A query/text-KV/image-KV factorial refines the
+conditional route and retains two failed source-ranking predictions in three
+source-qualified generic computation records.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 [Packed forecast storage](docs/FORECAST-STORAGE.md) is the default and preserves the complete
