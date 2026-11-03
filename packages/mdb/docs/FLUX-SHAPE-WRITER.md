@@ -185,6 +185,31 @@ The source archive contains318,730,143 expanded bytes across988 files including 
 
 Two earlier setup failures remain separate evidence. [Run01](../../../../artifacts/mdb-flux-shape-writer-20261103/run-01/submission-failure.json) defaulted to an unreachable localhost scheduler before admission and created no job. [Run02](../../../../artifacts/mdb-flux-shape-writer-20261103/run-02/failed-job.json), `job-70e589d70294`, failed while initializing a Mac-specific UV cache path on the Linux worker:1.32 seconds,7.1 MB RSS,0 VRAM and no model execution. Run03 uses the predecessor's qualified host execution profile. Its scientific configuration and every declared source-file hash equal the second submission-mechanics fixture; those setup corrections did not change the tested masks or hypotheses. Raw failed attempts and the immutable final publication remain unchanged.
 
+For a deliberate reproduction, use a new output directory, an environment with installed public MDB and `mrun-pub`, and the authenticated predecessor run. From the MDB package directory, the successful fleet profile was:
+
+```sh
+rtk proxy env \
+  MRUN_URL=http://192.168.68.68:9025 \
+  MDB_WORKER_UV_CACHE_DIR=/mnt/hdd8tb/mdb/uv-cache \
+  MDB_WORKER_TORCH_HOME=/mnt/hdd8tb/mdb/torch \
+  MDB_WORKER_MODEL_ROOTS=/mnt/big/llm-models \
+  python qualification/submit_flux_shape_writer.py /absolute/new-run \
+    --predecessor /absolute/mdb-flux-shape-handoff-20261103/run-01
+```
+
+These paths describe the Linux worker, not the Mac client. The command submits real model work; publication and indexing alone do not require another submission. After the returned job finishes, collect it using the same scheduler URL, audit the collected evidence and publish into another fresh directory:
+
+```sh
+rtk proxy env MRUN_URL=http://192.168.68.68:9025 \
+  python qualification/submit_flux_shape_writer.py /absolute/new-run --collect JOB_ID
+rtk proxy python qualification/analyze_flux_merge.py \
+  /absolute/new-run /absolute/new-run/analysis-v1.json
+rtk proxy python qualification/publish_flux_shape_writer.py \
+  /absolute/new-run /absolute/new-run/analysis-v1.json /absolute/new-publication
+```
+
+The collector retains the worker log as gzip and accepts at most 512 MiB compressed and 1 GiB expanded. Keep the originally sealed worker and auditor snapshots with a reproduction; an edited harness is a new instrument version whose source identity must remain explicit.
+
 The [independent numerical review](../../../../artifacts/mdb-flux-shape-writer-20261103/independent-results-review.json), SHA `943172316fce1d3e6b2c019556ba80e96b5b578f9e684de05cd4d45c1d8b5298`, retains the valid mechanics, numerical countertrends and alternative explanations. Its next suggested cut is an adjacent-boundary 2×2 A/M factorial with R fixed to0, unchanged recipient text and the same conditioning reset, to test whether the conditional trend persists across the next boundary. That recommendation is not evidence of a first or minimal writer and does not itself launch another experiment.
 
 The curated record [`flux.shape.step1.single4.RAM.seed47`](../../../../artifacts/mdb-flux-shape-writer-20261103/computation-record.json), SHA `fcd9483673647f777841a12cfce991766005a9dfa6bc89e7d0aea7b2c0423982`, preserves the source-qualified occurrence, signed effects, controls, predictions and counterexamples. It is a curated observation record, not automatic reusable-family induction or atlas ingestion.
