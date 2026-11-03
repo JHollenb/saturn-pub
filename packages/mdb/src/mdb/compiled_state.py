@@ -524,6 +524,11 @@ def verify_report(report: Mapping[str, Any]) -> dict[str, Any]:
     return dict(report)
 
 
+def _by_layer(layers: Mapping[str, Any]):
+    """Layer rows in numeric order (JSON object keys are strings and may be key-sorted)."""
+    return sorted(layers.items(), key=lambda item: int(item[0]))
+
+
 def _fmt(x, nd=3):
     return "-" if x is None else f"{x:.{nd}f}"
 
@@ -555,7 +560,7 @@ def render(report: Mapping[str, Any], *, feature_set: str | None = None, layer: 
                 raise CompiledStateError(f"unknown position {position!r}; family positions: {', '.join(names)}")
             p = names.index(position)
             lines.append(f"  {'L':>3}  {'|native|':>9}  {'|resid|':>9}  {'rel':>6}  {'R2':>6}")
-            for L, row in fs["layers"].items():
+            for L, row in _by_layer(fs["layers"]):
                 if layer is not None and int(L) != layer:
                     continue
                 s = row["positions"][p]
@@ -564,7 +569,7 @@ def render(report: Mapping[str, Any], *, feature_set: str | None = None, layer: 
             continue
         head = f"  {'L':>3}  {'agree':>6}  {'recall':>6}  " + "  ".join(f"R2@{n:<4}" for n in score) + "  R2 min..max"
         lines.append(head)
-        for L, row in fs["layers"].items():
+        for L, row in _by_layer(fs["layers"]):
             if layer is not None and int(L) != layer:
                 continue
             a = row["agreement"]

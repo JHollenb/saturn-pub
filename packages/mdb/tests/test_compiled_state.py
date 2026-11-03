@@ -244,6 +244,10 @@ def test_report_seal_render_and_cli(tmp_path, capsys):
     assert "[digits] horizon L1  first break L2" in text and "R2@op" in text
     assert "error recall 0.750" in text and "max |dlogit| 0 over 8 rows" in text
     assert "0.100" in render(report, position="y", layer=2)
+    shuffled = {**report["feature_sets"]["digits"], "layers": {"2": report["feature_sets"]["digits"]["layers"]["2"],
+                                                               "1": report["feature_sets"]["digits"]["layers"]["1"]}}
+    rows = render({**report, "feature_sets": {"digits": shuffled}}).splitlines()
+    assert [r.split()[0] for r in rows[-2:]] == ["1", "2"]  # numeric layer order regardless of key order
     with pytest.raises(CompiledStateError):
         render(report, position="nope")
     path = tmp_path / "report.json"
