@@ -175,9 +175,11 @@ def worker():
         F5 = "F5-+totals"  # the zero-layer chain and serving feature set
         report, maps = measure(model, family, prefix, fit, evaluate, layers=cfg["layers"], feature_sets=cfg["feature_sets"],
                                lam=config["lam"], threshold=0.95, batch=bs, r2_rows=cfg["r2_rows"],
-                               partial_layers=cfg["partial_layers"], model_identity=identity, log=log)
+                               partial_layers=cfg["partial_layers"], parity_rows=config["parity_rows"],
+                               model_identity=identity, log=log)
         save(OUTPUT / "report.json", report)
-        ladder = parity(run, family, evaluate.input_ids[:bs], range(nL + 1), partial_layers=range(nL))
+        ladder = parity(run, family, evaluate.input_ids[:config["parity_rows"]], range(nL + 1),
+                        partial_layers=range(nL))
         gate = gate_of(report["parity"]["gate"], ladder["gate"])
         out["addition"] = {"rows": {"fit": len(fit), "eval": len(evaluate), "train_half": len(train),
                                     "test_half": len(test)},
@@ -231,13 +233,13 @@ def worker():
                 x, _, _ = run.run(compiled(P, vals, f, L, score), L, positions=score, kv=kv, kv_positions=kv_pos)
                 return run.tokens(run.readout(x, vocab), vocab)
 
-            forward = {"native_prefix_cached": native, "native_prefix_cached+digit_head": lambda: native(digits)}
-            for f, L in cfg["timing_full"]:
-                forward[f"{f}({L})"] = lambda f=f, L=L: full(f, L)
-                forward[f"{f}({L})+digit_head"] = lambda f=f, L=L: full(f, L, digits)
-            for f, L in cfg["timing_t3c"]:
-                forward[f"T3c-{f}({L})"] = lambda f=f, L=L: t3c(f, L)
-                forward[f"T3c-{f}({L})+digit_head"] = lambda f=f, L=L: t3c(f, L, digits)
+            # headline arms only: [feature set, layer, "digit" | "full" readout]
+            head = {"digit": ("+digit_head", digits), "full": ("", None)}
+            forward = {"native_prefix_cached": native}
+            for f, L, h in cfg["timing_full"]:
+                forward[f"{f}({L}){head[h][0]}"] = lambda f=f, L=L, h=h: full(f, L, head[h][1])
+            for f, L, h in cfg["timing_t3c"]:
+                forward[f"T3c-{f}({L}){head[h][0]}"] = lambda f=f, L=L, h=h: t3c(f, L, head[h][1])
             chain, chain_d = chain_of(F5), chain_of(F5, digits)
             serving = {"native_kv_decode_3": lambda: run.decode(ids8_t, 3)[0],
                        "chain_F5_L28": lambda: chain(vals)[0], "chain_F5_L28+digit_head": lambda: chain_d(vals)[0]}
@@ -348,7 +350,8 @@ def worker():
         g1 = {"setup": setup, "family": fam1.fingerprint, "vocab_sizes": [len(x) for x in vocab_steps],
               "readout_subset": len(subset),
               "map": cmap.manifest(weights_sha256(cmap.weights)),
-              "parity": parity(run1, fam1, ids1[seen[:bs]], range(nL + 1), partial_layers=range(nL)),
+              "parity": parity(run1, fam1, ids1[seen[:config["parity_rows"]]], range(nL + 1),
+                               partial_layers=range(nL)),
               "chain": {}}
         for sname, rows in (("SEEN", seen), ("HO", held)):
             for label, ch in (("full_vocab", chain1), ("readout_subset", chain1_s)):
@@ -364,25 +367,12 @@ def worker():
             r = seen[:bsz] if len(seen) >= bsz else np.resize(seen, bsz)
             ids_t = torch.as_tensor(S1[r], device=dev)
             v_t = torch.as_tensor(vals1[r], device=dev)
-            last, w_last = [T1 - 1], torch.as_tensor(cmap.weights[T1 - 1:T1], device=dev)
-
-            def first_token(v_t=v_t, last=last, w_last=w_last):
-                x = compile_state(device_features(fam1, v_t, vis1)[:, last], w_last).to(run1.dtype)
-                return run1.tokens(run1.readout(x))
-
-            def native_first(ids_t=ids_t):
-                x, _, _ = run1.native(ids_t)
-                return run1.tokens(run1.readout(x[:, -1]))
-
             timing1[str(bsz)] = {
                 "serving": time_arms({"native_kv_decode_4": lambda ids_t=ids_t: run1.decode(ids_t, K)[0],
                                       "chain_L28": lambda v_t=v_t: chain1(v_t)[0],
                                       "chain_L28+readout_subset": lambda v_t=v_t: chain1_s(v_t)[0]},
                                      baseline="native_kv_decode_4", gate=gate1, reps=config["reps"],
-                                     warmup=config["warmup"], cuda=on_cuda, batch=bsz, device=str(dev)),
-                "first_token": time_arms({"native_prefix_cached": native_first, "zero_layer_L28": first_token},
-                                         baseline="native_prefix_cached", gate=gate1, reps=config["reps"],
-                                         warmup=config["warmup"], cuda=on_cuda, batch=bsz, device=str(dev))}
+                                     warmup=config["warmup"], cuda=on_cuda, batch=bsz, device=str(dev))}
             log(f"G1 timing b{bsz}", json.dumps({k: round(v["median_ms"], 3) for part in timing1[str(bsz)].values()
                                                  for k, v in part["arms"].items()}))
         g1["timing"] = timing1

@@ -25,7 +25,7 @@ def save(path, value):
         stream.write("\n")
 
 
-# earlier measurements this run is compared against, copied from the cited report files
+# earlier headline measurements this run is compared against, copied from the cited report files
 COMPARISON = {
     "part_e": {"source": f"{SOURCE} results/e-full1/report.json carry (job-008821c65712)",
                "rows": {"fit": 160200, "eval": 32768},
@@ -34,43 +34,33 @@ COMPARISON = {
                              "F5-+totals(28)": [0.9787, 0.0]},
                "agreement_fields": ["answer agreement", "error recall"],
                "timing_ms": {"1": {"native_prefix_cached": 10.979, "F4-+pairs(20)+digit_head": 3.714,
-                                   "F5-+totals(28)": 1.444, "F5-+totals(28)+digit_head": 0.735,
-                                   "F4-+pairs|c(28)+digit_head": 1.058},
-                             "256": {"native_prefix_cached": 105.177, "F4-+pairs(20)": 34.316,
-                                     "F4-+pairs(20)+digit_head": 30.383, "F5-+totals(28)": 4.703,
-                                     "F5-+totals(28)+digit_head": 0.753, "F4-+pairs|c(28)": 5.129,
-                                     "F4-+pairs|c(28)+digit_head": 1.2}},
-               "speedup": {"1": {"F4-+pairs(20)+digit_head": 2.96, "F5-+totals(28)": 7.6,
-                                 "F5-+totals(28)+digit_head": 14.93, "F4-+pairs|c(28)+digit_head": 10.38},
-                           "256": {"F4-+pairs(20)": 3.06, "F4-+pairs(20)+digit_head": 3.46, "F5-+totals(28)": 22.37,
-                                   "F5-+totals(28)+digit_head": 139.69, "F4-+pairs|c(28)": 20.51,
-                                   "F4-+pairs|c(28)+digit_head": 87.62}}},
+                                   "F5-+totals(28)+digit_head": 0.735},
+                             "256": {"native_prefix_cached": 105.177, "F4-+pairs(20)+digit_head": 30.383,
+                                     "F5-+totals(28)+digit_head": 0.753}},
+               "speedup": {"1": {"F4-+pairs(20)+digit_head": 2.96, "F5-+totals(28)+digit_head": 14.93},
+                           "256": {"F4-+pairs(20)+digit_head": 3.46, "F5-+totals(28)+digit_head": 139.69}}},
     "part_f": {"source": f"{SOURCE} results/f-full1/report.json gap",
                "agreement": {"T3c(20) sweep 32768": [0.9831, 0.5172], "T3c(20) headline 160200": [0.9832, 0.5334],
                              "T3c-nativeKV(20) sweep 32768": [0.9949, 0.8209],
                              "T3c-F5-+totals(20) sweep 32768": [0.9834, 0.5244]},
-               "timing_ms": {"1": {"native_prefix_cached": 10.804, "T3c(20)": 4.597, "T3c(20)+digit_head": 3.881},
-                             "256": {"native_prefix_cached": 105.112, "T3c(20)": 16.186, "T3c(20)+digit_head": 12.235}},
-               "speedup": {"1": {"T3c(20)": 2.35, "T3c(20)+digit_head": 2.78},
-                           "256": {"T3c(20)": 6.49, "T3c(20)+digit_head": 8.59}}},
+               "timing_ms": {"1": {"native_prefix_cached": 10.804, "T3c(20)+digit_head": 3.881},
+                             "256": {"native_prefix_cached": 105.112, "T3c(20)+digit_head": 12.235}},
+               "speedup": {"1": {"T3c(20)+digit_head": 2.78}, "256": {"T3c(20)+digit_head": 8.59}}},
     "part_g": {"source": f"{SOURCE} results/g-full1/report.json text_families.G1",
                "chain": {"n": 744, "exact_through": [1.0, 1.0, 1.0, 1.0], "answer_acc_pred": 1.0},
-               "timing_ms": {"1": {"native_kv_decode": 42.078, "predict_chain_L28": 3.602,
-                                   "native_prefix_cached": 10.572, "onehot(28)": 0.959},
-                             "256": {"native_kv_decode": 190.206, "predict_chain_L28": 6.359,
-                                     "native_prefix_cached": 117.429, "onehot(28)": 1.646}},
-               "speedup": {"1": {"predict_chain_L28": 11.68, "onehot(28)": 11.02},
-                           "256": {"predict_chain_L28": 29.91, "onehot(28)": 71.32}}}}
+               "timing_ms": {"1": {"native_kv_decode": 42.078, "predict_chain_L28": 3.602},
+                             "256": {"native_kv_decode": 190.206, "predict_chain_L28": 6.359}},
+               "speedup": {"1": {"predict_chain_L28": 11.68}, "256": {"predict_chain_L28": 29.91}}}}
 
 
 def plan(*, smoke):
     value = {"schema": "mdb-forwardless-plan-v1", "model": "qwen2.5-1.5b", "model_path": MODEL_PATH,
              "expected_weights_sha256": WEIGHTS_SHA256, "device": "cuda", "seed": 20261102, "lam": 1.0,
-             "batch": 256, "cpu_threads": 4, "reps": 30, "warmup": 5, "timing_batches": [1, 256],
+             "batch": 256, "cpu_threads": 4, "reps": 10, "warmup": 5, "timing_batches": [1, 256], "parity_rows": 64,
              "taus": [None, 1.0, 2.0, 4.0, 8.0],
              "addition": {"n_fit": 160200, "n_eval": 32768, "r2_rows": 2048, "layers": [20, 28],
                           "partial_layers": [20], "feature_sets": [F4, F4C, F5],
-                          "timing_full": [[F4, 20], [F5, 28], [F4C, 28]], "timing_t3c": [[F4, 20]],
+                          "timing_full": [[F4, 20, "digit"], [F5, 28, "digit"]], "timing_t3c": [[F4, 20, "digit"]],
                           "serve_warmup": 2048, "serve_refit_every": 1024},
              "g1": {"steps": 4, "expected_holdout": [0, 1, 9, 18, 27, 29, 31, 36, 39],
                     "expected_shape": [12, 33, 738, 744, 384], "serve_warmup": 64, "serve_refit_every": 32,
@@ -78,6 +68,7 @@ def plan(*, smoke):
              "smoke": smoke, "comparison": COMPARISON,
              "limits": ["single seed", "timings are one process on one GPU; mdb's layer loop calls the HF decoder "
                         "layers, Parts E-G timed their own manual loop",
+                        "headline arms only, 10 timed repetitions (Parts E-G used 30); parity gates on 64 rows",
                         "mdb's L28 arms compile only the score positions; Part E compiled all ten",
                         "G1 HO rows contain fillers the chain never saw; they are reported, not compared"]}
     if smoke:
@@ -90,7 +81,7 @@ def plan(*, smoke):
 def logical_operations(config):
     a = config["addition"]
     fsets, layers, partial = len(a["feature_sets"]), len(a["layers"]), len(a["partial_layers"])
-    timing = 2 * len(config["timing_batches"])
+    timing = 2 * len(config["timing_batches"])  # one forward group and one serving group per batch
     taus = len(config["taus"])
     # addition: 2 decodes, measure fit + eval passes, full arms, partial arms (compiled + oracle K/V), ladder gate,
     # timing groups, 2 chain scorings, one serve per tau; G1: 2 decodes, gate, 4 chain scorings, timing, serves
@@ -139,7 +130,8 @@ def stage(run_dir, *, smoke, vram_mb, ram_mb):
         "source_hashes": {**{name: sha(path.read_bytes()) for path, name in [(worker, worker.name), *extras]},
                           **module_hashes},
         "resource_basis": (f"reserve {ram_mb} MB RAM / {vram_mb} MB VRAM / 4 threads; "
-                           + ("first measurement: job-5ac69ae2b1d4 peaked 8,282 MB VRAM, 4,841 MB RSS"
+                           + ("first measurement: parity on 64 rows and score-tail hook logits keep the 3.1 GB model under 7 GB; "
+                              "job-5ac69ae2b1d4 peaked 4,841 MB RSS"
                               if smoke else "smoke-measured peaks x1.3")),
         "selection_policy": "fixed seed-derived Part D/E/F/G rows; every arm, gate, tau and family retained"}
     request["request_sha256"] = sha(json.dumps(request, sort_keys=True, allow_nan=False).encode())
@@ -153,7 +145,7 @@ def stage(run_dir, *, smoke, vram_mb, ram_mb):
     job = guarded_mrun_launch(worker_command(WORKER), request=request, experiment="mdb-forwardless-qualification",
         task="forward", model=config["model"], payload=run_dir / "payload", prefer_host="beast", gpu=True,
         needs=request["needs"], ram_mb=ram_mb, vram_mb=vram_mb, cpu_threads=4,
-        est_wall_s=600 if smoke else 1500, timeout_s=1500 if smoke else 3000, priority=80,
+        est_wall_s=420 if smoke else 1080, timeout_s=1200 if smoke else 2400, priority=80,
         retry_on_kill=False, preflight=True, note=note[:500])
     save(run_dir / "submission.json", {"job_id": str(job)})
     return {"job_id": str(job), "run_dir": str(run_dir)}
@@ -163,8 +155,8 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("run_dir", type=Path)
     parser.add_argument("--smoke", action="store_true")
-    parser.add_argument("--vram-mb", type=int, default=9000)
-    parser.add_argument("--ram-mb", type=int, default=12288)
+    parser.add_argument("--vram-mb", type=int, default=7000)
+    parser.add_argument("--ram-mb", type=int, default=8000)
     parser.add_argument("--collect")
     args = parser.parse_args()
     if args.vram_mb > 13000:

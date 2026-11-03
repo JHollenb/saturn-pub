@@ -88,7 +88,6 @@ def record(run_dir):
                      seen["exact_through"], "exact_through", n=seen["n"]))
     for b in ("1", "256"):
         serving = g1["timing"].get(b, {}).get("serving", {}).get("arms", {})
-        first = g1["timing"].get(b, {}).get("first_token", {}).get("arms", {})
         rows.append(_row("G", f"G1 chain vs KV-cached native decode at batch {b}",
                          cmp["part_g"]["speedup"][b]["predict_chain_L28"],
                          serving.get("chain_L28", {}).get("speedup_vs_baseline"), "speedup",
@@ -96,11 +95,6 @@ def record(run_dir):
                          earlier_ms=cmp["part_g"]["timing_ms"][b]["predict_chain_L28"],
                          mdb_baseline_ms=serving.get("native_kv_decode_4", {}).get("median_ms"),
                          earlier_baseline_ms=cmp["part_g"]["timing_ms"][b]["native_kv_decode"]))
-        rows.append(_row("G", f"G1 zero-layer first token vs prefix-cached native at batch {b}",
-                         cmp["part_g"]["speedup"][b]["onehot(28)"],
-                         first.get("zero_layer_L28", {}).get("speedup_vs_baseline"), "speedup",
-                         mdb_ms=first.get("zero_layer_L28", {}).get("median_ms"),
-                         earlier_ms=cmp["part_g"]["timing_ms"][b]["onehot(28)"]))
     table = ["| Part | Claim | Earlier | mdb | Match |", "|---|---|---|---|---|"]
     for r in rows:
         table.append(f"| {r['part']} | {r['claim']} | {_fmt(r['earlier'])} | {_fmt(r['mdb'])} | "

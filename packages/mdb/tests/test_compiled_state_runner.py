@@ -157,7 +157,7 @@ def test_kv_rows_round_trip_and_device_features_match_design():
 
 def test_measure_partial_arms_report_compiled_and_oracle_kv(model):
     report, maps = measure(model, toy(), PREFIX, rows(4), rows(), layers=[2], partial_layers=[0, 1],
-                           feature_sets=["digits"], lam=1e-6, batch=5)
+                           feature_sets=["digits"], lam=1e-6, batch=5, parity_rows=3)
     verify_report(report)
     d = report["feature_sets"]["digits"]
     assert set(d["partial"]) == {"0", "1"} and set(d["kv_maps"]) == {"0", "1"}
@@ -168,3 +168,4 @@ def test_measure_partial_arms_report_compiled_and_oracle_kv(model):
     assert maps[("digits", 1, "kv")].target == "kv"
     assert maps[("digits", 1, "kv")].weights.shape == (4, 9, 16)  # T, family width, 2 * kv heads * head dim
     assert report["parity"]["gate"]["passed"] and set(report["parity"]["kv_injection"]) == {"0", "1"}
+    assert report["parity"]["rows"] == 3

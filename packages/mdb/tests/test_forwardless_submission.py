@@ -13,7 +13,8 @@ def test_plan_is_finite_and_within_the_bounded_local_work_budget():
     for smoke in (True, False):
         plan = module["plan"](smoke=smoke)
         json.dumps(plan, allow_nan=False)
-        assert plan["batch"] == 256 and plan["timing_batches"] == [1, 256] and plan["reps"] == 30
+        assert plan["batch"] == 256 and plan["timing_batches"] == [1, 256] and plan["reps"] == 10
+        assert plan["parity_rows"] == 64 and all(h in ("digit", "full") for *_, h in plan["addition"]["timing_full"])
         assert module["logical_operations"](plan) <= 64
         assert plan["addition"]["partial_layers"] == [20] and 28 in plan["addition"]["layers"]
     full = module["plan"](smoke=False)

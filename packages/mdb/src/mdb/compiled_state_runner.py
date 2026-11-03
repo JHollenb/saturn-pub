@@ -299,11 +299,13 @@ def parity(run: DecoderSplice, family: PromptFamily, input_ids, layers: Sequence
     kv_pos = [p for p in range(T) if p not in score]
     layers = sorted(set(int(L) for L in layers) | set(int(L) for L in partial_layers))
     ids = torch.as_tensor(input_ids, device=run.device)
-    hf_logits, hf_cap = run.forward(ids, capture=layers)
+    keep = T - min(score)  # hook-path logits only for the tail that holds the score positions
+    tail = [p - min(score) for p in score]
+    hf_logits, hf_cap = run.forward(ids, capture=layers, keep=keep)
     lo = min(partial_layers, default=nL)
     x, cap, kvs = run.native(ids, capture=layers, capture_kv=range(lo, nL))
     native = run.readout(x[:, score])
-    out = {"rows": int(ids.shape[0]), "manual_native_vs_hf": _compare(native, hf_logits[:, score]),
+    out = {"rows": int(ids.shape[0]), "manual_native_vs_hf": _compare(native, hf_logits[:, tail]),
            "resume": {}, "kv_injection": {}, "partial_vs_hook": {}}
     for L in layers:
         xr, _, _ = run.run(cap[L], L)
@@ -315,8 +317,8 @@ def parity(run: DecoderSplice, family: PromptFamily, input_ids, layers: Sequence
         xp, _, _ = run.run(cap[L][:, score], L, positions=score, kv=kv, kv_positions=kv_pos)
         lp = run.readout(xp)
         out["kv_injection"][str(L)] = _compare(lp, native)
-        hook, _ = run.forward(ids, splice=(L, hf_cap[L]))
-        out["partial_vs_hook"][str(L)] = _compare(lp, hook[:, score])
+        hook, _ = run.forward(ids, splice=(L, hf_cap[L]), keep=keep)
+        out["partial_vs_hook"][str(L)] = _compare(lp, hook[:, tail])
     checks = [out["manual_native_vs_hf"], *(c for k in ("resume", "kv_injection", "partial_vs_hook")
                                             for c in out[k].values())]
     out["gate"] = {"passed": all(c["top1_agreement"] == 1.0 and (tol is None or c["max_abs_dlogit"] <= tol)
@@ -375,7 +377,7 @@ class _DeviceMoments:
 def measure(model, family: PromptFamily, prefix_ids: Sequence[int], fit: Rows, evaluate: Rows, *,
             layers: Sequence[int], feature_sets: Sequence[str] | None = None, lam: float = 1.0,
             threshold: float = 0.95, batch: int = 256, r2_rows: int | None = None,
-            partial_layers: Sequence[int] = (), parity_tol: float | None = None,
+            partial_layers: Sequence[int] = (), parity_tol: float | None = None, parity_rows: int | None = None,
             model_identity: Mapping[str, Any] | None = None, log=None):
     """Fit compiled maps on ``fit`` native states and score them on ``evaluate``.
 
@@ -383,7 +385,9 @@ def measure(model, family: PromptFamily, prefix_ids: Sequence[int], fit: Rows, e
     layers ``L..`` run. Partial arms (``partial_layers``): only the score positions
     run ``L..`` from their compiled state while every other position injects
     compiled K/V at each layer ``L..`` (Part F's T3c); an oracle variant injects
-    native K/V instead. Returns (report, {(feature_set, layer[, "kv"]): map})."""
+    native K/V instead. The parity gates run on the first ``parity_rows`` rows of
+    the first evaluation batch (all of it by default). Returns (report,
+    {(feature_set, layer[, "kv"]): map})."""
     t0 = time.time()
     log = log or (lambda *_: None)
     layers = sorted(set(int(L) for L in layers) | set(int(L) for L in partial_layers))
@@ -433,7 +437,8 @@ def measure(model, family: PromptFamily, prefix_ids: Sequence[int], fit: Rows, e
         x, cap, kvs = run.native(rows.input_ids, capture=layers, capture_kv=kv_layers)
         native_top.append(run.readout(x[:, score]).argmax(-1).cpu().numpy())
         if st == 0:
-            gates = parity(run, family, rows.input_ids, layers, partial_layers=partial_layers, tol=parity_tol)
+            gates = parity(run, family, rows.input_ids[:parity_rows], layers, partial_layers=partial_layers,
+                           tol=parity_tol)
         P = masked(rows.values)
         vals = torch.as_tensor(np.asarray(rows.values), device=dev)
         r2_take = max(0, min(len(rows), n_r2 - st))
