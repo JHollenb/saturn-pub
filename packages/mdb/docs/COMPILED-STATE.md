@@ -202,12 +202,84 @@ F1's R² at L4 by position (a2 … r1) is 1.000, 0.817, 0.821, 0.905, 0.982,
 0.823, 0.832, 0.911, 0.996, 0.866, against Part D/E's 1.00, 0.82, 0.82, 0.91,
 0.98, 0.82, 0.83, 0.91, 1.00, 0.87. Error recall falls with depth as in Part E
 (F1: 0.63 at L4, 0.43 at L22, 0 at L24; F4 and F5 reach 0 by L26), with wide
-intervals on 49 errors. The native-splice control is exactly 0 at all eight
-layers. The batch-shift noise ceiling is 1.000 (error recall 1.000, Wilson
+intervals on 49 errors. The native-splice control of that runner version (the
+hook path, before true resume) is exactly 0 at all eight layers. The batch-shift noise ceiling is 1.000 (error recall 1.000, Wilson
 [0.927, 1.000]): on this sample, shifting batch boundaries changed no native
 answer. Bit-level batch noise therefore does not limit error recall here; Part
 D's 0.9985 pass consistency compared different sequence lengths, which this
 ceiling does not vary. Single seed; no timing claim.
+
+### True resume, K/V injection, timing and forwardless serving
+
+Job `job-764839b8c085` (Beast RTX 4080, CUDA BF16, torch 2.13.0+cu130,
+transformers 5.14.1; 107 s wall, worker 42 s, peak VRAM 5,544 MB by the
+scheduler and 4,739 MB allocated, peak RSS 3.0 GB) ran
+[`compiled_state_forwardless.py`](../qualification/compiled_state_forwardless.py)
+in its smoke configuration; the record is
+[compiled-state-forwardless-20261102.json](../qualification/compiled-state-forwardless-20261102.json).
+Addition fits on 4,096 rows of the Part E/F train half (Part E/F used all
+160,200) and scores the first 1,024 rows of the Part D/E sample (28 native
+errors). G1 replays Part G's stage5 RNG order: holdout
+[0, 1, 9, 18, 27, 29, 31, 36, 39], 738 train, 744 SEEN and 384 HO rows, and
+0 tokenization mismatches over all 2,256 rows.
+
+**Parity gates (64 rows each, every layer 0..28, partial runs at every layer
+0..27): passed for both families.** The manual layer loop equals the HF forward
+exactly (max |Δlogit| 0), and resuming from the native state equals native
+exactly at every L. Native K/V injection and the partial runs agree on every
+top-1, with max |Δlogit| 0.281 (addition) and 0.375 (G1); the likely cause,
+not isolated, is BF16 rounding in sdpa over fewer query rows.
+
+The rules match agreement within max(0.005, two binomial standard errors) and
+speed within a factor of 0.8–1.25. Error recall on 28 errors has a standard
+error near 0.1, so those rows below cannot fail and are not shown.
+
+| Part | Claim | Earlier | mdb | Match |
+|---|---|---|---|---|
+| E | F4(20) answer agreement | 0.9840 | 0.9824 | yes |
+| E | F4 carry-switched(28) / F5(28) answer agreement | 0.9787 / 0.9787 | 0.9727 / 0.9727 | yes |
+| F | T3c(20) answer agreement (compiled operand K/V) | 0.9831 | 0.9805 | yes |
+| F | T3c(20) with native operand K/V | 0.9949 | 0.9961 | yes |
+| E | native prefix-cached forward, batch 1 / 256 (ms) | 10.98 / 105.18 | 11.37 / 105.19 | yes |
+| E | F4(20) + digit head speedup, batch 1 / 256 | 2.96 / 3.46 | 3.23 / 3.49 | yes |
+| F | T3c(20) + digit head speedup, batch 1 / 256 | 2.78 / 8.59 | 2.67 / 8.29 | yes |
+| E | F5(28) + digit head speedup, batch 1 / 256 | 14.93 / 139.69 | 48.74 / 419.49 | **no** |
+| G | G1 4-token zero-layer chain exact_through (744 SEEN) | 1, 1, 1, 1 | 1, 1, 1, 1 | yes |
+| G | G1 chain vs KV-cached native decode, batch 1 | 11.68 | 14.15 | yes |
+| G | G1 chain vs KV-cached native decode, batch 256 | 29.91 | 15.65 | **no** |
+
+Two speed results do not match:
+
+- **F5(28).** mdb is faster than Part E reported. The native baseline matches
+  to 0.02 ms, but the predictor arms differ: mdb compiles only the three score
+  positions from device symbol values (0.251 ms at batch 256), while Part E
+  compiled all ten positions from A and B on the device (0.753 ms).
+- **G1 chain at batch 256.** mdb is slower than Part G reported. Native decode
+  matches (188.3 ms here, 190.2 ms in Part G), but the chain took 12.03 ms
+  against Part G's 6.36 ms. The chain timed in this job computed a
+  full-vocabulary top-2 with a float upcast at every step, for its margins;
+  Part G took a bf16 argmax. `ZeroLayerChain(..., margins=False)` now takes
+  the argmax path, but it has not been re-timed. The subset-readout chain (all
+  train tokens) took 0.699 ms (269×) at batch 256.
+
+The addition zero-layer F5 chain, which feeds back its own r0 and r1, matches
+native greedy decode on 97.6%, 97.5% and 97.5% of rows through steps 1–3. The
+native answer accuracy is 97.5%: like Part E's F5(28), the chain answers like a
+calculator and keeps none of the model's errors.
+
+Serving (`serve`), counting native forwards per 1,000 served prompts:
+
+| Stream | tau | Native prompts per 1,000 | Served = native | Chain-served = native |
+|---|---|---|---|---|
+| addition, 1,024 rows, 256 warmup | none | 250 | 0.961 | 0.948 |
+| addition | 2 | 291 | 0.979 | 0.970 |
+| G1, 2,256 rows incl. HO fillers, 64 warmup | none | 28 | 0.342 | 0.323 |
+| G1 | 2 | 132 | 0.997 | 0.999 |
+
+With 64 warmup rows the G1 chain has not seen most fillers. A margin
+threshold of 2 logits sends the unfamiliar rows to native and refits on them,
+so 132 native prompts per 1,000 serve 99.7% of the stream exactly. Single seed;
+smoke-scale fit for addition; 10 timed repetitions (Parts E–G used 30).
 
 ## Limits
 
@@ -215,5 +287,8 @@ The view measures a linear compiler of declared finite symbols on fixed-length
 templates. Open-vocabulary slots need embedding features, and templates with
 variable lengths need position alignment; neither is implemented. Agreement is
 greedy top-1 at the score positions; KL to the native distribution is not
-reported. The runner does not skip the layers below `L`, inject compiled K/V or
-splice a subset of positions, so it cannot time a compiled predictor.
+reported. True resume and K/V injection need a full-attention decoder whose
+layers accept a cache object with `update(k, v, layer_idx)` (Qwen2-style
+attention in transformers 5.x); sliding-window and hybrid layer types are
+refused. The serving loop refits on the CPU from device moments and is not
+timed; its margin threshold is in raw logits, not calibrated.
