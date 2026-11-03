@@ -128,6 +128,12 @@ operand changes the direction of its final latent effect. Both frozen numerical
 rankings match; arm-blinded inspection preserves mixed shapes rather than claiming
 complete cube restoration. The curated record retains finite-precision limits,
 controls and counterexamples alongside the native images.
+The [adjacent block and recipient-only controls](docs/FLUX-RECIPIENT-CONTROLS.md)
+run fourteen native futures at single5. The attention-over-MLP donor ranking
+reverses there. Scaling the recipient's own operands needs no donor activation
+or conditioning reset: zero and half-strength branches change the numerical
+future while retaining the inspected coarse scene. The report preserves dose
+effects, distinct continuation baselines and the failed prediction.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 The [compiled-state residual view](docs/COMPILED-STATE.md) fits per-position

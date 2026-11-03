@@ -8,16 +8,32 @@ import runpy
 import time
 from pathlib import Path
 
+RECIPIENT_GAINS = {"11": (1., 1.), "10": (1., 0.), "01": (0., 1.), "00": (0., 0.),
+                   "1h": (1., .5), "h1": (.5, 1.)}
+
 
 def validate_shape_writer_config(config):
-    if config.get("panel") != "shape-step1-writer":
+    if config.get("panel") not in {"shape-step1-writer", "shape-step1-recipient-controls"}:
         return False
+    block = 5 if config["panel"] == "shape-step1-recipient-controls" else 4
     if (config.get("prefix_selector") != {"logical_step": 1, "phase": "single", "index": 0}
-            or config.get("selector") != {"logical_step": 1, "phase": "single", "index": 4}
-            or config.get("reset_step") != 2 or config.get("block") != 4
+            or config.get("selector") != {"logical_step": 1, "phase": "single", "index": block}
+            or config.get("reset_step") != 2 or config.get("block") != block
             or config.get("fresh_context") or config.get("attention_sources")):
-        raise ValueError("shape writer requires the declared step1 single0-to-single4 prefix and step2 reset")
+        raise ValueError("shape writer requires the declared step1 single0-to-selected-single prefix and step2 reset")
+    if block == 5 and config.get("recipient_gain_rows", {"self." + name: list(gains) for name, gains in RECIPIENT_GAINS.items()}) != {
+            "self." + name: list(gains) for name, gains in RECIPIENT_GAINS.items()}:
+        raise ValueError("recipient gain rows differ from the declared six controls")
     return True
+
+
+def requires_conditioning_reset(config, row):
+    if config.get("panel") == "shape-step1-recipient-controls":
+        policy = row.get("continuation_policy", "common-base-reset")
+        if policy not in {"common-base-reset", "recipient-own-C"}:
+            raise ValueError("unknown recipient continuation policy")
+        return policy == "common-base-reset"
+    return config.get("panel") == "shape-step1-writer"
 
 
 def matched_shape_closure(cuts, *, selector):
@@ -99,6 +115,7 @@ def worker():
     if config != request["config"] or any(file_sha(name) != value for name, value in request["source_hashes"].items()):
         raise ValueError("request/source differs")
     shape_mode = validate_shape_writer_config(config)
+    recipient_mode = config.get("panel") == "shape-step1-recipient-controls"
     for key in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
         os.environ[key] = str(config["cpu_threads"])
     os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
@@ -116,6 +133,7 @@ def worker():
     from mdb.native_navigation import NativeCutNavigator
 
     candidate = runpy.run_path("flux_parallel_merge.py")["merge_candidate"]
+    own_candidate = runpy.run_path("flux_parallel_merge.py")["recipient_candidate"] if recipient_mode else None
     attention_helper = runpy.run_path("flux_attention_sources.py")["attention_sources"] if config.get("attention_sources") else None
     torch.set_num_threads(config["cpu_threads"])
     torch.manual_seed(config["seed"])
@@ -269,6 +287,7 @@ def worker():
     projection, ports, after, prefix_receipts = target.to_out, {}, {}, {}
     text_rows = before["base"].payload["text"].shape[1]
     gate = Flux2Modulation.split(before["base"].payload["context"]["single_mod"], 1)[0][2]
+    own_gate = Flux2Modulation.split(before["changed"].payload["context"]["single_mod"], 1)[0][2] if recipient_mode else None
     residuals = {name: torch.cat([cut.payload["text"], cut.payload["image"]], dim=1) for name, cut in before.items()}
 
     def save_arrays(name, values):
@@ -340,8 +359,17 @@ def worker():
             conditioning_reset={"step": config["reset_step"], "phase": "project", "slot": "conditioning",
                 "source_cut": origins["base"].fingerprint,
                 "value_descriptor": tensor_descriptor(origins["base"].payload["conditioning"])})
+    if recipient_mode:
+        source.update(recipient_controls={"gains_A_M": {name: {"A": gains[0], "M": gains[1]} for name, gains in RECIPIENT_GAINS.items()},
+            "native_reference": "self.native", "identity_reference": "self.11", "recipe_mode": "recipient-only",
+            "gate_source_cut": before["changed"].fingerprint, "gate_descriptor": tensor_descriptor(own_gate),
+            "scope": "own residual/operands/gate/full original projection; no donor tensor inputs or donor lookup in recipe"},
+            continuation_policies={"common-base-reset": source["conditioning_reset"],
+                "recipient-own-C": {"source_cut": origins["changed"].fingerprint, "reset": None,
+                    "value_descriptor": tensor_descriptor(origins["changed"].payload["conditioning"])}})
     save(output / "source.json", source)
-    allowed_prefix = ("declared original step1 handoff cuts advanced natively to single4, then two selected-block observations; no RGB outcomes"
+    allowed_prefix = ("declared original step1 handoff cuts advanced natively to single5, then two selected-block observations; no RGB outcomes"
+        if recipient_mode else "declared original step1 handoff cuts advanced natively to single4, then two selected-block observations; no RGB outcomes"
         if shape_mode else "declared fresh text encodings/projection and matched prefixes, then two selected-block port observations; no RGB outcomes"
         if initial else "two native selected-block executions to observe actual merge ports; no RGB outcomes")
     tx = ForecastTransaction(output / "transaction", model_identity=adapter.model_identity,
@@ -354,12 +382,24 @@ def worker():
     rows = []
 
     def finish(session, row):
+        common_reset = requires_conditioning_reset(config, row)
+        if recipient_mode:
+            row.setdefault("continuation_policy", "common-base-reset")
+            row.setdefault("recipe_mode", "reference" if row["kind"] == "reference" else "copy-sham" if row["kind"] == "copy" else "donor-merge")
+            if row["continuation_policy"] not in {"common-base-reset", "recipient-own-C"}:
+                raise ValueError("unknown recipient continuation policy")
+            start = session.capture()
+            row["conditioning_at_start"] = tensor_descriptor(start.payload["conditioning"])
+            row["conditioning_source_cut"] = origins["base" if row["id"] == "base" else "changed"].fingerprint
+            if not common_reset:
+                row["source_cut"] = before["changed"].fingerprint
+                row["own_conditioning"] = tensor_descriptor(start.payload["conditioning"])
         event("branch_start", row=row["id"])
         schedulers, continuation_acts = [], []
         while session.point["logical_step"] < config["steps"]:
             wall()
             point = session.point
-            if shape_mode and point["logical_step"] == config["reset_step"] and point["phase"] == "project":
+            if common_reset and point["logical_step"] == config["reset_step"] and point["phase"] == "project":
                 continuation_acts.append(reset_shape_conditioning(session, origins["base"].payload["conditioning"],
                     step=config["reset_step"], name=row["id"] + ".future-source-base",
                     source_cut=origins["base"].fingerprint, store=store))
@@ -376,11 +416,13 @@ def worker():
         counts["images"] += 1
         row.update(schedulers=schedulers, image={"path": path.name, "sha256": file_sha(path)})
         if shape_mode:
-            if len(continuation_acts) != 1:
-                raise ValueError("shape branch did not perform exactly one future-source reset")
+            if len(continuation_acts) != int(common_reset):
+                raise ValueError("shape branch future-source reset count differs from policy")
             final = session.capture()
             store.save(final)
             row.update(continuation_acts=continuation_acts, final_cut=final.fingerprint)
+            if recipient_mode and not common_reset and describe(final.payload["conditioning"]) != describe(origins["changed"].payload["conditioning"]):
+                raise ValueError("recipient-only future changed its own conditioning")
         save(output / "rows" / (row["id"] + ".json"), row)
         rows.append(row)
         event("branch_complete", row=row["id"], counts=dict(counts))
@@ -405,9 +447,9 @@ def worker():
             for name in ("base", "changed"):
                 finish(nav(after[name]), {"id": name, "kind": "reference", "parent": after[name].fingerprint})
             install(after["changed"].payload["image"], {"id": "copy.sham", "kind": "copy"})
-            for bits in itertools.product("01", repeat=3):
+            masks = ("000", "001", "010", "011") if recipient_mode else ("".join(bits) for bits in itertools.product("01", repeat=3))
+            for mask in masks:
                 wall()
-                mask = "".join(bits)
                 with torch.inference_mode():
                     result = candidate(recipient_residual=residuals["changed"], donor_residual=residuals["base"],
                         recipient_operands=ports["changed"]["operands"], donor_operands=ports["base"]["operands"],
@@ -421,6 +463,27 @@ def worker():
                     "self_full_state_exact_changed": torch.equal(result["updated"], native_changed) if mask == "000" else None,
                     "all_donor_image_exact_base": torch.equal(result["updated"][:, text_rows:], after["base"].payload["image"]) if mask == "111" else None}
                 install(result["updated"][:, text_rows:], row)
+            if recipient_mode:
+                finish(nav(after["changed"]), {"id": "self.native", "kind": "reference", "parent": after["changed"].fingerprint,
+                    "continuation_policy": "recipient-own-C", "recipe_mode": "recipient-native"})
+                for name, gains in RECIPIENT_GAINS.items():
+                    wall()
+                    with torch.inference_mode():
+                        result = own_candidate(residual=residuals["changed"], operands=ports["changed"]["operands"],
+                            gate=own_gate, projection=projection, attention_width=target.inner_dim, text_rows=text_rows, gains=gains)
+                    counts["projection_evaluations"] += 1
+                    native_changed = torch.cat([after["changed"].payload["text"], after["changed"].payload["image"]], dim=1)
+                    row = {"id": "self." + name, "kind": "self", "recipe_mode": "recipient-only-scale",
+                        "continuation_policy": "recipient-own-C", "gains": list(gains),
+                        "operands_descriptor": tensor_descriptor(result["operands"]),
+                        "projection": save_arrays("self." + name + ".projection", {"value": result["projection"]}),
+                        "text_rows_exact_changed": torch.equal(result["updated"][:, :text_rows], native_changed[:, :text_rows]),
+                        "self_full_state_exact_changed": torch.equal(result["updated"], native_changed) if name == "11" else None}
+                    install(result["updated"][:, text_rows:], row)
+                expected_rows = {"base", "changed", "copy.sham", *("merge." + mask for mask in ("000", "001", "010", "011")),
+                                 "self.native", *("self." + name for name in RECIPIENT_GAINS)}
+                if len(rows) != 14 or {row["id"] for row in rows} != expected_rows:
+                    raise ValueError("recipient-control row inventory differs")
             if attention_helper is not None:
                 joins = {}
                 for bits in itertools.product("01", repeat=3):

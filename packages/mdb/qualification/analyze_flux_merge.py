@@ -62,7 +62,8 @@ def analyze(root):
     run = h["source_run"](root, "flux-merge-result", max_archive_bytes=512 << 20, max_member_bytes=128 << 20)
     data, plan, tree = run["data"], run["plan"], run["tree"]
     source, summary = (read(data / name) for name in ("source.json", "summary.json"))
-    shape_mode = plan.get("panel") == "shape-step1-writer"
+    recipient_mode = plan.get("panel") == "shape-step1-recipient-controls"
+    shape_mode = plan.get("panel") in {"shape-step1-writer", "shape-step1-recipient-controls"}
     observed = tree.decode(read(run["transaction"] / "observations/native.json")["value"])
     hypotheses = tree.decode(read(run["transaction"] / "forecasts/merge_hypotheses.json")["predictions"])
     require(hypotheses == plan["hypotheses"] and plan == run["request"]["config"], "sealed plan/hypothesis mismatch")
@@ -72,7 +73,8 @@ def analyze(root):
     if shape_mode:
         require(not plan.get("fresh_context") and not plan.get("attention_sources")
                 and plan.get("start_step", plan["selector"]["logical_step"]) == 1 and plan["reset_step"] == 2 and plan["steps"] == 4
-                and plan["selector"] == {"logical_step": 1, "phase": "single", "index": 4}
+                and plan["selector"] == {"logical_step": 1, "phase": "single", "index": 5 if recipient_mode else 4}
+                and plan["block"] == (5 if recipient_mode else 4)
                 and plan["prefix_selector"] == {"logical_step": 1, "phase": "single", "index": 0}, "shape writer geometry differs")
         require(source["origin_cuts"] == plan["input_cuts"] and source["prefix_selector"] == plan["prefix_selector"], "shape origin/prefix mismatch")
     elif not plan.get("fresh_context"):
@@ -108,7 +110,7 @@ def analyze(root):
                         and receipt["parent"] not in edges, "source advance receipt storage/model differs")
                 edges[receipt["parent"]] = receipt
             path = native_path(origin, selected, edges, limit=plan["max_adapter_steps"])
-            require(len(path) == len(edges) == 4, "source prefix lineage is not single0 through single4")
+            require(len(path) == len(edges) == plan["block"], "source prefix lineage has wrong number of single blocks")
             shape_prefix_paths[name] = path
         left_origin, right_origin = (fields(source["origin_cuts"][name]) for name in ("base", "changed"))
         require({key: value for key, value in left_origin.items() if key not in {"text", "image", "conditioning"}} ==
@@ -145,6 +147,15 @@ def analyze(root):
     text_rows, attention_width = source["text_rows"], source["attention_width"]
     gates_equal = np.array_equal(ports["base"]["gate"], ports["changed"]["gate"])
     require(gates_equal, "unmatched time gate")
+    if recipient_mode:
+        own = source["recipient_controls"]
+        require(own["gate_source_cut"] == source["input_cuts"]["changed"]
+                and typed["matches"](ports["changed"]["gate"], own["gate_descriptor"], bf16=True), "recipient gate provenance differs")
+        own_policy = source["continuation_policies"]["recipient-own-C"]
+        own_condition = fields(source["origin_cuts"]["changed"])["conditioning"]
+        require(own_policy["source_cut"] == source["origin_cuts"]["changed"] and own_policy["reset"] is None
+                and all(own_condition[key] == own_policy["value_descriptor"][key] for key in ("shape", "dtype", "sha256")),
+                "recipient conditioning policy differs")
     native_merge_checks = {}
     for name in ("base", "changed"):
         before, after = source["input_cuts"][name], source["post_cuts"][name]
@@ -160,9 +171,14 @@ def analyze(root):
                     and receipt["operation"] == "continue" and receipt["steps"] == 1
                     and receipt["parent"] == before and receipt["result"] == after, "selected block prefix lineage differs")
     rows = {row["id"]: row for row in observed["rows"]}
-    masks = ["".join(bits) for bits in itertools.product("01", repeat=3)]
+    masks = ["000", "001", "010", "011"] if recipient_mode else ["".join(bits) for bits in itertools.product("01", repeat=3)]
     attention_masks = [mask for mask in masks if mask not in {"000", "111"}] if plan.get("attention_sources") else []
-    require(set(rows) == {"base", "changed", "copy.sham", *("merge." + mask for mask in masks), *("attention." + mask for mask in attention_masks)}
+    self_gains = {"self.11": [1., 1.], "self.10": [1., 0.], "self.01": [0., 1.],
+        "self.00": [0., 0.], "self.1h": [1., .5], "self.h1": [.5, 1.]}
+    if recipient_mode:
+        require(plan["recipient_gain_rows"] == self_gains, "recipient gain inventory changed")
+    self_names = {"self.native", *self_gains} if recipient_mode else set()
+    require(set(rows) == {"base", "changed", "copy.sham", *("merge." + mask for mask in masks), *("attention." + mask for mask in attention_masks), *self_names}
             and len(rows) == plan["max_images"] == summary["counts"]["images"], "row inventory mismatch")
     pixels, latents, diagnostics, recipe_checks, reset_checks = {}, {}, {}, {}, {}
     for name, row in rows.items():
@@ -180,7 +196,24 @@ def analyze(root):
             latents[name][saved["step"]] = value
         expected_steps = {2, 3, 4} if shape_mode else {1, 2, 3, 4}
         require(set(latents[name]) == expected_steps and len(row["schedulers"]) == len(expected_steps), "incomplete continuation")
-        if shape_mode:
+        self_row = recipient_mode and name in self_names
+        if recipient_mode:
+            require(row["continuation_policy"] == ("recipient-own-C" if self_row else "common-base-reset"), "row continuation policy differs")
+            expected_c = fields(row["parent"])["conditioning"]
+            require(all(expected_c[key] == row["conditioning_at_start"][key] for key in ("shape", "dtype", "sha256"))
+                    and row["conditioning_source_cut"] == source["origin_cuts"]["base" if name == "base" else "changed"],
+                    "row initial conditioning declaration differs")
+        if self_row:
+            require(row["continuation_acts"] == [], "recipient-only branch imported a future-source Act")
+            own_condition = fields(source["origin_cuts"]["changed"])["conditioning"]
+            require(fields(row["parent"])["conditioning"] == fields(row["final_cut"])["conditioning"] == own_condition,
+                    "recipient-only branch did not retain own C")
+            require(row["source_cut"] == source["input_cuts"]["changed"]
+                    and all(own_condition[key] == row["own_conditioning"][key] for key in ("shape", "dtype", "sha256")),
+                    "recipient-only operand/conditioning provenance differs")
+            require(np.array_equal(slot(row["final_cut"], "latent"), latents[name][4]), "self final cut scheduler binding differs")
+            reset_checks[name] = {"reset_count": 0, "own_conditioning_exact": True, "conditioning_source_cut": source["origin_cuts"]["changed"]}
+        elif shape_mode:
             require(len(row["continuation_acts"]) == 1, "missing common conditioning reset")
             action = row["continuation_acts"][0]
             reset_spec = source["conditioning_reset"]
@@ -204,7 +237,7 @@ def analyze(root):
             reset_checks[name] = {"receipt_id": receipt["fingerprint"], "source_cut": reset_spec["source_cut"],
                                   "point": point, "conditioning_only_exact": True, "final_common_conditioning": True}
         if row["kind"] == "reference":
-            require(row["parent"] == source["post_cuts"][name], "reference parent mismatch")
+            require(row["parent"] == source["post_cuts"]["changed" if self_row else name], "reference parent mismatch")
             continue
         require(row["parent"] == source["post_cuts"]["changed"], "intervention parent mismatch")
         before_fields, post_fields = fields(row["parent"]), fields(row["post_act"])
@@ -221,7 +254,13 @@ def analyze(root):
             continue
         residual = ports["changed"]["residual"].copy()
         operands = ports["changed"]["operands"].copy()
-        if row["kind"] == "attention":
+        if self_row:
+            require(row["kind"] == "self" and row["gains"] == self_gains[name]
+                    and row["recipe_mode"] == "recipient-only-scale", "recipient-only recipe declaration differs")
+            a_gain, m_gain = self_gains[name]
+            operands[:, text_rows:, :attention_width] = typed["quantize_bf16"](operands[:, text_rows:, :attention_width] * a_gain)
+            operands[:, text_rows:, attention_width:] = typed["quantize_bf16"](operands[:, text_rows:, attention_width:] * m_gain)
+        elif row["kind"] == "attention":
             selected = arrays(row["positioned_qkv"])
             qkv = {name: arrays(source["ports"][name]["positioned_qkv"]) for name in ("base", "changed")}
             mask = row["mask_Q_TKV_IKV"]
@@ -282,9 +321,10 @@ def analyze(root):
             final = row["final_cut"]
             point = typed["unpack"](store["cuts"][final]["execution_point"])
             require(point["logical_step"] == 4, "final retained cut has not completed the declared native horizon")
-            path = native_path(start, final, continue_edges, reset=row["continuation_acts"][0]["receipt"], limit=plan["max_adapter_steps"])
+            reset = row["continuation_acts"][0]["receipt"] if row["continuation_acts"] else None
+            path = native_path(start, final, continue_edges, reset=reset, limit=plan["max_adapter_steps"])
             shape_native_paths[name] = {"start": start, "final_cut": final, "native_receipts": path,
-                                        "native_steps": sum(receipts[key]["steps"] for key in path), "reset_count": 1}
+                                        "native_steps": sum(receipts[key]["steps"] for key in path), "reset_count": int(reset is not None)}
     compare = routes["comparison"]
     comparisons = {name: {"rgb": compare(pixels[name], pixels["base"], pixels["changed"]),
         "scheduler_trajectory": {str(step): compare(value, latents["base"][step], latents["changed"][step]) for step, value in latents[name].items()}} for name in rows}
@@ -293,13 +333,28 @@ def analyze(root):
         shape_controls = {name + "_changed_future_exact": bool(np.array_equal(pixels[name], pixels["changed"]))
             and all(np.array_equal(latents[name][step], latents["changed"][step]) for step in (2, 3, 4))
             for name in ("copy.sham", "merge.000")}
-        shape_controls["merge.111_post_image_equals_native_base"] = bool(np.array_equal(
-            slot(rows["merge.111"]["post_act"], "image"), slot(source["post_cuts"]["base"], "image")))
+        if recipient_mode:
+            shape_controls["self.11_own_native_future_exact"] = bool(np.array_equal(pixels["self.11"], pixels["self.native"])) and all(
+                np.array_equal(latents["self.11"][step], latents["self.native"][step]) for step in (2, 3, 4))
+            shape_controls["self.11_post_image_equals_recipient_native"] = bool(np.array_equal(
+                slot(rows["self.11"]["post_act"], "image"), slot(source["post_cuts"]["changed"], "image")))
+        else:
+            shape_controls["merge.111_post_image_equals_native_base"] = bool(np.array_equal(
+                slot(rows["merge.111"]["post_act"], "image"), slot(source["post_cuts"]["base"], "image")))
+    recipient_comparisons = {}
+    if recipient_mode:
+        for name in sorted(self_names):
+            recipient_comparisons[name] = {
+                "rgb": compare(pixels[name], pixels["self.native"], pixels["self.native"]),
+                "scheduler_trajectory": {str(step): compare(value, latents["self.native"][step], latents["self.native"][step])
+                    for step, value in latents[name].items()},
+                "scope": "Distances from the matched own-C self.native future; target projection undefined. Global base/changed geometry uses a different future C policy and is not a matched causal effect for these rows."}
     return {"schema": "mdb-flux-merge-audit-v1", "source": run["source"], "counts": summary["counts"],
         "selected_block": plan["block"], "model_identity": source["model_identity"], "mechanics_status": "valid", "terminal_status": "unassessed",
         "native_merge_equation_checks": native_merge_checks, "recipe_checks": recipe_checks, "attention_joins": attention_joins,
         "typed_store": store["counts"], "unique_receipts": len(receipts), "receipt_emissions": len(emissions),
         "comparisons": comparisons, "image_diagnostics": diagnostics, "sealed_hypotheses": hypotheses,
+        **({"recipient_comparisons": recipient_comparisons} if recipient_mode else {}),
         **({"panel": plan["panel"], "source_prefix_paths": shape_prefix_paths, "conditioning_history": conditioning_history,
             "conditioning_resets": reset_checks, "native_paths": shape_native_paths,
             "scheduler_steps": [2, 3, 4], "control_observations": shape_controls,
