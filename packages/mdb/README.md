@@ -112,6 +112,11 @@ working prefixes whose different stored conditioning produces later divergence.
 All rows, source bindings and six image panels accompany the portable result index.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
+The [compiled-state residual view](docs/COMPILED-STATE.md) fits per-position
+linear maps from declared prompt-family symbols to the residual entering each
+layer, splices them into a prefix-cached decoder and reports norms, R², native
+agreement and the depth where the compiler stops reproducing the model; on
+Qwen2.5-1.5B addition it reproduces the L22, L24 and L28 horizons.
 [Packed forecast storage](docs/FORECAST-STORAGE.md) is the default and preserves the complete
 arrays and their hashes while reducing the measured campaign worker time from
 74.35 to 11.74 seconds. Selected-state saves also default to bundles, and native
