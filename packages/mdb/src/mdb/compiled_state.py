@@ -188,17 +188,26 @@ def _einsum(x):
 class CompilerFit:
     """Streaming ridge sufficient statistics for every feature set of a family at
     the given layers. ``add`` takes numpy rows; a device runner may accumulate the
-    same moments itself and hand them over once with ``add_moments``."""
+    same moments itself and hand them over once with ``add_moments``.
+
+    ``kv_layers`` adds a second target per layer: the flattened post-RoPE key and
+    value rows ``[k heads | v heads]`` (width ``kv_width``) that a position writes
+    at that layer, for K/V injection. K/V maps are always pooled (no switch)."""
 
     def __init__(self, family: PromptFamily, layers: Sequence[int], hidden_size: int,
-                 feature_sets: Sequence[str] | None = None):
+                 feature_sets: Sequence[str] | None = None, kv_layers: Sequence[int] = (),
+                 kv_width: int = 0):
         import numpy as np
 
         self.family, self.layers, self.D = family, tuple(sorted(set(layers))), int(hidden_size)
+        self.kv_layers, self.kv_width = tuple(sorted(set(kv_layers))), int(kv_width)
+        if self.kv_layers and self.kv_width < 1:
+            raise CompiledStateError("K/V targets need a positive kv_width")
         T, F = len(family.positions), family.width
         self.n = 0
         self.gram = np.zeros((T, F, F))
         self.xty = {L: np.zeros((T, F, self.D)) for L in self.layers}
+        self.xty.update({("kv", L): np.zeros((T, F, self.kv_width)) for L in self.kv_layers})
         fsets = family.feature_sets if feature_sets is None else {f: family.feature_sets[f] for f in feature_sets}
         self.switches = sorted({fs.switch for fs in fsets.values() if fs.switch})
         # per switch symbol: [V, T - s0, F, F] and {L: [V, T - s0, F, D]}, positions >= its visible_from
@@ -210,13 +219,15 @@ class CompilerFit:
             self.sw_xty[name] = {L: np.zeros((s.cardinality, k, F, self.D)) for L in self.layers}
             self.sw_n[name] = np.zeros(s.cardinality, np.int64)
 
-    def add(self, values, states: Mapping[int, Any]):
+    def add(self, values, states: Mapping[Any, Any]):
+        """``states[L]`` [N, T, D] per layer, and ``states[("kv", L)]`` [N, T, kv_width]
+        per K/V layer."""
         import numpy as np
 
         values = np.asarray(values)
         P = design(self.family, values)[:, None, :] * visibility(self.family)[None]
         gram = np.einsum("bpf,bpg->pfg", P, P)
-        xty = {L: np.einsum("bpf,bpd->pfd", P, np.asarray(states[L], np.float64)) for L in self.layers}
+        xty = {key: np.einsum("bpf,bpd->pfd", P, np.asarray(states[key], np.float64)) for key in self.xty}
         sw = {}
         for name in self.switches:
             s0, j = self.family.symbol(name).visible_from, self._index(name)
@@ -231,14 +242,15 @@ class CompilerFit:
             sw[name] = groups
         self.add_moments(len(values), gram, xty, sw)
 
-    def add_moments(self, n: int, gram, xty: Mapping[int, Any], switched: Mapping[str, Mapping[int, tuple]] = ()):
-        """Accumulate summed moments. ``switched[name][value] = (rows, gram, {L: xty})``."""
+    def add_moments(self, n: int, gram, xty: Mapping[Any, Any], switched: Mapping[str, Mapping[int, tuple]] = ()):
+        """Accumulate summed moments, keyed like ``self.xty`` (layer ints and ``("kv", L)``).
+        ``switched[name][value] = (rows, gram, {L: xty})`` for residual layers."""
         import numpy as np
 
         self.n += int(n)
         self.gram += np.asarray(gram, np.float64)
-        for L in self.layers:
-            self.xty[L] += np.asarray(xty[L], np.float64)
+        for key in self.xty:
+            self.xty[key] += np.asarray(xty[key], np.float64)
         for name, groups in dict(switched).items():
             for g, (rows, gg, gx) in groups.items():
                 self.sw_n[name][g] += int(rows)
@@ -249,41 +261,47 @@ class CompilerFit:
     def _index(self, name: str) -> int:
         return [s.name for s in self.family.symbols].index(name)
 
-    def solve(self, feature_set: str, layer: int, lam: float = 1.0) -> CompiledStateMap:
+    def solve(self, feature_set: str, layer: int, lam: float = 1.0, target: str = "residual") -> CompiledStateMap:
         """Per-position ridge (G + lam I) W = X^T Y over the visible feature-set columns.
-        The bias is regularized like every other column."""
+        The bias is regularized like every other column. ``target="kv"`` solves the
+        pooled K/V map of that layer."""
         import numpy as np
 
         if not lam > 0 or not math.isfinite(lam):
             raise CompiledStateError("ridge lambda must be positive and finite")
-        if layer not in self.xty:
-            raise CompiledStateError(f"layer {layer} was not accumulated")
+        if target not in ("residual", "kv"):
+            raise CompiledStateError("target must be 'residual' or 'kv'")
+        key = layer if target == "residual" else ("kv", layer)
+        if key not in self.xty:
+            raise CompiledStateError(f"{target} layer {layer} was not accumulated")
         if self.n == 0:
             raise CompiledStateError("no fit rows")
         fam, fs = self.family, self.family.feature_sets[feature_set]
-        if fs.switch and fs.switch not in self.switches:
+        switch = fs.switch if target == "residual" else None
+        if switch and switch not in self.switches:
             raise CompiledStateError(f"feature set {feature_set!r} switch moments were not accumulated")
         V, cols = visibility(fam), columns(fam, feature_set)
         T, F = V.shape
-        W = np.zeros((T, F, self.D), np.float32)
+        W = np.zeros((T, F, self.xty[key].shape[2]), np.float32)
         for p in range(T):
-            W[p] = _ridge(self.gram[p], self.xty[layer][p], V[p] & cols, lam)
+            W[p] = solve_ridge(self.gram[p], self.xty[key][p], V[p] & cols, lam)
         groups = None
-        if fs.switch:
+        if switch:
             s = fam.symbol(fs.switch)
             groups = np.repeat(W[None], s.cardinality, 0)
             for g in range(s.cardinality):
                 if self.sw_n[fs.switch][g] == 0:
                     continue  # unseen switch value keeps the pooled map
                 for i, p in enumerate(range(s.visible_from, T)):
-                    groups[g, p] = _ridge(self.sw_gram[fs.switch][g, i], self.sw_xty[fs.switch][layer][g, i],
-                                          V[p] & cols, lam)
+                    groups[g, p] = solve_ridge(self.sw_gram[fs.switch][g, i], self.sw_xty[fs.switch][layer][g, i],
+                                               V[p] & cols, lam)
         return CompiledStateMap(family=fam, feature_set=feature_set, layer=int(layer), lam=float(lam),
                                 n_fit=self.n, weights=groups if groups is not None else W,
-                                switch_rows=self.sw_n[fs.switch].tolist() if fs.switch else None)
+                                switch_rows=self.sw_n[fs.switch].tolist() if switch else None, target=target)
 
 
-def _ridge(G, XtY, keep, lam):
+def solve_ridge(G, XtY, keep, lam):
+    """Rows ``keep`` of ``(G + lam I)^-1 X^T Y`` restricted to the kept columns; other rows are 0."""
     import numpy as np
 
     out = np.zeros((G.shape[0], XtY.shape[1]), np.float32)
@@ -295,7 +313,8 @@ def _ridge(G, XtY, keep, lam):
 @dataclass
 class CompiledStateMap:
     """Fitted map for one (feature set, layer): weights [T, F, D], or [V, T, F, D]
-    when the feature set switches on a symbol."""
+    when the feature set switches on a symbol. ``target`` is ``residual`` (the
+    state entering ``layer``) or ``kv`` (the K/V rows each position writes there)."""
 
     family: PromptFamily
     feature_set: str
@@ -304,10 +323,11 @@ class CompiledStateMap:
     n_fit: int
     weights: Any
     switch_rows: list[int] | None = None
+    target: str = "residual"
 
     @property
     def switch(self) -> str | None:
-        return self.family.feature_sets[self.feature_set].switch
+        return self.family.feature_sets[self.feature_set].switch if self.weights.ndim == 4 else None
 
     def masked_features(self, values):
         import numpy as np
@@ -327,7 +347,7 @@ class CompiledStateMap:
         fs = self.family.feature_sets[self.feature_set]
         body = {"schema": MAP_SCHEMA, "family": self.family.fingerprint, "feature_set": self.feature_set,
                 "symbols": list(fs.symbols), "switch": fs.switch, "switch_rows": self.switch_rows,
-                "layer": self.layer, "lam": self.lam, "n_fit": self.n_fit,
+                "layer": self.layer, "lam": self.lam, "n_fit": self.n_fit, "target": self.target,
                 "shape": list(self.weights.shape), "dtype": "float32", "weights_sha256": weights_digest}
         return {**body, "fingerprint": digest(body)}
 
@@ -336,7 +356,7 @@ class CompiledStateMap:
 
         d = Path(directory)
         d.mkdir(parents=True, exist_ok=True)
-        stem = f"{_slug(self.feature_set)}-L{self.layer}"
+        stem = _stem(self.feature_set, self.layer, self.target)
         weights = np.ascontiguousarray(self.weights, np.float32)
         np.save(d / f"{stem}.npy", weights)
         manifest = self.manifest(weights_sha256(weights))
@@ -347,14 +367,13 @@ class CompiledStateMap:
         return manifest
 
     @classmethod
-    def load(cls, directory: str | Path, feature_set: str, layer: int) -> CompiledStateMap:
-
+    def load(cls, directory: str | Path, feature_set: str, layer: int, target: str = "residual") -> CompiledStateMap:
         d = Path(directory)
         family = PromptFamily.from_dict(json.loads((d / "family.json").read_text()))
-        stem = f"{_slug(feature_set)}-L{layer}"
-        manifest, weights = _verified(d / f"{stem}.json", family)
+        manifest, weights = _verified(d / f"{_stem(feature_set, layer, target)}.json", family)
         return cls(family=family, feature_set=feature_set, layer=int(layer), lam=manifest["lam"],
-                   n_fit=manifest["n_fit"], weights=weights, switch_rows=manifest["switch_rows"])
+                   n_fit=manifest["n_fit"], weights=weights, switch_rows=manifest["switch_rows"],
+                   target=manifest.get("target", "residual"))
 
 
 def compile_state(P, weights, groups=None, switch_from: int = 0):
@@ -374,6 +393,10 @@ def compile_state(P, weights, groups=None, switch_from: int = 0):
 
 def _slug(name: str) -> str:
     return "".join(c if c.isalnum() or c in "-_" else "_" for c in name)
+
+
+def _stem(feature_set: str, layer: int, target: str) -> str:
+    return f"{_slug(feature_set)}-L{layer}" if target == "residual" else f"{_slug(feature_set)}-{target}-L{layer}"
 
 
 def weights_sha256(weights) -> str:
@@ -539,13 +562,20 @@ def render(report: Mapping[str, Any], *, feature_set: str | None = None, layer: 
     lines = [f"family {fam['name']}  ({fam['fingerprint'][:12]})  model {report.get('model', {}).get('name', '?')}",
              f"rows fit {report['rows']['fit']}  eval {report['rows']['eval']}  r2 {report['rows']['r2']}  "
              f"lambda {report['lam']}  threshold {report['threshold']}"]
-    nc, ctl = report.get("noise_ceiling"), report.get("native_splice_control")
+    nc, ctl, gate = report.get("noise_ceiling"), report.get("native_splice_control"), report.get("parity")
     if nc:
         lines.append(f"noise ceiling (native vs batch-shifted native): agreement {_fmt(nc['row_agreement'])}  "
                      f"error recall {_fmt(nc.get('error_recall'))}")
     if ctl and ctl["max_abs_dlogit"]:
         lines.append(f"native splice control: max |dlogit| {max(ctl['max_abs_dlogit'].values()):.3g} "
                      f"over {ctl['rows']} rows")
+    if gate:
+        checks = [gate["manual_native_vs_hf"], *(c for k in ("resume", "kv_injection", "partial_vs_hook")
+                                                 for c in gate.get(k, {}).values())]
+        lines.append(f"parity gate {'PASS' if gate['gate']['passed'] else 'FAIL'}"
+                     f"{' (exact)' if gate['gate']['exact'] else ''}: {len(checks)} checks over {gate['rows']} rows, "
+                     f"max |dlogit| {max(c['max_abs_dlogit'] for c in checks):.3g}, "
+                     f"min top-1 agreement {min(c['top1_agreement'] for c in checks):.3f}")
     names = fam["positions"]
     score = [names[p] for p in fam["score_positions"]]
     for fname, fs in report["feature_sets"].items():
@@ -614,5 +644,5 @@ def main(argv=None) -> int:
 
 __all__ = ["CompiledStateError", "CompiledStateMap", "CompilerFit", "FeatureSet", "PromptFamily",
            "ResidualAccumulator", "Symbol", "agreement", "batch_residual_moments",
-           "columns", "compile_state", "design", "horizon", "main", "render", "seal_report",
+           "columns", "compile_state", "design", "horizon", "main", "render", "seal_report", "solve_ridge",
            "verify_maps", "verify_report", "visibility", "weights_sha256", "wilson"]
