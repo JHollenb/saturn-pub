@@ -129,8 +129,9 @@ def serve(run: DecoderSplice, family: PromptFamily, feature_set: str, template_i
     (feedback symbols are overwritten). The first ``warmup`` prompts are served
     natively; afterwards a batch is predicted by the chain and every row whose
     smallest step margin is below ``tau`` (never, if ``tau`` is None) is served by
-    a native KV-cached decode instead. ``audit_tokens`` [N, steps], native greedy
-    tokens computed separately, only score the served answers."""
+    a full-vocabulary native KV-cached decode instead (``vocab`` restricts only the
+    chain's readout). ``audit_tokens`` [N, steps], native greedy tokens computed
+    separately, only score the served answers."""
     t0 = time.time()
     log = log or (lambda *_: None)
     nL, dev = run.num_layers, run.device
@@ -147,7 +148,7 @@ def serve(run: DecoderSplice, family: PromptFamily, feature_set: str, template_i
     tables = feedback_tables(family, feedback, dev)
 
     def native_rows(r):
-        toks, finals = run.decode(ids[r], steps, vocab)
+        toks, finals = run.decode(ids[r], steps)
         v = apply_feedback(vals[r], toks, tables)
         moments.add(device_features(family, v, vis), {nL: finals}, v)
         return toks
