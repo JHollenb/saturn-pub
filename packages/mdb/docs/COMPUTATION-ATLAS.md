@@ -1,5 +1,11 @@
 # Computation atlas
 
+For the diffusion research implications and record requirements, see
+[diffusion symbol-table lessons](DIFFUSION-SYMBOL-TABLE-LESSONS.md).
+Its 18 curated causal observations remain campaign records; automatic import into
+this equation-catalog atlas is an open integration task. Their clocks, receiving
+states, consumers and counterexamples must survive that integration.
+
 `mdb.computation_atlas` imports explicitly selected, source-qualified
 `EquationCatalog` observations across runs. It stores immutable metadata using
 public Saturn `Receipt` CAS. It does not execute a model, evaluate equations,

@@ -1,5 +1,9 @@
 # Testing a diffusion computation family in one MDB run
 
+The [symbol-table synthesis](DIFFUSION-SYMBOL-TABLE-LESSONS.md) explains what
+these results change about naming computations, applicability, timed carriers and
+the next causal experiments.
+
 This campaign tests six extensions of the [replicated single-block residual/attention record](FLUX-ROUTE-REPLICATION.md) within one resident FLUX.2 Klein 4B model process. MDB saves immutable typed cuts, rewinds to those cuts, applies declared image-state edits, and continues each branch through the native scheduler and VAE. Different prompt/seed histories have their own matched roots; sharing a model process does not make them one identical state.
 
 All 47 futures completed in one model load. Across seven directed pairs, residual-plus-attention replacement finished closer to the source along the declared latent axis than either replacement alone. Assistant inspection found source ordering restored in all five directed relation contrasts, but source color and shape assignments were not restored. The numerical magnitudes agree with that selectivity boundary: relation pairs ended at p=0.065–0.176, while color assignment remained at p=0.889 and shape assignment at p=0.643. Several more specific predictions missed: V-only did not beat K-only, top text-energy support lost to its alternative, and the learned selectors offered no action improvement over the fixed RA baseline. These heterogeneous outcomes are retained alongside exact controls and successful selected-row rescue.

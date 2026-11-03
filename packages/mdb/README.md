@@ -110,6 +110,16 @@ assignment transfers. Text-energy support ranking reverses, and selectors do not
 improve on fixed RA. It retains K/V prediction misses, selected-row rescue, and equal
 working prefixes whose different stored conditioning produces later divergence.
 All rows, source bindings and six image panels accompany the portable result index.
+The [diffusion symbol-table lessons](docs/DIFFUSION-SYMBOL-TABLE-LESSONS.md)
+connect those outcomes to record design: receiving state, persistent prompt sources,
+timed carriers, native consumers, collateral and counterexamples. They separate the
+structural writer from its empirical response family and name the next discriminating
+experiments for causal localization and applicability prediction.
+The [four-future numerical forecast](docs/FLUX-BRANCH-FORECASTS.md) matches all
+four forecast/native PNGs, including a partial shape transfer. The
+[conditioning-timing follow-up](docs/FLUX-SHAPE-TIMING.md) follows ten native
+futures under reciprocal source switches, retaining exact replay controls and
+separate latent geometry and inspected shape outcomes.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 The [compiled-state residual view](docs/COMPILED-STATE.md) fits per-position
