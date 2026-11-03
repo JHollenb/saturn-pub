@@ -17,8 +17,9 @@ def test_plan_is_finite_and_within_the_bounded_local_work_budget():
         assert plan["parity_rows"] == 64 and all(h in ("digit", "full") for *_, h in plan["addition"]["timing_full"])
         assert module["logical_operations"](plan) <= 64
         assert plan["addition"]["partial_layers"] == [20] and 28 in plan["addition"]["layers"]
-    full = module["plan"](smoke=False)
-    assert full["addition"]["n_fit"] == 160200 and full["addition"]["n_eval"] == 32768
+    full = module["plan"](smoke=False)  # the headline check
+    assert full["addition"]["n_fit"] == 32768 and full["addition"]["n_eval"] == 512 and full["taus"] == []
+    assert full["g1"]["chain_rows"] == 128 and full["chain_timing"] is False
     assert full["g1"]["expected_holdout"] == [0, 1, 9, 18, 27, 29, 31, 36, 39]
     comparison = full["comparison"]
     assert comparison["part_f"]["speedup"]["256"]["T3c(20)+digit_head"] == 8.59

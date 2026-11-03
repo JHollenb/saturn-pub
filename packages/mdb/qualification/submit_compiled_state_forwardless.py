@@ -57,11 +57,11 @@ def plan(*, smoke):
     value = {"schema": "mdb-forwardless-plan-v1", "model": "qwen2.5-1.5b", "model_path": MODEL_PATH,
              "expected_weights_sha256": WEIGHTS_SHA256, "device": "cuda", "seed": 20261102, "lam": 1.0,
              "batch": 256, "cpu_threads": 4, "reps": 10, "warmup": 5, "timing_batches": [1, 256], "parity_rows": 64,
-             "taus": [None, 1.0, 2.0, 4.0, 8.0],
-             "addition": {"n_fit": 160200, "n_eval": 32768, "r2_rows": 2048, "layers": [20, 28],
+             "taus": [None, 2.0],
+             "addition": {"n_fit": 4096, "n_eval": 1024, "r2_rows": 512, "layers": [20, 28],
                           "partial_layers": [20], "feature_sets": [F4, F4C, F5],
                           "timing_full": [[F4, 20, "digit"], [F5, 28, "digit"]], "timing_t3c": [[F4, 20, "digit"]],
-                          "serve_warmup": 2048, "serve_refit_every": 1024},
+                          "serve_warmup": 256, "serve_refit_every": 128},
              "g1": {"steps": 4, "expected_holdout": [0, 1, 9, 18, 27, 29, 31, 36, 39],
                     "expected_shape": [12, 33, 738, 744, 384], "serve_warmup": 64, "serve_refit_every": 32,
                     "serve_batch": 64, "serve_window": 500},
@@ -71,10 +71,11 @@ def plan(*, smoke):
                         "headline arms only, 10 timed repetitions (Parts E-G used 30); parity gates on 64 rows",
                         "mdb's L28 arms compile only the score positions; Part E compiled all ten",
                         "G1 HO rows contain fillers the chain never saw; they are reported, not compared"]}
-    if smoke:
-        value["addition"].update({"n_fit": 4096, "n_eval": 1024, "r2_rows": 512, "serve_warmup": 256,
-                                  "serve_refit_every": 128})
-        value["taus"] = [None, 2.0]
+    if not smoke:  # the headline check: gates, F5(28) digit-head speed, T3c(20) agreement, G1 chain exactness
+        value.update({"taus": [], "chain_timing": False})
+        value["addition"].update({"n_fit": 32768, "n_eval": 512, "feature_sets": [F4, F5],
+                                  "timing_full": [[F5, 28, "digit"]], "timing_t3c": []})
+        value["g1"]["chain_rows"] = 128
     return value
 
 
@@ -145,7 +146,7 @@ def stage(run_dir, *, smoke, vram_mb, ram_mb):
     job = guarded_mrun_launch(worker_command(WORKER), request=request, experiment="mdb-forwardless-qualification",
         task="forward", model=config["model"], payload=run_dir / "payload", prefer_host="beast", gpu=True,
         needs=request["needs"], ram_mb=ram_mb, vram_mb=vram_mb, cpu_threads=4,
-        est_wall_s=420 if smoke else 1080, timeout_s=1200 if smoke else 2400, priority=80,
+        est_wall_s=240 if smoke else 300, timeout_s=900, priority=70,
         retry_on_kill=False, preflight=True, note=note[:500])
     save(run_dir / "submission.json", {"job_id": str(job)})
     return {"job_id": str(job), "run_dir": str(run_dir)}

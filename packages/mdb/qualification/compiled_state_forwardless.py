@@ -242,17 +242,20 @@ def worker():
                 forward[f"T3c-{f}({L}){head[h][0]}"] = lambda f=f, L=L, h=h: t3c(f, L, head[h][1])
             chain, chain_d = chain_of(F5), chain_of(F5, digits)
             serving = {"native_kv_decode_3": lambda: run.decode(ids8_t, 3)[0],
-                       "chain_F5_L28": lambda: chain(vals)[0], "chain_F5_L28+digit_head": lambda: chain_d(vals)[0]}
+                       "chain_F5_L28": lambda: chain(vals, margins=False)[0],
+                       "chain_F5_L28+digit_head": lambda: chain_d(vals, margins=False)[0]}
             return forward, serving
 
-        timing = {}
+        timing, chain_timing = {}, config.get("chain_timing", True)
         for bsz in config["timing_batches"]:
             forward, serving = arms_for(bsz)
             timing[str(bsz)] = {
                 "forward": time_arms(forward, baseline="native_prefix_cached", gate=gate, reps=config["reps"],
-                                     warmup=config["warmup"], cuda=on_cuda, batch=bsz, device=str(dev)),
-                "serving": time_arms(serving, baseline="native_kv_decode_3", gate=gate, reps=config["reps"],
                                      warmup=config["warmup"], cuda=on_cuda, batch=bsz, device=str(dev))}
+            if chain_timing:
+                timing[str(bsz)]["serving"] = time_arms(serving, baseline="native_kv_decode_3", gate=gate,
+                                                        reps=config["reps"], warmup=config["warmup"], cuda=on_cuda,
+                                                        batch=bsz, device=str(dev))
             log(f"addition timing b{bsz}", json.dumps({k: round(v["median_ms"], 3) for part in timing[str(bsz)].values()
                                                        for k, v in part["arms"].items()}))
         out["addition"]["timing"] = timing
@@ -353,24 +356,26 @@ def worker():
               "parity": parity(run1, fam1, ids1[seen[:config["parity_rows"]]], range(nL + 1),
                                partial_layers=range(nL)),
               "chain": {}}
-        for sname, rows in (("SEEN", seen), ("HO", held)):
+        cap = g.get("chain_rows") or None  # chain scoring rows per split (all when None)
+        for sname, rows in (("SEEN", seen[:cap]), ("HO", held[:cap])):
             for label, ch in (("full_vocab", chain1), ("readout_subset", chain1_s)):
                 a = chain_agreement(ch, vals1[rows], toks1[rows], batch=bs)
-                pred = np.concatenate([ch(vals1[rows[st:st + bs]])[0][:, 0].cpu().numpy() for st in range(0, len(rows), bs)])
+                pred = np.concatenate([ch(vals1[rows[st:st + bs]], margins=False)[0][:, 0].cpu().numpy()
+                                       for st in range(0, len(rows), bs)])
                 a.update({"answer_acc_pred": float((pred == truth1[rows]).mean()),
                           "answer_acc_native": float((toks1[rows, 0] == truth1[rows]).mean())})
                 g1["chain"][f"{sname}:{label}"] = a
         log("G1 chain", json.dumps({k: v["exact_through"] for k, v in g1["chain"].items()}))
         gate1 = g1["parity"]["gate"]
         timing1 = {}
-        for bsz in config["timing_batches"]:
+        for bsz in config["timing_batches"] if chain_timing else ():
             r = seen[:bsz] if len(seen) >= bsz else np.resize(seen, bsz)
             ids_t = torch.as_tensor(S1[r], device=dev)
             v_t = torch.as_tensor(vals1[r], device=dev)
             timing1[str(bsz)] = {
                 "serving": time_arms({"native_kv_decode_4": lambda ids_t=ids_t: run1.decode(ids_t, K)[0],
-                                      "chain_L28": lambda v_t=v_t: chain1(v_t)[0],
-                                      "chain_L28+readout_subset": lambda v_t=v_t: chain1_s(v_t)[0]},
+                                      "chain_L28": lambda v_t=v_t: chain1(v_t, margins=False)[0],
+                                      "chain_L28+readout_subset": lambda v_t=v_t: chain1_s(v_t, margins=False)[0]},
                                      baseline="native_kv_decode_4", gate=gate1, reps=config["reps"],
                                      warmup=config["warmup"], cuda=on_cuda, batch=bsz, device=str(dev))}
             log(f"G1 timing b{bsz}", json.dumps({k: round(v["median_ms"], 3) for part in timing1[str(bsz)].values()

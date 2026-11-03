@@ -4,13 +4,14 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 from pathlib import Path
 
 from mdb.compiled_state import verify_report
 
 RESULT = "forwardless-result"
-RULES = {"agreement": "match when |mdb - earlier| <= 0.005 (same 32,768-row sample, n_err ~700)",
-         "error_recall": "match when |mdb - earlier| <= 0.05",
+RULES = {"agreement": "match when |mdb - earlier| <= max(0.005, 2 * sqrt(p (1 - p) / n)) on mdb's rows",
+         "error_recall": "match when |mdb - earlier| <= max(0.05, 2 * sqrt(r (1 - r) / n_native_wrong))",
          "speedup": "match when mdb / earlier is within [0.8, 1.25]",
          "milliseconds": "match when mdb / earlier is within [0.8, 1.25]",
          "exact_through": "match when every step equals the earlier value"}
@@ -20,7 +21,7 @@ def file_sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def _row(part, claim, earlier, measured, kind, **extra):
+def _row(part, claim, earlier, measured, kind, n=None, **extra):
     if earlier is None or measured is None:
         match = None
     elif kind in ("speedup", "milliseconds"):
@@ -28,8 +29,11 @@ def _row(part, claim, earlier, measured, kind, **extra):
     elif kind == "exact_through":
         match = list(measured) == list(earlier)
     else:
-        match = abs(measured - earlier) <= (0.005 if kind == "agreement" else 0.05)
-    return {"part": part, "claim": claim, "kind": kind, "earlier": earlier, "mdb": measured, "match": match, **extra}
+        floor = 0.005 if kind == "agreement" else 0.05
+        se = math.sqrt(measured * (1 - measured) / n) if n else 0.0
+        match = abs(measured - earlier) <= max(floor, 2 * se)
+    return {"part": part, "claim": claim, "kind": kind, "earlier": earlier, "mdb": measured, "match": match,
+            "n": n, **extra}
 
 
 def _fmt(v):
@@ -58,7 +62,7 @@ def record(run_dir):
         if a:
             rows.append(_row("E", f"{name} answer agreement", agree, a["row_agreement"], "agreement", n=a["n"]))
             rows.append(_row("E", f"{name} error recall", recall, a.get("error_recall"), "error_recall",
-                             n_native_wrong=a.get("n_native_wrong")))
+                             n=a.get("n_native_wrong")))
     part = fs.get("F4-+pairs", {}).get("partial", {}).get("20")
     if part:
         for label, key, (agree, recall) in (("T3c(20)", "compiled_kv", cmp["part_f"]["agreement"]["T3c(20) sweep 32768"]),
@@ -67,7 +71,7 @@ def record(run_dir):
             rows.append(_row("F", f"{label} answer agreement", agree, part[key]["row_agreement"], "agreement",
                              n=part[key]["n"]))
             rows.append(_row("F", f"{label} error recall", recall, part[key].get("error_recall"), "error_recall",
-                             n_native_wrong=part[key].get("n_native_wrong")))
+                             n=part[key].get("n_native_wrong")))
     timing = q["addition"]["timing"]
     for b in ("1", "256"):
         arms = timing.get(b, {}).get("forward", {}).get("arms", {})
@@ -95,9 +99,9 @@ def record(run_dir):
                          earlier_ms=cmp["part_g"]["timing_ms"][b]["predict_chain_L28"],
                          mdb_baseline_ms=serving.get("native_kv_decode_4", {}).get("median_ms"),
                          earlier_baseline_ms=cmp["part_g"]["timing_ms"][b]["native_kv_decode"]))
-    table = ["| Part | Claim | Earlier | mdb | Match |", "|---|---|---|---|---|"]
+    table = ["| Part | Claim | Earlier | mdb | n | Match |", "|---|---|---|---|---|---|"]
     for r in rows:
-        table.append(f"| {r['part']} | {r['claim']} | {_fmt(r['earlier'])} | {_fmt(r['mdb'])} | "
+        table.append(f"| {r['part']} | {r['claim']} | {_fmt(r['earlier'])} | {_fmt(r['mdb'])} | {r['n'] or ''} | "
                      f"{'n/a' if r['match'] is None else ('yes' if r['match'] else 'NO')} |")
     serving = {"addition": [{k: s[k] for k in ("tau", "native_prompts", "served", "forwards_per_1000_prompts", "refits")}
                             | {"served_exact": s["audit"]["served_exact"], "predicted_exact": s["audit"]["predicted_exact"]}

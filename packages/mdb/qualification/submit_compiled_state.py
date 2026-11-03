@@ -95,7 +95,7 @@ def stage(run_dir, *, smoke, vram_mb, ram_mb):
     job = guarded_mrun_launch(worker_command(WORKER), request=request, experiment="mdb-compiled-state-qualification",
         task="forward", model=config["model"], payload=run_dir / "payload", prefer_host="beast", gpu=True,
         needs=request["needs"], ram_mb=ram_mb, vram_mb=vram_mb, cpu_threads=4,
-        est_wall_s=480 if smoke else 900, timeout_s=1200 if smoke else 1800, priority=80,
+        est_wall_s=480 if smoke else 900, timeout_s=1200 if smoke else 1800, priority=70,
         retry_on_kill=False, preflight=True, note=note[:500])
     save(run_dir / "submission.json", {"job_id": str(job)})
     return {"job_id": str(job), "run_dir": str(run_dir)}

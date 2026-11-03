@@ -71,6 +71,8 @@ def test_zero_layer_chain_reproduces_native_greedy_decode(model):
     assert torch.equal(toks, native) and margins.shape == (9, 2) and bool((margins >= 0).all())
     full_vocab = ZeroLayerChain(run, cmap, feedback=FEEDBACK, vocab=range(VOCAB))
     assert torch.equal(full_vocab(vals)[0], native)
+    fast, none = chain(vals, margins=False)
+    assert torch.equal(fast, native) and none is None
     a = chain_agreement(chain, torch.as_tensor(vals), native, batch=4)
     assert a["exact_through"] == [1.0, 1.0] and a["step_agreement_teacher_forced"] == [1.0, 1.0]
     with pytest.raises(CompiledStateError, match="num_layers"):

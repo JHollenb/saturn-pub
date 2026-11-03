@@ -87,30 +87,35 @@ class ZeroLayerChain:
         return x
 
     @torch.no_grad()
-    def __call__(self, values, teacher=None):
+    def __call__(self, values, teacher=None, *, margins: bool = True):
         """Tokens [B, K] and logit margins (top-1 minus top-2) [B, K] for the score
-        steps; ``teacher`` [B, K] feeds given tokens back instead of the chain's own."""
+        steps; ``teacher`` [B, K] feeds given tokens back instead of the chain's own.
+        ``margins=False`` takes a plain argmax and returns None for the margins."""
         values = torch.as_tensor(values, device=self.run.device).long().clone()
-        toks, margins = [], []
+        toks, gaps = [], []
         for k, p in enumerate(self.score):
-            logits = self.run.readout(self._state(values, p).to(self.run.dtype), self.vocab).float()
-            top = logits.topk(2, -1)
-            tok = top.indices[:, 0] if self.vocab is None else self.run._vocab_rows[tuple(self.vocab)][1][top.indices[:, 0]]
+            logits = self.run.readout(self._state(values, p).to(self.run.dtype), self.vocab)
+            if margins:
+                top = logits.float().topk(2, -1)
+                idx = top.indices[:, 0]
+                gaps.append(top.values[:, 0] - top.values[:, 1])
+            else:
+                idx = logits.argmax(-1)
+            tok = idx if self.vocab is None else self.run._vocab_rows[tuple(self.vocab)][1][idx]
             toks.append(tok)
-            margins.append(top.values[:, 0] - top.values[:, 1])
             fed = tok if teacher is None else torch.as_tensor(teacher, device=values.device)[:, k]
             for j, (step, table) in self.feedback.items():
                 if step == k:
                     values[:, j] = table[fed]
-        return torch.stack(toks, 1), torch.stack(margins, 1)
+        return torch.stack(toks, 1), torch.stack(gaps, 1) if margins else None
 
 
 def chain_agreement(chain: ZeroLayerChain, values, native_tokens, batch: int = 256) -> dict[str, Any]:
     """Free-running and teacher-forced agreement of a chain with native greedy tokens."""
     free, tf = [], []
     for st in range(0, len(values), batch):
-        free.append(chain(values[st:st + batch])[0])
-        tf.append(chain(values[st:st + batch], teacher=native_tokens[st:st + batch])[0])
+        free.append(chain(values[st:st + batch], margins=False)[0])
+        tf.append(chain(values[st:st + batch], teacher=native_tokens[st:st + batch], margins=False)[0])
     nat = torch.as_tensor(native_tokens, device=chain.run.device)
     same, same_tf = (torch.cat(free) == nat).cpu().numpy(), (torch.cat(tf) == nat).cpu().numpy()
     K = same.shape[1]

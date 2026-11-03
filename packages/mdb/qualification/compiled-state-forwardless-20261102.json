@@ -1,0 +1,566 @@
+{
+  "chains": {
+    "addition": {
+      "digit_head": {
+        "exact_through": [
+          0.9755859375,
+          0.974609375,
+          0.974609375
+        ],
+        "n": 1024,
+        "step_agreement_free": [
+          0.9755859375,
+          0.982421875,
+          0.9873046875
+        ],
+        "step_agreement_teacher_forced": [
+          0.9755859375,
+          0.9892578125,
+          0.98828125
+        ],
+        "steps": 3
+      },
+      "feature_set": "F5-+totals",
+      "feedback": {
+        "r0": "step 0 digit class",
+        "r1": "step 1 digit class"
+      },
+      "full_vocab": {
+        "exact_through": [
+          0.9755859375,
+          0.974609375,
+          0.974609375
+        ],
+        "n": 1024,
+        "step_agreement_free": [
+          0.9755859375,
+          0.982421875,
+          0.9873046875
+        ],
+        "step_agreement_teacher_forced": [
+          0.9755859375,
+          0.9892578125,
+          0.98828125
+        ],
+        "steps": 3
+      },
+      "layer": 28,
+      "native_answer_accuracy": 0.974609375,
+      "steps": 3
+    },
+    "g1": {
+      "HO:full_vocab": {
+        "answer_acc_native": 0.96875,
+        "answer_acc_pred": 0.4609375,
+        "exact_through": [
+          0.4609375,
+          0.4609375,
+          0.4609375,
+          0.4609375
+        ],
+        "n": 384,
+        "step_agreement_free": [
+          0.4609375,
+          0.96875,
+          0.96875,
+          0.96875
+        ],
+        "step_agreement_teacher_forced": [
+          0.4609375,
+          0.96875,
+          0.96875,
+          1.0
+        ],
+        "steps": 4
+      },
+      "HO:readout_subset": {
+        "answer_acc_native": 0.96875,
+        "answer_acc_pred": 0.4609375,
+        "exact_through": [
+          0.4609375,
+          0.4609375,
+          0.4609375,
+          0.4609375
+        ],
+        "n": 384,
+        "step_agreement_free": [
+          0.4609375,
+          0.96875,
+          0.96875,
+          0.96875
+        ],
+        "step_agreement_teacher_forced": [
+          0.4609375,
+          0.96875,
+          0.96875,
+          1.0
+        ],
+        "steps": 4
+      },
+      "SEEN:full_vocab": {
+        "answer_acc_native": 1.0,
+        "answer_acc_pred": 1.0,
+        "exact_through": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "n": 744,
+        "step_agreement_free": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "step_agreement_teacher_forced": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "steps": 4
+      },
+      "SEEN:readout_subset": {
+        "answer_acc_native": 1.0,
+        "answer_acc_pred": 1.0,
+        "exact_through": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "n": 744,
+        "step_agreement_free": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "step_agreement_teacher_forced": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "steps": 4
+      }
+    }
+  },
+  "comparison": [
+    {
+      "claim": "F4-+pairs(20) answer agreement",
+      "earlier": 0.984,
+      "kind": "agreement",
+      "match": true,
+      "mdb": 0.982421875,
+      "n": 1024,
+      "part": "E"
+    },
+    {
+      "claim": "F4-+pairs(20) error recall",
+      "earlier": 0.5444,
+      "kind": "error_recall",
+      "match": true,
+      "mdb": 0.5,
+      "n": 28,
+      "part": "E"
+    },
+    {
+      "claim": "F4-+pairs|c(20) answer agreement",
+      "earlier": 0.9842,
+      "kind": "agreement",
+      "match": true,
+      "mdb": 0.9814453125,
+      "n": 1024,
+      "part": "E"
+    },
+    {
+      "claim": "F4-+pairs|c(20) error recall",
+      "earlier": 0.5358,
+      "kind": "error_recall",
+      "match": true,
+      "mdb": 0.5,
+      "n": 28,
+      "part": "E"
+    },
+    {
+      "claim": "F4-+pairs|c(28) answer agreement",
+      "earlier": 0.9787,
+      "kind": "agreement",
+      "match": true,
+      "mdb": 0.97265625,
+      "n": 1024,
+      "part": "E"
+    },
+    {
+      "claim": "F4-+pairs|c(28) error recall",
+      "earlier": 0.0,
+      "kind": "error_recall",
+      "match": true,
+      "mdb": 0.0,
+      "n": 28,
+      "part": "E"
+    },
+    {
+      "claim": "F5-+totals(20) answer agreement",
+      "earlier": 0.9842,
+      "kind": "agreement",
+      "match": true,
+      "mdb": 0.982421875,
+      "n": 1024,
+      "part": "E"
+    },
+    {
+      "claim": "F5-+totals(20) error recall",
+      "earlier": 0.5415,
+      "kind": "error_recall",
+      "match": true,
+      "mdb": 0.5,
+      "n": 28,
+      "part": "E"
+    },
+    {
+      "claim": "F5-+totals(28) answer agreement",
+      "earlier": 0.9787,
+      "kind": "agreement",
+      "match": true,
+      "mdb": 0.97265625,
+      "n": 1024,
+      "part": "E"
+    },
+    {
+      "claim": "F5-+totals(28) error recall",
+      "earlier": 0.0,
+      "kind": "error_recall",
+      "match": true,
+      "mdb": 0.0,
+      "n": 28,
+      "part": "E"
+    },
+    {
+      "claim": "T3c(20) answer agreement",
+      "earlier": 0.9831,
+      "kind": "agreement",
+      "match": true,
+      "mdb": 0.98046875,
+      "n": 1024,
+      "part": "F"
+    },
+    {
+      "claim": "T3c(20) error recall",
+      "earlier": 0.5172,
+      "kind": "error_recall",
+      "match": true,
+      "mdb": 0.4642857142857143,
+      "n": 28,
+      "part": "F"
+    },
+    {
+      "claim": "T3c-nativeKV(20) answer agreement",
+      "earlier": 0.9949,
+      "kind": "agreement",
+      "match": true,
+      "mdb": 0.99609375,
+      "n": 1024,
+      "part": "F"
+    },
+    {
+      "claim": "T3c-nativeKV(20) error recall",
+      "earlier": 0.8209,
+      "kind": "error_recall",
+      "match": true,
+      "mdb": 0.8928571428571429,
+      "n": 28,
+      "part": "F"
+    },
+    {
+      "claim": "F4-+pairs(20)+digit_head speedup at batch 1",
+      "earlier": 2.96,
+      "earlier_ms": 3.714,
+      "kind": "speedup",
+      "match": true,
+      "mdb": 3.2337968330686286,
+      "mdb_ms": 3.515267511829734,
+      "n": null,
+      "part": "E"
+    },
+    {
+      "claim": "F5-+totals(28)+digit_head speedup at batch 1",
+      "earlier": 14.93,
+      "earlier_ms": 0.735,
+      "kind": "speedup",
+      "match": false,
+      "mdb": 48.73999668569398,
+      "mdb_ms": 0.23323064669966698,
+      "n": null,
+      "part": "E"
+    },
+    {
+      "claim": "T3c(20)+digit_head speedup at batch 1",
+      "earlier": 2.78,
+      "earlier_ms": 3.881,
+      "kind": "speedup",
+      "match": true,
+      "mdb": 2.6654765930410065,
+      "mdb_ms": 4.26477612927556,
+      "n": null,
+      "part": "F"
+    },
+    {
+      "claim": "native prefix-cached forward at batch 1 (ms)",
+      "earlier": 10.979,
+      "kind": "milliseconds",
+      "match": true,
+      "mdb": 11.367660947144032,
+      "n": null,
+      "part": "E"
+    },
+    {
+      "claim": "F4-+pairs(20)+digit_head speedup at batch 256",
+      "earlier": 3.46,
+      "earlier_ms": 30.383,
+      "kind": "speedup",
+      "match": true,
+      "mdb": 3.492420963647943,
+      "mdb_ms": 30.120688024908304,
+      "n": null,
+      "part": "E"
+    },
+    {
+      "claim": "F5-+totals(28)+digit_head speedup at batch 256",
+      "earlier": 139.69,
+      "earlier_ms": 0.753,
+      "kind": "speedup",
+      "match": false,
+      "mdb": 419.4875728964821,
+      "mdb_ms": 0.2507681492716074,
+      "n": null,
+      "part": "E"
+    },
+    {
+      "claim": "T3c(20)+digit_head speedup at batch 256",
+      "earlier": 8.59,
+      "earlier_ms": 12.235,
+      "kind": "speedup",
+      "match": true,
+      "mdb": 8.293130844553295,
+      "mdb_ms": 12.684488436207175,
+      "n": null,
+      "part": "F"
+    },
+    {
+      "claim": "native prefix-cached forward at batch 256 (ms)",
+      "earlier": 105.177,
+      "kind": "milliseconds",
+      "match": true,
+      "mdb": 105.19412229768932,
+      "n": null,
+      "part": "E"
+    },
+    {
+      "claim": "G1 4-token zero-layer chain exact_through (SEEN)",
+      "earlier": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "kind": "exact_through",
+      "match": true,
+      "mdb": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "n": 744,
+      "part": "G"
+    },
+    {
+      "claim": "G1 chain vs KV-cached native decode at batch 1",
+      "earlier": 11.68,
+      "earlier_baseline_ms": 42.078,
+      "earlier_ms": 3.602,
+      "kind": "speedup",
+      "match": true,
+      "mdb": 14.149121309629392,
+      "mdb_baseline_ms": 45.603070640936494,
+      "mdb_ms": 3.2230319920927286,
+      "n": null,
+      "part": "G"
+    },
+    {
+      "claim": "G1 chain vs KV-cached native decode at batch 256",
+      "earlier": 29.91,
+      "earlier_baseline_ms": 190.206,
+      "earlier_ms": 6.359,
+      "kind": "speedup",
+      "match": false,
+      "mdb": 15.647102295082057,
+      "mdb_baseline_ms": 188.27488413080573,
+      "mdb_ms": 12.032571947202086,
+      "n": null,
+      "part": "G"
+    }
+  ],
+  "comparison_sources": {
+    "part_e": "saturn experiments/2026-11-02-forecast-cost-and-compressed-addition results/e-full1/report.json carry (job-008821c65712)",
+    "part_f": "saturn experiments/2026-11-02-forecast-cost-and-compressed-addition results/f-full1/report.json gap",
+    "part_g": "saturn experiments/2026-11-02-forecast-cost-and-compressed-addition results/g-full1/report.json text_families.G1"
+  },
+  "elapsed_s": 42.3,
+  "environment": {
+    "cuda": "13.0",
+    "gpu": "NVIDIA GeForce RTX 4080",
+    "mdb_file": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/oy0r8nH-8ctJT3mu/lib/python3.14/site-packages/mdb/__init__.py",
+    "mdb_package_sha256": "7d6b9f307b4d2ca59d5e05dfc18660cdf26b6a0482459b9c8e84915d81b2c970",
+    "peak_vram_mb": 4738.8,
+    "torch": "2.13.0+cu130",
+    "transformers": "5.14.1"
+  },
+  "execution": {
+    "device": "cuda:0",
+    "dtype": "bfloat16",
+    "fit_s": 4.0,
+    "hidden_size": 1536,
+    "kv_width": 512,
+    "num_layers": 28,
+    "peak_vram_mb": 4294.6,
+    "prefix_tokens": 45,
+    "splice": "true resume: the compiled state enters layer L and only layers L.. execute; L = num_layers goes straight to the final norm and head",
+    "torch": "2.13.0+cu130",
+    "total_s": 6.7
+  },
+  "g1_setup": {
+    "T": 12,
+    "holdout": [
+      0,
+      1,
+      9,
+      18,
+      27,
+      29,
+      31,
+      36,
+      39
+    ],
+    "n_ho": 384,
+    "n_seen": 744,
+    "n_train": 738,
+    "prefix_tokens": 33,
+    "rows": 2256,
+    "slot_positions": {
+      "X": 3,
+      "Y": 5,
+      "Z": 10
+    },
+    "tokenization_mismatch": 0
+  },
+  "gates": {
+    "addition_ladder": {
+      "exact": false,
+      "passed": true,
+      "rule": "top-1 agreement 1.0 in every check"
+    },
+    "addition_measure": {
+      "exact": false,
+      "passed": true,
+      "rule": "top-1 agreement 1.0 in every check"
+    },
+    "g1_ladder": {
+      "exact": false,
+      "passed": true,
+      "rule": "top-1 agreement 1.0 in every check"
+    },
+    "max_abs_dlogit": {
+      "addition": 0.28125,
+      "addition_manual_vs_hf": {
+        "max_abs_dlogit": 0.0,
+        "top1_agreement": 1.0
+      },
+      "g1": 0.375,
+      "g1_manual_vs_hf": {
+        "max_abs_dlogit": 0.0,
+        "top1_agreement": 1.0
+      }
+    }
+  },
+  "job_id": "job-764839b8c085",
+  "job_state": "succeeded",
+  "limits": [
+    "single seed",
+    "timings are one process on one GPU; mdb's layer loop calls the HF decoder layers, Parts E-G timed their own manual loop",
+    "headline arms only, 10 timed repetitions (Parts E-G used 30); parity gates on 64 rows",
+    "mdb's L28 arms compile only the score positions; Part E compiled all ten",
+    "G1 HO rows contain fillers the chain never saw; they are reported, not compared"
+  ],
+  "model": {
+    "name": "qwen2.5-1.5b",
+    "path": "/mnt/big/llm-models/Qwen2.5-1.5B",
+    "safetensors": {
+      "model.safetensors": "a961db72e75d52b18e6b0c9d379e51a26973b233385e0e127fdda7d648aec796"
+    },
+    "weights_sha256": "1f160d193f8c1b78aa628cd8dfd92d5da5631a2132d1c8074f96c2be52c62601"
+  },
+  "qualification_sha256": "6906caea88b01310f1bfd6bf6383c8e7bf4213b4dba84f6d5859fc2a597fefe5",
+  "report_fingerprint": "9d139fae7581fbfb41d276b9c3dc4995ab2a832431e3652a501493ffe4aa010c",
+  "request_sha256": "8849dc3ab2d3ae1f9d6b46e418612f17da009483dcd502698d8e2ae534a209e2",
+  "rows": {
+    "eval": 1024,
+    "fit": 4096,
+    "test_half": 160200,
+    "train_half": 160200
+  },
+  "rules": {
+    "agreement": "match when |mdb - earlier| <= max(0.005, 2 * sqrt(p (1 - p) / n)) on mdb's rows",
+    "error_recall": "match when |mdb - earlier| <= max(0.05, 2 * sqrt(r (1 - r) / n_native_wrong))",
+    "exact_through": "match when every step equals the earlier value",
+    "milliseconds": "match when mdb / earlier is within [0.8, 1.25]",
+    "speedup": "match when mdb / earlier is within [0.8, 1.25]"
+  },
+  "schema": "mdb-forwardless-qualification-record-v1",
+  "serving": {
+    "addition": [
+      {
+        "forwards_per_1000_prompts": 250.0,
+        "native_prompts": 256,
+        "predicted_exact": 0.9479166865348816,
+        "refits": 1,
+        "served": 1024,
+        "served_exact": 0.9609375,
+        "tau": null
+      },
+      {
+        "forwards_per_1000_prompts": 291.015625,
+        "native_prompts": 298,
+        "predicted_exact": 0.9696969985961914,
+        "refits": 1,
+        "served": 1024,
+        "served_exact": 0.978515625,
+        "tau": 2.0
+      }
+    ],
+    "g1": [
+      {
+        "forwards_per_1000_prompts": 28.368794326241133,
+        "native_prompts": 64,
+        "predicted_exact": 0.32344889640808105,
+        "refits": 1,
+        "served": 2256,
+        "served_exact": 0.34219858050346375,
+        "tau": null
+      },
+      {
+        "forwards_per_1000_prompts": 131.64893617021278,
+        "native_prompts": 297,
+        "predicted_exact": 0.9989790916442871,
+        "refits": 6,
+        "served": 2256,
+        "served_exact": 0.9973403811454773,
+        "tau": 2.0
+      }
+    ]
+  },
+  "table": "| Part | Claim | Earlier | mdb | n | Match |\n|---|---|---|---|---|---|\n| E | F4-+pairs(20) answer agreement | 0.9840 | 0.9824 | 1024 | yes |\n| E | F4-+pairs(20) error recall | 0.5444 | 0.5000 | 28 | yes |\n| E | F4-+pairs|c(20) answer agreement | 0.9842 | 0.9814 | 1024 | yes |\n| E | F4-+pairs|c(20) error recall | 0.5358 | 0.5000 | 28 | yes |\n| E | F4-+pairs|c(28) answer agreement | 0.9787 | 0.9727 | 1024 | yes |\n| E | F4-+pairs|c(28) error recall | 0.0000 | 0.0000 | 28 | yes |\n| E | F5-+totals(20) answer agreement | 0.9842 | 0.9824 | 1024 | yes |\n| E | F5-+totals(20) error recall | 0.5415 | 0.5000 | 28 | yes |\n| E | F5-+totals(28) answer agreement | 0.9787 | 0.9727 | 1024 | yes |\n| E | F5-+totals(28) error recall | 0.0000 | 0.0000 | 28 | yes |\n| F | T3c(20) answer agreement | 0.9831 | 0.9805 | 1024 | yes |\n| F | T3c(20) error recall | 0.5172 | 0.4643 | 28 | yes |\n| F | T3c-nativeKV(20) answer agreement | 0.9949 | 0.9961 | 1024 | yes |\n| F | T3c-nativeKV(20) error recall | 0.8209 | 0.8929 | 28 | yes |\n| E | F4-+pairs(20)+digit_head speedup at batch 1 | 2.96 | 3.23 |  | yes |\n| E | F5-+totals(28)+digit_head speedup at batch 1 | 14.93 | 48.74 |  | NO |\n| F | T3c(20)+digit_head speedup at batch 1 | 2.78 | 2.67 |  | yes |\n| E | native prefix-cached forward at batch 1 (ms) | 10.98 | 11.37 |  | yes |\n| E | F4-+pairs(20)+digit_head speedup at batch 256 | 3.46 | 3.49 |  | yes |\n| E | F5-+totals(28)+digit_head speedup at batch 256 | 139.69 | 419.49 |  | NO |\n| F | T3c(20)+digit_head speedup at batch 256 | 8.59 | 8.29 |  | yes |\n| E | native prefix-cached forward at batch 256 (ms) | 105.18 | 105.19 |  | yes |\n| G | G1 4-token zero-layer chain exact_through (SEEN) | [1.0, 1.0, 1.0, 1.0] | [1.0, 1.0, 1.0, 1.0] | 744 | yes |\n| G | G1 chain vs KV-cached native decode at batch 1 | 11.68 | 14.15 |  | yes |\n| G | G1 chain vs KV-cached native decode at batch 256 | 29.91 | 15.65 |  | NO |"
+}
