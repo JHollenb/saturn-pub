@@ -138,3 +138,41 @@ def test_compact_rejects_consistent_outer_transport_with_broken_inner_authority(
             stream.write(b" \n")
     with pytest.raises(ValueError, match="differs"):
         api["verify_compact"](tmp_path)
+
+
+def test_repeat_verification_rechecks_custody_and_preserves_existing_receipt_bytes(tmp_path, monkeypatch):
+    api, _ = compact_fixture(tmp_path, monkeypatch)
+    original = api["verify_compact"]
+    calls = []
+
+    def counted(root):
+        calls.append(root)
+        return original(root)
+
+    monkeypatch.setitem(api["verify_and_record"].__globals__, "verify_compact", counted)
+    first = api["verify_and_record"](tmp_path)
+    receipt = tmp_path / "compact-verification.json"
+    assert json.loads(receipt.read_text()) == first
+    # Semantic JSON equality must not rewrite even noncanonical original bytes.
+    receipt.write_text(json.dumps(first, indent=1) + "\n\n")
+    before, modified = receipt.read_bytes(), receipt.stat().st_mtime_ns
+    assert api["verify_and_record"](tmp_path) == first
+    assert len(calls) == 2 and receipt.read_bytes() == before and receipt.stat().st_mtime_ns == modified
+
+
+def test_existing_mismatched_receipt_is_rejected_after_fresh_verification(tmp_path, monkeypatch):
+    api, _ = compact_fixture(tmp_path, monkeypatch)
+    original = api["verify_compact"]
+    calls = []
+
+    def counted(root):
+        calls.append(root)
+        return original(root)
+
+    monkeypatch.setitem(api["verify_and_record"].__globals__, "verify_compact", counted)
+    receipt = tmp_path / "compact-verification.json"
+    receipt.write_text('{"compact_binding_status":"old-or-wrong"}\n')
+    before = receipt.read_bytes()
+    with pytest.raises(ValueError, match="existing compact verification receipt differs"):
+        api["verify_and_record"](tmp_path)
+    assert len(calls) == 1 and receipt.read_bytes() == before

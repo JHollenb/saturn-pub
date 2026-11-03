@@ -498,6 +498,19 @@ def audit(run_dir):
         "scope": "saved hybrid versus natural relation history; signed differences are hybrid minus natural; descriptor equality and divergence are observations, not gates or semantic equivalence claims"}
     hybrid_natural["first_observed_scheduler_divergence"] = next((step for step in range(1, 5)
         if not hybrid_natural["reference_futures"]["schedulers"][str(step)]["exact"]), None)
+    hybrid_natural["matched_edits"] = {}
+    for action in rules["ACTIONS"]:
+        hybrid_name, natural_name = "hybrid." + action, "natural." + action
+        hybrid_cut, natural_cut = rows[hybrid_name]["post_act"], rows[natural_name]["post_act"]
+        hybrid_slots, natural_slots = slots(hybrid_cut), slots(natural_cut)
+        schedulers = {str(step): array_diagnostic(latents[hybrid_name][step], latents[natural_name][step]) for step in range(1, 5)}
+        hybrid_natural["matched_edits"][action] = {"hybrid_row": hybrid_name, "natural_row": natural_name,
+            "hybrid_post_act_cut": hybrid_cut, "natural_post_act_cut": natural_cut,
+            "post_act_fields": {name: {"hybrid_present": name in hybrid_slots, "natural_present": name in natural_slots,
+                                       "descriptor_equal": name in hybrid_slots and name in natural_slots and hybrid_slots[name] == natural_slots[name]}
+                                for name in sorted(set(hybrid_slots) | set(natural_slots))},
+            "schedulers": schedulers, "RGB": array_diagnostic(pixels[hybrid_name], pixels[natural_name]),
+            "first_observed_scheduler_divergence": next((step for step in range(1, 5) if not schedulers[str(step)]["exact"]), None)}
     emissions = [json.loads(line) for line in (data / "receipt-emissions.jsonl").read_text().splitlines()]
     require([row["sequence"] for row in emissions] == list(range(len(emissions))), "physical receipt emission sequence differs")
     work = {"acts": 0, "adapter_steps": 0}

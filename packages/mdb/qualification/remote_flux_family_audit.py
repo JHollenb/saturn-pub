@@ -172,6 +172,18 @@ def verify_compact(run_dir):
             "scope": "compact custody plus source-bound remote full-array audit attestation; raw producer archive remains remote"}
 
 
+def verify_and_record(run_dir):
+    """Reverify every time; create the receipt once or retain identical JSON."""
+    result = verify_compact(run_dir)
+    receipt = Path(run_dir) / "compact-verification.json"
+    try:
+        save(receipt, result)
+    except FileExistsError:
+        require(not receipt.is_symlink() and receipt.is_file(), "existing compact verification receipt is not a regular file")
+        require(read(receipt) == result, "existing compact verification receipt differs from newly verified result")
+    return result
+
+
 def stage(run_dir, producer, *, reuse_collected=False):
     from mdb.execution_environment import intent
     from mdb.job_support import guarded_mrun_launch, one_lease_scheduling_contract
@@ -231,9 +243,7 @@ if __name__ == "__main__":
         args = parser.parse_args()
         if args.collect or args.verify:
             custody = runpy.run_path(str(Path(__file__).with_name("flux_family_custody.py")))
-            result = verify_compact(args.run_dir) if args.verify else custody["collect"](args.run_dir, args.collect, COMPACT)
-            if args.verify:
-                save(args.run_dir / "compact-verification.json", result)
+            result = verify_and_record(args.run_dir) if args.verify else custody["collect"](args.run_dir, args.collect, COMPACT)
         else:
             if args.producer is None:
                 parser.error("--producer required")

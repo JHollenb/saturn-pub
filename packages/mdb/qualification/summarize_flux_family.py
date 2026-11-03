@@ -165,18 +165,31 @@ def records(audit, provenance, pairs, selectors):
     return output
 
 
+def panel_members(plan):
+    """Fixed display geometry, including controls; never select by outcome."""
+    inventory = {row["id"]: row for row in plan["rows"]}
+    references = lambda pairs: {"ref." + pair[key] for pair in plan["pairs"] if pair["id"] in pairs
+                               for key in ("source", "recipient")}
+    merges = lambda pairs: {pair + "." + action for pair in pairs for action in ACTIONS}
+    anchor_refs = {"ref.anchor.base", "ref.anchor.hybrid"}
+    selections = {
+        1: anchor_refs | {"hybrid.R", "hybrid.RA", "kv.K", "kv.V", "kv.KV", "kv.Q.changedR"},
+        2: references({"hybrid", "natural", "reverse"}) | merges({"hybrid", "natural", "reverse"}) | {"sham.hybrid", "sham.natural"},
+        3: references({"color", "shape"}) | merges({"color", "shape"}),
+        4: {name for name, row in inventory.items() if row["split"] == "heldout"},
+        5: anchor_refs | {"hybrid.R", "kv.KV"} | {name for name, row in inventory.items() if row["kind"] in {"support", "break", "rescue"}},
+        6: references({pair["id"] for pair in plan["pairs"]}) | {name for name, row in inventory.items() if row["kind"] == "merge"}}
+    require(all(names <= inventory.keys() for names in selections.values()), "curated panel control is missing")
+    require(set().union(*selections.values()) == inventory.keys(), "curated panels omit a completed row")
+    return {panel: [row["id"] for row in plan["rows"] if row["id"] in names] for panel, names in selections.items()}
+
+
 def contact_sheets(data, output, audit, rows):
     from PIL import Image, ImageDraw
 
     sheets = {}
-    for panel, title in PANELS.items():
-        names = {row["id"] for row in audit["plan"]["rows"] if panel in row["panels"]}
-        for name in list(names):
-            pair = rows[name].get("pair")
-            if pair is not None:
-                effect = audit["pair_effects"][pair]
-                names.update((effect["source_ref"], effect["recipient_ref"]))
-        order = [row["id"] for row in audit["plan"]["rows"] if row["id"] in names]
+    for panel, order in panel_members(audit["plan"]).items():
+        title = PANELS[panel]
         require(order, "empty logical panel")
         width, height = audit["plan"]["width"], audit["plan"]["height"]
         columns, label = min(4, len(order)), 36
@@ -194,6 +207,7 @@ def contact_sheets(data, output, audit, rows):
         path = output / ("panel-" + str(panel) + ".png")
         sheet.save(path)
         sheets[str(panel)] = {"title": title, "path": path.name, "sha256": sha(path), "sources": sources,
+            "selection_scope": "fixed by panel role and required controls before outcomes; union covers every completed row",
             "image_transform": "none; original RGB pixels tiled at original size with separate text labels", "visual_inspection": "pending"}
     return sheets
 
@@ -226,6 +240,11 @@ def markdown(result):
         lines.append(f"| {name} | {number(final['target_projection'])} | {number(final['base_l2'])} |")
     lines += ["", "All control findings and every row remain in result.json. No automatic semantic labels or rule promotion.",
         "", "Full arrays and CAS were audited on the storage host; this compact publication contains audited JSON and original PNGs.", ""]
+    lines += ["| Completed row | Split | Kind | Display panels |", "|---|---|---|---|"]
+    for row in result["row_index"]:
+        displayed = [panel for panel, sheet in result["contact_sheets"].items() if any(item["row_id"] == row["id"] for item in sheet["sources"])]
+        lines.append("| " + " | ".join([row["id"], row["split"], row["kind"], ", ".join(displayed)]) + " |")
+    lines.append("")
     for panel, sheet in result["contact_sheets"].items():
         lines += [f"## Panel {panel}: {sheet['title']}", "", f"![Panel {panel}]({sheet['path']})", ""]
     return "\n".join(lines)

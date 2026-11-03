@@ -102,6 +102,14 @@ seed/wording contexts with 39 native image outcomes. All 18 frozen ordering
 predictions agree with inspection. A query/text-KV/image-KV factorial refines the
 conditional route and retains two failed source-ranking predictions in three
 source-qualified generic computation records.
+The [six-panel computation-family campaign](docs/FLUX-COMPUTATION-FAMILIES.md)
+continues 47 native futures in one resident model load. Joint residual/attention
+replacement wins the declared latent rank in all seven pairs. Assistant inspection
+finds ordering restoration in five relation contrasts but failed color/shape
+assignment transfers. Text-energy support ranking reverses, and selectors do not
+improve on fixed RA. It retains K/V prediction misses, selected-row rescue, and equal
+working prefixes whose different stored conditioning produces later divergence.
+All rows, source bindings and six image panels accompany the portable result index.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 [Packed forecast storage](docs/FORECAST-STORAGE.md) is the default and preserves the complete
