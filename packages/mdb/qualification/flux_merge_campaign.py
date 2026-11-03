@@ -9,6 +9,88 @@ import time
 from pathlib import Path
 
 
+def validate_shape_writer_config(config):
+    if config.get("panel") != "shape-step1-writer":
+        return False
+    if (config.get("prefix_selector") != {"logical_step": 1, "phase": "single", "index": 0}
+            or config.get("selector") != {"logical_step": 1, "phase": "single", "index": 4}
+            or config.get("reset_step") != 2 or config.get("block") != 4
+            or config.get("fresh_context") or config.get("attention_sources")):
+        raise ValueError("shape writer requires the declared step1 single0-to-single4 prefix and step2 reset")
+    return True
+
+
+def matched_shape_closure(cuts, *, selector):
+    """Only this experiment permits a stored-conditioning mismatch."""
+    from saturn_pub.values import describe
+
+    if set(cuts) != {"base", "changed"}:
+        raise ValueError("shape writer requires base and changed origins")
+    base, changed = cuts["base"], cuts["changed"]
+    if (base.model_identity != changed.model_identity or dict(base.execution) != dict(changed.execution)
+            or base.execution_point != changed.execution_point
+            or any(base.execution_point.get(key) != value for key, value in selector.items())):
+        raise ValueError("shape writer source model/execution/clock differs")
+    left, right = base.payload, changed.payload
+    if set(left) != set(right):
+        raise ValueError("shape writer source closure inventory differs")
+    for slot in left:
+        if slot not in {"text", "image", "conditioning"} and describe(left[slot]) != describe(right[slot]):
+            raise ValueError("shape writer unmatched nuisance closure: " + slot)
+
+
+def advance_shape_sources(adapter, origins, *, prefix_selector, selector, store, max_steps, on_receipt=None):
+    """Advance original native handoff cuts to selected ports with public lineage."""
+    from saturn_pub import Session
+
+    from mdb.native_navigation import NativeCutNavigator
+
+    matched_shape_closure(origins, selector=prefix_selector)
+    selected, receipts = {}, {}
+    for name in ("base", "changed"):
+        origin = origins[name]
+        store.save(origin)
+        receipts[name] = []
+
+        def accept(receipt):
+            store.receipt(receipt)
+            receipts[name].append(receipt.to_dict())
+            if on_receipt is not None:
+                on_receipt(receipt)
+
+        nav = NativeCutNavigator(Session.from_cut(adapter, origin), max_steps=max_steps, on_receipt=accept)
+        nav.until(**selector)
+        selected[name] = nav.capture()
+        store.save(selected[name])
+    matched_shape_closure(selected, selector=selector)
+    return selected, receipts
+
+
+def reset_shape_conditioning(nav, value, *, step, name, source_cut, store):
+    """Typed C reset immediately before the declared next projection."""
+    from saturn_pub import Act
+    from saturn_pub.values import describe
+
+    point = nav.point
+    if (point.get("logical_step") != step or point.get("phase") != "project"
+            or point.get("local_clock") != 0 or point.get("index") is not None):
+        raise ValueError("shape source reset requires the declared project boundary")
+    before = nav.capture()
+    store.save(before)
+    expected = dict(before.payload)
+    expected["conditioning"] = value
+    act = Act.replace("conditioning", value, name=name)
+    receipt = nav.apply(act)
+    store.receipt(receipt)
+    after = nav.capture()
+    store.save(after)
+    if describe(after.payload) != describe(expected):
+        raise ValueError("shape source reset changed undeclared closure")
+    return {"act": act.manifest(), "receipt": receipt.to_dict(), "receipt_id": receipt.fingerprint,
+            "parent": before.fingerprint, "post_act": after.fingerprint, "point": point,
+            "source_cut": source_cut, "undeclared_slots_exact": True}
+
+
 def worker():
     support = runpy.run_path("flux_trajectory_forecast_campaign.py")
     save, file_sha, identity = (support[key] for key in ("save", "file_sha", "identity"))
@@ -16,6 +98,7 @@ def worker():
     request = json.loads(Path(os.environ["SATURN_DEBUG_REQUEST"]).read_text())
     if config != request["config"] or any(file_sha(name) != value for name, value in request["source_hashes"].items()):
         raise ValueError("request/source differs")
+    shape_mode = validate_shape_writer_config(config)
     for key in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS"):
         os.environ[key] = str(config["cpu_threads"])
     os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG", ":4096:8")
@@ -95,7 +178,7 @@ def worker():
     def nav(cut):
         return NativeCutNavigator(Session.from_cut(adapter, cut), max_steps=config["max_adapter_steps"], on_receipt=on_receipt)
 
-    initial = {}
+    initial, origins, advance_receipts = {}, {}, {}
     if config.get("fresh_context"):
         from diffusers.pipelines.flux2.pipeline_flux2_klein import (
             compute_empirical_mu,
@@ -163,12 +246,20 @@ def worker():
         adapter = Flux2KleinAdapter.from_pipeline(pipe, granularity="operation", residency="resident", device="cuda")
         inputs = LocalStore("input-store")
         before = {name: inputs.load(cut_id, device="cuda") for name, cut_id in config["input_cuts"].items()}
+        if shape_mode:
+            origins = before
+            before, advance_receipts = advance_shape_sources(adapter, origins,
+                prefix_selector=config["prefix_selector"], selector=config["selector"], store=store,
+                max_steps=config["max_adapter_steps"], on_receipt=on_receipt)
+            event("shape_writer_prefix_ready", origin_cuts={name: cut.fingerprint for name, cut in origins.items()},
+                input_cuts={name: cut.fingerprint for name, cut in before.items()}, counts=dict(counts))
     for cut in before.values():
         store.save(cut)
         if cut.model_identity != adapter.model_identity or any(cut.execution_point[k] != v for k, v in config["selector"].items()):
             raise ValueError("input model or selected boundary differs")
     for slot in before["base"].payload:
-        if slot not in {"text", "image"} and describe(before["base"].payload[slot]) != describe(before["changed"].payload[slot]):
+        allowed = {"text", "image", "conditioning"} if shape_mode else {"text", "image"}
+        if slot not in allowed and describe(before["base"].payload[slot]) != describe(before["changed"].payload[slot]):
             raise ValueError("unmatched source closure: " + slot)
 
     target = pipe.transformer.single_transformer_blocks[config["block"]].attn
@@ -243,11 +334,20 @@ def worker():
             "parallel_config": str(target.processor._parallel_config), "Q_factor": "source of installed image-query outputs; text-query outputs discarded; changed text remains"},
         "weight": tensor_descriptor(projection.weight), "bias": None if projection.bias is None else tensor_descriptor(projection.bias),
         "scope": "observed native R/A/M ports and two blocks before seal; original frozen projection, typed image-only post-block Acts; no independent edited-image forecast"}
+    if shape_mode:
+        source.update(origin_cuts={name: cut.fingerprint for name, cut in origins.items()},
+            advance_receipts=advance_receipts, prefix_selector=config["prefix_selector"],
+            conditioning_reset={"step": config["reset_step"], "phase": "project", "slot": "conditioning",
+                "source_cut": origins["base"].fingerprint,
+                "value_descriptor": tensor_descriptor(origins["base"].payload["conditioning"])})
     save(output / "source.json", source)
+    allowed_prefix = ("declared original step1 handoff cuts advanced natively to single4, then two selected-block observations; no RGB outcomes"
+        if shape_mode else "declared fresh text encodings/projection and matched prefixes, then two selected-block port observations; no RGB outcomes"
+        if initial else "two native selected-block executions to observe actual merge ports; no RGB outcomes")
     tx = ForecastTransaction(output / "transaction", model_identity=adapter.model_identity,
         input_identity=identity(config), source_identity=identity(request["source_hashes"]),
         frontier={"kind": "architectural", "source_sha256": file_sha(output / "source.json"),
-            "allowed_prefix": "declared fresh text encodings/projection and matched prefixes, then two selected-block port observations; no RGB outcomes" if initial else "two native selected-block executions to observe actual merge ports; no RGB outcomes"},
+            "allowed_prefix": allowed_prefix},
         budgets={"max_native_calls": 1, "max_wall_ms": config["max_wall_seconds"] * 1000})
     tx.predict("merge_hypotheses", lambda context: {"predictions": config["hypotheses"]})
     seal = tx.seal()
@@ -255,10 +355,14 @@ def worker():
 
     def finish(session, row):
         event("branch_start", row=row["id"])
-        schedulers = []
+        schedulers, continuation_acts = [], []
         while session.point["logical_step"] < config["steps"]:
             wall()
             point = session.point
+            if shape_mode and point["logical_step"] == config["reset_step"] and point["phase"] == "project":
+                continuation_acts.append(reset_shape_conditioning(session, origins["base"].payload["conditioning"],
+                    step=config["reset_step"], name=row["id"] + ".future-source-base",
+                    source_cut=origins["base"].fingerprint, store=store))
             session.step()
             if point["phase"] == "scheduler":
                 value = session.session.read("latent")
@@ -271,6 +375,12 @@ def worker():
         adapter.decode(session.session, height=512, width=512).save(path)
         counts["images"] += 1
         row.update(schedulers=schedulers, image={"path": path.name, "sha256": file_sha(path)})
+        if shape_mode:
+            if len(continuation_acts) != 1:
+                raise ValueError("shape branch did not perform exactly one future-source reset")
+            final = session.capture()
+            store.save(final)
+            row.update(continuation_acts=continuation_acts, final_cut=final.fingerprint)
         save(output / "rows" / (row["id"] + ".json"), row)
         rows.append(row)
         event("branch_complete", row=row["id"], counts=dict(counts))

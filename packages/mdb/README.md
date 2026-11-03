@@ -120,6 +120,14 @@ four forecast/native PNGs, including a partial shape transfer. The
 [conditioning-timing follow-up](docs/FLUX-SHAPE-TIMING.md) follows ten native
 futures under reciprocal source switches, retaining exact replay controls and
 separate latent geometry and inspected shape outcomes.
+The [second-step shape handoff](docs/FLUX-SHAPE-HANDOFF.md) maps an interval
+of text/image overlap. Its [native R/A/M follow-up](docs/FLUX-SHAPE-WRITER.md)
+continues eleven futures from one observed context: attention substitution becomes
+more consequential under a restored receiving residual, while the same donor MLP
+operand changes the direction of its final latent effect. Both frozen numerical
+rankings match; arm-blinded inspection preserves mixed shapes rather than claiming
+complete cube restoration. The curated record retains finite-precision limits,
+controls and counterexamples alongside the native images.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 The [compiled-state residual view](docs/COMPILED-STATE.md) fits per-position

@@ -19,6 +19,7 @@ def analyze(root):
     run = h["source_run"](root, "flux-handoff-result", max_archive_bytes=256 << 20, max_member_bytes=128 << 20)
     data, tree, plan = run["data"], run["tree"], run["plan"]
     source, summary, frontiers = (read(data / name) for name in ("source.json", "summary.json", "frontiers.json"))
+    shape_mode = plan.get("panel") == "shape-step1"
     require(plan == run["request"]["config"] and source["checkpoint_sha256"] == plan["expected_checkpoint_sha256"], "plan/checkpoint mismatch")
     observed = tree.decode(read(run["transaction"] / "observations/native.json")["value"])
     hypotheses = tree.decode(read(run["transaction"] / "forecasts/handoff_hypotheses.json")["predictions"])
@@ -31,11 +32,25 @@ def analyze(root):
         payload = store["cuts"][cut_id]["payload"]
         return {item["key"]["value"]: item["value"] for item in payload["items"]}
 
-    initial, donor, changed = (
-        fields(source["base"]), fields(source["input_cuts"]["relation"]), fields(source["changed"]))
-    require(changed == {**initial, "text": donor["text"]}, "initial changed branch is not text-only")
-    require(initial["text"] != donor["text"], "source text contrast empty")
-    require(all(initial[slot] == donor[slot] for slot in initial if slot not in {"text", "conditioning"}), "input nuisance contrast")
+    initial, changed = fields(source["base"]), fields(source["changed"])
+    if shape_mode:
+        before_a, before_d = (fields(source["input_cuts"][n]) for n in ("base", "changed"))
+        require({k: v for k, v in before_a.items() if k != "conditioning"} ==
+                {k: v for k, v in before_d.items() if k != "conditioning"}, "source parent nuisance differs")
+        require({k: v for k, v in initial.items() if k not in {"text", "conditioning"}} ==
+                {k: v for k, v in changed.items() if k not in {"text", "conditioning"}}, "projected nuisance differs")
+        require(initial["text"] != changed["text"] and initial["conditioning"] == before_a["conditioning"]
+                and changed["conditioning"] == before_d["conditioning"], "projected source contrast differs")
+        for name, receipt in zip(("base", "changed"), source["project_receipts"], strict=True):
+            h["public_receipt"](receipt)
+            require(read(data / "typed-store/receipts" / (receipt["fingerprint"] + ".json")) == receipt
+                    and receipt["parent"] == source["input_cuts"][name] and receipt["result"] == source[name]
+                    and receipt["operation"] == "continue" and receipt["steps"] == 1, "projection lineage differs")
+    else:
+        donor = fields(source["input_cuts"]["relation"])
+        require(changed == {**initial, "text": donor["text"]}, "initial changed branch is not text-only")
+        require(initial["text"] != donor["text"], "source text contrast empty")
+        require(all(initial[slot] == donor[slot] for slot in initial if slot not in {"text", "conditioning"}), "input nuisance contrast")
     for boundary in plan["boundaries"]:
         for ref in ("base", "changed"):
             cut_id = frontiers[ref][boundary["id"]]
@@ -43,13 +58,14 @@ def analyze(root):
             # Execution points in the StateCut manifest have typed descriptors.
             raw = read(data / "typed-store/cuts" / (cut_id + ".json"))["execution_point"]
             require(all(raw[key] == value for key, value in boundary["selector"].items()), "breakpoint selector mismatch")
-            require(point is not None and fields(cut_id)["conditioning"] == initial["conditioning"], "stored conditioning changed")
+            expected_c = changed["conditioning"] if shape_mode and ref == "changed" else initial["conditioning"]
+            require(point is not None and fields(cut_id)["conditioning"] == expected_c, "stored conditioning changed")
     rows = {row["id"]: row for row in observed["rows"]}
     expected = {"base", "changed", "late.sham", "late.restore_both"} | {
         b["id"] + ".restore_" + slot for b in plan["boundaries"] for slot in ("text", "image")}
     require(set(rows) == expected and len(rows) == plan["max_images"] == summary["counts"]["images"], "row inventory mismatch")
     arrays, pixels, diagnostics = {}, {}, {}
-    act_count = 1
+    act_count = 0 if shape_mode else 1
     for name, row in rows.items():
         require(read(data / "rows" / (name + ".json")) == row, "row observation mismatch")
         require(sha((data / row["image"]["path"]).read_bytes()) == row["image"]["sha256"], "PNG digest mismatch")
@@ -62,7 +78,19 @@ def analyze(root):
             values = np.load(path, allow_pickle=False)
             require(sha(path.read_bytes()) == saved["sha256"] and typed["matches"](values, saved["descriptor"], bf16=True), "scheduler array descriptor mismatch")
             arrays[name][saved["step"]] = values
-        require(set(arrays[name]) == {1, 2, 3, 4}, "incomplete scheduler future")
+        require(set(arrays[name]) == set(range(plan.get("start_step", 0) + 1, 5)), "incomplete scheduler future")
+        if shape_mode:
+            require(len(row["continuation_acts"]) == 1, "missing common future reset")
+            action = row["continuation_acts"][0]
+            receipt = read(data / "typed-store/receipts" / (action["receipt_id"] + ".json"))
+            h["public_receipt"](receipt)
+            require(receipt == action["receipt"] and receipt["parent"] == action["parent"]
+                    and receipt["result"] == action["post_act"] and action["act"]["writes"] == ["conditioning"], "reset receipt differs")
+            before, after = fields(action["parent"]), fields(action["post_act"])
+            point = read(data / "typed-store/cuts" / (action["parent"] + ".json"))["execution_point"]
+            require(point["logical_step"] == plan["reset_step"] and point["phase"] == "project"
+                    and after == {**before, "conditioning": initial["conditioning"]}, "future reset changed undeclared closure")
+            act_count += 1
         if row["kind"] == "reference":
             require(row["parent"] == source[name], "reference parent mismatch")
             continue
@@ -80,13 +108,15 @@ def analyze(root):
             require(receipt == action["receipt"] and action["act"]["writes"] == [slot], "Act/receipt mismatch")
         act_count += len(row["acts"])
     # Verify every retained native receipt, not only intervention receipts.
-    operations = 0
+    operations, continue_edges = 0, {}
     for path in (data / "typed-store/receipts").glob("*.json"):
         receipt = read(path)
         h["public_receipt"](receipt)
         require(receipt["fingerprint"] == path.stem and receipt["model_identity"] == source["model_identity"], "receipt identity mismatch")
         if receipt["operation"] == "continue":
             operations += receipt["steps"]
+            require(receipt["parent"] not in continue_edges or continue_edges[receipt["parent"]] == receipt, "ambiguous native edge")
+            continue_edges[receipt["parent"]] = receipt
     require(operations == summary["counts"]["adapter_steps"] and act_count == summary["counts"]["acts"], "receipt/work census mismatch")
     comparisons = {name: {"rgb": compare(pixels[name], pixels["base"], pixels["changed"]),
         "scheduler_trajectory": {str(step): compare(value, arrays["base"][step], arrays["changed"][step])
@@ -95,15 +125,38 @@ def analyze(root):
         row["exact_target"] for row in comparisons["late.sham"]["scheduler_trajectory"].values()),
         "restore_both_base_exact": comparisons["late.restore_both"]["rgb"]["exact_base"] and all(
         row["exact_base"] for row in comparisons["late.restore_both"]["scheduler_trajectory"].values())}
+    native_paths = {}
+    if shape_mode:
+        for name, row in rows.items():
+            current = row["parent"] if row["kind"] == "reference" else row["post_act"]
+            reset = row["continuation_acts"][0]["receipt"]
+            path, reset_count = [], 0
+            while True:
+                if current == reset["parent"]:
+                    current = reset["result"]
+                    reset_count += 1
+                require(current in continue_edges, "broken native path")
+                receipt = continue_edges[current]
+                path.append(receipt["fingerprint"])
+                current = receipt["result"]
+                if receipt["execution_point"]["logical_step"] == 4:
+                    break
+                require(len(path) <= 84, "native path exceeded suffix")
+            require(reset_count == 1, "native path omitted common reset")
+            native_paths[name] = {"native_steps": len(path), "reset_count": reset_count, "final_cut": current}
+        for name in ("base", "changed"):
+            controls[name + "_historical_png_exact"] = rows[name]["image"]["sha256"] == plan["historical_pngs"][name]
     helpers = ("summarize_context_window.py", "analyze_flux_mlp_forecast.py", "analyze_flux_concept_routes.py")
     return {"schema": "mdb-flux-handoff-audit-v1", "source": run["source"], "counts": summary["counts"],
         "mechanics_status": "valid", "terminal_status": "unassessed", "typed_store": {key: value for key, value in store.items() if key != "cuts"},
         "sealed_hypotheses": hypotheses, "control_observations": controls,
         "comparisons": comparisons, "image_diagnostics": diagnostics, "frontiers": frontiers,
+        "native_paths": native_paths,
         "auditor_source_sha256": sha(Path(__file__).read_bytes()),
         "audit_helpers": {name: sha((here / name).read_bytes()) for name in helpers},
         "scope": plan["scope"], "equations_or_models_executed": False,
-        "interpretation_limits": "Whole-field interventions, known seed31 contrast; no minimal writer, object masks, numerical image prediction or general semantic rule claim."}
+        "interpretation_limits": ("Whole-field step1 shape interventions in seed47, common future source from2; qualitative shapes require separate inspection; no minimal writer or numerical RGB forecast."
+            if shape_mode else "Whole-field interventions, known seed31 contrast; no minimal writer, object masks, numerical image prediction or general semantic rule claim.")}
 
 
 if __name__ == "__main__":

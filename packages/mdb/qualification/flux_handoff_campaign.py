@@ -9,6 +9,52 @@ import time
 from pathlib import Path
 
 
+def reset_conditioning(nav, value, *, step, name, store):
+    """Reset the future source at its declared read boundary, preserving closure."""
+    from saturn_pub import Act
+    from saturn_pub.values import describe
+
+    if nav.point["logical_step"] != step or nav.point["phase"] != "project":
+        raise ValueError("source reset requires the declared project boundary")
+    before = nav.capture()
+    store.save(before)
+    expected = dict(before.payload)
+    expected["conditioning"] = value
+    act = Act.replace("conditioning", value, name=name)
+    receipt = nav.apply(act)
+    after = nav.capture()
+    store.save(after)
+    if describe(after.payload) != describe(expected):
+        raise ValueError("source reset changed undeclared closure")
+    return {"act": act.manifest(), "receipt": receipt.to_dict(), "receipt_id": receipt.fingerprint,
+            "parent": before.fingerprint, "post_act": after.fingerprint}
+
+
+def project_matched_sources(adapter, base, changed, *, on_receipt, max_steps):
+    """Native projections from equal-latent parents differing only in C."""
+    from saturn_pub import Session
+    from saturn_pub.values import describe
+
+    from mdb.native_navigation import NativeCutNavigator
+
+    if base.execution_point != changed.execution_point or base.execution_point["phase"] != "project":
+        raise ValueError("source pair requires matching preprojection cuts")
+    for slot in base.payload:
+        if slot != "conditioning" and describe(base.payload[slot]) != describe(changed.payload[slot]):
+            raise ValueError("source pair changes nuisance slot: " + slot)
+    navs = [NativeCutNavigator(Session.from_cut(adapter, c), max_steps=max_steps, on_receipt=on_receipt)
+            for c in (base, changed)]
+    for nav in navs:
+        nav.step()
+    projected = [nav.capture() for nav in navs]
+    for slot in projected[0].payload:
+        if slot not in {"text", "conditioning"} and describe(projected[0].payload[slot]) != describe(projected[1].payload[slot]):
+            raise ValueError("projected nuisance differs: " + slot)
+    if describe(projected[0].payload["text"]) == describe(projected[1].payload["text"]):
+        raise ValueError("empty text contrast after projection")
+    return navs, projected
+
+
 def worker():
     support = runpy.run_path("flux_trajectory_forecast_campaign.py")
     save, file_sha, identity = (support[key] for key in ("save", "file_sha", "identity"))
@@ -82,7 +128,8 @@ def worker():
             raise ValueError("hydrated model identity differs")
         store.save(cut)
     # Source contrast changes only C/T. No changed latent, position, gates or schedule.
-    base, relation = cuts["base"], cuts["relation"]
+    shape_mode = config.get("panel") == "shape-step1"
+    base, relation = cuts["base"], cuts["changed" if shape_mode else "relation"]
     for slot in base.payload:
         if slot not in {"text", "conditioning"} and describe(base.payload[slot]) != describe(relation.payload[slot]):
             raise ValueError("source contrast changes nuisance slot: " + slot)
@@ -100,28 +147,37 @@ def worker():
     def navigator(cut):
         return NativeCutNavigator(Session.from_cut(adapter, cut), max_steps=config["max_adapter_steps"], on_receipt=on_receipt)
 
-    a, d = navigator(base), navigator(base)
-    seed_act = Act.replace("text", relation.payload["text"], name="seed.changed-working-text")
-    seed_receipt = d.apply(seed_act)
-    changed = d.capture()
-    store.save(changed)
-    expected = dict(base.payload)
-    expected["text"] = relation.payload["text"]
-    if describe(changed.payload) != describe(expected):
-        raise ValueError("changed branch altered undeclared initial state")
+    seed_metadata = {}
+    if shape_mode:
+        (a, d), (base, changed) = project_matched_sources(adapter, base, relation,
+            on_receipt=on_receipt, max_steps=config["max_adapter_steps"])
+        for cut in (base, changed):
+            store.save(cut)
+        seed_metadata["project_receipts"] = [nav.session.receipts[-1].to_dict() for nav in (a, d)]
+    else:
+        a, d = navigator(base), navigator(base)
+        seed_act = Act.replace("text", relation.payload["text"], name="seed.changed-working-text")
+        seed_receipt = d.apply(seed_act)
+        changed = d.capture()
+        store.save(changed)
+        expected = dict(base.payload)
+        expected["text"] = relation.payload["text"]
+        if describe(changed.payload) != describe(expected):
+            raise ValueError("changed branch altered undeclared initial state")
+        seed_metadata = {"seed_act": seed_act.manifest(), "seed_receipt": seed_receipt.to_dict()}
     source = {"schema": "mdb-flux-handoff-source-v1", "model_identity": adapter.model_identity,
         "checkpoint_sha256": identity(inventory), "request_sha256": request["request_sha256"],
         "packages": {key: importlib.metadata.version(key) for key in ("mdb-runtime", "saturn-pub", "torch", "diffusers", "transformers")},
         "input_cuts": config["input_cuts"], "base": base.fingerprint, "changed": changed.fingerprint,
-        "seed_act": seed_act.manifest(), "seed_receipt": seed_receipt.to_dict(),
+        **seed_metadata,
         "predecessor": config["predecessor"], "prompt_encodings": 0,
-        "scope": "same seed31 known contrast; native causal continuation, not a numerical image forecast"}
+        "scope": config["scope"]}
     save(output / "source.json", source)
     tx = ForecastTransaction(output / "transaction", model_identity=adapter.model_identity,
         input_identity=identity(config), source_identity=identity(request["source_hashes"]),
         frontier={"kind": "architectural", "source_sha256": file_sha(output / "source.json"),
             "base": base.fingerprint, "changed": changed.fingerprint,
-            "allowed_prefix": "previous observed timestep0 projection; no new native block or RGB outcome yet"},
+            "allowed_prefix": "observed source cuts and declared native projections; no new native block or RGB outcome yet"},
         budgets={"max_native_calls": 1, "max_wall_ms": config["max_wall_seconds"] * 1000})
     tx.predict("handoff_hypotheses", lambda context: {"predictions": config["hypotheses"]})
     seal = tx.seal()
@@ -129,16 +185,19 @@ def worker():
 
     def finish(nav, row, *, capture_reference=None):
         event("branch_start", row=row["id"])
-        schedulers = []
+        schedulers, continuation_acts = [], []
         while nav.point["logical_step"] < config["steps"]:
             wall()
             point = nav.point
-            if capture_reference is not None and point["logical_step"] == 0:
+            if capture_reference is not None and point["logical_step"] == config.get("start_step", 0):
                 for boundary in config["boundaries"]:
                     if all(point[key] == value for key, value in boundary["selector"].items()):
                         cut = nav.capture()
                         store.save(cut)
                         frontiers[capture_reference][boundary["id"]] = cut
+            if shape_mode and point["logical_step"] == config["reset_step"] and point["phase"] == "project":
+                continuation_acts.append(reset_conditioning(nav, base.payload["conditioning"], step=config["reset_step"],
+                    name=row["id"] + ".future-source-base", store=store))
             nav.step()
             if point["phase"] == "scheduler":
                 step = nav.point["logical_step"]
@@ -151,7 +210,8 @@ def worker():
         path = output / (row["id"] + ".png")
         adapter.decode(nav.session, height=512, width=512).save(path)
         counts["images"] += 1
-        row.update(image={"path": path.name, "sha256": file_sha(path)}, schedulers=schedulers)
+        row.update(image={"path": path.name, "sha256": file_sha(path)}, schedulers=schedulers,
+            continuation_acts=continuation_acts)
         rows.append(row)
         save(output / "rows" / (row["id"] + ".json"), row)
         event("branch_complete", row=row["id"], counts=dict(counts))
