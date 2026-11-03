@@ -1,0 +1,887 @@
+{
+  "artifacts": {
+    "audit": "../../../../artifacts/mdb-flux-branch-forecasts-20261102/run-04/analysis-v1.json",
+    "campaign": "../../../../artifacts/mdb-flux-branch-forecasts-20261102",
+    "comparison_figure": "../docs/assets/flux-branch-forecasts-20261102.png",
+    "comparison_figure_sha256": "0ce0747681864fd84905366b85e499dae33f5f4829c07db5252c8dd92906cb04"
+  },
+  "checks": {
+    "installed_package_consumer_tests": 4,
+    "ruff": "passed"
+  },
+  "computation_records": [
+    {
+      "applicability": {
+        "backend": "cuda",
+        "checkpoint_sha256": "dd976d67036c4a0a55642f702dcb3740ba7a4f367557596572baac168330904f",
+        "diffusion_steps": 4,
+        "dtype": "bfloat16",
+        "height": 512,
+        "initial_text_source": "base",
+        "later_conditioning": "base",
+        "parent_cut": "2604fcbf97f4a0efd64d1ea22583f31fa0c8b010b50c6f8581283c01b44a6995",
+        "physical_batch": 1,
+        "seed": 47,
+        "width": 512
+      },
+      "consumer_id": "vae.rgb",
+      "evidence_status": "observation",
+      "law_id": "flux.functional.own-state.trajectory-and-rgb",
+      "limits": "Structural computation and whole-text route; no per-object address or universal semantic operation inferred.",
+      "native_effect": {
+        "changed_channels": 0,
+        "max_abs": 0.0,
+        "mean_abs": 0.0
+      },
+      "numerical_forecast": {
+        "native_refreshes": 0,
+        "own_state": true,
+        "pixel_error": {
+          "changed_elements": 0,
+          "elements": 786432,
+          "exact": true,
+          "l2": 0.0,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "native_minus_forecast": 0.0
+          },
+          "max_abs": 0.0,
+          "mean_abs": 0.0,
+          "native_l2": 209992.15956316082,
+          "relative_l2": 0.0,
+          "shape": [
+            512,
+            512,
+            3
+          ],
+          "signed_mean": 0.0
+        },
+        "png_bytes_exact": true
+      },
+      "record_id": "flux.future.seed47.base",
+      "route_id": "flux.route.T",
+      "rule_status": "not-validated",
+      "semantic_observation": {
+        "observation": "A red cube on the left and a blue rounded sphere on the right, on a white background.",
+        "semantic_status": "base reference"
+      }
+    },
+    {
+      "applicability": {
+        "backend": "cuda",
+        "checkpoint_sha256": "dd976d67036c4a0a55642f702dcb3740ba7a4f367557596572baac168330904f",
+        "diffusion_steps": 4,
+        "dtype": "bfloat16",
+        "height": 512,
+        "initial_text_source": "color",
+        "later_conditioning": "base",
+        "parent_cut": "9a44f660a955811eed71ad9b764190a27cc04c73be9da33ef2f23eee0691ed1d",
+        "physical_batch": 1,
+        "seed": 47,
+        "width": 512
+      },
+      "consumer_id": "vae.rgb",
+      "evidence_status": "observation",
+      "law_id": "flux.functional.own-state.trajectory-and-rgb",
+      "limits": "Structural computation and whole-text route; no per-object address or universal semantic operation inferred.",
+      "native_effect": {
+        "changed_channels": 462929,
+        "max_abs": 255.0,
+        "mean_abs": 26.88402048746745
+      },
+      "numerical_forecast": {
+        "native_refreshes": 0,
+        "own_state": true,
+        "pixel_error": {
+          "changed_elements": 0,
+          "elements": 786432,
+          "exact": true,
+          "l2": 0.0,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "native_minus_forecast": 0.0
+          },
+          "max_abs": 0.0,
+          "mean_abs": 0.0,
+          "native_l2": 211618.6388010281,
+          "relative_l2": 0.0,
+          "shape": [
+            512,
+            512,
+            3
+          ],
+          "signed_mean": 0.0
+        },
+        "png_bytes_exact": true
+      },
+      "record_id": "flux.future.seed47.color",
+      "route_id": "flux.route.T",
+      "rule_status": "not-validated",
+      "semantic_observation": {
+        "hypothesis_status": "supports the predeclared early-text color hypothesis",
+        "observation": "A blue cube on the left and a red rounded or oval sphere on the right. The visible color assignment changes while cube-left and rounded-object-right organization remains.",
+        "semantic_status": "color-assignment change supported by inspection"
+      }
+    },
+    {
+      "applicability": {
+        "backend": "cuda",
+        "checkpoint_sha256": "dd976d67036c4a0a55642f702dcb3740ba7a4f367557596572baac168330904f",
+        "diffusion_steps": 4,
+        "dtype": "bfloat16",
+        "height": 512,
+        "initial_text_source": "relation",
+        "later_conditioning": "base",
+        "parent_cut": "dd5b50f2a69ae55d2e0450b90c17b649a7fced0c75e98186d5fc3e518bbcedd5",
+        "physical_batch": 1,
+        "seed": 47,
+        "width": 512
+      },
+      "consumer_id": "vae.rgb",
+      "evidence_status": "observation",
+      "law_id": "flux.functional.own-state.trajectory-and-rgb",
+      "limits": "Structural computation and whole-text route; no per-object address or universal semantic operation inferred.",
+      "native_effect": {
+        "changed_channels": 459138,
+        "max_abs": 255.0,
+        "mean_abs": 28.286786397298176
+      },
+      "numerical_forecast": {
+        "native_refreshes": 0,
+        "own_state": true,
+        "pixel_error": {
+          "changed_elements": 0,
+          "elements": 786432,
+          "exact": true,
+          "l2": 0.0,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "native_minus_forecast": 0.0
+          },
+          "max_abs": 0.0,
+          "mean_abs": 0.0,
+          "native_l2": 210459.65257977595,
+          "relative_l2": 0.0,
+          "shape": [
+            512,
+            512,
+            3
+          ],
+          "signed_mean": 0.0
+        },
+        "png_bytes_exact": true
+      },
+      "record_id": "flux.future.seed47.relation",
+      "route_id": "flux.route.T",
+      "rule_status": "not-validated",
+      "semantic_observation": {
+        "hypothesis_status": "supports the predeclared early-text ordering hypothesis",
+        "observation": "A blue sphere on the left and a red cube on the right. Object ordering reverses relative to base; shape, pose, scale and lighting also differ.",
+        "semantic_status": "ordering reversal supported by inspection"
+      }
+    },
+    {
+      "applicability": {
+        "backend": "cuda",
+        "checkpoint_sha256": "dd976d67036c4a0a55642f702dcb3740ba7a4f367557596572baac168330904f",
+        "diffusion_steps": 4,
+        "dtype": "bfloat16",
+        "height": 512,
+        "initial_text_source": "shape",
+        "later_conditioning": "base",
+        "parent_cut": "3d2c44eab2a423484acb492d58b6de23893dcf72f5b464f361a3b5dde2b975f1",
+        "physical_batch": 1,
+        "seed": 47,
+        "width": 512
+      },
+      "consumer_id": "vae.rgb",
+      "evidence_status": "observation",
+      "law_id": "flux.functional.own-state.trajectory-and-rgb",
+      "limits": "Structural computation and whole-text route; no per-object address or universal semantic operation inferred.",
+      "native_effect": {
+        "changed_channels": 357933,
+        "max_abs": 255.0,
+        "mean_abs": 7.568197886149089
+      },
+      "numerical_forecast": {
+        "native_refreshes": 0,
+        "own_state": true,
+        "pixel_error": {
+          "changed_elements": 0,
+          "elements": 786432,
+          "exact": true,
+          "l2": 0.0,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "native_minus_forecast": 0.0
+          },
+          "max_abs": 0.0,
+          "mean_abs": 0.0,
+          "native_l2": 210385.5463547817,
+          "relative_l2": 0.0,
+          "shape": [
+            512,
+            512,
+            3
+          ],
+          "signed_mean": 0.0
+        },
+        "png_bytes_exact": true
+      },
+      "record_id": "flux.future.seed47.shape",
+      "route_id": "flux.route.T",
+      "rule_status": "not-validated",
+      "semantic_observation": {
+        "hypothesis_status": "compatible with the predeclared mixture hypothesis; does not establish a clean shape swap",
+        "observation": "A rounded red cube-like object on the left and a blue cube on the right. The blue object changes from sphere-like to cube-like, but the red object does not become the requested sphere.",
+        "semantic_status": "partial shape transfer with mixed scene attributes"
+      }
+    }
+  ],
+  "job_id": "job-dc521d90c65d",
+  "mechanics_status": "valid",
+  "schema": "mdb-flux-branch-forecasts-20261102-v1",
+  "scientific_limits": [
+    "Observed prompt carriers, full frozen weights and shared CUDA kernels are supplied.",
+    "One fresh seed and three whole-text edits; no universal semantic dictionary.",
+    "Shape transfer is partial despite exact numerical prediction.",
+    "Intermediate full-array metrics are worker observations; offline audit recomputes witnesses and retained endpoints."
+  ],
+  "summary": {
+    "all_sealed_before_native": true,
+    "audit_model_calls": 0,
+    "checkpoint_sha256": "dd976d67036c4a0a55642f702dcb3740ba7a4f367557596572baac168330904f",
+    "counts": {
+      "acts": 3,
+      "images": 8,
+      "native_module_entries": 6060,
+      "native_transitions": 444,
+      "predicted_transitions": 444,
+      "prediction_module_entries": 0,
+      "prefix_module_entries": 19,
+      "prefix_projections": 1,
+      "prompt_encodings": 0,
+      "selected_block_entries": 400,
+      "vae_decoder_entries": 4
+    },
+    "exact_tensor_hash_pairs": 912,
+    "job_id": "job-dc521d90c65d",
+    "limits": "observed encoder carriers; full supplied weights; no speed/compression claim; full intermediate RAM-only, offline witnesses and full endpoints; qualitative semantic hypotheses distinct from numerical forecasts",
+    "mechanics_status": "valid",
+    "offline_full_arrays_recomputed": 36,
+    "pixel_channels_compared": 3145728,
+    "pre_release_counters": {
+      "acts": 3,
+      "images": 0,
+      "native_module_entries": 0,
+      "native_transitions": 0,
+      "predicted_transitions": 444,
+      "prediction_module_entries": 0,
+      "prefix_module_entries": 19,
+      "prefix_projections": 1,
+      "prompt_encodings": 0,
+      "selected_block_entries": 0,
+      "vae_decoder_entries": 0
+    },
+    "provenance": {
+      "archive_sha256": "d32e9897c77fe3f068ed5e40e42464a5ff83f919e4de33838acf7b4eb465a40b",
+      "audit_sha256": "32389f09abbc181e97aa1ac8e4b4d425dc177156a82e64fa0ec59db7a19c438f",
+      "auditor_sources": {
+        "analyze_flux_branch_forecasts.py": "e544a5cf754b92d344ab792c0b00530af43669cc712cb7f007e0b75c7ce1012f",
+        "analyze_flux_mlp_forecast.py": "fb5c11feff809f23f65b6c89dda73a589e2a46d11cede60aaf4e04b60d349252",
+        "analyze_flux_trajectory_forecast.py": "f10b35946ef8c7f374b72f649ddf785d289612bba1932d1577853c388827d2d5",
+        "publish_flux_branch_forecasts.py": "4cae2f4cbd870040e575bd37052868c5f03d8c3c441d9d31f312e0967142ab6a",
+        "summarize_context_window.py": "a2aa5d188acfebb7d962656eec7e02b0b1e57360b7955b4851e3bfbc60a913fe"
+      },
+      "figure_manifest_sha256": "9a58f705bb07f501ad18a3bb61c341ace2aef7616fee77b09dd8329754c6bd3c",
+      "request_sha256": "a2d2d2cfcabddab01eb978b2abef503c5f997254f5b009f17b8e5882d4ca48b2"
+    },
+    "resources": {
+      "elapsed_s": 335.23,
+      "peak_rss_mb": 12294.8,
+      "peak_vram_mb": 9316.0
+    },
+    "rows": {
+      "base": {
+        "color_diagnostics": {
+          "blue": {
+            "components": 1,
+            "largest": {
+              "bbox_xyxy": [
+                266,
+                170,
+                440,
+                361
+              ],
+              "centroid_xy": [
+                353.4431861366573,
+                265.27502470167974
+              ],
+              "pixels": 26314
+            },
+            "reported_components": [
+              {
+                "bbox_xyxy": [
+                  266,
+                  170,
+                  440,
+                  361
+                ],
+                "centroid_xy": [
+                  353.4431861366573,
+                  265.27502470167974
+                ],
+                "pixels": 26314
+              }
+            ],
+            "status": "color-region-observed",
+            "threshold_pixel_count": 26314
+          },
+          "policy": {
+            "blue_hue_degrees": [
+              [
+                190,
+                260
+              ]
+            ],
+            "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+            "component_connectivity": 4,
+            "minimum_alpha": 0.5,
+            "minimum_saturation": 0.3,
+            "minimum_value": 0.25,
+            "red_hue_degrees": [
+              [
+                0,
+                25
+              ],
+              [
+                335,
+                360
+              ]
+            ],
+            "reported_component_minimum_pixels": 16
+          },
+          "red": {
+            "components": 1,
+            "largest": {
+              "bbox_xyxy": [
+                77,
+                189,
+                227,
+                369
+              ],
+              "centroid_xy": [
+                152.7866974595843,
+                278.9903464203233
+              ],
+              "pixels": 21650
+            },
+            "reported_components": [
+              {
+                "bbox_xyxy": [
+                  77,
+                  189,
+                  227,
+                  369
+                ],
+                "centroid_xy": [
+                  152.7866974595843,
+                  278.9903464203233
+                ],
+                "pixels": 21650
+              }
+            ],
+            "status": "color-region-observed",
+            "threshold_pixel_count": 21650
+          },
+          "red_minus_blue_normalized_x": -0.3919072044474082,
+          "semantic_gate": false,
+          "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+        },
+        "native_difference_from_base": {
+          "changed_channels": 0,
+          "max_abs": 0.0,
+          "mean_abs": 0.0
+        },
+        "parent_cut": "2604fcbf97f4a0efd64d1ea22583f31fa0c8b010b50c6f8581283c01b44a6995",
+        "pixel_error": {
+          "changed_elements": 0,
+          "elements": 786432,
+          "exact": true,
+          "l2": 0.0,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "native_minus_forecast": 0.0
+          },
+          "max_abs": 0.0,
+          "mean_abs": 0.0,
+          "native_l2": 209992.15956316082,
+          "relative_l2": 0.0,
+          "shape": [
+            512,
+            512,
+            3
+          ],
+          "signed_mean": 0.0
+        },
+        "png_bytes_exact": true
+      },
+      "color": {
+        "color_diagnostics": {
+          "blue": {
+            "components": 1,
+            "largest": {
+              "bbox_xyxy": [
+                78,
+                190,
+                239,
+                365
+              ],
+              "centroid_xy": [
+                159.61905648954502,
+                276.51138639221347
+              ],
+              "pixels": 21473
+            },
+            "reported_components": [
+              {
+                "bbox_xyxy": [
+                  78,
+                  190,
+                  239,
+                  365
+                ],
+                "centroid_xy": [
+                  159.61905648954502,
+                  276.51138639221347
+                ],
+                "pixels": 21473
+              }
+            ],
+            "status": "color-region-observed",
+            "threshold_pixel_count": 21473
+          },
+          "policy": {
+            "blue_hue_degrees": [
+              [
+                190,
+                260
+              ]
+            ],
+            "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+            "component_connectivity": 4,
+            "minimum_alpha": 0.5,
+            "minimum_saturation": 0.3,
+            "minimum_value": 0.25,
+            "red_hue_degrees": [
+              [
+                0,
+                25
+              ],
+              [
+                335,
+                360
+              ]
+            ],
+            "reported_component_minimum_pixels": 16
+          },
+          "red": {
+            "components": 1,
+            "largest": {
+              "bbox_xyxy": [
+                272,
+                184,
+                425,
+                356
+              ],
+              "centroid_xy": [
+                348.07527453920954,
+                268.9672004257172
+              ],
+              "pixels": 20671
+            },
+            "reported_components": [
+              {
+                "bbox_xyxy": [
+                  272,
+                  184,
+                  425,
+                  356
+                ],
+                "centroid_xy": [
+                  348.07527453920954,
+                  268.9672004257172
+                ],
+                "pixels": 20671
+              }
+            ],
+            "status": "color-region-observed",
+            "threshold_pixel_count": 20671
+          },
+          "red_minus_blue_normalized_x": 0.36807855087825103,
+          "semantic_gate": false,
+          "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+        },
+        "native_difference_from_base": {
+          "changed_channels": 462929,
+          "max_abs": 255.0,
+          "mean_abs": 26.88402048746745
+        },
+        "parent_cut": "9a44f660a955811eed71ad9b764190a27cc04c73be9da33ef2f23eee0691ed1d",
+        "pixel_error": {
+          "changed_elements": 0,
+          "elements": 786432,
+          "exact": true,
+          "l2": 0.0,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "native_minus_forecast": 0.0
+          },
+          "max_abs": 0.0,
+          "mean_abs": 0.0,
+          "native_l2": 211618.6388010281,
+          "relative_l2": 0.0,
+          "shape": [
+            512,
+            512,
+            3
+          ],
+          "signed_mean": 0.0
+        },
+        "png_bytes_exact": true
+      },
+      "relation": {
+        "color_diagnostics": {
+          "blue": {
+            "components": 2,
+            "largest": {
+              "bbox_xyxy": [
+                83,
+                176,
+                255,
+                366
+              ],
+              "centroid_xy": [
+                168.3605072463768,
+                267.3084541062802
+              ],
+              "pixels": 24840
+            },
+            "reported_components": [
+              {
+                "bbox_xyxy": [
+                  83,
+                  176,
+                  255,
+                  366
+                ],
+                "centroid_xy": [
+                  168.3605072463768,
+                  267.3084541062802
+                ],
+                "pixels": 24840
+              }
+            ],
+            "status": "color-region-observed",
+            "threshold_pixel_count": 24841
+          },
+          "policy": {
+            "blue_hue_degrees": [
+              [
+                190,
+                260
+              ]
+            ],
+            "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+            "component_connectivity": 4,
+            "minimum_alpha": 0.5,
+            "minimum_saturation": 0.3,
+            "minimum_value": 0.25,
+            "red_hue_degrees": [
+              [
+                0,
+                25
+              ],
+              [
+                335,
+                360
+              ]
+            ],
+            "reported_component_minimum_pixels": 16
+          },
+          "red": {
+            "components": 1,
+            "largest": {
+              "bbox_xyxy": [
+                283,
+                210,
+                421,
+                356
+              ],
+              "centroid_xy": [
+                351.777633289987,
+                282.59486936990186
+              ],
+              "pixels": 16918
+            },
+            "reported_components": [
+              {
+                "bbox_xyxy": [
+                  283,
+                  210,
+                  421,
+                  356
+                ],
+                "centroid_xy": [
+                  351.777633289987,
+                  282.59486936990186
+                ],
+                "pixels": 16918
+              }
+            ],
+            "status": "color-region-observed",
+            "threshold_pixel_count": 16918
+          },
+          "red_minus_blue_normalized_x": 0.3582365743039262,
+          "semantic_gate": false,
+          "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+        },
+        "native_difference_from_base": {
+          "changed_channels": 459138,
+          "max_abs": 255.0,
+          "mean_abs": 28.286786397298176
+        },
+        "parent_cut": "dd5b50f2a69ae55d2e0450b90c17b649a7fced0c75e98186d5fc3e518bbcedd5",
+        "pixel_error": {
+          "changed_elements": 0,
+          "elements": 786432,
+          "exact": true,
+          "l2": 0.0,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "native_minus_forecast": 0.0
+          },
+          "max_abs": 0.0,
+          "mean_abs": 0.0,
+          "native_l2": 210459.65257977595,
+          "relative_l2": 0.0,
+          "shape": [
+            512,
+            512,
+            3
+          ],
+          "signed_mean": 0.0
+        },
+        "png_bytes_exact": true
+      },
+      "shape": {
+        "color_diagnostics": {
+          "blue": {
+            "components": 1,
+            "largest": {
+              "bbox_xyxy": [
+                259,
+                186,
+                433,
+                368
+              ],
+              "centroid_xy": [
+                345.62645660840235,
+                274.91302514566087
+              ],
+              "pixels": 26088
+            },
+            "reported_components": [
+              {
+                "bbox_xyxy": [
+                  259,
+                  186,
+                  433,
+                  368
+                ],
+                "centroid_xy": [
+                  345.62645660840235,
+                  274.91302514566087
+                ],
+                "pixels": 26088
+              }
+            ],
+            "status": "color-region-observed",
+            "threshold_pixel_count": 26088
+          },
+          "policy": {
+            "blue_hue_degrees": [
+              [
+                190,
+                260
+              ]
+            ],
+            "calibration": "none; descriptive diagnostic only; no execution/scientific gate",
+            "component_connectivity": 4,
+            "minimum_alpha": 0.5,
+            "minimum_saturation": 0.3,
+            "minimum_value": 0.25,
+            "red_hue_degrees": [
+              [
+                0,
+                25
+              ],
+              [
+                335,
+                360
+              ]
+            ],
+            "reported_component_minimum_pixels": 16
+          },
+          "red": {
+            "components": 1,
+            "largest": {
+              "bbox_xyxy": [
+                78,
+                196,
+                235,
+                364
+              ],
+              "centroid_xy": [
+                157.3005275689808,
+                278.25099210980903
+              ],
+              "pixels": 21419
+            },
+            "reported_components": [
+              {
+                "bbox_xyxy": [
+                  78,
+                  196,
+                  235,
+                  364
+                ],
+                "centroid_xy": [
+                  157.3005275689808,
+                  278.25099210980903
+                ],
+                "pixels": 21419
+              }
+            ],
+            "status": "color-region-observed",
+            "threshold_pixel_count": 21419
+          },
+          "red_minus_blue_normalized_x": -0.3678240801551202,
+          "semantic_gate": false,
+          "shape_identity": "unassessed; color regions do not identify cubes/spheres"
+        },
+        "native_difference_from_base": {
+          "changed_channels": 357933,
+          "max_abs": 255.0,
+          "mean_abs": 7.568197886149089
+        },
+        "parent_cut": "3d2c44eab2a423484acb492d58b6de23893dcf72f5b464f361a3b5dde2b975f1",
+        "pixel_error": {
+          "changed_elements": 0,
+          "elements": 786432,
+          "exact": true,
+          "l2": 0.0,
+          "largest_effect": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "native_minus_forecast": 0.0
+          },
+          "max_abs": 0.0,
+          "mean_abs": 0.0,
+          "native_l2": 210385.5463547817,
+          "relative_l2": 0.0,
+          "shape": [
+            512,
+            512,
+            3
+          ],
+          "signed_mean": 0.0
+        },
+        "png_bytes_exact": true
+      }
+    },
+    "schema": "mdb-flux-branch-forecast-summary-v1",
+    "scope": "four own-state numerical forecasts from common-parent initial states: unchanged base and relation/color/shape working-text replacements; all RGB sealed before any native suffix; fixed base conditioning reread later",
+    "seal": {
+      "forecasts": [
+        "base",
+        "relation",
+        "color",
+        "shape"
+      ],
+      "path": "flux-branch-forecast-result/transaction/seal.json",
+      "seal_sha256": "92574ea5fc0e619675a232b3b6744c4d1a3bbf2f0ff93ae8ab02ce80d0cb75a5"
+    },
+    "seed": 47,
+    "tensor_hash_pairs": 912,
+    "terminal_status": "unassessed"
+  },
+  "visual_review": {
+    "counterexamples": [
+      {
+        "claim": "Changing initial working text always cleanly transfers every requested object attribute",
+        "note": "This is a limitation on a broader possible semantic rule, not a missed numerical forecast or a failure of a predeclared clean-shape prediction.",
+        "row": "shape",
+        "status": "counterexample under informal inspection"
+      }
+    ],
+    "instrument_status": "informal visual assessment; no independent human labels or calibrated semantic classifier",
+    "observer": "assistant inspection of all eight images in the comparison panel, plus the original-resolution shape image",
+    "rows": {
+      "base": {
+        "observation": "A red cube on the left and a blue rounded sphere on the right, on a white background.",
+        "semantic_status": "base reference"
+      },
+      "color": {
+        "hypothesis_status": "supports the predeclared early-text color hypothesis",
+        "observation": "A blue cube on the left and a red rounded or oval sphere on the right. The visible color assignment changes while cube-left and rounded-object-right organization remains.",
+        "semantic_status": "color-assignment change supported by inspection"
+      },
+      "relation": {
+        "hypothesis_status": "supports the predeclared early-text ordering hypothesis",
+        "observation": "A blue sphere on the left and a red cube on the right. Object ordering reverses relative to base; shape, pose, scale and lighting also differ.",
+        "semantic_status": "ordering reversal supported by inspection"
+      },
+      "shape": {
+        "hypothesis_status": "compatible with the predeclared mixture hypothesis; does not establish a clean shape swap",
+        "observation": "A rounded red cube-like object on the left and a blue cube on the right. The blue object changes from sphere-like to cube-like, but the red object does not become the requested sphere.",
+        "semantic_status": "partial shape transfer with mixed scene attributes"
+      }
+    },
+    "schema": "mdb-flux-branch-forecast-visual-review-v1",
+    "scope": "Klein4B seed47, one base parent and initial working-text edits; later conditioning remains base",
+    "terminal_status": "no universal semantic rule or object dictionary established",
+    "working_inference": "Early working-text effects on ordering and color assignment recur at this fresh seed. Shape behavior remains heterogeneous and consistent with interaction between early edited text and later base conditioning; the experiment does not isolate the later writer or a per-object address."
+  }
+}

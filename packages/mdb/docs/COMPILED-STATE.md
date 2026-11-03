@@ -66,32 +66,103 @@ These functions are framework-free; numpy is imported only when map math runs.
 ## Native runner
 
 `mdb.compiled_state_runner` runs the measurement on Hugging Face causal
-decoders. `DecoderSplice` computes the prefix K/V once and runs each suffix
-batch through the unmodified model with a copy of that cache. A forward
-pre-hook on decoder layer `L`, or on the final norm when `L` equals the layer
-count, observes the residual entering `L` or replaces it at every suffix
-position. Layers below `L` still execute; nothing at or above `L` reads their
-suffix outputs, so the splice is exactly "compiled state at `L`, native layers
-`L..` on top". Because they execute, the runner makes no speed claim.
+decoders with full attention. `DecoderSplice` computes the prefix K/V once.
+`run(hidden, L)` executes only decoder layers `L..` on a supplied residual,
+calling the model's own decoder layers in a manual loop: each layer reads
+`[prefix | injected | own]` keys and values under a causal mask over absolute
+positions, with RoPE at the absolute positions. No layer below `L` executes,
+and `L` equal to the layer count runs no layer at all, so the compiled state
+goes straight to the final norm and head.
+
+- **True resume.** `run.run(state_at_L, L)` with the residual entering `L` at
+  every suffix position.
+- **Partial positions and K/V injection.** `run.run(x, L, positions=[7, 8, 9],
+  kv={l: (k, v)}, kv_positions=[0, ..., 6])` runs only the listed positions;
+  the others contribute the supplied post-RoPE K/V at every layer `l >= L`
+  (compiled, or native for an oracle). This is the forecast-cost Part F T3c
+  predictor: answer positions run `L..27`, operand K/V are compiled.
+- **Native passes.** `native(ids, capture=..., capture_kv=...)` is the
+  prefix-cached forward through the same loop; `decode(ids, steps, vocab)` is
+  KV-cached greedy decoding and also returns the final residual at every
+  position whose input is known; `readout(hidden, vocab)` is the final norm
+  and head, optionally restricted to a token subset.
+- `forward(ids, capture=..., splice=(L, state))` is the independent hook path
+  through the unmodified model, kept for the parity gates.
+
+`kv_rows`/`kv_unrows` flatten one position's K/V at one layer to a
+`2 * kv_heads * head_dim` row and back; `CompilerFit` fits K/V maps on those
+rows (`kv_layers=...`, `solve(..., target="kv")`), pooled over any switch.
 
 ```python
 from mdb.compiled_state_runner import Rows, measure
 
 report, maps = measure(model, family, prefix_ids, Rows(fit_ids, fit_values),
                        Rows(eval_ids, eval_values, reference_ids),
-                       layers=[4, 12, 20, 22, 23, 24, 26, 28], lam=1.0, threshold=0.95)
+                       layers=[20, 28], partial_layers=[20], lam=1.0, threshold=0.95)
 ```
 
 `measure` accumulates the fit moments on the device, solves every
-(feature set, layer) map, splices each on the evaluation rows and returns a
-sealed `mdb-compiled-state-residual-v1` report plus the maps. Each report also
-carries two references:
+(feature set, layer) residual map, and with `partial_layers` also K/V maps for
+every layer from the shallowest partial layer up. On the evaluation rows it
+resumes each residual map at `L` (full arm) and runs each partial arm twice,
+with compiled K/V and with native K/V (`native_kv_oracle`). It returns a sealed
+`mdb-compiled-state-residual-v1` report plus the maps, keyed `(feature_set, L)`
+and `(feature_set, L, "kv")`. The report also carries `noise_ceiling`: native
+top-1 against native top-1 with every batch boundary shifted by half a batch.
+Its error recall bounds what any compiler can reproduce under batch-shape noise.
 
-- `native_splice_control`: the captured native state spliced back at each layer
-  on the first evaluation batch, as max |Δlogit| (0 on the tiny-Qwen2 test);
-- `noise_ceiling`: native top-1 against native top-1 with every batch boundary
-  shifted by half a batch. Its error recall bounds what any compiler can
-  reproduce under batch-shape noise.
+## Parity gates
+
+`parity(run, family, ids, layers, partial_layers=...)` runs on one batch of
+native rows and compares top-1 and max |Δlogit| at the score positions:
+
+- `manual_native_vs_hf`: the manual layer loop from embeddings vs the model's
+  own forward;
+- `resume[L]`: resuming from the captured native state at `L` vs manual native;
+- `kv_injection[L]`: only the score positions run from their native state, the
+  others inject their native K/V, vs manual native;
+- `partial_vs_hook[L]`: that partial run vs the hook-path splice of native
+  states at `L`.
+
+The gate passes when every check has top-1 agreement 1.0 (and max |Δlogit| at
+most `tol`, if given); `exact` says whether every max |Δlogit| is 0. `measure`
+puts the gate for its own layers in every report.
+
+## Timing protocol
+
+`mdb.timing` is the registered protocol for speed claims. `time_arms(arms,
+baseline=..., gate=...)` times named zero-argument callables: 5 warmup calls,
+then 30 repetitions, each bracketed by `torch.cuda.synchronize` on CUDA, and
+reports median, p10 and p90 milliseconds plus an `nvidia-smi` process snapshot
+before and after. Every arm gets `speedup_vs_baseline` only when `gate["passed"]`
+is true. Without a passing parity gate the record keeps the timings, sets
+`claim` to `refused: parity gate missing or failed` and reports no speedup.
+The protocol's batches are 1 and 256. The baseline for a predictor is the
+prefix-cached native forward of the same rows through the same layer loop; for
+a decoding chain it is KV-cached native decode.
+
+## Forwardless serving
+
+`mdb.compiled_state_serving` serves at `L` equal to the layer count, where no
+transformer layer runs.
+
+- `ZeroLayerChain(run, map_at_num_layers, feedback={"r0": (0, table)},
+  vocab=None)` predicts the score positions in order. After step `k` it feeds
+  the predicted token back into every symbol that `feedback` assigns to `k`,
+  through a lookup table over the vocabulary. It returns tokens and per-step
+  margins (top-1 minus top-2 logit). `teacher=` feeds given tokens back
+  instead. `chain_agreement` reports free-running `exact_through` per step and
+  teacher-forced step agreement against native greedy tokens.
+- `serve(run, family, feature_set, template_ids, values, steps=..., tau=...,
+  warmup=..., refit_every=...)` answers a prompt stream in order. The first
+  `warmup` prompts get a native KV-cached decode and seed a streaming ridge
+  fit. After that, each batch is predicted by the chain, and every row whose
+  smallest step margin is below `tau` is served by a native decode instead;
+  that row is added to the fit, and the maps are re-solved once `refit_every`
+  new native rows have arrived. The record counts native prompts, native token
+  steps and `forwards_per_1000_prompts`. Native tokens passed as
+  `audit_tokens` score the served answers per window of prompts; they are
+  never counted as forwards and never reach the fit.
 
 ## Command line
 
