@@ -526,7 +526,8 @@ def column_equivalents_early_abort(f, f_pre, rho, per=1000):
 # --------------------------------------------------------------------------- bytes, timed records, pre-gates, decoders
 
 
-def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather", union=None):
+def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather", union=None, qbits=None, group=None,
+                scale_bytes=4):
     """Derived bytes one decoder layer reads for one decode step of ``batch`` rows (weights, gathered rows, tables and
     the K/V cache at ``shapes['context']``), split into shared (read once per step) and per-row parts.
 
@@ -535,15 +536,21 @@ def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather"
     own m rows) and the token tables (a, u, g at I each, n and y0 at d each); impl 'union' reads the union of the
     batch's exact sets once (``union`` neurons) instead of per-row rows. kind 'exact_select': attention + W_gate + W_up +
     B_0 shared, plus per row the m exact down rows (``union``: read once) and the token tables.
+
+    qbits: integer storage of the scoring matrices (kind 'exact_select': W_gate and W_up; kind 'proxy': the two
+    decoders) at qbits / 8 bytes per weight plus one ``scale_bytes`` scale per row (``group`` None) or per group of
+    ``group`` columns; everything else stays at ``dtype_bytes``.
     """
     d, inter, ctx = shapes["d"], shapes["inter"], shapes["context"]
     nh, nkv, hd = shapes["n_heads"], shapes["n_kv"], shapes["head_dim"]
     att = 2 * d * nh * hd + 2 * d * nkv * hd + nh * hd + 2 * nkv * hd + 2 * d
     kv = 2 * ctx * nkv * hd
+    qshared = 0
     if kind == "native":
         shared, row = att + 3 * d * inter, kv
     elif kind == "proxy":
-        shared = att + d * d + d * k + 2 * inter * k
+        shared = att + d * d + d * k
+        qshared = _qbytes(2 * inter, k, qbits, group, scale_bytes, dtype_bytes)
         row = kv + 3 * inter + 2 * d
         if impl == "gather":
             row += 3 * m * d
@@ -552,7 +559,8 @@ def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather"
         else:
             raise ValueError("impl must be 'gather' or 'union'")
     elif kind == "exact_select":
-        shared = att + 2 * d * inter + d * d
+        shared = att + d * d
+        qshared = _qbytes(2 * inter, d, qbits, group, scale_bytes, dtype_bytes)
         row = kv + 3 * inter + 2 * d
         if impl == "gather":
             row += m * d
@@ -562,15 +570,25 @@ def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather"
             raise ValueError("impl must be 'gather' or 'union'")
     else:
         raise ValueError("unknown kind: " + kind)
-    return {"shared": shared * dtype_bytes, "per_row": row * dtype_bytes, "total": (shared + batch * row) * dtype_bytes}
+    sh = shared * dtype_bytes + qshared
+    return {"shared": sh, "per_row": row * dtype_bytes, "total": sh + batch * row * dtype_bytes}
 
 
-def bytes_per_token(per_layer, shapes, *, vocab, batch=1, readout=True, dtype_bytes=2):
+def _qbytes(rows, cols, qbits, group, scale_bytes, dtype_bytes):
+    """Bytes of a rows x cols matrix stored at dtype_bytes, or at qbits with per-row (group None) or per-group scales."""
+    if not qbits:
+        return rows * cols * dtype_bytes
+    n_scales = rows * (1 if group is None else -(-cols // group))
+    return rows * cols * qbits / 8 + n_scales * scale_bytes
+
+
+def bytes_per_token(per_layer, shapes, *, vocab, batch=1, readout=True, dtype_bytes=2, readout_bits=None, scale_bytes=4):
     """Derived bytes per decode step and per token for a column given as [(kind, options)] per layer, plus the readout
-    (vocab x d, shared) when ``readout``. Options are passed to ``layer_bytes``."""
+    (vocab x d, shared) when ``readout`` (at ``readout_bits`` with per-row scales when given). Options are passed to
+    ``layer_bytes``."""
     step = sum(layer_bytes(kind, shapes, batch=batch, dtype_bytes=dtype_bytes, **opts)["total"] for kind, opts in per_layer)
     if readout:
-        step += vocab * shapes["d"] * dtype_bytes
+        step += _qbytes(vocab, shapes["d"], readout_bits, None, scale_bytes, dtype_bytes)
     return {"bytes_per_step": step, "bytes_per_token": step / batch, "batch": batch}
 
 
@@ -805,3 +823,155 @@ def set_jaccard(a, b):
     union = (a | b).sum(-1).float()
     return inter / union.clamp_min(1)
 
+
+
+# --------------------------------------------------------------------------- integer codes, readout candidates, gates
+
+
+def quantize_int(w, bits, group=None):
+    """Symmetric integer quantization of a matrix [rows, cols] per row (``group`` None) or per group of ``group``
+    consecutive columns. Returns (q int8 [rows, cols] in [-(2^(bits-1) - 1), 2^(bits-1) - 1], scale float32 [rows] or
+    [rows, cols / group]); w ~ q * scale. Per row this is ``quantize_rows`` with the integers kept."""
+    import torch
+
+    qmax = 2 ** (bits - 1) - 1
+    wf = w.float()
+    if group is None:
+        scale = (wf.abs().amax(-1) / qmax).clamp_min(1e-30)
+        q = torch.round(wf / scale[:, None]).clamp_(-qmax, qmax)
+        return q.to(torch.int8), scale
+    rows, cols = wf.shape
+    if cols % group:
+        raise ValueError("cols must be a multiple of group")
+    wg = wf.view(rows, cols // group, group)
+    scale = (wg.abs().amax(-1) / qmax).clamp_min(1e-30)
+    q = torch.round(wg / scale[..., None]).clamp_(-qmax, qmax)
+    return q.view(rows, cols).to(torch.int8), scale
+
+
+def dequantize_int(q, scale, group=None):
+    """float32 weights q * scale of ``quantize_int``."""
+    if group is None:
+        return q.float() * scale[:, None]
+    rows, cols = q.shape
+    return (q.float().view(rows, cols // group, group) * scale[..., None]).view(rows, cols)
+
+
+def pack_int4(q):
+    """Two signed int4 values per byte along the last axis (column 2j in the low nibble, 2j + 1 in the high nibble),
+    each stored as q + 8 in 0..15. q: int8 [..., cols] with cols even. Returns uint8 [..., cols / 2]."""
+    import torch
+
+    u = (q.to(torch.int16) + 8).to(torch.uint8)
+    return u[..., 0::2] | (u[..., 1::2] << 4)
+
+
+def unpack_int4(p):
+    """Inverse of ``pack_int4``: int8 [..., 2 cols]."""
+    import torch
+
+    lo = (p & 15).to(torch.int16) - 8
+    hi = (p >> 4).to(torch.int16) - 8
+    return torch.stack([lo, hi], -1).flatten(-2).to(torch.int8)
+
+
+def head_subspace(w_head, r_max):
+    """Top-r_max right singular directions of an output head w_head [V, d] from its d x d Gram (fp64 eigh, chunked over
+    the vocabulary). Returns (basis float32 [d, r_max], descending singular values squared [d])."""
+    import torch
+
+    V, d = w_head.shape
+    G = torch.zeros(d, d, dtype=torch.float64, device=w_head.device)
+    for c0 in range(0, V, 16384):
+        Wc = w_head[c0:c0 + 16384].double()
+        G += Wc.T @ Wc
+    ev, Q = torch.linalg.eigh(G)
+    order = torch.argsort(ev, descending=True)
+    return Q[:, order[:r_max]].float().contiguous(), ev[order]
+
+
+def certified_candidates(lhat, h_perp, e_perp):
+    """Cauchy-Schwarz candidate set of a projected readout: with lhat_v = (P_r e_v) . (P_r h) and
+    |l_v - lhat_v| <= |e_v_perp| |h_perp|, the exact argmax lies in
+    C(h) = {v : lhat_v >= max_w lhat_w - |h_perp| (|e_v_perp| + max_w |e_w_perp|)}.
+    lhat [P, V], h_perp [P], e_perp [V]. Returns (mask [P, V] bool, sizes [P])."""
+    top = lhat.max(-1, keepdim=True).values
+    thr = top - h_perp[:, None] * (e_perp[None, :] + e_perp.max())
+    mask = lhat >= thr
+    return mask, mask.sum(-1)
+
+
+def blockwise_topk_recall(lhat, target, block, k):
+    """Share of rows whose target index is among the top-k of its block of ``block`` columns, taking the top-k of every
+    block (the graph-capturable empirical candidate set of size n_blocks * k). lhat [P, V]; target [P] long."""
+    import torch
+
+    P, V = lhat.shape
+    nb = -(-V // block)
+    pad = torch.full((P, nb * block), float("-inf"), dtype=lhat.dtype, device=lhat.device)
+    pad[:, :V] = lhat
+    vals = pad.view(P, nb, block)
+    kth = vals.topk(k, dim=-1).values[..., -1]  # [P, nb]
+    tb = target // block
+    tv = lhat.gather(1, target[:, None])[:, 0]
+    return float((tv >= kth.gather(1, tb[:, None])[:, 0]).float().mean())
+
+
+def kl_log_dispersion(kl, floor=1e-6):
+    """sd of ln(max(KL_i, floor)) over positions: the log-dispersion sigma_k of per-position served KL."""
+    import torch
+
+    return float(torch.as_tensor(kl, dtype=torch.float64).clamp_min(floor).log().std())
+
+
+def metric_eigen_share(second_moment, metric, ranks):
+    """Top-r share of the eigenvalues of M^{1/2} S M^{1/2} (S a second moment, M a PSD metric, both d x d): the metric
+    energy of S that a rank-r map captures. Returns {r: share}."""
+    import torch
+
+    Mv, MQ = torch.linalg.eigh(((metric + metric.T) / 2).double())
+    Mh = (MQ * Mv.clamp_min(0).sqrt()[None, :]) @ MQ.T
+    S = ((second_moment + second_moment.T) / 2).double()
+    ev = torch.linalg.eigvalsh(Mh @ S @ Mh).flip(0).clamp_min(0)
+    tot = float(ev.sum())
+    return {int(r): (float(ev[:r].sum()) / tot if tot > 0 else float("nan")) for r in ranks}
+
+
+def gate_frontier(counts, kl, agree, f, f_pre, *, depths, rhos, a_native=0.925, law=(0.967, 0.403), budget=850.0,
+                  per=1000):
+    """Offline count-gate frontier from one free stream.
+
+    counts [P, L] per-layer selection counts at served positions; kl [P] and agree [P] the stream's per-position KL and
+    argmax agreement; f the served column's realized fraction; f_pre [L] the fraction spent through layer l. For an
+    abort depth l in ``depths`` and a native share rho in ``rhos``, positions whose prefix count sum_{l' <= l} exceeds
+    kappa (the (1 - rho) quantile) go native: predicted agreement rho_r a_native + (1 - rho_r) kl_law(mean kept KL)
+    (the law applied to the kept part; rho_r the realized share), the direct version with the kept positions' own
+    agreement, and the cost per * ((1 - rho_r) f + rho_r (f_pre[l] + 1)) (the last layer = decide-after, f_pre = f).
+    The memory interaction (aborted positions improve later positions' memory) is not modeled. Returns
+    {'rows': [...], 'best': the highest predicted agreement with cost <= budget}."""
+    import torch
+
+    c = torch.as_tensor(counts, dtype=torch.float64)
+    k_ = torch.as_tensor(kl, dtype=torch.float64).flatten()
+    a_ = torch.as_tensor(agree, dtype=torch.float64).flatten()
+    pref = c.cumsum(-1)
+    L = c.shape[-1]
+    rows, best = [], None
+    for dep in depths:
+        x = pref[:, dep]
+        fp = f if dep == L - 1 else float(f_pre[dep])
+        for rho in rhos:
+            kap = float(torch.quantile(x, 1 - rho))
+            ab = x > kap
+            rr = float(ab.float().mean())
+            kept = ~ab
+            klk = float(k_[kept].mean()) if bool(kept.any()) else 0.0
+            pred = rr * a_native + (1 - rr) * kl_law(klk, *law)
+            direct = rr * a_native + (1 - rr) * (float(a_[kept].mean()) if bool(kept.any()) else 0.0)
+            cost = per * ((1 - rr) * f + rr * (fp + 1))
+            row = {"depth": int(dep), "rho": float(rho), "rho_realized": rr, "kappa": kap, "kl_kept": klk,
+                   "predicted": pred, "direct": direct, "cost": cost}
+            rows.append(row)
+            if cost <= budget and (best is None or pred > best["predicted"]):
+                best = row
+    return {"rows": rows, "best": best, "a_native": a_native, "law": list(law), "budget": budget}

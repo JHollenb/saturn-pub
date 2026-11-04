@@ -435,3 +435,79 @@ def test_group_sets_and_jaccard():
     assert torch.allclose(j, torch.ones(6))
     tail = group_sets(s[:5], 2, 10)
     assert torch.equal(tail[4], top_m_mask(s[4], 10))
+
+
+def test_integer_quantization_and_int4_packing():
+    from mdb.sparse_switch import (
+        dequantize_int,
+        pack_int4,
+        quantize_int,
+        quantize_rows,
+        unpack_int4,
+    )
+
+    g = torch.Generator().manual_seed(2)
+    w = torch.randn(6, 256, generator=g)
+    q, s = quantize_int(w, 8)
+    assert q.dtype == torch.int8 and int(q.abs().max()) <= 127
+    assert torch.allclose(dequantize_int(q, s), quantize_rows(w, 8)[0], atol=1e-6)
+    q4, s4 = quantize_int(w, 4, group=128)
+    assert s4.shape == (6, 2) and int(q4.abs().max()) <= 7
+    err4 = (dequantize_int(q4, s4, 128) - w).abs().max()
+    assert float(err4) <= float(s4.max()) / 2 + 1e-6
+    assert torch.equal(unpack_int4(pack_int4(q4)), q4)
+    assert pack_int4(q4).shape == (6, 128) and pack_int4(q4).dtype == torch.uint8
+
+
+def test_quantized_layer_bytes():
+    from mdb.sparse_switch import bytes_per_token, layer_bytes
+
+    sh = {"d": 8, "inter": 32, "context": 4, "n_heads": 2, "n_kv": 1, "head_dim": 4}
+    full = layer_bytes("exact_select", sh, m=4)
+    q8 = layer_bytes("exact_select", sh, m=4, qbits=8)
+    assert full["shared"] - q8["shared"] == 2 * 32 * 8 * 2 - (2 * 32 * 8 + 2 * 32 * 4)
+    q4g = layer_bytes("proxy", sh, k=8, m=4, qbits=4, group=4)
+    assert q4g["shared"] == layer_bytes("proxy", sh, k=8, m=4)["shared"] - 2 * 32 * 8 * 2 + 2 * 32 * 8 * 0.5 + 2 * 32 * 2 * 4
+    b16 = bytes_per_token([("native", {})], sh, vocab=10)["bytes_per_step"]
+    b8 = bytes_per_token([("native", {})], sh, vocab=10, readout_bits=8)["bytes_per_step"]
+    assert b16 - b8 == 10 * 8 * 2 - (10 * 8 + 10 * 4)
+
+
+def test_certified_candidates_contain_the_argmax_and_blockwise_recall():
+    from mdb.sparse_switch import blockwise_topk_recall, certified_candidates, head_subspace
+
+    g = torch.Generator().manual_seed(3)
+    W = torch.randn(500, 16, generator=g) @ torch.diag(torch.linspace(3, 0.1, 16))
+    h = torch.randn(40, 16, generator=g)
+    basis, ev = head_subspace(W, 6)
+    assert basis.shape == (16, 6) and bool((ev[:-1] >= ev[1:]).all())
+    Pe, Ph = W @ basis, h @ basis
+    lhat = Ph @ Pe.T
+    e_perp = ((W * W).sum(-1) - (Pe * Pe).sum(-1)).clamp_min(0).sqrt()
+    h_perp = ((h * h).sum(-1) - (Ph * Ph).sum(-1)).clamp_min(0).sqrt()
+    mask, sizes = certified_candidates(lhat, h_perp, e_perp)
+    top = (h @ W.T).argmax(-1)
+    assert bool(mask[torch.arange(40), top].all()) and bool((sizes >= 1).all())
+    assert blockwise_topk_recall(h @ W.T, top, 64, 1) == 1.0
+    assert 0.0 <= blockwise_topk_recall(lhat, top, 64, 1) <= 1.0
+
+
+def test_gate_frontier_and_dispersion():
+    from mdb.sparse_switch import gate_frontier, kl_law, kl_log_dispersion, metric_eigen_share
+
+    g = torch.Generator().manual_seed(4)
+    P, L = 2000, 4
+    kl = (torch.randn(P, generator=g) * 1.5 - 2).exp()
+    counts = kl[:, None] * torch.tensor([1.0, 2.0, 3.0, 4.0]) + 0.01 * torch.rand(P, L, generator=g)
+    agree = torch.rand(P, generator=g) > kl.clamp_max(1)
+    fr = gate_frontier(counts, kl, agree, 0.5, [0.1, 0.2, 0.3, 0.5], depths=[1, 3], rhos=[0.0, 0.2, 0.4], budget=800)
+    r0 = [r for r in fr["rows"] if r["rho"] == 0.0][0]
+    assert r0["rho_realized"] == 0.0 and r0["predicted"] == pytest.approx(kl_law(float(kl.mean())))
+    r2 = [r for r in fr["rows"] if r["depth"] == 3 and r["rho"] == 0.2][0]
+    assert r2["rho_realized"] == pytest.approx(0.2, abs=0.01) and r2["kl_kept"] < float(kl.mean())
+    assert r2["cost"] == pytest.approx(1000 * (0.8 * 0.5 + 0.2 * 1.5), rel=0.02)
+    assert fr["best"] is None or fr["best"]["cost"] <= 800
+    assert kl_log_dispersion(kl) == pytest.approx(float(kl.log().std()), rel=1e-6)
+    S = torch.diag(torch.tensor([4.0, 1.0, 0.0]))
+    sh = metric_eigen_share(S, torch.eye(3), [1, 2])
+    assert sh[1] == pytest.approx(0.8) and sh[2] == pytest.approx(1.0)
