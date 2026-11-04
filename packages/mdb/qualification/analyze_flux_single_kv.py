@@ -251,16 +251,26 @@ def audit_attention_transaction(e, source, candidates, timeline):
 
 
 def analyze(root, *, failed=False):
-    e = Evidence(root, failed=failed)
+    return analyze_evidence(Evidence(root, failed=failed))
+
+
+def analyze_evidence(e, *, source_adapter=None):
+    """Audit one real panel through an explicit source-custody adapter.
+
+    The default retains the historical imported-source contract. Fresh-context
+    callers supply a separate validator and a real parent-job Evidence view;
+    they must not manufacture historical reports or child scheduler jobs.
+    """
     run, data, h = e.run, e.data, e.h
-    read, sha, typed = e.read, h["sha"], e.typed
+    read, sha = e.read, h["sha"]
     plan, request = run["plan"], run["request"]
     source, summary = (read(data / name) for name in ("source.json", "summary.json"))
     prefixes = read(data / "prefixes.json")["prefixes"]
     candidates = read(data / "candidates.json")["candidates"]
     observed = run["tree"].decode(read(run["transaction"] / "observations/native.json")["value"])
     hypotheses = run["tree"].decode(read(run["transaction"] / "forecasts/single_kv_hypotheses.json")["predictions"])
-    require(plan == request["config"] and hypotheses == plan["hypotheses"]
+    require((plan == request["config"] if source_adapter is None else
+             source_adapter.plan_matches(e, plan, request)) and hypotheses == plan["hypotheses"]
             and source["request_sha256"] == request["request_sha256"] == summary["request_sha256"]
             and source["source_hashes"] == request["source_hashes"]
             and source["checkpoint_sha256"] == plan["expected_checkpoint_sha256"]
@@ -270,6 +280,22 @@ def analyze(root, *, failed=False):
             and observed["prefixes"] == prefixes and observed["candidates"] == candidates
             and observed["counts"] == summary["counts"] and observed["RGB_forecast"] is False,
             "durable observation/source/prefix/candidate binding differs")
+    source_lineage = (historical_source(e, source, plan, request) if source_adapter is None
+                      else source_adapter.verify(e, source, summary))
+    zero, text = (source["input_cuts"][key] for key in ("zero", "text"))
+    require(set(e.fields(zero)) == set(e.fields(text))
+            and all(e.fields(zero)[key] == e.fields(text)[key] for key in e.fields(zero) if key != "text")
+            and e.point(zero) == e.point(text) and e.point(zero)["logical_step"] == 3
+            and e.point(zero)["phase"] == "single" and e.point(zero)["index"] == 0,
+            "paired single0 inputs differ outside working text")
+    return analyze_bound_panel(e, source, summary, prefixes, candidates, observed, hypotheses,
+                               source_lineage, source_adapter=source_adapter)
+
+
+def historical_source(e, source, plan, request):
+    """Original historical-source checks, unchanged in scientific scope."""
+    run, h, read = e.run, e.h, e.read
+    sha = h["sha"]
     payload = run["root"] / "payload"
     selection = read(payload / "source-selection.json")
     prior, prior_audit = (read(payload / name) for name in ("prior-source.json", "prior-audit.json"))
@@ -303,11 +329,15 @@ def analyze(root, *, failed=False):
             and len(text_actions) == 1 and text_actions[0]["slot"] == "text"
             and text_actions[0]["parent"] == zero and text_actions[0]["post_act"] == text,
             "selected single0 pair is not the actual prior text-only Act")
-    require(set(e.fields(zero)) == set(e.fields(text))
-            and all(e.fields(zero)[key] == e.fields(text)[key] for key in e.fields(zero) if key != "text")
-            and e.point(zero) == e.point(text) and e.point(zero)["logical_step"] == 3
-            and e.point(zero)["phase"] == "single" and e.point(zero)["index"] == 0,
-            "paired single0 inputs differ outside working text")
+    return {"kind": "historical-import", "source_selection": selection}
+
+
+def analyze_bound_panel(e, source, summary, prefixes, candidates, observed, hypotheses,
+                        source_lineage, *, source_adapter=None):
+    """Shared numerical/receipt panel audit after source-specific admission."""
+    run, data, h = e.run, e.data, e.h
+    read, sha, typed, plan = e.read, h["sha"], e.typed, run["plan"]
+    zero, text = (source["input_cuts"][key] for key in ("zero", "text"))
     own_c = e.fields(zero)["conditioning"]
     for name, cut in (("zero", zero), ("text", text)):
         for key in ("latent", "conditioning", "image", "text"):
@@ -441,12 +471,15 @@ def analyze(root, *, failed=False):
             and sum(path["acts"] for path in paths.values()) == counts["acts"] == 10
             and len(emissions) == counts["receipt_emissions"] == 201
             and counts["candidate_calls"] == 5 and counts["images"] == counts["vae_calls"] == 9
-            and counts["prompt_encodings"] == counts["noise_draws"] == 0 and counts["model_loads"] == counts["physical_batch"] == 1,
+            and counts["prompt_encodings"] == counts["noise_draws"] == 0
+            and counts["model_loads"] == (1 if source_adapter is None else source_adapter.panel_model_loads)
+            and counts["physical_batch"] == 1,
             "finite physical work census differs")
     comparisons = {name: {base: {"latent": distance(latents[name], latents[base]), "rgb": distance(pixels[name], pixels[base])}
                           for base in ("zero", "text")} for name in rows}
-    for name in ("zero", "text"):
-        controls[name + "_png_equals_prior"] = rows[name]["image"]["sha256"] == plan["expected_pngs"][name]
+    if source_adapter is None:
+        for name in ("zero", "text"):
+            controls[name + "_png_equals_prior"] = rows[name]["image"]["sha256"] == plan["expected_pngs"][name]
     for name, reference in (("sham", "zero"), ("coherent", "text")):
         controls[name + "_PNG_exact_" + reference] = rows[name]["image"]["sha256"] == rows[reference]["image"]["sha256"]
         controls[name + "_latent_exact_" + reference] = comparisons[name][reference]["latent"]["exact_base"]
@@ -456,8 +489,10 @@ def analyze(root, *, failed=False):
                      for name in candidates for key in ("image_mlp_preactivation", "image_mlp_activation")})
     declared.update(KV_image_exact_text_candidate=controls["KV_image_exact_text"],
         KV_image_exact_text_native=exact_bits(ports["KV"]["image"], e.slot(prefixes["text"]["post_single0"], "image")),
-        zero_png_equals_prior=controls["zero_png_equals_prior"], text_png_equals_prior=controls["text_png_equals_prior"],
         sham_png_equals_zero=controls["sham_PNG_exact_zero"], coherent_png_equals_text=controls["coherent_PNG_exact_text"])
+    if source_adapter is None:
+        declared.update(zero_png_equals_prior=controls["zero_png_equals_prior"],
+                        text_png_equals_prior=controls["text_png_equals_prior"])
     require(observed["control_observations"] == summary["control_observations"] == declared,
             "worker named control observations differ from saved arrays")
     numerical_attention = audit_attention_transaction(e, source, candidates, timeline)
@@ -473,7 +508,9 @@ def analyze(root, *, failed=False):
         "counts": counts, "typed_store_counts": e.store["counts"], "control_observations": controls,
         "replay_qualification": {"controls": controls, "status": "qualified" if qualified else "unresolved",
             "scope": "Named native/local-KV/replay controls, separate from scientific trends; negative controls retain all rows."},
-        "paired_source_checks": {"only_working_text_differs": True, "input_cuts": source["input_cuts"], "prefixes": prefix_paths},
+        "paired_source_checks": {"only_working_text_differs": True, "input_cuts": source["input_cuts"],
+                                 "prefixes": prefix_paths,
+                                 **({"lineage": source_lineage} if source_adapter is not None else {})},
         "candidate_checks": checks, "native_paths": paths, "comparisons": comparisons,
         "image_KV_interactions": {"Z4_latent": kv_interaction(latents), "final_RGB": kv_interaction(pixels)},
         "text_propagation_differentials": differentials, "sealed_hypotheses": hypotheses,
@@ -482,7 +519,8 @@ def analyze(root, *, failed=False):
         "auditor_source_sha256": sha(Path(__file__).read_bytes()),
         "audit_helpers": {name: sha((HERE / name).read_bytes()) for name in
             ("analyze_flux_rescue_routes.py", "summarize_context_window.py", "analyze_flux_mlp_forecast.py", "analyze_flux_concept_routes.py")},
-        "limits": ["One altered observed seed47 history; nine dependent futures, not independent prompt/seed replication.",
+        "limits": (["One altered observed seed47 history; nine dependent futures, not independent prompt/seed replication."]
+                   if source_adapter is None else source_adapter.limits) + [
             "Only working text differs at selected single0 source. Stored C identical; no further projection or declared denoiser C read.",
             "Parallel attention/MLP paths with one fused projection; attention module return includes MLP. No sequential joint-block equation assumed.",
             "Retained operands and native reference arrays observed after seal; structural equality prediction, not an independent numeric or RGB forecast.",

@@ -127,7 +127,7 @@ class _BoundedWriter:
         self.stream.flush()
 
 
-def emit(output: Path, report: dict, limits: dict | None = None):
+def emit(output: Path, report: dict, limits: dict | None = None, *, compression_level: int = 9):
     """Spool one bounded USTAR/gzip archive, then print ordered transport parts.
 
     Worker ``files.json`` must map every other relative output file to SHA256.
@@ -135,6 +135,8 @@ def emit(output: Path, report: dict, limits: dict | None = None):
     only transport divisions of the exact archive byte stream.
     """
     bounds, output = _limits(limits), Path(output)
+    if type(compression_level) is not int or not 1 <= compression_level <= 9:
+        raise CustodyError("archive compression level must be an integer from1 through9")
     if not isinstance(report, dict) or not report.get("job_id") or not report.get("request_sha256"):
         raise CustodyError("report requires job_id and request_sha256")
     _relative(output.name)
@@ -146,7 +148,8 @@ def emit(output: Path, report: dict, limits: dict | None = None):
     try:
         with os.fdopen(descriptor, "wb") as destination:
             bounded = _BoundedWriter(destination, bounds["max_archive_bytes"])
-            with gzip.GzipFile(filename="", fileobj=bounded, mode="wb", mtime=0) as compressed:
+            with gzip.GzipFile(filename="", fileobj=bounded, mode="wb", mtime=0,
+                               compresslevel=compression_level) as compressed:
                 with tarfile.open(fileobj=compressed, mode="w|", format=tarfile.USTAR_FORMAT) as archive:
                     for name, item in inventory.items():
                         path = output / name

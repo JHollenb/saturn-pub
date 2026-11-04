@@ -72,17 +72,18 @@ def scheduler(monkeypatch, raw, *, state="succeeded", response_bytes=83, bad_off
     return offsets
 
 
-def emitted(tmp_path, capsys):
+def emitted(tmp_path, capsys, *, compression_level=9):
     run = tmp_path / "run"
     request = request_dir(run)
     output = tmp_path / "worker-result"
     report = output_dir(output, request)
-    envelope = custody["emit"](output, report, LIMITS)
+    envelope = custody["emit"](output, report, LIMITS, compression_level=compression_level)
     return run, output, envelope, capsys.readouterr().out.encode()
 
 
-def test_roundtrip_streams_parts_exact_bytes_and_verifies_offline(tmp_path, capsys, monkeypatch):
-    run, output, envelope, raw = emitted(tmp_path, capsys)
+@pytest.mark.parametrize("compression_level", [1, 9])
+def test_roundtrip_streams_parts_exact_bytes_and_verifies_offline(tmp_path, capsys, monkeypatch, compression_level):
+    run, output, envelope, raw = emitted(tmp_path, capsys, compression_level=compression_level)
     assert envelope["part_count"] > 1 and envelope["report"]["mechanics_status"] == "valid"
     raw = b"ordinary bytes \xff\xfe\n" + raw + b"after-report diagnostic\n"
     offsets = scheduler(monkeypatch, raw)
@@ -94,6 +95,13 @@ def test_roundtrip_streams_parts_exact_bytes_and_verifies_offline(tmp_path, caps
     assert custody["verify"](run, LIMITS)["files"] == 3
     with pytest.raises(custody["CustodyError"], match="refusing overwrite"):
         custody["collect"](run, "job-one", LIMITS)
+
+
+@pytest.mark.parametrize("level", [0, 10, True, 1.5])
+def test_invalid_compression_refused_before_spooling(tmp_path, level):
+    with pytest.raises(custody["CustodyError"], match="compression level"):
+        custody["emit"](tmp_path / "absent", {}, LIMITS, compression_level=level)
+    assert not list(tmp_path.iterdir())
 
 
 @pytest.mark.parametrize("mutation", ["part-digest", "part-index", "report-job", "report-size", "duplicate-report"])

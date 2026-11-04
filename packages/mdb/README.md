@@ -163,6 +163,14 @@ MLP features remain fixed in this parallel block, while later working-text
 returns carry distinct continuation effects across nine futures. The report
 preserves prediction errors and the failed outer publication job, recovered
 and audited from unchanged artifacts without rerunning the model.
+The [fresh-context single0 replication](docs/FLUX-SINGLE-CONTEXTS.md) rebuilds
+matched sources for three connected prompt/seed contexts in one resident lease.
+Six novel conditional K/V attention arrays have 0.1701–0.1727% relative RMS
+error against native BF16 samples. A predeclared text-return distance ordering
+holds in all three contexts across 27 retained native futures, while K-versus-V
+rankings vary by seed and metric. This is bounded numerical and continuation
+evidence, with explicit source/seal custody and no semantic or universal-route
+certification.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 The [compiled-state residual view](docs/COMPILED-STATE.md) fits per-position
