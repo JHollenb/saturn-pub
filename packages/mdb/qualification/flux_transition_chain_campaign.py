@@ -1,7 +1,8 @@
-"""Seal complete two-block FLUX predictions before native current-step entries."""
+"""Seal bounded complete FLUX chains before native current-step entries."""
 from __future__ import annotations
 
 import gc
+import hashlib
 import importlib.metadata
 import inspect
 import json
@@ -33,18 +34,47 @@ OBSERVATION_PLAN = {"reference_rows": ["low.native", "high.native"], "boundaries
     "full_candidate_cuts": "Actual common post7 input and final committed Z4, plus both typed installation cuts and pred1 post6 input. No complete intermediate candidate cut claim."}
 
 
+def contract(config):
+    """Pure finite profile; two-block constants and serialized defaults persist."""
+    indices = config.get("block_indices", [6, 7])
+    if (type(indices) is not list or any(type(index) is not int for index in indices)
+            or indices not in ([6, 7], [6, 7, 8])):
+        raise ValueError("only declared two/three consecutive block variants are supported")
+    count, last = len(indices), indices[-1]
+    if count == 2:
+        context, branches, observation = CONTEXT, BRANCHES, OBSERVATION_PLAN
+    else:
+        context = {**CONTEXT, "id": "p1-s83", "seed": 83}
+        branches = BRANCHES[:3] + [{"id": label + ".pred" + str(depth), "base": role, "mode": "pred" + str(depth)}
+            for label, role in (("low", "zero"), ("high", "text")) for depth in range(1, count + 1)]
+        observation = {**OBSERVATION_PLAN, "boundaries_per_branch": 14,
+            "full_candidate_cuts": "Actual common post8 input and final committed Z4, both typed installation cuts, and every native bridge post7/post8. No complete intermediate common-suffix candidate cut claim."}
+    suffix = 21 - last
+    panel_steps = 2*count + count*(count-1) + len(branches)*suffix
+    panel_acts = 2*(len(branches)-2)
+    panel = {"adapter_steps": panel_steps, "acts": panel_acts, "receipt_emissions": panel_steps+panel_acts,
+        "candidate_calls": 0, "images": len(branches), "vae_calls": len(branches)}
+    counts = {**COUNTS, **panel, "adapter_steps": 108+panel_steps, "acts": 4+panel_acts,
+        "receipt_emissions": 112+panel_steps+panel_acts}
+    return json.loads(json.dumps({"context": context, "block_indices": indices, "branches": branches,
+        "order": [row["id"] for row in branches], "counts": counts, "panel_counts": panel,
+        "target_calls": {str(index): 2*(position+1) for position,index in enumerate(indices)},
+        "suffix_steps": suffix, "observation_plan": observation}))
+
+
 def validate_config(config):
-    if (config.get("context") != CONTEXT or config.get("height") != 512 or config.get("width") != 512
-            or config.get("steps") != 4 or config.get("block_indices") != [6, 7]
+    declared = contract(config)
+    if (config.get("context") != declared["context"] or config.get("height") != 512 or config.get("width") != 512
+            or config.get("steps") != 4 or config.get("block_indices") != declared["block_indices"]
             or config.get("selector") != {"logical_step": 3, "phase": "single", "index": 6}
-            or config.get("branches") != BRANCHES or config.get("branch_execution_order") != ORDER
-            or config.get("sample_indices") != SAMPLE_INDICES or config.get("observation_plan") != OBSERVATION_PLAN
+            or config.get("branches") != declared["branches"] or config.get("branch_execution_order") != declared["order"]
+            or config.get("sample_indices") != SAMPLE_INDICES or config.get("observation_plan") != declared["observation_plan"]
             or config.get("query_chunk") != 64 or config.get("projection_chunk") != 256
             or config.get("neuron_chunk") != 256 or config.get("retain_fields") is not False
             or config.get("array_storage") != "bf16-bits" or config.get("archive_integer_ids") != "native-int64"):
         raise ValueError("transition-chain frozen scientific geometry differs")
     for key in ("adapter_steps", "acts", "candidate_calls", "images", "vae_calls"):
-        if type(config.get("max_" + key)) is not int or config["max_" + key] != COUNTS[key]:
+        if type(config.get("max_" + key)) is not int or config["max_" + key] != declared["counts"][key]:
             raise ValueError("transition-chain finite census differs: " + key)
     for key, lo, hi in (("cpu_threads", 4, 4), ("max_wall_seconds", 1, 900), ("archive_compression_level", 1, 9)):
         if type(config.get(key)) is not int or not lo <= config[key] <= hi:
@@ -67,12 +97,17 @@ def bind_inputs(blocks, cuts, *, array, counts, builder_ref, preparation_ref, co
         result.setflags(write=False)
         return result
 
+    declared = contract(config)
+    if list(blocks) != declared["block_indices"]:
+        raise ValueError("actual block order differs from declared finite chain")
     binding = {"schema": "mdb-flux-transition-chain-binding-v1", "inputs": {}, "blocks": {},
-        "counts_before_seal": dict(counts), "target_entries_before_seal": {"6": 0, "7": 0},
-        "builder": builder_ref, "preparation": preparation_ref, "block_indices": [6, 7],
+        "counts_before_seal": dict(counts), "target_entries_before_seal": {str(index): 0 for index in declared["block_indices"]},
+        "builder": builder_ref, "preparation": preparation_ref, "block_indices": declared["block_indices"],
         "sample_indices": SAMPLE_INDICES, "query_chunk": config["query_chunk"],
         "projection_chunk": config["projection_chunk"], "neuron_chunk": config["neuron_chunk"],
         "scope": "Observed pre6 complete text/image, upstream modulation/RoPE and actual block6/7 parameters. No native current6/7 activation or post6 state supplied to prediction."}
+    if len(declared["block_indices"]) == 3:
+        binding["scope"] = "Observed pre6 complete text/image, upstream modulation/RoPE and actual block6/7/8 parameters. Later blocks consume own complete predicted predecessors; no native target/intermediate activation supplied to prediction."
     operands = {"blocks": [], "cases": {}, "profile": None}
     for index, block in blocks.items():
         attn = block.attn
@@ -135,6 +170,10 @@ def run_panel(*, adapter, cuts, output, config, store, array, wall, event, count
     legacy = runpy.run_path("flux_single_contraction.py")
     previous = runpy.run_path("flux_attention_replacement_campaign.py")
     save, sha = util["save"], util["sha"]
+    declared = contract(config)
+    indices, suffix = declared["block_indices"], declared["suffix_steps"]
+    last, common_key = indices[-1], "common_post" + str(indices[-1])
+    checked_predictions = set()
     source_non_stream = {role: describe({key: value for key, value in cut.payload.items() if key not in {"image", "text", "cursor"}})
         for role, cut in cuts.items()}
     active = {"branch": None}
@@ -143,7 +182,7 @@ def run_panel(*, adapter, cuts, output, config, store, array, wall, event, count
         body = value.to_dict()
         counts["adapter_steps" if body["operation"] == "continue" else "acts"] += body.get("steps", 1)
         counts["receipt_emissions"] += 1
-        if counts["adapter_steps"] > COUNTS["adapter_steps"] or counts["acts"] > COUNTS["acts"]:
+        if counts["adapter_steps"] > declared["counts"]["adapter_steps"] or counts["acts"] > declared["counts"]["acts"]:
             raise RuntimeError("transition-chain finite panel census exhausted")
         store.receipt(value)
         item = {"sequence": len(emissions), "branch": active["branch"], "receipt": value.fingerprint}
@@ -162,11 +201,46 @@ def run_panel(*, adapter, cuts, output, config, store, array, wall, event, count
         if describe({key: value for key, value in cut.payload.items() if key not in {"image", "text", "cursor"}}) != source_non_stream[role]:
             raise ValueError("full-block transition changed an undeclared non-I/T slot")
         point = cut.execution_point
-        if (point["logical_step"] != 3 or point["phase"] != "single" or point["index"] not in {7, 8}
+        if (point["logical_step"] != 3 or point["phase"] != "single" or point["index"] not in {index+1 for index in indices}
                 or point["local_clock"] != point["index"] or cut.payload["cursor"] != point["index"]
                 or cut.payload["step"] != 3 or cut.payload["phase"] != "single"):
             raise ValueError("full-block transition clock state differs")
+    def identity(value):
+        if (not isinstance(value, np.ndarray) or value.dtype != np.float32 or not np.isfinite(value).all()
+                or np.any(np.ascontiguousarray(value).view(np.uint32) & np.uint32(65535))):
+            raise ValueError("sealed transition output must contain finite exact BF16 widenings")
+        value = np.ascontiguousarray(value)
+        return {"shape": list(value.shape), "dtype": "float32-exact-bf16-widening",
+            "fp32_le_sha256": hashlib.sha256(value.astype("<f4",copy=False).tobytes()).hexdigest(),
+            "bf16_le_sha256": hashlib.sha256((value.view(np.uint32)>>16).astype("<u2").tobytes()).hexdigest()}
+    def validate_chain(role):
+        if role in checked_predictions:
+            return
+        original = torch.cat((cuts[role].payload["text"],cuts[role].payload["image"]),dim=1).float().cpu().numpy()
+        expected = identity(original)
+        chain = predictions[role]
+        normal = util["json_value"]
+        if (chain["chain_length"] != len(indices) or len(chain["steps"]) != len(indices)
+                or normal(chain["input_descriptor"]) != expected):
+            raise ValueError("sealed chain source identity or length differs")
+        text_rows = cuts[role].payload["text"].shape[1]
+        for position,step in enumerate(chain["steps"]):
+            prediction = step["prediction"]
+            value = prediction["output"]
+            actual = identity(value)
+            if (value.shape != original.shape or step["step"] != position or step["block_index"] != indices[position]
+                    or step["input_source"] != ("caller pre-entry residual" if position == 0 else "previous predicted full output")
+                    or normal(step["input_descriptor"]) != expected or normal(prediction["input_descriptor"]) != expected
+                    or normal(prediction["output_descriptor"]) != actual
+                    or not np.array_equal(prediction["text"].view(np.uint32),value[:,:text_rows].view(np.uint32))
+                    or not np.array_equal(prediction["image"].view(np.uint32),value[:,text_rows:].view(np.uint32))):
+                raise ValueError("sealed chain own-state input/output identity or both-stream join differs")
+            expected = actual
+        if normal(chain["output_descriptor"]) != expected or identity(chain["output"]) != expected:
+            raise ValueError("sealed chain final output identity differs")
+        checked_predictions.add(role)
     def predicted_tensor(role, stage, slot, reference):
+        validate_chain(role)
         full = predictions[role]["steps"][stage]["prediction"]["output"]
         text_rows = cuts[role].payload["text"].shape[1]
         image_rows = cuts[role].payload["image"].shape[1]
@@ -186,7 +260,7 @@ def run_panel(*, adapter, cuts, output, config, store, array, wall, event, count
         active["branch"] = "prefix." + role
         nav = navigator(cuts[role])
         paths, states = [], {}
-        for index in (6, 7):
+        for index in indices:
             wall()
             entry = nav.step()
             current = nav.capture()
@@ -198,12 +272,12 @@ def run_panel(*, adapter, cuts, output, config, store, array, wall, event, count
             states[str(index)] = current
         native[role] = states
         prefixes[role] = {"input_cut": cuts[role].fingerprint,
-            "post6": boundary(states["6"]), "post7": boundary(states["7"]), "receipts": paths}
+            **{"post"+str(index): boundary(states[str(index)]) for index in indices}, "receipts": paths}
     save(output / "native-boundaries.json", {"prefixes": prefixes, "scope": "All native current-target boundaries observed only after the complete free-chain seal."})
     for spec in config["branches"]:
         name, role, mode = spec["id"], spec["base"], spec["mode"]
         active["branch"] = name
-        install_index = 6 if mode == "pred1" else 7
+        install_index = indices[int(mode[4:])-1] if mode.startswith("pred") else last
         parent = native[role][str(install_index)]
         nav = navigator(parent)
         row = {**spec, "parent": parent.fingerprint, "start_point": nav.point, "acts": [], "bridge_receipts": [],
@@ -216,15 +290,27 @@ def run_panel(*, adapter, cuts, output, config, store, array, wall, event, count
             installed = nav.capture()
             non_stream_exact(installed, role)
             row["installed"] = boundary(installed)
-            if mode == "pred1":
+            if len(indices) == 3:
+                row["bridge_boundaries"] = []
+            for bridge_index in indices:
+                if bridge_index <= install_index:
+                    continue
                 wall()
-                row["bridge_receipts"].append(nav.step().to_dict())
+                entry = nav.step()
+                row["bridge_receipts"].append(entry.to_dict())
+                bridged = nav.capture()
+                non_stream_exact(bridged, role)
+                if bridged.execution_point["index"] != bridge_index+1:
+                    raise ValueError("native bridge exited at a different block cursor")
+                if len(indices) == 3:
+                    store.save(bridged)
+                    row["bridge_boundaries"].append(boundary(bridged))
         current = nav.capture()
-        if any(current.execution_point[key] != value for key, value in {"logical_step": 3, "phase": "single", "index": 8, "local_clock": 8}.items()):
-            raise ValueError("all chain rows must meet at actual post7 boundary")
+        if any(current.execution_point[key] != value for key, value in {"logical_step": 3, "phase": "single", "index": last+1, "local_clock": last+1}.items()):
+            raise ValueError("all chain rows must meet at actual common post" + str(last) + " boundary")
         non_stream_exact(current, role)
         store.save(current)
-        row["common_post7"] = common[name] = boundary(current)
+        row[common_key] = common[name] = boundary(current)
         initial_receipt = (row["bridge_receipts"] or row["acts"] or prefixes[role]["receipts"])[-1]
         initial_receipt = initial_receipt.get("receipt_id", initial_receipt.get("fingerprint"))
         observation = observer.observe(name, current, index=0, incoming_receipt=initial_receipt)
@@ -235,9 +321,9 @@ def run_panel(*, adapter, cuts, output, config, store, array, wall, event, count
             entry = nav.step()
             path.append(entry.to_dict())
             observation = observer.observe(name, nav.capture(), index=len(path), incoming_receipt=entry.fingerprint)
-            observation["complete_cut_retained"] = len(path) == 14
-        if len(path) != 14:
-            raise ValueError("transition-chain common native suffix must have14 transitions")
+            observation["complete_cut_retained"] = len(path) == suffix
+        if len(path) != suffix:
+            raise ValueError("transition-chain common native suffix census differs")
         final = nav.capture()
         store.save(final)
         if describe(final.payload["conditioning"]) != describe(cuts[role].payload["conditioning"]):
@@ -252,16 +338,17 @@ def run_panel(*, adapter, cuts, output, config, store, array, wall, event, count
         save(output / "rows" / (name + ".json"), row)
         rows[name] = row
         event("branch_complete", row=name)
-    if set(observer.rows) != set(ORDER) or any(len(value) != 15 for value in observer.rows.values()):
+    if set(observer.rows) != set(declared["order"]) or any(len(value) != suffix+1 for value in observer.rows.values()):
         raise ValueError("chain observation boundary census differs")
     save(output / "continuation-observations.json", {"schema": "mdb-flux-chain-continuation-observations-v1",
-        "plan": config["observation_plan"], "branch_execution_order": ORDER, "rows": observer.rows,
+        "plan": config["observation_plan"], "branch_execution_order": declared["order"], "rows": observer.rows,
         "reference_rows": config["observation_plan"]["reference_rows"], "model_calls_added": 0,
-        "scope": "Actual common post7 plus14 exits. Full reference arrays and full candidate endpoints retained; intermediate full candidate norms are worker observations with64 fixed witnesses. Inherited observer capture logic reused, final-cut flags explicitly adapted to15 boundaries."})
+        "scope": ("Actual common post7 plus14 exits. Full reference arrays and full candidate endpoints retained; intermediate full candidate norms are worker observations with64 fixed witnesses. Inherited observer capture logic reused, final-cut flags explicitly adapted to15 boundaries." if len(indices) == 2 else
+            "Actual common post8 plus13 exits. Full native reference arrays and candidate endpoints retained; intermediate full candidate norms are worker observations with64 fixed witnesses. All native bridges before common post8 retain complete I/T arrays and full cuts; common-suffix final flags adapted to14 boundaries.")})
     save(output / "common-boundaries.json", {"rows": common})
     controls = {"sham_png_exact_low": rows["low.sham"]["image"]["sha256"] == rows["low.native"]["image"]["sha256"],
         "sham_final_latent_exact_low": rows["low.sham"]["final_latent"] == rows["low.native"]["final_latent"]}
-    return {"rows": [rows[name] for name in ORDER], "counts": dict(counts), "control_observations": controls,
+    return {"rows": [rows[name] for name in declared["order"]], "counts": dict(counts), "control_observations": controls,
         "native_boundaries_sha256": sha(output / "native-boundaries.json"),
         "common_boundaries_sha256": sha(output / "common-boundaries.json"),
         "continuation_observations_sha256": sha(output / "continuation-observations.json")}
@@ -278,6 +365,8 @@ def worker():
     save, sha, identity, json_value = (util[key] for key in ("save", "sha", "identity", "json_value"))
     config, request = (json.loads(Path(os.environ[name]).read_text()) for name in ("SATURN_RUN_CONFIG", "SATURN_DEBUG_REQUEST"))
     validate_config(config)
+    declared = contract(config)
+    context = declared["context"]
     if request["config"] != config or any(sha(path) != digest for path, digest in request["source_hashes"].items()):
         raise ValueError("transition-chain request/source bytes differ")
     request = {**request, "job_id": os.environ["MRUN_JOB_ID"]}
@@ -366,7 +455,7 @@ def worker():
     event("encoder_placement")
     pipe.text_encoder.to("cuda")
     with torch.inference_mode():
-        conditioning, txt_ids = pipe.encode_prompt(CONTEXT["prompt"], device=torch.device("cuda"), num_images_per_prompt=1, max_sequence_length=512)
+        conditioning, txt_ids = pipe.encode_prompt(context["prompt"], device=torch.device("cuda"), num_images_per_prompt=1, max_sequence_length=512)
     counts["prompt_encodings"] += 1
     encodings = {"conditioning": array(conditioning), "txt_ids": array(txt_ids)}
     conditioning, txt_ids = conditioning.cpu(), txt_ids.cpu()
@@ -384,14 +473,14 @@ def worker():
         "source_hashes": request["source_hashes"], "model_identity": adapter.model_identity, "checkpoint_sha256": identity(inventory),
         "checkpoint_files": inventory, "execution": dict(adapter.execution), "implementation_sources": implementations,
         "versions": {name: importlib.metadata.version(name) for name in ("torch", "numpy", "diffusers", "transformers", "saturn-pub", "mdb-runtime")},
-        "context": CONTEXT, "encoding": encodings, "encodings": encodings, "counts_after_encoding": dict(counts),
+        "context": context, "encoding": encodings, "encodings": encodings, "counts_after_encoding": dict(counts),
         "cpu_thread_environment": {name: os.environ[name] for name in ("OMP_NUM_THREADS", "MKL_NUM_THREADS", "OPENBLAS_NUM_THREADS")},
         "blas_configuration": np.__config__.show(mode="dicts"), "scope": config["scope"]}
     progress["phase"] = "noise_schedule"
     with torch.inference_mode():
         conditioning, txt_ids = conditioning.to("cuda"), txt_ids.to("cuda")
         latent, img_ids = pipe.prepare_latents(1, pipe.transformer.config.in_channels // 4, 512, 512, conditioning.dtype,
-            torch.device("cuda"), torch.Generator(device="cuda").manual_seed(CONTEXT["seed"]))
+            torch.device("cuda"), torch.Generator(device="cuda").manual_seed(context["seed"]))
         counts["noise_draws"] += 1
         schedule = None if getattr(pipe.scheduler.config, "use_flow_sigmas", False) else np.linspace(1., .25, 4)
         timesteps, steps = retrieve_timesteps(pipe.scheduler, 4, torch.device("cuda"), sigmas=schedule,
@@ -402,7 +491,7 @@ def worker():
             timesteps=timesteps.clone(), sigmas=pipe.scheduler.sigmas.clone())
     progress["phase"] = "source_builder"
     event("source_builder_start")
-    cuts, builder = engine["build_sources"](adapter=adapter, session=session, output=output / "builder", context=CONTEXT,
+    cuts, builder = engine["build_sources"](adapter=adapter, session=session, output=output / "builder", context=context,
         job_id=request["job_id"], wall=wall)
     builder_ref = {"path": "builder/builder.json", "sha256": sha(output / "builder/builder.json")}
     for key in ("adapter_steps", "acts", "receipt_emissions"):
@@ -416,7 +505,7 @@ def worker():
     source.update(builder=builder_ref, preparation=preparation_ref)
     save(output / "source.json", source)
     event("sources_prepared")
-    blocks = {index: pipe.transformer.single_transformer_blocks[index] for index in (6, 7)}
+    blocks = {index: pipe.transformer.single_transformer_blocks[index] for index in declared["block_indices"]}
     binding, operands = bind_inputs(blocks, cuts, array=array, counts=counts, builder_ref=builder_ref,
         preparation_ref=preparation_ref, config=config, profile=previous["attention_profile"])
     if (operands["profile"]["heads"] != 24
@@ -427,11 +516,11 @@ def worker():
     tx = ForecastTransaction(output / "transaction", model_identity=adapter.model_identity, input_identity=identity(binding),
         source_identity=identity(request["source_hashes"]), frontier={"kind": "architectural", "binding": binding},
         execution_scope=config["scope"], budgets={"max_native_calls": 1, "max_wall_ms": config["max_wall_seconds"] * 1000, "max_bytes": 256 << 20})
-    release = {"native": False, "blocked": 0, "targets": {"6": 0, "7": 0}}
+    release = {"native": False, "blocked": 0, "targets": {str(index): 0 for index in declared["block_indices"]}}
     def guard(module, args):
         if not release["native"]:
             release["blocked"] += 1
-            raise ValueError("native model entered before complete two-block chain seal")
+            raise ValueError("native model entered before complete transition-chain seal")
         for index, block in blocks.items():
             if module is block:
                 release["targets"][str(index)] += 1
@@ -454,11 +543,11 @@ def worker():
         for handle in handles:
             handle.remove()
     save(output / "transaction-report.json", tx.report())
-    if counts != COUNTS or release["targets"] != {"6": 2, "7": 4} or release["blocked"] != 0:
+    if counts != declared["counts"] or release["targets"] != declared["target_calls"] or release["blocked"] != 0:
         raise ValueError("transition-chain completed physical census differs")
     summary = {"schema": "mdb-flux-transition-chain-result-v1", "job_id": request["job_id"], "request_sha256": request["request_sha256"],
         "counts": dict(counts), "builder_counts": {"adapter_steps": 108, "acts": 4, "receipt_emissions": 112},
-        "panel_counts": {"adapter_steps": 104, "acts": 10, "receipt_emissions": 114, "candidate_calls": 0, "images": 7, "vae_calls": 7},
+        "panel_counts": declared["panel_counts"],
         "seal": seal, "transaction_verification": verify_transaction(tx.root), "model_identity": adapter.model_identity,
         "control_observations": tx.observation("native")["control_observations"], "target_calls": release["targets"],
         "worker_seconds": time.monotonic() - started, "mechanics_status": "pending-independent-audit", "terminal_status": "unassessed", "scope": config["scope"]}

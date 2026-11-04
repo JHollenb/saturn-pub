@@ -76,6 +76,31 @@ The complete source cuts, native post6/post7 I/T, all common-post7 I/T and final
 
 The [saved-only auditor](../qualification/analyze_flux_transition_chain.py) independently recalculates the complete two-block recurrence with different32-query/512-row tiling, verifies transaction/source identity, both-stream chain joins, typed installation footprints, physical receipt census, native continuation and error decomposition. Numerical discrepancies remain observations; replay qualification and terminal generality are separate.
 
+## Bounded three-block extension
+
+Staging with `--chain-length 3` selects a separately frozen seed83 contract: complete block6→7→8 forecasts, nine matched native futures and a common post8 boundary whose next operation is single9. The default two-block seed79 variant remains available. Both variants begin at observed pre6 and use the unchanged complete numerical predictor.
+
+| Variant | Native futures | Native transitions | Typed Acts | Receipt occurrences | Common suffix |
+|---|---:|---:|---:|---:|---:|
+| Blocks6→7, seed79 | 7 | 212 | 14 | 226 | 14 steps |
+| Blocks6→7→8, seed83 | 9 | 237 | 18 | 255 | 13 steps |
+
+The three-block panel adds `low.pred3` and `high.pred3`. `pred1` installs complete predicted post6 I/T and runs native7/8; `pred2` installs recursively predicted post7 I/T and runs native8; `pred3` installs recursively predicted post8 I/T. Native reference prefixes and all bridge exits retain complete cuts, I/T arrays and receipt/clock bindings. Fourteen actual observations per branch cover common post8 and thirteen suffix exits; candidate intermediate suffix norms still have worker-observation authority with fixed witnesses.
+
+At block7, the retained pred1 post7 bridge separates local from carried discrepancy. At block8, the pred2 post8 bridge does the same. The four common post8 arrays additionally supply the exact telescoping identity
+
+```text
+P8 − X8 = [P8 − N8(P7)]
+        + [N8(P7) − N8(N7(P6))]
+        + [N8(N7(P6)) − X8]
+```
+
+The first term is block8's local discrepancy; the second is the finite difference caused by block7's discrepancy after transport through native8; the third carries the block6 discrepancy through native7/8. Nonlinear transport does not act on error vectors independently. Reports retain signed component statistics, all pairwise inner products and full-vector closure separately for image, text and concatenated state. None is a semantic attribution fraction.
+
+The launcher binds the measured Linux worker cache lane for this host-local checkpoint, honors explicit worker cache overrides and rejects Mac cache paths before staging. Three-block transport allows 256MiB members, 2048MiB compressed and 3072MiB expanded. Parameter geometry is a necessary expanded-byte lower bound; it does not predict compressed artifact size. Complete runtime inventory and archive bounds remain enforced.
+
+The generalized auditor passed a full saved-only regression on the previous two-block result: 177,992 existing numerical leaves were identical, with no missing values or changed lengths. This checks backward compatibility without changing the prior evidence. [Regression receipt](../../../../artifacts/mdb-flux-transition-chain3-20261104/legacy2-regression.json), [pre-outcome auditor freeze](../../../../artifacts/mdb-flux-transition-chain3-20261104/audit-qualification.json).
+
 ## Observed two-block result
 
 The seal preceded both current-step target blocks: target-entry counters were zero for blocks 6 and 7. Across the two histories, the independently rebuilt prediction matched all 18,874,368 sealed output values bit for bit. That is reproducibility of the reference forecast, not bitwise equality with native CUDA execution.
@@ -118,6 +143,8 @@ MDB=/absolute/path/to/saturn-pub/packages/mdb
 RUN=/absolute/path/to/new-run-directory
 cd /tmp
 "$PY" -I "$MDB/qualification/submit_flux_transition_chain.py" "$RUN"
+# Or select the separately bounded third-block extension:
+# "$PY" -I "$MDB/qualification/submit_flux_transition_chain.py" "$RUN" --chain-length 3
 # Inspect the immutable request and source/package pins before admission.
 "$PY" -I "$MDB/qualification/submit_flux_transition_chain.py" "$RUN" --submit-staged
 "$PY" -I "$MDB/qualification/submit_flux_transition_chain.py" "$RUN" --collect JOB_ID

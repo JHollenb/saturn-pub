@@ -1,4 +1,4 @@
-"""Publish all seven audited chain futures with unchanged native image tiles."""
+"""Publish all audited chain futures with unchanged native image tiles."""
 from __future__ import annotations
 
 import argparse
@@ -48,11 +48,13 @@ def publish(run, audit_path, output):
         raise ValueError("chain publication audit/request/source binding differs")
     order = [row["id"] for row in request["config"]["branches"]]
     rows = {row["id"]: row for row in audit["rows"]}
-    if len(order) != 7 or len(rows) != 7 or set(order) != set(rows):
-        raise ValueError("chain publication must contain all seven native futures")
+    indices = request["config"]["block_indices"]
+    expected = 7 if indices == [6, 7] else 9 if indices == [6, 7, 8] else None
+    if expected is None or len(order) != expected or len(rows) != expected or set(order) != set(rows):
+        raise ValueError("chain publication must contain all declared native futures")
     output.mkdir(parents=True, exist_ok=False)
     (output / "images").mkdir()
-    columns, margin, band = 4, 12, 66
+    columns, margin, band = (4 if expected == 7 else 3), 12, 66
     sheet = Image.new("RGB", (columns * (512 + margin) + margin,
         math.ceil(len(order) / columns) * (512 + band + margin) + margin), "#e9edf1")
     draw = ImageDraw.Draw(sheet)
@@ -86,7 +88,7 @@ def publish(run, audit_path, output):
         "context": request["config"]["context"], "rows": exported,
         "nested_audit_tensor_reference_base": audit["nested_audit_tensor_reference_base"],
         "producer": {"path": Path(__file__).name, "sha256": sha(Path(__file__))},
-        "native_image_layout": "All seven unchanged512x512 RGB tiles, separately annotated66-pixel bands; one unused grid cell stays blank. No resizing or color modification."}
+        "native_image_layout": f"All {expected} unchanged512x512 RGB tiles, separately annotated66-pixel bands. Unused cells stay blank. No resizing or color modification."}
     save(output / "result.json", result)
     save(output / "files.json", {path.relative_to(output).as_posix(): sha(path) for path in sorted(output.rglob("*")) if path.is_file()})
     return {"output": str(output), "rows": len(rows), "result_sha256": sha(output / "result.json"), "new_model_calls": 0}

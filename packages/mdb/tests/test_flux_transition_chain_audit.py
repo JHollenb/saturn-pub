@@ -115,10 +115,10 @@ def test_full_vector_decomposition_retains_opposed_errors_and_no_error_floor():
     assert all(np.array_equal(x, y) for x, y in zip((native, propagated, predicted), originals))
 
 
-def saved_chain():
+def saved_chain(length=2):
     r, mod, block, kwargs = specimen()
     steps, current = [], r
-    for index in range(2):
+    for index in range(length):
         output = A['independent_transition'](current, mod, block, **kwargs)
         descriptor = A['tensor_identity'](current)
         prediction = {'output': output, 'input_descriptor': descriptor,
@@ -129,7 +129,7 @@ def saved_chain():
             'input_source': 'caller pre-entry residual' if index == 0 else 'previous predicted full output',
             'input_descriptor': descriptor, 'prediction': prediction})
         current = output
-    return r, {'chain_length': 2, 'input_descriptor': A['tensor_identity'](r), 'steps': steps,
+    return r, {'chain_length': length, 'input_descriptor': A['tensor_identity'](r), 'steps': steps,
         'output': current, 'output_descriptor': A['tensor_identity'](current),
         'text': current[:, :1].copy(), 'image': current[:, 1:].copy()}
 
@@ -140,6 +140,52 @@ def test_saved_chain_carries_both_full_streams_and_exact_output_alias():
     assert A['exact_bits'](outputs[0][:, [0, 2]], chain['steps'][1]['prediction']['sampled']['input'])
     assert A['exact_bits'](outputs[1], chain['output'])
     assert not A['exact_bits'](outputs[0][:, :1], r[:, :1])
+
+
+def test_three_block_chain_has_no_native_refresh_and_default_remains_two_blocks():
+    r, chain = saved_chain(3)
+    outputs = A['verify_predicted_chain'](chain, r, text_rows=1, sample_indices=[0, 2], expected_block_indices=[6, 7, 8])
+    assert len(outputs) == 3
+    assert A['exact_bits'](outputs[1][:, [0, 2]], chain['steps'][2]['prediction']['sampled']['input'])
+    with pytest.raises(ValueError, match='initial binding'):
+        A['verify_predicted_chain'](chain, r, text_rows=1, sample_indices=[0, 2])
+    chain['steps'][2]['input_descriptor'] = chain['steps'][0]['input_descriptor']
+    with pytest.raises(ValueError, match='intermediate input'):
+        A['verify_predicted_chain'](chain, r, text_rows=1, sample_indices=[0, 2], expected_block_indices=[6, 7, 8])
+
+
+def test_geometry_is_independently_bounded_and_preserves_legacy_counts():
+    old = A['derive_geometry']({'block_indices': [6, 7]})
+    new = A['derive_geometry']({'block_indices': [6, 7, 8]})
+    assert old['context'] == A['CONTEXT'] and old['branches'] == A['BRANCHES'] and old['order'] == A['ORDER']
+    assert old['counts'] == A['COUNTS'] and old['panel_counts'] == A['PANEL_COUNTS']
+    assert (new['context']['seed'], len(new['branches']), new['suffix_steps'], new['observer_boundaries'], new['common_key']) == (83, 9, 13, 14, 'common_post8')
+    assert (new['counts']['adapter_steps'], new['counts']['acts'], new['counts']['receipt_emissions'], new['counts']['vae_calls']) == (237, 18, 255, 9)
+    assert (new['panel_counts']['adapter_steps'], new['panel_counts']['acts'], new['panel_counts']['receipt_emissions']) == (129, 14, 143)
+    assert new['targets'] == {'6': 2, '7': 4, '8': 6}
+    assert new['order'] == ['low.native', 'high.native', 'low.sham', 'low.pred1', 'low.pred2', 'low.pred3', 'high.pred1', 'high.pred2', 'high.pred3']
+
+
+@pytest.mark.parametrize('indices', [[7, 8], [6, 8], [6, 7, 9], [6, 7, 8, 9], [6., 7.]])
+def test_unsupported_or_ambiguous_horizons_rejected(indices):
+    with pytest.raises(ValueError, match='horizon'):
+        A['derive_geometry']({'block_indices': indices})
+
+
+def test_three_term_transport_identity_preserves_cancelled_text_and_image_effects():
+    native = np.zeros((1, 2, 2), np.float32)
+    bridge1 = np.array([[[2., -2.], [0., 0.]]], np.float32)
+    bridge2 = np.array([[[1., -1.], [4., -4.]]], np.float32)
+    predicted = np.array([[[0., 0.], [3., -3.]]], np.float32)
+    result = A['three_term_decomposition'](predicted, bridge2, bridge1, native)
+    text = A['three_term_decomposition'](predicted[:, :1], bridge2[:, :1], bridge1[:, :1], native[:, :1])
+    image = A['three_term_decomposition'](predicted[:, 1:], bridge2[:, 1:], bridge1[:, 1:], native[:, 1:])
+    assert result['closure_max_abs'] == text['closure_max_abs'] == image['closure_max_abs'] == 0
+    assert len(result['pairwise_dot_products']) == 3
+    assert text['total']['l2'] == 0 and all(v['l2'] > 0 for v in text['terms'].values())
+    assert image['total']['l2'] > 0 and image['terms']['transported_block6_difference']['l2'] == 0
+    assert text['pairwise_dot_products']['local_block8_dot_transported_block6_difference'] < 0
+    assert 'native8 applied to an error vector' in result['scope']
 
 
 @pytest.mark.parametrize('corruption', ['stale_source', 'native_intermediate', 'stale_text', 'final_alias', 'wrong_block', 'digest'])

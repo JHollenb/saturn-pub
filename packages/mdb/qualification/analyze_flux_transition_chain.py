@@ -1,4 +1,4 @@
-"""Independent saved-only audit of an autonomous two-block FLUX prediction.
+"""Independent saved-only audit of bounded two/three-block FLUX predictions.
 
 Source, typed closure and chain provenance are integrity checks. Numerical
 discrepancies are observations with no precision threshold or error floor.
@@ -32,6 +32,36 @@ COUNTS = {"model_loads": 1, "prompt_encodings": 1, "noise_draws": 1, "adapter_st
 PANEL_COUNTS = {"adapter_steps": 104, "acts": 10, "receipt_emissions": 114, "candidate_calls": 0, "images": 7, "vae_calls": 7}
 
 
+def derive_geometry(plan):
+    """Independently derive the two explicitly bounded experimental contracts."""
+    indices = list(plan.get("block_indices", [6, 7]))
+    require(indices in ([6, 7], [6, 7, 8]) and all(type(i) is int for i in indices), "unsupported finite transition-chain horizon")
+    count, last = len(indices), indices[-1]
+    seed = 79 if count == 2 else 83
+    context = {**CONTEXT, "id": "p1-s" + str(seed), "seed": seed}
+    branches = [{"id": "low.native", "base": "zero", "mode": "native"},
+        {"id": "high.native", "base": "text", "mode": "native"},
+        {"id": "low.sham", "base": "zero", "mode": "sham"}]
+    branches += [{"id": side + ".pred" + str(i), "base": role, "mode": "pred" + str(i)}
+                 for side, role in (("low", "zero"), ("high", "text")) for i in range(1, count + 1)]
+    suffix = 21 - last
+    bridge_steps = count * (count - 1)
+    panel_native = 2 * count + bridge_steps + len(branches) * suffix
+    panel_acts = 2 * (1 + 2 * count)
+    panel = {"adapter_steps": panel_native, "acts": panel_acts, "receipt_emissions": panel_native + panel_acts,
+        "candidate_calls": 0, "images": len(branches), "vae_calls": len(branches)}
+    counts = {**COUNTS, "adapter_steps": 108 + panel_native, "acts": 4 + panel_acts,
+        "receipt_emissions": 112 + panel_native + panel_acts, "images": len(branches), "vae_calls": len(branches)}
+    return {"indices": indices, "last": last, "length": count, "context": context, "branches": branches,
+        "order": [row["id"] for row in branches], "counts": counts, "panel_counts": panel,
+        "suffix_steps": suffix, "observer_boundaries": suffix + 1, "common_key": "common_post" + str(last),
+        "bridge_steps": bridge_steps, "targets": {str(index): 2 * (position + 1) for position, index in enumerate(indices)}}
+
+
+def geometry(parent):
+    return parent.get("contract") or derive_geometry(parent.get("plan", {}))
+
+
 def tensor_identity(value):
     value = np.asarray(value)
     require(value.dtype == np.float32 and value.size and np.isfinite(value).all()
@@ -41,15 +71,17 @@ def tensor_identity(value):
             "fp32_le_sha256": hashlib.sha256(np.asarray(value, dtype="<f4").tobytes()).hexdigest()}
 
 
-def verify_predicted_chain(chain, initial, *, text_rows, sample_indices):
+def verify_predicted_chain(chain, initial, *, text_rows, sample_indices, expected_block_indices=(6, 7)):
     """Require the saved full prediction to carry its own image AND text."""
     current, outputs = np.asarray(initial), []
-    require(chain["chain_length"] == 2 and len(chain["steps"]) == 2
+    expected = list(expected_block_indices)
+    require(expected in ([6, 7], [6, 7, 8]) and all(type(i) is int for i in expected)
+            and chain["chain_length"] == len(expected) and len(chain["steps"]) == len(expected)
             and chain["input_descriptor"] == tensor_identity(current), "chain initial binding differs")
     for index, step in enumerate(chain["steps"]):
         prediction = step["prediction"]
         descriptor = tensor_identity(current)
-        require(step["step"] == index and step["block_index"] == 6 + index
+        require(step["step"] == index and step["block_index"] == expected[index]
                 and step["input_source"] == ("caller pre-entry residual" if index == 0 else "previous predicted full output")
                 and step["input_descriptor"] == prediction["input_descriptor"] == descriptor,
                 "chain borrowed or misdeclared an intermediate input")
@@ -172,10 +204,36 @@ def vector_decomposition(predicted, propagated, native):
             "scope": "Saved full-vector identity, not a unique causal or semantic attribution."}
 
 
+def three_term_decomposition(predicted8, native8_predicted7, native8_native7_predicted6, native8):
+    """Three finite differences, preserving transport through the native block."""
+    arrays = [np.asarray(x) for x in (predicted8, native8_predicted7, native8_native7_predicted6, native8)]
+    require(all(x.dtype == np.float32 and x.shape == arrays[0].shape and x.size and np.isfinite(x).all() for x in arrays),
+            "three-term decomposition field ABI differs")
+    p, a, b, n = [x.astype(np.float64) for x in arrays]
+    terms = {"local_block8": p - a, "transported_block7_difference": a - b, "transported_block6_difference": b - n}
+    stats = lambda x: {"l2": float(np.linalg.norm(x.ravel())), "rms": float(np.sqrt(np.mean(x * x))),
+                       "max_abs": float(np.abs(x).max()), "signed_mean": float(x.mean())}
+    names = list(terms)
+    return {"formula": "P8-X8=(P8-N8(P7))+(N8(P7)-N8(N7(P6)))+(N8(N7(P6))-X8)",
+        "terms": {key: stats(value) for key, value in terms.items()}, "total": stats(p - n),
+        "pairwise_dot_products": {names[i] + "_dot_" + names[j]: float(np.sum(terms[names[i]] * terms[names[j]]))
+                                  for i in range(3) for j in range(i + 1, 3)},
+        "closure_max_abs": float(np.abs((p - n) - sum(terms.values())).max()),
+        "scope": "Exact saved-vector finite-difference identity. The middle term is a difference transported through native8, not native8 applied to an error vector; no unique semantic/causal attribution."}
+
+
+def stage_vector_decomposition(predicted, propagated, native, index):
+    result = vector_decomposition(predicted, propagated, native)
+    result["formula"] = (f"predicted{index}-native{index} = (predicted{index}-native{index}(predicted{index-1}))"
+                         f" + (native{index}(predicted{index-1})-native{index})")
+    return result
+
+
 def current_parent(root, *, custody_verify=None):
     root = Path(root).resolve()
     h = runpy.run_path(str(HERE / "summarize_context_window.py"))
     request, job = [h["read"](root / name) for name in ("request.json", "job.json")]
+    g = derive_geometry(request["config"])
     if (root / "recovery.json").is_file():
         custody, summary = recovered_custody(root, h, request, job)
         envelope = {"job_id": job["job_id"], "request_sha256": request["request_sha256"],
@@ -193,9 +251,9 @@ def current_parent(root, *, custody_verify=None):
     data = root / "extracted/flux-transition-chain-result"
     source, summary, plan, frozen, binding = [h["read"](data / name) for name in
         ("source.json", "summary.json", "plan.json", "plan-frozen.json", "binding.json")]
-    require(summary == envelope["report"] and summary["counts"] == COUNTS and summary["panel_counts"] == PANEL_COUNTS
-            and plan == request["config"] and plan["branches"] == BRANCHES and plan["branch_execution_order"] == ORDER
-            and source["context"] == plan["context"] == CONTEXT and plan["block_indices"] == [6, 7]
+    require(summary == envelope["report"] and summary["counts"] == g["counts"] and summary["panel_counts"] == g["panel_counts"]
+            and plan == request["config"] and plan["branches"] == g["branches"] and plan["branch_execution_order"] == g["order"]
+            and source["context"] == plan["context"] == g["context"] and plan["block_indices"] == g["indices"]
             and plan["selector"] == {"logical_step": 3, "phase": "single", "index": 6}
             and (plan["height"], plan["width"], plan["steps"]) == (512, 512, 4)
             and plan["sample_indices"] == SAMPLE_INDICES and plan["retain_fields"] is False
@@ -216,7 +274,7 @@ def current_parent(root, *, custody_verify=None):
             and SHARED["transaction_verifications_match"](transaction, summary["transaction_verification"]), "chain transaction differs")
     return {"root": root, "data": data, "result_root": data, "helpers": h, "request": request, "job": job,
             "custody": custody, "source": source, "summary": summary, "plan": plan,
-            "frozen": frozen, "binding": binding, "transaction": transaction}
+            "frozen": frozen, "binding": binding, "transaction": transaction, "contract": g}
 
 
 def verify_failed_recovery_identity(recovery, job, request):
@@ -250,6 +308,7 @@ def verify_recovered_inventory(data, before, after, limits):
 def recovered_custody(root, h, request, job):
     """Authenticate a failed publisher's complete bytes without a fake report."""
     helper = runpy.run_path(str(HERE / "flux_family_custody.py"))
+    g = derive_geometry(request["config"])
     recovery = h["read"](root / "recovery.json")
     verify_failed_recovery_identity(recovery, job, request)
     require(not (root / "report.json").exists() and recovery["worker_report_emitted"] is False
@@ -287,7 +346,7 @@ def recovered_custody(root, h, request, job):
     complete_lines = [line for line in log.splitlines() if line.startswith(marker)
                       and json.loads(line[len(marker):])["kind"] == "complete"]
     require(len(seals) == len(complete) == 1 and seals[0]["sequence"] < complete[0]["sequence"]
-            and seals[0]["seal"] == summary["seal"] and complete[0]["counts"] == COUNTS
+            and seals[0]["seal"] == summary["seal"] and complete[0]["counts"] == g["counts"]
             and len(complete_lines) == 1 and "archive member exceeds byte bound" in log
             and log.index(complete_lines[0]) < log.index("archive member exceeds byte bound"),
             "complete native log does not precede transport failure")
@@ -295,7 +354,7 @@ def recovered_custody(root, h, request, job):
     require(failure["job_id"] == summary["job_id"] == job["job_id"]
             and failure["request_sha256"] == summary["request_sha256"] == request["request_sha256"]
             and failure["mechanics_status"] == "errored" and "archive member exceeds byte bound" in failure["error"]
-            and summary["counts"] == COUNTS and summary["panel_counts"] == PANEL_COUNTS,
+            and summary["counts"] == g["counts"] and summary["panel_counts"] == g["panel_counts"],
             "failed exporter and completed native summary identities differ")
     report = h["read"](data / "transaction-report.json")
     checked = h["verify_transaction"](data / "transaction", expected_seal_sha256=summary["seal"]["seal_sha256"],
@@ -323,22 +382,23 @@ def audit_forecasts(parent, e):
     from mdb.tensor_archive import load_tensor_archive
 
     h, data, binding = parent["helpers"], parent["data"], parent["binding"]
+    g = geometry(parent)
     tree = h["NumericalTree"](data / "transaction")
     decoded = lambda file, field: tree.decode(h["read"](data / "transaction" / file)[field])
     declared = decoded("frontiers/source_binding.json", "value")
     forecast = decoded("forecasts/transition_chain.json", "predictions")
     hypotheses = decoded("forecasts/chain_hypotheses.json", "predictions")
-    expected = {**COUNTS, "adapter_steps": 108, "acts": 4, "receipt_emissions": 112, "images": 0, "vae_calls": 0}
+    expected = {**g["counts"], "adapter_steps": 108, "acts": 4, "receipt_emissions": 112, "images": 0, "vae_calls": 0}
     require(declared == binding and hypotheses == parent["plan"]["hypotheses"]
-            and binding["counts_before_seal"] == expected and binding["target_entries_before_seal"] == {"6": 0, "7": 0}
-            and binding["block_indices"] == [6, 7] and set(binding["blocks"]) == {"6", "7"}
+            and binding["counts_before_seal"] == expected and binding["target_entries_before_seal"] == {str(i): 0 for i in g["indices"]}
+            and binding["block_indices"] == g["indices"] and set(binding["blocks"]) == {str(i) for i in g["indices"]}
             and set(binding["inputs"]) == set(forecast["cases"]) == {"zero", "text"}
             and binding["sample_indices"] == SAMPLE_INDICES, "chain sealed declaration differs")
     parameter_names = {"qkv_mlp_weight": "attn.to_qkv_mlp_proj.weight", "qkv_mlp_bias": "attn.to_qkv_mlp_proj.bias",
         "to_out_weight": "attn.to_out.weight", "to_out_bias": "attn.to_out.bias",
         "norm_q_weight": "attn.norm_q.weight", "norm_k_weight": "attn.norm_k.weight"}
     blocks = {}
-    for index in (6, 7):
+    for index in g["indices"]:
         b = binding["blocks"][str(index)]
         require((b["hidden_width"], b["mlp_width"], b["heads"], b["head_dim"], b["layernorm_eps"], b["qk_eps"])
                 == (3072, 9216, 24, 128, 1e-6, 1e-6) and set(b["parameters"]) == set(parameter_names),
@@ -372,16 +432,25 @@ def audit_forecasts(parent, e):
                 and exact_bits(cos, PREVIOUS["nested_slot_array"](e, inp["cut"], "context", ("rope", 0)))
                 and exact_bits(sin, PREVIOUS["nested_slot_array"](e, inp["cut"], "context", ("rope", 1))),
                 "chain initial full state/context borrowed another source")
-        outputs = verify_predicted_chain(chain, residual, text_rows=512, sample_indices=SAMPLE_INDICES)
+        outputs = verify_predicted_chain(chain, residual, text_rows=512, sample_indices=SAMPLE_INDICES,
+                                         expected_block_indices=g["indices"])
         rebuilt, errors = residual, {}
-        for stage, index in enumerate((6, 7)):
+        for stage, index in enumerate(g["indices"]):
+            p = chain["steps"][stage]["prediction"]
+            source_block = binding["blocks"][str(index)]
+            require((p["hidden_width"], p["mlp_width"], p["heads"], p["head_dim"], p["sequence_length"])
+                    == (3072, 9216, 24, 128, 1536)
+                    and p["layernorm_eps"] == source_block["layernorm_eps"] and p["qk_eps"] == source_block["qk_eps"]
+                    and p["retain_fields"] is False
+                    and all(p[key] == binding[key] == parent["plan"][key] for key in ("query_chunk", "projection_chunk", "neuron_chunk")),
+                    "sealed transition metadata differs from independently declared geometry")
             rebuilt = independent_transition(rebuilt, mod, blocks[index], heads=24, layernorm_eps=1e-6, qk_eps=1e-6,
                                              rope_cos=cos, rope_sin=sin)
             errors[str(index)] = field_error(outputs[stage], rebuilt)
         cases[role] = outputs
         report[role] = {"sealed_minus_independent_free_chain": errors,
             "chain_input_identity": chain["input_descriptor"], "sealed_step_input_sources": [s["input_source"] for s in chain["steps"]],
-            "scope": "Independent source-only all-token whole-block recurrence; block7 consumes independent predicted block6. Rebuild differences are observations, not thresholds."}
+            "scope": "Independent source-only all-token whole-block recurrence; every later block consumes the preceding independent complete prediction. Rebuild differences are observations, not thresholds."}
     return cases, report, hypotheses
 
 
@@ -421,6 +490,8 @@ def boundary_arrays(e, record, *, source_cut):
 
 def audit_native_paths(parent, e, predictions, observed):
     data = e.data
+    g = geometry(parent)
+    common_key, last = g["common_key"], g["last"]
     native_record = e.read(data / "native-boundaries.json")
     prefixes = native_record["prefixes"]
     require(set(prefixes) == {"zero", "text"}, "native reference prefix inventory differs")
@@ -428,29 +499,30 @@ def audit_native_paths(parent, e, predictions, observed):
     for role in ("zero", "text"):
         prefix, source_cut = prefixes[role], parent["binding"]["inputs"][role]["cut"]
         require(prefix["input_cut"] == source_cut, "native prefix borrowed a different source")
-        path = e.walk(source_cut, prefix["post7"]["cut"], limit=3)
-        require(path["native_steps"] == 2 and path["acts"] == 0
+        path = e.walk(source_cut, prefix["post" + str(last)]["cut"], limit=g["length"] + 1)
+        require(path["native_steps"] == g["length"] and path["acts"] == 0
                 and prefix["receipts"] == [e.receipts[rid] for rid in path["receipts"]]
                 and prefix["post6"]["cut"] == prefix["receipts"][0]["result"], "native block6/7 lineage differs")
         native[role] = {}
-        for index in (6, 7):
+        for position, index in enumerate(g["indices"]):
             record = prefix["post" + str(index)]
             point = e.point(record["cut"])
-            require(all(point[key] == value for key, value in {"logical_step": 3, "phase": "single", "index": index + 1, "local_clock": index + 1}.items()),
+            require(record["cut"] == prefix["receipts"][position]["result"]
+                    and all(point[key] == value for key, value in {"logical_step": 3, "phase": "single", "index": index + 1, "local_clock": index + 1}.items()),
                     "native reference boundary clock differs")
             native[role][index] = boundary_arrays(e, record, source_cut=source_cut)
         prefix_paths[role] = path
     rows = {row["id"]: row for row in observed["rows"]}
-    require(len(rows) == len(observed["rows"]) == 7 and set(rows) == set(ORDER), "chain row inventory differs")
+    require(len(rows) == len(observed["rows"]) == len(g["order"]) and set(rows) == set(g["order"]), "chain row inventory differs")
     common_record = e.read(data / "common-boundaries.json")["rows"]
-    require(set(common_record) == set(ORDER), "common boundary inventory differs")
-    paths, common, pixels, latents = {}, {}, {}, {}
+    require(set(common_record) == set(g["order"]), "common boundary inventory differs")
+    paths, common, pixels, latents, bridge_states = {}, {}, {}, {}, {}
     retained = {cut: e.fields(cut) for cut in e.store["cuts"]}
-    for spec in BRANCHES:
+    for spec in g["branches"]:
         name, role, mode = (spec[key] for key in ("id", "base", "mode"))
         row = rows[name]
         source_cut = parent["binding"]["inputs"][role]["cut"]
-        boundary = 6 if mode == "pred1" else 7
+        boundary = g["indices"][int(mode[4:]) - 1] if mode.startswith("pred") else last
         expected_parent = prefixes[role]["post" + str(boundary)]["cut"]
         require(row == e.read(data / "rows" / (name + ".json")) and all(row[k] == v for k, v in spec.items())
                 and row["parent"] == expected_parent and row["start_point"] == e.point(expected_parent)
@@ -467,25 +539,34 @@ def audit_native_paths(parent, e, predictions, observed):
         if mode != "native":
             require(row["installed"]["cut"] == current, "installed boundary does not join both sequential Acts")
             installed = boundary_arrays(e, row["installed"], source_cut=source_cut)
-            require(exact_bits(installed, native[role][7] if mode == "sham" else predictions[role][boundary - 6]),
+            require(exact_bits(installed, native[role][last] if mode == "sham" else predictions[role][boundary - 6]),
                     "full image/text installation differs from sealed prediction")
         bridge = row["bridge_receipts"]
-        require(len(bridge) == (1 if mode == "pred1" else 0), "native block7 bridge census differs")
-        if bridge:
-            require(bridge[0] == e.receipts[bridge[0]["fingerprint"]] and bridge[0]["parent"] == current
-                    and bridge[0]["operation"] == "continue" and bridge[0]["steps"] == 1,
-                    "predicted block6 did not feed actual native block7")
-            current = bridge[0]["result"]
-        require(row["common_post7"] == common_record[name] and row["common_post7"]["cut"] == current
-                and all(e.point(current)[key] == value for key, value in {"logical_step": 3, "phase": "single", "index": 8, "local_clock": 8}.items()),
-                "row did not meet at common post7 clock")
-        common[name] = boundary_arrays(e, row["common_post7"], source_cut=source_cut)
+        require(len(bridge) == (last - boundary if mode.startswith("pred") else 0), "native bridge census differs")
+        records = row.get("bridge_boundaries", [])
+        require(g["length"] == 2 or len(records) == len(bridge), "three-block bridge full-state inventory differs")
+        bridge_states[name] = {}
+        for offset, receipt in enumerate(bridge):
+            index = boundary + offset + 1
+            require(receipt == e.receipts[receipt["fingerprint"]] and receipt["parent"] == current
+                    and receipt["operation"] == "continue" and receipt["steps"] == 1,
+                    "installed complete prediction did not feed declared native bridge")
+            current = receipt["result"]
+            saved = records[offset] if g["length"] == 3 else row[common_key]
+            require(saved["cut"] == current and all(e.point(current)[key] == value for key, value in
+                    {"logical_step": 3, "phase": "single", "index": index + 1, "local_clock": index + 1}.items()),
+                    "native bridge boundary clock differs")
+            bridge_states[name][index] = boundary_arrays(e, saved, source_cut=source_cut)
+        require(row[common_key] == common_record[name] and row[common_key]["cut"] == current
+                and all(e.point(current)[key] == value for key, value in {"logical_step": 3, "phase": "single", "index": last + 1, "local_clock": last + 1}.items()),
+                "row did not meet at common continuation clock")
+        common[name] = boundary_arrays(e, row[common_key], source_cut=source_cut)
         path = e.walk(expected_parent, row["final_cut"], row["acts"], limit=20)
         native_receipts = [e.receipts[rid] for rid in path["receipts"] if e.receipts[rid]["operation"] == "continue"]
-        require(path["native_steps"] == 14 + len(bridge) and path["acts"] == len(row["acts"])
-                and native_receipts == bridge + row["continuation_receipts"] and len(row["continuation_receipts"]) == 14
+        require(path["native_steps"] == g["suffix_steps"] + len(bridge) and path["acts"] == len(row["acts"])
+                and native_receipts == bridge + row["continuation_receipts"] and len(row["continuation_receipts"]) == g["suffix_steps"]
                 and e.point(row["final_cut"])["logical_step"] == 4 and e.point(row["final_cut"])["phase"] == "project",
-                "common14-transition continuation/bridge differs")
+                "common native continuation/bridge differs")
         path["conditioning_coverage"] = SHARED["BASE"]["conditioning_coverage"](
             path, e.receipts, retained, e.fields(source_cut)["conditioning"], e.point)
         latents[name] = e.array(row["final_latent"])
@@ -493,20 +574,20 @@ def audit_native_paths(parent, e, predictions, observed):
         pixels[name], paths[name] = e.png(row["image"]), path
     emitted = SHARED["read_jsonl"](data / "receipt-emissions.jsonl")
     expected = [("prefix." + role, rid) for role in ("zero", "text") for rid in prefix_paths[role]["receipts"]]
-    expected += [(name, rid) for name in ORDER for rid in paths[name]["receipts"]]
-    require([item["sequence"] for item in emitted] == list(range(114))
+    expected += [(name, rid) for name in g["order"] for rid in paths[name]["receipts"]]
+    require([item["sequence"] for item in emitted] == list(range(g["panel_counts"]["receipt_emissions"]))
             and [(item["branch"], item["receipt"]) for item in emitted] == expected
             and {rid for _, rid in expected} == set(e.receipts)
-            and sum(p["native_steps"] for p in [*prefix_paths.values(), *paths.values()]) == 104
-            and sum(p["acts"] for p in paths.values()) == 10, "physical panel receipt occurrence census differs")
+            and sum(p["native_steps"] for p in [*prefix_paths.values(), *paths.values()]) == g["panel_counts"]["adapter_steps"]
+            and sum(p["acts"] for p in paths.values()) == g["panel_counts"]["acts"], "physical panel receipt occurrence census differs")
     target_calls = {str(i): sum(1 for _, rid in expected if e.receipts[rid]["operation"] == "continue"
-        and all(e.point(e.receipts[rid]["parent"])[k] == v for k, v in {"logical_step": 3, "phase": "single", "index": i}.items())) for i in (6, 7)}
-    require(target_calls == parent["summary"]["target_calls"] == {"6": 2, "7": 4}, "physical target-entry census differs")
+        and all(e.point(e.receipts[rid]["parent"])[k] == v for k, v in {"logical_step": 3, "phase": "single", "index": i}.items())) for i in g["indices"]}
+    require(target_calls == parent["summary"]["target_calls"] == g["targets"], "physical target-entry census differs")
     controls = {"sham_png_exact_low": rows["low.sham"]["image"]["sha256"] == rows["low.native"]["image"]["sha256"],
         "sham_final_latent_exact_low": exact_bits(latents["low.sham"], latents["low.native"])}
     require(controls == observed["control_observations"] == parent["summary"]["control_observations"], "saved replay control observations differ")
-    controls["sham_common_post7_exact_low"] = exact_bits(common["low.sham"], common["low.native"])
-    return rows, paths, prefix_paths, native, common, pixels, latents, controls
+    controls["sham_" + common_key + "_exact_low"] = exact_bits(common["low.sham"], common["low.native"])
+    return rows, paths, prefix_paths, native, common, pixels, latents, controls, bridge_states
 
 
 def retained_reference_metrics(actual, reference):
@@ -517,30 +598,31 @@ def retained_reference_metrics(actual, reference):
 
 
 def audit_observer(parent, e, rows, prefixes):
+    g = geometry(parent)
     record = e.read(e.data / "continuation-observations.json")
     plan = parent["plan"]["observation_plan"]
     references = ["low.native", "high.native"]
     slots = ("image", "text", "latent", "noise_prediction")
     require(record["schema"] == "mdb-flux-chain-continuation-observations-v1" and record["plan"] == plan
-            and record["branch_execution_order"] == ORDER and record["reference_rows"] == references == plan["reference_rows"]
-            and plan["boundaries_per_branch"] == 15 and plan["witness_count"] == 64
-            and plan["slots"] == list(slots) and record["model_calls_added"] == 0 and set(record["rows"]) == set(ORDER),
+            and record["branch_execution_order"] == g["order"] and record["reference_rows"] == references == plan["reference_rows"]
+            and plan["boundaries_per_branch"] == g["observer_boundaries"] and plan["witness_count"] == 64
+            and plan["slots"] == list(slots) and record["model_calls_added"] == 0 and set(record["rows"]) == set(g["order"]),
             "chain continuation observation ABI differs")
     full, reports = {}, {}
-    for name in ORDER:
+    for name in g["order"]:
         row, trajectory = rows[name], record["rows"][name]
-        require(len(trajectory) == 15, "chain observer missing a continuation boundary")
+        require(len(trajectory) == g["observer_boundaries"], "chain observer missing a continuation boundary")
         suffix = row["continuation_receipts"]
         initial_receipt = (row["bridge_receipts"] or row["acts"] or prefixes[row["base"]]["receipts"])[-1]
         incoming = initial_receipt.get("receipt_id", initial_receipt.get("fingerprint"))
-        available_refs = [r for r in references if ORDER.index(r) <= ORDER.index(name)]
+        available_refs = [r for r in references if g["order"].index(r) <= g["order"].index(name)]
         z3 = e.slot(parent["binding"]["inputs"][row["base"]]["cut"], "latent")
         reports[name] = []
         for index, item in enumerate(trajectory):
-            cut = row["common_post7"]["cut"] if index == 0 else suffix[index - 1]["result"]
+            cut = row[g["common_key"]]["cut"] if index == 0 else suffix[index - 1]["result"]
             receipt = incoming if index == 0 else suffix[index - 1]["fingerprint"]
             require(item["index"] == index and item["cut"] == cut and item["point"] == e.point(cut)
-                    and item["incoming_receipt"] == receipt and item["complete_cut_retained"] == (index in {0, 14})
+                    and item["incoming_receipt"] == receipt and item["complete_cut_retained"] == (index in {0, g["suffix_steps"]})
                     and set(item["slots"]) == set(slots) and set(item["comparisons"]) == set(available_refs),
                     "chain observer receipt/clock/retention differs")
             samples, checked_slots = {}, {}
@@ -566,7 +648,7 @@ def audit_observer(parent, e, rows, prefixes):
                 else:
                     require("array" not in value, "candidate intermediate storage exceeds declared contract")
                 samples[slot] = PREVIOUS["witness_values"](value, retained)
-                if slot == "latent" and index < 14:
+                if slot == "latent" and index < g["suffix_steps"]:
                     require(e.typed["matches"](z3, value["descriptor"], bf16=True), "stored Z3 changed before scheduler commit")
                     PREVIOUS["witness_values"](value, z3)
                 checked_slots[slot] = {"descriptor": value["descriptor"], "meaning": value["meaning"], "array": value.get("array"),
@@ -600,11 +682,12 @@ def audit_observer(parent, e, rows, prefixes):
                     comparisons[ref][slot] = diagnostic
             reports[name].append({"index": index, "cut": cut, "point": item["point"], "incoming_receipt": receipt,
                 "slots": checked_slots, "comparisons": comparisons})
-    return {"rows": reports, "references": references, "boundaries_per_branch": 15,
+    return {"rows": reports, "references": references, "boundaries_per_branch": g["observer_boundaries"],
         "scope": "Full arrays independently recomputed only for native reference trajectories. Candidate intermediate full norms are retained worker observations; fixed64 witnesses and complete endpoint cuts do not prove every intermediate full norm."}
 
 
 def audit_timing(parent, observed):
+    g = geometry(parent)
     timeline = SHARED["read_jsonl"](parent["data"] / "timeline.jsonl")
     require([v["sequence"] for v in timeline] == list(range(len(timeline)))
             and all(a["seconds"] <= b["seconds"] for a, b in zip(timeline, timeline[1:])), "timeline ordering differs")
@@ -613,12 +696,12 @@ def audit_timing(parent, observed):
     completed = [v for v in timeline if v["kind"] == "branch_complete"]
     require(len(sealed) == len(starts) == 1 and sealed[0]["seal"] == parent["summary"]["seal"]
             and sealed[0]["counts"] == parent["binding"]["counts_before_seal"]
-            and sealed[0]["target_entries_before_seal"] == {"6": 0, "7": 0} and sealed[0]["blocked_entries"] == 0
+            and sealed[0]["target_entries_before_seal"] == {str(i): 0 for i in g["indices"]} and sealed[0]["blocked_entries"] == 0
             and starts[0]["sequence"] < sealed[0]["sequence"]
-            and [v["row"] for v in completed] == ORDER and all(sealed[0]["sequence"] < v["sequence"] for v in completed)
-            and observed["counts"] == parent["summary"]["counts"] == COUNTS,
+            and [v["row"] for v in completed] == g["order"] and all(sealed[0]["sequence"] < v["sequence"] for v in completed)
+            and observed["counts"] == parent["summary"]["counts"] == g["counts"],
             "chain seal does not precede target consumption or census differs")
-    return {"seal_event": sealed[0], "prediction_start": starts[0], "target_entries_before_seal": {"6": 0, "7": 0},
+    return {"seal_event": sealed[0], "prediction_start": starts[0], "target_entries_before_seal": {str(i): 0 for i in g["indices"]},
         "target_entries_after_seal": parent["summary"]["target_calls"],
         "scope": "Public transaction seal, source-bound guards and physical receipt census. Trusted callback/source inspection, not an OS sandbox or CUDA kernel trace."}
 
@@ -629,6 +712,7 @@ def analyze(root):
     from mdb.tensor_archive import load_tensor_archive
 
     parent = current_parent(root)
+    g = geometry(parent)
     data, h = parent["data"], parent["helpers"]
     e = SavedEvidence(data, run=parent)
     ENTRY["verify_store_identity"](e, parent["source"])
@@ -640,30 +724,41 @@ def analyze(root):
                             ("continuation_observations_sha256", "continuation-observations.json")):
         require(observed[field] == sha_file(data / filename), "native observation file binding differs")
     timing = audit_timing(parent, observed)
-    rows, paths, prefixes, native, common, pixels, latents, controls = audit_native_paths(parent, e, predictions, observed)
+    rows, paths, prefixes, native, common, pixels, latents, controls, bridge_states = audit_native_paths(parent, e, predictions, observed)
     observer = audit_observer(parent, e, rows, e.read(data / "native-boundaries.json")["prefixes"])
-    full_errors, decomposition = {}, {}
+    full_errors, decomposition, by_stage, three_terms = {}, {}, {}, {}
     for role, label in (("zero", "low"), ("text", "high")):
         full_errors[role] = {}
-        for stage, index in enumerate((6, 7)):
+        for stage, index in enumerate(g["indices"]):
             full_errors[role][str(index)] = {slot: field_error(native[role][index][:, sl], predictions[role][stage][:, sl])
                 for slot, sl in (("full", slice(None)), ("text", slice(None, 512)), ("image", slice(512, None)))}
-        decomposition[role] = {slot: vector_decomposition(predictions[role][1][:, sl], common[label + ".pred1"][:, sl], native[role][7][:, sl])
-            for slot, sl in (("full", slice(None)), ("text", slice(None, 512)), ("image", slice(512, None)))}
+        by_stage[role] = {}
+        for stage, index in enumerate(g["indices"]):
+            if stage == 0:
+                continue
+            propagated = bridge_states[label + ".pred" + str(stage)][index]
+            by_stage[role][str(index)] = {slot: stage_vector_decomposition(predictions[role][stage][:, sl], propagated[:, sl], native[role][index][:, sl], index)
+                for slot, sl in (("full", slice(None)), ("text", slice(None, 512)), ("image", slice(512, None)))}
+        decomposition[role] = by_stage[role]["7"] if g["length"] == 2 else by_stage[role]
+        if g["length"] == 3:
+            three_terms[role] = {slot: three_term_decomposition(common[label + ".pred3"][:, sl], common[label + ".pred2"][:, sl],
+                common[label + ".pred1"][:, sl], native[role][8][:, sl])
+                for slot, sl in (("full", slice(None)), ("text", slice(None, 512)), ("image", slice(512, None)))}
     distances, exported = {}, []
     relative = data.relative_to(parent["root"]).as_posix()
-    for name in ORDER:
+    for name in g["order"]:
         base = ("low" if rows[name]["base"] == "zero" else "high") + ".native"
         distances[name] = {"matched_reference": base, "latent": PREVIOUS["GENERIC"]["COMMON"]["distance"](latents[name], latents[base]),
             "RGB": PREVIOUS["GENERIC"]["COMMON"]["distance"](pixels[name], pixels[base]),
-            "common_post7": field_error(common[name], common[base])}
+            g["common_key"]: field_error(common[name], common[base])}
         row = rows[name]
         exported.append({"id": name, "base": row["base"], "mode": row["mode"], "parent": row["parent"], "acts": row["acts"],
             "final_cut": row["final_cut"], "installation_boundary": row["installation_boundary"],
             "image": {**row["image"], "path": relative + "/" + row["image"]["path"]},
             "final_latent": {**row["final_latent"], "path": relative + "/" + row["final_latent"]["path"]},
             "row_record": {"path": relative + "/rows/" + name + ".json", "sha256": sha_file(data / "rows" / (name + ".json"))},
-            "common_post7": row["common_post7"], "comparisons": distances[name], "native_path": paths[name]})
+            g["common_key"]: row[g["common_key"]], "comparisons": distances[name], "native_path": paths[name],
+            **({"bridge_boundaries": row.get("bridge_boundaries", [])} if g["length"] == 3 else {})})
     replay = all(v is True for v in controls.values())
     return {"schema": "mdb-flux-transition-chain-audit-v1", "mechanics_status": "valid",
         "instrument_status": "native-replay-qualified" if replay else "replay-unresolved", "terminal_status": "unassessed",
@@ -673,28 +768,31 @@ def analyze(root):
         "execution_status": {"job_id": parent["job"]["job_id"], "job_state": parent["job"]["state"],
             "collection_mode": parent["custody"].get("collection_mode", "verified-worker-archive"),
             "publication_status": parent["custody"].get("publication_status", "worker archive/report emitted")},
-        "counts": COUNTS, "panel_counts": PANEL_COUNTS, "seal": parent["summary"]["seal"], "timing": timing,
+        "counts": g["counts"], "panel_counts": g["panel_counts"], "seal": parent["summary"]["seal"], "timing": timing,
         "transaction_verification": parent["transaction"], "sealed_hypotheses": hypotheses, "fresh_builder": lineage,
         "typed_store_counts": e.store["counts"], "full_chain_forecast": {"source_binding": parent["binding"],
             "independent_reconstruction": reconstruction, "native_minus_sealed": full_errors,
-            "propagation_local_decomposition": decomposition},
+            "propagation_local_decomposition": decomposition, "propagation_local_decomposition_by_stage": by_stage,
+            "three_term_post8_decomposition": three_terms, "bridge_boundaries_scope": "Every required three-block bridge boundary retains full image/text; two-block legacy retains its common post7 bridge."},
         "control_observations": controls, "replay_qualification": {"checks": controls,
             "scope": "Named unchanged-sham complete-stream/common-boundary/final latent/PNG controls only; precision errors never gate."},
         "native_prefixes": prefixes, "native_paths": paths, "continuation_trajectory": observer, "comparisons": distances, "rows": exported,
-        "physical_census": {"builder_steps": 108, "native_reference_steps": 4, "native_pred1_bridge_steps": 2,
-            "common_suffix_steps": 98, "global_steps": 212, "global_acts": 14, "physical_receipt_occurrences": 226,
-            "target_entries": {"6": 2, "7": 4}, "direct_calls": 0, "VAE_decodes": 7},
+        "physical_census": {"builder_steps": 108, "native_reference_steps": 2 * g["length"], "native_bridge_steps": g["bridge_steps"],
+            **({"native_pred1_bridge_steps": 2} if g["length"] == 2 else {}),
+            "common_suffix_steps": len(g["order"]) * g["suffix_steps"], "global_steps": g["counts"]["adapter_steps"],
+            "global_acts": g["counts"]["acts"], "physical_receipt_occurrences": g["counts"]["receipt_emissions"],
+            "target_entries": g["targets"], "direct_calls": 0, "VAE_decodes": len(g["order"])},
         "nested_audit_tensor_reference_base": relative, "auditor_source_sha256": sha_file(Path(__file__)),
         "tensor_archive_source_sha256": sha_file(Path(inspect.getfile(load_tensor_archive))),
         "audit_helpers": {name: sha_file(HERE / name) for name in ("analyze_flux_attention_replacement.py", "analyze_flux_mlp_replacement.py",
             "analyze_flux_single_mlp.py", "analyze_flux_single_contraction.py", "analyze_flux_single_contexts.py",
             "summarize_context_window.py", "analyze_flux_mlp_forecast.py", "analyze_flux_rescue_routes.py", "flux_family_custody.py")},
         "models_executed": False,
-        "limits": ["One fresh seed79 history and seven dependent native futures; no semantic/generalization claim.",
-            "Prediction begins from observed native pre6 full image/text, time modulation, upstream RoPE and actual complete block6/7 weights; not raw prompt-to-RGB prediction.",
-            "Block7 free prediction consumes predicted block6 image AND text; no native intermediate or correction is an allowed forecast input.",
+        "limits": [f"One fresh seed{g['context']['seed']} history and {len(g['order'])} dependent native futures; no semantic/generalization claim.",
+            "Prediction begins from observed native pre6 full image/text, time modulation, upstream RoPE and actual complete selected-block weights; not raw prompt-to-RGB prediction.",
+            "Every later free prediction consumes the preceding complete predicted image AND text; no native intermediate or correction is an allowed forecast input.",
             "Independent full NumPy recurrence uses32-query/512-row tiles. All rebuild/native discrepancies remain observations, without precision thresholds or error floors.",
-            "pred1 installs complete predicted6 I/T then runs actual native7. pred2 installs recursively predicted7 I/T. Both join the same14-transition suffix clock.",
+            f"Each predN installs its complete predicted boundary then executes the remaining native bridge. All rows meet at post{g['last']} before the same {g['suffix_steps']}-transition suffix.",
             "Only two native reference trajectories retain full intermediate arrays. Candidate full intermediate norms are worker observations supported by fixed64 witnesses and retained endpoint cuts.",
             "Stored Z3 and post-readout I/T are stale outside their declared meaningful phase. No full intermediate candidate StateCut claim.",
             "Declared receipt footprints and source inspection are not a dynamic CUDA memory-read trace. Shared low-level kernels/framework arithmetic remain relevant to interpretation.",
@@ -706,12 +804,13 @@ audit = analyze
 
 def audit_fresh_builder(parent, e):
     source = parent["source"]
+    g = geometry(parent)
     path, record = ENTRY["referenced_json"](parent, source["builder"])
     b = SavedEvidence(path.parent)
     ENTRY["verify_store_identity"](b, source)
     require(record["schema"] == "mdb-flux-single-context-builder-v1" and record["context"] == source["context"]
-            and record["job_id"] == parent["job"]["job_id"] and source["context"]["seed"] == 79
-            and source["context"]["id"] == "p1-s79", "replacement fresh builder context/job differs")
+            and record["job_id"] == parent["job"]["job_id"] and source["context"] == g["context"],
+            "replacement fresh builder context/job differs")
     own = b.array(record["arrays"]["own_conditioning"])
     require(exact_bits(own, ENTRY["raw_npy"](parent, source["encoding"]["conditioning"]))
             and exact_bits(own, b.slot(record["initial"], "conditioning"))
@@ -774,7 +873,7 @@ def audit_fresh_builder(parent, e):
             "builder": source["builder"], "preparation": source["preparation"],
             "counts": {"adapter_steps": 108, "acts": 4, "receipt_emissions": 112},
             "pair_observations": ENTRY["fresh_pair"](e, prep["pre6_cuts"]["zero"], prep["pre6_cuts"]["text"]),
-            "scope": "Actual fresh seed79 own encoding/noise, two typed conditioning Acts, text transplant, native0 image alignment, native1..5. No imported historical states or known prior endpoints; seed provenance source-bound, not an offline RNG replay."}
+            "scope": f"Actual fresh seed{g['context']['seed']} own encoding/noise, two typed conditioning Acts, text transplant, native0 image alignment, native1..5. No imported historical states or known prior endpoints; seed provenance source-bound, not an offline RNG replay."}
 
 
 if __name__ == "__main__":
