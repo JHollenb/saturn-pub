@@ -115,3 +115,86 @@ def test_pool_mass_and_spearman():
     x = torch.arange(10.0)
     assert spearman(x, x ** 3) == pytest.approx(1.0)
     assert spearman(x, -x) == pytest.approx(-1.0)
+
+
+def _spd(gen, d, scale=1.0):
+    a = torch.randn(d, d, generator=gen, dtype=torch.float64) * scale
+    return a @ a.T + 1e-3 * torch.eye(d, dtype=torch.float64)
+
+
+def test_metric_proxy_is_pca_under_the_identity_metric():
+    from mdb.sparse_switch import metric_proxy
+
+    gen = torch.Generator().manual_seed(4)
+    d, k = 9, 3
+    S = _spd(gen, d)
+    pr = metric_proxy(torch.eye(d, dtype=torch.float64), S, k)
+    ev, Q = torch.linalg.eigh(S)
+    Pk = Q[:, -k:]
+    assert torch.allclose(pr["decode"] @ pr["encode"].T, Pk @ Pk.T, atol=1e-8)
+    assert pr["share"] == pytest.approx(float(ev[-k:].sum() / ev.sum()))
+
+
+def test_metric_proxy_matches_the_reduced_rank_solution_and_beats_pca():
+    from mdb.sparse_switch import metric_proxy, proxy_metric_share
+
+    gen = torch.Generator().manual_seed(5)
+    d, k = 10, 3
+    S, M = _spd(gen, d), _spd(gen, d)
+    pr = metric_proxy(M, S, k)
+    lm, V = torch.linalg.eigh(M)
+    Mh, Mmh = V @ torch.diag(lm.sqrt()) @ V.T, V @ torch.diag(lm.rsqrt()) @ V.T
+    lam, U = torch.linalg.eigh(Mh @ S @ Mh)
+    Uk = U[:, -k:]
+    B = Mmh @ Uk @ Uk.T @ Mh
+    assert torch.allclose(pr["decode"] @ pr["encode"].T, B, atol=1e-7)
+    share = proxy_metric_share(M, S, pr["encode"], pr["decode"])
+    assert share == pytest.approx(pr["share"], abs=1e-9)
+    ev, Q = torch.linalg.eigh(S)
+    assert proxy_metric_share(M, S, Q[:, -k:], Q[:, -k:]) <= share + 1e-12
+
+
+def test_proxy_gate_inputs_with_centres():
+    from mdb.sparse_switch import proxy_gate_inputs
+
+    gen = torch.Generator().manual_seed(6)
+    d, k, items = 6, 2, 7
+    n, c = torch.randn(4, d, generator=gen), torch.randn(4, d, generator=gen)
+    enc = torch.randn(d, k, generator=gen)
+    wg, wu = torch.randn(items, d, generator=gen), torch.randn(items, d, generator=gen)
+    dec = torch.randn(d, k, generator=gen)
+    a, u = proxy_gate_inputs(n, enc, wg @ dec, wu @ dec, center_n=c, center_a=c @ wg.T, center_u=c @ wu.T)
+    B = dec @ enc.T
+    nhat = c + (n - c) @ B.T
+    assert torch.allclose(a, nhat @ wg.T, atol=1e-5) and torch.allclose(u, nhat @ wu.T, atol=1e-5)
+
+
+def test_hybrid_error_scores_are_the_hybrid_base_residual():
+    from mdb.sparse_switch import code_products, hybrid_error_scores
+
+    gen = torch.Generator().manual_seed(7)
+    items = 8
+    g, u = torch.randn(3, items, generator=gen), torch.randn(3, items, generator=gen)
+    g_tok, u_tok, g_glob = torch.rand(items, generator=gen), torch.randn(3, items, generator=gen), torch.rand(items, generator=gen)
+    none = torch.zeros(items, dtype=torch.bool)
+    resid = g * u - code_products(g, u, none, g_glob, hybrid=(g_tok, u_tok))
+    w = torch.rand(items, generator=gen)
+    assert torch.allclose(hybrid_error_scores(g, u, g_tok, u_tok, g_glob, w), resid.abs() * w, atol=1e-6)
+
+
+def test_serving_ledger_and_column_equivalents():
+    from mdb.sparse_switch import ServingLedger, column_equivalents, column_equivalents_decide_after, readout_fraction, top1_margin
+
+    assert column_equivalents(0.331, 0.0) == pytest.approx(331.0)
+    assert column_equivalents(0.331, 1.0) == pytest.approx(1000.0)
+    assert column_equivalents_decide_after(0.331, 0.25) == pytest.approx(581.0)
+    assert readout_fraction(QWEN15, 151936, 28) == pytest.approx(0.177, abs=0.002)
+    logits = torch.tensor([[3.0, 1.0, 0.5], [2.0, 1.9, -1.0]])
+    assert torch.allclose(top1_margin(logits), torch.tensor([2.0, 0.1]))
+    led = ServingLedger()
+    pos = torch.tensor([4, 20, 70, 100])
+    led.add(pos, torch.tensor([True, False, False, True]), torch.tensor([True, True, False, True]), torch.tensor([0.0, 1.0, 2.0, 1.0]))
+    rep = led.report(f=0.5)
+    assert rep["all"]["n"] == 4 and rep["all"]["rho"] == pytest.approx(0.5) and rep["all"]["agree"] == pytest.approx(0.75)
+    assert rep["all"]["column_equivalents"] == pytest.approx(750.0)
+    assert rep["64-127"]["n"] == 2 and rep["64-127"]["kl"] == pytest.approx(1.5)

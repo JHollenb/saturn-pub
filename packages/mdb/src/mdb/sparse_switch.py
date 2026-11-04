@@ -33,6 +33,16 @@ and uses a ``base`` for the rest: the token-mean gate, the global-mean gate
 or the token-table hybrid ``y0_tok(n_tok) + B_0 (n - n_tok)``. The MLP write is
 ``W_down(products)``. ``flop_fraction`` gives a code's derived multiply-accumulate
 count as a fraction of a full column (derived from the shapes, not timed).
+
+Proxies (``reading_metric``, ``metric_proxy``, ``proxy_gate_inputs``): a rank-k map
+of the gate input predicts the gate pre-activation and up projection cheaply, and the
+code takes its exact set from the predicted scores. ``metric_proxy`` is the
+reduced-rank regression that minimises ``E || M^{1/2} (I - B) n ||^2`` for a reading
+metric ``M`` and second moment ``S`` of ``n``; with ``M = I`` it is the PCA of ``S``.
+Serving (``ServingLedger``, ``column_equivalents``): a mixed-memory stream in which
+each position appends rows from either the proxy column (cost f) or a native column
+(cost 1); nothing is recomputed. The ledger counts the native rate, agreement and KL
+by position band.
 """
 from __future__ import annotations
 
@@ -226,3 +236,144 @@ def spearman(x, y):
     ry = y.argsort().argsort().double()
     rx, ry = rx - rx.mean(), ry - ry.mean()
     return float((rx * ry).sum() / (rx.norm() * ry.norm()))
+
+
+# --------------------------------------------------------------------------- proxies
+
+
+def silu_prime(a):
+    """d silu(a) / da = sigma(a) (1 + a (1 - sigma(a))), in fp32."""
+    import torch
+
+    a = a.float()
+    sg = torch.sigmoid(a)
+    return sg * (1 + a * (1 - sg))
+
+
+def reading_metric(w_gate, w_up, weights, c2, e2):
+    """M = W_gate^T diag(w^2 c^2) W_gate + W_up^T diag(w^2 e^2) W_up (d x d, fp32).
+
+    w_gate, w_up [I, d]; weights [I] (for example the Fisher neuron weight); c2 = E[(silu'(a) u)^2] and
+    e2 = E[g^2] per neuron [I]. The Fisher-weighted error of the score inputs g * u under a rank-k map B of the
+    gate input n is, to first order and with position-dependent coefficients replaced by their RMS,
+    E || M^{1/2} (I - B) n ||^2.
+    """
+    wg = w_gate.float() * (weights.float() * c2.float().clamp_min(0).sqrt())[:, None]
+    wu = w_up.float() * (weights.float() * e2.float().clamp_min(0).sqrt())[:, None]
+    return wg.T @ wg + wu.T @ wu
+
+
+def metric_proxy(metric, second_moment, k):
+    """Optimal rank-k map B = decode @ encode^T of n under a reading metric (reduced-rank regression, fp64).
+
+    Minimises E || M^{1/2} (I - B) n ||^2 = tr(M (I - B) S (I - B)^T) over rank-k B, S = E[n n^T] (or a
+    centred covariance). Solved without inverting M: with S = L L^T and L^T M L = P diag(lam) P^T,
+    decode = L P_k lam_k^{-1/2} (= M^{-1/2} U_k) and encode = M decode (= M^{1/2} U_k), where U_k are the top-k
+    eigenvectors of M^{1/2} S M^{1/2}. With M = I this is the PCA of S. Returns encode [d, k], decode [d, k], the
+    eigenvalues lam (descending) and the captured share sum(lam_k) / sum(lam).
+    """
+    import torch
+
+    S = second_moment.double()
+    Mm = metric.double()
+    S, Mm = (S + S.T) / 2, (Mm + Mm.T) / 2
+    s, Q = torch.linalg.eigh(S)
+    L = Q * s.clamp_min(0).sqrt()[None, :]
+    K = L.T @ Mm @ L
+    lam, P = torch.linalg.eigh((K + K.T) / 2)
+    lam, P = lam.flip(0).clamp_min(0), P.flip(1)
+    lk = lam[:k].clamp_min(float(lam[0]) * 1e-15)
+    decode = (L @ P[:, :k]) / lk.sqrt()[None, :]
+    encode = Mm @ decode
+    return {"encode": encode, "decode": decode, "eigenvalues": lam, "share": float(lam[:k].sum() / lam.sum())}
+
+
+def proxy_metric_share(metric, second_moment, encode, decode):
+    """Share of tr(M S) a rank-k map B = decode @ encode^T keeps: 1 - tr(M (I - B) S (I - B)^T) / tr(M S)."""
+    import torch
+
+    S, Mm = second_moment.double(), metric.double()
+    R = torch.eye(S.shape[0], dtype=S.dtype, device=S.device) - decode.double() @ encode.double().T
+    return float(1 - torch.trace(Mm @ R @ S @ R.T) / torch.trace(Mm @ S))
+
+
+def proxy_gate_inputs(n, encode, dec_gate, dec_up, *, center_n=None, center_a=None, center_u=None):
+    """Proxy gate pre-activation and up projection: z = (n - c_n) encode, a = c_a + z dec_gate^T, u = c_u + z dec_up^T.
+
+    encode [d, k]; dec_gate = W_gate decode and dec_up = W_up decode [I, k] are precomputed. Centres are optional
+    (a token table row or a global mean; c_a = W_gate c_n and c_u = W_up c_n as tables). Cost per position:
+    d k + 2 I k multiply-accumulates.
+    """
+    x = n.float() if center_n is None else n.float() - center_n.float()
+    z = x @ encode.float()
+    a = z @ dec_gate.float().T
+    u = z @ dec_up.float().T
+    if center_a is not None:
+        a = a + center_a.float()
+    if center_u is not None:
+        u = u + center_u.float()
+    return a, u
+
+
+def hybrid_error_scores(g, u, g_tok, u_tok, g_glob, weights):
+    """Base-aware score for the token-table hybrid base: |g u - g_tok u_tok - g_glob (u - u_tok)| * weights.
+
+    This is the per-neuron error the hybrid base makes outside the exact set (compare ``switch_scores``, which is
+    the global base's error |g - g_glob| |u|)."""
+    gf, uf, ut = g.float(), u.float(), u_tok.float()
+    return (gf * uf - g_tok.float() * ut - g_glob.float() * (uf - ut)).abs() * weights.float()
+
+
+# --------------------------------------------------------------------------- serving
+
+
+def top1_margin(logits):
+    """Top-1 minus top-2 logit along the last axis (fp32)."""
+    top2 = logits.float().topk(2, dim=-1).values
+    return top2[..., 0] - top2[..., 1]
+
+
+def column_equivalents(f, rho, per=1000):
+    """Mixed memory: per * (f + (1 - f) rho) columns, native positions at cost 1 and proxy positions at cost f.
+
+    Readout excluded (see ``readout_fraction``)."""
+    return per * (f + (1 - f) * rho)
+
+
+def column_equivalents_decide_after(f, rho, per=1000):
+    """per * (f + rho): the gate needs the proxy column's own margin, so a native position costs f + 1."""
+    return per * (f + rho)
+
+
+def readout_fraction(shapes, vocab, n_layers):
+    """Readout MACs (d x vocab) per position as a fraction of a full column (n_layers decoder layers)."""
+    return shapes["d"] * vocab / (layer_macs(**shapes)["total"] * n_layers)
+
+
+@dataclass
+class ServingLedger:
+    """Per-position serving outcomes by position band: native rate, argmax agreement with native, KL(native || served)."""
+
+    bands: tuple = ((4, 16), (16, 32), (32, 64), (64, 128))
+    sums: dict = field(default_factory=dict)
+
+    def add(self, positions, native, agree, kl):
+        """positions, native (bool), agree (bool), kl: 1-D tensors over served positions."""
+        for name, (lo, hi) in [("all", (min(b[0] for b in self.bands), max(b[1] for b in self.bands))),
+                               *[(f"{lo}-{hi - 1}", (lo, hi)) for lo, hi in self.bands]]:
+            m = (positions >= lo) & (positions < hi)
+            tot = self.sums.setdefault(name, [0, 0.0, 0.0, 0.0])
+            tot[0] += int(m.sum())
+            tot[1] += float(native[m].float().sum())
+            tot[2] += float(agree[m].float().sum())
+            tot[3] += float(kl[m].float().sum())
+
+    def report(self, f=None, per=1000):
+        out = {}
+        for name, (n, nat, ag, kl) in self.sums.items():
+            r = {"n": n, "rho": nat / max(n, 1), "agree": ag / max(n, 1), "kl": kl / max(n, 1)}
+            if f is not None:
+                r["column_equivalents"] = column_equivalents(f, r["rho"], per)
+                r["column_equivalents_decide_after"] = column_equivalents_decide_after(f, r["rho"], per)
+            out[name] = r
+        return out
