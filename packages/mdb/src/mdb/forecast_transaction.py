@@ -130,6 +130,8 @@ class ForecastTransaction:
 
     Numerical publications use immutable bundles by default. Select
     ``array_storage='files-v1'`` for the legacy individual-NPY layout.
+    ``execution_scope`` optionally describes externally managed execution. It
+    is declared metadata and does not relax the CPU FP32 bound-model guards.
     """
 
     DEFAULT_BUDGETS = {"max_actions": 512, "max_captures": 64, "max_predictions": 128,
@@ -139,7 +141,7 @@ class ForecastTransaction:
 
     def __init__(self, root, *, model=None, model_identity, input_identity, source_identity,
                  allowed_prefix=None, denied_modules=(), frontier=None, weights=None,
-                 budgets=None, array_storage=DEFAULT_ARRAY_STORAGE):
+                 budgets=None, array_storage=DEFAULT_ARRAY_STORAGE, execution_scope=None):
         self.root = Path(root)
         _mkdir_durable(self.root, exist_ok=False)
         self.model = model
@@ -164,7 +166,10 @@ class ForecastTransaction:
         self.allowed_prefix = _json(allowed_prefix) if allowed_prefix is not None else None
         self.denied_modules = tuple(denied_modules)
         self.declarations = {}
+        self._explicit_execution_scope = execution_scope is not None
         try:
+            if execution_scope is not None and (not isinstance(execution_scope, str) or not execution_scope.strip()):
+                raise ForecastTransactionError("execution_scope must be a nonempty declared string")
             if array_storage not in ("files-v1", "bundle-v1"):
                 raise ForecastTransactionError("unsupported array storage format")
             for key, value in self.budgets.items():
@@ -204,7 +209,8 @@ class ForecastTransaction:
                 "input_identity": input_identity, "source_identity": source_identity,
                 "allowed_prefix": self.allowed_prefix, "frontier": frontier,
                 "denied_modules": list(self.denied_modules), "budgets": self.budgets,
-                "execution_scope": "CPU FP32 eval; genuine prefix wrapper or explicitly declared frontier",
+                "execution_scope": execution_scope if execution_scope is not None else
+                    "CPU FP32 eval; genuine prefix wrapper or explicitly declared frontier",
                 "callback_isolation": "trusted Python; instrumented bound-model module calls only; not an OS sandbox",
                 "guard_limits": ["direct .forward calls may bypass hooks", "other model objects are not instrumented",
                     "arbitrary Python and external side effects are not sandboxed",
@@ -694,12 +700,15 @@ class ForecastTransaction:
         return [method(**arguments) for method, arguments in prepared]
 
     def report(self):
-        return {"schema": SCHEMA, "phase": self.phase, "seal_sha256": self._seal_digest,
+        result = {"schema": SCHEMA, "phase": self.phase, "seal_sha256": self._seal_digest,
                 "failure": _json(self._failure),
                 "work": dict(self.work), "violations": _json(self._violations),
                 "frontiers": list(self._frontiers), "forecasts": list(self._predictions),
                 "observations": list(self._observations), "event_head": self._event_head,
                 "events": _json(self._events)}
+        if self._explicit_execution_scope:
+            result["execution_scope"] = self.declarations.get("execution_scope")
+        return result
 
     def close(self):
         if threading.get_ident() != self._owner:

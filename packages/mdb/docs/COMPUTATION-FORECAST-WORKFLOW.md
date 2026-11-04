@@ -108,6 +108,18 @@ sealed files and payloads again. Each execution result is persisted before its
 optional analysis callback, so an analysis failure retains the native evidence.
 Public receipts bind phase events and immutable content-addressed arrays.
 
+For an external typed navigator, declare its execution profile with
+`ForecastTransaction(..., execution_scope="CUDA BF16 observed StateCut; external native receipt ledger")`.
+The nonempty string is retained in declarations, the seal and the report. This
+is caller-declared metadata; native source/job records and receipts establish
+what actually ran. Bound-model guards retain their CPU FP32 requirements, and
+the generic `work.native_calls` counter counts instrumented bound-model calls,
+not external navigator transitions. Keep an external physical-work ledger when
+using that path. Omitting `execution_scope` preserves legacy declaration bytes
+and report shape. The [carrier assay](FLUX-CONTEXT-CARRIERS.md) records the older
+generic-label discrepancy and qualifies this correction separately from its
+unchanged historical scientific run.
+
 Use multiple captures or predictions before one seal when all cases must be
 forecast globally. For a raw-input account, declare `frontier={"kind": "raw-input"}`
 instead of `allowed_prefix`, then use a `frontier` action to publish the allowed

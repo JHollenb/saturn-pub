@@ -142,6 +142,13 @@ final scenes retain the inspected object arrangement, and eight live-latent
 previews expose the noisy intermediate trajectory. Typed text rollback uses a
 matched reference; exact controls, all numerical outcomes and source custody
 remain available for replay and indexing.
+The [carried-state and future-conditioning assay](docs/FLUX-CONTEXT-CARRIERS.md)
+continues eleven futures from an authenticated native scheduler cut. It observes
+actual projection inputs/returns and restores conditioning on two branches from
+their own edited intermediate states. Coarse scene structure survives zero future
+conditioning with substantial collateral; late restoration improves one history
+partly and leaves the noise-anchor history a collage. The report retains the
+componentwise prediction misses, exact replay controls and searchable occurrences.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 The [compiled-state residual view](docs/COMPILED-STATE.md) fits per-position
