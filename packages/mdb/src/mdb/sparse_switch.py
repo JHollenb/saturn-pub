@@ -1736,3 +1736,179 @@ def two_level_readout_bytes(vocab, d, r, candidates, *, qbits=8, scale_bytes=4, 
     tab = vocab * r * qbits / 8 + vocab * scale_bytes
     rows = float(candidates) * (d * qbits / 8 + scale_bytes)
     return d * r * basis_bytes + tab + rows
+
+
+# ---- Part AL (ADVISOR 19): posterior pool statistics, the adaptive tail detector, position water-filling of the
+# threshold, closed-form base tail energies, the o-projection head pool, the blocked-sigma readout, ledger tolerance
+
+
+def posterior_membership(proxy_scores, theta, tau, *, floor=1e-12):
+    """P(|s_j| > theta) for s_j ~ N(s_hat_j, tau_j^2) (ADVISOR 19.2, D1's denominator): Phi(z) + Phi(-(theta + s_hat) /
+    tau) with z = (s_hat - theta) / tau; s_hat >= 0 is the proxied |score|. Returns p [..., I] fp32."""
+    import torch
+
+    s, t = proxy_scores.float(), tau.float().clamp_min(floor)
+    th = torch.as_tensor(theta, dtype=torch.float32, device=s.device)
+    return torch.special.ndtr((s - th) / t) + torch.special.ndtr(-(th + s) / t)
+
+
+def posterior_energy_key(proxy_scores, theta, tau, *, floor=1e-12):
+    """E[s^2 1(s > theta)] for s ~ N(s_hat, tau^2) (ADVISOR 19.2): (s_hat^2 + tau^2) Phi(z) + tau (s_hat + theta) phi(z),
+    z = (s_hat - theta) / tau. The energy-optimal pool key and D2's summand. Returns [..., I] fp32 (>= 0)."""
+    import math
+
+    import torch
+
+    s, t = proxy_scores.float(), tau.float().clamp_min(floor)
+    th = torch.as_tensor(theta, dtype=torch.float32, device=s.device)
+    z = (s - th) / t
+    phi = torch.exp(-0.5 * z * z) / math.sqrt(2 * math.pi)
+    return ((s * s + t * t) * torch.special.ndtr(z) + t * (s + th) * phi).clamp_min(0)
+
+
+def posterior_recall(energy_key, z, z0):
+    """The posterior's own energy recall of a z-pool (ADVISOR 19.1 (a)): R(z0) = sum_j e_j 1(z_j >= z0) / sum_j e_j per
+    position, e_j = ``posterior_energy_key``. z0 scalar or broadcastable. Returns [...] fp32."""
+    import torch
+
+    e = energy_key.float()
+    z0 = torch.as_tensor(z0, dtype=torch.float32, device=e.device)
+    return (e * (z.float() >= z0)).sum(-1) / e.sum(-1).clamp_min(1e-30)
+
+
+def pool_tail_signals(z, pool, exact_scores, theta_x, proxy_scores, tau, band=None):
+    """The adaptive pool's per-position tail signals (ADVISOR 19.2): D1 = realized exact members in the pool / the
+    posterior-predicted members sum_{pool} p_j (> 1 when the proxy's attenuation is worse than modelled); D2 = the
+    model's expected missed energy outside the pool, sum_{not pool} E[s^2 1(s > theta)]; D3 = the exact-member share in
+    the pool's lowest-z band (``band`` [..., I] bool, a subset of the pool; None -> D3 omitted). Members are
+    exact_scores > theta_x. Larger = the pool was too small. Returns dict of [...] fp32."""
+    mem = exact_scores.float() > theta_x
+    p = posterior_membership(proxy_scores, theta_x, tau)
+    e = posterior_energy_key(proxy_scores, theta_x, tau)
+    out = {"D1": (pool & mem).sum(-1).float() / (p * pool).sum(-1).clamp_min(1e-6),
+           "D2": (e * (~pool)).sum(-1)}
+    if band is not None:
+        out["D3"] = (band & mem).sum(-1).float() / band.sum(-1).float().clamp_min(1)
+    return out
+
+
+def detector_capture(signal, gain, q):
+    """Captured share f of the oracle gain (ADVISOR 19.2): per-position gain [N] (the KL or Fisher-error reduction of
+    serving that position with the fallback) and a detector signal [N]; the detector acts on its top-q share of
+    positions, the oracle on the top-q share by gain. Returns f = sum gain[top_q(signal)] / sum gain[top_q(gain)]."""
+    import torch
+
+    s, g = signal.flatten().float(), gain.flatten().float()
+    k = max(1, int(round(float(q) * s.numel())))
+    den = g.topk(k).values.sum()
+    return float(g[s.topk(k).indices].sum() / den) if float(den) != 0 else float("nan")
+
+
+def missed_energy(scores, theta):
+    """E_t = sum_{s_j <= theta} s_j^2 per position (the selection's missed energy in score units, ADVISOR 19.4)."""
+    s = scores.float()
+    return (s * s * (s <= theta)).sum(-1)
+
+
+def waterfill_factor(missed, gamma, *, floor=1e-12):
+    """The position factor of the KL water-filled threshold (ADVISOR 19.4): theta_t = T E_t^((1 - gamma) / 2), with T
+    calibrated so the pooled count of scores_j / E_t^((1 - gamma) / 2) > T equals the target count (the mean E_t is
+    absorbed into T). Returns E_t^((1 - gamma) / 2) [...]."""
+    return missed.float().clamp_min(floor) ** ((1.0 - float(gamma)) / 2.0)
+
+
+def fit_power_exponent(x, y, *, floor=1e-6):
+    """OLS slope of log y on log x over entries with x, y > floor (gamma of KL_t ~ a E_t^gamma, ADVISOR 19.4).
+    Returns (gamma, intercept, n)."""
+    import numpy as np
+
+    x, y = np.asarray(x, np.float64).ravel(), np.asarray(y, np.float64).ravel()
+    ok = (x > floor) & (y > floor) & np.isfinite(x) & np.isfinite(y)
+    if ok.sum() < 3:
+        return float("nan"), float("nan"), int(ok.sum())
+    b, a = np.polyfit(np.log(x[ok]), np.log(y[ok]), 1)
+    return float(b), float(a), int(ok.sum())
+
+
+def tail_energy_curve(scores, ms):
+    """Tail energy beyond the top-m scores, sum_{j not in top m} s_j^2, per position for each m in ``ms`` (ADVISOR 19.2,
+    E_b(m) of a closed-form base). scores [P, I]. Returns [P, len(ms)] fp32."""
+    import torch
+
+    s2 = scores.float().pow(2).sort(-1, descending=True).values
+    cs = s2.cumsum(-1)
+    tot = cs[:, -1:]
+    idx = torch.as_tensor([min(max(int(m), 1), s2.shape[-1]) - 1 for m in ms], device=s2.device)
+    return (tot - cs[:, idx]).clamp_min(0)
+
+
+def count_at_energy(ms, curve, target):
+    """The count m (linear interpolation between grid points) at which a decreasing tail-energy curve reaches target;
+    None if the curve never gets there on the grid."""
+    import numpy as np
+
+    ms, c = np.asarray(ms, np.float64), np.asarray(curve, np.float64)
+    if c[0] <= target:
+        return float(ms[0])
+    for i in range(1, len(ms)):
+        if c[i] <= target:
+            return float(ms[i - 1] + (ms[i] - ms[i - 1]) * (c[i - 1] - target) / max(c[i - 1] - c[i], 1e-30))
+    return None
+
+
+def quantized_proxy_sigma(sigma, step, znorm):
+    """A rank-k int4 proxy row's error scale with its quantization term (ADVISOR 19.2 (b)): the row's dequantization
+    error is uniform with per-row step Delta_j, so its residual on z has variance Delta_j^2 ||z||^2 / 12; returns
+    sqrt(sigma_j^2 + Delta_j^2 ||z||^2 / 12) [..., I] for sigma [I], step [I], znorm [...]."""
+    s, d = sigma.float(), step.float()
+    return (s * s + (d * d)[None, :] * (znorm.float().reshape(-1, 1) ** 2) / 12.0).sqrt().reshape(*znorm.shape, -1)
+
+
+def head_pool_threshold(head_norms, drop_share):
+    """Pooled per-layer quantile of the attention heads' exact output norms ||o_h|| (ADVISOR 19.2 (1)): heads at or
+    below it are dropped from the o-projection; ``drop_share`` of (head, position) pairs. head_norms [...]."""
+    import torch
+
+    x = head_norms.float().flatten()
+    if x.numel() > 2 ** 24:
+        x = x[torch.randperm(x.numel(), device=x.device)[: 2 ** 24]]
+    return float(torch.quantile(x, float(drop_share)))
+
+
+def blocked_sigma_sd(h_block_norms, e_block, dims):
+    """The blocked-sigma readout scale (ADVISOR 19.5 route 1): the unseen subspace split into nested blocks b of the
+    hidden basis (sizes ``dims``); per state the block norms ||h_b|| [P, B], per vocabulary row the block norms
+    e_{v,b} [V, B]; sd_v = sqrt(sum_b ||h_b||^2 (e_{v,b} + max_v e_{v,b})^2 / d_b) [P, V] (one block = the isotropic
+    ``sigma_candidates`` scale per unit margin)."""
+    import torch
+
+    em = e_block.max(0).values
+    acc = None
+    for b, db in enumerate(dims):
+        t = (h_block_norms[:, b:b + 1].float() ** 2) * ((e_block[:, b] + em[b]).float()[None, :] ** 2) / float(db)
+        acc = t if acc is None else acc + t
+    return acc.clamp_min(0).sqrt()
+
+
+def blocked_sigma_candidates(lhat, sd, margin, *, target=None):
+    """Candidate set lhat_v >= top - margin sd_v (``blocked_sigma_sd``); with ``target`` [P] also the certification
+    statistic z* = (lhat_{v*} - top) / sd_{v*}. Returns (mask [P, V], sizes [P], z* [P] or None)."""
+    top = lhat.max(-1, keepdim=True).values
+    mask = lhat >= top - float(margin) * sd
+    zs = None
+    if target is not None:
+        lv = lhat.gather(-1, target[:, None])[:, 0]
+        zs = ((lv - top[:, 0]) / sd.gather(-1, target[:, None])[:, 0].clamp_min(1e-30)).float()
+    return mask, mask.sum(-1), zs
+
+
+def tolerance_verdict(val, lo, hi, tol=0.0):
+    """Ledger verdict with the realization tolerance shown (request mdb-ledger-tolerance-band-print): 'IN' inside the
+    raw band, 'IN (tolerance)' only inside [lo - tol, hi + tol], 'OUT' outside both, 'n/m' when not measured."""
+    if val is None or isinstance(val, str):
+        return "n/m"
+    if lo <= val <= hi:
+        return "IN"
+    if lo - tol <= val <= hi + tol:
+        return "IN (tolerance)"
+    return "OUT"

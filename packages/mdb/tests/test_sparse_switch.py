@@ -995,3 +995,78 @@ def test_paired_bootstrap_chord_frontier_laws_and_readout_certificate():
     tf = gaussian_tail_fit(rng.standard_normal(20000))
     assert tf["survival"][1.0] == pytest.approx(0.1587, abs=0.01) and -0.8 < tf["log_survival_slope_vs_x2"] < -0.35
     assert two_level_readout_bytes(1000, 16, 4, 10) == 16 * 4 * 2 + 1000 * 4 + 1000 * 4 + 10 * (16 + 4)
+
+
+def test_part_al_posterior_detector_waterfill_tail_readout():
+    import math
+
+    import numpy as np
+
+    from mdb.sparse_switch import (blocked_sigma_candidates, blocked_sigma_sd, count_at_energy, detector_capture,
+                                   fit_power_exponent, head_pool_threshold, missed_energy, pool_tail_signals,
+                                   posterior_energy_key, posterior_membership, posterior_recall, quantized_proxy_sigma,
+                                   sigma_candidates, tail_energy_curve, tolerance_verdict, waterfill_factor)
+
+    g = torch.Generator().manual_seed(7)
+    # posterior closed forms against Monte Carlo
+    sh, tau, th = torch.tensor([0.5, 1.0, 2.0, 0.1]), torch.tensor([0.3, 0.5, 0.2, 1.0]), 1.0
+    eps = torch.randn(200000, 4, generator=g)
+    s = sh + tau * eps
+    p_mc = (s.abs() > th).float().mean(0)
+    e_mc = (s * s * (s > th)).mean(0)
+    assert torch.allclose(posterior_membership(sh, th, tau), p_mc, atol=4e-3)
+    assert torch.allclose(posterior_energy_key(sh, th, tau), e_mc, rtol=0.03, atol=2e-3)
+    z = (sh - th) / tau
+    e = posterior_energy_key(sh, th, tau)
+    assert posterior_recall(e, z, -1e9) == pytest.approx(1.0)
+    assert float(posterior_recall(e, z, 0.0)) == pytest.approx(float(e[z >= 0].sum() / e.sum()))
+    # tail signals: D1 = realized / predicted members, D2 = expected missed energy outside the pool, D3 band share
+    pool = torch.tensor([[True, True, False, False]])
+    ex = torch.tensor([[2.0, 0.1, 3.0, 0.0]])
+    band = torch.tensor([[False, True, False, False]])
+    sig = pool_tail_signals(z[None], pool, ex, th, sh[None], tau[None], band=band)
+    pm = posterior_membership(sh, th, tau)
+    assert float(sig["D1"]) == pytest.approx(1.0 / float(pm[:2].sum()), rel=1e-5)
+    assert float(sig["D2"]) == pytest.approx(float(e[2:].sum()), rel=1e-5)
+    assert float(sig["D3"]) == 0.0
+    # detector capture: a perfect detector captures 1, a random one ~q of the total positive gain at top q
+    gain = torch.rand(10000, generator=g)
+    assert detector_capture(gain, gain, 0.1) == pytest.approx(1.0)
+    f_rand = detector_capture(torch.rand(10000, generator=g), gain, 0.1)
+    assert 0.4 < f_rand < 0.65  # E[gain] / E[gain | top 10%] = 0.5 / 0.95
+    # water-filling: missed energy, the factor and the fitted exponent
+    sc = torch.tensor([[0.5, 1.5, 0.2], [2.0, 0.1, 0.1]])
+    assert torch.allclose(missed_energy(sc, 1.0), torch.tensor([0.29, 0.02]))
+    assert torch.allclose(waterfill_factor(torch.tensor([4.0]), 1.5), torch.tensor([4.0 ** -0.25]))
+    xx = np.exp(np.random.default_rng(0).normal(size=2000))
+    gm, _, n = fit_power_exponent(xx, 0.1 * xx ** 1.4)
+    assert gm == pytest.approx(1.4, abs=1e-6) and n == 2000
+    # tail energy curve and its inversion
+    sp = torch.tensor([[3.0, 2.0, 1.0, 0.5]])
+    cur = tail_energy_curve(sp, [1, 2, 3])
+    assert torch.allclose(cur, torch.tensor([[5.25, 1.25, 0.25]]))
+    assert count_at_energy([1, 2, 3], cur[0].tolist(), 1.25) == pytest.approx(2.0)
+    assert count_at_energy([1, 2, 3], cur[0].tolist(), 0.75) == pytest.approx(2.5)
+    assert count_at_energy([1, 2, 3], cur[0].tolist(), 0.1) is None
+    # quantization term, head pool quantile
+    qs = quantized_proxy_sigma(torch.tensor([1.0, 0.0]), torch.tensor([0.0, math.sqrt(12.0)]), torch.tensor([2.0, 3.0]))
+    assert torch.allclose(qs, torch.tensor([[1.0, 2.0], [1.0, 3.0]]))
+    assert head_pool_threshold(torch.arange(101.0), 0.5) == pytest.approx(50.0)
+    # blocked sigma: one block reduces to the isotropic set; z* certifies membership
+    lhat = torch.randn(20, 40, generator=g)
+    hp, ep = torch.rand(20, generator=g) + 0.1, torch.rand(40, generator=g)
+    sd1 = blocked_sigma_sd(hp[:, None], ep[:, None], [16])
+    for mm in (2.0, 4.0):
+        m1, n1, _ = blocked_sigma_candidates(lhat, sd1, mm)
+        m0, n0 = sigma_candidates(lhat, hp, ep, mm, 16)
+        assert torch.equal(m1, m0) and torch.equal(n1, n0)
+    eb = torch.rand(40, 3, generator=g)
+    hb = torch.rand(20, 3, generator=g)
+    sd3 = blocked_sigma_sd(hb, eb, [4, 4, 8])
+    tgt = torch.randint(0, 40, (20,), generator=g)
+    mk, _, zs = blocked_sigma_candidates(lhat, sd3, 3.0, target=tgt)
+    assert torch.equal(mk[torch.arange(20), tgt], zs >= -3.0 - 1e-6)
+    # ledger verdicts
+    assert tolerance_verdict(0.5, 0.4, 0.6) == "IN"
+    assert tolerance_verdict(0.605, 0.4, 0.6, 0.007) == "IN (tolerance)"
+    assert tolerance_verdict(0.7, 0.4, 0.6, 0.007) == "OUT" and tolerance_verdict(None, 0, 1) == "n/m"
