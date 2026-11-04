@@ -2161,3 +2161,178 @@ def readout_escalation(c1, c2, vocab, d, r1, r2, *, q_bytes=1, scale_bytes=4, c1
             "q90_C1": float(np.quantile(c1, 0.9)), "q90_C2": float(np.quantile(c2, 0.9)),
             "escalated_C1": int((c1 > cap1).sum()), "escalated_C2": int((c2 > c2_cap).sum()), "positions": int(c1.size),
             "expected_bytes": float(b), "table1_bytes": float(t1)}
+
+
+def late_redo_price(L, n_layers, readout, per=1000, convention="readout_separate"):
+    """Column-equivalents per flagged position of a late-L dense re-do (ADVISOR 21.4): the flagged position's last L
+    decoder layers recomputed with dense MLPs from the code's own layer-(n_layers - L) state, plus one more readout. In
+    the ledger's readout-separate convention (``ServingLedger.report``: column-equivalents exclude the readout; the
+    honest dense re-do is per (1 + readout)) the price is per (L / n_layers + readout). ``convention="memo_21_4"`` is
+    the memo's per ((1 - readout) L / n_layers + 2 readout), which equals the honest dense price at L = n_layers but
+    charges a second readout and (1 - readout) per layer share below it (printed beside, not used for scoring here)."""
+    L, n, r = float(L), float(n_layers), float(readout)
+    if convention == "memo_21_4":
+        return per * ((1 - r) * L / n + 2 * r)
+    return per * (L / n + r)
+
+
+def late_fix_share_map(v):
+    """The arctan map of the late re-do (ADVISOR 21.4, derived): for a flagged near-tie (mu ~ 0) with the code's error
+    eps = eps_early + eps_late, v = Var(eps_late) / Var(eps), Gaussian, removing eps_late fixes the flipped sign with
+    probability f = (2 / pi) arctan sqrt(v / (1 - v)). v [...] in [0, 1]. Returns f (numpy)."""
+    import numpy as np
+
+    v = np.clip(np.asarray(v, np.float64), 0.0, 1.0)
+    return (2 / np.pi) * np.arctan(np.sqrt(v / np.maximum(1 - v, 1e-300)))
+
+
+def late_error_share(e_layers, L):
+    """Share of a code's summed per-layer error energy (e.g. the psi-Fisher energy of f - w, [n_layers, N]) carried
+    by the last L layers: sum_{l >= n - L} sum_t e[l, t] / sum_l sum_t e[l, t] (v_L of ADVISOR 21.4)."""
+    import numpy as np
+
+    e = np.asarray(e_layers, np.float64)
+    tot = float(e.sum())
+    return float(e[e.shape[0] - int(L):].sum()) / tot if tot > 0 else float("nan")
+
+
+def redo_fix_share(agree_base, agree_redo, flags):
+    """What a re-do stream did at its flagged positions (ADVISOR 21.4): f = the net share of flagged flips fixed,
+    (A_redo - A_base on the flagged) / P(dis | flag) (the arctan map's quantity: fixed flips minus broken agreements,
+    per flip), with its two parts fixed = P(redo agrees | flagged, base disagreed) and broken = P(redo disagrees |
+    flagged, base agreed), the base's P(dis | flag), and the unflagged positions' mean agreement change (the cache
+    effect). Arrays [N]."""
+    import numpy as np
+
+    a0, a1, fl = (np.asarray(agree_base) > 0.5), (np.asarray(agree_redo) > 0.5), np.asarray(flags, bool)
+    fd, fa = fl & ~a0, fl & a0
+    pd = float((~a0[fl]).mean()) if fl.any() else float("nan")
+    net = float(a1[fl].mean() - a0[fl].mean()) / pd if (fl.any() and pd > 0) else float("nan")
+    return {"f": net, "fixed": float(a1[fd].mean()) if fd.any() else float("nan"),
+            "broken": float((~a1[fa]).mean()) if fa.any() else float("nan"), "p_dis_flag": pd, "flagged": int(fl.sum()),
+            "flagged_flips": int(fd.sum()), "unflagged_change": float(a1[~fl].mean() - a0[~fl].mean()) if (~fl).any() else float("nan"),
+            "net_gain": float(a1.mean() - a0.mean())}
+
+
+class PoolRateController:
+    """Online quantile that holds a pool's mean size per position (ADVISOR 21.3, lever 1): per key (a layer), position
+    t's pool is {j : z_j > tau_t}, and tau_{t+1} = tau_t + gain (n_t - target) / slope, n_t the pool's size at tau_t.
+    With a constant slope (set once per key: the median local |dn/dz| at tau0 over the first call's positions) the
+    fixed point is E[n_t] = target on whatever distribution it runs on (Robbins-Monro; no objective, no fit). The
+    sizes come from a per-position grid: zk [N, G] the k-th largest z at the ascending counts kgrid [G]."""
+
+    def __init__(self, target, tau0, gain=0.05):
+        import numpy as np
+
+        self.target = float(target)
+        self.tau = np.array(tau0, dtype=np.float64).reshape(-1).copy()
+        self.tau0 = self.tau.copy()
+        self.gain = float(gain)
+        self.slope = np.full_like(self.tau, np.nan)
+        self.n = np.zeros_like(self.tau)
+        self.sum = np.zeros_like(self.tau)
+
+    @staticmethod
+    def count_at(zrow, kgrid, tau):
+        import numpy as np
+
+        return float(np.interp(-tau, -np.asarray(zrow, np.float64), np.asarray(kgrid, np.float64)))
+
+    def run_grid(self, key, zk, kgrid):
+        """Positions in stream order: returns (tau_used [N], size [N]) (numpy)."""
+        import numpy as np
+
+        zk, kg = np.asarray(zk, np.float64), np.asarray(kgrid, np.float64)
+        if not np.isfinite(self.slope[key]):
+            sl = []
+            for zr in zk:
+                i = int(np.searchsorted(-zr, -self.tau[key]))
+                i = min(max(i, 1), len(kg) - 1)
+                dz = zr[i - 1] - zr[i]
+                if dz > 0:
+                    sl.append((kg[i] - kg[i - 1]) / dz)
+            self.slope[key] = float(np.median(sl)) if sl else 1.0
+        t, g, tg, s = self.tau[key], self.gain, self.target, self.slope[key]
+        taus, ns = np.empty(len(zk)), np.empty(len(zk))
+        for i, zr in enumerate(zk):
+            n_ = float(np.interp(-t, -zr, kg))
+            taus[i], ns[i] = t, n_
+            t += g * (n_ - tg) / s
+        self.tau[key] = t
+        self.n[key] += len(zk)
+        self.sum[key] += float(ns.sum())
+        return taus, ns
+
+    def realized(self):
+        import numpy as np
+
+        m = np.where(self.n > 0, self.sum / np.maximum(self.n, 1), np.nan)
+        return {"mean_size_by_key": m.tolist(), "ratio_to_target": float(np.nanmean(m) / self.target) if np.isfinite(m).any() else float("nan"),
+                "tau_final": self.tau.tolist(), "tau0": self.tau0.tolist(), "slope": self.slope.tolist(), "target": self.target}
+
+
+def union_pool_topk(z, forced, size):
+    """A pool of exactly ``size`` members per row (ADVISOR 21.3, lever 4): the forced members (e.g. a token's top-k_tok
+    prior members) first, the rest filled by z. z [..., I] float, forced [..., I] bool. Returns the bool pool mask."""
+    import torch
+
+    zf = z.float()
+    big = (zf.abs().max() + 1).clamp_min(1.0) * 4
+    idx = (zf + forced.float() * big).topk(int(size), dim=-1).indices
+    return torch.zeros_like(forced, dtype=torch.bool).scatter_(-1, idx, True)
+
+
+def zbin_calibration(z, member, edges=(-4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0)):
+    """Calibration of a Gaussian membership posterior (ADVISOR 21.3, lever 5): neurons binned by z (bins (-inf, e_0],
+    (e_0, e_1], ..., (e_last, inf)); per bin the count, the realized member share, the mean predicted Phi(z) and their
+    ratio. z, member [...] (torch). Returns a list of dicts."""
+    import torch
+
+    zf, mf = z.float().reshape(-1), member.reshape(-1).float()
+    e = [-float("inf")] + [float(x) for x in edges] + [float("inf")]
+    out = []
+    for lo, hi in zip(e[:-1], e[1:]):
+        b = (zf > lo) & (zf <= hi)
+        n = int(b.sum())
+        real = float(mf[b].mean()) if n else float("nan")
+        pred = float(torch.special.ndtr(zf[b]).mean()) if n else float("nan")
+        out.append({"lo": lo, "hi": hi, "n": n, "realized": real, "predicted": pred,
+                    "ratio": (real / pred) if (n and pred > 0) else float("nan")})
+    return out
+
+
+def moment_sums(x):
+    """Running sums for the standardized residual's moments: (n, sum x, sum x^2, sum x^3, sum x^4) in float64."""
+    xd = x.double().reshape(-1)
+    return [float(xd.numel()), float(xd.sum()), float((xd ** 2).sum()), float((xd ** 3).sum()), float((xd ** 4).sum())]
+
+
+def kurtosis_from_sums(s):
+    """Mean, sd, excess kurtosis and the Student-t nu that matches it (nu = 4 + 6 / excess for excess > 0; inf for a
+    Gaussian or lighter tail) from ``moment_sums`` totals."""
+    n, s1, s2, s3, s4 = (float(v) for v in s)
+    if n < 2:
+        return {"n": n}
+    m = s1 / n
+    var = s2 / n - m * m
+    m4 = s4 / n - 4 * m * s3 / n + 6 * m * m * s2 / n - 3 * m ** 4
+    ex = m4 / max(var * var, 1e-300) - 3.0
+    return {"n": n, "mean": m, "sd": var ** 0.5, "excess_kurtosis": ex, "nu_t": (4 + 6 / ex) if ex > 0 else float("inf")}
+
+
+def escalated_readout_bytes(c1, c2, esc, vocab, d, r1, r2, *, q_bytes=1, scale_bytes=4):
+    """Expected bytes per step of the two-stage readout with a per-position starting level (ADVISOR 21.6 item 2):
+    non-escalated positions read table 1 (V x r1), table 2's (r2 - r1) columns on C1 and the exact rows on C2;
+    escalated ones (esc True) read one full table at r2 (V x r2; table 2 alone holds only columns r1..r2 and cannot form
+    the r2 logits without table 1) and the exact rows on C2. ``memo_table2_only`` prices escalated positions at V x (r2 -
+    r1) as the memo wrote (printed beside; not a buildable readout). c1, c2, esc [P]. Returns dict."""
+    import numpy as np
+
+    c1, c2, es = np.asarray(c1, np.float64), np.asarray(c2, np.float64), np.asarray(esc, bool)
+    rowb = d * q_bytes + scale_bytes
+    two = vocab * (r1 * q_bytes + scale_bytes) + c1 * ((r2 - r1) * q_bytes + scale_bytes) + c2 * rowb
+    full = vocab * (r2 * q_bytes + scale_bytes) + c2 * rowb
+    memo = vocab * ((r2 - r1) * q_bytes + scale_bytes) + c2 * rowb
+    return {"escalated_share": float(es.mean()), "expected_bytes": float(np.where(es, full, two).mean()),
+            "expected_bytes_two_stage": float(two.mean()), "expected_bytes_memo_table2_only": float(np.where(es, memo, two).mean()),
+            "positions": int(c1.size)}

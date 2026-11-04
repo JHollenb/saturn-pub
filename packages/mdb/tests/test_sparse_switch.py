@@ -1188,3 +1188,65 @@ def test_part_am_fp32_margin_and_phi_max():
     mc = margin_capture(np.arange(1000.0), agree, np.ones(1000), qs=(0.02, 0.2))
     assert abs(mc[0.02]["phi_max"] - 0.2) < 1e-12 and mc[0.02]["phi"] == 0.2
     assert mc[0.2]["phi_max"] == 1.0
+
+
+def test_part_an_late_redo_pool_controller_union_calibration_escalation():
+    import math
+
+    import numpy as np
+
+    from mdb.sparse_switch import (PoolRateController, escalated_readout_bytes, kurtosis_from_sums, late_error_share,
+                                   late_fix_share_map, late_redo_price, moment_sums, redo_fix_share, union_pool_topk,
+                                   zbin_calibration)
+
+    # prices: the readout-separate convention gives the honest dense re-do at L = n; the memo's convention too
+    assert late_redo_price(28, 28, 0.1766) == pytest.approx(1176.6)
+    assert late_redo_price(28, 28, 0.1766, convention="memo_21_4") == pytest.approx(1176.6)
+    assert late_redo_price(4, 28, 0.1766) == pytest.approx(1000 * 4 / 28 + 176.6)
+    assert late_redo_price(4, 28, 0.1766, convention="memo_21_4") == pytest.approx(823.4 * 4 / 28 + 353.2)
+    # the arctan map: v 0.5 -> 0.5, v 0 -> 0, v 1 -> 1; checked against a Monte Carlo of the Gaussian split
+    assert late_fix_share_map([0.0, 0.5, 1.0]) == pytest.approx([0.0, 0.5, 1.0])
+    rng = np.random.default_rng(0)
+    for v in (0.3, 0.7):  # Monte Carlo of the Gaussian split near the tie: flat mu >= 0, eps = eps_early + eps_late
+        n = 2000000
+        mu, el, ee = rng.uniform(0, 4, n), rng.normal(0, v ** 0.5, n), rng.normal(0, (1 - v) ** 0.5, n)
+        w = mu + el + ee
+        fl = np.abs(w) < 0.02
+        before, after = (w > 0)[fl], (mu + ee > 0)[fl]
+        net = (after.mean() - before.mean()) / (1 - before.mean())
+        assert abs(net - float(late_fix_share_map(v))) < 0.03
+    e = np.ones((28, 10))
+    e[-4:] = 3.0
+    assert late_error_share(e, 4) == pytest.approx(12 / 36)
+    fs = redo_fix_share([0, 0, 1, 1, 1], [1, 1, 1, 0, 1], [1, 1, 1, 1, 0])
+    assert fs["fixed"] == 1.0 and fs["broken"] == 0.5 and fs["p_dis_flag"] == 0.5 and fs["f"] == 0.5 and fs["unflagged_change"] == 0.0
+    # the pool controller holds the mean size on a shifted distribution (served z compressed toward 0)
+    kgrid = np.arange(100, 900, 10)
+    pc = PoolRateController(300, [1.0], gain=0.05)
+    sizes = []
+    for _ in range(20):
+        zz = np.sort(rng.normal(0.3, 1.0, (50, 1000)), axis=1)[:, ::-1]  # descending; native-quantile tau0 1.0 under-sizes
+        _, n_ = pc.run_grid(0, zz[:, kgrid - 1], kgrid)
+        sizes.append(n_)
+    assert abs(np.concatenate(sizes)[-300:].mean() / 300 - 1) < 0.05 and pc.realized()["target"] == 300
+    # union pool: forced members first, exact size
+    z = torch.tensor([[3.0, 2.0, 1.0, 0.0, -1.0]])
+    forced = torch.tensor([[False, False, False, False, True]])
+    pm = union_pool_topk(z, forced, 3)
+    assert pm.tolist() == [[True, True, False, False, True]]
+    # calibration bins and kurtosis
+    zc = torch.tensor([-5.0, -2.5, -2.5, 0.5, 3.0])
+    mc = torch.tensor([0.0, 1.0, 0.0, 1.0, 1.0])
+    cb = zbin_calibration(zc, mc, edges=(-3.0, 0.0))
+    assert [b["n"] for b in cb] == [1, 2, 2] and cb[1]["realized"] == 0.5
+    assert cb[1]["predicted"] == pytest.approx(0.5 * (1 + math.erf(-2.5 / 2 ** 0.5)), rel=1e-5)
+    kg = kurtosis_from_sums(moment_sums(torch.randn(200000, generator=torch.Generator().manual_seed(1))))
+    assert abs(kg["excess_kurtosis"]) < 0.05 and abs(kg["sd"] - 1) < 0.01
+    kt = kurtosis_from_sums(moment_sums(torch.distributions.StudentT(8.0).sample((400000,))))
+    assert 0.6 < kt["excess_kurtosis"] < 1.8 and 6 < kt["nu_t"] < 14
+    # escalation bytes: escalated positions read the full r2 table
+    eb = escalated_readout_bytes([10, 1000], [1, 5], [False, True], vocab=1000, d=8, r1=2, r2=5)
+    two = np.array([1000 * 6 + 10 * 7 + 1 * 12, 1000 * 6 + 1000 * 7 + 5 * 12])
+    assert eb["expected_bytes_two_stage"] == pytest.approx(two.mean())
+    assert eb["expected_bytes"] == pytest.approx((two[0] + 1000 * 9 + 5 * 12) / 2)
+    assert eb["expected_bytes_memo_table2_only"] == pytest.approx((two[0] + 1000 * 7 + 5 * 12) / 2)
