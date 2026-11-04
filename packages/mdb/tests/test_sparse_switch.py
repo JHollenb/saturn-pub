@@ -265,3 +265,65 @@ def test_error_mass_and_gates():
     t2 = quantile_threshold(stat, 0.3, below=False)
     assert float(kl_gate(stat, t2).float().mean()) == pytest.approx(0.3, abs=0.011)
     assert z_gate(torch.tensor([1.0, 3.0]), torch.tensor([4.0, 4.0]), 1.0).tolist() == [True, False]
+
+
+def test_layer_bytes_match_the_derived_qwen_counts():
+    from mdb.sparse_switch import bytes_per_token, layer_bytes
+
+    nat = layer_bytes("native", QWEN15)
+    assert nat["shared"] / 1e6 == pytest.approx(93.6, abs=0.3)
+    a1 = layer_bytes("proxy", QWEN15, k=512, m=1024)
+    assert a1["total"] / 1e6 == pytest.approx(45.1, abs=0.3)
+    col = bytes_per_token([("native", {})] * 28, QWEN15, vocab=151936)
+    prx = bytes_per_token([("proxy", {"k": 512, "m": 1024})] * 28, QWEN15, vocab=151936)
+    assert prx["bytes_per_step"] / col["bytes_per_step"] == pytest.approx(0.56, abs=0.01)
+    b256 = layer_bytes("proxy", QWEN15, k=512, m=1024, batch=256)
+    assert b256["total"] == b256["shared"] + 256 * b256["per_row"]
+    un = layer_bytes("proxy", QWEN15, k=512, batch=256, impl="union", union=8960)
+    assert un["shared"] > nat["shared"]
+
+
+def test_timed_record_adds_bandwidth_and_ratios():
+    from mdb.sparse_switch import timed_record
+
+    timing = {"batch": 1, "claim": "speedups reported",
+              "arms": {"native": {"median_ms": 10.0, "p10_ms": 9.0, "p90_ms": 11.0},
+                       "a1": {"median_ms": 8.0, "p10_ms": 7.0, "p90_ms": 9.0}}}
+    rec = timed_record(timing, {"native": {"bytes_per_step": 3e9, "flop_fraction": 1.0},
+                                "a1": {"bytes_per_step": 1.5e9, "flop_fraction": 0.5}})
+    assert rec["arms"]["native"]["achieved_GBps"] == pytest.approx(300.0)
+    assert rec["arms"]["a1"]["time_ratio_vs_baseline"] == pytest.approx(0.8)
+    assert rec["arms"]["a1"]["byte_ratio_vs_baseline"] == pytest.approx(0.5)
+    refused = timed_record({**timing, "claim": "refused: parity gate missing or failed"},
+                           {"native": {"bytes_per_step": 3e9}, "a1": {"bytes_per_step": 1.5e9}})
+    assert refused["arms"]["a1"]["time_ratio_vs_baseline"] is None
+
+
+def test_pregate_table_shrinks_rare_keys_to_the_prior():
+    from mdb.sparse_switch import pregate_table
+
+    keys = torch.tensor([0, 0, 0, 0, 1, 1, 1, 1, 2])
+    vals = torch.tensor([1.0, 1.2, 0.8, 1.0, 3.0, 3.2, 2.8, 3.0, 9.0])
+    table, lam, st = pregate_table(keys, vals, 4)
+    assert lam > 0 and st["keys_ge2"] == 2
+    gm = float(vals.double().mean())
+    assert float(table[3]) == pytest.approx(gm)
+    assert gm < float(table[2]) < 9.0
+    assert abs(float(table[0]) - 1.0) < abs(gm - 1.0)
+    big, _, _ = pregate_table(keys, vals, 4, prior=torch.tensor([5.0, 5.0, 5.0, 5.0]))
+    assert float(big[3]) == pytest.approx(5.0)
+
+
+def test_quantize_rows_and_ledger_groups():
+    from mdb.sparse_switch import ServingLedger, quantize_rows
+
+    w = torch.tensor([[1.0, -0.5, 0.25], [10.0, 3.0, -7.0]])
+    dq, sc = quantize_rows(w, 8)
+    assert torch.allclose(dq, w, atol=float(sc.max()) / 2 + 1e-6)
+    dq4, _ = quantize_rows(w, 4)
+    assert float((dq4 - w).abs().max()) <= 10.0 / 7 / 2 + 1e-6
+    led = ServingLedger()
+    led.add(torch.tensor([4, 5, 6]), torch.tensor([False, False, True]), torch.tensor([True, False, True]),
+            torch.tensor([0.0, 1.0, 0.0]), groups=torch.tensor([0, 1, 1]))
+    rep = led.report()
+    assert rep["group:0"]["agree"] == pytest.approx(1.0) and rep["group:1"]["n"] == 2

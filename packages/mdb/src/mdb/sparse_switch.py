@@ -358,12 +358,15 @@ class ServingLedger:
     bands: tuple = ((4, 16), (16, 32), (32, 64), (64, 128))
     sums: dict = field(default_factory=dict)
 
-    def add(self, positions, native, agree, kl):
-        """positions, native (bool), agree (bool), kl: 1-D tensors over served positions."""
+    def add(self, positions, native, agree, kl, groups=None):
+        """positions, native (bool), agree (bool), kl: 1-D tensors over served positions. groups: optional 1-D integer
+        labels (for example a context-count bucket); each label is also reported as its own row ``group:<label>``."""
         nat = native.bool()
-        for name, (lo, hi) in [("all", (min(b[0] for b in self.bands), max(b[1] for b in self.bands))),
-                               *[(f"{lo}-{hi - 1}", (lo, hi)) for lo, hi in self.bands]]:
-            m = (positions >= lo) & (positions < hi)
+        rows = [("all", (positions >= min(b[0] for b in self.bands)) & (positions < max(b[1] for b in self.bands))),
+                *[(f"{lo}-{hi - 1}", (positions >= lo) & (positions < hi)) for lo, hi in self.bands]]
+        if groups is not None:
+            rows += [(f"group:{int(g)}", groups == g) for g in groups.unique().tolist()]
+        for name, m in rows:
             mn = m & nat
             tot = self.sums.setdefault(name, [0, 0.0, 0.0, 0.0, 0.0, 0.0])
             tot[0] += int(m.sum())
@@ -476,3 +479,101 @@ def kl_gate(e_hat, kappa):
 def column_equivalents_early_abort(f, f_pre, rho, per=1000):
     """Early abort: served positions cost f, aborted positions f_pre (the proxy layers already run) + 1."""
     return per * ((1 - rho) * f + rho * (f_pre + 1))
+
+
+# --------------------------------------------------------------------------- bytes, timed records, pre-gates, decoders
+
+
+def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather", union=None):
+    """Derived bytes one decoder layer reads for one decode step of ``batch`` rows (weights, gathered rows, tables and
+    the K/V cache at ``shapes['context']``), split into shared (read once per step) and per-row parts.
+
+    kind 'native': attention + gate, up and down weights. kind 'proxy': attention + B_0 (d x d) + proxy encoder (d x k)
+    + two proxy decoders (I x k each) shared, plus per row the exact rows 3 m d (impl 'gather': every row gathers its
+    own m rows) and the token tables (a, u, g at I each, n and y0 at d each); impl 'union' reads the union of the
+    batch's exact sets once (``union`` neurons) instead of per-row rows.
+    """
+    d, inter, ctx = shapes["d"], shapes["inter"], shapes["context"]
+    nh, nkv, hd = shapes["n_heads"], shapes["n_kv"], shapes["head_dim"]
+    att = 2 * d * nh * hd + 2 * d * nkv * hd + nh * hd + 2 * nkv * hd + 2 * d
+    kv = 2 * ctx * nkv * hd
+    if kind == "native":
+        shared, row = att + 3 * d * inter, kv
+    elif kind == "proxy":
+        shared = att + d * d + d * k + 2 * inter * k
+        row = kv + 3 * inter + 2 * d
+        if impl == "gather":
+            row += 3 * m * d
+        elif impl == "union":
+            shared += 3 * (inter if union is None else union) * d
+        else:
+            raise ValueError("impl must be 'gather' or 'union'")
+    else:
+        raise ValueError("unknown kind: " + kind)
+    return {"shared": shared * dtype_bytes, "per_row": row * dtype_bytes, "total": (shared + batch * row) * dtype_bytes}
+
+
+def bytes_per_token(per_layer, shapes, *, vocab, batch=1, readout=True, dtype_bytes=2):
+    """Derived bytes per decode step and per token for a column given as [(kind, options)] per layer, plus the readout
+    (vocab x d, shared) when ``readout``. Options are passed to ``layer_bytes``."""
+    step = sum(layer_bytes(kind, shapes, batch=batch, dtype_bytes=dtype_bytes, **opts)["total"] for kind, opts in per_layer)
+    if readout:
+        step += vocab * shapes["d"] * dtype_bytes
+    return {"bytes_per_step": step, "bytes_per_token": step / batch, "batch": batch}
+
+
+def timed_record(timing, derived, *, baseline="native"):
+    """Join an ``mdb.timing.time_arms`` record with derived per-arm bytes and FLOP fractions.
+
+    derived: {arm: {'bytes_per_step': ..., 'flop_fraction': ...}}. Adds achieved GB/s = bytes / median time, and the
+    measured time ratio next to the derived byte and FLOP ratios against the baseline (time ratios only when the
+    record's parity gate passed)."""
+    out = {"schema": "mdb-timed-record-v1", "batch": timing.get("batch"), "claim": timing.get("claim"), "arms": {}}
+    base_ms = timing["arms"][baseline]["median_ms"]
+    base_b = derived[baseline]["bytes_per_step"]
+    passed = timing.get("claim") == "speedups reported"
+    for name, r in timing["arms"].items():
+        dv = derived.get(name, {})
+        b = dv.get("bytes_per_step")
+        row = {"median_ms": r["median_ms"], "p10_ms": r["p10_ms"], "p90_ms": r["p90_ms"], "bytes_per_step": b,
+               "flop_fraction": dv.get("flop_fraction"),
+               "achieved_GBps": (b / (r["median_ms"] * 1e-3) / 1e9) if b else None,
+               "byte_ratio_vs_baseline": (b / base_b) if b else None,
+               "time_ratio_vs_baseline": (r["median_ms"] / base_ms) if passed else None}
+        out["arms"][name] = row
+    return out
+
+
+def pregate_table(keys, values, n_keys, *, prior=None):
+    """Empirical-Bayes table of a per-position value by key (for example the token id).
+
+    Returns (table [n_keys], lam, stats): table = (c mean + lam prior) / (c + lam) with c the key count, prior the global
+    mean (or a per-key prior [n_keys], for example a unigram table under a bigram key), and lam = s2_within / s2_between
+    estimated from keys with c >= 2 (between = var of key means around the prior minus the mean s2_within / c)."""
+    import torch
+
+    keys = keys.long()
+    v = values.double()
+    c = torch.zeros(n_keys, dtype=torch.float64).index_add_(0, keys, torch.ones_like(v))
+    s1 = torch.zeros(n_keys, dtype=torch.float64).index_add_(0, keys, v)
+    s2 = torch.zeros(n_keys, dtype=torch.float64).index_add_(0, keys, v * v)
+    pr = torch.full((n_keys,), float(v.mean()), dtype=torch.float64) if prior is None else prior.double()
+    seen = c >= 2
+    mean = s1 / c.clamp_min(1)
+    within = float(((s2 - c * mean ** 2)[seen]).sum() / (c[seen] - 1).sum().clamp_min(1))
+    between = float(((mean - pr) ** 2)[seen].mean() - (within / c[seen]).mean()) if bool(seen.any()) else 0.0
+    between = max(between, 1e-12 * max(within, 1e-30))
+    lam = within / between
+    table = (s1 + lam * pr) / (c + lam)
+    return table, lam, {"within": within, "between": between, "keys_seen": int((c > 0).sum()), "keys_ge2": int(seen.sum())}
+
+
+def quantize_rows(w, bits):
+    """Symmetric per-row integer quantization: returns (dequantized float32 weights, per-row scales)."""
+    import torch
+
+    qmax = 2 ** (bits - 1) - 1
+    wf = w.float()
+    scale = (wf.abs().amax(-1, keepdim=True) / qmax).clamp_min(1e-30)
+    q = torch.round(wf / scale).clamp_(-qmax, qmax)
+    return q * scale, scale[..., 0]
