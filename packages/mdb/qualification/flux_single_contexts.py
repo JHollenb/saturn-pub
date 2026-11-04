@@ -148,7 +148,7 @@ def build_sources(*, adapter, session, output, context, job_id=None, max_steps=1
     return {"zero": zero_cut, "text": text_cut}, record
 
 
-def run_panel(*, pipe, adapter, cuts, output, config, request, source_metadata):
+def run_panel(*, pipe, adapter, cuts, output, config, request, source_metadata, output_prepared=False):
     """Run one matched pre-single0 panel on supplied resident native components.
 
     No model load, prompt encode, random draw or source construction occurs here.
@@ -165,10 +165,15 @@ def run_panel(*, pipe, adapter, cuts, output, config, request, source_metadata):
     from mdb.native_navigation import NativeCutNavigator
 
     output = Path(output)
-    output.mkdir(parents=True, exist_ok=False)
-    save(output / "plan.json", config)
+    if output_prepared:
+        if not output.is_dir() or json.loads((output / "plan.json").read_text()) != config or (output / "source.json").exists():
+            raise ValueError("prepared panel output/plan differs or already contains a source")
+    else:
+        output.mkdir(parents=True, exist_ok=False)
+        save(output / "plan.json", config)
     helper = runpy.run_path("flux_single_kv.py")
-    helper["validate_paired_cuts"](cuts["zero"], cuts["text"])
+    single_index = config.get("single_index", 0)
+    helper["validate_paired_cuts"](cuts["zero"], cuts["text"], single_index=single_index)
     queries = config.get("attention_query_indices", ATTENTION_QUERY_INDICES)
     counts = {"model_loads": 0, "physical_batch": 1, "prompt_encodings": 0, "noise_draws": 0,
         "adapter_steps": 0, "acts": 0, "candidate_calls": 0, "receipt_emissions": 0, "images": 0, "vae_calls": 0}
@@ -210,7 +215,7 @@ def run_panel(*, pipe, adapter, cuts, output, config, request, source_metadata):
                     "stored_dtype": "float32", "stored_shape": list(value.shape), "native_stride": list(value.stride())}
             return array_index[key]
 
-        block = pipe.transformer.single_transformer_blocks[0]
+        block = pipe.transformer.single_transformer_blocks[single_index]
         source = {**source_metadata, "schema": "mdb-flux-single-kv-source-v1", "model_identity": adapter.model_identity,
             "execution": dict(adapter.execution), "request_sha256": request["request_sha256"], "source_hashes": request["source_hashes"],
             "input_cuts": {name: cut.fingerprint for name, cut in cuts.items()},
@@ -220,11 +225,16 @@ def run_panel(*, pipe, adapter, cuts, output, config, request, source_metadata):
             "attention_forecast_plan": {"query_indices": queries,
                 "allowed_observations": "two native zero/text direct calls before second seal; no panel prefix/edited calls",
                 "novel_conditional_targets": ["K", "V"], "represented_consistency_control": "KV"}, "scope": config["scope"]}
+        if single_index:
+            source.update(selector_index=single_index, selector={"logical_step": 3, "phase": "single",
+                "index": single_index, "local_clock": single_index})
         save(output / "source.json", source)
         tx = ForecastTransaction(output / "transaction", model_identity=adapter.model_identity, input_identity=identity({"config": config, "input_cuts": source["input_cuts"]}),
             source_identity=identity(request["source_hashes"]), frontier={"kind": "architectural", "source_sha256": sha(output / "source.json"),
-                "allowed_prefix": "fresh source builder completed; no panel native call before this structural seal"},
-            execution_scope="CUDA BF16 matched single0 panel; separately counted fresh builder and encoder/noise; public Navigator/direct-candidate ledgers",
+                "allowed_prefix": ("fresh source builder completed; no panel native call before this structural seal" if single_index == 0
+                    else "authenticated imported observed post-single0 cuts hydrated; prior reference suffixes were executed in predecessor; no panel native call before structural seal")},
+            execution_scope=("CUDA BF16 matched single0 panel; separately counted fresh builder and encoder/noise; public Navigator/direct-candidate ledgers"
+                if single_index == 0 else "CUDA BF16 matched single1 imported-source panel; separately counted model load; public Navigator/direct-candidate ledgers"),
             budgets={"max_native_calls": 1, "max_wall_ms": config["max_wall_seconds"] * 1000})
         tx.predict("single_kv_hypotheses", lambda _: {"predictions": config["hypotheses"]})
         seal = tx.seal()
@@ -249,7 +259,7 @@ def run_panel(*, pipe, adapter, cuts, output, config, request, source_metadata):
                 raise RuntimeError("finite single candidate-call budget exhausted")
             counts["candidate_calls"] += 1
             event("candidate_start", candidate=name, input_parent=cut.fingerprint)
-            value = helper["capture_candidate"](block, cut, source=kv, selection=selected)
+            value = helper["capture_candidate"](block, cut, source=kv, selection=selected, single_index=single_index)
             candidates[name] = {key: value[key] for key in ("input_parent", "source_parent", "selection", "text_rows", "dispatch_calls", "equation_exact", "partition_controls", "dispatch_profile")}
             candidates[name].update(ports={key: array(tensor) for key, tensor in value["ports"].items()},
                 observed_qkv={key: array(tensor) for key, tensor in value["observed_qkv"].items()},
@@ -257,11 +267,43 @@ def run_panel(*, pipe, adapter, cuts, output, config, request, source_metadata):
             event("candidate_complete", candidate=name, counts=dict(counts))
             values[name] = value
 
+        def trajectory(n, native_receipt, kind):
+            body = native_receipt.to_dict()
+            point, arrays = n.point, {}
+            selected = point["phase"] in {"readout", "scheduler"} or point["logical_step"] == 4 or (
+                point["phase"] == "single" and point["index"] in {2, 3, 10})
+            cut = n.session.capture(retain=False) if selected else None
+            slots = ("latent",) if point["logical_step"] == 4 else ("image", "text", "latent")
+            for slot in slots:
+                value = n.session.read(slot)
+                if value is not None:
+                    full = array(value)
+                    wide = value.detach().float().cpu().numpy().astype(np.float64)
+                    arrays[slot] = {"descriptor": tensor_descriptor(value), "full_array": full,
+                        "rms": float(np.sqrt(np.mean(wide * wide))), "l2": float(np.linalg.norm(wide.ravel()))}
+            if cut is not None and cut.payload.get("noise_prediction") is not None:
+                value = cut.payload["noise_prediction"]
+                wide = value.detach().float().cpu().numpy().astype(np.float64)
+                arrays["noise_prediction"] = {"descriptor": tensor_descriptor(value), "full_array": array(value),
+                    "rms": float(np.sqrt(np.mean(wide * wide))), "l2": float(np.linalg.norm(wide.ravel()))}
+            if selected:
+                if cut.fingerprint != body["result"]:
+                    raise ValueError("reference trajectory receipt/current cut differs")
+                store.save(cut)
+            return {"kind": kind, "receipt_id": native_receipt.fingerprint, "cut": body["result"], "point": point,
+                "arrays": arrays, "retained_full_cut": selected}
+
         def finish(n, row):
             continuation = []
+            retain = config.get("capture_reference_trajectory", False) and row["kind"] == "reference"
+            if retain:
+                row["reference_trajectory"] = [trajectory(n, prefix_receipts[row["prefix_source"]], "prefix")]
             while n.point["logical_step"] < 4:
                 wall()
-                continuation.append(n.step().to_dict())
+                value = n.step()
+                continuation.append(value.to_dict())
+                if retain:
+                    row["reference_trajectory"].append(trajectory(n, value, "continuation"))
             final = n.capture()
             store.save(final)
             if describe(final.payload["conditioning"]) != describe(cuts["zero"].payload["conditioning"]):
@@ -284,6 +326,7 @@ def run_panel(*, pipe, adapter, cuts, output, config, request, source_metadata):
             event("hypotheses_sealed", seal=seal, counts=dict(counts), native_entries_before_release=release["entries_before_release"])
             release["native"] = True
 
+            prefix_receipts = {}
             def execute(_):
                 for name in ("zero", "text"):
                     calculate(name, cuts[name])
@@ -346,10 +389,11 @@ def run_panel(*, pipe, adapter, cuts, output, config, request, source_metadata):
                     active["branch"] = "prefix." + name
                     n = navigator(cuts[name])
                     native_receipt = n.step()
+                    prefix_receipts[name] = native_receipt
                     post = n.capture()
                     store.save(post)
                     post_cuts[name] = post
-                    prefixes[name] = {"input_cut": cuts[name].fingerprint, "post_single0": post.fingerprint, "receipt": native_receipt.to_dict()}
+                    prefixes[name] = {"input_cut": cuts[name].fingerprint, f"post_single{single_index}": post.fingerprint, "receipt": native_receipt.to_dict()}
                     for slot in ("image", "text"):
                         controls[name + "_candidate_" + slot + "_exact_native"] = torch.equal(values[name][slot], post.payload[slot])
                 for name in values:
@@ -372,9 +416,10 @@ def run_panel(*, pipe, adapter, cuts, output, config, request, source_metadata):
                             selected = spec[field]
                             if selected is not None:
                                 tensor = post_cuts[selected].payload[slot] if selected in post_cuts else values[selected][slot]
-                                row["acts"].append(helper["install_port"](n, slot, tensor, name=spec["id"] + "." + slot, store=store))
+                                row["acts"].append(helper["install_port"](n, slot, tensor, name=spec["id"] + "." + slot,
+                                    store=store, single_index=single_index))
                     finish(n, row)
-                expected = {"adapter_steps": 191, "acts": 10, "candidate_calls": 5, "images": 9, "vae_calls": 9,
+                expected = {"adapter_steps": 2 + 9 * (21 - single_index), "acts": 10, "candidate_calls": 5, "images": 9, "vae_calls": 9,
                     "prompt_encodings": 0, "noise_draws": 0}
                 if any(counts[key] != value for key, value in expected.items()):
                     raise ValueError("completed single-KV physical census differs")

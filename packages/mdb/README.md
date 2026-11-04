@@ -171,6 +171,14 @@ holds in all three contexts across 27 retained native futures, while K-versus-V
 rankings vary by seed and metric. This is bounded numerical and continuation
 evidence, with explicit source/seal custody and no semantic or universal-route
 certification.
+The [single1 successor assay](docs/FLUX-SINGLE-SUCCESSOR.md) follows an
+authenticated equal-image/different-text pair through the next native consumer.
+The presealed immediate image-divergence prediction matches; full saved
+trajectories show temporary contraction without exact reconvergence. Local KV
+image matching still produces a final result farther from high than the low
+baseline, while a native text-only return ends closer. Two conditional K/V
+attention forecasts, all nine native futures and the posthoc rounded scheduler
+equation retain their separate evidence scopes.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 The [compiled-state residual view](docs/COMPILED-STATE.md) fits per-position

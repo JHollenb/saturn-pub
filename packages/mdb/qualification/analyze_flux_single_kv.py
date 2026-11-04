@@ -254,6 +254,17 @@ def analyze(root, *, failed=False):
     return analyze_evidence(Evidence(root, failed=failed))
 
 
+def audit_site(source_adapter=None):
+    """Explicit site contract; historical single0 remains the exact default."""
+    index = 0 if source_adapter is None else getattr(source_adapter, "single_index", 0)
+    require(type(index) is int and index in {0, 1}, "unqualified single-block audit site")
+    key = "post_single0" if source_adapter is None else getattr(source_adapter, "prefix_exit_key", f"post_single{index}")
+    suffix = 21 - index if source_adapter is None else getattr(source_adapter, "suffix_native_steps", 21 - index)
+    require(key == f"post_single{index}" and suffix == 21 - index, "site prefix/suffix contract differs")
+    return {"single_index": index, "prefix_exit_key": key, "suffix_native_steps": suffix,
+            "adapter_steps": 2 + 9 * suffix, "receipt_emissions": 12 + 9 * suffix}
+
+
 def analyze_evidence(e, *, source_adapter=None):
     """Audit one real panel through an explicit source-custody adapter.
 
@@ -261,6 +272,7 @@ def analyze_evidence(e, *, source_adapter=None):
     callers supply a separate validator and a real parent-job Evidence view;
     they must not manufacture historical reports or child scheduler jobs.
     """
+    site = audit_site(source_adapter)
     run, data, h = e.run, e.data, e.h
     read, sha = e.read, h["sha"]
     plan, request = run["plan"], run["request"]
@@ -286,8 +298,8 @@ def analyze_evidence(e, *, source_adapter=None):
     require(set(e.fields(zero)) == set(e.fields(text))
             and all(e.fields(zero)[key] == e.fields(text)[key] for key in e.fields(zero) if key != "text")
             and e.point(zero) == e.point(text) and e.point(zero)["logical_step"] == 3
-            and e.point(zero)["phase"] == "single" and e.point(zero)["index"] == 0,
-            "paired single0 inputs differ outside working text")
+            and e.point(zero)["phase"] == "single" and e.point(zero)["index"] == site["single_index"],
+            "paired single-block inputs differ outside working text or site")
     return analyze_bound_panel(e, source, summary, prefixes, candidates, observed, hypotheses,
                                source_lineage, source_adapter=source_adapter)
 
@@ -337,6 +349,8 @@ def analyze_bound_panel(e, source, summary, prefixes, candidates, observed, hypo
     """Shared numerical/receipt panel audit after source-specific admission."""
     run, data, h = e.run, e.data, e.h
     read, sha, typed, plan = e.read, h["sha"], e.typed, run["plan"]
+    site = audit_site(source_adapter)
+    exit_key = site["prefix_exit_key"]
     zero, text = (source["input_cuts"][key] for key in ("zero", "text"))
     own_c = e.fields(zero)["conditioning"]
     for name, cut in (("zero", zero), ("text", text)):
@@ -362,11 +376,12 @@ def analyze_bound_panel(e, source, summary, prefixes, candidates, observed, hypo
     prefix_paths = {}
     for name, prefix in prefixes.items():
         start = source["input_cuts"][name]
-        path = e.walk(start, prefix["post_single0"], limit=3)
+        path = e.walk(start, prefix[exit_key], limit=3)
         require(prefix["input_cut"] == start and path["native_steps"] == 1
                 and prefix["receipt"] == e.receipts[path["receipts"][0]]
-                and e.point(prefix["post_single0"])["phase"] == "single"
-                and e.point(prefix["post_single0"])["index"] == 1, "native single0 prefix lineage differs")
+                and e.point(prefix[exit_key])["phase"] == "single"
+                and e.point(prefix[exit_key])["index"] == site["single_index"] + 1,
+                "native single-block prefix lineage differs")
         path["conditioning_coverage"] = BASE["conditioning_coverage"](path, e.receipts, retained_fields, own_c, e.point)
         prefix_paths[name] = path
     ports, qkvs, checks = {}, {}, {}
@@ -402,7 +417,7 @@ def analyze_bound_panel(e, source, summary, prefixes, candidates, observed, hypo
             "recorded partition control disagrees")
         if name in {"zero", "text"}:
             for key in ("image", "text"):
-                controls[name + "_candidate_" + key + "_exact_native"] = exact_bits(ports[name][key], e.slot(prefixes[name]["post_single0"], key))
+                controls[name + "_candidate_" + key + "_exact_native"] = exact_bits(ports[name][key], e.slot(prefixes[name][exit_key], key))
         else:
             controls[name + "_observed_recipient_QKV_exact"] = all(exact_bits(qkvs[name][0][key], qkvs["zero"][0][key]) for key in ("q", "k", "v"))
     n = candidates["zero"]["text_rows"]
@@ -431,7 +446,7 @@ def analyze_bound_panel(e, source, summary, prefixes, candidates, observed, hypo
     for name, row in rows.items():
         require(read(data / "rows" / (name + ".json")) == row and all(row[key] == value for key, value in specs[name].items())
                 and seals[0]["sequence"] < starts[name]["sequence"] < completes[name]["sequence"], "row record/spec/timing differs")
-        parent = prefixes["text" if name == "text" else "zero"]["post_single0"]
+        parent = prefixes["text" if name == "text" else "zero"][exit_key]
         require(row["parent"] == parent and row["start_point"] == e.point(parent), "row borrowed a different native prefix")
         if name in {"zero", "text"}:
             expected = {}
@@ -443,16 +458,16 @@ def analyze_bound_panel(e, source, summary, prefixes, candidates, observed, hypo
             if name == "KV.both":
                 expected["text"] = ports[selected]["text"]
         elif name == "text.text":
-            expected = {"text": e.slot(prefixes["text"]["post_single0"], "text")}
+            expected = {"text": e.slot(prefixes["text"][exit_key], "text")}
         else:
             require(name == "coherent", "unknown branch recipe")
-            expected = {key: e.slot(prefixes["text"]["post_single0"], key) for key in ("image", "text")}
+            expected = {key: e.slot(prefixes["text"][exit_key], key) for key in ("image", "text")}
         require([action["slot"] for action in row["acts"]] == list(expected), "Act slot inventory differs")
         current = parent
         for action in row["acts"]:
             current = e.act(action, current, expected[action["slot"]])
         path = e.walk(parent, row["final_cut"], row["acts"])
-        require(path["native_steps"] == 21 and e.point(row["final_cut"])["logical_step"] == 4
+        require(path["native_steps"] == site["suffix_native_steps"] and e.point(row["final_cut"])["logical_step"] == 4
                 and e.point(row["final_cut"])["phase"] == "project"
                 and row["continuation_receipts"] == [e.receipts[rid] for rid in path["receipts"] if e.receipts[rid]["operation"] == "continue"],
                 "last-step suffix horizon/receipt chain differs")
@@ -467,9 +482,9 @@ def analyze_bound_panel(e, source, summary, prefixes, candidates, observed, hypo
     require([item["sequence"] for item in emissions] == list(range(len(emissions)))
             and [(item["branch"], item["receipt"]) for item in emissions] == expected_emissions, "physical receipt emission census differs")
     counts = summary["counts"]
-    require(sum(path["native_steps"] for path in paths.values()) + 2 == counts["adapter_steps"] == 191
+    require(sum(path["native_steps"] for path in paths.values()) + 2 == counts["adapter_steps"] == site["adapter_steps"]
             and sum(path["acts"] for path in paths.values()) == counts["acts"] == 10
-            and len(emissions) == counts["receipt_emissions"] == 201
+            and len(emissions) == counts["receipt_emissions"] == site["receipt_emissions"]
             and counts["candidate_calls"] == 5 and counts["images"] == counts["vae_calls"] == 9
             and counts["prompt_encodings"] == counts["noise_draws"] == 0
             and counts["model_loads"] == (1 if source_adapter is None else source_adapter.panel_model_loads)
@@ -488,7 +503,7 @@ def analyze_bound_panel(e, source, summary, prefixes, candidates, observed, hypo
     declared.update({name + "_" + key + "_exact_zero": controls[name + "_" + key + "_exact_zero"]
                      for name in candidates for key in ("image_mlp_preactivation", "image_mlp_activation")})
     declared.update(KV_image_exact_text_candidate=controls["KV_image_exact_text"],
-        KV_image_exact_text_native=exact_bits(ports["KV"]["image"], e.slot(prefixes["text"]["post_single0"], "image")),
+        KV_image_exact_text_native=exact_bits(ports["KV"]["image"], e.slot(prefixes["text"][exit_key], "image")),
         sham_png_equals_zero=controls["sham_PNG_exact_zero"], coherent_png_equals_text=controls["coherent_PNG_exact_text"])
     if source_adapter is None:
         declared.update(zero_png_equals_prior=controls["zero_png_equals_prior"],
@@ -521,7 +536,7 @@ def analyze_bound_panel(e, source, summary, prefixes, candidates, observed, hypo
             ("analyze_flux_rescue_routes.py", "summarize_context_window.py", "analyze_flux_mlp_forecast.py", "analyze_flux_concept_routes.py")},
         "limits": (["One altered observed seed47 history; nine dependent futures, not independent prompt/seed replication."]
                    if source_adapter is None else source_adapter.limits) + [
-            "Only working text differs at selected single0 source. Stored C identical; no further projection or declared denoiser C read.",
+            f"Only working text differs at selected single{site['single_index']} source. Stored C identical; no further projection or declared denoiser C read.",
             "Parallel attention/MLP paths with one fused projection; attention module return includes MLP. No sequential joint-block equation assumed.",
             "Retained operands and native reference arrays observed after seal; structural equality prediction, not an independent numeric or RGB forecast.",
             "Only selected full cuts retained; intermediate receipt points/declared footprints checked against unchanged source, not independently read-traced.",

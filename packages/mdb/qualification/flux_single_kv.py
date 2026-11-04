@@ -10,16 +10,19 @@ import threading
 _DISPATCH_LOCK = threading.RLock()
 
 
-def validate_paired_cuts(zero, text):
+def validate_paired_cuts(zero, text, *, single_index=0):
     import torch
     from saturn_pub.values import describe
 
+    if type(single_index) is not int or single_index not in {0, 1}:
+        raise ValueError("single_index must be 0 or 1")
     if zero.model_identity != text.model_identity or zero.execution != text.execution:
         raise ValueError("single source model/execution differs")
     for cut in (zero, text):
         point = cut.execution_point
-        if (point["logical_step"] != 3 or point["phase"] != "single" or point["index"] != 0 or point["local_clock"] != 0):
-            raise ValueError("source must be the declared pre-single0 clock")
+        if (point["logical_step"] != 3 or point["phase"] != "single" or point["index"] != single_index
+                or point["local_clock"] != single_index):
+            raise ValueError(f"source must be the declared pre-single{single_index} clock")
     if set(zero.payload) != set(text.payload) or any(describe(value) != describe(text.payload[key])
             for key, value in zero.payload.items() if key != "text"):
         raise ValueError("paired single sources differ outside working text")
@@ -27,14 +30,16 @@ def validate_paired_cuts(zero, text):
         raise ValueError("paired single sources must actually differ in working text")
 
 
-def capture_candidate(block, cut, *, source=None, selection="native"):
+def capture_candidate(block, cut, *, source=None, selection="native", single_index=0):
     import torch
     from diffusers.models.transformers import transformer_flux2
     from diffusers.models.transformers.transformer_flux2 import Flux2Modulation
 
-    if (cut.execution_point["phase"] != "single" or cut.execution_point["index"] != 0 or block.training
+    if (type(single_index) is not int or single_index not in {0, 1}
+            or cut.execution_point["logical_step"] != 3 or cut.execution_point["phase"] != "single"
+            or cut.execution_point["index"] != single_index or cut.execution_point["local_clock"] != single_index or block.training
             or selection not in {"native", "K", "V", "KV"} or (selection == "native") != (source is None)):
-        raise ValueError("candidate requires native single0 or a declared K/V source")
+        raise ValueError(f"candidate requires native single{single_index} or a declared K/V source")
     text_rows = cut.payload["text"].shape[1]
     observed, used, ports, outputs, handles = {}, {}, {}, [], []
     original = None
@@ -170,15 +175,17 @@ image attention and is a consistency control. No model/SDPA call occurs.
         "scope": "Source-reviewed observed-QKV-only dataflow, not hermetic process isolation; no independent MLP or RGB forecast"}
 
 
-def install_port(nav, slot, value, *, name, store):
+def install_port(nav, slot, value, *, name, store, single_index=0):
     import torch
     from saturn_pub import Act
     from saturn_pub.values import describe
 
     point = nav.point
-    if (point["logical_step"] != 3 or point["phase"] != "single" or point["index"] != 1
+    if (type(single_index) is not int or single_index not in {0, 1}
+            or point["logical_step"] != 3 or point["phase"] != "single" or point["index"] != single_index + 1
+            or point["local_clock"] != single_index + 1
             or slot not in {"image", "text"}):
-        raise ValueError("single route write requires the post-single0 clock")
+        raise ValueError(f"single route write requires the post-single{single_index} clock")
     before = nav.capture()
     store.save(before)
     reference = before.payload[slot]
