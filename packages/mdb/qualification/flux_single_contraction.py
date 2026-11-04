@@ -29,12 +29,12 @@ def validate_sources(low, high):
         raise ValueError("single6 source image and text must both actually differ")
 
 
-def capture_candidate(block, cut, *, source=None, selection="native"):
+def capture_candidate(block, cut, *, source=None, selection="native", single_index=6):
     import torch
     from diffusers.models.transformers.transformer_flux2 import Flux2Modulation
 
     point = cut.execution_point
-    if (any(point[key] != value for key, value in {"logical_step": 3, "phase": "single", "index": 6, "local_clock": 6}.items())
+    if (any(point[key] != value for key, value in {"logical_step": 3, "phase": "single", "index": single_index, "local_clock": single_index}.items())
             or block.training or selection not in {"native", "A", "M", "AM"} or (source is None) != (selection == "native")):
         raise ValueError("candidate requires declared pre-single6 clock/native/A/M/AM profile")
     text_rows, width = cut.payload["text"].shape[1], cut.payload["image"].shape[-1]
@@ -143,13 +143,13 @@ def forecast_samples(low, high, weight_rows, bias_rows, *, query_indices, output
         "scope": "Conditional sampled native fused-linear/gated-write forecast from two observed source operands, not attention, raw-prompt or final-RGB prediction"}
 
 
-def install_port(nav, slot, value, *, name, store):
+def install_port(nav, slot, value, *, name, store, single_index=6):
     import torch
     from saturn_pub import Act
     from saturn_pub.values import describe
 
     if (slot not in {"image", "text"} or any(nav.point[key] != expected for key, expected in
-            {"logical_step": 3, "phase": "single", "index": 7, "local_clock": 7}.items())):
+            {"logical_step": 3, "phase": "single", "index": single_index + 1, "local_clock": single_index + 1}.items())):
         raise ValueError("single6 image/text Act requires post-single6 clock")
     before = nav.capture()
     reference = before.payload[slot]
