@@ -240,3 +240,62 @@ Measured on Qwen2.5-1.5B (WikiText, single seed, RTX 4080). Block closures are v
 - **Mass key.** M_t ranks a code's own Fisher error (Spearman 0.64) but not stream KL (0.03). The served entropy ranks KL at 0.63.
 
 Full tables: `FINDINGS-AH.md`.
+
+## WINA / R-Sparse / TEAL-greedy baselines, G2U, honest gate cost and interleaved timing noise (Part AI, job-74f216f85dd7)
+
+The helpers:
+
+- **Prior-art weights and remainders.** `column_norm_weights` is WINA's down-projection weight ‖w_j‖₂. `logit_gain_dispersion` is the weights-only diagnostic sd(log ψ_j / ‖w_j‖) with Spearman(ψ, ‖w‖) per layer. `svd_remainder_maps` is R-Sparse's data-free rank-r SVD remainder (E = U_rᵀ W_down, D = U_r). `tail_proxy_maps` gains `isotropic=` (the M = I PCA tail) and `dtype=`.
+- **TEAL's greedy allocation.** `teal_footprints` and `teal_greedy_allocation` implement TEAL Algorithm 1 over the seven matrices of a block: step α F / f_i, argmin of the block error, footprint-weighted target, per-matrix cap. `code_layer_macs` gets kind `teal_alloc` with per-matrix `densities=`.
+- **Gate-exact up-proxy code (G2U).** `gate_exact_up_proxy_scores` scores with the exact silu(a) and a rank-k up decoder û = u_tok + C z, using the base-aware form. It has `code_layer_macs` kind `gate_exact_up_proxy` and `layer_bytes` kind `g2u`, with `dec_qbits` / `tail_qbits`.
+- **Honest decide-after cost.** `column_equivalents_decide_after_honest` gives f + ρ(1 + readout) for keys that need the served logits. `ServingLedger.report(needs_readout=)` reports `decide_after_honest`, and `key_gate_frontier(needs_readout=, readout=)` reports `cost_honest`.
+- **Timing noise.** `timing.time_arms_interleaved` runs k round-robin timing blocks per arm. It reports each block's median, the mean and sd, the time-ratio sd, the pooled between-block sd and named-pair differences, and carries each cell's qualification status.
+
+Measured on Qwen2.5-1.5B (WikiText, single seed, RTX 4080). Block KL m0 on 171 covered rows (closure vs tokmean) is at the matched calibration target 2,048:
+
+- **Weights.** ψ_j / ‖w_j‖₂ is close to constant within each layer: sd(log ρ) is 0.016–0.080 (mean 0.021 over L0–9, 0.037 over L10–27), and Spearman(ψ, ‖w‖) has mean 0.94.
+- **Grid (KL m0, closure).**
+
+  | Base | unit weight | ℓ2 (WINA) | ψ |
+  |---|---|---|---|
+  | Zero | 0.122 (95.48) | 0.135 (95.00) | B0·K3 0.116 (95.69) |
+  | Hybrid | 0.035 (98.69) | 0.036 (98.66) | X2q8 0.033 (98.77) |
+
+  - The hybrid base with the base-aware score is ×3.5–3.7 lower in KL at every weight.
+  - The column weight barely matters: WINA-H / X2q8 is 1.08 and UNIT-H / X2q8 is 1.06.
+- **Remainders** (block KL m0).
+  - R-Sparse data-free SVD (UNIT-0 key) 0.080; M = I PCA 0.075.
+  - X2q8 + PCA tail 256: 0.0198. X2q8 + ψ tail 256: 0.0223. X2q8 + ψ tail 128: 0.0247.
+- **TEAL greedy at 50%** (f 0.504) agrees 0.722 free, against uniform TEAL-50's 0.718 (Part AH).
+- **≥ 0.92 under 900** (free, 7,936 positions).
+
+  | Code | Agreement | Cost (col-eq / 1k) |
+  |---|---|---|
+  | X2q8 count 3,300 | 0.926 | 872 |
+  | X2q8 count 3,800 | 0.942 | 888 |
+  | X2q8 count 2,800 + ψ tail 128 | 0.924 | 885 |
+
+  - The count exponent of free KL is −2.40.
+- **G2U** (rank-256 int4 up decoder): 0.823 at 712 (count 2,800) and 0.843 at 744 (count 3,300). Both sit on the measured W2 → X2q8 FLOP line.
+- **Timed step** (× native; first figure bf16 head, second int8 head).
+
+  | Code | bf16 head | int8 head |
+  |---|---|---|
+  | X8-2800 | 0.759 | 0.705 |
+  | X8-3300 | 0.774 | 0.720 |
+  | AC128 | 0.808 | 0.754 |
+  | G2U-2800 | 0.756 | 0.702 |
+  | X2q4r-2800 | 0.841 | 0.787 |
+  | M2 | 0.699 | 0.645 |
+
+  - Streams: X8-2800 runs at 0.778× and agrees 0.921; X8-3300 at 0.791× and 0.933; AC128 at 0.826× and 0.930.
+- **Timing noise.** Five interleaved 30-rep blocks give a pooled between-block sd of 0.44 µs. K1q4T − CATS-2250 = 23.0 ± 0.9 µs.
+- **Cold L2 at L14** (fused MLP total).
+
+  | Code | µs | Score GEMV | Up gather |
+  |---|---|---|---|
+  | G2U-2800 | 65.4 | 20.2 | 11.8 |
+  | X8-2800 | 65.6 | 39.6 | — |
+  | X2q4r-2800 | 81.6 | — | 25.3 (gate/up gather) |
+
+Full tables: `FINDINGS-AI.md` (saturn experiment `2026-11-02-forecast-cost-and-compressed-addition`).
