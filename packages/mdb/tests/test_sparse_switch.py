@@ -623,3 +623,105 @@ def test_readout_kl_ties_sigma_set_and_key_frontier():
     assert fr["rows"][0]["predicted"] == pytest.approx(kl_law(float(kl_.mean())))
     assert fr["rows"][1]["kl_kept"] < float(kl_.mean()) and fr["rows"][1]["cost"] == pytest.approx(1000 * (0.8 + 0.1), rel=0.02)
     assert fr["spearman_key_kl"] > 0.9
+
+
+def test_wina_weight_dispersion_and_svd_remainder():
+    from mdb.sparse_switch import (
+        column_norm_weights,
+        fisher_neuron_weights,
+        logit_gain_dispersion,
+        svd_remainder_maps,
+    )
+
+    g = torch.Generator().manual_seed(11)
+    d, I = 8, 40
+    Wd = torch.randn(d, I, generator=g, dtype=torch.float64)
+    wn = column_norm_weights(Wd)
+    assert torch.allclose(wn.double(), torch.stack([Wd[:, j].norm() for j in range(I)]), rtol=1e-5)
+    psi = fisher_neuron_weights(torch.eye(d, dtype=torch.float64), Wd)  # isotropic metric: psi = l2 norm, rho = 1
+    disp = logit_gain_dispersion(psi, wn)
+    assert disp["sd_log_rho"] < 1e-5 and disp["spearman_psi_wnorm"] == pytest.approx(1.0)
+    A = torch.diag(torch.linspace(3, 0.1, d, dtype=torch.float64))
+    disp2 = logit_gain_dispersion(fisher_neuron_weights(A @ A.T, Wd), wn)
+    assert disp2["sd_log_rho"] > 0.05
+    E, D, share = svd_remainder_maps(Wd, d)
+    t = torch.randn(30, I, generator=g, dtype=torch.float64)
+    assert share == pytest.approx(1.0) and torch.allclose((t @ E.double().T) @ D.double().T, t @ Wd.T, atol=1e-4)
+    E2, D2, s2 = svd_remainder_maps(Wd, 3)
+    U, S, Vh = torch.linalg.svd(Wd, full_matrices=False)
+    assert torch.allclose(D2.double() @ E2.double(), (U[:, :3] * S[:3]) @ Vh[:3], atol=1e-4)
+    assert s2 == pytest.approx(float((S[:3] ** 2).sum() / (S ** 2).sum()), rel=1e-6)
+
+
+def test_teal_greedy_allocation_follows_the_cheapest_error_and_lands_on_target():
+    from mdb.sparse_switch import (
+        TEAL_MATRICES,
+        code_layer_macs,
+        teal_footprints,
+        teal_greedy_allocation,
+    )
+
+    shapes = {"d": 16, "inter": 64, "context": 8, "n_heads": 4, "n_kv": 2, "head_dim": 4}
+    foot = teal_footprints(shapes)
+    assert tuple(foot) == TEAL_MATRICES
+    cost = {"q": 1.0, "k": 5.0, "v": 5.0, "o": 2.0, "gate": 0.5, "up": 3.0, "down": 0.2}
+    res = teal_greedy_allocation(lambda p: sum(cost[n_] * p[n_] ** 2 for n_ in p), foot, 0.5, alpha=0.05, cap=0.95)
+    F = sum(foot.values())
+    assert res["P"] == pytest.approx(0.5) and sum(res["sparsity"][n_] * foot[n_] for n_ in foot) / F == pytest.approx(0.5)
+    assert res["path"][0]["matrix"] == "down"  # lowest error per step first
+    assert all(0 <= v <= 0.95 + 1e-12 for v in res["sparsity"].values())
+    dens = {n_: 1 - v for n_, v in res["sparsity"].items()}
+    full = code_layer_macs("native", shapes)
+    uni = code_layer_macs("teal", shapes, density=0.5)
+    assert code_layer_macs("teal_alloc", shapes, densities=dens) == pytest.approx(uni)  # footprint-weighted = MAC-weighted
+    assert code_layer_macs("teal_alloc", shapes, densities={n_: 1.0 for n_ in foot}) == pytest.approx(full)
+
+
+def test_g2u_costs_rsp_remainder_and_honest_gate_cost():
+    from mdb.sparse_switch import (
+        ServingLedger,
+        code_layer_macs,
+        column_equivalents_decide_after_honest,
+        key_gate_frontier,
+        layer_bytes,
+    )
+
+    shapes = {"d": 1536, "inter": 8960, "context": 128, "n_heads": 12, "n_kv": 2, "head_dim": 128}
+    full = code_layer_macs("native", shapes)
+    g2u = code_layer_macs("gate_exact_up_proxy", shapes, k=256, m=3007) / full
+    assert g2u == pytest.approx(0.719, abs=0.003)  # ADVISOR 16.3: G2U(3,007) = 0.719
+    x8 = code_layer_macs("exact_select", shapes, m=3007) / full
+    assert x8 == pytest.approx(0.856, abs=0.003)
+    assert code_layer_macs("exact_select_zero", shapes, m=10, r=256) - code_layer_macs("exact_select_zero", shapes, m=10) == 256 * (8960 + 1536)
+    b = layer_bytes("g2u", shapes, k=256, m=2255, qbits=8)["total"] / 1e6
+    assert 38 < b < 46  # ADVISOR 16.3: about 42 MB at 2,255
+    t8 = layer_bytes("exact_select", shapes, m=10, qbits=8, r=128, tail_qbits=8)["total"]
+    t16 = layer_bytes("exact_select", shapes, m=10, qbits=8, r=128)["total"]
+    assert t8 < t16
+    assert column_equivalents_decide_after_honest(0.8317, 0.06, 0.177, needs_readout=True) == pytest.approx(902.3, abs=0.1)
+    assert column_equivalents_decide_after_honest(0.8317, 0.06, 0.177, needs_readout=False) == pytest.approx(891.7, abs=0.1)
+    led = ServingLedger()
+    pos = torch.arange(4, 12)
+    led.add(pos, pos < 6, torch.ones(8, dtype=torch.bool), torch.zeros(8))
+    r = led.report(f=0.8, readout=0.177, needs_readout=True)["all"]
+    assert r["decide_after_honest"] == pytest.approx(1000 * (0.8 + 0.25 * 1.177))
+    g = torch.Generator().manual_seed(3)
+    kl_ = torch.rand(1000, generator=g)
+    fr = key_gate_frontier(kl_, kl_, kl_ > 0.5, 0.8, [0.1], needs_readout=True, readout=0.177)
+    assert fr["rows"][0]["cost_honest"] == pytest.approx(fr["rows"][0]["cost"] + 1000 * 0.1 * 0.177, rel=1e-3)
+
+
+def test_g2u_scores_reduce_to_exact_selection_at_full_rank():
+    from mdb.sparse_switch import gate_exact_up_proxy_scores, hybrid_error_scores
+
+    g_ = torch.Generator().manual_seed(4)
+    d, I = 6, 30
+    Wu = torch.randn(I, d, generator=g_, dtype=torch.float64)
+    n = torch.randn(5, d, generator=g_, dtype=torch.float64)
+    nt = torch.randn(5, d, generator=g_, dtype=torch.float64)
+    gate = torch.randn(5, I, generator=g_, dtype=torch.float64)
+    gt, gg, w = torch.randn(5, I, generator=g_), torch.randn(I, generator=g_), torch.rand(I, generator=g_)
+    ut = nt @ Wu.T
+    sc, uh = gate_exact_up_proxy_scores(gate, n, nt, torch.eye(d, dtype=torch.float64), Wu, ut, gt, gg, w)
+    assert torch.allclose(uh.double(), n @ Wu.T, atol=1e-4)
+    assert torch.allclose(sc, hybrid_error_scores(gate, n @ Wu.T, gt, ut, gg, w), atol=1e-4)

@@ -206,7 +206,7 @@ def layer_macs(d, inter, context, n_heads, n_kv, head_dim):
     return {"attention": attention, "mlp_matmul": d * inter, "mlp": 3 * d * inter, "total": attention + 3 * d * inter}
 
 
-def code_layer_macs(kind, shapes, *, p=0, m=0, k=0, r=0, density=1.0, regather=False):
+def code_layer_macs(kind, shapes, *, p=0, m=0, k=0, r=0, density=1.0, regather=False, densities=None):
     """Derived per-layer MACs of a code (not timed).
 
     kind: 'native' or 'full_select' (all gates computed: full layer), 'token_base' (attention + W_up + W_down),
@@ -218,6 +218,10 @@ def code_layer_macs(kind, shapes, *, p=0, m=0, k=0, r=0, density=1.0, regather=F
     zero base), 'cats_hybrid' ('cats' + B_0 for the hybrid base), 'exact_select_zero' (gate and up GEMVs + m down rows,
     zero base), 'teal' (every projection's input thresholded to ``density``: density x the attention and MLP weight
     MACs, the attention scores dense), 'attention_only' (no MLP write).
+    Part AI: 'gate_exact_up_proxy' (G2U: attention + the gate GEMV of every neuron + B_0 + a rank-k up proxy, encoder
+    d x k and decoder I x k + gathered up and down rows of m neurons); 'exact_select_zero' takes ``r`` (a rank-r
+    remainder on the zero base, R-Sparse style); 'teal_alloc' (TEAL's per-matrix allocation: ``densities`` maps
+    q, k, v, o, gate, up, down to the kept input share of each matrix).
     """
     L = layer_macs(**shapes)
     d, inter = shapes["d"], shapes["inter"]
@@ -239,7 +243,15 @@ def code_layer_macs(kind, shapes, *, p=0, m=0, k=0, r=0, density=1.0, regather=F
     if kind == "cats_hybrid":
         return att + d * inter + d * d + 2 * m * d
     if kind == "exact_select_zero":
-        return att + 2 * d * inter + m * d
+        return att + 2 * d * inter + m * d + r * (inter + d)
+    if kind == "gate_exact_up_proxy":
+        return att + d * inter + d * d + k * (d + inter) + 2 * m * d
+    if kind == "teal_alloc":
+        qo = d * shapes["n_heads"] * shapes["head_dim"]
+        kv_ = d * shapes["n_kv"] * shapes["head_dim"]
+        foot = {"q": qo, "k": kv_, "v": kv_, "o": qo, "gate": d * inter, "up": d * inter, "down": d * inter}
+        scores = 2 * shapes["context"] * shapes["n_heads"] * shapes["head_dim"]
+        return sum(densities[n_] * f_ for n_, f_ in foot.items()) + scores
     if kind == "teal":
         scores = 2 * shapes["context"] * shapes["n_heads"] * shapes["head_dim"]
         return density * (att - scores + 3 * d * inter) + scores
@@ -379,6 +391,13 @@ def column_equivalents_decide_after(f, rho, per=1000):
     return per * (f + rho)
 
 
+def column_equivalents_decide_after_honest(f, rho, readout, *, needs_readout, per=1000):
+    """Decide-after cost in the readout-separate convention: per (f + rho) for keys known before the readout (count,
+    score mass), per (f + rho (1 + readout)) for keys computed from the served logits (entropy, margin), whose served
+    readout is spent and discarded at every position that goes native (ADVISOR 16.1 d)."""
+    return per * (f + rho * (1 + (readout if needs_readout else 0.0)))
+
+
 def readout_fraction(shapes, vocab, n_layers):
     """Readout MACs (d x vocab) per position as a fraction of a full column (n_layers decoder layers)."""
     return shapes["d"] * vocab / (layer_macs(**shapes)["total"] * n_layers)
@@ -410,10 +429,14 @@ class ServingLedger:
             tot[4] += float(agree[mn].float().sum())
             tot[5] += float(kl[mn].float().sum())
 
-    def report(self, f=None, per=1000, readout=None, f_pre=None, law=None):
+    def report(self, f=None, per=1000, readout=None, f_pre=None, law=None, needs_readout=None):
         """f: proxy column fraction; readout: readout fraction added per position to the decide-after count;
         f_pre: fraction already spent at an early-abort point (adds the early-abort count); law: (a0, beta) of the
-        agreement law A = a0 - beta sqrt(KL) (``kl_law``), adding the law's agreement and the excess over it."""
+        agreement law A = a0 - beta sqrt(KL) (``kl_law``), adding the law's agreement and the excess over it.
+        needs_readout (Part AI): True when the gate's key needs the served logits (entropy, margin), so the served
+        readout spent at a position that then goes native is wasted: adds ``decide_after_honest`` = per (f + rho (1 +
+        readout)) in the readout-separate convention (``column_equivalents_decide_after_honest``); False or None for
+        count and mass keys, whose honest cost is the plain decide-after count."""
         out = {}
         for name, (n, nat, ag, kl, ag_n, kl_n) in self.sums.items():
             ns = n - nat
@@ -427,6 +450,9 @@ class ServingLedger:
                     r["decide_after_with_readout"] = r["column_equivalents_decide_after"] + per * readout
                 if f_pre is not None:
                     r["column_equivalents_early_abort"] = column_equivalents_early_abort(f, f_pre, r["rho"], per)
+                if needs_readout is not None:
+                    r["decide_after_honest"] = column_equivalents_decide_after_honest(
+                        f, r["rho"], readout or 0.0, needs_readout=needs_readout, per=per)
             if law is not None:
                 r["agree_law"] = kl_law(r["kl"], *law)
                 r["law_excess"] = r["agree"] - r["agree_law"]
@@ -543,7 +569,7 @@ def column_equivalents_early_abort(f, f_pre, rho, per=1000):
 
 
 def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather", union=None, qbits=None, group=None,
-                scale_bytes=4, hybrid=True, regather=False, r=0, density=1.0):
+                scale_bytes=4, hybrid=True, regather=False, r=0, density=1.0, tail_qbits=None, dec_qbits=4):
     """Derived bytes one decoder layer reads for one decode step of ``batch`` rows (weights, gathered rows, tables and
     the K/V cache at ``shapes['context']``), split into shared (read once per step) and per-row parts.
 
@@ -562,6 +588,11 @@ def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather"
     per row the m up rows and m down rows; ``hybrid`` adds B_0 (shared) and the token tables (u_tok, g_tok, n_tok,
     y0 per row). Kind 'teal': ``density`` x every projection weight (rows of W^T gathered by the thresholded input),
     the K/V cache in full.
+
+    Part AI: ``tail_qbits`` stores the tail proxy's encoder (r x I) at that width with per-row scales (the decoder
+    d x r stays at ``dtype_bytes``). Kind 'g2u' (gate exact, up proxied): attention + B_0 + the encoder (d x k) shared,
+    W_gate at ``qbits`` and the up decoder (I x k) at ``dec_qbits`` with per-row scales, then per row the token tables
+    and the m gathered up rows and m down rows.
     """
     d, inter, ctx = shapes["d"], shapes["inter"], shapes["context"]
     nh, nkv, hd = shapes["n_heads"], shapes["n_kv"], shapes["head_dim"]
@@ -581,8 +612,10 @@ def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather"
         else:
             raise ValueError("impl must be 'gather' or 'union'")
     elif kind == "exact_select":
-        shared = att + d * d + r * (inter + d)
+        shared = att + d * d + (r * d if tail_qbits else r * (inter + d))
         qshared = _qbytes(2 * inter, d, qbits, group, scale_bytes, dtype_bytes)
+        if tail_qbits and r:
+            qshared += _qbytes(r, inter, tail_qbits, None, scale_bytes, dtype_bytes)
         row = kv + 3 * inter + 2 * d
         per = 3 if regather else 1
         if impl == "gather":
@@ -595,6 +628,17 @@ def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather"
         shared = att + (d * d if hybrid else 0)
         qshared = _qbytes(inter, d, qbits, group, scale_bytes, dtype_bytes)
         row = kv + ((2 * inter + 2 * d) if hybrid else 0)
+        if impl == "gather":
+            row += 2 * m * d
+        elif impl == "union":
+            shared += 2 * (inter if union is None else union) * d
+        else:
+            raise ValueError("impl must be 'gather' or 'union'")
+    elif kind == "g2u":
+        shared = att + d * d + d * k
+        qshared = _qbytes(inter, d, qbits, group, scale_bytes, dtype_bytes) + _qbytes(inter, k, dec_qbits, None, scale_bytes,
+                                                                                       dtype_bytes)
+        row = kv + 3 * inter + 2 * d
         if impl == "gather":
             row += 2 * m * d
         elif impl == "union":
@@ -1136,13 +1180,15 @@ def sigma_candidates(lhat, h_perp, e_perp, margin, dim_perp):
     return mask, mask.sum(-1)
 
 
-def key_gate_frontier(key, kl, agree, f, rhos, *, a_native=0.925, law=(0.967, 0.403), repair=0.0, excess=0.0, per=1000):
+def key_gate_frontier(key, kl, agree, f, rhos, *, a_native=0.925, law=(0.967, 0.403), repair=0.0, excess=0.0, per=1000,
+                      needs_readout=False, readout=0.0):
     """Offline decide-after gate on an arbitrary per-position key (for example the below-threshold score mass): the
     top-rho share by key goes native. Predicted agreement rho a_native + (1 - rho) (kl_law(KL_kept (1 - repair rho))
     + excess): the law on the kept positions' mean KL, scaled by a memory-repair factor linear in rho (natives in the
     memory lower the served positions' KL; AG measured x0.54 at rho 0.47, i.e. repair 0.98), plus the stream's own law
-    excess; the direct version uses the kept positions' own agreement. Cost per (f + rho) (decide-after).
-    Returns {'rows': [...], 'spearman_key_kl'}."""
+    excess; the direct version uses the kept positions' own agreement. Cost per (f + rho) (decide-after); with
+    ``needs_readout`` (a key computed from the served logits) also the honest cost per (f + rho (1 + readout)) as
+    ``cost_honest`` (Part AI). Returns {'rows': [...], 'spearman_key_kl'}."""
     import torch
 
     k_ = torch.as_tensor(key, dtype=torch.float64).flatten()
@@ -1158,6 +1204,102 @@ def key_gate_frontier(key, kl, agree, f, rhos, *, a_native=0.925, law=(0.967, 0.
         pred = rr * a_native + (1 - rr) * (kl_law(klk * max(1 - repair * rr, 0.0), *law) + excess)
         direct = rr * a_native + (1 - rr) * (float(a_[kept].mean()) if bool(kept.any()) else 0.0)
         rows.append({"rho": float(rho), "rho_realized": rr, "kappa": kap, "kl_kept": klk, "predicted": pred, "direct": direct,
-                     "cost": per * (f + rr)})
+                     "cost": per * (f + rr),
+                     "cost_honest": column_equivalents_decide_after_honest(f, rr, readout, needs_readout=needs_readout,
+                                                                           per=per)})
     return {"rows": rows, "spearman_key_kl": spearman(k_, kl_, ties=True), "a_native": a_native, "law": list(law),
-            "repair": repair, "excess": excess}
+            "repair": repair, "excess": excess, "needs_readout": bool(needs_readout)}
+
+
+# --------------------------------------------------------------------------- Part AI: WINA, R-Sparse, TEAL greedy
+
+
+def column_norm_weights(w_down):
+    """WINA's weight (Chen et al. 2025, arXiv 2505.19427) at the down projection: ||W_down[:, j]||_2 per neuron.
+    w_down [d, I] -> [I] fp32. The WINA criterion of input j is |p_j| ||w_j||_2 (``zero_base_scores(g, u, w)``); the
+    base-aware form at the hybrid base is ``hybrid_error_scores(..., w)``."""
+    return w_down.float().norm(dim=0)
+
+
+def logit_gain_dispersion(psi, wnorm):
+    """Weights-only split of the psi key's weight into the column norm and the column's logit gain rho_j = psi_j /
+    ||w_j||: sd(log rho), sd(log ||w||), sd(log psi) and Spearman(psi, ||w||) for one layer. A toy (ADVISOR 16.2) puts
+    the KL ratio between the l2 and psi keys at x1.07 / 1.3 / 1.85 / 3.1 at sd(log rho) 0.2 / 0.4 / 0.6 / 0.8."""
+    import torch
+
+    p = psi.double().clamp_min(1e-30)
+    w = wnorm.double().clamp_min(1e-30)
+    lr = (p / w).log()
+    return {"sd_log_rho": float(lr.std()), "sd_log_wnorm": float(w.log().std()), "sd_log_psi": float(p.log().std()),
+            "spearman_psi_wnorm": spearman(p, w, ties=True), "mean_log_rho": float(lr.mean()),
+            "corr_log_rho_log_wnorm": float(torch.corrcoef(torch.stack([lr, w.log()]))[0, 1])}
+
+
+def svd_remainder_maps(w_down, r):
+    """R-Sparse's data-free remainder (Zhang et al. 2025, arXiv 2504.19449) at the down projection: the rank-r truncated
+    SVD W_down ~ U_r S_r V_r^T applied to the skipped inputs t, written as E = S_r V_r^T = U_r^T W_down [r, I] and
+    D = U_r [d, r] (the remainder D E t is the projection of the skipped write onto the top-r left singular subspace).
+    Computed from the d x d Gram (eigh), not a d x I SVD. Returns (E float32, D float32, captured Frobenius share)."""
+    import torch
+
+    W = w_down.double()
+    ev, Q = torch.linalg.eigh(W @ W.T)
+    ev, Q = ev.flip(0).clamp_min(0), Q.flip(1)
+    U = Q[:, :r]
+    E = U.T @ W
+    tot = float(ev.sum())
+    return E.float().contiguous(), U.float().contiguous(), (float(ev[:r].sum()) / tot if tot > 0 else float("nan"))
+
+
+TEAL_MATRICES = ("q", "k", "v", "o", "gate", "up", "down")
+
+
+def teal_footprints(shapes):
+    """Weight footprints (parameters) of the seven projections of one block, TEAL's allocation weights."""
+    d, inter = shapes["d"], shapes["inter"]
+    qo = d * shapes["n_heads"] * shapes["head_dim"]
+    kv = d * shapes["n_kv"] * shapes["head_dim"]
+    return {"q": qo, "k": kv, "v": kv, "o": qo, "gate": d * inter, "up": d * inter, "down": d * inter}
+
+
+def teal_greedy_allocation(block_error, footprints, target, *, alpha=0.05, cap=0.95):
+    """TEAL's block-wise greedy sparsity allocation (Liu et al. 2025, arXiv 2408.14690, Algorithm 1): every matrix starts
+    at sparsity 0; each step tentatively raises matrix i by delta_i = alpha F / f_i (footprint-inverse, so one step adds
+    alpha to the footprint-weighted block sparsity P = sum p_i f_i / F), evaluates ``block_error(p)`` (the l2 error of
+    the block output against the dense block on calibration inputs) and keeps the matrix with the lowest error. Sparsity
+    per matrix is capped at ``cap`` (the paper does not state one); the last step is scaled to land exactly on
+    ``target``. block_error: callable {name: sparsity} -> float. Returns {'sparsity': {name: p}, 'P', 'path', 'evals'}."""
+    names = list(footprints)
+    F = float(sum(footprints.values()))
+    p = {n_: 0.0 for n_ in names}
+    path, evals = [], 0
+    P = 0.0
+    while P < target - 1e-12:
+        best = None
+        need = target - P
+        for n_ in names:
+            if p[n_] >= cap - 1e-12:
+                continue
+            dlt = min(alpha * F / footprints[n_], cap - p[n_], need * F / footprints[n_])
+            q = dict(p)
+            q[n_] = p[n_] + dlt
+            e = float(block_error(q))
+            evals += 1
+            if best is None or e < best[0]:
+                best = (e, n_, dlt)
+        if best is None:
+            break
+        p[best[1]] += best[2]
+        P = sum(p[n_] * footprints[n_] for n_ in names) / F
+        path.append({"matrix": best[1], "error": best[0], "P": P})
+    return {"sparsity": p, "P": P, "path": path, "evals": evals, "alpha": alpha, "cap": cap, "target": target}
+
+
+def gate_exact_up_proxy_scores(g, n, n_tok, encode, dec_up, u_tok, g_tok, g_glob, weights):
+    """G2U key (ADVISOR 16.3): the exact gate g = act(W_gate n) and a rank-k proxy of the up projection,
+    u_hat = u_tok + ((n - n_tok) encode) dec_up^T (encode [d, k], dec_up [I, k]), in the hybrid base's base-aware score
+    |g u_hat - g_tok u_tok - g_glob (u_hat - u_tok)| w. The selected neurons then take exact up and down rows, so the
+    proxy only ranks. Returns (scores [..., I], u_hat [..., I])."""
+    z = (n.float() - n_tok.float()) @ encode.float()
+    u_hat = u_tok.float() + z @ dec_up.float().T
+    return hybrid_error_scores(g, u_hat, g_tok, u_tok, g_glob, weights), u_hat

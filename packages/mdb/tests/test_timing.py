@@ -27,3 +27,19 @@ def test_time_arms_reports_speedups_only_behind_a_passing_gate():
         assert refused["arms"]["predictor"]["median_ms"] >= 0
     with pytest.raises(TimingError, match="baseline"):
         time_arms(arms, baseline="missing", gate={"passed": True})
+
+
+def test_time_arms_interleaved_reports_block_noise_pairs_and_status():
+    from mdb.timing import time_arms_interleaved
+
+    arms = {"native": lambda: sum(range(20000)), "a": lambda: sum(range(5000)), "b": lambda: None}
+    r = time_arms_interleaved(arms, baseline="native", gate={"passed": True}, blocks=3, reps=4, warmup=1,
+                              pairs=[("a", "b")], status={"a": "sealed", "b": "amended"})
+    assert len(r["arms"]["a"]["block_median_ms"]) == 3 and r["arms"]["a"]["status"] == "sealed"
+    assert r["arms"]["native"]["time_ratio_mean"] == pytest.approx(1.0)
+    assert r["pairs"]["a-b"]["mean_ms"] == pytest.approx(sum(r["pairs"]["a-b"]["diff_ms_by_block"]) / 3)
+    assert r["pooled_between_block_sd_ms"] >= 0 and r["pairs"]["a-b"]["status"] == ["sealed", "amended"]
+    refused = time_arms_interleaved(arms, baseline="native", gate=None, blocks=2, reps=2, warmup=0)
+    assert refused["claim"].startswith("refused") and refused["arms"]["a"]["time_ratio_by_block"] is None
+    with pytest.raises(TimingError):
+        time_arms_interleaved(arms, baseline="native", gate=None, blocks=1)
