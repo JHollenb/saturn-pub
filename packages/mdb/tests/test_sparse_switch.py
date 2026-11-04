@@ -725,3 +725,21 @@ def test_g2u_scores_reduce_to_exact_selection_at_full_rank():
     sc, uh = gate_exact_up_proxy_scores(gate, n, nt, torch.eye(d, dtype=torch.float64), Wu, ut, gt, gg, w)
     assert torch.allclose(uh.double(), n @ Wu.T, atol=1e-4)
     assert torch.allclose(sc, hybrid_error_scores(gate, n @ Wu.T, gt, ut, gg, w), atol=1e-4)
+
+
+def test_isotropic_tail_and_fp32_remainder_match_the_reference():
+    from mdb.sparse_switch import svd_remainder_maps, tail_proxy_maps
+
+    g = torch.Generator().manual_seed(9)
+    d, I = 8, 30
+    Wd = torch.randn(d, I, generator=g, dtype=torch.float64)
+    t = torch.randn(400, I, generator=g, dtype=torch.float64) * torch.linspace(2, 0.1, I, dtype=torch.float64)
+    y = t @ Wd.T
+    S = y.T @ y / len(y)
+    E1, D1, s1 = tail_proxy_maps(S, torch.eye(d, dtype=torch.float64), Wd, 3)
+    E2, D2, s2 = tail_proxy_maps(S, None, Wd, 3, isotropic=True, dtype=torch.float32)
+    assert s2 == pytest.approx(s1, rel=1e-4)
+    assert torch.allclose(D1.double() @ E1.double(), D2.double() @ E2.double(), atol=1e-3)  # same projector
+    Ea, Da, sa = svd_remainder_maps(Wd, 3)
+    Eb, Db, sb = svd_remainder_maps(Wd, 3, dtype=torch.float32)
+    assert sb == pytest.approx(sa, rel=1e-4) and torch.allclose(Da.double() @ Ea.double(), Db.double() @ Eb.double(), atol=1e-3)

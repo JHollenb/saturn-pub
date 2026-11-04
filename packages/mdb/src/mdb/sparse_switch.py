@@ -1125,14 +1125,25 @@ def layer_choice_frontier(err_a, err_b, t_a, t_b):
     return {"order": order, "rows": rows}
 
 
-def tail_proxy_maps(second_moment, metric, w_down, r, *, floor=1e-10):
+def tail_proxy_maps(second_moment, metric, w_down, r, *, floor=1e-10, isotropic=False, dtype=None):
     """Output-side rank-r proxy of an exact-selection code's skipped tail write y = W_down t (t: the dropped neurons'
     p - b). Q_r = top-r eigenvectors of M^{1/2} S M^{1/2} (S the tail write's second moment, M a PSD metric, d x d);
     E = Q_r^T M^{1/2} W_down [r, I] applied to t, D = M^{-1/2} Q_r [d, r] (pseudo-inverse below ``floor`` x the top
     eigenvalue of M), so the proxy write D E t is the M-orthogonal projection of y onto the captured subspace.
+    ``isotropic`` (Part AI): M = I without its eigendecomposition (``metric`` ignored; the PCA of S); ``dtype`` the
+    eigensolver's precision (default float64; float32 is ~10x faster on consumer GPUs for d ~ 1,536).
     Returns (E float32, D float32, captured share of the metric energy)."""
     import torch
 
+    dt = torch.float64 if dtype is None else dtype
+    if isotropic:
+        S = ((second_moment + second_moment.T) / 2).to(dt)
+        ev, Q = torch.linalg.eigh(S)
+        ev, Q = ev.flip(0).clamp_min(0), Q.flip(1)
+        Qr = Q[:, :r]
+        tot = float(ev.sum())
+        return ((Qr.T @ w_down.to(dt)).float().contiguous(), Qr.float().contiguous(),
+                (float(ev[:r].sum()) / tot if tot > 0 else float("nan")))
     Mv, MQ = torch.linalg.eigh(((metric + metric.T) / 2).double())
     Mv = Mv.clamp_min(0)
     keep = Mv > floor * float(Mv.max())
@@ -1235,14 +1246,15 @@ def logit_gain_dispersion(psi, wnorm):
             "corr_log_rho_log_wnorm": float(torch.corrcoef(torch.stack([lr, w.log()]))[0, 1])}
 
 
-def svd_remainder_maps(w_down, r):
+def svd_remainder_maps(w_down, r, *, dtype=None):
     """R-Sparse's data-free remainder (Zhang et al. 2025, arXiv 2504.19449) at the down projection: the rank-r truncated
     SVD W_down ~ U_r S_r V_r^T applied to the skipped inputs t, written as E = S_r V_r^T = U_r^T W_down [r, I] and
     D = U_r [d, r] (the remainder D E t is the projection of the skipped write onto the top-r left singular subspace).
-    Computed from the d x d Gram (eigh), not a d x I SVD. Returns (E float32, D float32, captured Frobenius share)."""
+    Computed from the d x d Gram (eigh, in ``dtype``, default float64), not a d x I SVD. Returns (E float32, D float32,
+    captured Frobenius share)."""
     import torch
 
-    W = w_down.double()
+    W = w_down.to(torch.float64 if dtype is None else dtype)
     ev, Q = torch.linalg.eigh(W @ W.T)
     ev, Q = ev.flip(0).clamp_min(0), Q.flip(1)
     U = Q[:, :r]
