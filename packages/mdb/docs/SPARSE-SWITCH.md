@@ -169,3 +169,30 @@ Measured on Qwen2.5-1.5B (WikiText, single seed; closure = share of the token-me
 - **Batching.** Group sets of 4 rows at 2,048 neurons keep 0.862 of each row's own set mass; per-row union fractions are 0.19 / 0.30 / 0.39 at B = 2 / 4 / 8.
 
 Full tables: `FINDINGS-AF.md`.
+
+## Integer codes, quantized decode, readout qualifiers and the gate frontier (Part AG, job-b725633849e0)
+
+The helpers:
+
+- `quantize_int` / `dequantize_int` do symmetric integer quantization per row or per group, and keep the integers as int8. `pack_int4` / `unpack_int4` pack two values per byte (low nibble = even column).
+- `layer_bytes` / `bytes_per_token` take `qbits`, `group` and `readout_bits`, and count the scales.
+- `head_subspace` gives the top-r right singular subspace of the head. `certified_candidates` gives the Cauchy–Schwarz margin set that provably contains the argmax. `blockwise_topk_recall` gives the per-block top-k recall.
+- `kl_log_dispersion` (σ_k) is the sd of log per-position KL. `metric_eigen_share` is the top-r share of G^{1/2} S G^{1/2}.
+- `gate_frontier` computes the decide-after and prefix count-gate frontiers (abort depth × native share → predicted agreement and cost) from one free stream's per-position counts, KL and agreement.
+
+Measured on Qwen2.5-1.5B (WikiText, single seed, RTX 4080):
+
+- **Integer scoring.** int8 per-row scores of W_gate / W_up keep 0.9999 of exact selection's mass.
+  - X2q8 (int8 scores, exact base, per-layer threshold at mean count 2,048) closes 98.75% (X2, exact top-E 2,048: 97.9%).
+  - int4 group-128 scoring keeps 0.981 of the mass. int4 *products* cost 1.7 points (96.9 vs 98.6 with int4 selection and exact products).
+- **Timed step.** Batch-1 CUDA-graphed step with the `payload_ag/qdecode.py` kernels: an int8 / int4 dual GEMV whose epilogue computes the score, threshold and ω; a tile scan-scatter; a count-bounded down projection.
+  - X2q8 takes 0.740× native's time (405 GB/s), K1q4T 0.673×, W1T3E2 0.714×.
+  - With an int8 head: 0.687× / 0.620× / 0.660×.
+  - At L14 the fused X2q8 MLP takes 38.9 µs against native's 131.1 µs.
+- **End-to-end stream.** A static-shape stream: 128 K/V slots, a device position, in-graph embedding, readout and argmax; the native and served graphs share buffers. X2q8 free runs at 0.760× native wall-clock and agrees 0.879 with the native stream (KL 0.039). In the harness it agrees 0.884 at 832 column-equivalents per 1k.
+- **Readout.**
+  - The int8 per-row head's argmax agrees 0.9745 with the served bf16 head and 0.986 with fp32 logits of the bf16 weights. The bf16 head itself agrees 0.976 with those fp32 logits.
+  - Certified sets at r ≤ 384 are the whole vocabulary. The head Gram's top eigenvalue is 34× the next (the shared embedding direction), so uncentred head subspaces do not discriminate.
+- **Gate frontier.** The prefix count does not rank per-position KL (|Spearman| ≤ 0.2 at every depth). The measured W1T3E2 gate (L9, ρ 0.46) agrees 0.867 at 846, against a predicted 0.834.
+
+Full tables: `FINDINGS-AG.md`.
