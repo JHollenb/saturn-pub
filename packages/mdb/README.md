@@ -186,6 +186,13 @@ linear/write forecasts and a complete saved-vector account preserve the
 contraction, rounding terms and opposite latent/RGB trends. Nine native futures
 separate feature writes, receiving residual and working-text continuation;
 geometric closure does not establish semantic repair or a universal route.
+The [single6 MLP-entry assay](docs/FLUX-SINGLE-MLP.md) forecasts selected MLP
+features from incoming state, time modulation and native weights before the
+current-step block executes. In each of two histories, its explicit BF16
+reference matches every sampled normalization/affine value and 255 of 256
+SwiGLU activations; the remaining errors are retained. Three separate seals
+distinguish this entry forecast from the later projection forecast and nine
+native image futures, which consume native features rather than predictions.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 The [compiled-state residual view](docs/COMPILED-STATE.md) fits per-position

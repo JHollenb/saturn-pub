@@ -123,7 +123,7 @@ def validate_native_sources(prior, current):
     return new
 
 
-def run_panel(*, pipe, adapter, inputs, output, config, request, metadata, selection):
+def run_panel(*, pipe, adapter, inputs, output, config, request, metadata, selection, prepared_inputs=False):
     """Injectable resident-model panel; no loading, encoding, random draws or jobs."""
     import numpy as np
     import torch
@@ -135,6 +135,8 @@ def run_panel(*, pipe, adapter, inputs, output, config, request, metadata, selec
     from mdb.forward_recording import tensor_descriptor
     from mdb.native_navigation import NativeCutNavigator
 
+    if type(prepared_inputs) is not bool or config.get("array_storage", "float32") not in {"float32", "bf16-bits"}:
+        raise ValueError("invalid optional contraction input/storage profile")
     helper = runpy.run_path("flux_single_contraction.py")
     output = Path(output)
     output.mkdir(parents=True, exist_ok=True)
@@ -176,9 +178,13 @@ def run_panel(*, pipe, adapter, inputs, output, config, request, metadata, selec
         if key not in array_index:
             path = output / "arrays" / (key + ".npy")
             path.parent.mkdir(exist_ok=True)
-            np.save(path, value.detach().float().cpu().numpy(), allow_pickle=False)
-            array_index[key] = {"path": path.relative_to(output).as_posix(), "sha256": sha(path), "descriptor": descriptor,
-                "stored_dtype": "float32", "stored_shape": list(value.shape), "native_stride": list(value.stride())}
+            if config.get("array_storage", "float32") == "bf16-bits":
+                from mdb.tensor_archive import write_tensor_archive
+                array_index[key] = write_tensor_archive(path, value, root=output)
+            else:
+                np.save(path, value.detach().float().cpu().numpy(), allow_pickle=False)
+                array_index[key] = {"path": path.relative_to(output).as_posix(), "sha256": sha(path), "descriptor": descriptor,
+                    "stored_dtype": "float32", "stored_shape": list(value.shape), "native_stride": list(value.stride())}
         return array_index[key]
     def frontier_check(cut, expected):
         if cut.fingerprint != expected["cut"] or dict(cut.execution_point) != expected["point"]:
@@ -188,9 +194,14 @@ def run_panel(*, pipe, adapter, inputs, output, config, request, metadata, selec
     cuts, replay = {}, {}
     for role, cut in inputs.items():
         point = cut.execution_point
-        if any(point[key] != value for key, value in {"logical_step": 3, "phase": "single", "index": 3, "local_clock": 3}.items()):
+        start = 6 if prepared_inputs else 3
+        if any(point[key] != value for key, value in {"logical_step": 3, "phase": "single", "index": start, "local_clock": start}.items()):
             raise ValueError("source replay requires retained post-single2 cut")
         store.save(cut)
+        if prepared_inputs:
+            cuts[role] = cut
+            replay[role] = {"input_cut": cut.fingerprint, "pre6_cut": cut.fingerprint, "receipts": []}
+            continue
         active["branch"] = "replay." + role
         n = navigator(cut)
         path = [n.step().to_dict() for _ in range(3)]
@@ -200,8 +211,20 @@ def run_panel(*, pipe, adapter, inputs, output, config, request, metadata, selec
         cuts[role] = current
         replay[role] = {"input_cut": cut.fingerprint, "pre6_cut": current.fingerprint, "receipts": path,
             "complete_cut_exact_prior": True, "live_descriptors_exact_prior": True}
-    helper["validate_sources"](cuts["zero"], cuts["text"])
-    save(output / "source-replay.json", replay)
+    if prepared_inputs:
+        low, high = cuts["zero"], cuts["text"]
+        if (low.model_identity != high.model_identity or low.execution != high.execution or set(low.payload) != set(high.payload)
+                or any(describe(value) != describe(high.payload[key]) for key, value in low.payload.items() if key not in {"image", "text"})):
+            raise ValueError("prepared sources differ in identity/schema or outside image/text")
+        for key in ("image", "text"):
+            a, b = low.payload[key], high.payload[key]
+            if a.shape != b.shape or a.dtype != b.dtype or a.device != b.device or not bool(torch.isfinite(a).all() and torch.isfinite(b).all()):
+                raise ValueError("prepared source geometry/dtype/device/finite differs")
+        save(output / "source-replay.json", {"kind": "prepared-inputs", "inputs": replay,
+            "counts": {"adapter_steps": 0, "acts": 0, "receipt_emissions": 0}})
+    else:
+        helper["validate_sources"](cuts["zero"], cuts["text"])
+        save(output / "source-replay.json", replay)
     block = pipe.transformer.single_transformer_blocks[6]
     if not isinstance(block.attn.to_out, torch.nn.Linear):
         raise ValueError("single6 native projection is not the qualified full linear module")
@@ -213,6 +236,12 @@ def run_panel(*, pipe, adapter, inputs, output, config, request, metadata, selec
         "source_parameters": {name: tensor_descriptor(value) for name, value in block.named_parameters()},
         "linear_path": "single_transformer_blocks.6.attn.to_out", "preseal_counts": dict(counts),
         "query_indices": config["query_indices"], "output_dims": config["output_dims"], "branches": config["branches"], "scope": config["scope"]}
+    if prepared_inputs:
+        source.pop("imported_cuts")
+        source.update(prepared_inputs=True, prepared_input_cuts={role: cut.fingerprint for role, cut in inputs.items()},
+            source_contrast_observations={key + "_exact": torch.equal(cuts["zero"].payload[key], cuts["text"].payload[key]) for key in ("image", "text")})
+    if config.get("array_storage", "float32") != "float32":
+        source["array_storage"] = config["array_storage"]
     save(output / "source.json", source)
     release = {"native": False, "blocked": 0}
     def guard(module, args):
@@ -255,7 +284,8 @@ def run_panel(*, pipe, adapter, inputs, output, config, request, metadata, selec
         event("branch_complete", row=row["id"])
     tx = ForecastTransaction(output / "transaction", model_identity=adapter.model_identity, input_identity=identity(source["input_cuts"]),
         source_identity=identity(request["source_hashes"]), frontier={"kind": "architectural", "source_sha256": sha(output / "source.json"),
-            "allowed_prefix": "Six native replay steps on authenticated own-history predecessor cuts; known predecessor references already executed; no direct current-site captures before this seal"},
+            "allowed_prefix": ("Externally prepared observed current-step pre6 cuts; zero panel source replay; earlier-timestep module6 calls allowed in the declared fresh builder, no current-step module6 call before the outer early-MLP seal"
+                if prepared_inputs else "Six native replay steps on authenticated own-history predecessor cuts; known predecessor references already executed; no direct current-site captures before this seal")},
         execution_scope="CUDA BF16 native single6 conditional operand assay; external receipt/direct-call census authoritative",
         budgets={"max_native_calls": 1, "max_wall_ms": config["max_wall_seconds"] * 1000})
     projection_summary = {}
@@ -330,7 +360,8 @@ def run_panel(*, pipe, adapter, inputs, output, config, request, metadata, selec
                     store.save(current)
                     post[role] = current
                     prefixes[role] = {"input_cut": cuts[role].fingerprint, "post_single6": current.fingerprint, "receipt": value.to_dict()}
-                    controls[role + "_prefix_cut_equals_prior"] = current.fingerprint == selection["expected_outputs"][role]["cut"]
+                    if not prepared_inputs:
+                        controls[role + "_prefix_cut_equals_prior"] = current.fingerprint == selection["expected_outputs"][role]["cut"]
                     for slot in ("image", "text"):
                         controls[role + "_candidate_" + slot + "_exact_native"] = torch.equal(values[role][slot], current.payload[slot])
                 for name in ("A", "M", "AM"):
@@ -354,15 +385,17 @@ def run_panel(*, pipe, adapter, inputs, output, config, request, metadata, selec
                 by_id = {row["id"]: row for row in rows}
                 controls.update(sham_png_equals_zero=by_id["sham"]["image"]["sha256"] == by_id["zero"]["image"]["sha256"],
                     coherent_png_equals_text=by_id["coherent"]["image"]["sha256"] == by_id["text"]["image"]["sha256"])
-                for role in ("zero", "text"):
-                    controls[role + "_png_equals_prior"] = by_id[role]["image"]["sha256"] == selection["expected_pngs"][role]
-                    controls[role + "_latent_equals_prior"] = by_id[role]["final_latent"]["descriptor"] == selection["expected_final_latents"][role]
+                if not prepared_inputs:
+                    for role in ("zero", "text"):
+                        controls[role + "_png_equals_prior"] = by_id[role]["image"]["sha256"] == selection["expected_pngs"][role]
+                        controls[role + "_latent_equals_prior"] = by_id[role]["final_latent"]["descriptor"] == selection["expected_final_latents"][role]
                 return {"rows": rows, "counts": dict(counts), "control_observations": controls, "source_sha256": sha(output / "source.json")}
             tx.execute("native", execute)
     finally:
         for handle in guards:
             handle.remove()
-    expected = {"adapter_steps": 143, "acts": 10, "candidate_calls": 5, "images": 9, "vae_calls": 9, "receipt_emissions": 153}
+    expected = {"adapter_steps": 137 if prepared_inputs else 143, "acts": 10, "candidate_calls": 5, "images": 9, "vae_calls": 9,
+        "receipt_emissions": 147 if prepared_inputs else 153}
     if any(counts[key] != value for key, value in expected.items()):
         raise ValueError("single6 completed physical census differs")
     save(output / "transaction-report.json", tx.report())

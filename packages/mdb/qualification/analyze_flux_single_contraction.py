@@ -431,7 +431,8 @@ def audit_prefixes(e, source, selection, replay, prefixes):
     return replay_paths, prefix_paths, controls, paired
 
 
-def projection_timing(timeline):
+def projection_timing(timeline, *, replay_steps=6):
+    require(replay_steps in {0, 6}, "unsupported source replay timing contract")
     require([event["sequence"] for event in timeline] == list(range(len(timeline))), "timeline sequence differs")
     main = [event for event in timeline if event["kind"] == "hypotheses_sealed"]
     secondary = [event for event in timeline if event["kind"] == "projection_forecast_sealed"]
@@ -443,22 +444,25 @@ def projection_timing(timeline):
               "five_candidate_events": set(starts) == set(ends) == {"zero", "text", "A", "M", "AM"}}
     if len(main) == len(secondary) == 1:
         primary, seal = main[0], secondary[0]
-        checks.update(main_after_only_six_allowed_replay_steps=primary["counts"]["adapter_steps"] == 6
-            and primary["counts"]["receipt_emissions"] == 6 and primary["blocked_native_entries"] == 0
+        checks.update(main_after_only_six_allowed_replay_steps=primary["counts"]["adapter_steps"] == replay_steps
+            and primary["counts"]["receipt_emissions"] == replay_steps and primary["blocked_native_entries"] == 0
             and all(primary["counts"][key] == 0 for key in ("candidate_calls", "acts", "images", "vae_calls", "prompt_encodings", "noise_draws")),
             numeric_after_only_two_native_sources=seal["counts"]["candidate_calls"] == 2
-            and seal["counts"]["adapter_steps"] == seal["counts"]["receipt_emissions"] == 6
+            and seal["counts"]["adapter_steps"] == seal["counts"]["receipt_emissions"] == replay_steps
             and all(seal["counts"][key] == 0 for key in ("acts", "images", "vae_calls")),
             sources_after_main_before_numeric=all(name in starts and name in ends
                 and primary["sequence"] < starts[name]["sequence"] < ends[name]["sequence"] < seal["sequence"] for name in ("zero", "text")),
             edited_after_numeric=all(name in starts and name in ends
                 and seal["sequence"] < starts[name]["sequence"] < ends[name]["sequence"] for name in ("A", "M", "AM")))
+    if replay_steps == 0:
+        checks["main_before_any_panel_native_step"] = checks.pop("main_after_only_six_allowed_replay_steps")
     return {"checks": checks, "qualified": all(checks.values()),
             "status": "prospective-timing-qualified" if all(checks.values()) else "prospective-timing-unresolved",
-            "scope": "Source-bound worker event/counter policy. Six preseal own-history replay steps are allowed; no current-site direct calculation before main seal. Not hermetic isolation or independent kernel-call tracing."}
+            "scope": ("Source-bound worker event/counter policy. Six preseal own-history replay steps are allowed; no current-site direct calculation before main seal. Not hermetic isolation or independent kernel-call tracing." if replay_steps else
+                "Prepared fresh states precede this panel. Main seal before all panel native calls; numeric seal after exactly two native sources and no panel prefix. Source-bound policy, not hermetic isolation or independent kernel-call tracing.")}
 
 
-def audit_projection_transaction(e, source, candidates, ports, summary, timeline):
+def audit_projection_transaction(e, source, candidates, ports, summary, timeline, *, replay_steps=6):
     h, read = e.h, e.read
     root = e.data / "projection-transaction"
     record = read(e.data / "projection-forecast.json")
@@ -539,7 +543,7 @@ def audit_projection_transaction(e, source, candidates, ports, summary, timeline
             "samples": record["samples"][name], "shape": [1, 8, 32]}
     expected_count = {**source["preseal_counts"], "candidate_calls": 5}
     require(observed["counts"] == expected_count, "projection edited-call census differs")
-    timing = projection_timing(timeline)
+    timing = projection_timing(timeline, replay_steps=replay_steps)
     seals = [event for event in timeline if event["kind"] == "projection_forecast_sealed"]
     if len(seals) == 1:
         require(seals[0]["seal"] == record["seal"] and seals[0]["counts"] == binding["counts_before_seal"]
@@ -675,17 +679,29 @@ def analyze(root, *, custody_verify=None):
         "source": {**parent["custody"], "transaction": parent["transaction"]},
         "transaction": data / "transaction", "tree": h["NumericalTree"](data / "transaction")}
     e = COMMON["SavedEvidence"](data, run=run)
+    return analyze_evidence(parent, e)
+
+
+def analyze_evidence(parent, e, *, source_adapter=None):
+    """Shared full-port panel with explicit source admission and physical census.
+
+    The default remains the authenticated historical after2 replay. A fresh
+    prepared-source adapter must supply its own lineage, prefixes and census;
+    it does not create a substitute historical report or scheduler job.
+    """
+    data, run = e.data, e.run
     source, summary, plan = parent["source"], parent["summary"], parent["plan"]
-    selection, lineage = audit_imported_source(e, parent)
+    selection, lineage = (audit_imported_source(e, parent) if source_adapter is None else source_adapter.verify_source(e, parent))
+    expected_preseal = ({**COUNTS, "model_loads": 0, "adapter_steps": 6, "candidate_calls": 0,
+                "acts": 0, "receipt_emissions": 6, "images": 0, "vae_calls": 0} if source_adapter is None else source_adapter.preseal_counts)
+    expected_outer = ({"model_loads": 1, "prompt_encodings": 0, "noise_draws": 0} if source_adapter is None else source_adapter.outer_preseal_counts)
     observed = run["tree"].decode(e.read(data / "transaction/observations/native.json")["value"])
     hypotheses = run["tree"].decode(e.read(data / "transaction/forecasts/contraction_hypotheses.json")["predictions"])
     require(hypotheses == plan["hypotheses"] and source["branches"] == plan["branches"]
             and observed["counts"] == summary["counts"]
             and observed["source_sha256"] == sha_file(data / "source.json")
             and observed["control_observations"] == summary["control_observations"]
-            and source["preseal_counts"] == {**COUNTS, "model_loads": 0, "adapter_steps": 6, "candidate_calls": 0,
-                "acts": 0, "receipt_emissions": 6, "images": 0, "vae_calls": 0}
-            and source["outer_preseal_counts"] == {"model_loads": 1, "prompt_encodings": 0, "noise_draws": 0},
+            and source["preseal_counts"] == expected_preseal and source["outer_preseal_counts"] == expected_outer,
             "primary source/plan/observation/preseal count differs")
     # Constant complete-state closure is independent of the replay outcome.
     anchor = e.fields(source["input_cuts"]["zero"])
@@ -701,27 +717,33 @@ def analyze(root, *, custody_verify=None):
                 "receipt native identity differs")
     points = BASE["receipt_points"](e.receipts.values())
     require(all(cut not in e.store["cuts"] or e.point(cut) == point for cut, point in points.items()), "cut/receipt point disagreement")
-    replay = e.read(data / "source-replay.json")
     prefixes = e.read(data / "prefixes.json")["prefixes"]
-    replay_paths, prefix_paths, controls, paired = audit_prefixes(e, source, selection, replay, prefixes)
+    if source_adapter is None:
+        replay = e.read(data / "source-replay.json")
+        replay_paths, prefix_paths, controls, paired = audit_prefixes(e, source, selection, replay, prefixes)
+    else:
+        replay_paths, prefix_paths, controls, paired = source_adapter.audit_prefixes(e, source, prefixes)
     candidates = e.read(data / "candidates.json")["candidates"]
     ports, candidate_checks, candidate_controls, contrasts = audit_candidates(e, candidates, source, prefixes)
     controls.update(candidate_controls)
     timeline = read_jsonl(data / "timeline.jsonl")
-    numerical = audit_projection_transaction(e, source, candidates, ports, summary, timeline)
+    numerical = audit_projection_transaction(e, source, candidates, ports, summary, timeline,
+        replay_steps=6 if source_adapter is None else source_adapter.native_replay_steps)
     main_events = [event for event in timeline if event["kind"] == "hypotheses_sealed"]
     require(len(main_events) == 1 and main_events[0]["seal"] == summary["seal"]
             and main_events[0]["counts"] == source["preseal_counts"], "primary timeline/seal differs")
     rows, paths, pixels, latents = audit_rows(e, source, plan, observed["rows"], prefixes, ports, timeline)
-    census = emission_census(e, replay_paths, prefix_paths, paths, summary, plan)
+    census = (emission_census(e, replay_paths, prefix_paths, paths, summary, plan) if source_adapter is None else
+        source_adapter.emission_census(e, prefix_paths, paths, summary, plan))
     comparisons = {name: {base: {"latent": distance(latents[name], latents[base]), "rgb": distance(pixels[name], pixels[base])}
                          for base in ("zero", "text")} for name in ROW_IDS}
     for name, base in (("sham", "zero"), ("coherent", "text")):
         controls[name + "_png_equals_" + base] = rows[name]["image"]["sha256"] == rows[base]["image"]["sha256"]
         controls[name + "_latent_equals_" + base] = comparisons[name][base]["latent"]["exact_base"]
-    for role in ("zero", "text"):
-        controls[role + "_png_equals_prior"] = rows[role]["image"]["sha256"] == selection["expected_pngs"][role]
-        controls[role + "_latent_equals_prior"] = rows[role]["final_latent"]["descriptor"] == selection["expected_final_latents"][role]
+    if source_adapter is None:
+        for role in ("zero", "text"):
+            controls[role + "_png_equals_prior"] = rows[role]["image"]["sha256"] == selection["expected_pngs"][role]
+            controls[role + "_latent_equals_prior"] = rows[role]["final_latent"]["descriptor"] == selection["expected_final_latents"][role]
     extra_controls = {"zero_prefix_descriptors_equal_prior", "text_prefix_descriptors_equal_prior", "sham_latent_equals_zero", "coherent_latent_equals_text"}
     declared = {key: value for key, value in controls.items() if key not in extra_controls}
     require(declared == summary["control_observations"], "worker named controls differ from saved evidence")
