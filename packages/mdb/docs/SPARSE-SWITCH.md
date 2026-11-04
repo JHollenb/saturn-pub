@@ -63,3 +63,21 @@ What it got:
 - **The offline Fisher energy tracks the causal gain** across the predicted codes at L10–18.
 
 Full tables: `FINDINGS-AA.md` in `saturn/experiments/2026-11-02-forecast-cost-and-compressed-addition`.
+
+## Codes with pools, bases and FLOP fractions (Part AB, job-f2add067bef1)
+
+`code_products` writes a code as `W_down(products)`: exact gates on a kept set (a per-position list, a static `pool_from_counts` pool or a proxy-selected set) and a base elsewhere (token-mean gate, global-mean gate, i.e. `B_0 n` with `global_base_matrix`, or the token-table hybrid). `flop_fraction` gives the derived multiply-accumulates per replaced column as a share of a full column from the layer shapes. It is derived, not timed. `pool_mass` is the share of the oracle list's score mass inside a pool.
+
+In Part AB, all codes ran as propagated columns at all 28 layers of Qwen2.5-1.5B, with an exact memory. Results are the share of the token-mean freeze's per-position KL gap closed, with agreement at offsets 32–39 after the block in parentheses:
+
+| Code | f | KL gap closed (post-block agreement) |
+|---|---|---|
+| full-pool list with the token-mean base, SP256 | 1.0 | 89% (0.90) |
+| full-pool list with the global base | 1.0 | 83% |
+| rank-256 proxy selecting 512 neurons per position, global base | 0.33 | 62% (0.86) |
+| static pool of 1,024, token-table hybrid base | 0.275 | 31% |
+| static pool of 1,024, global base | 0.275 | −10% |
+| static pool of 2,048, global base | 0.375 | 22% |
+| global base alone | 0.175 | −134% |
+
+Static pools hold only 33–45% (p = 1,024) of the list's score mass. Per-position selection is what lets the cheap global base work.
