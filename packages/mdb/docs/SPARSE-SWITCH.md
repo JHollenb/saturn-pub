@@ -146,3 +146,26 @@ Measured on Qwen2.5-1.5B, RTX 4080, bf16:
 - **k = 1,024.** It closes 93.5% at f = 0.697. Its free stream agrees with native at 0.763.
 
 Full tables: `FINDINGS-AE.md`.
+
+## Thresholds, ramps, rank water-filling and the KL law (Part AF, job-66da26ca60ba)
+
+The helpers:
+
+- `ScoreHistogram` pools per-neuron scores (positions × neurons) per layer in log bins. `threshold(layer, m)` returns the score with a mean count of m per position above it; `global_threshold(M)` does the same with one threshold across layers.
+- `ramp_weights` / `ramp_products` give the soft threshold: select above θ_lo, weight the exact correction by ω = min(1, (s − θ_lo) / (θ_hi − θ_lo)), θ_hi = θ_lo / (1 − η).
+- `rank_waterfill` allocates proxy rank across layers by taking the K largest metric eigenvalues (optionally capped per layer).
+- `group_sets` and `set_jaccard` measure exact sets shared across rows.
+- `kl_law` / `fit_kl_law` give agreement from a stream's KL, A = a0 − β √KL; `ServingLedger.report(law=(a0, β))` adds the law's agreement and the excess.
+- `code_layer_macs` / `layer_bytes` gain `exact_select` (every neuron's exact gate and up projections, B_0, m exact down rows).
+
+Measured on Qwen2.5-1.5B (WikiText, single seed; closure = share of the token-mean code's KL removed at one new position, all 28 layers):
+
+- **Rank allocation.** Water-filling 28 × 512 rank units over the ψ-metric eigenvalues (capped at 1,024; the cap binds at L22–27) closes 92.5% at A1's FLOP fraction (A1, uniform rank 512: 84.5%).
+- **E is the cheaper knob.** (512, 2,048) closes 90.7% at f 0.586; (1,024, 2,048) 96.8% at 0.797; proxy-free exact selection at E 1,024 94.5% at 0.792, at E 2,048 97.9% at 0.825.
+- **Thresholds.** A pooled per-layer threshold at mean count 1,024 closes 86.7% (top-1,024: 84.5%); one global threshold 88.5%; the ramp (η 0.25) 84.8%. At equal mean count the threshold set keeps 1.022× the top-E set's true-score mass.
+- **The KL law.** All seven pure streams sit within 0.018 of A = 0.967 − 0.403 √KL.
+- **Serving.** K1 with uncovered tokens native, decided before the column: 0.825 agreement at 798 column-equivalents per 1,000 tokens (KL 0.147).
+- **Decode timing.** A fused ramp path (`payload_af/sparse_decode.py`: index-select, one [enc | B_0ᵀ] GEMV, the decoder GEMV, then Triton select, gate/up epilogue, masked down and finish kernels) runs the batch-1 CUDA-graphed step in 0.832× native's time for A1-Θ2 (5.21 vs 6.26 ms, 0.57× the bytes) and 0.965× for K1-Θ2. A graph node of a trivial kernel costs 0.68 µs, so the remaining gap to the byte ratio is kernel execution, not launches.
+- **Batching.** Group sets of 4 rows at 2,048 neurons keep 0.862 of each row's own set mass; per-row union fractions are 0.19 / 0.30 / 0.39 at B = 2 / 4 / 8.
+
+Full tables: `FINDINGS-AF.md`.
