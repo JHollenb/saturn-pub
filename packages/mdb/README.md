@@ -193,6 +193,11 @@ reference matches every sampled normalization/affine value and 255 of 256
 SwiGLU activations; the remaining errors are retained. Three separate seals
 distinguish this entry forecast from the later projection forecast and nine
 native image futures, which consume native features rather than predictions.
+The [full-field MLP replacement workflow](docs/FLUX-MLP-REPLACEMENT.md) seals
+complete image-side MLP fields and supplies them to the native consumer in
+matched measured/predicted replay branches, including a placement contrast.
+Tiny native mechanics are qualified; the first real attempt timed out before
+its forecast seal, and the instrumented scientific result remains pending.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 The [compiled-state residual view](docs/COMPILED-STATE.md) fits per-position
