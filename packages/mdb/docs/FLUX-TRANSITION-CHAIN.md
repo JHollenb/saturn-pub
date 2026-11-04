@@ -2,7 +2,7 @@
 
 This workflow advances [attention/MLP field replacement](FLUX-ATTENTION-REPLACEMENT.md) to an independently calculated two-block segment. Complete predicted text and image outputs from single block6 feed the prediction of block7. Both stages are sealed before either selected current-step native block executes. The later native suffix supplies image evidence.
 
-**Status:** the genuine two-block chain executed in `job-48dc7e610cd2`, and its saved-only audit reports `mechanics_status=valid`, `instrument_status=native-replay-qualified`, `terminal_status=unassessed`. All seven native futures completed. Export subsequently hit the inherited 128MiB per-file cap on a 169,869,440-byte fused weight array. All 576 raw files were recovered through authenticated, independently verified transfer, with zero further model calls. The scheduler's failed status remains preserved. Fourteen predictor/campaign checks, 32 current auditor checks and three future storage-guard checks pass outside the workspace against installed wheels.
+**Status:** both the two-block seed79 chain and three-block seed83 extension have completed with `mechanics_status=valid`, `instrument_status=native-replay-qualified`, `terminal_status=unassessed`. Latest job `job-af3d6979dd41` completed all nine native futures and normal archive custody. Nine campaign checks, 40 auditor checks and nine storage/publication/submission checks pass outside the workspace against installed wheels. The numerical predictor is unchanged. The historical two-block job's failed export and verified recovery remain preserved separately.
 
 ## State and numerical scope
 
@@ -97,11 +97,45 @@ P8 − X8 = [P8 − N8(P7)]
 
 The first term is block8's local discrepancy; the second is the finite difference caused by block7's discrepancy after transport through native8; the third carries the block6 discrepancy through native7/8. Nonlinear transport does not act on error vectors independently. Reports retain signed component statistics, all pairwise inner products and full-vector closure separately for image, text and concatenated state. None is a semantic attribution fraction.
 
-The launcher binds the measured Linux worker cache lane for this host-local checkpoint, honors explicit worker cache overrides and rejects Mac cache paths before staging. Three-block transport allows 256MiB members, 2048MiB compressed and 3072MiB expanded. Parameter geometry is a necessary expanded-byte lower bound; it does not predict compressed artifact size. Complete runtime inventory and archive bounds remain enforced.
+The launcher binds the measured Linux worker cache lane for this host-local checkpoint, honors explicit worker cache overrides and rejects Mac cache paths before staging. Actual submission command cache paths, Python selection and dependencies bind to the staged request, with a hostile-local-default submission regression. Three-block transport allows 256MiB members, 2048MiB compressed and 3072MiB expanded. Parameter geometry is a necessary expanded-byte lower bound; it does not predict compressed artifact size. Complete runtime inventory and archive bounds remain enforced.
 
 The generalized auditor passed a full saved-only regression on the previous two-block result: 177,992 existing numerical leaves were identical, with no missing values or changed lengths. This checks backward compatibility without changing the prior evidence. [Regression receipt](../../../../artifacts/mdb-flux-transition-chain3-20261104/legacy2-regression.json), [pre-outcome auditor freeze](../../../../artifacts/mdb-flux-transition-chain3-20261104/audit-qualification.json).
 
-## Observed two-block result
+## Observed three-block result: seed83
+
+The independent all-query recurrence reproduced all six sealed complete outputs bit for bit: 28,311,552 values. This is forecast reproducibility, not native CUDA bit parity. Native target entries before sealing were zero for all three blocks; afterward the verified counts were 6:2, 7:4, 8:6. Complete image and text predictions feed both chain edges without native refresh.
+
+| History | Slot | Block6 error / native RMS | Block7 error / native RMS | Block8 error / native RMS |
+|---|---|---:|---:|---:|
+| Low | Image | 0.10211% | 0.24413% | 0.37211% |
+| Low | Text | 0.04364% | 0.09835% | 0.14205% |
+| High | Image | 0.09779% | 0.22306% | 0.32832% |
+| High | Text | 0.00651% | 0.01520% | 0.02167% |
+
+At post8, exact native image-value agreement is 41.18% low and 41.14% high. Maximum full-state absolute discrepancies are 4.0 low and 16.0 high; image-only maxima are 2.0 and 4.0. High text RMS is about 284.2, so its full-state percentage 0.02891% masks the larger image-relative discrepancy. Low combined error is 0.24839%. These are approximate numerical agreements with heterogeneous tails.
+
+| History | Predicted blocks before remaining native path | Final latent L2 | RGB MAE, 0–255 |
+|---|---:|---:|---:|
+| Low | 1 | 3.43626 | 0.21275 |
+| Low | 2 | 3.41612 | 0.21107 |
+| Low | 3 | 3.40802 | 0.21075 |
+| High | 1 | 2.94592 | 0.14952 |
+| High | 2 | 2.90299 | 0.15225 |
+| High | 3 | 2.91676 | 0.15247 |
+
+Low RGB MAE decreases slightly as the predicted segment grows, while high increases; high latent L2 decreases then rises. Three-block maximum RGB channel differences are 23 low and 8 high despite small means. The low sham exactly matches native at common post8, final latent and PNG. No outcome supports an across-context monotonic improvement or semantic repair claim.
+
+The three-term full-state L2 components (carried from6 / transported difference from7 / local at8 / total) are 93.57991 / 64.26685 / 28.42006 / 93.06904 for low and 103.48702 / 69.72273 / 32.22207 / 103.21020 for high. The identity closes exactly. Low's local8-versus-carried6 dot product is positive (+5.55015), while its other two are negative; all three high dot products are negative. Twice the sum of pairwise dots contributes −5033.28179 low and −5956.73935 high to total squared error. These are vector relations in the observed finite differences, not attribution percentages.
+
+Negative cross terms do not guarantee that adding a local discrepancy reduces the norm: low's post8 two-term total is 93.06904 versus carried 93.03043, a slight increase; high's is 103.21020 versus carried 104.72399, a decrease. The native bridge panel exposes this distinction without refreshing any sealed forecast.
+
+All nine native futures completed at 170.680 worker seconds; the summary was complete at 171.958. Prediction plus sealing took 19.978 seconds. Total runner time including export was 279.12 seconds; observed peak RSS/VRAM were 4567.6/9452MB. Normal custody verified 675 files, 1,705,149,008 expanded bytes and 1,269,248,597 compressed bytes. No matched speedup claim follows. Two earlier submissions failed in UV before worker/model entry; their raw logs and dispositions are retained. Their cache-path and command-intent defects were repaired before the actual model run.
+
+Evidence: [accepted three-block audit](../../../../artifacts/mdb-flux-transition-chain3-20261104/run-03/analysis.json), [nine native futures](../../../../artifacts/mdb-flux-transition-chain3-20261104/final/result.json), [normal archive custody](../../../../artifacts/mdb-flux-transition-chain3-20261104/run-03/archive-custody.json), [campaign qualification](../../../../artifacts/mdb-flux-transition-chain3-20261104/campaign-qualification.json), [submission/storage/publication checks](../../../../artifacts/mdb-flux-transition-chain3-20261104/storage-qualification-05.json), [figure data](../../../../artifacts/mdb-flux-transition-chain3-20261104/figures/source.json).
+
+The two new curated records are `flux.single6-8.transition-chain.p1-s83.zero` and `flux.single6-8.transition-chain.p1-s83.text`. Offline indexing verifies two qualified pre6 source citations and fifteen numerical rows: nine endpoint observations plus six complete block-output errors. All model/forecast/bridge/consumer bindings and the exact launcher snapshot remain separately recorded. Automatic family induction and automatic atlas ingestion remain unfinished. [Records](../../../../artifacts/mdb-flux-transition-chain3-20261104/computation-records.json), [index provenance](../../../../artifacts/mdb-flux-transition-chain3-20261104/evidence-v1/provenance.json), [independent postrun review](../../../../artifacts/mdb-flux-transition-chain3-20261104/postrun-review.json).
+
+## Observed two-block result: seed79
 
 The seal preceded both current-step target blocks: target-entry counters were zero for blocks 6 and 7. Across the two histories, the independently rebuilt prediction matched all 18,874,368 sealed output values bit for bit. That is reproducibility of the reference forecast, not bitwise equality with native CUDA execution.
 
@@ -151,4 +185,4 @@ cd /tmp
 "$PY" -I "$MDB/qualification/analyze_flux_transition_chain.py" "$RUN" "$RUN/analysis.json"
 ```
 
-The experiment begins from an observed prefix. It now supplies an audited composition of two complete block-state forecasts and their actual native continuations. The next extension is block8 consuming the predicted post7 image/text without refresh; readout and scheduler prediction introduce additional state and numerical contracts. Semantic object names, arbitrary-prompt applicability and prediction of the remaining suffix require further evidence.
+The experiment begins from an observed prefix. It now supplies audited compositions of two and three complete block-state forecasts and their actual native continuations. The three-block extension stays within one denoising step; readout and scheduler prediction introduce additional state and numerical contracts. Semantic object names, arbitrary-prompt applicability and prediction of the remaining suffix require further evidence.
