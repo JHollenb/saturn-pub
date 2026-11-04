@@ -149,6 +149,13 @@ their own edited intermediate states. Coarse scene structure survives zero futur
 conditioning with substantial collateral; late restoration improves one history
 partly and leaves the noise-anchor history a collage. The report retains the
 componentwise prediction misses, exact replay controls and searchable occurrences.
+The [conditioning rescue route assay](docs/FLUX-RESCUE-ROUTES.md) separates the
+working image and text registers across nine native futures. A text-K/V edit
+predicts the first block's image attention, receiving MLP and image output exactly,
+yet matching that image output alone does not reproduce the remaining future.
+Later working text has a distinct causal effect; coherent image/text swaps recover
+the paired reference exactly. The report retains the weak appearance prediction,
+all final images, source-qualified records and the finite execution history.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 The [compiled-state residual view](docs/COMPILED-STATE.md) fits per-position
