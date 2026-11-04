@@ -99,3 +99,16 @@ In Part AC, every proxy ran as a propagated column at all 28 layers of Qwen2.5-1
 | uncentred metric proxy, global base | 0.331 | 53% (67%) | 0.86 |
 
 The metric proxy alone does not beat the PCA proxy (PCA already keeps 0.78–0.85 of `tr(M S)`); token centring and the rank k do. The hybrid base needs the base-aware score: with the global score it costs 5 points. Free-running serving (every position ≥ 4 replaced, uncovered tokens on a globally centred proxy) agrees with native at 0.43; margin gating at τ = 2 gives 0.83 at 825 column-equivalents per 1,000 tokens. Full tables: `FINDINGS-AC.md`.
+
+## Coverage-complete tables and predicted-error gates (Part AD, job-9e76627f17e6)
+
+`ridge_from_moments` fits a multi-output ridge with λ by GCV from centred moments; `shrinkage_lambda` and `shrinkage_means` turn it into coverage-complete token tables, `(c n̄_emp + λ n̄_prior) / (c + λ)` with the prior a ridge from the input embedding, so every token type has a table. `error_mass` is the score mass a code chose not to evaluate (`ê`), and `z_gate`, `kl_gate` and `quantile_threshold` gate on it. `ServingLedger` splits served and native positions and reports decide-after (with the readout) and early-abort counts.
+
+On Qwen2.5-1.5B (all 28 layers, propagated, f derived not timed):
+- The token-centred ψ-metric proxy with k = 512, 1,024 exact neurons, the base-aware score and coverage-complete tables closes **84.5%** of the per-position KL gap (88.5% over the block, post-block 0.912) at **f = 0.486**, against 89.6% for the full-pool list at f = 1.0.
+- With every block position replaced (uncovered tokens through their coverage-complete rows) the block mean is 0.678: covered 0.667, uncovered 0.700 (Part AC's global-centred fallback: 0.478).
+- A free stream that is predictor-built at every position agrees with native at 0.664; sending uncovered tokens to native columns (decided before the column, ρ = 0.33, 657 column-equivalents per 1,000 tokens) gives 0.751.
+- Native columns reading a predictor-built memory at positions 64–127 agree at 0.891, so the stream's error is mostly the column's own.
+- The model's own top-1 margin is below 1 at 47% of WikiText positions, which bounds what a margin gate can save. At ρ ≈ 0.50 the `ê` gates trade agreement for KL (KL-gate 0.527 vs margin 0.646).
+
+Full tables: `FINDINGS-AD.md`.
