@@ -2282,6 +2282,18 @@ def union_pool_topk(z, forced, size):
     return torch.zeros_like(forced, dtype=torch.bool).scatter_(-1, idx, True)
 
 
+def union_pool_sized(z, forced, size):
+    """``union_pool_topk`` with a per-row size: size [...] (integer tensor, e.g. another pool's own count per position),
+    so the union can be read at the same pool size as a threshold pool. Returns the bool pool mask."""
+    import torch
+
+    zf = z.float()
+    big = (zf.abs().max() + 1).clamp_min(1.0) * 4
+    order = (zf + forced.float() * big).argsort(dim=-1, descending=True)
+    rank = torch.empty_like(order).scatter_(-1, order, torch.arange(z.shape[-1], device=z.device).expand_as(order))
+    return rank < size.long()[..., None]
+
+
 def zbin_calibration(z, member, edges=(-4.0, -3.0, -2.0, -1.0, 0.0, 1.0, 2.0)):
     """Calibration of a Gaussian membership posterior (ADVISOR 21.3, lever 5): neurons binned by z (bins (-inf, e_0],
     (e_0, e_1], ..., (e_last, inf)); per bin the count, the realized member share, the mean predicted Phi(z) and their

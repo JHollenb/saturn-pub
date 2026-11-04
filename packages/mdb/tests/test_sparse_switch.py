@@ -1196,8 +1196,8 @@ def test_part_an_late_redo_pool_controller_union_calibration_escalation():
     import numpy as np
 
     from mdb.sparse_switch import (PoolRateController, escalated_readout_bytes, kurtosis_from_sums, late_error_share,
-                                   late_fix_share_map, late_redo_price, moment_sums, redo_fix_share, union_pool_topk,
-                                   zbin_calibration)
+                                   late_fix_share_map, late_redo_price, moment_sums, redo_fix_share, union_pool_sized,
+                                   union_pool_topk, zbin_calibration)
 
     # prices: the readout-separate convention gives the honest dense re-do at L = n; the memo's convention too
     assert late_redo_price(28, 28, 0.1766) == pytest.approx(1176.6)
@@ -1234,6 +1234,9 @@ def test_part_an_late_redo_pool_controller_union_calibration_escalation():
     forced = torch.tensor([[False, False, False, False, True]])
     pm = union_pool_topk(z, forced, 3)
     assert pm.tolist() == [[True, True, False, False, True]]
+    zs2 = torch.tensor([[3.0, 2.0, 1.0, 0.0, -1.0], [0.0, 1.0, 2.0, 3.0, 4.0]])
+    ps = union_pool_sized(zs2, torch.tensor([[False, False, False, False, True], [True, False, False, False, False]]), torch.tensor([3, 1]))
+    assert ps.tolist() == [[True, True, False, False, True], [True, False, False, False, False]]
     # calibration bins and kurtosis
     zc = torch.tensor([-5.0, -2.5, -2.5, 0.5, 3.0])
     mc = torch.tensor([0.0, 1.0, 0.0, 1.0, 1.0])
