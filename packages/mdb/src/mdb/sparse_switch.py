@@ -1912,3 +1912,227 @@ def tolerance_verdict(val, lo, hi, tol=0.0):
     if lo - tol <= val <= hi + tol:
         return "IN (tolerance)"
     return "OUT"
+
+
+# ---- Part AM (ADVISOR 20): the online rate controller, the two-side posterior with the cross term, the smoothed silu,
+# the margin re-do statistics, the stream-oracle ceiling, the head write energy, spectrum shares, readout escalation
+
+
+class RateController:
+    """Stochastic-approximation quantile that holds a flag rate by construction (ADVISOR 20.2): per key (a layer, or a
+    stream), flag = signal > tau, then tau <- tau + eta (1[flag] - q) after every position. Its fixed point is
+    P(flag) = q on whatever distribution it runs on; there is no objective and no gradient (an online quantile, not a
+    fit). tau starts at ``tau0`` (e.g. the pass-B quantile) and eta is ``eta_frac`` x the signal's pass-B IQR."""
+
+    def __init__(self, q, tau0, iqr, eta_frac=0.05):
+        import numpy as np
+
+        self.q = float(q)
+        self.tau = np.array(tau0, dtype=np.float64).reshape(-1).copy()
+        self.eta = float(eta_frac) * np.array(iqr, dtype=np.float64).reshape(-1)
+        self.tau0 = self.tau.copy()
+        self.n = np.zeros_like(self.tau)
+        self.nf = np.zeros_like(self.tau)
+
+    def run(self, key, signal, valid=None):
+        """Flags of a 1-D sequence ``signal`` (in stream order) for controller ``key``; entries with valid False are
+        neither flagged nor used. Returns bool flags [N] (numpy)."""
+        import numpy as np
+
+        s = np.asarray(signal, np.float64).reshape(-1)
+        v = np.ones(s.shape, bool) if valid is None else np.asarray(valid, bool).reshape(-1)
+        out = np.zeros(s.shape, bool)
+        t, e, q = self.tau[key], self.eta[key], self.q
+        for i in range(s.size):
+            if not v[i]:
+                continue
+            f = s[i] > t
+            out[i] = f
+            t += e * ((1.0 if f else 0.0) - q)
+        self.tau[key] = t
+        self.n[key] += float(v.sum())
+        self.nf[key] += float(out.sum())
+        return out
+
+    def realized(self):
+        """Realized flag share per key and overall (mean over keys with positions)."""
+        import numpy as np
+
+        r = np.where(self.n > 0, self.nf / np.maximum(self.n, 1), np.nan)
+        return {"by_key": r.tolist(), "mean": float(np.nanmean(r)) if np.isfinite(r).any() else float("nan"),
+                "tau_final": self.tau.tolist(), "tau0": self.tau0.tolist()}
+
+
+def smoothed_silu(a_hat, sigma, lam=0.6266570686577501, exact_base=True):
+    """Gaussian-smoothed silu under the probit form silu(x) ~ x Phi(lam x) (ADVISOR 20.3; lam = sqrt(pi / 8), the
+    logistic's slope at 0: the 1.702 of the memo is the reciprocal direction, sigmoid(x) ~ Phi(x / 1.702)): for x ~ N(a_hat, sigma^2),
+    m = E[silu(x)] = a Phi(k) + lam sigma^2 phi(k) / sqrt(1 + lam^2 sigma^2) and its slope in a_hat,
+    d = Phi(k) + lam a phi(k) / (1 + lam^2 sigma^2)^(3/2), with k = lam a / sqrt(1 + lam^2 sigma^2). With exact_base the
+    probit form supplies only the smoothing correction (m_probit(sigma) - m_probit(0), likewise d) added to the exact
+    silu and silu', so sigma = 0 returns silu(a_hat) and silu'(a_hat) exactly. Returns (m, d) fp32."""
+    import math
+
+    import torch
+
+    a, s2 = a_hat.float(), sigma.float() ** 2
+
+    def probit(s2_):
+        den = (1 + lam * lam * s2_).sqrt()
+        k = lam * a / den
+        phi = torch.exp(-0.5 * k * k) / math.sqrt(2 * math.pi)
+        Phi = torch.special.ndtr(k)
+        return a * Phi + lam * s2_ * phi / den, Phi + lam * a * phi / den ** 3
+    m, d = probit(s2)
+    if not exact_base:
+        return m, d
+    m0, d0 = probit(torch.zeros_like(s2))
+    return torch.nn.functional.silu(a) + (m - m0), silu_prime(a) + (d - d0)
+
+
+def proxy_residual_cross(w_a, dec_a, w_u, dec_u, encode, second_moment, *, chunk=4096):
+    """The two-side residual covariance (ADVISOR 20.3): with v_a,j = W_a[j] - encode dec_a,j^T and v_u,j likewise,
+    sigma_a,j^2 = v_a^T S v_a, sigma_u,j^2 = v_u^T S v_u and the cross-covariance sigma_au,j = v_a^T S v_u (both residuals
+    are projections of the same dz onto the same unseen complement). Returns (sigma_a, sigma_u, sigma_au) [I] fp32."""
+    import torch
+
+    S = second_moment.float()
+    enc = encode.float()
+    sa, su, sau = [], [], []
+    for r0 in range(0, w_a.shape[0], chunk):
+        va = w_a[r0:r0 + chunk].float() - dec_a[r0:r0 + chunk].float() @ enc.T
+        vu = w_u[r0:r0 + chunk].float() - dec_u[r0:r0 + chunk].float() @ enc.T
+        vaS = va @ S
+        sa.append((vaS * va).sum(-1).clamp_min(0).sqrt())
+        sau.append((vaS * vu).sum(-1))
+        su.append(((vu @ S) * vu).sum(-1).clamp_min(0).sqrt())
+    return torch.cat(sa), torch.cat(su), torch.cat(sau)
+
+
+def two_side_posterior(a_hat, u_hat, u_tok, g_tok, g_ref, weights, sigma_a, sigma_u, sigma_au=None, *, smooth=False,
+                       product=False, scale=None, lam=0.6266570686577501, floor=1e-12):
+    """The two-side pool's proxied score and its error scale (ADVISOR 20.3), the terms switchable for the in-turn
+    recall curves. scale [...] (optional) multiplies the residual sds per position (sigma_a, sigma_u by s, sigma_au by
+    s^2: the position's unseen energy ||P_perp dz_t|| over its RMS). With g = silu(a_hat) or, smoothed, m = E[silu(a)]
+    and slope d (``smoothed_silu``), the mean of g(a) u is m u_hat + d sigma_au (Stein) and
+    tau^2 = w^2 [(d u_hat sigma_a)^2 + ((m - g_ref) sigma_u)^2 + 2 d u_hat (m - g_ref) sigma_au
+    + (product) d^2 (sigma_a^2 sigma_u^2 + sigma_au^2)]; sigma_au None drops the cross terms (the AL key). The score is
+    |mean - g_tok u_tok - g_ref (u_hat - u_tok)| w. Returns (s_hat, tau) [..., I] fp32."""
+    import torch
+
+    a, uh, ut = a_hat.float(), u_hat.float(), u_tok.float()
+    w, gr = weights.float(), g_ref.float()
+    sa, su = sigma_a.float(), sigma_u.float()
+    sau = None if sigma_au is None else sigma_au.float()
+    if scale is not None:
+        sc = scale.float()[..., None]
+        sa, su = sa * sc, su * sc
+        if sau is not None:
+            sau = sau * sc * sc
+    if smooth:
+        m, dg = smoothed_silu(a, sa, lam)
+    else:
+        m, dg = torch.nn.functional.silu(a), silu_prime(a)
+    mean = m * uh + (dg * sau if (sau is not None and smooth) else 0.0)
+    s_hat = (mean - g_tok.float() * ut - gr * (uh - ut)).abs() * w
+    ta, tu = dg * uh * sa, (m - gr) * su
+    var = ta * ta + tu * tu
+    if sau is not None:
+        var = var + 2 * dg * uh * (m - gr) * sau
+    if product:
+        var = var + dg * dg * (sa * sa * su * su + (0.0 if sau is None else sau * sau))
+    return s_hat, (w * var.clamp_min(0).sqrt()).clamp_min(floor)
+
+
+def margin_capture(margin, agree, kl, qs=(0.01, 0.02, 0.03, 0.05, 0.10)):
+    """The readout-side sensitivity statistic (ADVISOR 20.2): ranking positions by the code's own top-1 minus top-2 logit
+    gap (ascending), the share phi of the code's disagreements (agree == 0) and of its KL mass that the lowest-q share
+    holds. margin, agree, kl [N]. Returns {q: {"phi": ..., "kl_share": ..., "flagged": n}}."""
+    import numpy as np
+
+    m, ag, k = np.asarray(margin, np.float64), np.asarray(agree, np.float64), np.asarray(kl, np.float64)
+    order = np.argsort(m, kind="stable")
+    nd, kt = float((ag < 0.5).sum()), float(k.sum())
+    out = {}
+    for q in qs:
+        n = max(1, int(round(float(q) * m.size)))
+        sel = order[:n]
+        out[float(q)] = {"phi": float((ag[sel] < 0.5).sum()) / nd if nd else float("nan"),
+                         "kl_share": float(k[sel].sum()) / kt if kt else float("nan"), "flagged": n}
+    return out
+
+
+def redo_mixture(agree, kl, flags, f_code, readout, per=1000):
+    """The margin re-do's derived mixture (ADVISOR 20.2): flagged positions take the exact outcome (agreement 1, KL 0;
+    the cache drift is the built stream's difference), and the cost is the code at every position plus the dense
+    column at each flagged one: decide-after per (f + q) and, honestly, per (f + q (1 + readout)) (the served readout
+    spent before the re-do; ADVISOR 16.1 d). Returns dict."""
+    import numpy as np
+
+    ag, k, fl = np.asarray(agree, np.float64), np.asarray(kl, np.float64), np.asarray(flags, bool)
+    q = float(fl.mean()) if fl.size else 0.0
+    return {"agree": float(np.where(fl, 1.0, ag).mean()), "kl": float(np.where(fl, 0.0, k).mean()), "q": q,
+            "column_equivalents_decide_after": per * (float(f_code) + q),
+            "column_equivalents_honest": per * (float(f_code) + q * (1 + float(readout)))}
+
+
+def kl_persistence(kl, chunk, q=0.10):
+    """Within-chunk structure of a stream's per-position KL (ADVISOR 20.2): the lag-1 autocorrelation of log KL inside
+    chunks, and the tail persistence P(top-q at t | top-q at t - 1) against its base rate q. kl, chunk [N] (positions in
+    order within each chunk). Returns dict."""
+    import numpy as np
+
+    k = np.log(np.maximum(np.asarray(kl, np.float64), 1e-8))
+    ch = np.asarray(chunk)
+    same = ch[1:] == ch[:-1]
+    a, b = k[:-1][same], k[1:][same]
+    ac = float(np.corrcoef(a, b)[0, 1]) if a.size > 2 else float("nan")
+    top = np.asarray(kl, np.float64) >= np.quantile(np.asarray(kl, np.float64), 1 - q)
+    prev, cur = top[:-1][same], top[1:][same]
+    pers = float(cur[prev].mean()) if prev.any() else float("nan")
+    return {"lag1_autocorr_logkl": ac, "tail_persistence": pers, "base_rate": float(top.mean()), "pairs": int(same.sum())}
+
+
+def head_write_energy(o, w_o, fisher, head_dim):
+    """The psi-Fisher energy of each attention head's write (ADVISOR 20.7): o [..., n_h, hd] (the head outputs before
+    W_O), w_o [d, n_h hd]; e_h = (W_O,h o_h)^T F (W_O,h o_h). Returns [..., n_h] fp32."""
+    import torch
+
+    nh = o.shape[-2]
+    W = w_o.float().reshape(w_o.shape[0], nh, head_dim)  # [d, n_h, hd]
+    wr = torch.einsum("...hk,dhk->...hd", o.float(), W)
+    return ((wr @ fisher.float()) * wr).sum(-1)
+
+
+def head_bound_score(o, w_o, head_dim):
+    """The weights-only head ranking ||W_O,h||_F ||o_h|| (ADVISOR 20.7; an upper bound of the head's write norm).
+    o [..., n_h, hd]. Returns [..., n_h] fp32."""
+    nh = o.shape[-2]
+    fro = w_o.float().reshape(w_o.shape[0], nh, head_dim).pow(2).sum((0, 2)).sqrt()
+    return o.float().norm(dim=-1) * fro
+
+
+def spectrum_share(second_moment, ranks):
+    """Share of a second moment's trace in its top-r eigenvalues, for each r (ADVISOR 20.4: whether a fixed basis can
+    complete a write term; in-sample, so an upper bound for a held-out basis). Returns {r: share}."""
+    import torch
+
+    ev = torch.linalg.eigvalsh(((second_moment + second_moment.T) / 2).double()).flip(0).clamp_min(0)
+    tot = float(ev.sum())
+    return {int(r): (float(ev[:int(r)].sum()) / tot if tot > 0 else float("nan")) for r in ranks}
+
+
+def readout_escalation(c1, c2, vocab, d, r1, r2, *, q_bytes=1, scale_bytes=4, c1_cap=None, c2_cap=20000):
+    """The two-stage readout's expected cost over positions (ADVISOR 20.8): c1, c2 [P] the stage-1 and stage-2
+    candidate counts; table 1 (V x r1 int) read every step, table 2's (r2 - r1) columns gathered on C1, exact int8 head
+    rows on C2. Returns E|C1|, E|C2|, the counts of positions whose C1 exceeds c1_cap (default V / 4) or C2 exceeds
+    c2_cap, and the expected bytes per step."""
+    import numpy as np
+
+    c1, c2 = np.asarray(c1, np.float64), np.asarray(c2, np.float64)
+    cap1 = vocab / 4 if c1_cap is None else c1_cap
+    t1 = vocab * (r1 * q_bytes + scale_bytes)
+    b = t1 + c1.mean() * ((r2 - r1) * q_bytes + scale_bytes) + c2.mean() * (d * q_bytes + scale_bytes)
+    return {"E_C1": float(c1.mean()), "E_C2": float(c2.mean()), "median_C1": float(np.median(c1)), "median_C2": float(np.median(c2)),
+            "q90_C1": float(np.quantile(c1, 0.9)), "q90_C2": float(np.quantile(c2, 0.9)),
+            "escalated_C1": int((c1 > cap1).sum()), "escalated_C2": int((c2 > c2_cap).sum()), "positions": int(c1.size),
+            "expected_bytes": float(b), "table1_bytes": float(t1)}

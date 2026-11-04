@@ -1070,3 +1070,95 @@ def test_part_al_posterior_detector_waterfill_tail_readout():
     assert tolerance_verdict(0.5, 0.4, 0.6) == "IN"
     assert tolerance_verdict(0.605, 0.4, 0.6, 0.007) == "IN (tolerance)"
     assert tolerance_verdict(0.7, 0.4, 0.6, 0.007) == "OUT" and tolerance_verdict(None, 0, 1) == "n/m"
+
+
+def test_part_am_controller_two_side_margin_readout():
+    import math
+
+    import numpy as np
+
+    from mdb.sparse_switch import (RateController, head_bound_score, head_write_energy, kl_persistence, margin_capture,
+                                   proxy_residual_cross, proxy_residual_sigma, readout_escalation, redo_mixture,
+                                   silu_prime, smoothed_silu, spectrum_share, two_side_pool_key, two_side_posterior)
+    g = torch.Generator().manual_seed(0)
+    # the controller holds its rate on a shifted distribution it was not initialised on
+    rng = np.random.default_rng(0)
+    ctl = RateController(0.15, [0.0, 0.0], [1.35, 1.35])
+    sig = rng.normal(1.0, 1.0, 20000)  # tau0 = 0 is the 50% quantile of this sequence: far from 15%
+    fl = ctl.run(0, sig)
+    assert abs(fl[2000:].mean() - 0.15) < 0.01 and abs(ctl.realized()["by_key"][0] - fl.mean()) < 1e-12
+    assert np.isnan(ctl.realized()["by_key"][1])
+    fv = ctl.run(1, sig, valid=np.arange(sig.size) % 2 == 0)
+    assert not fv[1::2].any()
+    # smoothed silu: exact at sigma 0, the Monte-Carlo mean and slope otherwise
+    a = torch.tensor([-2.0, -0.5, 0.0, 0.7, 2.5])
+    m0, d0 = smoothed_silu(a, torch.zeros(5))
+    assert torch.allclose(m0, torch.nn.functional.silu(a)) and torch.allclose(d0, silu_prime(a))
+    s = torch.full((5,), 0.6)
+    m, d = smoothed_silu(a, s)
+    x = a[None] + s[None] * torch.randn(400000, 5, generator=g)
+    assert torch.allclose(m, torch.nn.functional.silu(x).mean(0), atol=7e-3)
+    assert torch.allclose(d, silu_prime(x).mean(0), atol=1e-2)
+    assert float((m - torch.nn.functional.silu(x).mean(0)).abs().max()) < 0.2 * float((m0 - torch.nn.functional.silu(x).mean(0)).abs().max())
+    # the cross residual covariance against its definition, and the one-side sigma
+    Wa, Wu = torch.randn(30, 8, generator=g), torch.randn(30, 8, generator=g)
+    enc = torch.randn(8, 3, generator=g)
+    Da, Du = torch.randn(30, 3, generator=g), torch.randn(30, 3, generator=g)
+    Xs = torch.randn(500, 8, generator=g)
+    S = Xs.T @ Xs / 500
+    sa, su, sau = proxy_residual_cross(Wa, Da, Wu, Du, enc, S, chunk=7)
+    va, vu = Wa - Da @ enc.T, Wu - Du @ enc.T
+    assert torch.allclose(sau, ((va @ S) * vu).sum(-1), atol=1e-4)
+    assert torch.allclose(sa, proxy_residual_sigma(Wa, Da, enc, S)[0], atol=1e-5)
+    # the two-side posterior: no cross term, no smoothing and no product = the AL key's tau and score
+    ah, uh, ut = torch.randn(4, 30, generator=g), torch.randn(4, 30, generator=g), torch.randn(4, 30, generator=g)
+    gt, gr, w = torch.rand(4, 30, generator=g), torch.rand(30, generator=g), torch.rand(30, generator=g) + 0.5
+    sh, tau = two_side_posterior(ah, uh, ut, gt, gr, w, sa, su)
+    sp_ = (torch.nn.functional.silu(ah) * uh - gt * ut - gr * (uh - ut)).abs() * w
+    assert torch.allclose(sh, sp_, atol=1e-6)
+    assert torch.allclose((sh - 0.3) / tau, two_side_pool_key(sh, 0.3, ah, uh, gr, w, sa, su), atol=1e-4)
+    # with every term on: tau against a Monte-Carlo of the first-order deviation with correlated residuals (scale 1)
+    j = 0
+    sa1, su1 = torch.tensor([0.3]), torch.tensor([0.4])
+    rho = 0.6
+    sau1 = torch.tensor([rho * 0.3 * 0.4])
+    a0, u0 = torch.tensor([[0.8]]), torch.tensor([[1.2]])
+    _, t_full = two_side_posterior(a0, u0, torch.zeros(1, 1), torch.zeros(1, 1), torch.zeros(1), torch.ones(1), sa1, su1, sau1, product=True)
+    z1 = torch.randn(400000, generator=g)
+    z2 = rho * z1 + math.sqrt(1 - rho * rho) * torch.randn(400000, generator=g)
+    ra, ru = 0.3 * z1, 0.4 * z2
+    gp = float(silu_prime(a0))
+    dev = gp * float(u0) * ra + float(torch.nn.functional.silu(a0)) * ru + gp * ra * ru
+    assert float(t_full) == pytest.approx(float(dev.std()), rel=0.02)
+    _, t_sc = two_side_posterior(a0, u0, torch.zeros(1, 1), torch.zeros(1, 1), torch.zeros(1), torch.ones(1), sa1, su1, sau1,
+                                 scale=torch.tensor([2.0]))
+    _, t_2 = two_side_posterior(a0, u0, torch.zeros(1, 1), torch.zeros(1, 1), torch.zeros(1), torch.ones(1), 2 * sa1, 2 * su1, 4 * sau1)
+    assert torch.allclose(t_sc, t_2)
+    assert j == 0
+    # margin capture and the re-do mixture
+    mg = np.array([0.1, 3.0, 0.2, 5.0, 0.05, 2.0, 4.0, 1.0, 6.0, 7.0])
+    ag = np.array([0, 1, 0, 1, 1, 1, 1, 0, 1, 1])
+    kk = np.array([0.5, 0.0, 0.3, 0.0, 0.1, 0.0, 0.0, 0.1, 0.0, 0.0])
+    mc = margin_capture(mg, ag, kk, qs=(0.2, 0.3))
+    assert mc[0.2]["phi"] == pytest.approx(1 / 3) and mc[0.3]["phi"] == pytest.approx(2 / 3)
+    assert mc[0.3]["kl_share"] == pytest.approx(0.9 / 1.0)
+    rm = redo_mixture(ag, kk, mg < 0.15, 0.7, 0.18)
+    assert rm["q"] == pytest.approx(0.2) and rm["agree"] == pytest.approx(0.8)
+    assert rm["column_equivalents_decide_after"] == pytest.approx(900.0) and rm["column_equivalents_honest"] == pytest.approx(936.0)
+    # KL persistence: a chunked sequence with repeated values is perfectly persistent
+    kv = np.repeat(np.array([1e-3, 1e-1, 1e-3, 1e-1]), 5)
+    kp = kl_persistence(kv, np.repeat([0, 1], 10), q=0.5)
+    assert kp["tail_persistence"] > 0.7 and kp["pairs"] == 18
+    # head write energy and its weights-only bound
+    o = torch.randn(5, 3, 4, generator=g)
+    Wo = torch.randn(6, 12, generator=g)
+    F = torch.eye(6)
+    e = head_write_energy(o, Wo, F, 4)
+    assert torch.allclose(e[2, 1], (Wo[:, 4:8] @ o[2, 1]).pow(2).sum(), rtol=1e-4)
+    assert bool((head_bound_score(o, Wo, 4) ** 2 >= e - 1e-4).all())
+    # spectrum share and the readout escalation statistics
+    C = torch.diag(torch.tensor([4.0, 3.0, 2.0, 1.0]))
+    assert spectrum_share(C, (1, 2, 4)) == pytest.approx({1: 0.4, 2: 0.7, 4: 1.0})
+    re = readout_escalation([100, 40000, 10], [5, 25000, 1], vocab=100000, d=8, r1=2, r2=5)
+    assert re["escalated_C1"] == 1 and re["escalated_C2"] == 1
+    assert re["expected_bytes"] == pytest.approx(100000 * 6 + (40110 / 3) * 7 + (25006 / 3) * 12)
