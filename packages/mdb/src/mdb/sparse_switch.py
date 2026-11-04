@@ -1676,7 +1676,10 @@ def chord_mixture(a_lo, a_hi, c_lo, c_hi, c):
 def exact_family_law(m, *, c0=758.0, kappa=0.0326, kl0=0.0524, m0=2254.0, alpha=-2.43, e0=0.0098, e1=5.4e-6, a0=0.967,
                      beta=0.403):
     """Frontier law of the exact-score family (ADVISOR 18.2, Part AJ fits): cost c = c0 + kappa m column-equivalents per
-    1k, KL = kl0 (m / m0)^alpha, agreement = a0 - beta sqrt(KL) + e0 + e1 (m - m0). Returns (c, KL, agreement)."""
+    1k, KL = kl0 (m / m0)^alpha, agreement = a0 - beta sqrt(KL) + e0 + e1 (m - m0). Returns (c, KL, agreement); outside
+    the law's domain (m <= 0, i.e. c <= c0) KL and agreement are NaN."""
+    if float(m) <= 0:
+        return c0 + kappa * float(m), float("nan"), float("nan")
     kl = kl0 * (float(m) / m0) ** alpha
     return c0 + kappa * float(m), kl, a0 - beta * kl ** 0.5 + e0 + e1 * (float(m) - m0)
 

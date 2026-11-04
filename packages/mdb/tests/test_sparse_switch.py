@@ -924,6 +924,17 @@ def test_first_order_base_reduces_to_hybrid_and_ls_recovers_constants():
     assert code_layer_macs("pool2_rescore", sh, k=2, p=5, m=3) == att + d * d + 2 * (d + 2 * I) + 2 * 5 * d + 3 * d
 
 
+def test_exact_family_law_outside_domain_is_nan():
+    import math
+
+    from mdb.sparse_switch import exact_family_at_cost, exact_family_law
+
+    m, kl, a = exact_family_at_cost(700.0)
+    assert m < 0 and math.isnan(kl) and math.isnan(a)
+    _, kl, a = exact_family_law(2254.0)
+    assert abs(kl - 0.0524) < 1e-12 and isinstance(a, float)
+
+
 def test_paired_bootstrap_chord_frontier_laws_and_readout_certificate():
     import numpy as np
 
