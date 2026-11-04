@@ -327,3 +327,17 @@ def test_quantize_rows_and_ledger_groups():
             torch.tensor([0.0, 1.0, 0.0]), groups=torch.tensor([0, 1, 1]))
     rep = led.report()
     assert rep["group:0"]["agree"] == pytest.approx(1.0) and rep["group:1"]["n"] == 2
+
+
+def test_spearman_ties_and_or_gate_thresholds():
+    from mdb.sparse_switch import average_ranks, or_gate_thresholds, spearman
+
+    assert average_ranks(torch.tensor([3.0, 1.0, 3.0, 2.0])).tolist() == [3.5, 1.0, 3.5, 2.0]
+    x = torch.tensor([0.0, 0.0, 0.0, 1.0, 1.0, 1.0])
+    y = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
+    assert spearman(x, y, ties=True) == pytest.approx(0.8783, abs=1e-3)
+    g = torch.Generator().manual_seed(0)
+    m, e = torch.rand(20000, generator=g), torch.rand(20000, generator=g)
+    th = or_gate_thresholds(m, e, 0.5)
+    assert th["union_share"] == pytest.approx(0.5, abs=2e-3)
+    assert th["marginal_share"] == pytest.approx(1 - 0.5 ** 0.5, abs=5e-3)  # independent: 1 - (1 - s)^2 = 0.5

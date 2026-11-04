@@ -230,10 +230,20 @@ def flop_fraction(per_layer, shapes):
     return sum(code_layer_macs(kind, shapes, **opts) for kind, opts in per_layer) / full
 
 
-def spearman(x, y):
-    """Spearman rank correlation of two 1-D tensors (no tie correction)."""
-    rx = x.argsort().argsort().double()
-    ry = y.argsort().argsort().double()
+def average_ranks(x):
+    """1-based ranks of a 1-D tensor with tied values sharing their average rank."""
+    import torch
+
+    _, inv, cnt = torch.unique(x, return_inverse=True, return_counts=True)
+    ends = cnt.cumsum(0).double()
+    return (ends - (cnt.double() - 1) / 2)[inv]
+
+
+def spearman(x, y, *, ties=False):
+    """Spearman rank correlation of two 1-D tensors (ties=True: average ranks, needed when one side is a table lookup
+    with many tied values; default: no tie correction)."""
+    rx = average_ranks(x) if ties else x.argsort().argsort().double()
+    ry = average_ranks(y) if ties else y.argsort().argsort().double()
     rx, ry = rx - rx.mean(), ry - ry.mean()
     return float((rx * ry).sum() / (rx.norm() * ry.norm()))
 
@@ -474,6 +484,26 @@ def z_gate(margin, e_hat, c):
 def kl_gate(e_hat, kappa):
     """Mark a position native when the predicted error mass exceeds kappa."""
     return e_hat > kappa
+
+
+def or_gate_thresholds(margin, e_hat, rho, *, iters=50):
+    """Thresholds (tau, kappa) of the OR-gate margin < tau or e_hat > kappa with equal marginal shares s
+    (P(margin < tau) = P(e_hat > kappa) = s) chosen so the union marks a share rho; bisection on s in [rho / 2, rho]."""
+    import torch
+
+    m, e = margin.float().flatten(), e_hat.float().flatten()
+    lo, hi = rho / 2, rho
+    for _ in range(iters):
+        s = (lo + hi) / 2
+        tau, kappa = float(torch.quantile(m, s)), float(torch.quantile(e, 1 - s))
+        if float(((m < tau) | (e > kappa)).float().mean()) < rho:
+            lo = s
+        else:
+            hi = s
+    s = (lo + hi) / 2
+    tau, kappa = float(torch.quantile(m, s)), float(torch.quantile(e, 1 - s))
+    return {"tau": tau, "kappa": kappa, "marginal_share": s, "union_share": float(((m < tau) | (e > kappa)).float().mean()),
+            "both_share": float(((m < tau) & (e > kappa)).float().mean())}
 
 
 def column_equivalents_early_abort(f, f_pre, rho, per=1000):
