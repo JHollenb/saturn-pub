@@ -802,6 +802,16 @@ def test_pool_mask_recall_jaccard_table_and_lowrank_b0():
     assert sh == pytest.approx(1.0, abs=1e-5) and torch.allclose(D @ E, global_base_matrix(Wd, gg, Wu), atol=1e-4)
     E2, D2, sh2 = lowrank_b0_maps(Wd, gg, Wu, Mo, 2)
     assert 0 < sh2 < 1
+    # input-weighted: inputs confined to a 2-d subspace -> rank 2 is exact on them; the isotropic rank-2 map is not
+    Bm = global_base_matrix(Wd, gg, Wu)
+    U2 = torch.linalg.qr(torch.randn(d, 2, generator=g, dtype=torch.float64))[0].float()
+    Sz = U2 @ torch.diag(torch.tensor([9.0, 4.0])) @ U2.T
+    E3, D3, sh3 = lowrank_b0_maps(Wd, gg, Wu, Mo, 2, second_moment=Sz)
+    dz = torch.randn(64, 2, generator=g) @ U2.T
+    err_w = (((Bm - D3 @ E3) @ dz.T).T @ Mo * ((Bm - D3 @ E3) @ dz.T).T).sum()
+    err_i = (((Bm - D2 @ E2) @ dz.T).T @ Mo * ((Bm - D2 @ E2) @ dz.T).T).sum()
+    assert sh3 == pytest.approx(1.0, abs=1e-4) and float(err_w) < 1e-6 * float((((Bm @ dz.T).T @ Mo) * (Bm @ dz.T).T).sum())
+    assert float(err_w) <= float(err_i)
     w, e2_ = torch.rand(I, generator=g), torch.rand(I, generator=g)
     assert torch.allclose(up_reading_metric(Wu, w, e2_), reading_metric(Wg, Wu, w, torch.zeros(I), e2_), atol=1e-5)
     S = torch.randn(d, d, generator=g)

@@ -1367,9 +1367,11 @@ def gate_exact_up_proxy_scores(g, n, n_tok, encode, dec_up, u_tok, g_tok, g_glob
 
 
 def up_reading_metric(w_up, weights, e2):
-    """The up half of ``reading_metric``: M_u = W_up^T diag(w^2 e2) W_up (d x d, fp32), e2 = E[g^2] per neuron. A rank-k
-    up proxy whose score multiplies u_hat by the exact gate g (G2U) errs in the selection by g_j (u_hat_j - u_j) w_j, so
-    this is the metric its reduced-rank map should minimise (``metric_proxy(up_reading_metric(...), S_n, k)``)."""
+    """The up half of ``reading_metric``: M_u = W_up^T diag(w^2 e2) W_up (d x d, fp32), e2 a per-neuron second moment.
+    A rank-k up proxy whose score multiplies u_hat by the exact gate g (G2U) errs in the selection by
+    (g_j - g_glob,j) (u_hat_j - u_j) w_j under the hybrid base (the base's g_glob (u_hat - u_tok) term cancels part of
+    it), so e2 = E[(g - g_glob)^2] is the selection's metric and E[g^2] the zero-base one; this is the metric the
+    reduced-rank map should minimise (``metric_proxy(up_reading_metric(...), S_n, k)``)."""
     wu = w_up.float() * (weights.float() * e2.float().clamp_min(0).sqrt())[:, None]
     return wu.T @ wu
 
@@ -1453,18 +1455,38 @@ class TokenTable:
         return float(((yf - mu) ** 2).sum()), float(((yf - g[None, :]) ** 2).sum()), int(ok.sum())
 
 
-def lowrank_b0_maps(w_down, g_glob, w_up, metric, r):
+def lowrank_b0_maps(w_down, g_glob, w_up, metric, r, *, second_moment=None, floor=1e-10):
     """Rank-r factorisation of the hybrid base's global term B_0 = W_down diag(g_glob) W_up in an output metric M
-    (for example the centred-head psi metric diag(gamma_f) G_U diag(gamma_f)): B_0 ~ D_r E_r with E_r = V_r^T the top-r
-    eigenvectors of B_0^T M B_0 and D_r = B_0 V_r (for orthonormal E_r this decoder is optimal in every PSD metric, so
-    no inverse of M is needed). Returns (E [r, d] fp32, D [d, r] fp32, the captured share of tr(B_0^T M B_0))."""
+    (for example the centred-head psi metric diag(gamma_f) G_U diag(gamma_f)): B_0 ~ D_r E_r.
+
+    Without ``second_moment`` the inputs are taken as isotropic: E_r = V_r^T, the top-r eigenvectors of B_0^T M B_0,
+    and D_r = B_0 V_r (for orthonormal E_r this decoder is optimal in every PSD metric). With ``second_moment``
+    S = E[dz dz^T] of the inputs the map is applied to (dz = n - n_tok), the factorisation minimises
+    E || M^{1/2} (B_0 - D E) dz ||^2 (reduced-rank regression): with S = L L^T and W_r the top-r eigenvectors of
+    L^T B_0^T M B_0 L, E_r = W_r^T L^+ and D_r = B_0 L W_r. Part AJ's smoke measured why the input weighting is needed:
+    the isotropic rank-256 map kept 63% of tr(B_0^T M B_0) yet served at 38.9 closure (the token-only base: 98.4),
+    because the residual's deviations live in few, heavy directions that an input-blind basis discards. Eigenvalues of
+    S below ``floor`` x its largest are dropped from L^+. Returns (E [r, d] fp32, D [d, r] fp32, the captured share of
+    tr(B_0^T M B_0) or, with S, of E || M^{1/2} B_0 dz ||^2)."""
     import torch
 
     B = w_down.float() @ (g_glob.float()[:, None] * w_up.float())
-    K = B.T @ metric.float() @ B
-    ev, Q = torch.linalg.eigh((K + K.T) / 2)
-    ev, Q = ev.flip(0).clamp_min(0), Q.flip(1)
-    V = Q[:, :r]
+    if second_moment is None:
+        K = B.T @ metric.float() @ B
+        ev, Q = torch.linalg.eigh((K + K.T) / 2)
+        ev, Q = ev.flip(0).clamp_min(0), Q.flip(1)
+        V = Q[:, :r]
+        tot = float(ev.sum())
+        return V.T.contiguous(), (B @ V).contiguous(), (float(ev[:r].sum()) / tot if tot > 0 else float("nan"))
+    S = second_moment.float()
+    s, Qs = torch.linalg.eigh((S + S.T) / 2)
+    keep = s > float(s.max()) * floor
+    s, Qs = s[keep], Qs[:, keep]
+    L = Qs * s.sqrt()[None, :]
+    K = L.T @ (B.T @ metric.float() @ B) @ L
+    ev, W = torch.linalg.eigh((K + K.T) / 2)
+    ev, W = ev.flip(0).clamp_min(0), W.flip(1)
+    Wr = W[:, :r]
+    E = (Wr.T / s.sqrt()[None, :]) @ Qs.T
     tot = float(ev.sum())
-    return V.T.contiguous(), (B @ V).contiguous(), (float(ev[:r].sum()) / tot if tot > 0 else float("nan"))
-
+    return E.contiguous(), (B @ L @ Wr).contiguous(), (float(ev[:r].sum()) / tot if tot > 0 else float("nan"))
