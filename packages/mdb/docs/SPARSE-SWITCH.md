@@ -299,3 +299,40 @@ Measured on Qwen2.5-1.5B (WikiText, single seed, RTX 4080). Block KL m0 on 171 c
   | X2q4r-2800 | 81.6 | — | 25.3 (gate/up gather) |
 
 Full tables: `FINDINGS-AI.md` (saturn experiment `2026-11-02-forecast-cost-and-compressed-addition`).
+
+## Posterior pool keys, the B_01 base, the paired bootstrap and the readout certificate (Part AK, job-37b919ee5c24)
+
+New functions: `proxy_residual_sigma`, `posterior_pool_key`, `two_side_pool_key`, `orth_residual_norm`, `first_order_base_matrix` / `_scores` / `_taylor`, `FirstOrderMoments` (optionally weighted), `tail_residual_components`, `paired_chunk_bootstrap`, `chord_mixture`, `exact_family_law` / `exact_family_at_cost` / `pool_family_law`, `sigma_margin_statistic`, `gaussian_tail_fit`, `two_level_readout_bytes`, and the `pool2_rescore` kind in `code_layer_macs`.
+
+- **The z-key.** A proxied pool ranked by z_j = (|ŝ_j| − θ) / τ_j, with τ_j = |g_j − ḡ_j| ψ_j σ_j and σ_j² = v_jᵀ S_n v_j exact from the weights and S_n, keeps more of the exact set than the point score at every pool size. Held-out energy recall of X8-2800's set (7,936 positions):
+
+  | Pool | Plain | z |
+  |---|---|---|
+  | 1.0× | 0.954 | 0.968 |
+  | 1.5× | 0.975 | 0.993 |
+  | 2× | 0.986 | 0.999 |
+
+  The position-conditional key is within 0.002 of z.
+- **Free streams** (7,936 positions; agreement at column-equivalents per 1k; z against the W2 → X2q8 chord from a paired 64-chunk bootstrap):
+
+  | Code | Agreement | Cost | z |
+  |---|---|---|---|
+  | G2U-Pz1.25-cal-2800 | 0.885 | 736 | 15 |
+  | G2U-Pz1.5-cal-2800 | 0.898 | 760 | 16 |
+  | G2U-Pz2-cal-2800 | 0.906 | 805 | 11 |
+  | G2U-Pz1.5-cal-3300 | 0.915 | 799 | 14 |
+
+  - X2q8 is 0.885 at 832.
+  - The paired SE of two codes is about 0.003.
+- **B_01 does not help.** The Taylor constants change little: block KL ratio 0.93. The all-position least squares is worse: ratio 1.38, free 0.914 against X8-3300's 0.927.
+  - Reason: the tail's Taylor split is far from orthogonal. The gate-linear and remainder energies are 2.7× and 3.9× the total.
+  - The weighted `FirstOrderMoments` fits only the tail, which is the next test.
+- **0.95.** X8-4560 reaches 0.9545 at 912 (4,714 served).
+- **Fused attention path** (payload kernels). Five launches per non-MLP step instead of 41: 14.7 µs against 65.5 hot.
+  - T1′: native 0.821×. X8-3300-d8 with the int8 head is 0.534× of the unfused native and 0.650× of the fused one.
+  - Stream: 0.517× at 0.933 agreement.
+- **Readout certificate.** At 6σ there are 0 misses in 7,936 states for r = 256, 512, 768 and 1,280.
+  - At r 512: z*_min −3.65, log-survival slope −0.61.
+  - Median |C|: 55k at r 512, 24k at r 768.
+
+Full tables: `FINDINGS-AK.md` (saturn experiment `2026-11-02-forecast-cost-and-compressed-addition`).
