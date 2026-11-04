@@ -974,6 +974,13 @@ def test_paired_bootstrap_chord_frontier_laws_and_readout_certificate():
     assert same["delta"] == 0 and same["se"] == 0
     mix, lam = chord_mixture(a, b, 638.0, 832.0, 735.0)
     assert lam == pytest.approx(0.5) and mix.mean() == pytest.approx(0.5 * (a.mean() + b.mean()))
+    from mdb.sparse_switch import chord_paired_bootstrap
+
+    cz = chord_paired_bootstrap(a, a, b, 638.0, 832.0, 735.0, ch, draws=200, seed=1)
+    assert cz["frontier"] == pytest.approx(mix.mean()) and cz["delta"] == pytest.approx(a.mean() - mix.mean())
+    assert not cz["extrapolated"] and cz["lam"] == pytest.approx(0.5)
+    ex = chord_paired_bootstrap(a, a, b, 638.0, 832.0, 1026.0, ch, draws=50)  # lam 2: extrapolated, not clipped
+    assert ex["extrapolated"] and ex["frontier"] == pytest.approx(2 * b.mean() - a.mean())
     # the exact family reproduces Part AJ's ladder anchors to the stated tolerance
     for m, (c_ref, a_ref) in {2254: (831.5, 0.8846), 3498: (872.2, 0.9264), 4272: (897.3, 0.9461)}.items():
         c_, kl_, a_ = exact_family_law(m)

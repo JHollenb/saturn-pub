@@ -1676,6 +1676,17 @@ def chord_mixture(a_lo, a_hi, c_lo, c_hi, c):
     return (1 - lam) * np.asarray(a_lo, np.float64) + lam * np.asarray(a_hi, np.float64), lam
 
 
+def chord_paired_bootstrap(a, a_lo, a_hi, c_lo, c_hi, c, chunk, *, draws=2000, seed=0):
+    """A code (per-position outcomes a, cost c) against the chord between two codes at its cost: the paired chunk
+    bootstrap of a against the deterministic ``chord_mixture`` (Part AM custody: a random per-position draw between the
+    two codes adds sampling noise to delta and collapses to one endpoint when lam is outside [0, 1]). Returns the
+    ``paired_chunk_bootstrap`` dict plus {lam, frontier (the chord's value at c), extrapolated (lam outside [0, 1])}."""
+    mix, lam = chord_mixture(a_lo, a_hi, c_lo, c_hi, c)
+    r = paired_chunk_bootstrap(a, mix, chunk, draws=draws, seed=seed)
+    r.update(lam=lam, frontier=float(mix.mean()), extrapolated=bool(lam < 0 or lam > 1))
+    return r
+
+
 def exact_family_law(m, *, c0=758.0, kappa=0.0326, kl0=0.0524, m0=2254.0, alpha=-2.43, e0=0.0098, e1=5.4e-6, a0=0.967,
                      beta=0.403):
     """Frontier law of the exact-score family (ADVISOR 18.2, Part AJ fits): cost c = c0 + kappa m column-equivalents per
