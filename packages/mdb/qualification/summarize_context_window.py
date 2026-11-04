@@ -99,11 +99,14 @@ def collector_log(root, *, max_bytes):
 
 
 def source_run(root, data_name, *, failed=False, max_archive_bytes=128 << 20, max_member_bytes=64 << 20,
-               recover_metadata=False):
+               recover_metadata=False, failed_manifest_extras=None):
     require(type(max_archive_bytes) is int and 0 < max_archive_bytes <= 512 << 20,
             "explicit archive allowance must be positive and at most 512 MiB")
     require(type(max_member_bytes) is int and 0 < max_member_bytes <= 256 << 20,
             "explicit member allowance must be positive and at most 256 MiB")
+    extras = {} if failed_manifest_extras is None else failed_manifest_extras
+    require(isinstance(extras, dict) and (not extras or failed), "manifest extras require an explicit failed job role")
+    require(not extras or set(extras) == {"failure.json"}, "only bounded failure metadata may be outside producer manifest")
     root = Path(root).resolve()
     data = root / "extracted" / data_name
     request, report, job = (read(root / name) for name in ("request.json", "report.json", "job.json"))
@@ -119,9 +122,10 @@ def source_run(root, data_name, *, failed=False, max_archive_bytes=128 << 20, ma
     require(published_manifest or failed, "completed raw result lacks a file manifest")
     manifest = (read(data / "files.json") if published_manifest
                 else {name: sha(file_path(data, name).read_bytes()) for name in sorted(inventory)})
+    extra_metadata = failed_extra_metadata(data, extras, manifest, report, published_manifest=published_manifest)
     for name, expected in manifest.items():
         require(sha(file_path(data, name).read_bytes()) == expected, "raw artifact differs from its result manifest: " + name)
-    require(inventory == set(manifest) | ({"files.json"} if published_manifest else set()),
+    require(inventory == set(manifest) | set(extras) | ({"files.json"} if published_manifest else set()),
             "raw result inventory differs from manifest")
     marker = "MDB_DISCOVERY_UPGRADES_ARCHIVE_V1 "
     archives = [line[len(marker):].strip() for line in collector_log(root, max_bytes=2 * max_archive_bytes + (16 << 20)).splitlines()
@@ -146,6 +150,8 @@ def source_run(root, data_name, *, failed=False, max_archive_bytes=128 << 20, ma
                 for name, digest in archived.items()), "extracted result differs from retained archive")
     tx = data / "transaction"
     recovered = {}
+    if extras:
+        recovered["failed_manifest_extras"] = extra_metadata
     if not (data / "transaction-report.json").is_file():
         require(failed and recover_metadata, "missing transaction report requires explicit failed-publication metadata recovery")
         # The raw archive has already been checked. Reconstruct reporting fields
@@ -187,6 +193,9 @@ def source_run(root, data_name, *, failed=False, max_archive_bytes=128 << 20, ma
         "manifest_sha256": sha((data / "files.json").read_bytes()) if published_manifest else None,
         "artifact_inventory_authority": "published manifest plus retained archive" if published_manifest else "failed-attempt retained archive; no completed result manifest",
         "transaction": verification}
+    if extras:
+        source["artifact_inventory_authority"] = "unchanged producer manifest plus explicit bounded failed-publication metadata; all files independently joined to retained original archive"
+        source["retained_failed_manifest_extras"] = dict(extras)
     if (data / "plan.json").is_file():
         plan = read(data / "plan.json")
     else:
@@ -199,6 +208,30 @@ def source_run(root, data_name, *, failed=False, max_archive_bytes=128 << 20, ma
     return {"root": root, "data": data, "request": request, "report": report, "manifest": manifest,
             "transaction": tx, "transaction_report": tx_report, "seal": seal, "events": events,
             "source": source, "tree": NumericalTree(tx), "plan": plan}
+
+
+def failed_extra_metadata(data, extras, manifest, report, *, published_manifest):
+    """Admit one exact transport-failure record, never arbitrary raw payloads."""
+    if not extras:
+        return {}
+    require(published_manifest and set(extras) == {"failure.json"} and not set(extras) & set(manifest),
+            "failed metadata extra must be disjoint from a producer manifest")
+    result = {}
+    for name, expected in extras.items():
+        require(isinstance(expected, str) and len(expected) == 64 and all(c in "0123456789abcdef" for c in expected),
+                "invalid explicit failed metadata digest")
+        path = file_path(data, name)
+        require(0 < path.stat().st_size <= 64 << 10 and sha(path.read_bytes()) == expected,
+                "failed metadata size/hash differs")
+        value = read(path)
+        require(isinstance(value, dict) and set(value) == {"schema", "job_id", "request_sha256", "mechanics_status", "error"}
+                and isinstance(value["schema"], str) and value["schema"].startswith("mdb-") and value["schema"].endswith("-failure-v1")
+                and value["mechanics_status"] == "errored" and isinstance(value["error"], str) and 0 < len(value["error"]) <= 16384
+                and value == {key: item for key, item in report.items() if key != "archive_sha256"},
+                "extra is not the exact outer failure-report metadata")
+        result[name] = {"sha256": expected, "bytes": path.stat().st_size,
+                        "role": "post-manifest failed-publication metadata; no scientific payload or producer-manifest bytes changed"}
+    return result
 
 
 def difference(observed, reference):

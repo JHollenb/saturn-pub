@@ -156,6 +156,13 @@ yet matching that image output alone does not reproduce the remaining future.
 Later working text has a distinct causal effect; coherent image/text swaps recover
 the paired reference exactly. The report retains the weak appearance prediction,
 all final images, source-qualified records and the finite execution history.
+The [single-block key/value assay](docs/FLUX-SINGLE-KV.md) seals numerical
+attention forecasts from two observed Q/K/V states before executing K-only and
+V-only edits. Both sampled forecasts have about 0.17% relative RMS error. Image
+MLP features remain fixed in this parallel block, while later working-text
+returns carry distinct continuation effects across nine futures. The report
+preserves prediction errors and the failed outer publication job, recovered
+and audited from unchanged artifacts without rerunning the model.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 The [compiled-state residual view](docs/COMPILED-STATE.md) fits per-position
