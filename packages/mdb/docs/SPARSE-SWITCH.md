@@ -336,3 +336,32 @@ New functions: `proxy_residual_sigma`, `posterior_pool_key`, `two_side_pool_key`
   - Median |C|: 55k at r 512, 24k at r 768.
 
 Full tables: `FINDINGS-AK.md` (saturn experiment `2026-11-02-forecast-cost-and-compressed-addition`).
+
+## Posterior pool statistics, the tail detector, KL water-filling, base tail curves and the head pool (Part AL, job-108fe654749e)
+
+New functions: `posterior_membership`, `posterior_energy_key`, `posterior_recall`, `pool_tail_signals` (D1 / D2 / D3), `detector_capture`, `missed_energy`, `waterfill_factor`, `fit_power_exponent`, `tail_energy_curve`, `count_at_energy`, `quantized_proxy_sigma`, `head_pool_threshold`, `blocked_sigma_sd`, `blocked_sigma_candidates`, `tolerance_verdict`.
+
+- **The posterior predicts its own recall.** R(z₀) from the σ tables against the measured z-key energy recall (7,936 positions):
+
+  | Pool | R(z₀) | Measured |
+  |---|---|---|
+  | 1.25× | 0.9860 | 0.9850 |
+  | 1.5× | 0.9935 | 0.9930 |
+  | 2× | 0.9992 | 0.9990 |
+
+  - The energy-optimal key adds +0.002 at 1.25× and +0.0006 at 1.5×.
+  - The k-128 proxy keeps 0.991 at 1.5×.
+  - The int4 quantization term moves the two-side recall by −0.0004.
+- **Tail detector.** D3, the exact-member share in the pool's lowest-z band, captures 0.93 of the per-layer Fisher oracle at q 10% (D1 0.65, D2 0.26). It captures 0.33 of the stream-KL oracle.
+  - Quantiles from fit chunks flag 2.5–3× their target on test streams: 0.373 served at a target of 0.15.
+  - So G2U-Pz1.25-ad15 serves 0.898 at 762, on the plain z-pool frontier (against Pz1.5-cal Δ −0.0003, z −0.1).
+- **Water-filling.** E_t summed over layers explains 1.7% of log KL_t. γ is 0.62 on 16 chunks and 1.98 on 64.
+  - X8-4410-wt at γ 1.8: 0.950 at 905.5, against X8-4410's 0.953 at 907.1 (z −1.3).
+- **Bases.** The count for KL_X 0.035 is 2,661 under the hybrid base, 2,677 under Taylor, 2,368 under the token gate (0.89) and 3,914 token-only.
+- **Head pool.** Dropping heads by ‖o_h‖ costs KL 0.13 / 0.60 / 3.3 at 29 / 45 / 55% dropped, so attention stays exact.
+- **Readout.** The blocked σ is wider than the isotropic one: 70k against 55k at r 512, 6σ. The two-stage basis r 512 → 1,280 gives a median |C₂| of 2,115 with 0 misses.
+- **Gather (payload kernels).** `_down_cnt8` time is not ∝ n / (SPLIT × BE); the entry block BE dominates.
+  - BE 64 runs 7 µs cold at 3,400 rows, against 10 at BE 16. It brings X8-3300-d8-fattn with the int8 head to 3.073 ms: 0.491× of the unfused native, 0.598× of the fused one.
+  - The contiguous-range `_down_rows` is slower (17.9 µs).
+
+Full tables: `FINDINGS-AL.md` (saturn experiment `2026-11-02-forecast-cost-and-compressed-addition`).
