@@ -196,3 +196,47 @@ Measured on Qwen2.5-1.5B (WikiText, single seed, RTX 4080):
 - **Gate frontier.** The prefix count does not rank per-position KL (|Spearman| ≤ 0.2 at every depth). The measured W1T3E2 gate (L9, ρ 0.46) agrees 0.867 at 846, against a predicted 0.834.
 
 Full tables: `FINDINGS-AG.md`.
+
+## Prior-art baselines, the base × key ablation, tail proxy and KL readout (Part AH, job-33a916386ecf)
+
+The helpers:
+
+- **Prior-art keys and masks.** `cats_scores` is the CATS key \|silu(a)\|. `gate_key_scores` is the gate-key \|g − g_tok\| \|u_tok\| ψ, which needs no up GEMV. `zero_base_scores` / `zero_base_products` give the zero-base \|g u\| ψ key and its products. `magnitude_mask` is a TEAL input mask.
+- **Mass and cost.** `below_threshold_mass` (M_t) is a code's own diagonal estimate of the error energy it drops. `code_layer_macs` / `layer_bytes` cover the `cats`, `cats_hybrid`, `exact_select_zero`, `teal` and `attention_only` kinds, `regather`, and an output-side tail rank `r`.
+- **Layer choice.** `layer_choice_frontier` is the greedy multiple-choice-knapsack frontier of a per-layer choice between two codes, with additive error and time.
+- **Tail proxy.** `tail_proxy_maps` gives E = Q_rᵀ M^{1/2} W_down and D = M^{−1/2} Q_r from a skipped tail's second moment, the M-orthogonal rank-r projection of the tail write.
+- **Readout.** `bf16_tie_mask` and `readout_kl_stats` score heads by KL against fp32 logits and by top-1 on non-tied positions. `sigma_candidates` is a σ-margin candidate set.
+- **Gate frontier.** `key_gate_frontier` is a decide-after gate on any per-position key, with a memory-repair factor.
+
+Measured on Qwen2.5-1.5B (WikiText, single seed, RTX 4080). Block closures are vs tokmean, at matched calibration target 2,048 unless stated:
+
+- **Key × base.**
+
+  | Base | \|silu\| key | Gate-key | \|p − b\| ψ key |
+  |---|---|---|---|
+  | Zero | CATS 54.7 | 58.6 | 95.7 |
+  | Hybrid | 73.9 | 90.6 | X2q8 98.7 |
+
+  - The base-aware ψ key is the larger part: block KL ×20 below \|silu\| at the hybrid base, ×10.5 at the zero base. The hybrid base is ×1.7 (\|silu\| key) and ×3.35 (ψ key).
+  - Exact-score threshold X2T closes 98.73 (int8 X2q8 98.71; exact top-E X2 97.49).
+- **Matched prior art** (free streams, agreement with native).
+  - CATS-2250 agrees 0.399 at 563 column-equivalents per 1k; CATS-50 0.741 at 716; TEAL-50 (all seven matrices) 0.718 at 504.
+  - X2q8 agrees 0.884 at 832; K1q4T 0.779 at 708; W2 0.788 at 638.
+- **≥ 0.90 under 900.** X2q8 at count 2,800 agrees 0.910 at 856. X2q8 + uncovered → native agrees 0.901 at 885. X2q8 + a rank-256 ψ tail proxy agrees 0.905 at 889.
+- **Timed step** (× native, bf16 head).
+
+  | Code | × native |
+  |---|---|
+  | CATS-2250 | 0.669 |
+  | K1q4T | 0.674 |
+  | BH·K2 | 0.702 |
+  | W1T3E2 | 0.714 |
+  | W2 | 0.717 |
+  | X2q8 | 0.741 |
+  | CATS-50 | 0.794 |
+
+- **Cold L2.** At L14 the X2q8 fused MLP takes 64.5 µs and its int8 score GEMV 41.0 µs, about 670 GB/s.
+- **Readout.** The int8 head's KL vs fp32 is 0.00041 (the bf16 head's own is 0.00035). Its non-tied top-1 is 1.000. Centred certified and 4–8σ sets are still the whole vocabulary. Centred blockwise recall at (256, 4,768) is 0.42.
+- **Mass key.** M_t ranks a code's own Fisher error (Spearman 0.64) but not stream KL (0.03). The served entropy ranks KL at 0.63.
+
+Full tables: `FINDINGS-AH.md`.
