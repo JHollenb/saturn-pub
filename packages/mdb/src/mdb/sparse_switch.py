@@ -52,6 +52,11 @@ Part AJ: ``pool_rescore_mask`` / ``pool_energy_recall`` (a proxied score admits 
 exactly), ``up_reading_metric`` (the gate-weighted up metric of G2U's proxy), ``lowrank_b0_maps`` and the ``b0``
 ledger option (token-only or rank-r global base), int8 down rows (``down_qbits``), ``adjacent_set_jaccard`` and
 ``TokenTable`` (temporal reuse and token-determined attention diagnostics).
+Part AK: ``proxy_residual_sigma`` / ``posterior_pool_key`` / ``two_side_pool_key`` / ``orth_residual_norm`` (a pool
+ranked by the posterior probability of membership in the exact set), ``first_order_base_*`` and ``FirstOrderMoments``
+(the gate-linear term B_01 the hybrid base lacks), ``tail_residual_components``, ``paired_chunk_bootstrap`` /
+``chord_mixture`` (paired noise model for frontier claims), ``exact_family_law`` / ``pool_family_law`` (per-family
+frontier laws), ``sigma_margin_statistic`` / ``gaussian_tail_fit`` / ``two_level_readout_bytes`` (readout certificate).
 """
 from __future__ import annotations
 
@@ -240,6 +245,8 @@ def code_layer_macs(kind, shapes, *, p=0, m=0, k=0, r=0, density=1.0, regather=F
     'gate_exact_up_proxy' and 'pool_rescore' (``_b0_macs``); 'pool_rescore' (G2U-P: attention + the gate GEMV of every
     neuron + B_0 + a rank-k up proxy + the gathered up rows of a candidate pool of ``p`` neurons, rescored exactly + the
     down rows of the m selected neurons).
+    Part AK: 'pool2_rescore' (K1-Pz: attention + B_0 + rank-k proxies of a and u, encoder d x k and two decoders I x k +
+    the gathered gate and up rows of a pool of ``p`` neurons, rescored exactly + the down rows of the m selected).
     """
     L = layer_macs(**shapes)
     d, inter = shapes["d"], shapes["inter"]
@@ -266,6 +273,8 @@ def code_layer_macs(kind, shapes, *, p=0, m=0, k=0, r=0, density=1.0, regather=F
         return att + d * inter + _b0_macs(b0, d) + k * (d + inter) + 2 * m * d
     if kind == "pool_rescore":
         return att + d * inter + _b0_macs(b0, d) + k * (d + inter) + p * d + m * d
+    if kind == "pool2_rescore":
+        return att + _b0_macs(b0, d) + k * (d + 2 * inter) + 2 * p * d + m * d
     if kind == "teal_alloc":
         qo = d * shapes["n_heads"] * shapes["head_dim"]
         kv_ = d * shapes["n_kv"] * shapes["head_dim"]
@@ -1490,3 +1499,234 @@ def lowrank_b0_maps(w_down, g_glob, w_up, metric, r, *, second_moment=None, floo
     E = (Wr.T / s.sqrt()[None, :]) @ Qs.T
     tot = float(ev.sum())
     return E.contiguous(), (B @ L @ Wr).contiguous(), (float(ev[:r].sum()) / tot if tot > 0 else float("nan"))
+
+
+# --------------------------------------------------------------------------- Part AK: posterior pool key, first-order base, frontier laws, readout certificate
+
+
+def proxy_residual_sigma(w, dec, encode, second_moment, *, chunk=4096):
+    """Per-neuron scale of what a rank-k proxy does not see (ADVISOR 18.1 (a)). A proxy reads z = dz encode
+    (encode [d, k]) and predicts the projection w_j dz of row j of W (W_up or W_gate, [I, d]) as dec_j . z (dec [I, k]);
+    the unseen part is r_j = v_j . dz with v_j = w_j - encode dec_j^T, so Var(r_j) = v_j^T S v_j exactly for
+    S = E[dz dz^T] (no distributional assumption). Returns (sigma [I] = sqrt(v_j^T S v_j), the row norms ||v_j|| [I]),
+    fp32, computed in row chunks."""
+    import torch
+
+    S = second_moment.float()
+    enc = encode.float()
+    sig, nrm = [], []
+    for r0 in range(0, w.shape[0], chunk):
+        v = w[r0:r0 + chunk].float() - dec[r0:r0 + chunk].float() @ enc.T
+        sig.append(((v @ S) * v).sum(-1).clamp_min(0).sqrt())
+        nrm.append(v.norm(dim=-1))
+    return torch.cat(sig), torch.cat(nrm)
+
+
+def posterior_pool_key(proxy_scores, theta, g, g_ref, weights, sigma, *, scale=None, floor=1e-12):
+    """The z-key of a one-side proxy pool (G2U-Pz, ADVISOR 18.3 route 1): the exact score is
+    |s_hat_j + (g_j - g_ref_j) w_j r_j| with r_j the up projection's unseen part, so its error scale given the proxy is
+    tau_j = |g_j - g_ref_j| w_j sigma_j (``proxy_residual_sigma``; ``scale`` [...] multiplies tau per position, the
+    position-conditional variant passes ||P_perp dz|| / sqrt(d - k) with sigma = ||v_j||). Ranking a fixed-size pool
+    by z_j = (|s_hat_j| - theta) / tau_j keeps the neurons most likely to clear the exact threshold theta under a
+    Gaussian r_j (the Neyman-Pearson set of the dominant branch). Returns z [..., I] (fp32; +-inf-free: tau is floored)."""
+    import torch
+
+    tau = (g.float() - g_ref.float()).abs() * weights.float() * sigma.float()
+    if scale is not None:
+        tau = tau * scale.float()[..., None]
+    th = torch.as_tensor(theta, dtype=torch.float32, device=proxy_scores.device)
+    return (proxy_scores.float() - th) / tau.clamp_min(floor)
+
+
+def two_side_pool_key(proxy_scores, theta, a_hat, u_hat, g_ref, weights, sigma_a, sigma_u, *, floor=1e-12):
+    """The z-key of a two-side proxy pool (K1-Pz, ADVISOR 18.3 route 5): both a and u are rank-k proxies, and to first
+    order the exact score moves by w_j (act'(a_hat) u_hat r^a_j + (act(a_hat) - g_ref) r^u_j), so
+    tau_j^2 = w_j^2 ((silu'(a_hat_j) u_hat_j sigma^a_j)^2 + ((silu(a_hat_j) - g_ref_j) sigma^u_j)^2) (cross term
+    dropped). Returns z [..., I]."""
+    import torch
+
+    th = torch.as_tensor(theta, dtype=torch.float32, device=proxy_scores.device)
+    a = a_hat.float()
+    ta = silu_prime(a) * u_hat.float() * sigma_a.float()
+    tu = (torch.nn.functional.silu(a) - g_ref.float()) * sigma_u.float()
+    tau = weights.float() * (ta * ta + tu * tu).sqrt()
+    return (proxy_scores.float() - th) / tau.clamp_min(floor)
+
+
+def orth_residual_norm(dz, z, encode):
+    """||P_perp dz|| for each row of dz [..., d] given z = dz encode [..., k]: the part of dz outside the span of the
+    encoder's columns, ||dz||^2 - z^T (encode^T encode)^{-1} z (k^2 work per row, no extra d x k GEMV)."""
+    import torch
+
+    enc = encode.double()
+    Gi = torch.linalg.inv(enc.T @ enc)
+    zz = z.double()
+    proj = ((zz @ Gi) * zz).sum(-1)
+    return (dz.double().pow(2).sum(-1) - proj).clamp_min(0).sqrt().float()
+
+
+def first_order_base_matrix(w_down, w_gate, w_up, c, d):
+    """B_01 = W_down [diag(d) W_up + diag(c) W_gate] (ADVISOR 18.3 route 3): the global term of the first-order-complete
+    base b_j = g_tok,j u_tok,j + d_j du_j + c_j da_j, whose write is y_tok + B_01 dz. With c = 0, d = g_glob it is
+    ``global_base_matrix``. fp32 [d_model, d_model]."""
+    return w_down.float() @ (d.float()[:, None] * w_up.float() + c.float()[:, None] * w_gate.float())
+
+
+def first_order_base_scores(g, u, a, g_tok, u_tok, a_tok, c, d, weights):
+    """The base-aware score of the first-order-complete base: |g u - g_tok u_tok - d (u - u_tok) - c (a - a_tok)| w,
+    a the gate pre-activation and a_tok its token-table value. With c = 0 and d = g_glob it is ``hybrid_error_scores``."""
+    gf, uf = g.float(), u.float()
+    ut = u_tok.float()
+    base = g_tok.float() * ut + d.float() * (uf - ut) + c.float() * (a.float() - a_tok.float())
+    return (gf * uf - base).abs() * weights.float()
+
+
+def first_order_base_taylor(a_tok, u_tok, counts, g_glob):
+    """Taylor constants of the first-order-complete base: c_j = E_tok[silu'(a_tok,j) u_tok,j] (token rows weighted by
+    their fit counts) and d_j = g_glob,j. a_tok, u_tok [R, I] token-table pre-activations and up values, counts [R].
+    Returns (c [I], d [I]) fp32."""
+    w = counts.double() / counts.double().sum().clamp_min(1e-30)
+    c = (w[:, None] * (silu_prime(a_tok.float()).double() * u_tok.double())).sum(0)
+    return c.float(), g_glob.float().clone()
+
+
+class FirstOrderMoments:
+    """Five per-neuron moments of the base's residual rho_j = p_j - g_tok,j u_tok,j against (da_j, du_j) (sums over
+    positions of da^2, du^2, da du, rho da, rho du) for the per-neuron 2 x 2 least squares of the first-order-complete
+    base (B01-LS, ADVISOR 18.3 route 3)."""
+
+    def __init__(self, n_layers, inter, device=None):
+        import torch
+
+        self.m = torch.zeros(n_layers, 5, inter, dtype=torch.float64, device=device)
+        self.n = [0] * n_layers
+
+    def add(self, layer, rho, da, du):
+        r, a, u = rho.double().reshape(-1, rho.shape[-1]), da.double().reshape(-1, da.shape[-1]), du.double().reshape(-1, du.shape[-1])
+        self.m[layer, 0] += (a * a).sum(0)
+        self.m[layer, 1] += (u * u).sum(0)
+        self.m[layer, 2] += (a * u).sum(0)
+        self.m[layer, 3] += (r * a).sum(0)
+        self.m[layer, 4] += (r * u).sum(0)
+        self.n[layer] += r.shape[0]
+
+    def solve(self, layer, *, ridge=1e-6, fallback=None):
+        """(c [I], d [I]) fp32 minimising E (rho - c da - d du)^2 per neuron, a ridge of ``ridge`` x the mean diagonal;
+        neurons whose 2 x 2 system is singular take ``fallback`` = (c, d) (or zeros)."""
+        import torch
+
+        saa, suu, sau, sra, sru = self.m[layer]
+        lam = ridge * (saa + suu) / 2
+        A, B, C = saa + lam, sau, suu + lam
+        det = A * C - B * B
+        ok = det > 1e-12 * (A * C).clamp_min(1e-300)
+        c = torch.where(ok, (C * sra - B * sru) / det.where(ok, torch.ones_like(det)), torch.zeros_like(det))
+        d = torch.where(ok, (A * sru - B * sra) / det.where(ok, torch.ones_like(det)), torch.zeros_like(det))
+        if fallback is not None:
+            c = torch.where(ok, c, fallback[0].double())
+            d = torch.where(ok, d, fallback[1].double())
+        return c.float(), d.float()
+
+
+def tail_residual_components(g, u, a, g_tok, u_tok, a_tok, g_glob, keep):
+    """Decomposition of the hybrid base's per-neuron residual on the tail (ADVISOR 18.3, AK held-out): p - b_H =
+    (g - g_tok) u_tok + (g - g_glob) du splits into the gate-linear part silu'(a_tok) da u_tok, the up-linear part beyond
+    g_glob (g_tok - g_glob) du, and the remainder (the rest: the gate's curvature and the da du product). Entries on the
+    selected set ``keep`` are zeroed. Returns dict of [..., I] fp32: total, gate_linear, up_linear, remainder."""
+    gf, uf, af = g.float(), u.float(), a.float()
+    gt, ut, at = g_tok.float(), u_tok.float(), a_tok.float()
+    du, da = uf - ut, af - at
+    tot = gf * uf - (gt * ut + g_glob.float() * du)
+    gl = silu_prime(at) * da * ut
+    ul = (gt - g_glob.float()) * du
+    m = (~keep).float()
+    return {"total": tot * m, "gate_linear": gl * m, "up_linear": ul * m, "remainder": (tot - gl - ul) * m}
+
+
+def paired_chunk_bootstrap(a, b, chunk, *, draws=2000, seed=0):
+    """Paired chunk bootstrap of mean(a) - mean(b) over positions (ADVISOR 18.2): a, b [N] per-position outcomes of two
+    codes on the same positions (agreement bits, or a chord's per-position mixture), chunk [N] chunk ids; chunks are
+    resampled with replacement ``draws`` times. Returns {delta, se, z, ci95, chunks, positions, discordance}."""
+    import numpy as np
+
+    a, b, ch = np.asarray(a, np.float64), np.asarray(b, np.float64), np.asarray(chunk)
+    ids, inv = np.unique(ch, return_inverse=True)
+    n = np.bincount(inv).astype(np.float64)
+    sd = np.bincount(inv, weights=a - b)
+    rng = np.random.default_rng(seed)
+    pick = rng.integers(0, len(ids), size=(draws, len(ids)))
+    boots = sd[pick].sum(1) / n[pick].sum(1)
+    delta = float((a - b).mean())
+    se = float(boots.std(ddof=1))
+    return {"delta": delta, "se": se, "z": (delta / se if se > 0 else float("nan")),
+            "ci95": [float(np.percentile(boots, 2.5)), float(np.percentile(boots, 97.5))], "chunks": int(len(ids)),
+            "positions": int(len(a)), "discordance": float(np.mean(np.abs(a - b) > 0))}
+
+
+def chord_mixture(a_lo, a_hi, c_lo, c_hi, c):
+    """The chord between two codes (cost c_lo, c_hi; per-position outcomes a_lo, a_hi) at cost c: the per-position
+    mixture (1 - lam) a_lo + lam a_hi with lam = (c - c_lo) / (c_hi - c_lo), the paired yardstick of a code at c (its
+    mean is the chord's value; outside [c_lo, c_hi] the chord is an extrapolation). Returns (mixture [N], lam)."""
+    import numpy as np
+
+    lam = (float(c) - float(c_lo)) / (float(c_hi) - float(c_lo))
+    return (1 - lam) * np.asarray(a_lo, np.float64) + lam * np.asarray(a_hi, np.float64), lam
+
+
+def exact_family_law(m, *, c0=758.0, kappa=0.0326, kl0=0.0524, m0=2254.0, alpha=-2.43, e0=0.0098, e1=5.4e-6, a0=0.967,
+                     beta=0.403):
+    """Frontier law of the exact-score family (ADVISOR 18.2, Part AJ fits): cost c = c0 + kappa m column-equivalents per
+    1k, KL = kl0 (m / m0)^alpha, agreement = a0 - beta sqrt(KL) + e0 + e1 (m - m0). Returns (c, KL, agreement)."""
+    kl = kl0 * (float(m) / m0) ** alpha
+    return c0 + kappa * float(m), kl, a0 - beta * kl ** 0.5 + e0 + e1 * (float(m) - m0)
+
+
+def exact_family_at_cost(c, **kw):
+    """The exact family's agreement at cost c (inverts c = c0 + kappa m). Returns (m, KL, agreement)."""
+    c0, kappa = kw.get("c0", 758.0), kw.get("kappa", 0.0326)
+    m = (float(c) - c0) / kappa
+    _, kl, a = exact_family_law(m, **kw)
+    return m, kl, a
+
+
+def pool_family_law(m, rho, floor, *, c0=524.0, k_pool=0.065, kappa=0.0326, excess=0.008, kl_kw=None, a0=0.967,
+                    beta=0.403):
+    """Frontier law of the one-side pool family (ADVISOR 18.2): c = c0 + k_pool m + kappa (rho - 1) m, KL = KL_X(m) +
+    floor (the measured proxy floor at pool ratio rho), agreement = a0 - beta sqrt(KL) + excess. Returns (c, KL, A)."""
+    kw = dict(kl_kw or {})
+    _, klx, _ = exact_family_law(m, **kw)
+    kl = klx + float(floor)
+    return c0 + k_pool * float(m) + kappa * (float(rho) - 1) * float(m), kl, a0 - beta * kl ** 0.5 + excess
+
+
+def sigma_margin_statistic(lhat, target, h_perp, e_perp, dim_perp):
+    """The certification statistic of a sigma-margin candidate set (ADVISOR 18.6): for the true argmax v* of each row,
+    z* = (lhat_{v*} - lhat_top) / (h_perp (e_perp,v* + max e_perp) / sqrt(dim_perp)), the (non-positive) margin in sigma
+    units by which v* sits below the approximate top; v* is in the m-sigma set iff z* >= -m. Returns z* [P] fp32."""
+    import torch
+
+    top = lhat.max(-1).values
+    lv = lhat.gather(-1, target[:, None])[:, 0]
+    s = h_perp * (e_perp[target] + e_perp.max()) / float(dim_perp) ** 0.5
+    return ((lv - top) / s.clamp_min(1e-30)).float()
+
+
+def gaussian_tail_fit(zstar, xs=(1.0, 2.0, 3.0, 4.0)):
+    """Empirical survival P(z* < -x) at each x and the slope of log survival against x^2 over the x with a non-zero
+    survival (a Gaussian tail has slope -1/2 in units of its own sd); with no tail mass the slope is None."""
+    import numpy as np
+
+    z = np.asarray(zstar, np.float64)
+    surv = {float(x): float(np.mean(z < -x)) for x in xs}
+    pts = [(x * x, np.log(s)) for x, s in surv.items() if s > 0]
+    slope = float(np.polyfit([p[0] for p in pts], [p[1] for p in pts], 1)[0]) if len(pts) >= 2 else None
+    return {"survival": surv, "log_survival_slope_vs_x2": slope, "min": float(z.min()) if len(z) else None,
+            "q001": float(np.quantile(z, 1e-3)) if len(z) else None}
+
+
+def two_level_readout_bytes(vocab, d, r, candidates, *, qbits=8, scale_bytes=4, basis_bytes=2):
+    """Bytes of a two-level candidate readout (ADVISOR 18.6): the rank-r basis d x r, an int (qbits) table [V, r] with
+    per-row scales, then |C| exact int rows [|C|, d] with scales. Returns bytes per step."""
+    tab = vocab * r * qbits / 8 + vocab * scale_bytes
+    rows = float(candidates) * (d * qbits / 8 + scale_bytes)
+    return d * r * basis_bytes + tab + rows

@@ -822,3 +822,146 @@ def test_pool_mask_recall_jaccard_table_and_lowrank_b0():
     B64 = p64["decode"] @ p64["encode"].T
     B32 = p32["decode"].double() @ p32["encode"].double().T
     assert torch.allclose(B64, B32, atol=1e-3)
+
+
+def test_posterior_pool_key_sigma_and_two_side_key():
+    from mdb.sparse_switch import (gate_exact_up_proxy_scores, hybrid_error_scores, orth_residual_norm, posterior_pool_key,
+                                   proxy_residual_sigma, silu_prime, two_side_pool_key)
+
+    g = torch.Generator().manual_seed(11)
+    d, I, k, N = 8, 20, 3, 4000
+    Wu = torch.randn(I, d, generator=g)
+    A = torch.randn(d, d, generator=g)
+    S = A @ A.T / d
+    enc = torch.linalg.qr(torch.randn(d, k, generator=g))[0]
+    dec = Wu @ enc  # the projection decoder: u_hat = u_tok + (dz enc) dec^T
+    sig, nrm = proxy_residual_sigma(Wu, dec, enc, S, chunk=7)
+    L = torch.linalg.cholesky(S + 1e-6 * torch.eye(d))
+    dz = torch.randn(N, d, generator=g) @ L.T
+    r = dz @ Wu.T - (dz @ enc) @ dec.T
+    assert torch.allclose(r.var(0), sig ** 2, rtol=0.12)
+    assert torch.allclose(nrm, (Wu - dec @ enc.T).norm(dim=-1), atol=1e-5)
+    # z-key: neurons with g = g_ref have tau = 0 and an exact proxy score; the key is monotone in the proxied score
+    gg = torch.rand(I, generator=g)
+    w = torch.rand(I, generator=g) + 0.5
+    gv = gg.clone()
+    gv[:5] += 1.0
+    sc = torch.rand(2, I, generator=g)
+    z = posterior_pool_key(sc, 0.5, gv, gg, w, sig)
+    assert torch.isfinite(z).all() and (z[:, 5:].abs() > 1e6).all()
+    assert torch.equal((z[:, :5] > 0), (sc[:, :5] > 0.5))
+    z2 = posterior_pool_key(sc, 0.5, gv, gg, w, nrm, scale=torch.tensor([1.0, 2.0]))
+    z1 = posterior_pool_key(sc, 0.5, gv, gg, w, nrm)
+    assert torch.allclose(z2[1, :5] * 2, z1[1, :5], rtol=1e-5) and torch.allclose(z2[0], z1[0])
+    # position-conditional scale: ||P_perp dz|| for an orthonormal encoder is the norm of the residual projection
+    zc = dz[:5] @ enc
+    pn = orth_residual_norm(dz[:5], zc, enc)
+    assert torch.allclose(pn, (dz[:5] - zc @ enc.T).norm(dim=-1), atol=1e-4)
+    # two-side key: with sigma_a = 0 it reduces to the one-side scale |silu(a) - g_ref| w sigma_u
+    ah = torch.randn(2, I, generator=g)
+    uh = torch.randn(2, I, generator=g)
+    k2 = two_side_pool_key(sc, 0.5, ah, uh, gg, w, torch.zeros(I), sig)
+    k1 = posterior_pool_key(sc, 0.5, torch.nn.functional.silu(ah), gg, w, sig)
+    assert torch.allclose(k2, k1, rtol=1e-4)
+    k3 = two_side_pool_key(sc, 0.5, ah, uh, gg, w, sig, torch.zeros(I))
+    tau = w * (silu_prime(ah) * uh * sig).abs()
+    assert torch.allclose(k3, (sc - 0.5) / tau.clamp_min(1e-12), rtol=1e-4)
+    # the G2U key at full rank is the exact hybrid score (consistency of the proxy pieces used by the z-key)
+    n = torch.randn(3, d, generator=g)
+    nt = torch.randn(3, d, generator=g)
+    gq = torch.rand(3, I, generator=g)
+    ut = nt @ Wu.T
+    s1, uhat = gate_exact_up_proxy_scores(gq, n, nt, torch.eye(d), Wu, ut, gq * 0.5, gg, w)
+    assert torch.allclose(s1, hybrid_error_scores(gq, n @ Wu.T, gq * 0.5, ut, gg, w), atol=1e-4)
+
+
+def test_first_order_base_reduces_to_hybrid_and_ls_recovers_constants():
+    from mdb.sparse_switch import (FirstOrderMoments, code_layer_macs, first_order_base_matrix, first_order_base_scores,
+                                   first_order_base_taylor, global_base_matrix, hybrid_error_scores, silu_prime,
+                                   tail_residual_components)
+
+    g = torch.Generator().manual_seed(12)
+    d, I = 6, 15
+    Wd, Wu, Wg = torch.randn(d, I, generator=g), torch.randn(I, d, generator=g), torch.randn(I, d, generator=g)
+    gg = torch.rand(I, generator=g)
+    zc = torch.zeros(I)
+    assert torch.allclose(first_order_base_matrix(Wd, Wg, Wu, zc, gg), global_base_matrix(Wd, gg, Wu), atol=1e-5)
+    gv, u, a = torch.rand(4, I, generator=g), torch.randn(4, I, generator=g), torch.randn(4, I, generator=g)
+    gt, ut, at = torch.rand(4, I, generator=g), torch.randn(4, I, generator=g), torch.randn(4, I, generator=g)
+    w = torch.rand(I, generator=g)
+    assert torch.allclose(first_order_base_scores(gv, u, a, gt, ut, at, zc, gg, w), hybrid_error_scores(gv, u, gt, ut, gg, w), atol=1e-6)
+    # the write of the base over all neurons is y_tok + B_01 dz
+    c, dd = torch.randn(I, generator=g), torch.rand(I, generator=g)
+    nt, n = torch.randn(d, generator=g), torch.randn(d, generator=g)
+    dz = n - nt
+    b = gt[0] * (nt @ Wu.T) + dd * (dz @ Wu.T) + c * (dz @ Wg.T)
+    assert torch.allclose(Wd @ b, Wd @ (gt[0] * (nt @ Wu.T)) + first_order_base_matrix(Wd, Wg, Wu, c, dd) @ dz, atol=1e-4)
+    # LS recovers planted constants
+    N = 3000
+    da, du = torch.randn(N, I, generator=g), torch.randn(N, I, generator=g)
+    c0, d0 = torch.randn(I, generator=g), torch.randn(I, generator=g)
+    rho = c0 * da + d0 * du + 0.01 * torch.randn(N, I, generator=g)
+    mo = FirstOrderMoments(2, I)
+    mo.add(1, rho[:1500], da[:1500], du[:1500])
+    mo.add(1, rho[1500:], da[1500:], du[1500:])
+    cs, ds = mo.solve(1)
+    assert torch.allclose(cs, c0, atol=0.01) and torch.allclose(ds, d0, atol=0.01) and mo.n[1] == N
+    c0s, d0s = mo.solve(0, fallback=(torch.ones(I), torch.full((I,), 2.0)))
+    assert torch.allclose(c0s, torch.ones(I)) and torch.allclose(d0s, torch.full((I,), 2.0))
+    at2 = torch.randn(5, I, generator=g)
+    ct, dt = first_order_base_taylor(at2, ut[:1].expand(5, -1), torch.tensor([1.0, 1, 1, 1, 4]), gg)
+    ref = ((torch.tensor([1.0, 1, 1, 1, 4]) / 8)[:, None] * silu_prime(at2) * ut[:1]).sum(0)
+    assert torch.allclose(ct, ref, atol=1e-5) and torch.equal(dt, gg)
+    keep = torch.zeros(4, I, dtype=torch.bool)
+    keep[:, :3] = True
+    comp = tail_residual_components(gv, u, a, gt, ut, at, gg, keep)
+    assert torch.allclose(comp["total"], comp["gate_linear"] + comp["up_linear"] + comp["remainder"], atol=1e-5)
+    assert (comp["total"][:, :3] == 0).all()
+    tot = gv * u - (gt * ut + gg * (u - ut))
+    assert torch.allclose(comp["total"][:, 3:], tot[:, 3:], atol=1e-6)
+    sh = {"d": d, "inter": I, "context": 4, "n_heads": 2, "n_kv": 1, "head_dim": 3}
+    att = code_layer_macs("attention_only", sh)
+    assert code_layer_macs("pool2_rescore", sh, k=2, p=5, m=3) == att + d * d + 2 * (d + 2 * I) + 2 * 5 * d + 3 * d
+
+
+def test_paired_bootstrap_chord_frontier_laws_and_readout_certificate():
+    import numpy as np
+
+    from mdb.sparse_switch import (chord_mixture, exact_family_at_cost, exact_family_law, gaussian_tail_fit,
+                                   paired_chunk_bootstrap, pool_family_law, sigma_candidates, sigma_margin_statistic,
+                                   two_level_readout_bytes)
+
+    rng = np.random.default_rng(3)
+    ch = np.repeat(np.arange(64), 124)
+    a = (rng.random(len(ch)) < 0.9).astype(float)
+    b = a.copy()
+    flip = rng.random(len(ch)) < 0.05
+    b[flip] = 1 - b[flip]
+    r = paired_chunk_bootstrap(a, b, ch, draws=500, seed=1)
+    assert r["positions"] == 7936 and r["chunks"] == 64 and r["delta"] == pytest.approx(float((a - b).mean()))
+    assert 0 < r["se"] < 0.01 and r["discordance"] == pytest.approx(float(flip.mean()))
+    same = paired_chunk_bootstrap(a, a, ch, draws=50)
+    assert same["delta"] == 0 and same["se"] == 0
+    mix, lam = chord_mixture(a, b, 638.0, 832.0, 735.0)
+    assert lam == pytest.approx(0.5) and mix.mean() == pytest.approx(0.5 * (a.mean() + b.mean()))
+    # the exact family reproduces Part AJ's ladder anchors to the stated tolerance
+    for m, (c_ref, a_ref) in {2254: (831.5, 0.8846), 3498: (872.2, 0.9264), 4272: (897.3, 0.9461)}.items():
+        c_, kl_, a_ = exact_family_law(m)
+        assert c_ == pytest.approx(c_ref, abs=1.0) and a_ == pytest.approx(a_ref, abs=0.004)
+    m_, _, a907 = exact_family_at_cost(907.0)
+    assert 4500 < m_ < 4620 and a907 == pytest.approx(0.950, abs=0.003)
+    c_, kl_, a_ = pool_family_law(2800, 2.0, 0.031)
+    assert c_ == pytest.approx(796.4, abs=1.0) and a_ == pytest.approx(0.877, abs=0.01)
+    # certificate statistic: v* in the m-sigma set iff z* >= -m
+    gt = torch.Generator().manual_seed(4)
+    lhat = torch.randn(30, 50, generator=gt)
+    tgt = torch.randint(0, 50, (30,), generator=gt)
+    hp, ep = torch.rand(30, generator=gt) + 0.1, torch.rand(50, generator=gt)
+    zs = sigma_margin_statistic(lhat, tgt, hp, ep, 16)
+    for mm in (1.0, 2.0, 4.0):
+        mk, _ = sigma_candidates(lhat, hp, ep, mm, 16)
+        assert torch.equal(mk[torch.arange(30), tgt], zs >= -mm - 1e-6)
+    assert (zs <= 0).all()
+    tf = gaussian_tail_fit(rng.standard_normal(20000))
+    assert tf["survival"][1.0] == pytest.approx(0.1587, abs=0.01) and -0.8 < tf["log_survival_slope_vs_x2"] < -0.35
+    assert two_level_readout_bytes(1000, 16, 4, 10) == 16 * 4 * 2 + 1000 * 4 + 1000 * 4 + 10 * (16 + 4)
