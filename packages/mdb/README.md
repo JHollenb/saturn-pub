@@ -202,8 +202,12 @@ All nine native futures and numerical misses are retained. Native MLPs still
 execute before replacement; this demonstrates consumer substitution, not speedup.
 The [attention-plus-MLP workflow](docs/FLUX-ATTENTION-REPLACEMENT.md) moves the
 prediction boundary into full image attention and adds sixteen aligned
-continuation observations per branch. Thirty focused mechanics/regression
-checks pass; the fresh seed-73 real-model result remains pending.
+continuation observations per branch. On fresh seed 73, full attention has
+0.126–0.135% native-relative RMS error and full MLP has 0.0234–0.0258%.
+Predicted versus measured combined transfer differs by 0.2003 RGB levels,
+against a measured transfer effect of 4.2557 levels. Thirty focused
+mechanics/regression checks and nineteen saved-audit checks pass; all nine
+native futures, numerical misses and capture-scope limitations are retained.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 The [compiled-state residual view](docs/COMPILED-STATE.md) fits per-position
