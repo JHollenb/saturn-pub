@@ -1162,3 +1162,22 @@ def test_part_am_controller_two_side_margin_readout():
     re = readout_escalation([100, 40000, 10], [5, 25000, 1], vocab=100000, d=8, r1=2, r2=5)
     assert re["escalated_C1"] == 1 and re["escalated_C2"] == 1
     assert re["expected_bytes"] == pytest.approx(100000 * 6 + (40110 / 3) * 7 + (25006 / 3) * 12)
+
+
+def test_part_am_fp32_margin_and_phi_max():
+    import numpy as np
+
+    from mdb.sparse_switch import margin_capture, top2_margin_fp32
+
+    g = torch.Generator().manual_seed(7)
+    w = torch.randn(1000, 16, generator=g)
+    h = torch.randn(5, 16, generator=g)
+    m = top2_margin_fp32(h.to(torch.bfloat16), w.to(torch.bfloat16), chunk=128)
+    ref = (h.to(torch.bfloat16).float() @ w.to(torch.bfloat16).float().T).topk(2, dim=-1).values
+    assert torch.allclose(m, ref[:, 0] - ref[:, 1], atol=1e-5)
+    assert (m >= 0).all()
+    agree = np.ones(1000)
+    agree[:100] = 0  # 10% disagreements
+    mc = margin_capture(np.arange(1000.0), agree, np.ones(1000), qs=(0.02, 0.2))
+    assert abs(mc[0.02]["phi_max"] - 0.2) < 1e-12 and mc[0.02]["phi"] == 0.2
+    assert mc[0.2]["phi_max"] == 1.0

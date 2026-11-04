@@ -2057,8 +2057,22 @@ def margin_capture(margin, agree, kl, qs=(0.01, 0.02, 0.03, 0.05, 0.10)):
         n = max(1, int(round(float(q) * m.size)))
         sel = order[:n]
         out[float(q)] = {"phi": float((ag[sel] < 0.5).sum()) / nd if nd else float("nan"),
-                         "kl_share": float(k[sel].sum()) / kt if kt else float("nan"), "flagged": n}
+                         "kl_share": float(k[sel].sum()) / kt if kt else float("nan"), "flagged": n,
+                         "phi_max": min(1.0, n / nd) if nd else float("nan")}  # no ranking at rate q captures more
     return out
+
+
+def top2_margin_fp32(h_normed, w_head, chunk=32768):
+    """The readout margin top-1 - top-2 in fp32 logits of a normed final state h_normed [N, d] (bf16 or fp32) against
+    the head w_head [V, d], the vocabulary in ``chunk``-row fp32 slices (Part AM: the bf16 head's logits are quantized
+    at 2^-3..2^-4 near |logit| 16-32 and tie on >= 3% of positions, so a lowest-q margin ranking needs fp32 logits, the
+    precision an int8 per-row head produces). Returns [N] fp32."""
+    import torch
+
+    h = h_normed.float()
+    tops = [(h @ w_head[c0:c0 + chunk].float().T).topk(2, dim=-1).values for c0 in range(0, w_head.shape[0], chunk)]
+    tv = torch.cat(tops, -1).topk(2, dim=-1).values
+    return tv[:, 0] - tv[:, 1]
 
 
 def redo_mixture(agree, kl, flags, f_code, readout, per=1000):
