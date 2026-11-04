@@ -511,3 +511,115 @@ def test_gate_frontier_and_dispersion():
     S = torch.diag(torch.tensor([4.0, 1.0, 0.0]))
     sh = metric_eigen_share(S, torch.eye(3), [1, 2])
     assert sh[1] == pytest.approx(0.8) and sh[2] == pytest.approx(1.0)
+
+
+def test_prior_art_keys_products_and_masks():
+    from mdb.sparse_switch import (
+        below_threshold_mass,
+        cats_scores,
+        gate_key_scores,
+        magnitude_mask,
+        zero_base_products,
+        zero_base_scores,
+    )
+
+    g = torch.tensor([[0.5, -0.2, 2.0, 0.0]])
+    u = torch.tensor([[1.0, 3.0, -1.0, 4.0]])
+    w = torch.tensor([1.0, 2.0, 0.5, 1.0])
+    assert torch.equal(cats_scores(g), g.abs())
+    assert torch.allclose(gate_key_scores(g, torch.tensor([0.5, 0.0, 1.0, 1.0]), u, w), torch.tensor([[0.0, 1.2, 0.5, 4.0]]))
+    assert torch.allclose(zero_base_scores(g, u, w), torch.tensor([[0.5, 1.2, 1.0, 0.0]]))
+    keep = torch.tensor([[True, False, True, False]])
+    assert torch.equal(zero_base_products(g, u, keep), torch.tensor([[0.5, 0.0, -2.0, 0.0]]))
+    assert torch.equal(magnitude_mask(u, 2.0), torch.tensor([[0.0, 3.0, 0.0, 4.0]]))
+    s = torch.tensor([[1.0, 2.0, 3.0]])
+    assert float(below_threshold_mass(s, 2.0)) == pytest.approx(5.0)
+
+
+def test_attention_cats_teal_macs_and_bytes():
+    from mdb.sparse_switch import code_layer_macs, layer_bytes, layer_macs
+
+    sh = {"d": 8, "inter": 32, "context": 4, "n_heads": 2, "n_kv": 1, "head_dim": 4}
+    L = layer_macs(**sh)
+    att = L["attention"]
+    assert code_layer_macs("cats", sh, m=4) == att + 8 * 32 + 2 * 4 * 8
+    assert code_layer_macs("cats_hybrid", sh, m=4) - code_layer_macs("cats", sh, m=4) == 64
+    assert code_layer_macs("exact_select_zero", sh, m=4) == att + 2 * 8 * 32 + 4 * 8
+    assert code_layer_macs("exact_select", sh, m=4, r=2) - code_layer_macs("exact_select", sh, m=4) == 2 * (32 + 8)
+    assert code_layer_macs("exact_select", sh, m=4, regather=True) - code_layer_macs("exact_select", sh, m=4) == 2 * 4 * 8
+    assert code_layer_macs("teal", sh, density=1.0) == pytest.approx(L["total"])
+    sc = 2 * 4 * 2 * 4
+    assert code_layer_macs("teal", sh, density=0.5) == pytest.approx(0.5 * (L["total"] - sc) + sc)
+    assert code_layer_macs("attention_only", sh) == att
+    c0 = layer_bytes("cats", sh, m=4, hybrid=False)
+    c1 = layer_bytes("cats", sh, m=4, hybrid=True)
+    assert c1["shared"] - c0["shared"] == 64 * 2 and c1["per_row"] - c0["per_row"] == (2 * 32 + 2 * 8) * 2
+    t1 = layer_bytes("teal", sh, density=1.0)
+    nat = layer_bytes("native", sh)
+    assert t1["total"] == pytest.approx(nat["total"])
+    assert layer_bytes("teal", sh, density=0.5)["shared"] < t1["shared"]
+    rg = layer_bytes("exact_select", sh, m=4, regather=True)["per_row"] - layer_bytes("exact_select", sh, m=4)["per_row"]
+    assert rg == 2 * 4 * 8 * 2
+
+
+def test_layer_choice_frontier_is_greedy_and_monotone():
+    from mdb.sparse_switch import layer_choice_frontier
+
+    ea, eb = [4.0, 1.0, 3.0, 2.0], [1.0, 1.5, 2.0, 0.0]
+    ta, tb = [1.0, 1.0, 1.0, 2.0], [2.0, 3.0, 1.5, 1.0]
+    fr = layer_choice_frontier(ea, eb, ta, tb)
+    assert fr["order"][0] == 3  # faster and better: swapped first
+    assert 1 not in fr["order"]  # worse and slower: never swapped
+    assert fr["order"][1:] == [0, 2]  # 3 / 1 = 3 before 1 / 0.5 = 2
+    errs = [r["error"] for r in fr["rows"]]
+    assert errs == sorted(errs, reverse=True) and fr["rows"][-1]["error"] == pytest.approx(1.0 + 1.0 + 2.0 + 0.0)
+
+
+def test_tail_proxy_maps_project_in_the_metric():
+    from mdb.sparse_switch import tail_proxy_maps
+
+    g = torch.Generator().manual_seed(7)
+    d, I = 6, 20
+    Wd = torch.randn(d, I, generator=g, dtype=torch.float64)
+    t = torch.randn(500, I, generator=g, dtype=torch.float64) * torch.linspace(2, 0.1, I, dtype=torch.float64)
+    y = t @ Wd.T
+    S = y.T @ y / len(y)
+    A = torch.randn(d, d, generator=g, dtype=torch.float64)
+    M = A @ A.T + 0.1 * torch.eye(d, dtype=torch.float64)
+    E, D, share = tail_proxy_maps(S, M, Wd, d)
+    assert share == pytest.approx(1.0)
+    assert torch.allclose((t @ E.double().T) @ D.double().T, y, atol=1e-4)  # full rank: exact
+    E2, D2, s2 = tail_proxy_maps(S, M, Wd, 2)
+    yh = (t @ E2.double().T) @ D2.double().T
+    err = (((y - yh) @ M) * (y - yh)).sum(-1).mean() / ((y @ M) * y).sum(-1).mean()
+    assert float(err) == pytest.approx(1 - s2, rel=1e-3, abs=1e-6)
+
+
+def test_readout_kl_ties_sigma_set_and_key_frontier():
+    from mdb.sparse_switch import (
+        bf16_tie_mask,
+        certified_candidates,
+        key_gate_frontier,
+        kl_law,
+        readout_kl_stats,
+        sigma_candidates,
+    )
+
+    lg = torch.tensor([[2.0, 2.0, 1.0], [3.0, 1.0, 0.0]]).to(torch.bfloat16)
+    assert bf16_tie_mask(lg).tolist() == [True, False]
+    ref = torch.tensor([[1.0, 0.0, -1.0]])
+    kl, ag = readout_kl_stats(ref, ref)
+    assert float(kl) == pytest.approx(0.0, abs=1e-7) and bool(ag)
+    lhat = torch.tensor([[1.0, 0.9, 0.0]])
+    hp, ep = torch.tensor([0.1]), torch.tensor([1.0, 1.0, 1.0])
+    m_cs, s_cs = certified_candidates(lhat, hp, ep)
+    m_s, s_s = sigma_candidates(lhat, hp, ep, 1.0, 4)
+    assert int(s_s) <= int(s_cs) and bool((m_s <= m_cs).all())
+    g = torch.Generator().manual_seed(5)
+    kl_ = (torch.randn(4000, generator=g) - 3).exp()
+    key = kl_ * (1 + 0.1 * torch.rand(4000, generator=g))
+    agree = torch.rand(4000, generator=g) > 0.1
+    fr = key_gate_frontier(key, kl_, agree, 0.8, [0.0, 0.1], repair=0.0)
+    assert fr["rows"][0]["predicted"] == pytest.approx(kl_law(float(kl_.mean())))
+    assert fr["rows"][1]["kl_kept"] < float(kl_.mean()) and fr["rows"][1]["cost"] == pytest.approx(1000 * (0.8 + 0.1), rel=0.02)
+    assert fr["spearman_key_kl"] > 0.9

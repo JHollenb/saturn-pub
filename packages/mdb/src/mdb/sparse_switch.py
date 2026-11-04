@@ -206,13 +206,18 @@ def layer_macs(d, inter, context, n_heads, n_kv, head_dim):
     return {"attention": attention, "mlp_matmul": d * inter, "mlp": 3 * d * inter, "total": attention + 3 * d * inter}
 
 
-def code_layer_macs(kind, shapes, *, p=0, m=0, k=0):
+def code_layer_macs(kind, shapes, *, p=0, m=0, k=0, r=0, density=1.0, regather=False):
     """Derived per-layer MACs of a code (not timed).
 
     kind: 'native' or 'full_select' (all gates computed: full layer), 'token_base' (attention + W_up + W_down),
     'global_base' (attention + B_0), 'pool' (attention + B_0 + p exact neurons), 'proxy' (attention + B_0 +
     rank-k proxy of a and u + m exact neurons), 'exact_select' (attention + the exact gate and up projections of every
-    neuron + B_0 + the down rows of m exact neurons: the proxy-free selection limit). m may be a mean count.
+    neuron + B_0 + the down rows of m exact neurons: the proxy-free selection limit; ``regather`` adds gathered gate/up
+    rows of the m neurons, ``r`` an output-side rank-r tail proxy r (I + d)). m may be a mean count.
+    Prior-art baselines (Part AH): 'cats' (attention + the gate GEMV of every neuron + up and down rows of m neurons,
+    zero base), 'cats_hybrid' ('cats' + B_0 for the hybrid base), 'exact_select_zero' (gate and up GEMVs + m down rows,
+    zero base), 'teal' (every projection's input thresholded to ``density``: density x the attention and MLP weight
+    MACs, the attention scores dense), 'attention_only' (no MLP write).
     """
     L = layer_macs(**shapes)
     d, inter = shapes["d"], shapes["inter"]
@@ -228,7 +233,18 @@ def code_layer_macs(kind, shapes, *, p=0, m=0, k=0):
     if kind == "proxy":
         return att + d * d + (d + 2 * inter) * k + 3 * m * d
     if kind == "exact_select":
-        return att + 2 * d * inter + d * d + m * d
+        return att + 2 * d * inter + d * d + m * d + (2 * m * d if regather else 0) + r * (inter + d)
+    if kind == "cats":
+        return att + d * inter + 2 * m * d
+    if kind == "cats_hybrid":
+        return att + d * inter + d * d + 2 * m * d
+    if kind == "exact_select_zero":
+        return att + 2 * d * inter + m * d
+    if kind == "teal":
+        scores = 2 * shapes["context"] * shapes["n_heads"] * shapes["head_dim"]
+        return density * (att - scores + 3 * d * inter) + scores
+    if kind == "attention_only":
+        return att
     raise ValueError("unknown code kind: " + kind)
 
 
@@ -527,7 +543,7 @@ def column_equivalents_early_abort(f, f_pre, rho, per=1000):
 
 
 def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather", union=None, qbits=None, group=None,
-                scale_bytes=4):
+                scale_bytes=4, hybrid=True, regather=False, r=0, density=1.0):
     """Derived bytes one decoder layer reads for one decode step of ``batch`` rows (weights, gathered rows, tables and
     the K/V cache at ``shapes['context']``), split into shared (read once per step) and per-row parts.
 
@@ -538,8 +554,14 @@ def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather"
     B_0 shared, plus per row the m exact down rows (``union``: read once) and the token tables.
 
     qbits: integer storage of the scoring matrices (kind 'exact_select': W_gate and W_up; kind 'proxy': the two
-    decoders) at qbits / 8 bytes per weight plus one ``scale_bytes`` scale per row (``group`` None) or per group of
-    ``group`` columns; everything else stays at ``dtype_bytes``.
+    decoders; kind 'cats': W_gate) at qbits / 8 bytes per weight plus one ``scale_bytes`` scale per row (``group``
+    None) or per group of ``group`` columns; everything else stays at ``dtype_bytes``.
+
+    Part AH: kind 'exact_select' with ``regather`` adds the m gathered gate/up rows per row (exact products on the set)
+    and ``r`` an output-side tail proxy (r x I and d x r, shared). Kind 'cats' (CATS-style): W_gate read in full, then
+    per row the m up rows and m down rows; ``hybrid`` adds B_0 (shared) and the token tables (u_tok, g_tok, n_tok,
+    y0 per row). Kind 'teal': ``density`` x every projection weight (rows of W^T gathered by the thresholded input),
+    the K/V cache in full.
     """
     d, inter, ctx = shapes["d"], shapes["inter"], shapes["context"]
     nh, nkv, hd = shapes["n_heads"], shapes["n_kv"], shapes["head_dim"]
@@ -559,15 +581,30 @@ def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather"
         else:
             raise ValueError("impl must be 'gather' or 'union'")
     elif kind == "exact_select":
-        shared = att + d * d
+        shared = att + d * d + r * (inter + d)
         qshared = _qbytes(2 * inter, d, qbits, group, scale_bytes, dtype_bytes)
         row = kv + 3 * inter + 2 * d
+        per = 3 if regather else 1
         if impl == "gather":
-            row += m * d
+            row += per * m * d
         elif impl == "union":
-            shared += (inter if union is None else union) * d
+            shared += per * (inter if union is None else union) * d
         else:
             raise ValueError("impl must be 'gather' or 'union'")
+    elif kind == "cats":
+        shared = att + (d * d if hybrid else 0)
+        qshared = _qbytes(inter, d, qbits, group, scale_bytes, dtype_bytes)
+        row = kv + ((2 * inter + 2 * d) if hybrid else 0)
+        if impl == "gather":
+            row += 2 * m * d
+        elif impl == "union":
+            shared += 2 * (inter if union is None else union) * d
+        else:
+            raise ValueError("impl must be 'gather' or 'union'")
+    elif kind == "teal":
+        proj = 2 * d * nh * hd + 2 * d * nkv * hd + 3 * d * inter
+        shared = density * proj + (att - (2 * d * nh * hd + 2 * d * nkv * hd))
+        row = kv
     else:
         raise ValueError("unknown kind: " + kind)
     sh = shared * dtype_bytes + qshared
@@ -975,3 +1012,152 @@ def gate_frontier(counts, kl, agree, f, f_pre, *, depths, rhos, a_native=0.925, 
             if cost <= budget and (best is None or pred > best["predicted"]):
                 best = row
     return {"rows": rows, "best": best, "a_native": a_native, "law": list(law), "budget": budget}
+
+
+# --------------------------------------------------------------------------- prior-art baselines, layer choice, tail proxy, readout KL, mass key (Part AH)
+
+
+def cats_scores(g):
+    """CATS key (Lee et al. 2024, arXiv 2404.08763): |silu(a_j)| per neuron, fp32 (g = silu(W_gate n))."""
+    return g.float().abs()
+
+
+def gate_key_scores(g, g_tok, u_tok, weights):
+    """Gate-key |g - g_tok| |u_tok| w: base-aware in the gate, the token table's u, psi-weighted; needs no up GEMV."""
+    return (g.float() - g_tok.float()).abs() * u_tok.float().abs() * weights.float()
+
+
+def zero_base_scores(g, u, weights):
+    """|g u| w: the fixed-count error-optimal key when dropped neurons write zero (the CATS base)."""
+    return (g.float() * u.float()).abs() * weights.float()
+
+
+def zero_base_products(g, u, keep):
+    """Products of a zero-base code: g u on ``keep``, 0 elsewhere."""
+    import torch
+
+    gu = g * u
+    return torch.where(keep, gu, torch.zeros_like(gu))
+
+
+def magnitude_mask(x, theta):
+    """TEAL-style input sparsification (Liu et al. 2025, arXiv 2408.14690): entries with |x| <= theta set to zero.
+    theta broadcasts (one value per layer and matrix)."""
+    import torch
+
+    return torch.where(x.float().abs() > theta, x, torch.zeros_like(x))
+
+
+def below_threshold_mass(scores, theta):
+    """Per-position sum of squared scores at or below theta: the code's own diagonal estimate of the error energy it
+    drops (the gate key of ADVISOR section 15.6). scores [..., I]."""
+    s = scores.float()
+    return (s * s * (s <= theta)).sum(-1)
+
+
+def layer_choice_frontier(err_a, err_b, t_a, t_b):
+    """Greedy frontier of a per-layer choice between two codes (a 28-item multiple-choice knapsack with two items per
+    layer; additive error and time). Starts from code a everywhere and swaps layers to code b in the order that saves the
+    most error per unit time added: first every layer where b is no slower and no worse, then the rest by
+    (err_a - err_b) / (t_b - t_a) descending; layers where b is worse and no faster are never swapped.
+    err_*, t_* [L]. Returns {'order': [layer], 'rows': [{'swapped', 'layers', 'time', 'error'}]}."""
+    import torch
+
+    ea, eb = torch.as_tensor(err_a, dtype=torch.float64), torch.as_tensor(err_b, dtype=torch.float64)
+    ta, tb = torch.as_tensor(t_a, dtype=torch.float64), torch.as_tensor(t_b, dtype=torch.float64)
+    de, dt = ea - eb, tb - ta
+    free = [int(i) for i in torch.nonzero((dt <= 0) & (de >= 0)).flatten()]
+    rest = [int(i) for i in torch.nonzero((dt > 0) & (de > 0)).flatten()]
+    rest.sort(key=lambda i: -float(de[i] / dt[i]))
+    order = free + rest
+    rows, cur = [], []
+    time_, err = float(ta.sum()), float(ea.sum())
+    rows.append({"swapped": 0, "layers": [], "time": time_, "error": err})
+    for i in order:
+        cur.append(i)
+        time_ += float(dt[i])
+        err -= float(de[i])
+        rows.append({"swapped": len(cur), "layers": list(cur), "time": time_, "error": err})
+    return {"order": order, "rows": rows}
+
+
+def tail_proxy_maps(second_moment, metric, w_down, r, *, floor=1e-10):
+    """Output-side rank-r proxy of an exact-selection code's skipped tail write y = W_down t (t: the dropped neurons'
+    p - b). Q_r = top-r eigenvectors of M^{1/2} S M^{1/2} (S the tail write's second moment, M a PSD metric, d x d);
+    E = Q_r^T M^{1/2} W_down [r, I] applied to t, D = M^{-1/2} Q_r [d, r] (pseudo-inverse below ``floor`` x the top
+    eigenvalue of M), so the proxy write D E t is the M-orthogonal projection of y onto the captured subspace.
+    Returns (E float32, D float32, captured share of the metric energy)."""
+    import torch
+
+    Mv, MQ = torch.linalg.eigh(((metric + metric.T) / 2).double())
+    Mv = Mv.clamp_min(0)
+    keep = Mv > floor * float(Mv.max())
+    Mh = (MQ * Mv.sqrt()[None, :]) @ MQ.T
+    Mih = (MQ * torch.where(keep, Mv.clamp_min(1e-300).rsqrt(), torch.zeros_like(Mv))[None, :]) @ MQ.T
+    S = ((second_moment + second_moment.T) / 2).double()
+    ev, Q = torch.linalg.eigh(Mh @ S @ Mh)
+    ev, Q = ev.flip(0).clamp_min(0), Q.flip(1)
+    Qr = Q[:, :r]
+    E = Qr.T @ Mh @ w_down.double()
+    D = Mih @ Qr
+    tot = float(ev.sum())
+    return E.float().contiguous(), D.float().contiguous(), (float(ev[:r].sum()) / tot if tot > 0 else float("nan"))
+
+
+def bf16_tie_mask(logits_bf16):
+    """Positions whose bf16 top-2 logits are within one bf16 ulp of the top logit (the served argmax is a tie-break).
+    logits_bf16 [P, V] (bf16 values, any dtype)."""
+    import torch
+
+    t2 = logits_bf16.float().topk(2, dim=-1).values
+    top = t2[:, 0].abs().clamp_min(1e-30)
+    ulp = torch.exp2(torch.floor(torch.log2(top)) - 7)
+    return (t2[:, 0] - t2[:, 1]) <= ulp
+
+
+def readout_kl_stats(logits_ref, logits_var):
+    """Per-position KL(p_ref || p_var) and top-1 agreement of a readout variant against a reference (fp32).
+    logits_* [P, V]. Returns (kl [P], agree [P] bool)."""
+    lr = logits_ref.float().log_softmax(-1)
+    lv = logits_var.float().log_softmax(-1)
+    kl = (lr.exp() * (lr - lv)).sum(-1)
+    return kl, lr.argmax(-1) == lv.argmax(-1)
+
+
+def sigma_candidates(lhat, h_perp, e_perp, margin, dim_perp):
+    """sigma-margin candidate set: the Cauchy-Schwarz bound of ``certified_candidates`` scaled by
+    margin / sqrt(dim_perp), the sd of e_perp . h_perp if the complement directions were isotropic (an assumption: it
+    fails for the argmax token, whose e is aligned with h, so the recall must be measured). A union bound over V gives
+    a nominal failure rate V Phibar(margin). Returns (mask [P, V], sizes [P])."""
+    scale = float(margin) / float(dim_perp) ** 0.5
+    top = lhat.max(-1, keepdim=True).values
+    thr = top - scale * h_perp[:, None] * (e_perp[None, :] + e_perp.max())
+    mask = lhat >= thr
+    return mask, mask.sum(-1)
+
+
+def key_gate_frontier(key, kl, agree, f, rhos, *, a_native=0.925, law=(0.967, 0.403), repair=0.0, excess=0.0, per=1000):
+    """Offline decide-after gate on an arbitrary per-position key (for example the below-threshold score mass): the
+    top-rho share by key goes native. Predicted agreement rho a_native + (1 - rho) (kl_law(KL_kept (1 - repair rho))
+    + excess): the law on the kept positions' mean KL, scaled by a memory-repair factor linear in rho (natives in the
+    memory lower the served positions' KL; AG measured x0.54 at rho 0.47, i.e. repair 0.98), plus the stream's own law
+    excess; the direct version uses the kept positions' own agreement. Cost per (f + rho) (decide-after).
+    Returns {'rows': [...], 'spearman_key_kl'}."""
+    import torch
+
+    k_ = torch.as_tensor(key, dtype=torch.float64).flatten()
+    kl_ = torch.as_tensor(kl, dtype=torch.float64).flatten()
+    a_ = torch.as_tensor(agree, dtype=torch.float64).flatten()
+    rows = []
+    for rho in rhos:
+        kap = float(torch.quantile(k_, 1 - rho)) if rho > 0 else float("inf")
+        ab = k_ > kap
+        rr = float(ab.float().mean())
+        kept = ~ab
+        klk = float(kl_[kept].mean()) if bool(kept.any()) else 0.0
+        pred = rr * a_native + (1 - rr) * (kl_law(klk * max(1 - repair * rr, 0.0), *law) + excess)
+        direct = rr * a_native + (1 - rr) * (float(a_[kept].mean()) if bool(kept.any()) else 0.0)
+        rows.append({"rho": float(rho), "rho_realized": rr, "kappa": kap, "kl_kept": klk, "predicted": pred, "direct": direct,
+                     "cost": per * (f + rr)})
+    return {"rows": rows, "spearman_key_kl": spearman(k_, kl_, ties=True), "a_native": a_native, "law": list(law),
+            "repair": repair, "excess": excess}
