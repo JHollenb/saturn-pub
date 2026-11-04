@@ -200,6 +200,10 @@ On fresh seed 71, complete fields match 99.68–99.70% of native BF16 values
 exactly; matched predicted/measured transfers differ by about 0.16 RGB levels.
 All nine native futures and numerical misses are retained. Native MLPs still
 execute before replacement; this demonstrates consumer substitution, not speedup.
+The [attention-plus-MLP workflow](docs/FLUX-ATTENTION-REPLACEMENT.md) moves the
+prediction boundary into full image attention and adds sixteen aligned
+continuation observations per branch. Thirty focused mechanics/regression
+checks pass; the fresh seed-73 real-model result remains pending.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 The [compiled-state residual view](docs/COMPILED-STATE.md) fits per-position
