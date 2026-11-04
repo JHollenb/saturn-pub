@@ -38,11 +38,13 @@ def save(path, value):
         stream.write("\n")
 
 
-def emit(output, report, *, max_compressed_bytes=64 * 1024 * 1024):
+def emit(output, report, *, max_compressed_bytes=64 * 1024 * 1024, compression_level=9):
     if type(max_compressed_bytes) is not int or not 0 < max_compressed_bytes <= 512 * 1024 * 1024:
         raise ValueError("max_compressed_bytes must be a positive integer no greater than 512 MiB")
+    if type(compression_level) is not int or not 1 <= compression_level <= 9:
+        raise ValueError("compression_level must be an integer in [1,9]")
     buffer = io.BytesIO()
-    with tarfile.open(fileobj=buffer, mode="w:gz") as archive:
+    with tarfile.open(fileobj=buffer, mode="w:gz", compresslevel=compression_level) as archive:
         for path in sorted(output.rglob("*")):
             if path.is_symlink():
                 raise ValueError("result archive contains a symbolic link")

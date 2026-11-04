@@ -134,6 +134,14 @@ reverses there. Scaling the recipient's own operands needs no donor activation
 or conditioning reset: zero and half-strength branches change the numerical
 future while retaining the inspected coarse scene. The report preserves dose
 effects, distinct continuation baselines and the failed prediction.
+The [fresh-prompt joint-block experiment](docs/FLUX-JOINT-SELF.md) follows twelve
+futures from one native prompt trajectory, with no donor or imported prefix.
+Holding the original same-parent MLP return distinguishes an attention write
+from its receiving MLP response. The compensation prediction misses, all twelve
+final scenes retain the inspected object arrangement, and eight live-latent
+previews expose the noisy intermediate trajectory. Typed text rollback uses a
+matched reference; exact controls, all numerical outcomes and source custody
+remain available for replay and indexing.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 The [compiled-state residual view](docs/COMPILED-STATE.md) fits per-position
