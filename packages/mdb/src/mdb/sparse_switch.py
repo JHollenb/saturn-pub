@@ -43,6 +43,11 @@ Serving (``ServingLedger``, ``column_equivalents``): a mixed-memory stream in wh
 each position appends rows from either the proxy column (cost f) or a native column
 (cost 1); nothing is recomputed. The ledger counts the native rate, agreement and KL
 by position band.
+Thresholds and ramps (``ScoreHistogram``, ``ramp_weights``, ``ramp_products``): a calibrated per-layer (or global)
+score threshold replaces the per-position top-m (variable m, mean count fixed in closed form from pooled fit-set
+quantiles); a soft ramp above the threshold makes the code continuous in the residual. ``rank_waterfill`` allocates
+proxy rank across layers from the metric eigenvalues; ``group_sets`` shares one exact set across a group of rows;
+``kl_law`` converts a stream's KL to the agreement the pure-stream law predicts.
 """
 from __future__ import annotations
 
@@ -206,7 +211,8 @@ def code_layer_macs(kind, shapes, *, p=0, m=0, k=0):
 
     kind: 'native' or 'full_select' (all gates computed: full layer), 'token_base' (attention + W_up + W_down),
     'global_base' (attention + B_0), 'pool' (attention + B_0 + p exact neurons), 'proxy' (attention + B_0 +
-    rank-k proxy of a and u + m exact neurons).
+    rank-k proxy of a and u + m exact neurons), 'exact_select' (attention + the exact gate and up projections of every
+    neuron + B_0 + the down rows of m exact neurons: the proxy-free selection limit). m may be a mean count.
     """
     L = layer_macs(**shapes)
     d, inter = shapes["d"], shapes["inter"]
@@ -221,6 +227,8 @@ def code_layer_macs(kind, shapes, *, p=0, m=0, k=0):
         return att + d * d + 3 * p * d
     if kind == "proxy":
         return att + d * d + (d + 2 * inter) * k + 3 * m * d
+    if kind == "exact_select":
+        return att + 2 * d * inter + d * d + m * d
     raise ValueError("unknown code kind: " + kind)
 
 
@@ -386,9 +394,10 @@ class ServingLedger:
             tot[4] += float(agree[mn].float().sum())
             tot[5] += float(kl[mn].float().sum())
 
-    def report(self, f=None, per=1000, readout=None, f_pre=None):
+    def report(self, f=None, per=1000, readout=None, f_pre=None, law=None):
         """f: proxy column fraction; readout: readout fraction added per position to the decide-after count;
-        f_pre: fraction already spent at an early-abort point (adds the early-abort count)."""
+        f_pre: fraction already spent at an early-abort point (adds the early-abort count); law: (a0, beta) of the
+        agreement law A = a0 - beta sqrt(KL) (``kl_law``), adding the law's agreement and the excess over it."""
         out = {}
         for name, (n, nat, ag, kl, ag_n, kl_n) in self.sums.items():
             ns = n - nat
@@ -402,6 +411,9 @@ class ServingLedger:
                     r["decide_after_with_readout"] = r["column_equivalents_decide_after"] + per * readout
                 if f_pre is not None:
                     r["column_equivalents_early_abort"] = column_equivalents_early_abort(f, f_pre, r["rho"], per)
+            if law is not None:
+                r["agree_law"] = kl_law(r["kl"], *law)
+                r["law_excess"] = r["agree"] - r["agree_law"]
             out[name] = r
         return out
 
@@ -521,7 +533,8 @@ def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather"
     kind 'native': attention + gate, up and down weights. kind 'proxy': attention + B_0 (d x d) + proxy encoder (d x k)
     + two proxy decoders (I x k each) shared, plus per row the exact rows 3 m d (impl 'gather': every row gathers its
     own m rows) and the token tables (a, u, g at I each, n and y0 at d each); impl 'union' reads the union of the
-    batch's exact sets once (``union`` neurons) instead of per-row rows.
+    batch's exact sets once (``union`` neurons) instead of per-row rows. kind 'exact_select': attention + W_gate + W_up +
+    B_0 shared, plus per row the m exact down rows (``union``: read once) and the token tables.
     """
     d, inter, ctx = shapes["d"], shapes["inter"], shapes["context"]
     nh, nkv, hd = shapes["n_heads"], shapes["n_kv"], shapes["head_dim"]
@@ -536,6 +549,15 @@ def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather"
             row += 3 * m * d
         elif impl == "union":
             shared += 3 * (inter if union is None else union) * d
+        else:
+            raise ValueError("impl must be 'gather' or 'union'")
+    elif kind == "exact_select":
+        shared = att + 2 * d * inter + d * d
+        row = kv + 3 * inter + 2 * d
+        if impl == "gather":
+            row += m * d
+        elif impl == "union":
+            shared += (inter if union is None else union) * d
         else:
             raise ValueError("impl must be 'gather' or 'union'")
     else:
@@ -607,3 +629,179 @@ def quantize_rows(w, bits):
     scale = (wf.abs().amax(-1, keepdim=True) / qmax).clamp_min(1e-30)
     q = torch.round(wf / scale).clamp_(-qmax, qmax)
     return q * scale, scale[..., 0]
+
+
+# --------------------------------------------------------------------------- thresholds, ramps, rank, groups, KL law
+
+
+def kl_law(kl, a0=0.967, beta=0.403):
+    """Agreement predicted from a stream's mean KL by A = a0 - beta sqrt(KL).
+
+    Derivation: the argmax flips when the top-1/top-2 logit-difference error exceeds the native margin; with a margin
+    density flat near zero and a Gaussian error of standard deviation proportional to sqrt(KL), P(flip) is linear in
+    sqrt(KL). The defaults are the fit to nine pure Qwen2.5-1.5B streams (Parts AD-AE); mixed streams sit above the line
+    (the square root is concave), so the excess measures how well a split separates easy from hard positions."""
+    return a0 - beta * max(float(kl), 0.0) ** 0.5
+
+
+def fit_kl_law(agree, kl):
+    """Least-squares (a0, beta, rms) of A = a0 - beta sqrt(KL) over paired stream summaries (closed form)."""
+    import torch
+
+    a = torch.as_tensor(agree, dtype=torch.float64).flatten()
+    s = torch.as_tensor(kl, dtype=torch.float64).flatten().clamp_min(0).sqrt()
+    X = torch.stack([torch.ones_like(s), -s], 1)
+    coef = torch.linalg.lstsq(X, a[:, None]).solution[:, 0]
+    rms = float(((X @ coef - a) ** 2).mean().sqrt())
+    return float(coef[0]), float(coef[1]), rms
+
+
+class ScoreHistogram:
+    """Per-layer log-binned histogram of per-neuron scores, for closed-form threshold calibration.
+
+    ``add(layer, scores)`` pools positions x neurons ([..., I] scores, I neurons per position); a value-weighted
+    histogram (``values``, for example true scores keyed by predicted scores) can be pooled alongside. ``threshold``
+    returns the score theta whose expected count above it per position equals ``mean_count`` (the (1 - mean_count / I)
+    pooled quantile); ``global_threshold`` does the same with one theta across layers for a mean total count. Bins are
+    uniform in log(score) between ``lo`` and ``hi``; within a bin the count is interpolated linearly in log(score).
+    Scores at or below exp(lo) fall in the bottom bin."""
+
+    def __init__(self, n_layers, lo=-40.0, hi=12.0, bins=26000, device=None):
+        import torch
+
+        self.lo, self.hi, self.bins = float(lo), float(hi), int(bins)
+        self.count = torch.zeros(n_layers, bins, dtype=torch.float64, device=device)
+        self.value = torch.zeros(n_layers, bins, dtype=torch.float64, device=device)
+        self.value2 = torch.zeros(n_layers, bins, dtype=torch.float64, device=device)
+        self.positions = [0] * n_layers
+
+    def _bin(self, scores):
+        x = scores.float().clamp_min(1e-38).log()
+        b = ((x - self.lo) / (self.hi - self.lo) * self.bins).floor().long()
+        return b.clamp_(0, self.bins - 1)
+
+    def add(self, layer, scores, values=None):
+        """scores [..., I]; values (same shape, optional) are summed per bin (and squared, in ``value2``)."""
+        import torch
+
+        b = self._bin(scores).flatten()
+        self.count[layer] += torch.bincount(b, minlength=self.bins).double()
+        if values is not None:
+            v = values.double().flatten()
+            self.value[layer] += torch.bincount(b, weights=v, minlength=self.bins)
+            self.value2[layer] += torch.bincount(b, weights=v * v, minlength=self.bins)
+        self.positions[layer] += scores.numel() // scores.shape[-1]
+
+    def edges(self):
+        import torch
+
+        return torch.linspace(self.lo, self.hi, self.bins + 1, dtype=torch.float64, device=self.count.device)
+
+    def _theta(self, counts, target):
+        import torch
+
+        above = counts.flip(0).cumsum(0).flip(0)  # count in bins >= b
+        e = self.edges()
+        hit = torch.nonzero(above >= target)
+        if len(hit) == 0:
+            return float(e[0].exp())
+        b = int(hit[-1])
+        nxt = float(above[b + 1]) if b + 1 < self.bins else 0.0
+        frac = (target - nxt) / max(float(counts[b]), 1e-30)  # share of bin b needed, taken from its top
+        return float((e[b + 1] - frac * (e[b + 1] - e[b])).exp())
+
+    def threshold(self, layer, mean_count):
+        return self._theta(self.count[layer], mean_count * self.positions[layer])
+
+    def global_threshold(self, mean_total_count):
+        n = self.positions[0]
+        if any(p != n for p in self.positions):
+            raise ValueError("global threshold needs the same positions at every layer")
+        return self._theta(self.count.sum(0), mean_total_count * n)
+
+    def above(self, layer, theta):
+        """(mean count, value sum, value^2 sum) per position above theta (bin-interpolated)."""
+        import math
+
+        x = (math.log(max(theta, 1e-38)) - self.lo) / (self.hi - self.lo) * self.bins
+        b = min(max(int(math.floor(x)), 0), self.bins - 1)
+        part = min(max(b + 1 - x, 0.0), 1.0)
+        n = max(self.positions[layer], 1)
+        out = []
+        for h in (self.count[layer], self.value[layer], self.value2[layer]):
+            out.append((float(h[b + 1:].sum()) + part * float(h[b])) / n)
+        return tuple(out)
+
+
+def ramp_weights(scores, theta_lo, eta):
+    """Soft threshold: select j when score_j > theta_lo and weight its exact correction by
+    omega_j = min(1, (score_j - theta_lo) / (theta_hi - theta_lo)) with theta_hi = theta_lo / (1 - eta). eta = 0 is the
+    hard threshold (omega = 1 on the set). theta_lo may broadcast (one value per layer or per position).
+    Returns (keep, omega) with omega = 0 outside keep."""
+    import torch
+
+    s = scores.float()
+    lo = torch.as_tensor(theta_lo, dtype=s.dtype, device=s.device)
+    keep = s > lo
+    if eta <= 0:
+        return keep, keep.to(s.dtype)
+    width = lo * eta / (1 - eta)
+    om = ((s - lo) / width.clamp_min(1e-30)).clamp(0, 1)
+    return keep, torch.where(keep, om, torch.zeros_like(om))
+
+
+def ramp_products(g, u, omega, base_gate, *, hybrid):
+    """Products of a ramp code: base + omega (g u - base), base = g_tok u_tok + base_gate (u - u_tok) (the hybrid base).
+    omega in [0, 1] (0 outside the set). Computed in fp32, returned in g's dtype."""
+    g_tok, u_tok = hybrid
+    gf, uf, ut = g.float(), u.float(), u_tok.float()
+    base = g_tok.float() * ut + base_gate.float() * (uf - ut)
+    return (base + omega.float() * (gf * uf - base)).to(g.dtype)
+
+
+def rank_waterfill(eigenvalues, K, *, cap=None):
+    """Per-layer proxy ranks k_l minimising the total discarded metric energy sum_l sum_{i > k_l} lam_{l,i} under
+    sum_l k_l = K: take the K largest eigenvalues over all (layer, index) pairs (they are in one output-weighted unit, so
+    commensurable). eigenvalues: list of 1-D descending tensors per layer; cap: optional maximum rank per layer.
+    Returns {'k': [k_l], 'theta': the smallest kept eigenvalue, 'kept_share', 'uniform_kept_share', 'cap_binds'}."""
+    import torch
+
+    nL = len(eigenvalues)
+    lam = [e.double().flatten().clamp_min(0) for e in eigenvalues]
+    if cap is not None:
+        lam_c = [e[:cap] for e in lam]
+    else:
+        lam_c = lam
+    allv = torch.cat(lam_c)
+    lay = torch.cat([torch.full((len(e),), i, dtype=torch.long, device=e.device) for i, e in enumerate(lam_c)])
+    order = torch.argsort(allv, descending=True, stable=True)[:K]
+    k = torch.bincount(lay[order], minlength=nL).tolist()
+    tot = float(sum(float(e.sum()) for e in lam))
+    kept = float(sum(float(lam[i][:k[i]].sum()) for i in range(nL)))
+    ku = K // nL
+    uni = float(sum(float(e[:ku].sum()) for e in lam))
+    return {"k": k, "theta": float(allv[order[-1]]) if K else float("inf"), "kept_share": kept / tot,
+            "uniform_kept_share": uni / tot, "cap_binds": bool(cap is not None and any(x >= cap for x in k))}
+
+
+def group_sets(scores, G, m):
+    """Group-level exact sets: rows [N, I] taken in consecutive groups of G share the top-m neurons by the group's
+    summed score; returns the per-row boolean mask [N, I] (a trailing partial group uses its own rows)."""
+    import torch
+
+    N, I = scores.shape
+    ng = -(-N // G)
+    pad = torch.zeros(ng * G, I, dtype=torch.float32, device=scores.device)
+    pad[:N] = scores.float()
+    S = pad.view(ng, G, I).sum(1)  # a trailing partial group sums only its own rows (zero padding adds nothing)
+    idx = S.topk(min(m, I), dim=-1).indices
+    gm = torch.zeros(ng, I, dtype=torch.bool, device=scores.device).scatter_(-1, idx, True)
+    return gm.repeat_interleave(G, 0)[:N]
+
+
+def set_jaccard(a, b):
+    """Row-wise Jaccard |a & b| / |a | b| of boolean masks [..., I]."""
+    inter = (a & b).sum(-1).float()
+    union = (a | b).sum(-1).float()
+    return inter / union.clamp_min(1)
+

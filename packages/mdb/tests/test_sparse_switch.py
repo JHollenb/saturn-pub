@@ -341,3 +341,97 @@ def test_spearman_ties_and_or_gate_thresholds():
     th = or_gate_thresholds(m, e, 0.5)
     assert th["union_share"] == pytest.approx(0.5, abs=2e-3)
     assert th["marginal_share"] == pytest.approx(1 - 0.5 ** 0.5, abs=5e-3)  # independent: 1 - (1 - s)^2 = 0.5
+
+
+def test_exact_select_cost_and_the_af_frontier_fractions():
+    from mdb.sparse_switch import bytes_per_token, flop_fraction, layer_bytes
+
+    def f(kind, **o):
+        return flop_fraction([(kind, o)] * 28, QWEN15)
+    assert f("exact_select", m=1024) == pytest.approx(0.792, abs=0.001)
+    assert f("exact_select", m=2048) == pytest.approx(0.825, abs=0.001)
+    assert f("proxy", k=512, m=2048) == pytest.approx(0.586, abs=0.001)
+    assert f("proxy", k=768, m=1024) == pytest.approx(0.592, abs=0.001)
+    assert f("proxy", k=1024, m=512) == pytest.approx(0.647, abs=0.001)
+    x1 = layer_bytes("exact_select", QWEN15, m=1024)
+    nat = layer_bytes("native", QWEN15)
+    assert nat["shared"] > x1["shared"] > 2 * 1536 * 8960 * 2
+    col = bytes_per_token([("native", {})] * 28, QWEN15, vocab=151936)
+    xb = bytes_per_token([("exact_select", {"m": 1024})] * 28, QWEN15, vocab=151936)
+    assert xb["bytes_per_step"] / col["bytes_per_step"] == pytest.approx(0.822, abs=0.002)
+
+
+def test_kl_law_fit_and_ledger_columns():
+    from mdb.sparse_switch import ServingLedger, fit_kl_law, kl_law
+
+    kl = torch.tensor([0.18, 0.25, 0.42, 0.51, 1.3, 2.7], dtype=torch.float64)
+    a = 0.967 - 0.403 * kl.sqrt()
+    a0, beta, rms = fit_kl_law(a, kl)
+    assert a0 == pytest.approx(0.967, abs=1e-9) and beta == pytest.approx(0.403, abs=1e-9) and rms < 1e-9
+    assert kl_law(0.25) == pytest.approx(0.967 - 0.403 * 0.5)
+    led = ServingLedger()
+    led.add(torch.tensor([4, 5]), torch.tensor([False, False]), torch.tensor([True, False]), torch.tensor([0.25, 0.25]))
+    r = led.report(law=(0.967, 0.403))["all"]
+    assert r["agree_law"] == pytest.approx(0.7655) and r["law_excess"] == pytest.approx(0.5 - 0.7655)
+
+
+def test_score_histogram_thresholds_hit_the_mean_count():
+    from mdb.sparse_switch import ScoreHistogram
+
+    g = torch.Generator().manual_seed(0)
+    s0 = torch.randn(400, 2000, generator=g).exp()
+    s1 = (torch.randn(400, 2000, generator=g) * 2).exp() * 3
+    h = ScoreHistogram(2, bins=20000)
+    h.add(0, s0, values=s0)
+    h.add(1, s1, values=s1)
+    for layer, s in ((0, s0), (1, s1)):
+        th = h.threshold(layer, 250)
+        assert float((s > th).sum(-1).float().mean()) == pytest.approx(250, rel=0.01)
+        cnt, mass, _ = h.above(layer, th)
+        assert cnt == pytest.approx(250, rel=0.01)
+        assert mass == pytest.approx(float((s * (s > th)).sum(-1).mean()), rel=0.01)
+    tg = h.global_threshold(500)
+    tot = float(((s0 > tg).sum(-1) + (s1 > tg).sum(-1)).float().mean())
+    assert tot == pytest.approx(500, rel=0.01)
+
+
+def test_ramp_weights_and_products():
+    from mdb.sparse_switch import code_products, ramp_products, ramp_weights
+
+    s = torch.tensor([[0.5, 1.0, 1.1, 1.2, 2.0]])
+    keep, om = ramp_weights(s, 1.0, 0.0)
+    assert keep.tolist() == [[False, False, True, True, True]] and om.tolist() == [[0, 0, 1, 1, 1]]
+    keep, om = ramp_weights(s, 1.0, 0.25)  # theta_hi = 4/3
+    assert keep.tolist() == [[False, False, True, True, True]]
+    assert om[0, 2] == pytest.approx(0.3, abs=1e-6) and om[0, 3] == pytest.approx(0.6, abs=1e-6) and om[0, 4] == 1.0
+    g, u = torch.randn(3, 5), torch.randn(3, 5)
+    gt, ut, gg = torch.randn(3, 5), torch.randn(3, 5), torch.randn(5)
+    hard = torch.rand(3, 5) > 0.5
+    assert torch.allclose(ramp_products(g, u, hard.float(), gg, hybrid=(gt, ut)),
+                          code_products(g, u, hard, gg, hybrid=(gt, ut)), atol=1e-6)
+
+
+def test_rank_waterfill_takes_the_largest_eigenvalues():
+    from mdb.sparse_switch import rank_waterfill
+
+    e = [torch.tensor([10.0, 1.0, 0.5, 0.1]), torch.tensor([5.0, 4.0, 3.0, 2.0])]
+    r = rank_waterfill(e, 4)
+    assert r["k"] == [1, 3] and r["theta"] == 3.0
+    assert r["kept_share"] == pytest.approx(22.0 / 25.6) and r["uniform_kept_share"] == pytest.approx(20.0 / 25.6)
+    rc = rank_waterfill(e, 4, cap=2)
+    assert rc["k"] == [2, 2] and rc["cap_binds"]
+
+
+def test_group_sets_and_jaccard():
+    from mdb.sparse_switch import group_sets, set_jaccard
+
+    g = torch.Generator().manual_seed(1)
+    s = torch.rand(6, 50, generator=g)
+    assert torch.equal(group_sets(s, 1, 10), top_m_mask(s, 10))
+    gs = group_sets(s, 2, 10)
+    assert torch.equal(gs[0], gs[1]) and int(gs[0].sum()) == 10
+    assert torch.equal(gs[0], top_m_mask(s[0] + s[1], 10))
+    j = set_jaccard(top_m_mask(s, 10), top_m_mask(s, 10))
+    assert torch.allclose(j, torch.ones(6))
+    tail = group_sets(s[:5], 2, 10)
+    assert torch.equal(tail[4], top_m_mask(s[4], 10))
