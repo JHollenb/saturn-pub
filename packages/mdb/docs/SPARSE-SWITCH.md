@@ -112,3 +112,37 @@ On Qwen2.5-1.5B (all 28 layers, propagated, f derived not timed):
 - The model's own top-1 margin is below 1 at 47% of WikiText positions, which bounds what a margin gate can save. At ρ ≈ 0.50 the `ê` gates trade agreement for KL (KL-gate 0.527 vs margin 0.646).
 
 Full tables: `FINDINGS-AD.md`.
+
+## Bytes, timed records and pre-gates (Part AE, job-68b861b0e19b)
+
+The cost helpers:
+
+- `layer_bytes` and `bytes_per_token` derive the bytes a decode step reads from the shapes and dtype: weights, gathered exact rows, token tables and K/V. A batch's exact rows are counted one of two ways: `gather` reads each row's own rows, `union` reads the union of the batch's exact sets once.
+- `timed_record` joins an `mdb.timing.time_arms` record with those bytes. It reports achieved GB/s, and the byte and time ratios against the baseline. The time ratio appears only when the parity gate passed.
+
+The gate and table helpers:
+
+- `pregate_table` builds empirical-Bayes key tables, with the global mean or a per-key prior (for example, a bigram key shrunk to the unigram table).
+- `quantize_rows` performs symmetric per-row int8/int4 quantization.
+- `spearman(ties=True)` uses average ranks, for table lookups with many tied values.
+- `or_gate_thresholds` calibrates margin-OR-ê gates.
+- `ServingLedger.add(groups=...)` reports agreement by a label, such as a context-count bucket.
+
+Measured on Qwen2.5-1.5B, RTX 4080, bf16:
+
+- **Decode timing.** One new token per DecoderSplice step, 128-token context, `layer.mlp` swapped for a sparse proxy MLP. The sparse MLP computes only:
+  - the proxy,
+  - top-1,024,
+  - Triton-gathered exact rows,
+  - the closed-form base y0 + B_0 (n − n̄).
+
+  Results with the step CUDA-graphed:
+  - Batch 1, readout included: native 6.26 ms (494 GB/s); A1 6.86 ms. That is 1.10× native's time at 0.56× its bytes (253 GB/s).
+  - Batch 1, column only: 1.11× native's time at 0.48× its bytes.
+  - Batch 256: the batch's exact sets cover 93% of the neurons, and A1 takes 1.67× native's time.
+- **Why batch 1 is slower.** A per-op breakdown of one layer (L2-hot weights) shows the sparse MLP is latency-bound: 121 µs against native's 131 µs. `topk` alone is 42 µs. The byte saving needs a fused selection path before it can show in wall clock.
+- **Decoder precision.** int8 and int4 proxy decoders keep 1.000 and 0.992 of the bf16 exact set's score mass. A two-stage proxy (64 → 2,048 → 1,024) keeps 0.855.
+- **Pre-gates.** A token table of the code's fit-set error (leave-one-out tables) ranks test errors at Spearman 0.45 (bigram 0.47). As a pre-decided gate it serves no better than sending uncovered tokens to native (0.746 vs 0.752 at ρ 0.33).
+- **k = 1,024.** It closes 93.5% at f = 0.697. Its free stream agrees with native at 0.763.
+
+Full tables: `FINDINGS-AE.md`.
