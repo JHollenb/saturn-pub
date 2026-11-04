@@ -352,28 +352,127 @@ def readout_fraction(shapes, vocab, n_layers):
 
 @dataclass
 class ServingLedger:
-    """Per-position serving outcomes by position band: native rate, argmax agreement with native, KL(native || served)."""
+    """Per-position serving outcomes by position band: native rate, argmax agreement with native, KL(native || served),
+    split into served (proxy) and native positions."""
 
     bands: tuple = ((4, 16), (16, 32), (32, 64), (64, 128))
     sums: dict = field(default_factory=dict)
 
     def add(self, positions, native, agree, kl):
         """positions, native (bool), agree (bool), kl: 1-D tensors over served positions."""
+        nat = native.bool()
         for name, (lo, hi) in [("all", (min(b[0] for b in self.bands), max(b[1] for b in self.bands))),
                                *[(f"{lo}-{hi - 1}", (lo, hi)) for lo, hi in self.bands]]:
             m = (positions >= lo) & (positions < hi)
-            tot = self.sums.setdefault(name, [0, 0.0, 0.0, 0.0])
+            mn = m & nat
+            tot = self.sums.setdefault(name, [0, 0.0, 0.0, 0.0, 0.0, 0.0])
             tot[0] += int(m.sum())
-            tot[1] += float(native[m].float().sum())
+            tot[1] += float(nat[m].float().sum())
             tot[2] += float(agree[m].float().sum())
             tot[3] += float(kl[m].float().sum())
+            tot[4] += float(agree[mn].float().sum())
+            tot[5] += float(kl[mn].float().sum())
 
-    def report(self, f=None, per=1000):
+    def report(self, f=None, per=1000, readout=None, f_pre=None):
+        """f: proxy column fraction; readout: readout fraction added per position to the decide-after count;
+        f_pre: fraction already spent at an early-abort point (adds the early-abort count)."""
         out = {}
-        for name, (n, nat, ag, kl) in self.sums.items():
-            r = {"n": n, "rho": nat / max(n, 1), "agree": ag / max(n, 1), "kl": kl / max(n, 1)}
+        for name, (n, nat, ag, kl, ag_n, kl_n) in self.sums.items():
+            ns = n - nat
+            r = {"n": n, "rho": nat / max(n, 1), "agree": ag / max(n, 1), "kl": kl / max(n, 1),
+                 "agree_served": (ag - ag_n) / ns if ns else float("nan"), "kl_served": (kl - kl_n) / ns if ns else float("nan"),
+                 "agree_native": ag_n / nat if nat else float("nan"), "kl_native": kl_n / nat if nat else float("nan")}
             if f is not None:
                 r["column_equivalents"] = column_equivalents(f, r["rho"], per)
                 r["column_equivalents_decide_after"] = column_equivalents_decide_after(f, r["rho"], per)
+                if readout is not None:
+                    r["decide_after_with_readout"] = r["column_equivalents_decide_after"] + per * readout
+                if f_pre is not None:
+                    r["column_equivalents_early_abort"] = column_equivalents_early_abort(f, f_pre, r["rho"], per)
             out[name] = r
         return out
+
+
+# --------------------------------------------------------------------------- coverage-complete tables, gates
+
+
+def ridge_from_moments(sxx, sxy, syy, n, grid, *, eig=None):
+    """Multi-output ridge Y_c ~ X_c B with lambda by GCV, from centred moments (fp64).
+
+    sxx = X_c^T X_c [p, p], sxy = X_c^T Y_c [p, q], syy = ||Y_c||_F^2, n rows; grid of lambdas. With
+    sxx = V diag(D) V^T and Z = V^T sxy: B = V diag(1 / (D + lam)) Z, RSS = syy - sum_i ||z_i||^2 (D_i + 2 lam) / (D_i + lam)^2,
+    df = sum_i D_i / (D_i + lam), GCV = RSS / (n - df)^2. eig = (D, V) reuses an eigendecomposition of sxx (sxx may then
+    be None). Returns beta, lam, gcv, df, rss.
+    """
+    import torch
+
+    if eig is None:
+        D, V = torch.linalg.eigh((sxx.double() + sxx.double().T) / 2)
+    else:
+        D, V = eig
+    D = D.double().clamp_min(0)
+    V = V.double()
+    Z = V.T @ sxy.double()
+    zz = (Z * Z).sum(-1)
+    best = None
+    for lam in grid:
+        lam = float(lam)
+        rss = float(syy) - float((zz * (D + 2 * lam) / (D + lam) ** 2).sum())
+        df = float((D / (D + lam)).sum())
+        gcv = rss / max(n - df, 1e-9) ** 2
+        if best is None or gcv < best["gcv"]:
+            best = {"lam": lam, "gcv": gcv, "df": df, "rss": rss}
+    best["beta"] = V @ (Z / (D + best["lam"])[:, None])
+    return best
+
+
+def shrinkage_lambda(tr_within, resid_sq, counts):
+    """Empirical-Bayes weight lam = tr S_within / tr S_between, per layer.
+
+    resid_sq [R]: ||n_emp_t - n_prior_t||^2 for held-out token types with counts c_t >= 1, whose expectation is
+    tr S_between + tr S_within / c_t. Returns (lam, tr S_between)."""
+    between = float((resid_sq.double() - float(tr_within) / counts.double()).mean())
+    between = max(between, 1e-12 * float(tr_within))
+    return float(tr_within) / between, between
+
+
+def shrinkage_means(counts, emp_means, prior_means, lam):
+    """Coverage-complete token means (c n_emp + lam n_prior) / (c + lam); types with c = 0 take the prior.
+
+    counts [R], emp_means [R, d] (ignored where c = 0), prior_means [R, d]."""
+    import torch
+
+    c = counts.to(prior_means.dtype)[:, None]
+    emp = torch.where(c > 0, emp_means.to(prior_means.dtype), torch.zeros_like(prior_means))
+    return (c * emp + lam * prior_means) / (c + lam)
+
+
+def error_mass(scores, keep):
+    """Per-position predicted error mass of a code: the sum of squared scores outside its exact set.
+
+    With Fisher neuron weights and the base-aware score this is the diagonal-Fisher energy the code chose not to
+    evaluate (about twice the predicted KL)."""
+    s = scores.float()
+    return (s * s * (~keep)).sum(-1)
+
+
+def quantile_threshold(stat, rho, *, below=True):
+    """Scalar t such that a share rho of stat lies below t (below=True) or above t (below=False)."""
+    import torch
+
+    return float(torch.quantile(stat.float().flatten(), rho if below else 1 - rho))
+
+
+def z_gate(margin, e_hat, c):
+    """Mark a position native when its top-1 margin is below c sqrt(e_hat) (flip probability ~ 2 Phi(-margin / sigma))."""
+    return margin < c * e_hat.clamp_min(0).sqrt()
+
+
+def kl_gate(e_hat, kappa):
+    """Mark a position native when the predicted error mass exceeds kappa."""
+    return e_hat > kappa
+
+
+def column_equivalents_early_abort(f, f_pre, rho, per=1000):
+    """Early abort: served positions cost f, aborted positions f_pre (the proxy layers already run) + 1."""
+    return per * ((1 - rho) * f + rho * (f_pre + 1))
