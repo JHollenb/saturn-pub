@@ -196,8 +196,10 @@ native image futures, which consume native features rather than predictions.
 The [full-field MLP replacement workflow](docs/FLUX-MLP-REPLACEMENT.md) seals
 complete image-side MLP fields and supplies them to the native consumer in
 matched measured/predicted replay branches, including a placement contrast.
-Tiny native mechanics are qualified; the first real attempt timed out before
-its forecast seal, and the instrumented scientific result remains pending.
+On fresh seed 71, complete fields match 99.68–99.70% of native BF16 values
+exactly; matched predicted/measured transfers differ by about 0.16 RGB levels.
+All nine native futures and numerical misses are retained. Native MLPs still
+execute before replacement; this demonstrates consumer substitution, not speedup.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 The [compiled-state residual view](docs/COMPILED-STATE.md) fits per-position

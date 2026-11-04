@@ -2,7 +2,9 @@
 
 This assay extends the [sampled MLP-entry forecast](FLUX-SINGLE-MLP.md) to every image token and MLP neuron at one selected block. It predicts two complete M fields, seals them, and supplies those values to the actual native fused projection. Measured-versus-predicted pairs test the numerical replacement, while a fixed token permutation tests placement.
 
-**Status:** the harness is implemented and qualified with tiny native fixtures; the seed-71 scientific result remains pending. The first job, `job-9999f2088d3b`, hit its 900-second limit before the full-field seal. Its [incomplete execution record](../../../../artifacts/mdb-flux-mlp-replacement-20261104/incomplete-attempt-01.json) retains the complete raw log and makes no forecast claim. The instrumented attempt, `job-68295609457d`, adds phase markers and stack diagnostics under a reviewed finite lease. No current full-field fidelity or image-outcome claim has been earned.
+**Status:** the seed-71 experiment completed in `job-68295609457d`. Both complete fields were sealed before any current-target entry, consumed by the real native projection, and followed through all nine image futures. The independent saved-only audit reports valid mechanics and qualified native replay. Low/high fields match 99.6777%/99.7026% of native BF16 values exactly, with relative RMS errors 0.0241937%/0.0235781%. This is one fresh context and two dependent source states.
+
+The first job, `job-9999f2088d3b`, hit its 900-second limit before the full-field seal. Its [incomplete execution record](../../../../artifacts/mdb-flux-mlp-replacement-20261104/incomplete-attempt-01.json) retains the complete raw log and makes no forecast claim. The successful attempt adds phase markers and stack diagnostics under a reviewed finite lease; its source and scientific plan remain bound separately.
 
 The native MLP still executes before its image-side activation slice is overwritten. The assay therefore tests whether a sealed prediction can serve the native consumer; it does not remove the MLP, skip its computation or demonstrate a speedup. Native prefix state, attention and text remain part of the computation. Final RGB images are native continuations, not independently predicted pixels.
 
@@ -64,9 +66,47 @@ The resulting image is installed at the post-single6 boundary through a public t
 
 `low.predicted` versus zero and `high.predicted` versus text test same-history numerical substitution. `M.predicted` versus `M.measured` compares forecast error with a matched measured high-M transfer on the same low recipient. Their rolled counterparts preserve the field values and energy while changing token placement along image-token axis 1. **Roll 512 is a placement contrast, not a guaranteed destructive null.** Similar, weaker or stronger effects are all retained.
 
-High M encodes the whole observed high history. The comparison does not isolate a text-only cause, assign semantic names to neurons or establish an object address. Endpoint distances and image observations will remain separate from numerical forecast fidelity; no rank or error threshold is a semantic score.
+High M encodes the whole observed high history. The comparison does not isolate a text-only cause, assign semantic names to neurons or establish an object address. Endpoint distances and image observations remain separate from numerical forecast fidelity; no rank or error threshold is a semantic score.
 
 The finite census is one model load, encoding and noise draw; 245 native transitions; 11 Acts; 256 receipt emissions; nine direct block calculations; and nine final PNG/VAE calls. The builder contributes 108 transitions/four Acts, and the panel 137 transitions/seven image Acts. Direct calculations include two native references and seven edited calls; they are not nine whole-model forward passes. Nine futures are dependent branches of one seed-71 history.
+
+## Observed prediction and continuation errors
+
+The independent auditor reconstructs all 18,874,368 sealed activation values exactly from saved pre-entry operands and weights. That checks the declared reference computation. Comparison with native CUDA retains 30,418 low-field and 28,068 high-field mismatches, rather than claiming a bit-exact kernel emulator.
+
+| Complete image M field | Low history | High history |
+|---|---:|---:|
+| Exact BF16 values | 9,406,766 / 9,437,184 | 9,409,116 / 9,437,184 |
+| RMS error | 0.0000319934 | 0.0000259889 |
+| Error / native RMS | 0.0241937% | 0.0235781% |
+| Maximum absolute error | 0.015625 | 0.015625 |
+
+The fixed sample is also informative: the high history matches every sampled stage exactly, while the low history has two LayerNorm and modulation mismatches, one u mismatch, two v mismatches and three of 256 M mismatches. The earlier seed-67 sample's exact normalization does not extend universally to this fresh state. Full-field coverage exposes errors that a small successful sample can miss.
+
+| Predicted branch versus matched native/measured branch | Postblock image L2 | Final latent L2 | Final RGB MAE (0–255) | Maximum RGB difference |
+|---|---:|---:|---:|---:|
+| low.predicted versus zero | 10.2453 | 3.21708 | 0.161407 | 10 |
+| high.predicted versus text | 8.15373 | 2.58497 | 0.110246 | 7 |
+| M.predicted versus M.measured | 8.29539 | 3.28410 | 0.160489 | 17 |
+| M.predicted.roll versus M.measured.roll | 8.48872 | 3.20076 | 0.161781 | 14 |
+
+Measured high-M transfer changes the low recipient by image L2 5,860.52, final latent L2 51.2959 and RGB MAE 2.76200. The corresponding prediction-versus-measurement discrepancies are 0.1415%, 6.4023% and 5.8106% of those effect norms. These diagnostic ratios use different observables at each boundary; they are not a fraction of semantics explained or a numerical guarantee for future inputs. Errors remain measurable after native continuation.
+
+Rolling the same measured high field by 512 tokens changes the final image relative to its unrolled counterpart by RGB MAE 3.80598; the predicted-field pair gives 3.78470. Relative to the low baseline, rolled measured M has a larger RGB distance than unrolled M, 4.92912 versus 2.76200. Yet it is closer to the high reference, 19.7296 versus 21.1253. Placement matters, and this particular roll is not simply a destructive control or an identified object-address move.
+
+![Nine native futures; each image tile retains its original pixels](../../../../artifacts/mdb-flux-mlp-replacement-20261104/final/native-futures.png)
+
+The native-prefix image/text comparisons and unchanged-sham latent/PNG checks all hold exactly. Forecast accuracy and intervention direction do not participate in that replay qualification. Arm-blind image descriptions, sealed before unblinding, identify the native high and high.predicted foregrounds as more coherent; all nine retain green-left/yellow-right forms and background artifacts. These are informal visual observations, without a calibrated semantic evaluator.
+
+The [saved-cut diagnostic](../../../../artifacts/mdb-flux-mlp-replacement-20261104/continuation-error-trajectory.json) finds 16 aligned boundaries per matched pair: the post6 input and 15 native transitions. Only the start and final full cuts exist. All 14 intermediate full cuts are absent, including from the builder/preparation stores; the root store has 20 full cuts total. Endpoint image/text and final latent/RGB metrics join the audit exactly. Receipts and pinned adapter source establish the declared native continuation path, without an independent kernel trace, but cannot supply absent tensors; a complete layer-by-layer error-growth curve is not established by this capture policy.
+
+## Operational diagnostics and next capture improvements
+
+The successful worker's phase ledger places 392.03 seconds in source construction and 89.30 seconds in preparation. Sampled stacks show file/directory synchronization inside public LocalStore publication. Those samples identify waits without attributing every second or establishing that a different disk would accelerate this model.
+
+The experimental [scalar storage probe](../qualification/profile_flux_storage.py) runs through public MDB bootstrap and mrun, with NumPy required by the public mrun import closure, and zero models, tensors or CUDA calls. Its [retained assessment](../../../../artifacts/mdb-flux-mlp-replacement-20261104/profile-result-v2.json) separates initial setup failures from the later executed probe: `job-ba3dd0306970` times one SSD-path file fsync at 2.612 ms, then `os.link` returns EPERM before a complete StateCut save. HDD is not entered in that executed revision. This is a path-specific publication refusal, not an SSD-versus-HDD speed measurement. The subsequent tool revision retains independent per-case filesystem errors and attempts the other case; four tiny checks pass, but that revision is not fleet-qualified for both roots. No durability operation is removed.
+
+Two tool improvements follow directly: paired per-cursor continuation observations with selected exact cuts, and bounded binary result transport with manifest-addressed retrieval. The first would localize propagation without saving every full branch history. The second would avoid returning the complete 810.8 MB archive through a 1.081 GB raw text log. Both are recorded in `saturn/request.jsonl`; neither is claimed implemented by this assay.
 
 ## Saved evidence and reproduction
 
@@ -101,4 +141,8 @@ FRESH_RUN=/absolute/path/to/new-run
   "$FRESH_RUN" --collect JOB_ID
 ```
 
-Completed audit/seal/cut/receipt bindings, every branch outcome and any separately sealed image observations will be added from the actual result bundle. The earlier sampled forecast and seed-53 contraction reports remain unchanged.
+The [independent audit](../../../../artifacts/mdb-flux-mlp-replacement-20261104/run-03/analysis.json), [published outcomes](../../../../artifacts/mdb-flux-mlp-replacement-20261104/final/result.json), [sealed image descriptions](../../../../artifacts/mdb-flux-mlp-replacement-20261104/blinded-observations.json) and [unblinded join](../../../../artifacts/mdb-flux-mlp-replacement-20261104/unblinded-visual-record.json) bind the actual results. The [Astra postrun review](../../../../artifacts/mdb-flux-mlp-replacement-20261104/postrun-review.json) independently checks source/seal, complete-field errors, consumer joins and endpoint comparisons, with no blocking integrity issue. Three [curated candidate-family records](../../../../artifacts/mdb-flux-mlp-replacement-20261104/computation-records.json) contribute 11 numerical rows and six source-qualified addresses to the [offline evidence index](../../../../artifacts/mdb-flux-mlp-replacement-20261104/evidence-v1/provenance.json); run, verify and query each return 0. This is explicit curation, not automatic family induction or atlas ingestion.
+
+The full archive is 810,756,640 bytes, SHA-256 `df12080744b8b6c94f9830930578f474cf5a235e7a95d97bf6d06e7de216d906`; complete raw logs are retained as gzip. The worker reached its pre-export summary in 740.34 seconds; the complete runner interval was 860.3 seconds, peaking at 9,672 MB VRAM and 6,320.6 MB RSS. After the storage diagnostic changes, 20 focused installed-wheel checks pass in 7.28 seconds, including four scalar diagnostic checks; this does not add real-model specimens or qualify a two-root storage comparison.
+
+This advances a symbol-table record from selected arithmetic prediction to a complete predicted feature field connected to its actual consumer and native future. Applicability remains bound to the observed entry state, timestep, model parameters and recipient operands. Independent attention prediction, stacked predicted blocks, broader seeds/prompts/MLPs, and reusable semantic names remain separate experiments. The earlier sampled forecast and seed-53 contraction reports remain unchanged.
