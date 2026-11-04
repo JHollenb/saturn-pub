@@ -179,6 +179,13 @@ image matching still produces a final result farther from high than the low
 baseline, while a native text-only return ends closer. Two conditional K/V
 attention forecasts, all nine native futures and the posthoc rounded scheduler
 equation retain their separate evidence scopes.
+The [single6 contraction assay](docs/FLUX-SINGLE-CONTRACTION.md) substitutes
+parallel attention/MLP features at a fixed fused projection. Its tentative
+MLP-over-attention local-distance prediction misses, while sampled conditional
+linear/write forecasts and a complete saved-vector account preserve the
+contraction, rounding terms and opposite latent/RGB trends. Nine native futures
+separate feature writes, receiving residual and working-text continuation;
+geometric closure does not establish semantic repair or a universal route.
 The [computation atlas](docs/COMPUTATION-ATLAS.md) connects source-qualified
 records across runs with signed effects, continuation and counterexamples.
 The [compiled-state residual view](docs/COMPILED-STATE.md) fits per-position
