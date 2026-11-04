@@ -743,3 +743,72 @@ def test_isotropic_tail_and_fp32_remainder_match_the_reference():
     Ea, Da, sa = svd_remainder_maps(Wd, 3)
     Eb, Db, sb = svd_remainder_maps(Wd, 3, dtype=torch.float32)
     assert sb == pytest.approx(sa, rel=1e-4) and torch.allclose(Da.double() @ Ea.double(), Db.double() @ Eb.double(), atol=1e-3)
+
+
+def test_pool_rescore_and_base_ledgers_match_the_derived_shapes():
+    from mdb.sparse_switch import code_layer_macs, layer_bytes
+
+    shapes = {"d": 1536, "inter": 8960, "context": 128, "n_heads": 12, "n_kv": 2, "head_dim": 128}
+    full = code_layer_macs("native", shapes)
+    gp = code_layer_macs("pool_rescore", shapes, k=256, m=2886, p=int(1.5 * 2886)) / full
+    assert gp == pytest.approx(0.759, abs=0.003)  # ADVISOR 17.2: G2U-P1.5 at count 2,886 = 758
+    x8 = code_layer_macs("exact_select", shapes, m=3498) / full
+    bt = code_layer_macs("exact_select", shapes, m=3498, b0="none") / full
+    lr = code_layer_macs("exact_select", shapes, m=3498, b0=256) / full
+    assert x8 - bt == pytest.approx(0.050, abs=0.001) and x8 - lr == pytest.approx(0.0333, abs=0.001)
+    assert code_layer_macs("pool_rescore", shapes, k=256, m=100, p=100) == code_layer_macs("gate_exact_up_proxy", shapes, k=256, m=100)
+    b16 = layer_bytes("exact_select", shapes, m=3420, qbits=8)["total"]
+    b8 = layer_bytes("exact_select", shapes, m=3420, qbits=8, down_qbits=8)["total"]
+    assert (b16 - b8) / 1e6 == pytest.approx(3420 * 1536 / 1e6 - 3420 * 4 / 1e6, rel=1e-6)
+    bn = layer_bytes("exact_select", shapes, m=3420, qbits=8, b0="none")["total"]
+    assert b16 - bn == 1536 * 1536 * 2
+    pb = layer_bytes("pool", shapes, k=256, m=2886, p=4329, qbits=8)["total"] / 1e6
+    gb = layer_bytes("g2u", shapes, k=256, m=2886, qbits=8)["total"] / 1e6
+    assert pb < gb  # int8 pool rows (1.5x) read fewer bytes than G2U's bf16 rows (ADVISOR 17.1 d)
+    assert 44 < pb < 50  # ADVISOR 17.2: about 47 MB
+
+
+def test_pool_mask_recall_jaccard_table_and_lowrank_b0():
+    from mdb.sparse_switch import (TokenTable, adjacent_set_jaccard, global_base_matrix, lowrank_b0_maps, metric_proxy,
+                                   pool_energy_recall, pool_rescore_mask, reading_metric, up_reading_metric)
+
+    g = torch.Generator().manual_seed(11)
+    s_ex = torch.rand(4, 50, generator=g)
+    s_px = s_ex + 0.05 * torch.randn(4, 50, generator=g)
+    keep, pool = pool_rescore_mask(s_px, -1.0, s_ex, 0.7)
+    assert pool.all() and torch.equal(keep, s_ex > 0.7)
+    e, c = pool_energy_recall(s_ex, s_ex > 0.7, pool)
+    assert torch.allclose(e, torch.ones(4)) and torch.allclose(c, torch.ones(4))
+    keep2, pool2 = pool_rescore_mask(s_px, 0.6, s_ex, 0.7)
+    assert (keep2 <= pool2).all() and (keep2 <= (s_ex > 0.7)).all()
+    e2, c2 = pool_energy_recall(s_ex, s_ex > 0.7, pool2)
+    assert ((e2 > 0.5) & (e2 <= 1)).all()
+    k3 = torch.zeros(2, 5, 7, dtype=torch.bool)
+    k3[..., :3] = True
+    ja = adjacent_set_jaccard(k3, torch.ones(2, 5, dtype=torch.bool))
+    assert ja[0] / ja[1] == pytest.approx(1.0) and ja[2] / ja[3] == pytest.approx(1.0)
+    tab = torch.randn(6, 4, generator=g)
+    rows = torch.randint(0, 6, (200,), generator=g)
+    tt = TokenTable(6, 4)
+    tt.add(rows, tab[rows])
+    a_, b_, n_ = tt.r2_terms(rows, tab[rows])
+    assert a_ == pytest.approx(0.0, abs=1e-6) and b_ > 0 and n_ == 200
+    d, I = 5, 12
+    Wd, Wu, Wg = torch.randn(d, I, generator=g), torch.randn(I, d, generator=g), torch.randn(I, d, generator=g)
+    gg = torch.rand(I, generator=g)
+    Mo = torch.randn(d, d, generator=g)
+    Mo = Mo @ Mo.T + torch.eye(d)
+    E, D, sh = lowrank_b0_maps(Wd, gg, Wu, Mo, d)
+    assert sh == pytest.approx(1.0, abs=1e-5) and torch.allclose(D @ E, global_base_matrix(Wd, gg, Wu), atol=1e-4)
+    E2, D2, sh2 = lowrank_b0_maps(Wd, gg, Wu, Mo, 2)
+    assert 0 < sh2 < 1
+    w, e2_ = torch.rand(I, generator=g), torch.rand(I, generator=g)
+    assert torch.allclose(up_reading_metric(Wu, w, e2_), reading_metric(Wg, Wu, w, torch.zeros(I), e2_), atol=1e-5)
+    S = torch.randn(d, d, generator=g)
+    S = S @ S.T
+    p64 = metric_proxy(Mo, S, 3)
+    p32 = metric_proxy(Mo, S, 3, dtype=torch.float32)
+    assert p32["share"] == pytest.approx(p64["share"], rel=1e-4)
+    B64 = p64["decode"] @ p64["encode"].T
+    B32 = p32["decode"].double() @ p32["encode"].double().T
+    assert torch.allclose(B64, B32, atol=1e-3)

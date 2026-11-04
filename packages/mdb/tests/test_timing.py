@@ -43,3 +43,16 @@ def test_time_arms_interleaved_reports_block_noise_pairs_and_status():
     assert refused["claim"].startswith("refused") and refused["arms"]["a"]["time_ratio_by_block"] is None
     with pytest.raises(TimingError):
         time_arms_interleaved(arms, baseline="native", gate=None, blocks=1)
+
+
+def test_op_breakdown_records_parts_and_byte_split():
+    torch = pytest.importorskip("torch")
+    if not torch.cuda.is_available():
+        pytest.skip("op_breakdown graphs need CUDA")
+    from mdb.timing import op_breakdown
+
+    x = torch.ones(1 << 20, device="cuda")
+    ops = {"a": lambda: x.mul_(1.0), "b": lambda: x.add_(0.0), "total": lambda: (x.mul_(1.0), x.add_(0.0))}
+    rec = op_breakdown(ops, reps=5, total="total", bytes_by_op={"a": 8e6, "b": 8e6}, bandwidth_gbs=500.0)
+    assert rec["l2"] == "hot" and set(rec["us"]) == {"a", "b", "total"}
+    assert rec["byte_us"]["a"] == pytest.approx(16.0) and "total_not_bytes_us" in rec

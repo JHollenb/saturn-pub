@@ -48,6 +48,10 @@ score threshold replaces the per-position top-m (variable m, mean count fixed in
 quantiles); a soft ramp above the threshold makes the code continuous in the residual. ``rank_waterfill`` allocates
 proxy rank across layers from the metric eigenvalues; ``group_sets`` shares one exact set across a group of rows;
 ``kl_law`` converts a stream's KL to the agreement the pure-stream law predicts.
+Part AJ: ``pool_rescore_mask`` / ``pool_energy_recall`` (a proxied score admits a candidate pool that is rescored
+exactly), ``up_reading_metric`` (the gate-weighted up metric of G2U's proxy), ``lowrank_b0_maps`` and the ``b0``
+ledger option (token-only or rank-r global base), int8 down rows (``down_qbits``), ``adjacent_set_jaccard`` and
+``TokenTable`` (temporal reuse and token-determined attention diagnostics).
 """
 from __future__ import annotations
 
@@ -206,7 +210,17 @@ def layer_macs(d, inter, context, n_heads, n_kv, head_dim):
     return {"attention": attention, "mlp_matmul": d * inter, "mlp": 3 * d * inter, "total": attention + 3 * d * inter}
 
 
-def code_layer_macs(kind, shapes, *, p=0, m=0, k=0, r=0, density=1.0, regather=False, densities=None):
+def _b0_macs(b0, d):
+    """MACs of the hybrid base's global term B_0 dz: 'full' d x d, 'none' 0 (the token-only base y_tok), an int r a
+    rank-r factorisation D_r E_r (2 r d)."""
+    if b0 == "full":
+        return d * d
+    if b0 == "none":
+        return 0
+    return 2 * int(b0) * d
+
+
+def code_layer_macs(kind, shapes, *, p=0, m=0, k=0, r=0, density=1.0, regather=False, densities=None, b0="full"):
     """Derived per-layer MACs of a code (not timed).
 
     kind: 'native' or 'full_select' (all gates computed: full layer), 'token_base' (attention + W_up + W_down),
@@ -222,6 +236,10 @@ def code_layer_macs(kind, shapes, *, p=0, m=0, k=0, r=0, density=1.0, regather=F
     d x k and decoder I x k + gathered up and down rows of m neurons); 'exact_select_zero' takes ``r`` (a rank-r
     remainder on the zero base, R-Sparse style); 'teal_alloc' (TEAL's per-matrix allocation: ``densities`` maps
     q, k, v, o, gate, up, down to the kept input share of each matrix).
+    Part AJ: ``b0`` ('full' | 'none' | rank r) prices the hybrid base's B_0 term in 'exact_select',
+    'gate_exact_up_proxy' and 'pool_rescore' (``_b0_macs``); 'pool_rescore' (G2U-P: attention + the gate GEMV of every
+    neuron + B_0 + a rank-k up proxy + the gathered up rows of a candidate pool of ``p`` neurons, rescored exactly + the
+    down rows of the m selected neurons).
     """
     L = layer_macs(**shapes)
     d, inter = shapes["d"], shapes["inter"]
@@ -237,7 +255,7 @@ def code_layer_macs(kind, shapes, *, p=0, m=0, k=0, r=0, density=1.0, regather=F
     if kind == "proxy":
         return att + d * d + (d + 2 * inter) * k + 3 * m * d
     if kind == "exact_select":
-        return att + 2 * d * inter + d * d + m * d + (2 * m * d if regather else 0) + r * (inter + d)
+        return att + 2 * d * inter + _b0_macs(b0, d) + m * d + (2 * m * d if regather else 0) + r * (inter + d)
     if kind == "cats":
         return att + d * inter + 2 * m * d
     if kind == "cats_hybrid":
@@ -245,7 +263,9 @@ def code_layer_macs(kind, shapes, *, p=0, m=0, k=0, r=0, density=1.0, regather=F
     if kind == "exact_select_zero":
         return att + 2 * d * inter + m * d + r * (inter + d)
     if kind == "gate_exact_up_proxy":
-        return att + d * inter + d * d + k * (d + inter) + 2 * m * d
+        return att + d * inter + _b0_macs(b0, d) + k * (d + inter) + 2 * m * d
+    if kind == "pool_rescore":
+        return att + d * inter + _b0_macs(b0, d) + k * (d + inter) + p * d + m * d
     if kind == "teal_alloc":
         qo = d * shapes["n_heads"] * shapes["head_dim"]
         kv_ = d * shapes["n_kv"] * shapes["head_dim"]
@@ -309,19 +329,21 @@ def reading_metric(w_gate, w_up, weights, c2, e2):
     return wg.T @ wg + wu.T @ wu
 
 
-def metric_proxy(metric, second_moment, k):
+def metric_proxy(metric, second_moment, k, *, dtype=None):
     """Optimal rank-k map B = decode @ encode^T of n under a reading metric (reduced-rank regression, fp64).
 
     Minimises E || M^{1/2} (I - B) n ||^2 = tr(M (I - B) S (I - B)^T) over rank-k B, S = E[n n^T] (or a
     centred covariance). Solved without inverting M: with S = L L^T and L^T M L = P diag(lam) P^T,
     decode = L P_k lam_k^{-1/2} (= M^{-1/2} U_k) and encode = M decode (= M^{1/2} U_k), where U_k are the top-k
     eigenvectors of M^{1/2} S M^{1/2}. With M = I this is the PCA of S. Returns encode [d, k], decode [d, k], the
-    eigenvalues lam (descending) and the captured share sum(lam_k) / sum(lam).
+    eigenvalues lam (descending) and the captured share sum(lam_k) / sum(lam). ``dtype`` (Part AJ): the eigensolver's
+    precision (default float64; float32 is ~10x faster on consumer GPUs at d ~ 1,536).
     """
     import torch
 
-    S = second_moment.double()
-    Mm = metric.double()
+    dt = torch.float64 if dtype is None else dtype
+    S = second_moment.to(dt)
+    Mm = metric.to(dt)
     S, Mm = (S + S.T) / 2, (Mm + Mm.T) / 2
     s, Q = torch.linalg.eigh(S)
     L = Q * s.clamp_min(0).sqrt()[None, :]
@@ -569,7 +591,8 @@ def column_equivalents_early_abort(f, f_pre, rho, per=1000):
 
 
 def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather", union=None, qbits=None, group=None,
-                scale_bytes=4, hybrid=True, regather=False, r=0, density=1.0, tail_qbits=None, dec_qbits=4):
+                scale_bytes=4, hybrid=True, regather=False, r=0, density=1.0, tail_qbits=None, dec_qbits=4, b0="full",
+                down_qbits=None, p=0, pool_qbits=8):
     """Derived bytes one decoder layer reads for one decode step of ``batch`` rows (weights, gathered rows, tables and
     the K/V cache at ``shapes['context']``), split into shared (read once per step) and per-row parts.
 
@@ -593,16 +616,30 @@ def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather"
     d x r stays at ``dtype_bytes``). Kind 'g2u' (gate exact, up proxied): attention + B_0 + the encoder (d x k) shared,
     W_gate at ``qbits`` and the up decoder (I x k) at ``dec_qbits`` with per-row scales, then per row the token tables
     and the m gathered up rows and m down rows.
+
+    Part AJ: ``b0`` ('full' d x d, 'none', or a rank r: E_r and D_r, 2 r d) prices B_0 in kinds 'proxy',
+    'exact_select', 'g2u' and 'pool'; ``down_qbits`` stores the gathered down rows (W_down columns) at that width with
+    one scale per row (kinds 'exact_select', 'g2u', 'pool'). Kind 'pool' (G2U-P): as 'g2u', but the gathered up rows are
+    the ``p`` rows of the candidate pool at ``pool_qbits`` (int8 per row) and the down rows are the m rows of the final
+    set.
     """
     d, inter, ctx = shapes["d"], shapes["inter"], shapes["context"]
     nh, nkv, hd = shapes["n_heads"], shapes["n_kv"], shapes["head_dim"]
     att = 2 * d * nh * hd + 2 * d * nkv * hd + nh * hd + 2 * nkv * hd + 2 * d
     kv = 2 * ctx * nkv * hd
     qshared = 0
+    b0e = _b0_macs(b0, d)
+
+    def _down(n_):
+        # (elements at dtype_bytes, bytes) of n_ gathered down rows
+        if not down_qbits:
+            return n_ * d, 0
+        return 0, _qbytes(n_, d, down_qbits, None, scale_bytes, dtype_bytes)
+    qrow = 0
     if kind == "native":
         shared, row = att + 3 * d * inter, kv
     elif kind == "proxy":
-        shared = att + d * d + d * k
+        shared = att + b0e + d * k
         qshared = _qbytes(2 * inter, k, qbits, group, scale_bytes, dtype_bytes)
         row = kv + 3 * inter + 2 * d
         if impl == "gather":
@@ -612,14 +649,16 @@ def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather"
         else:
             raise ValueError("impl must be 'gather' or 'union'")
     elif kind == "exact_select":
-        shared = att + d * d + (r * d if tail_qbits else r * (inter + d))
+        shared = att + b0e + (r * d if tail_qbits else r * (inter + d))
         qshared = _qbytes(2 * inter, d, qbits, group, scale_bytes, dtype_bytes)
         if tail_qbits and r:
             qshared += _qbytes(r, inter, tail_qbits, None, scale_bytes, dtype_bytes)
         row = kv + 3 * inter + 2 * d
         per = 3 if regather else 1
         if impl == "gather":
-            row += per * m * d
+            de, db = _down(m)
+            row += (per - 1) * m * d + de
+            qrow += db
         elif impl == "union":
             shared += per * (inter if union is None else union) * d
         else:
@@ -634,13 +673,19 @@ def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather"
             shared += 2 * (inter if union is None else union) * d
         else:
             raise ValueError("impl must be 'gather' or 'union'")
-    elif kind == "g2u":
-        shared = att + d * d + d * k
+    elif kind in ("g2u", "pool"):
+        shared = att + b0e + d * k
         qshared = _qbytes(inter, d, qbits, group, scale_bytes, dtype_bytes) + _qbytes(inter, k, dec_qbits, None, scale_bytes,
                                                                                        dtype_bytes)
         row = kv + 3 * inter + 2 * d
         if impl == "gather":
-            row += 2 * m * d
+            de, db = _down(m)
+            row += de
+            qrow += db
+            if kind == "g2u":
+                row += m * d
+            else:
+                qrow += _qbytes(p, d, pool_qbits, None, scale_bytes, dtype_bytes)
         elif impl == "union":
             shared += 2 * (inter if union is None else union) * d
         else:
@@ -652,7 +697,8 @@ def layer_bytes(kind, shapes, *, k=0, m=0, batch=1, dtype_bytes=2, impl="gather"
     else:
         raise ValueError("unknown kind: " + kind)
     sh = shared * dtype_bytes + qshared
-    return {"shared": sh, "per_row": row * dtype_bytes, "total": sh + batch * row * dtype_bytes}
+    pr = row * dtype_bytes + qrow
+    return {"shared": sh, "per_row": pr, "total": sh + batch * pr}
 
 
 def _qbytes(rows, cols, qbits, group, scale_bytes, dtype_bytes):
@@ -1315,3 +1361,110 @@ def gate_exact_up_proxy_scores(g, n, n_tok, encode, dec_up, u_tok, g_tok, g_glob
     z = (n.float() - n_tok.float()) @ encode.float()
     u_hat = u_tok.float() + z @ dec_up.float().T
     return hybrid_error_scores(g, u_hat, g_tok, u_tok, g_glob, weights), u_hat
+
+
+# --------------------------------------------------------------------------- Part AJ: pool codes, base variants, diagnostics
+
+
+def up_reading_metric(w_up, weights, e2):
+    """The up half of ``reading_metric``: M_u = W_up^T diag(w^2 e2) W_up (d x d, fp32), e2 = E[g^2] per neuron. A rank-k
+    up proxy whose score multiplies u_hat by the exact gate g (G2U) errs in the selection by g_j (u_hat_j - u_j) w_j, so
+    this is the metric its reduced-rank map should minimise (``metric_proxy(up_reading_metric(...), S_n, k)``)."""
+    wu = w_up.float() * (weights.float() * e2.float().clamp_min(0).sqrt())[:, None]
+    return wu.T @ wu
+
+
+def pool_rescore_mask(proxy_scores, theta_pool, exact_scores, theta):
+    """Pool-rescored selection (G2U-P, ADVISOR 17.3): the proxied score admits a candidate pool (score > theta_pool,
+    calibrated to pool x the final count), the exact score is recomputed on the pool only, and the code's own threshold
+    selects the final set inside it. Returns (keep, pool) boolean masks [..., I]; exact_scores need only be valid on
+    the pool."""
+    import torch
+
+    pool = proxy_scores.float() > torch.as_tensor(theta_pool, dtype=torch.float32, device=proxy_scores.device)
+    keep = pool & (exact_scores.float() > torch.as_tensor(theta, dtype=torch.float32, device=exact_scores.device))
+    return keep, pool
+
+
+def pool_energy_recall(exact_scores, exact_keep, pool):
+    """Per-position energy recall of an exact set by a candidate pool: sum_{j in exact & pool} s_j^2 / sum_{j in exact}
+    s_j^2 (s the exact score, in Fisher / psi units, so s^2 is the energy the exact selection keeps), and the count
+    recall |exact & pool| / |exact|. Positions with an empty exact set count as 1. Returns (energy [...], count [...])."""
+    s2 = exact_scores.float() ** 2
+    e_all = (s2 * exact_keep).sum(-1)
+    e_in = (s2 * (exact_keep & pool)).sum(-1)
+    n_all = exact_keep.sum(-1).float()
+    n_in = (exact_keep & pool).sum(-1).float()
+    one = e_all.new_ones(())
+    return (e_in / e_all.clamp_min(1e-30)).where(e_all > 0, one), (n_in / n_all.clamp_min(1)).where(n_all > 0, one)
+
+
+def adjacent_set_jaccard(keep, valid):
+    """Temporal reuse diagnostic: the Jaccard of the selected sets at adjacent positions t-1, t of the same sequence
+    (keep [B, T, I], valid [B, T] marks positions that may pair), and a random-pair baseline at the same density (the
+    set at t against the set at t in the next sequence of the batch, batch rolled by one; needs B >= 2). Returns
+    (sum of adjacent Jaccards, adjacent pairs, sum of random-pair Jaccards, random pairs)."""
+    import torch
+
+    va = valid[:, 1:] & valid[:, :-1]
+    ja = set_jaccard(keep[:, 1:], keep[:, :-1])
+    out = [float(ja[va].sum()), int(va.sum())]
+    if keep.shape[0] >= 2:
+        kr = torch.roll(keep, 1, 0)
+        vr = valid & torch.roll(valid, 1, 0)
+        jr = set_jaccard(keep, kr)
+        out += [float(jr[vr].sum()), int(vr.sum())]
+    else:
+        out += [0.0, 0]
+    return tuple(out)
+
+
+class TokenTable:
+    """Token-conditional mean of a per-position vector (for example one layer's attention write), fit on one set of
+    positions and scored on another: ``add(rows, y)`` pools y [N, d] into per-row sums (rows [N] in 0..R-1, -1
+    skipped) and a global sum; ``r2_terms(rows, y, min_count)`` returns (sum ||y - ybar_row||^2, sum ||y - ybar||^2,
+    n) over positions whose row has >= min_count fit positions, so the held-out R^2 of the table is 1 - a / b."""
+
+    def __init__(self, n_rows, dim, device=None):
+        import torch
+
+        self.sum = torch.zeros(n_rows, dim, device=device)
+        self.cnt = torch.zeros(n_rows, device=device)
+        self.gsum = torch.zeros(dim, dtype=torch.float64, device=device)
+        self.gn = 0
+
+    def add(self, rows, y):
+        import torch
+
+        ok = rows >= 0
+        yf = y.float()
+        self.sum.index_add_(0, rows[ok], yf[ok])
+        self.cnt.index_add_(0, rows[ok], torch.ones(int(ok.sum()), device=yf.device))
+        self.gsum += yf.double().sum(0)
+        self.gn += int(y.shape[0])
+
+    def r2_terms(self, rows, y, min_count=2):
+        ok = (rows >= 0)
+        ok = ok & (self.cnt[rows.clamp_min(0)] >= min_count)
+        yf = y.float()[ok]
+        r = rows[ok]
+        mu = self.sum[r] / self.cnt[r][:, None]
+        g = (self.gsum / max(self.gn, 1)).float()
+        return float(((yf - mu) ** 2).sum()), float(((yf - g[None, :]) ** 2).sum()), int(ok.sum())
+
+
+def lowrank_b0_maps(w_down, g_glob, w_up, metric, r):
+    """Rank-r factorisation of the hybrid base's global term B_0 = W_down diag(g_glob) W_up in an output metric M
+    (for example the centred-head psi metric diag(gamma_f) G_U diag(gamma_f)): B_0 ~ D_r E_r with E_r = V_r^T the top-r
+    eigenvectors of B_0^T M B_0 and D_r = B_0 V_r (for orthonormal E_r this decoder is optimal in every PSD metric, so
+    no inverse of M is needed). Returns (E [r, d] fp32, D [d, r] fp32, the captured share of tr(B_0^T M B_0))."""
+    import torch
+
+    B = w_down.float() @ (g_glob.float()[:, None] * w_up.float())
+    K = B.T @ metric.float() @ B
+    ev, Q = torch.linalg.eigh((K + K.T) / 2)
+    ev, Q = ev.flip(0).clamp_min(0), Q.flip(1)
+    V = Q[:, :r]
+    tot = float(ev.sum())
+    return V.T.contiguous(), (B @ V).contiguous(), (float(ev[:r].sum()) / tot if tot > 0 else float("nan"))
+

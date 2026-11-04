@@ -129,4 +129,75 @@ def time_arms_interleaved(arms: Mapping[str, Callable[[], Any]], *, baseline: st
             "arms": out_arms, "pooled_between_block_sd_ms": pooled, "pairs": prs}
 
 
-__all__ = ["PROTOCOL", "TIMING_SCHEMA", "TimingError", "gpu_processes", "time_arms", "time_arms_interleaved", "time_fn"]
+def _capture(fn):
+    import torch
+
+    st = torch.cuda.Stream()
+    st.wait_stream(torch.cuda.current_stream())
+    with torch.cuda.stream(st):
+        for _ in range(3):
+            fn()
+    torch.cuda.current_stream().wait_stream(st)
+    g = torch.cuda.CUDAGraph()
+    with torch.cuda.graph(g):
+        fn()
+    return g.replay
+
+
+def _graph_us(fn, reps, flush=None, replays=5):
+    """Microseconds per call of fn inside one CUDA graph of ``reps`` calls (L2-hot); with ``flush`` = (src, dst)
+    device buffers larger than the L2, a copy src -> dst precedes every call and the same graph of copies alone is
+    subtracted (L2-cold)."""
+    import torch
+
+    def body(with_fn):
+        def f():
+            for _ in range(reps):
+                if flush is not None:
+                    flush[1].copy_(flush[0])
+                if with_fn:
+                    fn()
+        return f
+    out = []
+    for with_fn in ((True, False) if flush is not None else (True,)):
+        replay = _capture(body(with_fn))
+        replay()
+        torch.cuda.synchronize()
+        t = time.perf_counter()
+        for _ in range(replays):
+            replay()
+        torch.cuda.synchronize()
+        out.append((time.perf_counter() - t) / (replays * reps) * 1e6)
+    return out[0] - (out[1] if len(out) > 1 else 0.0)
+
+
+def op_breakdown(ops: Mapping[str, Callable[[], Any]], *, reps: int = 50, flush=None, total: str | None = None,
+                 bytes_by_op: Mapping[str, float] | None = None, bandwidth_gbs: float | None = None) -> dict[str, Any]:
+    """Per-op microseconds of a decode step's pieces, each op graph-repeated ``reps`` times (``_graph_us``; L2-hot, or
+    L2-cold with ``flush``). ``total`` names the op that runs the whole piece (for example one layer's non-MLP step);
+    the record then carries the sum of the other ops and the total minus that sum (fusion headroom beyond the ops'
+    own costs is not in it: each op is timed as its own graph nodes). ``bytes_by_op`` with ``bandwidth_gbs`` adds
+    each op's byte time at that bandwidth and the total's time not accounted for by bytes. Ops that raise are reported
+    as their error text. CUDA only."""
+    res: dict[str, Any] = {}
+    for name, f in ops.items():
+        try:
+            res[name] = _graph_us(f, reps, flush)
+        except Exception as ex:  # an op that cannot be captured is reported, not fatal
+            res[name] = repr(ex)[:200]
+    rec: dict[str, Any] = {"us": res, "reps": reps, "l2": "cold" if flush is not None else "hot"}
+    num = {k: v for k, v in res.items() if isinstance(v, float)}
+    if total is not None and total in num:
+        parts = sum(v for k, v in num.items() if k != total)
+        rec.update(total_us=num[total], sum_of_ops_us=parts, total_minus_ops_us=num[total] - parts)
+    if bytes_by_op and bandwidth_gbs:
+        bt = {k: float(b) / (bandwidth_gbs * 1e3) for k, b in bytes_by_op.items()}  # bytes / (GB/s) -> us
+        rec["byte_us"] = bt
+        if total is not None and total in num:
+            rec["total_bytes_us"] = sum(bt.values())
+            rec["total_not_bytes_us"] = num[total] - sum(bt.values())
+    return rec
+
+
+__all__ = ["PROTOCOL", "TIMING_SCHEMA", "TimingError", "gpu_processes", "op_breakdown", "time_arms", "time_arms_interleaved",
+           "time_fn"]
