@@ -1601,13 +1601,16 @@ class FirstOrderMoments:
         self.m = torch.zeros(n_layers, 5, inter, dtype=torch.float64, device=device)
         self.n = [0] * n_layers
 
-    def add(self, layer, rho, da, du):
+    def add(self, layer, rho, da, du, weight=None):
+        """Accumulate positions [..., I]; ``weight`` [..., I] (optional) weights each (position, neuron) term, e.g. a
+        tail mask so the fit minimises the residual only where the neuron is left to the base."""
         r, a, u = rho.double().reshape(-1, rho.shape[-1]), da.double().reshape(-1, da.shape[-1]), du.double().reshape(-1, du.shape[-1])
-        self.m[layer, 0] += (a * a).sum(0)
-        self.m[layer, 1] += (u * u).sum(0)
-        self.m[layer, 2] += (a * u).sum(0)
-        self.m[layer, 3] += (r * a).sum(0)
-        self.m[layer, 4] += (r * u).sum(0)
+        w = 1.0 if weight is None else weight.double().reshape(-1, rho.shape[-1])
+        self.m[layer, 0] += (w * a * a).sum(0)
+        self.m[layer, 1] += (w * u * u).sum(0)
+        self.m[layer, 2] += (w * a * u).sum(0)
+        self.m[layer, 3] += (w * r * a).sum(0)
+        self.m[layer, 4] += (w * r * u).sum(0)
         self.n[layer] += r.shape[0]
 
     def solve(self, layer, *, ridge=1e-6, fallback=None):

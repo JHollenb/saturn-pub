@@ -924,6 +924,25 @@ def test_first_order_base_reduces_to_hybrid_and_ls_recovers_constants():
     assert code_layer_macs("pool2_rescore", sh, k=2, p=5, m=3) == att + d * d + 2 * (d + 2 * I) + 2 * 5 * d + 3 * d
 
 
+def test_first_order_moments_weighted_equals_subset():
+    from mdb.sparse_switch import FirstOrderMoments
+
+    g = torch.Generator().manual_seed(3)
+    da, du = torch.randn(200, 6, generator=g), torch.randn(200, 6, generator=g)
+    rho = 0.4 * da - 1.3 * du + 0.1 * torch.randn(200, 6, generator=g)
+    keep = torch.rand(200, 6, generator=g) > 0.5
+    mw, ms = FirstOrderMoments(1, 6), FirstOrderMoments(1, 6)
+    mw.add(0, rho, da, du, weight=keep.float())
+    for j in range(6):
+        sel = keep[:, j]
+        sub = FirstOrderMoments(1, 1)
+        sub.add(0, rho[sel, j:j + 1], da[sel, j:j + 1], du[sel, j:j + 1])
+        ms.m[0, :, j] = sub.m[0, :, 0]
+    assert torch.allclose(mw.m, ms.m)
+    c, d = mw.solve(0)
+    assert torch.allclose(c, torch.full((6,), 0.4), atol=0.05) and torch.allclose(d, torch.full((6,), -1.3), atol=0.05)
+
+
 def test_exact_family_law_outside_domain_is_nan():
     import math
 
