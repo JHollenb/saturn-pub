@@ -65,3 +65,53 @@ def test_view_energy_kept_and_report():
     assert rep["energy_kept"][3]["zero"] == pytest.approx(0.0)
     assert rep["lists"][3]["self"][4]["recall"] == pytest.approx(1.0)
     assert rep["lists"][3]["self"][4]["margin_ratio_median"] == pytest.approx(0.0)
+
+
+QWEN15 = {"d": 1536, "inter": 8960, "context": 128, "n_heads": 12, "n_kv": 2, "head_dim": 128}
+
+
+def test_flop_fractions_match_the_derived_shapes():
+    from mdb.sparse_switch import code_layer_macs, flop_fraction, layer_macs
+
+    layer = layer_macs(**QWEN15)
+    assert layer["mlp"] == 3 * 1536 * 8960
+    assert 28 * layer["total"] == pytest.approx(1.32e9, rel=0.01)
+    for p, f in ((512, 0.225), (1024, 0.275), (2048, 0.375)):
+        assert flop_fraction([("pool", {"p": p})] * 28, QWEN15) == pytest.approx(f, abs=0.002)
+    assert flop_fraction([("native", {})] * 28, QWEN15) == pytest.approx(1.0)
+    assert code_layer_macs("global_base", QWEN15) < code_layer_macs("token_base", QWEN15)
+
+
+def test_global_base_products_equal_the_base_matrix():
+    from mdb.sparse_switch import code_products, global_base_matrix
+
+    gen = torch.Generator().manual_seed(3)
+    d, items = 5, 11
+    w_down = torch.randn(d, items, generator=gen, dtype=torch.float64)
+    w_up = torch.randn(items, d, generator=gen, dtype=torch.float64)
+    n = torch.randn(4, d, generator=gen, dtype=torch.float64)
+    g_glob = torch.rand(items, generator=gen, dtype=torch.float64)
+    g = torch.randn(4, items, generator=gen, dtype=torch.float64)
+    u = n @ w_up.T
+    none = torch.zeros(items, dtype=torch.bool)
+    write = code_products(g, u, none, g_glob) @ w_down.T
+    assert torch.allclose(write, n @ global_base_matrix(w_down, g_glob, w_up).T)
+    keep = torch.zeros(items, dtype=torch.bool)
+    keep[:3] = True
+    exact = code_products(g, u, keep, g_glob)
+    assert torch.allclose(exact[:, :3], g[:, :3] * u[:, :3]) and torch.allclose(exact[:, 3:], g_glob[3:] * u[:, 3:])
+    g_tok = torch.rand(items, generator=gen, dtype=torch.float64)
+    hyb = code_products(g, u, none, g_glob, hybrid=(g_tok, u))
+    assert torch.allclose(hyb, g_tok * u)
+
+
+def test_pool_mass_and_spearman():
+    from mdb.sparse_switch import pool_from_counts, pool_mass, spearman
+
+    scores = torch.tensor([[5.0, 4.0, 3.0, 2.0, 1.0]])
+    pool = pool_from_counts(torch.tensor([9, 0, 8, 0, 0]), 2)
+    assert pool.tolist() == [True, False, True, False, False]
+    assert float(pool_mass(scores, pool, 2)[0]) == pytest.approx(5 / 9)
+    x = torch.arange(10.0)
+    assert spearman(x, x ** 3) == pytest.approx(1.0)
+    assert spearman(x, -x) == pytest.approx(-1.0)
