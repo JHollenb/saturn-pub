@@ -81,3 +81,21 @@ In Part AB, all codes ran as propagated columns at all 28 layers of Qwen2.5-1.5B
 | global base alone | 0.175 | −134% |
 
 Static pools hold only 33–45% (p = 1,024) of the list's score mass. Per-position selection is what lets the cheap global base work.
+
+## Proxies and mixed-memory serving (Part AC, job-dd0421427744)
+
+`reading_metric` builds `M = W_gᵀ diag(w² c²) W_g + W_uᵀ diag(w² e²) W_u` from the gate and up weights, a neuron weight `w` and two neuron moments (`c² = E[(silu′(a) u)²]`, `e² = E[g²]`). `metric_proxy` returns the rank-k map of the gate input that minimises `E‖M^{1/2}(I − B) n‖²` (reduced-rank regression, solved through `S = L Lᵀ` and the eigenvectors of `Lᵀ M L`, with no inverse of `M`); with `M = I` it is the PCA of `S`. `proxy_gate_inputs` applies a proxy with an optional token-table or global centre, and `hybrid_error_scores` is the token-table hybrid base's own per-neuron error. `ServingLedger`, `column_equivalents` and `readout_fraction` count a mixed-memory stream in which each position appends rows from the proxy column (cost f) or a native column (cost 1).
+
+In Part AC, every proxy ran as a propagated column at all 28 layers of Qwen2.5-1.5B with an exact memory. KL gap closed at the first block position (and over the 32-position block), f derived from the shapes (not timed):
+
+| Code | f | KL gap closed, first position (block) | post-block agreement |
+|---|---|---|---|
+| AB's PCA proxy, k = 256, 512 exact, global base | 0.331 | 62% (69%) | 0.86 |
+| token-centred metric proxy, hybrid base, base-aware score | 0.331 | 63% (72%) | 0.88 |
+| the same with the global score | 0.331 | 61% (70%) | 0.88 |
+| the same with the weights-only centred ψ for the Fisher weight | 0.331 | 61% (71%) | 0.88 |
+| the same at k = 512 | 0.436 | 74% (80%) | 0.88 |
+| the same with 1,024 exact neurons | 0.381 | 65% (77%) | 0.89 |
+| uncentred metric proxy, global base | 0.331 | 53% (67%) | 0.86 |
+
+The metric proxy alone does not beat the PCA proxy (PCA already keeps 0.78–0.85 of `tr(M S)`); token centring and the rank k do. The hybrid base needs the base-aware score: with the global score it costs 5 points. Free-running serving (every position ≥ 4 replaced, uncovered tokens on a globally centred proxy) agrees with native at 0.43; margin gating at τ = 2 gives 0.83 at 825 column-equivalents per 1,000 tokens. Full tables: `FINDINGS-AC.md`.

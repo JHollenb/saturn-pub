@@ -183,7 +183,13 @@ def test_hybrid_error_scores_are_the_hybrid_base_residual():
 
 
 def test_serving_ledger_and_column_equivalents():
-    from mdb.sparse_switch import ServingLedger, column_equivalents, column_equivalents_decide_after, readout_fraction, top1_margin
+    from mdb.sparse_switch import (
+        ServingLedger,
+        column_equivalents,
+        column_equivalents_decide_after,
+        readout_fraction,
+        top1_margin,
+    )
 
     assert column_equivalents(0.331, 0.0) == pytest.approx(331.0)
     assert column_equivalents(0.331, 1.0) == pytest.approx(1000.0)
