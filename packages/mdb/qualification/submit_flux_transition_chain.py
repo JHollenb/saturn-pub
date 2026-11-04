@@ -27,6 +27,41 @@ def save(path, value):
         stream.write("\n")
 
 
+def storage_plan(config):
+    """Check actual NPY framing for the largest declared parameter/state members.
+
+    This is a necessary pre-admission storage check, not a prediction of every
+    future artifact's size. The complete inventory remains bounded at export.
+    """
+    import io
+    import math
+
+    import numpy as np
+
+    h, m, length = 3072, 9216, 1536
+    shapes = {"fused_weight": ((3*h + 2*m, h), "<u2"), "output_weight": ((h, h+m), "<u2"),
+        "full_native_register": ((1, length, h), "<u2"), "predicted_register": ((1, length, h), "<f4")}
+    members = {}
+    for name, (shape, dtype) in shapes.items():
+        header = io.BytesIO()
+        value_type = np.dtype(dtype)
+        np.lib.format.write_array_header_1_0(header, {"descr": np.lib.format.dtype_to_descr(value_type),
+            "fortran_order": False, "shape": shape})
+        members[name] = {"shape": list(shape), "stored_dtype": str(value_type), "header_bytes": header.tell(),
+            "bytes": header.tell() + math.prod(shape) * value_type.itemsize}
+    limits = config["transport_limits"]
+    member_limit = limits.get("max_member_bytes", 128 << 20)
+    if any(value["bytes"] > member_limit for value in members.values()):
+        raise ValueError("declared complete parameter/state NPY exceeds transport member bound")
+    parameter_lower_bound = 2 * (members["fused_weight"]["bytes"] + members["output_weight"]["bytes"])
+    if parameter_lower_bound > limits["max_expanded_bytes"]:
+        raise ValueError("declared two-block parameter storage exceeds expanded transport bound")
+    return {"schema": "mdb-flux-chain-storage-plan-v1", "members": members,
+        "max_member_bytes": member_limit, "two_block_parameter_bytes_lower_bound": parameter_lower_bound,
+        "max_expanded_bytes": limits["max_expanded_bytes"],
+        "scope": "Exact NPY framing and byte geometry for declared member types; necessary parameter lower bound only. Complete runtime inventory still enforces total size and all members."}
+
+
 def stage(run_dir):
     from mdb.execution_environment import intent
     from mdb.job_support import one_lease_scheduling_contract
@@ -46,7 +81,7 @@ def stage(run_dir):
         "array_storage": "bf16-bits", "archive_integer_ids": "native-int64",
         **{"max_" + key: engine["COUNTS"][key] for key in ("adapter_steps", "acts", "candidate_calls", "images", "vae_calls")},
         "max_wall_seconds": 900, "archive_compression_level": 1,
-        "transport_limits": {"max_archive_bytes": 1536 << 20, "max_expanded_bytes": 3072 << 20},
+        "transport_limits": {"max_archive_bytes": 1536 << 20, "max_expanded_bytes": 3072 << 20, "max_member_bytes": 256 << 20},
         "hypotheses": {
             "H-chain": "Independently calculate complete block6 text+image outputs from observed pre6 state and actual weights, then calculate block7 from precisely that predicted complete output. Freeze both roles and stages before current-step native6/7 entry; no native intermediate refresh.",
             "H-complete": "Both blocks include population LayerNorm, time modulation, all-token QKV, learned Q/K RMSNorm, upstream RoPE, full unmasked attention, SwiGLU, actual fused output projection, gated write and residual addition under explicit staged BF16 reference arithmetic. No current-target activation is an input.",
@@ -57,6 +92,7 @@ def stage(run_dir):
         "terminal_status": "unassessed",
         "scope": "Fresh seed79: complete both-stream block6→7 prediction chain from observed pre6 state; one public seal before either current target. Seven native suffix futures,212native transitions/14Acts/226receipts/7VAE, no direct block calls or retries. Numerical misses retained."}
     engine["validate_config"](config)
+    config["storage_plan"] = storage_plan(config)
     run_dir.mkdir(parents=True, exist_ok=False)
     save(run_dir / "plan.json", config)
     names = ["flux_transition_reference.py", "flux_mlp_replacement.py", "flux_attention_replacement_campaign.py",

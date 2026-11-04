@@ -29,10 +29,21 @@ def save(path, value):
 def publish(run, audit_path, output):
     from PIL import Image, ImageDraw, ImageFont
 
-    audit, request, envelope = (read(path) for path in (audit_path, run / "request.json", run / "report.json"))
-    if (audit["mechanics_status"] != "valid" or audit["counts"] != envelope["report"]["counts"]
+    audit, request = read(audit_path), read(run / "request.json")
+    if (run / "recovery.json").exists():
+        recovered = read(run / "recovery.json")
+        summary = read(run / audit["nested_audit_tensor_reference_base"] / "summary.json")
+        custody_matches = (audit["source"]["collection_mode"] == "authenticated-ssh-manifest-recovery"
+            and audit["source"]["recovery_sha256"] == sha(run / "recovery.json")
+            and audit["source"]["archive_sha256"] is None and recovered["archive_sha256"] is None
+            and audit["execution_status"]["job_state"] == recovered["scheduler_status"] == "failed"
+            and audit["source"]["request_sha256"] == recovered["request_sha256"])
+    else:
+        envelope = read(run / "report.json")
+        summary = envelope["report"]
+        custody_matches = audit["source"]["archive_sha256"] == envelope["archive_sha256"]
+    if (audit["mechanics_status"] != "valid" or audit["counts"] != summary["counts"] or not custody_matches
             or audit["source"]["request_sha256"] != request["request_sha256"]
-            or audit["source"]["archive_sha256"] != envelope["archive_sha256"]
             or audit["auditor_source_sha256"] != sha(Path(__file__).with_name("analyze_flux_transition_chain.py"))):
         raise ValueError("chain publication audit/request/source binding differs")
     order = [row["id"] for row in request["config"]["branches"]]
@@ -71,7 +82,7 @@ def publish(run, audit_path, output):
     result = {"schema": "mdb-flux-transition-chain-publication-v1", "audit": {"path": str(audit_path), "sha256": sha(audit_path)},
         **{key: audit[key] for key in ("source", "counts", "panel_counts", "seal", "mechanics_status", "instrument_status", "terminal_status",
             "model_identity", "checkpoint_sha256", "full_chain_forecast", "control_observations", "comparisons",
-            "continuation_trajectory", "timing", "physical_census", "limits")},
+            "continuation_trajectory", "timing", "physical_census", "execution_status", "limits")},
         "context": request["config"]["context"], "rows": exported,
         "nested_audit_tensor_reference_base": audit["nested_audit_tensor_reference_base"],
         "producer": {"path": Path(__file__).name, "sha256": sha(Path(__file__))},

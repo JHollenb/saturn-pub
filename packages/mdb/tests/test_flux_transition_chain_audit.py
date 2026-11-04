@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import ast
 import copy
+import gzip
+import hashlib
 import json
 import math
 import runpy
@@ -169,6 +171,16 @@ def test_zero_error_decomposition_remains_measured_zero():
     assert result['local']['rms'] == result['carried']['rms'] == result['total']['rms'] == 0
 
 
+def test_observer_full_reference_metric_abi_includes_signed_metrics_and_mae():
+    actual = np.array([[[1., -3.]]], np.float32)
+    reference = np.array([[[0., 1.]]], np.float32)
+    metrics = A['retained_reference_metrics'](actual, reference)
+    assert set(('l2', 'rms', 'mae', 'signed_mean', 'max_abs')) <= set(metrics)
+    assert metrics['mae'] == 2.5 and metrics['signed_mean'] == -1.5
+    inherited = A['field_error'](actual, reference)
+    assert {k: metrics[k] for k in inherited} == inherited
+
+
 def test_expected_cursor_advance_keeps_data_fixed_and_clock_witness_is_checked():
     scalar = lambda value: {'kind': 'scalar', 'value': value}
     point = {'logical_step': 3, 'phase': 'single', 'index': 7, 'local_clock': 7}
@@ -204,3 +216,137 @@ def test_custodial_timeline_rejects_native_entry_or_consumption_before_seal(tmp_
     (tmp_path/'timeline.jsonl').write_text(''.join(json.dumps({**v, 'sequence': i, 'seconds': i})+'\n' for i, v in enumerate(events)))
     with pytest.raises(ValueError, match='seal'):
         A['audit_timing'](parent, {'counts': A['COUNTS']})
+
+
+@pytest.mark.parametrize('corruption', ['success', 'rerun', 'archive', 'payload', 'request'])
+def test_failed_recovery_cannot_rewrite_success_or_payload_identity(corruption):
+    request = {'request_sha256': 'a'*64}
+    job = {'job_id': 'job-tiny', 'state': 'failed', 'result': {'returncode': 1, 'executed_payload': {'sha256': 'b'*64}}}
+    recovery = {'schema': 'mdb-complete-result-failed-publication-recovery-v1', 'job_id': 'job-tiny',
+        'scheduler_status': 'failed', 'model_calls_during_recovery': 0, 'original_job_and_log_preserved': True,
+        'archive_sha256': None, 'request_sha256': 'a'*64, 'executed_payload_sha256': 'b'*64}
+    A['verify_failed_recovery_identity'](recovery, job, request)
+    if corruption == 'success':
+        job['state'] = 'succeeded'
+    elif corruption == 'rerun':
+        recovery['model_calls_during_recovery'] = 1
+    elif corruption == 'archive':
+        recovery['archive_sha256'] = 'c'*64
+    elif corruption == 'payload':
+        recovery['executed_payload_sha256'] = 'c'*64
+    else:
+        recovery['request_sha256'] = 'c'*64
+    with pytest.raises(ValueError, match='failed job'):
+        A['verify_failed_recovery_identity'](recovery, job, request)
+
+
+def recovery_inventory(tmp_path):
+    files = {'summary.json': '{}\n', 'transaction/seal.json': '{}\n', 'failure.json': '{"error":"transport"}\n'}
+    for name, content in files.items():
+        path = tmp_path/name
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(content)
+    digest = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+    (tmp_path/'files.json').write_text(json.dumps({name: digest(tmp_path/name) for name in files}))
+    inventory = {p.relative_to(tmp_path).as_posix(): {'sha256': digest(p), 'bytes': p.stat().st_size}
+                 for p in tmp_path.rglob('*') if p.is_file()}
+    before = {'schema': 'mdb-authenticated-remote-inventory-v1', 'files': inventory,
+        'file_count': len(inventory), 'expanded_bytes': sum(v['bytes'] for v in inventory.values()),
+        'max_member_bytes': max(v['bytes'] for v in inventory.values()),
+        'manifest_sha256': digest(tmp_path/'files.json'), 'summary_sha256': digest(tmp_path/'summary.json'),
+        'seal_sha256': digest(tmp_path/'transaction/seal.json')}
+    limits = {'max_member_bytes': 4096, 'max_expanded_bytes': 16384, 'max_files': 20}
+    return before, limits
+
+
+def test_recovery_exact_manifest_includes_failed_export_metadata(tmp_path):
+    before, limits = recovery_inventory(tmp_path)
+    actual = A['verify_recovered_inventory'](tmp_path, before, copy.deepcopy(before), limits)
+    assert set(actual) == {'summary.json', 'transaction/seal.json', 'failure.json', 'files.json'}
+
+
+@pytest.mark.parametrize('corruption', ['changed_remote', 'extra', 'missing', 'tamper', 'symlink', 'member_bound'])
+def test_recovery_rejects_partial_changed_aliased_or_unbounded_bytes(tmp_path, corruption):
+    before, limits = recovery_inventory(tmp_path)
+    after = copy.deepcopy(before)
+    if corruption == 'changed_remote':
+        after['summary_sha256'] = 'f'*64
+    elif corruption == 'extra':
+        (tmp_path/'unrecorded.npy').write_bytes(b'not-admitted')
+    elif corruption == 'missing':
+        (tmp_path/'summary.json').unlink()
+    elif corruption == 'tamper':
+        (tmp_path/'summary.json').write_text('{"new":1}')
+    elif corruption == 'symlink':
+        (tmp_path/'alias').symlink_to(tmp_path/'summary.json')
+    else:
+        limits['max_member_bytes'] = 3
+    with pytest.raises(ValueError):
+        A['verify_recovered_inventory'](tmp_path, before, after, limits)
+
+
+def test_complete_failed_transport_recovery_keeps_failed_status_and_no_fake_report(tmp_path):
+    from mdb.forecast_transaction import ForecastTransaction, verify_transaction
+
+    root = tmp_path/'run-02'
+    data = root/'extracted/flux-transition-chain-result'
+    data.mkdir(parents=True)
+    save = lambda p, v: p.write_text(json.dumps(v, sort_keys=True)+'\n')
+    sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+    request = {'source_hashes': {}, 'config': {}}
+    request['request_sha256'] = hashlib.sha256(json.dumps(request, sort_keys=True, allow_nan=False).encode()).hexdigest()
+    save(root/'request.json', request)
+    job = {'job_id': 'job-tiny', 'state': 'failed', 'config': {'request_sha256': request['request_sha256']},
+        'result': {'returncode': 1, 'executed_payload': {'sha256': 'b'*64}}}
+    save(root/'job.json', job)
+    with ForecastTransaction(data/'transaction', model_identity='tiny', input_identity='tiny', source_identity='tiny',
+                             frontier={'kind': 'architectural'}) as tx:
+        tx.predict('tiny', lambda _: {'predictions': {'value': np.array([1.], np.float32)}})
+        seal = tx.seal()
+        tx.execute('native', lambda _: {'fixture_only': True})
+    save(data/'transaction-report.json', tx.report())
+    summary = {'job_id': 'job-tiny', 'request_sha256': request['request_sha256'], 'counts': A['COUNTS'],
+        'panel_counts': A['PANEL_COUNTS'], 'seal': seal, 'transaction_verification': verify_transaction(data/'transaction')}
+    save(data/'summary.json', summary)
+    save(data/'failure.json', {'job_id': 'job-tiny', 'request_sha256': request['request_sha256'],
+        'mechanics_status': 'errored', 'error': 'CustodyError: archive member exceeds byte bound'})
+    save(data/'files.json', {p.relative_to(data).as_posix(): sha(p) for p in data.rglob('*') if p.is_file()})
+    inventory = {p.relative_to(data).as_posix(): {'sha256': sha(p), 'bytes': p.stat().st_size}
+                 for p in data.rglob('*') if p.is_file()}
+    remote = {'schema': 'mdb-authenticated-remote-inventory-v1', 'job_id': 'job-tiny',
+        'remote_path': '/remote/job-tiny/flux-transition-chain-result/', 'files': inventory,
+        'file_count': len(inventory), 'expanded_bytes': sum(v['bytes'] for v in inventory.values()),
+        'max_member_bytes': max(v['bytes'] for v in inventory.values()), 'manifest_sha256': sha(data/'files.json'),
+        'summary_sha256': sha(data/'summary.json'), 'seal_sha256': sha(data/'transaction/seal.json')}
+    for name in ('recovery-remote-before.json', 'recovery-remote-after.json'):
+        save(root/name, remote)
+    save(root/'recovery-local-inventory.json', {k: remote[k] for k in ('files', 'file_count', 'expanded_bytes')})
+    marker = 'MDB_FLUX_TRANSITION_CHAIN_PHASE '
+    events = [{'kind': 'transition_chain_sealed', 'sequence': 0, 'seal': seal},
+        {'kind': 'complete', 'sequence': 1, 'counts': A['COUNTS']}]
+    raw = (''.join(marker+json.dumps(v)+'\n' for v in events)+'CustodyError: archive member exceeds byte bound\n').encode()
+    compressed = gzip.compress(raw, mtime=0)
+    (root/'worker.log.gz').write_bytes(compressed)
+    save(root/'log-custody.json', {'schema': 'mdb-collector-log-custody-v1', 'storage': 'gzip',
+        'compressed_bytes': len(compressed), 'uncompressed_bytes': len(raw),
+        'compressed_sha256': hashlib.sha256(compressed).hexdigest(), 'uncompressed_sha256': hashlib.sha256(raw).hexdigest()})
+    for name in ('recover_result.py', 'remote_inventory.py'):
+        (tmp_path/name).write_text('# fixture procedure; no model\n')
+    recovery = {'schema': 'mdb-complete-result-failed-publication-recovery-v1', 'job_id': 'job-tiny',
+        'scheduler_status': 'failed', 'model_calls_during_recovery': 0, 'original_job_and_log_preserved': True,
+        'archive_sha256': None, 'request_sha256': request['request_sha256'], 'executed_payload_sha256': 'b'*64,
+        'worker_report_emitted': False, 'remote_path': remote['remote_path'],
+        'recovery_limits': {'max_member_bytes': 256 << 20, 'max_expanded_bytes': 3072 << 20, 'max_files': 20000}}
+    for key, path in (('remote_before_sha256', root/'recovery-remote-before.json'),
+        ('remote_after_sha256', root/'recovery-remote-after.json'), ('local_inventory_sha256', root/'recovery-local-inventory.json'),
+        ('remote_manifest_sha256', data/'files.json'), ('remote_summary_sha256', data/'summary.json'),
+        ('remote_seal_sha256', data/'transaction/seal.json'), ('recovery_script_sha256', tmp_path/'recover_result.py'),
+        ('remote_inventory_script_sha256', tmp_path/'remote_inventory.py')):
+        recovery[key] = sha(path)
+    save(root/'recovery.json', recovery)
+    h = runpy.run_path(str(HERE/'summarize_context_window.py'))
+    custody, recovered = A['recovered_custody'](root, h, request, job)
+    assert recovered == summary and custody['mechanics_status'] == 'verified'
+    assert custody['scheduler_status'] == job['state'] == 'failed'
+    assert custody['archive_sha256'] is None and custody['worker_report_emitted'] is False
+    assert not (root/'report.json').exists()

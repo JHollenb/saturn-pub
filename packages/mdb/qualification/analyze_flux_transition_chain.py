@@ -175,9 +175,16 @@ def vector_decomposition(predicted, propagated, native):
 def current_parent(root, *, custody_verify=None):
     root = Path(root).resolve()
     h = runpy.run_path(str(HERE / "summarize_context_window.py"))
-    request, job, envelope = [h["read"](root / name) for name in ("request.json", "job.json", "report.json")]
-    verify = custody_verify or runpy.run_path(str(HERE / "flux_family_custody.py"))["verify"]
-    custody = verify(root, limits=request["config"].get("transport_limits"))
+    request, job = [h["read"](root / name) for name in ("request.json", "job.json")]
+    if (root / "recovery.json").is_file():
+        custody, summary = recovered_custody(root, h, request, job)
+        envelope = {"job_id": job["job_id"], "request_sha256": request["request_sha256"],
+            "archive_root": "flux-transition-chain-result", "report": summary,
+            "authority": "in-memory native summary view; no worker transport REPORT was emitted"}
+    else:
+        envelope = h["read"](root / "report.json")
+        verify = custody_verify or runpy.run_path(str(HERE / "flux_family_custody.py"))["verify"]
+        custody = verify(root, limits=request["config"].get("transport_limits"))
     require(custody["mechanics_status"] == "verified" and custody["job_id"] == job["job_id"] == envelope["job_id"]
             and custody["request_sha256"] == request["request_sha256"] == envelope["request_sha256"]
             and envelope["archive_root"] == "flux-transition-chain-result", "chain custody/job/archive differs")
@@ -210,6 +217,106 @@ def current_parent(root, *, custody_verify=None):
     return {"root": root, "data": data, "result_root": data, "helpers": h, "request": request, "job": job,
             "custody": custody, "source": source, "summary": summary, "plan": plan,
             "frozen": frozen, "binding": binding, "transaction": transaction}
+
+
+def verify_failed_recovery_identity(recovery, job, request):
+    require(recovery["schema"] == "mdb-complete-result-failed-publication-recovery-v1"
+            and recovery["job_id"] == job["job_id"] and job["state"] == recovery["scheduler_status"] == "failed"
+            and job["result"]["returncode"] == 1 and recovery["model_calls_during_recovery"] == 0
+            and recovery["original_job_and_log_preserved"] is True and recovery["archive_sha256"] is None
+            and recovery["request_sha256"] == request["request_sha256"]
+            and recovery["executed_payload_sha256"] == job["result"]["executed_payload"]["sha256"],
+            "recovery does not preserve original failed job/request/payload identity")
+
+
+def verify_recovered_inventory(data, before, after, limits):
+    """Exact regular-file custody; no numerical values are interpreted here."""
+    helper = runpy.run_path(str(HERE / "flux_family_custody.py"))
+    require(before == after and before["schema"] == "mdb-authenticated-remote-inventory-v1",
+            "remote inventory changed during recovery")
+    checked_limits = helper["_limits"](limits)
+    actual = helper["_inventory"](data, checked_limits)
+    helper["_check_manifest"](data, actual, checked_limits)
+    require(actual == before["files"] and len(actual) == before["file_count"]
+            and sum(item["bytes"] for item in actual.values()) == before["expanded_bytes"]
+            and max(item["bytes"] for item in actual.values()) == before["max_member_bytes"]
+            and actual["files.json"]["sha256"] == before["manifest_sha256"]
+            and actual["summary.json"]["sha256"] == before["summary_sha256"]
+            and actual["transaction/seal.json"]["sha256"] == before["seal_sha256"],
+            "recovered local bytes differ from complete authenticated remote inventory")
+    return actual
+
+
+def recovered_custody(root, h, request, job):
+    """Authenticate a failed publisher's complete bytes without a fake report."""
+    helper = runpy.run_path(str(HERE / "flux_family_custody.py"))
+    recovery = h["read"](root / "recovery.json")
+    verify_failed_recovery_identity(recovery, job, request)
+    require(not (root / "report.json").exists() and recovery["worker_report_emitted"] is False
+            and helper["_request"](root) == request, "recovery must preserve absent worker REPORT and exact request")
+    declared = (job.get("config") or {}).get("request_sha256")
+    require(declared is None or declared == request["request_sha256"], "scheduler request binding differs")
+    limits = {"max_member_bytes": 256 << 20, "max_expanded_bytes": 3072 << 20, "max_files": 20000}
+    require(recovery["recovery_limits"] == limits, "recovery bounds differ from declared finite allowance")
+    for key, name in (("remote_before_sha256", "recovery-remote-before.json"),
+                      ("remote_after_sha256", "recovery-remote-after.json"),
+                      ("local_inventory_sha256", "recovery-local-inventory.json")):
+        require(recovery[key] == sha_file(root / name), "recovery inventory receipt digest differs")
+    before, after = [h["read"](root / name) for name in ("recovery-remote-before.json", "recovery-remote-after.json")]
+    require(before["job_id"] == job["job_id"] and before["remote_path"] == recovery["remote_path"]
+            and before["remote_path"].endswith("/" + job["job_id"] + "/flux-transition-chain-result/"),
+            "authenticated recovery source job/path differs")
+    data = root / "extracted/flux-transition-chain-result"
+    actual = verify_recovered_inventory(data, before, after, limits)
+    local = h["read"](root / "recovery-local-inventory.json")
+    require(local == {"files": actual, "file_count": len(actual), "expanded_bytes": before["expanded_bytes"]},
+            "recorded local recovery inventory differs")
+    for key, name in (("remote_manifest_sha256", "files.json"), ("remote_summary_sha256", "summary.json"),
+                      ("remote_seal_sha256", "transaction/seal.json")):
+        require(recovery[key] == actual[name]["sha256"], "remote metadata pin differs from recovered bytes")
+    for key, name in (("recovery_script_sha256", "recover_result.py"), ("remote_inventory_script_sha256", "remote_inventory.py")):
+        require(recovery[key] == sha_file(root.parent / name), "recovery procedure source differs")
+    require((root / "worker.log.gz").is_file() and not (root / "worker.log").exists(), "original compressed scheduler log required")
+    log = h["collector_log"](root, max_bytes=4 << 20)
+    require("MDB_FLUX_FAMILY_REPORT_V1 " not in log and "MDB_FLUX_FAMILY_PART_V1 " not in log,
+            "recovery lane cannot substitute for an emitted worker archive/report")
+    marker = "MDB_FLUX_TRANSITION_CHAIN_PHASE "
+    events = [json.loads(line.split(marker, 1)[1]) for line in log.splitlines() if line.startswith(marker)]
+    seals, complete = ([v for v in events if v["kind"] == kind] for kind in ("transition_chain_sealed", "complete"))
+    summary = h["read"](data / "summary.json")
+    complete_lines = [line for line in log.splitlines() if line.startswith(marker)
+                      and json.loads(line[len(marker):])["kind"] == "complete"]
+    require(len(seals) == len(complete) == 1 and seals[0]["sequence"] < complete[0]["sequence"]
+            and seals[0]["seal"] == summary["seal"] and complete[0]["counts"] == COUNTS
+            and len(complete_lines) == 1 and "archive member exceeds byte bound" in log
+            and log.index(complete_lines[0]) < log.index("archive member exceeds byte bound"),
+            "complete native log does not precede transport failure")
+    failure = h["read"](data / "failure.json")
+    require(failure["job_id"] == summary["job_id"] == job["job_id"]
+            and failure["request_sha256"] == summary["request_sha256"] == request["request_sha256"]
+            and failure["mechanics_status"] == "errored" and "archive member exceeds byte bound" in failure["error"]
+            and summary["counts"] == COUNTS and summary["panel_counts"] == PANEL_COUNTS,
+            "failed exporter and completed native summary identities differ")
+    report = h["read"](data / "transaction-report.json")
+    checked = h["verify_transaction"](data / "transaction", expected_seal_sha256=summary["seal"]["seal_sha256"],
+                                       expected_event_head=report["event_head"])
+    phase_events = [h["read"](p) for p in sorted((data / "transaction/events").glob("*.json"))]
+    require(checked["phase"] == "closed" and report["phase"] == "closed" and not report["failure"] and not report["violations"]
+            and phase_events == report["events"]
+            and SHARED["transaction_verifications_match"](checked, summary["transaction_verification"]),
+            "recovered transaction lacks complete clean durable observation")
+    return {"schema": "mdb-flux-transition-chain-recovery-custody-v1", "mechanics_status": "verified",
+        "job_id": job["job_id"], "request_sha256": request["request_sha256"], "archive_sha256": None,
+        "collection_mode": "authenticated-ssh-manifest-recovery", "scheduler_status": "failed",
+        "publication_status": "failed original transport; completed native evidence separately recovered and audited",
+        "files_manifest_sha256": actual["files.json"]["sha256"], "recovery_sha256": sha_file(root / "recovery.json"),
+        "verified_artifact_files": len(actual), "expanded_bytes": before["expanded_bytes"], "max_member_bytes": before["max_member_bytes"],
+        "recovery_inventory_sha256": {name: sha_file(root / name) for name in
+            ("recovery-remote-before.json", "recovery-remote-after.json", "recovery-local-inventory.json")},
+        "original_job_sha256": sha_file(root / "job.json"), "original_log_custody_sha256": sha_file(root / "log-custody.json"),
+        "executed_payload_sha256": recovery["executed_payload_sha256"], "worker_report_emitted": False,
+        "native_summary_sha256": actual["summary.json"]["sha256"], "recovery_limits": limits,
+        "recovery_procedure_sources": {name: sha_file(root.parent / name) for name in ("recover_result.py", "remote_inventory.py")}}, summary
 
 
 def audit_forecasts(parent, e):
@@ -402,6 +509,13 @@ def audit_native_paths(parent, e, predictions, observed):
     return rows, paths, prefix_paths, native, common, pixels, latents, controls
 
 
+def retained_reference_metrics(actual, reference):
+    """Add observer MAE to the inherited full-field metric ABI."""
+    metrics = field_error(actual, reference)
+    metrics["mae"] = float(np.mean(np.abs(np.asarray(actual, dtype=np.float64) - np.asarray(reference, dtype=np.float64))))
+    return metrics
+
+
 def audit_observer(parent, e, rows, prefixes):
     record = e.read(e.data / "continuation-observations.json")
     plan = parent["plan"]["observation_plan"]
@@ -480,7 +594,7 @@ def audit_observer(parent, e, rows, prefixes):
                         "independent_fixed64_metrics": PREVIOUS["compare_arrays"](samples[slot].reshape(1, -1, 1), ref_values.reshape(1, -1, 1)),
                         "independently_verified_full_norm": name in references}
                     if name in references:
-                        metrics = field_error(full[(name, index, slot)], reference)
+                        metrics = retained_reference_metrics(full[(name, index, slot)], reference)
                         diagnostic["independent_full_metrics"] = metrics
                         diagnostic["worker_minus_independent_reduction"] = {k: reported[k] - metrics[k] for k in ("l2", "rms", "mae", "signed_mean", "max_abs")}
                     comparisons[ref][slot] = diagnostic
@@ -556,7 +670,9 @@ def analyze(root):
         "source": {**parent["custody"], "source_record_sha256": sha_file(data / "source.json"),
             "staged_source_hashes": parent["request"]["source_hashes"], "global_plan_freeze": parent["frozen"], "custody_verifications": 1},
         "model_identity": parent["source"]["model_identity"], "checkpoint_sha256": parent["source"]["checkpoint_sha256"],
-        "execution_status": {"job_id": parent["job"]["job_id"], "job_state": parent["job"]["state"]},
+        "execution_status": {"job_id": parent["job"]["job_id"], "job_state": parent["job"]["state"],
+            "collection_mode": parent["custody"].get("collection_mode", "verified-worker-archive"),
+            "publication_status": parent["custody"].get("publication_status", "worker archive/report emitted")},
         "counts": COUNTS, "panel_counts": PANEL_COUNTS, "seal": parent["summary"]["seal"], "timing": timing,
         "transaction_verification": parent["transaction"], "sealed_hypotheses": hypotheses, "fresh_builder": lineage,
         "typed_store_counts": e.store["counts"], "full_chain_forecast": {"source_binding": parent["binding"],
