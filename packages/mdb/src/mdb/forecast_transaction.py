@@ -794,11 +794,13 @@ def verify_transaction(root, *, expected_seal_sha256=None, expected_event_head=N
     An external expected seal/head authenticates the identity being checked.
     Without those pins this establishes local hash consistency, not provenance
     against an actor who can replace the entire directory.
+    The default byte limit is 1 GiB. A caller may explicitly admit up to 8 GiB
+    for a larger, independently sized transaction; all integrity checks remain.
     """
     root = Path(root).resolve()
     if type(max_files) is not int or not 1 <= max_files <= 65536:
         raise ForecastTransactionError("invalid offline file bound")
-    if type(max_bytes) is not int or not 1 <= max_bytes <= 1024 * 1024 * 1024:
+    if type(max_bytes) is not int or not 1 <= max_bytes <= 8 * 1024 * 1024 * 1024:
         raise ForecastTransactionError("invalid offline byte bound")
 
     def path_for(relative):
