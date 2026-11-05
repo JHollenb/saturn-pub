@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import ast
 import copy
+import hashlib
+import json
 import runpy
 from pathlib import Path
 
@@ -241,3 +243,185 @@ def test_saved_verifier_receives_declared_large_geometry_and_exact_seal(tmp_path
     with pytest.raises(ReachedDeclaredBound):
         A["verify_transaction"](tmp_path, summary, {}, history, max_bytes=limit)
     assert calls == [(tmp_path / "transaction" / history, "b" * 64, limit)]
+
+
+@pytest.fixture
+def typed_int64_origin(tmp_path):
+    """A real public typed CAS with tensor values, without any model instance."""
+    import torch
+    from saturn_pub import StateCut
+    from saturn_pub.store import LocalStore
+
+    from mdb.tensor_archive import write_tensor_archive
+
+    ids = torch.tensor([-(2 ** 63), 2 ** 63 - 1, 2 ** 53 + 1, -(2 ** 53 + 1), 0, 1, 2, 3], dtype=torch.int64).reshape(1, 2, 4)
+    payload = {"latent": torch.zeros((1, 2, 2), dtype=torch.bfloat16),
+        "conditioning": torch.zeros((1, 1, 2), dtype=torch.bfloat16), "img_ids": ids,
+        "txt_ids": ids[:, :1].clone(), "timesteps": torch.tensor([1000., 750., 500., 250.]),
+        "sigmas": torch.tensor([1., .75, .5, .25, 0.]), "step": 0, "phase": "project", "cursor": 0,
+        **dict.fromkeys(("context", "image", "text", "noise_prediction"))}
+    point = {"logical_step": 0, "phase": "project", "index": None}
+    cut = StateCut("a" * 64, {"fixture": "tensor-only"}, "fixture.project", None, payload, execution_point=point, surface={})
+    LocalStore(tmp_path / "typed-store").save(cut)
+    origin = {"cut": cut.fingerprint, "point": point,
+        "inputs": {key: write_tensor_archive(tmp_path / (key + ".npy"), payload[key]) for key in A["SLOTS"]}}
+    return A["Evidence"](tmp_path, tmp_path / "unused-parameter-cache", {}), origin, payload
+
+
+def test_modern_int64_ids_remain_lossless_and_match_actual_typed_cut(typed_int64_origin):
+    e, origin, payload = typed_int64_origin
+    result = A["check_origin"](e, origin, 0)
+    for key in ("img_ids", "txt_ids"):
+        assert origin["inputs"][key]["encoding"] == "native-npy-v1"
+        assert result[key].dtype == np.dtype("int64")
+        assert result[key].tobytes() == payload[key].numpy().tobytes()
+        assert A["exact"](result[key], e.slot(origin["cut"], key))
+        assert not result[key].flags.writeable
+    assert result["img_ids"][0, 0, 2] == 2 ** 53 + 1
+
+
+@pytest.mark.parametrize("corruption", ["file-hash", "native-hash", "dtype", "shape", "valid-foreign-ids", "unknown-encoding"])
+def test_modern_id_corruption_or_valid_foreign_ids_cannot_pass_typed_join(typed_int64_origin, corruption):
+    import torch
+
+    from mdb.tensor_archive import write_tensor_archive
+
+    e, original, payload = typed_int64_origin
+    origin = copy.deepcopy(original)
+    record = origin["inputs"]["img_ids"]
+    if corruption == "file-hash":
+        record["sha256"] = "0" * 64
+    elif corruption == "native-hash":
+        record["descriptor"]["sha256"] = "0" * 64
+    elif corruption == "dtype":
+        record["descriptor"]["dtype"] = "torch.float32"
+    elif corruption == "shape":
+        record["stored_shape"] = [1, 4, 2]
+    elif corruption == "unknown-encoding":
+        record["encoding"] = "unqualified-id-conversion"
+    else:
+        changed = payload["img_ids"].clone()
+        changed[0, 1, 0] = torch.tensor(987654321, dtype=torch.int64)
+        origin["inputs"]["img_ids"] = write_tensor_archive(e.data / "foreign-ids.npy", changed)
+    with pytest.raises(ValueError):
+        A["check_origin"](e, origin, 0)
+
+
+def test_unencoded_legacy_float_witness_fallback_remains_supported(typed_int64_origin):
+    e, origin, payload = typed_int64_origin
+    record = copy.deepcopy(origin["inputs"]["timesteps"])
+    del record["encoding"]
+    actual = e.array(record)
+    assert actual.dtype == np.float32 and actual.tobytes() == payload["timesteps"].numpy().tobytes()
+
+
+@pytest.fixture
+def correction_fixture(tmp_path, monkeypatch):
+    run, helpers = tmp_path / "run", tmp_path / "corrected"
+    frozen = run / "independent-math-freeze"
+    frozen.mkdir(parents=True)
+    helpers.mkdir()
+    own = "analyze_flux_initial_noise.py"
+    (frozen / own).write_text("original immutable reader")
+    (helpers / own).write_text("corrected reader")
+    (frozen / "math.py").write_text("unchanged mathematics")
+    (helpers / "math.py").write_text("unchanged mathematics")
+    sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+    cohort = {p.name: sha(p) for p in frozen.iterdir()}
+    request, job = {"request_sha256": "a" * 64, "independent_math_sources": cohort}, {"job_id": "job-fixture"}
+    globals_ = A["audit_source_authority"].__globals__
+    monkeypatch.setitem(globals_, "HERE", helpers)
+    # Pin-validation tests isolate the separately tested AST comparison.
+    monkeypatch.setitem(globals_, "reader_ast_proof", lambda *_: {"fixture": "unchanged"})
+    def reference(name, value):
+        path = tmp_path / name
+        path.write_text(json.dumps(value))
+        return {"path": str(path), "sha256": sha(path)}
+    failed = {key: reference(key + ".json", {"output": key}) for key in ("stdout", "stderr")}
+    failed["receipt"] = reference("failed-receipt.json", {"returncode": 1, "model_calls": 0,
+        "source_before_sha256": cohort[own], "source_after_sha256": cohort[own],
+        "stdout_sha256": failed["stdout"]["sha256"], "stderr_sha256": failed["stderr"]["sha256"],
+        "command": [str(frozen / own), str(run)]})
+    record = {"schema": "mdb-flux-initial-noise-reader-correction-v1", "job_id": job["job_id"],
+        "request_sha256": request["request_sha256"], "original_auditor_sha256": cohort[own],
+        "corrected_auditor_sha256": sha(helpers / own), "original_cohort_sha256s": cohort,
+        "model_calls": 0, "producer_files_changed": False, "scope": "lossless-modern-native-reader-only",
+        "failed_attempt": failed,
+        "qualification": reference("qualification.json", {"returncode": 0, "analyzer_sha256": sha(helpers / own)}),
+        "ast_proof": {"fixture": "unchanged"}}
+    path = tmp_path / "correction.json"
+    path.write_text(json.dumps(record))
+    return run, helpers, request, job, record, path
+
+
+def test_reader_correction_is_explicit_and_leaves_original_cohort_strict(correction_fixture):
+    run, _, request, job, _, path = correction_fixture
+    with pytest.raises(ValueError, match="explicit correction"):
+        A["audit_source_authority"](run, request, job, None)
+    result = A["audit_source_authority"](run, request, job, path)
+    assert result["record"]["model_calls"] == 0 and "post-outcome" in result["status"]
+
+
+@pytest.mark.parametrize("field", ["original_auditor_sha256", "corrected_auditor_sha256", "request_sha256", "job_id"])
+def test_wrong_correction_identity_refuses(correction_fixture, field):
+    run, _, request, job, record, path = correction_fixture
+    record[field] = "wrong"
+    path.write_text(json.dumps(record))
+    with pytest.raises(ValueError, match="identity/scope"):
+        A["audit_source_authority"](run, request, job, path)
+
+
+@pytest.mark.parametrize("change", ["frozen", "unrelated", "failed-reference", "proof"])
+def test_correction_never_authorizes_other_source_or_evidence_changes(correction_fixture, change):
+    run, helpers, request, job, record, path = correction_fixture
+    if change == "frozen":
+        (run / "independent-math-freeze/math.py").write_text("changed")
+    elif change == "unrelated":
+        (helpers / "math.py").write_text("changed")
+    elif change == "failed-reference":
+        Path(record["failed_attempt"]["stderr"]["path"]).write_text("rewritten failure")
+    else:
+        record["ast_proof"] = {"fake": "claim"}
+        path.write_text(json.dumps(record))
+    with pytest.raises(ValueError):
+        A["audit_source_authority"](run, request, job, path)
+
+
+def test_ast_proof_rejects_changed_math_or_non_source_custody_control():
+    old = '''class Evidence:
+    def array(self, record):
+        return record
+def equation(value):
+    return value * value
+def custody(run):
+    for name, digest in request["independent_math_sources"].items():
+        require(sha(run / "independent-math-freeze" / name) == sha(HERE / name) == digest, "changed")
+    return run
+def analyze(run, *, parameter_root=None, checkpoint=None, ssh=None):
+    data, request, job, collection, inventory = custody(run)
+    return {"scope": "fixture"}
+'''
+    new = '''class Evidence:
+    def array(self, record):
+        return load_lossless(record)
+def equation(value):
+    return value * value
+def reader_ast_proof(a, b):
+    pass
+def audit_source_authority(a, b, c, d):
+    pass
+def custody(run, *, audit_correction=None):
+    audit_source_authority(run, request, job, audit_correction)
+    return run
+def analyze(run, *, parameter_root=None, checkpoint=None, ssh=None, audit_correction=None):
+    data, request, job, collection, inventory = custody(run, audit_correction=audit_correction)
+    authority = audit_source_authority(run, request, job, audit_correction)
+    return {"scope": "fixture", "preoutcome_auditor_sha256": request["independent_math_sources"]["analyze_flux_initial_noise.py"], "audit_correction": authority}
+'''
+    assert A["reader_ast_proof"](old, new)["analyze_control_unchanged"]
+    with pytest.raises(ValueError, match="equation/control AST"):
+        A["reader_ast_proof"](old, new.replace("value * value", "value * value * value"))
+    with pytest.raises(ValueError, match="custody correction"):
+        A["reader_ast_proof"](old, new.replace("    return run", "    return altered"))
+    with pytest.raises(ValueError, match="top-level"):
+        A["reader_ast_proof"](old, "MATH = changed_authority\n" + new)

@@ -1,8 +1,10 @@
 """Independent saved-only initial-noise112 and observed-Z2 matched56 audit.
 
-No producer, native model, replay, or learned operator is executed. Numerical
-discrepancies are observations; source/custody, clock and own-input joins are
-mechanics. The separately pinned older NumPy program supplies operator algebra.
+No producer or native framework forward/replay is executed. The independently
+pinned NumPy program recomputes all168 transitions using checkpoint parameters;
+the legacy models_executed flag refers to native forwards, not this arithmetic.
+Numerical discrepancies are observations; custody, clocks and own-input joins
+are mechanics.
 """
 from __future__ import annotations
 
@@ -215,10 +217,15 @@ class Evidence(BASE["SavedEvidence"]):
         self.parameter_root, self.recipes = Path(cache), recipes
 
     def array(self, record):
-        if record.get("storage") != "checkpoint-recipe-v1":
-            return super().array(record)
         from mdb.tensor_archive import load_tensor_archive
 
+        if record.get("storage") != "checkpoint-recipe-v1":
+            if "encoding" not in record:
+                return super().array(record)
+            require(record["encoding"] in {"bf16-bits-v1", "native-npy-v1"}, "unsupported modern tensor encoding")
+            value = load_tensor_archive(self.data, record)
+            require(value.size and np.isfinite(value).all(), "modern native tensor archive is empty or nonfinite")
+            return value
         recipe = self.recipes.get(record["path"])
         require(recipe is not None and recipe["sha256"] == record["sha256"]
             and recipe["source"]["shape"] == record["stored_shape"]
@@ -244,7 +251,99 @@ def validate_plan(plan, source, summary):
         == plan["expected_checkpoint_sha256"], "actual native model/backend/checkpoint differs")
 
 
-def custody(run):
+def reader_ast_proof(original_source, corrected_source):
+    """Permit the reader dispatch and exact correction plumbing, no equations."""
+    old_tree, new_tree = map(ast.parse, (original_source, corrected_source))
+    old = {node.name: node for node in old_tree.body if isinstance(node, (ast.FunctionDef, ast.ClassDef))}
+    new = {node.name: node for node in new_tree.body if isinstance(node, (ast.FunctionDef, ast.ClassDef))}
+    require(set(new) == set(old) | {"reader_ast_proof", "audit_source_authority"}, "unexpected corrected function inventory")
+    dump = lambda node: ast.dump(node, include_attributes=False)
+    clone = lambda node: ast.parse(ast.unparse(node)).body[0]
+    def globals_only(tree):
+        return [dump(node) for node in tree.body if not isinstance(node, (ast.FunctionDef, ast.ClassDef))
+            and not (isinstance(node, ast.Expr) and isinstance(node.value, ast.Constant) and isinstance(node.value.value, str))
+            and not (isinstance(node, ast.If) and "__name__" in ast.unparse(node.test))]
+    old_globals = globals_only(old_tree)
+    require(old_globals == globals_only(new_tree), "top-level helper imports/constants changed")
+    hashes = {}
+    for name in old:
+        if name in {"custody", "analyze"}:
+            continue
+        before, after = clone(old[name]), clone(new[name])
+        if name == "Evidence":
+            before.body = [node for node in before.body if not isinstance(node, ast.FunctionDef) or node.name != "array"]
+            after.body = [node for node in after.body if not isinstance(node, ast.FunctionDef) or node.name != "array"]
+        require(dump(before) == dump(after), "equation/control AST changed: " + name)
+        hashes[name] = hashlib.sha256(dump(before).encode()).hexdigest()
+    expected = clone(old["custody"])
+    expected.args.kwonlyargs.append(ast.arg(arg="audit_correction", annotation=None))
+    expected.args.kw_defaults.append(ast.Constant(None))
+    replaced = 0
+    for index, node in enumerate(expected.body):
+        if isinstance(node, ast.For) and "independent_math_sources" in ast.unparse(node.iter):
+            expected.body[index] = ast.parse("audit_source_authority(run, request, job, audit_correction)").body[0]
+            replaced += 1
+    require(replaced == 1 and dump(expected) == dump(new["custody"]), "custody correction changed other validation")
+    expected = clone(old["analyze"])
+    expected.args.kwonlyargs.append(ast.arg(arg="audit_correction", annotation=None))
+    expected.args.kw_defaults.append(ast.Constant(None))
+    replaced = 0
+    for index, node in enumerate(expected.body):
+        if isinstance(node, ast.Assign) and isinstance(node.value, ast.Call) and isinstance(node.value.func, ast.Name) and node.value.func.id == "custody":
+            node.value.keywords.append(ast.keyword(arg="audit_correction", value=ast.Name(id="audit_correction", ctx=ast.Load())))
+            expected.body.insert(index + 1, ast.parse("authority = audit_source_authority(run, request, job, audit_correction)").body[0])
+            replaced += 1
+            break
+    returned = expected.body[-1]
+    require(isinstance(returned, ast.Return) and isinstance(returned.value, ast.Dict), "unexpected original audit return")
+    returned.value.keys.extend([ast.Constant("preoutcome_auditor_sha256"), ast.Constant("audit_correction")])
+    returned.value.values.extend([ast.parse('request["independent_math_sources"]["analyze_flux_initial_noise.py"]', mode="eval").body,
+        ast.Name(id="authority", ctx=ast.Load())])
+    require(replaced == 1 and dump(expected) == dump(new["analyze"]), "correction changed mathematical/control execution")
+    return {"unchanged_function_ast_sha256": hashes,
+        "unchanged_globals_ast_sha256": hashlib.sha256(json.dumps(old_globals).encode()).hexdigest(), "custody_other_validation_unchanged": True,
+        "analyze_control_unchanged": True, "exception": "Evidence.array lossless modern native decoding; explicit source-authority/provenance plumbing"}
+
+
+def audit_source_authority(run, request, job, correction_path):
+    own = "analyze_flux_initial_noise.py"
+    cohort = request["independent_math_sources"]
+    for name, digest in cohort.items():
+        require(sha(run / "independent-math-freeze" / name) == digest, "original frozen independent source changed")
+        if name != own:
+            require(sha(HERE / name) == digest, "unrelated independent source changed")
+    current = sha(HERE / own)
+    if correction_path is None:
+        require(current == cohort[own], "pre-outcome independent source changed; explicit correction required")
+        return None
+    path = Path(correction_path).resolve()
+    record = read(path)
+    require(record["schema"] == "mdb-flux-initial-noise-reader-correction-v1"
+        and record["job_id"] == job["job_id"] and record["request_sha256"] == request["request_sha256"]
+        and record["original_auditor_sha256"] == cohort[own] and record["corrected_auditor_sha256"] == current
+        and record["original_cohort_sha256s"] == cohort and type(record["model_calls"]) is int and record["model_calls"] == 0
+        and record["producer_files_changed"] is False and record["scope"] == "lossless-modern-native-reader-only",
+        "reader correction identity/scope differs")
+    require(set(record["failed_attempt"]) == {"stdout", "stderr", "receipt"}, "failed attempt references incomplete")
+    for reference in (*record["failed_attempt"].values(), record["qualification"]):
+        require(Path(reference["path"]).is_absolute() and sha(Path(reference["path"])) == reference["sha256"],
+            "correction evidence reference changed")
+    failure = read(Path(record["failed_attempt"]["receipt"]["path"]))
+    qualification = read(Path(record["qualification"]["path"]))
+    require(failure["returncode"] != 0 and failure["model_calls"] == 0
+        and failure["source_before_sha256"] == failure["source_after_sha256"] == cohort[own]
+        and failure["stdout_sha256"] == record["failed_attempt"]["stdout"]["sha256"]
+        and failure["stderr_sha256"] == record["failed_attempt"]["stderr"]["sha256"]
+        and str(run / "independent-math-freeze" / own) in failure["command"] and str(run) in failure["command"]
+        and qualification["returncode"] == 0
+        and qualification["analyzer_sha256"] == current, "correction qualification/failure status differs")
+    proof = reader_ast_proof((run / "independent-math-freeze" / own).read_text(), (HERE / own).read_text())
+    require(record["ast_proof"] == proof, "reader correction AST proof differs")
+    return {"path": str(path), "sha256": sha(path), "record": record,
+        "status": "post-outcome saved-reader correction; original request/freeze/failed attempt unchanged"}
+
+
+def custody(run, *, audit_correction=None):
     collector = runpy.run_path(str(HERE / "collect_flux_initial_noise.py"))
     request, job, collection = [read(run / name) for name in ("request.json", "job.json", "collection.json")]
     data = run / "extracted/flux-initial-noise-result"
@@ -263,9 +362,7 @@ def custody(run):
         == request["request_sha256"], "request changed")
     for name, digest in request["source_hashes"].items():
         require(sha(H["file_path"](run / "payload", name)) == digest, "payload source changed")
-    for name, digest in request["independent_math_sources"].items():
-        require(sha(run / "independent-math-freeze" / name) == sha(HERE / name) == digest,
-            "pre-outcome independent source changed")
+    audit_source_authority(run, request, job, audit_correction)
     return data, request, job, collection, inventory
 
 
@@ -420,10 +517,11 @@ def prospective_order(data, summary, binding, rows):
     return checked
 
 
-def analyze(run, *, parameter_root=None, checkpoint=None, ssh=None):
+def analyze(run, *, parameter_root=None, checkpoint=None, ssh=None, audit_correction=None):
     started = time.monotonic()
     run = Path(run).resolve()
-    data, request, job, collection, inventory = custody(run)
+    data, request, job, collection, inventory = custody(run, audit_correction=audit_correction)
+    authority = audit_source_authority(run, request, job, audit_correction)
     source, summary, plan, binding, initial, segment = [read(data / name) for name in
         ("source.json", "summary.json", "plan.json", "binding.json", "binding-initial.json", "native-segment.json")]
     require(plan == request["config"] and source["job_id"] == summary["job_id"] == job["job_id"]
@@ -549,7 +647,8 @@ def analyze(run, *, parameter_root=None, checkpoint=None, ssh=None):
         "collection": {"files": inventory["file_count"], "bytes": inventory["expanded_bytes"], "sha256": sha(run / "collection.json")},
         "independent_math_sources": request["independent_math_sources"], "auditor_source_sha256": sha(Path(__file__)),
         "audit_seconds": time.monotonic() - started,
-        "scope": "One seed113 native history: full112 from actual initial noise, matched56 from observed same-history nativeZ2. Each independent recurrence advances its own computed state. Native prompt encoding and VAE remain supplied; guard counts are producer instrumentation, not OS isolation/kernel tracing. Four PNGs are native VAE observations, not independent pixel forecasts. No accuracy gate, semantic claim, universal error bound or speedup certification."}
+        "scope": "One seed113 native history: full112 from actual initial noise, matched56 from observed same-history nativeZ2. Each independent recurrence advances its own computed state. Native prompt encoding and VAE remain supplied; guard counts are producer instrumentation, not OS isolation/kernel tracing. Four PNGs are native VAE observations, not independent pixel forecasts. No accuracy gate, semantic claim, universal error bound or speedup certification.",
+        "preoutcome_auditor_sha256": request["independent_math_sources"]["analyze_flux_initial_noise.py"], "audit_correction": authority}
 
 
 if __name__ == "__main__":
@@ -559,9 +658,11 @@ if __name__ == "__main__":
     parser.add_argument("--parameter-root", type=Path, help="Existing external, exact recipe-qualified NPY cache")
     parser.add_argument("--checkpoint", type=Path, help="Optionally restore an incomplete external cache from this checkpoint root")
     parser.add_argument("--ssh", help="Explicit remote host for --checkpoint hydration")
+    parser.add_argument("--audit-correction", type=Path, help="Explicit hash-bound post-outcome reader correction receipt")
     args = parser.parse_args()
     require(not args.out.exists(), "refuse to overwrite an audit")
-    report = analyze(args.run_dir, parameter_root=args.parameter_root, checkpoint=args.checkpoint, ssh=args.ssh)
+    report = analyze(args.run_dir, parameter_root=args.parameter_root, checkpoint=args.checkpoint, ssh=args.ssh,
+        audit_correction=args.audit_correction)
     with args.out.open("x") as stream:
         json.dump(report, stream, indent=2, sort_keys=True, allow_nan=False)
         stream.write("\n")
