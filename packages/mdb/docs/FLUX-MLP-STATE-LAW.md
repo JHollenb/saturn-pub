@@ -237,6 +237,12 @@ MLP and residual consumer in the trace.
 That is the next mathematical gap. It supersedes the proposed image-edit
 duration experiment in the context-transfer report.
 
+The follow-up [raw-state attention experiment](FLUX-ATTENTION-STATE-LAW.md) now
+derives that attention return and carries it through the selected image MLP
+and residual exit. It also separates routing, values and their interaction.
+The remaining continuation gap is the complete image/text exit and its use as
+the next block's predicted input.
+
 ## Evidence and execution
 
 Job `job-f0cd6a040823` used one isolated checkpoint MLP, five native calls with
