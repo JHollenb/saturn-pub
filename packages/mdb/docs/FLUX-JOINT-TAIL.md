@@ -2,6 +2,8 @@
 
 This campaign extends the [joint1 forecast](FLUX-JOINT-CHAIN.md) through joint2, joint3 and joint4. It tests a complete mathematical prediction from an observed internal prefix, with matched native bridges that distinguish inherited error from each new block's local numerical discrepancy.
 
+The follow-up [final-latent campaign](FLUX-FINAL-LATENT.md) extends the forecast through the remaining denoising suffix and uses the native VAE as its final consumer.
+
 The specimen is FLUX.2 Klein 4B distilled, CUDA BF16, batch size 1, 512×512 and four denoising steps. Seed 103 is fresh to this campaign. The prompt is `A green cone to the left of a yellow cylinder on a plain white background. Two separate objects, simple studio product photograph.` A native prefix of 68 transitions reaches logical step 2 immediately before single block 6.
 
 The mathematical program then computes 22 transition equivalents: 14 complete single blocks, readout, Euler commit, next-step input projection and all five joint blocks. Each stage consumes the complete output of the preceding mathematical stage. The predicted latent, regenerated context and both working streams travel together. There is no donor or intermediate native activation refresh.
