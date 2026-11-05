@@ -157,6 +157,12 @@ to one activation or MLP.
 
 ## The next smallest cut
 
+The research priority was subsequently changed to understanding the computation
+before pursuing another image edit. The [MLP state-law investigation](FLUX-MLP-STATE-LAW.md)
+now traces the attention/residual/normalization boundary, predicts native MLP
+returns and separates gate, value and interaction terms. Its next gap is the
+attention Q/K/V computation. The duration experiment below remains deferred.
+
 Repeat `restore-I` from the saved common parent, changing one coordinate: keep
 the same two edited conditioning rows at project3 instead of resetting them.
 Include a source-bound replay of the existing transient-conditioning arm.
