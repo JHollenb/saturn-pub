@@ -2,6 +2,8 @@
 
 This campaign extends the [reentry forecast](FLUX-REENTRY.md) by one complete joint attention/MLP block and adds a matched native bridge. Its question is whether a discrepancy at the next boundary was transported from earlier predictions or introduced by the current mathematical block.
 
+The follow-up [joint-tail campaign](FLUX-JOINT-TAIL.md) extends this method through all five next-step joint blocks, with three matched local comparisons and six common-boundary continuations.
+
 **Actual run and independent audit completed.** The 19-transition forecast reaches joint2 with image/text relative RMS discrepancies of 0.521577%/0.345148% against native. At this boundary, local joint1 numerical error partly opposes transported upstream error in both streams. After 25 native transitions and VAE, the complete predicted-state arm differs by 0.102547 RGB channel levels out of 255. The remaining suffix is native; this is a mathematical forecast from an observed internal prefix.
 
 Job `job-0cda5797a845` succeeded in 466.71 runner seconds with peak RSS 8482.1 MB/VRAM 9590 MB. The [authenticated collection](../../../../artifacts/mdb-flux-joint-chain-20261104/run-01/collection.json) retains 625 files/5,797,359,286 bytes. Producer, remote-before, remote-after and local inventories agree exactly. The [unchanged pre-outcome auditor](../../../../artifacts/mdb-flux-joint-chain-20261104/audit.json) passed on its first execution in 72.3454s. All 80,920,576 checked output scalars match the separately implemented, independently fed recurrence bit for bit. This comparison qualifies the mathematical reconstruction; native CUDA differences remain nonzero:
