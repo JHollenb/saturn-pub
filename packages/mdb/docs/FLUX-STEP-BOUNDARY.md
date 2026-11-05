@@ -4,6 +4,8 @@ This qualification extends the [two and three block forecasts](FLUX-TRANSITION-C
 
 The experiment binds FLUX.2 Klein 4B distilled, CUDA BF16, batch1, 512×512, four denoising steps, prompt p1 and fresh seed89. It supplies the native prefix and upstream time/RoPE context. The next step's learned projection, transformer and VAE execute natively.
 
+The [reentry experiment](FLUX-REENTRY.md) extends this frontier through the next complete input projection and first joint block, with an explicit MDB Act that installs predicted latent, context, image and text atomically. Its separate seed97 evidence and qualification are recorded there.
+
 ## Measured result
 
 Job `job-2223e69ff840` succeeded in271.94 runner seconds with peak RSS7216.5MB and peak VRAM9698MB. The forecast seal is `ab052dac67e5397c8abd1fece8d8cc70f51f7d55c5861010c45c7851d1edea85`, recorded at200.566780 worker seconds with zero selected current-step target entries. All native futures completed by251.874289s; the summary through output preparation precedes final manifest hashing. Prediction and seal took80.043420s from the logged prediction start.
