@@ -186,3 +186,5 @@ cd /tmp
 ```
 
 The experiment begins from an observed prefix. It now supplies audited compositions of two and three complete block-state forecasts and their actual native continuations. The three-block extension stays within one denoising step; readout and scheduler prediction introduce additional state and numerical contracts. Semantic object names, arbitrary-prompt applicability and prediction of the remaining suffix require further evidence.
+
+The subsequent [fourteen-block step-boundary campaign](FLUX-STEP-BOUNDARY.md) adds those readout and scheduler contracts on a clean fresh-seed history. It independently predicts the remaining current-step blocks and committed Z3, then tests that latent through the next native step and VAE. Its clock, carry/reset semantics, scalar-promotion qualification and numerical results are separately bound; the two/three-block evidence above remains unchanged.
