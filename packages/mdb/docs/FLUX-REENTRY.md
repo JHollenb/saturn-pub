@@ -1,5 +1,7 @@
 # Sealed FLUX prediction through a commit and model reentry
 
+Follow-up: [the joint1 chain and matched native bridge](FLUX-JOINT-CHAIN.md) extends the sealed forecast to19 transitions and separates transported upstream discrepancy from local joint1 discrepancy on identical predicted incoming state.
+
 This experiment extends the [remaining-step forecast](FLUX-STEP-BOUNDARY.md) through the next learned projection and first joint transformer block. Starting from an observed logical-step2/pre-single6 state, it predicts fourteen complete single blocks, readout noise, the Euler latent commit, the complete step3 projection and joint0. Each stage consumes its own predicted predecessor. Actual native continuations then consume the admitted predicted latent, context and working streams together.
 
 **Status: actual native run and saved-only audit completed; terminal status unassessed.** The sealed prediction crossed the latent commit, regenerated complete projection/context and joint0, and was admitted through the four-port closure before five actual native suffixes and VAE decodes. Native numerical differences remain nonzero. The [accepted audit](../../../../artifacts/mdb-flux-reentry-20261104/audit.json) and [public equation/Atlas publication](../../../../artifacts/mdb-flux-reentry-20261104/equation-publication-v1/result.json) retain the measured errors and their source bindings.
