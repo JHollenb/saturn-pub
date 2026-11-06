@@ -139,7 +139,8 @@ def stage(run,study,*,worker_path=None,extra_files=(),audit_kind='attention',log
     c=dict(native_root=str(root),source_root=prior['config']['input_root'],native_manifest_sha256=info['sha'],
         source_manifest_sha256=prior['config']['source_files_sha256'],raw_files=info['files'],raw_bytes=info['bytes'],
         output_scratch='/mnt/big/mdb/research',directory_custody=True,audit_kind=audit_kind,
-        scope=('Post-hoc saved-only NumPy diagnosis:three scalar/product arithmetic rules across16known commits;48elementwise evaluations,0model/native/learned forwards.' if audit_kind=='commit-scalar' else
+        scope=('Saved-only last-writer audit:80complete Y/N/Z/I/V comparisons,16NumPy gated additions/16commits/16matched-input products,48checkpoint joins and16saved RGB outcomes;0model/native/learned forwards.' if audit_kind=='last-writer' else
+            'Post-hoc saved-only NumPy diagnosis:three scalar/product arithmetic rules across16known commits;48elementwise evaluations,0model/native/learned forwards.' if audit_kind=='commit-scalar' else
             'Saved-only numerical comparisons,16independent NumPy elementwise commit evaluations and supplied-applicability catalog; zero model/native/learned forwards.' if audit_kind=='commit-factorial' else
             'Saved-only numerical comparisons and supplied-applicability catalog; zero new model/native/reference forward calculations.'))
     run.mkdir(parents=True,exist_ok=False);save(run/'plan.json',c)
@@ -158,6 +159,9 @@ def stage(run,study,*,worker_path=None,extra_files=(),audit_kind='attention',log
         req['scheduling_contract']['checkpoint_policy']='One near-data saved-only commit/I/V audit:48complete port comparisons,16independent NumPy elementwise commits,28saved image consequences;0model/learned/native forwards or retries.'
     elif audit_kind=='commit-scalar':
         req['resource_exception']['reason']='Saved131072-element latent/flow fields, one row/rule at a time; no Torch, weights or model calls. Existing1.5GB/2CPU audit lane covers bounded NumPy arrays;60sestimate/240souter.'
+        req['scheduling_contract']['checkpoint_policy']=c['scope']+' No automatic retries.'
+    elif audit_kind=='last-writer':
+        req['resource_exception']['reason']='Prior9.44M-element saved audit peaked1328.5MBRSS. Largest field here4.72M elements; one full prediction or four-corner consumer at a time, no Torch/weights.1.5GBRAM/2CPU,60sestimate/240souter;80port comparisons and48elementwise checks.'
         req['scheduling_contract']['checkpoint_policy']=c['scope']+' No automatic retries.'
     req['request_sha256']=hashlib.sha256(json.dumps(req,sort_keys=True,allow_nan=False).encode()).hexdigest();save(run/'request.json',req)
     runpy.run_path(str(here/'stage_flux_source_receiver.py'))['bind'](req['execution_environment']);stage_worker(run/'payload',worker=worker_file,config=c,request=req,additional_files=extras)

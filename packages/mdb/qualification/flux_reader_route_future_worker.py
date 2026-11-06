@@ -53,9 +53,11 @@ def worker():
         math_sdpa_allow_reduced_precision=torch.backends.cuda.fp16_bf16_reduction_math_sdp_allowed(),tf32=False,deterministic=True,
         cudnn_deterministic=torch.backends.cudnn.deterministic,cudnn_benchmark=torch.backends.cudnn.benchmark,
         stochastic_sampling=adapter.scheduler_config['stochastic_sampling'],
-        prediction=('Original Euler multiply/add/cast plus native full-shape x_embedder/LayerNorm/modulation/to_v;16commit/I/V forecasts before hybrid targets.' if c.get('prior_commit') else
+        prediction=('Original full-shape gated R+U, norm_out/proj_out, Euler, x_embedder/norm1/to_v;16Y/N/Z/I/V forecasts before mixed writer targets.' if c.get('last_writer') else
+            'Original Euler multiply/add/cast plus native full-shape x_embedder/LayerNorm/modulation/to_v;16commit/I/V forecasts before hybrid targets.' if c.get('prior_commit') else
             'Native Flash/linear/LayerNorm/SwiGLU primitives; any earlier prefix blocks are declared in expected_prefix_counts and counted separately before all target suffixes seal.'),
-        consumer=('Actual original scheduler component returns feed typed project-latent Acts; actual native V producers feed selected band at fixed own Q/K/I. Original final-pass blocks and VAE.' if c.get('prior_commit') else
+        consumer=('Typed image/text Acts at step2/single19 and explicit raw U-return transplant; original gate/add, readout/commit and complete final pass/VAE. Actual outputs feed continuation; no band-only future.' if c.get('last_writer') else
+            'Actual original scheduler component returns feed typed project-latent Acts; actual native V producers feed selected band at fixed own Q/K/I. Original final-pass blocks and VAE.' if c.get('prior_commit') else
             'Original full native blocks and VAE; selected first-attention port interventions only.')))
     started=time.monotonic()
     def event(kind,**fields):
@@ -63,7 +65,8 @@ def worker():
         with (out/'timeline.jsonl').open('a') as f:f.write(json.dumps(row,sort_keys=True)+'\n')
         print('MDB_ROUTE_FUTURE '+json.dumps(row,sort_keys=True),flush=True)
         if row['seconds']>c['max_wall_seconds']:raise RuntimeError('finite native future budget exceeded')
-    if c.get('prior_commit'):program=runpy.run_path('flux_commit_factorial.py')
+    if c.get('last_writer'):program=runpy.run_path('flux_last_writer.py')
+    elif c.get('prior_commit'):program=runpy.run_path('flux_commit_factorial.py')
     elif c.get('upstream_receivers'):program=runpy.run_path('flux_reader_upstream.py')
     counts=program['run'](pipe=pipe,adapter=adapter,parents=parents,source=source,output=out,config=c,request=req,event=event)
     for name in ('parameter-artifacts.json','retrieve_weights.py','source-binding.json'):shutil.copyfile(name,out/name)

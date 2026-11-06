@@ -13,7 +13,7 @@ H=runpy.run_path(str(HERE/'flux_source_receiver.py'))
 read,save,sha=[H[k] for k in ('read','save','sha')]
 
 
-def stage(run,fresh,audit,panel='streams',operand_study=None,head_groups=None):
+def stage(run,fresh,audit,panel='streams',operand_study=None,head_groups=None,control_study=None):
     from mdb.job_support import one_lease_scheduling_contract
     from mdb.payload import stage_worker
     evidence=audit/'compact-collection-01/extracted/binding-minimal-result';report=read(evidence/'audit.json')
@@ -22,7 +22,7 @@ def stage(run,fresh,audit,panel='streams',operand_study=None,head_groups=None):
     if jid!=report['source_job']:raise ValueError('fresh audit/request differs')
     root=Path(c['output_scratch'])/jid/'binding-minimal-result';parents=read(evidence/'source-fresh-parents.json')
     code='import json\nfrom pathlib import Path\nr=Path('+repr(str(root))+')\nparents='+repr({r:p['parent'] for r,p in parents.items()})+'\n'
-    if panel in ('upstream','commit'):code+='parents.update({"initial-"+k:v["initial"] for k,v in json.loads((r/"fresh-parents.json").read_text()).items()})\n'
+    if panel in ('upstream','commit','last-writer'):code+='parents.update({"initial-"+k:v["initial"] for k,v in json.loads((r/"fresh-parents.json").read_text()).items()})\n'
     code+='''inventory=json.loads((r/'files.json').read_text());names={'prefixes.json','fresh-parents.json','cases.json'}
 prefixes=json.loads((r/'prefixes.json').read_text())['operands']
 for fields in prefixes.values():
@@ -49,7 +49,7 @@ print(json.dumps({n:dict(sha256=inventory[n],bytes=(r/n).stat().st_size) for n i
         scope='Four already observed seed193 color/order parents;8historical base/band2 controls+8new text-only/image-only attention-output futures. Each new split computes native full attention for base and changedKV at identical Q/shape/strides then routes one complete stream. All16local reader forecasts seal before any target block. Native image continuation observed, not numerically predicted.',
         planned_counts=dict(sdpa=12,staged_matmuls=0,staged_softmax=0,linear=48,layernorm=16,swiglu=16,
             native_sdpa=408,native_blocks=400,native_transitions=432,images=16,model_loads=1,encodes=0,noise_draws=0))
-    if panel not in ('streams','kv','value-streams','heads','upstream','commit'):raise ValueError('unknown reader panel')
+    if panel not in ('streams','kv','value-streams','heads','upstream','commit','last-writer'):raise ValueError('unknown reader panel')
     c['panel']=panel
     if panel=='kv':
         c.update(case_specs=[dict(id='base',kind='base'),dict(id='band2',kind='band-cross',band=2),
@@ -111,7 +111,7 @@ print(json.dumps({n:dict(sha256=inventory[n],bytes=(r/n).stat().st_size) for n i
             scope='Two recipients; honest84-step prefix replay to actual step3/project, then own/opposite-color native latent through typed Act.replace while own conditioning persists. Four projected parents, eight sealed reader forecasts, eight27-step native image suffixes. Opposite V-band restores/transplants form a persistent-latent x mediator square. Four historical own-corner controls; no new encoding/noise or full-image numerical prediction.',
             planned_counts=dict(sdpa=8,staged_matmuls=0,staged_softmax=0,linear=24,layernorm=8,swiglu=8,
                 native_sdpa=350,native_blocks=350,native_transitions=388,images=8,model_loads=1,encodes=0,noise_draws=0,prefix_stops=4,latent_acts=2))
-    if panel=='commit':
+    if panel in ('commit','last-writer'):
         c['original_source_sha256']={**c['original_source_sha256'],'diffusers/schedulers/scheduling_flow_match_euler_discrete.py':'8b96f25a6170480fb02decb58904e026250d6d68be5de8a7b8785b4c721e9d80'}
         recipes=read(fresh/'parameter-artifacts.json')['artifacts']
         names=('x_embedder.weight','transformer_blocks.0.attn.to_v.weight')
@@ -134,11 +134,34 @@ print(json.dumps({n:dict(sha256=inventory[n],bytes=(r/n).stat().st_size) for n i
             planned_counts=dict(model_loads=1,encodes=0,noise_draws=0,native_blocks=1000,native_sdpa=1000,native_transitions=1120,
                 mathematical_commits=16,forecast_linear=32,forecast_layernorm=16,native_scheduler_components=16,latent_acts=16,images=28))
         if set(c['forecast_parameter_sha256'])!=set(names):raise ValueError('missing original commit forecast parameter recipes')
+    if panel=='last-writer':
+        c['original_source_sha256']={**c['original_source_sha256'],'diffusers/models/normalization.py':'e92ebbb130082578f3cff3361891a1adaa32331347e7bb09e4c70b208a0a6059'}
+        if control_study is None:raise ValueError('audited commit control study required')
+        controls=control_study/'compact-collection-02/extracted/binding-minimal-result';cr=read(controls/'audit.json')
+        if cr['mechanics_status']!='verified' or any(sha(controls/n)!=v for n,v in read(controls/'files.json').items()):raise ValueError('commit control audit changed')
+        c.pop('prior_commit');names=(*names,'norm_out.linear.weight','proj_out.weight')
+        c.update(last_writer=True,schema='mdb-flux-last-writer-plan-v1',
+            historical_control_root=str(Path(c['output_scratch'])/cr['source_job']/'binding-minimal-result'),historical_control_manifest_sha256=cr['native_manifest_sha256'],
+            historical_controls={r+f'.r{i}u{i}':r+('.latent-z0n0' if i==0 else '.latent-z0n1') for r in parents for i in (0,1)},
+            forecast_parameter_sha256={a['source']['tensor']:a['source']['payload_sha256'] for a in recipes if a['source']['tensor'] in names},
+            case_specs=[dict(id=f'r{ri}u{ui}') for ri,ui in ((0,0),(0,1),(1,0),(1,1))],
+            expected_prefix_counts=dict(native_blocks=300,native_sdpa=300,native_transitions=336,source_write_captures=4),
+            selection=dict(rule='Step2/single19 incoming combined R versus raw fused to_out U; complete text/image transplants, recipient gate/temb/Z2/conditioning fixed.',source_job=jid,control_job=cr['source_job']),
+            semantic_hypotheses=dict(stage='Exploratory last learned writer, frozen before mixed block targets.',
+                prediction='Incoming residual-only r1u0 exceeds new-write-only r0u1 in signed RGB projection onto r1u1 and in absolute baseline-green score change in each recipient; both green effects expected negative. Retain all misses.',
+                numerical='All16 complete Y19/N2/Z3/I3/V3 predictions seal before mixed target blocks; original full geometry/primitives and gate once.',
+                controls='Own/own equals prior baseline; source/source with recipientZ2 fixed equals prior flow-only. Eight historical controls; eight crossed producer-state occurrences.',
+                limitation='Combined U includes fused attention/MLP projection, not separated H/M. U is clamped, not regenerated from chosen R. One shared seed/four dependent contexts. Native RGB observed, not numerically forecast.'),
+            scope='Four84-step honest source replays; capture step2/single19 R/U/gate then original N2/Z3.16sealed complete local-to-value forecasts;32typed image/text Acts;16explicit raw U-return transplants scoped to target step2only;16native31-operation full image futures. RecipientZ2/conditioning fixed; eight known controls, eight new mixed producer states.',
+            planned_counts=dict(model_loads=1,encodes=0,noise_draws=0,native_blocks=716,native_sdpa=716,native_transitions=832,
+                forecast_linear=64,forecast_layernorm=32,forecast_silu=16,mathematical_writes=16,mathematical_commits=16,typed_acts=32,write_transplants=16,source_write_captures=4,images=16))
+        if set(c['forecast_parameter_sha256'])!=set(names):raise ValueError('last-writer original forecast parameter recipes incomplete')
     run.mkdir(parents=True,exist_ok=False);save(run/'plan.json',c)
     extras=[(HERE/n,n) for n in ('flux_reader_route_future.py','flux_reader_routes.py','flux_reader_arithmetic.py','flux_reader_attention.py',
         'flux_source_receiver.py','flux_reentry_reference.py','flux_family_custody.py')]
     if panel=='upstream':extras.extend((HERE/n,n) for n in ('flux_reader_upstream.py','flux_latent_reader.py'))
-    if panel=='commit':extras.extend((HERE/n,n) for n in ('flux_commit_factorial.py','flux_latent_reader.py'))
+    if panel in ('commit','last-writer'):extras.extend((HERE/n,n) for n in ('flux_commit_factorial.py','flux_latent_reader.py'))
+    if panel=='last-writer':extras.append((HERE/'flux_last_writer.py','flux_last_writer.py'))
     for n in ('parameter-artifacts.json','retrieve_weights.py','source-binding.json'):
         shutil.copyfile(fresh/n,run/n);extras.append((run/n,n))
     worker=HERE/'flux_reader_route_future_worker.py';pre=run/'preflight.v1.json'
@@ -162,11 +185,16 @@ print(json.dumps({n:dict(sha256=inventory[n],bytes=(r/n).stat().st_size) for n i
         req['scheduling_contract']=one_lease_scheduling_contract(model_loads=1,logical_operations=24,logical_branches=8,logical_checkpoint_replays=8,max_local_work_items=32,
             checkpoint_policy='Two native84-step prefix replays;2typed latent Acts;4projected parents/4pre-attention stops;8sealed forecasts then8suffixes. One model, no encoder/noise/retries.')
     elif panel=='commit':
-        req['resource_exception'].update(ram_mb=6144,disk_gb=2,est_wall_s=180,
+        req['resource_exception'].update(ram_mb=10240,disk_gb=2,est_wall_s=180,
             calibration_job='job-d521b09f9834',measured_peak_rss_mb=4948.9,measured_peak_vram_mb=9380.,
-            reason='This exact28future geometry measured117.63s scheduler/71.40s experiment,4948.9MBRSS/9380MBVRAM and390MBraw output.6GBRAM/10GBVRAM/2GBdisk,180s estimate;600s worker/900s outer. One model, no encoder or duplicate weights.')
+            reason='28future geometry measured117.63s scheduler/71.40s experiment,4948.9MBsampledRSS/9380MBVRAM/390MBraw. Later same-pipeline last-writer load was killed at6993MBRSS above6758MBceiling with6GiBRAM. Restore established10GiBRAM/10GiBVRAM envelope;2GBdisk/180sestimate/600sworker/900souter.')
         req['scheduling_contract']=one_lease_scheduling_contract(model_loads=1,logical_operations=56,logical_branches=28,logical_checkpoint_replays=28,max_local_work_items=84,
             checkpoint_policy='Four84-transition source prefixes;16sealed commit/I/V forecasts;16original scheduler component checks;16typed project-latent Acts;28native28-transition futures/28VAE.1120navigation steps/1000blocks. One finite lease,0encodes/noise/retries; paired carry x flow and fixed-receiver V-band consumers.')
+    elif panel=='last-writer':
+        req['resource_exception'].update(ram_mb=10240,est_wall_s=180,calibration_job='job-d521b09f9834',measured_peak_rss_mb=4948.9,measured_peak_vram_mb=9380.,
+            reason='Same model/512px VAE. Earlier last-writer job-e8f2d590a1e8 killed during setup at6993MBRSS above6758MBceiling with6GiB; previous fresh80 family peaked8889MBRSS. Restore established10GiBRAM/10GiBVRAM;2GBdisk/180sestimate/600sworker/900souter.16images/716blocks,one resident load,no extra encoding/noise.')
+        req['scheduling_contract']=one_lease_scheduling_contract(model_loads=1,logical_operations=32,logical_branches=16,logical_checkpoint_replays=16,max_local_work_items=64,
+            checkpoint_policy='Four84-step source prefixes;16sealed Y/N/Z/I/V forecasts;16native31-step suffixes/16VAE;32I/T Acts,16scoped U-return transplants.832navsteps/716blocks,0encodes/noise/retries. Eight controls+eightmixed states; one finite lease.')
     req['request_sha256']=hashlib.sha256(json.dumps(req,sort_keys=True,allow_nan=False).encode()).hexdigest();save(run/'request.json',req)
     runpy.run_path(str(HERE/'stage_flux_source_receiver.py'))['bind'](req['execution_environment']);stage_worker(run/'payload',worker=worker,config=c,request=req,additional_files=extras)
     return dict(request_sha256=req['request_sha256'],cases=len(parents)*len(c['case_specs']))
@@ -186,5 +214,5 @@ def submit(run):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('run',type=Path);p.add_argument('--fresh',type=Path);p.add_argument('--audit',type=Path);p.add_argument('--panel',choices=('streams','kv','value-streams','heads','upstream','commit'),default='streams');p.add_argument('--operand-study',type=Path);p.add_argument('--head-groups',help='JSON list of image head lists');p.add_argument('--submit',action='store_true');a=p.parse_args()
-    print(json.dumps(submit(a.run.resolve()) if a.submit else stage(a.run.resolve(),a.fresh.resolve(),a.audit.resolve(),a.panel,a.operand_study.resolve() if a.operand_study else None,json.loads(a.head_groups) if a.head_groups else None)))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('run',type=Path);p.add_argument('--fresh',type=Path);p.add_argument('--audit',type=Path);p.add_argument('--panel',choices=('streams','kv','value-streams','heads','upstream','commit','last-writer'),default='streams');p.add_argument('--operand-study',type=Path);p.add_argument('--head-groups',help='JSON list of image head lists');p.add_argument('--control-study',type=Path);p.add_argument('--submit',action='store_true');a=p.parse_args()
+    print(json.dumps(submit(a.run.resolve()) if a.submit else stage(a.run.resolve(),a.fresh.resolve(),a.audit.resolve(),a.panel,a.operand_study.resolve() if a.operand_study else None,json.loads(a.head_groups) if a.head_groups else None,a.control_study.resolve() if a.control_study else None)))

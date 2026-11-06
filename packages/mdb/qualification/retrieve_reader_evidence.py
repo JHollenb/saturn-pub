@@ -21,6 +21,6 @@ def retrieve(manifest,alias,name,destination):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('alias',choices=['native','reader']);p.add_argument('path');p.add_argument('destination',type=Path)
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('alias',choices=['native','reader','controls']);p.add_argument('path');p.add_argument('destination',type=Path)
     p.add_argument('--manifest',type=Path,default=Path(__file__).with_name('external-evidence.json'));a=p.parse_args()
     print(retrieve(a.manifest,a.alias,a.path,a.destination))
