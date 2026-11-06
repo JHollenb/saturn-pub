@@ -194,3 +194,9 @@ MDB audit. Broader prompts/seeds, the source-payload versus receiving-text
 factorial, object identity and an independent Flash numerical implementation
 remain open. The new material here is the causal route and its verified clock
 and continuation, alongside a more broadly tested executable reader.
+
+The [fresh color/order and output-stream campaign](FLUX-READER-FAMILIES.md)
+now tests seed193, both color assignments and both spatial orders, then separates
+the complete text and image attention carriers. It preserves exact reader
+predictions while locating the dominant visible color response in the image
+output stream for that panel.

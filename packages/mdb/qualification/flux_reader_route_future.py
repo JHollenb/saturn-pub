@@ -19,8 +19,23 @@ def ports(base,changed,spec,bf16,nt=512):
     elif kind in ('band-add','band-remove'):
         lo,hi=nt+spec['band']*256,nt+(spec['band']+1)*256
         for key in result:result[key][:,lo:hi]=(base if full else changed)[key][:,lo:hi]
+    elif kind in ('band-cross','band-text','band-image','band-key','band-value'):
+        lo,hi=nt+spec['band']*256,nt+(spec['band']+1)*256
+        selected=('k',) if kind=='band-key' else ('v',) if kind=='band-value' else ('k','v')
+        for key in selected:result[key][:,lo:hi]=changed[key][:,lo:hi]
+    elif kind=='own-v':
+        result['v'][:,nt:,spec['head']]=bf16(result['v'][:,nt:,spec['head']]*spec['scale'])
     for key in result:
         if not (result[key][:,:nt]==base[key][:,:nt]).all():raise ValueError('text KV was modified')
+    return result
+
+
+def output_route(base,changed,kind,nt):
+    """Keep one complete stream from the base and one from the changed attention."""
+    if kind not in ('band-text','band-image'):raise ValueError('unknown attention output stream route')
+    result=base.clone()
+    if kind=='band-text':result[:,:nt]=changed[:,:nt]
+    else:result[:,nt:]=changed[:,nt:]
     return result
 
 
@@ -30,7 +45,7 @@ def payload_digest(value):
     return hashlib.sha256((np.ascontiguousarray(value,np.float32).view(np.uint32)>>16).astype('<u2').tobytes()).hexdigest()
 
 
-def run(*,pipe,adapter,parents,source,output,config,request,event):
+def run(*,pipe,adapter,parents,source,output,config,request,event,initial_counts=None):
     import diffusers.models.transformers.transformer_flux2 as native
     import torch
     from saturn_pub import Session
@@ -49,6 +64,8 @@ def run(*,pipe,adapter,parents,source,output,config,request,event):
         if payload_digest(module.weight)!=record['descriptor']['sha256']:raise ValueError('original forecast parameter differs')
     counts=dict(sdpa=0,staged_matmuls=0,staged_softmax=0,linear=0,layernorm=0,swiglu=0,
         native_sdpa=0,native_blocks=0,native_transitions=0,images=0,model_loads=1,encodes=0,noise_draws=0)
+    if initial_counts:counts.update(initial_counts)
+    prior_counts=counts.copy();case_specs=config.get('case_specs',specs(config['selected_head'],config['selected_band']))
     phase={'name':'forecast','case':None};allowed=set(modules['ff'].modules())|{modules['projection'],modules['norm']}
     def guard(module,args):
         if phase['name']=='forecast' and module not in allowed:raise ValueError('undeclared native module during primitive forecast')
@@ -62,22 +79,24 @@ def run(*,pipe,adapter,parents,source,output,config,request,event):
         if phase['name']=='first':observed['mlp']=h['array'](output,value)
     handles.extend([block.norm2_context.register_forward_pre_hook(after),block.ff_context.register_forward_hook(mlp)])
     prepared={};predictions={};profiles={};tensor=lambda x:torch.from_numpy(x.copy()).to('cuda',torch.bfloat16)
-    tx=ForecastTransaction(output/'transaction',model_identity=adapter.model_identity,input_identity=config['parents'],source_identity=request['request_sha256'],
+    tx=ForecastTransaction(output/'transaction',model_identity=adapter.model_identity,input_identity={r:p.fingerprint for r,p in parents.items()},source_identity=request['request_sha256'],
         frontier=dict(kind='architectural',boundary='observed positioned text Q/full KV; original parent text/modulation',step=3,block=0),
-        execution_scope='Externally counted CUDA native primitives forecast16reader heads/text writes before any native full block.12FlashSDPA/48linear/16norm/16SwiGLU. Then16full native suffixes. No independent Flash kernel implementation or full image forecast.',
+        execution_scope='Counted CUDA native primitives forecast reader heads/text writes before any target consumer. Earlier prefix execution, when present, is separately counted. Then unchanged native suffixes. No independent Flash implementation or full image forecast.',
         budgets=dict(max_native_calls=16,max_bytes=16<<20,max_wall_ms=600000))
     tx.frontier('selection',dict(head=config['selected_head'],band=config['selected_band'],source='Left route screen only; fixed before native futures',source_audit_sha256=config['route_audit_sha256']))
+    if 'semantic_hypotheses' in config:tx.frontier('semantic-hypotheses',config['semantic_hypotheses'])
     with torch.inference_mode():
         for receiver,parent in parents.items():
             b,d=[{f:load(source,a) for f,a in prefixes[receiver+'.'+n].items()} for n in ('base','delta')]
             q=tensor(b['q']);head0,p0=attention['attention'](q,tensor(b['k']),tensor(b['v']),'flash-text',counts)
-            head1,p1=attention['attention'](q,tensor(d['k']),tensor(d['v']),'flash-text',counts)
+            head1,p1=(attention['attention'](q,tensor(d['k']),tensor(d['v']),'flash-text',counts)
+                if any(s['kind'] in ('full','head-add','head-remove') for s in case_specs) else (None,None))
             text,mod=parent.payload['text'],parent.payload['context']['txt_mod']
-            for spec in specs(config['selected_head'],config['selected_band']):
+            for spec in case_specs:
                 key=receiver+'.'+spec['id'];kv=ports(b,d,spec,core['R']['bf16'])
                 prepared[key]=dict(kv=kv,spec=spec,base=b,head_source=head1 if spec['kind']=='head-add' else head0)
                 def predict(_,spec=spec,key=key,kv=kv):
-                    if spec['kind'] in ('base','head-add'):head=head0
+                    if spec['kind'] in ('base','head-add','band-image'):head=head0
                     elif spec['kind'] in ('full','head-remove'):head=head1
                     else:
                         head,profile=attention['attention'](q,tensor(kv['k']),tensor(kv['v']),'flash-text',counts);profiles[key]=profile
@@ -88,12 +107,14 @@ def run(*,pipe,adapter,parents,source,output,config,request,event):
                     predictions[key]=dict(fields=fields,ports={f:payload_digest(v) for f,v in kv.items()},spec=spec,
                         structural_prediction=dict(reference='full' if spec['kind'] in ('head-remove','band-remove') else 'base',
                             first_image_matches=('base' if spec['kind']=='head-add' else 'full') if spec['kind'].startswith('head-') else None,
-                            earliest_possible_image_change=1 if spec['kind'].startswith('head-') else 0,
-                            expected_first_image_change=1 if spec['kind'].startswith('head-') else (0 if spec['kind'] not in ('base',) else None)))
+                            earliest_possible_image_change=1 if spec['kind'].startswith('head-') or spec['kind']=='band-text' else 0,
+                            expected_first_image_change=1 if spec['kind'].startswith('head-') or spec['kind']=='band-text' else (0 if spec['kind'] not in ('base',) else None)))
                     return dict(predictions=predictions[key])
                 tx.predict(key,predict);event('prediction-persisted',case=key,counts=counts.copy())
             profiles[receiver]=dict(base=p0,full=p1)
-        if counts['sdpa']!=12 or counts['linear']!=48 or counts['native_blocks'] or counts['native_sdpa']:raise ValueError('forecast cohort census/order differs')
+        if any(counts[k]!=prior_counts[k] for k in ('native_blocks','native_sdpa','native_transitions')):raise ValueError('target consumer ran during forecasts')
+        for k in ('sdpa','linear','layernorm','swiglu'):
+            if counts[k]!=config['planned_counts'][k]:raise ValueError('forecast cohort census differs: '+k)
         seal=tx.seal();verify_transaction(output/'transaction',expected_seal_sha256=seal['seal_sha256'])
         save(output/'predictions.json',predictions);save(output/'profiles.json',profiles);event('all-predictions-sealed',seal_sha256=seal['seal_sha256'],counts=counts.copy())
     original_dispatch=native.dispatch_attention_fn
@@ -110,7 +131,20 @@ def run(*,pipe,adapter,parents,source,output,config,request,event):
             return out
         k,v=install(k,'k'),install(v,'v')
         with torch.profiler.profile(activities=[torch.profiler.ProfilerActivity.CPU]) as trace:
-            result=original_dispatch(q,k,v,*args,**kwargs);torch.cuda.synchronize()
+            result=original_dispatch(q,k,v,*args,**kwargs)
+            spec=item['spec']
+            if spec['kind'] in ('band-text','band-image'):
+                counts['native_sdpa']+=1
+                originals={}
+                for name,current in (('k',k),('v',v)):
+                    value=torch.empty_strided(current.shape,current.stride(),device=current.device,dtype=current.dtype)
+                    value.copy_(tensor(b[name]));originals[name]=value
+                original=original_dispatch(q,originals['k'],originals['v'],*args,**kwargs)
+                result=output_route(original,result,spec['kind'],nt)
+                preserved=result[:,nt:] if spec['kind']=='band-text' else result[:,:nt]
+                reference=original[:,nt:] if spec['kind']=='band-text' else original[:,:nt]
+                if not torch.equal(preserved,reference):raise ValueError('split output changed protected attention stream')
+            torch.cuda.synchronize()
         selected=[dict(name=x.key,calls=x.count) for x in trace.key_averages() if 'scaled_dot' in x.key]
         spec=item['spec'];changed=[]
         if spec['kind'].startswith('head-'):
@@ -119,7 +153,11 @@ def run(*,pipe,adapter,parents,source,output,config,request,event):
             others=[j for j in range(24) if j!=i]
             if not torch.equal(result[:,:nt,others],base[:,:nt,others]) or not torch.equal(result[:,nt:],base[:,nt:]):raise ValueError('head edit changed undeclared ports')
         observed['head']=h['array'](output,result[:,:nt].flatten(2,3))
-        footprint.update(changed_text_heads=changed,image_heads_preserved=True,kv_sha256={f:payload_digest(x) for f,x in (('k',k),('v',v))},
+        if spec['kind']=='band-image':changed=list(range(24))
+        footprint.update(changed_text_heads=changed,image_heads_preserved=spec['kind']!='band-text',
+            head_edit_reference='Native attention result under installed K/V before output-stream replacement',
+            kv_sha256={f:payload_digest(x) for f,x in (('k',k),('v',v))},
+            output_stream_route=spec['kind'] if spec['kind'] in ('band-text','band-image') else 'native',
             selected_aten_operations=selected,q_shape=list(q.shape),q_stride=list(q.stride()),k_stride=list(k.stride()),v_stride=list(v.stride()))
         return result
     cases={}
@@ -155,6 +193,6 @@ def run(*,pipe,adapter,parents,source,output,config,request,event):
         tx.close()
     verify_transaction(output/'transaction',expected_seal_sha256=seal['seal_sha256'])
     save(output/'transaction-report.json',tx.report());save(output/'cases.json',cases)
-    if counts!={**counts,'sdpa':12,'linear':48,'layernorm':16,'swiglu':16,'native_sdpa':400,'native_blocks':400,'native_transitions':432,'images':16}:
+    if counts!=config['planned_counts']:
         raise ValueError('native future physical census differs')
     return counts

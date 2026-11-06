@@ -18,6 +18,7 @@ def worker():
     req=read(os.environ['SATURN_DEBUG_REQUEST']);c=read(os.environ['SATURN_RUN_CONFIG'])
     if req['config']!=c or any(sha(Path(n))!=v for n,v in req['source_hashes'].items()):raise ValueError('source/config differs')
     source=Path(c['input_root'])
+    if sha(source/'files.json')!=c['source_files_sha256']:raise ValueError('source inventory differs')
     for name,r in c['inputs'].items():
         if sha(source/name)!=r['sha256'] or (source/name).stat().st_size!=r['bytes']:raise ValueError('input differs')
     for name,expected in c['original_source_sha256'].items():
