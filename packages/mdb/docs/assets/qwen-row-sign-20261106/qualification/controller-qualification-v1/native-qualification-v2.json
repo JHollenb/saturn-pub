@@ -1,0 +1,40 @@
+{
+  "canonical_package_ruff": "F,I clean before freeze",
+  "change": "Only source pin updated to final producer fbd8ece (source frontier metadata addition); prior stager and qualification preserved.",
+  "execution": "attempt-06/execution.json",
+  "execution_sha256": "368712f3a09e0aece143c754fada7bc21600bf800b6a30bbbfbf070fa6119b57",
+  "installed_runtime": {
+    "executable": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+    "packages": {
+      "mdb": {
+        "files": 188,
+        "sha256": "c483a1b79e8220a213c9aeacba988969934b6e122bf4b156eba486aa20c2b748"
+      },
+      "mrun": {
+        "files": 225,
+        "sha256": "7ff3f73e259864f3469fbede1596a846652821c733eea6290dbacc05b720c8b1"
+      },
+      "saturn_pub": {
+        "files": 59,
+        "sha256": "044add634bc2129953be3e2f430e8516485fba39efa358f506c087cb94e931b3"
+      }
+    },
+    "python": "3.12.13"
+  },
+  "limits": [
+    "No original model/array/weight read or actual stage/submission was performed.",
+    "Model-free fixture validates controller metadata, guards and installed bootstrap transport; it does not establish original numerical parity or measured resource usage.",
+    "Saved-reader frontend qualification is separate and pending final reader pin."
+  ],
+  "producer_sha256": "fbd8eceaf1a9ef8917ecdc39a98ff960940aab9da8ecb4697c25c1a33d545f47",
+  "pytest": "6 passed in 0.33s",
+  "schema": "mdb-row-sign-native-controller-qualification-v2",
+  "scope": "Isolated installed-wheel synthetic metadata/CLI/bootstrap guards only; zero actual staging, jobs, services, original arrays, models or weights.",
+  "source_hashes": {
+    "qualification/stage_qwen_row_sign.py": "bfe6fbf84faaaf3eabec8930a9c868dc72c9a55a0568d01da1fe3f89b4c50cce",
+    "tests/test_stage_qwen_row_sign.py": "18109da48f1f5ed679ebd9d5b0e5609edc43d3fc3a45a20be0872ecaaec8e25b"
+  },
+  "status": "qualified-model-free-mechanics-only",
+  "supersedes": "native-qualification.json",
+  "tests": 6
+}

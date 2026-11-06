@@ -1,0 +1,327 @@
+{
+  "actual_native_is_causal": true,
+  "actual_native_mask": "None",
+  "arms": [
+    {
+      "id": "all-negative",
+      "negative_rows": [
+        0,
+        512
+      ],
+      "support_closed_windows": [
+        [
+          0,
+          256
+        ],
+        [
+          256,
+          512
+        ]
+      ]
+    },
+    {
+      "id": "prefix-negative",
+      "mixed_support_windows": [
+        [
+          256,
+          512
+        ]
+      ],
+      "negative_rows": [
+        0,
+        256
+      ],
+      "support_closed_windows": [
+        [
+          0,
+          256
+        ]
+      ]
+    }
+  ],
+  "attention_dispatch": {
+    "backend": "sdpa",
+    "gqa_policy": "enable_gqa"
+  },
+  "baseline": "Archived functional positive basis versus fresh standalone native baseline, reported separately.",
+  "cache": false,
+  "comparisons": [
+    "shortcut-minus-full-functional",
+    "full-functional-minus-native",
+    "shortcut-minus-native"
+  ],
+  "edit_index": 18,
+  "expectations": [
+    "Global control and prefix support-closed queries are candidate numerical equalities; record raw-bit/signedzero separately.",
+    "Mixed-support rows need not satisfy the shortcut. Cancellation can produce equality; no all-rows-must-miss gate.",
+    "Freeze complete S/F edited states and full own-positive response hashes before all3native component targets."
+  ],
+  "fixed_split": 256,
+  "frontier": "authenticated own-functional block18 input and positive ports; conditional, not a new raw-prefix forecast",
+  "horizon": 19,
+  "limited_to": "Source-qualified component-native primitive profile; no public Qwen Act, semantic route or independent kernel claim.",
+  "original_component": {
+    "parameter_prefix": "model.layers.18.",
+    "selected_parameter_count": 11,
+    "selected_parameter_payload_bytes": 201861632
+  },
+  "parent_global_seal_sha256": "a6d61b11fa67bfa0eb3a50fee66f26584b452874a590c255163102362460e652",
+  "parent_job": "job-8c949b1c0278",
+  "parent_raw_manifest_sha256": "d573bffe5c0c3dfc3d1c353721f5696909f73b75fb6ff293aed2e905f4ec0c33",
+  "parent_raw_root": "/mnt/big/mdb/research/job-8c949b1c0278/qwen-sign-shortcut-result",
+  "parent_request_sha256": "1a9b11e4bc739410dcd165b31cd0c0452aa5f0583e7731598bc1e2b8a87bdd5a",
+  "physical_plan": {
+    "FLUX": 0,
+    "LM": 0,
+    "VAE": 0,
+    "embedding": 0,
+    "full_model": 0,
+    "functional_full_negative_blocks": 2,
+    "native_block_calls": 3,
+    "noise": 0,
+    "shortcut_down_projections": 2,
+    "tokenizer": 0
+  },
+  "predictor": "row-sign own-positive R/G/U; P=SiLU(s*G)*(s*U),M=linear(P,Wd,None),H=s*R+M; headhat=s*positive_head",
+  "schema": "mdb-qwen-row-sign-selection-v1",
+  "scientific_gates": [],
+  "sequence_rows": 512,
+  "source_arrays": {
+    "Hnext": {
+      "bytes": 2621568,
+      "content_sha256": "274cd9dadc211a26ff205478096e6fafd46e265760605c1deae111f23040f510",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.bfloat16",
+      "path": "cases/long-description/forecast/ports/plus/Hnext.npy",
+      "sha256": "1e59152cd5426390441f54c4f9817c5a8be3105f200c77b6e44a99ca9ca54fb8",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    "M": {
+      "bytes": 2621568,
+      "content_sha256": "bdca454b07ebbf42b0715043794ec4c00f0ada0a67c81eca4af9008f1501528b",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.bfloat16",
+      "path": "cases/long-description/forecast/ports/plus/M.npy",
+      "sha256": "1d1d3d6c09004a59245c8a6b1ecf0827e2dc23fcf05a773426a8d3409aff96c1",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    "R": {
+      "bytes": 2621568,
+      "content_sha256": "b628c33c677b3b63df680f11d586ef2e6aa4f3f8e3f70d918f348739a5535dae",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.bfloat16",
+      "path": "cases/long-description/forecast/ports/plus/R.npy",
+      "sha256": "eb58a50c76a03e80e3295026fa745f9b78641a5526565f74a563a3fe83ed963e",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    "attention_mask": {
+      "bytes": 4224,
+      "content_sha256": "8a472efbc41a4502e6da085422880bc742625c1187f2d36ed39e669d736ac113",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.int64",
+      "path": "cases/long-description/inputs/mask.npy",
+      "sha256": "b6ac6a685e8726963fa2bb91856728280ee6fa47957eea274285b029a6abb946",
+      "shape": [
+        1,
+        512
+      ],
+      "stored_dtype": "int64",
+      "stride": [
+        512,
+        1
+      ]
+    },
+    "gate": {
+      "bytes": 9961600,
+      "content_sha256": "d70489b339ba9fc912adb107c9155c844cb0b1b7d66c541acd82e4931bddc096",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.bfloat16",
+      "path": "cases/long-description/forecast/ports/plus/gate.npy",
+      "sha256": "1020451e4da967d3be4ef0b8500a7c3e010224e8d0d67a50d8afb6916ecbdcc4",
+      "shape": [
+        1,
+        512,
+        9728
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        4980736,
+        9728,
+        1
+      ]
+    },
+    "h": {
+      "bytes": 2621568,
+      "content_sha256": "cdf5c7e1e4c502aa15d655594b1d3ccc4a0f2483a6835d01780b0f51fdea4dd6",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.bfloat16",
+      "path": "cases/long-description/forecast/ports/plus/h.npy",
+      "sha256": "903c5353a56889346de2ae5bfecc147c96679fdccbfb76fb70b0d02d33599aea",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    "head": {
+      "bytes": 4194432,
+      "content_sha256": "bbf054dc13a67ae8297dc9454bbff85624947b065f4bda259c9957848665e4b2",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.bfloat16",
+      "path": "cases/long-description/forecast/ports/plus/head.npy",
+      "sha256": "aa82c8bd8cedde7e2edf53572aff04038e1cd836875377fde3c0ee909562263c",
+      "shape": [
+        1,
+        512,
+        32,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        4096,
+        128,
+        1
+      ]
+    },
+    "input_ids": {
+      "bytes": 4224,
+      "content_sha256": "cb7f2c8b789898f1d188f0683c7b068089579355c5ee257911f5977d864f67b9",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.int64",
+      "path": "cases/long-description/inputs/ids.npy",
+      "sha256": "799ae335f3076cf3ddcb293b58f8bbb9e66ecdb7ce4977e7c2058eab89ef9b83",
+      "shape": [
+        1,
+        512
+      ],
+      "stored_dtype": "int64",
+      "stride": [
+        512,
+        1
+      ]
+    },
+    "position_ids": {
+      "bytes": 4224,
+      "content_sha256": "5738153ec97595b1c1e4dc027f7b7fb4534f19ed2ce9f9ee712e6d34a384cde7",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.int64",
+      "path": "cases/long-description/forecast/position_ids.npy",
+      "sha256": "aae0468672b77326ea684d78e95f77d2b0341a9f6fb01146c25d09b29935ea68",
+      "shape": [
+        1,
+        512
+      ],
+      "stored_dtype": "int64",
+      "stride": [
+        512,
+        1
+      ]
+    },
+    "product": {
+      "bytes": 9961600,
+      "content_sha256": "42cd3135b94b0bf0c909931b4771c76a2d826a8c2a92725c2c49c3f72f839641",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.bfloat16",
+      "path": "cases/long-description/forecast/ports/plus/product.npy",
+      "sha256": "7a28c1b5f407d94c74c131918c7fa02460166b3f88ac0137d188c199a866b3b9",
+      "shape": [
+        1,
+        512,
+        9728
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        4980736,
+        9728,
+        1
+      ]
+    },
+    "rope_buffer:model.rotary_emb.inv_freq": {
+      "bytes": 384,
+      "content_sha256": "138c99b109d7affbfba059e435670918fe4531bce4709b6e86f3f22f7ef80f6e",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.float32",
+      "path": "rope-before/model.rotary_emb.inv_freq.npy",
+      "sha256": "2e515831f0c14466976c2f486410ba482661afc7bdb8ae12d9a1f7d6f070cfeb",
+      "shape": [
+        64
+      ],
+      "stored_dtype": "float32",
+      "stride": [
+        1
+      ]
+    },
+    "rope_buffer:model.rotary_emb.original_inv_freq": {
+      "bytes": 384,
+      "content_sha256": "138c99b109d7affbfba059e435670918fe4531bce4709b6e86f3f22f7ef80f6e",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.float32",
+      "path": "rope-before/model.rotary_emb.original_inv_freq.npy",
+      "sha256": "2e515831f0c14466976c2f486410ba482661afc7bdb8ae12d9a1f7d6f070cfeb",
+      "shape": [
+        64
+      ],
+      "stored_dtype": "float32",
+      "stride": [
+        1
+      ]
+    },
+    "up": {
+      "bytes": 9961600,
+      "content_sha256": "ed2613f71bc236715b45c2086de6571b93bf629e73d60d8fa98731fd432d5d64",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.bfloat16",
+      "path": "cases/long-description/forecast/ports/plus/up.npy",
+      "sha256": "53812c6c2b3d60ee853eacc3942d94e1988f9075e7b5a95b3479337e2b9fd0c3",
+      "shape": [
+        1,
+        512,
+        9728
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        4980736,
+        9728,
+        1
+      ]
+    }
+  },
+  "source_case": "long-description"
+}

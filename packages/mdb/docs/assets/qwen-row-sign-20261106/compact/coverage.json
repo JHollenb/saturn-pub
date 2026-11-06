@@ -1,0 +1,21 @@
+{
+  "arms": {
+    "all-negative": {
+      "overlapping_endpoint_windows": 24,
+      "overlapping_response_windows": 24,
+      "primary_endpoint_fields": 12,
+      "primary_response_fields": 12
+    },
+    "prefix-negative": {
+      "overlapping_endpoint_windows": 24,
+      "overlapping_response_windows": 24,
+      "primary_endpoint_fields": 12,
+      "primary_response_fields": 12
+    }
+  },
+  "dependent_accounts": true,
+  "learned_projections": 0,
+  "model_calls": 0,
+  "primary_and_windows_separate": true,
+  "tokenizer_calls": 0
+}

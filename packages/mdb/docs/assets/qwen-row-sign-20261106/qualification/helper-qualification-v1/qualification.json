@@ -1,0 +1,41 @@
+{
+  "actual_component_observations": {
+    "path": "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/helper-qualification-v1/attempt-01/tmp/test_three_shortcuts_before_th0/actual-component-observations.json",
+    "sha256": "3794965ad08287d0b98639ddf6e84c32aeb848562f5bb4d241f307ee67585f1e"
+  },
+  "checks": 5,
+  "execution_sha256": "1acd17fde8d1a17ffb77268bebd16ca3f363a3bf34ba6c94b228a2967cc1b903",
+  "installed_source_identity_sha256": "434b15eec1166c83a474ec442c15f15fad4caacb945448498ebcd0442ddee14a",
+  "pytest_seconds": 2.81,
+  "ruff": {
+    "command": [
+      "/Users/jakeholl/domains/common/.venv/bin/ruff",
+      "check",
+      "--select",
+      "F,I",
+      "--config",
+      "pyproject.toml",
+      "qualification/qwen_row_sign_shortcut.py",
+      "tests/test_qwen_row_sign_shortcut.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "returncode": 0,
+    "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  },
+  "schema": "mdb-qwen-row-sign-helper-qualification-v1",
+  "scope": [
+    "Actual installed Qwen3DecoderLayer only: residual6 vs query width8, six rows, synthetic BF16 weights, source-positive call then all three shortcuts before three targets. No pretrained model/tokenizer/checkpoint/CUDA/full encoder/LM/jobs/staging.",
+    "Every original native attention call receives None mask with is_causal=True,enable_gqa=True. Explicit Bool causal matrix is diagnostic only and never replaces native attention arguments.",
+    "Shortcut three observed down projections, zero attention; one unchanged finite-policy source profile per case and global module-forward guard.",
+    "Closed support rows agree in this tiny specimen; mixed rows produce a retained measured miss. This is a qualification expectation, never a production quality/oddness gate.",
+    "Signedzero, rawbits, explicit BTHD/BHTD query-axis semantics, allowed-mask mutation, invalid signs and hostile-module guard cleanup covered."
+  ],
+  "sources": {
+    "qualification/qwen_row_sign_shortcut.py": "940c3cfaafeaeb3f0df5746b92b6a8b0878255769c4f230b2a53bedfc0110c1c",
+    "qualification/qwen_sign_shortcut.py": "8e59051a34bc8e89c9376fd29aec966df9cbe84560c81f86910504172caaa457",
+    "tests/test_qwen_row_sign_shortcut.py": "503264dd085ade9708071f3ec6995e53470509e24ed7c75336bd97ab0904538b"
+  },
+  "status": "qualified-tiny-conditional-component-mechanics",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "a4f58bb9c8509e16bd0abe158c6ed31a21db16c78c11783be8b04dc0dcc994d5"
+}

@@ -1,0 +1,43 @@
+{
+  "canonical_package_ruff": "F,I clean before freeze",
+  "execution": "attempt-07/execution.json",
+  "execution_sha256": "095e4026b200e7a5103e61a17c89dc15bd518e1e9e66da56af4bb411da133316",
+  "generic_controller_sha256": "afbb71dfe56b2ed1749c77469dbde8a6c85f554b38831d52f54dd30a647f2ea0",
+  "helper_count": 5,
+  "installed_runtime": {
+    "executable": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+    "packages": {
+      "mdb": {
+        "files": 188,
+        "sha256": "c483a1b79e8220a213c9aeacba988969934b6e122bf4b156eba486aa20c2b748"
+      },
+      "mrun": {
+        "files": 225,
+        "sha256": "7ff3f73e259864f3469fbede1596a846652821c733eea6290dbacc05b720c8b1"
+      },
+      "saturn_pub": {
+        "files": 59,
+        "sha256": "044add634bc2129953be3e2f430e8516485fba39efa358f506c087cb94e931b3"
+      }
+    },
+    "python": "3.12.13"
+  },
+  "pytest": "4 passed in 0.10s",
+  "reader_sha256": "218bf64a05739a4af547b8e26c3ccf2f5d4f60ecbd4d2e73bc6ad691af8a5667",
+  "resource_profile": {
+    "cpu_threads": 2,
+    "disk_gb": 1,
+    "est_wall_s": 240,
+    "outer_timeout_s": 600,
+    "ram_mb": 3072,
+    "vram_mb": 0
+  },
+  "schema": "mdb-row-sign-saved-controller-qualification-v1",
+  "scope": "Isolated installed-wheel synthetic metadata/CLI/bootstrap guards only; zero actual staging, jobs, services, original arrays, models or weights.",
+  "source_hashes": {
+    "qualification/stage_qwen_row_sign_saved_audit.py": "bd832985f89589210420f7a07757dbec7e2d4f62e39966798248434e2518106e",
+    "tests/test_stage_qwen_row_sign_saved_audit.py": "982dfa80f36a570f353da8aee8e9aad1ca0910a66f9ff7d112989c6def4a5e84"
+  },
+  "status": "qualified-model-free-mechanics-only",
+  "tests": 4
+}

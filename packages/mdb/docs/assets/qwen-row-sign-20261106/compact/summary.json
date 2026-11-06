@@ -1,0 +1,12 @@
+{
+  "arms": 2,
+  "atlas_observations": 2,
+  "catalog_records": 2,
+  "job_id": "job-ded9cc529d99",
+  "model_calls": 0,
+  "native_component_observations": 3,
+  "request_sha256": "d77a7c3e9e87b5c8dada8bebdd1e70b3472427ef4e0d124f18d89fb8aea977c2",
+  "schema": "mdb-qwen-row-sign-compact-v1",
+  "seconds": 13.999249001033604,
+  "source_job": "job-74efe5506ecf"
+}

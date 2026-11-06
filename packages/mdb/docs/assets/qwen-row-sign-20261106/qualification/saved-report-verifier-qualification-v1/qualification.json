@@ -1,0 +1,36 @@
+{
+  "actual_execution": {
+    "actual_installed_CLI_calls": 12,
+    "audit_job": "job-ded9cc529d99",
+    "authorized_after_root_collection": true,
+    "changed_source_or_profile_abstentions": 8,
+    "exact_matches": 4,
+    "native_job": "job-74efe5506ecf",
+    "scope": "Actual collected compact JSON + local complete captured job JSON/logs only. Standard request/config/source/job, raw and compact manifest, executed command/reservation, payload custody and complete log/marker joins authenticated. No scheduler, model/tokenizer/projection or raw array/weight reads.",
+    "verification_receipt": "saved-report-verification-v1/verification.json",
+    "verification_receipt_sha256": "d3a5a75542be135a0e788eb3f6c90239193cdff78b4d5c27b67a4ea461c70108"
+  },
+  "limits": [
+    "Primary whole/window/channel/effect/premise/source accounts remain separate and dependent; no pooled gain or independent occurrence claim.",
+    "Prior failed audit01 and all source/result files remain unchanged.",
+    "Script never fetches a scheduler job: complete local captures are explicit arguments, otherwise command/custody/log status remains unestablished."
+  ],
+  "lint": {
+    "command": "rtk proxy uvx ruff check --select F,I artifacts/mdb-qwen-row-sign-20261106/verify_saved_reports.py artifacts/mdb-qwen-row-sign-20261106/saved-report-verifier-qualification-v1/test_verify_saved_reports.py",
+    "stdout": "All checks passed!\n"
+  },
+  "pinned_prior_helper_sha256": "3c982cef7cf3a873a7f5c89f7ccea7c1db2eacb6764afd16b44d9bf59b2fe653",
+  "qualification": {
+    "command": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B -m pytest -q test_verify_saved_reports.py --basetemp=../tmp",
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/saved-report-verifier-qualification-v1/attempt-01/cohort",
+    "observed_tool_wall_seconds": 0.82974225,
+    "passed": 4,
+    "pytest_seconds": 0.62,
+    "scope": "Actual prior tiny saved scalar/catalog data, with explicit synthetic request/job custody envelope;12 actual installed MDB CLI lookups in mechanics. No neural rerun, raw arrays or original assets.",
+    "stdout": "....                                                                     [100%]\n4 passed in 0.62s\n"
+  },
+  "schema": "mdb-qwen-row-sign-compact-verifier-qualification-v1",
+  "script_sha256": "3ff3a2417969475d6602b76c8e5d83677a52be895df4e7582e24e38821f1d4e6",
+  "status": "passed",
+  "tests_sha256": "b5e15fc09c51af2f8cefc72a4700cb64300248df724502db2f82d9d8235742c5"
+}

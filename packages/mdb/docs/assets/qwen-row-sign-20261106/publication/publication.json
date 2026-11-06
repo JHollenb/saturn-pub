@@ -1,0 +1,3085 @@
+{
+  "audit_sha256": "5e3b7d5f9061a705931ecc7562097bc7bf2b3d8f38b385cafa5490558c1e3457",
+  "compact_manifest_sha256": "82032b7ad875735d14a3c3f2ac2cc7dbb9bc342b3ae9373f2a8fbe349f06906f",
+  "native_job": "job-74efe5506ecf",
+  "native_request_sha256": "fb202763231fad27712f2b525aa1ea0d041496c13079d6b4a4a7425d36e18a77",
+  "prefix_arm_fields": {
+    "Hnext": {
+      "endpoint": {
+        "bounds": {
+          "prefix": [
+            0,
+            256
+          ],
+          "suffix": [
+            256,
+            512
+          ]
+        },
+        "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+        "whole": {
+          "bitwise_exact": false,
+          "changed_values": 651956,
+          "cosine": 0.999920233048868,
+          "denominator": "RMS of supplied right operand",
+          "dot": 326024850.6969988,
+          "first_differing_byte": 2621442,
+          "first_numerical_difference": {
+            "coordinate": [
+              0,
+              256,
+              0
+            ],
+            "flat_index": 655360,
+            "left": 24.75,
+            "right": 27.625,
+            "signed_error": -2.875
+          },
+          "maxabs": 4.375,
+          "native_rms": 15.772531104661873,
+          "native_signed_mean": -0.008428373807691968,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.4501953125,
+          "p99": 0.6875,
+          "predicted_rms": 15.7715373796259,
+          "predicted_signed_mean": -0.00682320842097397,
+          "relative_rms": 0.012630432316821328,
+          "rms": 0.1992138865823909,
+          "sample_count": 1310720,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 0.0016051653867179994,
+          "worst": {
+            "coordinate": [
+              0,
+              257,
+              0
+            ],
+            "native": 28.375,
+            "predicted": 24.0,
+            "signed_error": -4.375
+          }
+        },
+        "windows": {
+          "prefix": {
+            "bitwise_exact": true,
+            "changed_values": 0,
+            "cosine": 1.0,
+            "denominator": "RMS of supplied right operand",
+            "dot": 325373564.9402971,
+            "first_differing_byte": null,
+            "first_numerical_difference": null,
+            "maxabs": 0.0,
+            "native_rms": 22.281845960192882,
+            "native_signed_mean": -0.03713824931764975,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.0,
+            "p99": 0.0,
+            "predicted_rms": 22.281845960192882,
+            "predicted_signed_mean": -0.03713824931764975,
+            "relative_rms": 0.0,
+            "rms": 0.0,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": 0.0,
+            "worst": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "native": 828.0,
+              "predicted": 828.0,
+              "signed_error": 0.0
+            }
+          },
+          "suffix": {
+            "bitwise_exact": false,
+            "changed_values": 651956,
+            "cosine": 0.962041707505627,
+            "denominator": "RMS of supplied right operand",
+            "dot": 651285.7567017637,
+            "first_differing_byte": 2,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": 24.75,
+              "right": 27.625,
+              "signed_error": -2.875
+            },
+            "maxabs": 4.375,
+            "native_rms": 1.0318989782380459,
+            "native_signed_mean": 0.020281501702265815,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.5546875,
+            "p99": 0.79296875,
+            "predicted_rms": 1.0010610571340701,
+            "predicted_signed_mean": 0.023491832475701812,
+            "relative_rms": 0.273021861790119,
+            "rms": 0.28173098021787274,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": 0.003210330773435999,
+            "worst": {
+              "coordinate": [
+                0,
+                1,
+                0
+              ],
+              "native": 28.375,
+              "predicted": 24.0,
+              "signed_error": -4.375
+            }
+          }
+        }
+      },
+      "left_effect": {
+        "bounds": {
+          "prefix": [
+            0,
+            256
+          ],
+          "suffix": [
+            256,
+            512
+          ]
+        },
+        "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+        "whole": {
+          "bitwise_exact": false,
+          "changed_values": 654978,
+          "cosine": -0.9950499019705225,
+          "denominator": "RMS of supplied right operand",
+          "dot": -324189595.1975654,
+          "first_differing_byte": 2,
+          "first_numerical_difference": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "flat_index": 0,
+            "left": 828.0,
+            "right": -824.0,
+            "signed_error": 1652.0
+          },
+          "maxabs": 32640.0,
+          "native_rms": 15.760509569127885,
+          "native_signed_mean": 0.030354612500377697,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 2.90625,
+          "p99": 5.640625,
+          "predicted_rms": 15.7715373796259,
+          "predicted_signed_mean": -0.00682320842097397,
+          "relative_rms": 1.9982222630215927,
+          "rms": 31.49300109759619,
+          "sample_count": 1310720,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -0.03717782092135167,
+          "worst": {
+            "coordinate": [
+              0,
+              0,
+              4
+            ],
+            "native": 16320.0,
+            "predicted": -16320.0,
+            "signed_error": -32640.0
+          }
+        },
+        "windows": {
+          "prefix": {
+            "bitwise_exact": false,
+            "changed_values": 654978,
+            "cosine": -0.9990796417574112,
+            "denominator": "RMS of supplied right operand",
+            "dot": -324846346.68420404,
+            "first_differing_byte": 2,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": 828.0,
+              "right": -824.0,
+              "signed_error": 1652.0
+            },
+            "maxabs": 32640.0,
+            "native_rms": 22.266234538354993,
+            "native_signed_mean": 0.037217392525053586,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 3.8671875,
+            "p99": 7.625,
+            "predicted_rms": 22.281845960192882,
+            "predicted_signed_mean": -0.03713824931764975,
+            "relative_rms": 2.000240732007567,
+            "rms": 44.53782927205136,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": -0.07435564184270334,
+            "worst": {
+              "coordinate": [
+                0,
+                0,
+                4
+              ],
+              "native": 16320.0,
+              "predicted": -16320.0,
+              "signed_error": -32640.0
+            }
+          },
+          "suffix": {
+            "bitwise_exact": true,
+            "changed_values": 0,
+            "cosine": 1.0,
+            "denominator": "RMS of supplied right operand",
+            "dot": 656751.4866387399,
+            "first_differing_byte": null,
+            "first_numerical_difference": null,
+            "maxabs": 0.0,
+            "native_rms": 1.0010610571340701,
+            "native_signed_mean": 0.023491832475701812,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.0,
+            "p99": 0.0,
+            "predicted_rms": 1.0010610571340701,
+            "predicted_signed_mean": 0.023491832475701812,
+            "relative_rms": 0.0,
+            "rms": 0.0,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": 0.0,
+            "worst": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "native": 24.75,
+              "predicted": 24.75,
+              "signed_error": 0.0
+            }
+          }
+        }
+      },
+      "response_error": {
+        "bounds": {
+          "prefix": [
+            0,
+            256
+          ],
+          "suffix": [
+            256,
+            512
+          ]
+        },
+        "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+        "whole": {
+          "bitwise_exact": false,
+          "changed_values": 651956,
+          "cosine": 0.9999799936394403,
+          "denominator": "RMS of supplied right operand",
+          "dot": 1299984047.319541,
+          "first_differing_byte": 5242886,
+          "first_numerical_difference": {
+            "coordinate": [
+              0,
+              256,
+              0
+            ],
+            "flat_index": 655360,
+            "left": 0.0,
+            "right": 2.875,
+            "signed_error": -2.875
+          },
+          "maxabs": 4.375,
+          "native_rms": 31.49363117053672,
+          "native_signed_mean": -0.038782986308069665,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.4501953125,
+          "p99": 0.6875,
+          "predicted_rms": 31.49300109759619,
+          "predicted_signed_mean": -0.03717782092135167,
+          "relative_rms": 0.006325529295229753,
+          "rms": 0.1992138865823909,
+          "sample_count": 1310720,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 0.0016051653867179994,
+          "worst": {
+            "coordinate": [
+              0,
+              257,
+              0
+            ],
+            "native": 4.375,
+            "predicted": 0.0,
+            "signed_error": -4.375
+          }
+        },
+        "windows": {
+          "prefix": {
+            "bitwise_exact": true,
+            "changed_values": 0,
+            "cosine": 1.0,
+            "denominator": "RMS of supplied right operand",
+            "dot": 1299984047.3195446,
+            "first_differing_byte": null,
+            "first_numerical_difference": null,
+            "maxabs": 0.0,
+            "native_rms": 44.53782927205136,
+            "native_signed_mean": -0.07435564184270334,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.0,
+            "p99": 0.0,
+            "predicted_rms": 44.53782927205136,
+            "predicted_signed_mean": -0.07435564184270334,
+            "relative_rms": 0.0,
+            "rms": 0.0,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": 0.0,
+            "worst": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "native": 1652.0,
+              "predicted": 1652.0,
+              "signed_error": 0.0
+            }
+          },
+          "suffix": {
+            "bitwise_exact": false,
+            "changed_values": 651956,
+            "cosine": null,
+            "denominator": "RMS of supplied right operand",
+            "dot": 0.0,
+            "first_differing_byte": 6,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": 0.0,
+              "right": 2.875,
+              "signed_error": -2.875
+            },
+            "maxabs": 4.375,
+            "native_rms": 0.28173098021787274,
+            "native_signed_mean": -0.003210330773435999,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.5546875,
+            "p99": 0.79296875,
+            "predicted_rms": 0.0,
+            "predicted_signed_mean": 0.0,
+            "relative_rms": 1.0,
+            "rms": 0.28173098021787274,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": 0.003210330773435999,
+            "worst": {
+              "coordinate": [
+                0,
+                1,
+                0
+              ],
+              "native": 4.375,
+              "predicted": 0.0,
+              "signed_error": -4.375
+            }
+          }
+        }
+      },
+      "right_effect": {
+        "bounds": {
+          "prefix": [
+            0,
+            256
+          ],
+          "suffix": [
+            256,
+            512
+          ]
+        },
+        "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+        "whole": {
+          "bitwise_exact": false,
+          "changed_values": 1306934,
+          "cosine": -0.9950039854775999,
+          "denominator": "RMS of supplied right operand",
+          "dot": -324195060.92750233,
+          "first_differing_byte": 2,
+          "first_numerical_difference": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "flat_index": 0,
+            "left": 828.0,
+            "right": -824.0,
+            "signed_error": 1652.0
+          },
+          "maxabs": 32640.0,
+          "native_rms": 15.760509569127885,
+          "native_signed_mean": 0.030354612500377697,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 2.90625,
+          "p99": 5.640625,
+          "predicted_rms": 15.772531104661873,
+          "predicted_signed_mean": -0.008428373807691968,
+          "relative_rms": 1.9982622409764783,
+          "rms": 31.49363117053672,
+          "sample_count": 1310720,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -0.038782986308069665,
+          "worst": {
+            "coordinate": [
+              0,
+              0,
+              4
+            ],
+            "native": 16320.0,
+            "predicted": -16320.0,
+            "signed_error": -32640.0
+          }
+        },
+        "windows": {
+          "prefix": {
+            "bitwise_exact": false,
+            "changed_values": 654978,
+            "cosine": -0.9990796417574112,
+            "denominator": "RMS of supplied right operand",
+            "dot": -324846346.68420404,
+            "first_differing_byte": 2,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": 828.0,
+              "right": -824.0,
+              "signed_error": 1652.0
+            },
+            "maxabs": 32640.0,
+            "native_rms": 22.266234538354993,
+            "native_signed_mean": 0.037217392525053586,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 3.8671875,
+            "p99": 7.625,
+            "predicted_rms": 22.281845960192882,
+            "predicted_signed_mean": -0.03713824931764975,
+            "relative_rms": 2.000240732007567,
+            "rms": 44.53782927205136,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": -0.07435564184270334,
+            "worst": {
+              "coordinate": [
+                0,
+                0,
+                4
+              ],
+              "native": 16320.0,
+              "predicted": -16320.0,
+              "signed_error": -32640.0
+            }
+          },
+          "suffix": {
+            "bitwise_exact": false,
+            "changed_values": 651956,
+            "cosine": 0.962041707505627,
+            "denominator": "RMS of supplied right operand",
+            "dot": 651285.7567017637,
+            "first_differing_byte": 2,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": 27.625,
+              "right": 24.75,
+              "signed_error": 2.875
+            },
+            "maxabs": 4.375,
+            "native_rms": 1.0010610571340701,
+            "native_signed_mean": 0.023491832475701812,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.5546875,
+            "p99": 0.79296875,
+            "predicted_rms": 1.0318989782380459,
+            "predicted_signed_mean": 0.020281501702265815,
+            "relative_rms": 0.2814323643998681,
+            "rms": 0.28173098021787274,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": -0.003210330773435999,
+            "worst": {
+              "coordinate": [
+                0,
+                1,
+                0
+              ],
+              "native": 24.0,
+              "predicted": 28.375,
+              "signed_error": 4.375
+            }
+          }
+        }
+      }
+    },
+    "M": {
+      "endpoint": {
+        "bounds": {
+          "prefix": [
+            0,
+            256
+          ],
+          "suffix": [
+            256,
+            512
+          ]
+        },
+        "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+        "whole": {
+          "bitwise_exact": false,
+          "changed_values": 653672,
+          "cosine": 0.9582375765876868,
+          "denominator": "RMS of supplied right operand",
+          "dot": 381820.3062804767,
+          "first_differing_byte": 2621442,
+          "first_numerical_difference": {
+            "coordinate": [
+              0,
+              256,
+              0
+            ],
+            "flat_index": 655360,
+            "left": -3.546875,
+            "right": -5.875,
+            "signed_error": 2.328125
+          },
+          "maxabs": 4.84375,
+          "native_rms": 0.5555097678228272,
+          "native_signed_mean": 0.0009856144757236507,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.3603515625,
+          "p99": 0.55078125,
+          "predicted_rms": 0.5472480191144625,
+          "predicted_signed_mean": 0.0007736149733773345,
+          "relative_rms": 0.28723478480795217,
+          "rms": 0.15956172861930526,
+          "sample_count": 1310720,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -0.00021199950234631614,
+          "worst": {
+            "coordinate": [
+              0,
+              354,
+              0
+            ],
+            "native": -8.5,
+            "predicted": -3.65625,
+            "signed_error": 4.84375
+          }
+        },
+        "windows": {
+          "prefix": {
+            "bitwise_exact": true,
+            "changed_values": 0,
+            "cosine": 1.0,
+            "denominator": "RMS of supplied right operand",
+            "dot": 321423.5345172852,
+            "first_differing_byte": null,
+            "first_numerical_difference": null,
+            "maxabs": 0.0,
+            "native_rms": 0.7003237760437984,
+            "native_signed_mean": 0.00014009796041136724,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.0,
+            "p99": 0.0,
+            "predicted_rms": 0.7003237760437984,
+            "predicted_signed_mean": 0.00014009796041136724,
+            "relative_rms": 0.0,
+            "rms": 0.0,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": 0.0,
+            "worst": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "native": 2.5625,
+              "predicted": 2.5625,
+              "signed_error": 0.0
+            }
+          },
+          "suffix": {
+            "bitwise_exact": false,
+            "changed_values": 653672,
+            "cosine": 0.7858984605860929,
+            "denominator": "RMS of supplied right operand",
+            "dot": 60396.77176319149,
+            "first_differing_byte": 2,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": -3.546875,
+              "right": -5.875,
+              "signed_error": 2.328125
+            },
+            "maxabs": 4.84375,
+            "native_rms": 0.3559899057570293,
+            "native_signed_mean": 0.0018311309910359341,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.4443359375,
+            "p99": 0.6347296142578145,
+            "predicted_rms": 0.3294046107102359,
+            "predicted_signed_mean": 0.0014071319863433018,
+            "relative_rms": 0.6338785370030425,
+            "rms": 0.22565436064911673,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": -0.0004239990046926323,
+            "worst": {
+              "coordinate": [
+                0,
+                98,
+                0
+              ],
+              "native": -8.5,
+              "predicted": -3.65625,
+              "signed_error": 4.84375
+            }
+          }
+        }
+      },
+      "left_effect": {
+        "bounds": {
+          "prefix": [
+            0,
+            256
+          ],
+          "suffix": [
+            256,
+            512
+          ]
+        },
+        "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+        "whole": {
+          "bitwise_exact": false,
+          "changed_values": 654620,
+          "cosine": 0.6987392085722022,
+          "denominator": "RMS of supplied right operand",
+          "dot": 169951.97909439512,
+          "first_differing_byte": 2,
+          "first_numerical_difference": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "flat_index": 0,
+            "left": 2.5625,
+            "right": 1.859375,
+            "signed_error": 0.703125
+          },
+          "maxabs": 34.59375,
+          "native_rms": 0.3390915661388478,
+          "native_signed_mean": 0.0006810985893025645,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.89697265625,
+          "p99": 1.34375,
+          "predicted_rms": 0.5472480191144625,
+          "predicted_signed_mean": 0.0007736149733773345,
+          "relative_rms": 1.1615587715000146,
+          "rms": 0.393874782990256,
+          "sample_count": 1310720,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 9.251638407477003e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              3,
+              0
+            ],
+            "native": 38.25,
+            "predicted": 3.65625,
+            "signed_error": -34.59375
+          }
+        },
+        "windows": {
+          "prefix": {
+            "bitwise_exact": false,
+            "changed_values": 654620,
+            "cosine": 0.617933843704647,
+            "denominator": "RMS of supplied right operand",
+            "dot": 98840.57103133338,
+            "first_differing_byte": 2,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": 2.5625,
+              "right": 1.859375,
+              "signed_error": 0.703125
+            },
+            "maxabs": 34.59375,
+            "native_rms": 0.3485093727517686,
+            "native_signed_mean": -4.493480773817282e-05,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 1.0947265625,
+            "p99": 1.533203125,
+            "predicted_rms": 0.7003237760437984,
+            "predicted_signed_mean": 0.00014009796041136724,
+            "relative_rms": 1.598301519363522,
+            "rms": 0.5570230599815797,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": 0.00018503276814954006,
+            "worst": {
+              "coordinate": [
+                0,
+                3,
+                0
+              ],
+              "native": 38.25,
+              "predicted": 3.65625,
+              "signed_error": -34.59375
+            }
+          },
+          "suffix": {
+            "bitwise_exact": true,
+            "changed_values": 0,
+            "cosine": 1.0,
+            "denominator": "RMS of supplied right operand",
+            "dot": 71111.40806306174,
+            "first_differing_byte": null,
+            "first_numerical_difference": null,
+            "maxabs": 0.0,
+            "native_rms": 0.3294046107102359,
+            "native_signed_mean": 0.0014071319863433018,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.0,
+            "p99": 0.0,
+            "predicted_rms": 0.3294046107102359,
+            "predicted_signed_mean": 0.0014071319863433018,
+            "relative_rms": 0.0,
+            "rms": 0.0,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": 0.0,
+            "worst": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "native": -3.546875,
+              "predicted": -3.546875,
+              "signed_error": 0.0
+            }
+          }
+        }
+      },
+      "response_error": {
+        "bounds": {
+          "prefix": [
+            0,
+            256
+          ],
+          "suffix": [
+            256,
+            512
+          ]
+        },
+        "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+        "whole": {
+          "bitwise_exact": false,
+          "changed_values": 653672,
+          "cosine": 0.9268352919334674,
+          "denominator": "RMS of supplied right operand",
+          "dot": 203341.62041323032,
+          "first_differing_byte": 5242885,
+          "first_numerical_difference": {
+            "coordinate": [
+              0,
+              256,
+              0
+            ],
+            "flat_index": 655360,
+            "left": 0.0,
+            "right": -2.328125,
+            "signed_error": 2.328125
+          },
+          "maxabs": 4.84375,
+          "native_rms": 0.4249673986502989,
+          "native_signed_mean": 0.00030451588642108616,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.3603515625,
+          "p99": 0.55078125,
+          "predicted_rms": 0.393874782990256,
+          "predicted_signed_mean": 9.251638407477003e-05,
+          "relative_rms": 0.37546816326634713,
+          "rms": 0.15956172861930526,
+          "sample_count": 1310720,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -0.00021199950234631614,
+          "worst": {
+            "coordinate": [
+              0,
+              354,
+              0
+            ],
+            "native": -4.84375,
+            "predicted": 0.0,
+            "signed_error": 4.84375
+          }
+        },
+        "windows": {
+          "prefix": {
+            "bitwise_exact": true,
+            "changed_values": 0,
+            "cosine": 1.0,
+            "denominator": "RMS of supplied right operand",
+            "dot": 203341.62041323032,
+            "first_differing_byte": null,
+            "first_numerical_difference": null,
+            "maxabs": 0.0,
+            "native_rms": 0.5570230599815797,
+            "native_signed_mean": 0.00018503276814954006,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.0,
+            "p99": 0.0,
+            "predicted_rms": 0.5570230599815797,
+            "predicted_signed_mean": 0.00018503276814954006,
+            "relative_rms": 0.0,
+            "rms": 0.0,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": 0.0,
+            "worst": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "native": 0.703125,
+              "predicted": 0.703125,
+              "signed_error": 0.0
+            }
+          },
+          "suffix": {
+            "bitwise_exact": false,
+            "changed_values": 653672,
+            "cosine": null,
+            "denominator": "RMS of supplied right operand",
+            "dot": 0.0,
+            "first_differing_byte": 5,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": 0.0,
+              "right": -2.328125,
+              "signed_error": 2.328125
+            },
+            "maxabs": 4.84375,
+            "native_rms": 0.22565436064911673,
+            "native_signed_mean": 0.0004239990046926323,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.4443359375,
+            "p99": 0.6347296142578145,
+            "predicted_rms": 0.0,
+            "predicted_signed_mean": 0.0,
+            "relative_rms": 1.0,
+            "rms": 0.22565436064911673,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": -0.0004239990046926323,
+            "worst": {
+              "coordinate": [
+                0,
+                98,
+                0
+              ],
+              "native": -4.84375,
+              "predicted": 0.0,
+              "signed_error": 4.84375
+            }
+          }
+        }
+      },
+      "right_effect": {
+        "bounds": {
+          "prefix": [
+            0,
+            256
+          ],
+          "suffix": [
+            256,
+            512
+          ]
+        },
+        "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+        "whole": {
+          "bitwise_exact": false,
+          "changed_values": 1308292,
+          "cosine": 0.6449503869208489,
+          "denominator": "RMS of supplied right operand",
+          "dot": 159237.34279452485,
+          "first_differing_byte": 2,
+          "first_numerical_difference": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "flat_index": 0,
+            "left": 2.5625,
+            "right": 1.859375,
+            "signed_error": 0.703125
+          },
+          "maxabs": 34.59375,
+          "native_rms": 0.3390915661388478,
+          "native_signed_mean": 0.0006810985893025645,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.900390625,
+          "p99": 1.34765625,
+          "predicted_rms": 0.5555097678228272,
+          "predicted_signed_mean": 0.0009856144757236507,
+          "relative_rms": 1.2532526346476207,
+          "rms": 0.4249673986502989,
+          "sample_count": 1310720,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 0.00030451588642108616,
+          "worst": {
+            "coordinate": [
+              0,
+              3,
+              0
+            ],
+            "native": 38.25,
+            "predicted": 3.65625,
+            "signed_error": -34.59375
+          }
+        },
+        "windows": {
+          "prefix": {
+            "bitwise_exact": false,
+            "changed_values": 654620,
+            "cosine": 0.617933843704647,
+            "denominator": "RMS of supplied right operand",
+            "dot": 98840.57103133338,
+            "first_differing_byte": 2,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": 2.5625,
+              "right": 1.859375,
+              "signed_error": 0.703125
+            },
+            "maxabs": 34.59375,
+            "native_rms": 0.3485093727517686,
+            "native_signed_mean": -4.493480773817282e-05,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 1.0947265625,
+            "p99": 1.533203125,
+            "predicted_rms": 0.7003237760437984,
+            "predicted_signed_mean": 0.00014009796041136724,
+            "relative_rms": 1.598301519363522,
+            "rms": 0.5570230599815797,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": 0.00018503276814954006,
+            "worst": {
+              "coordinate": [
+                0,
+                3,
+                0
+              ],
+              "native": 38.25,
+              "predicted": 3.65625,
+              "signed_error": -34.59375
+            }
+          },
+          "suffix": {
+            "bitwise_exact": false,
+            "changed_values": 653672,
+            "cosine": 0.7858984605860929,
+            "denominator": "RMS of supplied right operand",
+            "dot": 60396.77176319149,
+            "first_differing_byte": 2,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": -5.875,
+              "right": -3.546875,
+              "signed_error": -2.328125
+            },
+            "maxabs": 4.84375,
+            "native_rms": 0.3294046107102359,
+            "native_signed_mean": 0.0014071319863433018,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.4443359375,
+            "p99": 0.6347296142578145,
+            "predicted_rms": 0.3559899057570293,
+            "predicted_signed_mean": 0.0018311309910359341,
+            "relative_rms": 0.6850370435391867,
+            "rms": 0.22565436064911673,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": 0.0004239990046926323,
+            "worst": {
+              "coordinate": [
+                0,
+                98,
+                0
+              ],
+              "native": -3.65625,
+              "predicted": -8.5,
+              "signed_error": -4.84375
+            }
+          }
+        }
+      }
+    },
+    "R": {
+      "endpoint": {
+        "bounds": {
+          "prefix": [
+            0,
+            256
+          ],
+          "suffix": [
+            256,
+            512
+          ]
+        },
+        "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+        "whole": {
+          "bitwise_exact": false,
+          "changed_values": 651599,
+          "cosine": 0.999919696334075,
+          "denominator": "RMS of supplied right operand",
+          "dot": 325579009.3864384,
+          "first_differing_byte": 28431,
+          "first_numerical_difference": {
+            "coordinate": [
+              0,
+              256,
+              0
+            ],
+            "flat_index": 655360,
+            "left": 28.25,
+            "right": 33.5,
+            "signed_error": -5.25
+          },
+          "maxabs": 7.5,
+          "native_rms": 15.762573729058927,
+          "native_signed_mean": -0.009412228496512399,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.4375,
+          "p99": 0.66796875,
+          "predicted_rms": 15.759927562444934,
+          "predicted_signed_mean": -0.007595527810917701,
+          "relative_rms": 0.012673142948091073,
+          "rms": 0.19976135009818874,
+          "sample_count": 1310720,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 0.0018167006855946966,
+          "worst": {
+            "coordinate": [
+              0,
+              354,
+              0
+            ],
+            "native": 34.5,
+            "predicted": 27.0,
+            "signed_error": -7.5
+          }
+        },
+        "windows": {
+          "prefix": {
+            "bitwise_exact": false,
+            "changed_values": 0,
+            "cosine": 1.0,
+            "denominator": "RMS of supplied right operand",
+            "dot": 324889196.4267159,
+            "first_differing_byte": 28431,
+            "first_numerical_difference": null,
+            "maxabs": 0.0,
+            "native_rms": 22.265254808693268,
+            "native_signed_mean": -0.03727291319228243,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.0,
+            "p99": 0.0,
+            "predicted_rms": 22.265254808693268,
+            "predicted_signed_mean": -0.03727291319228243,
+            "relative_rms": 0.0,
+            "rms": 0.0,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": 0.0,
+            "worst": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "native": 824.0,
+              "predicted": 824.0,
+              "signed_error": 0.0
+            }
+          },
+          "suffix": {
+            "bitwise_exact": false,
+            "changed_values": 651599,
+            "cosine": 0.9662939966568062,
+            "denominator": "RMS of supplied right operand",
+            "dot": 689812.9597228207,
+            "first_differing_byte": 2,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": 28.25,
+              "right": 33.5,
+              "signed_error": -5.25
+            },
+            "maxabs": 7.5,
+            "native_rms": 1.0843843562128324,
+            "native_signed_mean": 0.018448456199257633,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.5390625,
+            "p99": 0.76953125,
+            "predicted_rms": 1.0045207070961002,
+            "predicted_signed_mean": 0.022081857570447026,
+            "relative_rms": 0.2605212892718744,
+            "rms": 0.28250521054681854,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": 0.003633401371189393,
+            "worst": {
+              "coordinate": [
+                0,
+                98,
+                0
+              ],
+              "native": 34.5,
+              "predicted": 27.0,
+              "signed_error": -7.5
+            }
+          }
+        }
+      },
+      "left_effect": {
+        "bounds": {
+          "prefix": [
+            0,
+            256
+          ],
+          "suffix": [
+            256,
+            512
+          ]
+        },
+        "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+        "whole": {
+          "bitwise_exact": false,
+          "changed_values": 654945,
+          "cosine": -0.995937350522214,
+          "denominator": "RMS of supplied right operand",
+          "dot": -324227897.6520542,
+          "first_differing_byte": 3,
+          "first_numerical_difference": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "flat_index": 0,
+            "left": 824.0,
+            "right": -824.0,
+            "signed_error": 1648.0
+          },
+          "maxabs": 32640.0,
+          "native_rms": 15.759927562444934,
+          "native_signed_mean": 0.02967738538136473,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 2.5625,
+          "p99": 5.59375,
+          "predicted_rms": 15.759927562444934,
+          "predicted_signed_mean": -0.007595527810917701,
+          "relative_rms": 1.9979676426419994,
+          "rms": 31.487825320146776,
+          "sample_count": 1310720,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -0.03727291319228243,
+          "worst": {
+            "coordinate": [
+              0,
+              0,
+              4
+            ],
+            "native": 16320.0,
+            "predicted": -16320.0,
+            "signed_error": -32640.0
+          }
+        },
+        "windows": {
+          "prefix": {
+            "bitwise_exact": false,
+            "changed_values": 654945,
+            "cosine": -1.0,
+            "denominator": "RMS of supplied right operand",
+            "dot": -324889196.4267159,
+            "first_differing_byte": 3,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": 824.0,
+              "right": -824.0,
+              "signed_error": 1648.0
+            },
+            "maxabs": 32640.0,
+            "native_rms": 22.265254808693268,
+            "native_signed_mean": 0.03727291319228243,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 3.59375,
+            "p99": 7.65625,
+            "predicted_rms": 22.265254808693268,
+            "predicted_signed_mean": -0.03727291319228243,
+            "relative_rms": 2.0,
+            "rms": 44.530509617386535,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": -0.07454582638456486,
+            "worst": {
+              "coordinate": [
+                0,
+                0,
+                4
+              ],
+              "native": 16320.0,
+              "predicted": -16320.0,
+              "signed_error": -32640.0
+            }
+          },
+          "suffix": {
+            "bitwise_exact": true,
+            "changed_values": 0,
+            "cosine": 1.0,
+            "denominator": "RMS of supplied right operand",
+            "dot": 661298.7746614309,
+            "first_differing_byte": null,
+            "first_numerical_difference": null,
+            "maxabs": 0.0,
+            "native_rms": 1.0045207070961002,
+            "native_signed_mean": 0.022081857570447026,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.0,
+            "p99": 0.0,
+            "predicted_rms": 1.0045207070961002,
+            "predicted_signed_mean": 0.022081857570447026,
+            "relative_rms": 0.0,
+            "rms": 0.0,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": 0.0,
+            "worst": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "native": 28.25,
+              "predicted": 28.25,
+              "signed_error": 0.0
+            }
+          }
+        }
+      },
+      "response_error": {
+        "bounds": {
+          "prefix": [
+            0,
+            256
+          ],
+          "suffix": [
+            256,
+            512
+          ]
+        },
+        "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+        "whole": {
+          "bitwise_exact": false,
+          "changed_values": 651599,
+          "cosine": 0.9999798769183532,
+          "denominator": "RMS of supplied right operand",
+          "dot": 1299556785.7068624,
+          "first_differing_byte": 56863,
+          "first_numerical_difference": {
+            "coordinate": [
+              0,
+              256,
+              0
+            ],
+            "flat_index": 655360,
+            "left": 0.0,
+            "right": 5.25,
+            "signed_error": -5.25
+          },
+          "maxabs": 7.5,
+          "native_rms": 31.48845896497746,
+          "native_signed_mean": -0.03908961387787713,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.4375,
+          "p99": 0.66796875,
+          "predicted_rms": 31.487825320146776,
+          "predicted_signed_mean": -0.03727291319228243,
+          "relative_rms": 0.006343954472982312,
+          "rms": 0.19976135009818874,
+          "sample_count": 1310720,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 0.0018167006855946966,
+          "worst": {
+            "coordinate": [
+              0,
+              354,
+              0
+            ],
+            "native": 7.5,
+            "predicted": 0.0,
+            "signed_error": -7.5
+          }
+        },
+        "windows": {
+          "prefix": {
+            "bitwise_exact": false,
+            "changed_values": 0,
+            "cosine": 1.0,
+            "denominator": "RMS of supplied right operand",
+            "dot": 1299556785.7068636,
+            "first_differing_byte": 56863,
+            "first_numerical_difference": null,
+            "maxabs": 0.0,
+            "native_rms": 44.530509617386535,
+            "native_signed_mean": -0.07454582638456486,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.0,
+            "p99": 0.0,
+            "predicted_rms": 44.530509617386535,
+            "predicted_signed_mean": -0.07454582638456486,
+            "relative_rms": 0.0,
+            "rms": 0.0,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": 0.0,
+            "worst": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "native": 1648.0,
+              "predicted": 1648.0,
+              "signed_error": 0.0
+            }
+          },
+          "suffix": {
+            "bitwise_exact": false,
+            "changed_values": 651599,
+            "cosine": null,
+            "denominator": "RMS of supplied right operand",
+            "dot": 0.0,
+            "first_differing_byte": 6,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": 0.0,
+              "right": 5.25,
+              "signed_error": -5.25
+            },
+            "maxabs": 7.5,
+            "native_rms": 0.28250521054681854,
+            "native_signed_mean": -0.003633401371189393,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.5390625,
+            "p99": 0.76953125,
+            "predicted_rms": 0.0,
+            "predicted_signed_mean": 0.0,
+            "relative_rms": 1.0,
+            "rms": 0.28250521054681854,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": 0.003633401371189393,
+            "worst": {
+              "coordinate": [
+                0,
+                98,
+                0
+              ],
+              "native": 7.5,
+              "predicted": 0.0,
+              "signed_error": -7.5
+            }
+          }
+        }
+      },
+      "right_effect": {
+        "bounds": {
+          "prefix": [
+            0,
+            256
+          ],
+          "suffix": [
+            256,
+            512
+          ]
+        },
+        "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+        "whole": {
+          "bitwise_exact": false,
+          "changed_values": 1306544,
+          "cosine": -0.9956825830968721,
+          "denominator": "RMS of supplied right operand",
+          "dot": -324199383.4669928,
+          "first_differing_byte": 3,
+          "first_numerical_difference": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "flat_index": 0,
+            "left": 824.0,
+            "right": -824.0,
+            "signed_error": 1648.0
+          },
+          "maxabs": 32640.0,
+          "native_rms": 15.759927562444934,
+          "native_signed_mean": 0.02967738538136473,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 2.5625,
+          "p99": 5.59375,
+          "predicted_rms": 15.762573729058927,
+          "predicted_signed_mean": -0.009412228496512399,
+          "relative_rms": 1.99800784871707,
+          "rms": 31.48845896497746,
+          "sample_count": 1310720,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -0.03908961387787713,
+          "worst": {
+            "coordinate": [
+              0,
+              0,
+              4
+            ],
+            "native": 16320.0,
+            "predicted": -16320.0,
+            "signed_error": -32640.0
+          }
+        },
+        "windows": {
+          "prefix": {
+            "bitwise_exact": false,
+            "changed_values": 654945,
+            "cosine": -1.0,
+            "denominator": "RMS of supplied right operand",
+            "dot": -324889196.4267159,
+            "first_differing_byte": 3,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": 824.0,
+              "right": -824.0,
+              "signed_error": 1648.0
+            },
+            "maxabs": 32640.0,
+            "native_rms": 22.265254808693268,
+            "native_signed_mean": 0.03727291319228243,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 3.59375,
+            "p99": 7.65625,
+            "predicted_rms": 22.265254808693268,
+            "predicted_signed_mean": -0.03727291319228243,
+            "relative_rms": 2.0,
+            "rms": 44.530509617386535,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": -0.07454582638456486,
+            "worst": {
+              "coordinate": [
+                0,
+                0,
+                4
+              ],
+              "native": 16320.0,
+              "predicted": -16320.0,
+              "signed_error": -32640.0
+            }
+          },
+          "suffix": {
+            "bitwise_exact": false,
+            "changed_values": 651599,
+            "cosine": 0.9662939966568062,
+            "denominator": "RMS of supplied right operand",
+            "dot": 689812.9597228207,
+            "first_differing_byte": 2,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": 33.5,
+              "right": 28.25,
+              "signed_error": 5.25
+            },
+            "maxabs": 7.5,
+            "native_rms": 1.0045207070961002,
+            "native_signed_mean": 0.022081857570447026,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.5390625,
+            "p99": 0.76953125,
+            "predicted_rms": 1.0843843562128324,
+            "predicted_signed_mean": 0.018448456199257633,
+            "relative_rms": 0.2812338347543809,
+            "rms": 0.28250521054681854,
+            "sample_count": 655360,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              2560
+            ],
+            "signed_mean": -0.003633401371189393,
+            "worst": {
+              "coordinate": [
+                0,
+                98,
+                0
+              ],
+              "native": 27.0,
+              "predicted": 34.5,
+              "signed_error": 7.5
+            }
+          }
+        }
+      }
+    },
+    "head": {
+      "endpoint": {
+        "bounds": {
+          "prefix": [
+            0,
+            256
+          ],
+          "suffix": [
+            256,
+            512
+          ]
+        },
+        "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+        "whole": {
+          "bitwise_exact": false,
+          "changed_values": 1045571,
+          "cosine": 0.8723514276724778,
+          "denominator": "RMS of supplied right operand",
+          "dot": 150782.3571928868,
+          "first_differing_byte": 4194306,
+          "first_numerical_difference": {
+            "coordinate": [
+              0,
+              256,
+              0,
+              0
+            ],
+            "flat_index": 1048576,
+            "left": -0.0546875,
+            "right": -0.81640625,
+            "signed_error": 0.76171875
+          },
+          "maxabs": 3.2265625,
+          "native_rms": 0.30985613809836837,
+          "native_signed_mean": -0.004482393580772737,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.31982421875,
+          "p99": 0.603515625,
+          "predicted_rms": 0.26599228455682933,
+          "predicted_signed_mean": -0.0026748361062119558,
+          "relative_rms": 0.48907726384529693,
+          "rms": 0.15154359220682048,
+          "sample_count": 2097152,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            512,
+            32,
+            128
+          ],
+          "signed_mean": 0.0018075574745607809,
+          "worst": {
+            "coordinate": [
+              0,
+              390,
+              3,
+              105
+            ],
+            "native": -1.1796875,
+            "predicted": 2.046875,
+            "signed_error": 3.2265625
+          }
+        },
+        "windows": {
+          "prefix": {
+            "bitwise_exact": true,
+            "changed_values": 0,
+            "cosine": 1.0,
+            "denominator": "RMS of supplied right operand",
+            "dot": 68543.88288517992,
+            "first_differing_byte": null,
+            "first_numerical_difference": null,
+            "maxabs": 0.0,
+            "native_rms": 0.2556727217642782,
+            "native_signed_mean": 0.0009109995556038086,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.0,
+            "p99": 0.0,
+            "predicted_rms": 0.2556727217642782,
+            "predicted_signed_mean": 0.0009109995556038086,
+            "relative_rms": 0.0,
+            "rms": 0.0,
+            "sample_count": 1048576,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              32,
+              128
+            ],
+            "signed_mean": 0.0,
+            "worst": {
+              "coordinate": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "native": 0.126953125,
+              "predicted": 0.126953125,
+              "signed_error": 0.0
+            }
+          },
+          "suffix": {
+            "bitwise_exact": false,
+            "changed_values": 1045571,
+            "cosine": 0.798682758119,
+            "denominator": "RMS of supplied right operand",
+            "dot": 82238.47430770689,
+            "first_differing_byte": 2,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": -0.0546875,
+              "right": -0.81640625,
+              "signed_error": 0.76171875
+            },
+            "maxabs": 3.2265625,
+            "native_rms": 0.3558835652009183,
+            "native_signed_mean": -0.009875786717149282,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.42905426025390625,
+            "p99": 0.76171875,
+            "predicted_rms": 0.27592616808336345,
+            "predicted_signed_mean": -0.00626067176802772,
+            "relative_rms": 0.6022053962189265,
+            "rms": 0.2143150033896232,
+            "sample_count": 1048576,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              32,
+              128
+            ],
+            "signed_mean": 0.0036151149491215617,
+            "worst": {
+              "coordinate": [
+                0,
+                134,
+                3,
+                105
+              ],
+              "native": -1.1796875,
+              "predicted": 2.046875,
+              "signed_error": 3.2265625
+            }
+          }
+        }
+      },
+      "left_effect": {
+        "bounds": {
+          "prefix": [
+            0,
+            256
+          ],
+          "suffix": [
+            256,
+            512
+          ]
+        },
+        "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+        "whole": {
+          "bitwise_exact": false,
+          "changed_values": 1048576,
+          "cosine": 0.07608778189817321,
+          "denominator": "RMS of supplied right operand",
+          "dot": 11289.713263315018,
+          "first_differing_byte": 3,
+          "first_numerical_difference": {
+            "coordinate": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "flat_index": 0,
+            "left": 0.126953125,
+            "right": -0.126953125,
+            "signed_error": 0.25390625
+          },
+          "maxabs": 8.1875,
+          "native_rms": 0.26599228455682933,
+          "native_signed_mean": -0.0035858356618157644,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.7578125,
+          "p99": 1.4921875,
+          "predicted_rms": 0.26599228455682933,
+          "predicted_signed_mean": -0.0026748361062119558,
+          "relative_rms": 1.359347062454491,
+          "rms": 0.361575830647885,
+          "sample_count": 2097152,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            512,
+            32,
+            128
+          ],
+          "signed_mean": 0.0009109995556038086,
+          "worst": {
+            "coordinate": [
+              0,
+              10,
+              12,
+              111
+            ],
+            "native": 4.09375,
+            "predicted": -4.09375,
+            "signed_error": -8.1875
+          }
+        },
+        "windows": {
+          "prefix": {
+            "bitwise_exact": false,
+            "changed_values": 1048576,
+            "cosine": -1.0,
+            "denominator": "RMS of supplied right operand",
+            "dot": -68543.88288517992,
+            "first_differing_byte": 3,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": 0.126953125,
+              "right": -0.126953125,
+              "signed_error": 0.25390625
+            },
+            "maxabs": 8.1875,
+            "native_rms": 0.2556727217642782,
+            "native_signed_mean": -0.0009109995556038086,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 1.046875,
+            "p99": 1.875,
+            "predicted_rms": 0.2556727217642782,
+            "predicted_signed_mean": 0.0009109995556038086,
+            "relative_rms": 2.0,
+            "rms": 0.5113454435285564,
+            "sample_count": 1048576,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              32,
+              128
+            ],
+            "signed_mean": 0.0018219991112076173,
+            "worst": {
+              "coordinate": [
+                0,
+                10,
+                12,
+                111
+              ],
+              "native": 4.09375,
+              "predicted": -4.09375,
+              "signed_error": -8.1875
+            }
+          },
+          "suffix": {
+            "bitwise_exact": true,
+            "changed_values": 0,
+            "cosine": 1.0,
+            "denominator": "RMS of supplied right operand",
+            "dot": 79833.59614849492,
+            "first_differing_byte": null,
+            "first_numerical_difference": null,
+            "maxabs": 0.0,
+            "native_rms": 0.27592616808336345,
+            "native_signed_mean": -0.00626067176802772,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.0,
+            "p99": 0.0,
+            "predicted_rms": 0.27592616808336345,
+            "predicted_signed_mean": -0.00626067176802772,
+            "relative_rms": 0.0,
+            "rms": 0.0,
+            "sample_count": 1048576,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              32,
+              128
+            ],
+            "signed_mean": 0.0,
+            "worst": {
+              "coordinate": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "native": -0.0546875,
+              "predicted": -0.0546875,
+              "signed_error": 0.0
+            }
+          }
+        }
+      },
+      "response_error": {
+        "bounds": {
+          "prefix": [
+            0,
+            256
+          ],
+          "suffix": [
+            256,
+            512
+          ]
+        },
+        "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+        "whole": {
+          "bitwise_exact": false,
+          "changed_values": 1045571,
+          "cosine": 0.922271669313647,
+          "denominator": "RMS of supplied right operand",
+          "dot": 274175.5315407196,
+          "first_differing_byte": 8388613,
+          "first_numerical_difference": {
+            "coordinate": [
+              0,
+              256,
+              0,
+              0
+            ],
+            "flat_index": 1048576,
+            "left": 0.0,
+            "right": -0.76171875,
+            "signed_error": 0.76171875
+          },
+          "maxabs": 3.2265625,
+          "native_rms": 0.3920491571826869,
+          "native_signed_mean": -0.0008965579189569722,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.31982421875,
+          "p99": 0.603515625,
+          "predicted_rms": 0.361575830647885,
+          "predicted_signed_mean": 0.0009109995556038086,
+          "relative_rms": 0.3865423236612246,
+          "rms": 0.15154359220682048,
+          "sample_count": 2097152,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            512,
+            32,
+            128
+          ],
+          "signed_mean": 0.0018075574745607809,
+          "worst": {
+            "coordinate": [
+              0,
+              390,
+              3,
+              105
+            ],
+            "native": -3.2265625,
+            "predicted": 0.0,
+            "signed_error": 3.2265625
+          }
+        },
+        "windows": {
+          "prefix": {
+            "bitwise_exact": true,
+            "changed_values": 0,
+            "cosine": 1.0,
+            "denominator": "RMS of supplied right operand",
+            "dot": 274175.5315407197,
+            "first_differing_byte": null,
+            "first_numerical_difference": null,
+            "maxabs": 0.0,
+            "native_rms": 0.5113454435285564,
+            "native_signed_mean": 0.0018219991112076173,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.0,
+            "p99": 0.0,
+            "predicted_rms": 0.5113454435285564,
+            "predicted_signed_mean": 0.0018219991112076173,
+            "relative_rms": 0.0,
+            "rms": 0.0,
+            "sample_count": 1048576,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              32,
+              128
+            ],
+            "signed_mean": 0.0,
+            "worst": {
+              "coordinate": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "native": 0.25390625,
+              "predicted": 0.25390625,
+              "signed_error": 0.0
+            }
+          },
+          "suffix": {
+            "bitwise_exact": false,
+            "changed_values": 1045571,
+            "cosine": null,
+            "denominator": "RMS of supplied right operand",
+            "dot": 0.0,
+            "first_differing_byte": 5,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": 0.0,
+              "right": -0.76171875,
+              "signed_error": 0.76171875
+            },
+            "maxabs": 3.2265625,
+            "native_rms": 0.2143150033896232,
+            "native_signed_mean": -0.0036151149491215617,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.42905426025390625,
+            "p99": 0.76171875,
+            "predicted_rms": 0.0,
+            "predicted_signed_mean": 0.0,
+            "relative_rms": 1.0,
+            "rms": 0.2143150033896232,
+            "sample_count": 1048576,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              32,
+              128
+            ],
+            "signed_mean": 0.0036151149491215617,
+            "worst": {
+              "coordinate": [
+                0,
+                134,
+                3,
+                105
+              ],
+              "native": -3.2265625,
+              "predicted": 0.0,
+              "signed_error": 3.2265625
+            }
+          }
+        }
+      },
+      "right_effect": {
+        "bounds": {
+          "prefix": [
+            0,
+            256
+          ],
+          "suffix": [
+            256,
+            512
+          ]
+        },
+        "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+        "whole": {
+          "bitwise_exact": false,
+          "changed_values": 2094147,
+          "cosine": 0.07923006776946885,
+          "denominator": "RMS of supplied right operand",
+          "dot": 13694.59142252698,
+          "first_differing_byte": 3,
+          "first_numerical_difference": {
+            "coordinate": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "flat_index": 0,
+            "left": 0.126953125,
+            "right": -0.126953125,
+            "signed_error": 0.25390625
+          },
+          "maxabs": 8.1875,
+          "native_rms": 0.26599228455682933,
+          "native_signed_mean": -0.0035858356618157644,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.796875,
+          "p99": 1.5078125,
+          "predicted_rms": 0.30985613809836837,
+          "predicted_signed_mean": -0.004482393580772737,
+          "relative_rms": 1.473911763402767,
+          "rms": 0.3920491571826869,
+          "sample_count": 2097152,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            512,
+            32,
+            128
+          ],
+          "signed_mean": -0.0008965579189569722,
+          "worst": {
+            "coordinate": [
+              0,
+              10,
+              12,
+              111
+            ],
+            "native": 4.09375,
+            "predicted": -4.09375,
+            "signed_error": -8.1875
+          }
+        },
+        "windows": {
+          "prefix": {
+            "bitwise_exact": false,
+            "changed_values": 1048576,
+            "cosine": -1.0,
+            "denominator": "RMS of supplied right operand",
+            "dot": -68543.88288517992,
+            "first_differing_byte": 3,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": 0.126953125,
+              "right": -0.126953125,
+              "signed_error": 0.25390625
+            },
+            "maxabs": 8.1875,
+            "native_rms": 0.2556727217642782,
+            "native_signed_mean": -0.0009109995556038086,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 1.046875,
+            "p99": 1.875,
+            "predicted_rms": 0.2556727217642782,
+            "predicted_signed_mean": 0.0009109995556038086,
+            "relative_rms": 2.0,
+            "rms": 0.5113454435285564,
+            "sample_count": 1048576,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              32,
+              128
+            ],
+            "signed_mean": 0.0018219991112076173,
+            "worst": {
+              "coordinate": [
+                0,
+                10,
+                12,
+                111
+              ],
+              "native": 4.09375,
+              "predicted": -4.09375,
+              "signed_error": -8.1875
+            }
+          },
+          "suffix": {
+            "bitwise_exact": false,
+            "changed_values": 1045571,
+            "cosine": 0.798682758119,
+            "denominator": "RMS of supplied right operand",
+            "dot": 82238.47430770689,
+            "first_differing_byte": 2,
+            "first_numerical_difference": {
+              "coordinate": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "flat_index": 0,
+              "left": -0.81640625,
+              "right": -0.0546875,
+              "signed_error": -0.76171875
+            },
+            "maxabs": 3.2265625,
+            "native_rms": 0.27592616808336345,
+            "native_signed_mean": -0.00626067176802772,
+            "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+            "orientation": "supplied left-minus-right",
+            "p95": 0.42905426025390625,
+            "p99": 0.76171875,
+            "predicted_rms": 0.3558835652009183,
+            "predicted_signed_mean": -0.009875786717149282,
+            "relative_rms": 0.7767114111658806,
+            "rms": 0.2143150033896232,
+            "sample_count": 1048576,
+            "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+            "shape": [
+              1,
+              256,
+              32,
+              128
+            ],
+            "signed_mean": -0.0036151149491215617,
+            "worst": {
+              "coordinate": [
+                0,
+                134,
+                3,
+                105
+              ],
+              "native": 2.046875,
+              "predicted": -1.1796875,
+              "signed_error": -3.2265625
+            }
+          }
+        }
+      }
+    }
+  },
+  "region_scope": "Whole and fixed windows overlap; charts are descriptive, not independent trials or accuracy gates.",
+  "schema": "mdb-qwen-row-sign-publication-v1",
+  "scope": "Figures from authenticated scalar reports. No activation, checkpoint, tokenizer, neural recurrence or original model call.",
+  "source_baseline_errors": {
+    "Hnext": {
+      "bounds": {
+        "prefix": [
+          0,
+          256
+        ],
+        "suffix": [
+          256,
+          512
+        ]
+      },
+      "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+      "whole": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "denominator": "RMS of supplied right operand",
+        "dot": 325574540.4974814,
+        "first_differing_byte": null,
+        "first_numerical_difference": null,
+        "maxabs": 0.0,
+        "native_rms": 15.760509569127885,
+        "native_signed_mean": 0.030354612500377697,
+        "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+        "orientation": "supplied left-minus-right",
+        "p95": 0.0,
+        "p99": 0.0,
+        "predicted_rms": 15.760509569127885,
+        "predicted_signed_mean": 0.030354612500377697,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "sample_count": 1310720,
+        "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst": {
+          "coordinate": [
+            0,
+            0,
+            0
+          ],
+          "native": -824.0,
+          "predicted": -824.0,
+          "signed_error": 0.0
+        }
+      },
+      "windows": {
+        "prefix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "denominator": "RMS of supplied right operand",
+          "dot": 324917789.0108427,
+          "first_differing_byte": null,
+          "first_numerical_difference": null,
+          "maxabs": 0.0,
+          "native_rms": 22.266234538354993,
+          "native_signed_mean": 0.037217392525053586,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.0,
+          "p99": 0.0,
+          "predicted_rms": 22.266234538354993,
+          "predicted_signed_mean": 0.037217392525053586,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "sample_count": 655360,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            256,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "native": -824.0,
+            "predicted": -824.0,
+            "signed_error": 0.0
+          }
+        },
+        "suffix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "denominator": "RMS of supplied right operand",
+          "dot": 656751.4866387399,
+          "first_differing_byte": null,
+          "first_numerical_difference": null,
+          "maxabs": 0.0,
+          "native_rms": 1.0010610571340701,
+          "native_signed_mean": 0.023491832475701812,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.0,
+          "p99": 0.0,
+          "predicted_rms": 1.0010610571340701,
+          "predicted_signed_mean": 0.023491832475701812,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "sample_count": 655360,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            256,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "native": 24.75,
+            "predicted": 24.75,
+            "signed_error": 0.0
+          }
+        }
+      }
+    },
+    "M": {
+      "bounds": {
+        "prefix": [
+          0,
+          256
+        ],
+        "suffix": [
+          256,
+          512
+        ]
+      },
+      "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+      "whole": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "denominator": "RMS of supplied right operand",
+        "dot": 150710.63602167362,
+        "first_differing_byte": null,
+        "first_numerical_difference": null,
+        "maxabs": 0.0,
+        "native_rms": 0.3390915661388478,
+        "native_signed_mean": 0.0006810985893025645,
+        "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+        "orientation": "supplied left-minus-right",
+        "p95": 0.0,
+        "p99": 0.0,
+        "predicted_rms": 0.3390915661388478,
+        "predicted_signed_mean": 0.0006810985893025645,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "sample_count": 1310720,
+        "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst": {
+          "coordinate": [
+            0,
+            0,
+            0
+          ],
+          "native": 1.859375,
+          "predicted": 1.859375,
+          "signed_error": 0.0
+        }
+      },
+      "windows": {
+        "prefix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "denominator": "RMS of supplied right operand",
+          "dot": 79599.22795861191,
+          "first_differing_byte": null,
+          "first_numerical_difference": null,
+          "maxabs": 0.0,
+          "native_rms": 0.3485093727517686,
+          "native_signed_mean": -4.493480773817282e-05,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.0,
+          "p99": 0.0,
+          "predicted_rms": 0.3485093727517686,
+          "predicted_signed_mean": -4.493480773817282e-05,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "sample_count": 655360,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            256,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "native": 1.859375,
+            "predicted": 1.859375,
+            "signed_error": 0.0
+          }
+        },
+        "suffix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "denominator": "RMS of supplied right operand",
+          "dot": 71111.40806306174,
+          "first_differing_byte": null,
+          "first_numerical_difference": null,
+          "maxabs": 0.0,
+          "native_rms": 0.3294046107102359,
+          "native_signed_mean": 0.0014071319863433018,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.0,
+          "p99": 0.0,
+          "predicted_rms": 0.3294046107102359,
+          "predicted_signed_mean": 0.0014071319863433018,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "sample_count": 655360,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            256,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "native": -3.546875,
+            "predicted": -3.546875,
+            "signed_error": 0.0
+          }
+        }
+      }
+    },
+    "R": {
+      "bounds": {
+        "prefix": [
+          0,
+          256
+        ],
+        "suffix": [
+          256,
+          512
+        ]
+      },
+      "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+      "whole": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "denominator": "RMS of supplied right operand",
+        "dot": 325550495.20137703,
+        "first_differing_byte": null,
+        "first_numerical_difference": null,
+        "maxabs": 0.0,
+        "native_rms": 15.759927562444934,
+        "native_signed_mean": 0.02967738538136473,
+        "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+        "orientation": "supplied left-minus-right",
+        "p95": 0.0,
+        "p99": 0.0,
+        "predicted_rms": 15.759927562444934,
+        "predicted_signed_mean": 0.02967738538136473,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "sample_count": 1310720,
+        "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst": {
+          "coordinate": [
+            0,
+            0,
+            0
+          ],
+          "native": -824.0,
+          "predicted": -824.0,
+          "signed_error": 0.0
+        }
+      },
+      "windows": {
+        "prefix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "denominator": "RMS of supplied right operand",
+          "dot": 324889196.4267159,
+          "first_differing_byte": null,
+          "first_numerical_difference": null,
+          "maxabs": 0.0,
+          "native_rms": 22.265254808693268,
+          "native_signed_mean": 0.03727291319228243,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.0,
+          "p99": 0.0,
+          "predicted_rms": 22.265254808693268,
+          "predicted_signed_mean": 0.03727291319228243,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "sample_count": 655360,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            256,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "native": -824.0,
+            "predicted": -824.0,
+            "signed_error": 0.0
+          }
+        },
+        "suffix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "denominator": "RMS of supplied right operand",
+          "dot": 661298.7746614309,
+          "first_differing_byte": null,
+          "first_numerical_difference": null,
+          "maxabs": 0.0,
+          "native_rms": 1.0045207070961002,
+          "native_signed_mean": 0.022081857570447026,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.0,
+          "p99": 0.0,
+          "predicted_rms": 1.0045207070961002,
+          "predicted_signed_mean": 0.022081857570447026,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "sample_count": 655360,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            256,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "native": 28.25,
+            "predicted": 28.25,
+            "signed_error": 0.0
+          }
+        }
+      }
+    },
+    "head": {
+      "bounds": {
+        "prefix": [
+          0,
+          256
+        ],
+        "suffix": [
+          256,
+          512
+        ]
+      },
+      "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+      "whole": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "denominator": "RMS of supplied right operand",
+        "dot": 148377.4790336748,
+        "first_differing_byte": null,
+        "first_numerical_difference": null,
+        "maxabs": 0.0,
+        "native_rms": 0.26599228455682933,
+        "native_signed_mean": -0.0035858356618157644,
+        "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+        "orientation": "supplied left-minus-right",
+        "p95": 0.0,
+        "p99": 0.0,
+        "predicted_rms": 0.26599228455682933,
+        "predicted_signed_mean": -0.0035858356618157644,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "sample_count": 2097152,
+        "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+        "shape": [
+          1,
+          512,
+          32,
+          128
+        ],
+        "signed_mean": 0.0,
+        "worst": {
+          "coordinate": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "native": -0.126953125,
+          "predicted": -0.126953125,
+          "signed_error": 0.0
+        }
+      },
+      "windows": {
+        "prefix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "denominator": "RMS of supplied right operand",
+          "dot": 68543.88288517992,
+          "first_differing_byte": null,
+          "first_numerical_difference": null,
+          "maxabs": 0.0,
+          "native_rms": 0.2556727217642782,
+          "native_signed_mean": -0.0009109995556038086,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.0,
+          "p99": 0.0,
+          "predicted_rms": 0.2556727217642782,
+          "predicted_signed_mean": -0.0009109995556038086,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "sample_count": 1048576,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            256,
+            32,
+            128
+          ],
+          "signed_mean": 0.0,
+          "worst": {
+            "coordinate": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "native": -0.126953125,
+            "predicted": -0.126953125,
+            "signed_error": 0.0
+          }
+        },
+        "suffix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "denominator": "RMS of supplied right operand",
+          "dot": 79833.59614849492,
+          "first_differing_byte": null,
+          "first_numerical_difference": null,
+          "maxabs": 0.0,
+          "native_rms": 0.27592616808336345,
+          "native_signed_mean": -0.00626067176802772,
+          "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+          "orientation": "supplied left-minus-right",
+          "p95": 0.0,
+          "p99": 0.0,
+          "predicted_rms": 0.27592616808336345,
+          "predicted_signed_mean": -0.00626067176802772,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "sample_count": 1048576,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            256,
+            32,
+            128
+          ],
+          "signed_mean": 0.0,
+          "worst": {
+            "coordinate": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "native": -0.0546875,
+            "predicted": -0.0546875,
+            "signed_error": 0.0
+          }
+        }
+      }
+    }
+  },
+  "structural_graph": "Permitted mask and sign relations only; no observed attention weights or min-cut capacities.",
+  "transaction": {
+    "chronology": [
+      {
+        "arm": "all-negative",
+        "kind": "forecast_arm_completed",
+        "native_module_entries": 0,
+        "number": 0
+      },
+      {
+        "arm": "prefix-negative",
+        "kind": "forecast_arm_completed",
+        "native_module_entries": 0,
+        "number": 1
+      },
+      {
+        "kind": "cohort_globally_sealed",
+        "native_module_entries": 0,
+        "native_targets_at_seal": 0,
+        "number": 2,
+        "seal_sha256": "12077f1ee8ca0f2b23c1c440e11a9dea7b5f07058270041594320289055f0121"
+      },
+      {
+        "kind": "native_targets_released",
+        "native_module_entries": 0,
+        "number": 3,
+        "seal_sha256": "12077f1ee8ca0f2b23c1c440e11a9dea7b5f07058270041594320289055f0121"
+      },
+      {
+        "arm": "baseline",
+        "kind": "native_component_authorized",
+        "native_module_entries": 0,
+        "number": 4
+      },
+      {
+        "arm": "baseline",
+        "kind": "native_component_completed",
+        "native_module_entries": 15,
+        "number": 5
+      },
+      {
+        "arm": "all-negative",
+        "kind": "native_component_authorized",
+        "native_module_entries": 15,
+        "number": 6
+      },
+      {
+        "arm": "all-negative",
+        "kind": "native_component_completed",
+        "native_module_entries": 30,
+        "number": 7
+      },
+      {
+        "arm": "prefix-negative",
+        "kind": "native_component_authorized",
+        "native_module_entries": 30,
+        "number": 8
+      },
+      {
+        "arm": "prefix-negative",
+        "kind": "native_component_completed",
+        "native_module_entries": 45,
+        "number": 9
+      }
+    ],
+    "external_files": 74,
+    "inherited_arrays": 13,
+    "native_targets_at_seal": 0,
+    "verified": {
+      "event_head": "9378067faf821a4069a80ce9f9e8889038cc41ea66fede35aa728c15e9c99180",
+      "events": 7,
+      "forecasts": [
+        "cohort"
+      ],
+      "frontiers": [
+        "inherited-positive"
+      ],
+      "identity_scope": "externally-pinned",
+      "phase": "closed",
+      "schema": "mdb-forecast-offline-verification-v1",
+      "seal_sha256": "12077f1ee8ca0f2b23c1c440e11a9dea7b5f07058270041594320289055f0121",
+      "verified": true
+    }
+  },
+  "verification_sha256": "d3a5a75542be135a0e788eb3f6c90239193cdff78b4d5c27b67a4ea461c70108"
+}

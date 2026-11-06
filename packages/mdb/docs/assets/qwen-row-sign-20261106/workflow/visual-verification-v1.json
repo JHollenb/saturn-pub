@@ -1,0 +1,22 @@
+{
+  "figures": {
+    "missed-response.png": {
+      "sha256": "6c88b207c02766f2b18e5667f686769deabea27c72f47214dbd66c734fa94a7f",
+      "size": [
+        1698,
+        771
+      ]
+    },
+    "support-boundary.png": {
+      "sha256": "dfb4d2a8d4d02b184e784c020ed27ba544db561fe5f78584325017a795b99c85",
+      "size": [
+        1487,
+        814
+      ]
+    }
+  },
+  "issues": [],
+  "method": "Root viewed both actual rendered PNGs with view_image after publication. Labels, legends, data values, query/key axes and scope checked against authenticated audit.",
+  "raw_array_or_model_reads": 0,
+  "schema": "mdb-row-sign-root-visual-review-v1"
+}

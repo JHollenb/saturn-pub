@@ -1,0 +1,91 @@
+{
+  "backend": "numpy",
+  "config": {
+    "directory_custody": true,
+    "native_manifest_sha256": "d36f790376a85ad995cf20f01cff89fb6e04d282fe1290f677ba348ec98f4c8f",
+    "native_request_sha256": "fb202763231fad27712f2b525aa1ea0d041496c13079d6b4a4a7425d36e18a77",
+    "native_root": "/mnt/big/mdb/research/job-74efe5506ecf/qwen-row-sign-result",
+    "output_scratch": "/mnt/big/mdb/research",
+    "scope": "Inherited-functional-state conditional row-sign frontier; two edited forecasts and three native component observations, full fields/windows/signed responses and custody; zero neural/tokenizer/learned recurrence.",
+    "source_job": "job-74efe5506ecf"
+  },
+  "controller_sha256": "afbb71dfe56b2ed1749c77469dbde8a6c85f554b38831d52f54dd30a647f2ea0",
+  "device": "cpu",
+  "dtype": "float64",
+  "execution_environment": {
+    "cuda_cache_path": "/mnt/hdd8tb/mdb/cuda-cache",
+    "extra_model_roots": "/mnt/big/llm-models",
+    "python": "3.14.6",
+    "requirements": [
+      "torch==2.13.0",
+      "diffusers==0.39.0",
+      "transformers==5.14.1",
+      "accelerate==1.14.0",
+      "safetensors>=0.5",
+      "numpy>=2.0",
+      "pyyaml>=6.0",
+      "psutil>=5.9",
+      "pillow>=10.0"
+    ],
+    "tmpdir": "/mnt/hdd8tb/mdb/tmp",
+    "torch_home": "/mnt/hdd8tb/mdb/torch",
+    "torchinductor_cache_dir": "/mnt/hdd8tb/mdb/torchinductor-cache",
+    "uv_cache_dir": "/mnt/hdd8tb/mdb/uv-cache",
+    "uv_link_mode": "symlink"
+  },
+  "experiment": "mdb-qwen-row-sign-saved-audit",
+  "needs": {
+    "cpu": true,
+    "host": "beast"
+  },
+  "request_sha256": "662b43012ab7dde72d0527b7937dab7679c9b0b67de921d3f00be996afb05e33",
+  "resource_exception": {
+    "cpu_threads": 2,
+    "disk_gb": 1,
+    "est_wall_s": 240,
+    "ram_mb": 3072,
+    "vram_mb": 0
+  },
+  "runtime_wheels": {
+    "mdb_runtime-0.1.0-py3-none-any.whl": "4b1b965dce45883cabcb24ab2c11702ce748aeb1658776596be27b405df26d21",
+    "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+    "saturn_pub-0.4.1-py3-none-any.whl": "c32bbcf5c5b45e4970d9c750266f607b2a9b0f06dc982106fd82e0501375e424"
+  },
+  "scheduling_contract": {
+    "additional_scheduler_submissions": 0,
+    "branch_execution": "in_process",
+    "checkpoint_policy": "One full-array saved-only CPU audit; compact catalog/retriever, no native/reference recurrence or retries.",
+    "collection_policy": "direct_job_only",
+    "control_plane": "mrun_outer_lease",
+    "data_plane": "resident_worker",
+    "execution_model": "finite_local_program",
+    "interactive": false,
+    "lease_scope": "entire-worker",
+    "logical_branches": 1,
+    "logical_checkpoint_replays": 0,
+    "logical_operations": 3,
+    "max_local_work_items": 32,
+    "max_mrun_submissions": 1,
+    "model_free": true,
+    "model_loads": 0,
+    "mrun_retry_policy": "none_for_finite_lease",
+    "per_branch_mrun_submissions": 0,
+    "per_transition_mrun_submissions": 0,
+    "replay_policy": "none_source_only",
+    "schema": "saturn-single-lease-scheduling-contract-v1",
+    "task_family": "analysis"
+  },
+  "schema": "mdb-saved-flux-audit-request-v1",
+  "source_hashes": {
+    "audit_flux_functional_pass.py": "2d54e716749dec52c159f3a5214860f4bb8cbf396fd09239540bd55988274c80",
+    "audit_flux_functional_qwen_prefix.py": "5004786be76e1f576d2df65e6d1225f8fdd41c4a7e09e5ed8a6c23057db78a97",
+    "audit_flux_raw_to_image.py": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835",
+    "audit_qwen_row_sign.py": "218bf64a05739a4af547b8e26c3ccf2f5d4f60ecbd4d2e73bc6ad691af8a5667",
+    "audit_qwen_sign_shortcut.py": "d33613bbb1d71ee3b2007fb007e5266acaf141994091264bed50d27342237e2c",
+    "preflight.v1.json": "08aa46c90639b0ca8635edba1926c691a7e41c79864b824c42e194e222a989fb",
+    "retrieve_reader_evidence.py": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923",
+    "stage_qwen_row_sign_saved_audit.py": "bd832985f89589210420f7a07757dbec7e2d4f62e39966798248434e2518106e",
+    "stage_saved_flux_mask_pair_audit.py": "afbb71dfe56b2ed1749c77469dbde8a6c85f554b38831d52f54dd30a647f2ea0"
+  },
+  "task_family": "analysis"
+}

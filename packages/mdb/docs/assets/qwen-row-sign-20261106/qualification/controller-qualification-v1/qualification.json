@@ -1,0 +1,23 @@
+{
+  "limits": [
+    "No actual staging, scheduling, SSH, model/tokenizer/CUDA, original weights or activation arrays executed/read by this controller qualification.",
+    "Prior attempts and native v1 qualification retained; final native source differs from v1 only by final producer pin."
+  ],
+  "native": {
+    "receipt": "native-qualification-v2.json",
+    "sha256": "bf8cd8d35a597d6960aaef525f03e51d22bb1a6f9cd8a59cd69c30e5bddaa3cd",
+    "tests": 6
+  },
+  "parent_metadata": {
+    "receipt": "parent-metadata-verification.json",
+    "sha256": "692e04d908a42215ff2a095409e61f171c0b67a927432b8c8b47482c185f3758"
+  },
+  "saved": {
+    "receipt": "saved-qualification.json",
+    "sha256": "0eb082430755a419e79a33a5876b2cf32d07789502de87bc57efeed2e753ed67",
+    "tests": 4
+  },
+  "schema": "mdb-row-sign-controller-qualification-v1",
+  "status": "qualified-model-free-mechanics-only",
+  "unique_final_checks": 10
+}

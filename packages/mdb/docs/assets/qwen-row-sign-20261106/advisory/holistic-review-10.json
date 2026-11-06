@@ -1,0 +1,185 @@
+{
+  "schema": "mdb-astra-holistic-review-v1",
+  "review_number": 10,
+  "date": "2026-11-06",
+  "anchor_completed_research_turn": 13,
+  "next_review_no_later_than_turn": 16,
+  "goal_status": "active",
+  "review_status": "evidence-consistent-with-bounded-claims",
+  "blocking_issues": [],
+  "material_narrative_corrections": [],
+  "scope": "Saved compact/source/prose review; independently hashed compact members and recounted saved fields. No original arrays, tokenizer, checkpoint, models, native jobs, staging, or scheduler operations. Turn14 source reviewed directionally; no turn14 outcomes included.",
+  "evidence": {
+    "manifest_sha256": "73a1eb8cd5e0557ac893a1d6d14e6c24a0ea2dbb4107684cf47d748dbb8d0d00",
+    "compact_members_excluding_manifest": 29,
+    "compact_bytes_excluding_manifest": 1766918,
+    "compact_bytes_including_manifest": 1770172,
+    "audit_sha256": "b8887f9c2632e6097fd76782fcc91a29dcb79acc0d15e5c8bd321a69968c2020",
+    "verification_sha256": "b9acddfd87d0eb0101456761537935d49c41abf3e5e988fb9f669c5429e2fba4",
+    "source_hashes": {
+      "obsidian/blog/2026-11-06-075814-a-computation-family-survived-three-fresh-contexts.md": "5ce4a54cb52ec81f1375a906f9edd94be94de9ab87fe7a5082864bf4bd80686b",
+      "obsidian/blog/2026-11-06-070800-where-a-sign-flip-becomes-a-different-computation.md": "e8ecb9a548e433f4540041e5543433c8911dce563850c265b58c6a5f41d97fa1",
+      "saturn-pub/packages/mdb/docs/QWEN-SIGN-SHORTCUT.md": "36ecdbbdc006e0ec0da6de7e5e0b077c45fb8fa89603130fe854f6f9cf18a1b1",
+      "saturn-pub/packages/mdb/qualification/qwen_sign_shortcut.py": "8e59051a34bc8e89c9376fd29aec966df9cbe84560c81f86910504172caaa457",
+      "saturn-pub/packages/mdb/qualification/qwen_sign_shortcut_campaign.py": "83f9d459938ccb96b913def78862cffc869cb6f0b4404a7f116d0a46fed184af",
+      "saturn-pub/packages/mdb/qualification/audit_qwen_sign_shortcut.py": "d33613bbb1d71ee3b2007fb007e5266acaf141994091264bed50d27342237e2c",
+      "saturn-pub/packages/mdb/qualification/qwen_row_sign_campaign.py": "fbd8eceaf1a9ef8917ecdc39a98ff960940aab9da8ecb4697c25c1a33d545f47",
+      "artifacts/mdb-flux-understanding-20261106/direction-09.md": "7fa4885776ca56cce82d5501dd1ee82243d207f0d2cc275469e32044e0f0d46b",
+      "artifacts/mdb-flux-understanding-20261106/direction-08.md": "4917fef69ec1c6e9324932ebacc48a47b234745f6b61eb7e497825e081a74891",
+      "artifacts/mdb-flux-understanding-20261106/direction-07.md": "324407dc3ab43f0f1373d923915dc6c44982138a76305c52a4a3dd203587b85d",
+      "artifacts/mdb-flux-understanding-20261106/direction-06.md": "f44c6832aab25c2b670e03e4504dd78ee399529776a8e2362317c5d624083708"
+    },
+    "cases": {
+      "long-description": {
+        "attended": 512,
+        "padded": 0,
+        "prefix_fields": 20,
+        "prefix_positions": 26214400,
+        "signed_zero_R_native": 903,
+        "signed_zero_R_functional": 903,
+        "native_M_response_RMS": 0.529543493995868,
+        "native_H19_response_RMS": 31.53017927840399
+      },
+      "short-objects": {
+        "attended": 36,
+        "padded": 476,
+        "prefix_fields": 20,
+        "prefix_positions": 26214400,
+        "signed_zero_R_native": 514,
+        "signed_zero_R_functional": 514,
+        "native_M_response_RMS": 1.0576407760902742,
+        "native_H19_response_RMS": 29.8675571189042
+      },
+      "short-procedure": {
+        "attended": 39,
+        "padded": 473,
+        "prefix_fields": 20,
+        "prefix_positions": 26214400,
+        "signed_zero_R_native": 471,
+        "signed_zero_R_functional": 471,
+        "native_M_response_RMS": 0.8775121383307827,
+        "native_H19_response_RMS": 29.844552196192442
+      }
+    },
+    "totals": {
+      "full-functional-minus-native-negative": {
+        "fields": 9,
+        "positions": 22806528,
+        "endpoint_error": 0,
+        "response_error": 0
+      },
+      "shortcut-minus-full-functional-negative": {
+        "fields": 9,
+        "positions": 22806528,
+        "endpoint_error": 0,
+        "response_error": 0
+      },
+      "shortcut-minus-native-negative": {
+        "fields": 9,
+        "positions": 22806528,
+        "endpoint_error": 0,
+        "response_error": 0
+      }
+    },
+    "seal": {
+      "event_head": "9fb7311899e489a91cf940b6c47108e7cdae6f60fae093e633ce56108b2f5dc5",
+      "events": 6,
+      "forecasts": [
+        "cohort"
+      ],
+      "frontiers": [],
+      "identity_scope": "externally-pinned",
+      "phase": "closed",
+      "schema": "mdb-forecast-offline-verification-v1",
+      "seal_sha256": "a6d61b11fa67bfa0eb3a50fee66f26584b452874a590c255163102362460e652",
+      "verified": true
+    },
+    "counts": {
+      "forecast_module_attempts": 0,
+      "functional_observed_SDPA": 60,
+      "functional_reference_SDPA": 60,
+      "functional_reference_blocks": 60,
+      "native_SDPA": 111,
+      "native_authorizations": 6,
+      "native_blocks": 111,
+      "native_full_model_calls": 3,
+      "native_module_entries": 1683,
+      "native_observed_SDPA": 111,
+      "native_suffix_calls": 3,
+      "shortcut_down_projections": 3,
+      "shortcut_observed_SDPA": 0,
+      "shortcut_observed_linear": 3
+    },
+    "installed_cli_checks": 18,
+    "model_calls_by_reviewer": 0
+  },
+  "principal_findings": [
+    "Turn13 transfers one supplied conditional operation family to three freshly selected raw contexts, rather than merely repeating a full-program wrapper. Each shortcut uses its own functional positive R/G/U and original Wdown; neither observed native positive ports nor negative functional ports supply shortcut inputs.",
+    "The three endpoint and signed-response channels each cover nine dependent fields / 22,806,528 positions with zero errors. Positive functional prefixes cover 60 whole fields / 78,643,200 positions and match native. Regions and aligned ports overlap these primary scopes.",
+    "The actual contexts contain 36/39/512 attended rows and encounter repeated-KV versus enabled-GQA source branches. This is bounded cross-context transfer at one block and profile, not a controlled attribution to mask or token content.",
+    "Native and functional R each retain 514/471/903 signed-zero defects. Gate/up numerical and bit antisymmetry and final shortcut P/M/H equality do not imply universal bitwise residual oddness.",
+    "Chronology binds three positive-only shortcuts before their corresponding negative functional references, followed by a complete cohort seal with zero native module entries and then all six native authorizations.",
+    "The native lease completed 60 functional blocks, three shortcut down projections, 111 native blocks and three reference-only LM calls. No FLUX/VAE/noise, public Qwen Act or selected-kernel profile was executed in this campaign.",
+    "All 29 compact manifest members hash correctly, with 1,766,918 bytes plus the 3,254-byte manifest. Root's 18 installed catalog/atlas queries bind exact-context selection and changed-source/profile abstention; this does not establish automatic family discovery.",
+    "An earlier command omitted required --config and failed before model loading. The original failure and the command-only correction remain part of evidence. This review's earlier finite check verified sealed-command equality but did not catch that required-argument omission; equality is not execution ABI validation."
+  ],
+  "cumulative_understanding": {
+    "established": [
+      "Known original operations, original parameters and declared Torch primitives form an explicit own-state raw-input-to-image account for tested specimens, including source branch differences and actual consumers.",
+      "Direct E18 suppression and coherent negative-H18 history separate a direct conditioning constituent from downstream H27 history; real image futures consume those differences.",
+      "Block0 matched operands localize a finite attention-lowering discrepancy; current exact shared-primitive closure does not erase the earlier independent-arithmetic response misses.",
+      "The H18 sign result supplies an explanatory real-arithmetic symmetry and its first nonodd writer. Turn13 adds prospective finite-order reuse on new states rather than additional fitted predictor parameters."
+    ],
+    "not_established": [
+      "Universal sign symmetry, arbitrary block/architecture/profile transfer, or full nine-layer oddness.",
+      "Independent Flash/GEMM arithmetic, a complete native CUDA instruction trace, or a measured shortcut speedup.",
+      "Semantic necessity or object ownership of an activation, a universal color-transfer mechanism, or causal percentages from RMS projections.",
+      "Automatic induction of the generic operation ID or unseen-input applicability from exact occurrence retrieval."
+    ],
+    "counterevidence_retained": [
+      "Independent arithmetic could closely match endpoints while badly missing small intervention responses.",
+      "Semantic transfer predictions missed despite signed numerical trends.",
+      "Writer ranks changed after continuation; local relative errors can fall while absolute errors rise.",
+      "Finite rounding and signed-zero defects persist within numerically exact composed predictions.",
+      "Packaging, reader and command failures are instrument outcomes and are not scientific nulls or silently rewritten successes."
+    ],
+    "state_record_distinction": "Live residuals/latents/conditioning, masks/positions, schedule and clock are execution state. A generic record names a source-bound operation and applicability relation; original weights specify its parameter instance; continuation names its real consumer. Dense full states and generic names are valid.",
+    "completion_criterion": "At a declared model/profile/input/intervention domain, explicit input formation, sufficient live state, source-bound update semantics, prospective own-state predictions, and actual consumer closure can constitute a bounded complete account. No compression, semantic dictionary, independent CUDA implementation, endless benchmark, or whole-image replay is an automatic requirement. Broader applicability remains open and must be named, not hidden behind a global completion label."
+  },
+  "turn14_direction": {
+    "producer_sha256": "fbd8eceaf1a9ef8917ecdc39a98ff960940aab9da8ecb4697c25c1a33d545f47",
+    "scope": "Architectural transaction from inherited own-functional positive H18/ports; not a fresh raw-prompt prediction, public Qwen Act, or genuine record_prefix capture.",
+    "design_assessment": "Two edited full functional blocks and two positive-only shortcuts precede three original standalone native block18 calls. Fixed causal/all-attended support makes the first256 negative query rows support-closed, while later positive queries see mixed signs. No source-level scientific blocker found in the inspected portion; this is not a replacement request-bound admission review.",
+    "interpretation": "Support-closed is a sufficient ideal symmetry condition, not a necessary empirical condition. Mixed support permits disagreement but does not force every row to differ. Exact zero probabilities or cancellation can make particular cross-sign edges numerically silent.",
+    "status": "Outcome pending; not counted as completed turn14."
+  },
+  "ranked_next_cuts": [
+    {
+      "rank": 1,
+      "action": "Complete the running row-sign applicability test and preserve all three error channels by support region.",
+      "prediction": "Ideal support-closed rows retain the odd attention prerequisite; mixed-support rows can violate it. Numerical and raw-bit equality remain distinct prospective observations, with no mandatory miss outside the condition.",
+      "decision": "If full functional and native disagree, localize implementation/profile error before enlarging the law. If shortcut alone disagrees on closed rows, retain the first prerequisite defect."
+    },
+    {
+      "rank": 2,
+      "action": "If row-sign evidence supports the boundary, test one reusable positioned-QKV sign transformation with two predeclared new masks, recomputing attention and all downstream writes.",
+      "minimal_panel": "One authenticated positive source and unchanged native baseline; e.g. only final-row negative and alternating64-row sign blocks. Original mask, positions, layout, scale and SDPA profile remain fixed. Transformed Q/K/V and complete outputs seal before edited targets.",
+      "prediction": "Cached Q_i'=s_i Q_i, K_j'=s_j K_j, V_j'=s_j V_j should numerically agree with direct formation under the stated premises; complete cached-attention/output forecasts should agree with full functional and native references. Signed-zero/raw-bit discrepancies and all three error channels remain visible.",
+      "limits": "This is a conditional source/formation reuse test, not a new raw-prompt forecast. The mask defines permitted edges; state-dependent attention weights are payload, and this does not discover semantic routes. Do not reuse stale positive R/G/U once attention changes.",
+      "why": "It directly addresses the mixed-support failure mechanism without multiplying full-image or parameter-instance campaigns."
+    },
+    {
+      "rank": 3,
+      "action": "Integrate the established relations into one generic source/profile-aware computation record and reusable evaluator; only then choose a justified new parameter address or native consumer.",
+      "prediction": "Exact known occurrences resolve; unsupported source/profile/cache/edit conditions abstain or take an explicit full-functional path. Structural support selection must be recorded separately from exact occurrence lookup.",
+      "limits": "Metadata dispatch is not automatic discovery. A further native suffix is informative only if a nonzero local discrepancy creates a continuation question; identical installed bytes do not justify another indistinguishable image panel."
+    }
+  ],
+  "operational_notes": [
+    "The global-sign result is exact at original shared primitives, not an independent learned auxiliary law. Its applicability constraints are useful new explanatory content.",
+    "Positive-prefix computation is part of the forecast cost; skipping edited attention does not imply the positive operands were free.",
+    "All learned RHS Wdown(G*U) regrouping and universal sign claims remain unexecuted/unproven.",
+    "Preserve the pre-model failed job30027b477a9e and successful job8c949b1c0278 separately. Corrected request is 1a9b11e4bc739410dcd165b31cd0c0452aa5f0583e7731598bc1e2b8a87bdd5a.",
+    "Holistic10 anchors turn13 even though the source of turn14 is inspected. Review again by turn16 or earlier if a new frontier or counterexample changes the account."
+  ]
+}

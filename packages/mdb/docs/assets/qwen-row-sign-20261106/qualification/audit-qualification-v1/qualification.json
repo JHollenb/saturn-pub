@@ -1,0 +1,60 @@
+{
+  "actual_saved_fixture": {
+    "cohort_copy_manifest_sha256": "cec4793b53ff9a6320191f45f87d5311c3bbab3631e2c7446f318ef7195a0a0c",
+    "manifest_sha256": "cec4793b53ff9a6320191f45f87d5311c3bbab3631e2c7446f318ef7195a0a0c",
+    "scope": "Previously executed synthetic CPU Qwen3DecoderLayer with actual writer/guards/public ForecastTransaction/frozen finalizer; 6rows/split3/hidden6/querywidth16. This reader only consumes saved arrays/metadata; no model rerun or original checkpoint/tokenizer/activation reads.",
+    "source": "producer-qualification-v3/qwen-row-sign-result"
+  },
+  "coverage": [
+    "All three endpoint and own-positive signed-response channels on complete canonical head/R/M/H fields and fixed windows; mixed-row discrepancies retained",
+    "Numerical versus byte/signed-zero R/G/U premise defects",
+    "Actual serializer/source13 descriptors and full signed FP64 response commitments",
+    "Actual seven-event public frontier/global-seal/execute journal plus complete external-file equality; hostile missing source, extra future and corrupted seal refusal",
+    "Actual three native hidden inputs, nine context-tensor joins, raw-head transpose, unequal query/KV geometry and observed primitive/module census",
+    "Two conditional public EquationCatalog and ComputationAtlas observations distinguish native consumer effects from two prediction-error effects",
+    "Synthetic standard DEFAULT-separator request/effective-plan custody checks and hostile changed config",
+    "Actual installed isolated CLI help + model-free audit callback worker output/final marker/source-hash refusal"
+  ],
+  "history": {
+    "attempt-02": "9passed/2test-harness expectation failures: wrapper has files mapping rather than file_count; ForecastTransactionError is not ValueError. Preserved.",
+    "attempt-03": "10passed/1model-free worker fixture omission after compact sidecar-copy expansion. Preserved.",
+    "attempt-04": "11passed0.46s; before final additional functional-input byte join.",
+    "attempt-05": "Final source, 11passed0.47s."
+  },
+  "installed_runtime": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+  "limits": [
+    "Tiny actual saved component fixture is not an original-checkpoint source/parameter restoration execution; original production source envelope and streaming recipe audit remain for the near-data CPU job.",
+    "No local original-data numerical report or actual producer outcome claimed.",
+    "No attention, learned projection, model, tokenizer, scheduler, CUDA, staging, submission or recurrence runs in reader qualification.",
+    "CLI worker callback is deliberately mocked for envelope/packaging only; actual array/Tx/native accounts are separately read from real tiny serialized evidence.",
+    "Primary whole fields, two windows, premises and source-baseline accounts overlap and are not independent replications."
+  ],
+  "lint": {
+    "command": "rtk proxy uvx ruff check --select F,I qualification/audit_qwen_row_sign.py tests/test_audit_qwen_row_sign.py",
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "exit_code": 0,
+    "stdout": "All checks passed!\n"
+  },
+  "producer_qualification_sha256": "9adccec7c8f310c32f27b040af0fbe3a85530eca02521d15905166ba5609c716",
+  "producer_sha256": "fbd8eceaf1a9ef8917ecdc39a98ff960940aab9da8ecb4697c25c1a33d545f47",
+  "qualification": {
+    "command": "python -I -B -m pytest -q test_audit_qwen_row_sign.py --basetemp=../tmp",
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/audit-qualification-v1/attempt-05/cohort",
+    "exit_code": 0,
+    "observed_tool_wall_seconds": 0.664279709,
+    "passed": 11,
+    "pytest_seconds": 0.47,
+    "stdout": "...........                                                              [100%]\n11 passed in 0.47s\n"
+  },
+  "schema": "mdb-qwen-row-sign-saved-audit-qualification-v1",
+  "source_sha256": {
+    "audit_flux_functional_pass.py": "2d54e716749dec52c159f3a5214860f4bb8cbf396fd09239540bd55988274c80",
+    "audit_flux_functional_qwen_prefix.py": "5004786be76e1f576d2df65e6d1225f8fdd41c4a7e09e5ed8a6c23057db78a97",
+    "audit_flux_raw_to_image.py": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835",
+    "audit_qwen_row_sign.py": "218bf64a05739a4af547b8e26c3ccf2f5d4f60ecbd4d2e73bc6ad691af8a5667",
+    "audit_qwen_sign_shortcut.py": "d33613bbb1d71ee3b2007fb007e5266acaf141994091264bed50d27342237e2c",
+    "retrieve_reader_evidence.py": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923",
+    "test_audit_qwen_row_sign.py": "7decf206630375ba85d1162a63f1d880801ffaa861d3f4b48d37da345ef203a1"
+  },
+  "status": "passed"
+}

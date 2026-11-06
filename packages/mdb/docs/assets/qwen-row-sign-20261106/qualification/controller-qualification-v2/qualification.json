@@ -1,0 +1,36 @@
+{
+  "canonical_package_ruff": "F,I clean before freeze",
+  "checks": 8,
+  "execution": "attempt-02/execution.json",
+  "execution_sha256": "a6faf535367d8eb325b91c895dd2b048784edc71ee0cdd7b5bdc45af5ec4b9d6",
+  "limits": [
+    "Transport-only synthetic metadata, delegation, checksum/member guards and installed bootstrap-to-real-reader-worker publication with explicitly stubbed numerical audit. Actual installed Atlas core is qualified independently by reader owner. No services, stage, collection, neural calls or original arrays/weights.",
+    "Worker entry test stubs numerical audit explicitly; actual Atlas backend/schema validation is reader-owner qualification.",
+    "Collector is parameterized by expected audit request; no source edit is needed after root stages audit-02.",
+    "Compact member suffix/budget checks run before archive retrieval; original tensors/weights remain remote."
+  ],
+  "preserved": [
+    "prior-source-v1/",
+    "attempt-01/",
+    "../audit-01/",
+    "../controller-qualification-v1/"
+  ],
+  "pytest": "8 passed in 0.28s",
+  "reader_qualification": "../audit-qualification-v2/qualification.json",
+  "reader_qualification_sha256": "64b5ccba4653c06d2682700cf756e0f486271d208ba9fc53d38b65f11858221a",
+  "schema": "mdb-row-sign-corrected-saved-controller-qualification-v2",
+  "source_hashes": {
+    "artifacts/collect_compact.py": "b21e7084e3270120ed8f44712b41705a74ba0f58146f342788930a79ab375ab9",
+    "artifacts/controller-qualification-v2/test_collect_compact.py": "4c9b1ec01abcfe47694d1873860a4d9554a61ab583288248daf2c500818fe131",
+    "qualification/audit_flux_functional_pass.py": "2d54e716749dec52c159f3a5214860f4bb8cbf396fd09239540bd55988274c80",
+    "qualification/audit_flux_functional_qwen_prefix.py": "5004786be76e1f576d2df65e6d1225f8fdd41c4a7e09e5ed8a6c23057db78a97",
+    "qualification/audit_flux_raw_to_image.py": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835",
+    "qualification/audit_qwen_row_sign.py": "d995c3c5ca3c194a3ce87bfca58e9352d251246d798e21c6e04a7938bd9b5838",
+    "qualification/audit_qwen_sign_shortcut.py": "d33613bbb1d71ee3b2007fb007e5266acaf141994091264bed50d27342237e2c",
+    "qualification/retrieve_reader_evidence.py": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923",
+    "qualification/stage_qwen_row_sign_saved_audit.py": "69f23665e252956dc35a8084d1436524e4db1d92dc443b474bab1ef28369c019",
+    "qualification/stage_saved_flux_mask_pair_audit.py": "afbb71dfe56b2ed1749c77469dbde8a6c85f554b38831d52f54dd30a647f2ea0",
+    "tests/test_stage_qwen_row_sign_saved_audit.py": "0e13932b9ce5c433df138827dc76f8ce1c4667c97344f939f037b3f361715eb8"
+  },
+  "status": "qualified-transport-mechanics-only"
+}

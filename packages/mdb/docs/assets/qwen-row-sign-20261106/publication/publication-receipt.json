@@ -1,0 +1,24 @@
+{
+  "compact_manifest_sha256": "82032b7ad875735d14a3c3f2ac2cc7dbb9bc342b3ae9373f2a8fbe349f06906f",
+  "learned_calls": 0,
+  "model_calls": 0,
+  "outputs": {
+    "missed-response.png": {
+      "bytes": 88486,
+      "sha256": "6c88b207c02766f2b18e5667f686769deabea27c72f47214dbd66c734fa94a7f"
+    },
+    "publication.json": {
+      "bytes": 102319,
+      "sha256": "41f0b74b8ef247f94a6792be17f547fed9a9469caf1009e9aa2d51e375004df7"
+    },
+    "support-boundary.png": {
+      "bytes": 55604,
+      "sha256": "dfb4d2a8d4d02b184e784c020ed27ba544db561fe5f78584325017a795b99c85"
+    }
+  },
+  "raw_arrays_read": 0,
+  "schema": "mdb-qwen-row-sign-publication-receipt-v1",
+  "source_sha256": "758cb0bf717bddcedb9116d6cb2ed602dfa9a5b7fe527498c9ac14012aca4905",
+  "verification_sha256": "d3a5a75542be135a0e788eb3f6c90239193cdff78b4d5c27b67a4ea461c70108",
+  "visual_inspection": "Pending root view_image after rendering."
+}

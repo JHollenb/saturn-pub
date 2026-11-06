@@ -1,0 +1,28 @@
+{
+  "actual_request_keys": [
+    "backend",
+    "config",
+    "controller_sha256",
+    "device",
+    "dtype",
+    "execution_environment",
+    "experiment",
+    "needs",
+    "request_sha256",
+    "resource_exception",
+    "runtime_wheels",
+    "scheduling_contract",
+    "schema",
+    "source_hashes",
+    "task_family"
+  ],
+  "audit_request_sha256": "d77a7c3e9e87b5c8dada8bebdd1e70b3472427ef4e0d124f18d89fb8aea977c2",
+  "collector_sha256": "b621d8e12dc06476abf356643f22693a48a5a52bd43c7684d66e788126475015",
+  "data_arrays_read": false,
+  "native_job_id": "job-74efe5506ecf",
+  "remote_contact": false,
+  "request_has_scheduler_url": false,
+  "scheduler_override_verified": "http://192.168.68.68:9025",
+  "scheduler_source": "explicit CLI override or current environment, then known default; not request field",
+  "schema": "mdb-row-sign-actual-request-schema-proof-v1"
+}

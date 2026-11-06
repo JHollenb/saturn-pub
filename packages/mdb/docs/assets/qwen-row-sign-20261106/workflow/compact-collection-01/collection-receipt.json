@@ -1,0 +1,22 @@
+{
+  "archive_bytes": 252014,
+  "archive_sha256": "3828d369271baf7aabf9cd8ac93cfda00a83f963c1bd05816672291c68612fcf",
+  "collection_encoder": {
+    "schema": "mdb-explicit-recovery-encoder-v1",
+    "scope": "Collection-only encoder supplied by a separately request-sealed run. Original worker payload/request remain unchanged.",
+    "sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+    "source_request_sha256": "2339ecdb754e0104418b463397b4cb2121a4bbb1c9646d390e56cee3f0fe1e2e"
+  },
+  "collector_sha256": "b621d8e12dc06476abf356643f22693a48a5a52bd43c7684d66e788126475015",
+  "encoder_source_sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+  "expanded_bytes": 1676498,
+  "file_count": 41,
+  "files_manifest_sha256": "82032b7ad875735d14a3c3f2ac2cc7dbb9bc342b3ae9373f2a8fbe349f06906f",
+  "job_id": "job-ded9cc529d99",
+  "native_job_id": "job-74efe5506ecf",
+  "pointer_sha256": "86ad6e4ba3c44d469c08e76a3f36898a4596e73e7deab31eb776370d71535712",
+  "raw_tensor_arrays_collected": false,
+  "reader_sha256": "d995c3c5ca3c194a3ce87bfca58e9352d251246d798e21c6e04a7938bd9b5838",
+  "request_sha256": "d77a7c3e9e87b5c8dada8bebdd1e70b3472427ef4e0d124f18d89fb8aea977c2",
+  "schema": "mdb-qwen-row-sign-compact-retrieval-v1"
+}

@@ -1,0 +1,12 @@
+{
+  "actual_request_schema_proof_sha256": "6d5795ca249b423a350ac7d9be8b80d0246e0617ec4a58758ec1fd2538579946",
+  "canonical_package_ruff": "F,I clean",
+  "change": "Scheduler endpoint uses explicit --scheduler-url, current MRUN_URL or known Beast default; generic saved request has no scheduler_url field.",
+  "collector_sha256": "b621d8e12dc06476abf356643f22693a48a5a52bd43c7684d66e788126475015",
+  "execution_sha256": "2c575038b001f11b535a352e38bae3423d8a706eb381a24b179bf4ec429c380b",
+  "no_remote_collection_or_jobs": true,
+  "previous_source": "prior-collector-v1/collect_compact.py",
+  "pytest": "4 passed in 0.04s",
+  "schema": "mdb-row-sign-collector-qualification-v3",
+  "status": "qualified-transport-mechanics-only"
+}

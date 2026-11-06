@@ -1,0 +1,75 @@
+{
+  "actual_fixture": {
+    "manifest_sha256": "cec4793b53ff9a6320191f45f87d5311c3bbab3631e2c7446f318ef7195a0a0c",
+    "path": "producer-qualification-v3/qwen-row-sign-result",
+    "scope": "Actual previously executed tiny Qwen native/functional writer, serializers, public ForecastTransaction and finalizer; this qualification reads saved evidence only."
+  },
+  "changes": [
+    "Production and actual installed-schema test now share catalog_contexts; execution.backend derives saved actual native QKV device type, operand_device retains full device and learned_dtype retains actual dtype.",
+    "external-evidence roots and manifests use frozen retriever CLI aliases native/reader; reader role explicitly labels authenticated inherited parent source root and binds exactly13 source file hashes."
+  ],
+  "installed_schema": {
+    "computation_atlas_sha256": "730644006e23c0bdf171b42aba2ba006aee5ebaeca22f0ee1854dd4a4176eefe",
+    "equation_comparison_sha256": "5538e9ada396474f78065ec1a43e9d1533eff48f04bb20228a1c2c1cb42356af",
+    "negative": "Remove only execution.backend from same contexts; actual installed ComputationAtlasError execution backend is required reproduced",
+    "positive": "Actual EquationCatalog.record/find and ComputationAtlas.ingest/show on production-built contexts from tiny saved native operand metadata, two observations; all native-response/prediction-error contrast IDs verified",
+    "retriever": "Actual unchanged pinned retrieve_reader_evidence.py CLI reader alias verifies preexisting tiny inherited source file by manifest SHA; no scp/network invocation"
+  },
+  "limits": [
+    "No original numerical evidence inspected, original model/tokenizer/weights execution, learned projection, recurrence, CUDA, staging, submission, scheduler or SSH calls.",
+    "Native producer and original failed CPU audit/staged payload remain unchanged.",
+    "Tiny saved neural fixture versus model-free request/marker harness scopes remain separate.",
+    "This qualification does not claim successful actual production audit; root will submit a fresh CPU-only job."
+  ],
+  "lint": {
+    "command": "rtk proxy uvx ruff check --select F,I qualification/audit_qwen_row_sign.py tests/test_audit_qwen_row_sign.py",
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "exit_code": 0,
+    "stdout": "All checks passed!\n"
+  },
+  "preserved_failure": {
+    "archive": "artifacts/mdb-qwen-row-sign-20261106/audit-source-archive-v1",
+    "job_id": "job-807e7135ec2e",
+    "prior_qualification_sha256": "abc96171f4f439c81498cfb0b3ee20064a2f4dd1bab8090454d083df1cf8d3f3",
+    "prior_reader_sha256": "218bf64a05739a4af547b8e26c3ccf2f5d4f60ecbd4d2e73bc6ad691af8a5667",
+    "scope": "Saved numerical audit completed before optional catalog Atlas import rejected execution.binding without backend; no native rerun or outcome fitting",
+    "status": "failed"
+  },
+  "producer_sha256": "fbd8eceaf1a9ef8917ecdc39a98ff960940aab9da8ecb4697c25c1a33d545f47",
+  "qualification": {
+    "command": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B -m pytest -q test_audit_qwen_row_sign.py --basetemp=../tmp",
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/audit-qualification-v2/attempt-01/cohort",
+    "exit_code": 0,
+    "observed_tool_wall_seconds": 0.817492875,
+    "passed": 12,
+    "pytest_seconds": 0.58,
+    "stdout": "............                                                             [100%]\n12 passed in 0.58s\n"
+  },
+  "schema": "mdb-qwen-row-sign-saved-audit-qualification-v2",
+  "source_sha256": {
+    "audit_flux_functional_pass.py": "2d54e716749dec52c159f3a5214860f4bb8cbf396fd09239540bd55988274c80",
+    "audit_flux_functional_qwen_prefix.py": "5004786be76e1f576d2df65e6d1225f8fdd41c4a7e09e5ed8a6c23057db78a97",
+    "audit_flux_raw_to_image.py": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835",
+    "audit_qwen_row_sign.py": "d995c3c5ca3c194a3ce87bfca58e9352d251246d798e21c6e04a7938bd9b5838",
+    "audit_qwen_sign_shortcut.py": "d33613bbb1d71ee3b2007fb007e5266acaf141994091264bed50d27342237e2c",
+    "retrieve_reader_evidence.py": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923",
+    "test_audit_qwen_row_sign.py": "f4339db26bb5e0c9e3fbee37e81b6c6aada8bf4dc9141b57c55d06a679bae23a"
+  },
+  "status": "passed",
+  "unchanged_AST_functions": [
+    "regional",
+    "descriptor",
+    "support_account",
+    "premise",
+    "array_accounts",
+    "parameter_accounts",
+    "inherited_accounts",
+    "port_bank",
+    "saved_accounts",
+    "native_accounts",
+    "transaction",
+    "request_envelope",
+    "authenticate",
+    "source_accounts"
+  ]
+}

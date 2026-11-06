@@ -1,0 +1,25 @@
+{
+  "schema": "mdb-qwen-row-sign-derived-predictions-v1",
+  "stage": "before the first original-model row-sign target; metadata only",
+  "protocol_sha256": "d942001a79784ebb1bc5d5ed3f3946eaa03b4629f2fe13c7493afbaaf85b51e9",
+  "source": "Algebraic consequences of the fixed predictor and causal support; no new tensor observations or fitted constants.",
+  "permitted_graph": {
+    "rows": 512,
+    "includes_diagonal": true,
+    "causal_allowed_edges": 131328,
+    "prefix_negative_equal_sign_edges": 65792,
+    "prefix_negative_cross_sign_edges": 65536,
+    "interpretation": "Allowed query-key edges, not measured attention probabilities, causal flow capacities or semantic routes."
+  },
+  "prefix_negative": {
+    "candidate_numerical_symmetry_rows": [0, 256],
+    "mixed_support_rows": [256, 512],
+    "shortcut_head_and_R_response_on_mixed_rows": "Exactly zero because these queries have sign+1 and the shortcut returns their positive head/R values.",
+    "conditional_response_error": "If the fresh native baseline equals the archived positive basis and a native edited head/R response is nonzero in this window, shortcut-minus-native response error is the negative native response. RMS response-normalized error is exactly1. A zero native response leaves the denominator undefined.",
+    "MLP_scope": "No additional blanket claim of bitwise M/H baseline replay. Their actual prospective hashes and measured baseline errors are retained separately.",
+    "finite_scope": "Closed-support numerical equality is a prospective hypothesis for this source/profile. Signed-zero and raw-bit defects are separate observations."
+  },
+  "accuracy_gates": [],
+  "model_calls": 0,
+  "new_learned_parameters": 0
+}

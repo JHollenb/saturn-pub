@@ -1,0 +1,19 @@
+{
+  "schema": "mdb-qwen-row-sign-controller-invocations-v1",
+  "executed": false,
+  "executor": "root only",
+  "native_frontend_sha256": "bfe6fbf84faaaf3eabec8930a9c868dc72c9a55a0568d01da1fe3f89b4c50cce",
+  "saved_frontend_sha256": "bd832985f89589210420f7a07757dbec7e2d4f62e39966798248434e2518106e",
+  "cwd": "/Users/jakeholl/domains",
+  "native_stage": "rtk proxy /Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B saturn-pub/packages/mdb/qualification/stage_qwen_row_sign.py <FRESH_NATIVE_RUN> --parent-run artifacts/mdb-qwen-sign-shortcut-20261106/run-02 --compact artifacts/mdb-qwen-sign-shortcut-20261106/compact-collection-01/extracted/binding-minimal-result --selection artifacts/mdb-qwen-row-sign-20261106/selection-v1 --frontier artifacts/mdb-qwen-sign-shortcut-20261106/frontier-metadata-v1",
+  "native_inspect": "rtk proxy /Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B saturn-pub/packages/mdb/qualification/stage_qwen_row_sign.py <NATIVE_RUN> --inspect",
+  "native_submit": "rtk proxy /Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B saturn-pub/packages/mdb/qualification/stage_qwen_row_sign.py <NATIVE_RUN> --submit",
+  "saved_stage": "rtk proxy /Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B saturn-pub/packages/mdb/qualification/stage_qwen_row_sign_saved_audit.py <FRESH_AUDIT_RUN> --study <COMPLETED_NATIVE_RUN>",
+  "saved_submit": "rtk proxy /Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B saturn-pub/packages/mdb/qualification/stage_qwen_row_sign_saved_audit.py <AUDIT_RUN> --submit",
+  "limits": [
+    "Replace angle-bracket placeholders; never reuse an existing staged directory.",
+    "Native submission requires request-bound finite-run-review-v1.json with ready-for-finite-run and no blocking issues.",
+    "Native run-01 is historical pre-admission source201156; final sourcefbd8ece needs its fresh staged directory.",
+    "The saved controller uses the unchanged generic 240s estimate/600s outer timeout; no resource-only reseal is performed."
+  ]
+}

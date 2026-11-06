@@ -1,0 +1,17 @@
+{
+  "schema": "mdb-row-sign-corrected-saved-invocations-v2",
+  "executed_by_agent": false,
+  "frontend_sha256": "69f23665e252956dc35a8084d1436524e4db1d92dc443b474bab1ef28369c019",
+  "reader_sha256": "d995c3c5ca3c194a3ce87bfca58e9352d251246d798e21c6e04a7938bd9b5838",
+  "collector_sha256": "b21e7084e3270120ed8f44712b41705a74ba0f58146f342788930a79ab375ab9",
+  "cwd": "/Users/jakeholl/domains",
+  "stage_audit_02": "rtk proxy /Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B saturn-pub/packages/mdb/qualification/stage_qwen_row_sign_saved_audit.py artifacts/mdb-qwen-row-sign-20261106/audit-02 --study artifacts/mdb-qwen-row-sign-20261106/run-02",
+  "submit_audit_02": "rtk proxy /Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B saturn-pub/packages/mdb/qualification/stage_qwen_row_sign_saved_audit.py artifacts/mdb-qwen-row-sign-20261106/audit-02 --submit",
+  "collect_after_success": "rtk proxy /Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B artifacts/mdb-qwen-row-sign-20261106/collect_compact.py --audit-run artifacts/mdb-qwen-row-sign-20261106/audit-02 --native-run artifacts/mdb-qwen-row-sign-20261106/run-02 --expected-audit-request <EXACT_AUDIT_02_REQUEST_SHA256> --out artifacts/mdb-qwen-row-sign-20261106/compact-collection-01 --encoder-source artifacts/mdb-flux-functional-decoder-20261106/recovery-collection-01",
+  "notes": [
+    "Root alone executes these commands. Agent performed no real stage, submission, scheduler contact or collection.",
+    "Substitute the actual audit-02 request digest after staging; the collector verifies canonical request identity and frozen corrected reader source.",
+    "Audit-01 remains immutable and failed; it is not a successful publication.",
+    "Collector refuses nonmetadata members and budget excess before local archive retrieval. Raw arrays and weights stay remote."
+  ]
+}

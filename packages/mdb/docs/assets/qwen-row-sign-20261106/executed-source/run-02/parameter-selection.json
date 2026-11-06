@@ -1,0 +1,26 @@
+{
+  "exported_weight_payloads": 0,
+  "model_calls": 0,
+  "parent_manifest_sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+  "parent_recipe_count": 398,
+  "protocol_sha256": "d942001a79784ebb1bc5d5ed3f3946eaa03b4629f2fe13c7493afbaaf85b51e9",
+  "selected_parameter_payload_bytes": 201861632,
+  "selected_parameter_tensors": [
+    "model.layers.18.input_layernorm.weight",
+    "model.layers.18.post_attention_layernorm.weight",
+    "model.layers.18.self_attn.q_norm.weight",
+    "model.layers.18.self_attn.k_norm.weight",
+    "model.layers.18.self_attn.q_proj.weight",
+    "model.layers.18.self_attn.k_proj.weight",
+    "model.layers.18.self_attn.v_proj.weight",
+    "model.layers.18.self_attn.o_proj.weight",
+    "model.layers.18.mlp.gate_proj.weight",
+    "model.layers.18.mlp.up_proj.weight",
+    "model.layers.18.mlp.down_proj.weight"
+  ],
+  "selected_recipe_count": 11,
+  "selection": "Exact model.layers.18. prefix; original entry JSON values unchanged.",
+  "source_mutations": 0,
+  "subset_manifest_sha256": "425502121b4091b10124c548c98127785420233b12e95c8f1d972a186026dccf",
+  "weight_payload_bytes_read": 0
+}

@@ -1,0 +1,40 @@
+{
+  "accuracy_gates": [],
+  "blocking_issues": [],
+  "frontier": {
+    "genuine_record_prefix_capture": false,
+    "kind": "architectural",
+    "origin": "inherited-functional-state",
+    "raw_input_prediction": false
+  },
+  "independent_instrument_review": "Reader author confirmed final tiny saved fixture accounts/Tx/native input/context/transpose/census; original numerical outcomes remain unobserved.",
+  "inspected_source": "Full loader, source whitelist/global seal, BF16 original11recipe restoration, native-source/SDPA pins, positive-only shortcut before functional reference, global target guard, actual native context/ports, finite counts and publication entrypoint.",
+  "integrity_only_hard_guards": true,
+  "memory_reason": "201.9MB original component;13inherited arrays44.6MB; B1/512 sequential two F forecasts/two shortcuts/three native targets. 4GiB host and2GiB CUDA declarations include bounded arrays, transient payloads and runtime workspace; successor peaks remain unmeasured.",
+  "previous_staged_draft": "run-01 preserved unsubmitted; source.json metadata scope was added before this final request.",
+  "qualifications": {
+    "controller-qualification-v1/native-qualification-v2.json": "bf8cd8d35a597d6960aaef525f03e51d22bb1a6f9cd8a59cd69c30e5bddaa3cd",
+    "helper-qualification-v1/qualification.json": "e7a28111dee9c2b0012b78acfb2a1929fb62cb02d75dc65e66ad43e135fb1c1e",
+    "producer-qualification-v3/qualification.json": "9adccec7c8f310c32f27b040af0fbe3a85530eca02521d15905166ba5609c716"
+  },
+  "request_sha256": "fb202763231fad27712f2b525aa1ea0d041496c13079d6b4a4a7425d36e18a77",
+  "resources": {
+    "calibration": "Unmeasured component successor: 201861632B BF16 parameters; original source-shard hash streams ~4.97GB once. This startup I/O is distinct from selected component payload and from arithmetic. No successor runtime/peak claim.",
+    "cpu_threads": 4,
+    "disk_gb": 3,
+    "est_wall_s": 60,
+    "ram_mb": 4096,
+    "timeout_s": 300,
+    "vram_mb": 2048
+  },
+  "review_status": "ready-for-finite-run",
+  "reviewer": "root",
+  "schema": "mdb-qwen-row-sign-root-finite-review-v1",
+  "scientific_scope": "Support-closed versus mixed rows and three endpoint/own-positive response errors. Full and window accounts overlap. No semantic, universal, QwenAct or independent-kernel claim.",
+  "source_and_wheel_files_rehashed": 29,
+  "timing": {
+    "assay_timer_s": 240,
+    "estimated_s": 60,
+    "whole_worker_s": 300
+  }
+}

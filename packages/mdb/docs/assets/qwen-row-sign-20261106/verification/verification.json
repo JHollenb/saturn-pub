@@ -1,0 +1,4254 @@
+{
+  "actual_installed_cli": [
+    {
+      "alias": "cmp.qwen.row-sign.all-negative",
+      "api": "equations",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.row-sign.all-negative",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/saved-report-verification-v1/cmp.qwen.row-sign.all-negative.exact.context.json"
+      ],
+      "context_sha256": "8508903e599ca93bcbc9a0b8669b04d1d7ad6a972f3e7f59911186aeac3f45c1",
+      "contrast": "exact",
+      "matches": 1,
+      "result_sha256": "f6f8cd880e4ce9340f1417a0dbe8b72c3aec1351522dd9fb0e736063af8ba33c"
+    },
+    {
+      "alias": "cmp.qwen.row-sign.all-negative",
+      "api": "atlas",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb.computation_atlas",
+        "--atlas",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/compact-collection-01/extracted/binding-minimal-result/atlas",
+        "find",
+        "--law-id",
+        "law.qwen.row-sign-conditional-bf16.v1",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/saved-report-verification-v1/cmp.qwen.row-sign.all-negative.exact.context.json"
+      ],
+      "context_sha256": "8508903e599ca93bcbc9a0b8669b04d1d7ad6a972f3e7f59911186aeac3f45c1",
+      "contrast": "exact",
+      "matches": 1,
+      "result_sha256": "66a4af97a342b056556a5fee78b5fbc353d7dc047f56850ff0ae0cc3e0568fcf"
+    },
+    {
+      "alias": "cmp.qwen.row-sign.all-negative",
+      "api": "equations",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.row-sign.all-negative",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/saved-report-verification-v1/cmp.qwen.row-sign.all-negative.changed-source.context.json"
+      ],
+      "context_sha256": "da91f4072c0802c87ac08260ed0c8842471db7862215c699752e9790305630a6",
+      "contrast": "changed-source",
+      "matches": 0,
+      "result_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "alias": "cmp.qwen.row-sign.all-negative",
+      "api": "atlas",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb.computation_atlas",
+        "--atlas",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/compact-collection-01/extracted/binding-minimal-result/atlas",
+        "find",
+        "--law-id",
+        "law.qwen.row-sign-conditional-bf16.v1",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/saved-report-verification-v1/cmp.qwen.row-sign.all-negative.changed-source.context.json"
+      ],
+      "context_sha256": "da91f4072c0802c87ac08260ed0c8842471db7862215c699752e9790305630a6",
+      "contrast": "changed-source",
+      "matches": 0,
+      "result_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "alias": "cmp.qwen.row-sign.all-negative",
+      "api": "equations",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.row-sign.all-negative",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/saved-report-verification-v1/cmp.qwen.row-sign.all-negative.changed-profile.context.json"
+      ],
+      "context_sha256": "fd58c67cdfc0f26bf0c8585edb5f67e8b20bf1fb6f22bd8560106b424f565240",
+      "contrast": "changed-profile",
+      "matches": 0,
+      "result_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "alias": "cmp.qwen.row-sign.all-negative",
+      "api": "atlas",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb.computation_atlas",
+        "--atlas",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/compact-collection-01/extracted/binding-minimal-result/atlas",
+        "find",
+        "--law-id",
+        "law.qwen.row-sign-conditional-bf16.v1",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/saved-report-verification-v1/cmp.qwen.row-sign.all-negative.changed-profile.context.json"
+      ],
+      "context_sha256": "fd58c67cdfc0f26bf0c8585edb5f67e8b20bf1fb6f22bd8560106b424f565240",
+      "contrast": "changed-profile",
+      "matches": 0,
+      "result_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "alias": "cmp.qwen.row-sign.prefix-negative",
+      "api": "equations",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.row-sign.prefix-negative",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/saved-report-verification-v1/cmp.qwen.row-sign.prefix-negative.exact.context.json"
+      ],
+      "context_sha256": "b5a82d0b58dfc98da4579bacf7a2d23c6821e1ff1f23eea0325c802bb9301ee2",
+      "contrast": "exact",
+      "matches": 1,
+      "result_sha256": "dcd74cfd7fbf5209bd238503c8942f0bf0cd0534ca1b0de2a16438adca710419"
+    },
+    {
+      "alias": "cmp.qwen.row-sign.prefix-negative",
+      "api": "atlas",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb.computation_atlas",
+        "--atlas",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/compact-collection-01/extracted/binding-minimal-result/atlas",
+        "find",
+        "--law-id",
+        "law.qwen.row-sign-conditional-bf16.v1",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/saved-report-verification-v1/cmp.qwen.row-sign.prefix-negative.exact.context.json"
+      ],
+      "context_sha256": "b5a82d0b58dfc98da4579bacf7a2d23c6821e1ff1f23eea0325c802bb9301ee2",
+      "contrast": "exact",
+      "matches": 1,
+      "result_sha256": "69df1e581d7bf911ce8e909d96d8263998549d323becc84ab0f5208112ab247c"
+    },
+    {
+      "alias": "cmp.qwen.row-sign.prefix-negative",
+      "api": "equations",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.row-sign.prefix-negative",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/saved-report-verification-v1/cmp.qwen.row-sign.prefix-negative.changed-source.context.json"
+      ],
+      "context_sha256": "6ffbdf0b1d283d671383f10b954b0c3ccc84cb2c7d483abc50d74a0542a8be16",
+      "contrast": "changed-source",
+      "matches": 0,
+      "result_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "alias": "cmp.qwen.row-sign.prefix-negative",
+      "api": "atlas",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb.computation_atlas",
+        "--atlas",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/compact-collection-01/extracted/binding-minimal-result/atlas",
+        "find",
+        "--law-id",
+        "law.qwen.row-sign-conditional-bf16.v1",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/saved-report-verification-v1/cmp.qwen.row-sign.prefix-negative.changed-source.context.json"
+      ],
+      "context_sha256": "6ffbdf0b1d283d671383f10b954b0c3ccc84cb2c7d483abc50d74a0542a8be16",
+      "contrast": "changed-source",
+      "matches": 0,
+      "result_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "alias": "cmp.qwen.row-sign.prefix-negative",
+      "api": "equations",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.row-sign.prefix-negative",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/saved-report-verification-v1/cmp.qwen.row-sign.prefix-negative.changed-profile.context.json"
+      ],
+      "context_sha256": "4fdd5eebf41c46ad5e6dffd15a169d7628ffb2168d0bd12db551f759c91b5edf",
+      "contrast": "changed-profile",
+      "matches": 0,
+      "result_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "alias": "cmp.qwen.row-sign.prefix-negative",
+      "api": "atlas",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb.computation_atlas",
+        "--atlas",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/compact-collection-01/extracted/binding-minimal-result/atlas",
+        "find",
+        "--law-id",
+        "law.qwen.row-sign-conditional-bf16.v1",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-row-sign-20261106/saved-report-verification-v1/cmp.qwen.row-sign.prefix-negative.changed-profile.context.json"
+      ],
+      "context_sha256": "4fdd5eebf41c46ad5e6dffd15a169d7628ffb2168d0bd12db551f759c91b5edf",
+      "contrast": "changed-profile",
+      "matches": 0,
+      "result_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    }
+  ],
+  "audit_sha256": "5e3b7d5f9061a705931ecc7562097bc7bf2b3d8f38b385cafa5490558c1e3457",
+  "census": {
+    "actual_SDPA_receipts": [
+      {
+        "QKV": [
+          {
+            "device": "cuda:0",
+            "dtype": "torch.bfloat16",
+            "shape": [
+              1,
+              32,
+              512,
+              128
+            ],
+            "stride": [
+              2097152,
+              128,
+              4096,
+              1
+            ]
+          },
+          {
+            "device": "cuda:0",
+            "dtype": "torch.bfloat16",
+            "shape": [
+              1,
+              8,
+              512,
+              128
+            ],
+            "stride": [
+              524288,
+              128,
+              1024,
+              1
+            ]
+          },
+          {
+            "device": "cuda:0",
+            "dtype": "torch.bfloat16",
+            "shape": [
+              1,
+              8,
+              512,
+              128
+            ],
+            "stride": [
+              524288,
+              128,
+              1024,
+              1
+            ]
+          }
+        ],
+        "arm": "baseline",
+        "attention_mask": null,
+        "dropout_p": 0.0,
+        "enable_gqa": true,
+        "is_causal": true,
+        "scale": 0.08838834764831845
+      },
+      {
+        "QKV": [
+          {
+            "device": "cuda:0",
+            "dtype": "torch.bfloat16",
+            "shape": [
+              1,
+              32,
+              512,
+              128
+            ],
+            "stride": [
+              2097152,
+              128,
+              4096,
+              1
+            ]
+          },
+          {
+            "device": "cuda:0",
+            "dtype": "torch.bfloat16",
+            "shape": [
+              1,
+              8,
+              512,
+              128
+            ],
+            "stride": [
+              524288,
+              128,
+              1024,
+              1
+            ]
+          },
+          {
+            "device": "cuda:0",
+            "dtype": "torch.bfloat16",
+            "shape": [
+              1,
+              8,
+              512,
+              128
+            ],
+            "stride": [
+              524288,
+              128,
+              1024,
+              1
+            ]
+          }
+        ],
+        "arm": "all-negative",
+        "attention_mask": null,
+        "dropout_p": 0.0,
+        "enable_gqa": true,
+        "is_causal": true,
+        "scale": 0.08838834764831845
+      },
+      {
+        "QKV": [
+          {
+            "device": "cuda:0",
+            "dtype": "torch.bfloat16",
+            "shape": [
+              1,
+              32,
+              512,
+              128
+            ],
+            "stride": [
+              2097152,
+              128,
+              4096,
+              1
+            ]
+          },
+          {
+            "device": "cuda:0",
+            "dtype": "torch.bfloat16",
+            "shape": [
+              1,
+              8,
+              512,
+              128
+            ],
+            "stride": [
+              524288,
+              128,
+              1024,
+              1
+            ]
+          },
+          {
+            "device": "cuda:0",
+            "dtype": "torch.bfloat16",
+            "shape": [
+              1,
+              8,
+              512,
+              128
+            ],
+            "stride": [
+              524288,
+              128,
+              1024,
+              1
+            ]
+          }
+        ],
+        "arm": "prefix-negative",
+        "attention_mask": null,
+        "dropout_p": 0.0,
+        "enable_gqa": true,
+        "is_causal": true,
+        "scale": 0.08838834764831845
+      }
+    ],
+    "actual_component_entries": 3,
+    "actual_context_operand_occurrences": 3,
+    "actual_context_tensor_joins": 9,
+    "declared": {
+      "FLUX": 0,
+      "LM": 0,
+      "VAE": 0,
+      "component_hydrations": 1,
+      "cpu_offloads": 1,
+      "cuda_placements": 1,
+      "embedding": 0,
+      "forecast_module_attempts": 0,
+      "full_model": 0,
+      "functional_SDPA": 2,
+      "functional_blocks": 2,
+      "functional_linear": 14,
+      "genuine_qwen_acts": 0,
+      "native_SDPA": 3,
+      "native_authorizations": 3,
+      "native_blocks": 3,
+      "native_linear": 21,
+      "noise": 0,
+      "shortcut_SDPA": 0,
+      "shortcut_down_projections": 2,
+      "shortcut_linear": 2,
+      "tokenizer": 0
+    },
+    "observed": {
+      "forecast_module_attempts": 0,
+      "functional_SDPA": 2,
+      "functional_blocks": 2,
+      "functional_linear": 14,
+      "native_SDPA": 3,
+      "native_authorizations": 3,
+      "native_blocks": 3,
+      "native_linear": 21,
+      "native_module_entries": 45,
+      "shortcut_SDPA": 0,
+      "shortcut_down_projections": 2,
+      "shortcut_linear": 2
+    },
+    "scope": "Actual primitive/module/consumer receipts under original pinned component; excluded full-model/LM/tokenizer operations are program-contract declarations, not independent profiled counters."
+  },
+  "compact": {
+    "bytes": 1672252,
+    "collection": {
+      "archive_bytes": 252014,
+      "archive_sha256": "3828d369271baf7aabf9cd8ac93cfda00a83f963c1bd05816672291c68612fcf",
+      "collection_encoder": {
+        "schema": "mdb-explicit-recovery-encoder-v1",
+        "scope": "Collection-only encoder supplied by a separately request-sealed run. Original worker payload/request remain unchanged.",
+        "sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+        "source_request_sha256": "2339ecdb754e0104418b463397b4cb2121a4bbb1c9646d390e56cee3f0fe1e2e"
+      },
+      "collector_sha256": "b621d8e12dc06476abf356643f22693a48a5a52bd43c7684d66e788126475015",
+      "encoder_source_sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+      "expanded_bytes": 1676498,
+      "file_count": 41,
+      "files_manifest_sha256": "82032b7ad875735d14a3c3f2ac2cc7dbb9bc342b3ae9373f2a8fbe349f06906f",
+      "job_id": "job-ded9cc529d99",
+      "native_job_id": "job-74efe5506ecf",
+      "pointer_sha256": "86ad6e4ba3c44d469c08e76a3f36898a4596e73e7deab31eb776370d71535712",
+      "raw_tensor_arrays_collected": false,
+      "reader_sha256": "d995c3c5ca3c194a3ce87bfca58e9352d251246d798e21c6e04a7938bd9b5838",
+      "request_sha256": "d77a7c3e9e87b5c8dada8bebdd1e70b3472427ef4e0d124f18d89fb8aea977c2",
+      "schema": "mdb-qwen-row-sign-compact-retrieval-v1"
+    },
+    "collection_receipt_sha256": "7dfd634f6ab1585434b327a0443f7370f6cbdb0e4571f1f616151560e48406fd",
+    "manifest_sha256": "82032b7ad875735d14a3c3f2ac2cc7dbb9bc342b3ae9373f2a8fbe349f06906f",
+    "members": 40,
+    "retained_array_members": [],
+    "wrapper_bytes": 4246
+  },
+  "helper_sha256": "3c982cef7cf3a873a7f5c89f7ccea7c1db2eacb6764afd16b44d9bf59b2fe653",
+  "jobs": {
+    "audit": {
+      "command": [
+        "/usr/bin/env",
+        "CUDA_VISIBLE_DEVICES=",
+        "PYTHONUNBUFFERED=1",
+        "PYTHONNOUSERSITE=1",
+        "PYTHONPATH=",
+        "UV_LINK_MODE=symlink",
+        "UV_CACHE_DIR=/mnt/hdd8tb/mdb/uv-cache",
+        "TORCH_HOME=/mnt/hdd8tb/mdb/torch",
+        "LLM_MODELS_EXTRA_ROOT=/mnt/big/llm-models",
+        "HF_HUB_OFFLINE=1",
+        "TRANSFORMERS_OFFLINE=1",
+        "DIFFUSERS_OFFLINE=1",
+        "TOKENIZERS_PARALLELISM=false",
+        "SATURN_RESIDENT_WORKER=1",
+        "SATURN_RUN_CONFIG=saturn_run_config.json",
+        "SATURN_DEBUG_REQUEST=saturn_debug_request.json",
+        "uv",
+        "run",
+        "--no-project",
+        "--offline",
+        "--python",
+        "3.14.6",
+        "--with",
+        "./mdb_runtime-0.1.0-py3-none-any.whl",
+        "--with",
+        "./saturn_pub-0.4.1-py3-none-any.whl",
+        "--with",
+        "./mrun_pub-0.1.2-py3-none-any.whl",
+        "--with",
+        "torch==2.13.0",
+        "--with",
+        "diffusers==0.39.0",
+        "--with",
+        "transformers==5.14.1",
+        "--with",
+        "accelerate==1.14.0",
+        "--with",
+        "safetensors>=0.5",
+        "--with",
+        "numpy>=2.0",
+        "--with",
+        "pyyaml>=6.0",
+        "--with",
+        "psutil>=5.9",
+        "--with",
+        "pillow>=10.0",
+        "python",
+        "-B",
+        "-u",
+        "-m",
+        "mdb.worker_bootstrap",
+        "audit_qwen_row_sign.py"
+      ],
+      "complete_log_sha256": "87b111f5139c2218d1a03c38b80bbcf09f212082dd830e88a83f58c1d7ad63e2",
+      "elapsed_s": 18.63,
+      "executed_payload": {
+        "host": "beast",
+        "sha256": "417c79b7e7239f95e9cf51dc47cf109b06941eaefa1189908c2af4b0c2762490",
+        "size_bytes": 3174454
+      },
+      "job_id": "job-ded9cc529d99",
+      "job_json_sha256": "685d91c2ef2c1d272f29103fef3741281bbf312aad578b774ad87c672fa1a666",
+      "peak_rss_mb": 998.2,
+      "peak_vram_mb": 0.0,
+      "reservation": {
+        "cpu_threads": 2,
+        "disk_gb": 1.0,
+        "est_wall_s": 240.0,
+        "ram_mb": 3072.0,
+        "vram_mb": 0.0
+      },
+      "status": "authenticated-local-capture"
+    },
+    "native": {
+      "command": [
+        "/usr/bin/env",
+        "TORCHINDUCTOR_CACHE_DIR=/mnt/hdd8tb/mdb/torchinductor-cache",
+        "CUDA_CACHE_PATH=/mnt/hdd8tb/mdb/cuda-cache",
+        "TMPDIR=/mnt/hdd8tb/mdb/tmp",
+        "PYTHONUNBUFFERED=1",
+        "PYTHONNOUSERSITE=1",
+        "PYTHONPATH=",
+        "UV_LINK_MODE=symlink",
+        "UV_CACHE_DIR=/mnt/hdd8tb/mdb/uv-cache",
+        "TORCH_HOME=/mnt/hdd8tb/mdb/torch",
+        "LLM_MODELS_EXTRA_ROOT=/mnt/big/llm-models",
+        "HF_HUB_OFFLINE=1",
+        "TRANSFORMERS_OFFLINE=1",
+        "DIFFUSERS_OFFLINE=1",
+        "TOKENIZERS_PARALLELISM=false",
+        "SATURN_RESIDENT_WORKER=1",
+        "SATURN_RUN_CONFIG=saturn_run_config.json",
+        "SATURN_DEBUG_REQUEST=saturn_debug_request.json",
+        "uv",
+        "run",
+        "--no-project",
+        "--offline",
+        "--python",
+        "3.14.6",
+        "--with",
+        "./mdb_runtime-0.1.0-py3-none-any.whl",
+        "--with",
+        "./saturn_pub-0.4.1-py3-none-any.whl",
+        "--with",
+        "./mrun_pub-0.1.2-py3-none-any.whl",
+        "--with",
+        "torch==2.13.0",
+        "--with",
+        "diffusers==0.39.0",
+        "--with",
+        "transformers==5.14.1",
+        "--with",
+        "accelerate==1.14.0",
+        "--with",
+        "safetensors>=0.5",
+        "--with",
+        "numpy>=2.0",
+        "--with",
+        "pyyaml>=6.0",
+        "--with",
+        "psutil>=5.9",
+        "--with",
+        "pillow>=10.0",
+        "python",
+        "-B",
+        "-u",
+        "-m",
+        "mdb.worker_bootstrap",
+        "qwen_row_sign_campaign.py",
+        "--config",
+        "saturn_run_config.json"
+      ],
+      "complete_log_sha256": "3b3714c8eb3cdd20748aa6c8c2d29b45e65281ca8baa140137921a9a7b57f23f",
+      "elapsed_s": 47.22,
+      "executed_payload": {
+        "host": "beast",
+        "sha256": "799ef60af64a2f124267b953d85184772d8da05c7e1855af7708e7bd4aef24ac",
+        "size_bytes": 3291520
+      },
+      "job_id": "job-74efe5506ecf",
+      "job_json_sha256": "5da0755d1fcdbc2fc524aca96b3eb450e243b3409b4b3d28381dbf2082db49e3",
+      "peak_rss_mb": 1795.4,
+      "peak_vram_mb": 826.0,
+      "reservation": {
+        "cpu_threads": 4,
+        "disk_gb": 3.0,
+        "est_wall_s": 60.0,
+        "ram_mb": 4096.0,
+        "vram_mb": 2048.0
+      },
+      "status": "authenticated-local-capture"
+    }
+  },
+  "raw": {
+    "bytes": 376594023,
+    "members": 125
+  },
+  "requests": {
+    "audit": "d77a7c3e9e87b5c8dada8bebdd1e70b3472427ef4e0d124f18d89fb8aea977c2",
+    "native": "fb202763231fad27712f2b525aa1ea0d041496c13079d6b4a4a7425d36e18a77"
+  },
+  "schema": "mdb-qwen-row-sign-saved-report-verification-v1",
+  "scope": "Report JSON only; no array, weights, tokenizer, learned operation, scheduler or model access. Failed audit-01 remains unchanged. Job/log facts are established only when explicit complete local captures are supplied.",
+  "source": {
+    "inherited": {
+      "arrays": 13,
+      "bytes": 44578944,
+      "forecast_seal": "a6d61b11fa67bfa0eb3a50fee66f26584b452874a590c255163102362460e652",
+      "job_id": "job-8c949b1c0278",
+      "manifest_sha256": "d573bffe5c0c3dfc3d1c353721f5696909f73b75fb6ff293aed2e905f4ec0c33",
+      "request_sha256": "1a9b11e4bc739410dcd165b31cd0c0452aa5f0583e7731598bc1e2b8a87bdd5a"
+    },
+    "parameter_recipe_io": {
+      "cache_hits": 0,
+      "checkpoint_bytes_verified_once": 4967215360,
+      "checkpoint_files_verified_once": 1,
+      "load_requests": 11,
+      "parameter_payload_bytes": 201861632,
+      "payload_reads": 11,
+      "peak_cached_payload_bytes": 201861632
+    },
+    "parameter_restoration": {
+      "complete_source_recipe_count": 398,
+      "scope": "All11 original block weights, full source-file/header/payload/NPY archive hashes; no model construction, learned call or persistent parameter bank.",
+      "selected": {
+        "checkpoint_files": {
+          "model-00001-of-00002.safetensors": "8c0506e7f4936fa7e26183a4fd8da4e2bdbc5990ba64ae441f965d51228f36ea"
+        },
+        "module_sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+        "payload_bytes": 201861632,
+        "rows": {
+          "model.layers.18.input_layernorm.weight": {
+            "archive_sha256": "125184753f27ab253a6e0450362e769ba4e43bf981e7f61d0e32bf8037e10a95",
+            "payload_bytes": 5120,
+            "payload_sha256": "1fa08ab5cea0a8128c8ed832fce76a911a09ba28d932f9969a6b652f6e85e84c"
+          },
+          "model.layers.18.mlp.down_proj.weight": {
+            "archive_sha256": "9cab87b2a74a85d51f69f06487eae727d7ff57b863031f1c93efd6ed0b8b053f",
+            "payload_bytes": 49807360,
+            "payload_sha256": "efac53bfeaf24a75fc9945a866a4e0253c97c178e151fec6fa437e31bef5f7bf"
+          },
+          "model.layers.18.mlp.gate_proj.weight": {
+            "archive_sha256": "9408c2a8534dd99e1ebc8d89fcff6a0ab4d9d6459b4fb88fdea733b08ef4a88d",
+            "payload_bytes": 49807360,
+            "payload_sha256": "6feb850e627bbe322476f76aab3f82656f35976a6669dbeb6aa58709c9bcbed2"
+          },
+          "model.layers.18.mlp.up_proj.weight": {
+            "archive_sha256": "0724739985945a42eec650dea36e85352e8608dd1803ae1d91bd1ee5bd49cd49",
+            "payload_bytes": 49807360,
+            "payload_sha256": "06dca26793744f09ff061622623a79473ba2bf5890f084bc0127374241e00509"
+          },
+          "model.layers.18.post_attention_layernorm.weight": {
+            "archive_sha256": "8e4dd555202eb8b5af813c5bd4013aef706aba3171ee99dfd5308ea7e9c292bf",
+            "payload_bytes": 5120,
+            "payload_sha256": "29c230e781ceae6d9e8d69742a2b249b2ed55f3983fb1315bf9c5481d68191e2"
+          },
+          "model.layers.18.self_attn.k_norm.weight": {
+            "archive_sha256": "3febcde570d7f344e11f1271bb4407999d9335958c1a0cfdc0e601c6528a74be",
+            "payload_bytes": 256,
+            "payload_sha256": "d3b8c22916d5cbd150b680f3de8038e8a1d5f0be12f755a551151e131c813ea6"
+          },
+          "model.layers.18.self_attn.k_proj.weight": {
+            "archive_sha256": "f14ebc768b523a84ee0ee195efdb47311c6c6db322a1b95df1a7567034f49657",
+            "payload_bytes": 5242880,
+            "payload_sha256": "b41711c336c4d4cc62a944c52a383c52cc695549ad438a683ba9178da25b8dfd"
+          },
+          "model.layers.18.self_attn.o_proj.weight": {
+            "archive_sha256": "eac356fd46ee5592e0a664dcd41715f6fcee98c93717dcd611f1a551bb48f707",
+            "payload_bytes": 20971520,
+            "payload_sha256": "5d0c3afc14e85a3353a8d6b5239d975b8fbb1c145cfb71892c8628517de448bf"
+          },
+          "model.layers.18.self_attn.q_norm.weight": {
+            "archive_sha256": "b7ad3848163b1eb94478ac2a2920872e2e8653283ba968f50545f6b0b6fe05c6",
+            "payload_bytes": 256,
+            "payload_sha256": "1be96f42e1c42b92cc2fb2ef534ced2926901786424f143b861eff43cf160b1c"
+          },
+          "model.layers.18.self_attn.q_proj.weight": {
+            "archive_sha256": "96bf5e64f5356b885dc5d7a94923948579a8b1ef37181d0bf985230c737b4aa7",
+            "payload_bytes": 20971520,
+            "payload_sha256": "1662a2b25b03463b6016f7e7b6dea13c0c65c36c5860a443cd6222879d2f3271"
+          },
+          "model.layers.18.self_attn.v_proj.weight": {
+            "archive_sha256": "a50da0c5b313186f858e8f37ade437daadf41bdb63978a647d6f43f28ba05dd4",
+            "payload_bytes": 5242880,
+            "payload_sha256": "6ce69323e1bff678d0ca0f4743eba50a2255731777e818e5be462e8805b88a18"
+          }
+        },
+        "schema": "mdb-streamed-parameter-restoration-audit-v1",
+        "scope": "Full source-file SHA once/file, safetensors header/offset checks, every payload and original NPY archive SHA; no parameter export or neural call.",
+        "tensors": 11
+      },
+      "selected_original_names": [
+        "model.layers.18.input_layernorm.weight",
+        "model.layers.18.mlp.down_proj.weight",
+        "model.layers.18.mlp.gate_proj.weight",
+        "model.layers.18.mlp.up_proj.weight",
+        "model.layers.18.post_attention_layernorm.weight",
+        "model.layers.18.self_attn.k_norm.weight",
+        "model.layers.18.self_attn.k_proj.weight",
+        "model.layers.18.self_attn.o_proj.weight",
+        "model.layers.18.self_attn.q_norm.weight",
+        "model.layers.18.self_attn.q_proj.weight",
+        "model.layers.18.self_attn.v_proj.weight"
+      ]
+    },
+    "producer_sha256": "fbd8eceaf1a9ef8917ecdc39a98ff960940aab9da8ecb4697c25c1a33d545f47",
+    "reader_sha256": "d995c3c5ca3c194a3ce87bfca58e9352d251246d798e21c6e04a7938bd9b5838",
+    "runtime": {
+      "flags": {
+        "cuda_allow_bf16_reduced_precision_reduction": true,
+        "cuda_allow_tf32": false,
+        "cudnn_allow_tf32": false,
+        "cudnn_benchmark": false,
+        "cudnn_deterministic": true,
+        "deterministic_algorithms": true,
+        "float32_matmul_precision": "highest",
+        "num_threads": 4
+      },
+      "selected_kernels": "not independently profiled",
+      "sources": {
+        "qwen_native_source_sha256": {
+          "bytes": 23353,
+          "path": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/_mp_DKFu0lGz1Jsp/lib/python3.14/site-packages/transformers/models/qwen3/modeling_qwen3.py",
+          "sha256": "fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+        },
+        "sdpa_source_sha256": {
+          "bytes": 8407,
+          "path": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/_mp_DKFu0lGz1Jsp/lib/python3.14/site-packages/transformers/integrations/sdpa_attention.py",
+          "sha256": "b72c5c96ea070d594f36e774cfc799160a0ecb157353502a61eb3c5ea1e35b46"
+        }
+      },
+      "torch": "2.13.0+cu130",
+      "transformers": "5.14.1"
+    }
+  },
+  "status": "Saved compact custody/recount/CLI verification completed; no numerical success threshold.",
+  "totals": {
+    "by_port": {
+      "full-functional-minus-native": {
+        "endpoint": {
+          "Hnext": {
+            "whole": {
+              "bit_exact_fields": 2,
+              "changed_values": 0,
+              "fields": 2,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 15.778018458445429,
+              "pooled_right_rms": 15.778018458445429,
+              "positions": 2621440,
+              "signed_mean": 0.0
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 22.281845960192882,
+                "pooled_right_rms": 22.281845960192882,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 1.1878861714514142,
+                "pooled_right_rms": 1.1878861714514142,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              }
+            }
+          },
+          "M": {
+            "whole": {
+              "bit_exact_fields": 2,
+              "changed_values": 0,
+              "fields": 2,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 0.6206434476514422,
+              "pooled_right_rms": 0.6206434476514422,
+              "positions": 2621440,
+              "signed_mean": 0.0
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.7003237760437984,
+                "pooled_right_rms": 0.7003237760437984,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.5290965761872709,
+                "pooled_right_rms": 0.5290965761872709,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              }
+            }
+          },
+          "R": {
+            "whole": {
+              "bit_exact_fields": 2,
+              "changed_values": 0,
+              "fields": 2,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 15.76125070128526,
+              "pooled_right_rms": 15.76125070128526,
+              "positions": 2621440,
+              "signed_mean": 0.0
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 22.265254808693268,
+                "pooled_right_rms": 22.265254808693268,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 1.0452155956987936,
+                "pooled_right_rms": 1.0452155956987936,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              }
+            }
+          },
+          "head": {
+            "whole": {
+              "bit_exact_fields": 2,
+              "changed_values": 0,
+              "fields": 2,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 0.2887583087644374,
+              "pooled_right_rms": 0.2887583087644374,
+              "positions": 4194304,
+              "signed_mean": 0.0
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.2556727217642782,
+                "pooled_right_rms": 0.2556727217642782,
+                "positions": 2097152,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.3184245296874008,
+                "pooled_right_rms": 0.3184245296874008,
+                "positions": 2097152,
+                "signed_mean": 0.0
+              }
+            }
+          }
+        },
+        "response_error": {
+          "Hnext": {
+            "whole": {
+              "bit_exact_fields": 2,
+              "changed_values": 0,
+              "fields": 2,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 31.511910523118864,
+              "pooled_right_rms": 31.511910523118864,
+              "positions": 2621440,
+              "signed_mean": 0.0
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 44.53782927205136,
+                "pooled_right_rms": 44.53782927205136,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 1.5436234539902571,
+                "pooled_right_rms": 1.5436234539902571,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              }
+            }
+          },
+          "M": {
+            "whole": {
+              "bit_exact_fields": 2,
+              "changed_values": 0,
+              "fields": 2,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 0.4801112381255796,
+              "pooled_right_rms": 0.4801112381255796,
+              "positions": 2621440,
+              "signed_mean": 0.0
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.5570230599815797,
+                "pooled_right_rms": 0.5570230599815797,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.3882510947797976,
+                "pooled_right_rms": 0.3882510947797976,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              }
+            }
+          },
+          "R": {
+            "whole": {
+              "bit_exact_fields": 2,
+              "changed_values": 0,
+              "fields": 2,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 31.504160956000046,
+              "pooled_right_rms": 31.504160956000046,
+              "positions": 2621440,
+              "signed_mean": 0.0
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 44.530509617386535,
+                "pooled_right_rms": 44.530509617386535,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 1.43458297040037,
+                "pooled_right_rms": 1.43458297040037,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              }
+            }
+          },
+          "head": {
+            "whole": {
+              "bit_exact_fields": 2,
+              "changed_values": 0,
+              "fields": 2,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 0.4672847758180766,
+              "pooled_right_rms": 0.4672847758180766,
+              "positions": 4194304,
+              "signed_mean": 0.0
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.5113454435285564,
+                "pooled_right_rms": 0.5113454435285564,
+                "positions": 2097152,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.4186119453686005,
+                "pooled_right_rms": 0.4186119453686005,
+                "positions": 2097152,
+                "signed_mean": 0.0
+              }
+            }
+          }
+        }
+      },
+      "shortcut-minus-full-functional": {
+        "endpoint": {
+          "Hnext": {
+            "whole": {
+              "bit_exact_fields": 1,
+              "changed_values": 651956,
+              "fields": 2,
+              "max_rms": 0.1992138865823909,
+              "maxabs": 4.375,
+              "pooled_error_rms": 0.14086549010893637,
+              "pooled_left_rms": 15.777521776557625,
+              "pooled_right_rms": 15.778018458445429,
+              "positions": 2621440,
+              "signed_mean": 0.0008025826933589997
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 22.281845960192882,
+                "pooled_right_rms": 22.281845960192882,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 1,
+                "changed_values": 651956,
+                "fields": 2,
+                "max_rms": 0.28173098021787274,
+                "maxabs": 4.375,
+                "pooled_error_rms": 0.1992138865823909,
+                "pooled_left_rms": 1.1746179914067076,
+                "pooled_right_rms": 1.1878861714514142,
+                "positions": 1310720,
+                "signed_mean": 0.0016051653867179994
+              }
+            }
+          },
+          "M": {
+            "whole": {
+              "bit_exact_fields": 1,
+              "changed_values": 653672,
+              "fields": 2,
+              "max_rms": 0.15956172861930526,
+              "maxabs": 4.84375,
+              "pooled_error_rms": 0.11282718032455837,
+              "pooled_left_rms": 0.6169626692529576,
+              "pooled_right_rms": 0.6206434476514422,
+              "positions": 2621440,
+              "signed_mean": -0.00010599975117315807
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.7003237760437984,
+                "pooled_right_rms": 0.7003237760437984,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 1,
+                "changed_values": 653672,
+                "fields": 2,
+                "max_rms": 0.22565436064911673,
+                "maxabs": 4.84375,
+                "pooled_error_rms": 0.15956172861930526,
+                "pooled_left_rms": 0.5204156792519076,
+                "pooled_right_rms": 0.5290965761872709,
+                "positions": 1310720,
+                "signed_mean": -0.00021199950234631614
+              }
+            }
+          },
+          "R": {
+            "whole": {
+              "bit_exact_fields": 0,
+              "changed_values": 651599,
+              "fields": 2,
+              "max_rms": 0.19976135009818874,
+              "maxabs": 7.5,
+              "pooled_error_rms": 0.14125260527340924,
+              "pooled_left_rms": 15.759927562444934,
+              "pooled_right_rms": 15.76125070128526,
+              "positions": 2621440,
+              "signed_mean": 0.0009083503427973483
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 0,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 22.265254808693268,
+                "pooled_right_rms": 22.265254808693268,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 0,
+                "changed_values": 651599,
+                "fields": 2,
+                "max_rms": 0.28250521054681854,
+                "maxabs": 7.5,
+                "pooled_error_rms": 0.19976135009818874,
+                "pooled_left_rms": 1.0045207070961002,
+                "pooled_right_rms": 1.0452155956987936,
+                "positions": 1310720,
+                "signed_mean": 0.0018167006855946966
+              }
+            }
+          },
+          "head": {
+            "whole": {
+              "bit_exact_fields": 1,
+              "changed_values": 1045571,
+              "fields": 2,
+              "max_rms": 0.15154359220682048,
+              "maxabs": 3.2265625,
+              "pooled_error_rms": 0.1071575016948116,
+              "pooled_left_rms": 0.26599228455682933,
+              "pooled_right_rms": 0.2887583087644374,
+              "positions": 4194304,
+              "signed_mean": 0.0009037787372803904
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.2556727217642782,
+                "pooled_right_rms": 0.2556727217642782,
+                "positions": 2097152,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 1,
+                "changed_values": 1045571,
+                "fields": 2,
+                "max_rms": 0.2143150033896232,
+                "maxabs": 3.2265625,
+                "pooled_error_rms": 0.15154359220682048,
+                "pooled_left_rms": 0.27592616808336345,
+                "pooled_right_rms": 0.3184245296874008,
+                "positions": 2097152,
+                "signed_mean": 0.0018075574745607809
+              }
+            }
+          }
+        },
+        "response_error": {
+          "Hnext": {
+            "whole": {
+              "bit_exact_fields": 1,
+              "changed_values": 651956,
+              "fields": 2,
+              "max_rms": 0.1992138865823909,
+              "maxabs": 4.375,
+              "pooled_error_rms": 0.14086549010893637,
+              "pooled_left_rms": 31.5115956709708,
+              "pooled_right_rms": 31.511910523118864,
+              "positions": 2621440,
+              "signed_mean": 0.0008025826933589997
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 44.53782927205136,
+                "pooled_right_rms": 44.53782927205136,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 1,
+                "changed_values": 651956,
+                "fields": 2,
+                "max_rms": 0.28173098021787274,
+                "maxabs": 4.375,
+                "pooled_error_rms": 0.1992138865823909,
+                "pooled_left_rms": 1.5307146027596226,
+                "pooled_right_rms": 1.5436234539902571,
+                "positions": 1310720,
+                "signed_mean": 0.0016051653867179994
+              }
+            }
+          },
+          "M": {
+            "whole": {
+              "bit_exact_fields": 1,
+              "changed_values": 653672,
+              "fields": 2,
+              "max_rms": 0.15956172861930526,
+              "maxabs": 4.84375,
+              "pooled_error_rms": 0.11282718032455837,
+              "pooled_left_rms": 0.4666656494263174,
+              "pooled_right_rms": 0.4801112381255796,
+              "positions": 2621440,
+              "signed_mean": -0.00010599975117315807
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.5570230599815797,
+                "pooled_right_rms": 0.5570230599815797,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 1,
+                "changed_values": 653672,
+                "fields": 2,
+                "max_rms": 0.22565436064911673,
+                "maxabs": 4.84375,
+                "pooled_error_rms": 0.15956172861930526,
+                "pooled_left_rms": 0.35394769014323363,
+                "pooled_right_rms": 0.3882510947797976,
+                "positions": 1310720,
+                "signed_mean": -0.00021199950234631614
+              }
+            }
+          },
+          "R": {
+            "whole": {
+              "bit_exact_fields": 0,
+              "changed_values": 651599,
+              "fields": 2,
+              "max_rms": 0.19976135009818874,
+              "maxabs": 7.5,
+              "pooled_error_rms": 0.14125260527340924,
+              "pooled_left_rms": 31.503844293086857,
+              "pooled_right_rms": 31.504160956000046,
+              "positions": 2621440,
+              "signed_mean": 0.0009083503427973483
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 0,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 44.530509617386535,
+                "pooled_right_rms": 44.530509617386535,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 0,
+                "changed_values": 651599,
+                "fields": 2,
+                "max_rms": 0.28250521054681854,
+                "maxabs": 7.5,
+                "pooled_error_rms": 0.19976135009818874,
+                "pooled_left_rms": 1.420606807659916,
+                "pooled_right_rms": 1.43458297040037,
+                "positions": 1310720,
+                "signed_mean": 0.0018167006855946966
+              }
+            }
+          },
+          "head": {
+            "whole": {
+              "bit_exact_fields": 1,
+              "changed_values": 1045571,
+              "fields": 2,
+              "max_rms": 0.15154359220682048,
+              "maxabs": 3.2265625,
+              "pooled_error_rms": 0.1071575016948116,
+              "pooled_left_rms": 0.45483220152257964,
+              "pooled_right_rms": 0.4672847758180766,
+              "positions": 4194304,
+              "signed_mean": 0.0009037787372803904
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.5113454435285564,
+                "pooled_right_rms": 0.5113454435285564,
+                "positions": 2097152,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 1,
+                "changed_values": 1045571,
+                "fields": 2,
+                "max_rms": 0.2143150033896232,
+                "maxabs": 3.2265625,
+                "pooled_error_rms": 0.15154359220682048,
+                "pooled_left_rms": 0.39021852911713084,
+                "pooled_right_rms": 0.4186119453686005,
+                "positions": 2097152,
+                "signed_mean": 0.0018075574745607809
+              }
+            }
+          }
+        }
+      },
+      "shortcut-minus-native": {
+        "endpoint": {
+          "Hnext": {
+            "whole": {
+              "bit_exact_fields": 1,
+              "changed_values": 651956,
+              "fields": 2,
+              "max_rms": 0.1992138865823909,
+              "maxabs": 4.375,
+              "pooled_error_rms": 0.14086549010893637,
+              "pooled_left_rms": 15.777521776557625,
+              "pooled_right_rms": 15.778018458445429,
+              "positions": 2621440,
+              "signed_mean": 0.0008025826933589997
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 22.281845960192882,
+                "pooled_right_rms": 22.281845960192882,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 1,
+                "changed_values": 651956,
+                "fields": 2,
+                "max_rms": 0.28173098021787274,
+                "maxabs": 4.375,
+                "pooled_error_rms": 0.1992138865823909,
+                "pooled_left_rms": 1.1746179914067076,
+                "pooled_right_rms": 1.1878861714514142,
+                "positions": 1310720,
+                "signed_mean": 0.0016051653867179994
+              }
+            }
+          },
+          "M": {
+            "whole": {
+              "bit_exact_fields": 1,
+              "changed_values": 653672,
+              "fields": 2,
+              "max_rms": 0.15956172861930526,
+              "maxabs": 4.84375,
+              "pooled_error_rms": 0.11282718032455837,
+              "pooled_left_rms": 0.6169626692529576,
+              "pooled_right_rms": 0.6206434476514422,
+              "positions": 2621440,
+              "signed_mean": -0.00010599975117315807
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.7003237760437984,
+                "pooled_right_rms": 0.7003237760437984,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 1,
+                "changed_values": 653672,
+                "fields": 2,
+                "max_rms": 0.22565436064911673,
+                "maxabs": 4.84375,
+                "pooled_error_rms": 0.15956172861930526,
+                "pooled_left_rms": 0.5204156792519076,
+                "pooled_right_rms": 0.5290965761872709,
+                "positions": 1310720,
+                "signed_mean": -0.00021199950234631614
+              }
+            }
+          },
+          "R": {
+            "whole": {
+              "bit_exact_fields": 0,
+              "changed_values": 651599,
+              "fields": 2,
+              "max_rms": 0.19976135009818874,
+              "maxabs": 7.5,
+              "pooled_error_rms": 0.14125260527340924,
+              "pooled_left_rms": 15.759927562444934,
+              "pooled_right_rms": 15.76125070128526,
+              "positions": 2621440,
+              "signed_mean": 0.0009083503427973483
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 0,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 22.265254808693268,
+                "pooled_right_rms": 22.265254808693268,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 0,
+                "changed_values": 651599,
+                "fields": 2,
+                "max_rms": 0.28250521054681854,
+                "maxabs": 7.5,
+                "pooled_error_rms": 0.19976135009818874,
+                "pooled_left_rms": 1.0045207070961002,
+                "pooled_right_rms": 1.0452155956987936,
+                "positions": 1310720,
+                "signed_mean": 0.0018167006855946966
+              }
+            }
+          },
+          "head": {
+            "whole": {
+              "bit_exact_fields": 1,
+              "changed_values": 1045571,
+              "fields": 2,
+              "max_rms": 0.15154359220682048,
+              "maxabs": 3.2265625,
+              "pooled_error_rms": 0.1071575016948116,
+              "pooled_left_rms": 0.26599228455682933,
+              "pooled_right_rms": 0.2887583087644374,
+              "positions": 4194304,
+              "signed_mean": 0.0009037787372803904
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.2556727217642782,
+                "pooled_right_rms": 0.2556727217642782,
+                "positions": 2097152,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 1,
+                "changed_values": 1045571,
+                "fields": 2,
+                "max_rms": 0.2143150033896232,
+                "maxabs": 3.2265625,
+                "pooled_error_rms": 0.15154359220682048,
+                "pooled_left_rms": 0.27592616808336345,
+                "pooled_right_rms": 0.3184245296874008,
+                "positions": 2097152,
+                "signed_mean": 0.0018075574745607809
+              }
+            }
+          }
+        },
+        "response_error": {
+          "Hnext": {
+            "whole": {
+              "bit_exact_fields": 1,
+              "changed_values": 651956,
+              "fields": 2,
+              "max_rms": 0.1992138865823909,
+              "maxabs": 4.375,
+              "pooled_error_rms": 0.14086549010893637,
+              "pooled_left_rms": 31.5115956709708,
+              "pooled_right_rms": 31.511910523118864,
+              "positions": 2621440,
+              "signed_mean": 0.0008025826933589997
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 44.53782927205136,
+                "pooled_right_rms": 44.53782927205136,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 1,
+                "changed_values": 651956,
+                "fields": 2,
+                "max_rms": 0.28173098021787274,
+                "maxabs": 4.375,
+                "pooled_error_rms": 0.1992138865823909,
+                "pooled_left_rms": 1.5307146027596226,
+                "pooled_right_rms": 1.5436234539902571,
+                "positions": 1310720,
+                "signed_mean": 0.0016051653867179994
+              }
+            }
+          },
+          "M": {
+            "whole": {
+              "bit_exact_fields": 1,
+              "changed_values": 653672,
+              "fields": 2,
+              "max_rms": 0.15956172861930526,
+              "maxabs": 4.84375,
+              "pooled_error_rms": 0.11282718032455837,
+              "pooled_left_rms": 0.4666656494263174,
+              "pooled_right_rms": 0.4801112381255796,
+              "positions": 2621440,
+              "signed_mean": -0.00010599975117315807
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.5570230599815797,
+                "pooled_right_rms": 0.5570230599815797,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 1,
+                "changed_values": 653672,
+                "fields": 2,
+                "max_rms": 0.22565436064911673,
+                "maxabs": 4.84375,
+                "pooled_error_rms": 0.15956172861930526,
+                "pooled_left_rms": 0.35394769014323363,
+                "pooled_right_rms": 0.3882510947797976,
+                "positions": 1310720,
+                "signed_mean": -0.00021199950234631614
+              }
+            }
+          },
+          "R": {
+            "whole": {
+              "bit_exact_fields": 0,
+              "changed_values": 651599,
+              "fields": 2,
+              "max_rms": 0.19976135009818874,
+              "maxabs": 7.5,
+              "pooled_error_rms": 0.14125260527340924,
+              "pooled_left_rms": 31.503844293086857,
+              "pooled_right_rms": 31.504160956000046,
+              "positions": 2621440,
+              "signed_mean": 0.0009083503427973483
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 0,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 44.530509617386535,
+                "pooled_right_rms": 44.530509617386535,
+                "positions": 1310720,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 0,
+                "changed_values": 651599,
+                "fields": 2,
+                "max_rms": 0.28250521054681854,
+                "maxabs": 7.5,
+                "pooled_error_rms": 0.19976135009818874,
+                "pooled_left_rms": 1.420606807659916,
+                "pooled_right_rms": 1.43458297040037,
+                "positions": 1310720,
+                "signed_mean": 0.0018167006855946966
+              }
+            }
+          },
+          "head": {
+            "whole": {
+              "bit_exact_fields": 1,
+              "changed_values": 1045571,
+              "fields": 2,
+              "max_rms": 0.15154359220682048,
+              "maxabs": 3.2265625,
+              "pooled_error_rms": 0.1071575016948116,
+              "pooled_left_rms": 0.45483220152257964,
+              "pooled_right_rms": 0.4672847758180766,
+              "positions": 4194304,
+              "signed_mean": 0.0009037787372803904
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 2,
+                "changed_values": 0,
+                "fields": 2,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.5113454435285564,
+                "pooled_right_rms": 0.5113454435285564,
+                "positions": 2097152,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 1,
+                "changed_values": 1045571,
+                "fields": 2,
+                "max_rms": 0.2143150033896232,
+                "maxabs": 3.2265625,
+                "pooled_error_rms": 0.15154359220682048,
+                "pooled_left_rms": 0.39021852911713084,
+                "pooled_right_rms": 0.4186119453686005,
+                "positions": 2097152,
+                "signed_mean": 0.0018075574745607809
+              }
+            }
+          }
+        }
+      }
+    },
+    "channels": {
+      "full-functional-minus-native": {
+        "endpoint": {
+          "whole": {
+            "bit_exact_fields": 8,
+            "changed_values": 0,
+            "fields": 8,
+            "max_rms": 0.0,
+            "maxabs": 0.0,
+            "pooled_error_rms": 0.0,
+            "pooled_left_rms": 10.403610353793066,
+            "pooled_right_rms": 10.403610353793066,
+            "positions": 12058624,
+            "signed_mean": 0.0
+          },
+          "windows": {
+            "prefix": {
+              "bit_exact_fields": 8,
+              "changed_values": 0,
+              "fields": 8,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 14.691148430455769,
+              "pooled_right_rms": 14.691148430455769,
+              "positions": 6029312,
+              "signed_mean": 0.0
+            },
+            "suffix": {
+              "bit_exact_fields": 8,
+              "changed_values": 0,
+              "fields": 8,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 0.8002340791403805,
+              "pooled_right_rms": 0.8002340791403805,
+              "positions": 6029312,
+              "signed_mean": 0.0
+            }
+          }
+        },
+        "response_error": {
+          "whole": {
+            "bit_exact_fields": 8,
+            "changed_values": 0,
+            "fields": 8,
+            "max_rms": 0.0,
+            "maxabs": 0.0,
+            "pooled_error_rms": 0.0,
+            "pooled_left_rms": 20.77881727216613,
+            "pooled_right_rms": 20.77881727216613,
+            "positions": 12058624,
+            "signed_mean": 0.0
+          },
+          "windows": {
+            "prefix": {
+              "bit_exact_fields": 8,
+              "changed_values": 0,
+              "fields": 8,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 29.3676587733191,
+              "pooled_right_rms": 29.3676587733191,
+              "positions": 6029312,
+              "signed_mean": 0.0
+            },
+            "suffix": {
+              "bit_exact_fields": 8,
+              "changed_values": 0,
+              "fields": 8,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 1.0291319808626531,
+              "pooled_right_rms": 1.0291319808626531,
+              "positions": 6029312,
+              "signed_mean": 0.0
+            }
+          }
+        }
+      },
+      "shortcut-minus-full-functional": {
+        "endpoint": {
+          "whole": {
+            "bit_exact_fields": 3,
+            "changed_values": 3002798,
+            "fields": 8,
+            "max_rms": 0.19976135009818874,
+            "maxabs": 7.5,
+            "pooled_error_rms": 0.12414728778079312,
+            "pooled_left_rms": 10.402752103997406,
+            "pooled_right_rms": 10.403610353793066,
+            "positions": 12058624,
+            "signed_mean": 0.0006632563618764815
+          },
+          "windows": {
+            "prefix": {
+              "bit_exact_fields": 6,
+              "changed_values": 0,
+              "fields": 8,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 14.691148430455769,
+              "pooled_right_rms": 14.691148430455769,
+              "positions": 6029312,
+              "signed_mean": 0.0
+            },
+            "suffix": {
+              "bit_exact_fields": 3,
+              "changed_values": 3002798,
+              "fields": 8,
+              "max_rms": 0.28250521054681854,
+              "maxabs": 7.5,
+              "pooled_error_rms": 0.17557077811143326,
+              "pooled_left_rms": 0.7775991697282469,
+              "pooled_right_rms": 0.8002340791403805,
+              "positions": 6029312,
+              "signed_mean": 0.001326512723752963
+            }
+          }
+        },
+        "response_error": {
+          "whole": {
+            "bit_exact_fields": 3,
+            "changed_values": 3002798,
+            "fields": 8,
+            "max_rms": 0.19976135009818874,
+            "maxabs": 7.5,
+            "pooled_error_rms": 0.12414728778079312,
+            "pooled_left_rms": 20.7784463971926,
+            "pooled_right_rms": 20.77881727216613,
+            "positions": 12058624,
+            "signed_mean": 0.0006632563618764815
+          },
+          "windows": {
+            "prefix": {
+              "bit_exact_fields": 6,
+              "changed_values": 0,
+              "fields": 8,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 29.3676587733191,
+              "pooled_right_rms": 29.3676587733191,
+              "positions": 6029312,
+              "signed_mean": 0.0
+            },
+            "suffix": {
+              "bit_exact_fields": 3,
+              "changed_values": 3002798,
+              "fields": 8,
+              "max_rms": 0.28250521054681854,
+              "maxabs": 7.5,
+              "pooled_error_rms": 0.17557077811143326,
+              "pooled_left_rms": 1.0140451350446065,
+              "pooled_right_rms": 1.0291319808626531,
+              "positions": 6029312,
+              "signed_mean": 0.001326512723752963
+            }
+          }
+        }
+      },
+      "shortcut-minus-native": {
+        "endpoint": {
+          "whole": {
+            "bit_exact_fields": 3,
+            "changed_values": 3002798,
+            "fields": 8,
+            "max_rms": 0.19976135009818874,
+            "maxabs": 7.5,
+            "pooled_error_rms": 0.12414728778079312,
+            "pooled_left_rms": 10.402752103997406,
+            "pooled_right_rms": 10.403610353793066,
+            "positions": 12058624,
+            "signed_mean": 0.0006632563618764815
+          },
+          "windows": {
+            "prefix": {
+              "bit_exact_fields": 6,
+              "changed_values": 0,
+              "fields": 8,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 14.691148430455769,
+              "pooled_right_rms": 14.691148430455769,
+              "positions": 6029312,
+              "signed_mean": 0.0
+            },
+            "suffix": {
+              "bit_exact_fields": 3,
+              "changed_values": 3002798,
+              "fields": 8,
+              "max_rms": 0.28250521054681854,
+              "maxabs": 7.5,
+              "pooled_error_rms": 0.17557077811143326,
+              "pooled_left_rms": 0.7775991697282469,
+              "pooled_right_rms": 0.8002340791403805,
+              "positions": 6029312,
+              "signed_mean": 0.001326512723752963
+            }
+          }
+        },
+        "response_error": {
+          "whole": {
+            "bit_exact_fields": 3,
+            "changed_values": 3002798,
+            "fields": 8,
+            "max_rms": 0.19976135009818874,
+            "maxabs": 7.5,
+            "pooled_error_rms": 0.12414728778079312,
+            "pooled_left_rms": 20.7784463971926,
+            "pooled_right_rms": 20.77881727216613,
+            "positions": 12058624,
+            "signed_mean": 0.0006632563618764815
+          },
+          "windows": {
+            "prefix": {
+              "bit_exact_fields": 6,
+              "changed_values": 0,
+              "fields": 8,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 29.3676587733191,
+              "pooled_right_rms": 29.3676587733191,
+              "positions": 6029312,
+              "signed_mean": 0.0
+            },
+            "suffix": {
+              "bit_exact_fields": 3,
+              "changed_values": 3002798,
+              "fields": 8,
+              "max_rms": 0.28250521054681854,
+              "maxabs": 7.5,
+              "pooled_error_rms": 0.17557077811143326,
+              "pooled_left_rms": 1.0140451350446065,
+              "pooled_right_rms": 1.0291319808626531,
+              "positions": 6029312,
+              "signed_mean": 0.001326512723752963
+            }
+          }
+        }
+      }
+    },
+    "conditional_positive_suffix_response": {
+      "R": {
+        "conditions": {
+          "actual_native_response_nonzero": true,
+          "baseline_matches_numeric": true,
+          "cheap_response_zero": true
+        },
+        "implied_response_relative_error": 1.0,
+        "measured_response_relative_error": 1.0,
+        "scope": "Conditional suffix bookkeeping observation, never a success/miss gate or semantic inference."
+      },
+      "head": {
+        "conditions": {
+          "actual_native_response_nonzero": true,
+          "baseline_matches_numeric": true,
+          "cheap_response_zero": true
+        },
+        "implied_response_relative_error": 1.0,
+        "measured_response_relative_error": 1.0,
+        "scope": "Conditional suffix bookkeeping observation, never a success/miss gate or semantic inference."
+      }
+    },
+    "counting_scope": "Per channel:8 primary whole endpoint and8 response fields, plus16 windows each. Three channels remain separate. Native effects, source replay and12 premise fields are distinct overlapping accounts, not additional independent replications or gain measures.",
+    "per_arm": {
+      "all-negative": {
+        "channels": {
+          "full-functional-minus-native": {
+            "endpoint": {
+              "whole": {
+                "bit_exact_fields": 4,
+                "changed_values": 0,
+                "fields": 4,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 10.405572511931155,
+                "pooled_right_rms": 10.405572511931155,
+                "positions": 6029312,
+                "signed_mean": 0.0
+              },
+              "windows": {
+                "prefix": {
+                  "bit_exact_fields": 4,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 14.691148430455769,
+                  "pooled_right_rms": 14.691148430455769,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                },
+                "suffix": {
+                  "bit_exact_fields": 4,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 0.8497272482577136,
+                  "pooled_right_rms": 0.8497272482577136,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                }
+              }
+            },
+            "response_error": {
+              "whole": {
+                "bit_exact_fields": 4,
+                "changed_values": 0,
+                "fields": 4,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 20.790814761546983,
+                "pooled_right_rms": 20.790814761546983,
+                "positions": 6029312,
+                "signed_mean": 0.0
+              },
+              "windows": {
+                "prefix": {
+                  "bit_exact_fields": 4,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 29.3676587733191,
+                  "pooled_right_rms": 29.3676587733191,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                },
+                "suffix": {
+                  "bit_exact_fields": 4,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 1.4340763828385392,
+                  "pooled_right_rms": 1.4340763828385392,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                }
+              }
+            }
+          },
+          "shortcut-minus-full-functional": {
+            "endpoint": {
+              "whole": {
+                "bit_exact_fields": 3,
+                "changed_values": 0,
+                "fields": 4,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 10.405572511931155,
+                "pooled_right_rms": 10.405572511931155,
+                "positions": 6029312,
+                "signed_mean": 0.0
+              },
+              "windows": {
+                "prefix": {
+                  "bit_exact_fields": 3,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 14.691148430455769,
+                  "pooled_right_rms": 14.691148430455769,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                },
+                "suffix": {
+                  "bit_exact_fields": 3,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 0.8497272482577136,
+                  "pooled_right_rms": 0.8497272482577136,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                }
+              }
+            },
+            "response_error": {
+              "whole": {
+                "bit_exact_fields": 3,
+                "changed_values": 0,
+                "fields": 4,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 20.790814761546983,
+                "pooled_right_rms": 20.790814761546983,
+                "positions": 6029312,
+                "signed_mean": 0.0
+              },
+              "windows": {
+                "prefix": {
+                  "bit_exact_fields": 3,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 29.3676587733191,
+                  "pooled_right_rms": 29.3676587733191,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                },
+                "suffix": {
+                  "bit_exact_fields": 3,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 1.4340763828385392,
+                  "pooled_right_rms": 1.4340763828385392,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                }
+              }
+            }
+          },
+          "shortcut-minus-native": {
+            "endpoint": {
+              "whole": {
+                "bit_exact_fields": 3,
+                "changed_values": 0,
+                "fields": 4,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 10.405572511931155,
+                "pooled_right_rms": 10.405572511931155,
+                "positions": 6029312,
+                "signed_mean": 0.0
+              },
+              "windows": {
+                "prefix": {
+                  "bit_exact_fields": 3,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 14.691148430455769,
+                  "pooled_right_rms": 14.691148430455769,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                },
+                "suffix": {
+                  "bit_exact_fields": 3,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 0.8497272482577136,
+                  "pooled_right_rms": 0.8497272482577136,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                }
+              }
+            },
+            "response_error": {
+              "whole": {
+                "bit_exact_fields": 3,
+                "changed_values": 0,
+                "fields": 4,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 20.790814761546983,
+                "pooled_right_rms": 20.790814761546983,
+                "positions": 6029312,
+                "signed_mean": 0.0
+              },
+              "windows": {
+                "prefix": {
+                  "bit_exact_fields": 3,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 29.3676587733191,
+                  "pooled_right_rms": 29.3676587733191,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                },
+                "suffix": {
+                  "bit_exact_fields": 3,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 1.4340763828385392,
+                  "pooled_right_rms": 1.4340763828385392,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                }
+              }
+            }
+          }
+        },
+        "first_differences": {
+          "full-functional-minus-native": {
+            "endpoint": null,
+            "response_error": null
+          },
+          "shortcut-minus-full-functional": {
+            "endpoint": "R",
+            "response_error": "R"
+          },
+          "shortcut-minus-native": {
+            "endpoint": "R",
+            "response_error": "R"
+          }
+        },
+        "native_edit_effects": {
+          "Hnext": {
+            "bounds": {
+              "prefix": [
+                0,
+                256
+              ],
+              "suffix": [
+                256,
+                512
+              ]
+            },
+            "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+            "whole": {
+              "bitwise_exact": false,
+              "changed_values": 1309972,
+              "cosine": -0.9982461117141163,
+              "denominator": "RMS of supplied right operand",
+              "dot": -325477694.1426553,
+              "first_differing_byte": 2,
+              "first_numerical_difference": {
+                "coordinate": [
+                  0,
+                  0,
+                  0
+                ],
+                "flat_index": 0,
+                "left": 828.0,
+                "right": -824.0,
+                "signed_error": 1652.0
+              },
+              "maxabs": 32640.0,
+              "native_rms": 15.760509569127885,
+              "native_signed_mean": 0.030354612500377697,
+              "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+              "orientation": "supplied left-minus-right",
+              "p95": 3.61328125,
+              "p99": 6.875,
+              "predicted_rms": 15.78350390447454,
+              "predicted_signed_mean": -0.02515672211884521,
+              "relative_rms": 2.0005812083745163,
+              "rms": 31.53017927840399,
+              "sample_count": 1310720,
+              "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+              "shape": [
+                1,
+                512,
+                2560
+              ],
+              "signed_mean": -0.055511334619222905,
+              "worst": {
+                "coordinate": [
+                  0,
+                  0,
+                  4
+                ],
+                "native": 16320.0,
+                "predicted": -16320.0,
+                "signed_error": -32640.0
+              }
+            },
+            "windows": {
+              "prefix": {
+                "bitwise_exact": false,
+                "changed_values": 654978,
+                "cosine": -0.9990796417574112,
+                "denominator": "RMS of supplied right operand",
+                "dot": -324846346.68420404,
+                "first_differing_byte": 2,
+                "first_numerical_difference": {
+                  "coordinate": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "flat_index": 0,
+                  "left": 828.0,
+                  "right": -824.0,
+                  "signed_error": 1652.0
+                },
+                "maxabs": 32640.0,
+                "native_rms": 22.266234538354993,
+                "native_signed_mean": 0.037217392525053586,
+                "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+                "orientation": "supplied left-minus-right",
+                "p95": 3.8671875,
+                "p99": 7.625,
+                "predicted_rms": 22.281845960192882,
+                "predicted_signed_mean": -0.03713824931764975,
+                "relative_rms": 2.000240732007567,
+                "rms": 44.53782927205136,
+                "sample_count": 655360,
+                "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+                "shape": [
+                  1,
+                  256,
+                  2560
+                ],
+                "signed_mean": -0.07435564184270334,
+                "worst": {
+                  "coordinate": [
+                    0,
+                    0,
+                    4
+                  ],
+                  "native": 16320.0,
+                  "predicted": -16320.0,
+                  "signed_error": -32640.0
+                }
+              },
+              "suffix": {
+                "bitwise_exact": false,
+                "changed_values": 654994,
+                "cosine": -0.7259405869880972,
+                "denominator": "RMS of supplied right operand",
+                "dot": -631347.458451191,
+                "first_differing_byte": 2,
+                "first_numerical_difference": {
+                  "coordinate": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "flat_index": 0,
+                  "left": -33.0,
+                  "right": 24.75,
+                  "signed_error": -57.75
+                },
+                "maxabs": 70.5,
+                "native_rms": 1.0010610571340701,
+                "native_signed_mean": 0.023491832475701812,
+                "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+                "orientation": "supplied left-minus-right",
+                "p95": 3.359375,
+                "p99": 6.078125,
+                "predicted_rms": 1.3256438478574382,
+                "predicted_signed_mean": -0.013175194920040666,
+                "relative_rms": 2.1624628547060554,
+                "rms": 2.164757351345203,
+                "sample_count": 655360,
+                "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+                "shape": [
+                  1,
+                  256,
+                  2560
+                ],
+                "signed_mean": -0.03666702739574248,
+                "worst": {
+                  "coordinate": [
+                    0,
+                    247,
+                    0
+                  ],
+                  "native": 33.25,
+                  "predicted": -37.25,
+                  "signed_error": -70.5
+                }
+              }
+            }
+          },
+          "M": {
+            "bounds": {
+              "prefix": [
+                0,
+                256
+              ],
+              "suffix": [
+                256,
+                512
+              ]
+            },
+            "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+            "whole": {
+              "bitwise_exact": false,
+              "changed_values": 1309245,
+              "cosine": 0.6430741027218967,
+              "denominator": "RMS of supplied right operand",
+              "dot": 194230.5205596391,
+              "first_differing_byte": 2,
+              "first_numerical_difference": {
+                "coordinate": [
+                  0,
+                  0,
+                  0
+                ],
+                "flat_index": 0,
+                "left": 2.5625,
+                "right": 1.859375,
+                "signed_error": 0.703125
+              },
+              "maxabs": 34.59375,
+              "native_rms": 0.3390915661388478,
+              "native_signed_mean": 0.0006810985893025645,
+              "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+              "orientation": "supplied left-minus-right",
+              "p95": 1.048828125,
+              "p99": 1.48828125,
+              "predicted_rms": 0.679562709452752,
+              "predicted_signed_mean": 0.0045233811445370975,
+              "relative_rms": 1.561653390633242,
+              "rms": 0.529543493995868,
+              "sample_count": 1310720,
+              "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+              "shape": [
+                1,
+                512,
+                2560
+              ],
+              "signed_mean": 0.003842282555234533,
+              "worst": {
+                "coordinate": [
+                  0,
+                  3,
+                  0
+                ],
+                "native": 38.25,
+                "predicted": 3.65625,
+                "signed_error": -34.59375
+              }
+            },
+            "windows": {
+              "prefix": {
+                "bitwise_exact": false,
+                "changed_values": 654620,
+                "cosine": 0.617933843704647,
+                "denominator": "RMS of supplied right operand",
+                "dot": 98840.57103133338,
+                "first_differing_byte": 2,
+                "first_numerical_difference": {
+                  "coordinate": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "flat_index": 0,
+                  "left": 2.5625,
+                  "right": 1.859375,
+                  "signed_error": 0.703125
+                },
+                "maxabs": 34.59375,
+                "native_rms": 0.3485093727517686,
+                "native_signed_mean": -4.493480773817282e-05,
+                "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+                "orientation": "supplied left-minus-right",
+                "p95": 1.0947265625,
+                "p99": 1.533203125,
+                "predicted_rms": 0.7003237760437984,
+                "predicted_signed_mean": 0.00014009796041136724,
+                "relative_rms": 1.598301519363522,
+                "rms": 0.5570230599815797,
+                "sample_count": 655360,
+                "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+                "shape": [
+                  1,
+                  256,
+                  2560
+                ],
+                "signed_mean": 0.00018503276814954006,
+                "worst": {
+                  "coordinate": [
+                    0,
+                    3,
+                    0
+                  ],
+                  "native": 38.25,
+                  "predicted": 3.65625,
+                  "signed_error": -34.59375
+                }
+              },
+              "suffix": {
+                "bitwise_exact": false,
+                "changed_values": 654625,
+                "cosine": 0.6713825741615581,
+                "denominator": "RMS of supplied right operand",
+                "dot": 95389.94952830572,
+                "first_differing_byte": 2,
+                "first_numerical_difference": {
+                  "coordinate": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "flat_index": 0,
+                  "left": -4.875,
+                  "right": -3.546875,
+                  "signed_error": -1.328125
+                },
+                "maxabs": 6.3828125,
+                "native_rms": 0.3294046107102359,
+                "native_signed_mean": 0.0014071319863433018,
+                "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+                "orientation": "supplied left-minus-right",
+                "p95": 0.99609375,
+                "p99": 1.4296875,
+                "predicted_rms": 0.6581470662893565,
+                "predicted_signed_mean": 0.008906664328662828,
+                "relative_rms": 1.519582930827618,
+                "rms": 0.5005576237711908,
+                "sample_count": 655360,
+                "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+                "shape": [
+                  1,
+                  256,
+                  2560
+                ],
+                "signed_mean": 0.007499532342319526,
+                "worst": {
+                  "coordinate": [
+                    0,
+                    106,
+                    0
+                  ],
+                  "native": -0.3671875,
+                  "predicted": -6.75,
+                  "signed_error": -6.3828125
+                }
+              }
+            }
+          },
+          "R": {
+            "bounds": {
+              "prefix": [
+                0,
+                256
+              ],
+              "suffix": [
+                256,
+                512
+              ]
+            },
+            "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+            "whole": {
+              "bitwise_exact": false,
+              "changed_values": 1309817,
+              "cosine": -1.0,
+              "denominator": "RMS of supplied right operand",
+              "dot": -325550495.20137703,
+              "first_differing_byte": 3,
+              "first_numerical_difference": {
+                "coordinate": [
+                  0,
+                  0,
+                  0
+                ],
+                "flat_index": 0,
+                "left": 824.0,
+                "right": -824.0,
+                "signed_error": 1648.0
+              },
+              "maxabs": 32640.0,
+              "native_rms": 15.759927562444934,
+              "native_signed_mean": 0.02967738538136473,
+              "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+              "orientation": "supplied left-minus-right",
+              "p95": 3.296875,
+              "p99": 6.875,
+              "predicted_rms": 15.759927562444934,
+              "predicted_signed_mean": -0.02967738538136473,
+              "relative_rms": 2.0,
+              "rms": 31.51985512488987,
+              "sample_count": 1310720,
+              "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+              "shape": [
+                1,
+                512,
+                2560
+              ],
+              "signed_mean": -0.05935477076272946,
+              "worst": {
+                "coordinate": [
+                  0,
+                  0,
+                  4
+                ],
+                "native": 16320.0,
+                "predicted": -16320.0,
+                "signed_error": -32640.0
+              }
+            },
+            "windows": {
+              "prefix": {
+                "bitwise_exact": false,
+                "changed_values": 654945,
+                "cosine": -1.0,
+                "denominator": "RMS of supplied right operand",
+                "dot": -324889196.4267159,
+                "first_differing_byte": 3,
+                "first_numerical_difference": {
+                  "coordinate": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "flat_index": 0,
+                  "left": 824.0,
+                  "right": -824.0,
+                  "signed_error": 1648.0
+                },
+                "maxabs": 32640.0,
+                "native_rms": 22.265254808693268,
+                "native_signed_mean": 0.03727291319228243,
+                "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+                "orientation": "supplied left-minus-right",
+                "p95": 3.59375,
+                "p99": 7.65625,
+                "predicted_rms": 22.265254808693268,
+                "predicted_signed_mean": -0.03727291319228243,
+                "relative_rms": 2.0,
+                "rms": 44.530509617386535,
+                "sample_count": 655360,
+                "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+                "shape": [
+                  1,
+                  256,
+                  2560
+                ],
+                "signed_mean": -0.07454582638456486,
+                "worst": {
+                  "coordinate": [
+                    0,
+                    0,
+                    4
+                  ],
+                  "native": 16320.0,
+                  "predicted": -16320.0,
+                  "signed_error": -32640.0
+                }
+              },
+              "suffix": {
+                "bitwise_exact": false,
+                "changed_values": 654872,
+                "cosine": -1.0,
+                "denominator": "RMS of supplied right operand",
+                "dot": -661298.7746614309,
+                "first_differing_byte": 3,
+                "first_numerical_difference": {
+                  "coordinate": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "flat_index": 0,
+                  "left": -28.25,
+                  "right": 28.25,
+                  "signed_error": -56.5
+                },
+                "maxabs": 72.0,
+                "native_rms": 1.0045207070961002,
+                "native_signed_mean": 0.022081857570447026,
+                "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+                "orientation": "supplied left-minus-right",
+                "p95": 3.015625,
+                "p99": 6.03125,
+                "predicted_rms": 1.0045207070961002,
+                "predicted_signed_mean": -0.022081857570447026,
+                "relative_rms": 2.0,
+                "rms": 2.0090414141922004,
+                "sample_count": 655360,
+                "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+                "shape": [
+                  1,
+                  256,
+                  2560
+                ],
+                "signed_mean": -0.04416371514089405,
+                "worst": {
+                  "coordinate": [
+                    0,
+                    169,
+                    0
+                  ],
+                  "native": 36.0,
+                  "predicted": -36.0,
+                  "signed_error": -72.0
+                }
+              }
+            }
+          },
+          "head": {
+            "bounds": {
+              "prefix": [
+                0,
+                256
+              ],
+              "suffix": [
+                256,
+                512
+              ]
+            },
+            "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+            "whole": {
+              "bitwise_exact": false,
+              "changed_values": 2097152,
+              "cosine": -1.0,
+              "denominator": "RMS of supplied right operand",
+              "dot": -148377.4790336748,
+              "first_differing_byte": 3,
+              "first_numerical_difference": {
+                "coordinate": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "flat_index": 0,
+                "left": 0.126953125,
+                "right": -0.126953125,
+                "signed_error": 0.25390625
+              },
+              "maxabs": 8.1875,
+              "native_rms": 0.26599228455682933,
+              "native_signed_mean": -0.0035858356618157644,
+              "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+              "orientation": "supplied left-minus-right",
+              "p95": 1.109375,
+              "p99": 1.9609375,
+              "predicted_rms": 0.26599228455682933,
+              "predicted_signed_mean": 0.0035858356618157644,
+              "relative_rms": 2.0,
+              "rms": 0.5319845691136587,
+              "sample_count": 2097152,
+              "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+              "shape": [
+                1,
+                512,
+                32,
+                128
+              ],
+              "signed_mean": 0.007171671323631529,
+              "worst": {
+                "coordinate": [
+                  0,
+                  10,
+                  12,
+                  111
+                ],
+                "native": 4.09375,
+                "predicted": -4.09375,
+                "signed_error": -8.1875
+              }
+            },
+            "windows": {
+              "prefix": {
+                "bitwise_exact": false,
+                "changed_values": 1048576,
+                "cosine": -1.0,
+                "denominator": "RMS of supplied right operand",
+                "dot": -68543.88288517992,
+                "first_differing_byte": 3,
+                "first_numerical_difference": {
+                  "coordinate": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "flat_index": 0,
+                  "left": 0.126953125,
+                  "right": -0.126953125,
+                  "signed_error": 0.25390625
+                },
+                "maxabs": 8.1875,
+                "native_rms": 0.2556727217642782,
+                "native_signed_mean": -0.0009109995556038086,
+                "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+                "orientation": "supplied left-minus-right",
+                "p95": 1.046875,
+                "p99": 1.875,
+                "predicted_rms": 0.2556727217642782,
+                "predicted_signed_mean": 0.0009109995556038086,
+                "relative_rms": 2.0,
+                "rms": 0.5113454435285564,
+                "sample_count": 1048576,
+                "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+                "shape": [
+                  1,
+                  256,
+                  32,
+                  128
+                ],
+                "signed_mean": 0.0018219991112076173,
+                "worst": {
+                  "coordinate": [
+                    0,
+                    10,
+                    12,
+                    111
+                  ],
+                  "native": 4.09375,
+                  "predicted": -4.09375,
+                  "signed_error": -8.1875
+                }
+              },
+              "suffix": {
+                "bitwise_exact": false,
+                "changed_values": 1048576,
+                "cosine": -1.0,
+                "denominator": "RMS of supplied right operand",
+                "dot": -79833.59614849492,
+                "first_differing_byte": 3,
+                "first_numerical_difference": {
+                  "coordinate": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "flat_index": 0,
+                  "left": 0.0546875,
+                  "right": -0.0546875,
+                  "signed_error": 0.109375
+                },
+                "maxabs": 6.71875,
+                "native_rms": 0.27592616808336345,
+                "native_signed_mean": -0.00626067176802772,
+                "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+                "orientation": "supplied left-minus-right",
+                "p95": 1.1640625,
+                "p99": 2.03125,
+                "predicted_rms": 0.27592616808336345,
+                "predicted_signed_mean": 0.00626067176802772,
+                "relative_rms": 2.0,
+                "rms": 0.5518523361667269,
+                "sample_count": 1048576,
+                "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+                "shape": [
+                  1,
+                  256,
+                  32,
+                  128
+                ],
+                "signed_mean": 0.01252134353605544,
+                "worst": {
+                  "coordinate": [
+                    0,
+                    191,
+                    15,
+                    16
+                  ],
+                  "native": 3.359375,
+                  "predicted": -3.359375,
+                  "signed_error": -6.71875
+                }
+              }
+            }
+          }
+        },
+        "native_effect_summary": {
+          "whole": {
+            "bit_exact_fields": 0,
+            "changed_values": 6026186,
+            "fields": 4,
+            "max_rms": 31.53017927840399,
+            "maxabs": 32640.0,
+            "pooled_error_rms": 20.790814761546983,
+            "pooled_left_rms": 10.405572511931155,
+            "pooled_right_rms": 10.39436683533985,
+            "positions": 6029312,
+            "signed_mean": -0.021641119284545086
+          },
+          "windows": {
+            "prefix": {
+              "bit_exact_fields": 0,
+              "changed_values": 3013119,
+              "fields": 4,
+              "max_rms": 44.53782927205136,
+              "maxabs": 32640.0,
+              "pooled_error_rms": 29.3676587733191,
+              "pooled_left_rms": 14.691148430455769,
+              "pooled_right_rms": 14.68327072808145,
+              "positions": 3014656,
+              "signed_mean": -0.031695921061127494
+            },
+            "suffix": {
+              "bit_exact_fields": 0,
+              "changed_values": 3013067,
+              "fields": 4,
+              "max_rms": 2.164757351345203,
+              "maxabs": 72.0,
+              "pooled_error_rms": 1.4340763828385392,
+              "pooled_left_rms": 0.8497272482577136,
+              "pooled_right_rms": 0.6980576918081284,
+              "positions": 3014656,
+              "signed_mean": -0.011586317507962674
+            }
+          }
+        },
+        "premises": {
+          "metrics": {
+            "whole": {
+              "bit_exact_fields": 4,
+              "changed_values": 0,
+              "fields": 6,
+              "max_rms": 0.0,
+              "maxabs": 0.0,
+              "pooled_error_rms": 0.0,
+              "pooled_left_rms": 5.407565666799267,
+              "pooled_right_rms": 5.407565666799267,
+              "positions": 22544384,
+              "signed_mean": 0.0
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 4,
+                "changed_values": 0,
+                "fields": 6,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 7.617258188185271,
+                "pooled_right_rms": 7.617258188185271,
+                "positions": 11272192,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 4,
+                "changed_values": 0,
+                "fields": 6,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 0.6789039519821086,
+                "pooled_right_rms": 0.6789039519821086,
+                "positions": 11272192,
+                "signed_mean": 0.0
+              }
+            }
+          },
+          "signed_zero": {
+            "prefix": {
+              "defects": 830,
+              "shared": 830
+            },
+            "suffix": {
+              "defects": 976,
+              "shared": 976
+            },
+            "whole": {
+              "defects": 1806,
+              "shared": 1806
+            }
+          }
+        },
+        "support": {
+          "closed_rows": 512,
+          "empty_rows": 0,
+          "rows": 512,
+          "scope": "Derived permitted-key sign relation only; all rows are predicted and retained regardless of support or numerical error.",
+          "windows": {
+            "prefix": {
+              "classification": "closed",
+              "closed_rows": 256,
+              "rows": 256
+            },
+            "suffix": {
+              "classification": "closed",
+              "closed_rows": 256,
+              "rows": 256
+            }
+          }
+        }
+      },
+      "prefix-negative": {
+        "channels": {
+          "full-functional-minus-native": {
+            "endpoint": {
+              "whole": {
+                "bit_exact_fields": 4,
+                "changed_values": 0,
+                "fields": 4,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 10.401647825515113,
+                "pooled_right_rms": 10.401647825515113,
+                "positions": 6029312,
+                "signed_mean": 0.0
+              },
+              "windows": {
+                "prefix": {
+                  "bit_exact_fields": 4,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 14.691148430455769,
+                  "pooled_right_rms": 14.691148430455769,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                },
+                "suffix": {
+                  "bit_exact_fields": 4,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 0.7474709134164885,
+                  "pooled_right_rms": 0.7474709134164885,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                }
+              }
+            },
+            "response_error": {
+              "whole": {
+                "bit_exact_fields": 4,
+                "changed_values": 0,
+                "fields": 4,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 20.766812851547034,
+                "pooled_right_rms": 20.766812851547034,
+                "positions": 6029312,
+                "signed_mean": 0.0
+              },
+              "windows": {
+                "prefix": {
+                  "bit_exact_fields": 4,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 29.3676587733191,
+                  "pooled_right_rms": 29.3676587733191,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                },
+                "suffix": {
+                  "bit_exact_fields": 4,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 0.24829457556158624,
+                  "pooled_right_rms": 0.24829457556158624,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                }
+              }
+            }
+          },
+          "shortcut-minus-full-functional": {
+            "endpoint": {
+              "whole": {
+                "bit_exact_fields": 0,
+                "changed_values": 3002798,
+                "fields": 4,
+                "max_rms": 0.19976135009818874,
+                "maxabs": 7.5,
+                "pooled_error_rms": 0.17557077811143326,
+                "pooled_left_rms": 10.399930931183517,
+                "pooled_right_rms": 10.401647825515113,
+                "positions": 6029312,
+                "signed_mean": 0.001326512723752963
+              },
+              "windows": {
+                "prefix": {
+                  "bit_exact_fields": 3,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 14.691148430455769,
+                  "pooled_right_rms": 14.691148430455769,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                },
+                "suffix": {
+                  "bit_exact_fields": 0,
+                  "changed_values": 3002798,
+                  "fields": 4,
+                  "max_rms": 0.28250521054681854,
+                  "maxabs": 7.5,
+                  "pooled_error_rms": 0.24829457556158624,
+                  "pooled_left_rms": 0.6980576918081284,
+                  "pooled_right_rms": 0.7474709134164885,
+                  "positions": 3014656,
+                  "signed_mean": 0.002653025447505926
+                }
+              }
+            },
+            "response_error": {
+              "whole": {
+                "bit_exact_fields": 0,
+                "changed_values": 3002798,
+                "fields": 4,
+                "max_rms": 0.19976135009818874,
+                "maxabs": 7.5,
+                "pooled_error_rms": 0.17557077811143326,
+                "pooled_left_rms": 20.766070666186522,
+                "pooled_right_rms": 20.766812851547034,
+                "positions": 6029312,
+                "signed_mean": 0.001326512723752963
+              },
+              "windows": {
+                "prefix": {
+                  "bit_exact_fields": 3,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 29.3676587733191,
+                  "pooled_right_rms": 29.3676587733191,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                },
+                "suffix": {
+                  "bit_exact_fields": 0,
+                  "changed_values": 3002798,
+                  "fields": 4,
+                  "max_rms": 0.28250521054681854,
+                  "maxabs": 7.5,
+                  "pooled_error_rms": 0.24829457556158624,
+                  "pooled_left_rms": 0.0,
+                  "pooled_right_rms": 0.24829457556158624,
+                  "positions": 3014656,
+                  "signed_mean": 0.002653025447505926
+                }
+              }
+            }
+          },
+          "shortcut-minus-native": {
+            "endpoint": {
+              "whole": {
+                "bit_exact_fields": 0,
+                "changed_values": 3002798,
+                "fields": 4,
+                "max_rms": 0.19976135009818874,
+                "maxabs": 7.5,
+                "pooled_error_rms": 0.17557077811143326,
+                "pooled_left_rms": 10.399930931183517,
+                "pooled_right_rms": 10.401647825515113,
+                "positions": 6029312,
+                "signed_mean": 0.001326512723752963
+              },
+              "windows": {
+                "prefix": {
+                  "bit_exact_fields": 3,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 14.691148430455769,
+                  "pooled_right_rms": 14.691148430455769,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                },
+                "suffix": {
+                  "bit_exact_fields": 0,
+                  "changed_values": 3002798,
+                  "fields": 4,
+                  "max_rms": 0.28250521054681854,
+                  "maxabs": 7.5,
+                  "pooled_error_rms": 0.24829457556158624,
+                  "pooled_left_rms": 0.6980576918081284,
+                  "pooled_right_rms": 0.7474709134164885,
+                  "positions": 3014656,
+                  "signed_mean": 0.002653025447505926
+                }
+              }
+            },
+            "response_error": {
+              "whole": {
+                "bit_exact_fields": 0,
+                "changed_values": 3002798,
+                "fields": 4,
+                "max_rms": 0.19976135009818874,
+                "maxabs": 7.5,
+                "pooled_error_rms": 0.17557077811143326,
+                "pooled_left_rms": 20.766070666186522,
+                "pooled_right_rms": 20.766812851547034,
+                "positions": 6029312,
+                "signed_mean": 0.001326512723752963
+              },
+              "windows": {
+                "prefix": {
+                  "bit_exact_fields": 3,
+                  "changed_values": 0,
+                  "fields": 4,
+                  "max_rms": 0.0,
+                  "maxabs": 0.0,
+                  "pooled_error_rms": 0.0,
+                  "pooled_left_rms": 29.3676587733191,
+                  "pooled_right_rms": 29.3676587733191,
+                  "positions": 3014656,
+                  "signed_mean": 0.0
+                },
+                "suffix": {
+                  "bit_exact_fields": 0,
+                  "changed_values": 3002798,
+                  "fields": 4,
+                  "max_rms": 0.28250521054681854,
+                  "maxabs": 7.5,
+                  "pooled_error_rms": 0.24829457556158624,
+                  "pooled_left_rms": 0.0,
+                  "pooled_right_rms": 0.24829457556158624,
+                  "positions": 3014656,
+                  "signed_mean": 0.002653025447505926
+                }
+              }
+            }
+          }
+        },
+        "first_differences": {
+          "full-functional-minus-native": {
+            "endpoint": null,
+            "response_error": null
+          },
+          "shortcut-minus-full-functional": {
+            "endpoint": "head",
+            "response_error": "head"
+          },
+          "shortcut-minus-native": {
+            "endpoint": "head",
+            "response_error": "head"
+          }
+        },
+        "native_edit_effects": {
+          "Hnext": {
+            "bounds": {
+              "prefix": [
+                0,
+                256
+              ],
+              "suffix": [
+                256,
+                512
+              ]
+            },
+            "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+            "whole": {
+              "bitwise_exact": false,
+              "changed_values": 1306934,
+              "cosine": -0.9950039854775999,
+              "denominator": "RMS of supplied right operand",
+              "dot": -324195060.92750233,
+              "first_differing_byte": 2,
+              "first_numerical_difference": {
+                "coordinate": [
+                  0,
+                  0,
+                  0
+                ],
+                "flat_index": 0,
+                "left": 828.0,
+                "right": -824.0,
+                "signed_error": 1652.0
+              },
+              "maxabs": 32640.0,
+              "native_rms": 15.760509569127885,
+              "native_signed_mean": 0.030354612500377697,
+              "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+              "orientation": "supplied left-minus-right",
+              "p95": 2.90625,
+              "p99": 5.640625,
+              "predicted_rms": 15.772531104661873,
+              "predicted_signed_mean": -0.008428373807691968,
+              "relative_rms": 1.9982622409764783,
+              "rms": 31.49363117053672,
+              "sample_count": 1310720,
+              "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+              "shape": [
+                1,
+                512,
+                2560
+              ],
+              "signed_mean": -0.038782986308069665,
+              "worst": {
+                "coordinate": [
+                  0,
+                  0,
+                  4
+                ],
+                "native": 16320.0,
+                "predicted": -16320.0,
+                "signed_error": -32640.0
+              }
+            },
+            "windows": {
+              "prefix": {
+                "bitwise_exact": false,
+                "changed_values": 654978,
+                "cosine": -0.9990796417574112,
+                "denominator": "RMS of supplied right operand",
+                "dot": -324846346.68420404,
+                "first_differing_byte": 2,
+                "first_numerical_difference": {
+                  "coordinate": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "flat_index": 0,
+                  "left": 828.0,
+                  "right": -824.0,
+                  "signed_error": 1652.0
+                },
+                "maxabs": 32640.0,
+                "native_rms": 22.266234538354993,
+                "native_signed_mean": 0.037217392525053586,
+                "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+                "orientation": "supplied left-minus-right",
+                "p95": 3.8671875,
+                "p99": 7.625,
+                "predicted_rms": 22.281845960192882,
+                "predicted_signed_mean": -0.03713824931764975,
+                "relative_rms": 2.000240732007567,
+                "rms": 44.53782927205136,
+                "sample_count": 655360,
+                "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+                "shape": [
+                  1,
+                  256,
+                  2560
+                ],
+                "signed_mean": -0.07435564184270334,
+                "worst": {
+                  "coordinate": [
+                    0,
+                    0,
+                    4
+                  ],
+                  "native": 16320.0,
+                  "predicted": -16320.0,
+                  "signed_error": -32640.0
+                }
+              },
+              "suffix": {
+                "bitwise_exact": false,
+                "changed_values": 651956,
+                "cosine": 0.962041707505627,
+                "denominator": "RMS of supplied right operand",
+                "dot": 651285.7567017637,
+                "first_differing_byte": 2,
+                "first_numerical_difference": {
+                  "coordinate": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "flat_index": 0,
+                  "left": 27.625,
+                  "right": 24.75,
+                  "signed_error": 2.875
+                },
+                "maxabs": 4.375,
+                "native_rms": 1.0010610571340701,
+                "native_signed_mean": 0.023491832475701812,
+                "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+                "orientation": "supplied left-minus-right",
+                "p95": 0.5546875,
+                "p99": 0.79296875,
+                "predicted_rms": 1.0318989782380459,
+                "predicted_signed_mean": 0.020281501702265815,
+                "relative_rms": 0.2814323643998681,
+                "rms": 0.28173098021787274,
+                "sample_count": 655360,
+                "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+                "shape": [
+                  1,
+                  256,
+                  2560
+                ],
+                "signed_mean": -0.003210330773435999,
+                "worst": {
+                  "coordinate": [
+                    0,
+                    1,
+                    0
+                  ],
+                  "native": 24.0,
+                  "predicted": 28.375,
+                  "signed_error": 4.375
+                }
+              }
+            }
+          },
+          "M": {
+            "bounds": {
+              "prefix": [
+                0,
+                256
+              ],
+              "suffix": [
+                256,
+                512
+              ]
+            },
+            "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+            "whole": {
+              "bitwise_exact": false,
+              "changed_values": 1308292,
+              "cosine": 0.6449503869208489,
+              "denominator": "RMS of supplied right operand",
+              "dot": 159237.34279452485,
+              "first_differing_byte": 2,
+              "first_numerical_difference": {
+                "coordinate": [
+                  0,
+                  0,
+                  0
+                ],
+                "flat_index": 0,
+                "left": 2.5625,
+                "right": 1.859375,
+                "signed_error": 0.703125
+              },
+              "maxabs": 34.59375,
+              "native_rms": 0.3390915661388478,
+              "native_signed_mean": 0.0006810985893025645,
+              "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+              "orientation": "supplied left-minus-right",
+              "p95": 0.900390625,
+              "p99": 1.34765625,
+              "predicted_rms": 0.5555097678228272,
+              "predicted_signed_mean": 0.0009856144757236507,
+              "relative_rms": 1.2532526346476207,
+              "rms": 0.4249673986502989,
+              "sample_count": 1310720,
+              "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+              "shape": [
+                1,
+                512,
+                2560
+              ],
+              "signed_mean": 0.00030451588642108616,
+              "worst": {
+                "coordinate": [
+                  0,
+                  3,
+                  0
+                ],
+                "native": 38.25,
+                "predicted": 3.65625,
+                "signed_error": -34.59375
+              }
+            },
+            "windows": {
+              "prefix": {
+                "bitwise_exact": false,
+                "changed_values": 654620,
+                "cosine": 0.617933843704647,
+                "denominator": "RMS of supplied right operand",
+                "dot": 98840.57103133338,
+                "first_differing_byte": 2,
+                "first_numerical_difference": {
+                  "coordinate": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "flat_index": 0,
+                  "left": 2.5625,
+                  "right": 1.859375,
+                  "signed_error": 0.703125
+                },
+                "maxabs": 34.59375,
+                "native_rms": 0.3485093727517686,
+                "native_signed_mean": -4.493480773817282e-05,
+                "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+                "orientation": "supplied left-minus-right",
+                "p95": 1.0947265625,
+                "p99": 1.533203125,
+                "predicted_rms": 0.7003237760437984,
+                "predicted_signed_mean": 0.00014009796041136724,
+                "relative_rms": 1.598301519363522,
+                "rms": 0.5570230599815797,
+                "sample_count": 655360,
+                "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+                "shape": [
+                  1,
+                  256,
+                  2560
+                ],
+                "signed_mean": 0.00018503276814954006,
+                "worst": {
+                  "coordinate": [
+                    0,
+                    3,
+                    0
+                  ],
+                  "native": 38.25,
+                  "predicted": 3.65625,
+                  "signed_error": -34.59375
+                }
+              },
+              "suffix": {
+                "bitwise_exact": false,
+                "changed_values": 653672,
+                "cosine": 0.7858984605860929,
+                "denominator": "RMS of supplied right operand",
+                "dot": 60396.77176319149,
+                "first_differing_byte": 2,
+                "first_numerical_difference": {
+                  "coordinate": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "flat_index": 0,
+                  "left": -5.875,
+                  "right": -3.546875,
+                  "signed_error": -2.328125
+                },
+                "maxabs": 4.84375,
+                "native_rms": 0.3294046107102359,
+                "native_signed_mean": 0.0014071319863433018,
+                "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+                "orientation": "supplied left-minus-right",
+                "p95": 0.4443359375,
+                "p99": 0.6347296142578145,
+                "predicted_rms": 0.3559899057570293,
+                "predicted_signed_mean": 0.0018311309910359341,
+                "relative_rms": 0.6850370435391867,
+                "rms": 0.22565436064911673,
+                "sample_count": 655360,
+                "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+                "shape": [
+                  1,
+                  256,
+                  2560
+                ],
+                "signed_mean": 0.0004239990046926323,
+                "worst": {
+                  "coordinate": [
+                    0,
+                    98,
+                    0
+                  ],
+                  "native": -3.65625,
+                  "predicted": -8.5,
+                  "signed_error": -4.84375
+                }
+              }
+            }
+          },
+          "R": {
+            "bounds": {
+              "prefix": [
+                0,
+                256
+              ],
+              "suffix": [
+                256,
+                512
+              ]
+            },
+            "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+            "whole": {
+              "bitwise_exact": false,
+              "changed_values": 1306544,
+              "cosine": -0.9956825830968721,
+              "denominator": "RMS of supplied right operand",
+              "dot": -324199383.4669928,
+              "first_differing_byte": 3,
+              "first_numerical_difference": {
+                "coordinate": [
+                  0,
+                  0,
+                  0
+                ],
+                "flat_index": 0,
+                "left": 824.0,
+                "right": -824.0,
+                "signed_error": 1648.0
+              },
+              "maxabs": 32640.0,
+              "native_rms": 15.759927562444934,
+              "native_signed_mean": 0.02967738538136473,
+              "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+              "orientation": "supplied left-minus-right",
+              "p95": 2.5625,
+              "p99": 5.59375,
+              "predicted_rms": 15.762573729058927,
+              "predicted_signed_mean": -0.009412228496512399,
+              "relative_rms": 1.99800784871707,
+              "rms": 31.48845896497746,
+              "sample_count": 1310720,
+              "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+              "shape": [
+                1,
+                512,
+                2560
+              ],
+              "signed_mean": -0.03908961387787713,
+              "worst": {
+                "coordinate": [
+                  0,
+                  0,
+                  4
+                ],
+                "native": 16320.0,
+                "predicted": -16320.0,
+                "signed_error": -32640.0
+              }
+            },
+            "windows": {
+              "prefix": {
+                "bitwise_exact": false,
+                "changed_values": 654945,
+                "cosine": -1.0,
+                "denominator": "RMS of supplied right operand",
+                "dot": -324889196.4267159,
+                "first_differing_byte": 3,
+                "first_numerical_difference": {
+                  "coordinate": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "flat_index": 0,
+                  "left": 824.0,
+                  "right": -824.0,
+                  "signed_error": 1648.0
+                },
+                "maxabs": 32640.0,
+                "native_rms": 22.265254808693268,
+                "native_signed_mean": 0.03727291319228243,
+                "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+                "orientation": "supplied left-minus-right",
+                "p95": 3.59375,
+                "p99": 7.65625,
+                "predicted_rms": 22.265254808693268,
+                "predicted_signed_mean": -0.03727291319228243,
+                "relative_rms": 2.0,
+                "rms": 44.530509617386535,
+                "sample_count": 655360,
+                "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+                "shape": [
+                  1,
+                  256,
+                  2560
+                ],
+                "signed_mean": -0.07454582638456486,
+                "worst": {
+                  "coordinate": [
+                    0,
+                    0,
+                    4
+                  ],
+                  "native": 16320.0,
+                  "predicted": -16320.0,
+                  "signed_error": -32640.0
+                }
+              },
+              "suffix": {
+                "bitwise_exact": false,
+                "changed_values": 651599,
+                "cosine": 0.9662939966568062,
+                "denominator": "RMS of supplied right operand",
+                "dot": 689812.9597228207,
+                "first_differing_byte": 2,
+                "first_numerical_difference": {
+                  "coordinate": [
+                    0,
+                    0,
+                    0
+                  ],
+                  "flat_index": 0,
+                  "left": 33.5,
+                  "right": 28.25,
+                  "signed_error": 5.25
+                },
+                "maxabs": 7.5,
+                "native_rms": 1.0045207070961002,
+                "native_signed_mean": 0.022081857570447026,
+                "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+                "orientation": "supplied left-minus-right",
+                "p95": 0.5390625,
+                "p99": 0.76953125,
+                "predicted_rms": 1.0843843562128324,
+                "predicted_signed_mean": 0.018448456199257633,
+                "relative_rms": 0.2812338347543809,
+                "rms": 0.28250521054681854,
+                "sample_count": 655360,
+                "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+                "shape": [
+                  1,
+                  256,
+                  2560
+                ],
+                "signed_mean": -0.003633401371189393,
+                "worst": {
+                  "coordinate": [
+                    0,
+                    98,
+                    0
+                  ],
+                  "native": 27.0,
+                  "predicted": 34.5,
+                  "signed_error": 7.5
+                }
+              }
+            }
+          },
+          "head": {
+            "bounds": {
+              "prefix": [
+                0,
+                256
+              ],
+              "suffix": [
+                256,
+                512
+              ]
+            },
+            "scope": "Canonical B,T,... coordinates; whole is primary and two windows partition it, not additional independent evidence.",
+            "whole": {
+              "bitwise_exact": false,
+              "changed_values": 2094147,
+              "cosine": 0.07923006776946885,
+              "denominator": "RMS of supplied right operand",
+              "dot": 13694.59142252698,
+              "first_differing_byte": 3,
+              "first_numerical_difference": {
+                "coordinate": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "flat_index": 0,
+                "left": 0.126953125,
+                "right": -0.126953125,
+                "signed_error": 0.25390625
+              },
+              "maxabs": 8.1875,
+              "native_rms": 0.26599228455682933,
+              "native_signed_mean": -0.0035858356618157644,
+              "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+              "orientation": "supplied left-minus-right",
+              "p95": 0.796875,
+              "p99": 1.5078125,
+              "predicted_rms": 0.30985613809836837,
+              "predicted_signed_mean": -0.004482393580772737,
+              "relative_rms": 1.473911763402767,
+              "rms": 0.3920491571826869,
+              "sample_count": 2097152,
+              "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+              "shape": [
+                1,
+                512,
+                32,
+                128
+              ],
+              "signed_mean": -0.0008965579189569722,
+              "worst": {
+                "coordinate": [
+                  0,
+                  10,
+                  12,
+                  111
+                ],
+                "native": 4.09375,
+                "predicted": -4.09375,
+                "signed_error": -8.1875
+              }
+            },
+            "windows": {
+              "prefix": {
+                "bitwise_exact": false,
+                "changed_values": 1048576,
+                "cosine": -1.0,
+                "denominator": "RMS of supplied right operand",
+                "dot": -68543.88288517992,
+                "first_differing_byte": 3,
+                "first_numerical_difference": {
+                  "coordinate": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "flat_index": 0,
+                  "left": 0.126953125,
+                  "right": -0.126953125,
+                  "signed_error": 0.25390625
+                },
+                "maxabs": 8.1875,
+                "native_rms": 0.2556727217642782,
+                "native_signed_mean": -0.0009109995556038086,
+                "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+                "orientation": "supplied left-minus-right",
+                "p95": 1.046875,
+                "p99": 1.875,
+                "predicted_rms": 0.2556727217642782,
+                "predicted_signed_mean": 0.0009109995556038086,
+                "relative_rms": 2.0,
+                "rms": 0.5113454435285564,
+                "sample_count": 1048576,
+                "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+                "shape": [
+                  1,
+                  256,
+                  32,
+                  128
+                ],
+                "signed_mean": 0.0018219991112076173,
+                "worst": {
+                  "coordinate": [
+                    0,
+                    10,
+                    12,
+                    111
+                  ],
+                  "native": 4.09375,
+                  "predicted": -4.09375,
+                  "signed_error": -8.1875
+                }
+              },
+              "suffix": {
+                "bitwise_exact": false,
+                "changed_values": 1045571,
+                "cosine": 0.798682758119,
+                "denominator": "RMS of supplied right operand",
+                "dot": 82238.47430770689,
+                "first_differing_byte": 2,
+                "first_numerical_difference": {
+                  "coordinate": [
+                    0,
+                    0,
+                    0,
+                    0
+                  ],
+                  "flat_index": 0,
+                  "left": -0.81640625,
+                  "right": -0.0546875,
+                  "signed_error": -0.76171875
+                },
+                "maxabs": 3.2265625,
+                "native_rms": 0.27592616808336345,
+                "native_signed_mean": -0.00626067176802772,
+                "operand_keys": "Inherited predicted/native metric keys denote supplied left/right, respectively.",
+                "orientation": "supplied left-minus-right",
+                "p95": 0.42905426025390625,
+                "p99": 0.76171875,
+                "predicted_rms": 0.3558835652009183,
+                "predicted_signed_mean": -0.009875786717149282,
+                "relative_rms": 0.7767114111658806,
+                "rms": 0.2143150033896232,
+                "sample_count": 1048576,
+                "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+                "shape": [
+                  1,
+                  256,
+                  32,
+                  128
+                ],
+                "signed_mean": -0.0036151149491215617,
+                "worst": {
+                  "coordinate": [
+                    0,
+                    134,
+                    3,
+                    105
+                  ],
+                  "native": 2.046875,
+                  "predicted": -1.1796875,
+                  "signed_error": -3.2265625
+                }
+              }
+            }
+          }
+        },
+        "native_effect_summary": {
+          "whole": {
+            "bit_exact_fields": 0,
+            "changed_values": 6015917,
+            "fields": 4,
+            "max_rms": 31.49363117053672,
+            "maxabs": 32640.0,
+            "pooled_error_rms": 20.766812851547034,
+            "pooled_left_rms": 10.401647825515113,
+            "pooled_right_rms": 10.39436683533985,
+            "positions": 6029312,
+            "signed_mean": -0.01717447325431671
+          },
+          "windows": {
+            "prefix": {
+              "bit_exact_fields": 0,
+              "changed_values": 3013119,
+              "fields": 4,
+              "max_rms": 44.53782927205136,
+              "maxabs": 32640.0,
+              "pooled_error_rms": 29.3676587733191,
+              "pooled_left_rms": 14.691148430455769,
+              "pooled_right_rms": 14.68327072808145,
+              "positions": 3014656,
+              "signed_mean": -0.031695921061127494
+            },
+            "suffix": {
+              "bit_exact_fields": 0,
+              "changed_values": 3002798,
+              "fields": 4,
+              "max_rms": 0.28250521054681854,
+              "maxabs": 7.5,
+              "pooled_error_rms": 0.24829457556158624,
+              "pooled_left_rms": 0.7474709134164885,
+              "pooled_right_rms": 0.6980576918081284,
+              "positions": 3014656,
+              "signed_mean": -0.002653025447505926
+            }
+          }
+        },
+        "premises": {
+          "metrics": {
+            "whole": {
+              "bit_exact_fields": 0,
+              "changed_values": 11214142,
+              "fields": 6,
+              "max_rms": 0.19976135009818874,
+              "maxabs": 7.5,
+              "pooled_error_rms": 0.1705278008026812,
+              "pooled_left_rms": 5.410406559973773,
+              "pooled_right_rms": 5.407565666799267,
+              "positions": 22544384,
+              "signed_mean": -0.005774563837350961
+            },
+            "windows": {
+              "prefix": {
+                "bit_exact_fields": 4,
+                "changed_values": 0,
+                "fields": 6,
+                "max_rms": 0.0,
+                "maxabs": 0.0,
+                "pooled_error_rms": 0.0,
+                "pooled_left_rms": 7.617258188185271,
+                "pooled_right_rms": 7.617258188185271,
+                "positions": 11272192,
+                "signed_mean": 0.0
+              },
+              "suffix": {
+                "bit_exact_fields": 0,
+                "changed_values": 11214142,
+                "fields": 6,
+                "max_rms": 0.28250521054681854,
+                "maxabs": 7.5,
+                "pooled_error_rms": 0.24116272865680935,
+                "pooled_left_rms": 0.7227558252542823,
+                "pooled_right_rms": 0.6789039519821086,
+                "positions": 11272192,
+                "signed_mean": -0.011549127674701922
+              }
+            }
+          },
+          "signed_zero": {
+            "prefix": {
+              "defects": 830,
+              "shared": 830
+            },
+            "suffix": {
+              "defects": 0,
+              "shared": 2
+            },
+            "whole": {
+              "defects": 830,
+              "shared": 832
+            }
+          }
+        },
+        "support": {
+          "closed_rows": 256,
+          "empty_rows": 0,
+          "rows": 512,
+          "scope": "Derived permitted-key sign relation only; all rows are predicted and retained regardless of support or numerical error.",
+          "windows": {
+            "prefix": {
+              "classification": "closed",
+              "closed_rows": 256,
+              "rows": 256
+            },
+            "suffix": {
+              "classification": "mixed-or-empty",
+              "closed_rows": 0,
+              "rows": 256
+            }
+          }
+        }
+      }
+    },
+    "positive_source_baseline": {
+      "whole": {
+        "bit_exact_fields": 4,
+        "changed_values": 0,
+        "fields": 4,
+        "max_rms": 0.0,
+        "maxabs": 0.0,
+        "pooled_error_rms": 0.0,
+        "pooled_left_rms": 10.39436683533985,
+        "pooled_right_rms": 10.39436683533985,
+        "positions": 6029312,
+        "signed_mean": 0.0
+      },
+      "windows": {
+        "prefix": {
+          "bit_exact_fields": 4,
+          "changed_values": 0,
+          "fields": 4,
+          "max_rms": 0.0,
+          "maxabs": 0.0,
+          "pooled_error_rms": 0.0,
+          "pooled_left_rms": 14.68327072808145,
+          "pooled_right_rms": 14.68327072808145,
+          "positions": 3014656,
+          "signed_mean": 0.0
+        },
+        "suffix": {
+          "bit_exact_fields": 4,
+          "changed_values": 0,
+          "fields": 4,
+          "max_rms": 0.0,
+          "maxabs": 0.0,
+          "pooled_error_rms": 0.0,
+          "pooled_left_rms": 0.6980576918081284,
+          "pooled_right_rms": 0.6980576918081284,
+          "positions": 3014656,
+          "signed_mean": 0.0
+        }
+      }
+    }
+  },
+  "transaction": {
+    "chronology": [
+      {
+        "arm": "all-negative",
+        "kind": "forecast_arm_completed",
+        "native_module_entries": 0,
+        "number": 0
+      },
+      {
+        "arm": "prefix-negative",
+        "kind": "forecast_arm_completed",
+        "native_module_entries": 0,
+        "number": 1
+      },
+      {
+        "kind": "cohort_globally_sealed",
+        "native_module_entries": 0,
+        "native_targets_at_seal": 0,
+        "number": 2,
+        "seal_sha256": "12077f1ee8ca0f2b23c1c440e11a9dea7b5f07058270041594320289055f0121"
+      },
+      {
+        "kind": "native_targets_released",
+        "native_module_entries": 0,
+        "number": 3,
+        "seal_sha256": "12077f1ee8ca0f2b23c1c440e11a9dea7b5f07058270041594320289055f0121"
+      },
+      {
+        "arm": "baseline",
+        "kind": "native_component_authorized",
+        "native_module_entries": 0,
+        "number": 4
+      },
+      {
+        "arm": "baseline",
+        "kind": "native_component_completed",
+        "native_module_entries": 15,
+        "number": 5
+      },
+      {
+        "arm": "all-negative",
+        "kind": "native_component_authorized",
+        "native_module_entries": 15,
+        "number": 6
+      },
+      {
+        "arm": "all-negative",
+        "kind": "native_component_completed",
+        "native_module_entries": 30,
+        "number": 7
+      },
+      {
+        "arm": "prefix-negative",
+        "kind": "native_component_authorized",
+        "native_module_entries": 30,
+        "number": 8
+      },
+      {
+        "arm": "prefix-negative",
+        "kind": "native_component_completed",
+        "native_module_entries": 45,
+        "number": 9
+      }
+    ],
+    "external_files": 74,
+    "inherited_arrays": 13,
+    "native_targets_at_seal": 0,
+    "verified": {
+      "event_head": "9378067faf821a4069a80ce9f9e8889038cc41ea66fede35aa728c15e9c99180",
+      "events": 7,
+      "forecasts": [
+        "cohort"
+      ],
+      "frontiers": [
+        "inherited-positive"
+      ],
+      "identity_scope": "externally-pinned",
+      "phase": "closed",
+      "schema": "mdb-forecast-offline-verification-v1",
+      "seal_sha256": "12077f1ee8ca0f2b23c1c440e11a9dea7b5f07058270041594320289055f0121",
+      "verified": true
+    }
+  },
+  "verifier_sha256": "3ff3a2417969475d6602b76c8e5d83677a52be895df4e7582e24e38821f1d4e6"
+}

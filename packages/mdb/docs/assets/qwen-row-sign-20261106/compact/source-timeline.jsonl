@@ -1,0 +1,10 @@
+{"arm":"all-negative","kind":"forecast_arm_completed","native_module_entries":0,"number":0}
+{"arm":"prefix-negative","kind":"forecast_arm_completed","native_module_entries":0,"number":1}
+{"kind":"cohort_globally_sealed","native_module_entries":0,"native_targets_at_seal":0,"number":2,"seal_sha256":"12077f1ee8ca0f2b23c1c440e11a9dea7b5f07058270041594320289055f0121"}
+{"kind":"native_targets_released","native_module_entries":0,"number":3,"seal_sha256":"12077f1ee8ca0f2b23c1c440e11a9dea7b5f07058270041594320289055f0121"}
+{"arm":"baseline","kind":"native_component_authorized","native_module_entries":0,"number":4}
+{"arm":"baseline","kind":"native_component_completed","native_module_entries":15,"number":5}
+{"arm":"all-negative","kind":"native_component_authorized","native_module_entries":15,"number":6}
+{"arm":"all-negative","kind":"native_component_completed","native_module_entries":30,"number":7}
+{"arm":"prefix-negative","kind":"native_component_authorized","native_module_entries":30,"number":8}
+{"arm":"prefix-negative","kind":"native_component_completed","native_module_entries":45,"number":9}

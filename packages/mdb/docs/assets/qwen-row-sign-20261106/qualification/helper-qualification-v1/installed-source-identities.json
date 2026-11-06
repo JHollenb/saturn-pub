@@ -1,0 +1,10 @@
+{
+  "qwen3": {
+    "bytes": 23353,
+    "sha256": "fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+  },
+  "sdpa_interface": {
+    "bytes": 8407,
+    "sha256": "b72c5c96ea070d594f36e774cfc799160a0ecb157353502a61eb3c5ea1e35b46"
+  }
+}

@@ -1,5 +1,9 @@
 # Qwen sign-shortcut computation records
 
+The follow-up [row-sign experiment](QWEN-ROW-SIGN.md) now retains a specific
+counterexample: unchanged later rows read an edited prefix, invalidating the
+cheap reuse relation there while the full functional calculation remains exact.
+
 Three fixed fresh contexts at original Qwen block18 produced bit-exact
 positive-only conditional predictions for the negative branch's gated product,
 MLP return and H19. Full signed edit responses also matched exactly.
