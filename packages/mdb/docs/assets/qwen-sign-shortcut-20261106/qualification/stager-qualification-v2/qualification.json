@@ -1,0 +1,140 @@
+{
+  "checks": {
+    "bootstrap_config_argument_forwarding": {
+      "bootstrap_config_argument_forwarded": true,
+      "checkpoint_reads": 0,
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-u",
+        "-m",
+        "mdb.worker_bootstrap",
+        "qwen_sign_shortcut_campaign.py",
+        "--config",
+        "<temporary>/inapplicable-config.json"
+      ],
+      "cuda_work": 0,
+      "cwd": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload",
+      "independent_local_probe": true,
+      "input_config": "{}",
+      "missing_required_config_error": false,
+      "model_construction": 0,
+      "native_forwards": 0,
+      "observed": "worker bootstrap line printed; worker argparse accepted --config; validate_config then raised ValueError campaign/source schema differs",
+      "returncode": 1,
+      "root_receipt_sha256": "1c3583127763f0ad0e2b38cf6348cc0f52934b8efa4ddbb0d823ff019c183eb1",
+      "scheduler_contact": 0
+    },
+    "ruff": {
+      "command": "/Users/jakeholl/domains/common/.venv/bin/ruff check --select F,I --config pyproject.toml qualification/stage_qwen_sign_shortcut.py tests/test_stage_qwen_sign_shortcut.py",
+      "cwd": "saturn-pub/packages/mdb",
+      "result": "All checks passed!",
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "stager_pytest": {
+      "command": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B -m pytest -q tests/test_stage_qwen_sign_shortcut.py",
+      "cwd": "saturn-pub/packages/mdb",
+      "result": "5 passed in 0.06s",
+      "returncode": 0,
+      "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "stdout_sha256": "d8723ee001feaaf2086b9ce1b811b05cd7fcaa5a6810308b70293e0529ba97f7"
+    }
+  },
+  "created_at": "2026-11-06",
+  "failed_run_preserved": {
+    "actual_model_or_cuda_work": false,
+    "archive_sha256": "3093d74b28d374e6b20c07fcbf5cf2a404645a3c72ad5b1daa4df9e59b7cc070",
+    "elapsed_s": 4.33,
+    "failure": "old command omitted --config and exited at argparse before model execution",
+    "job_id": "job-30027b477a9e",
+    "peak_rss_mb": 196.6,
+    "peak_vram_mb": 0.0,
+    "returncode": 2,
+    "state": "failed"
+  },
+  "launcher_delta": {
+    "correction": "Append --config saturn_run_config.json after the worker script in the mdb.worker_bootstrap command.",
+    "new_command_tail": [
+      "qwen_sign_shortcut_campaign.py",
+      "--config",
+      "saturn_run_config.json"
+    ],
+    "new_stage_expected_sha256": "6f083cc6a039d50f8f206731d4a0fc87e76f9bf464c0d8cedba4caaecf04887b",
+    "new_stage_sha256": "6f083cc6a039d50f8f206731d4a0fc87e76f9bf464c0d8cedba4caaecf04887b",
+    "new_test_sha256": "0e7c3b26ac92f7b66f3afc443652f710415cedd4101bc5a857eb13ab08d334ea",
+    "old_command_tail": [
+      "-m",
+      "mdb.worker_bootstrap",
+      "qwen_sign_shortcut_campaign.py"
+    ],
+    "old_stage_expected_sha256": "d0ac0c75fa48bc48d5202a9cb37501a3af823c72615eb8c95d44c1db0ef134e9",
+    "old_stage_sha256": "d0ac0c75fa48bc48d5202a9cb37501a3af823c72615eb8c95d44c1db0ef134e9",
+    "old_test_sha256": "05d029a69561ddf0652f54c48743dd593009155e7476e13392c4cb5b17096bc4",
+    "run_02_request_sha256": "1a9b11e4bc739410dcd165b31cd0c0452aa5f0583e7731598bc1e2b8a87bdd5a",
+    "scientific_config_changed": false,
+    "scientific_worker_changed": false
+  },
+  "limitations": [
+    "This receipt qualifies only the launcher transport correction; it does not certify a native execution.",
+    "Run-02 staging/submission and admission remain root-owned; successor peak resources remain unmeasured."
+  ],
+  "schema": "mdb-qwen-sign-shortcut-stager-qualification-v2",
+  "scope": "Model-free correction qualification for the missing worker --config argument. The scientific worker, config, helper closure, protocol, source cohort, and wheels are unchanged from the qualified producer; the original failed run remains immutable.",
+  "source_hashes": {
+    "qualification/stage_qwen_sign_shortcut.py": {
+      "bytes": 23664,
+      "path": "saturn-pub/packages/mdb/qualification/stage_qwen_sign_shortcut.py",
+      "sha256": "6f083cc6a039d50f8f206731d4a0fc87e76f9bf464c0d8cedba4caaecf04887b"
+    },
+    "root_launcher_config_argument_receipt": "1c3583127763f0ad0e2b38cf6348cc0f52934b8efa4ddbb0d823ff019c183eb1",
+    "run-01/admission-command.json": {
+      "bytes": 1546,
+      "path": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/admission-command.json",
+      "sha256": "e3edd12c8f6180c1ed558e2b78ec88899f81b33f6d4975590103bf94e039bebe"
+    },
+    "run-01/job-first-observed.json": {
+      "bytes": 38691,
+      "path": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/job-first-observed.json",
+      "sha256": "53fa0f594b8b76966431835c784546174d243917ef9b7d4c2ab93374d5d7971c"
+    },
+    "run-01/payload/stage_qwen_sign_shortcut.py": {
+      "bytes": 23608,
+      "path": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/stage_qwen_sign_shortcut.py",
+      "sha256": "d0ac0c75fa48bc48d5202a9cb37501a3af823c72615eb8c95d44c1db0ef134e9"
+    },
+    "run-01/staged-command.json": {
+      "bytes": 1481,
+      "path": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/staged-command.json",
+      "sha256": "8fab68ddfe2b420d07c54aa2a3648a9874318018486d0ec852ec7d95dd54df47"
+    },
+    "run-02/request.json": {
+      "bytes": 11111,
+      "path": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/request.json",
+      "sha256": "7a986d2ae78fd496f6908fb040057e902e2c208f3314ee12b09afd6a2f841573"
+    },
+    "run-02/staged-command.json": {
+      "bytes": 1527,
+      "path": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/staged-command.json",
+      "sha256": "2c0faef5010ccfbf23873771b7ba253f88d592f6ad027f3de5993d64aaeb0f4f"
+    },
+    "stager-qualification-v1/qualification.json": {
+      "bytes": 16723,
+      "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/qualification.json",
+      "sha256": "1d781a88c55e08b198763724e44f6bc689d555a07f406f1b6614142147546224"
+    },
+    "stager-source-archive-v1/archive.json": {
+      "bytes": 17454,
+      "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-source-archive-v1/archive.json",
+      "sha256": "3093d74b28d374e6b20c07fcbf5cf2a404645a3c72ad5b1daa4df9e59b7cc070"
+    },
+    "tests/test_stage_qwen_sign_shortcut.py": {
+      "bytes": 3881,
+      "path": "saturn-pub/packages/mdb/tests/test_stage_qwen_sign_shortcut.py",
+      "sha256": "0e7c3b26ac92f7b66f3afc443652f710415cedd4101bc5a857eb13ab08d334ea"
+    }
+  },
+  "status": "qualified-launcher-correction-only"
+}

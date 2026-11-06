@@ -1,0 +1,12 @@
+usage: qwen_sign_shortcut_campaign.py [-h] --config CONFIG
+
+Prospective three-context Qwen-only conditional sign-shortcut experiment.
+Positive ports come from each raw input's own functional prefix. The shortcut
+receives only R/G/U and the original down weight, before the negative
+functional reference starts. All complete forecasts and signed responses
+precede any native model entry. This is neither a Qwen Act nor an independent-
+kernel claim.
+
+options:
+  -h, --help       show this help message and exit
+  --config CONFIG

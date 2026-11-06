@@ -1,0 +1,48 @@
+{
+  "entrypoint": "predict_negative(positive,down_weight,*,profile)",
+  "forbidden": [
+    "negative target operands",
+    "attention/RMS/GorUprojection",
+    "module forward",
+    "regrouping-Mplus+WdGU",
+    "extra learned WdGU projection"
+  ],
+  "outputs": [
+    "ports.negative_gate",
+    "ports.negative_up",
+    "ports.activation",
+    "ports.product",
+    "ports.M",
+    "ports.negative_R",
+    "ports.Hnext",
+    "input_descriptors",
+    "output_descriptors",
+    "counts",
+    "comparison_max_elements"
+  ],
+  "positive_keys": [
+    "R",
+    "gate",
+    "up"
+  ],
+  "primitive_order": "negGate;negUp;F.silu(negGate);activation*negUp;F.linear(product,Wd,None);negR;negR+M",
+  "production_catalog_budget": "comparison_element_budget({product:[1,512,9728],M:[1,512,2560],Hnext:[1,512,2560]})=7602176; caller must use its actual selected fields",
+  "profile_factory": "make_profile(positive,down_weight,source_identity=SHAmap,frontier_kind=observed-positive-ports|own-functional-positive-ports,attention_profile=...)",
+  "profile_scope": "Caller binds original source/recipe and same-mask/positions/RoPE context; helper binds actualpositivebits/layout and currentprecision flags. No negative target or oddness pass/fail supplied.",
+  "qualification_sha256": "3275144fed9c901abf624b0dcaa0e80d0a933fc446c2b39447d09d712063fdb1",
+  "schema": "mdb-qwen-sign-shortcut-interface-v1",
+  "source_sha256": "8e59051a34bc8e89c9376fd29aec966df9cbe84560c81f86910504172caaa457",
+  "tiny_invocation": [
+    "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+    "-I",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp",
+    "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/helper-qualification-v1/attempt-02/tmp",
+    "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/helper-qualification-v1/attempt-02/snapshot/tests/test_qwen_sign_shortcut.py"
+  ]
+}

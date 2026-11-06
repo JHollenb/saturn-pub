@@ -1,0 +1,67 @@
+{
+  "cases": [
+    {
+      "case_id": "short-objects",
+      "intended_mask_regime": "padded",
+      "raw_bytes": 117,
+      "raw_file": "short-objects.txt",
+      "raw_sha256": "90f0c110ea43399d147f404824fedb9ad4bf7ec4b6ee89a8f27283fcea8c2037",
+      "raw_text": "A polished silver torus behind a small green pyramid on a black tabletop. Three hard-edged shadows cross the surface."
+    },
+    {
+      "case_id": "short-procedure",
+      "intended_mask_regime": "padded",
+      "raw_bytes": 145,
+      "raw_file": "short-procedure.txt",
+      "raw_sha256": "a066714dd56745fafe36e021681e3954eddc280657bbd130d6abebb814d65f1d",
+      "raw_text": "Place a folded purple cloth beside a brass compass. Turn the compass clockwise, move the cloth behind it, and describe the remaining arrangement."
+    },
+    {
+      "case_id": "long-description",
+      "intended_mask_regime": "all-attended",
+      "raw_bytes": 7607,
+      "raw_file": "long-description.txt",
+      "raw_sha256": "1bf43008819b4e17d08ed8bd5905624868fdeb99771e3e8b338ce490791fe094",
+      "raw_text": "A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist. A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist."
+    }
+  ],
+  "comparisons": [
+    "shortcut-minus-full-functional-negative",
+    "full-functional-minus-native-negative",
+    "shortcut-minus-native-negative"
+  ],
+  "created_at": "2026-11-06T15:15:29.722047+00:00",
+  "edit": {
+    "horizon": 19,
+    "index": 18,
+    "operation": "Negate all query rows and features of each lane's own H18",
+    "selected": [
+      9,
+      18,
+      19
+    ]
+  },
+  "frontend": "Use the original source-bound chat template/tokenizer policy; retain actual token IDs/masks and actual dispatch rather than assuming intended regimes.",
+  "long_case_recipe": {
+    "passage": "A glass greenhouse stands beside a shallow pond at dawn. Copper pipes cross the ceiling, ferns grow between square stone tiles, and small numbered labels hang from the shelves. Outside, a narrow gravel path curves around a dark wooden bench. Reflections overlap on the water while pale light passes through the mist.",
+    "repetitions": 24,
+    "separator": " "
+  },
+  "model_calls_at_freeze": 0,
+  "observation_policy": "Keep numerical, raw-bit and signed-zero differences, nonzero shortcut errors and counterexamples; no numerical gate or target refresh.",
+  "prospective_scope": "Three new raw contexts at one first-edited-block horizon; no new FLUX/image/VAE continuation or universal rule claim.",
+  "query_geometry": {
+    "batch": 1,
+    "max_length": 512,
+    "padding_side": "right",
+    "truncation": true
+  },
+  "relation": "Pminus=SiLU(-Gplus)*(-Uplus); Mminus=linear(Pminus,Wd,None); Yminus=-Rplus+Mminus, preserving primitive order.",
+  "schema": "mdb-qwen-sign-shortcut-selection-v1",
+  "seal_policy": "All three contexts' complete forecast/reference/shortcut outputs and signed responses sealed before any native learned target.",
+  "selection": "Fixed before any new-context tokenization/model execution; no outcome-based selection.",
+  "shortcut_inputs": "Own functional positive R,gate,up plus original down weight and explicit finite profile; no negative targets or native positive ports.",
+  "signed_response": "For product, M and Hnext, compare each lane's negative-minus-own-positive response as well as endpoints.",
+  "source_model": "Original FLUX.2 Klein4B Qwen3 text encoder, unchanged original398Qwenrecipes",
+  "tokenizer_calls_at_freeze": 0
+}

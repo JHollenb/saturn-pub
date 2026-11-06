@@ -1,0 +1,28 @@
+{
+  "component_hydrations": 1,
+  "contexts": 3,
+  "cpu_offloads": 1,
+  "cuda_placements": 1,
+  "edit_index": 18,
+  "forecast_module_entries": 0,
+  "functional_reference_SDPA": 60,
+  "functional_reference_blocks": 60,
+  "genuine_qwen_acts": 0,
+  "horizon": 19,
+  "limits": [
+    "Counts are component/primitive occurrences, not independent trials.",
+    "Named ports do not establish an independent Flash/GEMM implementation or selected kernels."
+  ],
+  "native_LM_calls": 3,
+  "native_SDPA": 111,
+  "native_authorizations": 6,
+  "native_blocks": 111,
+  "native_full_model_calls": 3,
+  "native_suffix_calls": 3,
+  "native_unused_states": "after horizon through full native model final norm/LM are reference-only",
+  "no_flux_vae_noise": true,
+  "schema": "mdb-qwen-sign-shortcut-campaign-v1",
+  "shortcut_RMSNorm": 0,
+  "shortcut_attention": 0,
+  "shortcut_down_projections": 3
+}

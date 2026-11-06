@@ -1,0 +1,38 @@
+{
+  "blocking_issues": [],
+  "changed_request_fields": [
+    "launcher_sha256",
+    "request_sha256",
+    "source_hashes"
+  ],
+  "changed_sources": [
+    "stage_qwen_sign_shortcut.py"
+  ],
+  "command_delta": [
+    "--config",
+    "saturn_run_config.json"
+  ],
+  "exact_source_and_wheel_files_rehashed": 23,
+  "launcher_regression_checks": "Root ran all five exact stager tests after the correction: 5 passed in0.06s; exact files F/I Ruff passed.",
+  "launcher_test_sha256": "0e7c3b26ac92f7b66f3afc443652f710415cedd4101bc5a857eb13ab08d334ea",
+  "limitations": "This is a launcher admission review, not numerical evidence or a second holistic Astra review.",
+  "previous_astra_review_sha256": "03d6f98f1bf3a5f6ef39652883f59a1b2ff03b2009c8da987c83e8202416eded",
+  "previous_request_sha256": "999f8be2d10ea652e18661a93cfb9a9e419d9158f85bbceae8ec8d01df311f3e",
+  "prior_attempt": {
+    "job_id": "job-30027b477a9e",
+    "job_record_sha256": "53fa0f594b8b76966431835c784546174d243917ef9b7d4c2ab93374d5d7971c",
+    "result": "argument parsing stopped before model load",
+    "scientific_evidence": "none"
+  },
+  "qualification_sha256": "1c3583127763f0ad0e2b38cf6348cc0f52934b8efa4ddbb0d823ff019c183eb1",
+  "request_sha256": "1a9b11e4bc739410dcd165b31cd0c0452aa5f0583e7731598bc1e2b8a87bdd5a",
+  "review_status": "ready-for-finite-run",
+  "reviewer": "root, narrow delta review following Astra's complete source/resource review",
+  "schema": "mdb-finite-review-launcher-correction-v1",
+  "scientific_code_config_selection_wheels_resources_unchanged": true,
+  "timing": {
+    "assay_timer_s": 600,
+    "estimated_s": 300,
+    "whole_worker_timeout_s": 900
+  }
+}

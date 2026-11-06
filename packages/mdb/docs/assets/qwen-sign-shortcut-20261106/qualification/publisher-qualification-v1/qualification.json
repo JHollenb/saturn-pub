@@ -1,0 +1,212 @@
+{
+  "checks": 3,
+  "cli_help": {
+    "command": [
+      "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+      "-I",
+      "-B",
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/publisher-qualification-v1/source-freeze-v1/qualification/publish_qwen_sign_shortcut.py",
+      "--help"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "d4d02d8e9dc121f4fd531a90cafc900515af65ee377fbf907bd6c07b7b6d953c"
+  },
+  "coverage": [
+    "Complete synthetic compact metadata/envelope with separate catalog equation IDs versus atlas observation IDs, source snapshots and external collection request/job/manifest joins. No original-model authenticity is claimed by fixture.",
+    "Wrong external custody and overwrite refusal; no output before refusal.",
+    "Nonzero errors, signed means, bit/signedzero diagnostics, null relative values and all-zero rendering remain observations.",
+    "Publisher/reader source snapshots, compact evidence and audit qualification copied once; no arrays/models/tokenizer/weights/learned recurrence."
+  ],
+  "execution_sha256": "3fb97bf23a54c7fce0bbf455e8cfb5de25cb19f2cc5eedd3ea4225bf6f843f3f",
+  "final_attempt": "attempt-02",
+  "fixture": "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/publisher-qualification-v1/attempt-02/tmp/test_complete_saved_envelope_p0/publication",
+  "layout_regression": {
+    "conditional-computation-path.png": [
+      {
+        "axis": 0,
+        "bbox": [
+          6.2505,
+          6.2505,
+          1937.4989999999998,
+          818.9979999999999
+        ],
+        "within_figure": true
+      }
+    ],
+    "oddness-and-zero-signs.png": [
+      {
+        "axis": 0,
+        "bbox": [
+          39.37550000000001,
+          960.5831666666669,
+          937.4744999999999,
+          464.66533333333325
+        ],
+        "within_figure": true
+      },
+      {
+        "axis": 1,
+        "bbox": [
+          996.35,
+          960.5831666666669,
+          947.3994999999996,
+          464.66533333333325
+        ],
+        "within_figure": true
+      },
+      {
+        "axis": 2,
+        "bbox": [
+          6.250500000000002,
+          483.4168333333336,
+          970.5994999999999,
+          464.6653333333332
+        ],
+        "within_figure": true
+      },
+      {
+        "axis": 3,
+        "bbox": [
+          996.35,
+          483.4168333333336,
+          947.3994999999996,
+          464.6653333333332
+        ],
+        "within_figure": true
+      },
+      {
+        "axis": 4,
+        "bbox": [
+          39.37550000000001,
+          6.2505000000000095,
+          937.4744999999999,
+          464.6653333333337
+        ],
+        "within_figure": true
+      },
+      {
+        "axis": 5,
+        "bbox": [
+          996.35,
+          6.2505000000000095,
+          947.3994999999996,
+          464.6653333333337
+        ],
+        "within_figure": true
+      }
+    ],
+    "shortcut-errors.png": [
+      {
+        "axis": 0,
+        "bbox": [
+          52.625499999999995,
+          1060.5831666666666,
+          901.4896070822803,
+          514.6653333333334
+        ],
+        "within_figure": true
+      },
+      {
+        "axis": 1,
+        "bbox": [
+          973.4177290884044,
+          1060.5831666666666,
+          934.7396070822807,
+          514.6653333333334
+        ],
+        "within_figure": true
+      },
+      {
+        "axis": 2,
+        "bbox": [
+          6.250499999999988,
+          533.4168333333333,
+          947.8646070822803,
+          514.6653333333328
+        ],
+        "within_figure": true
+      },
+      {
+        "axis": 3,
+        "bbox": [
+          973.4177290884044,
+          533.4168333333333,
+          934.7396070822807,
+          514.6653333333328
+        ],
+        "within_figure": true
+      },
+      {
+        "axis": 4,
+        "bbox": [
+          52.625499999999995,
+          6.250500000000002,
+          901.4896070822803,
+          514.6653333333335
+        ],
+        "within_figure": true
+      },
+      {
+        "axis": 5,
+        "bbox": [
+          1006.6677290884045,
+          6.250500000000002,
+          937.0817709115954,
+          514.6653333333335
+        ],
+        "within_figure": true
+      }
+    ]
+  },
+  "limits": [
+    "Synthetic metadata fixture patches expected native request and qualification pins only inside tests; original source/runtime/recipe restoration is not repeated.",
+    "No actual turn13 scientific results read or published. Root alone may run against authenticated real compact evidence."
+  ],
+  "native_request_sha256": "1a9b11e4bc739410dcd165b31cd0c0452aa5f0583e7731598bc1e2b8a87bdd5a",
+  "prior_attempt_preserved": "attempt-01",
+  "prior_request": {
+    "sha256": "999f8be2d10ea652e18661a93cfb9a9e419d9158f85bbceae8ec8d01df311f3e",
+    "status": "root-reported failed before model entry; no outcomes"
+  },
+  "pytest_seconds": 1.52,
+  "ruff": {
+    "command": [
+      "/Users/jakeholl/domains/common/.venv/bin/ruff",
+      "check",
+      "--select",
+      "F,I",
+      "--config",
+      "pyproject.toml",
+      "qualification/publish_qwen_sign_shortcut.py",
+      "tests/test_publish_qwen_sign_shortcut.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "returncode": 0,
+    "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  },
+  "schema": "mdb-qwen-sign-shortcut-publisher-qualification-v1",
+  "sources": {
+    "qualification/audit_flux_functional_pass.py": "2d54e716749dec52c159f3a5214860f4bb8cbf396fd09239540bd55988274c80",
+    "qualification/audit_flux_functional_qwen_prefix.py": "5004786be76e1f576d2df65e6d1225f8fdd41c4a7e09e5ed8a6c23057db78a97",
+    "qualification/audit_flux_raw_to_image.py": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835",
+    "qualification/audit_qwen_sign_shortcut.py": "d33613bbb1d71ee3b2007fb007e5266acaf141994091264bed50d27342237e2c",
+    "qualification/publish_qwen_sign_shortcut.py": "de2b6aa02d668a8ff3193f1099a4b146aa362a980252a5ff34d2e5990f98ee9b",
+    "qualification/retrieve_reader_evidence.py": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923",
+    "tests/test_publish_qwen_sign_shortcut.py": "9ca8e8f29b2bc48cef1927488198f688af46d449751ade6a8bb18d6a51c09022"
+  },
+  "status": "qualified-synthetic-scalar-envelope-and-rendering",
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "9099ecb61f468c59675388ef7744e6be2e8909d84005c3ead62fbb5b2f22250a",
+  "synthetic_figures": {
+    "conditional-computation-path.png": "cc608435ac234a2f4de47d794758c8e913bd232c9c4d1836d56743e86ec41328",
+    "oddness-and-zero-signs.png": "a49e031e0e1e83c4c8732ea1a2b46ae203be37270ecb941a01390351ddf52b2e",
+    "shortcut-errors.png": "ae97692e834c4d7a100f7228d278a95d38b2b81da5b391570f4c3ab3a7224172"
+  },
+  "visual_qa": {
+    "status": "readable; labels within canvas; finite misses/undefined and exact zeros retained",
+    "viewed": [
+      "attempt-01 three figures",
+      "attempt-02 corrected short oddness count labels"
+    ]
+  }
+}

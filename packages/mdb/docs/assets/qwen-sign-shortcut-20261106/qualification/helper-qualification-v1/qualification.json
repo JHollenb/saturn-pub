@@ -1,0 +1,59 @@
+{
+  "attempt": "attempt-02",
+  "count_scope": "Prediction formula only; validation/copy/hash operations excluded. Not an ATen or selectedkernel profile.",
+  "coverage": [
+    "actual installed Qwen3 padded explicit-mask and all-attended source-context fixtures",
+    "one real BF16down linear+SiLU,zero attention/module calls in shortcut; subsequent native block numerical parity under measured tiny premises",
+    "wrong upstream premise retained as nonzero observed miss,not helper refusal",
+    "positive and negative zero signs retained separately from numeric equality",
+    "exact positive keys,sourcecontent/dtype/layout/finite and actualpolicy guards",
+    "globalmodule guard cleanup after hostile native module attempt",
+    "production3field comparisonbudget7602176 computed without largearray allocation"
+  ],
+  "execution_sha256": "ccb29fc6c068b38c781496dd18f1342b763afd1d263703ce619fdcabd6953b6c",
+  "limitations": [
+    "CPU tiny only; no original CUDA arithmetic or fresh-context transfer established.",
+    "Block0 synthetic native parity does not establish universal block18 oddness.",
+    "R/G/U finite oddness is not an input guard; signed-zero/numerical misses remain externalobservations.",
+    "Source/contextSHA provenance is declared by caller and must be authenticated by campaigncustody.",
+    "Observed-positive inputs support conditional frontier claims only; own-functional-positive inputs support a distinct prospective composition.",
+    "No threecontext campaign,rule selection,harness,stage or submission implemented."
+  ],
+  "previous_attempt_preserved": "attempt-01",
+  "primitive_counts": {
+    "RMSNorm": 0,
+    "SiLU": 1,
+    "attention": 0,
+    "elementwise_products": 1,
+    "gate_projection": 0,
+    "linear": 1,
+    "module_forwards": 0,
+    "negations": 3,
+    "residual_additions": 1,
+    "up_projection": 0
+  },
+  "proofs": {
+    "tmp/test_actual_native_block_condi0/actual-component-proof.json": {
+      "bytes": 5008,
+      "sha256": "29638ab4950f36f185544c80646fde940bf5527255916e42668f584173d74aeb"
+    },
+    "tmp/test_actual_native_block_condi1/actual-component-proof.json": {
+      "bytes": 5009,
+      "sha256": "b37f6078c79e8210cdd5a82d9e2c9e221d26a49da6fa4dc8e9c4c58842205549"
+    },
+    "tmp/test_deliberately_wrong_upstre0/wrong-premise-observation.json": {
+      "bytes": 278,
+      "sha256": "2f8b56489ba0eee9193c7142b08911fc663d3f53a094d25ea8ef39011b5c315f"
+    }
+  },
+  "pytest": "7 passed in2.52s",
+  "returncode": 0,
+  "ruff_returncode": 0,
+  "schema": "mdb-qwen-sign-shortcut-helper-qualification-v1",
+  "scope": "Synthetic installed Qwen3 unequal residual/head width; conditional positive-frontier shortcut and subsequent actual native component calls. No original models/assets/tokenizer/checkpoint/CUDA/staging/jobs.",
+  "sources": {
+    "qualification/qwen_sign_shortcut.py": "8e59051a34bc8e89c9376fd29aec966df9cbe84560c81f86910504172caaa457",
+    "tests/test_qwen_sign_shortcut.py": "4ae1ddc70e83e10a47252ad2c415f6f7a19ec8c114e9f159e358fbc1f0f05eb2"
+  },
+  "status": "passed"
+}

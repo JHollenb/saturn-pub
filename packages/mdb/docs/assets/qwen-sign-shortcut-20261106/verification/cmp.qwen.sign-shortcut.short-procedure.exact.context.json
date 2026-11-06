@@ -1,0 +1,49 @@
+{
+  "case": "short-procedure",
+  "execution": {
+    "attention_dispatch": {
+      "backend": "sdpa",
+      "gqa_policy": "repeat_kv",
+      "source": "fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+    },
+    "backend": "sdpa",
+    "learned_dtype": "bfloat16",
+    "primitive_policy": {
+      "cuda_allow_bf16_reduced_precision_reduction": true,
+      "cuda_allow_tf32": false,
+      "cudnn_allow_tf32": false,
+      "cudnn_benchmark": false,
+      "cudnn_deterministic": true,
+      "deterministic_algorithms": true,
+      "float32_matmul_precision": "highest",
+      "num_threads": 4
+    },
+    "runtime_identity": "9f0cf4faa1a1d1ab9b018876dc7bf667eee1416104552f3beda62aba218cdc4d"
+  },
+  "frontier": "own-functional-positive-R-G-U",
+  "horizon": 19,
+  "input_identity": "84a8b05e8eff6e208f6cd997ac2ee148c56a99f094490132a1996b78e0961c75",
+  "model_identity": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+  "source_identity": {
+    "count-contract.json": "9636302d05ad8221454d62eedc3ef76d85fa382f545c51ddb6b0a58ecb7cb7ce",
+    "flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "flux_functional_qwen_prefix_worker.py": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+    "flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "flux_source_receiver.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+    "long-description.txt": "1bf43008819b4e17d08ed8bd5905624868fdeb99771e3e8b338ce490791fe094",
+    "plan.json": "485ad9484bb47661585f61e6a13f7b9f5c5730b856d53fd96be16984616e563f",
+    "preflight.v1.json": "ec870e5d9b155daf64197958bac9aac2ccf0fbcd20a4757ecb6bccc0b2017c1e",
+    "protocol.json": "5ce41dda16fdfd687aba584f9aaedc389d0ec8bf088b2ea63de8b4456ddf9cf2",
+    "qwen-config.json": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+    "qwen-parameter-artifacts.json": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+    "qwen-source-binding.json": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+    "qwen_h18_state_history.py": "17084d404f5ae00557e4ad8e94a8b84704787c47ebf9c875228cb452c4857036",
+    "qwen_sign_shortcut.py": "8e59051a34bc8e89c9376fd29aec966df9cbe84560c81f86910504172caaa457",
+    "qwen_sign_shortcut_campaign.py": "83f9d459938ccb96b913def78862cffc869cb6f0b4404a7f116d0a46fed184af",
+    "retrieve_qwen_weights.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+    "short-objects.txt": "90f0c110ea43399d147f404824fedb9ad4bf7ec4b6ee89a8f27283fcea8c2037",
+    "short-procedure.txt": "a066714dd56745fafe36e021681e3954eddc280657bbd130d6abebb814d65f1d",
+    "source-cohort.json": "99e03d452031ffa2f0efdc6beddb9cafa8d4b2135946a6527a9e70ac7d990299",
+    "stage_qwen_sign_shortcut.py": "6f083cc6a039d50f8f206731d4a0fc87e76f9bf464c0d8cedba4caaecf04887b"
+  }
+}

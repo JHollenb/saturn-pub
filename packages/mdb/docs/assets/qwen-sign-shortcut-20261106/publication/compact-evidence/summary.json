@@ -1,0 +1,11 @@
+{
+  "atlas_observations": 3,
+  "cases": 3,
+  "catalog_records": 3,
+  "job_id": "job-56b19223977c",
+  "model_calls": 0,
+  "request_sha256": "791416007b636892b0ae40f9fbdd4e4ee9000b149d5705b05da5f1d792fd7216",
+  "schema": "mdb-qwen-sign-shortcut-compact-v1",
+  "seconds": 27.3741798941046,
+  "source_job": "job-8c949b1c0278"
+}

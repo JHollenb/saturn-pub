@@ -1,0 +1,11 @@
+{
+  "family_induction": false,
+  "generic_rule_id": "law.qwen.sign-shortcut.bf16-primitive-order.v1",
+  "observations": [
+    "58a04ea80d8fc7b1724efd1b14ae7a27a97e001be46e68564025284c08065ffe",
+    "5ab02a27dfc1646fd1821b34f4ffd1398b8135af318956f7c9f025a5b6d04fe3",
+    "02105fbb98bba29429febd1807ef9bde1575bfffca4101c4d9ad0676b7912a32"
+  ],
+  "scope": "Exact-source conditional observations; no new model call or mathematical proof.",
+  "status": "observation; no validated rule"
+}

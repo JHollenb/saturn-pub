@@ -167,3 +167,8 @@ image panel or a semantic name.
 
 The mathematical narrative and inspected figures are in the
 [blog post](../../../../obsidian/blog/2026-11-06-070800-where-a-sign-flip-becomes-a-different-computation.md).
+
+The proposed follow-up is now [executed on three fresh contexts](QWEN-SIGN-SHORTCUT.md):
+all three endpoint channels and signed edit-response channels match exactly.
+Residual signed-zero counterexamples remain. The next applicability cut tests
+row-wise attention support rather than repeating complete image inference.

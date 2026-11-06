@@ -1,0 +1,170 @@
+{
+  "schema": "mdb-flux-holistic-review-v1",
+  "review_number": 9,
+  "review_status": "complete-bounded-holistic-review",
+  "cadence": {
+    "anchor_completed_research_turn": 12,
+    "next_review_no_later_than_turn": 15,
+    "earlier_trigger": "Major frontier closure, contradictory evidence, or a change in architecture/claim scope"
+  },
+  "scope": "Saved-evidence/source/narrative review of H18 history and cumulative raw-prompt, finite-profile and intervention work. No original model, tokenizer, recurrence, staging or job execution. No production or blog edits.",
+  "source_sha256": {
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-070800-where-a-sign-flip-becomes-a-different-computation.md": "e8ecb9a548e433f4540041e5543433c8911dce563850c265b58c6a5f41d97fa1",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-064228-predicting-an-image-after-removing-one-hidden-state-route.md": "1fbe2c2393cc358b208ce2a7adf09b8c03ad5df98d04481ae961f5875503da21",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-054800-five-attention-values-become-a-different-hidden-state.md": "c2114d950655ac43d10d43125ca4a6d7a14691fb82d7f3525bc1dea407a9c5f9",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-051300-predicting-two-attention-paths-and-their-image-futures.md": "19656fe25f381c0998cdc52cff2e5b72137dfc533b76ac3d39297621cfca6537",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-042000-predicting-the-image-from-the-raw-prompt.md": "54d82b9f36da8312d96d570f8cc7976646f2c8370841adf25eb8d813d7387307",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-05-153154-state-context-and-the-mathematics-of-time-circuits.md": "826c6c12a6b7b155a46dcee1f352699b710c5eb43360ae8dcc36123f231ccad9",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-05-154412-computation-first-flux-dynamic-symbol-table.md": "28dc3b7c82f6ddcc656cec168c81470bbe336d6bc9054c8f2f0de70ba47facd4",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/actual-saved-report-verification-v1.json": "2c7aef4f8781790c0b4eaa1da39c70ff2bcb5ccc7d99db3fc42b02ebcb8a8544",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/scalar-reduction-diagnostics-v1.json": "74ba4c17b621369ebb79fdc9afbfaace50fdb70e102ea4bf0d5f4757d8735ebf",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/compact-collection-01/extracted/binding-minimal-result/audit.json": "548adac8eec327a16a0bc9d0db086daf5caec7df250a89d771ba4bed3dbaa497",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/compact-collection-01/extracted/binding-minimal-result/files.json": "bba4bb1271d24a5d34248d97fae09710dbe2b4b7baa7c72296258af9a3593852",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/run-01/finite-run-review-v1.json": "72364894048c23014d7869ef6128ec583f9acb2615c481ea695718fbfa230ed1"
+  },
+  "independent_saved_checks": {
+    "compact": {
+      "manifest_members_hashed": 48,
+      "manifest_member_bytes": 18796372,
+      "total_with_manifest": 49,
+      "manifest_sha256": "bba4bb1271d24a5d34248d97fae09710dbe2b4b7baa7c72296258af9a3593852"
+    },
+    "primary": {
+      "whole_fields": 2001,
+      "positions": 1206779904,
+      "changed_values": 0,
+      "all_bit_exact": true
+    },
+    "first_suffix_aligned_ports": {
+      "fields": 30,
+      "positions": 74973184,
+      "changed_values": 0,
+      "all_bit_exact": true
+    },
+    "signed_responses": {
+      "fields": 1548,
+      "positions": 1019321337,
+      "changed_values": 0,
+      "all_bit_exact": true
+    },
+    "native_advances": 224,
+    "genuine_FLUX_Acts": 4,
+    "receipt_occurrences": 228,
+    "persistent_context_operand_joins": 8,
+    "transaction": {
+      "phase": "closed",
+      "verified": true,
+      "seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639"
+    },
+    "native_suffix": {
+      "consumed_occurrences": 9,
+      "exact_own_prior_exit": true,
+      "same_source_context": true,
+      "use_cache": false
+    },
+    "limits": "Recounted complete scalar report leaves, source joins and compact byte hashes. Original near-data arrays were audited by the frozen CPU worker, not recomputed in this review. Reader/producer last-digit scalar differences retained."
+  },
+  "material_content_corrections": [],
+  "publication_correction": {
+    "observed": "Viewed publication-v1 endpoint figure still says no new image generation, although the experiment generated image futures.",
+    "action": "Use the already planned caption-only v2 correction before final publication. This is a publisher description error, not changed scientific evidence.",
+    "no_image_semantic_gate": true
+  },
+  "new_evidence": {
+    "local": "All-row H18 sign reversal has zero numerical oddness defect through first-block attention, R, postnorm, gate and up. Gate/up are bitwise antisymmetric. R/postnorm each have477 signed-zero mismatches; Q662 and repeated K608. SiLU is first retained numeric oddness break.",
+    "pair_sums": {
+      "activation_rms": 0.5168301104646923,
+      "product_rms": 0.5719073681155931,
+      "MLP_rms": 1.466944181548986,
+      "H19_rms": 1.4669348215944293,
+      "MLP_maxabs": 41.890625,
+      "plus_addition_remainder_rms": 0.004150467106151232,
+      "minus_addition_remainder_rms": 0.0055437619186089575
+    },
+    "scope": "These are full pair sums, twice the even component. The extra Wd(GU) projection was not executed. Rounding decomposition is saved-value accounting, not an additional independent forecast.",
+    "downstream": "Holding own H9 and negative H18 fixed, changing original H27 to own regenerated H27 changes the consumed conditioning and complete image. This is a controlled conditional H27-route effect, not a full factorial attribution.",
+    "pixel_response": {
+      "rms": 78.74462852929587,
+      "maxabs": 245,
+      "signed_mean": -55.53583017985026,
+      "changed_channels": 783855,
+      "total_channels": 786432,
+      "forecast_error": 0
+    },
+    "visual": "Viewed delivered original endpoint figure: direct branch retains recognizable orange ring and blue cube with a small top hole; coherent branch is fragmented texture. Informal task-aware observation, no calibrated object necessity claim.",
+    "scalar_counterexample": "Two NumPy/Torch Hnext RMS reductions differ by2.220446049250313e-16. This does not alter retained BF16 equality.",
+    "raw_label_limit": "history_response operands are minus[k]-common[k], despite inherited generic coherent-minus-direct label. Reader preserves raw and supplies correct interpretation."
+  },
+  "cumulative_assessment": {
+    "what_is_understood": [
+      "Own-state composition forms conditioning from the pinned raw parser contract, noise/schedule, all112 denoiser transitions and decoder pixels without native intermediate refresh, under the declared original shared numerical primitives.",
+      "Whole-state prediction now survives real downstream conditioning Acts and an upstream state-history intervention; actual consumer joins make this more than endpoint image similarity.",
+      "The mask/dispatch microscope explains one finite discrepancy using fixed operands and observed efficient-versus-Flash execution. H18 identifies a separate architecture-derived symmetry and its first broken operation.",
+      "Operation, source parameters, receiving operands, numerical profile and clock have distinct roles. Generic computation records can name these laws and connect measured occurrences without a semantic dictionary."
+    ],
+    "not_established": [
+      "Universal bit parity across prompts, shapes, devices or numerical profiles; one bias-free first-block symmetry is not nine-block oddness.",
+      "Independent CUDA/GEMM/attention implementation, a newly learned surrogate law, or complete native ATen instruction coverage.",
+      "Necessary/sufficient object representations, a causal share for one MLP, or complete semantic mediation from the first even write through the final picture.",
+      "Automatic equation-family discovery or automatic applicability inference from curated exact-context catalog matches.",
+      "A genuine public full512 padded-SDPA Qwen Act boundary; current upstream wrapper is source-qualified component execution."
+    ],
+    "why_this_is_not_empty_execution": "Original architecture/weights/shared primitives are acknowledged inputs. The explanatory gain is explicit own-operand formation, prospective complete state/response prediction, controlled source-route comparisons and actual consumed continuation. Merely rerunning the same wrapper on more examples would add little after these facts close.",
+    "preserved_counterevidence": [
+      "Independent higher-precision references previously missed small counterfactual responses despite small endpoint errors.",
+      "Signed-zero defects refute blanket bitwise oddness; rounding and cancellation are part of the finite law.",
+      "Writer rankings can reverse after a consumer; state-relative and absolute errors can move oppositely.",
+      "Context transfer did not establish its predicted complete color swap; native image appearance is not semantic mechanism certification.",
+      "Packaging failures and derived recovery manifests remain failures/recoveries, not retroactive original success."
+    ]
+  },
+  "ranked_next_cuts": [
+    {
+      "rank": 1,
+      "name": "Prospective transfer of the finite first-block sign shortcut",
+      "purpose": "Test one reusable structural relation on fresh receiving states, rather than another complete image wrapper.",
+      "design": "Three fixed fresh raw contexts, covering padded and all-attended dispatch. From each own functional prefix form positive R/G/U, then Sminus=add_BF16(-R,Linear_BF16(SiLU_BF16(-G)*(-U),Wd)). Independently compute full functional negative block and seal all states and signed responses before native learned targets.",
+      "census": "At horizon19/edit18:3*(19common+1negative)=60 full functional blocks, plus3 shortcut down projections;3*(36full/LM+1negative native suffix)=111 native blocks. One hydration, no FLUX/VAE/image branches. State/primitive accounting must name reference-only native tail/LM work.",
+      "predictions": [
+        "Full-functional/native H19 equality is expected under the same qualified primitive profile, as a falsifiable observation.",
+        "Shortcut numerical H19 and signed edit response equality is a worthwhile prospective hypothesis; raw bit equality remains a separate stronger observation, especially at signed zeros.",
+        "Numerical first-block antisymmetry through R/G/U is expected in the tested regimes; retain every earliest failure and do not qualify it from native operands before predicting."
+      ],
+      "comparisons": "Keep S-Fminus, Fminus-Nminus, S-Nminus and (S-Fplus)-(Nminus-Nplus) separately. Endpoint relative errors use corresponding native endpoint RMS; response errors use native edit-response RMS, with null denominator at zero. Retain complete vectors/hashes and cross terms where decomposed.",
+      "restrictions": "Do not regroup into Wd(GU)-M; do not refresh from native positive ports; do not repair individual signs after seeing target bits; no all-nine-block symmetry or speedup claim."
+    },
+    {
+      "rank": 2,
+      "name": "Resolve the first failed prerequisite, only if the transfer misses",
+      "purpose": "Separate a finite symmetry failure from an implementation/profile discrepancy.",
+      "design": "Use the already retained positive/negative port pairs to locate the first disagreement. If full functional equals native but shortcut misses, test the implicated normalization/attention/projection prerequisite on identical operands. If full functional misses too, fix/qualify that profile before calling it a structural-law failure.",
+      "limits": "A targeted matched-operand diagnostic is preferable to another full-image run or a blanket kernel reimplementation."
+    },
+    {
+      "rank": 3,
+      "name": "Consumer test only if the shortcut leaves a consequential discrepancy",
+      "purpose": "Measure whether the cheaper relation's actual discrepancy matters to the next computation.",
+      "design": "Feed the sealed shortcut H19 and the complete own-state reference H19 into one identical next-block consumer, preserving masks/positions/history. Forecast both before native. Extend to H27 or images only if a newly explicit continuation question requires it.",
+      "limits": "If shortcut output is already exact, repeating its full image future adds no new causal distinction; publish the reusable applicability record instead."
+    }
+  ],
+  "bounded_completion_criteria": {
+    "definition": "For a declared computation domain, an account is operationally complete when input formation, sufficient state, every update and finite profile are explicitly bound; its own-state predictions and declared interventions close through actual consumers; and unqualified conditions or misses are named. Evidence supports that bounded account, not all possible inputs or hardware.",
+    "already_closed": "Core raw-to-image formation and consumed continuation in the tested source/profile, plus specific controlled input-route and finite-dispatch explanations.",
+    "remaining": "Transfer of the newly proposed local sign relation, portable/reusable naming and applicability rather than one law ID per specimen, and any concrete unresolved profile/consumer miss.",
+    "not_requirements": [
+      "Compression",
+      "Semantic names or object dictionaries",
+      "Independent implementation of every CUDA primitive",
+      "An endless benchmark of whole-image wrappers"
+    ],
+    "stopping_rule": "After the fixed transfer panel, publish its qualified domain and misses. Do not automatically enlarge the cohort or regenerate full images. Choose another run only for a named unresolved state/update/consumer/applicability question."
+  },
+  "goal_status": "active",
+  "reviewer_actions": {
+    "new_models": 0,
+    "new_jobs": 0,
+    "new_tokenizer_calls": 0,
+    "production_edits": 0
+  }
+}

@@ -1,0 +1,947 @@
+{
+  "arrays_or_parameter_exports": false,
+  "bytes": 5232708,
+  "copied": {
+    "advisory/direction-09.md": {
+      "bytes": 7688,
+      "sha256": "7fa4885776ca56cce82d5501dd1ee82243d207f0d2cc275469e32044e0f0d46b",
+      "source": "artifacts/mdb-flux-understanding-20261106/direction-09.md"
+    },
+    "advisory/holistic-review-09.json": {
+      "bytes": 14012,
+      "sha256": "568068f2e17953804fa4af4f984aca3f33808c7dabca53673a1e94b1c95e3383",
+      "source": "artifacts/mdb-flux-understanding-20261106/holistic-review-09.json"
+    },
+    "executed-source/audit-01/audit_flux_functional_pass.py": {
+      "bytes": 42956,
+      "sha256": "2d54e716749dec52c159f3a5214860f4bb8cbf396fd09239540bd55988274c80",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/audit-01/payload/audit_flux_functional_pass.py"
+    },
+    "executed-source/audit-01/audit_flux_functional_qwen_prefix.py": {
+      "bytes": 42678,
+      "sha256": "5004786be76e1f576d2df65e6d1225f8fdd41c4a7e09e5ed8a6c23057db78a97",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/audit-01/payload/audit_flux_functional_qwen_prefix.py"
+    },
+    "executed-source/audit-01/audit_flux_raw_to_image.py": {
+      "bytes": 57722,
+      "sha256": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/audit-01/payload/audit_flux_raw_to_image.py"
+    },
+    "executed-source/audit-01/audit_qwen_sign_shortcut.py": {
+      "bytes": 50422,
+      "sha256": "d33613bbb1d71ee3b2007fb007e5266acaf141994091264bed50d27342237e2c",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/audit-01/payload/audit_qwen_sign_shortcut.py"
+    },
+    "executed-source/audit-01/preflight.v1.json": {
+      "bytes": 538,
+      "sha256": "5312bf986f256db6ffd872aa7932e3929eb3572490a5d4fbf5f4fa976ddf9489",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/audit-01/payload/preflight.v1.json"
+    },
+    "executed-source/audit-01/retrieve_reader_evidence.py": {
+      "bytes": 1442,
+      "sha256": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/audit-01/payload/retrieve_reader_evidence.py"
+    },
+    "executed-source/audit-01/stage_qwen_sign_shortcut_saved_audit.py": {
+      "bytes": 3628,
+      "sha256": "2ca00f6d28d752b4dff14874d1d8d0ea8a53e149f0ab5b569bb00a7f61b9137e",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/audit-01/payload/stage_qwen_sign_shortcut_saved_audit.py"
+    },
+    "executed-source/audit-01/stage_saved_flux_mask_pair_audit.py": {
+      "bytes": 8274,
+      "sha256": "afbb71dfe56b2ed1749c77469dbde8a6c85f554b38831d52f54dd30a647f2ea0",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/audit-01/payload/stage_saved_flux_mask_pair_audit.py"
+    },
+    "executed-source/run-01/count-contract.json": {
+      "bytes": 879,
+      "sha256": "9636302d05ad8221454d62eedc3ef76d85fa382f545c51ddb6b0a58ecb7cb7ce",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/count-contract.json"
+    },
+    "executed-source/run-01/flux_functional_qwen_prefix.py": {
+      "bytes": 27102,
+      "sha256": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/flux_functional_qwen_prefix.py"
+    },
+    "executed-source/run-01/flux_functional_qwen_prefix_worker.py": {
+      "bytes": 42155,
+      "sha256": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/flux_functional_qwen_prefix_worker.py"
+    },
+    "executed-source/run-01/flux_image_tail_microscope.py": {
+      "bytes": 31785,
+      "sha256": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/flux_image_tail_microscope.py"
+    },
+    "executed-source/run-01/flux_source_receiver.py": {
+      "bytes": 12787,
+      "sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/flux_source_receiver.py"
+    },
+    "executed-source/run-01/long-description.txt": {
+      "bytes": 7607,
+      "sha256": "1bf43008819b4e17d08ed8bd5905624868fdeb99771e3e8b338ce490791fe094",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/long-description.txt"
+    },
+    "executed-source/run-01/plan.json": {
+      "bytes": 3550,
+      "sha256": "485ad9484bb47661585f61e6a13f7b9f5c5730b856d53fd96be16984616e563f",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/plan.json"
+    },
+    "executed-source/run-01/preflight.v1.json": {
+      "bytes": 1063,
+      "sha256": "ec870e5d9b155daf64197958bac9aac2ccf0fbcd20a4757ecb6bccc0b2017c1e",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/preflight.v1.json"
+    },
+    "executed-source/run-01/protocol.json": {
+      "bytes": 10952,
+      "sha256": "5ce41dda16fdfd687aba584f9aaedc389d0ec8bf088b2ea63de8b4456ddf9cf2",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/protocol.json"
+    },
+    "executed-source/run-01/qwen-config.json": {
+      "bytes": 1536,
+      "sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/qwen-config.json"
+    },
+    "executed-source/run-01/qwen-parameter-artifacts.json": {
+      "bytes": 433549,
+      "sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/qwen-parameter-artifacts.json"
+    },
+    "executed-source/run-01/qwen-source-binding.json": {
+      "bytes": 65926,
+      "sha256": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/qwen-source-binding.json"
+    },
+    "executed-source/run-01/qwen_h18_state_history.py": {
+      "bytes": 18589,
+      "sha256": "17084d404f5ae00557e4ad8e94a8b84704787c47ebf9c875228cb452c4857036",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/qwen_h18_state_history.py"
+    },
+    "executed-source/run-01/qwen_sign_shortcut.py": {
+      "bytes": 9830,
+      "sha256": "8e59051a34bc8e89c9376fd29aec966df9cbe84560c81f86910504172caaa457",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/qwen_sign_shortcut.py"
+    },
+    "executed-source/run-01/qwen_sign_shortcut_campaign.py": {
+      "bytes": 38915,
+      "sha256": "83f9d459938ccb96b913def78862cffc869cb6f0b4404a7f116d0a46fed184af",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/qwen_sign_shortcut_campaign.py"
+    },
+    "executed-source/run-01/retrieve_qwen_weights.py": {
+      "bytes": 22624,
+      "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/retrieve_qwen_weights.py"
+    },
+    "executed-source/run-01/short-objects.txt": {
+      "bytes": 117,
+      "sha256": "90f0c110ea43399d147f404824fedb9ad4bf7ec4b6ee89a8f27283fcea8c2037",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/short-objects.txt"
+    },
+    "executed-source/run-01/short-procedure.txt": {
+      "bytes": 145,
+      "sha256": "a066714dd56745fafe36e021681e3954eddc280657bbd130d6abebb814d65f1d",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/short-procedure.txt"
+    },
+    "executed-source/run-01/source-cohort.json": {
+      "bytes": 3395,
+      "sha256": "99e03d452031ffa2f0efdc6beddb9cafa8d4b2135946a6527a9e70ac7d990299",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/source-cohort.json"
+    },
+    "executed-source/run-01/stage_qwen_sign_shortcut.py": {
+      "bytes": 23608,
+      "sha256": "d0ac0c75fa48bc48d5202a9cb37501a3af823c72615eb8c95d44c1db0ef134e9",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/payload/stage_qwen_sign_shortcut.py"
+    },
+    "executed-source/run-02/count-contract.json": {
+      "bytes": 879,
+      "sha256": "9636302d05ad8221454d62eedc3ef76d85fa382f545c51ddb6b0a58ecb7cb7ce",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/count-contract.json"
+    },
+    "executed-source/run-02/flux_functional_qwen_prefix.py": {
+      "bytes": 27102,
+      "sha256": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/flux_functional_qwen_prefix.py"
+    },
+    "executed-source/run-02/flux_functional_qwen_prefix_worker.py": {
+      "bytes": 42155,
+      "sha256": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/flux_functional_qwen_prefix_worker.py"
+    },
+    "executed-source/run-02/flux_image_tail_microscope.py": {
+      "bytes": 31785,
+      "sha256": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/flux_image_tail_microscope.py"
+    },
+    "executed-source/run-02/flux_source_receiver.py": {
+      "bytes": 12787,
+      "sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/flux_source_receiver.py"
+    },
+    "executed-source/run-02/long-description.txt": {
+      "bytes": 7607,
+      "sha256": "1bf43008819b4e17d08ed8bd5905624868fdeb99771e3e8b338ce490791fe094",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/long-description.txt"
+    },
+    "executed-source/run-02/plan.json": {
+      "bytes": 3550,
+      "sha256": "485ad9484bb47661585f61e6a13f7b9f5c5730b856d53fd96be16984616e563f",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/plan.json"
+    },
+    "executed-source/run-02/preflight.v1.json": {
+      "bytes": 1063,
+      "sha256": "ec870e5d9b155daf64197958bac9aac2ccf0fbcd20a4757ecb6bccc0b2017c1e",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/preflight.v1.json"
+    },
+    "executed-source/run-02/protocol.json": {
+      "bytes": 10952,
+      "sha256": "5ce41dda16fdfd687aba584f9aaedc389d0ec8bf088b2ea63de8b4456ddf9cf2",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/protocol.json"
+    },
+    "executed-source/run-02/qwen-config.json": {
+      "bytes": 1536,
+      "sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/qwen-config.json"
+    },
+    "executed-source/run-02/qwen-parameter-artifacts.json": {
+      "bytes": 433549,
+      "sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/qwen-parameter-artifacts.json"
+    },
+    "executed-source/run-02/qwen-source-binding.json": {
+      "bytes": 65926,
+      "sha256": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/qwen-source-binding.json"
+    },
+    "executed-source/run-02/qwen_h18_state_history.py": {
+      "bytes": 18589,
+      "sha256": "17084d404f5ae00557e4ad8e94a8b84704787c47ebf9c875228cb452c4857036",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/qwen_h18_state_history.py"
+    },
+    "executed-source/run-02/qwen_sign_shortcut.py": {
+      "bytes": 9830,
+      "sha256": "8e59051a34bc8e89c9376fd29aec966df9cbe84560c81f86910504172caaa457",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/qwen_sign_shortcut.py"
+    },
+    "executed-source/run-02/qwen_sign_shortcut_campaign.py": {
+      "bytes": 38915,
+      "sha256": "83f9d459938ccb96b913def78862cffc869cb6f0b4404a7f116d0a46fed184af",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/qwen_sign_shortcut_campaign.py"
+    },
+    "executed-source/run-02/retrieve_qwen_weights.py": {
+      "bytes": 22624,
+      "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/retrieve_qwen_weights.py"
+    },
+    "executed-source/run-02/short-objects.txt": {
+      "bytes": 117,
+      "sha256": "90f0c110ea43399d147f404824fedb9ad4bf7ec4b6ee89a8f27283fcea8c2037",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/short-objects.txt"
+    },
+    "executed-source/run-02/short-procedure.txt": {
+      "bytes": 145,
+      "sha256": "a066714dd56745fafe36e021681e3954eddc280657bbd130d6abebb814d65f1d",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/short-procedure.txt"
+    },
+    "executed-source/run-02/source-cohort.json": {
+      "bytes": 3395,
+      "sha256": "99e03d452031ffa2f0efdc6beddb9cafa8d4b2135946a6527a9e70ac7d990299",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/source-cohort.json"
+    },
+    "executed-source/run-02/stage_qwen_sign_shortcut.py": {
+      "bytes": 23664,
+      "sha256": "6f083cc6a039d50f8f206731d4a0fc87e76f9bf464c0d8cedba4caaecf04887b",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/payload/stage_qwen_sign_shortcut.py"
+    },
+    "execution/audit-01/admission-command.json": {
+      "bytes": 1334,
+      "sha256": "8569e3fd723a194e99c277aa077bdade85dc4a979af1b88933bef20d7939d889",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/audit-01/admission-command.json"
+    },
+    "execution/audit-01/job-completed.json": {
+      "bytes": 14163,
+      "sha256": "18967768fc2ecec34eb44fdc351f12d3a6a4938d17ddab7e4fe487db9c9815d1",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/audit-01/job-completed.json"
+    },
+    "execution/audit-01/request.json": {
+      "bytes": 3993,
+      "sha256": "9c4886949569c8e3bfaae5b9568d3906b2ad911b44834127554ebf6f43c57084",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/audit-01/request.json"
+    },
+    "execution/audit-01/source-job.json": {
+      "bytes": 34305,
+      "sha256": "31c887d8eb6044e636139bc654f83ebf28c910c1c5167d1da6267922dd386354",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/audit-01/source-job.json"
+    },
+    "execution/audit-01/source-worker.log": {
+      "bytes": 2649,
+      "sha256": "dce3a0885b03f865c63085e951ee21a7e34e0a7e572c2e036383d565dc709391",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/audit-01/source-worker.log"
+    },
+    "execution/audit-01/submission.json": {
+      "bytes": 35,
+      "sha256": "ab6f328f66f3eeb69d80e16b30b011decf2d7f27ee5637bec2ab83cae8a20e92",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/audit-01/submission.json"
+    },
+    "execution/run-01/admission-command.json": {
+      "bytes": 1546,
+      "sha256": "e3edd12c8f6180c1ed558e2b78ec88899f81b33f6d4975590103bf94e039bebe",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/admission-command.json"
+    },
+    "execution/run-01/finite-run-review-v1.json": {
+      "bytes": 7569,
+      "sha256": "03d6f98f1bf3a5f6ef39652883f59a1b2ff03b2009c8da987c83e8202416eded",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/finite-run-review-v1.json"
+    },
+    "execution/run-01/job-first-observed.json": {
+      "bytes": 38691,
+      "sha256": "53fa0f594b8b76966431835c784546174d243917ef9b7d4c2ab93374d5d7971c",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/job-first-observed.json"
+    },
+    "execution/run-01/request.json": {
+      "bytes": 11111,
+      "sha256": "e1b24890a0c27d0c51397caad98727219402f9272c5ad719599351f4a3369123",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/request.json"
+    },
+    "execution/run-01/source-cohort.json": {
+      "bytes": 3395,
+      "sha256": "99e03d452031ffa2f0efdc6beddb9cafa8d4b2135946a6527a9e70ac7d990299",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/source-cohort.json"
+    },
+    "execution/run-01/staged-command.json": {
+      "bytes": 1481,
+      "sha256": "8fab68ddfe2b420d07c54aa2a3648a9874318018486d0ec852ec7d95dd54df47",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/staged-command.json"
+    },
+    "execution/run-01/submission.json": {
+      "bytes": 35,
+      "sha256": "888abe504267b57fedae93b67af7a1b16265acc49cbaa7311d34b7d1bc8dd894",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-01/submission.json"
+    },
+    "execution/run-02/admission-command.json": {
+      "bytes": 1592,
+      "sha256": "103ed44fb87ce00fc61438cd7716d49d7dd87fe5ddac1cefb9c829397f0e3f86",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/admission-command.json"
+    },
+    "execution/run-02/finite-run-review-v1.json": {
+      "bytes": 1652,
+      "sha256": "f943948ba0db1516c93fdacc493d47675fb7815dc4f1eb358867fc1fb2e49c33",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/finite-run-review-v1.json"
+    },
+    "execution/run-02/job-completed.json": {
+      "bytes": 27704,
+      "sha256": "beac82a6cafcb5d89a7eed1c1cdf1460056e37a7ab724f2aed9613da7088aefd",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/job-completed.json"
+    },
+    "execution/run-02/request.json": {
+      "bytes": 11111,
+      "sha256": "7a986d2ae78fd496f6908fb040057e902e2c208f3314ee12b09afd6a2f841573",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/request.json"
+    },
+    "execution/run-02/source-cohort.json": {
+      "bytes": 3395,
+      "sha256": "99e03d452031ffa2f0efdc6beddb9cafa8d4b2135946a6527a9e70ac7d990299",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/source-cohort.json"
+    },
+    "execution/run-02/staged-command.json": {
+      "bytes": 1527,
+      "sha256": "2c0faef5010ccfbf23873771b7ba253f88d592f6ad027f3de5993d64aaeb0f4f",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/staged-command.json"
+    },
+    "execution/run-02/submission.json": {
+      "bytes": 35,
+      "sha256": "2d39a80608a6175e25cbf09d24ad1a03d46f94df18bfb5002137459ae949e7f5",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/run-02/submission.json"
+    },
+    "publication/README.md": {
+      "bytes": 1073,
+      "sha256": "998d92406c1b5d9262daf1608194eeb456950f3bf30823a6b983576866903cd7",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/README.md"
+    },
+    "publication/compact-evidence/atlas/provenance.json": {
+      "bytes": 483,
+      "sha256": "59e82805cff2606a155fb906ae8f2c2cb69145252a50564f8d94bc5db138e6f8",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/atlas/provenance.json"
+    },
+    "publication/compact-evidence/atlas/receipts/02105fbb98bba29429febd1807ef9bde1575bfffca4101c4d9ad0676b7912a32.json": {
+      "bytes": 15184,
+      "sha256": "96de69dbdff95992ee468301438da06796e2ad9d885af8bfd21afa3df0a42763",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/atlas/receipts/02105fbb98bba29429febd1807ef9bde1575bfffca4101c4d9ad0676b7912a32.json"
+    },
+    "publication/compact-evidence/atlas/receipts/58a04ea80d8fc7b1724efd1b14ae7a27a97e001be46e68564025284c08065ffe.json": {
+      "bytes": 15170,
+      "sha256": "75d2673348a3ac85df2f162acd072243957cb5440951b17f2bfaee569e294a75",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/atlas/receipts/58a04ea80d8fc7b1724efd1b14ae7a27a97e001be46e68564025284c08065ffe.json"
+    },
+    "publication/compact-evidence/atlas/receipts/5ab02a27dfc1646fd1821b34f4ffd1398b8135af318956f7c9f025a5b6d04fe3.json": {
+      "bytes": 15154,
+      "sha256": "d976c483bfce54d51e926df951883df1bd118a36ef2ab1769083ecf2dc37a37d",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/atlas/receipts/5ab02a27dfc1646fd1821b34f4ffd1398b8135af318956f7c9f025a5b6d04fe3.json"
+    },
+    "publication/compact-evidence/audit.json": {
+      "bytes": 865552,
+      "sha256": "b8887f9c2632e6097fd76782fcc91a29dcb79acc0d15e5c8bd321a69968c2020",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/audit.json"
+    },
+    "publication/compact-evidence/catalog/equations/6b602970451ee2178136196577f6880a5fa880e6e7df6bc4bd5b453524d8c02f.json": {
+      "bytes": 17835,
+      "sha256": "cf3a9181f7075ed29080cd1fa5bd68c6ed78ce8c8f827836d5879d851efb802d",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/catalog/equations/6b602970451ee2178136196577f6880a5fa880e6e7df6bc4bd5b453524d8c02f.json"
+    },
+    "publication/compact-evidence/catalog/equations/9ef8b1cfdaa409ff52c5450a2d4730c008031710529363032e114ec812b3263c.json": {
+      "bytes": 17821,
+      "sha256": "801b938cb4100296a36eac8921ef24fed68e3b2689a9e84fff91657947776b69",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/catalog/equations/9ef8b1cfdaa409ff52c5450a2d4730c008031710529363032e114ec812b3263c.json"
+    },
+    "publication/compact-evidence/catalog/equations/fa827b72fc25840b047602c5834da65b6812cda37ac17664d5eb2cde43e5117b.json": {
+      "bytes": 17805,
+      "sha256": "c854f4d9dcc124cdfcc67e2f3d4c42c7258bce62601697e6630303aa97d72c01",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/catalog/equations/fa827b72fc25840b047602c5834da65b6812cda37ac17664d5eb2cde43e5117b.json"
+    },
+    "publication/compact-evidence/catalog/provenance.json": {
+      "bytes": 10606,
+      "sha256": "366a2e29013e1c6f6399c65b6507206876e10d5c2c01cf4a1c505d683eeb24f4",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/catalog/provenance.json"
+    },
+    "publication/compact-evidence/coverage.json": {
+      "bytes": 969,
+      "sha256": "9f8a9fa7f4cabc3f3f07525bce4282ec814d0c14643a7c13ee1ae430b0b7342c",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/coverage.json"
+    },
+    "publication/compact-evidence/external-evidence.json": {
+      "bytes": 53183,
+      "sha256": "337dbfc056ee43136ffee4a0e7f3e2a939a64576745ad882d015ea72430a4351",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/external-evidence.json"
+    },
+    "publication/compact-evidence/files.json": {
+      "bytes": 3254,
+      "sha256": "73a1eb8cd5e0557ac893a1d6d14e6c24a0ea2dbb4107684cf47d748dbb8d0d00",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/files.json"
+    },
+    "publication/compact-evidence/request.json": {
+      "bytes": 3993,
+      "sha256": "9c4886949569c8e3bfaae5b9568d3906b2ad911b44834127554ebf6f43c57084",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/request.json"
+    },
+    "publication/compact-evidence/retrieve_evidence.py": {
+      "bytes": 1442,
+      "sha256": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/retrieve_evidence.py"
+    },
+    "publication/compact-evidence/source-comparisons.json": {
+      "bytes": 24229,
+      "sha256": "4cb6a912d05f2fc706629d7599d78dc665ebebc27152058e928f6a5546bd5921",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/source-comparisons.json"
+    },
+    "publication/compact-evidence/source-declared-config.json": {
+      "bytes": 3306,
+      "sha256": "5d80957dd3ef3bbb784dbbfac90c7d1c848a519405cd4f8f2c9f4456c1380a73",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/source-declared-config.json"
+    },
+    "publication/compact-evidence/source-files.json": {
+      "bytes": 72405,
+      "sha256": "d573bffe5c0c3dfc3d1c353721f5696909f73b75fb6ff293aed2e905f4ec0c33",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/source-files.json"
+    },
+    "publication/compact-evidence/source-forecast-responses.json": {
+      "bytes": 3586,
+      "sha256": "ce3191e8c1990936e0b1c96585ff6663dfaf11434377eb99a62bfead688685dd",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/source-forecast-responses.json"
+    },
+    "publication/compact-evidence/source-metadata/qwen_config-qwen-config.json": {
+      "bytes": 1536,
+      "sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/source-metadata/qwen_config-qwen-config.json"
+    },
+    "publication/compact-evidence/source-metadata/qwen_parameter_manifest-qwen-parameter-artifacts.json": {
+      "bytes": 433549,
+      "sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/source-metadata/qwen_parameter_manifest-qwen-parameter-artifacts.json"
+    },
+    "publication/compact-evidence/source-metadata/qwen_source_binding-qwen-source-binding.json": {
+      "bytes": 65926,
+      "sha256": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/source-metadata/qwen_source_binding-qwen-source-binding.json"
+    },
+    "publication/compact-evidence/source-metadata/retrieval_script-retrieve_qwen_weights.py": {
+      "bytes": 22624,
+      "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/source-metadata/retrieval_script-retrieve_qwen_weights.py"
+    },
+    "publication/compact-evidence/source-plan.json": {
+      "bytes": 5232,
+      "sha256": "530898a6e6c691c474fa9f13be30b0bb7dfed3aac72fdf17bde0fb53dfbcd610",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/source-plan.json"
+    },
+    "publication/compact-evidence/source-protocol.json": {
+      "bytes": 10952,
+      "sha256": "5ce41dda16fdfd687aba584f9aaedc389d0ec8bf088b2ea63de8b4456ddf9cf2",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/source-protocol.json"
+    },
+    "publication/compact-evidence/source-request.json": {
+      "bytes": 10093,
+      "sha256": "612c62919ceaf2891e9aa47348f5b5d7ec73579f0a1bc176998e189c18d57b79",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/source-request.json"
+    },
+    "publication/compact-evidence/source-runtime.json": {
+      "bytes": 2132,
+      "sha256": "fe12ec738cf0273dbbfa5edee83b7f6b6bea3b9afefca173a9d743106d619833",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/source-runtime.json"
+    },
+    "publication/compact-evidence/source-source.json": {
+      "bytes": 70641,
+      "sha256": "0b3fa63d8fbd252c4ee8f365b21012a266447cfdb2b953886187326d04bac3e4",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/source-source.json"
+    },
+    "publication/compact-evidence/source-summary.json": {
+      "bytes": 2075,
+      "sha256": "500b32c5e6c568e2c4f6123d3a7126bcf7047d925402b9c554427744a15c24e2",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/source-summary.json"
+    },
+    "publication/compact-evidence/source-timeline.jsonl": {
+      "bytes": 3111,
+      "sha256": "6f4fc2532fe9d074e1a284a1b4c7528393f17065970f323954b84cef9e79c4be",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/source-timeline.jsonl"
+    },
+    "publication/compact-evidence/summary.json": {
+      "bytes": 324,
+      "sha256": "b785e09bcaa0be48c7dde98ebb822e655ebd61f426312d04fc5fbbd9104ec8f4",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/compact-evidence/summary.json"
+    },
+    "publication/conditional-computation-path.png": {
+      "bytes": 110223,
+      "sha256": "cc608435ac234a2f4de47d794758c8e913bd232c9c4d1836d56743e86ec41328",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/conditional-computation-path.png"
+    },
+    "publication/figure-layout.json": {
+      "bytes": 2568,
+      "sha256": "b8f630e54971cebe3403d7d682e30c97d9f00206b06e1e7011981def6adfc0cb",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/figure-layout.json"
+    },
+    "publication/oddness-and-zero-signs.png": {
+      "bytes": 233815,
+      "sha256": "7293ea8ecc8a2ad0a420192d3251a8099ff9f281e898d58dcc696c8a0f518e22",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/oddness-and-zero-signs.png"
+    },
+    "publication/provenance/audit-qualification.json": {
+      "bytes": 4173,
+      "sha256": "8f85e4c5e93f568e40f0c22e0bf0260d754ff86a770ddb3ac8a03fdba1fef769",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/provenance/audit-qualification.json"
+    },
+    "publication/provenance/audit_flux_functional_pass.py": {
+      "bytes": 42956,
+      "sha256": "2d54e716749dec52c159f3a5214860f4bb8cbf396fd09239540bd55988274c80",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/provenance/audit_flux_functional_pass.py"
+    },
+    "publication/provenance/audit_flux_functional_qwen_prefix.py": {
+      "bytes": 42678,
+      "sha256": "5004786be76e1f576d2df65e6d1225f8fdd41c4a7e09e5ed8a6c23057db78a97",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/provenance/audit_flux_functional_qwen_prefix.py"
+    },
+    "publication/provenance/audit_flux_raw_to_image.py": {
+      "bytes": 57722,
+      "sha256": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/provenance/audit_flux_raw_to_image.py"
+    },
+    "publication/provenance/audit_qwen_sign_shortcut.py": {
+      "bytes": 50422,
+      "sha256": "d33613bbb1d71ee3b2007fb007e5266acaf141994091264bed50d27342237e2c",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/provenance/audit_qwen_sign_shortcut.py"
+    },
+    "publication/provenance/collection-receipt.json": {
+      "bytes": 958,
+      "sha256": "a5dee387a6e06d74a5cfaa7034ed2f7fc2409a753055e7ba3c2f486ee8b38443",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/provenance/collection-receipt.json"
+    },
+    "publication/provenance/publish_qwen_sign_shortcut.py": {
+      "bytes": 23953,
+      "sha256": "de2b6aa02d668a8ff3193f1099a4b146aa362a980252a5ff34d2e5990f98ee9b",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/provenance/publish_qwen_sign_shortcut.py"
+    },
+    "publication/provenance/retrieve_reader_evidence.py": {
+      "bytes": 1442,
+      "sha256": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/provenance/retrieve_reader_evidence.py"
+    },
+    "publication/publication-receipt.json": {
+      "bytes": 9919,
+      "sha256": "3afb4e7b4f3b12e511f5dd12b44a704a2dfdc0f783e8a0c460ee6d4bf38a68e6",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/publication-receipt.json"
+    },
+    "publication/publication.json": {
+      "bytes": 210085,
+      "sha256": "c692e6495874ca9a8cf3e8e38b5671d45b7df23007cfba911c3bca2529d899f4",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/publication.json"
+    },
+    "publication/shortcut-errors.png": {
+      "bytes": 209204,
+      "sha256": "d8d821e66ee61a4cbd73bb70f9d9599c6a885755478314c972f2296692d4c60a",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1/shortcut-errors.png"
+    },
+    "qualification/audit-qualification-v2/qualification.json": {
+      "bytes": 4173,
+      "sha256": "8f85e4c5e93f568e40f0c22e0bf0260d754ff86a770ddb3ac8a03fdba1fef769",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/audit-qualification-v2/qualification.json"
+    },
+    "qualification/helper-qualification-v1/interface-v1.json": {
+      "bytes": 1962,
+      "sha256": "682047aa093b4cf5b958bcbbbaa60d08f6f29f61b42aa5bc6c2057ec0f6f0c5a",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/helper-qualification-v1/interface-v1.json"
+    },
+    "qualification/helper-qualification-v1/qualification.json": {
+      "bytes": 3048,
+      "sha256": "3275144fed9c901abf624b0dcaa0e80d0a933fc446c2b39447d09d712063fdb1",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/helper-qualification-v1/qualification.json"
+    },
+    "qualification/launcher-config-argument-check-root-v1/payload-seal.json": {
+      "bytes": 264,
+      "sha256": "d1c14278c0e8e58bbfe77ac1979236d2ef5fa7db124f0c2b3ee14ec1cfaa0b4b",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/launcher-config-argument-check-root-v1/payload-seal.json"
+    },
+    "qualification/launcher-config-argument-check-root-v1/receipt.json": {
+      "bytes": 1842,
+      "sha256": "1c3583127763f0ad0e2b38cf6348cc0f52934b8efa4ddbb0d823ff019c183eb1",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/launcher-config-argument-check-root-v1/receipt.json"
+    },
+    "qualification/launcher-config-argument-check-root-v1/saturn_debug_request.json": {
+      "bytes": 3,
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/launcher-config-argument-check-root-v1/saturn_debug_request.json"
+    },
+    "qualification/launcher-config-argument-check-root-v1/saturn_run_config.json": {
+      "bytes": 3,
+      "sha256": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/launcher-config-argument-check-root-v1/saturn_run_config.json"
+    },
+    "qualification/launcher-config-argument-check-root-v1/stderr-confirmed.log": {
+      "bytes": 1445,
+      "sha256": "1ad6359c5d60da13e228976551146a1e1b912aa4cf74bf8d05d3e2bfaa7b5c25",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/launcher-config-argument-check-root-v1/stderr-confirmed.log"
+    },
+    "qualification/launcher-config-argument-check-root-v1/stderr.log": {
+      "bytes": 1445,
+      "sha256": "1ad6359c5d60da13e228976551146a1e1b912aa4cf74bf8d05d3e2bfaa7b5c25",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/launcher-config-argument-check-root-v1/stderr.log"
+    },
+    "qualification/launcher-config-argument-check-root-v1/stdout-confirmed.log": {
+      "bytes": 73,
+      "sha256": "f2574677220c1167430351941f03094441a2040201c87222092fe25a240683ac",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/launcher-config-argument-check-root-v1/stdout-confirmed.log"
+    },
+    "qualification/launcher-config-argument-check-root-v1/stdout.log": {
+      "bytes": 73,
+      "sha256": "f2574677220c1167430351941f03094441a2040201c87222092fe25a240683ac",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/launcher-config-argument-check-root-v1/stdout.log"
+    },
+    "qualification/producer-qualification-v1/help.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/producer-qualification-v1/help.stderr.txt"
+    },
+    "qualification/producer-qualification-v1/help.stdout.txt": {
+      "bytes": 527,
+      "sha256": "8f472a2d1d38cdaf1d040b5a7fc8f86db1ddc69c6fc6e141745cdcfd310d3d57",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/producer-qualification-v1/help.stdout.txt"
+    },
+    "qualification/producer-qualification-v1/interface-v1.json": {
+      "bytes": 4029,
+      "sha256": "606813d4b7e6ce57f5b8310e8ef1faee8f108474cc691accfef9121dc5f59606",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/producer-qualification-v1/interface-v1.json"
+    },
+    "qualification/producer-qualification-v1/qualification.json": {
+      "bytes": 4047,
+      "sha256": "a0d64ab540979ff01dcc09de1ae5c4c8a0b52a56d42b5afb6b3dd23d1efa292b",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/producer-qualification-v1/qualification.json"
+    },
+    "qualification/producer-qualification-v1/ruff.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/producer-qualification-v1/ruff.stderr.txt"
+    },
+    "qualification/producer-qualification-v1/ruff.stdout.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/producer-qualification-v1/ruff.stdout.txt"
+    },
+    "qualification/publisher-qualification-v1/help.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publisher-qualification-v1/help.stderr.txt"
+    },
+    "qualification/publisher-qualification-v1/help.stdout.txt": {
+      "bytes": 1011,
+      "sha256": "d4d02d8e9dc121f4fd531a90cafc900515af65ee377fbf907bd6c07b7b6d953c",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publisher-qualification-v1/help.stdout.txt"
+    },
+    "qualification/publisher-qualification-v1/invocations-v1.json": {
+      "bytes": 2344,
+      "sha256": "4ba0443595dd592503e04bd530c16fdce24a23d0577c9e2c1fbeb8119d8e06d4",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publisher-qualification-v1/invocations-v1.json"
+    },
+    "qualification/publisher-qualification-v1/qualification.json": {
+      "bytes": 7052,
+      "sha256": "49584a50977d84e63ac4637bb4253cbb0af0a5e174c0dc9ddf6673fbf169dd09",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publisher-qualification-v1/qualification.json"
+    },
+    "qualification/publisher-qualification-v1/ruff.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publisher-qualification-v1/ruff.stderr.txt"
+    },
+    "qualification/publisher-qualification-v1/ruff.stdout.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/publisher-qualification-v1/ruff.stdout.txt"
+    },
+    "qualification/saved-audit-controller-qualification-v1/controller-invocations-v1.json": {
+      "bytes": 1329,
+      "sha256": "827dc9a2dc0c9f725858bbb823ec3e5b0fce2f588abdf568ceb881a78e913498",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-audit-controller-qualification-v1/controller-invocations-v1.json"
+    },
+    "qualification/saved-audit-controller-qualification-v1/help.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-audit-controller-qualification-v1/help.stderr.txt"
+    },
+    "qualification/saved-audit-controller-qualification-v1/help.stdout.txt": {
+      "bytes": 541,
+      "sha256": "e0987048192154ffc199bd5ddb663d5a9771f60e46761df55cc3191371e7f833",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-audit-controller-qualification-v1/help.stdout.txt"
+    },
+    "qualification/saved-audit-controller-qualification-v1/qualification.json": {
+      "bytes": 3352,
+      "sha256": "57ae6bb83f54501992b9f63378e0a175d2c70ed291963f28c0faf3a91a73a7a9",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-audit-controller-qualification-v1/qualification.json"
+    },
+    "qualification/saved-audit-controller-qualification-v1/ruff.stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-audit-controller-qualification-v1/ruff.stderr.txt"
+    },
+    "qualification/saved-audit-controller-qualification-v1/ruff.stdout.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-audit-controller-qualification-v1/ruff.stdout.txt"
+    },
+    "qualification/saved-report-verifier-qualification-v1/qualification.json": {
+      "bytes": 2757,
+      "sha256": "8044bd104fe58ef828233728f807b995af7d45b835700985b41c534d5c69b93c",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verifier-qualification-v1/qualification.json"
+    },
+    "qualification/stager-qualification-v1/qualification.json": {
+      "bytes": 16723,
+      "sha256": "1d781a88c55e08b198763724e44f6bc689d555a07f406f1b6614142147546224",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/qualification.json"
+    },
+    "qualification/stager-qualification-v2/qualification.json": {
+      "bytes": 6784,
+      "sha256": "e4545fc6dadc2e5980a96a7de43535f44d333c208034af60d951650584106c9f",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v2/qualification.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.long-description.changed-profile.atlas.cli.json": {
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.long-description.changed-profile.atlas.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.long-description.changed-profile.context.json": {
+      "bytes": 2946,
+      "sha256": "fc8d9a17f74dad7edbc0e82464da5df7bda1f7a4b39d93022c291e6571d0477f",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.long-description.changed-profile.context.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.long-description.changed-profile.equations.cli.json": {
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.long-description.changed-profile.equations.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.long-description.changed-source.atlas.cli.json": {
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.long-description.changed-source.atlas.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.long-description.changed-source.context.json": {
+      "bytes": 2945,
+      "sha256": "4b12ec5b7888193576c591a6d43da2ce2f4df6383cddfb48db528d1224fe7ca9",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.long-description.changed-source.context.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.long-description.changed-source.equations.cli.json": {
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.long-description.changed-source.equations.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.long-description.exact.atlas.cli.json": {
+      "bytes": 27872,
+      "sha256": "1884b0576b0d35ce4cf2ec57123579b71fba5d069eb0feb226ae6da81f736075",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.long-description.exact.atlas.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.long-description.exact.context.json": {
+      "bytes": 2945,
+      "sha256": "58d913c2f726aa893d185d0bc55e176ac9659b6319023c55a63493cb9d9ebc4a",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.long-description.exact.context.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.long-description.exact.equations.cli.json": {
+      "bytes": 23381,
+      "sha256": "b0a03e55109fd92e27dd6963a043744bdb164b6148f52166303388be70e5829c",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.long-description.exact.equations.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-objects.changed-profile.atlas.cli.json": {
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-objects.changed-profile.atlas.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-objects.changed-profile.context.json": {
+      "bytes": 2942,
+      "sha256": "f69ae85a62deacf5223c91e06624975be563f0b272d36bb8b46d592ae6341eb3",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-objects.changed-profile.context.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-objects.changed-profile.equations.cli.json": {
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-objects.changed-profile.equations.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-objects.changed-source.atlas.cli.json": {
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-objects.changed-source.atlas.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-objects.changed-source.context.json": {
+      "bytes": 2941,
+      "sha256": "156a4eff3986dde7e8ada6d894876d8a7227a8c311f5b346f7bf520e3a4ae59a",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-objects.changed-source.context.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-objects.changed-source.equations.cli.json": {
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-objects.changed-source.equations.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-objects.exact.atlas.cli.json": {
+      "bytes": 27854,
+      "sha256": "35be8cc0b2f36b336d114d42ee00cc66db5260d84a5b0e27661c68cb21d3fba9",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-objects.exact.atlas.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-objects.exact.context.json": {
+      "bytes": 2941,
+      "sha256": "cd7662ead5471388d1ae1c76711c2a03f6576c470571bbeb04c2117e58fe050d",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-objects.exact.context.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-objects.exact.equations.cli.json": {
+      "bytes": 23363,
+      "sha256": "0a281451494b68a18a9695205a5fa4d6dd2edf26aa1693179a9a05163d761907",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-objects.exact.equations.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-procedure.changed-profile.atlas.cli.json": {
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-procedure.changed-profile.atlas.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-procedure.changed-profile.context.json": {
+      "bytes": 2944,
+      "sha256": "f14f2be82918f6c1893425cb35b69c2f71373e34635115705daed6b55836b9e0",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-procedure.changed-profile.context.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-procedure.changed-profile.equations.cli.json": {
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-procedure.changed-profile.equations.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-procedure.changed-source.atlas.cli.json": {
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-procedure.changed-source.atlas.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-procedure.changed-source.context.json": {
+      "bytes": 2943,
+      "sha256": "5683332344bde5e0c605f3bb94634cc597b46856a693125af19f2884916c76b6",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-procedure.changed-source.context.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-procedure.changed-source.equations.cli.json": {
+      "bytes": 3,
+      "sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-procedure.changed-source.equations.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-procedure.exact.atlas.cli.json": {
+      "bytes": 27840,
+      "sha256": "e4d8a9b4eb1c6a0855b12b4a894b04154e9e80741d54f1616ef6cb2f5217cf15",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-procedure.exact.atlas.cli.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-procedure.exact.context.json": {
+      "bytes": 2943,
+      "sha256": "729482a3a682179776df4790829e465eeaa9b6ccd535d34ebc735ae7ea7ccec0",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-procedure.exact.context.json"
+    },
+    "verification/cmp.qwen.sign-shortcut.short-procedure.exact.equations.cli.json": {
+      "bytes": 23349,
+      "sha256": "f244341d4701388496e1aba5b372c5b7e2173cad2d25b2e255752b3109591614",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/cmp.qwen.sign-shortcut.short-procedure.exact.equations.cli.json"
+    },
+    "verification/job-56b19223977c.job.json": {
+      "bytes": 14163,
+      "sha256": "18967768fc2ecec34eb44fdc351f12d3a6a4938d17ddab7e4fe487db9c9815d1",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/job-56b19223977c.job.json"
+    },
+    "verification/job-56b19223977c.worker.log": {
+      "bytes": 2537,
+      "sha256": "2ad4471f3b2dd36edfcd17dc180f681915a77bf8411e9d1b6b2044903c3ea718",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/job-56b19223977c.worker.log"
+    },
+    "verification/job-8c949b1c0278.job.json": {
+      "bytes": 27704,
+      "sha256": "beac82a6cafcb5d89a7eed1c1cdf1460056e37a7ab724f2aed9613da7088aefd",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/job-8c949b1c0278.job.json"
+    },
+    "verification/job-8c949b1c0278.worker.log": {
+      "bytes": 2649,
+      "sha256": "dce3a0885b03f865c63085e951ee21a7e34e0a7e572c2e036383d565dc709391",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/job-8c949b1c0278.worker.log"
+    },
+    "verification/verification.json": {
+      "bytes": 211792,
+      "sha256": "b9acddfd87d0eb0101456761537935d49c41abf3e5e988fb9f669c5429e2fba4",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verification-v1/verification.json"
+    },
+    "workflow/collect_compact.py": {
+      "bytes": 3597,
+      "sha256": "7ed5fdb20a57393202024ee0db8f2015e11b461438631fba7d733b726c4fd196",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/collect_compact.py"
+    },
+    "workflow/compact-collection-01/collection-receipt.json": {
+      "bytes": 958,
+      "sha256": "a5dee387a6e06d74a5cfaa7034ed2f7fc2409a753055e7ba3c2f486ee8b38443",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/compact-collection-01/collection-receipt.json"
+    },
+    "workflow/copy_integration.py": {
+      "bytes": 4205,
+      "sha256": "82aa3fabeb96edd58303be76a7da65687b6b63ca246642c18f6fbda9e3694da5",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/copy_integration.py"
+    },
+    "workflow/review_launcher_correction.py": {
+      "bytes": 3894,
+      "sha256": "425ad1b1abfbb13e9dff77fcc1ce2e937c918ec2963df47bb053b0b292726032",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/review_launcher_correction.py"
+    },
+    "workflow/stager-source-archive-v1/archive.json": {
+      "bytes": 17454,
+      "sha256": "3093d74b28d374e6b20c07fcbf5cf2a404645a3c72ad5b1daa4df9e59b7cc070",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-source-archive-v1/archive.json"
+    },
+    "workflow/verify_saved_reports.py": {
+      "bytes": 18356,
+      "sha256": "3c982cef7cf3a873a7f5c89f7ccea7c1db2eacb6764afd16b44d9bf59b2fe653",
+      "source": "artifacts/mdb-qwen-sign-shortcut-20261106/verify_saved_reports.py"
+    }
+  },
+  "files": 185,
+  "schema": "mdb-qwen-shortcut-integration-copy-v1",
+  "vault_figures": {
+    "conditional-computation-path.png": {
+      "bytes": 110223,
+      "sha256": "cc608435ac234a2f4de47d794758c8e913bd232c9c4d1836d56743e86ec41328"
+    },
+    "oddness-and-zero-signs.png": {
+      "bytes": 233815,
+      "sha256": "7293ea8ecc8a2ad0a420192d3251a8099ff9f281e898d58dcc696c8a0f518e22"
+    },
+    "shortcut-errors.png": {
+      "bytes": 209204,
+      "sha256": "d8d821e66ee61a4cbd73bb70f9d9599c6a885755478314c972f2296692d4c60a"
+    }
+  }
+}

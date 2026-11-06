@@ -1,0 +1,22 @@
+usage: publish_qwen_sign_shortcut.py [-h] --pack PACK --out OUT
+                                     --collection-receipt COLLECTION_RECEIPT
+                                     --qualification QUALIFICATION
+                                     --expected-manifest EXPECTED_MANIFEST
+                                     --expected-request EXPECTED_REQUEST
+                                     --expected-job EXPECTED_JOB
+
+Publish externally authenticated compact Qwen sign-shortcut observations. Only
+JSON/scalar evidence and source/checksum files are read. No saved tensor,
+model, tokenizer, parameter, neural recurrence or original primitive is
+loaded. An expected compact manifest/job/request must come from authenticated
+collection.
+
+options:
+  -h, --help            show this help message and exit
+  --pack PACK
+  --out OUT
+  --collection-receipt COLLECTION_RECEIPT
+  --qualification QUALIFICATION
+  --expected-manifest EXPECTED_MANIFEST
+  --expected-request EXPECTED_REQUEST
+  --expected-job EXPECTED_JOB

@@ -1,0 +1,35 @@
+{
+  "cases": {
+    "long-description": {
+      "aligned_port_fields": 22,
+      "overlapping_prefix_regions": 40,
+      "primary_endpoint_error_fields": 9,
+      "primary_prefix_fields": 20,
+      "primary_response_error_fields": 9
+    },
+    "short-objects": {
+      "aligned_port_fields": 22,
+      "overlapping_prefix_regions": 40,
+      "primary_endpoint_error_fields": 9,
+      "primary_prefix_fields": 20,
+      "primary_response_error_fields": 9
+    },
+    "short-procedure": {
+      "aligned_port_fields": 22,
+      "overlapping_prefix_regions": 40,
+      "primary_endpoint_error_fields": 9,
+      "primary_prefix_fields": 20,
+      "primary_response_error_fields": 9
+    }
+  },
+  "catalog": {
+    "atlas_observations": 3,
+    "generic_rule_id": "law.qwen.sign-shortcut.bf16-primitive-order.v1",
+    "records": 3
+  },
+  "dependent_accounts": true,
+  "learned_projections": 0,
+  "model_calls": 0,
+  "primary_and_regions_separate": true,
+  "tokenizer_calls": 0
+}

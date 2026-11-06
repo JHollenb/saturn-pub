@@ -1,0 +1,19 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/mdb/worker_bootstrap.py", line 73, in <module>
+    main()
+  File "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/mdb/worker_bootstrap.py", line 67, in main
+    runpy.run_path(str(worker), run_name="__main__")
+  File "<frozen runpy>", line 287, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/qwen_sign_shortcut_campaign.py", line 636, in <module>
+    worker(parser.parse_args().config)
+  File "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/qwen_sign_shortcut_campaign.py", line 609, in worker
+    validate_config(config)
+  File "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/qwen_sign_shortcut_campaign.py", line 130, in validate_config
+    require(config.get("schema") == SCHEMA and config.get("helper_source_sha256") == HELPERS, "campaign/source schema differs")
+  File "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/qwen_sign_shortcut_campaign.py", line 44, in require
+    raise ValueError(message)
+ValueError: campaign/source schema differs

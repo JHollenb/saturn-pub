@@ -1,0 +1,71 @@
+{
+  "command": [
+    "rtk",
+    "proxy",
+    "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+    "-I",
+    "-B",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/publish_qwen_sign_shortcut.py",
+    "--pack",
+    "COMPACT_BINDING_MINIMAL_RESULT",
+    "--out",
+    "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/publication-v1",
+    "--expected-manifest",
+    "AUTHENTICATED_COMPACT_FILES_SHA",
+    "--expected-request",
+    "CPU_AUDIT_REQUEST_SHA",
+    "--expected-job",
+    "CPU_AUDIT_JOB_ID",
+    "--collection-receipt",
+    "COMPACT_COLLECTION_RECEIPT_JSON",
+    "--qualification",
+    "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/audit-qualification-v2/qualification.json"
+  ],
+  "executed": false,
+  "input_abi": {
+    "audit": "mdb-qwen-sign-shortcut-audit-v1, auditor d33613, native producer83f9/request1a9b11",
+    "collection_receipt": [
+      "files_manifest_sha256",
+      "job_id",
+      "request_sha256",
+      "file_count",
+      "expanded_bytes",
+      "raw_tensor_arrays_collected:false"
+    ],
+    "compact_files_manifest": "plain relative member->SHA dictionary; every compact file except files.json indexed",
+    "request": "CPU saved audit canonical request, distinct from native request",
+    "required_copies": [
+      "source-request.json",
+      "source-declared-config.json",
+      "source-plan.json",
+      "source-source.json",
+      "source-summary.json",
+      "source-runtime.json",
+      "source-files.json",
+      "source-protocol.json",
+      "source-forecast-responses.json",
+      "source-comparisons.json",
+      "source-timeline.jsonl",
+      "source-metadata/*",
+      "external-evidence.json",
+      "retrieve_evidence.py",
+      "catalog/equations/*",
+      "catalog/provenance.json",
+      "atlas/receipts/*",
+      "atlas/provenance.json",
+      "coverage.json"
+    ]
+  },
+  "outputs": [
+    "shortcut-errors.png",
+    "oddness-and-zero-signs.png",
+    "conditional-computation-path.png",
+    "publication.json",
+    "publication-receipt.json",
+    "figure-layout.json",
+    "compact-evidence/",
+    "provenance/"
+  ],
+  "precondition": "Authenticated actual CPU compact collection after corrected native run-02, not failed run-01.",
+  "schema": "mdb-qwen-sign-shortcut-publisher-invocations-v1"
+}

@@ -1,0 +1,69 @@
+{
+  "cli_help": {
+    "command": [
+      "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+      "-I",
+      "-B",
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/saved-audit-controller-qualification-v1/source-freeze-v1/qualification/stage_qwen_sign_shortcut_saved_audit.py",
+      "--help"
+    ],
+    "returncode": 0,
+    "stdout_sha256": "e0987048192154ffc199bd5ddb663d5a9771f60e46761df55cc3191371e7f833"
+  },
+  "execution": {
+    "path": "attempt-01/execution.json",
+    "sha256": "a95a34eaa90d421a3ab014b5ca7c043efd2c9866a22ebb2974deaf8b566ce88e"
+  },
+  "limits": [
+    "Tests substitute only generic stage/submit delegates; no real stage, request, SSH, service, model, tokenizer, weights or recurrence.",
+    "Actual source files are hash checked and reader definitions loaded; no producer/generative helper imports.",
+    "Fixed afbb controller owns actual native-job/request/log publication validation and actual mrun submission; only root may invoke those actions."
+  ],
+  "mechanics_status": "qualified-model-free-guards-only",
+  "pytest": {
+    "passed": 4,
+    "seconds": 0.11,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "a3743b2a379a4c611aab88f2dd4a717b1f18ae345d3b524353c6daddbbda95ef"
+  },
+  "reader_qualification": {
+    "path": "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/audit-qualification-v2/qualification.json",
+    "sha256": "8f85e4c5e93f568e40f0c22e0bf0260d754ff86a770ddb3ac8a03fdba1fef769"
+  },
+  "resource_contract": {
+    "cpu_threads": 2,
+    "disk_gb": 1,
+    "estimated_seconds": 240,
+    "outer_seconds": 600,
+    "ram_mb": 3072,
+    "resource_reseal": false,
+    "vram_mb": 0
+  },
+  "ruff": {
+    "command": [
+      "/Users/jakeholl/domains/common/.venv/bin/ruff",
+      "check",
+      "--select",
+      "F,I",
+      "--config",
+      "pyproject.toml",
+      "qualification/stage_qwen_sign_shortcut_saved_audit.py",
+      "tests/test_stage_qwen_sign_shortcut_saved_audit.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "returncode": 0,
+    "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  },
+  "saved_helper_count": 4,
+  "schema": "mdb-qwen-sign-shortcut-saved-audit-controller-qualification-v1",
+  "source_hashes": {
+    "qualification/audit_flux_functional_pass.py": "2d54e716749dec52c159f3a5214860f4bb8cbf396fd09239540bd55988274c80",
+    "qualification/audit_flux_functional_qwen_prefix.py": "5004786be76e1f576d2df65e6d1225f8fdd41c4a7e09e5ed8a6c23057db78a97",
+    "qualification/audit_flux_raw_to_image.py": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835",
+    "qualification/audit_qwen_sign_shortcut.py": "d33613bbb1d71ee3b2007fb007e5266acaf141994091264bed50d27342237e2c",
+    "qualification/retrieve_reader_evidence.py": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923",
+    "qualification/stage_qwen_sign_shortcut_saved_audit.py": "2ca00f6d28d752b4dff14874d1d8d0ea8a53e149f0ab5b569bb00a7f61b9137e",
+    "qualification/stage_saved_flux_mask_pair_audit.py": "afbb71dfe56b2ed1749c77469dbde8a6c85f554b38831d52f54dd30a647f2ea0",
+    "tests/test_stage_qwen_sign_shortcut_saved_audit.py": "d3b679bb55a136111ef2b58f859797b538854aec02fb82d5188c5d206d1775bb"
+  }
+}

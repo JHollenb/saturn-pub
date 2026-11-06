@@ -1,0 +1,18 @@
+{
+  "hashed_roots": [
+    "audit_qwen_sign_shortcut.py",
+    "audit_flux_raw_to_image.py",
+    "audit_flux_functional_qwen_prefix.py",
+    "audit_flux_functional_pass.py",
+    "retrieve_reader_evidence.py",
+    "stage_qwen_sign_shortcut_saved_audit.py",
+    "stage_saved_flux_mask_pair_audit.py",
+    "preflight.v1.json"
+  ],
+  "path_token_allowlist": [
+    "/mnt/big/mdb/research/job-8c949b1c0278/qwen-sign-shortcut-result",
+    "/mnt/big/mdb/research",
+    "binding-minimal-result"
+  ],
+  "schema_version": "mrun-preflight-config-v1"
+}

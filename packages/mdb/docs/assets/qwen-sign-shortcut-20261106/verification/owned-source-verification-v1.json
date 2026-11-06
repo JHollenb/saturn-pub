@@ -1,0 +1,20 @@
+{
+  "exact_source_files": 12,
+  "root_checks": "Exact12source/testhashes match individualqualificationreceipts; F/Iruffpasses; actualsavedreader/rootverificationcomplete.",
+  "installed_package_mechanics_checks": 42,
+  "schema": "mdb-qwen-shortcut-owned-source-verification-v1",
+  "source_hashes": {
+    "qualification/audit_qwen_sign_shortcut.py": "d33613bbb1d71ee3b2007fb007e5266acaf141994091264bed50d27342237e2c",
+    "qualification/publish_qwen_sign_shortcut.py": "de2b6aa02d668a8ff3193f1099a4b146aa362a980252a5ff34d2e5990f98ee9b",
+    "qualification/qwen_sign_shortcut.py": "8e59051a34bc8e89c9376fd29aec966df9cbe84560c81f86910504172caaa457",
+    "qualification/qwen_sign_shortcut_campaign.py": "83f9d459938ccb96b913def78862cffc869cb6f0b4404a7f116d0a46fed184af",
+    "qualification/stage_qwen_sign_shortcut.py": "6f083cc6a039d50f8f206731d4a0fc87e76f9bf464c0d8cedba4caaecf04887b",
+    "qualification/stage_qwen_sign_shortcut_saved_audit.py": "2ca00f6d28d752b4dff14874d1d8d0ea8a53e149f0ab5b569bb00a7f61b9137e",
+    "tests/test_audit_qwen_sign_shortcut.py": "df39b55682895d1e488ec2dd1d2aed4e0641108951162e4d7f263cba03c25ba2",
+    "tests/test_publish_qwen_sign_shortcut.py": "9ca8e8f29b2bc48cef1927488198f688af46d449751ade6a8bb18d6a51c09022",
+    "tests/test_qwen_sign_shortcut.py": "4ae1ddc70e83e10a47252ad2c415f6f7a19ec8c114e9f159e358fbc1f0f05eb2",
+    "tests/test_qwen_sign_shortcut_campaign.py": "7228c7b91a64f80a10c186cb01a8fc5b87e5755954dcaf61fd8285eafb799ffc",
+    "tests/test_stage_qwen_sign_shortcut.py": "0e7c3b26ac92f7b66f3afc443652f710415cedd4101bc5a857eb13ab08d334ea",
+    "tests/test_stage_qwen_sign_shortcut_saved_audit.py": "d3b679bb55a136111ef2b58f859797b538854aec02fb82d5188c5d206d1775bb"
+  }
+}

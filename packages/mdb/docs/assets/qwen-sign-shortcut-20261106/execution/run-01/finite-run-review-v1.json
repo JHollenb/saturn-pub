@@ -1,0 +1,134 @@
+{
+  "schema": "mdb-astra-finite-run-review-v1",
+  "reviewer": "context_carriers_astra",
+  "review_date": "2026-11-06",
+  "request_sha256": "999f8be2d10ea652e18661a93cfb9a9e419d9158f85bbceae8ec8d01df311f3e",
+  "review_status": "ready-for-finite-run",
+  "blocking_issues": [],
+  "scope": "Exact staged native finite admission; metadata/source review only. Not a completed-result or holistic review.",
+  "identities": {
+    "request_file_sha256": "e1b24890a0c27d0c51397caad98727219402f9272c5ad719599351f4a3369123",
+    "payload_seal_sha256": "18cb38224553b9ab2c2bd2e06ed3dc97032ce2d0fa77658930eda1ba7146ade9",
+    "staged_command_sha256": "8fab68ddfe2b420d07c54aa2a3648a9874318018486d0ec852ec7d95dd54df47",
+    "producer_sha256": "83f9d459938ccb96b913def78862cffc869cb6f0b4404a7f116d0a46fed184af",
+    "shortcut_helper_sha256": "8e59051a34bc8e89c9376fd29aec966df9cbe84560c81f86910504172caaa457",
+    "stager_sha256": "d0ac0c75fa48bc48d5202a9cb37501a3af823c72615eb8c95d44c1db0ef134e9",
+    "saved_reader_sha256": "d33613bbb1d71ee3b2007fb007e5266acaf141994091264bed50d27342237e2c",
+    "selection_protocol_sha256": "5ce41dda16fdfd687aba584f9aaedc389d0ec8bf088b2ea63de8b4456ddf9cf2"
+  },
+  "checked": {
+    "canonical_request_identity": true,
+    "source_files": 20,
+    "whole_wheels": 3,
+    "installed_zip_sealed_package_entries": {
+      "mdb": 188,
+      "mrun": 225,
+      "saturn_pub": 59
+    },
+    "package_entries_total": 472,
+    "payload_config_request_plan_equal": true,
+    "all_payload_seal_files_hash_match": true,
+    "hostile_Mac_ambient_command_matches_staged_Linux_command": true,
+    "queue_note_characters": 371,
+    "source_cohort_and_resource_baseline_joins": true,
+    "source_and_qualification_hash_joins": true,
+    "submitted_at_review": false
+  },
+  "wheels": {
+    "mdb_runtime-0.1.0-py3-none-any.whl": "4b1b965dce45883cabcb24ab2c11702ce748aeb1658776596be27b405df26d21",
+    "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+    "saturn_pub-0.4.1-py3-none-any.whl": "c32bbcf5c5b45e4970d9c750266f607b2a9b0f06dc982106fd82e0501375e424"
+  },
+  "qualification_receipts": {
+    "producer": {
+      "sha256": "a0d64ab540979ff01dcc09de1ae5c4c8a0b52a56d42b5afb6b3dd23d1efa292b",
+      "reported_tests": 10,
+      "source_bindings_checked": 8
+    },
+    "helper": {
+      "sha256": "3275144fed9c901abf624b0dcaa0e80d0a933fc446c2b39447d09d712063fdb1",
+      "reported_tests": 7,
+      "source_bindings_checked": 2
+    },
+    "reader_v2": {
+      "sha256": "8f85e4c5e93f568e40f0c22e0bf0260d754ff86a770ddb3ac8a03fdba1fef769",
+      "reported_tests": 13,
+      "source_bindings_checked": 6
+    },
+    "stager": {
+      "sha256": "1d781a88c55e08b198763724e44f6bc689d555a07f406f1b6614142147546224",
+      "reported_tests": 5,
+      "source_bindings_checked": 22
+    },
+    "saved_audit_controller": {
+      "sha256": "57ae6bb83f54501992b9f63378e0a175d2c70ed291963f28c0faf3a91a73a7a9",
+      "reported_tests": 4,
+      "source_bindings_checked": 8
+    },
+    "scope": "Existing synthetic installed/source qualification receipts read and bound; reviewer did not rerun their tests or execute original assets."
+  },
+  "science_mechanics": [
+    "Three fixed raw UTF-8 contexts were selected before tokenization; intended padding regimes remain observed outcomes, not acceptance gates.",
+    "Positive R/gate/up are generated from each case's own functional state. Shortcut executes before that case's negative functional reference; no observed native positive activation is an input.",
+    "Complete cohort forecasts and signed responses seal before any native learned target. Native comparison uses each case's own full-model state and captured same-context suffix kwargs.",
+    "FP32 native rotary initialization and device-only placement are retained; runtime tokenizer native extension is explicitly runtime-bound.",
+    "Shortcut performs the original ordered BF16 negations, SiLU, product, down projection, and residual addition. It does not use a regrouped real-arithmetic identity.",
+    "Source-qualified native component suffix is not a public Qwen Act. It retains full native 36-layer and LM execution for all three references.",
+    "Reader v2 compares the four shortcut policy fields to the eight-field runtime superset and preserves the other four fields; prior reader history remains separate.",
+    "Numerical, bitwise, signed-zero, oddness-premise, endpoint and response errors remain observations. Zero-denominator relative errors are undefined, not forced to zero."
+  ],
+  "census": {
+    "contexts": 3,
+    "batch": 1,
+    "sequence_rows": 512,
+    "functional_blocks": 60,
+    "functional_SDPA": 60,
+    "shortcut_down_projections": 3,
+    "shortcut_attention": 0,
+    "native_blocks": 111,
+    "native_SDPA": 111,
+    "native_full_model_calls": 3,
+    "native_suffix_calls": 3,
+    "native_LM_calls": 3,
+    "native_authorizations": 6,
+    "component_hydrations": 1,
+    "cuda_placements": 1,
+    "cpu_offloads": 1,
+    "genuine_qwen_Acts": 0,
+    "Flux": 0,
+    "VAE": 0,
+    "noise_draws": 0,
+    "parameter_exports": 0,
+    "logical_phases": 6
+  },
+  "resources": {
+    "cpu_threads": 4,
+    "ram_mb": 16384,
+    "vram_mb": 10240,
+    "disk_gb": 4,
+    "estimate_s": 300,
+    "assay_limit_s": 600,
+    "outer_limit_s": 900,
+    "raw_bound_bytes": 2147483648,
+    "member_bound_bytes": 67108864,
+    "transaction_bytes": 67108864,
+    "one_lease": true,
+    "retry": false,
+    "nested_submission": false
+  },
+  "resource_rationale": [
+    "Authenticated original Qwen job-ebae1e4bd523 used 95.23 s, 4461.6 MB RSS and 8790 MB VRAM with the same source/wheel/environment cohort. Baseline job SHA d031b1bcb96c43b62235929b03770e368e325a3a24bc78b0eab629ce3fc512ca and receipt edca8760e2698069a32a58673647aa9cb29aaa3ff8e827607f9ace200fbf1dd9 were independently joined.",
+    "One 398-recipe model is hydrated; sequential B1 cases release GPU histories rather than accumulating three full native graphs. Parameter mapping aliases the resident model; logits and weights are not exported.",
+    "Estimated output geometry is below the 2 GiB bound; largest retained activation member is below 64 MiB including NPY overhead. Four GB disk accommodates the declared uncompressed output without a second persistent weight bank.",
+    "300 s is a plausible planning estimate, not a measured successor result. Additional native blocks and metadata hashing are explicit. Expected duration is below 15 minutes.",
+    "600 s begins at the assay rather than before hydration/finalization; 900 s outer timeout bounds the complete worker. Strict scheduler preflight and actual reservation remain the launcher's responsibility."
+  ],
+  "limits": [
+    "No original model, tokenizer, checkpoint, CUDA, scheduler, stage or scientific target was executed by this review.",
+    "No current fleet fit was certified; launch must retain strict preflight with the reviewed exact request.",
+    "Native shared Torch primitives and original weights are reused. This does not establish an independent CUDA kernel, universal sign symmetry, speed advantage, semantic necessity, or a nine-layer odd shortcut.",
+    "Applicable original CUDA premises and the three context outcomes are still prospective. Preserve any numerical or signed-zero counterexample without retry or selection.",
+    "Saved reader is independently qualified and source-bound, but an actual original-data saved-only audit has not yet run.",
+    "This targeted finite review does not reset holistic09's turn12 anchor or next-review-by15 cadence."
+  ]
+}

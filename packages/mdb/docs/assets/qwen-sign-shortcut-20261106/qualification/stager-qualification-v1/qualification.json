@@ -1,0 +1,367 @@
+{
+  "campaign_contract": {
+    "cohort": "prospective-new-sign-shortcut",
+    "component_hydrations": 1,
+    "contexts": 3,
+    "cpu_offloads": 1,
+    "cuda_placements": 1,
+    "flux_calls": 0,
+    "forecast_module_entries": 0,
+    "functional_reference_blocks": 60,
+    "global_forecast_seal_before_native": true,
+    "model_loads": 1,
+    "native_blocks": 111,
+    "native_full_model_calls": 3,
+    "native_lm_calls": 3,
+    "native_root_calls": 6,
+    "native_suffix_calls": 3,
+    "nested_mrun": false,
+    "noise_draws": 0,
+    "parameter_exports": 0,
+    "retry": false,
+    "sequence_rows": 512,
+    "shortcut_down_projections": 3,
+    "vae_calls": 0
+  },
+  "checks": {
+    "command_policy": {
+      "explicit_B_flag": true,
+      "isolated_python": true,
+      "no_scheduler_submission": true,
+      "offline": true,
+      "worker_bootstrap": true
+    },
+    "help": {
+      "command": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B qualification/stage_qwen_sign_shortcut.py --help",
+      "cwd": "saturn-pub/packages/mdb",
+      "outputs": {
+        "help_stderr": {
+          "bytes": 0,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/help.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "help_stdout": {
+          "bytes": 861,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/help.stdout",
+          "sha256": "972cd1fb297df5c4344add7b242e973e7dcaf289c4466c6e6658140bb9047adf"
+        },
+        "pytest_stderr": {
+          "bytes": 0,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/pytest.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "pytest_stdout": {
+          "bytes": 98,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/pytest.stdout",
+          "sha256": "bd5201fad773316bbfda2cfee7833ff2d8db356db81550c537f47ba44de0ed2d"
+        },
+        "ruff_stderr": {
+          "bytes": 0,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/ruff.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ruff_stdout": {
+          "bytes": 19,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/ruff.stdout",
+          "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+        }
+      },
+      "result": "usage and options rendered; no model/mrun action",
+      "returncode": 0
+    },
+    "pytest": {
+      "command": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B -m pytest -q tests/test_stage_qwen_sign_shortcut.py",
+      "cwd": "saturn-pub/packages/mdb",
+      "outputs": {
+        "help_stderr": {
+          "bytes": 0,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/help.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "help_stdout": {
+          "bytes": 861,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/help.stdout",
+          "sha256": "972cd1fb297df5c4344add7b242e973e7dcaf289c4466c6e6658140bb9047adf"
+        },
+        "pytest_stderr": {
+          "bytes": 0,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/pytest.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "pytest_stdout": {
+          "bytes": 98,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/pytest.stdout",
+          "sha256": "bd5201fad773316bbfda2cfee7833ff2d8db356db81550c537f47ba44de0ed2d"
+        },
+        "ruff_stderr": {
+          "bytes": 0,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/ruff.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ruff_stdout": {
+          "bytes": 19,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/ruff.stdout",
+          "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+        }
+      },
+      "result": "5 passed in 0.05s",
+      "returncode": 0
+    },
+    "ruff": {
+      "command": "/Users/jakeholl/domains/common/.venv/bin/ruff check --select F,I --config pyproject.toml qualification/stage_qwen_sign_shortcut.py tests/test_stage_qwen_sign_shortcut.py",
+      "cwd": "saturn-pub/packages/mdb",
+      "outputs": {
+        "help_stderr": {
+          "bytes": 0,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/help.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "help_stdout": {
+          "bytes": 861,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/help.stdout",
+          "sha256": "972cd1fb297df5c4344add7b242e973e7dcaf289c4466c6e6658140bb9047adf"
+        },
+        "pytest_stderr": {
+          "bytes": 0,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/pytest.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "pytest_stdout": {
+          "bytes": 98,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/pytest.stdout",
+          "sha256": "bd5201fad773316bbfda2cfee7833ff2d8db356db81550c537f47ba44de0ed2d"
+        },
+        "ruff_stderr": {
+          "bytes": 0,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/ruff.stderr",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        },
+        "ruff_stdout": {
+          "bytes": 19,
+          "path": "artifacts/mdb-qwen-sign-shortcut-20261106/stager-qualification-v1/ruff.stdout",
+          "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+        }
+      },
+      "result": "All checks passed!",
+      "returncode": 0
+    }
+  },
+  "created_at": "2026-11-06",
+  "created_by": "flux_replication_review",
+  "limitations": [
+    "The actual stage was not run by this qualification; root owns one eventual stage/submit decision.",
+    "The successor peak RSS/VRAM is unmeasured. The fresh baseline is a bound-setting observation, not a guarantee.",
+    "This receipt certifies launcher/source and metadata mechanics only; final sign-shortcut/native numerical rows remain prospective.",
+    "No historical activation arrays, model weights, or raw checkpoint payloads were read by the qualification."
+  ],
+  "parent_binding": {
+    "request_file_sha256": "02989e2189ea2546a03d4ad83dc55144dfee1177e16b3a5eea0ae9d056f77b85",
+    "request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea",
+    "run": "artifacts/mdb-flux-h18-history-20261106/run-01",
+    "runtime_wheels": {
+      "mdb_runtime-0.1.0-py3-none-any.whl": "4b1b965dce45883cabcb24ab2c11702ce748aeb1658776596be27b405df26d21",
+      "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+      "saturn_pub-0.4.1-py3-none-any.whl": "c32bbcf5c5b45e4970d9c750266f607b2a9b0f06dc982106fd82e0501375e424"
+    }
+  },
+  "producer_binding": {
+    "helpers": {
+      "flux_functional_qwen_prefix.py": {
+        "sha256": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a"
+      },
+      "flux_functional_qwen_prefix_worker.py": {
+        "sha256": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0"
+      },
+      "flux_image_tail_microscope.py": {
+        "sha256": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926"
+      },
+      "flux_source_receiver.py": {
+        "sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2"
+      },
+      "qwen_h18_state_history.py": {
+        "sha256": "17084d404f5ae00557e4ad8e94a8b84704787c47ebf9c875228cb452c4857036"
+      },
+      "qwen_sign_shortcut.py": {
+        "sha256": "8e59051a34bc8e89c9376fd29aec966df9cbe84560c81f86910504172caaa457"
+      }
+    },
+    "protocol_case_ids": [
+      "short-objects",
+      "short-procedure",
+      "long-description"
+    ],
+    "protocol_sha256": "5ce41dda16fdfd687aba584f9aaedc389d0ec8bf088b2ea63de8b4456ddf9cf2",
+    "qualification_receipt_sha256": "a0d64ab540979ff01dcc09de1ae5c4c8a0b52a56d42b5afb6b3dd23d1efa292b",
+    "raw_files": [
+      "protocol.json",
+      "short-objects.txt",
+      "short-procedure.txt",
+      "long-description.txt"
+    ],
+    "worker_sha256": "83f9d459938ccb96b913def78862cffc869cb6f0b4404a7f116d0a46fed184af",
+    "worker_test_sha256": "7228c7b91a64f80a10c186cb01a8fc5b87e5755954dcaf61fd8285eafb799ffc"
+  },
+  "resource_baseline": {
+    "elapsed_s": 95.23,
+    "host": "beast",
+    "job_id": "job-ebae1e4bd523",
+    "job_sha256": "d031b1bcb96c43b62235929b03770e368e325a3a24bc78b0eab629ce3fc512ca",
+    "needs": {
+      "cuda": true,
+      "host": "beast",
+      "payload_custody_v2": true
+    },
+    "peak_rss_mb": 4461.6,
+    "peak_vram_mb": 8790.0,
+    "receipt_sha256": "edca8760e2698069a32a58673647aa9cb29aaa3ff8e827607f9ace200fbf1dd9",
+    "returncode": 0,
+    "scope": "Fresh Qwen prefix source measurement only; successor geometry is larger and its peak remains unmeasured.",
+    "state": "succeeded"
+  },
+  "resource_plan": {
+    "assay_timeout_seconds": 600,
+    "cpu": 4,
+    "disk_gb": 4,
+    "estimate_seconds": 300,
+    "host": "beast",
+    "lease_count": 1,
+    "max_member_bytes": 67108864,
+    "needs": {
+      "cuda": true,
+      "host": "beast",
+      "payload_custody_v2": true
+    },
+    "outer_timeout_seconds": 900,
+    "queue_note": "Qwen sign-shortcut,B1/512,3 raw contexts:60 functional blocks+3 own down shortcuts sealed before3 native full36+suffix calls (111 native blocks/6 native roots); Qwen-only,no Flux/VAE/noise/extra Acts. One meta-to-CUDA BF16 hydration/offload,no parameter exports. CUDA Beast,CPU4/RAM16GiB/VRAM10GiB,disk4GB;300s estimate/600s assay/900s outer,one lease,no retries/nesting.",
+    "ram_mb": 16384,
+    "raw_bytes_bound": 2147483648,
+    "resource_evidence_limit": "The 300/600/900 timing labels distinguish estimate, assay, and whole-worker outer bound; baseline measurements do not establish successor peak.",
+    "retries": 0,
+    "transaction_bytes_bound": 67108864,
+    "vram_mb": 10240
+  },
+  "schema": "mdb-qwen-sign-shortcut-stager-qualification-v1",
+  "scope": {
+    "checkpoint_bytes_read_during_staging": 0,
+    "description": "Metadata-only stager qualification. It binds the prospective three literal raw prompts, four Qwen metadata files, the final producer and its six declared helper files, parent request/wheels, and a fresh baseline resource measurement. It does not execute stage(), construct a model, access checkpoint payloads, contact mrun, or submit a job.",
+    "historical_activation_inputs": 0,
+    "model_construction": 0,
+    "mrun_scheduler_contact": 0,
+    "mrun_submission": 0,
+    "ssh_calls": 0,
+    "tokenizer_calls": 0
+  },
+  "source_hashes": {
+    "baseline_job": {
+      "bytes": 27391,
+      "path": "artifacts/mdb-qwen-sign-shortcut-20261106/source-baseline-collection-v1/job.json",
+      "sha256": "d031b1bcb96c43b62235929b03770e368e325a3a24bc78b0eab629ce3fc512ca"
+    },
+    "baseline_receipt": {
+      "bytes": 1299,
+      "path": "artifacts/mdb-qwen-sign-shortcut-20261106/source-baseline-collection-v1/receipt.json",
+      "sha256": "edca8760e2698069a32a58673647aa9cb29aaa3ff8e827607f9ace200fbf1dd9"
+    },
+    "parent-payload/qwen-config.json": {
+      "bytes": 1536,
+      "path": "artifacts/mdb-flux-h18-history-20261106/run-01/payload/qwen-config.json",
+      "sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40"
+    },
+    "parent-payload/qwen-parameter-artifacts.json": {
+      "bytes": 433549,
+      "path": "artifacts/mdb-flux-h18-history-20261106/run-01/payload/qwen-parameter-artifacts.json",
+      "sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374"
+    },
+    "parent-payload/qwen-source-binding.json": {
+      "bytes": 65926,
+      "path": "artifacts/mdb-flux-h18-history-20261106/run-01/payload/qwen-source-binding.json",
+      "sha256": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7"
+    },
+    "parent-payload/retrieve_qwen_weights.py": {
+      "bytes": 22624,
+      "path": "artifacts/mdb-flux-h18-history-20261106/run-01/payload/retrieve_qwen_weights.py",
+      "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae"
+    },
+    "parent_request": {
+      "bytes": 20974,
+      "path": "artifacts/mdb-flux-h18-history-20261106/run-01/request.json",
+      "sha256": "02989e2189ea2546a03d4ad83dc55144dfee1177e16b3a5eea0ae9d056f77b85"
+    },
+    "producer_qualification": {
+      "bytes": 4047,
+      "path": "artifacts/mdb-qwen-sign-shortcut-20261106/producer-qualification-v1/qualification.json",
+      "sha256": "a0d64ab540979ff01dcc09de1ae5c4c8a0b52a56d42b5afb6b3dd23d1efa292b"
+    },
+    "qualification/flux_functional_qwen_prefix.py": {
+      "bytes": 27102,
+      "path": "saturn-pub/packages/mdb/qualification/flux_functional_qwen_prefix.py",
+      "sha256": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a"
+    },
+    "qualification/flux_functional_qwen_prefix_worker.py": {
+      "bytes": 42155,
+      "path": "saturn-pub/packages/mdb/qualification/flux_functional_qwen_prefix_worker.py",
+      "sha256": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0"
+    },
+    "qualification/flux_image_tail_microscope.py": {
+      "bytes": 31785,
+      "path": "saturn-pub/packages/mdb/qualification/flux_image_tail_microscope.py",
+      "sha256": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926"
+    },
+    "qualification/flux_source_receiver.py": {
+      "bytes": 12787,
+      "path": "saturn-pub/packages/mdb/qualification/flux_source_receiver.py",
+      "sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2"
+    },
+    "qualification/qwen_h18_state_history.py": {
+      "bytes": 18589,
+      "path": "saturn-pub/packages/mdb/qualification/qwen_h18_state_history.py",
+      "sha256": "17084d404f5ae00557e4ad8e94a8b84704787c47ebf9c875228cb452c4857036"
+    },
+    "qualification/qwen_sign_shortcut.py": {
+      "bytes": 9830,
+      "path": "saturn-pub/packages/mdb/qualification/qwen_sign_shortcut.py",
+      "sha256": "8e59051a34bc8e89c9376fd29aec966df9cbe84560c81f86910504172caaa457"
+    },
+    "qualification/qwen_sign_shortcut_campaign.py": {
+      "bytes": 38915,
+      "path": "saturn-pub/packages/mdb/qualification/qwen_sign_shortcut_campaign.py",
+      "sha256": "83f9d459938ccb96b913def78862cffc869cb6f0b4404a7f116d0a46fed184af"
+    },
+    "qualification/stage_qwen_sign_shortcut.py": {
+      "bytes": 23608,
+      "path": "saturn-pub/packages/mdb/qualification/stage_qwen_sign_shortcut.py",
+      "sha256": "d0ac0c75fa48bc48d5202a9cb37501a3af823c72615eb8c95d44c1db0ef134e9"
+    },
+    "selection-v1/long-description.txt": {
+      "bytes": 7607,
+      "path": "artifacts/mdb-qwen-sign-shortcut-20261106/selection-v1/long-description.txt",
+      "sha256": "1bf43008819b4e17d08ed8bd5905624868fdeb99771e3e8b338ce490791fe094"
+    },
+    "selection-v1/protocol.json": {
+      "bytes": 10952,
+      "path": "artifacts/mdb-qwen-sign-shortcut-20261106/selection-v1/protocol.json",
+      "sha256": "5ce41dda16fdfd687aba584f9aaedc389d0ec8bf088b2ea63de8b4456ddf9cf2"
+    },
+    "selection-v1/short-objects.txt": {
+      "bytes": 117,
+      "path": "artifacts/mdb-qwen-sign-shortcut-20261106/selection-v1/short-objects.txt",
+      "sha256": "90f0c110ea43399d147f404824fedb9ad4bf7ec4b6ee89a8f27283fcea8c2037"
+    },
+    "selection-v1/short-procedure.txt": {
+      "bytes": 145,
+      "path": "artifacts/mdb-qwen-sign-shortcut-20261106/selection-v1/short-procedure.txt",
+      "sha256": "a066714dd56745fafe36e021681e3954eddc280657bbd130d6abebb814d65f1d"
+    },
+    "tests/test_qwen_sign_shortcut_campaign.py": {
+      "bytes": 14485,
+      "path": "saturn-pub/packages/mdb/tests/test_qwen_sign_shortcut_campaign.py",
+      "sha256": "7228c7b91a64f80a10c186cb01a8fc5b87e5755954dcaf61fd8285eafb799ffc"
+    },
+    "tests/test_stage_qwen_sign_shortcut.py": {
+      "bytes": 3840,
+      "path": "saturn-pub/packages/mdb/tests/test_stage_qwen_sign_shortcut.py",
+      "sha256": "05d029a69561ddf0652f54c48743dd593009155e7476e13392c4cb5b17096bc4"
+    }
+  },
+  "status": "qualified-metadata-only"
+}

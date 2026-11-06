@@ -1,0 +1,56 @@
+{
+  "actual_tiny_cli_queries": 18,
+  "checks": [
+    "source-pinned-reader",
+    "six-channel-counts",
+    "whole-regional-port-separation",
+    "ignore-overlapping-shadow",
+    "preserve-nonzero-miss",
+    "actual18installed-CLI-lookups",
+    "offline-help"
+  ],
+  "commands": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "mechanics.py"
+      ],
+      "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verifier-qualification-v1/attempt-02/cohort",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "uvx",
+        "ruff",
+        "check",
+        "--select",
+        "F,I",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/verify_saved_reports.py",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/saved-report-verifier-qualification-v1/attempt-02/cohort/mechanics.py"
+      ],
+      "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+      "returncode": 0
+    }
+  ],
+  "current_native_request": "1a9b11e4bc739410dcd165b31cd0c0452aa5f0583e7731598bc1e2b8a87bdd5a",
+  "default_native_run": "run-02",
+  "mechanics_result_sha256": "3700765d1a4df4c419407e09d9233b0ecc44d58f0e9b88f30b71fe3b9b47461b",
+  "mechanics_source_sha256": "06f9f226e10287471be9d9cce43f3efdc48916ce18f07daef67815a65b08df21",
+  "producer_qualification_sha256": "a0d64ab540979ff01dcc09de1ae5c4c8a0b52a56d42b5afb6b3dd23d1efa292b",
+  "reader_sha256": "d33613bbb1d71ee3b2007fb007e5266acaf141994091264bed50d27342237e2c",
+  "schema": "mdb-qwen-sign-shortcut-saved-report-verifier-qualification-v1",
+  "scope": [
+    "Actual tiny producer arrays were reduced only through corrected frozen saved reader; no new model/tokenizer/projection/weight/SSH/scheduler calls.",
+    "The18 actual installed CLI calls exercised 3 synthetic-context catalog/atlas occurrences with exact source/profile conditions and changed-SHA/Boolean-primitive-policy abstentions. These are mechanics, not original campaign CLI results.",
+    "Actual native/audit scheduler status, request/config/command/custody/log/marker and compact report verification remain pending root execution after real compact collection.",
+    "Previous failed run-01 metadata untouched; verifier defaults only corrected run-02. Whole/regional/port/premise and six contrast/error channels remain separately counted."
+  ],
+  "script_sha256": "3c982cef7cf3a873a7f5c89f7ccea7c1db2eacb6764afd16b44d9bf59b2fe653",
+  "source_fixture": "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/producer-qualification-v1/attempt-06/tmp/shortcut0/result"
+}

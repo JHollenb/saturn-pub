@@ -1,0 +1,15 @@
+usage: stage_qwen_sign_shortcut_saved_audit.py [-h] [--study STUDY] [--submit]
+                                               run
+
+Source-pinned saved-only Qwen sign-shortcut CPU audit frontend. The unchanged
+generic controller uses CPU2/RAM3GiB, 240s estimated and600s outer timeout
+with one lease and no retries. Estimates are not runtime claims. No model,
+learned recurrence, tokenizer or producer helper is imported here.
+
+positional arguments:
+  run
+
+options:
+  -h, --help     show this help message and exit
+  --study STUDY
+  --submit

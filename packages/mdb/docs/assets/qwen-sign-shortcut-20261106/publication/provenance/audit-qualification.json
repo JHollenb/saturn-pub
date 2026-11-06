@@ -1,0 +1,71 @@
+{
+  "checks": 13,
+  "commands": [
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "uvx",
+        "ruff",
+        "check",
+        "--select",
+        "F,I",
+        "qualification/audit_qwen_sign_shortcut.py",
+        "tests/test_audit_qwen_sign_shortcut.py"
+      ],
+      "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+      "log": "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/audit-qualification-v2/attempt-01/check-1.log",
+      "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18",
+      "returncode": 0,
+      "seconds": 0.13625962496735156
+    },
+    {
+      "command": [
+        "rtk",
+        "proxy",
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "pytest",
+        "-q",
+        "test_audit_qwen_sign_shortcut.py"
+      ],
+      "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/audit-qualification-v2/attempt-01/cohort",
+      "log": "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/audit-qualification-v2/attempt-01/check-2.log",
+      "log_sha256": "4aa7f21539f88e904b1068c15628b8d8ecd18df618fd34c67b3953d3bd2431b3",
+      "returncode": 0,
+      "seconds": 1.180379540892318
+    }
+  ],
+  "correction": "Pre-admission reader-only ABI correction: compare frozen shortcut execution profile four keys against campaign runtime eight-key superset. Retain authenticated extra cuDNN/thread fields. No producer/science/data/controller change.",
+  "extra_test_scope": "Actual saved four-key shortcut profile plus frozen83f9 eight-key runtime schema; no observed original-CUDA runtime claimed by fixture.",
+  "fixture": {
+    "bytes": 320938,
+    "files": 303,
+    "manifest_sha256": "a39ded6e7cacbc1e89cc98b6213d68a0f074eea5e17c6136d31cdee4c7979b33",
+    "origin": "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/producer-qualification-v1/attempt-06/tmp/shortcut0/result",
+    "producer_receipt_sha256": "a0d64ab540979ff01dcc09de1ae5c4c8a0b52a56d42b5afb6b3dd23d1efa292b"
+  },
+  "prior_receipt_sha256": "8511df565cd5c1f26bcafa20ad65cb0b9ed3c084dacaadaf4057ef18f4788cbb",
+  "prior_source_archive": "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/audit-source-archive-v1",
+  "schema": "mdb-qwen-sign-shortcut-audit-qualification-v2",
+  "scope": [
+    "Actual producer-written tiny three-case Qwen arrays, native suffix consumed kwargs/hidden, primitive receipts and public ForecastTransaction are read without rerunning science.",
+    "Actual saved accounts also pass with torch/transformers/tokenizers imports blocked. No models, tokenizer calls, CUDA, projections, original checkpoint reads, staging or jobs.",
+    "Standard request/wrapper checks use a separately labeled model-free synthetic envelope, not a claim of actual original-model custody.",
+    "Production original398 recipe checkpoint/header/payload restoration and installed-runtime source identities are implemented but not locally executed.",
+    "Three endpoint errors and three own-positive response errors per P/M/H; nonzero observations, signed-zero defects and first discrepancies preserved.",
+    "Real MDB comparison exceeds default1M budget; one generic rule yields three conditional catalog+atlas observations, no proof or family induction."
+  ],
+  "sources": {
+    "audit_flux_functional_pass.py": "2d54e716749dec52c159f3a5214860f4bb8cbf396fd09239540bd55988274c80",
+    "audit_flux_functional_qwen_prefix.py": "5004786be76e1f576d2df65e6d1225f8fdd41c4a7e09e5ed8a6c23057db78a97",
+    "audit_flux_raw_to_image.py": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835",
+    "audit_qwen_sign_shortcut.py": "d33613bbb1d71ee3b2007fb007e5266acaf141994091264bed50d27342237e2c",
+    "retrieve_reader_evidence.py": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923",
+    "test_audit_qwen_sign_shortcut.py": "df39b55682895d1e488ec2dd1d2aed4e0641108951162e4d7f263cba03c25ba2"
+  },
+  "status": "qualified-tiny-saved-mechanics",
+  "worker_sha256": "83f9d459938ccb96b913def78862cffc869cb6f0b4404a7f116d0a46fed184af"
+}

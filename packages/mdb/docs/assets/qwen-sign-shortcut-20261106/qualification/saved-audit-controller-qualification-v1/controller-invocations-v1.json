@@ -1,0 +1,31 @@
+{
+  "executed": false,
+  "notes": [
+    "audit-01 is the fresh CPU audit destination; --study is the completed native run holding request/submission/admission-command, never the bare campaign root.",
+    "CPU2/RAM3GiB/240estimate/600outer exactly matches unchanged generic admission note; no request or payload resealing."
+  ],
+  "owner": "root only",
+  "precondition": "Completed exact native study with authenticated MDB_DIRECTORY_READY publication; replace NATIVE_STUDY_RUN with its actual run directory",
+  "schema": "mdb-qwen-sign-shortcut-saved-audit-invocations-v1",
+  "stage": [
+    "rtk",
+    "proxy",
+    "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+    "-I",
+    "-B",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/stage_qwen_sign_shortcut_saved_audit.py",
+    "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/audit-01",
+    "--study",
+    "NATIVE_STUDY_RUN"
+  ],
+  "submit": [
+    "rtk",
+    "proxy",
+    "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+    "-I",
+    "-B",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/stage_qwen_sign_shortcut_saved_audit.py",
+    "/Users/jakeholl/domains/artifacts/mdb-qwen-sign-shortcut-20261106/audit-01",
+    "--submit"
+  ]
+}
