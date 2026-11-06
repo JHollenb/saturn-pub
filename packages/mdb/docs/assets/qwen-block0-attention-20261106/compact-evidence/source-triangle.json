@@ -1,0 +1,2027 @@
+{
+  "accounts": {
+    "H1": {
+      "B-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 456308,
+          "cosine": 0.999996948279858,
+          "elements": 1310720,
+          "first_nonzero_flat": 17921,
+          "maxabs": 0.03125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.1747811115543119,
+          "relative_rms": 0.00247051898553938,
+          "rms": 0.00043180005440860374,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -1.303715180256404e-07,
+          "worst_flat": 704000
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 3376,
+          "cosine": 0.9999995662487025,
+          "elements": 76800,
+          "first_nonzero_flat": 17921,
+          "maxabs": 0.0078125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.19088027436255597,
+          "relative_rms": 0.000934494943718639,
+          "rms": 0.0001783766512474351,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 1.437962055206299e-07,
+          "worst_flat": 17978
+        }
+      },
+      "C-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 456308,
+          "cosine": 0.999996948279858,
+          "elements": 1310720,
+          "first_nonzero_flat": 17921,
+          "maxabs": 0.03125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.1747811115543119,
+          "relative_rms": 0.00247051898553938,
+          "rms": 0.00043180005440860374,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -1.303715180256404e-07,
+          "worst_flat": 704000
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 3376,
+          "cosine": 0.9999995662487025,
+          "elements": 76800,
+          "first_nonzero_flat": 17921,
+          "maxabs": 0.0078125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.19088027436255597,
+          "relative_rms": 0.000934494943718639,
+          "rms": 0.0001783766512474351,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 1.437962055206299e-07,
+          "worst_flat": 17978
+        }
+      },
+      "C-minus-B": {
+        "full": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 1310720,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.17478158353048232,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        },
+        "shared_prefix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 76800,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.190865681662304,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        }
+      },
+      "coordinate_identity": true,
+      "prefix_telescope": {
+        "coordinate_sum_elements": 76800,
+        "cross_dot": 0.0,
+        "energy_identity_residual": 0.0,
+        "first_energy": 0.0024436400417471305,
+        "first_vs_historical_cosine": 1.0,
+        "historical_energy": 0.0024436400417471305,
+        "scope": "order-conditioned vector telescope and alignment; not factorial interaction, intrinsic gain or causal shares",
+        "second_energy": 0.0,
+        "second_vs_historical_cosine": null,
+        "signed_cross_term": 0.0,
+        "sum_energy": 0.0024436400417471305
+      }
+    },
+    "after_attention": {
+      "B-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 126430,
+          "cosine": 0.9999995257096581,
+          "elements": 1310720,
+          "first_nonzero_flat": 19347,
+          "maxabs": 0.015625,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07518491718600553,
+          "relative_rms": 0.0009741675194885123,
+          "rms": 7.324270427804023e-05,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 3.3694595913402735e-08,
+          "worst_flat": 704000
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 49,
+          "cosine": 0.9999999980801002,
+          "elements": 76800,
+          "first_nonzero_flat": 19347,
+          "maxabs": 0.00048828125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07585589490426595,
+          "relative_rms": 6.19661201934026e-05,
+          "rms": 4.70049550101586e-06,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 3.973642985026042e-09,
+          "worst_flat": 46508
+        }
+      },
+      "C-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 126430,
+          "cosine": 0.9999995257096581,
+          "elements": 1310720,
+          "first_nonzero_flat": 19347,
+          "maxabs": 0.015625,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07518491718600553,
+          "relative_rms": 0.0009741675194885123,
+          "rms": 7.324270427804023e-05,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 3.3694595913402735e-08,
+          "worst_flat": 704000
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 49,
+          "cosine": 0.9999999980801002,
+          "elements": 76800,
+          "first_nonzero_flat": 19347,
+          "maxabs": 0.00048828125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07585589490426595,
+          "relative_rms": 6.19661201934026e-05,
+          "rms": 4.70049550101586e-06,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 3.973642985026042e-09,
+          "worst_flat": 46508
+        }
+      },
+      "C-minus-B": {
+        "full": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 1310720,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07518642583522014,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        },
+        "shared_prefix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 76800,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07585589355845426,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        }
+      },
+      "coordinate_identity": true,
+      "prefix_telescope": {
+        "coordinate_sum_elements": 76800,
+        "cross_dot": 0.0,
+        "energy_identity_residual": 0.0,
+        "first_energy": 1.6968697309494019e-06,
+        "first_vs_historical_cosine": 1.0,
+        "historical_energy": 1.6968697309494019e-06,
+        "scope": "order-conditioned vector telescope and alignment; not factorial interaction, intrinsic gain or causal shares",
+        "second_energy": 0.0,
+        "second_vs_historical_cosine": null,
+        "signed_cross_term": 0.0,
+        "sum_energy": 1.6968697309494019e-06
+      }
+    },
+    "head": {
+      "B-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 107158,
+          "cosine": 0.9999998906379662,
+          "elements": 2097152,
+          "first_nonzero_flat": 2650,
+          "maxabs": 0.001953125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.022452891479731018,
+          "relative_rms": 0.00046768122936632054,
+          "rms": 1.0500795890069186e-05,
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ],
+          "signed_mean": 1.9917157697418864e-08,
+          "worst_flat": 1847405
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 5,
+          "cosine": 0.9999999998952543,
+          "elements": 122880,
+          "first_nonzero_flat": 2650,
+          "maxabs": 0.0001220703125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.02710927588104248,
+          "relative_rms": 1.4473836923632765e-05,
+          "rms": 3.9237523821997976e-07,
+          "shape": [
+            1,
+            32,
+            30,
+            128
+          ],
+          "signed_mean": -5.510325233141581e-10,
+          "worst_flat": 13940
+        }
+      },
+      "C-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 107158,
+          "cosine": 0.9999998906379662,
+          "elements": 2097152,
+          "first_nonzero_flat": 2650,
+          "maxabs": 0.001953125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.022452891479731018,
+          "relative_rms": 0.00046768122936632054,
+          "rms": 1.0500795890069186e-05,
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ],
+          "signed_mean": 1.9917157697418864e-08,
+          "worst_flat": 1847405
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 5,
+          "cosine": 0.9999999998952543,
+          "elements": 122880,
+          "first_nonzero_flat": 2650,
+          "maxabs": 0.0001220703125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.02710927588104248,
+          "relative_rms": 1.4473836923632765e-05,
+          "rms": 3.9237523821997976e-07,
+          "shape": [
+            1,
+            32,
+            30,
+            128
+          ],
+          "signed_mean": -5.510325233141581e-10,
+          "worst_flat": 13940
+        }
+      },
+      "C-minus-B": {
+        "full": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 2097152,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.022452859950594935,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        },
+        "shared_prefix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 122880,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.027109276541563365,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            32,
+            30,
+            128
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        }
+      },
+      "coordinate_identity": true,
+      "prefix_telescope": {
+        "coordinate_sum_elements": 122880,
+        "cross_dot": 0.0,
+        "energy_identity_residual": 0.0,
+        "first_energy": 1.891839929157868e-08,
+        "first_vs_historical_cosine": 1.0,
+        "historical_energy": 1.891839929157868e-08,
+        "scope": "order-conditioned vector telescope and alignment; not factorial interaction, intrinsic gain or causal shares",
+        "second_energy": 0.0,
+        "second_vs_historical_cosine": null,
+        "signed_cross_term": 0.0,
+        "sum_energy": 1.891839929157868e-08
+      }
+    },
+    "mlp": {
+      "B-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 554800,
+          "cosine": 0.9999958644643757,
+          "elements": 1310720,
+          "first_nonzero_flat": 17921,
+          "maxabs": 0.015625,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.13068819759878622,
+          "relative_rms": 0.0028759494606591164,
+          "rms": 0.00037585265139874124,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -1.382333483235243e-07,
+          "worst_flat": 386575
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 4170,
+          "cosine": 0.9999994135974196,
+          "elements": 76800,
+          "first_nonzero_flat": 17921,
+          "maxabs": 0.005859375,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.14625746199214035,
+          "relative_rms": 0.0010883284594071319,
+          "rms": 0.00015917615828670327,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -2.0238726089398066e-07,
+          "worst_flat": 18016
+        }
+      },
+      "C-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 554800,
+          "cosine": 0.9999958644643757,
+          "elements": 1310720,
+          "first_nonzero_flat": 17921,
+          "maxabs": 0.015625,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.13068819759878622,
+          "relative_rms": 0.0028759494606591164,
+          "rms": 0.00037585265139874124,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -1.382333483235243e-07,
+          "worst_flat": 386575
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 4170,
+          "cosine": 0.9999994135974196,
+          "elements": 76800,
+          "first_nonzero_flat": 17921,
+          "maxabs": 0.005859375,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.14625746199214035,
+          "relative_rms": 0.0010883284594071319,
+          "rms": 0.00015917615828670327,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -2.0238726089398066e-07,
+          "worst_flat": 18016
+        }
+      },
+      "C-minus-B": {
+        "full": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 1310720,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.1306869276830263,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        },
+        "shared_prefix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 76800,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.1462415871806399,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        }
+      },
+      "coordinate_identity": true,
+      "prefix_telescope": {
+        "coordinate_sum_elements": 76800,
+        "cross_dot": 0.0,
+        "energy_identity_residual": 0.0,
+        "first_energy": 0.0019458853913789653,
+        "first_vs_historical_cosine": 1.0,
+        "historical_energy": 0.0019458853913789653,
+        "scope": "order-conditioned vector telescope and alignment; not factorial interaction, intrinsic gain or causal shares",
+        "second_energy": 0.0,
+        "second_vs_historical_cosine": null,
+        "signed_cross_term": 0.0,
+        "sum_energy": 0.0019458853913789653
+      }
+    },
+    "mlp_input": {
+      "B-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 125881,
+          "cosine": 0.999998704767429,
+          "elements": 1310720,
+          "first_nonzero_flat": 17922,
+          "maxabs": 0.0078125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.11114007543798231,
+          "relative_rms": 0.0016095295866150776,
+          "rms": 0.00017888323967606425,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -4.626908776117489e-08,
+          "worst_flat": 772240
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 533,
+          "cosine": 0.9999998550361516,
+          "elements": 76800,
+          "first_nonzero_flat": 17922,
+          "maxabs": 0.00390625,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.12386418850249542,
+          "relative_rms": 0.0005400648653538178,
+          "rms": 6.68946962857601e-05,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -2.082080269853274e-07,
+          "worst_flat": 18129
+        }
+      },
+      "C-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 125881,
+          "cosine": 0.999998704767429,
+          "elements": 1310720,
+          "first_nonzero_flat": 17922,
+          "maxabs": 0.0078125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.11114007543798231,
+          "relative_rms": 0.0016095295866150776,
+          "rms": 0.00017888323967606425,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -4.626908776117489e-08,
+          "worst_flat": 772240
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 533,
+          "cosine": 0.9999998550361516,
+          "elements": 76800,
+          "first_nonzero_flat": 17922,
+          "maxabs": 0.00390625,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.12386418850249542,
+          "relative_rms": 0.0005400648653538178,
+          "rms": 6.68946962857601e-05,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -2.082080269853274e-07,
+          "worst_flat": 18129
+        }
+      },
+      "C-minus-B": {
+        "full": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 1310720,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.11113870377322724,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        },
+        "shared_prefix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 76800,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.12385900022503771,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        }
+      },
+      "coordinate_identity": true,
+      "prefix_telescope": {
+        "coordinate_sum_elements": 76800,
+        "cross_dot": 0.0,
+        "energy_identity_residual": 0.0,
+        "first_energy": 0.00034367235004140184,
+        "first_vs_historical_cosine": 1.0,
+        "historical_energy": 0.00034367235004140184,
+        "scope": "order-conditioned vector telescope and alignment; not factorial interaction, intrinsic gain or causal shares",
+        "second_energy": 0.0,
+        "second_vs_historical_cosine": null,
+        "signed_cross_term": 0.0,
+        "sum_energy": 0.00034367235004140184
+      }
+    },
+    "projection": {
+      "B-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 206438,
+          "cosine": 0.9999995961600171,
+          "elements": 1310720,
+          "first_nonzero_flat": 18510,
+          "maxabs": 0.015625,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07292995087792882,
+          "relative_rms": 0.0008989368531281319,
+          "rms": 6.555942054099457e-05,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 3.56409135093827e-08,
+          "worst_flat": 704000
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 71,
+          "cosine": 0.9999999978253238,
+          "elements": 76800,
+          "first_nonzero_flat": 18510,
+          "maxabs": 0.00048828125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07324158346875971,
+          "relative_rms": 6.594985780400346e-05,
+          "rms": 4.830272015104753e-06,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 1.0286845887700716e-08,
+          "worst_flat": 46508
+        }
+      },
+      "C-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 206438,
+          "cosine": 0.9999995961600171,
+          "elements": 1310720,
+          "first_nonzero_flat": 18510,
+          "maxabs": 0.015625,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07292995087792882,
+          "relative_rms": 0.0008989368531281319,
+          "rms": 6.555942054099457e-05,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 3.56409135093827e-08,
+          "worst_flat": 704000
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 71,
+          "cosine": 0.9999999978253238,
+          "elements": 76800,
+          "first_nonzero_flat": 18510,
+          "maxabs": 0.00048828125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07324158346875971,
+          "relative_rms": 6.594985780400346e-05,
+          "rms": 4.830272015104753e-06,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 1.0286845887700716e-08,
+          "worst_flat": 46508
+        }
+      },
+      "C-minus-B": {
+        "full": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 1310720,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07293139393051776,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        },
+        "shared_prefix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 76800,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07324157049514496,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        }
+      },
+      "coordinate_identity": true,
+      "prefix_telescope": {
+        "coordinate_sum_elements": 76800,
+        "cross_dot": 0.0,
+        "energy_identity_residual": 0.0,
+        "first_energy": 1.7918613304246378e-06,
+        "first_vs_historical_cosine": 1.0,
+        "historical_energy": 1.7918613304246378e-06,
+        "scope": "order-conditioned vector telescope and alignment; not factorial interaction, intrinsic gain or causal shares",
+        "second_energy": 0.0,
+        "second_vs_historical_cosine": null,
+        "signed_cross_term": 0.0,
+        "sum_energy": 1.7918613304246378e-06
+      }
+    }
+  },
+  "arms": {
+    "A.explicit-repeated": {
+      "H1": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            8.625,
+            -2.1875,
+            0.8828125,
+            1.515625,
+            2.09375,
+            0.890625,
+            -1.640625,
+            0.140625
+          ],
+          "sha256": "deea21014117dfcef01e2d460bd55eddc3f737ee741da6a9d15afd28d824d30e",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/H1.npy",
+        "raw_sha256": "deea21014117dfcef01e2d460bd55eddc3f737ee741da6a9d15afd28d824d30e",
+        "sha256": "b65f39b3ef721acf5e432c43aeec4d8c631a511ba3367ab68d972c7a4a618112",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "activation": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            0.09765625,
+            -0.00482177734375,
+            -0.002166748046875,
+            0.439453125,
+            -0.007537841796875,
+            0.1494140625,
+            -0.0595703125,
+            0.205078125
+          ],
+          "sha256": "9c2128e52e7602befa054368b3387da72eba514037a0f0bc202012b471fad31d",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/activation.npy",
+        "raw_sha256": "9c2128e52e7602befa054368b3387da72eba514037a0f0bc202012b471fad31d",
+        "sha256": "d95183052dfc673c36d8974c75b7a26cae05f1db18293bc8fd3d0efc3c0a89ed",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      },
+      "after_attention": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            1.2734375,
+            -0.330078125,
+            -0.169921875,
+            -0.035400390625,
+            -0.171875,
+            0.78515625,
+            -0.58984375,
+            -0.09619140625
+          ],
+          "sha256": "67aed49d05dfd2a3e3cd1818bf7d84d256f7b844d6ba6b767c0aeeb2deaa9a78",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/after_attention.npy",
+        "raw_sha256": "67aed49d05dfd2a3e3cd1818bf7d84d256f7b844d6ba6b767c0aeeb2deaa9a78",
+        "sha256": "8148ec42b167c24a5be64f68f94d1461779c4cd20c41db5c8d69604a6d5de4e3",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "gate": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.65625,
+            -0.068359375,
+            -0.0311279296875,
+            1.1875,
+            0.07470703125,
+            -0.59765625,
+            -0.1728515625,
+            -0.73828125
+          ],
+          "sha256": "b567b74354d374949997f7d877c404a504765fb1e6ea25ae8b694e5d9aa625dc",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/gate.npy",
+        "raw_sha256": "b567b74354d374949997f7d877c404a504765fb1e6ea25ae8b694e5d9aa625dc",
+        "sha256": "53fbb2b6b29f84ef15a1886b66618c10b27cee6e5eb79170b51c0026f34f74e9",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      },
+      "head": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.05810546875,
+            0.123046875,
+            0.028564453125,
+            0.005218505859375,
+            -0.03857421875,
+            0.003875732421875,
+            -0.006439208984375,
+            0.0068359375
+          ],
+          "sha256": "92414069c01afa84d0d626ce6dbe78307589f3e9338ae905cbc7ff8412793563",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/head.npy",
+        "raw_sha256": "92414069c01afa84d0d626ce6dbe78307589f3e9338ae905cbc7ff8412793563",
+        "sha256": "4a5367c7c72701ff59f2871658f219233b91e9c9f6ffe1367f86c5ec7fa90fb0",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          128,
+          4096,
+          1
+        ]
+      },
+      "mlp": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            7.375,
+            -1.859375,
+            1.0546875,
+            1.5546875,
+            2.265625,
+            0.10595703125,
+            -1.0546875,
+            0.236328125
+          ],
+          "sha256": "30489839ab513b48492053af65ec594f0fdd16ec75cab48b0b6b5e9d4e9c8e4c",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/mlp.npy",
+        "raw_sha256": "30489839ab513b48492053af65ec594f0fdd16ec75cab48b0b6b5e9d4e9c8e4c",
+        "sha256": "4d4edb8285e940fb98d5118a47a1078f0dcb35f7b6d511f7150a760c86a9343d",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "mlp_input": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.0002574920654296875,
+            -0.000881195068359375,
+            9.107589721679688e-05,
+            -0.035888671875,
+            -0.365234375,
+            0.00115966796875,
+            -0.000690460205078125,
+            -0.06982421875
+          ],
+          "sha256": "3d55403af003ba71bc18aa1778655e45e7bb5f97fa506b22bd79ee5038ec2080",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/mlp_input.npy",
+        "raw_sha256": "3d55403af003ba71bc18aa1778655e45e7bb5f97fa506b22bd79ee5038ec2080",
+        "sha256": "9b88c0c162ae321ffee295a015212cdedc45d1c8a91313b447e380bdac3f5535",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "projection": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            1.2734375,
+            -0.337890625,
+            -0.1845703125,
+            -0.0771484375,
+            -0.189453125,
+            0.796875,
+            -0.59765625,
+            -0.12255859375
+          ],
+          "sha256": "aff9a8dc0a7c8dcbaf152df9d998d58836759d982f148f5cd9b1fe43a3d45673",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/projection.npy",
+        "raw_sha256": "aff9a8dc0a7c8dcbaf152df9d998d58836759d982f148f5cd9b1fe43a3d45673",
+        "sha256": "7f49734a13d671084ddf3152a5666b8590c893f5b20ee2135bff672caa9bd320",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "up": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.435546875,
+            0.146484375,
+            0.1416015625,
+            0.482421875,
+            -0.1943359375,
+            -0.70703125,
+            0.75390625,
+            -0.859375
+          ],
+          "sha256": "3bede3106a067e0bf9251d02b5851b1a0fde351ec8126f20eeff81bb6b2c7744",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/up.npy",
+        "raw_sha256": "3bede3106a067e0bf9251d02b5851b1a0fde351ec8126f20eeff81bb6b2c7744",
+        "sha256": "887c858b82538e4bc1701a867276ee946aaf76a4e9c21487ed688ddbaa148202",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      }
+    },
+    "B.causal-repeated": {
+      "H1": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            8.625,
+            -2.1875,
+            0.8828125,
+            1.515625,
+            2.09375,
+            0.890625,
+            -1.640625,
+            0.140625
+          ],
+          "sha256": "c53ea8fa17e7e882bdea3b84a98fa7983c8c10e60771be3655170cea9d2dd1a3",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/H1.npy",
+        "raw_sha256": "c53ea8fa17e7e882bdea3b84a98fa7983c8c10e60771be3655170cea9d2dd1a3",
+        "sha256": "2600ca861ea83745d8575db2680e03d8dc568899a93e76538f8ebc6fbde0e2a5",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "activation": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            0.09765625,
+            -0.00482177734375,
+            -0.002166748046875,
+            0.439453125,
+            -0.007537841796875,
+            0.1494140625,
+            -0.0595703125,
+            0.205078125
+          ],
+          "sha256": "7390f03198f1294c18d6a282b20c54f3927c6a11e9567bb6c0210f22688ca176",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/activation.npy",
+        "raw_sha256": "7390f03198f1294c18d6a282b20c54f3927c6a11e9567bb6c0210f22688ca176",
+        "sha256": "ad6dcbddbd052c54b3ffbcf17ccfa9f54edf5af83eee7a63954117dc397c5560",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      },
+      "after_attention": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            1.2734375,
+            -0.330078125,
+            -0.169921875,
+            -0.035400390625,
+            -0.171875,
+            0.78515625,
+            -0.58984375,
+            -0.09619140625
+          ],
+          "sha256": "7d3230b68c0cfa327f936e0162e7371704178ccba4548f3c6bf7f83028af86dc",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/after_attention.npy",
+        "raw_sha256": "7d3230b68c0cfa327f936e0162e7371704178ccba4548f3c6bf7f83028af86dc",
+        "sha256": "3c63277c704d370547430b94f99fc75deab69af6b2a9ef0f3e846e73a988b2ec",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "gate": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.65625,
+            -0.068359375,
+            -0.0311279296875,
+            1.1875,
+            0.07470703125,
+            -0.59765625,
+            -0.1728515625,
+            -0.73828125
+          ],
+          "sha256": "64665ef8ab7864c0ad8e9e4021b2da0b5f59fc7ed88346826e9c5b7a5fe7328c",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/gate.npy",
+        "raw_sha256": "64665ef8ab7864c0ad8e9e4021b2da0b5f59fc7ed88346826e9c5b7a5fe7328c",
+        "sha256": "bca52569efe320e535a59c5407f7cb0152af0986baac576f7a119e58ef54a594",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      },
+      "head": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.05810546875,
+            0.123046875,
+            0.028564453125,
+            0.005218505859375,
+            -0.03857421875,
+            0.003875732421875,
+            -0.006439208984375,
+            0.0068359375
+          ],
+          "sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/head.npy",
+        "raw_sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+        "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          128,
+          4096,
+          1
+        ]
+      },
+      "mlp": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            7.375,
+            -1.859375,
+            1.0546875,
+            1.5546875,
+            2.265625,
+            0.10595703125,
+            -1.0546875,
+            0.236328125
+          ],
+          "sha256": "f8b5b915712e3c77d57ad4a11ea59513e02c04b2dfb446c2fa9b36479716d168",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/mlp.npy",
+        "raw_sha256": "f8b5b915712e3c77d57ad4a11ea59513e02c04b2dfb446c2fa9b36479716d168",
+        "sha256": "812cacf7d5e725c6e5bb62cba683a7b92bc9e8b06511302868e076b4853698ac",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "mlp_input": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.0002574920654296875,
+            -0.000881195068359375,
+            9.107589721679688e-05,
+            -0.035888671875,
+            -0.365234375,
+            0.00115966796875,
+            -0.000690460205078125,
+            -0.06982421875
+          ],
+          "sha256": "b3beb892f9dde1613df1349c51d8fbea797fab74cf93faf928929274c48af141",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/mlp_input.npy",
+        "raw_sha256": "b3beb892f9dde1613df1349c51d8fbea797fab74cf93faf928929274c48af141",
+        "sha256": "1de304abb99c6a8c3122db60b2b79d583098c50fffcff779967b652505d7f35d",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "projection": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            1.2734375,
+            -0.337890625,
+            -0.1845703125,
+            -0.0771484375,
+            -0.189453125,
+            0.796875,
+            -0.59765625,
+            -0.12255859375
+          ],
+          "sha256": "499e404a62621d35ba815cb3140994fe7324998ae2d98e81b1a941cdc34bd226",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/projection.npy",
+        "raw_sha256": "499e404a62621d35ba815cb3140994fe7324998ae2d98e81b1a941cdc34bd226",
+        "sha256": "5299a15070f9dd54c08a52072c0719c173a1c39e3fa8c26326342578ee1a3909",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "up": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.435546875,
+            0.146484375,
+            0.1416015625,
+            0.482421875,
+            -0.1943359375,
+            -0.70703125,
+            0.75390625,
+            -0.859375
+          ],
+          "sha256": "cb451854c5c3eedeeda38cfc93bb8a301c4c209bffd9ac06a2adbbf3aa285e62",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/up.npy",
+        "raw_sha256": "cb451854c5c3eedeeda38cfc93bb8a301c4c209bffd9ac06a2adbbf3aa285e62",
+        "sha256": "835eddeb00bc883e0ea3e8a49b121df11e5a2ed828fb99b3b5999db5f13c2e2f",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      }
+    },
+    "C.causal-grouped": {
+      "H1": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            8.625,
+            -2.1875,
+            0.8828125,
+            1.515625,
+            2.09375,
+            0.890625,
+            -1.640625,
+            0.140625
+          ],
+          "sha256": "c53ea8fa17e7e882bdea3b84a98fa7983c8c10e60771be3655170cea9d2dd1a3",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/H1.npy",
+        "raw_sha256": "c53ea8fa17e7e882bdea3b84a98fa7983c8c10e60771be3655170cea9d2dd1a3",
+        "sha256": "2600ca861ea83745d8575db2680e03d8dc568899a93e76538f8ebc6fbde0e2a5",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "activation": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            0.09765625,
+            -0.00482177734375,
+            -0.002166748046875,
+            0.439453125,
+            -0.007537841796875,
+            0.1494140625,
+            -0.0595703125,
+            0.205078125
+          ],
+          "sha256": "7390f03198f1294c18d6a282b20c54f3927c6a11e9567bb6c0210f22688ca176",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/activation.npy",
+        "raw_sha256": "7390f03198f1294c18d6a282b20c54f3927c6a11e9567bb6c0210f22688ca176",
+        "sha256": "ad6dcbddbd052c54b3ffbcf17ccfa9f54edf5af83eee7a63954117dc397c5560",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      },
+      "after_attention": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            1.2734375,
+            -0.330078125,
+            -0.169921875,
+            -0.035400390625,
+            -0.171875,
+            0.78515625,
+            -0.58984375,
+            -0.09619140625
+          ],
+          "sha256": "7d3230b68c0cfa327f936e0162e7371704178ccba4548f3c6bf7f83028af86dc",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/after_attention.npy",
+        "raw_sha256": "7d3230b68c0cfa327f936e0162e7371704178ccba4548f3c6bf7f83028af86dc",
+        "sha256": "3c63277c704d370547430b94f99fc75deab69af6b2a9ef0f3e846e73a988b2ec",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "gate": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.65625,
+            -0.068359375,
+            -0.0311279296875,
+            1.1875,
+            0.07470703125,
+            -0.59765625,
+            -0.1728515625,
+            -0.73828125
+          ],
+          "sha256": "64665ef8ab7864c0ad8e9e4021b2da0b5f59fc7ed88346826e9c5b7a5fe7328c",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/gate.npy",
+        "raw_sha256": "64665ef8ab7864c0ad8e9e4021b2da0b5f59fc7ed88346826e9c5b7a5fe7328c",
+        "sha256": "bca52569efe320e535a59c5407f7cb0152af0986baac576f7a119e58ef54a594",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      },
+      "head": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.05810546875,
+            0.123046875,
+            0.028564453125,
+            0.005218505859375,
+            -0.03857421875,
+            0.003875732421875,
+            -0.006439208984375,
+            0.0068359375
+          ],
+          "sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/head.npy",
+        "raw_sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+        "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          128,
+          4096,
+          1
+        ]
+      },
+      "mlp": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            7.375,
+            -1.859375,
+            1.0546875,
+            1.5546875,
+            2.265625,
+            0.10595703125,
+            -1.0546875,
+            0.236328125
+          ],
+          "sha256": "f8b5b915712e3c77d57ad4a11ea59513e02c04b2dfb446c2fa9b36479716d168",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/mlp.npy",
+        "raw_sha256": "f8b5b915712e3c77d57ad4a11ea59513e02c04b2dfb446c2fa9b36479716d168",
+        "sha256": "812cacf7d5e725c6e5bb62cba683a7b92bc9e8b06511302868e076b4853698ac",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "mlp_input": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.0002574920654296875,
+            -0.000881195068359375,
+            9.107589721679688e-05,
+            -0.035888671875,
+            -0.365234375,
+            0.00115966796875,
+            -0.000690460205078125,
+            -0.06982421875
+          ],
+          "sha256": "b3beb892f9dde1613df1349c51d8fbea797fab74cf93faf928929274c48af141",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/mlp_input.npy",
+        "raw_sha256": "b3beb892f9dde1613df1349c51d8fbea797fab74cf93faf928929274c48af141",
+        "sha256": "1de304abb99c6a8c3122db60b2b79d583098c50fffcff779967b652505d7f35d",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "projection": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            1.2734375,
+            -0.337890625,
+            -0.1845703125,
+            -0.0771484375,
+            -0.189453125,
+            0.796875,
+            -0.59765625,
+            -0.12255859375
+          ],
+          "sha256": "499e404a62621d35ba815cb3140994fe7324998ae2d98e81b1a941cdc34bd226",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/projection.npy",
+        "raw_sha256": "499e404a62621d35ba815cb3140994fe7324998ae2d98e81b1a941cdc34bd226",
+        "sha256": "5299a15070f9dd54c08a52072c0719c173a1c39e3fa8c26326342578ee1a3909",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "up": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.435546875,
+            0.146484375,
+            0.1416015625,
+            0.482421875,
+            -0.1943359375,
+            -0.70703125,
+            0.75390625,
+            -0.859375
+          ],
+          "sha256": "cb451854c5c3eedeeda38cfc93bb8a301c4c209bffd9ac06a2adbbf3aa285e62",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/up.npy",
+        "raw_sha256": "cb451854c5c3eedeeda38cfc93bb8a301c4c209bffd9ac06a2adbbf3aa285e62",
+        "sha256": "835eddeb00bc883e0ea3e8a49b121df11e5a2ed828fb99b3b5999db5f13c2e2f",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      }
+    }
+  },
+  "fixed_bank_case": "long",
+  "full_causal_equivalence_rows": 512,
+  "historical_bridge_valid_prefix_rows": 30,
+  "inputs": {
+    "explicit_causal_mask": {
+      "bytes": 262272,
+      "descriptor": {
+        "dtype": "torch.bool",
+        "preview": [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "sha256": "1105de13a063dd488006cada34ce5e1edfc1c223327b035c1de7df30291a4876",
+        "shape": [
+          1,
+          1,
+          512,
+          512
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bool",
+      "encoding": "native-numpy-v1",
+      "path": "triangle-inputs/explicit_causal_mask.npy",
+      "raw_sha256": "1105de13a063dd488006cada34ce5e1edfc1c223327b035c1de7df30291a4876",
+      "sha256": "13d860c4b81bc2ca9c3fe116221d9a0a40f961c6fd926b7198ef3f556ce0e8c8",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stored_dtype": "bool",
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "repeated_k": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -4.71875,
+          2.53125,
+          2.390625,
+          4.1875,
+          -5.84375,
+          0.921875,
+          -0.11279296875,
+          2.703125
+        ],
+        "sha256": "b68b205457fe74bae7cea7ac5396091256c2a4c7a2112d0f65a65b5eac91b43f",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "triangle-inputs/repeated_k.npy",
+      "raw_sha256": "b68b205457fe74bae7cea7ac5396091256c2a4c7a2112d0f65a65b5eac91b43f",
+      "sha256": "529bfc8969bacc3add60fe8ea5d577bd70c26aeed7507d1a4c6e956a06890c99",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "repeated_v": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.05810546875,
+          0.123046875,
+          0.028564453125,
+          0.005218505859375,
+          -0.03857421875,
+          0.003875732421875,
+          -0.006439208984375,
+          0.0068359375
+        ],
+        "sha256": "c76103e6620a59bbf8f09e73d0601f76ea1de8ba8f37b7fdf31959fc9dcfb6b0",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "triangle-inputs/repeated_v.npy",
+      "raw_sha256": "c76103e6620a59bbf8f09e73d0601f76ea1de8ba8f37b7fdf31959fc9dcfb6b0",
+      "sha256": "c174d39f68a0d4f6cb15626049992fe6dcfee567fc35cda8a503ac0096f1e38b",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  }
+}

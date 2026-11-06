@@ -1,0 +1,76 @@
+{
+  "actual_writer_schema": {
+    "path": "actual-writer-schema-final.json",
+    "scope": "Readonly actual70e tiny writer serialization/frontier/12archive recipes/7receipt accounts, no request envelope in that producer fixture.",
+    "sha256": "a4aff72dd0fee03f706f5616e11de7be4c1daab88a1c7d45e8033dee3b023524"
+  },
+  "canonical_ruff": {
+    "command": [
+      "rtk",
+      "proxy",
+      "uvx",
+      "ruff",
+      "check",
+      "--select",
+      "F,I",
+      "qualification/audit_qwen_block0_attention.py",
+      "tests/test_audit_qwen_block0_attention.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "exit_code": 0,
+    "stdout": "All checks passed!"
+  },
+  "cohort_source_hashes_equal": true,
+  "coverage": [
+    "Full synthetic request/wrapper/source authentication and all port/SDPA payload checks use actual70e tensor_record.",
+    "Historical original input fields use frozen1c16 _save_tensor/_save_bytes, including BF16 raw bits and byte fallback.",
+    "Numerical H1 miss and capture-stride-only discrepancy retained as observations.",
+    "Hostile source/seal/unlisted member/seventh receipt/future-frontier and coherent fixed-Q replacement refused.",
+    "Actual -I -B reader CLI executes with torch/transformers/tokenizers import guard.",
+    "Actual saved-only worker finalizes compact marker with exact request/job/filemanifest identity.",
+    "Five conditional observed H1catalog records and wrong-clock abstentions.",
+    "Native after_attention explicitly reconstructed H0+captured projection, not independently hooked residual input."
+  ],
+  "final_test": {
+    "capture": "Tool-returned stdout transcribed into receipt; final copied sources verified identical.",
+    "command": [
+      "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+      "-I",
+      "-B",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_audit_qwen_block0_attention.py",
+      "--basetemp=tmp"
+    ],
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/audit-qualification-v1/attempt-02/cohort",
+    "exit_code": 0,
+    "passed": 11,
+    "pytest_seconds": 2.42,
+    "stdout_tool_return": "...........                                                              [100%]\n11 passed in 2.42s\n"
+  },
+  "history": "Attempt01 intermediate8checks passed; final attempt02 replaces qualification coverage without overwriting prior receipts/data. No existing source edited.",
+  "interpreter": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+  "isolation": "-I -B installed packages, copied cohort outside checkout",
+  "jobs_or_staging": 0,
+  "new_cuda_calls": 0,
+  "new_model_calls": 0,
+  "original_data_reads": false,
+  "producer_sha256": "70e52a6624947029b906e0a02f2f36d1a165b321a40c9e42f665224a3710361b",
+  "production_claims": false,
+  "python": "3.12.13",
+  "schema": "mdb-qwen-block0-saved-reader-qualification-v1",
+  "sources": {
+    "qualification/audit_qwen_block0_attention.py": "00de6d42e167351b95667b07723e04320f798265b0155e101008990e114abc20",
+    "tests/test_audit_qwen_block0_attention.py": "4b0ed4990ee48c1599d35c32f053b20796f967074877c04445085609ea5533d1"
+  },
+  "status": "qualified-tiny-mechanics",
+  "versions": {
+    "mdb": null,
+    "numpy": "2.5.4",
+    "pytest": "9.2.0",
+    "saturn-pub": "0.4.1",
+    "torch": "2.13.0",
+    "transformers": "5.14.1"
+  }
+}

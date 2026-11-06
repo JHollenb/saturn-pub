@@ -1,0 +1,9 @@
+{
+  "directory_custody": true,
+  "native_manifest_sha256": "e593670a65263168b08fb70fb684dca676ceb078fc78234dd11fb8e3cb3876a8",
+  "native_request_sha256": "5579dc04e6fbcb20d675386833b4e3cc545f0f071383c2443cb72b108c260c36",
+  "native_root": "/mnt/big/mdb/research/job-0a3c41fce1d0/qwen-block0-attention-result",
+  "output_scratch": "/mnt/big/mdb/research",
+  "scope": "Exact shared-prefix A/short,B/long,C/long and full signedtriangle-to-historical bridges;selected sixports only,zero model/attention/recipe recurrence.",
+  "source_job": "job-0a3c41fce1d0"
+}

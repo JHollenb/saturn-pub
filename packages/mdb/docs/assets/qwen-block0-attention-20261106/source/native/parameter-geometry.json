@@ -1,0 +1,108 @@
+{
+  "complete_checkpoint_archives_authenticated": {
+    "model-00001-of-00002.safetensors": "8c0506e7f4936fa7e26183a4fd8da4e2bdbc5990ba64ae441f965d51228f36ea",
+    "model-00002-of-00002.safetensors": "82f2bd839378541b0557bfabaf37c7d3d637071fdcb73302dedd7cf61162ce07"
+  },
+  "estimated_peak_ram_mb": "3000\u20134000, unmeasured at production geometry",
+  "estimated_peak_vram_mb": "1500, unmeasured at production geometry",
+  "native_weight_assignment": "Eleven block parameters alias the once-loaded recipe bank; no duplicate native bank.",
+  "new_frontier": "Retained original IDs/masks plus original parameters; historical H0/H1 are known replay controls.",
+  "original_input_member_bytes": 21104831,
+  "original_input_members": 20,
+  "selected_parameters": {
+    "model.embed_tokens.weight": {
+      "dtype": "BF16",
+      "payload_sha256": "eabe5625fc0575bf517c424041e9701c0fd521889e0f547c8522d2aa20e8c0f8",
+      "shape": [
+        151936,
+        2560
+      ]
+    },
+    "model.layers.0.input_layernorm.weight": {
+      "dtype": "BF16",
+      "payload_sha256": "5812f00704f74996f9460b6f78a3fdaafb759d8c1b9d406f3b3515e6376a33ac",
+      "shape": [
+        2560
+      ]
+    },
+    "model.layers.0.mlp.down_proj.weight": {
+      "dtype": "BF16",
+      "payload_sha256": "edf534353405dab5179894b9641d12c6e53c4c6a8100b8c079257a9f3584945f",
+      "shape": [
+        2560,
+        9728
+      ]
+    },
+    "model.layers.0.mlp.gate_proj.weight": {
+      "dtype": "BF16",
+      "payload_sha256": "fe440e8f6cc7c56de2d5a97fef5ee04f65388dd8460821ef2ed1645c39c6a47a",
+      "shape": [
+        9728,
+        2560
+      ]
+    },
+    "model.layers.0.mlp.up_proj.weight": {
+      "dtype": "BF16",
+      "payload_sha256": "9a957c5a0f2bd6a240eaf6e5de83dd91a58ed1acd1829fcb72ab95aa7624181d",
+      "shape": [
+        9728,
+        2560
+      ]
+    },
+    "model.layers.0.post_attention_layernorm.weight": {
+      "dtype": "BF16",
+      "payload_sha256": "1b62e6af917bfad75a9271a8d89a8d565517abbedef85a68cbd5f4ba3a0a0584",
+      "shape": [
+        2560
+      ]
+    },
+    "model.layers.0.self_attn.k_norm.weight": {
+      "dtype": "BF16",
+      "payload_sha256": "fd5fce9d76cc8de88ccc006467e7b923fdecf1263b5b1b999f46950fefcc8df2",
+      "shape": [
+        128
+      ]
+    },
+    "model.layers.0.self_attn.k_proj.weight": {
+      "dtype": "BF16",
+      "payload_sha256": "feca72b5422cfc9656587e7259fb2b968876375d995630fad33873f9ccedc647",
+      "shape": [
+        1024,
+        2560
+      ]
+    },
+    "model.layers.0.self_attn.o_proj.weight": {
+      "dtype": "BF16",
+      "payload_sha256": "619b512cd8923f4f7fe0aba1aa51182f15295ea3f4b5e994d2f96cc28bd87d1b",
+      "shape": [
+        2560,
+        4096
+      ]
+    },
+    "model.layers.0.self_attn.q_norm.weight": {
+      "dtype": "BF16",
+      "payload_sha256": "e164ef8d7d043266a0e09e002caa236d0f79ea6d847d32ff15a9966b4f8573aa",
+      "shape": [
+        128
+      ]
+    },
+    "model.layers.0.self_attn.q_proj.weight": {
+      "dtype": "BF16",
+      "payload_sha256": "d1a42b38b6bd851c98152836ca7cc1b88a9b730ae43391671989dfd027490c08",
+      "shape": [
+        4096,
+        2560
+      ]
+    },
+    "model.layers.0.self_attn.v_proj.weight": {
+      "dtype": "BF16",
+      "payload_sha256": "6fb28c797635ad16b0e57618e2efc2567977368b4963a8bf7cbe6e6f07c2dee6",
+      "shape": [
+        1024,
+        2560
+      ]
+    }
+  },
+  "selected_payload_bytes": 979773952,
+  "selected_tensors": 12
+}

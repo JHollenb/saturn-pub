@@ -1,0 +1,4666 @@
+{
+  "cases": {
+    "long": {
+      "attended_rows": 512,
+      "dispatch": {
+        "dispatch": {
+          "backend": "sdpa",
+          "gqa_policy": "enable_gqa",
+          "source": "source-bound installed Transformers SDPA"
+        },
+        "is_causal": true,
+        "mask_profile": {
+          "dtype": null,
+          "has_padding": false,
+          "kind": "native-causal-flag",
+          "shape": null
+        }
+      },
+      "functional": {
+        "H0": {
+          "bytes": 2621568,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              0.0024261474609375,
+              0.0074462890625,
+              0.014404296875,
+              0.041748046875,
+              0.01708984375,
+              -0.0126953125,
+              0.0079345703125,
+              0.0263671875
+            ],
+            "sha256": "d97c1c4931f262acc28e50a43422af7437817dcca9a444262a32ed53ada5360c",
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/H0.npy",
+          "raw_sha256": "d97c1c4931f262acc28e50a43422af7437817dcca9a444262a32ed53ada5360c",
+          "sha256": "7dce5d10272e9b6d708a70e4a493327c59c4d2d13b09dd533229408c9d0c5aaa",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            1310720,
+            2560,
+            1
+          ]
+        },
+        "H1": {
+          "bytes": 2621568,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              8.625,
+              -2.1875,
+              0.8828125,
+              1.515625,
+              2.09375,
+              0.890625,
+              -1.640625,
+              0.140625
+            ],
+            "sha256": "c53ea8fa17e7e882bdea3b84a98fa7983c8c10e60771be3655170cea9d2dd1a3",
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/H1.npy",
+          "raw_sha256": "c53ea8fa17e7e882bdea3b84a98fa7983c8c10e60771be3655170cea9d2dd1a3",
+          "sha256": "2600ca861ea83745d8575db2680e03d8dc568899a93e76538f8ebc6fbde0e2a5",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            1310720,
+            2560,
+            1
+          ]
+        },
+        "activation": {
+          "bytes": 9961600,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              0.09765625,
+              -0.00482177734375,
+              -0.002166748046875,
+              0.439453125,
+              -0.007537841796875,
+              0.1494140625,
+              -0.0595703125,
+              0.205078125
+            ],
+            "sha256": "7390f03198f1294c18d6a282b20c54f3927c6a11e9567bb6c0210f22688ca176",
+            "shape": [
+              1,
+              512,
+              9728
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/activation.npy",
+          "raw_sha256": "7390f03198f1294c18d6a282b20c54f3927c6a11e9567bb6c0210f22688ca176",
+          "sha256": "ad6dcbddbd052c54b3ffbcf17ccfa9f54edf5af83eee7a63954117dc397c5560",
+          "shape": [
+            1,
+            512,
+            9728
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            4980736,
+            9728,
+            1
+          ]
+        },
+        "after_attention": {
+          "bytes": 2621568,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              1.2734375,
+              -0.330078125,
+              -0.169921875,
+              -0.035400390625,
+              -0.171875,
+              0.78515625,
+              -0.58984375,
+              -0.09619140625
+            ],
+            "sha256": "7d3230b68c0cfa327f936e0162e7371704178ccba4548f3c6bf7f83028af86dc",
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/after_attention.npy",
+          "raw_sha256": "7d3230b68c0cfa327f936e0162e7371704178ccba4548f3c6bf7f83028af86dc",
+          "sha256": "3c63277c704d370547430b94f99fc75deab69af6b2a9ef0f3e846e73a988b2ec",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            1310720,
+            2560,
+            1
+          ]
+        },
+        "cos": {
+          "bytes": 131200,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "sha256": "b6778a60a45517cbaedaafd7db39da99fe7acebb91b18caaca37bb896d4b46d0",
+            "shape": [
+              1,
+              512,
+              128
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/cos.npy",
+          "raw_sha256": "b6778a60a45517cbaedaafd7db39da99fe7acebb91b18caaca37bb896d4b46d0",
+          "sha256": "093f9cb59eb21f03c71ce574fa390a8470371ab8d43887cc72130c487167039d",
+          "shape": [
+            1,
+            512,
+            128
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            65536,
+            128,
+            1
+          ]
+        },
+        "gate": {
+          "bytes": 9961600,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.65625,
+              -0.068359375,
+              -0.0311279296875,
+              1.1875,
+              0.07470703125,
+              -0.59765625,
+              -0.1728515625,
+              -0.73828125
+            ],
+            "sha256": "64665ef8ab7864c0ad8e9e4021b2da0b5f59fc7ed88346826e9c5b7a5fe7328c",
+            "shape": [
+              1,
+              512,
+              9728
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/gate.npy",
+          "raw_sha256": "64665ef8ab7864c0ad8e9e4021b2da0b5f59fc7ed88346826e9c5b7a5fe7328c",
+          "sha256": "bca52569efe320e535a59c5407f7cb0152af0986baac576f7a119e58ef54a594",
+          "shape": [
+            1,
+            512,
+            9728
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            4980736,
+            9728,
+            1
+          ]
+        },
+        "head": {
+          "bytes": 4194432,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.05810546875,
+              0.123046875,
+              0.028564453125,
+              0.005218505859375,
+              -0.03857421875,
+              0.003875732421875,
+              -0.006439208984375,
+              0.0068359375
+            ],
+            "sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+            "shape": [
+              1,
+              32,
+              512,
+              128
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/head.npy",
+          "raw_sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+          "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            2097152,
+            128,
+            4096,
+            1
+          ]
+        },
+        "k": {
+          "bytes": 1048704,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -4.71875,
+              2.53125,
+              2.390625,
+              4.1875,
+              -5.84375,
+              0.921875,
+              -0.11279296875,
+              2.703125
+            ],
+            "sha256": "ef2ff803de437838909a04fd69e69d21bc37c03f212ffb8353f2d060b51f47c1",
+            "shape": [
+              1,
+              8,
+              512,
+              128
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/k.npy",
+          "raw_sha256": "ef2ff803de437838909a04fd69e69d21bc37c03f212ffb8353f2d060b51f47c1",
+          "sha256": "8b0d9d5d73b020487563ec6b17d25ccefa9071167d408a637d3d91d09e8f7aa0",
+          "shape": [
+            1,
+            8,
+            512,
+            128
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            524288,
+            128,
+            1024,
+            1
+          ]
+        },
+        "k_norm": {
+          "bytes": 1048704,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -4.71875,
+              2.53125,
+              2.390625,
+              4.1875,
+              -5.84375,
+              0.921875,
+              -0.11279296875,
+              2.703125
+            ],
+            "sha256": "c7c22a74775768276d1b3165a056abfee587e45c8ef0ada2eb84011d93583e1c",
+            "shape": [
+              1,
+              8,
+              512,
+              128
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/k_norm.npy",
+          "raw_sha256": "c7c22a74775768276d1b3165a056abfee587e45c8ef0ada2eb84011d93583e1c",
+          "sha256": "dee02e24df256119132990542b394a5a155fec3bd813e9b3b6e9008641f2f441",
+          "shape": [
+            1,
+            8,
+            512,
+            128
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            524288,
+            128,
+            1024,
+            1
+          ]
+        },
+        "k_raw": {
+          "bytes": 1048704,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.44140625,
+              0.412109375,
+              0.255859375,
+              0.423828125,
+              -0.72265625,
+              0.087890625,
+              -0.0103759765625,
+              0.26953125
+            ],
+            "sha256": "7ca4ad9e8f85e7f2133f2e8f8e40fabe3066633502074c10f12aad162a7712a9",
+            "shape": [
+              1,
+              512,
+              1024
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/k_raw.npy",
+          "raw_sha256": "7ca4ad9e8f85e7f2133f2e8f8e40fabe3066633502074c10f12aad162a7712a9",
+          "sha256": "41af6c3b00bb346930c436e3e7bbfa3f7f27416a82c5270d9eb9f1aca0239d99",
+          "shape": [
+            1,
+            512,
+            1024
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            524288,
+            1024,
+            1
+          ]
+        },
+        "mlp": {
+          "bytes": 2621568,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              7.375,
+              -1.859375,
+              1.0546875,
+              1.5546875,
+              2.265625,
+              0.10595703125,
+              -1.0546875,
+              0.236328125
+            ],
+            "sha256": "f8b5b915712e3c77d57ad4a11ea59513e02c04b2dfb446c2fa9b36479716d168",
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/mlp.npy",
+          "raw_sha256": "f8b5b915712e3c77d57ad4a11ea59513e02c04b2dfb446c2fa9b36479716d168",
+          "sha256": "812cacf7d5e725c6e5bb62cba683a7b92bc9e8b06511302868e076b4853698ac",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            1310720,
+            2560,
+            1
+          ]
+        },
+        "mlp_input": {
+          "bytes": 2621568,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.0002574920654296875,
+              -0.000881195068359375,
+              9.107589721679688e-05,
+              -0.035888671875,
+              -0.365234375,
+              0.00115966796875,
+              -0.000690460205078125,
+              -0.06982421875
+            ],
+            "sha256": "b3beb892f9dde1613df1349c51d8fbea797fab74cf93faf928929274c48af141",
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/mlp_input.npy",
+          "raw_sha256": "b3beb892f9dde1613df1349c51d8fbea797fab74cf93faf928929274c48af141",
+          "sha256": "1de304abb99c6a8c3122db60b2b79d583098c50fffcff779967b652505d7f35d",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            1310720,
+            2560,
+            1
+          ]
+        },
+        "normalized": {
+          "bytes": 2621568,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              0.018798828125,
+              0.02783203125,
+              0.107421875,
+              0.1611328125,
+              0.125,
+              -0.0625,
+              0.03173828125,
+              0.46484375
+            ],
+            "sha256": "505051daef3d5c490f1d2ee6371adfc573bc15f1485e911c469e9277b45d22b2",
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/normalized.npy",
+          "raw_sha256": "505051daef3d5c490f1d2ee6371adfc573bc15f1485e911c469e9277b45d22b2",
+          "sha256": "14ed09645be44bb538a444e8ce3bb7da5d6ec1449a6c076fcfb19785177031be",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            1310720,
+            2560,
+            1
+          ]
+        },
+        "projection": {
+          "bytes": 2621568,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              1.2734375,
+              -0.337890625,
+              -0.1845703125,
+              -0.0771484375,
+              -0.189453125,
+              0.796875,
+              -0.59765625,
+              -0.12255859375
+            ],
+            "sha256": "499e404a62621d35ba815cb3140994fe7324998ae2d98e81b1a941cdc34bd226",
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/projection.npy",
+          "raw_sha256": "499e404a62621d35ba815cb3140994fe7324998ae2d98e81b1a941cdc34bd226",
+          "sha256": "5299a15070f9dd54c08a52072c0719c173a1c39e3fa8c26326342578ee1a3909",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            1310720,
+            2560,
+            1
+          ]
+        },
+        "q": {
+          "bytes": 4194432,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.16015625,
+              0.0849609375,
+              0.2138671875,
+              0.302734375,
+              -0.1572265625,
+              0.3671875,
+              -0.1396484375,
+              0.6171875
+            ],
+            "sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+            "shape": [
+              1,
+              32,
+              512,
+              128
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/q.npy",
+          "raw_sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+          "sha256": "74aff5b1bfb5de7d0ebcfb0ae03eaaa3f490a554f201d7e11acd99dcd1adc4ef",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            2097152,
+            128,
+            4096,
+            1
+          ]
+        },
+        "q_norm": {
+          "bytes": 4194432,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.16015625,
+              0.0849609375,
+              0.2138671875,
+              0.302734375,
+              -0.1572265625,
+              0.3671875,
+              -0.1396484375,
+              0.6171875
+            ],
+            "sha256": "2dcb288df3a475a17487efafbace9227081b8508bbda6b697be92f7e8e5759fa",
+            "shape": [
+              1,
+              32,
+              512,
+              128
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/q_norm.npy",
+          "raw_sha256": "2dcb288df3a475a17487efafbace9227081b8508bbda6b697be92f7e8e5759fa",
+          "sha256": "fbedee79a7152bb09f145b6abb9f58d3ec2629df389054f43f15aceb20fade63",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            2097152,
+            128,
+            4096,
+            1
+          ]
+        },
+        "q_raw": {
+          "bytes": 4194432,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.035888671875,
+              0.02392578125,
+              0.027099609375,
+              0.0400390625,
+              -0.0234375,
+              0.049072265625,
+              -0.0181884765625,
+              0.08154296875
+            ],
+            "sha256": "92713fb5fbb4fe5133a1850d1fc7c7741e6554f07aceeb45a322e280b80c917c",
+            "shape": [
+              1,
+              512,
+              4096
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/q_raw.npy",
+          "raw_sha256": "92713fb5fbb4fe5133a1850d1fc7c7741e6554f07aceeb45a322e280b80c917c",
+          "sha256": "c62a157b4b1c848c5e70b4fd29be55d2297fd4f6f72276253efea0b9086e25bc",
+          "shape": [
+            1,
+            512,
+            4096
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            2097152,
+            4096,
+            1
+          ]
+        },
+        "sin": {
+          "bytes": 131200,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "sha256": "ee183a365aa0504227b4bc8098db2c7d4b952133575c4d95b185bc42609e6fc2",
+            "shape": [
+              1,
+              512,
+              128
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/sin.npy",
+          "raw_sha256": "ee183a365aa0504227b4bc8098db2c7d4b952133575c4d95b185bc42609e6fc2",
+          "sha256": "4444319b6488e47afbfbe8cda5dc80bc845c5f6047f1df4604e39561e17ed61c",
+          "shape": [
+            1,
+            512,
+            128
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            65536,
+            128,
+            1
+          ]
+        },
+        "up": {
+          "bytes": 9961600,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.435546875,
+              0.146484375,
+              0.1416015625,
+              0.482421875,
+              -0.1943359375,
+              -0.70703125,
+              0.75390625,
+              -0.859375
+            ],
+            "sha256": "cb451854c5c3eedeeda38cfc93bb8a301c4c209bffd9ac06a2adbbf3aa285e62",
+            "shape": [
+              1,
+              512,
+              9728
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/up.npy",
+          "raw_sha256": "cb451854c5c3eedeeda38cfc93bb8a301c4c209bffd9ac06a2adbbf3aa285e62",
+          "sha256": "835eddeb00bc883e0ea3e8a49b121df11e5a2ed828fb99b3b5999db5f13c2e2f",
+          "shape": [
+            1,
+            512,
+            9728
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            4980736,
+            9728,
+            1
+          ]
+        },
+        "v": {
+          "bytes": 1048704,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.05810546875,
+              0.123046875,
+              0.028564453125,
+              0.005218505859375,
+              -0.03857421875,
+              0.003875732421875,
+              -0.006439208984375,
+              0.0068359375
+            ],
+            "sha256": "5266096e3950d1e082c69252873d60924aa32c823cfb1abbd13200fb4f646169",
+            "shape": [
+              1,
+              8,
+              512,
+              128
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/v.npy",
+          "raw_sha256": "5266096e3950d1e082c69252873d60924aa32c823cfb1abbd13200fb4f646169",
+          "sha256": "b865b37111f5ca458ec7802a6ffdc3d907c6510a584a5d008752c6376c87da57",
+          "shape": [
+            1,
+            8,
+            512,
+            128
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            524288,
+            128,
+            1024,
+            1
+          ]
+        },
+        "v_raw": {
+          "bytes": 1048704,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.05810546875,
+              0.123046875,
+              0.028564453125,
+              0.005218505859375,
+              -0.03857421875,
+              0.003875732421875,
+              -0.006439208984375,
+              0.0068359375
+            ],
+            "sha256": "3a60edb0ee86fca75aa0a2eb1210049a4f70370798c303f349960a954c6e0911",
+            "shape": [
+              1,
+              512,
+              1024
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/long/v_raw.npy",
+          "raw_sha256": "3a60edb0ee86fca75aa0a2eb1210049a4f70370798c303f349960a954c6e0911",
+          "sha256": "1c839e1db6431ba986f5d25ff0b8c8752f5ff8be8533b9ba36e182f19fbe5fd9",
+          "shape": [
+            1,
+            512,
+            1024
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            524288,
+            1024,
+            1
+          ]
+        }
+      },
+      "original_mask": null,
+      "retained_rows": 512,
+      "source_sidecars": {
+        "forecast_qwen": "cases/long/forecast-qwen.json",
+        "native_qwen": "cases/long/native-qwen.json"
+      }
+    },
+    "short": {
+      "attended_rows": 39,
+      "dispatch": {
+        "dispatch": {
+          "backend": "sdpa",
+          "gqa_policy": "repeat_kv",
+          "source": "source-bound installed Transformers SDPA"
+        },
+        "is_causal": false,
+        "mask_profile": {
+          "dtype": "torch.bool",
+          "has_padding": true,
+          "kind": "boolean-causal-padding",
+          "shape": [
+            1,
+            1,
+            512,
+            512
+          ]
+        }
+      },
+      "functional": {
+        "H0": {
+          "bytes": 2621568,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              0.0024261474609375,
+              0.0074462890625,
+              0.014404296875,
+              0.041748046875,
+              0.01708984375,
+              -0.0126953125,
+              0.0079345703125,
+              0.0263671875
+            ],
+            "sha256": "18c3907d9158014fe5b26d4ea1d7dc0158f794822691a066954c78882385aafe",
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/H0.npy",
+          "raw_sha256": "18c3907d9158014fe5b26d4ea1d7dc0158f794822691a066954c78882385aafe",
+          "sha256": "df13fc52c4df06fae8a719ec3aaf98dadd4301571223b26e7eb6d16fb65353d1",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            1310720,
+            2560,
+            1
+          ]
+        },
+        "H1": {
+          "bytes": 2621568,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              8.625,
+              -2.1875,
+              0.8828125,
+              1.515625,
+              2.09375,
+              0.890625,
+              -1.640625,
+              0.140625
+            ],
+            "sha256": "0345eb55d8801726f4fa899638d0f2973a92818aa720993578e29923c00211c3",
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/H1.npy",
+          "raw_sha256": "0345eb55d8801726f4fa899638d0f2973a92818aa720993578e29923c00211c3",
+          "sha256": "6b4ee0a45d48f3e89958cb1c8fb499794002ade219047f23ad92fc67ca783730",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            1310720,
+            2560,
+            1
+          ]
+        },
+        "activation": {
+          "bytes": 9961600,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              0.09765625,
+              -0.00482177734375,
+              -0.002166748046875,
+              0.439453125,
+              -0.007537841796875,
+              0.1494140625,
+              -0.0595703125,
+              0.205078125
+            ],
+            "sha256": "b6493ed048ae6820ca0df8bf2a6ab825745a888036017bfd38a9ba41514713d9",
+            "shape": [
+              1,
+              512,
+              9728
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/activation.npy",
+          "raw_sha256": "b6493ed048ae6820ca0df8bf2a6ab825745a888036017bfd38a9ba41514713d9",
+          "sha256": "d3193daaf673377167b5beb1aa61c5abf183c1bda0d03091171224a7d7f6c86c",
+          "shape": [
+            1,
+            512,
+            9728
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            4980736,
+            9728,
+            1
+          ]
+        },
+        "after_attention": {
+          "bytes": 2621568,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              1.2734375,
+              -0.330078125,
+              -0.169921875,
+              -0.035400390625,
+              -0.171875,
+              0.78515625,
+              -0.58984375,
+              -0.09619140625
+            ],
+            "sha256": "8b421d9b91a5697a17e8e24ff7fd121e54c50a0416724ff0b20aec0534a08f4a",
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/after_attention.npy",
+          "raw_sha256": "8b421d9b91a5697a17e8e24ff7fd121e54c50a0416724ff0b20aec0534a08f4a",
+          "sha256": "e0d268c8a1eb63277d44962afbf645681ebf20d6518762d07d92ac7abc405cbe",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            1310720,
+            2560,
+            1
+          ]
+        },
+        "cos": {
+          "bytes": 131200,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "sha256": "b6778a60a45517cbaedaafd7db39da99fe7acebb91b18caaca37bb896d4b46d0",
+            "shape": [
+              1,
+              512,
+              128
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/cos.npy",
+          "raw_sha256": "b6778a60a45517cbaedaafd7db39da99fe7acebb91b18caaca37bb896d4b46d0",
+          "sha256": "093f9cb59eb21f03c71ce574fa390a8470371ab8d43887cc72130c487167039d",
+          "shape": [
+            1,
+            512,
+            128
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            65536,
+            128,
+            1
+          ]
+        },
+        "gate": {
+          "bytes": 9961600,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.65625,
+              -0.068359375,
+              -0.0311279296875,
+              1.1875,
+              0.07470703125,
+              -0.59765625,
+              -0.1728515625,
+              -0.73828125
+            ],
+            "sha256": "0a4a5eab40b0665cea1edc9a5d94092fbe2568e13fe8cc533e8a709263735f68",
+            "shape": [
+              1,
+              512,
+              9728
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/gate.npy",
+          "raw_sha256": "0a4a5eab40b0665cea1edc9a5d94092fbe2568e13fe8cc533e8a709263735f68",
+          "sha256": "ab15057379e95a553d1f5d8fca2c51791e851d2225d2e1bb4164382d56036bfc",
+          "shape": [
+            1,
+            512,
+            9728
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            4980736,
+            9728,
+            1
+          ]
+        },
+        "head": {
+          "bytes": 4194432,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.05810546875,
+              0.123046875,
+              0.028564453125,
+              0.005218505859375,
+              -0.03857421875,
+              0.003875732421875,
+              -0.006439208984375,
+              0.0068359375
+            ],
+            "sha256": "6332e4ddeafe0ff544ae2ab3e383671e03f9bd3573da27b1f2f6756dce12364c",
+            "shape": [
+              1,
+              32,
+              512,
+              128
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/head.npy",
+          "raw_sha256": "6332e4ddeafe0ff544ae2ab3e383671e03f9bd3573da27b1f2f6756dce12364c",
+          "sha256": "b586f29dc56b2d391e986b5c65f9bfa177961d96cfd711d9518d097730733f5e",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            2097152,
+            128,
+            4096,
+            1
+          ]
+        },
+        "k": {
+          "bytes": 1048704,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -4.71875,
+              2.53125,
+              2.390625,
+              4.1875,
+              -5.84375,
+              0.921875,
+              -0.11279296875,
+              2.703125
+            ],
+            "sha256": "b0c0f2da94ad07d744ca3ab99777e59d1a6d357961cb2280527a196dac9066d5",
+            "shape": [
+              1,
+              8,
+              512,
+              128
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/k.npy",
+          "raw_sha256": "b0c0f2da94ad07d744ca3ab99777e59d1a6d357961cb2280527a196dac9066d5",
+          "sha256": "ee1ddd4850246f299f14a1193aa71f0707908df611578ba8b76fa48e46171632",
+          "shape": [
+            1,
+            8,
+            512,
+            128
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            524288,
+            128,
+            1024,
+            1
+          ]
+        },
+        "k_norm": {
+          "bytes": 1048704,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -4.71875,
+              2.53125,
+              2.390625,
+              4.1875,
+              -5.84375,
+              0.921875,
+              -0.11279296875,
+              2.703125
+            ],
+            "sha256": "12c494ecba5464e372b69b3d4c05e1096755eb71b208428512ccddf7f637caf3",
+            "shape": [
+              1,
+              8,
+              512,
+              128
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/k_norm.npy",
+          "raw_sha256": "12c494ecba5464e372b69b3d4c05e1096755eb71b208428512ccddf7f637caf3",
+          "sha256": "e077eb0da1b3d2e89f66894b6696fe02be3d494edd3894fc35b2c941923f78f1",
+          "shape": [
+            1,
+            8,
+            512,
+            128
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            524288,
+            128,
+            1024,
+            1
+          ]
+        },
+        "k_raw": {
+          "bytes": 1048704,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.44140625,
+              0.412109375,
+              0.255859375,
+              0.423828125,
+              -0.72265625,
+              0.087890625,
+              -0.0103759765625,
+              0.26953125
+            ],
+            "sha256": "fc04d82111afeb23d06295eb5aaa94bac6c4e8e24c6c4122bde4c84787da3875",
+            "shape": [
+              1,
+              512,
+              1024
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/k_raw.npy",
+          "raw_sha256": "fc04d82111afeb23d06295eb5aaa94bac6c4e8e24c6c4122bde4c84787da3875",
+          "sha256": "52a24776400161534603db6f19868f246a94ba4950d540fe7825084c6e2c4fea",
+          "shape": [
+            1,
+            512,
+            1024
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            524288,
+            1024,
+            1
+          ]
+        },
+        "mlp": {
+          "bytes": 2621568,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              7.375,
+              -1.859375,
+              1.0546875,
+              1.5546875,
+              2.265625,
+              0.10595703125,
+              -1.0546875,
+              0.236328125
+            ],
+            "sha256": "2a1a61b6e421763596d1ae5a659882be333cb42ab84c623b26cc14a56ff4c37d",
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/mlp.npy",
+          "raw_sha256": "2a1a61b6e421763596d1ae5a659882be333cb42ab84c623b26cc14a56ff4c37d",
+          "sha256": "5217139c89bedb2df4d9308bdb2109d310e4f1c00dd372de631eb9d2b6ded507",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            1310720,
+            2560,
+            1
+          ]
+        },
+        "mlp_input": {
+          "bytes": 2621568,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.0002574920654296875,
+              -0.000881195068359375,
+              9.107589721679688e-05,
+              -0.035888671875,
+              -0.365234375,
+              0.00115966796875,
+              -0.000690460205078125,
+              -0.06982421875
+            ],
+            "sha256": "f340981616da1eca47ca7e231c88892ef7616101ed7836085e3835d3dd9f8e3d",
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/mlp_input.npy",
+          "raw_sha256": "f340981616da1eca47ca7e231c88892ef7616101ed7836085e3835d3dd9f8e3d",
+          "sha256": "80f7206489246463043d804744b2d79a52878ea74b7de257b0f3e947f1cc4fae",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            1310720,
+            2560,
+            1
+          ]
+        },
+        "normalized": {
+          "bytes": 2621568,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              0.018798828125,
+              0.02783203125,
+              0.107421875,
+              0.1611328125,
+              0.125,
+              -0.0625,
+              0.03173828125,
+              0.46484375
+            ],
+            "sha256": "3dd4441570a0cccbd7804068b8fe0c4bfbd4987973e1f70ad90dbc98f1c2bea9",
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/normalized.npy",
+          "raw_sha256": "3dd4441570a0cccbd7804068b8fe0c4bfbd4987973e1f70ad90dbc98f1c2bea9",
+          "sha256": "3b981bd27838ea0bc7ab0b9b8aeb6cf9c5fd12aa597c8f650c909174efb64fd2",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            1310720,
+            2560,
+            1
+          ]
+        },
+        "projection": {
+          "bytes": 2621568,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              1.2734375,
+              -0.337890625,
+              -0.1845703125,
+              -0.0771484375,
+              -0.189453125,
+              0.796875,
+              -0.59765625,
+              -0.12255859375
+            ],
+            "sha256": "a0ecccc7efda15df248060a40ea9ab1bb8bb1f1228af85e6dde225231b37e3e0",
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/projection.npy",
+          "raw_sha256": "a0ecccc7efda15df248060a40ea9ab1bb8bb1f1228af85e6dde225231b37e3e0",
+          "sha256": "33baadb8cd8b726def887256c857e535f932871be109aadc25b9aa4664b63b41",
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            1310720,
+            2560,
+            1
+          ]
+        },
+        "q": {
+          "bytes": 4194432,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.16015625,
+              0.0849609375,
+              0.2138671875,
+              0.302734375,
+              -0.1572265625,
+              0.3671875,
+              -0.1396484375,
+              0.6171875
+            ],
+            "sha256": "c90763ace2f107e3006e4b750c0f50068cc6da7be501fd2d21c2c368d3b8049d",
+            "shape": [
+              1,
+              32,
+              512,
+              128
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/q.npy",
+          "raw_sha256": "c90763ace2f107e3006e4b750c0f50068cc6da7be501fd2d21c2c368d3b8049d",
+          "sha256": "e44f4d073e8e6a61dc67a7e605bca6ff06ee29c6ae799a39f9e469268f4e47a4",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            2097152,
+            128,
+            4096,
+            1
+          ]
+        },
+        "q_norm": {
+          "bytes": 4194432,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.16015625,
+              0.0849609375,
+              0.2138671875,
+              0.302734375,
+              -0.1572265625,
+              0.3671875,
+              -0.1396484375,
+              0.6171875
+            ],
+            "sha256": "38b927fb5969abaa752db96e3b08adb3fcff157a0ba2f363489509f2be17e5de",
+            "shape": [
+              1,
+              32,
+              512,
+              128
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/q_norm.npy",
+          "raw_sha256": "38b927fb5969abaa752db96e3b08adb3fcff157a0ba2f363489509f2be17e5de",
+          "sha256": "51265d6a0f0ae78d87b24e86a9cc864a83ae45a2b7366272a0a92f0cb7f13281",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            2097152,
+            128,
+            4096,
+            1
+          ]
+        },
+        "q_raw": {
+          "bytes": 4194432,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.035888671875,
+              0.02392578125,
+              0.027099609375,
+              0.0400390625,
+              -0.0234375,
+              0.049072265625,
+              -0.0181884765625,
+              0.08154296875
+            ],
+            "sha256": "6d8c7b1112489d0750dfe0bb0bb8fd9ee9a83d9b26699d14bf1b1ec7586c2c52",
+            "shape": [
+              1,
+              512,
+              4096
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/q_raw.npy",
+          "raw_sha256": "6d8c7b1112489d0750dfe0bb0bb8fd9ee9a83d9b26699d14bf1b1ec7586c2c52",
+          "sha256": "ca4576f53fa8103e6ba6c1a3760a9b86a28f775beedae0068d5e3c4313fd4053",
+          "shape": [
+            1,
+            512,
+            4096
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            2097152,
+            4096,
+            1
+          ]
+        },
+        "sin": {
+          "bytes": 131200,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0,
+              0.0
+            ],
+            "sha256": "ee183a365aa0504227b4bc8098db2c7d4b952133575c4d95b185bc42609e6fc2",
+            "shape": [
+              1,
+              512,
+              128
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/sin.npy",
+          "raw_sha256": "ee183a365aa0504227b4bc8098db2c7d4b952133575c4d95b185bc42609e6fc2",
+          "sha256": "4444319b6488e47afbfbe8cda5dc80bc845c5f6047f1df4604e39561e17ed61c",
+          "shape": [
+            1,
+            512,
+            128
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            65536,
+            128,
+            1
+          ]
+        },
+        "up": {
+          "bytes": 9961600,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.435546875,
+              0.146484375,
+              0.1416015625,
+              0.482421875,
+              -0.1943359375,
+              -0.70703125,
+              0.75390625,
+              -0.859375
+            ],
+            "sha256": "d0a573bc5dc4fbcec91e8ff0a0c880726b4fd5ad38fbf5ad2280d3e80e4c5ad2",
+            "shape": [
+              1,
+              512,
+              9728
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/up.npy",
+          "raw_sha256": "d0a573bc5dc4fbcec91e8ff0a0c880726b4fd5ad38fbf5ad2280d3e80e4c5ad2",
+          "sha256": "21a636288e49fceeec3518a887ef1a3fdd30088588e00923da34631aeb10ace3",
+          "shape": [
+            1,
+            512,
+            9728
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            4980736,
+            9728,
+            1
+          ]
+        },
+        "v": {
+          "bytes": 1048704,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.05810546875,
+              0.123046875,
+              0.028564453125,
+              0.005218505859375,
+              -0.03857421875,
+              0.003875732421875,
+              -0.006439208984375,
+              0.0068359375
+            ],
+            "sha256": "af71f78c82e60a1eecb9e293823ff46c0f0c88a74f91df4d440acb45a7ee0dca",
+            "shape": [
+              1,
+              8,
+              512,
+              128
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/v.npy",
+          "raw_sha256": "af71f78c82e60a1eecb9e293823ff46c0f0c88a74f91df4d440acb45a7ee0dca",
+          "sha256": "d1f70fbce643785eaaeaffd2f372813c2ea687d29b651eed9a0eea3f686d4818",
+          "shape": [
+            1,
+            8,
+            512,
+            128
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            524288,
+            128,
+            1024,
+            1
+          ]
+        },
+        "v_raw": {
+          "bytes": 1048704,
+          "descriptor": {
+            "dtype": "torch.bfloat16",
+            "preview": [
+              -0.05810546875,
+              0.123046875,
+              0.028564453125,
+              0.005218505859375,
+              -0.03857421875,
+              0.003875732421875,
+              -0.006439208984375,
+              0.0068359375
+            ],
+            "sha256": "a87c50b42919463a83cbbb41ff5fa850c888aeae604520bb1771b97dbfb4fd37",
+            "shape": [
+              1,
+              512,
+              1024
+            ]
+          },
+          "device_at_capture": "cuda:0",
+          "dtype": "torch.bfloat16",
+          "encoding": "bf16-bits-v1",
+          "path": "functional/short/v_raw.npy",
+          "raw_sha256": "a87c50b42919463a83cbbb41ff5fa850c888aeae604520bb1771b97dbfb4fd37",
+          "sha256": "d0dc57d982438e8dddf194ff03af256e4e8b73008f4772be80d0c5e637096e80",
+          "shape": [
+            1,
+            512,
+            1024
+          ],
+          "stored_dtype": "uint16",
+          "stride": [
+            524288,
+            1024,
+            1
+          ]
+        }
+      },
+      "original_mask": {
+        "bytes": 262272,
+        "descriptor": {
+          "dtype": "torch.bool",
+          "preview": [
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "sha256": "5e77597c29ecf8501766feca27250a6c1998644ca81cbf37e9474ae184a124b6",
+          "shape": [
+            1,
+            1,
+            512,
+            512
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bool",
+        "encoding": "native-numpy-v1",
+        "path": "functional/short/mask.npy",
+        "raw_sha256": "5e77597c29ecf8501766feca27250a6c1998644ca81cbf37e9474ae184a124b6",
+        "sha256": "8171245a8f5544bf147e2e10132409bfae3607b2e0cc8b79c948c59106e71481",
+        "shape": [
+          1,
+          1,
+          512,
+          512
+        ],
+        "stored_dtype": "bool",
+        "stride": [
+          262144,
+          262144,
+          512,
+          1
+        ]
+      },
+      "retained_rows": 512,
+      "source_sidecars": {
+        "forecast_qwen": "cases/short/forecast-qwen.json",
+        "native_qwen": "cases/short/native-qwen.json"
+      }
+    }
+  },
+  "external_files": {
+    "functional/long/H0.npy": {
+      "bytes": 2621568,
+      "sha256": "7dce5d10272e9b6d708a70e4a493327c59c4d2d13b09dd533229408c9d0c5aaa"
+    },
+    "functional/long/H1.npy": {
+      "bytes": 2621568,
+      "sha256": "2600ca861ea83745d8575db2680e03d8dc568899a93e76538f8ebc6fbde0e2a5"
+    },
+    "functional/long/activation.npy": {
+      "bytes": 9961600,
+      "sha256": "ad6dcbddbd052c54b3ffbcf17ccfa9f54edf5af83eee7a63954117dc397c5560"
+    },
+    "functional/long/after_attention.npy": {
+      "bytes": 2621568,
+      "sha256": "3c63277c704d370547430b94f99fc75deab69af6b2a9ef0f3e846e73a988b2ec"
+    },
+    "functional/long/cos.npy": {
+      "bytes": 131200,
+      "sha256": "093f9cb59eb21f03c71ce574fa390a8470371ab8d43887cc72130c487167039d"
+    },
+    "functional/long/gate.npy": {
+      "bytes": 9961600,
+      "sha256": "bca52569efe320e535a59c5407f7cb0152af0986baac576f7a119e58ef54a594"
+    },
+    "functional/long/head.npy": {
+      "bytes": 4194432,
+      "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83"
+    },
+    "functional/long/k.npy": {
+      "bytes": 1048704,
+      "sha256": "8b0d9d5d73b020487563ec6b17d25ccefa9071167d408a637d3d91d09e8f7aa0"
+    },
+    "functional/long/k_norm.npy": {
+      "bytes": 1048704,
+      "sha256": "dee02e24df256119132990542b394a5a155fec3bd813e9b3b6e9008641f2f441"
+    },
+    "functional/long/k_raw.npy": {
+      "bytes": 1048704,
+      "sha256": "41af6c3b00bb346930c436e3e7bbfa3f7f27416a82c5270d9eb9f1aca0239d99"
+    },
+    "functional/long/mlp.npy": {
+      "bytes": 2621568,
+      "sha256": "812cacf7d5e725c6e5bb62cba683a7b92bc9e8b06511302868e076b4853698ac"
+    },
+    "functional/long/mlp_input.npy": {
+      "bytes": 2621568,
+      "sha256": "1de304abb99c6a8c3122db60b2b79d583098c50fffcff779967b652505d7f35d"
+    },
+    "functional/long/normalized.npy": {
+      "bytes": 2621568,
+      "sha256": "14ed09645be44bb538a444e8ce3bb7da5d6ec1449a6c076fcfb19785177031be"
+    },
+    "functional/long/projection.npy": {
+      "bytes": 2621568,
+      "sha256": "5299a15070f9dd54c08a52072c0719c173a1c39e3fa8c26326342578ee1a3909"
+    },
+    "functional/long/q.npy": {
+      "bytes": 4194432,
+      "sha256": "74aff5b1bfb5de7d0ebcfb0ae03eaaa3f490a554f201d7e11acd99dcd1adc4ef"
+    },
+    "functional/long/q_norm.npy": {
+      "bytes": 4194432,
+      "sha256": "fbedee79a7152bb09f145b6abb9f58d3ec2629df389054f43f15aceb20fade63"
+    },
+    "functional/long/q_raw.npy": {
+      "bytes": 4194432,
+      "sha256": "c62a157b4b1c848c5e70b4fd29be55d2297fd4f6f72276253efea0b9086e25bc"
+    },
+    "functional/long/sin.npy": {
+      "bytes": 131200,
+      "sha256": "4444319b6488e47afbfbe8cda5dc80bc845c5f6047f1df4604e39561e17ed61c"
+    },
+    "functional/long/up.npy": {
+      "bytes": 9961600,
+      "sha256": "835eddeb00bc883e0ea3e8a49b121df11e5a2ed828fb99b3b5999db5f13c2e2f"
+    },
+    "functional/long/v.npy": {
+      "bytes": 1048704,
+      "sha256": "b865b37111f5ca458ec7802a6ffdc3d907c6510a584a5d008752c6376c87da57"
+    },
+    "functional/long/v_raw.npy": {
+      "bytes": 1048704,
+      "sha256": "1c839e1db6431ba986f5d25ff0b8c8752f5ff8be8533b9ba36e182f19fbe5fd9"
+    },
+    "functional/short/H0.npy": {
+      "bytes": 2621568,
+      "sha256": "df13fc52c4df06fae8a719ec3aaf98dadd4301571223b26e7eb6d16fb65353d1"
+    },
+    "functional/short/H1.npy": {
+      "bytes": 2621568,
+      "sha256": "6b4ee0a45d48f3e89958cb1c8fb499794002ade219047f23ad92fc67ca783730"
+    },
+    "functional/short/activation.npy": {
+      "bytes": 9961600,
+      "sha256": "d3193daaf673377167b5beb1aa61c5abf183c1bda0d03091171224a7d7f6c86c"
+    },
+    "functional/short/after_attention.npy": {
+      "bytes": 2621568,
+      "sha256": "e0d268c8a1eb63277d44962afbf645681ebf20d6518762d07d92ac7abc405cbe"
+    },
+    "functional/short/cos.npy": {
+      "bytes": 131200,
+      "sha256": "093f9cb59eb21f03c71ce574fa390a8470371ab8d43887cc72130c487167039d"
+    },
+    "functional/short/gate.npy": {
+      "bytes": 9961600,
+      "sha256": "ab15057379e95a553d1f5d8fca2c51791e851d2225d2e1bb4164382d56036bfc"
+    },
+    "functional/short/head.npy": {
+      "bytes": 4194432,
+      "sha256": "b586f29dc56b2d391e986b5c65f9bfa177961d96cfd711d9518d097730733f5e"
+    },
+    "functional/short/k.npy": {
+      "bytes": 1048704,
+      "sha256": "ee1ddd4850246f299f14a1193aa71f0707908df611578ba8b76fa48e46171632"
+    },
+    "functional/short/k_norm.npy": {
+      "bytes": 1048704,
+      "sha256": "e077eb0da1b3d2e89f66894b6696fe02be3d494edd3894fc35b2c941923f78f1"
+    },
+    "functional/short/k_raw.npy": {
+      "bytes": 1048704,
+      "sha256": "52a24776400161534603db6f19868f246a94ba4950d540fe7825084c6e2c4fea"
+    },
+    "functional/short/mask.npy": {
+      "bytes": 262272,
+      "sha256": "8171245a8f5544bf147e2e10132409bfae3607b2e0cc8b79c948c59106e71481"
+    },
+    "functional/short/mlp.npy": {
+      "bytes": 2621568,
+      "sha256": "5217139c89bedb2df4d9308bdb2109d310e4f1c00dd372de631eb9d2b6ded507"
+    },
+    "functional/short/mlp_input.npy": {
+      "bytes": 2621568,
+      "sha256": "80f7206489246463043d804744b2d79a52878ea74b7de257b0f3e947f1cc4fae"
+    },
+    "functional/short/normalized.npy": {
+      "bytes": 2621568,
+      "sha256": "3b981bd27838ea0bc7ab0b9b8aeb6cf9c5fd12aa597c8f650c909174efb64fd2"
+    },
+    "functional/short/projection.npy": {
+      "bytes": 2621568,
+      "sha256": "33baadb8cd8b726def887256c857e535f932871be109aadc25b9aa4664b63b41"
+    },
+    "functional/short/q.npy": {
+      "bytes": 4194432,
+      "sha256": "e44f4d073e8e6a61dc67a7e605bca6ff06ee29c6ae799a39f9e469268f4e47a4"
+    },
+    "functional/short/q_norm.npy": {
+      "bytes": 4194432,
+      "sha256": "51265d6a0f0ae78d87b24e86a9cc864a83ae45a2b7366272a0a92f0cb7f13281"
+    },
+    "functional/short/q_raw.npy": {
+      "bytes": 4194432,
+      "sha256": "ca4576f53fa8103e6ba6c1a3760a9b86a28f775beedae0068d5e3c4313fd4053"
+    },
+    "functional/short/sin.npy": {
+      "bytes": 131200,
+      "sha256": "4444319b6488e47afbfbe8cda5dc80bc845c5f6047f1df4604e39561e17ed61c"
+    },
+    "functional/short/up.npy": {
+      "bytes": 9961600,
+      "sha256": "21a636288e49fceeec3518a887ef1a3fdd30088588e00923da34631aeb10ace3"
+    },
+    "functional/short/v.npy": {
+      "bytes": 1048704,
+      "sha256": "d1f70fbce643785eaaeaffd2f372813c2ea687d29b651eed9a0eea3f686d4818"
+    },
+    "functional/short/v_raw.npy": {
+      "bytes": 1048704,
+      "sha256": "d0dc57d982438e8dddf194ff03af256e4e8b73008f4772be80d0c5e637096e80"
+    },
+    "original-inputs/cases/long/forecast-qwen.json": {
+      "bytes": 31230,
+      "sha256": "8d954b2dcfbbd000939b6445ba0892b911f7a87a972a578e4a71e1ce300e6502"
+    },
+    "original-inputs/cases/long/native-qwen.json": {
+      "bytes": 29977,
+      "sha256": "ebbb633bced37f16cb4520ff273e6b252325acd39051c0298c5b72371a671ce0"
+    },
+    "original-inputs/cases/long/qwen/forecast/attention-mask.npy": {
+      "bytes": 4224,
+      "sha256": "b6ac6a685e8726963fa2bb91856728280ee6fa47957eea274285b029a6abb946"
+    },
+    "original-inputs/cases/long/qwen/forecast/hidden-00.npy": {
+      "bytes": 2621568,
+      "sha256": "7dce5d10272e9b6d708a70e4a493327c59c4d2d13b09dd533229408c9d0c5aaa"
+    },
+    "original-inputs/cases/long/qwen/forecast/hidden-01.npy": {
+      "bytes": 2621568,
+      "sha256": "2600ca861ea83745d8575db2680e03d8dc568899a93e76538f8ebc6fbde0e2a5"
+    },
+    "original-inputs/cases/long/qwen/forecast/input-ids.npy": {
+      "bytes": 4224,
+      "sha256": "300215dde9e7b0f9ac6a0f68a0af959d965ef1768b323851d373d52c06925b52"
+    },
+    "original-inputs/cases/long/qwen/native/attention-mask.npy": {
+      "bytes": 4224,
+      "sha256": "b6ac6a685e8726963fa2bb91856728280ee6fa47957eea274285b029a6abb946"
+    },
+    "original-inputs/cases/long/qwen/native/hidden-00.npy": {
+      "bytes": 2621568,
+      "sha256": "7dce5d10272e9b6d708a70e4a493327c59c4d2d13b09dd533229408c9d0c5aaa"
+    },
+    "original-inputs/cases/long/qwen/native/hidden-01.npy": {
+      "bytes": 2621568,
+      "sha256": "2600ca861ea83745d8575db2680e03d8dc568899a93e76538f8ebc6fbde0e2a5"
+    },
+    "original-inputs/cases/long/qwen/native/input-ids.npy": {
+      "bytes": 4224,
+      "sha256": "300215dde9e7b0f9ac6a0f68a0af959d965ef1768b323851d373d52c06925b52"
+    },
+    "original-inputs/cases/short/forecast-qwen.json": {
+      "bytes": 19301,
+      "sha256": "f440fd56ec5b6a8547ccf5fb2707d9b47f08ee295abfcecfb16568d84a441e37"
+    },
+    "original-inputs/cases/short/native-qwen.json": {
+      "bytes": 17987,
+      "sha256": "d50d7ca40a52c3e88140f6a15bbf981b6b0bc6a2431153f30c30c6e857059bb5"
+    },
+    "original-inputs/cases/short/qwen/forecast/attention-mask.npy": {
+      "bytes": 4224,
+      "sha256": "17ecfc07548df44668e8d8197d6834f9e51348e90e72233d7398986a6f1d1eba"
+    },
+    "original-inputs/cases/short/qwen/forecast/hidden-00.npy": {
+      "bytes": 2621568,
+      "sha256": "df13fc52c4df06fae8a719ec3aaf98dadd4301571223b26e7eb6d16fb65353d1"
+    },
+    "original-inputs/cases/short/qwen/forecast/hidden-01.npy": {
+      "bytes": 2621568,
+      "sha256": "6b4ee0a45d48f3e89958cb1c8fb499794002ade219047f23ad92fc67ca783730"
+    },
+    "original-inputs/cases/short/qwen/forecast/input-ids.npy": {
+      "bytes": 4224,
+      "sha256": "034a1576091008b4f2ef813fb417c2d0089dabf9c6eaab85eb60d60eb62b286a"
+    },
+    "original-inputs/cases/short/qwen/native/attention-mask.npy": {
+      "bytes": 4224,
+      "sha256": "17ecfc07548df44668e8d8197d6834f9e51348e90e72233d7398986a6f1d1eba"
+    },
+    "original-inputs/cases/short/qwen/native/hidden-00.npy": {
+      "bytes": 2621568,
+      "sha256": "df13fc52c4df06fae8a719ec3aaf98dadd4301571223b26e7eb6d16fb65353d1"
+    },
+    "original-inputs/cases/short/qwen/native/hidden-01.npy": {
+      "bytes": 2621568,
+      "sha256": "6b4ee0a45d48f3e89958cb1c8fb499794002ade219047f23ad92fc67ca783730"
+    },
+    "original-inputs/cases/short/qwen/native/input-ids.npy": {
+      "bytes": 4224,
+      "sha256": "034a1576091008b4f2ef813fb417c2d0089dabf9c6eaab85eb60d60eb62b286a"
+    },
+    "original-inputs/files.json": {
+      "bytes": 588754,
+      "sha256": "89dafe939e0143596edf88b42e073f97cc5c945c893b5b8cf9897eff809c7154"
+    },
+    "plan.json": {
+      "bytes": 5246,
+      "sha256": "35152547b220b14cc6c82262cfe9253407073ef0f7a35060fca1ff1a5fa75185"
+    },
+    "qwen-config.json": {
+      "bytes": 1536,
+      "sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40"
+    },
+    "qwen-parameter-artifacts.json": {
+      "bytes": 433549,
+      "sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374"
+    },
+    "request.json": {
+      "bytes": 11451,
+      "sha256": "4240f9341223a0cd694454c36e5e0ba883359a4658cf7b9bd053f813ec3fc202"
+    },
+    "retrieve_qwen_weights.py": {
+      "bytes": 22624,
+      "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae"
+    },
+    "rotary-source/inv_freq.npy": {
+      "bytes": 384,
+      "sha256": "2e515831f0c14466976c2f486410ba482661afc7bdb8ae12d9a1f7d6f070cfeb"
+    },
+    "rotary-source/original_inv_freq.npy": {
+      "bytes": 384,
+      "sha256": "2e515831f0c14466976c2f486410ba482661afc7bdb8ae12d9a1f7d6f070cfeb"
+    },
+    "runtime-contract.json": {
+      "bytes": 484,
+      "sha256": "e57a1eaa72ae33dd0f4ec61f98b1a160fdb79c3d8da82e2a6fe51fa40ea0ea58"
+    },
+    "sdpa/0/key.npy": {
+      "bytes": 4194432,
+      "sha256": "d3ae30c96bee370384e1206082afd8a2b3f0925575044c670275e8842296dac9"
+    },
+    "sdpa/0/mask.npy": {
+      "bytes": 262272,
+      "sha256": "8171245a8f5544bf147e2e10132409bfae3607b2e0cc8b79c948c59106e71481"
+    },
+    "sdpa/0/output.npy": {
+      "bytes": 4194432,
+      "sha256": "b586f29dc56b2d391e986b5c65f9bfa177961d96cfd711d9518d097730733f5e"
+    },
+    "sdpa/0/query.npy": {
+      "bytes": 4194432,
+      "sha256": "e44f4d073e8e6a61dc67a7e605bca6ff06ee29c6ae799a39f9e469268f4e47a4"
+    },
+    "sdpa/0/value.npy": {
+      "bytes": 4194432,
+      "sha256": "720fa5470d5044963a6ba97192162f4b7bcdbed77f47ea18917d163ee644a084"
+    },
+    "sdpa/1/key.npy": {
+      "bytes": 1048704,
+      "sha256": "8b0d9d5d73b020487563ec6b17d25ccefa9071167d408a637d3d91d09e8f7aa0"
+    },
+    "sdpa/1/output.npy": {
+      "bytes": 4194432,
+      "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83"
+    },
+    "sdpa/1/query.npy": {
+      "bytes": 4194432,
+      "sha256": "74aff5b1bfb5de7d0ebcfb0ae03eaaa3f490a554f201d7e11acd99dcd1adc4ef"
+    },
+    "sdpa/1/value.npy": {
+      "bytes": 1048704,
+      "sha256": "b865b37111f5ca458ec7802a6ffdc3d907c6510a584a5d008752c6376c87da57"
+    },
+    "sdpa/2/key.npy": {
+      "bytes": 4194432,
+      "sha256": "529bfc8969bacc3add60fe8ea5d577bd70c26aeed7507d1a4c6e956a06890c99"
+    },
+    "sdpa/2/mask.npy": {
+      "bytes": 262272,
+      "sha256": "13d860c4b81bc2ca9c3fe116221d9a0a40f961c6fd926b7198ef3f556ce0e8c8"
+    },
+    "sdpa/2/output.npy": {
+      "bytes": 4194432,
+      "sha256": "4a5367c7c72701ff59f2871658f219233b91e9c9f6ffe1367f86c5ec7fa90fb0"
+    },
+    "sdpa/2/query.npy": {
+      "bytes": 4194432,
+      "sha256": "74aff5b1bfb5de7d0ebcfb0ae03eaaa3f490a554f201d7e11acd99dcd1adc4ef"
+    },
+    "sdpa/2/value.npy": {
+      "bytes": 4194432,
+      "sha256": "c174d39f68a0d4f6cb15626049992fe6dcfee567fc35cda8a503ac0096f1e38b"
+    },
+    "sdpa/3/key.npy": {
+      "bytes": 4194432,
+      "sha256": "529bfc8969bacc3add60fe8ea5d577bd70c26aeed7507d1a4c6e956a06890c99"
+    },
+    "sdpa/3/output.npy": {
+      "bytes": 4194432,
+      "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83"
+    },
+    "sdpa/3/query.npy": {
+      "bytes": 4194432,
+      "sha256": "74aff5b1bfb5de7d0ebcfb0ae03eaaa3f490a554f201d7e11acd99dcd1adc4ef"
+    },
+    "sdpa/3/value.npy": {
+      "bytes": 4194432,
+      "sha256": "c174d39f68a0d4f6cb15626049992fe6dcfee567fc35cda8a503ac0096f1e38b"
+    },
+    "sdpa/4/key.npy": {
+      "bytes": 1048704,
+      "sha256": "8b0d9d5d73b020487563ec6b17d25ccefa9071167d408a637d3d91d09e8f7aa0"
+    },
+    "sdpa/4/output.npy": {
+      "bytes": 4194432,
+      "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83"
+    },
+    "sdpa/4/query.npy": {
+      "bytes": 4194432,
+      "sha256": "74aff5b1bfb5de7d0ebcfb0ae03eaaa3f490a554f201d7e11acd99dcd1adc4ef"
+    },
+    "sdpa/4/value.npy": {
+      "bytes": 1048704,
+      "sha256": "b865b37111f5ca458ec7802a6ffdc3d907c6510a584a5d008752c6376c87da57"
+    },
+    "triangle-inputs/explicit_causal_mask.npy": {
+      "bytes": 262272,
+      "sha256": "13d860c4b81bc2ca9c3fe116221d9a0a40f961c6fd926b7198ef3f556ce0e8c8"
+    },
+    "triangle-inputs/repeated_k.npy": {
+      "bytes": 4194432,
+      "sha256": "529bfc8969bacc3add60fe8ea5d577bd70c26aeed7507d1a4c6e956a06890c99"
+    },
+    "triangle-inputs/repeated_v.npy": {
+      "bytes": 4194432,
+      "sha256": "c174d39f68a0d4f6cb15626049992fe6dcfee567fc35cda8a503ac0096f1e38b"
+    },
+    "triangle/A.explicit-repeated/H1.npy": {
+      "bytes": 2621568,
+      "sha256": "b65f39b3ef721acf5e432c43aeec4d8c631a511ba3367ab68d972c7a4a618112"
+    },
+    "triangle/A.explicit-repeated/activation.npy": {
+      "bytes": 9961600,
+      "sha256": "d95183052dfc673c36d8974c75b7a26cae05f1db18293bc8fd3d0efc3c0a89ed"
+    },
+    "triangle/A.explicit-repeated/after_attention.npy": {
+      "bytes": 2621568,
+      "sha256": "8148ec42b167c24a5be64f68f94d1461779c4cd20c41db5c8d69604a6d5de4e3"
+    },
+    "triangle/A.explicit-repeated/gate.npy": {
+      "bytes": 9961600,
+      "sha256": "53fbb2b6b29f84ef15a1886b66618c10b27cee6e5eb79170b51c0026f34f74e9"
+    },
+    "triangle/A.explicit-repeated/head.npy": {
+      "bytes": 4194432,
+      "sha256": "4a5367c7c72701ff59f2871658f219233b91e9c9f6ffe1367f86c5ec7fa90fb0"
+    },
+    "triangle/A.explicit-repeated/mlp.npy": {
+      "bytes": 2621568,
+      "sha256": "4d4edb8285e940fb98d5118a47a1078f0dcb35f7b6d511f7150a760c86a9343d"
+    },
+    "triangle/A.explicit-repeated/mlp_input.npy": {
+      "bytes": 2621568,
+      "sha256": "9b88c0c162ae321ffee295a015212cdedc45d1c8a91313b447e380bdac3f5535"
+    },
+    "triangle/A.explicit-repeated/projection.npy": {
+      "bytes": 2621568,
+      "sha256": "7f49734a13d671084ddf3152a5666b8590c893f5b20ee2135bff672caa9bd320"
+    },
+    "triangle/A.explicit-repeated/up.npy": {
+      "bytes": 9961600,
+      "sha256": "887c858b82538e4bc1701a867276ee946aaf76a4e9c21487ed688ddbaa148202"
+    },
+    "triangle/B.causal-repeated/H1.npy": {
+      "bytes": 2621568,
+      "sha256": "2600ca861ea83745d8575db2680e03d8dc568899a93e76538f8ebc6fbde0e2a5"
+    },
+    "triangle/B.causal-repeated/activation.npy": {
+      "bytes": 9961600,
+      "sha256": "ad6dcbddbd052c54b3ffbcf17ccfa9f54edf5af83eee7a63954117dc397c5560"
+    },
+    "triangle/B.causal-repeated/after_attention.npy": {
+      "bytes": 2621568,
+      "sha256": "3c63277c704d370547430b94f99fc75deab69af6b2a9ef0f3e846e73a988b2ec"
+    },
+    "triangle/B.causal-repeated/gate.npy": {
+      "bytes": 9961600,
+      "sha256": "bca52569efe320e535a59c5407f7cb0152af0986baac576f7a119e58ef54a594"
+    },
+    "triangle/B.causal-repeated/head.npy": {
+      "bytes": 4194432,
+      "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83"
+    },
+    "triangle/B.causal-repeated/mlp.npy": {
+      "bytes": 2621568,
+      "sha256": "812cacf7d5e725c6e5bb62cba683a7b92bc9e8b06511302868e076b4853698ac"
+    },
+    "triangle/B.causal-repeated/mlp_input.npy": {
+      "bytes": 2621568,
+      "sha256": "1de304abb99c6a8c3122db60b2b79d583098c50fffcff779967b652505d7f35d"
+    },
+    "triangle/B.causal-repeated/projection.npy": {
+      "bytes": 2621568,
+      "sha256": "5299a15070f9dd54c08a52072c0719c173a1c39e3fa8c26326342578ee1a3909"
+    },
+    "triangle/B.causal-repeated/up.npy": {
+      "bytes": 9961600,
+      "sha256": "835eddeb00bc883e0ea3e8a49b121df11e5a2ed828fb99b3b5999db5f13c2e2f"
+    },
+    "triangle/C.causal-grouped/H1.npy": {
+      "bytes": 2621568,
+      "sha256": "2600ca861ea83745d8575db2680e03d8dc568899a93e76538f8ebc6fbde0e2a5"
+    },
+    "triangle/C.causal-grouped/activation.npy": {
+      "bytes": 9961600,
+      "sha256": "ad6dcbddbd052c54b3ffbcf17ccfa9f54edf5af83eee7a63954117dc397c5560"
+    },
+    "triangle/C.causal-grouped/after_attention.npy": {
+      "bytes": 2621568,
+      "sha256": "3c63277c704d370547430b94f99fc75deab69af6b2a9ef0f3e846e73a988b2ec"
+    },
+    "triangle/C.causal-grouped/gate.npy": {
+      "bytes": 9961600,
+      "sha256": "bca52569efe320e535a59c5407f7cb0152af0986baac576f7a119e58ef54a594"
+    },
+    "triangle/C.causal-grouped/head.npy": {
+      "bytes": 4194432,
+      "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83"
+    },
+    "triangle/C.causal-grouped/mlp.npy": {
+      "bytes": 2621568,
+      "sha256": "812cacf7d5e725c6e5bb62cba683a7b92bc9e8b06511302868e076b4853698ac"
+    },
+    "triangle/C.causal-grouped/mlp_input.npy": {
+      "bytes": 2621568,
+      "sha256": "1de304abb99c6a8c3122db60b2b79d583098c50fffcff779967b652505d7f35d"
+    },
+    "triangle/C.causal-grouped/projection.npy": {
+      "bytes": 2621568,
+      "sha256": "5299a15070f9dd54c08a52072c0719c173a1c39e3fa8c26326342578ee1a3909"
+    },
+    "triangle/C.causal-grouped/up.npy": {
+      "bytes": 9961600,
+      "sha256": "835eddeb00bc883e0ea3e8a49b121df11e5a2ed828fb99b3b5999db5f13c2e2f"
+    }
+  },
+  "grid_inputs": {
+    "explicit_causal_mask": {
+      "bytes": 262272,
+      "descriptor": {
+        "dtype": "torch.bool",
+        "preview": [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "sha256": "1105de13a063dd488006cada34ce5e1edfc1c223327b035c1de7df30291a4876",
+        "shape": [
+          1,
+          1,
+          512,
+          512
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bool",
+      "encoding": "native-numpy-v1",
+      "path": "triangle-inputs/explicit_causal_mask.npy",
+      "raw_sha256": "1105de13a063dd488006cada34ce5e1edfc1c223327b035c1de7df30291a4876",
+      "sha256": "13d860c4b81bc2ca9c3fe116221d9a0a40f961c6fd926b7198ef3f556ce0e8c8",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stored_dtype": "bool",
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "repeated_k": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -4.71875,
+          2.53125,
+          2.390625,
+          4.1875,
+          -5.84375,
+          0.921875,
+          -0.11279296875,
+          2.703125
+        ],
+        "sha256": "b68b205457fe74bae7cea7ac5396091256c2a4c7a2112d0f65a65b5eac91b43f",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "triangle-inputs/repeated_k.npy",
+      "raw_sha256": "b68b205457fe74bae7cea7ac5396091256c2a4c7a2112d0f65a65b5eac91b43f",
+      "sha256": "529bfc8969bacc3add60fe8ea5d577bd70c26aeed7507d1a4c6e956a06890c99",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "repeated_v": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.05810546875,
+          0.123046875,
+          0.028564453125,
+          0.005218505859375,
+          -0.03857421875,
+          0.003875732421875,
+          -0.006439208984375,
+          0.0068359375
+        ],
+        "sha256": "c76103e6620a59bbf8f09e73d0601f76ea1de8ba8f37b7fdf31959fc9dcfb6b0",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "triangle-inputs/repeated_v.npy",
+      "raw_sha256": "c76103e6620a59bbf8f09e73d0601f76ea1de8ba8f37b7fdf31959fc9dcfb6b0",
+      "sha256": "c174d39f68a0d4f6cb15626049992fe6dcfee567fc35cda8a503ac0096f1e38b",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  "native_block_calls": 0,
+  "parameter_identity": {
+    "model.embed_tokens.weight": {
+      "dtype": "torch.bfloat16",
+      "sha256": "eabe5625fc0575bf517c424041e9701c0fd521889e0f547c8522d2aa20e8c0f8",
+      "shape": [
+        151936,
+        2560
+      ]
+    },
+    "model.layers.0.input_layernorm.weight": {
+      "dtype": "torch.bfloat16",
+      "sha256": "5812f00704f74996f9460b6f78a3fdaafb759d8c1b9d406f3b3515e6376a33ac",
+      "shape": [
+        2560
+      ]
+    },
+    "model.layers.0.mlp.down_proj.weight": {
+      "dtype": "torch.bfloat16",
+      "sha256": "edf534353405dab5179894b9641d12c6e53c4c6a8100b8c079257a9f3584945f",
+      "shape": [
+        2560,
+        9728
+      ]
+    },
+    "model.layers.0.mlp.gate_proj.weight": {
+      "dtype": "torch.bfloat16",
+      "sha256": "fe440e8f6cc7c56de2d5a97fef5ee04f65388dd8460821ef2ed1645c39c6a47a",
+      "shape": [
+        9728,
+        2560
+      ]
+    },
+    "model.layers.0.mlp.up_proj.weight": {
+      "dtype": "torch.bfloat16",
+      "sha256": "9a957c5a0f2bd6a240eaf6e5de83dd91a58ed1acd1829fcb72ab95aa7624181d",
+      "shape": [
+        9728,
+        2560
+      ]
+    },
+    "model.layers.0.post_attention_layernorm.weight": {
+      "dtype": "torch.bfloat16",
+      "sha256": "1b62e6af917bfad75a9271a8d89a8d565517abbedef85a68cbd5f4ba3a0a0584",
+      "shape": [
+        2560
+      ]
+    },
+    "model.layers.0.self_attn.k_norm.weight": {
+      "dtype": "torch.bfloat16",
+      "sha256": "fd5fce9d76cc8de88ccc006467e7b923fdecf1263b5b1b999f46950fefcc8df2",
+      "shape": [
+        128
+      ]
+    },
+    "model.layers.0.self_attn.k_proj.weight": {
+      "dtype": "torch.bfloat16",
+      "sha256": "feca72b5422cfc9656587e7259fb2b968876375d995630fad33873f9ccedc647",
+      "shape": [
+        1024,
+        2560
+      ]
+    },
+    "model.layers.0.self_attn.o_proj.weight": {
+      "dtype": "torch.bfloat16",
+      "sha256": "619b512cd8923f4f7fe0aba1aa51182f15295ea3f4b5e994d2f96cc28bd87d1b",
+      "shape": [
+        2560,
+        4096
+      ]
+    },
+    "model.layers.0.self_attn.q_norm.weight": {
+      "dtype": "torch.bfloat16",
+      "sha256": "e164ef8d7d043266a0e09e002caa236d0f79ea6d847d32ff15a9966b4f8573aa",
+      "shape": [
+        128
+      ]
+    },
+    "model.layers.0.self_attn.q_proj.weight": {
+      "dtype": "torch.bfloat16",
+      "sha256": "d1a42b38b6bd851c98152836ca7cc1b88a9b730ae43391671989dfd027490c08",
+      "shape": [
+        4096,
+        2560
+      ]
+    },
+    "model.layers.0.self_attn.v_proj.weight": {
+      "dtype": "torch.bfloat16",
+      "sha256": "6fb28c797635ad16b0e57618e2efc2567977368b4963a8bf7cbe6e6f07c2dee6",
+      "shape": [
+        1024,
+        2560
+      ]
+    }
+  },
+  "schema": "mdb-qwen-block0-functional-fields-v1",
+  "scope": "source-generated conditional primitive diagnostics, no novel raw-image forecast",
+  "sdpa_receipts": [
+    {
+      "dropout_p": 0.0,
+      "enable_gqa": false,
+      "is_causal": false,
+      "key": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -4.71875,
+            2.53125,
+            2.390625,
+            4.1875,
+            -5.84375,
+            0.921875,
+            -0.11279296875,
+            2.703125
+          ],
+          "sha256": "21e9ec0cb3e74b5efc8826ae692fea8a540f0f31539b3955087f32ba9de577df",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/0/key.npy",
+        "raw_sha256": "21e9ec0cb3e74b5efc8826ae692fea8a540f0f31539b3955087f32ba9de577df",
+        "sha256": "d3ae30c96bee370384e1206082afd8a2b3f0925575044c670275e8842296dac9",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          65536,
+          128,
+          1
+        ]
+      },
+      "label": "functional.short",
+      "mask": {
+        "bytes": 262272,
+        "descriptor": {
+          "dtype": "torch.bool",
+          "preview": [
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "sha256": "5e77597c29ecf8501766feca27250a6c1998644ca81cbf37e9474ae184a124b6",
+          "shape": [
+            1,
+            1,
+            512,
+            512
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bool",
+        "encoding": "native-numpy-v1",
+        "path": "sdpa/0/mask.npy",
+        "raw_sha256": "5e77597c29ecf8501766feca27250a6c1998644ca81cbf37e9474ae184a124b6",
+        "sha256": "8171245a8f5544bf147e2e10132409bfae3607b2e0cc8b79c948c59106e71481",
+        "shape": [
+          1,
+          1,
+          512,
+          512
+        ],
+        "stored_dtype": "bool",
+        "stride": [
+          262144,
+          262144,
+          512,
+          1
+        ]
+      },
+      "ordinal": 0,
+      "output": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.05810546875,
+            0.123046875,
+            0.028564453125,
+            0.005218505859375,
+            -0.03857421875,
+            0.003875732421875,
+            -0.006439208984375,
+            0.0068359375
+          ],
+          "sha256": "6332e4ddeafe0ff544ae2ab3e383671e03f9bd3573da27b1f2f6756dce12364c",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/0/output.npy",
+        "raw_sha256": "6332e4ddeafe0ff544ae2ab3e383671e03f9bd3573da27b1f2f6756dce12364c",
+        "sha256": "b586f29dc56b2d391e986b5c65f9bfa177961d96cfd711d9518d097730733f5e",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          128,
+          4096,
+          1
+        ]
+      },
+      "profiler": {
+        "events": [
+          "Activity Buffer Request",
+          "Lazy Function Loading",
+          "Runtime Triggered Module Loading",
+          "aten::_efficient_attention_forward",
+          "aten::_scaled_dot_product_efficient_attention",
+          "aten::as_strided",
+          "aten::empty",
+          "aten::expand",
+          "aten::fill_",
+          "aten::resize_",
+          "aten::scalar_tensor",
+          "aten::scaled_dot_product_attention",
+          "aten::set_",
+          "aten::to",
+          "aten::transpose",
+          "aten::where",
+          "cudaDeviceSynchronize",
+          "cudaFuncSetAttribute",
+          "cudaLaunchKernel",
+          "cudaStreamIsCapturing",
+          "fmha_cutlassF_bf16_aligned_64x128_rf_sm80(PyTorchMemEffAttention::AttentionKernel<cutlass::bfloat16_t, cutlass::arch::Sm80, true, 64, 128, 128, true, true>::Params)",
+          "void at::native::elementwise_kernel<128, 4, at::native::gpu_kernel_impl_nocast<at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1}>(at::TensorIteratorBase&, at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1} const&)::{lambda(int)#1}>(int, at::native::gpu_kernel_impl_nocast<at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1}>(at::TensorIteratorBase&, at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1} const&)::{lambda(int)#1})",
+          "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul>)"
+        ],
+        "scope": "passive events for this existing call; no forced backend or extra call",
+        "status": "observed"
+      },
+      "query": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.16015625,
+            0.0849609375,
+            0.2138671875,
+            0.302734375,
+            -0.1572265625,
+            0.3671875,
+            -0.1396484375,
+            0.6171875
+          ],
+          "sha256": "c90763ace2f107e3006e4b750c0f50068cc6da7be501fd2d21c2c368d3b8049d",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/0/query.npy",
+        "raw_sha256": "c90763ace2f107e3006e4b750c0f50068cc6da7be501fd2d21c2c368d3b8049d",
+        "sha256": "e44f4d073e8e6a61dc67a7e605bca6ff06ee29c6ae799a39f9e469268f4e47a4",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          128,
+          4096,
+          1
+        ]
+      },
+      "scale": 0.08838834764831845,
+      "value": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.05810546875,
+            0.123046875,
+            0.028564453125,
+            0.005218505859375,
+            -0.03857421875,
+            0.003875732421875,
+            -0.006439208984375,
+            0.0068359375
+          ],
+          "sha256": "802ef663f9257a3fb80f9ebfbc702e81099a51e6b29009d12ec3f43f4a237e33",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/0/value.npy",
+        "raw_sha256": "802ef663f9257a3fb80f9ebfbc702e81099a51e6b29009d12ec3f43f4a237e33",
+        "sha256": "720fa5470d5044963a6ba97192162f4b7bcdbed77f47ea18917d163ee644a084",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          65536,
+          128,
+          1
+        ]
+      }
+    },
+    {
+      "dropout_p": 0.0,
+      "enable_gqa": true,
+      "is_causal": true,
+      "key": {
+        "bytes": 1048704,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -4.71875,
+            2.53125,
+            2.390625,
+            4.1875,
+            -5.84375,
+            0.921875,
+            -0.11279296875,
+            2.703125
+          ],
+          "sha256": "ef2ff803de437838909a04fd69e69d21bc37c03f212ffb8353f2d060b51f47c1",
+          "shape": [
+            1,
+            8,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/1/key.npy",
+        "raw_sha256": "ef2ff803de437838909a04fd69e69d21bc37c03f212ffb8353f2d060b51f47c1",
+        "sha256": "8b0d9d5d73b020487563ec6b17d25ccefa9071167d408a637d3d91d09e8f7aa0",
+        "shape": [
+          1,
+          8,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          524288,
+          128,
+          1024,
+          1
+        ]
+      },
+      "label": "functional.long",
+      "mask": null,
+      "ordinal": 1,
+      "output": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.05810546875,
+            0.123046875,
+            0.028564453125,
+            0.005218505859375,
+            -0.03857421875,
+            0.003875732421875,
+            -0.006439208984375,
+            0.0068359375
+          ],
+          "sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/1/output.npy",
+        "raw_sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+        "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          128,
+          4096,
+          1
+        ]
+      },
+      "profiler": {
+        "events": [
+          "Activity Buffer Request",
+          "Lazy Function Loading",
+          "Runtime Triggered Module Loading",
+          "aten::_flash_attention_forward",
+          "aten::_scaled_dot_product_flash_attention",
+          "aten::as_strided",
+          "aten::empty",
+          "aten::empty_like",
+          "aten::empty_strided",
+          "aten::fill_",
+          "aten::scaled_dot_product_attention",
+          "aten::transpose",
+          "cudaDeviceGetAttribute",
+          "cudaDeviceSynchronize",
+          "cudaFuncSetAttribute",
+          "cudaLaunchKernel",
+          "void at::native::vectorized_elementwise_kernel<2, at::native::FillFunctor<unsigned long>, std::array<char*, 1ul> >(int, at::native::FillFunctor<unsigned long>, std::array<char*, 1ul>)",
+          "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul>)",
+          "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::native::FillFunctor<float>, std::array<char*, 1ul>)",
+          "void pytorch_flash::flash_fwd_kernel<Flash_fwd_kernel_traits<128, 64, 64, 4, false, false, cutlass::bfloat16_t, Flash_kernel_traits<128, 64, 64, 4, cutlass::bfloat16_t> >, false, true, false, false, true, true, false, false>(pytorch_flash::Flash_fwd_params)"
+        ],
+        "scope": "passive events for this existing call; no forced backend or extra call",
+        "status": "observed"
+      },
+      "query": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.16015625,
+            0.0849609375,
+            0.2138671875,
+            0.302734375,
+            -0.1572265625,
+            0.3671875,
+            -0.1396484375,
+            0.6171875
+          ],
+          "sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/1/query.npy",
+        "raw_sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+        "sha256": "74aff5b1bfb5de7d0ebcfb0ae03eaaa3f490a554f201d7e11acd99dcd1adc4ef",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          128,
+          4096,
+          1
+        ]
+      },
+      "scale": 0.08838834764831845,
+      "value": {
+        "bytes": 1048704,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.05810546875,
+            0.123046875,
+            0.028564453125,
+            0.005218505859375,
+            -0.03857421875,
+            0.003875732421875,
+            -0.006439208984375,
+            0.0068359375
+          ],
+          "sha256": "5266096e3950d1e082c69252873d60924aa32c823cfb1abbd13200fb4f646169",
+          "shape": [
+            1,
+            8,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/1/value.npy",
+        "raw_sha256": "5266096e3950d1e082c69252873d60924aa32c823cfb1abbd13200fb4f646169",
+        "sha256": "b865b37111f5ca458ec7802a6ffdc3d907c6510a584a5d008752c6376c87da57",
+        "shape": [
+          1,
+          8,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          524288,
+          128,
+          1024,
+          1
+        ]
+      }
+    },
+    {
+      "dropout_p": 0.0,
+      "enable_gqa": false,
+      "is_causal": false,
+      "key": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -4.71875,
+            2.53125,
+            2.390625,
+            4.1875,
+            -5.84375,
+            0.921875,
+            -0.11279296875,
+            2.703125
+          ],
+          "sha256": "b68b205457fe74bae7cea7ac5396091256c2a4c7a2112d0f65a65b5eac91b43f",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/2/key.npy",
+        "raw_sha256": "b68b205457fe74bae7cea7ac5396091256c2a4c7a2112d0f65a65b5eac91b43f",
+        "sha256": "529bfc8969bacc3add60fe8ea5d577bd70c26aeed7507d1a4c6e956a06890c99",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          65536,
+          128,
+          1
+        ]
+      },
+      "label": "A.explicit-repeated",
+      "mask": {
+        "bytes": 262272,
+        "descriptor": {
+          "dtype": "torch.bool",
+          "preview": [
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false,
+            false
+          ],
+          "sha256": "1105de13a063dd488006cada34ce5e1edfc1c223327b035c1de7df30291a4876",
+          "shape": [
+            1,
+            1,
+            512,
+            512
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bool",
+        "encoding": "native-numpy-v1",
+        "path": "sdpa/2/mask.npy",
+        "raw_sha256": "1105de13a063dd488006cada34ce5e1edfc1c223327b035c1de7df30291a4876",
+        "sha256": "13d860c4b81bc2ca9c3fe116221d9a0a40f961c6fd926b7198ef3f556ce0e8c8",
+        "shape": [
+          1,
+          1,
+          512,
+          512
+        ],
+        "stored_dtype": "bool",
+        "stride": [
+          262144,
+          262144,
+          512,
+          1
+        ]
+      },
+      "ordinal": 2,
+      "output": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.05810546875,
+            0.123046875,
+            0.028564453125,
+            0.005218505859375,
+            -0.03857421875,
+            0.003875732421875,
+            -0.006439208984375,
+            0.0068359375
+          ],
+          "sha256": "92414069c01afa84d0d626ce6dbe78307589f3e9338ae905cbc7ff8412793563",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/2/output.npy",
+        "raw_sha256": "92414069c01afa84d0d626ce6dbe78307589f3e9338ae905cbc7ff8412793563",
+        "sha256": "4a5367c7c72701ff59f2871658f219233b91e9c9f6ffe1367f86c5ec7fa90fb0",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          128,
+          4096,
+          1
+        ]
+      },
+      "profiler": {
+        "events": [
+          "Activity Buffer Request",
+          "aten::_efficient_attention_forward",
+          "aten::_scaled_dot_product_efficient_attention",
+          "aten::as_strided",
+          "aten::empty",
+          "aten::expand",
+          "aten::fill_",
+          "aten::resize_",
+          "aten::scalar_tensor",
+          "aten::scaled_dot_product_attention",
+          "aten::set_",
+          "aten::to",
+          "aten::transpose",
+          "aten::where",
+          "cudaDeviceSynchronize",
+          "cudaFuncSetAttribute",
+          "cudaLaunchKernel",
+          "cudaStreamIsCapturing",
+          "fmha_cutlassF_bf16_aligned_64x128_rf_sm80(PyTorchMemEffAttention::AttentionKernel<cutlass::bfloat16_t, cutlass::arch::Sm80, true, 64, 128, 128, true, true>::Params)",
+          "void at::native::elementwise_kernel<128, 4, at::native::gpu_kernel_impl_nocast<at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1}>(at::TensorIteratorBase&, at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1} const&)::{lambda(int)#1}>(int, at::native::gpu_kernel_impl_nocast<at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1}>(at::TensorIteratorBase&, at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1} const&)::{lambda(int)#1})",
+          "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul>)"
+        ],
+        "scope": "passive events for this existing call; no forced backend or extra call",
+        "status": "observed"
+      },
+      "query": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.16015625,
+            0.0849609375,
+            0.2138671875,
+            0.302734375,
+            -0.1572265625,
+            0.3671875,
+            -0.1396484375,
+            0.6171875
+          ],
+          "sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/2/query.npy",
+        "raw_sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+        "sha256": "74aff5b1bfb5de7d0ebcfb0ae03eaaa3f490a554f201d7e11acd99dcd1adc4ef",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          128,
+          4096,
+          1
+        ]
+      },
+      "scale": 0.08838834764831845,
+      "value": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.05810546875,
+            0.123046875,
+            0.028564453125,
+            0.005218505859375,
+            -0.03857421875,
+            0.003875732421875,
+            -0.006439208984375,
+            0.0068359375
+          ],
+          "sha256": "c76103e6620a59bbf8f09e73d0601f76ea1de8ba8f37b7fdf31959fc9dcfb6b0",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/2/value.npy",
+        "raw_sha256": "c76103e6620a59bbf8f09e73d0601f76ea1de8ba8f37b7fdf31959fc9dcfb6b0",
+        "sha256": "c174d39f68a0d4f6cb15626049992fe6dcfee567fc35cda8a503ac0096f1e38b",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          65536,
+          128,
+          1
+        ]
+      }
+    },
+    {
+      "dropout_p": 0.0,
+      "enable_gqa": false,
+      "is_causal": true,
+      "key": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -4.71875,
+            2.53125,
+            2.390625,
+            4.1875,
+            -5.84375,
+            0.921875,
+            -0.11279296875,
+            2.703125
+          ],
+          "sha256": "b68b205457fe74bae7cea7ac5396091256c2a4c7a2112d0f65a65b5eac91b43f",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/3/key.npy",
+        "raw_sha256": "b68b205457fe74bae7cea7ac5396091256c2a4c7a2112d0f65a65b5eac91b43f",
+        "sha256": "529bfc8969bacc3add60fe8ea5d577bd70c26aeed7507d1a4c6e956a06890c99",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          65536,
+          128,
+          1
+        ]
+      },
+      "label": "B.causal-repeated",
+      "mask": null,
+      "ordinal": 3,
+      "output": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.05810546875,
+            0.123046875,
+            0.028564453125,
+            0.005218505859375,
+            -0.03857421875,
+            0.003875732421875,
+            -0.006439208984375,
+            0.0068359375
+          ],
+          "sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/3/output.npy",
+        "raw_sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+        "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          128,
+          4096,
+          1
+        ]
+      },
+      "profiler": {
+        "events": [
+          "Activity Buffer Request",
+          "aten::_flash_attention_forward",
+          "aten::_scaled_dot_product_flash_attention",
+          "aten::as_strided",
+          "aten::empty",
+          "aten::empty_like",
+          "aten::empty_strided",
+          "aten::fill_",
+          "aten::scaled_dot_product_attention",
+          "aten::transpose",
+          "cudaDeviceGetAttribute",
+          "cudaDeviceSynchronize",
+          "cudaFuncSetAttribute",
+          "cudaLaunchKernel",
+          "void at::native::vectorized_elementwise_kernel<2, at::native::FillFunctor<unsigned long>, std::array<char*, 1ul> >(int, at::native::FillFunctor<unsigned long>, std::array<char*, 1ul>)",
+          "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul>)",
+          "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::native::FillFunctor<float>, std::array<char*, 1ul>)",
+          "void pytorch_flash::flash_fwd_kernel<Flash_fwd_kernel_traits<128, 64, 64, 4, false, false, cutlass::bfloat16_t, Flash_kernel_traits<128, 64, 64, 4, cutlass::bfloat16_t> >, false, true, false, false, true, true, false, false>(pytorch_flash::Flash_fwd_params)"
+        ],
+        "scope": "passive events for this existing call; no forced backend or extra call",
+        "status": "observed"
+      },
+      "query": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.16015625,
+            0.0849609375,
+            0.2138671875,
+            0.302734375,
+            -0.1572265625,
+            0.3671875,
+            -0.1396484375,
+            0.6171875
+          ],
+          "sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/3/query.npy",
+        "raw_sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+        "sha256": "74aff5b1bfb5de7d0ebcfb0ae03eaaa3f490a554f201d7e11acd99dcd1adc4ef",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          128,
+          4096,
+          1
+        ]
+      },
+      "scale": 0.08838834764831845,
+      "value": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.05810546875,
+            0.123046875,
+            0.028564453125,
+            0.005218505859375,
+            -0.03857421875,
+            0.003875732421875,
+            -0.006439208984375,
+            0.0068359375
+          ],
+          "sha256": "c76103e6620a59bbf8f09e73d0601f76ea1de8ba8f37b7fdf31959fc9dcfb6b0",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/3/value.npy",
+        "raw_sha256": "c76103e6620a59bbf8f09e73d0601f76ea1de8ba8f37b7fdf31959fc9dcfb6b0",
+        "sha256": "c174d39f68a0d4f6cb15626049992fe6dcfee567fc35cda8a503ac0096f1e38b",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          65536,
+          128,
+          1
+        ]
+      }
+    },
+    {
+      "dropout_p": 0.0,
+      "enable_gqa": true,
+      "is_causal": true,
+      "key": {
+        "bytes": 1048704,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -4.71875,
+            2.53125,
+            2.390625,
+            4.1875,
+            -5.84375,
+            0.921875,
+            -0.11279296875,
+            2.703125
+          ],
+          "sha256": "ef2ff803de437838909a04fd69e69d21bc37c03f212ffb8353f2d060b51f47c1",
+          "shape": [
+            1,
+            8,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/4/key.npy",
+        "raw_sha256": "ef2ff803de437838909a04fd69e69d21bc37c03f212ffb8353f2d060b51f47c1",
+        "sha256": "8b0d9d5d73b020487563ec6b17d25ccefa9071167d408a637d3d91d09e8f7aa0",
+        "shape": [
+          1,
+          8,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          524288,
+          128,
+          1024,
+          1
+        ]
+      },
+      "label": "C.causal-grouped",
+      "mask": null,
+      "ordinal": 4,
+      "output": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.05810546875,
+            0.123046875,
+            0.028564453125,
+            0.005218505859375,
+            -0.03857421875,
+            0.003875732421875,
+            -0.006439208984375,
+            0.0068359375
+          ],
+          "sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/4/output.npy",
+        "raw_sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+        "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          128,
+          4096,
+          1
+        ]
+      },
+      "profiler": {
+        "events": [
+          "Activity Buffer Request",
+          "aten::_flash_attention_forward",
+          "aten::_scaled_dot_product_flash_attention",
+          "aten::as_strided",
+          "aten::empty",
+          "aten::empty_like",
+          "aten::empty_strided",
+          "aten::fill_",
+          "aten::scaled_dot_product_attention",
+          "aten::transpose",
+          "cudaDeviceGetAttribute",
+          "cudaDeviceSynchronize",
+          "cudaFuncSetAttribute",
+          "cudaLaunchKernel",
+          "void at::native::vectorized_elementwise_kernel<2, at::native::FillFunctor<unsigned long>, std::array<char*, 1ul> >(int, at::native::FillFunctor<unsigned long>, std::array<char*, 1ul>)",
+          "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul>)",
+          "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::native::FillFunctor<float>, std::array<char*, 1ul>)",
+          "void pytorch_flash::flash_fwd_kernel<Flash_fwd_kernel_traits<128, 64, 64, 4, false, false, cutlass::bfloat16_t, Flash_kernel_traits<128, 64, 64, 4, cutlass::bfloat16_t> >, false, true, false, false, true, true, false, false>(pytorch_flash::Flash_fwd_params)"
+        ],
+        "scope": "passive events for this existing call; no forced backend or extra call",
+        "status": "observed"
+      },
+      "query": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.16015625,
+            0.0849609375,
+            0.2138671875,
+            0.302734375,
+            -0.1572265625,
+            0.3671875,
+            -0.1396484375,
+            0.6171875
+          ],
+          "sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/4/query.npy",
+        "raw_sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+        "sha256": "74aff5b1bfb5de7d0ebcfb0ae03eaaa3f490a554f201d7e11acd99dcd1adc4ef",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          128,
+          4096,
+          1
+        ]
+      },
+      "scale": 0.08838834764831845,
+      "value": {
+        "bytes": 1048704,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.05810546875,
+            0.123046875,
+            0.028564453125,
+            0.005218505859375,
+            -0.03857421875,
+            0.003875732421875,
+            -0.006439208984375,
+            0.0068359375
+          ],
+          "sha256": "5266096e3950d1e082c69252873d60924aa32c823cfb1abbd13200fb4f646169",
+          "shape": [
+            1,
+            8,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "sdpa/4/value.npy",
+        "raw_sha256": "5266096e3950d1e082c69252873d60924aa32c823cfb1abbd13200fb4f646169",
+        "sha256": "b865b37111f5ca458ec7802a6ffdc3d907c6510a584a5d008752c6376c87da57",
+        "shape": [
+          1,
+          8,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          524288,
+          128,
+          1024,
+          1
+        ]
+      }
+    }
+  ],
+  "triangle": {
+    "A.explicit-repeated": {
+      "H1": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            8.625,
+            -2.1875,
+            0.8828125,
+            1.515625,
+            2.09375,
+            0.890625,
+            -1.640625,
+            0.140625
+          ],
+          "sha256": "deea21014117dfcef01e2d460bd55eddc3f737ee741da6a9d15afd28d824d30e",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/H1.npy",
+        "raw_sha256": "deea21014117dfcef01e2d460bd55eddc3f737ee741da6a9d15afd28d824d30e",
+        "sha256": "b65f39b3ef721acf5e432c43aeec4d8c631a511ba3367ab68d972c7a4a618112",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "activation": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            0.09765625,
+            -0.00482177734375,
+            -0.002166748046875,
+            0.439453125,
+            -0.007537841796875,
+            0.1494140625,
+            -0.0595703125,
+            0.205078125
+          ],
+          "sha256": "9c2128e52e7602befa054368b3387da72eba514037a0f0bc202012b471fad31d",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/activation.npy",
+        "raw_sha256": "9c2128e52e7602befa054368b3387da72eba514037a0f0bc202012b471fad31d",
+        "sha256": "d95183052dfc673c36d8974c75b7a26cae05f1db18293bc8fd3d0efc3c0a89ed",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      },
+      "after_attention": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            1.2734375,
+            -0.330078125,
+            -0.169921875,
+            -0.035400390625,
+            -0.171875,
+            0.78515625,
+            -0.58984375,
+            -0.09619140625
+          ],
+          "sha256": "67aed49d05dfd2a3e3cd1818bf7d84d256f7b844d6ba6b767c0aeeb2deaa9a78",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/after_attention.npy",
+        "raw_sha256": "67aed49d05dfd2a3e3cd1818bf7d84d256f7b844d6ba6b767c0aeeb2deaa9a78",
+        "sha256": "8148ec42b167c24a5be64f68f94d1461779c4cd20c41db5c8d69604a6d5de4e3",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "gate": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.65625,
+            -0.068359375,
+            -0.0311279296875,
+            1.1875,
+            0.07470703125,
+            -0.59765625,
+            -0.1728515625,
+            -0.73828125
+          ],
+          "sha256": "b567b74354d374949997f7d877c404a504765fb1e6ea25ae8b694e5d9aa625dc",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/gate.npy",
+        "raw_sha256": "b567b74354d374949997f7d877c404a504765fb1e6ea25ae8b694e5d9aa625dc",
+        "sha256": "53fbb2b6b29f84ef15a1886b66618c10b27cee6e5eb79170b51c0026f34f74e9",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      },
+      "head": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.05810546875,
+            0.123046875,
+            0.028564453125,
+            0.005218505859375,
+            -0.03857421875,
+            0.003875732421875,
+            -0.006439208984375,
+            0.0068359375
+          ],
+          "sha256": "92414069c01afa84d0d626ce6dbe78307589f3e9338ae905cbc7ff8412793563",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/head.npy",
+        "raw_sha256": "92414069c01afa84d0d626ce6dbe78307589f3e9338ae905cbc7ff8412793563",
+        "sha256": "4a5367c7c72701ff59f2871658f219233b91e9c9f6ffe1367f86c5ec7fa90fb0",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          128,
+          4096,
+          1
+        ]
+      },
+      "mlp": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            7.375,
+            -1.859375,
+            1.0546875,
+            1.5546875,
+            2.265625,
+            0.10595703125,
+            -1.0546875,
+            0.236328125
+          ],
+          "sha256": "30489839ab513b48492053af65ec594f0fdd16ec75cab48b0b6b5e9d4e9c8e4c",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/mlp.npy",
+        "raw_sha256": "30489839ab513b48492053af65ec594f0fdd16ec75cab48b0b6b5e9d4e9c8e4c",
+        "sha256": "4d4edb8285e940fb98d5118a47a1078f0dcb35f7b6d511f7150a760c86a9343d",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "mlp_input": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.0002574920654296875,
+            -0.000881195068359375,
+            9.107589721679688e-05,
+            -0.035888671875,
+            -0.365234375,
+            0.00115966796875,
+            -0.000690460205078125,
+            -0.06982421875
+          ],
+          "sha256": "3d55403af003ba71bc18aa1778655e45e7bb5f97fa506b22bd79ee5038ec2080",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/mlp_input.npy",
+        "raw_sha256": "3d55403af003ba71bc18aa1778655e45e7bb5f97fa506b22bd79ee5038ec2080",
+        "sha256": "9b88c0c162ae321ffee295a015212cdedc45d1c8a91313b447e380bdac3f5535",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "projection": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            1.2734375,
+            -0.337890625,
+            -0.1845703125,
+            -0.0771484375,
+            -0.189453125,
+            0.796875,
+            -0.59765625,
+            -0.12255859375
+          ],
+          "sha256": "aff9a8dc0a7c8dcbaf152df9d998d58836759d982f148f5cd9b1fe43a3d45673",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/projection.npy",
+        "raw_sha256": "aff9a8dc0a7c8dcbaf152df9d998d58836759d982f148f5cd9b1fe43a3d45673",
+        "sha256": "7f49734a13d671084ddf3152a5666b8590c893f5b20ee2135bff672caa9bd320",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "up": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.435546875,
+            0.146484375,
+            0.1416015625,
+            0.482421875,
+            -0.1943359375,
+            -0.70703125,
+            0.75390625,
+            -0.859375
+          ],
+          "sha256": "3bede3106a067e0bf9251d02b5851b1a0fde351ec8126f20eeff81bb6b2c7744",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/A.explicit-repeated/up.npy",
+        "raw_sha256": "3bede3106a067e0bf9251d02b5851b1a0fde351ec8126f20eeff81bb6b2c7744",
+        "sha256": "887c858b82538e4bc1701a867276ee946aaf76a4e9c21487ed688ddbaa148202",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      }
+    },
+    "B.causal-repeated": {
+      "H1": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            8.625,
+            -2.1875,
+            0.8828125,
+            1.515625,
+            2.09375,
+            0.890625,
+            -1.640625,
+            0.140625
+          ],
+          "sha256": "c53ea8fa17e7e882bdea3b84a98fa7983c8c10e60771be3655170cea9d2dd1a3",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/H1.npy",
+        "raw_sha256": "c53ea8fa17e7e882bdea3b84a98fa7983c8c10e60771be3655170cea9d2dd1a3",
+        "sha256": "2600ca861ea83745d8575db2680e03d8dc568899a93e76538f8ebc6fbde0e2a5",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "activation": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            0.09765625,
+            -0.00482177734375,
+            -0.002166748046875,
+            0.439453125,
+            -0.007537841796875,
+            0.1494140625,
+            -0.0595703125,
+            0.205078125
+          ],
+          "sha256": "7390f03198f1294c18d6a282b20c54f3927c6a11e9567bb6c0210f22688ca176",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/activation.npy",
+        "raw_sha256": "7390f03198f1294c18d6a282b20c54f3927c6a11e9567bb6c0210f22688ca176",
+        "sha256": "ad6dcbddbd052c54b3ffbcf17ccfa9f54edf5af83eee7a63954117dc397c5560",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      },
+      "after_attention": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            1.2734375,
+            -0.330078125,
+            -0.169921875,
+            -0.035400390625,
+            -0.171875,
+            0.78515625,
+            -0.58984375,
+            -0.09619140625
+          ],
+          "sha256": "7d3230b68c0cfa327f936e0162e7371704178ccba4548f3c6bf7f83028af86dc",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/after_attention.npy",
+        "raw_sha256": "7d3230b68c0cfa327f936e0162e7371704178ccba4548f3c6bf7f83028af86dc",
+        "sha256": "3c63277c704d370547430b94f99fc75deab69af6b2a9ef0f3e846e73a988b2ec",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "gate": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.65625,
+            -0.068359375,
+            -0.0311279296875,
+            1.1875,
+            0.07470703125,
+            -0.59765625,
+            -0.1728515625,
+            -0.73828125
+          ],
+          "sha256": "64665ef8ab7864c0ad8e9e4021b2da0b5f59fc7ed88346826e9c5b7a5fe7328c",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/gate.npy",
+        "raw_sha256": "64665ef8ab7864c0ad8e9e4021b2da0b5f59fc7ed88346826e9c5b7a5fe7328c",
+        "sha256": "bca52569efe320e535a59c5407f7cb0152af0986baac576f7a119e58ef54a594",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      },
+      "head": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.05810546875,
+            0.123046875,
+            0.028564453125,
+            0.005218505859375,
+            -0.03857421875,
+            0.003875732421875,
+            -0.006439208984375,
+            0.0068359375
+          ],
+          "sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/head.npy",
+        "raw_sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+        "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          128,
+          4096,
+          1
+        ]
+      },
+      "mlp": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            7.375,
+            -1.859375,
+            1.0546875,
+            1.5546875,
+            2.265625,
+            0.10595703125,
+            -1.0546875,
+            0.236328125
+          ],
+          "sha256": "f8b5b915712e3c77d57ad4a11ea59513e02c04b2dfb446c2fa9b36479716d168",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/mlp.npy",
+        "raw_sha256": "f8b5b915712e3c77d57ad4a11ea59513e02c04b2dfb446c2fa9b36479716d168",
+        "sha256": "812cacf7d5e725c6e5bb62cba683a7b92bc9e8b06511302868e076b4853698ac",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "mlp_input": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.0002574920654296875,
+            -0.000881195068359375,
+            9.107589721679688e-05,
+            -0.035888671875,
+            -0.365234375,
+            0.00115966796875,
+            -0.000690460205078125,
+            -0.06982421875
+          ],
+          "sha256": "b3beb892f9dde1613df1349c51d8fbea797fab74cf93faf928929274c48af141",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/mlp_input.npy",
+        "raw_sha256": "b3beb892f9dde1613df1349c51d8fbea797fab74cf93faf928929274c48af141",
+        "sha256": "1de304abb99c6a8c3122db60b2b79d583098c50fffcff779967b652505d7f35d",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "projection": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            1.2734375,
+            -0.337890625,
+            -0.1845703125,
+            -0.0771484375,
+            -0.189453125,
+            0.796875,
+            -0.59765625,
+            -0.12255859375
+          ],
+          "sha256": "499e404a62621d35ba815cb3140994fe7324998ae2d98e81b1a941cdc34bd226",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/projection.npy",
+        "raw_sha256": "499e404a62621d35ba815cb3140994fe7324998ae2d98e81b1a941cdc34bd226",
+        "sha256": "5299a15070f9dd54c08a52072c0719c173a1c39e3fa8c26326342578ee1a3909",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "up": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.435546875,
+            0.146484375,
+            0.1416015625,
+            0.482421875,
+            -0.1943359375,
+            -0.70703125,
+            0.75390625,
+            -0.859375
+          ],
+          "sha256": "cb451854c5c3eedeeda38cfc93bb8a301c4c209bffd9ac06a2adbbf3aa285e62",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/B.causal-repeated/up.npy",
+        "raw_sha256": "cb451854c5c3eedeeda38cfc93bb8a301c4c209bffd9ac06a2adbbf3aa285e62",
+        "sha256": "835eddeb00bc883e0ea3e8a49b121df11e5a2ed828fb99b3b5999db5f13c2e2f",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      }
+    },
+    "C.causal-grouped": {
+      "H1": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            8.625,
+            -2.1875,
+            0.8828125,
+            1.515625,
+            2.09375,
+            0.890625,
+            -1.640625,
+            0.140625
+          ],
+          "sha256": "c53ea8fa17e7e882bdea3b84a98fa7983c8c10e60771be3655170cea9d2dd1a3",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/H1.npy",
+        "raw_sha256": "c53ea8fa17e7e882bdea3b84a98fa7983c8c10e60771be3655170cea9d2dd1a3",
+        "sha256": "2600ca861ea83745d8575db2680e03d8dc568899a93e76538f8ebc6fbde0e2a5",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "activation": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            0.09765625,
+            -0.00482177734375,
+            -0.002166748046875,
+            0.439453125,
+            -0.007537841796875,
+            0.1494140625,
+            -0.0595703125,
+            0.205078125
+          ],
+          "sha256": "7390f03198f1294c18d6a282b20c54f3927c6a11e9567bb6c0210f22688ca176",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/activation.npy",
+        "raw_sha256": "7390f03198f1294c18d6a282b20c54f3927c6a11e9567bb6c0210f22688ca176",
+        "sha256": "ad6dcbddbd052c54b3ffbcf17ccfa9f54edf5af83eee7a63954117dc397c5560",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      },
+      "after_attention": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            1.2734375,
+            -0.330078125,
+            -0.169921875,
+            -0.035400390625,
+            -0.171875,
+            0.78515625,
+            -0.58984375,
+            -0.09619140625
+          ],
+          "sha256": "7d3230b68c0cfa327f936e0162e7371704178ccba4548f3c6bf7f83028af86dc",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/after_attention.npy",
+        "raw_sha256": "7d3230b68c0cfa327f936e0162e7371704178ccba4548f3c6bf7f83028af86dc",
+        "sha256": "3c63277c704d370547430b94f99fc75deab69af6b2a9ef0f3e846e73a988b2ec",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "gate": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.65625,
+            -0.068359375,
+            -0.0311279296875,
+            1.1875,
+            0.07470703125,
+            -0.59765625,
+            -0.1728515625,
+            -0.73828125
+          ],
+          "sha256": "64665ef8ab7864c0ad8e9e4021b2da0b5f59fc7ed88346826e9c5b7a5fe7328c",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/gate.npy",
+        "raw_sha256": "64665ef8ab7864c0ad8e9e4021b2da0b5f59fc7ed88346826e9c5b7a5fe7328c",
+        "sha256": "bca52569efe320e535a59c5407f7cb0152af0986baac576f7a119e58ef54a594",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      },
+      "head": {
+        "bytes": 4194432,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.05810546875,
+            0.123046875,
+            0.028564453125,
+            0.005218505859375,
+            -0.03857421875,
+            0.003875732421875,
+            -0.006439208984375,
+            0.0068359375
+          ],
+          "sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/head.npy",
+        "raw_sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+        "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          2097152,
+          128,
+          4096,
+          1
+        ]
+      },
+      "mlp": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            7.375,
+            -1.859375,
+            1.0546875,
+            1.5546875,
+            2.265625,
+            0.10595703125,
+            -1.0546875,
+            0.236328125
+          ],
+          "sha256": "f8b5b915712e3c77d57ad4a11ea59513e02c04b2dfb446c2fa9b36479716d168",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/mlp.npy",
+        "raw_sha256": "f8b5b915712e3c77d57ad4a11ea59513e02c04b2dfb446c2fa9b36479716d168",
+        "sha256": "812cacf7d5e725c6e5bb62cba683a7b92bc9e8b06511302868e076b4853698ac",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "mlp_input": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.0002574920654296875,
+            -0.000881195068359375,
+            9.107589721679688e-05,
+            -0.035888671875,
+            -0.365234375,
+            0.00115966796875,
+            -0.000690460205078125,
+            -0.06982421875
+          ],
+          "sha256": "b3beb892f9dde1613df1349c51d8fbea797fab74cf93faf928929274c48af141",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/mlp_input.npy",
+        "raw_sha256": "b3beb892f9dde1613df1349c51d8fbea797fab74cf93faf928929274c48af141",
+        "sha256": "1de304abb99c6a8c3122db60b2b79d583098c50fffcff779967b652505d7f35d",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "projection": {
+        "bytes": 2621568,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            1.2734375,
+            -0.337890625,
+            -0.1845703125,
+            -0.0771484375,
+            -0.189453125,
+            0.796875,
+            -0.59765625,
+            -0.12255859375
+          ],
+          "sha256": "499e404a62621d35ba815cb3140994fe7324998ae2d98e81b1a941cdc34bd226",
+          "shape": [
+            1,
+            512,
+            2560
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/projection.npy",
+        "raw_sha256": "499e404a62621d35ba815cb3140994fe7324998ae2d98e81b1a941cdc34bd226",
+        "sha256": "5299a15070f9dd54c08a52072c0719c173a1c39e3fa8c26326342578ee1a3909",
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          1310720,
+          2560,
+          1
+        ]
+      },
+      "up": {
+        "bytes": 9961600,
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.435546875,
+            0.146484375,
+            0.1416015625,
+            0.482421875,
+            -0.1943359375,
+            -0.70703125,
+            0.75390625,
+            -0.859375
+          ],
+          "sha256": "cb451854c5c3eedeeda38cfc93bb8a301c4c209bffd9ac06a2adbbf3aa285e62",
+          "shape": [
+            1,
+            512,
+            9728
+          ]
+        },
+        "device_at_capture": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "encoding": "bf16-bits-v1",
+        "path": "triangle/C.causal-grouped/up.npy",
+        "raw_sha256": "cb451854c5c3eedeeda38cfc93bb8a301c4c209bffd9ac06a2adbbf3aa285e62",
+        "sha256": "835eddeb00bc883e0ea3e8a49b121df11e5a2ed828fb99b3b5999db5f13c2e2f",
+        "shape": [
+          1,
+          512,
+          9728
+        ],
+        "stored_dtype": "uint16",
+        "stride": [
+          4980736,
+          9728,
+          1
+        ]
+      }
+    }
+  }
+}

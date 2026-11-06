@@ -1,0 +1,83 @@
+{
+  "complete": true,
+  "coordinates": [
+    {
+      "A": 0.000164031982421875,
+      "B": 0.00016498565673828125,
+      "B_minus_A": 9.5367431640625e-07,
+      "C": 0.00016498565673828125,
+      "C_minus_B": 0.0,
+      "batch": 0,
+      "bridge_residual": 0.0,
+      "channel": 90,
+      "head": 0,
+      "native_long": 0.00016498565673828125,
+      "native_long_minus_short": 9.5367431640625e-07,
+      "native_short": 0.000164031982421875,
+      "token": 20
+    },
+    {
+      "A": -0.01153564453125,
+      "B": -0.011474609375,
+      "B_minus_A": 6.103515625e-05,
+      "C": -0.011474609375,
+      "C_minus_B": 0.0,
+      "batch": 0,
+      "bridge_residual": 0.0,
+      "channel": 62,
+      "head": 3,
+      "native_long": -0.011474609375,
+      "native_long_minus_short": 6.103515625e-05,
+      "native_short": -0.01153564453125,
+      "token": 11
+    },
+    {
+      "A": -0.0242919921875,
+      "B": -0.0244140625,
+      "B_minus_A": -0.0001220703125,
+      "C": -0.0244140625,
+      "C_minus_B": 0.0,
+      "batch": 0,
+      "bridge_residual": 0.0,
+      "channel": 116,
+      "head": 3,
+      "native_long": -0.0244140625,
+      "native_long_minus_short": -0.0001220703125,
+      "native_short": -0.0242919921875,
+      "token": 18
+    },
+    {
+      "A": 0.0037994384765625,
+      "B": 0.0037841796875,
+      "B_minus_A": -1.52587890625e-05,
+      "C": 0.0037841796875,
+      "C_minus_B": 0.0,
+      "batch": 0,
+      "bridge_residual": 0.0,
+      "channel": 31,
+      "head": 19,
+      "native_long": 0.0037841796875,
+      "native_long_minus_short": -1.52587890625e-05,
+      "native_short": 0.0037994384765625,
+      "token": 7
+    },
+    {
+      "A": -0.00164794921875,
+      "B": -0.00164031982421875,
+      "B_minus_A": 7.62939453125e-06,
+      "C": -0.00164031982421875,
+      "C_minus_B": 0.0,
+      "batch": 0,
+      "bridge_residual": 0.0,
+      "channel": 75,
+      "head": 27,
+      "native_long": -0.00164031982421875,
+      "native_long_minus_short": 7.62939453125e-06,
+      "native_short": -0.00164794921875,
+      "token": 28
+    }
+  ],
+  "descriptive_cap": 128,
+  "scope": "Shared-prefix head-coordinate union of nonzero B-A, native.long-native.short and C-B; no causal attribution inferred.",
+  "total_coordinates": 5
+}

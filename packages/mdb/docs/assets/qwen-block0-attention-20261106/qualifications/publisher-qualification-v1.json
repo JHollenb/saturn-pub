@@ -1,0 +1,66 @@
+{
+  "schema": "mdb-qwen-block0-attention-publisher-qualification-v1",
+  "status": "passed",
+  "scope": "Saved-only publication of authenticated compact block-0 attention evidence; no model, tokenizer, checkpoint, raw array, CUDA, or job access.",
+  "sources": {
+    "qualification/publish_qwen_block0_attention.py": "057cf7a8b1e06edb6ee086616306015590c2eb707ca41a1825c48f1c26fd409d",
+    "tests/test_publish_qwen_block0_attention.py": "a30b2a0ee6fafd19e4116beb582f50e477e20257d141b94069debc315e231da7"
+  },
+  "tests": {
+    "ruff": {
+      "command": "uvx ruff check --select F,I qualification/publish_qwen_block0_attention.py tests/test_publish_qwen_block0_attention.py",
+      "exit_code": 0,
+      "stdout": "All checks passed!"
+    },
+    "pytest": {
+      "command": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B -m pytest -q tests/test_publish_qwen_block0_attention.py",
+      "exit_code": 0,
+      "passed": 2,
+      "stdout": ".. [100%] 2 passed"
+    }
+  },
+  "actual_compact_smoke": {
+    "compact_manifest_sha256": "1b306fe32051e63b40961151fab246475f2c8fc69ebbcfad212fabd5dba9ac48",
+    "native_request_sha256": "5579dc04e6fbcb20d675386833b4e3cc545f0f071383c2443cb72b108c260c36",
+    "native_job": "job-0a3c41fce1d0",
+    "collection_receipt": "artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/collection-receipt.json",
+    "qualification": "artifacts/mdb-qwen-block0-attention-20261106/audit-qualification-v1/qualification.json",
+    "compact_members": 29,
+    "publication_pngs": [
+      "cross-case-ports.png",
+      "matched-replay-errors.png",
+      "sdpa-context.png",
+      "triangle-contrasts.png",
+      "triangle-energy.png"
+    ],
+    "raw_arrays_loaded": false,
+    "weights_loaded": false,
+    "tokenizer_calls": 0,
+    "new_model_calls": 0,
+    "new_cuda_calls": 0,
+    "large_per_token_record_copied_once": true,
+    "smoke_output": "Temporary output only; root reruns the frozen CLI for the durable publication."
+  },
+  "actual_cli": {
+    "command": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B saturn-pub/packages/mdb/qualification/publish_qwen_block0_attention.py --pack artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result --out /tmp/qwen-block0-attention-pub-cli2 --expected-manifest 1b306fe32051e63b40961151fab246475f2c8fc69ebbcfad212fabd5dba9ac48 --expected-request 5579dc04e6fbcb20d675386833b4e3cc545f0f071383c2443cb72b108c260c36 --expected-job job-0a3c41fce1d0 --qualification artifacts/mdb-qwen-block0-attention-20261106/audit-qualification-v1/qualification.json --collection-receipt artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/collection-receipt.json",
+    "exit_code": 0,
+    "output": "/tmp/qwen-block0-attention-pub-cli2",
+    "publication_receipt_sha256": "1e1ab9af2f9b57fbfada3a7adad84b94ec5ccc5cdc4b2608f8135b025b636b6c",
+    "raw_arrays_loaded": false,
+    "weights_loaded": false,
+    "new_model_calls": 0,
+    "new_cuda_calls": 0,
+    "pngs": [
+      "cross-case-ports.png",
+      "matched-replay-errors.png",
+      "sdpa-context.png",
+      "triangle-contrasts.png",
+      "triangle-energy.png"
+    ]
+  },
+  "limits": [
+    "The publication projects scalar audit records and copies the compact evidence once; it does not duplicate per-token/head JSON.",
+    "Cross-case drift, matched functional/native errors, historical replay, and fixed-bank triangle contrasts remain separate scopes.",
+    "Passive profiler events are retained, with no independent CUDA-kernel claim; no semantic, factorial, causal-percentage, or future-image claim is made."
+  ]
+}

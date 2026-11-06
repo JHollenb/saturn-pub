@@ -1,0 +1,47 @@
+{
+  "schema": "mdb-qwen-block0-attention-publisher-qualification-v3",
+  "status": "passed",
+  "purpose": "Saved-only cosmetic correction for compact SDPA dispatch labels and the short-case cross-case denominator title.",
+  "previous": {
+    "v1_source_sha256": "057cf7a8b1e06edb6ee086616306015590c2eb707ca41a1825c48f1c26fd409d",
+    "v2_receipt": "artifacts/mdb-qwen-block0-attention-20261106/publisher-qualification-v2/qualification.json",
+    "v2_receipt_sha256": "89c63fd5a13f9fc3c936535b611a74b6fd8fe3951635788d1d7c959d744231eb",
+    "v2_source_sha256": "687cf3ede80c22b390fad5db44d5ab1e382071bff86ec4163d1a6cd697a2a53f"
+  },
+  "sources": {
+    "qualification/publish_qwen_block0_attention.py": "1198e29a01bab139e091d4bac7905e07a0942e2019e7a116886950610fbf07ba",
+    "tests/test_publish_qwen_block0_attention.py": "bc8dc88923a3ea9649b7985bcbc024e74f631000fb4df84768fb67ff3db09662"
+  },
+  "corrections": [
+    "Observed efficient attention with CUTLASS is rendered as 'efficient / CUTLASS'; observed flash attention with the PyTorch flash forward kernel is rendered as 'Flash / flash_fwd'. Other observed SDPA variants use similarly short labels.",
+    "The unavailable or unsupported fallback is wrapped over two lines in the table; full profiler event names remain unchanged in the JSON evidence.",
+    "The lower cross-case title now states 'short-case prefix RMS', matching the existing y-axis and metric definition."
+  ],
+  "tests": {
+    "ruff": {
+      "command": "uvx ruff check --select F,I packages/mdb/qualification/publish_qwen_block0_attention.py packages/mdb/tests/test_publish_qwen_block0_attention.py",
+      "exit_code": 0,
+      "result": "All checks passed!"
+    },
+    "pytest": {
+      "command": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B -m pytest -q packages/mdb/tests/test_publish_qwen_block0_attention.py",
+      "exit_code": 0,
+      "passed": 4,
+      "failed": 0,
+      "result": "4 passed in 1.98s"
+    }
+  },
+  "scope": {
+    "saved_only": true,
+    "new_model_calls": 0,
+    "new_cuda_calls": 0,
+    "new_tokenizer_calls": 0,
+    "numeric_reductions_changed": false,
+    "scientific_data_changed": false,
+    "full_event_names_json_unchanged": true
+  },
+  "limits": [
+    "This receipt qualifies the display-only v3 correction; the root agent must rerun the publisher into a new output directory and inspect the resulting figures.",
+    "Observed dispatch labels do not establish an independent kernel implementation, arithmetic reproduction, or causal mechanism."
+  ]
+}

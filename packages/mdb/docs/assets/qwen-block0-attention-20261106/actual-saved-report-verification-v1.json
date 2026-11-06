@@ -1,0 +1,2038 @@
+{
+  "actual_census": {
+    "native_block_calls": 2,
+    "native_rotary_calls": 2,
+    "sdpa_calls": 7,
+    "selected_payload_bytes": 979773952,
+    "source_parameter_reads": 12
+  },
+  "actual_sdpa_profiles": [
+    {
+      "dispatch_events": [
+        "aten::_scaled_dot_product_efficient_attention",
+        "aten::scaled_dot_product_attention",
+        "fmha_cutlassF_bf16_aligned_64x128_rf_sm80(PyTorchMemEffAttention::AttentionKernel<cutlass::bfloat16_t, cutlass::arch::Sm80, true, 64, 128, 128, true, true>::Params)"
+      ],
+      "enable_gqa": false,
+      "explicit_mask": true,
+      "is_causal": false,
+      "label": "functional.short",
+      "status": "observed"
+    },
+    {
+      "dispatch_events": [
+        "aten::_flash_attention_forward",
+        "aten::_scaled_dot_product_flash_attention",
+        "aten::scaled_dot_product_attention",
+        "void pytorch_flash::flash_fwd_kernel<Flash_fwd_kernel_traits<128, 64, 64, 4, false, false, cutlass::bfloat16_t, Flash_kernel_traits<128, 64, 64, 4, cutlass::bfloat16_t> >, false, true, false, false, true, true, false, false>(pytorch_flash::Flash_fwd_params)"
+      ],
+      "enable_gqa": true,
+      "explicit_mask": false,
+      "is_causal": true,
+      "label": "functional.long",
+      "status": "observed"
+    },
+    {
+      "dispatch_events": [
+        "aten::_scaled_dot_product_efficient_attention",
+        "aten::scaled_dot_product_attention",
+        "fmha_cutlassF_bf16_aligned_64x128_rf_sm80(PyTorchMemEffAttention::AttentionKernel<cutlass::bfloat16_t, cutlass::arch::Sm80, true, 64, 128, 128, true, true>::Params)"
+      ],
+      "enable_gqa": false,
+      "explicit_mask": true,
+      "is_causal": false,
+      "label": "A.explicit-repeated",
+      "status": "observed"
+    },
+    {
+      "dispatch_events": [
+        "aten::_flash_attention_forward",
+        "aten::_scaled_dot_product_flash_attention",
+        "aten::scaled_dot_product_attention",
+        "void pytorch_flash::flash_fwd_kernel<Flash_fwd_kernel_traits<128, 64, 64, 4, false, false, cutlass::bfloat16_t, Flash_kernel_traits<128, 64, 64, 4, cutlass::bfloat16_t> >, false, true, false, false, true, true, false, false>(pytorch_flash::Flash_fwd_params)"
+      ],
+      "enable_gqa": false,
+      "explicit_mask": false,
+      "is_causal": true,
+      "label": "B.causal-repeated",
+      "status": "observed"
+    },
+    {
+      "dispatch_events": [
+        "aten::_flash_attention_forward",
+        "aten::_scaled_dot_product_flash_attention",
+        "aten::scaled_dot_product_attention",
+        "void pytorch_flash::flash_fwd_kernel<Flash_fwd_kernel_traits<128, 64, 64, 4, false, false, cutlass::bfloat16_t, Flash_kernel_traits<128, 64, 64, 4, cutlass::bfloat16_t> >, false, true, false, false, true, true, false, false>(pytorch_flash::Flash_fwd_params)"
+      ],
+      "enable_gqa": true,
+      "explicit_mask": false,
+      "is_causal": true,
+      "label": "C.causal-grouped",
+      "status": "observed"
+    },
+    {
+      "dispatch_events": [
+        "aten::_scaled_dot_product_efficient_attention",
+        "aten::scaled_dot_product_attention",
+        "fmha_cutlassF_bf16_aligned_64x128_rf_sm80(PyTorchMemEffAttention::AttentionKernel<cutlass::bfloat16_t, cutlass::arch::Sm80, true, 64, 128, 128, true, true>::Params)"
+      ],
+      "enable_gqa": false,
+      "explicit_mask": true,
+      "is_causal": false,
+      "label": "native.short",
+      "status": "observed"
+    },
+    {
+      "dispatch_events": [
+        "aten::_flash_attention_forward",
+        "aten::_scaled_dot_product_flash_attention",
+        "aten::scaled_dot_product_attention",
+        "void pytorch_flash::flash_fwd_kernel<Flash_fwd_kernel_traits<128, 64, 64, 4, false, false, cutlass::bfloat16_t, Flash_kernel_traits<128, 64, 64, 4, cutlass::bfloat16_t> >, false, true, false, false, true, true, false, false>(pytorch_flash::Flash_fwd_params)"
+      ],
+      "enable_gqa": true,
+      "explicit_mask": false,
+      "is_causal": true,
+      "label": "native.long",
+      "status": "observed"
+    }
+  ],
+  "audit_sha256": "1a8e658cd797d1ba719940eecf02c3bee039499ef6eaaeebeaddad06ec57641a",
+  "catalog_cli": [
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.block0.short",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/saved-report-verification-v1/short.exact.context.json"
+      ],
+      "context_sha256": "f31dbc8ad88451d298f170d9c7b42f1e498614d1a08db68e530d7a0b1f2e28a5",
+      "kind": "exact",
+      "occurrence": "short",
+      "output_sha256": "3b693926f16304d92453326d63308b2da6dec20a5d3afe17a80f9748ee5db6ef",
+      "results": 1
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.block0.short",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/saved-report-verification-v1/short.changed-clock.context.json"
+      ],
+      "context_sha256": "c947c29ef044b18e2dc47cd599a27a2e7725051df18e68e4e749e60eb9ff2012",
+      "kind": "changed-clock",
+      "occurrence": "short",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.block0.short",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/saved-report-verification-v1/short.changed-bank.context.json"
+      ],
+      "context_sha256": "73cf8ae0da003ee253bb06c6d78c08e4acaa66e09fbdcde54bf4ec4d3526ed1e",
+      "kind": "changed-bank",
+      "occurrence": "short",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.block0.B.causal-repeated-minus-A.explicit-repeated",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/saved-report-verification-v1/B.causal-repeated-minus-A.explicit-repeated.exact.context.json"
+      ],
+      "context_sha256": "328bf5cb4d9decb1da3e0b7f9294c0d3a7ac2b8a283d055a0d18ce04df11ffb6",
+      "kind": "exact",
+      "occurrence": "B.causal-repeated-minus-A.explicit-repeated",
+      "output_sha256": "7dbb1849f0cb2dda04b1e47b8ff6b5b6a4eb072172fecf327cde735ece0a51f6",
+      "results": 1
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.block0.B.causal-repeated-minus-A.explicit-repeated",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/saved-report-verification-v1/B.causal-repeated-minus-A.explicit-repeated.changed-clock.context.json"
+      ],
+      "context_sha256": "7836a1d94e10a2f1564c9d1281295e052830b0948daf649e280c85192bbf589d",
+      "kind": "changed-clock",
+      "occurrence": "B.causal-repeated-minus-A.explicit-repeated",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.block0.B.causal-repeated-minus-A.explicit-repeated",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/saved-report-verification-v1/B.causal-repeated-minus-A.explicit-repeated.changed-bank.context.json"
+      ],
+      "context_sha256": "6e676335a3428d218c80e47adc30d4ffa8d0ff2474f17e44453691d9351cad3a",
+      "kind": "changed-bank",
+      "occurrence": "B.causal-repeated-minus-A.explicit-repeated",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.block0.C.causal-grouped-minus-B.causal-repeated",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/saved-report-verification-v1/C.causal-grouped-minus-B.causal-repeated.exact.context.json"
+      ],
+      "context_sha256": "55d50eecd8c6cac594db813f8a690dd8a7b59910838bc9d1e811698d16f5f19d",
+      "kind": "exact",
+      "occurrence": "C.causal-grouped-minus-B.causal-repeated",
+      "output_sha256": "88f471c47c5799cc1194ff8b79e22d92f723c2cf44d603c5d2532d58c183c33f",
+      "results": 1
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.block0.C.causal-grouped-minus-B.causal-repeated",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/saved-report-verification-v1/C.causal-grouped-minus-B.causal-repeated.changed-clock.context.json"
+      ],
+      "context_sha256": "b445d06c178062e895abaa8fb16af63bcf02f686aa7a7bf78e794376852365bb",
+      "kind": "changed-clock",
+      "occurrence": "C.causal-grouped-minus-B.causal-repeated",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.block0.C.causal-grouped-minus-B.causal-repeated",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/saved-report-verification-v1/C.causal-grouped-minus-B.causal-repeated.changed-bank.context.json"
+      ],
+      "context_sha256": "43b302fe9f35c5ed206614166c83509c996866caa2b7bf654fd4757e51ad67e2",
+      "kind": "changed-bank",
+      "occurrence": "C.causal-grouped-minus-B.causal-repeated",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.block0.long",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/saved-report-verification-v1/long.exact.context.json"
+      ],
+      "context_sha256": "76e0de29da520ca9082d75c6d5d9625f4ed86e82e607f8287324262cf8d2f36c",
+      "kind": "exact",
+      "occurrence": "long",
+      "output_sha256": "49c82748481f3f9aec50b7c7069945749e75e850727d3bf455210806d774d8bd",
+      "results": 1
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.block0.long",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/saved-report-verification-v1/long.changed-clock.context.json"
+      ],
+      "context_sha256": "32af9092952dda038480414b0c22e0a8b9967c35e383d0955a181fa073016e2e",
+      "kind": "changed-clock",
+      "occurrence": "long",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.block0.long",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/saved-report-verification-v1/long.changed-bank.context.json"
+      ],
+      "context_sha256": "4d005696412680696cb1f444dbc39e79bf3421d979de837b72ff9a4f3ff8c83b",
+      "kind": "changed-bank",
+      "occurrence": "long",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.block0.C.causal-grouped-minus-A.explicit-repeated",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/saved-report-verification-v1/C.causal-grouped-minus-A.explicit-repeated.exact.context.json"
+      ],
+      "context_sha256": "daaa02db0947917f5e6c5a5db296c8c6b5f98e8f3662443db80b3d002fdc308b",
+      "kind": "exact",
+      "occurrence": "C.causal-grouped-minus-A.explicit-repeated",
+      "output_sha256": "bbea3dc8855b9c5cbedb266427d28968a2be947f01c6be3c882b40458628e77d",
+      "results": 1
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.block0.C.causal-grouped-minus-A.explicit-repeated",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/saved-report-verification-v1/C.causal-grouped-minus-A.explicit-repeated.changed-clock.context.json"
+      ],
+      "context_sha256": "cf160288e9d176fa4edec1bc92ad91ddd93f42985eb6fb610d4235535e89767e",
+      "kind": "changed-clock",
+      "occurrence": "C.causal-grouped-minus-A.explicit-repeated",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen.block0.C.causal-grouped-minus-A.explicit-repeated",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/saved-report-verification-v1/C.causal-grouped-minus-A.explicit-repeated.changed-bank.context.json"
+      ],
+      "context_sha256": "5a5f4649ff686ce0e5c9e52d6eda92c0bff8ee8b0f202b25141f2beb9f2ad7d6",
+      "kind": "changed-bank",
+      "occurrence": "C.causal-grouped-minus-A.explicit-repeated",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    }
+  ],
+  "collections": [
+    {
+      "archive_bytes": 5183913,
+      "archive_sha256": "e3a21f1e7482214d031f74d78210f10cdf9e1e56dee28fa2b3a45850fdd505f1",
+      "collection_encoder": {
+        "schema": "mdb-explicit-recovery-encoder-v1",
+        "scope": "Collection-only encoder supplied by a separately request-sealed run. Original worker payload/request remain unchanged.",
+        "sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+        "source_request_sha256": "2339ecdb754e0104418b463397b4cb2121a4bbb1c9646d390e56cee3f0fe1e2e"
+      },
+      "expanded_bytes": 52396064,
+      "file_count": 29,
+      "files_manifest_sha256": "1b306fe32051e63b40961151fab246475f2c8fc69ebbcfad212fabd5dba9ac48",
+      "job_id": "job-2d91d9d5163a",
+      "pointer_sha256": "874033a291781b5caba9cb7ff6e675fd2fef22b0d1b06ec0d7f883ccd1011721",
+      "raw_tensor_arrays_collected": false,
+      "request_sha256": "1d558db457410353773c2a55cbfda177ccab0f843d092cdb8251a1696e00a355",
+      "schema": "mdb-qwen-block0-compact-retrieval-v1"
+    },
+    {
+      "archive_bytes": 9308,
+      "archive_sha256": "7b02ec0b465dd1c2296d6976fe6a09da4c9e01161e3452fbd336a10652415489",
+      "collection_encoder": {
+        "schema": "mdb-explicit-recovery-encoder-v1",
+        "scope": "Collection-only encoder supplied by a separately request-sealed run. Original worker payload/request remain unchanged.",
+        "sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+        "source_request_sha256": "2339ecdb754e0104418b463397b4cb2121a4bbb1c9646d390e56cee3f0fe1e2e"
+      },
+      "expanded_bytes": 59335,
+      "file_count": 7,
+      "files_manifest_sha256": "4874c486decd965c1f756a7c62d4eafb380262141959dff9d7f4f46debdcd4a2",
+      "job_id": "job-c12bda14d64e",
+      "pointer_sha256": "407fbdd3f8bcc48c7f878a9ec32ef6c1b69e3bd7ea31b9830113d519759fdb85",
+      "raw_tensor_arrays_collected": false,
+      "request_sha256": "0c0c00b928f206faffe6fa68acd82f4b2f1aca78d0626469c3d3ca2da55e3cfe",
+      "schema": "mdb-qwen-block0-signed-bridge-compact-retrieval-v1"
+    }
+  ],
+  "complete_C_minus_B_totals": {
+    "bitwise_exact_fields": 6,
+    "changed_values": 0,
+    "field_comparisons": 6,
+    "max_rms": 0.0,
+    "maxabs": 0.0,
+    "scalar_positions": 8650752
+  },
+  "dependent_repeated_coordinates": true,
+  "exact_vector_bridges": {
+    "H1": {
+      "A_vs_native_short_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.19088027436255597,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "B_vs_native_long_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.190865681662304,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "C_minus_B_complete": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 1310720,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.17478158353048232,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "C_vs_native_long_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.190865681662304,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "first_vector_sha256": "e0c5f69ee69a46a22987b1448bc861803a56ee3b5ad777f7419b7c89b4ce09d7",
+      "historical_vector_sha256": "e0c5f69ee69a46a22987b1448bc861803a56ee3b5ad777f7419b7c89b4ce09d7",
+      "signed_vector_bridge_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.0001783766512474351,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      }
+    },
+    "after_attention": {
+      "A_vs_native_short_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.07585589490426595,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "B_vs_native_long_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.07585589355845426,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "C_minus_B_complete": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 1310720,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.07518642583522014,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "C_vs_native_long_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.07585589355845426,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "first_vector_sha256": "cce3a15f598243a4d0dd05fcfb8cb62586318e5c73696c2720dc828aadf66b29",
+      "historical_vector_sha256": "cce3a15f598243a4d0dd05fcfb8cb62586318e5c73696c2720dc828aadf66b29",
+      "signed_vector_bridge_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 4.70049550101586e-06,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      }
+    },
+    "head": {
+      "A_vs_native_short_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 122880,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.02710927588104248,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          32,
+          30,
+          128
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "B_vs_native_long_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 122880,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.027109276541563365,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          32,
+          30,
+          128
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "C_minus_B_complete": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 2097152,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.022452859950594935,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "C_vs_native_long_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 122880,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.027109276541563365,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          32,
+          30,
+          128
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "first_vector_sha256": "bfe2d648ce1ba3a1551f65c05f30299bcbbfc425e2b90b9c6feca669ddc984ec",
+      "historical_vector_sha256": "bfe2d648ce1ba3a1551f65c05f30299bcbbfc425e2b90b9c6feca669ddc984ec",
+      "signed_vector_bridge_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 122880,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 3.9237523821997976e-07,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          32,
+          30,
+          128
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      }
+    },
+    "mlp": {
+      "A_vs_native_short_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.14625746199214035,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "B_vs_native_long_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.1462415871806399,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "C_minus_B_complete": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 1310720,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.1306869276830263,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "C_vs_native_long_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.1462415871806399,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "first_vector_sha256": "66f8d154fca3ce2aa5fc00c89521acb25163180b263e57d5053c594e4d5f9928",
+      "historical_vector_sha256": "66f8d154fca3ce2aa5fc00c89521acb25163180b263e57d5053c594e4d5f9928",
+      "signed_vector_bridge_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.00015917615828670327,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      }
+    },
+    "mlp_input": {
+      "A_vs_native_short_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.1238641885024954,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "B_vs_native_long_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.1238590002250377,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "C_minus_B_complete": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 1310720,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.11113870377322722,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "C_vs_native_long_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.1238590002250377,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "first_vector_sha256": "589d114a1d860cc51df7acc4873f26b28ae8b037f2c7b830729f5aa58290b74e",
+      "historical_vector_sha256": "589d114a1d860cc51df7acc4873f26b28ae8b037f2c7b830729f5aa58290b74e",
+      "signed_vector_bridge_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 6.68946962857601e-05,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      }
+    },
+    "projection": {
+      "A_vs_native_short_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.07324158346875971,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "B_vs_native_long_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.07324157049514497,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "C_minus_B_complete": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 1310720,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.07293139393051776,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          512,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "C_vs_native_long_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.07324157049514497,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "first_vector_sha256": "c7367eb361428a14147786accec54431567983d28c44e707a0b18c1d484ddf09",
+      "historical_vector_sha256": "c7367eb361428a14147786accec54431567983d28c44e707a0b18c1d484ddf09",
+      "signed_vector_bridge_shared_prefix": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "exact_value_equality": true,
+        "first_bit_difference": null,
+        "first_difference": null,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 4.830272015104753e-06,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      }
+    }
+  },
+  "head_coordinates": {
+    "complete": true,
+    "coordinates": [
+      {
+        "A": 0.000164031982421875,
+        "B": 0.00016498565673828125,
+        "B_minus_A": 9.5367431640625e-07,
+        "C": 0.00016498565673828125,
+        "C_minus_B": 0.0,
+        "batch": 0,
+        "bridge_residual": 0.0,
+        "channel": 90,
+        "head": 0,
+        "native_long": 0.00016498565673828125,
+        "native_long_minus_short": 9.5367431640625e-07,
+        "native_short": 0.000164031982421875,
+        "token": 20
+      },
+      {
+        "A": -0.01153564453125,
+        "B": -0.011474609375,
+        "B_minus_A": 6.103515625e-05,
+        "C": -0.011474609375,
+        "C_minus_B": 0.0,
+        "batch": 0,
+        "bridge_residual": 0.0,
+        "channel": 62,
+        "head": 3,
+        "native_long": -0.011474609375,
+        "native_long_minus_short": 6.103515625e-05,
+        "native_short": -0.01153564453125,
+        "token": 11
+      },
+      {
+        "A": -0.0242919921875,
+        "B": -0.0244140625,
+        "B_minus_A": -0.0001220703125,
+        "C": -0.0244140625,
+        "C_minus_B": 0.0,
+        "batch": 0,
+        "bridge_residual": 0.0,
+        "channel": 116,
+        "head": 3,
+        "native_long": -0.0244140625,
+        "native_long_minus_short": -0.0001220703125,
+        "native_short": -0.0242919921875,
+        "token": 18
+      },
+      {
+        "A": 0.0037994384765625,
+        "B": 0.0037841796875,
+        "B_minus_A": -1.52587890625e-05,
+        "C": 0.0037841796875,
+        "C_minus_B": 0.0,
+        "batch": 0,
+        "bridge_residual": 0.0,
+        "channel": 31,
+        "head": 19,
+        "native_long": 0.0037841796875,
+        "native_long_minus_short": -1.52587890625e-05,
+        "native_short": 0.0037994384765625,
+        "token": 7
+      },
+      {
+        "A": -0.00164794921875,
+        "B": -0.00164031982421875,
+        "B_minus_A": 7.62939453125e-06,
+        "C": -0.00164031982421875,
+        "C_minus_B": 0.0,
+        "batch": 0,
+        "bridge_residual": 0.0,
+        "channel": 75,
+        "head": 27,
+        "native_long": -0.00164031982421875,
+        "native_long_minus_short": 7.62939453125e-06,
+        "native_short": -0.00164794921875,
+        "token": 28
+      }
+    ],
+    "descriptive_cap": 128,
+    "scope": "Shared-prefix head-coordinate union of nonzero B-A, native.long-native.short and C-B; no causal attribution inferred.",
+    "total_coordinates": 5
+  },
+  "historical_replays": {
+    "bitwise_exact_fields": 8,
+    "changed_values": 0,
+    "field_comparisons": 8,
+    "max_rms": 0.0,
+    "maxabs": 0.0,
+    "scalar_positions": 10485760
+  },
+  "interpretation": "Known-source block0 replay plus fixed-bank primitive interventions. Explicit-mask versus causal-flag execution exactly bridges the original prefix drift through H1; grouped-versus-repeated causal representation has zero complete-bank effect in this specimen. Shared original primitives, not independent kernel arithmetic, a new image prediction, a factorial attribution, or a universal GQA law.",
+  "jobs": {
+    "full_saved_audit": {
+      "elapsed_s": 14.53,
+      "executed_payload_sha256": "cb7cb3823a34ac007c42af1b6157ef4980d86f72eb3cfb334cf901bab09ac1b8",
+      "job_id": "job-2d91d9d5163a",
+      "job_sha256": "1885f2880f5a9124e3c5637dc9732792ccd2181e8f4934d7310ff2640e6922e6",
+      "peak_rss_mb": 487.6,
+      "peak_vram_mb": 0.0,
+      "request_sha256": "1d558db457410353773c2a55cbfda177ccab0f843d092cdb8251a1696e00a355",
+      "reservation": {
+        "cpu_threads": 2,
+        "disk_gb": 1.0,
+        "est_wall_s": 240.0,
+        "ram_mb": 3072.0,
+        "vram_mb": 0.0
+      },
+      "state": "succeeded",
+      "worker_log_sha256": "b441cea66a69cfdab08042333666744eb5af358d2ea77238153bfb40dad80bd8"
+    },
+    "native": {
+      "elapsed_s": 77.1,
+      "executed_payload_sha256": "c1f6c3f4c54b18592b5dbfcc32e2abc356ab6208f8eeba8192cdac0f3b4b0427",
+      "job_id": "job-0a3c41fce1d0",
+      "job_sha256": "6a91b1bdacd3a3c286adbaa3c3f424994d0082505aa51456c588d718cc6baa05",
+      "peak_rss_mb": 4591.6,
+      "peak_vram_mb": 1850.0,
+      "request_sha256": "5579dc04e6fbcb20d675386833b4e3cc545f0f071383c2443cb72b108c260c36",
+      "reservation": {
+        "cpu_threads": 4,
+        "disk_gb": 2.0,
+        "est_wall_s": 240.0,
+        "ram_mb": 8192.0,
+        "vram_mb": 4096.0
+      },
+      "state": "succeeded",
+      "worker_log_sha256": "1203da42f1ab14720a216fa9be56f5a09b89db6407f781f9d9017f021e15de15"
+    },
+    "signed_vector_bridge": {
+      "elapsed_s": 7.41,
+      "executed_payload_sha256": "a36d5097c0e8e3df0f0bfaa99136dcc57135762527ac56eccd2e7450046036c2",
+      "job_id": "job-c12bda14d64e",
+      "job_sha256": "00678b7c539899f2414179dd263e9ed1fbf9ecaac7c9823aae5636815b0839e1",
+      "peak_rss_mb": 299.8,
+      "peak_vram_mb": 0.0,
+      "request_sha256": "0c0c00b928f206faffe6fa68acd82f4b2f1aca78d0626469c3d3ca2da55e3cfe",
+      "reservation": {
+        "cpu_threads": 2,
+        "disk_gb": 1.0,
+        "est_wall_s": 240.0,
+        "ram_mb": 3072.0,
+        "vram_mb": 0.0
+      },
+      "state": "succeeded",
+      "worker_log_sha256": "a59ef568b9070df4ae0dc913756e46258dc811bbc14986166618e73f080ed541"
+    }
+  },
+  "matched_full_fields": {
+    "bitwise_exact_fields": 42,
+    "changed_values": 0,
+    "field_comparisons": 42,
+    "max_rms": 0.0,
+    "maxabs": 0.0,
+    "scalar_positions": 70516736
+  },
+  "port_provenance": {
+    "functional": "Explicit original primitive graph fields, source formation observed; no independent kernel implementation.",
+    "native": {
+      "H0": "Supplied matched functional embedding operand, not a fresh native embedding call.",
+      "H1": "Actual native block return.",
+      "activation": "Actual native down_proj input captured by prehook.",
+      "after_attention": "Reconstructed H0 + captured o_proj output in BF16; not an independently hooked residual-input port.",
+      "cos_sin": "Returned by two parameter-free native rotary calls.",
+      "mlp_input": "Actual post-attention RMSNorm output captured by native module hook.",
+      "other_module_ports": "Actual observation-only native module output hooks; q_norm/k_norm transposed to head layout.",
+      "q_k_v_head": "Actual SDPA consumed operands and return; repeated native KV are validated/canonicalized."
+    },
+    "triangle": "Only SDPA head is the actual primitive intervention return; later ports are functional same-weight tails, not native branch calls."
+  },
+  "raw_arrays_downloaded": false,
+  "schema": "mdb-qwen-block0-actual-saved-report-verification-v1",
+  "shared_prefix_cross_case": {
+    "H0": {
+      "bitwise_exact": true,
+      "changed_values": 0,
+      "cosine": 1.0,
+      "elements": 76800,
+      "first_nonzero_flat": null,
+      "maxabs": 0.0,
+      "orientation": "left-minus-right",
+      "reference_rms": 0.02059303142995652,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "shape": [
+        1,
+        30,
+        2560
+      ],
+      "signed_mean": 0.0,
+      "worst_flat": 0
+    },
+    "H1": {
+      "bitwise_exact": false,
+      "changed_values": 3376,
+      "cosine": 0.9999995662487025,
+      "elements": 76800,
+      "first_nonzero_flat": 17921,
+      "maxabs": 0.0078125,
+      "orientation": "left-minus-right",
+      "reference_rms": 0.19088027436255597,
+      "relative_rms": 0.000934494943718639,
+      "rms": 0.0001783766512474351,
+      "shape": [
+        1,
+        30,
+        2560
+      ],
+      "signed_mean": 1.437962055206299e-07,
+      "worst_flat": 17978
+    },
+    "after_attention": {
+      "bitwise_exact": false,
+      "changed_values": 49,
+      "cosine": 0.9999999980801002,
+      "elements": 76800,
+      "first_nonzero_flat": 19347,
+      "maxabs": 0.00048828125,
+      "orientation": "left-minus-right",
+      "reference_rms": 0.07585589490426595,
+      "relative_rms": 6.19661201934026e-05,
+      "rms": 4.70049550101586e-06,
+      "shape": [
+        1,
+        30,
+        2560
+      ],
+      "signed_mean": 3.973642985026042e-09,
+      "worst_flat": 46508
+    },
+    "head": {
+      "bitwise_exact": false,
+      "changed_values": 5,
+      "cosine": 0.9999999998952543,
+      "elements": 122880,
+      "first_nonzero_flat": 2650,
+      "maxabs": 0.0001220703125,
+      "orientation": "left-minus-right",
+      "reference_rms": 0.02710927588104248,
+      "relative_rms": 1.4473836923632765e-05,
+      "rms": 3.9237523821997976e-07,
+      "shape": [
+        1,
+        32,
+        30,
+        128
+      ],
+      "signed_mean": -5.510325233141581e-10,
+      "worst_flat": 13940
+    },
+    "k": {
+      "bitwise_exact": true,
+      "changed_values": 0,
+      "cosine": 1.0,
+      "elements": 30720,
+      "first_nonzero_flat": null,
+      "maxabs": 0.0,
+      "orientation": "left-minus-right",
+      "reference_rms": 14.488128063602254,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "shape": [
+        1,
+        8,
+        30,
+        128
+      ],
+      "signed_mean": 0.0,
+      "worst_flat": 0
+    },
+    "k_norm": {
+      "bitwise_exact": true,
+      "changed_values": 0,
+      "cosine": 1.0,
+      "elements": 30720,
+      "first_nonzero_flat": null,
+      "maxabs": 0.0,
+      "orientation": "left-minus-right",
+      "reference_rms": 14.488017930158735,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "shape": [
+        1,
+        8,
+        30,
+        128
+      ],
+      "signed_mean": 0.0,
+      "worst_flat": 0
+    },
+    "k_raw": {
+      "bitwise_exact": true,
+      "changed_values": 0,
+      "cosine": 1.0,
+      "elements": 30720,
+      "first_nonzero_flat": null,
+      "maxabs": 0.0,
+      "orientation": "left-minus-right",
+      "reference_rms": 0.09193192120072176,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "shape": [
+        1,
+        30,
+        1024
+      ],
+      "signed_mean": 0.0,
+      "worst_flat": 0
+    },
+    "mlp": {
+      "bitwise_exact": false,
+      "changed_values": 4170,
+      "cosine": 0.9999994135974195,
+      "elements": 76800,
+      "first_nonzero_flat": 17921,
+      "maxabs": 0.005859375,
+      "orientation": "left-minus-right",
+      "reference_rms": 0.14625746199214035,
+      "relative_rms": 0.0010883284594071319,
+      "rms": 0.00015917615828670327,
+      "shape": [
+        1,
+        30,
+        2560
+      ],
+      "signed_mean": -2.0238726089398066e-07,
+      "worst_flat": 18016
+    },
+    "mlp_input": {
+      "bitwise_exact": false,
+      "changed_values": 533,
+      "cosine": 0.9999998550361516,
+      "elements": 76800,
+      "first_nonzero_flat": 17922,
+      "maxabs": 0.00390625,
+      "orientation": "left-minus-right",
+      "reference_rms": 0.1238641885024954,
+      "relative_rms": 0.0005400648653538178,
+      "rms": 6.68946962857601e-05,
+      "shape": [
+        1,
+        30,
+        2560
+      ],
+      "signed_mean": -2.082080269853274e-07,
+      "worst_flat": 18129
+    },
+    "normalized": {
+      "bitwise_exact": true,
+      "changed_values": 0,
+      "cosine": 1.0,
+      "elements": 76800,
+      "first_nonzero_flat": null,
+      "maxabs": 0.0,
+      "orientation": "left-minus-right",
+      "reference_rms": 0.02934100051221836,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "shape": [
+        1,
+        30,
+        2560
+      ],
+      "signed_mean": 0.0,
+      "worst_flat": 0
+    },
+    "projection": {
+      "bitwise_exact": false,
+      "changed_values": 71,
+      "cosine": 0.9999999978253233,
+      "elements": 76800,
+      "first_nonzero_flat": 18510,
+      "maxabs": 0.00048828125,
+      "orientation": "left-minus-right",
+      "reference_rms": 0.07324158346875971,
+      "relative_rms": 6.594985780400346e-05,
+      "rms": 4.830272015104753e-06,
+      "shape": [
+        1,
+        30,
+        2560
+      ],
+      "signed_mean": 1.0286845887700716e-08,
+      "worst_flat": 46508
+    },
+    "q": {
+      "bitwise_exact": true,
+      "changed_values": 0,
+      "cosine": 1.0,
+      "elements": 122880,
+      "first_nonzero_flat": null,
+      "maxabs": 0.0,
+      "orientation": "left-minus-right",
+      "reference_rms": 1.545568772421156,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "shape": [
+        1,
+        32,
+        30,
+        128
+      ],
+      "signed_mean": 0.0,
+      "worst_flat": 0
+    },
+    "q_norm": {
+      "bitwise_exact": true,
+      "changed_values": 0,
+      "cosine": 1.0,
+      "elements": 122880,
+      "first_nonzero_flat": null,
+      "maxabs": 0.0,
+      "orientation": "left-minus-right",
+      "reference_rms": 1.5455893847288322,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "shape": [
+        1,
+        32,
+        30,
+        128
+      ],
+      "signed_mean": 0.0,
+      "worst_flat": 0
+    },
+    "q_raw": {
+      "bitwise_exact": true,
+      "changed_values": 0,
+      "cosine": 1.0,
+      "elements": 122880,
+      "first_nonzero_flat": null,
+      "maxabs": 0.0,
+      "orientation": "left-minus-right",
+      "reference_rms": 0.08543456068720662,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "shape": [
+        1,
+        30,
+        4096
+      ],
+      "signed_mean": 0.0,
+      "worst_flat": 0
+    },
+    "v": {
+      "bitwise_exact": true,
+      "changed_values": 0,
+      "cosine": 1.0,
+      "elements": 30720,
+      "first_nonzero_flat": null,
+      "maxabs": 0.0,
+      "orientation": "left-minus-right",
+      "reference_rms": 0.03469068372009749,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "shape": [
+        1,
+        8,
+        30,
+        128
+      ],
+      "signed_mean": 0.0,
+      "worst_flat": 0
+    },
+    "v_raw": {
+      "bitwise_exact": true,
+      "changed_values": 0,
+      "cosine": 1.0,
+      "elements": 30720,
+      "first_nonzero_flat": null,
+      "maxabs": 0.0,
+      "orientation": "left-minus-right",
+      "reference_rms": 0.03469068372009749,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "shape": [
+        1,
+        30,
+        1024
+      ],
+      "signed_mean": 0.0,
+      "worst_flat": 0
+    }
+  },
+  "signed_bridge_sha256": "1c18f33060051a3748acb4d5f50fe94575469514933b182e5144094e9f804b84",
+  "signed_bridge_totals": {
+    "bitwise_exact_fields": 6,
+    "changed_values": 0,
+    "field_comparisons": 6,
+    "max_rms": 0.0,
+    "maxabs": 0.0,
+    "scalar_positions": 506880
+  },
+  "source_summary_reduction_diagnostics": {
+    "different_summaries": 40,
+    "max_absolute_signed_reduction_difference": 1.7763568394002505e-15,
+    "scope": "Independent FP64 scalar reductions; raw field equality and scientific effects are separately retained."
+  },
+  "token_changes": {
+    "H1": {
+      "B-minus-A": {
+        "changed_tokens": 4,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [
+          {
+            "changed_values": 1531,
+            "token": 7
+          },
+          {
+            "changed_values": 625,
+            "token": 11
+          },
+          {
+            "changed_values": 807,
+            "token": 18
+          },
+          {
+            "changed_values": 413,
+            "token": 28
+          }
+        ],
+        "total_changed_values": 3376
+      },
+      "C-minus-B-complete": {
+        "changed_tokens": 0,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [],
+        "total_changed_values": 0
+      },
+      "bridge-residual": {
+        "changed_tokens": 0,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [],
+        "total_changed_values": 0
+      },
+      "native.long-minus-native.short": {
+        "changed_tokens": 4,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [
+          {
+            "changed_values": 1531,
+            "token": 7
+          },
+          {
+            "changed_values": 625,
+            "token": 11
+          },
+          {
+            "changed_values": 807,
+            "token": 18
+          },
+          {
+            "changed_values": 413,
+            "token": 28
+          }
+        ],
+        "total_changed_values": 3376
+      }
+    },
+    "after_attention": {
+      "B-minus-A": {
+        "changed_tokens": 4,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [
+          {
+            "changed_values": 2,
+            "token": 7
+          },
+          {
+            "changed_values": 10,
+            "token": 11
+          },
+          {
+            "changed_values": 35,
+            "token": 18
+          },
+          {
+            "changed_values": 2,
+            "token": 28
+          }
+        ],
+        "total_changed_values": 49
+      },
+      "C-minus-B-complete": {
+        "changed_tokens": 0,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [],
+        "total_changed_values": 0
+      },
+      "bridge-residual": {
+        "changed_tokens": 0,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [],
+        "total_changed_values": 0
+      },
+      "native.long-minus-native.short": {
+        "changed_tokens": 4,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [
+          {
+            "changed_values": 2,
+            "token": 7
+          },
+          {
+            "changed_values": 10,
+            "token": 11
+          },
+          {
+            "changed_values": 35,
+            "token": 18
+          },
+          {
+            "changed_values": 2,
+            "token": 28
+          }
+        ],
+        "total_changed_values": 49
+      }
+    },
+    "head": {
+      "B-minus-A": {
+        "changed_tokens": 5,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [
+          {
+            "changed_values": 1,
+            "token": 7
+          },
+          {
+            "changed_values": 1,
+            "token": 11
+          },
+          {
+            "changed_values": 1,
+            "token": 18
+          },
+          {
+            "changed_values": 1,
+            "token": 20
+          },
+          {
+            "changed_values": 1,
+            "token": 28
+          }
+        ],
+        "total_changed_values": 5
+      },
+      "C-minus-B-complete": {
+        "changed_tokens": 0,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [],
+        "total_changed_values": 0
+      },
+      "bridge-residual": {
+        "changed_tokens": 0,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [],
+        "total_changed_values": 0
+      },
+      "native.long-minus-native.short": {
+        "changed_tokens": 5,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [
+          {
+            "changed_values": 1,
+            "token": 7
+          },
+          {
+            "changed_values": 1,
+            "token": 11
+          },
+          {
+            "changed_values": 1,
+            "token": 18
+          },
+          {
+            "changed_values": 1,
+            "token": 20
+          },
+          {
+            "changed_values": 1,
+            "token": 28
+          }
+        ],
+        "total_changed_values": 5
+      }
+    },
+    "mlp": {
+      "B-minus-A": {
+        "changed_tokens": 4,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [
+          {
+            "changed_values": 1794,
+            "token": 7
+          },
+          {
+            "changed_values": 819,
+            "token": 11
+          },
+          {
+            "changed_values": 1011,
+            "token": 18
+          },
+          {
+            "changed_values": 546,
+            "token": 28
+          }
+        ],
+        "total_changed_values": 4170
+      },
+      "C-minus-B-complete": {
+        "changed_tokens": 0,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [],
+        "total_changed_values": 0
+      },
+      "bridge-residual": {
+        "changed_tokens": 0,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [],
+        "total_changed_values": 0
+      },
+      "native.long-minus-native.short": {
+        "changed_tokens": 4,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [
+          {
+            "changed_values": 1794,
+            "token": 7
+          },
+          {
+            "changed_values": 819,
+            "token": 11
+          },
+          {
+            "changed_values": 1011,
+            "token": 18
+          },
+          {
+            "changed_values": 546,
+            "token": 28
+          }
+        ],
+        "total_changed_values": 4170
+      }
+    },
+    "mlp_input": {
+      "B-minus-A": {
+        "changed_tokens": 4,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [
+          {
+            "changed_values": 488,
+            "token": 7
+          },
+          {
+            "changed_values": 9,
+            "token": 11
+          },
+          {
+            "changed_values": 34,
+            "token": 18
+          },
+          {
+            "changed_values": 2,
+            "token": 28
+          }
+        ],
+        "total_changed_values": 533
+      },
+      "C-minus-B-complete": {
+        "changed_tokens": 0,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [],
+        "total_changed_values": 0
+      },
+      "bridge-residual": {
+        "changed_tokens": 0,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [],
+        "total_changed_values": 0
+      },
+      "native.long-minus-native.short": {
+        "changed_tokens": 4,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [
+          {
+            "changed_values": 488,
+            "token": 7
+          },
+          {
+            "changed_values": 9,
+            "token": 11
+          },
+          {
+            "changed_values": 34,
+            "token": 18
+          },
+          {
+            "changed_values": 2,
+            "token": 28
+          }
+        ],
+        "total_changed_values": 533
+      }
+    },
+    "projection": {
+      "B-minus-A": {
+        "changed_tokens": 4,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [
+          {
+            "changed_values": 6,
+            "token": 7
+          },
+          {
+            "changed_values": 12,
+            "token": 11
+          },
+          {
+            "changed_values": 44,
+            "token": 18
+          },
+          {
+            "changed_values": 9,
+            "token": 28
+          }
+        ],
+        "total_changed_values": 71
+      },
+      "C-minus-B-complete": {
+        "changed_tokens": 0,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [],
+        "total_changed_values": 0
+      },
+      "bridge-residual": {
+        "changed_tokens": 0,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [],
+        "total_changed_values": 0
+      },
+      "native.long-minus-native.short": {
+        "changed_tokens": 4,
+        "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+        "tokens": [
+          {
+            "changed_values": 6,
+            "token": 7
+          },
+          {
+            "changed_values": 12,
+            "token": 11
+          },
+          {
+            "changed_values": 44,
+            "token": 18
+          },
+          {
+            "changed_values": 9,
+            "token": 28
+          }
+        ],
+        "total_changed_values": 71
+      }
+    }
+  }
+}

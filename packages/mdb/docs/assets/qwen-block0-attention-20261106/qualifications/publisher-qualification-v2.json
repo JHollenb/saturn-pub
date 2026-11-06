@@ -1,0 +1,58 @@
+{
+  "schema": "mdb-qwen-block0-attention-publisher-qualification-v2",
+  "status": "passed",
+  "purpose": "Saved-only publisher correction for passive SDPA display, denominator wording, and unavailable-profiler diagnostics.",
+  "previous_v1": {
+    "receipt": "artifacts/mdb-qwen-block0-attention-20261106/publisher-qualification-v1/qualification.json",
+    "receipt_sha256": "72d11e65b3f7737e44b61ef753a197f16af54a97604ca5add850f820d0f59fd5",
+    "source_copy": "artifacts/mdb-qwen-block0-attention-20261106/publisher-qualification-v1/source/publish_qwen_block0_attention.py",
+    "source_sha256": "057cf7a8b1e06edb6ee086616306015590c2eb707ca41a1825c48f1c26fd409d"
+  },
+  "sources": {
+    "qualification/publish_qwen_block0_attention.py": "687cf3ede80c22b390fad5db44d5ab1e382071bff86ec4163d1a6cd697a2a53f",
+    "tests/test_publish_qwen_block0_attention.py": "221fc4f17c9c8dfebb7d14162ce35d92c8d45576a05a92a5d8e25ccd3e9c2cfe"
+  },
+  "tests": {
+    "ruff": {
+      "command": "uvx ruff check --select F,I packages/mdb/qualification/publish_qwen_block0_attention.py packages/mdb/tests/test_publish_qwen_block0_attention.py",
+      "exit_code": 0,
+      "result": "All checks passed!"
+    },
+    "pytest": {
+      "command": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B -m pytest -q packages/mdb/tests/test_publish_qwen_block0_attention.py",
+      "exit_code": 0,
+      "passed": 4,
+      "failed": 0,
+      "result": "4 passed in 1.96s"
+    }
+  },
+  "corrections": [
+    "SDPA tables use short, unambiguous observed dispatch excerpts while the authenticated full event names remain in sdpa-context.json and publication.json.",
+    "SDPA prose distinguishes authenticated passive runtime observations from any independent CUDA-kernel implementation claim; the publisher performs no profiling.",
+    "Cross-case axes identify the denominator as the short-case prefix RMS rather than native prefix RMS.",
+    "Unavailable, unsupported, instrument-broken, and not-requested profiler rows remain publishable diagnostic rows; only observed/profiled rows require an event list."
+  ],
+  "actual_compact_smoke": {
+    "pack": "artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result",
+    "output": "/tmp/qwen-block0-attention-pub-v2",
+    "receipt_stdout": "/tmp/qwen-block0-attention-pub-v2-receipt.json",
+    "command": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B packages/mdb/qualification/publish_qwen_block0_attention.py --pack /Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result --out /tmp/qwen-block0-attention-pub-v2 --expected-manifest 1b306fe32051e63b40961151fab246475f2c8fc69ebbcfad212fabd5dba9ac48 --expected-request 5579dc04e6fbcb20d675386833b4e3cc545f0f071383c2443cb72b108c260c36 --expected-job job-0a3c41fce1d0 --qualification /Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/audit-qualification-v1/qualification.json --collection-receipt /Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/collection-receipt.json",
+    "expected_manifest_sha256": "1b306fe32051e63b40961151fab246475f2c8fc69ebbcfad212fabd5dba9ac48",
+    "expected_request_sha256": "5579dc04e6fbcb20d675386833b4e3cc545f0f071383c2443cb72b108c260c36",
+    "expected_job": "job-0a3c41fce1d0",
+    "new_model_calls": 0,
+    "new_cuda_calls": 0,
+    "raw_arrays_loaded": false,
+    "weights_loaded": false,
+    "output_receipt_sha256": "2c6720fe5b26738b9eef1461946f6b95deeb2f5c23bfd2ca689ee57d053df8d7",
+    "publication_sha256": "cff784a39deed447ca49aee91650666daec0cf73e6b25377b97663b414fec634",
+    "sdpa_context_sha256": "7832c52c9dafce01427d77d99e9c41cfdcdb38fe87dc0afd24960a1a31fd567a",
+    "sdpa_figure_sha256": "98489632df77a90d37ef89ff53328ad04ad131eb5b36fd1369a30e7bcafbaef6",
+    "receipt_stdout_sha256": "1aac47d8e66a8574209bc74738dad55da8ee7819f164a16b1e153a108cc4cc01"
+  },
+  "limits": [
+    "This is a saved-only publication correction and makes no new model, tokenizer, CUDA, or profiling call.",
+    "Observed dispatch names do not establish an independent kernel implementation, arithmetic reproduction, or causal mechanism.",
+    "The publication preserves the prior scientific scope: no semantic, factorial, causal-percentage, or future-image claim."
+  ]
+}

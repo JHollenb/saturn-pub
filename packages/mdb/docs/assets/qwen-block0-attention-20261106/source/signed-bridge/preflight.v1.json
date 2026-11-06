@@ -1,0 +1,14 @@
+{
+  "hashed_roots": [
+    "audit_qwen_attention_bridge.py",
+    "audit_qwen_block0_attention.py",
+    "stage_saved_flux_mask_pair_audit.py",
+    "preflight.v1.json"
+  ],
+  "path_token_allowlist": [
+    "/mnt/big/mdb/research/job-0a3c41fce1d0/qwen-block0-attention-result",
+    "/mnt/big/mdb/research",
+    "binding-minimal-result"
+  ],
+  "schema_version": "mrun-preflight-config-v1"
+}

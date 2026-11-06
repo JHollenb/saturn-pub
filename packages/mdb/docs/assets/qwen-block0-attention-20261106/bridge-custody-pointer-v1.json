@@ -1,0 +1,78 @@
+{
+  "collector_source_sha256": "007098eb72842fe1f5d585f64eae272812303d1c18eb67a17ba43508c646b18d",
+  "custody_encoder_source": "/Users/jakeholl/domains/artifacts/mdb-flux-functional-decoder-20261106/recovery-collection-01",
+  "local_source": "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/bridge-01",
+  "record": {
+    "collection": "/mnt/hdd8tb/mdb/custody/qwen-block0-signed-bridge-20261106/job-c12bda14d64e/collection-01",
+    "files": {
+      "bridge.json": {
+        "bytes": 35871,
+        "sha256": "1c18f33060051a3748acb4d5f50fe94575469514933b182e5144094e9f804b84"
+      },
+      "files.json": {
+        "bytes": 540,
+        "sha256": "4874c486decd965c1f756a7c62d4eafb380262141959dff9d7f4f46debdcd4a2"
+      },
+      "head-coordinates.json": {
+        "bytes": 2248,
+        "sha256": "4da789bf3327b94c6fd8bd8233e282011485d16e997eea5741ff5b9b8d8e33ec"
+      },
+      "request.json": {
+        "bytes": 3513,
+        "sha256": "a442c06b38721fcb98063467b5942f03448dbe2ca45c557e4cae4537fb9f013c"
+      },
+      "source-custody.json": {
+        "bytes": 6527,
+        "sha256": "e84b596017aa04526630795239d94ea2328b1424cd51c3c702d9aa2ea03622bd"
+      },
+      "summary.json": {
+        "bytes": 398,
+        "sha256": "b6ab28febf5fc5d12fc53f41ce961376d1e44c6c92f896948b8c36018b6dc125"
+      },
+      "token-changes.json": {
+        "bytes": 10238,
+        "sha256": "6521162950365ce577a88618dda83b23c406de46ee45c10a92dc070e806675a0"
+      }
+    },
+    "files_manifest_sha256": "4874c486decd965c1f756a7c62d4eafb380262141959dff9d7f4f46debdcd4a2",
+    "host": "beast",
+    "log": {
+      "complete": true,
+      "compressed_bytes": 10094,
+      "compressed_sha256": "d286f9f9b9b4289a896cebec42a3194ca48132c2c3cdf12aa462a37684489493",
+      "error": null,
+      "job_id": "job-c12bda14d64e",
+      "job_json_sha256": "b81e93e5fa8386ac6d1e6929e6882db18b47a70cb8e2ed288266fee16f474694",
+      "schema": "mdb-flux-family-log-custody-v1",
+      "scope": "Exact request-qualified directory re-emission bytes; not original scheduler log",
+      "storage": "gzip",
+      "uncompressed_bytes": 13554,
+      "uncompressed_sha256": "bc934e02211b7e7e45d51248b42be8081761e6a19d12235f273b7b821fc7753b"
+    },
+    "original_output": "/mnt/big/mdb/research/job-c12bda14d64e/binding-minimal-result",
+    "recovery_encoder": {
+      "schema": "mdb-explicit-recovery-encoder-v1",
+      "scope": "Collection-only encoder supplied by a separately request-sealed run. Original worker payload/request remain unchanged.",
+      "sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+      "source_request_sha256": "2339ecdb754e0104418b463397b4cb2121a4bbb1c9646d390e56cee3f0fe1e2e"
+    },
+    "schema": "mdb-remote-directory-custody-v1",
+    "scope": "Full archive, exact duplicate transport log, payload, extracted scientific evidence and legacy offline verification retained on Beast. No model rerun. Local pointer is not a complete collection.",
+    "seconds": 0.04669098788872361,
+    "summary_sha256": "b6ab28febf5fc5d12fc53f41ce961376d1e44c6c92f896948b8c36018b6dc125",
+    "verification": {
+      "archive_bytes": 9308,
+      "archive_sha256": "7b02ec0b465dd1c2296d6976fe6a09da4c9e01161e3452fbd336a10652415489",
+      "files": 7,
+      "job_id": "job-c12bda14d64e",
+      "mechanics_status": "verified",
+      "model_reexecution": false,
+      "part_count": 1,
+      "request_sha256": "0c0c00b928f206faffe6fa68acd82f4b2f1aca78d0626469c3d3ca2da55e3cfe",
+      "schema": "mdb-flux-family-custody-verification-v1"
+    }
+  },
+  "record_sha256": "9bc6e8b5e2a5725b2267efe4a9a367a1a86ec3885cb6569cf6bec22e1c7a8873",
+  "schema": "mdb-remote-custody-pointer-v1",
+  "scope": "Pointer to fully verified remote custody; scientific tensors are not locally collected. Use --retrieve to fetch exact retained bytes."
+}

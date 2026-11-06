@@ -1,0 +1,166 @@
+{
+  "collector_source_sha256": "007098eb72842fe1f5d585f64eae272812303d1c18eb67a17ba43508c646b18d",
+  "custody_encoder_source": "/Users/jakeholl/domains/artifacts/mdb-flux-functional-decoder-20261106/recovery-collection-01",
+  "local_source": "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/audit-01",
+  "record": {
+    "collection": "/mnt/hdd8tb/mdb/custody/qwen-block0-attention-20261106/job-2d91d9d5163a/collection-01",
+    "files": {
+      "audit.json": {
+        "bytes": 26655286,
+        "sha256": "1a8e658cd797d1ba719940eecf02c3bee039499ef6eaaeebeaddad06ec57641a"
+      },
+      "catalog/equations/12a05c06977eb187fbe513c073b756d53e6e75c12f9ca2a6ff97bda10dc00f3e.json": {
+        "bytes": 10621,
+        "sha256": "48a6a3fd5fa037179833cdfcd9c19e6ebdeb94725e6998587202f5d08bc53ca1"
+      },
+      "catalog/equations/1fbd7c34851e218cb0cae37d472afe1a6ac990ce51f0cc20ff495892c8f6a68f.json": {
+        "bytes": 10804,
+        "sha256": "f3fbe6686a75ae5788f9e419a67d640a9dc5fe167fc41e196aab8cef382c1ac4"
+      },
+      "catalog/equations/6d585ffc0b1bd35c7d551a1d6aab199f29c5c0d0af3d1466ee64e52d499e2cef.json": {
+        "bytes": 10714,
+        "sha256": "fc0c4d7aaae9b4dd0419bcf53c1de1c81afb4bb3838b1ef5d474a7b8997611a8"
+      },
+      "catalog/equations/cdaabbd9aa6069ebaca03677efa8787d89c96f129576071cc7aa4ae8805f5a22.json": {
+        "bytes": 10618,
+        "sha256": "e1c4430d6fc8bb4a915cff3ea59df5c4a98799fe55ea4bb5a9ad375b5d884e2c"
+      },
+      "catalog/equations/e697c167e8847db7398e3d55baf6841b3d56070367f39cf50784bdc616f354cb.json": {
+        "bytes": 10801,
+        "sha256": "9b9ded75eeb9429ce9566f785bb102ed4b1bddc77a31bb652f448134e20cec2d"
+      },
+      "catalog/provenance.json": {
+        "bytes": 23221,
+        "sha256": "230dc2e1bd48fb2618efc50896ee5a27f417168466009147f951e2aeb21cdf27"
+      },
+      "external-evidence.json": {
+        "bytes": 19749,
+        "sha256": "ff7d89f2fda147b82ec11227f4497b3e8c621a62d95511e6249a10d2241dd2f6"
+      },
+      "files.json": {
+        "bytes": 2952,
+        "sha256": "1b306fe32051e63b40961151fab246475f2c8fc69ebbcfad212fabd5dba9ac48"
+      },
+      "per-token-head.json": {
+        "bytes": 24707516,
+        "sha256": "e4437d6ef854c16d70b4fddba2ee0049aeb88e8942fd582a3a1ba35774072925"
+      },
+      "plan.json": {
+        "bytes": 539,
+        "sha256": "41ffc9b153cc9f5915bc9edb6be3afaf1c3f9d0cdcad83d440712da2440f04b4"
+      },
+      "qwen-config.json": {
+        "bytes": 1536,
+        "sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40"
+      },
+      "qwen-parameter-artifacts.json": {
+        "bytes": 433549,
+        "sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374"
+      },
+      "request.json": {
+        "bytes": 3384,
+        "sha256": "a161f3bd5628e0ebd840fea38bcd9a0496ef487bc4911b3abc68fd4fb10318bb"
+      },
+      "retrieve_qwen_weights.py": {
+        "bytes": 22624,
+        "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae"
+      },
+      "source-cases.json": {
+        "bytes": 115256,
+        "sha256": "7b043559f07b273f8ec6c5982166a80fb84fb18a773a5d1bb1b7a41fd93617e5"
+      },
+      "source-files.json": {
+        "bytes": 28073,
+        "sha256": "e593670a65263168b08fb70fb684dca676ceb078fc78234dd11fb8e3cb3876a8"
+      },
+      "source-functional-seal.json": {
+        "bytes": 137980,
+        "sha256": "ae567968b1fd49b314f9f79f2e02cf4e32a5a0a5dace1bcfed052e63c7bfdd08"
+      },
+      "source-pair-comparisons.json": {
+        "bytes": 14617,
+        "sha256": "a92a33ce7186b616242b2142f474d9882a9da611f3ad7701f01847602bb39a65"
+      },
+      "source-plan.json": {
+        "bytes": 5246,
+        "sha256": "35152547b220b14cc6c82262cfe9253407073ef0f7a35060fca1ff1a5fa75185"
+      },
+      "source-request.json": {
+        "bytes": 11451,
+        "sha256": "4240f9341223a0cd694454c36e5e0ba883359a4658cf7b9bd053f813ec3fc202"
+      },
+      "source-runtime-contract.json": {
+        "bytes": 484,
+        "sha256": "e57a1eaa72ae33dd0f4ec61f98b1a160fdb79c3d8da82e2a6fe51fa40ea0ea58"
+      },
+      "source-sdpa.json": {
+        "bytes": 44407,
+        "sha256": "be7bdf1fb3cf3eb384d4e32e3110d039cee17cd63b92e11c7d16ba210664ea3a"
+      },
+      "source-source.json": {
+        "bytes": 13151,
+        "sha256": "2f3c6478853311009b9d984899150c60e519eebf5ad56aa380bc5597b1753344"
+      },
+      "source-summary.json": {
+        "bytes": 42583,
+        "sha256": "fcc8f38777cadb16a15b52d0b88accbeafe1bee746441bc0ddb7aa157f417bfe"
+      },
+      "source-timeline.json": {
+        "bytes": 1004,
+        "sha256": "09dcb77fb0f071f1b4218ea5ae46c2af1a6b8f7735db3033ea54fa944729bb61"
+      },
+      "source-timeline.jsonl": {
+        "bytes": 859,
+        "sha256": "c920fbc3e619bea6d1c8ced8f50b635de1af99b62a48cbcb05e9859dee457822"
+      },
+      "source-triangle.json": {
+        "bytes": 56685,
+        "sha256": "06568d275cfdd7876a522bbb66d7672d7777a7ad2208b61a0f6762748cbb52f4"
+      },
+      "summary.json": {
+        "bytes": 354,
+        "sha256": "01f31c9f13d52925a890253fbff6869abdae4eb21bd061b7c9f29e3d3a38dd1d"
+      }
+    },
+    "files_manifest_sha256": "1b306fe32051e63b40961151fab246475f2c8fc69ebbcfad212fabd5dba9ac48",
+    "host": "beast",
+    "log": {
+      "complete": true,
+      "compressed_bytes": 5334668,
+      "compressed_sha256": "c8354427adc2669d7cd9fc1a89ed6586308ca0a9fea79ba718d0985746411265",
+      "error": null,
+      "job_id": "job-2d91d9d5163a",
+      "job_json_sha256": "b099f5ca2f6f7630bc14b43c971815d76111899ba121f3736ca92763f75708fb",
+      "schema": "mdb-flux-family-log-custody-v1",
+      "scope": "Exact request-qualified directory re-emission bytes; not original scheduler log",
+      "storage": "gzip",
+      "uncompressed_bytes": 6912992,
+      "uncompressed_sha256": "054de948c8d2c16dbe242cbda5f0af41ccf3452bb046562bf75ab36bdd67de06"
+    },
+    "original_output": "/mnt/big/mdb/research/job-2d91d9d5163a/binding-minimal-result",
+    "recovery_encoder": {
+      "schema": "mdb-explicit-recovery-encoder-v1",
+      "scope": "Collection-only encoder supplied by a separately request-sealed run. Original worker payload/request remain unchanged.",
+      "sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+      "source_request_sha256": "2339ecdb754e0104418b463397b4cb2121a4bbb1c9646d390e56cee3f0fe1e2e"
+    },
+    "schema": "mdb-remote-directory-custody-v1",
+    "scope": "Full archive, exact duplicate transport log, payload, extracted scientific evidence and legacy offline verification retained on Beast. No model rerun. Local pointer is not a complete collection.",
+    "seconds": 0.7583222109824419,
+    "summary_sha256": "01f31c9f13d52925a890253fbff6869abdae4eb21bd061b7c9f29e3d3a38dd1d",
+    "verification": {
+      "archive_bytes": 5183913,
+      "archive_sha256": "e3a21f1e7482214d031f74d78210f10cdf9e1e56dee28fa2b3a45850fdd505f1",
+      "files": 29,
+      "job_id": "job-2d91d9d5163a",
+      "mechanics_status": "verified",
+      "model_reexecution": false,
+      "part_count": 1,
+      "request_sha256": "1d558db457410353773c2a55cbfda177ccab0f843d092cdb8251a1696e00a355",
+      "schema": "mdb-flux-family-custody-verification-v1"
+    }
+  },
+  "record_sha256": "5f6cd30d43410c754ebd386bcbf0f91832ab5336d2efa63bcd46772c72ea7502",
+  "schema": "mdb-remote-custody-pointer-v1",
+  "scope": "Pointer to fully verified remote custody; scientific tensors are not locally collected. Use --retrieve to fetch exact retained bytes."
+}

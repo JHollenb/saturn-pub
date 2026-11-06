@@ -1,0 +1,27 @@
+{
+  "FLUX_calls": 0,
+  "VAE_calls": 0,
+  "fixed_bank_case": "long",
+  "full_encoder_calls": 0,
+  "functional_embeddings": 2,
+  "functional_source_blocks": 2,
+  "native_block_calls": 2,
+  "native_block_hydrations": 1,
+  "native_block_parameters": 11,
+  "native_rotary_calls": 2,
+  "native_sdpa_calls": 2,
+  "persistent_weight_banks": 0,
+  "primitive_scope": "source formation + three order-conditioned equivalent full-causal representations, not a factorial or future-image forecast",
+  "profiler_extra_forwards": 0,
+  "schema": "mdb-qwen-block0-attention-counts-v1",
+  "selected_parameter_tensors": 12,
+  "source_sdpa_calls": 2,
+  "tokenizer_calls": 0,
+  "total_sdpa_calls": 7,
+  "triangle_arms": [
+    "A.explicit-repeated",
+    "B.causal-repeated",
+    "C.causal-grouped"
+  ],
+  "triangle_sdpa_calls": 3
+}

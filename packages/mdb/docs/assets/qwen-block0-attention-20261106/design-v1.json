@@ -1,0 +1,186 @@
+{
+  "call_profile": "passive profiler on existing7SDPA calls; no forcedbackend/no repeats; unsupported profilingdiagnostic percall",
+  "contract": {
+    "FLUX_calls": 0,
+    "VAE_calls": 0,
+    "fixed_bank_case": "long",
+    "full_encoder_calls": 0,
+    "functional_embeddings": 2,
+    "functional_source_blocks": 2,
+    "native_block_calls": 2,
+    "native_block_hydrations": 1,
+    "native_block_parameters": 11,
+    "native_rotary_calls": 2,
+    "native_sdpa_calls": 2,
+    "persistent_weight_banks": 0,
+    "primitive_scope": "source formation + three order-conditioned equivalent full-causal representations, not a factorial or future-image forecast",
+    "profiler_extra_forwards": 0,
+    "schema": "mdb-qwen-block0-attention-counts-v1",
+    "selected_parameter_tensors": 12,
+    "source_sdpa_calls": 2,
+    "tokenizer_calls": 0,
+    "total_sdpa_calls": 7,
+    "triangle_arms": [
+      "A.explicit-repeated",
+      "B.causal-repeated",
+      "C.causal-grouped"
+    ],
+    "triangle_sdpa_calls": 3
+  },
+  "fixed_bank": "one functional source-generated long completeQ/K/V bank, before either native block; never refreshed from native outputs",
+  "frontier": "full functional/source/triangle arrays and original-inputs are inventoried in functional-seal.json; durable SHA event precedes two native_block_entry events",
+  "full_original_recipe_count": 398,
+  "hypotheses_observations_not_gates": [
+    "Original shared30 positionedQ/K/V are exact; first retained prefix difference appears at SDPA or later. Any miss localizes an earlier formation discrepancy.",
+    "At least one nonzero equivalent-representation prefix head contrast has positive cosine with nonzero historical long-minus-short head drift. Zero/negative/undefined outcomes retained.",
+    "Original-route H0/H1 replays reproduce original source arrays; numerical misses remain replay/profile diagnostics."
+  ],
+  "hypothesis_sources": {
+    "direction-07.md": "324407dc3ab43f0f1373d923915dc6c44982138a76305c52a4a3dd203587b85d",
+    "holistic-review-07.json": "1626a40c2c5f8cd0631eb68f39f01092fbb43b9d305b036e64d5500c1938c00b"
+  },
+  "limits": [
+    "Historical firstlayer outputs are known replay controls; triangle diagnostic is not a novel raw-to-image forecast.",
+    "Shortpadding mask is a separate replay bridge. Full causal equivalence only applies all512 forfixedtriangle; originalcase explanation restricted shared30.",
+    "Source-formed functional operands never use native outputs. Existing originalprimitive arithmetic is reused, not independent CUDA reduction algebra.",
+    "No semantic future-token reading, intrinsicgain, causalshares or fullfactorialinteraction claim.",
+    "Tiny CPU supports orchestration/serialization/API mechanics, not original CUDA equality."
+  ],
+  "native_scope": "one exact Qwen3DecoderLayer(0),2calls; parameter-free nativeQwen3RotaryEmbedding2calls; no fullencoder/FLUX/VAE/tokenizer",
+  "raw_schema": {
+    "cases.json": "short,long functional/native fullports +matched comparisons +historicalH0/H1replay",
+    "finalizer": "real frozen385c manifest wrapper with actualjob/request,1GiBtotal64MiBmember",
+    "original-inputs": "selected original files plus original files.json only; byteexact source closure",
+    "per-token-head.json": "alltoken/head signedreductions; fullfields separate",
+    "sdpa.json": "7fullQ/K/V/mask/head records with unchangedactualargs andprofilerevents",
+    "source.json": "original provenance,12weightsbefore/after,FP32rotarybuffers,12recipe reads",
+    "triangle.json": "three fulltailport maps, physicalrepeat/mask records, signed accounts"
+  },
+  "resources": {
+    "I/O": "12selectedpayloadreads~0.913GiB; fullcheckpoint-fileSHA validation viaqualifiedrecipehelper once/file, no persistentweightbank",
+    "actual_original_geometry_measured": false,
+    "cpu_threads": 4,
+    "estimated_live_RAM_GiB": [
+      3,
+      4
+    ],
+    "estimated_live_VRAM_GiB": 1.5,
+    "estimated_raw_GiB": 0.6,
+    "expected_seconds": 240,
+    "finite_outer_seconds": 900,
+    "finite_worker_seconds": 600,
+    "proposed_RAM_MB": 8192,
+    "proposed_VRAM_MB": 4096,
+    "raw_member_bound_bytes": 67108864,
+    "raw_total_bound_bytes": 1073741824
+  },
+  "schema": "mdb-qwen-block0-attention-design-v1",
+  "selected_original_payload_bytes": 979773952,
+  "source_parent": {
+    "job_id": "job-0b6c4340d5e6",
+    "manifest_sha256": "89dafe939e0143596edf88b42e073f97cc5c945c893b5b8cf9897eff809c7154",
+    "request_sha256": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd"
+  },
+  "source_tensor_geometry": [
+    {
+      "name": "model.embed_tokens.weight",
+      "payload_bytes": 777912320,
+      "shape": [
+        151936,
+        2560
+      ]
+    },
+    {
+      "name": "model.layers.0.input_layernorm.weight",
+      "payload_bytes": 5120,
+      "shape": [
+        2560
+      ]
+    },
+    {
+      "name": "model.layers.0.post_attention_layernorm.weight",
+      "payload_bytes": 5120,
+      "shape": [
+        2560
+      ]
+    },
+    {
+      "name": "model.layers.0.self_attn.q_norm.weight",
+      "payload_bytes": 256,
+      "shape": [
+        128
+      ]
+    },
+    {
+      "name": "model.layers.0.self_attn.k_norm.weight",
+      "payload_bytes": 256,
+      "shape": [
+        128
+      ]
+    },
+    {
+      "name": "model.layers.0.self_attn.q_proj.weight",
+      "payload_bytes": 20971520,
+      "shape": [
+        4096,
+        2560
+      ]
+    },
+    {
+      "name": "model.layers.0.self_attn.k_proj.weight",
+      "payload_bytes": 5242880,
+      "shape": [
+        1024,
+        2560
+      ]
+    },
+    {
+      "name": "model.layers.0.self_attn.v_proj.weight",
+      "payload_bytes": 5242880,
+      "shape": [
+        1024,
+        2560
+      ]
+    },
+    {
+      "name": "model.layers.0.self_attn.o_proj.weight",
+      "payload_bytes": 20971520,
+      "shape": [
+        2560,
+        4096
+      ]
+    },
+    {
+      "name": "model.layers.0.mlp.gate_proj.weight",
+      "payload_bytes": 49807360,
+      "shape": [
+        9728,
+        2560
+      ]
+    },
+    {
+      "name": "model.layers.0.mlp.up_proj.weight",
+      "payload_bytes": 49807360,
+      "shape": [
+        9728,
+        2560
+      ]
+    },
+    {
+      "name": "model.layers.0.mlp.down_proj.weight",
+      "payload_bytes": 49807360,
+      "shape": [
+        2560,
+        9728
+      ]
+    }
+  ],
+  "status": "tiny-qualified preparation only; production unexecuted",
+  "triangle": {
+    "A": "repeatKV + full512lower-triangularboolmask,is_causalFalse",
+    "B": "same repeatKV objects + no mask,is_causalTrue",
+    "C": "canonical groupedKV + no mask,is_causalTrue,enable_gqaTrue",
+    "estimand": "B-A then C-B order-conditioned telescope; not fullfactorial interaction",
+    "scale": "head_dim**-0.5, unchangedBF16 and reductionTrue"
+  }
+}

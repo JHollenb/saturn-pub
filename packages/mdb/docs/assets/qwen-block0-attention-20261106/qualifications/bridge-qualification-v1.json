@@ -1,0 +1,78 @@
+{
+  "canonical_ruff": {
+    "command": [
+      "rtk",
+      "proxy",
+      "uvx",
+      "ruff",
+      "check",
+      "--select",
+      "F,I",
+      "qualification/audit_qwen_attention_bridge.py",
+      "tests/test_audit_qwen_attention_bridge.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "exit_code": 0,
+    "stdout": "All checks passed!"
+  },
+  "coverage": [
+    "Fixture uses frozen70e actual tensor_record and frozen385 real wrapper finalizer; no neural calls.",
+    "Positive sixport full signed-vector bridge, direct arm/native endpoint joins and original shared clock.",
+    "Negative fixture has equal RMS and float64 cosine rounded to1 yet two signed-vector mismatches retained.",
+    "Complete C-B account detects difference beyond shared prefix.",
+    "Signed-zero bit-only mismatch remains separate from numerical changed count.",
+    "Sparse head-coordinate descriptive cap128 retains full total180 in dense fixture.",
+    "Selected-array/sidecar/wrapper tampering refuses evidence integrity.",
+    "Actual generic saved-only worker request, final compact wrapper and marker validated while model framework imports forbidden."
+  ],
+  "helper": {
+    "audit_qwen_block0_attention.py": "00de6d42e167351b95667b07723e04320f798265b0155e101008990e114abc20"
+  },
+  "installed_mdb_module": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/mdb/__init__.py",
+  "interpreter": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+  "isolation": "Installed Python -I -B, copied cohort outside checkout; actual worker tested with forbidden torch/transformers/tokenizers imports.",
+  "jobs_or_staging": 0,
+  "new_attention_calls": 0,
+  "new_model_calls": 0,
+  "new_recipe_reads": 0,
+  "new_tokenizer_calls": 0,
+  "original_array_reads_local": false,
+  "outcome_claim": "No original-data bridge outcome claimed before separate CPU production lease.",
+  "packages": {
+    "numpy": "2.5.4",
+    "pytest": "9.2.0",
+    "torch": "2.13.0"
+  },
+  "producer_serializer_sha256": "70e52a6624947029b906e0a02f2f36d1a165b321a40c9e42f665224a3710361b",
+  "production_expected": {
+    "job_id": "job-0a3c41fce1d0",
+    "manifest_sha256": "e593670a65263168b08fb70fb684dca676ceb078fc78234dd11fb8e3cb3876a8",
+    "request_sha256": "5579dc04e6fbcb20d675386833b4e3cc545f0f071383c2443cb72b108c260c36"
+  },
+  "python": "3.12.13",
+  "schema": "mdb-qwen-signed-attention-bridge-qualification-v1",
+  "scope": "Selected original9metadata+30port arrays; full recipe/fullarray audit not repeated. Native after_attention reconstructed, direct native residual input not claimed.",
+  "sources": {
+    "qualification/audit_qwen_attention_bridge.py": "e4b7b24d54c2ffcd574cb1fc41e39e4dfa1d9ff8db73005567ce15a3fc4dd3dc",
+    "tests/test_audit_qwen_attention_bridge.py": "89050131ef357c2aa388376e5912d5164513daa4c7155391569282e59e16e477"
+  },
+  "status": "qualified-tiny-saved-mechanics",
+  "test": {
+    "capture": "Tool-returned final stdout transcribed; copied source hashes verified equal to frozen sources.",
+    "command": [
+      "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+      "-I",
+      "-B",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_audit_qwen_attention_bridge.py",
+      "--basetemp=tmp"
+    ],
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/bridge-qualification-v1/attempt-01/cohort",
+    "exit_code": 0,
+    "passed": 9,
+    "pytest_seconds": 1.09,
+    "stdout_tool_return": ".........                                                                [100%]\n9 passed in 1.09s\n"
+  }
+}

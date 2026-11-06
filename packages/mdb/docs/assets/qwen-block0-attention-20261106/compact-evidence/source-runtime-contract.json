@@ -1,0 +1,19 @@
+{
+  "device": "cuda",
+  "flags": {
+    "cpu_threads": 4,
+    "cuda_bf16_reduced_precision_reduction": true,
+    "cuda_tf32": false,
+    "cudnn_benchmark": false,
+    "cudnn_deterministic": true,
+    "cudnn_tf32": false,
+    "deterministic_algorithms": true,
+    "float32_matmul_precision": "highest"
+  },
+  "profiling": "passive only, on existing seven calls; no forced backend",
+  "versions": {
+    "python": "3.14.6",
+    "torch": "2.13.0+cu130",
+    "transformers": "5.14.1"
+  }
+}

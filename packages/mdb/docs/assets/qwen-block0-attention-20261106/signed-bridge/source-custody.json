@@ -1,0 +1,169 @@
+{
+  "functional_seal_sha256": "ae567968b1fd49b314f9f79f2e02cf4e32a5a0a5dace1bcfed052e63c7bfdd08",
+  "original_expanded_bytes": 579212168,
+  "original_inventory_members": 185,
+  "scope": "Exact original wrapper and selected metadata/full arrays checked; original full recipe/array audit not repeated.",
+  "selected_bytes": 86895575,
+  "selected_members": {
+    "cases.json": {
+      "bytes": 115256,
+      "sha256": "7b043559f07b273f8ec6c5982166a80fb84fb18a773a5d1bb1b7a41fd93617e5"
+    },
+    "functional-seal.json": {
+      "bytes": 137980,
+      "sha256": "ae567968b1fd49b314f9f79f2e02cf4e32a5a0a5dace1bcfed052e63c7bfdd08"
+    },
+    "native/long/H1.npy": {
+      "bytes": 2621568,
+      "sha256": "2600ca861ea83745d8575db2680e03d8dc568899a93e76538f8ebc6fbde0e2a5"
+    },
+    "native/long/after_attention.npy": {
+      "bytes": 2621568,
+      "sha256": "3c63277c704d370547430b94f99fc75deab69af6b2a9ef0f3e846e73a988b2ec"
+    },
+    "native/long/head.npy": {
+      "bytes": 4194432,
+      "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83"
+    },
+    "native/long/mlp.npy": {
+      "bytes": 2621568,
+      "sha256": "812cacf7d5e725c6e5bb62cba683a7b92bc9e8b06511302868e076b4853698ac"
+    },
+    "native/long/mlp_input.npy": {
+      "bytes": 2621568,
+      "sha256": "1de304abb99c6a8c3122db60b2b79d583098c50fffcff779967b652505d7f35d"
+    },
+    "native/long/projection.npy": {
+      "bytes": 2621568,
+      "sha256": "5299a15070f9dd54c08a52072c0719c173a1c39e3fa8c26326342578ee1a3909"
+    },
+    "native/short/H1.npy": {
+      "bytes": 2621568,
+      "sha256": "6b4ee0a45d48f3e89958cb1c8fb499794002ade219047f23ad92fc67ca783730"
+    },
+    "native/short/after_attention.npy": {
+      "bytes": 2621568,
+      "sha256": "e0d268c8a1eb63277d44962afbf645681ebf20d6518762d07d92ac7abc405cbe"
+    },
+    "native/short/head.npy": {
+      "bytes": 4194432,
+      "sha256": "b586f29dc56b2d391e986b5c65f9bfa177961d96cfd711d9518d097730733f5e"
+    },
+    "native/short/mlp.npy": {
+      "bytes": 2621568,
+      "sha256": "5217139c89bedb2df4d9308bdb2109d310e4f1c00dd372de631eb9d2b6ded507"
+    },
+    "native/short/mlp_input.npy": {
+      "bytes": 2621568,
+      "sha256": "80f7206489246463043d804744b2d79a52878ea74b7de257b0f3e947f1cc4fae"
+    },
+    "native/short/projection.npy": {
+      "bytes": 2621568,
+      "sha256": "33baadb8cd8b726def887256c857e535f932871be109aadc25b9aa4664b63b41"
+    },
+    "plan.json": {
+      "bytes": 5246,
+      "sha256": "35152547b220b14cc6c82262cfe9253407073ef0f7a35060fca1ff1a5fa75185"
+    },
+    "request.json": {
+      "bytes": 11451,
+      "sha256": "4240f9341223a0cd694454c36e5e0ba883359a4658cf7b9bd053f813ec3fc202"
+    },
+    "source.json": {
+      "bytes": 13151,
+      "sha256": "2f3c6478853311009b9d984899150c60e519eebf5ad56aa380bc5597b1753344"
+    },
+    "summary.json": {
+      "bytes": 42583,
+      "sha256": "fcc8f38777cadb16a15b52d0b88accbeafe1bee746441bc0ddb7aa157f417bfe"
+    },
+    "timeline.json": {
+      "bytes": 1004,
+      "sha256": "09dcb77fb0f071f1b4218ea5ae46c2af1a6b8f7735db3033ea54fa944729bb61"
+    },
+    "timeline.jsonl": {
+      "bytes": 859,
+      "sha256": "c920fbc3e619bea6d1c8ced8f50b635de1af99b62a48cbcb05e9859dee457822"
+    },
+    "triangle.json": {
+      "bytes": 56685,
+      "sha256": "06568d275cfdd7876a522bbb66d7672d7777a7ad2208b61a0f6762748cbb52f4"
+    },
+    "triangle/A.explicit-repeated/H1.npy": {
+      "bytes": 2621568,
+      "sha256": "b65f39b3ef721acf5e432c43aeec4d8c631a511ba3367ab68d972c7a4a618112"
+    },
+    "triangle/A.explicit-repeated/after_attention.npy": {
+      "bytes": 2621568,
+      "sha256": "8148ec42b167c24a5be64f68f94d1461779c4cd20c41db5c8d69604a6d5de4e3"
+    },
+    "triangle/A.explicit-repeated/head.npy": {
+      "bytes": 4194432,
+      "sha256": "4a5367c7c72701ff59f2871658f219233b91e9c9f6ffe1367f86c5ec7fa90fb0"
+    },
+    "triangle/A.explicit-repeated/mlp.npy": {
+      "bytes": 2621568,
+      "sha256": "4d4edb8285e940fb98d5118a47a1078f0dcb35f7b6d511f7150a760c86a9343d"
+    },
+    "triangle/A.explicit-repeated/mlp_input.npy": {
+      "bytes": 2621568,
+      "sha256": "9b88c0c162ae321ffee295a015212cdedc45d1c8a91313b447e380bdac3f5535"
+    },
+    "triangle/A.explicit-repeated/projection.npy": {
+      "bytes": 2621568,
+      "sha256": "7f49734a13d671084ddf3152a5666b8590c893f5b20ee2135bff672caa9bd320"
+    },
+    "triangle/B.causal-repeated/H1.npy": {
+      "bytes": 2621568,
+      "sha256": "2600ca861ea83745d8575db2680e03d8dc568899a93e76538f8ebc6fbde0e2a5"
+    },
+    "triangle/B.causal-repeated/after_attention.npy": {
+      "bytes": 2621568,
+      "sha256": "3c63277c704d370547430b94f99fc75deab69af6b2a9ef0f3e846e73a988b2ec"
+    },
+    "triangle/B.causal-repeated/head.npy": {
+      "bytes": 4194432,
+      "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83"
+    },
+    "triangle/B.causal-repeated/mlp.npy": {
+      "bytes": 2621568,
+      "sha256": "812cacf7d5e725c6e5bb62cba683a7b92bc9e8b06511302868e076b4853698ac"
+    },
+    "triangle/B.causal-repeated/mlp_input.npy": {
+      "bytes": 2621568,
+      "sha256": "1de304abb99c6a8c3122db60b2b79d583098c50fffcff779967b652505d7f35d"
+    },
+    "triangle/B.causal-repeated/projection.npy": {
+      "bytes": 2621568,
+      "sha256": "5299a15070f9dd54c08a52072c0719c173a1c39e3fa8c26326342578ee1a3909"
+    },
+    "triangle/C.causal-grouped/H1.npy": {
+      "bytes": 2621568,
+      "sha256": "2600ca861ea83745d8575db2680e03d8dc568899a93e76538f8ebc6fbde0e2a5"
+    },
+    "triangle/C.causal-grouped/after_attention.npy": {
+      "bytes": 2621568,
+      "sha256": "3c63277c704d370547430b94f99fc75deab69af6b2a9ef0f3e846e73a988b2ec"
+    },
+    "triangle/C.causal-grouped/head.npy": {
+      "bytes": 4194432,
+      "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83"
+    },
+    "triangle/C.causal-grouped/mlp.npy": {
+      "bytes": 2621568,
+      "sha256": "812cacf7d5e725c6e5bb62cba683a7b92bc9e8b06511302868e076b4853698ac"
+    },
+    "triangle/C.causal-grouped/mlp_input.npy": {
+      "bytes": 2621568,
+      "sha256": "1de304abb99c6a8c3122db60b2b79d583098c50fffcff779967b652505d7f35d"
+    },
+    "triangle/C.causal-grouped/projection.npy": {
+      "bytes": 2621568,
+      "sha256": "5299a15070f9dd54c08a52072c0719c173a1c39e3fa8c26326342578ee1a3909"
+    }
+  },
+  "selected_members_count": 39,
+  "source_job": "job-0a3c41fce1d0",
+  "source_manifest_sha256": "e593670a65263168b08fb70fb684dca676ceb078fc78234dd11fb8e3cb3876a8",
+  "source_request_sha256": "5579dc04e6fbcb20d675386833b4e3cc545f0f071383c2443cb72b108c260c36"
+}

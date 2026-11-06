@@ -1,0 +1,1513 @@
+{
+  "actual": {
+    "native_block_calls": 2,
+    "native_rotary_calls": 2,
+    "sdpa_calls": 7,
+    "selected_payload_bytes": 979773952,
+    "source_parameter_reads": 12
+  },
+  "contract": {
+    "FLUX_calls": 0,
+    "VAE_calls": 0,
+    "fixed_bank_case": "long",
+    "full_encoder_calls": 0,
+    "functional_embeddings": 2,
+    "functional_source_blocks": 2,
+    "native_block_calls": 2,
+    "native_block_hydrations": 1,
+    "native_block_parameters": 11,
+    "native_rotary_calls": 2,
+    "native_sdpa_calls": 2,
+    "persistent_weight_banks": 0,
+    "primitive_scope": "source formation + three order-conditioned equivalent full-causal representations, not a factorial or future-image forecast",
+    "profiler_extra_forwards": 0,
+    "schema": "mdb-qwen-block0-attention-counts-v1",
+    "selected_parameter_tensors": 12,
+    "source_sdpa_calls": 2,
+    "tokenizer_calls": 0,
+    "total_sdpa_calls": 7,
+    "triangle_arms": [
+      "A.explicit-repeated",
+      "B.causal-repeated",
+      "C.causal-grouped"
+    ],
+    "triangle_sdpa_calls": 3
+  },
+  "hypotheses": {
+    "equivalent_contrast_nonzero_positive_alignment": {
+      "B-minus-A": true,
+      "C-minus-B": false
+    },
+    "first_retained_prefix_difference_in_declared_port_order": "head",
+    "nonzero_historical_head": true,
+    "positioned_prefix_QKV_exact": {
+      "k": true,
+      "q": true,
+      "v": true
+    },
+    "source": "Astra holistic07: predictions are diagnostic, never quality gates"
+  },
+  "job_id": "job-0a3c41fce1d0",
+  "limits": [
+    "Known original first-layer replay; new triangle consists of primitive interventions, not observed native source branches.",
+    "Only shared prefix supports cross-case causal-equivalence bridge; full triangle uses one fixed complete bank.",
+    "No semantic future-token reading, intrinsic gain, causal percentage or full-factorial interaction claim."
+  ],
+  "mechanics_status": "complete",
+  "pair_comparisons": {
+    "functional": {
+      "H0": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.02059303142995652,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "H1": {
+        "bitwise_exact": false,
+        "changed_values": 3376,
+        "cosine": 0.9999995662487025,
+        "elements": 76800,
+        "first_nonzero_flat": 17921,
+        "maxabs": 0.0078125,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.19088027436255597,
+        "relative_rms": 0.000934494943718639,
+        "rms": 0.0001783766512474351,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 1.437962055206299e-07,
+        "worst_flat": 17978
+      },
+      "after_attention": {
+        "bitwise_exact": false,
+        "changed_values": 49,
+        "cosine": 0.9999999980801002,
+        "elements": 76800,
+        "first_nonzero_flat": 19347,
+        "maxabs": 0.00048828125,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.07585589490426595,
+        "relative_rms": 6.19661201934026e-05,
+        "rms": 4.70049550101586e-06,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 3.973642985026042e-09,
+        "worst_flat": 46508
+      },
+      "head": {
+        "bitwise_exact": false,
+        "changed_values": 5,
+        "cosine": 0.9999999998952543,
+        "elements": 122880,
+        "first_nonzero_flat": 2650,
+        "maxabs": 0.0001220703125,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.02710927588104248,
+        "relative_rms": 1.4473836923632765e-05,
+        "rms": 3.9237523821997976e-07,
+        "shape": [
+          1,
+          32,
+          30,
+          128
+        ],
+        "signed_mean": -5.510325233141581e-10,
+        "worst_flat": 13940
+      },
+      "k": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 30720,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 14.488128063602254,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          8,
+          30,
+          128
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "k_norm": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 30720,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 14.488017930158737,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          8,
+          30,
+          128
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "k_raw": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 30720,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.09193192120072176,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          1024
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "mlp": {
+        "bitwise_exact": false,
+        "changed_values": 4170,
+        "cosine": 0.9999994135974196,
+        "elements": 76800,
+        "first_nonzero_flat": 17921,
+        "maxabs": 0.005859375,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.14625746199214035,
+        "relative_rms": 0.0010883284594071319,
+        "rms": 0.00015917615828670327,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": -2.0238726089398066e-07,
+        "worst_flat": 18016
+      },
+      "mlp_input": {
+        "bitwise_exact": false,
+        "changed_values": 533,
+        "cosine": 0.9999998550361516,
+        "elements": 76800,
+        "first_nonzero_flat": 17922,
+        "maxabs": 0.00390625,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.12386418850249542,
+        "relative_rms": 0.0005400648653538178,
+        "rms": 6.68946962857601e-05,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": -2.082080269853274e-07,
+        "worst_flat": 18129
+      },
+      "normalized": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.02934100051221836,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "projection": {
+        "bitwise_exact": false,
+        "changed_values": 71,
+        "cosine": 0.9999999978253238,
+        "elements": 76800,
+        "first_nonzero_flat": 18510,
+        "maxabs": 0.00048828125,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.07324158346875971,
+        "relative_rms": 6.594985780400346e-05,
+        "rms": 4.830272015104753e-06,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 1.0286845887700716e-08,
+        "worst_flat": 46508
+      },
+      "q": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 122880,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 1.545568772421156,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          32,
+          30,
+          128
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "q_norm": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 122880,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 1.5455893847288322,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          32,
+          30,
+          128
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "q_raw": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 122880,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.08543456068720662,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          4096
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "v": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 30720,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.03469068372009749,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          8,
+          30,
+          128
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "v_raw": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 30720,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.03469068372009749,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          1024
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      }
+    },
+    "native": {
+      "H0": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.02059303142995652,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "H1": {
+        "bitwise_exact": false,
+        "changed_values": 3376,
+        "cosine": 0.9999995662487025,
+        "elements": 76800,
+        "first_nonzero_flat": 17921,
+        "maxabs": 0.0078125,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.19088027436255597,
+        "relative_rms": 0.000934494943718639,
+        "rms": 0.0001783766512474351,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 1.437962055206299e-07,
+        "worst_flat": 17978
+      },
+      "after_attention": {
+        "bitwise_exact": false,
+        "changed_values": 49,
+        "cosine": 0.9999999980801002,
+        "elements": 76800,
+        "first_nonzero_flat": 19347,
+        "maxabs": 0.00048828125,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.07585589490426595,
+        "relative_rms": 6.19661201934026e-05,
+        "rms": 4.70049550101586e-06,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 3.973642985026042e-09,
+        "worst_flat": 46508
+      },
+      "head": {
+        "bitwise_exact": false,
+        "changed_values": 5,
+        "cosine": 0.9999999998952543,
+        "elements": 122880,
+        "first_nonzero_flat": 2650,
+        "maxabs": 0.0001220703125,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.02710927588104248,
+        "relative_rms": 1.4473836923632765e-05,
+        "rms": 3.9237523821997976e-07,
+        "shape": [
+          1,
+          32,
+          30,
+          128
+        ],
+        "signed_mean": -5.510325233141581e-10,
+        "worst_flat": 13940
+      },
+      "k": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 30720,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 14.488128063602254,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          8,
+          30,
+          128
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "k_norm": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 30720,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 14.488017930158737,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          8,
+          30,
+          128
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "k_raw": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 30720,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.09193192120072176,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          1024
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "mlp": {
+        "bitwise_exact": false,
+        "changed_values": 4170,
+        "cosine": 0.9999994135974196,
+        "elements": 76800,
+        "first_nonzero_flat": 17921,
+        "maxabs": 0.005859375,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.14625746199214035,
+        "relative_rms": 0.0010883284594071319,
+        "rms": 0.00015917615828670327,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": -2.0238726089398066e-07,
+        "worst_flat": 18016
+      },
+      "mlp_input": {
+        "bitwise_exact": false,
+        "changed_values": 533,
+        "cosine": 0.9999998550361516,
+        "elements": 76800,
+        "first_nonzero_flat": 17922,
+        "maxabs": 0.00390625,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.12386418850249542,
+        "relative_rms": 0.0005400648653538178,
+        "rms": 6.68946962857601e-05,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": -2.082080269853274e-07,
+        "worst_flat": 18129
+      },
+      "normalized": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 76800,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.02934100051221836,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "projection": {
+        "bitwise_exact": false,
+        "changed_values": 71,
+        "cosine": 0.9999999978253238,
+        "elements": 76800,
+        "first_nonzero_flat": 18510,
+        "maxabs": 0.00048828125,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.07324158346875971,
+        "relative_rms": 6.594985780400346e-05,
+        "rms": 4.830272015104753e-06,
+        "shape": [
+          1,
+          30,
+          2560
+        ],
+        "signed_mean": 1.0286845887700716e-08,
+        "worst_flat": 46508
+      },
+      "q": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 122880,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 1.545568772421156,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          32,
+          30,
+          128
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "q_norm": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 122880,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 1.5455893847288322,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          32,
+          30,
+          128
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "q_raw": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 122880,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.08543456068720662,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          4096
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "v": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 30720,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.03469068372009749,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          8,
+          30,
+          128
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      },
+      "v_raw": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "elements": 30720,
+        "first_nonzero_flat": null,
+        "maxabs": 0.0,
+        "orientation": "left-minus-right",
+        "reference_rms": 0.03469068372009749,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "shape": [
+          1,
+          30,
+          1024
+        ],
+        "signed_mean": 0.0,
+        "worst_flat": 0
+      }
+    }
+  },
+  "request_sha256": "5579dc04e6fbcb20d675386833b4e3cc545f0f071383c2443cb72b108c260c36",
+  "schema": "mdb-qwen-block0-attention-summary-v1",
+  "seconds": 41.30685266200453,
+  "shared_prefix_rows": 30,
+  "terminal_status": "unassessed",
+  "trend_status": "observed-uninterpreted",
+  "triangle_accounts": {
+    "H1": {
+      "B-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 456308,
+          "cosine": 0.999996948279858,
+          "elements": 1310720,
+          "first_nonzero_flat": 17921,
+          "maxabs": 0.03125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.1747811115543119,
+          "relative_rms": 0.00247051898553938,
+          "rms": 0.00043180005440860374,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -1.303715180256404e-07,
+          "worst_flat": 704000
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 3376,
+          "cosine": 0.9999995662487025,
+          "elements": 76800,
+          "first_nonzero_flat": 17921,
+          "maxabs": 0.0078125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.19088027436255597,
+          "relative_rms": 0.000934494943718639,
+          "rms": 0.0001783766512474351,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 1.437962055206299e-07,
+          "worst_flat": 17978
+        }
+      },
+      "C-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 456308,
+          "cosine": 0.999996948279858,
+          "elements": 1310720,
+          "first_nonzero_flat": 17921,
+          "maxabs": 0.03125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.1747811115543119,
+          "relative_rms": 0.00247051898553938,
+          "rms": 0.00043180005440860374,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -1.303715180256404e-07,
+          "worst_flat": 704000
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 3376,
+          "cosine": 0.9999995662487025,
+          "elements": 76800,
+          "first_nonzero_flat": 17921,
+          "maxabs": 0.0078125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.19088027436255597,
+          "relative_rms": 0.000934494943718639,
+          "rms": 0.0001783766512474351,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 1.437962055206299e-07,
+          "worst_flat": 17978
+        }
+      },
+      "C-minus-B": {
+        "full": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 1310720,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.17478158353048232,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        },
+        "shared_prefix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 76800,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.190865681662304,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        }
+      },
+      "coordinate_identity": true,
+      "prefix_telescope": {
+        "coordinate_sum_elements": 76800,
+        "cross_dot": 0.0,
+        "energy_identity_residual": 0.0,
+        "first_energy": 0.0024436400417471305,
+        "first_vs_historical_cosine": 1.0,
+        "historical_energy": 0.0024436400417471305,
+        "scope": "order-conditioned vector telescope and alignment; not factorial interaction, intrinsic gain or causal shares",
+        "second_energy": 0.0,
+        "second_vs_historical_cosine": null,
+        "signed_cross_term": 0.0,
+        "sum_energy": 0.0024436400417471305
+      }
+    },
+    "after_attention": {
+      "B-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 126430,
+          "cosine": 0.9999995257096581,
+          "elements": 1310720,
+          "first_nonzero_flat": 19347,
+          "maxabs": 0.015625,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07518491718600553,
+          "relative_rms": 0.0009741675194885123,
+          "rms": 7.324270427804023e-05,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 3.3694595913402735e-08,
+          "worst_flat": 704000
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 49,
+          "cosine": 0.9999999980801002,
+          "elements": 76800,
+          "first_nonzero_flat": 19347,
+          "maxabs": 0.00048828125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07585589490426595,
+          "relative_rms": 6.19661201934026e-05,
+          "rms": 4.70049550101586e-06,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 3.973642985026042e-09,
+          "worst_flat": 46508
+        }
+      },
+      "C-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 126430,
+          "cosine": 0.9999995257096581,
+          "elements": 1310720,
+          "first_nonzero_flat": 19347,
+          "maxabs": 0.015625,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07518491718600553,
+          "relative_rms": 0.0009741675194885123,
+          "rms": 7.324270427804023e-05,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 3.3694595913402735e-08,
+          "worst_flat": 704000
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 49,
+          "cosine": 0.9999999980801002,
+          "elements": 76800,
+          "first_nonzero_flat": 19347,
+          "maxabs": 0.00048828125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07585589490426595,
+          "relative_rms": 6.19661201934026e-05,
+          "rms": 4.70049550101586e-06,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 3.973642985026042e-09,
+          "worst_flat": 46508
+        }
+      },
+      "C-minus-B": {
+        "full": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 1310720,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07518642583522014,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        },
+        "shared_prefix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 76800,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07585589355845426,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        }
+      },
+      "coordinate_identity": true,
+      "prefix_telescope": {
+        "coordinate_sum_elements": 76800,
+        "cross_dot": 0.0,
+        "energy_identity_residual": 0.0,
+        "first_energy": 1.6968697309494019e-06,
+        "first_vs_historical_cosine": 1.0,
+        "historical_energy": 1.6968697309494019e-06,
+        "scope": "order-conditioned vector telescope and alignment; not factorial interaction, intrinsic gain or causal shares",
+        "second_energy": 0.0,
+        "second_vs_historical_cosine": null,
+        "signed_cross_term": 0.0,
+        "sum_energy": 1.6968697309494019e-06
+      }
+    },
+    "head": {
+      "B-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 107158,
+          "cosine": 0.9999998906379662,
+          "elements": 2097152,
+          "first_nonzero_flat": 2650,
+          "maxabs": 0.001953125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.022452891479731018,
+          "relative_rms": 0.00046768122936632054,
+          "rms": 1.0500795890069186e-05,
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ],
+          "signed_mean": 1.9917157697418864e-08,
+          "worst_flat": 1847405
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 5,
+          "cosine": 0.9999999998952543,
+          "elements": 122880,
+          "first_nonzero_flat": 2650,
+          "maxabs": 0.0001220703125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.02710927588104248,
+          "relative_rms": 1.4473836923632765e-05,
+          "rms": 3.9237523821997976e-07,
+          "shape": [
+            1,
+            32,
+            30,
+            128
+          ],
+          "signed_mean": -5.510325233141581e-10,
+          "worst_flat": 13940
+        }
+      },
+      "C-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 107158,
+          "cosine": 0.9999998906379662,
+          "elements": 2097152,
+          "first_nonzero_flat": 2650,
+          "maxabs": 0.001953125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.022452891479731018,
+          "relative_rms": 0.00046768122936632054,
+          "rms": 1.0500795890069186e-05,
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ],
+          "signed_mean": 1.9917157697418864e-08,
+          "worst_flat": 1847405
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 5,
+          "cosine": 0.9999999998952543,
+          "elements": 122880,
+          "first_nonzero_flat": 2650,
+          "maxabs": 0.0001220703125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.02710927588104248,
+          "relative_rms": 1.4473836923632765e-05,
+          "rms": 3.9237523821997976e-07,
+          "shape": [
+            1,
+            32,
+            30,
+            128
+          ],
+          "signed_mean": -5.510325233141581e-10,
+          "worst_flat": 13940
+        }
+      },
+      "C-minus-B": {
+        "full": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 2097152,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.022452859950594935,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            32,
+            512,
+            128
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        },
+        "shared_prefix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 122880,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.027109276541563365,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            32,
+            30,
+            128
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        }
+      },
+      "coordinate_identity": true,
+      "prefix_telescope": {
+        "coordinate_sum_elements": 122880,
+        "cross_dot": 0.0,
+        "energy_identity_residual": 0.0,
+        "first_energy": 1.891839929157868e-08,
+        "first_vs_historical_cosine": 1.0,
+        "historical_energy": 1.891839929157868e-08,
+        "scope": "order-conditioned vector telescope and alignment; not factorial interaction, intrinsic gain or causal shares",
+        "second_energy": 0.0,
+        "second_vs_historical_cosine": null,
+        "signed_cross_term": 0.0,
+        "sum_energy": 1.891839929157868e-08
+      }
+    },
+    "mlp": {
+      "B-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 554800,
+          "cosine": 0.9999958644643757,
+          "elements": 1310720,
+          "first_nonzero_flat": 17921,
+          "maxabs": 0.015625,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.13068819759878622,
+          "relative_rms": 0.0028759494606591164,
+          "rms": 0.00037585265139874124,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -1.382333483235243e-07,
+          "worst_flat": 386575
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 4170,
+          "cosine": 0.9999994135974196,
+          "elements": 76800,
+          "first_nonzero_flat": 17921,
+          "maxabs": 0.005859375,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.14625746199214035,
+          "relative_rms": 0.0010883284594071319,
+          "rms": 0.00015917615828670327,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -2.0238726089398066e-07,
+          "worst_flat": 18016
+        }
+      },
+      "C-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 554800,
+          "cosine": 0.9999958644643757,
+          "elements": 1310720,
+          "first_nonzero_flat": 17921,
+          "maxabs": 0.015625,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.13068819759878622,
+          "relative_rms": 0.0028759494606591164,
+          "rms": 0.00037585265139874124,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -1.382333483235243e-07,
+          "worst_flat": 386575
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 4170,
+          "cosine": 0.9999994135974196,
+          "elements": 76800,
+          "first_nonzero_flat": 17921,
+          "maxabs": 0.005859375,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.14625746199214035,
+          "relative_rms": 0.0010883284594071319,
+          "rms": 0.00015917615828670327,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -2.0238726089398066e-07,
+          "worst_flat": 18016
+        }
+      },
+      "C-minus-B": {
+        "full": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 1310720,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.1306869276830263,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        },
+        "shared_prefix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 76800,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.1462415871806399,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        }
+      },
+      "coordinate_identity": true,
+      "prefix_telescope": {
+        "coordinate_sum_elements": 76800,
+        "cross_dot": 0.0,
+        "energy_identity_residual": 0.0,
+        "first_energy": 0.0019458853913789653,
+        "first_vs_historical_cosine": 1.0,
+        "historical_energy": 0.0019458853913789653,
+        "scope": "order-conditioned vector telescope and alignment; not factorial interaction, intrinsic gain or causal shares",
+        "second_energy": 0.0,
+        "second_vs_historical_cosine": null,
+        "signed_cross_term": 0.0,
+        "sum_energy": 0.0019458853913789653
+      }
+    },
+    "mlp_input": {
+      "B-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 125881,
+          "cosine": 0.999998704767429,
+          "elements": 1310720,
+          "first_nonzero_flat": 17922,
+          "maxabs": 0.0078125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.11114007543798231,
+          "relative_rms": 0.0016095295866150776,
+          "rms": 0.00017888323967606425,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -4.626908776117489e-08,
+          "worst_flat": 772240
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 533,
+          "cosine": 0.9999998550361516,
+          "elements": 76800,
+          "first_nonzero_flat": 17922,
+          "maxabs": 0.00390625,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.12386418850249542,
+          "relative_rms": 0.0005400648653538178,
+          "rms": 6.68946962857601e-05,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -2.082080269853274e-07,
+          "worst_flat": 18129
+        }
+      },
+      "C-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 125881,
+          "cosine": 0.999998704767429,
+          "elements": 1310720,
+          "first_nonzero_flat": 17922,
+          "maxabs": 0.0078125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.11114007543798231,
+          "relative_rms": 0.0016095295866150776,
+          "rms": 0.00017888323967606425,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": -4.626908776117489e-08,
+          "worst_flat": 772240
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 533,
+          "cosine": 0.9999998550361516,
+          "elements": 76800,
+          "first_nonzero_flat": 17922,
+          "maxabs": 0.00390625,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.12386418850249542,
+          "relative_rms": 0.0005400648653538178,
+          "rms": 6.68946962857601e-05,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -2.082080269853274e-07,
+          "worst_flat": 18129
+        }
+      },
+      "C-minus-B": {
+        "full": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 1310720,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.11113870377322724,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        },
+        "shared_prefix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 76800,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.12385900022503771,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        }
+      },
+      "coordinate_identity": true,
+      "prefix_telescope": {
+        "coordinate_sum_elements": 76800,
+        "cross_dot": 0.0,
+        "energy_identity_residual": 0.0,
+        "first_energy": 0.00034367235004140184,
+        "first_vs_historical_cosine": 1.0,
+        "historical_energy": 0.00034367235004140184,
+        "scope": "order-conditioned vector telescope and alignment; not factorial interaction, intrinsic gain or causal shares",
+        "second_energy": 0.0,
+        "second_vs_historical_cosine": null,
+        "signed_cross_term": 0.0,
+        "sum_energy": 0.00034367235004140184
+      }
+    },
+    "projection": {
+      "B-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 206438,
+          "cosine": 0.9999995961600171,
+          "elements": 1310720,
+          "first_nonzero_flat": 18510,
+          "maxabs": 0.015625,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07292995087792882,
+          "relative_rms": 0.0008989368531281319,
+          "rms": 6.555942054099457e-05,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 3.56409135093827e-08,
+          "worst_flat": 704000
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 71,
+          "cosine": 0.9999999978253238,
+          "elements": 76800,
+          "first_nonzero_flat": 18510,
+          "maxabs": 0.00048828125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07324158346875971,
+          "relative_rms": 6.594985780400346e-05,
+          "rms": 4.830272015104753e-06,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 1.0286845887700716e-08,
+          "worst_flat": 46508
+        }
+      },
+      "C-minus-A": {
+        "full": {
+          "bitwise_exact": false,
+          "changed_values": 206438,
+          "cosine": 0.9999995961600171,
+          "elements": 1310720,
+          "first_nonzero_flat": 18510,
+          "maxabs": 0.015625,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07292995087792882,
+          "relative_rms": 0.0008989368531281319,
+          "rms": 6.555942054099457e-05,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 3.56409135093827e-08,
+          "worst_flat": 704000
+        },
+        "shared_prefix": {
+          "bitwise_exact": false,
+          "changed_values": 71,
+          "cosine": 0.9999999978253238,
+          "elements": 76800,
+          "first_nonzero_flat": 18510,
+          "maxabs": 0.00048828125,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07324158346875971,
+          "relative_rms": 6.594985780400346e-05,
+          "rms": 4.830272015104753e-06,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 1.0286845887700716e-08,
+          "worst_flat": 46508
+        }
+      },
+      "C-minus-B": {
+        "full": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 1310720,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07293139393051776,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            512,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        },
+        "shared_prefix": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "elements": 76800,
+          "first_nonzero_flat": null,
+          "maxabs": 0.0,
+          "orientation": "left-minus-right",
+          "reference_rms": 0.07324157049514496,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst_flat": 0
+        }
+      },
+      "coordinate_identity": true,
+      "prefix_telescope": {
+        "coordinate_sum_elements": 76800,
+        "cross_dot": 0.0,
+        "energy_identity_residual": 0.0,
+        "first_energy": 1.7918613304246378e-06,
+        "first_vs_historical_cosine": 1.0,
+        "historical_energy": 1.7918613304246378e-06,
+        "scope": "order-conditioned vector telescope and alignment; not factorial interaction, intrinsic gain or causal shares",
+        "second_energy": 0.0,
+        "second_vs_historical_cosine": null,
+        "signed_cross_term": 0.0,
+        "sum_energy": 1.7918613304246378e-06
+      }
+    }
+  }
+}

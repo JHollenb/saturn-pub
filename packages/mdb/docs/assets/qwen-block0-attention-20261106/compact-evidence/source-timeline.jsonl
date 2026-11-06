@@ -1,0 +1,6 @@
+{"kind": "functional_sources_and_triangle_complete", "native_block_calls": 0, "sdpa_calls": 5, "seconds": 33.92749417386949}
+{"kind": "functional_fields_sealed", "native_block_calls": 0, "sdpa_calls": 5, "seal_sha256": "ae567968b1fd49b314f9f79f2e02cf4e32a5a0a5dace1bcfed052e63c7bfdd08", "seconds": 34.13756038201973}
+{"case": "short", "functional_seal_sha256": "ae567968b1fd49b314f9f79f2e02cf4e32a5a0a5dace1bcfed052e63c7bfdd08", "kind": "native_block_entry", "seconds": 34.13837275700644}
+{"case": "short", "kind": "native_block_completed", "sdpa_calls": 6, "seconds": 35.30437719589099}
+{"case": "long", "functional_seal_sha256": "ae567968b1fd49b314f9f79f2e02cf4e32a5a0a5dace1bcfed052e63c7bfdd08", "kind": "native_block_entry", "seconds": 35.305135811213404}
+{"case": "long", "kind": "native_block_completed", "sdpa_calls": 7, "seconds": 36.042673599906266}

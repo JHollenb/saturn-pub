@@ -1,0 +1,11 @@
+{
+  "job_id": "job-2d91d9d5163a",
+  "mechanics_status": "verified-saved-block0-panel",
+  "model_calls": 0,
+  "records": 2,
+  "request_sha256": "1d558db457410353773c2a55cbfda177ccab0f843d092cdb8251a1696e00a355",
+  "schema": "mdb-qwen-block0-attention-compact-v1",
+  "seconds": 10.50309309689328,
+  "source_job": "job-0a3c41fce1d0",
+  "triangle_arms": 3
+}

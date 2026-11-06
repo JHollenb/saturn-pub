@@ -1,0 +1,258 @@
+{
+  "backend": "torch-qwen3-block0-attention",
+  "capture_sites": true,
+  "config": {
+    "cases": {
+      "long": {
+        "forecast_qwen": "cases/long/forecast-qwen.json",
+        "native_qwen": "cases/long/native-qwen.json"
+      },
+      "short": {
+        "forecast_qwen": "cases/short/forecast-qwen.json",
+        "native_qwen": "cases/short/native-qwen.json"
+      }
+    },
+    "cpu_threads": 4,
+    "device": "cuda",
+    "directory_custody": true,
+    "dtype": "bfloat16",
+    "fixed_bank_case": "long",
+    "input_files": {
+      "cases/long/forecast-qwen.json": {
+        "bytes": 31230,
+        "sha256": "8d954b2dcfbbd000939b6445ba0892b911f7a87a972a578e4a71e1ce300e6502"
+      },
+      "cases/long/native-qwen.json": {
+        "bytes": 29977,
+        "sha256": "ebbb633bced37f16cb4520ff273e6b252325acd39051c0298c5b72371a671ce0"
+      },
+      "cases/long/qwen/forecast/attention-mask.npy": {
+        "bytes": 4224,
+        "sha256": "b6ac6a685e8726963fa2bb91856728280ee6fa47957eea274285b029a6abb946"
+      },
+      "cases/long/qwen/forecast/hidden-00.npy": {
+        "bytes": 2621568,
+        "sha256": "7dce5d10272e9b6d708a70e4a493327c59c4d2d13b09dd533229408c9d0c5aaa"
+      },
+      "cases/long/qwen/forecast/hidden-01.npy": {
+        "bytes": 2621568,
+        "sha256": "2600ca861ea83745d8575db2680e03d8dc568899a93e76538f8ebc6fbde0e2a5"
+      },
+      "cases/long/qwen/forecast/input-ids.npy": {
+        "bytes": 4224,
+        "sha256": "300215dde9e7b0f9ac6a0f68a0af959d965ef1768b323851d373d52c06925b52"
+      },
+      "cases/long/qwen/native/attention-mask.npy": {
+        "bytes": 4224,
+        "sha256": "b6ac6a685e8726963fa2bb91856728280ee6fa47957eea274285b029a6abb946"
+      },
+      "cases/long/qwen/native/hidden-00.npy": {
+        "bytes": 2621568,
+        "sha256": "7dce5d10272e9b6d708a70e4a493327c59c4d2d13b09dd533229408c9d0c5aaa"
+      },
+      "cases/long/qwen/native/hidden-01.npy": {
+        "bytes": 2621568,
+        "sha256": "2600ca861ea83745d8575db2680e03d8dc568899a93e76538f8ebc6fbde0e2a5"
+      },
+      "cases/long/qwen/native/input-ids.npy": {
+        "bytes": 4224,
+        "sha256": "300215dde9e7b0f9ac6a0f68a0af959d965ef1768b323851d373d52c06925b52"
+      },
+      "cases/short/forecast-qwen.json": {
+        "bytes": 19301,
+        "sha256": "f440fd56ec5b6a8547ccf5fb2707d9b47f08ee295abfcecfb16568d84a441e37"
+      },
+      "cases/short/native-qwen.json": {
+        "bytes": 17987,
+        "sha256": "d50d7ca40a52c3e88140f6a15bbf981b6b0bc6a2431153f30c30c6e857059bb5"
+      },
+      "cases/short/qwen/forecast/attention-mask.npy": {
+        "bytes": 4224,
+        "sha256": "17ecfc07548df44668e8d8197d6834f9e51348e90e72233d7398986a6f1d1eba"
+      },
+      "cases/short/qwen/forecast/hidden-00.npy": {
+        "bytes": 2621568,
+        "sha256": "df13fc52c4df06fae8a719ec3aaf98dadd4301571223b26e7eb6d16fb65353d1"
+      },
+      "cases/short/qwen/forecast/hidden-01.npy": {
+        "bytes": 2621568,
+        "sha256": "6b4ee0a45d48f3e89958cb1c8fb499794002ade219047f23ad92fc67ca783730"
+      },
+      "cases/short/qwen/forecast/input-ids.npy": {
+        "bytes": 4224,
+        "sha256": "034a1576091008b4f2ef813fb417c2d0089dabf9c6eaab85eb60d60eb62b286a"
+      },
+      "cases/short/qwen/native/attention-mask.npy": {
+        "bytes": 4224,
+        "sha256": "17ecfc07548df44668e8d8197d6834f9e51348e90e72233d7398986a6f1d1eba"
+      },
+      "cases/short/qwen/native/hidden-00.npy": {
+        "bytes": 2621568,
+        "sha256": "df13fc52c4df06fae8a719ec3aaf98dadd4301571223b26e7eb6d16fb65353d1"
+      },
+      "cases/short/qwen/native/hidden-01.npy": {
+        "bytes": 2621568,
+        "sha256": "6b4ee0a45d48f3e89958cb1c8fb499794002ade219047f23ad92fc67ca783730"
+      },
+      "cases/short/qwen/native/input-ids.npy": {
+        "bytes": 4224,
+        "sha256": "034a1576091008b4f2ef813fb417c2d0089dabf9c6eaab85eb60d60eb62b286a"
+      }
+    },
+    "input_root": "/mnt/big/mdb/research/job-0b6c4340d5e6/raw-mask-pair-result",
+    "max_wall_seconds": 600,
+    "native_sources": {
+      "masking": "5f48e428ea02d1b6008acb45c147fcdb4eba89deea69627744662aa05da1b9f2",
+      "qwen3": "fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab",
+      "sdpa": "b72c5c96ea070d594f36e774cfc799160a0ecb157353502a61eb3c5ea1e35b46"
+    },
+    "output_name": "qwen-block0-attention-result",
+    "output_scratch": "/mnt/big/mdb/research",
+    "parameter_root": "/mnt/big/llm-models/FLUX.2-klein-4B/text_encoder",
+    "profile_sdpa": true,
+    "qwen_config": "qwen-config.json",
+    "qwen_config_sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+    "qwen_manifest": "qwen-parameter-artifacts.json",
+    "qwen_manifest_sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+    "retrieval_script": "retrieve_qwen_weights.py",
+    "retrieval_script_sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+    "schema": "mdb-qwen-block0-attention-plan-v1",
+    "shared_prefix_rows": 30,
+    "short_valid_rows": 39,
+    "source_provenance": {
+      "job_id": "job-0b6c4340d5e6",
+      "manifest_sha256": "89dafe939e0143596edf88b42e073f97cc5c945c893b5b8cf9897eff809c7154",
+      "request_sha256": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd"
+    },
+    "source_reduction_policy": true,
+    "transport_limits": {
+      "max_expanded_bytes": 1073741824,
+      "max_member_bytes": 67108864
+    }
+  },
+  "device": "cuda",
+  "dtype": "bfloat16",
+  "execution_environment": {
+    "cuda_cache_path": "/mnt/hdd8tb/mdb/cuda-cache",
+    "extra_model_roots": "/mnt/big/llm-models",
+    "python": "3.14.6",
+    "requirements": [
+      "torch==2.13.0",
+      "diffusers==0.39.0",
+      "transformers==5.14.1",
+      "accelerate==1.14.0",
+      "safetensors>=0.5",
+      "numpy>=2.0",
+      "pyyaml>=6.0",
+      "psutil>=5.9",
+      "pillow>=10.0"
+    ],
+    "tmpdir": "/mnt/hdd8tb/mdb/tmp",
+    "torch_home": "/mnt/hdd8tb/mdb/torch",
+    "torchinductor_cache_dir": "/mnt/hdd8tb/mdb/torchinductor-cache",
+    "uv_cache_dir": "/mnt/hdd8tb/mdb/uv-cache",
+    "uv_link_mode": "symlink"
+  },
+  "launcher_sha256": "6c6e4f3bd527b8b79bd6a2dd6fc44967f2fc9968de8d8b9f750066b95de49181",
+  "model": "qwen3-in-flux2-klein-4b",
+  "needs": {
+    "cuda": true,
+    "host": "beast"
+  },
+  "parent_request_sha256": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd",
+  "request_sha256": "5579dc04e6fbcb20d675386833b4e3cc545f0f071383c2443cb72b108c260c36",
+  "resource_exception": {
+    "calibration": "Metadata-derived12BF16 tensors979773952B; one aliasing native block, retained source/triangle ports and streamed parameter hashes. Tiny qualification uses actual installed equations/serializers; author estimates3\u20134GB RSS/~1.5GB VRAM. First original-geometry peak unmeasured. No full encoder/FLUX/VAE; full original source archives hash once.240s estimate,600s cooperative/900s outer,observe actual peaks.",
+    "cpu_threads": 4,
+    "disk_gb": 2,
+    "est_wall_s": 240,
+    "ram_mb": 8192,
+    "timeout_s": 900,
+    "vram_mb": 4096
+  },
+  "runtime_wheels": {
+    "mdb_runtime-0.1.0-py3-none-any.whl": "4b1b965dce45883cabcb24ab2c11702ce748aeb1658776596be27b405df26d21",
+    "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+    "saturn_pub-0.4.1-py3-none-any.whl": "c32bbcf5c5b45e4970d9c750266f607b2a9b0f06dc982106fd82e0501375e424"
+  },
+  "scheduler_url": "http://192.168.68.68:9025",
+  "scheduling_contract": {
+    "additional_scheduler_submissions": 0,
+    "branch_execution": "in_process",
+    "checkpoint_policy": "One finite diagnostic: source functional ports and three fixed-bank arms sealed before two native block calls. Historical H0/H1 are known replay controls; no retries, nesting or extra profiler forwards.",
+    "collection_policy": "direct_job_only",
+    "control_plane": "mrun_outer_lease",
+    "data_plane": "resident_worker",
+    "execution_model": "finite_local_program",
+    "interactive": false,
+    "lease_scope": "entire-worker",
+    "logical_branches": 5,
+    "logical_branches_scope": "2source cases+3triangle variants; source cases have separately counted functional/native executions.",
+    "logical_operations": 7,
+    "logical_operations_scope": "2functional source blocks+3fixed-bank attention/tail arms+2native source blocks; parameter-free native rotary called twice separately.",
+    "max_local_work_items": 32,
+    "max_mrun_submissions": 1,
+    "model_loads": 1,
+    "mrun_retry_policy": "none_for_finite_lease",
+    "native_block_calls": 2,
+    "native_rotary_calls": 2,
+    "per_branch_mrun_submissions": 0,
+    "per_transition_mrun_submissions": 0,
+    "physical_component_hydrations": 1,
+    "pipeline_assemblies": 1,
+    "replay_policy": "local_checkpoint_restore",
+    "schema": "saturn-single-lease-scheduling-contract-v1",
+    "total_sdpa_calls": 7
+  },
+  "schema": "mdb-qwen-block0-attention-request-v1",
+  "source_hashes": {
+    "count-contract.json": "78d87e0c4eda9ca17fa9b755f1f7b3c93e42a9d48acce40fae8e08753027fb53",
+    "flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "flux_source_receiver.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+    "parameter-geometry.json": "8e08b063adca4669dcd0d8635bb45101a558a23150ea87f88ea4427f819efca0",
+    "parent-files.json": "89dafe939e0143596edf88b42e073f97cc5c945c893b5b8cf9897eff809c7154",
+    "plan.json": "8ce2f870a87dffa9a2acf09dd4bec72787990e97c52fb083a4036602a1ad838c",
+    "preflight.v1.json": "f230e9dc42ce82d9f11a67298068e4d4ad863971b3846f566d25ddb3c1ae7358",
+    "qwen-config.json": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+    "qwen-parameter-artifacts.json": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+    "qwen-source-binding.json": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+    "qwen_block0_attention_microscope.py": "70e52a6624947029b906e0a02f2f36d1a165b321a40c9e42f665224a3710361b",
+    "retrieve_qwen_weights.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+    "stage_qwen_block0_attention.py": "6c6e4f3bd527b8b79bd6a2dd6fc44967f2fc9968de8d8b9f750066b95de49181"
+  },
+  "task_family": "analysis",
+  "workload_geometry": {
+    "FLUX_calls": 0,
+    "VAE_calls": 0,
+    "fixed_bank_case": "long",
+    "full_encoder_calls": 0,
+    "functional_embeddings": 2,
+    "functional_source_blocks": 2,
+    "model_loads": 1,
+    "native_block_calls": 2,
+    "native_block_hydrations": 1,
+    "native_block_parameters": 11,
+    "native_rotary_calls": 2,
+    "native_sdpa_calls": 2,
+    "peak_physical_batch": 1,
+    "persistent_weight_banks": 0,
+    "physical_native_block_hydrations": 1,
+    "primitive_scope": "source formation + three order-conditioned equivalent full-causal representations, not a factorial or future-image forecast",
+    "profiler_extra_forwards": 0,
+    "retained_sequence_rows": 512,
+    "schema": "mdb-qwen-block0-attention-counts-v1",
+    "selected_parameter_payload_bytes": 979773952,
+    "selected_parameter_tensors": 12,
+    "shared_prefix_rows": 30,
+    "source_sdpa_calls": 2,
+    "tokenizer_calls": 0,
+    "total_sdpa_calls": 7,
+    "triangle_arms": [
+      "A.explicit-repeated",
+      "B.causal-repeated",
+      "C.causal-grouped"
+    ],
+    "triangle_sdpa_calls": 3
+  }
+}

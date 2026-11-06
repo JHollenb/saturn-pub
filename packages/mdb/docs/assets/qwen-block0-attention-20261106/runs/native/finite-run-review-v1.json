@@ -1,0 +1,138 @@
+{
+  "bindings": {
+    "payload_seal_sha256": "1a14f40025232646fec018bd3abb77f2d5a0f27606b618d0030b0eb1dfd047bf",
+    "qualification_sha256": "786c328b011a0a8715c99ca7384c6a958ac0f5f1b1942c1177bd5d8a804f7d4a",
+    "staged_command_sha256": "c7ec37e060ed898eee37a99d5b55bdee68c60dbf7bdf417f29d4f5fdf41e6a74"
+  },
+  "blocking_issues": [],
+  "cadence": {
+    "holistic_anchor_turn": 9,
+    "latest_holistic_review": 7,
+    "next_no_later_than_turn": 12,
+    "reset": false
+  },
+  "chronology_and_census": {
+    "FLUX_calls": 0,
+    "SDPA_native": 2,
+    "SDPA_source": 2,
+    "SDPA_total": 7,
+    "SDPA_triangle": 3,
+    "VAE_calls": 0,
+    "extra_profiler_forwards": 0,
+    "full_encoder_calls": 0,
+    "functional_embeddings": 2,
+    "functional_source_blocks": 2,
+    "hydrations": 1,
+    "native_block_calls": 2,
+    "native_rotary_calls": 2,
+    "observer": "SDPA recorder preserves arguments and restores global callable on exit; profiler surrounds existing calls only and unavailable/broken profiling is diagnostic with no repeat.",
+    "seal": "Functional source ports and allthree triangle outcomes are recorded and file-inventoried before two native block calls. Original block module-entry guard covers source and triangle construction. No separate later native triangle validation calls exist: triangle is an observed primitive intervention.",
+    "seal_scope": "Custom source-bound functional-field/file seal, not a claimed ForecastTransaction or novel raw-image forecast. Posttarget verification checks the seal and all pretarget files unchanged.",
+    "selected_tensors": 12,
+    "tokenizer_calls": 0,
+    "triangle_attention_tail_arms": 3
+  },
+  "created_utc": "2026-11-06T13:38:41.985606+00:00",
+  "goal_status": "active",
+  "independent_checks": {
+    "12_selected_parameter_geometry_979773952_bytes": true,
+    "14_staged_source_hashes": true,
+    "20_selected_members_join_exact_parent_manifest": true,
+    "3_whole_wheels": true,
+    "455_wheel_python_entries_equal_installed_environment": true,
+    "472_payload_sealed_package_entries_equal_installed_environment": true,
+    "canonical_request_identity": true,
+    "current_launcher_equal_request": true,
+    "hostile_ambient_python_cache_overridden_to_exact_staged_command": true,
+    "no_Mac_paths_or_hostile_values_in_command": true,
+    "parent_job_request_manifest_identities": true,
+    "payload_files_config_and_request_copies": true,
+    "queue_note_419_characters": true,
+    "strict_preflight_CUDA_no_retry_single_lease": true,
+    "submit_checks_exact_review_request_sources_wheels_no_previous_submission": true
+  },
+  "launcher_sha256": "6c6e4f3bd527b8b79bd6a2dd6fc44967f2fc9968de8d8b9f750066b95de49181",
+  "qualification": {
+    "authority": "Reviewed bound receipt and source; no test rerun by this reviewer.",
+    "producer_tests": 8,
+    "pytest_seconds": 4.75,
+    "receipt_status": "passed",
+    "saved_only_auditor": "Separate instrument still being qualified; do not claim its result or original numerical outcomes at admission.",
+    "scope": "Synthetic recipe-backed actual block/SDPA/rotary APIs, unequal-width geometry, full ports, source immutability, repeated KV identity, codecs, profiler no-extra-call/restoration, signed accounts and actual CLI/finalizer."
+  },
+  "remaining_limits": [
+    "This readiness receipt is not numerical parity or scientific success.",
+    "Final saved-only auditor qualification and actual source/clock/consumer joins remain separate before result claims.",
+    "Original historical source data remain remote; reviewer checked metadata custody joins rather than rehashing original arrays/checkpoints.",
+    "Profiler capture failure must remain instrument status, not evidence that a particular kernel or discrepancy is absent."
+  ],
+  "request_file_sha256": "4240f9341223a0cd694454c36e5e0ba883359a4658cf7b9bd053f813ec3fc202",
+  "request_sha256": "5579dc04e6fbcb20d675386833b4e3cc545f0f071383c2443cb72b108c260c36",
+  "resources": {
+    "admission": "Actual scheduler resource/telemetry and strict preflight required at submit. Reviewer did not query scheduler or authorize cancellation of unrelated work.",
+    "max_member_bytes": 67108864,
+    "max_raw_bytes": 1073741824,
+    "rationale": "One selected embedding+block bank, aliasing native parameters and two source/threetriangle/twonative retained ports are materially smaller than full encoder composition. Recipe loading temporarily widens one BF16payload toFP32, including the large embedding, and native profiling/capture adds overhead: neither peak is certified from BF16 sum alone. 8192MB RAM/4096MB VRAM bounds are conservative relative to author3-4GB/~1.5GB estimates but firstoriginalgeometry remains unmeasured. Largest activation member is a512x9728 BF16 MLPfield (~10MB plusheader), below64MiB; no embedding bank is serialized. Totalfield+receipt estimate fits1GiB, enforced byfinalizer; actual measured size still required.",
+    "reservation": {
+      "calibration": "Metadata-derived12BF16 tensors979773952B; one aliasing native block, retained source/triangle ports and streamed parameter hashes. Tiny qualification uses actual installed equations/serializers; author estimates3\u20134GB RSS/~1.5GB VRAM. First original-geometry peak unmeasured. No full encoder/FLUX/VAE; full original source archives hash once.240s estimate,600s cooperative/900s outer,observe actual peaks.",
+      "cpu_threads": 4,
+      "disk_gb": 2,
+      "est_wall_s": 240,
+      "ram_mb": 8192,
+      "timeout_s": 900,
+      "vram_mb": 4096
+    },
+    "selected_original_payload_bytes": 979773952,
+    "time": "240s estimated;600s cooperative event checks and900s hardouter. Hashing fullsource archives and CPU per-token reductions count in runtime; no speed claim."
+  },
+  "review_status": "ready-for-finite-run",
+  "reviewer": "context_carriers_astra",
+  "runtime_wheel_hashes": {
+    "mdb_runtime-0.1.0-py3-none-any.whl": "4b1b965dce45883cabcb24ab2c11702ce748aeb1658776596be27b405df26d21",
+    "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+    "saturn_pub-0.4.1-py3-none-any.whl": "c32bbcf5c5b45e4970d9c750266f607b2a9b0f06dc982106fd82e0501375e424"
+  },
+  "schema": "mdb-finite-run-review-astra-v1",
+  "scientific_contract": {
+    "estimands": "B-A conditional mask representation contrast; C-B conditional grouping contrast; C-A telescopes with signed cross terms. No fourth corner, factorial interaction, additive causal share or universal causal-mask claim.",
+    "historical_bridge": "Only first30 common-ID query rows support the original cross-case causal dependency comparison. Full512 triangle is causal-equivalent on one bank; original short key padding and other-case suffix differ.",
+    "kernel_scope": "Passive event names may identify selected implementation/operator; do not equate them with proof of exact CUDA reduction order or force backend to obtain agreement.",
+    "observed_vs_reconstructed": "Native projection, post-attention normalization and MLP ports are directly hooked. Native after_attention is reconstructed as H0+captured projection; it is not an independently hooked residual operand. Parent acknowledged and will retain this provenance in reader/catalog/prose.",
+    "predictions": "Positioned-prefix Q/K/V equality and nonzero positively aligned equivalent-representation contrast remain frozen diagnostic hypotheses; all misses/replay differences remain observations. Native model/profile uncertainty must not be renamed semantic future-token access.",
+    "retention": "Full native/source/triangle ports and actual masks retained, plus per-token/head reductions. No laterQwen, E, diffusion or image continuation is claimed.",
+    "triangle": "Fixedlongfull512 Q/K/V/H0 bank; Aexplicitcausal+repeatedKV, Bimplicitcausal+same repeatedKV, Cimplicitcausal+groupedKV. Same original tail/weights/RMSNorm and residual applied to each."
+  },
+  "scope": "Exact staged finite block0 diagnostic; source/JSON/metadata and installed package checks only. No model, tokenizer, checkpoint payload, original array, CUDA, staging, job or scheduler call. Not a holistic cadence reset.",
+  "source_and_input_closure": {
+    "aliasing": "Eleven native block parameters assigned from the same once-loaded original tensors; original value hashes and FP32 rotary buffers rechecked at end.",
+    "forecast_inputs": "Regenerated functional embedding from retained native-lane IDs plus original embedding/eleven block0 parameter recipes; observed historical H0/H1 are not fed into the functional graph. IDs/masks are already known source inputs.",
+    "historical_usage": "Copies/hashes original H0/H1 before execution for custody; numerical loading/comparison occurs after native block calls. Historical outcomes are known replay controls, not held-out raw-input predictions.",
+    "native_ABI": "Qwen3, masking and SDPA implementation hashes checked before source execution; original unequal2560 residual/4096 attention width checked; CPUconstructed FP32 rotary moves device-only.",
+    "native_inputs": "Native layer receives the same regenerated H0 and source-derived mask/positions; thus matched-input conditional block comparison, not a separately tokenized/encoded raw path.",
+    "parameters": "RecipeBank validates full398 recipe/header/source-file closure, authenticates complete source archives once, then hashes payload and reconstructed NPY identity for the12 actually loaded tensors. It does not hydrate398tensors or export a bank.",
+    "parent": {
+      "job_id": "job-0b6c4340d5e6",
+      "manifest_sha256": "89dafe939e0143596edf88b42e073f97cc5c945c893b5b8cf9897eff809c7154",
+      "request_sha256": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd"
+    },
+    "selected_input_bytes": 21104831,
+    "selected_input_members": 20,
+    "source_indices": "Original cases/short and cases/long forecast/native Qwen sidecars; retained IDs/masks and hidden_states[0],[1] only. Original field0 is embedding H0; field1 is output after zero-indexed block0."
+  },
+  "source_hashes": {
+    "count-contract.json": "78d87e0c4eda9ca17fa9b755f1f7b3c93e42a9d48acce40fae8e08753027fb53",
+    "flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "flux_source_receiver.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+    "parameter-geometry.json": "8e08b063adca4669dcd0d8635bb45101a558a23150ea87f88ea4427f819efca0",
+    "parent-files.json": "89dafe939e0143596edf88b42e073f97cc5c945c893b5b8cf9897eff809c7154",
+    "plan.json": "8ce2f870a87dffa9a2acf09dd4bec72787990e97c52fb083a4036602a1ad838c",
+    "preflight.v1.json": "f230e9dc42ce82d9f11a67298068e4d4ad863971b3846f566d25ddb3c1ae7358",
+    "qwen-config.json": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+    "qwen-parameter-artifacts.json": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+    "qwen-source-binding.json": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+    "qwen_block0_attention_microscope.py": "70e52a6624947029b906e0a02f2f36d1a165b321a40c9e42f665224a3710361b",
+    "retrieve_qwen_weights.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+    "stage_qwen_block0_attention.py": "6c6e4f3bd527b8b79bd6a2dd6fc44967f2fc9968de8d8b9f750066b95de49181"
+  }
+}

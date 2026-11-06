@@ -1,0 +1,205 @@
+{
+  "actual_trends": {
+    "SDPA": "All54 functional and72 native argument records match case-specific mask/causal/GQA regimes. Selected CUDA kernels and full mask content were not independently recorded.",
+    "common_prefix_rows": 30,
+    "conditioning_response_native_rms": 4.388364921447274,
+    "countertrend": "Absolute common-prefix difference rises H6 toH7 (.00315716 to.00435295) while relative difference falls (.00415760 to.0000720209) because reference state amplitude grows. No uniform per-layer amplification claim follows.",
+    "endpoint": "Two own-state raw-input-to-image compositions exactly match each native reference; signed long-minus-short image vector is nonzero and exactly predicted.",
+    "pixel_response_native_rms": 10.975714433338007,
+    "pixel_response_native_signed_mean": 2.2758216857910156,
+    "pixel_response_units": "uint8 RGB levels on0..255; not divided by255 or a semantic score.",
+    "prefix_selected": {
+      "0": {
+        "changed_values": 0,
+        "maxabs": 0.0,
+        "relative_rms": 0.0,
+        "rms": 0.0
+      },
+      "1": {
+        "changed_values": 3376,
+        "maxabs": 0.0078125,
+        "relative_rms": 0.000934494943718639,
+        "rms": 0.0001783766512474351
+      },
+      "18": {
+        "changed_values": 61986,
+        "maxabs": 0.25,
+        "relative_rms": 0.00022943091589051504,
+        "rms": 0.014073519040640144
+      },
+      "27": {
+        "changed_values": 60918,
+        "maxabs": 1.0,
+        "relative_rms": 0.0005575657834767152,
+        "rms": 0.034241180664237446
+      },
+      "6": {
+        "changed_values": 49601,
+        "maxabs": 0.125,
+        "relative_rms": 0.0041576008384482535,
+        "rms": 0.0031571588530063853
+      },
+      "7": {
+        "changed_values": 53298,
+        "maxabs": 0.125,
+        "relative_rms": 7.202089796649404e-05,
+        "rms": 0.0043529502564732874
+      },
+      "9": {
+        "changed_values": 56666,
+        "maxabs": 0.15625,
+        "relative_rms": 0.00012300262940010719,
+        "rms": 0.007434493453659625
+      }
+    },
+    "visual": "Informal, unblinded task-aware inspection: both originals show orange ring onleft and blue cube onright ongray surface; their placement/scale/background differ modestly. Numerical whole-vector response, not appearance, is the predictive evidence. No semantic classifier calibration."
+  },
+  "content_review": {
+    "instrument_history": "Keep run01 model-free staging failure, both failed CPU readers and corrected count2 metadata. No model or prediction was rerun/changed to obtain final audit. Independent saved-only audit is not independent CUDA arithmetic.",
+    "material_result_errors": [],
+    "minor_derived_metadata_issue": "Common-prefix diagnostics reuse generic orientation='functional-minus-native' and native/predicted labels although the call compares long versus short within each lane. The nested lane/path and blog interpretation are correct. Preserve raw; add explicit cross-case orientation in future derived reports.",
+    "prose_assessment": "Current blog/doc correctly separate source-branch coverage, raw-content/truncation confounding, shared primitives, repeated-coordinate counts, true all512-row consumption, unused native Qwen suffix, prior reader failures and zero-vector cosine.",
+    "publishing": "Figures/key-map delivery pending at review; not an integrity failure of source data. Do not claim reviewer verified eventual figure assets."
+  },
+  "created_utc": "2026-11-06T13:20:27.269946+00:00",
+  "decision": "Prefer one small first-block localization now, then E18 typed full continuation. Do not turn the local arithmetic investigation into an indefinite sequence displacing the counterfactual account.",
+  "earlier_review_trigger": "Major architecture, arithmetic, source-frontier or interpretive contradiction.",
+  "evidence": {
+    "PNG_hashes": {
+      "long": {
+        "forecast": "6f2e653d4b51114ea549157eb9ab10b2e99b3fdde8f60b63c4b064db23172a57",
+        "native-own": "6f2e653d4b51114ea549157eb9ab10b2e99b3fdde8f60b63c4b064db23172a57",
+        "native-reference": "6f2e653d4b51114ea549157eb9ab10b2e99b3fdde8f60b63c4b064db23172a57"
+      },
+      "short": {
+        "forecast": "34ea82cf977a371130c30b6783cd01900c7b0ce97caa39d99b570064d3dc80c1",
+        "native-own": "34ea82cf977a371130c30b6783cd01900c7b0ce97caa39d99b570064d3dc80c1",
+        "native-reference": "34ea82cf977a371130c30b6783cd01900c7b0ce97caa39d99b570064d3dc80c1"
+      }
+    },
+    "actual_counts": {
+      "component_hydrations": 3,
+      "cpu_offloads": 6,
+      "cuda_placements": 6,
+      "functional_decode_calls": 2,
+      "functional_transitions": 224,
+      "guard_refusals": 0,
+      "native_module_entries": 4436,
+      "native_qwen_calls": 2,
+      "native_transitions": 224,
+      "native_vae_calls": 4,
+      "noise_draws": 4
+    },
+    "actual_saved_report_sha256": "0f0890fc0f55c06903c8ff841b2852778c328c9a57f3141964e9d06db4a45519",
+    "all_primary_bitwise_and_all_signed_response_hashes_and_errors_exact": true,
+    "audit_sha256": "896a8111e1b0d4caeeec53a731cffd2c8ee4087e2708aea3ef6cc75a392d59db",
+    "auditor_source_sha256": "70408046bb83f1c0719addb57191c7d4bdf4c5a1121195c299c4cb493cf11d88",
+    "compact_entries_independently_hashed": 64,
+    "compact_manifest_sha256": "14cee5b4030644aff01fdbffdfc45e42eb7f2a0dfd0ae15943449ec7d766afa8",
+    "cpu_audit_job_id": "job-ce54f7b5406a",
+    "cpu_audit_request_sha256": "83b0a86f3c4af70d137d31b0093990199a2675179b703371caa37e6cf5047d74",
+    "full_prefix_diagnostics_equal_between_functional_and_native_lanes": true,
+    "including_manifest_file_count": 65,
+    "native_job_id": "job-0b6c4340d5e6",
+    "native_module_entries_at_seal": 0,
+    "native_release_seconds": 255.70688345795497,
+    "native_request_sha256": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd",
+    "new_primary_full_tensor_recomputations_by_reviewer": 0,
+    "primary_fields_recounted": 2022,
+    "primary_positions_recounted": 1229586432,
+    "producer_source_sha256": "3ee62e9174186935b32ff6e9e33e18e46aa978c4442b19f02982919e63bf3912",
+    "recipes": {
+      "flux": {
+        "payload_bytes": 7751089152,
+        "tensors": 169
+      },
+      "qwen": {
+        "payload_bytes": 8044936192,
+        "tensors": 398
+      },
+      "vae": {
+        "payload_bytes": 99241030,
+        "tensors": 142
+      }
+    },
+    "response_fields_recounted": 1577,
+    "response_positions_recounted": 1059953657,
+    "seal_seconds": 255.67064416781068,
+    "seal_sha256": "836d44bc4dc24b4413473813eb0682efc1ef2c1a143f8b10f98dd6724697c594"
+  },
+  "goal_status": "active",
+  "holistic_account": {
+    "gained": "The existing end-to-end own-state account transfers across a second actual Qwen mask/GQA source branch, including complete response vectors before either reference. The new state variation on a mathematically shared causal prefix is also predicted under each finite profile.",
+    "known_counterexamples_retained": [
+      "Earlier independent NumPy/FP64 arithmetic could have small endpoint error but very poor perturbation-response error; current shared-kernel exactness does not revise those records.",
+      "Context-transfer carrier predictions recurred while complete color-swap predictions missed; numerical program closure does not establish semantic instructions.",
+      "Writer contribution ranks changed after continuation, and signed interactions/cancellations were not causal percentage shares.",
+      "BF16 nominal doses can change effective support/direction; dense-state intervention labels require actual-byte geometry.",
+      "Earlier failed producer exports, stride differences and unexecuted checks remain specific to their original experiments; later valid campaigns do not retroactively fill them."
+    ],
+    "not_merely_endpoints": "The explicit graph forms embedding,27Qwen states,E,all112FLUX transitions and functional decoder outputs without native activation refresh. Full retained fields and actual consumers connect these stages.",
+    "not_new_auxiliary_law": "Architecture, original learned parameters and original Torch primitives supply the numerical law; no surrogate law or new weights were learned. This is a separately orchestrated executable composition, not an independent implementation of CUDA reductions.",
+    "remaining_gaps": [
+      "Precise origin of new common-prefix finite drift inside block0, presently inferred from argument changes.",
+      "Untested typed counterfactual reuse of the fully composed raw graph.",
+      "Coverage beyond these input shapes, numerical policies and model/version; source-qualified applicability is curated, not automatically induced.",
+      "Primitive internals are accepted dependencies unless deliberately opened; selected kernel detail and unretained native decoder interiors are not silently inferred."
+    ],
+    "time_circuit": "Record=source-qualified operation/weights/ports/profile/applicability; state=live numerical operands plus clock; continuation=which update consumes them next. At commits working slots reset and latent is carried. These are operational distinctions, not a semantic dictionary.",
+    "understanding_criteria": "For a declared applicability domain, supply complete state/source/control dependencies, an executable finite update, prospective field and consumed-continuation predictions, and explicit unsupported profiles. Generic IDs and dense operands are valid. Neither compression nor semantic labels nor a universal independent-kernel proof is a completion prerequisite."
+  },
+  "next_review_no_later_than_turn": 12,
+  "ranked_next_cuts": [
+    {
+      "falsifiable_expectations": [
+        "Working hypothesis: first30 positionedQ/K/V are bit-exact between original routes and first differing prefix port is SDPA or later, not embedding/projection. A miss localizes an earlier formation gap and is retained.",
+        "Working hypothesis: equivalent mask/grouping representations on the fixed full operand bank produce a nonzero finite prefix output contrast matching at least part of the direction of historical head drift. No unsupported magnitude ranking or exact equality is promised.",
+        "Qualified original-route replays should reproduce their original H1/profile; replay drift remains a distinct instrument/profile observation, not suppressed.",
+        "Any conditional original-primitive numeric forecast must commit actual full output arrays before target calls; exactness would certify that local composition, not independently explain a CUDA reduction algorithm."
+      ],
+      "limits": "The triangle separates two conditional contrasts, not a complete factorial interaction. Different masked-out suffix data, mask strides or dispatch can remain alternatives. If matched heads do not account for original H1, inspect the saved output-projection/MLP handoffs; do not declare future-token semantic leakage.",
+      "minimal_contract": [
+        "Reuse authenticated exact short/long layer0 source inputs, parameter recipes, original CPU-FP32 rotary policy and execution profile. Do not retune prompts or change original targets.",
+        "Capture only the two original first-block routes and their prefix operands/returns: norm/projections, QK norm/RoPE, actual masks, SDPA head, output affine, residual and MLP exit. No27-layer orFLUX/VAE suffix is necessary.",
+        "First compare common30-prefix positionedQ/K/V bytewise. If upstream disagreement exists, report first observed differing boundary instead of assigning it to SDPA.",
+        "On ONE predetermined full512 operand bank, hold Q/K/V values, dimensions, scale, dtype and policy fixed. Compare a three-lane triangle: repeatedKV+explicit lower-triangular allowed mask; repeatedKV+maskNone/is_causalTrue; groupedKV+maskNone/is_causalTrue/enable_gqaTrue. Use original repeat layout, preserving declared strides.",
+        "These full512 causal relations are mathematically equivalent. Restrict historical cross-case explanation to shared30 query rows, whose allowed keys are all before30; historical short padding elsewhere is a separate actual-mask replay.",
+        "An optional fourth groupedKV+explicit causal-mask lane requires separate primitive support/qualification. Frozen helper rejects that combination; never mutate it in place or call it an observed Qwen source branch.",
+        "Retain raw masks, complete operand/output hashes and full prefix output arrays; passively record selected operator/kernel if available without forcing a backend. Conditional primitive forecasts may be sealed after operand capture and before editedtargets, with their frontier explicit.",
+        "End after block0. Do not expand to all27layers or another full image panel merely because one local result is interesting."
+      ],
+      "name": "One bounded Qwen block0 common-prefix/SDPA representation diagnostic",
+      "rank": 1,
+      "resources": "Only required embedding/block0/buffers and retained operands need hydration; no fullFLUX/VAE. Count original, replay, edited primitive and consumer calls separately. Bind mask data/stride/layout and allow bounded output headers; retain all misses without quality gates.",
+      "why_now": "Resolve the concrete newly observed prefix-drift explanation before another complete image pair; this is a bounded source/finite-profile question, not a claim that independent CUDA is required for understanding."
+    },
+    {
+      "assessment": "The plan is sound and does not duplicate peer lexical-row donor transfer. It tests one direct interface coordinate group, not upstream writer necessity.",
+      "contract": "Same short raw input/seed; ownE_P and separately formedE_N; same-mask own-value sham versus positiveBF16zero columns[2560:5120] at realstep0/project through Act.patch. Verify all unchanged ports/clock; retain4typedActs and8actualprojectoperandjoins if using the recommended variant;224functional+224native transitions and same-latent consumers.",
+      "limits": "E27 still contains downstream history fromH18; zeroing the directE18 concatenand does not erase Qwen block17 attention/MLP computation. Zero is an imposed potentially off-manifold input, so no semantic absence/necessity claim. BF16 projection rounding means ideal slice sums need not be exactly additive.",
+      "name": "Existing donor-free E18 constituent suppression through complete consumed future",
+      "predictions": "Freeze complete numerical edited and sham fields and signed responses before native targets. Predict sham replay equivalence and exact consumption of the declaredE18 edit at all4projects; no grounded object-change sign or necessary-feature ranking is available.",
+      "rank": 2,
+      "resources": "Reuse measured paired full composition rather than infer from logical_operations;3CPUretainedhydrations/6placements and full census/header bounds. Keep full array bytes near compute and collect compact evidence only."
+    }
+  ],
+  "review_number": 7,
+  "reviewer": "context_carriers_astra",
+  "schema": "mdb-holistic-review-v1",
+  "scope": "Read-only compact JSON, source, reviewed prose and two original native PNGs; independent hash/census/chronology checks. No model, tokenizer, checkpoint, raw tensor array, native recurrence, staging or scheduler execution. Own review files only.",
+  "sources": {
+    "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/next-counterfactual-planning-v1/plan.json": "12d80bbd98fe514e4bda62adb9e936ecc849e05323242fd719fc8cbc3785a96e",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-understanding-20261106/direction-05.md": "c8f5f55c092ee4ab4af0776fd65e647ba0e71c801c1039285b96be6841503766",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-understanding-20261106/direction-06.md": "f44c6832aab25c2b670e03e4504dd78ee399529776a8e2362317c5d624083708",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-014800-from-predicted-model-state-through-the-rest-of-the-image.md": "ddc3ef83729a13168d0f00bb75438e73f368ea8c82f4d36da9e98fbc1c631cf5",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-024157-predicting-the-decoder-from-latent-to-pixels.md": "68d73941c6080e083f5e939d3b5af6904c6367ed5ce7005250b8ba8396ebd625",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-032000-predicting-conditioning-from-the-raw-prompt.md": "dd81723d6161784eace42478e28afec1ee1a0fc6e6e2c3efe96aea372973e925",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-042000-predicting-the-image-from-the-raw-prompt.md": "d87d516784c6af686e96af69d36f57eab413d3371e6509399ee490baa93fbf54",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-051300-predicting-two-attention-paths-and-their-image-futures.md": "0c19079b109c80cc65e40e3d8416cceb2d26f7674309e69c7b6ab2fda4be172e",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/docs/FLUX-CONTEXT-TRANSFER.md": "05afba92783bf6638032631602ce419a80c301a55a97bfa8cd4f5c0dc99a94dd",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/docs/FLUX-RAW-MASK-PAIR.md": "36ce359ebb5174a228905fbc87218387aaa5b48cab8a04bdbf5006ca5aacb96e",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a"
+  },
+  "status": "accepted-bounded-paired-result; active-goal-remains-open",
+  "substantive_turn_anchor": 9
+}

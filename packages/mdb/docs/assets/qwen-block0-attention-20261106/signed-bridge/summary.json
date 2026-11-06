@@ -1,0 +1,11 @@
+{
+  "job_id": "job-c12bda14d64e",
+  "mechanics_status": "authenticated-selected-saved-vectors",
+  "model_calls": 0,
+  "numerical_status": "observed-full-vector-comparisons",
+  "ports": 6,
+  "request_sha256": "0c0c00b928f206faffe6fa68acd82f4b2f1aca78d0626469c3d3ca2da55e3cfe",
+  "schema": "mdb-qwen-attention-bridge-compact-v1",
+  "seconds": 1.5383488317020237,
+  "source_job": "job-0a3c41fce1d0"
+}

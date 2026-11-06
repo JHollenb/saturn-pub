@@ -1,0 +1,18 @@
+{
+  "archive_bytes": 9308,
+  "archive_sha256": "7b02ec0b465dd1c2296d6976fe6a09da4c9e01161e3452fbd336a10652415489",
+  "collection_encoder": {
+    "schema": "mdb-explicit-recovery-encoder-v1",
+    "scope": "Collection-only encoder supplied by a separately request-sealed run. Original worker payload/request remain unchanged.",
+    "sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+    "source_request_sha256": "2339ecdb754e0104418b463397b4cb2121a4bbb1c9646d390e56cee3f0fe1e2e"
+  },
+  "expanded_bytes": 59335,
+  "file_count": 7,
+  "files_manifest_sha256": "4874c486decd965c1f756a7c62d4eafb380262141959dff9d7f4f46debdcd4a2",
+  "job_id": "job-c12bda14d64e",
+  "pointer_sha256": "407fbdd3f8bcc48c7f878a9ec32ef6c1b69e3bd7ea31b9830113d519759fdb85",
+  "raw_tensor_arrays_collected": false,
+  "request_sha256": "0c0c00b928f206faffe6fa68acd82f4b2f1aca78d0626469c3d3ca2da55e3cfe",
+  "schema": "mdb-qwen-block0-signed-bridge-compact-retrieval-v1"
+}

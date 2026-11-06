@@ -1,0 +1,370 @@
+{
+  "H1": {
+    "B-minus-A": {
+      "changed_tokens": 4,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [
+        {
+          "changed_values": 1531,
+          "token": 7
+        },
+        {
+          "changed_values": 625,
+          "token": 11
+        },
+        {
+          "changed_values": 807,
+          "token": 18
+        },
+        {
+          "changed_values": 413,
+          "token": 28
+        }
+      ],
+      "total_changed_values": 3376
+    },
+    "C-minus-B-complete": {
+      "changed_tokens": 0,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [],
+      "total_changed_values": 0
+    },
+    "bridge-residual": {
+      "changed_tokens": 0,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [],
+      "total_changed_values": 0
+    },
+    "native.long-minus-native.short": {
+      "changed_tokens": 4,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [
+        {
+          "changed_values": 1531,
+          "token": 7
+        },
+        {
+          "changed_values": 625,
+          "token": 11
+        },
+        {
+          "changed_values": 807,
+          "token": 18
+        },
+        {
+          "changed_values": 413,
+          "token": 28
+        }
+      ],
+      "total_changed_values": 3376
+    }
+  },
+  "after_attention": {
+    "B-minus-A": {
+      "changed_tokens": 4,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [
+        {
+          "changed_values": 2,
+          "token": 7
+        },
+        {
+          "changed_values": 10,
+          "token": 11
+        },
+        {
+          "changed_values": 35,
+          "token": 18
+        },
+        {
+          "changed_values": 2,
+          "token": 28
+        }
+      ],
+      "total_changed_values": 49
+    },
+    "C-minus-B-complete": {
+      "changed_tokens": 0,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [],
+      "total_changed_values": 0
+    },
+    "bridge-residual": {
+      "changed_tokens": 0,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [],
+      "total_changed_values": 0
+    },
+    "native.long-minus-native.short": {
+      "changed_tokens": 4,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [
+        {
+          "changed_values": 2,
+          "token": 7
+        },
+        {
+          "changed_values": 10,
+          "token": 11
+        },
+        {
+          "changed_values": 35,
+          "token": 18
+        },
+        {
+          "changed_values": 2,
+          "token": 28
+        }
+      ],
+      "total_changed_values": 49
+    }
+  },
+  "head": {
+    "B-minus-A": {
+      "changed_tokens": 5,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [
+        {
+          "changed_values": 1,
+          "token": 7
+        },
+        {
+          "changed_values": 1,
+          "token": 11
+        },
+        {
+          "changed_values": 1,
+          "token": 18
+        },
+        {
+          "changed_values": 1,
+          "token": 20
+        },
+        {
+          "changed_values": 1,
+          "token": 28
+        }
+      ],
+      "total_changed_values": 5
+    },
+    "C-minus-B-complete": {
+      "changed_tokens": 0,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [],
+      "total_changed_values": 0
+    },
+    "bridge-residual": {
+      "changed_tokens": 0,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [],
+      "total_changed_values": 0
+    },
+    "native.long-minus-native.short": {
+      "changed_tokens": 5,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [
+        {
+          "changed_values": 1,
+          "token": 7
+        },
+        {
+          "changed_values": 1,
+          "token": 11
+        },
+        {
+          "changed_values": 1,
+          "token": 18
+        },
+        {
+          "changed_values": 1,
+          "token": 20
+        },
+        {
+          "changed_values": 1,
+          "token": 28
+        }
+      ],
+      "total_changed_values": 5
+    }
+  },
+  "mlp": {
+    "B-minus-A": {
+      "changed_tokens": 4,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [
+        {
+          "changed_values": 1794,
+          "token": 7
+        },
+        {
+          "changed_values": 819,
+          "token": 11
+        },
+        {
+          "changed_values": 1011,
+          "token": 18
+        },
+        {
+          "changed_values": 546,
+          "token": 28
+        }
+      ],
+      "total_changed_values": 4170
+    },
+    "C-minus-B-complete": {
+      "changed_tokens": 0,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [],
+      "total_changed_values": 0
+    },
+    "bridge-residual": {
+      "changed_tokens": 0,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [],
+      "total_changed_values": 0
+    },
+    "native.long-minus-native.short": {
+      "changed_tokens": 4,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [
+        {
+          "changed_values": 1794,
+          "token": 7
+        },
+        {
+          "changed_values": 819,
+          "token": 11
+        },
+        {
+          "changed_values": 1011,
+          "token": 18
+        },
+        {
+          "changed_values": 546,
+          "token": 28
+        }
+      ],
+      "total_changed_values": 4170
+    }
+  },
+  "mlp_input": {
+    "B-minus-A": {
+      "changed_tokens": 4,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [
+        {
+          "changed_values": 488,
+          "token": 7
+        },
+        {
+          "changed_values": 9,
+          "token": 11
+        },
+        {
+          "changed_values": 34,
+          "token": 18
+        },
+        {
+          "changed_values": 2,
+          "token": 28
+        }
+      ],
+      "total_changed_values": 533
+    },
+    "C-minus-B-complete": {
+      "changed_tokens": 0,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [],
+      "total_changed_values": 0
+    },
+    "bridge-residual": {
+      "changed_tokens": 0,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [],
+      "total_changed_values": 0
+    },
+    "native.long-minus-native.short": {
+      "changed_tokens": 4,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [
+        {
+          "changed_values": 488,
+          "token": 7
+        },
+        {
+          "changed_values": 9,
+          "token": 11
+        },
+        {
+          "changed_values": 34,
+          "token": 18
+        },
+        {
+          "changed_values": 2,
+          "token": 28
+        }
+      ],
+      "total_changed_values": 533
+    }
+  },
+  "projection": {
+    "B-minus-A": {
+      "changed_tokens": 4,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [
+        {
+          "changed_values": 6,
+          "token": 7
+        },
+        {
+          "changed_values": 12,
+          "token": 11
+        },
+        {
+          "changed_values": 44,
+          "token": 18
+        },
+        {
+          "changed_values": 9,
+          "token": 28
+        }
+      ],
+      "total_changed_values": 71
+    },
+    "C-minus-B-complete": {
+      "changed_tokens": 0,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [],
+      "total_changed_values": 0
+    },
+    "bridge-residual": {
+      "changed_tokens": 0,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [],
+      "total_changed_values": 0
+    },
+    "native.long-minus-native.short": {
+      "changed_tokens": 4,
+      "scope": "Same retained token coordinates; counts across ports are dependent observations, not new physical transitions or a gain estimate.",
+      "tokens": [
+        {
+          "changed_values": 6,
+          "token": 7
+        },
+        {
+          "changed_values": 12,
+          "token": 11
+        },
+        {
+          "changed_values": 44,
+          "token": 18
+        },
+        {
+          "changed_values": 9,
+          "token": 28
+        }
+      ],
+      "total_changed_values": 71
+    }
+  }
+}

@@ -182,6 +182,15 @@ propagation through projection/residual/MLP to H1. Stop at H1. This ordered
 triangle is not a full factorial attribution; the original short padding
 mask is equivalent to the full causal mask only over its valid prefix.
 
+That [microscope has now completed](QWEN-BLOCK0-ATTENTION.md). Shared-prefix
+Q/K/V are exact; the first five differences appear at SDPA. Actual profiling
+observes memory-efficient versus Flash Attention. On a fixed full bank,
+explicit-mask versus causal-flag execution exactly reproduces the original
+prefix difference through H1 at six retained ports. The causal repeated-versus-
+grouped contrast is bit-exact zero in this specimen. This localizes the fused
+primitive and its consumed tail; it does not isolate arithmetic inside its
+CUDA kernels or attribute the full image difference to the numerical route.
+
 Existing public`Act.patch` can replace E18 columns`[2560:5120]` by positive
 BF16zero at the genuine step0/project boundary, with same-mask own-value
 sham, original E9/E27 and noise fixed. This tests a direct conditioning

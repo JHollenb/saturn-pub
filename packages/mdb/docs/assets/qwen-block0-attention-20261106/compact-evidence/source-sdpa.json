@@ -1,0 +1,1545 @@
+[
+  {
+    "dropout_p": 0.0,
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -4.71875,
+          2.53125,
+          2.390625,
+          4.1875,
+          -5.84375,
+          0.921875,
+          -0.11279296875,
+          2.703125
+        ],
+        "sha256": "21e9ec0cb3e74b5efc8826ae692fea8a540f0f31539b3955087f32ba9de577df",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/0/key.npy",
+      "raw_sha256": "21e9ec0cb3e74b5efc8826ae692fea8a540f0f31539b3955087f32ba9de577df",
+      "sha256": "d3ae30c96bee370384e1206082afd8a2b3f0925575044c670275e8842296dac9",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "label": "functional.short",
+    "mask": {
+      "bytes": 262272,
+      "descriptor": {
+        "dtype": "torch.bool",
+        "preview": [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "sha256": "5e77597c29ecf8501766feca27250a6c1998644ca81cbf37e9474ae184a124b6",
+        "shape": [
+          1,
+          1,
+          512,
+          512
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bool",
+      "encoding": "native-numpy-v1",
+      "path": "sdpa/0/mask.npy",
+      "raw_sha256": "5e77597c29ecf8501766feca27250a6c1998644ca81cbf37e9474ae184a124b6",
+      "sha256": "8171245a8f5544bf147e2e10132409bfae3607b2e0cc8b79c948c59106e71481",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stored_dtype": "bool",
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 0,
+    "output": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.05810546875,
+          0.123046875,
+          0.028564453125,
+          0.005218505859375,
+          -0.03857421875,
+          0.003875732421875,
+          -0.006439208984375,
+          0.0068359375
+        ],
+        "sha256": "6332e4ddeafe0ff544ae2ab3e383671e03f9bd3573da27b1f2f6756dce12364c",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/0/output.npy",
+      "raw_sha256": "6332e4ddeafe0ff544ae2ab3e383671e03f9bd3573da27b1f2f6756dce12364c",
+      "sha256": "b586f29dc56b2d391e986b5c65f9bfa177961d96cfd711d9518d097730733f5e",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "profiler": {
+      "events": [
+        "Activity Buffer Request",
+        "Lazy Function Loading",
+        "Runtime Triggered Module Loading",
+        "aten::_efficient_attention_forward",
+        "aten::_scaled_dot_product_efficient_attention",
+        "aten::as_strided",
+        "aten::empty",
+        "aten::expand",
+        "aten::fill_",
+        "aten::resize_",
+        "aten::scalar_tensor",
+        "aten::scaled_dot_product_attention",
+        "aten::set_",
+        "aten::to",
+        "aten::transpose",
+        "aten::where",
+        "cudaDeviceSynchronize",
+        "cudaFuncSetAttribute",
+        "cudaLaunchKernel",
+        "cudaStreamIsCapturing",
+        "fmha_cutlassF_bf16_aligned_64x128_rf_sm80(PyTorchMemEffAttention::AttentionKernel<cutlass::bfloat16_t, cutlass::arch::Sm80, true, 64, 128, 128, true, true>::Params)",
+        "void at::native::elementwise_kernel<128, 4, at::native::gpu_kernel_impl_nocast<at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1}>(at::TensorIteratorBase&, at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1} const&)::{lambda(int)#1}>(int, at::native::gpu_kernel_impl_nocast<at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1}>(at::TensorIteratorBase&, at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1} const&)::{lambda(int)#1})",
+        "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul>)"
+      ],
+      "scope": "passive events for this existing call; no forced backend or extra call",
+      "status": "observed"
+    },
+    "query": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.16015625,
+          0.0849609375,
+          0.2138671875,
+          0.302734375,
+          -0.1572265625,
+          0.3671875,
+          -0.1396484375,
+          0.6171875
+        ],
+        "sha256": "c90763ace2f107e3006e4b750c0f50068cc6da7be501fd2d21c2c368d3b8049d",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/0/query.npy",
+      "raw_sha256": "c90763ace2f107e3006e4b750c0f50068cc6da7be501fd2d21c2c368d3b8049d",
+      "sha256": "e44f4d073e8e6a61dc67a7e605bca6ff06ee29c6ae799a39f9e469268f4e47a4",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "scale": 0.08838834764831845,
+    "value": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.05810546875,
+          0.123046875,
+          0.028564453125,
+          0.005218505859375,
+          -0.03857421875,
+          0.003875732421875,
+          -0.006439208984375,
+          0.0068359375
+        ],
+        "sha256": "802ef663f9257a3fb80f9ebfbc702e81099a51e6b29009d12ec3f43f4a237e33",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/0/value.npy",
+      "raw_sha256": "802ef663f9257a3fb80f9ebfbc702e81099a51e6b29009d12ec3f43f4a237e33",
+      "sha256": "720fa5470d5044963a6ba97192162f4b7bcdbed77f47ea18917d163ee644a084",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "dropout_p": 0.0,
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "bytes": 1048704,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -4.71875,
+          2.53125,
+          2.390625,
+          4.1875,
+          -5.84375,
+          0.921875,
+          -0.11279296875,
+          2.703125
+        ],
+        "sha256": "ef2ff803de437838909a04fd69e69d21bc37c03f212ffb8353f2d060b51f47c1",
+        "shape": [
+          1,
+          8,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/1/key.npy",
+      "raw_sha256": "ef2ff803de437838909a04fd69e69d21bc37c03f212ffb8353f2d060b51f47c1",
+      "sha256": "8b0d9d5d73b020487563ec6b17d25ccefa9071167d408a637d3d91d09e8f7aa0",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "label": "functional.long",
+    "mask": null,
+    "ordinal": 1,
+    "output": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.05810546875,
+          0.123046875,
+          0.028564453125,
+          0.005218505859375,
+          -0.03857421875,
+          0.003875732421875,
+          -0.006439208984375,
+          0.0068359375
+        ],
+        "sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/1/output.npy",
+      "raw_sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+      "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "profiler": {
+      "events": [
+        "Activity Buffer Request",
+        "Lazy Function Loading",
+        "Runtime Triggered Module Loading",
+        "aten::_flash_attention_forward",
+        "aten::_scaled_dot_product_flash_attention",
+        "aten::as_strided",
+        "aten::empty",
+        "aten::empty_like",
+        "aten::empty_strided",
+        "aten::fill_",
+        "aten::scaled_dot_product_attention",
+        "aten::transpose",
+        "cudaDeviceGetAttribute",
+        "cudaDeviceSynchronize",
+        "cudaFuncSetAttribute",
+        "cudaLaunchKernel",
+        "void at::native::vectorized_elementwise_kernel<2, at::native::FillFunctor<unsigned long>, std::array<char*, 1ul> >(int, at::native::FillFunctor<unsigned long>, std::array<char*, 1ul>)",
+        "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul>)",
+        "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::native::FillFunctor<float>, std::array<char*, 1ul>)",
+        "void pytorch_flash::flash_fwd_kernel<Flash_fwd_kernel_traits<128, 64, 64, 4, false, false, cutlass::bfloat16_t, Flash_kernel_traits<128, 64, 64, 4, cutlass::bfloat16_t> >, false, true, false, false, true, true, false, false>(pytorch_flash::Flash_fwd_params)"
+      ],
+      "scope": "passive events for this existing call; no forced backend or extra call",
+      "status": "observed"
+    },
+    "query": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.16015625,
+          0.0849609375,
+          0.2138671875,
+          0.302734375,
+          -0.1572265625,
+          0.3671875,
+          -0.1396484375,
+          0.6171875
+        ],
+        "sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/1/query.npy",
+      "raw_sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+      "sha256": "74aff5b1bfb5de7d0ebcfb0ae03eaaa3f490a554f201d7e11acd99dcd1adc4ef",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "scale": 0.08838834764831845,
+    "value": {
+      "bytes": 1048704,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.05810546875,
+          0.123046875,
+          0.028564453125,
+          0.005218505859375,
+          -0.03857421875,
+          0.003875732421875,
+          -0.006439208984375,
+          0.0068359375
+        ],
+        "sha256": "5266096e3950d1e082c69252873d60924aa32c823cfb1abbd13200fb4f646169",
+        "shape": [
+          1,
+          8,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/1/value.npy",
+      "raw_sha256": "5266096e3950d1e082c69252873d60924aa32c823cfb1abbd13200fb4f646169",
+      "sha256": "b865b37111f5ca458ec7802a6ffdc3d907c6510a584a5d008752c6376c87da57",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "dropout_p": 0.0,
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -4.71875,
+          2.53125,
+          2.390625,
+          4.1875,
+          -5.84375,
+          0.921875,
+          -0.11279296875,
+          2.703125
+        ],
+        "sha256": "b68b205457fe74bae7cea7ac5396091256c2a4c7a2112d0f65a65b5eac91b43f",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/2/key.npy",
+      "raw_sha256": "b68b205457fe74bae7cea7ac5396091256c2a4c7a2112d0f65a65b5eac91b43f",
+      "sha256": "529bfc8969bacc3add60fe8ea5d577bd70c26aeed7507d1a4c6e956a06890c99",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "label": "A.explicit-repeated",
+    "mask": {
+      "bytes": 262272,
+      "descriptor": {
+        "dtype": "torch.bool",
+        "preview": [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "sha256": "1105de13a063dd488006cada34ce5e1edfc1c223327b035c1de7df30291a4876",
+        "shape": [
+          1,
+          1,
+          512,
+          512
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bool",
+      "encoding": "native-numpy-v1",
+      "path": "sdpa/2/mask.npy",
+      "raw_sha256": "1105de13a063dd488006cada34ce5e1edfc1c223327b035c1de7df30291a4876",
+      "sha256": "13d860c4b81bc2ca9c3fe116221d9a0a40f961c6fd926b7198ef3f556ce0e8c8",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stored_dtype": "bool",
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 2,
+    "output": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.05810546875,
+          0.123046875,
+          0.028564453125,
+          0.005218505859375,
+          -0.03857421875,
+          0.003875732421875,
+          -0.006439208984375,
+          0.0068359375
+        ],
+        "sha256": "92414069c01afa84d0d626ce6dbe78307589f3e9338ae905cbc7ff8412793563",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/2/output.npy",
+      "raw_sha256": "92414069c01afa84d0d626ce6dbe78307589f3e9338ae905cbc7ff8412793563",
+      "sha256": "4a5367c7c72701ff59f2871658f219233b91e9c9f6ffe1367f86c5ec7fa90fb0",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "profiler": {
+      "events": [
+        "Activity Buffer Request",
+        "aten::_efficient_attention_forward",
+        "aten::_scaled_dot_product_efficient_attention",
+        "aten::as_strided",
+        "aten::empty",
+        "aten::expand",
+        "aten::fill_",
+        "aten::resize_",
+        "aten::scalar_tensor",
+        "aten::scaled_dot_product_attention",
+        "aten::set_",
+        "aten::to",
+        "aten::transpose",
+        "aten::where",
+        "cudaDeviceSynchronize",
+        "cudaFuncSetAttribute",
+        "cudaLaunchKernel",
+        "cudaStreamIsCapturing",
+        "fmha_cutlassF_bf16_aligned_64x128_rf_sm80(PyTorchMemEffAttention::AttentionKernel<cutlass::bfloat16_t, cutlass::arch::Sm80, true, 64, 128, 128, true, true>::Params)",
+        "void at::native::elementwise_kernel<128, 4, at::native::gpu_kernel_impl_nocast<at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1}>(at::TensorIteratorBase&, at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1} const&)::{lambda(int)#1}>(int, at::native::gpu_kernel_impl_nocast<at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1}>(at::TensorIteratorBase&, at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1} const&)::{lambda(int)#1})",
+        "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul>)"
+      ],
+      "scope": "passive events for this existing call; no forced backend or extra call",
+      "status": "observed"
+    },
+    "query": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.16015625,
+          0.0849609375,
+          0.2138671875,
+          0.302734375,
+          -0.1572265625,
+          0.3671875,
+          -0.1396484375,
+          0.6171875
+        ],
+        "sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/2/query.npy",
+      "raw_sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+      "sha256": "74aff5b1bfb5de7d0ebcfb0ae03eaaa3f490a554f201d7e11acd99dcd1adc4ef",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "scale": 0.08838834764831845,
+    "value": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.05810546875,
+          0.123046875,
+          0.028564453125,
+          0.005218505859375,
+          -0.03857421875,
+          0.003875732421875,
+          -0.006439208984375,
+          0.0068359375
+        ],
+        "sha256": "c76103e6620a59bbf8f09e73d0601f76ea1de8ba8f37b7fdf31959fc9dcfb6b0",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/2/value.npy",
+      "raw_sha256": "c76103e6620a59bbf8f09e73d0601f76ea1de8ba8f37b7fdf31959fc9dcfb6b0",
+      "sha256": "c174d39f68a0d4f6cb15626049992fe6dcfee567fc35cda8a503ac0096f1e38b",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "dropout_p": 0.0,
+    "enable_gqa": false,
+    "is_causal": true,
+    "key": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -4.71875,
+          2.53125,
+          2.390625,
+          4.1875,
+          -5.84375,
+          0.921875,
+          -0.11279296875,
+          2.703125
+        ],
+        "sha256": "b68b205457fe74bae7cea7ac5396091256c2a4c7a2112d0f65a65b5eac91b43f",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/3/key.npy",
+      "raw_sha256": "b68b205457fe74bae7cea7ac5396091256c2a4c7a2112d0f65a65b5eac91b43f",
+      "sha256": "529bfc8969bacc3add60fe8ea5d577bd70c26aeed7507d1a4c6e956a06890c99",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "label": "B.causal-repeated",
+    "mask": null,
+    "ordinal": 3,
+    "output": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.05810546875,
+          0.123046875,
+          0.028564453125,
+          0.005218505859375,
+          -0.03857421875,
+          0.003875732421875,
+          -0.006439208984375,
+          0.0068359375
+        ],
+        "sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/3/output.npy",
+      "raw_sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+      "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "profiler": {
+      "events": [
+        "Activity Buffer Request",
+        "aten::_flash_attention_forward",
+        "aten::_scaled_dot_product_flash_attention",
+        "aten::as_strided",
+        "aten::empty",
+        "aten::empty_like",
+        "aten::empty_strided",
+        "aten::fill_",
+        "aten::scaled_dot_product_attention",
+        "aten::transpose",
+        "cudaDeviceGetAttribute",
+        "cudaDeviceSynchronize",
+        "cudaFuncSetAttribute",
+        "cudaLaunchKernel",
+        "void at::native::vectorized_elementwise_kernel<2, at::native::FillFunctor<unsigned long>, std::array<char*, 1ul> >(int, at::native::FillFunctor<unsigned long>, std::array<char*, 1ul>)",
+        "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul>)",
+        "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::native::FillFunctor<float>, std::array<char*, 1ul>)",
+        "void pytorch_flash::flash_fwd_kernel<Flash_fwd_kernel_traits<128, 64, 64, 4, false, false, cutlass::bfloat16_t, Flash_kernel_traits<128, 64, 64, 4, cutlass::bfloat16_t> >, false, true, false, false, true, true, false, false>(pytorch_flash::Flash_fwd_params)"
+      ],
+      "scope": "passive events for this existing call; no forced backend or extra call",
+      "status": "observed"
+    },
+    "query": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.16015625,
+          0.0849609375,
+          0.2138671875,
+          0.302734375,
+          -0.1572265625,
+          0.3671875,
+          -0.1396484375,
+          0.6171875
+        ],
+        "sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/3/query.npy",
+      "raw_sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+      "sha256": "74aff5b1bfb5de7d0ebcfb0ae03eaaa3f490a554f201d7e11acd99dcd1adc4ef",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "scale": 0.08838834764831845,
+    "value": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.05810546875,
+          0.123046875,
+          0.028564453125,
+          0.005218505859375,
+          -0.03857421875,
+          0.003875732421875,
+          -0.006439208984375,
+          0.0068359375
+        ],
+        "sha256": "c76103e6620a59bbf8f09e73d0601f76ea1de8ba8f37b7fdf31959fc9dcfb6b0",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/3/value.npy",
+      "raw_sha256": "c76103e6620a59bbf8f09e73d0601f76ea1de8ba8f37b7fdf31959fc9dcfb6b0",
+      "sha256": "c174d39f68a0d4f6cb15626049992fe6dcfee567fc35cda8a503ac0096f1e38b",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "dropout_p": 0.0,
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "bytes": 1048704,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -4.71875,
+          2.53125,
+          2.390625,
+          4.1875,
+          -5.84375,
+          0.921875,
+          -0.11279296875,
+          2.703125
+        ],
+        "sha256": "ef2ff803de437838909a04fd69e69d21bc37c03f212ffb8353f2d060b51f47c1",
+        "shape": [
+          1,
+          8,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/4/key.npy",
+      "raw_sha256": "ef2ff803de437838909a04fd69e69d21bc37c03f212ffb8353f2d060b51f47c1",
+      "sha256": "8b0d9d5d73b020487563ec6b17d25ccefa9071167d408a637d3d91d09e8f7aa0",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "label": "C.causal-grouped",
+    "mask": null,
+    "ordinal": 4,
+    "output": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.05810546875,
+          0.123046875,
+          0.028564453125,
+          0.005218505859375,
+          -0.03857421875,
+          0.003875732421875,
+          -0.006439208984375,
+          0.0068359375
+        ],
+        "sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/4/output.npy",
+      "raw_sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+      "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "profiler": {
+      "events": [
+        "Activity Buffer Request",
+        "aten::_flash_attention_forward",
+        "aten::_scaled_dot_product_flash_attention",
+        "aten::as_strided",
+        "aten::empty",
+        "aten::empty_like",
+        "aten::empty_strided",
+        "aten::fill_",
+        "aten::scaled_dot_product_attention",
+        "aten::transpose",
+        "cudaDeviceGetAttribute",
+        "cudaDeviceSynchronize",
+        "cudaFuncSetAttribute",
+        "cudaLaunchKernel",
+        "void at::native::vectorized_elementwise_kernel<2, at::native::FillFunctor<unsigned long>, std::array<char*, 1ul> >(int, at::native::FillFunctor<unsigned long>, std::array<char*, 1ul>)",
+        "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul>)",
+        "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::native::FillFunctor<float>, std::array<char*, 1ul>)",
+        "void pytorch_flash::flash_fwd_kernel<Flash_fwd_kernel_traits<128, 64, 64, 4, false, false, cutlass::bfloat16_t, Flash_kernel_traits<128, 64, 64, 4, cutlass::bfloat16_t> >, false, true, false, false, true, true, false, false>(pytorch_flash::Flash_fwd_params)"
+      ],
+      "scope": "passive events for this existing call; no forced backend or extra call",
+      "status": "observed"
+    },
+    "query": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.16015625,
+          0.0849609375,
+          0.2138671875,
+          0.302734375,
+          -0.1572265625,
+          0.3671875,
+          -0.1396484375,
+          0.6171875
+        ],
+        "sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/4/query.npy",
+      "raw_sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+      "sha256": "74aff5b1bfb5de7d0ebcfb0ae03eaaa3f490a554f201d7e11acd99dcd1adc4ef",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "scale": 0.08838834764831845,
+    "value": {
+      "bytes": 1048704,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.05810546875,
+          0.123046875,
+          0.028564453125,
+          0.005218505859375,
+          -0.03857421875,
+          0.003875732421875,
+          -0.006439208984375,
+          0.0068359375
+        ],
+        "sha256": "5266096e3950d1e082c69252873d60924aa32c823cfb1abbd13200fb4f646169",
+        "shape": [
+          1,
+          8,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/4/value.npy",
+      "raw_sha256": "5266096e3950d1e082c69252873d60924aa32c823cfb1abbd13200fb4f646169",
+      "sha256": "b865b37111f5ca458ec7802a6ffdc3d907c6510a584a5d008752c6376c87da57",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "dropout_p": 0.0,
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -4.71875,
+          2.53125,
+          2.390625,
+          4.1875,
+          -5.84375,
+          0.921875,
+          -0.11279296875,
+          2.703125
+        ],
+        "sha256": "21e9ec0cb3e74b5efc8826ae692fea8a540f0f31539b3955087f32ba9de577df",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/5/key.npy",
+      "raw_sha256": "21e9ec0cb3e74b5efc8826ae692fea8a540f0f31539b3955087f32ba9de577df",
+      "sha256": "d3ae30c96bee370384e1206082afd8a2b3f0925575044c670275e8842296dac9",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "label": "native.short",
+    "mask": {
+      "bytes": 262272,
+      "descriptor": {
+        "dtype": "torch.bool",
+        "preview": [
+          true,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false,
+          false
+        ],
+        "sha256": "5e77597c29ecf8501766feca27250a6c1998644ca81cbf37e9474ae184a124b6",
+        "shape": [
+          1,
+          1,
+          512,
+          512
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bool",
+      "encoding": "native-numpy-v1",
+      "path": "sdpa/5/mask.npy",
+      "raw_sha256": "5e77597c29ecf8501766feca27250a6c1998644ca81cbf37e9474ae184a124b6",
+      "sha256": "8171245a8f5544bf147e2e10132409bfae3607b2e0cc8b79c948c59106e71481",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stored_dtype": "bool",
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 5,
+    "output": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.05810546875,
+          0.123046875,
+          0.028564453125,
+          0.005218505859375,
+          -0.03857421875,
+          0.003875732421875,
+          -0.006439208984375,
+          0.0068359375
+        ],
+        "sha256": "6332e4ddeafe0ff544ae2ab3e383671e03f9bd3573da27b1f2f6756dce12364c",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/5/output.npy",
+      "raw_sha256": "6332e4ddeafe0ff544ae2ab3e383671e03f9bd3573da27b1f2f6756dce12364c",
+      "sha256": "b586f29dc56b2d391e986b5c65f9bfa177961d96cfd711d9518d097730733f5e",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "profiler": {
+      "events": [
+        "Activity Buffer Request",
+        "aten::_efficient_attention_forward",
+        "aten::_scaled_dot_product_efficient_attention",
+        "aten::as_strided",
+        "aten::empty",
+        "aten::expand",
+        "aten::fill_",
+        "aten::resize_",
+        "aten::scalar_tensor",
+        "aten::scaled_dot_product_attention",
+        "aten::set_",
+        "aten::to",
+        "aten::transpose",
+        "aten::where",
+        "cudaDeviceSynchronize",
+        "cudaFuncSetAttribute",
+        "cudaLaunchKernel",
+        "cudaStreamIsCapturing",
+        "fmha_cutlassF_bf16_aligned_64x128_rf_sm80(PyTorchMemEffAttention::AttentionKernel<cutlass::bfloat16_t, cutlass::arch::Sm80, true, 64, 128, 128, true, true>::Params)",
+        "void at::native::elementwise_kernel<128, 4, at::native::gpu_kernel_impl_nocast<at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1}>(at::TensorIteratorBase&, at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1} const&)::{lambda(int)#1}>(int, at::native::gpu_kernel_impl_nocast<at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1}>(at::TensorIteratorBase&, at::native::(anonymous namespace)::where_kernel_impl(at::TensorIterator&)::{lambda()#1}::operator()() const::{lambda()#2}::operator()() const::{lambda(bool, unsigned short, unsigned short)#1} const&)::{lambda(int)#1})",
+        "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul>)"
+      ],
+      "scope": "passive events for this existing call; no forced backend or extra call",
+      "status": "observed"
+    },
+    "query": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.16015625,
+          0.0849609375,
+          0.2138671875,
+          0.302734375,
+          -0.1572265625,
+          0.3671875,
+          -0.1396484375,
+          0.6171875
+        ],
+        "sha256": "c90763ace2f107e3006e4b750c0f50068cc6da7be501fd2d21c2c368d3b8049d",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/5/query.npy",
+      "raw_sha256": "c90763ace2f107e3006e4b750c0f50068cc6da7be501fd2d21c2c368d3b8049d",
+      "sha256": "e44f4d073e8e6a61dc67a7e605bca6ff06ee29c6ae799a39f9e469268f4e47a4",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "scale": 0.08838834764831845,
+    "value": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.05810546875,
+          0.123046875,
+          0.028564453125,
+          0.005218505859375,
+          -0.03857421875,
+          0.003875732421875,
+          -0.006439208984375,
+          0.0068359375
+        ],
+        "sha256": "802ef663f9257a3fb80f9ebfbc702e81099a51e6b29009d12ec3f43f4a237e33",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/5/value.npy",
+      "raw_sha256": "802ef663f9257a3fb80f9ebfbc702e81099a51e6b29009d12ec3f43f4a237e33",
+      "sha256": "720fa5470d5044963a6ba97192162f4b7bcdbed77f47ea18917d163ee644a084",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "dropout_p": 0.0,
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "bytes": 1048704,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -4.71875,
+          2.53125,
+          2.390625,
+          4.1875,
+          -5.84375,
+          0.921875,
+          -0.11279296875,
+          2.703125
+        ],
+        "sha256": "ef2ff803de437838909a04fd69e69d21bc37c03f212ffb8353f2d060b51f47c1",
+        "shape": [
+          1,
+          8,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/6/key.npy",
+      "raw_sha256": "ef2ff803de437838909a04fd69e69d21bc37c03f212ffb8353f2d060b51f47c1",
+      "sha256": "8b0d9d5d73b020487563ec6b17d25ccefa9071167d408a637d3d91d09e8f7aa0",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "label": "native.long",
+    "mask": null,
+    "ordinal": 6,
+    "output": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.05810546875,
+          0.123046875,
+          0.028564453125,
+          0.005218505859375,
+          -0.03857421875,
+          0.003875732421875,
+          -0.006439208984375,
+          0.0068359375
+        ],
+        "sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/6/output.npy",
+      "raw_sha256": "0c880b1dbd7c68e75700bdbb88823d2f9da921fbb62a24233fd28091039f571c",
+      "sha256": "30674c21561c1c736d3c967fc3a69f972cde11fc5bde6e746060eed0040c9c83",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "profiler": {
+      "events": [
+        "Activity Buffer Request",
+        "aten::_flash_attention_forward",
+        "aten::_scaled_dot_product_flash_attention",
+        "aten::as_strided",
+        "aten::empty",
+        "aten::empty_like",
+        "aten::empty_strided",
+        "aten::fill_",
+        "aten::scaled_dot_product_attention",
+        "aten::transpose",
+        "cudaDeviceGetAttribute",
+        "cudaDeviceSynchronize",
+        "cudaFuncSetAttribute",
+        "cudaLaunchKernel",
+        "void at::native::vectorized_elementwise_kernel<2, at::native::FillFunctor<unsigned long>, std::array<char*, 1ul> >(int, at::native::FillFunctor<unsigned long>, std::array<char*, 1ul>)",
+        "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul> >(int, at::native::FillFunctor<c10::BFloat16>, std::array<char*, 1ul>)",
+        "void at::native::vectorized_elementwise_kernel<4, at::native::FillFunctor<float>, std::array<char*, 1ul> >(int, at::native::FillFunctor<float>, std::array<char*, 1ul>)",
+        "void pytorch_flash::flash_fwd_kernel<Flash_fwd_kernel_traits<128, 64, 64, 4, false, false, cutlass::bfloat16_t, Flash_kernel_traits<128, 64, 64, 4, cutlass::bfloat16_t> >, false, true, false, false, true, true, false, false>(pytorch_flash::Flash_fwd_params)"
+      ],
+      "scope": "passive events for this existing call; no forced backend or extra call",
+      "status": "observed"
+    },
+    "query": {
+      "bytes": 4194432,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.16015625,
+          0.0849609375,
+          0.2138671875,
+          0.302734375,
+          -0.1572265625,
+          0.3671875,
+          -0.1396484375,
+          0.6171875
+        ],
+        "sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+        "shape": [
+          1,
+          32,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/6/query.npy",
+      "raw_sha256": "b67d74e4afea40797e7e487c27870e953fcd3f95cc8d4d2dfd3caafb374a5fc3",
+      "sha256": "74aff5b1bfb5de7d0ebcfb0ae03eaaa3f490a554f201d7e11acd99dcd1adc4ef",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "scale": 0.08838834764831845,
+    "value": {
+      "bytes": 1048704,
+      "descriptor": {
+        "dtype": "torch.bfloat16",
+        "preview": [
+          -0.05810546875,
+          0.123046875,
+          0.028564453125,
+          0.005218505859375,
+          -0.03857421875,
+          0.003875732421875,
+          -0.006439208984375,
+          0.0068359375
+        ],
+        "sha256": "5266096e3950d1e082c69252873d60924aa32c823cfb1abbd13200fb4f646169",
+        "shape": [
+          1,
+          8,
+          512,
+          128
+        ]
+      },
+      "device_at_capture": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "encoding": "bf16-bits-v1",
+      "path": "sdpa/6/value.npy",
+      "raw_sha256": "5266096e3950d1e082c69252873d60924aa32c823cfb1abbd13200fb4f646169",
+      "sha256": "b865b37111f5ca458ec7802a6ffdc3d907c6510a584a5d008752c6376c87da57",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  }
+]

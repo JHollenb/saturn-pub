@@ -1,0 +1,191 @@
+{
+  "schema": "mdb-flux-holistic-review-v1",
+  "review_number": 8,
+  "review_status": "completed-scoped-holistic-review",
+  "created_at": "2026-11-06T14:13:56.607Z",
+  "cadence": {
+    "anchor_completed_research_turn": 10,
+    "next_review_no_later_than_turn": 13,
+    "early_review_triggers": [
+      "new observation frontier",
+      "material arithmetic or source contradiction",
+      "unexpected consumer or applicability failure"
+    ]
+  },
+  "scope": "Read-only source, compact evidence and cumulative narrative review; own review files only. No model, tokenizer, checkpoint, CUDA, staging, scheduler or full original-array recurrence executed. Compact inventory hashes verified; numerical checks recount accepted saved reports rather than redoing their large tensor audit.",
+  "source_sha256": {
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-054800-five-attention-values-become-a-different-hidden-state.md": "da8693191e62657d71c9bafa58a71e864e7261469215399b59a5cf35f4d9f3d7",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-051300-predicting-two-attention-paths-and-their-image-futures.md": "19656fe25f381c0998cdc52cff2e5b72137dfc533b76ac3d39297621cfca6537",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-042000-predicting-the-image-from-the-raw-prompt.md": "54d82b9f36da8312d96d570f8cc7976646f2c8370841adf25eb8d813d7387307",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-032000-predicting-conditioning-from-the-raw-prompt.md": "dd81723d6161784eace42478e28afec1ee1a0fc6e6e2c3efe96aea372973e925",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-024157-predicting-the-decoder-from-latent-to-pixels.md": "68d73941c6080e083f5e939d3b5af6904c6367ed5ce7005250b8ba8396ebd625",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-014800-from-predicted-model-state-through-the-rest-of-the-image.md": "ddc3ef83729a13168d0f00bb75438e73f368ea8c82f4d36da9e98fbc1c631cf5",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/docs/QWEN-BLOCK0-ATTENTION.md": "2a892037da7997223a8cf5d83e6b180307b535cfd7c9b0be43f332a959c6440a",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/docs/FLUX-CONTEXT-TRANSFER.md": "05afba92783bf6638032631602ce419a80c301a55a97bfa8cd4f5c0dc99a94dd",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/docs/FLUX-READER-ARITHMETIC.md": "9724642b970c36f25037fdd07ea105bcacf70aa1bc764f7c8817e895c9b5f3dc",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/docs/FLUX-LATENT-READER.md": "ace62479d5c1a0668f225a0ad5b19b7ab7ad945e6f3b222f203f0fb12a51e75e",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/qwen_block0_attention_microscope.py": "70e52a6624947029b906e0a02f2f36d1a165b321a40c9e42f665224a3710361b",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/flux_e18_conditioning_act.py": "45c512de2dff3252c38a182cf4291b392cf35a159c2bd83b35900c28005cb343",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/design-v2.json": "3bbff1a0427d47b16a448fde577e294f4bb212a23d65dea00c524d5827b7cfda",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/qualification-v2/qualification.json": "d78d7e041482971fd09c4566c0b71f66cd0ae74419c3121a460a65b67e8cf146",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/custody-calibration-plan-v1.json": "062c16e3109d372f1cdc477197fc05ea547fbb005a3f312ccf4c6bdb77c4f654",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-understanding-20261106/direction-05.md": "c8f5f55c092ee4ab4af0776fd65e647ba0e71c801c1039285b96be6841503766",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-understanding-20261106/direction-06.md": "f44c6832aab25c2b670e03e4504dd78ee399529776a8e2362317c5d624083708",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-understanding-20261106/direction-07.md": "324407dc3ab43f0f1373d923915dc6c44982138a76305c52a4a3dd203587b85d",
+    "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/actual-saved-report-verification-v1.json": "8f2c97fdbdf9ed397af4b8f2987ee459cd1ae30fc78a6eff174f035125923d76",
+    "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/audit.json": "1a8e658cd797d1ba719940eecf02c3bee039499ef6eaaeebeaddad06ec57641a",
+    "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/compact-collection-01/extracted/binding-minimal-result/source-sdpa.json": "be7bdf1fb3cf3eb384d4e32e3110d039cee17cd63b92e11c7d16ba210664ea3a",
+    "/Users/jakeholl/domains/artifacts/mdb-qwen-block0-attention-20261106/bridge-collection-01/extracted/binding-minimal-result/bridge.json": "1c18f33060051a3748acb4d5f50fe94575469514933b182e5144094e9f804b84"
+  },
+  "independent_saved_checks": {
+    "compact-collection-01": {
+      "inventory_entries_verified": 28,
+      "inventoried_bytes": 52393112,
+      "inventory_sha256": "1b306fe32051e63b40961151fab246475f2c8fc69ebbcfad212fabd5dba9ac48"
+    },
+    "bridge-collection-01": {
+      "inventory_entries_verified": 6,
+      "inventoried_bytes": 58795,
+      "inventory_sha256": "4874c486decd965c1f756a7c62d4eafb380262141959dff9d7f4f46debdcd4a2"
+    },
+    "recount": {
+      "matched_fields": 42,
+      "matched_positions": 70516736,
+      "signed_bridge_positions": 506880,
+      "complete_grouping_contrast_positions": 8650752,
+      "seal_seconds": 34.13756038201973,
+      "first_native_entry_seconds": 34.13837275700644,
+      "profiled_existing_SDPA_calls": 7
+    }
+  },
+  "conclusion": "The complete own-state raw-prompt-to-image account remains qualified under its declared shared-primitive profile. The new block0 microscope adds a controlled finite-execution explanation for one previously unresolved prefix discrepancy. This supports moving to the full E18 interface intervention rather than continuing an open-ended kernel microscope. The active goal is not declared complete.",
+  "material_content_corrections": [],
+  "optional_reporting_clarifications": [
+    "Native block H0 is the supplied regenerated functional embedding, not a separately executed native embedding. The42 matched fields include shared-input, parameter-free and reconstructed fields; they are comparison coverage, not42 independent native computations.",
+    "Mask/causal representation and the selected implementation change together. The result identifies this bounded finite route, not a kernel-only effect isolated from all other representation differences.",
+    "The full signed bridge is over the30-row common prefix; the complete512-row grouping contrast is a separate scope. Do not merge their counts or extrapolate the bridge to all prompt rows."
+  ],
+  "new_evidence": {
+    "source_frontier": "Regenerated embedding and complete own first-block functional formation; historical H0/H1 verification-only controls; fixed full long QKV bank for the triangle.",
+    "chronology": {
+      "seal_seconds": 34.13756038201973,
+      "first_native_block_entry_seconds": 34.13837275700644,
+      "native_blocks_at_seal": 0
+    },
+    "physical": {
+      "sdpa_calls": 7,
+      "native_blocks": 2,
+      "native_rotary_calls": 2,
+      "selected_original_parameter_payloads": 12,
+      "parameter_bytes": 979773952,
+      "extra_profiler_forwards": 0
+    },
+    "matched": {
+      "fields": 42,
+      "positions": 70516736,
+      "changed": 0
+    },
+    "first_difference": {
+      "prefix_rows": 30,
+      "QKV_exact": true,
+      "head_changed_values": 5,
+      "head_positions": 122880,
+      "head_rms": 3.9237523821997976e-7,
+      "H1_changed_values": 3376,
+      "H1_rms": 0.0001783766512474351
+    },
+    "controlled_contrast": "A explicit full causal bool mask/repeatedKV versus B causal flag/same repeatedKV reproduces complete historical native long-minus-short signed prefix vectors at six ports.",
+    "signed_bridge": {
+      "fields": 6,
+      "repeated_positions": 506880,
+      "residual_changed": 0
+    },
+    "grouping_contrast": {
+      "description": "C causal groupedKV minus B causal repeatedKV",
+      "fields": 6,
+      "complete_rows": 512,
+      "repeated_positions": 8650752,
+      "changed": 0
+    },
+    "observed_kernels": {
+      "explicit_mask": "aten efficient attention with fmha_cutlassF_bf16_aligned_64x128_rf_sm80 event",
+      "causal_flag": "aten flash attention with pytorch_flash::flash_fwd_kernel event",
+      "scope": "Passive observations on existing seven calls, not earlier entire encoder/image campaign."
+    },
+    "retained_countertrends": [
+      "Changed head row20 disappears at projection; H1 differences remain only at rows7,11,18,28.",
+      "Changed-coordinate count falls71→49 at the first residual addition and4170→3376 at H1 addition.",
+      "C−B is exactly zero on this fixed bank; no universal grouping invariance follows.",
+      "Earlier H6→H7 absolute difference rises while relative difference falls as native amplitude changes.",
+      "Forty FP64 summary reductions differ between readers by at most1.7763568394002505e-15; raw BF16 comparison outcomes are separately exact."
+    ],
+    "provenance": "Native after_attention is reconstructed BF16 H0+captured projection. Norm/MLP/H1 are captured native ports. Triangle head is actual SDPA return and later triangle ports are functional same-weight tails. No three extra native counterfactual block targets were run."
+  },
+  "cumulative_assessment": {
+    "established": [
+      "Own-state conditioning formation from pinned raw parser inputs, full112-transition denoising and functional decoder/pixels have been composed before native reference targets in a single global seal.",
+      "A second actual source regime, all512 attended rows versus short padded input, has complete own-state forecasts and exact signed responses. Native references form their own learned states.",
+      "Original learned weights, kernel calls, shapes, layouts, casts, clock, reset/carry rules and consumers are explicit dependencies of an executable account.",
+      "Prior local source/carrier/writer/consumer interventions supply controlled evidence beyond endpoint reproduction; the block0 fixed-bank bridge specifically explains the first prefix discrepancy."
+    ],
+    "not_established": [
+      "Universal exactness over prompts, shapes, devices, library versions or all interventions.",
+      "Independent reconstruction of Flash/memory-efficient attention's internal dot-product, softmax and value accumulation reduction sequence.",
+      "Attribution of the entire short/long image difference to the five block0 prefix changes. Content, truncation and mask dispatch still differ in the whole-image pair.",
+      "Automatic discovery of computation families or semantic object instructions from curated exact-context catalog records.",
+      "A newly learned auxiliary law or replacement parameter set; the account uses original architecture, weights and Torch primitives."
+    ],
+    "historical_limits_preserved": [
+      "Earlier independent NumPy/FP64 lowerings often approximated endpoints while badly missing small finite responses; exact shared-primitive composition does not erase them.",
+      "Working-text carrier localization and partial recoloring in peer context transfer did not establish a complete semantic color swap.",
+      "FLUX single-block attention/MLP are parallel before shared output projection; Qwen block0 attention/residual/MLP are serial. Their writer accounts cannot be interchanged.",
+      "Earlier writer rankings changed after continuation; signed cross terms and RMS interactions are not causal percentages.",
+      "Decoder replication retained eight upstream stride differences and missing final resident checks after its failed optional catalog export. Later whole-image recovery has its own stronger resident checks and separate failed producer status.",
+      "Nominal BF16 interpolation dose did not equal effective input direction or dose; original values and support remain authoritative."
+    ],
+    "symbol_time_circuit": "A computation record specifies the qualified operation, parameters, ports, numeric profile and evidence-backed applicability. A StateCut supplies actual live tensors and program clock; continuation determines the next update. Generic IDs and dense states are fully acceptable. Newly observed runtime dispatch refines the finite execution contract without inventing a semantic symbol.",
+    "completion_boundary": "The tested program can be operationally accounted for at the declared shared-primitive boundary. Remaining work should target specific counterfactual or applicability questions. Neither a compressed representation nor an English concept dictionary is a completion requirement; exhaustive reimplementation of every CUDA kernel is not imposed as an automatic requirement either."
+  },
+  "ranked_next_cuts": [
+    {
+      "rank": 1,
+      "name": "Direct E18 source-route suppression through the complete consumed image",
+      "rationale": "Tests whether the already closed raw-to-image program predicts an internal typed intervention, not just another natural-input replay. The block0 ambiguity has been sufficiently localized for this next question.",
+      "contract": "Own forecast and own native E=cat(H9,H18,H27), positive zero in columns2560:5120 across512rows through real Act.patch; same-mask own-value sham; E9/E27, noise, IDs, schedule and clock fixed within lane. Eight actual context operands; two full functional and two native112-transition futures, plus same-latent decoder consumers.",
+      "falsifiable_expectations": [
+        "The source-bound full numerical and signed-response forecasts agree with native counterparts under the declared profile; any first discrepancy and all later misses remain observations.",
+        "Immediately after the first project, image/time-context/RoPE remain identical between sham/edit because those formation paths do not read E; text is the first working stream expected to differ. A rounded-away text response is an observed miss, not grounds to discard the run.",
+        "The exact own-value sham replays the declared parent and native continuation; this is a mechanics/control claim, distinct from any predicted visual effect."
+      ],
+      "limits": "Direct interface route deletion is not upstream Qwen17-MLP ablation. H27 carries history from H18. Zero is off-manifold; do not infer semantic necessity from a large effect or redundancy from a small one. No unsupported object/color prediction."
+    },
+    {
+      "rank": 2,
+      "name": "Separate the direct H18 interface route from its downstream H27 history, conditional on E18 results",
+      "rationale": "Resolves a specific structural alternative that the direct suppression cannot answer and does not duplicate peer two-row transient C transfer.",
+      "minimal_contract": "If numerical closure holds and route attribution remains the question, apply one declared upstream H18 state perturbation, regenerate H19..27, and compare direct-only E=(H9,H18edited,H27base) with coherent E=(H9,H18edited,H27edited). Their paired difference holds the direct E18 input fixed and tests the mediated H27 route in that recipient; include base own-state replay. This is H18-state intervention, not MLP-writer ablation.",
+      "falsifiable_expectations": "Seal complete vectors and consumer joins before targets; do not promise an additive mediated share or semantic effect. If E18 numerical closure misses, prioritize first mismatching consumer instead of this larger follow-up.",
+      "limits": "A full direct×mediated factorial needs the extra mediated-only arm and explicit budget. Do not claim an interaction from the minimal three-state comparison."
+    },
+    {
+      "rank": 3,
+      "name": "A concrete unqualified applicability contrast, only after the route question is answered",
+      "rationale": "Choose a new source-supported geometry or one predeclared additional raw context that challenges an actual uncovered contract, not a generic large sample sweep.",
+      "limits": "Keep source/kernel profile fixed or explicitly treat profile changes as a new computation. A CUDA reduction microscope is justified only by a live mismatch or an explicit independent-kernel question; do not let it indefinitely displace consumed counterfactual tests."
+    }
+  ],
+  "e18_preparation": {
+    "source_sha256": "45c512de2dff3252c38a182cf4291b392cf35a159c2bd83b35900c28005cb343",
+    "observed_v2_changes": "Public execution-point metadata replaces whole-payload clock clones; exact previous-exit fingerprint assertion permits omitting redundant before-store. Session internal checks and receipt joins remain.",
+    "benchmark": "Planned synthetic production-shaped cut/store benchmark estimates storage/copy overhead only; it does not calibrate full Session guards or native learned arithmetic.",
+    "admission": "No E18 outcome, exact staged request or admission approval in this review. Preserve the source-bound preliminary resource receipt; finite request review follows. Obtain required Luna review if conservative expected total exceeds15minutes."
+  },
+  "goal_status": "active",
+  "reviewer_actions": {
+    "model_calls": 0,
+    "tokenizer_calls": 0,
+    "checkpoint_reads": 0,
+    "new_jobs": 0,
+    "production_edits": 0
+  }
+}
