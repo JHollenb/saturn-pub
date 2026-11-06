@@ -1,0 +1,59 @@
+{
+  "Q_seal_sha256": "480b8cc6ef9b61f4128a5c73b08a7e30ca55e0133fdf3239c8557101d4cedb45",
+  "account_verification": {
+    "P_N_archive_refs_bound_to_parent_inventory": 56,
+    "Q_full_archives_verified": 28,
+    "complete_Q_transitions": 56,
+    "full_field_accounts": 28,
+    "scope": "Q archive bytes/descriptors verified locally. P/N scalar accounts are the authenticated actual replay result; their arrays are not duplicated or independently reduced again here."
+  },
+  "collection": {
+    "collection_sha256": "01f2a395fd96ebb2a2befa147a32143f41d0a070ba0daea762de17a5d5cc1fea",
+    "expanded_bytes": 118102727,
+    "files": 30
+  },
+  "conditions": [
+    "c1-o0",
+    "c0-o1"
+  ],
+  "coverage": "All28 signed fields at10 retained landmark transitions; complete56 Q transition descriptors. Other46 native exits not inferred.",
+  "cross_term_normalization": "twice_dot_A_B / (elements \u00d7 reported native_rms\u00b2); common native energy reconstructed from saved RMS",
+  "execution": {
+    "job_id": "job-06a7ac52d411",
+    "mathematical_transitions": 56,
+    "native_framework_forwards": 0,
+    "parameter_cache_cleanup": {
+      "cache_removed": true,
+      "files": 169,
+      "logical_bytes": 7751110784
+    },
+    "parent_audit_job_id": "job-cf814192a615",
+    "parent_audit_sha256": "0d26903d1a34564bf13db9917b6a00e1dac48acfa28131126bc105c8b25c323c",
+    "parent_inventory_unchanged": true,
+    "parent_job_id": "job-95453050cf73",
+    "request_sha256": "3f52520f0c9c9edefca1c6f02e0b8282273f50bf4ddfe65c915212a633b4cea7",
+    "schema": "mdb-near-data-matched-pass-v1",
+    "scope": "Retrospective native-input numerical decomposition; targets were already observed. No prospective accuracy claim.",
+    "seconds": 759.3965709023178,
+    "worker_sha256": "63e004c4dd13d86b55415dc059e008324c401978c28318e542a09ab6589ecf58"
+  },
+  "learned_weight_math": false,
+  "logical_step": 1,
+  "native_forwards": 0,
+  "parameter_cache_cleanup": {
+    "cache_removed": true,
+    "files": 169,
+    "logical_bytes": 7751110784
+  },
+  "schema": "mdb-matched-pass-publication-summary-v1",
+  "scope": "Retrospective selected two-context logical-pass1 observations, Q=G_1(N1), after targets were known. P is the original full own-state forecast at the same cursor and N the actual clock-aligned native field. A=Q-N, B=P-Q, E=P-N; E=A+B. These signed vector accounts are not causal shares, isolated kernel errors, or prospective Q accuracy. The selected contexts differ in both supplied prompt factors. B is the difference between two whole-pass programs with different incoming latents; no G transport decomposition is inferred.",
+  "source": {
+    "parent_audit_job_id": "job-cf814192a615",
+    "parent_audit_sha256": "0d26903d1a34564bf13db9917b6a00e1dac48acfa28131126bc105c8b25c323c",
+    "parent_inventory_sha256": "1d7475e4ea53aa8f0d7fdc31537db1e5b23112399b0aefb21f73bb76106c4b0d",
+    "parent_job_id": "job-95453050cf73",
+    "parent_request_sha256": "a163060c2de634d516e42f6b3e9fe10066d24e7ed0b97511b2b7f682930c9a94",
+    "scope": "Authenticated metadata staged in actual matched-job payload; original P/N arrays are not duplicated in this publication."
+  },
+  "source_report_sha256": "31cbd92390b6ea7021aa6bda83c3c99cbadd5618dbf21da846e99cc1be6817da"
+}

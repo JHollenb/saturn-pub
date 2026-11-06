@@ -10,7 +10,7 @@ The full program predicts four complete 28-transition passes, steps0 through3, t
 
 Each program advances its own computed state. Project builds image/text registers and complete context from its incoming latent plus observed conditioning, IDs and schedule. Joint blocks execute attention followed by the receiving MLP separately for image and text; single blocks use parallel attention/MLP features, output projection, gate and residual addition. Readout consumes the predicted final image register and that pass's predicted time embedding. Euler consumes that pass's incoming latent and predicted noise. The next project consumes the preceding predicted commit, with working fields reset.
 
-The unchanged, source-pinned equations preserve the qualified BF16 boundaries, FP32 RoPE arithmetic, LayerNorm/RMSNorm details and scalar Euler profile. Hostile CUDA scalar-promotion cases run before model entry. These are declared equations for a particular source/backend/profile, not a claim about every implementation.
+The unchanged, source-pinned equations preserve the qualified BF16 boundaries, LayerNorm/RMSNorm details and scalar Euler profile. RoPE constructs frequencies, angles, cosine and sine in FP64, retains cosine and sine in FP32, and applies the qualified rotation arithmetic. Hostile CUDA scalar-promotion cases run before model entry. These are declared equations for a particular source/backend/profile, not a claim about every implementation.
 
 The worker does not refresh future image/text/context/RoPE/noise/latent values from native execution. All complete predicted fields and native comparison boundaries are retained. The independent auditor reconstructs each recurrence using its own preceding output, rather than evaluating each stage on supplied native inputs.
 
@@ -21,7 +21,8 @@ For fixed encoded conditioning C, IDs and pretrained parameters θ, write a comp
 \[
 V_s=D_{\theta,s}(Z_s,C,\mathrm{IDs}),\quad
 \delta_s=Q\!\left(\operatorname{FP32}(\sigma_{s+1}-\sigma_s)\right),\quad
-Z_{s+1}=Q\!\left(Z_s+Q(\delta_sV_s)\right).
+D_s=Q\!\left(\operatorname{FP32}(\delta_sV_s)\right),\quad
+Z_{s+1}=Q\!\left(\operatorname{FP32}(Z_s+D_s)\right).
 \]
 
 The inner rounding matters: an FP32 scalar increment multiplied without this BF16 conversion produces different native results in the retained hostile scalar cases. The retained denoiser program specifies its other intermediate rounding boundaries. The full forecast composes four approximate passes on its own state:
@@ -206,4 +207,4 @@ The block weights are reused across diffusion passes. Different latents and time
 
 It still executes the learned-weight arithmetic. It does not replace the 4B parameters with a compact discovered program, predict the prompt encoder or VAE mathematically, automatically enumerate futures, or establish a universal semantic dictionary. Native prompt encoding and native VAE decoding remain the two outer learned boundaries. One history does not establish arbitrary-prompt coverage, a universal coordinate bound or reusable semantic families.
 
-The next informative experiment crosses color assignment with left/right placement under the same retained initial noise. Freeze all four forecasts before native comparisons, then compare predicted and native changes between contexts. That tests controlled counterfactual transfer of the computation account, while keeping the observed conditioning boundary explicit. Differences in the endpoints should then guide smaller causal cuts inside attention, gates and receiving MLPs.
+The follow-up [four-context campaign](FLUX-PROMPT-FACTORIAL.md) crosses color assignment with left/right placement under one fresh noise state. All four full forecasts and decoded images preceded native denoising. Independent replay matched all 960 field hashes, while native final latent discrepancies ranged from 1.923% to 11.018%. Its completed 56-transition matched-input comparison separates whole-pass discrepancy on native input from inherited state differences transported through the mathematical map. The larger selected case has a much larger transported image difference. Testing the corresponding native finite response remains the next numerical cut, keeping the supplied conditioning boundary and finite coverage explicit.
