@@ -283,3 +283,9 @@ tests the proposed persistent-carrier bottleneck in the native consumer. Then
 split the changed first attention read into text-key and text-value contributions
 from matched operands. That distinguishes source addressing from transported
 content before broadening the record across fresh seeds or assigning concept names.
+
+The [latent/reader follow-up](FLUX-LATENT-READER.md) now completes that cut:
+latent restoration and transplantation replay exact futures, and image K/V
+reproduce the later text exit exactly. Split K/V futures reveal a value-aligned
+image response in both contexts, while small signed text-effect forecasts remain
+inaccurate despite low full-state error. The numerical limit is retained.

@@ -6,6 +6,11 @@ changed image stream can write a difference back into text through attention.
 The assay separates the image keys from image values in that read, predicts the
 complete receiving text write, and observes native image continuations.
 
+The real run establishes exact carrier/replay and text-read identities in both
+contexts. Its mathematical reference tracks full text states within 0.17–0.19%
+relative RMS, but misses the small split key/value text effects by 115–128%.
+This is stronger causal localization with an unresolved numerical-effect limit.
+
 The specimen is FLUX.2 Klein 4B distilled, CUDA BF16, batch one, seed 127,
 512 × 512, four denoising passes. The two receiving contexts and their changes
 are saved results from `job-3272cb7fc922`. They are known contexts, not held-out
@@ -32,6 +37,13 @@ before any new native attention returns. Each predicts full text attention head,
 after-attention residual, receiving MLP output and final text state. The later
 images are observed native continuations; this assay does not numerically
 predict those entire image futures.
+
+The baseline and joint-KV text endpoints are already known calibration outcomes
+from the source run. The four split-K/V text cases are new hybrid combinations.
+Their full image continuations have not been observed before; even joint-KV
+retains baseline image queries and residual, so matching the changed text exit
+does not imply matching the changed image trajectory. No calibration text target
+is a numerical forecast operand.
 
 ## The factorial reader
 
@@ -118,4 +130,126 @@ write predictions and six key/value/interaction contrasts. Applicability names
 the exact observed frontier, backend, clock and occurrence. Changed horizons
 abstain. Indexing records does not establish cross-context family generality.
 
-Run results and remaining limits are recorded below after custody verification.
+## Measured results
+
+Job `job-7afc16a70861` completed all sixteen futures. The frozen auditor verifies
+all native intervention hashes, forecast seals and array inventories. A separate
+verifier joins all 440 exit clocks to actual MDB transitions and lineage, and
+checks 452 unique receipt seals, including four intentional prefix refusals.
+
+All eight closure controls reproduce the expected complete final payload and
+PNG, with identical descriptors at every saved native exit. Restoration removes
+the prior change; reciprocal transplantation reproduces it. The original known
+baseline/changed PNGs also replay exactly.
+
+For both receivers, `k0v0` reproduces the known baseline text exit and `k1v1`
+reproduces the known changed text exit **exactly across all 512 text rows**.
+The latter retains baseline image queries and residual. Thus the changed image
+K/V suffice for this particular text write. They do not recreate the complete
+changed image stream or its future.
+
+| Native observable | Left receiver | Right receiver |
+|---|---:|---:|
+| Text-head key-only effect RMS | 0.001496 | 0.001452 |
+| Text-head value-only effect RMS | 0.002972 | 0.002950 |
+| Text-head joint K/V effect RMS | 0.003101 | 0.003139 |
+| Text-head interaction RMS | 0.001525 | 0.001459 |
+| Whole latent-change final RGB effect RMS | 2.747 | 2.622 |
+| Key-only final RGB effect RMS | 0.305 | 0.344 |
+| Value-only final RGB effect RMS | 0.563 | 0.612 |
+| Joint K/V final RGB effect RMS | 0.539 | 0.632 |
+| Value-only RGB effect cosine with whole change | 0.819 | 0.797 |
+| Key-only RGB effect cosine with whole change | 0.057 | 0.133 |
+
+RGB uses byte units on the 0–255 scale. Within this matched read, value-only
+effects are larger than key-only effects at the text head and final pixels,
+and point more closely along the original image effect in both contexts.
+This is a convergent two-context trend, not a universal value-dominance law.
+The finite K/V interaction remains nonzero. Magnitude ratios do not measure
+causal percentages, and comparisons between different tensor spaces are not
+meaningful attribution scores.
+
+The joint K/V future has only 0.539/0.632 RGB-effect RMS versus the original
+whole change's 2.747/2.622. Its effect cosine is 0.807 in both receivers, yet
+its complete text exit was identical to the changed source. By joint4, text
+has diverged again: its difference from the whole-changed text has relative
+effect error 80.96%/93.22%. A local text record alone does not close the future;
+the surrounding image state remains part of the continuation's live input.
+
+![Native key/value continuations and magnified differences](assets/flux-latent-reader-20261105.png)
+
+The upper rows show actual rendered futures. Difference rows are multiplied by
+eight and centered on gray. The cone remains green and the cylinder yellow in
+the inspected images. These subtle changes do not establish a color-swap
+operation, concept dictionary or object-level causal percentage.
+
+## Prediction accuracy and the retained miss
+
+Across eight prospective local reference runs, full-state relative RMS errors
+are 0.0947–0.0966% for the attention head, 0.160–0.181% after attention,
+0.423–0.504% for the receiving MLP output, and 0.170–0.191% for final text.
+Each denominator is the corresponding actual native state RMS.
+
+Those endpoint numbers conceal an important miss:
+
+| Signed effect prediction error, relative to actual effect RMS | Left | Right |
+|---|---:|---:|
+| Head, key only | 67.22% | 66.35% |
+| Head, value only | 35.35% | 35.46% |
+| Head, joint K/V | 36.13% | 34.55% |
+| Final text, key only | 118.66% | 127.99% |
+| Final text, value only | 121.29% | 114.81% |
+| Final text, joint K/V | 117.99% | 111.43% |
+
+The predicted joint head-effect cosine is 0.935/0.940, while final text-effect
+cosine falls to 0.157/0.203. Some residual differences contain BF16 jumps of
+8 or 16 despite small full-field RMS. Numerical discrepancies become material
+at the scale of the tested changes. Kernel arithmetic and rounding are plausible
+contributors, but this assay does not isolate their individual responsibility.
+The reference is not yet a reliable numerical predictor of these small text
+effects. Every miss remains in the fourteen published computation records.
+
+## Cost, custody and the next cut
+
+All forecasts were sealed by worker second 109.51 with zero completed native
+blocks/attention calls. Final native execution finished at second 439.87;
+the summary completed at 440.61. Runner elapsed time was 621.69 seconds,
+including imports, startup and cleanup. Peak RSS was 6154.1 MB and peak VRAM
+9330 MB. Repeated stack samples show durable-store publication stalls; the
+first closure took 118 seconds, with many later branches around 11–24 seconds.
+No job was canceled, no forecast changed, and no scientific panel was skipped.
+
+Custody verifies 896 files totaling 638,059,914 expanded bytes. The archive is
+508,370,059 bytes; the local campaign retains about 1.6 GiB including compressed
+transport and staging. Only three original parameter payloads were read for
+the text equations, with a 188,743,680-byte raw cache peak. Original recipes and
+the standalone retriever are retained; no full exported parameter bank is added.
+Saturn evidence-plane run/verify return zero with `target-streams-only` scope.
+This is an exploratory result; terminal status remains unassessed.
+
+Artifacts live in `artifacts/mdb-flux-latent-reader-20261105/`, including
+`audit-v1.json`, `clocks-v1.json`, `continuation-effects-v1.json`, the immutable
+worker payload, custody records and `public-records-v1/`. Fourteen exact catalog
+queries resolve and fourteen changed-horizon queries abstain.
+
+From that campaign directory, the actual searchable example is:
+
+```bash
+python -I -m mdb equations find --catalog public-records-v1/equations \
+  --applicable-to public-records-v1/context-right-key.json
+python -I -m mdb equations find --catalog public-records-v1/equations \
+  --applicable-to public-records-v1/context-wrong-horizon.json
+```
+
+The first returns `cmp.flux.latent-reader.right.key`, including its numerical
+miss. The second returns `[]`. These predicates express supplied scope, not
+an inferred applicability rule.
+
+The next informative cut is an operator-level numerical comparison using these
+same parents: record actual text output-projection inputs/returns, residual
+rounding, normalized MLP input and MLP returns; compare local equations supplied
+actual inputs against equations consuming their own predicted inputs. Bind the
+actual CUDA reduction/SDPA contract. That separates attention error from
+projection, residual-rounding and MLP contributions without fitting corrections
+or launching another large image sweep. After that, head/row-specific K/V cuts
+can localize the value-aligned route before testing fresh seeds.
