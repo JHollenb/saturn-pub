@@ -259,6 +259,11 @@ an observed state. At the same time, repeat the routing/value decomposition on
 fresh source contexts to test whether the same head addresses and interaction
 patterns recur. Keep endpoint, effect and continuation errors separate.
 
+The [complete-state continuation follow-up](FLUX-STATE-CLOSURE.md) now tests
+that missing closure: both entire streams are predicted through joint1 and
+joint2, and native joint2 separately consumes the sealed predicted joint1 state.
+It reports accumulated endpoint/effect errors and their propagation accounting.
+
 ## Reproduction, custody and resources
 
 Code: `qualification/flux_attention_state_law.py` stages/submits the experiment;
