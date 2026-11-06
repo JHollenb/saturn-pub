@@ -164,6 +164,7 @@ scripts. No new persistent parameter bank is added.
 
 [Complete numerical accounts](assets/flux-image-query-bank-accounts-20261106.json)
 retain every effect, signed cross term, operand comparison and numerical
-limitation. The next cut traces native HH versus HL growth through all twenty
-single blocks, then tests a selected writer. It requires no compression or
+limitation. The [completed single-stack trace](FLUX-SINGLE-STACK.md) localizes
+native HH versus HL growth through all twenty single blocks. Its next cut tests
+attention and MLP features at both recipients. It requires no compression or
 semantic-name gate.
