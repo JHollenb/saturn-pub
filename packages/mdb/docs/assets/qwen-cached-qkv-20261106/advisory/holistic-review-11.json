@@ -1,0 +1,277 @@
+{
+  "schema": "mdb-astra-holistic-review-v1",
+  "review_number": 11,
+  "anchor_completed_research_turn": 14,
+  "next_review_no_later_than_turn": 17,
+  "goal_status": "active",
+  "evidence": {
+    "review_scope": "Read-only local text, JSON, source, hashing and small metadata arithmetic. No model execution, activation-array or weight-payload reads, scheduler/network access, job operations, file edits, subagents or messages to other tasks.",
+    "compact_verification": {
+      "root": "artifacts/mdb-qwen-row-sign-20261106/compact-collection-01/extracted/binding-minimal-result",
+      "manifest_sha256": "82032b7ad875735d14a3c3f2ac2cc7dbb9bc342b3ae9373f2a8fbe349f06906f",
+      "independently_hashed_data_members": 40,
+      "hash_mismatches": 0,
+      "data_member_bytes": 1672252,
+      "manifest_bytes": 4246,
+      "total_files": 41,
+      "total_bytes": 1676498,
+      "audit_sha256": "5e3b7d5f9061a705931ecc7562097bc7bf2b3d8f38b385cafa5490558c1e3457",
+      "root_verification_sha256": "d3a5a75542be135a0e788eb3f6c90239193cdff78b4d5c27b67a4ea461c70108",
+      "raw_inventory_recount": {
+        "members_excluding_wrapper": 125,
+        "bytes_excluding_wrapper": 376594023,
+        "method": "Summed local raw-inventory metadata; did not read the indexed payloads."
+      }
+    },
+    "independent_saved_report_recount": {
+      "method": "Recounted individual primary fields and products of their declared shapes, checked reported numerical/bit results, and summed changed-coordinate counts. This does not repeat the near-data numerical audit.",
+      "full_functional_minus_native": {
+        "edits": 2,
+        "fields": 8,
+        "positions": 12058624,
+        "endpoint_changed_values": 0,
+        "maximum_reported_endpoint_rms_error": 0,
+        "maximum_reported_signed_response_rms_error": 0,
+        "all_endpoint_fields_bit_exact": true,
+        "all_signed_response_fields_bit_exact": true
+      },
+      "inherited_functional_positive_minus_fresh_native_positive": {
+        "fields": 4,
+        "positions": 6029312,
+        "all_fields_bit_exact": true
+      },
+      "other_comparison_channels": {
+        "channels": [
+          "shortcut-minus-full-functional",
+          "shortcut-minus-native"
+        ],
+        "fields_per_channel": 8,
+        "positions_per_channel": 12058624,
+        "global_edit_numerical_error": 0,
+        "prefix_edit_closed_region_numerical_error": 0,
+        "prefix_edit_changed_endpoint_values_per_channel": 3002798,
+        "all_numerically_changed_endpoint_values_confined_to_suffix": true,
+        "dependence": "Channels share operands. Regional windows partition whole fields and are not additional independent trials."
+      },
+      "prefix_edit_suffix": {
+        "head": {
+          "positions": 1048576,
+          "changed_endpoint_values": 1045571,
+          "actual_response_rms": 0.2143150033896232,
+          "shortcut_response_rms": 0,
+          "response_relative_error": 1,
+          "whole_endpoint_relative_error": 0.48907726384529693
+        },
+        "R": {
+          "positions": 655360,
+          "changed_endpoint_values": 651599,
+          "actual_response_rms": 0.28250521054681854,
+          "shortcut_response_rms": 0,
+          "response_relative_error": 1,
+          "whole_endpoint_relative_error": 0.012673142948091073
+        },
+        "M": {
+          "positions": 655360,
+          "changed_endpoint_values": 653672,
+          "actual_response_rms": 0.22565436064911673,
+          "shortcut_response_rms": 0,
+          "response_relative_error": 1,
+          "whole_endpoint_relative_error": 0.28723478480795217
+        },
+        "Hnext": {
+          "positions": 655360,
+          "changed_endpoint_values": 651956,
+          "actual_response_rms": 0.28173098021787274,
+          "shortcut_response_rms": 0,
+          "response_relative_error": 1,
+          "whole_endpoint_relative_error": 0.012630432316821328
+        },
+        "first_retained_numerical_discrepancy": "Attention head at query 256; all four primary ports first differ at that query.",
+        "maximum_endpoint_absolute_discrepancy": 7.5
+      },
+      "residual_signed_zero_defects": {
+        "global_edit": 903,
+        "prefix_edit_closed_region": 415,
+        "functional_and_native_repeat_same_counts": true,
+        "qualification": "Zero numerical error does not imply bit equality. Later M/Hnext agreement does not erase these residual defects."
+      },
+      "installed_lookup_recount": {
+        "queries": 12,
+        "exact_matches": 4,
+        "changed_source_abstentions": 4,
+        "changed_profile_abstentions": 4,
+        "reviewer_reran_queries": false
+      }
+    },
+    "independent_support_arithmetic": {
+      "permitted_causal_edges_including_diagonal": 131328,
+      "turn14_global": {
+        "support_closed_rows": 512,
+        "cross_sign_edges": 0
+      },
+      "turn14_prefix": {
+        "support_closed_rows": 256,
+        "cross_sign_edges": 65536
+      },
+      "cut15_last_row_negative": {
+        "negative_rows": 1,
+        "support_closed_rows": 511,
+        "cross_sign_edges": 511
+      },
+      "cut15_alternating64": {
+        "negative_rows": 256,
+        "support_closed_rows": 64,
+        "cross_sign_edges": 65536
+      },
+      "cut15_inherited_source_descriptors": 13,
+      "cut15_inherited_archive_bytes": 20985984
+    },
+    "chronology_and_execution": {
+      "forecast_seal_sha256": "12077f1ee8ca0f2b23c1c440e11a9dea7b5f07058270041594320289055f0121",
+      "saved_chronology_events": 10,
+      "forecast_arms_completed_before_seal": 2,
+      "native_targets_at_seal": 0,
+      "native_authorizations_after_seal": 3,
+      "observed_functional_blocks": 2,
+      "observed_functional_SDPA": 2,
+      "observed_functional_linear": 14,
+      "observed_shortcut_SDPA": 0,
+      "observed_shortcut_linear": 2,
+      "observed_native_blocks": 3,
+      "observed_native_SDPA": 3,
+      "observed_native_linear": 21,
+      "native_job": {
+        "id": "job-74efe5506ecf",
+        "saved_elapsed_seconds": 47.22,
+        "saved_peak_rss_mb": 1795.4,
+        "saved_peak_vram_mb": 826
+      },
+      "saved_only_audit_job": {
+        "id": "job-ded9cc529d99",
+        "saved_elapsed_seconds": 18.63,
+        "saved_peak_rss_mb": 998.2,
+        "saved_peak_vram_mb": 0
+      },
+      "failed_audit": {
+        "id": "job-807e7135ec2e",
+        "verified_local_log_error": "ComputationAtlasError: execution backend is required",
+        "source_comparison": "AST comparison against the archived reader found changes to audit/worker orchestration and added catalog_contexts/external_evidence functions. Existing numerical-accounting functions were unchanged.",
+        "archived_reader_sha256": "218bf64a05739a4af547b8e26c3ccf2f5d4f60ecbd4d2e73bc6ad691af8a5667"
+      },
+      "collector_correction": "The supplied account and current post retain the separate scheduler-field collection correction without another model/audit execution; I did not independently compare collector revisions."
+    },
+    "source_hashes": {
+      "artifacts/mdb-flux-understanding-20261106/README.md": "1b0c5f38d95981a23461642747d8762724b25f64c43a2f483eb4ea74a0077324",
+      "artifacts/mdb-flux-understanding-20261106/direction-08.md": "4917fef69ec1c6e9324932ebacc48a47b234745f6b61eb7e497825e081a74891",
+      "artifacts/mdb-flux-understanding-20261106/direction-09.md": "7fa4885776ca56cce82d5501dd1ee82243d207f0d2cc275469e32044e0f0d46b",
+      "artifacts/mdb-flux-understanding-20261106/direction-10.md": "1d56f79cf44d2df8e148a9f2710ab08f4fd682685551cd0093aae7dac0ed26a9",
+      "artifacts/mdb-flux-understanding-20261106/holistic-review-10.json": "1c08a95fb81a173dee634d5574f0f75437dc670a064676f39136d48f73ced918",
+      "obsidian/blog/2026-11-06-070800-where-a-sign-flip-becomes-a-different-computation.md": "e8ecb9a548e433f4540041e5543433c8911dce563850c265b58c6a5f41d97fa1",
+      "obsidian/blog/2026-11-06-075814-a-computation-family-survived-three-fresh-contexts.md": "5ce4a54cb52ec81f1375a906f9edd94be94de9ab87fe7a5082864bf4bd80686b",
+      "obsidian/blog/2026-11-06-084211-where-a-computation-shortcut-stops-working.md": "a4e9049758384f74424821e7c2675c568d22fa4d1f00449cd4dd292d1c7f320f",
+      "saturn-pub/packages/mdb/qualification/qwen_row_sign_campaign.py": "fbd8eceaf1a9ef8917ecdc39a98ff960940aab9da8ecb4697c25c1a33d545f47",
+      "saturn-pub/packages/mdb/qualification/qwen_row_sign_shortcut.py": "940c3cfaafeaeb3f0df5746b92b6a8b0878255769c4f230b2a53bedfc0110c1c",
+      "saturn-pub/packages/mdb/qualification/audit_qwen_row_sign.py": "d995c3c5ca3c194a3ce87bfca58e9352d251246d798e21c6e04a7938bd9b5838",
+      "artifacts/mdb-qwen-cached-qkv-20261106/selection-v1/protocol.json": "8c53ae9417ba40420e806cb634d59931fb0131f95d0329e5b34e078429503bff",
+      "artifacts/mdb-qwen-cached-qkv-20261106/design-v1.md": "ac89108acd11bcc03a7fd2f140653356be8fbd87d8b838ae3b46166bfe0fddfd",
+      "saturn-pub/packages/mdb/qualification/qwen_component_experiment.py": "81131b179f1a8a5ea52011be3e450e5901255f350d89ff11c053902c16a28580",
+      "saturn-pub/packages/mdb/qualification/qwen_cached_qkv.py": "95d356185b8bdd64479bc1e7937fa034aa24dc5f5b011b7075f0430e31c1bb21",
+      "saturn-pub/packages/mdb/qualification/qwen_cached_qkv_campaign.py": "d2c9e472ac06c667fea0726ac62f629e63ad776173a2e323821bf66f71b0d8f5",
+      "artifacts/mdb-qwen-row-sign-20261106/visual-verification-v1.json": "9db0b51b30e57899d40c71af99e078c5c6574bea22d038d3ba365a72e84d3f54",
+      "obsidian/blog/2026-11-05-140315-predicting-a-diffusion-image-from-its-initial-noise.md": "cbbb23488c8887bb0d6daa62669b4de0efe58d6be487e55c31311a951dfab65a",
+      "obsidian/blog/2026-11-06-001355-the-next-consumer-changes-which-model-write-matters.md": "61159a44f150eed6fb5b0d149c90f8a7221fab37258c23a9decf2de22853fccb",
+      "obsidian/blog/2026-11-06-024157-predicting-the-decoder-from-latent-to-pixels.md": "68d73941c6080e083f5e939d3b5af6904c6367ed5ce7005250b8ba8396ebd625"
+    }
+  },
+  "material_narrative_corrections": [],
+  "findings": [
+    {
+      "status": "observation",
+      "finding": "Turn14 is a substantial counterexample to extending the cheap sign shortcut beyond its qualified support condition. It does not contradict the full source-native functional account, which predicts the edited fields and responses exactly."
+    },
+    {
+      "status": "working inference",
+      "finding": "Unchanged incoming suffix rows acquire changed attention reads and therefore changed R, gate/up inputs, M and Hnext. Reusing positive R/G/U solely because the incoming row was unchanged is invalid in this specimen."
+    },
+    {
+      "status": "mathematical scope",
+      "finding": "Support closure is sufficient for ideal head oddness under the stated operand relation, fixed mask/positions, deterministic attention and nonempty permitted support. It is not necessary for accidental numerical agreement. Cross-sign edges are possible reads, not measured attention mass or causal shares."
+    },
+    {
+      "status": "finite prerequisite remains open",
+      "finding": "Turn14 locates the first retained discrepancy at head/query256 but does not directly establish transformed-versus-direct positioned-QKV equality. Its actual SDPA receipts describe operands and flags without identifying the selected CUDA kernel."
+    },
+    {
+      "status": "nonmaterial explanatory clarification",
+      "finding": "The source also applies per-head Q/K RMS normalization before RoPE. Those normalizations are odd in ideal arithmetic and preserve the derivation, but should be named explicitly when expanding the prose into an executable prerequisite record. The omitted naming does not invalidate the current conclusion."
+    },
+    {
+      "status": "source review",
+      "finding": "Cut15 addresses the missing mechanism. The candidate transforms inherited positioned Q/K/V, preserves their dense noncontiguous strides, and recomputes attention, O, R, postnorm and the complete MLP. Positive R/G/U are excluded from candidate source inputs. The shared panel retains actual consumed QKV, complete responses, all rows and a cohort seal before native calls."
+    },
+    {
+      "status": "implementation boundary",
+      "finding": "The new shared component scaffold is useful consolidation, but currently binds all-attended causal enable-GQA, no-cache execution. A reusable runner is not yet a general source/profile/applicability evaluator, and a tiny CPU fixture is not original-data CUDA qualification."
+    },
+    {
+      "status": "cumulative account",
+      "finding": "The research now connects supplied raw inputs, own-state computation, finite execution policy, local reuse relations, applicability counterexamples and consumed histories. Dense state and generic operation IDs are adequate. Exact occurrence retrieval remains separate from deciding whether a relation applies to an unseen occurrence."
+    },
+    {
+      "status": "counterevidence retained",
+      "finding": "Earlier independent-arithmetic small-response misses remain: local tail responses missed by 89.5202% and observed-QKV independent attention through the native tail by 96.6885%, despite sub-0.42% endpoints. Semantic-transfer misses, the FLUX writer-rank reversal after single19, absolute-versus-relative countertrends, signed-zero defects and decoder recovery limitations remain part of the account."
+    }
+  ],
+  "coverage": {
+    "boundedly_understood": [
+      "Source-native operational composition for the tested raw-prompt/noise/schedule-to-image specimens, including own-state formation and actual downstream consumption.",
+      "Conditional direct E18 versus regenerated H27 history effects, without assigning an object meaning or full factorial causal share.",
+      "The global-sign relation and first retained nonodd SiLU/MLP contribution under the specified first edited block and finite profile.",
+      "A concrete support-sensitive failure of the cheaper R/G/U reuse relation at block18 in the inherited long context.",
+      "Conservative source/profile-qualified retrieval of recorded successful and unsuccessful occurrences."
+    ],
+    "not_established": [
+      "Turn15 original-data transformed-QKV predictions or native outcomes.",
+      "Universal finite sign equivariance, arbitrary mask/cache/profile transfer, or applicability across arbitrary parameter instances.",
+      "Independent implementation of native Flash/GEMM arithmetic or a complete native CUDA instruction trace.",
+      "Automatic rule induction, a semantic dictionary, semantic ownership of coordinates or general prompt-to-circuit compilation.",
+      "The downstream persistence or repair of turn14's specific cheap-versus-corrected H19 discrepancy.",
+      "A measured shortcut speedup."
+    ],
+    "evidence_access": {
+      "requested_local_text_json_source": "Accessible.",
+      "original_activation_and_weight_payloads": "Not accessed. Near-data payloads were unavailable to this permitted local review; numerical conclusions rely on authenticated saved reports and inspected accounting source.",
+      "figures": "Publication and root visual-verification JSON were read. Root records viewing both figures; I did not independently inspect rendered images in this text/source review.",
+      "historical_results": "Reviewed cumulatively through the requested directions/review, ledger and selected linked posts; prior full compact inventories were not rehashed in this review.",
+      "cut15_status": "Scientific selection and inspected implementation only. No original-model result is counted."
+    },
+    "completion_boundary": "A bounded complete mechanical and applicability account needs an explicit domain, sufficient live state, source-bound operations and numerical profile, prospective intervention predictions, reusable applicability decisions and appropriate consumed consequences. Compression, semantic naming, independent CUDA reimplementation and unlimited benchmarks are not automatic requirements. Native-primitive closure alone does not finish the broader active applicability question."
+  },
+  "ranked_next_cuts": [
+    {
+      "rank": 1,
+      "action": "Finish qualification and execute only the already-frozen cut15 panel under root's normal process.",
+      "falsifiable_prediction": "Row-signed inherited positioned Q/K/V numerically agree with direct formation, and recomputed attention/tail predicts both edited complete outputs and signed responses under the original profile. Record raw-bit and signed-zero relations separately.",
+      "required_account": "Keep transformed-versus-direct, direct-versus-actual-native and transformed-versus-actual-native QKV comparisons separate from the three output/response channels. Preserve actual geometry, flags, first discrepancies and all later fields.",
+      "decision": "If direct formation misses native, investigate reference/profile congruence. If transformed QKV differs, identify the finite formation prerequisite. If operands agree but outputs differ, inspect layout, dispatch and downstream primitive order. A numerical miss is evidence, not an exploration stop gate.",
+      "boundary": "Conditional inherited-state component experiment; no raw-prompt, public Qwen Act, speedup or independent-kernel claim."
+    },
+    {
+      "rank": 2,
+      "action": "Use cut14 and cut15 to implement one explicit source/profile/applicability evaluator within the reusable component framework.",
+      "falsifiable_prediction": "Without consulting target errors, the evaluator identifies structurally closed rows, refuses blanket cheap reuse on mixed support, selects recomputed attention only within its declared finite/source domain, and abstains or uses an explicitly qualified full-functional fallback outside that domain.",
+      "minimal_panel": "First replay saved metadata and reports from global, prefix, last-row and alternating64 occurrences, including changed-source/profile/cache controls. This requires no new original-model benchmark.",
+      "record": "Separate structural eligibility, finite evidence coverage, selected computation, exact occurrence lookup and measured outcome. Bind parameter/source identity, operand provenance, layout/dtype, mask/positions/cache, operation address and continuation.",
+      "limit": "Do not label a structural sufficient condition as an unconditional BF16 guarantee, or a metadata selector as automatic discovery. Do not introduce accuracy thresholds that suppress exploratory evidence."
+    },
+    {
+      "rank": 3,
+      "action": "After cut15, ask one downstream question using the already nonidentical turn14 cheap and full H19 states: does their discrepancy persist, spread or cancel in the next native block19?",
+      "minimal_panel": "Use the authenticated turn14 prefix-edited full H19 and cheap H19 as two fixed inputs with identical context/profile. Predict both complete block19 returns and their signed difference before two standalone native component targets. Add a baseline only if the declared measurement needs it.",
+      "falsifiable_prediction": "The source-native functional block predicts both H20 states and their complete difference. The cheap-versus-full prefix should remain numerically equal under the unchanged causal dependency structure; suffix response magnitude and direction are observations, with no required amplification or nonzero threshold.",
+      "why": "This tests the consumer consequence of a real local approximation error. It avoids generating another indistinguishable image from byte-identical corrected states and directly addresses the earlier lesson that local writer rankings and effects can change after consumption.",
+      "branching_rule": "If cut15 exposes an unresolved operand/profile discrepancy, localize that discrepancy first. Do not automatically expand to all nine Qwen blocks, a full image, another parameter address or a broad benchmark."
+    }
+  ],
+  "direction_markdown": "Turn14 strengthens the computation account by giving it a sharp counterexample. The complete functional block still predicts the native edited computation exactly. What fails is the cheaper reuse relation: a positive suffix row cannot reuse its positive attention-derived R/G/U merely because its incoming H18 row was unchanged. Its causal reads include the edited prefix, and those reads change the state that the MLP consumes.\n\nI independently hashed all 40 compact data members and verified the 4,246-byte wrapper, giving 41 files and 1,676,498 bytes. Recounting individual saved fields gives eight primary full-functional/native comparisons over 12,058,624 positions, with exact endpoints and complete signed responses. The four positive baseline fields also match. The shortcut has 3,002,798 numerical endpoint discrepancies under the prefix edit, all in the later 256 rows. Each later-row head/R/M/Hnext shortcut response is zero while the actual response is nonzero, so each response-relative error is exactly one. These are dependent coordinate accounts, not millions of independent trials.\n\nThe latest post needs no material numerical or interpretive correction. It correctly distinguishes the roughly 1.27% whole-residual endpoint errors from missing the entire suffix response, and it retains 903 global and 415 prefix residual signed-zero defects. It also correctly says that the positioned-QKV finite premise remains to be tested. Naming the source's per-head Q/K RMS normalizations explicitly would make the derivation more executable; their ideal oddness preserves its conclusion.\n\nThe support argument must keep its precise scope. When every permitted key shares the query sign, ideal logits are unchanged and the weighted value sum acquires that common sign. Mixed support removes that sufficient guarantee. It does not force a visible effect at every row or head: cancellation, rounding and effectively silent reads remain possible. The prefix and alternating64 edits both have 65,536 cross-sign permitted edges but only 256 and 64 closed rows respectively. Edge count is therefore not an adequate description of the live computation, and no structural edge count measures attention mass or causal importance.\n\nCut15 is the right next experiment. It tests the missing source transformation rather than repeating the failed shortcut. The inspected candidate takes inherited own-functional positioned Q/K/V, applies the fixed row signs, and recomputes attention and every downstream write. It does not retain stale positive R/G/U. The explicit restoration of original noncontiguous BHTD strides is scientifically relevant: earlier work already showed that finite attention representation and dispatch can change a response even when the symbolic operation appears equivalent. Keep transformed, directly formed and actually consumed native QKV separate, then retain the three output and signed-response channels. The selected last-row and alternating64 masks are sufficient for this question; neither needs outcome-based replacement.\n\nThis implementation is still a proposed original-data test. Its CPU fixture can establish serialization, layout restoration, guards and accounting mechanics. It cannot establish CUDA parity on the original operands. The current source also represents a bounded all-attended causal enable-GQA scaffold, not a general cache/mask/profile resolver. Preserve that distinction when reporting the implementation.\n\nThe cumulative symbol-table account is now concrete. A record identifies an operation, its parameter instance, ports, numerical profile, operand provenance and applicability evidence. The live residuals, conditioning, latents, masks, positions, clock and any cache supply the state. A continuation identifies the next consumer. The record does not replace that state, and a generic name is sufficient. The twelve successful retrieval/abstention checks establish conservative lookup of occurrences, including the counterexample; they do not infer applicability for a new occurrence.\n\nThe broader operational account is substantial. Earlier work forms its own states from raw inputs, follows the denoising schedule, predicts decoder outputs and tests actual consumed interventions. The E18/H27 experiments distinguish a direct conditioning constituent from inherited history. The sign experiments add an explanatory local relation and now a measured limit of its reuse. These are different achievements from independently implementing CUDA arithmetic or assigning human semantic names. Neither of those stronger achievements is an automatic completion requirement.\n\nRetain the adverse history alongside that progress. Independent arithmetic previously matched large endpoints while missing small responses badly. Intended semantic transfers did not consistently occur. FLUX writer rankings reversed after the next consumer, and absolute response growth sometimes accompanied declining relative response. Decoder export/recovery limitations and signed-zero defects remain genuine limitations of their original records. Later exact shared-primitive forecasts do not retrospectively repair them.\n\nAfter cut15, consolidate the relations into one evaluator that separates structural eligibility, measured finite coverage and source/profile support. Exercise that evaluator first against the existing saved occurrences and unsupported metadata cases. Its decision must follow declared inputs and prerequisites, not observed target error. A supported path may compute the cheap relation or recompute attention; an unsupported path should carry an explicit abstention or qualified fallback. Numerical misses should remain observations with all rows retained, not become new discovery gates.\n\nThen use a native consumer only where it can distinguish alternatives. Turn14 already supplies two different H19 states: the cheap prediction and the correctly recomputed prefix-edited state. One block19 continuation can test whether their discrepancy persists, spreads or is reduced, while prospectively checking the complete H20 difference. This is a meaningful next cut because the local miss is real and the cumulative research shows that consumption can change an effect's importance. Another full image from identical corrected states would add no discrimination.\n\nThe active objective should remain bounded. The tested raw-to-image program can already be described as operationally accounted for within its declared source and primitive domain. The remaining work concerns reusable applicability and the consequences of counterfactual differences. What would materially change this account is a finite QKV-transformation miss, a mismatch despite matched operands/profile, an evaluator that silently selects unsupported reuse, or a downstream consumer that changes the local-error interpretation. None requires an unlimited benchmark, compressed state or a semantic dictionary. This review anchors completed turn14; review again by turn17, or immediately after a major counterexample."
+}

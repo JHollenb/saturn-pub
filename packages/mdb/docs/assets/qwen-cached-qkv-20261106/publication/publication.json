@@ -1,0 +1,99 @@
+{
+  "QK_signed_zero_defects": {
+    "k": [
+      0,
+      67
+    ],
+    "q": [
+      1,
+      364
+    ]
+  },
+  "arrays_read": 0,
+  "audit_sha256": "ae9bbed0078267d4968cc730e8c0116baf3dae6c73271fbcbf2fee00edd1a223",
+  "compact_manifest_sha256": "c662757ab5f261b91f72006bd3de57291e1ff70e208c38e9e30631cb6c1a3ca7",
+  "learned_calls": 0,
+  "model_calls": 0,
+  "native_job": "job-585e40c9614b",
+  "native_response_windows": {
+    "alternating64": {
+      "native_H19_response_rms": [
+        0.0,
+        2.4580191978371255,
+        0.15984609527717383,
+        29.435981142002547,
+        0.16440232117824,
+        2.264566380602404,
+        0.17770489052610172,
+        2.2183757684636984
+      ],
+      "native_M_response_rms": [
+        0.0,
+        0.666224169691066,
+        0.13540184899845187,
+        0.6344362828849821,
+        0.14430886477507016,
+        0.5916121085580885,
+        0.1575672937934921,
+        0.5628058933068785
+      ],
+      "windows": [
+        [
+          0,
+          64
+        ],
+        [
+          64,
+          128
+        ],
+        [
+          128,
+          192
+        ],
+        [
+          192,
+          256
+        ],
+        [
+          256,
+          320
+        ],
+        [
+          320,
+          384
+        ],
+        [
+          384,
+          448
+        ],
+        [
+          448,
+          512
+        ]
+      ]
+    },
+    "last-row-negative": {
+      "native_H19_response_rms": [
+        0.0,
+        1.919580811191467
+      ],
+      "native_M_response_rms": [
+        0.0,
+        0.5636534421397008
+      ],
+      "windows": [
+        [
+          0,
+          511
+        ],
+        [
+          511,
+          512
+        ]
+      ]
+    }
+  },
+  "schema": "mdb-qwen-cached-qkv-publication-v1",
+  "scope": "Plot coordinates come from authenticated complete saved scalar accounts. Windows/ports/channels share operands. Input doses differ; no intrinsic gain, semantic object, independent-kernel or speedup claim.",
+  "verifier_sha256": "733788bb8602639868592223bfeb50dea0d4998f0807e040398e2481fb1f057e"
+}

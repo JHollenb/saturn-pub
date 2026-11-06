@@ -1,0 +1,20 @@
+{
+  "schema": "mdb-cached-qkv-controller-invocations-v1",
+  "executed_by_agent": false,
+  "cwd": "/Users/jakeholl/domains",
+  "native_frontend_sha256": "bf5ccf76dda3059d3b222981efec483c8fe5d57bb93beb182ca6592e0edaa460",
+  "saved_frontend_sha256": "73a9e01e13c8b05f86790359f90858b205d1f503f0428e7e1015c6ad8642f131",
+  "native_stage": "rtk proxy /Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B saturn-pub/packages/mdb/qualification/stage_qwen_cached_qkv.py artifacts/mdb-qwen-cached-qkv-20261106/run-01 --parent-run artifacts/mdb-qwen-sign-shortcut-20261106/run-02 --compact artifacts/mdb-qwen-sign-shortcut-20261106/compact-collection-01/extracted/binding-minimal-result --selection artifacts/mdb-qwen-cached-qkv-20261106/selection-v1 --frontier artifacts/mdb-qwen-sign-shortcut-20261106/frontier-metadata-v1 --parameter-subset artifacts/mdb-qwen-row-sign-20261106/selection-v1/qwen-block18-parameter-artifacts.json --resource-job artifacts/mdb-qwen-row-sign-20261106/run-02/job.json",
+  "native_inspect": "rtk proxy /Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B saturn-pub/packages/mdb/qualification/stage_qwen_cached_qkv.py artifacts/mdb-qwen-cached-qkv-20261106/run-01 --inspect",
+  "native_submit": "rtk proxy /Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B saturn-pub/packages/mdb/qualification/stage_qwen_cached_qkv.py artifacts/mdb-qwen-cached-qkv-20261106/run-01 --submit",
+  "saved_stage_after_native_success": "rtk proxy /Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B saturn-pub/packages/mdb/qualification/stage_qwen_cached_qkv_saved_audit.py artifacts/mdb-qwen-cached-qkv-20261106/audit-01 --study artifacts/mdb-qwen-cached-qkv-20261106/run-01",
+  "saved_submit": "rtk proxy /Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B saturn-pub/packages/mdb/qualification/stage_qwen_cached_qkv_saved_audit.py artifacts/mdb-qwen-cached-qkv-20261106/audit-01 --submit",
+  "limits": [
+    "Root alone executes. Destinations must be fresh; preserve any failed/pre-admission attempt by choosing a new directory.",
+    "Native submit requires exact request-bound finite-run-review-v1.json with ready-for-finite-run and no blocking issues.",
+    "The original eleven-entry subset is unchanged; its historical provenance is retained. New source arrays/arms/windows come only from cached-QKV protocol8c53.",
+    "Source13 arrays remain inherited remote references; parent_forecast metadata is mandatory to authenticate original QKV capture strides.",
+    "Native4CPU/4GiBRAM/2GiBVRAM/60s estimate/240s assay/300s outer is a documented same-component planning exception based on native74. New peak/runtime are unmeasured.",
+    "Saved CPU controller remains unchanged at2CPU/3GiB/240s estimate/600s outer; no resource reseal."
+  ]
+}

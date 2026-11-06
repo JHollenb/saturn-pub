@@ -1,0 +1,21 @@
+{
+  "FLUX": 0,
+  "LM": 0,
+  "VAE": 0,
+  "cached_SDPA": 2,
+  "cached_attention_downstream_evaluations": 2,
+  "cached_linear": 8,
+  "component_hydrations": 1,
+  "embedding": 0,
+  "forecast_module_attempts": 0,
+  "full_functional_edited_blocks": 2,
+  "full_model": 0,
+  "functional_SDPA": 2,
+  "functional_linear": 14,
+  "native_SDPA": 3,
+  "native_authorizations": 3,
+  "native_block_calls": 3,
+  "native_linear": 21,
+  "noise": 0,
+  "tokenizer": 0
+}

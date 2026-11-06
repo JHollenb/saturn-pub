@@ -1,0 +1,21 @@
+{
+  "figures": {
+    "finite-zero-sign-boundary.png": {
+      "sha256": "1957ec98c214aac97e396c77d26ec81e768ff07593880d0b320ad750b6e9489a",
+      "size": [
+        1698,
+        738
+      ]
+    },
+    "predicted-native-responses.png": {
+      "sha256": "b79b7245308e3e6ebb2aeb5d6d1c63c7e5c59fe729e5a0e1be6d7bc671ff765c",
+      "size": [
+        1778,
+        760
+      ]
+    }
+  },
+  "issues": [],
+  "method": "Root viewed both actual rendered PNGs via view_image, checking values, legends, zero baseline, query windows, per-port response and Q/K defects against authenticated audit.",
+  "schema": "mdb-cached-qkv-root-visual-review-v1"
+}

@@ -1,0 +1,93 @@
+{
+  "arm": "alternating64",
+  "execution": {
+    "attention_dispatch": {
+      "backend": "sdpa",
+      "gqa_policy": "enable_gqa"
+    },
+    "backend": "cuda",
+    "learned_dtype": "torch.bfloat16",
+    "operand_device": "cuda:0",
+    "primitive_policy": {
+      "cuda_allow_bf16_reduced_precision_reduction": false,
+      "cuda_allow_tf32": false,
+      "cudnn_allow_tf32": false,
+      "cudnn_benchmark": false,
+      "cudnn_deterministic": true,
+      "deterministic_algorithms": true,
+      "float32_matmul_precision": "highest",
+      "num_threads": 4
+    },
+    "runtime_identity": "09f2ea2e47e3a0eee38dfbf52c86471113ec5e6b17bfb3520a04973d0ef9c8fc"
+  },
+  "frontier": "inherited-positioned-QKV-and-H18",
+  "horizon": 19,
+  "input_identity": "cdf5c7e1e4c502aa15d655594b1d3ccc4a0f2483a6835d01780b0f51fdea4dd6",
+  "model_identity": "425502121b4091b10124c548c98127785420233b12e95c8f1d972a186026dccf",
+  "source_identity": {
+    "count-contract.json": "80873b6e3f499d11082e8e00b209161ffe112349246f0518a5e582c571448ab8",
+    "flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "flux_functional_qwen_prefix_worker.py": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+    "flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "flux_source_receiver.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+    "parent-files.json": "d573bffe5c0c3dfc3d1c353721f5696909f73b75fb6ff293aed2e905f4ec0c33",
+    "parent-forecast.json": "0e716c88c8bca36ebd38e92963cce78fd3fc5dc798ab6da46623c8dd80499cda",
+    "parent-parameter-manifest.json": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+    "parent-request.json": "7a986d2ae78fd496f6908fb040057e902e2c208f3314ee12b09afd6a2f841573",
+    "parent-runtime.json": "fe12ec738cf0273dbbfa5edee83b7f6b6bea3b9afefca173a9d743106d619833",
+    "parent-seal.json": "a6d61b11fa67bfa0eb3a50fee66f26584b452874a590c255163102362460e652",
+    "parent-source.json": "0b3fa63d8fbd252c4ee8f365b21012a266447cfdb2b953886187326d04bac3e4",
+    "preflight.v1.json": "c2c967eaabcc341c9a647912d276dc3932be30d1d4e0fa60f9352814980299ea",
+    "qwen-config.json": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+    "qwen-parameter-manifest.json": "425502121b4091b10124c548c98127785420233b12e95c8f1d972a186026dccf",
+    "qwen-source-binding.json": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+    "qwen_cached_qkv.py": "95d356185b8bdd64479bc1e7937fa034aa24dc5f5b011b7075f0430e31c1bb21",
+    "qwen_cached_qkv_campaign.py": "d2c9e472ac06c667fea0726ac62f629e63ad776173a2e323821bf66f71b0d8f5",
+    "qwen_component_experiment.py": "81131b179f1a8a5ea52011be3e450e5901255f350d89ff11c053902c16a28580",
+    "qwen_h18_state_history.py": "17084d404f5ae00557e4ad8e94a8b84704787c47ebf9c875228cb452c4857036",
+    "qwen_row_sign_campaign.py": "fbd8eceaf1a9ef8917ecdc39a98ff960940aab9da8ecb4697c25c1a33d545f47",
+    "qwen_row_sign_shortcut.py": "940c3cfaafeaeb3f0df5746b92b6a8b0878255769c4f230b2a53bedfc0110c1c",
+    "qwen_sign_shortcut.py": "8e59051a34bc8e89c9376fd29aec966df9cbe84560c81f86910504172caaa457",
+    "qwen_sign_shortcut_campaign.py": "83f9d459938ccb96b913def78862cffc869cb6f0b4404a7f116d0a46fed184af",
+    "resource-basis.json": "336c327a88a5f03d2cc49da92936ab6ed229c8fc2af0b54205f7070a20aeb71c",
+    "retrieval-script.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+    "selection-protocol.json": "8c53ae9417ba40420e806cb634d59931fb0131f95d0329e5b34e078429503bff",
+    "stage_qwen_cached_qkv.py": "bf5ccf76dda3059d3b222981efec483c8fe5d57bb93beb182ca6592e0edaa460",
+    "stage_qwen_row_sign.py": "bfe6fbf84faaaf3eabec8930a9c868dc72c9a55a0568d01da1fe3f89b4c50cce",
+    "stage_qwen_sign_shortcut.py": "6f083cc6a039d50f8f206731d4a0fc87e76f9bf464c0d8cedba4caaecf04887b"
+  },
+  "windows": [
+    [
+      0,
+      64
+    ],
+    [
+      64,
+      128
+    ],
+    [
+      128,
+      192
+    ],
+    [
+      192,
+      256
+    ],
+    [
+      256,
+      320
+    ],
+    [
+      320,
+      384
+    ],
+    [
+      384,
+      448
+    ],
+    [
+      448,
+      512
+    ]
+  ]
+}

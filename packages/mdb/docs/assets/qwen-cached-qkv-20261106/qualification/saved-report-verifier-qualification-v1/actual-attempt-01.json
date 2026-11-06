@@ -1,0 +1,8 @@
+{
+  "script_sha256": "e0666fea27ed7a4a4b8e8b0b7b2ab1b947862cbaf75ced52e12bf7e86caccd15",
+  "status": "stopped",
+  "returncode": 1,
+  "error": "KeyError: reader_sha256",
+  "stage": "collector receipt schema before rollup/actual CLI/output creation",
+  "scope": "No data/model/audit changes. Cached collector uses exact collector/transport/reused-scope hashes rather than reader_sha256; reader source already bound through actual audit request."
+}

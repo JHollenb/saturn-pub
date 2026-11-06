@@ -1,5 +1,9 @@
 # Qwen row signs: a computation record with a counterexample
 
+The follow-up [cached-QKV experiment](QWEN-CACHED-QKV.md) now predicts two new
+mixed-support edits exactly at head/R/M/H19 by recomputing the changed read.
+It separately retains numerical QKV parity and 432 Q/K zero-sign defects.
+
 The positive-port sign shortcut is numerically exact on the tested
 support-closed queries. It misses the complete response of the later,
 unchanged input rows when they can read the edited prefix. Full functional

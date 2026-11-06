@@ -1,0 +1,162 @@
+{
+  "actual_documented_queries": [
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/saturn-pub/packages/mdb/docs/assets/qwen-cached-qkv-20261106/compact/catalog/equations",
+        "--alias",
+        "cmp.qwen.cached-qkv.alternating64",
+        "--applicable-to",
+        "/Users/jakeholl/domains/saturn-pub/packages/mdb/docs/assets/qwen-cached-qkv-20261106/verification/cmp.qwen.cached-qkv.alternating64.exact.context.json"
+      ],
+      "matches": 1,
+      "output_sha256": "b40e3e367d06e63797a0cd28f6b6f71293c39b5993c9f0d50d0f73fba1168ba7",
+      "returncode": 0
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb.computation_atlas",
+        "--atlas",
+        "/Users/jakeholl/domains/saturn-pub/packages/mdb/docs/assets/qwen-cached-qkv-20261106/compact/atlas",
+        "find",
+        "--law-id",
+        "law.qwen.positioned-QKV-row-sign.bf16.v1"
+      ],
+      "matches": 2,
+      "output_sha256": "196313a6466501a82beaafc85178af55488236f746ddda48427a502e2dfbfb84",
+      "returncode": 0
+    }
+  ],
+  "arrays_or_weights_copied": false,
+  "blog_sha256": "0e4751660e5094ff6d9e27b702552c8d2cbb4cc342d5ee7f0bdb46df2c7c36e8",
+  "copied_bytes": 6425748,
+  "copied_files": 145,
+  "figure_scope": "Complete output fields mean head/R/M/H19. Q/K zero-sign differences are shown separately.",
+  "frontmatter_source_links": 9,
+  "links": [
+    {
+      "document": "obsidian/blog/2026-11-06-090851-predicting-attention-from-transformed-operands.md",
+      "target": "2026-11-06-084211-where-a-computation-shortcut-stops-working.md"
+    },
+    {
+      "document": "obsidian/blog/2026-11-06-090851-predicting-attention-from-transformed-operands.md",
+      "target": "../images/mdb-qwen-cached-qkv-20261106/predicted-native-responses.png"
+    },
+    {
+      "document": "obsidian/blog/2026-11-06-090851-predicting-attention-from-transformed-operands.md",
+      "target": "../images/mdb-qwen-cached-qkv-20261106/finite-zero-sign-boundary.png"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "../../../../obsidian/blog/2026-11-06-090851-predicting-attention-from-transformed-operands.md"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "QWEN-ROW-SIGN.md"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "FLUX-H18-STATE-HISTORY.md"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "assets/qwen-cached-qkv-20261106/publication/predicted-native-responses.png"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "assets/qwen-cached-qkv-20261106/publication/finite-zero-sign-boundary.png"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "assets/qwen-cached-qkv-20261106/compact/audit.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "assets/qwen-cached-qkv-20261106/verification/verification.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "assets/qwen-cached-qkv-20261106/publication/publication-receipt.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "assets/qwen-cached-qkv-20261106/compact/source-metadata/qwen_parameter_manifest.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "assets/qwen-cached-qkv-20261106/compact/source-metadata/retrieval_script.py"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "assets/qwen-cached-qkv-20261106/compact/retrieve_evidence.py"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-ROW-SIGN.md",
+      "target": "QWEN-CACHED-QKV.md"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-ROW-SIGN.md",
+      "target": "../../../../obsidian/blog/2026-11-06-084211-where-a-computation-shortcut-stops-working.md"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-ROW-SIGN.md",
+      "target": "QWEN-SIGN-SHORTCUT.md"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-ROW-SIGN.md",
+      "target": "FLUX-H18-STATE-HISTORY.md"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-ROW-SIGN.md",
+      "target": "assets/qwen-row-sign-20261106/publication/support-boundary.png"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-ROW-SIGN.md",
+      "target": "assets/qwen-row-sign-20261106/publication/missed-response.png"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-ROW-SIGN.md",
+      "target": "assets/qwen-row-sign-20261106/compact/audit.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-ROW-SIGN.md",
+      "target": "assets/qwen-row-sign-20261106/verification/verification.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-ROW-SIGN.md",
+      "target": "assets/qwen-row-sign-20261106/publication/publication-receipt.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-ROW-SIGN.md",
+      "target": "FLUX-INITIAL-NOISE.md"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-ROW-SIGN.md",
+      "target": "assets/qwen-row-sign-20261106/compact/source-metadata/qwen_parameter_manifest.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-ROW-SIGN.md",
+      "target": "assets/qwen-row-sign-20261106/compact/source-metadata/retrieval_script.py"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-ROW-SIGN.md",
+      "target": "assets/qwen-row-sign-20261106/compact/retrieve_evidence.py"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-ROW-SIGN.md",
+      "target": "assets/qwen-row-sign-20261106/compact/external-evidence.json"
+    }
+  ],
+  "schema": "mdb-cached-qkv-docs-root-verification-v1"
+}

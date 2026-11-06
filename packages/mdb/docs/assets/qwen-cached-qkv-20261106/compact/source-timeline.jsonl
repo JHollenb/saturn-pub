@@ -1,0 +1,12 @@
+{"arm":"last-row-negative","kind":"forecast_lane_completed","lane":"cached","native_module_entries":0,"number":0}
+{"arm":"last-row-negative","kind":"forecast_lane_completed","lane":"functional","native_module_entries":0,"number":1}
+{"arm":"alternating64","kind":"forecast_lane_completed","lane":"cached","native_module_entries":0,"number":2}
+{"arm":"alternating64","kind":"forecast_lane_completed","lane":"functional","native_module_entries":0,"number":3}
+{"kind":"cohort_globally_sealed","native_module_entries":0,"native_targets_at_seal":0,"number":4,"seal_sha256":"f55ba3ef6ef0c5a16cefc4efff42fdc9fe58062dfc6432a46942cf8392c096c4"}
+{"kind":"native_targets_released","native_module_entries":0,"number":5,"seal_sha256":"f55ba3ef6ef0c5a16cefc4efff42fdc9fe58062dfc6432a46942cf8392c096c4"}
+{"arm":"baseline","kind":"native_component_authorized","native_module_entries":0,"number":6}
+{"arm":"baseline","kind":"native_component_completed","native_module_entries":15,"number":7}
+{"arm":"last-row-negative","kind":"native_component_authorized","native_module_entries":15,"number":8}
+{"arm":"last-row-negative","kind":"native_component_completed","native_module_entries":30,"number":9}
+{"arm":"alternating64","kind":"native_component_authorized","native_module_entries":30,"number":10}
+{"arm":"alternating64","kind":"native_component_completed","native_module_entries":45,"number":11}

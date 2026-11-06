@@ -1,0 +1,21 @@
+{
+  "outputs": {
+    "finite-zero-sign-boundary.png": {
+      "bytes": 88913,
+      "sha256": "1957ec98c214aac97e396c77d26ec81e768ff07593880d0b320ad750b6e9489a"
+    },
+    "predicted-native-responses.png": {
+      "bytes": 87382,
+      "sha256": "b79b7245308e3e6ebb2aeb5d6d1c63c7e5c59fe729e5a0e1be6d7bc671ff765c"
+    },
+    "publication.json": {
+      "bytes": 2061,
+      "sha256": "5c0ca4fbf7b2ae821352b7a2b440083c058e14aa19d8d41c545aed3a14df537c"
+    }
+  },
+  "schema": "mdb-qwen-cached-qkv-publication-receipt-v1",
+  "source_manifest_sha256": "c662757ab5f261b91f72006bd3de57291e1ff70e208c38e9e30631cb6c1a3ca7",
+  "source_sha256": "503ab8ffc87e8995551d9c8e03b687f766d34fef256b5fa2d0252a430e0407e4",
+  "verifier_sha256": "733788bb8602639868592223bfeb50dea0d4998f0807e040398e2481fb1f057e",
+  "visual_inspection": "Pending root view_image."
+}

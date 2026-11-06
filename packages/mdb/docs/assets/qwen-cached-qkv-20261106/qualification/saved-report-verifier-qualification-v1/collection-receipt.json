@@ -1,0 +1,17 @@
+{
+  "archive_bytes": 339962,
+  "archive_sha256": "00473d643b6702d919724bed7c99f9ff50dd2c69af612dd147d86392917c3429",
+  "collector_sha256": "fc63b5adfbb96d31529969efafab426ca05e9b7e4ddc461d81811cc96395c22d",
+  "expanded_bytes": 2651374,
+  "file_count": 43,
+  "files_manifest_sha256": "c662757ab5f261b91f72006bd3de57291e1ff70e208c38e9e30631cb6c1a3ca7",
+  "generic_transport_sha256": "007098eb72842fe1f5d585f64eae272812303d1c18eb67a17ba43508c646b18d",
+  "job_id": "job-aa0dc56ace52",
+  "model_calls": 0,
+  "native_job_id": "job-585e40c9614b",
+  "pointer_sha256": "75ba7d3eff47c5e2f8f184b287bf502a81b98727983bdc3b4d83bea7434e2d11",
+  "raw_tensor_arrays_collected": false,
+  "request_sha256": "debd122ff812da52b15a91d3b856301060c7ddb752b4f4a026f8e8b35bcbe351",
+  "reused_metadata_scope_sha256": "b621d8e12dc06476abf356643f22693a48a5a52bd43c7684d66e788126475015",
+  "schema": "mdb-qwen-cached-qkv-compact-retrieval-v1"
+}

@@ -1,0 +1,59 @@
+{
+  "actual_saved_fixture": {
+    "manifest_sha256": "58b68601101411ef5d717dcb6ae63f2de49ed728a30ab09d0bd214a159041207",
+    "producer_qualification_sha256": "3f40ba8f445fb1fdaaf20a7f9aebe78909f35a3fdf4b821cf1d0a0215c1ffd86",
+    "scope": "Previously executed actual installed tiny native Qwen CPU writer with separate synthetic own-positive parent, noncontiguous QKV restoration, signed-zero rows, all7SDPA/fullarrays, 3native components, real public ForecastTransaction/finalizer. This qualification reads saved evidence only; no model rerun.",
+    "source": "producer-qualification-v2/qwen-cached-qkv-result"
+  },
+  "coverage": [
+    "Actual writer descriptors/source13 and original parent mock manifest/global-seal/forecast layout joins; inherited payload bits and13restoration descriptors",
+    "Both named arms with2and4nonuniform protocol windows; three endpoint and own-baseline signed-response channels; all six actual public compare_equations calls receive exact explicit element budgets",
+    "Transformed/direct/native positionedQKV, signedzeros and layout; all7SDPA consumed input/fullrecord joins and returnedhead logical transpose;21QKVoperandjoins plus actual nativecontext occurrences",
+    "Actual seven-event frontier/globalSeal/execution journal, complete pretarget file equality, first4forecastlanes native-module count0, all3native targets afterrelease; hostile futurefile and corruptedseal refusal",
+    "Hostile actualQKVstride mismatch and full signed-response checksum tamper refuse",
+    "Deliberate per-window numeric/bit/signedzero misses retained as complete observations; overlapping dense layouts refused",
+    "Same production catalog_contexts builder exercised by actual installed EquationCatalog/Atlas record/find/ingest/show; missing execution.backend reproduces exact installed rejection",
+    "Legacy native/reader external roots/manifests consistent; reader labels inherited parent with13hashes",
+    "Actual isolated CLI help plus source-bound DEFAULT-separator CPU worker/normal marker with deliberately model-free mocked audit callback; changedsource refuses before callback/output"
+  ],
+  "limits": [
+    "Original production twelve-relative-metadata envelope and eleven-original-recipe streaming remain for the near-data CPU audit. Tiny parent metadata is explicitly synthetic, not an original checkpoint execution.",
+    "No generative helper/producer/model/tokenizer, attention, learned projection, recurrence, CUDA, original array/weight, scheduler, SSH, staging or submission executed by this reader qualification.",
+    "Aggregate sdpa.json is written post-target by producer; pretarget array/response custody and actual-call/fullarray joins are distinct claims.",
+    "No accuracy threshold, pruning, repair, whole-arm exactness, independentkernel, familyinduction, symbolicBF16law or terminal certification.",
+    "No actual installed CLI applicability lookup claimed by reader; actual public Python API schemas are qualified, CLI verification remains later compact-only work."
+  ],
+  "lint": {
+    "command": "rtk proxy uvx ruff check --select F,I qualification/audit_qwen_cached_qkv.py tests/test_audit_qwen_cached_qkv.py",
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "exit_code": 0,
+    "stdout": "All checks passed!\n"
+  },
+  "producer_pins": {
+    "qwen_cached_qkv.py": "95d356185b8bdd64479bc1e7937fa034aa24dc5f5b011b7075f0430e31c1bb21",
+    "qwen_cached_qkv_campaign.py": "d2c9e472ac06c667fea0726ac62f629e63ad776173a2e323821bf66f71b0d8f5",
+    "qwen_component_experiment.py": "81131b179f1a8a5ea52011be3e450e5901255f350d89ff11c053902c16a28580"
+  },
+  "qualification": {
+    "command": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B -m pytest -q test_audit_qwen_cached_qkv.py --basetemp=../tmp",
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-cached-qkv-20261106/audit-qualification-v1/attempt-01/cohort",
+    "exit_code": 0,
+    "observed_tool_wall_seconds": 0.885713917,
+    "passed": 8,
+    "pytest_seconds": 0.68,
+    "stdout": "........                                                                 [100%]\n8 passed in 0.68s\n"
+  },
+  "schema": "mdb-qwen-cached-qkv-saved-audit-qualification-v1",
+  "scope": "Frozen row-sign numerical/codec/parameter/custody functions reused rather than importing generative code. Whole fields/windows/QKV/premise/source accounts overlap and are counted separately.",
+  "source_sha256": {
+    "audit_flux_functional_pass.py": "2d54e716749dec52c159f3a5214860f4bb8cbf396fd09239540bd55988274c80",
+    "audit_flux_functional_qwen_prefix.py": "5004786be76e1f576d2df65e6d1225f8fdd41c4a7e09e5ed8a6c23057db78a97",
+    "audit_flux_raw_to_image.py": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835",
+    "audit_qwen_cached_qkv.py": "b473d178fd9825009c0c039dc23ab0f2208309f2d34ccc2d784ee5b5710385eb",
+    "audit_qwen_row_sign.py": "d995c3c5ca3c194a3ce87bfca58e9352d251246d798e21c6e04a7938bd9b5838",
+    "audit_qwen_sign_shortcut.py": "d33613bbb1d71ee3b2007fb007e5266acaf141994091264bed50d27342237e2c",
+    "retrieve_reader_evidence.py": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923",
+    "test_audit_qwen_cached_qkv.py": "fd6964d2ee40fbad84a23b5ba3a54d067fdb370b9e09f30b046391dc8a4f673f"
+  },
+  "status": "passed"
+}

@@ -1,0 +1,12 @@
+{
+  "coordinator_fallback": "Both spawn_agent and legacy Astra followup were refused with agent thread limit reached; user explicitly requested Astra. Existing active agents plus advisor remained within four active roles.",
+  "direction_sha256": "519ba55d84b6ec3dbeb1a5691d34a1ed4e2dcea633d7f52be9d0327ff028cfe6",
+  "execution_receipt_sha256": "cb95918a653bfade0aea39d1ea3588a396de250fa6748139dfac3fb3bddd651d",
+  "invocation_sha256": "412fbdb95d022bef3c70ff3bbaea2f7fd8aa7884d90d20eaadd5e31ce3ffa82d",
+  "model": "gpt-6-astra",
+  "raw_final_sha256": "45688fea642a5608722fb6dfaf44996d45bfaef851f20dcb8a25ab29ee4371a0",
+  "reasoning_effort": "high",
+  "review_sha256": "f4f06477c901791a308636f06d2e6c4912c9944db55bb993d1888cfd5cc682c5",
+  "sandbox": "read-only",
+  "schema": "mdb-astra-review-cli-provenance-v1"
+}

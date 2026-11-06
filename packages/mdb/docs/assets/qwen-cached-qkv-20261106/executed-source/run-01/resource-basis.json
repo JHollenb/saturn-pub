@@ -1,0 +1,8 @@
+{
+  "elapsed_s": 47.22,
+  "job_id": "job-74efe5506ecf",
+  "job_record_sha256": "3a67fc9408ca1cf338e3b96593a8ac4f64aed32df2b5afdcbbb5fabcef959888",
+  "peak_rss_mb": 1795.4,
+  "peak_vram_mb": 826.0,
+  "scope": "Same original11-weight hydration,2full functional and3native blocks. New candidate adds2SDPA+6linears; new peak/time unmeasured. Whole-shard hash startup is distinct from201861632B selected payload."
+}

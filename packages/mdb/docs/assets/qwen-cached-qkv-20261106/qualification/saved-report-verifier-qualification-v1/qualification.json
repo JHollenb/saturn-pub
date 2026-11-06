@@ -1,0 +1,50 @@
+{
+  "actual_verification": {
+    "actual_CLI_calls": 12,
+    "audit_job": "job-aa0dc56ace52",
+    "captured_job_status": "Both exact complete local job/log/request/config/reservation/command/payload/marker captures authenticated; no scheduler queried",
+    "compact_manifest_sha256": "c662757ab5f261b91f72006bd3de57291e1ff70e208c38e9e30631cb6c1a3ca7",
+    "exact_matches": 4,
+    "native_job": "job-585e40c9614b",
+    "receipt": "saved-report-verification-v1/verification.json",
+    "receipt_sha256": "733788bb8602639868592223bfeb50dea0d4998f0807e040398e2481fb1f057e",
+    "source_profile_abstentions": 8
+  },
+  "coverage": [
+    "Whole head/R/M/H endpoint and own-positive response errors separately in three channels",
+    "Dynamic protocol windows and per-arm complete port/native-effect reports, without duplicate primary counts",
+    "Transformed/direct/native QKV numeric/bit/signedzero, source-sign and source-positive-baseline accounts; captured staging/restored layouts separate",
+    "Actual cached collector schema binds fc63 wrapper/007098 generic transport/b621 reused metadata scope; reader source bound independently through actual executed audit request",
+    "Compact inventory no-array boundary, expected native/audit requests and producer/reader source, source/core counts and declared/effectiveconfig joins",
+    "Prior pinned job/log custody and actual installed CLI helpers reused; exact/source/profile applicability tested without seed assumptions"
+  ],
+  "limits": [
+    "Report scalar recounts only; no original raw arrays/weights, model/tokenizer, projection, scheduler, staging, submission or neural execution.",
+    "Primary whole fields, windows, effects, QKV, source signs/baselines and layouts are dependent overlapping views.",
+    "Logical bit-changed counts derive numericchanged+sharedzero sign defects for finite represented values; they are not raw archivebyte offsets.",
+    "Preserved QKV signedzero defects are not erased by exact downstream endpoints; no universal BF16law, independentkernel or terminalcertification claim."
+  ],
+  "lint": {
+    "command": "rtk proxy uvx ruff check --select F,I artifacts/mdb-qwen-cached-qkv-20261106/verify_saved_reports.py artifacts/mdb-qwen-cached-qkv-20261106/saved-report-verifier-qualification-v1/test_verify_saved_reports.py",
+    "stdout": "All checks passed!\n"
+  },
+  "preserved_history": {
+    "actual-attempt-01": "Stoppedbefore rollup/CLI/output with KeyError reader_sha256. Cached collector intentionally has collector/transport hashes rather than that row-specific field; no numerical/native/audit changes. Receipt preserved atactual-attempt-01.json.",
+    "attempt-01": "4mechanics checks passed0.55s on firstdraft; copiedsourcepreserved.",
+    "attempt-02": "Exact actual collector metadata regression added,5mechanics checks passed0.57s; correctedactualverification completed."
+  },
+  "qualification": {
+    "command": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B -m pytest -q test_verify_saved_reports.py --basetemp=../tmp",
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-cached-qkv-20261106/saved-report-verifier-qualification-v1/attempt-02/cohort",
+    "observed_tool_wall_seconds": 0.794049584,
+    "passed": 5,
+    "pytest_seconds": 0.57,
+    "scope": "Actual saved tiny scalar/catalog reports plus actual cached collector metadata schema;12actual installed CLI lookups in mechanics, no model/tensor/checkpoint execution.",
+    "stdout": ".....                                                                    [100%]\n5 passed in 0.57s\n"
+  },
+  "reused_helper_sha256": "3ff3a2417969475d6602b76c8e5d83677a52be895df4e7582e24e38821f1d4e6",
+  "schema": "mdb-qwen-cached-qkv-compact-verifier-qualification-v1",
+  "script_sha256": "a5a51d79b8bf43fe70b897a4eb62b6ab80a1f5e883e78b16496e51fb3fa99d41",
+  "status": "passed",
+  "tests_sha256": "c2e13e115923ea3fc06331b030b828d1f0d53e5ae7f1ff18d9c9b20bcedaff75"
+}
