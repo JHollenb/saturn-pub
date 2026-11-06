@@ -336,12 +336,14 @@ references, then plots the authenticated worker accounts without model calls.
 Its output explicitly distinguishes that validation from independently
 re-reducing P/N arrays. The full forecast reconstruction audit remains separate.
 
-The next numerical cut is the missing corner R=F_1(P_1): run the native pass
-on the saved predicted incoming latent. Compare R−N with the already observed
-P−Q to determine whether the larger finite input response also occurs in the
-native computation. That experiment is proposed, not executed. It requires
-56 native transitions for the two contexts, with no new encoding, noise draw
-or VAE image. Any new predictions must seal before those native targets.
+The missing corner subsequently ran as an expanded
+[native-continuation experiment](FLUX-NATIVE-CORNER.md): four native futures,
+336 transitions and four actual images from the two selected contexts.
+Paired shams M exactly match historical N. At post-single19, native image
+response R−M has RMS3.19852/0.79140 versus mathematical P−Q2.96892/0.78542;
+response errors are34.92%/128.37%. The high-case final native response has a
+197/255 channel tail, while P differs from the native P1 continuation by at
+most5/255. Complete signed accounts retain the low-case counterexample.
 
 The preceding full112 initial-noise and matched56 findings, including numerical
 errors and reader correction history, are in [FLUX-INITIAL-NOISE.md](FLUX-INITIAL-NOISE.md).
