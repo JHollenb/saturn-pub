@@ -1,0 +1,26 @@
+{
+  "actual_noise_identity": "8176781bb58db7cab1eecdf9e3c08cdc00914c76a5c1a048760c88046f2a2876",
+  "clock": {
+    "cursor": 0,
+    "phase": "project",
+    "step": 0
+  },
+  "forecast_seal": "36331a2642324ca69591e1e447ebe2b887d7e2152b0f5d1dbd32e35abb1efa19",
+  "frontier": "raw prompt plus declared seed before any native learned target",
+  "horizon": {
+    "denoiser_transitions": 112,
+    "functional_decoder": 1,
+    "qwen_prefix": 27
+  },
+  "mask_identity": "9f621570c4506bffbe062ff2dba4a981fb09673b22b655bec1618979ea4a47cb",
+  "numeric_profile_sha256": "1b3ec919a2fa15ca082760ec6f6a065ad48ac806aa4d88fb7e1f68feeb975ffc",
+  "occurrence": "whole",
+  "parameter_manifests": {
+    "flux": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb",
+    "qwen": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+    "vae": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9"
+  },
+  "prompt_utf8_sha256": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612",
+  "request_sha256": "982cbb95829fe1eb77c444e1beaa424e5535c18e4ec8bcb7ca6690e61d8d330e",
+  "seed": 277
+}

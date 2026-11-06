@@ -1,0 +1,161 @@
+{
+  "base_sigmas": [
+    1.0,
+    0.75,
+    0.5,
+    0.25
+  ],
+  "generator_after": {
+    "bytes": 144,
+    "dtype": "uint8",
+    "path": "frontend/forecast/generator-after.npy",
+    "sha256": "2f16aff95757afe9817e851b6fb6b3f492a421d8c62e111c40fc733d8172b719",
+    "shape": [
+      16
+    ]
+  },
+  "generator_before": {
+    "bytes": 144,
+    "dtype": "uint8",
+    "path": "frontend/forecast/generator-before.npy",
+    "sha256": "66ad63e55a4a6d7b3826afbd5a42a65f4a09831984897758eb4f5c3f4c9a91fb",
+    "shape": [
+      16
+    ]
+  },
+  "img_ids": {
+    "bytes": 32896,
+    "content_sha256": "87b4f95cfb97df0287488b86742472e263ea5e9c080c2e3348f6f64224f797af",
+    "device_at_capture": "cuda:0",
+    "encoding": "native-numpy-v1",
+    "logical_dtype": "torch.int64",
+    "path": "frontend/forecast/img-ids.npy",
+    "sha256": "5eaeec651a5ca7e48a9ec778cff91e3e2a98eda31fef6eadcd406cc403770e33",
+    "shape": [
+      1,
+      1024,
+      4
+    ],
+    "stored_dtype": "int64",
+    "stride": [
+      4096,
+      4,
+      1
+    ]
+  },
+  "lane": "forecast",
+  "mu": 2.0306897079499455,
+  "packed_noise": {
+    "bytes": 262272,
+    "content_sha256": "8176781bb58db7cab1eecdf9e3c08cdc00914c76a5c1a048760c88046f2a2876",
+    "device_at_capture": "cuda:0",
+    "encoding": "bf16-bits-v1",
+    "logical_dtype": "torch.bfloat16",
+    "path": "frontend/forecast/packed-noise.npy",
+    "sha256": "409f3e9a8af2623d07a8d4571ea1d02319aad174f247400d4df51a499c0b0482",
+    "shape": [
+      1,
+      1024,
+      128
+    ],
+    "stored_dtype": "uint16",
+    "stride": [
+      131072,
+      1,
+      1024
+    ]
+  },
+  "raw_noise": {
+    "bytes": 262272,
+    "content_sha256": "d18b8555021d7bfb291ac319b8af0fd60e2c318dc2d7571cfe60ab2913a4b3d0",
+    "device_at_capture": "cuda:0",
+    "encoding": "bf16-bits-v1",
+    "logical_dtype": "torch.bfloat16",
+    "path": "frontend/forecast/raw-noise.npy",
+    "sha256": "fb5e22ed9e47b622ef39f9ee7808433d2144c6331b52794d6feb370cea07b4db",
+    "shape": [
+      1,
+      128,
+      32,
+      32
+    ],
+    "stored_dtype": "uint16",
+    "stride": [
+      131072,
+      1024,
+      32,
+      1
+    ]
+  },
+  "scheduler_config": {
+    "_class_name": "FlowMatchEulerDiscreteScheduler",
+    "_diffusers_version": "0.37.0.dev0",
+    "base_image_seq_len": 256,
+    "base_shift": 0.5,
+    "invert_sigmas": false,
+    "max_image_seq_len": 4096,
+    "max_shift": 1.15,
+    "num_train_timesteps": 1000,
+    "shift": 3.0,
+    "shift_terminal": null,
+    "stochastic_sampling": false,
+    "time_shift_type": "exponential",
+    "use_beta_sigmas": false,
+    "use_dynamic_shifting": true,
+    "use_exponential_sigmas": false,
+    "use_karras_sigmas": false
+  },
+  "seed": 277,
+  "sigmas": {
+    "bytes": 148,
+    "content_sha256": "47eb6994cb84cb458fd9a90cd3eb5e5890856680c154abec35f26e833e400852",
+    "device_at_capture": "cuda:0",
+    "encoding": "native-numpy-v1",
+    "logical_dtype": "torch.float32",
+    "path": "frontend/forecast/sigmas.npy",
+    "sha256": "59a17e1beda261fa19f018fd780a0129fe6ece32b38c91f30105092c92b153b5",
+    "shape": [
+      5
+    ],
+    "stored_dtype": "float32",
+    "stride": [
+      1
+    ]
+  },
+  "timesteps": {
+    "bytes": 144,
+    "content_sha256": "1e400c851167980caf2cd88333c7b146d8c3168b4b49d817e7df5271dbda734b",
+    "device_at_capture": "cuda:0",
+    "encoding": "native-numpy-v1",
+    "logical_dtype": "torch.float32",
+    "path": "frontend/forecast/timesteps.npy",
+    "sha256": "4a17b23a562e491bd8dc4201e3c0c289e3a1ffc827e4ed0396bc7c6a79cb0b1a",
+    "shape": [
+      4
+    ],
+    "stored_dtype": "float32",
+    "stride": [
+      1
+    ]
+  },
+  "txt_ids": {
+    "bytes": 16512,
+    "content_sha256": "14787eca2e15009073d22c1a9bc4782762d6b6b46ee5ff1bd46178ca6d97cbe7",
+    "device_at_capture": "cuda:0",
+    "encoding": "native-numpy-v1",
+    "logical_dtype": "torch.int64",
+    "path": "frontend/forecast/txt-ids.npy",
+    "sha256": "069d7e8ff864b08420aa936d9c99c7547afbff8d4c4598d75afc09d76efad683",
+    "shape": [
+      1,
+      512,
+      4
+    ],
+    "stored_dtype": "int64",
+    "stride": [
+      2048,
+      4,
+      1
+    ]
+  }
+}

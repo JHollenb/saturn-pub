@@ -1,0 +1,92 @@
+{
+  "compact_fixture": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/audit-qualification-v1/attempt-08/tmp/test_actual_saved_only_compact0/outputs/job-tiny-saved-audit/binding-minimal-result",
+  "compact_manifest_sha256": "5dcfaa942928b5ecdcd3082984976bd853129b8c83d35bcecd83a72f4be16045",
+  "execution": "attempt-08/execution.json",
+  "execution_sha256": "657a8f3edaff6293277888925d2688fd5dd8e12c905e5904bf821ad11dd3385b",
+  "failed_attempts_preserved": [
+    "attempt-03: synthetic fixture used rejected ForecastTransaction frontier kind; corrected to qualified raw-input ABI before any production job"
+  ],
+  "installed_python": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+  "isolated_cwd": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/audit-qualification-v1/attempt-08/stage",
+  "limitations": [
+    "No learned recurrence or independent CUDA arithmetic recomputed.",
+    "No native internal decoder macros beyond retained consumer entry/decoded/pixels.",
+    "Raw tensors remain remote; compact contains references, accounts, metadata and three original PNGs.",
+    "Per-field shapes are retained in accounts; exact typed-state layouts remain in original source-bound LocalStore manifests and captured descriptors.",
+    "Scalar positions overlap across hidden states, carried state fields and dependent consumers."
+  ],
+  "original_sources_modified": false,
+  "prior_passing_attempts_preserved": [
+    "attempt-01",
+    "attempt-02",
+    "attempt-04",
+    "attempt-05",
+    "attempt-06",
+    "attempt-07"
+  ],
+  "producer_sha256": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522",
+  "production_calls": 0,
+  "production_expected_comparison_census": {
+    "catalog_dependent_records": 2,
+    "denoiser_primary_fields": 980,
+    "dependent_endpoint_diagnostics": 4,
+    "frontend_fields": 6,
+    "generator_state_fields": 2,
+    "independent_histories": 1,
+    "primary_full_fields": 1011,
+    "qwen_primary_fields": 29,
+    "same_latent_post_quant": 1,
+    "source_euler_checks": 8,
+    "whole_decoded_pixel_fields": 2
+  },
+  "pytest_summary": "20 passed in 10.87s",
+  "ruff": {
+    "command": [
+      "/Users/jakeholl/domains/common/.venv/bin/ruff",
+      "check",
+      "--select",
+      "F,I",
+      "--config",
+      "pyproject.toml",
+      "qualification/audit_flux_raw_to_image.py",
+      "tests/test_audit_flux_raw_to_image.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "returncode": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  },
+  "schema": "mdb-raw-to-image-saved-audit-qualification-v1",
+  "scope": "Synthetic saved-array/metadata/LocalStore/ForecastTransaction/checkpoint-recipe fixture only; zero neural model or CUDA calls and no production weights.",
+  "source_sha256": {
+    "qualification/audit_flux_functional_decoder.py": "b0cc9ae066e5d7471cf2b022093fb98bcdb45894e554d3f88bc6a87641c98148",
+    "qualification/audit_flux_functional_pass.py": "2d54e716749dec52c159f3a5214860f4bb8cbf396fd09239540bd55988274c80",
+    "qualification/audit_flux_functional_qwen_prefix.py": "5004786be76e1f576d2df65e6d1225f8fdd41c4a7e09e5ed8a6c23057db78a97",
+    "qualification/audit_flux_functional_remaining.py": "5027875c03f9ceb3157b4b9d9632366ff5c9b1c4beb429b8b73d79aad0db6b08",
+    "qualification/audit_flux_image_tail_microscope.py": "ead508b31acc036cb4a9fd61dcd334b34337a704728d4a3d357de94063863ee9",
+    "qualification/audit_flux_raw_to_image.py": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835",
+    "qualification/audit_flux_single_stack_trace.py": "126ced98b7ff718408123e19bcdceb44be153e456bb328d1fe487195a3ac7526",
+    "qualification/flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "qualification/flux_raw_to_image.py": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522",
+    "qualification/retrieve_reader_evidence.py": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923",
+    "tests/test_audit_flux_functional_qwen_prefix.py": "175fea728b2fff3c8ad9d1f1dc9aee14161998456db4bd60bd73821ff4d14817",
+    "tests/test_audit_flux_raw_to_image.py": "cd978cc7357797412cb828234f5223c2e05ddf1b1d662f7a723f9d5342fc7092"
+  },
+  "status": "passed",
+  "tested": [
+    "all112clock/parent/carry/reset joins",
+    "signed-zero and numerical misses preserved",
+    "negative endpoint cross terms and exact vector accounting",
+    "exact production catalog element budget",
+    "real frozen finalizer schema and complete member IDs/byte count",
+    "independent saved parser and query-row diagnostics",
+    "streamed original recipe restoration",
+    "per-placement complete tensor maps and hashes",
+    "closed global seal and no future native dependencies",
+    "actual pre/post-quant consumer operands",
+    "native neural calls forbidden during audit",
+    "actual compact CPU CLI with original PNGs, two catalog records and retrievers"
+  ],
+  "tests": 20,
+  "wall_seconds": 11.509267000015825
+}

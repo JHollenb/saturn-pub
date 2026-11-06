@@ -1,0 +1,87 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+Installed 65 packages in 1.24s
+MDB_EXECUTION_ENVIRONMENT={"cuda_driver": "NVIDIA GeForce RTX 4080, 580.159.03", "packages": {"Jinja2": "3.1.6", "MarkupSafe": "3.0.4", "PyYAML": "6.0.3", "Pygments": "2.21.0", "accelerate": "1.14.0", "annotated-doc": "0.0.5", "anyio": "4.15.1", "certifi": "2026.10.23", "charset-normalizer": "3.5.2", "click": "8.5.0", "cuda-bindings": "13.4.4", "cuda-pathfinder": "1.8.5", "cuda-toolkit": "13.0.3.0", "diffusers": "0.39.0", "filelock": "4.2.5", "fsspec": "2026.9.0", "h11": "0.16.0", "hf-xet": "1.8.0", "httpcore": "1.0.9", "httpx": "0.28.1", "huggingface_hub": "1.33.0", "idna": "3.20", "importlib_metadata": "10.1.0", "markdown-it-py": "4.2.0", "mdb-runtime": "0.1.0", "mdurl": "0.1.2", "mpmath": "1.3.0", "mrun-pub": "0.1.2", "networkx": "3.7", "numpy": "2.5.4", "nvidia-cublas": "13.1.1.3", "nvidia-cuda-cupti": "13.0.85", "nvidia-cuda-nvrtc": "13.0.88", "nvidia-cuda-runtime": "13.0.96", "nvidia-cudnn-cu13": "9.20.0.48", "nvidia-cufft": "12.0.0.61", "nvidia-cufile": "1.15.1.6", "nvidia-curand": "10.4.0.35", "nvidia-cusolver": "12.0.4.66", "nvidia-cusparse": "12.6.3.3", "nvidia-cusparselt-cu13": "0.8.1", "nvidia-nccl-cu13": "2.29.7", "nvidia-nvjitlink": "13.4.92", "nvidia-nvshmem-cu13": "3.4.5", "nvidia-nvtx": "13.0.85", "packaging": "26.3", "pillow": "13.0.0", "pip": "26.1.2", "psutil": "7.2.2", "regex": "2026.9.29", "requests": "2.34.2", "rich": "15.0.0", "safetensors": "0.8.0", "saturn-pub": "0.4.1", "setuptools": "84.2.1", "shellingham": "1.5.4", "sympy": "1.14.0", "tokenizers": "0.22.2", "torch": "2.13.0", "tqdm": "4.70.1", "transformers": "5.14.1", "triton": "3.7.1", "typer": "0.27.3", "typing_extensions": "4.16.0", "urllib3": "2.8.0", "zipp": "4.1.2"}, "python": "3.14.6", "resolved": {"LLM_MODELS_EXTRA_ROOT": "/mnt/big/llm-models", "TORCH_HOME": "/mnt/hdd8tb/mdb/torch", "UV_CACHE_DIR": "/mnt/hdd8tb/mdb/uv-cache", "UV_LINK_MODE": "symlink"}, "uv": "uv 0.12.6 (x86_64-unknown-linux-gnu)"}
+MDB_RAW_TO_IMAGE_PHASE {"kind": "runtime_contract_bound", "runtime_contract_sha256": "1b3ec919a2fa15ca082760ec6f6a065ad48ac806aa4d88fb7e1f68feeb975ffc", "seconds": 0.10711536463350058}
+MDB_RAW_TO_IMAGE_PHASE {"kind": "tokenizer_bound", "seconds": 0.5410923026502132, "source_files": 9, "tokenizer_class": "Qwen2Tokenizer"}
+MDB_RAW_TO_IMAGE_PHASE {"kind": "qwen_hydrated_cpu", "recipes": 398, "seconds": 47.76453345362097, "tied_alias": true}
+Timeout (0:02:00)!
+Thread 0x0000799105f51740 [python] (most recent call first):
+  File "flux_source_receiver.py", line 117 in load
+  File "flux_raw_to_image.py", line 264 in _load_transformer
+  File "flux_raw_to_image.py", line 821 in run
+  File "flux_raw_to_image.py", line 1070 in worker
+  File "flux_raw_to_image.py", line 1082 in main
+  File "flux_raw_to_image.py", line 1086 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 98 in _run_module_code
+  File "<frozen runpy>", line 294 in run_path
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 67 in main
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 73 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 203 in _run_module_as_main
+MDB_RAW_TO_IMAGE_PHASE {"kind": "flux_hydrated_cpu", "recipes": 169, "seconds": 113.40846576076001}
+MDB_RAW_TO_IMAGE_PHASE {"encoder": "meta", "kind": "vae_hydrated_cpu", "recipes": 142, "seconds": 113.8011712548323}
+MDB_RAW_TO_IMAGE_PHASE {"after_sha256": "daba436d017fc9eccfcb556819c9eee75f3a1304407bb6fbba46d137e72d5ec2", "before_sha256": "ec1c2c83ad6d88602a215cf6fe6f2ecf2d38d434d366833f4f10514bc9f44e26", "component": "qwen", "direction": "cuda", "identity_preserved": true, "kind": "component_placement", "seconds": 125.93052904494107, "tensors": 400}
+MDB_RAW_TO_IMAGE_PHASE {"conditioning_shape": [1, 512, 7680], "hidden_states": 28, "kind": "qwen_forecast_complete", "native_forwards": 0, "seconds": 131.57629843987525}
+MDB_RAW_TO_IMAGE_PHASE {"after_sha256": "ec1c2c83ad6d88602a215cf6fe6f2ecf2d38d434d366833f4f10514bc9f44e26", "before_sha256": "daba436d017fc9eccfcb556819c9eee75f3a1304407bb6fbba46d137e72d5ec2", "component": "qwen", "direction": "cpu", "identity_preserved": true, "kind": "component_placement", "seconds": 145.98049805872142, "tensors": 400}
+MDB_RAW_TO_IMAGE_PHASE {"after_sha256": "2c5e1f5544868ef7829c2745e4beacee7c8672b48e6cde081369b0588e8188f6", "before_sha256": "ce85b9b31c4e0f088f452cd00bd8957a77d0b1c8cc25d30cec41e67273ec9312", "component": "flux", "direction": "cuda", "identity_preserved": true, "kind": "component_placement", "seconds": 155.77141931280494, "tensors": 169}
+MDB_RAW_TO_IMAGE_PHASE {"kind": "flux_forecast_complete", "seconds": 175.33475431101397, "transitions": 112}
+MDB_RAW_TO_IMAGE_PHASE {"after_sha256": "ce85b9b31c4e0f088f452cd00bd8957a77d0b1c8cc25d30cec41e67273ec9312", "before_sha256": "2c5e1f5544868ef7829c2745e4beacee7c8672b48e6cde081369b0588e8188f6", "component": "flux", "direction": "cpu", "identity_preserved": true, "kind": "component_placement", "seconds": 192.3108705636114, "tensors": 169}
+MDB_RAW_TO_IMAGE_PHASE {"after_sha256": "8bf89e21711ecdb773f659000c1393f3c9616064cf321f1224f3c5656019c135", "before_sha256": "eeccf6a7e016f5d32952d7d111d9de36997a408e6218cb85750947699413d8de", "component": "vae", "direction": "cuda", "identity_preserved": true, "kind": "component_placement", "seconds": 192.54469560692087, "tensors": 143}
+MDB_RAW_TO_IMAGE_PHASE {"functional_decode_calls": 1, "kind": "decoder_forecast_complete", "macros": 11, "seconds": 199.44893397204578}
+MDB_RAW_TO_IMAGE_PHASE {"after_sha256": "eeccf6a7e016f5d32952d7d111d9de36997a408e6218cb85750947699413d8de", "before_sha256": "8bf89e21711ecdb773f659000c1393f3c9616064cf321f1224f3c5656019c135", "component": "vae", "direction": "cpu", "identity_preserved": true, "kind": "component_placement", "seconds": 199.54934090701863, "tensors": 143}
+MDB_RAW_TO_IMAGE_PHASE {"kind": "forecast_globally_sealed", "native_targets": 0, "seal_sha256": "36331a2642324ca69591e1e447ebe2b887d7e2152b0f5d1dbd32e35abb1efa19", "seconds": 201.64396407967433}
+MDB_RAW_TO_IMAGE_PHASE {"after_sha256": "daba436d017fc9eccfcb556819c9eee75f3a1304407bb6fbba46d137e72d5ec2", "before_sha256": "ec1c2c83ad6d88602a215cf6fe6f2ecf2d38d434d366833f4f10514bc9f44e26", "component": "qwen", "direction": "cuda", "identity_preserved": true, "kind": "component_placement", "seconds": 215.03696513175964, "tensors": 400}
+MDB_RAW_TO_IMAGE_PHASE {"executed_full_layers": 36, "kind": "qwen_native_complete", "retained_hidden_states": 28, "seconds": 215.67178762797266}
+Timeout (0:02:00)!
+Thread 0x0000799105f51740 [python] (most recent call first):
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/mdb/forward_recording.py", line 27 in tensor_descriptor
+  File "flux_raw_to_image.py", line 308 in _tensor_signature
+  File "flux_raw_to_image.py", line 325 in _component_signature
+  File "flux_raw_to_image.py", line 749 in placement
+  File "flux_raw_to_image.py", line 978 in execute_native
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/mdb/forecast_transaction.py", line 661 in execute
+  File "flux_raw_to_image.py", line 1024 in run
+  File "flux_raw_to_image.py", line 1070 in worker
+  File "flux_raw_to_image.py", line 1082 in main
+  File "flux_raw_to_image.py", line 1086 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 98 in _run_module_code
+  File "<frozen runpy>", line 294 in run_path
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 67 in main
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 73 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 203 in _run_module_as_main
+MDB_RAW_TO_IMAGE_PHASE {"after_sha256": "ec1c2c83ad6d88602a215cf6fe6f2ecf2d38d434d366833f4f10514bc9f44e26", "before_sha256": "daba436d017fc9eccfcb556819c9eee75f3a1304407bb6fbba46d137e72d5ec2", "component": "qwen", "direction": "cpu", "identity_preserved": true, "kind": "component_placement", "seconds": 231.43760076304898, "tensors": 400}
+MDB_RAW_TO_IMAGE_PHASE {"after_sha256": "2c5e1f5544868ef7829c2745e4beacee7c8672b48e6cde081369b0588e8188f6", "before_sha256": "ce85b9b31c4e0f088f452cd00bd8957a77d0b1c8cc25d30cec41e67273ec9312", "component": "flux", "direction": "cuda", "identity_preserved": true, "kind": "component_placement", "seconds": 246.37337116990238, "tensors": 169}
+MDB_RAW_TO_IMAGE_PHASE {"kind": "flux_native_complete", "seconds": 265.57279737479985, "transitions": 112}
+MDB_RAW_TO_IMAGE_PHASE {"after_sha256": "ce85b9b31c4e0f088f452cd00bd8957a77d0b1c8cc25d30cec41e67273ec9312", "before_sha256": "2c5e1f5544868ef7829c2745e4beacee7c8672b48e6cde081369b0588e8188f6", "component": "flux", "direction": "cpu", "identity_preserved": true, "kind": "component_placement", "seconds": 283.1665335409343, "tensors": 169}
+MDB_RAW_TO_IMAGE_PHASE {"after_sha256": "8bf89e21711ecdb773f659000c1393f3c9616064cf321f1224f3c5656019c135", "before_sha256": "eeccf6a7e016f5d32952d7d111d9de36997a408e6218cb85750947699413d8de", "component": "vae", "direction": "cuda", "identity_preserved": true, "kind": "component_placement", "seconds": 283.373554144986, "tensors": 143}
+MDB_RAW_TO_IMAGE_PHASE {"after_sha256": "eeccf6a7e016f5d32952d7d111d9de36997a408e6218cb85750947699413d8de", "before_sha256": "8bf89e21711ecdb773f659000c1393f3c9616064cf321f1224f3c5656019c135", "component": "vae", "direction": "cpu", "identity_preserved": true, "kind": "component_placement", "seconds": 283.73530913470313, "tensors": 143}
+MDB_RAW_TO_IMAGE_PHASE {"kind": "native_consumers_complete", "native_vae_calls": 2, "post_quant_exact_join": true, "seconds": 283.7496658228338}
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 73, in <module>
+    main()
+    ~~~~^^
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 67, in main
+    runpy.run_path(str(worker), run_name="__main__")
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 294, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "flux_raw_to_image.py", line 1086, in <module>
+    main()
+    ~~~~^^
+  File "flux_raw_to_image.py", line 1082, in main
+    worker(args.config)
+    ~~~~~~^^^^^^^^^^^^^
+  File "flux_raw_to_image.py", line 1072, in worker
+    ready = finalizer["finalize"](config["output"], job_id=summary["job_id"], request_sha256=summary["request_sha256"], **config.get("transport_limits", {}))
+  File "flux_image_tail_microscope.py", line 446, in finalize
+    require(size <= max_member_bytes, "output member bound exceeded")
+    ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "flux_image_tail_microscope.py", line 56, in require
+    raise ValueError(message)
+ValueError: output member bound exceeded

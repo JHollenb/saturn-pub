@@ -1,0 +1,53 @@
+{
+  "canonical_ruff": {
+    "command": "ruff check --select F,I tests/test_flux_raw_bootstrap.py",
+    "cwd": "saturn-pub/packages/mdb",
+    "status": "passed"
+  },
+  "cases": {
+    "changed_config": {
+      "refused_before_fake_science": true
+    },
+    "changed_source": {
+      "refused_before_fake_science": true
+    },
+    "compact_separator_identity": {
+      "refused_before_fake_science": true
+    },
+    "valid_direct": {
+      "directory_ready_markers": 1,
+      "fake_science_calls": 1
+    },
+    "valid_env_main_without_config_flag": {
+      "directory_ready_markers": 1,
+      "fake_science_calls": 1
+    }
+  },
+  "command": "python -I -B -m pytest -q tests/test_flux_raw_bootstrap.py",
+  "coverage": [
+    "Standard sortedjson DEFAULTseparator requestdigest accepted andcompactdigestdistinguished",
+    "ExactSATURN_DEBUG_REQUEST/config/sourcehashjoins",
+    "MRUN_JOB_ID output_scratch/job/output_name derivation",
+    "Onefake science record andonephaseevent pervalidcase",
+    "Actual finalizer files.json memberhashes+bytes+counts",
+    "DIRECTORY_READY job/request/output/manifest/summary/expandedbyte bindings",
+    "SATURN_RUN_CONFIG acceptedwithout--config throughactual main() incontrolledscript"
+  ],
+  "current_source_sha256": {
+    "qualification/flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "qualification/flux_raw_to_image.py": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522",
+    "tests/test_flux_raw_bootstrap.py": "f4b1cad85d9901a787483d09de67c81a8d3d32a7d96ad114d05418800524e23c"
+  },
+  "isolated": true,
+  "python": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+  "schema": "mdb-raw-bootstrap-independent-qualification-v1",
+  "scope": "One model-free bootstrap test with5subprocess cases; actual worker(config_path), actual main/env parser and real normal finalizer. Only run() replaced; no neural frameworks imported, models/CUDA, staging or jobs.",
+  "seconds": 0.23,
+  "source_sha256": {
+    "qualification/flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "qualification/flux_raw_to_image.py": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522",
+    "tests/test_flux_raw_bootstrap.py": "f4b1cad85d9901a787483d09de67c81a8d3d32a7d96ad114d05418800524e23c"
+  },
+  "source_snapshot_matches_current": true,
+  "status": "1-passed"
+}

@@ -1,0 +1,219 @@
+{
+  "alias": "cmp.flux.raw-to-image.same-latent-decoder",
+  "applicability_authority": "supplied; no generalization inferred",
+  "applicability_conditions": [
+    {
+      "field": "occurrence",
+      "op": "eq",
+      "value": "same-latent-decoder"
+    },
+    {
+      "field": "prompt_utf8_sha256",
+      "op": "eq",
+      "value": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612"
+    },
+    {
+      "field": "seed",
+      "op": "eq",
+      "value": 277
+    },
+    {
+      "field": "mask_identity",
+      "op": "eq",
+      "value": "9f621570c4506bffbe062ff2dba4a981fb09673b22b655bec1618979ea4a47cb"
+    },
+    {
+      "field": "clock",
+      "op": "eq",
+      "value": {
+        "cursor": 0,
+        "phase": "project",
+        "step": 0
+      }
+    },
+    {
+      "field": "parameter_manifests",
+      "op": "eq",
+      "value": {
+        "flux": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb",
+        "qwen": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+        "vae": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9"
+      }
+    },
+    {
+      "field": "actual_noise_identity",
+      "op": "eq",
+      "value": "8176781bb58db7cab1eecdf9e3c08cdc00914c76a5c1a048760c88046f2a2876"
+    },
+    {
+      "field": "request_sha256",
+      "op": "eq",
+      "value": "982cbb95829fe1eb77c444e1beaa424e5535c18e4ec8bcb7ca6690e61d8d330e"
+    },
+    {
+      "field": "frontier",
+      "op": "eq",
+      "value": "raw prompt plus declared seed before any native learned target"
+    },
+    {
+      "field": "horizon",
+      "op": "eq",
+      "value": {
+        "denoiser_transitions": 112,
+        "functional_decoder": 1,
+        "qwen_prefix": 27
+      }
+    },
+    {
+      "field": "forecast_seal",
+      "op": "eq",
+      "value": "36331a2642324ca69591e1e447ebe2b887d7e2152b0f5d1dbd32e35abb1efa19"
+    },
+    {
+      "field": "numeric_profile_sha256",
+      "op": "eq",
+      "value": "1b3ec919a2fa15ca082760ec6f6a065ad48ac806aa4d88fb7e1f68feeb975ffc"
+    }
+  ],
+  "binding": {
+    "execution": {
+      "cpu_decoder_frontend": true,
+      "dtype": "torch.bfloat16",
+      "id": "mdb-flux-raw-to-image-v1"
+    },
+    "frontier": "raw prompt plus declared seed before any native learned target",
+    "horizon": {
+      "denoiser_transitions": 112,
+      "functional_decoder": 1,
+      "qwen_prefix": 27
+    },
+    "input_identity": "dee2fe0a37cb781b8acf6455177dbb5b908eff8b088f23c34910fa019133251a",
+    "model_identity": "original-qwen-flux-vae-checkpoint-recipes",
+    "source_identity": "982cbb95829fe1eb77c444e1beaa424e5535c18e4ec8bcb7ca6690e61d8d330e"
+  },
+  "evidence": {
+    "audit_sha256": "0135ea5188aab73ef66c30d2b4d5b115f33be915968116a9b067c7ece02f9014",
+    "dependent_paths": 1,
+    "independent_kernel_arithmetic": false,
+    "scope": "Conditional same-forecast-latent native VAE consumer; dependent diagnostic."
+  },
+  "fingerprint": "e784e5e1cb24e94bfad483a33744d6aa9b7edf0ad7dd16e74bd2fcc31dc09591",
+  "law_id": "law.flux.raw-prompt-own-state-composition.v1",
+  "observation_unit": "one caller-bound comparison, not independent tasks",
+  "readers": [
+    "native independent full reference",
+    "same-latent native VAE"
+  ],
+  "report": {
+    "decision_fields": 0,
+    "decision_mismatches": 0,
+    "fields": {
+      "decoded": {
+        "decisions": {
+          "rule": "none",
+          "status": "not-requested"
+        },
+        "residual": {
+          "elements": 786432,
+          "l2": 0.0,
+          "largest": {
+            "coordinate": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "signed": 0.0
+          },
+          "max_abs": 0.0,
+          "maximum_signed": 0.0,
+          "minimum_signed": 0.0,
+          "nonzero": 0,
+          "shape": [
+            1,
+            3,
+            512,
+            512
+          ],
+          "signed_mean": 0.0,
+          "signed_sum": 0.0
+        },
+        "shape": [
+          1,
+          3,
+          512,
+          512
+        ]
+      },
+      "pixels": {
+        "decisions": {
+          "rule": "none",
+          "status": "not-requested"
+        },
+        "residual": {
+          "elements": 786432,
+          "l2": 0.0,
+          "largest": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "signed": 0.0
+          },
+          "max_abs": 0.0,
+          "maximum_signed": 0.0,
+          "minimum_signed": 0.0,
+          "nonzero": 0,
+          "shape": [
+            512,
+            512,
+            3
+          ],
+          "signed_mean": 0.0,
+          "signed_sum": 0.0
+        },
+        "shape": [
+          512,
+          512,
+          3
+        ]
+      }
+    },
+    "fingerprint": "6932d24ace2b83247f3974952554d53b6c9e6b6782696de92f9c04fdfc04424f",
+    "max_abs": 0.0,
+    "mechanics_status": "valid",
+    "residual_direction": "observed-minus-predicted",
+    "schema": "mdb-equation-comparison-v1",
+    "target_scope": "unassigned",
+    "terminal_status": "unassessed"
+  },
+  "route_id": "route.flux.shared-torch-primitives.raw-to-image.v1",
+  "schema": "mdb-equation-record-v1",
+  "tested_context": {
+    "actual_noise_identity": "8176781bb58db7cab1eecdf9e3c08cdc00914c76a5c1a048760c88046f2a2876",
+    "clock": {
+      "cursor": 0,
+      "phase": "project",
+      "step": 0
+    },
+    "forecast_seal": "36331a2642324ca69591e1e447ebe2b887d7e2152b0f5d1dbd32e35abb1efa19",
+    "frontier": "raw prompt plus declared seed before any native learned target",
+    "horizon": {
+      "denoiser_transitions": 112,
+      "functional_decoder": 1,
+      "qwen_prefix": 27
+    },
+    "mask_identity": "9f621570c4506bffbe062ff2dba4a981fb09673b22b655bec1618979ea4a47cb",
+    "numeric_profile_sha256": "1b3ec919a2fa15ca082760ec6f6a065ad48ac806aa4d88fb7e1f68feeb975ffc",
+    "occurrence": "same-latent-decoder",
+    "parameter_manifests": {
+      "flux": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb",
+      "qwen": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+      "vae": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9"
+    },
+    "prompt_utf8_sha256": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612",
+    "request_sha256": "982cbb95829fe1eb77c444e1beaa424e5535c18e4ec8bcb7ca6690e61d8d330e",
+    "seed": 277
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "contract": {
+    "decoder": {
+      "forecast_module_forwards": 0,
+      "functional_calls": 1,
+      "independent_decoder_kernel_arithmetic": false,
+      "native_calls": 2,
+      "native_decoder_operands": 2,
+      "whole_image_shared_primitive_forecast": true
+    },
+    "denoiser": {
+      "forecast_module_forwards": 0,
+      "forecast_transitions": 112,
+      "native_scheduler_commits": 4,
+      "native_transitions": 112
+    },
+    "execution_id": "mdb-flux-raw-to-image-v1",
+    "model_loads": 1,
+    "noise_draws": 2,
+    "predictions": [
+      "One complete raw prompt and seed form the entire functional Qwen, FLUX and explicit VAE forecast.",
+      "The native lane independently regenerates the same initial noise, IDs and schedule after the global forecast seal.",
+      "The functional decoder produces a complete pretarget image through shared Torch primitives; native VAE calls validate the own forecast latent and the separate native-reference final latent. This is not an independent-kernel or standalone RGB forecast claim."
+    ],
+    "prompt_cases": 1,
+    "qwen": {
+      "forecast_hidden_states": 28,
+      "functional_module_forwards": 0,
+      "native_calls": 1,
+      "native_full_layers_per_call": 36,
+      "native_retained_hidden_states": 28,
+      "selected_conditioning_states": [
+        9,
+        18,
+        27
+      ]
+    },
+    "resources": {
+      "component_hydrations": 3,
+      "cpu_offloads": 6,
+      "cuda_placements": 6,
+      "max_gpu_components": 1,
+      "persistent_weight_banks": 0,
+      "pipeline_assemblies": 1
+    },
+    "schema": "mdb-flux-raw-to-image-count-contract-v1"
+  },
+  "counts": {
+    "component_hydrations": 3,
+    "cpu_offloads": 6,
+    "cuda_placements": 6,
+    "forecast_transitions": 112,
+    "functional_decode_calls": 1,
+    "functional_transitions": 112,
+    "guard_refusals": 0,
+    "native_module_entries": 2218,
+    "native_qwen_calls": 1,
+    "native_transitions": 112,
+    "native_vae_calls": 2,
+    "noise_draws": 2,
+    "pipeline_assemblies": 1
+  },
+  "execution_id": "mdb-flux-raw-to-image-v1",
+  "forecast_seal": {
+    "forecasts": [
+      "raw-composition-forecast"
+    ],
+    "path": "/mnt/big/mdb/research/job-7efe0a8100bb/raw-to-image-result/forecast-transaction/seal.json",
+    "seal_sha256": "36331a2642324ca69591e1e447ebe2b887d7e2152b0f5d1dbd32e35abb1efa19"
+  },
+  "independent_rgb_forecast_claim": false,
+  "instrument_status": "full Qwen/denoiser/decoder arrays and native consumer joins retained",
+  "job_id": "job-7efe0a8100bb",
+  "mechanics_status": "complete",
+  "prompt": "A cobalt blue cube to the right of a matte orange ring on a gray tabletop. Two separate objects, simple studio product photograph.",
+  "request_sha256": "982cbb95829fe1eb77c444e1beaa424e5535c18e4ec8bcb7ca6690e61d8d330e",
+  "schema": "mdb-flux-raw-to-image-summary-v1",
+  "seconds": 296.74120564293116,
+  "seed": 277,
+  "terminal_status": "unassessed",
+  "transaction": {
+    "event_head": "5acfdee0e7b99f6baa34f589e53dd2c42a525f0a000878077e7d096f5d642440",
+    "events": 6,
+    "forecasts": [
+      "raw-composition-forecast"
+    ],
+    "frontiers": [],
+    "identity_scope": "externally-pinned",
+    "phase": "closed",
+    "schema": "mdb-forecast-offline-verification-v1",
+    "seal_sha256": "36331a2642324ca69591e1e447ebe2b887d7e2152b0f5d1dbd32e35abb1efa19",
+    "verified": true
+  },
+  "trend_status": "observed-uninterpreted",
+  "whole_image_shared_primitive_forecast": true
+}

@@ -1,0 +1,65 @@
+{
+  "custody_status": "derived-hardlink-view-finalized; original producer remains failed",
+  "derived_view": "/mnt/big/mdb/research/job-0059a663c170/raw-to-image-recovery-view",
+  "final_parameter_scope": "Runtime before/after identities retained before packaging failure; frozen saved auditor independently restores original recipes.",
+  "final_resident_parameter_check": "established-by-saved-before-after-core-records",
+  "finalizer_sha256": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+  "max_expanded_bytes": 4294967296,
+  "max_member_bytes": 134221824,
+  "new_neural_calls": 0,
+  "new_parameter_hydrations": 0,
+  "original_expanded_bytes": 2615642740,
+  "original_failure": "output member bound exceeded",
+  "original_file_count": 1337,
+  "original_job_id": "job-7efe0a8100bb",
+  "original_job_sha256": "daa6165f2a894542f2efaaa09af35eaef56394e31979673d5ec4e1d06624ea3f",
+  "original_largest_member_bytes": 134217856,
+  "original_log_sha256": "63733782cea8a616ef6d3a0614cebc8422d96c07754ed579b1f824db0dbbb2d0",
+  "original_mutation_scope": "No original file/directory writes, chmod, symlinks or content copies. Hard-link creation necessarily increments file link count and changes inode ctime; contents, mtime and inode preserved and rehashed.",
+  "original_payload_sha256": "6ea67c4d629a19537ef9a10db728c9a71fa3186c909c903e0e0f1d0aaf9cedb8",
+  "original_producer_status": "failed",
+  "original_request_file_sha256": "1ef4f3576393f9d1e6d06999c3c0c3ca51e868b32467264b5495272bcdc490f4",
+  "original_request_sha256": "982cbb95829fe1eb77c444e1beaa424e5535c18e4ec8bcb7ca6690e61d8d330e",
+  "original_returncode": 1,
+  "original_root": "/mnt/big/mdb/research/job-7efe0a8100bb/raw-to-image-result",
+  "original_shared_inode_groups": 0,
+  "original_worker_sha256": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522",
+  "recovery_execution": {
+    "job_id": "job-0059a663c170",
+    "request_sha256": "bae319cff028371a5fc339e0fda4654831c29cffc5a616ea2ac293c3655747c2",
+    "worker_sha256": "cae2d07825be0e01ad83c4b8f18535ec4b482f7fe62661f8cc1e16a0908a4b6e"
+  },
+  "retained_inventory_sha256": "623cc14564b0b80cdd3a3e1e0877b0ba7f59779e54e03f904152ba270bf39533",
+  "schema": "mdb-flux-raw-packaging-recovery-receipt-v1",
+  "transaction_event_kinds": [
+    "opened",
+    "forecast_persisted",
+    "globally_sealed",
+    "native_execution_released",
+    "observation_persisted",
+    "closed"
+  ],
+  "transaction_health_basis": "Verified persisted complete event chain contains no failed/violation events; seal violations empty.",
+  "transaction_verification": {
+    "event_head": "5acfdee0e7b99f6baa34f589e53dd2c42a525f0a000878077e7d096f5d642440",
+    "events": 6,
+    "forecasts": [
+      "raw-composition-forecast"
+    ],
+    "frontiers": [],
+    "identity_scope": "externally-pinned",
+    "phase": "closed",
+    "schema": "mdb-forecast-offline-verification-v1",
+    "seal_sha256": "36331a2642324ca69591e1e447ebe2b887d7e2152b0f5d1dbd32e35abb1efa19",
+    "verified": true
+  },
+  "wrapper": {
+    "expanded_bytes": 2615642740,
+    "file_count": 1337,
+    "files_manifest_sha256": "724a072e542c73cb0e9b4bc7822596e652aae24dcc4c2aeca634c85bb99da825",
+    "job_id": "job-7efe0a8100bb",
+    "output_root": "/mnt/big/mdb/research/job-0059a663c170/raw-to-image-recovery-view",
+    "request_sha256": "982cbb95829fe1eb77c444e1beaa424e5535c18e4ec8bcb7ca6690e61d8d330e",
+    "summary_sha256": "70b378be1daaa4299e2573b5ef561d6909ba52fe9fcbd3e2239124864762b61f"
+  }
+}

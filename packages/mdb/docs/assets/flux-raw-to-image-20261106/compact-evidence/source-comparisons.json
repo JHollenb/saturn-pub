@@ -1,0 +1,73 @@
+{
+  "conditioning": {
+    "exact_equal": true,
+    "forecast": {
+      "bytes": 7864448,
+      "content_sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/conditioning.npy",
+      "sha256": "be8c0567ec9b954af6ed87db9e1cb4d1c7159bf7ee018bc689afa2f350fefc0c",
+      "shape": [
+        1,
+        512,
+        7680
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        3932160,
+        7680,
+        1
+      ]
+    },
+    "native": {
+      "bytes": 7864448,
+      "content_sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+      "device_at_capture": "cpu",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/native/conditioning.npy",
+      "sha256": "be8c0567ec9b954af6ed87db9e1cb4d1c7159bf7ee018bc689afa2f350fefc0c",
+      "shape": [
+        1,
+        512,
+        7680
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        3932160,
+        7680,
+        1
+      ]
+    },
+    "status": "diagnostic-only"
+  },
+  "decoder": {
+    "forecast_vs_native_own": {
+      "decoded": "diagnostic-only",
+      "pixels": "diagnostic-only",
+      "post_quant_exact_equal": true,
+      "post_quant_operand": "diagnostic-only"
+    },
+    "native_input_custody": {
+      "own": "exact-module-entry-join",
+      "reference": "exact-module-entry-join"
+    },
+    "native_own_vs_native_reference": {
+      "decoded": "diagnostic-only",
+      "pixels": "diagnostic-only"
+    }
+  },
+  "frontend": {
+    "img_ids_equal": true,
+    "packed_noise_equal": true,
+    "raw_noise_equal": true,
+    "sigmas_equal": true,
+    "timesteps_equal": true,
+    "txt_ids_equal": true
+  },
+  "independent_rgb_forecast_claim": false,
+  "terminal_status": "unassessed",
+  "whole_image_shared_primitive_forecast": true
+}

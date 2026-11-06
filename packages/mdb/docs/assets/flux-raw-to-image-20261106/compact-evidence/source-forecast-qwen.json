@@ -1,0 +1,684 @@
+{
+  "attention_mask": {
+    "bytes": 4224,
+    "content_sha256": "9f621570c4506bffbe062ff2dba4a981fb09673b22b655bec1618979ea4a47cb",
+    "device_at_capture": "cuda:0",
+    "encoding": "native-numpy-v1",
+    "logical_dtype": "torch.int64",
+    "path": "qwen/forecast/attention-mask.npy",
+    "sha256": "17ecfc07548df44668e8d8197d6834f9e51348e90e72233d7398986a6f1d1eba",
+    "shape": [
+      1,
+      512
+    ],
+    "stored_dtype": "int64",
+    "stride": [
+      512,
+      1
+    ]
+  },
+  "conditioning": {
+    "bytes": 7864448,
+    "content_sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+    "device_at_capture": "cuda:0",
+    "encoding": "bf16-bits-v1",
+    "logical_dtype": "torch.bfloat16",
+    "path": "qwen/forecast/conditioning.npy",
+    "sha256": "be8c0567ec9b954af6ed87db9e1cb4d1c7159bf7ee018bc689afa2f350fefc0c",
+    "shape": [
+      1,
+      512,
+      7680
+    ],
+    "stored_dtype": "uint16",
+    "stride": [
+      3932160,
+      7680,
+      1
+    ]
+  },
+  "formatted_chat": "<|im_start|>user\nA cobalt blue cube to the right of a matte orange ring on a gray tabletop. Two separate objects, simple studio product photograph.<|im_end|>\n<|im_start|>assistant\n<think>\n\n</think>\n\n",
+  "hidden_states": [
+    {
+      "bytes": 2621568,
+      "content_sha256": "18c3907d9158014fe5b26d4ea1d7dc0158f794822691a066954c78882385aafe",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-00.npy",
+      "sha256": "df13fc52c4df06fae8a719ec3aaf98dadd4301571223b26e7eb6d16fb65353d1",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "0345eb55d8801726f4fa899638d0f2973a92818aa720993578e29923c00211c3",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-01.npy",
+      "sha256": "6b4ee0a45d48f3e89958cb1c8fb499794002ade219047f23ad92fc67ca783730",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "255caacff2cb88cda3d27dc85bac0928593ae4ddb40ba2fdccc3a6e2db3dc544",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-02.npy",
+      "sha256": "76a352c0c1aa605f9d9ed2719be10a3462e24f0f3a777267bae8edc3081bb313",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "68778f529f863a3b72d29192ff1663b81bffb7a70d686c35b134f3b97009a097",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-03.npy",
+      "sha256": "75e45f0a785c80d401476fd642d0dd4067d6cab464c1cc353725f8ce95bdbcf7",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "5113b53b3b3f8eb79b741ce76ed91b3d24508ea93601d90bfc9bfcd8a960605a",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-04.npy",
+      "sha256": "d63abc4b100aa7f90cc22cbf0e9732f333564c119c77eb75f698ea6027e87477",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "25180ae6cf39e0dfa7104eeddb18c30dc129faba52a70e986d77cb0e3c57071d",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-05.npy",
+      "sha256": "b5015ab721645fdea392fb6a39e0fa096e72b8d9d5db9c4dc106f37d4671c7d0",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "a7bd55aac73f6b06b9f2febc8fe8a91430ead3043e0933ad80c8af322f90d6ef",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-06.npy",
+      "sha256": "e64a5316479cc5d6d3b7f01de7c84fe1bd8580a8af56ec7615ce1683746ad6e4",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "43ae6c705411ca056db7d13184956a58c4511297afe6c6159e600582d9eeec1c",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-07.npy",
+      "sha256": "b2487f570dd41899ccecbc015b37a595d588599ad6aad9b0b8c13577e77df6e2",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "9e66cc8af129ee1f79da0f7d369b266aad9d9fcf6e5eff8ff42d8f69a03b6dce",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-08.npy",
+      "sha256": "f55646fd718a312d81ab0f6f9204259aa348b31c00ecc4b4df6bd0d0f63c0dcd",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "ee59d00fcd580dc92673e47af1c09d9b8acaccae1c955aca65a46abd11c275a8",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-09.npy",
+      "sha256": "e2e23fb9e71e98ef7009917930cf489a8b870e5326970754d03ecbf2f32ec125",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "85c2971e946f0438f54aba074aa490a72f75d5af781a7565b198bab98af47e1a",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-10.npy",
+      "sha256": "136fd55ec391e5fa79108c048be1ba1895933d40c05714f197c67fd08ab2d81b",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "feafe51cf2bd57d596d0de62109fd8ec5cdfa891617b98ee75a37c5845abe328",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-11.npy",
+      "sha256": "3bc27a2093d7046eace722cec8f846e7819a1acb5dd020ae623deda983731c63",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "61d394bc532dd38c78e0855ea5264975b11ffe6398d7e81d2231d77822135cce",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-12.npy",
+      "sha256": "c07c9809b7aefa97efa896f6b55d6c97b43e20cc1196ee8d83a551c41f2525e7",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "8a9175c28b112af5f67d81e842a75cb57fa2613dac2ce6c90ad8992b7d18c0cf",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-13.npy",
+      "sha256": "ddde074593f2a578894046e7b5ad4d896586bb047368ac1fe423708165f77228",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "dde1aad8a7cf20168df61f1d585b8e05b1847bc65a45dd1976e436498c2c1b1d",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-14.npy",
+      "sha256": "ee61ad5723a6cf1d3367e72e029a3ce0f9bc550f44332403766d6ada4af3e1b6",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "81fb6717e43b8da02c78084999e766328a2d62320b16b7b3ff543b7761a5e3e2",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-15.npy",
+      "sha256": "f2334f0ff5a86cb53cd6769f2a5496ecce065520fbb6e01c75d30d7cf9c026f8",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "e4cd1a765bf8a39ee48577e8dd6d881eaf51132ebfbf6cebac001286108be582",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-16.npy",
+      "sha256": "472c5e2b699726e383e5339850b47125c3883f36176d02153b2f2d622ff6d4c9",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "c6e04e88772c13965dea8d86108ca468531e91779a62e5b7e549c1914901fa48",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-17.npy",
+      "sha256": "3bea23d141c2d65ed55179df7e68ad899dd5854e7bf9aaf4c6732aca45c62366",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "ac81d997478b922116e41820507525a7a3ca03a965692fe5b98c17e3c45efbcf",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-18.npy",
+      "sha256": "155590d6830433c75de9053a341cb55b6fbf719a2c1334c6a14f53d05d317a1d",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "6b3132c209b4d779cd1cb750710122ff45efd9aa5ecc572ac726227feb372055",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-19.npy",
+      "sha256": "c6bf14de784a50314909175c02c8a1444850b7caa381867d064076b6aba44d3e",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "75412d0db33ce97c3f2e9a64ff56e7cfc7cf7d7cb446287bc7b832b0aa196c39",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-20.npy",
+      "sha256": "0dacb78aa260246afd9a33f80076338beda08b99216485368bba7da7f651e09f",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "7f7ac1d2cdca5b7c3bdd8bdb9b8d60f8b2fbebe30d3b674f9374cb3e237c9161",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-21.npy",
+      "sha256": "4db4cfce4034ae0b22cb79b7a856f5e84968d1ee366a2b409f981965e0950b9e",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "3549452179641b67dcc8861d27c56b4adbb0a8381fcc1ab3c505cb492c431e43",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-22.npy",
+      "sha256": "fcadd1dc3e601c6089b3115dc9e8e0d8da295a3d56401929764ad7d22e5d3588",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "e54dd3885f34bc58929ef458dfb89cca3699a8dec6ce0de8e4ecafca4c466793",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-23.npy",
+      "sha256": "72b10c84759f9f17b2c757997ca8adfa3353d91a19768853a1eb3b46eaf38e4f",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "b6731738676825c3d5764a29069d5c4b3cb547183872f9d5feceb33155f1b76b",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-24.npy",
+      "sha256": "b55f39c6e5e0f87cfe32125c44145369c3c4dc6253c68fbbe7d1917f7af5a6d5",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "a0078dbbe2a1e0e7b4453552b916cec8c5ea5e3d2ba02e67128cfb91628f431d",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-25.npy",
+      "sha256": "950db4d13cc5eeb2ef4302e9227f16e232227de63c76f4ae4e2f434c61cf84e5",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "479530ef28dc134596c9e50f054e527d877f191e3f6bef69fba338d0883ee901",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-26.npy",
+      "sha256": "cc9a04b08d0f5abd2a399989f8ae86401afbb202e889cba02f3a879f1d1aeb83",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    {
+      "bytes": 2621568,
+      "content_sha256": "4b0ac09ff6e4581a74c5732c42add84c475c3bf6ce79b4ea8d10dbfd53097eb5",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "qwen/forecast/hidden-27.npy",
+      "sha256": "196d01c1600069a77290d3429212fe10810586f188744335acd7785fd6d93b2d",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    }
+  ],
+  "input_ids": {
+    "bytes": 4224,
+    "content_sha256": "dee2fe0a37cb781b8acf6455177dbb5b908eff8b088f23c34910fa019133251a",
+    "device_at_capture": "cuda:0",
+    "encoding": "native-numpy-v1",
+    "logical_dtype": "torch.int64",
+    "path": "qwen/forecast/input-ids.npy",
+    "sha256": "034a1576091008b4f2ef813fb417c2d0089dabf9c6eaab85eb60d60eb62b286a",
+    "shape": [
+      1,
+      512
+    ],
+    "stored_dtype": "int64",
+    "stride": [
+      512,
+      1
+    ]
+  },
+  "native_module_forwards": 0,
+  "position_ids": {
+    "bytes": 4224,
+    "content_sha256": "5738153ec97595b1c1e4dc027f7b7fb4534f19ed2ce9f9ee712e6d34a384cde7",
+    "device_at_capture": "cuda:0",
+    "encoding": "native-numpy-v1",
+    "logical_dtype": "torch.int64",
+    "path": "qwen/forecast/position-ids.npy",
+    "sha256": "aae0468672b77326ea684d78e95f77d2b0341a9f6fb01146c25d09b29935ea68",
+    "shape": [
+      1,
+      512
+    ],
+    "stored_dtype": "int64",
+    "stride": [
+      512,
+      1
+    ]
+  },
+  "profile": {
+    "attention_dispatch": {
+      "backend": "sdpa",
+      "gqa_policy": "repeat_kv",
+      "source": "transformers-qwen3-modeling-fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+    },
+    "attention_width": 4096,
+    "conditioning_width": 7680,
+    "dtype": "torch.bfloat16",
+    "gqa_policy": "repeat_kv",
+    "hidden_size": 2560,
+    "mask": {
+      "dtype": "torch.bool",
+      "has_padding": true,
+      "kind": "boolean-causal-padding",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ]
+    },
+    "model_family": "Qwen3",
+    "native_module_forwards": 0,
+    "num_attention_heads": 32,
+    "num_key_value_groups": 4,
+    "num_key_value_heads": 8,
+    "position_source": "config-derived arange, no observed activation context",
+    "prefix_layers": 27,
+    "qualification_scope": "tiny synthetic CPU parity only; original CUDA pending",
+    "rope_buffer_policy": {
+      "init_device": "cpu",
+      "init_dtype": "float32",
+      "placement_dtype": "float32",
+      "source": "transformers-qwen3-rotary-embedding-v1-from-pretrained-device-only"
+    },
+    "rope_source": "config default base1e6 with source-bound CPU-float32 -> BF16 placement reconstructed",
+    "selected_hidden_states": [
+      9,
+      18,
+      27
+    ]
+  },
+  "prompt": "A cobalt blue cube to the right of a matte orange ring on a gray tabletop. Two separate objects, simple studio product photograph."
+}

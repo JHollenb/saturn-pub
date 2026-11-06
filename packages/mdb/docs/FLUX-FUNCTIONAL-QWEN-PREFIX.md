@@ -173,8 +173,9 @@ reference. The saved-only auditor passed16 checks, including the production
 5,505,024-element catalog budget. That reporting budget was corrected before
 the one actual audit; no original model result was rerun or changed.
 
-The next integration is one fresh prompt/seed: independently form E, noise,
-positions and schedule; forecast all112 denoiser transitions and explicit VAE
-pixels; seal the complete forecast before native learned targets. That joins
-the independently tested pieces in one consumed trajectory. It is still a
-bounded numerical execution account, not a universal object dictionary.
+A subsequent [globally sealed raw-prompt-to-image experiment](FLUX-RAW-TO-IMAGE.md)
+now joins E, independently formed noise/positions/schedule, all 112 denoiser
+transitions and explicit VAE pixels in one fresh specimen. Its 1,011 primary
+field comparisons are exact, with a separately labelled recovery of the
+original worker's packaging failure. This Qwen panel retains its own prefix
+and first-component scope.

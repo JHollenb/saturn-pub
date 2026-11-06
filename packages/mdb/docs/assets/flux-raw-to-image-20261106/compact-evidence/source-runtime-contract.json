@@ -1,0 +1,127 @@
+{
+  "attention_dispatch_source": {
+    "backend": "sdpa",
+    "gqa_policy": "repeat_kv",
+    "source": "transformers-qwen3-modeling-fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+  },
+  "implementation_sources": {
+    "flux_native_source_sha256": {
+      "binding": "staged-source-hash",
+      "bytes": 56227,
+      "expected_sha256": "0a3c56ed3ca28a416492b50953a433f20b8a89fd26c7b7a49b1b6b45d5236006",
+      "path": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/diffusers/models/transformers/transformer_flux2.py",
+      "sha256": "0a3c56ed3ca28a416492b50953a433f20b8a89fd26c7b7a49b1b6b45d5236006"
+    },
+    "jinja_environment_source_sha256": {
+      "binding": "staged-source-hash",
+      "bytes": 61513,
+      "expected_sha256": "f6786b3fb0a1f8d6c65f4d30bf2af8cb2fae84d1ead8e09ceb48201ab9e2fdf9",
+      "path": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/jinja2/environment.py",
+      "sha256": "f6786b3fb0a1f8d6c65f4d30bf2af8cb2fae84d1ead8e09ceb48201ab9e2fdf9"
+    },
+    "jinja_sandbox_source_sha256": {
+      "binding": "staged-source-hash",
+      "bytes": 15009,
+      "expected_sha256": "330d9a8ad958d88f256bb15885c5f6606f41b5461c2e70f41a1ddddbd7035ab6",
+      "path": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/jinja2/sandbox.py",
+      "sha256": "330d9a8ad958d88f256bb15885c5f6606f41b5461c2e70f41a1ddddbd7035ab6"
+    },
+    "qwen_native_source_sha256": {
+      "binding": "staged-source-hash",
+      "bytes": 23353,
+      "expected_sha256": "fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab",
+      "path": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/transformers/models/qwen3/modeling_qwen3.py",
+      "sha256": "fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+    },
+    "tokenizers_native_source_sha256": {
+      "binding": "runtime-observed-on-CUDA-host",
+      "bytes": 10074176,
+      "expected_sha256": "runtime-bound",
+      "path": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/tokenizers/tokenizers.abi3.so",
+      "sha256": "c116fcf1e80d461ce0a35c332974f25949e8359416f50b3d53371810d2ce1ccc"
+    },
+    "tokenizers_wrapper_source_sha256": {
+      "binding": "staged-source-hash",
+      "bytes": 2639,
+      "expected_sha256": "148ecb122f3fee03be9abb1fe213dd85fbc691bf2ad2b437ff531533781a6a3a",
+      "path": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/tokenizers/__init__.py",
+      "sha256": "148ecb122f3fee03be9abb1fe213dd85fbc691bf2ad2b437ff531533781a6a3a"
+    }
+  },
+  "native_diffusers_sources": {
+    "diffusers/models/autoencoders/autoencoder_kl_flux2.py": {
+      "binding": "staged-source-hash",
+      "bytes": 21392,
+      "expected_sha256": "7d9a976c1e4f42615e8c422f1643d86b49c4339221bd04b67f518b718ebd6c2d",
+      "module": "diffusers.models.autoencoders.autoencoder_kl_flux2",
+      "path": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/diffusers/models/autoencoders/autoencoder_kl_flux2.py",
+      "sha256": "7d9a976c1e4f42615e8c422f1643d86b49c4339221bd04b67f518b718ebd6c2d"
+    },
+    "diffusers/models/transformers/transformer_flux2.py": {
+      "binding": "staged-source-hash",
+      "bytes": 56227,
+      "expected_sha256": "0a3c56ed3ca28a416492b50953a433f20b8a89fd26c7b7a49b1b6b45d5236006",
+      "module": "diffusers.models.transformers.transformer_flux2",
+      "path": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/diffusers/models/transformers/transformer_flux2.py",
+      "sha256": "0a3c56ed3ca28a416492b50953a433f20b8a89fd26c7b7a49b1b6b45d5236006"
+    },
+    "diffusers/pipelines/flux2/image_processor.py": {
+      "binding": "staged-source-hash",
+      "bytes": 6974,
+      "expected_sha256": "d2cdc003444c8599e89789dfede8636d2534697bb3fe60d4b48cc0656b3b4e83",
+      "module": "diffusers.pipelines.flux2.image_processor",
+      "path": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/diffusers/pipelines/flux2/image_processor.py",
+      "sha256": "d2cdc003444c8599e89789dfede8636d2534697bb3fe60d4b48cc0656b3b4e83"
+    },
+    "diffusers/pipelines/flux2/pipeline_flux2_klein.py": {
+      "binding": "staged-source-hash",
+      "bytes": 41381,
+      "expected_sha256": "8a57a8a7f1c22fc0c5bc5d3fd1bd9bc76c17c1f4d6644cc73370651dd955358e",
+      "module": "diffusers.pipelines.flux2.pipeline_flux2_klein",
+      "path": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/diffusers/pipelines/flux2/pipeline_flux2_klein.py",
+      "sha256": "8a57a8a7f1c22fc0c5bc5d3fd1bd9bc76c17c1f4d6644cc73370651dd955358e"
+    },
+    "diffusers/schedulers/scheduling_flow_match_euler_discrete.py": {
+      "binding": "staged-source-hash",
+      "bytes": 26979,
+      "expected_sha256": "8b96f25a6170480fb02decb58904e026250d6d68be5de8a7b8785b4c721e9d80",
+      "module": "diffusers.schedulers.scheduling_flow_match_euler_discrete",
+      "path": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/diffusers/schedulers/scheduling_flow_match_euler_discrete.py",
+      "sha256": "8b96f25a6170480fb02decb58904e026250d6d68be5de8a7b8785b4c721e9d80"
+    },
+    "diffusers/utils/torch_utils.py": {
+      "binding": "staged-source-hash",
+      "bytes": 14955,
+      "expected_sha256": "f05b309756343484222e504828c7818395b62988fda06f5104c164f48956e2f4",
+      "module": "diffusers.utils.torch_utils",
+      "path": "/mnt/hdd8tb/mdb/uv-cache/archive-v0/YITp_EmDaTZwTFtq/lib/python3.14/site-packages/diffusers/utils/torch_utils.py",
+      "sha256": "f05b309756343484222e504828c7818395b62988fda06f5104c164f48956e2f4"
+    }
+  },
+  "native_kernel_selection": "not independently profiled; runtime uses the bound Transformers SDPA dispatch",
+  "numeric_flags_before_forecast": {
+    "cuda_bf16_reduced_precision_reduction": true,
+    "cuda_tf32": false,
+    "cudnn_benchmark": false,
+    "cudnn_deterministic": true,
+    "cudnn_tf32": false,
+    "deterministic_algorithms": true,
+    "float32_matmul_precision": "highest",
+    "num_threads": 4
+  },
+  "rope_buffer_policy": {
+    "init_device": "cpu",
+    "init_dtype": "float32",
+    "placement_dtype": "float32",
+    "source": "transformers-qwen3-rotary-embedding-v1-from-pretrained-device-only"
+  },
+  "schema": "mdb-qwen-prefix-runtime-contract-v1",
+  "versions": {
+    "diffusers": "0.39.0",
+    "jinja2": "3.1.6",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.22.2",
+    "torch": "2.13.0",
+    "transformers": "5.14.1"
+  }
+}

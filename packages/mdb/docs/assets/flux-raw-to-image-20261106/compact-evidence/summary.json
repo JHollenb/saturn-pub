@@ -1,0 +1,13 @@
+{
+  "derived_view": "/mnt/big/mdb/research/job-0059a663c170/raw-to-image-recovery-view",
+  "final_resident_parameter_check": "established-by-saved-before-after-core-records",
+  "job_id": "job-0059a663c170",
+  "mechanics_status": "verified-saved-evidence-from-derived-custody",
+  "model_calls": 0,
+  "original_producer_status": "failed",
+  "records": 2,
+  "recovery_receipt_sha256": "5cc204b0c2d31ac6332baed93f75457023367f69f3e808d3633dc07dac497806",
+  "request_sha256": "bae319cff028371a5fc339e0fda4654831c29cffc5a616ea2ac293c3655747c2",
+  "schema": "mdb-flux-raw-to-image-recovery-compact-v1",
+  "source_job": "job-7efe0a8100bb"
+}

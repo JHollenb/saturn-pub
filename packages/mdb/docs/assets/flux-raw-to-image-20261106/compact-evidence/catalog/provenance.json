@@ -1,0 +1,23 @@
+{
+  "dependent_paths": 1,
+  "family_induction": false,
+  "queries": [
+    {
+      "changed_clock": 0,
+      "changed_seed": 0,
+      "exact": 1,
+      "fingerprint": "b991dcca01fb495010b953a1f79c438768c0417273985603f3e034546e2f0873",
+      "missing_input": 0,
+      "occurrence": "whole"
+    },
+    {
+      "changed_clock": 0,
+      "changed_seed": 0,
+      "exact": 1,
+      "fingerprint": "e784e5e1cb24e94bfad483a33744d6aa9b7edf0ad7dd16e74bd2fcc31dc09591",
+      "missing_input": 0,
+      "occurrence": "same-latent-decoder"
+    }
+  ],
+  "records": 2
+}

@@ -1,0 +1,10 @@
+{
+  "checks": 1,
+  "max_member_bytes": 134221824,
+  "mechanics_status": "passed",
+  "model_calls": 0,
+  "original_preserved_sha256": "ea5306def8b283c84f6e8b08f9934d3536966526ba39dcb615f2981bfa8b2dbd",
+  "raw_tensor_allocations": 0,
+  "source_sha256": "855ee39d6d4c9c4a9f8fcefb425c33d8ff327b9f24a0f9dbf3066c8389040e99",
+  "test_sha256": "836a8a2d3f575e3818c89190e1c424ee5acfee726be83d3db1696ef25a73cacc"
+}

@@ -1,0 +1,48 @@
+{
+  "schema": "mdb-flux-raw-to-image-publisher-qualification-v2",
+  "scope": "Model-free compact saved-evidence publisher qualification after figure zero-state rendering fix; publication-v1 remains historical and the recovered compact evidence is unchanged.",
+  "publisher": {
+    "path": "saturn-pub/packages/mdb/qualification/publish_flux_raw_to_image.py",
+    "sha256": "690ce097652a52630a05b42fca2a2a255734481dadd925a44d287108181f4976"
+  },
+  "tests": {
+    "path": "saturn-pub/packages/mdb/tests/test_publish_flux_raw_to_image.py",
+    "sha256": "2dddbfdf7409bbfb2a102e2fce5bd19518e716ee7bc452833b3fb1d26d427b74",
+    "command": "../common/bin/common exec python -m pytest -q packages/mdb/tests/test_publish_flux_raw_to_image.py",
+    "result": "5 passed in 1.17s",
+    "ruff_command": "../common/bin/common exec python -m ruff check packages/mdb/qualification/publish_flux_raw_to_image.py packages/mdb/tests/test_publish_flux_raw_to_image.py",
+    "ruff_result": "All checks passed!",
+    "regression": "_zero_axis now reads bar heights: defined zero bars are annotated as exactly zero, while an empty axis remains no defined values."
+  },
+  "input": {
+    "compact_root": "artifacts/mdb-flux-raw-to-image-20261106/compact-collection-01/extracted/binding-minimal-result",
+    "compact_files_manifest_sha256": "95d27d2d7401ae0676001d9e6eca631a714b83bc124e552af3d0b6b9f5cb2cb5",
+    "collection_receipt": "artifacts/mdb-flux-raw-to-image-20261106/compact-collection-01/collection-receipt.json",
+    "collection_receipt_sha256": "737a870455a56ddc19419df572fd39a8b7b609b47a5586b821f38bdfc4360166",
+    "recovery_request_sha256": "bae319cff028371a5fc339e0fda4654831c29cffc5a616ea2ac293c3655747c2",
+    "native_request_sha256": "982cbb95829fe1eb77c444e1beaa424e5535c18e4ec8bcb7ca6690e61d8d330e",
+    "native_job_id": "job-7efe0a8100bb",
+    "recovery_receipt_sha256": "5cc204b0c2d31ac6332baed93f75457023367f69f3e808d3633dc07dac497806"
+  },
+  "cli": {
+    "command": "../common/bin/common exec python packages/mdb/qualification/publish_flux_raw_to_image.py --pack ../artifacts/mdb-flux-raw-to-image-20261106/compact-collection-01/extracted/binding-minimal-result --out /tmp/mdb-publish-recovery-v2 --expected-manifest 95d27d2d7401ae0676001d9e6eca631a714b83bc124e552af3d0b6b9f5cb2cb5 --expected-request 982cbb95829fe1eb77c444e1beaa424e5535c18e4ec8bcb7ca6690e61d8d330e --expected-job job-7efe0a8100bb --collection-receipt ../artifacts/mdb-flux-raw-to-image-20261106/compact-collection-01/collection-receipt.json",
+    "result": "success",
+    "output_root": "/tmp/mdb-publish-recovery-v2",
+    "publication_json_sha256": "e6b75d417b691ad8a160a636e31d2b8494f471e8021cb523b784187fcc4770d3",
+    "publication_receipt_sha256": "d121b017a9ab0c0e908ab33fc05a02ad86fde7a2b85dc687c1c19811fc30f989",
+    "figure_layout_sha256": "f0a6bbda8030a088088ff357377778cfc44cf47e922808982723562a30115dcc",
+    "figure_sha256": {
+      "error-traces.png": "75d5ff2da77a8546ceab40b9c9a8c54494092a256c23388382db69e063e03561",
+      "endpoint-errors.png": "5c19de2c8671e7cfb26e4fc190ae719517a62b6fe5f0ce80ea11db41115f9f03",
+      "endpoint-decomposition.png": "4a911456a640e3b1d330990f1e493af5ab79b7cc99f8cd2f77196ed4a5bdc841",
+      "image-contact-sheet.png": "6b06b5ab0fe49c79b799dd50629100e475c78d6ec848649fa5a772cad43c6b7b"
+    },
+    "publication_schema": "mdb-flux-raw-to-image-publication-v1",
+    "producer_status": "failed-recovered-saved-evidence",
+    "terminal_status": "unassessed",
+    "new_model_calls": 0,
+    "raw_arrays_loaded": false,
+    "weights_loaded": false
+  },
+  "qualification_status": "passed-model-free-and-authenticated-recovered-capsule"
+}

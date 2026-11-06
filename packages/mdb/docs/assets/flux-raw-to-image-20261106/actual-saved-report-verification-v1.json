@@ -1,0 +1,383 @@
+{
+  "audit_sha256": "0135ea5188aab73ef66c30d2b4d5b115f33be915968116a9b067c7ece02f9014",
+  "catalog_cli": [
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-to-image.whole",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/saved-report-verification-v1/whole.exact.context.json"
+      ],
+      "context_sha256": "8eb56fbd8a7fa082be86fde501c7fece3b43ad89ce27d17e28ebb1be9a0c438d",
+      "kind": "exact",
+      "occurrence": "whole",
+      "output_sha256": "ba91a7a36c91cfcd8b3c2ed319ffbbebea5d1f50e67dac7c84ad61732c400e9a",
+      "results": 1
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-to-image.whole",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/saved-report-verification-v1/whole.changed-seed.context.json"
+      ],
+      "context_sha256": "e3908a400ed094c961bf607b1b79166f1ee0d03e3a01bfa9eebbbc700f38c5fb",
+      "kind": "changed-seed",
+      "occurrence": "whole",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-to-image.whole",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/saved-report-verification-v1/whole.changed-clock.context.json"
+      ],
+      "context_sha256": "3aad009e5c1d2e11fd674b17700f420365c8f471157f48d176636e83be6aafbd",
+      "kind": "changed-clock",
+      "occurrence": "whole",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-to-image.whole",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/saved-report-verification-v1/whole.missing-input.context.json"
+      ],
+      "context_sha256": "6a12873a24478dfe5bbd94c6d9aad79d445d59889759b3e15bbaa0ab47a62dc6",
+      "kind": "missing-input",
+      "occurrence": "whole",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-to-image.same-latent-decoder",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/saved-report-verification-v1/same-latent-decoder.exact.context.json"
+      ],
+      "context_sha256": "c141b48ea0c1273d861ce7a80e75b7c37909b817d724d29a888d3ea381938c43",
+      "kind": "exact",
+      "occurrence": "same-latent-decoder",
+      "output_sha256": "9ef4aafc17c7388921d083bd0120921b1c9218975eed8c43b288b00b359a8510",
+      "results": 1
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-to-image.same-latent-decoder",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/saved-report-verification-v1/same-latent-decoder.changed-seed.context.json"
+      ],
+      "context_sha256": "371e38ba82c52679931fbbba83a426e254a2d99e763eeae9ba02b57c16f98267",
+      "kind": "changed-seed",
+      "occurrence": "same-latent-decoder",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-to-image.same-latent-decoder",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/saved-report-verification-v1/same-latent-decoder.changed-clock.context.json"
+      ],
+      "context_sha256": "ce4e7fb3c7b2764e7d857e0d12f0c25e43f077338f1fd4759830b8b531deda72",
+      "kind": "changed-clock",
+      "occurrence": "same-latent-decoder",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-to-image.same-latent-decoder",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/saved-report-verification-v1/same-latent-decoder.missing-input.context.json"
+      ],
+      "context_sha256": "d3631d3603da4b8430afce08212e991d819aa21c029f19dd40de27148ebb4bd0",
+      "kind": "missing-input",
+      "occurrence": "same-latent-decoder",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    }
+  ],
+  "collection": {
+    "archive_bytes": 2918732,
+    "archive_sha256": "b9c7cebb373b62f65d5ce6eabcbc1acc95add17774ba82f84848271ab669f549",
+    "collection_encoder": {
+      "schema": "mdb-explicit-recovery-encoder-v1",
+      "scope": "Collection-only encoder supplied by a separately request-sealed run. Original worker payload/request remain unchanged.",
+      "sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+      "source_request_sha256": "2339ecdb754e0104418b463397b4cb2121a4bbb1c9646d390e56cee3f0fe1e2e"
+    },
+    "expanded_bytes": 15297843,
+    "file_count": 50,
+    "files_manifest_sha256": "95d27d2d7401ae0676001d9e6eca631a714b83bc124e552af3d0b6b9f5cb2cb5",
+    "job_id": "job-0059a663c170",
+    "pointer_sha256": "9597af4db00aed528932eb3be25ce4d1b15903ab68d5ccc2143494551cdad3f0",
+    "raw_tensor_arrays_collected": false,
+    "request_sha256": "bae319cff028371a5fc339e0fda4654831c29cffc5a616ea2ac293c3655747c2",
+    "schema": "mdb-raw-to-image-compact-retrieval-v1"
+  },
+  "compact_manifest_sha256": "95d27d2d7401ae0676001d9e6eca631a714b83bc124e552af3d0b6b9f5cb2cb5",
+  "counts": {
+    "component_hydrations": 3,
+    "cpu_offloads": 6,
+    "cuda_placements": 6,
+    "forecast_transitions": 112,
+    "functional_decode_calls": 1,
+    "functional_transitions": 112,
+    "guard_refusals": 0,
+    "native_module_entries": 2218,
+    "native_qwen_calls": 1,
+    "native_transitions": 112,
+    "native_vae_calls": 2,
+    "noise_draws": 2,
+    "pipeline_assemblies": 1
+  },
+  "coverage_limits": {
+    "actual_consumer_scope": "Qwen IDs/masks and complete denoiser input/state closures joined; actual native VAE decoder prehooks capture after-post-quant operands. No unrecorded x_embedder/context_embedder prehook claim.",
+    "full_denoiser_transitions": 112,
+    "native_reference_consumers": 1,
+    "primitive_scope": "Only retained source/full fields and macro arrays; no unrecorded micro/full native submodule census inferred.",
+    "qwen_full_hidden_states": 28,
+    "raw_arrays_remain_remote": true,
+    "same_latent_native_consumers": 1,
+    "stride_scope": "Original captured strides retained in array/cut records; CPU loading does not independently recover selected device kernels."
+  },
+  "dependent_repeated_coordinates": true,
+  "first_bits": {
+    "denoiser": null,
+    "qwen": null
+  },
+  "first_retained_decoder_discrepancy": null,
+  "first_values": {
+    "denoiser": null,
+    "qwen": null
+  },
+  "groups": {
+    "decoded_and_pixels": {
+      "bitwise_exact_fields": 2,
+      "changed_values": 0,
+      "field_comparisons": 2,
+      "max_rms": 0.0,
+      "maxabs": 0.0,
+      "scalar_positions": 1572864
+    },
+    "denoiser": {
+      "bitwise_exact_fields": 980,
+      "changed_values": 0,
+      "field_comparisons": 980,
+      "max_rms": 0.0,
+      "maxabs": 0.0,
+      "scalar_positions": 572588032
+    },
+    "qwen": {
+      "bitwise_exact_fields": 29,
+      "changed_values": 0,
+      "field_comparisons": 29,
+      "max_rms": 0.0,
+      "maxabs": 0.0,
+      "scalar_positions": 40632320
+    }
+  },
+  "interpretation": "One globally sealed raw-prompt/seed to complete shared-Torch-primitive image forecast. Original producer failed packaging; separately authenticated CPU recovery audited retained bytes without model rerun. No universal or independent CUDA arithmetic claim.",
+  "original_job": {
+    "elapsed_s": 329.23,
+    "executed_payload_sha256": "6ea67c4d629a19537ef9a10db728c9a71fa3186c909c903e0e0f1d0aaf9cedb8",
+    "job_id": "job-7efe0a8100bb",
+    "job_sha256": "daa6165f2a894542f2efaaa09af35eaef56394e31979673d5ec4e1d06624ea3f",
+    "peak_rss_mb": 20815.5,
+    "peak_vram_mb": 8374.0,
+    "request_sha256": "982cbb95829fe1eb77c444e1beaa424e5535c18e4ec8bcb7ca6690e61d8d330e",
+    "reservation": {
+      "cpu_threads": 4,
+      "disk_gb": 8.0,
+      "est_wall_s": 750.0,
+      "ram_mb": 24576.0,
+      "vram_mb": 13000.0
+    },
+    "state": "failed",
+    "worker_log_sha256": "63733782cea8a616ef6d3a0614cebc8422d96c07754ed579b1f824db0dbbb2d0"
+  },
+  "parser": {
+    "attended_rows": 39,
+    "attention_mask_sha256": "9f621570c4506bffbe062ff2dba4a981fb09673b22b655bec1618979ea4a47cb",
+    "formatted_chat_sha256": "588b9d34237cc43789df3877f951be2e866a7cdb878db6b2a92d4f4544dc5d17",
+    "input_ids_sha256": "dee2fe0a37cb781b8acf6455177dbb5b908eff8b088f23c34910fa019133251a",
+    "padded_rows": 473,
+    "prompt_utf8_sha256": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612",
+    "scope": "Same pinned tokenizer/template reapplied offline; zero neural calls, not zero tokenizer calls. All query rows retained and consumed."
+  },
+  "primary": {
+    "bitwise_exact_fields": 1011,
+    "changed_values": 0,
+    "field_comparisons": 1011,
+    "max_rms": 0.0,
+    "maxabs": 0.0,
+    "scalar_positions": 614793216
+  },
+  "raw_arrays_downloaded": false,
+  "recovery": {
+    "custody_status": "derived-hardlink-view-finalized; original producer remains failed",
+    "derived_view": "/mnt/big/mdb/research/job-0059a663c170/raw-to-image-recovery-view",
+    "final_parameter_scope": "Runtime before/after identities retained before packaging failure; frozen saved auditor independently restores original recipes.",
+    "final_resident_parameter_check": "established-by-saved-before-after-core-records",
+    "finalizer_sha256": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "max_expanded_bytes": 4294967296,
+    "max_member_bytes": 134221824,
+    "new_neural_calls": 0,
+    "new_parameter_hydrations": 0,
+    "original_expanded_bytes": 2615642740,
+    "original_failure": "output member bound exceeded",
+    "original_file_count": 1337,
+    "original_job_id": "job-7efe0a8100bb",
+    "original_job_sha256": "daa6165f2a894542f2efaaa09af35eaef56394e31979673d5ec4e1d06624ea3f",
+    "original_largest_member_bytes": 134217856,
+    "original_log_sha256": "63733782cea8a616ef6d3a0614cebc8422d96c07754ed579b1f824db0dbbb2d0",
+    "original_mutation_scope": "No original file/directory writes, chmod, symlinks or content copies. Hard-link creation necessarily increments file link count and changes inode ctime; contents, mtime and inode preserved and rehashed.",
+    "original_payload_sha256": "6ea67c4d629a19537ef9a10db728c9a71fa3186c909c903e0e0f1d0aaf9cedb8",
+    "original_producer_status": "failed",
+    "original_request_file_sha256": "1ef4f3576393f9d1e6d06999c3c0c3ca51e868b32467264b5495272bcdc490f4",
+    "original_request_sha256": "982cbb95829fe1eb77c444e1beaa424e5535c18e4ec8bcb7ca6690e61d8d330e",
+    "original_returncode": 1,
+    "original_root": "/mnt/big/mdb/research/job-7efe0a8100bb/raw-to-image-result",
+    "original_shared_inode_groups": 0,
+    "original_worker_sha256": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522",
+    "recovery_execution": {
+      "job_id": "job-0059a663c170",
+      "request_sha256": "bae319cff028371a5fc339e0fda4654831c29cffc5a616ea2ac293c3655747c2",
+      "worker_sha256": "cae2d07825be0e01ad83c4b8f18535ec4b482f7fe62661f8cc1e16a0908a4b6e"
+    },
+    "retained_inventory_sha256": "623cc14564b0b80cdd3a3e1e0877b0ba7f59779e54e03f904152ba270bf39533",
+    "schema": "mdb-flux-raw-packaging-recovery-receipt-v1",
+    "transaction_event_kinds": [
+      "opened",
+      "forecast_persisted",
+      "globally_sealed",
+      "native_execution_released",
+      "observation_persisted",
+      "closed"
+    ],
+    "transaction_health_basis": "Verified persisted complete event chain contains no failed/violation events; seal violations empty.",
+    "transaction_verification": {
+      "event_head": "5acfdee0e7b99f6baa34f589e53dd2c42a525f0a000878077e7d096f5d642440",
+      "events": 6,
+      "forecasts": [
+        "raw-composition-forecast"
+      ],
+      "frontiers": [],
+      "identity_scope": "externally-pinned",
+      "phase": "closed",
+      "schema": "mdb-forecast-offline-verification-v1",
+      "seal_sha256": "36331a2642324ca69591e1e447ebe2b887d7e2152b0f5d1dbd32e35abb1efa19",
+      "verified": true
+    },
+    "wrapper": {
+      "expanded_bytes": 2615642740,
+      "file_count": 1337,
+      "files_manifest_sha256": "724a072e542c73cb0e9b4bc7822596e652aae24dcc4c2aeca634c85bb99da825",
+      "job_id": "job-7efe0a8100bb",
+      "output_root": "/mnt/big/mdb/research/job-0059a663c170/raw-to-image-recovery-view",
+      "request_sha256": "982cbb95829fe1eb77c444e1beaa424e5535c18e4ec8bcb7ca6690e61d8d330e",
+      "summary_sha256": "70b378be1daaa4299e2573b5ef561d6909ba52fe9fcbd3e2239124864762b61f"
+    }
+  },
+  "recovery_job": {
+    "elapsed_s": 85.26,
+    "executed_payload_sha256": "34e0cef57c0ea1c3c69834f3825c7b884d663309e4eca964ae007ebfa709fa04",
+    "job_id": "job-0059a663c170",
+    "job_sha256": "2ceabf6533eef416942a60f23de7c06e35175e9c35634b279fd7cde8a88f8664",
+    "peak_rss_mb": 1767.0,
+    "peak_vram_mb": 0.0,
+    "request_sha256": "bae319cff028371a5fc339e0fda4654831c29cffc5a616ea2ac293c3655747c2",
+    "reservation": {
+      "cpu_threads": 2,
+      "disk_gb": 4.0,
+      "est_wall_s": 180.0,
+      "ram_mb": 3072.0,
+      "vram_mb": 0.0
+    },
+    "state": "succeeded",
+    "worker_log_sha256": "ab11c126c54e294776cd11600cb83debab77f6263cf63ad92147182df99c2306"
+  },
+  "recovery_receipt_sha256": "5cc204b0c2d31ac6332baed93f75457023367f69f3e808d3633dc07dac497806",
+  "schema": "mdb-raw-to-image-actual-saved-report-verification-v1"
+}

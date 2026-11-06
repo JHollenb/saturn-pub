@@ -1,0 +1,291 @@
+{
+  "cadence": {
+    "anchor_substantive_turn": 8,
+    "earlier_trigger": "Material architectural/profile change, contradiction, or completion of another major observation-frontier closure.",
+    "next_review_no_later_than_turn": 11
+  },
+  "completion_policy": {
+    "bounded_claim": "Complete prospective source-bound composed forecast for this specimen/profile at declared observation boundaries.",
+    "goal": "active",
+    "not_claimed": [
+      "Universal arbitrary-input equality",
+      "Independent primitive/kernel implementation",
+      "Automatic computation-family induction",
+      "Semantic object dictionary"
+    ],
+    "not_required": [
+      "Compression",
+      "Human-readable semantic labels",
+      "Unanimous exploratory numerical successes"
+    ]
+  },
+  "conclusion": "The whole raw-prompt/seed composition is established for this specimen and explicit shared-Torch-primitive profile. This removes the remaining inter-component observed-activation frontier. It is not universal prompt/backend equivalence or an independent CUDA arithmetic account, and the active research goal is not complete.",
+  "created_utc": "2026-11-06T12:27:25.007760+00:00",
+  "direction_sha256": "f44c6832aab25c2b670e03e4504dd78ee399529776a8e2362317c5d624083708",
+  "editorial_review": {
+    "asset_status": "Scientific evidence and three original PNGs were inspected. Publisher figure delivery was pending at task assignment; this review is not a rendered final-publication/link-completeness check.",
+    "claims": "Failure/recovery, shared parser IDs, independent same-seed frontend formation, repeated-coordinate counts, actual versus functional decoder and generic-record limitations are stated honestly.",
+    "material_content_errors": [],
+    "math": "Qwen serial attention/MLP, FLUX joint serial versus single parallel branches, selected H9/H18/H27, scalar/noise Euler behavior, CPU decoder profile and signed endpoint identity are correctly distinguished.",
+    "optional_improvements": [
+      "Keep failed producer and successful recovery labels attached to any extracted audit table.",
+      "Retain both full counts and source-derived versus instrumented submodule coverage labels.",
+      "Continue framing-size checks using exact source geometry and NPY headers before admission; do not rerun neural work for packaging defects."
+    ]
+  },
+  "failure_and_recovery": {
+    "auditor_sha256": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835",
+    "authority": "Authenticated failed-job/request/payload/log and full post-failure inventory. A distinct hardlink view received a derived wrapper; original content/mtime/inode preserved, link counts/ctime necessarily changed. Both original and recovery identities remain explicit.",
+    "failure": "Finalizer rejected134217856-byte NPY:128MiB payload plus128-byte header. Scientific work, closed transaction and final identity records preceded packaging failure. No original final manifest existed.",
+    "new_model_calls": 0,
+    "original_bytes": 2615642740,
+    "original_elapsed_s": 329.23,
+    "original_files": 1337,
+    "original_job": "job-7efe0a8100bb",
+    "original_peak_rss_mb": 20815.5,
+    "original_peak_vram_mb": 8374,
+    "original_status": "failed",
+    "recovery_elapsed_s": 85.26,
+    "recovery_job": "job-0059a663c170",
+    "recovery_peak_rss_mb": 1767,
+    "recovery_peak_vram_mb": 0,
+    "recovery_status": "succeeded",
+    "reviewer_correction": "The preceding finite review missed the NPY header in its128MiB member assessment. The failure and review remain preserved; the recovery allowance and future geometry regression repair packaging, not scientific results."
+  },
+  "goal_status": "active",
+  "holistic_assessment": [
+    {
+      "assessment": "A separately orchestrated program forms its own token-derived conditioning, initial state, working image/text/context, all four latent commits, decoder operand and pixels. Intermediate native activations are no longer required for this tested path. Typed addresses, clocks, carry/reset rules and actual consumers make the account executable and inspectable.",
+      "topic": "What is now understood operationally"
+    },
+    {
+      "assessment": "Architecture, weights and Torch primitives are original dependencies. No auxiliary coefficients were trained and no compact surrogate law was discovered. Predictive execution validates this explicit implementation and its joins; it does not turn source-known architecture into a newly discovered semantic law.",
+      "topic": "What came from the original model"
+    },
+    {
+      "assessment": "The record identifies operation/ports/parameters/profile/applicability. The StateCut supplies live operands and clock; the continuation chooses the next addressed operation. A record plus continuation without operands is incomplete. Generic IDs and dense states suffice. Catalog entries are authored, source-bound occurrences, not automatic induction of a universal family.",
+      "topic": "Relation to time circuits and symbol tables"
+    },
+    {
+      "assessment": "Earlier remaining-denoiser results consumed predicted S2 but used real VAE consumers. Decoder replication supplied internal macro evidence for already observed endpoints and retained its own packaging failure/stride limits. Qwen supplied prospective raw-prompt E. This turn composes the graphs before any learned reference target, which earlier separate seals did not establish.",
+      "topic": "Cumulative progression"
+    },
+    {
+      "assessment": "Older independent arithmetic missed small native responses despite small endpoints. Writer/reader interaction terms and ranking reversals remain context-specific. Exact shared-kernel composition does not revise those results, explain all kernel rounding, establish pure dose response or erase conditional-controls failures.",
+      "topic": "Counterevidence remains"
+    },
+    {
+      "assessment": "One raw specimen, one mask regime, fixed shape/schedule/profile, repeated coordinates. Eleven functional decoder macros were saved, but this specimen lacks matching full native decoder internals. No unrecorded selected CUDA kernel or all-primitive census is inferred. Prior internal decoder coverage is supporting evidence, not a substitute for this run's missing arrays.",
+      "topic": "Coverage still bounded"
+    }
+  ],
+  "method": {
+    "compact_inventory_entries_checked": 49,
+    "compact_manifest_separate": true,
+    "hash_mismatches": 0,
+    "new_jobs": 0,
+    "new_model_calls": 0,
+    "new_neural_recurrence": 0,
+    "new_tokenizer_calls": 0,
+    "scope": "Read actual compact audit, source/recovery records, current blog/doc, prior component interpretation and next-mask source/planning. Independently rehashed compact inventory and recounted primary metrics from saved field accounts; viewed actual forecast PNG. Did not repeat remote full-array audit or checkpoint reconstruction."
+  },
+  "next_plan_review": {
+    "census": "Two functional Qwen prefixes,224 functional +224 native denoiser transitions,2 functional decoders,2 native full Qwen calls,4 native VAE calls,4 initial draws,6 images;3 component hydrations/6 placements possible by phase batching.",
+    "helper": "Frozen763ae helper already has both branches; current single-case repeat_kv orchestration cannot simply be reused for unmasked GQA. Numerical helper changes are unnecessary unless a concrete bug is found.",
+    "priority": "This is an applicability extension of an already complete tested program, not a claim that all-attended is a new mathematical equation.",
+    "source_only_predicate": "For the bound full-attention, no-cache, equal-length prefill profile, partially padded uses explicit bool causal/key mask with repeated KV; all-attended skips attention-level mask, uses is_causal=True and enable_gqa=True. Installed source and saved argument-only probe support these call contracts, not original-geometry CUDA precision."
+  },
+  "ranked_next_cuts": [
+    {
+      "frozen_expectations": [
+        "Both complete own-state forecasts and pixels will match their respective native path at declared retained fields under each explicit mask/GQA contract.",
+        "The signed long-minus-short field/image response will be predicted; response error zero is a falsifiable numerical expectation, not a scientific gate.",
+        "Actual retained long mask will have512 attended rows. If not, preserve an applicability miss and do not manufacture mask/token coverage."
+      ],
+      "known_control": "Short cube/ring seed277 is a known-protocol replay, not a fresh target. Long fixed repeated-clause prompt is prospective; do not adapt it after input predicate or target results.",
+      "limits": [
+        "Raw content, token count, truncation and chat suffix also change. This is not an isolated padding causal effect.",
+        "Backend=sdpa does not establish selected CUDA kernel. Passive kernel trace is useful but cannot be claimed from source predicates alone.",
+        "Same token-prefix mathematical dependencies need not imply bitwise equality across different finite attention lowering/kernel paths; common-prefix equality is diagnostic, not a hard gate.",
+        "One signed contrast supplies coordinates, not lexical alignment or semantic causal shares."
+      ],
+      "minimum_mechanics": [
+        "Bind exact raw text/template/tokenizer, untruncated length, retained IDs/mask, truncation and actual shared prefix.",
+        "Choose per-case dispatch from source-bound noncached-prefill predicates before forecasts; retain actual after-seal native call mask/is_causal/head/GQA arguments.",
+        "All512 rows consumed; all own Qwen/denoiser/decoder states remain case-scoped, no cross-case cache or state reuse.",
+        "Both entire forecasts and PNGs precede either native learned target. Phase-batch original CPU-retained components.",
+        "Verify same actual noise bytes, not just same seed. Retain same-latent decoder comparison separately.",
+        "Size raw evidence/framing and phase memory from actual completed composition; qualify long-run settings if expected>15minutes."
+      ],
+      "name": "Paired padded versus all512-attended complete raw composition",
+      "rank": 1,
+      "recommendation": "Proceed after new per-case orchestration and request-bound finite qualification. It exercises a real untested mask/GQA dispatch branch while preserving the complete image consumer."
+    },
+    {
+      "meaning": "Closes a concrete arithmetic applicability gap without generic reruns. A branch passing makes this panel unnecessary.",
+      "name": "Conditional numerical diagnosis only if the new branch misses",
+      "rank": 2,
+      "recommendation": "Locate first retained disagreement, then use its matched observed operands to separate mask/GQA lowering from inherited state. Preserve native dispatch; any forced equivalent lowering is a separately labelled counterfactual profile. Do not tune native to make a predictor match."
+    },
+    {
+      "meaning": "Tests counterfactual reuse beyond natural raw inputs. Full states and generic addresses remain sufficient; no compression gate.",
+      "name": "One predeclared source-to-consumer counterfactual after branch coverage",
+      "rank": 3,
+      "recommendation": "Use the complete account to predict a typed alteration from its source through the real image consumer, chosen for an unresolved question rather than a semantic naming requirement. Reuse earlier intervention evidence and avoid repeating peer V-stream cuts."
+    }
+  ],
+  "review_id": "holistic-review-06",
+  "review_status": "completed-source-and-saved-evidence-review",
+  "schema": "mdb-holistic-understanding-review-v1",
+  "source_and_evidence_bindings": [
+    {
+      "bytes": 13054,
+      "path": "/Users/jakeholl/domains/obsidian/blog/2026-11-06-042000-predicting-the-image-from-the-raw-prompt.md",
+      "sha256": "d87d516784c6af686e96af69d36f57eab413d3371e6509399ee490baa93fbf54"
+    },
+    {
+      "bytes": 10609,
+      "path": "/Users/jakeholl/domains/saturn-pub/packages/mdb/docs/FLUX-RAW-TO-IMAGE.md",
+      "sha256": "e52cac7916a7953a84941ea208571fc7ea9611ad29fbbfe5a8f242d462ef7b58"
+    },
+    {
+      "bytes": 11907,
+      "path": "/Users/jakeholl/domains/obsidian/blog/2026-11-06-032000-predicting-conditioning-from-the-raw-prompt.md",
+      "sha256": "dd81723d6161784eace42478e28afec1ee1a0fc6e6e2c3efe96aea372973e925"
+    },
+    {
+      "bytes": 14969,
+      "path": "/Users/jakeholl/domains/obsidian/blog/2026-11-06-014800-from-predicted-model-state-through-the-rest-of-the-image.md",
+      "sha256": "ddc3ef83729a13168d0f00bb75438e73f368ea8c82f4d36da9e98fbc1c631cf5"
+    },
+    {
+      "bytes": 4847,
+      "path": "/Users/jakeholl/domains/artifacts/mdb-flux-understanding-20261106/direction-05.md",
+      "sha256": "c8f5f55c092ee4ab4af0776fd65e647ba0e71c801c1039285b96be6841503766"
+    },
+    {
+      "bytes": 15980,
+      "path": "/Users/jakeholl/domains/artifacts/mdb-flux-understanding-20261106/holistic-review-05.json",
+      "sha256": "e858ffaf37f546f9161682c2b616d8e0ae6e2537423a773028cae6e2a72f3ffb"
+    },
+    {
+      "bytes": 16654,
+      "path": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/actual-saved-report-verification-v1.json",
+      "sha256": "665d77d9a61c50150fd2d99838da41fe770e3460ba664bd726a7ba711342eea3"
+    },
+    {
+      "bytes": 6667050,
+      "path": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/compact-collection-01/extracted/binding-minimal-result/audit.json",
+      "sha256": "0135ea5188aab73ef66c30d2b4d5b115f33be915968116a9b067c7ece02f9014"
+    },
+    {
+      "bytes": 3484,
+      "path": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/compact-collection-01/extracted/binding-minimal-result/recovery-receipt.json",
+      "sha256": "5cc204b0c2d31ac6332baed93f75457023367f69f3e808d3633dc07dac497806"
+    },
+    {
+      "bytes": 5315,
+      "path": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/compact-collection-01/extracted/binding-minimal-result/files.json",
+      "sha256": "95d27d2d7401ae0676001d9e6eca631a714b83bc124e552af3d0b6b9f5cb2cb5"
+    },
+    {
+      "bytes": 232653,
+      "path": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/compact-collection-01/extracted/binding-minimal-result/forecast.png",
+      "sha256": "34ea82cf977a371130c30b6783cd01900c7b0ce97caa39d99b570064d3dc80c1"
+    },
+    {
+      "bytes": 1102,
+      "path": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/recovery-inputs-v1/packet-receipt.json",
+      "sha256": "c68d6dfb9d393042c963e0b61d9c40eac3d2d280db7bdbd05ca5e9eb8faeda13"
+    },
+    {
+      "bytes": 59582,
+      "path": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/run-01/payload/flux_raw_to_image.py",
+      "sha256": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522"
+    },
+    {
+      "bytes": 57722,
+      "path": "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/audit_flux_raw_to_image.py",
+      "sha256": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835"
+    },
+    {
+      "bytes": 19385,
+      "path": "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/recover_flux_raw_to_image.py",
+      "sha256": "cae2d07825be0e01ad83c4b8f18535ec4b482f7fe62661f8cc1e16a0908a4b6e"
+    },
+    {
+      "bytes": 5582,
+      "path": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/planning-next-mask-v1/README.md",
+      "sha256": "25c048b8b4390e137fb4e8627232514c73f42b5f2771b026e7fab6b989512317"
+    },
+    {
+      "bytes": 4012,
+      "path": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/planning-next-mask-v1/plan.json",
+      "sha256": "6708ac1178241c17205259bad910d4d0eb07104e4e68fb156c5ca899da1bb2b4"
+    },
+    {
+      "bytes": 3390,
+      "path": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/planning-next-mask-v1/mechanics.json",
+      "sha256": "0cc0fad7d7170f103c9bb8ae5060c24ffbf799c2967121c5971014ac4e1f64eb"
+    },
+    {
+      "bytes": 6990,
+      "path": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-to-image-20261106/planning-next-mask-v1/prompts.json",
+      "sha256": "53e81c6499dd9ebb25a473924b6c3d24d17ccc1f130df47f7ba5292b9d5b9760"
+    },
+    {
+      "bytes": 27102,
+      "path": "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/flux_functional_qwen_prefix.py",
+      "sha256": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a"
+    },
+    {
+      "bytes": 13203,
+      "path": "/Users/jakeholl/domains/obsidian/blog/2026-11-06-024157-predicting-the-decoder-from-latent-to-pixels.md",
+      "sha256": "68d73941c6080e083f5e939d3b5af6904c6367ed5ce7005250b8ba8396ebd625"
+    },
+    {
+      "bytes": 8407,
+      "path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/transformers/integrations/sdpa_attention.py",
+      "sha256": "b72c5c96ea070d594f36e774cfc799160a0ecb157353502a61eb3c5ea1e35b46"
+    }
+  ],
+  "verified_result": {
+    "bitwise_exact_fields": 1011,
+    "changed_values": 0,
+    "chronology": "Own Qwen complete131.5763s, own112 transitions175.3348s, functional decoder199.4489s; global seal201.6440s; subsequent native Qwen completion215.6718s, native trajectory265.5728s, consumers283.7497s. Completion timestamps do not locate exact first entry; the source guard and closed transaction establish target ordering.",
+    "counts": {
+      "component_hydrations": 3,
+      "cpu_offloads": 6,
+      "cuda_placements": 6,
+      "functional_decoder_calls": 1,
+      "functional_transitions": 112,
+      "native_qwen_full_calls": 1,
+      "native_transitions": 112,
+      "native_vae_calls": 2,
+      "noise_draws": 2
+    },
+    "decoder_decomposition": "P-N=(P-C)+(C-N) holds in decoded and pixel coordinates. All terms and signed cross term are zero here; cross-cosine of zero error vectors is undefined. This is not a demonstration of nonzero error cancellation or causal percentage attribution.",
+    "dependent_scope": "Repeated carried conditioning/context and selected-state coordinates along one history. Additional row, consumer and Euler comparisons overlap these values.",
+    "png_sha256": "34ea82cf977a371130c30b6783cd01900c7b0ce97caa39d99b570064d3dc80c1",
+    "primary_groups": {
+      "decoded_and_pixels": {
+        "fields": 2,
+        "positions": 1572864
+      },
+      "denoiser": {
+        "fields": 980,
+        "positions": 572588032
+      },
+      "qwen": {
+        "fields": 29,
+        "positions": 40632320
+      }
+    },
+    "seal_sha256": "36331a2642324ca69591e1e447ebe2b887d7e2152b0f5d1dbd32e35abb1efa19",
+    "source_checks": "709 original recipes, final resident identities, placement identities, FP32 Qwen rotary buffers, tied alias and CPU decoder frontend established in accepted saved audit.",
+    "specimen": "Fixed cube/ring prompt, seed277, B1 512x512, four distilled steps;39 attended/473 padded Qwen rows.",
+    "total_fields": 1011,
+    "total_positions": 614793216,
+    "visual_observation": "The actual image visibly has an orange ring on the left and blue cube on the right on a gray surface. All three collected PNG byte hashes agree. This is informal task-aware inspection, not a calibrated semantic mechanism measurement."
+  }
+}

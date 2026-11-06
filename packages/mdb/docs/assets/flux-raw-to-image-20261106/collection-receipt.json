@@ -1,0 +1,18 @@
+{
+  "archive_bytes": 2918732,
+  "archive_sha256": "b9c7cebb373b62f65d5ce6eabcbc1acc95add17774ba82f84848271ab669f549",
+  "collection_encoder": {
+    "schema": "mdb-explicit-recovery-encoder-v1",
+    "scope": "Collection-only encoder supplied by a separately request-sealed run. Original worker payload/request remain unchanged.",
+    "sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+    "source_request_sha256": "2339ecdb754e0104418b463397b4cb2121a4bbb1c9646d390e56cee3f0fe1e2e"
+  },
+  "expanded_bytes": 15297843,
+  "file_count": 50,
+  "files_manifest_sha256": "95d27d2d7401ae0676001d9e6eca631a714b83bc124e552af3d0b6b9f5cb2cb5",
+  "job_id": "job-0059a663c170",
+  "pointer_sha256": "9597af4db00aed528932eb3be25ce4d1b15903ab68d5ccc2143494551cdad3f0",
+  "raw_tensor_arrays_collected": false,
+  "request_sha256": "bae319cff028371a5fc339e0fda4654831c29cffc5a616ea2ac293c3655747c2",
+  "schema": "mdb-raw-to-image-compact-retrieval-v1"
+}
