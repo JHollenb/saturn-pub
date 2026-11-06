@@ -1,0 +1,34 @@
+{
+  "dependent_cases": 4,
+  "family_induction": false,
+  "full_original_micro_retention": false,
+  "queries": [
+    {
+      "case": "sham",
+      "exact": 1,
+      "fingerprint": "41cd69bf0705f3c4d0f4981bc248eb53e3eb849bccf715d6347191bc516e474f",
+      "wrong_clock": 0
+    },
+    {
+      "case": "HH",
+      "exact": 1,
+      "fingerprint": "876f5f038fde62592264ece3cd568305afa8b9890f52adb80c582680e7c4eb4c",
+      "wrong_clock": 0
+    },
+    {
+      "case": "HL",
+      "exact": 1,
+      "fingerprint": "ecf68099cf94cf75e5c56ca1f47c7668e0e9af3f6bb3e477580ad1b16f214113",
+      "wrong_clock": 0
+    },
+    {
+      "case": "new-3over8",
+      "exact": 1,
+      "fingerprint": "3617a20f0c57e2c574cdd28955713c6500327b6713725f96e7584235ec22b76e",
+      "wrong_clock": 0
+    }
+  ],
+  "records": 4,
+  "scope": "Four endpoint replication comparisons; signed pair accounts remain complete in audit and are not independent tasks.",
+  "signed_responses": 3
+}

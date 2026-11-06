@@ -1,0 +1,1151 @@
+{
+  "final_resident_parameter_check": "unestablished; original check after failing catalog was not executed",
+  "forecast_seal": {
+    "forecasts": [
+      "cohort"
+    ],
+    "path": "/mnt/big/mdb/research/job-406f417b8512/functional-decoder-result/forecast-transaction/seal.json",
+    "seal_sha256": "c356b5f6b8ed6b9204bef0cd26d75b406df0f668a3d425230c3ea1aae6cc4974"
+  },
+  "helper_source_sha256": {
+    "flux_functional_decoder.py": "e2712298e42b37a263dea1b24f0f491082b8a01086b16fa66577f474c68f491f",
+    "flux_functional_vae.py": "576b94f3cd987e8849f6d4772c90a77f14fdfc9210dea608a9a3d16cf0f99a61",
+    "flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "flux_source_receiver.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2"
+  },
+  "input_records": {
+    "HH": {
+      "cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+      "parent": "cf713f722a968a9db17274795163744e25c64d81f2c1cb4b71090c5e90f52402",
+      "payload": {
+        "items": [
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "conditioning"
+            },
+            "value": {
+              "dtype": "torch.bfloat16",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "1ec4064ea6bfd64b377a9298a3ffc7d84b29c0919195da88ff722332fa6734a1",
+              "shape": [
+                1,
+                512,
+                7680
+              ],
+              "stride": [
+                3932160,
+                7680,
+                1
+              ],
+              "tensor": "1ec4064ea6bfd64b377a9298a3ffc7d84b29c0919195da88ff722332fa6734a1"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "context"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "none",
+              "value": null
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "cursor"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "int",
+              "value": 0
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "image"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "none",
+              "value": null
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "img_ids"
+            },
+            "value": {
+              "dtype": "torch.int64",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "87b4f95cfb97df0287488b86742472e263ea5e9c080c2e3348f6f64224f797af",
+              "shape": [
+                1,
+                1024,
+                4
+              ],
+              "stride": [
+                4096,
+                4,
+                1
+              ],
+              "tensor": "87b4f95cfb97df0287488b86742472e263ea5e9c080c2e3348f6f64224f797af"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "latent"
+            },
+            "value": {
+              "dtype": "torch.bfloat16",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "90c58b3bf0b1d2ec4ad351ce47ec767934253ef6000dd7cf16c610a05706328a",
+              "shape": [
+                1,
+                1024,
+                128
+              ],
+              "stride": [
+                131072,
+                1,
+                1024
+              ],
+              "tensor": "90c58b3bf0b1d2ec4ad351ce47ec767934253ef6000dd7cf16c610a05706328a"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "noise_prediction"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "none",
+              "value": null
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "phase"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "project"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "sigmas"
+            },
+            "value": {
+              "dtype": "torch.float32",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "47eb6994cb84cb458fd9a90cd3eb5e5890856680c154abec35f26e833e400852",
+              "shape": [
+                5
+              ],
+              "stride": [
+                1
+              ],
+              "tensor": "47eb6994cb84cb458fd9a90cd3eb5e5890856680c154abec35f26e833e400852"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "step"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "int",
+              "value": 4
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "text"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "none",
+              "value": null
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "timesteps"
+            },
+            "value": {
+              "dtype": "torch.float32",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "1e400c851167980caf2cd88333c7b146d8c3168b4b49d817e7df5271dbda734b",
+              "shape": [
+                4
+              ],
+              "stride": [
+                1
+              ],
+              "tensor": "1e400c851167980caf2cd88333c7b146d8c3168b4b49d817e7df5271dbda734b"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "txt_ids"
+            },
+            "value": {
+              "dtype": "torch.int64",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "14787eca2e15009073d22c1a9bc4782762d6b6b46ee5ff1bd46178ca6d97cbe7",
+              "shape": [
+                1,
+                512,
+                4
+              ],
+              "stride": [
+                2048,
+                4,
+                1
+              ],
+              "tensor": "14787eca2e15009073d22c1a9bc4782762d6b6b46ee5ff1bd46178ca6d97cbe7"
+            }
+          }
+        ],
+        "kind": "mapping"
+      },
+      "point": {
+        "edge": "before",
+        "family": "flux2-klein",
+        "index": null,
+        "local_clock": 0,
+        "logical_step": 4,
+        "next_operation": "native_input_projection",
+        "operator": "project",
+        "phase": "project"
+      }
+    },
+    "HL": {
+      "cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+      "parent": "ff8f10e0d18d737b7b5017930a2cd8f30f67e1f2c73dc59a4784ecf291a51df6",
+      "payload": {
+        "items": [
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "conditioning"
+            },
+            "value": {
+              "dtype": "torch.bfloat16",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "1ec4064ea6bfd64b377a9298a3ffc7d84b29c0919195da88ff722332fa6734a1",
+              "shape": [
+                1,
+                512,
+                7680
+              ],
+              "stride": [
+                3932160,
+                7680,
+                1
+              ],
+              "tensor": "1ec4064ea6bfd64b377a9298a3ffc7d84b29c0919195da88ff722332fa6734a1"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "context"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "none",
+              "value": null
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "cursor"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "int",
+              "value": 0
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "image"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "none",
+              "value": null
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "img_ids"
+            },
+            "value": {
+              "dtype": "torch.int64",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "87b4f95cfb97df0287488b86742472e263ea5e9c080c2e3348f6f64224f797af",
+              "shape": [
+                1,
+                1024,
+                4
+              ],
+              "stride": [
+                4096,
+                4,
+                1
+              ],
+              "tensor": "87b4f95cfb97df0287488b86742472e263ea5e9c080c2e3348f6f64224f797af"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "latent"
+            },
+            "value": {
+              "dtype": "torch.bfloat16",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "29510b63c06cef81caae7176ba2841669bee72ea7ddf5d45eab0a39c76b323db",
+              "shape": [
+                1,
+                1024,
+                128
+              ],
+              "stride": [
+                131072,
+                1,
+                1024
+              ],
+              "tensor": "29510b63c06cef81caae7176ba2841669bee72ea7ddf5d45eab0a39c76b323db"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "noise_prediction"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "none",
+              "value": null
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "phase"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "project"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "sigmas"
+            },
+            "value": {
+              "dtype": "torch.float32",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "47eb6994cb84cb458fd9a90cd3eb5e5890856680c154abec35f26e833e400852",
+              "shape": [
+                5
+              ],
+              "stride": [
+                1
+              ],
+              "tensor": "47eb6994cb84cb458fd9a90cd3eb5e5890856680c154abec35f26e833e400852"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "step"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "int",
+              "value": 4
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "text"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "none",
+              "value": null
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "timesteps"
+            },
+            "value": {
+              "dtype": "torch.float32",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "1e400c851167980caf2cd88333c7b146d8c3168b4b49d817e7df5271dbda734b",
+              "shape": [
+                4
+              ],
+              "stride": [
+                1
+              ],
+              "tensor": "1e400c851167980caf2cd88333c7b146d8c3168b4b49d817e7df5271dbda734b"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "txt_ids"
+            },
+            "value": {
+              "dtype": "torch.int64",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "14787eca2e15009073d22c1a9bc4782762d6b6b46ee5ff1bd46178ca6d97cbe7",
+              "shape": [
+                1,
+                512,
+                4
+              ],
+              "stride": [
+                2048,
+                4,
+                1
+              ],
+              "tensor": "14787eca2e15009073d22c1a9bc4782762d6b6b46ee5ff1bd46178ca6d97cbe7"
+            }
+          }
+        ],
+        "kind": "mapping"
+      },
+      "point": {
+        "edge": "before",
+        "family": "flux2-klein",
+        "index": null,
+        "local_clock": 0,
+        "logical_step": 4,
+        "next_operation": "native_input_projection",
+        "operator": "project",
+        "phase": "project"
+      }
+    },
+    "new-3over8": {
+      "cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+      "parent": "c1d7f8d424a63846ca2b7d419ffc743fb451bb36db5eea96c4e517baef4cbb77",
+      "payload": {
+        "items": [
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "conditioning"
+            },
+            "value": {
+              "dtype": "torch.bfloat16",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "1ec4064ea6bfd64b377a9298a3ffc7d84b29c0919195da88ff722332fa6734a1",
+              "shape": [
+                1,
+                512,
+                7680
+              ],
+              "stride": [
+                3932160,
+                7680,
+                1
+              ],
+              "tensor": "1ec4064ea6bfd64b377a9298a3ffc7d84b29c0919195da88ff722332fa6734a1"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "context"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "none",
+              "value": null
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "cursor"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "int",
+              "value": 0
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "image"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "none",
+              "value": null
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "img_ids"
+            },
+            "value": {
+              "dtype": "torch.int64",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "87b4f95cfb97df0287488b86742472e263ea5e9c080c2e3348f6f64224f797af",
+              "shape": [
+                1,
+                1024,
+                4
+              ],
+              "stride": [
+                4096,
+                4,
+                1
+              ],
+              "tensor": "87b4f95cfb97df0287488b86742472e263ea5e9c080c2e3348f6f64224f797af"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "latent"
+            },
+            "value": {
+              "dtype": "torch.bfloat16",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "5b86e9ed9e09b0631324e756baec05a6361db0bae971a0075b04b49c2c4851ca",
+              "shape": [
+                1,
+                1024,
+                128
+              ],
+              "stride": [
+                131072,
+                1,
+                1024
+              ],
+              "tensor": "5b86e9ed9e09b0631324e756baec05a6361db0bae971a0075b04b49c2c4851ca"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "noise_prediction"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "none",
+              "value": null
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "phase"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "project"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "sigmas"
+            },
+            "value": {
+              "dtype": "torch.float32",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "47eb6994cb84cb458fd9a90cd3eb5e5890856680c154abec35f26e833e400852",
+              "shape": [
+                5
+              ],
+              "stride": [
+                1
+              ],
+              "tensor": "47eb6994cb84cb458fd9a90cd3eb5e5890856680c154abec35f26e833e400852"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "step"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "int",
+              "value": 4
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "text"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "none",
+              "value": null
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "timesteps"
+            },
+            "value": {
+              "dtype": "torch.float32",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "1e400c851167980caf2cd88333c7b146d8c3168b4b49d817e7df5271dbda734b",
+              "shape": [
+                4
+              ],
+              "stride": [
+                1
+              ],
+              "tensor": "1e400c851167980caf2cd88333c7b146d8c3168b4b49d817e7df5271dbda734b"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "txt_ids"
+            },
+            "value": {
+              "dtype": "torch.int64",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "14787eca2e15009073d22c1a9bc4782762d6b6b46ee5ff1bd46178ca6d97cbe7",
+              "shape": [
+                1,
+                512,
+                4
+              ],
+              "stride": [
+                2048,
+                4,
+                1
+              ],
+              "tensor": "14787eca2e15009073d22c1a9bc4782762d6b6b46ee5ff1bd46178ca6d97cbe7"
+            }
+          }
+        ],
+        "kind": "mapping"
+      },
+      "point": {
+        "edge": "before",
+        "family": "flux2-klein",
+        "index": null,
+        "local_clock": 0,
+        "logical_step": 4,
+        "next_operation": "native_input_projection",
+        "operator": "project",
+        "phase": "project"
+      }
+    },
+    "sham": {
+      "cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+      "parent": "ddf0a0a97e012e6e1548ba7ff6f38324d73b6fa35956036222e1e0536f3f6859",
+      "payload": {
+        "items": [
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "conditioning"
+            },
+            "value": {
+              "dtype": "torch.bfloat16",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "1ec4064ea6bfd64b377a9298a3ffc7d84b29c0919195da88ff722332fa6734a1",
+              "shape": [
+                1,
+                512,
+                7680
+              ],
+              "stride": [
+                3932160,
+                7680,
+                1
+              ],
+              "tensor": "1ec4064ea6bfd64b377a9298a3ffc7d84b29c0919195da88ff722332fa6734a1"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "context"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "none",
+              "value": null
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "cursor"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "int",
+              "value": 0
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "image"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "none",
+              "value": null
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "img_ids"
+            },
+            "value": {
+              "dtype": "torch.int64",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "87b4f95cfb97df0287488b86742472e263ea5e9c080c2e3348f6f64224f797af",
+              "shape": [
+                1,
+                1024,
+                4
+              ],
+              "stride": [
+                4096,
+                4,
+                1
+              ],
+              "tensor": "87b4f95cfb97df0287488b86742472e263ea5e9c080c2e3348f6f64224f797af"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "latent"
+            },
+            "value": {
+              "dtype": "torch.bfloat16",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "a266c1d6ecbe58044d13ea33582a0731c083268bfb159e5d4c47ec96b587c62a",
+              "shape": [
+                1,
+                1024,
+                128
+              ],
+              "stride": [
+                131072,
+                1,
+                1024
+              ],
+              "tensor": "a266c1d6ecbe58044d13ea33582a0731c083268bfb159e5d4c47ec96b587c62a"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "noise_prediction"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "none",
+              "value": null
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "phase"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "project"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "sigmas"
+            },
+            "value": {
+              "dtype": "torch.float32",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "47eb6994cb84cb458fd9a90cd3eb5e5890856680c154abec35f26e833e400852",
+              "shape": [
+                5
+              ],
+              "stride": [
+                1
+              ],
+              "tensor": "47eb6994cb84cb458fd9a90cd3eb5e5890856680c154abec35f26e833e400852"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "step"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "int",
+              "value": 4
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "text"
+            },
+            "value": {
+              "kind": "scalar",
+              "type": "none",
+              "value": null
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "timesteps"
+            },
+            "value": {
+              "dtype": "torch.float32",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "1e400c851167980caf2cd88333c7b146d8c3168b4b49d817e7df5271dbda734b",
+              "shape": [
+                4
+              ],
+              "stride": [
+                1
+              ],
+              "tensor": "1e400c851167980caf2cd88333c7b146d8c3168b4b49d817e7df5271dbda734b"
+            }
+          },
+          {
+            "key": {
+              "kind": "scalar",
+              "type": "str",
+              "value": "txt_ids"
+            },
+            "value": {
+              "dtype": "torch.int64",
+              "kind": "tensor",
+              "layout": "strided-dense",
+              "sha256": "14787eca2e15009073d22c1a9bc4782762d6b6b46ee5ff1bd46178ca6d97cbe7",
+              "shape": [
+                1,
+                512,
+                4
+              ],
+              "stride": [
+                2048,
+                4,
+                1
+              ],
+              "tensor": "14787eca2e15009073d22c1a9bc4782762d6b6b46ee5ff1bd46178ca6d97cbe7"
+            }
+          }
+        ],
+        "kind": "mapping"
+      },
+      "point": {
+        "edge": "before",
+        "family": "flux2-klein",
+        "index": null,
+        "local_clock": 0,
+        "logical_step": 4,
+        "next_operation": "native_input_projection",
+        "operator": "project",
+        "phase": "project"
+      }
+    }
+  },
+  "input_seal": {
+    "forecasts": [
+      "inputs"
+    ],
+    "path": "/mnt/big/mdb/research/job-406f417b8512/functional-decoder-result/input-transaction/seal.json",
+    "seal_sha256": "381067b0ad08ea036a995f59be421731d180a58acc63461bdfde407be61f7380"
+  },
+  "job_id": "job-406f417b8512",
+  "metadata_origin": "Post-failure derived metadata; not an original runtime final export. Counts are the original persisted execution observation; profile declarations come from authenticated executed source/config.",
+  "original_decoder_tensor_sha256": {
+    "bn.running_mean": "ee8ef2e59ab125b9c3e32175557ae5b67ce248fe5139c979b6a6affe70faacc9",
+    "bn.running_var": "29c3fdc9732895bcd46334b22b4f44e70157d5dfda3dd3e85f9e26e7251ba44a",
+    "decoder.conv_in.bias": "2cdf4ddf0a26ced79659af5b0a2c7fa53efe9b81a569cd0af8ca01efdb9852ed",
+    "decoder.conv_in.weight": "8a0adb56663e72f60091d4fc7a54e93eb35728094b89520fcece7311106a0041",
+    "decoder.conv_norm_out.bias": "98207f37060264f0e1ec97157dfcbab7b9431556535bc310d7f4883723bf1e09",
+    "decoder.conv_norm_out.weight": "e70690402faf6044e2234d2982680d2b5376409f5e501cd102dc403e72172cb7",
+    "decoder.conv_out.bias": "146cc62d95116fc52efba986277d8c70e6d2e37cd4e4dd6080f418d6242ce23a",
+    "decoder.conv_out.weight": "6b08e2e8248e63624359ac46260ed8632ab958a335b7cb28aa11758c1e3d7621",
+    "decoder.mid_block.attentions.0.group_norm.bias": "d8bd597dfe02f11252f03e74590e9cc9e6f8300f8f2eeac37f04a462d967903b",
+    "decoder.mid_block.attentions.0.group_norm.weight": "8182bde7120abf4e3267f68514f94b7dc48920d318d389b5e1cb3858c2c51c06",
+    "decoder.mid_block.attentions.0.to_k.bias": "a127915bdb60f4566a34fa083aea0c8006b2959cfc9310e0a5f89f362967c5e4",
+    "decoder.mid_block.attentions.0.to_k.weight": "0b17f061af5b04c887d605421be19f253d220a95c881a274995362528d6fcd13",
+    "decoder.mid_block.attentions.0.to_out.0.bias": "7bc2a056dcb04eb8c535e4c96e260ea0ca11bcd34966397561ba80fb62942ede",
+    "decoder.mid_block.attentions.0.to_out.0.weight": "7f1e53f66cbf1b7de9adf71e145752767f33ef67d8bd05343981056db219639d",
+    "decoder.mid_block.attentions.0.to_q.bias": "a75ab18f79b29533fbcd912e75f7ffed193362a3e67e8497844d3ab9865644b7",
+    "decoder.mid_block.attentions.0.to_q.weight": "12847c08fed0c0ff8d127b7e0c5f5644d435f5e79f271f06c7d26e10d7f38d02",
+    "decoder.mid_block.attentions.0.to_v.bias": "62d2262d7afa3aed7a0840db85980cb3fd3840d6423294debe729226a9a34a80",
+    "decoder.mid_block.attentions.0.to_v.weight": "0f2b669451214d79b599c6b71f5642dd4b832e073925671e137191331dbbb29b",
+    "decoder.mid_block.resnets.0.conv1.bias": "bb08dfbceea49c21c027efc1d380883ed29328f1f04b992f0354bce4c76f623c",
+    "decoder.mid_block.resnets.0.conv1.weight": "2572b23675b3f90df33f1ef3d15879e3e1b88c4d595bf20674089780c1ac76b2",
+    "decoder.mid_block.resnets.0.conv2.bias": "9ffe9fb9b29494d2d6d45b05a9c2576b546093a7b97aadfbb1fa825c92a0e31a",
+    "decoder.mid_block.resnets.0.conv2.weight": "cfde987877fdb61cf33b0fde05a922369cc22f6e53eb10c377b14a5e3214dfa1",
+    "decoder.mid_block.resnets.0.norm1.bias": "937947d8c60fe16dd4ff42909e966728f1f3e06aa9a139c68fd2722cf4344141",
+    "decoder.mid_block.resnets.0.norm1.weight": "046279f603854f01c7d630caf8b6d5afcecd5b99e845d71e1aa7573ef76a34ec",
+    "decoder.mid_block.resnets.0.norm2.bias": "1887ac8fa8b67a0d1089d05d3d0a84ea5ed8a8c7b832a7117a74a80f84f84038",
+    "decoder.mid_block.resnets.0.norm2.weight": "f1aa92567b90f5f65240a1e813b54bedaf756ba3bd4bf3bb90abfb5086371348",
+    "decoder.mid_block.resnets.1.conv1.bias": "d15921f710e3b2f64148b24b54ff64fdd5a279acdee1003dee5ec30183923b53",
+    "decoder.mid_block.resnets.1.conv1.weight": "4ffbf46b1f4fb151ed0158d0e7a5bd0df3d5a7a9a4bf0f334a44d166cf5ba1d2",
+    "decoder.mid_block.resnets.1.conv2.bias": "c6f1d42b3ce8650fa7a5f2450168a700970961302b2935a88662a09705d6c1c2",
+    "decoder.mid_block.resnets.1.conv2.weight": "c519772f5e011e4f9affc8a4541ee7f57d384f19f01aacaed269c1c3160d4b48",
+    "decoder.mid_block.resnets.1.norm1.bias": "e3bc9bac89ec718499b3a6c8136302159d24e83f113fc3c7edb7a31cbbf57089",
+    "decoder.mid_block.resnets.1.norm1.weight": "cbe2804ab6f4546e73d0bd9c65488ef29d1f0b79e786620c91f1aa9596b8f4c6",
+    "decoder.mid_block.resnets.1.norm2.bias": "2e8a68f7a9e7b27cb0d09adf4cf8cc0b01e4c7173fd2f6285167531b389eb508",
+    "decoder.mid_block.resnets.1.norm2.weight": "331236417e14fb273bb14506ded13042dbf4070312dcc8bf868af20e7cac131f",
+    "decoder.up_blocks.0.resnets.0.conv1.bias": "45ad4f99512dfbb7c675e6cfd4c24115781c8c48e465a3351e18bc0036e6b143",
+    "decoder.up_blocks.0.resnets.0.conv1.weight": "96c7c29a51a956d9392d3aef9cfa3362e5ba4b75c6458d1f46fa84227afcabb3",
+    "decoder.up_blocks.0.resnets.0.conv2.bias": "8a46659f9580e538dbcf2a1c3b2d0b544c386a391d8c9691774748f3b2577827",
+    "decoder.up_blocks.0.resnets.0.conv2.weight": "9c3cceee50b5b26583070a4cef7356d0b197e0a328d3e66759e362613f61dabf",
+    "decoder.up_blocks.0.resnets.0.norm1.bias": "320732396537eaa3b912abbfd575efb0f9450f65e628aa0c7b0f994fae6d9eba",
+    "decoder.up_blocks.0.resnets.0.norm1.weight": "1a6fe9c3a01c85cce4f16caa2475d59db3808bc0a5ad97ffacf70767b0d528e2",
+    "decoder.up_blocks.0.resnets.0.norm2.bias": "0084a5069daa34243689b0a260d297ac6eb00ee46e4f7e6c6d95499087b625fc",
+    "decoder.up_blocks.0.resnets.0.norm2.weight": "b3cb62b536841ada28a34c92151a892e5d5abb3d56de8e546a4e535715df4592",
+    "decoder.up_blocks.0.resnets.1.conv1.bias": "3fb174198e4aa2dece2df50e208c08f40fd99e9cc339305b1b6a8fd647a7140b",
+    "decoder.up_blocks.0.resnets.1.conv1.weight": "af2a2741acc5e9fe3e49d9d4564f29202ec356b9a789e9a0c8554817521a49e9",
+    "decoder.up_blocks.0.resnets.1.conv2.bias": "a22ae5db6862db327e17b106745f52184af12bb2d47095e0ca456ba11465f83c",
+    "decoder.up_blocks.0.resnets.1.conv2.weight": "a21878326af8619f2b25414ad994af3ea3c70d682f8d83a6831f758b250bc85e",
+    "decoder.up_blocks.0.resnets.1.norm1.bias": "1773a44f7c370deae005d5d444131fd9bf9320cfb7364685333c3e402433f2c6",
+    "decoder.up_blocks.0.resnets.1.norm1.weight": "9d8e945ccfbac011c15e6dbdf842408c353b44cf531049b214d9264035db9d87",
+    "decoder.up_blocks.0.resnets.1.norm2.bias": "f276788b776b7d3c7270f4ff5e671e1a571de02942eac940206095c5fb088d2f",
+    "decoder.up_blocks.0.resnets.1.norm2.weight": "acfca7669ac1b712e3c42fcee32259a0f7d5d3e3a9d5ecfa2fed614137e4763c",
+    "decoder.up_blocks.0.resnets.2.conv1.bias": "090564ec1b145f415b63900dace7feb9f420f1c955beb703c9fc426d3b261275",
+    "decoder.up_blocks.0.resnets.2.conv1.weight": "e3d114b08fe0db6b9b46773f794afdb5df4f557e557fa3ef9074cdc43c7afadc",
+    "decoder.up_blocks.0.resnets.2.conv2.bias": "9d07074a8f450c028dcebb2061f34799921dbf85ad52ca4cd4c4cade7006a505",
+    "decoder.up_blocks.0.resnets.2.conv2.weight": "8bf9ce3e5d0395692315c950a567f1de17e2e530facb12b520daabfd96867441",
+    "decoder.up_blocks.0.resnets.2.norm1.bias": "8dd96c9adefd0e1eeb98d65ce4aeffcb35c226723d522a8cbd7ef515ecb2a018",
+    "decoder.up_blocks.0.resnets.2.norm1.weight": "41dc36aa961af8a6a1cf9738a8e54e9bbb2f42b06a13dd6506e0621195c0fced",
+    "decoder.up_blocks.0.resnets.2.norm2.bias": "b1e7fe91b6c6998c5c682ccb6f9e47be0c8ab5986caeedb312ea216eb8a8ceb8",
+    "decoder.up_blocks.0.resnets.2.norm2.weight": "be2634e3faaf98f4f4720ed1fc3a2947aff0f4d77694025be8bc677099940ac7",
+    "decoder.up_blocks.0.upsamplers.0.conv.bias": "542cde0bd90a97a6fed8a13bffcafa339e3252dbff720a1eb70a81cd0a35186e",
+    "decoder.up_blocks.0.upsamplers.0.conv.weight": "79edf5f7f35b9eabfedbb100fedafd54251f0b7b60c85303ef0f32c7e22934b7",
+    "decoder.up_blocks.1.resnets.0.conv1.bias": "a7f2c0ec57e9cb2aff03db5cd4d09f0921bd387a0292ab2cc9b601b92c5eca2b",
+    "decoder.up_blocks.1.resnets.0.conv1.weight": "acf338a30928bc1b442b957930f09cbb17367f6f5af3a42e28c40cc72f685e41",
+    "decoder.up_blocks.1.resnets.0.conv2.bias": "a0fb82c0ce6f1b0a9a28958a6f4276392c9d0fa53e0bd6ac117b4b507121c53a",
+    "decoder.up_blocks.1.resnets.0.conv2.weight": "65be5954194de5291164b8b3d4feb6cbab5cbc3d3d807ec63a19ca2dd31e734e",
+    "decoder.up_blocks.1.resnets.0.norm1.bias": "622331186856aa02e96cbb0dc47cb1dd241bf8b3fb7fd2ae5dc372680fe3c052",
+    "decoder.up_blocks.1.resnets.0.norm1.weight": "fc9984e8792dba8037a28698b3b13f046be79a049b979ece3c290fd58d95dc03",
+    "decoder.up_blocks.1.resnets.0.norm2.bias": "78247f396b54908747327086d12e7f26b23f93556aaf9fcc7039e3510b2623c3",
+    "decoder.up_blocks.1.resnets.0.norm2.weight": "f00006ae452f03df0ad2b04492871ca4f342ff6820270a2ca4871d84c5060a27",
+    "decoder.up_blocks.1.resnets.1.conv1.bias": "58280a82ce8fc9d048bcffbb6f8e8ea04d834423189ee58fbbf87729417d6f41",
+    "decoder.up_blocks.1.resnets.1.conv1.weight": "cc6a572aba236af3dd9f7ee7a34bd3427bd1d637477e438a542e671cd5c442d6",
+    "decoder.up_blocks.1.resnets.1.conv2.bias": "f92be82c0a096fd34351108b9860d7cf4dd8920c2134a1a8379e849cd612b883",
+    "decoder.up_blocks.1.resnets.1.conv2.weight": "5c8378693cdc632dca04d632fa4a368db6efd902e2f8b497181751d87079f994",
+    "decoder.up_blocks.1.resnets.1.norm1.bias": "3f35eec59fd85b56db90c70d0b355490ae911d21182b054dd9afaae53c01f476",
+    "decoder.up_blocks.1.resnets.1.norm1.weight": "e90a2488826d37679da9ae190f02b2eff4db87259a93001aa7969d204dedb798",
+    "decoder.up_blocks.1.resnets.1.norm2.bias": "2f0e1b16dca8bcd555bb6b93628bedeb2fc721cc2f017b09b72919a527fd7ea1",
+    "decoder.up_blocks.1.resnets.1.norm2.weight": "f7cd78ad264b5825ebcd6661cc4447503e9293f1e25e885b7aebf00e28bd3626",
+    "decoder.up_blocks.1.resnets.2.conv1.bias": "38339a42144c1d342db23fd3abafb21af5ec78ca965976bd7054bb551204acf7",
+    "decoder.up_blocks.1.resnets.2.conv1.weight": "bdfe8bc6a05964204d2a94cc5c9ca51000cf21faea5423dec8ad927629a3584a",
+    "decoder.up_blocks.1.resnets.2.conv2.bias": "00bb4c4fdf2d4e319c2f16f0bd63e9f0f2d80bbff40cf7aca3908fc79f8463a7",
+    "decoder.up_blocks.1.resnets.2.conv2.weight": "ac1d7b566556a0a8265309bded7e7685577dd0d5469e93ed49e785f7dba71277",
+    "decoder.up_blocks.1.resnets.2.norm1.bias": "9e38cf1b8d4856040b92efaf84b3106821797f62a8960bb2acc28cacd8a37e48",
+    "decoder.up_blocks.1.resnets.2.norm1.weight": "5542da937e215e104488e56a662926b9efe2ef1952e0269501f38204c05ff50a",
+    "decoder.up_blocks.1.resnets.2.norm2.bias": "ab5dbb9ec67af6dc647bb698d68936eb752ca7734c6bb8c79144bc9e490c1052",
+    "decoder.up_blocks.1.resnets.2.norm2.weight": "95758365168e7ce6c3af772548cf6a9621ca558e983b0032667285585171db5d",
+    "decoder.up_blocks.1.upsamplers.0.conv.bias": "680d3b70a4c821c44d99351a918a5287d3e580ab48fd80010fa4abbac067cc3a",
+    "decoder.up_blocks.1.upsamplers.0.conv.weight": "01cc47c0ab763dccd30c47e33a8571b4b30dc572f11d5e74fee3e56c0385e5ae",
+    "decoder.up_blocks.2.resnets.0.conv1.bias": "7aea6a9ba6d1ae835365a5c3c11b277602500a5ee4429284e4696feff0bcb0f9",
+    "decoder.up_blocks.2.resnets.0.conv1.weight": "4d4ae20c71b63495decda7b3ab0db9dd8b6b35dc64c574a41eaa2ebf4208365a",
+    "decoder.up_blocks.2.resnets.0.conv2.bias": "d933009008e753af286ce11bc7a1953c94a5eae26cc1337c685c944361537d19",
+    "decoder.up_blocks.2.resnets.0.conv2.weight": "2b78d75c41ff1acc12fde27c4891aeb8a6cd5f6fd2957e59698a160b7e7b1414",
+    "decoder.up_blocks.2.resnets.0.conv_shortcut.bias": "e3958d9c880646f1758bde986f2fd724ef69c9bcf63a0712dffb3f826875f748",
+    "decoder.up_blocks.2.resnets.0.conv_shortcut.weight": "4c7f38fa65ead907383634a9e793e089c3340a125dd78173c6141a27b8b71e96",
+    "decoder.up_blocks.2.resnets.0.norm1.bias": "15db90c87430d33b32b43343acd620f94dafd719d5d82112acec8e1df7656cb1",
+    "decoder.up_blocks.2.resnets.0.norm1.weight": "9d5a7d197c5195617f893151eb4aecacd30b4d9de8631531ac9c740ab6a473b9",
+    "decoder.up_blocks.2.resnets.0.norm2.bias": "cf534f5f5539b04ba8002be42f0c70cbd3fba78199b9033866b0f875a202b708",
+    "decoder.up_blocks.2.resnets.0.norm2.weight": "a668b7d87b7523f929f148d74e964091ad87cab30be55916a544d6facbf74e1e",
+    "decoder.up_blocks.2.resnets.1.conv1.bias": "4141395dea9c492d0c1cb96b6d758555d06422ba83ee2c46f54c0938aa88add5",
+    "decoder.up_blocks.2.resnets.1.conv1.weight": "820062747b035d053afcbee5a9bf599aaea674e7dee8ab9942d019f09b020cdc",
+    "decoder.up_blocks.2.resnets.1.conv2.bias": "dd268eb932f979eddc8b6b2059a921389ee42ea50446e1b1134478b2c0fc562a",
+    "decoder.up_blocks.2.resnets.1.conv2.weight": "3e717fcfe58866084884fe735696b08df410763899c41345059235894656a1e9",
+    "decoder.up_blocks.2.resnets.1.norm1.bias": "f9fae9c4fa69e1d67a32a53c08a51439027629e670345560d528e088a9175d10",
+    "decoder.up_blocks.2.resnets.1.norm1.weight": "9741f7c4978bbb36afacd5dd17fb060928eeeebc06b410b730b2cf37c09f6d88",
+    "decoder.up_blocks.2.resnets.1.norm2.bias": "2a30573747b8750ca48c51529a94a0bfb4bbc0476b41374e36e53fc0f9183d99",
+    "decoder.up_blocks.2.resnets.1.norm2.weight": "3292209e6688e91b936bc8c15b614c49c680cca85d37f6de98d39f2eaf827653",
+    "decoder.up_blocks.2.resnets.2.conv1.bias": "cac684632811a8ebaa403bf0312f9bbb44a74714d53dac36496d013eb181733d",
+    "decoder.up_blocks.2.resnets.2.conv1.weight": "027c6d2aaf8ca44f45a9f655113a0e0173c93e9842ccd6308a8063a211c50079",
+    "decoder.up_blocks.2.resnets.2.conv2.bias": "c953d12240ad89b30828858de1aae884d00eb25399cb2dc52bc5e5c19c3468da",
+    "decoder.up_blocks.2.resnets.2.conv2.weight": "2cf30025eb9b712f1ed989634303f19b3043bccb55a6cd8a989582938693bb5e",
+    "decoder.up_blocks.2.resnets.2.norm1.bias": "f9e23d37abc7bca5282e160b22ed16fb216c9084e553b050bc5b50768b2eff03",
+    "decoder.up_blocks.2.resnets.2.norm1.weight": "69300f2a9360282831441b0e9db1d14af84b61359015b5d1d162e422da232908",
+    "decoder.up_blocks.2.resnets.2.norm2.bias": "eee524cd0474f2980d8cb4e9412ed01fd457ed474fc18569b9105c6eae5baa2b",
+    "decoder.up_blocks.2.resnets.2.norm2.weight": "a42fec1a8e7313ef8a05556272f461d153bf6d47ae6a8e239160335639cd21b2",
+    "decoder.up_blocks.2.upsamplers.0.conv.bias": "5d22b98698127c4c7af7840ed7c807a9d7088b0a6015cff99b0da2abae3f9ba6",
+    "decoder.up_blocks.2.upsamplers.0.conv.weight": "04858b1c78524be869717ba3420ed8d4df1633479d73f1cce14b5debaf525f54",
+    "decoder.up_blocks.3.resnets.0.conv1.bias": "92744867fb5b360a9715faddf628d919f71a7b02fa232256cb4570fd6dfae20d",
+    "decoder.up_blocks.3.resnets.0.conv1.weight": "83601e40f48f096306868327c7035c286e668a81279c4e23bfc2bd12be9d59c4",
+    "decoder.up_blocks.3.resnets.0.conv2.bias": "ac081084edc818fef6916b39981bc6cb6585366ace566118f7ca76cf06e1da50",
+    "decoder.up_blocks.3.resnets.0.conv2.weight": "6a1477b600f1d69b3d1db670307c8fa05289baabceada94b683c2dcc37047174",
+    "decoder.up_blocks.3.resnets.0.conv_shortcut.bias": "d089c182322434a3c6d49467eac69745d2a9ef6ab0d2432693db3c5893dcfa01",
+    "decoder.up_blocks.3.resnets.0.conv_shortcut.weight": "5d8ee5867e00e1593f76bbdff7193db16e32ee35cce955bee079845ea5531265",
+    "decoder.up_blocks.3.resnets.0.norm1.bias": "d94d3d966427dc294fb3a8b4e6b95ccc1f1521df398854ec2bbd972fef6c0ad0",
+    "decoder.up_blocks.3.resnets.0.norm1.weight": "1090f5cde25c7b828898fd1fd853fb6cccb4bebe9ccd76a1a250c6635f9c9ac7",
+    "decoder.up_blocks.3.resnets.0.norm2.bias": "3f508bced1837b72764a8183fc251f5a4cf5bec5c290c82990093097f0e3685f",
+    "decoder.up_blocks.3.resnets.0.norm2.weight": "b1295cceb70223e7941ef818881e57ae1e68d5b40b5feb5449f72d50ea3cb23c",
+    "decoder.up_blocks.3.resnets.1.conv1.bias": "28663f0a2a722894d8983fd75def4f265e52c0e18fb60a73ad59df8bff688f03",
+    "decoder.up_blocks.3.resnets.1.conv1.weight": "8f4854bf63dc6030a91ebc43792c50853bdd6217ba9d9ece80403059989c8d84",
+    "decoder.up_blocks.3.resnets.1.conv2.bias": "f95b2f2038861e740aa1a4d89cdce223177e2b18d83f7ecfe4c6489394fdd75b",
+    "decoder.up_blocks.3.resnets.1.conv2.weight": "3b8b77737d5a7d6c342f1209122e0e0a7b11e3a4fc127dea93084d01653cf6f1",
+    "decoder.up_blocks.3.resnets.1.norm1.bias": "778c8aade951df886f26cfde3c1081e3127e56f827f8278e281cefa3396b94d6",
+    "decoder.up_blocks.3.resnets.1.norm1.weight": "5083b3ca5f5e9db330432f5c64109df2953f8dcd648ad4a0f8a0987450ef744f",
+    "decoder.up_blocks.3.resnets.1.norm2.bias": "2429f5f6f1d13b006bb0e8589c0ed04bfd6f69abf1e6cf43c47d81d4d441b01a",
+    "decoder.up_blocks.3.resnets.1.norm2.weight": "70e07e26734bbccb8ca0152a779ff8acbc6bae0635d887b674db751b93ac03c6",
+    "decoder.up_blocks.3.resnets.2.conv1.bias": "7ddcfe5bac1b23150f38e974f941986ffb377eec309898e14bb642f1fc5906c9",
+    "decoder.up_blocks.3.resnets.2.conv1.weight": "802e1055640a15d435561fd8aec0a33adad5b9db6181b8582508e6821f344ef8",
+    "decoder.up_blocks.3.resnets.2.conv2.bias": "b3b9685a44e2a385fdaf061402cc4fdce12a79aad544a715713a433d32c45c33",
+    "decoder.up_blocks.3.resnets.2.conv2.weight": "4430df049f39602b200c6b6ef091752f96af294d54953a3c826bfbe5362bda77",
+    "decoder.up_blocks.3.resnets.2.norm1.bias": "93e1e8aaeaaa6fdc18029676c38c5ba637288f13587e8084545ba7cad67c7c50",
+    "decoder.up_blocks.3.resnets.2.norm1.weight": "82763ea7faf48885b1a1f1c2b96382567c68e26ab2ca7e48511d925514319328",
+    "decoder.up_blocks.3.resnets.2.norm2.bias": "ddfa2b8477ff83dfb8a8e6bd6926bf4ccf75e06c072bb44be826bdceea217343",
+    "decoder.up_blocks.3.resnets.2.norm2.weight": "8e86c3891ea02a792c7d1497d8fb769b4e927b731647c0644b7f37d4b01a2a3f",
+    "post_quant_conv.bias": "4d2065d17ebec258927d584db805c400807df3170ca36464f433972ed1e5c457",
+    "post_quant_conv.weight": "7996ce0f4e9012f621914b92509fd8cf609457c1e17c60f76a26cadffc4f73ff"
+  },
+  "parameter_digest_basis": "Standalone original-archive recipe digests; not final resident tensor hashes",
+  "producer_status": "failed",
+  "request_sha256": "8740beb5bc338e9ac4fff678a80713f8fb27dd63a336caa52753edb16c671fc8",
+  "schema": "mdb-recovered-decoder-source-v1",
+  "source_provenance": {
+    "accepted_auditor_sha256": "5027875c03f9ceb3157b4b9d9632366ff5c9b1c4beb429b8b73d79aad0db6b08",
+    "audit_executed_payload_sha256": "b23fff9799d5f990a4ac1f8fd28483adefeddfb25fd3df0fdaca9ec210b0ed64",
+    "audit_job": "job-453a53b4ec8c",
+    "audit_request_sha256": "30308c13babcbd19a60b9d31e890c302457079e1613b0c2ed29ffc7dfd264db6",
+    "audit_sha256": "52bd05dc066f1295db32f9baa36986662417b74f1fdbad487d9d19378512d0a9",
+    "compact_archive_custody_sha256": "1385632dbc175f3ef0d0801d2711e9e27c55317ad282438f3e291069a0112f86",
+    "compact_archive_sha256": "fa910f6f3be5f5539cc980c75463ab5ca56231e94096f46cd55ee994f0bb2a80",
+    "compact_files_manifest_sha256": "61e92fc1540bd7ffb2209ed603a786f6513114d70c1eb10261c324f410c7e9b7",
+    "compact_report_sha256": "a09bf79658bacdb725b5a28fb26e80edff81b7777c6a7835eb6b0ff34da2d12d",
+    "native_manifest_sha256": "c6baff2a5aae8c03651399226f526794e7c9df3535748f365f101586bbfab41d",
+    "source_executed_payload_sha256": "87eb86bba4ee2aa9c71156f2e7227ae62ad32328f17fcacd56458126e07cb5ed",
+    "source_forecast_seal_sha256": "46a1266921696c0b927d1d9394f515565dd00e8077eb2e6d68e1ebc1403ba19e",
+    "source_job": "job-f7d249b6d3bb",
+    "source_job_record_sha256": "bd2f4a48b004b78ddc4dee83832c2ef328a0ad6cd1f8a40f64c106fcfb6cf615",
+    "source_request_sha256": "00d08d3eb058fa50656b0f3deb23238e9ad38a69a2266751462b80ee2ddce93a",
+    "source_worker_sha256": "71e2a82f47f3a29cc8195589ee20018f74e880cc6696fa47ebc1e04e78aa993e",
+    "state_index_sha256": "0595b687bd8f74b9aa13ca952ae8952c46454a05bc62dc7182381ca7c006ebdd"
+  },
+  "worker_sha256": "8de957590606dfbe39fdd5500075151025f266401fdac51238f891bfe13f9067"
+}

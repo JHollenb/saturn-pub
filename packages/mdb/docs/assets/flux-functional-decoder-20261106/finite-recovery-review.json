@@ -1,0 +1,108 @@
+{
+  "blocking_issues": [],
+  "command_review": {
+    "actual_controller_hostile_ambient_reconstruction": "Passed, explicit CUDA_VISIBLE_DEVICES empty, Linux uv/torch/model paths, sealed Python/requirements and three wheels; no submission called.",
+    "local_bind_dependency": {
+      "path": "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/stage_flux_image_tail_microscope.py",
+      "scope": "Local controller delegates environment binding here; reviewed current bytes and generated command. Not required by remote worker. Preserve these bytes through admission.",
+      "sha256": "9874d68b1170c68006f9d37afd14af47de02647f5bc5e80f6eba786ab6df448d"
+    },
+    "note_metadata": "Shared launcher note says120s estimate while resource_exception is180s; actual reservation uses180s. Minor inherited prose discrepancy, not execution mismatch."
+  },
+  "controller_sha256": "db16072a4c6024113f50d664870775afeff5c433b885c7941635bfbcc826c3cf",
+  "finite_resources": {
+    "cpu_threads": 2,
+    "disk_gb": 1,
+    "est_wall_s": 180,
+    "model_forwards": 0,
+    "model_loads": 0,
+    "outer_timeout_s": 360,
+    "output": "compact reports, original PNG copies, derived metadata and retrieval manifests; no full tensor bank",
+    "ram_mb": 3072,
+    "raw_tensor_copies": 0,
+    "retries": false,
+    "scheduler_submissions": 1,
+    "strict_preflight": true,
+    "vram_mb": 0
+  },
+  "independent_checks": {
+    "all_20_staged_source_and_packet_hashes": true,
+    "canonical_request_identity": true,
+    "config_byte_seal": true,
+    "failed_packet_job_and_log_hashes": true,
+    "original_actual_command_matches_run02_staged_command": true,
+    "original_declared_sealed_executed_result_payload_sha256": "70e10b312efeb3cefc6212f3afc6c138914ec489a738c2d7672a68f5d3be3064",
+    "original_inner_submitted_config_matches_original_request": true,
+    "package_zip_entries": {
+      "mdb": 188,
+      "mrun": 225,
+      "saturn_pub": 59,
+      "total": 472
+    },
+    "payload_debug_request": true,
+    "raw_arrays_rehashed_by_reviewer": false,
+    "raw_numerical_audit_by_reviewer": false,
+    "retained_inventory_entries": 555,
+    "retained_inventory_sha256": "87bbeae6dcb48f7a82fb8376a5741e9b245aaa3d7aab1134d902e93553ff4929",
+    "three_whole_wheels": true
+  },
+  "limits": [
+    "Review author inspected source and bounded packet/manifest metadata only; the scheduled CPU audit must perform full original-file and numerical verification.",
+    "Full macro errors are supported after audit; full tensors at every primitive are not claimed.",
+    "Recovered source/contract/summary are additive derived evidence, never original successful exports.",
+    "Goal remains active; next scientific priority remains prospectively bound Qwen conditioning."
+  ],
+  "qualification": {
+    "final_recovery_subset": "4 isolated recovery checks, 8.60s, final e4e9 source including saved-only CLI and prior-failure journal rejection",
+    "full_cohort": "24 isolated tiny checks, 24.07s, before final recovery-only journal/output-binding correction; unchanged worker/auditor qualified",
+    "path": "/Users/jakeholl/domains/artifacts/mdb-flux-functional-decoder-20261106/recovery-v1/qualification-v1/qualification.json",
+    "receipt_sha256": "6f9631254e98fb8dd7b81322775b9d3da0543cd5df8b9f71166e80eb6a07c960",
+    "reviewer_reran_tests": false
+  },
+  "request_file_sha256": "84e89d95da8eed5e854b94a102be9a29f9ac46cf496b5748fd9a178218c1b44d",
+  "request_sha256": "2339ecdb754e0104418b463397b4cb2121a4bbb1c9646d390e56cee3f0fe1e2e",
+  "review_status": "ready-for-finite-run",
+  "reviewed_at_utc": "2026-11-06T10:37:12.288918+00:00",
+  "reviewer": "context_carriers_astra",
+  "reviewer_model_calls": 0,
+  "reviewer_scheduler_submissions": 0,
+  "runtime_wheels": {
+    "mdb_runtime-0.1.0-py3-none-any.whl": "4b1b965dce45883cabcb24ab2c11702ce748aeb1658776596be27b405df26d21",
+    "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+    "saturn_pub-0.4.1-py3-none-any.whl": "c32bbcf5c5b45e4970d9c750266f607b2a9b0f06dc982106fd82e0501375e424"
+  },
+  "schema": "mdb-decoder-recovery-finite-review-astra-v1",
+  "scope": "One saved-only CPU recovery/audit; not a decoder rerun, another neural panel, or holistic cadence reset.",
+  "source_pins": {
+    "audit_flux_functional_decoder.py": "b0cc9ae066e5d7471cf2b022093fb98bcdb45894e554d3f88bc6a87641c98148",
+    "audit_flux_functional_pass.py": "2d54e716749dec52c159f3a5214860f4bb8cbf396fd09239540bd55988274c80",
+    "audit_flux_functional_remaining.py": "5027875c03f9ceb3157b4b9d9632366ff5c9b1c4beb429b8b73d79aad0db6b08",
+    "audit_flux_image_tail_microscope.py": "ead508b31acc036cb4a9fd61dcd334b34337a704728d4a3d357de94063863ee9",
+    "audit_flux_single_stack_trace.py": "126ced98b7ff718408123e19bcdceb44be153e456bb328d1fe487195a3ac7526",
+    "executed-decoder-helper.py": "e2712298e42b37a263dea1b24f0f491082b8a01086b16fa66577f474c68f491f",
+    "executed-decoder-worker.py": "8de957590606dfbe39fdd5500075151025f266401fdac51238f891bfe13f9067",
+    "failed-request.json": "196ad3380b2f46a43c86ebb3f04ead4d7de411558434078a55cd62c04a6f64c4",
+    "failed-source/authentication.json": "0847d5a70c98c861420c6f958ab76e3d7f0659428698b9c62f3c7ad3d3dbb395",
+    "failed-source/job.json": "7c0a8b26bdd3f5c42368b773167e1db562df04227137489306be939369d97d80",
+    "failed-source/worker.log": "68c822f64512ba7b295a7c2f2cce7d1a0d5b3ed605c317665292a707dce6f6a6",
+    "flux_family_custody.py": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+    "parameter-artifacts.json": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9",
+    "preflight.v1.json": "de31db31cfe428bca4f3da953d230e2e7b4a45b0eb45c129540cebcaebe6b58e",
+    "recover_flux_functional_decoder.py": "e4e9c83b5e63fe39010546b7bede9fb645b799adc2c81b1ca289089a2171b979",
+    "retained-files.json": "87bbeae6dcb48f7a82fb8376a5741e9b245aaa3d7aab1134d902e93553ff4929",
+    "retrieve_reader_evidence.py": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923",
+    "retrieve_weights.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+    "stage_saved_flux_audit.py": "db16072a4c6024113f50d664870775afeff5c433b885c7941635bfbcc826c3cf",
+    "vae-config.json": "0d6dfb69ae95a5e2ac9836284bbb63d8b38ce67b25ba2dff380752b2a10ab948"
+  },
+  "source_review": [
+    "Recovery writes derived metadata only into a new job-owned root; the original failed tensor stores and chronology remain read-only and original job remains failed rc1.",
+    "Original executed8de957 worker and e271 helper are separately pinned; future58525 worker/reporting fix is not misidentified as producer.",
+    "Transactions are verified against original seals and persisted event chains; failure and violations derive from explicit journal kinds/seal lists, with known exact event sequences, not from closed phase alone.",
+    "Native/profile declarations are labeled as authenticated-source-derived metadata, not fabricated final runtime probes. Final resident parameter immutability remains unestablished.",
+    "Auditor verifies all555 retained-file hashes/coverage, direct original full macro tensors, source recipes, same-latent joins, forecast-before-native chronology, all fixed primitive witnesses and conditional hash-matched diagnostic restrictions.",
+    "Numerical disagreements remain measurements. Source checkpoint recipe restoration does not substitute for the missing resident postcondition.",
+    "Public draft is appropriately pending; separates shared CPU-BN, shared original kernels, complete macro retention and partial micro retention. No material mathematical correction identified.",
+    "Publisher recovery source pin was stale during review and author acknowledged update; publisher is not in this CPU execution request and requires separate final pin/qualification before publication."
+  ]
+}

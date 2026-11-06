@@ -1,0 +1,171 @@
+{
+  "alias": "cmp.flux.decoder-audit.sham",
+  "applicability_authority": "supplied; no generalization inferred",
+  "applicability_conditions": [
+    {
+      "field": "case",
+      "op": "eq",
+      "value": "sham"
+    },
+    {
+      "field": "source_cut",
+      "op": "eq",
+      "value": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0"
+    },
+    {
+      "field": "clock",
+      "op": "eq",
+      "value": "step4/project0"
+    },
+    {
+      "field": "model",
+      "op": "eq",
+      "value": "a09191c5ff813af77bf89d8e4b9a07237befb67c1aef3e722322d3491250fcd0"
+    },
+    {
+      "field": "helper_sha256",
+      "op": "eq",
+      "value": "e2712298e42b37a263dea1b24f0f491082b8a01086b16fa66577f474c68f491f"
+    },
+    {
+      "field": "prior_helper_sha256",
+      "op": "eq",
+      "value": "576b94f3cd987e8849f6d4772c90a77f14fdfc9210dea608a9a3d16cf0f99a61"
+    },
+    {
+      "field": "parameter_manifest_sha256",
+      "op": "eq",
+      "value": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9"
+    },
+    {
+      "field": "forecast_seal",
+      "op": "eq",
+      "value": "c356b5f6b8ed6b9204bef0cd26d75b406df0f668a3d425230c3ea1aae6cc4974"
+    }
+  ],
+  "binding": {
+    "execution": {
+      "dtype": "torch.bfloat16",
+      "id": "mdb-functional-decoder-campaign-v1",
+      "replication": true
+    },
+    "frontier": "step4/project0",
+    "horizon": {
+      "decoder_passes": 1
+    },
+    "input_identity": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+    "model_identity": "a09191c5ff813af77bf89d8e4b9a07237befb67c1aef3e722322d3491250fcd0",
+    "source_identity": "8740beb5bc338e9ac4fff678a80713f8fb27dd63a336caa52753edb16c671fc8"
+  },
+  "evidence": {
+    "audit_sha256": "0587fb5caadf8c781b97910979e67edc7a97c249e7302c1ab0b6222805bde743",
+    "dependent_cases": 4,
+    "independent_kernel_arithmetic": false,
+    "replication": true
+  },
+  "fingerprint": "41cd69bf0705f3c4d0f4981bc248eb53e3eb849bccf715d6347191bc516e474f",
+  "law_id": "law.flux.functional-decoder-replication.v1",
+  "observation_unit": "one caller-bound comparison, not independent tasks",
+  "readers": [
+    "same-latent-native-VAE"
+  ],
+  "report": {
+    "decision_fields": 0,
+    "decision_mismatches": 0,
+    "fields": {
+      "decoded": {
+        "decisions": {
+          "rule": "none",
+          "status": "not-requested"
+        },
+        "residual": {
+          "elements": 786432,
+          "l2": 0.0,
+          "largest": {
+            "coordinate": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "signed": 0.0
+          },
+          "max_abs": 0.0,
+          "maximum_signed": 0.0,
+          "minimum_signed": 0.0,
+          "nonzero": 0,
+          "shape": [
+            1,
+            3,
+            512,
+            512
+          ],
+          "signed_mean": 0.0,
+          "signed_sum": 0.0
+        },
+        "shape": [
+          1,
+          3,
+          512,
+          512
+        ]
+      },
+      "pixels": {
+        "decisions": {
+          "rule": "none",
+          "status": "not-requested"
+        },
+        "residual": {
+          "elements": 786432,
+          "l2": 0.0,
+          "largest": {
+            "coordinate": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "signed": 0.0
+          },
+          "max_abs": 0.0,
+          "maximum_signed": 0.0,
+          "minimum_signed": 0.0,
+          "nonzero": 0,
+          "shape": [
+            1,
+            512,
+            512,
+            3
+          ],
+          "signed_mean": 0.0,
+          "signed_sum": 0.0
+        },
+        "shape": [
+          1,
+          512,
+          512,
+          3
+        ]
+      }
+    },
+    "fingerprint": "1832762084381a4f761dfd84b3ca59172430522651654d4c2709de6812b90a5b",
+    "max_abs": 0.0,
+    "mechanics_status": "valid",
+    "residual_direction": "observed-minus-predicted",
+    "schema": "mdb-equation-comparison-v1",
+    "target_scope": "unassigned",
+    "terminal_status": "unassessed"
+  },
+  "route_id": "route.flux.shared-native-primitives.decode.v1",
+  "schema": "mdb-equation-record-v1",
+  "tested_context": {
+    "case": "sham",
+    "clock": "step4/project0",
+    "forecast_seal": "c356b5f6b8ed6b9204bef0cd26d75b406df0f668a3d425230c3ea1aae6cc4974",
+    "helper_sha256": "e2712298e42b37a263dea1b24f0f491082b8a01086b16fa66577f474c68f491f",
+    "model": "a09191c5ff813af77bf89d8e4b9a07237befb67c1aef3e722322d3491250fcd0",
+    "parameter_manifest_sha256": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9",
+    "prior_helper_sha256": "576b94f3cd987e8849f6d4772c90a77f14fdfc9210dea608a9a3d16cf0f99a61",
+    "source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0"
+  }
+}

@@ -1,0 +1,226 @@
+{
+  "act_receipts": 0,
+  "cases": [
+    "sham",
+    "HH",
+    "HL",
+    "new-3over8"
+  ],
+  "complete_macro_cuts": {
+    "forecast": 48,
+    "native": 48
+  },
+  "counts": {
+    "diagnostic": {
+      "HH": {},
+      "HL": {},
+      "new-3over8": {},
+      "sham": {}
+    },
+    "forecast": {
+      "HH": {
+        "attention": 1,
+        "conv2d": 36,
+        "decoder": 1,
+        "dropout_identity": 15,
+        "group_norm": 30,
+        "interpolate_nearest": 3,
+        "linear": 4,
+        "mid_block": 1,
+        "resnet": 14,
+        "sdpa": 1,
+        "silu": 29,
+        "up_block": 4,
+        "upsample": 3
+      },
+      "HL": {
+        "attention": 1,
+        "conv2d": 36,
+        "decoder": 1,
+        "dropout_identity": 15,
+        "group_norm": 30,
+        "interpolate_nearest": 3,
+        "linear": 4,
+        "mid_block": 1,
+        "resnet": 14,
+        "sdpa": 1,
+        "silu": 29,
+        "up_block": 4,
+        "upsample": 3
+      },
+      "new-3over8": {
+        "attention": 1,
+        "conv2d": 36,
+        "decoder": 1,
+        "dropout_identity": 15,
+        "group_norm": 30,
+        "interpolate_nearest": 3,
+        "linear": 4,
+        "mid_block": 1,
+        "resnet": 14,
+        "sdpa": 1,
+        "silu": 29,
+        "up_block": 4,
+        "upsample": 3
+      },
+      "sham": {
+        "attention": 1,
+        "conv2d": 36,
+        "decoder": 1,
+        "dropout_identity": 15,
+        "group_norm": 30,
+        "interpolate_nearest": 3,
+        "linear": 4,
+        "mid_block": 1,
+        "resnet": 14,
+        "sdpa": 1,
+        "silu": 29,
+        "up_block": 4,
+        "upsample": 3
+      }
+    },
+    "native": {
+      "HH": {
+        "attention": 1,
+        "conv2d": 36,
+        "decoder": 1,
+        "dropout_identity": 15,
+        "group_norm": 30,
+        "interpolate_nearest": 3,
+        "linear": 4,
+        "mid_block": 1,
+        "resnet": 14,
+        "sdpa": 1,
+        "silu": 29,
+        "up_block": 4,
+        "upsample": 3
+      },
+      "HL": {
+        "attention": 1,
+        "conv2d": 36,
+        "decoder": 1,
+        "dropout_identity": 15,
+        "group_norm": 30,
+        "interpolate_nearest": 3,
+        "linear": 4,
+        "mid_block": 1,
+        "resnet": 14,
+        "sdpa": 1,
+        "silu": 29,
+        "up_block": 4,
+        "upsample": 3
+      },
+      "new-3over8": {
+        "attention": 1,
+        "conv2d": 36,
+        "decoder": 1,
+        "dropout_identity": 15,
+        "group_norm": 30,
+        "interpolate_nearest": 3,
+        "linear": 4,
+        "mid_block": 1,
+        "resnet": 14,
+        "sdpa": 1,
+        "silu": 29,
+        "up_block": 4,
+        "upsample": 3
+      },
+      "sham": {
+        "attention": 1,
+        "conv2d": 36,
+        "decoder": 1,
+        "dropout_identity": 15,
+        "group_norm": 30,
+        "interpolate_nearest": 3,
+        "linear": 4,
+        "mid_block": 1,
+        "resnet": 14,
+        "sdpa": 1,
+        "silu": 29,
+        "up_block": 4,
+        "upsample": 3
+      }
+    }
+  },
+  "diagnostics": {
+    "HH": {
+      "prefix_calls": 0,
+      "status": "not-needed"
+    },
+    "HL": {
+      "prefix_calls": 0,
+      "status": "not-needed"
+    },
+    "new-3over8": {
+      "prefix_calls": 0,
+      "status": "not-needed"
+    },
+    "sham": {
+      "prefix_calls": 0,
+      "status": "not-needed"
+    }
+  },
+  "final_resident_parameter_check": "unestablished; original check after failing catalog was not executed",
+  "first_macro_difference": {
+    "HH": null,
+    "HL": null,
+    "new-3over8": null,
+    "sham": null
+  },
+  "first_micro_difference": {
+    "HH": null,
+    "HL": null,
+    "new-3over8": null,
+    "sham": null
+  },
+  "forecast_seal": {
+    "forecasts": [
+      "cohort"
+    ],
+    "path": "/mnt/big/mdb/research/job-406f417b8512/functional-decoder-result/forecast-transaction/seal.json",
+    "seal_sha256": "c356b5f6b8ed6b9204bef0cd26d75b406df0f668a3d425230c3ea1aae6cc4974"
+  },
+  "input_seal": {
+    "forecasts": [
+      "inputs"
+    ],
+    "path": "/mnt/big/mdb/research/job-406f417b8512/functional-decoder-result/input-transaction/seal.json",
+    "seal_sha256": "381067b0ad08ea036a995f59be421731d180a58acc63461bdfde407be61f7380"
+  },
+  "job_id": "job-406f417b8512",
+  "metadata_origin": "Post-failure derived metadata; not an original runtime final export. Counts are the original persisted execution observation; profile declarations come from authenticated executed source/config.",
+  "producer_status": "failed",
+  "receipt_count_basis": "No Session/Act receipts in the declared component-only executed source or retained evidence",
+  "request_sha256": "8740beb5bc338e9ac4fff678a80713f8fb27dd63a336caa52753edb16c671fc8",
+  "schema": "mdb-recovered-decoder-summary-v1",
+  "session_continue_receipts": 0,
+  "totals": {
+    "decoder_loads": 1,
+    "denoiser_transitions": 0,
+    "diagnostic_module_entries": 0,
+    "diagnostic_prefix_calls": 0,
+    "encodes": 0,
+    "forecast_module_entries": 0,
+    "functional_decode_calls": 4,
+    "guard_refusals": 0,
+    "model_loads": 1,
+    "native_decode_calls": 4,
+    "native_module_entries": 552,
+    "noise_draws": 0,
+    "transformer_loads": 0
+  },
+  "transaction": {
+    "basis": "Absence derived from verified persisted failed/violation event kinds and sealed violation list; not inferred merely from closed phase.",
+    "event_head": "b9ad875da78ef9531abe84350ccb22fbe5d0ffbaeea8085dd23320d534c5d5d3",
+    "event_kinds": [
+      "opened",
+      "forecast_persisted",
+      "globally_sealed",
+      "native_execution_released",
+      "observation_persisted",
+      "closed"
+    ],
+    "failure": null,
+    "violations": []
+  }
+}

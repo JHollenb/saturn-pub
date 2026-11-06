@@ -1,0 +1,87 @@
+{
+  "actual_command_and_request_verified": true,
+  "elapsed_s": 206.66,
+  "executed_payload_sha256": "70e10b312efeb3cefc6212f3afc6c138914ec489a738c2d7672a68f5d3be3064",
+  "final_resident_parameter_check": "unexecuted; not established by this authentication",
+  "global_forecast_seal": {
+    "kind": "cohort_globally_sealed",
+    "native_decode_calls": 0,
+    "seal": {
+      "forecasts": [
+        "cohort"
+      ],
+      "path": "/mnt/big/mdb/research/job-406f417b8512/functional-decoder-result/forecast-transaction/seal.json",
+      "seal_sha256": "c356b5f6b8ed6b9204bef0cd26d75b406df0f668a3d425230c3ea1aae6cc4974"
+    },
+    "seconds": 52.84744320437312
+  },
+  "job_id": "job-406f417b8512",
+  "job_sha256": "7c0a8b26bdd3f5c42368b773167e1db562df04227137489306be939369d97d80",
+  "log_sha256": "68c822f64512ba7b295a7c2f2cce7d1a0d5b3ed605c317665292a707dce6f6a6",
+  "new_model_calls": 0,
+  "observed_forecast_completions": [
+    {
+      "case": "sham",
+      "kind": "forecast_case_completed",
+      "module_entries": 0,
+      "primitive_outputs": 127,
+      "seconds": 20.863460503984243
+    },
+    {
+      "case": "HH",
+      "kind": "forecast_case_completed",
+      "module_entries": 0,
+      "primitive_outputs": 127,
+      "seconds": 31.39041284425184
+    },
+    {
+      "case": "HL",
+      "kind": "forecast_case_completed",
+      "module_entries": 0,
+      "primitive_outputs": 127,
+      "seconds": 42.215247455984354
+    },
+    {
+      "case": "new-3over8",
+      "kind": "forecast_case_completed",
+      "module_entries": 0,
+      "primitive_outputs": 127,
+      "seconds": 51.34371134499088
+    }
+  ],
+  "observed_native_completions": [
+    {
+      "case": "sham",
+      "kind": "native_case_completed",
+      "native_decode_calls": 1,
+      "seconds": 63.01529970904812
+    },
+    {
+      "case": "HH",
+      "kind": "native_case_completed",
+      "native_decode_calls": 2,
+      "seconds": 72.5299829239957
+    },
+    {
+      "case": "HL",
+      "kind": "native_case_completed",
+      "native_decode_calls": 3,
+      "seconds": 82.1378651750274
+    },
+    {
+      "case": "new-3over8",
+      "kind": "native_case_completed",
+      "native_decode_calls": 4,
+      "seconds": 91.7319480329752
+    }
+  ],
+  "original_job_state": "failed",
+  "original_returncode": 1,
+  "outcome": "failed during catalog comparison after all primary decoder calls",
+  "peak_rss_mb": 3639.4,
+  "peak_vram_mb": 1676.0,
+  "raw_output_mutations": 0,
+  "recovery_status": "not-yet-audited",
+  "request_sha256": "8740beb5bc338e9ac4fff678a80713f8fb27dd63a336caa52753edb16c671fc8",
+  "schema": "mdb-decoder-failed-source-authentication-v1"
+}

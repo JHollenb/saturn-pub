@@ -1,0 +1,53 @@
+{
+  "derived_files": {
+    "native-contract.json": "548c72395a3ec90b8924d9804d25cfc27cdc79ccd6e2e3a9ac1cce1aa0ed05d1",
+    "parameter-artifacts.json": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9",
+    "retrieve_weights.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+    "source.json": "cea55e005329db8a9c58c7123941001ca2871580649d0014e10e592c9e0d1e4e",
+    "summary.json": "603e9fae7ea510593c70fea61473038472d8b798266223399304b2d942af1391",
+    "vae-config.json": "0d6dfb69ae95a5e2ac9836284bbb63d8b38ce67b25ba2dff380752b2a10ab948"
+  },
+  "failed_authentication_sha256": "0847d5a70c98c861420c6f958ab76e3d7f0659428698b9c62f3c7ad3d3dbb395",
+  "failed_executed_payload_sha256": "70e10b312efeb3cefc6212f3afc6c138914ec489a738c2d7672a68f5d3be3064",
+  "failed_job_sha256": "7c0a8b26bdd3f5c42368b773167e1db562df04227137489306be939369d97d80",
+  "failed_log_sha256": "68c822f64512ba7b295a7c2f2cce7d1a0d5b3ed605c317665292a707dce6f6a6",
+  "final_resident_parameter_check": "unestablished; original check after failing catalog was not executed",
+  "new_model_calls": 0,
+  "original_job_id": "job-406f417b8512",
+  "original_job_state": "failed",
+  "original_recipe_restoration": "independent audit will verify source checkpoint bytes; no final resident-version claim",
+  "original_request_sha256": "8740beb5bc338e9ac4fff678a80713f8fb27dd63a336caa52753edb16c671fc8",
+  "original_returncode": 1,
+  "original_runtime_metadata_export": "absent after optional catalog failure",
+  "persisted_transaction_health": {
+    "forecast": {
+      "basis": "Absence derived from verified persisted failed/violation event kinds and sealed violation list; not inferred merely from closed phase.",
+      "event_kinds": [
+        "opened",
+        "forecast_persisted",
+        "globally_sealed",
+        "native_execution_released",
+        "observation_persisted",
+        "closed"
+      ],
+      "failure": null,
+      "violations": []
+    },
+    "input": {
+      "basis": "Absence derived from verified persisted failed/violation event kinds and sealed violation list; not inferred merely from closed phase.",
+      "event_kinds": [
+        "opened",
+        "forecast_persisted",
+        "globally_sealed",
+        "closed"
+      ],
+      "failure": null,
+      "violations": []
+    }
+  },
+  "raw_root_mutations": 0,
+  "raw_tensor_copies": 0,
+  "retained_manifest_sha256": "87bbeae6dcb48f7a82fb8376a5741e9b245aaa3d7aab1134d902e93553ff4929",
+  "schema": "mdb-failed-decoder-recovery-metadata-v1",
+  "tensor_read_root": "/mnt/big/mdb/research/job-406f417b8512/functional-decoder-result"
+}

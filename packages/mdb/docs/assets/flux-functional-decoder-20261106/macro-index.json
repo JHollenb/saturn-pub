@@ -1,0 +1,3710 @@
+{
+  "forecast": {
+    "HH": {
+      "decoded": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "4e5a0dfdc25e60e0f0d6aafa4f54a71f4da0960c3de7ff7a54b2c7f83cead5ff",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            0.98828125,
+            1.0,
+            0.9921875,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "sha256": "f1d54917ab2fb587214c508bbc954a32f9190addb86ff1d7b76334eeaa5e9047",
+          "shape": [
+            1,
+            3,
+            512,
+            512
+          ],
+          "stride": [
+            786432,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 786432,
+        "name": "decoded",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "1b6e987047cba31e361f89bbaca5050ad357abde6895bb1a7bf703c9e449a74d"
+      },
+      "decoder_input": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "f5ec37046eb4b2ca437429ff632e7dbca2c6218a64cd8ad8ee54d65662c5a8e7",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -2.03125,
+            -1.8515625,
+            -1.4609375,
+            -1.34375,
+            -1.3828125,
+            -1.234375,
+            -1.046875,
+            -1.125
+          ],
+          "sha256": "170532a9dc9dbad4dd1193ceb95acb4451d06ade8bdb3cde0d300372e9bd8524",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "decoder_input",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "4734577fa7f0b125f0f2e7c4a530950b3411bc825e51be3a61d9f36410a870d0"
+      },
+      "decoder_mid": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "c2678a7abde245379e2e48b46ed2c35a4753f43b6420d25d60d41508c5268831",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.33984375,
+            -0.20703125,
+            -0.0859375,
+            -0.41796875,
+            -0.29296875,
+            -0.3671875,
+            -0.33984375,
+            -0.3671875
+          ],
+          "sha256": "b06ad98359dfa91d2fbb084743610074cd15dca074ba50b53e61fc9fa486e5c4",
+          "shape": [
+            1,
+            512,
+            64,
+            64
+          ],
+          "stride": [
+            512,
+            1,
+            32768,
+            512
+          ]
+        },
+        "elements": 2097152,
+        "name": "decoder_mid",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "f5ec37046eb4b2ca437429ff632e7dbca2c6218a64cd8ad8ee54d65662c5a8e7"
+      },
+      "decoder_up_0": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "094d8d7da0136867efeb1fe5ed42f839da88cf4d3a8242e22494507e73c5a4fb",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.185546875,
+            -0.0810546875,
+            0.486328125,
+            -0.291015625,
+            0.58984375,
+            0.7265625,
+            0.64453125,
+            0.5703125
+          ],
+          "sha256": "f47e32afeb53b5c53e09ca8373bd836cbb518e85ffb57977f82762e4a81277f0",
+          "shape": [
+            1,
+            512,
+            128,
+            128
+          ],
+          "stride": [
+            8388608,
+            16384,
+            128,
+            1
+          ]
+        },
+        "elements": 8388608,
+        "name": "decoder_up_0",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "c2678a7abde245379e2e48b46ed2c35a4753f43b6420d25d60d41508c5268831"
+      },
+      "decoder_up_1": {
+        "chunk_count": 2,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001"
+        ],
+        "cut": "6f5aa082e2248690961c35a5a96b0537b81ce2c9147c38bbc0238af41489aae9",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            48.75,
+            27.125,
+            21.5,
+            27.125,
+            27.625,
+            25.375,
+            26.75,
+            26.875
+          ],
+          "sha256": "8ea998ede0829769d25e5aea983dd0b887e4debb37ed9bb90980291728cf2458",
+          "shape": [
+            1,
+            512,
+            256,
+            256
+          ],
+          "stride": [
+            33554432,
+            65536,
+            256,
+            1
+          ]
+        },
+        "elements": 33554432,
+        "name": "decoder_up_1",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "094d8d7da0136867efeb1fe5ed42f839da88cf4d3a8242e22494507e73c5a4fb"
+      },
+      "decoder_up_2": {
+        "chunk_count": 4,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001",
+          "chunk_00002",
+          "chunk_00003"
+        ],
+        "cut": "c16821b4bca14d7d0af34001839c2d61af19a36f3a0164dd86de1ca6eaec0dee",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            35.5,
+            33.5,
+            24.75,
+            30.25,
+            30.375,
+            26.25,
+            25.625,
+            26.125
+          ],
+          "sha256": "da79619cdcd82af35bbbddfdaea762cd77b7b615ed6f130e9aabe2568b50ab27",
+          "shape": [
+            1,
+            256,
+            512,
+            512
+          ],
+          "stride": [
+            67108864,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 67108864,
+        "name": "decoder_up_2",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "6f5aa082e2248690961c35a5a96b0537b81ce2c9147c38bbc0238af41489aae9"
+      },
+      "decoder_up_3": {
+        "chunk_count": 2,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001"
+        ],
+        "cut": "1b6e987047cba31e361f89bbaca5050ad357abde6895bb1a7bf703c9e449a74d",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -7.0625,
+            -7.8125,
+            -10.6875,
+            -11.875,
+            -10.1875,
+            -9.1875,
+            -8.8125,
+            -9.5625
+          ],
+          "sha256": "f58b29da319ead16e3af3cdb6cfb35b88dd0238c764cdb1f9f7ed07e87a33e4b",
+          "shape": [
+            1,
+            128,
+            512,
+            512
+          ],
+          "stride": [
+            33554432,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 33554432,
+        "name": "decoder_up_3",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "c16821b4bca14d7d0af34001839c2d61af19a36f3a0164dd86de1ca6eaec0dee"
+      },
+      "latent_denormalized": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "25390d78d6c7191fc3da493262cb72a23a1c22536f7ec443cba8708316479a6d",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.6015625,
+            -1.0078125,
+            -0.05859375,
+            -0.34765625,
+            -0.1796875,
+            -0.25,
+            -0.310546875,
+            -0.279296875
+          ],
+          "sha256": "4aa93a64244d21d4e07be7e97fdecd56d7f522c462cb28e2ed353653f648eaf7",
+          "shape": [
+            1,
+            128,
+            32,
+            32
+          ],
+          "stride": [
+            128,
+            1,
+            4096,
+            128
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_denormalized",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "2563625717edfa31fa3ef5142e21a7603cdef1d45ffc70c1017662261e7df45a"
+      },
+      "latent_unpacked": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "2563625717edfa31fa3ef5142e21a7603cdef1d45ffc70c1017662261e7df45a",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.296875,
+            -0.51953125,
+            0.0048828125,
+            -0.15625,
+            -0.0625,
+            -0.1015625,
+            -0.134765625,
+            -0.1171875
+          ],
+          "sha256": "a7d780e18316a4e51c1bfc5542b75e1979760cd4eb2f984d1521425503909dc3",
+          "shape": [
+            1,
+            128,
+            32,
+            32
+          ],
+          "stride": [
+            128,
+            1,
+            4096,
+            128
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_unpacked",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80"
+      },
+      "latent_unpatched": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "0c1dcd8cbbcab389f6658b663175e255c50765b77f27841d4f974c7909da3b19",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.6015625,
+            -1.7265625,
+            -1.0078125,
+            -0.72265625,
+            -0.05859375,
+            -0.244140625,
+            -0.34765625,
+            -0.220703125
+          ],
+          "sha256": "2183e023b9e5100f1b39e662866a30f5b18514adfc51a18546e002e7fe4caa83",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_unpatched",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "25390d78d6c7191fc3da493262cb72a23a1c22536f7ec443cba8708316479a6d"
+      },
+      "pixels": {
+        "chunk_count": 1,
+        "chunk_elements": 33554432,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "d1e39eaeb2af7a28ee97cf8364e5b6957abe2f8655af27033eaf9cdef7b11113",
+        "descriptor": {
+          "dtype": "torch.uint8",
+          "preview": [
+            253,
+            251,
+            252,
+            255,
+            255,
+            253,
+            254,
+            255
+          ],
+          "sha256": "8c434ea118d8ff93b46fce5b22f41a0eec5f587da99d52e5ebbc4ee4b3b29015",
+          "shape": [
+            1,
+            512,
+            512,
+            3
+          ],
+          "stride": [
+            786432,
+            1536,
+            3,
+            1
+          ]
+        },
+        "elements": 786432,
+        "name": "pixels",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "4e5a0dfdc25e60e0f0d6aafa4f54a71f4da0960c3de7ff7a54b2c7f83cead5ff"
+      },
+      "post_quant_conv": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "4734577fa7f0b125f0f2e7c4a530950b3411bc825e51be3a61d9f36410a870d0",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -2.03125,
+            -1.8515625,
+            -1.4609375,
+            -1.34375,
+            -1.3828125,
+            -1.234375,
+            -1.046875,
+            -1.125
+          ],
+          "sha256": "170532a9dc9dbad4dd1193ceb95acb4451d06ade8bdb3cde0d300372e9bd8524",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "post_quant_conv",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "0c1dcd8cbbcab389f6658b663175e255c50765b77f27841d4f974c7909da3b19"
+      }
+    },
+    "HL": {
+      "decoded": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "60c934b70d2f7d3be1e67dbc32a5c7d930f68036da9e96b2600745431612e607",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            0.98828125,
+            1.0,
+            0.9921875,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "sha256": "51ed3b3fb56607777c426865a4d97d3265336fbbdf2c154a3d94197653c9a0ee",
+          "shape": [
+            1,
+            3,
+            512,
+            512
+          ],
+          "stride": [
+            786432,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 786432,
+        "name": "decoded",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "ceb2a71e8fd7538ca6b7870e476cb7cde1bba7bb972538a1722db9adbbf27a86"
+      },
+      "decoder_input": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "061c2f7f6e657e693324ff5a475db1d85c81d67c6663452278b063676b4a8036",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -1.9921875,
+            -1.8046875,
+            -1.4453125,
+            -1.3359375,
+            -1.375,
+            -1.21875,
+            -1.0390625,
+            -1.1171875
+          ],
+          "sha256": "78f633ce781337f594f15358646adc43ae9be1bd764d7c88505e113c9b8d037a",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "decoder_input",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "d4d49451389192371e1800ab17802746601902b39d9fa451faa9dd044245cc78"
+      },
+      "decoder_mid": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "0fa9dc635114862b918e105cc168e41fa45b462b38ae963eda07df99e3a08057",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.349609375,
+            -0.21875,
+            -0.09765625,
+            -0.42578125,
+            -0.29296875,
+            -0.375,
+            -0.35546875,
+            -0.37890625
+          ],
+          "sha256": "8919e9f239cef5107865405972b3b2e248ab8ef29d6a07c395c0753b0c5832d5",
+          "shape": [
+            1,
+            512,
+            64,
+            64
+          ],
+          "stride": [
+            512,
+            1,
+            32768,
+            512
+          ]
+        },
+        "elements": 2097152,
+        "name": "decoder_mid",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "061c2f7f6e657e693324ff5a475db1d85c81d67c6663452278b063676b4a8036"
+      },
+      "decoder_up_0": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "b067957933c6f6344fe1dab40f84c70d5538f32f74a289f9ddf1a31ef2c59793",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.158203125,
+            -0.0849609375,
+            0.490234375,
+            -0.24609375,
+            0.59765625,
+            0.72265625,
+            0.66796875,
+            0.59375
+          ],
+          "sha256": "a9b2bfdf84cfab4482f7f2ecc921d056635fd2b5b2a4f8bbea4d6954de1b3364",
+          "shape": [
+            1,
+            512,
+            128,
+            128
+          ],
+          "stride": [
+            8388608,
+            16384,
+            128,
+            1
+          ]
+        },
+        "elements": 8388608,
+        "name": "decoder_up_0",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "0fa9dc635114862b918e105cc168e41fa45b462b38ae963eda07df99e3a08057"
+      },
+      "decoder_up_1": {
+        "chunk_count": 2,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001"
+        ],
+        "cut": "1081d913ea483712974dc141d2ccac69e4545228593d90d2d376ca01cf3602e6",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            48.5,
+            27.125,
+            21.625,
+            27.125,
+            27.625,
+            25.375,
+            26.75,
+            27.0
+          ],
+          "sha256": "ec77db8a5dbf23db54a47474be2e9ac47bd389a580551a4f7f8f14376b414e3e",
+          "shape": [
+            1,
+            512,
+            256,
+            256
+          ],
+          "stride": [
+            33554432,
+            65536,
+            256,
+            1
+          ]
+        },
+        "elements": 33554432,
+        "name": "decoder_up_1",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "b067957933c6f6344fe1dab40f84c70d5538f32f74a289f9ddf1a31ef2c59793"
+      },
+      "decoder_up_2": {
+        "chunk_count": 4,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001",
+          "chunk_00002",
+          "chunk_00003"
+        ],
+        "cut": "7820cb6e4c22f9016f098b2b42ca392012b48e7b24b4cd74c2864b3c1e798d84",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            35.5,
+            33.5,
+            24.75,
+            30.25,
+            30.375,
+            26.375,
+            25.75,
+            26.25
+          ],
+          "sha256": "c658019ce52352dbd878ea83c7ff287d68cda53cf6324dba6510881837a219b7",
+          "shape": [
+            1,
+            256,
+            512,
+            512
+          ],
+          "stride": [
+            67108864,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 67108864,
+        "name": "decoder_up_2",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "1081d913ea483712974dc141d2ccac69e4545228593d90d2d376ca01cf3602e6"
+      },
+      "decoder_up_3": {
+        "chunk_count": 2,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001"
+        ],
+        "cut": "ceb2a71e8fd7538ca6b7870e476cb7cde1bba7bb972538a1722db9adbbf27a86",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -7.0625,
+            -7.71875,
+            -10.625,
+            -11.8125,
+            -10.1875,
+            -9.0625,
+            -8.6875,
+            -9.5
+          ],
+          "sha256": "cf86801c947e4625c030c4ac1f8ded45f97e6c122066c49cbf5715d4c1e58832",
+          "shape": [
+            1,
+            128,
+            512,
+            512
+          ],
+          "stride": [
+            33554432,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 33554432,
+        "name": "decoder_up_3",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "7820cb6e4c22f9016f098b2b42ca392012b48e7b24b4cd74c2864b3c1e798d84"
+      },
+      "latent_denormalized": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "24f223b5e5b87481e930ea7c2c6789f09824a4280a1485e34b27791cad1f1497",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.6015625,
+            -0.99609375,
+            -0.05322265625,
+            -0.34765625,
+            -0.173828125,
+            -0.2578125,
+            -0.29296875,
+            -0.279296875
+          ],
+          "sha256": "15a111c5010a1fc63e84b16ede6ce4e418f3c83ff91d0536fa98071ccebe4e89",
+          "shape": [
+            1,
+            128,
+            32,
+            32
+          ],
+          "stride": [
+            128,
+            1,
+            4096,
+            128
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_denormalized",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "01045a3d6482b0c7646d7ff78c0d45ae75495957086e47ed3e16176bae9c3587"
+      },
+      "latent_unpacked": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "01045a3d6482b0c7646d7ff78c0d45ae75495957086e47ed3e16176bae9c3587",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.296875,
+            -0.515625,
+            0.0078125,
+            -0.15625,
+            -0.05859375,
+            -0.10546875,
+            -0.125,
+            -0.1171875
+          ],
+          "sha256": "4dd9a733b96f647f50c6ed3096d6a3e8ec7e5adfc262a977eb518bdb80ef77ea",
+          "shape": [
+            1,
+            128,
+            32,
+            32
+          ],
+          "stride": [
+            128,
+            1,
+            4096,
+            128
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_unpacked",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5"
+      },
+      "latent_unpatched": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "7fdd4e7ab2a12fc0076f18dce0e8d3a4cbf7d946527b129bc2e6f0389263e006",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.6015625,
+            -1.7109375,
+            -0.99609375,
+            -0.72265625,
+            -0.05322265625,
+            -0.25,
+            -0.34765625,
+            -0.23046875
+          ],
+          "sha256": "5440553e9f44afab3ea614989dcb7ae2097af143a311a0c7c5dd28cd018cb1bf",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_unpatched",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "24f223b5e5b87481e930ea7c2c6789f09824a4280a1485e34b27791cad1f1497"
+      },
+      "pixels": {
+        "chunk_count": 1,
+        "chunk_elements": 33554432,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "05b40bec65c100de055ed7e204ac24c57fe434ad5e6e6e806d254afb4cf390fa",
+        "descriptor": {
+          "dtype": "torch.uint8",
+          "preview": [
+            253,
+            251,
+            252,
+            255,
+            255,
+            253,
+            254,
+            255
+          ],
+          "sha256": "94b508befd792ba7ad01183834b27e95272c8516699d3ba05123e519f5d7b8a4",
+          "shape": [
+            1,
+            512,
+            512,
+            3
+          ],
+          "stride": [
+            786432,
+            1536,
+            3,
+            1
+          ]
+        },
+        "elements": 786432,
+        "name": "pixels",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "60c934b70d2f7d3be1e67dbc32a5c7d930f68036da9e96b2600745431612e607"
+      },
+      "post_quant_conv": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "d4d49451389192371e1800ab17802746601902b39d9fa451faa9dd044245cc78",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -1.9921875,
+            -1.8046875,
+            -1.4453125,
+            -1.3359375,
+            -1.375,
+            -1.21875,
+            -1.0390625,
+            -1.1171875
+          ],
+          "sha256": "78f633ce781337f594f15358646adc43ae9be1bd764d7c88505e113c9b8d037a",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "post_quant_conv",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "7fdd4e7ab2a12fc0076f18dce0e8d3a4cbf7d946527b129bc2e6f0389263e006"
+      }
+    },
+    "new-3over8": {
+      "decoded": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "9c79971340caa74b584a990cfce02ba59d5b4e40038ab671b2bbb13ec7742794",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            0.98828125,
+            1.0,
+            0.9921875,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "sha256": "b33783a205e8ff0ab91f4705c3daa6fa3d0ee1716325c1778be8c1098ccd2a37",
+          "shape": [
+            1,
+            3,
+            512,
+            512
+          ],
+          "stride": [
+            786432,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 786432,
+        "name": "decoded",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "2ac52b8e0b4701d50a5388ecfb4894220a7cdf34915179d8f59bbe82e67ba95b"
+      },
+      "decoder_input": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "96237cf6de88d30f730395515da5f3b28fde937917fec5c7c1788ce5fada31e4",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -1.9921875,
+            -1.8125,
+            -1.4453125,
+            -1.3359375,
+            -1.3828125,
+            -1.2265625,
+            -1.03125,
+            -1.125
+          ],
+          "sha256": "f02f204a1ab0ec10738bab1742a8f7753f5d82154daecc13be0f0f20f1236e7a",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "decoder_input",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "6ef70be7619ed507b0f7bae5fcf0d5a31c07ef9f883bc48369b4ef62df716487"
+      },
+      "decoder_mid": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "63dda8fe4d5eff9a014f9a1f2358586adb103acebb32dd2ffa0f7e0c7cc65105",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.35546875,
+            -0.22265625,
+            -0.09375,
+            -0.42578125,
+            -0.29296875,
+            -0.37109375,
+            -0.3515625,
+            -0.37890625
+          ],
+          "sha256": "94f4456d9ad6f063504fcbfefe52a393375a5e60488d2d97f11d66eef69caa74",
+          "shape": [
+            1,
+            512,
+            64,
+            64
+          ],
+          "stride": [
+            512,
+            1,
+            32768,
+            512
+          ]
+        },
+        "elements": 2097152,
+        "name": "decoder_mid",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "96237cf6de88d30f730395515da5f3b28fde937917fec5c7c1788ce5fada31e4"
+      },
+      "decoder_up_0": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "1586209af2726dcd799842486af7e575e71f9991475b1c8c495ae50a733751e8",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.1572265625,
+            -0.0693359375,
+            0.482421875,
+            -0.255859375,
+            0.60546875,
+            0.71484375,
+            0.6484375,
+            0.57421875
+          ],
+          "sha256": "b943f6e4572d2a354bc70eb3672e096da77c5d5f2bef5f3d7f9b36dfdd2f36ec",
+          "shape": [
+            1,
+            512,
+            128,
+            128
+          ],
+          "stride": [
+            8388608,
+            16384,
+            128,
+            1
+          ]
+        },
+        "elements": 8388608,
+        "name": "decoder_up_0",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "63dda8fe4d5eff9a014f9a1f2358586adb103acebb32dd2ffa0f7e0c7cc65105"
+      },
+      "decoder_up_1": {
+        "chunk_count": 2,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001"
+        ],
+        "cut": "aac400d22269b6e51e820c41c4dd87fb0f1fe9fe7be1679e26cef1752084e8f0",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            48.5,
+            27.125,
+            21.625,
+            27.125,
+            27.625,
+            25.25,
+            26.75,
+            26.875
+          ],
+          "sha256": "35eeaa46ca01f56b3775d56132306b5234d04d0b45e86f1c9a0b2f02464871cf",
+          "shape": [
+            1,
+            512,
+            256,
+            256
+          ],
+          "stride": [
+            33554432,
+            65536,
+            256,
+            1
+          ]
+        },
+        "elements": 33554432,
+        "name": "decoder_up_1",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "1586209af2726dcd799842486af7e575e71f9991475b1c8c495ae50a733751e8"
+      },
+      "decoder_up_2": {
+        "chunk_count": 4,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001",
+          "chunk_00002",
+          "chunk_00003"
+        ],
+        "cut": "3b033cc8fc246aaee3fb41a94d79da03c9cdf6be4d3a136084f553312dfb13ae",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            35.5,
+            33.5,
+            24.75,
+            30.25,
+            30.375,
+            26.375,
+            25.75,
+            26.25
+          ],
+          "sha256": "94690263d4cdee9c180914bdc55584b22390ed5b500cfacb0263002de3140a6f",
+          "shape": [
+            1,
+            256,
+            512,
+            512
+          ],
+          "stride": [
+            67108864,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 67108864,
+        "name": "decoder_up_2",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "aac400d22269b6e51e820c41c4dd87fb0f1fe9fe7be1679e26cef1752084e8f0"
+      },
+      "decoder_up_3": {
+        "chunk_count": 2,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001"
+        ],
+        "cut": "2ac52b8e0b4701d50a5388ecfb4894220a7cdf34915179d8f59bbe82e67ba95b",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -7.0,
+            -7.71875,
+            -10.6875,
+            -11.8125,
+            -10.1875,
+            -9.0625,
+            -8.75,
+            -9.5625
+          ],
+          "sha256": "1620fc10f25eb24af798ae85391e6d8c0a951fb84e5c0941f59afa9ee1db839a",
+          "shape": [
+            1,
+            128,
+            512,
+            512
+          ],
+          "stride": [
+            33554432,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 33554432,
+        "name": "decoder_up_3",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "3b033cc8fc246aaee3fb41a94d79da03c9cdf6be4d3a136084f553312dfb13ae"
+      },
+      "latent_denormalized": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "a9f3f8c6dd7903b1b6cd9836a1c6fb72c3a45fc715fa9671ba8573beb3d369a7",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.62890625,
+            -0.98828125,
+            -0.05517578125,
+            -0.36328125,
+            -0.173828125,
+            -0.25,
+            -0.296875,
+            -0.29296875
+          ],
+          "sha256": "4f0067880fa47ef4c1a88b00d74388d32ee5b3e4aa4da3abfdee097548c3758c",
+          "shape": [
+            1,
+            128,
+            32,
+            32
+          ],
+          "stride": [
+            128,
+            1,
+            4096,
+            128
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_denormalized",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "b4b8fbf8265001bc8a9f05858b361da1a87f9439e961dffdb8e6b057ff087555"
+      },
+      "latent_unpacked": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "b4b8fbf8265001bc8a9f05858b361da1a87f9439e961dffdb8e6b057ff087555",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.3125,
+            -0.51171875,
+            0.0068359375,
+            -0.1640625,
+            -0.05859375,
+            -0.1015625,
+            -0.126953125,
+            -0.125
+          ],
+          "sha256": "ad83dda2499ae82f443c151555444a731d4c3c728ce5d6c91a038d58f854f95f",
+          "shape": [
+            1,
+            128,
+            32,
+            32
+          ],
+          "stride": [
+            128,
+            1,
+            4096,
+            128
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_unpacked",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0"
+      },
+      "latent_unpatched": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "290646242fc6bdfab0495b6416662aa3042d27dc2a311638bebb662b7694b3f7",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.62890625,
+            -1.7265625,
+            -0.98828125,
+            -0.72265625,
+            -0.05517578125,
+            -0.244140625,
+            -0.36328125,
+            -0.23046875
+          ],
+          "sha256": "f7e7ae4f7fb7895979379a333d9d80daa3fb9fc50663fa844c98b4a7f8de37e7",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_unpatched",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "a9f3f8c6dd7903b1b6cd9836a1c6fb72c3a45fc715fa9671ba8573beb3d369a7"
+      },
+      "pixels": {
+        "chunk_count": 1,
+        "chunk_elements": 33554432,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "06dc86ede5782b35997f95b0b04dddc3096a6f6856fb6d08e525ca07c478c65c",
+        "descriptor": {
+          "dtype": "torch.uint8",
+          "preview": [
+            253,
+            251,
+            252,
+            255,
+            255,
+            253,
+            254,
+            255
+          ],
+          "sha256": "d106eb3805f112f1104f9d7a6014b2e29e356fa5bcde03060b9c1684ca6ae01f",
+          "shape": [
+            1,
+            512,
+            512,
+            3
+          ],
+          "stride": [
+            786432,
+            1536,
+            3,
+            1
+          ]
+        },
+        "elements": 786432,
+        "name": "pixels",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "9c79971340caa74b584a990cfce02ba59d5b4e40038ab671b2bbb13ec7742794"
+      },
+      "post_quant_conv": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "6ef70be7619ed507b0f7bae5fcf0d5a31c07ef9f883bc48369b4ef62df716487",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -1.9921875,
+            -1.8125,
+            -1.4453125,
+            -1.3359375,
+            -1.3828125,
+            -1.2265625,
+            -1.03125,
+            -1.125
+          ],
+          "sha256": "f02f204a1ab0ec10738bab1742a8f7753f5d82154daecc13be0f0f20f1236e7a",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "post_quant_conv",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "290646242fc6bdfab0495b6416662aa3042d27dc2a311638bebb662b7694b3f7"
+      }
+    },
+    "sham": {
+      "decoded": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "df99dfc7385abf983f444852ad3973d25e71b262e98b5b952e6329d5a1e99e68",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            0.98828125,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0078125,
+            1.0,
+            1.0
+          ],
+          "sha256": "d748725806b98e07d59dfabcb3710503b6f41382ea275058c3221a98f6a4b31d",
+          "shape": [
+            1,
+            3,
+            512,
+            512
+          ],
+          "stride": [
+            786432,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 786432,
+        "name": "decoded",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "3311db1077c45d63942899058deaccb383bbba173737cc6961693f166866a618"
+      },
+      "decoder_input": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "c80160179c91d115b09856fe5473f7ddd1be11a90125529bcba8d3eafb583b31",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -1.9921875,
+            -1.8125,
+            -1.4375,
+            -1.3125,
+            -1.3671875,
+            -1.21875,
+            -1.03125,
+            -1.1171875
+          ],
+          "sha256": "7b107633c8023697b96d03af6b5b7f5514b1f3a809a19b0c708ed4b742129090",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "decoder_input",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "3e835c2c140d2cbe85dba8d986965ec76d18b364929eca03712578f10f349a66"
+      },
+      "decoder_mid": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "8cabdac137e5c5cd6c158f702661f840ea552c419d2553527095ac7c0987271c",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.359375,
+            -0.22265625,
+            -0.09765625,
+            -0.421875,
+            -0.29296875,
+            -0.37890625,
+            -0.35546875,
+            -0.37890625
+          ],
+          "sha256": "eb13886523d5b022d1c9cac4ef112d06d7a4613af7906fbd83aba874317db24f",
+          "shape": [
+            1,
+            512,
+            64,
+            64
+          ],
+          "stride": [
+            512,
+            1,
+            32768,
+            512
+          ]
+        },
+        "elements": 2097152,
+        "name": "decoder_mid",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "c80160179c91d115b09856fe5473f7ddd1be11a90125529bcba8d3eafb583b31"
+      },
+      "decoder_up_0": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "de7dfb696a7328a93ccdb74d79579db39efebd9e0c69474d4a482766a518fc07",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.1630859375,
+            -0.06689453125,
+            0.494140625,
+            -0.255859375,
+            0.6171875,
+            0.72265625,
+            0.67578125,
+            0.6171875
+          ],
+          "sha256": "ba9dd19c2d95ef00bc29fafe82e704339ac2f9a1a62e75c306ab8719605f691a",
+          "shape": [
+            1,
+            512,
+            128,
+            128
+          ],
+          "stride": [
+            8388608,
+            16384,
+            128,
+            1
+          ]
+        },
+        "elements": 8388608,
+        "name": "decoder_up_0",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "8cabdac137e5c5cd6c158f702661f840ea552c419d2553527095ac7c0987271c"
+      },
+      "decoder_up_1": {
+        "chunk_count": 2,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001"
+        ],
+        "cut": "9a969ea895b4ed60d9d8dd3f3dfda9148d6b4d20f76ab5cbdda184330f6caffd",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            48.5,
+            27.125,
+            21.5,
+            27.125,
+            27.625,
+            25.25,
+            26.75,
+            26.875
+          ],
+          "sha256": "aa809bb71f48b2419bddb633bea665f7d6315950b41fa26abac6d1e4bef33510",
+          "shape": [
+            1,
+            512,
+            256,
+            256
+          ],
+          "stride": [
+            33554432,
+            65536,
+            256,
+            1
+          ]
+        },
+        "elements": 33554432,
+        "name": "decoder_up_1",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "de7dfb696a7328a93ccdb74d79579db39efebd9e0c69474d4a482766a518fc07"
+      },
+      "decoder_up_2": {
+        "chunk_count": 4,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001",
+          "chunk_00002",
+          "chunk_00003"
+        ],
+        "cut": "5de54f7d5982ff9692c3f9fb73d9620433e1111edff7aa998e41b79b2b12494f",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            35.5,
+            33.5,
+            24.75,
+            30.25,
+            30.375,
+            26.25,
+            25.5,
+            26.125
+          ],
+          "sha256": "f3d9c4aab4f4364c3618af37912230c92522295edcd38dcf34bb1b205d9c432d",
+          "shape": [
+            1,
+            256,
+            512,
+            512
+          ],
+          "stride": [
+            67108864,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 67108864,
+        "name": "decoder_up_2",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "9a969ea895b4ed60d9d8dd3f3dfda9148d6b4d20f76ab5cbdda184330f6caffd"
+      },
+      "decoder_up_3": {
+        "chunk_count": 2,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001"
+        ],
+        "cut": "3311db1077c45d63942899058deaccb383bbba173737cc6961693f166866a618",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -7.0,
+            -7.71875,
+            -10.6875,
+            -11.875,
+            -10.125,
+            -9.1875,
+            -8.8125,
+            -9.5625
+          ],
+          "sha256": "7a794bf28ac5ef937632e0532df23071fd83f6fba60170e34b12b6d7ece33bb7",
+          "shape": [
+            1,
+            128,
+            512,
+            512
+          ],
+          "stride": [
+            33554432,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 33554432,
+        "name": "decoder_up_3",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "5de54f7d5982ff9692c3f9fb73d9620433e1111edff7aa998e41b79b2b12494f"
+      },
+      "latent_denormalized": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "6eecb916990cad2a4f8a3405d7098890ec1d8d24afc467b550d692708b7a4693",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.6015625,
+            -0.98828125,
+            -0.05517578125,
+            -0.34765625,
+            -0.166015625,
+            -0.25,
+            -0.29296875,
+            -0.279296875
+          ],
+          "sha256": "6bf8687b2ed99e750b7a06c0b4e6bf3366e91c7a886f54465728c540d48e58ac",
+          "shape": [
+            1,
+            128,
+            32,
+            32
+          ],
+          "stride": [
+            128,
+            1,
+            4096,
+            128
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_denormalized",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "4bb0aa79685946a1cf4cb214eea87c6d46bc32243e5bdf2936838017c7c8985e"
+      },
+      "latent_unpacked": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "4bb0aa79685946a1cf4cb214eea87c6d46bc32243e5bdf2936838017c7c8985e",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.296875,
+            -0.51171875,
+            0.0068359375,
+            -0.15625,
+            -0.0546875,
+            -0.1015625,
+            -0.125,
+            -0.1171875
+          ],
+          "sha256": "20b8f8fa55ba9a338a8f73ae5741894be3fc4f8569a3668b982fbb3653e74287",
+          "shape": [
+            1,
+            128,
+            32,
+            32
+          ],
+          "stride": [
+            128,
+            1,
+            4096,
+            128
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_unpacked",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0"
+      },
+      "latent_unpatched": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "4eecbd7618435a7ddd4c00b286782575e09f469b74662b6c557d8b1d1e5bb7a3",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.6015625,
+            -1.703125,
+            -0.98828125,
+            -0.70703125,
+            -0.05517578125,
+            -0.244140625,
+            -0.34765625,
+            -0.2236328125
+          ],
+          "sha256": "f0234c7deb35dfe89f5bfbdb81e3edd6914c03a29496e5e4be03eb16296bd1ee",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_unpatched",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "6eecb916990cad2a4f8a3405d7098890ec1d8d24afc467b550d692708b7a4693"
+      },
+      "pixels": {
+        "chunk_count": 1,
+        "chunk_elements": 33554432,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "20dc3b765274cadf882e35cf0db2c70919ff165fb806f7c1d272f4dded337e8a",
+        "descriptor": {
+          "dtype": "torch.uint8",
+          "preview": [
+            253,
+            251,
+            252,
+            255,
+            255,
+            253,
+            255,
+            255
+          ],
+          "sha256": "b0597314e4ec482f9881add8342c9455d9e68afcbc3006d2c6cb34fb7866bf60",
+          "shape": [
+            1,
+            512,
+            512,
+            3
+          ],
+          "stride": [
+            786432,
+            1536,
+            3,
+            1
+          ]
+        },
+        "elements": 786432,
+        "name": "pixels",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "df99dfc7385abf983f444852ad3973d25e71b262e98b5b952e6329d5a1e99e68"
+      },
+      "post_quant_conv": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "3e835c2c140d2cbe85dba8d986965ec76d18b364929eca03712578f10f349a66",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -1.9921875,
+            -1.8125,
+            -1.4375,
+            -1.3125,
+            -1.3671875,
+            -1.21875,
+            -1.03125,
+            -1.1171875
+          ],
+          "sha256": "7b107633c8023697b96d03af6b5b7f5514b1f3a809a19b0c708ed4b742129090",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "post_quant_conv",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "4eecbd7618435a7ddd4c00b286782575e09f469b74662b6c557d8b1d1e5bb7a3"
+      }
+    }
+  },
+  "native": {
+    "HH": {
+      "decoded": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "5c27d33675d7ba66a8b62642b8579d4c6e640f0d4fab0e0bde9c086e1e0c54d0",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            0.98828125,
+            1.0,
+            0.9921875,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "sha256": "f1d54917ab2fb587214c508bbc954a32f9190addb86ff1d7b76334eeaa5e9047",
+          "shape": [
+            1,
+            3,
+            512,
+            512
+          ],
+          "stride": [
+            786432,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 786432,
+        "name": "decoded",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "bef0dbfced14cd8ba5f7cb35bcd9861225312ddee3a460626c04f28104706a2c"
+      },
+      "decoder_input": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "bd20b4dd04321024bf88b620f611cf04103762be0964c4efc8b839c47fec98c8",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -2.03125,
+            -1.8515625,
+            -1.4609375,
+            -1.34375,
+            -1.3828125,
+            -1.234375,
+            -1.046875,
+            -1.125
+          ],
+          "sha256": "170532a9dc9dbad4dd1193ceb95acb4451d06ade8bdb3cde0d300372e9bd8524",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "decoder_input",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "6b594d91e28b35d32a53e3cd34ed84ca90fa705c5748767f45b8933e151bcc1f"
+      },
+      "decoder_mid": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "9f6ea07543bdb7dd205e3d7fa1ca9bf4f3449a5d0659a5ee99bba60376b0df8d",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.33984375,
+            -0.20703125,
+            -0.0859375,
+            -0.41796875,
+            -0.29296875,
+            -0.3671875,
+            -0.33984375,
+            -0.3671875
+          ],
+          "sha256": "b06ad98359dfa91d2fbb084743610074cd15dca074ba50b53e61fc9fa486e5c4",
+          "shape": [
+            1,
+            512,
+            64,
+            64
+          ],
+          "stride": [
+            512,
+            1,
+            32768,
+            512
+          ]
+        },
+        "elements": 2097152,
+        "name": "decoder_mid",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "bd20b4dd04321024bf88b620f611cf04103762be0964c4efc8b839c47fec98c8"
+      },
+      "decoder_up_0": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "3efe81df56e982f1d832985e629de3b97cea79456b327f4450c514d3082bbf8a",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.185546875,
+            -0.0810546875,
+            0.486328125,
+            -0.291015625,
+            0.58984375,
+            0.7265625,
+            0.64453125,
+            0.5703125
+          ],
+          "sha256": "f47e32afeb53b5c53e09ca8373bd836cbb518e85ffb57977f82762e4a81277f0",
+          "shape": [
+            1,
+            512,
+            128,
+            128
+          ],
+          "stride": [
+            8388608,
+            16384,
+            128,
+            1
+          ]
+        },
+        "elements": 8388608,
+        "name": "decoder_up_0",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "9f6ea07543bdb7dd205e3d7fa1ca9bf4f3449a5d0659a5ee99bba60376b0df8d"
+      },
+      "decoder_up_1": {
+        "chunk_count": 2,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001"
+        ],
+        "cut": "12370384c260b134a418e099acd7210bbca2e445a7d625dbd663ad55cd39e137",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            48.75,
+            27.125,
+            21.5,
+            27.125,
+            27.625,
+            25.375,
+            26.75,
+            26.875
+          ],
+          "sha256": "8ea998ede0829769d25e5aea983dd0b887e4debb37ed9bb90980291728cf2458",
+          "shape": [
+            1,
+            512,
+            256,
+            256
+          ],
+          "stride": [
+            33554432,
+            65536,
+            256,
+            1
+          ]
+        },
+        "elements": 33554432,
+        "name": "decoder_up_1",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "3efe81df56e982f1d832985e629de3b97cea79456b327f4450c514d3082bbf8a"
+      },
+      "decoder_up_2": {
+        "chunk_count": 4,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001",
+          "chunk_00002",
+          "chunk_00003"
+        ],
+        "cut": "1d09c7545a58a91b2106a55c22023b5aac5eaacdb383f812e3f8429e3379b1b7",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            35.5,
+            33.5,
+            24.75,
+            30.25,
+            30.375,
+            26.25,
+            25.625,
+            26.125
+          ],
+          "sha256": "da79619cdcd82af35bbbddfdaea762cd77b7b615ed6f130e9aabe2568b50ab27",
+          "shape": [
+            1,
+            256,
+            512,
+            512
+          ],
+          "stride": [
+            67108864,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 67108864,
+        "name": "decoder_up_2",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "12370384c260b134a418e099acd7210bbca2e445a7d625dbd663ad55cd39e137"
+      },
+      "decoder_up_3": {
+        "chunk_count": 2,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001"
+        ],
+        "cut": "bef0dbfced14cd8ba5f7cb35bcd9861225312ddee3a460626c04f28104706a2c",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -7.0625,
+            -7.8125,
+            -10.6875,
+            -11.875,
+            -10.1875,
+            -9.1875,
+            -8.8125,
+            -9.5625
+          ],
+          "sha256": "f58b29da319ead16e3af3cdb6cfb35b88dd0238c764cdb1f9f7ed07e87a33e4b",
+          "shape": [
+            1,
+            128,
+            512,
+            512
+          ],
+          "stride": [
+            33554432,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 33554432,
+        "name": "decoder_up_3",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "1d09c7545a58a91b2106a55c22023b5aac5eaacdb383f812e3f8429e3379b1b7"
+      },
+      "latent_denormalized": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "1b5e7e98218c10378dd703b337851e0fade60c95502eded6a95b5e9529dfa183",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.6015625,
+            -1.0078125,
+            -0.05859375,
+            -0.34765625,
+            -0.1796875,
+            -0.25,
+            -0.310546875,
+            -0.279296875
+          ],
+          "sha256": "4aa93a64244d21d4e07be7e97fdecd56d7f522c462cb28e2ed353653f648eaf7",
+          "shape": [
+            1,
+            128,
+            32,
+            32
+          ],
+          "stride": [
+            131072,
+            1024,
+            32,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_denormalized",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "20aa738d20d68ad31d47cdb3dde66018c6c10747686fea814e05203bb429d964"
+      },
+      "latent_unpacked": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "20aa738d20d68ad31d47cdb3dde66018c6c10747686fea814e05203bb429d964",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.296875,
+            -0.51953125,
+            0.0048828125,
+            -0.15625,
+            -0.0625,
+            -0.1015625,
+            -0.134765625,
+            -0.1171875
+          ],
+          "sha256": "a7d780e18316a4e51c1bfc5542b75e1979760cd4eb2f984d1521425503909dc3",
+          "shape": [
+            1,
+            128,
+            32,
+            32
+          ],
+          "stride": [
+            131072,
+            1024,
+            32,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_unpacked",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80"
+      },
+      "latent_unpatched": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "657b573500de0cc1333f579209f898aa67ff8119581035240b49240042545b2b",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.6015625,
+            -1.7265625,
+            -1.0078125,
+            -0.72265625,
+            -0.05859375,
+            -0.244140625,
+            -0.34765625,
+            -0.220703125
+          ],
+          "sha256": "2183e023b9e5100f1b39e662866a30f5b18514adfc51a18546e002e7fe4caa83",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_unpatched",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "1b5e7e98218c10378dd703b337851e0fade60c95502eded6a95b5e9529dfa183"
+      },
+      "pixels": {
+        "chunk_count": 1,
+        "chunk_elements": 33554432,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "2d8d8d2cd8f6e397b83f47438bf061af8fd7bf420601c27c2f87c6829c38ca16",
+        "descriptor": {
+          "dtype": "torch.uint8",
+          "preview": [
+            253,
+            251,
+            252,
+            255,
+            255,
+            253,
+            254,
+            255
+          ],
+          "sha256": "8c434ea118d8ff93b46fce5b22f41a0eec5f587da99d52e5ebbc4ee4b3b29015",
+          "shape": [
+            1,
+            512,
+            512,
+            3
+          ],
+          "stride": [
+            786432,
+            1536,
+            3,
+            1
+          ]
+        },
+        "elements": 786432,
+        "name": "pixels",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "5c27d33675d7ba66a8b62642b8579d4c6e640f0d4fab0e0bde9c086e1e0c54d0"
+      },
+      "post_quant_conv": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "6b594d91e28b35d32a53e3cd34ed84ca90fa705c5748767f45b8933e151bcc1f",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -2.03125,
+            -1.8515625,
+            -1.4609375,
+            -1.34375,
+            -1.3828125,
+            -1.234375,
+            -1.046875,
+            -1.125
+          ],
+          "sha256": "170532a9dc9dbad4dd1193ceb95acb4451d06ade8bdb3cde0d300372e9bd8524",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "post_quant_conv",
+        "original_source_cut": "8d6ece943e857c3237b66c9d649e2519507abdfb14da79925077d7a948edda80",
+        "parent": "657b573500de0cc1333f579209f898aa67ff8119581035240b49240042545b2b"
+      }
+    },
+    "HL": {
+      "decoded": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "1cad681bdec5b2fa67e7cb1afed623c60e883747f5cae5458baaf75342b0399f",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            0.98828125,
+            1.0,
+            0.9921875,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "sha256": "51ed3b3fb56607777c426865a4d97d3265336fbbdf2c154a3d94197653c9a0ee",
+          "shape": [
+            1,
+            3,
+            512,
+            512
+          ],
+          "stride": [
+            786432,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 786432,
+        "name": "decoded",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "296faf5add56e90171818fb479bf5bf301b58d7e3eaed3a0ebb1325155fe6782"
+      },
+      "decoder_input": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "6e2cdbe9b3d2aa572face01d96303dd023e2a41e47ba65b9f584e520ccac9b1a",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -1.9921875,
+            -1.8046875,
+            -1.4453125,
+            -1.3359375,
+            -1.375,
+            -1.21875,
+            -1.0390625,
+            -1.1171875
+          ],
+          "sha256": "78f633ce781337f594f15358646adc43ae9be1bd764d7c88505e113c9b8d037a",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "decoder_input",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "06d1386192c36ce51a007d4922ddd23777516941ee18582365341e0b01553bbd"
+      },
+      "decoder_mid": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "9b13194968ac6217ef703caf737589735113c686fbbe815fd26689e104889a55",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.349609375,
+            -0.21875,
+            -0.09765625,
+            -0.42578125,
+            -0.29296875,
+            -0.375,
+            -0.35546875,
+            -0.37890625
+          ],
+          "sha256": "8919e9f239cef5107865405972b3b2e248ab8ef29d6a07c395c0753b0c5832d5",
+          "shape": [
+            1,
+            512,
+            64,
+            64
+          ],
+          "stride": [
+            512,
+            1,
+            32768,
+            512
+          ]
+        },
+        "elements": 2097152,
+        "name": "decoder_mid",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "6e2cdbe9b3d2aa572face01d96303dd023e2a41e47ba65b9f584e520ccac9b1a"
+      },
+      "decoder_up_0": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "c8f991048bc15a64b443ea5b6b12f1f27141a0d6d71128f6bd48c3451235945c",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.158203125,
+            -0.0849609375,
+            0.490234375,
+            -0.24609375,
+            0.59765625,
+            0.72265625,
+            0.66796875,
+            0.59375
+          ],
+          "sha256": "a9b2bfdf84cfab4482f7f2ecc921d056635fd2b5b2a4f8bbea4d6954de1b3364",
+          "shape": [
+            1,
+            512,
+            128,
+            128
+          ],
+          "stride": [
+            8388608,
+            16384,
+            128,
+            1
+          ]
+        },
+        "elements": 8388608,
+        "name": "decoder_up_0",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "9b13194968ac6217ef703caf737589735113c686fbbe815fd26689e104889a55"
+      },
+      "decoder_up_1": {
+        "chunk_count": 2,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001"
+        ],
+        "cut": "4858fb77b400bbc447c5a7ee3dc197a371df862af94068eb726fcb91f5b05a6f",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            48.5,
+            27.125,
+            21.625,
+            27.125,
+            27.625,
+            25.375,
+            26.75,
+            27.0
+          ],
+          "sha256": "ec77db8a5dbf23db54a47474be2e9ac47bd389a580551a4f7f8f14376b414e3e",
+          "shape": [
+            1,
+            512,
+            256,
+            256
+          ],
+          "stride": [
+            33554432,
+            65536,
+            256,
+            1
+          ]
+        },
+        "elements": 33554432,
+        "name": "decoder_up_1",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "c8f991048bc15a64b443ea5b6b12f1f27141a0d6d71128f6bd48c3451235945c"
+      },
+      "decoder_up_2": {
+        "chunk_count": 4,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001",
+          "chunk_00002",
+          "chunk_00003"
+        ],
+        "cut": "05f7a775a5e6d534149d74321677c9fd31b0eeb77a535d89bc393b845bf8eb2a",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            35.5,
+            33.5,
+            24.75,
+            30.25,
+            30.375,
+            26.375,
+            25.75,
+            26.25
+          ],
+          "sha256": "c658019ce52352dbd878ea83c7ff287d68cda53cf6324dba6510881837a219b7",
+          "shape": [
+            1,
+            256,
+            512,
+            512
+          ],
+          "stride": [
+            67108864,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 67108864,
+        "name": "decoder_up_2",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "4858fb77b400bbc447c5a7ee3dc197a371df862af94068eb726fcb91f5b05a6f"
+      },
+      "decoder_up_3": {
+        "chunk_count": 2,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001"
+        ],
+        "cut": "296faf5add56e90171818fb479bf5bf301b58d7e3eaed3a0ebb1325155fe6782",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -7.0625,
+            -7.71875,
+            -10.625,
+            -11.8125,
+            -10.1875,
+            -9.0625,
+            -8.6875,
+            -9.5
+          ],
+          "sha256": "cf86801c947e4625c030c4ac1f8ded45f97e6c122066c49cbf5715d4c1e58832",
+          "shape": [
+            1,
+            128,
+            512,
+            512
+          ],
+          "stride": [
+            33554432,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 33554432,
+        "name": "decoder_up_3",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "05f7a775a5e6d534149d74321677c9fd31b0eeb77a535d89bc393b845bf8eb2a"
+      },
+      "latent_denormalized": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "d51fe80a1b200d34ac4da25c51133f740bf9fdf56ac049cab306f3332349e45e",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.6015625,
+            -0.99609375,
+            -0.05322265625,
+            -0.34765625,
+            -0.173828125,
+            -0.2578125,
+            -0.29296875,
+            -0.279296875
+          ],
+          "sha256": "15a111c5010a1fc63e84b16ede6ce4e418f3c83ff91d0536fa98071ccebe4e89",
+          "shape": [
+            1,
+            128,
+            32,
+            32
+          ],
+          "stride": [
+            131072,
+            1024,
+            32,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_denormalized",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "acbce956f7b6f5197fa7a6b7b29654ed563d9d36c476f9b9e766221f7201423d"
+      },
+      "latent_unpacked": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "acbce956f7b6f5197fa7a6b7b29654ed563d9d36c476f9b9e766221f7201423d",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.296875,
+            -0.515625,
+            0.0078125,
+            -0.15625,
+            -0.05859375,
+            -0.10546875,
+            -0.125,
+            -0.1171875
+          ],
+          "sha256": "4dd9a733b96f647f50c6ed3096d6a3e8ec7e5adfc262a977eb518bdb80ef77ea",
+          "shape": [
+            1,
+            128,
+            32,
+            32
+          ],
+          "stride": [
+            131072,
+            1024,
+            32,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_unpacked",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5"
+      },
+      "latent_unpatched": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "c5ca0fba05f1c3b31a30744ecfb9ecbb4c1bce61e51164ccc58413ab0d1d2c47",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.6015625,
+            -1.7109375,
+            -0.99609375,
+            -0.72265625,
+            -0.05322265625,
+            -0.25,
+            -0.34765625,
+            -0.23046875
+          ],
+          "sha256": "5440553e9f44afab3ea614989dcb7ae2097af143a311a0c7c5dd28cd018cb1bf",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_unpatched",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "d51fe80a1b200d34ac4da25c51133f740bf9fdf56ac049cab306f3332349e45e"
+      },
+      "pixels": {
+        "chunk_count": 1,
+        "chunk_elements": 33554432,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "fc03381a8074a9c37dd811b7e873efd5d3d3f0f155bc0995426398ec65365cc9",
+        "descriptor": {
+          "dtype": "torch.uint8",
+          "preview": [
+            253,
+            251,
+            252,
+            255,
+            255,
+            253,
+            254,
+            255
+          ],
+          "sha256": "94b508befd792ba7ad01183834b27e95272c8516699d3ba05123e519f5d7b8a4",
+          "shape": [
+            1,
+            512,
+            512,
+            3
+          ],
+          "stride": [
+            786432,
+            1536,
+            3,
+            1
+          ]
+        },
+        "elements": 786432,
+        "name": "pixels",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "1cad681bdec5b2fa67e7cb1afed623c60e883747f5cae5458baaf75342b0399f"
+      },
+      "post_quant_conv": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "06d1386192c36ce51a007d4922ddd23777516941ee18582365341e0b01553bbd",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -1.9921875,
+            -1.8046875,
+            -1.4453125,
+            -1.3359375,
+            -1.375,
+            -1.21875,
+            -1.0390625,
+            -1.1171875
+          ],
+          "sha256": "78f633ce781337f594f15358646adc43ae9be1bd764d7c88505e113c9b8d037a",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "post_quant_conv",
+        "original_source_cut": "2f492798b39423581c4cfbb381fbfe8fc676e26ab434c5e8ccbd2f54b057c7e5",
+        "parent": "c5ca0fba05f1c3b31a30744ecfb9ecbb4c1bce61e51164ccc58413ab0d1d2c47"
+      }
+    },
+    "new-3over8": {
+      "decoded": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "3d14480d39702fe0e88aa3eb58f8f2f85ba44aa7f2ee31418bbf95322e25ec7d",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            0.98828125,
+            1.0,
+            0.9921875,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "sha256": "b33783a205e8ff0ab91f4705c3daa6fa3d0ee1716325c1778be8c1098ccd2a37",
+          "shape": [
+            1,
+            3,
+            512,
+            512
+          ],
+          "stride": [
+            786432,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 786432,
+        "name": "decoded",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "4101e7e491aaafc0b7f67f6cf73aba4683c2b09f7b656c900dd9fd478f6f3dcb"
+      },
+      "decoder_input": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "ace6f6d4796ecf35cac5fe9691fd12aadd84f564ce9bb89eb8e649cb5aab0f92",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -1.9921875,
+            -1.8125,
+            -1.4453125,
+            -1.3359375,
+            -1.3828125,
+            -1.2265625,
+            -1.03125,
+            -1.125
+          ],
+          "sha256": "f02f204a1ab0ec10738bab1742a8f7753f5d82154daecc13be0f0f20f1236e7a",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "decoder_input",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "cc5b610a8fc17b6d4f05fca4b500477b05b60f835e2c06b9dc7df080df3caa74"
+      },
+      "decoder_mid": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "1ef275b565e08789a41314534e3b94ef041597c8d04bbad61123329163e310cf",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.35546875,
+            -0.22265625,
+            -0.09375,
+            -0.42578125,
+            -0.29296875,
+            -0.37109375,
+            -0.3515625,
+            -0.37890625
+          ],
+          "sha256": "94f4456d9ad6f063504fcbfefe52a393375a5e60488d2d97f11d66eef69caa74",
+          "shape": [
+            1,
+            512,
+            64,
+            64
+          ],
+          "stride": [
+            512,
+            1,
+            32768,
+            512
+          ]
+        },
+        "elements": 2097152,
+        "name": "decoder_mid",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "ace6f6d4796ecf35cac5fe9691fd12aadd84f564ce9bb89eb8e649cb5aab0f92"
+      },
+      "decoder_up_0": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "edf7edae6474033ab1021ec72552a5238583ff88350044cf40eb67bb9aae6e56",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.1572265625,
+            -0.0693359375,
+            0.482421875,
+            -0.255859375,
+            0.60546875,
+            0.71484375,
+            0.6484375,
+            0.57421875
+          ],
+          "sha256": "b943f6e4572d2a354bc70eb3672e096da77c5d5f2bef5f3d7f9b36dfdd2f36ec",
+          "shape": [
+            1,
+            512,
+            128,
+            128
+          ],
+          "stride": [
+            8388608,
+            16384,
+            128,
+            1
+          ]
+        },
+        "elements": 8388608,
+        "name": "decoder_up_0",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "1ef275b565e08789a41314534e3b94ef041597c8d04bbad61123329163e310cf"
+      },
+      "decoder_up_1": {
+        "chunk_count": 2,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001"
+        ],
+        "cut": "5c72fcc9a337942d1b1991e0de556aa309398ae145efd87f94e1868f34766311",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            48.5,
+            27.125,
+            21.625,
+            27.125,
+            27.625,
+            25.25,
+            26.75,
+            26.875
+          ],
+          "sha256": "35eeaa46ca01f56b3775d56132306b5234d04d0b45e86f1c9a0b2f02464871cf",
+          "shape": [
+            1,
+            512,
+            256,
+            256
+          ],
+          "stride": [
+            33554432,
+            65536,
+            256,
+            1
+          ]
+        },
+        "elements": 33554432,
+        "name": "decoder_up_1",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "edf7edae6474033ab1021ec72552a5238583ff88350044cf40eb67bb9aae6e56"
+      },
+      "decoder_up_2": {
+        "chunk_count": 4,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001",
+          "chunk_00002",
+          "chunk_00003"
+        ],
+        "cut": "c1f6bf09956924f148cb65b595633276c075f326c814b3aab2d2c686535460b0",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            35.5,
+            33.5,
+            24.75,
+            30.25,
+            30.375,
+            26.375,
+            25.75,
+            26.25
+          ],
+          "sha256": "94690263d4cdee9c180914bdc55584b22390ed5b500cfacb0263002de3140a6f",
+          "shape": [
+            1,
+            256,
+            512,
+            512
+          ],
+          "stride": [
+            67108864,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 67108864,
+        "name": "decoder_up_2",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "5c72fcc9a337942d1b1991e0de556aa309398ae145efd87f94e1868f34766311"
+      },
+      "decoder_up_3": {
+        "chunk_count": 2,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001"
+        ],
+        "cut": "4101e7e491aaafc0b7f67f6cf73aba4683c2b09f7b656c900dd9fd478f6f3dcb",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -7.0,
+            -7.71875,
+            -10.6875,
+            -11.8125,
+            -10.1875,
+            -9.0625,
+            -8.75,
+            -9.5625
+          ],
+          "sha256": "1620fc10f25eb24af798ae85391e6d8c0a951fb84e5c0941f59afa9ee1db839a",
+          "shape": [
+            1,
+            128,
+            512,
+            512
+          ],
+          "stride": [
+            33554432,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 33554432,
+        "name": "decoder_up_3",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "c1f6bf09956924f148cb65b595633276c075f326c814b3aab2d2c686535460b0"
+      },
+      "latent_denormalized": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "6ea44004f3cd67016f57593e75e2fefd84318cd0dd910e4bd9a4d025f7c7b17f",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.62890625,
+            -0.98828125,
+            -0.05517578125,
+            -0.36328125,
+            -0.173828125,
+            -0.25,
+            -0.296875,
+            -0.29296875
+          ],
+          "sha256": "4f0067880fa47ef4c1a88b00d74388d32ee5b3e4aa4da3abfdee097548c3758c",
+          "shape": [
+            1,
+            128,
+            32,
+            32
+          ],
+          "stride": [
+            131072,
+            1024,
+            32,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_denormalized",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "f2c1221b1d54eb902d68dba22540aa58af4cb48f7b3ee0f61a2b598896c8e6dd"
+      },
+      "latent_unpacked": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "f2c1221b1d54eb902d68dba22540aa58af4cb48f7b3ee0f61a2b598896c8e6dd",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.3125,
+            -0.51171875,
+            0.0068359375,
+            -0.1640625,
+            -0.05859375,
+            -0.1015625,
+            -0.126953125,
+            -0.125
+          ],
+          "sha256": "ad83dda2499ae82f443c151555444a731d4c3c728ce5d6c91a038d58f854f95f",
+          "shape": [
+            1,
+            128,
+            32,
+            32
+          ],
+          "stride": [
+            131072,
+            1024,
+            32,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_unpacked",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0"
+      },
+      "latent_unpatched": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "6f4a703f1ea17811ee762622518c823cf73ed70960ef4fade4ef4fbe785c7b51",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.62890625,
+            -1.7265625,
+            -0.98828125,
+            -0.72265625,
+            -0.05517578125,
+            -0.244140625,
+            -0.36328125,
+            -0.23046875
+          ],
+          "sha256": "f7e7ae4f7fb7895979379a333d9d80daa3fb9fc50663fa844c98b4a7f8de37e7",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_unpatched",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "6ea44004f3cd67016f57593e75e2fefd84318cd0dd910e4bd9a4d025f7c7b17f"
+      },
+      "pixels": {
+        "chunk_count": 1,
+        "chunk_elements": 33554432,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "567d1f92de78b48e5397db50b4d9480c3bc56a584abe40f8216e126b066becc4",
+        "descriptor": {
+          "dtype": "torch.uint8",
+          "preview": [
+            253,
+            251,
+            252,
+            255,
+            255,
+            253,
+            254,
+            255
+          ],
+          "sha256": "d106eb3805f112f1104f9d7a6014b2e29e356fa5bcde03060b9c1684ca6ae01f",
+          "shape": [
+            1,
+            512,
+            512,
+            3
+          ],
+          "stride": [
+            786432,
+            1536,
+            3,
+            1
+          ]
+        },
+        "elements": 786432,
+        "name": "pixels",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "3d14480d39702fe0e88aa3eb58f8f2f85ba44aa7f2ee31418bbf95322e25ec7d"
+      },
+      "post_quant_conv": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "cc5b610a8fc17b6d4f05fca4b500477b05b60f835e2c06b9dc7df080df3caa74",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -1.9921875,
+            -1.8125,
+            -1.4453125,
+            -1.3359375,
+            -1.3828125,
+            -1.2265625,
+            -1.03125,
+            -1.125
+          ],
+          "sha256": "f02f204a1ab0ec10738bab1742a8f7753f5d82154daecc13be0f0f20f1236e7a",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "post_quant_conv",
+        "original_source_cut": "13997d6daf30ff4a069dfcd7bcd32c4941f859a19817ec948c9ace71aa259ff0",
+        "parent": "6f4a703f1ea17811ee762622518c823cf73ed70960ef4fade4ef4fbe785c7b51"
+      }
+    },
+    "sham": {
+      "decoded": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "3d11f4647d349937ad39ce906175fc76538e5d56ee4c8215172db77005e9fb3e",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            0.98828125,
+            1.0,
+            1.0,
+            1.0,
+            1.0,
+            1.0078125,
+            1.0,
+            1.0
+          ],
+          "sha256": "d748725806b98e07d59dfabcb3710503b6f41382ea275058c3221a98f6a4b31d",
+          "shape": [
+            1,
+            3,
+            512,
+            512
+          ],
+          "stride": [
+            786432,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 786432,
+        "name": "decoded",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "90b3c0e32ead3347f9dad9e960dca674249ff01f94c64ae01630c399ed0fd18f"
+      },
+      "decoder_input": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "4fb714f50dbda2c11807bcf2f4bd1acb6f4f3b5e88c1fabc325435259cfdec0c",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -1.9921875,
+            -1.8125,
+            -1.4375,
+            -1.3125,
+            -1.3671875,
+            -1.21875,
+            -1.03125,
+            -1.1171875
+          ],
+          "sha256": "7b107633c8023697b96d03af6b5b7f5514b1f3a809a19b0c708ed4b742129090",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "decoder_input",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "eb8fb86f08beb03b217b68db5957302bfa4d4ec98769ecfdf902649f9bb3277b"
+      },
+      "decoder_mid": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "1c427d7befc2e6f3df9c47062ac1f903fb4ae52bc690f5cdf7a5d45e5d5bfa1b",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.359375,
+            -0.22265625,
+            -0.09765625,
+            -0.421875,
+            -0.29296875,
+            -0.37890625,
+            -0.35546875,
+            -0.37890625
+          ],
+          "sha256": "eb13886523d5b022d1c9cac4ef112d06d7a4613af7906fbd83aba874317db24f",
+          "shape": [
+            1,
+            512,
+            64,
+            64
+          ],
+          "stride": [
+            512,
+            1,
+            32768,
+            512
+          ]
+        },
+        "elements": 2097152,
+        "name": "decoder_mid",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "4fb714f50dbda2c11807bcf2f4bd1acb6f4f3b5e88c1fabc325435259cfdec0c"
+      },
+      "decoder_up_0": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "e52bd3ef9759c7a0f3aafb66ed7433074e6a840c1e1e2740a72711bd918b28f3",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.1630859375,
+            -0.06689453125,
+            0.494140625,
+            -0.255859375,
+            0.6171875,
+            0.72265625,
+            0.67578125,
+            0.6171875
+          ],
+          "sha256": "ba9dd19c2d95ef00bc29fafe82e704339ac2f9a1a62e75c306ab8719605f691a",
+          "shape": [
+            1,
+            512,
+            128,
+            128
+          ],
+          "stride": [
+            8388608,
+            16384,
+            128,
+            1
+          ]
+        },
+        "elements": 8388608,
+        "name": "decoder_up_0",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "1c427d7befc2e6f3df9c47062ac1f903fb4ae52bc690f5cdf7a5d45e5d5bfa1b"
+      },
+      "decoder_up_1": {
+        "chunk_count": 2,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001"
+        ],
+        "cut": "e3d585273ffceea01e69f9a0d014f655f7b411b5b0e5da54744253796f3419f7",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            48.5,
+            27.125,
+            21.5,
+            27.125,
+            27.625,
+            25.25,
+            26.75,
+            26.875
+          ],
+          "sha256": "aa809bb71f48b2419bddb633bea665f7d6315950b41fa26abac6d1e4bef33510",
+          "shape": [
+            1,
+            512,
+            256,
+            256
+          ],
+          "stride": [
+            33554432,
+            65536,
+            256,
+            1
+          ]
+        },
+        "elements": 33554432,
+        "name": "decoder_up_1",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "e52bd3ef9759c7a0f3aafb66ed7433074e6a840c1e1e2740a72711bd918b28f3"
+      },
+      "decoder_up_2": {
+        "chunk_count": 4,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001",
+          "chunk_00002",
+          "chunk_00003"
+        ],
+        "cut": "280c342aeaf79db52a2f25e1a3c9002a55f62dc8d9584003d49515ae758f2bf3",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            35.5,
+            33.5,
+            24.75,
+            30.25,
+            30.375,
+            26.25,
+            25.5,
+            26.125
+          ],
+          "sha256": "f3d9c4aab4f4364c3618af37912230c92522295edcd38dcf34bb1b205d9c432d",
+          "shape": [
+            1,
+            256,
+            512,
+            512
+          ],
+          "stride": [
+            67108864,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 67108864,
+        "name": "decoder_up_2",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "e3d585273ffceea01e69f9a0d014f655f7b411b5b0e5da54744253796f3419f7"
+      },
+      "decoder_up_3": {
+        "chunk_count": 2,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000",
+          "chunk_00001"
+        ],
+        "cut": "90b3c0e32ead3347f9dad9e960dca674249ff01f94c64ae01630c399ed0fd18f",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -7.0,
+            -7.71875,
+            -10.6875,
+            -11.875,
+            -10.125,
+            -9.1875,
+            -8.8125,
+            -9.5625
+          ],
+          "sha256": "7a794bf28ac5ef937632e0532df23071fd83f6fba60170e34b12b6d7ece33bb7",
+          "shape": [
+            1,
+            128,
+            512,
+            512
+          ],
+          "stride": [
+            33554432,
+            262144,
+            512,
+            1
+          ]
+        },
+        "elements": 33554432,
+        "name": "decoder_up_3",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "280c342aeaf79db52a2f25e1a3c9002a55f62dc8d9584003d49515ae758f2bf3"
+      },
+      "latent_denormalized": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "ac299e7faaf07edafa4b7103b399bbd1b7e17303ec6c204fe6ad41651ae475ec",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.6015625,
+            -0.98828125,
+            -0.05517578125,
+            -0.34765625,
+            -0.166015625,
+            -0.25,
+            -0.29296875,
+            -0.279296875
+          ],
+          "sha256": "6bf8687b2ed99e750b7a06c0b4e6bf3366e91c7a886f54465728c540d48e58ac",
+          "shape": [
+            1,
+            128,
+            32,
+            32
+          ],
+          "stride": [
+            131072,
+            1024,
+            32,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_denormalized",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "8a85dc55c5f01a77d5fc6cc0d595aee665b672ad29c9b50609740a35212745f9"
+      },
+      "latent_unpacked": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "8a85dc55c5f01a77d5fc6cc0d595aee665b672ad29c9b50609740a35212745f9",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.296875,
+            -0.51171875,
+            0.0068359375,
+            -0.15625,
+            -0.0546875,
+            -0.1015625,
+            -0.125,
+            -0.1171875
+          ],
+          "sha256": "20b8f8fa55ba9a338a8f73ae5741894be3fc4f8569a3668b982fbb3653e74287",
+          "shape": [
+            1,
+            128,
+            32,
+            32
+          ],
+          "stride": [
+            131072,
+            1024,
+            32,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_unpacked",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0"
+      },
+      "latent_unpatched": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "4ba730c15ca5ec6fdde78463e38e63518ecc346efa03c524516e200e454691da",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -0.6015625,
+            -1.703125,
+            -0.98828125,
+            -0.70703125,
+            -0.05517578125,
+            -0.244140625,
+            -0.34765625,
+            -0.2236328125
+          ],
+          "sha256": "f0234c7deb35dfe89f5bfbdb81e3edd6914c03a29496e5e4be03eb16296bd1ee",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "latent_unpatched",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "ac299e7faaf07edafa4b7103b399bbd1b7e17303ec6c204fe6ad41651ae475ec"
+      },
+      "pixels": {
+        "chunk_count": 1,
+        "chunk_elements": 33554432,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "abd46e206d3764ae383c9c03bf8368a04c39c0eeb01bce32ab983c4f416764ff",
+        "descriptor": {
+          "dtype": "torch.uint8",
+          "preview": [
+            253,
+            251,
+            252,
+            255,
+            255,
+            253,
+            255,
+            255
+          ],
+          "sha256": "b0597314e4ec482f9881add8342c9455d9e68afcbc3006d2c6cb34fb7866bf60",
+          "shape": [
+            1,
+            512,
+            512,
+            3
+          ],
+          "stride": [
+            786432,
+            1536,
+            3,
+            1
+          ]
+        },
+        "elements": 786432,
+        "name": "pixels",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "3d11f4647d349937ad39ce906175fc76538e5d56ee4c8215172db77005e9fb3e"
+      },
+      "post_quant_conv": {
+        "chunk_count": 1,
+        "chunk_elements": 16777216,
+        "chunk_keys": [
+          "chunk_00000"
+        ],
+        "cut": "eb8fb86f08beb03b217b68db5957302bfa4d4ec98769ecfdf902649f9bb3277b",
+        "descriptor": {
+          "dtype": "torch.bfloat16",
+          "preview": [
+            -1.9921875,
+            -1.8125,
+            -1.4375,
+            -1.3125,
+            -1.3671875,
+            -1.21875,
+            -1.03125,
+            -1.1171875
+          ],
+          "sha256": "7b107633c8023697b96d03af6b5b7f5514b1f3a809a19b0c708ed4b742129090",
+          "shape": [
+            1,
+            32,
+            64,
+            64
+          ],
+          "stride": [
+            131072,
+            4096,
+            64,
+            1
+          ]
+        },
+        "elements": 131072,
+        "name": "post_quant_conv",
+        "original_source_cut": "a73123009248f068f7d1571a4931c51c09ae42cfa411d5e5e479eae5907235b0",
+        "parent": "4ba730c15ca5ec6fdde78463e38e63518ecc346efa03c524516e200e454691da"
+      }
+    }
+  }
+}

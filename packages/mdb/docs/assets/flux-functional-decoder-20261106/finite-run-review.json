@@ -1,0 +1,119 @@
+{
+  "admission_authority": "Scoped pre-admission source and finite-resource review; no job submitted by reviewer. Strict scheduler preflight still applies.",
+  "blocking_issues": [],
+  "finite_census": {
+    "decoder_loads": 1,
+    "denoiser_transitions": 0,
+    "encodes": 0,
+    "functional_complete_decodes": 4,
+    "max_post_target_functional_diagnostic_prefixes": 4,
+    "maximum_scheduler_submissions": 1,
+    "native_same_latent_decodes": 4,
+    "nested_or_per_case_jobs": 0,
+    "noise_draws": 0,
+    "session_acts": 0,
+    "source_cases": 4,
+    "transformer_loads": 0
+  },
+  "holistic_review04": {
+    "goal_status": "active",
+    "path": "/Users/jakeholl/domains/artifacts/mdb-flux-understanding-20261106/holistic-review-04.json",
+    "resolved_editorial_correction": "Euler display now preserves original scalar/noise product and casts only latent to FP32 before addition; scientific source unchanged.",
+    "sha256": "b736284d3f24ef476203696002a87bf1b6ce849b6ef48477adf6ac91ebf8b36f"
+  },
+  "independent_checks": {
+    "all_15_auditor_qualification_source_pins_match_current_bytes": true,
+    "all_3_complete_wheel_hashes": true,
+    "all_9_payload_source_hashes": true,
+    "auditor_checks": "Full macro chunk/descriptor/content closure, input and forecast closed transactions, external inventory, exact recipe source binding, primitive census/order and fixed witnesses, four forecasts before any native decoder target, same-latent pre/post-quant joins, post-target-only optional diagnostic reconstruction and original sealed hash/shape/dtype binding, explicit CPU frontend and independent saved-only input reconstruction.",
+    "canonical_request_identity": true,
+    "command_uses_sealed_Linux_cache_model_python_requirements": true,
+    "config_inputs_resources_helpers_math_unchanged": true,
+    "current_launcher_equals_request_pin": true,
+    "hostile_Mac_ambient_command_reconstruction_matches_54_argument_staged_command": true,
+    "no_numerical_quality_gate": "Pair errors and optional reconstruction misses remain observations; neither numerical exactness nor positive signed effect is required for evidence collection.",
+    "payload_config_matches_request_and_byte_seal": true,
+    "payload_debug_request_matches_request": true,
+    "run02_request_delta_from_run01": [
+      "launcher_sha256",
+      "request_sha256",
+      "source_hashes.flux_functional_decoder_campaign.py"
+    ],
+    "sealed_package_entries_equal_wheel_zip_bytes": {
+      "mdb": 188,
+      "mrun": 225,
+      "saturn_pub": 59,
+      "total": 472
+    },
+    "worker_diff": "Exactly three sourcecut loads changed from configured CUDA device to CPU, plus explicit frontend contract. Forecast/native/conditional diagnostic lanes now preserve accepted parent CPU unpack, CPU BN statistics/sqrt/multiply/add and CPU unpatch; argument transfers to CUDA only after unpatch."
+  },
+  "qualification": {
+    "auditor": "10 isolated saved-only synthetic checks passed in 10.98s; inspected receipt and source pins, not rerun by reviewer",
+    "canonical_ruff": "Passed per qualified source receipts",
+    "reviewer_model_calls": 0,
+    "reviewer_scheduler_submissions": 0,
+    "worker": "8 isolated synthetic CPU checks passed in 10.65s; inspected receipt, not rerun by reviewer"
+  },
+  "receipt_hashes": {
+    "audit-qualification-v2/qualification.json": "0b462471d005881efce467d44701ab96a2cb84188833c5be7bf59faf8607ef9b",
+    "qualification-v2/qualification.json": "4aa3471b7811b0bb11ce31d05fcd7792bb05ee6861f30ccdc8210ba9f8ac8893",
+    "run-02/installed-cohort-validation.json": "6e15997098b7808312d191fd1286e810b592b297d32daa97d2bac61d2c4a6f13",
+    "run-02/payload/payload-seal.json": "c47c74543bb3c07658150ebf0e795dca6c3cbe8cf2b9e8805015cd258072a5c3",
+    "run-02/staged-command.json": "10c7ada893c2d95240f23390d426d73e0fa6ce863e8c765a58400c7e8ec6d4df"
+  },
+  "request_file_sha256": "196ad3380b2f46a43c86ebb3f04ead4d7de411558434078a55cd62c04a6f64c4",
+  "request_sha256": "8740beb5bc338e9ac4fff678a80713f8fb27dd63a336caa52753edb16c671fc8",
+  "resources": {
+    "calibration": "Accepted parent job-f7d249b6d3bb measured RSS2453.5MiB/VRAM9222MiB/482.2s for224+224 denoiser transitions and8 native VAE consumers, with7.75GB transformer plus99.24MB decoder resident. This removes transformer/denoising, adds original functional decoder and full macro/hash export; no direct VAE-only workspace measurement claimed.8GiB RAM/10GiB VRAM conservatively bound streaming snapshots/copies. Static macro2,344,615,936B plus bounded conditional diagnostic tensors fit6GiB raw; no allmicro arrays.600s estimate/1200s worker/1500s outer; no speed claim.",
+    "cpu_threads": 4,
+    "disk_gb": 8,
+    "est_wall_s": 600,
+    "ram_mb": 8192,
+    "timeout_s": 1500,
+    "vram_mb": 10240
+  },
+  "review_status": "ready-for-finite-run",
+  "reviewed_at_utc": "2026-11-06T10:14:15.388873+00:00",
+  "reviewer": "context_carriers_astra",
+  "runtime_wheels": {
+    "mdb_runtime-0.1.0-py3-none-any.whl": "4b1b965dce45883cabcb24ab2c11702ce748aeb1658776596be27b405df26d21",
+    "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+    "saturn_pub-0.4.1-py3-none-any.whl": "c32bbcf5c5b45e4970d9c750266f607b2a9b0f06dc982106fd82e0501375e424"
+  },
+  "schema": "mdb-functional-decoder-finite-run-review-astra-v1",
+  "scope_and_limits": [
+    "This is a four-dependent-case replication and retention upgrade of already-observed decoder endpoints, not a new image prediction from unseen input or a new semantic task.",
+    "The functional graph reuses the frozen explicit helper and original Torch primitive kernels. It does not independently reproduce CUDA convolution, group normalization, attention, or reduction arithmetic.",
+    "Both lanes share explicit CPU inverse-BN code. Native unpack/unpatch and native decoder comparisons plus saved-only input reconstruction do not amount to an independent full-pipeline BN target.",
+    "All named macro arrays are retained; all primitive outputs have full hashes and fixed witnesses. Full primitive arrays are not generally retained. A first mismatch may be reconstructed only after all targets and only attributed to the original forecast if its presealed content hash, shape and dtype match.",
+    "Metadata/source/guard chronology is trusted instrument evidence, not cryptographic proof that arbitrary hostile code could not make hidden calls.",
+    "Resource exception uses measured parent with transformer resident, not a direct VAE-only measurement; finite geometry and removal of transformer make reservation reasonable, while actual scheduler preflight remains required.",
+    "Old run-01 b71d9600/50af07a2 is preserved as unsubmitted superseded stage; this review approves only corrected run-02 identity8740beb5.",
+    "Following this one bounded renderer account, prioritize prospectively bound raw-prompt/tokenizer/template/Qwen conditioning frontier. Dense tensors and generic record IDs remain acceptable; no compression or semantic-name completion gate."
+  ],
+  "source_pins": {
+    "auditor": "79b18670ef5ccf8954a95adc0265f2173df97ee02c84bfd8af9891989536a84d",
+    "flux_functional_decoder.py": "e2712298e42b37a263dea1b24f0f491082b8a01086b16fa66577f474c68f491f",
+    "flux_functional_decoder_campaign.py": "8de957590606dfbe39fdd5500075151025f266401fdac51238f891bfe13f9067",
+    "flux_functional_vae.py": "576b94f3cd987e8849f6d4772c90a77f14fdfc9210dea608a9a3d16cf0f99a61",
+    "flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "flux_source_receiver.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+    "launcher": "5c6704650164fc69a980faf2b5ca4a6df2536abfb12396c85395bb4c0c2b8942",
+    "parameter-artifacts.json": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9",
+    "preflight.v1.json": "0d20463e96971c3bc2dfeedc846b5142e319cf3b1eb7cb81aaf7385a7eee94e6",
+    "retrieve_weights.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+    "vae-config.json": "0d6dfb69ae95a5e2ac9836284bbb63d8b38ce67b25ba2dff380752b2a10ab948"
+  },
+  "storage": {
+    "combined_tensor_bytes_bound": 4492099584,
+    "conditional_diagnostic_bytes_bound": 2147483648,
+    "full_macro_bytes": 2344615936,
+    "macro_chunk_bound": 33554432,
+    "member_bound": 134217728,
+    "no_all_micro_full_array_claim": true,
+    "no_persistent_parameter_bank": true,
+    "original_recipe_entries": 142,
+    "raw_output_bound": 6442450944,
+    "reservation_disk_gb": 8
+  }
+}

@@ -1,0 +1,44 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+Installed 65 packages in 1.07s
+MDB_EXECUTION_ENVIRONMENT={"cuda_driver": "NVIDIA GeForce RTX 4080, 580.159.03", "packages": {"Jinja2": "3.1.6", "MarkupSafe": "3.0.4", "PyYAML": "6.0.3", "Pygments": "2.21.0", "accelerate": "1.14.0", "annotated-doc": "0.0.5", "anyio": "4.15.1", "certifi": "2026.10.23", "charset-normalizer": "3.5.2", "click": "8.5.0", "cuda-bindings": "13.4.4", "cuda-pathfinder": "1.8.5", "cuda-toolkit": "13.0.3.0", "diffusers": "0.39.0", "filelock": "4.2.5", "fsspec": "2026.9.0", "h11": "0.16.0", "hf-xet": "1.8.0", "httpcore": "1.0.9", "httpx": "0.28.1", "huggingface_hub": "1.33.0", "idna": "3.20", "importlib_metadata": "10.1.0", "markdown-it-py": "4.2.0", "mdb-runtime": "0.1.0", "mdurl": "0.1.2", "mpmath": "1.3.0", "mrun-pub": "0.1.2", "networkx": "3.7", "numpy": "2.5.4", "nvidia-cublas": "13.1.1.3", "nvidia-cuda-cupti": "13.0.85", "nvidia-cuda-nvrtc": "13.0.88", "nvidia-cuda-runtime": "13.0.96", "nvidia-cudnn-cu13": "9.20.0.48", "nvidia-cufft": "12.0.0.61", "nvidia-cufile": "1.15.1.6", "nvidia-curand": "10.4.0.35", "nvidia-cusolver": "12.0.4.66", "nvidia-cusparse": "12.6.3.3", "nvidia-cusparselt-cu13": "0.8.1", "nvidia-nccl-cu13": "2.29.7", "nvidia-nvjitlink": "13.4.92", "nvidia-nvshmem-cu13": "3.4.5", "nvidia-nvtx": "13.0.85", "packaging": "26.3", "pillow": "13.0.0", "pip": "26.1.2", "psutil": "7.2.2", "regex": "2026.9.29", "requests": "2.34.2", "rich": "15.0.0", "safetensors": "0.8.0", "saturn-pub": "0.4.1", "setuptools": "84.2.1", "shellingham": "1.5.4", "sympy": "1.14.0", "tokenizers": "0.22.2", "torch": "2.13.0", "tqdm": "4.70.1", "transformers": "5.14.1", "triton": "3.7.1", "typer": "0.27.3", "typing_extensions": "4.16.0", "urllib3": "2.8.0", "zipp": "4.1.2"}, "python": "3.14.6", "resolved": {"LLM_MODELS_EXTRA_ROOT": "/mnt/big/llm-models", "TORCH_HOME": "/mnt/hdd8tb/mdb/torch", "UV_CACHE_DIR": "/mnt/hdd8tb/mdb/uv-cache", "UV_LINK_MODE": "symlink"}, "uv": "uv 0.12.6 (x86_64-unknown-linux-gnu)"}
+MDB_DECODER_PHASE {"kind": "inputs_sealed", "seal": {"forecasts": ["inputs"], "path": "/mnt/big/mdb/research/job-406f417b8512/functional-decoder-result/input-transaction/seal.json", "seal_sha256": "381067b0ad08ea036a995f59be421731d180a58acc63461bdfde407be61f7380"}, "seconds": 2.3198997490108013}
+MDB_DECODER_PHASE {"case": "sham", "kind": "forecast_case_completed", "module_entries": 0, "primitive_outputs": 127, "seconds": 20.863460503984243}
+MDB_DECODER_PHASE {"case": "HH", "kind": "forecast_case_completed", "module_entries": 0, "primitive_outputs": 127, "seconds": 31.39041284425184}
+MDB_DECODER_PHASE {"case": "HL", "kind": "forecast_case_completed", "module_entries": 0, "primitive_outputs": 127, "seconds": 42.215247455984354}
+MDB_DECODER_PHASE {"case": "new-3over8", "kind": "forecast_case_completed", "module_entries": 0, "primitive_outputs": 127, "seconds": 51.34371134499088}
+MDB_DECODER_PHASE {"kind": "cohort_globally_sealed", "native_decode_calls": 0, "seal": {"forecasts": ["cohort"], "path": "/mnt/big/mdb/research/job-406f417b8512/functional-decoder-result/forecast-transaction/seal.json", "seal_sha256": "c356b5f6b8ed6b9204bef0cd26d75b406df0f668a3d425230c3ea1aae6cc4974"}, "seconds": 52.84744320437312}
+MDB_DECODER_PHASE {"actual_before_post_quant_descriptor": {"dtype": "torch.bfloat16", "preview": [-0.6015625, -1.703125, -0.98828125, -0.70703125, -0.05517578125, -0.244140625, -0.34765625, -0.2236328125], "sha256": "f0234c7deb35dfe89f5bfbdb81e3edd6914c03a29496e5e4be03eb16296bd1ee", "shape": [1, 32, 64, 64], "stride": [131072, 4096, 64, 1]}, "case": "sham", "kind": "native_decode_entry", "seconds": 53.20066708512604}
+MDB_DECODER_PHASE {"actual_after_post_quant_descriptor": {"dtype": "torch.bfloat16", "preview": [-1.9921875, -1.8125, -1.4375, -1.3125, -1.3671875, -1.21875, -1.03125, -1.1171875], "sha256": "7b107633c8023697b96d03af6b5b7f5514b1f3a809a19b0c708ed4b742129090", "shape": [1, 32, 64, 64], "stride": [131072, 4096, 64, 1]}, "case": "sham", "kind": "native_decoder_entry", "seconds": 53.46061229519546}
+MDB_DECODER_PHASE {"case": "sham", "kind": "native_case_completed", "native_decode_calls": 1, "seconds": 63.01529970904812}
+MDB_DECODER_PHASE {"actual_before_post_quant_descriptor": {"dtype": "torch.bfloat16", "preview": [-0.6015625, -1.7265625, -1.0078125, -0.72265625, -0.05859375, -0.244140625, -0.34765625, -0.220703125], "sha256": "2183e023b9e5100f1b39e662866a30f5b18514adfc51a18546e002e7fe4caa83", "shape": [1, 32, 64, 64], "stride": [131072, 4096, 64, 1]}, "case": "HH", "kind": "native_decode_entry", "seconds": 63.323975425213575}
+MDB_DECODER_PHASE {"actual_after_post_quant_descriptor": {"dtype": "torch.bfloat16", "preview": [-2.03125, -1.8515625, -1.4609375, -1.34375, -1.3828125, -1.234375, -1.046875, -1.125], "sha256": "170532a9dc9dbad4dd1193ceb95acb4451d06ade8bdb3cde0d300372e9bd8524", "shape": [1, 32, 64, 64], "stride": [131072, 4096, 64, 1]}, "case": "HH", "kind": "native_decoder_entry", "seconds": 63.55420506699011}
+MDB_DECODER_PHASE {"case": "HH", "kind": "native_case_completed", "native_decode_calls": 2, "seconds": 72.5299829239957}
+MDB_DECODER_PHASE {"actual_before_post_quant_descriptor": {"dtype": "torch.bfloat16", "preview": [-0.6015625, -1.7109375, -0.99609375, -0.72265625, -0.05322265625, -0.25, -0.34765625, -0.23046875], "sha256": "5440553e9f44afab3ea614989dcb7ae2097af143a311a0c7c5dd28cd018cb1bf", "shape": [1, 32, 64, 64], "stride": [131072, 4096, 64, 1]}, "case": "HL", "kind": "native_decode_entry", "seconds": 72.8316221353598}
+MDB_DECODER_PHASE {"actual_after_post_quant_descriptor": {"dtype": "torch.bfloat16", "preview": [-1.9921875, -1.8046875, -1.4453125, -1.3359375, -1.375, -1.21875, -1.0390625, -1.1171875], "sha256": "78f633ce781337f594f15358646adc43ae9be1bd764d7c88505e113c9b8d037a", "shape": [1, 32, 64, 64], "stride": [131072, 4096, 64, 1]}, "case": "HL", "kind": "native_decoder_entry", "seconds": 73.06194401020184}
+MDB_DECODER_PHASE {"case": "HL", "kind": "native_case_completed", "native_decode_calls": 3, "seconds": 82.1378651750274}
+MDB_DECODER_PHASE {"actual_before_post_quant_descriptor": {"dtype": "torch.bfloat16", "preview": [-0.62890625, -1.7265625, -0.98828125, -0.72265625, -0.05517578125, -0.244140625, -0.36328125, -0.23046875], "sha256": "f7e7ae4f7fb7895979379a333d9d80daa3fb9fc50663fa844c98b4a7f8de37e7", "shape": [1, 32, 64, 64], "stride": [131072, 4096, 64, 1]}, "case": "new-3over8", "kind": "native_decode_entry", "seconds": 82.43238666001707}
+MDB_DECODER_PHASE {"actual_after_post_quant_descriptor": {"dtype": "torch.bfloat16", "preview": [-1.9921875, -1.8125, -1.4453125, -1.3359375, -1.3828125, -1.2265625, -1.03125, -1.125], "sha256": "f02f204a1ab0ec10738bab1742a8f7753f5d82154daecc13be0f0f20f1236e7a", "shape": [1, 32, 64, 64], "stride": [131072, 4096, 64, 1]}, "case": "new-3over8", "kind": "native_decoder_entry", "seconds": 82.68061198899522}
+MDB_DECODER_PHASE {"case": "new-3over8", "kind": "native_case_completed", "native_decode_calls": 4, "seconds": 91.7319480329752}
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/18lyt7kxDq2-Jb-I/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 73, in <module>
+    main()
+    ~~~~^^
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/18lyt7kxDq2-Jb-I/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 67, in main
+    runpy.run_path(str(worker), run_name="__main__")
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 294, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "flux_functional_decoder_campaign.py", line 579, in <module>
+    worker(parser.parse_args().config)
+    ~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "flux_functional_decoder_campaign.py", line 571, in worker
+    summary = run(config, progress=lambda row: print("MDB_DECODER_PHASE " + json.dumps(row, sort_keys=True), flush=True))
+  File "flux_functional_decoder_campaign.py", line 519, in run
+    report=compare_equations(values["forecast"], values["native"]), conditions=[dict(field=k, op="eq", value=v) for k, v in context.items()], tested_context=context,
+           ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/18lyt7kxDq2-Jb-I/lib/python3.14/site-packages/mdb/equation_comparison.py", line 123, in compare_equations
+    raise ValueError("comparison exceeds declared element budget")
+ValueError: comparison exceeds declared element budget
