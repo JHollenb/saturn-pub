@@ -1,0 +1,18 @@
+{
+  "archive_bytes": 338127,
+  "archive_sha256": "ee8abe0fa00b0b4cb931294c4b05aece834904876717403060638a19c4bac2a8",
+  "collection_encoder": {
+    "schema": "mdb-explicit-recovery-encoder-v1",
+    "scope": "Collection-only encoder supplied by a separately request-sealed run. Original worker payload/request remain unchanged.",
+    "sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+    "source_request_sha256": "2339ecdb754e0104418b463397b4cb2121a4bbb1c9646d390e56cee3f0fe1e2e"
+  },
+  "expanded_bytes": 1853396,
+  "file_count": 31,
+  "files_manifest_sha256": "24758521de1d267d4c5b70c447d63d9534a3b4a1ee8375e07e46f0c5b1637629",
+  "job_id": "job-c9d79d1d8d9e",
+  "pointer_sha256": "6fa08a53e4b2c6ae70f8923bb4e0147d89c39489290d4de96ecb46ebc7d6b904",
+  "raw_tensor_arrays_collected": false,
+  "request_sha256": "d26703bd0fdfba9b7da7e44703dda72664e9734ac6626a5007d41fcdf155ab4e",
+  "schema": "mdb-qwen-prefix-compact-retrieval-v1"
+}

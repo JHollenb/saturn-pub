@@ -1,0 +1,261 @@
+{
+  "cases": [
+    "prompt-00",
+    "prompt-01"
+  ],
+  "claim_limit": "conditioning formation and first native context projection only; no edited-RGB or full-session forecast",
+  "counts": {
+    "cases": 2,
+    "consumers": {
+      "context_embedder_native_calls": 4,
+      "full_flux_transformer_calls": 0,
+      "predicted_embedding_calls": 2,
+      "reference_embedding_calls": 2,
+      "rgb_forecasts": 0,
+      "vae_calls": 0
+    },
+    "encodes": 2,
+    "execution_id": "mdb-flux-functional-qwen-prefix-v1",
+    "forecast": {
+      "conditioning_ports": 2,
+      "context_embedder_forecast_linear_calls": 2,
+      "embedding_states": 2,
+      "functional_module_forwards": 0,
+      "functional_prefix_calls": 2,
+      "native_encoder_calls": 0,
+      "prefix_hidden_states": 54,
+      "selected_hidden_states": 6,
+      "tokenizer_calls": 2
+    },
+    "model_loads": 1,
+    "native": {
+      "full_native_layers_per_call": 36,
+      "native_encoder_calls": 2,
+      "native_module_forwards": 2,
+      "retained_embedding_ports": 2,
+      "retained_hidden_states": 56,
+      "tail_layers_executed_but_not_retained": 18
+    },
+    "noise_draws": 0,
+    "predictions": [
+      "The functional prefix arithmetic and selected conditioning are sealed before any native encoder comparison.",
+      "Native Qwen3ForCausalLM hidden states at all retained prefix indices are measured against the forecast; every miss remains evidence.",
+      "The original FLUX context_embedder receives predicted and reference E after target entry; this is a component-port diagnostic, not an RGB prediction."
+    ],
+    "schema": "mdb-qwen-prefix-count-contract-v1",
+    "vae_calls": 0
+  },
+  "execution_id": "mdb-flux-functional-qwen-prefix-v1",
+  "forecast_seal": {
+    "forecasts": [
+      "qwen-prefix-forecast"
+    ],
+    "path": "/mnt/big/mdb/research/job-ebae1e4bd523/qwen-prefix-result/forecast-transaction/seal.json",
+    "seal_sha256": "bd47e7ea1719d1e3c96eabe34939e1b5d20f7a44a2e04087bc3bc4135e97d980"
+  },
+  "instrument_status": "full prefix arrays, native targets, and native component ports retained",
+  "job_id": "job-ebae1e4bd523",
+  "mechanics_status": "complete",
+  "request_sha256": "aacdb95dd43145d44f4a68c292a16764c6292d0b3b32236e223b58751c4b0d51",
+  "schema": "mdb-qwen-prefix-summary-v1",
+  "seconds": 78.96980348788202,
+  "source_mutations": 0,
+  "source_payload_exports": 0,
+  "terminal_status": "unassessed",
+  "timeline_events": 8,
+  "transaction": {
+    "event_head": "7928bb7fe9f1018e13df2601ab8e2d047035157e73b338cd9f951db043f07824",
+    "events": [
+      {
+        "detail": {},
+        "elapsed_ms": 87.61388808488846,
+        "kind": "opened",
+        "phase": "open",
+        "previous": null,
+        "receipt_id": "7d43eb129ac6d5f18c0f8998dc01976e314330bad49964def4b347804edbdec9",
+        "schema": "mdb-forecast-phase-event-v1",
+        "sequence": 0,
+        "work": {
+          "actions": 0,
+          "captures": 0,
+          "denied_attempts": 0,
+          "executions": 0,
+          "native_calls": 0,
+          "predictions": 0,
+          "retained_bytes": 3340
+        }
+      },
+      {
+        "detail": {
+          "name": "tokenized-inputs",
+          "native_calls": 0
+        },
+        "elapsed_ms": 118.82368288934231,
+        "kind": "frontier_published",
+        "phase": "open",
+        "previous": "fa9f9d5f3267dca000d1a675de8ffe52c58fc12669dd3c49ad6bd276a7a1de4b",
+        "receipt_id": "a3f1f482c19eadf3b85e2b693d6fa6b410da2321db0c2cff64f97d3320c0e222",
+        "schema": "mdb-forecast-phase-event-v1",
+        "sequence": 1,
+        "work": {
+          "actions": 1,
+          "captures": 0,
+          "denied_attempts": 0,
+          "executions": 0,
+          "native_calls": 0,
+          "predictions": 0,
+          "retained_bytes": 66738
+        }
+      },
+      {
+        "detail": {
+          "frontiers": [
+            "tokenized-inputs"
+          ],
+          "name": "qwen-prefix-forecast"
+        },
+        "elapsed_ms": 332.3181299492717,
+        "kind": "forecast_persisted",
+        "phase": "open",
+        "previous": "bea63c58603b222330705690f029b83da6604424ba33df0a22f11fb419f89e9d",
+        "receipt_id": "f6cbf466dfc33a80eeed52cf144b660c6ae327b2f0bac7e0772a5a962d75135a",
+        "schema": "mdb-forecast-phase-event-v1",
+        "sequence": 2,
+        "work": {
+          "actions": 2,
+          "captures": 0,
+          "denied_attempts": 0,
+          "executions": 0,
+          "native_calls": 0,
+          "predictions": 1,
+          "retained_bytes": 15945263
+        }
+      },
+      {
+        "detail": {
+          "seal_sha256": "bd47e7ea1719d1e3c96eabe34939e1b5d20f7a44a2e04087bc3bc4135e97d980"
+        },
+        "elapsed_ms": 402.0046158693731,
+        "kind": "globally_sealed",
+        "phase": "sealed",
+        "previous": "9e174288b71b566ed01b2c7ef598fd45e10b96fb368007861c42e04b04fc324e",
+        "receipt_id": "07a576291bd70f7f0b1607bf4b0a8aa3af2e3e8997fa0b08f4b5a8627ac219a4",
+        "schema": "mdb-forecast-phase-event-v1",
+        "sequence": 3,
+        "work": {
+          "actions": 3,
+          "captures": 0,
+          "denied_attempts": 0,
+          "executions": 0,
+          "native_calls": 0,
+          "predictions": 1,
+          "retained_bytes": 15950937
+        }
+      },
+      {
+        "detail": {
+          "seal_sha256": "bd47e7ea1719d1e3c96eabe34939e1b5d20f7a44a2e04087bc3bc4135e97d980"
+        },
+        "elapsed_ms": 421.7918450012803,
+        "kind": "native_execution_released",
+        "phase": "released",
+        "previous": "4d4bb886d8f75ed2d2e12281505f72cd64f4d51ff72082208cb0a5eaf5fd4032",
+        "receipt_id": "89559a06b3ce86ce4607e4de2e21f8e51dd3fcfbfa6a99581bc91f9d9e0ec9c0",
+        "schema": "mdb-forecast-phase-event-v1",
+        "sequence": 4,
+        "work": {
+          "actions": 4,
+          "captures": 0,
+          "denied_attempts": 0,
+          "executions": 0,
+          "native_calls": 0,
+          "predictions": 1,
+          "retained_bytes": 15951441
+        }
+      },
+      {
+        "detail": {
+          "name": "native-targets-and-context-consumers",
+          "seal_sha256": "bd47e7ea1719d1e3c96eabe34939e1b5d20f7a44a2e04087bc3bc4135e97d980"
+        },
+        "elapsed_ms": 1720.7264052703977,
+        "kind": "observation_persisted",
+        "phase": "execute",
+        "previous": "d15cb7abac6cd7c611fced9e6cd9674bfaee1201fd7cd790da2e18a7bb547b53",
+        "receipt_id": "0e83317e9af36a826de87eff5161d1abbb285bd504fb1c73e636db28a7fb1a87",
+        "schema": "mdb-forecast-phase-event-v1",
+        "sequence": 5,
+        "work": {
+          "actions": 4,
+          "captures": 0,
+          "denied_attempts": 0,
+          "executions": 1,
+          "native_calls": 0,
+          "predictions": 1,
+          "retained_bytes": 16005416
+        }
+      },
+      {
+        "detail": {
+          "prior_phase": "released"
+        },
+        "elapsed_ms": 1741.8790799565613,
+        "kind": "closed",
+        "phase": "closed",
+        "previous": "ae6c2e5ee1aa737a27a6aaf463610870d982189b0f00f56d7d189dbb5c741527",
+        "receipt_id": "b2ffd765cc14a3b299d630bb2a75b2e72dba3419d92ad6065df2b3b56f565c7c",
+        "schema": "mdb-forecast-phase-event-v1",
+        "sequence": 6,
+        "work": {
+          "actions": 4,
+          "captures": 0,
+          "denied_attempts": 0,
+          "executions": 1,
+          "native_calls": 0,
+          "predictions": 1,
+          "retained_bytes": 16005974
+        }
+      }
+    ],
+    "execution_scope": "External CUDA Qwen3ForCausalLM and native FLUX context_embedder calls after global seal; transaction is metadata/array custody.",
+    "failure": null,
+    "forecasts": [
+      "qwen-prefix-forecast"
+    ],
+    "frontiers": [
+      "tokenized-inputs"
+    ],
+    "observations": [
+      "native-targets-and-context-consumers"
+    ],
+    "phase": "closed",
+    "schema": "mdb-forecast-transaction-v1",
+    "seal_sha256": "bd47e7ea1719d1e3c96eabe34939e1b5d20f7a44a2e04087bc3bc4135e97d980",
+    "violations": [],
+    "work": {
+      "actions": 4,
+      "captures": 0,
+      "denied_attempts": 0,
+      "executions": 1,
+      "native_calls": 0,
+      "predictions": 1,
+      "retained_bytes": 16006414
+    }
+  },
+  "transaction_verification": {
+    "event_head": "7928bb7fe9f1018e13df2601ab8e2d047035157e73b338cd9f951db043f07824",
+    "events": 7,
+    "forecasts": [
+      "qwen-prefix-forecast"
+    ],
+    "frontiers": [
+      "tokenized-inputs"
+    ],
+    "identity_scope": "externally-pinned",
+    "phase": "closed",
+    "schema": "mdb-forecast-offline-verification-v1",
+    "seal_sha256": "bd47e7ea1719d1e3c96eabe34939e1b5d20f7a44a2e04087bc3bc4135e97d980",
+    "verified": true
+  },
+  "trend_status": "observed-uninterpreted"
+}

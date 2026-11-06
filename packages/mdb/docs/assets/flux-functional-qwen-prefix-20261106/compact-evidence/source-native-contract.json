@@ -1,0 +1,29 @@
+{
+  "attention_dispatch": {
+    "backend": "sdpa",
+    "gqa_policy": "repeat_kv",
+    "source": "transformers-qwen3-modeling-fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+  },
+  "context_embedder_bias": false,
+  "context_embedder_native_calls": 4,
+  "context_embedder_shape": [
+    3072,
+    7680
+  ],
+  "context_embedder_weight_identity_after": "db8873ff6d5f0496751674da3a1d256eb1e187714d73a2093e46517155ab32f7",
+  "context_embedder_weight_identity_before": "db8873ff6d5f0496751674da3a1d256eb1e187714d73a2093e46517155ab32f7",
+  "forecast_native_module_forwards": 0,
+  "full_native_layers": 36,
+  "model_class": "Qwen3ForCausalLM",
+  "native_encoder_calls": 2,
+  "no_rgb_forecast": true,
+  "qwen_architecture": "Qwen3ForCausalLM",
+  "retained_states_per_case": 28,
+  "rope_buffer_policy": {
+    "init_device": "cpu",
+    "init_dtype": "float32",
+    "placement_dtype": "float32",
+    "source": "transformers-qwen3-rotary-embedding-v1-from-pretrained-device-only"
+  },
+  "schema": "mdb-qwen-prefix-native-contract-v1"
+}

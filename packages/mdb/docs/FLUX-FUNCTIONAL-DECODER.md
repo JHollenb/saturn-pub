@@ -97,4 +97,12 @@ Source: [graph instrumentation](../qualification/flux_functional_decoder.py), [f
 
 ## Next frontier
 
-The next assay moves back to raw-prompt/template/tokenizer → own-state Qwen embedding and 27 blocks → selected hidden states 9/18/27 → conditioning → its actual first FLUX context projection. The decoder replication has finished; another decoder panel is not needed. Current exact shared-kernel results do not erase earlier independent-arithmetic misses, establish arbitrary raw-prompt-to-image prediction, or supply a universal object dictionary. Dense computation records and generic names remain sufficient for the mechanistic account.
+The [raw-prompt conditioning assay](FLUX-FUNCTIONAL-QWEN-PREFIX.md) now predicts
+the embedding,27 Qwen blocks, selected hidden states9/18/27 and actual first
+FLUX context projection for two prospective prompts. All60 complete primary
+fields agree bitwise under shared Torch primitives. The next integration joins
+prompt, noise, the complete denoiser schedule and this decoder in one sealed
+execution. Current results retain their separate cohorts and seals; they do
+not establish arbitrary prompt-to-image prediction or independent CUDA
+arithmetic. Dense computation records and generic names remain sufficient for
+the mechanistic account.

@@ -1,0 +1,111 @@
+{
+  "all_512_rows_retained": true,
+  "apply_chat_template": {
+    "add_generation_prompt": true,
+    "enable_thinking": false,
+    "messages": [
+      {
+        "content": "<raw prompt>",
+        "role": "user"
+      }
+    ]
+  },
+  "attention_dispatch": {
+    "backend": "sdpa",
+    "gqa_policy": "repeat_kv",
+    "source": "transformers-qwen3-modeling-fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+  },
+  "batch_size": 1,
+  "cohort": "prospective-new",
+  "device": "cuda",
+  "diffusers_version": "0.39.0",
+  "dtype": "bfloat16",
+  "effective_binding": {
+    "job_id": "job-ebae1e4bd523",
+    "request_sha256": "aacdb95dd43145d44f4a68c292a16764c6292d0b3b32236e223b58751c4b0d51"
+  },
+  "flux_config": "flux-transformer-config.json",
+  "flux_config_sha256": "09733c74a3da6d17dd0a0472a091a8950c7c6935889c32c16cc800ede05029de",
+  "flux_manifest": "flux-parameter-artifacts.json",
+  "flux_manifest_sha256": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb",
+  "flux_native_source_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/diffusers/models/transformers/transformer_flux2.py",
+  "flux_native_source_sha256": "0a3c56ed3ca28a416492b50953a433f20b8a89fd26c7b7a49b1b6b45d5236006",
+  "flux_parameter_root": "/mnt/big/llm-models/FLUX.2-klein-4B",
+  "flux_recipe_helper": "flux-recipe-helper.py",
+  "flux_recipe_helper_sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+  "flux_retrieval_script": "retrieve_flux_weights.py",
+  "flux_retrieval_script_sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+  "full_layers": 36,
+  "jinja_environment_source_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/jinja2/environment.py",
+  "jinja_environment_source_sha256": "f6786b3fb0a1f8d6c65f4d30bf2af8cb2fae84d1ead8e09ceb48201ab9e2fdf9",
+  "jinja_sandbox_source_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/jinja2/sandbox.py",
+  "jinja_sandbox_source_sha256": "330d9a8ad958d88f256bb15885c5f6606f41b5461c2e70f41a1ddddbd7035ab6",
+  "job_id": "job-ebae1e4bd523",
+  "max_length": 512,
+  "max_wall_seconds": 1200,
+  "output": "/mnt/big/mdb/research/job-ebae1e4bd523/qwen-prefix-result",
+  "output_name": "qwen-prefix-result",
+  "output_scratch": "/mnt/big/mdb/research",
+  "padding": "max_length",
+  "padding_side": "right",
+  "prefix_layers": 27,
+  "prompts": [
+    "A yellow cone to the left of a green cylinder on a plain white background. Two separate objects, simple studio product photograph.",
+    "A small violet torus above a large copper pyramid on a plain ivory background. Two separate objects, simple studio product photograph."
+  ],
+  "qwen_config": "qwen-config.json",
+  "qwen_config_sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+  "qwen_manifest": "qwen-parameter-artifacts.json",
+  "qwen_manifest_sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+  "qwen_native_source_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/transformers/models/qwen3/modeling_qwen3.py",
+  "qwen_native_source_sha256": "fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab",
+  "qwen_parameter_root": "/mnt/big/llm-models/FLUX.2-klein-4B/text_encoder",
+  "qwen_recipe_helper": "qwen-recipe-helper.py",
+  "qwen_recipe_helper_sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+  "qwen_retrieval_script": "retrieve_qwen_weights.py",
+  "qwen_retrieval_script_sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+  "qwen_source_binding": "qwen-source-binding.json",
+  "qwen_source_binding_sha256": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+  "request_sha256": "aacdb95dd43145d44f4a68c292a16764c6292d0b3b32236e223b58751c4b0d51",
+  "retry": false,
+  "rope_buffer_policy": {
+    "init_device": "cpu",
+    "init_dtype": "float32",
+    "placement_dtype": "float32",
+    "source": "transformers-qwen3-rotary-embedding-v1-from-pretrained-device-only"
+  },
+  "schema": "mdb-qwen-prefix-plan-v1",
+  "selected_hidden_states": [
+    9,
+    18,
+    27
+  ],
+  "source_metadata": {
+    "flux_context_embedder_bias": false,
+    "flux_context_embedder_shape": [
+      3072,
+      7680
+    ],
+    "flux_context_embedder_tensor": "context_embedder.weight",
+    "flux_parameter_manifest_sha256": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb",
+    "historical_chat_template_bound": false,
+    "qwen_full_parameter_count": 398,
+    "qwen_functional_parameter_count": 298,
+    "qwen_metadata_build_receipt_sha256": "6e88f25b9355d41b0918b4df071553ea35aead13fa8aabe49513121c832feacd",
+    "qwen_parameter_manifest_sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+    "qwen_reference_only_parameter_count": 100,
+    "qwen_source_binding_sha256": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7"
+  },
+  "tokenizers_native_preparation_source_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/tokenizers/tokenizers.abi3.so",
+  "tokenizers_native_preparation_source_sha256": "899b244f19f1ddd6506c45ea0f7163f38952f2a552272a687a6ef4b9ddcc7327",
+  "tokenizers_native_source_path": "runtime-bound-on-CUDA-host",
+  "tokenizers_native_source_sha256": "runtime-bound",
+  "tokenizers_wrapper_source_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/tokenizers/__init__.py",
+  "tokenizers_wrapper_source_sha256": "148ecb122f3fee03be9abb1fe213dd85fbc691bf2ad2b437ff531533781a6a3a",
+  "transformers_version": "5.14.1",
+  "transport_limits": {
+    "max_expanded_bytes": 2147483648,
+    "max_member_bytes": 134217728
+  },
+  "truncation": true
+}

@@ -1,0 +1,70 @@
+{
+  "cuda_calls": 0,
+  "experiment": "Construct tiny Qwen3ForCausalLM, save_pretrained to ephemeral owned directory, from_pretrained(dtype=torch.bfloat16,local_files_only=True), inspect buffers, device-only .to(cpu), then explicit .to(dtype=BF16). No forwards. Temporary synthetic checkpoint removed by context manager.",
+  "limits": [
+    "No original model/checkpoint loaded or executed; no CUDA operation or native activation used.",
+    "This establishes the installed loader path on a synthetic checkpoint plus source semantics, not direct inspection of a historical resident encoder. Actual production metadata should still bind buffer dtype/device and actual loading path.",
+    "Do not change native policy merely to make a predictor assumption exact."
+  ],
+  "model_forwards": 0,
+  "observations": {
+    "device_only_cpu": {
+      "both_rotary_buffers_dtype": "float32",
+      "values_unchanged": true
+    },
+    "explicit_bf16_cast": {
+      "both_rotary_buffers_dtype": "bfloat16",
+      "inv_freq": [
+        1.0,
+        0.03173828125,
+        0.00099945068359375,
+        3.170967102050781e-05
+      ]
+    },
+    "from_pretrained_bf16": {
+      "both_rotary_buffers_dtype": "float32",
+      "inv_freq": [
+        1.0,
+        0.03162277862429619,
+        0.0010000000474974513,
+        3.162277425872162e-05
+      ],
+      "weight_dtype": "bfloat16"
+    },
+    "initial": {
+      "both_rotary_buffers_dtype": "float32",
+      "weight_dtype": "float32"
+    }
+  },
+  "original_model_loads": 0,
+  "recommendation": "For native-faithful CPU-load then CUDA-device-transfer profile: initialize/reconstruct CPU FP32 inv_freq and original_inv_freq; after all parameter BF16 placement attach original CPU rotary module and use only device transfer. Functional helper reconstructs CPU FP32 frequencies and preserves FP32 through transfer; remove BF16 roundtrip. Inspect buffer dtype/device before forecasts as profile metadata, never import native cosine/sine activation as prediction input.",
+  "reviewed_at_utc": "2026-11-06T10:56:46.186741+00:00",
+  "runtime": {
+    "device": "cpu",
+    "torch": "2.13.0",
+    "transformers": "5.14.1"
+  },
+  "schema": "mdb-qwen-rope-loader-review-astra-v1",
+  "source_explanation": [
+    "Qwen constructor explicitly creates frequencies with int64 arange then dtype=torch.float before power; this overrides local default BF16.",
+    "Loader creates/moves nonpersistent buffers using empty_like preserving dtype, followed by initialization; dtype=BF16 is not a blanket Module.to(BF16) on every explicitly typed buffer.",
+    "A module device-only move preserves floating dtype. Explicit dtype casting changes floating buffers."
+  ],
+  "source_sha256": {
+    "torch/nn/modules/module.py": "341153e4099444f923f5b0766e8e41b45fbe909b87f4737cb28c828f297b7baa",
+    "transformers/modeling_utils.py": "d8bf1879d6f582888b6cf47b4d63070260285a3bd1dc94ce7e1373304f74168a",
+    "transformers/models/qwen3/modeling_qwen3.py": "fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+  },
+  "status": "native-policy-resolved-with-tiny-checkpoint",
+  "tiny_config": {
+    "head_dim": 8,
+    "hidden_size": 24,
+    "intermediate_size": 40,
+    "num_attention_heads": 4,
+    "num_hidden_layers": 2,
+    "num_key_value_heads": 2,
+    "rope_theta": 1000000.0,
+    "tie_word_embeddings": true,
+    "vocab_size": 64
+  }
+}

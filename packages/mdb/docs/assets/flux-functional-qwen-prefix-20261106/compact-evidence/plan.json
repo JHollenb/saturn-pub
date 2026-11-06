@@ -1,0 +1,9 @@
+{
+  "directory_custody": true,
+  "native_manifest_sha256": "8fbc0ab394f77f289392a5440fd2ef1ab506ddc05de0476de2c6cba1b4a4de4d",
+  "native_request_sha256": "aacdb95dd43145d44f4a68c292a16764c6292d0b3b32236e223b58751c4b0d51",
+  "native_root": "/mnt/big/mdb/research/job-ebae1e4bd523/qwen-prefix-result",
+  "output_scratch": "/mnt/big/mdb/research",
+  "scope": "Two source-bound own-state Qwen prefix/conditioning forecasts and native component consumers; full saved arrays, exact recipes, no neural calls.",
+  "source_job": "job-ebae1e4bd523"
+}

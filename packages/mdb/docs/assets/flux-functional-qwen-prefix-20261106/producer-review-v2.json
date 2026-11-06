@@ -1,0 +1,71 @@
+{
+  "schema": "mdb-qwen-prefix-preflight-review-v1",
+  "supersedes": {
+    "path": "review-v1.json",
+    "sha256": "d21b079d7fbfd410079364a99b0033b13ceca85961048fca36ed7dc66da77e1f"
+  },
+  "review_status": "stage-only-ready-no-launch",
+  "native_execution": false,
+  "model_construction": false,
+  "request_sha256": "aacdb95dd43145d44f4a68c292a16764c6292d0b3b32236e223b58751c4b0d51",
+  "staged_run": "run-08",
+  "source_hashes": {
+    "worker": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+    "helper": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "launcher": "6f97a976eac136fad5adb3fb12daad1472292d9d9ab04a1fae3ba24ca0980411",
+    "qwen_parameter_manifest": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+    "qwen_source_binding": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+    "qwen_metadata_receipt": "6e88f25b9355d41b0918b4df071553ea35aead13fa8aabe49513121c832feacd"
+  },
+  "metadata_scope": {
+    "qwen_full_parameter_count": 398,
+    "qwen_functional_parameter_count": 298,
+    "qwen_reference_only_parameter_count": 100,
+    "qwen_selected_payload_bytes": 8044936192,
+    "conditioning_states": [9, 18, 27],
+    "full_layers": 36,
+    "retained_rows_per_prompt": 512,
+    "prompt_cases": 2,
+    "context_embedder_shape": [3072, 7680],
+    "context_embedder_bias": false,
+    "raw_rgb_or_vae_forecasts": 0
+  },
+  "custody_and_chronology": {
+    "forecast_sealed_before_native_targets": true,
+    "native_qwen_calls": 2,
+    "native_context_embedder_calls": 4,
+    "functional_native_module_forwards": 0,
+    "one_cuda_lease": true,
+    "retry": false,
+    "nested_submission": false,
+    "output_plan_and_request_are_persisted": true,
+    "context_weight_identity_before_after_checked": true,
+    "qwen_parameter_identity_before_after_checked": true
+  },
+  "resource_envelope": {
+    "device": "cuda",
+    "batch_size": 1,
+    "dtype": "bfloat16",
+    "ram_mb": 16384,
+    "vram_mb": 13000,
+    "cpu_threads": 4,
+    "max_wall_seconds": 1200,
+    "max_expanded_bytes": 2147483648,
+    "tokenizers_native_source_binding": "runtime-bound-on-CUDA-host",
+    "tokenizers_preparation_native_hash_is_diagnostic_only": true
+  },
+  "verification": {
+    "isolated_tests": "11 passed",
+    "py_compile": "passed",
+    "prior_canonical_ruff": "passed before final metadata-only patches",
+    "staging": "run-08 payload hash verification passed",
+    "payload_files": 23
+  },
+  "caveats": [
+    "No original Qwen construction, tokenizer forward, CUDA forecast, or native target was run during this review.",
+    "The worker records the actual Linux tokenizers extension hash at startup; the Darwin preparation hash is never used as a CUDA equality gate.",
+    "The native RoPE profile is constructor CPU FP32 followed by device-only movement, matching the observed from_pretrained(dtype=BF16).to(device) behavior; the helper keeps an explicit BF16 placement option only for v1 tiny parity.",
+    "The native kernel choice remains runtime-bound SDPA metadata, not an independent CUDA kernel claim.",
+    "The experiment is limited to Qwen conditioning formation and the native FLUX context_embedder component; it makes no RGB or full-session forecast claim."
+  ]
+}

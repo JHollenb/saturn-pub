@@ -1,0 +1,135 @@
+{
+  "all_source_hashes": {
+    "count-contract.json": "595cacc3f2e9cc7a7fe1b7443d24de09f7fb632b6e9923bbfc52a20b6d7aabcd",
+    "flux-parameter-artifacts.json": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb",
+    "flux-recipe-helper.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+    "flux-transformer-config.json": "09733c74a3da6d17dd0a0472a091a8950c7c6935889c32c16cc800ede05029de",
+    "flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "flux_functional_qwen_prefix_worker.py": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+    "flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "flux_source_receiver.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+    "plan.json": "f32c503fad43e36be07bf4fb7ed4c16b96e201415f04ffe182c8224cac6f503c",
+    "preflight.v1.json": "6ded36b1677829b89ef428f23528bd3744ca96be3908f59394142f9a988679b2",
+    "qwen-config.json": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+    "qwen-metadata-build-receipt.json": "6e88f25b9355d41b0918b4df071553ea35aead13fa8aabe49513121c832feacd",
+    "qwen-parameter-artifacts.json": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+    "qwen-recipe-helper.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+    "qwen-source-binding.json": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+    "retrieve_flux_weights.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+    "retrieve_qwen_weights.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae"
+  },
+  "blocking_issues": [],
+  "bounds": {
+    "member_bytes": 134217728,
+    "outer_timeout_seconds": 1500,
+    "raw_output_bytes": 2147483648,
+    "transaction_bytes": 536870912,
+    "weight_bank_persisted": false,
+    "worker_wall_seconds": 1200
+  },
+  "counts": {
+    "VAE_calls": 0,
+    "batch_size": 1,
+    "cases": 2,
+    "full_FLUX_transformer_calls": 0,
+    "functional_context_projection_calls": 2,
+    "functional_embedding_states": 2,
+    "functional_layer_transitions": 54,
+    "functional_prefix_calls": 2,
+    "functional_retained_hidden_states": 56,
+    "model_scheduler_leases": 1,
+    "native_context_component_calls": 4,
+    "native_final_norm_calls": 2,
+    "native_full_encoder_calls": 2,
+    "native_layer_transitions": 72,
+    "native_lm_head_calls": 2,
+    "noise_draws": 0,
+    "original_model_loads": 1,
+    "retries": 0
+  },
+  "goal_status": "active",
+  "holistic_cadence": "This is finite admission, not a holistic reset; next holistic review follows actual Qwen result/blog.",
+  "independent_checks": {
+    "canonical_request_identity": true,
+    "current_stager_hash": true,
+    "installed_runtime_intent_and_54_argument_Linux_command_reconstructed_without_submit": true,
+    "original_recipe_count": 398,
+    "original_recipe_payload_bytes": 8044936192,
+    "payload_config_and_byte_seal": true,
+    "payload_debug_request": true,
+    "sealed_package_zip_entries": {
+      "mdb": 188,
+      "mrun": 225,
+      "saturn_pub": 59,
+      "total": 472
+    },
+    "staged_17_source_hashes": true,
+    "submitter_source_read": true,
+    "synthetic_hydration_receipt_current_source_hashes": true,
+    "whole_3_wheel_hashes": true
+  },
+  "launch_conditions": [
+    "Use the reviewed submit_reviewed.py source hash and unchanged staged bytes; it checks exact review/request/source/wheels before one strict guarded launch and persists actual argv.",
+    "Preserve failed/rejected admission attempts if any; no automatic retry or nested jobs.",
+    "Do not promote numerical conclusions before final saved-only audit qualification and actual authenticated collection."
+  ],
+  "pins": {
+    "helper": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "hydration_qualification": "780f783df7b4f4c67661e57249af5bc9c507080d0884129259444e6caddd2fd5",
+    "native_loader_profile_manifest": "af884ae5e9a72534fd3584011fb777c7c0268e2d09d62891954eb73a45ea057e",
+    "payload_seal": "2f38eb3263c34027c2f3150b03bbc717ea9b1c228f285a5d1b0cc0af295b9136",
+    "review_v2": "82b66e0026e5a2a603b4d4a7971094649e22d28d462725d8ef6c3993320a971c",
+    "stager": "6f97a976eac136fad5adb3fb12daad1472292d9d9ab04a1fae3ba24ca0980411",
+    "submitter": "ca0a68c0ed410b177024a8e1595a0612e2d668bc5c497b6038202d5ae71cc224",
+    "worker": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0"
+  },
+  "qualification": {
+    "cuda_calls_by_reviewer": 0,
+    "independent_hydration": "1 actual-loader synthetic CPU checkpoint test,2.68s, unequal widths and nontrivial FP32 rotary, all parameters/buffers/tied alias, full4-layer reference/interior prefix states and masked repeat_kv; exact current source pins",
+    "original_model_calls_by_reviewer": 0,
+    "producer_review": "11 isolated tests and stage verification reported in review-v2; not rerun by reviewer"
+  },
+  "reporting_limits": [
+    "Bounded raw-prompt conditioning formation and first native context projection only, not raw-prompt-to-image closure or a new semantic dictionary.",
+    "Tokenizer/template execution is a pinned reused deterministic parser dependency, not an independently implemented tokenizer.",
+    "Original Torch kernels and weights are reused in explicitly composed recurrence; no independent CUDA-kernel or universal numerical-profile claim.",
+    "Runtime SDPA/GQA metadata describes the configured Transformers dispatch; selected CUDA kernel and actual native mask/GQA ports are not individually observed in this worker. Do not claim such primitive port fidelity.",
+    "Helper profile.rope_source contains stale prose saying CPU-FP32 to BF16 placement. Authoritative production rope_buffer_policy is FP32 and executed source implements FP32. Preserve this metadata discrepancy in interpretation rather than describing native buffers as BF16.",
+    "Primitive counts beyond explicit encoder/context entries are source-derived call census, not an instrumented all-primitive counter ledger.",
+    "Native and predicted conditioning share all512 rows; active/padded subsets may be reported alongside wholefield errors, never silently discarded.",
+    "Endpoints are prospective for these fixed raw prompts and profile. Two cases do not establish generality over prompts, templates, masks, positions, devices, or backend policies."
+  ],
+  "request_file_sha256": "4572825ccd3b5ed13761751fe6af15ba9140fd6c4624aff1eae1eec4f4e20a17",
+  "request_sha256": "aacdb95dd43145d44f4a68c292a16764c6292d0b3b32236e223b58751c4b0d51",
+  "resource_assessment": "Plausible finite envelope:8.04GB BF16 resident Qwen plus47MB context matrix, sequential B1=512 hidden states and transient full-vocabulary logits; per-recipe CPU hydration avoids8GB CPU duplicate.16GB RAM/13,000MB VRAM/4CPU/600s estimate; no direct production Qwen measurement yet. Strict scheduler preflight and actual reservation inspection remain required.",
+  "resources": {
+    "calibration": "No original execution in preparation. RAM16GiB is a conservative working-set bound for a meta-constructed 8.04GB BF16 Qwen resident plus CUDA/runtime/transient logits and tokenizer; VRAM13GiB is a declared measured-envelope candidate to be admitted/observed by mrun, with no no-clamp or resident-worker override.",
+    "cpu_threads": 4,
+    "disk_gb": 8,
+    "est_wall_s": 600,
+    "ram_mb": 16384,
+    "timeout_s": 1500,
+    "vram_mb": 13000
+  },
+  "review_scope": "Native execution admission for exactly one prospective CUDA conditioning cohort; not a completed-results verdict or final saved-only numerical audit.",
+  "review_status": "ready-for-finite-run",
+  "reviewed_at_utc": "2026-11-06T11:09:42.078545+00:00",
+  "reviewer": "context_carriers_astra",
+  "runtime_wheels": {
+    "mdb_runtime-0.1.0-py3-none-any.whl": "4b1b965dce45883cabcb24ab2c11702ce748aeb1658776596be27b405df26d21",
+    "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+    "saturn_pub-0.4.1-py3-none-any.whl": "c32bbcf5c5b45e4970d9c750266f607b2a9b0f06dc982106fd82e0501375e424"
+  },
+  "saved_only_auditor_status": "Final exact-schema fixture qualification and source freeze pending at native admission review. Agent reports previous14-check synthetic cohort passed; no claim final numerical audit already qualified. This does not prevent safely retaining the prospective native cohort; later results require accepted bound saved-only audit.",
+  "schema": "mdb-qwen-prefix-finite-review-astra-v1",
+  "source_findings": [
+    "Production native model is meta-constructed, cast to BF16 before allocating storage, hydrated from all398 original named recipes, and tied lm_head alias is restored. No native hidden state is used by the functional recurrence.",
+    "Original rotary module is reattached after BF16 model placement from its CPU FP32 constructor and then moved device-only; helper independently reconstructs CPU FP32 inverse frequencies and preserves their dtype. The old BF16-buffer assumption is not imposed on the native reference.",
+    "Unequal Qwen hidden2560 and attention4096 widths are explicit. Native36-layer reference keeps selected9/18/27 as post8/17/26 interior outputs, not final-normalized output.",
+    "Two original raw prompts are tokenized with copied bound template/tokenizer files; actual Linux tokenizers extension hash is recorded before forecasts and included in sealed runtime source inventory. Darwin extension hash is diagnostic only.",
+    "Two complete own-state embedding plus27-block forecasts, selected conditioning E and context linear results are sealed globally before two full Qwen3ForCausalLM calls. Native full references include layers27..35, final norm and tied LM head; retained prefix states number28 per case.",
+    "All512 rows including padded queries are retained. Four native context_embedder operand hashes permit comparison of consumed predicted/reference E with recorded sealed BF16 bit arrays.",
+    "Helper guards reject native Qwen module entry during functional recurrence. The broader no-target-before-seal claim also relies on inspected trusted worker call ordering; this is not a sandbox against malicious hidden calls.",
+    "All numerical discrepancies remain observations; forecasts do not require exact native numerical parity as an execution gate."
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "job_id": "job-c9d79d1d8d9e",
+  "mechanics_status": "verified-saved-evidence",
+  "model_calls": 0,
+  "records": 2,
+  "request_sha256": "d26703bd0fdfba9b7da7e44703dda72664e9734ac6626a5007d41fcdf155ab4e",
+  "schema": "mdb-functional-qwen-prefix-compact-v1",
+  "seconds": 41.4123140219599,
+  "source_job": "job-ebae1e4bd523"
+}

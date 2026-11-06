@@ -1,0 +1,22 @@
+{
+  "dependent_prompts": 2,
+  "family_induction": false,
+  "queries": [
+    {
+      "case": "prompt-00",
+      "changed_input": 0,
+      "exact": 1,
+      "fingerprint": "9d26e7864d3bed15e87b477be92b3832e35bdf90efcfaa4d96498b27f1506284",
+      "missing_mask": 0
+    },
+    {
+      "case": "prompt-01",
+      "changed_input": 0,
+      "exact": 1,
+      "fingerprint": "5b04b5ac7e6a8587bc02373c5af9fdcc5e22d3f8fea0b30822a76e2ee6f767ba",
+      "missing_mask": 0
+    }
+  ],
+  "records": 2,
+  "scope": "Two conditioning-plus-component forecast occurrences; complete per-hidden errors remain in audit, not independent replications."
+}

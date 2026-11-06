@@ -1,0 +1,381 @@
+{
+  "actual_predicted_E_minus_reference_E_consumer": {
+    "prompt-00": {
+      "bitwise_exact": true,
+      "changed_values": 0,
+      "cosine": 1.0,
+      "denominator": "RMS of same native field",
+      "dot": 507158293.2538351,
+      "maxabs": 0.0,
+      "native_rms": 17.956685637548514,
+      "native_signed_mean": -0.03304964463678554,
+      "orientation": "native context_embedder(predicted E) minus native context_embedder(reference E)",
+      "p95": 0.0,
+      "p99": 0.0,
+      "predicted_rms": 17.956685637548514,
+      "predicted_signed_mean": -0.03304964463678554,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "sample_count": 1572864,
+      "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+      "shape": [
+        1,
+        512,
+        3072
+      ],
+      "signed_mean": 0.0,
+      "worst": {
+        "coordinate": [
+          0,
+          0,
+          0
+        ],
+        "native": 64.5,
+        "predicted": 64.5,
+        "signed_error": 0.0
+      }
+    },
+    "prompt-01": {
+      "bitwise_exact": true,
+      "changed_values": 0,
+      "cosine": 1.0,
+      "denominator": "RMS of same native field",
+      "dot": 506540453.193586,
+      "maxabs": 0.0,
+      "native_rms": 17.945744536082554,
+      "native_signed_mean": -0.024586953953000073,
+      "orientation": "native context_embedder(predicted E) minus native context_embedder(reference E)",
+      "p95": 0.0,
+      "p99": 0.0,
+      "predicted_rms": 17.945744536082554,
+      "predicted_signed_mean": -0.024586953953000073,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "sample_count": 1572864,
+      "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+      "shape": [
+        1,
+        512,
+        3072
+      ],
+      "signed_mean": 0.0,
+      "worst": {
+        "coordinate": [
+          0,
+          0,
+          0
+        ],
+        "native": 64.5,
+        "predicted": 64.5,
+        "signed_error": 0.0
+      }
+    }
+  },
+  "audit_sha256": "9b046d95d7cc1c56a8d0e0c1aa628e6a4bc69b7d0f11d3e10fa625295b38eac5",
+  "catalog_cli": [
+    {
+      "case": "prompt-01",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-qwen-prefix-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen-prefix.prompt-01",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-qwen-prefix-20261106/saved-report-verification-v1/prompt-01.exact.context.json"
+      ],
+      "context_sha256": "fe1e5bf987011821999fd87e4f9abf017a5f4f25cee42d216de171a11a00be83",
+      "kind": "exact",
+      "output_sha256": "1cf57c85c0044c7fccbda010c4d284d6e488bc146867a082343bc35874a7b372",
+      "results": 1
+    },
+    {
+      "case": "prompt-01",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-qwen-prefix-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen-prefix.prompt-01",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-qwen-prefix-20261106/saved-report-verification-v1/prompt-01.changed-input.context.json"
+      ],
+      "context_sha256": "6eeba5999ef07ebd51600067848c5e9d2701c07a2a4f33bcccfbd9416d52be64",
+      "kind": "changed-input",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "case": "prompt-01",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-qwen-prefix-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen-prefix.prompt-01",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-qwen-prefix-20261106/saved-report-verification-v1/prompt-01.missing-mask.context.json"
+      ],
+      "context_sha256": "6bbc4ae3199252db21ea94c36eda447805f96b1c27ca2e73416e73769fbe4821",
+      "kind": "missing-mask",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "case": "prompt-00",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-qwen-prefix-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen-prefix.prompt-00",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-qwen-prefix-20261106/saved-report-verification-v1/prompt-00.exact.context.json"
+      ],
+      "context_sha256": "3da03445135ce4cf2891c795171b17147f50b400d8798c39fdc6c510cd823027",
+      "kind": "exact",
+      "output_sha256": "d306843a202931dc00f4593883a49331b77cffe9e86f83a2e675825e481823c5",
+      "results": 1
+    },
+    {
+      "case": "prompt-00",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-qwen-prefix-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen-prefix.prompt-00",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-qwen-prefix-20261106/saved-report-verification-v1/prompt-00.changed-input.context.json"
+      ],
+      "context_sha256": "fbc8c3accd9145214b538af24ed42cbda2348f8660703ccc753e4c12e88b1edb",
+      "kind": "changed-input",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "case": "prompt-00",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-qwen-prefix-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.qwen-prefix.prompt-00",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-qwen-prefix-20261106/saved-report-verification-v1/prompt-00.missing-mask.context.json"
+      ],
+      "context_sha256": "a102ae3dd311a190700b9d37a59ddb4e71e2e097e10ce20127a24940789ad86c",
+      "kind": "missing-mask",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    }
+  ],
+  "collection": {
+    "archive_bytes": 338127,
+    "archive_sha256": "ee8abe0fa00b0b4cb931294c4b05aece834904876717403060638a19c4bac2a8",
+    "collection_encoder": {
+      "schema": "mdb-explicit-recovery-encoder-v1",
+      "scope": "Collection-only encoder supplied by a separately request-sealed run. Original worker payload/request remain unchanged.",
+      "sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+      "source_request_sha256": "2339ecdb754e0104418b463397b4cb2121a4bbb1c9646d390e56cee3f0fe1e2e"
+    },
+    "expanded_bytes": 1853396,
+    "file_count": 31,
+    "files_manifest_sha256": "24758521de1d267d4c5b70c447d63d9534a3b4a1ee8375e07e46f0c5b1637629",
+    "job_id": "job-c9d79d1d8d9e",
+    "pointer_sha256": "6fa08a53e4b2c6ae70f8923bb4e0147d89c39489290d4de96ecb46ebc7d6b904",
+    "raw_tensor_arrays_collected": false,
+    "request_sha256": "d26703bd0fdfba9b7da7e44703dda72664e9734ac6626a5007d41fcdf155ab4e",
+    "schema": "mdb-qwen-prefix-compact-retrieval-v1"
+  },
+  "compact_manifest_sha256": "24758521de1d267d4c5b70c447d63d9534a3b4a1ee8375e07e46f0c5b1637629",
+  "coverage_limits": {
+    "actual_context_consumer_inputs": "Full raw content hashes from native prehooks",
+    "all_query_rows": 512,
+    "full_conditioning": true,
+    "full_hidden_states_per_lane_per_case": 28,
+    "original_native_strides_retained": false,
+    "primitive_arrays_retained": false,
+    "primitive_checkpoint_scope": "This producer exports complete hidden/E/consumer fields, not an all-primitive hash/witness trace; no unrecorded primitive norm or dispatch-kernel identity is inferred."
+  },
+  "dependent_repeated_coordinates": true,
+  "first_bits": {
+    "prompt-00": null,
+    "prompt-01": null
+  },
+  "first_values": {
+    "prompt-00": null,
+    "prompt-01": null
+  },
+  "interpretation": "Complete own-state prefix and first context component match in two prospective prompts under shared native numerical primitives. No whole image, independent kernel arithmetic or semantic attribution claim.",
+  "native_job": {
+    "elapsed_s": 95.23,
+    "executed_payload_sha256": "477ab27d4e54381bbf86d501e1087d4bea140fb6c9be484d498211d30edd9bdd",
+    "job_id": "job-ebae1e4bd523",
+    "job_sha256": "d031b1bcb96c43b62235929b03770e368e325a3a24bc78b0eab629ce3fc512ca",
+    "peak_rss_mb": 4461.6,
+    "peak_vram_mb": 8790.0,
+    "request_sha256": "aacdb95dd43145d44f4a68c292a16764c6292d0b3b32236e223b58751c4b0d51",
+    "reservation": {
+      "cpu_threads": 4,
+      "disk_gb": 8.0,
+      "est_wall_s": 600.0,
+      "ram_mb": 16384.0,
+      "vram_mb": 13000.0
+    },
+    "state": "succeeded",
+    "worker_log_sha256": "ff2266bf95f68dcdd0c2a7ec8561398daea1d022c588ef62625d472b269ba903"
+  },
+  "primary": {
+    "bitwise_exact_fields": 60,
+    "changed_values": 0,
+    "field_comparisons": 60,
+    "max_rms": 0.0,
+    "maxabs": 0.0,
+    "scalar_positions": 84410368
+  },
+  "query_rows": {
+    "prompt-00": {
+      "attended": 37,
+      "padded": 475
+    },
+    "prompt-01": {
+      "attended": 37,
+      "padded": 475
+    }
+  },
+  "raw_arrays_downloaded": false,
+  "same_predicted_E_component_closure": {
+    "prompt-00": {
+      "bitwise_exact": true,
+      "changed_values": 0,
+      "cosine": 1.0,
+      "denominator": "RMS of same native field",
+      "dot": 507158293.2538351,
+      "maxabs": 0.0,
+      "native_rms": 17.956685637548514,
+      "native_signed_mean": -0.03304964463678554,
+      "orientation": "functional-minus-native",
+      "p95": 0.0,
+      "p99": 0.0,
+      "predicted_rms": 17.956685637548514,
+      "predicted_signed_mean": -0.03304964463678554,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "sample_count": 1572864,
+      "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+      "shape": [
+        1,
+        512,
+        3072
+      ],
+      "signed_mean": 0.0,
+      "worst": {
+        "coordinate": [
+          0,
+          0,
+          0
+        ],
+        "native": 64.5,
+        "predicted": 64.5,
+        "signed_error": 0.0
+      }
+    },
+    "prompt-01": {
+      "bitwise_exact": true,
+      "changed_values": 0,
+      "cosine": 1.0,
+      "denominator": "RMS of same native field",
+      "dot": 506540453.193586,
+      "maxabs": 0.0,
+      "native_rms": 17.945744536082554,
+      "native_signed_mean": -0.024586953953000073,
+      "orientation": "functional-minus-native",
+      "p95": 0.0,
+      "p99": 0.0,
+      "predicted_rms": 17.945744536082554,
+      "predicted_signed_mean": -0.024586953953000073,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "sample_count": 1572864,
+      "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+      "shape": [
+        1,
+        512,
+        3072
+      ],
+      "signed_mean": 0.0,
+      "worst": {
+        "coordinate": [
+          0,
+          0,
+          0
+        ],
+        "native": 64.5,
+        "predicted": 64.5,
+        "signed_error": 0.0
+      }
+    }
+  },
+  "saved_only_job": {
+    "elapsed_s": 52.68,
+    "executed_payload_sha256": "e0813e62fd3c97b6e40596970ce2386d489de54ed8643473fd354c8e751d0ff7",
+    "job_id": "job-c9d79d1d8d9e",
+    "job_sha256": "66e865812cd0fd7f6cef962f385918671a50434b920f7c053b05e7971bf8b7fc",
+    "peak_rss_mb": 1851.9,
+    "peak_vram_mb": 0.0,
+    "request_sha256": "d26703bd0fdfba9b7da7e44703dda72664e9734ac6626a5007d41fcdf155ab4e",
+    "reservation": {
+      "cpu_threads": 2,
+      "disk_gb": 1.0,
+      "est_wall_s": 120.0,
+      "ram_mb": 3072.0,
+      "vram_mb": 0.0
+    },
+    "state": "succeeded",
+    "worker_log_sha256": "9dd70335cbe749da7dad53cdbf130cb28584e3025cbdc344d216cce6bf983387"
+  },
+  "schema": "mdb-qwen-prefix-actual-saved-report-verification-v1",
+  "signed_prompt_responses": {
+    "changed_values": 0,
+    "fields": 30,
+    "maxabs": 0.0,
+    "scalar_positions": 42205184
+  }
+}

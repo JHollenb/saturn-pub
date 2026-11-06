@@ -1,0 +1,53 @@
+{
+  "actual_compact_authentication": {
+    "arrays_loaded": false,
+    "fields_per_case": 30,
+    "manifest_sha256": "24758521de1d267d4c5b70c447d63d9534a3b4a1ee8375e07e46f0c5b1637629",
+    "native_job": "job-ebae1e4bd523",
+    "publication_written": false,
+    "records": 2,
+    "verified": true
+  },
+  "actual_publication_executed": false,
+  "execution": "attempt-01/execution.json",
+  "execution_sha256": "3c86cbcf909aeba864900b0becab7abca746e6060eb01296d61ff508af327c87",
+  "original_auditor_unchanged": true,
+  "pytest_summary": "4 passed in 8.00s",
+  "ruff": {
+    "command": [
+      "/Users/jakeholl/domains/common/.venv/bin/ruff",
+      "check",
+      "--select",
+      "F,I",
+      "--config",
+      "pyproject.toml",
+      "qualification/publish_flux_functional_qwen_prefix.py",
+      "tests/test_publish_flux_functional_qwen_prefix.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "returncode": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  },
+  "schema": "mdb-qwen-prefix-publisher-qualification-v1",
+  "scope": "Synthetic saved-report fixture only; no original data, weights, neural calls, model equations or jobs. Frozen audit reader creates the compact fixture; only the four new publisher checks are run.",
+  "source_sha256": {
+    "qualification/publish_flux_functional_qwen_prefix.py": "09eeee389f3cc12c74e05b8937dfffb450f92282c1ad42364e634f0cec517d0e",
+    "tests/test_publish_flux_functional_qwen_prefix.py": "454f534d6c60539e54074398fd96b63d2b2995b480bb3407c58d58003d37ff16"
+  },
+  "status": "passed",
+  "tests": 4,
+  "visual_qa": {
+    "checked": [
+      "hidden-errors.png",
+      "conditioning-errors.png",
+      "prompt-responses.png"
+    ],
+    "fixture": "attempt-01/tmp/test_countertrends_undefined_a0/figures",
+    "labels_visible": true,
+    "negative_cosine_and_signed_mean_visible": true,
+    "no_clipped_data": true,
+    "zeros_and_undefined_retained": true
+  },
+  "wall_seconds": 8.66201400756836
+}

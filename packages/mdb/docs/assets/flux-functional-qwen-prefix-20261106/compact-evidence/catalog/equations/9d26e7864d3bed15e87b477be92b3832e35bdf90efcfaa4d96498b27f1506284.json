@@ -1,0 +1,198 @@
+{
+  "alias": "cmp.qwen-prefix.prompt-00",
+  "applicability_authority": "supplied; no generalization inferred",
+  "applicability_conditions": [
+    {
+      "field": "case",
+      "op": "eq",
+      "value": "prompt-00"
+    },
+    {
+      "field": "input_identity",
+      "op": "eq",
+      "value": "cef86fcaa39a5da3a3477138f21c42bdf05025a7162beafd755462fcf8583103"
+    },
+    {
+      "field": "mask_identity",
+      "op": "eq",
+      "value": "c8ff653dc6cdd5adcdabdf409af9a30ea2bfd5ee4573919230877318e3e0f276"
+    },
+    {
+      "field": "raw_prompt_identity",
+      "op": "eq",
+      "value": "7bddb7ae0dce80ce32a1df9dd6db0ff92646eec693eb8329651a76f2e9aaac99"
+    },
+    {
+      "field": "source_request",
+      "op": "eq",
+      "value": "aacdb95dd43145d44f4a68c292a16764c6292d0b3b32236e223b58751c4b0d51"
+    },
+    {
+      "field": "qwen_manifest",
+      "op": "eq",
+      "value": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374"
+    },
+    {
+      "field": "flux_manifest",
+      "op": "eq",
+      "value": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb"
+    },
+    {
+      "field": "helper",
+      "op": "eq",
+      "value": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a"
+    },
+    {
+      "field": "frontier",
+      "op": "eq",
+      "value": "tokenized prospective prompt before native encoder"
+    },
+    {
+      "field": "horizon",
+      "op": "eq",
+      "value": {
+        "consumer": "context_embedder",
+        "prefix_layers": 27,
+        "selected": [
+          9,
+          18,
+          27
+        ]
+      }
+    }
+  ],
+  "binding": {
+    "execution": {
+      "dtype": "torch.bfloat16",
+      "id": "mdb-flux-functional-qwen-prefix-v1"
+    },
+    "frontier": "tokenized prospective prompt before native encoder",
+    "horizon": {
+      "consumer": "context_embedder",
+      "prefix_layers": 27,
+      "selected": [
+        9,
+        18,
+        27
+      ]
+    },
+    "input_identity": "cef86fcaa39a5da3a3477138f21c42bdf05025a7162beafd755462fcf8583103",
+    "model_identity": "qwen3-flux2-klein-4b-original",
+    "source_identity": "aacdb95dd43145d44f4a68c292a16764c6292d0b3b32236e223b58751c4b0d51"
+  },
+  "evidence": {
+    "audit_sha256": "9b046d95d7cc1c56a8d0e0c1aa628e6a4bc69b7d0f11d3e10fa625295b38eac5",
+    "dependent_prompts": 2,
+    "independent_kernel_arithmetic": false
+  },
+  "fingerprint": "9d26e7864d3bed15e87b477be92b3832e35bdf90efcfaa4d96498b27f1506284",
+  "law_id": "law.qwen3.own-state-prefix-and-context-projection.v1",
+  "observation_unit": "one caller-bound comparison, not independent tasks",
+  "readers": [
+    "native Qwen full encoder reference",
+    "actual context_embedder component"
+  ],
+  "report": {
+    "decision_fields": 0,
+    "decision_mismatches": 0,
+    "fields": {
+      "conditioning": {
+        "decisions": {
+          "rule": "none",
+          "status": "not-requested"
+        },
+        "residual": {
+          "elements": 3932160,
+          "l2": 0.0,
+          "largest": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "signed": 0.0
+          },
+          "max_abs": 0.0,
+          "maximum_signed": 0.0,
+          "minimum_signed": 0.0,
+          "nonzero": 0,
+          "shape": [
+            1,
+            512,
+            7680
+          ],
+          "signed_mean": 0.0,
+          "signed_sum": 0.0
+        },
+        "shape": [
+          1,
+          512,
+          7680
+        ]
+      },
+      "projected": {
+        "decisions": {
+          "rule": "none",
+          "status": "not-requested"
+        },
+        "residual": {
+          "elements": 1572864,
+          "l2": 0.0,
+          "largest": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "signed": 0.0
+          },
+          "max_abs": 0.0,
+          "maximum_signed": 0.0,
+          "minimum_signed": 0.0,
+          "nonzero": 0,
+          "shape": [
+            1,
+            512,
+            3072
+          ],
+          "signed_mean": 0.0,
+          "signed_sum": 0.0
+        },
+        "shape": [
+          1,
+          512,
+          3072
+        ]
+      }
+    },
+    "fingerprint": "2ddb82cbd427747224328ba15fd52192853a47b0ea22e7cf3b4c210c30aa6475",
+    "max_abs": 0.0,
+    "mechanics_status": "valid",
+    "residual_direction": "observed-minus-predicted",
+    "schema": "mdb-equation-comparison-v1",
+    "target_scope": "unassigned",
+    "terminal_status": "unassessed"
+  },
+  "route_id": "route.qwen3.shared-torch-primitives.prefix.v1",
+  "schema": "mdb-equation-record-v1",
+  "tested_context": {
+    "case": "prompt-00",
+    "flux_manifest": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb",
+    "frontier": "tokenized prospective prompt before native encoder",
+    "helper": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "horizon": {
+      "consumer": "context_embedder",
+      "prefix_layers": 27,
+      "selected": [
+        9,
+        18,
+        27
+      ]
+    },
+    "input_identity": "cef86fcaa39a5da3a3477138f21c42bdf05025a7162beafd755462fcf8583103",
+    "mask_identity": "c8ff653dc6cdd5adcdabdf409af9a30ea2bfd5ee4573919230877318e3e0f276",
+    "qwen_manifest": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+    "raw_prompt_identity": "7bddb7ae0dce80ce32a1df9dd6db0ff92646eec693eb8329651a76f2e9aaac99",
+    "source_request": "aacdb95dd43145d44f4a68c292a16764c6292d0b3b32236e223b58751c4b0d51"
+  }
+}

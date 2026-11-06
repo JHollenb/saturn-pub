@@ -1,0 +1,146 @@
+{
+  "prompt-00": {
+    "full_flux_transformer_calls": 0,
+    "native_component": "Flux2Transformer2DModel.context_embedder (nn.Linear, bias=False)",
+    "predicted_input": {
+      "all_rows_retained": true,
+      "bytes": 7864448,
+      "case": "prompt-00",
+      "content_sha256": "1ec4064ea6bfd64b377a9298a3ffc7d84b29c0919195da88ff722332fa6734a1",
+      "index": null,
+      "kind": "forecast-conditioning",
+      "logical_dtype": "torch.bfloat16",
+      "path": "arrays/prompt-00/forecast-conditioning.npy",
+      "sha256": "025fc0792ef8717d19b8d5e4eb9b0245727c432eeef308d02dc708ff9eb007db",
+      "shape": [
+        1,
+        512,
+        7680
+      ],
+      "stored_dtype": "uint16"
+    },
+    "predicted_output": {
+      "all_rows_retained": true,
+      "bytes": 3145856,
+      "case": "prompt-00",
+      "content_sha256": "4d518318233ecb0f014e5197d977aa4c85ecdb7549956edb453f212e3011818a",
+      "index": null,
+      "kind": "native-context-from-predicted",
+      "logical_dtype": "torch.bfloat16",
+      "path": "arrays/prompt-00/native-context-from-predicted.npy",
+      "sha256": "e69d11b7a411fa7caa756f2e3f670dd817f1eb3dbe533a47c77c44e3d09a1c69",
+      "shape": [
+        1,
+        512,
+        3072
+      ],
+      "stored_dtype": "uint16"
+    },
+    "reference_input": {
+      "all_rows_retained": true,
+      "bytes": 7864448,
+      "case": "prompt-00",
+      "content_sha256": "1ec4064ea6bfd64b377a9298a3ffc7d84b29c0919195da88ff722332fa6734a1",
+      "index": null,
+      "kind": "native-conditioning",
+      "logical_dtype": "torch.bfloat16",
+      "path": "arrays/prompt-00/native-conditioning.npy",
+      "sha256": "025fc0792ef8717d19b8d5e4eb9b0245727c432eeef308d02dc708ff9eb007db",
+      "shape": [
+        1,
+        512,
+        7680
+      ],
+      "stored_dtype": "uint16"
+    },
+    "reference_output": {
+      "all_rows_retained": true,
+      "bytes": 3145856,
+      "case": "prompt-00",
+      "content_sha256": "4d518318233ecb0f014e5197d977aa4c85ecdb7549956edb453f212e3011818a",
+      "index": null,
+      "kind": "native-context-from-reference",
+      "logical_dtype": "torch.bfloat16",
+      "path": "arrays/prompt-00/native-context-from-reference.npy",
+      "sha256": "e69d11b7a411fa7caa756f2e3f670dd817f1eb3dbe533a47c77c44e3d09a1c69",
+      "shape": [
+        1,
+        512,
+        3072
+      ],
+      "stored_dtype": "uint16"
+    }
+  },
+  "prompt-01": {
+    "full_flux_transformer_calls": 0,
+    "native_component": "Flux2Transformer2DModel.context_embedder (nn.Linear, bias=False)",
+    "predicted_input": {
+      "all_rows_retained": true,
+      "bytes": 7864448,
+      "case": "prompt-01",
+      "content_sha256": "00434a9dea9e18a412d9753b1884e01767fbe7fe9e015a45241eca2de659ea42",
+      "index": null,
+      "kind": "forecast-conditioning",
+      "logical_dtype": "torch.bfloat16",
+      "path": "arrays/prompt-01/forecast-conditioning.npy",
+      "sha256": "352064af034d7a5e8d2635321b4294ce3a0d7ec0ba80d7c0df3e421e1b59b0ed",
+      "shape": [
+        1,
+        512,
+        7680
+      ],
+      "stored_dtype": "uint16"
+    },
+    "predicted_output": {
+      "all_rows_retained": true,
+      "bytes": 3145856,
+      "case": "prompt-01",
+      "content_sha256": "1a7b67ec4dc80e5c50dcde82019ac21ca0495745ebbea485c97b36e892f2128d",
+      "index": null,
+      "kind": "native-context-from-predicted",
+      "logical_dtype": "torch.bfloat16",
+      "path": "arrays/prompt-01/native-context-from-predicted.npy",
+      "sha256": "e4e3441918026bfb924457c144ddbeac28b1615e804535682b5de58f5aad853a",
+      "shape": [
+        1,
+        512,
+        3072
+      ],
+      "stored_dtype": "uint16"
+    },
+    "reference_input": {
+      "all_rows_retained": true,
+      "bytes": 7864448,
+      "case": "prompt-01",
+      "content_sha256": "00434a9dea9e18a412d9753b1884e01767fbe7fe9e015a45241eca2de659ea42",
+      "index": null,
+      "kind": "native-conditioning",
+      "logical_dtype": "torch.bfloat16",
+      "path": "arrays/prompt-01/native-conditioning.npy",
+      "sha256": "352064af034d7a5e8d2635321b4294ce3a0d7ec0ba80d7c0df3e421e1b59b0ed",
+      "shape": [
+        1,
+        512,
+        7680
+      ],
+      "stored_dtype": "uint16"
+    },
+    "reference_output": {
+      "all_rows_retained": true,
+      "bytes": 3145856,
+      "case": "prompt-01",
+      "content_sha256": "1a7b67ec4dc80e5c50dcde82019ac21ca0495745ebbea485c97b36e892f2128d",
+      "index": null,
+      "kind": "native-context-from-reference",
+      "logical_dtype": "torch.bfloat16",
+      "path": "arrays/prompt-01/native-context-from-reference.npy",
+      "sha256": "e4e3441918026bfb924457c144ddbeac28b1615e804535682b5de58f5aad853a",
+      "shape": [
+        1,
+        512,
+        3072
+      ],
+      "stored_dtype": "uint16"
+    }
+  }
+}

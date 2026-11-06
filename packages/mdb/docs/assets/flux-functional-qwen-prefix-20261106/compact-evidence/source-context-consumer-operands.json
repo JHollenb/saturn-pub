@@ -1,0 +1,50 @@
+[
+  {
+    "consumer": "native context_embedder prehook operand",
+    "device": "cuda:0",
+    "dtype": "torch.bfloat16",
+    "ordinal": 0,
+    "sha256": "1ec4064ea6bfd64b377a9298a3ffc7d84b29c0919195da88ff722332fa6734a1",
+    "shape": [
+      1,
+      512,
+      7680
+    ]
+  },
+  {
+    "consumer": "native context_embedder prehook operand",
+    "device": "cuda:0",
+    "dtype": "torch.bfloat16",
+    "ordinal": 1,
+    "sha256": "1ec4064ea6bfd64b377a9298a3ffc7d84b29c0919195da88ff722332fa6734a1",
+    "shape": [
+      1,
+      512,
+      7680
+    ]
+  },
+  {
+    "consumer": "native context_embedder prehook operand",
+    "device": "cuda:0",
+    "dtype": "torch.bfloat16",
+    "ordinal": 2,
+    "sha256": "00434a9dea9e18a412d9753b1884e01767fbe7fe9e015a45241eca2de659ea42",
+    "shape": [
+      1,
+      512,
+      7680
+    ]
+  },
+  {
+    "consumer": "native context_embedder prehook operand",
+    "device": "cuda:0",
+    "dtype": "torch.bfloat16",
+    "ordinal": 3,
+    "sha256": "00434a9dea9e18a412d9753b1884e01767fbe7fe9e015a45241eca2de659ea42",
+    "shape": [
+      1,
+      512,
+      7680
+    ]
+  }
+]

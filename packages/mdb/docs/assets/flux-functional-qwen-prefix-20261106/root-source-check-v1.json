@@ -1,0 +1,17 @@
+{
+  "canonical_ruff": "passed after import-order-only worker-test correction",
+  "original_model_calls": 0,
+  "production_qualification": "11 producer checks plus independent one-test actual hydration; see pinned separate receipts",
+  "production_sources_unchanged": true,
+  "schema": "mdb-qwen-prefix-root-source-check-v1",
+  "source_note": "Root verified frozen payload sources and no production source was changed by lint repair.",
+  "source_sha256": {
+    "qualification/flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "qualification/flux_functional_qwen_prefix_worker.py": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+    "qualification/stage_flux_functional_qwen_prefix.py": "6f97a976eac136fad5adb3fb12daad1472292d9d9ab04a1fae3ba24ca0980411",
+    "tests/test_flux_functional_qwen_prefix.py": "de1c0f37a875caf81beb56922622ebb6f089f3be2488e30e46a32bf8f86d024e",
+    "tests/test_flux_functional_qwen_prefix_worker.py": "a8e7f1b1d73051dde9e7817eba3af8f0d5571dca5503e1d7d06bf532a9465205",
+    "tests/test_flux_qwen_prefix_hydration.py": "5baa2b842bb03b81a043e7af8eb9c32d4ab30359ef6c1a539d798bf48f6ce11a"
+  },
+  "worker_test_import_order_only": true
+}

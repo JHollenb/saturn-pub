@@ -1,0 +1,8 @@
+{"declared_tokenizer_class": "Qwen2TokenizerFast", "is_fast": true, "kind": "tokenizer_loaded", "metadata_tokenizer_class": "Qwen2Tokenizer", "retained_sources": 9, "seconds": 8.20159897301346, "tokenizer_class": "Qwen2Tokenizer"}
+{"kind": "qwen_model_hydrated", "model_loads": 1, "payload_reads": 398, "recipes": 398, "seconds": 57.037781851831824}
+{"kind": "context_component_hydrated", "native_class": "Linear", "seconds": 61.98022759798914, "shape": [3072, 7680]}
+{"active_rows": 37, "case": "prompt-00", "kind": "forecast_case_complete", "native_forwards": 0, "padded_rows": 475, "seconds": 69.9237995618023}
+{"active_rows": 37, "case": "prompt-01", "kind": "forecast_case_complete", "native_forwards": 0, "padded_rows": 475, "seconds": 70.57663150364533}
+{"kind": "forecast_globally_sealed", "native_encoder_calls": 0, "seal_sha256": "bd47e7ea1719d1e3c96eabe34939e1b5d20f7a44a2e04087bc3bc4135e97d980", "seconds": 71.09210530109704}
+{"case": "prompt-00", "context_calls": 2, "full_native_hidden_state_count": 37, "kind": "native_case_complete", "retained_hidden_states": 28, "seconds": 71.82621510885656}
+{"case": "prompt-01", "context_calls": 2, "full_native_hidden_state_count": 37, "kind": "native_case_complete", "retained_hidden_states": 28, "seconds": 72.32941196672618}

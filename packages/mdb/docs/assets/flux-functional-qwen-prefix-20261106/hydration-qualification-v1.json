@@ -1,0 +1,64 @@
+{
+  "canonical_ruff": {
+    "command": "ruff check --select F,I tests/test_flux_qwen_prefix_hydration.py",
+    "cwd": "saturn-pub/packages/mdb",
+    "status": "passed"
+  },
+  "checkout_imports": false,
+  "command": "python -I -B -m pytest -q tests/test_flux_qwen_prefix_hydration.py",
+  "coverage": {
+    "actual_worker_loader": "_load_qwen",
+    "all_buffers_materialized_and_finite": true,
+    "before_forward_parameter_bitchecks": 47,
+    "checkpoint_unchanged": true,
+    "constructor_rope_dtype": "float32",
+    "cuda_initializations": 0,
+    "forecast_module_entries": 0,
+    "interior_index_semantics_verified": true,
+    "masked_repeat_kv_verified": true,
+    "native_full_forwards": 1,
+    "native_reference": "synthetic save_pretrained then from_pretrained(dtype=bfloat16)",
+    "native_sdpa_calls": 4,
+    "nontrivial_rope_unrounded_verified": true,
+    "original_model_or_checkpoint_calls": 0,
+    "retained_hidden_states_compared": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "selected_conditioning_bitexact": true,
+    "streamed_learned_tensors": 46,
+    "tied_lm_head_alias_verified": true
+  },
+  "cwd": "/Users/jakeholl/domains/artifacts/mdb-flux-functional-qwen-prefix-20261106/hydration-qualification-v1/cohort",
+  "geometry": {
+    "attention_heads": 4,
+    "attention_width": 16,
+    "conditioning_width": 18,
+    "head_dim": 4,
+    "hidden_size": 6,
+    "intermediate_size": 12,
+    "kv_heads": 2,
+    "prefix_layers": 3,
+    "selected_hidden_states": [
+      1,
+      2,
+      3
+    ],
+    "sequence_length": 7,
+    "total_layers": 4,
+    "vocab_size": 37
+  },
+  "isolated": true,
+  "python": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+  "schema": "mdb-qwen-prefix-independent-hydration-qualification-v1",
+  "scope": "One synthetic CPU hydration/parity fixture only; no original checkpoint, original model, CUDA, staging or scientific job.",
+  "seconds": 2.68,
+  "source_sha256": {
+    "qualification/flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "qualification/flux_functional_qwen_prefix_worker.py": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+    "tests/test_flux_qwen_prefix_hydration.py": "5baa2b842bb03b81a043e7af8eb9c32d4ab30359ef6c1a539d798bf48f6ce11a"
+  },
+  "status": "1-passed"
+}
