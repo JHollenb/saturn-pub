@@ -1,0 +1,17 @@
+{
+  "hashed_roots": [
+    "run_flux_e18_custody_calibration.py",
+    "benchmark_flux_e18_custody.py",
+    "flux_image_tail_microscope.py",
+    "stage_flux_e18_custody_calibration.py",
+    "stage_qwen_block0_attention.py",
+    "plan.json",
+    "preflight.v1.json"
+  ],
+  "path_token_allowlist": [
+    "/mnt/big/mdb/research",
+    "e18-custody-calibration-result"
+  ],
+  "schema_version": "mrun-preflight-config-v1",
+  "synthetic_only_no_models_or_fabricated_receipts": true
+}

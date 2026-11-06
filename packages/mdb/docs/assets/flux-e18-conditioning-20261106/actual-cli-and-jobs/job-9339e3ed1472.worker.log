@@ -1,0 +1,104 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+Installed 65 packages in 1.81s
+MDB_EXECUTION_ENVIRONMENT={"cuda_driver": "NVIDIA GeForce RTX 4080, 580.159.03", "packages": {"Jinja2": "3.1.6", "MarkupSafe": "3.0.4", "PyYAML": "6.0.3", "Pygments": "2.21.0", "accelerate": "1.14.0", "annotated-doc": "0.0.5", "anyio": "4.15.1", "certifi": "2026.10.23", "charset-normalizer": "3.5.2", "click": "8.5.0", "cuda-bindings": "13.4.4", "cuda-pathfinder": "1.8.5", "cuda-toolkit": "13.0.3.0", "diffusers": "0.39.0", "filelock": "4.2.5", "fsspec": "2026.9.0", "h11": "0.16.0", "hf-xet": "1.8.0", "httpcore": "1.0.9", "httpx": "0.28.1", "huggingface_hub": "1.33.0", "idna": "3.20", "importlib_metadata": "10.1.0", "markdown-it-py": "4.2.0", "mdb-runtime": "0.1.0", "mdurl": "0.1.2", "mpmath": "1.3.0", "mrun-pub": "0.1.2", "networkx": "3.7", "numpy": "2.5.4", "nvidia-cublas": "13.1.1.3", "nvidia-cuda-cupti": "13.0.85", "nvidia-cuda-nvrtc": "13.0.88", "nvidia-cuda-runtime": "13.0.96", "nvidia-cudnn-cu13": "9.20.0.48", "nvidia-cufft": "12.0.0.61", "nvidia-cufile": "1.15.1.6", "nvidia-curand": "10.4.0.35", "nvidia-cusolver": "12.0.4.66", "nvidia-cusparse": "12.6.3.3", "nvidia-cusparselt-cu13": "0.8.1", "nvidia-nccl-cu13": "2.29.7", "nvidia-nvjitlink": "13.4.92", "nvidia-nvshmem-cu13": "3.4.5", "nvidia-nvtx": "13.0.85", "packaging": "26.3", "pillow": "13.0.0", "pip": "26.1.2", "psutil": "7.2.2", "regex": "2026.9.29", "requests": "2.34.2", "rich": "15.0.0", "safetensors": "0.8.0", "saturn-pub": "0.4.1", "setuptools": "84.2.1", "shellingham": "1.5.4", "sympy": "1.14.0", "tokenizers": "0.22.2", "torch": "2.13.0", "tqdm": "4.70.1", "transformers": "5.14.1", "triton": "3.7.1", "typer": "0.27.3", "typing_extensions": "4.16.0", "urllib3": "2.8.0", "zipp": "4.1.2"}, "python": "3.14.6", "resolved": {"LLM_MODELS_EXTRA_ROOT": "/mnt/big/llm-models", "TORCH_HOME": "/mnt/hdd8tb/mdb/torch", "UV_CACHE_DIR": "/mnt/hdd8tb/mdb/uv-cache", "UV_LINK_MODE": "symlink"}, "uv": "uv 0.12.6 (x86_64-unknown-linux-gnu)"}
+MDB_E18_CONDITIONING_BOOTSTRAP
+Timeout (0:02:00)!
+Thread 0x000079f4408fa740 [python] (most recent call first):
+  File "flux_source_receiver.py", line 126 in load
+  File "flux_raw_to_image.py", line 264 in _load_transformer
+  File "flux_e18_conditioning_act.py", line 430 in run
+  File "flux_e18_conditioning_act.py", line 639 in worker
+  File "flux_e18_conditioning_act.py", line 651 in main
+  File "flux_e18_conditioning_act.py", line 655 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 98 in _run_module_code
+  File "<frozen runpy>", line 294 in run_path
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/0m4IpDpPZ8kIiW-0/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 67 in main
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/0m4IpDpPZ8kIiW-0/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 73 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 203 in _run_module_as_main
+MDB_E18_PHASE {"component": "qwen", "direction": "cuda", "kind": "component_placement", "seconds": 186.89547448419034}
+MDB_E18_PHASE {"conditioning": {"device": "cuda:0", "dtype": "torch.bfloat16", "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094", "shape": [1, 512, 7680], "stride": [3932160, 7680, 1]}, "kind": "qwen_completed", "lane": "forecast", "native_qwen_calls": 0, "seconds": 196.50943750794977}
+Timeout (0:02:00)!
+Thread 0x000079f4408fa740 [python] (most recent call first):
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/0m4IpDpPZ8kIiW-0/lib/python3.14/site-packages/mdb/forward_recording.py", line 27 in tensor_descriptor
+  File "flux_raw_to_image.py", line 308 in _tensor_signature
+  File "flux_raw_to_image.py", line 325 in _component_signature
+  File "flux_e18_conditioning_act.py", line 452 in place
+  File "flux_e18_conditioning_act.py", line 322 in lane_phases
+  File "flux_e18_conditioning_act.py", line 551 in run
+  File "flux_e18_conditioning_act.py", line 639 in worker
+  File "flux_e18_conditioning_act.py", line 651 in main
+  File "flux_e18_conditioning_act.py", line 655 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 98 in _run_module_code
+  File "<frozen runpy>", line 294 in run_path
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/0m4IpDpPZ8kIiW-0/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 67 in main
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/0m4IpDpPZ8kIiW-0/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 73 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 203 in _run_module_as_main
+MDB_E18_PHASE {"component": "qwen", "direction": "cpu", "kind": "component_placement", "seconds": 218.1869815401733}
+MDB_E18_PHASE {"component": "flux", "direction": "cuda", "kind": "component_placement", "seconds": 238.00542249297723}
+MDB_E18_PHASE {"branch": "sham", "input_act_cut": "dda908d691f8f9bdd5ebabd14f782d61a020de8366fdc6d80f5b1a3fcf49bec6", "kind": "denoiser_branch_entry", "lane": "forecast", "seconds": 244.65743672288954}
+MDB_E18_PHASE {"branch": "sham", "kind": "denoiser_branch_complete", "lane": "forecast", "seconds": 264.3978028059937, "transitions": 112}
+MDB_E18_PHASE {"branch": "e18-zero", "input_act_cut": "e08ca953c7dcce6f443359fc4281a685c2c170122651c9f7da0d45745e2c64f2", "kind": "denoiser_branch_entry", "lane": "forecast", "seconds": 264.398012928199}
+MDB_E18_PHASE {"branch": "e18-zero", "kind": "denoiser_branch_complete", "lane": "forecast", "seconds": 280.32261782092974, "transitions": 112}
+MDB_E18_PHASE {"component": "flux", "direction": "cpu", "kind": "component_placement", "seconds": 309.87068782094866}
+MDB_E18_PHASE {"component": "vae", "direction": "cuda", "kind": "component_placement", "seconds": 310.2150296368636}
+MDB_E18_PHASE {"branch": "sham", "kind": "decoder_branch_complete", "lane": "forecast", "seconds": 318.89175901329145}
+MDB_E18_PHASE {"branch": "e18-zero", "kind": "decoder_branch_complete", "lane": "forecast", "seconds": 322.24049439514056}
+MDB_E18_PHASE {"component": "vae", "direction": "cpu", "kind": "component_placement", "seconds": 322.34041445329785}
+Timeout (0:02:00)!
+Thread 0x000079f4408fa740 [python] (most recent call first):
+  File "/home/beast/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/pathlib/__init__.py", line 771 in open
+  File "/home/beast/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/pathlib/__init__.py", line 777 in read_bytes
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/0m4IpDpPZ8kIiW-0/lib/python3.14/site-packages/saturn_pub/store.py", line 397 in load
+  File "flux_e18_conditioning_act.py", line 337 in seal_responses
+  File "flux_e18_conditioning_act.py", line 553 in run
+  File "flux_e18_conditioning_act.py", line 639 in worker
+  File "flux_e18_conditioning_act.py", line 651 in main
+  File "flux_e18_conditioning_act.py", line 655 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 98 in _run_module_code
+  File "<frozen runpy>", line 294 in run_path
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/0m4IpDpPZ8kIiW-0/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 67 in main
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/0m4IpDpPZ8kIiW-0/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 73 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 203 in _run_module_as_main
+MDB_E18_PHASE {"forecast_act_receipts": 2, "functional_transitions": 224, "kind": "forecast_globally_sealed", "native_module_entries": 0, "seal_sha256": "8f4818ade6207f05c5af0484b6c7815f25ec9a21197bec07456fa31633d2acab", "seconds": 352.6454726778902}
+MDB_E18_PHASE {"forecast_seal": "8f4818ade6207f05c5af0484b6c7815f25ec9a21197bec07456fa31633d2acab", "kind": "native_targets_released", "seconds": 354.97222498990595}
+MDB_E18_PHASE {"component": "qwen", "direction": "cuda", "kind": "component_placement", "seconds": 366.43709276616573}
+MDB_E18_PHASE {"forecast_seal": "8f4818ade6207f05c5af0484b6c7815f25ec9a21197bec07456fa31633d2acab", "kind": "native_qwen_entry", "seconds": 366.4380156490952}
+MDB_E18_PHASE {"conditioning": {"device": "cuda:0", "dtype": "torch.bfloat16", "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094", "shape": [1, 512, 7680], "stride": [3932160, 7680, 1]}, "kind": "qwen_completed", "lane": "native", "native_qwen_calls": 1, "seconds": 367.55476994113997}
+MDB_E18_PHASE {"component": "qwen", "direction": "cpu", "kind": "component_placement", "seconds": 382.9423257880844}
+MDB_E18_PHASE {"component": "flux", "direction": "cuda", "kind": "component_placement", "seconds": 396.608939033933}
+MDB_E18_PHASE {"branch": "sham", "input_act_cut": "dda908d691f8f9bdd5ebabd14f782d61a020de8366fdc6d80f5b1a3fcf49bec6", "kind": "denoiser_branch_entry", "lane": "native", "seconds": 402.0780256171711}
+MDB_E18_PHASE {"branch": "sham", "kind": "denoiser_branch_complete", "lane": "native", "seconds": 427.27687209518626, "transitions": 112}
+MDB_E18_PHASE {"branch": "e18-zero", "input_act_cut": "e08ca953c7dcce6f443359fc4281a685c2c170122651c9f7da0d45745e2c64f2", "kind": "denoiser_branch_entry", "lane": "native", "seconds": 427.2770621390082}
+MDB_E18_PHASE {"branch": "e18-zero", "kind": "denoiser_branch_complete", "lane": "native", "seconds": 451.1034403592348, "transitions": 112}
+Timeout (0:02:00)!
+Thread 0x000079f4408fa740 [python] (most recent call first):
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/0m4IpDpPZ8kIiW-0/lib/python3.14/site-packages/mdb/forward_recording.py", line 27 in tensor_descriptor
+  File "flux_raw_to_image.py", line 308 in _tensor_signature
+  File "flux_raw_to_image.py", line 325 in _component_signature
+  File "flux_e18_conditioning_act.py", line 444 in place
+  File "flux_e18_conditioning_act.py", line 322 in lane_phases
+  File "flux_e18_conditioning_act.py", line 575 in execute
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/0m4IpDpPZ8kIiW-0/lib/python3.14/site-packages/mdb/forecast_transaction.py", line 661 in execute
+  File "flux_e18_conditioning_act.py", line 579 in run
+  File "flux_e18_conditioning_act.py", line 639 in worker
+  File "flux_e18_conditioning_act.py", line 651 in main
+  File "flux_e18_conditioning_act.py", line 655 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 98 in _run_module_code
+  File "<frozen runpy>", line 294 in run_path
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/0m4IpDpPZ8kIiW-0/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 67 in main
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/0m4IpDpPZ8kIiW-0/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 73 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 203 in _run_module_as_main
+MDB_E18_PHASE {"component": "flux", "direction": "cpu", "kind": "component_placement", "seconds": 475.28286074101925}
+MDB_E18_PHASE {"component": "vae", "direction": "cuda", "kind": "component_placement", "seconds": 475.7924290942028}
+MDB_E18_PHASE {"branch": "sham", "kind": "decoder_branch_complete", "lane": "native", "seconds": 476.57920419005677}
+MDB_E18_PHASE {"branch": "e18-zero", "kind": "decoder_branch_complete", "lane": "native", "seconds": 476.85119357099757}
+MDB_E18_PHASE {"component": "vae", "direction": "cpu", "kind": "component_placement", "seconds": 476.9531545601785}
+MDB_DIRECTORY_READY {"expanded_bytes": 5057838426, "file_count": 2568, "files_manifest_sha256": "4d481f3b3b735a4a6814d21e10e87fbbb36759879bc5d46bc53f6c583443d70b", "job_id": "job-9339e3ed1472", "output_root": "/mnt/big/mdb/research/job-9339e3ed1472/e18-conditioning-result", "request_sha256": "491d0611ac1ebbf1a6451552d93b83288713175bc0fac019a7d9251f956f3d34", "summary_sha256": "51397bc23ffd1aac46fc3ebc617bbdb8c39c19c2d8469bf2fd627e4390d2fb70"}

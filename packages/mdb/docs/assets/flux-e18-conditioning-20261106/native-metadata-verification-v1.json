@@ -1,0 +1,255 @@
+{
+  "counts": {
+    "act_receipts": 4,
+    "component_hydrations": 3,
+    "cpu_offloads": 6,
+    "cuda_placements": 6,
+    "functional_decode_calls": 2,
+    "functional_transitions": 224,
+    "guard_refusals": 0,
+    "native_module_entries": 3890,
+    "native_qwen_calls": 1,
+    "native_transitions": 224,
+    "native_vae_calls": 4,
+    "noise_draws": 2,
+    "receipt_occurrences": 228
+  },
+  "elapsed_s": 545.01,
+  "executed_payload": {
+    "host": "beast",
+    "sha256": "0c4c90a1fa468a3881c090b02f0a3a074340c89a906612266c3aefff94f43dd7",
+    "size_bytes": 3293004
+  },
+  "forecast_seal": {
+    "forecasts": [
+      "e18-complete-composition"
+    ],
+    "path": "/mnt/big/mdb/research/job-9339e3ed1472/e18-conditioning-result/forecast-transaction/seal.json",
+    "seal_sha256": "8f4818ade6207f05c5af0484b6c7815f25ec9a21197bec07456fa31633d2acab"
+  },
+  "job_id": "job-9339e3ed1472",
+  "numeric_prediction_outcomes": "Pending independent saved-only full-array audit",
+  "peak_rss_mb": 20462.1,
+  "peak_vram_mb": 8374.0,
+  "raw_bytes": 5057838426,
+  "raw_manifest_sha256": "4d481f3b3b735a4a6814d21e10e87fbbb36759879bc5d46bc53f6c583443d70b",
+  "raw_members": 2568,
+  "raw_tensors_downloaded": false,
+  "request_sha256": "491d0611ac1ebbf1a6451552d93b83288713175bc0fac019a7d9251f956f3d34",
+  "schema": "mdb-e18-native-metadata-collection-v1",
+  "timeline": [
+    {
+      "component": "qwen",
+      "direction": "cuda",
+      "kind": "component_placement",
+      "seconds": 186.89547448419034
+    },
+    {
+      "conditioning": {
+        "device": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+        "shape": [
+          1,
+          512,
+          7680
+        ],
+        "stride": [
+          3932160,
+          7680,
+          1
+        ]
+      },
+      "kind": "qwen_completed",
+      "lane": "forecast",
+      "native_qwen_calls": 0,
+      "seconds": 196.50943750794977
+    },
+    {
+      "component": "qwen",
+      "direction": "cpu",
+      "kind": "component_placement",
+      "seconds": 218.1869815401733
+    },
+    {
+      "component": "flux",
+      "direction": "cuda",
+      "kind": "component_placement",
+      "seconds": 238.00542249297723
+    },
+    {
+      "branch": "sham",
+      "input_act_cut": "dda908d691f8f9bdd5ebabd14f782d61a020de8366fdc6d80f5b1a3fcf49bec6",
+      "kind": "denoiser_branch_entry",
+      "lane": "forecast",
+      "seconds": 244.65743672288954
+    },
+    {
+      "branch": "sham",
+      "kind": "denoiser_branch_complete",
+      "lane": "forecast",
+      "seconds": 264.3978028059937,
+      "transitions": 112
+    },
+    {
+      "branch": "e18-zero",
+      "input_act_cut": "e08ca953c7dcce6f443359fc4281a685c2c170122651c9f7da0d45745e2c64f2",
+      "kind": "denoiser_branch_entry",
+      "lane": "forecast",
+      "seconds": 264.398012928199
+    },
+    {
+      "branch": "e18-zero",
+      "kind": "denoiser_branch_complete",
+      "lane": "forecast",
+      "seconds": 280.32261782092974,
+      "transitions": 112
+    },
+    {
+      "component": "flux",
+      "direction": "cpu",
+      "kind": "component_placement",
+      "seconds": 309.87068782094866
+    },
+    {
+      "component": "vae",
+      "direction": "cuda",
+      "kind": "component_placement",
+      "seconds": 310.2150296368636
+    },
+    {
+      "branch": "sham",
+      "kind": "decoder_branch_complete",
+      "lane": "forecast",
+      "seconds": 318.89175901329145
+    },
+    {
+      "branch": "e18-zero",
+      "kind": "decoder_branch_complete",
+      "lane": "forecast",
+      "seconds": 322.24049439514056
+    },
+    {
+      "component": "vae",
+      "direction": "cpu",
+      "kind": "component_placement",
+      "seconds": 322.34041445329785
+    },
+    {
+      "forecast_act_receipts": 2,
+      "functional_transitions": 224,
+      "kind": "forecast_globally_sealed",
+      "native_module_entries": 0,
+      "seal_sha256": "8f4818ade6207f05c5af0484b6c7815f25ec9a21197bec07456fa31633d2acab",
+      "seconds": 352.6454726778902
+    },
+    {
+      "forecast_seal": "8f4818ade6207f05c5af0484b6c7815f25ec9a21197bec07456fa31633d2acab",
+      "kind": "native_targets_released",
+      "seconds": 354.97222498990595
+    },
+    {
+      "component": "qwen",
+      "direction": "cuda",
+      "kind": "component_placement",
+      "seconds": 366.43709276616573
+    },
+    {
+      "forecast_seal": "8f4818ade6207f05c5af0484b6c7815f25ec9a21197bec07456fa31633d2acab",
+      "kind": "native_qwen_entry",
+      "seconds": 366.4380156490952
+    },
+    {
+      "conditioning": {
+        "device": "cuda:0",
+        "dtype": "torch.bfloat16",
+        "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+        "shape": [
+          1,
+          512,
+          7680
+        ],
+        "stride": [
+          3932160,
+          7680,
+          1
+        ]
+      },
+      "kind": "qwen_completed",
+      "lane": "native",
+      "native_qwen_calls": 1,
+      "seconds": 367.55476994113997
+    },
+    {
+      "component": "qwen",
+      "direction": "cpu",
+      "kind": "component_placement",
+      "seconds": 382.9423257880844
+    },
+    {
+      "component": "flux",
+      "direction": "cuda",
+      "kind": "component_placement",
+      "seconds": 396.608939033933
+    },
+    {
+      "branch": "sham",
+      "input_act_cut": "dda908d691f8f9bdd5ebabd14f782d61a020de8366fdc6d80f5b1a3fcf49bec6",
+      "kind": "denoiser_branch_entry",
+      "lane": "native",
+      "seconds": 402.0780256171711
+    },
+    {
+      "branch": "sham",
+      "kind": "denoiser_branch_complete",
+      "lane": "native",
+      "seconds": 427.27687209518626,
+      "transitions": 112
+    },
+    {
+      "branch": "e18-zero",
+      "input_act_cut": "e08ca953c7dcce6f443359fc4281a685c2c170122651c9f7da0d45745e2c64f2",
+      "kind": "denoiser_branch_entry",
+      "lane": "native",
+      "seconds": 427.2770621390082
+    },
+    {
+      "branch": "e18-zero",
+      "kind": "denoiser_branch_complete",
+      "lane": "native",
+      "seconds": 451.1034403592348,
+      "transitions": 112
+    },
+    {
+      "component": "flux",
+      "direction": "cpu",
+      "kind": "component_placement",
+      "seconds": 475.28286074101925
+    },
+    {
+      "component": "vae",
+      "direction": "cuda",
+      "kind": "component_placement",
+      "seconds": 475.7924290942028
+    },
+    {
+      "branch": "sham",
+      "kind": "decoder_branch_complete",
+      "lane": "native",
+      "seconds": 476.57920419005677
+    },
+    {
+      "branch": "e18-zero",
+      "kind": "decoder_branch_complete",
+      "lane": "native",
+      "seconds": 476.85119357099757
+    },
+    {
+      "component": "vae",
+      "direction": "cpu",
+      "kind": "component_placement",
+      "seconds": 476.9531545601785
+    }
+  ],
+  "wrapper_bytes_additional": 581971
+}

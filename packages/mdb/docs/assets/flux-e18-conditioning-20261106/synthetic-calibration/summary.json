@@ -1,0 +1,39 @@
+{
+  "Session_receipts": 0,
+  "benchmark_source_sha256": "3e8b81894cde296cf5ff15509ba68c6c35ef60020b640b1a733d201d1005fd66",
+  "build_seconds": 0.36481734784319997,
+  "complete_cuts": 9,
+  "device": "cuda",
+  "exact_metadata_and_store_equivalence": true,
+  "job_id": "job-d1af1e9981fd",
+  "limits": [
+    "Synthetic full geometry, not original activations or adapter execution",
+    "Session capture/guard/native arithmetic cost is not measured",
+    "v1 then v2 order; warm filesystem/cache can affect store timings",
+    "Payload read counts are source-rule counts, not allocator telemetry",
+    "CUDA copies/hashing occur only when device explicitly CUDA; no kernel parity claim"
+  ],
+  "neural_forwards": 0,
+  "report_sha256": "a8f61345db4009792317f8eda22e8d3b8c025442dc63d3c1f823b1ce8df9bdc6",
+  "request_sha256": "3319e26d1419642dc88dc20900c6a0a9435eaf54c55b59eadce27c2dfe810ae2",
+  "schema": "mdb-e18-custody-calibration-summary-v1",
+  "synthetic": true,
+  "timed_steps_per_mode": 8,
+  "timings": {
+    "v1-redundant": {
+      "bytes": 67073072,
+      "metadata_seconds": 0.004585730377584696,
+      "source_rule_payload_reads": 64,
+      "store_calls": 17,
+      "store_seconds": 1.1431981003843248
+    },
+    "v2-cached": {
+      "bytes": 67073072,
+      "metadata_seconds": 7.0902518928051e-05,
+      "source_rule_payload_reads": 0,
+      "store_calls": 9,
+      "store_seconds": 0.7537603904493153
+    }
+  },
+  "worker_seconds": 17.790363082196563
+}

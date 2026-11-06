@@ -1,0 +1,242 @@
+{
+  "collector_source_sha256": "007098eb72842fe1f5d585f64eae272812303d1c18eb67a17ba43508c646b18d",
+  "custody_encoder_source": "/Users/jakeholl/domains/artifacts/mdb-flux-functional-decoder-20261106/recovery-collection-01",
+  "local_source": "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/audit-01",
+  "record": {
+    "collection": "/mnt/hdd8tb/mdb/custody/flux-e18-conditioning-20261106/job-cf83caa6f2cb/collection-01",
+    "files": {
+      "audit.json": {
+        "bytes": 10660882,
+        "sha256": "4a8a2627abccb947047077c5672d4a15f5b4f1de7d888844a053869424072090"
+      },
+      "catalog/equations/1788eccbb9563bf2eb985c31d91a0227bccf2191f619a41f885f34a887fb1adb.json": {
+        "bytes": 5292,
+        "sha256": "14775cb83d63c361b3c944a551c4c1de31f4adcbc79dcb3c800cbd6efbf939ef"
+      },
+      "catalog/equations/39979b686f5c2ab251da7edf59527cdb38c2327392a86b3d0f6f8dbd1494ec40.json": {
+        "bytes": 5248,
+        "sha256": "be0b176fdc80468039e5400e8545820431bbba3c3e4f791f892ea8354ab2224c"
+      },
+      "catalog/equations/47003ccb5474a87e928eacc2a028f725550e6fe996371143733a842e524bffc9.json": {
+        "bytes": 5236,
+        "sha256": "2f9d1ed9e426f0a437926a813f1c6725d89aa73b75433741a1b7376a8b9eee26"
+      },
+      "catalog/equations/55444873953aa7d24593449a5afdde45e99576a16b603e8e387a6a8be2dc02f8.json": {
+        "bytes": 5304,
+        "sha256": "51de3069cc2e0ab1faee50ab08ab6d95914e19e2d0dd78dfca7d797e81c66619"
+      },
+      "catalog/provenance.json": {
+        "bytes": 4440,
+        "sha256": "f59f83a3eaaa8f5fe66c597f0539791b523451ff6fb4fd22a0c706372bc9d846"
+      },
+      "e18-zero-forecast.png": {
+        "bytes": 230886,
+        "sha256": "e5d02e101d6bee94a64b78161c759bb359889418c5dc63a3e1c2f78b39c9d0a6"
+      },
+      "e18-zero-native-own.png": {
+        "bytes": 230886,
+        "sha256": "e5d02e101d6bee94a64b78161c759bb359889418c5dc63a3e1c2f78b39c9d0a6"
+      },
+      "e18-zero-native-reference.png": {
+        "bytes": 230886,
+        "sha256": "e5d02e101d6bee94a64b78161c759bb359889418c5dc63a3e1c2f78b39c9d0a6"
+      },
+      "external-evidence.json": {
+        "bytes": 469228,
+        "sha256": "04080347b1f52418728b02018f0b8a3e0e8ccafb91bbd786655acf0ab877341d"
+      },
+      "files.json": {
+        "bytes": 5245,
+        "sha256": "32c1efee36b02a4eab138d95d84bfa76e62a6e2db84a25bd94f9649f948fba50"
+      },
+      "request.json": {
+        "bytes": 4029,
+        "sha256": "b7d6820171a1db226053c362d614ef3ab81cb65db0a6c1262aea15378a4bd0f0"
+      },
+      "retrieve_evidence.py": {
+        "bytes": 1442,
+        "sha256": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923"
+      },
+      "sham-forecast.png": {
+        "bytes": 232653,
+        "sha256": "34ea82cf977a371130c30b6783cd01900c7b0ce97caa39d99b570064d3dc80c1"
+      },
+      "sham-native-own.png": {
+        "bytes": 232653,
+        "sha256": "34ea82cf977a371130c30b6783cd01900c7b0ce97caa39d99b570064d3dc80c1"
+      },
+      "sham-native-reference.png": {
+        "bytes": 232653,
+        "sha256": "34ea82cf977a371130c30b6783cd01900c7b0ce97caa39d99b570064d3dc80c1"
+      },
+      "source-act-records.json": {
+        "bytes": 40009,
+        "sha256": "1f19fc09e8113663bf1e9f7b7cfd443102e4ce5573214b24bb09a1ecc5ae81a5"
+      },
+      "source-context-consumers.json": {
+        "bytes": 5011,
+        "sha256": "b90ea394d361ba1db62ae8eb960ff9f6873b89a9b888d04f36384c19ad597548"
+      },
+      "source-files.json": {
+        "bytes": 581971,
+        "sha256": "4d481f3b3b735a4a6814d21e10e87fbbb36759879bc5d46bc53f6c583443d70b"
+      },
+      "source-forecast-acts.json": {
+        "bytes": 18721,
+        "sha256": "d57bc69a772f1011d4cf550aaab03d678f478fda03b74c92cef5cb9aa13f5b6d"
+      },
+      "source-forecast-qwen.json": {
+        "bytes": 18232,
+        "sha256": "6120ab885627fad27016cb16ba917c9e3d4d3f778fbf6f6ef404bda94377f8b1"
+      },
+      "source-forecast-responses.json": {
+        "bytes": 481318,
+        "sha256": "9587379830d4a86c8f9394b68a5db855c4167857b203ce1993e5705c0e79021f"
+      },
+      "source-input.json": {
+        "bytes": 542,
+        "sha256": "a97d278bb77a30551d38874e92004fac710b356129e861faa3750308c7894b30"
+      },
+      "source-metadata/flux_config-flux-transformer-config.json": {
+        "bytes": 541,
+        "sha256": "09733c74a3da6d17dd0a0472a091a8950c7c6935889c32c16cc800ede05029de"
+      },
+      "source-metadata/flux_manifest-flux-parameter-artifacts.json": {
+        "bytes": 158206,
+        "sha256": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb"
+      },
+      "source-metadata/flux_recipe_helper-flux_source_receiver.py": {
+        "bytes": 12787,
+        "sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2"
+      },
+      "source-metadata/flux_retrieval_script-retrieve_flux_weights.py": {
+        "bytes": 22624,
+        "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae"
+      },
+      "source-metadata/flux_scheduler_config-scheduler-config.json": {
+        "bytes": 486,
+        "sha256": "067afb012cef64553a763447d1efd93daeffcc0123ca7e25b09f8de20b90762e"
+      },
+      "source-metadata/qwen_config-qwen-config.json": {
+        "bytes": 1536,
+        "sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40"
+      },
+      "source-metadata/qwen_manifest-qwen-parameter-artifacts.json": {
+        "bytes": 433549,
+        "sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374"
+      },
+      "source-metadata/qwen_recipe_helper-flux_source_receiver.py": {
+        "bytes": 12787,
+        "sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2"
+      },
+      "source-metadata/qwen_retrieval_script-retrieve_qwen_weights.py": {
+        "bytes": 22624,
+        "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae"
+      },
+      "source-metadata/qwen_source_binding-qwen-source-binding.json": {
+        "bytes": 65926,
+        "sha256": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7"
+      },
+      "source-metadata/vae_config-vae-config.json": {
+        "bytes": 821,
+        "sha256": "0d6dfb69ae95a5e2ac9836284bbb63d8b38ce67b25ba2dff380752b2a10ab948"
+      },
+      "source-metadata/vae_manifest-vae-parameter-artifacts.json": {
+        "bytes": 128869,
+        "sha256": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9"
+      },
+      "source-metadata/vae_recipe_helper-flux_source_receiver.py": {
+        "bytes": 12787,
+        "sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2"
+      },
+      "source-metadata/vae_retrieval_script-retrieve_vae_weights.py": {
+        "bytes": 22624,
+        "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae"
+      },
+      "source-native-acts.json": {
+        "bytes": 18717,
+        "sha256": "049634cc6ae3099ed626275428a9345d1a6be355ab6e0e9c0e84007276920156"
+      },
+      "source-native-contract.json": {
+        "bytes": 2389364,
+        "sha256": "4142486b15b40e5b35f1b45e0ef14314f97c9803e7588f3d562883da515018a4"
+      },
+      "source-native-qwen.json": {
+        "bytes": 16918,
+        "sha256": "65fd8782e8001e7ca49b1def97a15f3be029d1063249b792c739e37b1b3fc8ea"
+      },
+      "source-plan.json": {
+        "bytes": 10383,
+        "sha256": "458fb80496e3d89cbc14923481162561d203f5db225e23ce4e11e9ce33553366"
+      },
+      "source-receipt-emissions.jsonl": {
+        "bytes": 577662,
+        "sha256": "5c1dfeab60d5ba0ee807f726e00e79f35dbeaa173c4718c7e23033bba554c9dc"
+      },
+      "source-request.json": {
+        "bytes": 18944,
+        "sha256": "7379b1205a904d050dce38d82e9950befeb85b0b690ee665116cd0806e658cb8"
+      },
+      "source-runtime-contract.json": {
+        "bytes": 6646,
+        "sha256": "a429ad205454089fdd5daf05470fabfa8de1a17f2fd9e70155b0f9676cdb4aa9"
+      },
+      "source-source.json": {
+        "bytes": 6963,
+        "sha256": "8661cd2524a42962a1aea60d340228ddcb905f680015aa69ac2f85b7dc8bb264"
+      },
+      "source-summary.json": {
+        "bytes": 2309,
+        "sha256": "51397bc23ffd1aac46fc3ebc617bbdb8c39c19c2d8469bf2fd627e4390d2fb70"
+      },
+      "source-timeline.jsonl": {
+        "bytes": 4057,
+        "sha256": "04304aa62ca132fed8a1e7374ffa1cbc80d292c3607bf80f140b0565692e0784"
+      },
+      "summary.json": {
+        "bytes": 341,
+        "sha256": "5a5cacd74ce32433dcc30bda3bbd656335ba7f6690bfae4d1839b1b9d0541360"
+      }
+    },
+    "files_manifest_sha256": "32c1efee36b02a4eab138d95d84bfa76e62a6e2db84a25bd94f9649f948fba50",
+    "host": "beast",
+    "log": {
+      "complete": true,
+      "compressed_bytes": 3309104,
+      "compressed_sha256": "321743700827d005f872dd070456a3c9575987db4bb91f53c6bd97589d8e83de",
+      "error": null,
+      "job_id": "job-cf83caa6f2cb",
+      "job_json_sha256": "c1126c6c6103a4b23fd59718a30ad96235b7dc5003782a17c1a544aa523da162",
+      "schema": "mdb-flux-family-log-custody-v1",
+      "scope": "Exact request-qualified directory re-emission bytes; not original scheduler log",
+      "storage": "gzip",
+      "uncompressed_bytes": 4303369,
+      "uncompressed_sha256": "73abfc1a5652c281b7fa4422b73ff71b6946fd8a3262fc4e7fabc62cb9419fd8"
+    },
+    "original_output": "/mnt/big/mdb/research/job-cf83caa6f2cb/binding-minimal-result",
+    "recovery_encoder": {
+      "schema": "mdb-explicit-recovery-encoder-v1",
+      "scope": "Collection-only encoder supplied by a separately request-sealed run. Original worker payload/request remain unchanged.",
+      "sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+      "source_request_sha256": "2339ecdb754e0104418b463397b4cb2121a4bbb1c9646d390e56cee3f0fe1e2e"
+    },
+    "schema": "mdb-remote-directory-custody-v1",
+    "scope": "Full archive, exact duplicate transport log, payload, extracted scientific evidence and legacy offline verification retained on Beast. No model rerun. Local pointer is not a complete collection.",
+    "seconds": 0.43198336800560355,
+    "summary_sha256": "5a5cacd74ce32433dcc30bda3bbd656335ba7f6690bfae4d1839b1b9d0541360",
+    "verification": {
+      "archive_bytes": 3226706,
+      "archive_sha256": "e39909a27a9008b45654deb043a2ab5db970a676843e4dcce0f8275268c21661",
+      "files": 48,
+      "job_id": "job-cf83caa6f2cb",
+      "mechanics_status": "verified",
+      "model_reexecution": false,
+      "part_count": 1,
+      "request_sha256": "3e0b0069dee703dfe6ae98e1bb3139767cba1bdce23a447f7ae6aeecdfbb4d42",
+      "schema": "mdb-flux-family-custody-verification-v1"
+    }
+  },
+  "record_sha256": "cd8c7dad8d74881753e15493d7257a8bca03016dac96d28a1cd6e233e6b4a2da",
+  "schema": "mdb-remote-custody-pointer-v1",
+  "scope": "Pointer to fully verified remote custody; scientific tensors are not locally collected. Use --retrieve to fetch exact retained bytes."
+}

@@ -1,0 +1,105 @@
+{
+  "schema": "mdb-flux-e18-conditioning-design-v1",
+  "status": "prepared-not-staged-not-run",
+  "worker_sha256": "d11a7be7385a6f83c775c023e07298693091d4233d9d6a5763405e9b9364b0d3",
+  "test_sha256": "67c9f60445c8509ee2b92fe90c53edaa8880424c3ef9377bf051dd32687b1642",
+  "source_plan_sha256": "12d80bbd98fe514e4bda62adb9e936ecc849e05323242fd719fc8cbc3785a96e",
+  "specimen": {
+    "prompt": "A cobalt blue cube to the right of a matte orange ring on a gray tabletop. Two separate objects, simple studio product photograph.",
+    "seed": 277,
+    "batch_size": 1,
+    "pixels": [512, 512],
+    "steps": 4,
+    "conditioning": "cat(raw unnormalized h9,h18,h27), all512 rows"
+  },
+  "intervention": {
+    "branches": ["sham", "e18-zero"],
+    "address": "conditioning",
+    "site": "real step0/project/cursor0",
+    "columns": [2560, 5120],
+    "mode": "replace",
+    "sham_value": "same-lane own current complete E tensor",
+    "edit_value": "scalar0 assigned as positive BF16 zero",
+    "mask": "exact-shape boolean mask, every row and selected columns only",
+    "precondition": "digest(describe(own current E))",
+    "preserved": "all other typed slots; h9 and h27 columns unchanged",
+    "scope": "direct E18 route removal, not upstream Qwen17 MLP ablation; h27 still carries history"
+  },
+  "api": {
+    "factory": "make_config(base original raw profile)",
+    "validate": "validate_config(config)",
+    "callable": "run(config, progress=None)",
+    "cli": "python -I flux_e18_conditioning_act.py --config CONFIG",
+    "output_name": "e18-conditioning-result",
+    "typed_runtime": "installed public Flux2KleinAdapter.session, Session.fork/apply, Act.patch, NativeCutNavigator.step(1)",
+    "receipt_kind": "4 real public Act receipts plus224 one-step native continuation receipts; functional cuts explicitly component-derived"
+  },
+  "chronology": [
+    "Hydrate Qwen, transformer and decoder once on CPU from398+169+142 original recipes; retain no exported weightbank",
+    "Place Qwen, form own functional E_P from raw prompt, offload",
+    "Place transformer, independently draw functional initial noise; fork typed sham/edit parents and apply2 real conditioning Acts; forecast112 transitions per branch; offload",
+    "Place decoder, form CPU unpack/BN/unpatch then forecast2 complete images with unchanged functional primitives; offload",
+    "Hash complete edit-minus-sham state/decoded/pixel response fields and globally seal both forecasts and external inventory while native learned module entries are0",
+    "Only inside the sealed transaction execution callback: place Qwen, execute full36+LM and form own E_N, offload",
+    "Place transformer, independently draw native initial noise; fork own typed parents and apply2 real conditioning Acts; execute224 actual Session transitions and capture8 actual context projection operands; offload",
+    "Place decoder, execute4 native VAE consumers: same forecast latent and independent native latent for each branch; offload",
+    "Verify original component signatures/tied alias, fixed source inventory, frontend identity and physical census; retain every numerical miss for saved-only audit"
+  ],
+  "counts": {
+    "functional_qwen27": 1,
+    "native_qwen36_plus_LM": 1,
+    "functional_transitions": 224,
+    "native_transitions": 224,
+    "actual_Acts": 4,
+    "actual_receipt_occurrences": 228,
+    "actual_context_projection_operands": 8,
+    "functional_decoder_calls": 2,
+    "native_VAE_calls": 4,
+    "PNG_files": 6,
+    "noise_draws": 2,
+    "component_hydrations": 3,
+    "device_placements": 6,
+    "CPU_offloads": 6,
+    "forecast_module_entries": 0,
+    "transaction_execute_callbacks": 1
+  },
+  "files": {
+    "shared": ["plan.json", "request.json when request-bound", "input.json", "forecast-qwen.json", "native-qwen.json", "frontend/forecast.json", "frontend/native.json", "input-lane-forecast.json", "input-lane-native.json"],
+    "Acts": ["acts-store", "forecast-acts.json", "native-acts.json", "act-records.json", "receipt-emissions.jsonl"],
+    "branches": "cases/{sham,e18-zero}/{forecast,native}-state-store and {forecast,native}-state-rows.json; decoder-forecast.json, decoder-native-own.json, decoder-native-reference.json and arrays/PNGs",
+    "consumer": "context-consumers.json actual pre-hook public tensor descriptors joined to each acted E",
+    "seal": "forecast-transaction/seal.json, one prediction e18-complete-composition, one execution native-own-E-branches",
+    "response": "forecast-responses.json complete own-state fields and decoded/pixels; little-endian FP64 edit-minus-sham hashes, no duplicate delta tensor bank",
+    "custody": "runtime-contract.json, native-contract.json, source.json, timeline.jsonl, summary.json, original metadata/709 recipes/retrievers under source/, final wrapped files.json"
+  },
+  "immutable_helpers": {
+    "flux_raw_to_image.py": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522",
+    "flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "flux_functional_qwen_prefix_worker.py": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+    "flux_functional_denoiser.py": "cb794daa5818ec3f9107f23839a41010f9569148da3708e39cedd364dff21923",
+    "flux_functional_decoder.py": "e2712298e42b37a263dea1b24f0f491082b8a01086b16fa66577f474c68f491f",
+    "flux_functional_vae.py": "576b94f3cd987e8849f6d4772c90a77f14fdfc9210dea608a9a3d16cf0f99a61",
+    "flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926"
+  },
+  "resource_planning": {
+    "prior_single_raw_measured_seconds": 329.23,
+    "prior_single_raw_peak_RSS_MB": 20815.5,
+    "prior_single_raw_peak_VRAM_MB": 8374,
+    "estimated_seconds": [600, 900],
+    "worker_wall_limit_seconds": 1200,
+    "qualification_limit": "New real Session receipt/hash/clone overhead is not calibrated on production geometry; root must review finite settings before admission",
+    "max_expanded_bytes": 8589934592,
+    "max_member_bytes": 134221824,
+    "transaction_max_bytes": 1073741824,
+    "raw_arrays": "remain remote; compact saved-only audit and individual checksum retrieval later",
+    "no_weight_exports": true
+  },
+  "report_limits": [
+    "One raw prompt/seed and one direct source edit; no semantic or universal claim",
+    "Shared native primitives, not independent Flash/GEMM/VAE arithmetic",
+    "Two distinct own-E lanes; numerical equality would not erase source provenance",
+    "Actual native VAE on forecast latent is a conditional consumer, not an independent decoder forecast",
+    "Numerical errors, signed responses and input novelty are observations, never quality gates",
+    "Selected CUDA kernels remain unprofiled; configured policy is source-bound"
+  ]
+}

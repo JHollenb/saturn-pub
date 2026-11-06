@@ -151,3 +151,7 @@ The [complete/prefix triangle contrasts](assets/qwen-block0-attention-20261106/t
 [signed energy accounts](assets/qwen-block0-attention-20261106/triangle-energy.png)
 and [separate matched/replay errors](assets/qwen-block0-attention-20261106/matched-replay-errors.png)
 keep nonzero state differences distinct from prediction error.
+
+The subsequent [direct E18 experiment](FLUX-E18-CONDITIONING.md) is now
+complete: genuine conditioning Acts, two fully predicted image futures and
+complete signed-response checks extend this local mechanism work.

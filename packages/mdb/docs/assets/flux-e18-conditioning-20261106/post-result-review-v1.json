@@ -1,0 +1,113 @@
+{
+  "schema": "mdb-e18-targeted-post-result-review-v1",
+  "reviewer": "context_carriers_astra",
+  "review_status": "saved-evidence-and-primary-narrative-supported",
+  "scope": "Targeted post-result and narrative review; not a holistic cadence reset. No model, tokenizer, tensor recurrence, audit rerun, staging or submission.",
+  "sources": {
+    "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/primary-scope-recount-v1.json": "0e69fe01ca61eda1300c2d15a7d0659f4b7cedb5a06ffa29547ec15dd310f2c3",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/actual-saved-report-verification-v1.json": "bbcb9b6c1437e06f5b14c819ea27cf3563b8056b92149f51d9967cc77248be0f",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/compact-collection-01/extracted/binding-minimal-result/audit.json": "4a8a2627abccb947047077c5672d4a15f5b4f1de7d888844a053869424072090",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/compact-collection-01/extracted/binding-minimal-result/files.json": "32c1efee36b02a4eab138d95d84bfa76e62a6e2db84a25bd94f9649f948fba50",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/publication-v1/publication.json": "fa56590981f7e862bc9ebc345f8fcc900ffc86cc4affe8cbd03f2b2d400cf461",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/publication-v1/native-futures.png": "82f0016e5f3d356ca5a02fbb4e41af8c9d17c4b4c1b3e1290b9aa0f1a7a41e92",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-064228-predicting-an-image-after-removing-one-hidden-state-route.md": "af3ced525aa8db1361965e8266b5b0e84507b8762bf958f5cef835f44ab4a11b",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/docs/FLUX-E18-CONDITIONING.md": "516b35866a1b30699dbe1510c9cea55fa01f81aab229f74934ec6131196e1621"
+  },
+  "native_job": "job-9339e3ed1472",
+  "audit_job": "job-cf83caa6f2cb",
+  "request_sha256": "491d0611ac1ebbf1a6451552d93b83288713175bc0fac019a7d9251f956f3d34",
+  "independent_checks": {
+    "compact_manifest": {
+      "all_members_hashed": true,
+      "members": 47,
+      "bytes": 17645993,
+      "note": "files.json itself is additional: 48 total delivered files."
+    },
+    "primary": {
+      "whole_qwen_fields": 29,
+      "whole_denoiser_fields": 1960,
+      "total": 1989,
+      "positions": 1185808384,
+      "changed_values": 0,
+      "all_bitwise_exact": true
+    },
+    "signed_responses": {
+      "fields": 1548,
+      "positions": 1019321337,
+      "changed_values": 0,
+      "max_rms": 0
+    },
+    "count_scope": "Primary recount selects Qwen full and denoiser boundary.fields only. The 58 regional Qwen comparisons overlap full fields. A generic recursive denoiser walk also picks up 16 scheduler-equation diagnostic comparisons; these are not extra primary fields.",
+    "genuine_occurrences": {
+      "Acts": 4,
+      "native_advances": 224,
+      "total": 228
+    },
+    "actual_context_consumers": {
+      "count": 8,
+      "steps_per_branch": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "full_operands_exact": true,
+      "one_fixed_operand_digest_per_branch": true
+    },
+    "forecast_native_module_entries": 0,
+    "component_identity_before_after_equal": true,
+    "transaction": {
+      "verified": true,
+      "phase": "closed",
+      "seal_sha256": "8f4818ade6207f05c5af0484b6c7815f25ec9a21197bec07456fa31633d2acab"
+    },
+    "pixel_response": {
+      "units": "uint8 RGB channel units 0–255; e18-zero minus sham",
+      "rms": 10.314685012068637,
+      "maxabs": 146,
+      "changed_values": 759372,
+      "sample_count": 786432,
+      "signed_mean": -2.3916104634602866,
+      "forecast_error_rms": 0
+    },
+    "visual_inspection": "Viewed delivered six-image native-futures sheet. Orange ring left and blue cube right remain recognizable; size/geometry/shading differ. Informal task-aware observation, not a semantic necessity classifier."
+  },
+  "findings": [
+    "Exact complete signed response is a stronger result than merely similar endpoint pictures: this imposed direct conditioning change was consumed at all four projects and its retained numerical future was predicted.",
+    "The 1989 whole-field count and separate 58 overlapping regional comparisons are correctly stated. Coordinates and repeated continuation fields are dependent, not independent trials.",
+    "Shared Torch primitives/original parameters/frontend contract remain explicit; no independent kernel or newly fitted law claim.",
+    "Current decoder evidence covers functional macro records and actual native endpoints/same-latent consumers. Native macro-by-macro coverage is explicitly not established for this cohort.",
+    "Direct E18 suppression leaves H27's upstream history intact. Object retention cannot establish semantic dispensability, compensation, or a complete object code.",
+    "The real-arithmetic context subtraction and SwiGLU sign identity are correct and properly qualified against separately rounded BF16 operations."
+  ],
+  "narrative_corrections": [
+    {
+      "severity": "small prospective chronology ambiguity, not a result error",
+      "location": "Blog last section: will first measure finite oddness defects and rounding remainders, then predict ...",
+      "recommendation": "Say: seal both own-state futures and signed responses before native execution, then measure native oddness defects and rounding remainders. Source-derived/functional diagnostics may precede sealing, but observed native target ports may not.",
+      "status": "reported to parent; files not edited by reviewer"
+    }
+  ],
+  "concrete_caveats": [
+    "Compensation among supplied states remains a possible explanation, not an effect identified by the two-arm direct-zero test.",
+    "Do not treat increasing absolute commit RMS across four steps as a universal amplification law or causal allocation.",
+    "Saved scalar/hash audit checks were independently recounted; full near-data tensors and original CUDA arithmetic were not recomputed here.",
+    "Chronology's exact seconds remain producer/qualification report evidence; compact transaction verification and zero forecast module-entry count were checked.",
+    "Original source pipeline and receipt occurrence counts remain distinct from curated catalog records and automatic family discovery."
+  ],
+  "next_cut": {
+    "recommendation": "Retain the global H18 sign-history design as the next informative cut.",
+    "comparison": "Same own H9 and negative H18, but original H27 versus H27 regenerated through blocks18..26. Compare complete sealed futures and the exact signed conditional H27-route response.",
+    "why": "All-zero H18 is an ideal absorbing state under the pinned bias-free suffix, making coherent zero largely simultaneous E18/E27 deletion. A full sign flip produces a nondegenerate suffix and a concrete first-MLP even-component identity.",
+    "limits": "All512 rows/allfeatures must flip for the ideal attention oddness argument; norm preservation is a large off-manifold displacement, not a mild semantic edit. Finite arithmetic defects remain observations. Upstream native suffix execution is not a currently qualified public full-prefill Qwen Act.",
+    "local_math": "For x at first edited post-attention normalization, M(-x)+M(x)=Wd[(Wg x)*(Wu x)] in real arithmetic. Measure residual/norm oddness and add-rounding remainders separately; do not extend oddness across all nine blocks.",
+    "forecast_order": "Global forecasts and signed responses before native target observations; no quantitative or semantic success gate."
+  },
+  "cadence": {
+    "anchor_completed_turn": 10,
+    "next_holistic_no_later_than_turn": 13,
+    "reset": false
+  },
+  "blocking_integrity_issues": [],
+  "goal_status": "active"
+}

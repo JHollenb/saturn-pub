@@ -1,0 +1,33 @@
+{
+  "act_receipts": 4,
+  "batch_size": 1,
+  "branches": [
+    "sham",
+    "e18-zero"
+  ],
+  "component_hydrations": 3,
+  "conditioning_columns": [
+    2560,
+    5120
+  ],
+  "context_operand_occurrences": 8,
+  "cpu_offloads": 6,
+  "cuda_placements": 6,
+  "execution_id": "mdb-flux-e18-conditioning-act-v1",
+  "forecast_module_entries": 0,
+  "functional_decode_calls": 2,
+  "functional_transitions": 224,
+  "max_gpu_components": 1,
+  "native_transitions": 224,
+  "native_vae_calls": 4,
+  "noise_draws": 2,
+  "persistent_weight_banks": 0,
+  "pngs": 6,
+  "qwen_forecast_layers": 27,
+  "qwen_functional_calls": 1,
+  "qwen_native_calls": 1,
+  "qwen_native_layers": 36,
+  "receipt_occurrences": 228,
+  "schema": "mdb-flux-e18-conditioning-count-contract-v1",
+  "seed": 277
+}

@@ -1,0 +1,12 @@
+{
+  "cpu_threads": 4,
+  "device": "cuda",
+  "output_name": "e18-custody-calibration-result",
+  "output_scratch": "/mnt/big/mdb/research",
+  "profile": "production",
+  "repeats": 2,
+  "transport_limits": {
+    "max_expanded_bytes": 1073741824,
+    "max_member_bytes": 67108864
+  }
+}

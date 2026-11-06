@@ -1,0 +1,12 @@
+{
+  "cases": 2,
+  "genuine_acts": 4,
+  "job_id": "job-cf83caa6f2cb",
+  "model_calls": 0,
+  "native_advances": 224,
+  "records": 4,
+  "request_sha256": "3e0b0069dee703dfe6ae98e1bb3139767cba1bdce23a447f7ae6aeecdfbb4d42",
+  "schema": "mdb-flux-e18-conditioning-compact-v1",
+  "seconds": 240.27283709403127,
+  "source_job": "job-9339e3ed1472"
+}

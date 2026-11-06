@@ -1,0 +1,194 @@
+[
+  {
+    "actual_forward_pre_hook": true,
+    "branch": "sham",
+    "full_operand_exact": true,
+    "logical_step": 0,
+    "operand": {
+      "dtype": "torch.bfloat16",
+      "kind": "tensor",
+      "layout": "strided-dense",
+      "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+      "shape": [
+        1,
+        512,
+        7680
+      ],
+      "stride": [
+        3932160,
+        7680,
+        1
+      ],
+      "tensor": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094"
+    },
+    "source_act_cut": "dda908d691f8f9bdd5ebabd14f782d61a020de8366fdc6d80f5b1a3fcf49bec6"
+  },
+  {
+    "actual_forward_pre_hook": true,
+    "branch": "sham",
+    "full_operand_exact": true,
+    "logical_step": 1,
+    "operand": {
+      "dtype": "torch.bfloat16",
+      "kind": "tensor",
+      "layout": "strided-dense",
+      "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+      "shape": [
+        1,
+        512,
+        7680
+      ],
+      "stride": [
+        3932160,
+        7680,
+        1
+      ],
+      "tensor": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094"
+    },
+    "source_act_cut": "dda908d691f8f9bdd5ebabd14f782d61a020de8366fdc6d80f5b1a3fcf49bec6"
+  },
+  {
+    "actual_forward_pre_hook": true,
+    "branch": "sham",
+    "full_operand_exact": true,
+    "logical_step": 2,
+    "operand": {
+      "dtype": "torch.bfloat16",
+      "kind": "tensor",
+      "layout": "strided-dense",
+      "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+      "shape": [
+        1,
+        512,
+        7680
+      ],
+      "stride": [
+        3932160,
+        7680,
+        1
+      ],
+      "tensor": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094"
+    },
+    "source_act_cut": "dda908d691f8f9bdd5ebabd14f782d61a020de8366fdc6d80f5b1a3fcf49bec6"
+  },
+  {
+    "actual_forward_pre_hook": true,
+    "branch": "sham",
+    "full_operand_exact": true,
+    "logical_step": 3,
+    "operand": {
+      "dtype": "torch.bfloat16",
+      "kind": "tensor",
+      "layout": "strided-dense",
+      "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+      "shape": [
+        1,
+        512,
+        7680
+      ],
+      "stride": [
+        3932160,
+        7680,
+        1
+      ],
+      "tensor": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094"
+    },
+    "source_act_cut": "dda908d691f8f9bdd5ebabd14f782d61a020de8366fdc6d80f5b1a3fcf49bec6"
+  },
+  {
+    "actual_forward_pre_hook": true,
+    "branch": "e18-zero",
+    "full_operand_exact": true,
+    "logical_step": 0,
+    "operand": {
+      "dtype": "torch.bfloat16",
+      "kind": "tensor",
+      "layout": "strided-dense",
+      "sha256": "c82a5d9e20430535d42b1900484ff4a6d1b0bcbe9a39ceec73c81beaa7be6aaf",
+      "shape": [
+        1,
+        512,
+        7680
+      ],
+      "stride": [
+        3932160,
+        7680,
+        1
+      ],
+      "tensor": "c82a5d9e20430535d42b1900484ff4a6d1b0bcbe9a39ceec73c81beaa7be6aaf"
+    },
+    "source_act_cut": "e08ca953c7dcce6f443359fc4281a685c2c170122651c9f7da0d45745e2c64f2"
+  },
+  {
+    "actual_forward_pre_hook": true,
+    "branch": "e18-zero",
+    "full_operand_exact": true,
+    "logical_step": 1,
+    "operand": {
+      "dtype": "torch.bfloat16",
+      "kind": "tensor",
+      "layout": "strided-dense",
+      "sha256": "c82a5d9e20430535d42b1900484ff4a6d1b0bcbe9a39ceec73c81beaa7be6aaf",
+      "shape": [
+        1,
+        512,
+        7680
+      ],
+      "stride": [
+        3932160,
+        7680,
+        1
+      ],
+      "tensor": "c82a5d9e20430535d42b1900484ff4a6d1b0bcbe9a39ceec73c81beaa7be6aaf"
+    },
+    "source_act_cut": "e08ca953c7dcce6f443359fc4281a685c2c170122651c9f7da0d45745e2c64f2"
+  },
+  {
+    "actual_forward_pre_hook": true,
+    "branch": "e18-zero",
+    "full_operand_exact": true,
+    "logical_step": 2,
+    "operand": {
+      "dtype": "torch.bfloat16",
+      "kind": "tensor",
+      "layout": "strided-dense",
+      "sha256": "c82a5d9e20430535d42b1900484ff4a6d1b0bcbe9a39ceec73c81beaa7be6aaf",
+      "shape": [
+        1,
+        512,
+        7680
+      ],
+      "stride": [
+        3932160,
+        7680,
+        1
+      ],
+      "tensor": "c82a5d9e20430535d42b1900484ff4a6d1b0bcbe9a39ceec73c81beaa7be6aaf"
+    },
+    "source_act_cut": "e08ca953c7dcce6f443359fc4281a685c2c170122651c9f7da0d45745e2c64f2"
+  },
+  {
+    "actual_forward_pre_hook": true,
+    "branch": "e18-zero",
+    "full_operand_exact": true,
+    "logical_step": 3,
+    "operand": {
+      "dtype": "torch.bfloat16",
+      "kind": "tensor",
+      "layout": "strided-dense",
+      "sha256": "c82a5d9e20430535d42b1900484ff4a6d1b0bcbe9a39ceec73c81beaa7be6aaf",
+      "shape": [
+        1,
+        512,
+        7680
+      ],
+      "stride": [
+        3932160,
+        7680,
+        1
+      ],
+      "tensor": "c82a5d9e20430535d42b1900484ff4a6d1b0bcbe9a39ceec73c81beaa7be6aaf"
+    },
+    "source_act_cut": "e08ca953c7dcce6f443359fc4281a685c2c170122651c9f7da0d45745e2c64f2"
+  }
+]

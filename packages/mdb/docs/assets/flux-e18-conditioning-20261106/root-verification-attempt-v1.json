@@ -1,0 +1,8 @@
+{
+  "status": "root-bookkeeping-error-after-authentication-and-CLI-checks",
+  "source_attempt": "saved-report-verification-v1",
+  "error": "KeyError: sample_count. Qwen/denoiser field accounts have nested metric records; the root summarizer initially assumed a flat record.",
+  "scientific_source_or_saved_audit_changed": false,
+  "new_model_calls": 0,
+  "correction": "Traverse the typed metric leaves, preserve the partial attempt and rerun the root verification into a new v2 directory."
+}

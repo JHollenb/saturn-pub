@@ -1,0 +1,96 @@
+{
+  "backend": "torch-cuda-public-statecut-store",
+  "config": {
+    "cpu_threads": 4,
+    "device": "cuda",
+    "output_name": "e18-custody-calibration-result",
+    "output_scratch": "/mnt/big/mdb/research",
+    "profile": "production",
+    "repeats": 2,
+    "transport_limits": {
+      "max_expanded_bytes": 1073741824,
+      "max_member_bytes": 67108864
+    }
+  },
+  "controller_sha256": "0981f6cd1675d7f6fef16102512aeb59f7396bf0a5aacee9bb7a1dc20ac418f2",
+  "device": "cuda",
+  "dtype": "bfloat16",
+  "execution_environment": {
+    "cuda_cache_path": "/mnt/hdd8tb/mdb/cuda-cache",
+    "extra_model_roots": "/mnt/big/llm-models",
+    "python": "3.14.6",
+    "requirements": [
+      "torch==2.13.0",
+      "diffusers==0.39.0",
+      "transformers==5.14.1",
+      "accelerate==1.14.0",
+      "safetensors>=0.5",
+      "numpy>=2.0",
+      "pyyaml>=6.0",
+      "psutil>=5.9",
+      "pillow>=10.0"
+    ],
+    "tmpdir": "/mnt/hdd8tb/mdb/tmp",
+    "torch_home": "/mnt/hdd8tb/mdb/torch",
+    "torchinductor_cache_dir": "/mnt/hdd8tb/mdb/torchinductor-cache",
+    "uv_cache_dir": "/mnt/hdd8tb/mdb/uv-cache",
+    "uv_link_mode": "symlink"
+  },
+  "needs": {
+    "cuda": true,
+    "host": "beast"
+  },
+  "request_sha256": "3319e26d1419642dc88dc20900c6a0a9435eaf54c55b59eadce27c2dfe810ae2",
+  "resource_exception": {
+    "calibration": "Synthetic production geometry9cuts,8steps/mode, no real model; unmeasured CUDA storage overhead. Tiny CPU equivalence qualified; measure clone/store costs and peaks without neural forwards.",
+    "cpu_threads": 4,
+    "disk_gb": 1,
+    "est_wall_s": 60,
+    "ram_mb": 2048,
+    "timeout_s": 300,
+    "vram_mb": 1536
+  },
+  "runtime_wheels": {
+    "mdb_runtime-0.1.0-py3-none-any.whl": "4b1b965dce45883cabcb24ab2c11702ce748aeb1658776596be27b405df26d21",
+    "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+    "saturn_pub-0.4.1-py3-none-any.whl": "c32bbcf5c5b45e4970d9c750266f607b2a9b0f06dc982106fd82e0501375e424"
+  },
+  "scheduler_url": "http://192.168.68.68:9025",
+  "scheduling_contract": {
+    "Session_receipts": 0,
+    "additional_scheduler_submissions": 0,
+    "branch_execution": "in_process",
+    "checkpoint_policy": "One bounded synthetic custody timing experiment; no checkpoint, adapter, Act or real transition claims; no retries or nested jobs.",
+    "collection_policy": "direct_job_only",
+    "control_plane": "mrun_outer_lease",
+    "data_plane": "resident_worker",
+    "execution_model": "finite_local_program",
+    "interactive": false,
+    "lease_scope": "entire-worker",
+    "logical_branches": 2,
+    "logical_operations": 16,
+    "max_local_work_items": 32,
+    "max_mrun_submissions": 1,
+    "model_free": true,
+    "model_loads": 0,
+    "mrun_retry_policy": "none_for_finite_lease",
+    "neural_forwards": 0,
+    "per_branch_mrun_submissions": 0,
+    "per_transition_mrun_submissions": 0,
+    "replay_policy": "local_checkpoint_restore",
+    "schema": "saturn-single-lease-scheduling-contract-v1",
+    "synthetic_public_StateCuts": 9,
+    "task_family": "analysis"
+  },
+  "schema": "mdb-e18-custody-calibration-request-v1",
+  "source_hashes": {
+    "benchmark_flux_e18_custody.py": "3e8b81894cde296cf5ff15509ba68c6c35ef60020b640b1a733d201d1005fd66",
+    "flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "plan.json": "10f1d6d15b437383b8cc4c6a797b9fbbd5c1696d1d0aaf9f07e03f42ab5a4eea",
+    "preflight.v1.json": "890a9fa1e5a62a0eb048fe605ff3c083aeafdf423fcc7231bc2829ea0a748688",
+    "run_flux_e18_custody_calibration.py": "5eccefa0de717b75931ce8214239128342be005608e6ebdc62863b561bc677c9",
+    "stage_flux_e18_custody_calibration.py": "0981f6cd1675d7f6fef16102512aeb59f7396bf0a5aacee9bb7a1dc20ac418f2",
+    "stage_qwen_block0_attention.py": "6c6e4f3bd527b8b79bd6a2dd6fc44967f2fc9968de8d8b9f750066b95de49181"
+  },
+  "task_family": "analysis"
+}

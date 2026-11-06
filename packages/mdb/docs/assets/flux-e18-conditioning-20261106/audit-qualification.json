@@ -1,0 +1,81 @@
+{
+  "canonical_ruff": {
+    "command": [
+      "rtk",
+      "proxy",
+      "uvx",
+      "ruff",
+      "check",
+      "--select",
+      "F,I",
+      "qualification/audit_flux_e18_conditioning_act.py",
+      "tests/test_audit_flux_e18_conditioning_act.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "exit_code": 0,
+    "stdout": "All checks passed!"
+  },
+  "coverage": [
+    "4 actual registered patch manifests and typed before/after/common cuts; exact Bool mask, positive BF16zero, own E lanes and unchanged collateral/noise slots.",
+    "56 actual tiny native advances and8 context prehook operands; receipt seals, occurrence order, footprint/points/cut joins verified.",
+    "All28 complete tiny transitions/branch in own functional/native lanes, with component-derived provenance distinguished from actual native cuts.",
+    "Every recursively live predicted response field checked against its actual producer sealed FP64 edit-minus-sham hash.",
+    "Crosslane, mask shape/columns, receipt, context operand and wrong native receipt hostile controls refuse.",
+    "Public ForecastTransaction regression verifies complete pretarget ordinary files plus exact forecast Act CAS closure; actual old native decoder serializers/path prefixes exclude native future evidence.",
+    "Unsealed forecast file addition refuses complete frontier equality.",
+    "Actual generic saved-worker compact packaging/standard request/6PNG marker tested with ONLY full scientific account mocked for transport; no full original-data audit claimed."
+  ],
+  "fixture": {
+    "bytes": 4929758,
+    "copied_exact": true,
+    "inventory_sha256": "60cf20cb3e266ab72fee8b2436d59165434be6c6addc902e1f958dafd460c4d3",
+    "members": 682,
+    "origin": "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/qualification-v2/attempt-01/tmp/e18-own-state0",
+    "scope": "Actual producer-v2 saved genuine public Act/Session tiny output; synthetic differing E lanes, no Qwen/VAE closure claim."
+  },
+  "history": "Intermediate13checks passed against preserved producer v1 fixture; final15 against producer v2 fixture. Old sources/qualifications untouched.",
+  "installed_mdb": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/mdb/__init__.py",
+  "interpreter": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+  "jobs_or_staging": 0,
+  "new_model_calls": 0,
+  "new_tokenizer_calls": 0,
+  "original_asset_reads_local": false,
+  "original_numerical_claims": false,
+  "packages": {
+    "numpy": "2.5.4",
+    "pytest": "9.2.0",
+    "torch": "2.13.0"
+  },
+  "producer_sha256": "45c512de2dff3252c38a182cf4291b392cf35a159c2bd83b35900c28005cb343",
+  "producer_v2_qualification_sha256": "d78d7e041482971fd09c4566c0b71f66cd0ae74419c3121a460a65b67e8cf146",
+  "python": "3.12.13",
+  "schema": "mdb-flux-e18-saved-reader-qualification-v1",
+  "scope": "Original709 recipe streaming/full Qwen/decoder accounts remain production CPU work after root launches; all discrepancies will remain observations.",
+  "source_schema_review": "Producer owner independently source-walked transaction/Qwen/source/runtime/compact paths; native decoder directory mismatch fixed before freeze.",
+  "sources": {
+    "qualification/audit_flux_e18_conditioning_act.py": "b9690429f05257bac7f6a9bd276e37e411d4fd7960cd33caa893faf5d87ec70c",
+    "tests/test_audit_flux_e18_conditioning_act.py": "1169be2250e1ae84dec7c58988b6ce21edb6e280a6450048bb8fac0eae8828c2"
+  },
+  "status": "qualified-saved-tiny-mechanics",
+  "test": {
+    "capture": "Tool-returned final stdout transcribed; exact final sources and producer fixture copy independently checked.",
+    "command": [
+      "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+      "-I",
+      "-B",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_audit_flux_e18_conditioning_act.py",
+      "--basetemp=tmp"
+    ],
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/audit-qualification-v1/attempt-02/cohort",
+    "environment": {
+      "MDB_E18_SAVED_FIXTURE": "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/audit-qualification-v1/attempt-02/cohort/fixture"
+    },
+    "exit_code": 0,
+    "passed": 15,
+    "pytest_seconds": 9.16,
+    "stdout_tool_return": "...............                                                          [100%]\n15 passed in 9.16s\n"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "all_positions_are_dependent_and_overlap": true,
+  "clarification": "The earlier root recursive count2047 includes29 complete Qwen fields AND58 overlapping attended/padded diagnostics. The1989 whole-field primary count excludes those58 subfield comparisons. Numeric measurements and all source/audit artifacts are unchanged.",
+  "new_installed_CLI_queries": 0,
+  "new_model_calls": 0,
+  "primary_full_denoiser_fields": {
+    "bitwise_exact_fields": 1960,
+    "changed_values": 0,
+    "field_comparisons": 1960,
+    "max_rms": 0.0,
+    "maxabs": 0.0,
+    "overlapping_scalar_positions": 1145176064
+  },
+  "primary_full_qwen_and_denoiser": {
+    "bitwise_exact_fields": 1989,
+    "changed_values": 0,
+    "field_comparisons": 1989,
+    "max_rms": 0.0,
+    "maxabs": 0.0,
+    "overlapping_scalar_positions": 1185808384
+  },
+  "primary_full_qwen_fields": {
+    "bitwise_exact_fields": 29,
+    "changed_values": 0,
+    "field_comparisons": 29,
+    "max_rms": 0.0,
+    "maxabs": 0.0,
+    "overlapping_scalar_positions": 40632320
+  },
+  "regional_qwen_diagnostics": {
+    "bitwise_exact_fields": 58,
+    "changed_values": 0,
+    "field_comparisons": 58,
+    "max_rms": 0.0,
+    "maxabs": 0.0,
+    "overlapping_scalar_positions": 40632320
+  },
+  "schema": "mdb-e18-primary-scope-recount-v1",
+  "scientific_measurements_changed": false,
+  "source_verification_sha256": "bbcb9b6c1437e06f5b14c819ea27cf3563b8056b92149f51d9967cc77248be0f"
+}

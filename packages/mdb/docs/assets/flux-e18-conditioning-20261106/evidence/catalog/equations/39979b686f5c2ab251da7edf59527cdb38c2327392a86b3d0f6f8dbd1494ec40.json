@@ -1,0 +1,199 @@
+{
+  "alias": "cmp.flux.E18.e18-zero.whole",
+  "applicability_authority": "supplied; no generalization inferred",
+  "applicability_conditions": [
+    {
+      "field": "branch",
+      "op": "eq",
+      "value": "e18-zero"
+    },
+    {
+      "field": "occurrence",
+      "op": "eq",
+      "value": "whole"
+    },
+    {
+      "field": "prompt_sha256",
+      "op": "eq",
+      "value": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612"
+    },
+    {
+      "field": "seed",
+      "op": "eq",
+      "value": 277
+    },
+    {
+      "field": "clock",
+      "op": "eq",
+      "value": {
+        "cursor": 0,
+        "phase": "project",
+        "step": 0
+      }
+    },
+    {
+      "field": "intervention",
+      "op": "eq",
+      "value": {
+        "address": "conditioning",
+        "h9_h27": "unchanged",
+        "mode": "replace",
+        "rows": "all512",
+        "site": "step0/project",
+        "value": "positive-BF16-zero"
+      }
+    },
+    {
+      "field": "native_act",
+      "op": "eq",
+      "value": "e585d87c570d2dd63944cd44e932fbe4157135fef38cc61e183af5a87dd4824e"
+    },
+    {
+      "field": "forecast_act",
+      "op": "eq",
+      "value": "e585d87c570d2dd63944cd44e932fbe4157135fef38cc61e183af5a87dd4824e"
+    },
+    {
+      "field": "forecast_seal",
+      "op": "eq",
+      "value": "8f4818ade6207f05c5af0484b6c7815f25ec9a21197bec07456fa31633d2acab"
+    },
+    {
+      "field": "request_sha256",
+      "op": "eq",
+      "value": "491d0611ac1ebbf1a6451552d93b83288713175bc0fac019a7d9251f956f3d34"
+    }
+  ],
+  "binding": {
+    "execution": {
+      "id": "mdb-flux-e18-conditioning-act-v1"
+    },
+    "frontier": "own raw-Qwen E then actual initial-project conditioning Act",
+    "horizon": {
+      "decoder": "whole",
+      "steps": 4
+    },
+    "input_identity": "e08ca953c7dcce6f443359fc4281a685c2c170122651c9f7da0d45745e2c64f2",
+    "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+    "source_identity": "491d0611ac1ebbf1a6451552d93b83288713175bc0fac019a7d9251f956f3d34"
+  },
+  "evidence": {
+    "audit_sha256": "4a8a2627abccb947047077c5672d4a15f5b4f1de7d888844a053869424072090",
+    "direct_route_only": true,
+    "genuine_acts": true,
+    "independent_kernel": false
+  },
+  "fingerprint": "39979b686f5c2ab251da7edf59527cdb38c2327392a86b3d0f6f8dbd1494ec40",
+  "law_id": "law.flux.direct-E18-act.complete-program.v1",
+  "observation_unit": "one caller-bound comparison, not independent tasks",
+  "readers": [],
+  "report": {
+    "decision_fields": 0,
+    "decision_mismatches": 0,
+    "fields": {
+      "decoded": {
+        "decisions": {
+          "rule": "none",
+          "status": "not-requested"
+        },
+        "residual": {
+          "elements": 786432,
+          "l2": 0.0,
+          "largest": {
+            "coordinate": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "signed": 0.0
+          },
+          "max_abs": 0.0,
+          "maximum_signed": 0.0,
+          "minimum_signed": 0.0,
+          "nonzero": 0,
+          "shape": [
+            1,
+            3,
+            512,
+            512
+          ],
+          "signed_mean": 0.0,
+          "signed_sum": 0.0
+        },
+        "shape": [
+          1,
+          3,
+          512,
+          512
+        ]
+      },
+      "pixels": {
+        "decisions": {
+          "rule": "none",
+          "status": "not-requested"
+        },
+        "residual": {
+          "elements": 786432,
+          "l2": 0.0,
+          "largest": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "signed": 0.0
+          },
+          "max_abs": 0.0,
+          "maximum_signed": 0.0,
+          "minimum_signed": 0.0,
+          "nonzero": 0,
+          "shape": [
+            512,
+            512,
+            3
+          ],
+          "signed_mean": 0.0,
+          "signed_sum": 0.0
+        },
+        "shape": [
+          512,
+          512,
+          3
+        ]
+      }
+    },
+    "fingerprint": "6932d24ace2b83247f3974952554d53b6c9e6b6782696de92f9c04fdfc04424f",
+    "max_abs": 0.0,
+    "mechanics_status": "valid",
+    "residual_direction": "observed-minus-predicted",
+    "schema": "mdb-equation-comparison-v1",
+    "target_scope": "unassigned",
+    "terminal_status": "unassessed"
+  },
+  "route_id": "route.flux.original-shared-primitives.E18-conditioning.v1",
+  "schema": "mdb-equation-record-v1",
+  "tested_context": {
+    "branch": "e18-zero",
+    "clock": {
+      "cursor": 0,
+      "phase": "project",
+      "step": 0
+    },
+    "forecast_act": "e585d87c570d2dd63944cd44e932fbe4157135fef38cc61e183af5a87dd4824e",
+    "forecast_seal": "8f4818ade6207f05c5af0484b6c7815f25ec9a21197bec07456fa31633d2acab",
+    "intervention": {
+      "address": "conditioning",
+      "h9_h27": "unchanged",
+      "mode": "replace",
+      "rows": "all512",
+      "site": "step0/project",
+      "value": "positive-BF16-zero"
+    },
+    "native_act": "e585d87c570d2dd63944cd44e932fbe4157135fef38cc61e183af5a87dd4824e",
+    "occurrence": "whole",
+    "prompt_sha256": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612",
+    "request_sha256": "491d0611ac1ebbf1a6451552d93b83288713175bc0fac019a7d9251f956f3d34",
+    "seed": 277
+  }
+}

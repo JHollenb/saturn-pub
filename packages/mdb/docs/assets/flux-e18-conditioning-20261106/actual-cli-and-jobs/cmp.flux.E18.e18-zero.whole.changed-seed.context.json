@@ -1,0 +1,23 @@
+{
+  "branch": "e18-zero",
+  "clock": {
+    "cursor": 0,
+    "phase": "project",
+    "step": 0
+  },
+  "forecast_act": "e585d87c570d2dd63944cd44e932fbe4157135fef38cc61e183af5a87dd4824e",
+  "forecast_seal": "8f4818ade6207f05c5af0484b6c7815f25ec9a21197bec07456fa31633d2acab",
+  "intervention": {
+    "address": "conditioning",
+    "h9_h27": "unchanged",
+    "mode": "replace",
+    "rows": "all512",
+    "site": "step0/project",
+    "value": "positive-BF16-zero"
+  },
+  "native_act": "e585d87c570d2dd63944cd44e932fbe4157135fef38cc61e183af5a87dd4824e",
+  "occurrence": "whole",
+  "prompt_sha256": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612",
+  "request_sha256": "491d0611ac1ebbf1a6451552d93b83288713175bc0fac019a7d9251f956f3d34",
+  "seed": 278
+}

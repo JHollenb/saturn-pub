@@ -1,0 +1,18 @@
+{
+  "design-v1.json": {
+    "bytes": 6776,
+    "sha256": "348b9f2066112adaa71c0a1c9902810f7174a29310699aacf62bf07d672fbe8f"
+  },
+  "qualification.json": {
+    "bytes": 5488,
+    "sha256": "86a41be0d4e12bcc97a58e6e30a24e5654b53b8bc2d53cd53e03610acadb82d4"
+  },
+  "qualification/flux_e18_conditioning_act.py": {
+    "bytes": 37320,
+    "sha256": "d11a7be7385a6f83c775c023e07298693091d4233d9d6a5763405e9b9364b0d3"
+  },
+  "tests/test_flux_e18_conditioning_act.py": {
+    "bytes": 20502,
+    "sha256": "67c9f60445c8509ee2b92fe90c53edaa8880424c3ef9377bf051dd32687b1642"
+  }
+}

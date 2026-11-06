@@ -1,0 +1,104 @@
+{
+  "E18_checks": 13,
+  "changes": [
+    "Clock metadata uses exact public Flux2 execution_point logical_step/phase/local_clock; zero payload clones for cut_record and native before clock",
+    "Actual Session before capture retained, explicit fingerprint equality to saved previous after enforced",
+    "Duplicate save(before) removed; each actual after is still saved and receipt/cut joins unchanged"
+  ],
+  "evidence": {
+    "qualification-v2/attempt-01/execution.json": {
+      "bytes": 2228,
+      "sha256": "91b07585078655f03f8dfb2db3c4a0208b4200dcdde33c865f06f4d60607545e"
+    },
+    "qualification-v2/attempt-01/ruff-stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "qualification-v2/attempt-01/ruff-stdout.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "qualification-v2/attempt-01/stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "qualification-v2/attempt-01/stdout.txt": {
+      "bytes": 99,
+      "sha256": "f53d07ab11b917565e8623da04abab2c0428e9a6399780c996ae697149374e3b"
+    },
+    "qualification-v2/source-diff.txt": {
+      "bytes": 2848,
+      "sha256": "71d072b6786f73935410662feaa82cb9f5ae73e716e78099f00c96df4d4ee878"
+    },
+    "source-archive-v1/archive-receipt.json": {
+      "bytes": 570,
+      "sha256": "841eb5ff1972d7316305b462f563af53d8074286c5e1d57ce25885b5ae535272"
+    }
+  },
+  "execution": {
+    "command": [
+      "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+      "-I",
+      "-B",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp",
+      "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/qualification-v2/attempt-01/tmp",
+      "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/qualification-v2/attempt-01/snapshot/tests/test_flux_e18_conditioning_act.py",
+      "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/qualification-v2/attempt-01/snapshot/tests/test_benchmark_flux_e18_custody.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/qualification-v2/attempt-01",
+    "returncode": 0,
+    "ruff": {
+      "command": [
+        "/Users/jakeholl/domains/common/.venv/bin/ruff",
+        "check",
+        "--select",
+        "F,I",
+        "--config",
+        "pyproject.toml",
+        "qualification/flux_e18_conditioning_act.py",
+        "tests/test_flux_e18_conditioning_act.py",
+        "qualification/benchmark_flux_e18_custody.py",
+        "tests/test_benchmark_flux_e18_custody.py"
+      ],
+      "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+      "returncode": 0
+    },
+    "seconds": 7.820190958911553,
+    "source_hashes": {
+      "qualification/benchmark_flux_e18_custody.py": "3e8b81894cde296cf5ff15509ba68c6c35ef60020b640b1a733d201d1005fd66",
+      "qualification/flux_e18_conditioning_act.py": "45c512de2dff3252c38a182cf4291b392cf35a159c2bd83b35900c28005cb343",
+      "qualification/flux_functional_denoiser.py": "cb794daa5818ec3f9107f23839a41010f9569148da3708e39cedd364dff21923",
+      "qualification/flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+      "qualification/flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+      "qualification/flux_raw_to_image.py": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522",
+      "tests/test_benchmark_flux_e18_custody.py": "674071802f1da998156d84d76767b13bb4f6582f010488665f7d884aa05b2f6b",
+      "tests/test_flux_e18_conditioning_act.py": "63270da5240f71d7023c91c71204d9dee149101c9057345f2a0f4b2804635e47"
+    }
+  },
+  "focused_proofs": [
+    "Every tiny native phase clock equals full payload clock with zero payload getter reads",
+    "Actual receipt-bound old duplicate-save and new one-save stores have identical full member maps and bytes",
+    "All original11 Act/own-E/consumer/full-field/hostile controls still pass",
+    "Synthetic StateCut/LocalStore benchmark refuses all Module calls, observes8legacy metadata payload reads versus0new, and proves exact stores"
+  ],
+  "limits": [
+    "No original assets, tokenization, CUDA, neural production calls, staging or jobs",
+    "Benchmark local execution used tinyCPU only; production synthetic CUDA profile remains root-owned mrun proposal",
+    "Benchmark excludes Session capture/guards and native arithmetic and cannot certify total assay runtime",
+    "No numerical graph, intervention, receipt, source-provenance or control change"
+  ],
+  "mechanics_status": "qualified-tiny-installed-CPU-only",
+  "prior_frozen_source": "d11a7be7385a6f83c775c023e07298693091d4233d9d6a5763405e9b9364b0d3",
+  "pytest": "16 passed in 7.21s",
+  "schema": "mdb-flux-e18-conditioning-qualification-v2",
+  "synthetic_benchmark_checks": 3,
+  "tiny_benchmark": "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/qualification-v2/attempt-01/tmp/test_tiny_actual_store_equival0/benchmark/report.json",
+  "tiny_fixture": "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/qualification-v2/attempt-01/tmp/e18-own-state0",
+  "v1_archive_verified_unchanged": true,
+  "v1_qualification_sha256": "86a41be0d4e12bcc97a58e6e30a24e5654b53b8bc2d53cd53e03610acadb82d4"
+}

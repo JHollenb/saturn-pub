@@ -1,0 +1,1274 @@
+{
+  "forecast": {
+    "e18-zero": {
+      "after": {
+        "boundary": "diffusion-step:0/project",
+        "clock": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        },
+        "cut": "e08ca953c7dcce6f443359fc4281a685c2c170122651c9f7da0d45745e2c64f2",
+        "execution_point": {
+          "edge": "before",
+          "family": "flux2-klein",
+          "index": null,
+          "local_clock": 0,
+          "logical_step": 0,
+          "next_operation": "native_input_projection",
+          "operator": "project",
+          "phase": "project"
+        },
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "parent": "f56b07614112cf6156266cf2bc56c8a13b3aa7960a54b0d2e10a04c99febb0a1",
+        "store": "acts-store"
+      },
+      "all_other_slots_unchanged": true,
+      "before": {
+        "boundary": "diffusion-step:0/project",
+        "clock": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        },
+        "cut": "f56b07614112cf6156266cf2bc56c8a13b3aa7960a54b0d2e10a04c99febb0a1",
+        "execution_point": {
+          "edge": "before",
+          "family": "flux2-klein",
+          "index": null,
+          "local_clock": 0,
+          "logical_step": 0,
+          "next_operation": "native_input_projection",
+          "operator": "project",
+          "phase": "project"
+        },
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "parent": "f1fbf45442b375cca298a6389045bd267b6ac20f49ccda6289c849c31117745c",
+        "store": "acts-store"
+      },
+      "branch": "e18-zero",
+      "changed_values": 1309631,
+      "columns": [
+        2560,
+        5120
+      ],
+      "common_parent": {
+        "boundary": "diffusion-step:0/project",
+        "clock": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        },
+        "cut": "f1fbf45442b375cca298a6389045bd267b6ac20f49ccda6289c849c31117745c",
+        "execution_point": {
+          "edge": "before",
+          "family": "flux2-klein",
+          "index": null,
+          "local_clock": 0,
+          "logical_step": 0,
+          "next_operation": "native_input_projection",
+          "operator": "project",
+          "phase": "project"
+        },
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "parent": null,
+        "store": "acts-store"
+      },
+      "conditioning_after": {
+        "dtype": "torch.bfloat16",
+        "kind": "tensor",
+        "layout": "strided-dense",
+        "sha256": "c82a5d9e20430535d42b1900484ff4a6d1b0bcbe9a39ceec73c81beaa7be6aaf",
+        "shape": [
+          1,
+          512,
+          7680
+        ],
+        "stride": [
+          3932160,
+          7680,
+          1
+        ],
+        "tensor": "c82a5d9e20430535d42b1900484ff4a6d1b0bcbe9a39ceec73c81beaa7be6aaf"
+      },
+      "conditioning_before": {
+        "dtype": "torch.bfloat16",
+        "kind": "tensor",
+        "layout": "strided-dense",
+        "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+        "shape": [
+          1,
+          512,
+          7680
+        ],
+        "stride": [
+          3932160,
+          7680,
+          1
+        ],
+        "tensor": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094"
+      },
+      "exact_shape_mask": [
+        1,
+        512,
+        7680
+      ],
+      "lane": "forecast",
+      "operation_id": "saturn.builtin.patch",
+      "receipt": {
+        "act": {
+          "invalidates": [],
+          "name": "patch",
+          "numerical_contract": "behavioral-intervention",
+          "operation": {
+            "authority": "registered",
+            "id": "saturn.builtin.patch",
+            "implementation_digest": "4e25139d6e1fe6010d988da081f6dba5fd46a4326b959c906914f04ccde3e0dd",
+            "implementation_state_digest": "29d757752575bdb37f1b8c53c73fe6308f2a3983df00425b6e65e4dbe158c9fe",
+            "pure": true,
+            "version": "1"
+          },
+          "parameters": {
+            "items": [
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "address"
+                },
+                "value": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "conditioning"
+                }
+              },
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "dose"
+                },
+                "value": {
+                  "kind": "scalar",
+                  "type": "int",
+                  "value": 1
+                }
+              },
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "mask"
+                },
+                "value": {
+                  "dtype": "torch.bool",
+                  "kind": "tensor",
+                  "layout": "strided-dense",
+                  "sha256": "a94aec79722371c3c5e948a18c6c3d0e744d98903d81bed22b7c7f424bed45de",
+                  "shape": [
+                    1,
+                    512,
+                    7680
+                  ],
+                  "stride": [
+                    3932160,
+                    7680,
+                    1
+                  ],
+                  "tensor": "a94aec79722371c3c5e948a18c6c3d0e744d98903d81bed22b7c7f424bed45de"
+                }
+              },
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "mode"
+                },
+                "value": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "replace"
+                }
+              },
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "value"
+                },
+                "value": {
+                  "kind": "scalar",
+                  "type": "int",
+                  "value": 0
+                }
+              }
+            ],
+            "kind": "mapping"
+          },
+          "preconditions": {
+            "conditioning": "5096165065f6720ac72e6410d74e2111467c8db48d3dce191e976a18c6270e35"
+          },
+          "preserve": [],
+          "reads": [
+            "conditioning"
+          ],
+          "writes": [
+            "conditioning"
+          ]
+        },
+        "boundary": "diffusion-step:0/project",
+        "execution": {
+          "adapter": "native-boundary-v2",
+          "batch": {
+            "guidance": 1.0,
+            "reference_images": false,
+            "size": 1
+          },
+          "decoder_normalization_device": "cpu",
+          "device": {
+            "index": 0,
+            "type": "cuda"
+          },
+          "dtype": "torch.bfloat16",
+          "environment_versions": {
+            "diffusers": "0.39.0",
+            "python": "3.14.6",
+            "torch": "2.13.0+cu130"
+          },
+          "family": "flux2-klein",
+          "granularity": "operation",
+          "guidance": 1.0,
+          "kernel": {
+            "scheduler": "FlowMatchEulerDiscreteScheduler",
+            "transformer": "Flux2Transformer2DModel"
+          },
+          "model_program": "project->joint_block[*]->single_block[*]->norm/proj_readout->flow_commit",
+          "numeric_scope": {
+            "autocast": false,
+            "deterministic_algorithms": true,
+            "float32_matmul_precision": "highest",
+            "inference_mode": true,
+            "stochastic_sampling": false,
+            "tensor_layout": "state-slot-bound-stride",
+            "tf32_matmul": false,
+            "torch_num_threads": 4
+          },
+          "parity": "same-program-exact",
+          "reference_images": false
+        },
+        "execution_point": {
+          "edge": "before",
+          "family": "flux2-klein",
+          "index": null,
+          "local_clock": 0,
+          "logical_step": 0,
+          "next_operation": "native_input_projection",
+          "operator": "project",
+          "phase": "project"
+        },
+        "fingerprint": "e585d87c570d2dd63944cd44e932fbe4157135fef38cc61e183af5a87dd4824e",
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "numerical_contract": {
+          "atol": 0.0,
+          "comparator": "typed-content-digest",
+          "mode": "same-program-exact",
+          "program": "native-boundary-v2",
+          "rtol": 0.0
+        },
+        "operation": "apply",
+        "parent": "f56b07614112cf6156266cf2bc56c8a13b3aa7960a54b0d2e10a04c99febb0a1",
+        "result": "e08ca953c7dcce6f443359fc4281a685c2c170122651c9f7da0d45745e2c64f2",
+        "schema": "saturn-pub-receipt-v1",
+        "writes": {
+          "items": [
+            {
+              "key": {
+                "kind": "scalar",
+                "type": "str",
+                "value": "conditioning"
+              },
+              "value": {
+                "dtype": "torch.bfloat16",
+                "kind": "tensor",
+                "layout": "strided-dense",
+                "sha256": "c82a5d9e20430535d42b1900484ff4a6d1b0bcbe9a39ceec73c81beaa7be6aaf",
+                "shape": [
+                  1,
+                  512,
+                  7680
+                ],
+                "stride": [
+                  3932160,
+                  7680,
+                  1
+                ],
+                "tensor": "c82a5d9e20430535d42b1900484ff4a6d1b0bcbe9a39ceec73c81beaa7be6aaf"
+              }
+            }
+          ],
+          "kind": "mapping"
+        }
+      },
+      "selected_values": 1310720
+    },
+    "sham": {
+      "after": {
+        "boundary": "diffusion-step:0/project",
+        "clock": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        },
+        "cut": "dda908d691f8f9bdd5ebabd14f782d61a020de8366fdc6d80f5b1a3fcf49bec6",
+        "execution_point": {
+          "edge": "before",
+          "family": "flux2-klein",
+          "index": null,
+          "local_clock": 0,
+          "logical_step": 0,
+          "next_operation": "native_input_projection",
+          "operator": "project",
+          "phase": "project"
+        },
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "parent": "f56b07614112cf6156266cf2bc56c8a13b3aa7960a54b0d2e10a04c99febb0a1",
+        "store": "acts-store"
+      },
+      "all_other_slots_unchanged": true,
+      "before": {
+        "boundary": "diffusion-step:0/project",
+        "clock": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        },
+        "cut": "f56b07614112cf6156266cf2bc56c8a13b3aa7960a54b0d2e10a04c99febb0a1",
+        "execution_point": {
+          "edge": "before",
+          "family": "flux2-klein",
+          "index": null,
+          "local_clock": 0,
+          "logical_step": 0,
+          "next_operation": "native_input_projection",
+          "operator": "project",
+          "phase": "project"
+        },
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "parent": "f1fbf45442b375cca298a6389045bd267b6ac20f49ccda6289c849c31117745c",
+        "store": "acts-store"
+      },
+      "branch": "sham",
+      "changed_values": 0,
+      "columns": [
+        2560,
+        5120
+      ],
+      "common_parent": {
+        "boundary": "diffusion-step:0/project",
+        "clock": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        },
+        "cut": "f1fbf45442b375cca298a6389045bd267b6ac20f49ccda6289c849c31117745c",
+        "execution_point": {
+          "edge": "before",
+          "family": "flux2-klein",
+          "index": null,
+          "local_clock": 0,
+          "logical_step": 0,
+          "next_operation": "native_input_projection",
+          "operator": "project",
+          "phase": "project"
+        },
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "parent": null,
+        "store": "acts-store"
+      },
+      "conditioning_after": {
+        "dtype": "torch.bfloat16",
+        "kind": "tensor",
+        "layout": "strided-dense",
+        "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+        "shape": [
+          1,
+          512,
+          7680
+        ],
+        "stride": [
+          3932160,
+          7680,
+          1
+        ],
+        "tensor": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094"
+      },
+      "conditioning_before": {
+        "dtype": "torch.bfloat16",
+        "kind": "tensor",
+        "layout": "strided-dense",
+        "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+        "shape": [
+          1,
+          512,
+          7680
+        ],
+        "stride": [
+          3932160,
+          7680,
+          1
+        ],
+        "tensor": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094"
+      },
+      "exact_shape_mask": [
+        1,
+        512,
+        7680
+      ],
+      "lane": "forecast",
+      "operation_id": "saturn.builtin.patch",
+      "receipt": {
+        "act": {
+          "invalidates": [],
+          "name": "patch",
+          "numerical_contract": "behavioral-intervention",
+          "operation": {
+            "authority": "registered",
+            "id": "saturn.builtin.patch",
+            "implementation_digest": "4e25139d6e1fe6010d988da081f6dba5fd46a4326b959c906914f04ccde3e0dd",
+            "implementation_state_digest": "42c1a7a2a487076f5787a9925b9f5ea4e8d4f16bbc67a5b171415c0460585b0c",
+            "pure": true,
+            "version": "1"
+          },
+          "parameters": {
+            "items": [
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "address"
+                },
+                "value": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "conditioning"
+                }
+              },
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "dose"
+                },
+                "value": {
+                  "kind": "scalar",
+                  "type": "int",
+                  "value": 1
+                }
+              },
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "mask"
+                },
+                "value": {
+                  "dtype": "torch.bool",
+                  "kind": "tensor",
+                  "layout": "strided-dense",
+                  "sha256": "a94aec79722371c3c5e948a18c6c3d0e744d98903d81bed22b7c7f424bed45de",
+                  "shape": [
+                    1,
+                    512,
+                    7680
+                  ],
+                  "stride": [
+                    3932160,
+                    7680,
+                    1
+                  ],
+                  "tensor": "a94aec79722371c3c5e948a18c6c3d0e744d98903d81bed22b7c7f424bed45de"
+                }
+              },
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "mode"
+                },
+                "value": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "replace"
+                }
+              },
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "value"
+                },
+                "value": {
+                  "dtype": "torch.bfloat16",
+                  "kind": "tensor",
+                  "layout": "strided-dense",
+                  "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+                  "shape": [
+                    1,
+                    512,
+                    7680
+                  ],
+                  "stride": [
+                    3932160,
+                    7680,
+                    1
+                  ],
+                  "tensor": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094"
+                }
+              }
+            ],
+            "kind": "mapping"
+          },
+          "preconditions": {
+            "conditioning": "5096165065f6720ac72e6410d74e2111467c8db48d3dce191e976a18c6270e35"
+          },
+          "preserve": [],
+          "reads": [
+            "conditioning"
+          ],
+          "writes": [
+            "conditioning"
+          ]
+        },
+        "boundary": "diffusion-step:0/project",
+        "execution": {
+          "adapter": "native-boundary-v2",
+          "batch": {
+            "guidance": 1.0,
+            "reference_images": false,
+            "size": 1
+          },
+          "decoder_normalization_device": "cpu",
+          "device": {
+            "index": 0,
+            "type": "cuda"
+          },
+          "dtype": "torch.bfloat16",
+          "environment_versions": {
+            "diffusers": "0.39.0",
+            "python": "3.14.6",
+            "torch": "2.13.0+cu130"
+          },
+          "family": "flux2-klein",
+          "granularity": "operation",
+          "guidance": 1.0,
+          "kernel": {
+            "scheduler": "FlowMatchEulerDiscreteScheduler",
+            "transformer": "Flux2Transformer2DModel"
+          },
+          "model_program": "project->joint_block[*]->single_block[*]->norm/proj_readout->flow_commit",
+          "numeric_scope": {
+            "autocast": false,
+            "deterministic_algorithms": true,
+            "float32_matmul_precision": "highest",
+            "inference_mode": true,
+            "stochastic_sampling": false,
+            "tensor_layout": "state-slot-bound-stride",
+            "tf32_matmul": false,
+            "torch_num_threads": 4
+          },
+          "parity": "same-program-exact",
+          "reference_images": false
+        },
+        "execution_point": {
+          "edge": "before",
+          "family": "flux2-klein",
+          "index": null,
+          "local_clock": 0,
+          "logical_step": 0,
+          "next_operation": "native_input_projection",
+          "operator": "project",
+          "phase": "project"
+        },
+        "fingerprint": "06c166bce471b932daa0a07ddcae1de40d814e4cf7638fb33764e8fc0dc9c427",
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "numerical_contract": {
+          "atol": 0.0,
+          "comparator": "typed-content-digest",
+          "mode": "same-program-exact",
+          "program": "native-boundary-v2",
+          "rtol": 0.0
+        },
+        "operation": "apply",
+        "parent": "f56b07614112cf6156266cf2bc56c8a13b3aa7960a54b0d2e10a04c99febb0a1",
+        "result": "dda908d691f8f9bdd5ebabd14f782d61a020de8366fdc6d80f5b1a3fcf49bec6",
+        "schema": "saturn-pub-receipt-v1",
+        "writes": {
+          "items": [
+            {
+              "key": {
+                "kind": "scalar",
+                "type": "str",
+                "value": "conditioning"
+              },
+              "value": {
+                "dtype": "torch.bfloat16",
+                "kind": "tensor",
+                "layout": "strided-dense",
+                "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+                "shape": [
+                  1,
+                  512,
+                  7680
+                ],
+                "stride": [
+                  3932160,
+                  7680,
+                  1
+                ],
+                "tensor": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094"
+              }
+            }
+          ],
+          "kind": "mapping"
+        }
+      },
+      "selected_values": 1310720
+    }
+  },
+  "native": {
+    "e18-zero": {
+      "after": {
+        "boundary": "diffusion-step:0/project",
+        "clock": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        },
+        "cut": "e08ca953c7dcce6f443359fc4281a685c2c170122651c9f7da0d45745e2c64f2",
+        "execution_point": {
+          "edge": "before",
+          "family": "flux2-klein",
+          "index": null,
+          "local_clock": 0,
+          "logical_step": 0,
+          "next_operation": "native_input_projection",
+          "operator": "project",
+          "phase": "project"
+        },
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "parent": "f56b07614112cf6156266cf2bc56c8a13b3aa7960a54b0d2e10a04c99febb0a1",
+        "store": "acts-store"
+      },
+      "all_other_slots_unchanged": true,
+      "before": {
+        "boundary": "diffusion-step:0/project",
+        "clock": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        },
+        "cut": "f56b07614112cf6156266cf2bc56c8a13b3aa7960a54b0d2e10a04c99febb0a1",
+        "execution_point": {
+          "edge": "before",
+          "family": "flux2-klein",
+          "index": null,
+          "local_clock": 0,
+          "logical_step": 0,
+          "next_operation": "native_input_projection",
+          "operator": "project",
+          "phase": "project"
+        },
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "parent": "f1fbf45442b375cca298a6389045bd267b6ac20f49ccda6289c849c31117745c",
+        "store": "acts-store"
+      },
+      "branch": "e18-zero",
+      "changed_values": 1309631,
+      "columns": [
+        2560,
+        5120
+      ],
+      "common_parent": {
+        "boundary": "diffusion-step:0/project",
+        "clock": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        },
+        "cut": "f1fbf45442b375cca298a6389045bd267b6ac20f49ccda6289c849c31117745c",
+        "execution_point": {
+          "edge": "before",
+          "family": "flux2-klein",
+          "index": null,
+          "local_clock": 0,
+          "logical_step": 0,
+          "next_operation": "native_input_projection",
+          "operator": "project",
+          "phase": "project"
+        },
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "parent": null,
+        "store": "acts-store"
+      },
+      "conditioning_after": {
+        "dtype": "torch.bfloat16",
+        "kind": "tensor",
+        "layout": "strided-dense",
+        "sha256": "c82a5d9e20430535d42b1900484ff4a6d1b0bcbe9a39ceec73c81beaa7be6aaf",
+        "shape": [
+          1,
+          512,
+          7680
+        ],
+        "stride": [
+          3932160,
+          7680,
+          1
+        ],
+        "tensor": "c82a5d9e20430535d42b1900484ff4a6d1b0bcbe9a39ceec73c81beaa7be6aaf"
+      },
+      "conditioning_before": {
+        "dtype": "torch.bfloat16",
+        "kind": "tensor",
+        "layout": "strided-dense",
+        "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+        "shape": [
+          1,
+          512,
+          7680
+        ],
+        "stride": [
+          3932160,
+          7680,
+          1
+        ],
+        "tensor": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094"
+      },
+      "exact_shape_mask": [
+        1,
+        512,
+        7680
+      ],
+      "lane": "native",
+      "operation_id": "saturn.builtin.patch",
+      "receipt": {
+        "act": {
+          "invalidates": [],
+          "name": "patch",
+          "numerical_contract": "behavioral-intervention",
+          "operation": {
+            "authority": "registered",
+            "id": "saturn.builtin.patch",
+            "implementation_digest": "4e25139d6e1fe6010d988da081f6dba5fd46a4326b959c906914f04ccde3e0dd",
+            "implementation_state_digest": "29d757752575bdb37f1b8c53c73fe6308f2a3983df00425b6e65e4dbe158c9fe",
+            "pure": true,
+            "version": "1"
+          },
+          "parameters": {
+            "items": [
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "address"
+                },
+                "value": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "conditioning"
+                }
+              },
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "dose"
+                },
+                "value": {
+                  "kind": "scalar",
+                  "type": "int",
+                  "value": 1
+                }
+              },
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "mask"
+                },
+                "value": {
+                  "dtype": "torch.bool",
+                  "kind": "tensor",
+                  "layout": "strided-dense",
+                  "sha256": "a94aec79722371c3c5e948a18c6c3d0e744d98903d81bed22b7c7f424bed45de",
+                  "shape": [
+                    1,
+                    512,
+                    7680
+                  ],
+                  "stride": [
+                    3932160,
+                    7680,
+                    1
+                  ],
+                  "tensor": "a94aec79722371c3c5e948a18c6c3d0e744d98903d81bed22b7c7f424bed45de"
+                }
+              },
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "mode"
+                },
+                "value": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "replace"
+                }
+              },
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "value"
+                },
+                "value": {
+                  "kind": "scalar",
+                  "type": "int",
+                  "value": 0
+                }
+              }
+            ],
+            "kind": "mapping"
+          },
+          "preconditions": {
+            "conditioning": "5096165065f6720ac72e6410d74e2111467c8db48d3dce191e976a18c6270e35"
+          },
+          "preserve": [],
+          "reads": [
+            "conditioning"
+          ],
+          "writes": [
+            "conditioning"
+          ]
+        },
+        "boundary": "diffusion-step:0/project",
+        "execution": {
+          "adapter": "native-boundary-v2",
+          "batch": {
+            "guidance": 1.0,
+            "reference_images": false,
+            "size": 1
+          },
+          "decoder_normalization_device": "cpu",
+          "device": {
+            "index": 0,
+            "type": "cuda"
+          },
+          "dtype": "torch.bfloat16",
+          "environment_versions": {
+            "diffusers": "0.39.0",
+            "python": "3.14.6",
+            "torch": "2.13.0+cu130"
+          },
+          "family": "flux2-klein",
+          "granularity": "operation",
+          "guidance": 1.0,
+          "kernel": {
+            "scheduler": "FlowMatchEulerDiscreteScheduler",
+            "transformer": "Flux2Transformer2DModel"
+          },
+          "model_program": "project->joint_block[*]->single_block[*]->norm/proj_readout->flow_commit",
+          "numeric_scope": {
+            "autocast": false,
+            "deterministic_algorithms": true,
+            "float32_matmul_precision": "highest",
+            "inference_mode": true,
+            "stochastic_sampling": false,
+            "tensor_layout": "state-slot-bound-stride",
+            "tf32_matmul": false,
+            "torch_num_threads": 4
+          },
+          "parity": "same-program-exact",
+          "reference_images": false
+        },
+        "execution_point": {
+          "edge": "before",
+          "family": "flux2-klein",
+          "index": null,
+          "local_clock": 0,
+          "logical_step": 0,
+          "next_operation": "native_input_projection",
+          "operator": "project",
+          "phase": "project"
+        },
+        "fingerprint": "e585d87c570d2dd63944cd44e932fbe4157135fef38cc61e183af5a87dd4824e",
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "numerical_contract": {
+          "atol": 0.0,
+          "comparator": "typed-content-digest",
+          "mode": "same-program-exact",
+          "program": "native-boundary-v2",
+          "rtol": 0.0
+        },
+        "operation": "apply",
+        "parent": "f56b07614112cf6156266cf2bc56c8a13b3aa7960a54b0d2e10a04c99febb0a1",
+        "result": "e08ca953c7dcce6f443359fc4281a685c2c170122651c9f7da0d45745e2c64f2",
+        "schema": "saturn-pub-receipt-v1",
+        "writes": {
+          "items": [
+            {
+              "key": {
+                "kind": "scalar",
+                "type": "str",
+                "value": "conditioning"
+              },
+              "value": {
+                "dtype": "torch.bfloat16",
+                "kind": "tensor",
+                "layout": "strided-dense",
+                "sha256": "c82a5d9e20430535d42b1900484ff4a6d1b0bcbe9a39ceec73c81beaa7be6aaf",
+                "shape": [
+                  1,
+                  512,
+                  7680
+                ],
+                "stride": [
+                  3932160,
+                  7680,
+                  1
+                ],
+                "tensor": "c82a5d9e20430535d42b1900484ff4a6d1b0bcbe9a39ceec73c81beaa7be6aaf"
+              }
+            }
+          ],
+          "kind": "mapping"
+        }
+      },
+      "selected_values": 1310720
+    },
+    "sham": {
+      "after": {
+        "boundary": "diffusion-step:0/project",
+        "clock": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        },
+        "cut": "dda908d691f8f9bdd5ebabd14f782d61a020de8366fdc6d80f5b1a3fcf49bec6",
+        "execution_point": {
+          "edge": "before",
+          "family": "flux2-klein",
+          "index": null,
+          "local_clock": 0,
+          "logical_step": 0,
+          "next_operation": "native_input_projection",
+          "operator": "project",
+          "phase": "project"
+        },
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "parent": "f56b07614112cf6156266cf2bc56c8a13b3aa7960a54b0d2e10a04c99febb0a1",
+        "store": "acts-store"
+      },
+      "all_other_slots_unchanged": true,
+      "before": {
+        "boundary": "diffusion-step:0/project",
+        "clock": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        },
+        "cut": "f56b07614112cf6156266cf2bc56c8a13b3aa7960a54b0d2e10a04c99febb0a1",
+        "execution_point": {
+          "edge": "before",
+          "family": "flux2-klein",
+          "index": null,
+          "local_clock": 0,
+          "logical_step": 0,
+          "next_operation": "native_input_projection",
+          "operator": "project",
+          "phase": "project"
+        },
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "parent": "f1fbf45442b375cca298a6389045bd267b6ac20f49ccda6289c849c31117745c",
+        "store": "acts-store"
+      },
+      "branch": "sham",
+      "changed_values": 0,
+      "columns": [
+        2560,
+        5120
+      ],
+      "common_parent": {
+        "boundary": "diffusion-step:0/project",
+        "clock": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        },
+        "cut": "f1fbf45442b375cca298a6389045bd267b6ac20f49ccda6289c849c31117745c",
+        "execution_point": {
+          "edge": "before",
+          "family": "flux2-klein",
+          "index": null,
+          "local_clock": 0,
+          "logical_step": 0,
+          "next_operation": "native_input_projection",
+          "operator": "project",
+          "phase": "project"
+        },
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "parent": null,
+        "store": "acts-store"
+      },
+      "conditioning_after": {
+        "dtype": "torch.bfloat16",
+        "kind": "tensor",
+        "layout": "strided-dense",
+        "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+        "shape": [
+          1,
+          512,
+          7680
+        ],
+        "stride": [
+          3932160,
+          7680,
+          1
+        ],
+        "tensor": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094"
+      },
+      "conditioning_before": {
+        "dtype": "torch.bfloat16",
+        "kind": "tensor",
+        "layout": "strided-dense",
+        "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+        "shape": [
+          1,
+          512,
+          7680
+        ],
+        "stride": [
+          3932160,
+          7680,
+          1
+        ],
+        "tensor": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094"
+      },
+      "exact_shape_mask": [
+        1,
+        512,
+        7680
+      ],
+      "lane": "native",
+      "operation_id": "saturn.builtin.patch",
+      "receipt": {
+        "act": {
+          "invalidates": [],
+          "name": "patch",
+          "numerical_contract": "behavioral-intervention",
+          "operation": {
+            "authority": "registered",
+            "id": "saturn.builtin.patch",
+            "implementation_digest": "4e25139d6e1fe6010d988da081f6dba5fd46a4326b959c906914f04ccde3e0dd",
+            "implementation_state_digest": "42c1a7a2a487076f5787a9925b9f5ea4e8d4f16bbc67a5b171415c0460585b0c",
+            "pure": true,
+            "version": "1"
+          },
+          "parameters": {
+            "items": [
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "address"
+                },
+                "value": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "conditioning"
+                }
+              },
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "dose"
+                },
+                "value": {
+                  "kind": "scalar",
+                  "type": "int",
+                  "value": 1
+                }
+              },
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "mask"
+                },
+                "value": {
+                  "dtype": "torch.bool",
+                  "kind": "tensor",
+                  "layout": "strided-dense",
+                  "sha256": "a94aec79722371c3c5e948a18c6c3d0e744d98903d81bed22b7c7f424bed45de",
+                  "shape": [
+                    1,
+                    512,
+                    7680
+                  ],
+                  "stride": [
+                    3932160,
+                    7680,
+                    1
+                  ],
+                  "tensor": "a94aec79722371c3c5e948a18c6c3d0e744d98903d81bed22b7c7f424bed45de"
+                }
+              },
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "mode"
+                },
+                "value": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "replace"
+                }
+              },
+              {
+                "key": {
+                  "kind": "scalar",
+                  "type": "str",
+                  "value": "value"
+                },
+                "value": {
+                  "dtype": "torch.bfloat16",
+                  "kind": "tensor",
+                  "layout": "strided-dense",
+                  "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+                  "shape": [
+                    1,
+                    512,
+                    7680
+                  ],
+                  "stride": [
+                    3932160,
+                    7680,
+                    1
+                  ],
+                  "tensor": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094"
+                }
+              }
+            ],
+            "kind": "mapping"
+          },
+          "preconditions": {
+            "conditioning": "5096165065f6720ac72e6410d74e2111467c8db48d3dce191e976a18c6270e35"
+          },
+          "preserve": [],
+          "reads": [
+            "conditioning"
+          ],
+          "writes": [
+            "conditioning"
+          ]
+        },
+        "boundary": "diffusion-step:0/project",
+        "execution": {
+          "adapter": "native-boundary-v2",
+          "batch": {
+            "guidance": 1.0,
+            "reference_images": false,
+            "size": 1
+          },
+          "decoder_normalization_device": "cpu",
+          "device": {
+            "index": 0,
+            "type": "cuda"
+          },
+          "dtype": "torch.bfloat16",
+          "environment_versions": {
+            "diffusers": "0.39.0",
+            "python": "3.14.6",
+            "torch": "2.13.0+cu130"
+          },
+          "family": "flux2-klein",
+          "granularity": "operation",
+          "guidance": 1.0,
+          "kernel": {
+            "scheduler": "FlowMatchEulerDiscreteScheduler",
+            "transformer": "Flux2Transformer2DModel"
+          },
+          "model_program": "project->joint_block[*]->single_block[*]->norm/proj_readout->flow_commit",
+          "numeric_scope": {
+            "autocast": false,
+            "deterministic_algorithms": true,
+            "float32_matmul_precision": "highest",
+            "inference_mode": true,
+            "stochastic_sampling": false,
+            "tensor_layout": "state-slot-bound-stride",
+            "tf32_matmul": false,
+            "torch_num_threads": 4
+          },
+          "parity": "same-program-exact",
+          "reference_images": false
+        },
+        "execution_point": {
+          "edge": "before",
+          "family": "flux2-klein",
+          "index": null,
+          "local_clock": 0,
+          "logical_step": 0,
+          "next_operation": "native_input_projection",
+          "operator": "project",
+          "phase": "project"
+        },
+        "fingerprint": "06c166bce471b932daa0a07ddcae1de40d814e4cf7638fb33764e8fc0dc9c427",
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "numerical_contract": {
+          "atol": 0.0,
+          "comparator": "typed-content-digest",
+          "mode": "same-program-exact",
+          "program": "native-boundary-v2",
+          "rtol": 0.0
+        },
+        "operation": "apply",
+        "parent": "f56b07614112cf6156266cf2bc56c8a13b3aa7960a54b0d2e10a04c99febb0a1",
+        "result": "dda908d691f8f9bdd5ebabd14f782d61a020de8366fdc6d80f5b1a3fcf49bec6",
+        "schema": "saturn-pub-receipt-v1",
+        "writes": {
+          "items": [
+            {
+              "key": {
+                "kind": "scalar",
+                "type": "str",
+                "value": "conditioning"
+              },
+              "value": {
+                "dtype": "torch.bfloat16",
+                "kind": "tensor",
+                "layout": "strided-dense",
+                "sha256": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094",
+                "shape": [
+                  1,
+                  512,
+                  7680
+                ],
+                "stride": [
+                  3932160,
+                  7680,
+                  1
+                ],
+                "tensor": "ff85068eed51d0bdc5d6d418f9d972ceeb2f5064da81103f34b3569cb755c094"
+              }
+            }
+          ],
+          "kind": "mapping"
+        }
+      },
+      "selected_values": 1310720
+    }
+  }
+}

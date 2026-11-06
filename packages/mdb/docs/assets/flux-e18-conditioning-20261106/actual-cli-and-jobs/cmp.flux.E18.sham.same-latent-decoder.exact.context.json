@@ -1,0 +1,23 @@
+{
+  "branch": "sham",
+  "clock": {
+    "cursor": 0,
+    "phase": "project",
+    "step": 0
+  },
+  "forecast_act": "06c166bce471b932daa0a07ddcae1de40d814e4cf7638fb33764e8fc0dc9c427",
+  "forecast_seal": "8f4818ade6207f05c5af0484b6c7815f25ec9a21197bec07456fa31633d2acab",
+  "intervention": {
+    "address": "conditioning",
+    "h9_h27": "unchanged",
+    "mode": "replace",
+    "rows": "all512",
+    "site": "step0/project",
+    "value": "positive-BF16-zero"
+  },
+  "native_act": "06c166bce471b932daa0a07ddcae1de40d814e4cf7638fb33764e8fc0dc9c427",
+  "occurrence": "same-latent-decoder",
+  "prompt_sha256": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612",
+  "request_sha256": "491d0611ac1ebbf1a6451552d93b83288713175bc0fac019a7d9251f956f3d34",
+  "seed": 277
+}

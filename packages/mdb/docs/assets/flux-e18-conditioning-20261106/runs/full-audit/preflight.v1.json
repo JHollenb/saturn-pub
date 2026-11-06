@@ -1,0 +1,19 @@
+{
+  "hashed_roots": [
+    "audit_flux_e18_conditioning_act.py",
+    "audit_flux_raw_mask_pair.py",
+    "audit_flux_raw_to_image.py",
+    "audit_flux_functional_qwen_prefix.py",
+    "audit_flux_functional_remaining.py",
+    "audit_flux_functional_pass.py",
+    "retrieve_reader_evidence.py",
+    "stage_saved_flux_mask_pair_audit.py",
+    "preflight.v1.json"
+  ],
+  "path_token_allowlist": [
+    "/mnt/big/mdb/research/job-9339e3ed1472/e18-conditioning-result",
+    "/mnt/big/mdb/research",
+    "binding-minimal-result"
+  ],
+  "schema_version": "mrun-preflight-config-v1"
+}

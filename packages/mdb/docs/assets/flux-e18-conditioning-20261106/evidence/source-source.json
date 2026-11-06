@@ -1,0 +1,152 @@
+{
+  "forecast_seal": {
+    "forecasts": [
+      "e18-complete-composition"
+    ],
+    "path": "/mnt/big/mdb/research/job-9339e3ed1472/e18-conditioning-result/forecast-transaction/seal.json",
+    "seal_sha256": "8f4818ade6207f05c5af0484b6c7815f25ec9a21197bec07456fa31633d2acab"
+  },
+  "helper_source_sha256": {
+    "flux_functional_decoder.py": "e2712298e42b37a263dea1b24f0f491082b8a01086b16fa66577f474c68f491f",
+    "flux_functional_denoiser.py": "cb794daa5818ec3f9107f23839a41010f9569148da3708e39cedd364dff21923",
+    "flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "flux_functional_qwen_prefix_worker.py": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+    "flux_functional_vae.py": "576b94f3cd987e8849f6d4772c90a77f14fdfc9210dea608a9a3d16cf0f99a61",
+    "flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "flux_raw_to_image.py": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522",
+    "flux_source_receiver.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2"
+  },
+  "job_id": "job-9339e3ed1472",
+  "request_sha256": "491d0611ac1ebbf1a6451552d93b83288713175bc0fac019a7d9251f956f3d34",
+  "runtime_contract_sha256": "a429ad205454089fdd5daf05470fabfa8de1a17f2fd9e70155b0f9676cdb4aa9",
+  "schema": "mdb-flux-e18-conditioning-source-v1",
+  "source_files": {
+    "flux_config": {
+      "bytes": 541,
+      "path": "source/flux_config/flux-transformer-config.json",
+      "sha256": "09733c74a3da6d17dd0a0472a091a8950c7c6935889c32c16cc800ede05029de"
+    },
+    "flux_manifest": {
+      "bytes": 158206,
+      "path": "source/flux_manifest/flux-parameter-artifacts.json",
+      "sha256": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb"
+    },
+    "flux_recipe_helper": {
+      "bytes": 12787,
+      "path": "source/flux_recipe_helper/flux_source_receiver.py",
+      "sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2"
+    },
+    "flux_retrieval_script": {
+      "bytes": 22624,
+      "path": "source/flux_retrieval_script/retrieve_flux_weights.py",
+      "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae"
+    },
+    "flux_scheduler_config": {
+      "bytes": 486,
+      "path": "source/flux_scheduler_config/scheduler-config.json",
+      "sha256": "067afb012cef64553a763447d1efd93daeffcc0123ca7e25b09f8de20b90762e"
+    },
+    "qwen_config": {
+      "bytes": 1536,
+      "path": "source/qwen_config/qwen-config.json",
+      "sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40"
+    },
+    "qwen_manifest": {
+      "bytes": 433549,
+      "path": "source/qwen_manifest/qwen-parameter-artifacts.json",
+      "sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374"
+    },
+    "qwen_recipe_helper": {
+      "bytes": 12787,
+      "path": "source/qwen_recipe_helper/flux_source_receiver.py",
+      "sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2"
+    },
+    "qwen_retrieval_script": {
+      "bytes": 22624,
+      "path": "source/qwen_retrieval_script/retrieve_qwen_weights.py",
+      "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae"
+    },
+    "qwen_source_binding": {
+      "bytes": 65926,
+      "path": "source/qwen_source_binding/qwen-source-binding.json",
+      "sha256": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7"
+    },
+    "vae_config": {
+      "bytes": 821,
+      "path": "source/vae_config/vae-config.json",
+      "sha256": "0d6dfb69ae95a5e2ac9836284bbb63d8b38ce67b25ba2dff380752b2a10ab948"
+    },
+    "vae_manifest": {
+      "bytes": 128869,
+      "path": "source/vae_manifest/vae-parameter-artifacts.json",
+      "sha256": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9"
+    },
+    "vae_recipe_helper": {
+      "bytes": 12787,
+      "path": "source/vae_recipe_helper/flux_source_receiver.py",
+      "sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2"
+    },
+    "vae_retrieval_script": {
+      "bytes": 22624,
+      "path": "source/vae_retrieval_script/retrieve_vae_weights.py",
+      "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae"
+    }
+  },
+  "tokenizer_files": {
+    "text_encoder/config.json": {
+      "bytes": 1536,
+      "path": "/mnt/big/llm-models/FLUX.2-klein-4B/text_encoder/config.json",
+      "retained": "source/text_encoder/config.json",
+      "sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40"
+    },
+    "text_encoder/generation_config.json": {
+      "bytes": 214,
+      "path": "/mnt/big/llm-models/FLUX.2-klein-4B/text_encoder/generation_config.json",
+      "retained": "source/text_encoder/generation_config.json",
+      "sha256": "4347b1aeed2b2b78bc059920a0b7f5fec71482e1344952b76d7665d638d71f13"
+    },
+    "tokenizer/added_tokens.json": {
+      "bytes": 707,
+      "path": "/mnt/big/llm-models/FLUX.2-klein-4B/tokenizer/added_tokens.json",
+      "retained": "source/tokenizer/added_tokens.json",
+      "sha256": "c0284b582e14987fbd3d5a2cb2bd139084371ed9acbae488829a1c900833c680"
+    },
+    "tokenizer/chat_template.jinja": {
+      "bytes": 4168,
+      "path": "/mnt/big/llm-models/FLUX.2-klein-4B/tokenizer/chat_template.jinja",
+      "retained": "source/tokenizer/chat_template.jinja",
+      "sha256": "a55ee1b1660128b7098723e0abcd92caa0788061051c62d51cbe87d9cf1974d8"
+    },
+    "tokenizer/merges.txt": {
+      "bytes": 1671853,
+      "path": "/mnt/big/llm-models/FLUX.2-klein-4B/tokenizer/merges.txt",
+      "retained": "source/tokenizer/merges.txt",
+      "sha256": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5"
+    },
+    "tokenizer/special_tokens_map.json": {
+      "bytes": 613,
+      "path": "/mnt/big/llm-models/FLUX.2-klein-4B/tokenizer/special_tokens_map.json",
+      "retained": "source/tokenizer/special_tokens_map.json",
+      "sha256": "76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd"
+    },
+    "tokenizer/tokenizer.json": {
+      "bytes": 11422654,
+      "path": "/mnt/big/llm-models/FLUX.2-klein-4B/tokenizer/tokenizer.json",
+      "retained": "source/tokenizer/tokenizer.json",
+      "sha256": "aeb13307a71acd8fe81861d94ad54ab689df773318809eed3cbe794b4492dae4"
+    },
+    "tokenizer/tokenizer_config.json": {
+      "bytes": 5404,
+      "path": "/mnt/big/llm-models/FLUX.2-klein-4B/tokenizer/tokenizer_config.json",
+      "retained": "source/tokenizer/tokenizer_config.json",
+      "sha256": "443bfa629eb16387a12edbf92a76f6a6f10b2af3b53d87ba1550adfcf45f7fa0"
+    },
+    "tokenizer/vocab.json": {
+      "bytes": 2776833,
+      "path": "/mnt/big/llm-models/FLUX.2-klein-4B/tokenizer/vocab.json",
+      "retained": "source/tokenizer/vocab.json",
+      "sha256": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+    }
+  },
+  "worker_sha256": "45c512de2dff3252c38a182cf4291b392cf35a159c2bd83b35900c28005cb343"
+}

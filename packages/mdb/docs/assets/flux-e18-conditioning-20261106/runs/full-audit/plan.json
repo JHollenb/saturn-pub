@@ -1,0 +1,9 @@
+{
+  "directory_custody": true,
+  "native_manifest_sha256": "4d481f3b3b735a4a6814d21e10e87fbbb36759879bc5d46bc53f6c583443d70b",
+  "native_request_sha256": "491d0611ac1ebbf1a6451552d93b83288713175bc0fac019a7d9251f956f3d34",
+  "native_root": "/mnt/big/mdb/research/job-9339e3ed1472/e18-conditioning-result",
+  "output_scratch": "/mnt/big/mdb/research",
+  "scope": "OwnQwen,E18patchCAS+4Acts/224advances/8operands,complete branch states,signed responses and six actual decoder images;zero neural/tokenizer calls.",
+  "source_job": "job-9339e3ed1472"
+}

@@ -1,0 +1,113 @@
+{
+  "schema": "mdb-h18-history-next-perturbation-advisory-v1",
+  "created_at": "2026-11-06T14:27:29.310Z",
+  "status": "prospective-read-only-design-advice",
+  "source_sha256": {
+    "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/transformers/models/qwen3/modeling_qwen3.py": "fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/run-01/qwen-config.json": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/upstream-h18-feasibility-v1.json": "28b67a3571737cade9a5aab4463977a474d9f27fe4d3cdb741517e52c455acf7",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/design-v1.md": "afd360f5bed4010838d01cec71f361d97df04d30023fa5563ce56f786c002fa7",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-054800-five-attention-values-become-a-different-hidden-state.md": "fa5de4333dbf8d06e47292ab69a8861f278415cc88592dedbdd1fef46a0bcc30",
+    "/Users/jakeholl/domains/obsidian/blog/2026-11-06-032000-predicting-conditioning-from-the-raw-prompt.md": "dd81723d6161784eace42478e28afec1ee1a0fc6e6e2c3efe96aea372973e925"
+  },
+  "recommendation": "For the successor history experiment, prefer a global all-row/all-feature H18 sign reversal to complete H18 zeroing. Keep the currently running direct E18-zero campaign unchanged.",
+  "reasons": [
+    "In the pinned bias-free, no-cache Qwen suffix, an all-query zero residual is an ideal absorbing state. Its regenerated H27 is therefore zero: direct-zero versus coherent-zero mostly compares removal of one selected conditioning slice against removal of two, rather than a rich history transformation.",
+    "Negating a finite BF16 H18 preserves each absolute value and its norm without an interpolation/rounding dose ambiguity. The sign change avoids the absorbing zero while yielding a specific algebraic prediction about the first suffix block.",
+    "This remains a large imposed state perturbation: its FP64 displacement is−2H18 with norm2||H18|| and cosine−1. Norm preservation does not make it on-manifold, small, semantic, or an isolated MLP ablation."
+  ],
+  "pinned_source_findings": {
+    "attention_bias": false,
+    "attention_dropout": 0,
+    "hidden_act": "silu",
+    "RMSNorm_epsilon": 0.000001,
+    "attention": "Q/K/V/output linears have config.attention_bias=False; Q/K per-head normalization is multiplicative RMSNorm; rotary position is multiplicative/rotational, without additive position injection.",
+    "MLP": "gate_proj/up_proj/down_proj all bias=False; down_proj(SiLU(gate_proj(x))*up_proj(x)).",
+    "residual": "Qwen is serial: attention residual addition, post-attention RMSNorm, then MLP residual addition. Do not import the FLUX single-block parallel-writer interpretation.",
+    "indexing": "H18 is the residual after block17 and incoming to zero-indexed block18. Regenerate blocks18..26 to obtain H19..H27.",
+    "cache": "Require use_cache=False and no unflipped previous KV cache. The global symmetry is not a cached one-token statement."
+  },
+  "ideal_math": {
+    "variables": "Let h=H18, R(h)=h+A(N1(h)), x=N2(R(h)), G=Wg x, U=Wu x, M(x)=Wd[SiLU(G)⊙U], Y=R+M.",
+    "odd_prefix": "For the same complete mask/positions and real arithmetic: RMSNorm(−h)=−RMSNorm(h); Q,K,V all reverse; QK^T and softmax probabilities are unchanged; attention and first residual are odd; x(−h)=−x(h). Epsilon and learned multiplicative RMS weights do not break this oddness.",
+    "identity": "SiLU(−G)=SiLU(G)−G. Hence M(−x)=−M(x)+Wd[G⊙U], so M(−x)+M(x)=Wd[G⊙U]. Consequently Y(−h)+Y(h)=Wd[G⊙U] for the complete first suffix block in real arithmetic.",
+    "scope": "The first ideal non-odd activation is SiLU, and the first non-odd residual writer is the MLP. This is not odd symmetry of the entire nine-block recurrence; after block18 its two states generally are no longer negatives.",
+    "zero_scope": "Zero absorption assumes finite valid inputs and an attention row with permitted keys; signed-zero bits and any nonfinite implementation path remain diagnostics. No native zero suffix has been observed by this review."
+  },
+  "finite_precision_qualification": [
+    "The symbolic identity is not a BF16/GEMM/SDPA equality claim. Preserve original FP32 statistics, BF16 casts/weight products, FP32 RoPE construction/device-only placement, original mask/layout/dispatch and output addition order.",
+    "Compare numerical-value antisymmetry and sign-bit antisymmetry separately, especially±0. Do not label signed-zero-only differences as the same scientific effect as nonzero-value differences.",
+    "Q/K score invariance is an ideal argument. Actual positioned Q/K/V and head/projection oddness must be measured; do not assume identical softmax/kernel internals from matching source labels.",
+    "If earlier finite attention/residual/postnorm steps violate oddness, the later MLP even response includes changed incoming operands as well as SiLU's algebra. Do not assign all observed H19 non-oddness solely to SwiGLU.",
+    "Given saved finite R±,M±,Y±, define epsilon±=FP64(Y±)−FP64(R±)−FP64(M±). Then the exact coordinate account is FP64(Y+)+FP64(Y−)=(R++R−)+(M++M−)+(epsilon++epsilon−). Retain signed cross terms for energies; no additive causal percentages.",
+    "A posthoc Wd(G⊙U) reconstruction from observed operands is a diagnostic, not a prospective forecast. If any extra learned primitive is executed for that RHS, count it explicitly and declare its rounding profile. Do not add an expensive full FP64 matrix recurrence merely to illustrate the real-arithmetic identity."
+  ],
+  "row_and_feature_restrictions": [
+    "Flip every feature of all512 query rows, including padded rows. Padded keys are masked, but their query outputs are still computed and later consumed by FLUX.",
+    "Partial token flips generally reverse cross-group QK products and change attention probabilities. Even flipping only attended rows loses whole-state oddness at unflipped padded queries.",
+    "Featurewise sign masks generally do not commute with the learned Q/K/V matrices and RMS/QK formation. They answer a different mechanism question; do not apply this global-sign proof to them.",
+    "Preserve all shapes, strides, dtype, device and mask/position bytes. Negate by the declared native sign operation, not a nominal interpolated dose."
+  ],
+  "one_bounded_design": {
+    "primary_question": "How much of an H18-state sign intervention reaches the image through direct E18 versus regenerated E27 history, with a first-suffix-block algebraic diagnostic?",
+    "cases": {
+      "direct": "E_D=cat(H9_own,−H18_own,H27_base_own)",
+      "coherent": "E_C=cat(H9_own,−H18_own,H27_minus_own), with H27_minus from blocks18..26 consuming −H18 then their own prior outputs"
+    },
+    "held_fixed": "Within each lane: raw parser inputs/mask/positions, H9, direct negative H18 slice, original weights/profile, noise, IDs, scheduler and clock. Forecast and native lanes form their own E components independently.",
+    "functional": "One own baseline27-block prefix plus nine edited suffix blocks=36 functional Qwen block evaluations. Retain first suffix block diagnostic ports and all H19..27 exits. Then two112-transition FLUX paths and two functional decodes.",
+    "native_preference": "One full36-layer baseline/LM reference plus nine unchanged native layer18..26 component calls=45 native Qwen blocks, with source-bound mask/RoPE context and a qualified same-H18 suffix replay. Do not run two full36 references merely for convenience if this component boundary is faithfully qualified.",
+    "minimum_controls": "Native baseline retains original H18/H19..H27; qualify the suffix wrapper with same-input parity before original execution. Direct/coherent E agree exactly in H9 and negative H18; both have actual project operand joins. Reuse existing image sham only as an explicitly historical source/profile-bound control; it is not a new native image baseline in this two-image panel.",
+    "prospective_order": "Complete own functional baseline/edited Qwen histories, both FLUX/decoder forecasts and signed coherent-minus-direct response commitments before any native learned reference. No observed native QKV or intermediate refresh enters predictions.",
+    "downstream_Acts": "Use genuine existing FLUX conditioning Acts to install E_D/E_C from same-lane common parents; actual next consumers verify both complete operands at four projects each. Four downstream Acts do not retroactively create a genuine upstream Qwen Act.",
+    "local_comparisons": "For block18 retain h±, first norm, positioned Q/K/V, actual head, projection, R±, second norm x±, gate/up, activated product, M± and Y±. First compare oddness defects before interpreting the first MLP even contribution. Retain existing whole signed future comparison rather than a semantic scalar.",
+    "continuation": "The two complete image futures test the mediated H27 route conditional on the same negative E18. They do not estimate a direct×mediated interaction; that requires a fourth E27-only arm plus baseline and is outside this minimum panel."
+  },
+  "frozen_prediction_suggestions": [
+    {
+      "name": "finite own-state forecast",
+      "claim": "The complete shared-primitive functional states, signed future response and endpoints will match their native counterparts under the declared profile.",
+      "on_miss": "Retain first/later discrepancies; inspect earliest consumed mismatch. No numerical quality gate."
+    },
+    {
+      "name": "first suffix odd-prefix expectation",
+      "claim": "Tentatively expect numerical-value antisymmetry through block18 first normalization, positioned Q/K/V, head/output projection, residual, second norm, and gate/up projections; inspect signed-zero bits separately.",
+      "on_miss": "Record earliest violating port and do not attribute all later even response to MLP alone."
+    },
+    {
+      "name": "first non-odd writer",
+      "claim": "Expect nonzero MLP even response and hence non-odd H19; the real-arithmetic explanatory candidate is Wd(G⊙U).",
+      "on_miss": "A zero/cancelled or finite-different response remains evidence; no forced effect or semantic conclusion."
+    },
+    {
+      "name": "route contrast",
+      "claim": "Seal the complete coherent-minus-direct future vector. Do not predeclare its magnitude, RGB direction or object effect without supporting data.",
+      "on_miss": "Numerical prediction errors and any vanishing downstream effect remain recorded."
+    }
+  ],
+  "API_and_execution_limits": {
+    "current_public_gap": "Sol's source inventory finds no existing full512 padded SDPA Qwen3 Session Act boundary; current public decoder adapter is eager pending-token and cannot be relabeled as this execution.",
+    "recommended_path": "A new explicit source-qualified native suffix component wrapper is the smaller implementation. If a genuine upstream public Act is required, qualify a distinct full-prefill Qwen3 adapter rather than forging StateCuts or modifying an eager/pending-token contract.",
+    "required_qualification": "Synthetic unequal hidden/attention-width Qwen3, FP32 RoPE, padded all512-style shape, original mask/backend, no cache; correct H18 layer indexing and post-edit actual consumer capture; baseline suffix parity; hook cleanup/parameter immutability; all forecast/native counts and source identities explicit.",
+    "resource": "Reuse original709 recipes and three component hydration pattern; no extra weight bank. New nine Qwen blocks per lane and diagnostic retention require concrete sizing after code exists. No resource admission or job authorization is issued here.",
+    "existing_E18": "Running direct-zero request/job remains unchanged. This advice concerns a separate successor only."
+  },
+  "coordination": {
+    "agent": "/root/single_writers_sol",
+    "activity": "Read-only feasibility exchange and source/design inspection",
+    "mutations_to_others": 0
+  },
+  "cadence": {
+    "resets_holistic_cadence": false,
+    "anchor_turn": 10,
+    "next_by_turn": 13
+  },
+  "reviewer_actions": {
+    "model_calls": 0,
+    "tokenizer_calls": 0,
+    "checkpoint_reads": 0,
+    "jobs": 0,
+    "source_edits": 0
+  }
+}

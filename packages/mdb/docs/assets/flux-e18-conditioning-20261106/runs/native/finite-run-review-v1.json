@@ -1,0 +1,99 @@
+{
+  "schema": "mdb-finite-run-independent-review-v1",
+  "created_at": "2026-11-06T14:21:25.469Z",
+  "reviewer": "Astra",
+  "request_sha256": "491d0611ac1ebbf1a6451552d93b83288713175bc0fac019a7d9251f956f3d34",
+  "request_file_sha256": "7379b1205a904d050dce38d82e9950befeb85b0b690ee665116cd0806e658cb8",
+  "review_status": "ready-for-finite-run",
+  "blocking_issues": [],
+  "specimen": "One finite CUDA E18 conditioning Act campaign; two own-state branches per lane, short raw prompt/seed277/B1/512px/four steps.",
+  "exact_pins": {
+    "worker_sha256": "45c512de2dff3252c38a182cf4291b392cf35a159c2bd83b35900c28005cb343",
+    "launcher_sha256": "c542b0576f955e10f286fb5db6fc24a4aee7f9b79ad73cc91bed108bc0b81ccf",
+    "base_launcher_sha256": "855ee39d6d4c9c4a9f8fcefb425c33d8ff327b9f24a0f9dbf3066c8389040e99",
+    "payload_seal_sha256": "9a21e4116a3949b57d70141becc0bb95d9ca30d036bc9a902fa92a4bd8d48bb6",
+    "staged_command_sha256": "cad0a415ee2288f555516b583141442f992018f699e0cfebcaa22404f032396f",
+    "qualification_v2_sha256": "d78d7e041482971fd09c4566c0b71f66cd0ae74419c3121a460a65b67e8cf146",
+    "custody_calibration_receipt_sha256": "6fab331138fe042fac47de734b5495ca67782304d2edcfa44c6a1569332c414f",
+    "audit_qualification_receipt_sha256": "2572e9a73e1276b67eb95d8d3e3dbb7b02db26ad9c942a153064f7fac0c6336d"
+  },
+  "whole_wheels": {
+    "mdb_runtime-0.1.0-py3-none-any.whl": "4b1b965dce45883cabcb24ab2c11702ce748aeb1658776596be27b405df26d21",
+    "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+    "saturn_pub-0.4.1-py3-none-any.whl": "c32bbcf5c5b45e4970d9c750266f607b2a9b0f06dc982106fd82e0501375e424"
+  },
+  "independently_checked": [
+    "Canonical request identity; all29 source files and all payload-seal file hashes; all3 whole-wheel hashes.",
+    "All472 sealed package entries equal both wheel members and actual qualified installed bytes:188mdb,225mrun,59saturn_pub.",
+    "saturn_run_config.json equals exact request config and its byte hash; saturn_debug_request.json equals exact request; staged plan equals config.",
+    "Current launcher equals staged launcher and request pin; inspect_run reports no submission. Command generated offline under hostile /Users/ ambient settings equals staged-command exactly, contains Linux paths and original three wheels. Queue note430characters.",
+    "Original recipe manifests validate metadata and names/counts:398Qwen,169FLUX,142VAE,709total. Original source archive hashes are consistently bound; no checkpoint data read by reviewer.",
+    "Worker validate_config and count-contract agree for exact staged config using qualified installed environment; no numerical execution.",
+    "Source review confirms genuine public Act.patch, common-parent forks, own-E forecast/native lanes, all-other-slot preservation, eight actual context operand joins, guarded global forecast and signed-response seal before native learned targets.",
+    "v2 clock metadata uses execution_point; native before fingerprint must match previously saved after; redundant before serialization removed. Public Session continuation guards/receipts remain."
+  ],
+  "census": {
+    "functional_qwen27": 1,
+    "native_qwen36_plus_LM": 1,
+    "functional_FLUX_transitions": 224,
+    "native_FLUX_transitions": 224,
+    "genuine_Acts": 4,
+    "receipt_occurrences": 228,
+    "actual_context_operands": 8,
+    "functional_decodes": 2,
+    "native_VAE_calls": 4,
+    "PNGs": 6,
+    "noise_draws": 2,
+    "component_hydrations": 3,
+    "placements": 6,
+    "offloads": 6,
+    "max_GPU_components": 1,
+    "physical_component_transition_action_occurrences": 460,
+    "logical_operations": 16,
+    "logical_operations_interpretation": "12 actual component passes (2Qwen+4denoiser trajectories+6decodes) plus4Acts. The448denoiser transitions remain separately explicit, not hidden by this aggregation.",
+    "model_loads_interpretation": "One composite assembly containing3 physical once-hydrated CPU-retained components; not one weight read."
+  },
+  "resource_review": {
+    "requested": {
+      "cpu_threads": 4,
+      "ram_mb": 24576,
+      "vram_mb": 13312,
+      "disk_gb": 12,
+      "estimated_seconds": 900,
+      "worker_cooperative_seconds": 1200,
+      "outer_seconds": 1500
+    },
+    "learned_parameter_bytes": 15895266374,
+    "payload_bytes": 4345173,
+    "max_expanded_bytes": 8589934592,
+    "max_member_bytes": 134221824,
+    "largest_decoder_tensor_payload_bytes": 134217728,
+    "member_header_allowance_bytes": 4096,
+    "forecast_transaction_bytes": 1073741824,
+    "rationale": "Same three CPU-retained parameter sets and one-GPU-component placement pattern as prior measured20.7GB RSS/8.37GB VRAM composition. New Session states/receipt storage are bounded, gradients disabled, capture retain=False and model shared across forks; no112-step GPU history or per-transition full-weight hashing. Two trajectories per lane are sequential. Raw8GiB plus small staged payload fits declared12GB workspace bound; actual strict disk admission remains launcher authority.",
+    "custody_calibration": "Authenticated source-bound synthetic CUDA job-d1af1e9981fd:29.02s wall/RSS869.8MB/VRAM450MB;9cuts,8timed steps,67,073,072B exact-equivalent stores. v2store0.753760s/9calls; metadata0.0000709s. Does not measure Session guards, model arithmetic or a production memory ceiling; v1/v2 comparison has cache/order confounding.",
+    "time_judgment": "900s is a conservative planning estimate, not a measured E18 bound. Prior paired full run411.95s plus bounded new Session/custody overhead and modest synthetic store cost do not presently establish an expected duration above15minutes. The1200/1500 safety deadlines are not expected runtimes. No extra neural smoke or mandatory long-run Luna review is triggered by this assessed estimate; reassess before submission if new evidence raises the expected duration above900s.",
+    "retained_uncertainties": [
+      "Full production Session capture/version-guard and fsync/hash throughput remain uncalibrated.",
+      "Allocator/loading transients and shared-host telemetry may differ from historical peaks.",
+      "Worker budget checks are cooperative at events; the outer lease is the hard finite limit.",
+      "Final output bytes are bounded, not yet measured. No claim that external forecast arrays fit the1GiB metadata transaction itself."
+    ]
+  },
+  "mechanical_conditions": [
+    "Submit only this exact reviewed request and unchanged payload using pinned launcher, strict preflight, CUDA need, declared reservations, one lease and retry_on_kill=False.",
+    "Launcher rechecks request/source/wheel identity and review binding, persists actual command, and refuses repeated submission. Actual scheduler reservation/telemetry must be checked by launch owner.",
+    "Runtime verifies configured native source/parameter identities and tied alias, preserves FP32 Qwen rotary device-only placement and explicit CPU decoder frontend.",
+    "All completed scientific outcomes and numerical misses remain evidence. Nonzero intervention effect, cosine, norm, semantic appearance or prediction parity are not added as scientific abort gates."
+  ],
+  "scope_limits": [
+    "No source, model, tokenizer, checkpoint, CUDA or scheduler execution by reviewer; only isolated metadata/source validation and command construction.",
+    "The16 installed worker/calibration tests are read from durable qualification, not rerun here.",
+    "Readiness applies to this finite producer request, not a completed result or independently certified saved-only numerical audit.",
+    "Direct E18columns2560:5120 suppression across512rows leaves E9/E27 unchanged; it does not ablate upstream Qwen17 MLP. E27 retains upstream history, and zero can be off-manifold.",
+    "Native reference learns its own E_N; no forecast E is substituted into it. Same-latent native decodes are conditional consumers. Original Torch primitives are shared, selected kernels unprofiled.",
+    "No refreshed holistic cadence: turn10 anchor and next review by13 remain."
+  ],
+  "reviewer_model_calls": 0,
+  "reviewer_submissions": 0
+}

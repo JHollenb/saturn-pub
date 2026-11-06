@@ -1,0 +1,113 @@
+{
+  "coverage": [
+    "Actual registered Act.patch with exact-shape bool mask and conditioning precondition at real step0/project",
+    "Fork parent/receipt/result joins; positive-zero BF16 replacement including negative-zero source; all other slots and layout preserved",
+    "Both own-state tiny branches, all 28 boundaries, actual per-transition Session receipts, bitwise full-field parity",
+    "Four Acts across independently different E lanes; eight actual native context_embedder pre-hook operand joins",
+    "Forecast module-forward refusal and cleanup; wrong operand/precondition/mask/site refusals",
+    "Actual raw rich/minimal serializers, persisted actual receipt writer, fixed signed response hashes",
+    "Real frozen finalizer wrapper and request-bound worker-tail API",
+    "Pinned prospective Qwen input binding; BatchEncoding token-count ABI; six-placement phase ordering and offload on failure"
+  ],
+  "evidence": {
+    "attempt-05/execution.json": {
+      "bytes": 1736,
+      "sha256": "7b7ca8d812872196e8e59886f5250ab6b4c7a6a2fde9d17ae5c40a5599f87a87"
+    },
+    "attempt-05/ruff-stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "attempt-05/ruff-stdout.txt": {
+      "bytes": 19,
+      "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+    },
+    "attempt-05/stderr.txt": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "attempt-05/stdout.txt": {
+      "bytes": 99,
+      "sha256": "41ab01be4c3c46ba8e973c102916e4cf4ef37565fb38a46974686d9b836a0c3c"
+    }
+  },
+  "execution": {
+    "command": [
+      "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+      "-I",
+      "-B",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp",
+      "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/qualification-v1/attempt-05/tmp",
+      "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/qualification-v1/attempt-05/snapshot/tests/test_flux_e18_conditioning_act.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/qualification-v1/attempt-05",
+    "returncode": 0,
+    "ruff": {
+      "command": [
+        "/Users/jakeholl/domains/common/.venv/bin/ruff",
+        "check",
+        "--select",
+        "F,I",
+        "--config",
+        "pyproject.toml",
+        "qualification/flux_e18_conditioning_act.py",
+        "tests/test_flux_e18_conditioning_act.py"
+      ],
+      "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+      "returncode": 0
+    },
+    "seconds": 7.620838333154097,
+    "source_hashes": {
+      "qualification/flux_e18_conditioning_act.py": "d11a7be7385a6f83c775c023e07298693091d4233d9d6a5763405e9b9364b0d3",
+      "qualification/flux_functional_denoiser.py": "cb794daa5818ec3f9107f23839a41010f9569148da3708e39cedd364dff21923",
+      "qualification/flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+      "qualification/flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+      "qualification/flux_raw_to_image.py": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522",
+      "tests/test_flux_e18_conditioning_act.py": "67c9f60445c8509ee2b92fe90c53edaa8880424c3ef9377bf051dd32687b1642"
+    }
+  },
+  "final_attempt": "attempt-05",
+  "installed_public_sources": {
+    "mdb.native_navigation": {
+      "path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/mdb/native_navigation.py",
+      "sha256": "5fc49831de98641858344280316826f12c563aefb5ef521f787282e33556cca8"
+    },
+    "saturn_pub.adapters.flux2": {
+      "path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/saturn_pub/adapters/flux2.py",
+      "sha256": "2004b81971a258f1ca6295fe69d24767dc6bb6b92e103fa30cf6ccb0249b5a86"
+    },
+    "saturn_pub.core": {
+      "path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/saturn_pub/core.py",
+      "sha256": "38fea49e43c4e7059fd14e046d2d884e74bc19f9272e686b61a55b64e96019f9"
+    }
+  },
+  "installed_versions": {
+    "diffusers": "0.39.0",
+    "numpy": "2.5.4",
+    "pytest": "9.2.0",
+    "torch": "2.13.0",
+    "transformers": "5.14.1"
+  },
+  "limits": [
+    "No original weights/tokenizer/model assets/CUDA/jobs/staging were read or executed",
+    "Tiny decoder records are serialization fixtures, not VAE predictions",
+    "Full three-component production orchestration remains subject to root source review and mrun admission",
+    "Numerical production misses remain observations; only identity/geometry/custody/census stop execution"
+  ],
+  "mechanics_status": "qualified-tiny-installed-CPU-only",
+  "prior_attempts_preserved": [
+    "attempt-01: 3 failed, 4 passed, 2 errors; frontier-kind/binding and test-harness assumptions corrected before production",
+    "attempt-02: 9 passed",
+    "attempt-03: 11 passed",
+    "attempt-04: 11 passed"
+  ],
+  "pytest": "11 passed in 6.95s",
+  "python": "3.12.13",
+  "schema": "mdb-flux-e18-conditioning-qualification-v1",
+  "tiny_saved_fixture": "/Users/jakeholl/domains/artifacts/mdb-flux-e18-conditioning-20261106/qualification-v1/attempt-05/tmp/e18-own-state0"
+}

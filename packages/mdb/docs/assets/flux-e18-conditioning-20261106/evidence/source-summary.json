@@ -1,0 +1,78 @@
+{
+  "context_operand_occurrences": 8,
+  "contract": {
+    "act_receipts": 4,
+    "batch_size": 1,
+    "branches": [
+      "sham",
+      "e18-zero"
+    ],
+    "component_hydrations": 3,
+    "conditioning_columns": [
+      2560,
+      5120
+    ],
+    "context_operand_occurrences": 8,
+    "cpu_offloads": 6,
+    "cuda_placements": 6,
+    "execution_id": "mdb-flux-e18-conditioning-act-v1",
+    "forecast_module_entries": 0,
+    "functional_decode_calls": 2,
+    "functional_transitions": 224,
+    "max_gpu_components": 1,
+    "native_transitions": 224,
+    "native_vae_calls": 4,
+    "noise_draws": 2,
+    "persistent_weight_banks": 0,
+    "pngs": 6,
+    "qwen_forecast_layers": 27,
+    "qwen_functional_calls": 1,
+    "qwen_native_calls": 1,
+    "qwen_native_layers": 36,
+    "receipt_occurrences": 228,
+    "schema": "mdb-flux-e18-conditioning-count-contract-v1",
+    "seed": 277
+  },
+  "counts": {
+    "act_receipts": 4,
+    "component_hydrations": 3,
+    "cpu_offloads": 6,
+    "cuda_placements": 6,
+    "functional_decode_calls": 2,
+    "functional_transitions": 224,
+    "guard_refusals": 0,
+    "native_module_entries": 3890,
+    "native_qwen_calls": 1,
+    "native_transitions": 224,
+    "native_vae_calls": 4,
+    "noise_draws": 2,
+    "receipt_occurrences": 228
+  },
+  "forecast_seal": {
+    "forecasts": [
+      "e18-complete-composition"
+    ],
+    "path": "/mnt/big/mdb/research/job-9339e3ed1472/e18-conditioning-result/forecast-transaction/seal.json",
+    "seal_sha256": "8f4818ade6207f05c5af0484b6c7815f25ec9a21197bec07456fa31633d2acab"
+  },
+  "job_id": "job-9339e3ed1472",
+  "mechanics_status": "complete",
+  "request_sha256": "491d0611ac1ebbf1a6451552d93b83288713175bc0fac019a7d9251f956f3d34",
+  "schema": "mdb-flux-e18-conditioning-summary-v1",
+  "seconds": 495.51187417889014,
+  "terminal_status": "unassessed",
+  "transaction": {
+    "event_head": "45d9004109b48a5b7882913c485f2a6083b3c216f63617c3ef97c4c01c586b2b",
+    "events": 6,
+    "forecasts": [
+      "e18-complete-composition"
+    ],
+    "frontiers": [],
+    "identity_scope": "externally-pinned",
+    "phase": "closed",
+    "schema": "mdb-forecast-offline-verification-v1",
+    "seal_sha256": "8f4818ade6207f05c5af0484b6c7815f25ec9a21197bec07456fa31633d2acab",
+    "verified": true
+  },
+  "trend_status": "observed-uninterpreted"
+}
