@@ -178,6 +178,11 @@ the stream contributions and their interaction before merely making the chain
 longer. Fresh prompt/seed contexts can then test whether particular routing and
 MLP response patterns deserve reusable family records.
 
+The [stream-factorial follow-up](FLUX-STREAM-FACTORIAL.md) now executes that
+panel. It verifies reciprocal K/V-mediated cross-stream reads and sampled
+prefix locality, while exposing 81–133% errors on the tiny restoration effects.
+Its next numerical cut isolates attention using exact native Q/K/V operands.
+
 ## MDB records and reproducible workflow
 
 Nine measured occurrences are indexed in `public-records-v1/equations/`:
