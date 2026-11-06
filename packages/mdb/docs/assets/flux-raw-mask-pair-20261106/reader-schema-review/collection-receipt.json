@@ -1,0 +1,19 @@
+{
+  "all_selected_files_join_original_manifest": true,
+  "command": [
+    "ssh",
+    "beast",
+    "python3",
+    "-"
+  ],
+  "json_packet_bytes": 4331078,
+  "json_packet_sha256": "d9db4a503bedcd92c0f6507b6c47684dc3913dd85c44037bbd01a6cbb4028fd2",
+  "remote_code_sha256": "85eb2c7e54fb53067307d6f9d329da23193c66d0fcaad4727d2c531bb5fba8fc",
+  "remote_manifest_sha256": "89dafe939e0143596edf88b42e073f97cc5c945c893b5b8cf9897eff809c7154",
+  "request_sha256": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd",
+  "returncode": 0,
+  "schema": "mdb-mask-pair-json-metadata-collection-v1",
+  "scope": "actual authenticated-SSH JSON metadata only, no tensor payload reads or numerical reductions",
+  "script_sha256": "9f0bcb21a4b0fdc3077d1720c73f4e2cb69814b490596806f0314a185987fc0a",
+  "selected_json_files": 45
+}

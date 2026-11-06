@@ -1,0 +1,266 @@
+{
+  "audit_sha256": "896a8111e1b0d4caeeec53a731cffd2c8ee4087e2708aea3ef6cc75a392d59db",
+  "comparison": "long minus short within each lane, shared first 30 token IDs",
+  "forecast_native_summary_metrics_equal": true,
+  "new_neural_calls": 0,
+  "observational_scope": "Dependent states from one paired context contrast; no gain or semantic attribution claim.",
+  "orientation_note": "The generic raw label does not describe this cross-case diagnostic.",
+  "raw_arrays_loaded": false,
+  "raw_generic_orientation_label_preserved": "functional-minus-native",
+  "relative_denominator": "RMS of short-case hidden state on the same 30 rows",
+  "rows": [
+    {
+      "boundary": 0,
+      "changed_values": 0,
+      "maxabs": 0.0,
+      "native_rms": 0.02059303142995652,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 1,
+      "changed_values": 3376,
+      "maxabs": 0.0078125,
+      "native_rms": 0.19088027436255597,
+      "relative_rms": 0.000934494943718639,
+      "rms": 0.0001783766512474351,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 2,
+      "changed_values": 22913,
+      "maxabs": 0.125,
+      "native_rms": 0.5176014283516823,
+      "relative_rms": 0.0012561746717682104,
+      "rms": 0.0006501978043664312,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 3,
+      "changed_values": 36410,
+      "maxabs": 0.125,
+      "native_rms": 0.6074772221376525,
+      "relative_rms": 0.0016179429805678225,
+      "rms": 0.0009828635074124548,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 4,
+      "changed_values": 40892,
+      "maxabs": 0.125,
+      "native_rms": 0.6554174109199242,
+      "relative_rms": 0.002261008568375713,
+      "rms": 0.0014819043819525742,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 5,
+      "changed_values": 43879,
+      "maxabs": 0.0625,
+      "native_rms": 0.7277916656982988,
+      "relative_rms": 0.0029437786404879645,
+      "rms": 0.0021424575602078094,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 6,
+      "changed_values": 49601,
+      "maxabs": 0.125,
+      "native_rms": 0.7593703618225975,
+      "relative_rms": 0.0041576008384482535,
+      "rms": 0.0031571588530063853,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 7,
+      "changed_values": 53298,
+      "maxabs": 0.125,
+      "native_rms": 60.44009974019474,
+      "relative_rms": 7.202089796649404e-05,
+      "rms": 0.0043529502564732874,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 8,
+      "changed_values": 55708,
+      "maxabs": 0.125,
+      "native_rms": 60.44073974009052,
+      "relative_rms": 9.62912512087211e-05,
+      "rms": 0.005819914453553989,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 9,
+      "changed_values": 56666,
+      "maxabs": 0.15625,
+      "native_rms": 60.44174413114738,
+      "relative_rms": 0.00012300262940010719,
+      "rms": 0.007434493453659625,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 10,
+      "changed_values": 57843,
+      "maxabs": 0.15625,
+      "native_rms": 60.441970957935894,
+      "relative_rms": 0.000138678131375096,
+      "rms": 0.008381979589074372,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 11,
+      "changed_values": 59101,
+      "maxabs": 0.21875,
+      "native_rms": 60.44207106792366,
+      "relative_rms": 0.00014663485697190146,
+      "rms": 0.00886291444613049,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 12,
+      "changed_values": 59891,
+      "maxabs": 0.25,
+      "native_rms": 60.442641818514915,
+      "relative_rms": 0.00016250780299811564,
+      "rms": 0.009822400929328888,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 13,
+      "changed_values": 59839,
+      "maxabs": 0.28125,
+      "native_rms": 60.44418648847012,
+      "relative_rms": 0.0001753440287307019,
+      "rms": 0.01059852717223821,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 14,
+      "changed_values": 60851,
+      "maxabs": 0.28125,
+      "native_rms": 60.44358314885414,
+      "relative_rms": 0.00019270901053183073,
+      "rms": 0.011648023101614117,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 15,
+      "changed_values": 61598,
+      "maxabs": 0.1875,
+      "native_rms": 60.445289973843515,
+      "relative_rms": 0.00021010961890127167,
+      "rms": 0.012700136840781119,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 16,
+      "changed_values": 61763,
+      "maxabs": 0.28125,
+      "native_rms": 60.44530578115102,
+      "relative_rms": 0.00021790695935186994,
+      "rms": 0.013171452789864625,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 17,
+      "changed_values": 61859,
+      "maxabs": 0.25,
+      "native_rms": 61.3388443825177,
+      "relative_rms": 0.00021702620861481636,
+      "rms": 0.013312136837152043,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 18,
+      "changed_values": 61986,
+      "maxabs": 0.25,
+      "native_rms": 61.34098792229055,
+      "relative_rms": 0.00022943091589051504,
+      "rms": 0.014073519040640144,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 19,
+      "changed_values": 62205,
+      "maxabs": 0.375,
+      "native_rms": 61.342743264421195,
+      "relative_rms": 0.0002459368644838126,
+      "rms": 0.015086441937287264,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 20,
+      "changed_values": 62228,
+      "maxabs": 0.5,
+      "native_rms": 61.34714896954423,
+      "relative_rms": 0.00027357563427515694,
+      "rms": 0.016783085190315603,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 21,
+      "changed_values": 62420,
+      "maxabs": 0.5,
+      "native_rms": 61.349516982541914,
+      "relative_rms": 0.00028957497951501116,
+      "rms": 0.017765285123475406,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 22,
+      "changed_values": 62365,
+      "maxabs": 0.625,
+      "native_rms": 61.3520217341398,
+      "relative_rms": 0.0003096840115753997,
+      "rms": 0.018999740208889525,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 23,
+      "changed_values": 61768,
+      "maxabs": 0.625,
+      "native_rms": 61.355921782352794,
+      "relative_rms": 0.000329530224450361,
+      "rms": 0.020218630676297512,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 24,
+      "changed_values": 61326,
+      "maxabs": 0.625,
+      "native_rms": 61.364813505596,
+      "relative_rms": 0.00037524980886005974,
+      "rms": 0.02302713453870811,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 25,
+      "changed_values": 61032,
+      "maxabs": 0.75,
+      "native_rms": 61.38078285605487,
+      "relative_rms": 0.00043127175148458403,
+      "rms": 0.026471797729825716,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 26,
+      "changed_values": 61111,
+      "maxabs": 1.0,
+      "native_rms": 61.39222892787738,
+      "relative_rms": 0.0004907557977658944,
+      "rms": 0.030128592284126884,
+      "sample_count": 76800
+    },
+    {
+      "boundary": 27,
+      "changed_values": 60918,
+      "maxabs": 1.0,
+      "native_rms": 61.411911704347624,
+      "relative_rms": 0.0005575657834767152,
+      "rms": 0.034241180664237446,
+      "sample_count": 76800
+    }
+  ],
+  "schema": "mdb-common-prefix-drift-plot-data-v1"
+}

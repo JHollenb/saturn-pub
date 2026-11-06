@@ -1,0 +1,57 @@
+{
+  "actual_metadata_only_diagnostic": {
+    "corrected_classification": {
+      "cases/long/frontend/native.json": true,
+      "cases/short/frontend/native.json": true
+    },
+    "path": "frontier-diagnostic-v1.json",
+    "production_numerical_arrays_read": false,
+    "recomputed_reader_count": 1323,
+    "sealed_frontier_count": 1323,
+    "sha256": "2b1d43c8f8cba25be05544d5646be96b46e3df44335a713e64fa0b7dfb1a678b"
+  },
+  "canonical_ruff": {
+    "command": [
+      "rtk",
+      "proxy",
+      "uvx",
+      "ruff",
+      "check",
+      "--select",
+      "F,I",
+      "qualification/audit_flux_raw_mask_pair.py",
+      "tests/test_audit_flux_raw_mask_pair.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "returncode": 0,
+    "stdout": "All checks passed!"
+  },
+  "change": "Exact path classification for per-case frontend/native.json metadata written by frozen _frontend_record; unchanged strict complete frontier/hash/transaction/guard checks and all numerical reductions.",
+  "command": [
+    "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+    "-I",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_audit_flux_raw_mask_pair.py",
+    "--tb=short"
+  ],
+  "controller_sha256": "afbb71dfe56b2ed1749c77469dbde8a6c85f554b38831d52f54dd30a647f2ea0",
+  "cwd": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/audit-qualification-v2/attempt-01/cohort",
+  "prior_failed_audit": "audit-01/job-56860c50186f",
+  "prior_v1_source_archive": "audit-reader-abi-v1-archive",
+  "producer_sha256": "3ee62e9174186935b32ff6e9e33e18e46aa978c4442b19f02982919e63bf3912",
+  "pytest_seconds": 13.49,
+  "regression": "Complete fixture reproduces both nested and top-level frontend metadata paths; real frozen frontend function creates native metadata; hostile native inclusion and missing forecast member reject via the same strict equality.",
+  "returncode": 0,
+  "schema": "mdb-raw-mask-pair-reader-abi-qualification-v2",
+  "scope": "Installed isolated synthetic saved pair only, actual saved-reader CLI/four context catalogs/six PNGs, no production arrays/model/tokenizer/checkpoint reads, jobs or staging. V1 sources/qualification and failed job preserved; no producer/controller edits.",
+  "sources": {
+    "saturn-pub/packages/mdb/qualification/audit_flux_raw_mask_pair.py": "fdf4672e0866c44aada1b687cf2405b5a40831afa64c9eda583e533739a7697d",
+    "saturn-pub/packages/mdb/tests/test_audit_flux_raw_mask_pair.py": "61ab2510abe8c471e349fe181eceaaae3743f1c5e9580e5187c51687718d1fb1"
+  },
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "1170e68217f2cb31bd4b587f0576fb25ddc6f497ce97dc5310cbbcb8d0ce2506",
+  "tests": 12
+}

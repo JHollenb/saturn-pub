@@ -1,0 +1,40 @@
+{
+  "auditor_sha256": "70408046bb83f1c0719addb57191c7d4bdf4c5a1121195c299c4cb493cf11d88",
+  "change": "Translate case-facing Qwen hidden.N names to the producer signed-response numeric N keys; retain the source signed map and ordered case-facing labels. Accept the producer denoiser initial boundary -1 plus complete 0..111 transitions, plot actual boundary numbers, and publish case discrepancy diagnostics and common-token-prefix observations.",
+  "prior_qualification_receipts": [
+    "publisher-qualification-v1/qualification.json",
+    "publisher-qualification-v2/qualification.json"
+  ],
+  "publisher_sha256": "373a0e66cf5806a7a24903e94a2f64b6bc2eef6e04ea2015f05b445cc11add18",
+  "schema": "mdb-flux-raw-mask-pair-publisher-qualification-v3",
+  "scope": "Saved-only publisher qualification; no model, tokenizer, checkpoint, CUDA, job, staging, or raw tensor read.",
+  "source_faithful_compact_smoke": {
+    "collection_receipt": "compact-collection-01/collection-receipt.json",
+    "common_prefix_hidden_1_rms": 0.0001783766512474351,
+    "compact_manifest_sha256": "14cee5b4030644aff01fdbffdfc45e42eb7f2a0dfd0ae15943449ec7d766afa8",
+    "endpoint_terms_observed": "all saved endpoint terms were defined; exact zeros remain observations",
+    "first_qwen_and_denoiser_discrepancy": {
+      "long": null,
+      "short": null
+    },
+    "model_calls": 0,
+    "native_job_id": "job-0b6c4340d5e6",
+    "native_request_sha256": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd",
+    "qualification_receipt": "audit-qualification-v3/qualification.json",
+    "raw_arrays_loaded": false,
+    "signed_denoiser_first_boundary": -1,
+    "signed_denoiser_last_boundary": 111,
+    "signed_qwen_first_field": "hidden.0",
+    "signed_qwen_first_source_key": "0",
+    "status": "passed"
+  },
+  "status": "passed",
+  "test_sha256": "55f87db41eb9e8c685d0de7fad22cb162cf0d908987bbbaf3980094e6ea43739",
+  "tests": {
+    "command": "rtk ../common/bin/common exec ruff check packages/mdb/qualification/publish_flux_raw_mask_pair.py packages/mdb/tests/test_publish_flux_raw_mask_pair.py && rtk ../common/bin/common exec python -m pytest -q packages/mdb/tests/test_publish_flux_raw_mask_pair.py",
+    "pytest_result": "3 passed",
+    "pytest_returncode": 0,
+    "pytest_tests": 3,
+    "ruff_returncode": 0
+  }
+}

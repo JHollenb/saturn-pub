@@ -1,0 +1,12 @@
+{
+  "numerical_arrays_read": false,
+  "reader_derived_count": 1325,
+  "reader_derived_not_sealed": [
+    "cases/long/frontend/native.json",
+    "cases/short/frontend/native.json"
+  ],
+  "schema": "mdb-raw-pair-frontier-diagnostic-v1",
+  "sealed_frontier_count": 1323,
+  "sealed_not_reader_derived": [],
+  "source_job": "job-0b6c4340d5e6"
+}

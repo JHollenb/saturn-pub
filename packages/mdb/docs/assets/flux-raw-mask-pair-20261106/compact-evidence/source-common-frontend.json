@@ -1,0 +1,132 @@
+{
+  "generator_after": {
+    "descriptor": {
+      "device": "cpu",
+      "dtype": "torch.uint8",
+      "sha256": "3a31f24947ee1674a98cb676cafeb2b135e7b20757a7554ac079f313f6227e29",
+      "shape": [
+        16
+      ],
+      "stride": [
+        1
+      ]
+    },
+    "exact_equal": true
+  },
+  "generator_before": {
+    "descriptor": {
+      "device": "cpu",
+      "dtype": "torch.uint8",
+      "sha256": "7cce26740f4cff99136ec73dc4a6b58b30edca36857ee63fa90140e85521b303",
+      "shape": [
+        16
+      ],
+      "stride": [
+        1
+      ]
+    },
+    "exact_equal": true
+  },
+  "img_ids": {
+    "descriptor": {
+      "device": "cpu",
+      "dtype": "torch.int64",
+      "sha256": "87b4f95cfb97df0287488b86742472e263ea5e9c080c2e3348f6f64224f797af",
+      "shape": [
+        1,
+        1024,
+        4
+      ],
+      "stride": [
+        4096,
+        4,
+        1
+      ]
+    },
+    "exact_equal": true
+  },
+  "packed_noise": {
+    "descriptor": {
+      "device": "cpu",
+      "dtype": "torch.bfloat16",
+      "sha256": "8176781bb58db7cab1eecdf9e3c08cdc00914c76a5c1a048760c88046f2a2876",
+      "shape": [
+        1,
+        1024,
+        128
+      ],
+      "stride": [
+        131072,
+        1,
+        1024
+      ]
+    },
+    "exact_equal": true
+  },
+  "raw_noise": {
+    "descriptor": {
+      "device": "cpu",
+      "dtype": "torch.bfloat16",
+      "sha256": "d18b8555021d7bfb291ac319b8af0fd60e2c318dc2d7571cfe60ab2913a4b3d0",
+      "shape": [
+        1,
+        128,
+        32,
+        32
+      ],
+      "stride": [
+        131072,
+        1024,
+        32,
+        1
+      ]
+    },
+    "exact_equal": true
+  },
+  "sigmas": {
+    "descriptor": {
+      "device": "cpu",
+      "dtype": "torch.float32",
+      "sha256": "47eb6994cb84cb458fd9a90cd3eb5e5890856680c154abec35f26e833e400852",
+      "shape": [
+        5
+      ],
+      "stride": [
+        1
+      ]
+    },
+    "exact_equal": true
+  },
+  "timesteps": {
+    "descriptor": {
+      "device": "cpu",
+      "dtype": "torch.float32",
+      "sha256": "1e400c851167980caf2cd88333c7b146d8c3168b4b49d817e7df5271dbda734b",
+      "shape": [
+        4
+      ],
+      "stride": [
+        1
+      ]
+    },
+    "exact_equal": true
+  },
+  "txt_ids": {
+    "descriptor": {
+      "device": "cpu",
+      "dtype": "torch.int64",
+      "sha256": "14787eca2e15009073d22c1a9bc4782762d6b6b46ee5ff1bd46178ca6d97cbe7",
+      "shape": [
+        1,
+        512,
+        4
+      ],
+      "stride": [
+        2048,
+        4,
+        1
+      ]
+    },
+    "exact_equal": true
+  }
+}

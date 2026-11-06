@@ -1,0 +1,53 @@
+{
+  "canonical_ruff": {
+    "command": [
+      "rtk",
+      "proxy",
+      "uvx",
+      "ruff",
+      "check",
+      "--select",
+      "F,I",
+      "qualification/audit_flux_raw_mask_pair.py",
+      "tests/test_audit_flux_raw_mask_pair.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "returncode": 0,
+    "stdout": "All checks passed!"
+  },
+  "change": "Exact _save_bytes frontend-generator record ABI support; actual raw NPY bytes bind shape/dtype/content to common descriptor. Capture stride is joined only when _save_tensor retained it. Byte-record serialization layout and observed common stride remain distinct. No other frontier/hash/transaction/guard/numerical-policy change.",
+  "command": [
+    "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+    "-I",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_audit_flux_raw_mask_pair.py",
+    "--tb=short"
+  ],
+  "controller_sha256": "afbb71dfe56b2ed1749c77469dbde8a6c85f554b38831d52f54dd30a647f2ea0",
+  "cwd": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/audit-qualification-v3/attempt-01/cohort",
+  "prior_failed_audit": "audit-02/job-7a55a56683eb",
+  "prior_v2_source_archive": "audit-reader-abi-v2-archive",
+  "producer_sha256": "3ee62e9174186935b32ff6e9e33e18e46aa978c4442b19f02982919e63bf3912",
+  "pytest_seconds": 13.08,
+  "regressions": [
+    "Whole pair fixture calls actual frozen _frontend_record for all generator/regular fields, including both nested and top-level metadata aliases.",
+    "Byte generator records omit stride/logical_dtype/content_sha and still verify raw uint8 content.",
+    "Noncontiguous byte capturestride2 versus serializedstride1 is reported without fabricated capture join.",
+    "Noncontiguous BF16 packed-noise metadata verifies rawuint16 hash and recorded capture stride, never decodedfloat32 hash.",
+    "Fixture pixel records use actual _save_bytes and full audit/CLI/catalog/6PNG packaging passes."
+  ],
+  "returncode": 0,
+  "schema": "mdb-raw-mask-pair-reader-abi-qualification-v3",
+  "scope": "Installed isolated synthetic saved pair only; no production arrays/model/tokenizer/checkpoint reads, jobs or staging. Earlier frozen source/qualification and failed audits preserved; no producer/controller edits.",
+  "source_schema_review_sha256": "a2c3ea6e1f655d244e1a779421214361dc976e360f70de59bce3bc1d69b74022",
+  "sources": {
+    "saturn-pub/packages/mdb/qualification/audit_flux_raw_mask_pair.py": "70408046bb83f1c0719addb57191c7d4bdf4c5a1121195c299c4cb493cf11d88",
+    "saturn-pub/packages/mdb/tests/test_audit_flux_raw_mask_pair.py": "428cf3fff3c19bef06e844bf538f9e3041770290d83acbd284b1bc5ef75b17ee"
+  },
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "716c01edd326207027730834efd934bf38d9f5c62ac9c18ea2f22082a89dd3fd",
+  "tests": 12
+}

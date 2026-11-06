@@ -1,0 +1,17 @@
+{
+  "checklist": {
+    "catalog": "Frozen e807 catalog_comparison declares exact decoded+pixels max_elements rather than1M default; endpoint mapping arrays are decoded values anduint8pixels.",
+    "decoder": "Frozen _functional_decoder and _native_decoder tensor input/rawRGB/macros/pre/postquant use _save_tensor; pixels use _save_bytes. Fixture now uses actual _save_bytes pixels. Frozen e807.load_array supports dtype fallback.",
+    "frontend": "Actual frozen _frontend_record calls _save_tensor for6regular fields and _save_bytes for2generator arrays, plus nested metadata alias. Fixture now invokes this exact function for every field.",
+    "packaging": "Source_files rows have path/bytes/sha256; percase JSON sidecars and PNG path/sha/bytes match producer. Compact exports metadata/retriever/6PNGs only, original tensors remain remote.",
+    "prefix": "Qwen input IDs/hidden fields use _save_tensor rich metadata; only forecast position_ids required. Native position IDs not fabricated.",
+    "responses": "Fixed response_descriptor returns shape/elements/float64/orientation/sha256. Recursive paths,113fullclocks and29Qwen production fields handled generically; same key set and hash checks retained.",
+    "source_and_runtime": "Actual source/helper pins unchanged; typed parameter/SDPA descriptors retain rich tensor shape/dtype/stride fields. Plan optional job_id and BatchEncoding count correction unchanged."
+  },
+  "original_checkpoint_tokenizer_calls": 0,
+  "producer_sha256": "3ee62e9174186935b32ff6e9e33e18e46aa978c4442b19f02982919e63bf3912",
+  "production_array_reads": 0,
+  "schema": "mdb-paired-reader-v3-source-abi-review",
+  "scope": "Source/schema review only; independent peer authenticates selected actual JSON metadata separately. No numerical outcome interpretation.",
+  "serializer_sha256": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522"
+}

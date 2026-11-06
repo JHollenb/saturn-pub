@@ -1,0 +1,2673 @@
+{
+  "audit_sha256": "896a8111e1b0d4caeeec53a731cffd2c8ee4087e2708aea3ef6cc75a392d59db",
+  "catalog_cli": [
+    {
+      "case": "long",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-mask-pair.long.same-latent-decoder",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/saved-report-verification-v1/long.same-latent-decoder.exact.context.json"
+      ],
+      "context_sha256": "580271717857fd05cf31b0aa0c4e4cb31098bcd3d8ef1d976b403c0190db096e",
+      "kind": "exact",
+      "occurrence": "same-latent-decoder",
+      "output_sha256": "f7fc8118aa6e9613104ad2d72011738fea6c84d9fae8c271742f7f49eeada5af",
+      "results": 1
+    },
+    {
+      "case": "long",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-mask-pair.long.same-latent-decoder",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/saved-report-verification-v1/long.same-latent-decoder.changed-seed.context.json"
+      ],
+      "context_sha256": "7f92c86889d63c4dec80628139cbd7850458c324fb9214aa4fbbab1a3641ad6c",
+      "kind": "changed-seed",
+      "occurrence": "same-latent-decoder",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "case": "long",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-mask-pair.long.same-latent-decoder",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/saved-report-verification-v1/long.same-latent-decoder.changed-clock.context.json"
+      ],
+      "context_sha256": "93c596fa6b8f6222fda12b863b7bd9eeaa3b9a560ad16c1e71eec2f43cd3ee9e",
+      "kind": "changed-clock",
+      "occurrence": "same-latent-decoder",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "case": "short",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-mask-pair.short.same-latent-decoder",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/saved-report-verification-v1/short.same-latent-decoder.exact.context.json"
+      ],
+      "context_sha256": "33078ca0324a11f9caf8d5ff9ce7ed3f89f8a3b8bdaff25171dbb610d6db102c",
+      "kind": "exact",
+      "occurrence": "same-latent-decoder",
+      "output_sha256": "2c475c14808c05be6b0829720ad8b5e4b2de420e287573c6ef7a767b7f02f967",
+      "results": 1
+    },
+    {
+      "case": "short",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-mask-pair.short.same-latent-decoder",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/saved-report-verification-v1/short.same-latent-decoder.changed-seed.context.json"
+      ],
+      "context_sha256": "d967951d76272187f63c8c4008545924305979c150ab6d894b35e99e4c3010a8",
+      "kind": "changed-seed",
+      "occurrence": "same-latent-decoder",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "case": "short",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-mask-pair.short.same-latent-decoder",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/saved-report-verification-v1/short.same-latent-decoder.changed-clock.context.json"
+      ],
+      "context_sha256": "287a50a49dab86ea716ab1f85285199f2c581f7c824bd8b4a38ffe56e294a4ab",
+      "kind": "changed-clock",
+      "occurrence": "same-latent-decoder",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "case": "long",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-mask-pair.long.whole",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/saved-report-verification-v1/long.whole.exact.context.json"
+      ],
+      "context_sha256": "80316e580e27763d7cb1a5a1b4861a33102cf3edca258d5a0082ff2353f040ec",
+      "kind": "exact",
+      "occurrence": "whole",
+      "output_sha256": "6a71ee14b6e38d9d4d354be670b04d9e6269528138380b3d833cce6b0242328f",
+      "results": 1
+    },
+    {
+      "case": "long",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-mask-pair.long.whole",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/saved-report-verification-v1/long.whole.changed-seed.context.json"
+      ],
+      "context_sha256": "0373f35e75a8b114f112c0a44b58478b87b396b5ba4856f7998ce35bcc0ab21e",
+      "kind": "changed-seed",
+      "occurrence": "whole",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "case": "long",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-mask-pair.long.whole",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/saved-report-verification-v1/long.whole.changed-clock.context.json"
+      ],
+      "context_sha256": "b9c12ffec976fdad3bdefdf557d01b840e263cbf98b7b8270b56eca3e57c00b7",
+      "kind": "changed-clock",
+      "occurrence": "whole",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "case": "short",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-mask-pair.short.whole",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/saved-report-verification-v1/short.whole.exact.context.json"
+      ],
+      "context_sha256": "310e30a156a847652a6c06459499fd68862c7eceedbbbcf1bbf544ae68eb0514",
+      "kind": "exact",
+      "occurrence": "whole",
+      "output_sha256": "7cffb2b6af8b94e29dfec37662c386f47a6a5c6c271d6d8a5e95b5b5db1249c8",
+      "results": 1
+    },
+    {
+      "case": "short",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-mask-pair.short.whole",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/saved-report-verification-v1/short.whole.changed-seed.context.json"
+      ],
+      "context_sha256": "f2b1774a8e77efcc609924d60a1da4a717d1e5943c12fd62aa5d47c787694f3e",
+      "kind": "changed-seed",
+      "occurrence": "whole",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    },
+    {
+      "case": "short",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.raw-mask-pair.short.whole",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/saved-report-verification-v1/short.whole.changed-clock.context.json"
+      ],
+      "context_sha256": "b9176b0168883e7214d83776b07a0217f4e66a5e9b7ce50acd1429a91b91c27f",
+      "kind": "changed-clock",
+      "occurrence": "whole",
+      "output_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570",
+      "results": 0
+    }
+  ],
+  "collection": {
+    "archive_bytes": 3834243,
+    "archive_sha256": "618f6e2d728c98a265895db8662a23a0675a5d24d9152f83f958c83dc6303d39",
+    "collection_encoder": {
+      "schema": "mdb-explicit-recovery-encoder-v1",
+      "scope": "Collection-only encoder supplied by a separately request-sealed run. Original worker payload/request remain unchanged.",
+      "sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+      "source_request_sha256": "2339ecdb754e0104418b463397b4cb2121a4bbb1c9646d390e56cee3f0fe1e2e"
+    },
+    "expanded_bytes": 22422868,
+    "file_count": 65,
+    "files_manifest_sha256": "14cee5b4030644aff01fdbffdfc45e42eb7f2a0dfd0ae15943449ec7d766afa8",
+    "job_id": "job-ce54f7b5406a",
+    "pointer_sha256": "ab21367ad06b2024b01b885ca2235562e767af64c91020f5a0c11b3bf8bf5435",
+    "raw_tensor_arrays_collected": false,
+    "request_sha256": "83b0a86f3c4af70d137d31b0093990199a2675179b703371caa37e6cf5047d74",
+    "schema": "mdb-raw-mask-pair-compact-retrieval-v1"
+  },
+  "common_token_prefix": {
+    "authority": "Observation only; equality is not an acceptance/quality gate.",
+    "diagnostics": {
+      "forecast": {
+        "0": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "denominator": "RMS of same native field",
+          "dot": 32.568802058893596,
+          "maxabs": 0.0,
+          "native_rms": 0.02059303142995652,
+          "native_signed_mean": 4.676846738827104e-05,
+          "orientation": "functional-minus-native",
+          "p95": 0.0,
+          "p99": 0.0,
+          "predicted_rms": 0.02059303142995652,
+          "predicted_signed_mean": 4.676846738827104e-05,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "native": 0.0024261474609375,
+            "predicted": 0.0024261474609375,
+            "signed_error": 0.0
+          }
+        },
+        "1": {
+          "bitwise_exact": false,
+          "changed_values": 3376,
+          "cosine": 0.9999995662487025,
+          "denominator": "RMS of same native field",
+          "dot": 2798.0143011421787,
+          "maxabs": 0.0078125,
+          "native_rms": 0.19088027436255597,
+          "native_signed_mean": 0.00023243623475233713,
+          "orientation": "functional-minus-native",
+          "p95": 0.0,
+          "p99": 0.0009765625,
+          "predicted_rms": 0.190865681662304,
+          "predicted_signed_mean": 0.00023258003095785778,
+          "relative_rms": 0.000934494943718639,
+          "rms": 0.0001783766512474351,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 1.437962055206299e-07,
+          "worst": {
+            "coordinate": [
+              0,
+              7,
+              58
+            ],
+            "native": 1.4375,
+            "predicted": 1.4296875,
+            "signed_error": -0.0078125
+          }
+        },
+        "10": {
+          "bitwise_exact": false,
+          "changed_values": 57843,
+          "cosine": 0.9999999903841882,
+          "denominator": "RMS of same native field",
+          "dot": 280568203.5244578,
+          "maxabs": 0.15625,
+          "native_rms": 60.441970957935894,
+          "native_signed_mean": 0.12252965211868286,
+          "orientation": "functional-minus-native",
+          "p95": 0.015625,
+          "p99": 0.0234375,
+          "predicted_rms": 60.441970934335316,
+          "predicted_signed_mean": 0.1225909016529719,
+          "relative_rms": 0.000138678131375096,
+          "rms": 0.008381979589074372,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 6.124953428904215e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": -6.4375,
+            "predicted": -6.28125,
+            "signed_error": 0.15625
+          }
+        },
+        "11": {
+          "bitwise_exact": false,
+          "changed_values": 59101,
+          "cosine": 0.99999998924911,
+          "denominator": "RMS of same native field",
+          "dot": 280569121.5505748,
+          "maxabs": 0.21875,
+          "native_rms": 60.44207106792366,
+          "native_signed_mean": 0.12914922773838045,
+          "orientation": "functional-minus-native",
+          "p95": 0.0166015625,
+          "p99": 0.025390625,
+          "predicted_rms": 60.442068660419515,
+          "predicted_signed_mean": 0.12921338925759,
+          "relative_rms": 0.00014663485697190146,
+          "rms": 0.00886291444613049,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 6.416151920954386e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": -4.09375,
+            "predicted": -3.875,
+            "signed_error": 0.21875
+          }
+        },
+        "12": {
+          "bitwise_exact": false,
+          "changed_values": 59891,
+          "cosine": 0.9999999867956076,
+          "denominator": "RMS of same native field",
+          "dot": 280574417.53784066,
+          "maxabs": 0.25,
+          "native_rms": 60.442641818514915,
+          "native_signed_mean": 0.13540158867836,
+          "orientation": "functional-minus-native",
+          "p95": 0.01953125,
+          "p99": 0.03125,
+          "predicted_rms": 60.44263894960966,
+          "predicted_signed_mean": 0.1354537366827329,
+          "relative_rms": 0.00016250780299811564,
+          "rms": 0.009822400929328888,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 5.214800437291463e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": -3.34375,
+            "predicted": -3.09375,
+            "signed_error": 0.25
+          }
+        },
+        "13": {
+          "bitwise_exact": false,
+          "changed_values": 59839,
+          "cosine": 0.9999999846272406,
+          "denominator": "RMS of same native field",
+          "dot": 280588738.3593432,
+          "maxabs": 0.28125,
+          "native_rms": 60.44418648847012,
+          "native_signed_mean": 0.13100611249605815,
+          "orientation": "functional-minus-native",
+          "p95": 0.021484375,
+          "p99": 0.03125,
+          "predicted_rms": 60.44417942904335,
+          "predicted_signed_mean": 0.13110006362199783,
+          "relative_rms": 0.0001753440287307019,
+          "rms": 0.01059852717223821,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 9.395112593968709e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 3.34375,
+            "predicted": 3.625,
+            "signed_error": 0.28125
+          }
+        },
+        "14": {
+          "bitwise_exact": false,
+          "changed_values": 60851,
+          "cosine": 0.9999999814316213,
+          "denominator": "RMS of same native field",
+          "dot": 280583143.31559557,
+          "maxabs": 0.28125,
+          "native_rms": 60.44358314885414,
+          "native_signed_mean": 0.13363458275794982,
+          "orientation": "functional-minus-native",
+          "p95": 0.0234375,
+          "p99": 0.03515625,
+          "predicted_rms": 60.44357767632801,
+          "predicted_signed_mean": 0.13374652475118637,
+          "relative_rms": 0.00019270901053183073,
+          "rms": 0.011648023101614117,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 0.00011194199323654175,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 7.53125,
+            "predicted": 7.8125,
+            "signed_error": 0.28125
+          }
+        },
+        "15": {
+          "bitwise_exact": false,
+          "changed_values": 61598,
+          "cosine": 0.9999999779271055,
+          "denominator": "RMS of same native field",
+          "dot": 280598864.30084836,
+          "maxabs": 0.1875,
+          "native_rms": 60.445289973843515,
+          "native_signed_mean": 0.1367089674870173,
+          "orientation": "functional-minus-native",
+          "p95": 0.025390625,
+          "p99": 0.0390625,
+          "predicted_rms": 60.445257650533456,
+          "predicted_signed_mean": 0.13676645105083785,
+          "relative_rms": 0.00021010961890127167,
+          "rms": 0.012700136840781119,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 5.748356382052104e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 13.125,
+            "predicted": 13.3125,
+            "signed_error": 0.1875
+          }
+        },
+        "16": {
+          "bitwise_exact": false,
+          "changed_values": 61763,
+          "cosine": 0.9999999762583139,
+          "denominator": "RMS of same native field",
+          "dot": 280599079.33582425,
+          "maxabs": 0.28125,
+          "native_rms": 60.44530578115102,
+          "native_signed_mean": 0.1360074372092883,
+          "orientation": "functional-minus-native",
+          "p95": 0.02734375,
+          "p99": 0.0390625,
+          "predicted_rms": 60.445288265897176,
+          "predicted_signed_mean": 0.13609079619248707,
+          "relative_rms": 0.00021790695935186994,
+          "rms": 0.013171452789864625,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 8.335898319880168e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              3,
+              0
+            ],
+            "native": 7.6875,
+            "predicted": 7.96875,
+            "signed_error": 0.28125
+          }
+        },
+        "17": {
+          "bitwise_exact": false,
+          "changed_values": 61859,
+          "cosine": 0.9999999764498276,
+          "denominator": "RMS of same native field",
+          "dot": 288956389.7710736,
+          "maxabs": 0.25,
+          "native_rms": 61.3388443825177,
+          "native_signed_mean": 0.14113180389006932,
+          "orientation": "functional-minus-native",
+          "p95": 0.02734375,
+          "p99": 0.04296875,
+          "predicted_rms": 61.33883215917932,
+          "predicted_signed_mean": 0.14119702180226643,
+          "relative_rms": 0.00021702620861481636,
+          "rms": 0.013312136837152043,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 6.521791219711303e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              22,
+              4
+            ],
+            "native": 19.0,
+            "predicted": 19.25,
+            "signed_error": 0.25
+          }
+        },
+        "18": {
+          "bitwise_exact": false,
+          "changed_values": 61986,
+          "cosine": 0.9999999736807451,
+          "denominator": "RMS of same native field",
+          "dot": 288976580.17070466,
+          "maxabs": 0.25,
+          "native_rms": 61.34098792229055,
+          "native_signed_mean": 0.1434808353583018,
+          "orientation": "functional-minus-native",
+          "p95": 0.0302734375,
+          "p99": 0.046875,
+          "predicted_rms": 61.340974674846095,
+          "predicted_signed_mean": 0.1435029868284861,
+          "relative_rms": 0.00022943091589051504,
+          "rms": 0.014073519040640144,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 2.215147018432617e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 20.75,
+            "predicted": 21.0,
+            "signed_error": 0.25
+          }
+        },
+        "19": {
+          "bitwise_exact": false,
+          "changed_values": 62205,
+          "cosine": 0.9999999697575318,
+          "denominator": "RMS of same native field",
+          "dot": 288993148.9250957,
+          "maxabs": 0.375,
+          "native_rms": 61.342743264421195,
+          "native_signed_mean": 0.14150802264610926,
+          "orientation": "functional-minus-native",
+          "p95": 0.03125,
+          "p99": 0.046875,
+          "predicted_rms": 61.34273656802197,
+          "predicted_signed_mean": 0.1415603960553805,
+          "relative_rms": 0.0002459368644838126,
+          "rms": 0.015086441937287264,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 5.237340927124023e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 22.5,
+            "predicted": 22.875,
+            "signed_error": 0.375
+          }
+        },
+        "2": {
+          "bitwise_exact": false,
+          "changed_values": 22913,
+          "cosine": 0.9999992243568196,
+          "denominator": "RMS of same native field",
+          "dot": 20572.189822601227,
+          "maxabs": 0.125,
+          "native_rms": 0.5176014283516823,
+          "native_signed_mean": 0.001976868212223053,
+          "orientation": "functional-minus-native",
+          "p95": 0.0009765625,
+          "p99": 0.001953125,
+          "predicted_rms": 0.5175164674568885,
+          "predicted_signed_mean": 0.0019728108247121174,
+          "relative_rms": 0.0012561746717682104,
+          "rms": 0.0006501978043664312,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -4.057387510935466e-06,
+          "worst": {
+            "coordinate": [
+              0,
+              9,
+              373
+            ],
+            "native": 24.625,
+            "predicted": 24.5,
+            "signed_error": -0.125
+          }
+        },
+        "20": {
+          "bitwise_exact": false,
+          "changed_values": 62228,
+          "cosine": 0.9999999625781931,
+          "denominator": "RMS of same native field",
+          "dot": 289034716.26837105,
+          "maxabs": 0.5,
+          "native_rms": 61.34714896954423,
+          "native_signed_mean": 0.14526013135910035,
+          "orientation": "functional-minus-native",
+          "p95": 0.03125,
+          "p99": 0.0546875,
+          "predicted_rms": 61.347154221984844,
+          "predicted_signed_mean": 0.14528743227322896,
+          "relative_rms": 0.00027357563427515694,
+          "rms": 0.016783085190315603,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 2.730091412862142e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 25.375,
+            "predicted": 25.875,
+            "signed_error": 0.5
+          }
+        },
+        "21": {
+          "bitwise_exact": false,
+          "changed_values": 62420,
+          "cosine": 0.9999999580731669,
+          "denominator": "RMS of same native field",
+          "dot": 289057010.30381703,
+          "maxabs": 0.5,
+          "native_rms": 61.349516982541914,
+          "native_signed_mean": 0.14318922847509385,
+          "orientation": "functional-minus-native",
+          "p95": 0.0341796875,
+          "p99": 0.054696044921870524,
+          "predicted_rms": 61.349518267133845,
+          "predicted_signed_mean": 0.1432252371311188,
+          "relative_rms": 0.00028957497951501116,
+          "rms": 0.017765285123475406,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 3.600865602493286e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 22.0,
+            "predicted": 22.5,
+            "signed_error": 0.5
+          }
+        },
+        "22": {
+          "bitwise_exact": false,
+          "changed_values": 62365,
+          "cosine": 0.9999999520479067,
+          "denominator": "RMS of same native field",
+          "dot": 289080605.6308572,
+          "maxabs": 0.625,
+          "native_rms": 61.3520217341398,
+          "native_signed_mean": 0.144921495616436,
+          "orientation": "functional-minus-native",
+          "p95": 0.037109375,
+          "p99": 0.0625,
+          "predicted_rms": 61.35202165993123,
+          "predicted_signed_mean": 0.14497784396012625,
+          "relative_rms": 0.0003096840115753997,
+          "rms": 0.018999740208889525,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 5.634834369023641e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 23.875,
+            "predicted": 24.5,
+            "signed_error": 0.625
+          }
+        },
+        "23": {
+          "bitwise_exact": false,
+          "changed_values": 61768,
+          "cosine": 0.9999999457049146,
+          "denominator": "RMS of same native field",
+          "dot": 289117335.1551449,
+          "maxabs": 0.625,
+          "native_rms": 61.355921782352794,
+          "native_signed_mean": 0.14368479778369267,
+          "orientation": "functional-minus-native",
+          "p95": 0.0390625,
+          "p99": 0.0625,
+          "predicted_rms": 61.35591691675761,
+          "predicted_signed_mean": 0.14367219289143882,
+          "relative_rms": 0.000329530224450361,
+          "rms": 0.020218630676297512,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -1.2604892253875732e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 22.625,
+            "predicted": 23.25,
+            "signed_error": 0.625
+          }
+        },
+        "24": {
+          "bitwise_exact": false,
+          "changed_values": 61326,
+          "cosine": 0.999999929593789,
+          "denominator": "RMS of same native field",
+          "dot": 289201123.885163,
+          "maxabs": 0.625,
+          "native_rms": 61.364813505596,
+          "native_signed_mean": 0.14645857055981953,
+          "orientation": "functional-minus-native",
+          "p95": 0.046875,
+          "p99": 0.06640625,
+          "predicted_rms": 61.36480637560209,
+          "predicted_signed_mean": 0.14649902443091076,
+          "relative_rms": 0.00037524980886005974,
+          "rms": 0.02302713453870811,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 4.045387109120687e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 25.875,
+            "predicted": 26.5,
+            "signed_error": 0.625
+          }
+        },
+        "25": {
+          "bitwise_exact": false,
+          "changed_values": 61032,
+          "cosine": 0.9999999070025823,
+          "denominator": "RMS of same native field",
+          "dot": 289351460.92452955,
+          "maxabs": 0.75,
+          "native_rms": 61.38078285605487,
+          "native_signed_mean": 0.15602637261152266,
+          "orientation": "functional-minus-native",
+          "p95": 0.05078125,
+          "p99": 0.0859375,
+          "predicted_rms": 61.3807338799687,
+          "predicted_signed_mean": 0.1560314683119456,
+          "relative_rms": 0.00043127175148458403,
+          "rms": 0.026471797729825716,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 5.09570042292277e-06,
+          "worst": {
+            "coordinate": [
+              0,
+              29,
+              0
+            ],
+            "native": 57.0,
+            "predicted": 57.75,
+            "signed_error": 0.75
+          }
+        },
+        "26": {
+          "bitwise_exact": false,
+          "changed_values": 61111,
+          "cosine": 0.9999998795797406,
+          "denominator": "RMS of same native field",
+          "dot": 289459323.16963124,
+          "maxabs": 1.0,
+          "native_rms": 61.39222892787738,
+          "native_signed_mean": 0.16785454163948696,
+          "orientation": "functional-minus-native",
+          "p95": 0.0625,
+          "p99": 0.09375,
+          "predicted_rms": 61.39216841374515,
+          "predicted_signed_mean": 0.16781531572341918,
+          "relative_rms": 0.0004907557977658944,
+          "rms": 0.030128592284126884,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -3.92259160677592e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              29,
+              0
+            ],
+            "native": 64.0,
+            "predicted": 65.0,
+            "signed_error": 1.0
+          }
+        },
+        "27": {
+          "bitwise_exact": false,
+          "changed_values": 60918,
+          "cosine": 0.9999998445609454,
+          "denominator": "RMS of same native field",
+          "dot": 289644831.7644074,
+          "maxabs": 1.0,
+          "native_rms": 61.411911704347624,
+          "native_signed_mean": 0.1674761378765106,
+          "orientation": "functional-minus-native",
+          "p95": 0.0625,
+          "p99": 0.109375,
+          "predicted_rms": 61.41182649789295,
+          "predicted_signed_mean": 0.16747498750686646,
+          "relative_rms": 0.0005575657834767152,
+          "rms": 0.034241180664237446,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -1.150369644165039e-06,
+          "worst": {
+            "coordinate": [
+              0,
+              29,
+              0
+            ],
+            "native": 73.5,
+            "predicted": 74.5,
+            "signed_error": 1.0
+          }
+        },
+        "3": {
+          "bitwise_exact": false,
+          "changed_values": 36410,
+          "cosine": 0.9999987019798723,
+          "denominator": "RMS of same native field",
+          "dot": 28337.145985593103,
+          "maxabs": 0.125,
+          "native_rms": 0.6074772221376525,
+          "native_signed_mean": 0.0026024696230888367,
+          "orientation": "functional-minus-native",
+          "p95": 0.001953125,
+          "p99": 0.00390625,
+          "predicted_rms": 0.6073869447445198,
+          "predicted_signed_mean": 0.002600366324186325,
+          "relative_rms": 0.0016179429805678225,
+          "rms": 0.0009828635074124548,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -2.1032989025115968e-06,
+          "worst": {
+            "coordinate": [
+              0,
+              9,
+              373
+            ],
+            "native": 27.75,
+            "predicted": 27.625,
+            "signed_error": -0.125
+          }
+        },
+        "4": {
+          "bitwise_exact": false,
+          "changed_values": 40892,
+          "cosine": 0.9999974463770681,
+          "denominator": "RMS of same native field",
+          "dot": 32988.64558907355,
+          "maxabs": 0.125,
+          "native_rms": 0.6554174109199242,
+          "native_signed_mean": 0.003102357697983583,
+          "orientation": "functional-minus-native",
+          "p95": 0.0029296875,
+          "p99": 0.00390625,
+          "predicted_rms": 0.6553697625913767,
+          "predicted_signed_mean": 0.0030993868286410967,
+          "relative_rms": 0.002261008568375713,
+          "rms": 0.0014819043819525742,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -2.9708693424860637e-06,
+          "worst": {
+            "coordinate": [
+              0,
+              9,
+              373
+            ],
+            "native": 28.375,
+            "predicted": 28.25,
+            "signed_error": -0.125
+          }
+        },
+        "5": {
+          "bitwise_exact": false,
+          "changed_values": 43879,
+          "cosine": 0.9999956670895038,
+          "denominator": "RMS of same native field",
+          "dot": 40678.90137238227,
+          "maxabs": 0.0625,
+          "native_rms": 0.7277916656982988,
+          "native_signed_mean": 0.004614652891953786,
+          "orientation": "functional-minus-native",
+          "p95": 0.00390625,
+          "p99": 0.0078125,
+          "predicted_rms": 0.7277844951428144,
+          "predicted_signed_mean": 0.004605828548471133,
+          "relative_rms": 0.0029437786404879645,
+          "rms": 0.0021424575602078094,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -8.8243434826533e-06,
+          "worst": {
+            "coordinate": [
+              0,
+              7,
+              0
+            ],
+            "native": 9.25,
+            "predicted": 9.1875,
+            "signed_error": -0.0625
+          }
+        },
+        "6": {
+          "bitwise_exact": false,
+          "changed_values": 49601,
+          "cosine": 0.9999913612159065,
+          "denominator": "RMS of same native field",
+          "dot": 44281.44555510269,
+          "maxabs": 0.125,
+          "native_rms": 0.7593703618225975,
+          "native_signed_mean": 0.004619490454594294,
+          "orientation": "functional-minus-native",
+          "p95": 0.0068359375,
+          "p99": 0.0087890625,
+          "predicted_rms": 0.7592952429072455,
+          "predicted_signed_mean": 0.004610224266846975,
+          "relative_rms": 0.0041576008384482535,
+          "rms": 0.0031571588530063853,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -9.26618774731954e-06,
+          "worst": {
+            "coordinate": [
+              0,
+              7,
+              0
+            ],
+            "native": 11.375,
+            "predicted": 11.25,
+            "signed_error": -0.125
+          }
+        },
+        "7": {
+          "bitwise_exact": false,
+          "changed_values": 53298,
+          "cosine": 0.9999999974064954,
+          "denominator": "RMS of same native field",
+          "dot": 280550829.87786376,
+          "maxabs": 0.125,
+          "native_rms": 60.44009974019474,
+          "native_signed_mean": 0.12641000851988793,
+          "orientation": "functional-minus-native",
+          "p95": 0.0078125,
+          "p99": 0.015625,
+          "predicted_rms": 60.44009891685753,
+          "predicted_signed_mean": 0.12639956523974735,
+          "relative_rms": 7.202089796649404e-05,
+          "rms": 0.0043529502564732874,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -1.0443280140558879e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              7,
+              0
+            ],
+            "native": 8.75,
+            "predicted": 8.625,
+            "signed_error": -0.125
+          }
+        },
+        "8": {
+          "bitwise_exact": false,
+          "changed_values": 55708,
+          "cosine": 0.9999999953639976,
+          "denominator": "RMS of same native field",
+          "dot": 280556772.03924847,
+          "maxabs": 0.125,
+          "native_rms": 60.44073974009052,
+          "native_signed_mean": 0.12392819961222509,
+          "orientation": "functional-minus-native",
+          "p95": 0.01171875,
+          "p99": 0.015625,
+          "predicted_rms": 60.44073917536202,
+          "predicted_signed_mean": 0.12392665426246822,
+          "relative_rms": 9.62912512087211e-05,
+          "rms": 0.005819914453553989,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -1.5453497568766276e-06,
+          "worst": {
+            "coordinate": [
+              0,
+              10,
+              0
+            ],
+            "native": 6.8125,
+            "predicted": 6.9375,
+            "signed_error": 0.125
+          }
+        },
+        "9": {
+          "bitwise_exact": false,
+          "changed_values": 56666,
+          "cosine": 0.9999999924351777,
+          "denominator": "RMS of same native field",
+          "dot": 280566108.32328355,
+          "maxabs": 0.15625,
+          "native_rms": 60.44174413114738,
+          "native_signed_mean": 0.1225515432159106,
+          "orientation": "functional-minus-native",
+          "p95": 0.015625,
+          "p99": 0.02294921875,
+          "predicted_rms": 60.44174627337835,
+          "predicted_signed_mean": 0.12259131232897441,
+          "relative_rms": 0.00012300262940010719,
+          "rms": 0.007434493453659625,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 3.976911306381226e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              26,
+              0
+            ],
+            "native": 5.03125,
+            "predicted": 4.875,
+            "signed_error": -0.15625
+          }
+        }
+      },
+      "native": {
+        "0": {
+          "bitwise_exact": true,
+          "changed_values": 0,
+          "cosine": 1.0,
+          "denominator": "RMS of same native field",
+          "dot": 32.568802058893596,
+          "maxabs": 0.0,
+          "native_rms": 0.02059303142995652,
+          "native_signed_mean": 4.676846738827104e-05,
+          "orientation": "functional-minus-native",
+          "p95": 0.0,
+          "p99": 0.0,
+          "predicted_rms": 0.02059303142995652,
+          "predicted_signed_mean": 4.676846738827104e-05,
+          "relative_rms": 0.0,
+          "rms": 0.0,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 0.0,
+          "worst": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "native": 0.0024261474609375,
+            "predicted": 0.0024261474609375,
+            "signed_error": 0.0
+          }
+        },
+        "1": {
+          "bitwise_exact": false,
+          "changed_values": 3376,
+          "cosine": 0.9999995662487025,
+          "denominator": "RMS of same native field",
+          "dot": 2798.0143011421787,
+          "maxabs": 0.0078125,
+          "native_rms": 0.19088027436255597,
+          "native_signed_mean": 0.00023243623475233713,
+          "orientation": "functional-minus-native",
+          "p95": 0.0,
+          "p99": 0.0009765625,
+          "predicted_rms": 0.190865681662304,
+          "predicted_signed_mean": 0.00023258003095785778,
+          "relative_rms": 0.000934494943718639,
+          "rms": 0.0001783766512474351,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 1.437962055206299e-07,
+          "worst": {
+            "coordinate": [
+              0,
+              7,
+              58
+            ],
+            "native": 1.4375,
+            "predicted": 1.4296875,
+            "signed_error": -0.0078125
+          }
+        },
+        "10": {
+          "bitwise_exact": false,
+          "changed_values": 57843,
+          "cosine": 0.9999999903841882,
+          "denominator": "RMS of same native field",
+          "dot": 280568203.5244578,
+          "maxabs": 0.15625,
+          "native_rms": 60.441970957935894,
+          "native_signed_mean": 0.12252965211868286,
+          "orientation": "functional-minus-native",
+          "p95": 0.015625,
+          "p99": 0.0234375,
+          "predicted_rms": 60.441970934335316,
+          "predicted_signed_mean": 0.1225909016529719,
+          "relative_rms": 0.000138678131375096,
+          "rms": 0.008381979589074372,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 6.124953428904215e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": -6.4375,
+            "predicted": -6.28125,
+            "signed_error": 0.15625
+          }
+        },
+        "11": {
+          "bitwise_exact": false,
+          "changed_values": 59101,
+          "cosine": 0.99999998924911,
+          "denominator": "RMS of same native field",
+          "dot": 280569121.5505748,
+          "maxabs": 0.21875,
+          "native_rms": 60.44207106792366,
+          "native_signed_mean": 0.12914922773838045,
+          "orientation": "functional-minus-native",
+          "p95": 0.0166015625,
+          "p99": 0.025390625,
+          "predicted_rms": 60.442068660419515,
+          "predicted_signed_mean": 0.12921338925759,
+          "relative_rms": 0.00014663485697190146,
+          "rms": 0.00886291444613049,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 6.416151920954386e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": -4.09375,
+            "predicted": -3.875,
+            "signed_error": 0.21875
+          }
+        },
+        "12": {
+          "bitwise_exact": false,
+          "changed_values": 59891,
+          "cosine": 0.9999999867956076,
+          "denominator": "RMS of same native field",
+          "dot": 280574417.53784066,
+          "maxabs": 0.25,
+          "native_rms": 60.442641818514915,
+          "native_signed_mean": 0.13540158867836,
+          "orientation": "functional-minus-native",
+          "p95": 0.01953125,
+          "p99": 0.03125,
+          "predicted_rms": 60.44263894960966,
+          "predicted_signed_mean": 0.1354537366827329,
+          "relative_rms": 0.00016250780299811564,
+          "rms": 0.009822400929328888,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 5.214800437291463e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": -3.34375,
+            "predicted": -3.09375,
+            "signed_error": 0.25
+          }
+        },
+        "13": {
+          "bitwise_exact": false,
+          "changed_values": 59839,
+          "cosine": 0.9999999846272406,
+          "denominator": "RMS of same native field",
+          "dot": 280588738.3593432,
+          "maxabs": 0.28125,
+          "native_rms": 60.44418648847012,
+          "native_signed_mean": 0.13100611249605815,
+          "orientation": "functional-minus-native",
+          "p95": 0.021484375,
+          "p99": 0.03125,
+          "predicted_rms": 60.44417942904335,
+          "predicted_signed_mean": 0.13110006362199783,
+          "relative_rms": 0.0001753440287307019,
+          "rms": 0.01059852717223821,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 9.395112593968709e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 3.34375,
+            "predicted": 3.625,
+            "signed_error": 0.28125
+          }
+        },
+        "14": {
+          "bitwise_exact": false,
+          "changed_values": 60851,
+          "cosine": 0.9999999814316213,
+          "denominator": "RMS of same native field",
+          "dot": 280583143.31559557,
+          "maxabs": 0.28125,
+          "native_rms": 60.44358314885414,
+          "native_signed_mean": 0.13363458275794982,
+          "orientation": "functional-minus-native",
+          "p95": 0.0234375,
+          "p99": 0.03515625,
+          "predicted_rms": 60.44357767632801,
+          "predicted_signed_mean": 0.13374652475118637,
+          "relative_rms": 0.00019270901053183073,
+          "rms": 0.011648023101614117,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 0.00011194199323654175,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 7.53125,
+            "predicted": 7.8125,
+            "signed_error": 0.28125
+          }
+        },
+        "15": {
+          "bitwise_exact": false,
+          "changed_values": 61598,
+          "cosine": 0.9999999779271055,
+          "denominator": "RMS of same native field",
+          "dot": 280598864.30084836,
+          "maxabs": 0.1875,
+          "native_rms": 60.445289973843515,
+          "native_signed_mean": 0.1367089674870173,
+          "orientation": "functional-minus-native",
+          "p95": 0.025390625,
+          "p99": 0.0390625,
+          "predicted_rms": 60.445257650533456,
+          "predicted_signed_mean": 0.13676645105083785,
+          "relative_rms": 0.00021010961890127167,
+          "rms": 0.012700136840781119,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 5.748356382052104e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 13.125,
+            "predicted": 13.3125,
+            "signed_error": 0.1875
+          }
+        },
+        "16": {
+          "bitwise_exact": false,
+          "changed_values": 61763,
+          "cosine": 0.9999999762583139,
+          "denominator": "RMS of same native field",
+          "dot": 280599079.33582425,
+          "maxabs": 0.28125,
+          "native_rms": 60.44530578115102,
+          "native_signed_mean": 0.1360074372092883,
+          "orientation": "functional-minus-native",
+          "p95": 0.02734375,
+          "p99": 0.0390625,
+          "predicted_rms": 60.445288265897176,
+          "predicted_signed_mean": 0.13609079619248707,
+          "relative_rms": 0.00021790695935186994,
+          "rms": 0.013171452789864625,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 8.335898319880168e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              3,
+              0
+            ],
+            "native": 7.6875,
+            "predicted": 7.96875,
+            "signed_error": 0.28125
+          }
+        },
+        "17": {
+          "bitwise_exact": false,
+          "changed_values": 61859,
+          "cosine": 0.9999999764498276,
+          "denominator": "RMS of same native field",
+          "dot": 288956389.7710736,
+          "maxabs": 0.25,
+          "native_rms": 61.3388443825177,
+          "native_signed_mean": 0.14113180389006932,
+          "orientation": "functional-minus-native",
+          "p95": 0.02734375,
+          "p99": 0.04296875,
+          "predicted_rms": 61.33883215917932,
+          "predicted_signed_mean": 0.14119702180226643,
+          "relative_rms": 0.00021702620861481636,
+          "rms": 0.013312136837152043,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 6.521791219711303e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              22,
+              4
+            ],
+            "native": 19.0,
+            "predicted": 19.25,
+            "signed_error": 0.25
+          }
+        },
+        "18": {
+          "bitwise_exact": false,
+          "changed_values": 61986,
+          "cosine": 0.9999999736807451,
+          "denominator": "RMS of same native field",
+          "dot": 288976580.17070466,
+          "maxabs": 0.25,
+          "native_rms": 61.34098792229055,
+          "native_signed_mean": 0.1434808353583018,
+          "orientation": "functional-minus-native",
+          "p95": 0.0302734375,
+          "p99": 0.046875,
+          "predicted_rms": 61.340974674846095,
+          "predicted_signed_mean": 0.1435029868284861,
+          "relative_rms": 0.00022943091589051504,
+          "rms": 0.014073519040640144,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 2.215147018432617e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 20.75,
+            "predicted": 21.0,
+            "signed_error": 0.25
+          }
+        },
+        "19": {
+          "bitwise_exact": false,
+          "changed_values": 62205,
+          "cosine": 0.9999999697575318,
+          "denominator": "RMS of same native field",
+          "dot": 288993148.9250957,
+          "maxabs": 0.375,
+          "native_rms": 61.342743264421195,
+          "native_signed_mean": 0.14150802264610926,
+          "orientation": "functional-minus-native",
+          "p95": 0.03125,
+          "p99": 0.046875,
+          "predicted_rms": 61.34273656802197,
+          "predicted_signed_mean": 0.1415603960553805,
+          "relative_rms": 0.0002459368644838126,
+          "rms": 0.015086441937287264,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 5.237340927124023e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 22.5,
+            "predicted": 22.875,
+            "signed_error": 0.375
+          }
+        },
+        "2": {
+          "bitwise_exact": false,
+          "changed_values": 22913,
+          "cosine": 0.9999992243568196,
+          "denominator": "RMS of same native field",
+          "dot": 20572.189822601227,
+          "maxabs": 0.125,
+          "native_rms": 0.5176014283516823,
+          "native_signed_mean": 0.001976868212223053,
+          "orientation": "functional-minus-native",
+          "p95": 0.0009765625,
+          "p99": 0.001953125,
+          "predicted_rms": 0.5175164674568885,
+          "predicted_signed_mean": 0.0019728108247121174,
+          "relative_rms": 0.0012561746717682104,
+          "rms": 0.0006501978043664312,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -4.057387510935466e-06,
+          "worst": {
+            "coordinate": [
+              0,
+              9,
+              373
+            ],
+            "native": 24.625,
+            "predicted": 24.5,
+            "signed_error": -0.125
+          }
+        },
+        "20": {
+          "bitwise_exact": false,
+          "changed_values": 62228,
+          "cosine": 0.9999999625781931,
+          "denominator": "RMS of same native field",
+          "dot": 289034716.26837105,
+          "maxabs": 0.5,
+          "native_rms": 61.34714896954423,
+          "native_signed_mean": 0.14526013135910035,
+          "orientation": "functional-minus-native",
+          "p95": 0.03125,
+          "p99": 0.0546875,
+          "predicted_rms": 61.347154221984844,
+          "predicted_signed_mean": 0.14528743227322896,
+          "relative_rms": 0.00027357563427515694,
+          "rms": 0.016783085190315603,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 2.730091412862142e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 25.375,
+            "predicted": 25.875,
+            "signed_error": 0.5
+          }
+        },
+        "21": {
+          "bitwise_exact": false,
+          "changed_values": 62420,
+          "cosine": 0.9999999580731669,
+          "denominator": "RMS of same native field",
+          "dot": 289057010.30381703,
+          "maxabs": 0.5,
+          "native_rms": 61.349516982541914,
+          "native_signed_mean": 0.14318922847509385,
+          "orientation": "functional-minus-native",
+          "p95": 0.0341796875,
+          "p99": 0.054696044921870524,
+          "predicted_rms": 61.349518267133845,
+          "predicted_signed_mean": 0.1432252371311188,
+          "relative_rms": 0.00028957497951501116,
+          "rms": 0.017765285123475406,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 3.600865602493286e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 22.0,
+            "predicted": 22.5,
+            "signed_error": 0.5
+          }
+        },
+        "22": {
+          "bitwise_exact": false,
+          "changed_values": 62365,
+          "cosine": 0.9999999520479067,
+          "denominator": "RMS of same native field",
+          "dot": 289080605.6308572,
+          "maxabs": 0.625,
+          "native_rms": 61.3520217341398,
+          "native_signed_mean": 0.144921495616436,
+          "orientation": "functional-minus-native",
+          "p95": 0.037109375,
+          "p99": 0.0625,
+          "predicted_rms": 61.35202165993123,
+          "predicted_signed_mean": 0.14497784396012625,
+          "relative_rms": 0.0003096840115753997,
+          "rms": 0.018999740208889525,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 5.634834369023641e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 23.875,
+            "predicted": 24.5,
+            "signed_error": 0.625
+          }
+        },
+        "23": {
+          "bitwise_exact": false,
+          "changed_values": 61768,
+          "cosine": 0.9999999457049146,
+          "denominator": "RMS of same native field",
+          "dot": 289117335.1551449,
+          "maxabs": 0.625,
+          "native_rms": 61.355921782352794,
+          "native_signed_mean": 0.14368479778369267,
+          "orientation": "functional-minus-native",
+          "p95": 0.0390625,
+          "p99": 0.0625,
+          "predicted_rms": 61.35591691675761,
+          "predicted_signed_mean": 0.14367219289143882,
+          "relative_rms": 0.000329530224450361,
+          "rms": 0.020218630676297512,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -1.2604892253875732e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 22.625,
+            "predicted": 23.25,
+            "signed_error": 0.625
+          }
+        },
+        "24": {
+          "bitwise_exact": false,
+          "changed_values": 61326,
+          "cosine": 0.999999929593789,
+          "denominator": "RMS of same native field",
+          "dot": 289201123.885163,
+          "maxabs": 0.625,
+          "native_rms": 61.364813505596,
+          "native_signed_mean": 0.14645857055981953,
+          "orientation": "functional-minus-native",
+          "p95": 0.046875,
+          "p99": 0.06640625,
+          "predicted_rms": 61.36480637560209,
+          "predicted_signed_mean": 0.14649902443091076,
+          "relative_rms": 0.00037524980886005974,
+          "rms": 0.02302713453870811,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 4.045387109120687e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              13,
+              0
+            ],
+            "native": 25.875,
+            "predicted": 26.5,
+            "signed_error": 0.625
+          }
+        },
+        "25": {
+          "bitwise_exact": false,
+          "changed_values": 61032,
+          "cosine": 0.9999999070025823,
+          "denominator": "RMS of same native field",
+          "dot": 289351460.92452955,
+          "maxabs": 0.75,
+          "native_rms": 61.38078285605487,
+          "native_signed_mean": 0.15602637261152266,
+          "orientation": "functional-minus-native",
+          "p95": 0.05078125,
+          "p99": 0.0859375,
+          "predicted_rms": 61.3807338799687,
+          "predicted_signed_mean": 0.1560314683119456,
+          "relative_rms": 0.00043127175148458403,
+          "rms": 0.026471797729825716,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 5.09570042292277e-06,
+          "worst": {
+            "coordinate": [
+              0,
+              29,
+              0
+            ],
+            "native": 57.0,
+            "predicted": 57.75,
+            "signed_error": 0.75
+          }
+        },
+        "26": {
+          "bitwise_exact": false,
+          "changed_values": 61111,
+          "cosine": 0.9999998795797406,
+          "denominator": "RMS of same native field",
+          "dot": 289459323.16963124,
+          "maxabs": 1.0,
+          "native_rms": 61.39222892787738,
+          "native_signed_mean": 0.16785454163948696,
+          "orientation": "functional-minus-native",
+          "p95": 0.0625,
+          "p99": 0.09375,
+          "predicted_rms": 61.39216841374515,
+          "predicted_signed_mean": 0.16781531572341918,
+          "relative_rms": 0.0004907557977658944,
+          "rms": 0.030128592284126884,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -3.92259160677592e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              29,
+              0
+            ],
+            "native": 64.0,
+            "predicted": 65.0,
+            "signed_error": 1.0
+          }
+        },
+        "27": {
+          "bitwise_exact": false,
+          "changed_values": 60918,
+          "cosine": 0.9999998445609454,
+          "denominator": "RMS of same native field",
+          "dot": 289644831.7644074,
+          "maxabs": 1.0,
+          "native_rms": 61.411911704347624,
+          "native_signed_mean": 0.1674761378765106,
+          "orientation": "functional-minus-native",
+          "p95": 0.0625,
+          "p99": 0.109375,
+          "predicted_rms": 61.41182649789295,
+          "predicted_signed_mean": 0.16747498750686646,
+          "relative_rms": 0.0005575657834767152,
+          "rms": 0.034241180664237446,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -1.150369644165039e-06,
+          "worst": {
+            "coordinate": [
+              0,
+              29,
+              0
+            ],
+            "native": 73.5,
+            "predicted": 74.5,
+            "signed_error": 1.0
+          }
+        },
+        "3": {
+          "bitwise_exact": false,
+          "changed_values": 36410,
+          "cosine": 0.9999987019798723,
+          "denominator": "RMS of same native field",
+          "dot": 28337.145985593103,
+          "maxabs": 0.125,
+          "native_rms": 0.6074772221376525,
+          "native_signed_mean": 0.0026024696230888367,
+          "orientation": "functional-minus-native",
+          "p95": 0.001953125,
+          "p99": 0.00390625,
+          "predicted_rms": 0.6073869447445198,
+          "predicted_signed_mean": 0.002600366324186325,
+          "relative_rms": 0.0016179429805678225,
+          "rms": 0.0009828635074124548,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -2.1032989025115968e-06,
+          "worst": {
+            "coordinate": [
+              0,
+              9,
+              373
+            ],
+            "native": 27.75,
+            "predicted": 27.625,
+            "signed_error": -0.125
+          }
+        },
+        "4": {
+          "bitwise_exact": false,
+          "changed_values": 40892,
+          "cosine": 0.9999974463770681,
+          "denominator": "RMS of same native field",
+          "dot": 32988.64558907355,
+          "maxabs": 0.125,
+          "native_rms": 0.6554174109199242,
+          "native_signed_mean": 0.003102357697983583,
+          "orientation": "functional-minus-native",
+          "p95": 0.0029296875,
+          "p99": 0.00390625,
+          "predicted_rms": 0.6553697625913767,
+          "predicted_signed_mean": 0.0030993868286410967,
+          "relative_rms": 0.002261008568375713,
+          "rms": 0.0014819043819525742,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -2.9708693424860637e-06,
+          "worst": {
+            "coordinate": [
+              0,
+              9,
+              373
+            ],
+            "native": 28.375,
+            "predicted": 28.25,
+            "signed_error": -0.125
+          }
+        },
+        "5": {
+          "bitwise_exact": false,
+          "changed_values": 43879,
+          "cosine": 0.9999956670895038,
+          "denominator": "RMS of same native field",
+          "dot": 40678.90137238227,
+          "maxabs": 0.0625,
+          "native_rms": 0.7277916656982988,
+          "native_signed_mean": 0.004614652891953786,
+          "orientation": "functional-minus-native",
+          "p95": 0.00390625,
+          "p99": 0.0078125,
+          "predicted_rms": 0.7277844951428144,
+          "predicted_signed_mean": 0.004605828548471133,
+          "relative_rms": 0.0029437786404879645,
+          "rms": 0.0021424575602078094,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -8.8243434826533e-06,
+          "worst": {
+            "coordinate": [
+              0,
+              7,
+              0
+            ],
+            "native": 9.25,
+            "predicted": 9.1875,
+            "signed_error": -0.0625
+          }
+        },
+        "6": {
+          "bitwise_exact": false,
+          "changed_values": 49601,
+          "cosine": 0.9999913612159065,
+          "denominator": "RMS of same native field",
+          "dot": 44281.44555510269,
+          "maxabs": 0.125,
+          "native_rms": 0.7593703618225975,
+          "native_signed_mean": 0.004619490454594294,
+          "orientation": "functional-minus-native",
+          "p95": 0.0068359375,
+          "p99": 0.0087890625,
+          "predicted_rms": 0.7592952429072455,
+          "predicted_signed_mean": 0.004610224266846975,
+          "relative_rms": 0.0041576008384482535,
+          "rms": 0.0031571588530063853,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -9.26618774731954e-06,
+          "worst": {
+            "coordinate": [
+              0,
+              7,
+              0
+            ],
+            "native": 11.375,
+            "predicted": 11.25,
+            "signed_error": -0.125
+          }
+        },
+        "7": {
+          "bitwise_exact": false,
+          "changed_values": 53298,
+          "cosine": 0.9999999974064954,
+          "denominator": "RMS of same native field",
+          "dot": 280550829.87786376,
+          "maxabs": 0.125,
+          "native_rms": 60.44009974019474,
+          "native_signed_mean": 0.12641000851988793,
+          "orientation": "functional-minus-native",
+          "p95": 0.0078125,
+          "p99": 0.015625,
+          "predicted_rms": 60.44009891685753,
+          "predicted_signed_mean": 0.12639956523974735,
+          "relative_rms": 7.202089796649404e-05,
+          "rms": 0.0043529502564732874,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -1.0443280140558879e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              7,
+              0
+            ],
+            "native": 8.75,
+            "predicted": 8.625,
+            "signed_error": -0.125
+          }
+        },
+        "8": {
+          "bitwise_exact": false,
+          "changed_values": 55708,
+          "cosine": 0.9999999953639976,
+          "denominator": "RMS of same native field",
+          "dot": 280556772.03924847,
+          "maxabs": 0.125,
+          "native_rms": 60.44073974009052,
+          "native_signed_mean": 0.12392819961222509,
+          "orientation": "functional-minus-native",
+          "p95": 0.01171875,
+          "p99": 0.015625,
+          "predicted_rms": 60.44073917536202,
+          "predicted_signed_mean": 0.12392665426246822,
+          "relative_rms": 9.62912512087211e-05,
+          "rms": 0.005819914453553989,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": -1.5453497568766276e-06,
+          "worst": {
+            "coordinate": [
+              0,
+              10,
+              0
+            ],
+            "native": 6.8125,
+            "predicted": 6.9375,
+            "signed_error": 0.125
+          }
+        },
+        "9": {
+          "bitwise_exact": false,
+          "changed_values": 56666,
+          "cosine": 0.9999999924351777,
+          "denominator": "RMS of same native field",
+          "dot": 280566108.32328355,
+          "maxabs": 0.15625,
+          "native_rms": 60.44174413114738,
+          "native_signed_mean": 0.1225515432159106,
+          "orientation": "functional-minus-native",
+          "p95": 0.015625,
+          "p99": 0.02294921875,
+          "predicted_rms": 60.44174627337835,
+          "predicted_signed_mean": 0.12259131232897441,
+          "relative_rms": 0.00012300262940010719,
+          "rms": 0.007434493453659625,
+          "sample_count": 76800,
+          "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+          "shape": [
+            1,
+            30,
+            2560
+          ],
+          "signed_mean": 3.976911306381226e-05,
+          "worst": {
+            "coordinate": [
+              0,
+              26,
+              0
+            ],
+            "native": 5.03125,
+            "predicted": 4.875,
+            "signed_error": -0.15625
+          }
+        }
+      }
+    },
+    "rows": 30
+  },
+  "compact_manifest_sha256": "14cee5b4030644aff01fdbffdfc45e42eb7f2a0dfd0ae15943449ec7d766afa8",
+  "counts": {
+    "component_hydrations": 3,
+    "cpu_offloads": 6,
+    "cuda_placements": 6,
+    "functional_decode_calls": 2,
+    "functional_transitions": 224,
+    "guard_refusals": 0,
+    "native_module_entries": 4436,
+    "native_qwen_calls": 2,
+    "native_transitions": 224,
+    "native_vae_calls": 4,
+    "noise_draws": 4
+  },
+  "coverage": {
+    "actual_sdpa_arguments": "Q/K/V/mask descriptors and flags; no selected CUDA kernel or mask-content hash claim.",
+    "cases": 2,
+    "complete_passes_per_case": 4,
+    "independent_seeds": 1,
+    "metadata_correction": "Producer uncropped_token_count mislabeled len(BatchEncoding); retained-field value preserved and explicit input_ids token length reported independently.",
+    "original_pngs": 6,
+    "producer_plan_job_id": "Optional by frozen producer schema; wrapper/source/summary job identities joined explicitly.",
+    "recursive_per_case_error_scope": "Every response leaf also retains both per-case full-field errors; these repeat primary case errors and carried coordinates, not new independent observations or physical transitions.",
+    "response_context_leaves": "Every recursive saved tensor leaf, including carried inputs and all context leaves; coordinate counts overlap across clocks.",
+    "retained_rows": 512
+  },
+  "dependent_repeated_coordinates": true,
+  "endpoint_response": {
+    "decoded": {
+      "bitwise_exact": null,
+      "changed_values": 0,
+      "cosine": 1.0,
+      "denominator": "RMS of native prompt1-minus-prompt0 response",
+      "dot": 5825.716325369896,
+      "maxabs": 0.0,
+      "native_rms": 0.08606846913300183,
+      "native_signed_mean": 0.017767065728548914,
+      "orientation": "functional prompt1-minus-prompt0 minus native prompt1-minus-prompt0",
+      "p95": 0.0,
+      "p99": 0.0,
+      "predicted_rms": 0.08606846913300183,
+      "predicted_signed_mean": 0.017767065728548914,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "sample_count": 786432,
+      "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+      "shape": [
+        1,
+        3,
+        512,
+        512
+      ],
+      "signed_mean": 0.0,
+      "worst": {
+        "coordinate": [
+          0,
+          0,
+          0,
+          0
+        ],
+        "native": 0.01953125,
+        "predicted": 0.01953125,
+        "signed_error": 0.0
+      }
+    },
+    "pixels": {
+      "bitwise_exact": null,
+      "changed_values": 0,
+      "cosine": 1.0,
+      "denominator": "RMS of native prompt1-minus-prompt0 response",
+      "dot": 94738559.0,
+      "maxabs": 0.0,
+      "native_rms": 10.975714433338007,
+      "native_signed_mean": 2.2758216857910156,
+      "orientation": "functional prompt1-minus-prompt0 minus native prompt1-minus-prompt0",
+      "p95": 0.0,
+      "p99": 0.0,
+      "predicted_rms": 10.975714433338007,
+      "predicted_signed_mean": 2.2758216857910156,
+      "relative_rms": 0.0,
+      "rms": 0.0,
+      "sample_count": 786432,
+      "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+      "shape": [
+        512,
+        512,
+        3
+      ],
+      "signed_mean": 0.0,
+      "worst": {
+        "coordinate": [
+          0,
+          0,
+          0
+        ],
+        "native": 3.0,
+        "predicted": 3.0,
+        "signed_error": 0.0
+      }
+    }
+  },
+  "failed_saved_audits": [
+    {
+      "elapsed_s": 43.64,
+      "executed_payload_sha256": "bb809174a326254f8fdc255bdb4ec004ce2a3c46fceb58eab5b5f8cade3b6621",
+      "job_id": "job-56860c50186f",
+      "job_sha256": "850bcacfc9582794b168d24b311404efd1c42873124e091ba605e8c08642da33",
+      "peak_rss_mb": 258.3,
+      "peak_vram_mb": 0.0,
+      "request_sha256": "07f97ca3371e944f5ec945b7ef8ddbc5e8454b83ca15647a50dcbfdbd4b3c9a3",
+      "reservation": {
+        "cpu_threads": 2,
+        "disk_gb": 1.0,
+        "est_wall_s": 240.0,
+        "ram_mb": 3072.0,
+        "vram_mb": 0.0
+      },
+      "state": "failed",
+      "worker_log_sha256": "63847fcaae55ec9b73b07742826bf3b7f9ea4d7d0ff3b96b13dc10d6c8f3a7d8"
+    },
+    {
+      "elapsed_s": 126.93,
+      "executed_payload_sha256": "947ae172efaf142c4c8cfb410f40c0ac33b2a560f1553a39592e8dc45607810f",
+      "job_id": "job-7a55a56683eb",
+      "job_sha256": "6c235f8c3c28eb9be9ae630a5d84f7d3a66209144076b5fc6bd413036b0653ab",
+      "peak_rss_mb": 1637.0,
+      "peak_vram_mb": 0.0,
+      "request_sha256": "1fce09dc7c9a2cf644801c837882139650e9894470b7a5988cf75f937bf673ea",
+      "reservation": {
+        "cpu_threads": 2,
+        "disk_gb": 1.0,
+        "est_wall_s": 240.0,
+        "ram_mb": 3072.0,
+        "vram_mb": 0.0
+      },
+      "state": "failed",
+      "worker_log_sha256": "9b955c698227b4612490030053a956651b638185b816bf3b83498757b76a6cea"
+    }
+  ],
+  "first_retained_discrepancies": {
+    "long": {
+      "denoiser": {
+        "first_bit_discrepancy": null,
+        "first_value_discrepancy": null
+      },
+      "qwen": {
+        "first_bit_discrepancy": null,
+        "first_value_discrepancy": null
+      }
+    },
+    "short": {
+      "denoiser": {
+        "first_bit_discrepancy": null,
+        "first_value_discrepancy": null
+      },
+      "qwen": {
+        "first_bit_discrepancy": null,
+        "first_value_discrepancy": null
+      }
+    }
+  },
+  "groups": {
+    "decoded_and_pixels": {
+      "bitwise_exact_fields": 4,
+      "changed_values": 0,
+      "field_comparisons": 4,
+      "max_rms": 0.0,
+      "maxabs": 0.0,
+      "scalar_positions": 3145728
+    },
+    "denoiser": {
+      "bitwise_exact_fields": 1960,
+      "changed_values": 0,
+      "field_comparisons": 1960,
+      "max_rms": 0.0,
+      "maxabs": 0.0,
+      "scalar_positions": 1145176064
+    },
+    "qwen": {
+      "bitwise_exact_fields": 58,
+      "changed_values": 0,
+      "field_comparisons": 58,
+      "max_rms": 0.0,
+      "maxabs": 0.0,
+      "scalar_positions": 81264640
+    }
+  },
+  "interpretation": "Two complete own-state image paths under different source mask/GQA regimes, one replay control and one prospective long case. Shared primitives, single seed, combined content/truncation/dispatch contrast. Common-prefix numerical drift is diagnostic, not target prediction error. Original forecasts/producer unchanged through all saved-reader repairs.",
+  "native_job": {
+    "elapsed_s": 411.95,
+    "executed_payload_sha256": "297947bf967fa7a916c139effe67605def920347315e9b8485d01fb359bb9f9b",
+    "job_id": "job-0b6c4340d5e6",
+    "job_sha256": "09c9534565277534c96e90a12cc8d46cd9a86b46f7520c39eebe282a1d654cdc",
+    "peak_rss_mb": 20718.1,
+    "peak_vram_mb": 8374.0,
+    "request_sha256": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd",
+    "reservation": {
+      "cpu_threads": 4,
+      "disk_gb": 12.0,
+      "est_wall_s": 750.0,
+      "ram_mb": 24576.0,
+      "vram_mb": 13000.0
+    },
+    "state": "succeeded",
+    "worker_log_sha256": "e0959b2b345f288a828fac7fb8bf9fbcd08c95c8a8d60bbfdfe3f3858f30390b"
+  },
+  "parsers": {
+    "long": {
+      "dispatch": {
+        "backend": "sdpa",
+        "gqa_policy": "enable_gqa",
+        "source": "transformers-qwen3-modeling-fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+      },
+      "formatted_chat_sha256": "adde3ddf6b5e570a08935efa2c45180bf620bfd8df112088a507323d129f515c",
+      "input_ids_sha256": "99f7255e13f443098096d1ea978cad869b4347fdab67fc34fc94a86a66720f4b",
+      "mask": {
+        "attended_rows": 512,
+        "expected_enable_gqa": true,
+        "expected_is_causal": true,
+        "expected_mask": "None",
+        "expected_regime": "all-attended",
+        "expected_regime_observed": true,
+        "padded_rows": 0,
+        "regime": "all-attended"
+      },
+      "mask_sha256": "8a472efbc41a4502e6da085422880bc742625c1187f2d36ed39e669d736ac113",
+      "producer_uncropped_count_matches_actual": false,
+      "producer_uncropped_token_count_recorded": 2,
+      "prompt_utf8_sha256": "53bd915a9d453795e804f12fd7ff811d25ad49b21e8acb9b78466be28cec8470",
+      "retained_rows": 512,
+      "scope": "Retained tokenizer/template reapplied offline, no original asset lookup or neural calls. Content and truncated suffix also change; not an isolated padding intervention.",
+      "uncropped_count_correction": "Frozen producer used len(default BatchEncoding), counting mapping fields. Actual token count independently extracted from explicit input_ids; original field preserved, no numerical failure inferred.",
+      "uncropped_token_count": 1319
+    },
+    "short": {
+      "dispatch": {
+        "backend": "sdpa",
+        "gqa_policy": "repeat_kv",
+        "source": "transformers-qwen3-modeling-fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+      },
+      "formatted_chat_sha256": "588b9d34237cc43789df3877f951be2e866a7cdb878db6b2a92d4f4544dc5d17",
+      "input_ids_sha256": "dee2fe0a37cb781b8acf6455177dbb5b908eff8b088f23c34910fa019133251a",
+      "mask": {
+        "attended_rows": 39,
+        "expected_enable_gqa": false,
+        "expected_is_causal": false,
+        "expected_mask": "explicit-bool-causal-key-padding",
+        "expected_regime": "partially-padded",
+        "expected_regime_observed": true,
+        "padded_rows": 473,
+        "regime": "partially-padded"
+      },
+      "mask_sha256": "9f621570c4506bffbe062ff2dba4a981fb09673b22b655bec1618979ea4a47cb",
+      "producer_uncropped_count_matches_actual": false,
+      "producer_uncropped_token_count_recorded": 2,
+      "prompt_utf8_sha256": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612",
+      "retained_rows": 512,
+      "scope": "Retained tokenizer/template reapplied offline, no original asset lookup or neural calls. Content and truncated suffix also change; not an isolated padding intervention.",
+      "uncropped_count_correction": "Frozen producer used len(default BatchEncoding), counting mapping fields. Actual token count independently extracted from explicit input_ids; original field preserved, no numerical failure inferred.",
+      "uncropped_token_count": 39
+    }
+  },
+  "per_case": {
+    "long": {
+      "decoded_and_pixels": {
+        "bitwise_exact_fields": 2,
+        "changed_values": 0,
+        "field_comparisons": 2,
+        "max_rms": 0.0,
+        "maxabs": 0.0,
+        "scalar_positions": 1572864
+      },
+      "denoiser": {
+        "bitwise_exact_fields": 980,
+        "changed_values": 0,
+        "field_comparisons": 980,
+        "max_rms": 0.0,
+        "maxabs": 0.0,
+        "scalar_positions": 572588032
+      },
+      "qwen": {
+        "bitwise_exact_fields": 29,
+        "changed_values": 0,
+        "field_comparisons": 29,
+        "max_rms": 0.0,
+        "maxabs": 0.0,
+        "scalar_positions": 40632320
+      }
+    },
+    "short": {
+      "decoded_and_pixels": {
+        "bitwise_exact_fields": 2,
+        "changed_values": 0,
+        "field_comparisons": 2,
+        "max_rms": 0.0,
+        "maxabs": 0.0,
+        "scalar_positions": 1572864
+      },
+      "denoiser": {
+        "bitwise_exact_fields": 980,
+        "changed_values": 0,
+        "field_comparisons": 980,
+        "max_rms": 0.0,
+        "maxabs": 0.0,
+        "scalar_positions": 572588032
+      },
+      "qwen": {
+        "bitwise_exact_fields": 29,
+        "changed_values": 0,
+        "field_comparisons": 29,
+        "max_rms": 0.0,
+        "maxabs": 0.0,
+        "scalar_positions": 40632320
+      }
+    }
+  },
+  "primary": {
+    "bitwise_exact_fields": 2022,
+    "changed_values": 0,
+    "field_comparisons": 2022,
+    "max_rms": 0.0,
+    "maxabs": 0.0,
+    "scalar_positions": 1229586432
+  },
+  "raw_arrays_downloaded": false,
+  "saved_audit_job": {
+    "elapsed_s": 208.62,
+    "executed_payload_sha256": "dd8c523f6ad262ff5fae21cac6c2c98d7ef185803866bc15015b7bd07581f9a8",
+    "job_id": "job-ce54f7b5406a",
+    "job_sha256": "db56deb6cdc92f1d1218d68551e938547dda5523190fffe068ec7f1040d806a9",
+    "peak_rss_mb": 1445.9,
+    "peak_vram_mb": 0.0,
+    "request_sha256": "83b0a86f3c4af70d137d31b0093990199a2675179b703371caa37e6cf5047d74",
+    "reservation": {
+      "cpu_threads": 2,
+      "disk_gb": 1.0,
+      "est_wall_s": 240.0,
+      "ram_mb": 3072.0,
+      "vram_mb": 0.0
+    },
+    "state": "succeeded",
+    "worker_log_sha256": "5088ff17f23cf30b4d6849f10818fdb9326217a1b0686430e11b962f15336aaf"
+  },
+  "schema": "mdb-raw-mask-pair-actual-saved-report-verification-v1",
+  "sdpa_census": {
+    "forecast": {
+      "long": {
+        "all_argument_profiles_match": true,
+        "calls": 27,
+        "selected_kernel": "unprofiled"
+      },
+      "short": {
+        "all_argument_profiles_match": true,
+        "calls": 27,
+        "selected_kernel": "unprofiled"
+      }
+    },
+    "native": {
+      "long": {
+        "all_argument_profiles_match": true,
+        "calls": 36,
+        "selected_kernel": "unprofiled"
+      },
+      "short": {
+        "all_argument_profiles_match": true,
+        "calls": 36,
+        "selected_kernel": "unprofiled"
+      }
+    }
+  },
+  "signed_groups": {
+    "decoded_and_pixels": {
+      "changed_values": 0,
+      "field_comparisons": 2,
+      "max_rms": 0.0,
+      "maxabs": 0.0,
+      "scalar_positions": 1572864,
+      "verified_forecast_hashes": 2
+    },
+    "denoiser": {
+      "changed_values": 0,
+      "field_comparisons": 1546,
+      "max_rms": 0.0,
+      "maxabs": 0.0,
+      "scalar_positions": 1017748473,
+      "verified_forecast_hashes": 1546
+    },
+    "qwen": {
+      "changed_values": 0,
+      "field_comparisons": 29,
+      "max_rms": 0.0,
+      "maxabs": 0.0,
+      "scalar_positions": 40632320,
+      "verified_forecast_hashes": 29
+    }
+  },
+  "signed_response": {
+    "changed_values": 0,
+    "field_comparisons": 1577,
+    "max_rms": 0.0,
+    "maxabs": 0.0,
+    "scalar_positions": 1059953657,
+    "verified_forecast_hashes": 1577
+  }
+}

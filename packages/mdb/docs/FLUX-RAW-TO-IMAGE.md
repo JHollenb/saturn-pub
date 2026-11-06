@@ -178,10 +178,13 @@ universal image prediction, semantic object functions or independent kernel
 arithmetic. Earlier independent-arithmetic misses and separate component
 coverage limits remain evidence.
 
-The next prepared contrast uses two raw prompts under seed 277: a partly
+The next prepared contrast used two raw prompts under seed 277: a partly
 padded 512-row prompt versus a fully attended 512-row prompt. Native SDPA then
 changes from an explicit bool mask/is_causal=False/repeated KV to
 mask=None/is_causal=True/enable_gqa=True. The existing functional helper
-supports both source paths. A new paired driver must bind dispatch per case,
-seal both full forecasts before either native target and compare their signed
-state and image differences. No such production contrast has run yet.
+supports both source paths. That contrast has now completed with per-case
+dispatch binding and one global seal before either native target. All2,022
+primary fields and all1,577 signed-response fields have zero numerical error.
+The [paired workflow](FLUX-RAW-MASK-PAIR.md) records the actual run, preserved
+reader failures and a new shared-prefix finite-drift observation. The next
+experiment localizes that drift at Qwen block0 with matched attention operands.

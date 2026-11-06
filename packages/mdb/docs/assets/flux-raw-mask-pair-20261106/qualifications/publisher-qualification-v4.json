@@ -1,0 +1,26 @@
+{
+  "auditor_sha256": "70408046bb83f1c0719addb57191c7d4bdf4c5a1121195c299c4cb493cf11d88",
+  "authenticated_data_unchanged": {
+    "change_is_label_only": true,
+    "compact_manifest_sha256": "14cee5b4030644aff01fdbffdfc45e42eb7f2a0dfd0ae15943449ec7d766afa8",
+    "native_job_id": "job-0b6c4340d5e6",
+    "native_request_sha256": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd"
+  },
+  "change": "Clarify the mask table SHA column as prompt hash, and label signed-response RMS/sum panels as signed prediction-error RMS/sum. No data keys, reductions, authentication, or scientific claims changed.",
+  "prior_qualification": {
+    "path": "publisher-qualification-v3/qualification.json",
+    "sha256": "57caf095fcb6629b52544d807c9ef7e9a6d84d7863dc694b06a646ae42d37dd9"
+  },
+  "publisher_sha256": "941636f8a9677b1997c4f9f31e5c48f56dd6aaa30e477594d42abb90238dad23",
+  "schema": "mdb-flux-raw-mask-pair-publisher-qualification-v4",
+  "scope": "Saved-only publisher label qualification; no model, tokenizer, checkpoint, CUDA, job, staging, or raw tensor read.",
+  "status": "passed",
+  "test_sha256": "55f87db41eb9e8c685d0de7fad22cb162cf0d908987bbbaf3980094e6ea43739",
+  "tests": {
+    "command": "rtk ../common/bin/common exec ruff check packages/mdb/qualification/publish_flux_raw_mask_pair.py packages/mdb/tests/test_publish_flux_raw_mask_pair.py && rtk ../common/bin/common exec python -m pytest -q packages/mdb/tests/test_publish_flux_raw_mask_pair.py",
+    "pytest_result": "3 passed",
+    "pytest_returncode": 0,
+    "pytest_tests": 3,
+    "ruff_returncode": 0
+  }
+}

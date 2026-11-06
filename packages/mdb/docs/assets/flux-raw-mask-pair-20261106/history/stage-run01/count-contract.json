@@ -1,0 +1,33 @@
+{
+  "batch_size": 1,
+  "case_order": [
+    "short",
+    "long"
+  ],
+  "component_hydrations": 3,
+  "cpu_offloads": 6,
+  "cuda_placements": 6,
+  "execution_id": "mdb-flux-raw-mask-pair-v1",
+  "forecast_hidden_states_per_case": 28,
+  "forecast_module_entries": 0,
+  "functional_decode_calls": 2,
+  "functional_transitions": 224,
+  "global_forecast_seals": 1,
+  "max_gpu_components": 1,
+  "native_transitions": 224,
+  "native_vae_calls": 4,
+  "noise_draws": 4,
+  "persistent_weight_banks": 0,
+  "pngs": 6,
+  "qwen_forecast_layers_per_case": 27,
+  "qwen_functional_calls": 2,
+  "qwen_native_calls": 2,
+  "qwen_native_layers_per_case": 36,
+  "schema": "mdb-flux-raw-mask-pair-count-contract-v1",
+  "scope": "conditional shared-primitive composition; content/truncation and mask/dispatch contrast, not isolated padding causality or independent kernels",
+  "sdpa_argument_observations": {
+    "forecast": 54,
+    "native": 72
+  },
+  "seed": 277
+}

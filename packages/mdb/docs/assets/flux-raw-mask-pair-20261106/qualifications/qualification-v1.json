@@ -1,0 +1,66 @@
+{
+  "cuda_calls": 0,
+  "design_sha256": "48c7f05f7364d2494e300dd70215cf844bee9220a2141bb72e507f7b6713321a",
+  "execution": {
+    "command": [
+      "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+      "-I",
+      "-B",
+      "-m",
+      "pytest",
+      "-c",
+      "/dev/null",
+      "-q",
+      "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/qualification-v1/attempt-05/isolated/tests/test_flux_raw_mask_pair.py",
+      "--basetemp",
+      "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/qualification-v1/attempt-05/tmp"
+    ],
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/qualification-v1/attempt-05/isolated",
+    "returncode": 0,
+    "scope": "tiny synthetic installed CPU mechanics only; no real checkpoints/tokenizer assets/CUDA/jobs",
+    "seconds": 3.321064416086301,
+    "source_sha256": {
+      "qualification/flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+      "qualification/flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+      "qualification/flux_raw_mask_pair.py": "3ee62e9174186935b32ff6e9e33e18e46aa978c4442b19f02982919e63bf3912",
+      "qualification/flux_raw_to_image.py": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522",
+      "tests/test_flux_raw_mask_pair.py": "f0e370079a9c3b8b56555cf604f30eda8329ac1a0797424af98164f77dda5a22"
+    },
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "bd6905ccf1b34e2e87bd20abfe43fd5572fdd001af006382932ac377d618b57a"
+  },
+  "installed_python": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+  "mrun_jobs": 0,
+  "original_checkpoint_reads": 0,
+  "original_tokenizer_calls": 0,
+  "preserved_attempts": [
+    "qualification-v1/attempt-01",
+    "qualification-v1/attempt-02",
+    "qualification-v1/attempt-03",
+    "qualification-v1/attempt-04",
+    "qualification-v1/attempt-05"
+  ],
+  "prior_failure": "attempt01 finalizer fixture omitted required summary.json; corrected fixture, all failed bytes preserved",
+  "pytest_seconds": 2.69,
+  "real_model_runs": 0,
+  "ruff": {
+    "command": [
+      "/Users/jakeholl/domains/common/.venv/bin/ruff",
+      "check",
+      "--select",
+      "F,I",
+      "--config",
+      "pyproject.toml",
+      "qualification/flux_raw_mask_pair.py",
+      "tests/test_flux_raw_mask_pair.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "returncode": 0,
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stdout_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  },
+  "schema": "mdb-flux-raw-mask-pair-qualification-v1",
+  "source_freeze": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/qualification-v1/source-freeze",
+  "status": "passed",
+  "tests": 12
+}

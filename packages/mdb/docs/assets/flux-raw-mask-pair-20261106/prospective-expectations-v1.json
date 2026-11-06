@@ -1,0 +1,30 @@
+{
+  "schema": "mdb-raw-mask-pair-prospective-expectations-v1",
+  "request_sha256": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd",
+  "status_at_write": "staged-not-submitted-no-native-target-observed",
+  "known_control": "Short prompt seed277 repeats the previous one-case protocol, whose raw-prompt image forecast matched exactly. This remains a replay control, not a fresh semantic context.",
+  "new_branch_hypothesis": "The fixed long prompt reaches512 attended rows. The unchanged equation helper can predict the unmasked causal/GQA path and its full image using each lane's own successive states.",
+  "numerical_prediction": "Both complete computed arrays and their full FP64 long-minus-short response commitments are formed and sealed before either native reference. Intended primary error is zero under the declared shared primitive profile; every nonzero discrepancy remains evidence, without suppressing subsequent native consumers or optional scientific panels.",
+  "expected_sdpa_occurrences": {
+    "functional": 54,
+    "native": 72,
+    "per_functional_case": 27,
+    "per_native_case": 36
+  },
+  "expected_argument_regimes": {
+    "short": "explicit boolean causal/key-padding mask,is_causalFalse,repeatKV,enable_gqaFalse",
+    "long": "maskNone,is_causalTrue,enable_gqaTrue"
+  },
+  "same_noise_claim": "Four separately initialized seeded generators each draw once; actual source bytes and before/after states must join within and across cases. Seeds alone do not certify this claim.",
+  "common_prefix": "Actual shared token coordinates are measured. Equality of their finite hidden states is diagnostic, not a correctness gate, because source lowerings differ.",
+  "semantic_prediction": "No predeclared claim about object count, ring/cube relations, image quality or direction of a semantic effect. Raw text, truncation, length and mask/dispatch change together.",
+  "kernel_scope": "Record actual SDPA argument metadata while forwarding the unchanged calls. Selected CUDA kernels remain unprofiled.",
+  "next_if_discrepancy": "Identify the first retained disagreement and use matched operands to distinguish local lowering from inherited state. Preserve native dispatch; a forced equivalent lowering is a separately labelled profile.",
+  "next_if_closed": "Choose one useful typed source-to-consumer counterfactual through the complete equation account, using prior causal evidence and avoiding repeated generic or peer V-stream panels.",
+  "claim_limits": [
+    "Original weights and shared Torch/parser/RNG dependencies remain explicit.",
+    "No donor or observed native activation supplies a forecast state.",
+    "This is a combined content/truncation/mask-dispatch contrast, not isolated padding causality.",
+    "Dependent coordinates and two case paths do not establish universal model understanding."
+  ]
+}

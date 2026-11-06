@@ -1,0 +1,314 @@
+{
+  "decoded": {
+    "bytes": 1572992,
+    "content_sha256": "f0c1918d9939af02463ca6e698635bfcc4655fcc2b43a7c80e96a763a999986a",
+    "device_at_capture": "cuda:0",
+    "encoding": "bf16-bits-v1",
+    "logical_dtype": "torch.bfloat16",
+    "path": "decoder/forecast/decoded.npy",
+    "sha256": "73deb9738181c8c6cf09575552bcf3802f4d4ee49efeb1c1579162b182bec8f6",
+    "shape": [
+      1,
+      3,
+      512,
+      512
+    ],
+    "stored_dtype": "uint16",
+    "stride": [
+      786432,
+      262144,
+      512,
+      1
+    ]
+  },
+  "decoder_input": {
+    "bytes": 262272,
+    "content_sha256": "e113047e933718551c94416d4fcb6c9086d1dd7f033e733fbf3754cd3b3d3421",
+    "device_at_capture": "cpu",
+    "encoding": "bf16-bits-v1",
+    "logical_dtype": "torch.bfloat16",
+    "path": "decoder/forecast/decoder-input.npy",
+    "sha256": "a9fbae0ee985db369e4f94f6106c51fbf1fe30231801342732fa8411eb341e9b",
+    "shape": [
+      1,
+      32,
+      64,
+      64
+    ],
+    "stored_dtype": "uint16",
+    "stride": [
+      131072,
+      4096,
+      64,
+      1
+    ]
+  },
+  "independent_decoder_prediction": true,
+  "macro_contract": {
+    "decoder_input_boundary": 1,
+    "module_macros": 11,
+    "total_saved_boundaries": 12
+  },
+  "macros": {
+    "decoder": {
+      "bytes": 1572992,
+      "content_sha256": "f0c1918d9939af02463ca6e698635bfcc4655fcc2b43a7c80e96a763a999986a",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "decoder/forecast/macros/10-decoder.npy",
+      "sha256": "73deb9738181c8c6cf09575552bcf3802f4d4ee49efeb1c1579162b182bec8f6",
+      "shape": [
+        1,
+        3,
+        512,
+        512
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        786432,
+        262144,
+        512,
+        1
+      ]
+    },
+    "decoder.conv_act": {
+      "bytes": 67108992,
+      "content_sha256": "26f50a1115e672f84050c3338296f3bef423eb87b6719519ae50b493260a60d9",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "decoder/forecast/macros/08-decoder.conv_act.npy",
+      "sha256": "8ab226779ef8422f4c95daae8c2a924245c0084a554975b3eb07b61f941bb893",
+      "shape": [
+        1,
+        128,
+        512,
+        512
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        33554432,
+        262144,
+        512,
+        1
+      ]
+    },
+    "decoder.conv_in": {
+      "bytes": 4194432,
+      "content_sha256": "667b8d28ba5c1422e876f25b79c3f2953ccd61cb608c567c0a68228b331d8ceb",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "decoder/forecast/macros/01-decoder.conv_in.npy",
+      "sha256": "6fcef112b2631c551a75a7586d1bd2b91726fb1dcbc3795d61cde044c9d4eaaa",
+      "shape": [
+        1,
+        512,
+        64,
+        64
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        4096,
+        64,
+        1
+      ]
+    },
+    "decoder.conv_norm_out": {
+      "bytes": 67108992,
+      "content_sha256": "62a1cd31b813e5b8d18bcad00e4e8794c5e190c2b29f0736b199a3ed4725f8f8",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "decoder/forecast/macros/07-decoder.conv_norm_out.npy",
+      "sha256": "0a2c3dbb8f3606bc7e520422a1afc8b9dabe6e1eaf23ad0b652847372aec3e45",
+      "shape": [
+        1,
+        128,
+        512,
+        512
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        33554432,
+        262144,
+        512,
+        1
+      ]
+    },
+    "decoder.conv_out": {
+      "bytes": 1572992,
+      "content_sha256": "f0c1918d9939af02463ca6e698635bfcc4655fcc2b43a7c80e96a763a999986a",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "decoder/forecast/macros/09-decoder.conv_out.npy",
+      "sha256": "73deb9738181c8c6cf09575552bcf3802f4d4ee49efeb1c1579162b182bec8f6",
+      "shape": [
+        1,
+        3,
+        512,
+        512
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        786432,
+        262144,
+        512,
+        1
+      ]
+    },
+    "decoder.mid_block": {
+      "bytes": 4194432,
+      "content_sha256": "2061aa691f8a0487c66f045eb508b3356cdd4868254de743497d541f81ca4e67",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "decoder/forecast/macros/02-decoder.mid_block.npy",
+      "sha256": "55f8733bc79689bf643433c17d6a67cadc6075c4acdffff7ce9673b55a80fd62",
+      "shape": [
+        1,
+        512,
+        64,
+        64
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        512,
+        1,
+        32768,
+        512
+      ]
+    },
+    "decoder.up_blocks.0": {
+      "bytes": 16777344,
+      "content_sha256": "19691036a04937e5a674c16025c7ac05a99b0430397f502020664a830f47bf6d",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "decoder/forecast/macros/03-decoder.up_blocks.0.npy",
+      "sha256": "c6fdd50373862b461af023ac4da7ee0af94ba9eef59d17d76922274499e31519",
+      "shape": [
+        1,
+        512,
+        128,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        8388608,
+        16384,
+        128,
+        1
+      ]
+    },
+    "decoder.up_blocks.1": {
+      "bytes": 67108992,
+      "content_sha256": "13e8a6d3bda19b268a391efeb99eb6f9c13115e9fe39f938b7f2b690eeb90997",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "decoder/forecast/macros/04-decoder.up_blocks.1.npy",
+      "sha256": "eb8b66476bdc1ebf6a92b432cba08a893e3a3a59e4e6464240bc9c45b935b6f6",
+      "shape": [
+        1,
+        512,
+        256,
+        256
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        33554432,
+        65536,
+        256,
+        1
+      ]
+    },
+    "decoder.up_blocks.2": {
+      "bytes": 134217856,
+      "content_sha256": "7a570614c935bfd2f12afe7f29e48e5d86ff92a7bf12e26795e85d7c896a31cc",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "decoder/forecast/macros/05-decoder.up_blocks.2.npy",
+      "sha256": "88b505e27146d2d867fee647a5bfc6a5ea9236630b75a8164feb4cdcdcf08437",
+      "shape": [
+        1,
+        256,
+        512,
+        512
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        67108864,
+        262144,
+        512,
+        1
+      ]
+    },
+    "decoder.up_blocks.3": {
+      "bytes": 67108992,
+      "content_sha256": "9a23e265b09682ba1312ec2b02a26707bbb8f263972950f29ae31ccb46fa2887",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "decoder/forecast/macros/06-decoder.up_blocks.3.npy",
+      "sha256": "e6cf2b0f154a4325127176f22bbc0706b970a7685cd8d628d08607f0d552e280",
+      "shape": [
+        1,
+        128,
+        512,
+        512
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        33554432,
+        262144,
+        512,
+        1
+      ]
+    },
+    "post_quant_conv": {
+      "bytes": 262272,
+      "content_sha256": "0b9ebd37cce8c3cce4c645f951d763a21c1cb8b8819d7f66b29ab55bf90aff53",
+      "device_at_capture": "cuda:0",
+      "encoding": "bf16-bits-v1",
+      "logical_dtype": "torch.bfloat16",
+      "path": "decoder/forecast/macros/00-post_quant_conv.npy",
+      "sha256": "f6ceb8aff2b455df9647b9620000c15174d8741b4c10078466380307a3f845f4",
+      "shape": [
+        1,
+        32,
+        64,
+        64
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        131072,
+        4096,
+        64,
+        1
+      ]
+    }
+  },
+  "native_module_forwards": 0,
+  "origin": "forecast",
+  "pixels": {
+    "bytes": 786560,
+    "dtype": "uint8",
+    "path": "decoder/forecast/pixels.npy",
+    "sha256": "418f7c20e569c1df46b6520c49b831cddf829e962ea38693a972cd1204a5bfc9",
+    "shape": [
+      512,
+      512,
+      3
+    ]
+  },
+  "png": {
+    "bytes": 271460,
+    "path": "decoder/forecast/image.png",
+    "sha256": "6f2e653d4b51114ea549157eb9ab10b2e99b3fdde8f60b63c4b064db23172a57"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "mdb-raw-mask-pair-publisher-qualification-v2",
+  "status": "passed",
+  "scope": "Installed-wheel saved-only synthetic compact publication; no arrays, checkpoints, tokenizers, CUDA, model calls, jobs, or staging.",
+  "sources": {
+    "saturn-pub/packages/mdb/qualification/publish_flux_raw_mask_pair.py": "57d79ac416da2669943d090d08475900e3b739dddd02aaf8a3fbb9b504332e52",
+    "saturn-pub/packages/mdb/tests/test_publish_flux_raw_mask_pair.py": "3467419b004cc43dab3f8068d0ffa098a901a9ecbdeb600a7a4210f934ce13b9",
+    "saturn-pub/packages/mdb/qualification/audit_flux_raw_mask_pair.py": "70408046bb83f1c0719addb57191c7d4bdf4c5a1121195c299c4cb493cf11d88"
+  },
+  "audit_qualification_pin": "70408046bb83f1c0719addb57191c7d4bdf4c5a1121195c299c4cb493cf11d88",
+  "tests": {
+    "command": "../common/bin/common exec python -m pytest -q packages/mdb/tests/test_publish_flux_raw_mask_pair.py",
+    "returncode": 0,
+    "passed": 3,
+    "scope": [
+      "authenticated manifest/native request/job/collection joins",
+      "six original PNG consumers and six figure outputs",
+      "complete Qwen and denoiser scalar traces",
+      "signed response totals and dependent endpoint decomposition",
+      "undefined/zero reductions and raw-member rejection",
+      "v3 common_frontend metadata retained as provenance without numerical recomputation"
+    ]
+  },
+  "ruff": {
+    "command": "../common/bin/common exec ruff check packages/mdb/qualification/publish_flux_raw_mask_pair.py packages/mdb/tests/test_publish_flux_raw_mask_pair.py",
+    "returncode": 0
+  },
+  "change_from_v1": "Accepted final audit reader v3 source pin and retained richer common_frontend join metadata in publication.json; figures and scalar reduction paths are unchanged.",
+  "claims_boundary": [
+    "All scalar reductions are read from the authenticated saved audit; no raw tensor is loaded or recomputed.",
+    "Short/long content and possible truncation remain explicit confounds to the observed mask/dispatch contrast.",
+    "Numerical misses, undefined denominators, zero terms, and signed countertrends remain publication data rather than scoring gates.",
+    "The producer's uncropped token count is preserved next to the auditor's independently corrected explicit-input_ids count."
+  ]
+}

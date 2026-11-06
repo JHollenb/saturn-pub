@@ -1,0 +1,65 @@
+{
+  "canonical_ruff": {
+    "command": [
+      "rtk",
+      "proxy",
+      "uvx",
+      "ruff",
+      "check",
+      "--select",
+      "F,I",
+      "qualification/audit_flux_raw_mask_pair.py",
+      "tests/test_audit_flux_raw_mask_pair.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "returncode": 0,
+    "stdout": "All checks passed!"
+  },
+  "command": [
+    "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+    "-I",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "tests/test_audit_flux_raw_mask_pair.py",
+    "--tb=short"
+  ],
+  "controller_sha256": "afbb71dfe56b2ed1749c77469dbde8a6c85f554b38831d52f54dd30a647f2ea0",
+  "cwd": "/Users/jakeholl/domains/artifacts/mdb-flux-raw-mask-pair-20261106/audit-qualification-v1/attempt-06/cohort",
+  "frozen_pure_account_sha256": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835",
+  "prior_attempts": {
+    "attempt_01": "Initial fixture/API issues and exception type; no production evidence touched.",
+    "attempt_02": "Strict complete frontier test required recognizing fixture native decoder path aliases.",
+    "attempt_03": "Auditor core/CLI passed; synthetic tokenizer did not exercise all-active branch.",
+    "attempt_04": "Producer omitted-plan-job-ID and uncropped-count schema corrections qualified; synthetic normalizer still lacked intended branch.",
+    "attempt_05": "Synthetic normalizer serialization produced applicability miss; original assets untouched.",
+    "attempt_06": "Controlled synthetic template20/600 rows exercises both branches; final11pass."
+  },
+  "producer_sha256": "3ee62e9174186935b32ff6e9e33e18e46aa978c4442b19f02982919e63bf3912",
+  "pytest_seconds": 13.06,
+  "regressions": [
+    "Omitted producer plan.job_id is valid; wrapper/source/summary IDs and effective request join remain strict.",
+    "Actual installed BatchEncoding default field count2 preserved separately from explicit input_ids token count; synthetic template guarantees20short/600long tokens and active long512-row regime.",
+    "Full per-case numerical decoder misses coexist with zero signed response error, neither is a discard gate.",
+    "All recursive context/carry response hashes verified, no delta bank; per-case duplicate leaf diagnostics labeled.",
+    "Raw/transaction/response hash/clock/own parent/argument ledger/alias hostile checks refuse; argument profile mismatch remains diagnostic."
+  ],
+  "resource_assessment": {
+    "basis": "Prior one-case recovery/audit85s peak1.77GiB; pair has2case passes plus4-lane recursive response pass,709recipes streamed once. Resource profile is prospective, not a measured production-audit result.",
+    "cpu_threads": 2,
+    "est_wall_s": 240,
+    "outer_timeout_s": 600,
+    "ram_mb": 3072
+  },
+  "returncode": 0,
+  "schema": "mdb-raw-mask-pair-audit-qualification-v1",
+  "scope": "Installed-wheel, saved-only synthetic pair. Real typed cutstores, parser metadata, original-archive recipe mechanics and ForecastTransaction; actual auditor CLI/4context catalogs/6fixture PNGs. No original model/checkpoint/tokenizer reads, CUDA, real-model forwards, jobs or staging.",
+  "sources": {
+    "saturn-pub/packages/mdb/qualification/audit_flux_raw_mask_pair.py": "73441c1f5face169b0599f3359b5201f7a55f82854e770cf0555a69d68c3037b",
+    "saturn-pub/packages/mdb/tests/test_audit_flux_raw_mask_pair.py": "c339a5818b44e187b532d1bbc088044200e343dd2ed303d4a68d0720ae1cd3e5"
+  },
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "bb7c5e9faf032314461bdf828a7db8f32782fe8be2dfbbf88acf48e69bb63217",
+  "tests": 11
+}

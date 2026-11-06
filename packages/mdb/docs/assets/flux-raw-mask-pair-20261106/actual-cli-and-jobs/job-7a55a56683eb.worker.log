@@ -1,0 +1,25 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+Installed 65 packages in 820ms
+MDB_EXECUTION_ENVIRONMENT={"cuda_driver": "NVIDIA GeForce RTX 4080, 580.159.03", "packages": {"Jinja2": "3.1.6", "MarkupSafe": "3.0.4", "PyYAML": "6.0.3", "Pygments": "2.21.0", "accelerate": "1.14.0", "annotated-doc": "0.0.5", "anyio": "4.15.1", "certifi": "2026.10.23", "charset-normalizer": "3.5.2", "click": "8.5.0", "cuda-bindings": "13.4.4", "cuda-pathfinder": "1.8.5", "cuda-toolkit": "13.0.3.0", "diffusers": "0.39.0", "filelock": "4.2.5", "fsspec": "2026.9.0", "h11": "0.16.0", "hf-xet": "1.8.0", "httpcore": "1.0.9", "httpx": "0.28.1", "huggingface_hub": "1.33.0", "idna": "3.20", "importlib_metadata": "10.1.0", "markdown-it-py": "4.2.0", "mdb-runtime": "0.1.0", "mdurl": "0.1.2", "mpmath": "1.3.0", "mrun-pub": "0.1.2", "networkx": "3.7", "numpy": "2.5.4", "nvidia-cublas": "13.1.1.3", "nvidia-cuda-cupti": "13.0.85", "nvidia-cuda-nvrtc": "13.0.88", "nvidia-cuda-runtime": "13.0.96", "nvidia-cudnn-cu13": "9.20.0.48", "nvidia-cufft": "12.0.0.61", "nvidia-cufile": "1.15.1.6", "nvidia-curand": "10.4.0.35", "nvidia-cusolver": "12.0.4.66", "nvidia-cusparse": "12.6.3.3", "nvidia-cusparselt-cu13": "0.8.1", "nvidia-nccl-cu13": "2.29.7", "nvidia-nvjitlink": "13.4.92", "nvidia-nvshmem-cu13": "3.4.5", "nvidia-nvtx": "13.0.85", "packaging": "26.3", "pillow": "13.0.0", "pip": "26.1.2", "psutil": "7.2.2", "regex": "2026.9.29", "requests": "2.34.2", "rich": "15.0.0", "safetensors": "0.8.0", "saturn-pub": "0.4.1", "setuptools": "84.2.1", "shellingham": "1.5.4", "sympy": "1.14.0", "tokenizers": "0.22.2", "torch": "2.13.0", "tqdm": "4.70.1", "transformers": "5.14.1", "triton": "3.7.1", "typer": "0.27.3", "typing_extensions": "4.16.0", "urllib3": "2.8.0", "zipp": "4.1.2"}, "python": "3.14.6", "resolved": {"LLM_MODELS_EXTRA_ROOT": "/mnt/big/llm-models", "TORCH_HOME": "/mnt/hdd8tb/mdb/torch", "UV_CACHE_DIR": "/mnt/hdd8tb/mdb/uv-cache", "UV_LINK_MODE": "symlink"}, "uv": "uv 0.12.6 (x86_64-unknown-linux-gnu)"}
+Traceback (most recent call last):
+  File "<frozen runpy>", line 203, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/ZskSfXrJRezYwX7h/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 73, in <module>
+    main()
+    ~~~~^^
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/ZskSfXrJRezYwX7h/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 67, in main
+    runpy.run_path(str(worker), run_name="__main__")
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen runpy>", line 294, in run_path
+  File "<frozen runpy>", line 98, in _run_module_code
+  File "<frozen runpy>", line 88, in _run_code
+  File "audit_flux_raw_mask_pair.py", line 551, in <module>
+    worker()
+    ~~~~~~^^
+  File "audit_flux_raw_mask_pair.py", line 519, in worker
+    result, inventory = audit(root, output, expected_manifest=config["native_manifest_sha256"], expected_request=config["native_request_sha256"])
+                        ~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "audit_flux_raw_mask_pair.py", line 416, in audit
+    expected = dict(shape=record["shape"], stride=record["stride"], dtype=record["logical_dtype"],
+                                                  ~~~~~~^^^^^^^^^^
+KeyError: 'stride'

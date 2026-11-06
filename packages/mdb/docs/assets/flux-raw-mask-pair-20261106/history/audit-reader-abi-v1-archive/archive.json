@@ -1,0 +1,8 @@
+{
+  "files": {
+    "audit_flux_raw_mask_pair.py": "73441c1f5face169b0599f3359b5201f7a55f82854e770cf0555a69d68c3037b",
+    "test_audit_flux_raw_mask_pair.py": "c339a5818b44e187b532d1bbc088044200e343dd2ed303d4a68d0720ae1cd3e5"
+  },
+  "reason": "Preserve executed v1 before exact nested frontend/native.json ABI repair; audit-01 failed before numeric comparison.",
+  "schema": "mdb-mask-pair-reader-v1-source-archive"
+}

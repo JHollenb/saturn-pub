@@ -1,0 +1,140 @@
+{
+  "bindings": {
+    "payload_seal_sha256": "ab6ab16611cab692805af5133106d0733bd75417dc0fefe47b4cb78c6d23af6d",
+    "qualification_sha256": "db57f184c294366520f6e3175543054786f6eb2822a16fe4ce70d1993f137124",
+    "staged_command_sha256": "ea2231cb0eb4808a3775643c1cf4bdb77f18d881d49446a61f807fd53dfe06d0"
+  },
+  "blocking_issues": [],
+  "cadence": {
+    "completed_research_turns": 8,
+    "latest_holistic_review": 6,
+    "next_holistic_no_later_than_turn": 11,
+    "this_review_resets_cadence": false
+  },
+  "checks": {
+    "25_payload_sealed_files_and_config_byte_hash": true,
+    "455_wheel_python_entries_equal_installed_qualification_environment": true,
+    "472_payload_sealed_package_entries_equal_installed_environment": true,
+    "all_25_staged_source_hashes": true,
+    "all_three_whole_wheels": true,
+    "command_contains_no_host_Mac_or_hostile_paths": true,
+    "command_under_hostile_ambient_python_and_cache_equals_staged_command": true,
+    "current_launcher_and_base_launcher_match_request": true,
+    "request_canonical_identity": true,
+    "staged_request_and_config_equal_authoritative_request": true,
+    "submit_requires_this_exact_request_review_source_wheels_and_strict_preflight": true
+  },
+  "counting": {
+    "assessment": "14 is a defined component-pass count, not a replacement or concealment of the deeper transition count. The installed 256 local-work-item cap is not claimed to count every denoiser transition.",
+    "component_or_transition_calls": 458,
+    "component_pass_breakdown": {
+      "functional_112_transition_paths": 2,
+      "functional_decoder": 2,
+      "functional_qwen": 2,
+      "native_112_transition_paths": 2,
+      "native_decoder": 4,
+      "native_full36_qwen": 2
+    },
+    "cpu_offloads": 6,
+    "cuda_placements": 6,
+    "functional_denoiser_transitions": 224,
+    "logical_branches": 4,
+    "logical_component_passes": 14,
+    "max_local_work_items": 64,
+    "maximum_gpu_components": 1,
+    "model_loads_scope": "One composite pipeline assembly with three explicitly counted physical component hydrations, not one checkpoint read.",
+    "native_denoiser_transitions": 224,
+    "noise_draws": 4,
+    "physical_hydrations": 3,
+    "pngs": 6,
+    "run01_disposition": "Parent reports model-free staging failure before request/job; corrected counting is prospective. No scientific failure or target evidence is implied."
+  },
+  "created_utc": "2026-11-06T12:42:37.236069+00:00",
+  "execution_integrity": [
+    "Phase batching completes both functional Qwen, denoiser and decoder paths, streams all signed FP64 forecast-response commitments, inventories outputs, and globally seals before either native learned chain is released.",
+    "Hooks reject module forwards before seal; functional graphs use original parameters and original Torch primitives. Native references then form their own conditioning and state, without forecast-state refresh.",
+    "Actual per-case masks select repeat-KV with explicit mask or enable-GQA with mask=None; actual SDPA operands/strides and causal/GQA arguments are recorded for all 54 forecast and 72 native occurrences.",
+    "Device-only transfers retain FP32 rotary buffers. VAE BN remains CPU; both lanes share the explicit CPU unpack/inverse-BN/unpatch frontend.",
+    "Both forecast frontends are compared bytewise for actual noise, IDs, schedule and generator states. Native frontends are separately redrawn and checked against their own forecast frontend.",
+    "Before/after component value signatures and tied-alias checks protect resident identity; three CPU-retained components are placed sequentially and offloaded in finally.",
+    "Forecast inventory is rechecked after targets. Final census and identities are written before finalizer. Corrected member allowance is 134221824 bytes, exceeding the known 134217856-byte framed macro."
+  ],
+  "payload_source_hashes": {
+    "count-contract.json": "4932cd619460741e5f6084b90637e9ffe7c80d59432e819b82683a34fb10b1cb",
+    "flux-parameter-artifacts.json": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb",
+    "flux-transformer-config.json": "09733c74a3da6d17dd0a0472a091a8950c7c6935889c32c16cc800ede05029de",
+    "flux_functional_decoder.py": "e2712298e42b37a263dea1b24f0f491082b8a01086b16fa66577f474c68f491f",
+    "flux_functional_denoiser.py": "cb794daa5818ec3f9107f23839a41010f9569148da3708e39cedd364dff21923",
+    "flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "flux_functional_qwen_prefix_worker.py": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+    "flux_functional_vae.py": "576b94f3cd987e8849f6d4772c90a77f14fdfc9210dea608a9a3d16cf0f99a61",
+    "flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "flux_raw_mask_pair.py": "3ee62e9174186935b32ff6e9e33e18e46aa978c4442b19f02982919e63bf3912",
+    "flux_raw_to_image.py": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522",
+    "flux_source_receiver.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+    "model_index.json": "51a76cb1cf3ed37423a1128c79c22faee8e6fbe7f5aaeb737f0a258930dbaac0",
+    "plan.json": "e72fe1b5f235872b67e7bedaa384e64f54e4d487386ce12c8a6472033227109c",
+    "preflight.v1.json": "ae4fd3da76158a8c721056f8c04aef734a2d6dc233c1a0ee2805c5757e21c468",
+    "qwen-config.json": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+    "qwen-parameter-artifacts.json": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+    "qwen-source-binding.json": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+    "retrieve_flux_weights.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+    "retrieve_qwen_weights.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+    "retrieve_vae_weights.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+    "scheduler-config.json": "067afb012cef64553a763447d1efd93daeffcc0123ca7e25b09f8de20b90762e",
+    "source-metadata-receipt-v1.json": "bdb557b3a6a236173c4df0d7324f08fdcd80a3eaa9c48f3394b0e02b9ca4a4b8",
+    "vae-config.json": "0d6dfb69ae95a5e2ac9836284bbb63d8b38ce67b25ba2dff380752b2a10ab948",
+    "vae-parameter-artifacts.json": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9"
+  },
+  "qualification": {
+    "authority": "Read bound receipt and test source; did not rerun tests.",
+    "independent_bootstrap_review": "Parent reports separately underway; this receipt does not claim its result.",
+    "independent_saved_only_auditor": "Not yet frozen/qualified at review; actual numerical conclusions must wait for that separate instrument and saved evidence.",
+    "producer_tests": 12,
+    "receipt_status": "passed",
+    "scope": "Synthetic CPU scheduler, mask dispatch, unequal-width Qwen both mask regimes, response hashes/typed cuts, early module-entry refusal, primitive recorder restoration, finalizer ABI/header allowance. Original CUDA pair not measured."
+  },
+  "request_file_sha256": "943570db44acab3e87509b9fd177339466d7c07e64c06b3294047b01df691756",
+  "request_sha256": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd",
+  "resources": {
+    "forecast_transaction_metadata_bound_bytes": 1073741824,
+    "live_admission": "Scheduler strict preflight and actual reservation/telemetry still required at submission; reviewer did not query or alter scheduler.",
+    "member_bound_bytes": 134221824,
+    "no_retries_or_nested_jobs": true,
+    "output_bound_bytes": 8589934592,
+    "rationale": "Previous one-case composition measured 329.23 s, RSS20815.5 MB and VRAM8374 MB. This pair retains the same three parameter sets and phase-batches B1 cases, with CPU retained endpoints and streamed response hashing. 24576 MB RAM and 13000 MB VRAM provide bounded margins; paired GQA kernel workspace, runtime and full output size remain unmeasured. 750 s estimate is below15 minutes, 1200 s cooperative worker events and1500 s hard scheduler timeout are distinct. No promise that estimate or limits will be met.",
+    "request": {
+      "calibration": "One-case original job-7efe0a8100bb measured329.23s/RSS20815.5MB/VRAM8374MB. Same three retained CPU components, six placements and B1 sequential phases. Two paths and streamed FP64 response hashing, no parallel GPU forwards or persistent delta/weight bank. Paired GQA lowering/peak/runtime unmeasured;750s estimate below15min,1200s cooperative events/1500s hard outer. Observe misses and peaks.",
+      "cpu_threads": 4,
+      "disk_gb": 12,
+      "est_wall_s": 750,
+      "ram_mb": 24576,
+      "timeout_s": 1500,
+      "vram_mb": 13000
+    }
+  },
+  "review_status": "ready-for-finite-run",
+  "reviewed_sources": {
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/flux_raw_mask_pair.py": "3ee62e9174186935b32ff6e9e33e18e46aa978c4442b19f02982919e63bf3912",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/flux_raw_to_image.py": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/stage_flux_raw_mask_pair.py": "b5dfa0c09047640ef387aebdbe8c89bfdc7f76f23cfae5fbbfb88a8fa16852e7",
+    "/Users/jakeholl/domains/saturn-pub/packages/mdb/qualification/stage_flux_raw_to_image.py": "855ee39d6d4c9c4a9f8fcefb425c33d8ff327b9f24a0f9dbf3066c8389040e99"
+  },
+  "reviewer": "context_carriers_astra",
+  "schema": "mdb-finite-run-review-astra-v1",
+  "scientific_reporting_limits": [
+    "The short prompt is an already observed control; the fixed long input is prospective. The pair changes content, truncation, mask and dispatch together, so it does not isolate padding causality.",
+    "An unexpected actual mask regime is an applicability observation, not permission to tune text or erase a case. Actual SDPA argument mismatches remain diagnostic.",
+    "Recorded SDPA arguments do not identify the selected CUDA kernel. Full original weights and Torch primitives are reused; no independent kernel or newly learned semantic law is established.",
+    "Both full endpoint accuracy and signed long-minus-short response accuracy must be reported, with native response norms as explicit denominators and undefined zero-response cosines/ratios preserved.",
+    "FP64 response commitments are fixed-coordinate differences, not semantic object correspondences. Retain all rows, numerical misses, maxima and countertrends.",
+    "Same-latent native VAE calls test the predicted-latent consumer separately from the full native-reference image. Shared CPU frontend is not an independent pipeline frontend target.",
+    "Current receipt establishes bounded execution readiness only, not numerical parity, causal attribution, complete understanding, or active-goal completion."
+  ],
+  "scope": "Read-only pre-execution source and immutable staged-specimen review. One finite CUDA lease; no submission, model, tokenizer, CUDA, or numerical target execution by reviewer. Not a completed-result or holistic review.",
+  "wheel_hashes": {
+    "mdb_runtime-0.1.0-py3-none-any.whl": "4b1b965dce45883cabcb24ab2c11702ce748aeb1658776596be27b405df26d21",
+    "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+    "saturn_pub-0.4.1-py3-none-any.whl": "c32bbcf5c5b45e4970d9c750266f607b2a9b0f06dc982106fd82e0501375e424"
+  }
+}

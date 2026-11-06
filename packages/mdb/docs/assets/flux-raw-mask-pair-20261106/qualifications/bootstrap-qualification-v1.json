@@ -1,0 +1,39 @@
+{
+  "schema": "mdb-flux-raw-mask-pair-bootstrap-qualification-v1",
+  "status": "passed",
+  "scope": "model-free bootstrap and finalizer mechanics only; no model, checkpoint, tokenizer, CUDA, mrun, or scheduler execution",
+  "test": {
+    "path": "saturn-pub/packages/mdb/tests/test_flux_raw_mask_pair_bootstrap.py",
+    "sha256": "7188dbebea7c1b7f2b7344686a3bebe978505df94827fb541be8213f2df475da",
+    "command": "../common/bin/common exec python -m pytest -q packages/mdb/tests/test_flux_raw_mask_pair_bootstrap.py",
+    "returncode": 0,
+    "passed": 1,
+    "seconds": 0.43,
+    "coverage": [
+      "direct worker(config_path) entrypoint",
+      "SATURN_RUN_CONFIG main() entrypoint",
+      "SATURN_DEBUG_REQUEST identity propagation",
+      "job-scoped output derivation",
+      "model-free finalizer and MDB_DIRECTORY_READY manifest"
+    ]
+  },
+  "ruff": {
+    "command": "../common/bin/common exec ruff check packages/mdb/tests/test_flux_raw_mask_pair_bootstrap.py",
+    "returncode": 0
+  },
+  "frozen_sources": {
+    "qualification/flux_raw_mask_pair.py": "3ee62e9174186935b32ff6e9e33e18e46aa978c4442b19f02982919e63bf3912",
+    "qualification/flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "qualification/stage_flux_raw_mask_pair.py": "b5dfa0c09047640ef387aebdbe8c89bfdc7f76f23cfae5fbbfb88a8fa16852e7"
+  },
+  "staged_run": {
+    "run": "run-02",
+    "request_sha256": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd",
+    "worker_sha256": "3ee62e9174186935b32ff6e9e33e18e46aa978c4442b19f02982919e63bf3912",
+    "mrun_jobs_from_qualification": 0
+  },
+  "notes": [
+    "The harness patches the run symbol in the loaded worker function globals, so no real run can be reached by the fixture.",
+    "This receipt qualifies bootstrap/finalizer behavior only; it is not a scientific result or a production-run success receipt."
+  ]
+}

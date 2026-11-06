@@ -1,0 +1,86 @@
+[
+  {
+    "all_argument_profiles_match_declared_regime": true,
+    "attended_rows": 39,
+    "calls": 27,
+    "context": "short",
+    "dispatch": {
+      "backend": "sdpa",
+      "gqa_policy": "repeat_kv",
+      "source": "transformers-qwen3-modeling-fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+    },
+    "expected_mask_regime": "partially-padded",
+    "expected_regime_observed": true,
+    "lane": "forecast",
+    "mask_regime": "partially-padded",
+    "padded_rows": 473,
+    "producer_uncropped_count_matches_actual": false,
+    "producer_uncropped_token_count_recorded": 2,
+    "prompt_utf8_sha256": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612",
+    "selected_kernel": "unprofiled",
+    "uncropped_token_count": 39
+  },
+  {
+    "all_argument_profiles_match_declared_regime": true,
+    "attended_rows": 39,
+    "calls": 36,
+    "context": "short",
+    "dispatch": {
+      "backend": "sdpa",
+      "gqa_policy": "repeat_kv",
+      "source": "transformers-qwen3-modeling-fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+    },
+    "expected_mask_regime": "partially-padded",
+    "expected_regime_observed": true,
+    "lane": "native",
+    "mask_regime": "partially-padded",
+    "padded_rows": 473,
+    "producer_uncropped_count_matches_actual": false,
+    "producer_uncropped_token_count_recorded": 2,
+    "prompt_utf8_sha256": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612",
+    "selected_kernel": "unprofiled",
+    "uncropped_token_count": 39
+  },
+  {
+    "all_argument_profiles_match_declared_regime": true,
+    "attended_rows": 512,
+    "calls": 27,
+    "context": "long",
+    "dispatch": {
+      "backend": "sdpa",
+      "gqa_policy": "enable_gqa",
+      "source": "transformers-qwen3-modeling-fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+    },
+    "expected_mask_regime": "all-attended",
+    "expected_regime_observed": true,
+    "lane": "forecast",
+    "mask_regime": "all-attended",
+    "padded_rows": 0,
+    "producer_uncropped_count_matches_actual": false,
+    "producer_uncropped_token_count_recorded": 2,
+    "prompt_utf8_sha256": "53bd915a9d453795e804f12fd7ff811d25ad49b21e8acb9b78466be28cec8470",
+    "selected_kernel": "unprofiled",
+    "uncropped_token_count": 1319
+  },
+  {
+    "all_argument_profiles_match_declared_regime": true,
+    "attended_rows": 512,
+    "calls": 36,
+    "context": "long",
+    "dispatch": {
+      "backend": "sdpa",
+      "gqa_policy": "enable_gqa",
+      "source": "transformers-qwen3-modeling-fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+    },
+    "expected_mask_regime": "all-attended",
+    "expected_regime_observed": true,
+    "lane": "native",
+    "mask_regime": "all-attended",
+    "padded_rows": 0,
+    "producer_uncropped_count_matches_actual": false,
+    "producer_uncropped_token_count_recorded": 2,
+    "prompt_utf8_sha256": "53bd915a9d453795e804f12fd7ff811d25ad49b21e8acb9b78466be28cec8470",
+    "selected_kernel": "unprofiled",
+    "uncropped_token_count": 1319
+  }
+]

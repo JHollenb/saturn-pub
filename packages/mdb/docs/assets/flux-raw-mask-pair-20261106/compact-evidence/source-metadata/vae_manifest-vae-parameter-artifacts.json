@@ -1,0 +1,2982 @@
+{
+  "artifacts": [
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/79850426dbccdc1b73abf1a68650466939da07f008f85a81c3677e5a61b92810.npy",
+      "sha256": "79850426dbccdc1b73abf1a68650466939da07f008f85a81c3677e5a61b92810",
+      "source": {
+        "data_offsets": [
+          8,
+          264
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "ee8ef2e59ab125b9c3e32175557ae5b67ce248fe5139c979b6a6affe70faacc9",
+        "shape": [
+          128
+        ],
+        "tensor": "bn.running_mean"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/e6b96757253e1fa0a4dc0769e6bd8c8b62ab9a7aa0e3b8cf48a7e63e3e370ac0.npy",
+      "sha256": "e6b96757253e1fa0a4dc0769e6bd8c8b62ab9a7aa0e3b8cf48a7e63e3e370ac0",
+      "source": {
+        "data_offsets": [
+          264,
+          520
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "29c3fdc9732895bcd46334b22b4f44e70157d5dfda3dd3e85f9e26e7251ba44a",
+        "shape": [
+          128
+        ],
+        "tensor": "bn.running_var"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/8a4a0061670948ca5a360622619ed6dc2b3deb3c26a02ca71f9126c549af2b67.npy",
+      "sha256": "8a4a0061670948ca5a360622619ed6dc2b3deb3c26a02ca71f9126c549af2b67",
+      "source": {
+        "data_offsets": [
+          520,
+          1544
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "2cdf4ddf0a26ced79659af5b0a2c7fa53efe9b81a569cd0af8ca01efdb9852ed",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.conv_in.bias"
+      }
+    },
+    {
+      "bytes": 295040,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgMzIsIDMsIDMpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/29e9c7051718fa7931a301fa0ee07604f3c827e31fc24fbfe271390e0c22d4a9.npy",
+      "sha256": "29e9c7051718fa7931a301fa0ee07604f3c827e31fc24fbfe271390e0c22d4a9",
+      "source": {
+        "data_offsets": [
+          1544,
+          296456
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "8a0adb56663e72f60091d4fc7a54e93eb35728094b89520fcece7311106a0041",
+        "shape": [
+          512,
+          32,
+          3,
+          3
+        ],
+        "tensor": "decoder.conv_in.weight"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/ef3301eb65310cd90467ef9c301f6663d1c5ef40819744fc47b3a23d5b4a2dbe.npy",
+      "sha256": "ef3301eb65310cd90467ef9c301f6663d1c5ef40819744fc47b3a23d5b4a2dbe",
+      "source": {
+        "data_offsets": [
+          296456,
+          296712
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "98207f37060264f0e1ec97157dfcbab7b9431556535bc310d7f4883723bf1e09",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.conv_norm_out.bias"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/67e80ab80f94811e07b22086f5a446056fbc6208e195a9c1aeca8619b7415e96.npy",
+      "sha256": "67e80ab80f94811e07b22086f5a446056fbc6208e195a9c1aeca8619b7415e96",
+      "source": {
+        "data_offsets": [
+          296712,
+          296968
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "e70690402faf6044e2234d2982680d2b5376409f5e501cd102dc403e72172cb7",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.conv_norm_out.weight"
+      }
+    },
+    {
+      "bytes": 134,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDMsKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/5cf48f05a359da12c421aa4f7514d4717c26fecb4c7225eaa69300a086d5e6e0.npy",
+      "sha256": "5cf48f05a359da12c421aa4f7514d4717c26fecb4c7225eaa69300a086d5e6e0",
+      "source": {
+        "data_offsets": [
+          296968,
+          296974
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "146cc62d95116fc52efba986277d8c70e6d2e37cd4e4dd6080f418d6242ce23a",
+        "shape": [
+          3
+        ],
+        "tensor": "decoder.conv_out.bias"
+      }
+    },
+    {
+      "bytes": 7040,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDMsIDEyOCwgMywgMyl9ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/9e19f128e0a05ed996f912c3f081ccdad15ca1442c07072b0f34ef6f293811c2.npy",
+      "sha256": "9e19f128e0a05ed996f912c3f081ccdad15ca1442c07072b0f34ef6f293811c2",
+      "source": {
+        "data_offsets": [
+          296974,
+          303886
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "6b08e2e8248e63624359ac46260ed8632ab958a335b7cb28aa11758c1e3d7621",
+        "shape": [
+          3,
+          128,
+          3,
+          3
+        ],
+        "tensor": "decoder.conv_out.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/1022e4dad553ea1ef8016811d5122fe89e5b898daca152a1d4382d284ee0b910.npy",
+      "sha256": "1022e4dad553ea1ef8016811d5122fe89e5b898daca152a1d4382d284ee0b910",
+      "source": {
+        "data_offsets": [
+          303886,
+          304910
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "d8bd597dfe02f11252f03e74590e9cc9e6f8300f8f2eeac37f04a462d967903b",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.attentions.0.group_norm.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/2665147d7b5b58e6ab85e4abf467d453689545068aaa7b976930578fc532ccbf.npy",
+      "sha256": "2665147d7b5b58e6ab85e4abf467d453689545068aaa7b976930578fc532ccbf",
+      "source": {
+        "data_offsets": [
+          304910,
+          305934
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "8182bde7120abf4e3267f68514f94b7dc48920d318d389b5e1cb3858c2c51c06",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.attentions.0.group_norm.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/9fc783e0737d1d43ba5f8d764c47ddbabdb0710a10fb3f0855d6710951fd346d.npy",
+      "sha256": "9fc783e0737d1d43ba5f8d764c47ddbabdb0710a10fb3f0855d6710951fd346d",
+      "source": {
+        "data_offsets": [
+          305934,
+          306958
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "a127915bdb60f4566a34fa083aea0c8006b2959cfc9310e0a5f89f362967c5e4",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.attentions.0.to_k.bias"
+      }
+    },
+    {
+      "bytes": 524416,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/300798117ad3d9396f14834d79818a7b00af21622ab5d9e5bc1a415bf285f4b0.npy",
+      "sha256": "300798117ad3d9396f14834d79818a7b00af21622ab5d9e5bc1a415bf285f4b0",
+      "source": {
+        "data_offsets": [
+          306958,
+          831246
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "0b17f061af5b04c887d605421be19f253d220a95c881a274995362528d6fcd13",
+        "shape": [
+          512,
+          512
+        ],
+        "tensor": "decoder.mid_block.attentions.0.to_k.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/df00d06b4a89a6d6339b2c0670afb549f677a9244b1ecb59abacb6e0d05fbdfe.npy",
+      "sha256": "df00d06b4a89a6d6339b2c0670afb549f677a9244b1ecb59abacb6e0d05fbdfe",
+      "source": {
+        "data_offsets": [
+          831246,
+          832270
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "7bc2a056dcb04eb8c535e4c96e260ea0ca11bcd34966397561ba80fb62942ede",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.attentions.0.to_out.0.bias"
+      }
+    },
+    {
+      "bytes": 524416,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/cb9af0019e2d2f00ecb6e6cc770a8d27d6d14626df43978098fbf4b982066941.npy",
+      "sha256": "cb9af0019e2d2f00ecb6e6cc770a8d27d6d14626df43978098fbf4b982066941",
+      "source": {
+        "data_offsets": [
+          832270,
+          1356558
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "7f1e53f66cbf1b7de9adf71e145752767f33ef67d8bd05343981056db219639d",
+        "shape": [
+          512,
+          512
+        ],
+        "tensor": "decoder.mid_block.attentions.0.to_out.0.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/808d9ff02c85b115f69f3c243e513aeda079e6777401f51f5c87b4d8314475e9.npy",
+      "sha256": "808d9ff02c85b115f69f3c243e513aeda079e6777401f51f5c87b4d8314475e9",
+      "source": {
+        "data_offsets": [
+          1356558,
+          1357582
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "a75ab18f79b29533fbcd912e75f7ffed193362a3e67e8497844d3ab9865644b7",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.attentions.0.to_q.bias"
+      }
+    },
+    {
+      "bytes": 524416,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/9663bd84f5aa36135fa936d24b6980210adff0fb8f41eb939b5b59f2feea58c0.npy",
+      "sha256": "9663bd84f5aa36135fa936d24b6980210adff0fb8f41eb939b5b59f2feea58c0",
+      "source": {
+        "data_offsets": [
+          1357582,
+          1881870
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "12847c08fed0c0ff8d127b7e0c5f5644d435f5e79f271f06c7d26e10d7f38d02",
+        "shape": [
+          512,
+          512
+        ],
+        "tensor": "decoder.mid_block.attentions.0.to_q.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/fb1edd06f63e032de43ec0b74e208592b82a1c50640247c796ec1a9cbee9ac02.npy",
+      "sha256": "fb1edd06f63e032de43ec0b74e208592b82a1c50640247c796ec1a9cbee9ac02",
+      "source": {
+        "data_offsets": [
+          1881870,
+          1882894
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "62d2262d7afa3aed7a0840db85980cb3fd3840d6423294debe729226a9a34a80",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.attentions.0.to_v.bias"
+      }
+    },
+    {
+      "bytes": 524416,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/9a22d568c93eb0aaf962ece3a76ae509f851b4713cf64d2ae3e0efa56e5dd7eb.npy",
+      "sha256": "9a22d568c93eb0aaf962ece3a76ae509f851b4713cf64d2ae3e0efa56e5dd7eb",
+      "source": {
+        "data_offsets": [
+          1882894,
+          2407182
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "0f2b669451214d79b599c6b71f5642dd4b832e073925671e137191331dbbb29b",
+        "shape": [
+          512,
+          512
+        ],
+        "tensor": "decoder.mid_block.attentions.0.to_v.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/18e2db1b7408bdbaae9205fe2111b6cd56f93866757f8df4d6fcfa3d496aa51a.npy",
+      "sha256": "18e2db1b7408bdbaae9205fe2111b6cd56f93866757f8df4d6fcfa3d496aa51a",
+      "source": {
+        "data_offsets": [
+          2407182,
+          2408206
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "bb08dfbceea49c21c027efc1d380883ed29328f1f04b992f0354bce4c76f623c",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.resnets.0.conv1.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/2f1d3a7c0ce188f751279d440d8074f157bf90ee395c301649b81012aa81992b.npy",
+      "sha256": "2f1d3a7c0ce188f751279d440d8074f157bf90ee395c301649b81012aa81992b",
+      "source": {
+        "data_offsets": [
+          2408206,
+          7126798
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "2572b23675b3f90df33f1ef3d15879e3e1b88c4d595bf20674089780c1ac76b2",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.mid_block.resnets.0.conv1.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/2d431c56269c6f1cba87eb0679b013874a3ff2cd933907c231ca06829b7a1461.npy",
+      "sha256": "2d431c56269c6f1cba87eb0679b013874a3ff2cd933907c231ca06829b7a1461",
+      "source": {
+        "data_offsets": [
+          7126798,
+          7127822
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "9ffe9fb9b29494d2d6d45b05a9c2576b546093a7b97aadfbb1fa825c92a0e31a",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.resnets.0.conv2.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/6d06b154989053276a076d8b6f38adf5bac9f9275f5259beb7828e201014cee3.npy",
+      "sha256": "6d06b154989053276a076d8b6f38adf5bac9f9275f5259beb7828e201014cee3",
+      "source": {
+        "data_offsets": [
+          7127822,
+          11846414
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "cfde987877fdb61cf33b0fde05a922369cc22f6e53eb10c377b14a5e3214dfa1",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.mid_block.resnets.0.conv2.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/0dfb42e084d074418bef6e47b8a50144cee3b355e7184cf3858a6104ef581ff9.npy",
+      "sha256": "0dfb42e084d074418bef6e47b8a50144cee3b355e7184cf3858a6104ef581ff9",
+      "source": {
+        "data_offsets": [
+          11846414,
+          11847438
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "937947d8c60fe16dd4ff42909e966728f1f3e06aa9a139c68fd2722cf4344141",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.resnets.0.norm1.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/b8d6e3637046699ea69c15f645981dbcd3d791709b239d30fe4708c15f48ee8a.npy",
+      "sha256": "b8d6e3637046699ea69c15f645981dbcd3d791709b239d30fe4708c15f48ee8a",
+      "source": {
+        "data_offsets": [
+          11847438,
+          11848462
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "046279f603854f01c7d630caf8b6d5afcecd5b99e845d71e1aa7573ef76a34ec",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.resnets.0.norm1.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/c489b70fa6d344156374f3b56c7886f6a3506e3bbed3807ad1ab494c1a227cad.npy",
+      "sha256": "c489b70fa6d344156374f3b56c7886f6a3506e3bbed3807ad1ab494c1a227cad",
+      "source": {
+        "data_offsets": [
+          11848462,
+          11849486
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "1887ac8fa8b67a0d1089d05d3d0a84ea5ed8a8c7b832a7117a74a80f84f84038",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.resnets.0.norm2.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/734bfb943bc632e97b24d6d596512309bab5369d0077d1fec6e66a35a939d8d2.npy",
+      "sha256": "734bfb943bc632e97b24d6d596512309bab5369d0077d1fec6e66a35a939d8d2",
+      "source": {
+        "data_offsets": [
+          11849486,
+          11850510
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "f1aa92567b90f5f65240a1e813b54bedaf756ba3bd4bf3bb90abfb5086371348",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.resnets.0.norm2.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/aad6c67b74a81d39d3c61c16d7ffca61b41b979e085b7c1809ae197c543c0a92.npy",
+      "sha256": "aad6c67b74a81d39d3c61c16d7ffca61b41b979e085b7c1809ae197c543c0a92",
+      "source": {
+        "data_offsets": [
+          11850510,
+          11851534
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "d15921f710e3b2f64148b24b54ff64fdd5a279acdee1003dee5ec30183923b53",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.resnets.1.conv1.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/fd638c1809180dcfc2ab9626a76c60bcb43b597d1316edc399612060a883d907.npy",
+      "sha256": "fd638c1809180dcfc2ab9626a76c60bcb43b597d1316edc399612060a883d907",
+      "source": {
+        "data_offsets": [
+          11851534,
+          16570126
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "4ffbf46b1f4fb151ed0158d0e7a5bd0df3d5a7a9a4bf0f334a44d166cf5ba1d2",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.mid_block.resnets.1.conv1.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/06a4b8f5ae6cabd416f611fa111dc0ce9802149546bfbd1168c72e2ef82612d2.npy",
+      "sha256": "06a4b8f5ae6cabd416f611fa111dc0ce9802149546bfbd1168c72e2ef82612d2",
+      "source": {
+        "data_offsets": [
+          16570126,
+          16571150
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "c6f1d42b3ce8650fa7a5f2450168a700970961302b2935a88662a09705d6c1c2",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.resnets.1.conv2.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/3df949818648fade37551819c3e5a039b78ea7c5f79869c83175e9932e2cd3a7.npy",
+      "sha256": "3df949818648fade37551819c3e5a039b78ea7c5f79869c83175e9932e2cd3a7",
+      "source": {
+        "data_offsets": [
+          16571150,
+          21289742
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "c519772f5e011e4f9affc8a4541ee7f57d384f19f01aacaed269c1c3160d4b48",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.mid_block.resnets.1.conv2.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/03e0403138d40a62ea86774030ad4934b9a58d798f2b0e7406320c1caf13f6a8.npy",
+      "sha256": "03e0403138d40a62ea86774030ad4934b9a58d798f2b0e7406320c1caf13f6a8",
+      "source": {
+        "data_offsets": [
+          21289742,
+          21290766
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "e3bc9bac89ec718499b3a6c8136302159d24e83f113fc3c7edb7a31cbbf57089",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.resnets.1.norm1.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/c5807f86d4ea65cbfe936ecada8de4d5abd86bc1c6dbc01a21bb8d9247b57ee8.npy",
+      "sha256": "c5807f86d4ea65cbfe936ecada8de4d5abd86bc1c6dbc01a21bb8d9247b57ee8",
+      "source": {
+        "data_offsets": [
+          21290766,
+          21291790
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "cbe2804ab6f4546e73d0bd9c65488ef29d1f0b79e786620c91f1aa9596b8f4c6",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.resnets.1.norm1.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/787c928e6ee5c21b6ca6180fb9333076cbc35a9e367a55b0665aed09d7466d0a.npy",
+      "sha256": "787c928e6ee5c21b6ca6180fb9333076cbc35a9e367a55b0665aed09d7466d0a",
+      "source": {
+        "data_offsets": [
+          21291790,
+          21292814
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "2e8a68f7a9e7b27cb0d09adf4cf8cc0b01e4c7173fd2f6285167531b389eb508",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.resnets.1.norm2.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/fe28a59d03776f4f806109d164f4a57d23b66f905d42241af55f96f35e977733.npy",
+      "sha256": "fe28a59d03776f4f806109d164f4a57d23b66f905d42241af55f96f35e977733",
+      "source": {
+        "data_offsets": [
+          21292814,
+          21293838
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "331236417e14fb273bb14506ded13042dbf4070312dcc8bf868af20e7cac131f",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.mid_block.resnets.1.norm2.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/a5912c1f83454ba93bb4d26495600c5e9ebb40a88857f5eed77fac114be7e02d.npy",
+      "sha256": "a5912c1f83454ba93bb4d26495600c5e9ebb40a88857f5eed77fac114be7e02d",
+      "source": {
+        "data_offsets": [
+          21293838,
+          21294862
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "45ad4f99512dfbb7c675e6cfd4c24115781c8c48e465a3351e18bc0036e6b143",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.0.conv1.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/30d348df220152ae93e7b64cf5935b3b3685db68f4facba0f5569edb9752fecc.npy",
+      "sha256": "30d348df220152ae93e7b64cf5935b3b3685db68f4facba0f5569edb9752fecc",
+      "source": {
+        "data_offsets": [
+          21294862,
+          26013454
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "96c7c29a51a956d9392d3aef9cfa3362e5ba4b75c6458d1f46fa84227afcabb3",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.0.conv1.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/28f1b564ee941544b8c3ef4888ade989e2a946a982956daf7027cffcad63c13a.npy",
+      "sha256": "28f1b564ee941544b8c3ef4888ade989e2a946a982956daf7027cffcad63c13a",
+      "source": {
+        "data_offsets": [
+          26013454,
+          26014478
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "8a46659f9580e538dbcf2a1c3b2d0b544c386a391d8c9691774748f3b2577827",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.0.conv2.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/afbf24be01cdfcae756f4637dd92675c104b51dcfcd77613016fe631e1b67e26.npy",
+      "sha256": "afbf24be01cdfcae756f4637dd92675c104b51dcfcd77613016fe631e1b67e26",
+      "source": {
+        "data_offsets": [
+          26014478,
+          30733070
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "9c3cceee50b5b26583070a4cef7356d0b197e0a328d3e66759e362613f61dabf",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.0.conv2.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/d8f11f1d1e20efa45d42c4951e18a9dbe942532222ed2ef5e30b7be256ac0c7c.npy",
+      "sha256": "d8f11f1d1e20efa45d42c4951e18a9dbe942532222ed2ef5e30b7be256ac0c7c",
+      "source": {
+        "data_offsets": [
+          30733070,
+          30734094
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "320732396537eaa3b912abbfd575efb0f9450f65e628aa0c7b0f994fae6d9eba",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.0.norm1.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/1a51194a0c81047f5182757f3da6ce537de70445d9c89397e79100e3b49f9798.npy",
+      "sha256": "1a51194a0c81047f5182757f3da6ce537de70445d9c89397e79100e3b49f9798",
+      "source": {
+        "data_offsets": [
+          30734094,
+          30735118
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "1a6fe9c3a01c85cce4f16caa2475d59db3808bc0a5ad97ffacf70767b0d528e2",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.0.norm1.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/e0005a4521b2121ea23951b56422f3f783da9c35df922ca0b8bb95dbfc3fac5d.npy",
+      "sha256": "e0005a4521b2121ea23951b56422f3f783da9c35df922ca0b8bb95dbfc3fac5d",
+      "source": {
+        "data_offsets": [
+          30735118,
+          30736142
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "0084a5069daa34243689b0a260d297ac6eb00ee46e4f7e6c6d95499087b625fc",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.0.norm2.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/ed1a4d0542c4fa9a0c2b51ccbcc35a6599e7836b0e829fd96cf5911ad942b238.npy",
+      "sha256": "ed1a4d0542c4fa9a0c2b51ccbcc35a6599e7836b0e829fd96cf5911ad942b238",
+      "source": {
+        "data_offsets": [
+          30736142,
+          30737166
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "b3cb62b536841ada28a34c92151a892e5d5abb3d56de8e546a4e535715df4592",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.0.norm2.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/d0d0346d8253058b34a6b9448d831c9407d8b209dd9ea8a9f746f4ea23abe9ed.npy",
+      "sha256": "d0d0346d8253058b34a6b9448d831c9407d8b209dd9ea8a9f746f4ea23abe9ed",
+      "source": {
+        "data_offsets": [
+          30737166,
+          30738190
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "3fb174198e4aa2dece2df50e208c08f40fd99e9cc339305b1b6a8fd647a7140b",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.1.conv1.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/6014e2c0c27fc399059f60331db5a97cc843b821f5bc0cddb0ff32d8206fe076.npy",
+      "sha256": "6014e2c0c27fc399059f60331db5a97cc843b821f5bc0cddb0ff32d8206fe076",
+      "source": {
+        "data_offsets": [
+          30738190,
+          35456782
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "af2a2741acc5e9fe3e49d9d4564f29202ec356b9a789e9a0c8554817521a49e9",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.1.conv1.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/0261045722e4d8ce1fba60b844e302cad9c1ba335715ed7515349fd08947a662.npy",
+      "sha256": "0261045722e4d8ce1fba60b844e302cad9c1ba335715ed7515349fd08947a662",
+      "source": {
+        "data_offsets": [
+          35456782,
+          35457806
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "a22ae5db6862db327e17b106745f52184af12bb2d47095e0ca456ba11465f83c",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.1.conv2.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/7086efd74e843f0449ee6eb742e0a2c08e4d9a11a8e862fe6b5da16a165e5be8.npy",
+      "sha256": "7086efd74e843f0449ee6eb742e0a2c08e4d9a11a8e862fe6b5da16a165e5be8",
+      "source": {
+        "data_offsets": [
+          35457806,
+          40176398
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "a21878326af8619f2b25414ad994af3ea3c70d682f8d83a6831f758b250bc85e",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.1.conv2.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/ea9c0d74b87361a7d32bbbab784955683f37804ce8fc4d0e8f6b9f8aabdcbc4a.npy",
+      "sha256": "ea9c0d74b87361a7d32bbbab784955683f37804ce8fc4d0e8f6b9f8aabdcbc4a",
+      "source": {
+        "data_offsets": [
+          40176398,
+          40177422
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "1773a44f7c370deae005d5d444131fd9bf9320cfb7364685333c3e402433f2c6",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.1.norm1.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/8ae77eb7ade9ced0f67b84ec6f2eb4a4dfd46c7562683897c94c7c559bacb734.npy",
+      "sha256": "8ae77eb7ade9ced0f67b84ec6f2eb4a4dfd46c7562683897c94c7c559bacb734",
+      "source": {
+        "data_offsets": [
+          40177422,
+          40178446
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "9d8e945ccfbac011c15e6dbdf842408c353b44cf531049b214d9264035db9d87",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.1.norm1.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/a3c99b24689f55245422c185a33f48690432a3bc63d218faa2b746785c314ef0.npy",
+      "sha256": "a3c99b24689f55245422c185a33f48690432a3bc63d218faa2b746785c314ef0",
+      "source": {
+        "data_offsets": [
+          40178446,
+          40179470
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "f276788b776b7d3c7270f4ff5e671e1a571de02942eac940206095c5fb088d2f",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.1.norm2.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/6aa3c5ae411588d7aa6ff7c2376a437585da9756b72c2a9edf739748e0c1f2ca.npy",
+      "sha256": "6aa3c5ae411588d7aa6ff7c2376a437585da9756b72c2a9edf739748e0c1f2ca",
+      "source": {
+        "data_offsets": [
+          40179470,
+          40180494
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "acfca7669ac1b712e3c42fcee32259a0f7d5d3e3a9d5ecfa2fed614137e4763c",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.1.norm2.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/622b81231b4ba03edd5aafb457f1b4d6aede8c8d1aa53da4691bcc89cb72a626.npy",
+      "sha256": "622b81231b4ba03edd5aafb457f1b4d6aede8c8d1aa53da4691bcc89cb72a626",
+      "source": {
+        "data_offsets": [
+          40180494,
+          40181518
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "090564ec1b145f415b63900dace7feb9f420f1c955beb703c9fc426d3b261275",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.2.conv1.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/e6fcfaa2381e2c6df65570468af0ef0e69c730e3d248dee8424d5ca29ba40df2.npy",
+      "sha256": "e6fcfaa2381e2c6df65570468af0ef0e69c730e3d248dee8424d5ca29ba40df2",
+      "source": {
+        "data_offsets": [
+          40181518,
+          44900110
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "e3d114b08fe0db6b9b46773f794afdb5df4f557e557fa3ef9074cdc43c7afadc",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.2.conv1.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/bc608cf41674d2949be28599bd07cb874ce764b02c3ff62b88c106e12d64c70b.npy",
+      "sha256": "bc608cf41674d2949be28599bd07cb874ce764b02c3ff62b88c106e12d64c70b",
+      "source": {
+        "data_offsets": [
+          44900110,
+          44901134
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "9d07074a8f450c028dcebb2061f34799921dbf85ad52ca4cd4c4cade7006a505",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.2.conv2.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/703d268c08b05dee69a4bb64d5a3678c1c283efb2fce9f018584473093aef415.npy",
+      "sha256": "703d268c08b05dee69a4bb64d5a3678c1c283efb2fce9f018584473093aef415",
+      "source": {
+        "data_offsets": [
+          44901134,
+          49619726
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "8bf9ce3e5d0395692315c950a567f1de17e2e530facb12b520daabfd96867441",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.2.conv2.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/214f3d6f761aa794f5bba0c1698d6929de3b3cc5457c667ab42bb5345df510b6.npy",
+      "sha256": "214f3d6f761aa794f5bba0c1698d6929de3b3cc5457c667ab42bb5345df510b6",
+      "source": {
+        "data_offsets": [
+          49619726,
+          49620750
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "8dd96c9adefd0e1eeb98d65ce4aeffcb35c226723d522a8cbd7ef515ecb2a018",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.2.norm1.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/5332f71ac8628b04c174f4258a7eef548ba4315f2002f57e24a8c4e43d4e56cd.npy",
+      "sha256": "5332f71ac8628b04c174f4258a7eef548ba4315f2002f57e24a8c4e43d4e56cd",
+      "source": {
+        "data_offsets": [
+          49620750,
+          49621774
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "41dc36aa961af8a6a1cf9738a8e54e9bbb2f42b06a13dd6506e0621195c0fced",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.2.norm1.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/756f0d22928a89e019e8911487f7f60925f06652f46214f9620c1fd65723b6f6.npy",
+      "sha256": "756f0d22928a89e019e8911487f7f60925f06652f46214f9620c1fd65723b6f6",
+      "source": {
+        "data_offsets": [
+          49621774,
+          49622798
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "b1e7fe91b6c6998c5c682ccb6f9e47be0c8ab5986caeedb312ea216eb8a8ceb8",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.2.norm2.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/00fa72349c10400ca4f0e0ae95c9ec4cff8bd651d2a9ec6cbe132a4d52500ae9.npy",
+      "sha256": "00fa72349c10400ca4f0e0ae95c9ec4cff8bd651d2a9ec6cbe132a4d52500ae9",
+      "source": {
+        "data_offsets": [
+          49622798,
+          49623822
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "be2634e3faaf98f4f4720ed1fc3a2947aff0f4d77694025be8bc677099940ac7",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.resnets.2.norm2.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/65121aebaaa3e98c9c446a126e8cad0b3db4bd1c9f217b9584f95fd1ed485f34.npy",
+      "sha256": "65121aebaaa3e98c9c446a126e8cad0b3db4bd1c9f217b9584f95fd1ed485f34",
+      "source": {
+        "data_offsets": [
+          49623822,
+          49624846
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "542cde0bd90a97a6fed8a13bffcafa339e3252dbff720a1eb70a81cd0a35186e",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.0.upsamplers.0.conv.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/2fe3b9a8d3b430b030119d2d6dcc579262f61be4631bef8b292d6c9146a371b1.npy",
+      "sha256": "2fe3b9a8d3b430b030119d2d6dcc579262f61be4631bef8b292d6c9146a371b1",
+      "source": {
+        "data_offsets": [
+          49624846,
+          54343438
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "79edf5f7f35b9eabfedbb100fedafd54251f0b7b60c85303ef0f32c7e22934b7",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.0.upsamplers.0.conv.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/11c8764ab31ce363c2d55e1a4eee4567de2b5b89a120cf247837f6c5323f36ff.npy",
+      "sha256": "11c8764ab31ce363c2d55e1a4eee4567de2b5b89a120cf247837f6c5323f36ff",
+      "source": {
+        "data_offsets": [
+          54343438,
+          54344462
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "a7f2c0ec57e9cb2aff03db5cd4d09f0921bd387a0292ab2cc9b601b92c5eca2b",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.0.conv1.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/f4a80c8b3c9b02318e68ed7be18ad6a8e2a20fc7986fdd5bed5ae9fa93484211.npy",
+      "sha256": "f4a80c8b3c9b02318e68ed7be18ad6a8e2a20fc7986fdd5bed5ae9fa93484211",
+      "source": {
+        "data_offsets": [
+          54344462,
+          59063054
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "acf338a30928bc1b442b957930f09cbb17367f6f5af3a42e28c40cc72f685e41",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.0.conv1.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/1b66b0eb64315304e92549661fad305c56e24cfa59a55a08d43e872e6bdbd481.npy",
+      "sha256": "1b66b0eb64315304e92549661fad305c56e24cfa59a55a08d43e872e6bdbd481",
+      "source": {
+        "data_offsets": [
+          59063054,
+          59064078
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "a0fb82c0ce6f1b0a9a28958a6f4276392c9d0fa53e0bd6ac117b4b507121c53a",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.0.conv2.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/6b1adeaba4ddd8e5891a995f5eb7c336797ea41da106c7be8516108800ce3958.npy",
+      "sha256": "6b1adeaba4ddd8e5891a995f5eb7c336797ea41da106c7be8516108800ce3958",
+      "source": {
+        "data_offsets": [
+          59064078,
+          63782670
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "65be5954194de5291164b8b3d4feb6cbab5cbc3d3d807ec63a19ca2dd31e734e",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.0.conv2.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/cf3d977c1a10dd429bb8ce88644458fa49c45c60ad846e731e2b4a647516f92c.npy",
+      "sha256": "cf3d977c1a10dd429bb8ce88644458fa49c45c60ad846e731e2b4a647516f92c",
+      "source": {
+        "data_offsets": [
+          63782670,
+          63783694
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "622331186856aa02e96cbb0dc47cb1dd241bf8b3fb7fd2ae5dc372680fe3c052",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.0.norm1.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/691f4435ae61ed7254f730d6fb2a8d1c1dabbddaf09f1974883779386c92560f.npy",
+      "sha256": "691f4435ae61ed7254f730d6fb2a8d1c1dabbddaf09f1974883779386c92560f",
+      "source": {
+        "data_offsets": [
+          63783694,
+          63784718
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "fc9984e8792dba8037a28698b3b13f046be79a049b979ece3c290fd58d95dc03",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.0.norm1.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/675422fcabb52e5718645544f05be6ef9c7907b0e7d6a756875479d49020008b.npy",
+      "sha256": "675422fcabb52e5718645544f05be6ef9c7907b0e7d6a756875479d49020008b",
+      "source": {
+        "data_offsets": [
+          63784718,
+          63785742
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "78247f396b54908747327086d12e7f26b23f93556aaf9fcc7039e3510b2623c3",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.0.norm2.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/a99249501bafeda1a54d18b46ee4780bcf460b9b9d14a6965936d04a82e672a7.npy",
+      "sha256": "a99249501bafeda1a54d18b46ee4780bcf460b9b9d14a6965936d04a82e672a7",
+      "source": {
+        "data_offsets": [
+          63785742,
+          63786766
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "f00006ae452f03df0ad2b04492871ca4f342ff6820270a2ca4871d84c5060a27",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.0.norm2.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/8af9ff24b833f0fc4e5d4817a641c13ce3be2695376cf6f35d20f440ed32ac64.npy",
+      "sha256": "8af9ff24b833f0fc4e5d4817a641c13ce3be2695376cf6f35d20f440ed32ac64",
+      "source": {
+        "data_offsets": [
+          63786766,
+          63787790
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "58280a82ce8fc9d048bcffbb6f8e8ea04d834423189ee58fbbf87729417d6f41",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.1.conv1.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/5ae9a863e9dfc68f422de1fd5394386014341c6525768fb27a74052bc6051661.npy",
+      "sha256": "5ae9a863e9dfc68f422de1fd5394386014341c6525768fb27a74052bc6051661",
+      "source": {
+        "data_offsets": [
+          63787790,
+          68506382
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "cc6a572aba236af3dd9f7ee7a34bd3427bd1d637477e438a542e671cd5c442d6",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.1.conv1.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/73c05760f391eafca42d01b95ed090590b3299701345d68dab719db4178873f2.npy",
+      "sha256": "73c05760f391eafca42d01b95ed090590b3299701345d68dab719db4178873f2",
+      "source": {
+        "data_offsets": [
+          68506382,
+          68507406
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "f92be82c0a096fd34351108b9860d7cf4dd8920c2134a1a8379e849cd612b883",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.1.conv2.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/7b7c3b7046a6b9de9aa0b76e9130d86abe75effc56dea5bab33e26543c604e10.npy",
+      "sha256": "7b7c3b7046a6b9de9aa0b76e9130d86abe75effc56dea5bab33e26543c604e10",
+      "source": {
+        "data_offsets": [
+          68507406,
+          73225998
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "5c8378693cdc632dca04d632fa4a368db6efd902e2f8b497181751d87079f994",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.1.conv2.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/e463f125184f2bc3cd6a455bcf1540a89926b7caaf7db724ff486f4ddded2cc0.npy",
+      "sha256": "e463f125184f2bc3cd6a455bcf1540a89926b7caaf7db724ff486f4ddded2cc0",
+      "source": {
+        "data_offsets": [
+          73225998,
+          73227022
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "3f35eec59fd85b56db90c70d0b355490ae911d21182b054dd9afaae53c01f476",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.1.norm1.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/49091fd739990aac45921cc0a7a012204d0f451cd416eca7f4c3fc65b302bf31.npy",
+      "sha256": "49091fd739990aac45921cc0a7a012204d0f451cd416eca7f4c3fc65b302bf31",
+      "source": {
+        "data_offsets": [
+          73227022,
+          73228046
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "e90a2488826d37679da9ae190f02b2eff4db87259a93001aa7969d204dedb798",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.1.norm1.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/5ce6289a85cf3bb1e0787ee0b11c46880ae1fb1415a5c24375e54f7fddbb69a9.npy",
+      "sha256": "5ce6289a85cf3bb1e0787ee0b11c46880ae1fb1415a5c24375e54f7fddbb69a9",
+      "source": {
+        "data_offsets": [
+          73228046,
+          73229070
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "2f0e1b16dca8bcd555bb6b93628bedeb2fc721cc2f017b09b72919a527fd7ea1",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.1.norm2.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/e57847a665a125e67cadf0c74c21b035fb5a27c5f36865081a0e2b9d302b2f56.npy",
+      "sha256": "e57847a665a125e67cadf0c74c21b035fb5a27c5f36865081a0e2b9d302b2f56",
+      "source": {
+        "data_offsets": [
+          73229070,
+          73230094
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "f7cd78ad264b5825ebcd6661cc4447503e9293f1e25e885b7aebf00e28bd3626",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.1.norm2.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/850ba134391c4c0ffc0f74d6364ea0effe7b64e22c336aed6a1cb28f95aa6531.npy",
+      "sha256": "850ba134391c4c0ffc0f74d6364ea0effe7b64e22c336aed6a1cb28f95aa6531",
+      "source": {
+        "data_offsets": [
+          73230094,
+          73231118
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "38339a42144c1d342db23fd3abafb21af5ec78ca965976bd7054bb551204acf7",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.2.conv1.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/b5ad7b8d0361868256409c2aa3e8dbd23f86b2bc5614f9829538b80de4107ef2.npy",
+      "sha256": "b5ad7b8d0361868256409c2aa3e8dbd23f86b2bc5614f9829538b80de4107ef2",
+      "source": {
+        "data_offsets": [
+          73231118,
+          77949710
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "bdfe8bc6a05964204d2a94cc5c9ca51000cf21faea5423dec8ad927629a3584a",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.2.conv1.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/ab0df7160179bb241425fe70db95ca9e64d230ea94fc028cd904811026fecfd4.npy",
+      "sha256": "ab0df7160179bb241425fe70db95ca9e64d230ea94fc028cd904811026fecfd4",
+      "source": {
+        "data_offsets": [
+          77949710,
+          77950734
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "00bb4c4fdf2d4e319c2f16f0bd63e9f0f2d80bbff40cf7aca3908fc79f8463a7",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.2.conv2.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/ea75130b981748c19ac60870459840681b0d56d22ef36f6d0be0260d148f47f5.npy",
+      "sha256": "ea75130b981748c19ac60870459840681b0d56d22ef36f6d0be0260d148f47f5",
+      "source": {
+        "data_offsets": [
+          77950734,
+          82669326
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "ac1d7b566556a0a8265309bded7e7685577dd0d5469e93ed49e785f7dba71277",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.2.conv2.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/0f0d3caca777d86e34ccbea60e3d1d31a4ff921eaafce6997c79ccf3886d3179.npy",
+      "sha256": "0f0d3caca777d86e34ccbea60e3d1d31a4ff921eaafce6997c79ccf3886d3179",
+      "source": {
+        "data_offsets": [
+          82669326,
+          82670350
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "9e38cf1b8d4856040b92efaf84b3106821797f62a8960bb2acc28cacd8a37e48",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.2.norm1.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/b92a1c423d065cbbeadd5d1b769017084d59eaf85b9ff6e4cdfdb51646a49065.npy",
+      "sha256": "b92a1c423d065cbbeadd5d1b769017084d59eaf85b9ff6e4cdfdb51646a49065",
+      "source": {
+        "data_offsets": [
+          82670350,
+          82671374
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "5542da937e215e104488e56a662926b9efe2ef1952e0269501f38204c05ff50a",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.2.norm1.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/64e7b59bf849a85b52912f88e3c4ff4936d247a5ad6fd7b951ed3a869babedc1.npy",
+      "sha256": "64e7b59bf849a85b52912f88e3c4ff4936d247a5ad6fd7b951ed3a869babedc1",
+      "source": {
+        "data_offsets": [
+          82671374,
+          82672398
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "ab5dbb9ec67af6dc647bb698d68936eb752ca7734c6bb8c79144bc9e490c1052",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.2.norm2.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/4d4fe0556c1c8a568e07f0b9d261896f9a1d3818f6e23d7f682cd96a51104d44.npy",
+      "sha256": "4d4fe0556c1c8a568e07f0b9d261896f9a1d3818f6e23d7f682cd96a51104d44",
+      "source": {
+        "data_offsets": [
+          82672398,
+          82673422
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "95758365168e7ce6c3af772548cf6a9621ca558e983b0032667285585171db5d",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.resnets.2.norm2.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/3170714869ca44ace34ce4d8943253a37d45d33989a7a6945b68b01dbb7251fd.npy",
+      "sha256": "3170714869ca44ace34ce4d8943253a37d45d33989a7a6945b68b01dbb7251fd",
+      "source": {
+        "data_offsets": [
+          82673422,
+          82674446
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "680d3b70a4c821c44d99351a918a5287d3e580ab48fd80010fa4abbac067cc3a",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.1.upsamplers.0.conv.bias"
+      }
+    },
+    {
+      "bytes": 4718720,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/ee5cafcae8779a356c241a275926061a4167a7a039e7e1f91647d4451c236555.npy",
+      "sha256": "ee5cafcae8779a356c241a275926061a4167a7a039e7e1f91647d4451c236555",
+      "source": {
+        "data_offsets": [
+          82674446,
+          87393038
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "01cc47c0ab763dccd30c47e33a8571b4b30dc572f11d5e74fee3e56c0385e5ae",
+        "shape": [
+          512,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.1.upsamplers.0.conv.weight"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/2ca6ab2407b1d664807a32706c5bc84da2e75e4bec46a4ccc827f1faa9d371aa.npy",
+      "sha256": "2ca6ab2407b1d664807a32706c5bc84da2e75e4bec46a4ccc827f1faa9d371aa",
+      "source": {
+        "data_offsets": [
+          87393038,
+          87393550
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "7aea6a9ba6d1ae835365a5c3c11b277602500a5ee4429284e4696feff0bcb0f9",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.0.conv1.bias"
+      }
+    },
+    {
+      "bytes": 2359424,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwgNTEyLCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/f443cacec06460207b8aea81677ddc652051cc6377a8f26c42fae015c61f96ac.npy",
+      "sha256": "f443cacec06460207b8aea81677ddc652051cc6377a8f26c42fae015c61f96ac",
+      "source": {
+        "data_offsets": [
+          87393550,
+          89752846
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "4d4ae20c71b63495decda7b3ab0db9dd8b6b35dc64c574a41eaa2ebf4208365a",
+        "shape": [
+          256,
+          512,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.0.conv1.weight"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/d8de0204988d7f3aa2aba52dade5057507ad053f33b6b651d209c8c9b90f7261.npy",
+      "sha256": "d8de0204988d7f3aa2aba52dade5057507ad053f33b6b651d209c8c9b90f7261",
+      "source": {
+        "data_offsets": [
+          89752846,
+          89753358
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "d933009008e753af286ce11bc7a1953c94a5eae26cc1337c685c944361537d19",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.0.conv2.bias"
+      }
+    },
+    {
+      "bytes": 1179776,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwgMjU2LCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/6d37cfb5dfb4674a7268b241d597b097e2c0851a22a78439cfab5307fba544dd.npy",
+      "sha256": "6d37cfb5dfb4674a7268b241d597b097e2c0851a22a78439cfab5307fba544dd",
+      "source": {
+        "data_offsets": [
+          89753358,
+          90933006
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "2b78d75c41ff1acc12fde27c4891aeb8a6cd5f6fd2957e59698a160b7e7b1414",
+        "shape": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.0.conv2.weight"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/b7626725942df893c9013211a3e91604000634ce407b35d25857fbc7deac92e7.npy",
+      "sha256": "b7626725942df893c9013211a3e91604000634ce407b35d25857fbc7deac92e7",
+      "source": {
+        "data_offsets": [
+          90933006,
+          90933518
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "e3958d9c880646f1758bde986f2fd724ef69c9bcf63a0712dffb3f826875f748",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.0.conv_shortcut.bias"
+      }
+    },
+    {
+      "bytes": 262272,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwgNTEyLCAxLCAxKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/4c4aa258dfbd4566a5102ca70454f9ee4efdff17a7e190d816f623d2faf8d845.npy",
+      "sha256": "4c4aa258dfbd4566a5102ca70454f9ee4efdff17a7e190d816f623d2faf8d845",
+      "source": {
+        "data_offsets": [
+          90933518,
+          91195662
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "4c7f38fa65ead907383634a9e793e089c3340a125dd78173c6141a27b8b71e96",
+        "shape": [
+          256,
+          512,
+          1,
+          1
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.0.conv_shortcut.weight"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/82567379a50995b31588ccd8a2953d63554c2a684a1f661638f00e19c2448874.npy",
+      "sha256": "82567379a50995b31588ccd8a2953d63554c2a684a1f661638f00e19c2448874",
+      "source": {
+        "data_offsets": [
+          91195662,
+          91196686
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "15db90c87430d33b32b43343acd620f94dafd719d5d82112acec8e1df7656cb1",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.0.norm1.bias"
+      }
+    },
+    {
+      "bytes": 1152,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDUxMiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/80c1dcf2bc6ec7ef0812b0bdcb476da78a96ff2b1146dc6c9c9c4ec2ca708161.npy",
+      "sha256": "80c1dcf2bc6ec7ef0812b0bdcb476da78a96ff2b1146dc6c9c9c4ec2ca708161",
+      "source": {
+        "data_offsets": [
+          91196686,
+          91197710
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "9d5a7d197c5195617f893151eb4aecacd30b4d9de8631531ac9c740ab6a473b9",
+        "shape": [
+          512
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.0.norm1.weight"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/b9fe26c8d22084a4746078167f47d77c0e2ef7b17f0d5645e349b761f12a7d6c.npy",
+      "sha256": "b9fe26c8d22084a4746078167f47d77c0e2ef7b17f0d5645e349b761f12a7d6c",
+      "source": {
+        "data_offsets": [
+          91197710,
+          91198222
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "cf534f5f5539b04ba8002be42f0c70cbd3fba78199b9033866b0f875a202b708",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.0.norm2.bias"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/ca5621e26eaaaf74148f257df753caf36947301446cca6cb2e2241e943309efa.npy",
+      "sha256": "ca5621e26eaaaf74148f257df753caf36947301446cca6cb2e2241e943309efa",
+      "source": {
+        "data_offsets": [
+          91198222,
+          91198734
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "a668b7d87b7523f929f148d74e964091ad87cab30be55916a544d6facbf74e1e",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.0.norm2.weight"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/8d48b05bff333be1d861709d09e6915e9635041cfa530b01cb67de7bc88a653f.npy",
+      "sha256": "8d48b05bff333be1d861709d09e6915e9635041cfa530b01cb67de7bc88a653f",
+      "source": {
+        "data_offsets": [
+          91198734,
+          91199246
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "4141395dea9c492d0c1cb96b6d758555d06422ba83ee2c46f54c0938aa88add5",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.1.conv1.bias"
+      }
+    },
+    {
+      "bytes": 1179776,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwgMjU2LCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/d0d0b96dbbd4276b90ce5bdf60193ff5492a3223895a03672e98115156a5abfe.npy",
+      "sha256": "d0d0b96dbbd4276b90ce5bdf60193ff5492a3223895a03672e98115156a5abfe",
+      "source": {
+        "data_offsets": [
+          91199246,
+          92378894
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "820062747b035d053afcbee5a9bf599aaea674e7dee8ab9942d019f09b020cdc",
+        "shape": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.1.conv1.weight"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/3fd02490a4a6cfc8d1ed56a969692b25a91fc6d2d2f5e188d3eb7273193a95cf.npy",
+      "sha256": "3fd02490a4a6cfc8d1ed56a969692b25a91fc6d2d2f5e188d3eb7273193a95cf",
+      "source": {
+        "data_offsets": [
+          92378894,
+          92379406
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "dd268eb932f979eddc8b6b2059a921389ee42ea50446e1b1134478b2c0fc562a",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.1.conv2.bias"
+      }
+    },
+    {
+      "bytes": 1179776,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwgMjU2LCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/6f167c48ade92e682970deafb1402edf25a0f629d67baadef09d53fad4cf908f.npy",
+      "sha256": "6f167c48ade92e682970deafb1402edf25a0f629d67baadef09d53fad4cf908f",
+      "source": {
+        "data_offsets": [
+          92379406,
+          93559054
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "3e717fcfe58866084884fe735696b08df410763899c41345059235894656a1e9",
+        "shape": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.1.conv2.weight"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/274c9c7adb23c4d8ffd9eacde837dd2c6fe9f67cb40f8eee95098e4624df5129.npy",
+      "sha256": "274c9c7adb23c4d8ffd9eacde837dd2c6fe9f67cb40f8eee95098e4624df5129",
+      "source": {
+        "data_offsets": [
+          93559054,
+          93559566
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "f9fae9c4fa69e1d67a32a53c08a51439027629e670345560d528e088a9175d10",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.1.norm1.bias"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/6b0677423e9a28df581d2ee50fb302a0921a51da1e8bd771c2fd5ad2cc7ea24b.npy",
+      "sha256": "6b0677423e9a28df581d2ee50fb302a0921a51da1e8bd771c2fd5ad2cc7ea24b",
+      "source": {
+        "data_offsets": [
+          93559566,
+          93560078
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "9741f7c4978bbb36afacd5dd17fb060928eeeebc06b410b730b2cf37c09f6d88",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.1.norm1.weight"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/212efaf67c0d48f4f4ee7f674ae0f40549b47d3a6b5ad55c0e3f3a36bbe84e0d.npy",
+      "sha256": "212efaf67c0d48f4f4ee7f674ae0f40549b47d3a6b5ad55c0e3f3a36bbe84e0d",
+      "source": {
+        "data_offsets": [
+          93560078,
+          93560590
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "2a30573747b8750ca48c51529a94a0bfb4bbc0476b41374e36e53fc0f9183d99",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.1.norm2.bias"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/8537df83f78ba8df2ab1258fed16c5b3685f076b9b52200b05b79c4e9626be05.npy",
+      "sha256": "8537df83f78ba8df2ab1258fed16c5b3685f076b9b52200b05b79c4e9626be05",
+      "source": {
+        "data_offsets": [
+          93560590,
+          93561102
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "3292209e6688e91b936bc8c15b614c49c680cca85d37f6de98d39f2eaf827653",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.1.norm2.weight"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/f57d080589239e7a3d16ecacf464e4af8b65631501184a8a19a7d53975fc0548.npy",
+      "sha256": "f57d080589239e7a3d16ecacf464e4af8b65631501184a8a19a7d53975fc0548",
+      "source": {
+        "data_offsets": [
+          93561102,
+          93561614
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "cac684632811a8ebaa403bf0312f9bbb44a74714d53dac36496d013eb181733d",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.2.conv1.bias"
+      }
+    },
+    {
+      "bytes": 1179776,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwgMjU2LCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/7ac68021fbe73adfa856e0e012eaa10928705560e98deba229c3a5d50be32bf4.npy",
+      "sha256": "7ac68021fbe73adfa856e0e012eaa10928705560e98deba229c3a5d50be32bf4",
+      "source": {
+        "data_offsets": [
+          93561614,
+          94741262
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "027c6d2aaf8ca44f45a9f655113a0e0173c93e9842ccd6308a8063a211c50079",
+        "shape": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.2.conv1.weight"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/2d308add1c32b1774f216154bdc5b91438722dd92d905a148cdf1449c64c15c9.npy",
+      "sha256": "2d308add1c32b1774f216154bdc5b91438722dd92d905a148cdf1449c64c15c9",
+      "source": {
+        "data_offsets": [
+          94741262,
+          94741774
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "c953d12240ad89b30828858de1aae884d00eb25399cb2dc52bc5e5c19c3468da",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.2.conv2.bias"
+      }
+    },
+    {
+      "bytes": 1179776,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwgMjU2LCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/d8404fa047d27080e718a8a0e32a8566c20ec897c11cbb2e57bb61b57ebade4c.npy",
+      "sha256": "d8404fa047d27080e718a8a0e32a8566c20ec897c11cbb2e57bb61b57ebade4c",
+      "source": {
+        "data_offsets": [
+          94741774,
+          95921422
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "2cf30025eb9b712f1ed989634303f19b3043bccb55a6cd8a989582938693bb5e",
+        "shape": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.2.conv2.weight"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/33fdfb7c848f01d59cea999f3394b73c4d9eff9859c69d6ef0d3dae09dde02df.npy",
+      "sha256": "33fdfb7c848f01d59cea999f3394b73c4d9eff9859c69d6ef0d3dae09dde02df",
+      "source": {
+        "data_offsets": [
+          95921422,
+          95921934
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "f9e23d37abc7bca5282e160b22ed16fb216c9084e553b050bc5b50768b2eff03",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.2.norm1.bias"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/5068b530ee1c306a49089c30382e52fcbcd091524064afe33726797b030e1539.npy",
+      "sha256": "5068b530ee1c306a49089c30382e52fcbcd091524064afe33726797b030e1539",
+      "source": {
+        "data_offsets": [
+          95921934,
+          95922446
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "69300f2a9360282831441b0e9db1d14af84b61359015b5d1d162e422da232908",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.2.norm1.weight"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/007e85b4e63bbd893406b0d942b9ab5965abfae313286b50ec745d4c47ee4b09.npy",
+      "sha256": "007e85b4e63bbd893406b0d942b9ab5965abfae313286b50ec745d4c47ee4b09",
+      "source": {
+        "data_offsets": [
+          95922446,
+          95922958
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "eee524cd0474f2980d8cb4e9412ed01fd457ed474fc18569b9105c6eae5baa2b",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.2.norm2.bias"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/521782db54bb1d873cac2df45d9e4aaefae77697fbc64fb0e8bdb6d81282c152.npy",
+      "sha256": "521782db54bb1d873cac2df45d9e4aaefae77697fbc64fb0e8bdb6d81282c152",
+      "source": {
+        "data_offsets": [
+          95922958,
+          95923470
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "a42fec1a8e7313ef8a05556272f461d153bf6d47ae6a8e239160335639cd21b2",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.resnets.2.norm2.weight"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/92a3f5324e699e56f167437926d41ad694b97d95babff1f3d97d5499f297fb59.npy",
+      "sha256": "92a3f5324e699e56f167437926d41ad694b97d95babff1f3d97d5499f297fb59",
+      "source": {
+        "data_offsets": [
+          95923470,
+          95923982
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "5d22b98698127c4c7af7840ed7c807a9d7088b0a6015cff99b0da2abae3f9ba6",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.2.upsamplers.0.conv.bias"
+      }
+    },
+    {
+      "bytes": 1179776,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwgMjU2LCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/6074d36f589e5d3e1dd0589b776ecfbd1d55db91ba288d967045aced19486a6e.npy",
+      "sha256": "6074d36f589e5d3e1dd0589b776ecfbd1d55db91ba288d967045aced19486a6e",
+      "source": {
+        "data_offsets": [
+          95923982,
+          97103630
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "04858b1c78524be869717ba3420ed8d4df1633479d73f1cce14b5debaf525f54",
+        "shape": [
+          256,
+          256,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.2.upsamplers.0.conv.weight"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/6ddea8ca1d0bbc7dbeefab3fd1e85b63140ef29bf8563a52082adc4fac0bd4df.npy",
+      "sha256": "6ddea8ca1d0bbc7dbeefab3fd1e85b63140ef29bf8563a52082adc4fac0bd4df",
+      "source": {
+        "data_offsets": [
+          97103630,
+          97103886
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "92744867fb5b360a9715faddf628d919f71a7b02fa232256cb4570fd6dfae20d",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.0.conv1.bias"
+      }
+    },
+    {
+      "bytes": 589952,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwgMjU2LCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/87ece81e218bfbd1e6c339756933e5f1dd30115d7069bbc04c1b37447614968d.npy",
+      "sha256": "87ece81e218bfbd1e6c339756933e5f1dd30115d7069bbc04c1b37447614968d",
+      "source": {
+        "data_offsets": [
+          97103886,
+          97693710
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "83601e40f48f096306868327c7035c286e668a81279c4e23bfc2bd12be9d59c4",
+        "shape": [
+          128,
+          256,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.0.conv1.weight"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/7c77500f68c46b0e918a888c827e415fa53778df4f0c673c844b3ea681b844e5.npy",
+      "sha256": "7c77500f68c46b0e918a888c827e415fa53778df4f0c673c844b3ea681b844e5",
+      "source": {
+        "data_offsets": [
+          97693710,
+          97693966
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "ac081084edc818fef6916b39981bc6cb6585366ace566118f7ca76cf06e1da50",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.0.conv2.bias"
+      }
+    },
+    {
+      "bytes": 295040,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwgMTI4LCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/3ecf718420381a17a0633039957384c6da4a51eb8a3608704f3299264f4cd3f1.npy",
+      "sha256": "3ecf718420381a17a0633039957384c6da4a51eb8a3608704f3299264f4cd3f1",
+      "source": {
+        "data_offsets": [
+          97693966,
+          97988878
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "6a1477b600f1d69b3d1db670307c8fa05289baabceada94b683c2dcc37047174",
+        "shape": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.0.conv2.weight"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/080250b255673ef9e524dc8bd674afeece44ed824ab743bc4966990e6cd5bd96.npy",
+      "sha256": "080250b255673ef9e524dc8bd674afeece44ed824ab743bc4966990e6cd5bd96",
+      "source": {
+        "data_offsets": [
+          97988878,
+          97989134
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "d089c182322434a3c6d49467eac69745d2a9ef6ab0d2432693db3c5893dcfa01",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.0.conv_shortcut.bias"
+      }
+    },
+    {
+      "bytes": 65664,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwgMjU2LCAxLCAxKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/503d67d3b95ae265c80ea23eaebeb48216d091ca33c121eacf4855010c8069a4.npy",
+      "sha256": "503d67d3b95ae265c80ea23eaebeb48216d091ca33c121eacf4855010c8069a4",
+      "source": {
+        "data_offsets": [
+          97989134,
+          98054670
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "5d8ee5867e00e1593f76bbdff7193db16e32ee35cce955bee079845ea5531265",
+        "shape": [
+          128,
+          256,
+          1,
+          1
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.0.conv_shortcut.weight"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/b3d198fd6036ff9410a525266107c7f94918ae7c4f0d2fe453762bfd7c7b15a9.npy",
+      "sha256": "b3d198fd6036ff9410a525266107c7f94918ae7c4f0d2fe453762bfd7c7b15a9",
+      "source": {
+        "data_offsets": [
+          98054670,
+          98055182
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "d94d3d966427dc294fb3a8b4e6b95ccc1f1521df398854ec2bbd972fef6c0ad0",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.0.norm1.bias"
+      }
+    },
+    {
+      "bytes": 640,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDI1NiwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/1077d10bae0a2bf5b8036752d27fe2a94aac4efcb532cafc60524c14847f2bb3.npy",
+      "sha256": "1077d10bae0a2bf5b8036752d27fe2a94aac4efcb532cafc60524c14847f2bb3",
+      "source": {
+        "data_offsets": [
+          98055182,
+          98055694
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "1090f5cde25c7b828898fd1fd853fb6cccb4bebe9ccd76a1a250c6635f9c9ac7",
+        "shape": [
+          256
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.0.norm1.weight"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/06d00886206bfb2bb771dd45271f232afcf7fc88530d01ce148a584d8685cd51.npy",
+      "sha256": "06d00886206bfb2bb771dd45271f232afcf7fc88530d01ce148a584d8685cd51",
+      "source": {
+        "data_offsets": [
+          98055694,
+          98055950
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "3f508bced1837b72764a8183fc251f5a4cf5bec5c290c82990093097f0e3685f",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.0.norm2.bias"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/e627be55dc4120e9966f73834d498edac71af40b3b21408763ed9b77c1006d76.npy",
+      "sha256": "e627be55dc4120e9966f73834d498edac71af40b3b21408763ed9b77c1006d76",
+      "source": {
+        "data_offsets": [
+          98055950,
+          98056206
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "b1295cceb70223e7941ef818881e57ae1e68d5b40b5feb5449f72d50ea3cb23c",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.0.norm2.weight"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/c5dc363ac39540861e5d48724443abfe2c193020a5b2bfab71fc26233b8e7f21.npy",
+      "sha256": "c5dc363ac39540861e5d48724443abfe2c193020a5b2bfab71fc26233b8e7f21",
+      "source": {
+        "data_offsets": [
+          98056206,
+          98056462
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "28663f0a2a722894d8983fd75def4f265e52c0e18fb60a73ad59df8bff688f03",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.1.conv1.bias"
+      }
+    },
+    {
+      "bytes": 295040,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwgMTI4LCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/1876b653a0dd344354cb8b7aba373257020bd0dae031e3ee3cc22651117f6589.npy",
+      "sha256": "1876b653a0dd344354cb8b7aba373257020bd0dae031e3ee3cc22651117f6589",
+      "source": {
+        "data_offsets": [
+          98056462,
+          98351374
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "8f4854bf63dc6030a91ebc43792c50853bdd6217ba9d9ece80403059989c8d84",
+        "shape": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.1.conv1.weight"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/eb80efeb0a4b45cd1911e949ac793350bc222123c454c10b99f8044298b769a3.npy",
+      "sha256": "eb80efeb0a4b45cd1911e949ac793350bc222123c454c10b99f8044298b769a3",
+      "source": {
+        "data_offsets": [
+          98351374,
+          98351630
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "f95b2f2038861e740aa1a4d89cdce223177e2b18d83f7ecfe4c6489394fdd75b",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.1.conv2.bias"
+      }
+    },
+    {
+      "bytes": 295040,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwgMTI4LCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/e48ff0a68e1967828f92366db4bfb78abd2f57e8d4d98132c8b960182a48975f.npy",
+      "sha256": "e48ff0a68e1967828f92366db4bfb78abd2f57e8d4d98132c8b960182a48975f",
+      "source": {
+        "data_offsets": [
+          98351630,
+          98646542
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "3b8b77737d5a7d6c342f1209122e0e0a7b11e3a4fc127dea93084d01653cf6f1",
+        "shape": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.1.conv2.weight"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/f5bd8d59a0b38ef8377cac68af31111ea9dca26d6296bd8b60cc8a1b870e8943.npy",
+      "sha256": "f5bd8d59a0b38ef8377cac68af31111ea9dca26d6296bd8b60cc8a1b870e8943",
+      "source": {
+        "data_offsets": [
+          98646542,
+          98646798
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "778c8aade951df886f26cfde3c1081e3127e56f827f8278e281cefa3396b94d6",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.1.norm1.bias"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/4e874b496b4a9995041bbbb1c9a59a189cefdeb10d553b500513bcf35d56d4fa.npy",
+      "sha256": "4e874b496b4a9995041bbbb1c9a59a189cefdeb10d553b500513bcf35d56d4fa",
+      "source": {
+        "data_offsets": [
+          98646798,
+          98647054
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "5083b3ca5f5e9db330432f5c64109df2953f8dcd648ad4a0f8a0987450ef744f",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.1.norm1.weight"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/af882fbb3d8ac1e4034702b364d905337ec46ea21f803f79af34c69fb25f88d1.npy",
+      "sha256": "af882fbb3d8ac1e4034702b364d905337ec46ea21f803f79af34c69fb25f88d1",
+      "source": {
+        "data_offsets": [
+          98647054,
+          98647310
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "2429f5f6f1d13b006bb0e8589c0ed04bfd6f69abf1e6cf43c47d81d4d441b01a",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.1.norm2.bias"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/9bb6bc74e244125e2291dcbfdb30a6de06c4c9e1c68b5404a76e5269c0e04f48.npy",
+      "sha256": "9bb6bc74e244125e2291dcbfdb30a6de06c4c9e1c68b5404a76e5269c0e04f48",
+      "source": {
+        "data_offsets": [
+          98647310,
+          98647566
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "70e07e26734bbccb8ca0152a779ff8acbc6bae0635d887b674db751b93ac03c6",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.1.norm2.weight"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/23c7042faf583b0d6843034625263509319a671db9a07b77cd78365027578162.npy",
+      "sha256": "23c7042faf583b0d6843034625263509319a671db9a07b77cd78365027578162",
+      "source": {
+        "data_offsets": [
+          98647566,
+          98647822
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "7ddcfe5bac1b23150f38e974f941986ffb377eec309898e14bb642f1fc5906c9",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.2.conv1.bias"
+      }
+    },
+    {
+      "bytes": 295040,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwgMTI4LCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/158d9a950dadb794c460f0fd7193f4e1024939cf3a351c7d12178cd57bf2d28a.npy",
+      "sha256": "158d9a950dadb794c460f0fd7193f4e1024939cf3a351c7d12178cd57bf2d28a",
+      "source": {
+        "data_offsets": [
+          98647822,
+          98942734
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "802e1055640a15d435561fd8aec0a33adad5b9db6181b8582508e6821f344ef8",
+        "shape": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.2.conv1.weight"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/f42fc0537afbb8e31e772eef4febf3e69d0e18b2c9c70e12672868771c634b23.npy",
+      "sha256": "f42fc0537afbb8e31e772eef4febf3e69d0e18b2c9c70e12672868771c634b23",
+      "source": {
+        "data_offsets": [
+          98942734,
+          98942990
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "b3b9685a44e2a385fdaf061402cc4fdce12a79aad544a715713a433d32c45c33",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.2.conv2.bias"
+      }
+    },
+    {
+      "bytes": 295040,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwgMTI4LCAzLCAzKX0gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/c8e8ffc6620d60fa41ccb9dba189b4447250bfb4c1e43242a050388c07441332.npy",
+      "sha256": "c8e8ffc6620d60fa41ccb9dba189b4447250bfb4c1e43242a050388c07441332",
+      "source": {
+        "data_offsets": [
+          98942990,
+          99237902
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "4430df049f39602b200c6b6ef091752f96af294d54953a3c826bfbe5362bda77",
+        "shape": [
+          128,
+          128,
+          3,
+          3
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.2.conv2.weight"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/713a14aec408091413014a54b46d8c0b57489a72c556dbeb4e37757117fcb2e8.npy",
+      "sha256": "713a14aec408091413014a54b46d8c0b57489a72c556dbeb4e37757117fcb2e8",
+      "source": {
+        "data_offsets": [
+          99237902,
+          99238158
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "93e1e8aaeaaa6fdc18029676c38c5ba637288f13587e8084545ba7cad67c7c50",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.2.norm1.bias"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/27e2409cfc6a544b3005babc0b513a8565c7260556f0c94e926264df1f812387.npy",
+      "sha256": "27e2409cfc6a544b3005babc0b513a8565c7260556f0c94e926264df1f812387",
+      "source": {
+        "data_offsets": [
+          99238158,
+          99238414
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "82763ea7faf48885b1a1f1c2b96382567c68e26ab2ca7e48511d925514319328",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.2.norm1.weight"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/e6a010be43f6ba91f0c55a0c99b234cd7fe83184e7ac5fd5b1bddc92dadcfdc4.npy",
+      "sha256": "e6a010be43f6ba91f0c55a0c99b234cd7fe83184e7ac5fd5b1bddc92dadcfdc4",
+      "source": {
+        "data_offsets": [
+          99238414,
+          99238670
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "ddfa2b8477ff83dfb8a8e6bd6926bf4ccf75e06c072bb44be826bdceea217343",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.2.norm2.bias"
+      }
+    },
+    {
+      "bytes": 384,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDEyOCwpfSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/39813ead320651170c535ced0283e26bff4f8b6d8920f766ce631056eebc4bc1.npy",
+      "sha256": "39813ead320651170c535ced0283e26bff4f8b6d8920f766ce631056eebc4bc1",
+      "source": {
+        "data_offsets": [
+          99238670,
+          99238926
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "8e86c3891ea02a792c7d1497d8fb769b4e927b731647c0644b7f37d4b01a2a3f",
+        "shape": [
+          128
+        ],
+        "tensor": "decoder.up_blocks.3.resnets.2.norm2.weight"
+      }
+    },
+    {
+      "bytes": 192,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDMyLCl9ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/7a331ba37b3a583d2d625f24cc2a2a67a50cebb3428d76e711a03e7df9b38280.npy",
+      "sha256": "7a331ba37b3a583d2d625f24cc2a2a67a50cebb3428d76e711a03e7df9b38280",
+      "source": {
+        "data_offsets": [
+          168082318,
+          168082382
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "4d2065d17ebec258927d584db805c400807df3170ca36464f433972ed1e5c457",
+        "shape": [
+          32
+        ],
+        "tensor": "post_quant_conv.bias"
+      }
+    },
+    {
+      "bytes": 2176,
+      "npy_prefix_b64": "k05VTVBZAQB2AHsnZGVzY3InOiAnPHUyJywgJ2ZvcnRyYW5fb3JkZXInOiBGYWxzZSwgJ3NoYXBlJzogKDMyLCAzMiwgMSwgMSl9ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIAo=",
+      "path": "vae-parameters/49f8e9004c20aa52c811d9f7b7c303bc31a5f8ac87a63f1a4b328664fc2dfed2.npy",
+      "sha256": "49f8e9004c20aa52c811d9f7b7c303bc31a5f8ac87a63f1a4b328664fc2dfed2",
+      "source": {
+        "data_offsets": [
+          168082382,
+          168084430
+        ],
+        "dtype": "BF16",
+        "file": "diffusion_pytorch_model.safetensors",
+        "file_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+        "payload_sha256": "7996ce0f4e9012f621914b92509fd8cf609457c1e17c60f76a26cadffc4f73ff",
+        "shape": [
+          32,
+          32,
+          1,
+          1
+        ],
+        "tensor": "post_quant_conv.weight"
+      }
+    }
+  ],
+  "provenance": {
+    "after_signature": [
+      66311,
+      298074,
+      168120878,
+      1784967511525412600,
+      1784967511529305200
+    ],
+    "before_signature": [
+      66311,
+      298074,
+      168120878,
+      1784967511525412600,
+      1784967511529305200
+    ],
+    "checkpoint": "/mnt/big/llm-models/FLUX.2-klein-4B/vae/diffusion_pytorch_model.safetensors",
+    "checkpoint_sha256": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04",
+    "exported_weight_payloads": 0,
+    "header_bytes": 28120,
+    "header_sha256": "c1ba5cc25ab7a306fc9b5c43c70243df8fd3c29e81dd931bef2086ac8e0b61ea",
+    "libraries": "Python stdlib only",
+    "module_forwards": 0,
+    "payload_bytes": 99241030,
+    "recipe_scope": "142 original decoder/post_quant_conv/BN mean+variance BF16 entries"
+  },
+  "schema": "mdb-parameter-artifacts-v1"
+}

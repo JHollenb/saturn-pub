@@ -1,0 +1,25 @@
+{
+  "attention_dispatch": {
+    "backend": "sdpa",
+    "gqa_policy": "enable_gqa",
+    "source": "transformers-qwen3-modeling-fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+  },
+  "case": "long",
+  "clock": {
+    "cursor": 0,
+    "phase": "project",
+    "step": 0
+  },
+  "forecast_seal": "836d44bc4dc24b4413473813eb0682efc1ef2c1a143f8b10f98dd6724697c594",
+  "mask_sha256": "8a472efbc41a4502e6da085422880bc742625c1187f2d36ed39e669d736ac113",
+  "numeric_profile_sha256": "f9835a42645aedaed85f9e5f943e66ced5629fb92ba9d6891ed94180eeb6154d",
+  "occurrence": "whole",
+  "parameter_manifests": {
+    "flux": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb",
+    "qwen": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+    "vae": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9"
+  },
+  "prompt_utf8_sha256": "53bd915a9d453795e804f12fd7ff811d25ad49b21e8acb9b78466be28cec8470",
+  "request_sha256": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd",
+  "seed": 277
+}

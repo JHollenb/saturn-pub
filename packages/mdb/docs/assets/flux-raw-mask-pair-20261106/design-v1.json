@@ -1,0 +1,116 @@
+{
+  "api": [
+    "make_config(base)",
+    "contract(config=None)",
+    "validate_config(config)",
+    "run(config, progress=None)",
+    "worker(config_path)"
+  ],
+  "cases": {
+    "long": {
+      "prompt": "A cobalt blue cube to the right of a matte orange ring on a gray tabletop. Two separate objects, simple studio product photograph. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even. The tabletop is gray and the lighting is even.",
+      "utf8_sha256": "53bd915a9d453795e804f12fd7ff811d25ad49b21e8acb9b78466be28cec8470"
+    },
+    "short": {
+      "prompt": "A cobalt blue cube to the right of a matte orange ring on a gray tabletop. Two separate objects, simple studio product photograph.",
+      "utf8_sha256": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612"
+    }
+  },
+  "configuration": {
+    "forecast_transaction_bytes": 1073741824,
+    "max_wall_seconds": 1200,
+    "output_name": "raw-mask-pair-result",
+    "schema": "mdb-flux-raw-mask-pair-plan-v1",
+    "transport_limits": {
+      "max_expanded_bytes": 8589934592,
+      "max_member_bytes": 134221824
+    }
+  },
+  "contract": {
+    "batch_size": 1,
+    "case_order": [
+      "short",
+      "long"
+    ],
+    "component_hydrations": 3,
+    "cpu_offloads": 6,
+    "cuda_placements": 6,
+    "execution_id": "mdb-flux-raw-mask-pair-v1",
+    "forecast_hidden_states_per_case": 28,
+    "forecast_module_entries": 0,
+    "functional_decode_calls": 2,
+    "functional_transitions": 224,
+    "global_forecast_seals": 1,
+    "max_gpu_components": 1,
+    "native_transitions": 224,
+    "native_vae_calls": 4,
+    "noise_draws": 4,
+    "persistent_weight_banks": 0,
+    "pngs": 6,
+    "qwen_forecast_layers_per_case": 27,
+    "qwen_functional_calls": 2,
+    "qwen_native_calls": 2,
+    "qwen_native_layers_per_case": 36,
+    "schema": "mdb-flux-raw-mask-pair-count-contract-v1",
+    "scope": "conditional shared-primitive composition; content/truncation and mask/dispatch contrast, not isolated padding causality or independent kernels",
+    "sdpa_argument_observations": {
+      "forecast": 54,
+      "native": 72
+    },
+    "seed": 277
+  },
+  "limits": [
+    "CPU synthetic tests do not qualify original CUDA parity or selected kernels.",
+    "SDPA recorder observes unchanged-call argument metadata, not selected kernel or operand values.",
+    "Raw contrast changes content/truncated suffix as well as mask/dispatch; no isolated padding causality.",
+    "Actual mask applicability misses are retained without tuning the fixed raw text.",
+    "Original component-derived StateCut utility identity is retained; outer new campaign identity and case paths distinguish occurrences.",
+    "End-to-end original checkpoint orchestration has not run locally; production source/custody and independent saved-array audit remain required."
+  ],
+  "paths": {
+    "case_roots": "cases/{short,long}",
+    "common_frontend": "common-frontend.json",
+    "forecast_sdpa": "sdpa-forecast.json",
+    "native_sdpa": "sdpa-native.json",
+    "responses": "forecast-responses.json",
+    "transaction": "forecast-transaction"
+  },
+  "phases": [
+    "CPU hydrate3 once",
+    "forecast Qwen both",
+    "forecast FLUX112 both",
+    "forecast decoder both",
+    "hash full signed long-minus-short responses",
+    "ONE global seal at native0",
+    "native Qwen both",
+    "native FLUX112 both",
+    "native VAE(own-forecast and native-reference) both"
+  ],
+  "resources": {
+    "calibration": "original one-case329.23s/RSS20815.5MB/VRAM8374MB, phase batching and streamed response hashes; paired runtime not measured",
+    "component_live_bound": 1,
+    "expected_seconds": 750,
+    "largest_member_allowance": 134221824,
+    "local_bulk_collection_required": false,
+    "new_persistent_weights": 0,
+    "raw_expanded_bound": 8589934592
+  },
+  "schema": "mdb-flux-raw-mask-pair-design-v1",
+  "source_keys": [
+    "qwen_config",
+    "qwen_manifest",
+    "qwen_source_binding",
+    "qwen_retrieval_script",
+    "qwen_recipe_helper",
+    "flux_config",
+    "flux_scheduler_config",
+    "flux_manifest",
+    "flux_retrieval_script",
+    "flux_recipe_helper",
+    "vae_config",
+    "vae_manifest",
+    "vae_retrieval_script",
+    "vae_recipe_helper"
+  ],
+  "status": "tiny-qualified-preproduction; no staging/submission/model runs"
+}

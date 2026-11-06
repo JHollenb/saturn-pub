@@ -1,0 +1,12 @@
+{
+  "cases": 2,
+  "independent_seeds": 1,
+  "job_id": "job-ce54f7b5406a",
+  "mechanics_status": "verified-saved-pair",
+  "model_calls": 0,
+  "records": 4,
+  "request_sha256": "83b0a86f3c4af70d137d31b0093990199a2675179b703371caa37e6cf5047d74",
+  "schema": "mdb-raw-mask-pair-compact-v1",
+  "seconds": 191.90982199413702,
+  "source_job": "job-0b6c4340d5e6"
+}

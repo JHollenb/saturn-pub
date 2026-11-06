@@ -1,0 +1,30 @@
+{"component": "qwen", "direction": "cuda", "kind": "component_placement", "seconds": 135.89314361009747}
+{"case": "short", "component": "qwen", "kind": "phase_entry", "lane": "forecast", "native_module_entries": 0, "seconds": 135.8942871238105}
+{"case": "long", "component": "qwen", "kind": "phase_entry", "lane": "forecast", "native_module_entries": 0, "seconds": 142.56454328913242}
+{"component": "qwen", "direction": "cpu", "kind": "component_placement", "seconds": 157.80712290899828}
+{"component": "flux", "direction": "cuda", "kind": "component_placement", "seconds": 166.26322967093438}
+{"case": "short", "component": "flux", "kind": "phase_entry", "lane": "forecast", "native_module_entries": 0, "seconds": 166.26396371005103}
+{"case": "long", "component": "flux", "kind": "phase_entry", "lane": "forecast", "native_module_entries": 0, "seconds": 185.82035706099123}
+{"component": "flux", "direction": "cpu", "kind": "component_placement", "seconds": 226.7843491421081}
+{"component": "vae", "direction": "cuda", "kind": "component_placement", "seconds": 226.9940724647604}
+{"case": "short", "component": "vae", "kind": "phase_entry", "lane": "forecast", "native_module_entries": 0, "seconds": 226.99460988817737}
+{"case": "short", "component": "vae", "kind": "phase_completed", "lane": "forecast", "seconds": 233.7668052110821}
+{"case": "long", "component": "vae", "kind": "phase_entry", "lane": "forecast", "native_module_entries": 0, "seconds": 233.76698360405862}
+{"case": "long", "component": "vae", "kind": "phase_completed", "lane": "forecast", "seconds": 236.87715643411502}
+{"component": "vae", "direction": "cpu", "kind": "component_placement", "seconds": 236.97687702113762}
+{"case_count": 2, "kind": "forecast_globally_sealed", "native_module_entries": 0, "seal_sha256": "836d44bc4dc24b4413473813eb0682efc1ef2c1a143f8b10f98dd6724697c594", "seconds": 255.67064416781068}
+{"forecast_seal": "836d44bc4dc24b4413473813eb0682efc1ef2c1a143f8b10f98dd6724697c594", "kind": "native_targets_released", "seconds": 255.70688345795497}
+{"component": "qwen", "direction": "cuda", "kind": "component_placement", "seconds": 268.8452006969601}
+{"case": "short", "component": "qwen", "kind": "phase_entry", "lane": "native", "native_module_entries": 0, "seconds": 268.8459922140464}
+{"case": "long", "component": "qwen", "kind": "phase_entry", "lane": "native", "native_module_entries": 546, "seconds": 269.723377881106}
+{"component": "qwen", "direction": "cpu", "kind": "component_placement", "seconds": 285.19050275394693}
+{"component": "flux", "direction": "cuda", "kind": "component_placement", "seconds": 298.1833340758458}
+{"case": "short", "component": "flux", "kind": "phase_entry", "lane": "native", "native_module_entries": 1092, "seconds": 298.1841123988852}
+{"case": "long", "component": "flux", "kind": "phase_entry", "lane": "native", "native_module_entries": 2488, "seconds": 318.6208763369359}
+{"component": "flux", "direction": "cpu", "kind": "component_placement", "seconds": 356.82004142785445}
+{"component": "vae", "direction": "cuda", "kind": "component_placement", "seconds": 357.0325393388048}
+{"case": "short", "component": "vae", "kind": "phase_entry", "lane": "native", "native_module_entries": 3884, "seconds": 357.0335414088331}
+{"case": "short", "component": "vae", "kind": "phase_completed", "lane": "native", "seconds": 357.4117613490671}
+{"case": "long", "component": "vae", "kind": "phase_entry", "lane": "native", "native_module_entries": 4160, "seconds": 357.4119246727787}
+{"case": "long", "component": "vae", "kind": "phase_completed", "lane": "native", "seconds": 357.6931303157471}
+{"component": "vae", "direction": "cpu", "kind": "component_placement", "seconds": 357.7944190199487}

@@ -1,0 +1,33 @@
+{
+  "schema": "mdb-raw-mask-pair-publisher-qualification-v1",
+  "status": "passed",
+  "scope": "Installed-wheel saved-only synthetic compact publication; no arrays, checkpoints, tokenizers, CUDA, model calls, jobs, or staging.",
+  "sources": {
+    "saturn-pub/packages/mdb/qualification/publish_flux_raw_mask_pair.py": "bb6037f25b99535b5022122a874642baba765e5681bf6b29120ee760068626b3",
+    "saturn-pub/packages/mdb/tests/test_publish_flux_raw_mask_pair.py": "3467419b004cc43dab3f8068d0ffa098a901a9ecbdeb600a7a4210f934ce13b9",
+    "saturn-pub/packages/mdb/qualification/audit_flux_raw_mask_pair.py": "fdf4672e0866c44aada1b687cf2405b5a40831afa64c9eda583e533739a7697d"
+  },
+  "audit_qualification_pin": "fdf4672e0866c44aada1b687cf2405b5a40831afa64c9eda583e533739a7697d",
+  "tests": {
+    "command": "../common/bin/common exec python -m pytest -q packages/mdb/tests/test_publish_flux_raw_mask_pair.py",
+    "returncode": 0,
+    "passed": 3,
+    "scope": [
+      "authenticated manifest/native request/job/collection joins",
+      "six original PNG consumers and six figure outputs",
+      "complete Qwen and denoiser scalar traces",
+      "signed response totals and dependent endpoint decomposition",
+      "undefined/zero reductions and raw-member rejection"
+    ]
+  },
+  "ruff": {
+    "command": "../common/bin/common exec ruff check packages/mdb/qualification/publish_flux_raw_mask_pair.py packages/mdb/tests/test_publish_flux_raw_mask_pair.py",
+    "returncode": 0
+  },
+  "claims_boundary": [
+    "All scalar reductions are read from the authenticated saved audit; no raw tensor is loaded or recomputed.",
+    "Short/long content and possible truncation remain explicit confounds to the observed mask/dispatch contrast.",
+    "Numerical misses, undefined denominators, zero terms, and signed countertrends remain publication data rather than scoring gates.",
+    "The producer's uncropped token count is preserved next to the auditor's independently corrected explicit-input_ids count."
+  ]
+}

@@ -1,0 +1,4718 @@
+[
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 54,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 55,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 56,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 57,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 58,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 59,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 60,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 61,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 62,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 63,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 64,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 65,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 66,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 67,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 68,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 69,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 70,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 71,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 72,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 73,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 74,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 75,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 76,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 77,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 78,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 79,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 80,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 81,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 82,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 83,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 84,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 85,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 86,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 87,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 88,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "short",
+    "configured_backend": "sdpa",
+    "enable_gqa": false,
+    "is_causal": false,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": {
+      "device": "cuda:0",
+      "dtype": "torch.bool",
+      "shape": [
+        1,
+        1,
+        512,
+        512
+      ],
+      "stride": [
+        262144,
+        262144,
+        512,
+        1
+      ]
+    },
+    "ordinal": 89,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        65536,
+        128,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 90,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 91,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 92,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 93,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 94,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 95,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 96,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 97,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 98,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 99,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 100,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 101,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 102,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 103,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 104,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 105,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 106,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 107,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 108,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 109,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 110,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 111,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 112,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 113,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 114,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 115,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 116,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 117,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 118,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 119,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 120,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 121,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 122,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 123,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 124,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  {
+    "case": "long",
+    "configured_backend": "sdpa",
+    "enable_gqa": true,
+    "is_causal": true,
+    "key": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "lane": "native",
+    "mask": null,
+    "ordinal": 125,
+    "query": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "selected_kernel": "unprofiled",
+    "value": {
+      "device": "cuda:0",
+      "dtype": "torch.bfloat16",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  }
+]

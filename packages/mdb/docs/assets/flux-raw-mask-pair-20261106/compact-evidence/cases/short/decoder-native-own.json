@@ -1,0 +1,110 @@
+{
+  "actual_after_post_quant": {
+    "bytes": 262272,
+    "content_sha256": "0c649c4796139ded8587bcb51f61a8b654981f2b0ceda14313e0f230ae750f7f",
+    "device_at_capture": "cuda:0",
+    "encoding": "bf16-bits-v1",
+    "logical_dtype": "torch.bfloat16",
+    "path": "decoder/native-own/actual-after-post-quant.npy",
+    "sha256": "628f5d0d35dfb64646bffdbc3210d12868807e1b1438b36923f2fe6b58814b41",
+    "shape": [
+      1,
+      32,
+      64,
+      64
+    ],
+    "stored_dtype": "uint16",
+    "stride": [
+      131072,
+      4096,
+      64,
+      1
+    ]
+  },
+  "actual_before_post_quant": {
+    "bytes": 262272,
+    "content_sha256": "ee7c27ddb32be989fe0259af2483c47c0c6626ea196d0264690580eee011047e",
+    "device_at_capture": "cuda:0",
+    "encoding": "bf16-bits-v1",
+    "logical_dtype": "torch.bfloat16",
+    "path": "decoder/native-own/actual-before-post-quant.npy",
+    "sha256": "93db63c0bd534cce6a5fe21bd401fe15ff8c7576f056457b53b2b150a86c824b",
+    "shape": [
+      1,
+      32,
+      64,
+      64
+    ],
+    "stored_dtype": "uint16",
+    "stride": [
+      131072,
+      4096,
+      64,
+      1
+    ]
+  },
+  "decoded": {
+    "bytes": 1572992,
+    "content_sha256": "fbc423c848670025b9e82cc314e1f3ae391e9ea47c4d7a39bf923d9c0d60fe11",
+    "device_at_capture": "cuda:0",
+    "encoding": "bf16-bits-v1",
+    "logical_dtype": "torch.bfloat16",
+    "path": "decoder/native-own/decoded.npy",
+    "sha256": "6b33ebf8ba6ab0f1abc24a611e2b3acaa386753a5d2d9437dc04394a48a8775f",
+    "shape": [
+      1,
+      3,
+      512,
+      512
+    ],
+    "stored_dtype": "uint16",
+    "stride": [
+      786432,
+      262144,
+      512,
+      1
+    ]
+  },
+  "decoder_input": {
+    "bytes": 262272,
+    "content_sha256": "ee7c27ddb32be989fe0259af2483c47c0c6626ea196d0264690580eee011047e",
+    "device_at_capture": "cpu",
+    "encoding": "bf16-bits-v1",
+    "logical_dtype": "torch.bfloat16",
+    "path": "decoder/native-own/decoder-input.npy",
+    "sha256": "93db63c0bd534cce6a5fe21bd401fe15ff8c7576f056457b53b2b150a86c824b",
+    "shape": [
+      1,
+      32,
+      64,
+      64
+    ],
+    "stored_dtype": "uint16",
+    "stride": [
+      131072,
+      4096,
+      64,
+      1
+    ]
+  },
+  "independent_decoder_prediction": false,
+  "native_module_forwards": true,
+  "operand_boundary": "after_post_quant_conv_before_decoder",
+  "origin": "own_forecast",
+  "pixels": {
+    "bytes": 786560,
+    "dtype": "uint8",
+    "path": "decoder/native-own/pixels.npy",
+    "sha256": "ab7623fe843365a4f111c0ed00dbf58923fbbade03818b28cb6aa605555e4843",
+    "shape": [
+      512,
+      512,
+      3
+    ]
+  },
+  "png": {
+    "bytes": 232653,
+    "path": "decoder/native-own/image.png",
+    "sha256": "34ea82cf977a371130c30b6783cd01900c7b0ce97caa39d99b570064d3dc80c1"
+  }
+}

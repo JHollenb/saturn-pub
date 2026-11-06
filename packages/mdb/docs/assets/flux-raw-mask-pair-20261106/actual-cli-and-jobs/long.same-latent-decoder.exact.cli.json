@@ -1,0 +1,314 @@
+[
+  {
+    "alias": "cmp.flux.raw-mask-pair.long.same-latent-decoder",
+    "applicability_authority": "supplied; no generalization inferred",
+    "applicability_conditions": [
+      {
+        "field": "case",
+        "op": "eq",
+        "value": "long"
+      },
+      {
+        "field": "occurrence",
+        "op": "eq",
+        "value": "same-latent-decoder"
+      },
+      {
+        "field": "prompt_utf8_sha256",
+        "op": "eq",
+        "value": "53bd915a9d453795e804f12fd7ff811d25ad49b21e8acb9b78466be28cec8470"
+      },
+      {
+        "field": "seed",
+        "op": "eq",
+        "value": 277
+      },
+      {
+        "field": "mask_sha256",
+        "op": "eq",
+        "value": "8a472efbc41a4502e6da085422880bc742625c1187f2d36ed39e669d736ac113"
+      },
+      {
+        "field": "clock",
+        "op": "eq",
+        "value": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        }
+      },
+      {
+        "field": "request_sha256",
+        "op": "eq",
+        "value": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd"
+      },
+      {
+        "field": "forecast_seal",
+        "op": "eq",
+        "value": "836d44bc4dc24b4413473813eb0682efc1ef2c1a143f8b10f98dd6724697c594"
+      },
+      {
+        "field": "numeric_profile_sha256",
+        "op": "eq",
+        "value": "f9835a42645aedaed85f9e5f943e66ced5629fb92ba9d6891ed94180eeb6154d"
+      },
+      {
+        "field": "attention_dispatch",
+        "op": "eq",
+        "value": {
+          "backend": "sdpa",
+          "gqa_policy": "enable_gqa",
+          "source": "transformers-qwen3-modeling-fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+        }
+      },
+      {
+        "field": "parameter_manifests",
+        "op": "eq",
+        "value": {
+          "flux": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb",
+          "qwen": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+          "vae": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9"
+        }
+      }
+    ],
+    "applicability_query": {
+      "authority": "supplied-predicate-only; tested scope is separate",
+      "conditions": [
+        {
+          "condition": {
+            "field": "case",
+            "op": "eq",
+            "value": "long"
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "occurrence",
+            "op": "eq",
+            "value": "same-latent-decoder"
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "prompt_utf8_sha256",
+            "op": "eq",
+            "value": "53bd915a9d453795e804f12fd7ff811d25ad49b21e8acb9b78466be28cec8470"
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "seed",
+            "op": "eq",
+            "value": 277
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "mask_sha256",
+            "op": "eq",
+            "value": "8a472efbc41a4502e6da085422880bc742625c1187f2d36ed39e669d736ac113"
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "clock",
+            "op": "eq",
+            "value": {
+              "cursor": 0,
+              "phase": "project",
+              "step": 0
+            }
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "request_sha256",
+            "op": "eq",
+            "value": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd"
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "forecast_seal",
+            "op": "eq",
+            "value": "836d44bc4dc24b4413473813eb0682efc1ef2c1a143f8b10f98dd6724697c594"
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "numeric_profile_sha256",
+            "op": "eq",
+            "value": "f9835a42645aedaed85f9e5f943e66ced5629fb92ba9d6891ed94180eeb6154d"
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "attention_dispatch",
+            "op": "eq",
+            "value": {
+              "backend": "sdpa",
+              "gqa_policy": "enable_gqa",
+              "source": "transformers-qwen3-modeling-fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+            }
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "parameter_manifests",
+            "op": "eq",
+            "value": {
+              "flux": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb",
+              "qwen": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+              "vae": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9"
+            }
+          },
+          "status": "matches"
+        }
+      ],
+      "status": "matches"
+    },
+    "binding": {
+      "execution": {
+        "id": "mdb-flux-raw-mask-pair-v1"
+      },
+      "frontier": "raw prompt and seed before global cohort targets",
+      "horizon": {
+        "decoder": "same-latent-decoder",
+        "steps": 4
+      },
+      "input_identity": "99f7255e13f443098096d1ea978cad869b4347fdab67fc34fc94a86a66720f4b",
+      "model_identity": "original709checkpoint-recipes",
+      "source_identity": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd"
+    },
+    "evidence": {
+      "audit_sha256": "896a8111e1b0d4caeeec53a731cffd2c8ee4087e2708aea3ef6cc75a392d59db",
+      "dependent_paths": true,
+      "independent_kernel_arithmetic": false
+    },
+    "fingerprint": "159a7aef6961bd90d77893b316df5499c91cd1a404e8fe0926cc8991fd7418f8",
+    "law_id": "law.flux.raw-mask-pair.fixed-program.v1",
+    "observation_unit": "one caller-bound comparison, not independent tasks",
+    "readers": [],
+    "report": {
+      "decision_fields": 0,
+      "decision_mismatches": 0,
+      "fields": {
+        "decoded": {
+          "decisions": {
+            "rule": "none",
+            "status": "not-requested"
+          },
+          "residual": {
+            "elements": 786432,
+            "l2": 0.0,
+            "largest": {
+              "coordinate": [
+                0,
+                0,
+                0,
+                0
+              ],
+              "signed": 0.0
+            },
+            "max_abs": 0.0,
+            "maximum_signed": 0.0,
+            "minimum_signed": 0.0,
+            "nonzero": 0,
+            "shape": [
+              1,
+              3,
+              512,
+              512
+            ],
+            "signed_mean": 0.0,
+            "signed_sum": 0.0
+          },
+          "shape": [
+            1,
+            3,
+            512,
+            512
+          ]
+        },
+        "pixels": {
+          "decisions": {
+            "rule": "none",
+            "status": "not-requested"
+          },
+          "residual": {
+            "elements": 786432,
+            "l2": 0.0,
+            "largest": {
+              "coordinate": [
+                0,
+                0,
+                0
+              ],
+              "signed": 0.0
+            },
+            "max_abs": 0.0,
+            "maximum_signed": 0.0,
+            "minimum_signed": 0.0,
+            "nonzero": 0,
+            "shape": [
+              512,
+              512,
+              3
+            ],
+            "signed_mean": 0.0,
+            "signed_sum": 0.0
+          },
+          "shape": [
+            512,
+            512,
+            3
+          ]
+        }
+      },
+      "fingerprint": "6932d24ace2b83247f3974952554d53b6c9e6b6782696de92f9c04fdfc04424f",
+      "max_abs": 0.0,
+      "mechanics_status": "valid",
+      "residual_direction": "observed-minus-predicted",
+      "schema": "mdb-equation-comparison-v1",
+      "target_scope": "unassigned",
+      "terminal_status": "unassessed"
+    },
+    "route_id": "route.flux.shared-original-primitives.raw-mask-pair.v1",
+    "schema": "mdb-equation-record-v1",
+    "tested_context": {
+      "attention_dispatch": {
+        "backend": "sdpa",
+        "gqa_policy": "enable_gqa",
+        "source": "transformers-qwen3-modeling-fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+      },
+      "case": "long",
+      "clock": {
+        "cursor": 0,
+        "phase": "project",
+        "step": 0
+      },
+      "forecast_seal": "836d44bc4dc24b4413473813eb0682efc1ef2c1a143f8b10f98dd6724697c594",
+      "mask_sha256": "8a472efbc41a4502e6da085422880bc742625c1187f2d36ed39e669d736ac113",
+      "numeric_profile_sha256": "f9835a42645aedaed85f9e5f943e66ced5629fb92ba9d6891ed94180eeb6154d",
+      "occurrence": "same-latent-decoder",
+      "parameter_manifests": {
+        "flux": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb",
+        "qwen": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+        "vae": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9"
+      },
+      "prompt_utf8_sha256": "53bd915a9d453795e804f12fd7ff811d25ad49b21e8acb9b78466be28cec8470",
+      "request_sha256": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd",
+      "seed": 277
+    }
+  }
+]

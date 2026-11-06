@@ -1,0 +1,8 @@
+{
+  "files": {
+    "audit_flux_raw_mask_pair.py": "fdf4672e0866c44aada1b687cf2405b5a40831afa64c9eda583e533739a7697d",
+    "test_audit_flux_raw_mask_pair.py": "61ab2510abe8c471e349fe181eceaaae3743f1c5e9580e5187c51687718d1fb1"
+  },
+  "reason": "Preserve executed v2 before exact frozen _save_bytes generator-record ABI repair; audit-02 failed before reports.",
+  "schema": "mdb-mask-pair-reader-v2-source-archive"
+}

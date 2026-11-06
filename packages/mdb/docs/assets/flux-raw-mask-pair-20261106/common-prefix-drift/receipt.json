@@ -1,0 +1,11 @@
+{
+  "audit_sha256": "896a8111e1b0d4caeeec53a731cffd2c8ee4087e2708aea3ef6cc75a392d59db",
+  "new_neural_calls": 0,
+  "outputs": {
+    "common-prefix-drift.png": "56cc1ece7d83a7590350033db0fa693de8d15c47b85ce47bbbc8abaae784a947",
+    "plot-data.json": "a1eb36c843a2a7f853d9877a08fc28d763add93db2c631e363b28fb5371378a4"
+  },
+  "raw_arrays_loaded": false,
+  "schema": "mdb-common-prefix-drift-figure-v1",
+  "source_sha256": "72cdd4239a68ac88f65fed9d6a4cd7b2f8747d7300dafba6dc5922a1d49246e0"
+}

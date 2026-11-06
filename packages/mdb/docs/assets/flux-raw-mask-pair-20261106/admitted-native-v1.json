@@ -1,0 +1,26 @@
+{
+  "schema": "mdb-raw-mask-pair-admission-v1",
+  "job_id": "job-0b6c4340d5e6",
+  "request_sha256": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd",
+  "run": "run-02",
+  "state_at_write": "running",
+  "host": "beast",
+  "native_result_status": "unobserved",
+  "worker_sha256": "3ee62e9174186935b32ff6e9e33e18e46aa978c4442b19f02982919e63bf3912",
+  "launcher_sha256": "b5dfa0c09047640ef387aebdbe8c89bfdc7f76f23cfae5fbbfb88a8fa16852e7",
+  "finite_review_sha256": "8a5f9c6a77bd9f1f13e7a0f395983b6e98e09e6553eca1b53ca243e7c29fdcb1",
+  "worker_qualification_sha256": "db57f184c294366520f6e3175543054786f6eb2822a16fe4ce70d1993f137124",
+  "bootstrap_qualification_sha256": "3f8fb953f8df77561ed861fd58d30368460464ff08ccdbe872cc46d01d81aca8",
+  "declared_resources": {"ram_mb": 24576, "vram_mb": 13000, "cpu_threads": 4, "est_wall_s": 750, "timeout_s": 1500, "disk_gb": 12},
+  "strict_preflight": true,
+  "retry_on_kill": false,
+  "component_passes": 14,
+  "component_or_transition_calls": 458,
+  "denoiser_transitions": 448,
+  "original_failed_local_stage": "run-01; unsupported512work-item declaration, no request or job",
+  "reporting_corrections_pending": [
+    "Effective plan has nojob_id; join actual wrapper/source/summary identities.",
+    "Producer uncropped_token_count counts tokenizer mapping fields; derive actual token length separately and retain original metadata."
+  ],
+  "next_audit": {"model_calls": 0, "device": "cpu", "estimate_s": 240, "outer_s": 600, "ram_mb": 3072}
+}

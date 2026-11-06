@@ -1,0 +1,116 @@
+{
+  "cuda_calls": 0,
+  "families": {
+    "flux": {
+      "manifest_sha256": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb",
+      "payload_bytes": 7751089152,
+      "recipes": 169
+    },
+    "qwen": {
+      "manifest_sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+      "payload_bytes": 8044936192,
+      "recipes": 398
+    },
+    "vae": {
+      "manifest_sha256": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9",
+      "payload_bytes": 99241030,
+      "recipes": 142
+    }
+  },
+  "model_constructions": 0,
+  "native_sources": {
+    "diffusers/models/autoencoders/autoencoder_kl_flux2.py": {
+      "preparation_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/diffusers/models/autoencoders/autoencoder_kl_flux2.py",
+      "sha256": "7d9a976c1e4f42615e8c422f1643d86b49c4339221bd04b67f518b718ebd6c2d"
+    },
+    "diffusers/models/transformers/transformer_flux2.py": {
+      "preparation_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/diffusers/models/transformers/transformer_flux2.py",
+      "sha256": "0a3c56ed3ca28a416492b50953a433f20b8a89fd26c7b7a49b1b6b45d5236006"
+    },
+    "diffusers/pipelines/flux2/image_processor.py": {
+      "preparation_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/diffusers/pipelines/flux2/image_processor.py",
+      "sha256": "d2cdc003444c8599e89789dfede8636d2534697bb3fe60d4b48cc0656b3b4e83"
+    },
+    "diffusers/pipelines/flux2/pipeline_flux2_klein.py": {
+      "preparation_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/diffusers/pipelines/flux2/pipeline_flux2_klein.py",
+      "sha256": "8a57a8a7f1c22fc0c5bc5d3fd1bd9bc76c17c1f4d6644cc73370651dd955358e"
+    },
+    "diffusers/schedulers/scheduling_flow_match_euler_discrete.py": {
+      "preparation_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/diffusers/schedulers/scheduling_flow_match_euler_discrete.py",
+      "sha256": "8b96f25a6170480fb02decb58904e026250d6d68be5de8a7b8785b4c721e9d80"
+    },
+    "diffusers/utils/torch_utils.py": {
+      "preparation_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/diffusers/utils/torch_utils.py",
+      "sha256": "f05b309756343484222e504828c7818395b62988fda06f5104c164f48956e2f4"
+    }
+  },
+  "neural_calls": 0,
+  "original_configs": {
+    "model_index.json": {
+      "bytes": 446,
+      "sha256": "51a76cb1cf3ed37423a1128c79c22faee8e6fbe7f5aaeb737f0a258930dbaac0",
+      "source_path": "/mnt/big/llm-models/FLUX.2-klein-4B/model_index.json",
+      "utf8": "{\n  \"_class_name\": \"Flux2KleinPipeline\",\n  \"_diffusers_version\": \"0.37.0.dev0\",\n  \"is_distilled\": true,\n  \"scheduler\": [\n    \"diffusers\",\n    \"FlowMatchEulerDiscreteScheduler\"\n  ],\n  \"text_encoder\": [\n    \"transformers\",\n    \"Qwen3ForCausalLM\"\n  ],\n  \"tokenizer\": [\n    \"transformers\",\n    \"Qwen2TokenizerFast\"\n  ],\n  \"transformer\": [\n    \"diffusers\",\n    \"Flux2Transformer2DModel\"\n  ],\n  \"vae\": [\n    \"diffusers\",\n    \"AutoencoderKLFlux2\"\n  ]\n}\n"
+    },
+    "scheduler/scheduler_config.json": {
+      "bytes": 486,
+      "sha256": "067afb012cef64553a763447d1efd93daeffcc0123ca7e25b09f8de20b90762e",
+      "source_path": "/mnt/big/llm-models/FLUX.2-klein-4B/scheduler/scheduler_config.json",
+      "utf8": "{\n  \"_class_name\": \"FlowMatchEulerDiscreteScheduler\",\n  \"_diffusers_version\": \"0.37.0.dev0\",\n  \"base_image_seq_len\": 256,\n  \"base_shift\": 0.5,\n  \"invert_sigmas\": false,\n  \"max_image_seq_len\": 4096,\n  \"max_shift\": 1.15,\n  \"num_train_timesteps\": 1000,\n  \"shift\": 3.0,\n  \"shift_terminal\": null,\n  \"stochastic_sampling\": false,\n  \"time_shift_type\": \"exponential\",\n  \"use_beta_sigmas\": false,\n  \"use_dynamic_shifting\": true,\n  \"use_exponential_sigmas\": false,\n  \"use_karras_sigmas\": false\n}\n"
+    }
+  },
+  "parameter_payloads_exported": 0,
+  "physical_component_hydrations_planned": 3,
+  "schema": "mdb-raw-to-image-input-source-metadata-v1",
+  "scope": "Original metadata and installed source identity only. No scientific target or new execution result.",
+  "source_files": {
+    "flux-parameter-artifacts.json": {
+      "bytes": 158206,
+      "sha256": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb"
+    },
+    "flux-transformer-config.json": {
+      "bytes": 541,
+      "sha256": "09733c74a3da6d17dd0a0472a091a8950c7c6935889c32c16cc800ede05029de"
+    },
+    "model_index.json": {
+      "bytes": 446,
+      "sha256": "51a76cb1cf3ed37423a1128c79c22faee8e6fbe7f5aaeb737f0a258930dbaac0"
+    },
+    "qwen-config.json": {
+      "bytes": 1536,
+      "sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40"
+    },
+    "qwen-parameter-artifacts.json": {
+      "bytes": 433549,
+      "sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374"
+    },
+    "qwen-source-binding.json": {
+      "bytes": 65926,
+      "sha256": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7"
+    },
+    "retrieve_flux_weights.py": {
+      "bytes": 22624,
+      "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae"
+    },
+    "retrieve_qwen_weights.py": {
+      "bytes": 22624,
+      "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae"
+    },
+    "retrieve_vae_weights.py": {
+      "bytes": 22624,
+      "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae"
+    },
+    "scheduler-config.json": {
+      "bytes": 486,
+      "sha256": "067afb012cef64553a763447d1efd93daeffcc0123ca7e25b09f8de20b90762e"
+    },
+    "vae-config.json": {
+      "bytes": 821,
+      "sha256": "0d6dfb69ae95a5e2ac9836284bbb63d8b38ce67b25ba2dff380752b2a10ab948"
+    },
+    "vae-parameter-artifacts.json": {
+      "bytes": 128869,
+      "sha256": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9"
+    }
+  }
+}

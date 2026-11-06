@@ -1,0 +1,9 @@
+{
+  "directory_custody": true,
+  "native_manifest_sha256": "89dafe939e0143596edf88b42e073f97cc5c945c893b5b8cf9897eff809c7154",
+  "native_request_sha256": "783e8dc0c0a731c458eed739c5d8b68c932bf622ef5f426d7f484596a8c011dd",
+  "native_root": "/mnt/big/mdb/research/job-0b6c4340d5e6/raw-mask-pair-result",
+  "output_scratch": "/mnt/big/mdb/research",
+  "scope": "Complete two-case saved array, signed response, argument and709recipe audit; no learned recurrence.",
+  "source_job": "job-0b6c4340d5e6"
+}
