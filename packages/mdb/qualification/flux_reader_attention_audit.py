@@ -138,7 +138,10 @@ def stage(run,study,*,worker_path=None,extra_files=(),audit_kind='attention',log
     info=json.loads(subprocess.run(['ssh','beast','python3','-I','-'],input=code,text=True,capture_output=True,check=True).stdout)
     c=dict(native_root=str(root),source_root=prior['config']['input_root'],native_manifest_sha256=info['sha'],
         source_manifest_sha256=prior['config']['source_files_sha256'],raw_files=info['files'],raw_bytes=info['bytes'],
-        output_scratch='/mnt/big/mdb/research',directory_custody=True,audit_kind=audit_kind,scope='Saved-only numerical comparisons and supplied-applicability catalog; zero new model/native/reference forward calculations.')
+        output_scratch='/mnt/big/mdb/research',directory_custody=True,audit_kind=audit_kind,
+        scope=('Post-hoc saved-only NumPy diagnosis:three scalar/product arithmetic rules across16known commits;48elementwise evaluations,0model/native/learned forwards.' if audit_kind=='commit-scalar' else
+            'Saved-only numerical comparisons,16independent NumPy elementwise commit evaluations and supplied-applicability catalog; zero model/native/learned forwards.' if audit_kind=='commit-factorial' else
+            'Saved-only numerical comparisons and supplied-applicability catalog; zero new model/native/reference forward calculations.'))
     run.mkdir(parents=True,exist_ok=False);save(run/'plan.json',c)
     extras=[(here/n,n) for n in ('flux_source_receiver.py','analyze_flux_reader_arithmetic.py','flux_family_custody.py','retrieve_reader_evidence.py')]+list(extra_files)
     pre=run/'preflight.v1.json';save(pre,dict(schema_version='mrun-preflight-config-v1',hashed_roots=[worker_file.name,*[n for _,n in extras],pre.name],
@@ -150,6 +153,12 @@ def stage(run,study,*,worker_path=None,extra_files=(),audit_kind='attention',log
             calibration_job='job-c8a4bc3cc1e4',measured_peak_rss_mb=1328.5,reason='Prior saved-only audit1328.5MB peak included9.44M-element paired fields. Here all metrics use1.57M-element heads/text only, no paired arrays retained, no Torch import.1.5GB covers prior measured peak; raw corpus stays remote.'),
         scheduling_contract=one_lease_scheduling_contract(model_loads=0,model_free=True,logical_operations=logical_operations,logical_branches=1,logical_checkpoint_replays=0,
             max_local_work_items=max(32,logical_operations),extra=dict(task_family='analysis'),checkpoint_policy='One near-data full-geometry saved-only '+audit_kind+' audit; no native/model/reference forwards or retries.'))
+    if audit_kind=='commit-factorial':
+        req['resource_exception']['reason']='Prior saved-only audit1328.5MB peak included9.44M-element paired fields. Current largest I/V field3.15M elements; compare one forecast at a time and one signed four-corner consumer at a time.16saved NumPy elementwise commits, no Torch/weights/model calls;1.5GBRAM/2CPU,60sestimate/240souter.'
+        req['scheduling_contract']['checkpoint_policy']='One near-data saved-only commit/I/V audit:48complete port comparisons,16independent NumPy elementwise commits,28saved image consequences;0model/learned/native forwards or retries.'
+    elif audit_kind=='commit-scalar':
+        req['resource_exception']['reason']='Saved131072-element latent/flow fields, one row/rule at a time; no Torch, weights or model calls. Existing1.5GB/2CPU audit lane covers bounded NumPy arrays;60sestimate/240souter.'
+        req['scheduling_contract']['checkpoint_policy']=c['scope']+' No automatic retries.'
     req['request_sha256']=hashlib.sha256(json.dumps(req,sort_keys=True,allow_nan=False).encode()).hexdigest();save(run/'request.json',req)
     runpy.run_path(str(here/'stage_flux_source_receiver.py'))['bind'](req['execution_environment']);stage_worker(run/'payload',worker=worker_file,config=c,request=req,additional_files=extras)
     return dict(request_sha256=req['request_sha256'],**info)
@@ -166,7 +175,8 @@ def submit(run):
     kind=r['config'].get('audit_kind','attention')
     job=guarded_mrun_launch(cmd,request=r,model=None,task='analysis',experiment='mdb-reader-'+kind+'-audit',payload=run/'payload',gpu=False,
         needs=r['needs'],prefer_host='beast',timeout_s=240,retry_on_kill=False,preflight=True,**resources,
-        note='Saved-only '+kind+' reader audit; full geometry, compact custody plus individual array retriever.0native/model/referenceforwards/images;CPU2/RAM1.5GB;60sestimate/240souter,no retries.')
+        note=('Saved-only commit factorial:48complete commit/I/V comparisons,16NumPy elementwise commit evaluations,28saved RGB consumers.0native/model/learned forwards/new images;CPU2/RAM1.5GB;60sestimate/240souter,no retries; raw arrays stay near data.' if kind=='commit-factorial' else
+            'Saved-only '+kind+' reader audit; full geometry, compact custody.0native/model/learned forwards/new images;CPU2/RAM1.5GB;60sestimate/240souter,no retries.'))
     h['save'](run/'submission.json',dict(job_id=str(job)));return dict(job_id=str(job))
 
 

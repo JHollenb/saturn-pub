@@ -52,15 +52,19 @@ def worker():
         dtype='bfloat16',physical_batch=1,image_size=[512,512],bf16_reduced_reduction=torch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction,
         math_sdpa_allow_reduced_precision=torch.backends.cuda.fp16_bf16_reduction_math_sdp_allowed(),tf32=False,deterministic=True,
         cudnn_deterministic=torch.backends.cudnn.deterministic,cudnn_benchmark=torch.backends.cudnn.benchmark,
-        prediction='Native Flash/linear/LayerNorm/SwiGLU primitives; any earlier prefix blocks are declared in expected_prefix_counts and counted separately before all target suffixes seal.',
-        consumer='Original full native blocks and VAE; selected first-attention port interventions only.'))
+        stochastic_sampling=adapter.scheduler_config['stochastic_sampling'],
+        prediction=('Original Euler multiply/add/cast plus native full-shape x_embedder/LayerNorm/modulation/to_v;16commit/I/V forecasts before hybrid targets.' if c.get('prior_commit') else
+            'Native Flash/linear/LayerNorm/SwiGLU primitives; any earlier prefix blocks are declared in expected_prefix_counts and counted separately before all target suffixes seal.'),
+        consumer=('Actual original scheduler component returns feed typed project-latent Acts; actual native V producers feed selected band at fixed own Q/K/I. Original final-pass blocks and VAE.' if c.get('prior_commit') else
+            'Original full native blocks and VAE; selected first-attention port interventions only.')))
     started=time.monotonic()
     def event(kind,**fields):
         row=dict(kind=kind,seconds=time.monotonic()-started,**fields)
         with (out/'timeline.jsonl').open('a') as f:f.write(json.dumps(row,sort_keys=True)+'\n')
         print('MDB_ROUTE_FUTURE '+json.dumps(row,sort_keys=True),flush=True)
         if row['seconds']>c['max_wall_seconds']:raise RuntimeError('finite native future budget exceeded')
-    if c.get('upstream_receivers'):program=runpy.run_path('flux_reader_upstream.py')
+    if c.get('prior_commit'):program=runpy.run_path('flux_commit_factorial.py')
+    elif c.get('upstream_receivers'):program=runpy.run_path('flux_reader_upstream.py')
     counts=program['run'](pipe=pipe,adapter=adapter,parents=parents,source=source,output=out,config=c,request=req,event=event)
     for name in ('parameter-artifacts.json','retrieve_weights.py','source-binding.json'):shutil.copyfile(name,out/name)
     save(out/'summary.json',dict(schema='mdb-reader-route-future-v1',job_id=os.environ['MRUN_JOB_ID'],request_sha256=req['request_sha256'],

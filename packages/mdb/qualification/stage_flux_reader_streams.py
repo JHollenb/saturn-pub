@@ -22,7 +22,7 @@ def stage(run,fresh,audit,panel='streams',operand_study=None,head_groups=None):
     if jid!=report['source_job']:raise ValueError('fresh audit/request differs')
     root=Path(c['output_scratch'])/jid/'binding-minimal-result';parents=read(evidence/'source-fresh-parents.json')
     code='import json\nfrom pathlib import Path\nr=Path('+repr(str(root))+')\nparents='+repr({r:p['parent'] for r,p in parents.items()})+'\n'
-    if panel=='upstream':code+='parents.update({"initial-"+k:v["initial"] for k,v in json.loads((r/"fresh-parents.json").read_text()).items()})\n'
+    if panel in ('upstream','commit'):code+='parents.update({"initial-"+k:v["initial"] for k,v in json.loads((r/"fresh-parents.json").read_text()).items()})\n'
     code+='''inventory=json.loads((r/'files.json').read_text());names={'prefixes.json','fresh-parents.json','cases.json'}
 prefixes=json.loads((r/'prefixes.json').read_text())['operands']
 for fields in prefixes.values():
@@ -49,7 +49,7 @@ print(json.dumps({n:dict(sha256=inventory[n],bytes=(r/n).stat().st_size) for n i
         scope='Four already observed seed193 color/order parents;8historical base/band2 controls+8new text-only/image-only attention-output futures. Each new split computes native full attention for base and changedKV at identical Q/shape/strides then routes one complete stream. All16local reader forecasts seal before any target block. Native image continuation observed, not numerically predicted.',
         planned_counts=dict(sdpa=12,staged_matmuls=0,staged_softmax=0,linear=48,layernorm=16,swiglu=16,
             native_sdpa=408,native_blocks=400,native_transitions=432,images=16,model_loads=1,encodes=0,noise_draws=0))
-    if panel not in ('streams','kv','value-streams','heads','upstream'):raise ValueError('unknown reader panel')
+    if panel not in ('streams','kv','value-streams','heads','upstream','commit'):raise ValueError('unknown reader panel')
     c['panel']=panel
     if panel=='kv':
         c.update(case_specs=[dict(id='base',kind='base'),dict(id='band2',kind='band-cross',band=2),
@@ -111,10 +111,34 @@ print(json.dumps({n:dict(sha256=inventory[n],bytes=(r/n).stat().st_size) for n i
             scope='Two recipients; honest84-step prefix replay to actual step3/project, then own/opposite-color native latent through typed Act.replace while own conditioning persists. Four projected parents, eight sealed reader forecasts, eight27-step native image suffixes. Opposite V-band restores/transplants form a persistent-latent x mediator square. Four historical own-corner controls; no new encoding/noise or full-image numerical prediction.',
             planned_counts=dict(sdpa=8,staged_matmuls=0,staged_softmax=0,linear=24,layernorm=8,swiglu=8,
                 native_sdpa=350,native_blocks=350,native_transitions=388,images=8,model_loads=1,encodes=0,noise_draws=0,prefix_stops=4,latent_acts=2))
+    if panel=='commit':
+        c['original_source_sha256']={**c['original_source_sha256'],'diffusers/schedulers/scheduling_flow_match_euler_discrete.py':'8b96f25a6170480fb02decb58904e026250d6d68be5de8a7b8785b4c721e9d80'}
+        recipes=read(fresh/'parameter-artifacts.json')['artifacts']
+        names=('x_embedder.weight','transformer_blocks.0.attn.to_v.weight')
+        ancestry={k:c.pop(k) for k in ('source_job','route_screen_job','route_audit_sha256','selected_head') if k in c}
+        c.pop('text_parameters',None)
+        c.update(prior_commit=True,schema='mdb-flux-commit-factorial-plan-v1',source_job=jid,
+            recipe_ancestry=dict(inherited_metadata=ancestry,manifest_sha256=sha(fresh/'parameter-artifacts.json'),source_binding_sha256=sha(fresh/'source-binding.json')),
+            selection=dict(rule='Paired opposite-color carry and current-flow source at both layouts; fixed imageV band512:768. No head selection, encoding or new random state.',source_job=jid,source_audit_sha256=sha(evidence/'audit.json')),
+            forecast_parameter_sha256={a['source']['tensor']:a['source']['payload_sha256'] for a in recipes if a['source']['tensor'] in names},
+            expected_prefix_counts=dict(native_blocks=300,native_sdpa=300,native_transitions=336),
+            case_specs=[dict(id=f'latent-z{z}n{n}') for z,n in ((0,0),(0,1),(1,0),(1,1))]+[dict(id=f'band-z{z}n{n}') for z,n in ((0,1),(1,0),(1,1))],
+            historical_controls={**{r+'.latent-z0n0':r+'.base' for r in parents},**{r+'.band-z1n1':r+'.band2' for r in parents}},
+            semantic_hypotheses=dict(stage='Exploratory carry versus current flow contribution; all16commit/I/V forecasts seal before hybrid component targets.',
+                prediction='Carry-only z1n0 exceeds flow-only z0n1 in signed RGB projection onto z1n1 and in absolute baseline-mask green response, under both whole-latent and V-band-only consumers, for each recipient. Negative green sign expected. Retain every miss.',
+                arithmetic='Original Euler multiply/add/cast, full x_embedder and first image norm/modulation/to_v; original shapes and CUDA/BF16 primitive profile.',
+                controls='Four natural00 own replays and four band11 historical controls. Natural11 arithmetic already observed during source prefixes. New01/10 transplant proximal flow without regenerating it after changing carry.',
+                consumer='Full native final pass versus fixed-own Q/K/I and all-other-V with only imageV rows512:768 transplanted; signed effects, factorial interaction and finite-rounding defects retained.',
+                limitation='Four source contexts, shared seed241. No earlier attention/MLP writer identification, independent floating-point implementation, numerical RGB prediction, or semantic head claim.'),
+            scope='Four honest84-transition prefixes to source Z2/N2 and own Z3.16sealed mathematical commit/I/V forecasts;16original scheduler component checks feeding actual returns into genuine project-latent Acts;16whole-latent plus12actual-produced-V-band native final-pass futures. Original parameters, no encoder/noise/retries.',
+            planned_counts=dict(model_loads=1,encodes=0,noise_draws=0,native_blocks=1000,native_sdpa=1000,native_transitions=1120,
+                mathematical_commits=16,forecast_linear=32,forecast_layernorm=16,native_scheduler_components=16,latent_acts=16,images=28))
+        if set(c['forecast_parameter_sha256'])!=set(names):raise ValueError('missing original commit forecast parameter recipes')
     run.mkdir(parents=True,exist_ok=False);save(run/'plan.json',c)
     extras=[(HERE/n,n) for n in ('flux_reader_route_future.py','flux_reader_routes.py','flux_reader_arithmetic.py','flux_reader_attention.py',
         'flux_source_receiver.py','flux_reentry_reference.py','flux_family_custody.py')]
     if panel=='upstream':extras.extend((HERE/n,n) for n in ('flux_reader_upstream.py','flux_latent_reader.py'))
+    if panel=='commit':extras.extend((HERE/n,n) for n in ('flux_commit_factorial.py','flux_latent_reader.py'))
     for n in ('parameter-artifacts.json','retrieve_weights.py','source-binding.json'):
         shutil.copyfile(fresh/n,run/n);extras.append((run/n,n))
     worker=HERE/'flux_reader_route_future_worker.py';pre=run/'preflight.v1.json'
@@ -127,7 +151,7 @@ print(json.dumps({n:dict(sha256=inventory[n],bytes=(r/n).stat().st_size) for n i
             calibration_job='job-4c4cf4ac3624',measured_peak_rss_mb=8209.8,measured_peak_vram_mb=9264.,
             reason='Same scalar B1/512px model/VAE and16suffixes measured98.26s,8209.8MBRSS/9264MBVRAM. At most8extra attention calls for stream splits; no extra blocks, encoders or weights.9GBRAM/10GBVRAM reserve,150sestimate.'),
         scheduling_contract=one_lease_scheduling_contract(model_loads=1,logical_operations=32,logical_branches=16,logical_checkpoint_replays=16,max_local_work_items=64,
-            checkpoint_policy='One resident model/16sealed predictions then16native suffixes;'+str(c['planned_counts']['sdpa'])+'forecastFlash+48linears,432steps/400blocks/'+str(c['planned_counts']['native_sdpa'])+'nativeSDPA/16VAE;0encodes/noise/retries.8historical controls+8new '+panel+' factorial cases.'))
+            checkpoint_policy='One resident model; declared sealed forecasts before native target suffixes. No encodes/noise/retries; '+panel+' factorial cases.'))
     if panel=='heads':
         n=len(parents)*len(c['case_specs'])
         req['resource_exception'].update(ram_mb=10240,disk_gb=4,est_wall_s=360,reason='Same measured resident B1/512px model/VAE and27-step suffix.44suffixes instead of16; prepared operands are now recipes, not per-case retained KV copies.10GBRAM/VRAM,360s estimate;600s worker/900s outer. No prefix or encoder.')
@@ -137,6 +161,12 @@ print(json.dumps({n:dict(sha256=inventory[n],bytes=(r/n).stat().st_size) for n i
         req['resource_exception'].update(est_wall_s=180,reason='Same measured resident transformer/VAE, two84-step source-prefix replays plus8suffixes,350blocks/8images; no encoder or new noise. Existing9GBRAM/10GBVRAM covers measured scalar geometry.')
         req['scheduling_contract']=one_lease_scheduling_contract(model_loads=1,logical_operations=24,logical_branches=8,logical_checkpoint_replays=8,max_local_work_items=32,
             checkpoint_policy='Two native84-step prefix replays;2typed latent Acts;4projected parents/4pre-attention stops;8sealed forecasts then8suffixes. One model, no encoder/noise/retries.')
+    elif panel=='commit':
+        req['resource_exception'].update(ram_mb=6144,disk_gb=2,est_wall_s=180,
+            calibration_job='job-d521b09f9834',measured_peak_rss_mb=4948.9,measured_peak_vram_mb=9380.,
+            reason='This exact28future geometry measured117.63s scheduler/71.40s experiment,4948.9MBRSS/9380MBVRAM and390MBraw output.6GBRAM/10GBVRAM/2GBdisk,180s estimate;600s worker/900s outer. One model, no encoder or duplicate weights.')
+        req['scheduling_contract']=one_lease_scheduling_contract(model_loads=1,logical_operations=56,logical_branches=28,logical_checkpoint_replays=28,max_local_work_items=84,
+            checkpoint_policy='Four84-transition source prefixes;16sealed commit/I/V forecasts;16original scheduler component checks;16typed project-latent Acts;28native28-transition futures/28VAE.1120navigation steps/1000blocks. One finite lease,0encodes/noise/retries; paired carry x flow and fixed-receiver V-band consumers.')
     req['request_sha256']=hashlib.sha256(json.dumps(req,sort_keys=True,allow_nan=False).encode()).hexdigest();save(run/'request.json',req)
     runpy.run_path(str(HERE/'stage_flux_source_receiver.py'))['bind'](req['execution_environment']);stage_worker(run/'payload',worker=worker,config=c,request=req,additional_files=extras)
     return dict(request_sha256=req['request_sha256'],cases=len(parents)*len(c['case_specs']))
@@ -156,5 +186,5 @@ def submit(run):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('run',type=Path);p.add_argument('--fresh',type=Path);p.add_argument('--audit',type=Path);p.add_argument('--panel',choices=('streams','kv','value-streams','heads','upstream'),default='streams');p.add_argument('--operand-study',type=Path);p.add_argument('--head-groups',help='JSON list of image head lists');p.add_argument('--submit',action='store_true');a=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('run',type=Path);p.add_argument('--fresh',type=Path);p.add_argument('--audit',type=Path);p.add_argument('--panel',choices=('streams','kv','value-streams','heads','upstream','commit'),default='streams');p.add_argument('--operand-study',type=Path);p.add_argument('--head-groups',help='JSON list of image head lists');p.add_argument('--submit',action='store_true');a=p.parse_args()
     print(json.dumps(submit(a.run.resolve()) if a.submit else stage(a.run.resolve(),a.fresh.resolve(),a.audit.resolve(),a.panel,a.operand_study.resolve() if a.operand_study else None,json.loads(a.head_groups) if a.head_groups else None)))

@@ -9,7 +9,7 @@ The [earlier family](FLUX-READER-FAMILIES.md) established a V-band→image-outpu
 route. This work identifies stronger tested head coalitions, retains fresh
 signed-color counterexamples, reconstructs immediate V formation, and connects
 the route to persistent latent state. The earlier writer of that latent remains
-open. This is exploratory evidence, with terminal status unassessed.
+open. The [subsequent commit factorial](FLUX-COMMIT-FACTORIAL.md) separates incoming carry from the current flow contribution and retains a failed carry-dominance prediction. This is exploratory evidence, with terminal status unassessed.
 
 ## Completed panels
 
