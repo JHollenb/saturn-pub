@@ -165,9 +165,10 @@ endpoints and twelve local tensor contrasts, not twenty independent trials or
 final forecasts. Applicability predicates are supplied; family induction is open.
 
 [Complete accounts](assets/flux-single-writers-accounts-20261106.json) retain
-both streams, all corners and counter-trends. The remaining frontier is H/M
-formation from earlier state. The next major candidate composes a complete pass
-from a latent/project cut, without refreshing any intermediate operand from
-native execution. Original kernels remain explicit primitives; this would be
-independently orchestrated original-weight computation, not independent CUDA
-kernel implementation or raw-prompt-to-image coverage.
+both streams, all corners and counter-trends. The [complete functional
+pass](FLUX-FUNCTIONAL-PASS.md) now forms H/M and every other working field from
+the latent/project boundary without intermediate refresh. Four 28-transition
+paths match native bitwise and reach actual next-project consumers. Original
+kernels remain explicit primitives; independently orchestrated computation does
+not establish independent CUDA kernels or raw-prompt-to-image coverage. The next
+frontier is the remaining schedule from the sealed predicted commits.
