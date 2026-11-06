@@ -128,8 +128,8 @@ python -I qualification/recover_flux_directory.py AUDIT COMPACT_COLLECTION
 ```
 
 [Complete numerical accounts](assets/flux-single-stack-accounts-20261106.json)
-retain every boundary and normalization. The next causal cut crosses sham/own
-attention features with sham/own activated MLP features at **both** HH and HL
-block18 recipients, then consumes each output through original single19.
-Corner00 retains its recipient's residual and is not sham. Corner11 must be
-compared with the native own-state exit. No attention/MLP winner is assumed.
+retain every boundary and normalization. The [completed paired writer cut](FLUX-SINGLE-WRITERS.md)
+crosses sham/own attention features with sham/own activated MLP features at both
+HH and HL block18 recipients, then consumes each output through single19.
+Joint restoration reduces additional selective image growth, eight local
+forecasts are exact, and the H/M ranking changes after the next consumer.
