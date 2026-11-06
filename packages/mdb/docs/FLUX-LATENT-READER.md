@@ -251,6 +251,8 @@ from carried approximations. On identical operands, output-projection and MLP
 output-matrix arithmetic retain large errors on the small K/V effects; local
 residual, modulation and SwiGLU equations match exactly. Changing CUDA
 reduction policy moves the two matrix effects closer to the FP64 reference.
-Those are known-input diagnostics, not new prospective predictions. The next
-cut isolates attention arithmetic on fixed Q/K/V before testing the complete
-reader on fresh states and localizing head/row-specific value transport.
+Those are known-input diagnostics, not new prospective predictions. The
+[attention follow-up](FLUX-READER-ATTENTION.md) now reproduces the calculated
+head and complete text tail exactly from fixed Q/K/V in all eight cases.
+Head/row-specific value transport and fresh-state reader predictions remain
+the next causal and generalization questions.

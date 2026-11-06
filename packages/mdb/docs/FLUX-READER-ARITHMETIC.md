@@ -190,14 +190,15 @@ scientific null or generic evidence-plane certification.
 
 ## The next cut
 
-Hold the captured Q/K/V operands fixed and compare the original native
-attention path with the independent attention equation at its first differing
-boundary. Preserve full geometry and signed K/V effects, and record the
-selected attention implementation and reduction flags before execution.
-Then feed its own predicted head through the already qualified native tail.
-Only after that local account closes should fresh states receive sealed
-end-to-end reader predictions. Actual target heads or residuals must remain
-diagnostic controls rather than inputs to those predictions.
+The [attention follow-up](FLUX-READER-ATTENTION.md) now calculates the head
+from captured Q/K/V and reproduces all eight original reader states exactly
+through the native tail. Automatic/forced-Flash kernels match; forced-math
+and explicit FP32 programs retain head-effect discrepancies that grow through
+the tail. Query-shape controls also match exactly. This closes the tested
+reader at native-primitive granularity, not the internal arithmetic of the
+Flash kernel or fresh-state generalization. Head/row-specific route tests can
+now use this exact consumer, followed by native future validation and sealed
+predictions on new states.
 
 ## Execution and reproduction
 
