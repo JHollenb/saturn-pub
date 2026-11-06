@@ -166,6 +166,13 @@ the resulting head return through the receiving projection/MLP then localizes
 the remaining error. Such forecasts start at an observed Q/K/V frontier; they
 must remain distinct from raw-state forecasts.
 
+The later [source-by-receiver campaign](FLUX-SOURCE-RECEIVER.md) follows a
+larger natural working-text contrast across fifty transitions and the next
+denoising pass. It verifies text-to-image-to-latent-to-text transport in two
+contexts and retains 23% signed latent-effect prediction errors. That result
+adds a temporal mechanism; it does not resolve this CPU micro-effect precision
+gap or establish a portable semantic color operation.
+
 ## What goes into the symbol table
 
 The supported structural record is a stream-local prefix feeding a joint read
