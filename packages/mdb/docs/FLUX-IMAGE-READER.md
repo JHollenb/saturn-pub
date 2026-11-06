@@ -123,8 +123,8 @@ persistent pretrained parameter bank was added.
 
 This result establishes prospective conditional primitive composition for one
 new synthetic register. The prior independent-equation errors remain unchanged.
-The next mechanism cut crosses image Q from sham/midpoint with each complete
-K/V bank, keeping midpoint residual/modulation fixed in every tail. Two mixed
-heads are new; preserve signed interaction and normalize against the full-head
-change at that same fixed residual. No suffix or VAE is required to distinguish
-query dependence from bank dependence at this boundary.
+The [completed query/bank cut](FLUX-IMAGE-QUERY-BANK.md) crosses image Q from
+sham/midpoint with each complete K/V bank at fixed midpoint residual/modulation.
+All four forecasts and36 primitive ports match exactly. Both changing queries
+and changing the bank matter, with a large, strongly cancelling interaction.
+The next cut localizes native HH amplification through the single stack.

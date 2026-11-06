@@ -1,0 +1,2444 @@
+{
+  "auditor_sha256": "762b164d404adb3f19b2e267b607ca5d5f4c2a4af6e59c2246a68d3aaa5247ca",
+  "consumed_operand_fidelity": {
+    "q0-b0": {
+      "k": {
+        "actual_rms": 1.196647364551029,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.196647364551029,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "q": {
+        "actual_rms": 1.2257530382605701,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.2257530382605701,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "v": {
+        "actual_rms": 6.554273140709956,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 6.554273140709956,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      }
+    },
+    "q0-b1": {
+      "k": {
+        "actual_rms": 1.1966463508438439,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.1966463508438439,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "q": {
+        "actual_rms": 1.2257530382605701,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.2257530382605701,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "v": {
+        "actual_rms": 6.5543312557875915,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0000000000000002,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 6.5543312557875915,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      }
+    },
+    "q1-b0": {
+      "k": {
+        "actual_rms": 1.196647364551029,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.196647364551029,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "q": {
+        "actual_rms": 1.2257522154485385,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.2257522154485385,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "v": {
+        "actual_rms": 6.554273140709956,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 6.554273140709956,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      }
+    },
+    "q1-b1": {
+      "k": {
+        "actual_rms": 1.1966463508438439,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.1966463508438439,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "q": {
+        "actual_rms": 1.2257522154485385,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.2257522154485385,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "v": {
+        "actual_rms": 6.5543312557875915,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0000000000000002,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 6.5543312557875915,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      }
+    }
+  },
+  "errors": {
+    "q0-b0": {
+      "actual_rms": 1.78871726800995,
+      "bitwise_fp32_widening_exact": true,
+      "changed_widened_value_bits": 0,
+      "cosine": 0.9999999999999998,
+      "exact": true,
+      "exact_fraction": 1.0,
+      "max_abs": 0.0,
+      "mean_signed": 0.0,
+      "predicted_rms": 1.78871726800995,
+      "relative_to_actual_rms": 0.0,
+      "rms": 0.0
+    },
+    "q0-b1": {
+      "actual_rms": 1.7884534872679556,
+      "bitwise_fp32_widening_exact": true,
+      "changed_widened_value_bits": 0,
+      "cosine": 1.0,
+      "exact": true,
+      "exact_fraction": 1.0,
+      "max_abs": 0.0,
+      "mean_signed": 0.0,
+      "predicted_rms": 1.7884534872679556,
+      "relative_to_actual_rms": 0.0,
+      "rms": 0.0
+    },
+    "q1-b0": {
+      "actual_rms": 1.7887037437448101,
+      "bitwise_fp32_widening_exact": true,
+      "changed_widened_value_bits": 0,
+      "cosine": 0.9999999999999998,
+      "exact": true,
+      "exact_fraction": 1.0,
+      "max_abs": 0.0,
+      "mean_signed": 0.0,
+      "predicted_rms": 1.7887037437448101,
+      "relative_to_actual_rms": 0.0,
+      "rms": 0.0
+    },
+    "q1-b1": {
+      "actual_rms": 1.7883814696998186,
+      "bitwise_fp32_widening_exact": true,
+      "changed_widened_value_bits": 0,
+      "cosine": 1.0,
+      "exact": true,
+      "exact_fraction": 1.0,
+      "max_abs": 0.0,
+      "mean_signed": 0.0,
+      "predicted_rms": 1.7883814696998186,
+      "relative_to_actual_rms": 0.0,
+      "rms": 0.0
+    }
+  },
+  "forecast_counts": {
+    "layernorm": 4,
+    "linear": 12,
+    "native_attention": 4,
+    "swiglu": 4
+  },
+  "forecast_seal_sha256": "6651e2a58702cd12a6318957aa1d38407392ce29b5cd3b2ec262e23e80b7b4e8",
+  "job": "job-1a4550b46598",
+  "limitations": [
+    "One fixed synthetic midpoint recipient and two known positioned-QKV source banks.",
+    "Conditional native primitives, not independent Flash/GEMM implementation.",
+    "No raw-prompt, suffix, VAE or semantic claim; effects are not causal shares."
+  ],
+  "mechanics_status": "authenticated-full-array-audit",
+  "metric_orientation": "native minus predicted; finite contrasts follow named case ordering",
+  "native_contract": {
+    "backend": null,
+    "bank": "complete coupled K/V text+image bank",
+    "deterministic": true,
+    "device": "cuda",
+    "dtype": "torch.bfloat16",
+    "intervention": "dispatch inputs only; original SDPA return is not replaced; no fabricated Act receipt",
+    "parallel_config": "None",
+    "processor": "Flux2AttnProcessor",
+    "query_geometry": "full original text+image rows",
+    "recipient": "same midpoint image/residual/modulation/text/RoPE/clock for every branch",
+    "source_reduction_policy": true,
+    "tf32": false
+  },
+  "native_manifest_sha256": "b7e673bfdb61951e1526293fe51cf75e7225aa05a16a1c40cc7c91c6bb120b50",
+  "native_request_sha256": "aa8e04ccc1827d13c704d251f0e43f23c5b59adc4a6f850c6a1286a2b0606280",
+  "new_model_calls": 0,
+  "new_reference_forward_calls": 0,
+  "port_errors": {
+    "q0-b0": {
+      "activation": {
+        "actual_rms": 0.24460131682445932,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.24460131682445932,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "after_attention": {
+        "actual_rms": 1.3359665513658818,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.3359665513658818,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "head": {
+        "actual_rms": 3.3377869039571437,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999998,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 3.3377869039571437,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "image": {
+        "actual_rms": 1.78871726800995,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999998,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.78871726800995,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "mlp": {
+        "actual_rms": 0.9740175542514267,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0000000000000002,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.9740175542514267,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "mlp_input": {
+        "actual_rms": 0.33984855329684965,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.33984855329684965,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "norm": {
+        "actual_rms": 0.9999659338969541,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.9999659338969541,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "paired": {
+        "actual_rms": 0.9065118435716614,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.9065118435716614,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "projection": {
+        "actual_rms": 3.6992428431065343,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 3.6992428431065343,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      }
+    },
+    "q0-b1": {
+      "activation": {
+        "actual_rms": 0.24456319524031747,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999998,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.24456319524031747,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "after_attention": {
+        "actual_rms": 1.3359670637471328,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0000000000000002,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.3359670637471328,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "head": {
+        "actual_rms": 3.3379017322152555,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 3.3379017322152555,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "image": {
+        "actual_rms": 1.7884534872679556,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.7884534872679556,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "mlp": {
+        "actual_rms": 0.973930951583498,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.973930951583498,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "mlp_input": {
+        "actual_rms": 0.33984871953640045,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.33984871953640045,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "norm": {
+        "actual_rms": 0.9999942467629976,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.9999942467629976,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "paired": {
+        "actual_rms": 0.906514353964984,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.906514353964984,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "projection": {
+        "actual_rms": 3.6993051845580536,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 3.6993051845580536,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      }
+    },
+    "q1-b0": {
+      "activation": {
+        "actual_rms": 0.24458073061738145,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999998,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.24458073061738145,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "after_attention": {
+        "actual_rms": 1.3359818763832634,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0000000000000002,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.3359818763832634,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "head": {
+        "actual_rms": 3.3377746215310835,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999998,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 3.3377746215310835,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "image": {
+        "actual_rms": 1.7887037437448101,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999998,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.7887037437448101,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "mlp": {
+        "actual_rms": 0.9739714195583749,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.9739714195583749,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "mlp_input": {
+        "actual_rms": 0.33984304116982195,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0000000000000002,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.33984304116982195,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "norm": {
+        "actual_rms": 0.9999856560466364,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.9999856560466364,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "paired": {
+        "actual_rms": 0.9064937317407658,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.9064937317407658,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "projection": {
+        "actual_rms": 3.6992382752182817,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 3.6992382752182817,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      }
+    },
+    "q1-b1": {
+      "activation": {
+        "actual_rms": 0.24455376769930912,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.24455376769930912,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "after_attention": {
+        "actual_rms": 1.33596050924864,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0000000000000002,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.33596050924864,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "head": {
+        "actual_rms": 3.3378983299389136,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 3.3378983299389136,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "image": {
+        "actual_rms": 1.7883814696998186,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.7883814696998186,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "mlp": {
+        "actual_rms": 0.9739051961181394,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0000000000000002,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.9739051961181394,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "mlp_input": {
+        "actual_rms": 0.3398467375899752,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.3398467375899752,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "norm": {
+        "actual_rms": 0.9999752704728808,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.9999752704728808,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "paired": {
+        "actual_rms": 0.9064993864617844,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0000000000000002,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.9064993864617844,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "projection": {
+        "actual_rms": 3.6993046568854027,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0000000000000002,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 3.6993046568854027,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      }
+    }
+  },
+  "predeclared_expectations": {
+    "controls": "00 at midpoint residual should replay the earlier fixed-sham-head prediction;11 should replay the earlier midpoint native image. 00 is not a historical sham block.",
+    "exploratory": "Relative query/bank effects, their sign, interaction and downstream roles are not assumed; preserve all signed values without a dominance gate.",
+    "numerical": "All four complete image-write forecasts and their signed contrasts should have exact value equality under original-policy native primitives; retain misses.",
+    "text_separation": "The two source text-Q portions are unchanged; at each fixed bank, changing image Q alone should leave the current block text exit exactly unchanged."
+  },
+  "query_only_text_exits": {
+    "bank0": {
+      "actual_rms": 26.295088668457673,
+      "bitwise_fp32_widening_exact": true,
+      "changed_widened_value_bits": 0,
+      "cosine": 1.0,
+      "exact": true,
+      "exact_fraction": 1.0,
+      "max_abs": 0.0,
+      "mean_signed": 0.0,
+      "predicted_rms": 26.295088668457673,
+      "relative_to_actual_rms": 0.0,
+      "rms": 0.0
+    },
+    "bank1": {
+      "actual_rms": 26.295168084210935,
+      "bitwise_fp32_widening_exact": true,
+      "changed_widened_value_bits": 0,
+      "cosine": 1.0,
+      "exact": true,
+      "exact_fraction": 1.0,
+      "max_abs": 0.0,
+      "mean_signed": 0.0,
+      "predicted_rms": 26.295168084210935,
+      "relative_to_actual_rms": 0.0,
+      "rms": 0.0
+    }
+  },
+  "receiving_qkv_replay": {
+    "q0-b0": {
+      "k": {
+        "actual_rms": 1.1966463508438439,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.1966463508438439,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "q": {
+        "actual_rms": 1.2257522154485385,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.2257522154485385,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "v": {
+        "actual_rms": 6.5543312557875915,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0000000000000002,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 6.5543312557875915,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      }
+    },
+    "q0-b1": {
+      "k": {
+        "actual_rms": 1.1966463508438439,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.1966463508438439,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "q": {
+        "actual_rms": 1.2257522154485385,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.2257522154485385,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "v": {
+        "actual_rms": 6.5543312557875915,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0000000000000002,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 6.5543312557875915,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      }
+    },
+    "q1-b0": {
+      "k": {
+        "actual_rms": 1.1966463508438439,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.1966463508438439,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "q": {
+        "actual_rms": 1.2257522154485385,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.2257522154485385,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "v": {
+        "actual_rms": 6.5543312557875915,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0000000000000002,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 6.5543312557875915,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      }
+    },
+    "q1-b1": {
+      "k": {
+        "actual_rms": 1.1966463508438439,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.1966463508438439,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "q": {
+        "actual_rms": 1.2257522154485385,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 1.2257522154485385,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "v": {
+        "actual_rms": 6.5543312557875915,
+        "bitwise_fp32_widening_exact": true,
+        "changed_widened_value_bits": 0,
+        "cosine": 1.0000000000000002,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 6.5543312557875915,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      }
+    }
+  },
+  "recipient_cut": "97abb5f3f65c66503633235e03c29a035591ff7b4cd1091c9f49fb1a580eebcc",
+  "responses": {
+    "activation": {
+      "contrasts": {
+        "bank_at_query0": {
+          "comparison": {
+            "actual_rms": 0.0019719133986327085,
+            "cosine": 0.9999999999999998,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.0019719133986327085,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.375,
+          "native_relative_to_total_rms": 0.9302498651173476,
+          "native_rms": 0.0019719133986327085,
+          "native_signed_mean": -1.0023044905938551e-06,
+          "predicted_rms": 0.0019719133986327085,
+          "signed_projection_onto_total": 0.6016621556300226
+        },
+        "bank_at_query1": {
+          "comparison": {
+            "actual_rms": 0.0019396418065088096,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.0019396418065088096,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.3125,
+          "native_relative_to_total_rms": 0.9150257461265264,
+          "native_rms": 0.0019396418065088096,
+          "native_signed_mean": -1.6237536270850993e-06,
+          "predicted_rms": 0.0019396418065088096,
+          "signed_projection_onto_total": 0.5836518073698224
+        },
+        "interaction": {
+          "comparison": {
+            "actual_rms": 0.002170438936045996,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.002170438936045996,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.375,
+          "native_relative_to_total_rms": 1.0239042591333893,
+          "native_rms": 0.002170438936045996,
+          "native_signed_mean": -6.214491364912442e-07,
+          "predicted_rms": 0.002170438936045996,
+          "signed_projection_onto_total": -0.018010348260200253
+        },
+        "query_at_bank0": {
+          "comparison": {
+            "actual_rms": 0.0017350636630900473,
+            "cosine": 1.0000000000000002,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.0017350636630900473,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.375,
+          "native_relative_to_total_rms": 0.8185160360889467,
+          "native_rms": 0.0017350636630900473,
+          "native_signed_mean": 6.186741437309735e-07,
+          "predicted_rms": 0.0017350636630900473,
+          "signed_projection_onto_total": 0.41634819263017786
+        },
+        "query_at_bank1": {
+          "comparison": {
+            "actual_rms": 0.0017247672664003637,
+            "cosine": 1.0000000000000002,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.0017247672664003637,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.25,
+          "native_relative_to_total_rms": 0.8136587124162061,
+          "native_rms": 0.0017247672664003637,
+          "native_signed_mean": -2.7749927602707363e-09,
+          "predicted_rms": 0.0017247672664003637,
+          "signed_projection_onto_total": 0.3983378443699776
+        },
+        "total": {
+          "comparison": {
+            "actual_rms": 0.0021197674652540357,
+            "cosine": 0.9999999999999998,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.0021197674652540357,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.375,
+          "native_relative_to_total_rms": 1.0,
+          "native_rms": 0.0021197674652540357,
+          "native_signed_mean": -1.0050794833541258e-06,
+          "predicted_rms": 0.0021197674652540357,
+          "signed_projection_onto_total": 1.0
+        }
+      },
+      "denominator": "Y11-Y00 at fixed midpoint recipient",
+      "native_total_rms": 0.0021197674652540357,
+      "scope": "Signed finite contrasts; magnitudes and projections are not independent causal shares.",
+      "square": {
+        "closure_rms": 0.0,
+        "energy_sum": 42.405175713590836,
+        "signed_cross_terms": {
+          "bank_at_query0__interaction": -45.64801091355987,
+          "query_at_bank0__bank_at_query0": 23.283295992633867,
+          "query_at_bank0__interaction": -44.79292350293995
+        },
+        "term_squared_l2": {
+          "bank_at_query0": 36.69594689017195,
+          "interaction": 44.456735225613144,
+          "query_at_bank0": 28.410132021671707
+        },
+        "total_squared_l2": 42.40517571359085
+      }
+    },
+    "after_attention": {
+      "contrasts": {
+        "bank_at_query0": {
+          "comparison": {
+            "actual_rms": 0.0050302686238416034,
+            "cosine": 0.9999999999999998,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.0050302686238416034,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.5,
+          "native_relative_to_total_rms": 0.9378820407528791,
+          "native_rms": 0.0050302686238416034,
+          "native_signed_mean": -4.0521226765122265e-06,
+          "predicted_rms": 0.0050302686238416034,
+          "signed_projection_onto_total": 0.6214138926254348
+        },
+        "bank_at_query1": {
+          "comparison": {
+            "actual_rms": 0.004958599718599597,
+            "cosine": 1.0000000000000002,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.004958599718599597,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.5,
+          "native_relative_to_total_rms": 0.9245195378463118,
+          "native_rms": 0.004958599718599597,
+          "native_signed_mean": -3.291622097852572e-06,
+          "predicted_rms": 0.004958599718599597,
+          "signed_projection_onto_total": 0.6099183603866698
+        },
+        "interaction": {
+          "comparison": {
+            "actual_rms": 0.00541344660509286,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.00541344660509286,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 1.0,
+          "native_relative_to_total_rms": 1.0093246959868738,
+          "native_rms": 0.00541344660509286,
+          "native_signed_mean": 7.605005786596545e-07,
+          "predicted_rms": 0.00541344660509286,
+          "signed_projection_onto_total": -0.011495532238764913
+        },
+        "query_at_bank0": {
+          "comparison": {
+            "actual_rms": 0.004273616067201617,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.004273616067201617,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.5,
+          "native_relative_to_total_rms": 0.7968059080392278,
+          "native_rms": 0.004273616067201617,
+          "native_signed_mean": 1.7632852783814694e-06,
+          "predicted_rms": 0.004273616067201617,
+          "signed_projection_onto_total": 0.39008163961333014
+        },
+        "query_at_bank1": {
+          "comparison": {
+            "actual_rms": 0.004279990044512751,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.004279990044512751,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.5,
+          "native_relative_to_total_rms": 0.7979943214809962,
+          "native_rms": 0.004279990044512751,
+          "native_signed_mean": 2.523785857041124e-06,
+          "predicted_rms": 0.004279990044512751,
+          "signed_projection_onto_total": 0.3785861073745652
+        },
+        "total": {
+          "comparison": {
+            "actual_rms": 0.005363434211623869,
+            "cosine": 0.9999999999999999,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.005363434211623869,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.5,
+          "native_relative_to_total_rms": 1.0,
+          "native_rms": 0.005363434211623869,
+          "native_signed_mean": -1.5283368194711027e-06,
+          "predicted_rms": 0.005363434211623869,
+          "signed_projection_onto_total": 1.0
+        }
+      },
+      "denominator": "Y11-Y00 at fixed midpoint recipient",
+      "native_total_rms": 0.005363434211623869,
+      "scope": "Signed finite contrasts; magnitudes and projections are not independent causal shares.",
+      "square": {
+        "closure_rms": 0.0,
+        "energy_sum": 90.49135343442546,
+        "signed_cross_terms": {
+          "bank_at_query0__interaction": -94.4388295514675,
+          "query_at_bank0__bank_at_query0": 47.70749660743968,
+          "query_at_bank0__interaction": -92.01532373798318
+        },
+        "term_squared_l2": {
+          "bank_at_query0": 79.59825065864425,
+          "interaction": 92.18683037399043,
+          "query_at_bank0": 57.45292908380179
+        },
+        "total_squared_l2": 90.49135343442546
+      }
+    },
+    "head": {
+      "contrasts": {
+        "bank_at_query0": {
+          "comparison": {
+            "actual_rms": 0.008135213994735251,
+            "cosine": 1.0000000000000002,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.008135213994735251,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.1875,
+          "native_relative_to_total_rms": 0.9177981795533643,
+          "native_rms": 0.008135213994735251,
+          "native_signed_mean": -5.325001752728061e-06,
+          "predicted_rms": 0.008135213994735251,
+          "signed_projection_onto_total": 0.7398475918330524
+        },
+        "bank_at_query1": {
+          "comparison": {
+            "actual_rms": 0.008135407765383615,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.008135407765383615,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.1875,
+          "native_relative_to_total_rms": 0.9178200403610128,
+          "native_rms": 0.008135407765383615,
+          "native_signed_mean": -5.918156076016127e-06,
+          "predicted_rms": 0.008135407765383615,
+          "signed_projection_onto_total": 0.7385545509452753
+        },
+        "interaction": {
+          "comparison": {
+            "actual_rms": 0.005671312794046233,
+            "cosine": 1.0000000000000002,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.005671312794046233,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.25,
+          "native_relative_to_total_rms": 0.639825892892536,
+          "native_rms": 0.005671312794046233,
+          "native_signed_mean": -5.931543232880662e-07,
+          "predicted_rms": 0.005671312794046233,
+          "signed_projection_onto_total": -0.001293040887777009
+        },
+        "query_at_bank0": {
+          "comparison": {
+            "actual_rms": 0.005357194647806536,
+            "cosine": 1.0000000000000002,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.005357194647806536,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.171875,
+          "native_relative_to_total_rms": 0.6043877270409622,
+          "native_rms": 0.005357194647806536,
+          "native_signed_mean": 4.229170100937078e-06,
+          "predicted_rms": 0.005357194647806536,
+          "signed_projection_onto_total": 0.26144544905472455
+        },
+        "query_at_bank1": {
+          "comparison": {
+            "actual_rms": 0.0053379021575903915,
+            "cosine": 0.9999999999999999,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.0053379021575903915,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.171875,
+          "native_relative_to_total_rms": 0.6022111878115225,
+          "native_rms": 0.0053379021575903915,
+          "native_signed_mean": 3.636015777649012e-06,
+          "predicted_rms": 0.0053379021575903915,
+          "signed_projection_onto_total": 0.26015240816694757
+        },
+        "total": {
+          "comparison": {
+            "actual_rms": 0.008863837579950483,
+            "cosine": 0.9999999999999999,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.008863837579950483,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.1875,
+          "native_relative_to_total_rms": 1.0,
+          "native_rms": 0.008863837579950483,
+          "native_signed_mean": -1.6889859750790492e-06,
+          "predicted_rms": 0.008863837579950483,
+          "signed_projection_onto_total": 1.0
+        }
+      },
+      "denominator": "Y11-Y00 at fixed midpoint recipient",
+      "native_total_rms": 0.008863837579950483,
+      "scope": "Signed finite contrasts; magnitudes and projections are not independent causal shares.",
+      "square": {
+        "closure_rms": 0.0,
+        "energy_sum": 247.1523515694866,
+        "signed_cross_terms": {
+          "bank_at_query0__interaction": -101.16861328564343,
+          "query_at_bank0__bank_at_query0": 50.499461574293655,
+          "query_at_bank0__interaction": -101.82760498480964
+        },
+        "term_squared_l2": {
+          "bank_at_query0": 208.1896479802355,
+          "interaction": 101.17853103913694,
+          "query_at_bank0": 90.28092924627359
+        },
+        "total_squared_l2": 247.15235156948663
+      }
+    },
+    "image": {
+      "contrasts": {
+        "bank_at_query0": {
+          "comparison": {
+            "actual_rms": 0.009150301026425084,
+            "cosine": 1.0000000000000002,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.009150301026425084,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 1.0,
+          "native_relative_to_total_rms": 0.9380566077325364,
+          "native_rms": 0.009150301026425084,
+          "native_signed_mean": 4.405425139945389e-06,
+          "predicted_rms": 0.009150301026425084,
+          "signed_projection_onto_total": 0.5830408491904642
+        },
+        "bank_at_query1": {
+          "comparison": {
+            "actual_rms": 0.009053174578593991,
+            "cosine": 1.0000000000000002,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.009053174578593991,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 1.5,
+          "native_relative_to_total_rms": 0.9280995466576679,
+          "native_rms": 0.009053174578593991,
+          "native_signed_mean": 3.0270575734903105e-06,
+          "predicted_rms": 0.009053174578593991,
+          "signed_projection_onto_total": 0.575375662571316
+        },
+        "interaction": {
+          "comparison": {
+            "actual_rms": 0.010652697201051954,
+            "cosine": 0.9999999999999999,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.010652697201051954,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 1.0,
+          "native_relative_to_total_rms": 1.0920769678246056,
+          "native_rms": 0.010652697201051954,
+          "native_signed_mean": -1.378367566455078e-06,
+          "predicted_rms": 0.010652697201051954,
+          "signed_projection_onto_total": -0.007665186619148174
+        },
+        "query_at_bank0": {
+          "comparison": {
+            "actual_rms": 0.00822288594827966,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.00822288594827966,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 1.0,
+          "native_relative_to_total_rms": 0.8429812829259833,
+          "native_rms": 0.00822288594827966,
+          "native_signed_mean": -3.268587533966638e-07,
+          "predicted_rms": 0.00822288594827966,
+          "signed_projection_onto_total": 0.42462433742868394
+        },
+        "query_at_bank1": {
+          "comparison": {
+            "actual_rms": 0.008241674235688678,
+            "cosine": 0.9999999999999999,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.008241674235688678,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 1.0,
+          "native_relative_to_total_rms": 0.8449073919251419,
+          "native_rms": 0.008241674235688678,
+          "native_signed_mean": -1.7052263198517419e-06,
+          "predicted_rms": 0.008241674235688678,
+          "signed_projection_onto_total": 0.4169591508095358
+        },
+        "total": {
+          "comparison": {
+            "actual_rms": 0.009754529685093445,
+            "cosine": 0.9999999999999998,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.009754529685093445,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 1.5,
+          "native_relative_to_total_rms": 1.0,
+          "native_rms": 0.009754529685093445,
+          "native_signed_mean": 2.7001988200936466e-06,
+          "predicted_rms": 0.009754529685093445,
+          "signed_projection_onto_total": 1.0
+        }
+      },
+      "denominator": "Y11-Y00 at fixed midpoint recipient",
+      "native_total_rms": 0.009754529685093445,
+      "scope": "Signed finite contrasts; magnitudes and projections are not independent causal shares.",
+      "square": {
+        "closure_rms": 0.0,
+        "energy_sum": 299.31869111017295,
+        "signed_cross_terms": {
+          "bank_at_query0__interaction": -362.538849788742,
+          "query_at_bank0__bank_at_query0": 184.79781367603573,
+          "query_at_bank0__interaction": -356.0039779459421
+        },
+        "term_squared_l2": {
+          "bank_at_query0": 263.38554189980664,
+          "interaction": 356.9770802413834,
+          "query_at_bank0": 212.70108302763128
+        },
+        "total_squared_l2": 299.31869111017295
+      }
+    },
+    "mlp": {
+      "contrasts": {
+        "bank_at_query0": {
+          "comparison": {
+            "actual_rms": 0.006477533280496748,
+            "cosine": 0.9999999999999998,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.006477533280496748,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.09375,
+          "native_relative_to_total_rms": 0.9357597892880318,
+          "native_rms": 0.006477533280496748,
+          "native_signed_mean": -4.874215306926999e-07,
+          "predicted_rms": 0.006477533280496748,
+          "signed_projection_onto_total": 0.5809844037476846
+        },
+        "bank_at_query1": {
+          "comparison": {
+            "actual_rms": 0.006367339955808778,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.006367339955808778,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.125,
+          "native_relative_to_total_rms": 0.9198410007884914,
+          "native_rms": 0.006367339955808778,
+          "native_signed_mean": -1.1989463235551057e-05,
+          "predicted_rms": 0.006367339955808778,
+          "signed_projection_onto_total": 0.5608588752549323
+        },
+        "interaction": {
+          "comparison": {
+            "actual_rms": 0.007507341344780351,
+            "cosine": 0.9999999999999999,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.007507341344780351,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.15625,
+          "native_relative_to_total_rms": 1.0845282996934682,
+          "native_rms": 0.007507341344780351,
+          "native_signed_mean": -1.1502041704858357e-05,
+          "predicted_rms": 0.007507341344780351,
+          "signed_projection_onto_total": -0.020125528492752325
+        },
+        "query_at_bank0": {
+          "comparison": {
+            "actual_rms": 0.005891575018573395,
+            "cosine": 0.9999999999999999,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.005891575018573395,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.125,
+          "native_relative_to_total_rms": 0.8511108718737582,
+          "native_rms": 0.005891575018573395,
+          "native_signed_mean": 7.3555882214767126e-06,
+          "predicted_rms": 0.005891575018573395,
+          "signed_projection_onto_total": 0.4391411247450678
+        },
+        "query_at_bank1": {
+          "comparison": {
+            "actual_rms": 0.005847851012796717,
+            "cosine": 1.0000000000000002,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.005847851012796717,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.09375,
+          "native_relative_to_total_rms": 0.8447943985094909,
+          "native_rms": 0.005847851012796717,
+          "native_signed_mean": -4.146453483381644e-06,
+          "predicted_rms": 0.005847851012796717,
+          "signed_projection_onto_total": 0.4190155962523155
+        },
+        "total": {
+          "comparison": {
+            "actual_rms": 0.006922218025018094,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.006922218025018094,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.125,
+          "native_relative_to_total_rms": 1.0,
+          "native_rms": 0.006922218025018094,
+          "native_signed_mean": -4.633875014074344e-06,
+          "predicted_rms": 0.006922218025018094,
+          "signed_projection_onto_total": 1.0
+        }
+      },
+      "denominator": "Y11-Y00 at fixed midpoint recipient",
+      "native_total_rms": 0.006922218025018094,
+      "scope": "Signed finite contrasts; magnitudes and projections are not independent causal shares.",
+      "square": {
+        "closure_rms": 0.0,
+        "energy_sum": 150.7341706541465,
+        "signed_cross_terms": {
+          "bank_at_query0__interaction": -181.74630173077134,
+          "query_at_bank0__bank_at_query0": 92.9150435240779,
+          "query_at_bank0__interaction": -178.9084632570678
+        },
+        "term_squared_l2": {
+          "bank_at_query0": 131.98983136524777,
+          "interaction": 177.29377764758817,
+          "query_at_bank0": 109.19028310507184
+        },
+        "total_squared_l2": 150.7341706541465
+      }
+    },
+    "mlp_input": {
+      "contrasts": {
+        "bank_at_query0": {
+          "comparison": {
+            "actual_rms": 0.0021519451126441403,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.0021519451126441403,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.0625,
+          "native_relative_to_total_rms": 0.942507103871027,
+          "native_rms": 0.0021519451126441403,
+          "native_signed_mean": -2.190973191318335e-06,
+          "predicted_rms": 0.0021519451126441403,
+          "signed_projection_onto_total": 0.6218759767539473
+        },
+        "bank_at_query1": {
+          "comparison": {
+            "actual_rms": 0.0021413207033694676,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.0021413207033694676,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.0625,
+          "native_relative_to_total_rms": 0.9378538340655028,
+          "native_rms": 0.0021413207033694676,
+          "native_signed_mean": -1.5948648600290956e-06,
+          "predicted_rms": 0.0021413207033694676,
+          "signed_projection_onto_total": 0.6165053135334904
+        },
+        "interaction": {
+          "comparison": {
+            "actual_rms": 0.002354026681386665,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.002354026681386665,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.125,
+          "native_relative_to_total_rms": 1.0310146187616853,
+          "native_rms": 0.002354026681386665,
+          "native_signed_mean": 5.961083312892393e-07,
+          "predicted_rms": 0.002354026681386665,
+          "signed_projection_onto_total": -0.005370663220456993
+        },
+        "query_at_bank0": {
+          "comparison": {
+            "actual_rms": 0.0018359070996283187,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.0018359070996283187,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.0625,
+          "native_relative_to_total_rms": 0.8040890417139029,
+          "native_rms": 0.0018359070996283187,
+          "native_signed_mean": -1.1268498383287806e-06,
+          "predicted_rms": 0.0018359070996283187,
+          "signed_projection_onto_total": 0.38349468646650964
+        },
+        "query_at_bank1": {
+          "comparison": {
+            "actual_rms": 0.001833077483864045,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.001833077483864045,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.0625,
+          "native_relative_to_total_rms": 0.802849728990087,
+          "native_rms": 0.001833077483864045,
+          "native_signed_mean": -5.307415070395413e-07,
+          "predicted_rms": 0.001833077483864045,
+          "signed_projection_onto_total": 0.37812402324605265
+        },
+        "total": {
+          "comparison": {
+            "actual_rms": 0.002283213679563537,
+            "cosine": 1.0000000000000002,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.002283213679563537,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.0625,
+          "native_relative_to_total_rms": 1.0,
+          "native_rms": 0.002283213679563537,
+          "native_signed_mean": -2.7217146983578764e-06,
+          "predicted_rms": 0.002283213679563537,
+          "signed_projection_onto_total": 1.0
+        }
+      },
+      "denominator": "Y11-Y00 at fixed midpoint recipient",
+      "native_total_rms": 0.002283213679563537,
+      "scope": "Signed finite contrasts; magnitudes and projections are not independent causal shares.",
+      "square": {
+        "closure_rms": 0.0,
+        "energy_sum": 16.398883613193746,
+        "signed_cross_terms": {
+          "bank_at_query0__interaction": -17.575355444891557,
+          "query_at_bank0__bank_at_query0": 8.836598171010337,
+          "query_at_bank0__interaction": -17.464526425177382
+        },
+        "term_squared_l2": {
+          "bank_at_query0": 14.567450401569772,
+          "interaction": 17.431868053956535,
+          "query_at_bank0": 10.602848856726041
+        },
+        "total_squared_l2": 16.398883613193746
+      }
+    },
+    "norm": {
+      "contrasts": {
+        "bank_at_query0": {
+          "comparison": {
+            "actual_rms": 0.004027785400059201,
+            "cosine": 1.0000000000000002,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.004027785400059201,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.25,
+          "native_relative_to_total_rms": 0.9387192625584893,
+          "native_rms": 0.004027785400059201,
+          "native_signed_mean": -1.8301365366513167e-06,
+          "predicted_rms": 0.004027785400059201,
+          "signed_projection_onto_total": 0.6112124407018413
+        },
+        "bank_at_query1": {
+          "comparison": {
+            "actual_rms": 0.003979170771755011,
+            "cosine": 1.0000000000000002,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.003979170771755011,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.25,
+          "native_relative_to_total_rms": 0.9273890938681233,
+          "native_rms": 0.003979170771755011,
+          "native_signed_mean": -1.2896693872832543e-06,
+          "predicted_rms": 0.003979170771755011,
+          "signed_projection_onto_total": 0.6022045286735268
+        },
+        "interaction": {
+          "comparison": {
+            "actual_rms": 0.004437478249207856,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.004437478249207856,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.5,
+          "native_relative_to_total_rms": 1.034202643878323,
+          "native_rms": 0.004437478249207856,
+          "native_signed_mean": 5.404671493680624e-07,
+          "predicted_rms": 0.004437478249207856,
+          "signed_projection_onto_total": -0.00900791202831443
+        },
+        "query_at_bank0": {
+          "comparison": {
+            "actual_rms": 0.0034742718911933944,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.0034742718911933944,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.25,
+          "native_relative_to_total_rms": 0.8097169098385468,
+          "native_rms": 0.0034742718911933944,
+          "native_signed_mean": -1.4882402155080854e-07,
+          "predicted_rms": 0.0034742718911933944,
+          "signed_projection_onto_total": 0.3977954713264733
+        },
+        "query_at_bank1": {
+          "comparison": {
+            "actual_rms": 0.003482548406080057,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.003482548406080057,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.25,
+          "native_relative_to_total_rms": 0.8116458417897993,
+          "native_rms": 0.003482548406080057,
+          "native_signed_mean": 3.9164312781725386e-07,
+          "predicted_rms": 0.003482548406080057,
+          "signed_projection_onto_total": 0.3887875592981588
+        },
+        "total": {
+          "comparison": {
+            "actual_rms": 0.004290724139484929,
+            "cosine": 1.0000000000000002,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.004290724139484929,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.25,
+          "native_relative_to_total_rms": 1.0,
+          "native_rms": 0.004290724139484929,
+          "native_signed_mean": -1.4384934088340628e-06,
+          "predicted_rms": 0.004290724139484929,
+          "signed_projection_onto_total": 1.0
+        }
+      },
+      "denominator": "Y11-Y00 at fixed midpoint recipient",
+      "native_total_rms": 0.004290724139484929,
+      "scope": "Signed finite contrasts; magnitudes and projections are not independent causal shares.",
+      "square": {
+        "closure_rms": 0.0,
+        "energy_sum": 57.91383910977481,
+        "signed_cross_terms": {
+          "bank_at_query0__interaction": -63.16769173150158,
+          "query_at_bank0__bank_at_query0": 31.896371478516606,
+          "query_at_bank0__interaction": -61.76207531547379
+        },
+        "term_squared_l2": {
+          "bank_at_query0": 51.0333190791917,
+          "interaction": 61.943200755564874,
+          "query_at_bank0": 37.970714843477
+        },
+        "total_squared_l2": 57.91383910977481
+      }
+    },
+    "paired": {
+      "contrasts": {
+        "bank_at_query0": {
+          "comparison": {
+            "actual_rms": 0.004078637393918367,
+            "cosine": 1.0000000000000002,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.004078637393918367,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.0625,
+          "native_relative_to_total_rms": 0.9376281967299739,
+          "native_rms": 0.004078637393918367,
+          "native_signed_mean": -1.7970460399209366e-05,
+          "predicted_rms": 0.004078637393918367,
+          "signed_projection_onto_total": 0.6118939506533276
+        },
+        "bank_at_query1": {
+          "comparison": {
+            "actual_rms": 0.0040539340540666265,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.0040539340540666265,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.0625,
+          "native_relative_to_total_rms": 0.9319492050076569,
+          "native_rms": 0.0040539340540666265,
+          "native_signed_mean": -1.3246348987965777e-05,
+          "predicted_rms": 0.0040539340540666265,
+          "signed_projection_onto_total": 0.604914941380963
+        },
+        "interaction": {
+          "comparison": {
+            "actual_rms": 0.004484954705824434,
+            "cosine": 1.0000000000000002,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.004484954705824434,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.09375,
+          "native_relative_to_total_rms": 1.031035511886434,
+          "native_rms": 0.004484954705824434,
+          "native_signed_mean": 4.724111411243588e-06,
+          "predicted_rms": 0.004484954705824434,
+          "signed_projection_onto_total": -0.006979009272364628
+        },
+        "query_at_bank0": {
+          "comparison": {
+            "actual_rms": 0.0035304338940804415,
+            "cosine": 0.9999999999999999,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.0035304338940804415,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.09375,
+          "native_relative_to_total_rms": 0.8116030051401225,
+          "native_rms": 0.0035304338940804415,
+          "native_signed_mean": 1.1072695373925967e-06,
+          "predicted_rms": 0.0035304338940804415,
+          "signed_projection_onto_total": 0.3950850586190368
+        },
+        "query_at_bank1": {
+          "comparison": {
+            "actual_rms": 0.003521469922185956,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.003521469922185956,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.09375,
+          "native_relative_to_total_rms": 0.8095422990779712,
+          "native_rms": 0.003521469922185956,
+          "native_signed_mean": 5.831380948636185e-06,
+          "predicted_rms": 0.003521469922185956,
+          "signed_projection_onto_total": 0.3881060493466723
+        },
+        "total": {
+          "comparison": {
+            "actual_rms": 0.00434995172728681,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.00434995172728681,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.09375,
+          "native_relative_to_total_rms": 1.0,
+          "native_rms": 0.00434995172728681,
+          "native_signed_mean": -1.213907945057318e-05,
+          "predicted_rms": 0.00434995172728681,
+          "signed_projection_onto_total": 1.0
+        }
+      },
+      "denominator": "Y11-Y00 at fixed midpoint recipient",
+      "native_total_rms": 0.00434995172728681,
+      "scope": "Signed finite contrasts; magnitudes and projections are not independent causal shares.",
+      "square": {
+        "closure_rms": 0.0,
+        "energy_sum": 357.1423018064901,
+        "signed_cross_terms": {
+          "bank_at_query0__interaction": -383.4463828192605,
+          "query_at_bank0__bank_at_query0": 192.55190489969135,
+          "query_at_bank0__interaction": -380.8475973485599
+        },
+        "term_squared_l2": {
+          "bank_at_query0": 313.98045295758095,
+          "interaction": 379.65449064804903,
+          "query_at_bank0": 235.24943346898917
+        },
+        "total_squared_l2": 357.1423018064901
+      }
+    },
+    "projection": {
+      "contrasts": {
+        "bank_at_query0": {
+          "comparison": {
+            "actual_rms": 0.018812302746382015,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.018812302746382015,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.25,
+          "native_relative_to_total_rms": 0.9469949465419921,
+          "native_rms": 0.018812302746382015,
+          "native_signed_mean": 7.169338194519999e-05,
+          "predicted_rms": 0.018812302746382015,
+          "signed_projection_onto_total": 0.6958178194849941
+        },
+        "bank_at_query1": {
+          "comparison": {
+            "actual_rms": 0.018811715358009896,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.018811715358009896,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.25,
+          "native_relative_to_total_rms": 0.9469653779225864,
+          "native_rms": 0.018811715358009896,
+          "native_signed_mean": 6.163210324909112e-05,
+          "predicted_rms": 0.018811715358009896,
+          "signed_projection_onto_total": 0.69504057298754
+        },
+        "interaction": {
+          "comparison": {
+            "actual_rms": 0.017833763066236484,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.017833763066236484,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.25,
+          "native_relative_to_total_rms": 0.897736110737489,
+          "native_rms": 0.017833763066236484,
+          "native_signed_mean": -1.006127869610888e-05,
+          "predicted_rms": 0.017833763066236484,
+          "signed_projection_onto_total": -0.0007772464974541589
+        },
+        "query_at_bank0": {
+          "comparison": {
+            "actual_rms": 0.014140135942039188,
+            "cosine": 0.9999999999999998,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.014140135942039188,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.25,
+          "native_relative_to_total_rms": 0.711802136136853,
+          "native_rms": 0.014140135942039188,
+          "native_signed_mean": -1.724320668472501e-07,
+          "predicted_rms": 0.014140135942039188,
+          "signed_projection_onto_total": 0.30495942701246
+        },
+        "query_at_bank1": {
+          "comparison": {
+            "actual_rms": 0.014119210208828772,
+            "cosine": 1.0,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.014119210208828772,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.25,
+          "native_relative_to_total_rms": 0.7107487529402232,
+          "native_rms": 0.014119210208828772,
+          "native_signed_mean": -1.023371076295613e-05,
+          "predicted_rms": 0.014119210208828772,
+          "signed_projection_onto_total": 0.30418218051500584
+        },
+        "total": {
+          "comparison": {
+            "actual_rms": 0.01986526202180513,
+            "cosine": 1.0000000000000002,
+            "exact": true,
+            "exact_fraction": 1.0,
+            "max_abs": 0.0,
+            "mean_signed": 0.0,
+            "predicted_rms": 0.01986526202180513,
+            "relative_to_actual_rms": 0.0,
+            "rms": 0.0
+          },
+          "error_relative_to_total_rms": 0.0,
+          "native_maxabs": 0.375,
+          "native_relative_to_total_rms": 1.0,
+          "native_rms": 0.01986526202180513,
+          "native_signed_mean": 6.145967118224387e-05,
+          "predicted_rms": 0.01986526202180513,
+          "signed_projection_onto_total": 1.0
+        }
+      },
+      "denominator": "Y11-Y00 at fixed midpoint recipient",
+      "native_total_rms": 0.01986526202180513,
+      "scope": "Signed finite contrasts; magnitudes and projections are not independent causal shares.",
+      "square": {
+        "closure_rms": 0.0,
+        "energy_sum": 1241.3943473346128,
+        "signed_cross_terms": {
+          "bank_at_query0__interaction": -1000.5466212364161,
+          "query_at_bank0__bank_at_query0": 501.55175385210384,
+          "query_at_bank0__interaction": -1002.3373194371983
+        },
+        "term_squared_l2": {
+          "bank_at_query0": 1113.281741575524,
+          "interaction": 1000.4771009283819,
+          "query_at_bank0": 628.9676916522174
+        },
+        "total_squared_l2": 1241.3943473346126
+      }
+    }
+  },
+  "retrospective_controls": {
+    "q0-b0": {
+      "native_minus_prior": {
+        "changed_values": 0,
+        "maxabs": 0.0,
+        "native_relative_rms": 0.0,
+        "native_rms": 1.78871726800995,
+        "orientation": "candidate-minus-native",
+        "rms": 0.0,
+        "sample_count": 3145728,
+        "signed_mean": 0.0
+      },
+      "reference": "prior sealed wrong-fixed-sham-head prediction at midpoint residual"
+    },
+    "q1-b1": {
+      "native_minus_prior": {
+        "changed_values": 0,
+        "maxabs": 0.0,
+        "native_relative_rms": 0.0,
+        "native_rms": 1.7883814696998186,
+        "orientation": "candidate-minus-native",
+        "rms": 0.0,
+        "sample_count": 3145728,
+        "signed_mean": 0.0
+      },
+      "reference": "prior complete midpoint native image return"
+    }
+  },
+  "schema": "mdb-image-query-bank-audit-v1",
+  "selected_aten_operations": {
+    "q0-b0": {
+      "forecast": [
+        {
+          "calls": 1,
+          "name": "aten::scaled_dot_product_attention"
+        },
+        {
+          "calls": 1,
+          "name": "aten::_scaled_dot_product_flash_attention"
+        }
+      ],
+      "target": [
+        {
+          "calls": 1,
+          "name": "aten::scaled_dot_product_attention"
+        },
+        {
+          "calls": 1,
+          "name": "aten::_scaled_dot_product_flash_attention"
+        },
+        {
+          "calls": 2,
+          "name": "aten::bmm"
+        }
+      ]
+    },
+    "q0-b1": {
+      "forecast": [
+        {
+          "calls": 1,
+          "name": "aten::scaled_dot_product_attention"
+        },
+        {
+          "calls": 1,
+          "name": "aten::_scaled_dot_product_flash_attention"
+        }
+      ],
+      "target": [
+        {
+          "calls": 1,
+          "name": "aten::scaled_dot_product_attention"
+        },
+        {
+          "calls": 1,
+          "name": "aten::_scaled_dot_product_flash_attention"
+        },
+        {
+          "calls": 2,
+          "name": "aten::bmm"
+        }
+      ]
+    },
+    "q1-b0": {
+      "forecast": [
+        {
+          "calls": 1,
+          "name": "aten::scaled_dot_product_attention"
+        },
+        {
+          "calls": 1,
+          "name": "aten::_scaled_dot_product_flash_attention"
+        }
+      ],
+      "target": [
+        {
+          "calls": 1,
+          "name": "aten::scaled_dot_product_attention"
+        },
+        {
+          "calls": 1,
+          "name": "aten::_scaled_dot_product_flash_attention"
+        },
+        {
+          "calls": 2,
+          "name": "aten::bmm"
+        }
+      ]
+    },
+    "q1-b1": {
+      "forecast": [
+        {
+          "calls": 1,
+          "name": "aten::scaled_dot_product_attention"
+        },
+        {
+          "calls": 1,
+          "name": "aten::_scaled_dot_product_flash_attention"
+        }
+      ],
+      "target": [
+        {
+          "calls": 1,
+          "name": "aten::scaled_dot_product_attention"
+        },
+        {
+          "calls": 1,
+          "name": "aten::_scaled_dot_product_flash_attention"
+        },
+        {
+          "calls": 2,
+          "name": "aten::bmm"
+        }
+      ]
+    }
+  },
+  "source_job_id": "job-720536f238d0",
+  "source_manifest_sha256": "b197eb17f06227dc5b4cf73546ca10cd223637f3b04614d5dc57ee2ee35528ee",
+  "source_qkv_changes": {
+    "k": {
+      "image_rows": {
+        "changed_values": 819889,
+        "maxabs": 0.0625,
+        "native_relative_rms": 0.0018204337371035147,
+        "native_rms": 1.1870388194387549,
+        "orientation": "candidate-minus-native",
+        "rms": 0.0021609255141578367,
+        "sample_count": 3145728,
+        "signed_mean": -1.1390835844930318e-06
+      },
+      "text_rows": {
+        "changed_values": 0,
+        "maxabs": 0.0,
+        "native_relative_rms": 0.0,
+        "native_rms": 1.2156366346699428,
+        "orientation": "candidate-minus-native",
+        "rms": 0.0,
+        "sample_count": 1572864,
+        "signed_mean": 0.0
+      }
+    },
+    "q": {
+      "image_rows": {
+        "changed_values": 871380,
+        "maxabs": 0.0625,
+        "native_relative_rms": 0.0018283471818680284,
+        "native_rms": 1.2903063928504228,
+        "orientation": "candidate-minus-native",
+        "rms": 0.0023591280571143717,
+        "sample_count": 3145728,
+        "signed_mean": 7.790292411158362e-07
+      },
+      "text_rows": {
+        "changed_values": 0,
+        "maxabs": 0.0,
+        "native_relative_rms": 0.0,
+        "native_rms": 1.0851867846383487,
+        "orientation": "candidate-minus-native",
+        "rms": 0.0,
+        "sample_count": 1572864,
+        "signed_mean": 0.0
+      }
+    },
+    "v": {
+      "image_rows": {
+        "changed_values": 973931,
+        "maxabs": 0.25,
+        "native_relative_rms": 0.0020824700669523563,
+        "native_rms": 7.072007577945019,
+        "orientation": "candidate-minus-native",
+        "rms": 0.014727244094330736,
+        "sample_count": 3145728,
+        "signed_mean": -7.238429851952333e-06
+      },
+      "text_rows": {
+        "changed_values": 0,
+        "maxabs": 0.0,
+        "native_relative_rms": 0.0,
+        "native_rms": 5.371117839339621,
+        "orientation": "candidate-minus-native",
+        "rms": 0.0,
+        "sample_count": 1572864,
+        "signed_mean": 0.0
+      }
+    }
+  },
+  "target_counts": {
+    "layernorm": 16,
+    "linear": 48,
+    "native_attention": 4,
+    "native_blocks": 4,
+    "rmsnorm": 16,
+    "swiglu": 8
+  },
+  "terminal_status": "unassessed",
+  "transaction_verification": {
+    "event_head": "eb9445231b7eb40a8ca879aaef712d8e719232d86c8b6c57a687fa7958f1bc1d",
+    "events": 7,
+    "forecasts": [
+      "image_query_bank"
+    ],
+    "frontiers": [
+      "saved_qkv"
+    ],
+    "identity_scope": "externally-pinned",
+    "phase": "closed",
+    "schema": "mdb-forecast-offline-verification-v1",
+    "seal_sha256": "6651e2a58702cd12a6318957aa1d38407392ce29b5cd3b2ec262e23e80b7b4e8",
+    "verified": true
+  }
+}
