@@ -1,0 +1,46 @@
+{
+  "counts": {
+    "act_receipts": 4,
+    "component_hydrations": 3,
+    "cpu_offloads": 6,
+    "cuda_placements": 6,
+    "functional_decode_calls": 2,
+    "functional_transitions": 224,
+    "guard_refusals": 0,
+    "native_module_entries": 4025,
+    "native_qwen_calls": 1,
+    "native_transitions": 224,
+    "native_vae_calls": 4,
+    "noise_draws": 2,
+    "qwen_functional_SDPA": 36,
+    "qwen_functional_blocks": 36,
+    "qwen_native_SDPA": 45,
+    "qwen_native_authorizations": 10,
+    "qwen_native_blocks": 45,
+    "receipt_occurrences": 228
+  },
+  "elapsed_s": 455.15,
+  "executed_payload": {
+    "host": "beast",
+    "sha256": "ad25f5c9b0ae1be808615bc79e4a8ba48945819091d14fcfce7a4cb689bdeafb",
+    "size_bytes": 3320801
+  },
+  "forecast_seal": {
+    "forecasts": [
+      "h18-complete-composition"
+    ],
+    "path": "/mnt/big/mdb/research/job-4420636a123c/h18-state-history-result/forecast-transaction/seal.json",
+    "seal_sha256": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639"
+  },
+  "job_id": "job-4420636a123c",
+  "numeric_prediction_outcomes": "Pending independent full-array saved-only audit",
+  "peak_rss_mb": 20805.0,
+  "peak_vram_mb": 8614.0,
+  "raw_bytes": 5487696020,
+  "raw_manifest_sha256": "4afc19151e37197d8ec71ff6134e19d4a99c8a33c3f25fbbbcbc8035b2024618",
+  "raw_members": 2712,
+  "raw_tensors_downloaded": false,
+  "request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea",
+  "schema": "mdb-h18-native-metadata-collection-v1",
+  "wrapper_bytes_additional": 609165
+}

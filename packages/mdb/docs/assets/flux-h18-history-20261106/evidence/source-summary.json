@@ -1,0 +1,96 @@
+{
+  "context_operand_occurrences": 8,
+  "contract": {
+    "act_receipts": 4,
+    "batch_size": 1,
+    "branches": [
+      "direct",
+      "coherent"
+    ],
+    "component_hydrations": 3,
+    "conditioning_columns": [
+      2560,
+      7680
+    ],
+    "context_operand_occurrences": 8,
+    "cpu_offloads": 6,
+    "cuda_placements": 6,
+    "execution_id": "mdb-flux-h18-state-history-v1",
+    "extra_learned_oddness_projections": 0,
+    "forecast_module_entries": 0,
+    "functional_decode_calls": 2,
+    "functional_transitions": 224,
+    "genuine_qwen_acts": 0,
+    "max_gpu_components": 1,
+    "native_transitions": 224,
+    "native_vae_calls": 4,
+    "noise_draws": 2,
+    "persistent_weight_banks": 0,
+    "pngs": 6,
+    "qwen_functional_RMSNorm": 144,
+    "qwen_functional_SDPA": 36,
+    "qwen_functional_baseline_blocks": 27,
+    "qwen_functional_blocks": 36,
+    "qwen_functional_calls": 1,
+    "qwen_functional_linear": 252,
+    "qwen_functional_rotary_applications": 72,
+    "qwen_functional_suffix_blocks": 9,
+    "qwen_native_SDPA": 45,
+    "qwen_native_authorizations": 10,
+    "qwen_native_baseline_blocks": 36,
+    "qwen_native_blocks": 45,
+    "qwen_native_calls": 1,
+    "qwen_native_suffix_blocks": 9,
+    "qwen_parent_conditioning_concats": 2,
+    "receipt_occurrences": 228,
+    "schema": "mdb-flux-h18-state-history-count-contract-v1",
+    "seed": 277
+  },
+  "counts": {
+    "act_receipts": 4,
+    "component_hydrations": 3,
+    "cpu_offloads": 6,
+    "cuda_placements": 6,
+    "functional_decode_calls": 2,
+    "functional_transitions": 224,
+    "guard_refusals": 0,
+    "native_module_entries": 4025,
+    "native_qwen_calls": 1,
+    "native_transitions": 224,
+    "native_vae_calls": 4,
+    "noise_draws": 2,
+    "qwen_functional_SDPA": 36,
+    "qwen_functional_blocks": 36,
+    "qwen_native_SDPA": 45,
+    "qwen_native_authorizations": 10,
+    "qwen_native_blocks": 45,
+    "receipt_occurrences": 228
+  },
+  "forecast_seal": {
+    "forecasts": [
+      "h18-complete-composition"
+    ],
+    "path": "/mnt/big/mdb/research/job-4420636a123c/h18-state-history-result/forecast-transaction/seal.json",
+    "seal_sha256": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639"
+  },
+  "job_id": "job-4420636a123c",
+  "mechanics_status": "complete",
+  "request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea",
+  "schema": "mdb-flux-h18-state-history-summary-v1",
+  "seconds": 404.85689195711166,
+  "terminal_status": "unassessed",
+  "transaction": {
+    "event_head": "02e30c9325d084ae6bee87ec1d50024f7821c462e5646ea38b915d849cc1267e",
+    "events": 6,
+    "forecasts": [
+      "h18-complete-composition"
+    ],
+    "frontiers": [],
+    "identity_scope": "externally-pinned",
+    "phase": "closed",
+    "schema": "mdb-forecast-offline-verification-v1",
+    "seal_sha256": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639",
+    "verified": true
+  },
+  "trend_status": "observed-uninterpreted"
+}

@@ -1,0 +1,93 @@
+{
+  "backend": "numpy",
+  "config": {
+    "directory_custody": true,
+    "native_manifest_sha256": "4afc19151e37197d8ec71ff6134e19d4a99c8a33c3f25fbbbcbc8035b2024618",
+    "native_request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea",
+    "native_root": "/mnt/big/mdb/research/job-4420636a123c/h18-state-history-result",
+    "output_scratch": "/mnt/big/mdb/research",
+    "scope": "OwnH18history/direct-vs-coherent E,4genuine FLUX Acts/224advances/8actualcontext operands; fullsavedstate,signedresponses,sixoriginal decoder images;zero neural/tokenizer recurrence.",
+    "source_job": "job-4420636a123c"
+  },
+  "controller_sha256": "afbb71dfe56b2ed1749c77469dbde8a6c85f554b38831d52f54dd30a647f2ea0",
+  "device": "cpu",
+  "dtype": "float64",
+  "execution_environment": {
+    "cuda_cache_path": "/mnt/hdd8tb/mdb/cuda-cache",
+    "extra_model_roots": "/mnt/big/llm-models",
+    "python": "3.14.6",
+    "requirements": [
+      "torch==2.13.0",
+      "diffusers==0.39.0",
+      "transformers==5.14.1",
+      "accelerate==1.14.0",
+      "safetensors>=0.5",
+      "numpy>=2.0",
+      "pyyaml>=6.0",
+      "psutil>=5.9",
+      "pillow>=10.0"
+    ],
+    "tmpdir": "/mnt/hdd8tb/mdb/tmp",
+    "torch_home": "/mnt/hdd8tb/mdb/torch",
+    "torchinductor_cache_dir": "/mnt/hdd8tb/mdb/torchinductor-cache",
+    "uv_cache_dir": "/mnt/hdd8tb/mdb/uv-cache",
+    "uv_link_mode": "symlink"
+  },
+  "experiment": "mdb-flux-h18-history-saved-audit",
+  "needs": {
+    "cpu": true,
+    "host": "beast"
+  },
+  "request_sha256": "f6fd5739232f27d58bb758f29739e417c43c955fdce1c109dd8e8242189e3b65",
+  "resource_exception": {
+    "cpu_threads": 2,
+    "disk_gb": 1,
+    "est_wall_s": 240,
+    "ram_mb": 3072,
+    "vram_mb": 0
+  },
+  "runtime_wheels": {
+    "mdb_runtime-0.1.0-py3-none-any.whl": "4b1b965dce45883cabcb24ab2c11702ce748aeb1658776596be27b405df26d21",
+    "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+    "saturn_pub-0.4.1-py3-none-any.whl": "c32bbcf5c5b45e4970d9c750266f607b2a9b0f06dc982106fd82e0501375e424"
+  },
+  "scheduling_contract": {
+    "additional_scheduler_submissions": 0,
+    "branch_execution": "in_process",
+    "checkpoint_policy": "One full-array saved-only CPU audit; compact catalog/retriever, no native/reference recurrence or retries.",
+    "collection_policy": "direct_job_only",
+    "control_plane": "mrun_outer_lease",
+    "data_plane": "resident_worker",
+    "execution_model": "finite_local_program",
+    "interactive": false,
+    "lease_scope": "entire-worker",
+    "logical_branches": 1,
+    "logical_checkpoint_replays": 0,
+    "logical_operations": 6,
+    "max_local_work_items": 32,
+    "max_mrun_submissions": 1,
+    "model_free": true,
+    "model_loads": 0,
+    "mrun_retry_policy": "none_for_finite_lease",
+    "per_branch_mrun_submissions": 0,
+    "per_transition_mrun_submissions": 0,
+    "replay_policy": "none_source_only",
+    "schema": "saturn-single-lease-scheduling-contract-v1",
+    "task_family": "analysis"
+  },
+  "schema": "mdb-saved-flux-audit-request-v1",
+  "source_hashes": {
+    "audit_flux_e18_conditioning_act.py": "b9690429f05257bac7f6a9bd276e37e411d4fd7960cd33caa893faf5d87ec70c",
+    "audit_flux_functional_pass.py": "2d54e716749dec52c159f3a5214860f4bb8cbf396fd09239540bd55988274c80",
+    "audit_flux_functional_qwen_prefix.py": "5004786be76e1f576d2df65e6d1225f8fdd41c4a7e09e5ed8a6c23057db78a97",
+    "audit_flux_functional_remaining.py": "5027875c03f9ceb3157b4b9d9632366ff5c9b1c4beb429b8b73d79aad0db6b08",
+    "audit_flux_h18_state_history.py": "512f21ad1410fccf61930d807a9e939517accff1004be318be7c9f2a7166fb77",
+    "audit_flux_raw_mask_pair.py": "70408046bb83f1c0719addb57191c7d4bdf4c5a1121195c299c4cb493cf11d88",
+    "audit_flux_raw_to_image.py": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835",
+    "preflight.v1.json": "ce636a41c492f042929518ab827dadab273eb04283ec63a15370592b2ba11583",
+    "retrieve_reader_evidence.py": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923",
+    "stage_flux_h18_saved_audit.py": "6e97554549ed339b8d70ec4cbd89172e5e4a3ca9d5e5bb2cdbe16c51bc45f2fa",
+    "stage_saved_flux_mask_pair_audit.py": "afbb71dfe56b2ed1749c77469dbde8a6c85f554b38831d52f54dd30a647f2ea0"
+  },
+  "task_family": "analysis"
+}

@@ -1,0 +1,94 @@
+{
+  "schema": "qwen-h18-state-history-helper-qualification-v1",
+  "status": "qualified-tiny-mechanics-only",
+  "sources": {
+    "qualification/qwen_h18_state_history.py": "17084d404f5ae00557e4ad8e94a8b84704787c47ebf9c875228cb452c4857036",
+    "qualification/flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "tests/test_qwen_h18_state_history.py": "692698836d02a84a712c9148fa21334a8687151b09180ccf5cc86cda31e14a2f"
+  },
+  "final_attempt": {
+    "path": "attempt-02/result.json",
+    "sha256": "2cac509942453dabb9e2b2257b419a103000776b5cbba11faf99b4d7ca1dfccf",
+    "checks": 10,
+    "pytest_seconds": 2.91,
+    "wall_seconds": 3.545483750058338,
+    "command": [
+      "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+      "-I",
+      "-B",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_qwen_h18_state_history.py",
+      "--basetemp=tmp"
+    ],
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/helper-qualification-v1/attempt-02/cohort"
+  },
+  "prior_attempt": {
+    "path": "attempt-01/cohort",
+    "checks": 7,
+    "pytest_seconds": 2.76,
+    "scope": "earlier source snapshot before final source-policy/bit/count additions; not final qualification"
+  },
+  "ruff": {
+    "command": [
+      "rtk",
+      "proxy",
+      "uvx",
+      "ruff",
+      "check",
+      "--select",
+      "F,I",
+      "qualification/qwen_h18_state_history.py",
+      "tests/test_qwen_h18_state_history.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "returncode": 0,
+    "stdout": "All checks passed!\n",
+    "stderr": "",
+    "log_sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  },
+  "coverage": [
+    "actual installed Qwen3 hidden6 versus query8 BF16 learned/FP32 RoPE",
+    "padded and fully-attended SDPA with explicit repeatKV/enable_gqa policy",
+    "frozen prefix exact complete common-state parity",
+    "native own-value suffix replay exact to complete native baseline",
+    "negative own state and actual next-consumer/continuation identity",
+    "native full5 plus suffix2 actual7 SDPA receipts",
+    "before-seal native refusal without module entry",
+    "observer-failure native hooks and global SDPA restoration",
+    "forecast global module guard and weight-mutation detection/release",
+    "signed-zero value/bit diagnostics and observed nonlinear writer/addition remainders",
+    "changed frozen helper refusal before source evaluation"
+  ],
+  "limits": [
+    "Synthetic CPU only; no original checkpoint/tokenizer/CUDA/model jobs/staging",
+    "No genuine existing Qwen Act/Session claim; native component wrapper has distinct provenance",
+    "No new semantic outcome or downstream full-image result",
+    "Native authorize_native callback must be bound to the future campaign global seal by caller",
+    "Counts are named executable primitive groups, not independent kernels or scalar arithmetic instructions; diagnostic reductions are separate from model work",
+    "Native q/k/v_consumed are actual SDPA arguments after native KV repetition; head_consumed precedes transpose. Functional q/k/v are pre-repetition and head follows the qualified helper transpose. Preserve these explicit port geometries."
+  ],
+  "API": {
+    "load_prefix": "load_prefix(path) verifies exact frozen763ae bytes before run_path",
+    "functional": "functional_state_history(graph,input_ids,attention_mask,parameters,config,*,attention_dispatch,rope_buffer_policy,edit_index=18,horizon=27,selected=(9,18,27),observe=None)",
+    "native": "native_state_history(model,input_ids,attention_mask,*,authorize_native,edit_index=18,horizon=27,selected=(9,18,27),observe=None,suffix_sign=-1)",
+    "callback": "observe(lane,name,live_tensor); lane plus/minus at first suffix block only; must not mutate. All own exits also returned in common/minus.",
+    "outputs": "common/minus full states and direct/coherent conditioning; counts/profile; native actual consumed hidden/kwargs/context, SDPA/module/block census. No storage/transactions are fabricated.",
+    "diagnostics": "oddness_diagnostic(plus,minus); writer_diagnostic(plus_ports,minus_ports). Observation-only numerical/byte/element/sign-zero defects and FP64 finite addition remainders; no extra Wd(GU) projection."
+  },
+  "production_formula": {
+    "functional_blocks": 36,
+    "functional_SDPA": 36,
+    "functional_linear": 252,
+    "native_full_model": 1,
+    "native_baseline_blocks": 36,
+    "native_suffix_blocks": 9,
+    "native_total_blocks": 45,
+    "native_SDPA": 45,
+    "extra_learned_tensors": 0,
+    "new_weight_banks": 0
+  },
+  "jobs_submitted": 0,
+  "original_assets_read": false
+}

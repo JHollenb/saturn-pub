@@ -1,0 +1,26 @@
+job-4420636a123c  running  mdb-flux-h18-state-history  host=beast
+reservation: ram=24576MB vram=13312MB cpu=4 source=declared
+needs: {"cuda": true, "host": "beast", "payload_custody_v2": true}
+queue note: H18 sign-history,short raw/seed277,B1/512sq/4steps:Qwen36 functional blocks(27+9),45 native(1full36+LM,9suffix);2 own-E branches/lane. 224 functional+224 native FLUX,4 genuine FLUX Acts/228receipts,8 context operands,2 functional+4 native VAE. Both futures+signed vectors sealed before native;3CPU hydrations/6placements,max1GPU,2noise draws. CPU4/RAM24GiB/VRAM13GiB,disk12GB;900est/1200worker/1500outer,no retries/nesting. Qwen suffix is component execution,not Act.
+meta: {"observed_peak_rss_mb": 14201.5, "observed_peak_rss_ts": 1793977138.5083652}
+recent events (newest first, 20):
+  4s ago   job.telemetry host=beast
+  9s ago   job.telemetry host=beast
+  14s ago  job.telemetry host=beast
+  19s ago  job.telemetry host=beast
+  24s ago  job.telemetry host=beast
+  29s ago  job.telemetry host=beast
+  34s ago  job.telemetry host=beast
+  40s ago  job.telemetry host=beast
+  45s ago  job.telemetry host=beast
+  50s ago  job.telemetry host=beast
+  55s ago  job.telemetry host=beast
+  60s ago  job.telemetry host=beast
+  65s ago  job.telemetry host=beast
+  70s ago  job.telemetry host=beast
+  75s ago  job.telemetry host=beast
+  80s ago  job.telemetry host=beast
+  85s ago  job.telemetry host=beast
+  90s ago  job.telemetry host=beast
+  95s ago  job.telemetry host=beast
+  100s ago job.telemetry host=beast

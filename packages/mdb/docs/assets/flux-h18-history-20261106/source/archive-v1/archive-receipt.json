@@ -1,0 +1,22 @@
+{
+  "schema": "mdb-h18-publisher-source-archive-v1",
+  "reason": "Preserve actually executed publisher66dab before caption-only clarity correction",
+  "files": {
+    "qualification/publish_flux_h18_state_history.py": {
+      "original": "saturn-pub/packages/mdb/qualification/publish_flux_h18_state_history.py",
+      "sha256": "66dab2fa48bdcdb37a9db4e846fc78ea9c4e785732c998a4026ded68b458c41c",
+      "bytes": 40597
+    },
+    "tests/test_publish_flux_h18_state_history.py": {
+      "original": "saturn-pub/packages/mdb/tests/test_publish_flux_h18_state_history.py",
+      "sha256": "0c4b8844da8fc4fa2cbeec3e51321000050b81c4b99a55e53133d2b37c9f1f54",
+      "bytes": 23437
+    },
+    "publisher-qualification-v1/qualification.json": {
+      "original": "artifacts/mdb-flux-h18-history-20261106/publisher-qualification-v1/qualification.json",
+      "sha256": "a94d87a901f24eb34cf694692d358a250b7440bb8163473dffceb95706f55d2b",
+      "bytes": 8993
+    }
+  },
+  "publication_v1_untouched": true
+}

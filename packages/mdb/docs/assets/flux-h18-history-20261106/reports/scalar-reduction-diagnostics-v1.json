@@ -1,0 +1,18 @@
+{
+  "differences": [
+    {
+      "absdiff": 2.220446049250313e-16,
+      "field": "forecast.oddness.Hnext.rms",
+      "producer": 1.4669348215944291,
+      "saved_reader": 1.4669348215944293
+    },
+    {
+      "absdiff": 2.220446049250313e-16,
+      "field": "native.oddness.Hnext.rms",
+      "producer": 1.4669348215944291,
+      "saved_reader": 1.4669348215944293
+    }
+  ],
+  "schema": "mdb-h18-scalar-reduction-diagnostics-v1",
+  "scope": "NumPy saved-reader versus Torch producer reductions; raw BF16 parity separate"
+}

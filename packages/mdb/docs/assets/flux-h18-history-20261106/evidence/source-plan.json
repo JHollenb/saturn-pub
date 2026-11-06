@@ -1,0 +1,217 @@
+{
+  "all_512_rows_retained": true,
+  "apply_chat_template": {
+    "add_generation_prompt": true,
+    "enable_thinking": false,
+    "messages": [
+      {
+        "content": "<raw prompt>",
+        "role": "user"
+      }
+    ]
+  },
+  "attention_dispatch": {
+    "backend": "sdpa",
+    "gqa_policy": "repeat_kv",
+    "source": "transformers-qwen3-modeling-fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab"
+  },
+  "batch_size": 1,
+  "branches": [
+    "direct",
+    "coherent"
+  ],
+  "capture_sites": true,
+  "cohort": "prospective-new",
+  "component_hydrations": 3,
+  "conditioning_columns": [
+    2560,
+    7680
+  ],
+  "cpu_threads": 4,
+  "cuda_placements": 6,
+  "decoder_frontend_profile": "cpu-unpack-inverse-bn-unpatch-v1",
+  "device": "cuda",
+  "diffusers_version": "0.39.0",
+  "dtype": "bfloat16",
+  "flux_config": "flux-transformer-config.json",
+  "flux_config_sha256": "09733c74a3da6d17dd0a0472a091a8950c7c6935889c32c16cc800ede05029de",
+  "flux_in_channels": 128,
+  "flux_manifest": "flux-parameter-artifacts.json",
+  "flux_manifest_entries": 169,
+  "flux_manifest_sha256": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb",
+  "flux_mode": "capture",
+  "flux_native_source_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/diffusers/models/transformers/transformer_flux2.py",
+  "flux_native_source_sha256": "0a3c56ed3ca28a416492b50953a433f20b8a89fd26c7b7a49b1b6b45d5236006",
+  "flux_parameter_root": "/mnt/big/llm-models/FLUX.2-klein-4B",
+  "flux_recipe_helper": "flux_source_receiver.py",
+  "flux_recipe_helper_sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+  "flux_retrieval_script": "retrieve_flux_weights.py",
+  "flux_retrieval_script_sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+  "flux_scheduler_config": "scheduler-config.json",
+  "flux_scheduler_config_sha256": "067afb012cef64553a763447d1efd93daeffcc0123ca7e25b09f8de20b90762e",
+  "forecast_transaction_bytes": 1073741824,
+  "full_layers": 36,
+  "guidance_scale": 1.0,
+  "height": 512,
+  "helper_source_sha256": {
+    "flux_e18_conditioning_act.py": "45c512de2dff3252c38a182cf4291b392cf35a159c2bd83b35900c28005cb343",
+    "flux_functional_decoder.py": "e2712298e42b37a263dea1b24f0f491082b8a01086b16fa66577f474c68f491f",
+    "flux_functional_denoiser.py": "cb794daa5818ec3f9107f23839a41010f9569148da3708e39cedd364dff21923",
+    "flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "flux_functional_qwen_prefix_worker.py": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+    "flux_functional_vae.py": "576b94f3cd987e8849f6d4772c90a77f14fdfc9210dea608a9a3d16cf0f99a61",
+    "flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "flux_raw_to_image.py": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522",
+    "flux_source_receiver.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+    "qwen_h18_state_history.py": "17084d404f5ae00557e4ad8e94a8b84704787c47ebf9c875228cb452c4857036"
+  },
+  "history": {
+    "edit_index": 18,
+    "genuine_qwen_act": false,
+    "horizon": 27,
+    "native_route": "full36-plus-LM then own-context layers18..26; use_cache=False",
+    "operation": "native BF16 unary negation of all512 rows/all2560 features",
+    "selected": [
+      9,
+      18,
+      27
+    ]
+  },
+  "intervention": {
+    "H9": "unchanged",
+    "address": "conditioning",
+    "both_branches_same_mask": true,
+    "coherent": "cat(own H9,own -H18,own regenerated H27minus)",
+    "columns": [
+      2560,
+      7680
+    ],
+    "direct": "cat(own H9,own -H18,own baseline H27)",
+    "direct_H27": "same-value replacement",
+    "mode": "replace",
+    "rows": "all512",
+    "site": "step0/project"
+  },
+  "jinja_environment_source_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/jinja2/environment.py",
+  "jinja_environment_source_sha256": "f6786b3fb0a1f8d6c65f4d30bf2af8cb2fae84d1ead8e09ceb48201ab9e2fdf9",
+  "jinja_sandbox_source_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/jinja2/sandbox.py",
+  "jinja_sandbox_source_sha256": "330d9a8ad958d88f256bb15885c5f6606f41b5461c2e70f41a1ddddbd7035ab6",
+  "max_gpu_components": 1,
+  "max_length": 512,
+  "max_wall_seconds": 1200,
+  "native_sources": {
+    "diffusers/models/autoencoders/autoencoder_kl_flux2.py": {
+      "preparation_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/diffusers/models/autoencoders/autoencoder_kl_flux2.py",
+      "sha256": "7d9a976c1e4f42615e8c422f1643d86b49c4339221bd04b67f518b718ebd6c2d"
+    },
+    "diffusers/models/transformers/transformer_flux2.py": {
+      "preparation_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/diffusers/models/transformers/transformer_flux2.py",
+      "sha256": "0a3c56ed3ca28a416492b50953a433f20b8a89fd26c7b7a49b1b6b45d5236006"
+    },
+    "diffusers/pipelines/flux2/image_processor.py": {
+      "preparation_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/diffusers/pipelines/flux2/image_processor.py",
+      "sha256": "d2cdc003444c8599e89789dfede8636d2534697bb3fe60d4b48cc0656b3b4e83"
+    },
+    "diffusers/pipelines/flux2/pipeline_flux2_klein.py": {
+      "preparation_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/diffusers/pipelines/flux2/pipeline_flux2_klein.py",
+      "sha256": "8a57a8a7f1c22fc0c5bc5d3fd1bd9bc76c17c1f4d6644cc73370651dd955358e"
+    },
+    "diffusers/schedulers/scheduling_flow_match_euler_discrete.py": {
+      "preparation_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/diffusers/schedulers/scheduling_flow_match_euler_discrete.py",
+      "sha256": "8b96f25a6170480fb02decb58904e026250d6d68be5de8a7b8785b4c721e9d80"
+    },
+    "diffusers/utils/torch_utils.py": {
+      "preparation_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/diffusers/utils/torch_utils.py",
+      "sha256": "f05b309756343484222e504828c7818395b62988fda06f5104c164f48956e2f4"
+    }
+  },
+  "nested_mrun": false,
+  "offloads": 6,
+  "output": "/mnt/big/mdb/research/job-4420636a123c/h18-state-history-result",
+  "output_name": "h18-state-history-result",
+  "output_scratch": "/mnt/big/mdb/research",
+  "padding": "max_length",
+  "padding_side": "right",
+  "parameter_payload_bytes": {
+    "flux": 7751089152,
+    "qwen": 8044936192,
+    "vae": 99241030
+  },
+  "prefix_layers": 27,
+  "prompt": "A cobalt blue cube to the right of a matte orange ring on a gray tabletop. Two separate objects, simple studio product photograph.",
+  "qwen_config": "qwen-config.json",
+  "qwen_config_sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+  "qwen_manifest": "qwen-parameter-artifacts.json",
+  "qwen_manifest_entries": 398,
+  "qwen_manifest_sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+  "qwen_native_source_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/transformers/models/qwen3/modeling_qwen3.py",
+  "qwen_native_source_sha256": "fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab",
+  "qwen_parameter_root": "/mnt/big/llm-models/FLUX.2-klein-4B/text_encoder",
+  "qwen_recipe_helper": "flux_source_receiver.py",
+  "qwen_recipe_helper_sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+  "qwen_retrieval_script": "retrieve_qwen_weights.py",
+  "qwen_retrieval_script_sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+  "qwen_rope_buffer_policy": {
+    "init_device": "cpu",
+    "init_dtype": "float32",
+    "placement_dtype": "float32",
+    "source": "transformers-qwen3-rotary-embedding-v1-from-pretrained-device-only"
+  },
+  "qwen_source_binding": "qwen-source-binding.json",
+  "qwen_source_binding_sha256": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+  "reference_image": false,
+  "request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea",
+  "retry": false,
+  "rope_buffer_policy": {
+    "init_device": "cpu",
+    "init_dtype": "float32",
+    "placement_dtype": "float32",
+    "source": "transformers-qwen3-rotary-embedding-v1-from-pretrained-device-only"
+  },
+  "schema": "mdb-flux-h18-state-history-plan-v1",
+  "seed": 277,
+  "selected_hidden_states": [
+    9,
+    18,
+    27
+  ],
+  "signed_response": {
+    "arithmetic": "float64(coherent)-float64(direct)",
+    "duplicate_delta_bank": false,
+    "hash_encoding": "C-order little-endian float64",
+    "orientation": "coherent-minus-direct"
+  },
+  "source_metadata_receipt_sha256": "bdb557b3a6a236173c4df0d7324f08fdcd80a3eaa9c48f3394b0e02b9ca4a4b8",
+  "source_reduction_policy": true,
+  "steps": 4,
+  "tokenizers_native_preparation_source_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/tokenizers/tokenizers.abi3.so",
+  "tokenizers_native_preparation_source_sha256": "899b244f19f1ddd6506c45ea0f7163f38952f2a552272a687a6ef4b9ddcc7327",
+  "tokenizers_native_source_path": "runtime-bound-on-CUDA-host",
+  "tokenizers_native_source_sha256": "runtime-bound",
+  "tokenizers_wrapper_source_path": "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/lib/python3.12/site-packages/tokenizers/__init__.py",
+  "tokenizers_wrapper_source_sha256": "148ecb122f3fee03be9abb1fe213dd85fbc691bf2ad2b437ff531533781a6a3a",
+  "transformers_version": "5.14.1",
+  "transport_geometry": {
+    "largest_tensor_payload_bytes": 134217728,
+    "max_member_bytes": 134221824,
+    "npy_header_allowance_bytes": 4096,
+    "scope": "B1 BF16 retained decoder macros at fixed image geometry; archive framing is additional to tensor payload."
+  },
+  "transport_limits": {
+    "max_expanded_bytes": 8589934592,
+    "max_member_bytes": 134221824
+  },
+  "truncation": true,
+  "vae_config": "vae-config.json",
+  "vae_config_sha256": "0d6dfb69ae95a5e2ac9836284bbb63d8b38ce67b25ba2dff380752b2a10ab948",
+  "vae_manifest": "vae-parameter-artifacts.json",
+  "vae_manifest_entries": 142,
+  "vae_manifest_sha256": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9",
+  "vae_parameter_root": "/mnt/big/llm-models/FLUX.2-klein-4B/vae",
+  "vae_recipe_helper": "flux_source_receiver.py",
+  "vae_recipe_helper_sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+  "vae_retrieval_script": "retrieve_vae_weights.py",
+  "vae_retrieval_script_sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+  "width": 512,
+  "worker_sha256": "d1e57904f88cc4e6ccc062a966406d7fe7e2a0dfa669ad18985f640969ee2c75"
+}

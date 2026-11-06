@@ -134,9 +134,12 @@ retrieval scripts cover Qwen398+FLUX169+VAE142 without exporting banks.
 - [Target/collateral and endpoint effects](assets/flux-e18-conditioning-20261106/target-and-decoder.png)
 - [Seal chronology and genuine occurrence census](assets/flux-e18-conditioning-20261106/chronology-and-counts.png)
 
-Next: compare direct negative H18 with negative H18 followed by regenerated
-H19..27. A source-derived SwiGLU sign identity motivates that experiment, but
-is not a measured BF16 equality. The public full512 Qwen Act boundary remains
-unqualified; a new native suffix component must be honestly labeled and
-qualified. See the [attention microscope](QWEN-BLOCK0-ATTENTION.md) for the
-finite-profile issue and prior precision/counterexample context.
+The [H18 history experiment](FLUX-H18-STATE-HISTORY.md) now compares direct
+negative H18 with the same input followed by regenerated H19..27. Both full
+futures and their signed response were predicted exactly. The first edited
+block stays numerically odd through attention and gate/up, with SiLU the
+first numerical break. The real-arithmetic SwiGLU identity remains separate
+from measured BF16 behavior. The native suffix is qualified component
+execution; the public full512 Qwen Act boundary remains unqualified. See the
+[attention microscope](QWEN-BLOCK0-ATTENTION.md) for the finite-profile issue
+and prior precision/counterexample context.

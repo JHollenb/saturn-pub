@@ -1,0 +1,21 @@
+{
+  "hashed_roots": [
+    "audit_flux_h18_state_history.py",
+    "audit_flux_e18_conditioning_act.py",
+    "audit_flux_raw_mask_pair.py",
+    "audit_flux_raw_to_image.py",
+    "audit_flux_functional_qwen_prefix.py",
+    "audit_flux_functional_remaining.py",
+    "audit_flux_functional_pass.py",
+    "retrieve_reader_evidence.py",
+    "stage_flux_h18_saved_audit.py",
+    "stage_saved_flux_mask_pair_audit.py",
+    "preflight.v1.json"
+  ],
+  "path_token_allowlist": [
+    "/mnt/big/mdb/research/job-4420636a123c/h18-state-history-result",
+    "/mnt/big/mdb/research",
+    "binding-minimal-result"
+  ],
+  "schema_version": "mrun-preflight-config-v1"
+}

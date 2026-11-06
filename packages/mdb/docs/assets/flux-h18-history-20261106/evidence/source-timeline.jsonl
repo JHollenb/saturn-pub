@@ -1,0 +1,38 @@
+{"component": "qwen", "direction": "cuda", "kind": "component_placement", "seconds": 132.01937493588775}
+{"coherent": {"dtype": "torch.bfloat16", "kind": "tensor", "layout": "strided-dense", "sha256": "e0f85b8c357f4ee1948a7eb60d1f6653c9a777223625fcfca4bcfb2c82c86461", "shape": [1, 512, 7680], "stride": [3932160, 7680, 1], "tensor": "e0f85b8c357f4ee1948a7eb60d1f6653c9a777223625fcfca4bcfb2c82c86461"}, "counts": {"RMSNorm": 144, "SDPA": 36, "SiLU_products": 36, "blocks": 36, "conditioning_concats": 2, "eager_attention": 0, "embedding": 1, "linear": 252, "native_module_forwards": 0, "residual_additions": 72, "rope_context_formations": 1, "rotary_applications": 72, "state_negations": 1}, "direct": {"dtype": "torch.bfloat16", "kind": "tensor", "layout": "strided-dense", "sha256": "403e72bbdb68fb63f334aaf8d91f41a77184da0fce9901f674acc79af487bb3d", "shape": [1, 512, 7680], "stride": [3932160, 7680, 1], "tensor": "403e72bbdb68fb63f334aaf8d91f41a77184da0fce9901f674acc79af487bb3d"}, "kind": "qwen_history_completed", "lane": "forecast", "seconds": 140.71357256919146}
+{"component": "qwen", "direction": "cpu", "kind": "component_placement", "seconds": 160.11989861680195}
+{"component": "flux", "direction": "cuda", "kind": "component_placement", "seconds": 174.94008345715702}
+{"branch": "direct", "input_act_cut": "b5524122f43519f3b91134d0132c18e3207217a1a8cee87a3314abfad1dc79d2", "kind": "denoiser_branch_entry", "lane": "forecast", "seconds": 181.63585773995146}
+{"branch": "direct", "kind": "denoiser_branch_complete", "lane": "forecast", "seconds": 198.24886629311368, "transitions": 112}
+{"branch": "coherent", "input_act_cut": "a899f6252d17655df8c2352c5ab379225c36963d2ade1be1f06579a6fb0f8ceb", "kind": "denoiser_branch_entry", "lane": "forecast", "seconds": 198.24905921285972}
+{"branch": "coherent", "kind": "denoiser_branch_complete", "lane": "forecast", "seconds": 217.91106455679983, "transitions": 112}
+{"component": "flux", "direction": "cpu", "kind": "component_placement", "seconds": 238.06258572125807}
+{"component": "vae", "direction": "cuda", "kind": "component_placement", "seconds": 238.47316980408505}
+{"branch": "direct", "kind": "decoder_branch_complete", "lane": "forecast", "seconds": 246.58788302307948}
+{"branch": "coherent", "kind": "decoder_branch_complete", "lane": "forecast", "seconds": 249.8628691090271}
+{"component": "vae", "direction": "cpu", "kind": "component_placement", "seconds": 249.96430847607553}
+{"forecast_act_receipts": 2, "functional_transitions": 224, "kind": "forecast_globally_sealed", "native_module_entries": 0, "qwen_functional_blocks": 36, "seal_sha256": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "seconds": 277.83622056618333}
+{"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_targets_released", "seconds": 280.4650825019926}
+{"component": "qwen", "direction": "cuda", "kind": "component_placement", "seconds": 292.61820286605507}
+{"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 1, "seconds": 292.6225098092109}
+{"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 2, "seconds": 293.3222802472301}
+{"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 3, "seconds": 293.33653761120513}
+{"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 4, "seconds": 293.34365987125784}
+{"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 5, "seconds": 293.3444843310863}
+{"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 6, "seconds": 293.345408547204}
+{"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 7, "seconds": 293.3463341249153}
+{"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 8, "seconds": 293.3470269292593}
+{"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 9, "seconds": 293.3477721102536}
+{"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 10, "seconds": 293.3484440851025}
+{"coherent": {"dtype": "torch.bfloat16", "kind": "tensor", "layout": "strided-dense", "sha256": "e0f85b8c357f4ee1948a7eb60d1f6653c9a777223625fcfca4bcfb2c82c86461", "shape": [1, 512, 7680], "stride": [3932160, 7680, 1], "tensor": "e0f85b8c357f4ee1948a7eb60d1f6653c9a777223625fcfca4bcfb2c82c86461"}, "counts": {"SDPA": 45, "baseline_blocks": 36, "conditioning_concats": 2, "full_model_calls": 1, "native_module_entries": 681, "sham_clones": 0, "state_negations": 1, "suffix_blocks": 9}, "direct": {"dtype": "torch.bfloat16", "kind": "tensor", "layout": "strided-dense", "sha256": "403e72bbdb68fb63f334aaf8d91f41a77184da0fce9901f674acc79af487bb3d", "shape": [1, 512, 7680], "stride": [3932160, 7680, 1], "tensor": "403e72bbdb68fb63f334aaf8d91f41a77184da0fce9901f674acc79af487bb3d"}, "kind": "qwen_history_completed", "lane": "native", "seconds": 295.5790943210013}
+{"component": "qwen", "direction": "cpu", "kind": "component_placement", "seconds": 310.6856685928069}
+{"component": "flux", "direction": "cuda", "kind": "component_placement", "seconds": 323.26994245219976}
+{"branch": "direct", "input_act_cut": "b5524122f43519f3b91134d0132c18e3207217a1a8cee87a3314abfad1dc79d2", "kind": "denoiser_branch_entry", "lane": "native", "seconds": 327.866437247023}
+{"branch": "direct", "kind": "denoiser_branch_complete", "lane": "native", "seconds": 354.8833534908481, "transitions": 112}
+{"branch": "coherent", "input_act_cut": "a899f6252d17655df8c2352c5ab379225c36963d2ade1be1f06579a6fb0f8ceb", "kind": "denoiser_branch_entry", "lane": "native", "seconds": 354.88353429781273}
+{"branch": "coherent", "kind": "denoiser_branch_complete", "lane": "native", "seconds": 376.71821944322437, "transitions": 112}
+{"component": "flux", "direction": "cpu", "kind": "component_placement", "seconds": 388.4318291260861}
+{"component": "vae", "direction": "cuda", "kind": "component_placement", "seconds": 388.65549181820825}
+{"branch": "direct", "kind": "decoder_branch_complete", "lane": "native", "seconds": 388.9282339159399}
+{"branch": "coherent", "kind": "decoder_branch_complete", "lane": "native", "seconds": 389.19714632304385}
+{"component": "vae", "direction": "cpu", "kind": "component_placement", "seconds": 389.29831279208884}

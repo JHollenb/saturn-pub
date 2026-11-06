@@ -1,0 +1,43 @@
+{
+  "attempt": "attempt-01",
+  "coverage": [
+    "exact frozen reader plus7saved-only helpers and frontend source closure",
+    "missing study and helper tamper refusal before delegation",
+    "submit exact source/resource guards with unchanged afbb contract",
+    "actual isolated help and missing-study CLI"
+  ],
+  "execution_sha256": "ad74fd01c067b25ba6aef73a6ac2f4d6bd603e60e6b25fb54103f771cd413b73",
+  "limitations": [
+    "This is not actual source-job authentication,staging,collection or admission proof; those remain genericcontroller/root responsibilities.",
+    "No numerical accounts were rerun."
+  ],
+  "pytest": "4 passed in0.12s",
+  "resource_note": "Per final parent instruction retain frozen afbb240s estimate and600souter, matching actual generic queue note. E18 actual245.61s makes estimate slightly low; no runtime/speedup guarantee. No resource-only request reseal or staged archive/debug-request mutation implemented.",
+  "resources": {
+    "cpu_threads": 2,
+    "est_wall_s": 240,
+    "outer_timeout_s": 600,
+    "ram_mb": 3072,
+    "vram_mb": 0
+  },
+  "returncode": 0,
+  "ruff_returncode": 0,
+  "schema": "mdb-h18-saved-audit-controller-qualification-v1",
+  "scope": "Offline thin frontend and source guards; generic stage/submit mocked, no real request,network,SSH,model,tokenizer,checkpoint or CUDA call.",
+  "source_sha256": "6e97554549ed339b8d70ec4cbd89172e5e4a3ca9d5e5bb2cdbe16c51bc45f2fa",
+  "sources": {
+    "qualification/audit_flux_e18_conditioning_act.py": "b9690429f05257bac7f6a9bd276e37e411d4fd7960cd33caa893faf5d87ec70c",
+    "qualification/audit_flux_functional_pass.py": "2d54e716749dec52c159f3a5214860f4bb8cbf396fd09239540bd55988274c80",
+    "qualification/audit_flux_functional_qwen_prefix.py": "5004786be76e1f576d2df65e6d1225f8fdd41c4a7e09e5ed8a6c23057db78a97",
+    "qualification/audit_flux_functional_remaining.py": "5027875c03f9ceb3157b4b9d9632366ff5c9b1c4beb429b8b73d79aad0db6b08",
+    "qualification/audit_flux_h18_state_history.py": "512f21ad1410fccf61930d807a9e939517accff1004be318be7c9f2a7166fb77",
+    "qualification/audit_flux_raw_mask_pair.py": "70408046bb83f1c0719addb57191c7d4bdf4c5a1121195c299c4cb493cf11d88",
+    "qualification/audit_flux_raw_to_image.py": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835",
+    "qualification/retrieve_reader_evidence.py": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923",
+    "qualification/stage_flux_h18_saved_audit.py": "6e97554549ed339b8d70ec4cbd89172e5e4a3ca9d5e5bb2cdbe16c51bc45f2fa",
+    "qualification/stage_saved_flux_mask_pair_audit.py": "afbb71dfe56b2ed1749c77469dbde8a6c85f554b38831d52f54dd30a647f2ea0",
+    "tests/test_stage_flux_h18_saved_audit.py": "c1e0c6a6dc658d2afb89b8f5fa7a4a3dd480d63037fa1c127493bb634afa78f1"
+  },
+  "status": "passed",
+  "test_sha256": "c1e0c6a6dc658d2afb89b8f5fa7a4a3dd480d63037fa1c127493bb634afa78f1"
+}

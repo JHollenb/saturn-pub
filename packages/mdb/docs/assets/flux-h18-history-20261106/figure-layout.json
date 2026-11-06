@@ -1,0 +1,337 @@
+{
+  "chronology-census-and-coverage.png": [
+    {
+      "axis": 0,
+      "bbox": [
+        5.8337999999999965,
+        646.6717555555558,
+        1125.4177013126755,
+        659.5601777777779
+      ],
+      "figure_title": "Global chronology, physical census and separate coverage accounts\nAll complete functional futures sealed before native learned targets; one dependent prompt/seed.",
+      "within_figure": true
+    },
+    {
+      "axis": 1,
+      "bbox": [
+        1152.2579505249805,
+        706.0606444444447,
+        941.9082494750196,
+        626.8379555555557
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 2,
+      "bbox": [
+        178.4449111111111,
+        5.833799999999999,
+        941.9082494750197,
+        626.8379555555556
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 3,
+      "bbox": [
+        1152.2579505249805,
+        5.833799999999999,
+        941.9082494750196,
+        626.8379555555556
+      ],
+      "within_figure": true
+    }
+  ],
+  "downstream-signed-continuation.png": [
+    {
+      "axis": 0,
+      "bbox": [
+        12.208799999999993,
+        1219.8831,
+        740.992641387433,
+        393.0155000000002
+      ],
+      "figure_title": "Downstream continuation \u0394 = coherent \u2212 direct, conditional on held negative H18\nActual retained clocks; gaps are nonlive/undefined. Units differ across fields; no stage-RMS gain or causal-share inference.",
+      "within_figure": true
+    },
+    {
+      "axis": 1,
+      "bbox": [
+        774.4223777777776,
+        1219.8831,
+        716.1176413874329,
+        393.0155000000002
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 2,
+      "bbox": [
+        1511.760955555555,
+        1219.8831,
+        716.167409372038,
+        393.0155000000002
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 3,
+      "bbox": [
+        12.208799999999993,
+        815.2,
+        740.992641387433,
+        393.01550000000066
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 4,
+      "bbox": [
+        774.4223777777776,
+        815.2,
+        716.1176413874329,
+        393.01550000000066
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 5,
+      "bbox": [
+        1511.760955555555,
+        815.2,
+        716.1176413874337,
+        393.01550000000066
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 6,
+      "bbox": [
+        5.833799999999993,
+        410.51689999999974,
+        753.5457836984584,
+        393.0155000000003
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 7,
+      "bbox": [
+        774.4223777777776,
+        410.51689999999974,
+        722.2957836984582,
+        393.0155000000003
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 8,
+      "bbox": [
+        1511.760955555555,
+        410.51689999999974,
+        722.2957836984592,
+        393.0155000000003
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 9,
+      "bbox": [
+        18.458799999999993,
+        5.833800000000004,
+        729.3179310655572,
+        393.0155000000003
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 10,
+      "bbox": [
+        774.4223777777776,
+        5.833800000000004,
+        710.6929310655572,
+        393.0155000000003
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 11,
+      "bbox": [
+        1511.760955555555,
+        5.833800000000004,
+        716.803899922129,
+        393.0155000000003
+      ],
+      "within_figure": true
+    }
+  ],
+  "first-edited-block-ports.png": [
+    {
+      "axis": 0,
+      "bbox": [
+        5.833799999999993,
+        5.8337999999999965,
+        766.4080222222224,
+        773.4648
+      ],
+      "figure_title": "First edited Qwen block only \u00b7 ideal oddness extends through gate/up; SiLU is the first nonodd operation\nShaded ports have no zero-oddness prediction. KV repetition/head transpose are declared views; no whole-suffix parity or independent-kernel claim.",
+      "within_figure": true
+    },
+    {
+      "axis": 1,
+      "bbox": [
+        788.108488888889,
+        5.8337999999999965,
+        785.1580222222221,
+        773.4648
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 2,
+      "bbox": [
+        1589.1331777777775,
+        5.8337999999999965,
+        785.0330222222221,
+        773.4648
+      ],
+      "within_figure": true
+    }
+  ],
+  "native-endpoints-and-signed-difference.png": [
+    {
+      "axis": 0,
+      "bbox": [
+        5.833799999999999,
+        556.3106076388891,
+        457.8185069444444,
+        484.48517361111124
+      ],
+      "figure_title": "Negative-H18 direct route versus regenerated H27 history\nOne fixed prompt/seed; global state intervention, no object-concept attribution",
+      "within_figure": true
+    },
+    {
+      "axis": 1,
+      "bbox": [
+        612.6557111111111,
+        556.3106076388895,
+        457.8185069444438,
+        484.48517361111044
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 2,
+      "bbox": [
+        1219.477622222222,
+        535.2000000000002,
+        457.8185069444444,
+        500.0397222222224
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 3,
+      "bbox": [
+        5.833799999999999,
+        26.94440763888896,
+        457.8185069444444,
+        484.48517361111107
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 4,
+      "bbox": [
+        612.6557111111111,
+        26.94440763888921,
+        457.8185069444438,
+        484.48517361111044
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 5,
+      "bbox": [
+        1219.477622222222,
+        26.944407638888897,
+        457.8185069444444,
+        484.4851736111112
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 6,
+      "bbox": [
+        486.54323229166664,
+        68.3387652777778,
+        112.39037847222221,
+        375.0297916666667
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 7,
+      "bbox": [
+        1093.3651434027772,
+        68.3387652777778,
+        112.39037847222221,
+        375.0297916666667
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 8,
+      "bbox": [
+        1700.1870545138886,
+        68.3387652777778,
+        112.39037847222221,
+        375.0297916666667
+      ],
+      "within_figure": true
+    }
+  ],
+  "qwen-history-and-first-writer.png": [
+    {
+      "axis": 0,
+      "bbox": [
+        12.083800000000004,
+        592.2773111111112,
+        945.8661999999994,
+        600.6212888888888
+      ],
+      "figure_title": "Whole history prediction plus one retained writer microscope\nNo later MLP/even-contribution curve was retained; no learned Wd(GU) projection is executed. Real algebra is not a finite-kernel equality.",
+      "within_figure": true
+    },
+    {
+      "axis": 1,
+      "bbox": [
+        1020.7999999999995,
+        592.2773111111112,
+        933.3662000000006,
+        600.6212888888888
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 2,
+      "bbox": [
+        5.833800000000004,
+        5.833799999999993,
+        952.1161999999995,
+        573.8435111111111
+      ],
+      "within_figure": true
+    },
+    {
+      "axis": 3,
+      "bbox": [
+        977.5499999999995,
+        5.833799999999993,
+        976.6162000000004,
+        573.8435111111111
+      ],
+      "within_figure": true
+    }
+  ]
+}

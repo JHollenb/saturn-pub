@@ -1,0 +1,136 @@
+{
+  "schema": "mdb-flux-h18-history-saved-reader-qualification-v1",
+  "status": "qualified-tiny-saved-mechanics-only",
+  "reader_sha256": "512f21ad1410fccf61930d807a9e939517accff1004be318be7c9f2a7166fb77",
+  "test_sha256": "f71504d4fa3fd8d78015647ba794042addd09177d2c515279f0889e459bb17de",
+  "producer_sha256": "d1e57904f88cc4e6ccc062a966406d7fe7e2a0dfa669ad18985f640969ee2c75",
+  "producer_qualification_sha256": "257351308f8d80d049d13e3f0569e44b273023ecd7c94a7d51d8b49b948abe18",
+  "generative_history_helper_sha256_not_imported": "17084d404f5ae00557e4ad8e94a8b84704787c47ebf9c875228cb452c4857036",
+  "final_attempt": {
+    "path": "attempt-04/result.json",
+    "sha256": "6358baef54e17fb12098fa4c57ac6a22526544cf633559b81e752709cbfe7ff4",
+    "checks": 24,
+    "pytest_seconds": 12.05,
+    "wall_seconds": 12.44856687495485,
+    "command": [
+      "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+      "-I",
+      "-B",
+      "-m",
+      "pytest",
+      "-q",
+      "tests/test_audit_flux_h18_state_history.py",
+      "--basetemp=tmp"
+    ],
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/audit-qualification-v1/attempt-04/cohort"
+  },
+  "prior_attempts": [
+    {
+      "path": "attempt-01/pytest.log",
+      "status": "14passed2test-assumption-failures; oldsham path and unjustified CAS inequality corrected"
+    },
+    {
+      "path": "attempt-02/result.json",
+      "checks": 23,
+      "pytest_seconds": 9.75
+    },
+    {
+      "path": "attempt-03/result.json",
+      "checks": 24,
+      "pytest_seconds": 12.04,
+      "scope": "before final wording/catalog-context metadata update"
+    }
+  ],
+  "ruff": {
+    "command": [
+      "rtk",
+      "proxy",
+      "uvx",
+      "ruff",
+      "check",
+      "--select",
+      "F,I",
+      "qualification/audit_flux_h18_state_history.py",
+      "tests/test_audit_flux_h18_state_history.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "returncode": 0,
+    "output": "All checks passed!\n",
+    "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+  },
+  "source_cohort": {
+    "qualification/audit_flux_h18_state_history.py": "512f21ad1410fccf61930d807a9e939517accff1004be318be7c9f2a7166fb77",
+    "tests/test_audit_flux_h18_state_history.py": "f71504d4fa3fd8d78015647ba794042addd09177d2c515279f0889e459bb17de",
+    "qualification/audit_flux_e18_conditioning_act.py": "b9690429f05257bac7f6a9bd276e37e411d4fd7960cd33caa893faf5d87ec70c",
+    "qualification/audit_flux_raw_mask_pair.py": "70408046bb83f1c0719addb57191c7d4bdf4c5a1121195c299c4cb493cf11d88",
+    "qualification/audit_flux_raw_to_image.py": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835",
+    "qualification/audit_flux_functional_qwen_prefix.py": "5004786be76e1f576d2df65e6d1225f8fdd41c4a7e09e5ed8a6c23057db78a97",
+    "qualification/audit_flux_functional_remaining.py": "5027875c03f9ceb3157b4b9d9632366ff5c9b1c4beb429b8b73d79aad0db6b08",
+    "qualification/audit_flux_functional_pass.py": "2d54e716749dec52c159f3a5214860f4bb8cbf396fd09239540bd55988274c80",
+    "qualification/retrieve_reader_evidence.py": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923",
+    "qualification/flux_raw_to_image.py": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522"
+  },
+  "fixture": {
+    "source": "artifacts/mdb-flux-h18-history-20261106/producer-qualification-v1/attempt-03/tmp/h18-own-history0",
+    "members": 759,
+    "bytes": 4935839,
+    "inventory_sha256": "cbde2a58d1764d1dc41039a9acc82daf35337cb5afdc6246ccdff9521b2de58d",
+    "scope": "Actual new producer writer, tiny synthetic Qwen/FLUX Act/Session. Decoder pixels are serializer fixtures, no VAE closure claim."
+  },
+  "coverage": [
+    "Actual rich/minimal serializer arrays and own common/negative histories",
+    "Exact unary-negated H18 and independently composed own base/direct/coherent E",
+    "Actual seven tiny nativeSDPA receipts/full5+suffix2/LM embedding rotary entries, source masks positions RoPE and suffix consumers",
+    "First-suffix primitive metrics with explicit repeatedKV/headtranspose mapping only",
+    "Oddness value versus BF16bits/signedzero and R/M/Y finite-addition remainders; no extra learned projection",
+    "Four genuine downstream FLUX Acts,56tiny native advances,60emitted occurrences,eight actual context consumers",
+    "Complete own-state trajectories and recursive FP64 coherent-minus-direct commitments",
+    "Real ForecastTransaction allforecast ActCAS frontier excludes native paths; hostile unsealed file refusal",
+    "Synthetic standardrequest/wrapper/source authentication with changedidentity refusal",
+    "Nonzero port/response misses retained and later fields present",
+    "Distinct primary wholefields/queryregions/alignedports/oddness coverage regression",
+    "Model-free compactworker request/output/normalmanifest/marker and sixoriginalPNG transport"
+  ],
+  "API": {
+    "config_keys": [
+      "native_root",
+      "native_manifest_sha256",
+      "native_request_sha256",
+      "output_scratch"
+    ],
+    "outputs": [
+      "audit.json",
+      "catalog/equations",
+      "catalog/provenance.json",
+      "six original PNGs",
+      "source metadata/recipes/sidecars",
+      "external-evidence.json",
+      "retrieve_evidence.py",
+      "request.json",
+      "summary.json",
+      "files.json"
+    ],
+    "helper_sources": [
+      "qualification/audit_flux_h18_state_history.py",
+      "tests/test_audit_flux_h18_state_history.py",
+      "qualification/audit_flux_e18_conditioning_act.py",
+      "qualification/audit_flux_raw_mask_pair.py",
+      "qualification/audit_flux_raw_to_image.py",
+      "qualification/audit_flux_functional_qwen_prefix.py",
+      "qualification/audit_flux_functional_remaining.py",
+      "qualification/audit_flux_functional_pass.py",
+      "qualification/retrieve_reader_evidence.py",
+      "qualification/flux_raw_to_image.py"
+    ]
+  },
+  "limits": [
+    "No originalassets/model/tokenizer/GPU calls, SSH, staging or jobs by this reader qualification",
+    "Reader never imports generative H18 helper; only pinned pure saved-account dependencies",
+    "Primary whole Qwen coverage41 productionfields;82queryregions and30alignedports separate; aliases/dependence explicit",
+    "Native baseline exits28..36 are retainedreference-only; actual LM entry/logitsshape, no forecast of LMvalues",
+    "Raw history_response genericorientationlabel preserved but corrected semantics reported as edited-minus-baseline; downstreamconditioning/image response is coherent-minus-direct",
+    "Fullproduction authentication/parameterrestore/decoderaccount needs parent-launched savedCPU run after native success; tiny fixture is not productionoutcome"
+  ],
+  "resource_note": "Closest measured source is E18 saved audit245.61s/RSS1425.2MB/0VRAM. Extra history/port comparisons suggest retain at least240s estimate/600s outer;3GiB sequential account remains plausible, not a measured new reservation/speedclaim.",
+  "stage_or_submit": false
+}

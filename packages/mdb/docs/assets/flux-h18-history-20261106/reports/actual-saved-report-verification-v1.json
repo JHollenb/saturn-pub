@@ -1,0 +1,1223 @@
+{
+  "actual_context_operands": 8,
+  "actual_counts": {
+    "act_receipts": 4,
+    "component_hydrations": 3,
+    "cpu_offloads": 6,
+    "cuda_placements": 6,
+    "functional_decode_calls": 2,
+    "functional_transitions": 224,
+    "guard_refusals": 0,
+    "native_module_entries": 4025,
+    "native_qwen_calls": 1,
+    "native_transitions": 224,
+    "native_vae_calls": 4,
+    "noise_draws": 2,
+    "qwen_functional_SDPA": 36,
+    "qwen_functional_blocks": 36,
+    "qwen_native_SDPA": 45,
+    "qwen_native_authorizations": 10,
+    "qwen_native_blocks": 45,
+    "receipt_occurrences": 228
+  },
+  "audit_sha256": "548adac8eec327a16a0bc9d0db086daf5caec7df250a89d771ba4bed3dbaa497",
+  "collection": {
+    "archive_bytes": 3949722,
+    "archive_sha256": "97ca4a382ccc9cf16415a220896b70b735c7120ffdc1ec3be2754bd850216bc0",
+    "collection_encoder": {
+      "schema": "mdb-explicit-recovery-encoder-v1",
+      "scope": "Collection-only encoder supplied by a separately request-sealed run. Original worker payload/request remain unchanged.",
+      "sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+      "source_request_sha256": "2339ecdb754e0104418b463397b4cb2121a4bbb1c9646d390e56cee3f0fe1e2e"
+    },
+    "expanded_bytes": 18801739,
+    "file_count": 49,
+    "files_manifest_sha256": "bba4bb1271d24a5d34248d97fae09710dbe2b4b7baa7c72296258af9a3593852",
+    "job_id": "job-722d899061e3",
+    "pointer_sha256": "a9a3769c1df17c103fc4ff9b467db7ebf56965677ad1add8af4e0e0d96cc904c",
+    "raw_tensor_arrays_collected": false,
+    "request_sha256": "f6fd5739232f27d58bb758f29739e417c43c955fdce1c109dd8e8242189e3b65",
+    "schema": "mdb-h18-compact-retrieval-v1"
+  },
+  "coverage": {
+    "aligned_first_suffix_port_comparisons": {
+      "bit_exact_fields": 30,
+      "changed_values": 0,
+      "fields": 30,
+      "max_rms": 0.0,
+      "maxabs": 0.0,
+      "positions": 74973184
+    },
+    "primary_denoiser_whole_fields": {
+      "bit_exact_fields": 1960,
+      "changed_values": 0,
+      "fields": 1960,
+      "max_rms": 0.0,
+      "maxabs": 0.0,
+      "positions": 1145176064
+    },
+    "primary_qwen_whole_fields": {
+      "bit_exact_fields": 41,
+      "changed_values": 0,
+      "fields": 41,
+      "max_rms": 0.0,
+      "maxabs": 0.0,
+      "positions": 61603840
+    },
+    "qwen_query_region_diagnostics": {
+      "bit_exact_fields": 82,
+      "changed_values": 0,
+      "fields": 82,
+      "max_rms": 0.0,
+      "maxabs": 0.0,
+      "positions": 61603840
+    },
+    "signed_denoiser_response_fields": {
+      "bit_exact_fields": 1546,
+      "changed_values": 0,
+      "fields": 1546,
+      "max_rms": 0.0,
+      "maxabs": 0.0,
+      "positions": 1017748473
+    }
+  },
+  "decoder_responses": {
+    "decoded": {
+      "forecast": {
+        "bitwise_exact": false,
+        "changed_values": 785996,
+        "cosine": -0.17445729090410128,
+        "denominator": "RMS of same native field",
+        "dot": -19951.88714852091,
+        "maxabs": 1.9921875,
+        "native_rms": 0.2916731010585082,
+        "native_signed_mean": 0.0815223937582535,
+        "orientation": "coherent-minus-direct",
+        "p95": 1.07421875,
+        "p99": 1.193359375,
+        "predicted_rms": 0.4985828086813776,
+        "predicted_signed_mean": -0.3568780449568294,
+        "relative_rms": 2.1256626580143494,
+        "rms": 0.6199986192673164,
+        "sample_count": 786432,
+        "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+        "shape": [
+          1,
+          3,
+          512,
+          512
+        ],
+        "signed_mean": -0.4384004387150829,
+        "worst": {
+          "coordinate": [
+            0,
+            0,
+            291,
+            123
+          ],
+          "native": 0.90625,
+          "predicted": -1.0859375,
+          "signed_error": -1.9921875
+        }
+      },
+      "native": {
+        "bitwise_exact": false,
+        "changed_values": 785996,
+        "cosine": -0.17445729090410128,
+        "denominator": "RMS of same native field",
+        "dot": -19951.88714852091,
+        "maxabs": 1.9921875,
+        "native_rms": 0.2916731010585082,
+        "native_signed_mean": 0.0815223937582535,
+        "orientation": "coherent-minus-direct",
+        "p95": 1.07421875,
+        "p99": 1.193359375,
+        "predicted_rms": 0.4985828086813776,
+        "predicted_signed_mean": -0.3568780449568294,
+        "relative_rms": 2.1256626580143494,
+        "rms": 0.6199986192673164,
+        "sample_count": 786432,
+        "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+        "shape": [
+          1,
+          3,
+          512,
+          512
+        ],
+        "signed_mean": -0.4384004387150829,
+        "worst": {
+          "coordinate": [
+            0,
+            0,
+            291,
+            123
+          ],
+          "native": 0.90625,
+          "predicted": -1.0859375,
+          "signed_error": -1.9921875
+        }
+      },
+      "prospective_full_hash_verified": true,
+      "scope": "Coherent-minus-direct H27-history response conditional on negative H18; targets/collaterals/continuations share state and are dependent observations.",
+      "sealed": {
+        "dtype": "float64",
+        "elements": 786432,
+        "orientation": "coherent-minus-direct",
+        "sha256": "9bddad503555ccc1e5b169b8fe566bef71c300d731309538fad668dd0af11d82",
+        "shape": [
+          1,
+          3,
+          512,
+          512
+        ]
+      },
+      "signed_response_error": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "denominator": "RMS of same native field",
+        "dot": 302303.11434456566,
+        "maxabs": 0.0,
+        "native_rms": 0.6199986192673164,
+        "native_signed_mean": -0.4384004387150829,
+        "orientation": "functional-minus-native",
+        "p95": 0.0,
+        "p99": 0.0,
+        "predicted_rms": 0.6199986192673164,
+        "predicted_signed_mean": -0.4384004387150829,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "sample_count": 786432,
+        "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+        "shape": [
+          1,
+          3,
+          512,
+          512
+        ],
+        "signed_mean": 0.0,
+        "worst": {
+          "coordinate": [
+            0,
+            0,
+            0,
+            0
+          ],
+          "native": -0.0723876953125,
+          "predicted": -0.0723876953125,
+          "signed_error": 0.0
+        }
+      }
+    },
+    "pixels": {
+      "forecast": {
+        "bitwise_exact": false,
+        "changed_values": 783855,
+        "cosine": 0.8560332498254204,
+        "denominator": "RMS of same native field",
+        "dot": 8919878030.0,
+        "maxabs": 245.0,
+        "native_rms": 142.09135367092213,
+        "native_signed_mean": 137.55546442667642,
+        "orientation": "coherent-minus-direct",
+        "p95": 137.0,
+        "p99": 151.0,
+        "predicted_rms": 93.24798454308845,
+        "predicted_signed_mean": 82.01963424682617,
+        "relative_rms": 0.5541831117441901,
+        "rms": 78.74462852929587,
+        "sample_count": 786432,
+        "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+        "shape": [
+          512,
+          512,
+          3
+        ],
+        "signed_mean": -55.53583017985026,
+        "worst": {
+          "coordinate": [
+            229,
+            103,
+            0
+          ],
+          "native": 245.0,
+          "predicted": 0.0,
+          "signed_error": -245.0
+        }
+      },
+      "native": {
+        "bitwise_exact": false,
+        "changed_values": 783855,
+        "cosine": 0.8560332498254204,
+        "denominator": "RMS of same native field",
+        "dot": 8919878030.0,
+        "maxabs": 245.0,
+        "native_rms": 142.09135367092213,
+        "native_signed_mean": 137.55546442667642,
+        "orientation": "coherent-minus-direct",
+        "p95": 137.0,
+        "p99": 151.0,
+        "predicted_rms": 93.24798454308845,
+        "predicted_signed_mean": 82.01963424682617,
+        "relative_rms": 0.5541831117441901,
+        "rms": 78.74462852929587,
+        "sample_count": 786432,
+        "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+        "shape": [
+          512,
+          512,
+          3
+        ],
+        "signed_mean": -55.53583017985026,
+        "worst": {
+          "coordinate": [
+            229,
+            103,
+            0
+          ],
+          "native": 245.0,
+          "predicted": 0.0,
+          "signed_error": -245.0
+        }
+      },
+      "prospective_full_hash_verified": true,
+      "scope": "Coherent-minus-direct H27-history response conditional on negative H18; targets/collaterals/continuations share state and are dependent observations.",
+      "sealed": {
+        "dtype": "float64",
+        "elements": 786432,
+        "orientation": "coherent-minus-direct",
+        "sha256": "3172cc92337afe336b0f2e07bd8840cfddd59fe64c7ac293b18323e4e1155cc6",
+        "shape": [
+          512,
+          512,
+          3
+        ]
+      },
+      "signed_response_error": {
+        "bitwise_exact": true,
+        "changed_values": 0,
+        "cosine": 1.0,
+        "denominator": "RMS of same native field",
+        "dot": 4876441896.0,
+        "maxabs": 0.0,
+        "native_rms": 78.74462852929587,
+        "native_signed_mean": -55.53583017985026,
+        "orientation": "functional-minus-native",
+        "p95": 0.0,
+        "p99": 0.0,
+        "predicted_rms": 78.74462852929587,
+        "predicted_signed_mean": -55.53583017985026,
+        "relative_rms": 0.0,
+        "rms": 0.0,
+        "sample_count": 786432,
+        "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+        "shape": [
+          512,
+          512,
+          3
+        ],
+        "signed_mean": 0.0,
+        "worst": {
+          "coordinate": [
+            0,
+            0,
+            0
+          ],
+          "native": -10.0,
+          "predicted": -10.0,
+          "signed_error": 0.0
+        }
+      }
+    }
+  },
+  "decoder_three_term_comparisons": {
+    "bit_exact_fields": 12,
+    "changed_values": 0,
+    "fields": 12,
+    "max_rms": 0.0,
+    "maxabs": 0.0,
+    "positions": 9437184
+  },
+  "earliest_numeric_changes": {
+    "image": {
+      "clock": {
+        "cursor": 1,
+        "phase": "joint",
+        "step": 0
+      },
+      "number": 1,
+      "response": {
+        "bitwise_exact": false,
+        "changed_values": 3123083,
+        "cosine": 0.866344420709669,
+        "denominator": "RMS of same native field",
+        "dot": 11278815.665250087,
+        "maxabs": 119.5,
+        "native_rms": 1.625087466244421,
+        "native_signed_mean": 0.014669116443352928,
+        "orientation": "coherent-minus-direct",
+        "p95": 2.078125,
+        "p99": 3.984375,
+        "predicted_rms": 2.5466836918436897,
+        "predicted_signed_mean": -7.321044116300375e-05,
+        "relative_rms": 0.860530995922521,
+        "rms": 1.3984381357885178,
+        "sample_count": 3145728,
+        "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+        "shape": [
+          1,
+          1024,
+          3072
+        ],
+        "signed_mean": -0.014742326884515933,
+        "worst": {
+          "coordinate": [
+            0,
+            1,
+            2808
+          ],
+          "native": -63.5,
+          "predicted": -183.0,
+          "signed_error": -119.5
+        }
+      }
+    },
+    "latent": {
+      "clock": {
+        "cursor": 0,
+        "phase": "project",
+        "step": 1
+      },
+      "number": 27,
+      "response": {
+        "bitwise_exact": false,
+        "changed_values": 125909,
+        "cosine": 0.9986918589075137,
+        "denominator": "RMS of same native field",
+        "dot": 122583.6305644472,
+        "maxabs": 0.2890625,
+        "native_rms": 0.9668824732354611,
+        "native_signed_mean": -0.008447063875792082,
+        "orientation": "coherent-minus-direct",
+        "p95": 0.09912109375,
+        "p99": 0.1484375,
+        "predicted_rms": 0.9685395417652078,
+        "predicted_signed_mean": -0.006594456717721187,
+        "relative_rms": 0.051222097167767995,
+        "rms": 0.04952574799387862,
+        "sample_count": 131072,
+        "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+        "shape": [
+          1,
+          1024,
+          128
+        ],
+        "signed_mean": 0.0018526071580708958,
+        "worst": {
+          "coordinate": [
+            0,
+            646,
+            81
+          ],
+          "native": 0.45703125,
+          "predicted": 0.74609375,
+          "signed_error": 0.2890625
+        }
+      }
+    },
+    "noise_prediction": {
+      "clock": {
+        "cursor": 20,
+        "phase": "scheduler",
+        "step": 0
+      },
+      "number": 26,
+      "response": {
+        "bitwise_exact": false,
+        "changed_values": 130863,
+        "cosine": 0.46697287984525776,
+        "denominator": "RMS of same native field",
+        "dot": 72287.80175678735,
+        "maxabs": 6.9375,
+        "native_rms": 1.2817240644887973,
+        "native_signed_mean": 0.09932260196012521,
+        "orientation": "coherent-minus-direct",
+        "p95": 2.35546875,
+        "p99": 3.5,
+        "predicted_rms": 0.9214438900268361,
+        "predicted_signed_mean": 0.05509738112868945,
+        "relative_rms": 0.9194609842661126,
+        "rms": 1.1784952698924318,
+        "sample_count": 131072,
+        "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+        "shape": [
+          1,
+          1024,
+          128
+        ],
+        "signed_mean": -0.04422522083143576,
+        "worst": {
+          "coordinate": [
+            0,
+            646,
+            81
+          ],
+          "native": 6.15625,
+          "predicted": -0.78125,
+          "signed_error": -6.9375
+        }
+      }
+    },
+    "text": {
+      "clock": {
+        "cursor": 0,
+        "phase": "joint",
+        "step": 0
+      },
+      "number": 0,
+      "response": {
+        "bitwise_exact": false,
+        "changed_values": 1571611,
+        "cosine": 0.35332373312685844,
+        "denominator": "RMS of same native field",
+        "dot": 173041472.41555107,
+        "maxabs": 2297.0,
+        "native_rms": 17.952597202225334,
+        "native_signed_mean": 0.012662606926615657,
+        "orientation": "coherent-minus-direct",
+        "p95": 9.61328125,
+        "p99": 13.407695312499527,
+        "predicted_rms": 17.34438608214114,
+        "predicted_signed_mean": -0.06008357149808793,
+        "relative_rms": 1.1183394680566032,
+        "rms": 20.077098005371145,
+        "sample_count": 1572864,
+        "scope": "Complete saved arrays; native token coordinates, no alignment, quality threshold or semantic correspondence claim.",
+        "shape": [
+          1,
+          512,
+          3072
+        ],
+        "signed_mean": -0.07274617842470359,
+        "worst": {
+          "coordinate": [
+            0,
+            0,
+            2678
+          ],
+          "native": -249.0,
+          "predicted": 2048.0,
+          "signed_error": 2297.0
+        }
+      }
+    }
+  },
+  "installed_cli": [
+    {
+      "alias": "cmp.flux.H18-history.coherent.whole",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.H18-history.coherent.whole",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/saved-report-verification-v1/cmp.flux.H18-history.coherent.whole.exact.context.json"
+      ],
+      "context_sha256": "88b4b3f63a63cbcffaa76d5c2c3e4614ad7dbe34e9840b037a4b23f25cb5462a",
+      "kind": "exact",
+      "matches": 1,
+      "result_sha256": "38d032ddce01780c64387a29307607939a1956354f3cc3c3d4b20416accc4b45"
+    },
+    {
+      "alias": "cmp.flux.H18-history.coherent.whole",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.H18-history.coherent.whole",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/saved-report-verification-v1/cmp.flux.H18-history.coherent.whole.changed-clock.context.json"
+      ],
+      "context_sha256": "59a9906ea188ece89053047355a1bf5c085d7022a6c85ee813a0259df77e93b0",
+      "kind": "changed-clock",
+      "matches": 0,
+      "result_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "alias": "cmp.flux.H18-history.coherent.whole",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.H18-history.coherent.whole",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/saved-report-verification-v1/cmp.flux.H18-history.coherent.whole.changed-seed.context.json"
+      ],
+      "context_sha256": "9a1c1250cb2603c9510d60bb35e1edf3c8c597d4e6ec128533a0ca3b5bac1a7e",
+      "kind": "changed-seed",
+      "matches": 0,
+      "result_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "alias": "cmp.flux.H18-history.direct.whole",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.H18-history.direct.whole",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/saved-report-verification-v1/cmp.flux.H18-history.direct.whole.exact.context.json"
+      ],
+      "context_sha256": "2c41e80ee61fce8975472765526d4fb39742e9045239d484c40e0774905b6bf8",
+      "kind": "exact",
+      "matches": 1,
+      "result_sha256": "625ba74c94848ddaa5190b62c0c7cc8a6e8cfc404bb106a8620f3e6e09a3ca66"
+    },
+    {
+      "alias": "cmp.flux.H18-history.direct.whole",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.H18-history.direct.whole",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/saved-report-verification-v1/cmp.flux.H18-history.direct.whole.changed-clock.context.json"
+      ],
+      "context_sha256": "50b90116fb49c10444c438f39b58744c26b2f19302b4838a6eb870e5223d5537",
+      "kind": "changed-clock",
+      "matches": 0,
+      "result_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "alias": "cmp.flux.H18-history.direct.whole",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.H18-history.direct.whole",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/saved-report-verification-v1/cmp.flux.H18-history.direct.whole.changed-seed.context.json"
+      ],
+      "context_sha256": "976ee0e0f6ec8ce20db16ca406ffe4d55567e7c9bdb4ebfb874185f88070f86a",
+      "kind": "changed-seed",
+      "matches": 0,
+      "result_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "alias": "cmp.flux.H18-history.direct.same-latent-decoder",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.H18-history.direct.same-latent-decoder",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/saved-report-verification-v1/cmp.flux.H18-history.direct.same-latent-decoder.exact.context.json"
+      ],
+      "context_sha256": "7b2d5ca3677d062b9c39403d9ca18be46bd3102010ffa42305413c9b801883cc",
+      "kind": "exact",
+      "matches": 1,
+      "result_sha256": "249fe167b29121a0c3b1e4cc9d4126114cc279e97f7513bcaa5d9035837315bd"
+    },
+    {
+      "alias": "cmp.flux.H18-history.direct.same-latent-decoder",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.H18-history.direct.same-latent-decoder",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/saved-report-verification-v1/cmp.flux.H18-history.direct.same-latent-decoder.changed-clock.context.json"
+      ],
+      "context_sha256": "c230be62087cfd00edadd43b0f7c8cc12e4d791ce966c46ee409102bca3dd4f6",
+      "kind": "changed-clock",
+      "matches": 0,
+      "result_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "alias": "cmp.flux.H18-history.direct.same-latent-decoder",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.H18-history.direct.same-latent-decoder",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/saved-report-verification-v1/cmp.flux.H18-history.direct.same-latent-decoder.changed-seed.context.json"
+      ],
+      "context_sha256": "f022d0c7cecc2603f699880941424253b8142ac7ad764bbe33626a6c69987c30",
+      "kind": "changed-seed",
+      "matches": 0,
+      "result_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "alias": "cmp.flux.H18-history.coherent.same-latent-decoder",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.H18-history.coherent.same-latent-decoder",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/saved-report-verification-v1/cmp.flux.H18-history.coherent.same-latent-decoder.exact.context.json"
+      ],
+      "context_sha256": "fbd3eccad4bfa37a96307233f2452fd359bd1118c7f621bcd3935eb13f35e322",
+      "kind": "exact",
+      "matches": 1,
+      "result_sha256": "0f28b61443796b2984376e131fd32b2a051bf1293cf2aa785fd4390a8e722203"
+    },
+    {
+      "alias": "cmp.flux.H18-history.coherent.same-latent-decoder",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.H18-history.coherent.same-latent-decoder",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/saved-report-verification-v1/cmp.flux.H18-history.coherent.same-latent-decoder.changed-clock.context.json"
+      ],
+      "context_sha256": "224649545ac0c66f574057e919afa83a6f5b1a33c888c073b98cf2a854042b41",
+      "kind": "changed-clock",
+      "matches": 0,
+      "result_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    },
+    {
+      "alias": "cmp.flux.H18-history.coherent.same-latent-decoder",
+      "command": [
+        "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+        "-I",
+        "-B",
+        "-m",
+        "mdb",
+        "equations",
+        "find",
+        "--catalog",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/compact-collection-01/extracted/binding-minimal-result/catalog/equations",
+        "--alias",
+        "cmp.flux.H18-history.coherent.same-latent-decoder",
+        "--applicable-to",
+        "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/saved-report-verification-v1/cmp.flux.H18-history.coherent.same-latent-decoder.changed-seed.context.json"
+      ],
+      "context_sha256": "e5ae6717da26ff41fea0c967ae97a198ede8137b44edb63677e929fc6eeb3ba2",
+      "kind": "changed-seed",
+      "matches": 0,
+      "result_sha256": "37517e5f3dc66819f61f5a7bb8ace1921282415f10551d2defa5c3eb0985b570"
+    }
+  ],
+  "jobs": {
+    "native": {
+      "complete_log_sha256": "d8bff1903d64b0426ebb2ddc35b5f92366f68d54c3afe22ce59e34613ee9543e",
+      "elapsed_s": 455.15,
+      "executed_payload": {
+        "host": "beast",
+        "sha256": "ad25f5c9b0ae1be808615bc79e4a8ba48945819091d14fcfce7a4cb689bdeafb",
+        "size_bytes": 3320801
+      },
+      "job_id": "job-4420636a123c",
+      "peak_rss_mb": 20805.0,
+      "peak_vram_mb": 8614.0,
+      "request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea",
+      "reservation": {
+        "cpu_threads": 4,
+        "disk_gb": 12.0,
+        "est_wall_s": 900.0,
+        "ram_mb": 24576.0,
+        "vram_mb": 13312.0
+      }
+    },
+    "saved_audit": {
+      "complete_log_sha256": "961abe6ffba3eea1ee7647709c803b0e4c981e687f017be66a3efa3eb1d2c801",
+      "elapsed_s": 255.86,
+      "executed_payload": {
+        "host": "beast",
+        "sha256": "9c1c88c6cbf2cf7f087ff54fcd954e88bb66e61970f52cf76eace11d3ee1c5b0",
+        "size_bytes": 3195543
+      },
+      "job_id": "job-722d899061e3",
+      "peak_rss_mb": 2083.6,
+      "peak_vram_mb": 0.0,
+      "request_sha256": "f6fd5739232f27d58bb758f29739e417c43c955fdce1c109dd8e8242189e3b65",
+      "reservation": {
+        "cpu_threads": 2,
+        "disk_gb": 1.0,
+        "est_wall_s": 240.0,
+        "ram_mb": 3072.0,
+        "vram_mb": 0.0
+      }
+    }
+  },
+  "new_neural_calls": 0,
+  "original_png_sha256": {
+    "coherent": {
+      "forecast": "c73fd63d47dea79f9ff7fdf99f9d0f33c57c3eb1d19592b2025d8670c3a0855d",
+      "native-own": "c73fd63d47dea79f9ff7fdf99f9d0f33c57c3eb1d19592b2025d8670c3a0855d",
+      "native-reference": "c73fd63d47dea79f9ff7fdf99f9d0f33c57c3eb1d19592b2025d8670c3a0855d"
+    },
+    "direct": {
+      "forecast": "85d3bd4876bb50fa0bc98fb725b96e1157fbb27ded90bf86beb32f2d33fbf499",
+      "native-own": "85d3bd4876bb50fa0bc98fb725b96e1157fbb27ded90bf86beb32f2d33fbf499",
+      "native-reference": "85d3bd4876bb50fa0bc98fb725b96e1157fbb27ded90bf86beb32f2d33fbf499"
+    }
+  },
+  "primary_whole": {
+    "bit_exact_fields": 2001,
+    "changed_values": 0,
+    "fields": 2001,
+    "max_rms": 0.0,
+    "maxabs": 0.0,
+    "positions": 1206779904
+  },
+  "qwen_oddness": {
+    "forecast": {
+      "MLP_even_component_max_abs": 41.890625,
+      "extra_learned_projections": 0,
+      "minus_finite_addition_remainder": {
+        "max_abs": 3.484375,
+        "rms": 0.0055437619186089575
+      },
+      "oddness": {
+        "Hnext": {
+          "bit_changed_elements": 1307377,
+          "differing_bytes": 2170699,
+          "elements": 1310720,
+          "max_abs": 41.9375,
+          "numerical_changed": 1307377,
+          "rms": 1.4669348215944293,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "M": {
+          "bit_changed_elements": 1310302,
+          "differing_bytes": 2517122,
+          "elements": 1310720,
+          "max_abs": 41.890625,
+          "numerical_changed": 1310302,
+          "rms": 1.466944181548986,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "R": {
+          "bit_changed_elements": 477,
+          "differing_bytes": 477,
+          "elements": 1310720,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 477,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 477
+        },
+        "activation": {
+          "bit_changed_elements": 4949309,
+          "differing_bytes": 7026842,
+          "elements": 4980736,
+          "max_abs": 8.560867309570312,
+          "numerical_changed": 4949309,
+          "rms": 0.5168301104646923,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "gate": {
+          "bit_changed_elements": 0,
+          "differing_bytes": 0,
+          "elements": 4980736,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "h": {
+          "bit_changed_elements": 0,
+          "differing_bytes": 0,
+          "elements": 1310720,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 1089,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "head": {
+          "bit_changed_elements": 0,
+          "differing_bytes": 0,
+          "elements": 2097152,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "k": {
+          "bit_changed_elements": 152,
+          "differing_bytes": 152,
+          "elements": 524288,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 152,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 152
+        },
+        "norm": {
+          "bit_changed_elements": 0,
+          "differing_bytes": 0,
+          "elements": 1310720,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 1089,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "postnorm": {
+          "bit_changed_elements": 477,
+          "differing_bytes": 477,
+          "elements": 1310720,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 477,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 477
+        },
+        "product": {
+          "bit_changed_elements": 4980736,
+          "differing_bytes": 9921419,
+          "elements": 4980736,
+          "max_abs": 63.4765625,
+          "numerical_changed": 4980736,
+          "rms": 0.5719073681155931,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "projection": {
+          "bit_changed_elements": 0,
+          "differing_bytes": 0,
+          "elements": 1310720,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "q": {
+          "bit_changed_elements": 662,
+          "differing_bytes": 662,
+          "elements": 2097152,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 662,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 662
+        },
+        "up": {
+          "bit_changed_elements": 0,
+          "differing_bytes": 0,
+          "elements": 4980736,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "v": {
+          "bit_changed_elements": 0,
+          "differing_bytes": 0,
+          "elements": 524288,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        }
+      },
+      "plus_finite_addition_remainder": {
+        "max_abs": 2.265625,
+        "rms": 0.004150467106151232
+      },
+      "status": "observation-only"
+    },
+    "native": {
+      "MLP_even_component_max_abs": 41.890625,
+      "extra_learned_projections": 0,
+      "minus_finite_addition_remainder": {
+        "max_abs": 3.484375,
+        "rms": 0.0055437619186089575
+      },
+      "oddness": {
+        "Hnext": {
+          "bit_changed_elements": 1307377,
+          "differing_bytes": 2170699,
+          "elements": 1310720,
+          "max_abs": 41.9375,
+          "numerical_changed": 1307377,
+          "rms": 1.4669348215944293,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "M": {
+          "bit_changed_elements": 1310302,
+          "differing_bytes": 2517122,
+          "elements": 1310720,
+          "max_abs": 41.890625,
+          "numerical_changed": 1310302,
+          "rms": 1.466944181548986,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "R": {
+          "bit_changed_elements": 477,
+          "differing_bytes": 477,
+          "elements": 1310720,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 477,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 477
+        },
+        "activation": {
+          "bit_changed_elements": 4949309,
+          "differing_bytes": 7026842,
+          "elements": 4980736,
+          "max_abs": 8.560867309570312,
+          "numerical_changed": 4949309,
+          "rms": 0.5168301104646923,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "gate": {
+          "bit_changed_elements": 0,
+          "differing_bytes": 0,
+          "elements": 4980736,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "h": {
+          "bit_changed_elements": 0,
+          "differing_bytes": 0,
+          "elements": 1310720,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 1089,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "head_consumed": {
+          "bit_changed_elements": 0,
+          "differing_bytes": 0,
+          "elements": 2097152,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "k_consumed": {
+          "bit_changed_elements": 608,
+          "differing_bytes": 608,
+          "elements": 2097152,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 608,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 608
+        },
+        "norm": {
+          "bit_changed_elements": 0,
+          "differing_bytes": 0,
+          "elements": 1310720,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 1089,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "postnorm": {
+          "bit_changed_elements": 477,
+          "differing_bytes": 477,
+          "elements": 1310720,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 477,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 477
+        },
+        "product": {
+          "bit_changed_elements": 4980736,
+          "differing_bytes": 9921419,
+          "elements": 4980736,
+          "max_abs": 63.4765625,
+          "numerical_changed": 4980736,
+          "rms": 0.5719073681155931,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "projection": {
+          "bit_changed_elements": 0,
+          "differing_bytes": 0,
+          "elements": 1310720,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "q_consumed": {
+          "bit_changed_elements": 662,
+          "differing_bytes": 662,
+          "elements": 2097152,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 662,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 662
+        },
+        "up": {
+          "bit_changed_elements": 0,
+          "differing_bytes": 0,
+          "elements": 4980736,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        },
+        "v_consumed": {
+          "bit_changed_elements": 0,
+          "differing_bytes": 0,
+          "elements": 2097152,
+          "max_abs": 0.0,
+          "numerical_changed": 0,
+          "rms": 0.0,
+          "shared_zero_elements": 0,
+          "status": "observation-only",
+          "zero_signbit_mismatches": 0
+        }
+      },
+      "plus_finite_addition_remainder": {
+        "max_abs": 2.265625,
+        "rms": 0.004150467106151232
+      },
+      "status": "observation-only"
+    }
+  },
+  "raw_arrays_downloaded": false,
+  "raw_bytes": 5487696020,
+  "raw_members": 2712,
+  "schema": "mdb-h18-actual-saved-report-verification-v1",
+  "scope": "Whole and regional/port checks are separate dependent coverage; direct-versus-coherent response is conditional on negative H18. No current native decoder macro or universal concept claim.",
+  "signed_response_errors": {
+    "bit_exact_fields": 1548,
+    "changed_values": 0,
+    "fields": 1548,
+    "max_rms": 0.0,
+    "maxabs": 0.0,
+    "positions": 1019321337
+  },
+  "within_branch_png_byte_identity": {
+    "coherent": true,
+    "direct": true
+  }
+}

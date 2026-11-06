@@ -1,0 +1,462 @@
+{
+  "account_summary": {
+    "coverage": {
+      "aligned_first_suffix_port_comparisons": {
+        "bit_exact_fields": 30,
+        "fields": 30,
+        "positions": 74973184
+      },
+      "oddness": "Separate per-lane diagnostic accounts; not included in whole-field comparison counts.",
+      "primary_denoiser_whole_fields": {
+        "bit_exact_fields": 1960,
+        "fields": 1960,
+        "positions": 1145176064
+      },
+      "primary_qwen_whole_fields": {
+        "bit_exact_fields": 41,
+        "fields": 41,
+        "positions": 61603840
+      },
+      "qwen_query_region_diagnostics": {
+        "bit_exact_fields": 82,
+        "fields": 82,
+        "positions": 61603840
+      },
+      "scope": "Overlapping/alias/dependent fields and regions are explicitly separate; counts are coverage, not independent measurements or new transitions.",
+      "signed_denoiser_response_fields": {
+        "bit_exact_fields": 1546,
+        "fields": 1546,
+        "positions": 1017748473
+      }
+    },
+    "field_pairs_with_bit_misses": 0,
+    "field_pairs_with_value_misses": 0,
+    "first_discrepancies": {
+      "coherent": {
+        "bits": null,
+        "same_latent_decoder": null,
+        "values": null
+      },
+      "direct": {
+        "bits": null,
+        "same_latent_decoder": null,
+        "values": null
+      },
+      "first_suffix": {
+        "minus": null,
+        "plus": null
+      },
+      "qwen": null
+    },
+    "overlapping_scalar_positions": 1206779904,
+    "qwen_and_denoiser_full_field_pairs": 2001,
+    "qwen_primary_full_field_pairs": 41,
+    "scope": "Whole Qwen fields, regional checks, aligned first-suffix ports and oddness diagnostics are separate. Aliases and carried positions overlap; these are coverage, not independent trials."
+  },
+  "acts": {
+    "forecast": {
+      "coherent": {
+        "H9_exact": true,
+        "all_other_slots_exact": true,
+        "changed_values": 2620656,
+        "columns": [
+          2560,
+          7680
+        ],
+        "execution": {
+          "adapter": "native-boundary-v2",
+          "batch": {
+            "guidance": 1.0,
+            "reference_images": false,
+            "size": 1
+          },
+          "decoder_normalization_device": "cpu",
+          "device": {
+            "index": 0,
+            "type": "cuda"
+          },
+          "dtype": "torch.bfloat16",
+          "environment_versions": {
+            "diffusers": "0.39.0",
+            "python": "3.14.6",
+            "torch": "2.13.0+cu130"
+          },
+          "family": "flux2-klein",
+          "granularity": "operation",
+          "guidance": 1.0,
+          "kernel": {
+            "scheduler": "FlowMatchEulerDiscreteScheduler",
+            "transformer": "Flux2Transformer2DModel"
+          },
+          "model_program": "project->joint_block[*]->single_block[*]->norm/proj_readout->flow_commit",
+          "numeric_scope": {
+            "autocast": false,
+            "deterministic_algorithms": true,
+            "float32_matmul_precision": "highest",
+            "inference_mode": true,
+            "stochastic_sampling": false,
+            "tensor_layout": "state-slot-bound-stride",
+            "tf32_matmul": false,
+            "torch_num_threads": 4
+          },
+          "parity": "same-program-exact",
+          "reference_images": false
+        },
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "own_lane_replacement_exact": true,
+        "parent": "f56b07614112cf6156266cf2bc56c8a13b3aa7960a54b0d2e10a04c99febb0a1",
+        "receipt": "39859240975f12f770c63725515766c19b45c2c871df4706a3678ce2b708e720",
+        "result": "a899f6252d17655df8c2352c5ab379225c36963d2ade1be1f06579a6fb0f8ceb",
+        "selected_values": 2621440
+      },
+      "direct": {
+        "H9_exact": true,
+        "all_other_slots_exact": true,
+        "changed_values": 1310720,
+        "columns": [
+          2560,
+          7680
+        ],
+        "execution": {
+          "adapter": "native-boundary-v2",
+          "batch": {
+            "guidance": 1.0,
+            "reference_images": false,
+            "size": 1
+          },
+          "decoder_normalization_device": "cpu",
+          "device": {
+            "index": 0,
+            "type": "cuda"
+          },
+          "dtype": "torch.bfloat16",
+          "environment_versions": {
+            "diffusers": "0.39.0",
+            "python": "3.14.6",
+            "torch": "2.13.0+cu130"
+          },
+          "family": "flux2-klein",
+          "granularity": "operation",
+          "guidance": 1.0,
+          "kernel": {
+            "scheduler": "FlowMatchEulerDiscreteScheduler",
+            "transformer": "Flux2Transformer2DModel"
+          },
+          "model_program": "project->joint_block[*]->single_block[*]->norm/proj_readout->flow_commit",
+          "numeric_scope": {
+            "autocast": false,
+            "deterministic_algorithms": true,
+            "float32_matmul_precision": "highest",
+            "inference_mode": true,
+            "stochastic_sampling": false,
+            "tensor_layout": "state-slot-bound-stride",
+            "tf32_matmul": false,
+            "torch_num_threads": 4
+          },
+          "parity": "same-program-exact",
+          "reference_images": false
+        },
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "own_lane_replacement_exact": true,
+        "parent": "f56b07614112cf6156266cf2bc56c8a13b3aa7960a54b0d2e10a04c99febb0a1",
+        "receipt": "e26dce5adf0d62cb179cc4619f1a061b86765c0b03a48e345eaa338e5ff57907",
+        "result": "b5524122f43519f3b91134d0132c18e3207217a1a8cee87a3314abfad1dc79d2",
+        "selected_values": 2621440
+      }
+    },
+    "native": {
+      "coherent": {
+        "H9_exact": true,
+        "all_other_slots_exact": true,
+        "changed_values": 2620656,
+        "columns": [
+          2560,
+          7680
+        ],
+        "execution": {
+          "adapter": "native-boundary-v2",
+          "batch": {
+            "guidance": 1.0,
+            "reference_images": false,
+            "size": 1
+          },
+          "decoder_normalization_device": "cpu",
+          "device": {
+            "index": 0,
+            "type": "cuda"
+          },
+          "dtype": "torch.bfloat16",
+          "environment_versions": {
+            "diffusers": "0.39.0",
+            "python": "3.14.6",
+            "torch": "2.13.0+cu130"
+          },
+          "family": "flux2-klein",
+          "granularity": "operation",
+          "guidance": 1.0,
+          "kernel": {
+            "scheduler": "FlowMatchEulerDiscreteScheduler",
+            "transformer": "Flux2Transformer2DModel"
+          },
+          "model_program": "project->joint_block[*]->single_block[*]->norm/proj_readout->flow_commit",
+          "numeric_scope": {
+            "autocast": false,
+            "deterministic_algorithms": true,
+            "float32_matmul_precision": "highest",
+            "inference_mode": true,
+            "stochastic_sampling": false,
+            "tensor_layout": "state-slot-bound-stride",
+            "tf32_matmul": false,
+            "torch_num_threads": 4
+          },
+          "parity": "same-program-exact",
+          "reference_images": false
+        },
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "own_lane_replacement_exact": true,
+        "parent": "f56b07614112cf6156266cf2bc56c8a13b3aa7960a54b0d2e10a04c99febb0a1",
+        "receipt": "39859240975f12f770c63725515766c19b45c2c871df4706a3678ce2b708e720",
+        "result": "a899f6252d17655df8c2352c5ab379225c36963d2ade1be1f06579a6fb0f8ceb",
+        "selected_values": 2621440
+      },
+      "direct": {
+        "H9_exact": true,
+        "all_other_slots_exact": true,
+        "changed_values": 1310720,
+        "columns": [
+          2560,
+          7680
+        ],
+        "execution": {
+          "adapter": "native-boundary-v2",
+          "batch": {
+            "guidance": 1.0,
+            "reference_images": false,
+            "size": 1
+          },
+          "decoder_normalization_device": "cpu",
+          "device": {
+            "index": 0,
+            "type": "cuda"
+          },
+          "dtype": "torch.bfloat16",
+          "environment_versions": {
+            "diffusers": "0.39.0",
+            "python": "3.14.6",
+            "torch": "2.13.0+cu130"
+          },
+          "family": "flux2-klein",
+          "granularity": "operation",
+          "guidance": 1.0,
+          "kernel": {
+            "scheduler": "FlowMatchEulerDiscreteScheduler",
+            "transformer": "Flux2Transformer2DModel"
+          },
+          "model_program": "project->joint_block[*]->single_block[*]->norm/proj_readout->flow_commit",
+          "numeric_scope": {
+            "autocast": false,
+            "deterministic_algorithms": true,
+            "float32_matmul_precision": "highest",
+            "inference_mode": true,
+            "stochastic_sampling": false,
+            "tensor_layout": "state-slot-bound-stride",
+            "tf32_matmul": false,
+            "torch_num_threads": 4
+          },
+          "parity": "same-program-exact",
+          "reference_images": false
+        },
+        "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+        "own_lane_replacement_exact": true,
+        "parent": "f56b07614112cf6156266cf2bc56c8a13b3aa7960a54b0d2e10a04c99febb0a1",
+        "receipt": "e26dce5adf0d62cb179cc4619f1a061b86765c0b03a48e345eaa338e5ff57907",
+        "result": "b5524122f43519f3b91134d0132c18e3207217a1a8cee87a3314abfad1dc79d2",
+        "selected_values": 2621440
+      }
+    }
+  },
+  "actual_counts": {
+    "act_receipts": 4,
+    "component_hydrations": 3,
+    "cpu_offloads": 6,
+    "cuda_placements": 6,
+    "functional_decode_calls": 2,
+    "functional_transitions": 224,
+    "guard_refusals": 0,
+    "native_module_entries": 4025,
+    "native_qwen_calls": 1,
+    "native_transitions": 224,
+    "native_vae_calls": 4,
+    "noise_draws": 2,
+    "qwen_functional_SDPA": 36,
+    "qwen_functional_blocks": 36,
+    "qwen_native_SDPA": 45,
+    "qwen_native_authorizations": 10,
+    "qwen_native_blocks": 45,
+    "receipt_occurrences": 228
+  },
+  "catalog": {
+    "dependent": true,
+    "family_induction": false,
+    "path": "evidence/catalog/provenance.json",
+    "records": 4
+  },
+  "denominators": "Field error / same native field RMS. Response error / same native coherent\u2212direct response RMS. Zero denominator remains null; no causal shares.",
+  "full_accounts": {
+    "path": "evidence/audit.json",
+    "sha256": "548adac8eec327a16a0bc9d0db086daf5caec7df250a89d771ba4bed3dbaa497"
+  },
+  "limits": [
+    "One fixed prompt/seed277: direct E=[H9,-H18,H27base] versus coherent E=[H9,-H18,H27minus], with H19..27 regenerated from own negative H18. H9, negative H18 and noise are held within each lane. Qwen uses a component suffix, not a genuine Qwen Act; four FLUX Acts are genuine. This is a conditional H27-history contrast, not an MLP-writer ablation, full factorial or semantic image prediction.",
+    "All512 rows are edited at H18; direct H27 remains baseline and coherent H27 is regenerated. Negative H18 is a large off-manifold displacement of norm2||H18||, not a gentle dose.",
+    "Signed means, tails, cosines and every numerical discrepancy remain in immutable full audit; figures are selected scalar views.",
+    "Native VAE on forecast latent is an observed conditional consumer, distinct from complete native own-state reference.",
+    "Configured policies and source identities are bound; selected kernels are not independently profiled.",
+    "Bit equality concerns saved value payloads in declared bases, not complete layout/dispatch/ABI identity.",
+    "One dependent prompt/seed, four endpoint catalog occurrences, not independent tasks or family induction.",
+    "MLP/even contributions are retained only at first edited block18; no all-nine-block oddness or MLP curve is inferred.",
+    "No new exact CLI claim: catalog applicability counts are authenticated saved-reader observations, not CLI invocations by publication.",
+    "No raw tensor arrays, weights, tokenizer or model calls by publication. Numeric misses, zero edits/effects and unsupported profiling are not rejection gates."
+  ],
+  "mathematical_expectation": "In real arithmetic the first block is odd through gate/up; SiLU is first nonodd and M(-x)+M(x)=Wd(G*U). Finite casts/reductions/dispatch are observed separately. No extra learned RHS projection and no whole-suffix parity prediction.",
+  "orientation": "Forecast errors=functional\u2212native; downstream/conditioning responses=coherent\u2212direct within each lane; raw Qwen history_response operands are edited\u2212baseline despite generic source label; response errors=\u0394functional\u2212\u0394native.",
+  "original_images": {
+    "coherent-forecast.png": {
+      "bytes": 449390,
+      "path": "evidence/coherent-forecast.png",
+      "raw_member": "cases/coherent/decoder/forecast/image.png",
+      "sha256": "c73fd63d47dea79f9ff7fdf99f9d0f33c57c3eb1d19592b2025d8670c3a0855d"
+    },
+    "coherent-native-own.png": {
+      "bytes": 449390,
+      "path": "evidence/coherent-native-own.png",
+      "raw_member": "cases/coherent/decoder/native-own/image.png",
+      "sha256": "c73fd63d47dea79f9ff7fdf99f9d0f33c57c3eb1d19592b2025d8670c3a0855d"
+    },
+    "coherent-native-reference.png": {
+      "bytes": 449390,
+      "path": "evidence/coherent-native-reference.png",
+      "raw_member": "cases/coherent/decoder/native-reference/image.png",
+      "sha256": "c73fd63d47dea79f9ff7fdf99f9d0f33c57c3eb1d19592b2025d8670c3a0855d"
+    },
+    "direct-forecast.png": {
+      "bytes": 232862,
+      "path": "evidence/direct-forecast.png",
+      "raw_member": "cases/direct/decoder/forecast/image.png",
+      "sha256": "85d3bd4876bb50fa0bc98fb725b96e1157fbb27ded90bf86beb32f2d33fbf499"
+    },
+    "direct-native-own.png": {
+      "bytes": 232862,
+      "path": "evidence/direct-native-own.png",
+      "raw_member": "cases/direct/decoder/native-own/image.png",
+      "sha256": "85d3bd4876bb50fa0bc98fb725b96e1157fbb27ded90bf86beb32f2d33fbf499"
+    },
+    "direct-native-reference.png": {
+      "bytes": 232862,
+      "path": "evidence/direct-native-reference.png",
+      "raw_member": "cases/direct/decoder/native-reference/image.png",
+      "sha256": "85d3bd4876bb50fa0bc98fb725b96e1157fbb27ded90bf86beb32f2d33fbf499"
+    }
+  },
+  "plan_scope": "CPU compact plan is authenticated request.config; frozen compact writer need not emit a separate plan.json.",
+  "qualification": {
+    "auditor_sha256": "512f21ad1410fccf61930d807a9e939517accff1004be318be7c9f2a7166fb77",
+    "sha256": "3f621c14e7f6700e7f3d2d3fdde5c9a084f49fd864f9b47e284571f0b868b56f",
+    "status": "qualified-tiny-saved-mechanics-only"
+  },
+  "raw_retrieval": "evidence/external-evidence.json and evidence/retrieve_evidence.py",
+  "schema": "mdb-flux-h18-state-history-publication-v1",
+  "scope": "One fixed prompt/seed277: direct E=[H9,-H18,H27base] versus coherent E=[H9,-H18,H27minus], with H19..27 regenerated from own negative H18. H9, negative H18 and noise are held within each lane. Qwen uses a component suffix, not a genuine Qwen Act; four FLUX Acts are genuine. This is a conditional H27-history contrast, not an MLP-writer ablation, full factorial or semantic image prediction.",
+  "source": {
+    "CPU_audit_job": "job-722d899061e3",
+    "CPU_audit_request_sha256": "f6fd5739232f27d58bb758f29739e417c43c955fdce1c109dd8e8242189e3b65",
+    "auditor_sha256": "512f21ad1410fccf61930d807a9e939517accff1004be318be7c9f2a7166fb77",
+    "compact_manifest_sha256": "bba4bb1271d24a5d34248d97fae09710dbe2b4b7baa7c72296258af9a3593852",
+    "native_job": "job-4420636a123c",
+    "native_manifest_sha256": "4afc19151e37197d8ec71ff6134e19d4a99c8a33c3f25fbbbcbc8035b2024618",
+    "native_request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea",
+    "worker_sha256": "d1e57904f88cc4e6ccc062a966406d7fe7e2a0dfa669ad18985f640969ee2c75"
+  },
+  "source_files": {
+    "audit_flux_e18_conditioning_act.py": {
+      "path": "source/audit_flux_e18_conditioning_act.py",
+      "sha256": "b9690429f05257bac7f6a9bd276e37e411d4fd7960cd33caa893faf5d87ec70c"
+    },
+    "audit_flux_functional_pass.py": {
+      "path": "source/audit_flux_functional_pass.py",
+      "sha256": "2d54e716749dec52c159f3a5214860f4bb8cbf396fd09239540bd55988274c80"
+    },
+    "audit_flux_functional_qwen_prefix.py": {
+      "path": "source/audit_flux_functional_qwen_prefix.py",
+      "sha256": "5004786be76e1f576d2df65e6d1225f8fdd41c4a7e09e5ed8a6c23057db78a97"
+    },
+    "audit_flux_functional_remaining.py": {
+      "path": "source/audit_flux_functional_remaining.py",
+      "sha256": "5027875c03f9ceb3157b4b9d9632366ff5c9b1c4beb429b8b73d79aad0db6b08"
+    },
+    "audit_flux_h18_state_history.py": {
+      "path": "source/audit_flux_h18_state_history.py",
+      "sha256": "512f21ad1410fccf61930d807a9e939517accff1004be318be7c9f2a7166fb77"
+    },
+    "audit_flux_raw_mask_pair.py": {
+      "path": "source/audit_flux_raw_mask_pair.py",
+      "sha256": "70408046bb83f1c0719addb57191c7d4bdf4c5a1121195c299c4cb493cf11d88"
+    },
+    "audit_flux_raw_to_image.py": {
+      "path": "source/audit_flux_raw_to_image.py",
+      "sha256": "e8075dfe29401b39678b479b7f13681fd5f2ce56a44ff9e5761a2f74b4431835"
+    },
+    "flux_e18_conditioning_act.py": {
+      "path": "source/flux_e18_conditioning_act.py",
+      "sha256": "45c512de2dff3252c38a182cf4291b392cf35a159c2bd83b35900c28005cb343"
+    },
+    "flux_functional_decoder.py": {
+      "path": "source/flux_functional_decoder.py",
+      "sha256": "e2712298e42b37a263dea1b24f0f491082b8a01086b16fa66577f474c68f491f"
+    },
+    "flux_functional_denoiser.py": {
+      "path": "source/flux_functional_denoiser.py",
+      "sha256": "cb794daa5818ec3f9107f23839a41010f9569148da3708e39cedd364dff21923"
+    },
+    "flux_functional_qwen_prefix.py": {
+      "path": "source/flux_functional_qwen_prefix.py",
+      "sha256": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a"
+    },
+    "flux_functional_qwen_prefix_worker.py": {
+      "path": "source/flux_functional_qwen_prefix_worker.py",
+      "sha256": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0"
+    },
+    "flux_functional_vae.py": {
+      "path": "source/flux_functional_vae.py",
+      "sha256": "576b94f3cd987e8849f6d4772c90a77f14fdfc9210dea608a9a3d16cf0f99a61"
+    },
+    "flux_h18_state_history.py": {
+      "path": "source/flux_h18_state_history.py",
+      "sha256": "d1e57904f88cc4e6ccc062a966406d7fe7e2a0dfa669ad18985f640969ee2c75"
+    },
+    "flux_image_tail_microscope.py": {
+      "path": "source/flux_image_tail_microscope.py",
+      "sha256": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926"
+    },
+    "flux_raw_to_image.py": {
+      "path": "source/flux_raw_to_image.py",
+      "sha256": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522"
+    },
+    "flux_source_receiver.py": {
+      "path": "evidence/source-metadata/vae_recipe_helper-flux_source_receiver.py",
+      "sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2"
+    },
+    "publish_flux_h18_state_history.py": {
+      "path": "source/publish_flux_h18_state_history.py",
+      "sha256": "28c21642a9bcb61c752f8de182d1dffaffa0f0df8e579ea9460ace3629a4b34d"
+    },
+    "qwen_h18_state_history.py": {
+      "path": "source/qwen_h18_state_history.py",
+      "sha256": "17084d404f5ae00557e4ad8e94a8b84704787c47ebf9c875228cb452c4857036"
+    },
+    "retrieve_reader_evidence.py": {
+      "path": "evidence/retrieve_evidence.py",
+      "sha256": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923"
+    }
+  }
+}

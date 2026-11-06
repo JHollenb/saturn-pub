@@ -1,0 +1,14 @@
+{
+  "schema": "mdb-h18-admission-observation-v1",
+  "job_id": "job-4420636a123c",
+  "request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea",
+  "finite_review_sha256": "72364894048c23014d7869ef6128ec583f9acb2615c481ea695718fbfa230ed1",
+  "actual_command_matches_staged": true,
+  "declared_sealed_executed_payload_sha256": "ad25f5c9b0ae1be808615bc79e4a8ba48945819091d14fcfce7a4cb689bdeafb",
+  "actual_payload_bytes": 3320801,
+  "actual_reservation": {"ram_mb": 24576, "vram_mb": 13312, "cpu_threads": 4, "disk_gb": 12, "est_wall_s": 900},
+  "why_queue_note_verified": true,
+  "native_execution_device": "cuda",
+  "mechanics_status": "running-with-source-and-reservation-joins-verified",
+  "numerical_results": "Pending independent saved-only audit; execution progress is not prediction accuracy."
+}

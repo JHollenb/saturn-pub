@@ -1,0 +1,112 @@
+{
+  "schema": "mdb-h18-history-finite-run-review-v1",
+  "request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea",
+  "review_status": "ready-for-finite-run",
+  "blocking_issues": [],
+  "reviewer": "context_carriers_astra",
+  "scope": "Exact staged finite admission review before submission. Source/metadata/whole-wheel inspection and model-free command/config validation only; no original assets, model, tokenizer, staging or scheduler calls.",
+  "pins": {
+    "request_file_sha256": "02989e2189ea2546a03d4ad83dc55144dfee1177e16b3a5eea0ae9d056f77b85",
+    "payload_seal_sha256": "cbc1a0f972da0d2171ddabc7768d9f5f2d37fcffaee6bd599691750d843f60e9",
+    "staged_command_sha256": "a91c7f5c7ae31aa4195913236fc7e0925bd2eaebb5b704cdc778fc4334544626",
+    "worker": "d1e57904f88cc4e6ccc062a966406d7fe7e2a0dfa669ad18985f640969ee2c75",
+    "history_helper": "17084d404f5ae00557e4ad8e94a8b84704787c47ebf9c875228cb452c4857036",
+    "launcher": "42e1caaa3a7b2eb1c52a5d8d28457a85316f60592221bbf28c9d25f918202759",
+    "native_qwen_source": "fbdcfeeb1b54135ca67ba7df924da92f4b264e1252b517eea2de989289ebaeab",
+    "resource_source_job": "ba768527281dee17706f9344ce6feaf9b3f88ccd1c8d74ea311bd5e3e5c6fdf5",
+    "saved_reader": "512f21ad1410fccf61930d807a9e939517accff1004be318be7c9f2a7166fb77"
+  },
+  "qualification_receipts": {
+    "producer": "257351308f8d80d049d13e3f0569e44b273023ecd7c94a7d51d8b49b948abe18",
+    "helper": "231578258f4c01f3bc0c776d9fd7765c9b17201a954abba760a469e85f8a0fb4",
+    "controller": "d64a6ac887f9ab80b2add2b9124ad48caa3d798cc57aec575660342c99d87b7a",
+    "audit": "3f621c14e7f6700e7f3d2d3fdde5c9a084f49fd864f9b47e284571f0b868b56f",
+    "scope": "Read producer10/helper10/controller6/reader24 tiny-test receipts and verified current source/test cohort hashes. Did not rerun these tests or claim original-size CUDA parity."
+  },
+  "checks": {
+    "canonical_request_identity": true,
+    "all_32_source_hashes": true,
+    "all_3_whole_wheels": true,
+    "whole_wheel_hashes": {
+      "mdb_runtime-0.1.0-py3-none-any.whl": "4b1b965dce45883cabcb24ab2c11702ce748aeb1658776596be27b405df26d21",
+      "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+      "saturn_pub-0.4.1-py3-none-any.whl": "c32bbcf5c5b45e4970d9c750266f607b2a9b0f06dc982106fd82e0501375e424"
+    },
+    "installed_zip_sealed_package_entries": {
+      "mdb": 188,
+      "mrun": 225,
+      "saturn_pub": 59,
+      "total": 472
+    },
+    "sealed_request_config_plan_equal": true,
+    "worker_validate_config_equals_count_contract": true,
+    "hostile_Mac_ambient_command_matches_staged_Linux_command": true,
+    "queue_note_characters": 467,
+    "source_job_declared_sealed_executed_payload_command_parent_request_join": true,
+    "recipe_metadata": {
+      "qwen": 398,
+      "flux": 169,
+      "vae": 142,
+      "total": 709,
+      "checkpoint_bytes_read": 0
+    },
+    "submitted_when_checked": false
+  },
+  "mechanics": [
+    "Functional common27 plus own negative-H18 suffix9 uses its own embedding, mask, positions, FP32 RoPE policy and original parameters. It accepts no native hidden-state input.",
+    "Global learned-module guard spans forecast Qwen, both FLUX paths and decoders. Complete external forecast inventory, own Act records and signed responses are sealed and inventory-verified before release.",
+    "Native full36/LM forms its own common H18/H27. Its negative suffix uses its own captured block18 mask/position embeddings/kwargs, never forecast context. The pinned config has all36 full_attention layers, no sliding window, no cache, and unchanged positions across suffix layers.",
+    "Each native suffix layer gets the previous own native minus output; exact incoming hidden/context receipts retained. Full baseline, suffix layers and first-block actual ports have separate provenance.",
+    "Both E variants use same own H9 and negative H18; only original versus regenerated H27 differs. Both FLUX replacements use the same columns2560:7680 mask; direct H27 is a same-value write. Four real FLUX Acts, no claimed upstream Qwen Act.",
+    "Layer18 native SDPA and module hooks are restored in finally. Common/negative history and port clones are bounded; parameter/version checks and before/after component signatures retained.",
+    "No BF16 oddness, nonzero effect, semantic outcome or numerical-accuracy gate blocks collection. Final field/response differences remain observations."
+  ],
+  "census": {
+    "Qwen_functional_blocks": 36,
+    "Qwen_native_blocks": 45,
+    "Qwen_native_full_model_calls": 1,
+    "Qwen_native_suffix_calls": 9,
+    "native_Qwen_authorizations": 10,
+    "functional_FLUX_transitions": 224,
+    "native_FLUX_transitions": 224,
+    "genuine_FLUX_Acts": 4,
+    "total_receipt_occurrences": 228,
+    "actual_context_operand_occurrences": 8,
+    "functional_VAE": 2,
+    "native_VAE": 4,
+    "noise_draws": 2,
+    "physical_hydrations": 3,
+    "CUDA_placements": 6,
+    "CPU_offloads": 6,
+    "max_GPU_components": 1,
+    "B": 1
+  },
+  "resources": {
+    "CPU": 4,
+    "RAM_MB": 24576,
+    "VRAM_MB": 13312,
+    "disk_GB": 12,
+    "estimate_seconds": 900,
+    "worker_cooperative_seconds": 1200,
+    "outer_seconds": 1500,
+    "max_expanded_bytes": 8589934592,
+    "max_member_bytes": 134221824,
+    "forecast_transaction_bytes": 1073741824,
+    "basis": "Authenticated prior E18 job9339:545.01s,20462.1MB RSS,8374MB VRAM. Same three CPU-retained components and six placements; extra nine functional plus nine native Qwen blocks and bounded history/port clones. Approximately581MB additional named raw history, no extra parameter bank.",
+    "reasoning": "Prior raw5.058GB plus estimated0.581GB remains below8GiB. Member allowance retains4096 bytes above largest128MiB tensor payload. Prior memory leaves approximately4.1GB declared RAM and4.9GB VRAM; additional bounded histories/ports are plausibly within these margins. 900s is a conservative prospective estimate, not measured successor throughput or a guarantee.",
+    "limits": "No live fleet telemetry or strict scheduler admission performed here. Parent must retain strict preflight and inspect actual reservation. No evidence here implies expected duration over15min; if revised expectation exceeds900s, obtain required Luna long-run review before admission. Cooperative budget cannot interrupt a stuck primitive; finite outer timeout remains authoritative."
+  },
+  "reporting_limits": [
+    "Qwen suffix is source-qualified component execution, not a public full512 prefill Act.",
+    "Original shared Torch primitives and original learned parameters; no independent attention/GEMM/kernel claim.",
+    "history_response raw label inherits coherent-minus-direct, but its operands are minus[k]-common[k]. Preserve raw and correct interpretation in reader/publication; only conditioning/FLUX response is coherent-minus-direct.",
+    "First-block oddness is diagnostic. The ideal SwiGLU identity is not forced as BF16 equality or nine-block global symmetry; no extra learned Wd(GU) evaluation is executed.",
+    "Direct/coherent contrast isolates changed H27 route conditional on negative E18, not a full factorial interaction, causal share, semantic necessity or on-manifold perturbation.",
+    "New original-size parity, scientific outcomes and actual resource peaks remain unobserved; qualified tiny tests protect implementation mechanics only.",
+    "Logical_operations16 is phase-level scheduling metadata, not a claimed total kernel/block call census; explicit Qwen/FLUX/VAE/Act counts above govern physical work."
+  ],
+  "cadence_reset": false,
+  "holistic_anchor_turn": 10,
+  "next_holistic_no_later_than_turn": 13,
+  "goal_status": "active"
+}

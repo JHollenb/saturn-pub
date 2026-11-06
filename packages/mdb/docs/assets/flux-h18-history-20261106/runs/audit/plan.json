@@ -1,0 +1,9 @@
+{
+  "directory_custody": true,
+  "native_manifest_sha256": "4afc19151e37197d8ec71ff6134e19d4a99c8a33c3f25fbbbcbc8035b2024618",
+  "native_request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea",
+  "native_root": "/mnt/big/mdb/research/job-4420636a123c/h18-state-history-result",
+  "output_scratch": "/mnt/big/mdb/research",
+  "scope": "OwnH18history/direct-vs-coherent E,4genuine FLUX Acts/224advances/8actualcontext operands; fullsavedstate,signedresponses,sixoriginal decoder images;zero neural/tokenizer recurrence.",
+  "source_job": "job-4420636a123c"
+}

@@ -1,0 +1,105 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+Installed 65 packages in 1.41s
+MDB_EXECUTION_ENVIRONMENT={"cuda_driver": "NVIDIA GeForce RTX 4080, 580.159.03", "packages": {"Jinja2": "3.1.6", "MarkupSafe": "3.0.4", "PyYAML": "6.0.3", "Pygments": "2.21.0", "accelerate": "1.14.0", "annotated-doc": "0.0.5", "anyio": "4.15.1", "certifi": "2026.10.23", "charset-normalizer": "3.5.2", "click": "8.5.0", "cuda-bindings": "13.4.4", "cuda-pathfinder": "1.8.5", "cuda-toolkit": "13.0.3.0", "diffusers": "0.39.0", "filelock": "4.2.5", "fsspec": "2026.9.0", "h11": "0.16.0", "hf-xet": "1.8.0", "httpcore": "1.0.9", "httpx": "0.28.1", "huggingface_hub": "1.33.0", "idna": "3.20", "importlib_metadata": "10.1.0", "markdown-it-py": "4.2.0", "mdb-runtime": "0.1.0", "mdurl": "0.1.2", "mpmath": "1.3.0", "mrun-pub": "0.1.2", "networkx": "3.7", "numpy": "2.5.4", "nvidia-cublas": "13.1.1.3", "nvidia-cuda-cupti": "13.0.85", "nvidia-cuda-nvrtc": "13.0.88", "nvidia-cuda-runtime": "13.0.96", "nvidia-cudnn-cu13": "9.20.0.48", "nvidia-cufft": "12.0.0.61", "nvidia-cufile": "1.15.1.6", "nvidia-curand": "10.4.0.35", "nvidia-cusolver": "12.0.4.66", "nvidia-cusparse": "12.6.3.3", "nvidia-cusparselt-cu13": "0.8.1", "nvidia-nccl-cu13": "2.29.7", "nvidia-nvjitlink": "13.4.92", "nvidia-nvshmem-cu13": "3.4.5", "nvidia-nvtx": "13.0.85", "packaging": "26.3", "pillow": "13.0.0", "pip": "26.1.2", "psutil": "7.2.2", "regex": "2026.9.29", "requests": "2.34.2", "rich": "15.0.0", "safetensors": "0.8.0", "saturn-pub": "0.4.1", "setuptools": "84.2.1", "shellingham": "1.5.4", "sympy": "1.14.0", "tokenizers": "0.22.2", "torch": "2.13.0", "tqdm": "4.70.1", "transformers": "5.14.1", "triton": "3.7.1", "typer": "0.27.3", "typing_extensions": "4.16.0", "urllib3": "2.8.0", "zipp": "4.1.2"}, "python": "3.14.6", "resolved": {"LLM_MODELS_EXTRA_ROOT": "/mnt/big/llm-models", "TORCH_HOME": "/mnt/hdd8tb/mdb/torch", "UV_CACHE_DIR": "/mnt/hdd8tb/mdb/uv-cache", "UV_LINK_MODE": "symlink"}, "uv": "uv 0.12.6 (x86_64-unknown-linux-gnu)"}
+MDB_H18_STATE_HISTORY_BOOTSTRAP
+Timeout (0:02:00)!
+Thread 0x00007aac6b3da740 [python] (most recent call first):
+  File "flux_source_receiver.py", line 126 in load
+  File "flux_raw_to_image.py", line 264 in _load_transformer
+  File "flux_h18_state_history.py", line 363 in run
+  File "flux_h18_state_history.py", line 577 in worker
+  File "flux_h18_state_history.py", line 590 in main
+  File "flux_h18_state_history.py", line 594 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 98 in _run_module_code
+  File "<frozen runpy>", line 294 in run_path
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/zH6jSxxG-d4KF_UX/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 67 in main
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/zH6jSxxG-d4KF_UX/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 73 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 203 in _run_module_as_main
+MDB_H18_HISTORY_PHASE {"component": "qwen", "direction": "cuda", "kind": "component_placement", "seconds": 132.01937493588775}
+MDB_H18_HISTORY_PHASE {"coherent": {"dtype": "torch.bfloat16", "kind": "tensor", "layout": "strided-dense", "sha256": "e0f85b8c357f4ee1948a7eb60d1f6653c9a777223625fcfca4bcfb2c82c86461", "shape": [1, 512, 7680], "stride": [3932160, 7680, 1], "tensor": "e0f85b8c357f4ee1948a7eb60d1f6653c9a777223625fcfca4bcfb2c82c86461"}, "counts": {"RMSNorm": 144, "SDPA": 36, "SiLU_products": 36, "blocks": 36, "conditioning_concats": 2, "eager_attention": 0, "embedding": 1, "linear": 252, "native_module_forwards": 0, "residual_additions": 72, "rope_context_formations": 1, "rotary_applications": 72, "state_negations": 1}, "direct": {"dtype": "torch.bfloat16", "kind": "tensor", "layout": "strided-dense", "sha256": "403e72bbdb68fb63f334aaf8d91f41a77184da0fce9901f674acc79af487bb3d", "shape": [1, 512, 7680], "stride": [3932160, 7680, 1], "tensor": "403e72bbdb68fb63f334aaf8d91f41a77184da0fce9901f674acc79af487bb3d"}, "kind": "qwen_history_completed", "lane": "forecast", "seconds": 140.71357256919146}
+MDB_H18_HISTORY_PHASE {"component": "qwen", "direction": "cpu", "kind": "component_placement", "seconds": 160.11989861680195}
+MDB_H18_HISTORY_PHASE {"component": "flux", "direction": "cuda", "kind": "component_placement", "seconds": 174.94008345715702}
+MDB_H18_HISTORY_PHASE {"branch": "direct", "input_act_cut": "b5524122f43519f3b91134d0132c18e3207217a1a8cee87a3314abfad1dc79d2", "kind": "denoiser_branch_entry", "lane": "forecast", "seconds": 181.63585773995146}
+MDB_H18_HISTORY_PHASE {"branch": "direct", "kind": "denoiser_branch_complete", "lane": "forecast", "seconds": 198.24886629311368, "transitions": 112}
+MDB_H18_HISTORY_PHASE {"branch": "coherent", "input_act_cut": "a899f6252d17655df8c2352c5ab379225c36963d2ade1be1f06579a6fb0f8ceb", "kind": "denoiser_branch_entry", "lane": "forecast", "seconds": 198.24905921285972}
+Timeout (0:02:00)!
+Thread 0x00007aac6b3da740 [python] (most recent call first):
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/zH6jSxxG-d4KF_UX/lib/python3.14/site-packages/saturn_pub/store.py", line 45 in _publish
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/zH6jSxxG-d4KF_UX/lib/python3.14/site-packages/saturn_pub/store.py", line 215 in _save_slot
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/zH6jSxxG-d4KF_UX/lib/python3.14/site-packages/saturn_pub/store.py", line 243 in save
+  File "flux_raw_to_image.py", line 499 in _save_cut
+  File "flux_e18_conditioning_act.py", line 222 in boundary
+  File "flux_functional_denoiser.py", line 246 in functional_trajectory
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/zH6jSxxG-d4KF_UX/lib/python3.14/site-packages/torch/utils/_contextlib.py", line 124 in decorate_context
+  File "flux_e18_conditioning_act.py", line 227 in forecast_trajectory
+  File "flux_h18_state_history.py", line 460 in flux_phase
+  File "flux_e18_conditioning_act.py", line 318 in lane_phases
+  File "flux_h18_state_history.py", line 486 in run
+  File "flux_h18_state_history.py", line 577 in worker
+  File "flux_h18_state_history.py", line 590 in main
+  File "flux_h18_state_history.py", line 594 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 98 in _run_module_code
+  File "<frozen runpy>", line 294 in run_path
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/zH6jSxxG-d4KF_UX/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 67 in main
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/zH6jSxxG-d4KF_UX/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 73 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 203 in _run_module_as_main
+MDB_H18_HISTORY_PHASE {"branch": "coherent", "kind": "denoiser_branch_complete", "lane": "forecast", "seconds": 217.91106455679983, "transitions": 112}
+MDB_H18_HISTORY_PHASE {"component": "flux", "direction": "cpu", "kind": "component_placement", "seconds": 238.06258572125807}
+MDB_H18_HISTORY_PHASE {"component": "vae", "direction": "cuda", "kind": "component_placement", "seconds": 238.47316980408505}
+MDB_H18_HISTORY_PHASE {"branch": "direct", "kind": "decoder_branch_complete", "lane": "forecast", "seconds": 246.58788302307948}
+MDB_H18_HISTORY_PHASE {"branch": "coherent", "kind": "decoder_branch_complete", "lane": "forecast", "seconds": 249.8628691090271}
+MDB_H18_HISTORY_PHASE {"component": "vae", "direction": "cpu", "kind": "component_placement", "seconds": 249.96430847607553}
+MDB_H18_HISTORY_PHASE {"forecast_act_receipts": 2, "functional_transitions": 224, "kind": "forecast_globally_sealed", "native_module_entries": 0, "qwen_functional_blocks": 36, "seal_sha256": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "seconds": 277.83622056618333}
+MDB_H18_HISTORY_PHASE {"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_targets_released", "seconds": 280.4650825019926}
+MDB_H18_HISTORY_PHASE {"component": "qwen", "direction": "cuda", "kind": "component_placement", "seconds": 292.61820286605507}
+MDB_H18_HISTORY_PHASE {"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 1, "seconds": 292.6225098092109}
+MDB_H18_HISTORY_PHASE {"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 2, "seconds": 293.3222802472301}
+MDB_H18_HISTORY_PHASE {"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 3, "seconds": 293.33653761120513}
+MDB_H18_HISTORY_PHASE {"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 4, "seconds": 293.34365987125784}
+MDB_H18_HISTORY_PHASE {"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 5, "seconds": 293.3444843310863}
+MDB_H18_HISTORY_PHASE {"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 6, "seconds": 293.345408547204}
+MDB_H18_HISTORY_PHASE {"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 7, "seconds": 293.3463341249153}
+MDB_H18_HISTORY_PHASE {"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 8, "seconds": 293.3470269292593}
+MDB_H18_HISTORY_PHASE {"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 9, "seconds": 293.3477721102536}
+MDB_H18_HISTORY_PHASE {"forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639", "kind": "native_qwen_authorized", "occurrence": 10, "seconds": 293.3484440851025}
+MDB_H18_HISTORY_PHASE {"coherent": {"dtype": "torch.bfloat16", "kind": "tensor", "layout": "strided-dense", "sha256": "e0f85b8c357f4ee1948a7eb60d1f6653c9a777223625fcfca4bcfb2c82c86461", "shape": [1, 512, 7680], "stride": [3932160, 7680, 1], "tensor": "e0f85b8c357f4ee1948a7eb60d1f6653c9a777223625fcfca4bcfb2c82c86461"}, "counts": {"SDPA": 45, "baseline_blocks": 36, "conditioning_concats": 2, "full_model_calls": 1, "native_module_entries": 681, "sham_clones": 0, "state_negations": 1, "suffix_blocks": 9}, "direct": {"dtype": "torch.bfloat16", "kind": "tensor", "layout": "strided-dense", "sha256": "403e72bbdb68fb63f334aaf8d91f41a77184da0fce9901f674acc79af487bb3d", "shape": [1, 512, 7680], "stride": [3932160, 7680, 1], "tensor": "403e72bbdb68fb63f334aaf8d91f41a77184da0fce9901f674acc79af487bb3d"}, "kind": "qwen_history_completed", "lane": "native", "seconds": 295.5790943210013}
+MDB_H18_HISTORY_PHASE {"component": "qwen", "direction": "cpu", "kind": "component_placement", "seconds": 310.6856685928069}
+MDB_H18_HISTORY_PHASE {"component": "flux", "direction": "cuda", "kind": "component_placement", "seconds": 323.26994245219976}
+MDB_H18_HISTORY_PHASE {"branch": "direct", "input_act_cut": "b5524122f43519f3b91134d0132c18e3207217a1a8cee87a3314abfad1dc79d2", "kind": "denoiser_branch_entry", "lane": "native", "seconds": 327.866437247023}
+Timeout (0:02:00)!
+Thread 0x00007aac6b3da740 [python] (most recent call first):
+  File "/home/beast/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/tempfile.py", line 255 in _mkstemp_inner
+  File "/home/beast/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/tempfile.py", line 600 in opener
+  File "/home/beast/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/tempfile.py", line 603 in NamedTemporaryFile
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/zH6jSxxG-d4KF_UX/lib/python3.14/site-packages/saturn_pub/store.py", line 41 in _publish
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/zH6jSxxG-d4KF_UX/lib/python3.14/site-packages/saturn_pub/store.py", line 226 in _save_slot
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/zH6jSxxG-d4KF_UX/lib/python3.14/site-packages/saturn_pub/store.py", line 243 in save
+  File "flux_e18_conditioning_act.py", line 258 in native_trajectory
+  File "flux_h18_state_history.py", line 462 in flux_phase
+  File "flux_e18_conditioning_act.py", line 318 in lane_phases
+  File "flux_h18_state_history.py", line 511 in execute
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/zH6jSxxG-d4KF_UX/lib/python3.14/site-packages/mdb/forecast_transaction.py", line 661 in execute
+  File "flux_h18_state_history.py", line 515 in run
+  File "flux_h18_state_history.py", line 577 in worker
+  File "flux_h18_state_history.py", line 590 in main
+  File "flux_h18_state_history.py", line 594 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 98 in _run_module_code
+  File "<frozen runpy>", line 294 in run_path
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/zH6jSxxG-d4KF_UX/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 67 in main
+  File "/mnt/hdd8tb/mdb/uv-cache/archive-v0/zH6jSxxG-d4KF_UX/lib/python3.14/site-packages/mdb/worker_bootstrap.py", line 73 in <module>
+  File "<frozen runpy>", line 88 in _run_code
+  File "<frozen runpy>", line 203 in _run_module_as_main
+MDB_H18_HISTORY_PHASE {"branch": "direct", "kind": "denoiser_branch_complete", "lane": "native", "seconds": 354.8833534908481, "transitions": 112}
+MDB_H18_HISTORY_PHASE {"branch": "coherent", "input_act_cut": "a899f6252d17655df8c2352c5ab379225c36963d2ade1be1f06579a6fb0f8ceb", "kind": "denoiser_branch_entry", "lane": "native", "seconds": 354.88353429781273}
+MDB_H18_HISTORY_PHASE {"branch": "coherent", "kind": "denoiser_branch_complete", "lane": "native", "seconds": 376.71821944322437, "transitions": 112}
+MDB_H18_HISTORY_PHASE {"component": "flux", "direction": "cpu", "kind": "component_placement", "seconds": 388.4318291260861}
+MDB_H18_HISTORY_PHASE {"component": "vae", "direction": "cuda", "kind": "component_placement", "seconds": 388.65549181820825}
+MDB_H18_HISTORY_PHASE {"branch": "direct", "kind": "decoder_branch_complete", "lane": "native", "seconds": 388.9282339159399}
+MDB_H18_HISTORY_PHASE {"branch": "coherent", "kind": "decoder_branch_complete", "lane": "native", "seconds": 389.19714632304385}
+MDB_H18_HISTORY_PHASE {"component": "vae", "direction": "cpu", "kind": "component_placement", "seconds": 389.29831279208884}
+MDB_DIRECTORY_READY {"expanded_bytes": 5487696020, "file_count": 2712, "files_manifest_sha256": "4afc19151e37197d8ec71ff6134e19d4a99c8a33c3f25fbbbcbc8035b2024618", "job_id": "job-4420636a123c", "output_root": "/mnt/big/mdb/research/job-4420636a123c/h18-state-history-result", "request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea", "summary_sha256": "fe47b99737f1f884ca32b1e534758455bf79f03409c3dc43aeeee4c4857349e1"}

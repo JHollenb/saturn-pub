@@ -1,0 +1,246 @@
+{
+  "collector_source_sha256": "007098eb72842fe1f5d585f64eae272812303d1c18eb67a17ba43508c646b18d",
+  "custody_encoder_source": "/Users/jakeholl/domains/artifacts/mdb-flux-functional-decoder-20261106/recovery-collection-01",
+  "local_source": "/Users/jakeholl/domains/artifacts/mdb-flux-h18-history-20261106/audit-01",
+  "record": {
+    "collection": "/mnt/hdd8tb/mdb/custody/flux-h18-history-20261106/job-722d899061e3/collection-01",
+    "files": {
+      "audit.json": {
+        "bytes": 10859317,
+        "sha256": "548adac8eec327a16a0bc9d0db086daf5caec7df250a89d771ba4bed3dbaa497"
+      },
+      "catalog/equations/8ebba790feacdde80423581e331d95e061f5ed9c4fd3fd021e26c9457c7c50a9.json": {
+        "bytes": 6493,
+        "sha256": "c813958b4d78baabc9435fb7fff7da8e8d628a6673b578f812140b5541d2a476"
+      },
+      "catalog/equations/9ac10d22d1087994b721e423859bdd56d57bf4707d9a19e31fa5499f91ecfb10.json": {
+        "bytes": 6487,
+        "sha256": "364d3515ff61f8358c8b29c33edbe6208b447a39f44ab5610f45a2aac9a72ee6"
+      },
+      "catalog/equations/d78e42cef071682c4514117ea0d5766e71daa026c01ffa2d66f91226100115f9.json": {
+        "bytes": 6543,
+        "sha256": "fc0220649d0afff0e5f66b6cc371a5e12af2044bcab76377b70909c07a1be15d"
+      },
+      "catalog/equations/e107212cb141be8ac699d816e52d6029bdc3361c93c00e81d2053a7d25e46c38.json": {
+        "bytes": 6549,
+        "sha256": "14bfcf49643017c3567b1485b68fa1b72c3f09ea31f35cd27a96313125b206a2"
+      },
+      "catalog/provenance.json": {
+        "bytes": 6997,
+        "sha256": "842cf0aeb98c9215e904bf15394c6886fdc3d289afcd0be99573d177af226d02"
+      },
+      "coherent-forecast.png": {
+        "bytes": 449390,
+        "sha256": "c73fd63d47dea79f9ff7fdf99f9d0f33c57c3eb1d19592b2025d8670c3a0855d"
+      },
+      "coherent-native-own.png": {
+        "bytes": 449390,
+        "sha256": "c73fd63d47dea79f9ff7fdf99f9d0f33c57c3eb1d19592b2025d8670c3a0855d"
+      },
+      "coherent-native-reference.png": {
+        "bytes": 449390,
+        "sha256": "c73fd63d47dea79f9ff7fdf99f9d0f33c57c3eb1d19592b2025d8670c3a0855d"
+      },
+      "direct-forecast.png": {
+        "bytes": 232862,
+        "sha256": "85d3bd4876bb50fa0bc98fb725b96e1157fbb27ded90bf86beb32f2d33fbf499"
+      },
+      "direct-native-own.png": {
+        "bytes": 232862,
+        "sha256": "85d3bd4876bb50fa0bc98fb725b96e1157fbb27ded90bf86beb32f2d33fbf499"
+      },
+      "direct-native-reference.png": {
+        "bytes": 232862,
+        "sha256": "85d3bd4876bb50fa0bc98fb725b96e1157fbb27ded90bf86beb32f2d33fbf499"
+      },
+      "external-evidence.json": {
+        "bytes": 489865,
+        "sha256": "31637610eb51cf3a34840d982bdb7fecc924830035a1110b94b021db01a3a1e2"
+      },
+      "files.json": {
+        "bytes": 5367,
+        "sha256": "bba4bb1271d24a5d34248d97fae09710dbe2b4b7baa7c72296258af9a3593852"
+      },
+      "request.json": {
+        "bytes": 4286,
+        "sha256": "90d198b07de81ca301f358f770a35dd20dfa7595c588d6b6e354ea035d70385f"
+      },
+      "retrieve_evidence.py": {
+        "bytes": 1442,
+        "sha256": "0fd61c80696b6bfb76532c9a85ea29b094cde97c0675563c42b05992f5576923"
+      },
+      "source-act-records.json": {
+        "bytes": 43041,
+        "sha256": "3687952282ced1571c1adb448bcf342370fa19e05546103453c326357c229dc4"
+      },
+      "source-context-consumers.json": {
+        "bytes": 5019,
+        "sha256": "4188e9bf04b637efa4f2fbbd077c3c4fb762fdc10d5b4afe793b062b75730c9e"
+      },
+      "source-count-contract.json": {
+        "bytes": 1233,
+        "sha256": "ac8e48a336af949dcc632497f7ddb41afd906efbff26bf5d74fd9d1efe6efd4e"
+      },
+      "source-files.json": {
+        "bytes": 609165,
+        "sha256": "4afc19151e37197d8ec71ff6134e19d4a99c8a33c3f25fbbbcbc8035b2024618"
+      },
+      "source-forecast-acts.json": {
+        "bytes": 20141,
+        "sha256": "f8b4f5d7417bf3a72e5f9f55688fa2a9c416527c35a9fe1c7fb883b841309dec"
+      },
+      "source-forecast-qwen-history.json": {
+        "bytes": 52998,
+        "sha256": "c89e761f0208a0b63bb3ac65b21c719096eac405decebb38235564b644e4c430"
+      },
+      "source-forecast-responses.json": {
+        "bytes": 484424,
+        "sha256": "33d686a7a37a90ffdab0b7ab4e94c9381d125a183c4852235d35076744c92fd1"
+      },
+      "source-input.json": {
+        "bytes": 542,
+        "sha256": "a97d278bb77a30551d38874e92004fac710b356129e861faa3750308c7894b30"
+      },
+      "source-metadata/flux_config-flux-transformer-config.json": {
+        "bytes": 541,
+        "sha256": "09733c74a3da6d17dd0a0472a091a8950c7c6935889c32c16cc800ede05029de"
+      },
+      "source-metadata/flux_manifest-flux-parameter-artifacts.json": {
+        "bytes": 158206,
+        "sha256": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb"
+      },
+      "source-metadata/flux_recipe_helper-flux_source_receiver.py": {
+        "bytes": 12787,
+        "sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2"
+      },
+      "source-metadata/flux_retrieval_script-retrieve_flux_weights.py": {
+        "bytes": 22624,
+        "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae"
+      },
+      "source-metadata/flux_scheduler_config-scheduler-config.json": {
+        "bytes": 486,
+        "sha256": "067afb012cef64553a763447d1efd93daeffcc0123ca7e25b09f8de20b90762e"
+      },
+      "source-metadata/qwen_config-qwen-config.json": {
+        "bytes": 1536,
+        "sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40"
+      },
+      "source-metadata/qwen_manifest-qwen-parameter-artifacts.json": {
+        "bytes": 433549,
+        "sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374"
+      },
+      "source-metadata/qwen_recipe_helper-flux_source_receiver.py": {
+        "bytes": 12787,
+        "sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2"
+      },
+      "source-metadata/qwen_retrieval_script-retrieve_qwen_weights.py": {
+        "bytes": 22624,
+        "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae"
+      },
+      "source-metadata/qwen_source_binding-qwen-source-binding.json": {
+        "bytes": 65926,
+        "sha256": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7"
+      },
+      "source-metadata/vae_config-vae-config.json": {
+        "bytes": 821,
+        "sha256": "0d6dfb69ae95a5e2ac9836284bbb63d8b38ce67b25ba2dff380752b2a10ab948"
+      },
+      "source-metadata/vae_manifest-vae-parameter-artifacts.json": {
+        "bytes": 128869,
+        "sha256": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9"
+      },
+      "source-metadata/vae_recipe_helper-flux_source_receiver.py": {
+        "bytes": 12787,
+        "sha256": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2"
+      },
+      "source-metadata/vae_retrieval_script-retrieve_vae_weights.py": {
+        "bytes": 22624,
+        "sha256": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae"
+      },
+      "source-native-acts.json": {
+        "bytes": 20137,
+        "sha256": "2f7542db0d02e5be53ac6fdea896ef2b287a1a6f1a99691277382781bbb93d3a"
+      },
+      "source-native-contract.json": {
+        "bytes": 2389693,
+        "sha256": "5ef523a18d1ce0309e9b73afef23f9f6443da546b8aac722de2e4953a9c28cf4"
+      },
+      "source-native-qwen-history.json": {
+        "bytes": 204634,
+        "sha256": "f273c35100cd2c8e168f24eb26defb72eb3cf5cf0be1a72989460ae287417ba5"
+      },
+      "source-plan.json": {
+        "bytes": 11118,
+        "sha256": "eb18f34aec51f51abcb048b5ccb46d3120001be38cc6e49af747a30538f8572e"
+      },
+      "source-receipt-emissions.jsonl": {
+        "bytes": 578366,
+        "sha256": "5a807d0818bd7a41f678aeafbfff9dc75a014acb514a3cb3c54c06fbf6619565"
+      },
+      "source-request.json": {
+        "bytes": 20974,
+        "sha256": "02989e2189ea2546a03d4ad83dc55144dfee1177e16b3a5eea0ae9d056f77b85"
+      },
+      "source-runtime-contract.json": {
+        "bytes": 6646,
+        "sha256": "fcad173d94082f7d766ed5834385d32353600f8bdc9db26a8719f1e7df8b32b3"
+      },
+      "source-source.json": {
+        "bytes": 7170,
+        "sha256": "7e4387b4d4987f466a8ae15faca698485e4336f0f37b0d63f6f44a291b612b06"
+      },
+      "source-summary.json": {
+        "bytes": 2964,
+        "sha256": "fe47b99737f1f884ca32b1e534758455bf79f03409c3dc43aeeee4c4857349e1"
+      },
+      "source-timeline.jsonl": {
+        "bytes": 6863,
+        "sha256": "5b933a88a5c294f6115df3ceabe08e3a5a1442eb33b4349eeae92d0ae3d9a744"
+      },
+      "summary.json": {
+        "bytes": 342,
+        "sha256": "5da7a3496a01a61845aedc05555a4d1b63bced00c89e5597684025859412c67b"
+      }
+    },
+    "files_manifest_sha256": "bba4bb1271d24a5d34248d97fae09710dbe2b4b7baa7c72296258af9a3593852",
+    "host": "beast",
+    "log": {
+      "complete": true,
+      "compressed_bytes": 4052642,
+      "compressed_sha256": "3a874bcedb12288cab47595a9466b1fcb2ce45be5227ebb07914ce66cd1ce70b",
+      "error": null,
+      "job_id": "job-722d899061e3",
+      "job_json_sha256": "5d03080a324b82697c37a284a1a9a6a48556c2e4993bd6f98c0767818ecf64d5",
+      "schema": "mdb-flux-family-log-custody-v1",
+      "scope": "Exact request-qualified directory re-emission bytes; not original scheduler log",
+      "storage": "gzip",
+      "uncompressed_bytes": 5267390,
+      "uncompressed_sha256": "ff04297de3285b133778b6881b8e6cb84346d67c555c60e958b788b40426f5ad"
+    },
+    "original_output": "/mnt/big/mdb/research/job-722d899061e3/binding-minimal-result",
+    "recovery_encoder": {
+      "schema": "mdb-explicit-recovery-encoder-v1",
+      "scope": "Collection-only encoder supplied by a separately request-sealed run. Original worker payload/request remain unchanged.",
+      "sha256": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+      "source_request_sha256": "2339ecdb754e0104418b463397b4cb2121a4bbb1c9646d390e56cee3f0fe1e2e"
+    },
+    "schema": "mdb-remote-directory-custody-v1",
+    "scope": "Full archive, exact duplicate transport log, payload, extracted scientific evidence and legacy offline verification retained on Beast. No model rerun. Local pointer is not a complete collection.",
+    "seconds": 0.4751648320816457,
+    "summary_sha256": "5da7a3496a01a61845aedc05555a4d1b63bced00c89e5597684025859412c67b",
+    "verification": {
+      "archive_bytes": 3949722,
+      "archive_sha256": "97ca4a382ccc9cf16415a220896b70b735c7120ffdc1ec3be2754bd850216bc0",
+      "files": 49,
+      "job_id": "job-722d899061e3",
+      "mechanics_status": "verified",
+      "model_reexecution": false,
+      "part_count": 1,
+      "request_sha256": "f6fd5739232f27d58bb758f29739e417c43c955fdce1c109dd8e8242189e3b65",
+      "schema": "mdb-flux-family-custody-verification-v1"
+    }
+  },
+  "record_sha256": "bf8ae2485d6ab378228e562ac83365994124c7d4bb20dce0009a41ea286326c3",
+  "schema": "mdb-remote-custody-pointer-v1",
+  "scope": "Pointer to fully verified remote custody; scientific tensors are not locally collected. Use --retrieve to fetch exact retained bytes."
+}

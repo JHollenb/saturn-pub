@@ -1,0 +1,42 @@
+{
+  "branch": "direct",
+  "clock": {
+    "cursor": 0,
+    "phase": "project",
+    "step": 1
+  },
+  "forecast_act": "e26dce5adf0d62cb179cc4619f1a061b86765c0b03a48e345eaa338e5ff57907",
+  "forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639",
+  "history": {
+    "edit_index": 18,
+    "genuine_qwen_act": false,
+    "horizon": 27,
+    "native_route": "full36-plus-LM then own-context layers18..26; use_cache=False",
+    "operation": "native BF16 unary negation of all512 rows/all2560 features",
+    "selected": [
+      9,
+      18,
+      27
+    ]
+  },
+  "intervention": {
+    "H9": "unchanged",
+    "address": "conditioning",
+    "both_branches_same_mask": true,
+    "coherent": "cat(own H9,own -H18,own regenerated H27minus)",
+    "columns": [
+      2560,
+      7680
+    ],
+    "direct": "cat(own H9,own -H18,own baseline H27)",
+    "direct_H27": "same-value replacement",
+    "mode": "replace",
+    "rows": "all512",
+    "site": "step0/project"
+  },
+  "native_act": "e26dce5adf0d62cb179cc4619f1a061b86765c0b03a48e345eaa338e5ff57907",
+  "occurrence": "same-latent-decoder",
+  "prompt_sha256": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612",
+  "request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea",
+  "seed": 277
+}

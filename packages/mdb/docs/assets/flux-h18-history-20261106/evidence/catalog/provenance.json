@@ -1,0 +1,195 @@
+{
+  "automatic_family_induction": false,
+  "queries": [
+    {
+      "context": {
+        "branch": "direct",
+        "clock": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        },
+        "forecast_act": "e26dce5adf0d62cb179cc4619f1a061b86765c0b03a48e345eaa338e5ff57907",
+        "forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639",
+        "history": {
+          "edit_index": 18,
+          "genuine_qwen_act": false,
+          "horizon": 27,
+          "native_route": "full36-plus-LM then own-context layers18..26; use_cache=False",
+          "operation": "native BF16 unary negation of all512 rows/all2560 features",
+          "selected": [
+            9,
+            18,
+            27
+          ]
+        },
+        "intervention": {
+          "H9": "unchanged",
+          "address": "conditioning",
+          "both_branches_same_mask": true,
+          "coherent": "cat(own H9,own -H18,own regenerated H27minus)",
+          "columns": [
+            2560,
+            7680
+          ],
+          "direct": "cat(own H9,own -H18,own baseline H27)",
+          "direct_H27": "same-value replacement",
+          "mode": "replace",
+          "rows": "all512",
+          "site": "step0/project"
+        },
+        "native_act": "e26dce5adf0d62cb179cc4619f1a061b86765c0b03a48e345eaa338e5ff57907",
+        "occurrence": "whole",
+        "prompt_sha256": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612",
+        "request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea",
+        "seed": 277
+      },
+      "exact": 1,
+      "fingerprint": "9ac10d22d1087994b721e423859bdd56d57bf4707d9a19e31fa5499f91ecfb10",
+      "wrong_clock": 0
+    },
+    {
+      "context": {
+        "branch": "direct",
+        "clock": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        },
+        "forecast_act": "e26dce5adf0d62cb179cc4619f1a061b86765c0b03a48e345eaa338e5ff57907",
+        "forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639",
+        "history": {
+          "edit_index": 18,
+          "genuine_qwen_act": false,
+          "horizon": 27,
+          "native_route": "full36-plus-LM then own-context layers18..26; use_cache=False",
+          "operation": "native BF16 unary negation of all512 rows/all2560 features",
+          "selected": [
+            9,
+            18,
+            27
+          ]
+        },
+        "intervention": {
+          "H9": "unchanged",
+          "address": "conditioning",
+          "both_branches_same_mask": true,
+          "coherent": "cat(own H9,own -H18,own regenerated H27minus)",
+          "columns": [
+            2560,
+            7680
+          ],
+          "direct": "cat(own H9,own -H18,own baseline H27)",
+          "direct_H27": "same-value replacement",
+          "mode": "replace",
+          "rows": "all512",
+          "site": "step0/project"
+        },
+        "native_act": "e26dce5adf0d62cb179cc4619f1a061b86765c0b03a48e345eaa338e5ff57907",
+        "occurrence": "same-latent-decoder",
+        "prompt_sha256": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612",
+        "request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea",
+        "seed": 277
+      },
+      "exact": 1,
+      "fingerprint": "d78e42cef071682c4514117ea0d5766e71daa026c01ffa2d66f91226100115f9",
+      "wrong_clock": 0
+    },
+    {
+      "context": {
+        "branch": "coherent",
+        "clock": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        },
+        "forecast_act": "39859240975f12f770c63725515766c19b45c2c871df4706a3678ce2b708e720",
+        "forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639",
+        "history": {
+          "edit_index": 18,
+          "genuine_qwen_act": false,
+          "horizon": 27,
+          "native_route": "full36-plus-LM then own-context layers18..26; use_cache=False",
+          "operation": "native BF16 unary negation of all512 rows/all2560 features",
+          "selected": [
+            9,
+            18,
+            27
+          ]
+        },
+        "intervention": {
+          "H9": "unchanged",
+          "address": "conditioning",
+          "both_branches_same_mask": true,
+          "coherent": "cat(own H9,own -H18,own regenerated H27minus)",
+          "columns": [
+            2560,
+            7680
+          ],
+          "direct": "cat(own H9,own -H18,own baseline H27)",
+          "direct_H27": "same-value replacement",
+          "mode": "replace",
+          "rows": "all512",
+          "site": "step0/project"
+        },
+        "native_act": "39859240975f12f770c63725515766c19b45c2c871df4706a3678ce2b708e720",
+        "occurrence": "whole",
+        "prompt_sha256": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612",
+        "request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea",
+        "seed": 277
+      },
+      "exact": 1,
+      "fingerprint": "8ebba790feacdde80423581e331d95e061f5ed9c4fd3fd021e26c9457c7c50a9",
+      "wrong_clock": 0
+    },
+    {
+      "context": {
+        "branch": "coherent",
+        "clock": {
+          "cursor": 0,
+          "phase": "project",
+          "step": 0
+        },
+        "forecast_act": "39859240975f12f770c63725515766c19b45c2c871df4706a3678ce2b708e720",
+        "forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639",
+        "history": {
+          "edit_index": 18,
+          "genuine_qwen_act": false,
+          "horizon": 27,
+          "native_route": "full36-plus-LM then own-context layers18..26; use_cache=False",
+          "operation": "native BF16 unary negation of all512 rows/all2560 features",
+          "selected": [
+            9,
+            18,
+            27
+          ]
+        },
+        "intervention": {
+          "H9": "unchanged",
+          "address": "conditioning",
+          "both_branches_same_mask": true,
+          "coherent": "cat(own H9,own -H18,own regenerated H27minus)",
+          "columns": [
+            2560,
+            7680
+          ],
+          "direct": "cat(own H9,own -H18,own baseline H27)",
+          "direct_H27": "same-value replacement",
+          "mode": "replace",
+          "rows": "all512",
+          "site": "step0/project"
+        },
+        "native_act": "39859240975f12f770c63725515766c19b45c2c871df4706a3678ce2b708e720",
+        "occurrence": "same-latent-decoder",
+        "prompt_sha256": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612",
+        "request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea",
+        "seed": 277
+      },
+      "exact": 1,
+      "fingerprint": "e107212cb141be8ac699d816e52d6029bdc3361c93c00e81d2053a7d25e46c38",
+      "wrong_clock": 0
+    }
+  ],
+  "records": 4,
+  "scope": "Dependent exact-context endpoint accounts of H27 history conditional on held negative H18; no full-factorial or semantic attribution."
+}

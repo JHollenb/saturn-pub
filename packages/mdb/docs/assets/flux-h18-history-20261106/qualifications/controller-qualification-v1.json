@@ -1,0 +1,47 @@
+{
+  "actual_metadata_authentication": {
+    "path": "attempt-01/actual-resource-binding.json",
+    "scope": "Actual immutable E18 scheduler/request JSON and command/payload joins only; no stage performed.",
+    "sha256": "c13e1332c03d6393e3614cdb4d5b3c340bb742fd8c2c462f2a1d2cad7dd8c88a"
+  },
+  "attempt": "attempt-01",
+  "coverage": [
+    "newsource closure+all709manifest census and exact resources/counts",
+    "tampered original metadata/wheel refusal before output",
+    "pinned resourcejob and declared/sealed/executed payload identity",
+    "exact finite review,onelease,no retry and duplicate refusal",
+    "offline actual CLI inspect/help and source tamper refusal",
+    "metadata validation without checkpoint dependency"
+  ],
+  "execution_sha256": "80eb0b6444d8d630fdb4612e6845893456803266a7f5ad88e5cb828a483b77b1",
+  "limitations": [
+    "No actual production stage or admission performed.",
+    "Synthetic wheel bytes were mock packaging inputs, not runtime certification.",
+    "900s is prospective H18 estimate based on measured E18 baseline; no successor throughput claim."
+  ],
+  "pytest": "6 passed in 1.41s",
+  "returncode": 0,
+  "ruff_returncode": 0,
+  "schema": "mdb-h18-history-controller-qualification-v1",
+  "scope": "Model-free source and CLI qualification; original709 recipes are metadata only; packaging and admission mocked, no model/tokenizer/checkpoint/network calls.",
+  "source_sha256": "42e1caaa3a7b2eb1c52a5d8d28457a85316f60592221bbf28c9d25f918202759",
+  "sources": {
+    "qualification/flux_e18_conditioning_act.py": "45c512de2dff3252c38a182cf4291b392cf35a159c2bd83b35900c28005cb343",
+    "qualification/flux_functional_decoder.py": "e2712298e42b37a263dea1b24f0f491082b8a01086b16fa66577f474c68f491f",
+    "qualification/flux_functional_denoiser.py": "cb794daa5818ec3f9107f23839a41010f9569148da3708e39cedd364dff21923",
+    "qualification/flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "qualification/flux_functional_qwen_prefix_worker.py": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+    "qualification/flux_functional_vae.py": "576b94f3cd987e8849f6d4772c90a77f14fdfc9210dea608a9a3d16cf0f99a61",
+    "qualification/flux_h18_state_history.py": "d1e57904f88cc4e6ccc062a966406d7fe7e2a0dfa669ad18985f640969ee2c75",
+    "qualification/flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+    "qualification/flux_raw_to_image.py": "1c16c1a90442194e97398ea8d0cda5cb4d7686434d45a16eec6ba6fa9b103522",
+    "qualification/flux_source_receiver.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+    "qualification/qwen_h18_state_history.py": "17084d404f5ae00557e4ad8e94a8b84704787c47ebf9c875228cb452c4857036",
+    "qualification/stage_flux_e18_conditioning_act.py": "c542b0576f955e10f286fb5db6fc24a4aee7f9b79ad73cc91bed108bc0b81ccf",
+    "qualification/stage_flux_h18_state_history.py": "42e1caaa3a7b2eb1c52a5d8d28457a85316f60592221bbf28c9d25f918202759",
+    "qualification/stage_flux_raw_to_image.py": "855ee39d6d4c9c4a9f8fcefb425c33d8ff327b9f24a0f9dbf3066c8389040e99",
+    "tests/test_stage_flux_h18_state_history.py": "f06b73c2e3498816c6e00c5458191184c8c0c3e71d9d335b310abd7e849a1222"
+  },
+  "status": "passed",
+  "test_sha256": "f06b73c2e3498816c6e00c5458191184c8c0c3e71d9d335b310abd7e849a1222"
+}

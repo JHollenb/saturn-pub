@@ -1,0 +1,242 @@
+{
+  "alias": "cmp.flux.H18-history.direct.same-latent-decoder",
+  "applicability_authority": "supplied; no generalization inferred",
+  "applicability_conditions": [
+    {
+      "field": "branch",
+      "op": "eq",
+      "value": "direct"
+    },
+    {
+      "field": "occurrence",
+      "op": "eq",
+      "value": "same-latent-decoder"
+    },
+    {
+      "field": "prompt_sha256",
+      "op": "eq",
+      "value": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612"
+    },
+    {
+      "field": "seed",
+      "op": "eq",
+      "value": 277
+    },
+    {
+      "field": "history",
+      "op": "eq",
+      "value": {
+        "edit_index": 18,
+        "genuine_qwen_act": false,
+        "horizon": 27,
+        "native_route": "full36-plus-LM then own-context layers18..26; use_cache=False",
+        "operation": "native BF16 unary negation of all512 rows/all2560 features",
+        "selected": [
+          9,
+          18,
+          27
+        ]
+      }
+    },
+    {
+      "field": "clock",
+      "op": "eq",
+      "value": {
+        "cursor": 0,
+        "phase": "project",
+        "step": 0
+      }
+    },
+    {
+      "field": "intervention",
+      "op": "eq",
+      "value": {
+        "H9": "unchanged",
+        "address": "conditioning",
+        "both_branches_same_mask": true,
+        "coherent": "cat(own H9,own -H18,own regenerated H27minus)",
+        "columns": [
+          2560,
+          7680
+        ],
+        "direct": "cat(own H9,own -H18,own baseline H27)",
+        "direct_H27": "same-value replacement",
+        "mode": "replace",
+        "rows": "all512",
+        "site": "step0/project"
+      }
+    },
+    {
+      "field": "native_act",
+      "op": "eq",
+      "value": "e26dce5adf0d62cb179cc4619f1a061b86765c0b03a48e345eaa338e5ff57907"
+    },
+    {
+      "field": "forecast_act",
+      "op": "eq",
+      "value": "e26dce5adf0d62cb179cc4619f1a061b86765c0b03a48e345eaa338e5ff57907"
+    },
+    {
+      "field": "forecast_seal",
+      "op": "eq",
+      "value": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639"
+    },
+    {
+      "field": "request_sha256",
+      "op": "eq",
+      "value": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea"
+    }
+  ],
+  "binding": {
+    "execution": {
+      "id": "mdb-flux-h18-state-history-v1"
+    },
+    "frontier": "own raw-Qwen E then actual initial-project conditioning Act",
+    "horizon": {
+      "decoder": "same-latent-decoder",
+      "steps": 4
+    },
+    "input_identity": "b5524122f43519f3b91134d0132c18e3207217a1a8cee87a3314abfad1dc79d2",
+    "model_identity": "d9bcf01c7bf6d225e275e09274488c05d4a530a44b75dbe003710457ef3782af",
+    "source_identity": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea"
+  },
+  "evidence": {
+    "audit_sha256": "548adac8eec327a16a0bc9d0db086daf5caec7df250a89d771ba4bed3dbaa497",
+    "full_factorial": false,
+    "genuine_flux_acts": true,
+    "genuine_qwen_act": false,
+    "independent_kernel": false
+  },
+  "fingerprint": "d78e42cef071682c4514117ea0d5766e71daa026c01ffa2d66f91226100115f9",
+  "law_id": "law.flux.H18-state-history.complete-program.v1",
+  "observation_unit": "one caller-bound comparison, not independent tasks",
+  "readers": [],
+  "report": {
+    "decision_fields": 0,
+    "decision_mismatches": 0,
+    "fields": {
+      "decoded": {
+        "decisions": {
+          "rule": "none",
+          "status": "not-requested"
+        },
+        "residual": {
+          "elements": 786432,
+          "l2": 0.0,
+          "largest": {
+            "coordinate": [
+              0,
+              0,
+              0,
+              0
+            ],
+            "signed": 0.0
+          },
+          "max_abs": 0.0,
+          "maximum_signed": 0.0,
+          "minimum_signed": 0.0,
+          "nonzero": 0,
+          "shape": [
+            1,
+            3,
+            512,
+            512
+          ],
+          "signed_mean": 0.0,
+          "signed_sum": 0.0
+        },
+        "shape": [
+          1,
+          3,
+          512,
+          512
+        ]
+      },
+      "pixels": {
+        "decisions": {
+          "rule": "none",
+          "status": "not-requested"
+        },
+        "residual": {
+          "elements": 786432,
+          "l2": 0.0,
+          "largest": {
+            "coordinate": [
+              0,
+              0,
+              0
+            ],
+            "signed": 0.0
+          },
+          "max_abs": 0.0,
+          "maximum_signed": 0.0,
+          "minimum_signed": 0.0,
+          "nonzero": 0,
+          "shape": [
+            512,
+            512,
+            3
+          ],
+          "signed_mean": 0.0,
+          "signed_sum": 0.0
+        },
+        "shape": [
+          512,
+          512,
+          3
+        ]
+      }
+    },
+    "fingerprint": "6932d24ace2b83247f3974952554d53b6c9e6b6782696de92f9c04fdfc04424f",
+    "max_abs": 0.0,
+    "mechanics_status": "valid",
+    "residual_direction": "observed-minus-predicted",
+    "schema": "mdb-equation-comparison-v1",
+    "target_scope": "unassigned",
+    "terminal_status": "unassessed"
+  },
+  "route_id": "route.flux.original-shared-primitives.H18-state-history.v1",
+  "schema": "mdb-equation-record-v1",
+  "tested_context": {
+    "branch": "direct",
+    "clock": {
+      "cursor": 0,
+      "phase": "project",
+      "step": 0
+    },
+    "forecast_act": "e26dce5adf0d62cb179cc4619f1a061b86765c0b03a48e345eaa338e5ff57907",
+    "forecast_seal": "dc14bfa58f4b50b145241d69889111ab28c39712b7ca24343d1052ca22db8639",
+    "history": {
+      "edit_index": 18,
+      "genuine_qwen_act": false,
+      "horizon": 27,
+      "native_route": "full36-plus-LM then own-context layers18..26; use_cache=False",
+      "operation": "native BF16 unary negation of all512 rows/all2560 features",
+      "selected": [
+        9,
+        18,
+        27
+      ]
+    },
+    "intervention": {
+      "H9": "unchanged",
+      "address": "conditioning",
+      "both_branches_same_mask": true,
+      "coherent": "cat(own H9,own -H18,own regenerated H27minus)",
+      "columns": [
+        2560,
+        7680
+      ],
+      "direct": "cat(own H9,own -H18,own baseline H27)",
+      "direct_H27": "same-value replacement",
+      "mode": "replace",
+      "rows": "all512",
+      "site": "step0/project"
+    },
+    "native_act": "e26dce5adf0d62cb179cc4619f1a061b86765c0b03a48e345eaa338e5ff57907",
+    "occurrence": "same-latent-decoder",
+    "prompt_sha256": "0983d25ebf131ee86477c861a1b8182ff397a635dd471f4137b0bf67197cf612",
+    "request_sha256": "a69c20845dba8c20be4b76eff33ddfc89e27d8b016730b19029a2be8e9f55dea",
+    "seed": 277
+  }
+}

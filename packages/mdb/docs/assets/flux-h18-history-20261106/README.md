@@ -1,0 +1,5 @@
+# H18 state sign-history
+
+One fixed prompt/seed277: direct E=[H9,-H18,H27base] versus coherent E=[H9,-H18,H27minus], with H19..27 regenerated from own negative H18. H9, negative H18 and noise are held within each lane. Qwen uses a component suffix, not a genuine Qwen Act; four FLUX Acts are genuine. This is a conditional H27-history contrast, not an MLP-writer ablation, full factorial or semantic image prediction.
+
+The complete original compact pack is in evidence/ exactly once. Six original PNG bytes are preserved there. Full field errors, signed means, tails, undefined cosines, first discrepancies, genuine Acts/native receipts and exact-context catalog records remain in evidence/audit.json and its sidecars. The five figures use authenticated saved reductions plus signed channel display transforms of the two original native-reference PNGs. Linear axes retain zeros; nonlive/undefined values are gaps. RMS is unsigned, and relative denominators are the same native field or native signed response. Repeated fields/exits are not independent trials.

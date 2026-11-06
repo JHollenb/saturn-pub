@@ -1,0 +1,72 @@
+{
+  "checkpoint_bytes_read": 0,
+  "original_payload_files": {
+    "flux-parameter-artifacts.json": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb",
+    "flux-transformer-config.json": "09733c74a3da6d17dd0a0472a091a8950c7c6935889c32c16cc800ede05029de",
+    "model_index.json": "51a76cb1cf3ed37423a1128c79c22faee8e6fbe7f5aaeb737f0a258930dbaac0",
+    "qwen-config.json": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+    "qwen-parameter-artifacts.json": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+    "qwen-source-binding.json": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+    "retrieve_flux_weights.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+    "retrieve_qwen_weights.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+    "retrieve_vae_weights.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+    "scheduler-config.json": "067afb012cef64553a763447d1efd93daeffcc0123ca7e25b09f8de20b90762e",
+    "source-metadata-receipt-v1.json": "bdb557b3a6a236173c4df0d7324f08fdcd80a3eaa9c48f3394b0e02b9ca4a4b8",
+    "vae-config.json": "0d6dfb69ae95a5e2ac9836284bbb63d8b38ce67b25ba2dff380752b2a10ab948",
+    "vae-parameter-artifacts.json": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9"
+  },
+  "parent_launcher_sha256": "c542b0576f955e10f286fb5db6fc24a4aee7f9b79ad73cc91bed108bc0b81ccf",
+  "parent_request_file_sha256": "7379b1205a904d050dce38d82e9950befeb85b0b690ee665116cd0806e658cb8",
+  "parent_request_sha256": "491d0611ac1ebbf1a6451552d93b83288713175bc0fac019a7d9251f956f3d34",
+  "recipes": {
+    "flux": {
+      "checkpoint_bytes_read": 0,
+      "manifest_sha256": "8d3d7a3f4db3ca0646ea94b86bf9d77454ad8f0323eec07ee85c980fc5ff12eb",
+      "payload_bytes": 7751089152,
+      "source_checkpoints": {
+        "transformer/diffusion_pytorch_model.safetensors": "9f29f9edcfdae452a653ffb51a534ca4decd389952c225724ff3b94042612a6e"
+      },
+      "tensors": 169
+    },
+    "qwen": {
+      "checkpoint_bytes_read": 0,
+      "manifest_sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+      "payload_bytes": 8044936192,
+      "source_checkpoints": {
+        "model-00001-of-00002.safetensors": "8c0506e7f4936fa7e26183a4fd8da4e2bdbc5990ba64ae441f965d51228f36ea",
+        "model-00002-of-00002.safetensors": "82f2bd839378541b0557bfabaf37c7d3d637071fdcb73302dedd7cf61162ce07"
+      },
+      "tensors": 398
+    },
+    "vae": {
+      "checkpoint_bytes_read": 0,
+      "manifest_sha256": "beb6b6ac566aa30adea28861fa1a8e92153d3c6627989d8df35f89d193e3cae9",
+      "payload_bytes": 99241030,
+      "source_checkpoints": {
+        "diffusion_pytorch_model.safetensors": "ca70d2202afe6415bdbcb8793ba8cd99fd159cfe6192381504d6c4d3036e0f04"
+      },
+      "tensors": 142
+    }
+  },
+  "resource_measurement": {
+    "elapsed_s": 545.01,
+    "executed_payload": {
+      "sha256": "0c4c90a1fa468a3881c090b02f0a3a074340c89a906612266c3aefff94f43dd7",
+      "size_bytes": 3293004
+    },
+    "job_id": "job-9339e3ed1472",
+    "peak_rss_mb": 20462.1,
+    "peak_vram_mb": 8374.0,
+    "request_sha256": "491d0611ac1ebbf1a6451552d93b83288713175bc0fac019a7d9251f956f3d34",
+    "scope": "Measured E18 baseline only; H18 successor adds18Qwen block evaluations and named history/ports, not another hydration/placement",
+    "source_job_sha256": "ba768527281dee17706f9344ce6feaf9b3f88ccd1c8d74ea311bd5e3e5c6fdf5"
+  },
+  "runtime_wheels": {
+    "mdb_runtime-0.1.0-py3-none-any.whl": "4b1b965dce45883cabcb24ab2c11702ce748aeb1658776596be27b405df26d21",
+    "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+    "saturn_pub-0.4.1-py3-none-any.whl": "c32bbcf5c5b45e4970d9c750266f607b2a9b0f06dc982106fd82e0501375e424"
+  },
+  "schema": "mdb-h18-history-source-cohort-v1",
+  "source_metadata_receipt_sha256": "bdb557b3a6a236173c4df0d7324f08fdcd80a3eaa9c48f3394b0e02b9ca4a4b8",
+  "usage": "Original metadata,709recipes and qualified wheels only; no historical activations or learned weight payloads"
+}
