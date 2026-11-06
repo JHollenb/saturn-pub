@@ -1,6 +1,7 @@
 """Stage a small original-parameter microscope, without another model/image run."""
 import argparse
 import hashlib
+import importlib.metadata
 import json
 import os
 import runpy
@@ -49,6 +50,7 @@ def stage(run,prior):
         text_rows=512,width=3072,output_scratch='/mnt/big/mdb/research',directory_custody=True,max_wall_seconds=240,python_bytecode=False,
         reused_custody=dict(report_sha256=sha(collection/'report.json'),archive_receipt_sha256=sha(collection/'archive-custody.json'),
             log_receipt_sha256=sha(collection/'log-custody.json'),scope='Prior verified transport receipts plus rechecked extracted inputs; transport archive is not re-emitted or revalidated.'),
+        original_module_source_sha256=sha(Path(importlib.metadata.distribution('diffusers').locate_file('diffusers/models/transformers/transformer_flux2.py'))),
         scope='Post-hoc diagnosis on eight known step3/joint0 reader cases. Three checkpoint-identical text matrices; full B1x512 geometry. Native actual-input, prior-reference-head, actual-after and opposite-reduction tails, plus24fixed-input opposite-reduction matrix calls and independent local/actual-input NumPy equations. No new target-free forecasts, full model/block/attention forwards or images.',
         planned_counts=dict(linear=112,layernorm=32,swiglu=32,mathematical_affines=64,full_model_loads=0,native_blocks=0,native_attention=0,images=0))
     run.mkdir(parents=True,exist_ok=False);save(run/'plan.json',cfg)
@@ -87,7 +89,7 @@ def submit(run):
     job=guarded_mrun_launch(command,request=r,model=None,task='analysis',
         experiment='mdb-flux-reader-arithmetic',payload=run/'payload',gpu=True,needs=r['needs'],prefer_host='beast',
         timeout_s=600,retry_on_kill=False,preflight=True,**resource,
-        note='Observed-operand reader microscope:3original text matrices;8knowncases,112CUDAlinear/32LayerNorm/32SwiGLU and64independent NumPy affines. Includes24fixed-input opposite-reduction calls. FullB1x512 geometry.0fullmodels/blocks/attention/VAE/newforecasts. Startup trace and python-B after prior420s import timeout;150scompute estimate/240sworker/600souter;no retries.')
+        note='Observed-operand reader microscope:3original text matrices;8knowncases,112CUDAlinear/32LayerNorm/32SwiGLU and64independent NumPy affines. FullB1x512 geometry. Torch-only source-transcribed primitive graph; no Diffusers runtime import; original source SHA verified and original-return parity measured.0fullmodels/blocks/attention/VAE/newforecasts.150scompute estimate/240sworker/600souter;no retries.')
     save(run/'submission.json',dict(job_id=str(job)));return dict(job_id=str(job))
 
 

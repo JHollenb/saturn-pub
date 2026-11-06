@@ -245,11 +245,12 @@ The first returns `cmp.flux.latent-reader.right.key`, including its numerical
 miss. The second returns `[]`. These predicates express supplied scope, not
 an inferred applicability rule.
 
-The next informative cut is an operator-level numerical comparison using these
-same parents: record actual text output-projection inputs/returns, residual
-rounding, normalized MLP input and MLP returns; compare local equations supplied
-actual inputs against equations consuming their own predicted inputs. Bind the
-actual CUDA reduction/SDPA contract. That separates attention error from
-projection, residual-rounding and MLP contributions without fitting corrections
-or launching another large image sweep. After that, head/row-specific K/V cuts
-can localize the value-aligned route before testing fresh seeds.
+The [operator-level follow-up](FLUX-READER-ARITHMETIC.md) now reproduces all eight
+source text tails byte for byte and separates actual-input local equations
+from carried approximations. On identical operands, output-projection and MLP
+output-matrix arithmetic retain large errors on the small K/V effects; local
+residual, modulation and SwiGLU equations match exactly. Changing CUDA
+reduction policy moves the two matrix effects closer to the FP64 reference.
+Those are known-input diagnostics, not new prospective predictions. The next
+cut isolates attention arithmetic on fixed Q/K/V before testing the complete
+reader on fresh states and localizing head/row-specific value transport.

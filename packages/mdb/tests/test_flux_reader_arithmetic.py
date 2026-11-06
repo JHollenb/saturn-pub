@@ -1,5 +1,7 @@
 """Reconstituted component parity against an actual tiny native joint block."""
 import runpy
+import subprocess
+import sys
 from pathlib import Path
 
 import numpy as np
@@ -8,6 +10,21 @@ from saturn_pub import Session
 
 Q=Path(__file__).parents[1]/'qualification'
 C=runpy.run_path(str(Q/'flux_reader_arithmetic.py'))
+
+
+def test_lazy_archive_comparison_preserves_frozen_measurements(tmp_path):
+    audit=runpy.run_path(str(Q/'analyze_flux_reader_arithmetic.py'))
+    rng=np.random.default_rng(8);b=C['R']['bf16']
+    a=b(rng.normal(size=(1,7,8)).astype(np.float32));p=b(a+.03125)
+    ar,pr=[C['H']['array'](tmp_path,x) for x in (a,p)]
+    ref=audit['ArrayReference'];loader=C['H']['load_array']
+    assert audit['measure'](a,p)==audit['measure'](ref(loader,tmp_path,ar),ref(loader,tmp_path,pr))
+    assert np.array_equal(a.astype(np.float64),ref(loader,tmp_path,ar).astype(np.float64))
+
+
+def test_strict_eager_determinism_does_not_import_compiler():
+    code="import runpy,sys,torch; c=runpy.run_path("+repr(str(Q/'flux_reader_arithmetic.py'))+"); c['configure_eager_determinism'](); assert torch.are_deterministic_algorithms_enabled(); assert not torch.is_deterministic_algorithms_warn_only_enabled(); assert 'torch._dynamo' not in sys.modules and 'torch._inductor' not in sys.modules"
+    subprocess.run([sys.executable,'-I','-B','-c',code],check=True,capture_output=True,text=True)
 
 
 def test_actual_native_block_matches_reconstituted_tail_and_local_residuals():

@@ -1,7 +1,6 @@
 """Finite original-parameter CUDA primitives over saved reader operands."""
 import faulthandler
-import hashlib
-import inspect
+import importlib.metadata
 import json
 import os
 import runpy
@@ -23,7 +22,8 @@ def worker():
     if c.get('python_bytecode') is False and not sys.dont_write_bytecode:raise ValueError('declared no-bytecode startup did not execute')
     import torch
     print('MDB_READER_SETUP torch-ready '+str(time.monotonic()-boot),flush=True)
-    from diffusers.models.transformers.transformer_flux2 import Flux2FeedForward
+    original_source=Path(importlib.metadata.distribution('diffusers').locate_file('diffusers/models/transformers/transformer_flux2.py'))
+    if sha(original_source)!=c['original_module_source_sha256']:raise ValueError('original module source differs')
     print('MDB_READER_SETUP modules-ready '+str(time.monotonic()-boot),flush=True)
     from saturn_pub.store import LocalStore
     source=Path(c['input_root'])
@@ -31,7 +31,7 @@ def worker():
         if sha(source/n)!=v['sha256'] or (source/n).stat().st_size!=v['bytes']:raise ValueError('source operand changed: '+n)
     print('MDB_READER_SETUP inputs-verified '+str(time.monotonic()-boot),flush=True)
     if not torch.cuda.is_available():raise ValueError('CUDA primitive lane required')
-    torch.set_num_threads(4);torch.use_deterministic_algorithms(True)
+    torch.set_num_threads(4);core['configure_eager_determinism']()
     torch.backends.cuda.matmul.allow_tf32=False;torch.backends.cudnn.allow_tf32=False
     original=torch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction
     started=time.monotonic()
@@ -40,6 +40,17 @@ def worker():
     bank=h['RecipeBank'](read(here/'parameter-artifacts.json'),c['model_path'])
     weights={k:bank.load(v) for k,v in c['text_parameters'].items()}
     modules=core['make_modules'](weights,device='cuda',eps=c['eps'])
+    # Publish the ABI before tensor work. Nested runpy classes have no reliable
+    # inspect.getsource(class) path; bind their complete shipped definition.
+    save(out/'native-contract.json',dict(device=torch.cuda.get_device_name(),torch_version=torch.__version__,cuda_version=torch.version.cuda,
+        input_shape=[1,c['text_rows'],c['width']],dtype='bfloat16',default_bf16_reduced_reduction=original,
+        python_bytecode=not sys.dont_write_bytecode,fp16_reduced_reduction=torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction,
+        bf16_accumulation=getattr(torch.backends.cuda.matmul,'allow_bf16_accumulation',None),tf32=False,deterministic=True,
+        inference_mode=True,cublas_workspace=os.environ['CUBLAS_WORKSPACE_CONFIG'],sdpa='not executed',
+        determinism_interface='set_deterministic_debug_mode(error), eager-only',
+        execution_kind='Torch primitive transcription; qualified against original captured returns',
+        original_module_source_sha256=sha(original_source),module_source_sha256={'primitive_graph_file':sha(here/'flux_reader_arithmetic.py'),
+            'torch_normalization_file':sha(Path(torch.nn.modules.normalization.__file__))}))
     store=LocalStore(source/'store');parents={};parent_records={}
     for receiver,fp in c['parents'].items():
         cut=store.load(fp);p=cut.payload
@@ -100,14 +111,6 @@ def worker():
         raise ValueError('physical primitive census differs')
     save(out/'cases.json',cases);save(out/'parents.json',parent_records)
     for n in ('parameter-artifacts.json','retrieve_weights.py','source-binding.json'):shutil.copyfile(here/n,out/n)
-    save(out/'native-contract.json',dict(device=torch.cuda.get_device_name(),torch_version=torch.__version__,cuda_version=torch.version.cuda,
-        input_shape=[1,c['text_rows'],c['width']],dtype='bfloat16',default_bf16_reduced_reduction=original,
-        python_bytecode=not sys.dont_write_bytecode,
-        fp16_reduced_reduction=torch.backends.cuda.matmul.allow_fp16_reduced_precision_reduction,
-        bf16_accumulation=getattr(torch.backends.cuda.matmul,'allow_bf16_accumulation',None),tf32=False,deterministic=True,
-        inference_mode=True,cublas_workspace=os.environ['CUBLAS_WORKSPACE_CONFIG'],sdpa='not executed',
-        module_source_sha256={name:hashlib.sha256(inspect.getsource(obj).encode()).hexdigest()
-            for name,obj in [('Linear',torch.nn.Linear),('LayerNorm',torch.nn.LayerNorm),('Flux2FeedForward',Flux2FeedForward)]}))
     summary=dict(schema='mdb-reader-arithmetic-summary-v1',job_id=os.environ['MRUN_JOB_ID'],request_sha256=req['request_sha256'],
         output_root=str(out),counts=counts,seconds=time.monotonic()-started,bootstrap_seconds=started-boot,parameter_reads=bank.reads,
         parameter_cache_peak_bytes=bank.peak_retained,mechanics_status='complete',terminal_status='unassessed',scope=c['scope'])

@@ -10,6 +10,14 @@ H=runpy.run_path(str(Path(__file__).with_name('flux_source_receiver.py')))
 R=runpy.run_path(str(Path(__file__).with_name('flux_reentry_reference.py')))
 
 
+def configure_eager_determinism():
+    """Strict eager determinism via the public interface, without compiler setup."""
+    import torch
+    torch.set_deterministic_debug_mode('error')
+    if not torch.are_deterministic_algorithms_enabled() or torch.is_deterministic_algorithms_warn_only_enabled():
+        raise ValueError('strict eager determinism did not apply')
+
+
 def math_tail(head,text,mod,weights,*,eps,after=None):
     import numpy as np
     b=R['bf16'];m=np.split(mod.reshape(1,1,-1),6,axis=-1);fields={}
@@ -42,20 +50,30 @@ def math_local(actual,text,mod,weights,*,eps):
 
 def make_modules(weights,*,device,eps):
     import torch
-    from diffusers.models.transformers.transformer_flux2 import Flux2FeedForward
+    from torch.nn import functional as f
     width=weights['attn.to_add_out.weight'].shape[0]
-    hidden=weights['ff_context.linear_out.weight'].shape[1]
-    bias=weights.get('attn.to_add_out.bias') is not None
-    with torch.device('meta'):
-        projection=torch.nn.Linear(width,width,bias=bias)
-        norm=torch.nn.LayerNorm(width,eps=eps,elementwise_affine=False)
-        ff=Flux2FeedForward(dim=width,inner_dim=hidden,bias=weights.get('ff_context.linear_in.bias') is not None)
-    def state(prefix):
-        return {k.removeprefix(prefix):torch.from_numpy(v.copy()).to(device,torch.bfloat16)
-            for k,v in weights.items() if k.startswith(prefix) and v is not None}
-    projection.load_state_dict(state('attn.to_add_out.'),assign=True)
-    ff.load_state_dict(state('ff_context.'),assign=True)
+    class PinnedLinear(torch.nn.Module):
+        def __init__(self,name):
+            super().__init__()
+            self.weight=torch.nn.Parameter(torch.from_numpy(weights[name+'.weight'].copy()).to(device,torch.bfloat16),requires_grad=False)
+            bias=weights.get(name+'.bias')
+            self.bias=None if bias is None else torch.nn.Parameter(torch.from_numpy(bias.copy()).to(device,torch.bfloat16),requires_grad=False)
+        def forward(self,x):return f.linear(x,self.weight,self.bias)
+    class SwiGLU(torch.nn.Module):
+        def forward(self,x):
+            a,b=x.chunk(2,dim=-1)
+            return f.silu(a)*b
+    class FeedForward(torch.nn.Module):
+        def __init__(self):
+            super().__init__();self.linear_in=PinnedLinear('ff_context.linear_in')
+            self.act_fn=SwiGLU();self.linear_out=PinnedLinear('ff_context.linear_out')
+        def forward(self,x):return self.linear_out(self.act_fn(self.linear_in(x)))
+    projection=PinnedLinear('attn.to_add_out')
+    norm=torch.nn.LayerNorm(width,eps=eps,elementwise_affine=False)
+    ff=FeedForward()
     for m in (projection,norm,ff):m.eval().requires_grad_(False)
+    if any(getattr(child,'_compiled_call_impl',None) is not None for module in (projection,norm,ff) for child in module.modules()):
+        raise ValueError('this primitive recipe is eager-only')
     return dict(projection=projection,norm=norm,ff=ff)
 
 

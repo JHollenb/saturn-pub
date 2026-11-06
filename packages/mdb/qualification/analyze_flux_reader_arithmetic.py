@@ -15,7 +15,16 @@ def measure(actual,predicted):
         mean_signed=float(d.mean()),exact_fraction=float(np.mean(a==p)),exact=bool(np.array_equal(a,p)))
 
 
-def audit(root,source,output):
+class ArrayReference:
+    """Lazy, checksum-verified archive access; never retains tensor payloads."""
+    def __init__(self,loader,root,record):self.loader,self.root,self.record=loader,root,record
+    def __array__(self,dtype=None,copy=None):
+        value=self.loader(self.root,self.record)
+        return value.astype(dtype,copy=False) if dtype is not None else value
+    def astype(self,dtype,**kwargs):return self.loader(self.root,self.record).astype(dtype,**kwargs)
+
+
+def audit(root,source,output,*,lazy_arrays=False):
     import numpy as np
     h=runpy.run_path(str(Path(__file__).with_name('flux_source_receiver.py')));read,sha,load=h['read'],h['sha'],h['load_array']
     if any(sha(root/n)!=v for n,v in read(root/'files.json').items()):raise ValueError('output evidence changed')
@@ -29,7 +38,7 @@ def audit(root,source,output):
     raw_load=load
     def load(where,record):
         key=(record['sha256'],tuple(record['shape']),record['encoding'])
-        if key not in cache:cache[key]=raw_load(where,record)
+        if key not in cache:cache[key]=ArrayReference(raw_load,where,record) if lazy_arrays else raw_load(where,record)
         return cache[key]
     cases=read(root/'cases.json');parity={};errors={};values={};source_final={}
     for key,row in cases.items():
@@ -38,6 +47,8 @@ def audit(root,source,output):
         native={lane:{f:load(root,a) for f,a in fields.items()} for lane,fields in row['native'].items()}
         math={lane:{f:load(root,a) for f,a in fields.items()} for lane,fields in row['math'].items()}
         parity[key]={f:measure(actual[f],native['native-input'][f]) for f in ('after_attention','mlp','text')}
+        for field in parity[key]:
+            parity[key][field]['archive_bytes_exact']=row['source_observed'][field]['sha256']==row['native']['native-input'][field]['sha256']
         source_final[key]=measure(actual['text'],load(root,row['source_final']))
         errors[key]={}
         for prefix,lanes in [('native',native),('math',math)]:
@@ -70,10 +81,12 @@ def audit(root,source,output):
                 return dict(key=k-b,value=z-b,interaction=d-k-z+b,total=d-b)
             ac,pc=contrast('native.local-opposite'),contrast('math.local')
             effects[receiver]['math.local-vs-opposite'][field]={name:measure(ac[name],pc[name]) for name in ac}
-    qualified=all(p['exact'] for row in parity.values() for p in row.values())
+    qualified=all(p['archive_bytes_exact'] for row in parity.values() for p in row.values())
     result=dict(schema='mdb-reader-arithmetic-audit-v1',job=s['job_id'],mechanics_status='verified',
         instrument_status='component-replay-qualified' if qualified else 'component-replay-not-qualified',
         trend_status='observed',terminal_status='unassessed',counts=s['counts'],scope=c['scope'],native_contract=read(root/'native-contract.json'),
+        original_computation_job=s.get('original_computation_job',s['job_id']),publication_job=s['job_id'],
+        new_execution_counts=s.get('new_execution_counts'),array_loading='lazy' if lazy_arrays else 'eager',
         native_parity=parity,source_final_residual=source_final,errors=errors,effects=effects,
         output_manifest_sha256=sha(root/'files.json'),source_manifest_sha256=sha(source/'files.json'),auditor_sha256=sha(Path(__file__)),new_model_calls=0,
         limitations=['All targets are already observed; this is diagnosis, not new prospective validation.',
