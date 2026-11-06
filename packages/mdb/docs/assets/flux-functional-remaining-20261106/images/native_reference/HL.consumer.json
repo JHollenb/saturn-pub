@@ -1,0 +1,368 @@
+{
+  "actual_decoder_input": {
+    "bytes": 262272,
+    "dtype": "uint16",
+    "encoding": "bf16-bits-v1",
+    "meaning": "Actual args[0] consumed by native decoder after native post_quant_conv; observation hook returns None",
+    "native_descriptor": {
+      "dtype": "torch.bfloat16",
+      "preview": [
+        -1.9921875,
+        -1.8046875,
+        -1.4453125,
+        -1.3359375,
+        -1.375,
+        -1.21875,
+        -1.0390625,
+        -1.1171875
+      ],
+      "sha256": "78f633ce781337f594f15358646adc43ae9be1bd764d7c88505e113c9b8d037a",
+      "shape": [
+        1,
+        32,
+        64,
+        64
+      ],
+      "stride": [
+        131072,
+        4096,
+        64,
+        1
+      ]
+    },
+    "path": "native-reference-decoder/HL/actual-decoder-input-bf16.npy",
+    "sha256": "465c475af4af5f01056c8fdf7db2381e2ee9042a9daa1d7b023156bb15f73fb7",
+    "shape": [
+      1,
+      32,
+      64,
+      64
+    ]
+  },
+  "consumed_state": {
+    "items": [
+      {
+        "key": {
+          "kind": "scalar",
+          "type": "str",
+          "value": "conditioning"
+        },
+        "value": {
+          "dtype": "torch.bfloat16",
+          "kind": "tensor",
+          "layout": "strided-dense",
+          "sha256": "1ec4064ea6bfd64b377a9298a3ffc7d84b29c0919195da88ff722332fa6734a1",
+          "shape": [
+            1,
+            512,
+            7680
+          ],
+          "stride": [
+            3932160,
+            7680,
+            1
+          ],
+          "tensor": "1ec4064ea6bfd64b377a9298a3ffc7d84b29c0919195da88ff722332fa6734a1"
+        }
+      },
+      {
+        "key": {
+          "kind": "scalar",
+          "type": "str",
+          "value": "context"
+        },
+        "value": {
+          "kind": "scalar",
+          "type": "none",
+          "value": null
+        }
+      },
+      {
+        "key": {
+          "kind": "scalar",
+          "type": "str",
+          "value": "cursor"
+        },
+        "value": {
+          "kind": "scalar",
+          "type": "int",
+          "value": 0
+        }
+      },
+      {
+        "key": {
+          "kind": "scalar",
+          "type": "str",
+          "value": "image"
+        },
+        "value": {
+          "kind": "scalar",
+          "type": "none",
+          "value": null
+        }
+      },
+      {
+        "key": {
+          "kind": "scalar",
+          "type": "str",
+          "value": "img_ids"
+        },
+        "value": {
+          "dtype": "torch.int64",
+          "kind": "tensor",
+          "layout": "strided-dense",
+          "sha256": "87b4f95cfb97df0287488b86742472e263ea5e9c080c2e3348f6f64224f797af",
+          "shape": [
+            1,
+            1024,
+            4
+          ],
+          "stride": [
+            4096,
+            4,
+            1
+          ],
+          "tensor": "87b4f95cfb97df0287488b86742472e263ea5e9c080c2e3348f6f64224f797af"
+        }
+      },
+      {
+        "key": {
+          "kind": "scalar",
+          "type": "str",
+          "value": "latent"
+        },
+        "value": {
+          "dtype": "torch.bfloat16",
+          "kind": "tensor",
+          "layout": "strided-dense",
+          "sha256": "29510b63c06cef81caae7176ba2841669bee72ea7ddf5d45eab0a39c76b323db",
+          "shape": [
+            1,
+            1024,
+            128
+          ],
+          "stride": [
+            131072,
+            1,
+            1024
+          ],
+          "tensor": "29510b63c06cef81caae7176ba2841669bee72ea7ddf5d45eab0a39c76b323db"
+        }
+      },
+      {
+        "key": {
+          "kind": "scalar",
+          "type": "str",
+          "value": "noise_prediction"
+        },
+        "value": {
+          "kind": "scalar",
+          "type": "none",
+          "value": null
+        }
+      },
+      {
+        "key": {
+          "kind": "scalar",
+          "type": "str",
+          "value": "phase"
+        },
+        "value": {
+          "kind": "scalar",
+          "type": "str",
+          "value": "project"
+        }
+      },
+      {
+        "key": {
+          "kind": "scalar",
+          "type": "str",
+          "value": "sigmas"
+        },
+        "value": {
+          "dtype": "torch.float32",
+          "kind": "tensor",
+          "layout": "strided-dense",
+          "sha256": "47eb6994cb84cb458fd9a90cd3eb5e5890856680c154abec35f26e833e400852",
+          "shape": [
+            5
+          ],
+          "stride": [
+            1
+          ],
+          "tensor": "47eb6994cb84cb458fd9a90cd3eb5e5890856680c154abec35f26e833e400852"
+        }
+      },
+      {
+        "key": {
+          "kind": "scalar",
+          "type": "str",
+          "value": "step"
+        },
+        "value": {
+          "kind": "scalar",
+          "type": "int",
+          "value": 4
+        }
+      },
+      {
+        "key": {
+          "kind": "scalar",
+          "type": "str",
+          "value": "text"
+        },
+        "value": {
+          "kind": "scalar",
+          "type": "none",
+          "value": null
+        }
+      },
+      {
+        "key": {
+          "kind": "scalar",
+          "type": "str",
+          "value": "timesteps"
+        },
+        "value": {
+          "dtype": "torch.float32",
+          "kind": "tensor",
+          "layout": "strided-dense",
+          "sha256": "1e400c851167980caf2cd88333c7b146d8c3168b4b49d817e7df5271dbda734b",
+          "shape": [
+            4
+          ],
+          "stride": [
+            1
+          ],
+          "tensor": "1e400c851167980caf2cd88333c7b146d8c3168b4b49d817e7df5271dbda734b"
+        }
+      },
+      {
+        "key": {
+          "kind": "scalar",
+          "type": "str",
+          "value": "txt_ids"
+        },
+        "value": {
+          "dtype": "torch.int64",
+          "kind": "tensor",
+          "layout": "strided-dense",
+          "sha256": "14787eca2e15009073d22c1a9bc4782762d6b6b46ee5ff1bd46178ca6d97cbe7",
+          "shape": [
+            1,
+            512,
+            4
+          ],
+          "stride": [
+            2048,
+            4,
+            1
+          ],
+          "tensor": "14787eca2e15009073d22c1a9bc4782762d6b6b46ee5ff1bd46178ca6d97cbe7"
+        }
+      }
+    ],
+    "kind": "mapping"
+  },
+  "decoded": {
+    "bytes": 1572992,
+    "dtype": "uint16",
+    "encoding": "bf16-bits-v1",
+    "native_descriptor": {
+      "dtype": "torch.bfloat16",
+      "preview": [
+        0.98828125,
+        1.0,
+        0.9921875,
+        1.0,
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "sha256": "51ed3b3fb56607777c426865a4d97d3265336fbbdf2c154a3d94197653c9a0ee",
+      "shape": [
+        1,
+        3,
+        512,
+        512
+      ],
+      "stride": [
+        786432,
+        262144,
+        512,
+        1
+      ]
+    },
+    "path": "native-reference-decoder/HL/decoded-bf16.npy",
+    "sha256": "2fe3ba4bab9ad52a82336621027016d0f578dbb8b4b6247716c3d05b3e99c3ec",
+    "shape": [
+      1,
+      3,
+      512,
+      512
+    ]
+  },
+  "decoder_contract_sha256": "c6a9cb63c14e70a7e5fdc9e8e12741ca2caee90a3d22cdf62e2436d2aa49c76d",
+  "decoder_input": {
+    "bytes": 262272,
+    "dtype": "uint16",
+    "encoding": "bf16-bits-v1",
+    "meaning": "Actual native VAE.decode argument before native post_quant_conv",
+    "native_descriptor": {
+      "dtype": "torch.bfloat16",
+      "preview": [
+        -0.6015625,
+        -1.7109375,
+        -0.99609375,
+        -0.72265625,
+        -0.05322265625,
+        -0.25,
+        -0.34765625,
+        -0.23046875
+      ],
+      "sha256": "5440553e9f44afab3ea614989dcb7ae2097af143a311a0c7c5dd28cd018cb1bf",
+      "shape": [
+        1,
+        32,
+        64,
+        64
+      ],
+      "stride": [
+        131072,
+        4096,
+        64,
+        1
+      ]
+    },
+    "path": "native-reference-decoder/HL/decoder-input-bf16.npy",
+    "sha256": "9e42aea5c4067c6b38e5eca290e4bf96b46536330641e676bd091ef7c9060569",
+    "shape": [
+      1,
+      32,
+      64,
+      64
+    ]
+  },
+  "independent_decoder_prediction": false,
+  "input_cut": "a2787ac5bfc7ff750f70c13c2be07cdbf29999ba37331386515ed5c18738552e",
+  "label": "real decoder on separate native-reference final latent",
+  "native_future_transitions": 224,
+  "origin": "native_reference",
+  "pixels": {
+    "bytes": 786560,
+    "dtype": "uint8",
+    "path": "native-reference-decoder/HL/pixels.npy",
+    "sha256": "3d048ebdfe1180622b05c6f0659144abd409a50eaeac7cdc6f93fbe0d13ab4bc",
+    "shape": [
+      512,
+      512,
+      3
+    ]
+  },
+  "png": {
+    "bytes": 115981,
+    "path": "native-reference-decoder/HL/image.png",
+    "sha256": "57bb9aa770d6f159cf2a22096a43963c80a233e88e9a224faac8274acacc801d"
+  }
+}
