@@ -1,0 +1,5 @@
+{
+  "mode": "intent-first",
+  "reservation": null,
+  "timeout_s": 300
+}

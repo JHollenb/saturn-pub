@@ -1,0 +1,11 @@
+{
+  "dependent_endpoint_windows": 20,
+  "dependent_response_windows": 10,
+  "independent_occurrences": false,
+  "learned_projections": 0,
+  "model_calls": 0,
+  "primary_and_windows_separate": true,
+  "primary_endpoint_fields": 10,
+  "primary_response_fields": 5,
+  "tokenizer_calls": 0
+}

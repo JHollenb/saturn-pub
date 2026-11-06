@@ -1,0 +1,25 @@
+{
+  "command": [
+    "/opt/homebrew/bin/codex",
+    "exec",
+    "--model",
+    "gpt-6-astra",
+    "--sandbox",
+    "read-only",
+    "--config",
+    "model_reasoning_effort=\"high\"",
+    "--skip-git-repo-check",
+    "--ephemeral",
+    "--color",
+    "never",
+    "--cd",
+    "/Users/jakeholl/domains",
+    "--output-last-message",
+    "/Users/jakeholl/domains/artifacts/mdb-flux-understanding-20261106/review-12-cli/final-response.txt",
+    "-"
+  ],
+  "prompt_sha256": "c2c3ca60cd548082e336332643402f14610c994750dcaf54b6ac101ce59d328e",
+  "requested_model": "gpt-6-astra",
+  "sandbox": "read-only",
+  "started_unix": 1793986090.839335
+}

@@ -1,0 +1,12 @@
+{
+  "atlas_observations": 2,
+  "catalog_records": 2,
+  "job_id": "job-2259d3e99ff9",
+  "model_calls": 0,
+  "native_component_observations": 2,
+  "request_sha256": "ddd5e5218048b41b5ffe0ff86748b55a459a748c60ea93f219151ad2e8fe6619",
+  "schema": "mdb-qwen-error-consumer-compact-v1",
+  "seconds": 9.59179712086916,
+  "source_job": "job-f74bf3f78621",
+  "worlds": 2
+}

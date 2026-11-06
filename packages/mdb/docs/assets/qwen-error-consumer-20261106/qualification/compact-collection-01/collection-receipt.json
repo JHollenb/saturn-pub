@@ -1,0 +1,17 @@
+{
+  "archive_bytes": 212440,
+  "archive_sha256": "3d932b8a92d1a8b840947a7b7fd3bbee97e88312481dfbb31d2004a800a220a4",
+  "collector_sha256": "10bcf0c84c4fffa2eed7f1665a4a706cc3aea365d9c8e64e6a9323c865823877",
+  "expanded_bytes": 1249760,
+  "file_count": 46,
+  "files_manifest_sha256": "f3b67a7fe77cf1003775b6e2fd551b79ba4580c4e1f9330b439c4cdf8fe652ab",
+  "generic_transport_sha256": "007098eb72842fe1f5d585f64eae272812303d1c18eb67a17ba43508c646b18d",
+  "job_id": "job-2259d3e99ff9",
+  "metadata_scope_sha256": "b621d8e12dc06476abf356643f22693a48a5a52bd43c7684d66e788126475015",
+  "model_calls": 0,
+  "native_job_id": "job-f74bf3f78621",
+  "pointer_sha256": "5c3514a40419d0637fb68721f29a60988951c45d4d0a5a61fa3c2127d4549259",
+  "raw_tensor_arrays_collected": false,
+  "request_sha256": "ddd5e5218048b41b5ffe0ff86748b55a459a748c60ea93f219151ad2e8fe6619",
+  "schema": "mdb-error-consumer-compact-retrieval-v1"
+}

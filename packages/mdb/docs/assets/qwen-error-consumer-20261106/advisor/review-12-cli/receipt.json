@@ -1,0 +1,23 @@
+{
+  "elapsed_s": 424.12834310531616,
+  "files": {
+    "final-response.txt": {
+      "bytes": 31638,
+      "sha256": "0f6a01f195d5df8d154079e95a209e1fad2db7ff7fe23d80e3379464b0d141f4"
+    },
+    "invocation.json": {
+      "bytes": 637,
+      "sha256": "c854ef97d27bbeb08edab77b9b82b746236ff1386c1f0026ce01c95d16a5b229"
+    },
+    "stderr.log": {
+      "bytes": 1267679,
+      "sha256": "b4b561c94ecd13d987bb7cc00674bb5be2ed130ab1745daa1502ef3046772f60"
+    },
+    "stdout.log": {
+      "bytes": 31639,
+      "sha256": "a3b03ecc002f71b9a4640b8cb2a0702c03b387b09729bd3f131cd3ad419e6741"
+    }
+  },
+  "requested_model": "gpt-6-astra",
+  "returncode": 0
+}

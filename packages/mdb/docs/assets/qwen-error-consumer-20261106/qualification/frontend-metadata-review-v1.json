@@ -1,0 +1,34 @@
+{
+  "schema": "mdb-error-consumer-frontend-metadata-review-receipt-v1",
+  "command": [
+    "rtk", "proxy", "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+    "-I", "-B", "artifacts/mdb-qwen-error-consumer-20261106/review_frontend_metadata.py"
+  ],
+  "cwd": "/Users/jakeholl/domains",
+  "returncode": 0,
+  "frontend_sha256": "c7574da612f8548e0574e627496e273c6ac8f81e8b04f5984fb368759d21cf28",
+  "producer_sha256": "ad82b86dd837a1f2bc9134f2c5bda3dcb097e8f8583e7849fcfbe8d5c49b229b",
+  "component_sha256": "c93324ee76156f2fba16f70d7cef78b7accbf6020f0c899cb04d856c348b5762",
+  "protocol_sha256": "4e62bc3fa8adcd059ac12f775effa0010752e3c5e0cca2a2ebc4702ecef7f847",
+  "subset_sha256": "69a9189b00413ccb01943718a68eba2865181110aa30b04f17668a8e2e1ffb8c",
+  "metadata_path_count": 14,
+  "source_array_references": 7,
+  "world_request_sha256": "fb202763231fad27712f2b525aa1ea0d041496c13079d6b4a4a7425d36e18a77",
+  "context_request_sha256": "1a9b11e4bc739410dcd165b31cd0c0452aa5f0583e7731598bc1e2b8a87bdd5a",
+  "world_raw_manifest_sha256": "d36f790376a85ad995cf20f01cff89fb6e04d282fe1290f677ba348ec98f4c8f",
+  "context_raw_manifest_sha256": "d573bffe5c0c3dfc3d1c353721f5696909f73b75fb6ff293aed2e905f4ec0c33",
+  "world_seal_sha256": "12077f1ee8ca0f2b23c1c440e11a9dea7b5f07058270041594320289055f0121",
+  "context_seal_sha256": "a6d61b11fa67bfa0eb3a50fee66f26584b452874a590c255163102362460e652",
+  "count_contract": "exact match to frozen protocol physical_plan: two functional blocks followed by two native blocks; one hydration; no extra baseline or whole model",
+  "sizing": "intent-first default; separately validated explicit measured-component exception",
+  "measurement": {"job_id": "job-74efe5506ecf", "elapsed_s": 47.22, "peak_rss_mb": 1795.4, "peak_vram_mb": 826.0},
+  "runtime_wheels": {
+    "mdb_runtime-0.1.0-py3-none-any.whl": "4b1b965dce45883cabcb24ab2c11702ce748aeb1658776596be27b405df26d21",
+    "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+    "saturn_pub-0.4.1-py3-none-any.whl": "c32bbcf5c5b45e4970d9c750266f607b2a9b0f06dc982106fd82e0501375e424"
+  },
+  "imported_frameworks": {"torch": false, "transformers": false, "numpy": true},
+  "source_array_or_weight_bytes_read": 0,
+  "scientific_stage": false,
+  "submitted": false
+}

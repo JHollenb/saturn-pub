@@ -1,0 +1,3099 @@
+{
+  "bindings": {
+    "job_id": "job-f74bf3f78621",
+    "native_manifest_sha256": "d4beda87d13774a57be662bf2335aaf3cc23f0ddc305ac101942926f5cf4ef5d",
+    "original_audit_sha256": "0c42b3e5f5ccf31229e0d4cb05456d1e6c6e0b0e6b4bdc5cab447b285bb63d45",
+    "original_compact_manifest_sha256": "f3b67a7fe77cf1003775b6e2fd551b79ba4580c4e1f9330b439c4cdf8fe652ab",
+    "original_reader_sha256": "c0adfae449b426c52c91a5cb2e05fd27453cdd704354dbd7dd465a194d19723b",
+    "request_sha256": "d0bb13015d8bcb735f0de5cc2a4587d8aa96eb13b7af51d6c6af391015cdf827"
+  },
+  "correction": "Add left_term/right_term only. Existing left/right remain the original scalar summary objects; all original numbers are preserved.",
+  "label_authority": "Pinned c0ad reader insertion order, independently checked against every stored term summary. Equal zero-prefix summaries do not determine identity.",
+  "residual_accounts": {
+    "functional": {
+      "coordinate_space": "Common residual feature basis only; head width is excluded from gain accounts.",
+      "orientation": "cheap-input-minus-full-input",
+      "whole": {
+        "R_M": {
+          "cosine": -0.4104806566018152,
+          "denominator": "supplied right vector norm; zero is undefined",
+          "difference": {
+            "changed_values": 654676,
+            "elements": 1310720,
+            "max_abs": 15.140625,
+            "p95_abs": 0.8729248046875,
+            "p99_abs": 1.369140625,
+            "rms": 0.40039457105066795,
+            "signed_mean": 0.0012528997523588714,
+            "squared_norm": 210129.1417951907
+          },
+          "dot": -29019.3655905377,
+          "left": {
+            "changed_values": 652054,
+            "elements": 1310720,
+            "max_abs": 7.0,
+            "p95_abs": 0.6259765625,
+            "p99_abs": 0.97265625,
+            "rms": 0.28176762995361376,
+            "signed_mean": 0.0013979228240714292,
+            "squared_norm": 104061.98940752493
+          },
+          "right": {
+            "changed_values": 653265,
+            "elements": 1310720,
+            "max_abs": 9.015625,
+            "p95_abs": 0.40625,
+            "p99_abs": 0.650390625,
+            "rms": 0.19142303260008503,
+            "signed_mean": 0.0001450230717125578,
+            "squared_norm": 48028.421206590385
+          },
+          "rms_ratio_left_to_right": 1.4719630450232903,
+          "signed_cross_term": -58038.7311810754,
+          "sum": {
+            "changed_values": 654368,
+            "elements": 1310720,
+            "max_abs": 7.1328125,
+            "p95_abs": 0.6005859375,
+            "p99_abs": 0.9453125,
+            "rms": 0.2678726131431343,
+            "signed_mean": 0.001542945895783987,
+            "squared_norm": 94051.67943303991
+          }
+        },
+        "bounds": [
+          0,
+          512
+        ],
+        "input_H19_to_output_H20": {
+          "cosine": 0.5483053954961112,
+          "denominator": "supplied right vector norm; zero is undefined",
+          "difference": {
+            "changed_values": 652814,
+            "elements": 1310720,
+            "max_abs": 5.875,
+            "p95_abs": 0.5087890625,
+            "p99_abs": 0.81640625,
+            "rms": 0.2300490119752248,
+            "signed_mean": -6.326250804704614e-05,
+            "squared_norm": 69366.64199761378
+          },
+          "dot": 38351.37680947967,
+          "left": {
+            "changed_values": 652015,
+            "elements": 1310720,
+            "max_abs": 7.1875,
+            "p95_abs": 0.6015625,
+            "p99_abs": 0.9453125,
+            "rms": 0.2678729777389759,
+            "signed_mean": 0.0015419028786709532,
+            "squared_norm": 94051.93545678306
+          },
+          "right": {
+            "changed_values": 651956,
+            "elements": 1310720,
+            "max_abs": 4.375,
+            "p95_abs": 0.4501953125,
+            "p99_abs": 0.6875,
+            "rms": 0.1992138865823909,
+            "signed_mean": 0.0016051653867179994,
+            "squared_norm": 52017.46015979006
+          },
+          "rms_ratio_left_to_right": 1.3446501262259594,
+          "signed_cross_term": 76702.75361895934,
+          "sum": {
+            "changed_values": 653996,
+            "elements": 1310720,
+            "max_abs": 9.5,
+            "p95_abs": 0.931640625,
+            "p99_abs": 1.44140625,
+            "rms": 0.4122640679336947,
+            "signed_mean": 0.0031470682653889524,
+            "squared_norm": 222772.14923553244
+          }
+        },
+        "output": {
+          "energy_identity_residual": 1.4551915228366852e-11,
+          "expanded_squared_norm": 94051.93545678305,
+          "pairwise_cross_terms": [
+            {
+              "cosine": -0.4104806566018152,
+              "denominator": "supplied right vector norm; zero is undefined",
+              "difference": {
+                "changed_values": 654676,
+                "elements": 1310720,
+                "max_abs": 15.140625,
+                "p95_abs": 0.8729248046875,
+                "p99_abs": 1.369140625,
+                "rms": 0.40039457105066795,
+                "signed_mean": 0.0012528997523588714,
+                "squared_norm": 210129.1417951907
+              },
+              "dot": -29019.3655905377,
+              "left": {
+                "changed_values": 652054,
+                "elements": 1310720,
+                "max_abs": 7.0,
+                "p95_abs": 0.6259765625,
+                "p99_abs": 0.97265625,
+                "rms": 0.28176762995361376,
+                "signed_mean": 0.0013979228240714292,
+                "squared_norm": 104061.98940752493
+              },
+              "left_term": "R",
+              "right": {
+                "changed_values": 653265,
+                "elements": 1310720,
+                "max_abs": 9.015625,
+                "p95_abs": 0.40625,
+                "p99_abs": 0.650390625,
+                "rms": 0.19142303260008503,
+                "signed_mean": 0.0001450230717125578,
+                "squared_norm": 48028.421206590385
+              },
+              "right_term": "M",
+              "rms_ratio_left_to_right": 1.4719630450232903,
+              "signed_cross_term": -58038.7311810754,
+              "sum": {
+                "changed_values": 654368,
+                "elements": 1310720,
+                "max_abs": 7.1328125,
+                "p95_abs": 0.6005859375,
+                "p99_abs": 0.9453125,
+                "rms": 0.2678726131431343,
+                "signed_mean": 0.001542945895783987,
+                "squared_norm": 94051.67943303991
+              }
+            },
+            {
+              "cosine": 0.007804508198133096,
+              "denominator": "supplied right vector norm; zero is undefined",
+              "difference": {
+                "changed_values": 654067,
+                "elements": 1310720,
+                "max_abs": 6.9453125,
+                "p95_abs": 0.626953125,
+                "p99_abs": 0.97265625,
+                "rms": 0.2817590991716068,
+                "signed_mean": 0.001398965841184463,
+                "squared_norm": 104055.68835222942
+              },
+              "dot": 5.851587260767644,
+              "left": {
+                "changed_values": 652054,
+                "elements": 1310720,
+                "max_abs": 7.0,
+                "p95_abs": 0.6259765625,
+                "p99_abs": 0.97265625,
+                "rms": 0.28176762995361376,
+                "signed_mean": 0.0013979228240714292,
+                "squared_norm": 104061.98940752493
+              },
+              "left_term": "R",
+              "right": {
+                "changed_values": 413883,
+                "elements": 1310720,
+                "max_abs": 0.203125,
+                "p95_abs": 0.00390625,
+                "p99_abs": 0.0078125,
+                "rms": 0.0020301452874159197,
+                "signed_mean": -1.043017113033784e-06,
+                "squared_norm": 5.402119226021731
+              },
+              "right_term": "finite_addition_defect",
+              "rms_ratio_left_to_right": 138.79185479984196,
+              "signed_cross_term": 11.703174521535288,
+              "sum": {
+                "changed_values": 654019,
+                "elements": 1310720,
+                "max_abs": 7.0546875,
+                "p95_abs": 0.626953125,
+                "p99_abs": 0.97265625,
+                "rms": 0.28179078692025034,
+                "signed_mean": 0.0013968798069583955,
+                "squared_norm": 104079.0947012725
+              }
+            },
+            {
+              "cosine": -0.01653940402518852,
+              "denominator": "supplied right vector norm; zero is undefined",
+              "difference": {
+                "changed_values": 652931,
+                "elements": 1310720,
+                "max_abs": 9.03125,
+                "p95_abs": 0.40625,
+                "p99_abs": 0.6501000976562636,
+                "rms": 0.19146737025546665,
+                "signed_mean": 0.00014606608882559158,
+                "squared_norm": 48050.67259582081
+              },
+              "dot": -8.42463500220321,
+              "left": {
+                "changed_values": 653265,
+                "elements": 1310720,
+                "max_abs": 9.015625,
+                "p95_abs": 0.40625,
+                "p99_abs": 0.650390625,
+                "rms": 0.19142303260008503,
+                "signed_mean": 0.0001450230717125578,
+                "squared_norm": 48028.421206590385
+              },
+              "left_term": "M",
+              "right": {
+                "changed_values": 413883,
+                "elements": 1310720,
+                "max_abs": 0.203125,
+                "p95_abs": 0.00390625,
+                "p99_abs": 0.0078125,
+                "rms": 0.0020301452874159197,
+                "signed_mean": -1.043017113033784e-06,
+                "squared_norm": 5.402119226021731
+              },
+              "right_term": "finite_addition_defect",
+              "rms_ratio_left_to_right": 94.29031202182519,
+              "signed_cross_term": -16.84927000440642,
+              "sum": {
+                "changed_values": 651160,
+                "elements": 1310720,
+                "max_abs": 9.0,
+                "p95_abs": 0.40625,
+                "p99_abs": 0.6494140625,
+                "rms": 0.19140021924454143,
+                "signed_mean": 0.000143980054599524,
+                "squared_norm": 48016.974055812
+              }
+            }
+          ],
+          "scope": "FP64 saved-vector addition identity; signed cross terms are descriptive, not causal shares.",
+          "terms": {
+            "M": {
+              "changed_values": 653265,
+              "elements": 1310720,
+              "max_abs": 9.015625,
+              "p95_abs": 0.40625,
+              "p99_abs": 0.650390625,
+              "rms": 0.19142303260008503,
+              "signed_mean": 0.0001450230717125578,
+              "squared_norm": 48028.421206590385
+            },
+            "R": {
+              "changed_values": 652054,
+              "elements": 1310720,
+              "max_abs": 7.0,
+              "p95_abs": 0.6259765625,
+              "p99_abs": 0.97265625,
+              "rms": 0.28176762995361376,
+              "signed_mean": 0.0013979228240714292,
+              "squared_norm": 104061.98940752493
+            },
+            "finite_addition_defect": {
+              "changed_values": 413883,
+              "elements": 1310720,
+              "max_abs": 0.203125,
+              "p95_abs": 0.00390625,
+              "p99_abs": 0.0078125,
+              "rms": 0.0020301452874159197,
+              "signed_mean": -1.043017113033784e-06,
+              "squared_norm": 5.402119226021731
+            }
+          },
+          "total": {
+            "changed_values": 652015,
+            "elements": 1310720,
+            "max_abs": 7.1875,
+            "p95_abs": 0.6015625,
+            "p99_abs": 0.9453125,
+            "rms": 0.2678729777389759,
+            "signed_mean": 0.0015419028786709532,
+            "squared_norm": 94051.93545678306
+          },
+          "vector_identity_residual": {
+            "changed_values": 0,
+            "elements": 1310720,
+            "max_abs": 0.0,
+            "p95_abs": 0.0,
+            "p99_abs": 0.0,
+            "rms": 0.0,
+            "signed_mean": 0.0,
+            "squared_norm": 0.0
+          }
+        },
+        "residual": {
+          "energy_identity_residual": 0.0,
+          "expanded_squared_norm": 104061.98940752493,
+          "pairwise_cross_terms": [
+            {
+              "cosine": 0.01855584883528136,
+              "denominator": "supplied right vector norm; zero is undefined",
+              "difference": {
+                "changed_values": 654436,
+                "elements": 1310720,
+                "max_abs": 6.875,
+                "p95_abs": 0.62939453125,
+                "p99_abs": 0.97265625,
+                "rms": 0.27658936757130015,
+                "signed_mean": 0.001812785119597038,
+                "squared_norm": 100272.27972041676
+              },
+              "dot": 947.7465673613187,
+              "left": {
+                "changed_values": 651956,
+                "elements": 1310720,
+                "max_abs": 4.375,
+                "p95_abs": 0.4501953125,
+                "p99_abs": 0.6875,
+                "rms": 0.1992138865823909,
+                "signed_mean": 0.0016051653867179994,
+                "squared_norm": 52017.46015979006
+              },
+              "left_term": "input_H19",
+              "right": {
+                "changed_values": 653184,
+                "elements": 1310720,
+                "max_abs": 4.65625,
+                "p95_abs": 0.4366455078125,
+                "p99_abs": 0.6875,
+                "rms": 0.19560585917052067,
+                "signed_mean": -0.00020761973287903858,
+                "squared_norm": 50150.31269534934
+              },
+              "right_term": "projection",
+              "rms_ratio_left_to_right": 1.0184453953842194,
+              "signed_cross_term": 1895.4931347226375,
+              "sum": {
+                "changed_values": 654390,
+                "elements": 1310720,
+                "max_abs": 6.9375,
+                "p95_abs": 0.626953125,
+                "p99_abs": 0.97265625,
+                "rms": 0.28176935824306154,
+                "signed_mean": 0.0013975456538389609,
+                "squared_norm": 104063.26598986203
+              }
+            },
+            {
+              "cosine": -0.004533845592978754,
+              "denominator": "supplied right vector norm; zero is undefined",
+              "difference": {
+                "changed_values": 653712,
+                "elements": 1310720,
+                "max_abs": 4.4375,
+                "p95_abs": 0.449951171875,
+                "p99_abs": 0.6875,
+                "rms": 0.1992385296710725,
+                "signed_mean": 0.001604788216485531,
+                "squared_norm": 52030.33024822094
+              },
+              "dot": -2.7914102358927266,
+              "left": {
+                "changed_values": 651956,
+                "elements": 1310720,
+                "max_abs": 4.375,
+                "p95_abs": 0.4501953125,
+                "p99_abs": 0.6875,
+                "rms": 0.1992138865823909,
+                "signed_mean": 0.0016051653867179994,
+                "squared_norm": 52017.46015979006
+              },
+              "left_term": "input_H19",
+              "right": {
+                "changed_values": 433525,
+                "elements": 1310720,
+                "max_abs": 0.25,
+                "p95_abs": 0.00390625,
+                "p99_abs": 0.0078125,
+                "rms": 0.002357910988881429,
+                "signed_mean": 3.7717023246841565e-07,
+                "squared_norm": 7.287267959095686
+              },
+              "right_term": "finite_addition_defect",
+              "rms_ratio_left_to_right": 84.4874499172236,
+              "signed_cross_term": -5.582820471785453,
+              "sum": {
+                "changed_values": 653579,
+                "elements": 1310720,
+                "max_abs": 4.3125,
+                "p95_abs": 0.4498352050781307,
+                "p99_abs": 0.6875,
+                "rms": 0.19921715035984114,
+                "signed_mean": 0.0016055425569504677,
+                "squared_norm": 52019.16460727737
+              }
+            },
+            {
+              "cosine": -0.0024655688422292495,
+              "denominator": "supplied right vector norm; zero is undefined",
+              "difference": {
+                "changed_values": 653198,
+                "elements": 1310720,
+                "max_abs": 4.6875,
+                "p95_abs": 0.436767578125,
+                "p99_abs": 0.6875,
+                "rms": 0.19562588333687608,
+                "signed_mean": -0.00020799690311150697,
+                "squared_norm": 50160.58099313286
+              },
+              "dot": -1.490514912213427,
+              "left": {
+                "changed_values": 653184,
+                "elements": 1310720,
+                "max_abs": 4.65625,
+                "p95_abs": 0.4366455078125,
+                "p99_abs": 0.6875,
+                "rms": 0.19560585917052067,
+                "signed_mean": -0.00020761973287903858,
+                "squared_norm": 50150.31269534934
+              },
+              "left_term": "projection",
+              "right": {
+                "changed_values": 433525,
+                "elements": 1310720,
+                "max_abs": 0.25,
+                "p95_abs": 0.00390625,
+                "p99_abs": 0.0078125,
+                "rms": 0.002357910988881429,
+                "signed_mean": 3.7717023246841565e-07,
+                "squared_norm": 7.287267959095686
+              },
+              "right_term": "finite_addition_defect",
+              "rms_ratio_left_to_right": 82.95727026715046,
+              "signed_cross_term": -2.981029824426854,
+              "sum": {
+                "changed_values": 652143,
+                "elements": 1310720,
+                "max_abs": 4.625,
+                "p95_abs": 0.4375,
+                "p99_abs": 0.6875,
+                "rms": 0.1956142569978095,
+                "signed_mean": -0.00020724256264657016,
+                "squared_norm": 50154.61893348401
+              }
+            }
+          ],
+          "scope": "FP64 saved-vector addition identity; signed cross terms are descriptive, not causal shares.",
+          "terms": {
+            "finite_addition_defect": {
+              "changed_values": 433525,
+              "elements": 1310720,
+              "max_abs": 0.25,
+              "p95_abs": 0.00390625,
+              "p99_abs": 0.0078125,
+              "rms": 0.002357910988881429,
+              "signed_mean": 3.7717023246841565e-07,
+              "squared_norm": 7.287267959095686
+            },
+            "input_H19": {
+              "changed_values": 651956,
+              "elements": 1310720,
+              "max_abs": 4.375,
+              "p95_abs": 0.4501953125,
+              "p99_abs": 0.6875,
+              "rms": 0.1992138865823909,
+              "signed_mean": 0.0016051653867179994,
+              "squared_norm": 52017.46015979006
+            },
+            "projection": {
+              "changed_values": 653184,
+              "elements": 1310720,
+              "max_abs": 4.65625,
+              "p95_abs": 0.4366455078125,
+              "p99_abs": 0.6875,
+              "rms": 0.19560585917052067,
+              "signed_mean": -0.00020761973287903858,
+              "squared_norm": 50150.31269534934
+            }
+          },
+          "total": {
+            "changed_values": 652054,
+            "elements": 1310720,
+            "max_abs": 7.0,
+            "p95_abs": 0.6259765625,
+            "p99_abs": 0.97265625,
+            "rms": 0.28176762995361376,
+            "signed_mean": 0.0013979228240714292,
+            "squared_norm": 104061.98940752493
+          },
+          "vector_identity_residual": {
+            "changed_values": 0,
+            "elements": 1310720,
+            "max_abs": 0.0,
+            "p95_abs": 0.0,
+            "p99_abs": 0.0,
+            "rms": 0.0,
+            "signed_mean": 0.0,
+            "squared_norm": 0.0
+          }
+        }
+      },
+      "windows": [
+        {
+          "R_M": {
+            "cosine": null,
+            "denominator": "supplied right vector norm; zero is undefined",
+            "difference": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            },
+            "dot": 0.0,
+            "left": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            },
+            "right": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            },
+            "rms_ratio_left_to_right": null,
+            "signed_cross_term": 0.0,
+            "sum": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            }
+          },
+          "bounds": [
+            0,
+            256
+          ],
+          "input_H19_to_output_H20": {
+            "cosine": null,
+            "denominator": "supplied right vector norm; zero is undefined",
+            "difference": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            },
+            "dot": 0.0,
+            "left": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            },
+            "right": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            },
+            "rms_ratio_left_to_right": null,
+            "signed_cross_term": 0.0,
+            "sum": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            }
+          },
+          "output": {
+            "energy_identity_residual": 0.0,
+            "expanded_squared_norm": 0.0,
+            "pairwise_cross_terms": [
+              {
+                "cosine": null,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "dot": 0.0,
+                "left": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "left_term": "R",
+                "right": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "right_term": "M",
+                "rms_ratio_left_to_right": null,
+                "signed_cross_term": 0.0,
+                "sum": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                }
+              },
+              {
+                "cosine": null,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "dot": 0.0,
+                "left": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "left_term": "R",
+                "right": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "right_term": "finite_addition_defect",
+                "rms_ratio_left_to_right": null,
+                "signed_cross_term": 0.0,
+                "sum": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                }
+              },
+              {
+                "cosine": null,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "dot": 0.0,
+                "left": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "left_term": "M",
+                "right": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "right_term": "finite_addition_defect",
+                "rms_ratio_left_to_right": null,
+                "signed_cross_term": 0.0,
+                "sum": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                }
+              }
+            ],
+            "scope": "FP64 saved-vector addition identity; signed cross terms are descriptive, not causal shares.",
+            "terms": {
+              "M": {
+                "changed_values": 0,
+                "elements": 655360,
+                "max_abs": 0.0,
+                "p95_abs": 0.0,
+                "p99_abs": 0.0,
+                "rms": 0.0,
+                "signed_mean": 0.0,
+                "squared_norm": 0.0
+              },
+              "R": {
+                "changed_values": 0,
+                "elements": 655360,
+                "max_abs": 0.0,
+                "p95_abs": 0.0,
+                "p99_abs": 0.0,
+                "rms": 0.0,
+                "signed_mean": 0.0,
+                "squared_norm": 0.0
+              },
+              "finite_addition_defect": {
+                "changed_values": 0,
+                "elements": 655360,
+                "max_abs": 0.0,
+                "p95_abs": 0.0,
+                "p99_abs": 0.0,
+                "rms": 0.0,
+                "signed_mean": 0.0,
+                "squared_norm": 0.0
+              }
+            },
+            "total": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            },
+            "vector_identity_residual": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            }
+          },
+          "residual": {
+            "energy_identity_residual": 0.0,
+            "expanded_squared_norm": 0.0,
+            "pairwise_cross_terms": [
+              {
+                "cosine": null,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "dot": 0.0,
+                "left": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "left_term": "input_H19",
+                "right": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "right_term": "projection",
+                "rms_ratio_left_to_right": null,
+                "signed_cross_term": 0.0,
+                "sum": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                }
+              },
+              {
+                "cosine": null,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "dot": 0.0,
+                "left": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "left_term": "input_H19",
+                "right": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "right_term": "finite_addition_defect",
+                "rms_ratio_left_to_right": null,
+                "signed_cross_term": 0.0,
+                "sum": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                }
+              },
+              {
+                "cosine": null,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "dot": 0.0,
+                "left": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "left_term": "projection",
+                "right": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "right_term": "finite_addition_defect",
+                "rms_ratio_left_to_right": null,
+                "signed_cross_term": 0.0,
+                "sum": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                }
+              }
+            ],
+            "scope": "FP64 saved-vector addition identity; signed cross terms are descriptive, not causal shares.",
+            "terms": {
+              "finite_addition_defect": {
+                "changed_values": 0,
+                "elements": 655360,
+                "max_abs": 0.0,
+                "p95_abs": 0.0,
+                "p99_abs": 0.0,
+                "rms": 0.0,
+                "signed_mean": 0.0,
+                "squared_norm": 0.0
+              },
+              "input_H19": {
+                "changed_values": 0,
+                "elements": 655360,
+                "max_abs": 0.0,
+                "p95_abs": 0.0,
+                "p99_abs": 0.0,
+                "rms": 0.0,
+                "signed_mean": 0.0,
+                "squared_norm": 0.0
+              },
+              "projection": {
+                "changed_values": 0,
+                "elements": 655360,
+                "max_abs": 0.0,
+                "p95_abs": 0.0,
+                "p99_abs": 0.0,
+                "rms": 0.0,
+                "signed_mean": 0.0,
+                "squared_norm": 0.0
+              }
+            },
+            "total": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            },
+            "vector_identity_residual": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            }
+          }
+        },
+        {
+          "R_M": {
+            "cosine": -0.4104806566018152,
+            "denominator": "supplied right vector norm; zero is undefined",
+            "difference": {
+              "changed_values": 654676,
+              "elements": 655360,
+              "max_abs": 15.140625,
+              "p95_abs": 1.083984375,
+              "p99_abs": 1.594094238281258,
+              "rms": 0.5662434326804124,
+              "signed_mean": 0.002505799504717743,
+              "squared_norm": 210129.1417951907
+            },
+            "dot": -29019.3655905377,
+            "left": {
+              "changed_values": 652054,
+              "elements": 655360,
+              "max_abs": 7.0,
+              "p95_abs": 0.775390625,
+              "p99_abs": 1.140625,
+              "rms": 0.3984796037181241,
+              "signed_mean": 0.0027958456481428583,
+              "squared_norm": 104061.98940752493
+            },
+            "right": {
+              "changed_values": 653265,
+              "elements": 655360,
+              "max_abs": 9.015625,
+              "p95_abs": 0.5107421875,
+              "p99_abs": 0.755859375,
+              "rms": 0.27071304885362735,
+              "signed_mean": 0.0002900461434251156,
+              "squared_norm": 48028.421206590385
+            },
+            "rms_ratio_left_to_right": 1.4719630450232903,
+            "signed_cross_term": -58038.7311810754,
+            "sum": {
+              "changed_values": 654368,
+              "elements": 655360,
+              "max_abs": 7.1328125,
+              "p95_abs": 0.7492691040039041,
+              "p99_abs": 1.1015625,
+              "rms": 0.3788290824953419,
+              "signed_mean": 0.003085891791567974,
+              "squared_norm": 94051.67943303991
+            }
+          },
+          "bounds": [
+            256,
+            512
+          ],
+          "input_H19_to_output_H20": {
+            "cosine": 0.5483053954961112,
+            "denominator": "supplied right vector norm; zero is undefined",
+            "difference": {
+              "changed_values": 652814,
+              "elements": 655360,
+              "max_abs": 5.875,
+              "p95_abs": 0.640625,
+              "p99_abs": 0.9499072265625159,
+              "rms": 0.32533843274589347,
+              "signed_mean": -0.00012652501609409229,
+              "squared_norm": 69366.64199761378
+            },
+            "dot": 38351.37680947967,
+            "left": {
+              "changed_values": 652015,
+              "elements": 655360,
+              "max_abs": 7.1875,
+              "p95_abs": 0.75,
+              "p99_abs": 1.1015625,
+              "rms": 0.3788295981117259,
+              "signed_mean": 0.0030838057573419064,
+              "squared_norm": 94051.93545678306
+            },
+            "right": {
+              "changed_values": 651956,
+              "elements": 655360,
+              "max_abs": 4.375,
+              "p95_abs": 0.5546875,
+              "p99_abs": 0.79296875,
+              "rms": 0.28173098021787274,
+              "signed_mean": 0.003210330773435999,
+              "squared_norm": 52017.46015979006
+            },
+            "rms_ratio_left_to_right": 1.3446501262259594,
+            "signed_cross_term": 76702.75361895934,
+            "sum": {
+              "changed_values": 653996,
+              "elements": 655360,
+              "max_abs": 9.5,
+              "p95_abs": 1.15234375,
+              "p99_abs": 1.6650390625,
+              "rms": 0.583029436150934,
+              "signed_mean": 0.006294136530777905,
+              "squared_norm": 222772.14923553244
+            }
+          },
+          "output": {
+            "energy_identity_residual": 1.4551915228366852e-11,
+            "expanded_squared_norm": 94051.93545678305,
+            "pairwise_cross_terms": [
+              {
+                "cosine": -0.4104806566018152,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 654676,
+                  "elements": 655360,
+                  "max_abs": 15.140625,
+                  "p95_abs": 1.083984375,
+                  "p99_abs": 1.594094238281258,
+                  "rms": 0.5662434326804124,
+                  "signed_mean": 0.002505799504717743,
+                  "squared_norm": 210129.1417951907
+                },
+                "dot": -29019.3655905377,
+                "left": {
+                  "changed_values": 652054,
+                  "elements": 655360,
+                  "max_abs": 7.0,
+                  "p95_abs": 0.775390625,
+                  "p99_abs": 1.140625,
+                  "rms": 0.3984796037181241,
+                  "signed_mean": 0.0027958456481428583,
+                  "squared_norm": 104061.98940752493
+                },
+                "left_term": "R",
+                "right": {
+                  "changed_values": 653265,
+                  "elements": 655360,
+                  "max_abs": 9.015625,
+                  "p95_abs": 0.5107421875,
+                  "p99_abs": 0.755859375,
+                  "rms": 0.27071304885362735,
+                  "signed_mean": 0.0002900461434251156,
+                  "squared_norm": 48028.421206590385
+                },
+                "right_term": "M",
+                "rms_ratio_left_to_right": 1.4719630450232903,
+                "signed_cross_term": -58038.7311810754,
+                "sum": {
+                  "changed_values": 654368,
+                  "elements": 655360,
+                  "max_abs": 7.1328125,
+                  "p95_abs": 0.7492691040039041,
+                  "p99_abs": 1.1015625,
+                  "rms": 0.3788290824953419,
+                  "signed_mean": 0.003085891791567974,
+                  "squared_norm": 94051.67943303991
+                }
+              },
+              {
+                "cosine": 0.007804508198133096,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 654067,
+                  "elements": 655360,
+                  "max_abs": 6.9453125,
+                  "p95_abs": 0.775390625,
+                  "p99_abs": 1.141945800781258,
+                  "rms": 0.3984675393705122,
+                  "signed_mean": 0.002797931682368926,
+                  "squared_norm": 104055.68835222942
+                },
+                "dot": 5.851587260767644,
+                "left": {
+                  "changed_values": 652054,
+                  "elements": 655360,
+                  "max_abs": 7.0,
+                  "p95_abs": 0.775390625,
+                  "p99_abs": 1.140625,
+                  "rms": 0.3984796037181241,
+                  "signed_mean": 0.0027958456481428583,
+                  "squared_norm": 104061.98940752493
+                },
+                "left_term": "R",
+                "right": {
+                  "changed_values": 413883,
+                  "elements": 655360,
+                  "max_abs": 0.203125,
+                  "p95_abs": 0.0048828125,
+                  "p99_abs": 0.009765625,
+                  "rms": 0.002871058999051419,
+                  "signed_mean": -2.086034226067568e-06,
+                  "squared_norm": 5.402119226021731
+                },
+                "right_term": "finite_addition_defect",
+                "rms_ratio_left_to_right": 138.79185479984196,
+                "signed_cross_term": 11.703174521535288,
+                "sum": {
+                  "changed_values": 654019,
+                  "elements": 655360,
+                  "max_abs": 7.0546875,
+                  "p95_abs": 0.775390625,
+                  "p99_abs": 1.140625,
+                  "rms": 0.398512352614405,
+                  "signed_mean": 0.002793759613916791,
+                  "squared_norm": 104079.0947012725
+                }
+              },
+              {
+                "cosine": -0.01653940402518852,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 652931,
+                  "elements": 655360,
+                  "max_abs": 9.03125,
+                  "p95_abs": 0.5103179931640582,
+                  "p99_abs": 0.755859375,
+                  "rms": 0.2707757517671919,
+                  "signed_mean": 0.00029213217765118317,
+                  "squared_norm": 48050.67259582081
+                },
+                "dot": -8.42463500220321,
+                "left": {
+                  "changed_values": 653265,
+                  "elements": 655360,
+                  "max_abs": 9.015625,
+                  "p95_abs": 0.5107421875,
+                  "p99_abs": 0.755859375,
+                  "rms": 0.27071304885362735,
+                  "signed_mean": 0.0002900461434251156,
+                  "squared_norm": 48028.421206590385
+                },
+                "left_term": "M",
+                "right": {
+                  "changed_values": 413883,
+                  "elements": 655360,
+                  "max_abs": 0.203125,
+                  "p95_abs": 0.0048828125,
+                  "p99_abs": 0.009765625,
+                  "rms": 0.002871058999051419,
+                  "signed_mean": -2.086034226067568e-06,
+                  "squared_norm": 5.402119226021731
+                },
+                "right_term": "finite_addition_defect",
+                "rms_ratio_left_to_right": 94.29031202182519,
+                "signed_cross_term": -16.84927000440642,
+                "sum": {
+                  "changed_values": 651160,
+                  "elements": 655360,
+                  "max_abs": 9.0,
+                  "p95_abs": 0.51025390625,
+                  "p99_abs": 0.755859375,
+                  "rms": 0.2706807858968143,
+                  "signed_mean": 0.000287960109199048,
+                  "squared_norm": 48016.974055812
+                }
+              }
+            ],
+            "scope": "FP64 saved-vector addition identity; signed cross terms are descriptive, not causal shares.",
+            "terms": {
+              "M": {
+                "changed_values": 653265,
+                "elements": 655360,
+                "max_abs": 9.015625,
+                "p95_abs": 0.5107421875,
+                "p99_abs": 0.755859375,
+                "rms": 0.27071304885362735,
+                "signed_mean": 0.0002900461434251156,
+                "squared_norm": 48028.421206590385
+              },
+              "R": {
+                "changed_values": 652054,
+                "elements": 655360,
+                "max_abs": 7.0,
+                "p95_abs": 0.775390625,
+                "p99_abs": 1.140625,
+                "rms": 0.3984796037181241,
+                "signed_mean": 0.0027958456481428583,
+                "squared_norm": 104061.98940752493
+              },
+              "finite_addition_defect": {
+                "changed_values": 413883,
+                "elements": 655360,
+                "max_abs": 0.203125,
+                "p95_abs": 0.0048828125,
+                "p99_abs": 0.009765625,
+                "rms": 0.002871058999051419,
+                "signed_mean": -2.086034226067568e-06,
+                "squared_norm": 5.402119226021731
+              }
+            },
+            "total": {
+              "changed_values": 652015,
+              "elements": 655360,
+              "max_abs": 7.1875,
+              "p95_abs": 0.75,
+              "p99_abs": 1.1015625,
+              "rms": 0.3788295981117259,
+              "signed_mean": 0.0030838057573419064,
+              "squared_norm": 94051.93545678306
+            },
+            "vector_identity_residual": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            }
+          },
+          "residual": {
+            "energy_identity_residual": 0.0,
+            "expanded_squared_norm": 104061.98940752493,
+            "pairwise_cross_terms": [
+              {
+                "cosine": 0.01855584883528136,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 654436,
+                  "elements": 655360,
+                  "max_abs": 6.875,
+                  "p95_abs": 0.77783203125,
+                  "p99_abs": 1.119140625,
+                  "rms": 0.3911564348275298,
+                  "signed_mean": 0.003625570239194076,
+                  "squared_norm": 100272.27972041676
+                },
+                "dot": 947.7465673613187,
+                "left": {
+                  "changed_values": 651956,
+                  "elements": 655360,
+                  "max_abs": 4.375,
+                  "p95_abs": 0.5546875,
+                  "p99_abs": 0.79296875,
+                  "rms": 0.28173098021787274,
+                  "signed_mean": 0.003210330773435999,
+                  "squared_norm": 52017.46015979006
+                },
+                "left_term": "input_H19",
+                "right": {
+                  "changed_values": 653184,
+                  "elements": 655360,
+                  "max_abs": 4.65625,
+                  "p95_abs": 0.54345703125,
+                  "p99_abs": 0.806640625,
+                  "rms": 0.276628458918592,
+                  "signed_mean": -0.00041523946575807715,
+                  "squared_norm": 50150.31269534934
+                },
+                "right_term": "projection",
+                "rms_ratio_left_to_right": 1.0184453953842194,
+                "signed_cross_term": 1895.4931347226375,
+                "sum": {
+                  "changed_values": 654390,
+                  "elements": 655360,
+                  "max_abs": 6.9375,
+                  "p95_abs": 0.775390625,
+                  "p99_abs": 1.141069335937516,
+                  "rms": 0.3984820478885009,
+                  "signed_mean": 0.0027950913076779218,
+                  "squared_norm": 104063.26598986203
+                }
+              },
+              {
+                "cosine": -0.004533845592978754,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 653712,
+                  "elements": 655360,
+                  "max_abs": 4.4375,
+                  "p95_abs": 0.5546875,
+                  "p99_abs": 0.79296875,
+                  "rms": 0.281765830808105,
+                  "signed_mean": 0.003209576432971062,
+                  "squared_norm": 52030.33024822094
+                },
+                "dot": -2.7914102358927266,
+                "left": {
+                  "changed_values": 651956,
+                  "elements": 655360,
+                  "max_abs": 4.375,
+                  "p95_abs": 0.5546875,
+                  "p99_abs": 0.79296875,
+                  "rms": 0.28173098021787274,
+                  "signed_mean": 0.003210330773435999,
+                  "squared_norm": 52017.46015979006
+                },
+                "left_term": "input_H19",
+                "right": {
+                  "changed_values": 433525,
+                  "elements": 655360,
+                  "max_abs": 0.25,
+                  "p95_abs": 0.00537109375,
+                  "p99_abs": 0.009765625,
+                  "rms": 0.003334589699344673,
+                  "signed_mean": 7.543404649368313e-07,
+                  "squared_norm": 7.287267959095686
+                },
+                "right_term": "finite_addition_defect",
+                "rms_ratio_left_to_right": 84.4874499172236,
+                "signed_cross_term": -5.582820471785453,
+                "sum": {
+                  "changed_values": 653579,
+                  "elements": 655360,
+                  "max_abs": 4.3125,
+                  "p95_abs": 0.5546875,
+                  "p99_abs": 0.79296875,
+                  "rms": 0.28173559589620745,
+                  "signed_mean": 0.0032110851139009354,
+                  "squared_norm": 52019.16460727737
+                }
+              },
+              {
+                "cosine": -0.0024655688422292495,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 653198,
+                  "elements": 655360,
+                  "max_abs": 4.6875,
+                  "p95_abs": 0.54345703125,
+                  "p99_abs": 0.806640625,
+                  "rms": 0.276656777366227,
+                  "signed_mean": -0.00041599380622301394,
+                  "squared_norm": 50160.58099313286
+                },
+                "dot": -1.490514912213427,
+                "left": {
+                  "changed_values": 653184,
+                  "elements": 655360,
+                  "max_abs": 4.65625,
+                  "p95_abs": 0.54345703125,
+                  "p99_abs": 0.806640625,
+                  "rms": 0.276628458918592,
+                  "signed_mean": -0.00041523946575807715,
+                  "squared_norm": 50150.31269534934
+                },
+                "left_term": "projection",
+                "right": {
+                  "changed_values": 433525,
+                  "elements": 655360,
+                  "max_abs": 0.25,
+                  "p95_abs": 0.00537109375,
+                  "p99_abs": 0.009765625,
+                  "rms": 0.003334589699344673,
+                  "signed_mean": 7.543404649368313e-07,
+                  "squared_norm": 7.287267959095686
+                },
+                "right_term": "finite_addition_defect",
+                "rms_ratio_left_to_right": 82.95727026715046,
+                "signed_cross_term": -2.981029824426854,
+                "sum": {
+                  "changed_values": 652143,
+                  "elements": 655360,
+                  "max_abs": 4.625,
+                  "p95_abs": 0.54296875,
+                  "p99_abs": 0.806640625,
+                  "rms": 0.2766403352398383,
+                  "signed_mean": -0.0004144851252931403,
+                  "squared_norm": 50154.61893348401
+                }
+              }
+            ],
+            "scope": "FP64 saved-vector addition identity; signed cross terms are descriptive, not causal shares.",
+            "terms": {
+              "finite_addition_defect": {
+                "changed_values": 433525,
+                "elements": 655360,
+                "max_abs": 0.25,
+                "p95_abs": 0.00537109375,
+                "p99_abs": 0.009765625,
+                "rms": 0.003334589699344673,
+                "signed_mean": 7.543404649368313e-07,
+                "squared_norm": 7.287267959095686
+              },
+              "input_H19": {
+                "changed_values": 651956,
+                "elements": 655360,
+                "max_abs": 4.375,
+                "p95_abs": 0.5546875,
+                "p99_abs": 0.79296875,
+                "rms": 0.28173098021787274,
+                "signed_mean": 0.003210330773435999,
+                "squared_norm": 52017.46015979006
+              },
+              "projection": {
+                "changed_values": 653184,
+                "elements": 655360,
+                "max_abs": 4.65625,
+                "p95_abs": 0.54345703125,
+                "p99_abs": 0.806640625,
+                "rms": 0.276628458918592,
+                "signed_mean": -0.00041523946575807715,
+                "squared_norm": 50150.31269534934
+              }
+            },
+            "total": {
+              "changed_values": 652054,
+              "elements": 655360,
+              "max_abs": 7.0,
+              "p95_abs": 0.775390625,
+              "p99_abs": 1.140625,
+              "rms": 0.3984796037181241,
+              "signed_mean": 0.0027958456481428583,
+              "squared_norm": 104061.98940752493
+            },
+            "vector_identity_residual": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            }
+          }
+        }
+      ]
+    },
+    "native": {
+      "coordinate_space": "Common residual feature basis only; head width is excluded from gain accounts.",
+      "orientation": "cheap-input-minus-full-input",
+      "whole": {
+        "R_M": {
+          "cosine": -0.4104806566018152,
+          "denominator": "supplied right vector norm; zero is undefined",
+          "difference": {
+            "changed_values": 654676,
+            "elements": 1310720,
+            "max_abs": 15.140625,
+            "p95_abs": 0.8729248046875,
+            "p99_abs": 1.369140625,
+            "rms": 0.40039457105066795,
+            "signed_mean": 0.0012528997523588714,
+            "squared_norm": 210129.1417951907
+          },
+          "dot": -29019.3655905377,
+          "left": {
+            "changed_values": 652054,
+            "elements": 1310720,
+            "max_abs": 7.0,
+            "p95_abs": 0.6259765625,
+            "p99_abs": 0.97265625,
+            "rms": 0.28176762995361376,
+            "signed_mean": 0.0013979228240714292,
+            "squared_norm": 104061.98940752493
+          },
+          "right": {
+            "changed_values": 653265,
+            "elements": 1310720,
+            "max_abs": 9.015625,
+            "p95_abs": 0.40625,
+            "p99_abs": 0.650390625,
+            "rms": 0.19142303260008503,
+            "signed_mean": 0.0001450230717125578,
+            "squared_norm": 48028.421206590385
+          },
+          "rms_ratio_left_to_right": 1.4719630450232903,
+          "signed_cross_term": -58038.7311810754,
+          "sum": {
+            "changed_values": 654368,
+            "elements": 1310720,
+            "max_abs": 7.1328125,
+            "p95_abs": 0.6005859375,
+            "p99_abs": 0.9453125,
+            "rms": 0.2678726131431343,
+            "signed_mean": 0.001542945895783987,
+            "squared_norm": 94051.67943303991
+          }
+        },
+        "bounds": [
+          0,
+          512
+        ],
+        "input_H19_to_output_H20": {
+          "cosine": 0.5483053954961112,
+          "denominator": "supplied right vector norm; zero is undefined",
+          "difference": {
+            "changed_values": 652814,
+            "elements": 1310720,
+            "max_abs": 5.875,
+            "p95_abs": 0.5087890625,
+            "p99_abs": 0.81640625,
+            "rms": 0.2300490119752248,
+            "signed_mean": -6.326250804704614e-05,
+            "squared_norm": 69366.64199761378
+          },
+          "dot": 38351.37680947967,
+          "left": {
+            "changed_values": 652015,
+            "elements": 1310720,
+            "max_abs": 7.1875,
+            "p95_abs": 0.6015625,
+            "p99_abs": 0.9453125,
+            "rms": 0.2678729777389759,
+            "signed_mean": 0.0015419028786709532,
+            "squared_norm": 94051.93545678306
+          },
+          "right": {
+            "changed_values": 651956,
+            "elements": 1310720,
+            "max_abs": 4.375,
+            "p95_abs": 0.4501953125,
+            "p99_abs": 0.6875,
+            "rms": 0.1992138865823909,
+            "signed_mean": 0.0016051653867179994,
+            "squared_norm": 52017.46015979006
+          },
+          "rms_ratio_left_to_right": 1.3446501262259594,
+          "signed_cross_term": 76702.75361895934,
+          "sum": {
+            "changed_values": 653996,
+            "elements": 1310720,
+            "max_abs": 9.5,
+            "p95_abs": 0.931640625,
+            "p99_abs": 1.44140625,
+            "rms": 0.4122640679336947,
+            "signed_mean": 0.0031470682653889524,
+            "squared_norm": 222772.14923553244
+          }
+        },
+        "output": {
+          "energy_identity_residual": 1.4551915228366852e-11,
+          "expanded_squared_norm": 94051.93545678305,
+          "pairwise_cross_terms": [
+            {
+              "cosine": -0.4104806566018152,
+              "denominator": "supplied right vector norm; zero is undefined",
+              "difference": {
+                "changed_values": 654676,
+                "elements": 1310720,
+                "max_abs": 15.140625,
+                "p95_abs": 0.8729248046875,
+                "p99_abs": 1.369140625,
+                "rms": 0.40039457105066795,
+                "signed_mean": 0.0012528997523588714,
+                "squared_norm": 210129.1417951907
+              },
+              "dot": -29019.3655905377,
+              "left": {
+                "changed_values": 652054,
+                "elements": 1310720,
+                "max_abs": 7.0,
+                "p95_abs": 0.6259765625,
+                "p99_abs": 0.97265625,
+                "rms": 0.28176762995361376,
+                "signed_mean": 0.0013979228240714292,
+                "squared_norm": 104061.98940752493
+              },
+              "left_term": "R",
+              "right": {
+                "changed_values": 653265,
+                "elements": 1310720,
+                "max_abs": 9.015625,
+                "p95_abs": 0.40625,
+                "p99_abs": 0.650390625,
+                "rms": 0.19142303260008503,
+                "signed_mean": 0.0001450230717125578,
+                "squared_norm": 48028.421206590385
+              },
+              "right_term": "M",
+              "rms_ratio_left_to_right": 1.4719630450232903,
+              "signed_cross_term": -58038.7311810754,
+              "sum": {
+                "changed_values": 654368,
+                "elements": 1310720,
+                "max_abs": 7.1328125,
+                "p95_abs": 0.6005859375,
+                "p99_abs": 0.9453125,
+                "rms": 0.2678726131431343,
+                "signed_mean": 0.001542945895783987,
+                "squared_norm": 94051.67943303991
+              }
+            },
+            {
+              "cosine": 0.007804508198133096,
+              "denominator": "supplied right vector norm; zero is undefined",
+              "difference": {
+                "changed_values": 654067,
+                "elements": 1310720,
+                "max_abs": 6.9453125,
+                "p95_abs": 0.626953125,
+                "p99_abs": 0.97265625,
+                "rms": 0.2817590991716068,
+                "signed_mean": 0.001398965841184463,
+                "squared_norm": 104055.68835222942
+              },
+              "dot": 5.851587260767644,
+              "left": {
+                "changed_values": 652054,
+                "elements": 1310720,
+                "max_abs": 7.0,
+                "p95_abs": 0.6259765625,
+                "p99_abs": 0.97265625,
+                "rms": 0.28176762995361376,
+                "signed_mean": 0.0013979228240714292,
+                "squared_norm": 104061.98940752493
+              },
+              "left_term": "R",
+              "right": {
+                "changed_values": 413883,
+                "elements": 1310720,
+                "max_abs": 0.203125,
+                "p95_abs": 0.00390625,
+                "p99_abs": 0.0078125,
+                "rms": 0.0020301452874159197,
+                "signed_mean": -1.043017113033784e-06,
+                "squared_norm": 5.402119226021731
+              },
+              "right_term": "finite_addition_defect",
+              "rms_ratio_left_to_right": 138.79185479984196,
+              "signed_cross_term": 11.703174521535288,
+              "sum": {
+                "changed_values": 654019,
+                "elements": 1310720,
+                "max_abs": 7.0546875,
+                "p95_abs": 0.626953125,
+                "p99_abs": 0.97265625,
+                "rms": 0.28179078692025034,
+                "signed_mean": 0.0013968798069583955,
+                "squared_norm": 104079.0947012725
+              }
+            },
+            {
+              "cosine": -0.01653940402518852,
+              "denominator": "supplied right vector norm; zero is undefined",
+              "difference": {
+                "changed_values": 652931,
+                "elements": 1310720,
+                "max_abs": 9.03125,
+                "p95_abs": 0.40625,
+                "p99_abs": 0.6501000976562636,
+                "rms": 0.19146737025546665,
+                "signed_mean": 0.00014606608882559158,
+                "squared_norm": 48050.67259582081
+              },
+              "dot": -8.42463500220321,
+              "left": {
+                "changed_values": 653265,
+                "elements": 1310720,
+                "max_abs": 9.015625,
+                "p95_abs": 0.40625,
+                "p99_abs": 0.650390625,
+                "rms": 0.19142303260008503,
+                "signed_mean": 0.0001450230717125578,
+                "squared_norm": 48028.421206590385
+              },
+              "left_term": "M",
+              "right": {
+                "changed_values": 413883,
+                "elements": 1310720,
+                "max_abs": 0.203125,
+                "p95_abs": 0.00390625,
+                "p99_abs": 0.0078125,
+                "rms": 0.0020301452874159197,
+                "signed_mean": -1.043017113033784e-06,
+                "squared_norm": 5.402119226021731
+              },
+              "right_term": "finite_addition_defect",
+              "rms_ratio_left_to_right": 94.29031202182519,
+              "signed_cross_term": -16.84927000440642,
+              "sum": {
+                "changed_values": 651160,
+                "elements": 1310720,
+                "max_abs": 9.0,
+                "p95_abs": 0.40625,
+                "p99_abs": 0.6494140625,
+                "rms": 0.19140021924454143,
+                "signed_mean": 0.000143980054599524,
+                "squared_norm": 48016.974055812
+              }
+            }
+          ],
+          "scope": "FP64 saved-vector addition identity; signed cross terms are descriptive, not causal shares.",
+          "terms": {
+            "M": {
+              "changed_values": 653265,
+              "elements": 1310720,
+              "max_abs": 9.015625,
+              "p95_abs": 0.40625,
+              "p99_abs": 0.650390625,
+              "rms": 0.19142303260008503,
+              "signed_mean": 0.0001450230717125578,
+              "squared_norm": 48028.421206590385
+            },
+            "R": {
+              "changed_values": 652054,
+              "elements": 1310720,
+              "max_abs": 7.0,
+              "p95_abs": 0.6259765625,
+              "p99_abs": 0.97265625,
+              "rms": 0.28176762995361376,
+              "signed_mean": 0.0013979228240714292,
+              "squared_norm": 104061.98940752493
+            },
+            "finite_addition_defect": {
+              "changed_values": 413883,
+              "elements": 1310720,
+              "max_abs": 0.203125,
+              "p95_abs": 0.00390625,
+              "p99_abs": 0.0078125,
+              "rms": 0.0020301452874159197,
+              "signed_mean": -1.043017113033784e-06,
+              "squared_norm": 5.402119226021731
+            }
+          },
+          "total": {
+            "changed_values": 652015,
+            "elements": 1310720,
+            "max_abs": 7.1875,
+            "p95_abs": 0.6015625,
+            "p99_abs": 0.9453125,
+            "rms": 0.2678729777389759,
+            "signed_mean": 0.0015419028786709532,
+            "squared_norm": 94051.93545678306
+          },
+          "vector_identity_residual": {
+            "changed_values": 0,
+            "elements": 1310720,
+            "max_abs": 0.0,
+            "p95_abs": 0.0,
+            "p99_abs": 0.0,
+            "rms": 0.0,
+            "signed_mean": 0.0,
+            "squared_norm": 0.0
+          }
+        },
+        "residual": {
+          "energy_identity_residual": 0.0,
+          "expanded_squared_norm": 104061.98940752493,
+          "pairwise_cross_terms": [
+            {
+              "cosine": 0.01855584883528136,
+              "denominator": "supplied right vector norm; zero is undefined",
+              "difference": {
+                "changed_values": 654436,
+                "elements": 1310720,
+                "max_abs": 6.875,
+                "p95_abs": 0.62939453125,
+                "p99_abs": 0.97265625,
+                "rms": 0.27658936757130015,
+                "signed_mean": 0.001812785119597038,
+                "squared_norm": 100272.27972041676
+              },
+              "dot": 947.7465673613187,
+              "left": {
+                "changed_values": 651956,
+                "elements": 1310720,
+                "max_abs": 4.375,
+                "p95_abs": 0.4501953125,
+                "p99_abs": 0.6875,
+                "rms": 0.1992138865823909,
+                "signed_mean": 0.0016051653867179994,
+                "squared_norm": 52017.46015979006
+              },
+              "left_term": "input_H19",
+              "right": {
+                "changed_values": 653184,
+                "elements": 1310720,
+                "max_abs": 4.65625,
+                "p95_abs": 0.4366455078125,
+                "p99_abs": 0.6875,
+                "rms": 0.19560585917052067,
+                "signed_mean": -0.00020761973287903858,
+                "squared_norm": 50150.31269534934
+              },
+              "right_term": "projection",
+              "rms_ratio_left_to_right": 1.0184453953842194,
+              "signed_cross_term": 1895.4931347226375,
+              "sum": {
+                "changed_values": 654390,
+                "elements": 1310720,
+                "max_abs": 6.9375,
+                "p95_abs": 0.626953125,
+                "p99_abs": 0.97265625,
+                "rms": 0.28176935824306154,
+                "signed_mean": 0.0013975456538389609,
+                "squared_norm": 104063.26598986203
+              }
+            },
+            {
+              "cosine": -0.004533845592978754,
+              "denominator": "supplied right vector norm; zero is undefined",
+              "difference": {
+                "changed_values": 653712,
+                "elements": 1310720,
+                "max_abs": 4.4375,
+                "p95_abs": 0.449951171875,
+                "p99_abs": 0.6875,
+                "rms": 0.1992385296710725,
+                "signed_mean": 0.001604788216485531,
+                "squared_norm": 52030.33024822094
+              },
+              "dot": -2.7914102358927266,
+              "left": {
+                "changed_values": 651956,
+                "elements": 1310720,
+                "max_abs": 4.375,
+                "p95_abs": 0.4501953125,
+                "p99_abs": 0.6875,
+                "rms": 0.1992138865823909,
+                "signed_mean": 0.0016051653867179994,
+                "squared_norm": 52017.46015979006
+              },
+              "left_term": "input_H19",
+              "right": {
+                "changed_values": 433525,
+                "elements": 1310720,
+                "max_abs": 0.25,
+                "p95_abs": 0.00390625,
+                "p99_abs": 0.0078125,
+                "rms": 0.002357910988881429,
+                "signed_mean": 3.7717023246841565e-07,
+                "squared_norm": 7.287267959095686
+              },
+              "right_term": "finite_addition_defect",
+              "rms_ratio_left_to_right": 84.4874499172236,
+              "signed_cross_term": -5.582820471785453,
+              "sum": {
+                "changed_values": 653579,
+                "elements": 1310720,
+                "max_abs": 4.3125,
+                "p95_abs": 0.4498352050781307,
+                "p99_abs": 0.6875,
+                "rms": 0.19921715035984114,
+                "signed_mean": 0.0016055425569504677,
+                "squared_norm": 52019.16460727737
+              }
+            },
+            {
+              "cosine": -0.0024655688422292495,
+              "denominator": "supplied right vector norm; zero is undefined",
+              "difference": {
+                "changed_values": 653198,
+                "elements": 1310720,
+                "max_abs": 4.6875,
+                "p95_abs": 0.436767578125,
+                "p99_abs": 0.6875,
+                "rms": 0.19562588333687608,
+                "signed_mean": -0.00020799690311150697,
+                "squared_norm": 50160.58099313286
+              },
+              "dot": -1.490514912213427,
+              "left": {
+                "changed_values": 653184,
+                "elements": 1310720,
+                "max_abs": 4.65625,
+                "p95_abs": 0.4366455078125,
+                "p99_abs": 0.6875,
+                "rms": 0.19560585917052067,
+                "signed_mean": -0.00020761973287903858,
+                "squared_norm": 50150.31269534934
+              },
+              "left_term": "projection",
+              "right": {
+                "changed_values": 433525,
+                "elements": 1310720,
+                "max_abs": 0.25,
+                "p95_abs": 0.00390625,
+                "p99_abs": 0.0078125,
+                "rms": 0.002357910988881429,
+                "signed_mean": 3.7717023246841565e-07,
+                "squared_norm": 7.287267959095686
+              },
+              "right_term": "finite_addition_defect",
+              "rms_ratio_left_to_right": 82.95727026715046,
+              "signed_cross_term": -2.981029824426854,
+              "sum": {
+                "changed_values": 652143,
+                "elements": 1310720,
+                "max_abs": 4.625,
+                "p95_abs": 0.4375,
+                "p99_abs": 0.6875,
+                "rms": 0.1956142569978095,
+                "signed_mean": -0.00020724256264657016,
+                "squared_norm": 50154.61893348401
+              }
+            }
+          ],
+          "scope": "FP64 saved-vector addition identity; signed cross terms are descriptive, not causal shares.",
+          "terms": {
+            "finite_addition_defect": {
+              "changed_values": 433525,
+              "elements": 1310720,
+              "max_abs": 0.25,
+              "p95_abs": 0.00390625,
+              "p99_abs": 0.0078125,
+              "rms": 0.002357910988881429,
+              "signed_mean": 3.7717023246841565e-07,
+              "squared_norm": 7.287267959095686
+            },
+            "input_H19": {
+              "changed_values": 651956,
+              "elements": 1310720,
+              "max_abs": 4.375,
+              "p95_abs": 0.4501953125,
+              "p99_abs": 0.6875,
+              "rms": 0.1992138865823909,
+              "signed_mean": 0.0016051653867179994,
+              "squared_norm": 52017.46015979006
+            },
+            "projection": {
+              "changed_values": 653184,
+              "elements": 1310720,
+              "max_abs": 4.65625,
+              "p95_abs": 0.4366455078125,
+              "p99_abs": 0.6875,
+              "rms": 0.19560585917052067,
+              "signed_mean": -0.00020761973287903858,
+              "squared_norm": 50150.31269534934
+            }
+          },
+          "total": {
+            "changed_values": 652054,
+            "elements": 1310720,
+            "max_abs": 7.0,
+            "p95_abs": 0.6259765625,
+            "p99_abs": 0.97265625,
+            "rms": 0.28176762995361376,
+            "signed_mean": 0.0013979228240714292,
+            "squared_norm": 104061.98940752493
+          },
+          "vector_identity_residual": {
+            "changed_values": 0,
+            "elements": 1310720,
+            "max_abs": 0.0,
+            "p95_abs": 0.0,
+            "p99_abs": 0.0,
+            "rms": 0.0,
+            "signed_mean": 0.0,
+            "squared_norm": 0.0
+          }
+        }
+      },
+      "windows": [
+        {
+          "R_M": {
+            "cosine": null,
+            "denominator": "supplied right vector norm; zero is undefined",
+            "difference": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            },
+            "dot": 0.0,
+            "left": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            },
+            "right": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            },
+            "rms_ratio_left_to_right": null,
+            "signed_cross_term": 0.0,
+            "sum": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            }
+          },
+          "bounds": [
+            0,
+            256
+          ],
+          "input_H19_to_output_H20": {
+            "cosine": null,
+            "denominator": "supplied right vector norm; zero is undefined",
+            "difference": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            },
+            "dot": 0.0,
+            "left": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            },
+            "right": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            },
+            "rms_ratio_left_to_right": null,
+            "signed_cross_term": 0.0,
+            "sum": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            }
+          },
+          "output": {
+            "energy_identity_residual": 0.0,
+            "expanded_squared_norm": 0.0,
+            "pairwise_cross_terms": [
+              {
+                "cosine": null,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "dot": 0.0,
+                "left": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "left_term": "R",
+                "right": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "right_term": "M",
+                "rms_ratio_left_to_right": null,
+                "signed_cross_term": 0.0,
+                "sum": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                }
+              },
+              {
+                "cosine": null,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "dot": 0.0,
+                "left": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "left_term": "R",
+                "right": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "right_term": "finite_addition_defect",
+                "rms_ratio_left_to_right": null,
+                "signed_cross_term": 0.0,
+                "sum": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                }
+              },
+              {
+                "cosine": null,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "dot": 0.0,
+                "left": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "left_term": "M",
+                "right": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "right_term": "finite_addition_defect",
+                "rms_ratio_left_to_right": null,
+                "signed_cross_term": 0.0,
+                "sum": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                }
+              }
+            ],
+            "scope": "FP64 saved-vector addition identity; signed cross terms are descriptive, not causal shares.",
+            "terms": {
+              "M": {
+                "changed_values": 0,
+                "elements": 655360,
+                "max_abs": 0.0,
+                "p95_abs": 0.0,
+                "p99_abs": 0.0,
+                "rms": 0.0,
+                "signed_mean": 0.0,
+                "squared_norm": 0.0
+              },
+              "R": {
+                "changed_values": 0,
+                "elements": 655360,
+                "max_abs": 0.0,
+                "p95_abs": 0.0,
+                "p99_abs": 0.0,
+                "rms": 0.0,
+                "signed_mean": 0.0,
+                "squared_norm": 0.0
+              },
+              "finite_addition_defect": {
+                "changed_values": 0,
+                "elements": 655360,
+                "max_abs": 0.0,
+                "p95_abs": 0.0,
+                "p99_abs": 0.0,
+                "rms": 0.0,
+                "signed_mean": 0.0,
+                "squared_norm": 0.0
+              }
+            },
+            "total": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            },
+            "vector_identity_residual": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            }
+          },
+          "residual": {
+            "energy_identity_residual": 0.0,
+            "expanded_squared_norm": 0.0,
+            "pairwise_cross_terms": [
+              {
+                "cosine": null,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "dot": 0.0,
+                "left": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "left_term": "input_H19",
+                "right": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "right_term": "projection",
+                "rms_ratio_left_to_right": null,
+                "signed_cross_term": 0.0,
+                "sum": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                }
+              },
+              {
+                "cosine": null,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "dot": 0.0,
+                "left": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "left_term": "input_H19",
+                "right": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "right_term": "finite_addition_defect",
+                "rms_ratio_left_to_right": null,
+                "signed_cross_term": 0.0,
+                "sum": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                }
+              },
+              {
+                "cosine": null,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "dot": 0.0,
+                "left": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "left_term": "projection",
+                "right": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                },
+                "right_term": "finite_addition_defect",
+                "rms_ratio_left_to_right": null,
+                "signed_cross_term": 0.0,
+                "sum": {
+                  "changed_values": 0,
+                  "elements": 655360,
+                  "max_abs": 0.0,
+                  "p95_abs": 0.0,
+                  "p99_abs": 0.0,
+                  "rms": 0.0,
+                  "signed_mean": 0.0,
+                  "squared_norm": 0.0
+                }
+              }
+            ],
+            "scope": "FP64 saved-vector addition identity; signed cross terms are descriptive, not causal shares.",
+            "terms": {
+              "finite_addition_defect": {
+                "changed_values": 0,
+                "elements": 655360,
+                "max_abs": 0.0,
+                "p95_abs": 0.0,
+                "p99_abs": 0.0,
+                "rms": 0.0,
+                "signed_mean": 0.0,
+                "squared_norm": 0.0
+              },
+              "input_H19": {
+                "changed_values": 0,
+                "elements": 655360,
+                "max_abs": 0.0,
+                "p95_abs": 0.0,
+                "p99_abs": 0.0,
+                "rms": 0.0,
+                "signed_mean": 0.0,
+                "squared_norm": 0.0
+              },
+              "projection": {
+                "changed_values": 0,
+                "elements": 655360,
+                "max_abs": 0.0,
+                "p95_abs": 0.0,
+                "p99_abs": 0.0,
+                "rms": 0.0,
+                "signed_mean": 0.0,
+                "squared_norm": 0.0
+              }
+            },
+            "total": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            },
+            "vector_identity_residual": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            }
+          }
+        },
+        {
+          "R_M": {
+            "cosine": -0.4104806566018152,
+            "denominator": "supplied right vector norm; zero is undefined",
+            "difference": {
+              "changed_values": 654676,
+              "elements": 655360,
+              "max_abs": 15.140625,
+              "p95_abs": 1.083984375,
+              "p99_abs": 1.594094238281258,
+              "rms": 0.5662434326804124,
+              "signed_mean": 0.002505799504717743,
+              "squared_norm": 210129.1417951907
+            },
+            "dot": -29019.3655905377,
+            "left": {
+              "changed_values": 652054,
+              "elements": 655360,
+              "max_abs": 7.0,
+              "p95_abs": 0.775390625,
+              "p99_abs": 1.140625,
+              "rms": 0.3984796037181241,
+              "signed_mean": 0.0027958456481428583,
+              "squared_norm": 104061.98940752493
+            },
+            "right": {
+              "changed_values": 653265,
+              "elements": 655360,
+              "max_abs": 9.015625,
+              "p95_abs": 0.5107421875,
+              "p99_abs": 0.755859375,
+              "rms": 0.27071304885362735,
+              "signed_mean": 0.0002900461434251156,
+              "squared_norm": 48028.421206590385
+            },
+            "rms_ratio_left_to_right": 1.4719630450232903,
+            "signed_cross_term": -58038.7311810754,
+            "sum": {
+              "changed_values": 654368,
+              "elements": 655360,
+              "max_abs": 7.1328125,
+              "p95_abs": 0.7492691040039041,
+              "p99_abs": 1.1015625,
+              "rms": 0.3788290824953419,
+              "signed_mean": 0.003085891791567974,
+              "squared_norm": 94051.67943303991
+            }
+          },
+          "bounds": [
+            256,
+            512
+          ],
+          "input_H19_to_output_H20": {
+            "cosine": 0.5483053954961112,
+            "denominator": "supplied right vector norm; zero is undefined",
+            "difference": {
+              "changed_values": 652814,
+              "elements": 655360,
+              "max_abs": 5.875,
+              "p95_abs": 0.640625,
+              "p99_abs": 0.9499072265625159,
+              "rms": 0.32533843274589347,
+              "signed_mean": -0.00012652501609409229,
+              "squared_norm": 69366.64199761378
+            },
+            "dot": 38351.37680947967,
+            "left": {
+              "changed_values": 652015,
+              "elements": 655360,
+              "max_abs": 7.1875,
+              "p95_abs": 0.75,
+              "p99_abs": 1.1015625,
+              "rms": 0.3788295981117259,
+              "signed_mean": 0.0030838057573419064,
+              "squared_norm": 94051.93545678306
+            },
+            "right": {
+              "changed_values": 651956,
+              "elements": 655360,
+              "max_abs": 4.375,
+              "p95_abs": 0.5546875,
+              "p99_abs": 0.79296875,
+              "rms": 0.28173098021787274,
+              "signed_mean": 0.003210330773435999,
+              "squared_norm": 52017.46015979006
+            },
+            "rms_ratio_left_to_right": 1.3446501262259594,
+            "signed_cross_term": 76702.75361895934,
+            "sum": {
+              "changed_values": 653996,
+              "elements": 655360,
+              "max_abs": 9.5,
+              "p95_abs": 1.15234375,
+              "p99_abs": 1.6650390625,
+              "rms": 0.583029436150934,
+              "signed_mean": 0.006294136530777905,
+              "squared_norm": 222772.14923553244
+            }
+          },
+          "output": {
+            "energy_identity_residual": 1.4551915228366852e-11,
+            "expanded_squared_norm": 94051.93545678305,
+            "pairwise_cross_terms": [
+              {
+                "cosine": -0.4104806566018152,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 654676,
+                  "elements": 655360,
+                  "max_abs": 15.140625,
+                  "p95_abs": 1.083984375,
+                  "p99_abs": 1.594094238281258,
+                  "rms": 0.5662434326804124,
+                  "signed_mean": 0.002505799504717743,
+                  "squared_norm": 210129.1417951907
+                },
+                "dot": -29019.3655905377,
+                "left": {
+                  "changed_values": 652054,
+                  "elements": 655360,
+                  "max_abs": 7.0,
+                  "p95_abs": 0.775390625,
+                  "p99_abs": 1.140625,
+                  "rms": 0.3984796037181241,
+                  "signed_mean": 0.0027958456481428583,
+                  "squared_norm": 104061.98940752493
+                },
+                "left_term": "R",
+                "right": {
+                  "changed_values": 653265,
+                  "elements": 655360,
+                  "max_abs": 9.015625,
+                  "p95_abs": 0.5107421875,
+                  "p99_abs": 0.755859375,
+                  "rms": 0.27071304885362735,
+                  "signed_mean": 0.0002900461434251156,
+                  "squared_norm": 48028.421206590385
+                },
+                "right_term": "M",
+                "rms_ratio_left_to_right": 1.4719630450232903,
+                "signed_cross_term": -58038.7311810754,
+                "sum": {
+                  "changed_values": 654368,
+                  "elements": 655360,
+                  "max_abs": 7.1328125,
+                  "p95_abs": 0.7492691040039041,
+                  "p99_abs": 1.1015625,
+                  "rms": 0.3788290824953419,
+                  "signed_mean": 0.003085891791567974,
+                  "squared_norm": 94051.67943303991
+                }
+              },
+              {
+                "cosine": 0.007804508198133096,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 654067,
+                  "elements": 655360,
+                  "max_abs": 6.9453125,
+                  "p95_abs": 0.775390625,
+                  "p99_abs": 1.141945800781258,
+                  "rms": 0.3984675393705122,
+                  "signed_mean": 0.002797931682368926,
+                  "squared_norm": 104055.68835222942
+                },
+                "dot": 5.851587260767644,
+                "left": {
+                  "changed_values": 652054,
+                  "elements": 655360,
+                  "max_abs": 7.0,
+                  "p95_abs": 0.775390625,
+                  "p99_abs": 1.140625,
+                  "rms": 0.3984796037181241,
+                  "signed_mean": 0.0027958456481428583,
+                  "squared_norm": 104061.98940752493
+                },
+                "left_term": "R",
+                "right": {
+                  "changed_values": 413883,
+                  "elements": 655360,
+                  "max_abs": 0.203125,
+                  "p95_abs": 0.0048828125,
+                  "p99_abs": 0.009765625,
+                  "rms": 0.002871058999051419,
+                  "signed_mean": -2.086034226067568e-06,
+                  "squared_norm": 5.402119226021731
+                },
+                "right_term": "finite_addition_defect",
+                "rms_ratio_left_to_right": 138.79185479984196,
+                "signed_cross_term": 11.703174521535288,
+                "sum": {
+                  "changed_values": 654019,
+                  "elements": 655360,
+                  "max_abs": 7.0546875,
+                  "p95_abs": 0.775390625,
+                  "p99_abs": 1.140625,
+                  "rms": 0.398512352614405,
+                  "signed_mean": 0.002793759613916791,
+                  "squared_norm": 104079.0947012725
+                }
+              },
+              {
+                "cosine": -0.01653940402518852,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 652931,
+                  "elements": 655360,
+                  "max_abs": 9.03125,
+                  "p95_abs": 0.5103179931640582,
+                  "p99_abs": 0.755859375,
+                  "rms": 0.2707757517671919,
+                  "signed_mean": 0.00029213217765118317,
+                  "squared_norm": 48050.67259582081
+                },
+                "dot": -8.42463500220321,
+                "left": {
+                  "changed_values": 653265,
+                  "elements": 655360,
+                  "max_abs": 9.015625,
+                  "p95_abs": 0.5107421875,
+                  "p99_abs": 0.755859375,
+                  "rms": 0.27071304885362735,
+                  "signed_mean": 0.0002900461434251156,
+                  "squared_norm": 48028.421206590385
+                },
+                "left_term": "M",
+                "right": {
+                  "changed_values": 413883,
+                  "elements": 655360,
+                  "max_abs": 0.203125,
+                  "p95_abs": 0.0048828125,
+                  "p99_abs": 0.009765625,
+                  "rms": 0.002871058999051419,
+                  "signed_mean": -2.086034226067568e-06,
+                  "squared_norm": 5.402119226021731
+                },
+                "right_term": "finite_addition_defect",
+                "rms_ratio_left_to_right": 94.29031202182519,
+                "signed_cross_term": -16.84927000440642,
+                "sum": {
+                  "changed_values": 651160,
+                  "elements": 655360,
+                  "max_abs": 9.0,
+                  "p95_abs": 0.51025390625,
+                  "p99_abs": 0.755859375,
+                  "rms": 0.2706807858968143,
+                  "signed_mean": 0.000287960109199048,
+                  "squared_norm": 48016.974055812
+                }
+              }
+            ],
+            "scope": "FP64 saved-vector addition identity; signed cross terms are descriptive, not causal shares.",
+            "terms": {
+              "M": {
+                "changed_values": 653265,
+                "elements": 655360,
+                "max_abs": 9.015625,
+                "p95_abs": 0.5107421875,
+                "p99_abs": 0.755859375,
+                "rms": 0.27071304885362735,
+                "signed_mean": 0.0002900461434251156,
+                "squared_norm": 48028.421206590385
+              },
+              "R": {
+                "changed_values": 652054,
+                "elements": 655360,
+                "max_abs": 7.0,
+                "p95_abs": 0.775390625,
+                "p99_abs": 1.140625,
+                "rms": 0.3984796037181241,
+                "signed_mean": 0.0027958456481428583,
+                "squared_norm": 104061.98940752493
+              },
+              "finite_addition_defect": {
+                "changed_values": 413883,
+                "elements": 655360,
+                "max_abs": 0.203125,
+                "p95_abs": 0.0048828125,
+                "p99_abs": 0.009765625,
+                "rms": 0.002871058999051419,
+                "signed_mean": -2.086034226067568e-06,
+                "squared_norm": 5.402119226021731
+              }
+            },
+            "total": {
+              "changed_values": 652015,
+              "elements": 655360,
+              "max_abs": 7.1875,
+              "p95_abs": 0.75,
+              "p99_abs": 1.1015625,
+              "rms": 0.3788295981117259,
+              "signed_mean": 0.0030838057573419064,
+              "squared_norm": 94051.93545678306
+            },
+            "vector_identity_residual": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            }
+          },
+          "residual": {
+            "energy_identity_residual": 0.0,
+            "expanded_squared_norm": 104061.98940752493,
+            "pairwise_cross_terms": [
+              {
+                "cosine": 0.01855584883528136,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 654436,
+                  "elements": 655360,
+                  "max_abs": 6.875,
+                  "p95_abs": 0.77783203125,
+                  "p99_abs": 1.119140625,
+                  "rms": 0.3911564348275298,
+                  "signed_mean": 0.003625570239194076,
+                  "squared_norm": 100272.27972041676
+                },
+                "dot": 947.7465673613187,
+                "left": {
+                  "changed_values": 651956,
+                  "elements": 655360,
+                  "max_abs": 4.375,
+                  "p95_abs": 0.5546875,
+                  "p99_abs": 0.79296875,
+                  "rms": 0.28173098021787274,
+                  "signed_mean": 0.003210330773435999,
+                  "squared_norm": 52017.46015979006
+                },
+                "left_term": "input_H19",
+                "right": {
+                  "changed_values": 653184,
+                  "elements": 655360,
+                  "max_abs": 4.65625,
+                  "p95_abs": 0.54345703125,
+                  "p99_abs": 0.806640625,
+                  "rms": 0.276628458918592,
+                  "signed_mean": -0.00041523946575807715,
+                  "squared_norm": 50150.31269534934
+                },
+                "right_term": "projection",
+                "rms_ratio_left_to_right": 1.0184453953842194,
+                "signed_cross_term": 1895.4931347226375,
+                "sum": {
+                  "changed_values": 654390,
+                  "elements": 655360,
+                  "max_abs": 6.9375,
+                  "p95_abs": 0.775390625,
+                  "p99_abs": 1.141069335937516,
+                  "rms": 0.3984820478885009,
+                  "signed_mean": 0.0027950913076779218,
+                  "squared_norm": 104063.26598986203
+                }
+              },
+              {
+                "cosine": -0.004533845592978754,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 653712,
+                  "elements": 655360,
+                  "max_abs": 4.4375,
+                  "p95_abs": 0.5546875,
+                  "p99_abs": 0.79296875,
+                  "rms": 0.281765830808105,
+                  "signed_mean": 0.003209576432971062,
+                  "squared_norm": 52030.33024822094
+                },
+                "dot": -2.7914102358927266,
+                "left": {
+                  "changed_values": 651956,
+                  "elements": 655360,
+                  "max_abs": 4.375,
+                  "p95_abs": 0.5546875,
+                  "p99_abs": 0.79296875,
+                  "rms": 0.28173098021787274,
+                  "signed_mean": 0.003210330773435999,
+                  "squared_norm": 52017.46015979006
+                },
+                "left_term": "input_H19",
+                "right": {
+                  "changed_values": 433525,
+                  "elements": 655360,
+                  "max_abs": 0.25,
+                  "p95_abs": 0.00537109375,
+                  "p99_abs": 0.009765625,
+                  "rms": 0.003334589699344673,
+                  "signed_mean": 7.543404649368313e-07,
+                  "squared_norm": 7.287267959095686
+                },
+                "right_term": "finite_addition_defect",
+                "rms_ratio_left_to_right": 84.4874499172236,
+                "signed_cross_term": -5.582820471785453,
+                "sum": {
+                  "changed_values": 653579,
+                  "elements": 655360,
+                  "max_abs": 4.3125,
+                  "p95_abs": 0.5546875,
+                  "p99_abs": 0.79296875,
+                  "rms": 0.28173559589620745,
+                  "signed_mean": 0.0032110851139009354,
+                  "squared_norm": 52019.16460727737
+                }
+              },
+              {
+                "cosine": -0.0024655688422292495,
+                "denominator": "supplied right vector norm; zero is undefined",
+                "difference": {
+                  "changed_values": 653198,
+                  "elements": 655360,
+                  "max_abs": 4.6875,
+                  "p95_abs": 0.54345703125,
+                  "p99_abs": 0.806640625,
+                  "rms": 0.276656777366227,
+                  "signed_mean": -0.00041599380622301394,
+                  "squared_norm": 50160.58099313286
+                },
+                "dot": -1.490514912213427,
+                "left": {
+                  "changed_values": 653184,
+                  "elements": 655360,
+                  "max_abs": 4.65625,
+                  "p95_abs": 0.54345703125,
+                  "p99_abs": 0.806640625,
+                  "rms": 0.276628458918592,
+                  "signed_mean": -0.00041523946575807715,
+                  "squared_norm": 50150.31269534934
+                },
+                "left_term": "projection",
+                "right": {
+                  "changed_values": 433525,
+                  "elements": 655360,
+                  "max_abs": 0.25,
+                  "p95_abs": 0.00537109375,
+                  "p99_abs": 0.009765625,
+                  "rms": 0.003334589699344673,
+                  "signed_mean": 7.543404649368313e-07,
+                  "squared_norm": 7.287267959095686
+                },
+                "right_term": "finite_addition_defect",
+                "rms_ratio_left_to_right": 82.95727026715046,
+                "signed_cross_term": -2.981029824426854,
+                "sum": {
+                  "changed_values": 652143,
+                  "elements": 655360,
+                  "max_abs": 4.625,
+                  "p95_abs": 0.54296875,
+                  "p99_abs": 0.806640625,
+                  "rms": 0.2766403352398383,
+                  "signed_mean": -0.0004144851252931403,
+                  "squared_norm": 50154.61893348401
+                }
+              }
+            ],
+            "scope": "FP64 saved-vector addition identity; signed cross terms are descriptive, not causal shares.",
+            "terms": {
+              "finite_addition_defect": {
+                "changed_values": 433525,
+                "elements": 655360,
+                "max_abs": 0.25,
+                "p95_abs": 0.00537109375,
+                "p99_abs": 0.009765625,
+                "rms": 0.003334589699344673,
+                "signed_mean": 7.543404649368313e-07,
+                "squared_norm": 7.287267959095686
+              },
+              "input_H19": {
+                "changed_values": 651956,
+                "elements": 655360,
+                "max_abs": 4.375,
+                "p95_abs": 0.5546875,
+                "p99_abs": 0.79296875,
+                "rms": 0.28173098021787274,
+                "signed_mean": 0.003210330773435999,
+                "squared_norm": 52017.46015979006
+              },
+              "projection": {
+                "changed_values": 653184,
+                "elements": 655360,
+                "max_abs": 4.65625,
+                "p95_abs": 0.54345703125,
+                "p99_abs": 0.806640625,
+                "rms": 0.276628458918592,
+                "signed_mean": -0.00041523946575807715,
+                "squared_norm": 50150.31269534934
+              }
+            },
+            "total": {
+              "changed_values": 652054,
+              "elements": 655360,
+              "max_abs": 7.0,
+              "p95_abs": 0.775390625,
+              "p99_abs": 1.140625,
+              "rms": 0.3984796037181241,
+              "signed_mean": 0.0027958456481428583,
+              "squared_norm": 104061.98940752493
+            },
+            "vector_identity_residual": {
+              "changed_values": 0,
+              "elements": 655360,
+              "max_abs": 0.0,
+              "p95_abs": 0.0,
+              "p99_abs": 0.0,
+              "rms": 0.0,
+              "signed_mean": 0.0,
+              "squared_norm": 0.0
+            }
+          }
+        }
+      ]
+    }
+  },
+  "schema": "mdb-qwen-consumer-cross-term-labels-v1"
+}

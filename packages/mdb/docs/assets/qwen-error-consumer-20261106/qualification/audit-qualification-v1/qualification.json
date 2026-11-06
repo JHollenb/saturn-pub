@@ -1,0 +1,40 @@
+{
+  "schema": "mdb-qwen-error-consumer-audit-qualification-v1",
+  "reader_sha256": "c0adfae449b426c52c91a5cb2e05fd27453cdd704354dbd7dd465a194d19723b",
+  "tests_sha256": "f2bdf39ecd3cab8de764e8dfa9c747cb076bfd656ed1ad93f83b18187d9a6dbf",
+  "qualification_runner_sha256": "feb69e9b98f4b32e848a204934bd1cb6b3252e2770773647a6d2b7d0854e7f0c",
+  "producer_sha256": "ad82b86dd837a1f2bc9134f2c5bda3dcb097e8f8583e7849fcfbe8d5c49b229b",
+  "component_sha256": "c93324ee76156f2fba16f70d7cef78b7accbf6020f0c899cb04d856c348b5762",
+  "protocol_sha256": "4e62bc3fa8adcd059ac12f775effa0010752e3c5e0cca2a2ebc4702ecef7f847",
+  "actual_saved_fixture_manifest_sha256": "0ee361355c66217b1e17da862104da010190fe404d7ec8533cfb43da4e02e56c",
+  "tests": {"attempt": "attempt-02", "passed": 10, "seconds": 0.49, "returncode": 0, "execution_sha256": "1a8f5bd759dfa7442c717f959918e3e8595ca3c6a81d7f1c80fb93804d94732f"},
+  "ruff": {"cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb", "command": ["/Users/jakeholl/domains/common/.venv/bin/ruff", "check", "--select", "F,I", "--config", "pyproject.toml", "qualification/audit_qwen_error_consumer.py", "tests/test_audit_qwen_error_consumer.py"], "returncode": 0},
+  "metadata_review": {
+    "producer_helper_dictionary_exact_join": true,
+    "producer_helper_files": 11,
+    "retained_metadata_path_keys": 14,
+    "reader_helper_files": 7,
+    "protocol_frontier_spelling": "Frozen selection uses genuine_Qwen_Act; actual producer uses genuine_qwen_act. Each is explicitly authenticated in its own schema, both false.",
+    "production_primary_comparison_elements": 7340032,
+    "scope": "Source/serialized-schema comparison only; no original tensor or checkpoint read."
+  },
+  "coverage": [
+    "Actual installed native tiny writer serialization: two worlds, five complete endpoint fields, complete FP64 signed-response hashes, prefix/suffix windows and explicit element budgets.",
+    "Actual public closed transaction and full pretarget inventory, zero target entries at seal, two native consumers, four SDPA operand/head layout joins, actual projection hook and no hidden baseline.",
+    "Hostile world, source/input layout, SDPA stride, response commitment, wrapper member and request/source checks.",
+    "Numeric, raw-bit and signed-zero misses remain observations. Negative cross terms and nonzero finite-addition defects are retained with exact vector/energy accounts.",
+    "Actual audit reduction/transaction/census/catalog paths against installed EquationCatalog/ComputationAtlas, including required backend and wrong-clock abstention.",
+    "Actual compact worker packaging/marker with explicit model-free transport substitute; no activation or weight arrays exported."
+  ],
+  "limits": [
+    "The serialized fixture is synthetic tiny CPU Qwen; no original model, activation, tokenizer, checkpoint, CUDA, scheduler or service was executed/read by this qualification.",
+    "Full audit-core fixture uses explicitly labeled substitutes for the production outer source envelope and checkpoint recipe service. Separate metadata envelope checks do not claim original-model custody.",
+    "Production source authentication streams the exact eleven original block19 recipes through the frozen saved-only restorer. It has not been run on original assets here.",
+    "Primary endpoint fields, signed responses, prefix/suffix windows and two catalog occurrences are dependent observations, not independent replications.",
+    "SDPA metadata binds configured primitives/operands, not a selected CUDA kernel or hardware attestation."
+  ],
+  "original_model_calls": 0,
+  "reader_neural_calls": 0,
+  "production_job_staged_or_submitted": false,
+  "previous_attempt": "attempt-01 retained: nine existing checks passed before additive runtime-profile/forecast-layout coverage."
+}

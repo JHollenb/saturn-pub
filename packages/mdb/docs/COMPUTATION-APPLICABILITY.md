@@ -85,8 +85,11 @@ The [packet ABI](assets/qwen-applicability-20261106/packet-abi-v1.md) describes
 the five input objects and returned schema. The [source](../src/mdb/computation_applicability.py)
 imports only standard-library code and the existing supplied-condition matcher.
 
+The [block19 continuation](QWEN-ERROR-CONSUMER.md) now predicts what the retained
+cheap and corrected H19 states become, including their complete signed difference.
+
 The symbol-table entry now has an explicit local applicability decision beside
 its immutable computation and evidence records. Its finite numerical coverage,
-raw-bit limitations and consumer continuation remain separate. The next original
-experiment will send the retained, nonidentical cheap and corrected H19 states
-through block19 after sealing both H20 predictions.
+raw-bit limitations and consumer continuation remain separate. That original
+two-world experiment seals both complete H20 predictions before either native
+consumer runs.

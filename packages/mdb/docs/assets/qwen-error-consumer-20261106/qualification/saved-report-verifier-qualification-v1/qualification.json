@@ -1,0 +1,36 @@
+{
+  "schema": "mdb-error-consumer-saved-compact-verifier-qualified-v1",
+  "verifier_sha256": "f6451c2a8dea954a0151e03468fca35f0151dd3d13299fb1c09cc121c65eecaf",
+  "test_sha256": "5f22a2013f8ae1a01005d6be91c7fad3f3d6500dbc88754e72fca42593e625f2",
+  "installed_test_receipt": "attempt-02/qualification.json",
+  "installed_test_receipt_sha256": "f1a8b08560950cba1767ec3121e9ba72e1177db3eedb2fc85634dd0553318253",
+  "tests": "7 passed in 0.60s; synthetic scalar/custody/seal/operand tampering and12 actual installed catalog/atlas calls on qualified tiny metadata",
+  "query_matrix": {
+    "full-input": ["exact", "changed-source", "changed-clock20-to21"],
+    "cheap-input": ["exact", "changed-source", "changed-profileBF16-toFP32"],
+    "APIs": ["equations", "atlas"],
+    "calls": 12,
+    "matches": 4,
+    "abstentions": 8
+  },
+  "lint": "Canonical uvx ruff check --select F,I passed for verifier, focused tests and qualification harness",
+  "coverage": [
+    "10 endpoint fields/14680064 positions and5 response-error fields/7340032 positions;20/10 dependent windows counted separately",
+    "Per-field numeric/raw-bit/zero-sign reports, signed magnitudes and residual countertrends preserved",
+    "Complete local job/log command and payload custody, source/wheel and request/config payload seals",
+    "Native intent-first submitted reservation null distinguished from actual probe-defaultCPU4/RAM4096/VRAM4096/disk1",
+    "Explicit CPU saved-audit reservation accounted independently",
+    "Seven transaction events/global FP64 response commitments and8entry native chronology",
+    "Four actual SDPA operand receipts/two explicit native consumers/one hydration"
+  ],
+  "frozen_label_limitation": "Original c0ad energy cross-term left/right values are numeric summaries; term-name strings were overwritten. Verifier retains these numeric rows and flags their label limitation. Separate label repair remains external to frozen scientific rows.",
+  "separate_label_sidecar": {
+    "path": "../cross-term-labels-v1/cross-term-labels.json",
+    "sha256": "9f4b81e3cf4aabfde47b3db487769a195cff87ca0973632bdb343d1caf09ef70",
+    "repair_receipt_sha256": "20b166d01f36458a0562759caf2d07fc21b4ace179d269e6a8f79410f7b5a2b6"
+  },
+  "root_actual_command": "rtk proxy /Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B artifacts/mdb-qwen-error-consumer-20261106/verify_saved_reports.py",
+  "root_actual_command_cwd": "/Users/jakeholl/domains",
+  "agent_actual_verification": "not run; root owns actual scientific compact verification",
+  "scope": "No model, array/weight payload, scheduler, original staging/submission or scientific-row rewrite. Prior failed synthetic qualification is preserved in attempt-01; the final profile contrast changes the explicitly bound learned dtype."
+}

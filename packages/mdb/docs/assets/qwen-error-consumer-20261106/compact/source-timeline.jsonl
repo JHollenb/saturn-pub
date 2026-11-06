@@ -1,0 +1,8 @@
+{"kind":"functional_world_completed","native_module_entries":0,"number":0,"world":"full-input"}
+{"kind":"functional_world_completed","native_module_entries":0,"number":1,"world":"cheap-input"}
+{"kind":"cohort_globally_sealed","native_module_entries":0,"native_targets_at_seal":0,"number":2,"seal_sha256":"1542aa8c8901e79378a7c133aacf4082516ef121860300af3f1336a2c4616984"}
+{"kind":"native_targets_released","native_module_entries":0,"number":3,"seal_sha256":"1542aa8c8901e79378a7c133aacf4082516ef121860300af3f1336a2c4616984"}
+{"kind":"native_component_authorized","native_module_entries":0,"number":4,"world":"full-input"}
+{"kind":"native_component_completed","native_module_entries":15,"number":5,"world":"full-input"}
+{"kind":"native_component_authorized","native_module_entries":15,"number":6,"world":"cheap-input"}
+{"kind":"native_component_completed","native_module_entries":30,"number":7,"world":"cheap-input"}

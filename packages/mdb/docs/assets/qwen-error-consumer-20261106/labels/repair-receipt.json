@@ -1,0 +1,471 @@
+{
+  "affected": [
+    {
+      "account": "residual",
+      "bounds": [
+        0,
+        512
+      ],
+      "lane": "functional",
+      "left_term": "input_H19",
+      "pair_index": 0,
+      "right_term": "projection",
+      "view": "whole"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        0,
+        512
+      ],
+      "lane": "functional",
+      "left_term": "input_H19",
+      "pair_index": 1,
+      "right_term": "finite_addition_defect",
+      "view": "whole"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        0,
+        512
+      ],
+      "lane": "functional",
+      "left_term": "projection",
+      "pair_index": 2,
+      "right_term": "finite_addition_defect",
+      "view": "whole"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        0,
+        512
+      ],
+      "lane": "functional",
+      "left_term": "R",
+      "pair_index": 0,
+      "right_term": "M",
+      "view": "whole"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        0,
+        512
+      ],
+      "lane": "functional",
+      "left_term": "R",
+      "pair_index": 1,
+      "right_term": "finite_addition_defect",
+      "view": "whole"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        0,
+        512
+      ],
+      "lane": "functional",
+      "left_term": "M",
+      "pair_index": 2,
+      "right_term": "finite_addition_defect",
+      "view": "whole"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        0,
+        256
+      ],
+      "lane": "functional",
+      "left_term": "input_H19",
+      "pair_index": 0,
+      "right_term": "projection",
+      "view": "window"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        0,
+        256
+      ],
+      "lane": "functional",
+      "left_term": "input_H19",
+      "pair_index": 1,
+      "right_term": "finite_addition_defect",
+      "view": "window"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        0,
+        256
+      ],
+      "lane": "functional",
+      "left_term": "projection",
+      "pair_index": 2,
+      "right_term": "finite_addition_defect",
+      "view": "window"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        0,
+        256
+      ],
+      "lane": "functional",
+      "left_term": "R",
+      "pair_index": 0,
+      "right_term": "M",
+      "view": "window"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        0,
+        256
+      ],
+      "lane": "functional",
+      "left_term": "R",
+      "pair_index": 1,
+      "right_term": "finite_addition_defect",
+      "view": "window"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        0,
+        256
+      ],
+      "lane": "functional",
+      "left_term": "M",
+      "pair_index": 2,
+      "right_term": "finite_addition_defect",
+      "view": "window"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        256,
+        512
+      ],
+      "lane": "functional",
+      "left_term": "input_H19",
+      "pair_index": 0,
+      "right_term": "projection",
+      "view": "window"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        256,
+        512
+      ],
+      "lane": "functional",
+      "left_term": "input_H19",
+      "pair_index": 1,
+      "right_term": "finite_addition_defect",
+      "view": "window"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        256,
+        512
+      ],
+      "lane": "functional",
+      "left_term": "projection",
+      "pair_index": 2,
+      "right_term": "finite_addition_defect",
+      "view": "window"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        256,
+        512
+      ],
+      "lane": "functional",
+      "left_term": "R",
+      "pair_index": 0,
+      "right_term": "M",
+      "view": "window"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        256,
+        512
+      ],
+      "lane": "functional",
+      "left_term": "R",
+      "pair_index": 1,
+      "right_term": "finite_addition_defect",
+      "view": "window"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        256,
+        512
+      ],
+      "lane": "functional",
+      "left_term": "M",
+      "pair_index": 2,
+      "right_term": "finite_addition_defect",
+      "view": "window"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        0,
+        512
+      ],
+      "lane": "native",
+      "left_term": "input_H19",
+      "pair_index": 0,
+      "right_term": "projection",
+      "view": "whole"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        0,
+        512
+      ],
+      "lane": "native",
+      "left_term": "input_H19",
+      "pair_index": 1,
+      "right_term": "finite_addition_defect",
+      "view": "whole"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        0,
+        512
+      ],
+      "lane": "native",
+      "left_term": "projection",
+      "pair_index": 2,
+      "right_term": "finite_addition_defect",
+      "view": "whole"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        0,
+        512
+      ],
+      "lane": "native",
+      "left_term": "R",
+      "pair_index": 0,
+      "right_term": "M",
+      "view": "whole"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        0,
+        512
+      ],
+      "lane": "native",
+      "left_term": "R",
+      "pair_index": 1,
+      "right_term": "finite_addition_defect",
+      "view": "whole"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        0,
+        512
+      ],
+      "lane": "native",
+      "left_term": "M",
+      "pair_index": 2,
+      "right_term": "finite_addition_defect",
+      "view": "whole"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        0,
+        256
+      ],
+      "lane": "native",
+      "left_term": "input_H19",
+      "pair_index": 0,
+      "right_term": "projection",
+      "view": "window"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        0,
+        256
+      ],
+      "lane": "native",
+      "left_term": "input_H19",
+      "pair_index": 1,
+      "right_term": "finite_addition_defect",
+      "view": "window"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        0,
+        256
+      ],
+      "lane": "native",
+      "left_term": "projection",
+      "pair_index": 2,
+      "right_term": "finite_addition_defect",
+      "view": "window"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        0,
+        256
+      ],
+      "lane": "native",
+      "left_term": "R",
+      "pair_index": 0,
+      "right_term": "M",
+      "view": "window"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        0,
+        256
+      ],
+      "lane": "native",
+      "left_term": "R",
+      "pair_index": 1,
+      "right_term": "finite_addition_defect",
+      "view": "window"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        0,
+        256
+      ],
+      "lane": "native",
+      "left_term": "M",
+      "pair_index": 2,
+      "right_term": "finite_addition_defect",
+      "view": "window"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        256,
+        512
+      ],
+      "lane": "native",
+      "left_term": "input_H19",
+      "pair_index": 0,
+      "right_term": "projection",
+      "view": "window"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        256,
+        512
+      ],
+      "lane": "native",
+      "left_term": "input_H19",
+      "pair_index": 1,
+      "right_term": "finite_addition_defect",
+      "view": "window"
+    },
+    {
+      "account": "residual",
+      "bounds": [
+        256,
+        512
+      ],
+      "lane": "native",
+      "left_term": "projection",
+      "pair_index": 2,
+      "right_term": "finite_addition_defect",
+      "view": "window"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        256,
+        512
+      ],
+      "lane": "native",
+      "left_term": "R",
+      "pair_index": 0,
+      "right_term": "M",
+      "view": "window"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        256,
+        512
+      ],
+      "lane": "native",
+      "left_term": "R",
+      "pair_index": 1,
+      "right_term": "finite_addition_defect",
+      "view": "window"
+    },
+    {
+      "account": "output",
+      "bounds": [
+        256,
+        512
+      ],
+      "lane": "native",
+      "left_term": "M",
+      "pair_index": 2,
+      "right_term": "finite_addition_defect",
+      "view": "window"
+    }
+  ],
+  "affected_records": 36,
+  "arrays_read": 0,
+  "bindings": {
+    "job_id": "job-f74bf3f78621",
+    "native_manifest_sha256": "d4beda87d13774a57be662bf2335aaf3cc23f0ddc305ac101942926f5cf4ef5d",
+    "original_audit_sha256": "0c42b3e5f5ccf31229e0d4cb05456d1e6c6e0b0e6b4bdc5cab447b285bb63d45",
+    "original_compact_manifest_sha256": "f3b67a7fe77cf1003775b6e2fd551b79ba4580c4e1f9330b439c4cdf8fe652ab",
+    "original_reader_sha256": "c0adfae449b426c52c91a5cb2e05fd27453cdd704354dbd7dd465a194d19723b",
+    "request_sha256": "d0bb13015d8bcb735f0de5cc2a4587d8aa96eb13b7af51d6c6af391015cdf827"
+  },
+  "model_calls": 0,
+  "numerical_reductions": 0,
+  "original_files_unchanged": true,
+  "original_residual_accounts_canonical_sha256": "2522e04c830a096d41eb8e2a3eab119f04d812f71c88378079829238936e127e",
+  "read_manifest": [
+    {
+      "bytes": 4782,
+      "path": "artifacts/mdb-qwen-error-consumer-20261106/compact-collection-01/extracted/binding-minimal-result/files.json",
+      "sha256": "f3b67a7fe77cf1003775b6e2fd551b79ba4580c4e1f9330b439c4cdf8fe652ab"
+    },
+    {
+      "bytes": 290290,
+      "path": "artifacts/mdb-qwen-error-consumer-20261106/compact-collection-01/extracted/binding-minimal-result/audit.json",
+      "sha256": "0c42b3e5f5ccf31229e0d4cb05456d1e6c6e0b0e6b4bdc5cab447b285bb63d45"
+    },
+    {
+      "bytes": 38216,
+      "path": "saturn-pub/packages/mdb/qualification/audit_qwen_error_consumer.py",
+      "sha256": "c0adfae449b426c52c91a5cb2e05fd27453cdd704354dbd7dd465a194d19723b"
+    }
+  ],
+  "schema": "mdb-qwen-consumer-cross-term-label-repair-v1",
+  "scope": "Reporting metadata correction only; no scientific row, number, inventory, source or historical failure rewritten.",
+  "script_sha256": "bc0af9ee043bab433e6d4a9b58877ba4b08bd2b532a3c3d20269ed99ed352eeb",
+  "sidecar_sha256": "9f4b81e3cf4aabfde47b3db487769a195cff87ca0973632bdb343d1caf09ef70"
+}

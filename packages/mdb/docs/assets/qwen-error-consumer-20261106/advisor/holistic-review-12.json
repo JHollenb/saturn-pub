@@ -1,0 +1,375 @@
+{
+  "schema": "mdb-astra-holistic-review-v1",
+  "review_number": 12,
+  "anchor_completed_research_turn": 16,
+  "next_review_no_later_than_turn": 19,
+  "goal_status": "active",
+  "evidence": {
+    "review_scope": "Read-only local prose, source, JSON, file hashing and small metadata arithmetic. No models, activation arrays, weight payloads, scheduler/network services, job operations, file edits, subagents or task messages. Turn17 is reviewed prospectively; no turn17 original-data outcome is included.",
+    "turn15_compact_verification": {
+      "root": "artifacts/mdb-qwen-cached-qkv-20261106/compact-collection-01/extracted/binding-minimal-result",
+      "independently_hashed_manifest_members": 42,
+      "member_bytes": 2646918,
+      "wrapper_bytes": 4456,
+      "total_files": 43,
+      "total_bytes": 2651374,
+      "hash_mismatches": 0,
+      "raw_inventory_metadata_recount": {
+        "members_excluding_wrapper": 148,
+        "bytes_excluding_wrapper": 423853232,
+        "indexed_payloads_read": false
+      }
+    },
+    "turn15_independent_account_recount": {
+      "method": "Enumerated individual saved-report fields, summed their sample counts, checked products of declared shapes for all 288 primary/window endpoint/response records, and independently summed QKV defect counts. This recount does not repeat the near-data array audit.",
+      "channels": [
+        "cached-qkv-minus-full-functional",
+        "cached-qkv-minus-native",
+        "full-functional-minus-native"
+      ],
+      "per_channel": {
+        "primary_endpoint_fields": 8,
+        "primary_endpoint_positions": 12058624,
+        "bit_exact_endpoint_fields": 8,
+        "numerically_changed_endpoint_positions": 0,
+        "primary_signed_response_fields": 8,
+        "primary_signed_response_positions": 12058624,
+        "bit_exact_signed_response_fields": 8,
+        "dependent_endpoint_window_fields": 40,
+        "dependent_signed_response_window_fields": 40,
+        "positions_per_window_account": 12058624,
+        "all_window_comparisons_bit_exact": true
+      },
+      "shape_count_disagreements": 0,
+      "QKV_per_channel": {
+        "fields": 6,
+        "positions": 6291456,
+        "numerically_changed_positions": 0,
+        "full_functional_minus_native_bit_exact_fields": 6,
+        "cached_minus_full_functional_bit_exact_fields": 3,
+        "cached_minus_native_bit_exact_fields": 3
+      },
+      "unique_cached_QKV_signed_zero_defects": {
+        "last_row_negative": {
+          "q": 1,
+          "k": 0,
+          "v": 0
+        },
+        "alternating64": {
+          "q": 364,
+          "k": 67,
+          "v": 0
+        },
+        "total": 432,
+        "qualification": "The cached/direct and cached/native channels repeat these defects; they are not 864 independent defects."
+      },
+      "positive_baseline": {
+        "output_fields": 4,
+        "output_positions": 6029312,
+        "QKV_fields": 3,
+        "QKV_positions": 3145728,
+        "all_seven_fields_bit_exact": true
+      },
+      "native_H19_response_RMS": {
+        "last_row_whole": 0.08483428803931625,
+        "last_row_first_511": 0.0,
+        "last_row_edited_row": 1.919580811191467,
+        "alternating64_whole": 10.503882937020412,
+        "alternating64_successive_64_row_windows": [
+          0.0,
+          2.4580191978371255,
+          0.15984609527717383,
+          29.435981142002547,
+          0.16440232117824,
+          2.264566380602404,
+          0.17770489052610172,
+          2.2183757684636984
+        ]
+      },
+      "dependence": "Channels share operands; windows partition and repeat whole-field coordinates. Scalar positions are coverage denominators, not independent trials."
+    },
+    "turn15_chronology_and_consumption": {
+      "forecast_seal_sha256": "f55ba3ef6ef0c5a16cefc4efff42fdc9fe58062dfc6432a46942cf8392c096c4",
+      "forecast_lanes_completed_before_seal": 4,
+      "native_targets_at_seal": 0,
+      "native_calls_after_seal": 3,
+      "SDPA_occurrences": 7,
+      "linear_occurrences": 43,
+      "native_module_entries": 45,
+      "independently_checked_QKV_descriptor_joins": 21,
+      "aggregate_SDPA_receipt_scope": "The seven-call sidecar is written after targets. Forecast arrays and complete response hashes are sealed before targets; the sidecar joins to those retained ports.",
+      "installed_lookup_receipt_recount": {
+        "queries": 12,
+        "matches": 4,
+        "changed_source_abstentions": 4,
+        "changed_profile_abstentions": 4,
+        "reviewer_reran_queries": false
+      },
+      "job_measurements_from_saved_receipts": {
+        "native": {
+          "job": "job-585e40c9614b",
+          "seconds": 45.4,
+          "RSS_MB": 1697.3,
+          "VRAM_MB": 676
+        },
+        "saved_only_audit": {
+          "job": "job-aa0dc56ace52",
+          "seconds": 18.83,
+          "RSS_MB": 1045.3,
+          "VRAM_MB": 0
+        }
+      }
+    },
+    "turn16_independent_metadata_recount": {
+      "input_manifest_members_hashed": 9,
+      "input_manifest_hash_mismatches": 0,
+      "read_manifest_entries_independently_rehashed": 26,
+      "read_manifest_bytes": 472652,
+      "wrappers": 2,
+      "data_members": 24,
+      "read_manifest_size_or_hash_mismatches": 0,
+      "main_plans": [
+        {
+          "case": "turn14.all-negative",
+          "method": "m0",
+          "closed_rows": 512,
+          "cross_sign_edges": 0,
+          "lookup": "exact-occurrence"
+        },
+        {
+          "case": "turn14.prefix-negative",
+          "method": "m2",
+          "closed_rows": 256,
+          "cross_sign_edges": 65536,
+          "lookup": "no-exact-occurrence"
+        },
+        {
+          "case": "turn15.last-row-negative",
+          "method": "m1",
+          "closed_rows": 511,
+          "cross_sign_edges": 511,
+          "lookup": "exact-occurrence"
+        },
+        {
+          "case": "turn15.alternating64",
+          "method": "m1",
+          "closed_rows": 64,
+          "cross_sign_edges": 65536,
+          "lookup": "exact-occurrence"
+        }
+      ],
+      "support_counts_independently_recomputed_from_sign_vectors": true,
+      "query_rows_per_plan": 512,
+      "decision_hashes_unchanged_by_coverage": 4,
+      "controls": {
+        "total": 28,
+        "changed_source_profile_or_cache_abstentions": 12,
+        "missing_prediction_port_fallbacks": 4,
+        "missing_response_baseline_abstentions": 4,
+        "unchanged_local_plan_with_unqualified_continuation": 4,
+        "fallback_disabled": {
+          "prefix_abstention": 1,
+          "other_candidates_retained": 3
+        }
+      },
+      "coverage_index": {
+        "occurrences": 4,
+        "account_kind_entries": 20,
+        "evidence_references": 8,
+        "historical_methods": [
+          "m0",
+          "m0",
+          "m1",
+          "m1"
+        ],
+        "qualification": "These are dependent metadata entries. The historical prefix m0 counterexample is not converted into m2 evidence."
+      },
+      "installed_qualification": {
+        "reported_focused_checks": 29,
+        "reviewer_executed_tests": false,
+        "wheel_sha256_from_receipt": "21fed3096a796f46584f20da8ca47bc7f1244e5b0fd1c1b3fb91a768f9984377",
+        "reported_framework_imports": {
+          "torch": false,
+          "numpy": false
+        }
+      }
+    },
+    "turn17_prospective_metadata_recount": {
+      "selected_input_arrays": 7,
+      "input_roots": 2,
+      "selected_archive_bytes": 5256576,
+      "original_block19_recipes": 11,
+      "parameter_payload_bytes": 201861632,
+      "planned_functional_worlds": 2,
+      "planned_native_worlds": 2,
+      "planned_extra_baselines": 0,
+      "planned_SDPA_occurrences": 4,
+      "planned_linear_occurrences": 28,
+      "planned_native_module_entries": 30,
+      "five_port_positions_per_world": 7340032,
+      "expected_endpoint_account": {
+        "fields": 10,
+        "positions": 14680064
+      },
+      "expected_signed_response_account": {
+        "fields": 5,
+        "positions": 7340032
+      },
+      "status": "Design/source arithmetic only, not observed execution."
+    },
+    "file_sha256": {
+      "artifacts/mdb-flux-understanding-20261106/README.md": "aed09527217e837c6a8219c0ac4c8af0295eac7b96ab7e59e334d128234171a4",
+      "artifacts/mdb-flux-understanding-20261106/direction-10.md": "1d56f79cf44d2df8e148a9f2710ab08f4fd682685551cd0093aae7dac0ed26a9",
+      "artifacts/mdb-flux-understanding-20261106/direction-11.md": "519ba55d84b6ec3dbeb1a5691d34a1ed4e2dcea633d7f52be9d0327ff028cfe6",
+      "artifacts/mdb-flux-understanding-20261106/holistic-review-11.json": "f4f06477c901791a308636f06d2e6c4912c9944db55bb993d1888cfd5cc682c5",
+      "obsidian/blog/2026-11-06-084211-where-a-computation-shortcut-stops-working.md": "a4e9049758384f74424821e7c2675c568d22fa4d1f00449cd4dd292d1c7f320f",
+      "obsidian/blog/2026-11-06-090851-predicting-attention-from-transformed-operands.md": "0e4751660e5094ff6d9e27b702552c8d2cbb4cc342d5ee7f0bdb46df2c7c36e8",
+      "obsidian/blog/2026-11-06-092300-a-symbol-table-that-checks-its-inputs.md": "5319ce3eccd14238f4a8c50ef4a32fed6dcd053d623f51b82e456c800a78f45c",
+      "artifacts/mdb-qwen-cached-qkv-20261106/compact-collection-01/extracted/binding-minimal-result/files.json": "c662757ab5f261b91f72006bd3de57291e1ff70e208c38e9e30631cb6c1a3ca7",
+      "artifacts/mdb-qwen-cached-qkv-20261106/compact-collection-01/extracted/binding-minimal-result/audit.json": "ae9bbed0078267d4968cc730e8c0116baf3dae6c73271fbcbf2fee00edd1a223",
+      "artifacts/mdb-qwen-cached-qkv-20261106/saved-report-verification-v1/verification.json": "733788bb8602639868592223bfeb50dea0d4998f0807e040398e2481fb1f057e",
+      "artifacts/mdb-qwen-cached-qkv-20261106/docs-verification-v1.json": "22c85c14ad1c22ff57ad56e1a12143fcf996fd274367d3dd9800154c2a5710c5",
+      "saturn-pub/packages/mdb/qualification/qwen_cached_qkv.py": "95d356185b8bdd64479bc1e7937fa034aa24dc5f5b011b7075f0430e31c1bb21",
+      "saturn-pub/packages/mdb/qualification/qwen_component_experiment.py": "81131b179f1a8a5ea52011be3e450e5901255f350d89ff11c053902c16a28580",
+      "saturn-pub/packages/mdb/qualification/qwen_cached_qkv_campaign.py": "d2c9e472ac06c667fea0726ac62f629e63ad776173a2e323821bf66f71b0d8f5",
+      "saturn-pub/packages/mdb/qualification/audit_qwen_cached_qkv.py": "b473d178fd9825009c0c039dc23ab0f2208309f2d34ccc2d784ee5b5710385eb",
+      "saturn-pub/packages/mdb/src/mdb/computation_applicability.py": "820e971a6128aa7f49cd169734fd2a123e8a60924b25a6d08f6d0a46d33996f3",
+      "saturn-pub/packages/mdb/tests/test_computation_applicability.py": "6a98faabbc2ff4142be18e0cc6ac9041d41b56232a8ce9586b4d3412a54fdbe9",
+      "artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/qualification.json": "7848766cc9d6e6c62565a9b1397fe0097202fa4c26f2db6e2116ad7360f82d9f",
+      "artifacts/mdb-qwen-applicability-20261106/packets-v1/inputs-manifest.json": "fa30ac0218f859a96df10ea80095f6211493c310422774fe442e9255497c61ca",
+      "artifacts/mdb-qwen-applicability-20261106/packets-v1/read-manifest.json": "72d3d0eae09cfbc1dfef25bbd20e45f9c35f8c71b1ca3ff6115ace454fe64a25",
+      "artifacts/mdb-qwen-applicability-20261106/replay-v1/plans.json": "3073fd66494baafb92d09bb159d6bd3a2996c999f4924648e4f363481a5b61ff",
+      "artifacts/mdb-qwen-applicability-20261106/replay-v1/controls.json": "6da0f3bf66b57e79885545403be69a1b426211f8d335581111ce2e9b007aa60e",
+      "artifacts/mdb-qwen-applicability-20261106/replay-v1/coverage-index.json": "cfbbff6010d6d4d9fa88f64526e4ff330ca1fadc7dcc487f69f1e06b3047ba6a",
+      "artifacts/mdb-qwen-applicability-20261106/replay-v1/replay-receipt.json": "7e3606bb7a19831b96e4672a9aae463319275ad72531adbf6c363ff5aebb746e",
+      "artifacts/mdb-qwen-applicability-20261106/replay-review-v1.json": "8ed51f94bb74184b0a8c602386732005b9f5243a9ee125615dd79bbdc7c25941",
+      "artifacts/mdb-qwen-applicability-20261106/docs-verification-v1.json": "37c1d2c77925f7cfbd087e25c76c0d85cd026f4cfbd2ec54ed881805242dcc04",
+      "artifacts/mdb-qwen-error-consumer-20261106/design-v1.md": "ae6ef81ab03d351c16f736e9c025edc1578e1d8a66b11a61e9fde79b1248f52f",
+      "artifacts/mdb-qwen-error-consumer-20261106/selection-v1/protocol.json": "4e62bc3fa8adcd059ac12f775effa0010752e3c5e0cca2a2ebc4702ecef7f847",
+      "saturn-pub/packages/mdb/qualification/qwen_component_experiment_v2.py": "c93324ee76156f2fba16f70d7cef78b7accbf6020f0c899cb04d856c348b5762",
+      "saturn-pub/packages/mdb/qualification/qwen_error_consumer_campaign.py": "ad82b86dd837a1f2bc9134f2c5bda3dcb097e8f8583e7849fcfbe8d5c49b229b",
+      "saturn-pub/packages/mdb/qualification/audit_qwen_error_consumer.py": "c0adfae449b426c52c91a5cb2e05fd27453cdd704354dbd7dd465a194d19723b"
+    }
+  },
+  "material_narrative_corrections": [],
+  "findings": [
+    {
+      "status": "observation",
+      "finding": "Turn15 closes the missing transformed-operand test for its two frozen edits. Recomputing attention and its complete tail from signed inherited QKV predicts the mixed-support response that stale R/G/U reuse could not explain. This is a substantive advance beyond another exact replay."
+    },
+    {
+      "status": "mathematical scope",
+      "finding": "The derivation correctly includes input RMSNorm, bias-free projections, per-head Q/K RMSNorm, fixed-position RoPE and the 32-query/8-KV-head mapping. Their ideal oddness gives the signed-QKV relation; mixed signs change both logits and values. Support closure is sufficient for ideal head oddness, not necessary for accidental equality and not an unconditional finite-bit theorem."
+    },
+    {
+      "status": "finite observation",
+      "finding": "The 432 Q/K zero-sign defects refute blanket bitwise formation equivariance even though all measured downstream outputs reconcile. The observations locate reconciliation by the retained head boundary; they do not identify the internal instruction that removes the distinction or prove universal zero-sign insensitivity."
+    },
+    {
+      "status": "working inference",
+      "finding": "Permitted support and state-dependent reads must remain distinct. Prefix and alternating64 edits have the same 65,536 cross-sign edges but different closed prefixes. Later positive-input windows respond under alternating64 because their reads include edited operands. Edge counts do not quantify attention mass, causal importance or response magnitude."
+    },
+    {
+      "status": "implemented mechanics",
+      "finding": "Turn16 implements the requested separation between structural eligibility, source/profile support, operand availability, selected computation, occurrence coverage and outcome. Selection is fixed before coverage inspection, and unsupported continuation does not invalidate an otherwise supported local plan."
+    },
+    {
+      "status": "source boundary",
+      "finding": "The applicability function is deliberately bound to two original packet kinds and exact source-record/parameter digests. It computes support for supplied sign vectors but does not discover prerequisites, authenticate live payload bytes, attest hardware, or resolve an arbitrary fresh context. Method priority is supplied policy, not a learned cost model."
+    },
+    {
+      "status": "scientific knowledge versus convention",
+      "finding": "Empirically earned knowledge includes the finite success of the global relation across three fresh contexts, its prefix-support failure, and the transformed-QKV predictions in turn15. The architecture, masks, parameter addresses, normalization order and ideal identities come from inspected source and mathematics. Generic IDs, method priority and exact digest allowlists are engineering conventions. None should be presented as automatically learned semantic structure."
+    },
+    {
+      "status": "prospective consumer assessment",
+      "finding": "Turn17 is the smallest discriminating continuation now available. The two inputs are different sealed turn14 forecasts, not two equal corrected states. Exactly two own-input functional graphs and two native block19 calls can test the conditional total effect of this specific approximation error on H20."
+    },
+    {
+      "status": "pre-execution review",
+      "finding": "No concrete scientific blocker was found in the inspected protocol, explicit-world evaluator, adapter and saved-reader source. Actual O-projection capture, common context, original forecast lineage, complete FP64 response commitments, global pretarget sealing and finite-addition defect accounts address the main confounds. This source review does not replace root's ongoing installed reader/frontend qualification."
+    },
+    {
+      "status": "reporting refinement",
+      "finding": "Describe turn17's result as propagation, attenuation, rotation or cancellation of a fixed discrepancy. A claim of spread needs row/coordinate support comparisons between delta H19 and delta H20 in their common residual basis; two regional RMS values alone do not establish spread. The retained arrays permit this saved-only analysis without another model run."
+    },
+    {
+      "status": "causal boundary",
+      "finding": "Signed R/M cross terms and finite-addition defects describe the realized vector decomposition. Negative alignment does not establish an autonomous repair mechanism, necessity, sufficiency or a causal mediation percentage. Likewise, the H20/H19 norm ratio is a secant response for these worlds, not intrinsic gain or a general stability constant."
+    },
+    {
+      "status": "cumulative counterevidence",
+      "finding": "Retain failed intended semantic transfers; M-only exceeding H-only locally but H-only exceeding M-only after the FLUX consumer; absolute response growth alongside declining relative response; independent-arithmetic small-response misses of approximately 89.5202% and 96.6885%; historical residual signed-zero defects; and decoder recovery limitations. Later native-primitive parity does not revise any of those earlier observations."
+    }
+  ],
+  "coverage": {
+    "operationally_understood": [
+      "An executable source-native composition from supplied raw prompt/seed through tested Qwen conditioning, the denoising schedule, decoder and pixels, with own-state formation and prospective native comparisons.",
+      "Bound input, parameter, layout, dtype, operation-order and continuation records sufficient to inspect and reproduce the tested program at the declared primitive boundary.",
+      "Conditional direct-conditioning versus regenerated-history consequences, including consumed image changes, without assigning object semantics.",
+      "A support-sensitive boundary for cheap R/G/U reuse and a numerically successful transformed-QKV alternative for the two tested mixed-support edits.",
+      "Reusable source-only planning over the declared original packet domain, with explicit missing-port handling, fallback and abstention."
+    ],
+    "not_established": [
+      "Any turn17 original block19 outcome.",
+      "An independent numerical implementation of native CUDA attention/GEMM reduction arithmetic.",
+      "Universal finite sign equivariance or hardware/kernel portability.",
+      "Automatic applicability discovery across arbitrary prompts, source states or parameter instances.",
+      "A semantic dictionary or general prompt-to-circuit compiler.",
+      "A measured shortcut speedup.",
+      "A causal repair writer inferred solely from cancellation."
+    ],
+    "evidence_access": {
+      "requested_local_posts_source_and_metadata": "Accessible; inspected through completed turn16 and the named prospective turn17 source snapshot.",
+      "original_activation_arrays_and_weight_payloads": "Outside this permitted review and not accessed. Near-data numerical conclusions rely on authenticated compact reports and inspected accounting source, not a repeated payload audit.",
+      "turn17_original_results": "Unavailable at the stipulated anchor and not reviewed. No later result is incorporated.",
+      "figures": "Rendered figures were not independently inspected in this text/source review.",
+      "historical_evidence": "Reviewed cumulatively through the ledger, directions, review11 and selected earlier post passages. Earlier complete compact inventories were not all rehashed.",
+      "runtime_services_and_remote_repository_state": "Not accessed. Job execution, installed command execution and publication claims are receipt-based; no scheduler or remote push verification was performed."
+    }
+  },
+  "ranked_next_cuts": [
+    {
+      "rank": 1,
+      "action": "Complete qualification and execute the frozen turn17 two-world block19 consumer experiment under root's normal process.",
+      "question": "What does the next native computation do to the actual turn14 cheap-versus-full H19 discrepancy, and does the complete functional graph predict both endpoints and their signed difference?",
+      "falsifiable_expectations": [
+        "Under the unchanged causal/no-cache profile, equal first256 input rows and positions predict equal first256 outputs; verify the input premise and retain any numerical or bitwise counterexample.",
+        "The complete source-native functional graph predicts head, actual projection, R, M and H20 for both input worlds and their cheap-minus-full difference.",
+        "Suffix magnitude, direction, support and cancellation are observations; no amplification, attenuation or nonzero-response gate is required."
+      ],
+      "pre_execution_focus": "Finish the actual serialized-fixture reader/frontend qualification. Preserve the two forecast-array lineages, exactly two native calls, actual projection hook and full pretarget response commitments. Do not add an extra baseline.",
+      "interpretation": "A conditional native-consumer total effect of a fixed internal state replacement. It is neither a block19 row-sign shortcut test nor a full Qwen/LM/image consequence.",
+      "decision_rule": "If parity fails, localize the first affected retained port and check operand/layout/profile agreement before attributing a new mechanism. If parity holds, report the observed consumer effect and assess bounded completion rather than automatically extending the suffix."
+    },
+    {
+      "rank": 2,
+      "action": "Only if turn17 motivates a specific causal repair claim, perform one targeted writer-clamp contrast at the implicated residual or MLP boundary.",
+      "minimal_design": "Use the two authenticated worlds as controls. Hold the receiving residual fixed while replacing only the candidate write with its counterpart, preserve finite addition order, and consume the resulting state through the single continuation needed for the claim.",
+      "discrimination": "This can distinguish an effect causally attributable to the candidate write from descriptive anti-alignment between jointly changing terms. Include the reciprocal clamp only if the claim concerns both receiving worlds.",
+      "conditionality": "Not a default follow-up and not a completion requirement. If the intended claim remains an executable account of the measured total effect, the two-world experiment is sufficient for that horizon."
+    }
+  ],
+  "completion_envelope": {
+    "bounded_object": "The tested source-native program and explicitly declared intervention/applicability domain, using original parameters and qualified numerical primitives, dense live state and generic operation IDs.",
+    "distinctions": {
+      "executable_mechanistic_account": "Substantially established at the source-native primitive boundary: sufficient state, operations, bindings, chronology and consumed continuations are concrete and prospectively tested.",
+      "independent_numerical_implementation": "Separate and incomplete. Earlier independently implemented reductions retain their measured discrepancies, particularly for small responses.",
+      "causal_explanation": "Established for specific controlled state/history interventions and support-sensitive failures. Branch-specific necessity, mediation or repair requires the corresponding intervention and is not implied by parity.",
+      "semantic_naming": "Optional and currently limited. Generic IDs adequately name the tested computations."
+    },
+    "specific_remaining_question": "The next native-consumer consequence of turn14's real shortcut error remains unobserved at this anchor. Turn17 directly addresses it while testing the forecast of the complete discrepancy.",
+    "closure_after_turn17": "If the instrument is valid and the declared endpoint/response predictions are supported, the bounded account can close with an explicit statement of the observed consumer behavior and the selector's original-packet domain. Growth, attenuation or cancellation can each be a completed scientific answer. An unresolved functional/native mismatch keeps that particular prediction claim open; it does not justify erasing the rest of the account.",
+    "not_automatic_requirements": [
+      "Compression or a compact state representation.",
+      "A universal semantic dictionary.",
+      "Independent CUDA kernel reimplementation.",
+      "Arbitrary-context applicability or a learned resolver.",
+      "Another image from identical states.",
+      "A broad benchmark, unlimited seeds, more layer addresses or an indefinitely extended suffix.",
+      "A causal repair claim when only a bounded total-effect account is intended."
+    ],
+    "review_trigger": "Review again by completed turn19, or immediately after a major counterexample that changes the source, applicability, finite-arithmetic or consumer account."
+  },
+  "direction_markdown": "Turn15 and turn16 complete two different parts of the account. Turn15 supplies a new numerical result: signed inherited QKV, followed by recomputed attention and the entire receiving tail, predicts the mixed-support updates that stale R/G/U reuse missed. Turn16 turns the declared prerequisites into a reusable source-only planning function. Neither result needs a semantic label to be useful.\n\nI independently hashed all42 turn15 compact members. With the4,456-byte wrapper, the collection contains43files and2,651,374bytes, with no hash disagreement. Recounting the saved reports gives eight primary endpoint fields and eight complete signed-response fields per channel, each over12,058,624positions. Cached/full, cached/native and full/native all agree at those outputs. Each channel also has40 dependent window fields per account. These are repeated views of shared operands, not independent replications.\n\nThe finite caveat remains precise. Directly formed QKV agrees bitwise with native QKV across six fields and6,291,456positions. Cached QKV has zero numerical error but432 unique Q/K signed-zero differences: one last-row Q,364 alternating Q and67 alternating K. V is exact. The head and downstream ports reconcile exactly in these executions. This closes the tested output prediction without proving bitwise formation equivariance or universal insensitivity to zero signs.\n\nThe latest posts need no material numerical or interpretive correction. The transformed-operand post now explicitly names per-head Q/K normalization and the grouped-head mapping. Its equations correctly explain why both logits and values change under mixed signs. The prefix and alternating edits have the same cross-sign edge count but different closed prefixes, so permitted-edge totals cannot summarize the live read. The large alternating-window response also includes direct input negation and inherited amplitude; it is not evidence of intrinsic amplification.\n\nTurn16 is useful because selection no longer follows the observed error. I rehashed its nine input-manifest members and all26 entries in the source read manifest, totaling472,652bytes. Its four plans select m0,m2,m1,m1, retain all512queries and preserve the different port availability of the two packets. The28 controls retain the intended abstentions and fallbacks. All four decision hashes remain unchanged when coverage is attached. The historical prefix m0 miss remains m0; the newly selected m2 has no exact selected-method occurrence in that index.\n\nThe narrow domain is part of the achievement. The evaluator checks exact original source-record and parameter descriptors, declared profile, structural support and availability. It does not inspect live payloads, discover prerequisites or generalize across arbitrary fresh contexts. Its method order is policy. The source architecture and ideal algebra are supplied knowledge; the finite successes, failures and consumed consequences are what the experiments have established. Keep those categories separate when describing what has been learned.\n\nThe frozen block19 consumer is the right next experiment. It takes two genuinely different H19 forecasts from turn14 and asks what the next computation does to their difference. Both complete own-input forecasts and the five-port cheap-minus-full response must precede exactly two native calls. The inspected source captures the actual O-projection output, preserves the original forecast lineages and common context, and retains the finite-addition defects. I found no scientific blocker in that design. Root's ongoing installed reader/frontend qualification remains necessary engineering work; this review does not substitute for it.\n\nInterpret the next result in the common residual coordinates. Compare deltaH20 with deltaH19 using magnitude, direction, absolute and reference-relative measures, and prefix/suffix accounts. If reporting spread, compare which rows or coordinates change at input and output; regional RMS alone cannot establish it. Equal first256 inputs under the same causal profile predict equal first256 outputs, but retain any finite counterexample rather than turning that prediction into a gate that suppresses the remaining evidence.\n\nThe equations deltaR=deltaH19+deltaProjection+epsilonR and deltaH20=deltaR+deltaM+epsilonH give a useful account of the realized update. Their signed cross terms describe cancellation. They do not identify causal mediation shares or prove that an MLP writer repairs errors. A targeted clamp would be justified only if that stronger causal claim becomes the question. No such additional experiment is required merely to report what the two-world consumer does.\n\nThe cumulative result already supports a substantial operational account of the tested raw-input-to-image program at the source-native primitive boundary. It forms its own states, binds the numerical policy, predicts retained fields and tests actual consumed interventions. Independent numerical implementation remains a separate achievement: later shared-primitive parity does not erase earlier small-response misses. Preserve failed semantic transfers, the FLUX writer-ranking reversal after consumption, absolute/relative countertrends, residual signed-zero defects and the decoder's failed-job recovery limits, including the missing final resident-parameter checks and limited micro-array retention.\n\nKeep completion bounded. Reusable planning over the declared original packet domain is implemented. The specific open question now is the consumer consequence of the real turn14 approximation error and whether the complete block19 account predicts it. If turn17 answers that question with a valid instrument, assess closure of this bounded account. Do not automatically demand another prompt family, layer, image suffix, compressed representation, semantic dictionary or independent CUDA implementation. If a new mismatch appears, investigate that concrete discrepancy. This review anchors completed turn16 only; review again by turn19 or immediately after a major counterexample."
+}

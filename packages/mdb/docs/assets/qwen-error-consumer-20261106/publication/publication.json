@@ -1,0 +1,60 @@
+{
+  "audit_sha256": "0c42b3e5f5ccf31229e0d4cb05456d1e6c6e0b0e6b4bdc5cab447b285bb63d45",
+  "compact_manifest_sha256": "f3b67a7fe77cf1003775b6e2fd551b79ba4580c4e1f9330b439c4cdf8fe652ab",
+  "figures": {
+    "predicted-error-continuation.png": {
+      "bytes": 111732,
+      "sha256": "fa08c8c944ab2357501132fedbe2f9b142b16431cefa735831c66db8fd7b6d98"
+    },
+    "signed-energy-account.png": {
+      "bytes": 82579,
+      "sha256": "6be1f54a139193371dee6b07649831d76856ae31d8a99bd0adb22fe39e5a0d83"
+    }
+  },
+  "label_sidecar_sha256": "9f4b81e3cf4aabfde47b3db487769a195cff87ca0973632bdb343d1caf09ef70",
+  "model_calls": 0,
+  "primary": {
+    "bit_exact_endpoint_fields": 10,
+    "bit_exact_response_fields": 5,
+    "endpoint_fields": 10,
+    "endpoint_positions": 14680064,
+    "response_fields": 5,
+    "response_positions": 7340032
+  },
+  "publisher_sha256": "6e0015c48ad4b30179bc5ee40a16cf671c84acac4af5e2407f48b0c04d81fec6",
+  "raw_arrays_read": 0,
+  "schema": "mdb-error-consumer-publication-v1",
+  "scope": "Metadata-only plotting of two dependent worlds; no new scientific result or causal-share estimate.",
+  "suffix": {
+    "H20_H19_cosine": 0.5483053954961112,
+    "H20_H19_rms_ratio": 1.3446501262259594,
+    "R_M_cosine": -0.4104806566018152,
+    "energies": [
+      104061.98940752493,
+      48028.421206590385,
+      -58038.7311810754,
+      0.2560237431505987
+    ],
+    "finite_addition_components": [
+      5.402119226021731,
+      11.703174521535288,
+      -16.84927000440642
+    ],
+    "input_energy": 52017.46015979006,
+    "labels": [
+      "Input H19",
+      "Attention write",
+      "Residual R",
+      "MLP write",
+      "Output H20"
+    ],
+    "native_rms": [
+      0.28173098021787274,
+      0.276628458918592,
+      0.3984796037181241,
+      0.27071304885362735,
+      0.3788295981117259
+    ],
+    "output_energy": 94051.93545678306
+  }
+}

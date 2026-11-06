@@ -1,0 +1,25 @@
+{
+  "anchor_completed_research_turn": 16,
+  "direction_sha256": "2e1332463f08aae91dd7846ea085f5e6ee1589814f664abb842efcc82e9b1f1a",
+  "elapsed_s": 424.12834310531616,
+  "execution_receipt_sha256": "294427ddaa5b6f6086412b7fdd2976d8bf021e719263345f7c80e52a8d966055",
+  "final_response_sha256": "0f6a01f195d5df8d154079e95a209e1fad2db7ff7fe23d80e3379464b0d141f4",
+  "invocation_sha256": "c854ef97d27bbeb08edab77b9b82b746236ff1386c1f0026ce01c95d16a5b229",
+  "material_narrative_corrections": [],
+  "method": "Actual explicitly requested advisor through read-only Codex CLI; coordinator thread limit previously refused an extra thread.",
+  "model": "gpt-6-astra",
+  "model_header": {
+    "effort": "high",
+    "expected_model": "gpt-6-astra",
+    "path": "review-12-cli/stderr.log",
+    "sandbox": "read-only"
+  },
+  "next_review_no_later_than_turn": 19,
+  "original_model_calls": 0,
+  "prompt_sha256": "c2c3ca60cd548082e336332643402f14610c994750dcaf54b6ac101ce59d328e",
+  "report_sha256": "0f6a01f195d5df8d154079e95a209e1fad2db7ff7fe23d80e3379464b0d141f4",
+  "returncode": 0,
+  "review_number": 12,
+  "schema": "mdb-actual-astra-holistic-review-provenance-v1",
+  "scope": "Actual15/16 posts, source and metadata reviewed holistically. Turn17 source/protocol assessed prospectively; its later outcomes and post were not reviewed."
+}

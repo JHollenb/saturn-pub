@@ -1,0 +1,19 @@
+{
+  "FLUX": 0,
+  "LM": 0,
+  "VAE": 0,
+  "component_hydrations": 1,
+  "embedding": 0,
+  "forecast_module_attempts": 0,
+  "full_model": 0,
+  "functional_SDPA": 2,
+  "functional_blocks": 2,
+  "functional_linear": 14,
+  "native_SDPA": 2,
+  "native_authorizations": 2,
+  "native_block_calls": 2,
+  "native_linear": 14,
+  "native_module_entries": 30,
+  "noise": 0,
+  "tokenizer": 0
+}

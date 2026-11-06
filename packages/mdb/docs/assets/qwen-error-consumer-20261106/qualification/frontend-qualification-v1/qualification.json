@@ -1,0 +1,32 @@
+{
+  "schema": "mdb-error-consumer-frontends-qualified-v1",
+  "base_commit": "698fe49ebfe3b9d64078b48fa5f583a7b427e104",
+  "source_sha256": {
+    "qualification/stage_qwen_error_consumer.py": "c7574da612f8548e0574e627496e273c6ac8f81e8b04f5984fb368759d21cf28",
+    "qualification/stage_qwen_error_consumer_saved_audit.py": "0556094604951913293e6c5704487754420d6328a35bea258d9f77bad61c0d87",
+    "tests/test_stage_qwen_error_consumer.py": "7759152d5ecebbc5b8682f7cd96bbf591b39eca2510be4aa691f5574952b735a",
+    "tests/test_stage_qwen_error_consumer_saved_audit.py": "4b61c95f9e982bd74aea803694e35156be87ecc22365b9ed9203ebbc4a61585d"
+  },
+  "producer_sha256": "ad82b86dd837a1f2bc9134f2c5bda3dcb097e8f8583e7849fcfbe8d5c49b229b",
+  "component_sha256": "c93324ee76156f2fba16f70d7cef78b7accbf6020f0c899cb04d856c348b5762",
+  "reader_sha256": "c0adfae449b426c52c91a5cb2e05fd27453cdd704354dbd7dd465a194d19723b",
+  "tests": {
+    "command": "rtk proxy /Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B artifacts/mdb-qwen-error-consumer-20261106/qualify_frontends.py artifacts/mdb-qwen-error-consumer-20261106/frontend-qualification-v1/attempt-03",
+    "receipt": "attempt-03/qualification.json",
+    "stdout": "attempt-03/tests.stdout",
+    "stderr": "attempt-03/tests.stderr",
+    "result": "13 passed in 1.02s",
+    "returncode": 0,
+    "coverage": "Two-root raw/seal and exact subset custody; producer14path ABI and2+2count plan; intent-first versus explicit measured reservation and finite review/no-repeat launch; installed package-derived wheel seals and dummy bootstrap; saved-only seven-helper delegation/tamper/resource guards; inert CLI"
+  },
+  "lint": {
+    "command": "rtk proxy uvx ruff check --select F,I qualification/stage_qwen_error_consumer.py qualification/stage_qwen_error_consumer_saved_audit.py tests/test_stage_qwen_error_consumer.py tests/test_stage_qwen_error_consumer_saved_audit.py",
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "result": "All checks passed!",
+    "returncode": 0
+  },
+  "actual_metadata_review": "../frontend-metadata-review-v1.json",
+  "root_commands": "../frontend-commands-v1.md",
+  "scope": "Installed fixed package cohort, synthetic metadata/payload and bootstrap only; explicit owned overlays plus source-pinned helpers from clean HEAD. No original array/weight payloads, models, SSH, scheduler, native or saved scientific stage/submission. Frozen turn14/15 files unchanged.",
+  "prior_attempts": "Source-checkout bootstrap attempt exposed pytest source-path versus installed-child package-seal mismatch. Qualified attempts run outside checkout with -I -B and -c /dev/null; original failed output was not rewritten. Attempt01 native8checks and attempt02 native9checks are preserved."
+}

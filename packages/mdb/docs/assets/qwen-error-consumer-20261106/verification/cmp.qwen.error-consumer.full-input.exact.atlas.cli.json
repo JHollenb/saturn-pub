@@ -1,0 +1,640 @@
+[
+  {
+    "applicability_query": {
+      "authority": "supplied-predicate-only; tested scope is separate",
+      "conditions": [
+        {
+          "condition": {
+            "field": "model_identity",
+            "op": "eq",
+            "value": "69a9189b00413ccb01943718a68eba2865181110aa30b04f17668a8e2e1ffb8c"
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "source_identity",
+            "op": "eq",
+            "value": {
+              "context-files.json": "d573bffe5c0c3dfc3d1c353721f5696909f73b75fb6ff293aed2e905f4ec0c33",
+              "context-request.json": "7a986d2ae78fd496f6908fb040057e902e2c208f3314ee12b09afd6a2f841573",
+              "context-seal.json": "a6d61b11fa67bfa0eb3a50fee66f26584b452874a590c255163102362460e652",
+              "count-contract.json": "6df2afa97a4908312685176762bd6319c4588e09a4e2428c2bb620999814e53b",
+              "flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+              "flux_functional_qwen_prefix_worker.py": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+              "flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+              "flux_source_receiver.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+              "parent-parameter-manifest.json": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+              "preflight.v1.json": "4af8da578a7c57937a473b7eb2fd011b2228a0803039f7c24a17a9c2bae28356",
+              "qwen-config.json": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+              "qwen-parameter-manifest.json": "69a9189b00413ccb01943718a68eba2865181110aa30b04f17668a8e2e1ffb8c",
+              "qwen-source-binding.json": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+              "qwen_component_experiment.py": "81131b179f1a8a5ea52011be3e450e5901255f350d89ff11c053902c16a28580",
+              "qwen_component_experiment_v2.py": "c93324ee76156f2fba16f70d7cef78b7accbf6020f0c899cb04d856c348b5762",
+              "qwen_error_consumer_campaign.py": "ad82b86dd837a1f2bc9134f2c5bda3dcb097e8f8583e7849fcfbe8d5c49b229b",
+              "qwen_h18_state_history.py": "17084d404f5ae00557e4ad8e94a8b84704787c47ebf9c875228cb452c4857036",
+              "qwen_row_sign_campaign.py": "fbd8eceaf1a9ef8917ecdc39a98ff960940aab9da8ecb4697c25c1a33d545f47",
+              "qwen_row_sign_shortcut.py": "940c3cfaafeaeb3f0df5746b92b6a8b0878255769c4f230b2a53bedfc0110c1c",
+              "qwen_sign_shortcut.py": "8e59051a34bc8e89c9376fd29aec966df9cbe84560c81f86910504172caaa457",
+              "qwen_sign_shortcut_campaign.py": "83f9d459938ccb96b913def78862cffc869cb6f0b4404a7f116d0a46fed184af",
+              "resource-basis.json": "9f4307a6e13e2e0001473581a17df90582bc2ea159124d76e162e728ff270151",
+              "retrieval-script.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+              "selection-protocol.json": "4e62bc3fa8adcd059ac12f775effa0010752e3c5e0cca2a2ebc4702ecef7f847",
+              "stage_qwen_error_consumer.py": "c7574da612f8548e0574e627496e273c6ac8f81e8b04f5984fb368759d21cf28",
+              "stage_qwen_sign_shortcut.py": "6f083cc6a039d50f8f206731d4a0fc87e76f9bf464c0d8cedba4caaecf04887b",
+              "world-files.json": "d36f790376a85ad995cf20f01cff89fb6e04d282fe1290f677ba348ec98f4c8f",
+              "world-forecast.json": "ced63ba53dbcb4b80bfa44012fcb0873a21753c053c83f6c7a2cd5c75ef20381",
+              "world-request.json": "810a90f133dc89f93073e682dc4ce4a09f702707a303095fb4fa3d40339f3d58",
+              "world-seal.json": "12077f1ee8ca0f2b23c1c440e11a9dea7b5f07058270041594320289055f0121",
+              "world-shortcut.json": "4866833cfffe92a5538d5ec9cd3c94148e15b4867522e33ac8c34340995c073e"
+            }
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "execution",
+            "op": "eq",
+            "value": {
+              "attention_dispatch": {
+                "backend": "sdpa",
+                "gqa_policy": "enable_gqa"
+              },
+              "backend": "cuda",
+              "learned_dtype": "torch.bfloat16",
+              "operand_device": "cuda:0",
+              "primitive_policy": {
+                "cuda_allow_bf16_reduced_precision_reduction": true,
+                "cuda_allow_tf32": false,
+                "cudnn_allow_tf32": false,
+                "cudnn_benchmark": false,
+                "cudnn_deterministic": true,
+                "deterministic_algorithms": true,
+                "float32_matmul_precision": "highest",
+                "num_threads": 4
+              },
+              "runtime_identity": "b8973b78c3c5b587235ce3157a839ce3312d40b9786965156326aa823b62e65a"
+            }
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "input_identity",
+            "op": "eq",
+            "value": "f34d3eb90ff3910fdb15fc99a5a157a7b6177807ab87a327516081b5cc4c80c5"
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "context_identity",
+            "op": "eq",
+            "value": "1ddc16ef86bbbaece2916789d962b36729182e3dc9d269059d74ae478dfbd03d"
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "frontier",
+            "op": "eq",
+            "value": "two-inherited-sealed-forecast-H19-worlds"
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "horizon",
+            "op": "eq",
+            "value": 20
+          },
+          "status": "matches"
+        },
+        {
+          "condition": {
+            "field": "world",
+            "op": "eq",
+            "value": "full-input"
+          },
+          "status": "matches"
+        }
+      ],
+      "status": "matches"
+    },
+    "atlas_schema": "mdb-computation-atlas-observation-v1",
+    "consumer_ids": [
+      "qwen.block19.head",
+      "qwen.block19.projection",
+      "qwen.block19.R",
+      "qwen.block19.M",
+      "qwen.block19.Hnext"
+    ],
+    "continuation": {
+      "provenance": [],
+      "status": "not-measured"
+    },
+    "counterexamples": [],
+    "equation": {
+      "alias": "cmp.qwen.error-consumer.full-input",
+      "applicability_authority": "supplied; no generalization inferred",
+      "applicability_conditions": [
+        {
+          "field": "model_identity",
+          "op": "eq",
+          "value": "69a9189b00413ccb01943718a68eba2865181110aa30b04f17668a8e2e1ffb8c"
+        },
+        {
+          "field": "source_identity",
+          "op": "eq",
+          "value": {
+            "context-files.json": "d573bffe5c0c3dfc3d1c353721f5696909f73b75fb6ff293aed2e905f4ec0c33",
+            "context-request.json": "7a986d2ae78fd496f6908fb040057e902e2c208f3314ee12b09afd6a2f841573",
+            "context-seal.json": "a6d61b11fa67bfa0eb3a50fee66f26584b452874a590c255163102362460e652",
+            "count-contract.json": "6df2afa97a4908312685176762bd6319c4588e09a4e2428c2bb620999814e53b",
+            "flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+            "flux_functional_qwen_prefix_worker.py": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+            "flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+            "flux_source_receiver.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+            "parent-parameter-manifest.json": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+            "preflight.v1.json": "4af8da578a7c57937a473b7eb2fd011b2228a0803039f7c24a17a9c2bae28356",
+            "qwen-config.json": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+            "qwen-parameter-manifest.json": "69a9189b00413ccb01943718a68eba2865181110aa30b04f17668a8e2e1ffb8c",
+            "qwen-source-binding.json": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+            "qwen_component_experiment.py": "81131b179f1a8a5ea52011be3e450e5901255f350d89ff11c053902c16a28580",
+            "qwen_component_experiment_v2.py": "c93324ee76156f2fba16f70d7cef78b7accbf6020f0c899cb04d856c348b5762",
+            "qwen_error_consumer_campaign.py": "ad82b86dd837a1f2bc9134f2c5bda3dcb097e8f8583e7849fcfbe8d5c49b229b",
+            "qwen_h18_state_history.py": "17084d404f5ae00557e4ad8e94a8b84704787c47ebf9c875228cb452c4857036",
+            "qwen_row_sign_campaign.py": "fbd8eceaf1a9ef8917ecdc39a98ff960940aab9da8ecb4697c25c1a33d545f47",
+            "qwen_row_sign_shortcut.py": "940c3cfaafeaeb3f0df5746b92b6a8b0878255769c4f230b2a53bedfc0110c1c",
+            "qwen_sign_shortcut.py": "8e59051a34bc8e89c9376fd29aec966df9cbe84560c81f86910504172caaa457",
+            "qwen_sign_shortcut_campaign.py": "83f9d459938ccb96b913def78862cffc869cb6f0b4404a7f116d0a46fed184af",
+            "resource-basis.json": "9f4307a6e13e2e0001473581a17df90582bc2ea159124d76e162e728ff270151",
+            "retrieval-script.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+            "selection-protocol.json": "4e62bc3fa8adcd059ac12f775effa0010752e3c5e0cca2a2ebc4702ecef7f847",
+            "stage_qwen_error_consumer.py": "c7574da612f8548e0574e627496e273c6ac8f81e8b04f5984fb368759d21cf28",
+            "stage_qwen_sign_shortcut.py": "6f083cc6a039d50f8f206731d4a0fc87e76f9bf464c0d8cedba4caaecf04887b",
+            "world-files.json": "d36f790376a85ad995cf20f01cff89fb6e04d282fe1290f677ba348ec98f4c8f",
+            "world-forecast.json": "ced63ba53dbcb4b80bfa44012fcb0873a21753c053c83f6c7a2cd5c75ef20381",
+            "world-request.json": "810a90f133dc89f93073e682dc4ce4a09f702707a303095fb4fa3d40339f3d58",
+            "world-seal.json": "12077f1ee8ca0f2b23c1c440e11a9dea7b5f07058270041594320289055f0121",
+            "world-shortcut.json": "4866833cfffe92a5538d5ec9cd3c94148e15b4867522e33ac8c34340995c073e"
+          }
+        },
+        {
+          "field": "execution",
+          "op": "eq",
+          "value": {
+            "attention_dispatch": {
+              "backend": "sdpa",
+              "gqa_policy": "enable_gqa"
+            },
+            "backend": "cuda",
+            "learned_dtype": "torch.bfloat16",
+            "operand_device": "cuda:0",
+            "primitive_policy": {
+              "cuda_allow_bf16_reduced_precision_reduction": true,
+              "cuda_allow_tf32": false,
+              "cudnn_allow_tf32": false,
+              "cudnn_benchmark": false,
+              "cudnn_deterministic": true,
+              "deterministic_algorithms": true,
+              "float32_matmul_precision": "highest",
+              "num_threads": 4
+            },
+            "runtime_identity": "b8973b78c3c5b587235ce3157a839ce3312d40b9786965156326aa823b62e65a"
+          }
+        },
+        {
+          "field": "input_identity",
+          "op": "eq",
+          "value": "f34d3eb90ff3910fdb15fc99a5a157a7b6177807ab87a327516081b5cc4c80c5"
+        },
+        {
+          "field": "context_identity",
+          "op": "eq",
+          "value": "1ddc16ef86bbbaece2916789d962b36729182e3dc9d269059d74ae478dfbd03d"
+        },
+        {
+          "field": "frontier",
+          "op": "eq",
+          "value": "two-inherited-sealed-forecast-H19-worlds"
+        },
+        {
+          "field": "horizon",
+          "op": "eq",
+          "value": 20
+        },
+        {
+          "field": "world",
+          "op": "eq",
+          "value": "full-input"
+        }
+      ],
+      "binding": {
+        "execution": {
+          "attention_dispatch": {
+            "backend": "sdpa",
+            "gqa_policy": "enable_gqa"
+          },
+          "backend": "cuda",
+          "learned_dtype": "torch.bfloat16",
+          "operand_device": "cuda:0",
+          "primitive_policy": {
+            "cuda_allow_bf16_reduced_precision_reduction": true,
+            "cuda_allow_tf32": false,
+            "cudnn_allow_tf32": false,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": true,
+            "deterministic_algorithms": true,
+            "float32_matmul_precision": "highest",
+            "num_threads": 4
+          },
+          "runtime_identity": "b8973b78c3c5b587235ce3157a839ce3312d40b9786965156326aa823b62e65a"
+        },
+        "frontier": "two-inherited-sealed-forecast-H19-worlds",
+        "horizon": 20,
+        "input_identity": "f34d3eb90ff3910fdb15fc99a5a157a7b6177807ab87a327516081b5cc4c80c5",
+        "model_identity": "69a9189b00413ccb01943718a68eba2865181110aa30b04f17668a8e2e1ffb8c",
+        "source_identity": {
+          "context-files.json": "d573bffe5c0c3dfc3d1c353721f5696909f73b75fb6ff293aed2e905f4ec0c33",
+          "context-request.json": "7a986d2ae78fd496f6908fb040057e902e2c208f3314ee12b09afd6a2f841573",
+          "context-seal.json": "a6d61b11fa67bfa0eb3a50fee66f26584b452874a590c255163102362460e652",
+          "count-contract.json": "6df2afa97a4908312685176762bd6319c4588e09a4e2428c2bb620999814e53b",
+          "flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+          "flux_functional_qwen_prefix_worker.py": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+          "flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+          "flux_source_receiver.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+          "parent-parameter-manifest.json": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+          "preflight.v1.json": "4af8da578a7c57937a473b7eb2fd011b2228a0803039f7c24a17a9c2bae28356",
+          "qwen-config.json": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+          "qwen-parameter-manifest.json": "69a9189b00413ccb01943718a68eba2865181110aa30b04f17668a8e2e1ffb8c",
+          "qwen-source-binding.json": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+          "qwen_component_experiment.py": "81131b179f1a8a5ea52011be3e450e5901255f350d89ff11c053902c16a28580",
+          "qwen_component_experiment_v2.py": "c93324ee76156f2fba16f70d7cef78b7accbf6020f0c899cb04d856c348b5762",
+          "qwen_error_consumer_campaign.py": "ad82b86dd837a1f2bc9134f2c5bda3dcb097e8f8583e7849fcfbe8d5c49b229b",
+          "qwen_h18_state_history.py": "17084d404f5ae00557e4ad8e94a8b84704787c47ebf9c875228cb452c4857036",
+          "qwen_row_sign_campaign.py": "fbd8eceaf1a9ef8917ecdc39a98ff960940aab9da8ecb4697c25c1a33d545f47",
+          "qwen_row_sign_shortcut.py": "940c3cfaafeaeb3f0df5746b92b6a8b0878255769c4f230b2a53bedfc0110c1c",
+          "qwen_sign_shortcut.py": "8e59051a34bc8e89c9376fd29aec966df9cbe84560c81f86910504172caaa457",
+          "qwen_sign_shortcut_campaign.py": "83f9d459938ccb96b913def78862cffc869cb6f0b4404a7f116d0a46fed184af",
+          "resource-basis.json": "9f4307a6e13e2e0001473581a17df90582bc2ea159124d76e162e728ff270151",
+          "retrieval-script.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+          "selection-protocol.json": "4e62bc3fa8adcd059ac12f775effa0010752e3c5e0cca2a2ebc4702ecef7f847",
+          "stage_qwen_error_consumer.py": "c7574da612f8548e0574e627496e273c6ac8f81e8b04f5984fb368759d21cf28",
+          "stage_qwen_sign_shortcut.py": "6f083cc6a039d50f8f206731d4a0fc87e76f9bf464c0d8cedba4caaecf04887b",
+          "world-files.json": "d36f790376a85ad995cf20f01cff89fb6e04d282fe1290f677ba348ec98f4c8f",
+          "world-forecast.json": "ced63ba53dbcb4b80bfa44012fcb0873a21753c053c83f6c7a2cd5c75ef20381",
+          "world-request.json": "810a90f133dc89f93073e682dc4ce4a09f702707a303095fb4fa3d40339f3d58",
+          "world-seal.json": "12077f1ee8ca0f2b23c1c440e11a9dea7b5f07058270041594320289055f0121",
+          "world-shortcut.json": "4866833cfffe92a5538d5ec9cd3c94148e15b4867522e33ac8c34340995c073e"
+        }
+      },
+      "evidence": {
+        "audit_sha256": "0c42b3e5f5ccf31229e0d4cb05456d1e6c6e0b0e6b4bdc5cab447b285bb63d45",
+        "status": "conditional dependent observation; no validated rule or independent kernel claim"
+      },
+      "fingerprint": "58ec40975a9ef8fe3feb5feae4b2990a2945fb06844ec207f24d28faf500ba88",
+      "law_id": "law.qwen.complete-component-primitive-graph.bf16.v1",
+      "observation_unit": "one caller-bound comparison, not independent tasks",
+      "readers": [
+        "qwen.block19.head",
+        "qwen.block19.projection",
+        "qwen.block19.R",
+        "qwen.block19.M",
+        "qwen.block19.Hnext"
+      ],
+      "report": {
+        "decision_fields": 0,
+        "decision_mismatches": 0,
+        "fields": {
+          "Hnext": {
+            "decisions": {
+              "rule": "none",
+              "status": "not-requested"
+            },
+            "residual": {
+              "elements": 1310720,
+              "l2": 0.0,
+              "largest": {
+                "coordinate": [
+                  0,
+                  0,
+                  0
+                ],
+                "signed": 0.0
+              },
+              "max_abs": 0.0,
+              "maximum_signed": 0.0,
+              "minimum_signed": 0.0,
+              "nonzero": 0,
+              "shape": [
+                1,
+                512,
+                2560
+              ],
+              "signed_mean": 0.0,
+              "signed_sum": 0.0
+            },
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "M": {
+            "decisions": {
+              "rule": "none",
+              "status": "not-requested"
+            },
+            "residual": {
+              "elements": 1310720,
+              "l2": 0.0,
+              "largest": {
+                "coordinate": [
+                  0,
+                  0,
+                  0
+                ],
+                "signed": 0.0
+              },
+              "max_abs": 0.0,
+              "maximum_signed": 0.0,
+              "minimum_signed": 0.0,
+              "nonzero": 0,
+              "shape": [
+                1,
+                512,
+                2560
+              ],
+              "signed_mean": 0.0,
+              "signed_sum": 0.0
+            },
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "R": {
+            "decisions": {
+              "rule": "none",
+              "status": "not-requested"
+            },
+            "residual": {
+              "elements": 1310720,
+              "l2": 0.0,
+              "largest": {
+                "coordinate": [
+                  0,
+                  0,
+                  0
+                ],
+                "signed": 0.0
+              },
+              "max_abs": 0.0,
+              "maximum_signed": 0.0,
+              "minimum_signed": 0.0,
+              "nonzero": 0,
+              "shape": [
+                1,
+                512,
+                2560
+              ],
+              "signed_mean": 0.0,
+              "signed_sum": 0.0
+            },
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          },
+          "head": {
+            "decisions": {
+              "rule": "none",
+              "status": "not-requested"
+            },
+            "residual": {
+              "elements": 2097152,
+              "l2": 0.0,
+              "largest": {
+                "coordinate": [
+                  0,
+                  0,
+                  0,
+                  0
+                ],
+                "signed": 0.0
+              },
+              "max_abs": 0.0,
+              "maximum_signed": 0.0,
+              "minimum_signed": 0.0,
+              "nonzero": 0,
+              "shape": [
+                1,
+                512,
+                32,
+                128
+              ],
+              "signed_mean": 0.0,
+              "signed_sum": 0.0
+            },
+            "shape": [
+              1,
+              512,
+              32,
+              128
+            ]
+          },
+          "projection": {
+            "decisions": {
+              "rule": "none",
+              "status": "not-requested"
+            },
+            "residual": {
+              "elements": 1310720,
+              "l2": 0.0,
+              "largest": {
+                "coordinate": [
+                  0,
+                  0,
+                  0
+                ],
+                "signed": 0.0
+              },
+              "max_abs": 0.0,
+              "maximum_signed": 0.0,
+              "minimum_signed": 0.0,
+              "nonzero": 0,
+              "shape": [
+                1,
+                512,
+                2560
+              ],
+              "signed_mean": 0.0,
+              "signed_sum": 0.0
+            },
+            "shape": [
+              1,
+              512,
+              2560
+            ]
+          }
+        },
+        "fingerprint": "6475e617a05301ed93419df6c09d69bf29f818cd3d7be838add05a0e1e091860",
+        "max_abs": 0.0,
+        "mechanics_status": "valid",
+        "residual_direction": "observed-minus-predicted",
+        "schema": "mdb-equation-comparison-v1",
+        "target_scope": "unassigned",
+        "terminal_status": "unassessed"
+      },
+      "route_id": "route.qwen.block19.own-H19-to-five-ports.v1",
+      "schema": "mdb-equation-record-v1",
+      "tested_context": {
+        "context_identity": "1ddc16ef86bbbaece2916789d962b36729182e3dc9d269059d74ae478dfbd03d",
+        "execution": {
+          "attention_dispatch": {
+            "backend": "sdpa",
+            "gqa_policy": "enable_gqa"
+          },
+          "backend": "cuda",
+          "learned_dtype": "torch.bfloat16",
+          "operand_device": "cuda:0",
+          "primitive_policy": {
+            "cuda_allow_bf16_reduced_precision_reduction": true,
+            "cuda_allow_tf32": false,
+            "cudnn_allow_tf32": false,
+            "cudnn_benchmark": false,
+            "cudnn_deterministic": true,
+            "deterministic_algorithms": true,
+            "float32_matmul_precision": "highest",
+            "num_threads": 4
+          },
+          "runtime_identity": "b8973b78c3c5b587235ce3157a839ce3312d40b9786965156326aa823b62e65a"
+        },
+        "frontier": "two-inherited-sealed-forecast-H19-worlds",
+        "horizon": 20,
+        "input_identity": "f34d3eb90ff3910fdb15fc99a5a157a7b6177807ab87a327516081b5cc4c80c5",
+        "model_identity": "69a9189b00413ccb01943718a68eba2865181110aa30b04f17668a8e2e1ffb8c",
+        "source_identity": {
+          "context-files.json": "d573bffe5c0c3dfc3d1c353721f5696909f73b75fb6ff293aed2e905f4ec0c33",
+          "context-request.json": "7a986d2ae78fd496f6908fb040057e902e2c208f3314ee12b09afd6a2f841573",
+          "context-seal.json": "a6d61b11fa67bfa0eb3a50fee66f26584b452874a590c255163102362460e652",
+          "count-contract.json": "6df2afa97a4908312685176762bd6319c4588e09a4e2428c2bb620999814e53b",
+          "flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+          "flux_functional_qwen_prefix_worker.py": "2a953ca5ae3bc507e6f79797595a0c69c68325df307a63e4d90bfe88142f62b0",
+          "flux_image_tail_microscope.py": "385c5701832b3b56e5cdb16cc370b0f25660bfca7cb3a9396a17cfe63e32d926",
+          "flux_source_receiver.py": "77c0c717dd82afe7c039a3179bf0f34e2f44d77ed3fd14fb0c87893946c11dc2",
+          "parent-parameter-manifest.json": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+          "preflight.v1.json": "4af8da578a7c57937a473b7eb2fd011b2228a0803039f7c24a17a9c2bae28356",
+          "qwen-config.json": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+          "qwen-parameter-manifest.json": "69a9189b00413ccb01943718a68eba2865181110aa30b04f17668a8e2e1ffb8c",
+          "qwen-source-binding.json": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+          "qwen_component_experiment.py": "81131b179f1a8a5ea52011be3e450e5901255f350d89ff11c053902c16a28580",
+          "qwen_component_experiment_v2.py": "c93324ee76156f2fba16f70d7cef78b7accbf6020f0c899cb04d856c348b5762",
+          "qwen_error_consumer_campaign.py": "ad82b86dd837a1f2bc9134f2c5bda3dcb097e8f8583e7849fcfbe8d5c49b229b",
+          "qwen_h18_state_history.py": "17084d404f5ae00557e4ad8e94a8b84704787c47ebf9c875228cb452c4857036",
+          "qwen_row_sign_campaign.py": "fbd8eceaf1a9ef8917ecdc39a98ff960940aab9da8ecb4697c25c1a33d545f47",
+          "qwen_row_sign_shortcut.py": "940c3cfaafeaeb3f0df5746b92b6a8b0878255769c4f230b2a53bedfc0110c1c",
+          "qwen_sign_shortcut.py": "8e59051a34bc8e89c9376fd29aec966df9cbe84560c81f86910504172caaa457",
+          "qwen_sign_shortcut_campaign.py": "83f9d459938ccb96b913def78862cffc869cb6f0b4404a7f116d0a46fed184af",
+          "resource-basis.json": "9f4307a6e13e2e0001473581a17df90582bc2ea159124d76e162e728ff270151",
+          "retrieval-script.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+          "selection-protocol.json": "4e62bc3fa8adcd059ac12f775effa0010752e3c5e0cca2a2ebc4702ecef7f847",
+          "stage_qwen_error_consumer.py": "c7574da612f8548e0574e627496e273c6ac8f81e8b04f5984fb368759d21cf28",
+          "stage_qwen_sign_shortcut.py": "6f083cc6a039d50f8f206731d4a0fc87e76f9bf464c0d8cedba4caaecf04887b",
+          "world-files.json": "d36f790376a85ad995cf20f01cff89fb6e04d282fe1290f677ba348ec98f4c8f",
+          "world-forecast.json": "ced63ba53dbcb4b80bfa44012fcb0873a21753c053c83f6c7a2cd5c75ef20381",
+          "world-request.json": "810a90f133dc89f93073e682dc4ce4a09f702707a303095fb4fa3d40339f3d58",
+          "world-seal.json": "12077f1ee8ca0f2b23c1c440e11a9dea7b5f07058270041594320289055f0121",
+          "world-shortcut.json": "4866833cfffe92a5538d5ec9cd3c94148e15b4867522e33ac8c34340995c073e"
+        },
+        "world": "full-input"
+      }
+    },
+    "fingerprint": "e55999da255e1612b5b23dd957f68993979993f076fecb2e0a16c9eb5aa4e3c3",
+    "law_id": "law.qwen.complete-component-primitive-graph.bf16.v1",
+    "operation": "mdb.atlas.import",
+    "provenance": {
+      "artifacts": [
+        {
+          "path": "audit.json",
+          "sha256": "0c42b3e5f5ccf31229e0d4cb05456d1e6c6e0b0e6b4bdc5cab447b285bb63d45"
+        }
+      ],
+      "run_id": "job-f74bf3f78621"
+    },
+    "reference_scope": "Equation snapshot/seals verified; external artifact references are supplied, not fetched.",
+    "route_id": "route.qwen.block19.own-H19-to-five-ports.v1",
+    "rule_status": "observation; no validated rule",
+    "schema": "saturn-pub-receipt-v1",
+    "signed_effects": [
+      {
+        "consumer_id": "qwen.block19.head",
+        "contrast_id": "functional-minus-native-endpoint-error",
+        "provenance": [
+          {
+            "path": "audit.json",
+            "sha256": "0c42b3e5f5ccf31229e0d4cb05456d1e6c6e0b0e6b4bdc5cab447b285bb63d45"
+          }
+        ],
+        "units": "represented coordinate units",
+        "value": 0.0
+      },
+      {
+        "consumer_id": "qwen.block19.projection",
+        "contrast_id": "functional-minus-native-endpoint-error",
+        "provenance": [
+          {
+            "path": "audit.json",
+            "sha256": "0c42b3e5f5ccf31229e0d4cb05456d1e6c6e0b0e6b4bdc5cab447b285bb63d45"
+          }
+        ],
+        "units": "represented coordinate units",
+        "value": 0.0
+      },
+      {
+        "consumer_id": "qwen.block19.R",
+        "contrast_id": "functional-minus-native-endpoint-error",
+        "provenance": [
+          {
+            "path": "audit.json",
+            "sha256": "0c42b3e5f5ccf31229e0d4cb05456d1e6c6e0b0e6b4bdc5cab447b285bb63d45"
+          }
+        ],
+        "units": "represented coordinate units",
+        "value": 0.0
+      },
+      {
+        "consumer_id": "qwen.block19.M",
+        "contrast_id": "functional-minus-native-endpoint-error",
+        "provenance": [
+          {
+            "path": "audit.json",
+            "sha256": "0c42b3e5f5ccf31229e0d4cb05456d1e6c6e0b0e6b4bdc5cab447b285bb63d45"
+          }
+        ],
+        "units": "represented coordinate units",
+        "value": 0.0
+      },
+      {
+        "consumer_id": "qwen.block19.Hnext",
+        "contrast_id": "functional-minus-native-endpoint-error",
+        "provenance": [
+          {
+            "path": "audit.json",
+            "sha256": "0c42b3e5f5ccf31229e0d4cb05456d1e6c6e0b0e6b4bdc5cab447b285bb63d45"
+          }
+        ],
+        "units": "represented coordinate units",
+        "value": 0.0
+      }
+    ],
+    "source_record": {
+      "file_sha256": "ae3381a30fc1d65225d955a5b138c0e35dd8de229482a7aa3fcfbd28020517d1",
+      "fingerprint": "58ec40975a9ef8fe3feb5feae4b2990a2945fb06844ec207f24d28faf500ba88"
+    },
+    "status": "observed"
+  }
+]
