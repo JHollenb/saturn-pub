@@ -179,8 +179,13 @@ native campaign supplies separate scientific evidence.
 
 ## Next receiving-state test
 
-Cross the two observed latent-error directions with both native receiving
-states at a predeclared common scale. Seal forecasts before the four new
-native continuations and report actual BF16-rounded perturbation norms.
-This separates receiving-state from direction dependence, confounded here.
-An object-level label still requires causal read/write localization.
+The [receiver and latent-direction cross](FLUX-LATENT-DIRECTION-CROSS.md)
+crossed the two observed error directions with both native receiving states
+at a predeclared requested scale. Its six mathematical continuations include
+two shams and a known-input repeatability control, and sealed before native
+validation. One pairing has native image response RMS2.993 versus0.787–0.822
+in the other corners; mathematical response error is37.47% versus128–139%.
+Actual BF16-rounded norms and directions qualify the comparison:
+receiver-specific installation prevents interpreting normalized responses as
+pure receiver sensitivity. An object-level label still requires causal
+read/write localization.
