@@ -1,0 +1,2505 @@
+{
+  "auditor_sha256": "ead508b31acc036cb4a9fd61dcd334b34337a704728d4a3d357de94063863ee9",
+  "boundary_substitution_squares": {
+    "changed-minus-sham": {
+      "closure_rms": 0.0,
+      "energy_sum": 331.18651745716227,
+      "scope": "Fixed-coordinate substitution identity; these are not independent causal shares.",
+      "signed_cross_terms": {
+        "head__interaction": -534.0456569599971,
+        "head__tail": 276.97110089038324,
+        "tail__interaction": -451.8921385581035
+      },
+      "term_squared_l2": {
+        "head": 324.15432176269576,
+        "interaction": 438.1270990255079,
+        "tail": 277.8717912966759
+      },
+      "total_squared_l2": 331.18651745716215
+    },
+    "edit": {
+      "closure_rms": 0.0,
+      "energy_sum": 170.31726933808113,
+      "scope": "Fixed-coordinate substitution identity; these are not independent causal shares.",
+      "signed_cross_terms": {
+        "head__interaction": -261.1578650369863,
+        "head__tail": 128.51082509900152,
+        "tail__interaction": -217.3630624811376
+      },
+      "term_squared_l2": {
+        "head": 158.6040349303156,
+        "interaction": 219.90441237457424,
+        "tail": 141.8189244523137
+      },
+      "total_squared_l2": 170.31726933808113
+    },
+    "sham": {
+      "closure_rms": 0.0,
+      "energy_sum": 172.90467691370577,
+      "scope": "Fixed-coordinate substitution identity; these are not independent causal shares.",
+      "signed_cross_terms": {
+        "head__interaction": -259.42892327124355,
+        "head__tail": 133.37684510638064,
+        "tail__interaction": -219.5182926738654
+      },
+      "term_squared_l2": {
+        "head": 159.9630576795007,
+        "interaction": 211.34915016072415,
+        "tail": 147.16283991220922
+      },
+      "total_squared_l2": 172.90467691370577
+    }
+  },
+  "counts": {
+    "encodes": 0,
+    "full_model_loads": 0,
+    "layernorm": 14,
+    "linear": 48,
+    "mathematical_affines": 22,
+    "native_attention": 2,
+    "native_blocks": 2,
+    "noise_draws": 0,
+    "reference_heads": 2,
+    "rmsnorm": 8,
+    "swiglu": 10,
+    "vae_calls": 0
+  },
+  "effects": {
+    "independent.actual-after": {
+      "activation": {
+        "actual_rms": 0.0023039626694768343,
+        "cosine": 0.999273174259312,
+        "exact": false,
+        "exact_fraction": 0.9951667785644531,
+        "max_abs": 0.0625,
+        "mean_signed": -2.345195488501206e-08,
+        "predicted_rms": 0.0023045768963207,
+        "relative_to_actual_rms": 0.038132795493364666,
+        "rms": 8.785653729950665e-05
+      },
+      "after_attention": {
+        "actual_rms": 0.005883717854117183,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.005883717854117183,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "image": {
+        "actual_rms": 0.010498822471223537,
+        "cosine": 0.8960192003982738,
+        "exact": false,
+        "exact_fraction": 0.7418298721313477,
+        "max_abs": 1.0,
+        "mean_signed": 2.430867425573524e-06,
+        "predicted_rms": 0.010292840760613845,
+        "relative_to_actual_rms": 0.4519584277049201,
+        "rms": 0.004745031296847274
+      },
+      "mlp": {
+        "actual_rms": 0.007471476480157957,
+        "cosine": 0.8910441818400294,
+        "exact": false,
+        "exact_fraction": 0.5626999537150065,
+        "max_abs": 0.0625,
+        "mean_signed": 1.3671630879249128e-07,
+        "predicted_rms": 0.0072207709070978045,
+        "relative_to_actual_rms": 0.46013644254703734,
+        "rms": 0.0034378986081537426
+      },
+      "mlp_input": {
+        "actual_rms": 0.0024819892187014497,
+        "cosine": 0.9999978960574821,
+        "exact": false,
+        "exact_fraction": 0.9999920527140299,
+        "max_abs": 0.00390625,
+        "mean_signed": 4.3655745685100555e-09,
+        "predicted_rms": 0.0024819940231832066,
+        "relative_to_actual_rms": 0.0020513159016652153,
+        "rms": 5.091343952083908e-06
+      },
+      "norm": {
+        "actual_rms": 0.004659816163275622,
+        "cosine": 0.9999985263679384,
+        "exact": false,
+        "exact_fraction": 0.9999764760335287,
+        "max_abs": 0.00390625,
+        "mean_signed": 6.287857641969671e-10,
+        "predicted_rms": 0.004659823445265463,
+        "relative_to_actual_rms": 0.0017167618272351946,
+        "rms": 7.999794511045151e-06
+      },
+      "paired": {
+        "actual_rms": 0.004760436899912852,
+        "cosine": 0.9991971436843249,
+        "exact": false,
+        "exact_fraction": 0.9970914522806803,
+        "max_abs": 0.03125,
+        "mean_signed": -4.7967746466228945e-08,
+        "predicted_rms": 0.004760512474912304,
+        "relative_to_actual_rms": 0.040071665489568004,
+        "rms": 0.00019075863503750394
+      }
+    },
+    "independent.actual-head": {
+      "activation": {
+        "actual_rms": 0.0023039626694768343,
+        "cosine": 0.6607734530524252,
+        "exact": false,
+        "exact_fraction": 0.23984050750732422,
+        "max_abs": 0.375,
+        "mean_signed": -6.962827388239343e-07,
+        "predicted_rms": 0.0021908618064178063,
+        "relative_to_actual_rms": 0.8047097780860037,
+        "rms": 0.00185402128847314
+      },
+      "after_attention": {
+        "actual_rms": 0.005883717854117183,
+        "cosine": 0.671053969221152,
+        "exact": false,
+        "exact_fraction": 0.5650927225748698,
+        "max_abs": 0.5,
+        "mean_signed": -2.8153399398433976e-06,
+        "predicted_rms": 0.0051967949887243865,
+        "relative_to_actual_rms": 0.7711769005872975,
+        "rms": 0.004537387298668235
+      },
+      "image": {
+        "actual_rms": 0.010498822471223537,
+        "cosine": 0.5655935081241892,
+        "exact": false,
+        "exact_fraction": 0.36304601033528644,
+        "max_abs": 2.0,
+        "mean_signed": -3.991119304676734e-06,
+        "predicted_rms": 0.0095943502976307,
+        "relative_to_actual_rms": 0.8952020215606086,
+        "rms": 0.009398567100245255
+      },
+      "mlp": {
+        "actual_rms": 0.007471476480157957,
+        "cosine": 0.5930170667412412,
+        "exact": false,
+        "exact_fraction": 0.24358336130777994,
+        "max_abs": 0.125,
+        "mean_signed": 4.9248780017071185e-06,
+        "predicted_rms": 0.006889319124229008,
+        "relative_to_actual_rms": 0.8698361583421467,
+        "rms": 0.006498960398644301
+      },
+      "mlp_input": {
+        "actual_rms": 0.0024819892187014497,
+        "cosine": 0.6347973969756555,
+        "exact": false,
+        "exact_fraction": 0.5989303588867188,
+        "max_abs": 0.125,
+        "mean_signed": -9.961368808338496e-07,
+        "predicted_rms": 0.0021864097215070315,
+        "relative_to_actual_rms": 0.8109277384118584,
+        "rms": 0.002012713903884182
+      },
+      "norm": {
+        "actual_rms": 0.004659816163275622,
+        "cosine": 0.6268832325698209,
+        "exact": false,
+        "exact_fraction": 0.507335344950358,
+        "max_abs": 0.5,
+        "mean_signed": -1.014819961101902e-06,
+        "predicted_rms": 0.004152203598730338,
+        "relative_to_actual_rms": 0.822684587343169,
+        "rms": 0.003833558937379434
+      },
+      "paired": {
+        "actual_rms": 0.004760436899912852,
+        "cosine": 0.6535088000341265,
+        "exact": false,
+        "exact_fraction": 0.3781764242384169,
+        "max_abs": 0.125,
+        "mean_signed": -6.380103761971512e-06,
+        "predicted_rms": 0.004488129430795412,
+        "relative_to_actual_rms": 0.8103174520600102,
+        "rms": 0.0038574650994298364
+      },
+      "projection": {
+        "actual_rms": 0.021880785488061515,
+        "cosine": 0.7495793773896411,
+        "exact": false,
+        "exact_fraction": 0.4547716776529948,
+        "max_abs": 0.25,
+        "mean_signed": -1.9242654912450994e-06,
+        "predicted_rms": 0.019206362279986774,
+        "relative_to_actual_rms": 0.6742138805392551,
+        "rms": 0.014752329293152974
+      }
+    },
+    "independent.local": {
+      "activation": {
+        "actual_rms": 0.0023039626694768343,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.0023039626694768343,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "after_attention": {
+        "actual_rms": 0.005883717854117183,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.005883717854117183,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "image": {
+        "actual_rms": 0.010498822471223537,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.010498822471223537,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "mlp": {
+        "actual_rms": 0.007471476480157957,
+        "cosine": 0.8917368882576421,
+        "exact": false,
+        "exact_fraction": 0.5689932505289713,
+        "max_abs": 0.0625,
+        "mean_signed": 6.865141492321906e-08,
+        "predicted_rms": 0.0072188424621479706,
+        "relative_to_actual_rms": 0.4586372440753272,
+        "rms": 0.0034266973820332716
+      },
+      "mlp_input": {
+        "actual_rms": 0.0024819892187014497,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.0024819892187014497,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "norm": {
+        "actual_rms": 0.004659816163275622,
+        "cosine": 0.9999985263679384,
+        "exact": false,
+        "exact_fraction": 0.9999764760335287,
+        "max_abs": 0.00390625,
+        "mean_signed": 6.287857641969671e-10,
+        "predicted_rms": 0.004659823445265463,
+        "relative_to_actual_rms": 0.0017167618272351946,
+        "rms": 7.999794511045151e-06
+      },
+      "paired": {
+        "actual_rms": 0.004760436899912852,
+        "cosine": 0.9992344874012239,
+        "exact": false,
+        "exact_fraction": 0.9975034395853678,
+        "max_abs": 0.03125,
+        "mean_signed": -6.360121668830882e-08,
+        "predicted_rms": 0.004760481982425164,
+        "relative_to_actual_rms": 0.03912850350351322,
+        "rms": 0.00018626877191649366
+      },
+      "projection": {
+        "actual_rms": 0.021880785488061515,
+        "cosine": 0.7495793773896411,
+        "exact": false,
+        "exact_fraction": 0.4547716776529948,
+        "max_abs": 0.25,
+        "mean_signed": -1.9242654912450994e-06,
+        "predicted_rms": 0.019206362279986774,
+        "relative_to_actual_rms": 0.6742138805392551,
+        "rms": 0.014752329293152974
+      }
+    },
+    "independent.reference-head": {
+      "activation": {
+        "actual_rms": 0.0023039626694768343,
+        "cosine": 0.5578419318855795,
+        "exact": false,
+        "exact_fraction": 0.2095301946004232,
+        "max_abs": 0.375,
+        "mean_signed": -3.6724860557233437e-07,
+        "predicted_rms": 0.0021259675203932245,
+        "relative_to_actual_rms": 0.9066233132413709,
+        "rms": 0.002088826268985521
+      },
+      "after_attention": {
+        "actual_rms": 0.005883717854117183,
+        "cosine": 0.5654215462982781,
+        "exact": false,
+        "exact_fraction": 0.4840208689371745,
+        "max_abs": 0.5,
+        "mean_signed": 3.662340911129528e-06,
+        "predicted_rms": 0.005082094102862254,
+        "relative_to_actual_rms": 0.8770984369691687,
+        "rms": 0.0051605997334137725
+      },
+      "head": {
+        "actual_rms": 0.010068698044959737,
+        "cosine": 0.8654943247728218,
+        "exact": false,
+        "exact_fraction": 0.7477699915568033,
+        "max_abs": 0.25,
+        "mean_signed": -2.650466278897312e-06,
+        "predicted_rms": 0.009830657719697922,
+        "relative_to_actual_rms": 0.5130403616670731,
+        "rms": 0.005165648486502695
+      },
+      "image": {
+        "actual_rms": 0.010498822471223537,
+        "cosine": 0.4722046380077209,
+        "exact": false,
+        "exact_fraction": 0.33025137583414715,
+        "max_abs": 2.0,
+        "mean_signed": -3.5404503554066955e-06,
+        "predicted_rms": 0.00938859822664216,
+        "relative_to_actual_rms": 0.9773163133938212,
+        "rms": 0.010260670472552394
+      },
+      "mlp": {
+        "actual_rms": 0.007471476480157957,
+        "cosine": 0.5007810256841638,
+        "exact": false,
+        "exact_fraction": 0.2206557591756185,
+        "max_abs": 0.125,
+        "mean_signed": -3.7778612852849375e-07,
+        "predicted_rms": 0.006689605093800607,
+        "relative_to_actual_rms": 0.9512649511201287,
+        "rms": 0.00710735370869265
+      },
+      "mlp_input": {
+        "actual_rms": 0.0024819892187014497,
+        "cosine": 0.5313745398500673,
+        "exact": false,
+        "exact_fraction": 0.5219033559163412,
+        "max_abs": 0.09375,
+        "mean_signed": -1.7895664162400256e-06,
+        "predicted_rms": 0.002135751740978481,
+        "relative_to_actual_rms": 0.9088259854161588,
+        "rms": 0.002255696297478627
+      },
+      "norm": {
+        "actual_rms": 0.004659816163275622,
+        "cosine": 0.5283244284957993,
+        "exact": false,
+        "exact_fraction": 0.42835203806559247,
+        "max_abs": 0.375,
+        "mean_signed": -1.9045741345517324e-06,
+        "predicted_rms": 0.004055310755764004,
+        "relative_to_actual_rms": 0.9153151987374124,
+        "rms": 0.004265200557568433
+      },
+      "paired": {
+        "actual_rms": 0.004760436899912852,
+        "cosine": 0.5533092183934952,
+        "exact": false,
+        "exact_fraction": 0.33774163987901473,
+        "max_abs": 0.0625,
+        "mean_signed": 4.832159295053367e-06,
+        "predicted_rms": 0.0043821497994471085,
+        "relative_to_actual_rms": 0.9103317200580016,
+        "rms": 0.004333576711325247
+      },
+      "projection": {
+        "actual_rms": 0.021880785488061515,
+        "cosine": 0.666000026451908,
+        "exact": false,
+        "exact_fraction": 0.3643411000569661,
+        "max_abs": 0.25,
+        "mean_signed": 9.962186935460101e-06,
+        "predicted_rms": 0.018844852641834088,
+        "relative_to_actual_rms": 0.7710816970044192,
+        "rms": 0.01687187320592414
+      }
+    },
+    "native.actual-head": {
+      "activation": {
+        "actual_rms": 0.0023039626694768343,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.0023039626694768343,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "after_attention": {
+        "actual_rms": 0.005883717854117183,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.005883717854117183,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "head": {
+        "actual_rms": 0.010068698044959737,
+        "cosine": 0.9999999999999998,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.010068698044959737,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "image": {
+        "actual_rms": 0.010498822471223537,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.010498822471223537,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "mlp": {
+        "actual_rms": 0.007471476480157957,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.007471476480157957,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "mlp_input": {
+        "actual_rms": 0.0024819892187014497,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.0024819892187014497,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "norm": {
+        "actual_rms": 0.004659816163275622,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.004659816163275622,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "paired": {
+        "actual_rms": 0.004760436899912852,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.004760436899912852,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "projection": {
+        "actual_rms": 0.021880785488061515,
+        "cosine": 0.9999999999999999,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.021880785488061515,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      }
+    },
+    "native.local-opposite": {
+      "mlp": {
+        "actual_rms": 0.007471476480157957,
+        "cosine": 0.891718955550608,
+        "exact": false,
+        "exact_fraction": 0.5689964294433594,
+        "max_abs": 0.0625,
+        "mean_signed": -8.488551609768062e-08,
+        "predicted_rms": 0.007219040429905794,
+        "relative_to_actual_rms": 0.4586793229707612,
+        "rms": 0.0034270117735108177
+      },
+      "paired": {
+        "actual_rms": 0.004760436899912852,
+        "cosine": 1.0,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.004760436899912852,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "projection": {
+        "actual_rms": 0.021880785488061515,
+        "cosine": 0.7495728994454394,
+        "exact": false,
+        "exact_fraction": 0.4547770818074544,
+        "max_abs": 0.25,
+        "mean_signed": -1.8034119761978218e-06,
+        "predicted_rms": 0.01920644890606351,
+        "relative_to_actual_rms": 0.6742230670520205,
+        "rms": 0.014752530301268177
+      }
+    },
+    "native.opposite-reduction": {
+      "activation": {
+        "actual_rms": 0.0023039626694768343,
+        "cosine": 0.6617407825011025,
+        "exact": false,
+        "exact_fraction": 0.23975160386827257,
+        "max_abs": 0.375,
+        "mean_signed": -6.320900007349949e-07,
+        "predicted_rms": 0.0021923497210273443,
+        "relative_to_actual_rms": 0.8037985146742812,
+        "rms": 0.0018519217715904713
+      },
+      "after_attention": {
+        "actual_rms": 0.005883717854117183,
+        "cosine": 0.6709941730525325,
+        "exact": false,
+        "exact_fraction": 0.565093994140625,
+        "max_abs": 0.5,
+        "mean_signed": -2.8807703529309947e-06,
+        "predicted_rms": 0.005196616097600003,
+        "relative_to_actual_rms": 0.7712370166363517,
+        "rms": 0.004537741004539374
+      },
+      "head": {
+        "actual_rms": 0.010068698044959737,
+        "cosine": 0.9999999999999998,
+        "exact": true,
+        "exact_fraction": 1.0,
+        "max_abs": 0.0,
+        "mean_signed": 0.0,
+        "predicted_rms": 0.010068698044959737,
+        "relative_to_actual_rms": 0.0,
+        "rms": 0.0
+      },
+      "image": {
+        "actual_rms": 0.010498822471223537,
+        "cosine": 0.5684580029618935,
+        "exact": false,
+        "exact_fraction": 0.36305491129557294,
+        "max_abs": 2.0,
+        "mean_signed": -3.2119351089932024e-06,
+        "predicted_rms": 0.009611875793474603,
+        "relative_to_actual_rms": 0.8929205573271154,
+        "rms": 0.009374614412283364
+      },
+      "mlp": {
+        "actual_rms": 0.007471476480157957,
+        "cosine": 0.5938144510072019,
+        "exact": false,
+        "exact_fraction": 0.24353631337483725,
+        "max_abs": 0.125,
+        "mean_signed": 5.743780616166798e-06,
+        "predicted_rms": 0.006894933782952185,
+        "relative_to_actual_rms": 0.8692746240922454,
+        "rms": 0.006494764908703361
+      },
+      "mlp_input": {
+        "actual_rms": 0.0024819892187014497,
+        "cosine": 0.6347357764641244,
+        "exact": false,
+        "exact_fraction": 0.5990476608276367,
+        "max_abs": 0.125,
+        "mean_signed": -1.0135725005966378e-06,
+        "predicted_rms": 0.0021864418837109264,
+        "relative_to_actual_rms": 0.8109986074877321,
+        "rms": 0.00201288980016644
+      },
+      "norm": {
+        "actual_rms": 0.004659816163275622,
+        "cosine": 0.6264885609376981,
+        "exact": false,
+        "exact_fraction": 0.5075152715047201,
+        "max_abs": 0.5,
+        "mean_signed": -1.2280328956689364e-06,
+        "predicted_rms": 0.004154799793223059,
+        "relative_to_actual_rms": 0.8232912083091366,
+        "rms": 0.0038363856795616317
+      },
+      "paired": {
+        "actual_rms": 0.004760436899912852,
+        "cosine": 0.6536280486885416,
+        "exact": false,
+        "exact_fraction": 0.3782226774427626,
+        "max_abs": 0.125,
+        "mean_signed": -6.305561068891623e-06,
+        "predicted_rms": 0.0044886117300266684,
+        "relative_to_actual_rms": 0.8102148619765346,
+        "rms": 0.003856976725810894
+      },
+      "projection": {
+        "actual_rms": 0.021880785488061515,
+        "cosine": 0.7495728994454394,
+        "exact": false,
+        "exact_fraction": 0.4547770818074544,
+        "max_abs": 0.25,
+        "mean_signed": -1.8034119761978218e-06,
+        "predicted_rms": 0.01920644890606351,
+        "relative_to_actual_rms": 0.6742230670520205,
+        "rms": 0.014752530301268177
+      }
+    },
+    "native.reference-head": {
+      "activation": {
+        "actual_rms": 0.0023039626694768343,
+        "cosine": 0.5958542179808209,
+        "exact": false,
+        "exact_fraction": 0.21924495697021484,
+        "max_abs": 0.3125,
+        "mean_signed": -7.290595235658219e-07,
+        "predicted_rms": 0.002252352323740732,
+        "relative_to_actual_rms": 0.8892058641159094,
+        "rms": 0.002048697116402946
+      },
+      "after_attention": {
+        "actual_rms": 0.005883717854117183,
+        "cosine": 0.635553679781669,
+        "exact": false,
+        "exact_fraction": 0.544030507405599,
+        "max_abs": 0.75,
+        "mean_signed": 8.89040620677406e-07,
+        "predicted_rms": 0.0057769503878982754,
+        "relative_to_actual_rms": 0.846165026890714,
+        "rms": 0.004978596276246441
+      },
+      "head": {
+        "actual_rms": 0.010068698044959737,
+        "cosine": 0.8654943247728218,
+        "exact": false,
+        "exact_fraction": 0.7477699915568033,
+        "max_abs": 0.25,
+        "mean_signed": -2.650466278897312e-06,
+        "predicted_rms": 0.009830657719697922,
+        "relative_to_actual_rms": 0.5130403616670731,
+        "rms": 0.005165648486502695
+      },
+      "image": {
+        "actual_rms": 0.010498822471223537,
+        "cosine": 0.5190598682631642,
+        "exact": false,
+        "exact_fraction": 0.34160804748535156,
+        "max_abs": 2.0,
+        "mean_signed": -1.6238069141157516e-07,
+        "predicted_rms": 0.010194815128253213,
+        "relative_to_actual_rms": 0.9668847978708742,
+        "rms": 0.010151151842971162
+      },
+      "mlp": {
+        "actual_rms": 0.007471476480157957,
+        "cosine": 0.5267616351688214,
+        "exact": false,
+        "exact_fraction": 0.2226406733194987,
+        "max_abs": 0.125,
+        "mean_signed": 7.581716108262526e-07,
+        "predicted_rms": 0.007306603209173072,
+        "relative_to_actual_rms": 0.9623293386696069,
+        "rms": 0.007190021020035929
+      },
+      "mlp_input": {
+        "actual_rms": 0.0024819892187014497,
+        "cosine": 0.6183169895659485,
+        "exact": false,
+        "exact_fraction": 0.5732971827189127,
+        "max_abs": 0.125,
+        "mean_signed": -1.9584285079569477e-06,
+        "predicted_rms": 0.0024372624374143794,
+        "relative_to_actual_rms": 0.8659875831650068,
+        "rms": 0.002149371844944872
+      },
+      "norm": {
+        "actual_rms": 0.004659816163275622,
+        "cosine": 0.6041425281514566,
+        "exact": false,
+        "exact_fraction": 0.4802786509195964,
+        "max_abs": 0.5,
+        "mean_signed": -2.0861956984141727e-06,
+        "predicted_rms": 0.004593364155797827,
+        "relative_to_actual_rms": 0.8835315161927312,
+        "rms": 0.004117094439918306
+      },
+      "paired": {
+        "actual_rms": 0.004760436899912852,
+        "cosine": 0.599391756308866,
+        "exact": false,
+        "exact_fraction": 0.3501924408806695,
+        "max_abs": 0.125,
+        "mean_signed": 1.132151604831143e-05,
+        "predicted_rms": 0.0046637581582701275,
+        "relative_to_actual_rms": 0.8862038097523951,
+        "rms": 0.004218717316788651
+      },
+      "projection": {
+        "actual_rms": 0.021880785488061515,
+        "cosine": 0.724529387950472,
+        "exact": false,
+        "exact_fraction": 0.4257914225260417,
+        "max_abs": 0.25,
+        "mean_signed": 9.406353512986243e-06,
+        "predicted_rms": 0.021542098550656596,
+        "relative_to_actual_rms": 0.7366498087744929,
+        "rms": 0.016118476445616214
+      }
+    }
+  },
+  "entry_changes": {
+    "image": {
+      "changed_values": 956206,
+      "elements": 3145728,
+      "max_abs": 0.0625,
+      "orientation": "native edit minus native sham",
+      "rms": 0.000979896867527553,
+      "signed_mean": -2.6328698006968426e-07
+    },
+    "img_mod": {
+      "changed_values": 0,
+      "elements": 18432,
+      "max_abs": 0.0,
+      "orientation": "native edit minus native sham",
+      "rms": 0.0,
+      "signed_mean": 0.0
+    },
+    "text": {
+      "changed_values": 0,
+      "elements": 1572864,
+      "max_abs": 0.0,
+      "orientation": "native edit minus native sham",
+      "rms": 0.0,
+      "signed_mean": 0.0
+    },
+    "txt_mod": {
+      "changed_values": 0,
+      "elements": 18432,
+      "max_abs": 0.0,
+      "orientation": "native edit minus native sham",
+      "rms": 0.0,
+      "signed_mean": 0.0
+    }
+  },
+  "errors": {
+    "edit": {
+      "independent.actual-after": {
+        "activation": {
+          "actual_rms": 0.2444913597995431,
+          "cosine": 0.9999999681389011,
+          "exact": false,
+          "exact_fraction": 0.9977216720581055,
+          "max_abs": 0.0625,
+          "mean_signed": -9.605365618633085e-09,
+          "predicted_rms": 0.24449343410959712,
+          "relative_to_actual_rms": 0.0002525761672490356,
+          "rms": 6.175269058367354e-05
+        },
+        "after_attention": {
+          "actual_rms": 1.3361060875799917,
+          "cosine": 1.0,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 1.3361060875799917,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "image": {
+          "actual_rms": 1.788365779750962,
+          "cosine": 0.9999982214670311,
+          "exact": false,
+          "exact_fraction": 0.8403342564900717,
+          "max_abs": 1.0,
+          "mean_signed": 7.205414173464911e-07,
+          "predicted_rms": 1.788401174535595,
+          "relative_to_actual_rms": 0.0018861410470826121,
+          "rms": 0.0033731101043861914
+        },
+        "mlp": {
+          "actual_rms": 0.973747095295574,
+          "cosine": 0.9999968236920355,
+          "exact": false,
+          "exact_fraction": 0.6845404307047526,
+          "max_abs": 0.0625,
+          "mean_signed": 3.104859847743076e-07,
+          "predicted_rms": 0.9737537461913887,
+          "relative_to_actual_rms": 0.0025204574923629783,
+          "rms": 0.0024542881620044166
+        },
+        "mlp_input": {
+          "actual_rms": 0.33981929089355245,
+          "cosine": 0.9999999999877706,
+          "exact": false,
+          "exact_fraction": 0.9999980926513672,
+          "max_abs": 0.001953125,
+          "mean_signed": -5.238689482212067e-10,
+          "predicted_rms": 0.33981928968212805,
+          "relative_to_actual_rms": 4.945561867076787e-06,
+          "rms": 1.6805973267402273e-06
+        },
+        "norm": {
+          "actual_rms": 0.999985629706114,
+          "cosine": 0.9999999999971717,
+          "exact": false,
+          "exact_fraction": 0.9999907811482748,
+          "max_abs": 0.001953125,
+          "mean_signed": -3.4805647253222105e-09,
+          "predicted_rms": 0.9999856285906437,
+          "relative_to_actual_rms": 2.3783512436673144e-06,
+          "rms": 2.3783170660609788e-06
+        },
+        "paired": {
+          "actual_rms": 0.9064030729387367,
+          "cosine": 0.9999999894072,
+          "exact": false,
+          "exact_fraction": 0.9986285103691949,
+          "max_abs": 0.03125,
+          "mean_signed": 9.61645296183712e-07,
+          "predicted_rms": 0.906406373784425,
+          "relative_to_actual_rms": 0.00014559855843526278,
+          "rms": 0.0001319709807811724
+        }
+      },
+      "independent.actual-head": {
+        "activation": {
+          "actual_rms": 0.2444913597995431,
+          "cosine": 0.9999853068011562,
+          "exact": false,
+          "exact_fraction": 0.3444584740532769,
+          "max_abs": 0.1875,
+          "mean_signed": -2.6733962501173133e-07,
+          "predicted_rms": 0.2444614249815819,
+          "relative_to_actual_rms": 0.005421972939359897,
+          "rms": 0.0013256255367404268
+        },
+        "after_attention": {
+          "actual_rms": 1.3361060875799917,
+          "cosine": 0.9999968531483504,
+          "exact": false,
+          "exact_fraction": 0.6607303619384766,
+          "max_abs": 0.25,
+          "mean_signed": -5.758753710930856e-07,
+          "predicted_rms": 1.336157419787158,
+          "relative_to_actual_rms": 0.0025090677827170117,
+          "rms": 0.0033523807386390313
+        },
+        "image": {
+          "actual_rms": 1.788365779750962,
+          "cosine": 0.9999929519819187,
+          "exact": false,
+          "exact_fraction": 0.48692989349365234,
+          "max_abs": 1.0,
+          "mean_signed": -6.975960786803626e-07,
+          "predicted_rms": 1.788330754820687,
+          "relative_to_actual_rms": 0.0037544831417111097,
+          "rms": 0.00671438917128803
+        },
+        "mlp": {
+          "actual_rms": 0.973747095295574,
+          "cosine": 0.9999887139183257,
+          "exact": false,
+          "exact_fraction": 0.33893712361653644,
+          "max_abs": 0.078125,
+          "mean_signed": 3.217907921756099e-06,
+          "predicted_rms": 0.9736217432850941,
+          "relative_to_actual_rms": 0.004752455093992329,
+          "rms": 0.0046276893432976845
+        },
+        "mlp_input": {
+          "actual_rms": 0.33981929089355245,
+          "cosine": 0.9999903983631391,
+          "exact": false,
+          "exact_fraction": 0.7138252258300781,
+          "max_abs": 0.0625,
+          "mean_signed": -3.3098437294635613e-07,
+          "predicted_rms": 0.3398126284168169,
+          "relative_to_actual_rms": 0.004382154905526647,
+          "rms": 0.0014891407725817673
+        },
+        "norm": {
+          "actual_rms": 0.999985629706114,
+          "cosine": 0.9999960616767128,
+          "exact": false,
+          "exact_fraction": 0.6298710505167643,
+          "max_abs": 0.25,
+          "mean_signed": 6.100490887265645e-07,
+          "predicted_rms": 0.9999701833981904,
+          "relative_to_actual_rms": 0.002806557233171994,
+          "rms": 0.002806516902119746
+        },
+        "paired": {
+          "actual_rms": 0.9064030729387367,
+          "cosine": 0.999995291648613,
+          "exact": false,
+          "exact_fraction": 0.49027442932128906,
+          "max_abs": 0.0625,
+          "mean_signed": -4.7885019421014775e-06,
+          "predicted_rms": 0.9063806171076282,
+          "relative_to_actual_rms": 0.0030687266522162293,
+          "rms": 0.0027815032675777922
+        },
+        "projection": {
+          "actual_rms": 3.699341991050641,
+          "cosine": 0.9999956207007982,
+          "exact": false,
+          "exact_fraction": 0.5435253779093424,
+          "max_abs": 0.25,
+          "mean_signed": 7.226404032204907e-06,
+          "predicted_rms": 3.69935899655116,
+          "relative_to_actual_rms": 0.002959503302568692,
+          "rms": 0.010948214839845413
+        }
+      },
+      "independent.local": {
+        "activation": {
+          "actual_rms": 0.2444913597995431,
+          "cosine": 1.0,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 0.2444913597995431,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "after_attention": {
+          "actual_rms": 1.3361060875799917,
+          "cosine": 1.0,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 1.3361060875799917,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "image": {
+          "actual_rms": 1.788365779750962,
+          "cosine": 1.0000000000000002,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 1.788365779750962,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "mlp": {
+          "actual_rms": 0.973747095295574,
+          "cosine": 0.9999968409861267,
+          "exact": false,
+          "exact_fraction": 0.6890319188435873,
+          "max_abs": 0.0625,
+          "mean_signed": 3.7243365251053245e-07,
+          "predicted_rms": 0.9737465082171656,
+          "relative_to_actual_rms": 0.00251356804182061,
+          "rms": 0.002447579579550603
+        },
+        "mlp_input": {
+          "actual_rms": 0.33981929089355245,
+          "cosine": 0.9999999999999999,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 0.33981929089355245,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "norm": {
+          "actual_rms": 0.999985629706114,
+          "cosine": 0.9999999999971717,
+          "exact": false,
+          "exact_fraction": 0.9999907811482748,
+          "max_abs": 0.001953125,
+          "mean_signed": -3.4805647253222105e-09,
+          "predicted_rms": 0.9999856285906437,
+          "relative_to_actual_rms": 2.3783512436673144e-06,
+          "rms": 2.3783170660609788e-06
+        },
+        "paired": {
+          "actual_rms": 0.9064030729387367,
+          "cosine": 0.9999999896217557,
+          "exact": false,
+          "exact_fraction": 0.9987265798780653,
+          "max_abs": 0.03125,
+          "mean_signed": 9.625763298042816e-07,
+          "predicted_rms": 0.9064063688715293,
+          "relative_to_actual_rms": 0.0001441172713646952,
+          "rms": 0.00013062833762850554
+        },
+        "projection": {
+          "actual_rms": 3.699341991050641,
+          "cosine": 0.9999956207007982,
+          "exact": false,
+          "exact_fraction": 0.5435253779093424,
+          "max_abs": 0.25,
+          "mean_signed": 7.226404032204907e-06,
+          "predicted_rms": 3.69935899655116,
+          "relative_to_actual_rms": 0.002959503302568692,
+          "rms": 0.010948214839845413
+        }
+      },
+      "independent.reference-head": {
+        "activation": {
+          "actual_rms": 0.2444913597995431,
+          "cosine": 0.9999808992581164,
+          "exact": false,
+          "exact_fraction": 0.3028296364678277,
+          "max_abs": 0.1875,
+          "mean_signed": -4.956775288246623e-07,
+          "predicted_rms": 0.24447612684994197,
+          "relative_to_actual_rms": 0.006180856373616726,
+          "rms": 0.0015111659795112261
+        },
+        "after_attention": {
+          "actual_rms": 1.3361060875799917,
+          "cosine": 0.9999958717456882,
+          "exact": false,
+          "exact_fraction": 0.5921328862508138,
+          "max_abs": 0.375,
+          "mean_signed": 1.1614596739188225e-06,
+          "predicted_rms": 1.3361418260877682,
+          "relative_to_actual_rms": 0.00287357702867081,
+          "rms": 0.003839403761137094
+        },
+        "head": {
+          "actual_rms": 3.3379262179751352,
+          "cosine": 0.9999993946776524,
+          "exact": false,
+          "exact_fraction": 0.8241701126098633,
+          "max_abs": 0.125,
+          "mean_signed": 4.367041171645288e-07,
+          "predicted_rms": 3.337950703018649,
+          "relative_to_actual_rms": 0.0011003214912858432,
+          "rms": 0.003672791953964515
+        },
+        "image": {
+          "actual_rms": 1.788365779750962,
+          "cosine": 0.9999915357237965,
+          "exact": false,
+          "exact_fraction": 0.44429556528727215,
+          "max_abs": 1.0,
+          "mean_signed": -5.673410669260193e-06,
+          "predicted_rms": 1.788321460352081,
+          "relative_to_actual_rms": 0.004114455861159019,
+          "rms": 0.007358152064392565
+        },
+        "mlp": {
+          "actual_rms": 0.973747095295574,
+          "cosine": 0.9999860887979173,
+          "exact": false,
+          "exact_fraction": 0.30502955118815106,
+          "max_abs": 0.0625,
+          "mean_signed": -1.7342397321910379e-06,
+          "predicted_rms": 0.9736912379789793,
+          "relative_to_actual_rms": 0.005274855327508616,
+          "rms": 0.005136375053265898
+        },
+        "mlp_input": {
+          "actual_rms": 0.33981929089355245,
+          "cosine": 0.9999878714618498,
+          "exact": false,
+          "exact_fraction": 0.6476596196492513,
+          "max_abs": 0.0625,
+          "mean_signed": -5.310992795178512e-07,
+          "predicted_rms": 0.3398164471885593,
+          "relative_to_actual_rms": 0.004925133839665239,
+          "rms": 0.0016736554889508809
+        },
+        "norm": {
+          "actual_rms": 0.999985629706114,
+          "cosine": 0.9999949377811999,
+          "exact": false,
+          "exact_fraction": 0.556120236714681,
+          "max_abs": 0.25,
+          "mean_signed": -8.52548021512689e-07,
+          "predicted_rms": 0.9999725956451126,
+          "relative_to_actual_rms": 0.003181898101530722,
+          "rms": 0.0031818523767198877
+        },
+        "paired": {
+          "actual_rms": 0.9064030729387367,
+          "cosine": 0.9999939744368638,
+          "exact": false,
+          "exact_fraction": 0.4429231219821506,
+          "max_abs": 0.0625,
+          "mean_signed": -2.615127817906515e-07,
+          "predicted_rms": 0.9063948760096041,
+          "relative_to_actual_rms": 0.003471469296405167,
+          "rms": 0.0031465504378741173
+        },
+        "projection": {
+          "actual_rms": 3.699341991050641,
+          "cosine": 0.9999943666139965,
+          "exact": false,
+          "exact_fraction": 0.4613281885782878,
+          "max_abs": 0.25,
+          "mean_signed": 1.2304957701140632e-05,
+          "predicted_rms": 3.6993667781093524,
+          "relative_to_actual_rms": 0.0033566191911935613,
+          "rms": 0.012417282321948782
+        }
+      },
+      "native.actual-head": {
+        "activation": {
+          "actual_rms": 0.2444913597995431,
+          "cosine": 1.0,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 0.2444913597995431,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "after_attention": {
+          "actual_rms": 1.3361060875799917,
+          "cosine": 1.0,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 1.3361060875799917,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "head": {
+          "actual_rms": 3.3379262179751352,
+          "cosine": 1.0,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 3.3379262179751352,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "image": {
+          "actual_rms": 1.788365779750962,
+          "cosine": 1.0000000000000002,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 1.788365779750962,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "mlp": {
+          "actual_rms": 0.973747095295574,
+          "cosine": 0.9999999999999999,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 0.973747095295574,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "mlp_input": {
+          "actual_rms": 0.33981929089355245,
+          "cosine": 0.9999999999999999,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 0.33981929089355245,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "norm": {
+          "actual_rms": 0.999985629706114,
+          "cosine": 1.0000000000000002,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 0.999985629706114,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "paired": {
+          "actual_rms": 0.9064030729387367,
+          "cosine": 1.0,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 0.9064030729387367,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "projection": {
+          "actual_rms": 3.699341991050641,
+          "cosine": 1.0000000000000002,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 3.699341991050641,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        }
+      },
+      "native.local-opposite": {
+        "mlp": {
+          "actual_rms": 0.973747095295574,
+          "cosine": 0.9999968404804898,
+          "exact": false,
+          "exact_fraction": 0.6890058517456055,
+          "max_abs": 0.0625,
+          "mean_signed": 8.333665183120805e-07,
+          "predicted_rms": 0.9737339377850649,
+          "relative_to_actual_rms": 0.0025137892149837194,
+          "rms": 0.002447794946275738
+        },
+        "paired": {
+          "actual_rms": 0.9064030729387367,
+          "cosine": 1.0,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 0.9064030729387367,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "projection": {
+          "actual_rms": 3.699341991050641,
+          "cosine": 0.9999956213252499,
+          "exact": false,
+          "exact_fraction": 0.5435568491617838,
+          "max_abs": 0.25,
+          "mean_signed": 7.2499488131446315e-06,
+          "predicted_rms": 3.699347662181522,
+          "relative_to_actual_rms": 0.0029592845884826983,
+          "rms": 0.010947405741643062
+        }
+      },
+      "native.opposite-reduction": {
+        "activation": {
+          "actual_rms": 0.2444913597995431,
+          "cosine": 0.9999853307333755,
+          "exact": false,
+          "exact_fraction": 0.34440358479817706,
+          "max_abs": 0.1875,
+          "mean_signed": -2.2548155288351942e-07,
+          "predicted_rms": 0.2444609697875157,
+          "relative_to_actual_rms": 0.005417595105518889,
+          "rms": 0.0013245551941916621
+        },
+        "after_attention": {
+          "actual_rms": 1.3361060875799917,
+          "cosine": 0.9999968422414471,
+          "exact": false,
+          "exact_fraction": 0.6607557932535807,
+          "max_abs": 0.25,
+          "mean_signed": -7.219355211418588e-07,
+          "predicted_rms": 1.3361518959792824,
+          "relative_to_actual_rms": 0.0025133461947836923,
+          "rms": 0.0033580971510464987
+        },
+        "head": {
+          "actual_rms": 3.3379262179751352,
+          "cosine": 1.0,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 3.3379262179751352,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "image": {
+          "actual_rms": 1.788365779750962,
+          "cosine": 0.999992982199267,
+          "exact": false,
+          "exact_fraction": 0.4870456059773763,
+          "max_abs": 1.0,
+          "mean_signed": -7.645333729063471e-08,
+          "predicted_rms": 1.7883262430415914,
+          "relative_to_actual_rms": 0.0037464356290156245,
+          "rms": 0.006699997274971313
+        },
+        "mlp": {
+          "actual_rms": 0.973747095295574,
+          "cosine": 0.9999887206660256,
+          "exact": false,
+          "exact_fraction": 0.3391726811726888,
+          "max_abs": 0.078125,
+          "mean_signed": 3.6597352046641163e-06,
+          "predicted_rms": 0.9736056728205198,
+          "relative_to_actual_rms": 0.004751471870118628,
+          "rms": 0.004626731931906643
+        },
+        "mlp_input": {
+          "actual_rms": 0.33981929089355245,
+          "cosine": 0.9999903879996188,
+          "exact": false,
+          "exact_fraction": 0.713836669921875,
+          "max_abs": 0.0625,
+          "mean_signed": -4.034198658094586e-07,
+          "predicted_rms": 0.3398130587776609,
+          "relative_to_actual_rms": 0.004384516454623442,
+          "rms": 0.0014899432725212507
+        },
+        "norm": {
+          "actual_rms": 0.999985629706114,
+          "cosine": 0.9999960413948003,
+          "exact": false,
+          "exact_fraction": 0.6298599243164062,
+          "max_abs": 0.25,
+          "mean_signed": 4.4249301393387935e-07,
+          "predicted_rms": 0.9999672914703844,
+          "relative_to_actual_rms": 0.002813787751519528,
+          "rms": 0.0028137473165626057
+        },
+        "paired": {
+          "actual_rms": 0.9064030729387367,
+          "cosine": 0.9999952893408705,
+          "exact": false,
+          "exact_fraction": 0.4901859495374892,
+          "max_abs": 0.0625,
+          "mean_signed": -5.812590198199056e-06,
+          "predicted_rms": 0.9063782116318897,
+          "relative_to_actual_rms": 0.0030694970555672206,
+          "rms": 0.0027822015635425327
+        },
+        "projection": {
+          "actual_rms": 3.699341991050641,
+          "cosine": 0.9999956213252499,
+          "exact": false,
+          "exact_fraction": 0.5435568491617838,
+          "max_abs": 0.25,
+          "mean_signed": 7.2499488131446315e-06,
+          "predicted_rms": 3.699347662181522,
+          "relative_to_actual_rms": 0.0029592845884826983,
+          "rms": 0.010947405741643062
+        }
+      },
+      "native.reference-head": {
+        "activation": {
+          "actual_rms": 0.2444913597995431,
+          "cosine": 0.99998284539682,
+          "exact": false,
+          "exact_fraction": 0.32482677035861546,
+          "max_abs": 0.25,
+          "mean_signed": -9.551111675396944e-07,
+          "predicted_rms": 0.24447418553978262,
+          "relative_to_actual_rms": 0.0058576215871976815,
+          "rms": 0.001432137867045119
+        },
+        "after_attention": {
+          "actual_rms": 1.3361060875799917,
+          "cosine": 0.9999965422736223,
+          "exact": false,
+          "exact_fraction": 0.6802794138590494,
+          "max_abs": 0.375,
+          "mean_signed": -1.0334785353431168e-07,
+          "predicted_rms": 1.3361234694602806,
+          "relative_to_actual_rms": 0.0026297741280333032,
+          "rms": 0.003513657221425661
+        },
+        "head": {
+          "actual_rms": 3.3379262179751352,
+          "cosine": 0.9999993946776524,
+          "exact": false,
+          "exact_fraction": 0.8241701126098633,
+          "max_abs": 0.125,
+          "mean_signed": 4.367041171645288e-07,
+          "predicted_rms": 3.337950703018649,
+          "relative_to_actual_rms": 0.0011003214912858432,
+          "rms": 0.003672791953964515
+        },
+        "image": {
+          "actual_rms": 1.788365779750962,
+          "cosine": 0.9999921178647818,
+          "exact": false,
+          "exact_fraction": 0.4709313710530599,
+          "max_abs": 1.0,
+          "mean_signed": -1.3574258067213425e-06,
+          "predicted_rms": 1.7883208362908578,
+          "relative_to_actual_rms": 0.003970454109074533,
+          "rms": 0.007100624258740488
+        },
+        "mlp": {
+          "actual_rms": 0.973747095295574,
+          "cosine": 0.9999866834415487,
+          "exact": false,
+          "exact_fraction": 0.31930287679036456,
+          "max_abs": 0.125,
+          "mean_signed": -9.117409405234866e-08,
+          "predicted_rms": 0.9737027662497735,
+          "relative_to_actual_rms": 0.005160811651607425,
+          "rms": 0.005025325355120284
+        },
+        "mlp_input": {
+          "actual_rms": 0.33981929089355245,
+          "cosine": 0.9999900047940091,
+          "exact": false,
+          "exact_fraction": 0.7191829681396484,
+          "max_abs": 0.0625,
+          "mean_signed": -1.3027730953278174e-07,
+          "predicted_rms": 0.33981913697241156,
+          "relative_to_actual_rms": 0.004471062863794272,
+          "rms": 0.0015193534119150654
+        },
+        "norm": {
+          "actual_rms": 0.999985629706114,
+          "cosine": 0.9999957574138962,
+          "exact": false,
+          "exact_fraction": 0.635395367940267,
+          "max_abs": 0.25,
+          "mean_signed": -5.44499063170889e-07,
+          "predicted_rms": 0.9999939813215654,
+          "relative_to_actual_rms": 0.0029129560287938106,
+          "rms": 0.0029129141687596
+        },
+        "paired": {
+          "actual_rms": 0.9064030729387367,
+          "cosine": 0.9999946144942382,
+          "exact": false,
+          "exact_fraction": 0.4672922558254666,
+          "max_abs": 0.0625,
+          "mean_signed": 3.383737661424549e-07,
+          "predicted_rms": 0.9063980685545148,
+          "relative_to_actual_rms": 0.00328191750986275,
+          "rms": 0.0029747401160710434
+        },
+        "projection": {
+          "actual_rms": 3.699341991050641,
+          "cosine": 0.9999952305181001,
+          "exact": false,
+          "exact_fraction": 0.5653603871663412,
+          "max_abs": 0.25,
+          "mean_signed": 9.757782114168853e-06,
+          "predicted_rms": 3.6993562843960883,
+          "relative_to_actual_rms": 0.00308852968015082,
+          "rms": 0.011425527536388133
+        }
+      }
+    },
+    "sham": {
+      "independent.actual-after": {
+        "activation": {
+          "actual_rms": 0.24460373487002118,
+          "cosine": 0.9999999673678097,
+          "exact": false,
+          "exact_fraction": 0.9973301357693143,
+          "max_abs": 0.0625,
+          "mean_signed": 1.3846589266378976e-08,
+          "predicted_rms": 0.2446058013283394,
+          "relative_to_actual_rms": 0.00025560967195832884,
+          "rms": 6.252308042990816e-05
+        },
+        "after_attention": {
+          "actual_rms": 1.3359648928912584,
+          "cosine": 0.9999999999999999,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 1.3359648928912584,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "image": {
+          "actual_rms": 1.7887468054101283,
+          "cosine": 0.9999982236604044,
+          "exact": false,
+          "exact_fraction": 0.8402643203735352,
+          "max_abs": 0.5,
+          "mean_signed": -1.7103260082270328e-06,
+          "predicted_rms": 1.7887229773624873,
+          "relative_to_actual_rms": 0.001884889736038929,
+          "rms": 0.0033715904938899743
+        },
+        "mlp": {
+          "actual_rms": 0.9740241264248858,
+          "cosine": 0.9999968097669808,
+          "exact": false,
+          "exact_fraction": 0.6841646830240885,
+          "max_abs": 0.0625,
+          "mean_signed": 1.7376967598181636e-07,
+          "predicted_rms": 0.974035765663521,
+          "relative_to_actual_rms": 0.0025260017966371295,
+          "rms": 0.002460386693317172
+        },
+        "mlp_input": {
+          "actual_rms": 0.3398492506328868,
+          "cosine": 0.9999999999000092,
+          "exact": false,
+          "exact_fraction": 0.9999939600626627,
+          "max_abs": 0.00390625,
+          "mean_signed": -4.889443516731262e-09,
+          "predicted_rms": 0.33984924509619563,
+          "relative_to_actual_rms": 1.4141484576705756e-05,
+          "rms": 4.805972936229977e-06
+        },
+        "norm": {
+          "actual_rms": 0.9999654730632371,
+          "cosine": 0.9999999999708279,
+          "exact": false,
+          "exact_fraction": 0.9999856948852539,
+          "max_abs": 0.00390625,
+          "mean_signed": -4.109350489519177e-09,
+          "predicted_rms": 0.9999654641515795,
+          "relative_to_actual_rms": 7.638347267961453e-06,
+          "rms": 7.63808353922836e-06
+        },
+        "paired": {
+          "actual_rms": 0.9065141311706464,
+          "cosine": 0.9999999884514497,
+          "exact": false,
+          "exact_fraction": 0.9983949131435819,
+          "max_abs": 0.03125,
+          "mean_signed": 1.009613042649941e-06,
+          "predicted_rms": 0.9065175463628834,
+          "relative_to_actual_rms": 0.00015202428148705928,
+          "rms": 0.00013781215944908332
+        }
+      },
+      "independent.actual-head": {
+        "activation": {
+          "actual_rms": 0.24460373487002118,
+          "cosine": 0.9999848694794952,
+          "exact": false,
+          "exact_fraction": 0.34329859415690106,
+          "max_abs": 0.375,
+          "mean_signed": 4.28943113812203e-07,
+          "predicted_rms": 0.2445934269993837,
+          "relative_to_actual_rms": 0.00550104914111087,
+          "rms": 0.0013455771656192411
+        },
+        "after_attention": {
+          "actual_rms": 1.3359648928912584,
+          "cosine": 0.9999967828567266,
+          "exact": false,
+          "exact_fraction": 0.6605421702067057,
+          "max_abs": 0.375,
+          "mean_signed": 2.239464568750312e-06,
+          "predicted_rms": 1.3359719209048995,
+          "relative_to_actual_rms": 0.0025366016774080753,
+          "rms": 0.0033888107882662655
+        },
+        "image": {
+          "actual_rms": 1.7887468054101283,
+          "cosine": 0.999992692502959,
+          "exact": false,
+          "exact_fraction": 0.4853521982828776,
+          "max_abs": 2.0,
+          "mean_signed": 3.293523225996372e-06,
+          "predicted_rms": 1.788593657274092,
+          "relative_to_actual_rms": 0.00382375118804353,
+          "rms": 0.006839722722296047
+        },
+        "mlp": {
+          "actual_rms": 0.9740241264248858,
+          "cosine": 0.9999883769077914,
+          "exact": false,
+          "exact_fraction": 0.3367818196614583,
+          "max_abs": 0.09375,
+          "mean_signed": -1.7069700799510201e-06,
+          "predicted_rms": 0.974021047685531,
+          "relative_to_actual_rms": 0.0048214231230037236,
+          "rms": 0.004696182445508446
+        },
+        "mlp_input": {
+          "actual_rms": 0.3398492506328868,
+          "cosine": 0.9999902544910179,
+          "exact": false,
+          "exact_fraction": 0.7119379043579102,
+          "max_abs": 0.0625,
+          "mean_signed": 6.651525078874935e-07,
+          "predicted_rms": 0.33984841952489264,
+          "relative_to_actual_rms": 0.004414858579727243,
+          "rms": 0.0015003863799704744
+        },
+        "norm": {
+          "actual_rms": 0.9999654730632371,
+          "cosine": 0.9999960289263697,
+          "exact": false,
+          "exact_fraction": 0.6272751490275065,
+          "max_abs": 0.25,
+          "mean_signed": 1.6248690498284664e-06,
+          "predicted_rms": 0.9999857849183312,
+          "relative_to_actual_rms": 0.0028182833758112263,
+          "rms": 0.00281818606911933
+        },
+        "paired": {
+          "actual_rms": 0.9065141311706464,
+          "cosine": 0.9999952244417959,
+          "exact": false,
+          "exact_fraction": 0.48866499794854057,
+          "max_abs": 0.0625,
+          "mean_signed": 1.5916018198700342e-06,
+          "predicted_rms": 0.9065180353312268,
+          "relative_to_actual_rms": 0.0030904977098690526,
+          "rms": 0.0028015798463468166
+        },
+        "projection": {
+          "actual_rms": 3.6992428431065343,
+          "cosine": 0.9999956209769386,
+          "exact": false,
+          "exact_fraction": 0.543665885925293,
+          "max_abs": 0.25,
+          "mean_signed": 9.150669523450006e-06,
+          "predicted_rms": 3.6992427950427773,
+          "relative_to_actual_rms": 0.0029593996028733074,
+          "rms": 0.010947537800821402
+        }
+      },
+      "independent.local": {
+        "activation": {
+          "actual_rms": 0.24460373487002118,
+          "cosine": 1.0,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 0.24460373487002118,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "after_attention": {
+          "actual_rms": 1.3359648928912584,
+          "cosine": 0.9999999999999999,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 1.3359648928912584,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "image": {
+          "actual_rms": 1.7887468054101283,
+          "cosine": 0.9999999999999998,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 1.7887468054101283,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "mlp": {
+          "actual_rms": 0.9740241264248858,
+          "cosine": 0.9999968282957707,
+          "exact": false,
+          "exact_fraction": 0.6890316009521484,
+          "max_abs": 0.0625,
+          "mean_signed": 3.037822375873134e-07,
+          "predicted_rms": 0.9740296331345671,
+          "relative_to_actual_rms": 0.0025186258722693726,
+          "rms": 0.0024532023650282917
+        },
+        "mlp_input": {
+          "actual_rms": 0.3398492506328868,
+          "cosine": 1.0,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 0.3398492506328868,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "norm": {
+          "actual_rms": 0.9999654730632371,
+          "cosine": 0.9999999999708279,
+          "exact": false,
+          "exact_fraction": 0.9999856948852539,
+          "max_abs": 0.00390625,
+          "mean_signed": -4.109350489519177e-09,
+          "predicted_rms": 0.9999654641515795,
+          "relative_to_actual_rms": 7.638347267961453e-06,
+          "rms": 7.63808353922836e-06
+        },
+        "paired": {
+          "actual_rms": 0.9065141311706464,
+          "cosine": 0.9999999892669802,
+          "exact": false,
+          "exact_fraction": 0.9987131754557291,
+          "max_abs": 0.03125,
+          "mean_signed": 1.0261775464925904e-06,
+          "predicted_rms": 0.9065175689054924,
+          "relative_to_actual_rms": 0.00014656228606879876,
+          "rms": 0.00013286078341804083
+        },
+        "projection": {
+          "actual_rms": 3.6992428431065343,
+          "cosine": 0.9999956209769386,
+          "exact": false,
+          "exact_fraction": 0.543665885925293,
+          "max_abs": 0.25,
+          "mean_signed": 9.150669523450006e-06,
+          "predicted_rms": 3.6992427950427773,
+          "relative_to_actual_rms": 0.0029593996028733074,
+          "rms": 0.010947537800821402
+        }
+      },
+      "independent.reference-head": {
+        "activation": {
+          "actual_rms": 0.24460373487002118,
+          "cosine": 0.9999809416839103,
+          "exact": false,
+          "exact_fraction": 0.3051844702826606,
+          "max_abs": 0.375,
+          "mean_signed": -1.2842892325232786e-07,
+          "predicted_rms": 0.24457779557161224,
+          "relative_to_actual_rms": 0.006174450247385839,
+          "rms": 0.0015102935912797025
+        },
+        "after_attention": {
+          "actual_rms": 1.3359648928912584,
+          "cosine": 0.9999959613921028,
+          "exact": false,
+          "exact_fraction": 0.592341423034668,
+          "max_abs": 0.375,
+          "mean_signed": -2.500881237210706e-06,
+          "predicted_rms": 1.3359764943557009,
+          "relative_to_actual_rms": 0.0028420699054283105,
+          "rms": 0.0037969056167950015
+        },
+        "head": {
+          "actual_rms": 3.3377869039571437,
+          "cosine": 0.9999993911203086,
+          "exact": false,
+          "exact_fraction": 0.8238175710042318,
+          "max_abs": 0.125,
+          "mean_signed": 3.087170396061841e-06,
+          "predicted_rms": 3.3378233404259716,
+          "relative_to_actual_rms": 0.0011035813712504071,
+          "rms": 0.003683519448410676
+        },
+        "image": {
+          "actual_rms": 1.7887468054101283,
+          "cosine": 0.9999914132781332,
+          "exact": false,
+          "exact_fraction": 0.44719409942626953,
+          "max_abs": 2.0,
+          "mean_signed": -2.132960313853497e-06,
+          "predicted_rms": 1.7886020552006232,
+          "relative_to_actual_rms": 0.004144707769480522,
+          "rms": 0.0074138327820168215
+        },
+        "mlp": {
+          "actual_rms": 0.9740241264248858,
+          "cosine": 0.9999861376670136,
+          "exact": false,
+          "exact_fraction": 0.30810896555582684,
+          "max_abs": 0.125,
+          "mean_signed": -1.356453603662544e-06,
+          "predicted_rms": 0.9739607012181224,
+          "relative_to_actual_rms": 0.005265652933456324,
+          "rms": 0.005128872998566434
+        },
+        "mlp_input": {
+          "actual_rms": 0.3398492506328868,
+          "cosine": 0.9999880185181684,
+          "exact": false,
+          "exact_fraction": 0.6497058868408203,
+          "max_abs": 0.0625,
+          "mean_signed": 1.2584671367221745e-06,
+          "predicted_rms": 0.33984591277881543,
+          "relative_to_actual_rms": 0.004895183834387003,
+          "rms": 0.0016636245578266443
+        },
+        "norm": {
+          "actual_rms": 0.9999654730632371,
+          "cosine": 0.9999951627828806,
+          "exact": false,
+          "exact_fraction": 0.5589745839436849,
+          "max_abs": 0.25,
+          "mean_signed": 1.0520261130390434e-06,
+          "predicted_rms": 0.9999783659331515,
+          "relative_to_actual_rms": 0.0031104220313128705,
+          "rms": 0.0031103146379680897
+        },
+        "paired": {
+          "actual_rms": 0.9065141311706464,
+          "cosine": 0.9999940381368395,
+          "exact": false,
+          "exact_fraction": 0.4456120596991645,
+          "max_abs": 0.0625,
+          "mean_signed": -5.093672076844018e-06,
+          "predicted_rms": 0.9065032318433601,
+          "relative_to_actual_rms": 0.00345307508208925,
+          "rms": 0.0031302613579071445
+        },
+        "projection": {
+          "actual_rms": 3.6992428431065343,
+          "cosine": 0.999994395211724,
+          "exact": false,
+          "exact_fraction": 0.46152210235595703,
+          "max_abs": 0.25,
+          "mean_signed": 2.3427707656805317e-06,
+          "predicted_rms": 3.6992810592743597,
+          "relative_to_actual_rms": 0.003348103803897054,
+          "rms": 0.01238544903454394
+        }
+      },
+      "native.actual-head": {
+        "activation": {
+          "actual_rms": 0.24460373487002118,
+          "cosine": 1.0,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 0.24460373487002118,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "after_attention": {
+          "actual_rms": 1.3359648928912584,
+          "cosine": 0.9999999999999999,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 1.3359648928912584,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "head": {
+          "actual_rms": 3.3377869039571437,
+          "cosine": 0.9999999999999998,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 3.3377869039571437,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "image": {
+          "actual_rms": 1.7887468054101283,
+          "cosine": 0.9999999999999998,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 1.7887468054101283,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "mlp": {
+          "actual_rms": 0.9740241264248858,
+          "cosine": 0.9999999999999999,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 0.9740241264248858,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "mlp_input": {
+          "actual_rms": 0.3398492506328868,
+          "cosine": 1.0,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 0.3398492506328868,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "norm": {
+          "actual_rms": 0.9999654730632371,
+          "cosine": 1.0000000000000002,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 0.9999654730632371,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "paired": {
+          "actual_rms": 0.9065141311706464,
+          "cosine": 1.0000000000000002,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 0.9065141311706464,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "projection": {
+          "actual_rms": 3.6992428431065343,
+          "cosine": 1.0,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 3.6992428431065343,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        }
+      },
+      "native.local-opposite": {
+        "mlp": {
+          "actual_rms": 0.9740241264248858,
+          "cosine": 0.9999968286264217,
+          "exact": false,
+          "exact_fraction": 0.6889950434366862,
+          "max_abs": 0.0625,
+          "mean_signed": 9.182520344097611e-07,
+          "predicted_rms": 0.9740169338391513,
+          "relative_to_actual_rms": 0.0025184826480872287,
+          "rms": 0.002453062861219396
+        },
+        "paired": {
+          "actual_rms": 0.9065141311706464,
+          "cosine": 1.0000000000000002,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 0.9065141311706464,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "projection": {
+          "actual_rms": 3.6992428431065343,
+          "cosine": 0.9999956211890707,
+          "exact": false,
+          "exact_fraction": 0.5436662038167318,
+          "max_abs": 0.25,
+          "mean_signed": 9.053360789342454e-06,
+          "predicted_rms": 3.699231205302584,
+          "relative_to_actual_rms": 0.002959324957542136,
+          "rms": 0.010947261669614294
+        }
+      },
+      "native.opposite-reduction": {
+        "activation": {
+          "actual_rms": 0.24460373487002118,
+          "cosine": 0.9999848753738908,
+          "exact": false,
+          "exact_fraction": 0.3432219823201497,
+          "max_abs": 0.375,
+          "mean_signed": 4.0660844785147547e-07,
+          "predicted_rms": 0.24459059918712941,
+          "relative_to_actual_rms": 0.005500046515576403,
+          "rms": 0.0013453319196688343
+        },
+        "after_attention": {
+          "actual_rms": 1.3359648928912584,
+          "cosine": 0.9999967824738311,
+          "exact": false,
+          "exact_fraction": 0.6605434417724609,
+          "max_abs": 0.375,
+          "mean_signed": 2.158834831789136e-06,
+          "predicted_rms": 1.335970316022548,
+          "relative_to_actual_rms": 0.0025367488914191613,
+          "rms": 0.0033890074610168183
+        },
+        "head": {
+          "actual_rms": 3.3377869039571437,
+          "cosine": 0.9999999999999998,
+          "exact": true,
+          "exact_fraction": 1.0,
+          "max_abs": 0.0,
+          "mean_signed": 0.0,
+          "predicted_rms": 3.3377869039571437,
+          "relative_to_actual_rms": 0.0,
+          "rms": 0.0
+        },
+        "image": {
+          "actual_rms": 1.7887468054101283,
+          "cosine": 0.9999926797766066,
+          "exact": false,
+          "exact_fraction": 0.48554102579752606,
+          "max_abs": 2.0,
+          "mean_signed": 3.1354817717025676e-06,
+          "predicted_rms": 1.7885798242918463,
+          "relative_to_actual_rms": 0.0038272437180739806,
+          "rms": 0.0068459699742308144
+        },
+        "mlp": {
+          "actual_rms": 0.9740241264248858,
+          "cosine": 0.9999883734380758,
+          "exact": false,
+          "exact_fraction": 0.3369181950887044,
+          "max_abs": 0.09375,
+          "mean_signed": -2.084045411502681e-06,
+          "predicted_rms": 0.9740011918863426,
+          "relative_to_actual_rms": 0.004822150013081175,
+          "rms": 0.004696890453981143
+        },
+        "mlp_input": {
+          "actual_rms": 0.3398492506328868,
+          "cosine": 0.9999902525066691,
+          "exact": false,
+          "exact_fraction": 0.7119913101196289,
+          "max_abs": 0.0625,
+          "mean_signed": 6.101526347871792e-07,
+          "predicted_rms": 0.3398479919131425,
+          "relative_to_actual_rms": 0.00441530612471806,
+          "rms": 0.0015005384778002278
+        },
+        "norm": {
+          "actual_rms": 0.9999654730632371,
+          "cosine": 0.9999960279407214,
+          "exact": false,
+          "exact_fraction": 0.6273959477742513,
+          "max_abs": 0.25,
+          "mean_signed": 1.6705259096028158e-06,
+          "predicted_rms": 0.9999854255444144,
+          "relative_to_actual_rms": 0.0028186300213785304,
+          "rms": 0.0028185327027180243
+        },
+        "paired": {
+          "actual_rms": 0.9065141311706464,
+          "cosine": 0.9999952237620772,
+          "exact": false,
+          "exact_fraction": 0.4886068238152398,
+          "max_abs": 0.0625,
+          "mean_signed": 4.929708706925674e-07,
+          "predicted_rms": 0.9065134011209665,
+          "relative_to_actual_rms": 0.0030907068454657026,
+          "rms": 0.0028017694307205104
+        },
+        "projection": {
+          "actual_rms": 3.6992428431065343,
+          "cosine": 0.9999956211890707,
+          "exact": false,
+          "exact_fraction": 0.5436662038167318,
+          "max_abs": 0.25,
+          "mean_signed": 9.053360789342454e-06,
+          "predicted_rms": 3.699231205302584,
+          "relative_to_actual_rms": 0.002959324957542136,
+          "rms": 0.010947261669614294
+        }
+      },
+      "native.reference-head": {
+        "activation": {
+          "actual_rms": 0.24460373487002118,
+          "cosine": 0.9999822377193277,
+          "exact": false,
+          "exact_fraction": 0.3244121339586046,
+          "max_abs": 0.25,
+          "mean_signed": -2.2605164397387247e-07,
+          "predicted_rms": 0.24457758264441357,
+          "relative_to_actual_rms": 0.005960888722480975,
+          "rms": 0.0014580556446634357
+        },
+        "after_attention": {
+          "actual_rms": 1.3359648928912584,
+          "cosine": 0.9999964959422802,
+          "exact": false,
+          "exact_fraction": 0.6801191965738932,
+          "max_abs": 0.375,
+          "mean_signed": -9.923884742117177e-07,
+          "predicted_rms": 1.3359850753542954,
+          "relative_to_actual_rms": 0.0026473476412945405,
+          "rms": 0.0035367635080479866
+        },
+        "head": {
+          "actual_rms": 3.3377869039571437,
+          "cosine": 0.9999993911203086,
+          "exact": false,
+          "exact_fraction": 0.8238175710042318,
+          "max_abs": 0.125,
+          "mean_signed": 3.087170396061841e-06,
+          "predicted_rms": 3.3378233404259716,
+          "relative_to_actual_rms": 0.0011035813712504071,
+          "rms": 0.003683519448410676
+        },
+        "image": {
+          "actual_rms": 1.7887468054101283,
+          "cosine": 0.9999920552672386,
+          "exact": false,
+          "exact_fraction": 0.4704580307006836,
+          "max_abs": 1.0,
+          "mean_signed": -1.1950451153097674e-06,
+          "predicted_rms": 1.7886281234311447,
+          "relative_to_actual_rms": 0.0039865791713659445,
+          "rms": 0.007130980757295389
+        },
+        "mlp": {
+          "actual_rms": 0.9740241264248858,
+          "cosine": 0.9999862836296635,
+          "exact": false,
+          "exact_fraction": 0.3182996114095052,
+          "max_abs": 0.125,
+          "mean_signed": -8.493457048786013e-07,
+          "predicted_rms": 0.9739329142522026,
+          "relative_to_actual_rms": 0.005238219265013245,
+          "rms": 0.005102151943626534
+        },
+        "mlp_input": {
+          "actual_rms": 0.3398492506328868,
+          "cosine": 0.9999899642967978,
+          "exact": false,
+          "exact_fraction": 0.7181688944498698,
+          "max_abs": 0.0625,
+          "mean_signed": 1.828151198424166e-06,
+          "predicted_rms": 0.3398451604423761,
+          "relative_to_actual_rms": 0.004480101526499363,
+          "rms": 0.0015225591465400608
+        },
+        "norm": {
+          "actual_rms": 0.9999654730632371,
+          "cosine": 0.9999957433402581,
+          "exact": false,
+          "exact_fraction": 0.6335452397664388,
+          "max_abs": 0.25,
+          "mean_signed": 1.5416966352432837e-06,
+          "predicted_rms": 0.9999810641163309,
+          "relative_to_actual_rms": 0.0029178237298375103,
+          "rms": 0.002917722986322105
+        },
+        "paired": {
+          "actual_rms": 0.9065141311706464,
+          "cosine": 0.9999945574620528,
+          "exact": false,
+          "exact_fraction": 0.4666423797607422,
+          "max_abs": 0.0625,
+          "mean_signed": -1.0983142282168975e-05,
+          "predicted_rms": 0.9064891479225579,
+          "relative_to_actual_rms": 0.0032993234830082803,
+          "rms": 0.0029908833606501622
+        },
+        "projection": {
+          "actual_rms": 3.6992428431065343,
+          "cosine": 0.9999952512963918,
+          "exact": false,
+          "exact_fraction": 0.5651264190673828,
+          "max_abs": 0.25,
+          "mean_signed": 3.5142860118260916e-07,
+          "predicted_rms": 3.699284956051949,
+          "relative_to_actual_rms": 0.003081824936196238,
+          "rms": 0.011400418838931186
+        }
+      }
+    }
+  },
+  "historical_replay": {
+    "edit": {
+      "image": {
+        "exact_value_identity": true,
+        "expected": {
+          "bf16_le_sha256": "1a66c2a0014ccf8e5958c5bb4ffc5afbfa80c9e05f21c15931cb061ef00a434e",
+          "dtype": "float32",
+          "fp32_le_sha256": "4d8937b64d5778c0a2dc8d9b518c0ead95c6745e1b47b35e10869074f0687b76",
+          "shape": [
+            1,
+            1024,
+            3072
+          ]
+        },
+        "fields": {
+          "bf16_le_sha256": true,
+          "dtype": true,
+          "fp32_le_sha256": true,
+          "shape": true
+        },
+        "observed": {
+          "bf16_le_sha256": "1a66c2a0014ccf8e5958c5bb4ffc5afbfa80c9e05f21c15931cb061ef00a434e",
+          "dtype": "float32",
+          "fp32_le_sha256": "4d8937b64d5778c0a2dc8d9b518c0ead95c6745e1b47b35e10869074f0687b76",
+          "shape": [
+            1,
+            1024,
+            3072
+          ]
+        },
+        "scope": "Historical replay instrument observation; misses do not erase captured ports."
+      },
+      "text": {
+        "exact_value_identity": true,
+        "expected": {
+          "bf16_le_sha256": "2ecb9ee7019f986ef909cce46cb63fd4e9adca37a1670de13322e28a54afe6e3",
+          "dtype": "float32",
+          "fp32_le_sha256": "deee00aff3720eb66fa3a4581b8ef85d3a79241fb34a265b26661cb03494c622",
+          "shape": [
+            1,
+            512,
+            3072
+          ]
+        },
+        "fields": {
+          "bf16_le_sha256": true,
+          "dtype": true,
+          "fp32_le_sha256": true,
+          "shape": true
+        },
+        "observed": {
+          "bf16_le_sha256": "2ecb9ee7019f986ef909cce46cb63fd4e9adca37a1670de13322e28a54afe6e3",
+          "dtype": "float32",
+          "fp32_le_sha256": "deee00aff3720eb66fa3a4581b8ef85d3a79241fb34a265b26661cb03494c622",
+          "shape": [
+            1,
+            512,
+            3072
+          ]
+        },
+        "scope": "Historical replay instrument observation; misses do not erase captured ports."
+      }
+    },
+    "sham": {
+      "image": {
+        "exact_value_identity": true,
+        "expected": {
+          "bf16_le_sha256": "daf45f39b890007134b8b8599485dbaf4cc9d7013b9bc1438bd27248733083bd",
+          "dtype": "float32",
+          "fp32_le_sha256": "6442d3b8d357673949ea41486376a8f9e4dbccb332725557724fca7e1751340e",
+          "shape": [
+            1,
+            1024,
+            3072
+          ]
+        },
+        "fields": {
+          "bf16_le_sha256": true,
+          "dtype": true,
+          "fp32_le_sha256": true,
+          "shape": true
+        },
+        "observed": {
+          "bf16_le_sha256": "daf45f39b890007134b8b8599485dbaf4cc9d7013b9bc1438bd27248733083bd",
+          "dtype": "float32",
+          "fp32_le_sha256": "6442d3b8d357673949ea41486376a8f9e4dbccb332725557724fca7e1751340e",
+          "shape": [
+            1,
+            1024,
+            3072
+          ]
+        },
+        "scope": "Historical replay instrument observation; misses do not erase captured ports."
+      },
+      "text": {
+        "exact_value_identity": true,
+        "expected": {
+          "bf16_le_sha256": "9d5a4fbd70fea8ce09fc417cbb5a72e4e3137562e8a2884874dac0ba96ad1546",
+          "dtype": "float32",
+          "fp32_le_sha256": "f269e64841d9cb47e9fb79a637484ffafb091c050f0a47662e130790a09c3c36",
+          "shape": [
+            1,
+            512,
+            3072
+          ]
+        },
+        "fields": {
+          "bf16_le_sha256": true,
+          "dtype": true,
+          "fp32_le_sha256": true,
+          "shape": true
+        },
+        "observed": {
+          "bf16_le_sha256": "9d5a4fbd70fea8ce09fc417cbb5a72e4e3137562e8a2884874dac0ba96ad1546",
+          "dtype": "float32",
+          "fp32_le_sha256": "f269e64841d9cb47e9fb79a637484ffafb091c050f0a47662e130790a09c3c36",
+          "shape": [
+            1,
+            512,
+            3072
+          ]
+        },
+        "scope": "Historical replay instrument observation; misses do not erase captured ports."
+      }
+    }
+  },
+  "independent_local_vs_toggled_native": {
+    "mlp": {
+      "actual_rms": 0.007219040429905794,
+      "cosine": 0.9986467356504302,
+      "exact": false,
+      "exact_fraction": 0.9895763397216797,
+      "max_abs": 0.03125,
+      "mean_signed": 1.5353693102089969e-07,
+      "predicted_rms": 0.0072188424621479706,
+      "relative_to_actual_rms": 0.05202360262438622,
+      "rms": 0.00037556049065479727
+    },
+    "paired": {
+      "actual_rms": 0.004760436899912852,
+      "cosine": 0.9992344874012239,
+      "exact": false,
+      "exact_fraction": 0.9975034395853678,
+      "max_abs": 0.03125,
+      "mean_signed": -6.360121668830882e-08,
+      "predicted_rms": 0.004760481982425164,
+      "relative_to_actual_rms": 0.03912850350351322,
+      "rms": 0.00018626877191649366
+    },
+    "projection": {
+      "actual_rms": 0.01920644890606351,
+      "cosine": 0.9992336916844187,
+      "exact": false,
+      "exact_fraction": 0.9931764602661133,
+      "max_abs": 0.125,
+      "mean_signed": -1.2085351504727745e-07,
+      "predicted_rms": 0.019206362279986774,
+      "relative_to_actual_rms": 0.039148559858648325,
+      "rms": 0.0007519048146710979
+    }
+  },
+  "instrument_status": "historical-and-primitive-replay-observations-retained-per-field",
+  "job": "job-3fb176d80f27",
+  "limitations": [
+    "Two retrospectively selected states, one receiver/clock and observed operands; no prospective generalization.",
+    "Observed-QKV reference head excludes upstream QKV/norm/RoPE arithmetic discrepancies.",
+    "Whole-state error and changed-minus-sham response error use different native denominators.",
+    "Reduction-policy counterfactual is not a fitted correction to original forecasts.",
+    "No suffix or VAE executes here; later HH amplification and semantic names remain unassessed."
+  ],
+  "measurement_source_sha256": "83f735efe86e4a2d769f1dcf465ff15eaad595ec58ef87c26765f88170da2fbe",
+  "mechanics_status": "verified-saved-array-custody",
+  "metric_orientation": {
+    "errors_and_effects_mean_signed": "captured native minus candidate lane; effects are edit minus own sham before comparison",
+    "local_vs_toggled_mean_signed": "toggled native effect minus independent local effect",
+    "worker_comparisons": "candidate minus native, opposite to this audit's error sign"
+  },
+  "native_contract": {
+    "attention_mask": null,
+    "backend": null,
+    "cublas_workspace_config": ":4096:8",
+    "cudnn_benchmark": false,
+    "cudnn_deterministic": true,
+    "cudnn_tf32": false,
+    "deterministic_algorithms": true,
+    "device": "cuda",
+    "dtype": "torch.bfloat16",
+    "fp16_reduced_precision_reduction": true,
+    "inline_products": "Reconstructed, not module-observed.",
+    "native_return_order": [
+      "text",
+      "image"
+    ],
+    "parallel_config": "None",
+    "processor": "Flux2AttnProcessor",
+    "sdpa_enabled_flags": {
+      "flash_sdp_enabled": true,
+      "math_sdp_enabled": true,
+      "mem_efficient_sdp_enabled": true
+    },
+    "source_reduction_policy": true,
+    "tf32": false
+  },
+  "native_manifest_sha256": "d7cc47318ef783042fca27d9e084712c1038d5b29b4dcc31966f5413fa4d3a61",
+  "native_request_sha256": "0b89990a177fd23f1844b64b792b763ba60a25910e84da93acc5313b4c1f4a12",
+  "new_model_calls": 0,
+  "new_reference_forward_calls": 0,
+  "positioned_QKV_changes": {
+    "k": {
+      "image_rows": {
+        "changed_values": 1039151,
+        "elements": 3145728,
+        "max_abs": 0.0625,
+        "orientation": "native edit minus native sham",
+        "rms": 0.0025623640525942034,
+        "signed_mean": -3.270617327781148e-06
+      },
+      "text_rows": {
+        "changed_values": 0,
+        "elements": 1572864,
+        "max_abs": 0.0,
+        "orientation": "native edit minus native sham",
+        "rms": 0.0,
+        "signed_mean": 0.0
+      }
+    },
+    "q": {
+      "image_rows": {
+        "changed_values": 1090780,
+        "elements": 3145728,
+        "max_abs": 0.09375,
+        "orientation": "native edit minus native sham",
+        "rms": 0.0027947360338502415,
+        "signed_mean": -2.1793282386125176e-07
+      },
+      "text_rows": {
+        "changed_values": 0,
+        "elements": 1572864,
+        "max_abs": 0.0,
+        "orientation": "native edit minus native sham",
+        "rms": 0.0,
+        "signed_mean": 0.0
+      }
+    },
+    "v": {
+      "image_rows": {
+        "changed_values": 1258285,
+        "elements": 3145728,
+        "max_abs": 0.25,
+        "orientation": "native edit minus native sham",
+        "rms": 0.01844363549777883,
+        "signed_mean": -9.84838612320497e-06
+      },
+      "text_rows": {
+        "changed_values": 0,
+        "elements": 1572864,
+        "max_abs": 0.0,
+        "orientation": "native edit minus native sham",
+        "rms": 0.0,
+        "signed_mean": 0.0
+      }
+    }
+  },
+  "schema": "mdb-image-tail-audit-v1",
+  "scope": "Two complete native joint0 component captures; image-facing observed-operand native and independent arithmetic tails. No full model/pipeline, encoder, noise draw, suffix, VAE or new prospective forecast. Finite numerical substitutions, not semantic rules or causal shares.",
+  "selected_aten_operations": {
+    "edit": [
+      {
+        "calls": 1,
+        "name": "aten::scaled_dot_product_attention"
+      },
+      {
+        "calls": 1,
+        "name": "aten::_scaled_dot_product_flash_attention"
+      },
+      {
+        "calls": 2,
+        "name": "aten::bmm"
+      }
+    ],
+    "sham": [
+      {
+        "calls": 1,
+        "name": "aten::scaled_dot_product_attention"
+      },
+      {
+        "calls": 1,
+        "name": "aten::_scaled_dot_product_flash_attention"
+      },
+      {
+        "calls": 2,
+        "name": "aten::bmm"
+      }
+    ]
+  },
+  "source_cuts": {
+    "edit": "bef336254e7958a8e3953e2ad454a39cb6b1aa85cbff369f644ecfccd85020e8",
+    "sham": "4e555e904fac92399fbb218f98a8bbaa9b9dbffd99a6fd3943daad16da1df590"
+  },
+  "source_job": "job-46a52ffae499",
+  "terminal_status": "unassessed",
+  "trend_status": "observed"
+}

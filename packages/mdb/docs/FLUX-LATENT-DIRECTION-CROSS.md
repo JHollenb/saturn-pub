@@ -355,6 +355,12 @@ tail, using one retrospectively selected weakly predicted off-diagonal input
 and its own sham. Capture unchanged native operands, qualify exact native-tail
 replay, then compare local and carried mathematical equations on the same
 operands. Original and changed reduction policies remain separately named lanes.
-Two native joint0 calls suffice for the initial trace; no full three-pass suffix
-or VAE is needed. That proposed transfer test is distinct from locating the
-later h,h amplification through the single stack, and neither has run here.
+The [image-tail microscope](FLUX-IMAGE-TAIL.md) has now executed those two
+joint0 calls and a saved-array audit, with no full suffix or VAE. Exact native
+tail replay holds on both states. Same-operand independent projection and
+MLP-output response errors are 67.42% and 45.86% against the original policy,
+versus 3.91% and 5.20% against toggled native reduction. This implicates finite
+execution policy without repairing the original forecast. Attention-head
+disagreement remains consequential too. The new report retains every error
+and signed substitution term. Locating later h,h amplification through the
+single stack remains a separate open cut.
