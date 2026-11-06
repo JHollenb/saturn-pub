@@ -60,14 +60,17 @@ The saved-only CPU auditor independently evaluates16 NumPy elementwise commits w
 
 ## Reproduce the bounded workflow
 
-Use the installed qualified wheels outside the checkout. The native launcher stages original source hashes, parameter retrieval recipes, exact initial/final source cuts, finite budgets and a strict mrun preflight:
+Use the installed qualified wheels outside the checkout, with absolute paths to the maintainer launchers. The native launcher stages original source hashes, parameter retrieval recipes, exact initial/final source cuts, finite budgets and a strict mrun preflight:
 
 ```sh
-python -I qualification/stage_flux_reader_streams.py RUN \
+MDB_PY=/path/to/qualified/bin/python
+MDB_QUALIFICATION=/path/to/saturn-pub/packages/mdb/qualification
+export MRUN_URL=http://192.168.68.68:9025
+"$MDB_PY" -I "$MDB_QUALIFICATION/stage_flux_reader_streams.py" RUN \
   --fresh FRESH_NATIVE_RUN --audit FRESH_AUDIT_STUDY --panel commit
-python -I qualification/stage_flux_reader_streams.py RUN --submit
-python -I qualification/flux_commit_factorial_audit.py AUDIT --study RUN
-python -I qualification/flux_commit_factorial_audit.py AUDIT --submit
+"$MDB_PY" -I "$MDB_QUALIFICATION/stage_flux_reader_streams.py" RUN --submit
+"$MDB_PY" -I "$MDB_QUALIFICATION/flux_commit_factorial_audit.py" AUDIT --study RUN
+"$MDB_PY" -I "$MDB_QUALIFICATION/flux_commit_factorial_audit.py" AUDIT --submit
 ```
 
 The declared CUDA assay uses one resident model,4×84 source-prefix operations and28×28 final-pass operations:1,120 navigation operations,1,000 completed blocks/attention calls,16 additional original scheduler component calls,16 project-latent Acts and28 VAE calls. It performs no encoding or new random draw. Each submission is one finite lease with automatic retries disabled. Failed attempts remain separate records.
