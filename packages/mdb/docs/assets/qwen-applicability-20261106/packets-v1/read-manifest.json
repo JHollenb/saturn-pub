@@ -1,0 +1,170 @@
+{
+  "arrays_or_weights_read": 0,
+  "evaluator_calls": 0,
+  "forbidden_files_opened": 0,
+  "profile_scope": "Position start/step and dispatch scale/dropout derive from qualified source contract/config, not newly loaded tensor values. Selected kernels remain unprofiled.",
+  "reads": [
+    {
+      "bytes": 4246,
+      "file": "files.json",
+      "packet": "turn14",
+      "sha256": "82032b7ad875735d14a3c3f2ac2cc7dbb9bc342b3ae9373f2a8fbe349f06906f"
+    },
+    {
+      "bytes": 5853,
+      "file": "source-plan.json",
+      "packet": "turn14",
+      "sha256": "0a6d1b3f317e750d7a756978bc9c606d15f0052a88cd476a5028d82104f09805"
+    },
+    {
+      "bytes": 5939,
+      "file": "source-source.json",
+      "packet": "turn14",
+      "sha256": "721968c5de252514007a9ad47ee7dbd2cc0b11994f5d1ff5fe84ce9a8c8e546f"
+    },
+    {
+      "bytes": 857,
+      "file": "source-runtime-contract.json",
+      "packet": "turn14",
+      "sha256": "5986013a0b64c7948a769cfd04814965c7a0f67b93d00a43c0e5e59981fccd52"
+    },
+    {
+      "bytes": 7380,
+      "file": "source-source-frontier.json",
+      "packet": "turn14",
+      "sha256": "6563dd7a25a7634e7dd4efd5ef76ce3cf4b648c34fb5bfb7bd97b53e6616cda9"
+    },
+    {
+      "bytes": 1536,
+      "file": "source-metadata/qwen_config.json",
+      "packet": "turn14",
+      "sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40"
+    },
+    {
+      "bytes": 12595,
+      "file": "source-metadata/qwen_parameter_manifest.json",
+      "packet": "turn14",
+      "sha256": "425502121b4091b10124c548c98127785420233b12e95c8f1d972a186026dccf"
+    },
+    {
+      "bytes": 65926,
+      "file": "source-metadata/qwen_source_binding.json",
+      "packet": "turn14",
+      "sha256": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7"
+    },
+    {
+      "bytes": 72405,
+      "file": "source-metadata/parent_files.json",
+      "packet": "turn14",
+      "sha256": "d573bffe5c0c3dfc3d1c353721f5696909f73b75fb6ff293aed2e905f4ec0c33"
+    },
+    {
+      "bytes": 33034,
+      "file": "source-metadata/parent_seal.json",
+      "packet": "turn14",
+      "sha256": "a6d61b11fa67bfa0eb3a50fee66f26584b452874a590c255163102362460e652"
+    },
+    {
+      "bytes": 9480,
+      "file": "source-metadata/selection_protocol.json",
+      "packet": "turn14",
+      "sha256": "d942001a79784ebb1bc5d5ed3f3946eaa03b4629f2fe13c7493afbaaf85b51e9"
+    },
+    {
+      "bytes": 8798,
+      "file": "catalog/provenance.json",
+      "packet": "turn14",
+      "sha256": "813583a4589c77977446f651d76c84e2d2ebc4bb11a02a75dcb0b660414ed6d1"
+    },
+    {
+      "bytes": 536,
+      "file": "coverage.json",
+      "packet": "turn14",
+      "sha256": "dd727262bb1e716ba0eef5f17500a26df6b0ff0eebd9fb3d4baf63786029b714"
+    },
+    {
+      "bytes": 4456,
+      "file": "files.json",
+      "packet": "turn15",
+      "sha256": "c662757ab5f261b91f72006bd3de57291e1ff70e208c38e9e30631cb6c1a3ca7"
+    },
+    {
+      "bytes": 6613,
+      "file": "source-plan.json",
+      "packet": "turn15",
+      "sha256": "aaa7b31d5755247a5199c53b28636722a7619b3d7ec3300eac9878ca6e46fd8c"
+    },
+    {
+      "bytes": 6718,
+      "file": "source-source.json",
+      "packet": "turn15",
+      "sha256": "2bd16f715dbc00a1d2114c68b16259b27570cd37a3aba6ad936235cc5214a2db"
+    },
+    {
+      "bytes": 857,
+      "file": "source-runtime-contract.json",
+      "packet": "turn15",
+      "sha256": "6200cb6d3b21d19bd12732f37d419a7c5ef28bc15115e97c0e4a7d5f6a99eab0"
+    },
+    {
+      "bytes": 7279,
+      "file": "source-source-frontier.json",
+      "packet": "turn15",
+      "sha256": "af1445504a0c42a6049230255bf833f013da563d6c9efcd310394e9b44eaf136"
+    },
+    {
+      "bytes": 1536,
+      "file": "source-metadata/qwen_config.json",
+      "packet": "turn15",
+      "sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40"
+    },
+    {
+      "bytes": 12595,
+      "file": "source-metadata/qwen_parameter_manifest.json",
+      "packet": "turn15",
+      "sha256": "425502121b4091b10124c548c98127785420233b12e95c8f1d972a186026dccf"
+    },
+    {
+      "bytes": 65926,
+      "file": "source-metadata/qwen_source_binding.json",
+      "packet": "turn15",
+      "sha256": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7"
+    },
+    {
+      "bytes": 72405,
+      "file": "source-metadata/parent_files.json",
+      "packet": "turn15",
+      "sha256": "d573bffe5c0c3dfc3d1c353721f5696909f73b75fb6ff293aed2e905f4ec0c33"
+    },
+    {
+      "bytes": 33034,
+      "file": "source-metadata/parent_seal.json",
+      "packet": "turn15",
+      "sha256": "a6d61b11fa67bfa0eb3a50fee66f26584b452874a590c255163102362460e652"
+    },
+    {
+      "bytes": 22393,
+      "file": "source-metadata/selection_protocol.json",
+      "packet": "turn15",
+      "sha256": "8c53ae9417ba40420e806cb634d59931fb0131f95d0329e5b34e078429503bff"
+    },
+    {
+      "bytes": 9584,
+      "file": "catalog/provenance.json",
+      "packet": "turn15",
+      "sha256": "03a8aa784e176e9a0968d4d229933f9c497f8c55b1c9fdf23ec259039d628de3"
+    },
+    {
+      "bytes": 671,
+      "file": "coverage.json",
+      "packet": "turn15",
+      "sha256": "c3521a9ddabb143dc7f463dd26f531f3d118347a78a8a92641b8123d8d748b03"
+    }
+  ],
+  "schema": "mdb-source-only-read-manifest-v1",
+  "source_sha256": "86b7f56e983c41bb43f7169683c3a85415c38807864d773ccba759864777478f",
+  "trusted_wrappers": {
+    "turn14": "82032b7ad875735d14a3c3f2ac2cc7dbb9bc342b3ae9373f2a8fbe349f06906f",
+    "turn15": "c662757ab5f261b91f72006bd3de57291e1ff70e208c38e9e30631cb6c1a3ca7"
+  }
+}

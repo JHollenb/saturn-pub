@@ -1,0 +1,49 @@
+{
+  "schema": "mdb-source-applicability-independent-review-v1",
+  "status": "no-concrete-metadata-blocker-found",
+  "review_scope": "Read-only inspection of root-executed metadata preparation/replay results and their contracts. No evaluator calls or fresh preparation by reviewer; no original arrays, weights, images, numerical reports, services or model calls.",
+  "bindings": {
+    "module_sha256": "820e971a6128aa7f49cd169734fd2a123e8a60924b25a6d08f6d0a46d33996f3",
+    "normalizer_sha256": "86b7f56e983c41bb43f7169683c3a85415c38807864d773ccba759864777478f",
+    "inputs_manifest_sha256": "fa30ac0218f859a96df10ea80095f6211493c310422774fe442e9255497c61ca",
+    "replay_receipt_sha256": "7e3606bb7a19831b96e4672a9aae463319275ad72531adbf6c363ff5aebb746e",
+    "plans_sha256": "3073fd66494baafb92d09bb159d6bd3a2996c999f4924648e4f363481a5b61ff",
+    "controls_sha256": "6da0f3bf66b57e79885545403be69a1b426211f8d335581111ce2e9b007aa60e",
+    "coverage_index_sha256": "cfbbff6010d6d4d9fa88f64526e4ff330ca1fadc7dcc487f69f1e06b3047ba6a",
+    "read_manifest_sha256": "72d3d0eae09cfbc1dfef25bbd20e45f9c35f8c71b1ca3ff6115ace454fe64a25",
+    "execution_receipt_sha256": "781fa49ca593efd428fcece4cefd51ea52a5a55351722e3bb4832dc022868700"
+  },
+  "input_manifest": {"members_checked": 9, "hash_mismatches": 0},
+  "main_plans": [
+    {"case": "turn14.all-negative", "method": "m0", "selection": "candidate", "query_bounds": [0,512], "structurally_closed_rows": 512, "cross_sign_edges": 0, "historical_lookup": "exact-occurrence"},
+    {"case": "turn14.prefix-negative", "method": "m2", "selection": "fallback", "query_bounds": [0,512], "structurally_closed_rows": 256, "cross_sign_edges": 65536, "historical_lookup": "no-exact-occurrence"},
+    {"case": "turn15.last-row-negative", "method": "m1", "selection": "candidate", "query_bounds": [0,512], "structurally_closed_rows": 511, "cross_sign_edges": 511, "historical_lookup": "exact-occurrence"},
+    {"case": "turn15.alternating64", "method": "m1", "selection": "candidate", "query_bounds": [0,512], "structurally_closed_rows": 64, "cross_sign_edges": 65536, "historical_lookup": "exact-occurrence"}
+  ],
+  "controls": {
+    "rows": 28,
+    "changed_source": "All four abstain with unsupported local source binding.",
+    "changed_profile": "All four abstain with unsupported local profile.",
+    "cache_added": "All four abstain with unsupported local cache context.",
+    "missing_prediction_ports": "All four fall back to m2 with retained full functional prerequisites.",
+    "missing_output_baseline": "All four abstain; no silent source-port union.",
+    "unqualified_continuation": "All four retain their original local method while continuation is explicitly unqualified.",
+    "fallback_disabled": "Only prefix-negative abstains; the three directly eligible m0/m1 cases retain selection."
+  },
+  "coverage_review": {
+    "all_four_decision_hashes_unchanged_by_index": true,
+    "historical_methods_preserved": ["m0","m0","m1","m1"],
+    "prefix_note": "The historical prefix m0 occurrence is retained as m0, not relabeled as m2. Newly selected m2 has no exact historical occurrence; the old m0 counterexample is not converted into fallback finite evidence.",
+    "availability": "Turn14 has R/G/U but no QKV; turn15 has QKV but no G/U. The packets remain separate and no union is inferred.",
+    "scope": "Occurrence/account counts are dependent metadata coverage only. No error, pass, target outcome, raw-bit identity or numerical identity is inferred."
+  },
+  "read_barrier": {"source_reads": 26, "forbidden_files_opened": 0, "arrays_or_weights_read": 0, "preparation_evaluator_calls": 0},
+  "limits": [
+    "All plans cover the complete 512-row component; structural support is an ideal-arithmetic sufficient premise, not a BF16 or signed-zero equality guarantee.",
+    "Profile is declared and source-bound. Selected kernels are unprofiled and hardware attestation is not supplied; no new hardware qualification or measured speed claim follows.",
+    "Operation-source hashes are explicit for m0/m1/m2, but no prediction was numerically executed in this replay.",
+    "Frontier is inherited functional state, not a raw-input prediction or genuine RecordPrefix capture.",
+    "Support ends at local horizon19. A later consumer remains independently unqualified even when local selection remains valid.",
+    "The finite occurrence index is a retrospective source-only projection and cannot authorize a scientific-null or accuracy verdict."
+  ]
+}

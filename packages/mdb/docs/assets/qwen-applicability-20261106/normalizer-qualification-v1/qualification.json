@@ -1,0 +1,33 @@
+{
+  "schema": "mdb-qwen-applicability-normalizer-qualification-v1",
+  "mechanics_status": "synthetic-metadata-checks-passed",
+  "source_hashes": {
+    "prepare_packets.py": "86b7f56e983c41bb43f7169683c3a85415c38807864d773ccba759864777478f",
+    "test_prepare_packets.py": "ac50ba81eaf5e0ba276629a0ffeb96d18126c38205973a4683dbe824e6a238e2",
+    "qualify_metadata.py": "f95899de4c2b34b230ec668062b4761687c45c78b37a9fc98b997cd39221fe96"
+  },
+  "tests": {
+    "attempt": "attempt-01",
+    "execution_sha256": "016f8f2a1219e20b98243c3cca3991897f396f8d0d69a14ae7f241625afe4dc3",
+    "passed": 5,
+    "seconds": 0.02,
+    "returncode": 0,
+    "stdout_sha256": "ef0e7ef49e71fa999842be0cb8d22ec1058d3a384ed5c0a2ec6efb8f434975ac",
+    "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "scope": "Synthetic metadata read-barrier, wrapper/member integrity, separate port availability, counts-only occurrence index and isolated control-copy checks; no evaluator execution."
+  },
+  "ruff": {
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "command": ["/Users/jakeholl/domains/common/.venv/bin/ruff", "check", "--select", "F,I", "--config", "pyproject.toml", "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/prepare_packets.py", "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/test_prepare_packets.py"],
+    "returncode": 0,
+    "stdout": "All checks passed!\n"
+  },
+  "limits": {
+    "actual_packet_preparation_executed": false,
+    "actual_evaluator_replay_executed": false,
+    "target_reports_arrays_weights_images_read": false,
+    "profile": "Metadata source-bound versions, sources, CUDA device, configured flags, geometry and attention arguments only. GPU architecture/driver and selected kernels were not independently profiled; no new hardware qualification is asserted.",
+    "coverage": "Historical source-only occurrence metadata is retrospective lookup evidence; it does not change route selection or prove finite numerical accuracy. Turn14 RGU and turn15 QKV availability remain separate."
+  },
+  "execution_owner": "Root owns actual preparation and installed evaluator replay; this receipt freezes only the metadata helper and synthetic qualification."
+}

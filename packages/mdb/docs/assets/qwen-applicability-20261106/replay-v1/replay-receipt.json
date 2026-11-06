@@ -1,0 +1,13 @@
+{
+  "arrays_or_weights_read": 0,
+  "controls": 28,
+  "inputs_manifest_sha256": "fa30ac0218f859a96df10ea80095f6211493c310422774fe442e9255497c61ca",
+  "installed_module": "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/venv/lib/python3.12/site-packages/mdb/computation_applicability.py",
+  "main_cases": 4,
+  "model_calls": 0,
+  "module_sha256": "820e971a6128aa7f49cd169734fd2a123e8a60924b25a6d08f6d0a46d33996f3",
+  "outcome_status": "not-read-or-executed",
+  "schema": "mdb-source-only-replay-receipt-v1",
+  "scope": "Metadata applicability replay only. Historical occurrence binding is a retrospective projection; method mismatch remains unmatched and never becomes a finite accuracy certificate.",
+  "source_sha256": "86b7f56e983c41bb43f7169683c3a85415c38807864d773ccba759864777478f"
+}

@@ -1,0 +1,25 @@
+{
+  "arms": {
+    "alternating64": {
+      "QKV_channel_fields": 9,
+      "QKV_source_sign_fields": 3,
+      "overlapping_endpoint_windows": 96,
+      "overlapping_response_windows": 96,
+      "primary_endpoint_fields": 12,
+      "primary_response_fields": 12
+    },
+    "last-row-negative": {
+      "QKV_channel_fields": 9,
+      "QKV_source_sign_fields": 3,
+      "overlapping_endpoint_windows": 24,
+      "overlapping_response_windows": 24,
+      "primary_endpoint_fields": 12,
+      "primary_response_fields": 12
+    }
+  },
+  "dependent_accounts": true,
+  "learned_projections": 0,
+  "model_calls": 0,
+  "primary_and_windows_separate": true,
+  "tokenizer_calls": 0
+}

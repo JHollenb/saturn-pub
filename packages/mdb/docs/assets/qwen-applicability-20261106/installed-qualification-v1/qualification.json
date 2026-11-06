@@ -1,0 +1,27 @@
+{
+  "base_commit": "698fe49ebfe3b9d64078b48fa5f583a7b427e104",
+  "commands_sha256": "342986dcda46424a5f63d49f41295838e1fcdaba84da2f763e85d3a1213cdde2",
+  "installed": {
+    "module": "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/venv/lib/python3.12/site-packages/mdb/computation_applicability.py",
+    "numpy_imported": false,
+    "sha256": "820e971a6128aa7f49cd169734fd2a123e8a60924b25a6d08f6d0a46d33996f3",
+    "torch_imported": false
+  },
+  "model_calls": 0,
+  "owned_overlays": {
+    "src/mdb/computation_applicability.py": "820e971a6128aa7f49cd169734fd2a123e8a60924b25a6d08f6d0a46d33996f3",
+    "tests/test_computation_applicability.py": "6a98faabbc2ff4142be18e0cc6ac9041d41b56232a8ce9586b4d3412a54fdbe9"
+  },
+  "peer_uncommitted_sources_included": false,
+  "python": "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/venv/bin/python",
+  "saturn_wheel_sha256": "c32bbcf5c5b45e4970d9c750266f607b2a9b0f06dc982106fd82e0501375e424",
+  "schema": "mdb-source-applicability-installed-qualification-v1",
+  "scope": "Installed pure metadata API mechanics; no original scientific prediction.",
+  "source_manifest_sha256": "18992037bf9df653c5a2823044533732cc630494b7a5c4522d12bb3e9342d849",
+  "tests_stdout_sha256": "796baadbd3505252bffc0ec11fc6418c1a66ded311dfb992a2c358e13ec4d9dc",
+  "wheel": {
+    "bytes": 1091581,
+    "path": "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/wheels/mdb_runtime-0.1.0-py3-none-any.whl",
+    "sha256": "21fed3096a796f46584f20da8ca47bc7f1244e5b0fd1c1b3fb91a768f9984377"
+  }
+}

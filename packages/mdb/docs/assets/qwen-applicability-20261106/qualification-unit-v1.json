@@ -1,0 +1,36 @@
+{
+  "schema": "mdb-source-only-qualification-v1",
+  "scope": "Owned public applicability module and focused source-unit tests; clean installed-wheel qualification remains with root",
+  "source": {
+    "path": "saturn-pub/packages/mdb/src/mdb/computation_applicability.py",
+    "sha256": "820e971a6128aa7f49cd169734fd2a123e8a60924b25a6d08f6d0a46d33996f3"
+  },
+  "tests": {
+    "path": "saturn-pub/packages/mdb/tests/test_computation_applicability.py",
+    "sha256": "6a98faabbc2ff4142be18e0cc6ac9041d41b56232a8ce9586b4d3412a54fdbe9",
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "command": "rtk proxy /Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python -I -B -m pytest /Users/jakeholl/domains/saturn-pub/packages/mdb/tests/test_computation_applicability.py -q -p no:cacheprovider",
+    "result": "29 passed in 0.13s",
+    "exit_code": 0,
+    "coverage": [
+      "Declared source, context, parameter, layout and execution-profile bindings",
+      "Per-row causal sign closure and all-512 query plans",
+      "Port availability, explicit fallback policy and no implicit positive recomputation",
+      "Coverage-independent decisions and exact selected-method occurrence lookup",
+      "Hostile source/profile/cache/layout/port and target-metric inputs",
+      "Distinct local and continuation qualification",
+      "JSON-owned result copies, no file reads and no Torch/NumPy imports"
+    ]
+  },
+  "lint": {
+    "status": "not-run",
+    "reason": "Ruff executable and Python module unavailable in the fixed qualification environment"
+  },
+  "profile_authority": "declared-source-bound; selected kernels unprofiled; hardware attestation not supplied",
+  "execution": {
+    "models": 0,
+    "original_arrays_or_weights_read": 0,
+    "scientific_jobs": 0,
+    "actual_replay": "not performed by this agent"
+  }
+}

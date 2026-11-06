@@ -1,0 +1,11 @@
+{
+  "continuation": null,
+  "horizon": 19,
+  "ports": [
+    "head",
+    "R",
+    "M",
+    "Hnext"
+  ],
+  "response": "edited-minus-own-positive"
+}

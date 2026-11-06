@@ -1,0 +1,38 @@
+[
+  {
+    "label": "prepare",
+    "command": [
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/venv/bin/python",
+      "-I",
+      "-B",
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/prepare_packets.py",
+      "prepare",
+      "--out",
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/packets-v1"
+    ],
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/execution-v1",
+    "returncode": 0,
+    "elapsed_s": 0.041502916952595115
+  },
+  {
+    "label": "replay",
+    "command": [
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/venv/bin/python",
+      "-I",
+      "-B",
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/prepare_packets.py",
+      "replay",
+      "--inputs",
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/packets-v1",
+      "--out",
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/replay-v1",
+      "--expected-input-manifest",
+      "fa30ac0218f859a96df10ea80095f6211493c310422774fe442e9255497c61ca",
+      "--expected-module-sha256",
+      "820e971a6128aa7f49cd169734fd2a123e8a60924b25a6d08f6d0a46d33996f3"
+    ],
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/execution-v1",
+    "returncode": 0,
+    "elapsed_s": 0.11128950002603233
+  }
+]

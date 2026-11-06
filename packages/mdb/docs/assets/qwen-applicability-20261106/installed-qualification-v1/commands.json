@@ -1,0 +1,95 @@
+[
+  {
+    "label": "build",
+    "command": [
+      "uv",
+      "build",
+      "--offline",
+      "--wheel",
+      "--out-dir",
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/wheels",
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/clean/packages/mdb"
+    ],
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106",
+    "returncode": 0,
+    "elapsed_s": 0.4558135000988841
+  },
+  {
+    "label": "venv",
+    "command": [
+      "uv",
+      "venv",
+      "--offline",
+      "--python",
+      "3.12",
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/venv"
+    ],
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106",
+    "returncode": 0,
+    "elapsed_s": 0.011163459159433842
+  },
+  {
+    "label": "install-runtime",
+    "command": [
+      "uv",
+      "pip",
+      "install",
+      "--offline",
+      "--python",
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/venv/bin/python",
+      "--no-deps",
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/wheels/mdb_runtime-0.1.0-py3-none-any.whl",
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-cached-qkv-20261106/run-01/payload/saturn_pub-0.4.1-py3-none-any.whl"
+    ],
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106",
+    "returncode": 0,
+    "elapsed_s": 0.11361674987711012
+  },
+  {
+    "label": "install-pytest",
+    "command": [
+      "uv",
+      "pip",
+      "install",
+      "--offline",
+      "--python",
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/venv/bin/python",
+      "pytest"
+    ],
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106",
+    "returncode": 0,
+    "elapsed_s": 0.03077162499539554
+  },
+  {
+    "label": "tests",
+    "command": [
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/venv/bin/python",
+      "-I",
+      "-B",
+      "-m",
+      "pytest",
+      "-q",
+      "-p",
+      "no:cacheprovider",
+      "--basetemp",
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/test-tmp",
+      "test_computation_applicability.py"
+    ],
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/tests",
+    "returncode": 0,
+    "elapsed_s": 0.39651474985294044
+  },
+  {
+    "label": "inspect",
+    "command": [
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/venv/bin/python",
+      "-I",
+      "-B",
+      "-c",
+      "import hashlib,json,sys; from pathlib import Path; import mdb.computation_applicability as m; p=Path(m.__file__).resolve(); assert 'site-packages' in p.parts; assert 'torch' not in sys.modules and 'numpy' not in sys.modules; print(json.dumps(dict(module=str(p),sha256=hashlib.sha256(p.read_bytes()).hexdigest(),torch_imported=False,numpy_imported=False)))"
+    ],
+    "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106",
+    "returncode": 0,
+    "elapsed_s": 0.04217329085804522
+  }
+]

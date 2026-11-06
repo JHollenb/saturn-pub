@@ -1,0 +1,8 @@
+{
+  "allow_full_functional_fallback": true,
+  "order": [
+    "m0",
+    "m1",
+    "m2"
+  ]
+}

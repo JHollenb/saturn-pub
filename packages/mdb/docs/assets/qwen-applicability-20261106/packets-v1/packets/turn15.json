@@ -1,0 +1,455 @@
+{
+  "binding": {
+    "parameter_manifest_sha256": "425502121b4091b10124c548c98127785420233b12e95c8f1d972a186026dccf",
+    "parent_global_seal_sha256": "a6d61b11fa67bfa0eb3a50fee66f26584b452874a590c255163102362460e652",
+    "parent_job": "job-8c949b1c0278",
+    "parent_parameter_manifest_sha256": "d5060dd8137bf34568d3d9b0fda805c5979133b0c4a4538e23579196cb5d3374",
+    "parent_raw_manifest_sha256": "d573bffe5c0c3dfc3d1c353721f5696909f73b75fb6ff293aed2e905f4ec0c33",
+    "parent_request_sha256": "1a9b11e4bc739410dcd165b31cd0c0452aa5f0583e7731598bc1e2b8a87bdd5a",
+    "producer_sha256": "83f9d459938ccb96b913def78862cffc869cb6f0b4404a7f116d0a46fed184af",
+    "qwen_config_sha256": "214b4c29a0d975e9fddf9994a5673f22cb2c4c5750352f9227c2c3251ebeab40",
+    "qwen_source_binding_sha256": "663707b6a30042ff89e90f05560766c23f49b084b33385be09028c78e15859c7",
+    "selection_protocol_sha256": "8c53ae9417ba40420e806cb634d59931fb0131f95d0329e5b34e078429503bff",
+    "source_case": "long-description"
+  },
+  "context": {
+    "attention_mask": {
+      "bytes": 4224,
+      "content_sha256": "8a472efbc41a4502e6da085422880bc742625c1187f2d36ed39e669d736ac113",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.int64",
+      "path": "cases/long-description/inputs/mask.npy",
+      "sha256": "b6ac6a685e8726963fa2bb91856728280ee6fa47957eea274285b029a6abb946",
+      "shape": [
+        1,
+        512
+      ],
+      "stored_dtype": "int64",
+      "stride": [
+        512,
+        1
+      ]
+    },
+    "input_ids": {
+      "bytes": 4224,
+      "content_sha256": "cb7f2c8b789898f1d188f0683c7b068089579355c5ee257911f5977d864f67b9",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.int64",
+      "path": "cases/long-description/inputs/ids.npy",
+      "sha256": "799ae335f3076cf3ddcb293b58f8bbb9e66ecdb7ce4977e7c2058eab89ef9b83",
+      "shape": [
+        1,
+        512
+      ],
+      "stored_dtype": "int64",
+      "stride": [
+        512,
+        1
+      ]
+    },
+    "position_ids": {
+      "bytes": 4224,
+      "content_sha256": "5738153ec97595b1c1e4dc027f7b7fb4534f19ed2ce9f9ee712e6d34a384cde7",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.int64",
+      "path": "cases/long-description/forecast/position_ids.npy",
+      "sha256": "aae0468672b77326ea684d78e95f77d2b0341a9f6fb01146c25d09b29935ea68",
+      "shape": [
+        1,
+        512
+      ],
+      "stored_dtype": "int64",
+      "stride": [
+        512,
+        1
+      ]
+    },
+    "rope_buffer:model.rotary_emb.inv_freq": {
+      "bytes": 384,
+      "content_sha256": "138c99b109d7affbfba059e435670918fe4531bce4709b6e86f3f22f7ef80f6e",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.float32",
+      "path": "rope-before/model.rotary_emb.inv_freq.npy",
+      "sha256": "2e515831f0c14466976c2f486410ba482661afc7bdb8ae12d9a1f7d6f070cfeb",
+      "shape": [
+        64
+      ],
+      "stored_dtype": "float32",
+      "stride": [
+        1
+      ]
+    },
+    "rope_buffer:model.rotary_emb.original_inv_freq": {
+      "bytes": 384,
+      "content_sha256": "138c99b109d7affbfba059e435670918fe4531bce4709b6e86f3f22f7ef80f6e",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.float32",
+      "path": "rope-before/model.rotary_emb.original_inv_freq.npy",
+      "sha256": "2e515831f0c14466976c2f486410ba482661afc7bdb8ae12d9a1f7d6f070cfeb",
+      "shape": [
+        64
+      ],
+      "stored_dtype": "float32",
+      "stride": [
+        1
+      ]
+    }
+  },
+  "frontier": {
+    "genuine_record_prefix_capture": false,
+    "kind": "architectural",
+    "origin": "inherited-functional-state",
+    "raw_input_prediction": false,
+    "scope": "conditional block18 hidden-state interface"
+  },
+  "kind": "qkv",
+  "packet_id": "turn15",
+  "parameters": {
+    "model.layers.18.input_layernorm.weight": {
+      "data_offsets": [
+        2796528640,
+        2796533760
+      ],
+      "dtype": "BF16",
+      "file": "model-00001-of-00002.safetensors",
+      "file_sha256": "8c0506e7f4936fa7e26183a4fd8da4e2bdbc5990ba64ae441f965d51228f36ea",
+      "header_bytes": 26360,
+      "header_sha256": "8d1a2170cadc1eb2e68cb60f5610c304d263f29de260584fd4fadc73d40b56ec",
+      "payload_sha256": "1fa08ab5cea0a8128c8ed832fce76a911a09ba28d932f9969a6b652f6e85e84c",
+      "shape": [
+        2560
+      ],
+      "tensor": "model.layers.18.input_layernorm.weight"
+    },
+    "model.layers.18.mlp.down_proj.weight": {
+      "data_offsets": [
+        2796533760,
+        2846341120
+      ],
+      "dtype": "BF16",
+      "file": "model-00001-of-00002.safetensors",
+      "file_sha256": "8c0506e7f4936fa7e26183a4fd8da4e2bdbc5990ba64ae441f965d51228f36ea",
+      "header_bytes": 26360,
+      "header_sha256": "8d1a2170cadc1eb2e68cb60f5610c304d263f29de260584fd4fadc73d40b56ec",
+      "payload_sha256": "efac53bfeaf24a75fc9945a866a4e0253c97c178e151fec6fa437e31bef5f7bf",
+      "shape": [
+        2560,
+        9728
+      ],
+      "tensor": "model.layers.18.mlp.down_proj.weight"
+    },
+    "model.layers.18.mlp.gate_proj.weight": {
+      "data_offsets": [
+        2846341120,
+        2896148480
+      ],
+      "dtype": "BF16",
+      "file": "model-00001-of-00002.safetensors",
+      "file_sha256": "8c0506e7f4936fa7e26183a4fd8da4e2bdbc5990ba64ae441f965d51228f36ea",
+      "header_bytes": 26360,
+      "header_sha256": "8d1a2170cadc1eb2e68cb60f5610c304d263f29de260584fd4fadc73d40b56ec",
+      "payload_sha256": "6feb850e627bbe322476f76aab3f82656f35976a6669dbeb6aa58709c9bcbed2",
+      "shape": [
+        9728,
+        2560
+      ],
+      "tensor": "model.layers.18.mlp.gate_proj.weight"
+    },
+    "model.layers.18.mlp.up_proj.weight": {
+      "data_offsets": [
+        2896148480,
+        2945955840
+      ],
+      "dtype": "BF16",
+      "file": "model-00001-of-00002.safetensors",
+      "file_sha256": "8c0506e7f4936fa7e26183a4fd8da4e2bdbc5990ba64ae441f965d51228f36ea",
+      "header_bytes": 26360,
+      "header_sha256": "8d1a2170cadc1eb2e68cb60f5610c304d263f29de260584fd4fadc73d40b56ec",
+      "payload_sha256": "06dca26793744f09ff061622623a79473ba2bf5890f084bc0127374241e00509",
+      "shape": [
+        9728,
+        2560
+      ],
+      "tensor": "model.layers.18.mlp.up_proj.weight"
+    },
+    "model.layers.18.post_attention_layernorm.weight": {
+      "data_offsets": [
+        2945955840,
+        2945960960
+      ],
+      "dtype": "BF16",
+      "file": "model-00001-of-00002.safetensors",
+      "file_sha256": "8c0506e7f4936fa7e26183a4fd8da4e2bdbc5990ba64ae441f965d51228f36ea",
+      "header_bytes": 26360,
+      "header_sha256": "8d1a2170cadc1eb2e68cb60f5610c304d263f29de260584fd4fadc73d40b56ec",
+      "payload_sha256": "29c230e781ceae6d9e8d69742a2b249b2ed55f3983fb1315bf9c5481d68191e2",
+      "shape": [
+        2560
+      ],
+      "tensor": "model.layers.18.post_attention_layernorm.weight"
+    },
+    "model.layers.18.self_attn.k_norm.weight": {
+      "data_offsets": [
+        2945960960,
+        2945961216
+      ],
+      "dtype": "BF16",
+      "file": "model-00001-of-00002.safetensors",
+      "file_sha256": "8c0506e7f4936fa7e26183a4fd8da4e2bdbc5990ba64ae441f965d51228f36ea",
+      "header_bytes": 26360,
+      "header_sha256": "8d1a2170cadc1eb2e68cb60f5610c304d263f29de260584fd4fadc73d40b56ec",
+      "payload_sha256": "d3b8c22916d5cbd150b680f3de8038e8a1d5f0be12f755a551151e131c813ea6",
+      "shape": [
+        128
+      ],
+      "tensor": "model.layers.18.self_attn.k_norm.weight"
+    },
+    "model.layers.18.self_attn.k_proj.weight": {
+      "data_offsets": [
+        2945961216,
+        2951204096
+      ],
+      "dtype": "BF16",
+      "file": "model-00001-of-00002.safetensors",
+      "file_sha256": "8c0506e7f4936fa7e26183a4fd8da4e2bdbc5990ba64ae441f965d51228f36ea",
+      "header_bytes": 26360,
+      "header_sha256": "8d1a2170cadc1eb2e68cb60f5610c304d263f29de260584fd4fadc73d40b56ec",
+      "payload_sha256": "b41711c336c4d4cc62a944c52a383c52cc695549ad438a683ba9178da25b8dfd",
+      "shape": [
+        1024,
+        2560
+      ],
+      "tensor": "model.layers.18.self_attn.k_proj.weight"
+    },
+    "model.layers.18.self_attn.o_proj.weight": {
+      "data_offsets": [
+        2951204096,
+        2972175616
+      ],
+      "dtype": "BF16",
+      "file": "model-00001-of-00002.safetensors",
+      "file_sha256": "8c0506e7f4936fa7e26183a4fd8da4e2bdbc5990ba64ae441f965d51228f36ea",
+      "header_bytes": 26360,
+      "header_sha256": "8d1a2170cadc1eb2e68cb60f5610c304d263f29de260584fd4fadc73d40b56ec",
+      "payload_sha256": "5d0c3afc14e85a3353a8d6b5239d975b8fbb1c145cfb71892c8628517de448bf",
+      "shape": [
+        2560,
+        4096
+      ],
+      "tensor": "model.layers.18.self_attn.o_proj.weight"
+    },
+    "model.layers.18.self_attn.q_norm.weight": {
+      "data_offsets": [
+        2972175616,
+        2972175872
+      ],
+      "dtype": "BF16",
+      "file": "model-00001-of-00002.safetensors",
+      "file_sha256": "8c0506e7f4936fa7e26183a4fd8da4e2bdbc5990ba64ae441f965d51228f36ea",
+      "header_bytes": 26360,
+      "header_sha256": "8d1a2170cadc1eb2e68cb60f5610c304d263f29de260584fd4fadc73d40b56ec",
+      "payload_sha256": "1be96f42e1c42b92cc2fb2ef534ced2926901786424f143b861eff43cf160b1c",
+      "shape": [
+        128
+      ],
+      "tensor": "model.layers.18.self_attn.q_norm.weight"
+    },
+    "model.layers.18.self_attn.q_proj.weight": {
+      "data_offsets": [
+        2972175872,
+        2993147392
+      ],
+      "dtype": "BF16",
+      "file": "model-00001-of-00002.safetensors",
+      "file_sha256": "8c0506e7f4936fa7e26183a4fd8da4e2bdbc5990ba64ae441f965d51228f36ea",
+      "header_bytes": 26360,
+      "header_sha256": "8d1a2170cadc1eb2e68cb60f5610c304d263f29de260584fd4fadc73d40b56ec",
+      "payload_sha256": "1662a2b25b03463b6016f7e7b6dea13c0c65c36c5860a443cd6222879d2f3271",
+      "shape": [
+        4096,
+        2560
+      ],
+      "tensor": "model.layers.18.self_attn.q_proj.weight"
+    },
+    "model.layers.18.self_attn.v_proj.weight": {
+      "data_offsets": [
+        2993147392,
+        2998390272
+      ],
+      "dtype": "BF16",
+      "file": "model-00001-of-00002.safetensors",
+      "file_sha256": "8c0506e7f4936fa7e26183a4fd8da4e2bdbc5990ba64ae441f965d51228f36ea",
+      "header_bytes": 26360,
+      "header_sha256": "8d1a2170cadc1eb2e68cb60f5610c304d263f29de260584fd4fadc73d40b56ec",
+      "payload_sha256": "6ce69323e1bff678d0ca0f4743eba50a2255731777e818e5be462e8805b88a18",
+      "shape": [
+        1024,
+        2560
+      ],
+      "tensor": "model.layers.18.self_attn.v_proj.weight"
+    }
+  },
+  "ports": {
+    "Hnext": {
+      "bytes": 2621568,
+      "content_sha256": "274cd9dadc211a26ff205478096e6fafd46e265760605c1deae111f23040f510",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.bfloat16",
+      "path": "cases/long-description/forecast/ports/plus/Hnext.npy",
+      "sha256": "1e59152cd5426390441f54c4f9817c5a8be3105f200c77b6e44a99ca9ca54fb8",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    "M": {
+      "bytes": 2621568,
+      "content_sha256": "bdca454b07ebbf42b0715043794ec4c00f0ada0a67c81eca4af9008f1501528b",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.bfloat16",
+      "path": "cases/long-description/forecast/ports/plus/M.npy",
+      "sha256": "1d1d3d6c09004a59245c8a6b1ecf0827e2dc23fcf05a773426a8d3409aff96c1",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    "R": {
+      "bytes": 2621568,
+      "content_sha256": "b628c33c677b3b63df680f11d586ef2e6aa4f3f8e3f70d918f348739a5535dae",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.bfloat16",
+      "path": "cases/long-description/forecast/ports/plus/R.npy",
+      "sha256": "eb58a50c76a03e80e3295026fa745f9b78641a5526565f74a563a3fe83ed963e",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    "h": {
+      "bytes": 2621568,
+      "content_sha256": "cdf5c7e1e4c502aa15d655594b1d3ccc4a0f2483a6835d01780b0f51fdea4dd6",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.bfloat16",
+      "path": "cases/long-description/forecast/ports/plus/h.npy",
+      "sha256": "903c5353a56889346de2ae5bfecc147c96679fdccbfb76fb70b0d02d33599aea",
+      "shape": [
+        1,
+        512,
+        2560
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        1310720,
+        2560,
+        1
+      ]
+    },
+    "head": {
+      "bytes": 4194432,
+      "content_sha256": "bbf054dc13a67ae8297dc9454bbff85624947b065f4bda259c9957848665e4b2",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.bfloat16",
+      "path": "cases/long-description/forecast/ports/plus/head.npy",
+      "sha256": "aa82c8bd8cedde7e2edf53572aff04038e1cd836875377fde3c0ee909562263c",
+      "shape": [
+        1,
+        512,
+        32,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        4096,
+        128,
+        1
+      ]
+    },
+    "k": {
+      "bytes": 1048704,
+      "content_sha256": "d622d5ce590e2fc0c7534c396a78ad1c0d2c43c254de19393183ab0f7b4bd6a9",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.bfloat16",
+      "path": "cases/long-description/forecast/ports/plus/k.npy",
+      "sha256": "8c463ac7df2e9e9b19f9b22a0967f8addca5fc7b205d60b82a4e86cf4af7ed9e",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    },
+    "q": {
+      "bytes": 4194432,
+      "content_sha256": "bae885d7e02f5834fd970f1e53d18839bdf9a41ab11a9902c9da0b35265375c9",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.bfloat16",
+      "path": "cases/long-description/forecast/ports/plus/q.npy",
+      "sha256": "877202b6a156445a965e549230bb84ebf5acd93764d33562267344ec2d8fafc5",
+      "shape": [
+        1,
+        32,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        2097152,
+        128,
+        4096,
+        1
+      ]
+    },
+    "v": {
+      "bytes": 1048704,
+      "content_sha256": "0aa77cb6e7ba99c21a9068460351201cbc49c42333fc0e207bdf25dc32719a0f",
+      "device_at_capture": "cuda:0",
+      "logical_dtype": "torch.bfloat16",
+      "path": "cases/long-description/forecast/ports/plus/v.npy",
+      "sha256": "0aacf4a81d556f2e02d4f248e9910997f4d816720217382451542ece8ae4bb41",
+      "shape": [
+        1,
+        8,
+        512,
+        128
+      ],
+      "stored_dtype": "uint16",
+      "stride": [
+        524288,
+        128,
+        1024,
+        1
+      ]
+    }
+  },
+  "schema": "mdb-qwen-source-packet-v1"
+}

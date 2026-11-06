@@ -1,0 +1,24 @@
+{
+  "command": [
+    "/Users/jakeholl/.cache/mdb/qualification/flux-initial-noise-corrected-20261105/bin/python",
+    "-I",
+    "-B",
+    "-m",
+    "pytest",
+    "-q",
+    "-p",
+    "no:cacheprovider",
+    "--basetemp",
+    "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/normalizer-qualification-v1/attempt-01/tmp",
+    "test_prepare_packets.py"
+  ],
+  "cwd": "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/normalizer-qualification-v1/attempt-01/cohort",
+  "returncode": 0,
+  "scope": "Synthetic normalizer/read-barrier/port-availability/count-only-index schema checks. No actual packet preparation or evaluator replay, no target report/array/weight/model/service access.",
+  "source_hashes": {
+    "prepare_packets.py": "86b7f56e983c41bb43f7169683c3a85415c38807864d773ccba759864777478f",
+    "test_prepare_packets.py": "ac50ba81eaf5e0ba276629a0ffeb96d18126c38205973a4683dbe824e6a238e2"
+  },
+  "stderr_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "stdout_sha256": "ef0e7ef49e71fa999842be0cb8d22ec1058d3a384ed5c0a2ec6efb8f434975ac"
+}

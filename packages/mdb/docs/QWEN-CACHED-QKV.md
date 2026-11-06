@@ -5,6 +5,10 @@ for the complete attention head, receiving residual R, MLP write M and H19.
 The predictor transforms its inherited own-functional positive Q/K/V and
 recomputes original-profile attention and the complete downstream tail.
 
+The [source-only applicability planner](COMPUTATION-APPLICABILITY.md) now chooses
+among this method, the cheap sign relation and a full-block fallback from the
+actual packet/profile conditions, before consulting historical coverage.
+
 Read the [mathematical account](../../../../obsidian/blog/2026-11-06-090851-predicting-attention-from-transformed-operands.md),
 including per-head Q/K RMSNorm and grouped attention. The preceding
 [row-sign experiment](QWEN-ROW-SIGN.md) supplies the cheap relation's

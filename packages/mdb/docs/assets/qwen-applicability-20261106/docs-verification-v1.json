@@ -1,0 +1,171 @@
+{
+  "arrays_or_weights_read": 0,
+  "copied_members": 64,
+  "document_targets_checked": 32,
+  "documents": {
+    "obsidian/blog/2026-11-06-092300-a-symbol-table-that-checks-its-inputs.md": "5319ce3eccd14238f4a8c50ef4a32fed6dcd053d623f51b82e456c800a78f45c",
+    "saturn-pub/packages/mdb/docs/COMPUTATION-APPLICABILITY.md": "1cbbe358494a8788fb1dcc68246311181f4aaeaa950d3e0f2c1fe299d4abad99",
+    "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md": "4e1884ebd245f5e2de2172e253ee23f9c9afafffd8ce1025350013bd9753918f"
+  },
+  "links": [
+    {
+      "document": "saturn-pub/packages/mdb/docs/COMPUTATION-APPLICABILITY.md",
+      "target": "QWEN-ROW-SIGN.md"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/COMPUTATION-APPLICABILITY.md",
+      "target": "QWEN-CACHED-QKV.md"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/COMPUTATION-APPLICABILITY.md",
+      "target": "assets/qwen-applicability-20261106/replay-v1/plans.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/COMPUTATION-APPLICABILITY.md",
+      "target": "assets/qwen-applicability-20261106/replay-v1/controls.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/COMPUTATION-APPLICABILITY.md",
+      "target": "assets/qwen-applicability-20261106/packets-v1/read-manifest.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/COMPUTATION-APPLICABILITY.md",
+      "target": "assets/qwen-applicability-20261106/replay-review-v1.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/COMPUTATION-APPLICABILITY.md",
+      "target": "assets/qwen-applicability-20261106/installed-qualification-v1/qualification.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/COMPUTATION-APPLICABILITY.md",
+      "target": "assets/qwen-applicability-20261106/execution-v1/execution.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/COMPUTATION-APPLICABILITY.md",
+      "target": "assets/qwen-applicability-20261106/packet-abi-v1.md"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/COMPUTATION-APPLICABILITY.md",
+      "target": "../src/mdb/computation_applicability.py"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "COMPUTATION-APPLICABILITY.md"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "../../../../obsidian/blog/2026-11-06-090851-predicting-attention-from-transformed-operands.md"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "QWEN-ROW-SIGN.md"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "FLUX-H18-STATE-HISTORY.md"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "assets/qwen-cached-qkv-20261106/publication/predicted-native-responses.png"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "assets/qwen-cached-qkv-20261106/publication/finite-zero-sign-boundary.png"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "assets/qwen-cached-qkv-20261106/compact/audit.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "assets/qwen-cached-qkv-20261106/verification/verification.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "assets/qwen-cached-qkv-20261106/publication/publication-receipt.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "assets/qwen-cached-qkv-20261106/compact/source-metadata/qwen_parameter_manifest.json"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "assets/qwen-cached-qkv-20261106/compact/source-metadata/retrieval_script.py"
+    },
+    {
+      "document": "saturn-pub/packages/mdb/docs/QWEN-CACHED-QKV.md",
+      "target": "assets/qwen-cached-qkv-20261106/compact/retrieve_evidence.py"
+    },
+    {
+      "document": "obsidian/blog/2026-11-06-092300-a-symbol-table-that-checks-its-inputs.md",
+      "target": "2026-11-06-090851-predicting-attention-from-transformed-operands.md"
+    },
+    {
+      "document": "obsidian/blog/2026-11-06-092300-a-symbol-table-that-checks-its-inputs.md",
+      "target": "2026-11-06-084211-where-a-computation-shortcut-stops-working.md"
+    },
+    {
+      "document": "obsidian/blog/2026-11-06-092300-a-symbol-table-that-checks-its-inputs.md",
+      "target": "../../saturn-pub/packages/mdb/docs/COMPUTATION-APPLICABILITY.md"
+    },
+    {
+      "document": "obsidian/blog/2026-11-06-092300-a-symbol-table-that-checks-its-inputs.md",
+      "kind": "frontmatter",
+      "target": "../../saturn-pub/packages/mdb/docs/COMPUTATION-APPLICABILITY.md"
+    },
+    {
+      "document": "obsidian/blog/2026-11-06-092300-a-symbol-table-that-checks-its-inputs.md",
+      "kind": "frontmatter",
+      "target": "../../saturn-pub/packages/mdb/src/mdb/computation_applicability.py"
+    },
+    {
+      "document": "obsidian/blog/2026-11-06-092300-a-symbol-table-that-checks-its-inputs.md",
+      "kind": "frontmatter",
+      "target": "../../artifacts/mdb-qwen-applicability-20261106/replay-v1/replay-receipt.json"
+    },
+    {
+      "document": "obsidian/blog/2026-11-06-092300-a-symbol-table-that-checks-its-inputs.md",
+      "kind": "frontmatter",
+      "target": "../../artifacts/mdb-qwen-applicability-20261106/replay-review-v1.json"
+    },
+    {
+      "document": "obsidian/blog/2026-11-06-092300-a-symbol-table-that-checks-its-inputs.md",
+      "kind": "frontmatter",
+      "target": "../../artifacts/mdb-qwen-applicability-20261106/packets-v1/read-manifest.json"
+    },
+    {
+      "document": "obsidian/blog/2026-11-06-092300-a-symbol-table-that-checks-its-inputs.md",
+      "kind": "frontmatter",
+      "target": "../../artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/qualification.json"
+    },
+    {
+      "document": "obsidian/blog/2026-11-06-092300-a-symbol-table-that-checks-its-inputs.md",
+      "kind": "frontmatter",
+      "target": "../../artifacts/mdb-flux-understanding-20261106/direction-11.md"
+    }
+  ],
+  "original_model_calls": 0,
+  "portable_replay": {
+    "command": [
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/installed-qualification-v1/venv/bin/python",
+      "-I",
+      "-B",
+      "docs/assets/qwen-applicability-20261106/prepare_packets.py",
+      "replay",
+      "--inputs",
+      "docs/assets/qwen-applicability-20261106/packets-v1",
+      "--out",
+      "/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/portable-replay-v1",
+      "--expected-input-manifest",
+      "fa30ac0218f859a96df10ea80095f6211493c310422774fe442e9255497c61ca",
+      "--expected-module-sha256",
+      "820e971a6128aa7f49cd169734fd2a123e8a60924b25a6d08f6d0a46d33996f3"
+    ],
+    "complete_plan_control_index_hashes_unchanged": true,
+    "cwd": "/Users/jakeholl/domains/saturn-pub/packages/mdb",
+    "returncode": 0,
+    "stderr": "",
+    "stdout": "{\"controls\": 28, \"main_cases\": 4, \"output\": \"/Users/jakeholl/domains/artifacts/mdb-qwen-applicability-20261106/portable-replay-v1\"}\n"
+  },
+  "schema": "mdb-applicability-document-verification-v1"
+}

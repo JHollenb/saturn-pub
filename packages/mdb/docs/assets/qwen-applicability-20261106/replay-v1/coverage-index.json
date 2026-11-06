@@ -1,0 +1,70 @@
+{
+  "index_id": "2867d90cc848f97cc58aeb608974f2ee97d25c9c10d359127cc89f6ba2147ce8",
+  "occurrences": [
+    {
+      "account_kinds": [
+        "overlapping_endpoint_windows",
+        "overlapping_response_windows",
+        "primary_endpoint_fields",
+        "primary_response_fields"
+      ],
+      "decision_sha256": "920f2b9f4b4bce650bb82c930e56369ab46bdfa0d25564fcf48304d64ad8e0d1",
+      "evidence_refs": [
+        "turn14:catalog/provenance.json#7360943eb8d2e017561d65de515340299702d65a2f6d2760ea4d5ad585082d07",
+        "turn14:coverage.json#all-negative"
+      ],
+      "method_id": "m0",
+      "occurrence_id": "7360943eb8d2e017561d65de515340299702d65a2f6d2760ea4d5ad585082d07"
+    },
+    {
+      "account_kinds": [
+        "overlapping_endpoint_windows",
+        "overlapping_response_windows",
+        "primary_endpoint_fields",
+        "primary_response_fields"
+      ],
+      "decision_sha256": "882106f56a6c5973e3279ee4a05e1dd74f654c5dfbce485434866074360a80a1",
+      "evidence_refs": [
+        "turn14:catalog/provenance.json#f859024f73943f843f0ea88ec5ff1c0135eb70230eaabf772ac6eb0f33f275be",
+        "turn14:coverage.json#prefix-negative"
+      ],
+      "method_id": "m0",
+      "occurrence_id": "f859024f73943f843f0ea88ec5ff1c0135eb70230eaabf772ac6eb0f33f275be"
+    },
+    {
+      "account_kinds": [
+        "QKV_channel_fields",
+        "QKV_source_sign_fields",
+        "overlapping_endpoint_windows",
+        "overlapping_response_windows",
+        "primary_endpoint_fields",
+        "primary_response_fields"
+      ],
+      "decision_sha256": "22bf50010805fa652f455398f7078337ab66f6e9f647a436eeed21babe1a62f6",
+      "evidence_refs": [
+        "turn15:catalog/provenance.json#9705b40bd826df3771228aef9d83305b155630c18e2e9425964acf1b514bbd0d",
+        "turn15:coverage.json#last-row-negative"
+      ],
+      "method_id": "m1",
+      "occurrence_id": "9705b40bd826df3771228aef9d83305b155630c18e2e9425964acf1b514bbd0d"
+    },
+    {
+      "account_kinds": [
+        "QKV_channel_fields",
+        "QKV_source_sign_fields",
+        "overlapping_endpoint_windows",
+        "overlapping_response_windows",
+        "primary_endpoint_fields",
+        "primary_response_fields"
+      ],
+      "decision_sha256": "a98863be31173f6956902402dfa246d365ec40a37058924bb6220a4e60d636db",
+      "evidence_refs": [
+        "turn15:catalog/provenance.json#31b6b218afa976cad9f361fb8efe080dcc36d6f0d07739b3c3ef76b2eab5574d",
+        "turn15:coverage.json#alternating64"
+      ],
+      "method_id": "m1",
+      "occurrence_id": "31b6b218afa976cad9f361fb8efe080dcc36d6f0d07739b3c3ef76b2eab5574d"
+    }
+  ],
+  "schema": "mdb-computation-coverage-index-v1"
+}

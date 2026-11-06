@@ -1,0 +1,11 @@
+{
+  "arrays_or_weights_read": 0,
+  "commands_sha256": "5110c284b71dc3b37877cfc61df3e0b54e1be661d1f870d0242a436d69890e06",
+  "inputs_manifest_sha256": "fa30ac0218f859a96df10ea80095f6211493c310422774fe442e9255497c61ca",
+  "normalizer_sha256": "86b7f56e983c41bb43f7169683c3a85415c38807864d773ccba759864777478f",
+  "original_model_calls": 0,
+  "qualification_sha256": "7848766cc9d6e6c62565a9b1397fe0097202fa4c26f2db6e2116ad7360f82d9f",
+  "replay_receipt_sha256": "7e3606bb7a19831b96e4672a9aae463319275ad72531adbf6c363ff5aebb746e",
+  "schema": "mdb-source-applicability-execution-v1",
+  "scope": "Actual installed metadata replay; no floating-point prediction or observed outcome is consulted."
+}
