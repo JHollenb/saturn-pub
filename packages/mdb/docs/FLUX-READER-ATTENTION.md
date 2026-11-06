@@ -226,10 +226,11 @@ and original `right.k1v1` head and text archives also verifies byte equality,
 with four 3,145,856-byte retrieved files. Source and calculated files are kept
 under separate retrieval aliases even when their content hashes match.
 
-The next scientific cut can now separate **which head/row changes carry the
-K/V effect** from inaccuracies in its approximate numerical account. Use
-same-parent head restoration or value-source subsets through this exact reader,
-retain countereffects and collateral, then validate selected changes through
-the unchanged native future. Fresh-state sealed predictions remain the test
-of transfer. Disassembling FlashAttention's internal arithmetic is a separate
-open task if an independent kernel-exact mathematical implementation is needed.
+The [head/source-row screen](FLUX-READER-ROUTES.md) now measures 116 reader
+interventions and seals left-to-right ranking/sign predictions before testing
+the second context. Importance is distributed: head 7 leads on the left,
+while heads 14 and 21 lead different tests on the right. Source band 2 leads
+addition in both contexts. Rank misses and a trivial all-positive sign baseline
+are retained. Selected native futures and new-dose reader predictions follow
+that screen. Disassembling FlashAttention's internal arithmetic remains a
+separate open task for an independent kernel-exact mathematical implementation.

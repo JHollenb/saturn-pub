@@ -120,33 +120,38 @@ def worker():
         files_manifest_sha256=sha(out/'files.json'),summary_sha256=sha(out/'summary.json')),sort_keys=True),flush=True)
 
 
-def stage(run,study):
+def stage(run,study,*,worker_path=None,extra_files=(),audit_kind='attention',logical_operations=25):
     from mdb.job_support import one_lease_scheduling_contract, scheduler_api
     from mdb.payload import stage_worker
-    here=Path(__file__).resolve().parent;h=runpy.run_path(str(here/'flux_source_receiver.py'));read,save,sha=h['read'],h['save'],h['sha']
+    here=Path(__file__).resolve().parent;worker_file=Path(worker_path).resolve() if worker_path is not None else Path(__file__).resolve()
+    h=runpy.run_path(str(here/'flux_source_receiver.py'));read,save,sha=h['read'],h['save'],h['sha']
     prior=read(study/'request.json');jid=read(study/'submission.json')['job_id']
     _,raw,_=scheduler_api().request('GET','/api/jobs/'+jid,timeout_s=20);job=json.loads(raw)
     if job['state']!='succeeded':raise ValueError('completed native operator job required')
-    save(study/'job.json',job)
+    if (study/'job.json').exists():
+        previous=read(study/'job.json')
+        if previous['job_id']!=jid or previous['state']!='succeeded' or previous.get('submitted_request_sha256')!=job.get('submitted_request_sha256'):
+            raise ValueError('retained native job binding differs')
+    else:save(study/'job.json',job)
     root=Path(prior['config']['output_scratch'])/jid/'binding-minimal-result'
     code='import hashlib,json\nfrom pathlib import Path\np=Path('+repr(str(root))+')\nprint(json.dumps(dict(sha=hashlib.sha256((p/"files.json").read_bytes()).hexdigest(),files=sum(1 for x in p.rglob("*") if x.is_file()),bytes=sum(x.stat().st_size for x in p.rglob("*") if x.is_file()))))\n'
     info=json.loads(subprocess.run(['ssh','beast','python3','-I','-'],input=code,text=True,capture_output=True,check=True).stdout)
     c=dict(native_root=str(root),source_root=prior['config']['input_root'],native_manifest_sha256=info['sha'],
         source_manifest_sha256=prior['config']['source_files_sha256'],raw_files=info['files'],raw_bytes=info['bytes'],
-        output_scratch='/mnt/big/mdb/research',directory_custody=True,scope='Saved-only numerical comparisons and supplied-applicability catalog; zero new model/native/reference forward calculations.')
+        output_scratch='/mnt/big/mdb/research',directory_custody=True,audit_kind=audit_kind,scope='Saved-only numerical comparisons and supplied-applicability catalog; zero new model/native/reference forward calculations.')
     run.mkdir(parents=True,exist_ok=False);save(run/'plan.json',c)
-    extras=[(here/n,n) for n in ('flux_source_receiver.py','analyze_flux_reader_arithmetic.py','flux_family_custody.py','retrieve_reader_evidence.py')]
-    pre=run/'preflight.v1.json';save(pre,dict(schema_version='mrun-preflight-config-v1',hashed_roots=[Path(__file__).name,*[n for _,n in extras],pre.name],
+    extras=[(here/n,n) for n in ('flux_source_receiver.py','analyze_flux_reader_arithmetic.py','flux_family_custody.py','retrieve_reader_evidence.py')]+list(extra_files)
+    pre=run/'preflight.v1.json';save(pre,dict(schema_version='mrun-preflight-config-v1',hashed_roots=[worker_file.name,*[n for _,n in extras],pre.name],
         path_token_allowlist=[str(root),c['source_root'],c['output_scratch'],'binding-minimal-result']))
     extras.append((pre,pre.name))
-    req=dict(schema='mdb-reader-attention-audit-request-v1',config=c,execution_environment=prior['execution_environment'],needs=dict(cpu=True,host='beast'),
-        task_family='analysis',backend='numpy',device='cpu',dtype='float64',source_hashes={n:sha(p) for p,n in [(Path(__file__),Path(__file__).name),*extras]},
+    req=dict(schema='mdb-reader-'+audit_kind+'-audit-request-v1',worker_script=worker_file.name,config=c,execution_environment=prior['execution_environment'],needs=dict(cpu=True,host='beast'),
+        task_family='analysis',backend='numpy',device='cpu',dtype='float64',source_hashes={n:sha(p) for p,n in [(worker_file,worker_file.name),*extras]},
         resource_exception=dict(ram_mb=1536,vram_mb=0,cpu_threads=2,disk_gb=1,est_wall_s=60,
             calibration_job='job-c8a4bc3cc1e4',measured_peak_rss_mb=1328.5,reason='Prior saved-only audit1328.5MB peak included9.44M-element paired fields. Here all metrics use1.57M-element heads/text only, no paired arrays retained, no Torch import.1.5GB covers prior measured peak; raw corpus stays remote.'),
-        scheduling_contract=one_lease_scheduling_contract(model_loads=0,model_free=True,logical_operations=25,logical_branches=1,logical_checkpoint_replays=0,
-            max_local_work_items=32,extra=dict(task_family='analysis'),checkpoint_policy='One near-data full-geometry saved-only audit and24catalog comparisons maximum; no native/model/reference forwards or retries.'))
+        scheduling_contract=one_lease_scheduling_contract(model_loads=0,model_free=True,logical_operations=logical_operations,logical_branches=1,logical_checkpoint_replays=0,
+            max_local_work_items=max(32,logical_operations),extra=dict(task_family='analysis'),checkpoint_policy='One near-data full-geometry saved-only '+audit_kind+' audit; no native/model/reference forwards or retries.'))
     req['request_sha256']=hashlib.sha256(json.dumps(req,sort_keys=True,allow_nan=False).encode()).hexdigest();save(run/'request.json',req)
-    runpy.run_path(str(here/'stage_flux_source_receiver.py'))['bind'](req['execution_environment']);stage_worker(run/'payload',worker=Path(__file__),config=c,request=req,additional_files=extras)
+    runpy.run_path(str(here/'stage_flux_source_receiver.py'))['bind'](req['execution_environment']);stage_worker(run/'payload',worker=worker_file,config=c,request=req,additional_files=extras)
     return dict(request_sha256=req['request_sha256'],**info)
 
 
@@ -156,11 +161,12 @@ def submit(run):
     here=Path(__file__).resolve().parent;h=runpy.run_path(str(here/'flux_source_receiver.py'));r=h['read'](run/'request.json')
     runpy.run_path(str(here/'stage_flux_source_receiver.py'))['bind'](r['execution_environment'])
     if (run/'submission.json').exists() or any(h['sha'](run/'payload'/n)!=v for n,v in r['source_hashes'].items()):raise ValueError('changed/already submitted audit')
-    cmd=worker_command(Path(__file__).name);cmd.insert(1,'CUDA_VISIBLE_DEVICES=');cmd.insert(cmd.index('python')+1,'-B')
+    cmd=worker_command(r.get('worker_script',Path(__file__).name));cmd.insert(1,'CUDA_VISIBLE_DEVICES=');cmd.insert(cmd.index('python')+1,'-B')
     resources={k:r['resource_exception'][k] for k in ('ram_mb','vram_mb','cpu_threads','disk_gb','est_wall_s')}
-    job=guarded_mrun_launch(cmd,request=r,model=None,task='analysis',experiment='mdb-reader-attention-audit',payload=run/'payload',gpu=False,
+    kind=r['config'].get('audit_kind','attention')
+    job=guarded_mrun_launch(cmd,request=r,model=None,task='analysis',experiment='mdb-reader-'+kind+'-audit',payload=run/'payload',gpu=False,
         needs=r['needs'],prefer_host='beast',timeout_s=240,retry_on_kill=False,preflight=True,**resources,
-        note='Saved-only8case attention head/text audit,4signedK/V contrasts,24catalogrecordsmax; compact custody plus individual array retriever.0native/model/referenceforwards/images;CPU2/RAM1.5GB;60sestimate/240souter,no retries.')
+        note='Saved-only '+kind+' reader audit; full geometry, compact custody plus individual array retriever.0native/model/referenceforwards/images;CPU2/RAM1.5GB;60sestimate/240souter,no retries.')
     h['save'](run/'submission.json',dict(job_id=str(job)));return dict(job_id=str(job))
 
 
