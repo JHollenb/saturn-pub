@@ -250,3 +250,9 @@ stop capture before SDPA, then seal full image predictions before complete
 native target calls. Using qualified original-policy primitives would test
 composition on a new input; independent Flash/reduction reconstruction remains
 a separate objective.
+
+The subsequent [sealed image-reader assay](FLUX-IMAGE-READER.md) has now tested
+that new midpoint: both complete image-register predictions and the paired
+response match exactly using original-policy native primitives. A fixed-sham-head
+control has 99.94% response error. That bounded new-input composition result
+does not change the independent-arithmetic misses reported above.
