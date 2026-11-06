@@ -130,7 +130,8 @@ Run from the original pinned public wheel cohort, outside a source checkout:
 
 ```sh
 python -I qualification/stage_flux_image_query_bank.py RUN \
-  --source-run COMPLETED_IMAGE_READER_RUN
+  --source-run COMPLETED_IMAGE_READER_RUN \
+  --source-compact COMPLETED_IMAGE_READER_COMPACT
 # Bind finite-run review to this exact request and payload before submission.
 python -I qualification/stage_flux_image_query_bank.py RUN --submit
 python -I qualification/audit_flux_image_query_bank.py AUDIT --study RUN
