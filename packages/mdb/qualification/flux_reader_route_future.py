@@ -19,9 +19,9 @@ def ports(base,changed,spec,bf16,nt=512):
     elif kind in ('band-add','band-remove'):
         lo,hi=nt+spec['band']*256,nt+(spec['band']+1)*256
         for key in result:result[key][:,lo:hi]=(base if full else changed)[key][:,lo:hi]
-    elif kind in ('band-cross','band-text','band-image','band-key','band-value'):
+    elif kind in ('band-cross','band-text','band-image','band-key','band-value','value-text','value-image'):
         lo,hi=nt+spec['band']*256,nt+(spec['band']+1)*256
-        selected=('k',) if kind=='band-key' else ('v',) if kind=='band-value' else ('k','v')
+        selected=('k',) if kind=='band-key' else ('v',) if kind in ('band-value','value-text','value-image') else ('k','v')
         for key in selected:result[key][:,lo:hi]=changed[key][:,lo:hi]
     elif kind=='own-v':
         result['v'][:,nt:,spec['head']]=bf16(result['v'][:,nt:,spec['head']]*spec['scale'])
@@ -30,11 +30,15 @@ def ports(base,changed,spec,bf16,nt=512):
     return result
 
 
+def split_stream(kind):
+    return 'text' if kind in ('band-text','value-text') else 'image' if kind in ('band-image','value-image') else None
+
+
 def output_route(base,changed,kind,nt):
     """Keep one complete stream from the base and one from the changed attention."""
-    if kind not in ('band-text','band-image'):raise ValueError('unknown attention output stream route')
+    if split_stream(kind) is None:raise ValueError('unknown attention output stream route')
     result=base.clone()
-    if kind=='band-text':result[:,:nt]=changed[:,:nt]
+    if split_stream(kind)=='text':result[:,:nt]=changed[:,:nt]
     else:result[:,nt:]=changed[:,nt:]
     return result
 
@@ -96,7 +100,7 @@ def run(*,pipe,adapter,parents,source,output,config,request,event,initial_counts
                 key=receiver+'.'+spec['id'];kv=ports(b,d,spec,core['R']['bf16'])
                 prepared[key]=dict(kv=kv,spec=spec,base=b,head_source=head1 if spec['kind']=='head-add' else head0)
                 def predict(_,spec=spec,key=key,kv=kv):
-                    if spec['kind'] in ('base','head-add','band-image'):head=head0
+                    if spec['kind'] in ('base','head-add') or split_stream(spec['kind'])=='image':head=head0
                     elif spec['kind'] in ('full','head-remove'):head=head1
                     else:
                         head,profile=attention['attention'](q,tensor(kv['k']),tensor(kv['v']),'flash-text',counts);profiles[key]=profile
@@ -107,8 +111,8 @@ def run(*,pipe,adapter,parents,source,output,config,request,event,initial_counts
                     predictions[key]=dict(fields=fields,ports={f:payload_digest(v) for f,v in kv.items()},spec=spec,
                         structural_prediction=dict(reference='full' if spec['kind'] in ('head-remove','band-remove') else 'base',
                             first_image_matches=('base' if spec['kind']=='head-add' else 'full') if spec['kind'].startswith('head-') else None,
-                            earliest_possible_image_change=1 if spec['kind'].startswith('head-') or spec['kind']=='band-text' else 0,
-                            expected_first_image_change=1 if spec['kind'].startswith('head-') or spec['kind']=='band-text' else (0 if spec['kind'] not in ('base',) else None)))
+                            earliest_possible_image_change=1 if spec['kind'].startswith('head-') or split_stream(spec['kind'])=='text' else 0,
+                            expected_first_image_change=1 if spec['kind'].startswith('head-') or split_stream(spec['kind'])=='text' else (0 if spec['kind'] not in ('base',) else None)))
                     return dict(predictions=predictions[key])
                 tx.predict(key,predict);event('prediction-persisted',case=key,counts=counts.copy())
             profiles[receiver]=dict(base=p0,full=p1)
@@ -133,7 +137,7 @@ def run(*,pipe,adapter,parents,source,output,config,request,event,initial_counts
         with torch.profiler.profile(activities=[torch.profiler.ProfilerActivity.CPU]) as trace:
             result=original_dispatch(q,k,v,*args,**kwargs)
             spec=item['spec']
-            if spec['kind'] in ('band-text','band-image'):
+            if split_stream(spec['kind']) is not None:
                 counts['native_sdpa']+=1
                 originals={}
                 for name,current in (('k',k),('v',v)):
@@ -141,8 +145,8 @@ def run(*,pipe,adapter,parents,source,output,config,request,event,initial_counts
                     value.copy_(tensor(b[name]));originals[name]=value
                 original=original_dispatch(q,originals['k'],originals['v'],*args,**kwargs)
                 result=output_route(original,result,spec['kind'],nt)
-                preserved=result[:,nt:] if spec['kind']=='band-text' else result[:,:nt]
-                reference=original[:,nt:] if spec['kind']=='band-text' else original[:,:nt]
+                preserved=result[:,nt:] if split_stream(spec['kind'])=='text' else result[:,:nt]
+                reference=original[:,nt:] if split_stream(spec['kind'])=='text' else original[:,:nt]
                 if not torch.equal(preserved,reference):raise ValueError('split output changed protected attention stream')
             torch.cuda.synchronize()
         selected=[dict(name=x.key,calls=x.count) for x in trace.key_averages() if 'scaled_dot' in x.key]
@@ -153,11 +157,11 @@ def run(*,pipe,adapter,parents,source,output,config,request,event,initial_counts
             others=[j for j in range(24) if j!=i]
             if not torch.equal(result[:,:nt,others],base[:,:nt,others]) or not torch.equal(result[:,nt:],base[:,nt:]):raise ValueError('head edit changed undeclared ports')
         observed['head']=h['array'](output,result[:,:nt].flatten(2,3))
-        if spec['kind']=='band-image':changed=list(range(24))
-        footprint.update(changed_text_heads=changed,image_heads_preserved=spec['kind']!='band-text',
+        if split_stream(spec['kind'])=='image':changed=list(range(24))
+        footprint.update(changed_text_heads=changed,image_heads_preserved=split_stream(spec['kind'])!='text',
             head_edit_reference='Native attention result under installed K/V before output-stream replacement',
             kv_sha256={f:payload_digest(x) for f,x in (('k',k),('v',v))},
-            output_stream_route=spec['kind'] if spec['kind'] in ('band-text','band-image') else 'native',
+            output_stream_route=spec['kind'] if split_stream(spec['kind']) is not None else 'native',
             selected_aten_operations=selected,q_shape=list(q.shape),q_stride=list(q.stride()),k_stride=list(k.stride()),v_stride=list(v.stride()))
         return result
     cases={}

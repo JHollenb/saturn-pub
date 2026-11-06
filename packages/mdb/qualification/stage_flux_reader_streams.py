@@ -13,7 +13,7 @@ H=runpy.run_path(str(HERE/'flux_source_receiver.py'))
 read,save,sha=[H[k] for k in ('read','save','sha')]
 
 
-def stage(run,fresh,audit,panel='streams'):
+def stage(run,fresh,audit,panel='streams',operand_study=None):
     from mdb.job_support import one_lease_scheduling_contract
     from mdb.payload import stage_worker
     evidence=audit/'compact-collection-01/extracted/binding-minimal-result';report=read(evidence/'audit.json')
@@ -48,7 +48,7 @@ print(json.dumps({n:dict(sha256=inventory[n],bytes=(r/n).stat().st_size) for n i
         scope='Four already observed seed193 color/order parents;8historical base/band2 controls+8new text-only/image-only attention-output futures. Each new split computes native full attention for base and changedKV at identical Q/shape/strides then routes one complete stream. All16local reader forecasts seal before any target block. Native image continuation observed, not numerically predicted.',
         planned_counts=dict(sdpa=12,staged_matmuls=0,staged_softmax=0,linear=48,layernorm=16,swiglu=16,
             native_sdpa=408,native_blocks=400,native_transitions=432,images=16,model_loads=1,encodes=0,noise_draws=0))
-    if panel not in ('streams','kv'):raise ValueError('unknown reader panel')
+    if panel not in ('streams','kv','value-streams'):raise ValueError('unknown reader panel')
     c['panel']=panel
     if panel=='kv':
         c.update(case_specs=[dict(id='base',kind='base'),dict(id='band2',kind='band-cross',band=2),
@@ -61,6 +61,22 @@ print(json.dumps({n:dict(sha256=inventory[n],bytes=(r/n).stat().st_size) for n i
                 caveat='Native final image observed, not numerically forecast. K/V edits affect both query streams; image dominance of jointKV does not certify dominance for each operand separately.'),
             scope='Four observed seed193 color/order parents,8historical base/full controls+8new band2K-only/V-only futures. Freeze16primitive reader predictions and value-dominance/sign hypotheses before any targetblock. Full original native suffix;0prefix regeneration/encodes/noise/retries. Signed operand effects and factorial interaction retained.',
             planned_counts={**c['planned_counts'],'sdpa':16,'native_sdpa':400})
+    elif panel=='value-streams':
+        if operand_study is None:raise ValueError('audited operand controls required')
+        control_evidence=operand_study/'compact-collection-01/extracted/binding-minimal-result'
+        control_audit=read(control_evidence/'audit.json')
+        if control_audit['mechanics_status']!='verified' or any(sha(control_evidence/n)!=v for n,v in read(control_evidence/'files.json').items()):raise ValueError('operand control audit differs')
+        c.update(case_specs=[dict(id='base',kind='base'),dict(id='band2',kind='band-value',band=2),
+                dict(id='text-only',kind='value-text',band=2),dict(id='image-only',kind='value-image',band=2)],
+            historical_control_root=str(Path(c['output_scratch'])/control_audit['source_job']/'binding-minimal-result'),
+            historical_control_manifest_sha256=control_audit['native_manifest_sha256'],
+            historical_controls={r+'.'+arm:r+'.'+oldarm for r in parents for arm,oldarm in (('base','base'),('band2','values-only'))},
+            semantic_hypotheses=dict(stage='V-only output-stream mediation; frozen before target execution.',
+                prediction='Image-only V-source output has larger absolute green-score response on originally green object than text-only and retains negative sign in all four contexts; retain misses.',
+                timing='Text-only first changes image at joint1 and text at joint0; image-only has reciprocal timing. Current exit closures match base/full V-only stream choices.',
+                controls='Eight base/full-V historical controls from independently audited operand panel; eight new V-only stream-split futures.',
+                caveat='Routes complete streams, not individual heads. Native final image observed, not numerically forecast; applies only to tested contexts/clock/source band.'),
+            scope='Four observed seed193 parents;8historical base/values-only controls+8new V-only text/image output splits.16local primitive reader forecasts and image-dominance/sign hypotheses sealed before targets. Copy source imageVband2 only; K/textV/Q fixed, then route complete native output streams. No raw-prompt/independentFlash/full-image forecast or universal symbol claim.')
     run.mkdir(parents=True,exist_ok=False);save(run/'plan.json',c)
     extras=[(HERE/n,n) for n in ('flux_reader_route_future.py','flux_reader_routes.py','flux_reader_arithmetic.py','flux_reader_attention.py',
         'flux_source_receiver.py','flux_reentry_reference.py','flux_family_custody.py')]
@@ -96,5 +112,5 @@ def submit(run):
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('run',type=Path);p.add_argument('--fresh',type=Path);p.add_argument('--audit',type=Path);p.add_argument('--panel',choices=('streams','kv'),default='streams');p.add_argument('--submit',action='store_true');a=p.parse_args()
-    print(json.dumps(submit(a.run.resolve()) if a.submit else stage(a.run.resolve(),a.fresh.resolve(),a.audit.resolve(),a.panel)))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('run',type=Path);p.add_argument('--fresh',type=Path);p.add_argument('--audit',type=Path);p.add_argument('--panel',choices=('streams','kv','value-streams'),default='streams');p.add_argument('--operand-study',type=Path);p.add_argument('--submit',action='store_true');a=p.parse_args()
+    print(json.dumps(submit(a.run.resolve()) if a.submit else stage(a.run.resolve(),a.fresh.resolve(),a.audit.resolve(),a.panel,a.operand_study.resolve() if a.operand_study else None)))

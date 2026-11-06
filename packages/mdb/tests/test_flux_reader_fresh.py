@@ -58,17 +58,17 @@ def test_fresh_evidence_publication_binds_the_numerical_execution(tmp_path):
 def test_attention_stream_split_preserves_the_entire_other_stream():
     import torch
     base=torch.ones((1,6,2,2),dtype=torch.bfloat16);changed=torch.full_like(base,8)
-    for kind in ('band-text','band-image'):
+    for kind in ('band-text','band-image','value-text','value-image'):
         result=C['output_route'](base,changed,kind,2)
-        assert torch.equal(result[:,:2],changed[:,:2] if kind=='band-text' else base[:,:2])
-        assert torch.equal(result[:,2:],base[:,2:] if kind=='band-text' else changed[:,2:])
+        assert torch.equal(result[:,:2],changed[:,:2] if C['split_stream'](kind)=='text' else base[:,:2])
+        assert torch.equal(result[:,2:],base[:,2:] if C['split_stream'](kind)=='text' else changed[:,2:])
     assert torch.all(base==1) and torch.all(changed==8)
 
 
 def test_single_operand_band_does_not_leak_into_the_other_operand():
     base={k:np.ones((1,1026,2,2),np.float32) for k in ('k','v')}
     donor={k:np.full_like(v,8.) for k,v in base.items()}
-    for kind,selected,protected in (('band-key','k','v'),('band-value','v','k')):
+    for kind,selected,protected in (('band-key','k','v'),('band-value','v','k'),('value-text','v','k'),('value-image','v','k')):
         result=C['ports'](base,donor,dict(kind=kind,band=2),B,nt=2)
         assert np.array_equal(result[protected],base[protected])
         assert np.all(result[selected][:,:514]==1) and np.all(result[selected][:,514:770]==8) and np.all(result[selected][:,770:]==1)
@@ -80,3 +80,9 @@ def test_operand_prediction_retains_counterexample_and_mask_abstention():
     assert miss['values_larger_matches'] is False and miss['values_sign_matches'] is False
     unknown=A['operand_hypothesis'](rows(None,None))
     assert unknown['values_larger_matches'] is None and unknown['values_sign_matches'] is None
+
+
+def test_stream_prediction_retains_failed_dominance_and_sign_separately():
+    rows={name:dict(regions=dict(green=dict(signed_green_score=x))) for name,x in (('text-only',-.2),('image-only',.1))}
+    miss=A['stream_hypothesis'](rows)
+    assert miss['image_larger_matches'] is False and miss['image_sign_matches'] is False

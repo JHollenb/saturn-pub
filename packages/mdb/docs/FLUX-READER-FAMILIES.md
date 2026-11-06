@@ -183,10 +183,48 @@ not make attention addresses irrelevant: original keys are still required,
 and changed keys plus changed values have measured interaction.
 
 The stream and operand experiments are separate factorizations. Joint K/V's
-image-output dominance does not establish the same mediation for V-only. The
-next small cut should cross V-only with text-only/image-only output routing,
-then decompose the responsible image heads. That explicitly tests the missing
-conjunction instead of assuming two dominance results compose.
+image-output dominance alone does not establish V-only mediation. The following
+panel directly tests that conjunction.
+
+## Connecting the value payload to the image output
+
+The fourth panel crosses V-only with complete text/image output routing. It
+replays eight baseline/V-only controls from the independently audited operand
+panel and tests eight new mixed futures. All 64 reader fields are byte-exact;
+all eight controls match text, latent and PNG bytes. All current text/image exit
+closures and both reciprocal first-divergence timings match again.
+
+The frozen prediction was that the image-only route would have the larger
+absolute signed green-score response and retain the negative full-V sign.
+Both agree in all four tested contexts:
+
+| Context | V through text only | V through image only | Full V-only |
+|---|---:|---:|---:|
+| c0-o0 | −0.001942 | −0.164577 | −0.165633 |
+| c0-o1 | −0.000089 | −0.157360 | −0.156764 |
+| c1-o0 | +0.001099 | −0.054356 | −0.053894 |
+| c1-o1 | −0.000468 | −0.167294 | −0.169068 |
+
+Image-only RGB projection onto the complete V-only effect is 0.9890–0.9971;
+text-only is −0.00389 to +0.00709. Additive response error is 5.98–8.45% in RGB
+and 13.44–16.03% in final latent. Thus the value-payload to image-output edge
+is now tested directly, with interaction and a counter-signed text case retained.
+
+In ideal real arithmetic, holding Q and K fixed holds
+P=softmax(QKᵀ/√d) fixed, so ΔH=PΔV. Changing keys instead gives ΔH=ΔPV;
+the joint attention interaction is ΔPΔV. This explains the distinction between
+changing an address weighting and transporting another value payload under
+existing addresses. Native BF16 rounding and downstream nonlinear consumers
+remain part of the finite computation. This panel does not independently
+reconstruct Flash probabilities or certify the ideal identity bit-for-bit.
+
+The candidate record has an operational name:
+`route.flux.image-V.band2.image-output.future-RGB.v1`, paired with
+`law.flux.V-band.image-stream-response.v1`. Four qualitative prediction records
+bind the frozen sign/dominance expectations to native outcomes. Applicability
+is restricted to supplied model, seed, parent, clock, band, consumer and tested
+contexts; the record is not a universal green concept. Individual image heads,
+upstream value writers and replication on fresh wording/seeds remain open.
 
 ## Computation records and the time circuit
 
@@ -201,8 +239,8 @@ influence image. Image-only changes produce the reciprocal delayed text read.
 The symbol table should index these lifetimes and roles, including readers that
 are not dominant carriers of a selected behavior.
 
-The next causal cut should connect the operand and output-stream maps, then
-heads, using these same parents and native continuations. The peer
+The next causal cut should narrow the image heads and upstream value writers,
+using these same parents and native continuations. The peer
 [image-tail microscope](FLUX-IMAGE-TAIL.md) already supplies an observed-head
 image-tail instrument at another clock. Reuse it while keeping known-input
 numerical results separate from fresh-state and semantic claims.
@@ -216,13 +254,13 @@ tensors and publishes 16 supplied-applicability records per panel. Installed CLI
 queries return the selected record and abstain at a changed horizon. Family
 induction remains manual.
 
-The three audited panels also have a consolidated 48-occurrence catalog at
-`artifacts/mdb-flux-reader-fresh-20261105/index-v1/equations`. The actual installed
-CLI returns all 48 for `--law-id law.flux.reader.native-state-and-consumer-clock.v1`;
-all 48 complete-context queries identify one occurrence and all 48 changed-horizon
-queries abstain. This is source-verified consolidation of supplied records, not
-automatic family discovery. `index-v1/provenance.json` binds every copied record
-to its original panel and audit.
+The historical three-panel index remains immutable at `index-v1`. The four-panel
+catalog at `artifacts/mdb-flux-reader-fresh-20261105/index-v2/equations` contains
+64 numerical occurrences and four causal-response occurrences. All 68
+complete-context queries identify one occurrence, and all changed-horizon queries
+abstain. This is source-verified consolidation and manually named candidate
+family evidence, not automatic family induction. `index-v2/provenance.json`
+binds every copied record to its original panel and audit.
 
 ```sh
 # Fresh-seed acquisition, sealed reader predictions and native continuation.
@@ -239,6 +277,7 @@ python -I qualification/stage_flux_reader_streams.py STREAM_RUN \
   --fresh FRESH_RUN --audit FRESH_STUDY
 python -I qualification/stage_flux_reader_streams.py STREAM_RUN --submit
 # --panel kv selects the matched K-only/V-only factorial instead.
+# --panel value-streams --operand-study KV_STUDY tests V-only output mediation.
 ```
 
 `FRESH_STUDY` contains `compact-collection-01/extracted/binding-minimal-result`
@@ -252,9 +291,11 @@ can use the retained catalog context files or a sidecar copied from an occurrenc
 Fresh native job `job-4663ab0e6fbd` and audit `job-940663c8b340` succeeded.
 Stream native job `job-f9d4172f333b` and audit `job-4483b5fc868a` succeeded.
 K/V native job `job-22d63312934e` and audit `job-2447d09f120b` succeeded.
+V-stream native job `job-8214b5c54472` and audit `job-f9886e5d8a60` succeeded.
 Fresh scheduler time 89.18s, peak RSS 2953.5MB/VRAM 9298MB; stream 66.60s,
 RSS 2774.1MB/VRAM 9306MB. These are measured costs, not comparative speedups.
 The K/V job used 78.84s, RSS 6326MB and VRAM 9306MB.
+The V-stream job used 96.21s, RSS 6476.1MB and VRAM 9306MB.
 
 Raw fresh 473,301,141 bytes and stream 160,639,816 bytes remain on Beast. Audited
 compact transport archives are 1,844,395 and 1,780,480 bytes, including PNGs,
@@ -266,6 +307,9 @@ The K/V panel adds 432 native steps, 400 blocks/attention calls, 16 forecast
 Flash calls, 48 linears, 16 LayerNorm/SwiGLU calls and 16 images. Its raw
 311,655,233 bytes remain remote; the compact archive is 1,796,952 bytes. It
 uses the same original parameters and creates no new encoder input or noise.
+The V-stream panel adds 432 steps/400 blocks/408 native attention calls and
+16 images, with 12 forecast Flash/48 linear/16 LayerNorm/16 SwiGLU calls.
+Its raw 160,650,871 bytes remain remote; the compact archive is 1,797,506 bytes.
 
 The first fresh audit omitted the required execution identity during catalog
 publication. Its failed attempt is retained; the corrected CPU audit succeeded
@@ -283,3 +327,6 @@ Local evidence lives under `artifacts/mdb-flux-reader-fresh-20261105/` and
 `metadata-correction-v1.json`. Historical failures remain immutable and separate
 from current interpretations. The operand panel is retained under
 `artifacts/mdb-flux-reader-kv-20261105/`.
+The direct payload/output mediation is in
+`artifacts/mdb-flux-reader-value-streams-20261105/`. Thirteen focused installed
+environment tests pass for the current harness.

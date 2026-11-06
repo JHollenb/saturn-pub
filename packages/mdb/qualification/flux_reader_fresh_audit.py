@@ -32,6 +32,14 @@ def operand_hypothesis(rows):
         role='Frozen exploratory prediction; per-context agreement is an observation, not a scientific stopping gate.')
 
 
+def stream_hypothesis(rows):
+    t=rows['text-only']['regions']['green']['signed_green_score'];i=rows['image-only']['regions']['green']['signed_green_score']
+    return dict(text_signed_green_score=t,image_signed_green_score=i,
+        predicted_image_larger_absolute_effect=True,image_larger_matches=None if t is None or i is None else abs(i)>abs(t),
+        predicted_image_negative=True,image_sign_matches=None if i is None else i<0,
+        role='Frozen V-only mediation hypothesis; retain every context, miss and empty-mask abstention.')
+
+
 def worker():
     for n in ('OMP_NUM_THREADS','MKL_NUM_THREADS','OPENBLAS_NUM_THREADS'):os.environ[n]='2'
     import numpy as np
@@ -89,19 +97,20 @@ def worker():
                 left_minus_right_mean_energy=difference('left','right'),
                 green_to_yellow_expected_sign=-1,green_to_yellow_observed=regions['green']['signed_green_score'],
                 yellow_to_green_expected_sign=1,yellow_to_green_observed=regions['yellow']['signed_green_score'],
-                direction_applicable=spec['kind'] in ('band-cross','band-text','band-image','band-key','band-value'),shape_label_status='prompt-assigned; inspect unchanged native baseline before semantic interpretation')
+                direction_applicable=spec['kind'] in ('band-cross','band-text','band-image','band-key','band-value','value-text','value-image'),shape_label_status='prompt-assigned; inspect unchanged native baseline before semantic interpretation')
             reports[key]=dict(spec=spec,reader_fields=fields,image_trajectory=image_path,text_trajectory=text_path,latent_trajectory=latent_path,
                 expected_first_image_change=prediction['structural_prediction']['expected_first_image_change'],
                 first_image_prediction_matches=prediction['structural_prediction']['expected_first_image_change']==image_path['first_value_divergence'],
                 final_latent=measure(load(root,base['latent']),load(root,case['latent'])),final_rgb=measure(base_rgb,candidate))
-            if spec['kind'] in ('band-text','band-image'):
-                text_reference=r+('.band2' if spec['kind']=='band-text' else '.base')
-                image_reference=r+('.base' if spec['kind']=='band-text' else '.band2')
+            if spec['kind'] in ('band-text','band-image','value-text','value-image'):
+                is_text=spec['kind'] in ('band-text','value-text')
+                text_reference=r+('.band2' if is_text else '.base')
+                image_reference=r+('.base' if is_text else '.band2')
                 reports[key]['split_closure']=dict(text_reference=text_reference,image_reference=image_reference,
                     current_text_archive_exact=case['first_fields']['text']['sha256']==cases[text_reference]['first_fields']['text']['sha256'],
                     current_image_archive_exact=case['first_image']['sha256']==cases[image_reference]['first_image']['sha256'],
-                    expected_first_text_change=0 if spec['kind']=='band-text' else 1,
-                    first_text_change_matches=text_path['first_value_divergence']==(0 if spec['kind']=='band-text' else 1))
+                    expected_first_text_change=0 if is_text else 1,
+                    first_text_change_matches=text_path['first_value_divergence']==(0 if is_text else 1))
         semantics[r]=semantic_rows
     interactions={}
     for condition in plan['conditions']:
@@ -131,9 +140,15 @@ def worker():
             operand_interactions[r][field]=report
     out=Path(c['output_scratch'])/os.environ['MRUN_JOB_ID']/'binding-minimal-result';out.mkdir(parents=True,exist_ok=False)
     controls={}
+    control_root=Path(plan.get('historical_control_root',str(source)))
     if plan.get('historical_controls'):
-        old=read(source/'cases.json')
+        inventory=read(control_root/'files.json')
+        if plan.get('historical_control_manifest_sha256') and sha(control_root/'files.json')!=plan['historical_control_manifest_sha256']:raise ValueError('historical control inventory changed')
+        if sha(control_root/'cases.json')!=inventory['cases.json']:raise ValueError('historical control rows changed')
+        old=read(control_root/'cases.json')
         for key,oldkey in plan['historical_controls'].items():
+            load(control_root,old[oldkey]['latent']);load(control_root,old[oldkey]['first_fields']['text'])
+            if sha(control_root/old[oldkey]['image']['path'])!=old[oldkey]['image']['sha256']:raise ValueError('historical control image changed')
             controls[key]=dict(png_exact=cases[key]['image']['sha256']==old[oldkey]['image']['sha256'],
                 latent_exact=cases[key]['latent']['sha256']==old[oldkey]['latent']['sha256'],
                 text_exact=cases[key]['first_fields']['text']['sha256']==old[oldkey]['first_fields']['text']['sha256'])
@@ -142,6 +157,7 @@ def worker():
         reader_forecasts=reports,semantic_contrasts=semantics,frozen_semantic_hypotheses=plan['semantic_hypotheses'],
         native_manifest_sha256=sha(root/'files.json'),seal_sha256=tx['seal_sha256'],historical_controls=controls,scope=plan['scope'],stream_interactions=interactions,
         operand_interactions=operand_interactions,operand_predictions=operand_predictions,
+        stream_predictions={r:stream_hypothesis(rows) for r,rows in semantics.items()} if plan.get('panel')=='value-streams' else {},
         limitations=['One fresh seed193, four previously encoded prompts; new color/order states but no new wording or encoder computation.',
             'Forecasts use native Flash/linear/norm/SwiGLU primitives; not independently implemented Flash arithmetic.',
             'Original fresh-parent acquisition executed300blocks; current pre-seal counts are retained in the frozen transaction. No target suffix executes before all forecasts seal.',
@@ -167,7 +183,7 @@ def worker():
     for case in cases.values():shutil.copyfile(root/case['image']['path'],out/case['image']['path'])
     shutil.copytree(root/'transaction',out/'transaction')
     for n in ('parameter-artifacts.json','retrieve_weights.py'):shutil.copyfile(root/n,out/n)
-    save(out/'external-evidence.json',dict(host='beast',roots=dict(native=str(root),reader=str(source)),manifests=dict(native=read(root/'files.json'),reader=read(source/'files.json')),
+    save(out/'external-evidence.json',dict(host='beast',roots=dict(native=str(root),reader=str(source),controls=str(control_root)),manifests=dict(native=read(root/'files.json'),reader=read(source/'files.json'),controls=read(control_root/'files.json')),
         scope='Native tensors, fresh parent cuts and receipts remain remote; compact reports, native PNGs and sealed transaction retained locally.'))
     shutil.copyfile('retrieve_reader_evidence.py',out/'retrieve_evidence.py');save(out/'plan.json',c);save(out/'request.json',req)
     save(out/'summary.json',dict(schema='mdb-reader-fresh-compact-v1',job_id=os.environ['MRUN_JOB_ID'],request_sha256=req['request_sha256'],output_root=str(out),source_job=summary['job_id'],seconds=time.monotonic()-started,
