@@ -21,7 +21,7 @@ def semantic_masks(rgb):
         yellow=(r>50)&(g>50)&(r>.8*g)&(g>.8*r)&(r>1.30*b)&(g>1.30*b))
 
 
-def stage(run,prior,origin_local,factorial):
+def stage(run,prior,origin_local,factorial,campaign=None):
     from mdb.job_support import one_lease_scheduling_contract
     from mdb.payload import stage_worker
     old=read(prior/'request.json');c=dict(old['config'])
@@ -63,11 +63,30 @@ def stage(run,prior,origin_local,factorial):
         scope='Fresh seed193, four cached prompt conditions crossed color/order, sixteen sealed QKV-to-text forecasts then native futures. Four native prefixes of85steps each are executed before forecasting and counted; no raw-prompt or full-image numerical forecast. Color-swapped K/V band sources and an own-state no-donor V intervention; shape/color hypotheses exploratory.',
         planned_counts=dict(sdpa=16,staged_matmuls=0,staged_softmax=0,linear=48,layernorm=16,swiglu=16,
             native_sdpa=700,native_blocks=700,native_transitions=772,images=16,model_loads=1,encodes=0,noise_draws=1,prefix_stops=4))
+    if campaign:
+        allowed={'seed','conditions','case_specs','semantic_hypotheses','panel','reconstruct_values','selection','scope','new_prompt_encoding'}
+        if set(campaign)-allowed:raise ValueError('unknown campaign override')
+        c.update(campaign)
+        if {x['id'] for x in c['conditions']}!={'c0-o0','c0-o1','c1-o0','c1-o1'}:raise ValueError('four matched contexts required')
+        c['conditions']=[{**x,'seed':c['seed']} for x in c['conditions']]
+        image_kinds={'value-image','image-head-add','image-head-remove'}
+        nspec=len(c['case_specs']);n=4*nspec;formed=4 if c.get('reconstruct_values') else 0
+        flashes=4*(1+sum(s['kind']!='base' and s['kind'] not in image_kinds for s in c['case_specs']))
+        c['planned_counts']=dict(sdpa=flashes,staged_matmuls=0,staged_softmax=0,linear=3*n+formed,layernorm=n+formed,swiglu=n,
+            native_sdpa=300+25*n+4*sum(s['kind'] in image_kinds|{'value-text'} for s in c['case_specs']),native_blocks=300+25*n,native_transitions=340+27*n,
+            images=n,model_loads=1,encodes=4 if c.get('new_prompt_encoding') else 0,noise_draws=1,prefix_stops=4)
+        if formed:
+            c['planned_counts']['value_formations']=4
+            manifest=read(prior/'parameter-artifacts.json')
+            c['value_parameter_sha256']=next(a['source']['payload_sha256'] for a in manifest['artifacts'] if a['source']['tensor']=='transformer_blocks.0.attn.to_v.weight')
+        if c.get('new_prompt_encoding'):
+            c['checkpoint_files']={k:v for k,v in source['checkpoint_files'].items() if k.startswith(('text_encoder/','tokenizer/'))}
     save(run/'plan.json',c)
     for n in ('parameter-artifacts.json','retrieve_weights.py','source-binding.json'):
         shutil.copyfile(prior/n,run/n);extras.append((run/n,n))
     names=('flux_reader_route_future.py','flux_reader_routes.py','flux_reader_arithmetic.py','flux_reader_attention.py',
         'flux_source_receiver.py','flux_reentry_reference.py','flux_family_custody.py','flux_latent_reader.py')
+    if c.get('new_prompt_encoding'):names=(*names,'retrieve_flux_encoder.py')
     extras.extend((HERE/n,n) for n in names)
     pre=run/'preflight.v1.json';save(pre,dict(schema_version='mrun-preflight-config-v1',hashed_roots=[Path(__file__).name,*[n for _,n in extras],pre.name],
         path_token_allowlist=[c['input_root'],c['model_path'],c['output_scratch'],'binding-minimal-result']))
@@ -80,13 +99,21 @@ def stage(run,prior,origin_local,factorial):
             reason='Same resident model/16scalar suffixes measured98.26s/8209.8MBRSS/9264MBVRAM; add300prefixblocks to400suffixblocks, four cached contexts and operand arrays.10GB RAM/VRAM,240s estimate,600s worker/900s outer; no duplicate weights or encoders.'),
         scheduling_contract=one_lease_scheduling_contract(model_loads=1,logical_operations=36,logical_branches=16,logical_checkpoint_replays=16,max_local_work_items=64,
             checkpoint_policy='One resident model;4fresh prefixes,16sealed reader forecasts,16suffixes.772successful native steps/700blocks+4intentional prefix stops,16images;1shared noise draw,0encodes/retries.'))
+    if campaign:
+        n=4*len(c['case_specs'])
+        req['resource_exception'].update(ram_mb=12288 if c.get('new_prompt_encoding') else 10240,disk_gb=4,est_wall_s=360,
+            calibration_job='job-6a35eb9ce352',measured_peak_rss_mb=8889.3,measured_peak_vram_mb=9372.,
+            reason=f'Fresh80-future job-6a35eb9ce352 measured257.69s/8889.3MBRSS/9372MBVRAM with four new encodes/prefixes. Current{n}suffixes, sequential original encoder then transformer.12GBRAM/10GBVRAM;360s estimate/600s worker. No duplicated per-case KV retention.')
+        req['scheduling_contract']=one_lease_scheduling_contract(model_loads=1,logical_operations=4+2*n,logical_branches=n,logical_checkpoint_replays=n,max_local_work_items=4+2*n,
+            checkpoint_policy=f'One pipeline acquisition;4prefixes and {n} sealed forecasts then {n} suffixes. Original encoder sequential then released if requested; own image-to-V formation separately counted; no retries.')
     req['request_sha256']=hashlib.sha256(json.dumps(req,sort_keys=True,allow_nan=False).encode()).hexdigest();save(run/'request.json',req)
     runpy.run_path(str(HERE/'stage_flux_source_receiver.py'))['bind'](req['execution_environment'])
     stage_worker(run/'payload',worker=Path(__file__),config=c,request=req,additional_files=extras)
-    return dict(request_sha256=req['request_sha256'],seed=c['seed'],cases=16)
+    return dict(request_sha256=req['request_sha256'],seed=c['seed'],cases=4*len(c['case_specs']))
 
 
 def worker():
+    boot=time.monotonic()
     import faulthandler
     import importlib.metadata
     for n in ('OMP_NUM_THREADS','MKL_NUM_THREADS','OPENBLAS_NUM_THREADS'):os.environ[n]='4'
@@ -109,13 +136,28 @@ def worker():
     torch.set_num_threads(4);core['configure_eager_determinism']();torch.backends.cuda.matmul.allow_tf32=False
     torch.backends.cudnn.allow_tf32=False;torch.backends.cudnn.deterministic=True;torch.backends.cudnn.benchmark=False
     print('MDB_READER_FRESH loading original transformer/VAE',flush=True)
-    pipe=Flux2KleinPipeline.from_pretrained(c['model_path'],torch_dtype=torch.bfloat16,local_files_only=True,text_encoder=None,tokenizer=None)
+    if c.get('new_prompt_encoding'):
+        import gc
+        import inspect
+        if any(sha(Path(c['model_path'])/n)!=v for n,v in c['checkpoint_files'].items()):raise ValueError('original encoder/tokenizer checkpoint differs')
+        pipe=Flux2KleinPipeline.from_pretrained(c['model_path'],torch_dtype=torch.bfloat16,local_files_only=True)
+        pipe.text_encoder.eval().requires_grad_(False).to('cuda');encodings={}
+        encoder_source=dict(path=inspect.getfile(type(pipe.text_encoder)),sha256=sha(Path(inspect.getfile(type(pipe.text_encoder)))))
+        with torch.inference_mode():
+            for condition in c['conditions']:
+                value,ids=pipe.encode_prompt(condition['prompt'],device=torch.device('cuda'),num_images_per_prompt=1,max_sequence_length=512)
+                encodings[condition['id']]=(value.cpu(),ids.cpu())
+        pipe.text_encoder=None;pipe.tokenizer=None;del value,ids;gc.collect();torch.cuda.empty_cache()
+    else:pipe=Flux2KleinPipeline.from_pretrained(c['model_path'],torch_dtype=torch.bfloat16,local_files_only=True,text_encoder=None,tokenizer=None)
     pipe.set_progress_bar_config(disable=True)
     for component in (pipe.transformer,pipe.vae):component.eval().requires_grad_(False).to('cuda')
     pipe.vae.bn.to('cpu');adapter=FluxFinalLatentClosureAdapter.from_pipeline(pipe,granularity='operation',residency='resident',device='cuda')
     origins={r:LocalStore(source/'store').load(fp,device='cuda') for r,fp in c['origin_parents'].items()}
     if any(p.model_identity!=adapter.model_identity or dict(p.execution)!=dict(adapter.execution) for p in origins.values()):raise ValueError('origin model/backend differs')
     out=Path(c['output_scratch'])/os.environ['MRUN_JOB_ID']/'binding-minimal-result';out.mkdir(parents=True,exist_ok=False);store=LocalStore(out/'store')
+    if c.get('new_prompt_encoding'):
+        save(out/'encoder-source.json',dict(implementation=encoder_source,checkpoint_files=c['checkpoint_files'],prompts=c['conditions'],encodes=4))
+        shutil.copyfile('retrieve_flux_encoder.py',out/'retrieve_encoder.py')
     started=time.monotonic()
     def event(kind,**fields):
         row=dict(kind=kind,seconds=time.monotonic()-started,**fields)
@@ -123,6 +165,7 @@ def worker():
         print('MDB_READER_FRESH '+json.dumps(row,sort_keys=True),flush=True)
         if row['seconds']>c['max_wall_seconds']:raise RuntimeError('finite fresh campaign budget exceeded')
     counts=dict(native_transitions=0,native_sdpa=0,native_blocks=0,prefix_stops=0,noise_draws=1)
+    if c.get('new_prompt_encoding'):counts['encodes']=4
     reader=runpy.run_path('flux_latent_reader.py');active=dict(mode='continuation',text_rows=512);parents={};prefixes={};prefix_rows={}
     handles=[b.register_forward_hook(lambda m,a,v:counts.__setitem__('native_blocks',counts['native_blocks']+1)) for b in [*pipe.transformer.transformer_blocks,*pipe.transformer.single_transformer_blocks]]
     with torch.inference_mode():
@@ -133,8 +176,10 @@ def worker():
             with reader['ReaderBoundary'](native,counts,active) as boundary:
                 for condition in c['conditions']:
                     r=condition['id'];origin=origins['c0-'+r.split('-')[1]].payload
-                    conditioning=(origin['conditioning'] if r.startswith('c0-') else torch.from_numpy(load_tensor_archive(Path.cwd(),c['conditioning'][r]).copy()).to('cuda',torch.bfloat16))
-                    session=adapter.session(latent=latent.clone(),conditioning=conditioning,img_ids=img_ids.clone(),txt_ids=origin['txt_ids'].clone(),timesteps=origin['timesteps'].clone(),sigmas=origin['sigmas'].clone())
+                    if c.get('new_prompt_encoding'):conditioning,txt_ids=[v.to('cuda') for v in encodings[r]]
+                    else:
+                        conditioning=(origin['conditioning'] if r.startswith('c0-') else torch.from_numpy(load_tensor_archive(Path.cwd(),c['conditioning'][r]).copy()).to('cuda',torch.bfloat16));txt_ids=origin['txt_ids'].clone()
+                    session=adapter.session(latent=latent.clone(),conditioning=conditioning,img_ids=img_ids.clone(),txt_ids=txt_ids,timesteps=origin['timesteps'].clone(),sigmas=origin['sigmas'].clone())
                     initial=session.capture(retain=False);store.save(initial);nav=NativeCutNavigator(session,max_steps=86);active['mode']='continuation'
                     for _ in range(85):receipt(nav.step(),r);counts['native_transitions']+=1
                     parent=session.capture(retain=False);point=dict(parent.execution_point)
@@ -150,6 +195,7 @@ def worker():
         finally:
             for handle in handles:handle.remove()
         expected=dict(native_transitions=340,native_sdpa=300,native_blocks=300,prefix_stops=4,noise_draws=1)
+        if c.get('new_prompt_encoding'):expected['encodes']=4
         if counts!=expected:raise ValueError('fresh prefix census differs')
         operand_records={}
         for r in parents:
@@ -164,7 +210,7 @@ def worker():
         counts=program['run'](pipe=pipe,adapter=adapter,parents=parents,source=out,output=out,config=c,request=req,event=event,initial_counts=counts)
     for n in ('parameter-artifacts.json','retrieve_weights.py','source-binding.json'):shutil.copyfile(n,out/n)
     save(out/'summary.json',dict(schema='mdb-reader-fresh-summary-v1',job_id=os.environ['MRUN_JOB_ID'],request_sha256=req['request_sha256'],output_root=str(out),counts=counts,seconds=time.monotonic()-started,
-        mechanics_status='complete',terminal_status='unassessed',scope=c['scope']))
+        mechanics_status='complete',terminal_status='unassessed',bootstrap_seconds=started-boot,total_worker_seconds=time.monotonic()-boot,scope=c['scope']))
     save(out/'files.json',{p.relative_to(out).as_posix():sha(p) for p in sorted(out.rglob('*')) if p.is_file()})
     print('MDB_DIRECTORY_READY '+json.dumps(dict(job_id=os.environ['MRUN_JOB_ID'],request_sha256=req['request_sha256'],output_root=str(out),files_manifest_sha256=sha(out/'files.json'),summary_sha256=sha(out/'summary.json')),sort_keys=True),flush=True)
     faulthandler.cancel_dump_traceback_later()
@@ -178,12 +224,12 @@ def submit(run):
     cmd=worker_command(Path(__file__).name);cmd.insert(cmd.index('python')+1,'-B');os.environ.setdefault('MRUN_URL','http://192.168.68.68:9025')
     resources={k:req['resource_exception'][k] for k in ('ram_mb','vram_mb','cpu_threads','disk_gb','est_wall_s')}
     job=guarded_mrun_launch(cmd,request=req,model=req['model'],task='forward',experiment='mdb-reader-fresh',payload=run/'payload',gpu=True,needs=req['needs'],prefer_host='beast',timeout_s=900,preflight=True,retry_on_kill=False,**resources,
-        note='Freshseed193/color-order2x2, one resident model.4prefixes/340steps then16sealed readerforecasts and16suffixes/432steps,700nativeblocks total,16images.1sharednoisedraw,0encodes/retries. Band2vsband1 color-swappedKV anddonorfreeownVhead7.240s estimate/600sworker; earlier nativeprefix execution explicitly counted.')
+        note=f"Fresh seed{req['config']['seed']}/color-order2x2. One pipeline, encoder released before transformer. Four prefixes/340steps, then {req['config']['planned_counts']['images']} sealed reader forecasts and suffixes. {req['config']['planned_counts']['native_blocks']} nativeblocks, {req['config']['planned_counts']['encodes']} original encodes,1shared noise draw,0retries.600sworker/900souter; earlier native prefix explicitly counted.")
     save(run/'submission.json',dict(job_id=str(job)));return dict(job_id=str(job))
 
 
 if __name__=='__main__':
     if os.environ.get('SATURN_RESIDENT_WORKER')=='1':worker()
     else:
-        p=argparse.ArgumentParser(description=__doc__);p.add_argument('run',type=Path);p.add_argument('--prior',type=Path);p.add_argument('--origin-local',type=Path);p.add_argument('--factorial',type=Path);p.add_argument('--submit',action='store_true');a=p.parse_args()
-        print(json.dumps(submit(a.run.resolve()) if a.submit else stage(a.run.resolve(),a.prior.resolve(),a.origin_local.resolve(),a.factorial.resolve())))
+        p=argparse.ArgumentParser(description=__doc__);p.add_argument('run',type=Path);p.add_argument('--prior',type=Path);p.add_argument('--origin-local',type=Path);p.add_argument('--factorial',type=Path);p.add_argument('--campaign',type=Path);p.add_argument('--submit',action='store_true');a=p.parse_args()
+        print(json.dumps(submit(a.run.resolve()) if a.submit else stage(a.run.resolve(),a.prior.resolve(),a.origin_local.resolve(),a.factorial.resolve(),read(a.campaign) if a.campaign else None)))

@@ -330,3 +330,13 @@ from current interpretations. The operand panel is retained under
 The direct payload/output mediation is in
 `artifacts/mdb-flux-reader-value-streams-20261105/`. Thirteen focused installed
 environment tests pass for the current harness.
+
+The [completed head/source/generalization campaign](FLUX-READER-HEADS.md) adds
+132 native futures. Coalition18–23 leads the four known contexts; its RGB order
+transfers to four new paraphrases at seed241, while its signed-green order only
+transfers2/4. Complete image-to-V reconstruction is exact, and typed final-pass
+latent swaps establish the persistent source of that image register and V while
+retaining recipient text ports. The selected V band's effect has small signed
+alignment with the much larger latent-source image change;
+these are not causal percentages. Earlier latent writers, a complete individual
+head map and independent seed/wording attribution remain open.

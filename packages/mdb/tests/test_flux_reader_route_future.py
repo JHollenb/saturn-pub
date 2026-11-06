@@ -30,3 +30,20 @@ def test_payload_digest_agrees_between_exact_widening_and_native_bits():
     import torch
     value=torch.tensor([[-0.,1.,-2.,.375]],dtype=torch.bfloat16)
     assert C['payload_digest'](value)==C['payload_digest'](value.float().numpy())
+
+
+def test_image_cohorts_protect_text_and_complements_for_every_head():
+    import pytest
+    import torch
+    base=torch.arange(1*5*24*2).reshape(1,5,24,2)
+    changed=base+1000
+    for i in range(24):
+        add=C['image_head_route'](base,changed,dict(kind='image-head-add',heads=[i]),2)
+        remove=C['image_head_route'](base,changed,dict(kind='image-head-remove',heads=[i]),2)
+        assert torch.equal(add[:,:2],base[:,:2]) and torch.equal(remove[:,:2],base[:,:2])
+        assert torch.equal(add[:,2:,i],changed[:,2:,i]) and torch.equal(remove[:,2:,i],base[:,2:,i])
+        others=[j for j in range(24) if j!=i]
+        assert torch.equal(add[:,2:,others],base[:,2:,others])
+        assert torch.equal(remove[:,2:,others],changed[:,2:,others])
+    for heads in ([],[1,1],[-1],[24],[True]):
+        with pytest.raises(ValueError):C['image_head_route'](base,changed,dict(kind='image-head-add',heads=heads),2)

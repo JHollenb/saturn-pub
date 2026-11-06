@@ -86,3 +86,15 @@ def test_stream_prediction_retains_failed_dominance_and_sign_separately():
     rows={name:dict(regions=dict(green=dict(signed_green_score=x))) for name,x in (('text-only',-.2),('image-only',.1))}
     miss=A['stream_hypothesis'](rows)
     assert miss['image_larger_matches'] is False and miss['image_sign_matches'] is False
+
+
+def test_head_instrument_keeps_large_orthogonal_effect_distinct_from_alignment():
+    vals={k:np.asarray(v,float) for k,v in dict(base=[0,0],**{'image-only':[1,0],
+        'g0-add':[0,3],'g0-remove':[1,-3],'g1-add':[.5,0],'g1-remove':[.5,0]}).items()}
+    cases={'r.'+k:dict(first_image=k) for k in vals}
+    sem={'r':{k:dict(regions=dict(green=dict(signed_green_score=-float(v[0])))) for k,v in vals.items()}}
+    result=A['head_analysis'](cases,lambda k:vals[k.split('.')[1]],lambda root,a:vals[a],None,
+        [dict(id='r')],[dict(id='g0-add',kind='image-head-add',heads=[0]),dict(id='g1-add',kind='image-head-add',heads=[1])],sem)['r']
+    assert result['rank_rgb']==['g1','g0'] and result['rank_rgb_rms']==['g0','g1']
+    assert result['g0']['consumers']['rgb']['add_projection']==0
+    assert result['g0']['consumers']['rgb']['interaction_relative_rms']==0

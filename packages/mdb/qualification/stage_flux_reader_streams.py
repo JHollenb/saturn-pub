@@ -13,7 +13,7 @@ H=runpy.run_path(str(HERE/'flux_source_receiver.py'))
 read,save,sha=[H[k] for k in ('read','save','sha')]
 
 
-def stage(run,fresh,audit,panel='streams',operand_study=None):
+def stage(run,fresh,audit,panel='streams',operand_study=None,head_groups=None):
     from mdb.job_support import one_lease_scheduling_contract
     from mdb.payload import stage_worker
     evidence=audit/'compact-collection-01/extracted/binding-minimal-result';report=read(evidence/'audit.json')
@@ -22,6 +22,7 @@ def stage(run,fresh,audit,panel='streams',operand_study=None):
     if jid!=report['source_job']:raise ValueError('fresh audit/request differs')
     root=Path(c['output_scratch'])/jid/'binding-minimal-result';parents=read(evidence/'source-fresh-parents.json')
     code='import json\nfrom pathlib import Path\nr=Path('+repr(str(root))+')\nparents='+repr({r:p['parent'] for r,p in parents.items()})+'\n'
+    if panel=='upstream':code+='parents.update({"initial-"+k:v["initial"] for k,v in json.loads((r/"fresh-parents.json").read_text()).items()})\n'
     code+='''inventory=json.loads((r/'files.json').read_text());names={'prefixes.json','fresh-parents.json','cases.json'}
 prefixes=json.loads((r/'prefixes.json').read_text())['operands']
 for fields in prefixes.values():
@@ -33,7 +34,7 @@ for fp in parents.values():
 print(json.dumps({n:dict(sha256=inventory[n],bytes=(r/n).stat().st_size) for n in sorted(names)}))
 '''
     inputs=json.loads(subprocess.run(['ssh','beast','python3','-I','-'],input=code,text=True,capture_output=True,check=True).stdout)
-    for k in ('conditioning','origin_parents'):c.pop(k,None)
+    for k in ('conditioning','origin_parents','new_prompt_encoding','reconstruct_values'):c.pop(k,None)
     c.update(schema='mdb-reader-streams-plan-v1',input_root=str(root),source_files_sha256=report['native_manifest_sha256'],inputs=inputs,
         parents={r:p['parent'] for r,p in parents.items()},expected_prefix_counts=dict(native_blocks=0,native_sdpa=0,native_transitions=0),
         case_specs=[dict(id='base',kind='base'),dict(id='band2',kind='band-cross',band=2),
@@ -48,7 +49,7 @@ print(json.dumps({n:dict(sha256=inventory[n],bytes=(r/n).stat().st_size) for n i
         scope='Four already observed seed193 color/order parents;8historical base/band2 controls+8new text-only/image-only attention-output futures. Each new split computes native full attention for base and changedKV at identical Q/shape/strides then routes one complete stream. All16local reader forecasts seal before any target block. Native image continuation observed, not numerically predicted.',
         planned_counts=dict(sdpa=12,staged_matmuls=0,staged_softmax=0,linear=48,layernorm=16,swiglu=16,
             native_sdpa=408,native_blocks=400,native_transitions=432,images=16,model_loads=1,encodes=0,noise_draws=0))
-    if panel not in ('streams','kv','value-streams'):raise ValueError('unknown reader panel')
+    if panel not in ('streams','kv','value-streams','heads','upstream'):raise ValueError('unknown reader panel')
     c['panel']=panel
     if panel=='kv':
         c.update(case_specs=[dict(id='base',kind='base'),dict(id='band2',kind='band-cross',band=2),
@@ -77,9 +78,43 @@ print(json.dumps({n:dict(sha256=inventory[n],bytes=(r/n).stat().st_size) for n i
                 controls='Eight base/full-V historical controls from independently audited operand panel; eight new V-only stream-split futures.',
                 caveat='Routes complete streams, not individual heads. Native final image observed, not numerically forecast; applies only to tested contexts/clock/source band.'),
             scope='Four observed seed193 parents;8historical base/values-only controls+8new V-only text/image output splits.16local primitive reader forecasts and image-dominance/sign hypotheses sealed before targets. Copy source imageVband2 only; K/textV/Q fixed, then route complete native output streams. No raw-prompt/independentFlash/full-image forecast or universal symbol claim.')
+    if panel=='heads':
+        groups=head_groups or [list(range(i,i+6)) for i in range(0,24,6)]
+        if any(not g or len(set(g))!=len(g) or any(type(h) is not int or not 0<=h<24 for h in g) for g in groups):raise ValueError('invalid head groups')
+        rows=[dict(id='base',kind='base'),dict(id='band2',kind='band-value',band=2),dict(id='image-only',kind='value-image',band=2)]
+        for i,g in enumerate(groups):
+            rows.extend(dict(id=f'g{i}-{arm}',kind='image-head-'+arm,band=2,heads=g) for arm in ('add','remove'))
+        n=len(parents)*len(rows);splits=len(parents)*(len(rows)-2)
+        c.update(case_specs=rows,selection=dict(groups=groups,source='Fixed contiguous image-head groups, or explicitly supplied groups; no target-based rank selection in this screen.'),
+            historical_controls={r+'.base':r+'.base' for r in parents},
+            semantic_hypotheses=dict(stage='Exploratory image-head screen; group choices frozen before native suffixes.',
+                alternatives=['one head cohort carries the value response','several cohorts are redundant or cooperative','local image-write ranks differ from final RGB ranks'],
+                prediction='All output-routed groups preserve current baseline text; their first possible image effect is joint0. No frozen winner or semantic head label.',
+                consumer='Rank signed green-score effects, RGB response projection and local image response separately; retain complement asymmetry and all counterexamples.',
+                caveat='Baseline-mask color instrument, fixed seed193, four known contexts. Head output surgery identifies a carrier under these Q/K/V, not an upstream source or universal concept.'),
+            scope='Four observed seed193 parents; baseline/fullV/image-only controls plus paired image-head cohort additions/removals. Text is baseline under every cohort route. Complete text-reader forecasts seal before all target suffixes; final images and head rankings are native observations, not numerical image forecasts.',
+            planned_counts=dict(sdpa=2*len(parents),staged_matmuls=0,staged_softmax=0,linear=3*n,layernorm=n,swiglu=n,
+                native_sdpa=25*n+splits,native_blocks=25*n,native_transitions=27*n,images=n,model_loads=1,encodes=0,noise_draws=0))
+    if panel=='upstream':
+        receivers=['c0-o0','c1-o0'];conditions=c['conditions']
+        c.update(upstream_receivers=receivers,new_prompt_encoding=False,reconstruct_values=False,
+            conditions=[{**x,'id':x['id']+'-'+role} for x in conditions if x['id'] in receivers for role in ('own','swap')],
+            case_specs=[dict(id='base',kind='base'),dict(id='band2',kind='band-value',band=2)],
+            expected_prefix_counts=dict(native_blocks=150,native_sdpa=150,native_transitions=172,prefix_stops=4,latent_acts=2),
+            historical_control_root=str(root),historical_control_manifest_sha256=report['native_manifest_sha256'],
+            historical_controls={r+'-own.'+a:r+'.'+a for r in receivers for a in ('base','band2')},
+            selection=dict(source='Actual new-seed native latent at step3/project; own conditioning retained. Opposite-color latent used through a typed project-port Act.'),
+            semantic_hypotheses=dict(stage='Persistent latent source x V-band mediator, frozen before new branches.',
+                prediction='Latent source exactly determines projected image and image V under fixed time; projected text remains recipient-native. Selected V band can be restored or transplanted without changing query/key or other values.',
+                consumer='Measure the four-corner signed image/RGB mediation square per recipient, including nonadditivity. No frozen claim that this one band explains the complete latent effect.',
+                limitation='Two opposite-color recipients, one layout, seed241 and cached new paraphrases. Latent is a persistent carrier; prior readout/MLP writer remains unidentified.'),
+            scope='Two recipients; honest84-step prefix replay to actual step3/project, then own/opposite-color native latent through typed Act.replace while own conditioning persists. Four projected parents, eight sealed reader forecasts, eight27-step native image suffixes. Opposite V-band restores/transplants form a persistent-latent x mediator square. Four historical own-corner controls; no new encoding/noise or full-image numerical prediction.',
+            planned_counts=dict(sdpa=8,staged_matmuls=0,staged_softmax=0,linear=24,layernorm=8,swiglu=8,
+                native_sdpa=350,native_blocks=350,native_transitions=388,images=8,model_loads=1,encodes=0,noise_draws=0,prefix_stops=4,latent_acts=2))
     run.mkdir(parents=True,exist_ok=False);save(run/'plan.json',c)
     extras=[(HERE/n,n) for n in ('flux_reader_route_future.py','flux_reader_routes.py','flux_reader_arithmetic.py','flux_reader_attention.py',
         'flux_source_receiver.py','flux_reentry_reference.py','flux_family_custody.py')]
+    if panel=='upstream':extras.extend((HERE/n,n) for n in ('flux_reader_upstream.py','flux_latent_reader.py'))
     for n in ('parameter-artifacts.json','retrieve_weights.py','source-binding.json'):
         shutil.copyfile(fresh/n,run/n);extras.append((run/n,n))
     worker=HERE/'flux_reader_route_future_worker.py';pre=run/'preflight.v1.json'
@@ -93,9 +128,18 @@ print(json.dumps({n:dict(sha256=inventory[n],bytes=(r/n).stat().st_size) for n i
             reason='Same scalar B1/512px model/VAE and16suffixes measured98.26s,8209.8MBRSS/9264MBVRAM. At most8extra attention calls for stream splits; no extra blocks, encoders or weights.9GBRAM/10GBVRAM reserve,150sestimate.'),
         scheduling_contract=one_lease_scheduling_contract(model_loads=1,logical_operations=32,logical_branches=16,logical_checkpoint_replays=16,max_local_work_items=64,
             checkpoint_policy='One resident model/16sealed predictions then16native suffixes;'+str(c['planned_counts']['sdpa'])+'forecastFlash+48linears,432steps/400blocks/'+str(c['planned_counts']['native_sdpa'])+'nativeSDPA/16VAE;0encodes/noise/retries.8historical controls+8new '+panel+' factorial cases.'))
+    if panel=='heads':
+        n=len(parents)*len(c['case_specs'])
+        req['resource_exception'].update(ram_mb=10240,disk_gb=4,est_wall_s=360,reason='Same measured resident B1/512px model/VAE and27-step suffix.44suffixes instead of16; prepared operands are now recipes, not per-case retained KV copies.10GBRAM/VRAM,360s estimate;600s worker/900s outer. No prefix or encoder.')
+        req['scheduling_contract']=one_lease_scheduling_contract(model_loads=1,logical_operations=2*n,logical_branches=n,logical_checkpoint_replays=n,max_local_work_items=2*n,
+            checkpoint_policy=f'One model, {n} sealed local reader forecasts then {n} native suffixes; paired image head groups. No target-ranked selection inside the panel, no encodes/noise/retries.')
+    elif panel=='upstream':
+        req['resource_exception'].update(est_wall_s=180,reason='Same measured resident transformer/VAE, two84-step source-prefix replays plus8suffixes,350blocks/8images; no encoder or new noise. Existing9GBRAM/10GBVRAM covers measured scalar geometry.')
+        req['scheduling_contract']=one_lease_scheduling_contract(model_loads=1,logical_operations=24,logical_branches=8,logical_checkpoint_replays=8,max_local_work_items=32,
+            checkpoint_policy='Two native84-step prefix replays;2typed latent Acts;4projected parents/4pre-attention stops;8sealed forecasts then8suffixes. One model, no encoder/noise/retries.')
     req['request_sha256']=hashlib.sha256(json.dumps(req,sort_keys=True,allow_nan=False).encode()).hexdigest();save(run/'request.json',req)
     runpy.run_path(str(HERE/'stage_flux_source_receiver.py'))['bind'](req['execution_environment']);stage_worker(run/'payload',worker=worker,config=c,request=req,additional_files=extras)
-    return dict(request_sha256=req['request_sha256'],cases=16)
+    return dict(request_sha256=req['request_sha256'],cases=len(parents)*len(c['case_specs']))
 
 
 def submit(run):
@@ -107,10 +151,10 @@ def submit(run):
     resources={k:r['resource_exception'][k] for k in ('ram_mb','vram_mb','cpu_threads','disk_gb','est_wall_s')}
     panel=r['config'].get('panel','streams');pc=r['config']['planned_counts']
     job=guarded_mrun_launch(cmd,request=r,model=r['model'],task='forward',experiment='mdb-reader-'+panel,payload=run/'payload',gpu=True,needs=r['needs'],prefer_host='beast',timeout_s=900,preflight=True,retry_on_kill=False,**resources,
-        note='16B1/512px '+panel+' futures:8historical base/band2+8new factorial cases. All16local forecasts/semantic hypotheses seal before targetblocks.1model acquisition,432steps/400blocks/'+str(pc['native_sdpa'])+'nativeSDPA/16VAE,0encodes/noise/retries.150sestimate/600sworker/900souter; calibrated9GBRAM/10GBVRAM.')
+        note=f"{pc['images']} B1/512px {panel} futures, all local forecasts seal before targetblocks. One model, {pc['native_transitions']} steps/{pc['native_blocks']} blocks/{pc['native_sdpa']} native SDPA/{pc['images']} VAE; pre-seal prefix blocks={r['config']['expected_prefix_counts']['native_blocks']},0encodes/noise/retries. Paired fixed head cohorts or declared factorial. {resources['est_wall_s']}s estimate/600s worker/900s outer; measured resident model memory.")
     save(run/'submission.json',dict(job_id=str(job)));return dict(job_id=str(job))
 
 
 if __name__=='__main__':
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('run',type=Path);p.add_argument('--fresh',type=Path);p.add_argument('--audit',type=Path);p.add_argument('--panel',choices=('streams','kv','value-streams'),default='streams');p.add_argument('--operand-study',type=Path);p.add_argument('--submit',action='store_true');a=p.parse_args()
-    print(json.dumps(submit(a.run.resolve()) if a.submit else stage(a.run.resolve(),a.fresh.resolve(),a.audit.resolve(),a.panel,a.operand_study.resolve() if a.operand_study else None)))
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('run',type=Path);p.add_argument('--fresh',type=Path);p.add_argument('--audit',type=Path);p.add_argument('--panel',choices=('streams','kv','value-streams','heads','upstream'),default='streams');p.add_argument('--operand-study',type=Path);p.add_argument('--head-groups',help='JSON list of image head lists');p.add_argument('--submit',action='store_true');a=p.parse_args()
+    print(json.dumps(submit(a.run.resolve()) if a.submit else stage(a.run.resolve(),a.fresh.resolve(),a.audit.resolve(),a.panel,a.operand_study.resolve() if a.operand_study else None,json.loads(a.head_groups) if a.head_groups else None)))

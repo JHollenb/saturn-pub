@@ -40,6 +40,36 @@ def stream_hypothesis(rows):
         role='Frozen V-only mediation hypothesis; retain every context, miss and empty-mask abstention.')
 
 
+def head_analysis(cases,rgb,load,root,conditions,specs,semantics):
+    """Rank two consumers separately; keep signed complement interactions."""
+    import numpy as np
+    result={}
+    for condition in conditions:
+        r=condition['id'];result[r]={}
+        def value(arm,field):
+            key=r+'.'+arm
+            return np.asarray(rgb(key) if field=='rgb' else load(root,cases[key]['first_image']),np.float64)
+        for spec in specs:
+            if spec['kind']!='image-head-add':continue
+            name=spec['id'].removesuffix('-add');row=dict(heads=spec['heads'],consumers={})
+            for field in ('image','rgb'):
+                b,f,a,c=[value(x,field) for x in ('base','image-only',name+'-add',name+'-remove')]
+                j=f-b;delta=a-b;remaining=c-b;den=float(np.vdot(j,j));interaction=j-delta-remaining
+                row['consumers'][field]=dict(full_rms=float(np.sqrt(np.mean(j*j))),add_rms=float(np.sqrt(np.mean(delta*delta))),
+                    add_projection=float(np.vdot(j,delta)/den) if den else None,
+                    complement_projection=float(np.vdot(j,remaining)/den) if den else None,
+                    interaction_relative_rms=float(np.sqrt(np.vdot(interaction,interaction)/den)) if den else None)
+            row['signed_green_add']=semantics[r][name+'-add']['regions']['green']['signed_green_score']
+            row['signed_green_complement']=semantics[r][name+'-remove']['regions']['green']['signed_green_score']
+            result[r][name]=row
+        for field in ('image','rgb'):
+            result[r]['rank_'+field]=sorted([k for k in result[r] if not k.startswith('rank_')],key=lambda k:-(result[r][k]['consumers'][field]['add_projection'] or 0))
+        groups=[k for k in result[r] if not k.startswith('rank_')]
+        result[r]['rank_green_signed']=sorted(groups,key=lambda k:result[r][k]['signed_green_add'] if result[r][k]['signed_green_add'] is not None else float('inf'))
+        result[r]['rank_rgb_rms']=sorted(groups,key=lambda k:-result[r][k]['consumers']['rgb']['add_rms'])
+    return result
+
+
 def worker():
     for n in ('OMP_NUM_THREADS','MKL_NUM_THREADS','OPENBLAS_NUM_THREADS'):os.environ[n]='2'
     import numpy as np
@@ -64,16 +94,27 @@ def worker():
     tx=read(root/'transaction-report.json');verify_transaction(root/'transaction',expected_seal_sha256=tx['seal_sha256'])
     timeline=[json.loads(x) for x in (root/'timeline.jsonl').read_text().splitlines()]
     seals=[i for i,x in enumerate(timeline) if x['kind']=='all-predictions-sealed'];futures=[i for i,x in enumerate(timeline) if x['kind']=='native-future-complete']
-    if len(seals)!=1 or len(futures)!=16 or min(futures)<=seals[0]:raise ValueError('target suffix chronology differs')
+    ncases=len(cases)
+    if len(seals)!=1 or len(futures)!=ncases or min(futures)<=seals[0]:raise ValueError('target suffix chronology differs')
     at_seal=timeline[seals[0]]['counts']
     expected_prefix=plan.get('expected_prefix_counts',dict(native_blocks=300,native_sdpa=300,native_transitions=340,prefix_stops=4))
     if any(at_seal.get(k,0)!=v for k,v in expected_prefix.items()):raise ValueError('pre-forecast prefix census differs')
     if len({x['initial_latent']['sha256'] for x in parents.values()})!=1:raise ValueError('fresh contexts do not share initial noise')
     prefix=read(prefix_root/'prefixes.json')['operands'];reports={};semantics={};exact=0;values=0
+    formed={};formation_report={}
+    if plan.get('reconstruct_values'):
+        formation=read(root/'value-formation.json')
+        for receiver,record in formation.items():
+            formed[receiver]=load(root,record['values'])
+            actual=load(prefix_root,prefix[receiver+'.base']['v'])[:,512:]
+            formation_report[receiver]=dict(**measure(actual,formed[receiver]),complete_array_exact=np.array_equal(actual,formed[receiver]),values=int(actual.size),parent=record['parent'])
     def rgb(key):return np.asarray(Image.open(root/cases[key]['image']['path']).convert('RGB'))
     for condition in plan['conditions']:
         r=condition['id'];base=cases[r+'.base'];base_rgb=rgb(r+'.base');masks=fresh['semantic_masks'](base_rgb)
         b,d=[{f:load(prefix_root,a) for f,a in prefix[r+'.'+role].items()} for role in ('base','delta')]
+        if formed:
+            other=('c1-' if r.startswith('c0-') else 'c0-')+r.split('-')[1]
+            b['v'][:,512:]=formed[r];d['v'][:,512:]=formed[other]
         semantic_rows={}
         for spec in plan['case_specs']:
             key=r+'.'+spec['id'];case=cases[key];prediction=predictions[key]
@@ -152,32 +193,74 @@ def worker():
             controls[key]=dict(png_exact=cases[key]['image']['sha256']==old[oldkey]['image']['sha256'],
                 latent_exact=cases[key]['latent']['sha256']==old[oldkey]['latent']['sha256'],
                 text_exact=cases[key]['first_fields']['text']['sha256']==old[oldkey]['first_fields']['text']['sha256'])
-    result=dict(schema='mdb-reader-fresh-audit-v1',source_job=summary['job_id'],mechanics_status='verified',instrument_status='reader-byte-parity' if exact==64 else 'reader-discrepancies-observed',
-        trend_status='observed',terminal_status='unassessed',counts=summary['counts'],exact_reader_archives=exact,reader_archives=64,compared_bf16_values=values,
+    result=dict(schema='mdb-reader-fresh-audit-v1',source_job=summary['job_id'],mechanics_status='verified',instrument_status='reader-byte-parity' if exact==4*ncases else 'reader-discrepancies-observed',
+        trend_status='observed',terminal_status='unassessed',counts=summary['counts'],exact_reader_archives=exact,reader_archives=4*ncases,compared_bf16_values=values,
         reader_forecasts=reports,semantic_contrasts=semantics,frozen_semantic_hypotheses=plan['semantic_hypotheses'],
         native_manifest_sha256=sha(root/'files.json'),seal_sha256=tx['seal_sha256'],historical_controls=controls,scope=plan['scope'],stream_interactions=interactions,
         operand_interactions=operand_interactions,operand_predictions=operand_predictions,
-        stream_predictions={r:stream_hypothesis(rows) for r,rows in semantics.items()} if plan.get('panel')=='value-streams' else {},
+        stream_predictions={r:stream_hypothesis(rows) for r,rows in semantics.items()} if all('text-only' in rows and 'image-only' in rows for rows in semantics.values()) else {},
         limitations=['One fresh seed193, four previously encoded prompts; new color/order states but no new wording or encoder computation.',
             'Forecasts use native Flash/linear/norm/SwiGLU primitives; not independently implemented Flash arithmetic.',
             'Original fresh-parent acquisition executed300blocks; current pre-seal counts are retained in the frozen transaction. No target suffix executes before all forecasts seal.',
             'Final images are native observations, not numerical forecasts. All semantic alternatives and countertrends retained.',
             'Color masks are baseline-derived instruments; shape labels require visual conformance, and RGB sensitivity does not establish discrete concept identity.',
             'Original fresh panel includes a band1 spatial control without energy matching and a donor-free own-V edit. Stream panel instead separates the two complete attention output streams; read each plan for the actual cases.'])
+    if plan.get('panel')=='heads':
+        result['head_analysis']=head_analysis(cases,rgb,load,root,plan['conditions'],plan['case_specs'],semantics)
+        result['limitations']=[x.replace('One fresh seed193','One previously observed seed193') for x in result['limitations']]
+        result['limitations'].append('Head ranks are exploratory at image exit and native RGB separately. Signed projections are not causal percentages. Text forecasts are shared baseline predictions under protected text outputs; image endpoints are observed.')
+    if formed:
+        result['value_formation']=formation_report
+        shutil.copyfile(root/'value-formation.json',out/'source-value-formation.json')
+    if plan.get('new_prompt_encoding'):
+        result['limitations'][0]='One fresh seed'+str(plan['seed'])+' and four fresh paraphrases encoded by the original conditioner; seed and wording change together, so their effects are not independently identified.'
+        for name in ('encoder-source.json','retrieve_encoder.py'):shutil.copyfile(root/name,out/name)
+        result['fresh_cohort_predictions']={}
+        for r,rows in semantics.items():
+            a,b=result['head_analysis'][r]['g6'],result['head_analysis'][r]['g7']
+            ga,gb=a['signed_green_add'],b['signed_green_add'];full=rows['band2']['regions']['green']['signed_green_score']
+            result['fresh_cohort_predictions'][r]=dict(selected_heads=a['heads'],outside_heads=b['heads'],selected_green=ga,outside_green=gb,
+                full_values_negative=None if full is None else full<0,selected_more_negative=None if ga is None or gb is None else ga<gb,
+                selected_more_rgb_aligned=a['consumers']['rgb']['add_projection']>b['consumers']['rgb']['add_projection'],
+                role='Frozen sign/order predictions; per-context observations, no scientific stopping gate.')
+    if plan.get('upstream_receivers'):
+        bindings=read(root/'upstream-bindings.json');result['upstream_bindings']=bindings
+        result['upstream_mediation']={}
+        for r in plan['upstream_receivers']:
+            keys=[r+'-own.base',r+'-own.band2',r+'-swap.band2',r+'-swap.base']
+            base_rgb=rgb(keys[0]);masks=fresh['semantic_masks'](base_rgb);account={}
+            for field in ('rgb','latent','image'):
+                vals=[rgb(k) if field=='rgb' else load(root,cases[k]['latent' if field=='latent' else 'first_image']) for k in keys]
+                b,v,z,both=[np.asarray(x,np.float64) for x in vals];total=both-b;vdelta=v-b;zdelta=z-b;interaction=both-z-v+b;den=float(np.vdot(total,total))
+                account[field]=dict(total_rms=float(np.sqrt(np.mean(total*total))),band_only_rms=float(np.sqrt(np.mean(vdelta*vdelta))),
+                    other_latent_paths_rms=float(np.sqrt(np.mean(zdelta*zdelta))),interaction_rms=float(np.sqrt(np.mean(interaction*interaction))),
+                    band_projection=float(np.vdot(total,vdelta)/den) if den else None,
+                    other_latent_paths_projection=float(np.vdot(total,zdelta)/den) if den else None,
+                    band_removal_projection=float(np.vdot(total,both-z)/den) if den else None,
+                    interaction_projection=float(np.vdot(total,interaction)/den) if den else None,
+                    interaction_relative_rms=float(np.sqrt(np.vdot(interaction,interaction)/den)) if den else None)
+            account['regions']={name:{key:region_effect(base_rgb,rgb(k),mask) for key,k in zip(('base','band-only','latent-band-restored','latent-natural'),keys,strict=True)} for name,mask in masks.items()}
+            account['signed_green_interaction']={name:rows['latent-natural']['signed_green_score']-rows['latent-band-restored']['signed_green_score']-rows['band-only']['signed_green_score'] if rows['base']['pixels'] else None for name,rows in account['regions'].items()}
+            result['upstream_mediation'][r]=account
+        result['limitations']=['Two opposite-color seed241 recipients in one layout; original conditioning retained while native opposite-color latent is installed through typed project Act.',
+            'Latent is a persistent source, and V is a recomputed mediator. Earlier readout/attention/MLP writer of the latent remains unidentified.',
+            'Own versus swapped states differ in all latent consequences; the selected V band is one mediator. Signed projections are not causal percentages.',
+            'Local reader equations use original primitives and observed positioned Q/K/V. Native image futures are observations, not numerical image forecasts.']
+        shutil.copyfile(root/'upstream-bindings.json',out/'source-upstream-bindings.json')
     save(out/'audit.json',result);catalog=EquationCatalog(out/'catalog/equations');ids=[];profile=read(root/'native-contract.json')
     for key,case in cases.items():
-        context=dict(model='flux2-klein-4b-distilled',seed=193,case=key,source_job=summary['job_id'],horizon=1,clock=dict(step=3,block=0,phase='joint'))
+        context=dict(model='flux2-klein-4b-distilled',seed=plan['seed'],case=key,source_job=summary['job_id'],horizon=1,clock=dict(step=3,block=0,phase='joint'))
         prediction=predictions[key]
         item=catalog.record(law_id='law.flux.reader.native-state-and-consumer-clock.v1',route_id='route.flux.image-KV.text-projection-residual-mlp.v1',alias='cmp.flux.reader-fresh.'+key,
             binding=catalog_binding(context,parents,native_req,profile),
             report=compare_equations({f:load(root,a) for f,a in prediction['fields'].items()},{f:load(root,a) for f,a in case['first_fields'].items()},max_elements=20_000_000),
             conditions=[dict(field=f,op='eq',value=v) for f,v in context.items()],tested_context=context,
-            readers=['joint0.text-head','joint0.text-mlp','native-image-suffix'],evidence=dict(audit_sha256=sha(out/'audit.json'),seal_sha256=tx['seal_sha256'],new_state=key not in controls,seed=193,
+            readers=['joint0.text-head','joint0.text-mlp','native-image-suffix'],evidence=dict(audit_sha256=sha(out/'audit.json'),seal_sha256=tx['seal_sha256'],new_state=key not in controls,seed=plan['seed'],
                 semantic_status='competing hypotheses; see full signed per-context evidence',terminal_status='unassessed'))
         if len(catalog.find(applicable_to=context))!=1 or catalog.find(applicable_to={**context,'horizon':2}):raise ValueError('catalog applicability differs')
-        if key=='c1-o1.'+plan['case_specs'][-1]['id']:save(out/'catalog/context.json',context);save(out/'catalog/context-wrong-horizon.json',{**context,'horizon':2})
+        if key==list(cases)[-1]:save(out/'catalog/context.json',context);save(out/'catalog/context-wrong-horizon.json',{**context,'horizon':2})
         ids.append(item['fingerprint'])
-    save(out/'catalog/provenance.json',dict(records=16,fingerprints=ids,matching_queries=16,wrong_horizon_abstentions=16))
+    save(out/'catalog/provenance.json',dict(records=ncases,fingerprints=ids,matching_queries=ncases,wrong_horizon_abstentions=ncases))
     for n in ('native-contract.json','summary.json','cases.json','predictions.json','plan.json','timeline.jsonl'):shutil.copyfile(root/n,out/('source-'+n))
     shutil.copyfile(prefix_root/'fresh-parents.json',out/'source-fresh-parents.json')
     for case in cases.values():shutil.copyfile(root/case['image']['path'],out/case['image']['path'])
@@ -187,7 +270,7 @@ def worker():
         scope='Native tensors, fresh parent cuts and receipts remain remote; compact reports, native PNGs and sealed transaction retained locally.'))
     shutil.copyfile('retrieve_reader_evidence.py',out/'retrieve_evidence.py');save(out/'plan.json',c);save(out/'request.json',req)
     save(out/'summary.json',dict(schema='mdb-reader-fresh-compact-v1',job_id=os.environ['MRUN_JOB_ID'],request_sha256=req['request_sha256'],output_root=str(out),source_job=summary['job_id'],seconds=time.monotonic()-started,
-        exact_reader_archives=exact,records=16,mechanics_status='verified',terminal_status='unassessed'))
+        exact_reader_archives=exact,records=ncases,mechanics_status='verified',terminal_status='unassessed'))
     save(out/'files.json',{p.relative_to(out).as_posix():sha(p) for p in sorted(out.rglob('*')) if p.is_file()})
     print('MDB_DIRECTORY_READY '+json.dumps(dict(job_id=os.environ['MRUN_JOB_ID'],request_sha256=req['request_sha256'],output_root=str(out),files_manifest_sha256=sha(out/'files.json'),summary_sha256=sha(out/'summary.json')),sort_keys=True),flush=True)
 

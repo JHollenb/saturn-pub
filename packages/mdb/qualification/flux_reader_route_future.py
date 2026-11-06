@@ -19,9 +19,9 @@ def ports(base,changed,spec,bf16,nt=512):
     elif kind in ('band-add','band-remove'):
         lo,hi=nt+spec['band']*256,nt+(spec['band']+1)*256
         for key in result:result[key][:,lo:hi]=(base if full else changed)[key][:,lo:hi]
-    elif kind in ('band-cross','band-text','band-image','band-key','band-value','value-text','value-image'):
+    elif kind in ('band-cross','band-text','band-image','band-key','band-value','value-text','value-image','image-head-add','image-head-remove'):
         lo,hi=nt+spec['band']*256,nt+(spec['band']+1)*256
-        selected=('k',) if kind=='band-key' else ('v',) if kind in ('band-value','value-text','value-image') else ('k','v')
+        selected=('k',) if kind=='band-key' else ('v',) if kind in ('band-value','value-text','value-image','image-head-add','image-head-remove') else ('k','v')
         for key in selected:result[key][:,lo:hi]=changed[key][:,lo:hi]
     elif kind=='own-v':
         result['v'][:,nt:,spec['head']]=bf16(result['v'][:,nt:,spec['head']]*spec['scale'])
@@ -31,7 +31,20 @@ def ports(base,changed,spec,bf16,nt=512):
 
 
 def split_stream(kind):
-    return 'text' if kind in ('band-text','value-text') else 'image' if kind in ('band-image','value-image') else None
+    return 'text' if kind in ('band-text','value-text') else 'image' if kind in ('band-image','value-image','image-head-add','image-head-remove') else None
+
+
+def image_head_route(base,changed,spec,nt):
+    """An explicit output edit: all text heads stay baseline; image heads are named."""
+    heads=spec['heads']
+    if not heads or len(set(heads))!=len(heads) or any(type(i) is not int or not 0<=i<base.shape[2] for i in heads):
+        raise ValueError('invalid image head selection')
+    result=base.clone()
+    if spec['kind']=='image-head-add':result[:,nt:,heads]=changed[:,nt:,heads]
+    elif spec['kind']=='image-head-remove':
+        result[:,nt:]=changed[:,nt:];result[:,nt:,heads]=base[:,nt:,heads]
+    else:raise ValueError('unknown image head route')
+    return result
 
 
 def output_route(base,changed,kind,nt):
@@ -71,6 +84,7 @@ def run(*,pipe,adapter,parents,source,output,config,request,event,initial_counts
     if initial_counts:counts.update(initial_counts)
     prior_counts=counts.copy();case_specs=config.get('case_specs',specs(config['selected_head'],config['selected_band']))
     phase={'name':'forecast','case':None};allowed=set(modules['ff'].modules())|{modules['projection'],modules['norm']}
+    if config.get('reconstruct_values'):allowed.update((block.norm1,block.attn.to_v))
     def guard(module,args):
         if phase['name']=='forecast' and module not in allowed:raise ValueError('undeclared native module during primitive forecast')
     handles=[torch.nn.modules.module.register_module_forward_pre_hook(guard)]
@@ -86,19 +100,36 @@ def run(*,pipe,adapter,parents,source,output,config,request,event,initial_counts
     tx=ForecastTransaction(output/'transaction',model_identity=adapter.model_identity,input_identity={r:p.fingerprint for r,p in parents.items()},source_identity=request['request_sha256'],
         frontier=dict(kind='architectural',boundary='observed positioned text Q/full KV; original parent text/modulation',step=3,block=0),
         execution_scope='Counted CUDA native primitives forecast reader heads/text writes before any target consumer. Earlier prefix execution, when present, is separately counted. Then unchanged native suffixes. No independent Flash implementation or full image forecast.',
-        budgets=dict(max_native_calls=16,max_bytes=16<<20,max_wall_ms=600000))
-    tx.frontier('selection',dict(head=config['selected_head'],band=config['selected_band'],source='Left route screen only; fixed before native futures',source_audit_sha256=config['route_audit_sha256']))
+        budgets=dict(max_native_calls=len(parents)*len(case_specs),max_bytes=16<<20,max_wall_ms=600000))
+    tx.frontier('selection',config.get('selection',dict(head=config['selected_head'],band=config['selected_band'],source='Left route screen only; fixed before native futures',source_audit_sha256=config['route_audit_sha256'])))
     if 'semantic_hypotheses' in config:tx.frontier('semantic-hypotheses',config['semantic_hypotheses'])
     with torch.inference_mode():
+        formed={};writer_records={}
+        if config.get('reconstruct_values'):
+            if payload_digest(block.attn.to_v.weight)!=config['value_parameter_sha256']:raise ValueError('value writer parameter differs from original recipe')
+            counts['value_formations']=0
+            for receiver,parent in parents.items():
+                shift,scale,*_=torch.chunk(parent.payload['context']['img_mod'].reshape(1,1,-1),6,dim=-1)
+                normalized=block.norm1(parent.payload['image']);counts['layernorm']+=1
+                operand=(1+scale)*normalized+shift
+                formed[receiver]=block.attn.to_v(operand).unflatten(-1,(24,128));counts['linear']+=1;counts['value_formations']+=1
+                writer_records[receiver]=dict(normalized=h['array'](output,normalized),modulated=h['array'](output,operand),values=h['array'](output,formed[receiver]),parent=parent.fingerprint)
+            save(output/'value-formation.json',writer_records);tx.frontier('value-formation',writer_records)
         for receiver,parent in parents.items():
             b,d=[{f:load(source,a) for f,a in prefixes[receiver+'.'+n].items()} for n in ('base','delta')]
+            receiving_base=b
+            if formed:
+                b={**b,'v':b['v'].copy()};d={**d,'v':d['v'].copy()}
+                other=('c1-' if receiver.startswith('c0-') else 'c0-')+receiver.split('-')[1]
+                b['v'][:,512:]=formed[receiver].float().cpu().numpy()
+                d['v'][:,512:]=formed[other].float().cpu().numpy()
             q=tensor(b['q']);head0,p0=attention['attention'](q,tensor(b['k']),tensor(b['v']),'flash-text',counts)
             head1,p1=(attention['attention'](q,tensor(d['k']),tensor(d['v']),'flash-text',counts)
                 if any(s['kind'] in ('full','head-add','head-remove') for s in case_specs) else (None,None))
             text,mod=parent.payload['text'],parent.payload['context']['txt_mod']
             for spec in case_specs:
                 key=receiver+'.'+spec['id'];kv=ports(b,d,spec,core['R']['bf16'])
-                prepared[key]=dict(kv=kv,spec=spec,base=b,head_source=head1 if spec['kind']=='head-add' else head0)
+                prepared[key]=dict(spec=spec,base=b,receiving_base=receiving_base,changed=d,head_source=head1 if spec['kind']=='head-add' else head0)
                 def predict(_,spec=spec,key=key,kv=kv):
                     if spec['kind'] in ('base','head-add') or split_stream(spec['kind'])=='image':head=head0
                     elif spec['kind'] in ('full','head-remove'):head=head1
@@ -128,12 +159,13 @@ def run(*,pipe,adapter,parents,source,output,config,request,event,initial_counts
         if phase['name']!='first':return original_dispatch(q,k,v,*args,**kwargs)
         item=prepared[phase['case']];b=item['base'];nt=b['q'].shape[1]
         for name,value in (('q',q[:,:nt]),('k',k),('v',v)):
-            if not torch.equal(value.float().cpu(),torch.from_numpy(b[name])):raise ValueError('native prefix differs before intervention: '+name)
+            if not torch.equal(value.float().cpu(),torch.from_numpy(item['receiving_base'][name])):raise ValueError('native prefix differs before intervention: '+name)
         def install(value,name):
             desired=tensor(item['kv'][name]);out=torch.empty_strided(value.shape,value.stride(),device=value.device,dtype=value.dtype);out.copy_(desired)
             if payload_digest(out)!=predictions[phase['case']]['ports'][name]:raise ValueError('installed ports differ from sealed inputs')
             return out
-        k,v=install(k,'k'),install(v,'v')
+        item['kv']=ports(item['base'],item['changed'],item['spec'],core['R']['bf16'])
+        k,v=install(k,'k'),install(v,'v');del item['kv']
         with torch.profiler.profile(activities=[torch.profiler.ProfilerActivity.CPU]) as trace:
             result=original_dispatch(q,k,v,*args,**kwargs)
             spec=item['spec']
@@ -144,7 +176,7 @@ def run(*,pipe,adapter,parents,source,output,config,request,event,initial_counts
                     value=torch.empty_strided(current.shape,current.stride(),device=current.device,dtype=current.dtype)
                     value.copy_(tensor(b[name]));originals[name]=value
                 original=original_dispatch(q,originals['k'],originals['v'],*args,**kwargs)
-                result=output_route(original,result,spec['kind'],nt)
+                result=(image_head_route(original,result,spec,nt) if spec['kind'].startswith('image-head-') else output_route(original,result,spec['kind'],nt))
                 preserved=result[:,nt:] if split_stream(spec['kind'])=='text' else result[:,:nt]
                 reference=original[:,nt:] if split_stream(spec['kind'])=='text' else original[:,:nt]
                 if not torch.equal(preserved,reference):raise ValueError('split output changed protected attention stream')
@@ -157,8 +189,9 @@ def run(*,pipe,adapter,parents,source,output,config,request,event,initial_counts
             others=[j for j in range(24) if j!=i]
             if not torch.equal(result[:,:nt,others],base[:,:nt,others]) or not torch.equal(result[:,nt:],base[:,nt:]):raise ValueError('head edit changed undeclared ports')
         observed['head']=h['array'](output,result[:,:nt].flatten(2,3))
-        if split_stream(spec['kind'])=='image':changed=list(range(24))
-        footprint.update(changed_text_heads=changed,image_heads_preserved=split_stream(spec['kind'])!='text',
+        if split_stream(spec['kind'])=='text':changed=list(range(24))
+        image_heads=(spec['heads'] if spec['kind']=='image-head-add' else [i for i in range(24) if i not in spec['heads']]) if spec['kind'].startswith('image-head-') else (list(range(24)) if split_stream(spec['kind'])=='image' else [])
+        footprint.update(changed_text_heads=changed,changed_image_heads=image_heads,image_heads_preserved=split_stream(spec['kind'])!='image',
             head_edit_reference='Native attention result under installed K/V before output-stream replacement',
             kv_sha256={f:payload_digest(x) for f,x in (('k',k),('v',v))},
             output_stream_route=spec['kind'] if split_stream(spec['kind']) is not None else 'native',
