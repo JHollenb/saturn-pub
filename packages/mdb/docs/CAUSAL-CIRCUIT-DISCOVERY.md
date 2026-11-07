@@ -218,6 +218,11 @@ The [measured composition findings](../qualification/read_composition_20261107/F
 report eight receivers: updating B's reader improves every local prediction,
 while both forecasts match the same 24 native next-token decisions. Economical
 formation of that changed reader remains open.
+The [baseline-compiled weight producer](READ-WEIGHT-TRANSPORT.md) now predicts
+that change without observing the edited receiver in a bounded eight-receiver
+assay. Its [findings](../qualification/read_weight_transport_20261107/FINDINGS.md)
+separate dense per-state compilation, scalar dose evaluation and the consumer's
+still-paid native A output and incoming state.
 
 ## Bounds and validation
 

@@ -1,0 +1,91 @@
+{
+  "compact_audit": {
+    "bytes": 30247,
+    "sha256": "eaa0282c4cd53e4f6d0fe941d38dcc18dc5644c5202c281f2d2f89cdb1a6a33b"
+  },
+  "derivative_compiler_independently_rerun": false,
+  "economical_full_query_qualified": false,
+  "focused_tests": {
+    "additional_producer_and_audit_tamper_check": {
+      "elapsed_seconds": 20.66,
+      "passed": 7
+    },
+    "elapsed_seconds": 44.4,
+    "passed": 74
+  },
+  "independent_audit": {
+    "bytes": 464585,
+    "sha256": "6f574a1c8a68d359e8604a80f4b1631200304302d965e63f8f3d25a7b11fc4c5"
+  },
+  "installed_proof": {
+    "framework_free_import": true,
+    "installed_module": "/tmp/mdb-read-weight-transport-20261107-installed/mdb/read_weight_transport.py",
+    "module_sha256": "ceda5583d9027bea4774c26d82244efa588b23be5d7f89666bfd76a1bff67c50",
+    "native_model_loaded": false,
+    "private_imports_blocked": true,
+    "scalar_program_only": true,
+    "schema": "mdb-read-weight-installed-proof-v1",
+    "softmax_identity": true,
+    "zero_anchor": true
+  },
+  "instrument_status": "valid",
+  "job_id": "job-466e6e302535",
+  "job_result": {
+    "elapsed_s": 283.23,
+    "peak_rss_mb": 2282.8,
+    "peak_vram_mb": 4060.0,
+    "status": "ok"
+  },
+  "mechanics_status": "valid",
+  "post_audit_custody": {
+    "changed": [],
+    "inventoried_files": 25296,
+    "job_id": "job-466e6e302535",
+    "manifest_sha256": "c996a4459c185c1a1fca16d0f909c5203bd5274c02a95e23e8ad86efa47c86ac",
+    "missing": [],
+    "raw_tree_unchanged": true,
+    "schema": "mdb-read-weight-post-audit-custody-v1",
+    "unexpected": []
+  },
+  "post_hoc_diagnostic": {
+    "bytes": 117428,
+    "model_executions": 0,
+    "receivers": 8,
+    "script": {
+      "bytes": 7270,
+      "sha256": "81797c314f9d187398fac7fc70880c738a5e6db288ba5ddc9afe3c3c59d56a2c"
+    },
+    "sha256": "d44443e2aa08fd8e1647d8d4c41cee6512fddc00f5b22efd3bc90a6bc67b94bc",
+    "status": "post-hoc-paid-control-diagnostic",
+    "verified_payloads": 96
+  },
+  "report": {
+    "bytes": 6613289,
+    "sha256": "24c43074d80cc4d0ea6001d9ed5ca78bd7ec73b32aedc627502be880e9f24397"
+  },
+  "request_sha256": "1a43f454b6f73233928a16dfc4e069bccfbddc22dc6ce8da4d33dbe03d107341",
+  "scalar_evidence": {
+    "fires": 0,
+    "instrument_status": "target-streams-only",
+    "records": 1312,
+    "run": {
+      "bytes": 3080,
+      "sha256": "5c34ab880be9f41c88cd3b56071c7a078bb6e2cf0f2199c9aebda79ae6e389a5"
+    },
+    "run_exit_code": 0,
+    "scope": "1312 scalar observations; native tensors assessed separately",
+    "streams": 4,
+    "verify": {
+      "bytes": 1715,
+      "sha256": "922bafdd6682db509aa63f92e3603ec046115a863080adb8090323460851cab7"
+    },
+    "verify_exit_code": 0
+  },
+  "schema": "mdb-read-weight-validation-v1",
+  "semantic_cot_qualified": false,
+  "terminal_status": "not-assessed",
+  "verifier_source": {
+    "bytes": 41084,
+    "sha256": "2071b325764f16f04ef2a9c4e7e9e17cdd8b8052084f36f24962eb22959af4c1"
+  }
+}
