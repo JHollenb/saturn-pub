@@ -183,6 +183,42 @@ addresses across later states does not establish equal payloads or semantic
 roles. Semantic CoT, unique/minimal circuits, cross-context generalization, and
 economical emulation remain separate research questions.
 
+## Freeze a candidate read program
+
+The experimental `mdb.read_program.FrozenReadProgram` turns two previously
+nominated sites into a frozen, digest-bound row-location rule. The standard
+declaration is scoped to the Qwen2.5-1.5B composition assay: layer 19 / KV0 reads
+the first generated row of the preceding answer prefix, and layer 22 / KV0 reads
+the last designated copula within the current follow-up span.
+
+```python
+from mdb.read_program import FrozenReadProgram
+
+program = FrozenReadProgram.standard()
+a, b = program.resolve(
+    committed_token_ids,
+    preceding_answer_span=(answer_start, answer_stop),
+    followup_span=(followup_start, followup_stop),
+    copula_token_id=is_token_id,
+)
+if b is None:
+    # The declared locator is inapplicable to this follow-up.
+    ...
+```
+
+Both row-role constructors are supplied hypotheses. Prior discovery nominated
+their physical sites; token words do not name the values' represented variables.
+The resolver is framework-free, verifies its serialized declaration fingerprint,
+and uses current committed history rather than fixed global row numbers.
+It does not edit or run a model by itself. The
+[prospective composition assay](../qualification/read_composition_20261107/PLAN.md)
+tests these rules on fresh contexts and own-generated answer prefixes, while
+keeping native receiver assistance and dense forecast MLP work explicit.
+The [measured composition findings](../qualification/read_composition_20261107/FINDINGS.md)
+report eight receivers: updating B's reader improves every local prediction,
+while both forecasts match the same 24 native next-token decisions. Economical
+formation of that changed reader remains open.
+
 ## Bounds and validation
 
 Plans contain at most 32 token transitions and eight inspected receiver

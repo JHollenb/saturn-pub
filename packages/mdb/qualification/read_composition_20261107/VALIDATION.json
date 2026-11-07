@@ -1,0 +1,127 @@
+{
+  "economical_query_formation_qualified": false,
+  "focused_tests": {
+    "elapsed_seconds": 38.14,
+    "passed": 67,
+    "scope": "resolver, composed-read worker, offline-audit tamper detection, existing discovery/debugger/memory/CoT regressions"
+  },
+  "independent_audit": {
+    "bytes": 39337,
+    "cases": 4,
+    "path": "AUDIT.json",
+    "sha256": "28dac02ec2a4df4f6b8e3b6bdb96cb3d200869ae1f8ddc69ebe5ff03585fde00"
+  },
+  "installed_resolver_proof": {
+    "bytes": 1778,
+    "result": {
+      "framework_free": true,
+      "installed_module": "/tmp/mdb-read-composition-20261107-installed/mdb/read_program.py",
+      "missing_copula_abstained": true,
+      "module_sha256": "e37431567bf75c68bcc06047faffd51de0a903f613f796452ddc49350b2ccc35",
+      "private_imports_blocked": true,
+      "program": {
+        "fingerprint": "d8ad2a4671e12be88975e6c033c66aba64cd94883351b134e3ee785ae2be2499",
+        "ports": {
+          "A": {
+            "kv_head": 0,
+            "layer": 19,
+            "name": "A",
+            "provenance": "supplied",
+            "row_role": "preceding-answer-first-generated"
+          },
+          "B": {
+            "kv_head": 0,
+            "layer": 22,
+            "name": "B",
+            "provenance": "supplied",
+            "row_role": "current-followup-copula"
+          }
+        },
+        "prediction_assistance": "native-A-receiver",
+        "schema": "saturn-mdb-frozen-read-program-v1"
+      },
+      "resolved_addresses": [
+        {
+          "kv_head": 0,
+          "layer": 19,
+          "lineage": {
+            "occurrence": "first-generated",
+            "provenance": "supplied",
+            "role": "preceding-answer-first-generated",
+            "source": "preceding_answer_span",
+            "span": [
+              2,
+              4
+            ]
+          },
+          "port": "A",
+          "provenance": "supplied",
+          "role": "preceding-answer-first-generated",
+          "row": 2,
+          "source_token_id": 9
+        },
+        {
+          "kv_head": 0,
+          "layer": 22,
+          "lineage": {
+            "copula_token_id": 3,
+            "occurrence": "last-copula-in-span",
+            "provenance": "supplied",
+            "role": "current-followup-copula",
+            "source": "followup_span",
+            "span": [
+              4,
+              7
+            ]
+          },
+          "port": "B",
+          "provenance": "supplied",
+          "role": "current-followup-copula",
+          "row": 5,
+          "source_token_id": 3
+        }
+      ]
+    },
+    "sha256": "26a37aefe3fbf5adfd810f0a5cbfd73f919e39240a52a9a5f6820397e1c6162c"
+  },
+  "instrument_status": "valid",
+  "job_id": "job-1e8caccdd3cc",
+  "mechanics_status": "valid",
+  "post_audit_custody": {
+    "changed": [],
+    "inventoried_files": 23521,
+    "job_id": "job-1e8caccdd3cc",
+    "manifest_sha256": "9c4459e500c7d45310f137fa2d24f2291cf4ff5563c74d731339fc8cbff158ce",
+    "missing": [],
+    "raw_tree_unchanged": true,
+    "schema": "mdb-read-composition-post-audit-custody-v1",
+    "unexpected": []
+  },
+  "scalar_evidence_plane": {
+    "findings": 0,
+    "instrument_status": "target-streams-only",
+    "observations": {
+      "bytes": 29565,
+      "sha256": "1abebe080b439af49694c1acf6f4ffd4f30b7e62e6441efbeb09f4b015f2f23f"
+    },
+    "predicates": 3,
+    "run": {
+      "bytes": 1837,
+      "sha256": "b97ffa829ad2c9ca82ea76cfe71dd5fae02b4305d4e3a6dd570c31889adf10a0"
+    },
+    "run_exit_code": 0,
+    "scope": "48 local scalar observations, not the complete neural proof",
+    "verify": {
+      "bytes": 996,
+      "sha256": "99db2f1320987c1b1bb78537998d5fcfcb3a989796b86966632693db88ca40d1"
+    },
+    "verify_exit_code": 0
+  },
+  "schema": "mdb-read-composition-validation-v1",
+  "semantic_cot_qualified": false,
+  "terminal_status": "not-assessed",
+  "verifier_source": {
+    "bytes": 44056,
+    "sha256": "23fde827aeb9b3b6c9a5fbd7b2760ee90dace926254df594c89a55a1561ecd3f"
+  }
+}
