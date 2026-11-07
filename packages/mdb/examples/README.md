@@ -1,13 +1,15 @@
 # mdb examples
 
-Runnable examples over a caller-owned `BenchSession`. Each one loads no model on
-import; the real-model examples run inside an admitted mrun worker.
+Runnable examples over caller-owned `BenchSession` state and saved scalar programs.
+Examples load no model on import; real-model examples run inside an admitted mrun worker.
 
 | Example | What it shows |
 | --- | --- |
 | `resident_lab.py` | Rewind/replay, residual preview/commit/abort, sibling memory, circuit panel (tiny random CPU model). |
 | `pass_indexed_baseline.py` | The pass-indexed-baseline R0 drift recipe as BenchSession primitives. |
 | `collect_session.py` | Collecting an exported session. |
+| [`read_weight_transport_demo.py`](read_weight_transport_demo.py) | Framework-free six-head toy algebra for normalized read-weight transport; [worked docs and measured Qwen result](../docs/READ-WEIGHT-TRANSPORT.md). |
+| [`read_weight_taylor_demo.py`](read_weight_taylor_demo.py) | Evaluate a measured, sealed second-order six-head program without loading a model; [math and scope](../docs/READ-WEIGHT-TAYLOR.md). |
 
 ## `pass_indexed_baseline.py`
 

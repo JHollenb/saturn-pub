@@ -1,0 +1,115 @@
+{
+  "archive": {
+    "archive": "result.tar.gz",
+    "archive_bytes": 330603983,
+    "archive_sha256": "2d6b6818098c51ba3106f5fc96124fc3797e706dd8e52b642ac9239bf14aba81",
+    "expanded_bytes": 440032618,
+    "file_count": 29840,
+    "manifest": "output-manifest.json",
+    "manifest_sha256": "93fc269092d7e6bb52c28dfc17fc64dee9a36d204dc5a87f4869907be4e5790e",
+    "output_root": "/mnt/big/mdb/qualification/read-weight-second-order-20261107/job-df06c7aeda6d",
+    "pretrained_weight_copies": false,
+    "schema": "mdb-read-weight-second-order-custody-v1"
+  },
+  "checks": {
+    "evidence_plane_run": {
+      "exit_code": 0,
+      "findings": 0,
+      "instrument_status": "target-streams-only",
+      "rows": 2200,
+      "sha256": "b27cf738c917ca83a06c161b0f5515a7b3e30edacccab3f84cc9a460c6f0ad1e",
+      "streams": 4
+    },
+    "evidence_plane_verify": {
+      "exit_code": 0,
+      "findings": 0,
+      "instrument_status": "target-streams-only",
+      "sha256": "2c1308740303e58118608f1faa8cf0b6b2215e8d90684d4c891eac277ee0b7f2"
+    },
+    "independent_audit": {
+      "cases": 4,
+      "path": "/Users/jakeholl/domains/artifacts/mdb-read-weight-second-order-20261107/run-01/independent-verification-v2.json",
+      "receivers": 8,
+      "sha256": "38c168e61c45098e3bc7da959b12e24188593d8d5d2b19eee4cc602a42762a3d",
+      "trained_second_derivative_compiler_independently_reexecuted": false
+    },
+    "installed_framework_free_proof": {
+      "path": "/Users/jakeholl/domains/artifacts/mdb-read-weight-second-order-20261107/run-01/installed-proof.json",
+      "sha256": "b2953edb8eeca9f9b2a6e15ed8b94ac89335097784ac2e65bd576c76fa988c5d"
+    },
+    "measured_demo": {
+      "fixture_matches_sealed_primary_coefficients": true,
+      "installed_no_framework_proof_sha256": "e9684501e416c55eca0a3ed0d61022a604def8117661c5d72385ea26a7bb6540",
+      "minimal_program_json_bytes": 461,
+      "numeric_values": 18,
+      "packed_fp32_bytes": 72,
+      "packed_roundtrip_exact": true
+    },
+    "native_qualification_and_tamper": {
+      "note": "rerun after audit-v2 score reconstruction also passed",
+      "passed": 1,
+      "seconds": 24.76
+    },
+    "post_audit_custody": {
+      "archive_sha256": "2d6b6818098c51ba3106f5fc96124fc3797e706dd8e52b642ac9239bf14aba81",
+      "bytes_rehashed": 440032618,
+      "extra": [],
+      "files_rehashed": 29840,
+      "manifest_sha256": "93fc269092d7e6bb52c28dfc17fc64dee9a36d204dc5a87f4869907be4e5790e",
+      "mismatches": [],
+      "missing": [],
+      "raw_tree_unchanged": true,
+      "schema": "mdb-read-weight-second-order-post-audit-custody-v1",
+      "timestamp": "2026-11-07T10:26:14.580578+00:00",
+      "wall_seconds": 5.292892874917015
+    },
+    "regression": {
+      "passed": 79,
+      "seconds": 88.53,
+      "skipped": 9
+    },
+    "static_lint": {
+      "scope": "public module, new tests, both demos and entire second-order qualification source",
+      "status": "passed"
+    }
+  },
+  "compact_artifacts_sha256": {
+    "AUDIT.json": "c32904e130cb6935655c0d0f842845002b80de845ee6ef04010b777fa79c0ed5",
+    "DEMO-PROGRAM.json": "8558dd4283e48408e0b088db48ef962fbe6c180e51d497143b41b6b977560a40",
+    "RESULTS.json": "b5a4508921be02a2d8c813e80c6d6e7b6c6fd572c721212090b0b5ee5db706ba"
+  },
+  "diagnostics": {
+    "second-order-diagnostic.json": {
+      "path": "/Users/jakeholl/domains/artifacts/mdb-read-weight-second-order-20261107/run-01/analysis/second-order-diagnostic.json",
+      "sha256": "8620d8d462cbca4fd8ba4a60e5273bc57f0db0a69244059ce349a0fcadafd4f5"
+    },
+    "taylor-remainder-diagnostic.json": {
+      "path": "/Users/jakeholl/domains/artifacts/mdb-read-weight-second-order-20261107/run-01/analysis/taylor-remainder-diagnostic.json",
+      "sha256": "aea61ed9be1d784360f36984f52aec73954fedff28fba5435f96634356290f98"
+    }
+  },
+  "instrument_status": "valid within named scopes",
+  "job_id": "job-df06c7aeda6d",
+  "mechanics_status": "valid",
+  "open_costs": [
+    "native baseline tape",
+    "per-state dense derivative compilation",
+    "native A attention output and input22 for consumer forecasts",
+    "native later layers and generation"
+  ],
+  "public_module_sha256": "f39ed46541f3744535a43423cf28ec81d13cefe1c5e57e2d62274654e09acbe9",
+  "report_sha256": "03bd777d3f2711b378becfb4a71d25831b0484ed6c9808bb32e3fc61061fa281",
+  "request_sha256": "1318cb5f3fb11cb6508ccdceccbb27d6541cfe4922358821550cadffa998c441",
+  "schema": "mdb-read-weight-second-order-validation-v1",
+  "source_sha256": {
+    "analyze.py": "a5de92b6b81829038127afc332dc5a0517e97d79d8947cabd7f646392db705dd",
+    "diagnose.py": "81e5f640f09b1dcbeb357d4441227e703f142b1ec1057982e50014120543625b",
+    "figure.py": "b4bc9a7b6058f1a63374d2c9aef8e286dbcef855323cd32a948b1cc0c07385cc",
+    "launch.py": "89319d9b094ab3c16dcc6dacc87c4ff977aa86731cd12e4e4b5e5e547899e5b6",
+    "remainder_diagnostic.py": "88ea2ab244457ab65d3abaf7a0ca9a402502db19ffff3dd298b06a7271deccd3",
+    "verify.py": "cf9c63ffeef507efaadfedc5f731538abb4423b516bfb6ab6e019b305cf59a27",
+    "worker.py": "9de3aa244df1c3f5a3632b027cf968cbc8cec8476232cda80eeab70475b9b255"
+  },
+  "terminal_status": "not-assessed",
+  "trend_status": "full dose mean improves; per-row countertrends retained"
+}

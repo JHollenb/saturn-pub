@@ -6,6 +6,8 @@ Run the commands below from this directory. From the repository root, use
 package declares the public `saturn-pub` core as a dependency. See the [MDB overview](../../docs/mdb.md),
 [documentation index](../../docs/README.md) and [repository guide](../../docs/monorepo.md).
 
+The [read-weight demos](examples/README.md) show a framework-free toy attention update and offline evaluation of measured six-head coefficients. See [first-order transport](docs/READ-WEIGHT-TRANSPORT.md) and [direct second-order log weights](docs/READ-WEIGHT-TAYLOR.md) for the equations, sealed Qwen experiments, native consumer tests, and paid compilation costs.
+
 Standalone model virtual memory and reversible model debugger, extracted from
 Saturn's Open Bench. MDB may reuse public `saturn_pub` contracts, adapters and APIs
 through declared package dependencies. Private Saturn and common workspace imports

@@ -1,0 +1,92 @@
+{
+  "numeric_values": 18,
+  "packed_core_sha256": "9c777682f03be7a5b953292b89d3a1aef87c24ec138198ec43a00260bf27bb99",
+  "packed_float32_bytes": 72,
+  "packed_roundtrip_exact": true,
+  "program": {
+    "c1": [
+      [
+        0.12310069799423218
+      ],
+      [
+        0.2480490803718567
+      ],
+      [
+        0.08087819069623947
+      ],
+      [
+        0.20314501225948334
+      ],
+      [
+        0.7013576626777649
+      ],
+      [
+        0.22484171390533447
+      ]
+    ],
+    "c2": [
+      [
+        0.17047858238220215
+      ],
+      [
+        0.2408931702375412
+      ],
+      [
+        -0.2143118977546692
+      ],
+      [
+        0.2562163472175598
+      ],
+      [
+        -0.15439677238464355
+      ],
+      [
+        0.15093284845352173
+      ]
+    ],
+    "logp0": [
+      [
+        -1.0027954578399658
+      ],
+      [
+        -2.180006504058838
+      ],
+      [
+        -1.4400858879089355
+      ],
+      [
+        -2.0906877517700195
+      ],
+      [
+        -5.610111713409424
+      ],
+      [
+        -3.6319308280944824
+      ]
+    ],
+    "schema": "mdb-smooth-qwen-taylor-program-v1"
+  },
+  "program_json_bytes": 461,
+  "program_sha256": "ee293ac6d19bea1173261cb5d81c03e3b8c7d130f3cfb18e9267f4ef347ca2ab",
+  "schema": "mdb-read-weight-taylor-measured-demo-v1",
+  "source": {
+    "job_id": "job-df06c7aeda6d",
+    "parent_cut": "cas://sha256/097ac90bcac626f67868d982c21f0b979d1af3b3ac09ff18a4c8c32b653de198",
+    "query_heads": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5
+    ],
+    "receiver": "nora-nora:first",
+    "report_sha256": "03bd777d3f2711b378becfb4a71d25831b0484ed6c9808bb32e3fc61061fa281",
+    "request_sha256": "1318cb5f3fb11cb6508ccdceccbb27d6541cfe4922358821550cadffa998c441",
+    "scope": "native-anchored local scalar coefficients; native baseline and dense compilation paid",
+    "selected_rows": [
+      29
+    ],
+    "weight_forecast_ref": "cas://sha256/8ddd5fc3e77ef4778813754aec7ae6ec182b66a0356eff8817c1b0d9bab3c5a5"
+  }
+}

@@ -1,0 +1,784 @@
+{
+  "cases": [
+    {
+      "bench": {
+        "counts": {
+          "cuts": 114,
+          "json_artifacts": 577,
+          "memory_writes": 14,
+          "payload_references": 457,
+          "symbols": 0,
+          "vm_bundles": 73
+        },
+        "mechanics_status": "valid",
+        "payload_audit": {
+          "authority": "disk-byte-integrity; native consumer not assessed",
+          "bytes_read": 126808952,
+          "checksum_verified": 472,
+          "descriptor_payload_sha256": "c2a3b3e3ca2382f4e1d36f1ca07e5c6a8b6fad270bc9924f3b7675912f0d0e27",
+          "failed_payloads": [],
+          "failures": 0,
+          "geometry_verified": 472,
+          "manifest_ref": "cas://sha256/a9f54a0ea89d6627391e3e79c7819c986709e6af53d4f085b900f49d276fceb9",
+          "mechanics_status": "valid",
+          "misses": 0,
+          "read_attempts": 571,
+          "schema": "mdb-payload-audit-v1",
+          "unique_payloads": 472,
+          "unique_verified_bytes": 38212472
+        },
+        "schema": "saturn-open-bench-verification-v1"
+      },
+      "case_id": "nora-nora",
+      "instrument_status": "valid",
+      "limitations": [
+        "nested second-derivative compiler was not independently reexecuted",
+        "semantic CoT and portable full-query claims are not assessed"
+      ],
+      "manifest_ref": "cas://sha256/a9f54a0ea89d6627391e3e79c7819c986709e6af53d4f085b900f49d276fceb9",
+      "mechanics_status": "valid",
+      "prediction_events": {
+        "pairs": [
+          {
+            "consumer_seal_index": 5,
+            "consumer_seal_steps": 23,
+            "native_AB_index": 6,
+            "native_AB_steps": 38,
+            "weight_seal_index": 0,
+            "weight_seal_steps": 17
+          },
+          {
+            "consumer_seal_index": 12,
+            "consumer_seal_steps": 61,
+            "native_AB_index": 13,
+            "native_AB_steps": 76,
+            "weight_seal_index": 7,
+            "weight_seal_steps": 55
+          }
+        ],
+        "status": "valid"
+      },
+      "receivers": {
+        "first": {
+          "consumers": {
+            "methods": [
+              "second-order",
+              "linear-logweight",
+              "transport",
+              "stale",
+              "oracle"
+            ],
+            "status": "valid"
+          },
+          "dose_count": 5,
+          "parent_cut": "cas://sha256/097ac90bcac626f67868d982c21f0b979d1af3b3ac09ff18a4c8c32b653de198",
+          "second_order_compiler_reexecuted": false,
+          "sites": {
+            "A": {
+              "kv_head": 0,
+              "layer": 19,
+              "lineage": {
+                "occurrence": "first-generated",
+                "provenance": "supplied",
+                "role": "preceding-answer-first-generated",
+                "source": "preceding_answer_span",
+                "span": [
+                  23,
+                  25
+                ]
+              },
+              "port": "A",
+              "provenance": "supplied",
+              "role": "preceding-answer-first-generated",
+              "row": 23,
+              "source_row": 23,
+              "source_token_id": 8896
+            },
+            "B": {
+              "kv_head": 0,
+              "layer": 22,
+              "lineage": {
+                "copula_token_id": 374,
+                "occurrence": "last-copula-in-span",
+                "provenance": "supplied",
+                "role": "current-followup-copula",
+                "source": "followup_span",
+                "span": [
+                  25,
+                  30
+                ]
+              },
+              "port": "B",
+              "provenance": "supplied",
+              "role": "current-followup-copula",
+              "row": 29,
+              "source_row": 29,
+              "source_token_id": 374
+            }
+          },
+          "taylor": {
+            "c1_routing_exact": true,
+            "c2_routing_exact": true,
+            "c2_trained_compiler_reexecuted": false,
+            "payload_count": 207
+          }
+        },
+        "second": {
+          "consumers": {
+            "methods": [
+              "second-order",
+              "linear-logweight",
+              "transport",
+              "stale",
+              "oracle"
+            ],
+            "status": "valid"
+          },
+          "dose_count": 5,
+          "parent_cut": "cas://sha256/d26d15b01a5c982142d4c8e37e5b4cc92bf47940dc1ee3dd49415219459c3d36",
+          "second_order_compiler_reexecuted": false,
+          "sites": {
+            "A": {
+              "kv_head": 0,
+              "layer": 19,
+              "lineage": {
+                "occurrence": "first-generated",
+                "provenance": "supplied",
+                "role": "preceding-answer-first-generated",
+                "source": "preceding_answer_span",
+                "span": [
+                  31,
+                  33
+                ]
+              },
+              "port": "A",
+              "provenance": "supplied",
+              "role": "preceding-answer-first-generated",
+              "row": 31,
+              "source_row": 31,
+              "source_token_id": 5750
+            },
+            "B": {
+              "kv_head": 0,
+              "layer": 22,
+              "lineage": {
+                "copula_token_id": 374,
+                "occurrence": "last-copula-in-span",
+                "provenance": "supplied",
+                "role": "current-followup-copula",
+                "source": "followup_span",
+                "span": [
+                  33,
+                  38
+                ]
+              },
+              "port": "B",
+              "provenance": "supplied",
+              "role": "current-followup-copula",
+              "row": 37,
+              "source_row": 37,
+              "source_token_id": 374
+            }
+          },
+          "taylor": {
+            "c1_routing_exact": true,
+            "c2_routing_exact": true,
+            "c2_trained_compiler_reexecuted": false,
+            "payload_count": 207
+          }
+        }
+      },
+      "schema": "mdb-read-weight-second-order-verification-v1",
+      "terminal_status": "not-assessed"
+    },
+    {
+      "bench": {
+        "counts": {
+          "cuts": 114,
+          "json_artifacts": 577,
+          "memory_writes": 14,
+          "payload_references": 457,
+          "symbols": 0,
+          "vm_bundles": 73
+        },
+        "mechanics_status": "valid",
+        "payload_audit": {
+          "authority": "disk-byte-integrity; native consumer not assessed",
+          "bytes_read": 126808952,
+          "checksum_verified": 472,
+          "descriptor_payload_sha256": "288c5a0ba43f2f1326328f9b398ad39eec17d8671f889370911fda8534a53949",
+          "failed_payloads": [],
+          "failures": 0,
+          "geometry_verified": 472,
+          "manifest_ref": "cas://sha256/b0d20dc5907b2bf6cf1050c4ff41fe2738daad8757e43aa091017ad86327d717",
+          "mechanics_status": "valid",
+          "misses": 0,
+          "read_attempts": 571,
+          "schema": "mdb-payload-audit-v1",
+          "unique_payloads": 472,
+          "unique_verified_bytes": 38212472
+        },
+        "schema": "saturn-open-bench-verification-v1"
+      },
+      "case_id": "nora-ethan",
+      "instrument_status": "valid",
+      "limitations": [
+        "nested second-derivative compiler was not independently reexecuted",
+        "semantic CoT and portable full-query claims are not assessed"
+      ],
+      "manifest_ref": "cas://sha256/b0d20dc5907b2bf6cf1050c4ff41fe2738daad8757e43aa091017ad86327d717",
+      "mechanics_status": "valid",
+      "prediction_events": {
+        "pairs": [
+          {
+            "consumer_seal_index": 5,
+            "consumer_seal_steps": 23,
+            "native_AB_index": 6,
+            "native_AB_steps": 38,
+            "weight_seal_index": 0,
+            "weight_seal_steps": 17
+          },
+          {
+            "consumer_seal_index": 12,
+            "consumer_seal_steps": 61,
+            "native_AB_index": 13,
+            "native_AB_steps": 76,
+            "weight_seal_index": 7,
+            "weight_seal_steps": 55
+          }
+        ],
+        "status": "valid"
+      },
+      "receivers": {
+        "first": {
+          "consumers": {
+            "methods": [
+              "second-order",
+              "linear-logweight",
+              "transport",
+              "stale",
+              "oracle"
+            ],
+            "status": "valid"
+          },
+          "dose_count": 5,
+          "parent_cut": "cas://sha256/8b520e17f60cfc707f87d815d74deaa1dcad10836329b9c3827de318f32e314e",
+          "second_order_compiler_reexecuted": false,
+          "sites": {
+            "A": {
+              "kv_head": 0,
+              "layer": 19,
+              "lineage": {
+                "occurrence": "first-generated",
+                "provenance": "supplied",
+                "role": "preceding-answer-first-generated",
+                "source": "preceding_answer_span",
+                "span": [
+                  23,
+                  25
+                ]
+              },
+              "port": "A",
+              "provenance": "supplied",
+              "role": "preceding-answer-first-generated",
+              "row": 23,
+              "source_row": 23,
+              "source_token_id": 1852
+            },
+            "B": {
+              "kv_head": 0,
+              "layer": 22,
+              "lineage": {
+                "copula_token_id": 374,
+                "occurrence": "last-copula-in-span",
+                "provenance": "supplied",
+                "role": "current-followup-copula",
+                "source": "followup_span",
+                "span": [
+                  25,
+                  30
+                ]
+              },
+              "port": "B",
+              "provenance": "supplied",
+              "role": "current-followup-copula",
+              "row": 29,
+              "source_row": 29,
+              "source_token_id": 374
+            }
+          },
+          "taylor": {
+            "c1_routing_exact": true,
+            "c2_routing_exact": true,
+            "c2_trained_compiler_reexecuted": false,
+            "payload_count": 207
+          }
+        },
+        "second": {
+          "consumers": {
+            "methods": [
+              "second-order",
+              "linear-logweight",
+              "transport",
+              "stale",
+              "oracle"
+            ],
+            "status": "valid"
+          },
+          "dose_count": 5,
+          "parent_cut": "cas://sha256/76a7f28e19b2801fc43d49c1c8622c2e2961a7cd3d428c34597c8ec28342f803",
+          "second_order_compiler_reexecuted": false,
+          "sites": {
+            "A": {
+              "kv_head": 0,
+              "layer": 19,
+              "lineage": {
+                "occurrence": "first-generated",
+                "provenance": "supplied",
+                "role": "preceding-answer-first-generated",
+                "source": "preceding_answer_span",
+                "span": [
+                  31,
+                  33
+                ]
+              },
+              "port": "A",
+              "provenance": "supplied",
+              "role": "preceding-answer-first-generated",
+              "row": 31,
+              "source_row": 31,
+              "source_token_id": 5750
+            },
+            "B": {
+              "kv_head": 0,
+              "layer": 22,
+              "lineage": {
+                "copula_token_id": 374,
+                "occurrence": "last-copula-in-span",
+                "provenance": "supplied",
+                "role": "current-followup-copula",
+                "source": "followup_span",
+                "span": [
+                  33,
+                  38
+                ]
+              },
+              "port": "B",
+              "provenance": "supplied",
+              "role": "current-followup-copula",
+              "row": 37,
+              "source_row": 37,
+              "source_token_id": 374
+            }
+          },
+          "taylor": {
+            "c1_routing_exact": true,
+            "c2_routing_exact": true,
+            "c2_trained_compiler_reexecuted": false,
+            "payload_count": 207
+          }
+        }
+      },
+      "schema": "mdb-read-weight-second-order-verification-v1",
+      "terminal_status": "not-assessed"
+    },
+    {
+      "bench": {
+        "counts": {
+          "cuts": 114,
+          "json_artifacts": 577,
+          "memory_writes": 14,
+          "payload_references": 457,
+          "symbols": 0,
+          "vm_bundles": 73
+        },
+        "mechanics_status": "valid",
+        "payload_audit": {
+          "authority": "disk-byte-integrity; native consumer not assessed",
+          "bytes_read": 126808952,
+          "checksum_verified": 472,
+          "descriptor_payload_sha256": "7f5162f696cf791a040c0c059dbd18643d9d2dfc534d4ac4bc0b45404a6194b1",
+          "failed_payloads": [],
+          "failures": 0,
+          "geometry_verified": 472,
+          "manifest_ref": "cas://sha256/20cb25473d37848c6e5977950748b140f9a4bdfea640e26a1b1f10f9e99351f3",
+          "mechanics_status": "valid",
+          "misses": 0,
+          "read_attempts": 571,
+          "schema": "mdb-payload-audit-v1",
+          "unique_payloads": 472,
+          "unique_verified_bytes": 38212472
+        },
+        "schema": "saturn-open-bench-verification-v1"
+      },
+      "case_id": "ivy-ivy",
+      "instrument_status": "valid",
+      "limitations": [
+        "nested second-derivative compiler was not independently reexecuted",
+        "semantic CoT and portable full-query claims are not assessed"
+      ],
+      "manifest_ref": "cas://sha256/20cb25473d37848c6e5977950748b140f9a4bdfea640e26a1b1f10f9e99351f3",
+      "mechanics_status": "valid",
+      "prediction_events": {
+        "pairs": [
+          {
+            "consumer_seal_index": 5,
+            "consumer_seal_steps": 23,
+            "native_AB_index": 6,
+            "native_AB_steps": 38,
+            "weight_seal_index": 0,
+            "weight_seal_steps": 17
+          },
+          {
+            "consumer_seal_index": 12,
+            "consumer_seal_steps": 61,
+            "native_AB_index": 13,
+            "native_AB_steps": 76,
+            "weight_seal_index": 7,
+            "weight_seal_steps": 55
+          }
+        ],
+        "status": "valid"
+      },
+      "receivers": {
+        "first": {
+          "consumers": {
+            "methods": [
+              "second-order",
+              "linear-logweight",
+              "transport",
+              "stale",
+              "oracle"
+            ],
+            "status": "valid"
+          },
+          "dose_count": 5,
+          "parent_cut": "cas://sha256/9ca005a6890de4bcb32c3be026b4a8dfec4ad33eec57b9a77c5a3773991a0792",
+          "second_order_compiler_reexecuted": false,
+          "sites": {
+            "A": {
+              "kv_head": 0,
+              "layer": 19,
+              "lineage": {
+                "occurrence": "first-generated",
+                "provenance": "supplied",
+                "role": "preceding-answer-first-generated",
+                "source": "preceding_answer_span",
+                "span": [
+                  23,
+                  25
+                ]
+              },
+              "port": "A",
+              "provenance": "supplied",
+              "role": "preceding-answer-first-generated",
+              "row": 23,
+              "source_row": 23,
+              "source_token_id": 3736
+            },
+            "B": {
+              "kv_head": 0,
+              "layer": 22,
+              "lineage": {
+                "copula_token_id": 374,
+                "occurrence": "last-copula-in-span",
+                "provenance": "supplied",
+                "role": "current-followup-copula",
+                "source": "followup_span",
+                "span": [
+                  25,
+                  30
+                ]
+              },
+              "port": "B",
+              "provenance": "supplied",
+              "role": "current-followup-copula",
+              "row": 29,
+              "source_row": 29,
+              "source_token_id": 374
+            }
+          },
+          "taylor": {
+            "c1_routing_exact": true,
+            "c2_routing_exact": true,
+            "c2_trained_compiler_reexecuted": false,
+            "payload_count": 207
+          }
+        },
+        "second": {
+          "consumers": {
+            "methods": [
+              "second-order",
+              "linear-logweight",
+              "transport",
+              "stale",
+              "oracle"
+            ],
+            "status": "valid"
+          },
+          "dose_count": 5,
+          "parent_cut": "cas://sha256/e45a01017dcedd060213882ccec98f34d7024c4289574c7480b9b2489cb4f65b",
+          "second_order_compiler_reexecuted": false,
+          "sites": {
+            "A": {
+              "kv_head": 0,
+              "layer": 19,
+              "lineage": {
+                "occurrence": "first-generated",
+                "provenance": "supplied",
+                "role": "preceding-answer-first-generated",
+                "source": "preceding_answer_span",
+                "span": [
+                  31,
+                  33
+                ]
+              },
+              "port": "A",
+              "provenance": "supplied",
+              "role": "preceding-answer-first-generated",
+              "row": 31,
+              "source_row": 31,
+              "source_token_id": 3736
+            },
+            "B": {
+              "kv_head": 0,
+              "layer": 22,
+              "lineage": {
+                "copula_token_id": 374,
+                "occurrence": "last-copula-in-span",
+                "provenance": "supplied",
+                "role": "current-followup-copula",
+                "source": "followup_span",
+                "span": [
+                  33,
+                  38
+                ]
+              },
+              "port": "B",
+              "provenance": "supplied",
+              "role": "current-followup-copula",
+              "row": 37,
+              "source_row": 37,
+              "source_token_id": 374
+            }
+          },
+          "taylor": {
+            "c1_routing_exact": true,
+            "c2_routing_exact": true,
+            "c2_trained_compiler_reexecuted": false,
+            "payload_count": 207
+          }
+        }
+      },
+      "schema": "mdb-read-weight-second-order-verification-v1",
+      "terminal_status": "not-assessed"
+    },
+    {
+      "bench": {
+        "counts": {
+          "cuts": 114,
+          "json_artifacts": 577,
+          "memory_writes": 14,
+          "payload_references": 457,
+          "symbols": 0,
+          "vm_bundles": 73
+        },
+        "mechanics_status": "valid",
+        "payload_audit": {
+          "authority": "disk-byte-integrity; native consumer not assessed",
+          "bytes_read": 126808952,
+          "checksum_verified": 472,
+          "descriptor_payload_sha256": "4d0054fbf3c10516bf3ba8b8c4647dd1bbf599fd85fdc5b4d08f667d69e0bb99",
+          "failed_payloads": [],
+          "failures": 0,
+          "geometry_verified": 472,
+          "manifest_ref": "cas://sha256/42ad213c26be9a4bffbe613912b71213b34760d30f256d3894d56cb3579a10d7",
+          "mechanics_status": "valid",
+          "misses": 0,
+          "read_attempts": 571,
+          "schema": "mdb-payload-audit-v1",
+          "unique_payloads": 472,
+          "unique_verified_bytes": 38212472
+        },
+        "schema": "saturn-open-bench-verification-v1"
+      },
+      "case_id": "ivy-owen",
+      "instrument_status": "valid",
+      "limitations": [
+        "nested second-derivative compiler was not independently reexecuted",
+        "semantic CoT and portable full-query claims are not assessed"
+      ],
+      "manifest_ref": "cas://sha256/42ad213c26be9a4bffbe613912b71213b34760d30f256d3894d56cb3579a10d7",
+      "mechanics_status": "valid",
+      "prediction_events": {
+        "pairs": [
+          {
+            "consumer_seal_index": 5,
+            "consumer_seal_steps": 23,
+            "native_AB_index": 6,
+            "native_AB_steps": 38,
+            "weight_seal_index": 0,
+            "weight_seal_steps": 17
+          },
+          {
+            "consumer_seal_index": 12,
+            "consumer_seal_steps": 61,
+            "native_AB_index": 13,
+            "native_AB_steps": 76,
+            "weight_seal_index": 7,
+            "weight_seal_steps": 55
+          }
+        ],
+        "status": "valid"
+      },
+      "receivers": {
+        "first": {
+          "consumers": {
+            "methods": [
+              "second-order",
+              "linear-logweight",
+              "transport",
+              "stale",
+              "oracle"
+            ],
+            "status": "valid"
+          },
+          "dose_count": 5,
+          "parent_cut": "cas://sha256/1561f5767c39c3767e40676b818b0add6bcd850c19e4cd292b11e75eb30248b6",
+          "second_order_compiler_reexecuted": false,
+          "sites": {
+            "A": {
+              "kv_head": 0,
+              "layer": 19,
+              "lineage": {
+                "occurrence": "first-generated",
+                "provenance": "supplied",
+                "role": "preceding-answer-first-generated",
+                "source": "preceding_answer_span",
+                "span": [
+                  23,
+                  25
+                ]
+              },
+              "port": "A",
+              "provenance": "supplied",
+              "role": "preceding-answer-first-generated",
+              "row": 23,
+              "source_row": 23,
+              "source_token_id": 3736
+            },
+            "B": {
+              "kv_head": 0,
+              "layer": 22,
+              "lineage": {
+                "copula_token_id": 374,
+                "occurrence": "last-copula-in-span",
+                "provenance": "supplied",
+                "role": "current-followup-copula",
+                "source": "followup_span",
+                "span": [
+                  25,
+                  30
+                ]
+              },
+              "port": "B",
+              "provenance": "supplied",
+              "role": "current-followup-copula",
+              "row": 29,
+              "source_row": 29,
+              "source_token_id": 374
+            }
+          },
+          "taylor": {
+            "c1_routing_exact": true,
+            "c2_routing_exact": true,
+            "c2_trained_compiler_reexecuted": false,
+            "payload_count": 207
+          }
+        },
+        "second": {
+          "consumers": {
+            "methods": [
+              "second-order",
+              "linear-logweight",
+              "transport",
+              "stale",
+              "oracle"
+            ],
+            "status": "valid"
+          },
+          "dose_count": 5,
+          "parent_cut": "cas://sha256/ea7a7a6b6cddaa31ca75be3a9a596dcdea80dbbf99f1e01830bf2ecbc82a216a",
+          "second_order_compiler_reexecuted": false,
+          "sites": {
+            "A": {
+              "kv_head": 0,
+              "layer": 19,
+              "lineage": {
+                "occurrence": "first-generated",
+                "provenance": "supplied",
+                "role": "preceding-answer-first-generated",
+                "source": "preceding_answer_span",
+                "span": [
+                  31,
+                  33
+                ]
+              },
+              "port": "A",
+              "provenance": "supplied",
+              "role": "preceding-answer-first-generated",
+              "row": 31,
+              "source_row": 31,
+              "source_token_id": 4935
+            },
+            "B": {
+              "kv_head": 0,
+              "layer": 22,
+              "lineage": {
+                "copula_token_id": 374,
+                "occurrence": "last-copula-in-span",
+                "provenance": "supplied",
+                "role": "current-followup-copula",
+                "source": "followup_span",
+                "span": [
+                  33,
+                  38
+                ]
+              },
+              "port": "B",
+              "provenance": "supplied",
+              "role": "current-followup-copula",
+              "row": 37,
+              "source_row": 37,
+              "source_token_id": 374
+            }
+          },
+          "taylor": {
+            "c1_routing_exact": true,
+            "c2_routing_exact": true,
+            "c2_trained_compiler_reexecuted": false,
+            "payload_count": 207
+          }
+        }
+      },
+      "schema": "mdb-read-weight-second-order-verification-v1",
+      "terminal_status": "not-assessed"
+    }
+  ],
+  "full_audit_path": "/Users/jakeholl/domains/artifacts/mdb-read-weight-second-order-20261107/run-01/independent-verification-v2.json",
+  "full_audit_sha256": "38c168e61c45098e3bc7da959b12e24188593d8d5d2b19eee4cc602a42762a3d",
+  "instrument_status": "valid",
+  "mechanics_status": "valid",
+  "prior_audit_preserved": true,
+  "report_schema": "mdb-read-weight-second-order-report-v1",
+  "schema": "mdb-read-weight-second-order-compact-audit-v2",
+  "second_order_compiler_independently_reexecuted": false,
+  "semantic_cot_qualified": false,
+  "source_dependencies": {
+    "read_weight_transport_verify.py": {
+      "path": "qualification/read_weight_transport_20261107/verify.py",
+      "sha256": "2071b325764f16f04ef2a9c4e7e9e17cdd8b8052084f36f24962eb22959af4c1"
+    }
+  },
+  "terminal_status": "not-assessed"
+}
