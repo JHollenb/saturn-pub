@@ -300,7 +300,7 @@ class DebuggerAdapter(ABC):
 
         ar_operations = {
             "measure_circuit", "replay_circuit", "memory_read", "memory_write",
-            "memory_diff", "memory_probe",
+            "memory_diff", "memory_probe", "discover_circuit",
         }
         if name in ar_operations and self.capabilities.family not in {
             "autoregressive",
@@ -337,6 +337,7 @@ class DebuggerAdapter(ABC):
             "promote",
             "measure_circuit",
             "replay_circuit",
+            "discover_circuit",
             "memory_read",
             "memory_write",
             "memory_diff",
@@ -345,8 +346,8 @@ class DebuggerAdapter(ABC):
             "register_address",
         )
         circuit_ops = {
-            "measure_circuit", "replay_circuit", "memory_read", "memory_write",
-            "memory_diff", "memory_probe",
+            "measure_circuit", "replay_circuit", "discover_circuit", "memory_read",
+            "memory_write", "memory_diff", "memory_probe",
         }
         return tuple(
             name

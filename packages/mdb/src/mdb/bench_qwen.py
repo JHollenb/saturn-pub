@@ -273,7 +273,7 @@ class QwenBenchSession:
             "operations": ["prefill", "step", "generate", "inspect", "checkpoint", "fork", "checkout",
                 "restore", "replay", "compare", "export", "close", "discover", "bind_symbol", "stage_input", "replay_observation",
                 "annotate_state", "list_state_annotations", "show_state_annotation", "state_lineage", "verify_state_annotations",
-                *(["memory_read", "memory_write", "memory_diff", "memory_probe",
+                *(["memory_read", "memory_write", "memory_diff", "memory_probe", "discover_circuit",
                    "measure_circuit", "replay_circuit", "pin_jacobian_lens",
                    "read_jacobian", "preview_jacobian_edit", "configure_cot_register",
                    "cot_register", "cot_graph", "cot_pointer"] if self.publication.mode == "journal" else [])],
@@ -285,6 +285,10 @@ class QwenBenchSession:
                 "default_max_rows": 32, "max_rows": 256,
                 "boundary": "committed-token", "authority": "model-os",
                 "publication": "single-atomic-journal-selection"},
+            "circuit_discovery": {"protocol": "saturn-bench-circuit-discovery-v1",
+                "available": (self.publication.mode == "journal" and self.vm.runtime.codec.model_type == "qwen2"
+                    and self.vm.runtime.backend == "native-eager"),
+                "carrier_resolution": "layer/kv-head/committed-row/value", "semantic_cot_qualified": False},
             "circuit_measurement": {"protocol": "saturn-bench-circuit-measurement-v1", "available": self.publication.mode == "journal",
                 "publication_mode_required": "journal",
                 "observable": "token_margin", "start_boundary": "committed-token", "memory_mediation": True,
@@ -874,6 +878,9 @@ class QwenBenchSession:
                 return self.cot_register()
             if path == "cot.graph":
                 return self.cot_graph()
+            if path == "circuits.discovery":
+                from .bench_circuit_discovery import inspect_discoveries
+                return inspect_discoveries(self)
             if path == "frames":
                 return self.source_frames.debug_view() if self.source_frames else {"attached": False}
             if path == "measurements":
@@ -1046,6 +1053,12 @@ class QwenBenchSession:
     def memory_probe(self, spec):
         from .bench_memory_probe import atomic_probe
         return atomic_probe(self, spec)
+
+    @_serialized
+    def discover_circuit(self, spec):
+        """Nominate native reads and test carriers on their own evolving futures."""
+        from .bench_circuit_discovery import discover_circuit
+        return discover_circuit(self, spec)
 
     @property
     def mlp_memory_digest(self):

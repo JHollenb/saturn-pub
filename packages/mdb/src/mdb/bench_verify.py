@@ -13,7 +13,7 @@ from mdb.vm_payload_cache import PayloadRef
 
 def verify(root):
     root = Path(root)
-    from mdb.bench_publication import recover_locked, OWNERS
+    from mdb.bench_publication import OWNERS, recover_locked
     from mdb.errors import BenchError
     try: writer, _ = recover_locked(root)
     except BenchError:
@@ -36,6 +36,7 @@ def verify(root):
 def _persist_failed_audit(root, exc):
     """One durable invalid aggregate, separate from immutable payload objects."""
     from hashlib import sha256
+
     from .vm_payload_cache import PayloadStore
     summary = getattr(exc, "audit_summary", None)
     if summary is None: return
@@ -100,6 +101,11 @@ def _verify(root):
                 from .bench_circuit_verify import verify_artifact
                 if verify_artifact(value, artifacts, manifest, vm_artifacts):
                     counts["circuit_artifacts"] = counts.get("circuit_artifacts", 0)+1
+                from .bench_circuit_discovery_verify import (
+                    verify_artifact as verify_circuit_discovery,
+                )
+                if verify_circuit_discovery(value, artifacts, manifest, vm_artifacts):
+                    counts["circuit_discovery_artifacts"] = counts.get("circuit_discovery_artifacts", 0)+1
                 from .bench_memory_probe import verify_artifact as verify_memory_probe
                 if verify_memory_probe(value, artifacts, manifest, vm_artifacts):
                     counts["memory_probes"] = counts.get("memory_probes", 0)+1

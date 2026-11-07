@@ -2,6 +2,11 @@
 
 Status: a native Qwen stepping prototype. Compatible frozen Jacobian lenses automatically produce source-bound vocabulary readouts as the debugger advances. The debugger frame shows the latest readout in human language, and an accompanying StateGraph retains native lineage and decoded annotations. Semantic CoT reconstruction remains unqualified.
 
+For automatic native-read localization followed by head-local intervention and
+own-history continuation, use [causal circuit discovery](CAUSAL-CIRCUIT-DISCOVERY.md).
+That workflow records measured dependencies separately from vocabulary candidates
+and native execution ancestry. It does not change this register's semantic claim.
+
 Attach fitted lenses once; ordinary stepping then updates the register without explanation queries:
 
 ```python

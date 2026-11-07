@@ -254,6 +254,12 @@ and K/V components; inspect bounded numeric values and token text; apply atomic
 copy/zero/scale/replace Acts; and compare paired native futures with exact parent
 restore. Start with the [hidden-memory walkthrough](docs/HIDDEN-MEMORY.md).
 
+`discover_circuit` observes native Qwen memory reads, nominates layer/head/row
+carriers, tests head-local edits through branch-owned continuations and fixed
+follow-up inputs, and retains a causal-response graph with exact observer and
+reinstall controls. See [causal circuit discovery](docs/CAUSAL-CIRCUIT-DISCOVERY.md)
+for the API, bounds, and semantic interpretation limits.
+
 Frozen Jacobian lenses can read exact residual cuts and prepare signed atom or
 selected-span edits through `pin_jacobian_lens`, `read_jacobian`, and
 `preview_jacobian_edit`. Writes use the existing residual Act commit/abort path.

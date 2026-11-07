@@ -52,6 +52,19 @@ class BenchDebuggerAdapter(CallbackDebuggerAdapter):
                 callbacks["measure_circuit"] = measure
             if callable(replay):
                 callbacks["replay_circuit"] = replay
+        # Circuit discovery is a Qwen2-only optional lane.  The runtime owns
+        # the capability declaration; do not expose a method merely because a
+        # bench happens to provide one under another family or publication
+        # mode.
+        discovery = metadata.get("circuit_discovery")
+        if (
+            family == "qwen2"
+            and isinstance(discovery, Mapping)
+            and discovery.get("available") is True
+        ):
+            discover = getattr(bench, "discover_circuit", None)
+            if callable(discover):
+                callbacks["discover_circuit"] = discover
         if family in {"qwen2", "mamba"}:
             for operation in ("memory_read", "memory_write", "memory_diff", "memory_probe"):
                 callback = getattr(bench, operation, None)

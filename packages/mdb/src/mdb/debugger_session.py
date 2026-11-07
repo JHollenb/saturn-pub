@@ -317,6 +317,13 @@ class DebugSession:
             raise ValueError("measure_circuit spec must be a JSON object")
         return self.call("measure_circuit", {"spec": spec})
 
+    def discover_circuit(self, spec: dict[str, Any]) -> dict[str, Any]:
+        """Discover one Qwen2 circuit at the paused committed cut."""
+
+        if not isinstance(spec, dict):
+            raise ValueError("discover_circuit spec must be a JSON object")
+        return self.call("discover_circuit", {"spec": spec})
+
     def replay_circuit(self, evidence_ref: str) -> dict[str, Any]:
         """Replay one BenchSession circuit evidence reference exactly."""
 

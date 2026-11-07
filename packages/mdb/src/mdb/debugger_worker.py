@@ -180,7 +180,7 @@ class DebugWorkerController:
                 # new control operations into protocol refusals.
                 serializable_runtime_errors = {
                     "measure_circuit", "replay_circuit", "memory_read", "memory_write",
-                    "memory_diff", "memory_probe",
+                    "memory_diff", "memory_probe", "discover_circuit",
                 }
                 if request.operation not in serializable_runtime_errors and not discovery:
                     raise
@@ -546,7 +546,7 @@ class DebugWorkerController:
             elif operation == "promote":
                 hook_args = [str(payload.get("cut_id") or "")]
             return dict(self.adapter.optional_operation(operation.replace("-", "_"), *hook_args))
-        if operation in {"measure_circuit", "replay_circuit"}:
+        if operation in {"discover_circuit", "measure_circuit", "replay_circuit"}:
             if operation not in self.adapter.optional_operations():
                 raise DebuggerProtocolError(
                     "adapter "
@@ -560,15 +560,17 @@ class DebugWorkerController:
                 raise DebuggerProtocolError(
                     f"cannot {operation} with a pending Act; commit or abort it first"
                 )
-            if operation == "measure_circuit":
+            if operation in {"discover_circuit", "measure_circuit"}:
                 spec = payload.get("spec")
                 if not isinstance(spec, Mapping):
-                    raise DebuggerProtocolError("measure_circuit requires a JSON object spec")
+                    raise DebuggerProtocolError(
+                        f"{operation} requires a JSON object spec"
+                    )
                 try:
                     spec = json.loads(json.dumps(dict(spec), allow_nan=False))
                 except (TypeError, ValueError) as exc:
                     raise DebuggerProtocolError(
-                        "measure_circuit spec must contain JSON values only"
+                        f"{operation} spec must contain JSON values only"
                     ) from exc
                 result = dict(self.adapter.optional_operation(operation, spec))
                 self._remember_cut(result)

@@ -47,7 +47,8 @@ HELP = GROUP_HELP + "\nFull MDB debugger commands:\n" + """
   algebra
   preview | commit | abort | abort-all
   replay CUT_ID | reverse-step | reverse-continue PREDICATE
-  measure-circuit SPEC|@FILE | replay-circuit EVIDENCE_REF
+  measure-circuit SPEC|@FILE | discover-circuit --spec SPEC|@FILE
+  replay-circuit EVIDENCE_REF
   memory [read] [SPEC|@FILE] | memory write|diff|probe SPEC|@FILE
   info steps|symbols | resolve NAME | read symbol:NAME | backtrace PORT (Saturn-pub)
   public watch PORT change|nonfinite | public watchpoints | public unwatch ID
@@ -262,7 +263,13 @@ class DebugShell:
                 line = self.history[index - 1]
             line = Template(line).safe_substitute(self.variables)
             raw_command, separator, raw_remainder = line.partition(" ")
-            if raw_command in {"measure-circuit", "measure_circuit", "memory"}:
+            if raw_command in {
+                "measure-circuit",
+                "measure_circuit",
+                "discover-circuit",
+                "discover_circuit",
+                "memory",
+            }:
                 # Keep JSON punctuation and its quoted object keys intact;
                 # shlex would strip the inner quotes from an unquoted object.
                 remainder = raw_remainder.strip() if separator else ""
@@ -654,6 +661,25 @@ class DebugShell:
             return self.session.measure_circuit(
                 _json_payload(" ".join(args), label="measure-circuit")
             )
+        if command in {"discover-circuit", "discover_circuit"}:
+            raw = " ".join(args).strip()
+            if raw == "--spec" or not raw.startswith("--spec "):
+                raise ValueError("discover-circuit requires --spec JSON or @FILE")
+            spec_source = raw[len("--spec") :].strip()
+            if spec_source and spec_source[0] in {"'", '"'}:
+                try:
+                    quoted = shlex.split(spec_source)
+                except ValueError as exc:
+                    raise ValueError(
+                        "discover-circuit --spec requires valid JSON or @FILE"
+                    ) from exc
+                if len(quoted) == 1:
+                    spec_source = quoted[0]
+            if not spec_source:
+                raise ValueError("discover-circuit requires --spec JSON or @FILE")
+            return self.session.discover_circuit(
+                _json_payload(spec_source, label="discover-circuit --spec")
+            )
         if command in {"replay-circuit", "replay_circuit"}:
             if len(args) != 1:
                 raise ValueError("replay-circuit requires EVIDENCE_REF")
@@ -864,6 +890,7 @@ class DebugShell:
             "python",
             "replay",
             "measure-circuit",
+            "discover-circuit",
             "replay-circuit",
             "memory",
             "reverse-step",
