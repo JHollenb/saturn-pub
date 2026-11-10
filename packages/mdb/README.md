@@ -8,6 +8,8 @@ package declares the public `saturn-pub` core as a dependency. See the [MDB over
 
 The [read-weight demos](examples/README.md) show a framework-free toy attention update and offline evaluation of measured six-head coefficients. See [first-order transport](docs/READ-WEIGHT-TRANSPORT.md) and [direct second-order log weights](docs/READ-WEIGHT-TAYLOR.md) for the equations, sealed Qwen experiments, native consumer tests, and paid compilation costs.
 
+The [complete read-weight state span](docs/READ-WEIGHT-CLOSURE.md) adds midpoint compilation and prospective native-profile residual/KV production. Tested functional spans retain exact native closure in 8/8 receivers while actually skipping layers 19–22 on the pending token. Dense arithmetic remains paid; the linked findings retain negative-dose, later-logit and compilation-cost countertrends.
+
 Standalone model virtual memory and reversible model debugger, extracted from
 Saturn's Open Bench. MDB may reuse public `saturn_pub` contracts, adapters and APIs
 through declared package dependencies. Private Saturn and common workspace imports

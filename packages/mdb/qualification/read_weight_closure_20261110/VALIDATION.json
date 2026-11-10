@@ -1,0 +1,116 @@
+{
+  "audit_instrument_corrections": [
+    "Compare core weight metrics separately from the six additional FP64/profile fields.",
+    "Compare already-hydrated forecast tensors directly.",
+    "Reproduce FP32-derived decomposition observations with a documented 5e-7 replay allowance; preserve measured values.",
+    "Count follow-up prefix steps from saved cut histories.",
+    "Accept the inherited support writer output-manifest schema while retaining exact file/hash/size contracts."
+  ],
+  "claim_limits": [
+    "native00 baseline and dense parameters supplied",
+    "24 dense linear maps per native-profile evaluation",
+    "no measured compilation payback at K1,5,32",
+    "no arbitrary chat or semantic CoT claim"
+  ],
+  "documentation_checks": {
+    "checked_local_links": 30,
+    "missing_local_links": 0,
+    "git_diff_check": "Two extra EOF blank-line warnings in worker.py and launch.py are preserved so committed payload sources retain the exact qualified hashes; no other whitespace findings."
+  },
+  "compact_audit_sha256": "b282469d79b008d7e363a1249f2c5b71c1e9823a8de059799bcea9e68745efd8",
+  "compact_results_sha256": "f9b4b81148c701098d930c9a32de884886798583118b55ac7c0c598c4f29052a",
+  "focused_tests": {
+    "command": "python -m pytest packages/mdb/tests/test_read_weight_native.py packages/mdb/tests/test_read_weight_centered.py packages/mdb/tests/test_read_weight_closure_qualification.py packages/mdb/tests/test_read_weight_taylor.py packages/mdb/tests/test_read_weight_transport.py -q",
+    "passed": 25,
+    "scope": "tiny random BF16 native equations; live identity guards; centered JVP and scalar laws; actual span residual/KV installation; own-state continuation; saved-audit lineage tamper; prior Taylor/transport regression",
+    "seconds": 25.66,
+    "warnings": [
+      "Torch JIT script deprecation"
+    ]
+  },
+  "full_saved_audit_sha256": "da0dfdb61f846c3eb864fc4b5527ec2391d3af467811a1674face635ea891a31",
+  "installed_qualified_wheel_proof": {
+    "measured_demo_replay": {
+      "all_six_zero_deltas_exact": true,
+      "blocked_imports": [
+        "torch",
+        "numpy",
+        "saturn",
+        "common",
+        "common_harness"
+      ],
+      "dose": 0,
+      "isolated_interpreter": true,
+      "method": "baseline-corrected",
+      "outside_workspace": true
+    },
+    "modules": {
+      "mdb.read_weight_centered": {
+        "path": "/tmp/mdb-read-closure-wheel-proof/mdb/read_weight_centered.py",
+        "sha256": "475bbb422454220f912ae6e354040f820032eccf0a74d76d25b60ebc72428e92"
+      },
+      "mdb.read_weight_native": {
+        "path": "/tmp/mdb-read-closure-wheel-proof/mdb/read_weight_native.py",
+        "sha256": "381b49943e0e1cd50be1dbf7fcdeb5955eb78c12600a9613cae6a49e842cc447"
+      }
+    },
+    "scope": "isolated public wheels outside workspace; native module import and centered scalar evaluation without model frameworks/private packages",
+    "sha256": "da36d1fef3764cfb46252cc14907f1b5945f430c0b5002ba7dbd6d04d7c16b73"
+  },
+  "instrument_status": "saved scalar laws and payloads audited; trained derivative compiler not independently rerun",
+  "job_id": "job-5fc199bd25fe",
+  "mechanics_status": "valid",
+  "post_audit_rehash": {
+    "expanded_bytes": 421255647,
+    "file_count": 34056,
+    "manifest_sha256": "cce62f493e9ca3eb45af9c9dfa14bd159d3591ba5b3dc9aa73115a6662c8a83f",
+    "mismatched": [],
+    "missing": [],
+    "schema": "mdb-read-weight-closure-post-audit-rehash-v1",
+    "status": "valid",
+    "unexpected": []
+  },
+  "post_qualification_hardening": {
+    "change": "Re-enumerate live parameters and recheck config/module numerical policy identity; no numerical equations changed. Substitution/epsilon/scaling/backend drift tested on tiny model. Trained run remains bound to frozen wheel; it was not repeated after this hardening.",
+    "frozen_qualified_native_source_sha256": "381b49943e0e1cd50be1dbf7fcdeb5955eb78c12600a9613cae6a49e842cc447",
+    "limitation": "Model configuration backend is guarded; a separate external runtime object backend is not observable through this constructor.",
+    "native_source_sha256": "0a62572e08cb1efd028c962e5405666c463b9e7404e721c4238630d5eec02035"
+  },
+  "report_sha256": "f16573c426234c50edd355b4b466ef0dc7949650ca2fb5fb7407062dca3152ba",
+  "request_sha256": "dcf9b0466553a6c8e4a5684d00a49eb9cbca76f42ead77f1a638aff08447c94a",
+  "ruff": {
+    "scope": "all new qualification, native/centered APIs, associated tests and demo",
+    "status": "passed"
+  },
+  "scheduling_note": "One incomplete staging attempt rejected local operation count before submission; fixed bounded panel transaction units240 with physical compile/dense-call counts separately disclosed. One actual CUDA job, no retries.",
+  "schema": "mdb-read-weight-closure-validation-v1",
+  "source_hashes": {
+    "packages/mdb/examples/read_weight_centered_demo.py": "3c2ba15318687a2c61a352b11d50868d0403e4ad32197815455dfa2c03d75066",
+    "packages/mdb/qualification/read_weight_closure_20261110/analyze.py": "dfcba571bfe8fc759706f526141d771682d5eb12037ecc238670204c332329c7",
+    "packages/mdb/qualification/read_weight_closure_20261110/launch.py": "ab9671c9fa059fc037b3c22c55c05b934a00ab2dc698aa160f2463be6127cd1c",
+    "packages/mdb/qualification/read_weight_closure_20261110/simplefigure.py": "85d537b0a713d4b10927dbdf8eb77492126fc3be92e63f4469e5349b6745a276",
+    "packages/mdb/qualification/read_weight_closure_20261110/verify.py": "2481e8f530aca308599ed67abe45bfe6a173caf253012c06827047bcea853e95",
+    "packages/mdb/qualification/read_weight_closure_20261110/worker.py": "a622367325144c6b09ed2fc536d7bfa55ef653d9f487a21260f5b95023267842",
+    "packages/mdb/src/mdb/read_weight_centered.py": "475bbb422454220f912ae6e354040f820032eccf0a74d76d25b60ebc72428e92",
+    "packages/mdb/src/mdb/read_weight_native.py": "0a62572e08cb1efd028c962e5405666c463b9e7404e721c4238630d5eec02035",
+    "packages/mdb/tests/test_read_weight_centered.py": "d9d66b225c441ecc4ed3380153916f9a0cabfef13f1e7af38c4e9aba4f5a02e4",
+    "packages/mdb/tests/test_read_weight_closure_qualification.py": "1af687f831a98589def17fc1ea87484880b797c8e30499f837b4b5dbdd9b4bd3",
+    "packages/mdb/tests/test_read_weight_native.py": "8390f388cf84dbf47f6bbd114fa61f15ffc42f9cbef47792c849d6d2da2f296d"
+  },
+  "standard_evidence": {
+    "run": {
+      "exit_code": 0,
+      "findings": 0,
+      "instrument_status": "target-streams-only",
+      "sha256": "8e51d02264a45e167265dec9c63bbcb4d4f281c5462c3124d5e7c9eb275f9353"
+    },
+    "verify": {
+      "exit_code": 0,
+      "findings": 0,
+      "instrument_status": "target-streams-only",
+      "sha256": "e7278da6f566399e487c400a1cb929cae9c8babd2a42c7829e68ae5b8bcf7e2a"
+    }
+  },
+  "terminal_status": "not-assessed",
+  "trend_status": "heterogeneous; all signed rows retained"
+}

@@ -4,6 +4,8 @@ MDB can compile a local response law for one selected historical attention row. 
 
 This extends [first-order read-weight transport](READ-WEIGHT-TRANSPORT.md). Compilation still reads dense parameters and the native baseline tape for every new receiver and direction. The later consumer experiment separately pays for native A attention output and input22. Neither cost is closed by a small scalar program.
 
+The [midpoint and complete-state follow-up](READ-WEIGHT-CLOSURE.md) repairs the large finite-dose counterexample and replaces native-A assistance with prospective dense functional production. Its installed residual/KV spans retain exact native baseline and AB closure in 8/8 tested receivers; dense compilation and production remain paid, with no measured amortization through 32 dose queries. This later result preserves the Taylor-v1 API and the historical measurements below.
+
 ## The law and its anchor
 
 Let the smooth FP32 transport be `(q_s(λ), k_s(λ)) = F_s(o19 + λd)`. Its displacements are added to the native unedited query and current key:

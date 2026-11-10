@@ -1,0 +1,729 @@
+{
+  "archive_custody": {
+    "archive_bytes": 302896888,
+    "archive_sha256": "9b7271ff5e485242dabfe8922273865d823d5899ac7ce9bf835f0af5331216a6"
+  },
+  "case_count": 4,
+  "cases": [
+    {
+      "bench": {
+        "boundary": "byte-integrity and reference closure; native execution is proved separately",
+        "counts": {
+          "cuts": 108,
+          "json_artifacts": 567,
+          "memory_writes": 14,
+          "payload_references": 635,
+          "symbols": 0,
+          "vm_bundles": 67
+        },
+        "discovery_contexts": [],
+        "manifest_ref": "cas://sha256/1025eae03ce2f9c1dd5c57488e67cc7ab8a628ef4a8fafe393309297250d561b",
+        "mechanics_status": "valid",
+        "payload_audit": {
+          "authority": "disk-byte-integrity; native consumer not assessed",
+          "bytes_read": 120230872,
+          "checksum_verified": 650,
+          "descriptor_payload_sha256": "bc749b79ea0d8a735e8a98b45e5366c61e3e387708f6206b3dcb2315c0b93c52",
+          "failed_payloads": [],
+          "failures": 0,
+          "geometry_verified": 650,
+          "manifest_ref": "cas://sha256/1025eae03ce2f9c1dd5c57488e67cc7ab8a628ef4a8fafe393309297250d561b",
+          "mechanics_status": "valid",
+          "misses": 0,
+          "read_attempts": 743,
+          "schema": "mdb-payload-audit-v1",
+          "unique_payloads": 650,
+          "unique_verified_bytes": 37483480
+        },
+        "schema": "saturn-open-bench-verification-v1",
+        "session_id": "nora-ethan"
+      },
+      "case_id": "nora-ethan",
+      "first": {
+        "derivative_compiler_independently_rerun": false,
+        "forecast_ref": "cas://sha256/57e97788ce3532a2a03076b7fb305ac948db879647db94787ca00fd82833e036",
+        "functional_AB_full_logit_signature_exact": true,
+        "functional_AB_native_closure_exact": true,
+        "functional_zero_closure_exact": true,
+        "parent_cut": "cas://sha256/e6169a26de0faa7ccc94c9d0ee30377e54d5f0665ed1449315459c80c2d66bf0",
+        "payload_count": 682,
+        "prediction_event": {
+          "edited_receiver_events": 4,
+          "native_AB_index": 5,
+          "native_AB_steps": 41,
+          "physical_steps": 17,
+          "seal_index": 0,
+          "status": "valid"
+        },
+        "sites": {
+          "A": {
+            "kv_head": 0,
+            "layer": 19,
+            "lineage": {
+              "occurrence": "first-generated",
+              "provenance": "supplied",
+              "role": "preceding-answer-first-generated",
+              "source": "preceding_answer_span",
+              "span": [
+                23,
+                25
+              ]
+            },
+            "port": "A",
+            "provenance": "supplied",
+            "role": "preceding-answer-first-generated",
+            "row": 23,
+            "source_row": 23,
+            "source_token_id": 1852
+          },
+          "B": {
+            "kv_head": 0,
+            "layer": 22,
+            "lineage": {
+              "copula_token_id": 374,
+              "occurrence": "last-copula-in-span",
+              "provenance": "supplied",
+              "role": "current-followup-copula",
+              "source": "followup_span",
+              "span": [
+                25,
+                30
+              ]
+            },
+            "port": "B",
+            "provenance": "supplied",
+            "role": "current-followup-copula",
+            "row": 29,
+            "source_row": 29,
+            "source_token_id": 374
+          }
+        }
+      },
+      "instrument_status": "saved scalar laws and payloads audited",
+      "limitations": [
+        "the trained centered derivative compiler was not independently rerun",
+        "native parity, score error, and continuation differences are retained observations",
+        "semantic CoT and economical full-query claims are not assessed"
+      ],
+      "manifest_ref": "cas://sha256/1025eae03ce2f9c1dd5c57488e67cc7ab8a628ef4a8fafe393309297250d561b",
+      "mechanics_status": "valid",
+      "native_layer_transitions": 2332,
+      "physical_token_steps": 85,
+      "replaced_layer_transitions": 48,
+      "second": {
+        "derivative_compiler_independently_rerun": false,
+        "forecast_ref": "cas://sha256/0a0618fe2e0e89ff5b293a00369698780fca2df269281a2dd52e4ddb94de3d8a",
+        "functional_AB_full_logit_signature_exact": true,
+        "functional_AB_native_closure_exact": true,
+        "functional_zero_closure_exact": true,
+        "parent_cut": "cas://sha256/a195d2e40be8fb5b6824bb036084b01e890d10ce1a37cb8289d71250c70b6c66",
+        "payload_count": 682,
+        "prediction_event": {
+          "edited_receiver_events": 4,
+          "native_AB_index": 11,
+          "native_AB_steps": 82,
+          "physical_steps": 58,
+          "seal_index": 6,
+          "status": "valid"
+        },
+        "sites": {
+          "A": {
+            "kv_head": 0,
+            "layer": 19,
+            "lineage": {
+              "occurrence": "first-generated",
+              "provenance": "supplied",
+              "role": "preceding-answer-first-generated",
+              "source": "preceding_answer_span",
+              "span": [
+                31,
+                33
+              ]
+            },
+            "port": "A",
+            "provenance": "supplied",
+            "role": "preceding-answer-first-generated",
+            "row": 31,
+            "source_row": 31,
+            "source_token_id": 5750
+          },
+          "B": {
+            "kv_head": 0,
+            "layer": 22,
+            "lineage": {
+              "copula_token_id": 374,
+              "occurrence": "last-copula-in-span",
+              "provenance": "supplied",
+              "role": "current-followup-copula",
+              "source": "followup_span",
+              "span": [
+                33,
+                38
+              ]
+            },
+            "port": "B",
+            "provenance": "supplied",
+            "role": "current-followup-copula",
+            "row": 37,
+            "source_row": 37,
+            "source_token_id": 374
+          }
+        }
+      },
+      "split": "development",
+      "terminal_status": "not-assessed"
+    },
+    {
+      "bench": {
+        "boundary": "byte-integrity and reference closure; native execution is proved separately",
+        "counts": {
+          "cuts": 102,
+          "json_artifacts": 549,
+          "memory_writes": 14,
+          "payload_references": 617,
+          "symbols": 0,
+          "vm_bundles": 61
+        },
+        "discovery_contexts": [],
+        "manifest_ref": "cas://sha256/2d8e00628e563a10973db7fcda11c03910763790cd8032b311bd5806c0105b4a",
+        "mechanics_status": "valid",
+        "payload_audit": {
+          "authority": "disk-byte-integrity; native consumer not assessed",
+          "bytes_read": 111622616,
+          "checksum_verified": 632,
+          "descriptor_payload_sha256": "91b6ef93142fce5ac2794c6de1f3d1c114128f7f7f0e5cee217b0a46dadfc98d",
+          "failed_payloads": [],
+          "failures": 0,
+          "geometry_verified": 632,
+          "manifest_ref": "cas://sha256/2d8e00628e563a10973db7fcda11c03910763790cd8032b311bd5806c0105b4a",
+          "mechanics_status": "valid",
+          "misses": 0,
+          "read_attempts": 719,
+          "schema": "mdb-payload-audit-v1",
+          "unique_payloads": 632,
+          "unique_verified_bytes": 35412440
+        },
+        "schema": "saturn-open-bench-verification-v1",
+        "session_id": "ivy-ivy"
+      },
+      "case_id": "ivy-ivy",
+      "first": {
+        "derivative_compiler_independently_rerun": false,
+        "forecast_ref": "cas://sha256/1dcfab39d44ab5a1bb9ebe19f8f6f888f2e3681b36d9a594de3cd45bcf7be362",
+        "functional_AB_full_logit_signature_exact": true,
+        "functional_AB_native_closure_exact": true,
+        "functional_zero_closure_exact": true,
+        "parent_cut": "cas://sha256/0054f024eb02c13c2fbcdb06be6d4e66d13f1aeb8ded664349274d4f8e5b2946",
+        "payload_count": 682,
+        "prediction_event": {
+          "edited_receiver_events": 4,
+          "native_AB_index": 5,
+          "native_AB_steps": 41,
+          "physical_steps": 17,
+          "seal_index": 0,
+          "status": "valid"
+        },
+        "sites": {
+          "A": {
+            "kv_head": 0,
+            "layer": 19,
+            "lineage": {
+              "occurrence": "first-generated",
+              "provenance": "supplied",
+              "role": "preceding-answer-first-generated",
+              "source": "preceding_answer_span",
+              "span": [
+                23,
+                25
+              ]
+            },
+            "port": "A",
+            "provenance": "supplied",
+            "role": "preceding-answer-first-generated",
+            "row": 23,
+            "source_row": 23,
+            "source_token_id": 3736
+          },
+          "B": {
+            "kv_head": 0,
+            "layer": 22,
+            "lineage": {
+              "copula_token_id": 374,
+              "occurrence": "last-copula-in-span",
+              "provenance": "supplied",
+              "role": "current-followup-copula",
+              "source": "followup_span",
+              "span": [
+                25,
+                30
+              ]
+            },
+            "port": "B",
+            "provenance": "supplied",
+            "role": "current-followup-copula",
+            "row": 29,
+            "source_row": 29,
+            "source_token_id": 374
+          }
+        }
+      },
+      "instrument_status": "saved scalar laws and payloads audited",
+      "limitations": [
+        "the trained centered derivative compiler was not independently rerun",
+        "native parity, score error, and continuation differences are retained observations",
+        "semantic CoT and economical full-query claims are not assessed"
+      ],
+      "manifest_ref": "cas://sha256/2d8e00628e563a10973db7fcda11c03910763790cd8032b311bd5806c0105b4a",
+      "mechanics_status": "valid",
+      "native_layer_transitions": 2332,
+      "physical_token_steps": 85,
+      "replaced_layer_transitions": 48,
+      "second": {
+        "derivative_compiler_independently_rerun": false,
+        "forecast_ref": "cas://sha256/8d80531d41bb5108a66b33efff5c291b65b4c9ca4b00c67da985bc970475ebca",
+        "functional_AB_full_logit_signature_exact": true,
+        "functional_AB_native_closure_exact": true,
+        "functional_zero_closure_exact": true,
+        "parent_cut": "cas://sha256/f9dbf0f862b872ca0aafee4b6ddeac03530a1af15132dadb16128ae4af67e857",
+        "payload_count": 682,
+        "prediction_event": {
+          "edited_receiver_events": 4,
+          "native_AB_index": 11,
+          "native_AB_steps": 82,
+          "physical_steps": 58,
+          "seal_index": 6,
+          "status": "valid"
+        },
+        "sites": {
+          "A": {
+            "kv_head": 0,
+            "layer": 19,
+            "lineage": {
+              "occurrence": "first-generated",
+              "provenance": "supplied",
+              "role": "preceding-answer-first-generated",
+              "source": "preceding_answer_span",
+              "span": [
+                31,
+                33
+              ]
+            },
+            "port": "A",
+            "provenance": "supplied",
+            "role": "preceding-answer-first-generated",
+            "row": 31,
+            "source_row": 31,
+            "source_token_id": 3736
+          },
+          "B": {
+            "kv_head": 0,
+            "layer": 22,
+            "lineage": {
+              "copula_token_id": 374,
+              "occurrence": "last-copula-in-span",
+              "provenance": "supplied",
+              "role": "current-followup-copula",
+              "source": "followup_span",
+              "span": [
+                33,
+                38
+              ]
+            },
+            "port": "B",
+            "provenance": "supplied",
+            "role": "current-followup-copula",
+            "row": 37,
+            "source_row": 37,
+            "source_token_id": 374
+          }
+        }
+      },
+      "split": "development",
+      "terminal_status": "not-assessed"
+    },
+    {
+      "bench": {
+        "boundary": "byte-integrity and reference closure; native execution is proved separately",
+        "counts": {
+          "cuts": 102,
+          "json_artifacts": 549,
+          "memory_writes": 14,
+          "payload_references": 617,
+          "symbols": 0,
+          "vm_bundles": 61
+        },
+        "discovery_contexts": [],
+        "manifest_ref": "cas://sha256/17543591cceb34beb5ec84ff2ed2909732b552e80f6923de1f861e1e1f133f3a",
+        "mechanics_status": "valid",
+        "payload_audit": {
+          "authority": "disk-byte-integrity; native consumer not assessed",
+          "bytes_read": 112310744,
+          "checksum_verified": 632,
+          "descriptor_payload_sha256": "04642c7f2f8eb560943dd92561c3755d99bbb5c8fd8fe112b92bd04eba49d3bb",
+          "failed_payloads": [],
+          "failures": 0,
+          "geometry_verified": 632,
+          "manifest_ref": "cas://sha256/17543591cceb34beb5ec84ff2ed2909732b552e80f6923de1f861e1e1f133f3a",
+          "mechanics_status": "valid",
+          "misses": 0,
+          "read_attempts": 719,
+          "schema": "mdb-payload-audit-v1",
+          "unique_payloads": 632,
+          "unique_verified_bytes": 35412440
+        },
+        "schema": "saturn-open-bench-verification-v1",
+        "session_id": "clara-leo"
+      },
+      "case_id": "clara-leo",
+      "first": {
+        "derivative_compiler_independently_rerun": false,
+        "forecast_ref": "cas://sha256/6733d98f03234c51ecc5e7b6dad50f5bd964e1a44ae4ff0a42f4f33ec89bcba2",
+        "functional_AB_full_logit_signature_exact": true,
+        "functional_AB_native_closure_exact": true,
+        "functional_zero_closure_exact": true,
+        "parent_cut": "cas://sha256/2557ee40ed7b04ee7ac7e9a944f9d7238512cf70dbd15d01a060339a6168706c",
+        "payload_count": 682,
+        "prediction_event": {
+          "edited_receiver_events": 4,
+          "native_AB_index": 5,
+          "native_AB_steps": 41,
+          "physical_steps": 17,
+          "seal_index": 0,
+          "status": "valid"
+        },
+        "sites": {
+          "A": {
+            "kv_head": 0,
+            "layer": 19,
+            "lineage": {
+              "occurrence": "first-generated",
+              "provenance": "supplied",
+              "role": "preceding-answer-first-generated",
+              "source": "preceding_answer_span",
+              "span": [
+                23,
+                25
+              ]
+            },
+            "port": "A",
+            "provenance": "supplied",
+            "role": "preceding-answer-first-generated",
+            "row": 23,
+            "source_row": 23,
+            "source_token_id": 10058
+          },
+          "B": {
+            "kv_head": 0,
+            "layer": 22,
+            "lineage": {
+              "copula_token_id": 374,
+              "occurrence": "last-copula-in-span",
+              "provenance": "supplied",
+              "role": "current-followup-copula",
+              "source": "followup_span",
+              "span": [
+                25,
+                30
+              ]
+            },
+            "port": "B",
+            "provenance": "supplied",
+            "role": "current-followup-copula",
+            "row": 29,
+            "source_row": 29,
+            "source_token_id": 374
+          }
+        }
+      },
+      "instrument_status": "saved scalar laws and payloads audited",
+      "limitations": [
+        "the trained centered derivative compiler was not independently rerun",
+        "native parity, score error, and continuation differences are retained observations",
+        "semantic CoT and economical full-query claims are not assessed"
+      ],
+      "manifest_ref": "cas://sha256/17543591cceb34beb5ec84ff2ed2909732b552e80f6923de1f861e1e1f133f3a",
+      "mechanics_status": "valid",
+      "native_layer_transitions": 2332,
+      "physical_token_steps": 85,
+      "replaced_layer_transitions": 48,
+      "second": {
+        "derivative_compiler_independently_rerun": false,
+        "forecast_ref": "cas://sha256/84c10196f0d0458950f6db1c6cb6cf205ff21af8a3ce40bfab8c08e1402b4bfe",
+        "functional_AB_full_logit_signature_exact": true,
+        "functional_AB_native_closure_exact": true,
+        "functional_zero_closure_exact": true,
+        "parent_cut": "cas://sha256/9b003118d0ee240f1e5992a9ba48218bb440d3499a54c73cf35e627b9caae05f",
+        "payload_count": 682,
+        "prediction_event": {
+          "edited_receiver_events": 4,
+          "native_AB_index": 11,
+          "native_AB_steps": 82,
+          "physical_steps": 58,
+          "seal_index": 6,
+          "status": "valid"
+        },
+        "sites": {
+          "A": {
+            "kv_head": 0,
+            "layer": 19,
+            "lineage": {
+              "occurrence": "first-generated",
+              "provenance": "supplied",
+              "role": "preceding-answer-first-generated",
+              "source": "preceding_answer_span",
+              "span": [
+                31,
+                33
+              ]
+            },
+            "port": "A",
+            "provenance": "supplied",
+            "role": "preceding-answer-first-generated",
+            "row": 31,
+            "source_row": 31,
+            "source_token_id": 3745
+          },
+          "B": {
+            "kv_head": 0,
+            "layer": 22,
+            "lineage": {
+              "copula_token_id": 374,
+              "occurrence": "last-copula-in-span",
+              "provenance": "supplied",
+              "role": "current-followup-copula",
+              "source": "followup_span",
+              "span": [
+                33,
+                38
+              ]
+            },
+            "port": "B",
+            "provenance": "supplied",
+            "role": "current-followup-copula",
+            "row": 37,
+            "source_row": 37,
+            "source_token_id": 374
+          }
+        }
+      },
+      "split": "fresh",
+      "terminal_status": "not-assessed"
+    },
+    {
+      "bench": {
+        "boundary": "byte-integrity and reference closure; native execution is proved separately",
+        "counts": {
+          "cuts": 102,
+          "json_artifacts": 549,
+          "memory_writes": 14,
+          "payload_references": 617,
+          "symbols": 0,
+          "vm_bundles": 61
+        },
+        "discovery_contexts": [],
+        "manifest_ref": "cas://sha256/cf7c2f32c07e3942eafd61f949b13e824671baed2fd9b2495e522b983c3d504e",
+        "mechanics_status": "valid",
+        "payload_audit": {
+          "authority": "disk-byte-integrity; native consumer not assessed",
+          "bytes_read": 111622616,
+          "checksum_verified": 632,
+          "descriptor_payload_sha256": "b009dc0a12a971ff8bd8a224085db6376b9ba92aaf891874a7e529259e12007e",
+          "failed_payloads": [],
+          "failures": 0,
+          "geometry_verified": 632,
+          "manifest_ref": "cas://sha256/cf7c2f32c07e3942eafd61f949b13e824671baed2fd9b2495e522b983c3d504e",
+          "mechanics_status": "valid",
+          "misses": 0,
+          "read_attempts": 719,
+          "schema": "mdb-payload-audit-v1",
+          "unique_payloads": 632,
+          "unique_verified_bytes": 35412440
+        },
+        "schema": "saturn-open-bench-verification-v1",
+        "session_id": "maya-maya"
+      },
+      "case_id": "maya-maya",
+      "first": {
+        "derivative_compiler_independently_rerun": false,
+        "forecast_ref": "cas://sha256/74aabe3fbcd65dca63c262a69bb7e76d18a3cb3eca09f96f000c1c3d6ecb3c3b",
+        "functional_AB_full_logit_signature_exact": true,
+        "functional_AB_native_closure_exact": true,
+        "functional_zero_closure_exact": true,
+        "parent_cut": "cas://sha256/9a8e7d1b2f637c5c93001fb0db2865efd1e8de06d2459f9b4cedd5065c7e6f1d",
+        "payload_count": 682,
+        "prediction_event": {
+          "edited_receiver_events": 4,
+          "native_AB_index": 5,
+          "native_AB_steps": 41,
+          "physical_steps": 17,
+          "seal_index": 0,
+          "status": "valid"
+        },
+        "sites": {
+          "A": {
+            "kv_head": 0,
+            "layer": 19,
+            "lineage": {
+              "occurrence": "first-generated",
+              "provenance": "supplied",
+              "role": "preceding-answer-first-generated",
+              "source": "preceding_answer_span",
+              "span": [
+                23,
+                25
+              ]
+            },
+            "port": "A",
+            "provenance": "supplied",
+            "role": "preceding-answer-first-generated",
+            "row": 23,
+            "source_row": 23,
+            "source_token_id": 10525
+          },
+          "B": {
+            "kv_head": 0,
+            "layer": 22,
+            "lineage": {
+              "copula_token_id": 374,
+              "occurrence": "last-copula-in-span",
+              "provenance": "supplied",
+              "role": "current-followup-copula",
+              "source": "followup_span",
+              "span": [
+                25,
+                30
+              ]
+            },
+            "port": "B",
+            "provenance": "supplied",
+            "role": "current-followup-copula",
+            "row": 29,
+            "source_row": 29,
+            "source_token_id": 374
+          }
+        }
+      },
+      "instrument_status": "saved scalar laws and payloads audited",
+      "limitations": [
+        "the trained centered derivative compiler was not independently rerun",
+        "native parity, score error, and continuation differences are retained observations",
+        "semantic CoT and economical full-query claims are not assessed"
+      ],
+      "manifest_ref": "cas://sha256/cf7c2f32c07e3942eafd61f949b13e824671baed2fd9b2495e522b983c3d504e",
+      "mechanics_status": "valid",
+      "native_layer_transitions": 2332,
+      "physical_token_steps": 85,
+      "replaced_layer_transitions": 48,
+      "second": {
+        "derivative_compiler_independently_rerun": false,
+        "forecast_ref": "cas://sha256/2ce6343c8ea32bf9649c86ce099ea89278027b1d7d48c994f1d331b8870eeebe",
+        "functional_AB_full_logit_signature_exact": true,
+        "functional_AB_native_closure_exact": true,
+        "functional_zero_closure_exact": true,
+        "parent_cut": "cas://sha256/cd71b01e551ebc7fc916f74923fe9e7a6b18766be8728584c9afd9f59d9694d0",
+        "payload_count": 682,
+        "prediction_event": {
+          "edited_receiver_events": 4,
+          "native_AB_index": 11,
+          "native_AB_steps": 82,
+          "physical_steps": 58,
+          "seal_index": 6,
+          "status": "valid"
+        },
+        "sites": {
+          "A": {
+            "kv_head": 0,
+            "layer": 19,
+            "lineage": {
+              "occurrence": "first-generated",
+              "provenance": "supplied",
+              "role": "preceding-answer-first-generated",
+              "source": "preceding_answer_span",
+              "span": [
+                31,
+                33
+              ]
+            },
+            "port": "A",
+            "provenance": "supplied",
+            "role": "preceding-answer-first-generated",
+            "row": 31,
+            "source_row": 31,
+            "source_token_id": 10525
+          },
+          "B": {
+            "kv_head": 0,
+            "layer": 22,
+            "lineage": {
+              "copula_token_id": 374,
+              "occurrence": "last-copula-in-span",
+              "provenance": "supplied",
+              "role": "current-followup-copula",
+              "source": "followup_span",
+              "span": [
+                33,
+                38
+              ]
+            },
+            "port": "B",
+            "provenance": "supplied",
+            "role": "current-followup-copula",
+            "row": 37,
+            "source_row": 37,
+            "source_token_id": 374
+          }
+        }
+      },
+      "split": "fresh",
+      "terminal_status": "not-assessed"
+    }
+  ],
+  "custody": {
+    "expanded_bytes": 421255647,
+    "file_count": 34056,
+    "manifest_sha256": "cce62f493e9ca3eb45af9c9dfa14bd159d3591ba5b3dc9aa73115a6662c8a83f",
+    "pretrained_weight_copies": false
+  },
+  "derivative_compiler_independently_rerun": false,
+  "full_audit_path": "artifacts/mdb-read-weight-closure-20261110/run-01/verification.json",
+  "full_audit_sha256": "da0dfdb61f846c3eb864fc4b5527ec2391d3af467811a1674face635ea891a31",
+  "instrument_status": "saved scalar laws and payloads audited",
+  "mechanics_status": "valid",
+  "native_layer_transitions": 9328,
+  "physical_token_steps": 340,
+  "receiver_count": 8,
+  "replaced_layer_transitions": 192,
+  "report_schema": "mdb-read-weight-closure-report-v1",
+  "request_binding": {
+    "request_sha256": "dcf9b0466553a6c8e4a5684d00a49eb9cbca76f42ead77f1a638aff08447c94a",
+    "source_hash_count": 10,
+    "status": "valid"
+  },
+  "request_sha256": "dcf9b0466553a6c8e4a5684d00a49eb9cbca76f42ead77f1a638aff08447c94a",
+  "schema": "mdb-read-weight-closure-compact-audit-v1",
+  "source_dependencies": {
+    "read_weight_transport_verify.py": {
+      "path": "qualification/read_weight_transport_20261107/verify.py",
+      "sha256": "2071b325764f16f04ef2a9c4e7e9e17cdd8b8052084f36f24962eb22959af4c1"
+    }
+  },
+  "source_dependency_sha256": "6f488ada3e456c2a85586700f95e96a7dda531b9053d0a2d5eb81edcf47e8d61",
+  "source_hashes": {
+    "composition_support.py": "f4b4c66dcb9fd1ce47def6410c537646437dc8abb598b82321c03e8164a0f03b",
+    "launcher.py": "ab9671c9fa059fc037b3c22c55c05b934a00ab2dc698aa160f2463be6127cd1c",
+    "parameter-artifacts.json": "387f1b374598ada7a1026804b78d406e18799fc7f09cea599727b814b1a11c32",
+    "plan.json": "8f4d7318bf05132ce22d1ab0288dfa57ad41fee5041205bfcfb5d9018868d0b4",
+    "preflight.v1.json": "5a2696ea2e1435818bcc627b4644d176f1da10ae232230e47126df8b7f9a24f5",
+    "qualification_support.py": "6d1e550e35215696c8ce74921f7f0e8bf9c047908437fb98fbea4b11487b51e3",
+    "retrieve_weights.py": "7cef6f04829dc8638718c25cffa9e3e5ca86703e19cb770d57aa516b719677ae",
+    "second_order_support.py": "9de3aa244df1c3f5a3632b027cf968cbc8cec8476232cda80eeab70475b9b255",
+    "source-binding.json": "6ce0bfcb53d136f2daae877b3894692d89835f0d29d35d255952bc20e43000e3",
+    "worker.py": "a622367325144c6b09ed2fc536d7bfa55ef653d9f487a21260f5b95023267842"
+  },
+  "split_counts": {
+    "development": 2,
+    "fresh": 2
+  },
+  "terminal_status": "not-assessed",
+  "trend_status": "all retained rows summarized"
+}

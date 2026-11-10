@@ -10,6 +10,7 @@ Examples load no model on import; real-model examples run inside an admitted mru
 | `collect_session.py` | Collecting an exported session. |
 | [`read_weight_transport_demo.py`](read_weight_transport_demo.py) | Framework-free six-head toy algebra for normalized read-weight transport; [worked docs and measured Qwen result](../docs/READ-WEIGHT-TRANSPORT.md). |
 | [`read_weight_taylor_demo.py`](read_weight_taylor_demo.py) | Evaluate a measured, sealed second-order six-head program without loading a model; [math and scope](../docs/READ-WEIGHT-TAYLOR.md). |
+| [`read_weight_centered_demo.py`](read_weight_centered_demo.py) | Replay measured midpoint coefficients and their zero residual without a framework; [native-profile state/KV closure and measured costs](../docs/READ-WEIGHT-CLOSURE.md). |
 
 ## `pass_indexed_baseline.py`
 
