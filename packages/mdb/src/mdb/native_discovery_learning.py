@@ -9,6 +9,7 @@ import numpy as np
 import torch
 from torch import nn
 
+from .attention_ranking import evaluate_route_forecast
 from .native_discovery import (
     DiscoveryError,
     checked,
@@ -378,5 +379,6 @@ def score_forecast(prediction, target):
         rows.append({"span": i, "state": error_metrics(prediction["state"][i], target["states"][i + 1]),
                      "route_kl": kl,
                      "source_top1_agreement": float((p.argmax(-1) == t.argmax(-1)).mean()),
+                     "source_top1": evaluate_route_forecast(p, t, name="learned route"),
                      "value": error_metrics(prediction["values"][i], target["values"][i])})
     return rows

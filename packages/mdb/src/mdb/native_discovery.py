@@ -122,6 +122,40 @@ def load_corpus(path):
     return corpus
 
 
+SHARED_PREFIX_REFUSAL = 8
+
+
+def cross_split_prefixes(windows, *, refuse_at=SHARED_PREFIX_REFUSAL):
+    """Longest shared leading token run between visible windows of different splits.
+
+    ``windows``: list of ``(split, token_ids)``. A causal model gives identical states at every
+    position of a shared leading run, so a held-out window that begins with a discovery window's
+    first ``k`` tokens leaks ``k`` positions. Raises when any cross-split pair shares
+    ``min(refuse_at, len(shorter window))`` or more leading tokens (identical windows and whole
+    short windows that prefix a longer one are always refused). Returns the per-window longest
+    cross-split shared prefix length.
+    """
+    if type(refuse_at) is not int or refuse_at < 1:
+        raise DiscoveryError("shared-prefix refusal length must be a positive integer")
+    rows = [(split, tuple(int(t) for t in tokens)) for split, tokens in windows]
+    longest = [0] * len(rows)
+    for i, (split_i, a) in enumerate(rows):
+        for j in range(i + 1, len(rows)):
+            split_j, b = rows[j]
+            if split_i == split_j:
+                continue
+            n = 0
+            for x, y in zip(a, b):
+                if x != y:
+                    break
+                n += 1
+            longest[i], longest[j] = max(longest[i], n), max(longest[j], n)
+            if n >= min(refuse_at, len(a), len(b)):
+                raise DiscoveryError(
+                    f"visible token windows from {split_i} and {split_j} share their first {n} tokens")
+    return longest
+
+
 def save_arrays(path, **arrays):
     import numpy as np
     for key, value in arrays.items():
@@ -163,8 +197,16 @@ def error_metrics(prediction, target):
         raise DiscoveryError("metric requires matching finite arrays")
     mse = float(np.square(a - b).mean())
     energy = float(np.square(b).mean())
-    return {"mse": mse, "relative_mse": mse / max(energy, 1e-20),
-            "max_abs": float(np.abs(a - b).max()), "scalars": int(b.size)}
+    result = {"mse": mse, "relative_mse": mse / max(energy, 1e-20),
+              "max_abs": float(np.abs(a - b).max()), "scalars": int(b.size)}
+    # Additive companions (positions on axis 0): the uncentred ratio above can be a pure
+    # position-0 score when the first token carries a massive activation.
+    from .analysis_metrics import relative_error
+    extra = relative_error(a, b)
+    for key in ("centered_relative_mse", "relative_mse_excluding_position_0",
+                "centered_relative_mse_excluding_position_0", "position_0_energy_fraction"):
+        result[key] = extra[key]
+    return result
 
 
 def verify_run(root):
