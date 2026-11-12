@@ -2,8 +2,23 @@
 
 No prompt text, reference span, token identity, donor contrast or output label is
 accepted. Attention is computed by the native model before this resolver runs.
+
+Any evaluation of these nominations must report trivial baselines (position 0, offset from the
+end, previous token, uniform) on the same rows: use ``evaluate_top_source`` (re-exported from
+``mdb.attention_ranking``), which always computes them.
 """
 import math
+
+
+def evaluate_top_source(*args, **kwargs):
+    """Lazy re-export (keeps this module numpy-free until an evaluation is requested)."""
+    from .attention_ranking import evaluate_top_source as evaluate
+    return evaluate(*args, **kwargs)
+
+
+def require_trivial_baselines(record):
+    from .attention_ranking import require_trivial_baselines as require
+    return require(record)
 
 READER_LAYER = 20
 READER_HEAD = 5

@@ -8,9 +8,13 @@ from pathlib import Path
 import numpy as np
 import torch
 
+from .analysis_metrics import fit_mean_writes, mean_write_baselines
+from .attention_ranking import trivial_route_baselines
 from .native_discovery import (
     SCHEMA,
+    SHARED_PREFIX_REFUSAL,
     DiscoveryError,
+    cross_split_prefixes,
     digest,
     error_metrics,
     file_hash,
@@ -51,7 +55,7 @@ def local_basis_baseline(discovery, targets, *, ridge=0.01):
 
 def run_on_model(model, tokenizer, *, corpus, out, binding, max_tokens=64, stages=3,
                  features=32, steps=60, interval_steps=10, seed=0, kinds=KINDS,
-                 max_wall_seconds=600):
+                 max_wall_seconds=600, refuse_shared_prefix=SHARED_PREFIX_REFUSAL):
     from .forecast_transaction import ForecastTransaction
 
     if (max_tokens < 2 or stages < 1 or features < 1 or max_wall_seconds <= 0
@@ -71,7 +75,7 @@ def run_on_model(model, tokenizer, *, corpus, out, binding, max_tokens=64, stage
         raise DiscoveryError("model and numerical execution identities are required")
     save_json(out / "corpus.json", corpus)
     save_json(out / "binding.json", checked_binding)
-    visible, seen_inputs = [], {}
+    visible, seen_inputs, windows = [], {}, []
     for row in corpus["documents"]:
         tokens = tokenizer(row["text"], add_special_tokens=False, truncation=True,
                            max_length=max_tokens)["input_ids"]
@@ -80,10 +84,18 @@ def run_on_model(model, tokenizer, *, corpus, out, binding, max_tokens=64, stage
         identity = digest(tokens)
         if seen_inputs.setdefault(identity, row["split"]) != row["split"]:
             raise DiscoveryError("identical visible token prefixes cross corpus splits")
+        windows.append((row["split"], tokens))
         visible.append({"document": row["id"], "split": row["split"], "tokens": len(tokens),
                         "token_ids_sha256": identity})
+    # Shared leading token runs give identical causal states; refuse long cross-split runs.
+    for entry, shared in zip(visible, cross_split_prefixes(windows, refuse_at=refuse_shared_prefix),
+                             strict=True):
+        entry["longest_cross_split_shared_prefix"] = shared
+        entry["shared_prefix_refusal_tokens"] = refuse_shared_prefix
     save_json(out / "visible-inputs.json", visible)
     source = {p.name: file_hash(p) for p in Path(__file__).parent.glob("native_discovery*.py")}
+    source.update({p.name: file_hash(p) for p in (Path(__file__).parent / "analysis_metrics.py",
+                                                 Path(__file__).parent / "attention_ranking.py")})
     save_json(out / "source.json", source)
     trace_root = out / "traces"
     trace_root.mkdir()
@@ -144,6 +156,8 @@ def run_on_model(model, tokenizer, *, corpus, out, binding, max_tokens=64, stage
         print("DISCOVERY_CAPTURE " + json.dumps({"split": split, "documents": len(captures[split])}), flush=True)
     mean_write = np.stack([np.concatenate([a["states"][i + 1] - a["states"][i]
                         for _, a in captures["discovery"]]).mean(0) for i in range(stages)])
+    # Post-hoc position-split mean writes (position 0 vs rest), fit on discovery only.
+    split_writes = fit_mean_writes([a["states"] for _, a in captures["discovery"]])
     budget()
     metadata, predictors = fit_predictors(captures["discovery"], captures["development"],
         root=out / "predictor", binding=checked_binding, boundaries=boundaries,
@@ -209,6 +223,8 @@ def run_on_model(model, tokenizer, *, corpus, out, binding, max_tokens=64, stage
         uniform /= uniform.sum(-1, keepdims=True)
         baseline_kl = float((arrays["routes"] * (np.log(np.maximum(arrays["routes"], 1e-8))
                             - np.log(np.maximum(uniform, 1e-8)))).sum(-1).mean())
+        position_baselines = mean_write_baselines(initial, arrays["states"], split_writes)
+        route_baselines = [trivial_route_baselines(native) for native in arrays["routes"]]
         symbols = register_observations(record, arrays, predictions[catalog_arm],
                     root=out / "symbols" / identity, catalog=catalog)
         symbol_counts.append(symbols)
@@ -218,6 +234,9 @@ def run_on_model(model, tokenizer, *, corpus, out, binding, max_tokens=64, stage
                              "mean_write": mean_error,
                              "mean_write_consumer": consumer_metrics(baseline_predictions["mean_write"]["consumer_logits"], native_logits),
                              "hold_state": hold, "uniform_route_kl": baseline_kl,
+                             "position_split_mean_write": position_baselines["position_split_mean_write"],
+                             "position_split_mean_write_scope": "post-hoc baseline fit on discovery documents only; not sealed; state metrics only",
+                             "route_top1_trivial_baselines": route_baselines,
                              "forecast_seal": transaction_report["seal_sha256"],
                              "symbol_records": symbols})
         print("DISCOVERY_FORECAST " + json.dumps({"document": row["id"], "symbols": symbols["bindings"]}), flush=True)
@@ -226,6 +245,7 @@ def run_on_model(model, tokenizer, *, corpus, out, binding, max_tokens=64, stage
         "boundaries": list(boundaries), "heldout": held_results,
         "local_native_neuron_baseline": local_basis_baseline(captures["discovery"], captures["heldout"]),
         "components": len(catalog["components"]), "role_candidates": catalog["groups"],
+        "role_candidates_nonempty": catalog.get("nonempty_groups"),
         "bindings": sum(s["bindings"] for s in symbol_counts),
         "work": {"model_loads": 1, "physical_document_forwards": sum(len(v) for v in captures.values()),
                  "physical_batch": 1, "embedding_prefix_calls": len(held_results),
@@ -296,7 +316,8 @@ print(json.dumps({"verified_archives":len(m["archives"]),"required_tensors":len(
 
 
 def run_pretrained(*, corpus, model, out, device="cuda", max_tokens=64, stages=3,
-                   features=32, steps=60, interval_steps=10, seed=0, max_wall_seconds=600):
+                   features=32, steps=60, interval_steps=10, seed=0, max_wall_seconds=600,
+                   refuse_shared_prefix=SHARED_PREFIX_REFUSAL):
     import transformers
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -321,7 +342,8 @@ def run_pretrained(*, corpus, model, out, device="cuda", max_tokens=64, stages=3
                              "physical_batch": 1, "cache": False}}
     result = run_on_model(native, tokenizer, corpus=corpus, out=out, binding=binding,
                           max_tokens=max_tokens, stages=stages, features=features, steps=steps,
-                          interval_steps=interval_steps, seed=seed, max_wall_seconds=max_wall_seconds)
+                          interval_steps=interval_steps, seed=seed, max_wall_seconds=max_wall_seconds,
+                          refuse_shared_prefix=refuse_shared_prefix)
     # Publish retrieval metadata and extend custody without altering prior artifacts.
     root = Path(out)
     parameter_manifest(checkpoint, native, root)

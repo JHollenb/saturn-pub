@@ -15,9 +15,16 @@ def build(source_root, out, *, count=20, skip=0, seed=20261112, exclude_corpus=(
     paths = [p for directory in (source_root / "packages/mdb/docs", source_root / "src/saturn_pub")
              for p in directory.rglob("*") if p.suffix in {".md", ".py"} and p.stat().st_size >= 512]
     paths.sort(key=lambda p: digest([seed, str(p.relative_to(source_root))]))
-    excluded = {row["group"] for corpus in exclude_corpus
-                for row in json.loads(corpus.read_text())["documents"]}
-    paths = [p for p in paths if p.relative_to(source_root).as_posix() not in excluded]
+    # Old corpora grouped by relative path; new ones group by file content hash. Exclude both.
+    excluded = {value for corpus in exclude_corpus
+                for row in json.loads(corpus.read_text())["documents"]
+                for value in (row["group"], row.get("source"))}
+    for corpus in exclude_corpus:  # sidecars record content hashes for path-grouped corpora
+        sidecar = corpus.with_suffix(".sources.json")
+        if sidecar.exists():
+            excluded |= {"sha256:" + s["sha256"] for s in json.loads(sidecar.read_text())["sources"]}
+    paths = [p for p in paths if p.relative_to(source_root).as_posix() not in excluded
+             and "sha256:" + file_hash(p) not in excluded]
     paths = paths[skip:skip + count]
     if len(paths) != count:
         raise ValueError("not enough source documents")
@@ -25,15 +32,18 @@ def build(source_root, out, *, count=20, skip=0, seed=20261112, exclude_corpus=(
     for path in paths:
         relative = path.relative_to(source_root).as_posix()
         text = path.read_text()
+        # Byte-identical files under different paths share one group, so they share one split.
+        group = "sha256:" + file_hash(path)
         # Seeded character window is a collection budget, not a semantic address.
         start = int(hashlib.sha256((str(seed) + relative).encode()).hexdigest(), 16) % max(1, len(text) - 4096)
         start = text.find("\n", start) + 1 if start else 0
         window = text[start:start + 4096]
-        rows.append({"id": digest(relative)[:20], "text": window, "source": relative, "group": relative})
+        rows.append({"id": digest(relative)[:20], "text": window, "source": relative, "group": group})
         sources.append({"source": relative, "sha256": file_hash(path), "characters": [start, start + len(window)]})
     save_json(out, prepare_corpus(rows, seed=seed))
     save_json(out.with_suffix(".sources.json"), {"seed": seed, "skip": skip, "count": count,
               "selection": "hash-ranked ordinary markdown/python files; deterministic character windows",
+              "split_group": "file content sha256 (byte-identical files cannot cross splits)",
               "source_root": str(source_root), "sources": sources,
               "excluded_corpora": {str(p): file_hash(p) for p in exclude_corpus}})
     return {"corpus": str(out), "documents": count, "source_groups": len(sources)}

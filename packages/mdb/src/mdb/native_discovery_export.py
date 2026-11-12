@@ -76,6 +76,23 @@ def load_catalog_bank(path):
     return bank
 
 
+def source_top1_metrics(prediction):
+    """Bare ``source_top1_agreement`` plus its trivial baselines (or an explicit ``None``).
+
+    Saved runs from before ``source_top1`` existed carry only the bare field; they still load and
+    export ``source_top1_baselines: None`` rather than silently omitting the comparison.
+    """
+    record = prediction.get("source_top1")
+    baselines = None
+    if isinstance(record, dict) and record.get("baselines"):
+        baselines = {"baselines": record["baselines"], "best_trivial": record.get("best_trivial"),
+                     "margin_over_best_trivial": record.get("margin_over_best_trivial"),
+                     "beats_every_trivial_baseline": record.get("beats_every_trivial_baseline"),
+                     "rows": record.get("rows")}
+    return {"source_top1_agreement": prediction["source_top1_agreement"],
+            "source_top1_baselines": baselines}
+
+
 def index_observations(root, out):
     """Project verified immutable results into existing WATCH/XREF input formats."""
     from .evidence_citations import make_citation
@@ -102,7 +119,7 @@ def index_observations(root, out):
             for p in predictions:
                 emit(kind, report["boundaries"][p["span"] + 1], "own-depth-state/read-error",
                      {**p["state"], "route_kl": p["route_kl"],
-                      "source_top1_agreement": p["source_top1_agreement"]})
+                      **source_top1_metrics(p)})
         for kind in ("mean_write", "hold_state"):
             if kind not in document:
                 continue
