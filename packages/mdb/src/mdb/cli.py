@@ -5,6 +5,7 @@ import json
 import sys
 
 TOOLS = {"cache": "vm_cache", "hyperion": "hyperion", "context": "context_cli",
+    "analyze": "native_discovery",
     "bisect": "bisect_adapters", "xref": "xref_index", "claims": "claims_registry",
     "watch": "receipt_watch", "custody": "artifact_custody", "cite": "evidence_citations",
     "evidence": "evidence_pipeline", "states": "state_annotations", "graph": "state_graph",
