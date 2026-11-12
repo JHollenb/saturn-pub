@@ -4,7 +4,10 @@ from pathlib import Path
 
 
 def write_view(directory):
+    """Qwen join view (``linked-symbols.json``), or the read-record table (``reads.json``)."""
     root = Path(directory)
+    if not (root / "linked-symbols.json").exists() and (root / "reads.json").exists():
+        return write_reads_view(root)
     source = json.loads((root / "linked-symbols.json").read_text())
     formations = json.loads((root / "formation-symbols.json").read_text())
     summary = json.loads((root / "summary.json").read_text())
@@ -32,7 +35,7 @@ function pickHead(h){el('head').value=h;view('map')}
 function pickLayer(l){el('layer').value=l;view('map')}
 function draw(){const r=current(),h=r.heads[+el('head').value],m=r.definition.metadata,o=r.output;const formations=Object.fromEntries(data.formations.map(f=>[f.binding_fingerprint,f]));const k=formations[m.key_origin_binding],v=formations[m.value_origin_binding];
 el('counts').innerHTML=[data.summary.canonical_bindings+' canonical bindings',data.summary.attention_uses+' native attention uses',data.summary.output_bindings+' readouts',data.summary.native_forwards+' new forwards'].map(s=>'<span class="pill">'+esc(s)+'</span>').join('');
-el('selection').innerHTML='<strong>'+esc(r.binding.symbol)+'</strong> · source row 18 · query H'+h.head+' / KV'+h.kv_head+'<br>Source attention <strong>'+(100*h.source_mass).toFixed(2)+'%</strong> · K origin: '+esc(m.key_origin_side)+' · V origin: '+esc(m.value_origin_side)+'<br>Actual next token <strong>'+esc(JSON.stringify(o.token_text))+'</strong> ('+o.token_id+')<br><span class="muted">Native source cut </span><code>'+esc(r.definition.source_cut)+'</code>';
+el('selection').innerHTML='<strong>'+esc(r.binding.symbol)+'</strong> · source row 18 · query H'+h.head+' / KV'+h.kv_head+'<br>Source attention <strong>'+(100*h.source_mass).toFixed(2)+'%</strong> · K origin: '+esc(m.key_origin_side)+' · V origin: '+esc(m.value_origin_side)+'<br>Actual next token <strong>'+esc(JSON.stringify(o.token_text))+'</strong> ('+o.token_id+')<br>Causal status: <strong>unknown (observed only; no intervention)</strong><br><span class="muted">Native source cut </span><code>'+esc(r.definition.source_cut)+'</code>';
 el('matrix').innerHTML='<table><thead><tr><th>Query / KV</th>'+r.token_labels.map((s,i)=>'<th class="'+(i===18?'source':'')+'">'+i+' '+esc(s)+'</th>').join('')+'</tr></thead><tbody>'+r.heads.map(q=>'<tr class="'+(q.head===h.head?'selected':'')+'"><th><button onclick="pickHead('+q.head+')">H'+q.head+' / KV'+q.kv_head+'</button></th>'+q.allocation.map((p,i)=>'<td class="'+(i===18?'source':'')+'" '+(i===18?'onclick="pickHead('+q.head+')"':'')+' style="background:rgba(14,165,233,'+(p*.94)+')">'+(100*p).toFixed(1)+'%</td>').join('')+'</tr>').join('')+'</tbody></table>';
 el('use').innerHTML='<strong>Selected head → registered symbol</strong><p>Query L'+r.layer+'/H'+h.head+' reads the source through KV group '+h.kv_head+'. Its canonical use points to the original native readout receipt, with K/V location selectors and a hash-bound attention array.</p><pre>'+esc(JSON.stringify({use_id:h.use.use_id,binding_fingerprint:h.use.binding_fingerprint,locations:h.use.locations,readout_receipt:h.use.receipt,attention_selector:h.use.metadata.attention_selector,output_binding:h.use.metadata.output_binding},null,2))+'</pre>';
 const symbols=data.rows.filter(x=>x.arm===r.arm&&x.step===r.step);el('symboltable').innerHTML='<table><thead><tr><th>Registered source symbol</th><th>Locations</th><th>Head uses</th><th>V origin</th><th>Binding fingerprint</th></tr></thead><tbody>'+symbols.map(x=>'<tr class="symbolrow" onclick="pickLayer('+x.layer+')"><td>'+esc(x.binding.symbol)+'</td><td>'+x.binding.locations.length+'</td><td>'+x.heads.length+'</td><td>'+esc(x.definition.metadata.value_origin_side)+'</td><td><code>'+esc(x.binding.fingerprint)+'</code></td></tr>').join('')+'<tr><td>'+esc(o.binding.symbol)+'</td><td>1 native logit port</td><td>1 sample/commit use</td><td>native readout</td><td><code>'+esc(o.binding.fingerprint)+'</code></td></tr></tbody></table>';
@@ -43,3 +46,68 @@ const params=new URLSearchParams(location.hash.slice(1));for(const id of ['arm',
     (root / "symbols-attention.html").write_text(html)
     return {"file": str(root / "symbols-attention.html"), "source_layer_rows": len(rows),
         "linked_head_uses": sum(len(r["heads"]) for r in rows)}
+
+
+def write_reads_view(directory):
+    """Offline table of ``mdb.symbol_reads`` records (no external assets).
+
+    Read sets come first with their set-level results; then observed reads with their causal
+    label, which is ``unknown`` unless a per-read intervention was recorded on that read.
+    """
+    from html import escape
+
+    from .symbol_reads import load_reads
+    root = Path(directory)
+    loaded = load_reads(root / "reads.json")
+    reads, sets = loaded["reads"], loaded["sets"]
+    sources = sorted({r.source.name for r in reads} | {s.source.name for s in sets})
+
+    def num(x):
+        return "" if x is None else f"{x:.3g}"
+
+    def cell(text, cls=""):
+        return f'<td class="{cls}">{escape(str(text))}</td>'
+
+    set_rows = []
+    for s in sets:
+        for r in s.causal.results or (None,):
+            if r is None:
+                cells = ["", "unknown", "", "", "", "", "", "unknown (no intervention on this set)"]
+                verdict = "unknown"
+            else:
+                c = r.control or {}
+                control = "" if not c else (f"{c.get('arm')} {num(c.get('effect'))} {c.get('judgement', '')}"
+                                            + ("" if c.get("in_run", True) else " (cross-run)"))
+                picture = (r.metadata.get("picture") or {}).get("calls") or []
+                verdict = r.verdict
+                cells = [f"{r.intervention} / {r.cut_type}", verdict, num(r.effect), " / ".join(picture),
+                         control, num(r.floor), r.run_id, r.reason or ""]
+            set_rows.append(f'<tr data-source="{escape(s.source.name)}">' + cell(s.source.name) + cell(s.name)
+                            + cell(s.members["count"]) + cell(cells[0]) + cell(cells[1], "v " + verdict)
+                            + "".join(cell(x) for x in cells[2:7]) + cell(cells[7], "muted") + "</tr>")
+    read_rows = []
+    for r in reads:
+        d = r.reader
+        read_rows.append(f'<tr data-source="{escape(r.source.name)}">' + cell(r.source.name) + cell(r.source.assignment)
+                         + cell(d.block_label or d.block) + cell(d.head) + cell("" if d.kv_group is None else d.kv_group)
+                         + cell("all" if d.step is None else d.step) + cell(num(r.mass))
+                         + cell(r.causal.label, "v " + r.causal.status) + cell(len(r.sets)) + "</tr>")
+    options = "".join(f"<option>{escape(n)}</option>" for n in sources)
+    html = f"""<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MDB symbol reads</title>
+<style>:root{{--bg:#0f172a;--fg:#e2e8f0;--muted:#94a3b8;--line:#334155;--ok:#4ade80;--no:#f87171;--un:#fbbf24;--cm:#c084fc}}
+body{{font:14px system-ui;margin:24px;color:var(--fg);background:var(--bg)}}table{{border-collapse:collapse;font-size:12px;margin:8px 0 24px}}
+th,td{{border:1px solid var(--line);padding:5px 7px;text-align:left;vertical-align:top}}.muted{{color:var(--muted)}}
+.v.supported{{color:var(--ok)}}.v.not_supported{{color:var(--no)}}.v.unresolved{{color:var(--un)}}.v.control_missing{{color:var(--cm)}}.v.unknown{{color:var(--muted)}}
+.scroll{{overflow-x:auto}}select{{padding:6px;background:#1e293b;color:var(--fg);border:1px solid var(--line)}}</style>
+<h1>Symbol reads</h1><p class="muted">{escape(str(loaded['meta'].get('scope', '')))}</p>
+<p>Reads are observations: causal status <strong>unknown</strong> unless a per-read intervention is recorded.
+Set results apply to the set as a whole and are not copied onto member heads.</p>
+<label>Source <select id="src"><option value="">all</option>{options}</select></label>
+<h2>Read sets ({len(sets)})</h2><div class="scroll"><table><tr><th>source</th><th>set</th><th>size</th><th>arm</th><th>verdict</th><th>effect</th><th>picture (seeds)</th><th>control</th><th>floor</th><th>run</th><th>reason</th></tr>{''.join(set_rows)}</table></div>
+<h2>Observed reads ({len(reads)})</h2><div class="scroll"><table><tr><th>source</th><th>role</th><th>block</th><th>head</th><th>KV group</th><th>step</th><th>mass</th><th>causal status</th><th>in sets</th></tr>{''.join(read_rows)}</table></div>
+<p class="muted">reads.json fingerprint {escape(loaded['fingerprint'])}</p>
+<script>document.getElementById('src').onchange=e=>{{for(const tr of document.querySelectorAll('tr[data-source]'))tr.style.display=!e.target.value||tr.dataset.source===e.target.value?'':'none'}}</script>"""
+    (root / "symbol-reads.html").write_text(html)
+    return {"file": str(root / "symbol-reads.html"), "reads": len(reads), "sets": len(sets),
+            "set_results": sum(len(s.causal.results) for s in sets)}

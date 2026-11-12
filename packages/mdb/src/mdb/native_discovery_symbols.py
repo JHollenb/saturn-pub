@@ -68,21 +68,34 @@ def discover_components(model, discovery, *, root, predictor_identity, groups=8,
     return result
 
 
-def register_observations(record, arrays, prediction, *, root, catalog, max_uses=24):
+def register_observations(record, arrays, prediction, *, root, catalog, max_uses=24, reads=False):
     """Persist real SymbolTable/Lifecycle records over explicitly non-resumable cuts.
 
     These are captured observation surfaces, not fabricated live Session closures.
     Predicted source relevance is retained beside the actual native source mass.
+    Records are built by the shared passive writer in ``mdb.symbol_reads``; the files written
+    by default are byte-identical to the pre-consolidation writer. ``reads=True`` additionally
+    writes ``reads.json`` (backend-neutral read records, causal status ``unknown``).
     """
     import torch
-    from saturn_pub.contracts import StateAddress
     from saturn_pub.core import Receipt, StateCut
     from saturn_pub.store import LocalStore
-    from saturn_pub.symbols import SymbolBinding, SymbolTable
+    from saturn_pub.symbols import SymbolTable
     from saturn_pub.values import describe
     from saturn_pub.values import digest as public_digest
 
-    from .symbol_lifecycle import ClockWitness, SymbolLifecycle, SymbolOccurrence, SymbolUse
+    from .symbol_lifecycle import ClockWitness
+    from .symbol_reads import (
+        PassiveSurface,
+        Reader,
+        ReadSource,
+        passive_binding,
+        passive_definition,
+        passive_lifecycle,
+        passive_use,
+        read_for_use,
+        save_reads,
+    )
 
     root.mkdir(parents=True, exist_ok=False)
     store = LocalStore(root / "store")
@@ -107,7 +120,11 @@ def register_observations(record, arrays, prediction, *, root, catalog, max_uses
         cut.verify()
         store.save(cut)
         cuts.append(cut)
-    rows, lifecycles, tables = [], [], [[] for _ in cuts]
+    token_slot = describe(observed_tokens)
+    surfaces = [PassiveSurface.from_cut(cut, session_id=document, slots={
+        "tokens": token_slot, "hidden": describe(observed_states[stage])})
+        for stage, cut in enumerate(cuts)]
+    rows, lifecycles, tables, read_records = [], [], [[] for _ in cuts], []
     feature_lookup = {(r["stage"], r["feature"]): r for r in catalog["components"]}
     stages, heads, length, _ = prediction["routes"].shape
     candidates = [(s, h, p) for s in range(stages) for h in range(heads) for p in range(1, length)]
@@ -122,52 +139,61 @@ def register_observations(record, arrays, prediction, *, root, catalog, max_uses
             continue
         feature = int(np.abs(prediction["code"][stage, source]).argmax())
         component = feature_lookup[stage, feature]
-        cut, end = cuts[stage], cuts[stage + 1]
-        point = public_digest(dict(cut.execution_point))
-        location = StateAddress("hidden", (source,), "observed-residual", point, schema)
-        binding = SymbolBinding(component["id"], identity, public_digest(execution),
-            document, (("tokens", public_digest(describe(observed_tokens))),), (location,),
-            (reference, "sha256:" + catalog["fingerprint"]),
-            "Automatically proposed source component; native location observed; semantic role unresolved",
-            status="observed")
+        surface, end = surfaces[stage], cuts[stage + 1]
         # Check exact geometry without granting executable Session authority.
-        binding.resolve_metadata(model_identity=identity, execution=execution, context=document,
-            slots={"tokens": describe(observed_tokens), "hidden": describe(observed_states[stage])},
-            surface=dict(cut.surface), execution_point=dict(cut.execution_point))
+        binding = passive_binding(surface, component["id"],
+            (surface.address("hidden", (source,), "observed-residual"),),
+            context_slots=(("tokens", public_digest(token_slot)),),
+            evidence=(reference, "sha256:" + catalog["fingerprint"]),
+            claim="Automatically proposed source component; native location observed; semantic role unresolved")
         receipt = Receipt.make(operation="mdb.native_discovery.observed-span", status="observed",
-            parent=cut.fingerprint, result=end.fingerprint,
+            parent=surface.cut_ref, result=end.fingerprint,
             capture=record["fingerprint"], source=source, receiver=receiver, head=head,
             claim="native observations plus a previously sealed source forecast; not a causal test")
         store.receipt(receipt)
         clock = ClockWitness("clock_" + str(number), "layer", document,
             record["boundaries"][stage], provenance=(reference,), status="observed")
-        occurrence = SymbolOccurrence.for_binding(binding, occurrence_id="definition_" + str(number),
-            session_id=document, source_cut=cut.fingerprint, locations=binding.locations,
-            branch="ordinary-execution", execution=binding.execution, clock=clock,
-            evidence_refs=(reference,), status="observed",
+        occurrence = passive_definition(surface, binding, occurrence_id="definition_" + str(number),
+            clock=clock, evidence_refs=(reference,),
             metadata={"component": component["id"], "role_candidate": component["role_candidate"],
                       "source_status": "learned nomination", "surface": "observation-only"})
         observations = {"predicted_source_mass": float(prediction["routes"][stage, head, receiver, source]),
                         "native_source_mass": float(arrays["routes"][stage, head, receiver, source]),
                         "native_top_source": int(arrays["routes"][stage, head, receiver].argmax())}
-        use = SymbolUse("use_" + str(number), binding.to_dict()["fingerprint"], document,
-            f"native.layers.{record['boundaries'][stage]}:{record['boundaries'][stage + 1]}",
-            source_cut=cut.fingerprint, parent_cut=cut.fingerprint, result_cut=end.fingerprint,
-            branch="ordinary-execution", execution=binding.execution, receipt=receipt.fingerprint,
-            locations=binding.locations, evidence_refs=(reference,), status="observed",
+        span = f"native.layers.{record['boundaries'][stage]}:{record['boundaries'][stage + 1]}"
+        use = passive_use(surface, binding, use_id="use_" + str(number), consumer=span,
+            result_cut=end.fingerprint, receipt=receipt.fingerprint, evidence_refs=(reference,),
             signed_observations=(observations,))
-        lifecycle = SymbolLifecycle.define(binding, definitions=(occurrence,), uses=(use,),
-            mechanics_status="valid", instrument_status="observations-only", trend_status="not-assessed",
-            terminal_status="not-assessed", claim_boundary="Predicted bindings over passive native observations.")
+        lifecycle = passive_lifecycle(binding, definitions=(occurrence,), uses=(use,),
+            claim_boundary="Predicted bindings over passive native observations.")
         lifecycles.append(lifecycle.to_dict())
         tables[stage].append(binding)
         rows.append({"component": component["id"], "role_candidate": component["role_candidate"],
                      "stage": stage, "head": head, "receiver": receiver, "source": source,
                      "source_span": arrays["offsets"][source].tolist(), **observations})
+        if reads:
+            read_records.append(read_for_use(use, lifecycle,
+                source=ReadSource(component["id"], (source,), "learned", {
+                    "predictor": catalog["predictor_identity"],
+                    "catalog": "sha256:" + catalog["fingerprint"],
+                    "role_candidate": component["role_candidate"],
+                    "score": observations["predicted_source_mass"],
+                    "score_kind": "sealed predicted source mass (argmax source)"},
+                    binding_fingerprint=lifecycle.binding_fingerprint),
+                reader=Reader(stage, head, block_label=span, receivers="token row", receiver_row=receiver),
+                mass=observations["native_source_mass"], mass_kind="native attention route mass at source",
+                surface="passive-observation", backend="native-discovery",
+                evidence=({"kind": "file", "path": record["arrays"]["path"],
+                           "sha256": record["arrays"]["sha256"], "array": "routes",
+                           "selector": [stage, head, receiver, source]},)))
     for stage, table in enumerate(tables):
         SymbolTable(tuple(table)).save(root / f"symbols-{stage:03d}.json", cuts[stage])
     save_json(root / "lifecycles.json", lifecycles)
     save_json(root / "occurrences.json", rows)
+    if reads:
+        save_reads(root / "reads.json", read_records, meta={
+            "backend": "native-discovery", "document": document, "capture": reference,
+            "causal_tests": 0})
     return {"bindings": len(rows), "uses": len(rows), "native_observation_cuts": len(cuts),
             "inactive_feature_abstentions": abstained,
             "semantics": "anonymous learned candidates", "causal_tests": 0}
