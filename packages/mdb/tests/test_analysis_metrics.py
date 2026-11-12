@@ -136,3 +136,31 @@ def test_correlation_report_returns_pearson_spearman_and_leave_one_out():
     assert correlation_report([1, 1, 1], [1, 2, 3])["pearson"] is None
     with pytest.raises(ValueError):
         correlation_report([1, 2], [1, 2])
+
+
+def test_reusing_a_source_key_with_a_different_value_is_refused():
+    # Same arm name, different logits: previously the shared key cancelled and the bound was 0.0
+    # (the true bound is 0.25 at the BF16 spacing of 20 and 19).
+    a = margin([20.0, 18.0], 0, 1, dtype="bfloat16", source="arm")
+    b = margin([19.0, 18.5], 0, 1, dtype="bfloat16", source="arm")
+    with pytest.raises(ValueError, match="different value"):
+        a - b
+    with pytest.raises(ValueError, match="different value"):
+        b + a
+    same = margin([20.0, 18.0], 0, 1, dtype="bfloat16", source="arm")
+    assert (a - same).bound == 0.0  # identical reuse still cancels exactly
+    unkeyed = margin([20.0, 18.0], 0, 1, dtype="bfloat16") - margin([19.0, 18.5], 0, 1, dtype="bfloat16")
+    assert unkeyed.bound == 0.25  # four independent half-spacings of 0.0625
+
+
+def test_inferred_step_is_a_lower_bound_and_not_accepted_implicitly():
+    from mdb.analysis_metrics import infer_step_lower_bound
+    values = [0.50390625, 20.0]
+    step = infer_step_lower_bound(values)
+    assert step == 2 ** -8 and infer_step(values) == step
+    # BF16 spacing at 20 is 0.125, far above 2**-8: the inferred half-step under-states the bound.
+    assert float(float_spacing([20.0], "bfloat16")[0]) > 2 * step
+    with pytest.raises(ValueError, match="lower bound"):
+        rounding_bound(values, step=step)
+    assert rounding_bound(values, step=step, allow_inferred_step=True).tolist() == [step / 2] * 2
+    assert rounding_bound(values, step=float(step)).tolist() == [step / 2] * 2  # a plain float is explicit

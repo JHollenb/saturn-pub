@@ -133,20 +133,42 @@ def float_spacing(values, dtype):
     return np.ldexp(1.0, (exponent - m).astype(int))
 
 
-def infer_step(values, *, max_power=8, min_power=-30):
-    """Largest power of two dividing every value (the observed quantisation grid)."""
+class InferredStep(float):
+    """A grid spacing inferred from values; a LOWER bound on the spacing of the larger values."""
+
+
+def infer_step_lower_bound(values, *, max_power=8, min_power=-30):
+    """Largest power of two dividing every value, as an ``InferredStep``.
+
+    This is a lower bound on the true rounding spacing only: it is set by the finest-grained
+    value, so it under-states the spacing of larger values (``[0.50390625, 20.0]`` gives 2^-8
+    although 20.0 sits on a much coarser grid). ``rounding_bound(step=...)`` refuses it unless
+    ``allow_inferred_step=True``; use ``dtype=`` for a worst-case bound.
+    """
     v = np.asarray(values, np.float64).ravel()
     for p in range(max_power, min_power - 1, -1):
         step = math.ldexp(1.0, p)
         if np.all(np.mod(v, step) == 0):
-            return step
+            return InferredStep(step)
     return None
 
 
-def rounding_bound(values, *, dtype=None, step=None):
-    """Half-spacing round-to-nearest bound per value, from a dtype or an observed step."""
+def infer_step(*args, **kwargs):
+    """Deprecated alias of ``infer_step_lower_bound`` (a lower bound, not the spacing)."""
+    return infer_step_lower_bound(*args, **kwargs)
+
+
+def rounding_bound(values, *, dtype=None, step=None, allow_inferred_step=False):
+    """Half-spacing round-to-nearest bound per value, from a dtype or a known step.
+
+    A ``step`` produced by ``infer_step_lower_bound`` is refused (it under-states the spacing of
+    larger values) unless ``allow_inferred_step=True``.
+    """
     if (dtype is None) == (step is None):
         raise ValueError("pass exactly one of dtype or step")
+    if isinstance(step, InferredStep) and not allow_inferred_step:
+        raise ValueError("an inferred step is only a lower bound on the spacing; pass dtype= or a "
+                         "known step, or allow_inferred_step=True to accept an under-stated bound")
     if step is not None:
         if step <= 0:
             raise ValueError("step must be positive")
@@ -163,11 +185,12 @@ class Bounded:
     bound. ``bound = sum(|coefficient| * unit_bound)``. Products of two bounded values are refused.
     """
 
-    __slots__ = ("value", "terms")
+    __slots__ = ("value", "terms", "base")
     _counter = [0]
 
-    def __init__(self, value, bound=0.0, *, key=None, terms=None):
+    def __init__(self, value, bound=0.0, *, key=None, terms=None, base=None):
         self.value = float(value)
+        self.base = dict(base or {})  # explicit key -> stored value, to catch one key, two values
         if terms is not None:
             self.terms = dict(terms)
             return
@@ -176,6 +199,8 @@ class Bounded:
         if key is None:
             Bounded._counter[0] += 1
             key = ("anonymous", Bounded._counter[0])
+        else:
+            self.base[key] = self.value
         self.terms = {key: (1.0, float(bound))} if bound else {}
 
     @property
@@ -185,12 +210,18 @@ class Bounded:
     def _merge(self, other, sign):
         other = _bounded(other)
         terms = dict(self.terms)
+        base = dict(self.base)
+        for key, value in other.base.items():
+            if key in base and base[key] != value:
+                raise ValueError(f"key {key!r} is reused with a different value "
+                                 f"({base[key]!r} vs {value!r}); one key names one quantity")
+            base[key] = value
         for key, (c, b) in other.terms.items():
             old = terms.get(key, (0.0, b))
             if old[1] != b:
                 raise ValueError("one key carries two different unit bounds")
             terms[key] = (old[0] + sign * c, b)
-        return Bounded(self.value + sign * other.value, terms=terms)
+        return Bounded(self.value + sign * other.value, terms=terms, base=base)
 
     def __add__(self, other):
         return self._merge(other, 1.0)
@@ -209,7 +240,8 @@ class Bounded:
     def __mul__(self, scalar):
         if isinstance(scalar, Bounded):
             raise TypeError("product of two bounded values is not linear; bound it explicitly")
-        return Bounded(self.value * scalar, terms={k: (c * scalar, b) for k, (c, b) in self.terms.items()})
+        return Bounded(self.value * scalar, terms={k: (c * scalar, b) for k, (c, b) in self.terms.items()},
+                       base=self.base)
 
     __rmul__ = __mul__
 

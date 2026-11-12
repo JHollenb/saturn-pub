@@ -192,6 +192,9 @@ def test_full_pipeline_seals_future_and_exports_real_symbol_records(tmp_path):
     assert all(v["longest_cross_split_shared_prefix"] < 8 for v in visible)
     projection = index_observations(root, tmp_path / "index-input")
     assert projection["observations"] == 15
+    exported = json.loads((tmp_path / "index-input/observations.json").read_text())
+    learned = [r for r in exported if "source_top1_agreement" in r["metrics"]]
+    assert learned and all(r["metrics"]["source_top1_baselines"]["baselines"]["position_0"] for r in learned)
     assert len((tmp_path / "index-input/observations.jsonl").read_text().splitlines()) == 15
     with pytest.raises(DiscoveryError, match="outside immutable"):
         index_observations(root, root / "index")
@@ -251,6 +254,48 @@ def test_cross_split_shared_token_prefixes_are_refused():
     with pytest.raises(DiscoveryError, match="share"):  # a whole shorter window prefixing a longer one
         cross_split_prefixes([("discovery", base), ("heldout", base[:3])])
     assert cross_split_prefixes([("discovery", base), ("heldout", base[:3] + [99])], refuse_at=5) == [3, 3]
+
+
+def test_export_writes_baselines_beside_top1_or_explicit_null():
+    from mdb.native_discovery_export import source_top1_metrics
+    t = np.zeros((4, 4))
+    t[np.arange(4), [0, 1, 1, 3]] = 1.0
+    from mdb.attention_ranking import evaluate_route_forecast
+    record = evaluate_route_forecast(t, t, name="x")
+    full = source_top1_metrics({"source_top1_agreement": 1.0, "source_top1": record})
+    assert full["source_top1_agreement"] == 1.0
+    assert {"position_0", "previous_token", "uniform"} <= set(full["source_top1_baselines"]["baselines"])
+    old = source_top1_metrics({"source_top1_agreement": 0.5})  # a saved run without baselines
+    assert old == {"source_top1_agreement": 0.5, "source_top1_baselines": None}
+
+
+def test_shared_prefix_threshold_can_be_changed_or_disabled(tmp_path, monkeypatch):
+    from mdb.native_discovery_run import run_on_model
+    shared = "alpha beta gamma delta epsilon zeta eta theta"
+    rows = [{"id": k, "text": shared + " " + t} for k, t in
+            (("a", "one two three"), ("b", "four five six"), ("c", "seven eight nine"),
+             ("d", "ten eleven twelve"), ("e", "thirteen fourteen fifteen"))]
+    rows = [{**r, "text": r["text"] + " " + " ".join(r["id"] * (i + 2) for i in range(6))} for r in rows]
+    corpus = prepare_corpus(rows, seed=3, near_duplicate=1.0)
+    save_json(tmp_path / "corpus.json", corpus)
+    run_on_model(tiny_model(), TinyTokenizer(), corpus=tmp_path / "corpus.json", out=tmp_path / "run",
+                 binding={"model_identity": "tiny", "execution": {"device": "cpu"}},
+                 max_tokens=12, stages=2, features=4, steps=1, interval_steps=1,
+                 refuse_shared_prefix=None)
+    visible = json.loads((tmp_path / "run/visible-inputs.json").read_text())
+    assert max(v["longest_cross_split_shared_prefix"] for v in visible) >= 8  # recorded, not refused
+    assert all(v["shared_prefix_refusal_tokens"] is None for v in visible)
+    # The CLI forwards the option; 0 means disabled, the default stays 8.
+    import mdb.native_discovery as nd
+    import mdb.native_discovery_run as ndr
+    seen = []
+    monkeypatch.setenv("MRUN_JOB_ID", "x")
+    monkeypatch.setattr(ndr, "run_pretrained", lambda **kw: seen.append(kw) or {})
+    base = ["run", "--corpus", "c", "--model", "m", "--out", "o"]
+    nd.main(base)
+    nd.main(base + ["--shared-prefix-refusal", "20"])
+    nd.main(base + ["--shared-prefix-refusal", "0"])
+    assert [k["refuse_shared_prefix"] for k in seen] == [8, 20, None]
 
 
 def test_run_refuses_shared_visible_prefix_before_capture(tmp_path):

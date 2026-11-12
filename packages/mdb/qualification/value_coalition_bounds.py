@@ -15,7 +15,11 @@ prints each coefficient from those logits beside the BF16 value. Only three 1536
 read; no model is loaded.
 
   python value_coalition_bounds.py /path/to/mdb-value-coalition-20261112/main-02 \
-      [--readout-rows rows.json | --checkpoint /path/to/model.safetensors]
+      [--readout-rows rows.json] [--checkpoint /path/to/model.safetensors]
+
+With --checkpoint the file's sha256 is checked against the run's parameter artifacts and the rows
+are taken from it (or, together with --readout-rows, the rows file is compared to it); with
+--readout-rows alone the rows are trusted on their recorded hash and the output says NOT VERIFIED.
 """
 from __future__ import annotations
 
@@ -98,6 +102,30 @@ def rows_from_file(path, expected_sha):
                   "verified_here": False, "note": "checkpoint hash recorded by the extractor"}
 
 
+def select_rows(readout_rows, checkpoint, expected_sha):
+    """Head rows plus a provenance record saying whether they were verified against a checkpoint.
+
+    Checkpoint only: rows are read from the file after its sha256 matched. Rows file only: the
+    recorded hash is trusted and the result is labelled NOT verified. Both: the checkpoint file is
+    hash-checked and every extracted row must equal the checkpoint's row byte for byte.
+    """
+    if checkpoint and not readout_rows:
+        rows, provenance = rows_from_checkpoint(checkpoint, expected_sha)
+        provenance["verification"] = "VERIFIED: checkpoint sha256 matched the run and rows were read from it"
+        return rows, provenance
+    rows, provenance = rows_from_file(readout_rows, expected_sha)
+    if not checkpoint:
+        provenance["verification"] = ("NOT VERIFIED here: rows file trusted on its recorded sha256; "
+                                      "pass --checkpoint to check it against the checkpoint file")
+        return rows, provenance
+    reference, _ = rows_from_checkpoint(checkpoint, expected_sha)
+    if set(rows) != set(reference) or any(not np.array_equal(rows[t], reference[t]) for t in reference):
+        raise ValueError("extracted head rows differ from the checkpoint file's rows")
+    provenance.update(verified_here=True, verification=(
+        "VERIFIED: checkpoint sha256 matched the run and the rows file equals the checkpoint's rows"))
+    return rows, provenance
+
+
 def coefficients(margin):
     """Every coefficient in trends.json, as linear combinations of per-arm margins."""
     m0, full = margin["native-recipient"], margin["donor-late"]
@@ -159,8 +187,7 @@ def main(run, readout_rows=None, checkpoint=None):
     if readout_rows or checkpoint:
         sha = json.loads((run / "results/parameter-artifacts.json").read_text())[
             "provenance"]["weight_files_sha256"]["model.safetensors"]
-        rows, provenance = (rows_from_checkpoint(checkpoint, sha) if checkpoint
-                            else rows_from_file(readout_rows, sha))
+        rows, provenance = select_rows(readout_rows, checkpoint, sha)
         rows = {t: bf16_to_f64(r) for t, r in rows.items()}
         store = run / "results/project/store"
         exact, worst = 0, 0.0
@@ -177,7 +204,7 @@ def main(run, readout_rows=None, checkpoint=None):
         fp64 = coefficients(fp64_margin)
         print(f"FP64 readout from stored post-norm hidden x tied head rows; rows from "
               f"{provenance['source']} (checkpoint sha256 {provenance['sha256'][:12]}..., "
-              f"verified here: {provenance['verified_here']}); {exact}/{2 * len(arms)} stored logits "
+              f"{provenance['verification']}); {exact}/{2 * len(arms)} stored logits "
               f"equal the BF16 rounding of the FP64 readout "
               f"(worst |fp64 - stored| / half-spacing = {worst:.3f})")
     print()
@@ -202,7 +229,6 @@ def main(run, readout_rows=None, checkpoint=None):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("run", type=Path)
-    source = parser.add_mutually_exclusive_group()
-    source.add_argument("--readout-rows", type=Path)
-    source.add_argument("--checkpoint", type=Path)
+    parser.add_argument("--readout-rows", type=Path)
+    parser.add_argument("--checkpoint", type=Path)
     main(**vars(parser.parse_args()))

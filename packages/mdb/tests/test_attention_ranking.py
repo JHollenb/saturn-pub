@@ -195,7 +195,9 @@ def test_route_evaluation_uses_causal_visibility_and_weights():
     assert record["baselines"]["position_0"]["top_source_agreement"] == 1.0
     assert record["nominator"]["top_source_agreement"] == pytest.approx(0.25)
     assert record["baselines"]["position_0"]["native_weight_at_choice"] == pytest.approx((1 + 3 * 0.6) / 4)
-    assert trivial_route_baselines(native) == record["baselines"]
+    expected = {k: dict(v) for k, v in record["baselines"].items()}
+    expected["previous_token"].pop("nominator_top_source_agreement_same_rows")  # nominator-specific
+    assert trivial_route_baselines(native) == expected
     with pytest.raises(ValueError):
         evaluate_route_forecast(predicted[:, :, :3], native)
 
@@ -207,3 +209,43 @@ def test_resolver_nomination_scored_against_baselines_on_rows():
     record = evaluate_top_source(nominated, native, visible=[len(w) for w, _ in rows])
     assert record["nominator"]["top_source_agreement"] == 1.0
     assert record["baselines"]["position_0"]["top_source_agreement"] == pytest.approx(2 / 3)
+
+
+def test_previous_token_baseline_excludes_query_position_zero():
+    # Row 0 is query 0 (visible 1): its "previous token" clamps to position 0, which would score
+    # correct whenever the native top source is 0. It must be left out and counted.
+    record = evaluate_top_source([0, 0, 0], [0, 0, 1], visible=[1, 3, 3])
+    prev = record["baselines"]["previous_token"]
+    assert prev["rows"] == 2 and prev["excluded_rows"] == 1
+    assert prev["top_source_agreement"] == pytest.approx(0.5)  # queries 2 -> source 1: right on row 2 only
+    assert prev["nominator_top_source_agreement_same_rows"] == pytest.approx(0.5)
+    assert record["baselines"]["position_0"]["rows"] == 3
+    only_zero = evaluate_top_source([0], [0], visible=[1])
+    assert only_zero["baselines"]["previous_token"]["rows"] == 0
+    assert only_zero["baselines"]["previous_token"]["top_source_agreement"] is None
+    assert only_zero["best_trivial"]["name"] != "previous_token"
+
+
+def test_query_positions_are_validated_against_visible():
+    with pytest.raises(ValueError, match="query_positions"):
+        evaluate_top_source([0, 0], [0, 0], visible=[2, 2], query_positions=[1, 3])
+    with pytest.raises(ValueError, match="query_positions"):
+        evaluate_top_source([0, 0], [0, 0], visible=[2, 2], query_positions=[-1, 1])
+    ok = evaluate_top_source([0, 0], [0, 0], visible=[2, 2], query_positions=[1, 2])
+    assert ok["baselines"]["previous_token"]["rows"] == 2
+
+
+def test_empty_offsets_still_report_the_current_token_baseline():
+    record = evaluate_top_source([1, 2], [1, 2], visible=[2, 3], offsets_from_end=())
+    assert record["baselines"]["offset_0_from_end"]["top_source_agreement"] == 1.0
+    with pytest.raises(ValueError):
+        evaluate_top_source([1, 2], [1, 2], visible=[2, 3], offsets_from_end=(-1,))
+
+
+def test_control_set_failure_names_the_failed_constraint():
+    strata = np.array([0, 0, 0, 1, 1, 1])
+    with pytest.raises(ValueError, match=r"stratum 1: needs 3 units, only 0 allowed"):
+        matched_control_sets([3, 4, 5], 6, strata=strata, disjoint=True, max_tries=3)
+    blocks = np.array([0, 1, 2, 2, 2, 2])
+    with pytest.raises(ValueError, match="needs 3 distinct blocks, only 1 allowed"):
+        matched_control_sets([0, 1, 2], 6, blocks=blocks, disjoint=True, max_tries=3)

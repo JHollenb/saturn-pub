@@ -167,13 +167,18 @@ def matched_control_sets(target, n_units, *, strata=None, blocks=None, mass=None
                        if block_mode == "per-stratum" else len(target_blocks))
     out = []
     for index in range(n_sets):
-        chosen, attempts = None, 0
+        chosen, attempts, why = None, 0, []
         while chosen is None and attempts < max_tries:
             attempts += 1
             chosen = _draw(rng, strata, blocks, allowed, quota, block_mode,
-                           block_quota if blocks is not None else None)
+                           block_quota if blocks is not None else None, why)
         if chosen is None:
-            raise ValueError("no structurally matched control set found within max_tries")
+            counts = {}
+            for reason in why:
+                counts[reason] = counts.get(reason, 0) + 1
+            failed = "; ".join(f"{r} (x{c})" for r, c in sorted(counts.items(), key=lambda kv: -kv[1]))
+            raise ValueError(f"no structurally matched control set found in {max_tries} tries "
+                             f"(disjoint={bool(disjoint)}); constraint(s) that failed: {failed}")
         swaps = 0
         if mass_tolerance is not None:
             chosen, swaps = _match_mass(rng, chosen, strata, blocks, allowed, mass,
@@ -184,12 +189,14 @@ def matched_control_sets(target, n_units, *, strata=None, blocks=None, mass=None
     return out
 
 
-def _draw(rng, strata, blocks, allowed, quota, block_mode, block_quota):
+def _draw(rng, strata, blocks, allowed, quota, block_mode, block_quota, why=None):
+    why = [] if why is None else why
     picked = []
     if blocks is None:
         for s, c in quota.items():
             pool = np.flatnonzero(allowed & (strata == s))
             if len(pool) < c:
+                why.append(f"stratum {s!r}: needs {c} units, only {len(pool)} allowed")
                 return None
             picked += rng.choice(pool, size=c, replace=False).tolist()
         return np.array(picked, np.int64)
@@ -198,10 +205,12 @@ def _draw(rng, strata, blocks, allowed, quota, block_mode, block_quota):
             pool_blocks = np.unique(blocks[allowed & (strata == s)])
             k = block_quota[s]
             if len(pool_blocks) < k:
+                why.append(f"stratum {s!r}: needs {k} distinct blocks, only {len(pool_blocks)} allowed")
                 return None
             chosen_blocks = rng.choice(pool_blocks, size=k, replace=False)
             in_blocks = allowed & (strata == s) & np.isin(blocks, chosen_blocks)
             if in_blocks.sum() < c:
+                why.append(f"stratum {s!r}: {k} chosen blocks hold {int(in_blocks.sum())} allowed units, need {c}")
                 return None
             first = [rng.choice(np.flatnonzero(in_blocks & (blocks == b))) for b in chosen_blocks]
             rest = np.setdiff1d(np.flatnonzero(in_blocks), first)
@@ -210,6 +219,7 @@ def _draw(rng, strata, blocks, allowed, quota, block_mode, block_quota):
     # Mixed strata within blocks: choose k blocks, cover each, then fill quotas; caller retries.
     pool_blocks = np.unique(blocks[allowed])
     if len(pool_blocks) < block_quota:
+        why.append(f"distinct blocks: needs {block_quota}, only {len(pool_blocks)} allowed")
         return None
     chosen_blocks = rng.choice(pool_blocks, size=block_quota, replace=False)
     remaining = dict(quota)
@@ -217,6 +227,7 @@ def _draw(rng, strata, blocks, allowed, quota, block_mode, block_quota):
         options = [u for u in np.flatnonzero(allowed & (blocks == b))
                    if remaining.get(strata[u].item(), 0) > 0 and u not in picked]
         if not options:
+            why.append(f"mixed-stratum block {b!r}: no allowed unit left that fits the remaining per-stratum counts")
             return None
         u = int(rng.choice(options))
         picked.append(u)
@@ -225,6 +236,7 @@ def _draw(rng, strata, blocks, allowed, quota, block_mode, block_quota):
     for s, c in remaining.items():
         pool = np.setdiff1d(np.flatnonzero(in_blocks & (strata == s)), picked)
         if len(pool) < c:
+            why.append(f"stratum {s!r}: needs {c} more units inside the chosen blocks, only {len(pool)} allowed")
             return None
         picked += rng.choice(pool, size=c, replace=False).tolist() if c else []
     return np.array(picked, np.int64)
@@ -306,14 +318,23 @@ def _int_rows(name, value, n=None):
     return a.astype(np.int64)
 
 
+def _offset(k):
+    k = int(k)
+    if k < 0:
+        raise ValueError("offsets_from_end must be non-negative")
+    return k
+
+
 def evaluate_top_source(predicted, target, *, visible, query_positions=None, target_weights=None,
                         offsets_from_end=(0,), name="nominator"):
     """Top-source agreement of a nominator beside trivial baselines on the same rows.
 
     ``predicted`` / ``target``: nominated and native top source per row. ``visible``: number of
     sources visible to each row (sources ``0 .. visible-1``). ``query_positions`` (default
-    ``visible - 1``) defines the previous-token baseline ``query - 1``. ``offsets_from_end`` adds
-    ``visible - 1 - k`` baselines (k = 0 is the most recent visible source). Uniform is reported as
+    ``visible - 1``, must satisfy ``0 <= query <= visible``) defines the previous-token baseline
+    ``query - 1``, which is scored only on rows with query >= 1 (the row count is reported). ``offsets_from_end`` adds
+    ``visible - 1 - k`` baselines (k = 0 is the most recent visible source; offset 0 is always
+    included, even for ``offsets_from_end=()``). Uniform is reported as
     its exact expected agreement ``mean(1 / visible)``. With ``target_weights`` (rows x sources
     native weights), every entry also reports the native weight at the nominated source.
     """
@@ -326,32 +347,48 @@ def evaluate_top_source(predicted, target, *, visible, query_positions=None, tar
     query = visible - 1 if query_positions is None else _int_rows("query_positions", query_positions, n)
     if (visible < 1).any() or (target < 0).any() or (target >= visible).any():
         raise ValueError("native top source must lie inside the visible sources")
+    if (query < 0).any() or (query > visible).any():
+        raise ValueError("query_positions must satisfy 0 <= query <= visible (query - 1 must be a "
+                         "visible source for the previous-token baseline)")
+    offsets = sorted({0} | {_offset(k) for k in offsets_from_end})
     weights = None
     if target_weights is not None:
         weights = np.asarray(target_weights, np.float64)
         if weights.ndim != 2 or len(weights) != n or weights.shape[1] < visible.max():
             raise ValueError("target weights must be rows x sources")
 
-    def score(choice):
+    def score(choice, rows=None):
         choice = np.asarray(choice, np.int64)
+        keep = np.ones(n, bool) if rows is None else rows
         valid = (choice >= 0) & (choice < visible)
-        row = {"top_source_agreement": float(np.mean(valid & (choice == target)))}
+        count = int(keep.sum())
+        row = {"rows": count, "top_source_agreement":
+               float(np.mean((valid & (choice == target))[keep])) if count else None}
         if weights is not None:
             row["native_weight_at_choice"] = float(np.mean(np.where(
-                valid, weights[np.arange(n), np.clip(choice, 0, weights.shape[1] - 1)], 0.0)))
+                valid, weights[np.arange(n), np.clip(choice, 0, weights.shape[1] - 1)], 0.0)[keep])) if count else None
         return row
 
-    baselines = {"position_0": score(np.zeros(n, np.int64)),
-                 "previous_token": score(np.maximum(query - 1, 0))}
-    for k in offsets_from_end:
-        baselines[f"offset_{int(k)}_from_end"] = score(np.maximum(visible - 1 - int(k), 0))
-    uniform = {"top_source_agreement": float(np.mean(1.0 / visible)), "kind": "expected value"}
+    # Query 0 has no previous token (the clamp to position 0 would score it correct whenever the
+    # native top source is position 0), so the previous-token baseline is scored on query >= 1 only.
+    has_previous = query >= 1
+    previous = score(query - 1, has_previous)
+    previous["excluded_rows"] = int(n - has_previous.sum())
+    previous["note"] = "rows with query position 0 excluded (no previous token)"
+    if has_previous.any():
+        previous["nominator_top_source_agreement_same_rows"] = float(
+            np.mean((predicted == target)[has_previous] & ((predicted >= 0) & (predicted < visible))[has_previous]))
+    baselines = {"position_0": score(np.zeros(n, np.int64)), "previous_token": previous}
+    for k in offsets:
+        baselines[f"offset_{k}_from_end"] = score(np.maximum(visible - 1 - k, 0))
+    uniform = {"rows": n, "top_source_agreement": float(np.mean(1.0 / visible)), "kind": "expected value"}
     if weights is not None:
         uniform["native_weight_at_choice"] = float(np.mean(
             [weights[i, :visible[i]].sum() / visible[i] for i in range(n)]))
     baselines["uniform"] = uniform
     nominator = {"name": name, **score(predicted)}
-    best = max(baselines, key=lambda k: baselines[k]["top_source_agreement"])
+    scored = [k for k in baselines if baselines[k]["top_source_agreement"] is not None]
+    best = max(scored, key=lambda k: baselines[k]["top_source_agreement"])
     margin = nominator["top_source_agreement"] - baselines[best]["top_source_agreement"]
     return {"rows": n, "nominator": nominator, "baselines": baselines,
             "best_trivial": {"name": best, "top_source_agreement": baselines[best]["top_source_agreement"]},
@@ -390,5 +427,7 @@ def evaluate_route_forecast(predicted_routes, native_routes, *, offsets_from_end
 def trivial_route_baselines(native_routes, *, offsets_from_end=(0,)):
     """Trivial top-source baselines alone for native attention ``[..., queries, sources]``."""
     t = np.asarray(native_routes)
-    return evaluate_route_forecast(t, t, offsets_from_end=offsets_from_end,
-                                   name="native-self (ceiling)")["baselines"]
+    baselines = evaluate_route_forecast(t, t, offsets_from_end=offsets_from_end,
+                                        name="native-self (ceiling)")["baselines"]
+    baselines["previous_token"].pop("nominator_top_source_agreement_same_rows", None)  # nominator-specific
+    return baselines

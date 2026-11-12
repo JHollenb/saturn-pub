@@ -316,7 +316,8 @@ print(json.dumps({"verified_archives":len(m["archives"]),"required_tensors":len(
 
 
 def run_pretrained(*, corpus, model, out, device="cuda", max_tokens=64, stages=3,
-                   features=32, steps=60, interval_steps=10, seed=0, max_wall_seconds=600):
+                   features=32, steps=60, interval_steps=10, seed=0, max_wall_seconds=600,
+                   refuse_shared_prefix=SHARED_PREFIX_REFUSAL):
     import transformers
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -341,7 +342,8 @@ def run_pretrained(*, corpus, model, out, device="cuda", max_tokens=64, stages=3
                              "physical_batch": 1, "cache": False}}
     result = run_on_model(native, tokenizer, corpus=corpus, out=out, binding=binding,
                           max_tokens=max_tokens, stages=stages, features=features, steps=steps,
-                          interval_steps=interval_steps, seed=seed, max_wall_seconds=max_wall_seconds)
+                          interval_steps=interval_steps, seed=seed, max_wall_seconds=max_wall_seconds,
+                          refuse_shared_prefix=refuse_shared_prefix)
     # Publish retrieval metadata and extend custody without altering prior artifacts.
     root = Path(out)
     parameter_manifest(checkpoint, native, root)

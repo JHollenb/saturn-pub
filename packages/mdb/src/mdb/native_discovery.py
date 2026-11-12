@@ -133,9 +133,10 @@ def cross_split_prefixes(windows, *, refuse_at=SHARED_PREFIX_REFUSAL):
     first ``k`` tokens leaks ``k`` positions. Raises when any cross-split pair shares
     ``min(refuse_at, len(shorter window))`` or more leading tokens (identical windows and whole
     short windows that prefix a longer one are always refused). Returns the per-window longest
-    cross-split shared prefix length.
+    cross-split shared prefix length. ``refuse_at=None`` disables the refusal (lengths are still
+    computed and recorded); 8 is a chosen default, not a derived value.
     """
-    if type(refuse_at) is not int or refuse_at < 1:
+    if refuse_at is not None and (type(refuse_at) is not int or refuse_at < 1):
         raise DiscoveryError("shared-prefix refusal length must be a positive integer")
     rows = [(split, tuple(int(t) for t in tokens)) for split, tokens in windows]
     longest = [0] * len(rows)
@@ -150,7 +151,7 @@ def cross_split_prefixes(windows, *, refuse_at=SHARED_PREFIX_REFUSAL):
                     break
                 n += 1
             longest[i], longest[j] = max(longest[i], n), max(longest[j], n)
-            if n >= min(refuse_at, len(a), len(b)):
+            if refuse_at is not None and n >= min(refuse_at, len(a), len(b)):
                 raise DiscoveryError(
                     f"visible token windows from {split_i} and {split_j} share their first {n} tokens")
     return longest
@@ -281,6 +282,9 @@ def main(argv=None):
     run.add_argument("--features", type=int, default=32)
     run.add_argument("--steps", type=int, default=60)
     run.add_argument("--device", choices=("cpu", "cuda"), default="cuda")
+    run.add_argument("--shared-prefix-refusal", type=int, default=SHARED_PREFIX_REFUSAL,
+                     help="refuse cross-split windows sharing this many leading tokens "
+                          "(default %(default)s, a chosen value; 0 disables, lengths are still recorded)")
     for name in ("inspect", "verify"):
         cmd = sub.add_parser(name)
         cmd.add_argument("root", type=Path)
@@ -306,7 +310,10 @@ def main(argv=None):
         if not os.environ.get("MRUN_JOB_ID"):
             raise DiscoveryError("real-model discovery requires an admitted mrun worker")
         from .native_discovery_run import run_pretrained
-        result = run_pretrained(**{k: v for k, v in vars(args).items() if k != "action"})
+        options = {k: v for k, v in vars(args).items() if k not in {"action", "shared_prefix_refusal"}}
+        if args.shared_prefix_refusal < 0:
+            raise DiscoveryError("--shared-prefix-refusal must be 0 (disable) or a positive integer")
+        result = run_pretrained(**options, refuse_shared_prefix=args.shared_prefix_refusal or None)
         print(json.dumps(result, sort_keys=True))
     return 0
 
