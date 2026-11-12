@@ -1,0 +1,37 @@
+{
+  "schema": "mdb-native-workflow-mechanics-qualification-v1",
+  "job_id": "job-bb94a16acad0",
+  "request_sha256": "93ecc6d505e6edbec92a6776dc124f48e4199c045763ad05b34eea43113e867b",
+  "checkpoint_sha256": "fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe",
+  "archive_sha256": "2cedc340ba7f86d7e63771d321dfcb95fdb363df0fcc960764b40aa491c7bdcd",
+  "report": "../../../../artifacts/mdb-workflow-comparison-20261110/native-smoke-01/extracted/native-result/summary.json",
+  "saved_readout_audit": "../../../../artifacts/mdb-workflow-comparison-20261110/native-smoke-01/saved-readout-audit.json",
+  "execution": "Qwen2.5-0.5B-Instruct, CPU FP32 eager, batch16, fresh full prefixes, use_cache=False",
+  "intervention": {"site": "net.model.layers.6.mlp.down_proj", "weight_gain": 0.5, "selection": "supplied, not discovered"},
+  "work": {"anchor_forwards": 1, "study_forwards": 4, "lease_seconds": 98.66, "peak_rss_mb": 3935.2, "editor_calls": 0},
+  "observations": {
+    "virtual_compiled_different_logp_elements": 0,
+    "original_restored_different_logp_elements": 0,
+    "logp_elements_per_comparison": 2430976,
+    "parameter_identity_restored": true,
+    "weight_study_verified": true,
+    "original_task_nll_nats": 3.6515889167785645,
+    "edited_task_nll_nats": 3.178159475326538,
+    "edited_preservation_kl_nats": 0.1433573216199875,
+    "original_greedy_correct": 0,
+    "edited_greedy_correct": 0,
+    "task_rows": 8
+  },
+  "mechanics_status": "valid-within-declared-scope",
+  "instrument_status": "four-readouts-observed; task-readout-needs-diagnosis-before-workflow-ranking",
+  "trend_status": "supplied-dose NLL improvement with preservation cost and unchanged zero greedy accuracy",
+  "terminal_status": "workflow-advantage-not-evaluated",
+  "limits": [
+    "No pretrained editor comparison or held-out repair evaluation.",
+    "No full-transformer typed port-capture qualification.",
+    "No generation, KV replay or loop-repair claim.",
+    "Exact parity applies only to this specimen, execution profile, site and dose.",
+    "Configured package versions are sealed; an explicit in-worker runtime-version receipt remains future work.",
+    "Saved-array audit checks arithmetic and custody, without independently executing parameter restoration."
+  ]
+}

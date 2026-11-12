@@ -1,0 +1,131 @@
+{
+  "artifact_root": "/Users/jakeholl/domains/artifacts/mdb-wsp-20261110/installed-03",
+  "checks": {
+    "execution_cwd": "/private/tmp",
+    "isolated_installed_tests": "71 passed in 2.10s",
+    "pip_check": "All installed packages are compatible",
+    "private_runtime_imports": "blocked by copied MDB conftest",
+    "ruff": "All checks passed",
+    "test_command": "python -m pytest -c /dev/null /private/tmp/mdb-wsp-installed-tests-20261110 -q"
+  },
+  "parameters_restored": true,
+  "report_sha256": "fdecc90ea1f68e31ad0a73b9c73bef6c324adf88ca540675bca4811ca3c5a782",
+  "rows": {
+    "edited": {
+      "actions": [
+        1
+      ],
+      "completed": true,
+      "state_forecast_error": {
+        "cosine": 0.9999999999999998,
+        "different": 0,
+        "max_abs": 0,
+        "reference_rms": 0.7071067811865476,
+        "relative_rms": 0,
+        "rms": 0,
+        "scalars": 2
+      }
+    },
+    "native": {
+      "actions": [
+        0,
+        0,
+        0
+      ],
+      "completed": false,
+      "state_forecast_error": {
+        "cosine": 0.9999999999999998,
+        "different": 0,
+        "max_abs": 0,
+        "reference_rms": 0.7071067811865476,
+        "relative_rms": 0,
+        "rms": 0,
+        "scalars": 6
+      }
+    },
+    "restore": {
+      "actions": [
+        0,
+        0,
+        0
+      ],
+      "completed": false,
+      "state_forecast_error": {
+        "cosine": 0.9999999999999998,
+        "different": 0,
+        "max_abs": 0,
+        "reference_rms": 0.7071067811865476,
+        "relative_rms": 0,
+        "rms": 0,
+        "scalars": 6
+      }
+    },
+    "zero": {
+      "actions": [
+        0,
+        0,
+        0
+      ],
+      "completed": false,
+      "state_forecast_error": {
+        "cosine": 0.9999999999999998,
+        "different": 0,
+        "max_abs": 0,
+        "reference_rms": 0.7071067811865476,
+        "relative_rms": 0,
+        "rms": 0,
+        "scalars": 6
+      }
+    }
+  },
+  "schema": "mdb-wsp-mechanics-qualification-v1",
+  "scope": "tiny CPU mechanics and isolated installed-wheel tests; no real-model WSP result",
+  "source_sha256": {
+    "src/mdb/wsp.py": "19704cf6f797332408d3be2b0d7e47f0008ada0c3bb65d7e36222317bd394f39",
+    "src/mdb/wsp_demo.py": "f2d0eb24431cc90b2ee0e7fd31c004b081f23ca5338450f8b3d18c1654cdf32a",
+    "src/mdb/wsp_response.py": "117ac11af0c4ffd51a9c6e2c881577ae2540b0e633f39305853780d3b5d131a9",
+    "src/mdb/wsp_weights.py": "787a6dfdc4ff19a542e56b6f26250aa90cd40328e5adab0384d1d030f22f3e86",
+    "tests/test_wsp.py": "a71b0fcfecf4e4f5cca4839d5f6bd9d124595f350e633d49947ea8e164da8126"
+  },
+  "verification": {
+    "forecast": {
+      "event_head": "90c6f35da88b4bcfff7156b742fb058ea91a61d0c2ed86a2fc13d03410a6b34b",
+      "events": 17,
+      "forecasts": [
+        "native",
+        "edited",
+        "zero",
+        "restore"
+      ],
+      "frontiers": [
+        "wsp_contract",
+        "native_arm",
+        "edited_arm",
+        "zero_arm",
+        "restore_arm"
+      ],
+      "identity_scope": "local-hash-consistency",
+      "phase": "closed",
+      "schema": "mdb-forecast-offline-verification-v1",
+      "seal_sha256": "eb407e3083127c4ec1395cde896b7340535d056b2fe52e9a6b7fa102e4b54431",
+      "verified": true
+    },
+    "identity_scope": "local-hash-consistency",
+    "outcome_manifest": "788a38fe4d19d1282c01f6c0bf11be30a08eb08babc48ebc2528f7358cfec029",
+    "outcomes": 4,
+    "schema": "mdb-weight-study-verification-v1",
+    "unexecuted_arms": [],
+    "verified": true
+  },
+  "versions": {
+    "mdb-runtime": "0.1.0",
+    "numpy": "2.5.4",
+    "safetensors": "0.8.0",
+    "saturn-pub": "0.4.1",
+    "torch": "2.13.0"
+  },
+  "wheel_sha256": {
+    "mdb_runtime-0.1.0-py3-none-any.whl": "d3c1daeb21bed3201808fc4e8da237336845bf496357b3e91e7fcbd9491568f1",
+    "saturn_pub-0.4.1-py3-none-any.whl": "3893aca4723ad107b0a5ce97856af7d25a7f08da73fa505842a16c6717e3d6ed"
+  }
+}

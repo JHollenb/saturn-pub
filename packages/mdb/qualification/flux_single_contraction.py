@@ -29,12 +29,13 @@ def validate_sources(low, high):
         raise ValueError("single6 source image and text must both actually differ")
 
 
-def capture_candidate(block, cut, *, source=None, selection="native", single_index=6):
+def capture_candidate(block, cut, *, source=None, selection="native", single_index=6, logical_step=3):
     import torch
     from diffusers.models.transformers.transformer_flux2 import Flux2Modulation
 
     point = cut.execution_point
-    if (any(point[key] != value for key, value in {"logical_step": 3, "phase": "single", "index": single_index, "local_clock": single_index}.items())
+    if (type(logical_step) is not int or logical_step not in range(4)
+            or any(point[key] != value for key, value in {"logical_step": logical_step, "phase": "single", "index": single_index, "local_clock": single_index}.items())
             or block.training or selection not in {"native", "A", "M", "AM"} or (source is None) != (selection == "native")):
         raise ValueError("candidate requires declared pre-single6 clock/native/A/M/AM profile")
     text_rows, width = cut.payload["text"].shape[1], cut.payload["image"].shape[-1]

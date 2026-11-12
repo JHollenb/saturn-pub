@@ -60,6 +60,22 @@ def build_runtime_wheel(staging, *, package="mdb", distribution="mdb-runtime", v
     return target
 
 
+def _require_distribution_entry(package, distribution):
+    """Reject a source-path shadow of a normally installed runtime package.
+
+    Editable distributions do not own a package entry in RECORD and keep their
+    declared editable resolution. Ordinary wheels must supply the imported bytes.
+    """
+    installed = importlib.metadata.distribution(distribution)
+    entry = next((p for p in installed.files or () if str(p) == package+"/__init__.py"), None)
+    if entry is not None:
+        expected = Path(installed.locate_file(entry)).resolve()
+        actual = Path(importlib.import_module(package).__file__).resolve()
+        if actual != expected:
+            raise RuntimeError("installed "+distribution+" is shadowed by another "+package+
+                               " source; stage with the installed public environment and a clean PYTHONPATH")
+
+
 def runtime_distributions(*, require_installed=False):
     """Resolve only explicitly installed public distributions."""
     try:
@@ -77,9 +93,13 @@ def runtime_distributions(*, require_installed=False):
             # The dependency-free toolkit can describe an inert worker command.
             # Actual staging requires installed bytes and distribution metadata.
             return fallback
-    return (("mdb", "mdb-runtime", version("mdb-runtime")),
-            ("saturn_pub", "saturn-pub", version("saturn-pub", "0.4.1")),
-            ("mrun", "mrun-pub", version("mrun-pub")))
+    resolved = (("mdb", "mdb-runtime", version("mdb-runtime")),
+                ("saturn_pub", "saturn-pub", version("saturn-pub", "0.4.1")),
+                ("mrun", "mrun-pub", version("mrun-pub")))
+    if require_installed:
+        for package, distribution, _ in resolved:
+            _require_distribution_entry(package, distribution)
+    return resolved
 
 
 def runtime_wheel_names():

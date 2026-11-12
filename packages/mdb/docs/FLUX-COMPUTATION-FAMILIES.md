@@ -1,5 +1,10 @@
 # Testing a diffusion computation family in one MDB run
 
+For the later source-writer experiment with frozen fresh-context predictions,
+see [a prospective FLUX computation family](FLUX-PROSPECTIVE-WRITER-FAMILY.md).
+It records a different clock, source policy and intervention construction; the
+earlier six-panel results and counterexamples below remain unchanged.
+
 The [symbol-table synthesis](DIFFUSION-SYMBOL-TABLE-LESSONS.md) explains what
 these results change about naming computations, applicability, timed carriers and
 the next causal experiments.

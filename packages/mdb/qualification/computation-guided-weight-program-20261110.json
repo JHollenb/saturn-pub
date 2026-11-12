@@ -1,0 +1,328 @@
+{
+  "archive": {
+    "bytes": 367824965,
+    "files_manifest_sha256": "7c1a2812caaf8f1fb143c433d4b59c793f98f5ba588122bfffbe59f8a8e68ba2",
+    "path": "/mnt/hdd8tb/mdb/research/wsp-program-replay-job-f9ca124e108d.tar.gz",
+    "sha256": "78eb2135746f679ea075ac6f7ead9e55e579d37bf494f111e904798ce0e4900e",
+    "summary_sha256": "a08206692f09e53dbab7cdf1065b89455a491db997fd5577c3bc1b51cce11faa"
+  },
+  "comparisons": {
+    "compiled_minus_native": {
+      "control_correct_delta": -3,
+      "first_token_choices_equal": false,
+      "full_logits_max_abs_difference": 14.257328033447266,
+      "generated_rewrite_correct_delta": 16,
+      "generation_equal": false,
+      "mean_rewrite_logp_delta": 10.36869840214479,
+      "preservation_kl_delta": 0.6343793684303114,
+      "rewrite_final_digit_correct_delta": 16
+    },
+    "compiled_minus_random": {
+      "control_correct_delta": -3,
+      "first_token_choices_equal": false,
+      "full_logits_max_abs_difference": 12.643096923828125,
+      "generated_rewrite_correct_delta": 16,
+      "generation_equal": false,
+      "mean_rewrite_logp_delta": 8.506184625181495,
+      "preservation_kl_delta": 0.6335740828604637,
+      "rewrite_final_digit_correct_delta": 16
+    },
+    "compiled_minus_semantic-program": {
+      "control_correct_delta": -3,
+      "first_token_choices_equal": false,
+      "full_logits_max_abs_difference": 12.185550689697266,
+      "generated_rewrite_correct_delta": 0,
+      "generation_equal": false,
+      "mean_rewrite_logp_delta": -0.00022245917681572931,
+      "preservation_kl_delta": 0.6343793684303114,
+      "rewrite_final_digit_correct_delta": 0
+    },
+    "factored_minus_compiled": {
+      "control_correct_delta": 0,
+      "first_token_choices_equal": true,
+      "full_logits_max_abs_difference": 0.000029325485229492188,
+      "generated_rewrite_correct_delta": 0,
+      "generation_equal": true,
+      "mean_rewrite_logp_delta": -1.4267838405971484e-9,
+      "preservation_kl_delta": -0.000001769841648346926,
+      "rewrite_final_digit_correct_delta": 0
+    },
+    "native_minus_restored": {
+      "control_correct_delta": 0,
+      "first_token_choices_equal": true,
+      "full_logits_max_abs_difference": 0,
+      "generated_rewrite_correct_delta": 0,
+      "generation_equal": true,
+      "mean_rewrite_logp_delta": 0,
+      "preservation_kl_delta": 0,
+      "rewrite_final_digit_correct_delta": 0
+    },
+    "wrong-location_minus_semantic-program": {
+      "control_correct_delta": 0,
+      "first_token_choices_equal": false,
+      "full_logits_max_abs_difference": 13.396496772766113,
+      "generated_rewrite_correct_delta": -16,
+      "generation_equal": false,
+      "mean_rewrite_logp_delta": -4.387641721782595,
+      "preservation_kl_delta": 0,
+      "rewrite_final_digit_correct_delta": -16
+    }
+  },
+  "custody_sha256": {
+    "evidence-sweep.json": "4bcbbecceb5df69809ebb5867850ceeb95296fc64596882b729eed2704778645",
+    "evidence-verify.json": "a5d51e10330b8ed56f87914757150ffe899679fa3d42dbef515b566b0d8d9bd3",
+    "fresh-process-comparison.json": "6aea3117bd572eda33bbcb3088131b3fa6a7eea46e6bf4849932ecd800562f65",
+    "guarded-receipt.json": "934b76fb52996b53d83f805890446b11b51aca24e5d85af685f73d1a065b12d3",
+    "job.json": "5b2fcb98dcada2de6ce4425b1135f9bfb6e164fadc35fae8339bcf84dadf4270",
+    "payload/payload-seal.json": "1a1c464fa26668dd9094c1c6ddbfed385552f03da865d7fd9398c48e8d213636",
+    "publication.json": "52e9c73a58a1f4c4a01ab4a8783e1e252eb5430e34177569f17b5ea299f54a14",
+    "request.json": "01dcbb7f7cc57e25ecfe881fe5551064efbbef5b812282848d881f1097e66e77",
+    "saved-audit.json": "ecb8ecba982c26aed57e6f944ebfbef5bb2fdb08d7b0a99ae3c9cdd01ef97c48"
+  },
+  "date": "2026-11-10",
+  "evidence_root": "/Users/jakeholl/domains/artifacts/mdb-computation-program-20261110/replay-02",
+  "executed_wheels_sha256": {
+    "mdb_runtime-0.1.0-py3-none-any.whl": "8e29cedbb24ac491c9cad358d896578cd35f677ccbbbc849655d3be147de2fed",
+    "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+    "saturn_pub-0.4.1-py3-none-any.whl": "7deadd93c3f3c40d0b7c16dd148231d7f245b6eb79172a054533f6c0387b6e62"
+  },
+  "fresh_process_comparison": {
+    "comparisons": {
+      "compiled": {
+        "full_logits_max_abs_difference": 0,
+        "generation_equal": true
+      },
+      "native": {
+        "full_logits_max_abs_difference": 0,
+        "generation_equal": true
+      },
+      "semantic-program": {
+        "full_logits_max_abs_difference": 0,
+        "generation_equal": true
+      }
+    },
+    "replay_job": "job-f9ca124e108d",
+    "schema": "mdb-frozen-program-fresh-process-comparison-v1",
+    "scope": "same frozen patch and heldout rows, full saved first-token logits and own-state answer IDs; no KV comparison",
+    "source_job": "job-ca1c7ac68a91"
+  },
+  "frozen_program_sha256": "85332e67412ca402ecbb0ce4ff579f5cf1e3d53f83292a4649f43d3370b1971e",
+  "heldout": {
+    "compiled": {
+      "control_final_digit_correct": 6,
+      "control_mean_kl": 1.2682510538675185,
+      "general_mean_kl": 0.0005076829931042647,
+      "generated_control_correct": 5,
+      "generated_original_task_correct": 0,
+      "generated_rewrite_correct": 16,
+      "preservation_kl": 0.6343793684303114,
+      "rewrite_final_digit_correct": 16
+    },
+    "factored": {
+      "control_final_digit_correct": 6,
+      "control_mean_kl": 1.2682475203320482,
+      "general_mean_kl": 0.000507676845277758,
+      "generated_control_correct": 5,
+      "generated_original_task_correct": 0,
+      "generated_rewrite_correct": 16,
+      "preservation_kl": 0.634377598588663,
+      "rewrite_final_digit_correct": 16
+    },
+    "native": {
+      "control_final_digit_correct": 8,
+      "control_mean_kl": 0,
+      "general_mean_kl": 0,
+      "generated_control_correct": 8,
+      "generated_original_task_correct": 16,
+      "generated_rewrite_correct": 0,
+      "preservation_kl": 0,
+      "rewrite_final_digit_correct": 0
+    },
+    "random": {
+      "control_final_digit_correct": 8,
+      "control_mean_kl": 0.000022052462519800466,
+      "general_mean_kl": 0.001588518677175636,
+      "generated_control_correct": 8,
+      "generated_original_task_correct": 15,
+      "generated_rewrite_correct": 0,
+      "preservation_kl": 0.0008052855698477183,
+      "rewrite_final_digit_correct": 0
+    },
+    "restored": {
+      "control_final_digit_correct": 8,
+      "control_mean_kl": 0,
+      "general_mean_kl": 0,
+      "generated_control_correct": 8,
+      "generated_original_task_correct": 16,
+      "generated_rewrite_correct": 0,
+      "preservation_kl": 0,
+      "rewrite_final_digit_correct": 0
+    },
+    "semantic-program": {
+      "control_final_digit_correct": 8,
+      "control_mean_kl": 0,
+      "general_mean_kl": 0,
+      "generated_control_correct": 8,
+      "generated_original_task_correct": 0,
+      "generated_rewrite_correct": 16,
+      "preservation_kl": 0,
+      "rewrite_final_digit_correct": 16
+    },
+    "wrong-location": {
+      "control_final_digit_correct": 8,
+      "control_mean_kl": 0,
+      "general_mean_kl": 0,
+      "generated_control_correct": 8,
+      "generated_original_task_correct": 12,
+      "generated_rewrite_correct": 0,
+      "preservation_kl": 0,
+      "rewrite_final_digit_correct": 0
+    }
+  },
+  "installed_package_tests": {
+    "errors": 0,
+    "failures": 0,
+    "junit_sha256": "b6035bf0d1ef2b603c1727758b465b15d162a1627bac77715570b6c018c56bb8",
+    "junit_xml": "/private/tmp/mdb-program-installed-tests-20261110.xml",
+    "numpy": "2.5.4",
+    "python": "3.12.13",
+    "ruff": "passed",
+    "scope": "installed public packages outside workspace; WSP, selective/program lowering, forecast/archive/ports",
+    "seconds": 2.243,
+    "tests": 83,
+    "torch": "2.13.0"
+  },
+  "job_id": "job-f9ca124e108d",
+  "limits": [
+    "single fixed prompt family, no carry-class change on matched tasks",
+    "authored semantic request and historical account; learned response and weight realization",
+    "wrong-location control at other operand units cannot alone isolate identity because addition is commutative",
+    "conditional state-program reference has externally supplied row selection; weight arms have no predicate",
+    "saved-only audit, no independent full-model rerun; exploratory, not terminal certification",
+    "authored semantic request and historical role map, no automatic semantic decompilation",
+    "three-token generation budget does not test stopping beyond that budget",
+    "static rank-one correction is not sparse changed-weight support",
+    "no general superiority or arithmetic capability improvement claim"
+  ],
+  "matched_norm_ratios": {
+    "0": {
+      "correction_frobenius": 0.9999999648127744,
+      "target_direction_norm": 0.9999999999999999
+    },
+    "1": {
+      "correction_frobenius": 0.9999999648127741,
+      "target_direction_norm": 1.0000000000000002
+    }
+  },
+  "parameters_restored": true,
+  "payload_custody": {
+    "declared": {
+      "sha256": "12d902cbf94f22060a46e216fe30d2115334c8d33da8da400701591a9e78d155",
+      "size_bytes": 9709764
+    },
+    "executed": {
+      "host": "beast",
+      "reported_ts": 1794374527.054376,
+      "sha256": "12d902cbf94f22060a46e216fe30d2115334c8d33da8da400701591a9e78d155",
+      "size_bytes": 9709764
+    },
+    "required": true,
+    "sealed": {
+      "sealed_ts": 1794374526.914467,
+      "sha256": "12d902cbf94f22060a46e216fe30d2115334c8d33da8da400701591a9e78d155",
+      "size_bytes": 9709764
+    }
+  },
+  "program": {
+    "column": 0,
+    "operand": "a",
+    "source": 7,
+    "target": 3
+  },
+  "recipe_identity": "d9a9b3ed34285ef2ac10ac8b52a2c9bebd2693c367f3f57f06ba0e89cabc6c7e",
+  "replay_lease_seconds": 273.97,
+  "replay_peak_rss_mb": 8853.7,
+  "replay_peak_vram_mb": 0,
+  "replay_scientific_seconds": 246.33194264024496,
+  "request_sha256": "503dad7ca6e7a94985caff867e69ff9fc45000ffec033b76f7a734109ee8ff4d",
+  "saturn_evidence": {
+    "address_citations": 0,
+    "instrument_status": "target-streams-only",
+    "run_exit": 0,
+    "timeline_records": 7,
+    "typed_receipts": 0,
+    "verify_exit": 0
+  },
+  "saved_audit": {
+    "files_verified": 323,
+    "full_vocabulary_recomputed": true,
+    "generation_ids_recomputed": true,
+    "studies": [
+      "capture",
+      "causal",
+      "discovery",
+      "heldout"
+    ]
+  },
+  "schema": "mdb-computation-guided-weight-program-qualification-v1",
+  "selected": {
+    "random": {
+      "dose": 1.5,
+      "family": "random",
+      "key": "random1",
+      "site": "model.layers.21.mlp.down_proj"
+    },
+    "semantic": {
+      "dose": 1,
+      "family": "semantic",
+      "key": "semantic1",
+      "site": "model.layers.21.mlp.down_proj"
+    }
+  },
+  "site": "model.layers.21.mlp.down_proj",
+  "source_job": {
+    "closed_source_phases_verified": [
+      "capture",
+      "causal",
+      "discovery"
+    ],
+    "job_id": "job-ca1c7ac68a91",
+    "partial_heldout_verified": true,
+    "raw_root": "/Users/jakeholl/domains/artifacts/mdb-computation-program-20261110/native-01/partial-evidence",
+    "reason": "finite scientific wall budget exceeded after completed discovery and three heldout arms",
+    "state": "failed"
+  },
+  "source_sha256": {
+    "qualification/audit_wsp_program.py": "819b9b84b3e9c0a1d22ab9aa724752edbcb27bafa1df5c8feebc758faa6472cb",
+    "qualification/audit_wsp_selective.py": "9286c989192bc44769f8cf1197698c1f4de9c727a77164bc3166d2a700ecf090",
+    "qualification/submit_wsp_program.py": "8215be52211934ebb67d7224a52b89ab0531146c1db99c0b6daea97f81d02506",
+    "qualification/submit_wsp_program_replay.py": "931c1f128703c4d6d5384633c366005ef2ef14b25b26fea5f16d6656948b105c",
+    "qualification/wsp_program_qwen.py": "f5f352213085d71a8b8746a0053006448446e36b2fa1c9300cfb2bc7fc5bae7e",
+    "qualification/wsp_program_replay.py": "92b925325fd214bce843029b77cebc10f0c6a33c5f112fa6bb2095d0034e0c68",
+    "src/mdb/wsp_program.py": "35ad61afb521e2f8dc048c4c3514f3885fdd899bfa996972b497d94f0bfbb37f",
+    "tests/test_wsp_program.py": "9f6fb06573ab7ed27f584e20b091f2363cae5022b160df98d7d966ebb54ea388"
+  },
+  "specimen": {
+    "backend": "HF CPU FP32 eager",
+    "checkpoint_sha256": "dd924a11b4c220f385b51ffa522daea7c9f3d850e31b162bb5661df483c6d3ee",
+    "consumer": "full-vocabulary final-digit scoring after two supplied digits; separate three-token own-state generation",
+    "gradient_or_optimizer_steps": 0,
+    "model": "Qwen2.5-1.5B-Instruct"
+  },
+  "split": {
+    "development_general": 8,
+    "development_matched": 16,
+    "development_position_controls": 8,
+    "heldout_general": 8,
+    "heldout_matched": 16,
+    "heldout_position_controls": 8,
+    "replay_is_new_independent_holdout": false
+  },
+  "status": {
+    "instrument_status": "observed",
+    "mechanics_status": "valid completed replay and three completed source phases",
+    "terminal_status": "not-evaluated",
+    "trend_status": "requested digit transformation realized; contextual operand/column scope incomplete"
+  },
+  "working_inference": "value rewrite transfers; three control failures are consistent with a broader operand/column binding than requested; internal selector not yet isolated"
+}

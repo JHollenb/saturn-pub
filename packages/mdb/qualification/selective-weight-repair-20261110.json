@@ -1,0 +1,195 @@
+{
+  "archive": {
+    "bytes": 141556160,
+    "files_manifest_sha256": "013e4a7378262519739f945c3fb85e51523db6af4ca1d8f47d8cfa5de8f7df24",
+    "path": "/mnt/hdd8tb/mdb/research/wsp-selective-job-1c69edf785bf.tar.gz",
+    "sha256": "3e58e57afb87bf0e03e9e3ae96ea4f3202a132f2dc82d181ed1c7bb34a94a8d1",
+    "summary_sha256": "fbfd0915bd338ad893bf534893ff10766962b47a0eba2ce4ff37dcd18cc4065a"
+  },
+  "comparisons": {
+    "compiled_minus_native": {
+      "correct_delta": 8,
+      "first_token_choices_equal": false,
+      "full_logits_max_abs_difference": 9.33148193359375,
+      "generation_equal": false,
+      "mean_logp_delta": 1.4216940102800082,
+      "preservation_kl_delta": 0.002212005398816772
+    },
+    "compiled_minus_whole-write": {
+      "correct_delta": 4,
+      "first_token_choices_equal": false,
+      "full_logits_max_abs_difference": 8.75744342803955,
+      "generation_equal": false,
+      "mean_logp_delta": 0.5827511101596643,
+      "preservation_kl_delta": -0.4589254886313029
+    },
+    "native_minus_restored": {
+      "correct_delta": 0,
+      "first_token_choices_equal": true,
+      "full_logits_max_abs_difference": 0,
+      "generation_equal": true,
+      "mean_logp_delta": 0,
+      "preservation_kl_delta": 0
+    },
+    "virtual_minus_compiled": {
+      "correct_delta": 0,
+      "first_token_choices_equal": true,
+      "full_logits_max_abs_difference": 0.00002765655517578125,
+      "generation_equal": true,
+      "mean_logp_delta": -0.0000010452640339941865,
+      "preservation_kl_delta": -1.0323166515623788e-8
+    },
+    "wrong-sign_minus_native": {
+      "correct_delta": 0,
+      "first_token_choices_equal": false,
+      "full_logits_max_abs_difference": 3.4459917545318604,
+      "generation_equal": false,
+      "mean_logp_delta": -0.040056188442268326,
+      "preservation_kl_delta": 0.00195377297396453
+    }
+  },
+  "custody_files": {
+    "guarded-receipt.json": "c413cced11ff8c34b33d8525b5df8eed142c1d22e506adc1ddbaad5eca9598bf",
+    "job.json": "f17f2664e16a60f6b31e06cf7b8cdf3264de9c907cc51f45c359c8daf593f1eb",
+    "payload/payload-seal.json": "b51b8ee9e74e49bc062c8a1b6fcbc5e7f03ed0f68b590c524a2a63ae4866b999",
+    "publication.json": "1f8208b72515adb886167c567f8b5ab8b9c58a38b0f9b6a18e221186f2658bf4",
+    "request.json": "b6bf22a2cf6a1f387709baa12c7631986da5ccba3ae6d9998b2fce064f964be0",
+    "saved-audit.json": "9789bead92bfcd5b27a90559478af7e5eeb8ffc1c8ea5b3293b22fe89302c6dd"
+  },
+  "date": "2026-11-10",
+  "evidence_root": "/Users/jakeholl/domains/artifacts/mdb-selective-discovery-20261110/native-02",
+  "executed_worker_sha256": "ca81524dc50263239a117bfeb3af411cc5dcaeb2c64cae2fb674e8176d429c5b",
+  "installed_verification": {
+    "mdb_wheel_sha256": "0434a73c35e3fd0c4b316bfb8aef7cdfc4550ede79110e168a6afcebb35fe4d0",
+    "numpy": "2.5.4",
+    "python": "3.12.13",
+    "ruff": "passed",
+    "saturn_shared_store_tests": 7,
+    "saturn_wheel_sha256": "3893aca4723ad107b0a5ce97856af7d25a7f08da73fa505842a16c6717e3d6ed",
+    "scope": "isolated installed public packages outside workspace; WSP/discovery/selective/forecast/archive/ports",
+    "seconds": 2.41,
+    "tests_passed": 80,
+    "torch": "2.13.0"
+  },
+  "job_id": "job-1c69edf785bf",
+  "lease_elapsed_s": 257.12,
+  "limits": [
+    "one same-template arithmetic family; twenty fresh tasks and twelve fresh preservation prompts",
+    "site and desired suppression direction supplied by previous discovery",
+    "low-rank correction is not sparse changed-weight support",
+    "one native-correct case regressed",
+    "four-token generations are not complete-answer compliance",
+    "exploratory result, not terminal capability certification"
+  ],
+  "parameter_inventory_restored": true,
+  "payload_custody": {
+    "declared": {
+      "sha256": "ed209e06553f3d84fbd1fcfe184decf464c9c9f967dbe15f14265028e49caca7",
+      "size_bytes": 3249444
+    },
+    "executed": {
+      "host": "beast",
+      "reported_ts": 1794371993.0972502,
+      "sha256": "ed209e06553f3d84fbd1fcfe184decf464c9c9f967dbe15f14265028e49caca7",
+      "size_bytes": 3249444
+    },
+    "required": true,
+    "sealed": {
+      "sealed_ts": 1794371992.9991016,
+      "sha256": "ed209e06553f3d84fbd1fcfe184decf464c9c9f967dbe15f14265028e49caca7",
+      "size_bytes": 3249444
+    }
+  },
+  "peak_rss_mb": 3957.5,
+  "peak_vram_mb": 0,
+  "prior_failed_lease": {
+    "candidate_or_heldout_outcomes": false,
+    "cause": "shipped Saturn wheel predated shared_store import; stopped on capture publication",
+    "job_id": "job-381c15270212",
+    "root": "/Users/jakeholl/domains/artifacts/mdb-selective-discovery-20261110/native-01"
+  },
+  "request_sha256": "841bb3e2bb107b9277e4e06aab4afb83f721938690e3aa7f7fa368d91bf43080",
+  "retained_results": {
+    "compiled": {
+      "correct": 10,
+      "mean_target_logp": -1.5869392408706962,
+      "preservation_kl": 0.002212005398816772
+    },
+    "native": {
+      "correct": 2,
+      "mean_target_logp": -3.0086332511507043,
+      "preservation_kl": 0
+    },
+    "restored": {
+      "correct": 2,
+      "mean_target_logp": -3.0086332511507043,
+      "preservation_kl": 0
+    },
+    "virtual": {
+      "correct": 10,
+      "mean_target_logp": -1.5869402861347301,
+      "preservation_kl": 0.0022119950756502565
+    },
+    "whole-write": {
+      "correct": 6,
+      "mean_target_logp": -2.1696903510303605,
+      "preservation_kl": 0.46113749403011967
+    },
+    "wrong-sign": {
+      "correct": 2,
+      "mean_target_logp": -3.0486894395929727,
+      "preservation_kl": 0.00195377297396453
+    }
+  },
+  "saturn_evidence": {
+    "address_citations": 0,
+    "instrument_status": "target-streams-only",
+    "run_exit": 0,
+    "timeline_records": 26,
+    "typed_receipts": 0,
+    "verify_exit": 0
+  },
+  "saved_audit": {
+    "files_verified": 318,
+    "full_vocabulary_recomputed": true,
+    "independent_pretrained_rerun": false,
+    "studies": [
+      "capture",
+      "discovery",
+      "heldout"
+    ]
+  },
+  "schema": "mdb-selective-weight-repair-qualification-v1",
+  "scientific_elapsed_s": 217.79142429167405,
+  "selected": {
+    "dose": 1.5,
+    "fit_preserve_weight": 100,
+    "key": "rank4-preserve100.0",
+    "rank": 4
+  },
+  "source_sha256": {
+    "qualification/audit_wsp_selective.py": "9286c989192bc44769f8cf1197698c1f4de9c727a77164bc3166d2a700ecf090",
+    "qualification/submit_wsp_selective.py": "8924ec8c80171c5647ecb5dc42675c98e0a82868e7b5f1a02a784b8fa065a790",
+    "qualification/wsp_selective_qwen.py": "ca81524dc50263239a117bfeb3af411cc5dcaeb2c64cae2fb674e8176d429c5b",
+    "src/mdb/wsp_selective.py": "62468d758cc0192df4b4f98206b42e447ebb35508e073e106ef2fd5f3dded9b7",
+    "tests/test_wsp_selective.py": "9f7c48f74bf807ff6634dc714f55aa6e20a4b466411cba0e6f8b4cc5c587b4b1"
+  },
+  "specimen": {
+    "backend": "HF CPU FP32 eager",
+    "checkpoint_sha256": "fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe",
+    "consumer": "complete-vocabulary first-token argmax and target logp; preservation KL; separate own-state four-token generation",
+    "model": "Qwen2.5-0.5B-Instruct"
+  },
+  "split_counts": {
+    "discovery": 16,
+    "discovery_preservation": 8,
+    "heldout": 20,
+    "heldout_preservation": 12
+  },
+  "status": {
+    "instrument_status": "observed",
+    "mechanics_status": "valid",
+    "terminal_status": "not-evaluated",
+    "trend_status": "task improvement with lower measured locality cost; nine repairs and one regression"
+  }
+}

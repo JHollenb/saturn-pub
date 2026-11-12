@@ -1,0 +1,268 @@
+{
+  "audit_sha256": "78724f60ecd91f4ae67efd2e618124c15c60c000f5059ff80fc63f10ef2f0acd",
+  "model_calls": 0,
+  "originals": [
+    {
+      "case": "binding-anchor/whole_Q",
+      "original": {
+        "bytes": 157557,
+        "path": "images/binding-anchor/whole_Q/native.png",
+        "sha256": "cd59ab8dd012ace5ac8927bff8cbd8cbfba9a55b452d306c15ab27d46d2ae777",
+        "source_path": "cases/binding-anchor/whole_Q/decoder/native-reference/image.png"
+      },
+      "panel": "binding"
+    },
+    {
+      "case": "binding-anchor/support_P",
+      "original": {
+        "bytes": 155963,
+        "path": "images/binding-anchor/support_P/native.png",
+        "sha256": "c3e658ea6b6e730acd0c60aaa32fc2ecb0cbf882dfa48156863f4b972a19d8a1",
+        "source_path": "cases/binding-anchor/support_P/decoder/native-reference/image.png"
+      },
+      "panel": "binding"
+    },
+    {
+      "case": "binding-anchor/complement_P",
+      "original": {
+        "bytes": 157538,
+        "path": "images/binding-anchor/complement_P/native.png",
+        "sha256": "086292a03f202a915fe8a84f93a4c690e0f106e6cc706dd37e591ad2f8c8c4ec",
+        "source_path": "cases/binding-anchor/complement_P/decoder/native-reference/image.png"
+      },
+      "panel": "binding"
+    },
+    {
+      "case": "binding-anchor/whole_P",
+      "original": {
+        "bytes": 156715,
+        "path": "images/binding-anchor/whole_P/native.png",
+        "sha256": "7b42ebbdbdc41677d9d8c9ef36161411a9536ae3243251a9fb5c588cfc6713ac",
+        "source_path": "cases/binding-anchor/whole_P/decoder/native-reference/image.png"
+      },
+      "panel": "binding"
+    },
+    {
+      "case": "binding-seed/whole_Q",
+      "original": {
+        "bytes": 142384,
+        "path": "images/binding-seed/whole_Q/native.png",
+        "sha256": "32acd4e36ff63dde176dcc58ec1ffdeb74a79fece8e1b06c86cf96ac29ff3197",
+        "source_path": "cases/binding-seed/whole_Q/decoder/native-reference/image.png"
+      },
+      "panel": "binding"
+    },
+    {
+      "case": "binding-seed/support_P",
+      "original": {
+        "bytes": 140875,
+        "path": "images/binding-seed/support_P/native.png",
+        "sha256": "de5792f28d964aa2dc854e6416195d063fd3a8da4e5634eb2c557dc188463512",
+        "source_path": "cases/binding-seed/support_P/decoder/native-reference/image.png"
+      },
+      "panel": "binding"
+    },
+    {
+      "case": "binding-seed/complement_P",
+      "original": {
+        "bytes": 142510,
+        "path": "images/binding-seed/complement_P/native.png",
+        "sha256": "246bc859e8bf55f262d8e624d15b4196941361028eb95c68f4f3c0ba974dfa01",
+        "source_path": "cases/binding-seed/complement_P/decoder/native-reference/image.png"
+      },
+      "panel": "binding"
+    },
+    {
+      "case": "binding-seed/whole_P",
+      "original": {
+        "bytes": 140073,
+        "path": "images/binding-seed/whole_P/native.png",
+        "sha256": "dfe561573b7fe102f326bab4e47b28bd4783afc47289498a4607030ff0201a6b",
+        "source_path": "cases/binding-seed/whole_P/decoder/native-reference/image.png"
+      },
+      "panel": "binding"
+    },
+    {
+      "case": "binding-wording/whole_Q",
+      "original": {
+        "bytes": 127678,
+        "path": "images/binding-wording/whole_Q/native.png",
+        "sha256": "dc48af3cbc7d3d9f17967927796e29a3af179d4171b115a612f7f8fe450ba662",
+        "source_path": "cases/binding-wording/whole_Q/decoder/native-reference/image.png"
+      },
+      "panel": "binding"
+    },
+    {
+      "case": "binding-wording/support_P",
+      "original": {
+        "bytes": 110405,
+        "path": "images/binding-wording/support_P/native.png",
+        "sha256": "cff954483a1ceecbb3aa92ef7b79da31e6555016aa4d715a4c6f0e7edc573f3e",
+        "source_path": "cases/binding-wording/support_P/decoder/native-reference/image.png"
+      },
+      "panel": "binding"
+    },
+    {
+      "case": "binding-wording/complement_P",
+      "original": {
+        "bytes": 128965,
+        "path": "images/binding-wording/complement_P/native.png",
+        "sha256": "09a3c7dbc82724ec42a5fe51f021338b191455d6094613d0a029e64e386fec72",
+        "source_path": "cases/binding-wording/complement_P/decoder/native-reference/image.png"
+      },
+      "panel": "binding"
+    },
+    {
+      "case": "binding-wording/whole_P",
+      "original": {
+        "bytes": 111847,
+        "path": "images/binding-wording/whole_P/native.png",
+        "sha256": "d69dae31512ac2324369b2aeecd22b6c88c837962daff84c715d69ef2552c2b6",
+        "source_path": "cases/binding-wording/whole_P/decoder/native-reference/image.png"
+      },
+      "panel": "binding"
+    },
+    {
+      "case": "binding-objects/whole_Q",
+      "original": {
+        "bytes": 148569,
+        "path": "images/binding-objects/whole_Q/native.png",
+        "sha256": "84e7aff35f96cd25ab61cc179b6089c3c0468739c2f9e34d5ea6c748bebd2fe9",
+        "source_path": "cases/binding-objects/whole_Q/decoder/native-reference/image.png"
+      },
+      "panel": "binding"
+    },
+    {
+      "case": "binding-objects/support_P",
+      "original": {
+        "bytes": 141388,
+        "path": "images/binding-objects/support_P/native.png",
+        "sha256": "043a22759f4ef7a06283b470e31fbf69d3403569e791534aedcc214a34c0d02e",
+        "source_path": "cases/binding-objects/support_P/decoder/native-reference/image.png"
+      },
+      "panel": "binding"
+    },
+    {
+      "case": "binding-objects/complement_P",
+      "original": {
+        "bytes": 149087,
+        "path": "images/binding-objects/complement_P/native.png",
+        "sha256": "df524ff9fa5202bd0fb03d6f176c1be7bab940aa993ebff01aad7ed4a611aed3",
+        "source_path": "cases/binding-objects/complement_P/decoder/native-reference/image.png"
+      },
+      "panel": "binding"
+    },
+    {
+      "case": "binding-objects/whole_P",
+      "original": {
+        "bytes": 140847,
+        "path": "images/binding-objects/whole_P/native.png",
+        "sha256": "457eab313a6394b1453e18b02b9a263c9188164bf5546b782469b490cb5a6fe2",
+        "source_path": "cases/binding-objects/whole_P/decoder/native-reference/image.png"
+      },
+      "panel": "binding"
+    },
+    {
+      "case": "cd-fresh0s613/baseline",
+      "original": {
+        "bytes": 231969,
+        "path": "images/cd-fresh0s613/baseline/native.png",
+        "sha256": "b13c378fb6c30bb2cdb9c879f7d75203e9e1d9ef58c00ad359c0b5b2f25e1b4c",
+        "source_path": "cases/cd-fresh0s613/baseline/decoder/native-reference/image.png"
+      },
+      "panel": "fixed-payload"
+    },
+    {
+      "case": "cd-fresh0s613/sham",
+      "original": {
+        "bytes": 231969,
+        "path": "images/cd-fresh0s613/sham/native.png",
+        "sha256": "b13c378fb6c30bb2cdb9c879f7d75203e9e1d9ef58c00ad359c0b5b2f25e1b4c",
+        "source_path": "cases/cd-fresh0s613/sham/decoder/native-reference/image.png"
+      },
+      "panel": "fixed-payload"
+    },
+    {
+      "case": "cd-fresh0s613/common-only",
+      "original": {
+        "bytes": 231226,
+        "path": "images/cd-fresh0s613/common-only/native.png",
+        "sha256": "a0a62358a112988d201cb0da536832026260caa3f75a5460cfc6292698442e58",
+        "source_path": "cases/cd-fresh0s613/common-only/decoder/native-reference/image.png"
+      },
+      "panel": "fixed-payload"
+    },
+    {
+      "case": "cd-fresh0s613/differential-only",
+      "original": {
+        "bytes": 233701,
+        "path": "images/cd-fresh0s613/differential-only/native.png",
+        "sha256": "ab340c2fd1ca9cd51b1ecce90638221e714b31e0ac45c767d1d418368763101f",
+        "source_path": "cases/cd-fresh0s613/differential-only/decoder/native-reference/image.png"
+      },
+      "panel": "fixed-payload"
+    },
+    {
+      "case": "cd-fresh0s613/both",
+      "original": {
+        "bytes": 234928,
+        "path": "images/cd-fresh0s613/both/native.png",
+        "sha256": "c5caa0dcb75d83ba563a35efac874ba8f6d3c76cb5e4ddd4ac36b8feea15dc35",
+        "source_path": "cases/cd-fresh0s613/both/decoder/native-reference/image.png"
+      },
+      "panel": "fixed-payload"
+    },
+    {
+      "case": "cd-foxcat0s821/baseline",
+      "original": {
+        "bytes": 264712,
+        "path": "images/cd-foxcat0s821/baseline/native.png",
+        "sha256": "4df397d91ed4c1f79976624867758e14f8d2fa911302ebea68bf62b794d9b48f",
+        "source_path": "cases/cd-foxcat0s821/baseline/decoder/native-reference/image.png"
+      },
+      "panel": "fixed-payload"
+    },
+    {
+      "case": "cd-foxcat0s821/sham",
+      "original": {
+        "bytes": 264712,
+        "path": "images/cd-foxcat0s821/sham/native.png",
+        "sha256": "4df397d91ed4c1f79976624867758e14f8d2fa911302ebea68bf62b794d9b48f",
+        "source_path": "cases/cd-foxcat0s821/sham/decoder/native-reference/image.png"
+      },
+      "panel": "fixed-payload"
+    },
+    {
+      "case": "cd-foxcat0s821/common-only",
+      "original": {
+        "bytes": 265241,
+        "path": "images/cd-foxcat0s821/common-only/native.png",
+        "sha256": "161d17ff8168cd54ae5016ae704959d8f90eb0e9e1c5170c9d9fca7d81fec6cf",
+        "source_path": "cases/cd-foxcat0s821/common-only/decoder/native-reference/image.png"
+      },
+      "panel": "fixed-payload"
+    },
+    {
+      "case": "cd-foxcat0s821/differential-only",
+      "original": {
+        "bytes": 266416,
+        "path": "images/cd-foxcat0s821/differential-only/native.png",
+        "sha256": "8e7998fc66caadb39902a6c30dae17fe1516c1cbc174ee1857cdf59b964bc8d9",
+        "source_path": "cases/cd-foxcat0s821/differential-only/decoder/native-reference/image.png"
+      },
+      "panel": "fixed-payload"
+    },
+    {
+      "case": "cd-foxcat0s821/both",
+      "original": {
+        "bytes": 265098,
+        "path": "images/cd-foxcat0s821/both/native.png",
+        "sha256": "2282a1b3ca2d814367b8d243ab48d474b8479111076f9ed68c3c5d25d3ece958",
+        "source_path": "cases/cd-foxcat0s821/both/decoder/native-reference/image.png"
+      },
+      "panel": "fixed-payload"
+    }
+  ],
+  "schema": "mdb-lifecycle-image-panels-v1",
+  "scope": "Display panels from hash-verified original native PNGs; numerical equality is established separately by the saved-only audit."
+}

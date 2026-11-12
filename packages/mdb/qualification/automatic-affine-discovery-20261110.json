@@ -1,0 +1,164 @@
+{
+  "archive": {
+    "bytes": 2983923,
+    "files_manifest_sha256": "4e469ac1f71c047b8c942f1eb0a9d1d9e2edd9b9436dff5147d2a7ed80c35848",
+    "path": "/mnt/hdd8tb/mdb/research/wsp-auto-job-745584d1b1ce.tar.gz",
+    "sha256": "5d19d2a9931c1f112acbe627af0e8878a1d8d3f7af33ed77c1d8ee0385a8a7d1",
+    "summary_sha256": "56b1ce5fea6eadddc0e9a6869e8fb441f79baa18decc298827df71ea84f3a42c"
+  },
+  "artifact_root": "/Users/jakeholl/domains/artifacts/mdb-auto-discovery-20261110/native-03",
+  "audit_reader_sha256": "8042e81734a3c1dd32d32c9cf5b8ab620aa9a4e0f44ae3f813b7f4a27868172d",
+  "checks": {
+    "dedicated_saved_audit": "mechanics valid",
+    "discovery_and_heldout_inputs_disjoint": true,
+    "evidence_sweep": "run ok; target-streams-only, 23 records; no typed receipts or address citations",
+    "installed_tests": "76 passed in 2.40s, outside workspace, Torch 2.13.0",
+    "ruff": "All checks passed",
+    "source_matches_executed_payload": true
+  },
+  "executed_payload": {
+    "host": "beast",
+    "sha256": "984d5e7475849866ba93e76d3e08f045e7fe69950dc65907d36e3e4815ca0bb7",
+    "size_bytes": 3240723
+  },
+  "files_verified": 346,
+  "heldout_comparisons": {
+    "compiled_minus_native": {
+      "correct_delta": 2,
+      "generation_equal": false,
+      "max_target_logp_difference": 4.221957683563232,
+      "mean_logp_delta": 1.3581792712211609,
+      "preservation_kl_delta": 0.6545455418527126
+    },
+    "native_minus_restored": {
+      "correct_delta": 0,
+      "generation_equal": true,
+      "max_target_logp_difference": 0,
+      "mean_logp_delta": 0,
+      "preservation_kl_delta": 0
+    },
+    "virtual_minus_compiled": {
+      "correct_delta": 0,
+      "generation_equal": true,
+      "max_target_logp_difference": 0,
+      "mean_logp_delta": 0,
+      "preservation_kl_delta": 0
+    }
+  },
+  "heldout_correct": {
+    "compiled": 3,
+    "native": 1,
+    "restored": 1,
+    "virtual": 3
+  },
+  "job_id": "job-745584d1b1ce",
+  "payload_custody": {
+    "declared": {
+      "sha256": "984d5e7475849866ba93e76d3e08f045e7fe69950dc65907d36e3e4815ca0bb7",
+      "size_bytes": 3240723
+    },
+    "executed": {
+      "host": "beast",
+      "reported_ts": 1794370648.6722112,
+      "sha256": "984d5e7475849866ba93e76d3e08f045e7fe69950dc65907d36e3e4815ca0bb7",
+      "size_bytes": 3240723
+    },
+    "required": true,
+    "sealed": {
+      "sealed_ts": 1794370648.581271,
+      "sha256": "984d5e7475849866ba93e76d3e08f045e7fe69950dc65907d36e3e4815ca0bb7",
+      "size_bytes": 3240723
+    }
+  },
+  "prior_setup_failures": [
+    {
+      "job_id": "job-0a9fbb11efdc",
+      "reason": "laptop cache path staged for Linux; no model loaded"
+    },
+    {
+      "job_id": "job-4401fc2ddce7",
+      "reason": "private outbox API absent from public mrun; no model loaded"
+    }
+  ],
+  "request_sha256": "62a5a90116d4cb7ca7356dcbdf1f9506abebbe2bfce227c7fca3aa2981035ad3",
+  "resources": {
+    "elapsed_s": 238.45,
+    "peak_rss_mb": 3971,
+    "peak_vram_mb": 0
+  },
+  "saved_audit_sha256": "f1d38b759deaca12600a6c6cf3e538569ce474d5f5a4d126f9a6da26b8f75dfa",
+  "schema": "mdb-automatic-affine-discovery-qualification-v1",
+  "scope": "bounded numerical gain/channel search; constructed recovery and small native pretrained trial; no published Qwen3.5 WSP reproduction",
+  "selected": {
+    "channels": [],
+    "gain": 0,
+    "mode": "write-gain",
+    "site": "model.layers.6.mlp.down_proj"
+  },
+  "source_sha256": {
+    "wsp.py": "588380e5469c63147a350372a86651e8735c46f4d51f301c36b1c59a68f85bba",
+    "wsp_discovery.py": "fcc0ea0e03beee8e0772e55ef0649affb3691a15a20ff33a74a8c6d02e3751c9",
+    "wsp_discovery_demo.py": "e4d38b8a5f492676bcb8c2ec4cfb4f0af18c5cfcd9b95fc1555e1514d0ba5bcf",
+    "wsp_weights.py": "787a6dfdc4ff19a542e56b6f26250aa90cd40328e5adab0384d1d030f22f3e86"
+  },
+  "terminal_status": "not-evaluated",
+  "toy_runs": [
+    {
+      "heldout_mse": {
+        "compiled": 5.475942083611607e-32,
+        "native": 0.1793927842323514,
+        "restored": 0.1793927842323514,
+        "virtual": 5.566834441468789e-32
+      },
+      "parameter_restoration": true,
+      "restored_native_max_abs": 0,
+      "seed": 731,
+      "selected": {
+        "channels": [],
+        "gain": 0.12500000000000044,
+        "mode": "write-gain",
+        "site": "parts.site_2"
+      },
+      "site_discovered": true,
+      "virtual_compiled_max_abs": 2.220446049250313e-16
+    },
+    {
+      "heldout_mse": {
+        "compiled": 5.308673547635549e-33,
+        "native": 0.12284950345928247,
+        "restored": 0.12284950345928247,
+        "virtual": 6.246561307011624e-33
+      },
+      "parameter_restoration": true,
+      "restored_native_max_abs": 0,
+      "seed": 732,
+      "selected": {
+        "channels": [],
+        "gain": 0.1250000000000001,
+        "mode": "write-gain",
+        "site": "parts.site_0"
+      },
+      "site_discovered": true,
+      "virtual_compiled_max_abs": 4.440892098500626e-16
+    },
+    {
+      "heldout_mse": {
+        "compiled": 2.7919229019412196e-32,
+        "native": 0.1278794952304418,
+        "restored": 0.1278794952304418,
+        "virtual": 2.8388925215484757e-32
+      },
+      "parameter_restoration": true,
+      "restored_native_max_abs": 0,
+      "seed": 733,
+      "selected": {
+        "channels": [],
+        "gain": 0.1250000000000004,
+        "mode": "write-gain",
+        "site": "parts.site_0"
+      },
+      "site_discovered": true,
+      "virtual_compiled_max_abs": 1.1102230246251565e-16
+    }
+  ]
+}

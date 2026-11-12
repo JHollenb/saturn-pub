@@ -1,5 +1,9 @@
 # Forecasting a trained language model's final MLP
 
+For the later raw-prompt forecasts that also predict generated-token and KV
+continuations, see [Qwen computation families](QWEN-COMPUTATION-FAMILIES.md).
+This page retains the earlier observed-prefix assay and its narrower scope.
+
 The ISA workflow transfers to a trained Qwen2.5-0.5B-Instruct checkpoint: MDB
 captures an actual residual state, independent NumPy equations predict the final
 MLP and its readout, one global seal freezes those predictions, and native model
