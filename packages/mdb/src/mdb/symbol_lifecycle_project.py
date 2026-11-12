@@ -206,7 +206,7 @@ def _joins(project, sid, lifecycle, *, slices=False):
             "authority": "read-only-evidence-index", "causal_effect": "not-established"}
 
 
-def save_lifecycle(project, sid, lifecycle):
+def save_lifecycle(project, sid, lifecycle, *, include_slices=True):
     """Verify the native metadata join, then retain one immutable evidence version."""
     lifecycle = SymbolLifecycle.from_dict(
         lifecycle.to_dict() if isinstance(lifecycle, SymbolLifecycle) else lifecycle)
@@ -219,7 +219,7 @@ def save_lifecycle(project, sid, lifecycle):
         project._save_symbols(db, sid, {"symbols": [lifecycle.binding.to_dict()]},
                               json.loads(project.session(sid)["identity"]),
                               json.loads(project.session(sid)["execution"]))
-    joins = _joins(project, sid, lifecycle, slices=True)
+    joins = _joins(project, sid, lifecycle, slices=include_slices)
     _table(project)
     body, joined = project._json(lifecycle.to_dict()), project._json(joins)
     with project._db() as db:
@@ -417,10 +417,13 @@ def main(argv=None):
     parser.add_argument("--cut")
     parser.add_argument("--branch")
     parser.add_argument("--selector", type=json.loads)
+    parser.add_argument("--read-only", action="store_true", help="Open an existing schema-3 index without migrations or analysis refresh")
     args = parser.parse_args(argv)
     from .project import Project
 
-    project = Project(args.root)
+    if args.read_only and args.action == "add":
+        parser.error("read-only navigation cannot add a lifecycle")
+    project = Project(args.root, read_only=args.read_only)
     sid = args.session_id
     if sid is None:
         sessions = project.sessions()

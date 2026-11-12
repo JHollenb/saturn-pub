@@ -28,6 +28,12 @@ def _safe_id(value: str) -> str:
 
 
 def _publish(path: Path, data: bytes) -> bool:
+    if path.suffix == ".safetensors":
+        from .shared_store import publish_configured
+
+        shared = publish_configured(path, data)
+        if shared is not None:
+            return shared
     try:
         existing = path.read_bytes()
     except FileNotFoundError:

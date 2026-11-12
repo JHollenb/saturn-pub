@@ -13,7 +13,13 @@ TOOLS = {"cache": "vm_cache", "hyperion": "hyperion", "context": "context_cli",
     "symbol-producers": "symbol_producers", "forward-symbols": "forward_symbols",
     "circuits": "circuit_explorer", "discovery": "discovery_cli",
     "ports": "forward_ports", "forecast": "forecast_transaction",
-    "equations": "equation_comparison", "compiled-state": "compiled_state"}
+    "equations": "equation_comparison", "compiled-state": "compiled_state",
+    "storage": "storage_cli", "edit-search": "edit_search"}
+
+TOOLS["view"] = "evidence_viewer"
+TOOLS["family"] = "computation_protocol"
+TOOLS["atlas"] = "computation_atlas"
+TOOLS["wsp"] = "wsp"
 
 
 def main(argv=None):

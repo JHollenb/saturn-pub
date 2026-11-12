@@ -291,6 +291,12 @@ class ForecastTransaction:
         if not emergency and self.work["retained_bytes"] + len(raw) > self.budgets["max_bytes"]:
             raise ForecastTransactionError("retained-byte budget exhausted")
         _mkdir_durable(path.parent)
+        if path.suffix in {".npy", ".npyb"}:
+            from saturn_pub.shared_store import publish_configured
+
+            if publish_configured(path, raw) is not None:
+                self.work["retained_bytes"] += len(raw)
+                return
         temporary = path.parent / (".publish-" + uuid.uuid4().hex)
         try:
             with temporary.open("xb") as stream:

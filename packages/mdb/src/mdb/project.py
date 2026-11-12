@@ -25,8 +25,17 @@ from .state_graph import GraphSnapshot, NodeBinding, StateGraph
 class Project:
     """A multi-session investigation, reopenable without a model or framework."""
 
-    def __init__(self, root):
+    def __init__(self, root, *, read_only=False):
         self.root = Path(root).expanduser().resolve()
+        self.read_only = read_only
+        if read_only:
+            if not (self.root / "project.sqlite").is_file() or not (self.root / "store").is_dir():
+                raise ValueError("read-only project requires an existing index and store")
+            self.store = LocalStore(self.root / "store")
+            with self._db() as db:
+                if db.execute("PRAGMA user_version").fetchone()[0] != 3:
+                    raise ValueError("read-only project requires schema 3; migrate a writable copy first")
+            return
         self.root.mkdir(parents=True, exist_ok=True)
         self.store = LocalStore(self.root / "store")
         with self._db() as db:
@@ -69,7 +78,9 @@ class Project:
 
     @contextmanager
     def _db(self):
-        db = sqlite3.connect(self.root / "project.sqlite", timeout=30)
+        db = (sqlite3.connect((self.root / "project.sqlite").as_uri() + "?mode=ro", uri=True,
+                timeout=30) if self.read_only else
+            sqlite3.connect(self.root / "project.sqlite", timeout=30))
         db.row_factory = sqlite3.Row
         try:
             with db:
@@ -242,10 +253,10 @@ class Project:
                 )
             ]
 
-    def save_symbol_lifecycle(self, session_id, lifecycle):
+    def save_symbol_lifecycle(self, session_id, lifecycle, *, include_slices=True):
         from .symbol_lifecycle_project import save_lifecycle
 
-        return save_lifecycle(self, session_id, lifecycle)
+        return save_lifecycle(self, session_id, lifecycle, include_slices=include_slices)
 
     def symbol_lifecycle(self, session_id, identifier):
         from .symbol_lifecycle_project import load_lifecycle

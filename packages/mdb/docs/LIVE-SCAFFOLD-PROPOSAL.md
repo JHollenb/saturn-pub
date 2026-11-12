@@ -1,0 +1,17 @@
+# Live scaffold invocations
+
+This isolated experiment connects a supplied, historically measured Qwen2.5-1.5B addition reader schema to actual token arguments, observed head returns, downstream MLP writes, native logits and own-token continuation. It adds `mdb.live_scaffold` as a framework-free resolver/occurrence graph and an offline HTML view. The model-backed harness remains under `qualification/live_scaffold_*`.
+
+The schema names three candidate roles: own-column, column-below and carry-sensitive. Role names and the input grammar are supplied. Native read weights are observations; intervention responses are separate measurements. The graph labels proposed semantic bindings, observed returns and declared native-suffix dataflow separately. It does not call an attention weight a causal semantic edge.
+
+The proposal and eventual results live in the workspace blog at `obsidian/blog/2026-11-11-112926-making-the-time-scaffold-visible-live-symbol-bindings-and-causal-functions.md`. Exact inherited public source bytes are retained in `artifacts/mdb-scaffold-live-20261111/inherited-source.json`; only new module, harness, test and documentation files are this experiment's changes. No inference-speed claim is made.
+
+The initial native panel freezes historical role identities before new examples, compares logical-column and fixed-distance/shuffled bindings, measures correct/wrong source-contribution removals and donor-role/control-head replacements, and traces the candidate's own subsequent tokens and upper-layer cache changes. A short object follow-up reuses MDB's existing `discover_circuit` API rather than reimplementing that transaction.
+
+Mechanics checks run separately from scientific observations. See the retained request, installed wheel seals, scheduler payload custody, raw arrays, saved-only audit and occurrence view for the actual executed scope. A metadata/dataflow graph is useful even when a proposed semantic binding fails.
+
+The first panel completed as `job-d7942ffdaf50`: six native sums correct, 20 decoding occurrences, 42 applicable bindings, four intervention pairs and 28 arms. Four-digit own-column attention preferred the logical source rule (median paired-source mass 0.8594) over the old fixed-distance rule (0.0266). Heads 6/8 transplanted the donor's leading output in three of four pairs; the four-digit case shifted the donor margin by +6.8125 without flipping, while all twelve layer-22 attention heads flipped it. Control heads changed no leading choices. This is a useful incomplete-coalition result, not a failure of logical addressing.
+
+The existing MDB two-receiver discovery transaction preserved observer closure, parent restoration and sibling selections. Its top-ranked carriers were nearby `is` tokens, not object arguments or generated sources; zero/half scaling changed logits without changing greedy tokens. Semantic nomination remains unresolved. All inference stayed dense/native, with no speed claim.
+
+The collector verified 3,696 output files. A no-Torch saved-array audit checked all 118 full-vocabulary argmax rows, all 28 margin effects and 56 own-output feedback links. Nine local mechanics checks passed. See `artifacts/mdb-scaffold-live-20261111/main-01/{audit.json,summary.json,results/scaffold.html}` in the workspace. The original proposal remains retained separately. The next cut is the four-digit head coalition and downstream writer restoration; the object lane needs source-class contrasts before broader search.
