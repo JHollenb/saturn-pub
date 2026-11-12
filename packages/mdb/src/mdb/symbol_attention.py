@@ -13,6 +13,7 @@ from saturn_pub.contracts import StateAddress
 from saturn_pub.symbols import SymbolBinding
 from saturn_pub.values import digest
 
+from .attention_port import kv_group
 from .project_slice import slot_descriptors
 from .symbol_lifecycle import ClockWitness, SymbolLifecycle, SymbolOccurrence, SymbolUse
 
@@ -104,7 +105,7 @@ def attach_attention(project, session_id, lifecycle, *, receipt_id, trace, heads
     uses = []
     for row in heads:
         head = row["head"]
-        group = head // (count // kv)
+        group = kv_group(head, count, kv)
         if row["kv_head"] != group:
             raise ValueError("query head was linked to the wrong KV group")
         selectors = [(slot, (layer, 0, group, source_row)) for slot in ("keys", "values")]
