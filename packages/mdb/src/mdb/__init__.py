@@ -9,12 +9,14 @@ saying so.
 from importlib import import_module
 
 __version__ = "0.1.0"
-__all__ = ["attach", "open_tiny", "Debugger"]
+__all__ = ["attach", "open_tiny", "Debugger", "trace", "resolve"]
 
 _EXPORTS = {
     "attach": ("ops.debugger", "attach"),
     "open_tiny": ("ops.debugger", "open_tiny"),
     "Debugger": ("ops.debugger", "Debugger"),
+    "trace": ("engine.trace", "trace"),
+    "resolve": ("core.resolve", "resolve"),
 }
 
 

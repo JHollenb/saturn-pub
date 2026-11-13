@@ -5,5 +5,15 @@ Importing ``mdb`` never imports this package; importing it loads torch.
 
 from .ports import PortController, PortEdit, PortProgram, PortSpec, program_for
 from .run import Run
+from .trace import Trace, trace
 
-__all__ = ["PortController", "PortEdit", "PortProgram", "PortSpec", "Run", "program_for"]
+__all__ = [
+    "PortController",
+    "PortEdit",
+    "PortProgram",
+    "PortSpec",
+    "Run",
+    "Trace",
+    "program_for",
+    "trace",
+]
