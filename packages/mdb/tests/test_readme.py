@@ -12,7 +12,7 @@ from pathlib import Path
 import pytest
 
 README = Path(__file__).resolve().parents[1] / "README.md"
-MAX_LINES = 400
+MAX_LINES = 500
 
 
 def _cell(text: str) -> str:

@@ -18,7 +18,7 @@ The REPL on a tiny Qwen2 (bf16, 2 layers, no tokenizer, so the prompt is token i
 `python -m mdb.repl` is the same entry point. The commands below were fed with `--script FILE`.
 
 ```
-$ python -m mdb engine --tiny qwen2 --tokens "1 5 9 3"
+$ python -m mdb engine tiny:qwen2 --tokens "1 5 9 3"
 (mdb) start 1 5 9 3
 t3.L0.h  h = layer input (residual stream)  {P01}
 (mdb) step
@@ -65,9 +65,14 @@ staged at t3.L1.p: none
 ```
 
 `start` prefills all tokens but the last; the last token (row 3) is the one you step through.
-For a local Hugging Face checkpoint directory: `python -m mdb.repl --model DIR --tokens "1 5 9 3"`
-(run here on a saved tiny model; it never downloads). `--prompt TEXT` instead of `--tokens` uses
-the checkpoint's tokenizer (not run here: the tiny model has none).
+
+`mdb engine MODEL [PROMPT]` names what to debug, as `gdb PROGRAM` does. `MODEL` is a checkpoint
+directory (run here on a saved tiny model), the name of a model in the local Hugging Face cache
+(`mdb engine qwen2.5-1.5b "Weather: freezing"`; the name lookup was run against a real cache,
+the model itself was not loaded here), `tiny:qwen2` or `tiny:qwen3`, or the address of a
+running `mdb serve` (see [Live and remote sessions](#live-and-remote-sessions-mdb-serve)).
+Nothing is ever downloaded; a name that matches no cached model, or several, is refused with
+the candidates. `--project DIR` attaches a project, which makes checkpoints durable.
 
 ## Embedding
 
@@ -301,6 +306,60 @@ whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 579b420956
   session unchanged at t3.L1.a  (5 moves, restored)
 ```
 
+## Following a value: `reads`, `symbols`, `circuit`, `compare`
+
+`reads ADDR` lists who reads a source row: attention mass beside the exact contribution of
+that read to a consumer, and a causal verdict measured by removing the read natively.
+`symbols` prints the symbol table as bindings (where a value is defined, how long it lives,
+who reads it), always with an `Unbound` row so the table sums to the whole. Cursor at
+`t3.logits`; output cut at `...`:
+
+```
+(mdb) reads t1 --consumer M[4,9] top=3
+reads t1 at t3.logits  rows t3  consumer t3.M[4,9]  (4 reads)
+  t3.L1.h0   mass 0.24902 [measured]  effect 0.011455 [derived-exact P19]
+    causal: Δ -0.015137 [measured], predicted -0.01456 [derived-exact] (within rounding bound 0.029953 [bound])
+...
+(mdb) symbol ctx = t1, cache.L1.v[row=2]
+symbol ctx = t1, cache.L1.v[row=2]  (declared: ctx)
+(mdb) symbols consumer=M[4,9]
+symbols at t3.logits  consumer t3.M[4,9] = -0.11401 [measured]  min_mass 0.1 [supplied]
+  ctx         read   mass 1.4971 [derived-exact]  to_consumer 0.0020898 [derived-exact P19]  life t3:## (t3.L0..t3.L1)
+    defined t1, cache.L1.v[row=2]
+    readers t3.L1.h0 mass 0.49805 effect 0.013241 [derived-exact P19]; t3.L0.h1 mass 0.25 effect -0.0081352 [derived-exact P19]; ...
+...
+  Unbound     mass 0 [derived-exact]  readout -0.14463 [measured]
+```
+
+Mass is summed over the heads and layers that read the binding, so it can exceed 1.
+`circuit CONSUMER` builds a record of exact contributions that closes on the consumer;
+whatever is not listed stays in the record as `+N more` and `remainder` nodes. `circuit test`
+measures the retained set and its complement natively, and `compare` measures two edits
+separately and together:
+
+```
+(mdb) circuit M[4,9] top=2 depth=3
+circuit 1  t3.M[4,9]  top 2 depth 3  (16 nodes, record bfdf9816699df9de)
+  t3.M[4,9]  -0.11401 [measured]
+    embedding  t3.L0.h  -0.14578 [derived-exact P19]
+    L1.attn  t3.L1.o  0.03064 [derived-exact P19]
+      L1.h0  t3.L1.A[h0]  0.025084 [derived-exact P07]
+        t0  t3.L1.p[h0,src=0]  0.013624 [derived-exact P06]
+...
+    +3 more  t3.M[4,9] (unlisted)  0.00064862 [derived-exact]
+    remainder  t3.M[4,9]  0.00047376 [measured]
+  closure 1.3878e-17 [derived-exact P19] within 2.0716e-15 [bound]
+(mdb) compare L1.m=0.5 add L0.v = 0.25 add --consumer M[4,9]
+compare A: L1.m=0.5 add  B: L0.v=0.25 add  -> t3.M[4,9]
+  base -0.11401 [measured]  A 0.050476 [measured]  B -0.068237 [measured]  A+B 0.052124 [measured]
+  effects A 0.16449 [measured]  B 0.045776 [measured]  A+B 0.16614 [measured]
+  interaction (A+B) - A - B + base = -0.044128 [measured]
+  session unchanged at t3.logits
+```
+
+`seek ADDR` moves the session to an occurrence: forward, backward, or by replaying a stored
+recipe when a project is attached.
+
 ## Durable checkpoints
 
 ```python
@@ -314,26 +373,42 @@ run = mdb.attach(model, tok, project="runs/t").restart("pre")    # same cut fing
 The REPL's `checkpoint NAME` / `restart NAME` do the same when a project is attached.
 `mdb.resolve(pointer, project=..., session=dbg)` turns an occurrence pointer back into a tensor.
 
-## Recorded projects: `mdb serve`
+## Live and remote sessions: `mdb serve`
 
 `mdb serve --project DIR` serves a recorded project read-only on loopback, with no model and no
-torch (it needs the `serve` extra). Run here on a copy of the fixture project that
-`../mdb-lanes/tests/fixtures/serve_fixture_project.py` writes:
+torch (it needs the `serve` extra). The browser at `/` shows the project's sessions with an
+address bar and a command line, and these views: Timeline (token by layer, with a branch
+rail), Graph, Symbols, Records and an Inspector whose reductions (`POST /reduce`) never send a
+whole tensor. Every response is at most 64 KiB.
+
+With `--tiny FAMILY` or `--model PATH` the server also holds one live debugger, attached with
+that project. The page gets a Live view (the port pipeline of the current layer, step / next /
+finish / until / continue / reverse controls, breakpoints, edits, checkpoints, a console), and
+every action is the registry op of the same name, run on one worker thread in arrival order.
+`mdb engine http://HOST:PORT` is the same REPL prompt over that session: the model stays in
+the server process and the client needs only the standard library. Run here as two processes:
 
 ```
-$ python -m mdb serve --project project --port 8799
-mdb serve: http://127.0.0.1:8799/  (project project)
-$ curl -s http://127.0.0.1:8799/api/v1/sessions
-{"bytes":579,"data":[{"adapter":"native-boundary-v2","cuts":2,"family":"qwen2","granularity":"operation","home":"t2.logits","id":"qwen",...},{"adapter":"native-decoder-v1","cuts":18,"family":"qwen3","granularity":"layer","home":"t2.L0.h","id":"tiny",...}]...
-$ curl -s http://127.0.0.1:8799/api/v1/hello
-{"bytes":887,"data":{"cap":65536,"capabilities":{"graph":{"available":true,"reason":null},"live":{"available":false,"reason":"recorded project; no engine attached"},...},"readOnly":true,...
+$ python -m mdb serve --project runs/t --tiny qwen2 --port 8799
+mdb serve: http://127.0.0.1:8799/  (project runs/t; live session qwen2-8a16dcab78be)
+$ python -m mdb engine http://127.0.0.1:8799 --tokens "1 5 9 3" --script walk.mdb
+(mdb) start 1 5 9 3
+t3.L0.h  h = layer input (residual stream)  {P01}
+(mdb) until L1.p
+t3.L1.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
+(mdb) checkpoint pre
+checkpoint pre at t3.L1.p (628 bytes)
+$ echo "info checkpoints" | python -m mdb engine http://127.0.0.1:8799      # a second client
+(mdb) info checkpoints
+pre       t3.L1.p  staged 0, committed 0
 ```
 
-(Output cut at `...`; the project path is shortened.) The browser at `/` shows the project's
-sessions with an address bar and a command line, and these views: Timeline (token by layer,
-with a branch rail), Graph, Symbols, Records and an Inspector whose reductions (`POST
-/reduce`) never send a whole tensor. Every response is at most 64 KiB. Live stepping in the
-browser is not built.
+(`walk.mdb` holds the two commands shown.) In the remote prompt `quit` ends the client and
+leaves the session as it is, `source FILE` reads the client's file, and Ctrl-C interrupts the
+op the server is running. From Python: `mdb.repl.remote.Remote(url).op("print", address="p")`
+returns the JSON that `--json` prints. The server has no authentication and binds loopback;
+reach another machine through a tunnel (`ssh -L 8799:127.0.0.1:8799 host`), not by binding it
+to a network.
 
 ## Lanes
 
@@ -396,4 +471,5 @@ engine imports no lane module and that its layers (`core`, `engine`, `analysis`,
 - `trace(project=)`, cache-cell edits (`set cache.L.v[...]`) and what-if values taken from
   another run (`boiling:cache.L20.v[...]`).
 - `export` (B1).
-- Live stepping in the web viewer (B2-B4) and remote workers over mrun.
+- Web views for symbols, circuits and predictions in a live session (the ops work through the
+  console), and running the server as an mrun job.
