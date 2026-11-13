@@ -49,8 +49,8 @@ def test_every_verb_returns_labelled_bounded_results(debugger):
     ctx = _ctx(debugger)
     reads = _clean(dispatch(ctx, "reads", {"source": "t1", "consumer": "M[4,9]", "top": 3}))
     assert len(reads["reads"]) == 3 and reads["omitted"]["count"] == 1
-    assert {e["causal"]["verdict"] for e in reads["reads"]} <= {"causal",
-                                                                 "not causal at this dose"}
+    assert {e["causal"]["verdict"] for e in reads["reads"]} <= {
+        "causal", "not causal at this dose", "unresolved"}
     declared = _clean(dispatch(ctx, "symbol", {"name": "ctx", "addresses": "t1,t2"}))
     assert declared["symbol"] == "ctx" and declared["rows"] == [1, 2]
     table = _clean(dispatch(ctx, "symbols", {"consumer": "M[4,9]"}))
@@ -158,3 +158,127 @@ def test_shell_parsers():
     assert parse("circuit", "M[4,9] top=2 depth=3") == {"target": "M[4,9]", "top": 2,
                                                          "depth": 3}
     assert parse("symbols", "--consumer M[4,9]") == {"consumer": "M[4,9]"}
+
+
+# --- an interrupt anywhere inside a verb leaves the session as it was (M1) ---------------------
+
+INJECT = [
+    ("reads", "t3.logits", "restore", {"source": "t1", "consumer": "M[4,9]", "top": 2}),
+    ("compare", "t3.logits", "restore", {"a": "L1.m=0.5 add", "b": "L0.v=0.25 add",
+                                         "consumer": "M[4,9]"}),
+    ("circuit", "t3.logits", "restore", None),
+    ("seek", "t3.L0.q", "continue_", {"target": "t3.L1.m"}),
+]
+
+
+@pytest.mark.parametrize("case", INJECT, ids=lambda c: c[0])
+def test_inject_an_interrupt_at_each_native_call_and_the_session_is_unchanged(debugger, case,
+                                                                              monkeypatch):
+    from saturn_pub.core import Session
+
+    from mdb.analysis.propagate import state_digest
+
+    verb, where, method, args = case
+    original = getattr(Session, method)
+    fired_any = False
+    for nth in range(1, 25):
+        ctx = _ctx(debugger, where)
+        if verb == "circuit":
+            built = dispatch(ctx, "circuit", {"target": "M[4,9]", "top": 2, "depth": 2})
+            args = {"target": "test", "id": built["id"]}
+        before, digest = ctx.run.checkpoint(), state_digest(ctx.run)
+        calls = {"n": 0}
+
+        def wrapped(self, *a, _nth=nth, _calls=calls, **k):
+            _calls["n"] += 1
+            out = original(self, *a, **k)
+            if _calls["n"] == _nth:
+                raise KeyboardInterrupt
+            return out
+
+        monkeypatch.setattr(Session, method, wrapped)
+        try:
+            dispatch(ctx, verb, args)
+            fired = False
+        except KeyboardInterrupt:
+            fired = True
+        monkeypatch.undo()
+        if not fired:
+            break  # past the verb's last such call: it completed
+        fired_any = True
+        now = ctx.run.checkpoint()
+        assert state_digest(ctx.run) == digest, (verb, nth)
+        for key in ("where", "cut", "edits", "path_edits"):
+            assert now[key] == before[key], (verb, nth, key)
+    assert fired_any
+
+
+# --- the fix-round behaviours through dispatch ---------------------------------------------------
+
+
+def test_consumer_ids_outside_the_vocabulary_are_refused(debugger):
+    ctx = _ctx(debugger)
+    for verb, args in (("reads", {"source": "t1"}), ("symbols", {}), ("circuit", {}),
+                       ("compare", {"a": "L1.m=0.5 add", "b": "L0.v=1 add"})):
+        for consumer in ("M[0,99999]", "logits[999]"):
+            key = "target" if verb == "circuit" else "consumer"
+            with pytest.raises(Refused, match=r"outside the vocabulary \(valid ids 0\.\.31\)"):
+                dispatch(ctx, verb, {**args, key: consumer})
+
+
+def test_seek_lists_the_edits_it_dropped_or_restaged(debugger):
+    run = debugger.run(PROMPT)
+    run.until("t3.L1.q")
+    run.set("t3.L1.v", 0.5, "add")
+    ctx = debugger.ops(run)
+    back = _clean(dispatch(ctx, "seek", {"target": "t3.L0.p"}))
+    assert back["dropped_edits"] == ["t3.L1.v add 0.5"] and back["restaged_edits"] == []
+    run = debugger.run(PROMPT)
+    run.until("t3.L0.h")
+    run.set("t3.L0.v", 0.25, "add")
+    run.until("t3.logits")
+    ctx = debugger.ops(run)
+    restaged = _clean(dispatch(ctx, "seek", {"target": "t3.L0.p"}))
+    assert restaged["restaged_edits"] == ["t3.L0.v add 0.25"]
+    assert restaged["dropped_edits"] == []
+
+
+def test_declared_symbols_and_circuits_outlive_the_run(tmp_path):
+    dbg = mdb.attach(tiny_model("qwen2", "bf16"), project=tmp_path / "p")
+    ctx = dbg.ops()
+    dispatch(ctx, "start", {"prompt": PROMPT})
+    dispatch(ctx, "until", {"target": "t3.logits"})
+    dispatch(ctx, "symbol", {"name": "ctx", "addresses": "t1"})
+    dispatch(ctx, "symbol", {"name": "late", "addresses": "t3.L1.v"})
+    built = dispatch(ctx, "circuit", {"target": "M[4,9]", "top": 2, "depth": 1})
+    dispatch(ctx, "checkpoint", {"name": "here"})
+    first = ctx.run
+    # a recipe seek replays into a new run: the ledger and the symbols come along
+    _clean(dispatch(ctx, "seek", {"target": "here:t3.logits"}))
+    assert ctx.run is not first
+    shown = _clean(dispatch(ctx, "circuit", {"target": "show", "id": built["id"]}))
+    assert shown["record"]["id"] == built["record"]["id"]
+    table = _clean(dispatch(ctx, "symbols", {}))
+    assert [b["symbol"] for b in table["bindings"]][:2] == ["ctx", "late"]
+    # after start the cursor is at t3.L0.h: t3.L1.v is not computed, so `late` is unresolved
+    dispatch(ctx, "start", {"prompt": PROMPT})
+    table = _clean(dispatch(ctx, "symbols", {}))
+    pending = {item["symbol"]: item for item in table["unresolved_symbols"]}
+    assert list(pending) == ["late"] and pending["late"]["status"] == "unresolved"
+    assert "has not been computed" in pending["late"]["reason"]
+    assert table["bindings"][0]["symbol"] == "ctx"
+
+
+def test_circuit_show_marks_what_the_last_test_ablated(debugger):
+    ctx = _ctx(debugger)
+    built = dispatch(ctx, "circuit", {"target": "M[4,9]", "top": 2, "depth": 3})
+    tested = dispatch(ctx, "circuit", {"target": "test", "id": built["id"]})
+    shown = _clean(dispatch(ctx, "circuit", {"target": "show", "id": built["id"]}))
+    assert shown["ablated"]["retained"] == tested["test"]["retained"]["nodes"]
+    ids = set()
+    stack = [shown["record"]["body"]["root"]]
+    while stack:
+        node = stack.pop()
+        ids.add(node["id"])
+        stack += node.get("children", [])
+    assert set(shown["ablated"]["retained"]) | set(shown["ablated"]["complement"]) <= ids

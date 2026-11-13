@@ -642,15 +642,18 @@ def _short(item: Any) -> str:
 
 
 def _verdict(causal: dict[str, Any]) -> str:
-    if causal["verdict"] == "unresolved":
+    if "delta" not in causal:
         return f"unresolved ({causal['reason']})"
-    text = f"{causal['verdict']}: Δ {_short(causal['delta'])}"
+    head = causal["verdict"] + (f" ({causal['reason']})" if causal.get("reason") else "")
+    text = f"{head}: Δ {_short(causal['delta'])}"
     predicted = causal.get("predicted")
     if isinstance(predicted, dict) and predicted.get("state") is None:
         text += f", predicted {_short(predicted)}"
     if causal.get("beyond_rounding_bound") is not None:
         text += (" (beyond" if causal["beyond_rounding_bound"] else " (within") + \
             f" rounding bound {_claimed(causal['rounding_bound'])})"
+    if causal.get("bound_exceeds_consumer"):
+        text += "  bound exceeds the consumer"
     return text
 
 
@@ -682,7 +685,10 @@ def _symbols_lines(result: dict[str, Any]) -> list[str]:
     head = f"symbols at {result['where']}  consumer {result['consumer']}"
     if "consumer_total" in result:
         head += f" = {_claimed(result['consumer_total'])}"
-    lines = [head + f"  min_mass {_claimed(result['min_mass'])}"]
+    lines = [head + f"  min_mass {_claimed(result['min_mass'])}",
+             "  mass: a sum over the heads and layers that read the binding (n reads, mean per "
+             "read)",
+             "  life: " + "  ".join(f"{mark} {text}" for mark, text in result["legend"].items())]
     for item in result["bindings"]:
         name = item["symbol"]
         if "text" in item:
@@ -691,24 +697,41 @@ def _symbols_lines(result: dict[str, Any]) -> list[str]:
             name += f" (id {item['token']})"
         life = item["lifetime"]
         span = f" ({life['first']}..{life['last']})" if life["first"] else ""
-        lines.append(f"  {name:<12}{item['status']:<7}mass {_claimed(item['mass'])}  "
-                     f"to_consumer {_short(item['to_consumer'])}  life {life['strip']}{span}")
+        lines.append(f"  {name:<12}{item['status']:<7}mass {_claimed(item['mass'])} over "
+                     f"{item['count']} reads (mean {_short(item['mean_mass'])})  to_consumer "
+                     f"{_short(item['to_consumer'])}  life {life['strip']}{span}")
         lines.append(f"    defined {', '.join(item['definitions'])}")
-        readers = "; ".join(f"{r['name']} mass {fmt(r['mass']['value'])} effect "
+        readers = "; ".join(f"{r['name']} mass {_claimed(r['mass'])} effect "
                             f"{_short(r['effect'])}" for r in item["readers"])
         more = f" (+{item['omitted']} more)" if item.get("omitted") else ""
-        lines.append(f"    readers {readers}{more}")
+        lines.append(f"    readers {readers or 'none'}{more}")
         if item.get("edited_by"):
             lines.append(f"    edited by {', '.join(item['edited_by'])}")
+    for item in result.get("unresolved_symbols", ()):
+        lines.append(f"  {item['symbol']:<12}unresolved  defined {', '.join(item['definitions'])}"
+                     f"  ({item['reason']})")
     unbound = result["unbound"]
-    lines.append(f"  Unbound     mass {_claimed(unbound['mass'])}  readout "
+    lines.append(f"  Unbound     mass {_short(unbound['mass'])}  readout "
                  f"{_short(unbound['readout'])}")
+    parts = unbound.get("parts")
+    if parts:
+        remainder = parts["remainder"]
+        text = (f"    = embedding+mlp {_claimed(parts['embedding_mlp'])} + attention not "
+                f"listed {_claimed(parts['attention_not_listed'])}")
+        if "residual_edits" in parts:
+            text += f" + residual edits {_claimed(parts['residual_edits'])}"
+        lines.append(text + f" + remainder {_claimed(remainder['value'])} "
+                     f"{'within' if remainder['within'] else 'OUTSIDE'} "
+                     f"{_claimed(remainder['bound'])}")
     accounting = result["accounting"]
+    partition = accounting["partition"]
+    split = (f"partition gap {_claimed(partition['max_gap'])}" if "max_gap" in partition
+             else f"partition {num(partition)}")
     lines.append(f"  accounting: {accounting['heads']} heads, listed mass "
                  f"{_claimed(accounting['listed_mass'])}, max |sum p - 1| "
                  f"{_claimed(accounting['max_head_deviation'])} "
                  f"{'<=' if accounting['within_bound'] else '>'} "
-                 f"{_claimed(accounting['deviation_bound'])}")
+                 f"{_claimed(accounting['deviation_bound'])}, {split}")
     page = result["page"]
     shown = len(result["bindings"])
     lines.append(f"  (bindings {page['offset'] + 1}-{page['offset'] + shown} of {page['total']})"
@@ -719,18 +742,30 @@ def _symbols_lines(result: dict[str, Any]) -> list[str]:
     return lines
 
 
-def _walk(node: dict[str, Any], depth: int = 0) -> list[str]:
+def _walk(node: dict[str, Any], depth: int = 0, marks: dict[str, str] | None = None,
+          texts: dict[str, str] | None = None) -> list[str]:
+    marks, texts = marks or {}, texts or {}
     name = node["name"] if node["name"] == node["address"] else (
         f"{node['name']}  {node['address']}")
-    lines = [f"{'  ' * depth}{name}  {_short(node['value'])}"]
+    if node["id"] in texts:
+        name += f" {json.dumps(texts[node['id']])}"
+    line = f"{'  ' * depth}{name}  {_short(node['value'])}"
+    if "bound" in node:
+        line += f" {'within' if node['within'] else 'OUTSIDE'} {_short(node['bound'])}"
+    if node["id"] in marks:
+        line += f"  [ablated: {marks[node['id']]}]"
+    lines = [line]
     for child in node.get("children", ()):
-        lines += _walk(child, depth + 1)
+        lines += _walk(child, depth + 1, marks, texts)
     return lines
 
 
 def _circuit_test_lines(test: dict[str, Any]) -> list[str]:
     lines = [f"circuit {test['id']} test  {test['consumer']}  base "
              f"{_short(test['base'])}  tolerance {_claimed(test['tolerance'])}"]
+    if "excluded" in test:
+        lines.append(f"  not ablated: {', '.join(test['excluded']['nodes'])} "
+                     f"({test['excluded']['reason']})")
     for name in ("retained", "complement"):
         part = test[name]
         if part.get("state"):
@@ -749,10 +784,14 @@ def _circuit_lines(result: dict[str, Any]) -> list[str]:
     body = result["record"]["body"]
     lines = [f"circuit {result['id']}  {body['consumer']}  top {body['k']} depth "
              f"{body['depth']}  ({body['count']} nodes, record {result['record']['id'][:16]})"]
-    lines += ["  " + line for line in _walk(body["root"])]
+    marks = {ref: name for name, refs in result.get("ablated", {}).items() for ref in refs}
+    lines += ["  " + line for line in _walk(body["root"], 0, marks, result.get("token_text"))]
     closure = body["closure"]
     lines.append(f"  closure {_short(closure['value'])} "
-                 f"{'within' if closure['within'] else 'OUTSIDE'} {_claimed(closure['bound'])}")
+                 f"{'within' if closure['within'] else 'OUTSIDE'} {_claimed(closure['bound'])} "
+                 f"(zero by construction: float64 summation only)")
+    lines.append(f"  remainders {'all within' if body['remainders_within'] else 'NOT all within'}"
+                 f" their rounding bounds; {body['edits']['count']} edit node(s)")
     for test in result.get("tests", ()):
         lines += ["  " + line for line in _circuit_test_lines(test)]
     if result.get("stored"):
@@ -764,7 +803,7 @@ def _compare_lines(result: dict[str, Any]) -> list[str]:
     measured, effects = result["measured"], result["effects"]
     lines = [f"compare A: {result['sides']['A']}  B: {result['sides']['B']}  -> "
              f"{result['consumer']}"]
-    lines.append("  " + "  ".join(f"{name} {_short(item['value'])}"
+    lines.append("  " + "  ".join(f"{name} {_short(item.get('value', item))}"
                                   for name, item in measured.items()))
     lines.append("  effects " + "  ".join(f"{name} {_short(value)}"
                                           for name, value in effects.items()))
@@ -773,6 +812,8 @@ def _compare_lines(result: dict[str, Any]) -> list[str]:
         lines.append(f"  interaction {num(interaction)}")
     else:
         lines.append(f"  interaction {interaction['formula']} = {_short(interaction['value'])}")
+    if "order" in result:
+        lines.append(f"  order: {result['order']}")
     session = result["session"]
     lines.append(f"  session {'unchanged' if session['unchanged'] else 'CHANGED'} at "
                  f"{result['where']}")
@@ -787,6 +828,10 @@ def _symbol_lines(result: dict[str, Any]) -> list[str]:
 def _seek_lines(result: dict[str, Any]) -> list[str]:
     lines = [f"seek {result['target']} via {result['via']}: " + ("; ".join(result["moves"])
                                                                  or "already there")]
+    if result.get("dropped_edits"):
+        lines.append(f"  dropped edits: {', '.join(result['dropped_edits'])}")
+    if result.get("restaged_edits"):
+        lines.append(f"  committed edits staged again: {', '.join(result['restaged_edits'])}")
     return lines + _motion(result)
 
 

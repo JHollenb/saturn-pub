@@ -43,6 +43,23 @@ def _guard(run: Any, checkpoints: list[dict[str, Any]]) -> None:
     run.hold(held)
 
 
+_SAME = ("where", "cut", "transitions", "port", "edits", "path_edits")
+
+
+def restore_exactly(run: Any, checkpoint: dict[str, Any]) -> None:
+    """``run.restore(checkpoint)`` that finishes even under a ``KeyboardInterrupt`` (re-raised
+    after it), then checks that the cursor, the cut and the committed and staged edits equal the
+    checkpoint's; ``RuntimeError`` if not."""
+    try:
+        run.restore(checkpoint, defer_interrupt=True)
+    finally:
+        now = run.checkpoint()
+        differ = [key for key in _SAME if now[key] != checkpoint[key]]
+        if differ:
+            raise RuntimeError(f"the restore to {checkpoint['where']} left {', '.join(differ)} "
+                               f"different (now at {run.where})")
+
+
 def consumer_stop(run: Any, consumer: Any) -> str:
     """The stop a consumer is read at: the row's ``logits`` for a margin or logit."""
     if isinstance(consumer, (Margin, Logit)):
@@ -111,7 +128,7 @@ def measure(run: Any, edits: list[Edit], consumer: Any) -> dict[str, Any]:
         value, authority = _read(run, consumer)
         moves.append(f"read {consumer_stop(run, consumer)}")
     finally:
-        run.restore(checkpoint)
+        restore_exactly(run, checkpoint)
     moves.append(f"restore {checkpoint['where']}")
     after = state_digest(run)
     if after != before:
@@ -130,7 +147,7 @@ def measure_at(run: Any, checkpoint: dict[str, Any], consumer: Any) -> dict[str,
         run.restore(checkpoint)
         value, authority = _read(run, consumer)
     finally:
-        run.restore(here)
+        restore_exactly(run, here)
     if state_digest(run) != before:
         raise RuntimeError("measure_at did not leave the session where it was")
     return {"value": value, "authority": authority,
@@ -165,6 +182,33 @@ def _side(run: Any, side: Side, consumer: Any) -> dict[str, Any]:
     return measure_other(side.run, consumer)
 
 
+def _commute(x: Edit, y: Edit) -> bool:
+    """Whether applying ``x`` then ``y`` at one port equals ``y`` then ``x`` (real arithmetic):
+    two adds, two scales, or two replaces with the same scalar value."""
+    if x.op == y.op and x.op in ("add", "scale"):
+        return True
+    return (x.op == y.op == "replace" and not hasattr(x.value, "shape")
+            and not hasattr(y.value, "shape") and float(x.value) == float(y.value))
+
+
+def _overlap(x: Edit, y: Edit) -> bool:
+    if x.mask is None or y.mask is None:
+        return True
+    import torch
+
+    return bool(torch.logical_and(x.mask, y.mask).any())
+
+
+def _order_conflict(a: list[Edit], b: list[Edit]) -> str | None:
+    """Why A+B is order-dependent (same port, overlapping masks, ops that do not commute)."""
+    for x in a:
+        for y in b:
+            if x.address == y.address and _overlap(x, y) and not _commute(x, y):
+                return (f"A and B both edit {x.address} on overlapping elements with ops that "
+                        f"do not commute ({x.op}, {y.op}): A+B depends on the order")
+    return None
+
+
 def _effect(value: Any) -> dict[str, Any]:
     return claim(value, MEASURED)
 
@@ -178,7 +222,9 @@ def compare(run: Any, a: Side, b: Side, consumer: Any) -> dict[str, Any]:
     found = {"base": base, "A": _side(run, a, consumer), "B": _side(run, b, consumer)}
     joint: str | None = None
     if a.edits is not None and b.edits is not None:
-        found["A+B"] = measure(run, [*a.edits, *b.edits], consumer)
+        joint = _order_conflict(a.edits, b.edits)
+        if joint is None:
+            found["A+B"] = measure(run, [*a.edits, *b.edits], consumer)
     else:
         joint = ("A+B needs both sides to be edits (a checkpoint is a whole session state, not "
                  "a change that composes)")
@@ -196,6 +242,8 @@ def compare(run: Any, a: Side, b: Side, consumer: Any) -> dict[str, Any]:
         "session": {"before": before, "after": after, "unchanged": True},
     }
     if joint is None:
+        report["order"] = ("A+B stages both sides' edits layer by layer; at one port A's edit "
+                           "is applied before B's (where both edit one port, the ops commute)")
         interaction = values["A+B"] - values["A"] - values["B"] + values["base"]
         report["effects"]["A+B"] = _effect(values["A+B"] - values["base"])
         report["interaction"] = {"value": _effect(interaction),
@@ -203,9 +251,13 @@ def compare(run: Any, a: Side, b: Side, consumer: Any) -> dict[str, Any]:
         values["interaction"] = interaction
     else:
         report["interaction"] = {"state": "refused", "reason": joint}
+        if a.edits is not None and b.edits is not None:
+            found_joint = {"state": "refused", "reason": joint}
+            report["measured"]["A+B"] = found_joint
+            report["effects"]["A+B"] = found_joint
     report["kind"] = "vector" if vector else "scalar"
     return {"report": report, "values": values}
 
 
 __all__ = ["Side", "compare", "consumer_stop", "consumer_value", "measure", "measure_at",
-           "measure_other"]
+           "measure_other", "restore_exactly"]

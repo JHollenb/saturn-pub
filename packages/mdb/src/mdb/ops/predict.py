@@ -39,11 +39,19 @@ def _row(ctx, match) -> int:
     return int(match["row"]) if match["row"] else int(_ROW.match(ctx.run.where)["row"])
 
 
+def _in_vocab(ctx, token: int) -> int:
+    """``token`` when it indexes the logits; ``Refused`` with the valid range otherwise."""
+    vocab = int(ctx.run.adapter.model.lm_head.weight.shape[0])
+    if not 0 <= token < vocab:
+        raise Refused(f"token id {token} is outside the vocabulary (valid ids 0..{vocab - 1})")
+    return token
+
+
 def _token_id(ctx, text: str) -> int:
-    """A token id, or the single id of a quoted token text."""
+    """A token id (inside the vocabulary), or the single id of a quoted token text."""
     text = text.strip()
     if re.fullmatch(r"\d+", text):
-        return int(text)
+        return _in_vocab(ctx, int(text))
     if len(text) >= 2 and text[0] == text[-1] and text[0] in "\"'":
         word = json.loads(text) if text[0] == '"' else text[1:-1]
         if ctx.tokenizer is None:
@@ -218,7 +226,7 @@ def _consumer(ctx, text: str):
         return margin
     match = _LOGIT.fullmatch(text.strip())
     if match is not None:
-        return Logit(_row(ctx, match), int(match["i"]))
+        return Logit(_row(ctx, match), _in_vocab(ctx, int(match["i"])))
     return _whole_stop(ctx, text, "a whatif consumer")
 
 

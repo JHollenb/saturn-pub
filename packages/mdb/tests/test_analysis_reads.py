@@ -63,6 +63,13 @@ def _fresh_margin(debugger, edits, margin):
     return logits[margin.a] - logits[margin.b]
 
 
+def _rule(delta, entry):
+    """S1: causal only beyond max(min_effect, rounding bound); exactly 0 is not causal."""
+    if delta == 0:
+        return "not causal at this dose"
+    return "causal" if entry["causal"]["beyond_rounding_bound"] else "unresolved"
+
+
 def test_causal_verdict_equals_a_fresh_committed_run_bitwise(debugger):
     run = _at_logits(debugger)
     margin = Margin(3, 4, 9)
@@ -75,8 +82,29 @@ def test_causal_verdict_equals_a_fresh_committed_run_bitwise(debugger):
         mask = head_mask(run, 3, layer, head, 2)
         edited = _fresh_margin(debugger, [(f"t3.L{layer}.p", 0.0, "replace", mask)], margin)
         assert entry["causal"]["delta"]["value"] == float(edited - base)
-        expected = "causal" if edited != base else "not causal at this dose"
-        assert entry["causal"]["verdict"] == expected
+        assert entry["causal"]["verdict"] == _rule(float(edited - base), entry)
+        if entry["causal"]["verdict"] == "unresolved":
+            assert entry["causal"]["reason"].startswith("changed, ")
+        if "rounding_bound" in entry["causal"]:
+            bound = entry["causal"]["rounding_bound"]["value"]
+            assert entry["causal"]["bound_exceeds_consumer"] == (bound > abs(float(base)))
+
+
+def test_reads_at_other_rows_with_causal_verdicts_equal_fresh_runs(debugger):
+    """rows=all with the default causal verdict (the p edit in an earlier row's frame)."""
+    run = debugger.run(PROMPT)
+    run.until("t5.logits")
+    margin = Margin(5, 4, 9)
+    result = reads(run, "t3", rows="all", consumer=margin, top=32)
+    assert {e["row"] for e in result.report["reads"]} == {3, 4, 5}
+    base = _fresh_margin(debugger, [], margin)
+    for entry in result.report["reads"]:
+        j, layer = entry["row"], entry["layer"]
+        head = int(entry["name"].rsplit(".h", 1)[1])
+        mask = head_mask(run, j, layer, head, 3)
+        edited = _fresh_margin(debugger, [(f"t{j}.L{layer}.p", 0.0, "replace", mask)], margin)
+        assert entry["causal"]["delta"]["value"] == float(edited - base), entry["name"]
+        assert entry["causal"]["verdict"] == _rule(float(edited - base), entry)
 
 
 def test_reads_rank_by_effect_sum_the_rest_and_are_bounded(debugger):
@@ -97,39 +125,54 @@ def test_reads_rank_by_effect_sum_the_rest_and_are_bounded(debugger):
 
 
 def test_small_mass_large_effect_and_large_mass_no_effect_are_labelled(debugger):
-    """Constructed at L0 of row 3: score of (h0, src 3) lowered by 3 and row 3's own value
-    scaled by 50 (small mass, large effect); score of (h1, src 0) raised by 8 and head 1's
-    block of A replaced by 0 (large mass, no effect)."""
-    run = debugger.run(PROMPT)
-    run.until("t3.L0.h")
+    """Constructed at L1 of row 3 (prompt [1, 5]: rows 1-3 stepped): score of (h0, src 3)
+    lowered by 3 and row 3's own value scaled by 50 (small mass, large effect); score of
+    (h1, src 1) raised by 8 with row 1's L1 value scaled to 0 earlier (large mass, no effect).
+    No edit lies on the path of the p edits, so each verdict has its rounding bound."""
+    run = debugger.run([1, 5])
+    run.until("t1.L1.h")
+    run.set("t1.L1.v", 0.0, "scale")
+    run.until("t3.L1.h")
     s_shape = tuple(run.port_shape("s"))
     low = torch.zeros(s_shape, dtype=torch.bool)
     low[0, 0, 0, 3] = True
     high = torch.zeros(s_shape, dtype=torch.bool)
-    high[0, 1, 0, 0] = True
-    run.set("t3.L0.s", -3.0, "add", mask=low)
-    run.set("t3.L0.s", 8.0, "add", mask=high)
-    run.set("t3.L0.v", 50.0, "scale")
-    run.set("t3.L0.A", 0.0, "replace", mask=head_mask(run, 3, 0, 1))
+    high[0, 1, 0, 1] = True
+    run.set("t3.L1.s", -3.0, "add", mask=low)
+    run.set("t3.L1.s", 8.0, "add", mask=high)
+    run.set("t3.L1.v", 50.0, "scale")
     run.until("t3.logits")
-    small = reads(run, "t3.L0.v", top=8).report["reads"]
-    entry = next(e for e in small if e["name"] == "t3.L0.h0")
-    assert entry["mass"]["value"] < 0.03
+    entry = next(e for e in reads(run, "t3.L1.v", top=8).report["reads"]
+                 if e["name"] == "t3.L1.h0")
     assert entry["mass"]["authority"] in AUTHORITIES
     assert entry["causal"]["verdict"] == "causal"
-    # a read of another row by the same head: ten times the mass or more, a smaller effect
-    normal = next(e for e in reads(run, "t1.L0.v", top=8).report["reads"]
-                  if e["name"] == "t3.L0.h0")
-    assert normal["mass"]["value"] > 10 * entry["mass"]["value"]
+    assert entry["causal"]["beyond_rounding_bound"] is True
+    # a read of another row by the same head: more than twice the mass, a smaller effect
+    normal = next(e for e in reads(run, "t2.L1.v", top=8).report["reads"]
+                  if e["name"] == "t3.L1.h0")
+    assert normal["mass"]["value"] > 2 * entry["mass"]["value"]
     assert (entry["causal"]["delta"]["norm"]["value"]
             > normal["causal"]["delta"]["norm"]["value"])
-    big = reads(run, "t0.L0.k", top=8).report["reads"]
-    head1 = next(e for e in big if e["name"] == "t3.L0.h1")
+    big = reads(run, "t1.L1.v", top=8).report["reads"]
+    head1 = next(e for e in big if e["name"] == "t3.L1.h1")
     assert head1["mass"]["value"] > 0.9
     assert head1["causal"]["verdict"] == "not causal at this dose"
     assert head1["causal"]["delta"]["max_abs"]["value"] == 0.0
-    assert head1["to_consumer"]["state"] == "refused"
-    assert "written by an edit" in head1["to_consumer"]["reason"]
+    assert head1["to_consumer"]["max_abs"]["value"] == 0.0
+
+
+def test_an_edit_that_blocks_the_value_mix_leaves_the_verdict_unmeasured(debugger):
+    run = debugger.run(PROMPT)
+    run.until("t3.L1.h")
+    run.set("t3.L1.A", 0.0, "replace", mask=head_mask(run, 3, 1, 1))
+    run.until("t3.logits")
+    before = run.checkpoint()
+    entry = next(e for e in reads(run, "t1", consumer=Margin(3, 4, 9), top=8).report["reads"]
+                 if e["name"] == "t3.L1.h1")
+    assert entry["to_consumer"]["state"] == "refused"
+    assert entry["causal"]["verdict"] == "unresolved"
+    assert "written by an edit" in entry["causal"]["reason"]
+    assert run.checkpoint()["path_edits"] == before["path_edits"]
 
 
 def test_mid_row_reads_list_uncomputed_layers_and_refusals(debugger):

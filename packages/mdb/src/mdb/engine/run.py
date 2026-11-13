@@ -942,16 +942,20 @@ class Run:
             "lookahead": self.lookahead,
             "numeric_scope": self._numeric_scope(),
             "edits": [edit.manifest() for edit in self._edits],
-            "path_edits": [
-                {
-                    "transition": item.transitions,
-                    "layer": item.layer,
-                    "edits": [edit.manifest() for edit in item.edits],
-                }
-                for item in self._trail[:-1]
-                if item.edits
-            ],
+            "path_edits": self._path_manifest(len(self._trail) - 1),
         }
+
+    def _path_manifest(self, index: int) -> list[dict[str, Any]]:
+        """The committed edits on the path to trail mark ``index`` (as a checkpoint lists them)."""
+        return [
+            {
+                "transition": item.transitions,
+                "layer": item.layer,
+                "edits": [edit.manifest() for edit in item.edits],
+            }
+            for item in self._trail[:index]
+            if item.edits
+        ]
 
     def edit_tensors(self) -> dict[str, torch.Tensor]:
         """Every tensor the edits of ``checkpoint()`` name, by payload sha256 (edit values and
@@ -1089,7 +1093,11 @@ class Run:
             raise ValueError("checkpoint belongs to another prompt")
         self._refuse_other_numeric_scope(checkpoint)
         staged =[self._edit_from(manifest) for manifest in checkpoint["edits"]]
-        found = [i for i, m in enumerate(self._trail) if m.fingerprint == checkpoint["cut"]]
+        # A mark stands for the checkpoint only with the same cut AND the same committed edits
+        # before it: an edit whose result is bit-identical (``add 0``) leaves the cut unchanged
+        # but must not survive the restore.
+        found = [i for i, m in enumerate(self._trail) if m.fingerprint == checkpoint["cut"]
+                 and self._path_manifest(i) == checkpoint["path_edits"]]
         if found:
             self._restore_mark(found[-1])
         else:

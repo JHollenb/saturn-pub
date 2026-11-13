@@ -174,7 +174,7 @@ verb is missing here; `python tests/test_readme.py` regenerates this table and t
 | `break` | `break PATTERN [if CONDITION]` | mutate | Set a breakpoint on an address pattern (L*.p, t5.L1.o, logits, cache.L0.v[row=2]); cache cells are evaluated at boundary stops only |
 | `checkpoint` | `checkpoint [NAME]` | mutate | Name the cursor position (about 1 KB of plain data) |
 | `checkpoints` | `checkpoints [offset=N] [limit=N]` | read | List named checkpoints (paged: offset=, limit=) |
-| `circuit` | `circuit CONSUMER [top=K] [depth=D] \| circuit test ID \| circuit show ID` | navigate | Circuit records: build from the exact decomposition (nodes, edges, remainder), test by native ablation, show as a walk |
+| `circuit` | `circuit CONSUMER [top=K] [depth=D] \| circuit test ID \| circuit show ID` | mutate | Circuit records: build from the exact decomposition (nodes, edges, remainder), test by native ablation, show as a walk |
 | `commit` | `commit` | mutate | Commit the pending layer with its staged edits (cursor to its h_out) |
 | `compare` | `compare A B [consumer=C]  (A, B: ADDR=VALUE [op] or a checkpoint name)` | navigate | Compare branches: base, A, B and A+B measured natively, effects and the interaction |
 | `condition` | `condition N [EXPR]` | mutate | Set the condition of breakpoint N (a watch's predicate); no expression removes it |

@@ -19,12 +19,17 @@ torch-free; each op imports the analysis layer when it runs.
   checkpoint name or session id as origin, or an occurrence pointer as JSON).
 
 With a project attached, ``symbols`` and ``circuit`` index their sealed records in it.
+Declared symbols belong to the debugger: they are bound again on the run the session moves to
+(``start``, a recipe ``seek``) once their rows are computed, and listed ``unresolved`` until
+then; the circuit ledger moves with a recipe ``seek``.
 """
 
 from __future__ import annotations
 
 import json
 import re
+import weakref
+from collections import Counter
 from typing import Any
 
 from .builtin import GLOBALS, _moved, _project
@@ -34,6 +39,7 @@ from .registry import Arg, Op, register
 
 _ROW = re.compile(r"t(?P<row>\d+)\.")
 _OPS = ("replace", "add", "scale")
+_SYMBOLS: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
 
 
 def _refusal():
@@ -89,14 +95,39 @@ def _reads(ctx, source, rows, consumer, top, causal, min_effect):
 # --------------------------------------------------------------------------- symbols
 
 
+def _symbol_store(ctx) -> dict[str, list[str]]:
+    """The symbols declared through this debugger (name -> addresses), whatever its run."""
+    if ctx.debugger not in _SYMBOLS:
+        _SYMBOLS[ctx.debugger] = {}
+    return _SYMBOLS[ctx.debugger]
+
+
+def _bind_declared(ctx) -> dict[str, dict[str, Any]]:
+    """Declare on the current run every symbol of the debugger it does not hold yet; those that
+    cannot be bound (rows not computed) are returned with the reason."""
+    from mdb.analysis import symbols
+
+    held = symbols.declared(ctx.run)
+    pending = {}
+    for name, addresses in _symbol_store(ctx).items():
+        if name in held and held[name].addresses == addresses:
+            continue
+        try:
+            symbols.declare(ctx.run, name, addresses)
+        except _refusal() as error:
+            pending[name] = {"addresses": addresses, "reason": str(error)}
+    return pending
+
+
 def _symbols(ctx, consumer, rows, min_mass, readers, offset, limit):
     from mdb.analysis import symbols
 
+    pending = _bind_declared(ctx)
     try:
         found = symbols.table(ctx.run, consumer=_declared_consumer(ctx, consumer), rows=rows,
                               min_mass=float(min_mass), readers=readers, offset=offset,
                               limit=limit, session_id=_session_id(ctx),
-                              tokenizer=ctx.tokenizer)
+                              tokenizer=ctx.tokenizer, pending=pending)
     except _refusal() as error:
         raise Refused(str(error)) from None
     stored = _store(ctx, found.records)
@@ -110,13 +141,15 @@ def _symbol(ctx, name, addresses):
     from mdb.analysis import symbols
 
     parts = [part.strip() for part in addresses.split(",") if part.strip()]
+    _bind_declared(ctx)
     try:
         binding = symbols.declare(ctx.run, name, parts)
     except _refusal() as error:
         raise Refused(str(error)) from None
+    _symbol_store(ctx)[name] = binding.addresses
     return {"symbol": binding.name, "definitions": binding.addresses,
             "rows": sorted({cell.row for cell in binding.cells}),
-            "declared": sorted(symbols.declared(ctx.run))}
+            "declared": sorted(_symbol_store(ctx))}
 
 
 # --------------------------------------------------------------------------- circuit
@@ -134,8 +167,17 @@ def _circuit(ctx, target, id, top, depth, tolerance):  # noqa: A002 - the wire n
             raise Refused(f"no circuit {id} (have: {', '.join(map(str, ledger)) or 'none'})")
         circuit = ledger[id]
         if target == "show":
-            return {"action": "show", "id": id, "record": _record_view(circuit.record),
-                    "tests": circuit.tests[-1:]}
+            out = {"action": "show", "id": id, "record": _record_view(circuit.record),
+                   "tests": circuit.tests[-1:]}
+            if circuit.tests:
+                last = circuit.tests[-1]
+                out["ablated"] = {name: last[name]["nodes"] for name in ("retained",
+                                                                        "complement")
+                                  if "nodes" in last.get(name, {})}
+            texts = _source_texts(ctx, circuit.record["body"]["root"])
+            if texts:
+                out["token_text"] = texts
+            return out
         before = _session_digest(ctx)
         try:
             result = circuits.test(run, circuit, tolerance=float(tolerance))
@@ -154,6 +196,23 @@ def _circuit(ctx, target, id, top, depth, tolerance):  # noqa: A002 - the wire n
     stored = _store(ctx, [circuit.record])
     if stored:
         out["stored"] = stored
+    return out
+
+
+def _source_texts(ctx, root: dict[str, Any]) -> dict[str, str]:
+    """Token text of each source-row leaf (node id -> text), when a tokenizer is attached."""
+    tokenizer, tokens = ctx.tokenizer, ctx.run.tokens
+    if tokenizer is None:
+        return {}
+    out = {}
+    stack = [root]
+    while stack and len(out) < 64:
+        node = stack.pop()
+        stack += node.get("children", [])
+        if node["kind"] == "source":
+            row = int(node["name"][1:])
+            if row < len(tokens):
+                out[node["id"]] = tokenizer.decode([int(tokens[row])])
     return out
 
 
@@ -234,9 +293,33 @@ def _seek_within(run, address: str) -> list[str]:
             run.until(address)
             moves.append(f"until {address}")
     except BaseException:
-        run.restore(start)
+        from mdb.analysis.compare import restore_exactly
+
+        restore_exactly(run, start)
         raise
     return moves
+
+
+def _edit_list(run) -> dict[str, list[str]]:
+    """The run's committed and staged edits as text (``t<r>.L<l>.<port> <op> <value>``)."""
+    def text(row, entry):
+        value = entry["value"]
+        shown = value.get("value") if value.get("kind") == "scalar" else value.get("sha256",
+                                                                                   "")[:12]
+        sel = f"[{entry['selection']}]" if entry.get("selection") else ""
+        return f"t{row}.L{entry['layer']}.{entry['port']}{sel} {entry['op']} {shown}"
+
+    row = int(_ROW.match(run.where)["row"])
+    return {"committed": [text(e["row"], e) for e in run.committed_edits()],
+            "staged": [text(row, e) for e in run.staged_info()]}
+
+
+def _dropped(before: dict[str, list[str]], after: dict[str, list[str]]) -> dict[str, Any]:
+    """The edits a move dropped and the committed edits it turned back into staged ones."""
+    now = Counter(after["committed"]) + Counter(after["staged"])
+    dropped = list((Counter(before["committed"]) + Counter(before["staged"]) - now).elements())
+    restaged = list((Counter(before["committed"]) & Counter(after["staged"])).elements())
+    return {"dropped_edits": dropped[:16], "restaged_edits": restaged[:16]}
 
 
 def _replayed(ctx, recipe_id: str):
@@ -304,6 +387,7 @@ def _seek(ctx, target):
     plain = addresses.format_address(addresses.Occurrence(parsed.token, parsed.port,
                                                           parsed.layer))
     own = origin is None or origin == getattr(ctx.debugger, "session_id", None)
+    before = _edit_list(run)
     if own and recipe_id is None:
         try:
             moves = _seek_within(run, plain)
@@ -314,7 +398,8 @@ def _seek(ctx, target):
                               "and checkpoint)") from None
             recipe_id = _origin_recipe(ctx, ctx.debugger.session_id, plain)
         else:
-            return _moved(ctx, {"target": plain, "moves": moves, "via": "run"})
+            return _moved(ctx, {"target": plain, "moves": moves, "via": "run",
+                                **_dropped(before, _edit_list(run))})
     if _project(ctx) is None:
         raise Refused(f"{text}: reaching another origin needs a stored recipe; attach with "
                       "project=")
@@ -329,10 +414,14 @@ def _seek(ctx, target):
     except ValueError as error:
         raise Refused(f"the stored recipe reaches {replayed.where}, but not {plain}: "
                       f"{error}") from None
+    from mdb.analysis import circuits
+
+    circuits.ledger(replayed).update(circuits.ledger(run))
     ctx.set_run(replayed)
     ctx.debugger.live = replayed
+    _bind_declared(ctx)
     return _moved(ctx, {"target": plain, "moves": moves, "via": "recipe",
-                        "recipe": recipe_id})
+                        "recipe": recipe_id, **_dropped(before, _edit_list(replayed))})
 
 
 # --------------------------------------------------------------------------- registration
@@ -377,7 +466,7 @@ register(Op("circuit", "Circuit records: build from the exact decomposition (nod
              Arg("tolerance", "number", default=0.1, positional=False,
                  help="sufficient when the complement ablation moves the consumer by at most "
                       "this fraction of its size")),
-            "navigate", True, _circuit,
+            "mutate", True, _circuit,
             usage="circuit CONSUMER [top=K] [depth=D] | circuit test ID | circuit show ID"),
          replace=True)
 register(Op("compare", "Compare branches: base, A, B and A+B measured natively, effects and "

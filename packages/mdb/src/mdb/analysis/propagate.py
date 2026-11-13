@@ -32,21 +32,15 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from mdb.core.kinds import WHATIF
 from mdb.core.pointers import seal_digest
-from mdb.core.records import declare_kind, num, seal_record
+from mdb.core.records import num, seal_record
 
 from .finite import BOUND, EXACT, LOCAL, MEASURED, SUPPLIED, f64
 from .forecast import Logit, Margin, Refusal, RowModel, _session_id, _split, producers
 
 SCHEMA = "mdb-whatif-v1"
 OPS = ("replace", "add", "scale")
-WHATIF = declare_kind(
-    "whatif",
-    required=("schema", "edit", "consumer", "sealed_at", "mode", "prediction"),
-    plain_numeric=("edit.row", "edit.layer", "edit.mask_count", "edit.shape", "consumer.row",
-                   "consumer.index", "consumer.indices", "sealed_at.row", "sealed_at.index",
-                   "sealed_at.transition", "operands.*.shape"),
-)
 
 
 def _torch():
@@ -288,7 +282,7 @@ def _request(run: Any, edit: Edit, shape: tuple[int, ...], x0: Any, b0: Any, u: 
     edit writes (the operand cast to the model dtype, one rounded op; ``b0`` the bound of ``x0``
     itself when ``x0`` is a prediction)."""
     torch = _torch()
-    port_shape = tuple(run.port_shape(_split(run.stops()[run.parse(edit.address)[1]])[1]))
+    port_shape = tuple(run.address_shape(edit.address))  # the edited row's frame, not the cursor's
     if isinstance(edit.value, torch.Tensor):
         value = f64(edit.value).broadcast_to(port_shape).reshape(shape)
     else:

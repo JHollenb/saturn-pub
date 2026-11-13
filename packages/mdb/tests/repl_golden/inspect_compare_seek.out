@@ -7,6 +7,7 @@ compare A: L1.m=0.5 add  B: L0.v=0.25 add  -> t3.M[4,9]
   base -0.11401 [measured]  A 0.050476 [measured]  B -0.068237 [measured]  A+B 0.052124 [measured]
   effects A 0.16449 [measured]  B 0.045776 [measured]  A+B 0.16614 [measured]
   interaction (A+B) - A - B + base = -0.044128 [measured]
+  order: A+B stages both sides' edits layer by layer; at one port A's edit is applied before B's (where both edit one port, the ops commute)
   session unchanged at t3.logits
 (mdb) checkpoint here
 checkpoint here at t3.logits (632 bytes)

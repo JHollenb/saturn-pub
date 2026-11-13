@@ -13,9 +13,9 @@ point) as itself, and ``o`` of the read's own layer (the default consumer) as it
 The causal verdict of a read is a native measurement: the source's weight in that head is set to
 zero (``p[h, src] = 0``, a masked ``replace`` at the ``p`` port) through
 ``analysis.propagate.whatif``, which measures the consumer natively and restores the session.
-``causal`` when the measured change exceeds ``min_effect`` (default 0: the engine is
-deterministic, so a change of exactly 0 is the only native null), ``not causal at this dose``
-otherwise, ``unresolved`` (with the reason) when the measurement could not be made. Mass and
+``causal`` when the measured change exceeds both ``min_effect`` (default 0) and the rounding
+bound of the prediction; ``not causal at this dose`` when it is exactly 0; ``unresolved`` (with
+the reason) when it changed but within the bound, or the measurement could not be made. Mass and
 effect are always reported side by side; a small mass never hides a read.
 """
 
@@ -337,16 +337,19 @@ def _edited_block(mix: HeadMix, run: Any, head: int) -> str | None:
 
 @dataclass(frozen=True)
 class Source:
-    """A source row and the reads that can name it: ``layers`` / ``kv`` None means all."""
+    """Cache cells of one source row: ``layers`` / ``kv`` / ``ports`` (``k``, ``v``) None means
+    all. ``covers(layer, kv)`` asks about a read (any port); with ``port`` about one cell."""
 
     row: int
     layers: tuple[int, ...] | None = None
     kv: tuple[int, ...] | None = None
     text: str = ""
+    ports: tuple[str, ...] | None = None
 
-    def covers(self, layer: int, kv: int) -> bool:
+    def covers(self, layer: int, kv: int, port: str | None = None) -> bool:
         return ((self.layers is None or layer in self.layers)
-                and (self.kv is None or kv in self.kv))
+                and (self.kv is None or kv in self.kv)
+                and (port is None or self.ports is None or port in self.ports))
 
 
 def parse_source(run: Any, text: str) -> Source:
@@ -359,7 +362,9 @@ def parse_source(run: Any, text: str) -> Source:
         layer = None if match["layer"] is None else int(match["layer"])
         if layer is not None and layer >= layers:
             raise Refusal(f"no layer {layer} in a {layers}-layer model")
-        return Source(row, None if layer is None else (layer,), None, text)
+        port = match["port"]
+        return Source(row, None if layer is None else (layer,), None, text,
+                      None if port is None else ("v",) if port == "v" else ("k",))
     match = _CELL.fullmatch(text)
     if match is None:
         raise Refusal(f"a read source is a token row t<r>, a cache-row occurrence t<r>.L<l>.k|v "
@@ -382,7 +387,7 @@ def parse_source(run: Any, text: str) -> Source:
         raise Refusal(f"{text}: name the source row (row=<r>)")
     if kv is not None and kv >= run.adapter.num_kv_heads:
         raise Refusal(f"{text}: no KV head {kv}")
-    return Source(row, (layer,), None if kv is None else (kv,), text)
+    return Source(row, (layer,), None if kv is None else (kv,), text, (match["port"],))
 
 
 def reader_rows(run: Any, source: Source, rows: str | None) -> list[int]:
@@ -442,10 +447,9 @@ def verdict(run: Any, address: str, mask: Any, selection: str, target: Any,
                                   "remove the source's weight in this head"), target)
     except Refusal as error:
         return {"verdict": "unresolved", "reason": str(error)}
-    delta = result.tensors["native_delta"]
-    measured = size(delta)
+    delta = f64(result.tensors["native_delta"]).reshape(-1)
+    bound = result.tensors.get("rounding_bound")
     out: dict[str, Any] = {
-        "verdict": "causal" if measured > min_effect else "not causal at this dose",
         "delta": result.report["measured"]["delta"],
         "min_effect": num(float(min_effect), SUPPLIED),
         "record": result.report["record"],
@@ -454,14 +458,36 @@ def verdict(run: Any, address: str, mask: Any, selection: str, target: Any,
     prediction = result.report["prediction"]
     out["predicted"] = (prediction["exact"]["value"] if prediction["state"] == "resolved"
                         else {"state": prediction["state"], "reason": prediction["reason"]})
-    bound = result.tensors.get("rounding_bound")
-    if bound is None:
-        out["beyond_rounding_bound"] = None
+    if bound is not None:
+        bound = f64(bound).reshape(-1)
+        out["beyond_rounding_bound"] = bool((delta.abs() > bound).any())
+        out["rounding_bound"] = claim(bound.max(), BOUND)
+        base = result.report["measured"]["base"]
+        scale = base["value"] if "value" in base else base["max_abs"]["value"]
+        out["bound_exceeds_consumer"] = float(bound.max()) > abs(scale)
     else:
-        out["beyond_rounding_bound"] = bool((f64(delta).reshape(-1).abs()
-                                             > f64(bound).reshape(-1)).any())
-        out["rounding_bound"] = claim(f64(bound).reshape(-1).max(), BOUND)
+        out["beyond_rounding_bound"] = None
+    out.update(_decide(delta, bound, min_effect, prediction))
     return out
+
+
+def _decide(delta: Any, bound: Any, min_effect: float, prediction: dict[str, Any]
+            ) -> dict[str, Any]:
+    """``causal`` only when the measured change exceeds both ``min_effect`` and the rounding
+    bound; exactly 0 is ``not causal at this dose``; a change inside the bound (or with no
+    bound to compare with) is ``unresolved``."""
+    if not bool((delta != 0).any()):
+        return {"verdict": "not causal at this dose"}
+    if bound is None:
+        why = ("the prediction carries no rounding bound" if prediction["state"] == "resolved"
+               else f"the prediction is {prediction['state']}: {prediction.get('reason')}")
+        return {"verdict": "unresolved",
+                "reason": f"changed, but no rounding bound to compare with ({why})"}
+    if size(delta) <= min_effect:
+        return {"verdict": "unresolved", "reason": "changed, at or below min_effect"}
+    if not bool((delta.abs() > bound).any()):
+        return {"verdict": "unresolved", "reason": "changed, within rounding bound"}
+    return {"verdict": "causal"}
 
 
 def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: Any = None,
@@ -527,7 +553,9 @@ def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: 
                     entry["to_consumer"] = claim(value, EXACT, "P19" if reader.scalar else "P07")
                 entry["_rank"] = -1.0 if value is None else size(value)
                 entry["_mask"] = (j, layer, h, s)
-                entry["_target"] = None if isinstance(reader, Refusal) else reader.target
+                # an edit that blocks the value mix decides the verdict too: not measured
+                entry["_target"] = (None if isinstance(reader, Refusal) or blocked
+                                    else reader.target)
                 entry["_value"] = value
                 entries.append(entry)
     entries.sort(key=lambda e: (-e["_rank"], e["row"], e["layer"], e["name"]))
@@ -558,8 +586,7 @@ def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: 
         report["omitted"] = {
             "count": len(rest),
             "mass": num(sum(float(e["mass"]["value"]) for e in rest), EXACT),
-            "to_consumer": (claim(sum(values[1:], values[0]), EXACT) if values
-                            else unresolved("no omitted read reaches the consumer")),
+            "to_consumer": _omitted_sum(rest, values, consumer),
             "meaning": f"+{len(rest)} more reads (ranked below the top {top}), summed",
         }
     report["checks"] = _check_summary(checks)
@@ -569,6 +596,19 @@ def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: 
             report["not_computed_total"] = len(missing)
     tensors["entries"] = entries
     return Reads(report, tensors)
+
+
+def _omitted_sum(rest: list[dict[str, Any]], values: list[Any], consumer: Any) -> dict:
+    """The omitted reads' summed contribution, only when they share one consumer (a declared
+    one, or by default ``o`` of one row and layer)."""
+    if not values:
+        return unresolved("no omitted read reaches the consumer")
+    if consumer is None and len({(e["row"], e["layer"]) for e in rest}) > 1:
+        return unresolved("the omitted reads have different consumers (o of their own layers): "
+                          "their contributions do not add")
+    if len(values) < len(rest):
+        return unresolved("some omitted reads do not reach the consumer")
+    return claim(sum(values[1:], values[0]), EXACT)
 
 
 def _label(run: Any, mix: HeadMix, head: int, source: int) -> str:

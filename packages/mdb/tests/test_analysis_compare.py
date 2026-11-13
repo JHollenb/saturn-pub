@@ -98,3 +98,27 @@ def test_refusals(debugger):
     run.until("t3.logits")
     with pytest.raises(Refusal, match="token id"):
         compare(run, Side("A", edits=A), Side("B", edits=B), "t3.sample")
+
+
+@pytest.mark.parametrize("ops", [(("replace", 0.0), ("add", 0.5)), (("add", 0.5), ("scale", 2.0))],
+                         ids=["replace-add", "add-scale"])
+def test_non_commuting_edits_at_one_port_refuse_the_joint_branch(debugger, ops):
+    run = debugger.run(PROMPT)
+    run.until("t3.logits")
+    (op_a, va), (op_b, vb) = ops
+    result = compare(run, Side("A", edits=[Edit("t3.L1.m", va, op_a)]),
+                     Side("B", edits=[Edit("t3.L1.m", vb, op_b)]), MARGIN)
+    report = check_bounded(result["report"])
+    assert report["interaction"]["state"] == "refused"
+    assert "depends on the order" in report["interaction"]["reason"]
+    assert report["measured"]["A+B"]["state"] == "refused" and "A+B" not in result["values"]
+
+
+def test_commuting_edits_at_one_port_state_the_order(debugger):
+    run = debugger.run(PROMPT)
+    run.until("t3.logits")
+    result = compare(run, Side("A", edits=[Edit("t3.L1.m", 0.5, "add")]),
+                     Side("B", edits=[Edit("t3.L1.m", 0.25, "add")]), MARGIN)
+    assert "A's edit is applied before B's" in result["report"]["order"]
+    assert float(result["values"]["A+B"]) == float(
+        _fresh(debugger, [Edit("t3.L1.m", 0.5, "add"), Edit("t3.L1.m", 0.25, "add")], MARGIN))

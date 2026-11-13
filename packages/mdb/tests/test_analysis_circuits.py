@@ -105,3 +105,59 @@ def test_refusals(debugger):
     run.until("t3.L1.m")
     with pytest.raises(Refusal, match="was built at"):
         circuits.test(run, built)
+
+
+def _nodes(node):
+    yield node
+    for child in node.get("children", ()):
+        yield from _nodes(child)
+
+
+@pytest.mark.parametrize("consumer", [Margin(3, 4, 9), Logit(3, 7), "t3.L1.h_out", "t3.L1.o"],
+                         ids=str)
+def test_every_remainder_is_bounded_and_within_on_a_native_run(debugger, consumer):
+    run = debugger.run(PROMPT)
+    run.until("t3.logits")
+    body = circuits.build(run, consumer, top=2, depth=3).record["body"]
+    remainders = [n for n in _nodes(body["root"]) if n["kind"] == "remainder"]
+    assert remainders and all(n["within"] is True for n in remainders)
+    assert all(n["bound"].get("authority", n["bound"].get("max_abs", {}).get("authority"))
+               == "bound" for n in remainders)
+    assert body["remainders_within"] is True and body["closure"]["by_construction"] is True
+    assert body["edits"]["count"] == 0
+
+
+@pytest.mark.parametrize("edit", [("o", 0.5, "add"), ("m", 2.0, "scale"), ("h_out", 0.25, "add")],
+                         ids=lambda e: e[0])
+def test_a_committed_edit_is_its_own_node_never_a_remainder(debugger, edit):
+    port, value, op = edit
+    run = debugger.run(PROMPT)
+    run.until("t3.L0.h")
+    run.set(f"t3.L0.{port}", value, op)
+    run.until("t3.logits")
+    circuit = circuits.build(run, Margin(3, 4, 9), top=8, depth=2)
+    _closes(circuit.root, 1e-12)
+    body = circuit.record["body"]
+    edits = [n for n in _nodes(body["root"]) if n["kind"] == "edit"]
+    assert [n["address"] for n in edits] == [f"t3.L0.{port}"]
+    assert body["edits"]["count"] == 1
+    assert edits[0]["value"]["authority"] in ("supplied", "derived-exact")
+    assert abs(edits[0]["value"]["value"]) > 1e-6
+    remainders = [n for n in _nodes(body["root"]) if n["kind"] == "remainder"]
+    assert all(n["within"] is True for n in remainders), [
+        (n["name"], n["value"], n["bound"]) for n in remainders if not n["within"]]
+
+
+def test_the_embedding_is_ablated_in_neither_set(debugger):
+    run = debugger.run(PROMPT)
+    run.until("t3.logits")
+    circuit = circuits.build(run, Margin(3, 4, 9), top=1, depth=1)
+    result = circuits.test(run, circuit)
+    named = {n.name: n.ref for n in circuits._walk(circuit.root)}
+    assert "embedding" in result["excluded"]["reason"]
+    for name in ("retained", "complement"):
+        part = result[name]
+        if "edits" in part:
+            assert not any(e.startswith("t3.L0.h") for e in part["edits"])
+    marked = set(result["retained"].get("nodes", [])) | set(result["complement"]["nodes"])
+    assert named.get("embedding") not in marked

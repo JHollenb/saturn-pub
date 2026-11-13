@@ -1550,3 +1550,27 @@ def test_the_deferred_interrupt_points_fire():
         pytest.skip("run with the deferred-interrupt sweep")
     fired = {(m, n, a, r) for m, n, a, r, f in FIRED if f}
     assert {(m, n, a) for m, n, a, _ in fired} == set(POINTS), sorted(FIRED)
+
+
+# --- restore sets the edits to the checkpoint's even when the cut is bit-identical --------------
+
+
+@pytest.mark.parametrize("edit", [("m", 0.0, "add"), ("m", 1.0, "scale"), ("m", 0.5, "add")],
+                         ids=["add-0", "scale-1", "add-0.5"])
+def test_restore_drops_an_edit_whose_result_is_bit_identical(adapter, edit):
+    """``add 0`` / ``scale 1`` commit an edit whose native cut equals the checkpoint's: the
+    restore must still leave the checkpoint's (empty) edit list, staged and committed."""
+    port, value, op = edit
+    run = Run(adapter, PROMPT)
+    run.until(f"t{NEXT}.logits")
+    checkpoint = run.checkpoint()
+    while run.parse(run.where) >= run.parse(f"t{NEXT}.L1.h"):
+        run.reverse_step("layer")
+    run.until(f"t{NEXT}.L1.h")
+    run.set(f"t{NEXT}.L1.{port}", value, op)
+    run.until(f"t{NEXT}.logits")
+    assert len(run.committed_edits()) == 1
+    run.restore(checkpoint)
+    assert run.committed_edits() == [] and run.edits == []
+    assert run.where == checkpoint["where"]
+    assert run.checkpoint()["path_edits"] == checkpoint["path_edits"] == []

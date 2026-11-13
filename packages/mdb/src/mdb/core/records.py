@@ -522,3 +522,6 @@ OCCURRENCE = declare_kind(
                    "retained.*.layer", "retained.*.head", "evidence.*.size",
                    "evidence.*.event", "evidence.*.index"),
 )
+
+# the analysis layer's kinds (torch-free), so any reader can verify them
+from . import kinds as _kinds  # noqa: E402, F401
