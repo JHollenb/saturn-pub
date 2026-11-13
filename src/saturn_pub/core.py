@@ -516,8 +516,28 @@ class Receipt:
         return {**json.loads(self._body), "fingerprint": self.fingerprint}
 
 
+class PortStop(Exception):
+    """Raised by a port controller to end a read-only probe at a declared port."""
+
+
 class Adapter(ABC):
-    """Native executor contract. Execution state belongs to a Session, not the model."""
+    """Native executor contract. Execution state belongs to a Session, not the model.
+
+    Adapters that expose ports accept ``advance(state, *, ports=controller)`` and install the
+    controller around their native call; ``ports(state)`` names the hook sites the next
+    transition offers. A controller may define a per-transition lifecycle: ``begin()`` is
+    called before each transition's ``advance`` (in ``probe`` and ``continue_``);
+    ``probe_check()`` after a probe's ``advance``; ``manifest()`` once after the same
+    ``advance`` in ``continue_``, never earlier. A non-empty ``manifest()`` is recorded as that
+    transition's ``port_edits`` and so must list only edits applied during that call; it may
+    raise to refuse committing a transition whose staged edits did not take effect.
+
+    A controller may also define ``check_ahead(ahead)``, called by ``continue_`` before anything
+    runs with ``adapter.ports_ahead(state, steps)``; it raises to refuse a call in which none of
+    the transitions would reach what the controller addresses. ``begin_call()`` / ``end_call()``
+    bracket one ``continue_`` call (``end_call`` raises if a controller that carries edits was
+    never installed by the call).
+    """
 
     model_identity: str
     execution: Mapping[str, Any]
@@ -533,6 +553,16 @@ class Adapter(ABC):
 
     @abstractmethod
     def addresses(self, state: Mapping[str, Any]) -> tuple[str, ...]: ...
+
+    def ports(self, state: Mapping[str, Any]) -> tuple[str, ...]:
+        """Hook sites of the next transition; empty means it accepts no port controller."""
+        return ()
+
+    def ports_ahead(self, state: Mapping[str, Any], steps: int) -> tuple[Any, ...] | None:
+        """For each of the next ``steps`` transitions, the site index a port controller can
+        address there (``None`` for a transition that offers no ports); ``None`` overall when
+        the adapter cannot say without running."""
+        return None
 
     def point(self, state: Mapping[str, Any]) -> ExecutionPoint:
         return ExecutionPoint(
@@ -832,14 +862,55 @@ class Session:
             self._failed("apply", before, exc)
             raise
 
-    def continue_(self, steps: int = 1) -> Receipt:
+    def _accepts_ports(self) -> bool:
+        return "ports" in inspect.signature(self.adapter.advance).parameters
+
+    def probe(self, controller: Any) -> dict[str, Any]:
+        """Run the next transition on a throw-away candidate with ``controller`` installed.
+
+        Read-only: records no receipt, attempt or history entry and leaves the session state
+        and external closure as they were. ``PortStop`` ends the probe normally; any other
+        exception propagates unchanged.
+        """
+        self._activate()
+        self.adapter.validate_execution()
+        if not self._accepts_ports() or not self.adapter.ports(self._state):
+            raise ValueError(f"no ports at {self.adapter.boundary(self._state)}")
+        external = clone(self.adapter.capture_external())
+        candidate = clone(self._state)
+        stopped = False
+        begin = getattr(controller, "begin", None)
+        if begin is not None:
+            begin()
+        try:
+            self.adapter.advance(candidate, ports=controller)
+        except PortStop:
+            stopped = True
+        finally:
+            self.adapter.restore_external(external)
+        check = getattr(controller, "probe_check", None)
+        if check is not None:
+            check()
+        return {"boundary": self.adapter.boundary(self._state), "stopped": stopped}
+
+    def continue_(self, steps: int = 1, *, ports: Any = None) -> Receipt:
         if isinstance(steps, bool) or not isinstance(steps, int) or steps < 1:
             raise ValueError("steps must be a positive integer")
+        if ports is not None and not self._accepts_ports():
+            raise ValueError("adapter does not accept a port controller")
+        if ports is not None:
+            check_ahead = getattr(ports, "check_ahead", None)
+            ahead = self.adapter.ports_ahead(self._state, steps) if check_ahead else None
+            if ahead is not None:
+                check_ahead(ahead)  # refuses before anything runs: no receipt, no attempt
         before = self.capture(retain=False)
         external = clone(self.adapter.capture_external())
         try:
             candidate = clone(self._state)
             transitions = []
+            begin_call = getattr(ports, "begin_call", None)
+            if begin_call is not None:
+                begin_call()
             for _ in range(steps):
                 entry = self.adapter.point(candidate).to_dict()
                 spec = self.adapter.transition(candidate)
@@ -855,7 +926,14 @@ class Session:
                     if spec.footprint == "declared"
                     else {}
                 )
-                candidate = dict(self.adapter.advance(candidate))
+                begin = getattr(ports, "begin", None)
+                if begin is not None:
+                    begin()
+                candidate = dict(
+                    self.adapter.advance(candidate)
+                    if ports is None
+                    else self.adapter.advance(candidate, ports=ports)
+                )
                 for name, expected in preserved.items():
                     if name not in candidate or describe(candidate[name]) != expected:
                         raise ValueError(f"native transition changed undeclared slot: {name}")
@@ -879,6 +957,13 @@ class Session:
                         ),
                     }
                 )
+                manifest = getattr(ports, "manifest", None)
+                edits = manifest() if manifest is not None else None
+                if edits:
+                    transitions[-1]["port_edits"] = edits
+            end_call = getattr(ports, "end_call", None)
+            if end_call is not None:
+                end_call()
             return self._record(
                 "continue", before, state=candidate, steps=steps, transitions=transitions
             )

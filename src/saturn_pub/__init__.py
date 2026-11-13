@@ -8,13 +8,14 @@ from .contracts import (
     SurfaceManifest,
     TransitionSpec,
 )
-from .core import Act, Adapter, Frame, Receipt, Session, StateCut
+from .core import Act, Adapter, Frame, PortStop, Receipt, Session, StateCut
 
 __version__ = "0.4.1"
 __all__ = [
     "Act",
     "Adapter",
     "Frame",
+    "PortStop",
     "Receipt",
     "Session",
     "StateCut",

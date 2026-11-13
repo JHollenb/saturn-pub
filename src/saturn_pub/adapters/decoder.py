@@ -774,7 +774,12 @@ class DecoderAdapter(Adapter):
         return {k: v for k, v in kwargs.items() if k in signature.parameters}
 
     def _run_layer(
-        self, index: int, hidden: torch.Tensor, cache: DynamicCache, position: int
+        self,
+        index: int,
+        hidden: torch.Tensor,
+        cache: DynamicCache,
+        position: int,
+        ports: Any = None,
     ) -> torch.Tensor:
         positions = torch.tensor([[position]], device=self.device)
         kwargs: dict[str, Any] = {self.spec.cache_kwarg: cache, "use_cache": True}
@@ -785,7 +790,12 @@ class DecoderAdapter(Adapter):
         else:
             kwargs["attention_mask"] = None
         kwargs = self._layer_kwargs(index, kwargs)
-        result = self._residency.run(self._layer_modules[index], hidden, **kwargs)
+        module = self._layer_modules[index]
+        if ports is None:
+            result = self._residency.run(module, hidden, **kwargs)
+        else:
+            with ports.installed(self, index, module):
+                result = self._residency.run(module, hidden, **kwargs)
         return result[0] if isinstance(result, tuple) else result
 
     def _streamed_backbone(self, tokens: torch.Tensor) -> tuple[torch.Tensor, DynamicCache]:
@@ -1117,6 +1127,21 @@ class DecoderAdapter(Adapter):
         if (phase == "commit") != (sampled is not None):
             raise ValueError("sampled token exists only at the commit boundary")
 
+    def read(self, state: Mapping[str, Any], address: str) -> Any:
+        """Read a listed address, or one of the cache/decision slots that exist in the state.
+
+        ``keys`` and ``values`` (per-layer cache tensors) are always present; ``sampled_token``
+        only at the operation-granularity commit boundary. They are readable here but are not in
+        ``addresses()``, so frames, cuts and receipts are unchanged.
+        """
+        if address in ("keys", "values"):
+            return clone(state[address])
+        if address == "sampled_token":
+            if state["sampled_token"] is None:
+                raise ValueError(f"unsupported address at {self.boundary(state)}: {address}")
+            return clone(state[address])
+        return super().read(state, address)
+
     def write(
         self, state: Mapping[str, Any], writes: Mapping[str, Any], invalidates: tuple[str, ...]
     ) -> Mapping[str, Any]:
@@ -1132,8 +1157,43 @@ class DecoderAdapter(Adapter):
             )
         return super().write(state, writes, ())
 
+    def ports(self, state: Mapping[str, Any]) -> tuple[str, ...]:
+        """Qualified module names a port controller may hook in the pending decoder layer."""
+        if state["hidden"] is None or state["phase"] != "layer" or state["layer"] >= self.layers:
+            return ()
+        prefix = f"{self.spec.backbone}.{self.spec.layers}.{state['layer']}"
+        return tuple(
+            f"{prefix}.{name}" if name else prefix
+            for name, _ in self._layer_modules[state["layer"]].named_modules()
+        )
+
+    def ports_ahead(self, state: Mapping[str, Any], steps: int) -> tuple[Any, ...]:
+        """The decoder layer index each of the next ``steps`` transitions runs (``None`` for the
+        embedding and the post-layer operations), derived from the state without running."""
+        bare = state["hidden"] is None
+        layer = state["layer"]
+        post = ("normalization", "readout", "sample", "commit")
+        phase = state["phase"] if state["phase"] in post else None
+        out: list[int | None] = []
+        for _ in range(steps):
+            if bare:
+                out.append(None)
+                bare = False
+            elif layer < self.layers:
+                out.append(layer)
+                layer += 1
+                if layer == self.layers:
+                    phase = post[0]
+            else:
+                out.append(None)
+                if self.granularity == "operation" and phase != post[-1]:
+                    phase = post[post.index(phase) + 1] if phase in post else post[1]
+                else:
+                    bare, layer, phase = True, 0, None
+        return tuple(out)
+
     @torch.inference_mode()
-    def advance(self, state: Mapping[str, Any]) -> Mapping[str, Any]:
+    def advance(self, state: Mapping[str, Any], *, ports: Any = None) -> Mapping[str, Any]:
         self.validate(state)
         out = clone(state)
         tokens = out["tokens"].to(self.device)
@@ -1148,7 +1208,7 @@ class DecoderAdapter(Adapter):
         layer = out["layer"]
         if layer < self.layers:
             cache = self._cache(out["keys"], out["values"])
-            out["hidden"] = self._run_layer(layer, hidden, cache, tokens.shape[1] - 1)
+            out["hidden"] = self._run_layer(layer, hidden, cache, tokens.shape[1] - 1, ports)
             out["keys"], out["values"] = self._cache_values(cache)
             out["layer"] = layer + 1
             if self.granularity == "operation" and out["layer"] == self.layers:

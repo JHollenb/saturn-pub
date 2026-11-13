@@ -555,3 +555,264 @@ class LocalStore:
             _publish(self.root / "pages" / f"{identifier}.json", raw)
         for identifier, data in cuts.items():
             _publish(self.root / "cuts" / f"{identifier}.json", canonical(data))
+
+    # Single tensors by content address (occurrence values). Each is one safetensors file,
+    # tensors/<sha256 of the file>.safetensors, holding one tensor named "tensor" with
+    # little-endian payload bytes; __metadata__ records the payload sha256. The file is written
+    # here byte for byte (canonical header, space-padded to 8 bytes), so numpy arrays need no
+    # torch and bfloat16 round-trips through torch only.
+    #
+    # Temporary files (``tensors/tmp*``, unique per write: tempfile picks a fresh random name)
+    # that a killed process left behind are removed by the next successful put once they are
+    # older than ``_STALE_TMP_SECONDS``; a file a live process is writing is younger than that.
+    # A blob hard-linked into a shared pool (``shared_store``) is never repaired from here: if
+    # it is corrupt the pooled object is, and the pool is repaired there.
+
+    def put_tensor(self, value: Any) -> dict[str, Any]:
+        dtype, shape, payload = _tensor_payload(value)
+        payload_sha = hashlib.sha256(payload).hexdigest()
+        header = {
+            "__metadata__": {"schema": _TENSOR_SCHEMA, "sha256": payload_sha},
+            "tensor": {
+                "dtype": _SAFETENSORS_DTYPES[dtype][0],
+                "shape": shape,
+                "data_offsets": [0, len(payload)],
+            },
+        }
+        raw_header = json.dumps(header, sort_keys=True, separators=(",", ":")).encode()
+        raw_header += b" " * (-len(raw_header) % 8)
+        data = len(raw_header).to_bytes(8, "little") + raw_header + payload
+        ref = hashlib.sha256(data).hexdigest()
+        path = self.root / "tensors" / f"{ref}.safetensors"
+        self._repair_tensor(path, data)
+        _publish(path, data)
+        self._remove_stale_temporaries(path.parent)
+        return {"ref": ref, "shape": shape, "dtype": dtype, "sha256": payload_sha,
+                "bytes": len(payload)}
+
+    @staticmethod
+    def _remove_stale_temporaries(directory: Path) -> None:
+        """Delete ``tmp*`` files older than ``_STALE_TMP_SECONDS`` (best effort, never raises)."""
+        import time
+
+        cutoff = time.time() - _STALE_TMP_SECONDS
+        try:
+            entries = list(directory.iterdir())
+        except OSError:
+            return
+        for entry in entries:
+            if not entry.name.startswith("tmp"):
+                continue
+            try:
+                if entry.is_file() and not entry.is_symlink() and entry.stat().st_mtime < cutoff:
+                    entry.unlink(missing_ok=True)
+            except OSError:
+                continue
+
+    @staticmethod
+    def _repair_tensor(path: Path, data: bytes) -> None:
+        """Replace an on-disk blob whose bytes differ from its content address, atomically.
+
+        The correct bytes are written to a temporary file in the same directory, fsynced and
+        renamed over the damaged file, so a reader sees the old or the new file, never a mix.
+        A blob that is a directory is a ``ValueError``; a damaged blob hard-linked into a shared
+        pool is a ``ValueError`` naming the pooled object (repair it in the pool).
+        """
+        if path.is_dir():
+            raise ValueError(f"tensor blob path {path} is a directory, not a file")
+        try:
+            existing = path.read_bytes()
+        except FileNotFoundError:
+            return
+        if existing == data:
+            return
+        LocalStore._refuse_pooled_blob(path, data)
+        with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
+            temporary = Path(stream.name)
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        try:
+            os.replace(temporary, path)
+        except BaseException:
+            temporary.unlink(missing_ok=True)
+            raise
+        try:
+            directory = os.open(path.parent, os.O_RDONLY)
+        except OSError:
+            return
+        try:
+            os.fsync(directory)
+        finally:
+            os.close(directory)
+
+    @staticmethod
+    def _refuse_pooled_blob(path: Path, data: bytes) -> None:
+        """A corrupt blob that is the same inode as its shared-pool object is not repaired here."""
+        try:
+            if path.stat().st_nlink < 2:
+                return
+            from .shared_store import configured_store
+
+            pool = configured_store(path)
+            if pool is None:
+                return
+            pooled = pool.object_path(hashlib.sha256(data).hexdigest())
+            if pooled.exists() and os.path.samefile(path, pooled):
+                raise ValueError(
+                    f"the pooled object {pooled} is corrupt (it is hard-linked at {path}); "
+                    "repair it in the shared pool: remove the object there and publish the "
+                    "tensor again; this store does not repair a pooled blob")
+        except ValueError:
+            raise
+        except OSError:
+            return
+
+    @staticmethod
+    def _tensor_ref(ref: Any) -> str:
+        if not isinstance(ref, str):
+            raise ValueError(f"expected a lowercase SHA-256 identifier (text), not "
+                             f"{type(ref).__name__}")
+        return _safe_id(ref)
+
+    def has_tensor(self, ref: str, *, verify: bool = False) -> bool:
+        """Whether the blob exists; with ``verify`` also that its size, header and hash are sound."""
+        path = self.root / "tensors" / f"{self._tensor_ref(ref)}.safetensors"
+        if not path.is_file():
+            return False
+        if not verify:
+            return True
+        try:
+            self._read_tensor(ref)
+        except (ValueError, OSError):
+            return False
+        return True
+
+    def tensor_info(self, ref: str) -> dict[str, Any]:
+        """Verified descriptor of a stored tensor, without materialising it."""
+        dtype, shape, payload_sha, payload = self._read_tensor(ref)
+        return {"ref": ref, "shape": shape, "dtype": dtype, "sha256": payload_sha,
+                "bytes": len(payload)}
+
+    def get_tensor(
+        self, ref: str, *, device: str | None = None, framework: str | None = None
+    ) -> Any:
+        """Rebuild a stored tensor after verifying both digests.
+
+        Returns a numpy array unless ``device`` is given, ``framework="torch"``, or the dtype
+        has no numpy form (bfloat16): then a torch tensor (torch is imported only then). The
+        numpy array is a writable copy (never a view of the verified bytes); so is the torch one.
+        """
+        if framework not in (None, "numpy", "torch"):
+            raise ValueError("framework is 'numpy' or 'torch'")
+        dtype, shape, _, payload = self._read_tensor(ref)
+        if framework == "numpy" and (device is not None or dtype == "bfloat16"):
+            raise ValueError("a bfloat16 tensor or a device placement needs framework='torch'")
+        if framework == "torch" or device is not None or dtype == "bfloat16":
+            import torch
+
+            torch_dtype = getattr(torch, dtype)
+            if not payload:
+                restored = torch.empty(shape, dtype=torch_dtype)
+            else:
+                restored = torch.frombuffer(bytearray(payload), dtype=torch.uint8)
+                restored = restored.view(torch_dtype).reshape(shape)
+            return restored if device is None else restored.to(device)
+        import numpy as np
+
+        little = np.dtype(dtype).newbyteorder("<")
+        return np.frombuffer(payload, dtype=little).reshape(shape).astype(np.dtype(dtype))
+
+    def _read_tensor(self, ref: str) -> tuple[str, list[int], str, bytes]:
+        identifier = self._tensor_ref(ref)
+        blob = self.root / "tensors" / f"{identifier}.safetensors"
+        if blob.is_dir():
+            raise ValueError(f"tensor blob path {blob} is a directory, not a file")
+        data = blob.read_bytes()
+        if hashlib.sha256(data).hexdigest() != identifier:
+            raise ValueError("tensor blob digest mismatch")
+        size = int.from_bytes(data[:8], "little") if len(data) >= 8 else -1
+        if size < 2 or 8 + size > len(data):
+            raise ValueError("tensor blob header is malformed")
+        try:
+            header = json.loads(data[8:8 + size])
+            entry = header["tensor"]
+            metadata = header["__metadata__"]
+            codes = {code: name for name, (code, _) in _SAFETENSORS_DTYPES.items()}
+            if (not isinstance(header, dict) or not isinstance(entry, dict)
+                    or not isinstance(metadata, dict) or not isinstance(entry["dtype"], str)):
+                raise ValueError("header sections are mappings and the dtype is text")
+            dtype = codes[entry["dtype"]]
+            shape = entry["shape"]
+            begin, end = entry["data_offsets"]
+        except (ValueError, KeyError, TypeError, RecursionError) as error:
+            raise ValueError("tensor blob header is malformed") from error
+        if (
+            set(header) != {"__metadata__", "tensor"}
+            or type(begin) is not int or type(end) is not int
+            or metadata.get("schema") != _TENSOR_SCHEMA
+            or not isinstance(shape, list)
+            or any(type(n) is not int or n < 0 for n in shape)
+        ):
+            raise ValueError("tensor blob header is malformed")
+        payload = data[8 + size:]
+        count = 1
+        for n in shape:
+            count *= n
+        expected = count * _SAFETENSORS_DTYPES[dtype][1]
+        if (begin, end) != (0, len(payload)) or len(payload) != expected:
+            raise ValueError("tensor blob payload does not match its header")
+        payload_sha = hashlib.sha256(payload).hexdigest()
+        if metadata.get("sha256") != payload_sha:
+            raise ValueError("tensor payload digest mismatch")
+        return dtype, shape, payload_sha, payload
+
+
+_TENSOR_SCHEMA = "saturn-pub-tensor-v1"
+_STALE_TMP_SECONDS = 3600
+# dtype name -> (safetensors code, bytes per element)
+_SAFETENSORS_DTYPES = {
+    "bool": ("BOOL", 1),
+    "uint8": ("U8", 1),
+    "int8": ("I8", 1),
+    "int16": ("I16", 2),
+    "uint16": ("U16", 2),
+    "int32": ("I32", 4),
+    "uint32": ("U32", 4),
+    "int64": ("I64", 8),
+    "uint64": ("U64", 8),
+    "float16": ("F16", 2),
+    "bfloat16": ("BF16", 2),
+    "float32": ("F32", 4),
+    "float64": ("F64", 8),
+}
+
+
+def _tensor_payload(value: Any) -> tuple[str, list[int], bytes]:
+    """(dtype name, shape, little-endian bytes) of a torch tensor or numpy array."""
+    if tensor(value):
+        import sys
+
+        import torch
+
+        if sys.byteorder != "little":
+            raise ValueError("torch tensor blobs require a little-endian host")
+        # Lazy conjugate/negation views carry a flag the raw storage does not: materialise them.
+        value = value.detach().resolve_conj().resolve_neg().cpu().contiguous()
+        dtype = str(value.dtype).removeprefix("torch.")
+        if dtype not in _SAFETENSORS_DTYPES:
+            raise ValueError(f"unsupported tensor dtype: {dtype}")
+        payload = value.reshape(-1).view(torch.uint8).numpy().tobytes()
+        return dtype, list(value.shape), payload
+    if type(value).__module__ == "numpy" and hasattr(value, "dtype"):
+        import numpy as np
+
+        array = np.asarray(value)  # ascontiguousarray would turn a 0-d array into 1-d
+        if not array.flags.c_contiguous:
+            array = array.copy(order="C")
+        dtype = array.dtype.name
+        if dtype not in _SAFETENSORS_DTYPES or dtype == "bfloat16":
+            raise ValueError(f"unsupported array dtype: {array.dtype}")
+        array = array.astype(array.dtype.newbyteorder("<"), copy=False)
+        return dtype, list(array.shape), array.tobytes()
+    raise ValueError("put_tensor expects a torch tensor or a numpy array")
