@@ -1,0 +1,14 @@
+# Extra engine keep roots for tools/split_lanes.py.
+#
+# One dotted module per line (relative to the mdb package, or fully qualified
+# as mdb.<name>); '#' starts a comment. Each listed module, and everything it
+# imports inside mdb (directly or lazily), stays in the engine.
+#
+# Automatic roots, not listed here: mdb/__init__.py, mdb/__main__.py, mdb/cli.py
+# and the subpackages mdb.core, mdb.engine, mdb.analysis, mdb.ops, mdb.repl and
+# mdb.serve.
+#
+# Intentionally empty for the first dry run, so the closure report shows what
+# the automatic roots alone drag in. Add a module here only after deciding it
+# belongs to the engine API (for example a lazy export of mdb/__init__.py that
+# should survive even if its import edge is later cut).
