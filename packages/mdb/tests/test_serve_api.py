@@ -2038,6 +2038,39 @@ def test_a_comparison_with_a_bad_arm_still_lists_the_good_arms_and_a_bad_summary
     assert all(a["value"]["ev"] in ("measured", "unresolved") for a in out["arms"])
 
 
+def _all_record_rows(client, sid="tiny"):
+    first = check(client.get(f"/api/v1/s/{sid}/records"), "records")["data"]
+    rows = list(first["rows"])
+    for page in range(1, first["pages"]):
+        rows += client.get(f"/api/v1/s/{sid}/records", params={"page": page}).json()["data"]["rows"]
+    return rows
+
+
+@pytest.mark.parametrize("case", ["focus_id_dict", "dangling_arm"])
+@needs_fixture
+def test_the_session_graph_leaves_out_a_record_it_cannot_place_and_lists_it(hostile, case):
+    """A sealed record whose reference cannot be resolved (an unhashable ``focus_id``, an arm
+    that is not recorded) used to make ``zoom=session`` a 409; it is now left out of the graph,
+    the rest of the graph is served, and the row is listed as refused (``graph:<id>``)."""
+    body = (_with(hostile.arm, focus_id={"x": 1}) if case == "focus_id_dict"
+            else _with(hostile.cmp, arms=["0" * 64]))
+    params = {"zoom": "session", "k": 64}
+    healthy = check(hostile.c.get("/api/v1/s/tiny/graph", params=params), "graph")["data"]
+    ids = hostile.insert([body])
+    try:
+        response = hostile.c.get("/api/v1/s/tiny/graph", params=params)
+        assert response.status_code == 200, response.text[:300]
+        served = check(response, "graph")["data"]
+        assert [n["id"] for n in served["nodes"]] == [n["id"] for n in healthy["nodes"]]
+        rows = _all_record_rows(hostile.c)
+        refused = [r for r in rows if r["id"] == "graph:" + ids[0]]
+        assert len(refused) == 1 and refused[0]["status"] == "refused"
+        # the record itself verifies and is still listed as a record
+        assert [r["status"] for r in rows if r["id"] == ids[0]] not in ([], ["refused"])
+    finally:
+        hostile.remove(ids)
+
+
 # ---- session-level tampering: a broken session or row is refused for itself only
 
 TAMPER_ROUTES = ["/capabilities", "/frame", "/timeline", "/timeline?lens=symbols", "/branches",

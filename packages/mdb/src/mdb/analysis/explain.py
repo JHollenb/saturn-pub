@@ -697,10 +697,63 @@ def explain_margin(source: Any, a: int, b: int, *, first_order: bool = False) ->
     return out
 
 
+def _layer_module(adapter: Any, layer: int) -> Any:
+    """Decoder layer ``layer`` of a saturn_pub ``DecoderAdapter`` (its public backbone/spec)."""
+    return getattr(adapter.backbone, adapter.spec.layers)[layer]
+
+
+def consumer_gradient(session: Any, token: int, contrast: int) -> tuple[float, Any]:
+    """``(value, d value / d hidden)`` for ``value = logits[token] - logits[contrast]`` of the
+    pending row, from the hidden state entering the session's pending decoder layer.
+
+    The same computation as the lane function ``circuit_native.consumer_gradient`` restricted to
+    what ``_first_order`` reads (the primal and the hidden adjoint): the adapter's own layer
+    executor under autograd, the past KV fixed (detached clones of the captured cache), final norm,
+    LM head and logit softcap; no argmax/rounding derivative. Resident Qwen2/Qwen3
+    ``DecoderAdapter`` with one pending token, batch one, only.
+    """
+    import torch
+    from saturn_pub.adapters.decoder import DecoderAdapter
+
+    adapter = session.adapter
+    if (not isinstance(adapter, DecoderAdapter)
+            or adapter.spec.model_type not in {"qwen2", "qwen3"}
+            or adapter.execution.get("residency", "resident") != "resident"):
+        raise ValueError("native circuit expansion currently supports resident public "
+                         "Qwen2/Qwen3 DecoderAdapter")
+    adapter.validate_execution()
+    state = session.capture(retain=False).payload
+    index = state["layer"]
+    if state["phase"] != "layer" or not 0 <= index < adapter.layers:
+        raise ValueError("select hidden at a pending decoder layer before expanding native "
+                         "attention/MLP")
+    hidden = session.read("hidden")
+    if hidden is None or hidden.shape[:2] != (1, 1):
+        raise ValueError("native circuit expansion requires one pending token and batch one")
+    if max(token, contrast) >= adapter.model.config.vocab_size:
+        raise ValueError("consumer token is outside native vocabulary")
+    with torch.inference_mode(False), torch.enable_grad():
+        hidden = hidden.detach().clone().requires_grad_(True)
+        keys = [x.detach().clone() for x in state["keys"]]
+        values = [x.detach().clone() for x in state["values"]]
+        cache = adapter._cache(keys, values)
+        position = session.read("tokens").shape[-1] - 1
+        out = hidden
+        for layer in range(index, adapter.layers):
+            out = adapter._run_layer(layer, out, cache, position)
+        logits = adapter._apply_logit_softcap(
+            adapter.model.lm_head(getattr(adapter.backbone, adapter.spec.final_norm)(out))
+        )[:, -1]
+        target = logits[0, token] - logits[0, contrast]
+        (gradient,) = torch.autograd.grad(target, [hidden])
+        value = float(target.detach())
+        gradient = gradient.detach().clone()
+    adapter.validate_execution()
+    return value, gradient
+
+
 def _first_order(caps: RowCapture, a: int, b: int, result: Any,
                  components: Mapping[str, Any]) -> dict[str, Any]:
-    from mdb.circuit_native import consumer_gradient
-
     if caps.edits or caps.edits_history:
         where = []
         if caps.edits:
@@ -719,16 +772,15 @@ def _first_order(caps: RowCapture, a: int, b: int, result: Any,
         session.continue_()
         for _ in range(layer):
             session.continue_()
-        info, grad = consumer_gradient(session, {"port": "logits", "token": int(a),
-                                                 "contrast": int(b)})
+        value, grad = consumer_gradient(session, int(a), int(b))
         adjoints.append(_vec(grad))
-        primals.append(info["value"])
+        primals.append(value)
     adjoints.append(result.extras["gradient"])
     rows = [{"name": "embedding", "value": num(float(adjoints[0] @ components["embedding"]),
                                                LOCAL, "P19")}]
     for layer, ports in enumerate(caps.ports):
-        mlp = adapter._layer_modules[layer].mlp
-        norm = adapter._layer_modules[layer].post_attention_layernorm
+        mlp = _layer_module(adapter, layer).mlp
+        norm = _layer_module(adapter, layer).post_attention_layernorm
         lam_out = adjoints[layer + 1]
         lam_r = finite.mlp_pullback(lam_out, _vec(ports["r"]), mlp.gate_proj.weight,
                                     mlp.up_proj.weight, mlp.down_proj.weight, norm.weight,
@@ -743,7 +795,7 @@ def _first_order(caps: RowCapture, a: int, b: int, result: Any,
         "reason": None,
         "authority": LOCAL,
         "rows": rows,
-        "adjoint_source": "circuit_native.consumer_gradient (model dtype autograd, fixed past "
+        "adjoint_source": "consumer_gradient (model dtype autograd, fixed past "
                           "KV) at each layer input; P14 float64 pullback through each MLP; P19 "
                           "float64 readout gradient for the last layer",
         "consumer_primal_minus_native": [num(p - native, MEASURED, "P19") for p in primals],
@@ -796,7 +848,7 @@ def explain_port(source: Any, layer: int, port: str) -> dict[str, Any]:
     caps = _as_capture(source)
     adapter = caps.adapter
     spec = program_for(adapter).spec(port)
-    module = adapter._layer_modules[layer]
+    module = _layer_module(adapter, layer)
     attn = module.self_attn
     ports = caps.ports[layer]
     heads, kv_heads, d_h = adapter.num_heads, adapter.num_kv_heads, adapter.head_dim

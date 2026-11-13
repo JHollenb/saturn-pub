@@ -563,11 +563,15 @@ def test_dynamic_import_rules(repo2, tmp_path):
     assert verify["identity_strings_missing"] == []
     manual = plan.manual_final()
     rules = {m["rule"] for m in manual}
-    assert {"api-string", "payload-distributions", "package-seal", "cli-entry-points"} <= rules
+    assert {"api-string", "payload-distributions", "cli-entry-points"} <= rules
     caps = next(m for m in manual if m["rule"] == "api-string")
     assert caps["replacement"] == 'CAPS = {"x": {"api": "mdb_lanes.lane_b.f"}}'
-    seal = next(m for m in manual if m["rule"] == "package-seal")
-    assert 'for _package in ("mdb", "mdb_lanes")' in seal["replacement"]
+    # a mechanical package seal is applied as a rule fix, not left as a manual fix
+    assert "package-seal" not in rules
+    assert any(r["rule"] == "package-seal" for r in plan.rule_fixes)
+    pay = (out / "packages/mdb-lanes/src/mdb_lanes/lane_pay.py").read_text()
+    assert ('(f"{_package}/{name}", path) for _package in ("mdb", "mdb_lanes") '
+            'for name, path in package_files(_package).items()') in pay
     assert (out / "_split/manual-fixes.md").read_text().count("\n## ") == len(manual)
 
 
@@ -582,6 +586,58 @@ def test_mixed_prefix_import_is_manual(repo2, tmp_path):
     assert '{"lane_b": "mdb_lanes.lane_b", "util": "mdb.util"}[name]' in item["replacement"]
     record = next(f for f in plan.files if f["source"].endswith("lane_mixed.py"))
     assert not record["changed"]
+
+
+def test_code_in_a_string_that_imports_a_moving_module_is_a_manual_fix(repo2):
+    """``python -c`` code is never rewritten (it may run against an archived pre-split tree), but
+    each import in it of a module that changes home is listed, with the substitution when exact."""
+    _, root = repo2
+    (root / "tests/test_subprocess_code.py").write_text(
+        'import subprocess\nimport sys\n\n'
+        'SCRIPT = """\nimport sys\nfrom mdb.lane_b import f\nfrom mdb.util import helper\n'
+        'import mdb.util, mdb.lane_c as c, mdb.lane_b\n"""\n\n\n'
+        'def test_runs(tmp_path):\n'
+        '    code = f"""\n        from mdb import lane_c\n        print({str(tmp_path)!r})\n        """\n'
+        '    subprocess.run([sys.executable, "-c", SCRIPT + code], check=True)\n')
+    analysis, plan, hazards, result = SL.prepare(root, None)
+    items = {m["current"].strip(): m for m in plan.manual_final() if m["rule"] == "code-string-import"}
+    assert set(items) == {"from mdb.lane_b import f", "from mdb import lane_c",
+                          "import mdb.util, mdb.lane_c as c, mdb.lane_b"}
+    assert items["from mdb.lane_b import f"]["replacement"] == "from mdb_lanes.lane_b import f"
+    assert items["import mdb.util, mdb.lane_c as c, mdb.lane_b"]["replacement"] == \
+        "import mdb.util, mdb_lanes.lane_c as c, mdb_lanes.lane_b"
+    assert items["from mdb.lane_b import f"]["line"] == 6
+    assert items["from mdb import lane_c"]["replacement"] is None
+    assert "mdb.lane_c -> mdb_lanes.lane_c" in items["from mdb import lane_c"]["why"]
+    record = next(f for f in plan.files if f["source"].endswith("test_subprocess_code.py"))
+    assert not any("lane" in e["old"] for e in record["edits"])  # the strings themselves stay
+
+
+def test_lane_package_data_read_by_name_and_module_name_strings(repo2, tmp_path):
+    """``files("mdb").joinpath(...)`` in a lane module follows the data into mdb_lanes (rule fix);
+    an exact module-name string outside a known context is a manual fix with its replacement."""
+    _, root = repo2
+    (root / "src/mdb/assets").mkdir(exist_ok=True)
+    (root / "src/mdb/assets/view.html").write_text("<p>view</p>\n")
+    (root / "src/mdb/lane_view.py").write_text(
+        'from importlib.resources import files\n\nfrom . import lane_b\n\n\n'
+        'def page():\n    return files("mdb").joinpath("assets/view.html").read_text(), lane_b\n\n\n'
+        'def other():\n    return (files("mdb") / "assets/view.html").read_text()\n')
+    (root / "tests/test_view_cmd.py").write_text(
+        'def test_cmd():\n    assert "mdb.lane_b" in ["-m", "mdb.lane_b"][1:]\n')
+    out = tmp_path / "out"
+    analysis, plan, hazards, manifest = SL.do_apply(root, out, None)
+    view = (out / "packages/mdb-lanes/src/mdb_lanes/lane_view.py").read_text()
+    assert 'files("mdb_lanes").joinpath("assets/view.html")' in view
+    assert '(files("mdb_lanes") / "assets/view.html")' in view
+    assert (out / "packages/mdb-lanes/src/mdb_lanes/assets/view.html").is_file()
+    assert sum(r["rule"] == "package-resource" for r in plan.rule_fixes) == 2
+    item = next(m for m in plan.manual_final()
+                if m["rule"] == "module-name-string" and m["file"].endswith("test_view_cmd.py"))
+    # the "-m" list element is rewritten by rule; the assertion about it is the manual fix
+    assert item["current"] == '    assert "mdb.lane_b" in ["-m", "mdb_lanes.lane_b"][1:]'
+    assert item["replacement"] == '    assert "mdb_lanes.lane_b" in ["-m", "mdb_lanes.lane_b"][1:]'
+    assert item["line"] == 2
 
 
 def test_path_rules(repo2, tmp_path):
@@ -787,3 +843,81 @@ def test_aux_scripts_rewritten_vendor_untouched(repo2, tmp_path):
     assert exp == b"import mdb.util\nfrom mdb_lanes.lane_b import f\n"
     assert plan.contents["mdb/experiments/vendor/frozen.py"] == b"from mdb.lane_b import f\n"
     assert any(r["file"].endswith("vendor/frozen.py") for r in plan.aux_lane_refs)
+
+
+# --------------------------------------------------------------------------- compatibility shim
+
+SHIM = '''"""COMPATIBILITY SHIM."""
+import importlib
+
+TOOLS = {"lane": "lane_tool"}
+BENCH_VERBS = ("open",)
+DEBUGGER_VERBS = ("run",)
+VERBS = sorted({*TOOLS, *BENCH_VERBS, *DEBUGGER_VERBS, "help", "capabilities"})
+EXPORTS = {
+    "Thing": "store:Thing",
+    "f": "lane_b:f",
+    **{name: "lane_c:" + name for name in ("VALUE",)},
+}
+
+
+def main(argv):
+    return importlib.import_module("." + TOOLS[argv[0]], __package__).main(argv[1:])
+'''
+SHIM_EXTRA = {
+    **EXTRA,
+    "src/mdb/lanes_compat.py": SHIM,
+    "src/mdb_lanes_compat-0.0.0.dist-info/METADATA": "Metadata-Version: 2.1\nName: mdb-lanes-compat\n"
+                                                     "Version: 0.0.0\n",
+    "src/mdb_lanes_compat-0.0.0.dist-info/entry_points.txt": "[mdb.lanes]\nlane = mdb.lanes_compat:main\n",
+    "src/mdb/seal_tuple.py": '''def seal_package(name):
+    return name
+
+
+PACKAGES = ("mdb", "mrun")
+SEALS = {name: seal_package(name) for name in PACKAGES}
+''',
+}
+
+
+def test_shim_tables_drive_both_entry_point_groups(tmp_path):
+    import tomllib
+
+    _, root = make_repo(tmp_path, SHIM_EXTRA)
+    analysis, plan, hazards, result = SL.prepare(root, None)
+    assert plan.shim_tables()[0] == ["capabilities", "help", "lane", "open", "run"]
+    content = next(c["content"] for c in plan.creates if c["to"] == "mdb-lanes/pyproject.toml")
+    points = tomllib.loads(content)["project"]["entry-points"]
+    assert set(points["mdb.lanes"].values()) == {"mdb_lanes.lanes_compat:main"}
+    assert sorted(points["mdb.lanes"]) == ["capabilities", "help", "lane", "open", "run"]
+    # an export whose module stays in the engine keeps the engine package
+    assert points["mdb.lanes.exports"] == {"Thing": "mdb.store:Thing", "f": "mdb_lanes.lane_b:f",
+                                           "VALUE": "mdb_lanes.lane_c:VALUE"}
+    assert not [m for m in plan.manual_final() if m["rule"] == "cli-entry-points"]
+    assert [r["to"] for r in plan.relocations] == [
+        "mdb-lanes/src/mdb_lanes_compat-0.0.0.dist-info/METADATA",
+        "mdb-lanes/src/mdb_lanes_compat-0.0.0.dist-info/entry_points.txt"]
+    stub = plan.relocations[1]["content"]
+    assert "lane = mdb_lanes.lanes_compat:main" in stub and "f = mdb_lanes.lane_b:f" in stub
+
+
+def test_in_place_apply_moves_the_stub_and_seals_lanes_too(tmp_path):
+    repo, root = make_repo(tmp_path, SHIM_EXTRA, fake_git=False)
+    records = root / "src/mdb/core/records.py"
+    records.write_text(records.read_text().replace('mock.patch("mdb.lane_b.f")', 'mock.patch("mdb.util.helper")'))
+    for args in (("init", "-q", "-b", "main"), ("config", "user.email", "split@example.invalid"),
+                 ("config", "user.name", "split test"), ("add", "-A"), ("commit", "-q", "-m", "base")):
+        _git(repo, *args)
+    before = tree(repo)
+    SL.do_apply_in_place(root, None, expect_branch="main", repin=True, echo=lambda *_: None)
+    lanes = repo / "packages/mdb-lanes"
+    stub = lanes / "src/mdb_lanes_compat-0.0.0.dist-info"
+    assert not (root / "src/mdb_lanes_compat-0.0.0.dist-info").exists()
+    assert (stub / "METADATA").read_text().startswith("Metadata-Version")
+    assert "lane = mdb_lanes.lanes_compat:main" in (stub / "entry_points.txt").read_text()
+    assert (lanes / "src/mdb_lanes/lanes_compat.py").exists()
+    assert 'PACKAGES = ("mdb", "mdb_lanes", "mrun")' in (lanes / "src/mdb_lanes/seal_tuple.py").read_text()
+    assert "mdb.lanes.exports" in (lanes / "pyproject.toml").read_text()
+    assert "??" not in _git(repo, "status", "--porcelain")
+    SL.do_apply_in_place(root, None, expect_branch="main", rollback=True, echo=lambda *_: None)
+    assert tree(repo) == before and _git(repo, "status", "--porcelain") == ""

@@ -105,6 +105,10 @@ DOTTED_RE = re.compile(r"(?<![\w.])(mdb(?:_lanes)?(?:\.[A-Za-z_]\w*)+)")
 DOTTED_RE_B = re.compile(rb"(?<![\w.])(mdb(?:_lanes)?(?:\.[A-Za-z_]\w*)+)")
 PKGPATH_RE_B = re.compile(rb"(?<![\w/])(mdb(?:_lanes)?/[\w/]+\.py)")
 DASH_M_RE = re.compile(r"-m\s+(mdb(?:_lanes)?(?:\.[A-Za-z_]\w*)+)")
+# A Python import statement inside a string literal (code a test runs with ``python -c``/``exec``).
+CODE_IMPORT_RE = re.compile(
+    r"^[ \t]*(?:from[ \t]+(mdb(?:_lanes)?(?:\.[A-Za-z_]\w*)*)[ \t]+import[ \t]+([^\n#;]+)"
+    r"|import[ \t]+(mdb(?:_lanes)?(?:\.[A-Za-z_]\w*)+[^\n#;]*))", re.M)
 HASHY = re.compile(r"sha|digest|hash|md5|blake", re.I)
 IMPORT_ERRORS = {"ImportError", "ModuleNotFoundError", "Exception", "BaseException"}
 PICKLE_CALLS = {"pickle.dump", "pickle.dumps", "pickle.load", "pickle.loads", "torch.save", "torch.load",
@@ -119,6 +123,11 @@ IDENTITY_RE = re.compile(r"(?:mdb|mdb_lanes)(?:\.\w+)+\.v\d+")
 SEAL_CALLS = {"package_files", "seal_package"}
 INPLACE_DIR = "split-lanes"  # under the git dir: never shows in `git status`
 LANES_VERB_GROUP = "mdb.lanes"
+LANES_EXPORT_GROUP = "mdb.lanes.exports"
+# The compatibility shim: a lane module holding the verb/export tables the engine reaches through the
+# two entry-point groups, and the source-tree stub distribution (next to the package) declaring them.
+SHIM_KEY = "lanes_compat"
+SHIM_STUB = "mdb_lanes_compat-0.0.0.dist-info"
 
 
 # ---------------------------------------------------------------- utilities
@@ -363,6 +372,8 @@ class Scan:
         self.prefix_imports: list[dict] = []
         self.identity_strings: list[dict] = []
         self.package_seals: list[dict] = []
+        self.code_imports: list[dict] = []
+        self.resource_refs: list[dict] = []
         self.attr_chains: list[tuple] = []  # (dotted, start, end, line, col)
         self.top_names: set[str] = set()
         self.open_namespace = False
@@ -533,6 +544,10 @@ class Scanner:
                     result.hex_consts.append({"line": value.lineno, "value": value.value,
                                               "context": ",".join(dotted(t) or "?" for t in targets)})
         for node in ast.walk(tree):
+            if isinstance(node, ast.Call):
+                self._resource_ref(node, lines, result)
+            if isinstance(node, ast.Constant) and isinstance(node.value, str):
+                self._code_imports(node, lines, result)
             if isinstance(node, ast.Constant) and isinstance(node.value, str) and IDENTITY_RE.fullmatch(node.value):
                 s, e = lines.span(node)
                 result.identity_strings.append({"line": node.lineno, "text": node.value, "start": s, "end": e})
@@ -961,6 +976,62 @@ class Scanner:
                                    target=res[0].mid if res else None, rest=".".join(res[1]) if res else "",
                                    lazy=lazy, optional=opt, confident=confident, written=name.split(".")[0],
                                    note="inline"))
+
+    def _resource_ref(self, node, lines, result):
+        """``importlib.resources.files("mdb").joinpath("assets/x")`` (or ``/ "assets/x"``): package
+        data read by package name. The name is rewritten when the data travels with the lanes."""
+        if (dotted(node.func) or "").split(".")[-1] != "files" or len(node.args) != 1:
+            return
+        package = node.args[0]
+        if _str_const(package) not in HOMES:
+            return
+        parent = getattr(node, "_sl_parent", None)
+        rel = None
+        if isinstance(parent, ast.Attribute) and parent.attr == "joinpath":
+            call = getattr(parent, "_sl_parent", None)
+            if isinstance(call, ast.Call) and call.func is parent and len(call.args) == 1:
+                rel = _str_const(call.args[0])
+        elif isinstance(parent, ast.BinOp) and isinstance(parent.op, ast.Div) and parent.left is node:
+            rel = _str_const(parent.right)
+        if not rel:
+            return
+        s, e = lines.span(package)
+        result.resource_refs.append({"line": node.lineno, "col": package.col_offset, "start": s + 1,
+                                     "end": e - 1, "package": package.value, "rel": rel.strip("/"),
+                                     "quoted": lines.data[s:e].decode("utf-8", "replace")})
+
+    def _code_imports(self, node, lines, result):
+        """Import statements inside a string literal (or an f-string part): code a test runs in a
+        subprocess. Recorded, never rewritten: the string may run against another tree (an archived
+        pre-split commit), so whether it should name the new home is the owner's call."""
+        value = node.value
+        if "import" not in value or "mdb" not in value:
+            return
+        parent = getattr(node, "_sl_parent", None)
+        s, e = lines.span(parent if isinstance(parent, ast.JoinedStr) else node)
+        raw = lines.data[s:e]
+        for match in CODE_IMPORT_RE.finditer(value):
+            if match.group(3):  # import a.b, c.d as e
+                names = [words[0] for words in (part.split() for part in match.group(3).split(","))
+                         if words and words[0].split(".")[0] in HOMES]
+            else:
+                names = [match.group(1)]
+                for part in match.group(2).strip().strip("()").split(","):
+                    words = part.split()
+                    if words and words[0].isidentifier():
+                        names.append(f"{match.group(1)}.{words[0]}")
+            targets = []
+            for name in names:
+                res = self.resolve_abs(name, require_full=True)
+                if res and res[0].mid not in targets:
+                    targets.append(res[0].mid)
+            if not targets:
+                continue
+            stmt = match.group(0).strip()
+            off = raw.find(stmt.encode("utf-8", "surrogatepass"))
+            start = s + off if off >= 0 else s
+            result.code_imports.append({"line": lines.data.count(b"\n", 0, start) + 1, "text": stmt,
+                                        "start": start, "targets": targets})
 
     def _mention(self, node, info, lines, result, docstring, fstring=False):
         value = node.value
@@ -1901,6 +1972,7 @@ class Plan:
         self.a = analysis
         layout = analysis.layout
         self.moves, self.copies, self.creates = [], [], []
+        self.relocations = []
         self.files = []
         self.errors, self.registry, self.unconfident, self.warnings = [], [], [], []
         self.aux_lane_refs, self.optional_engine_test_refs, self.splits = [], [], []
@@ -1987,7 +2059,29 @@ class Plan:
                                      f"enumerated values {rec['values']} all move to {new_home}"))
                     self._rule(info, dest, "prefix-import/" + kind, line, rec["home"], new_home)
             for seal in scan.package_seals:
-                self._seal_manual(info, scan, seal, dest, engine_side)
+                fixes = self._seal_manual(info, scan, seal, dest, engine_side)
+                if not record_only:
+                    out += fixes
+            for rec in scan.code_imports:
+                self._code_import_manual(info, rec, dest, engine_side)
+            for mention in scan.mentions:
+                self._module_name_manual(info, scan, mention, dest)
+            data_rels = {rel for home, _, rel in a.layout.package_data
+                         if home == ENGINE and rel.split("/")[0] not in ENGINE_SUBPACKAGES}
+            for rec in scan.resource_refs:
+                # Package data goes to every home whose code names it (``_package_data``), so a
+                # lanes file reading engine data by package name reads its own copy after the split.
+                if engine_side or rec["package"] != ENGINE or rec["rel"] not in data_rels:
+                    continue
+                if rec["quoted"][1:-1] != ENGINE:
+                    self.unconfident.append({"file": dest, "line": rec["line"], "text": rec["quoted"],
+                                             "why": "package name literal is not a plain string"})
+                    continue
+                if not record_only:
+                    out.append(_edit(lines, rec["start"], rec["end"], ENGINE, LANES, rec["line"],
+                                     rec["col"] + 1, "rule-package-resource",
+                                     f"package data {rec['rel']} is placed in {LANES} with this file"))
+                self._rule(info, dest, "package-resource", rec["line"], ENGINE, LANES)
         for pref in scan.path_refs:
             check, edit = self._path_eval(info, scan, pref, dest)
             if check is None:
@@ -1997,11 +2091,59 @@ class Plan:
                 out.append(edit)
         return out
 
+    def _module_name_manual(self, info, scan, mention, dest):
+        """A string that is exactly a dotted name (``"mdb.worker_bootstrap"``) of a module that
+        changes home, outside the contexts the tool rewrites (``-m`` lists, module keys,
+        ``sys.modules``): often an assertion about what the rewritten code now produces."""
+        text = mention["text"]
+        if not mention.get("exact") or mention.get("docstring") or mention.get("fstring") or \
+                mention.get("pkgpath") or IDENTITY_RE.fullmatch(text):
+            return
+        home, key = split_mid(mention["target"])
+        new_home = self.a.dest_home.get(mention["target"], home)
+        old = full_name(home, key)
+        if new_home == home or not text.startswith(old):
+            return
+        new = full_name(new_home, key) + text[len(old):]
+        lines = scan.lines
+        line_start = lines.starts[mention["line"] - 1]
+        line_end = lines.starts[mention["line"]] if mention["line"] < len(lines.starts) else len(lines.data)
+        found = lines.data.find(text.encode("utf-8", "surrogatepass"), line_start, line_end)
+        self._manual(info, dest, mention["line"], found if found >= 0 else line_start,
+                     f"string `{text}` names a module that moves to {new}; the tool rewrites module "
+                     "names only where it knows the string is one (`-m`, module keys, sys.modules). "
+                     "Rewrite it if it means the module (e.g. a command assertion); keep it if it is a "
+                     "recorded identity", "module-name-string", sub=(text, new))
+
+    def _code_import_manual(self, info, rec, dest, engine_side):
+        """A string that holds Python code importing a module that changes home. Not rewritten: the
+        code may run against an archived pre-split tree, where the old name is the right one."""
+        moved = []
+        for target in rec["targets"]:
+            home, key = split_mid(target)
+            new_home = self.a.dest_home.get(target, home)
+            if new_home != home:
+                moved.append((full_name(home, key), full_name(new_home, key)))
+        if not moved:
+            return
+        stmt, new = rec["text"], rec["text"]
+        for old_name, new_name in moved:
+            new = re.sub(r"(?<![\w.])" + re.escape(old_name) + r"(?![\w])", new_name, new, count=1)
+        mapping = ", ".join(f"{o} -> {n}" for o, n in moved)
+        why = (f"Python code inside a string literal imports a module that changes home ({mapping}); "
+               "the tool does not edit code in strings. Rewrite it unless the string runs against a "
+               "pre-split tree (e.g. a `git archive` of an older commit), and check that any helper "
+               "it imports from today's tree still loads there")
+        if engine_side and any(n.startswith(LANES + ".") for _, n in moved):
+            why += "; this file stays in the engine, so the string is an engine-to-lane edge"
+        self._manual(info, dest, rec["line"], rec["start"], why, "code-string-import",
+                     sub=(stmt, new) if new != stmt else None)
+
     def _seal_manual(self, info, scan, seal, dest, engine_side):
         lines = scan.lines
         lanes_exist = any(h == LANES for h in self.a.dest_home.values())
         if not lanes_exist:
-            return
+            return []
         text = lines.text(seal["start"], seal["end"])
         if seal["form"] == "table-row":
             self._manual(info, dest, seal["line"], seal["start"],
@@ -2010,38 +2152,51 @@ class Plan:
                          block="add after this row:\n"
                                '                *((("mdb_lanes", "mdb-lanes", version("mdb-lanes")),)\n'
                                '                  if importlib.util.find_spec("mdb_lanes") else ()),')
-            return
+            return []
         if engine_side:
-            return
+            return []
         if seal["form"] == "literal-tuple":
             names = seal["names"]
             if LANES in names:
-                return
+                return []
             new = text.replace(f'"{ENGINE}"', f'"{ENGINE}", "{LANES}"', 1)
-            self._manual(info, dest, seal["line"], seal["start"],
-                         "lane-side code seals `mdb` packages; lane modules now live in `mdb_lanes`", "package-seal",
-                         sub=(text, new) if new != text else None)
-            return
+            if new == text:
+                self._manual(info, dest, seal["line"], seal["start"],
+                             "lane-side code seals `mdb` packages; lane modules now live in `mdb_lanes`",
+                             "package-seal")
+                return []
+            # Mechanical: lane code that seals/ships the `mdb` sources must also seal/ship `mdb_lanes`
+            # (a lane worker imports both). Applied as a rule fix.
+            self._rule(info, dest, "package-seal", seal["line"], text, new)
+            return [_edit(lines, seal["start"], seal["end"], text, new, seal["line"], 0, "rule-package-seal",
+                          "lane-side package seal also covers mdb_lanes")]
         line = lines.line_text(seal["line"])
         m = re.search(r'\(f"mdb/\{(\w+)\}", (\w+)\) for \1, \2 in package_files\("mdb"\)\.items\(\)', line)
         if m:
             old = m.group(0)
             new = (f'(f"{{_package}}/{{{m.group(1)}}}", {m.group(2)}) for _package in ("{ENGINE}", "{LANES}") '
                    f'for {m.group(1)}, {m.group(2)} in package_files(_package).items()')
+            row = lines.data[lines.starts[seal["line"] - 1]:lines.starts[seal["line"]]]
+            if row.count(old.encode()) == 1:
+                start = lines.starts[seal["line"] - 1] + row.index(old.encode())
+                self._rule(info, dest, "package-seal", seal["line"], old, new)
+                return [_edit(lines, start, start + len(old.encode()), old, new, seal["line"], 0,
+                              "rule-package-seal", "lane-side payload also ships mdb_lanes sources")]
             self._manual(info, dest, seal["line"], seal["start"],
                          "lane-side payload ships only `mdb` sources; lane modules now live in `mdb_lanes`",
                          "package-seal", sub=(old, new))
-            return
+            return []
         if seal["call"] == "seal_package" and seal["package"] == ENGINE:
             self._manual(info, dest, seal["line"], seal["start"],
                          "lane-side code seals only `mdb`; lane modules now live in `mdb_lanes` (the sealed value's "
                          "shape changes; owner decides)", "package-seal",
                          sub=(text, f'{{_package: seal_package(_package) for _package in ("{ENGINE}", "{LANES}")}}'))
-            return
+            return []
         self._manual(info, dest, seal["line"], seal["start"],
                      f"lane-side code calls {text}; lane modules now live in `mdb_lanes`. No mechanical "
                      "replacement: decide whether this site must also cover `package_files(\"mdb_lanes\")`",
                      "package-seal")
+        return []
 
     def _target_root(self, d, new_base):
         """Distribution directory that holds package directory ``d`` after the split."""
@@ -2233,9 +2388,86 @@ class Plan:
         pyproject = f"{LANES_DIST}/pyproject.toml"
         if not (layout.packages_dir / pyproject).exists():
             self.creates.append({"to": pyproject, "content": self.lanes_pyproject(), "why": "distribution metadata"})
+        self.relocations = []
+        stub = layout.engine_root / "src" / SHIM_STUB
+        if self.shim_tables() is not None and stub.is_dir() and self.a.dest_home.get(mid(ENGINE, SHIM_KEY)) == LANES:
+            # The source-tree stub declaring the entry points moves with the shim; its entry points
+            # are rewritten to the lane package (git history follows the move).
+            engine = layout.engine_root.name
+            for path in sorted(stub.iterdir()):
+                content = self.stub_entry_points() if path.name == "entry_points.txt" else path.read_text()
+                self.relocations.append({"from": f"{engine}/src/{SHIM_STUB}/{path.name}",
+                                         "to": f"{LANES_DIST}/src/{SHIM_STUB}/{path.name}",
+                                         "content": content, "why": "source-tree entry-point stub"})
+
+    def shim_tables(self):
+        """``(VERBS, EXPORTS)`` read from the compatibility shim ``mdb/lanes_compat.py`` (literal
+        tables, evaluated by AST), or ``None`` when the tree has no shim. ``VERBS`` is a list of verb
+        names; ``EXPORTS`` maps an ``mdb`` attribute to ``"module:attribute"`` (shim-relative)."""
+        info = self.a.layout.modules.get(mid(ENGINE, SHIM_KEY))
+        if info is None:
+            return None
+        tree = ast.parse(info.data)
+        values = {}
+        for node in tree.body:
+            if isinstance(node, ast.Assign) and len(node.targets) == 1 and \
+                    isinstance(node.targets[0], ast.Name):
+                values[node.targets[0].id] = node.value
+
+        def literal(name):
+            node = values.get(name)
+            if node is None:
+                raise SystemExit(f"compatibility shim {info.label} has no {name} table")
+            return node
+
+        tools = ast.literal_eval(literal("TOOLS"))
+        bench = ast.literal_eval(literal("BENCH_VERBS"))
+        debugger = ast.literal_eval(literal("DEBUGGER_VERBS"))
+        verbs = sorted({*tools, *bench, *debugger, "help", "capabilities"})
+        exports_node = literal("EXPORTS")
+        exports = {}
+        for key, value in zip(exports_node.keys, exports_node.values):
+            if key is None:  # ``**{name: "state_graph:" + name for name in (...)}``
+                comp = value
+                if not (isinstance(comp, ast.DictComp) and isinstance(comp.value, ast.BinOp)):
+                    raise SystemExit("compatibility shim EXPORTS: unsupported ** entry")
+                prefix = ast.literal_eval(comp.value.left)
+                for name in ast.literal_eval(comp.generators[0].iter):
+                    exports[name] = prefix + name
+            else:
+                exports[ast.literal_eval(key)] = ast.literal_eval(value)
+        return verbs, exports
+
+    def _shim_target(self, module):
+        """Package of lane module ``module`` (shim-relative) after the split."""
+        target = mid(ENGINE, module)
+        home = self.a.dest_home.get(target, ENGINE if target in self.a.layout.modules else LANES)
+        return full_name(home, module)
+
+    def lanes_exports(self):
+        """(name, "package.module:attribute") of the ``mdb.lanes.exports`` group, from the shim."""
+        tables = self.shim_tables()
+        if tables is None:
+            return []
+        out = []
+        for name, target in sorted(tables[1].items()):
+            module, attribute = target.split(":", 1)
+            out.append((name, f"{self._shim_target(module)}:{attribute}"))
+        return out
+
+    def stub_entry_points(self):
+        """``entry_points.txt`` of the source-tree stub after the split (same groups as pyproject)."""
+        lines = [f"[{LANES_VERB_GROUP}]"] + [f"{v} = {t}" for v, t in self.lanes_verbs()]
+        lines += ["", f"[{LANES_EXPORT_GROUP}]"] + [f"{n} = {t}" for n, t in self.lanes_exports()]
+        return "\n".join(lines) + "\n"
 
     def lanes_verbs(self):
-        """(verb, "mdb_lanes.module:main") for every cli TOOLS entry whose module moves to lanes."""
+        """(verb, target) of the ``mdb.lanes`` group: every verb of the compatibility shim ->
+        ``<shim after the split>:main``; without a shim, every cli TOOLS entry whose module moves."""
+        tables = self.shim_tables()
+        if tables is not None:
+            target = self._shim_target(SHIM_KEY) + ":main"
+            return [(verb, target) for verb in tables[0]]
         out = []
         for item in self.registry:
             m = re.match(r"TOOLS\[['\"]?([^'\"\]]+)['\"]?\]", item["entry"] or "")
@@ -2271,6 +2503,12 @@ class Plan:
             w.append(f'[project.entry-points."{LANES_VERB_GROUP}"]')
             for verb, target in verbs:
                 w.append(f'{json.dumps(verb)} = "{target}"')
+            w.append("")
+        exports = self.lanes_exports()
+        if exports:
+            w.append(f'[project.entry-points."{LANES_EXPORT_GROUP}"]')
+            for name, target in exports:
+                w.append(f'{json.dumps(name)} = "{target}"')
             w.append("")
         w += ["[build-system]", 'requires = ["hatchling>=1.25"]', 'build-backend = "hatchling.build"', "",
               "[tool.hatch.build.targets.wheel]", f'packages = ["src/{LANES}"]']
@@ -2519,6 +2757,8 @@ class Plan:
         return out
 
     def _cli_manual(self):
+        if self.shim_tables() is not None:
+            return []  # the engine cli already reads the entry-point groups (no TOOLS table)
         verbs = self.lanes_verbs()
         if not verbs:
             return []
@@ -2563,6 +2803,8 @@ class Plan:
             "rule_fixes": self.rule_fixes, "manual_fixes": self.manual_final(),
             "identity_strings": self.identity_strings, "identity_edits_refused": self.identity_refused,
             "lanes_verbs": [{"verb": v, "target": t} for v, t in self.lanes_verbs()],
+            "lanes_exports": [{"name": n, "target": t} for n, t in self.lanes_exports()],
+            "relocations": [{k: r[k] for k in ("from", "to", "why")} for r in self.relocations],
             "repin": self.repin.to_json() if self.repin else None,
             "moves": self.moves, "copies": self.copies, "creates": self.creates,
             "files": self.files, "errors": self.errors, "registry_reregister": self.registry,
@@ -3177,7 +3419,7 @@ def do_apply(package_root: Path, out: Path, keep: Path | None, clean: bool = Fal
         manifest["files"].append({"source": record["source"], "dest": record["dest"], "sha_before": record["sha_before"],
                                   "sha_after": record["sha_after"], "changed": record["changed"],
                                   "edits": len(record["edits"]), "repins": record.get("repins", 0)})
-    for create in plan.creates:
+    for create in [*plan.creates, *plan.relocations]:
         target = packages / create["to"]
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_text(create["content"])
@@ -3280,6 +3522,8 @@ def build_inplace_ops(analysis, plan, result, repo: Path, tracked: set):
     moves = []
     for m in plan.moves:
         moves.append((P(m["from"]), P(m["to"])))
+    for r in plan.relocations:
+        moves.append((P(r["from"]), P(r["to"])))
     qual_prefix = P(engine + "/qualification/")
     planned_sources = {P(m["from"]) for m in plan.moves}
     for path in sorted(tracked):
@@ -3319,6 +3563,11 @@ def build_inplace_ops(analysis, plan, result, repo: Path, tracked: set):
     for create in plan.creates:
         writes.append({"op": "write", "path": P(create["to"]), "data": create["content"].encode(), "new": True})
         adds.append(P(create["to"]))
+    for r in plan.relocations:
+        prev = (layout.packages_dir / r["from"]).read_bytes()
+        if r["content"].encode() != prev:
+            writes.append({"op": "write", "path": P(r["to"]), "data": r["content"].encode(), "new": False,
+                           "prev": prev})  # tracked through the move, like every other rewrite
     for path, area, rel, sides in _test_data_files(analysis, plan):
         for side_name in sides:
             target = P(f"{side_name}/{area}/{rel}")

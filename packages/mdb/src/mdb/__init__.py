@@ -1,74 +1,17 @@
-"""MDB's lazy public API. Importing the package never loads a model backend."""
+"""MDB's lazy public API. Importing the package never loads a model backend.
+
+The engine's own names (``attach``, ``open_tiny``, ``Debugger``) are exported here. Any other
+public name (``BenchSession``, ``Project``, ``StateGraph``, ...) belongs to the experiment lanes
+and is resolved on first use through the ``mdb.lanes.exports`` entry-point group
+(``mdb.core.plugins``); without the ``mdb-lanes`` plug-in such a name raises ``AttributeError``
+saying so.
+"""
 from importlib import import_module
 
 __version__ = "0.1.0"
-__all__ = [
-    "BenchSession",
-    "SaturnPubDebuggerAdapter",
-    "Project",
-    "BenchError",
-    "ModelRunner",
-    "RunnerCapabilities",
-    "ForwardResult",
-    "register_backend",
-    "available_backends",
-    "TransformerLensRunner",
-    "TransformerLensDebuggerAdapter",
-    "TransformersRunner",
-    "CausalContextVM",
-    "MambaStateVM",
-    "StateGraph",
-    "GraphNode",
-    "GraphEdge",
-    "GraphIntegrityError",
-    "GraphSnapshot",
-    "GraphVerification",
-    "NodeBinding",
-    "Evidence",
-    "StateGraphError",
-    "ExecutionBinding",
-    "GraphBinding",
-    "SourceNode",
-    "StateNode",
-    "ActionNode",
-    "OutputNode",
-    "evidence",
-    "attach",
-    "open_tiny",
-    "Debugger",
-]
+__all__ = ["attach", "open_tiny", "Debugger"]
 
 _EXPORTS = {
-    "BenchSession": ("bench", "BenchSession"),
-    "SaturnPubDebuggerAdapter": ("saturn_pub_adapter", "SaturnPubDebuggerAdapter"),
-    "Project": ("project", "Project"),
-    "BenchError": ("errors", "BenchError"),
-    "ModelRunner": ("backends", "ModelRunner"),
-    "RunnerCapabilities": ("backends", "RunnerCapabilities"),
-    "ForwardResult": ("backends", "ForwardResult"),
-    "register_backend": ("backends", "register_backend"),
-    "available_backends": ("backends", "available_backends"),
-    "TransformerLensRunner": ("backend_torch", "TransformerLensRunner"),
-    "TransformerLensDebuggerAdapter": ("lens_debugger", "TransformerLensDebuggerAdapter"),
-    "TransformersRunner": ("backend_torch", "TransformersRunner"),
-    "CausalContextVM": ("causal_context_vm", "CausalContextVM"),
-    "MambaStateVM": ("mamba_state_vm", "MambaStateVM"),
-    "StateGraph": ("state_graph", "StateGraph"),
-    "GraphNode": ("state_graph", "GraphNode"),
-    "GraphEdge": ("state_graph", "GraphEdge"),
-    "GraphIntegrityError": ("state_graph", "GraphIntegrityError"),
-    "GraphSnapshot": ("state_graph", "GraphSnapshot"),
-    "GraphVerification": ("state_graph", "GraphVerification"),
-    "NodeBinding": ("state_graph", "NodeBinding"),
-    "Evidence": ("state_graph", "Evidence"),
-    "StateGraphError": ("state_graph", "StateGraphError"),
-    "ExecutionBinding": ("state_graph", "ExecutionBinding"),
-    "GraphBinding": ("state_graph", "GraphBinding"),
-    "SourceNode": ("state_graph", "SourceNode"),
-    "StateNode": ("state_graph", "StateNode"),
-    "ActionNode": ("state_graph", "ActionNode"),
-    "OutputNode": ("state_graph", "OutputNode"),
-    "evidence": ("state_graph", "evidence"),
     "attach": ("ops.debugger", "attach"),
     "open_tiny": ("ops.debugger", "open_tiny"),
     "Debugger": ("ops.debugger", "Debugger"),
@@ -76,9 +19,21 @@ _EXPORTS = {
 
 
 def __getattr__(name):
-    if name not in _EXPORTS:
+    if name in _EXPORTS:
+        module, attribute = _EXPORTS[name]
+        value = getattr(import_module("." + module, __name__), attribute)
+    elif name.startswith("__"):
         raise AttributeError(name)
-    module, attribute = _EXPORTS[name]
-    value = getattr(import_module("." + module, __name__), attribute)
+    else:
+        from .core import plugins
+
+        found, value = plugins.export(name)
+        if not found:
+            if not plugins.installed():
+                raise AttributeError(
+                    f"module 'mdb' has no attribute {name!r}; lane APIs (BenchSession, Project, "
+                    f"StateGraph, ...) come from the {plugins.PLUGIN_DIST} plug-in, which is not "
+                    "installed (no 'mdb.lanes.exports' entry points found)")
+            raise AttributeError(f"module 'mdb' has no attribute {name!r}")
     globals()[name] = value
     return value

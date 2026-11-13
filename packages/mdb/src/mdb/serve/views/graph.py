@@ -8,7 +8,6 @@ from __future__ import annotations
 import sqlite3
 from collections import deque
 
-from .. import _legacy
 from ..schema import CircuitOverlay, GraphEdge, GraphNode, GraphView, PrunedGroup, SliceRef
 from ..stored import as_str
 from .common import ViewError, address_cell, cell_address, parse, record_id, short
@@ -194,7 +193,7 @@ def graph(model, *, addr=None, zoom="slice", depth=3, k=48, slice_id=None):
         authority = sliced.get("authority", "declared-dependency")
     else:
         try:
-            snap = _legacy.session_graph(model.project, model.sid)
+            snap = model.session_graph()
         except (ValueError, KeyError, TypeError, AttributeError, LookupError, OSError,
                 sqlite3.Error) as error:
             raise ViewError("graph_unreadable", "the session graph could not be read "

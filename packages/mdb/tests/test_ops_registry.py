@@ -70,8 +70,16 @@ def test_unknown_bad_args_and_refusals_without_a_model():
 
 
 def test_registry_imports_and_describes_without_torch():
+    engine = ("core", "engine", "analysis", "ops", "repl", "serve", "cli", "__main__")
     code = (
-        "import sys, json, mdb, mdb.cli, mdb.ops, mdb.repl\n"
+        "import sys, json, mdb, mdb.cli, mdb.core\n"
+        "heavy = [m for m in ('torch', 'numpy', 'fastapi', 'transformers', 'mdb_lanes')\n"
+        "         if m in sys.modules]\n"
+        "assert not heavy, heavy\n"
+        f"lanes = [m for m in sys.modules if m.startswith('mdb.') and m.split('.')[1] not in "
+        f"{engine!r}]\n"
+        "assert not lanes, lanes\n"
+        "import mdb.ops, mdb.repl\n"
         "json.dumps(mdb.ops.describe())\n"
         "assert 'torch' not in sys.modules, 'torch loaded'\n"
         "assert 'transformers' not in sys.modules\n"

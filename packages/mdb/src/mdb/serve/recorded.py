@@ -1,6 +1,6 @@
 """Read-only model of one recorded project session: clocks, cuts, branches and index rows.
 
-Everything here is derived from ``Project`` reads (opened ``read_only=True``) and from sealed
+Everything here is derived from verified ``mdb.core.project_read`` reads and from sealed
 cut metadata; nothing is executed. ``Recorded`` caches one ``SessionModel`` per session and
 rebuilds it when the session's index rows change.
 """
@@ -337,9 +337,9 @@ class SessionModel:
         out.sort(key=lambda r: (str(r.get("kind")), str(r.get("id") or r.get("record_id"))))
         return out
 
-    def _problem(self, kind, ident, error):
-        reason = f"refused: {kind} {as_str(ident)[:12] or '?'} could not be read " \
-                 f"({type(error).__name__})"
+    def _problem(self, kind, ident, error, reason=None):
+        reason = reason or (f"refused: {kind} {as_str(ident)[:12] or '?'} could not be read "
+                            f"({type(error).__name__})")
         if any(p["kind"] == kind and p["record_id"] == (as_str(ident) or kind)
                for p in self._problems):
             return
@@ -353,7 +353,41 @@ class SessionModel:
 
         self.symbols(), self.slices(), self.lifecycles(), self.findings()
         build_rows(self)
+        try:
+            self.session_graph()  # rows left out of the session graph are listed too
+        except READ_ERRORS:
+            pass
         return list(self._problems)
+
+    def _refuse(self, kind, ident, error):
+        """Per-row refusal from the project reader: the row is listed, the rest is served."""
+        self._problem(kind, ident, error)
+
+    def _graph_refuse(self, kind, ident, error):
+        """A row left out of the session graph. Rows already listed as refused are not listed
+        twice; a row that is readable on its own (e.g. a record whose reference does not
+        resolve) is listed under ``graph:<id>``."""
+        ident = as_str(ident) or kind
+        if any(p["record_id"] == ident for p in self._problems):
+            return
+        self._problem("session-graph", "graph:" + ident, error, reason=(
+            f"refused from the session graph: {kind} {ident[:12]} "
+            f"({type(error).__name__}: {str(error)[:120]})")[:300])
+
+    def session_graph(self):
+        """The sealed session graph (cached); raises when the session history itself does not
+        verify. Rows that cannot be placed are left out and listed by ``unreadable()``."""
+        if "session_graph" not in self._cache:
+            self.symbols(), self.slices(), self.lifecycles(), self.findings()
+            try:
+                self._cache["session_graph"] = (_legacy.session_graph(
+                    self.project, self.sid, refuse=self._graph_refuse), None)
+            except READ_ERRORS as error:
+                self._cache["session_graph"] = (None, error)
+        graph, error = self._cache["session_graph"]
+        if error is not None:
+            raise error
+        return graph
 
     def _cached(self, key, read):
         if key not in self._cache:
@@ -366,18 +400,18 @@ class SessionModel:
 
     def lifecycles(self):
         return self._cached("lifecycles", lambda: [
-            r for r in _legacy.symbol_lifecycles(self.project, self.sid)
+            r for r in _legacy.symbol_lifecycles(self.project, self.sid, refuse=self._refuse)
             if isinstance(r, dict) and isinstance(r.get("lifecycle"), dict)
             and isinstance(r.get("joins"), dict) and isinstance(r.get("lifecycle_id"), str)])
 
     def findings(self):
         return self._cached("findings", lambda: [
-            f for f in _legacy.findings(self.project, self.sid)
+            f for f in _legacy.findings(self.project, self.sid, refuse=self._refuse)
             if isinstance(f, dict) and isinstance(f.get("annotation_id"), str)])
 
     def symbols(self):
         return self._cached("symbols", lambda: [
-            b for b in _legacy.symbols(self.project, self.sid)
+            b for b in _legacy.symbols(self.project, self.sid, refuse=self._refuse)
             if isinstance(b, dict) and isinstance(b.get("fingerprint"), str)])
 
     def slices(self):
