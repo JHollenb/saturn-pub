@@ -169,9 +169,9 @@ verb is missing here; `python tests/test_readme.py` regenerates this table and t
 | `break` | `break PATTERN [if CONDITION]` | mutate | Set a breakpoint on an address pattern (L*.p, t5.L1.o, logits, cache.L0.v[row=2]); cache cells are evaluated at boundary stops only |
 | `checkpoint` | `checkpoint [NAME]` | mutate | Name the cursor position (about 1 KB of plain data) |
 | `checkpoints` | `checkpoints [offset=N] [limit=N]` | read | List named checkpoints (paged: offset=, limit=) |
-| `circuit` | `circuit` | not built yet (A6) | Circuit records: nodes, edges, consumer, unlisted remainder |
+| `circuit` | `circuit CONSUMER [top=K] [depth=D] \| circuit test ID \| circuit show ID` | navigate | Circuit records: build from the exact decomposition (nodes, edges, remainder), test by native ablation, show as a walk |
 | `commit` | `commit` | mutate | Commit the pending layer with its staged edits (cursor to its h_out) |
-| `compare` | `compare` | not built yet (A6) | Compare branches (sham, A, B, A+B, predicted-only) |
+| `compare` | `compare A B [consumer=C]  (A, B: ADDR=VALUE [op] or a checkpoint name)` | navigate | Compare branches: base, A, B and A+B measured natively, effects and the interaction |
 | `condition` | `condition N [EXPR]` | mutate | Set the condition of breakpoint N (a watch's predicate); no expression removes it |
 | `continue` | `continue [N] [budget=ROWS]` | navigate | Run to the next armed breakpoint or watch hit (N: ignore the breakpoint stopped at N-1 more times, as gdb) |
 | `delete` | `delete [ID ...]` | mutate | Delete breakpoints and watches (all when no ids are given) |
@@ -189,18 +189,19 @@ verb is missing here; `python tests/test_readme.py` regenerates this table and t
 | `list` | `list [LAYER]` | read | The layer's port program: operator text, proof IDs, cursor marked |
 | `next` | `next [N]` | navigate | Step to the last port of the sublayer (r, then h_out) |
 | `print` | `print [ADDR] [top=K] [slice=N]` | read | Reduce a value: shape, dtype, stats, top-k by \|value\|, pointer |
-| `reads` | `reads` | not built yet (A6) | Who reads a value: attention reads with mass and causal verdict |
+| `reads` | `reads SOURCE [rows=R\|A:B\|all] [consumer=C] [top=K] [causal=false]` | navigate | Who reads a value: attention reads of a source row with mass, exact contribution and a native causal verdict |
 | `restart` | `restart NAME` | navigate | Return to a named checkpoint (rewinds or replays) |
 | `reverse-continue` | `reverse-continue` | navigate | Run backwards to the previous breakpoint or watch hit |
 | `reverse-finish` | `reverse-finish` | navigate | Step back to the boundary before the pending layer (its input) |
 | `reverse-next` | `reverse-next [N]` | navigate | Step back to the previous sublayer end |
 | `reverse-step` | `reverse-step [N] [unit] [budget=ROWS]` | navigate | Step back one port (or N units; layer/token units enter at most `budget` rows) |
 | `run` | `run [TEXT \| ID ID ...] [budget=N]` | native | Like start, then continue to the first armed breakpoint or watch |
-| `seek` | `seek` | not built yet (A6) | Seek to an occurrence through recorded projects |
+| `seek` | `seek ADDR \| seek ORIGIN:ADDR \| seek POINTER-JSON` | navigate | Move the session to an occurrence: forward, backward, or by replaying a stored recipe (ORIGIN:ADDR or an occurrence pointer) |
 | `set` | `set ADDR = VALUE\|ADDR [replace\|add\|scale]` | mutate | Stage an edit at a port of the pending layer: set ADDR = VALUE [op] |
 | `start` | `start [TEXT \| ID ID ...]` | native | Prefill a prompt and stop at the pending token's first port (L0.h) |
 | `step` | `step [N] [port\|sublayer\|layer\|token] [budget=ROWS]` | navigate | Step one port (or N units; layer/token units enter at most `budget` rows) |
-| `symbols` | `symbols` | not built yet (A6) | Symbol bindings at the cursor with readers and lifetimes |
+| `symbol` | `symbol NAME = ADDR[,ADDR...]` | mutate | Declare a user symbol over cache rows: symbol NAME = ADDR[,ADDR...] |
+| `symbols` | `symbols [consumer=C] [rows=R\|A:B\|all] [min_mass=X] [offset=N] [limit=N]` | mutate | Symbol table at the cursor: bindings with definition sites, lifetimes, readers, status and an Unbound row (stored as records with a project) |
 | `tbreak` | `tbreak PATTERN [if CONDITION]` | mutate | Set a breakpoint that deletes itself after its first hit |
 | `undisplay` | `undisplay [ID ...]` | mutate | Remove displays (all when no ids are given) |
 | `until` | `until ADDR [budget=ROWS]` | navigate | Run to an address, stopping earlier at an armed breakpoint or watch |
@@ -394,5 +395,5 @@ engine imports no lane module and that its layers (`core`, `engine`, `analysis`,
 
 - `trace(project=)`, cache-cell edits (`set cache.L.v[...]`) and what-if values taken from
   another run (`boiling:cache.L20.v[...]`).
-- `symbols`, `reads`, `circuit`, `compare`, `seek` (A6) and `export` (B1).
+- `export` (B1).
 - Live stepping in the web viewer (B2-B4) and remote workers over mrun.

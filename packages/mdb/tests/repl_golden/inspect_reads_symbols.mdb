@@ -1,0 +1,8 @@
+# Who reads a row: mass and contribution side by side with a native causal verdict; the symbol table.
+until L1.p
+reads t2 top=2
+symbols
+until t3.logits
+reads t1 --consumer M[4,9] top=3
+symbol ctx = t1, cache.L1.v[row=2]
+symbols consumer=M[4,9]

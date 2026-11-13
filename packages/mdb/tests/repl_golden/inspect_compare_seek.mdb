@@ -1,0 +1,8 @@
+# Compare branches (base, A, B, A+B, interaction) and seek forward, backward or refuse.
+until t3.logits
+compare L1.m=0.5 add L0.v = 0.25 add --consumer M[4,9]
+checkpoint here
+seek t3.L0.p
+compare here L1.m=0.5 add --consumer t3.M[4,9]
+seek t3.logits
+where

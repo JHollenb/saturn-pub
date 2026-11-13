@@ -1,0 +1,28 @@
+(mdb) start 1 5 9 3
+t3.L0.h  h = layer input (residual stream)  {P01}
+(mdb) until t3.logits
+t3.logits  logits = lm_head(fn)
+(mdb) compare L1.m=0.5 add L0.v = 0.25 add --consumer M[4,9]
+compare A: L1.m=0.5 add  B: L0.v=0.25 add  -> t3.M[4,9]
+  base -0.11401 [measured]  A 0.050476 [measured]  B -0.068237 [measured]  A+B 0.052124 [measured]
+  effects A 0.16449 [measured]  B 0.045776 [measured]  A+B 0.16614 [measured]
+  interaction (A+B) - A - B + base = -0.044128 [measured]
+  session unchanged at t3.logits
+(mdb) checkpoint here
+checkpoint here at t3.logits (632 bytes)
+(mdb) seek t3.L0.p
+seek t3.L0.p via run: reverse-step layer to t3.emb; until t3.L0.p
+t3.L0.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
+(mdb) compare here L1.m=0.5 add --consumer t3.M[4,9]
+compare A: here  B: L1.m=0.5 add  -> t3.M[4,9]
+  base -0.11401 [measured]  A -0.11401 [measured]  B 0.050476 [measured]
+  effects A 0 [measured]  B 0.16449 [measured]
+  interaction refused (A+B needs both sides to be edits (a checkpoint is a whole session state, not a change that composes))
+  session unchanged at t3.L0.p
+(mdb) seek t3.logits
+seek t3.logits via run: until t3.logits
+t3.logits  logits = lm_head(fn)
+(mdb) where
+t3.logits  logits = lm_head(fn)
+tokens: 1 5 9 3
+staged edits: 0, lookahead none

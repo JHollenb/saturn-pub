@@ -17,8 +17,9 @@ from mdb.ops import (
     registry,
 )
 
-SLOTS = {"reads", "symbols", "circuit", "compare", "seek", "export"}
+SLOTS = {"export"}
 PREDICT = {"explain", "forecast", "verify", "whatif"}
+INSPECT = {"reads", "symbols", "symbol", "circuit", "compare", "seek"}
 GDB_VERBS = {"run", "start", "where", "frame", "step", "next", "finish", "until", "advance",
              "continue", "break", "tbreak", "delete", "watch", "display", "undisplay", "print",
              "x", "info", "list", "backtrace", "up", "down", "set", "commit", "abort",
@@ -28,7 +29,7 @@ GDB_VERBS = {"run", "start", "where", "frame", "step", "next", "finish", "until"
 
 def test_catalogue_has_every_verb_with_a_schema_and_round_trips_json():
     ops = registry()
-    assert GDB_VERBS | SLOTS | PREDICT <= set(ops)
+    assert GDB_VERBS | SLOTS | PREDICT | INSPECT <= set(ops)
     catalogue = describe()
     assert json.loads(json.dumps(catalogue)) == catalogue
     check_bounded(catalogue, "catalogue")
@@ -145,6 +146,11 @@ def _fuzz_args(ctx, name):
         "reverse-continue": {}, "explain": {"address": "M[0,1]"},
         "whatif": {"target": f"t{row}.L1.h_out=0.01", "op": "add",
                    "consumer": f"t{row}.M[0,1]"},
+        "reads": {"source": "t1", "top": 2},
+        "circuit": {"target": f"t{row}.M[0,1]", "top": 2},
+        "compare": {"a": f"t{row}.L1.h_out=0.01 add", "b": "fz",
+                    "consumer": f"t{row}.M[0,1]"},
+        "seek": {"target": ahead},
     }[name]
 
 

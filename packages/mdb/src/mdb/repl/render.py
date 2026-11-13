@@ -470,6 +470,8 @@ def _render(result: dict[str, Any]) -> str:
         return "\n".join(_info(result))
     if name in _PREDICT:
         return "\n".join(_PREDICT[name](result))
+    if name in _INSPECT:
+        return "\n".join(_INSPECT[name](result))
     return json.dumps(result, sort_keys=True)
 
 
@@ -626,6 +628,170 @@ def _whatif_lines(result: dict[str, Any]) -> list[str]:
 
 _PREDICT = {"explain": _explain_lines, "forecast": _forecast_lines, "verify": _verify_lines,
             "whatif": _whatif_lines}
+
+
+# --------------------------------------------------------------------------- reads/symbols/
+# circuit/compare/seek
+
+
+def _short(item: Any) -> str:
+    """A labelled scalar, or the norm of a labelled vector, or a state and reason."""
+    if isinstance(item, dict) and "norm" in item and "value" not in item:
+        return f"norm {_claimed(item['norm'])}"
+    return _claimed(item)
+
+
+def _verdict(causal: dict[str, Any]) -> str:
+    if causal["verdict"] == "unresolved":
+        return f"unresolved ({causal['reason']})"
+    text = f"{causal['verdict']}: Δ {_short(causal['delta'])}"
+    predicted = causal.get("predicted")
+    if isinstance(predicted, dict) and predicted.get("state") is None:
+        text += f", predicted {_short(predicted)}"
+    if causal.get("beyond_rounding_bound") is not None:
+        text += (" (beyond" if causal["beyond_rounding_bound"] else " (within") + \
+            f" rounding bound {_claimed(causal['rounding_bound'])})"
+    return text
+
+
+def _reads_lines(result: dict[str, Any]) -> list[str]:
+    source = result["source"]
+    lines = [f"reads {source['address']} at {result['where']}  rows "
+             f"{','.join(f't{r}' for r in result['rows'])}  consumer {result['consumer']}  "
+             f"({result['total']} reads)"]
+    for entry in result["reads"]:
+        lines.append(f"  {entry['name']:<10} mass {_claimed(entry['mass'])}  effect "
+                     f"{_short(entry['to_consumer'])}")
+        lines.append(f"    {_verdict(entry['causal'])}")
+    if "omitted" in result:
+        omitted = result["omitted"]
+        lines.append(f"  +{omitted['count']} more: mass Σ {_claimed(omitted['mass'])}  "
+                     f"effect Σ {_short(omitted['to_consumer'])}")
+    for name, check in result["checks"].items():
+        if check.get("state"):
+            continue
+        lines.append(f"  {name}: eta_max_abs {_claimed(check['eta_max_abs'])} worst |eta|/bound "
+                     f"{_claimed(check['worst_ratio'])} "
+                     f"{'within' if check['within_bound'] else 'OUTSIDE'} bound "
+                     f"({check['count']} layer rows)")
+    lines += [f"  not computed: {item}" for item in result.get("not_computed", ())]
+    return lines
+
+
+def _symbols_lines(result: dict[str, Any]) -> list[str]:
+    head = f"symbols at {result['where']}  consumer {result['consumer']}"
+    if "consumer_total" in result:
+        head += f" = {_claimed(result['consumer_total'])}"
+    lines = [head + f"  min_mass {_claimed(result['min_mass'])}"]
+    for item in result["bindings"]:
+        name = item["symbol"]
+        if "text" in item:
+            name += f" {json.dumps(item['text'])}"
+        elif "token" in item:
+            name += f" (id {item['token']})"
+        life = item["lifetime"]
+        span = f" ({life['first']}..{life['last']})" if life["first"] else ""
+        lines.append(f"  {name:<12}{item['status']:<7}mass {_claimed(item['mass'])}  "
+                     f"to_consumer {_short(item['to_consumer'])}  life {life['strip']}{span}")
+        lines.append(f"    defined {', '.join(item['definitions'])}")
+        readers = "; ".join(f"{r['name']} mass {fmt(r['mass']['value'])} effect "
+                            f"{_short(r['effect'])}" for r in item["readers"])
+        more = f" (+{item['omitted']} more)" if item.get("omitted") else ""
+        lines.append(f"    readers {readers}{more}")
+        if item.get("edited_by"):
+            lines.append(f"    edited by {', '.join(item['edited_by'])}")
+    unbound = result["unbound"]
+    lines.append(f"  Unbound     mass {_claimed(unbound['mass'])}  readout "
+                 f"{_short(unbound['readout'])}")
+    accounting = result["accounting"]
+    lines.append(f"  accounting: {accounting['heads']} heads, listed mass "
+                 f"{_claimed(accounting['listed_mass'])}, max |sum p - 1| "
+                 f"{_claimed(accounting['max_head_deviation'])} "
+                 f"{'<=' if accounting['within_bound'] else '>'} "
+                 f"{_claimed(accounting['deviation_bound'])}")
+    page = result["page"]
+    shown = len(result["bindings"])
+    lines.append(f"  (bindings {page['offset'] + 1}-{page['offset'] + shown} of {page['total']})"
+                 if shown else f"  (no bindings at offset {page['offset']} of {page['total']})")
+    lines += [f"  not computed: {item}" for item in result.get("not_computed", ())]
+    if result.get("stored"):
+        lines.append(f"  stored {len(result['stored'])} record(s): {result['stored'][0][:16]}")
+    return lines
+
+
+def _walk(node: dict[str, Any], depth: int = 0) -> list[str]:
+    name = node["name"] if node["name"] == node["address"] else (
+        f"{node['name']}  {node['address']}")
+    lines = [f"{'  ' * depth}{name}  {_short(node['value'])}"]
+    for child in node.get("children", ()):
+        lines += _walk(child, depth + 1)
+    return lines
+
+
+def _circuit_test_lines(test: dict[str, Any]) -> list[str]:
+    lines = [f"circuit {test['id']} test  {test['consumer']}  base "
+             f"{_short(test['base'])}  tolerance {_claimed(test['tolerance'])}"]
+    for name in ("retained", "complement"):
+        part = test[name]
+        if part.get("state"):
+            lines.append(f"  ablate {name}: {num(part)}")
+            continue
+        lines.append(f"  ablate {name} ({part['count']} nodes): Δ {_short(part['delta'])}"
+                     f"  predicted {_short(part['predicted_delta'])}")
+        lines.append(f"    edits {', '.join(part['edits'])}")
+    lines.append(f"  verdict: {test['verdict']}  ({test['rule']})")
+    return lines
+
+
+def _circuit_lines(result: dict[str, Any]) -> list[str]:
+    if result["action"] == "test":
+        return _circuit_test_lines(result["test"])
+    body = result["record"]["body"]
+    lines = [f"circuit {result['id']}  {body['consumer']}  top {body['k']} depth "
+             f"{body['depth']}  ({body['count']} nodes, record {result['record']['id'][:16]})"]
+    lines += ["  " + line for line in _walk(body["root"])]
+    closure = body["closure"]
+    lines.append(f"  closure {_short(closure['value'])} "
+                 f"{'within' if closure['within'] else 'OUTSIDE'} {_claimed(closure['bound'])}")
+    for test in result.get("tests", ()):
+        lines += ["  " + line for line in _circuit_test_lines(test)]
+    if result.get("stored"):
+        lines.append(f"  stored record {result['stored'][0][:16]}")
+    return lines
+
+
+def _compare_lines(result: dict[str, Any]) -> list[str]:
+    measured, effects = result["measured"], result["effects"]
+    lines = [f"compare A: {result['sides']['A']}  B: {result['sides']['B']}  -> "
+             f"{result['consumer']}"]
+    lines.append("  " + "  ".join(f"{name} {_short(item['value'])}"
+                                  for name, item in measured.items()))
+    lines.append("  effects " + "  ".join(f"{name} {_short(value)}"
+                                          for name, value in effects.items()))
+    interaction = result["interaction"]
+    if interaction.get("state"):
+        lines.append(f"  interaction {num(interaction)}")
+    else:
+        lines.append(f"  interaction {interaction['formula']} = {_short(interaction['value'])}")
+    session = result["session"]
+    lines.append(f"  session {'unchanged' if session['unchanged'] else 'CHANGED'} at "
+                 f"{result['where']}")
+    return lines
+
+
+def _symbol_lines(result: dict[str, Any]) -> list[str]:
+    return [f"symbol {result['symbol']} = {', '.join(result['definitions'])}  (declared: "
+            f"{', '.join(result['declared'])})"]
+
+
+def _seek_lines(result: dict[str, Any]) -> list[str]:
+    lines = [f"seek {result['target']} via {result['via']}: " + ("; ".join(result["moves"])
+                                                                 or "already there")]
+    return lines + _motion(result)
+
+
+_INSPECT = {"reads": _reads_lines, "symbols": _symbols_lines, "symbol": _symbol_lines,
+            "circuit": _circuit_lines, "compare": _compare_lines, "seek": _seek_lines}
 
 
 def render_error(error: Any) -> str:

@@ -1,0 +1,394 @@
+"""The inspection verbs: ``reads``, ``symbols``, ``symbol``, ``circuit``, ``compare`` and
+``seek``.
+
+They replace the A6 slots of ``builtin`` (``register(..., replace=True)``). Import is
+torch-free; each op imports the analysis layer when it runs.
+
+- ``reads SOURCE``: the attention reads of a source row (``t2``, ``t2.L0.v``,
+  ``cache.L1.v[row=2]``) at the cursor's row (``rows=`` for later rows), with mass, exact
+  contribution and a native causal verdict (``analysis.reads``).
+- ``symbols``: the symbol table at the cursor (``analysis.symbols``); ``symbol NAME =
+  ADDR[,ADDR...]`` declares a user symbol over cache rows.
+- ``circuit CONSUMER [top=K] [depth=D]`` builds a circuit record; ``circuit test ID`` ablates
+  it natively; ``circuit show ID`` prints it as a walk (``analysis.circuits``).
+- ``compare A B [consumer=C]``: base, A, B and A+B measured natively, effects and the
+  interaction (``analysis.compare``). A side is an edit ``ADDR=VALUE [op]`` or a checkpoint
+  name (in memory, else durable).
+- ``seek ADDR``: move the session to an occurrence, forward (``until``), backward
+  (``reverse-step``) or, with a project, by replaying a stored recipe (``ORIGIN:ADDR`` with a
+  checkpoint name or session id as origin, or an occurrence pointer as JSON).
+
+With a project attached, ``symbols`` and ``circuit`` index their sealed records in it.
+"""
+
+from __future__ import annotations
+
+import json
+import re
+from typing import Any
+
+from .builtin import GLOBALS, _moved, _project
+from .errors import BadArgs, Refused
+from .predict import _consumer, _edit, _record_view, _session_digest, _split_assignment
+from .registry import Arg, Op, register
+
+_ROW = re.compile(r"t(?P<row>\d+)\.")
+_OPS = ("replace", "add", "scale")
+
+
+def _refusal():
+    from mdb.analysis.forecast import Refusal
+
+    return Refusal
+
+
+def _declared_consumer(ctx, text: str | None):
+    return None if text is None else _consumer(ctx, text)
+
+
+def _session_id(ctx) -> str | None:
+    project = _project(ctx)
+    return None if project is None or project.read_only else ctx.debugger.session_id
+
+
+def _store(ctx, records: list[dict[str, Any]]) -> list[str]:
+    """Index sealed records in the attached project; the ids stored."""
+    if _session_id(ctx) is None:
+        return []
+    from mdb.core import index
+
+    return [index.put_record(ctx.debugger.project, record) for record in records]
+
+
+def _unchanged(ctx, before: str, verb: str) -> None:
+    if _session_digest(ctx) != before:
+        raise RuntimeError(f"{verb} changed the debugger session")
+
+
+# --------------------------------------------------------------------------- reads
+
+
+def _reads(ctx, source, rows, consumer, top, causal, min_effect):
+    from mdb.analysis import reads as reads_mod
+
+    before = _session_digest(ctx)
+    try:
+        result = reads_mod.reads(ctx.run, source, rows=rows,
+                                 consumer=_declared_consumer(ctx, consumer), top=top,
+                                 causal=causal, min_effect=float(min_effect))
+    except _refusal() as error:
+        raise Refused(str(error)) from None
+    _unchanged(ctx, before, "reads")
+    report = result.report
+    tokenizer = ctx.tokenizer
+    if tokenizer is not None and "token" in report["source"]:
+        report["source"]["text"] = tokenizer.decode([report["source"]["token"]])
+    return {**report, "where": ctx.run.where}
+
+
+# --------------------------------------------------------------------------- symbols
+
+
+def _symbols(ctx, consumer, rows, min_mass, readers, offset, limit):
+    from mdb.analysis import symbols
+
+    try:
+        found = symbols.table(ctx.run, consumer=_declared_consumer(ctx, consumer), rows=rows,
+                              min_mass=float(min_mass), readers=readers, offset=offset,
+                              limit=limit, session_id=_session_id(ctx),
+                              tokenizer=ctx.tokenizer)
+    except _refusal() as error:
+        raise Refused(str(error)) from None
+    stored = _store(ctx, found.records)
+    report = dict(found.report)
+    if stored:
+        report["stored"] = stored
+    return report
+
+
+def _symbol(ctx, name, addresses):
+    from mdb.analysis import symbols
+
+    parts = [part.strip() for part in addresses.split(",") if part.strip()]
+    try:
+        binding = symbols.declare(ctx.run, name, parts)
+    except _refusal() as error:
+        raise Refused(str(error)) from None
+    return {"symbol": binding.name, "definitions": binding.addresses,
+            "rows": sorted({cell.row for cell in binding.cells}),
+            "declared": sorted(symbols.declared(ctx.run))}
+
+
+# --------------------------------------------------------------------------- circuit
+
+
+def _circuit(ctx, target, id, top, depth, tolerance):  # noqa: A002 - the wire name
+    from mdb.analysis import circuits
+
+    run = ctx.run
+    ledger = circuits.ledger(run)
+    if target in ("test", "show"):
+        if id is None:
+            raise BadArgs(f"write circuit {target} ID")
+        if id not in ledger:
+            raise Refused(f"no circuit {id} (have: {', '.join(map(str, ledger)) or 'none'})")
+        circuit = ledger[id]
+        if target == "show":
+            return {"action": "show", "id": id, "record": _record_view(circuit.record),
+                    "tests": circuit.tests[-1:]}
+        before = _session_digest(ctx)
+        try:
+            result = circuits.test(run, circuit, tolerance=float(tolerance))
+        except _refusal() as error:
+            raise Refused(str(error)) from None
+        _unchanged(ctx, before, "circuit test")
+        return {"action": "test", "id": id, "test": result, "where": run.where}
+    if id is not None:
+        raise BadArgs("circuit CONSUMER takes top= and depth=, not an id")
+    try:
+        circuit = circuits.build(run, _consumer(ctx, target), top=top, depth=depth,
+                                 session_id=_session_id(ctx))
+    except _refusal() as error:
+        raise Refused(str(error)) from None
+    out = {"action": "build", "id": circuit.id, "record": _record_view(circuit.record)}
+    stored = _store(ctx, [circuit.record])
+    if stored:
+        out["stored"] = stored
+    return out
+
+
+# --------------------------------------------------------------------------- compare
+
+
+def _side(ctx, text: str):
+    """An edit ``ADDR=VALUE [op]`` or a checkpoint name (in memory first, then durable)."""
+    from mdb.analysis.compare import Side
+
+    words = text.split()
+    if words and "=" in words[0].partition("[")[0] + words[0].rpartition("]")[2]:
+        op = words[1] if len(words) > 1 else "replace"
+        if op not in _OPS or len(words) > 2:
+            raise BadArgs(f"an edit side is ADDR=VALUE [replace|add|scale], not {text!r}")
+        address, value = _split_assignment(words[0], None)
+        return Side(text, edits=[_edit(ctx, address, value, op)])
+    if len(words) != 1:
+        raise BadArgs(f"a side is an edit ADDR=VALUE [op] or a checkpoint name, not {text!r}")
+    name = words[0]
+    if name in ctx.checkpoints:
+        return Side(name, checkpoint=ctx.checkpoints[name])
+    project = _project(ctx)
+    if project is not None:
+        from mdb.core import recipe as recipes
+
+        found = recipes.find_checkpoint(project, name, session_id=ctx.debugger.session_id)
+        if found is not None:
+            try:
+                other = ctx.debugger.replay(recipes.load(project, found["body"]["recipe"]))
+            except (recipes.RecipeError, ValueError) as error:
+                raise Refused(f"checkpoint {name!r} cannot be replayed here: {error}") from None
+            return Side(f"{name} (durable)", run=other)
+    known = ", ".join(ctx.checkpoints) or "none"
+    raise Refused(f"no checkpoint {name!r} (have: {known}) and it is not an edit ADDR=VALUE")
+
+
+def _compare(ctx, a, b, consumer):
+    from mdb.analysis import compare
+
+    run = ctx.run
+    if consumer is None:
+        consumer = f"t{_ROW.match(run.where)['row']}.logits"
+    chosen = _consumer(ctx, consumer)
+    before = _session_digest(ctx)
+    try:
+        result = compare.compare(run, _side(ctx, a), _side(ctx, b), chosen)
+    except _refusal() as error:
+        raise Refused(str(error)) from None
+    after = _session_digest(ctx)
+    if after != before:
+        raise RuntimeError("compare changed the debugger session")
+    report = result["report"]
+    report["session"] = {**report["session"], "debugger_before": before,
+                         "debugger_after": after}
+    return {**report, "consumer": getattr(chosen, "text", chosen), "where": run.where}
+
+
+# --------------------------------------------------------------------------- seek
+
+
+def _seek_within(run, address: str) -> list[str]:
+    """Move ``run`` to ``address``: forward with ``until``, backward by layer boundaries. All
+    or nothing: a target before the run's first stepped row is refused before any move, and a
+    failure part way restores the starting cursor."""
+    moves = []
+    key = run.parse(address)
+    first = len(run.tokens) - 1
+    if key[0] < first:
+        raise ValueError(f"t{key[0]} was prefilled before this run's first stepped row t{first}")
+    start = run.checkpoint()
+    try:
+        if key < run.parse(run.where):
+            while run.parse(run.where) > key:
+                run.reverse_step("layer")
+            moves.append(f"reverse-step layer to {run.where}")
+        if key > run.parse(run.where):
+            run.until(address)
+            moves.append(f"until {address}")
+    except BaseException:
+        run.restore(start)
+        raise
+    return moves
+
+
+def _replayed(ctx, recipe_id: str):
+    from mdb.core import recipe as recipes
+
+    try:
+        return ctx.debugger.replay(recipes.load(ctx.debugger.project, recipe_id))
+    except (recipes.RecipeError, ValueError) as error:
+        raise Refused(f"the stored recipe {recipe_id[:12]} cannot be replayed here: "
+                      f"{error}") from None
+
+
+def _origin_recipe(ctx, branch: str, address: str) -> str:
+    """The recipe standing for origin ``branch``: a durable checkpoint of that name, or the
+    recipe the occurrence index (or the session cursor) of session ``branch`` holds."""
+    from mdb.core import index
+    from mdb.core import recipe as recipes
+
+    project = ctx.debugger.project
+    named = recipes.find_checkpoint(project, branch, session_id=ctx.debugger.session_id)
+    if named is not None:
+        return named["body"]["recipe"]
+    if branch in {r["session_id"] for r in project.sessions()}:
+        # exported occurrences are indexed under their origin-qualified address
+        row = index.find_occurrence(project, branch, f"{branch}:{address}",
+                                    layers=ctx.run.adapter.layers,
+                                    ports=ctx.run.program.names, global_ports=GLOBALS)
+        if row is not None and row["recipe_id"]:
+            return row["recipe_id"]
+        cursor = index.get_cursor(project, branch)
+        if cursor is not None:
+            return index.get_record(project, branch, cursor)["body"]["recipe"]
+    raise Refused(f"origin {branch}: names no durable checkpoint and no session with a stored "
+                  "recipe in this project")
+
+
+def _seek(ctx, target):
+    from mdb.core import address as addresses
+    from mdb.core.pointers import RecordError, validate_occurrence_pointer
+
+    run = ctx.run
+    text = target.strip()
+    moves: list[str] = []
+    origin = None
+    if text.startswith("{"):
+        try:
+            pointer = validate_occurrence_pointer(json.loads(text), ports=run.program.names,
+                                                  global_ports=GLOBALS)
+        except (ValueError, RecordError) as error:
+            raise BadArgs(f"not an occurrence pointer: {error}") from None
+        parsed = addresses.from_json(pointer["address"], ports=run.program.names,
+                                         global_ports=GLOBALS)
+        recipe_id = pointer["recipe"]
+        origin = "pointer"
+    else:
+        try:
+            parsed = addresses.parse(text, ports=run.program.names, global_ports=GLOBALS)
+        except addresses.AddressError as error:
+            raise BadArgs(f"bad address {text!r}: {error}") from None
+        recipe_id = None
+        if parsed.origin is not None:
+            origin = parsed.origin.branch or "@cut"
+    if not isinstance(parsed, addresses.Occurrence) or parsed.selector != addresses.Selector():
+        raise Refused("seek moves to an occurrence t<row>.<stop> (no selector, no cache cell)")
+    plain = addresses.format_address(addresses.Occurrence(parsed.token, parsed.port,
+                                                          parsed.layer))
+    own = origin is None or origin == getattr(ctx.debugger, "session_id", None)
+    if own and recipe_id is None:
+        try:
+            moves = _seek_within(run, plain)
+        except ValueError as error:
+            if _project(ctx) is None:
+                raise Refused(f"cannot reach {plain}: {error}; an occurrence outside this run "
+                              "is reachable only through a stored recipe (attach with project= "
+                              "and checkpoint)") from None
+            recipe_id = _origin_recipe(ctx, ctx.debugger.session_id, plain)
+        else:
+            return _moved(ctx, {"target": plain, "moves": moves, "via": "run"})
+    if _project(ctx) is None:
+        raise Refused(f"{text}: reaching another origin needs a stored recipe; attach with "
+                      "project=")
+    if origin == "@cut":
+        raise Refused("an @cut origin names no recipe; use a checkpoint name or a pointer")
+    if recipe_id is None:
+        recipe_id = _origin_recipe(ctx, origin, plain)
+    replayed = _replayed(ctx, recipe_id)
+    moves.append(f"replay recipe {recipe_id[:12]} to {replayed.where}")
+    try:
+        moves += _seek_within(replayed, plain)
+    except ValueError as error:
+        raise Refused(f"the stored recipe reaches {replayed.where}, but not {plain}: "
+                      f"{error}") from None
+    ctx.set_run(replayed)
+    ctx.debugger.live = replayed
+    return _moved(ctx, {"target": plain, "moves": moves, "via": "recipe",
+                        "recipe": recipe_id})
+
+
+# --------------------------------------------------------------------------- registration
+
+_CONSUMER = Arg("consumer", "str", positional=False,
+                help="M[a,b], logits[i] or a residual port / o address")
+register(Op("reads", "Who reads a value: attention reads of a source row with mass, exact "
+            "contribution and a native causal verdict",
+            (Arg("source", "str", required=True,
+                 help="t<r>, t<r>.L<l>.k|v or cache.L<l>.k|v[row=<r>]"),
+             Arg("rows", "str", positional=False, help="reader rows: R, A:B or all"),
+             _CONSUMER,
+             Arg("top", "int", default=8, minimum=1, maximum=32, positional=False,
+                 help="reads listed with a verdict; the rest are summed"),
+             Arg("causal", "bool", default=True, positional=False,
+                 help="measure each listed read's verdict natively"),
+             Arg("min_effect", "number", default=0.0, positional=False,
+                 help="a measured change above this is causal")),
+            "navigate", True, _reads,
+            usage="reads SOURCE [rows=R|A:B|all] [consumer=C] [top=K] [causal=false]"),
+         replace=True)
+register(Op("symbols", "Symbol table at the cursor: bindings with definition sites, lifetimes, "
+            "readers, status and an Unbound row (stored as records with a project)",
+            (_CONSUMER, Arg("rows", "str", positional=False, help="reader rows: R, A:B or all"),
+             Arg("min_mass", "number", default=0.1, positional=False,
+                 help="a read above this mass marks the lifetime"),
+             Arg("readers", "int", default=3, minimum=1, maximum=8, positional=False),
+             Arg("offset", "int", default=0, minimum=0, positional=False),
+             Arg("limit", "int", default=16, minimum=1, maximum=16, positional=False)),
+            "mutate", True, _symbols,
+            usage="symbols [consumer=C] [rows=R|A:B|all] [min_mass=X] [offset=N] [limit=N]"),
+         replace=True)
+register(Op("symbol", "Declare a user symbol over cache rows: symbol NAME = ADDR[,ADDR...]",
+            (Arg("name", "str", required=True), Arg("addresses", "str", required=True)),
+            "mutate", True, _symbol, usage="symbol NAME = ADDR[,ADDR...]"), replace=True)
+register(Op("circuit", "Circuit records: build from the exact decomposition (nodes, edges, "
+            "remainder), test by native ablation, show as a walk",
+            (Arg("target", "str", required=True, help="a consumer, or test / show"),
+             Arg("id", "int", minimum=1),
+             Arg("top", "int", default=4, minimum=1, maximum=8, positional=False),
+             Arg("depth", "int", default=2, minimum=1, maximum=3, positional=False),
+             Arg("tolerance", "number", default=0.1, positional=False,
+                 help="sufficient when the complement ablation moves the consumer by at most "
+                      "this fraction of its size")),
+            "navigate", True, _circuit,
+            usage="circuit CONSUMER [top=K] [depth=D] | circuit test ID | circuit show ID"),
+         replace=True)
+register(Op("compare", "Compare branches: base, A, B and A+B measured natively, effects and "
+            "the interaction",
+            (Arg("a", "str", required=True, help="ADDR=VALUE [op] or a checkpoint name"),
+             Arg("b", "str", required=True, help="ADDR=VALUE [op] or a checkpoint name"),
+             _CONSUMER),
+            "navigate", True, _compare,
+            usage="compare A B [consumer=C]  (A, B: ADDR=VALUE [op] or a checkpoint name)"),
+         replace=True)
+register(Op("seek", "Move the session to an occurrence: forward, backward, or by replaying a "
+            "stored recipe (ORIGIN:ADDR or an occurrence pointer)",
+            (Arg("target", "str", required=True),), "navigate", True, _seek,
+            usage="seek ADDR | seek ORIGIN:ADDR | seek POINTER-JSON"), replace=True)

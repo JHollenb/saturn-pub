@@ -282,6 +282,71 @@ def _condition_args(text: str) -> dict[str, Any]:
     return args
 
 
+def _consumer_option(text: str) -> tuple[str | None, str]:
+    """Take ``--consumer C`` (or ``--consumer=C``) out of a command line."""
+    words = split(text)
+    consumer, kept, i = None, [], 0
+    while i < len(words):
+        word = words[i][0]
+        if word == "--consumer" and i + 1 < len(words):
+            consumer, i = words[i + 1][0], i + 2
+        elif word.startswith("--consumer="):
+            consumer, i = word.split("=", 1)[1], i + 1
+        else:
+            kept.append(words[i])
+            i += 1
+    return consumer, " ".join(text[start:end] for _, start, end in kept)
+
+
+def _with_consumer(name: str):
+    """The generic parser of ``name`` that also takes ``--consumer C``."""
+    def parse_args(text: str) -> dict[str, Any]:
+        consumer, rest = _consumer_option(text)
+        args = _generic(registry()[name], rest)
+        if consumer is not None:
+            args["consumer"] = consumer
+        return args
+
+    return parse_args
+
+
+_COMPARE_USAGE = "write compare A B [--consumer C]; a side is ADDR=VALUE [op] or a checkpoint"
+
+
+def _compare_args(text: str) -> dict[str, Any]:
+    """``compare A B [--consumer C]``: a side is ``ADDR=VALUE [replace|add|scale]`` (spaces
+    around ``=`` allowed) or a checkpoint name."""
+    consumer, rest = _consumer_option(text)
+    args: dict[str, Any] = {}
+    words = [word for word, _, _ in split(rest)]
+    sides: list[list[str]] = []
+    i = 0
+    while i < len(words):
+        word = words[i]
+        if i + 2 < len(words) and words[i + 1] == "=":
+            word, i = f"{word}={words[i + 2]}", i + 2
+        if word in ("replace", "add", "scale") and sides and \
+                _equals_outside_brackets(sides[-1][0]) > 0 and len(sides[-1]) == 1:
+            sides[-1].append(word)
+        else:
+            sides.append([word])
+        i += 1
+    if len(sides) != 2:
+        raise BadArgs(_COMPARE_USAGE)
+    args.update(a=" ".join(sides[0]), b=" ".join(sides[1]))
+    if consumer is not None:
+        args["consumer"] = consumer
+    return args
+
+
+def _symbol_args(text: str) -> dict[str, Any]:
+    """``symbol NAME = ADDR[,ADDR...]``."""
+    name, equals, addresses = text.partition("=")
+    if not equals or not name.strip() or not addresses.strip():
+        raise BadArgs("write symbol NAME = ADDR[,ADDR...]")
+    return {"name": name.strip(), "addresses": addresses.strip()}
+
+
 SPECIAL = {
     "start": _prompt_args,
     "run": _prompt_args,
@@ -292,6 +357,11 @@ SPECIAL = {
     "whatif": _whatif_args,
     "up": _up_args,
     "condition": _condition_args,
+    "reads": _with_consumer("reads"),
+    "symbols": _with_consumer("symbols"),
+    "circuit": _with_consumer("circuit"),
+    "compare": _compare_args,
+    "symbol": _symbol_args,
 }
 
 

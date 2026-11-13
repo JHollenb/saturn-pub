@@ -7,6 +7,7 @@
 """
 
 from . import builtin as _builtin  # noqa: F401 - registers the built-in ops
+from . import inspect as _inspect  # noqa: F401 - reads/symbols/circuit/compare/seek
 from . import predict as _predict  # noqa: F401 - explain/forecast/verify/whatif
 from .context import Context
 from .errors import BadArgs, OpError, Refused, UnknownOp
