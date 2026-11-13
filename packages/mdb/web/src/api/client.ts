@@ -10,6 +10,7 @@ import type {
   Hello,
   Interrupt,
   LiveFrame,
+  LiveItems,
   LiveTimeline,
   OpResult,
   RecordDetail,
@@ -46,6 +47,7 @@ export interface ViewTypes {
   interrupt: Interrupt;
   live: LiveFrame;
   'live-timeline': LiveTimeline;
+  'live-items': LiveItems;
   event: Event;
 }
 // Compile-time check that the map covers exactly the generated schema names.

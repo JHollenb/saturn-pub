@@ -95,8 +95,10 @@ SCRIPT = [
     ("verify", "verify", {}),
     ("reads", "reads", {}),
     ("symbols", "symbols", {}),
+    ("symbol x = L1.p", "symbol", {"name": "x", "addresses": "L1.p"}),
     ("circuit", "circuit", {}),
-    ("compare", "compare", {}),
+    ("compare pre L0.v=2 scale --consumer L0.o", "compare",
+     {"a": "pre", "b": "L0.v=2 scale", "consumer": "L0.o"}),
     ("seek", "seek", {}),
     ("export", "export", {}),
     ("restart pre", "restart", {"name": "pre"}),
@@ -159,7 +161,7 @@ def _repl_transcript(tmp_path, family, capsys):
     outer.write_text(f"source -k {inner}\n")
     project = tmp_path / f"repl-{family}"
 
-    def open_tiny(name, dtype="bf16", *, seed=113):
+    def open_tiny(name, dtype="bf16", *, seed=113, **_):  # project= is this test's own
         return attach(tiny_model(name, dtype, seed=seed), None, project=project)
 
     capsys.readouterr()
@@ -259,6 +261,8 @@ def test_a_full_queue_is_409_busy_and_runs_nothing(tmp_path):
         app = create_app(session.debugger.project.root, port=PORT, live=session)
         gate = threading.Event()
         blocker = session.call(gate.wait)  # occupies the worker
+        while session._current is None:  # picked up (a queued job would be cancelled below)
+            time.sleep(0.001)
 
         async def go():
             async with _async_client(app) as c:
@@ -306,7 +310,8 @@ def test_interrupt_stops_a_long_continue_and_leaves_a_consistent_cursor(live):
     started = time.monotonic()
     stop, long = asyncio.run(go())
     elapsed = time.monotonic() - started
-    assert stop.json()["data"] == {"interrupted": True, "running": "continue", "reason": None}
+    assert stop.json()["data"] == {"interrupted": True, "running": "continue", "cancelled": 0,
+                                   "reason": None}
     body = long.json()
     result = body["data"]["result"]
     assert set(result) == {"interrupted", "state", "reason"}, result
@@ -352,6 +357,7 @@ def test_interrupts_at_random_moments_leave_a_working_session(live):
 NEW_ROUTES = [("POST", "op", {"op": "where", "args": {}, "request_id": "g"}),
               ("POST", "console", {"line": "where"}), ("POST", "interrupt", None),
               ("GET", "live", None), ("GET", "live/timeline", None),
+              ("GET", "live/items?list=breakpoints", None),
               ("POST", "reduce", {"pointer": {"kind": "occurrence", "address": "t3.L0.h"},
                                   "op": "stats"})]
 
@@ -602,3 +608,218 @@ def test_live_cli_flags_warn_twice_with_allow_remote(tmp_path, capsys, monkeypat
     assert serve_main.main(["--project", str(tmp_path / "p"), "--model",
                             str(tmp_path / "nowhere")]) == 1
     assert "cannot attach the live model" in capsys.readouterr().err
+
+
+# --------------------------------------------------------------------------- fix round (audit)
+
+
+def _frame(c, sid):
+    response = c.get(f"/api/v1/s/{sid}/live")
+    assert response.status_code == 200, response.text[:300]
+    assert len(response.content) <= schema.CAP_BYTES
+    schema.LiveFrame.model_validate(response.json()["data"])
+    return response.json()
+
+
+def _page_through(c, sid, name, addr=None):
+    """Every item of one frame list, page by page through ``GET .../live/items``."""
+    items, offset, total = [], 0, None
+    while offset is not None:
+        params = {"list": name, "offset": offset, **({"addr": addr} if addr else {})}
+        response = c.get(f"/api/v1/s/{sid}/live/items", params=params)
+        assert response.status_code == 200, response.text[:300]
+        assert len(response.content) <= schema.CAP_BYTES
+        page = schema.LiveItems.model_validate(response.json()["data"])
+        assert page.offset == offset and page.items
+        items += page.items
+        total, offset = page.total, page.next
+    assert len(items) == total
+    return items
+
+
+def test_the_live_frame_always_fits_the_cap_and_pages_the_rest(live):
+    """The audit's states: many committed edits (one per row and layer), 8 displays (the op's
+    limit; the audit's 64 asked for more and 56 were refused), 64
+    breakpoints with 247-character conditions (the engine's limit is 256), 64 checkpoints with 64-character names. The
+    frame stays a 200 under the cap, says what it left out, and the items route returns all."""
+    c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
+    sid = live.sid
+    _op(c, sid, "start", {"prompt": PROMPT})
+    for row in range(3, 34):  # 62 committed edits (the audit saw 413 from 34 on); a durable
+        for layer in (0, 1):  # checkpoint's recipe holds at most 64 edited transitions
+            _op(c, sid, "until", {"target": f"t{row}.L{layer}.v"})
+            assert _op(c, sid, "set", {"target": f"L{layer}.v", "value": 1.5, "op": "scale"}
+                       ).json()["state"] == "resolved"
+            _op(c, sid, "commit")
+        _op(c, sid, "step", {"n": 3})
+    _op(c, sid, "until", {"target": "t34.L0.v"})
+    _op(c, sid, "set", {"target": "L0.v", "value": 2.0, "op": "scale"})
+    _frame(c, sid)
+    for i in range(64):
+        _op(c, sid, "display", {"address": f"t{i}.L0.h"})
+        assert _op(c, sid, "break", {"pattern": f"t{i}.L*.p",
+                                     "condition": "norm > " + "9" * 240}).status_code == 200
+        assert _op(c, sid, "checkpoint", {"name": f"c{i:02d}-" + "n" * 60}).status_code == 200
+    body = _frame(c, sid)
+    data, more = body["data"], {m["field"]: m for m in body["data"]["more"]}
+    assert body["omitted"] == data["more"]
+    assert {"committed", "breakpoints", "checkpoints"} <= set(more)
+    assert data["edits"]["committed_total"] == 62 and data["edits"]["staged_total"] == 1
+    assert len(live.ctx.displays) == 8
+    for name, total in (("committed", 62), ("breakpoints", 64), ("displays", 8),
+                        ("checkpoints", 64), ("staged", 1)):
+        shown = len(data["edits"][name]) if name in ("committed", "staged") else len(data[name])
+        assert shown + (more[name]["count"] if name in more else 0) == total, name
+        if name in more:
+            assert more[name]["reason"] == (
+                f"GET /api/v1/s/{sid}/live/items?list={name}&offset={shown}")
+        everything = _page_through(c, sid, name)
+        assert len(everything) == total
+    # one port's upstream edits: a few in the frame, all through the items route
+    port = next(p for p in data["ports"] if p["computed"] and p["port"] == "h")
+    assert port["edit"]["upstream_total"] == 62 and len(port["edit"]["upstream"]) <= 4
+    assert len(_page_through(c, sid, "upstream", port["addr"])) == 62
+    # whole items: the paged breakpoints carry their full conditions
+    assert all(len(b["condition"]) == 247 for b in _page_through(c, sid, "breakpoints"))
+    # the console and the controls still answer
+    assert _op(c, sid, "where").json()["state"] == "resolved"
+
+
+def test_a_checkpoint_name_over_64_characters_is_refused(live):
+    c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
+    _op(c, live.sid, "start", {"prompt": PROMPT})
+    response = _op(c, live.sid, "checkpoint", {"name": "n" * 65})
+    assert response.status_code == 409
+    assert "at most 64 characters" in response.json()["data"]["result"]["reason"]
+    assert live.ctx.checkpoints == {} and live.debugger.checkpoints() == []
+
+
+def test_one_checkpoint_row_per_name_and_restart_goes_where_it_says(live):
+    c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
+    sid = live.sid
+    _op(c, sid, "start", {"prompt": PROMPT})
+    _op(c, sid, "step", {"n": 2})
+    _op(c, sid, "checkpoint", {"name": "x"})
+    _op(c, sid, "step", {"n": 7})
+    latest = _op(c, sid, "checkpoint", {"name": "x"}).json()["data"]["where"]
+    for moved in (False, True):
+        if moved:
+            _op(c, sid, "start", {"prompt": PROMPT})  # in-memory checkpoints are gone
+        rows = _frame(c, sid)["data"]["checkpoints"]
+        assert rows == [{"name": "x", "where": latest, "store": "durable"}]
+        assert _op(c, sid, "restart", {"name": "x"}).json()["data"]["where"] == latest
+
+
+@pytest.mark.parametrize("history", ["finish", "commit", "step-after-commit", "reverse"])
+def test_every_computed_port_reduces_live_and_nothing_is_written(live, history):
+    """Live reductions read like ``print`` (``Run.read``): every port the frame marks computed
+    resolves after any cursor history, and the project does not grow."""
+    root = live.debugger.project.root
+    c = _client(create_app(root, port=PORT, live=live))
+    sid = live.sid
+    _op(c, sid, "start", {"prompt": PROMPT})
+    _op(c, sid, "until", {"target": "L0.v"})
+    if history != "finish":
+        _op(c, sid, "set", {"target": "L0.v", "value": 2.0, "op": "scale"})
+    _op(c, sid, "finish" if history == "finish" else "commit")
+    if history == "step-after-commit":
+        _op(c, sid, "step", {"n": 3})
+    if history == "reverse":
+        _op(c, sid, "step", {"n": 3})
+        _op(c, sid, "reverse-step", {"n": 2})
+
+    def size():
+        files = [p for p in root.rglob("*") if p.is_file()]
+        return len(files), sum(p.stat().st_size for p in files)
+
+    before = size()
+    ports = [p for p in _frame(c, sid)["data"]["ports"] if p["computed"]]
+    assert ports
+    for port in ports:
+        for op, params in (("stats", {}), ("topk", {"k": 3})):
+            response = c.post(f"/api/v1/s/{sid}/reduce", json={
+                "pointer": {"kind": "occurrence", "address": port["addr"]}, "op": op,
+                "params": params})
+            assert response.status_code == 200, (port["addr"], response.text[:300])
+        printed = _op(c, sid, "print", {"address": port["addr"]}).json()["data"]["result"]
+        stats = c.post(f"/api/v1/s/{sid}/reduce", json={
+            "pointer": {"kind": "occurrence", "address": port["addr"]}, "op": "stats"}
+        ).json()["data"]
+        if printed["shape"] == stats["shape"] and "stats" in printed:  # same value, same label
+            assert stats["max"]["ev"] == printed["stats"]["max"]["authority"]
+    assert size() == before
+
+
+def test_interrupt_cancels_every_queued_job_and_says_how_many(live):
+    c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
+    sid = live.sid
+    _op(c, sid, "start", {"prompt": PROMPT})
+    where = live.ctx.run.where
+    gate = threading.Event()
+    blocker = live.call(gate.wait)
+    while live._current is None:
+        time.sleep(0.001)
+    queued = [live.op("step", {"n": 2}), live.op("set", {"target": "L0.v", "value": 2.0}),
+              live.call(lambda: "a view")]
+    stop = c.post(f"/api/v1/s/{sid}/interrupt").json()["data"]
+    assert stop == {"interrupted": False, "running": None, "cancelled": 3,
+                    "reason": "nothing is running; cancelled 3 queued"}
+    gate.set()
+    blocker.result(timeout=10)  # a running read is never interrupted
+    for future in queued[:2]:
+        assert future.result(timeout=10)["result"] == {
+            "interrupted": where, "state": "unresolved", "reason": f"interrupted at {where}"}
+    with pytest.raises(Exception, match="interrupted"):
+        queued[2].result(timeout=10)
+    assert live.ctx.run.where == where and live.ctx.run.edits == []  # nothing ran
+    assert _op(c, sid, "step").json()["state"] == "resolved"  # later work runs
+
+
+@pytest.mark.parametrize("site,status", [("cross-site", 403), ("same-site", 403),
+                                         ("same-origin", 200), ("none", 200), (None, 200)])
+def test_sec_fetch_site_other_than_same_origin_or_none_is_refused(live, site, status):
+    from starlette.websockets import WebSocketDisconnect
+
+    c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
+    headers = {} if site is None else {"sec-fetch-site": site}
+    for method, route, body in NEW_ROUTES:
+        response = c.request(method, f"/api/v1/s/{live.sid}/{route}", json=body,
+                             headers=headers)
+        if status == 403:
+            assert response.status_code == 403 and response.json()["refused"] == "cross_site"
+        else:
+            assert response.status_code != 403, (route, response.text[:200])
+    for path in ("/api/v1/hello", "/"):
+        response = c.get(path, headers=headers)
+        assert (response.status_code == 403) is (status == 403), path
+    url = f"ws://127.0.0.1:{PORT}/api/v1/s/{live.sid}/events"
+    if status == 403:
+        with pytest.raises(WebSocketDisconnect) as closed:
+            with c.websocket_connect(url, headers=headers):
+                pass
+        assert closed.value.code == 1008
+    else:
+        with c.websocket_connect(url, headers=headers) as socket:
+            assert json.loads(socket.receive_text())["data"]["type"] == "hello"
+
+
+def test_refusals_name_the_project_relatively_never_its_absolute_path(live):
+    root = str(live.debugger.project.root)
+    c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
+    body = _op(c, live.sid, "restart", {"name": "nope"}).json()
+    reason = body["data"]["result"]["reason"]
+    assert root not in json.dumps(body) and "<project>" in reason, reason
+    text = c.post(f"/api/v1/s/{live.sid}/console", json={"line": "restart nope"}).json()
+    assert root not in text["data"]["text"] and "<project>" in text["data"]["text"]
+
+
+def test_the_recorded_frame_of_the_live_session_says_it_is_live(live):
+    c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
+    _op(c, live.sid, "start", {"prompt": PROMPT})
+    _op(c, live.sid, "step", {"n": 2})
+    _op(c, live.sid, "checkpoint", {"name": "cut"})  # the recorded frame needs a stored cut
+    data = c.get(f"/api/v1/s/{live.sid}/frame").json()["data"]
+    assert data["live"]["state"] == "paused"
+    text = " ".join(data["live"]["frontier"])
+    assert "engine is attached" in text and "no engine attached" not in text
+    assert live.ctx.run.where in text

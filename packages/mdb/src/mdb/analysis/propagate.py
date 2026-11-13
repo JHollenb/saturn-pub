@@ -424,7 +424,9 @@ def _measure(run: Any, p: Plan, edit: Edit, checkpoint: dict[str, Any]) -> dict[
         out["edited_info"] = run.read_info(p.consumer_stop)
         out["realised"] = run.read(p.edit_stop).clone()
     finally:
-        run.restore(checkpoint)
+        # An interrupt (Ctrl-C) during this restore must not roll it back to the edited
+        # excursion: the restore completes first and the interrupt is raised after it.
+        run.restore(checkpoint, defer_interrupt=True)
     out["moves"].append(f"restore {checkpoint['where']}")
     return out
 

@@ -3,7 +3,7 @@
 // (`POST /op`) or one REPL line (`POST /console`); the server runs them on one thread in order.
 import { create } from 'zustand';
 import { getView, postView } from '../api/client';
-import type { LiveFrame, LiveTimeline, Refused, ReduceResult } from '../api/types.gen';
+import type { LiveFrame, LiveTimeline, Omitted, Refused, ReduceResult } from '../api/types.gen';
 import { useCursor } from './cursor';
 import { lruSet } from './lru';
 import type { ReduceEntry } from './reduce';
@@ -24,6 +24,14 @@ export interface ConsoleLine {
   seq: number;
   line: string;
   text: string;
+}
+
+/** Items of a frame list fetched past what the frame showed (`GET .../live/items`). */
+export interface Extra {
+  items: Record<string, unknown>[];
+  /** Offset of the next page; null when the list is complete. */
+  next: number | null;
+  refused: Refused | null;
 }
 
 const STOP_REASONS = new Set([
@@ -59,11 +67,43 @@ export function summaryKey(seq: number, addr: string): string {
   return `${seq}|${addr}`;
 }
 
+/** The frame's `more` entry for a list (`breakpoints`, `committed`, `upstream:<addr>`, ...). */
+export function moreOf(frame: LiveFrame | null, field: string): Omitted | null {
+  return frame?.more.find((m) => m.field === field) ?? null;
+}
+
+/** `[list, addr]` of a `more` field: `upstream:<addr>` names a port's upstream edits. */
+export function listOf(field: string): [string, string | null] {
+  return field.startsWith('upstream:') ? ['upstream', field.slice(9)] : [field, null];
+}
+
+/** Items the frame itself shows for a `more` field (the offset its first page starts at). */
+export function shownIn(frame: LiveFrame, field: string): number {
+  const [list, addr] = listOf(field);
+  const edits = (frame.edits ?? {}) as Record<string, unknown[] | undefined>;
+  switch (list) {
+    case 'staged':
+    case 'committed':
+      return edits[list]?.length ?? 0;
+    case 'breakpoints':
+      return frame.breakpoints.length;
+    case 'displays':
+      return frame.displays.length;
+    case 'checkpoints':
+      return frame.checkpoints.length;
+    case 'upstream':
+      return frame.ports.find((p) => p.addr === addr)?.edit?.upstream.length ?? 0;
+    default:
+      return 0;
+  }
+}
+
 interface LiveStore {
   sid: string | null;
   frame: LiveFrame | null;
   timeline: LiveTimeline | null;
-  /** A refusal of a request itself (busy, network, not live), not of an op. */
+  /** A refusal of a request itself (busy, network, not live, an unanswerable frame), not of an
+   *  op. Shown beside the controls, which stay usable. */
   refused: Refused | null;
   /** Op or console line this page is waiting for. */
   running: string | null;
@@ -72,12 +112,20 @@ interface LiveStore {
   summaries: ReadonlyMap<string, Summary>;
   /** The row whose top entries are shown besides the cursor row. */
   expanded: string | null;
+  /** Rows on screen (`addr`), when the page reports them; null: every row counts as shown. */
+  visible: ReadonlySet<string> | null;
+  /** Pages of frame lists fetched past the frame, by `more` field (for the current frame). */
+  extra: ReadonlyMap<string, Extra>;
   setSid(sid: string | null): void;
   refresh(): Promise<void>;
   op(name: string, args?: Record<string, unknown>): Promise<void>;
   command(line: string): Promise<void>;
   interrupt(): Promise<void>;
   expand(addr: string | null): void;
+  /** Report a pipeline row entering (`true`) or leaving the screen. */
+  setVisible(addr: string, on: boolean): void;
+  /** Fetch the next page of a frame list the frame shortened. */
+  more(field: string): Promise<void>;
   onEvent(data: Record<string, unknown>): void;
 }
 
@@ -97,17 +145,23 @@ async function reduce(sid: string, addr: string, op: 'stats' | 'topk'): Promise<
 }
 
 export const useLive = create<LiveStore>((set, get) => {
-  /** Summaries of every computed port of the frame, one request at a time; stops when a newer
-   *  frame arrives. */
+  let pass = 0;
+  /** Summaries of the computed ports on screen (every computed port when the page does not
+   *  report rows), one request at a time; a newer frame or a newer pass stops this one. A
+   *  value outside the cursor's layer costs the server a layer re-entry, so rows off screen
+   *  are not asked for. */
   async function summarize(frame: LiveFrame) {
     const sid = get().sid;
     if (!sid) return;
+    const mine = ++pass;
     for (const port of frame.ports) {
       if (!port.computed) continue;
-      if (get().frame?.seq !== frame.seq) return;
+      if (get().frame?.seq !== frame.seq || pass !== mine) return;
+      const visible = get().visible;
+      const wantTopk = port.cursor || port.addr === get().expanded;
+      if (visible && !visible.has(port.addr) && !wantTopk) continue;
       const key = summaryKey(frame.seq, port.addr);
       const have = get().summaries.get(key);
-      const wantTopk = port.cursor || port.addr === get().expanded;
       if (have && (have.topk || !wantTopk)) continue;
       const stats = have?.stats ?? (await reduce(sid, port.addr, 'stats'));
       const topk = wantTopk ? await reduce(sid, port.addr, 'topk') : null;
@@ -115,6 +169,17 @@ export const useLive = create<LiveStore>((set, get) => {
         summaries: lruSet(s.summaries, key, { stats, topk }, MAX_SUMMARIES),
       }));
     }
+  }
+
+  let scheduled = false;
+  function resummarize() {
+    if (scheduled) return;
+    scheduled = true;
+    queueMicrotask(() => {
+      scheduled = false;
+      const frame = get().frame;
+      if (frame) void summarize(frame);
+    });
   }
 
   return {
@@ -127,9 +192,19 @@ export const useLive = create<LiveStore>((set, get) => {
     console: [],
     summaries: new Map(),
     expanded: null,
+    visible: null,
+    extra: new Map(),
     setSid(sid) {
       if (sid === get().sid) return;
-      set({ sid, frame: null, timeline: null, last: null, refused: null, summaries: new Map() });
+      set({
+        sid,
+        frame: null,
+        timeline: null,
+        last: null,
+        refused: null,
+        summaries: new Map(),
+        extra: new Map(),
+      });
       if (sid) void get().refresh();
     },
     async refresh() {
@@ -140,11 +215,13 @@ export const useLive = create<LiveStore>((set, get) => {
         getView('live-timeline', path(sid, 'live/timeline')),
       ]);
       if (get().sid !== sid) return;
+      // A refused frame keeps the last one (or none): controls and console stay usable.
       if (!frame.ok) return set({ refused: frame.refused });
       const current = get().frame;
       if (current && current.seq > frame.env.data.seq) return; // a newer frame already landed
       set({
         frame: frame.env.data,
+        extra: current?.seq === frame.env.data.seq ? get().extra : new Map(),
         timeline: timeline.ok ? timeline.env.data : null,
         refused: timeline.ok ? null : timeline.refused,
       });
@@ -194,8 +271,44 @@ export const useLive = create<LiveStore>((set, get) => {
     },
     expand(addr) {
       set({ expanded: addr });
+      resummarize();
+    },
+    setVisible(addr, on) {
+      const visible = new Set(get().visible ?? []);
+      if (on === visible.has(addr)) {
+        if (get().visible === null) set({ visible });
+        return;
+      }
+      if (on) visible.add(addr);
+      else visible.delete(addr);
+      set({ visible });
+      if (on) resummarize();
+    },
+    async more(field) {
+      const sid = get().sid;
       const frame = get().frame;
-      if (frame) void summarize(frame);
+      if (!sid || !frame) return;
+      const have = get().extra.get(field);
+      if (have && have.next === null) return;
+      const [list, addr] = listOf(field);
+      const offset = have?.next ?? shownIn(frame, field);
+      const r = await getView('live-items', path(sid, 'live/items'), { list, offset, addr });
+      if (get().frame?.seq !== frame.seq) return; // the frame moved on: its lists are stale
+      const extra = new Map(get().extra);
+      if (r.ok) {
+        extra.set(field, {
+          items: [...(have?.items ?? []), ...r.env.data.items],
+          next: r.env.data.next,
+          refused: null,
+        });
+      } else {
+        extra.set(field, {
+          items: have?.items ?? [],
+          next: have?.next ?? offset,
+          refused: r.refused,
+        });
+      }
+      set({ extra });
     },
     onEvent(data) {
       const seq = typeof data.seq === 'number' ? data.seq : null;

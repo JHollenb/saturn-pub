@@ -197,6 +197,7 @@ export interface HistogramResult {
 export interface Interrupt {
   interrupted: boolean;
   running: string | null;
+  cancelled: number;
   reason: string | null;
 }
 
@@ -238,6 +239,7 @@ export interface LiveEdit {
   by: string | null;
   reason: string | null;
   upstream: LiveUpstream[];
+  upstream_total: number;
 }
 
 export interface LiveFrame {
@@ -257,6 +259,16 @@ export interface LiveFrame {
   breakpoints: Record<string, unknown>[];
   displays: Record<string, unknown>[];
   checkpoints: LiveCheckpoint[];
+  more: Omitted[];
+}
+
+export interface LiveItems {
+  list: string;
+  addr: string | null;
+  offset: number;
+  total: number;
+  items: Record<string, unknown>[];
+  next: number | null;
 }
 
 export interface LivePort {
@@ -701,5 +713,6 @@ export const SCHEMAS = {
   interrupt: "mdb-view-interrupt-v1",
   live: "mdb-view-live-v1",
   "live-timeline": "mdb-view-live-timeline-v1",
+  "live-items": "mdb-view-live-items-v1",
   event: "mdb-view-event-v1",
 } as const;

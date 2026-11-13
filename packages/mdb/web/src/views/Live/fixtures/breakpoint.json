@@ -1,6 +1,6 @@
 {
   "frame": {
-    "bytes": 5349,
+    "bytes": 5461,
     "data": {
       "breakpoints": [
         {
@@ -23,13 +23,8 @@
       "edits": {
         "committed": [],
         "committed_total": 0,
-        "limit": 64,
-        "offset": 0,
         "staged": [],
         "staged_total": 0,
-        "state": "resolved",
-        "subject": "edits",
-        "total": 0,
         "where": "t3.L1.p"
       },
       "family": "qwen2",
@@ -42,6 +37,7 @@
         "frontier": [],
         "state": "paused"
       },
+      "more": [],
       "ports": [
         {
           "addr": "t3.L1.h",
@@ -54,7 +50,8 @@
             "kind": "native",
             "reason": null,
             "state": "resolved",
-            "upstream": []
+            "upstream": [],
+            "upstream_total": 0
           },
           "editable": true,
           "focus": false,
@@ -74,7 +71,8 @@
             "kind": "native",
             "reason": null,
             "state": "resolved",
-            "upstream": []
+            "upstream": [],
+            "upstream_total": 0
           },
           "editable": true,
           "focus": false,
@@ -94,7 +92,8 @@
             "kind": "native",
             "reason": null,
             "state": "resolved",
-            "upstream": []
+            "upstream": [],
+            "upstream_total": 0
           },
           "editable": true,
           "focus": false,
@@ -114,7 +113,8 @@
             "kind": "native",
             "reason": null,
             "state": "resolved",
-            "upstream": []
+            "upstream": [],
+            "upstream_total": 0
           },
           "editable": true,
           "focus": false,
@@ -134,7 +134,8 @@
             "kind": "native",
             "reason": null,
             "state": "resolved",
-            "upstream": []
+            "upstream": [],
+            "upstream_total": 0
           },
           "editable": true,
           "focus": false,
@@ -154,7 +155,8 @@
             "kind": "native",
             "reason": null,
             "state": "resolved",
-            "upstream": []
+            "upstream": [],
+            "upstream_total": 0
           },
           "editable": true,
           "focus": false,
@@ -174,7 +176,8 @@
             "kind": "native",
             "reason": null,
             "state": "resolved",
-            "upstream": []
+            "upstream": [],
+            "upstream_total": 0
           },
           "editable": false,
           "focus": false,
@@ -194,7 +197,8 @@
             "kind": "replica",
             "reason": null,
             "state": "resolved",
-            "upstream": []
+            "upstream": [],
+            "upstream_total": 0
           },
           "editable": true,
           "focus": false,
@@ -214,7 +218,8 @@
             "kind": "native",
             "reason": null,
             "state": "resolved",
-            "upstream": []
+            "upstream": [],
+            "upstream_total": 0
           },
           "editable": true,
           "focus": false,
@@ -346,7 +351,7 @@
       ],
       "row": 3,
       "seq": 3,
-      "session": "qwen2-8a16dcab78be",
+      "session": "qwen2-b16329a9d6e4",
       "stop": {
         "address": "t3.L1.p",
         "layer": 1,
@@ -372,13 +377,13 @@
       ],
       "where": "t3.L1.p"
     },
-    "digest": "74679d173bf76b10c3b66aa3e3ee98b1d673046cf5d7e2d9ca93bc16efa014ee",
+    "digest": "a57a360f17c8b79e2275143b3ae6c9bd9aae68341ee829675d07ed3fc96351f4",
     "schema": "mdb-view-live-v1",
     "state": "resolved"
   },
   "stats": {
     "a": {
-      "bytes": 1593,
+      "bytes": 1603,
       "data": {
         "absmax": {
           "ev": "measured",
@@ -451,7 +456,7 @@
           "unit": null,
           "v": -2.09375
         },
-        "note": "live run, live tier, value sha256 91e79e708e22",
+        "note": "live run at t3.L1.p, read as `print` reads it (Run.read)",
         "op": "stats",
         "pointer": "a32d1a750da9ee10af473febe5fcb162bf006a092939a6583b7b0025a79ca9a6",
         "shape": [1, 1, 16],
@@ -466,12 +471,12 @@
           "v": 0.9993382075261642
         }
       },
-      "digest": "1c14ae26c19f9225f11bd7991ae67c0171d5feb7890285b86c13145a8991f581",
+      "digest": "b03bcb05f581fcca7af2875fd0395d1505b9bb9cbcdd0c6fdb6daf6ac3be4e1a",
       "schema": "mdb-view-reduce-v1",
       "state": "resolved"
     },
     "h": {
-      "bytes": 1615,
+      "bytes": 1625,
       "data": {
         "absmax": {
           "ev": "measured",
@@ -544,7 +549,7 @@
           "unit": null,
           "v": -0.046142578125
         },
-        "note": "live run, live tier, value sha256 6ea4712c2a2b",
+        "note": "live run at t3.L1.p, read as `print` reads it (Run.read)",
         "op": "stats",
         "pointer": "2965b9e72c6a0e765d8784b55793904d90c22047cc13345a5c02c58611f10942",
         "shape": [1, 1, 16],
@@ -559,12 +564,12 @@
           "v": 0.022057262424599173
         }
       },
-      "digest": "1b6f37f5cdc34e14eb903aec52db7bf4907b7812bc08ca4f9b67d6457e83c7c0",
+      "digest": "19bec6b7b50bdf6e0a3e2e8ee5cd54a67165f0469c219e8c116660dbfe6e9af4",
       "schema": "mdb-view-reduce-v1",
       "state": "resolved"
     },
     "p": {
-      "bytes": 1588,
+      "bytes": 1598,
       "data": {
         "absmax": {
           "ev": "measured",
@@ -637,7 +642,7 @@
           "unit": null,
           "v": 0.2490234375
         },
-        "note": "live run, live tier, value sha256 a3a32de6269f",
+        "note": "live run at t3.L1.p, read as `print` reads it (Run.read)",
         "op": "stats",
         "pointer": "c64bc4ce472a9368df7804a6c954d9f942805902ea3fdfa53065397304d283d2",
         "shape": [1, 2, 1, 4],
@@ -652,12 +657,12 @@
           "v": 0.0004727762873788351
         }
       },
-      "digest": "6db0908f766641cc80c6ebf9ddc6887bdf7bba84748fa9214dea68a2cd6b6b71",
+      "digest": "ede622b756d06e1026301af1f27a56450892182774060b1c5c9f33fff77ab779",
       "schema": "mdb-view-reduce-v1",
       "state": "resolved"
     },
     "q": {
-      "bytes": 1613,
+      "bytes": 1623,
       "data": {
         "absmax": {
           "ev": "measured",
@@ -730,7 +735,7 @@
           "unit": null,
           "v": -0.11669921875
         },
-        "note": "live run, live tier, value sha256 754af0c28b51",
+        "note": "live run at t3.L1.p, read as `print` reads it (Run.read)",
         "op": "stats",
         "pointer": "40594fb3cef5f61979f3c41d34071ee8e0de6ce907742735062a61e5cfe9c12e",
         "shape": [1, 1, 16],
@@ -745,7 +750,7 @@
           "v": 0.056558845810775096
         }
       },
-      "digest": "b01528062516b0f1bc6b8619bfa292e90e11d8ebff40c8008cc2ecc091a33e4f",
+      "digest": "1bc4e13a6f1a39d42922714924af5e42dbdecfcc23e3b1d5a022a747003ddb0a",
       "schema": "mdb-view-reduce-v1",
       "state": "resolved"
     }
@@ -793,7 +798,7 @@
           "token": 3
         }
       ],
-      "session": "qwen2-8a16dcab78be",
+      "session": "qwen2-b16329a9d6e4",
       "stops": [
         "start",
         "emb",
@@ -841,12 +846,12 @@
       ],
       "where": "t3.L1.p"
     },
-    "digest": "0a6f3173f19ce468fbb49d9df9d100f3c3383658f8ae94289695e8009ba5539b",
+    "digest": "af2d5ec5317206e2483bda01982f5294cd4f844266e2487b0a7005b227f09b77",
     "schema": "mdb-view-live-timeline-v1",
     "state": "resolved"
   },
   "topk": {
-    "bytes": 851,
+    "bytes": 861,
     "data": {
       "axis": null,
       "by": "abs",
@@ -893,13 +898,13 @@
         }
       ],
       "k": 3,
-      "note": "live run, live tier, value sha256 a3a32de6269f",
+      "note": "live run at t3.L1.p, read as `print` reads it (Run.read)",
       "op": "topk",
       "pointer": "c64bc4ce472a9368df7804a6c954d9f942805902ea3fdfa53065397304d283d2",
       "score": "element value",
       "shape": [1, 2, 1, 4]
     },
-    "digest": "768ffbdd1ea5d0426ee0807b2e9b4104dba98c3126322c936dbcd68db10c9fcc",
+    "digest": "69aed0431652e1e3201d88aa44e79340a27eb8e8869e7b77afc83b50c50a771c",
     "schema": "mdb-view-reduce-v1",
     "state": "resolved"
   }

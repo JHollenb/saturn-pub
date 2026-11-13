@@ -1,12 +1,12 @@
 {
   "frame": {
-    "bytes": 6309,
+    "bytes": 6441,
     "data": {
       "breakpoints": [],
       "checkpoints": [
         {
           "name": "edited",
-          "store": "memory",
+          "store": "durable",
           "where": "t3.L0.A"
         }
       ],
@@ -25,8 +25,6 @@
       "edits": {
         "committed": [],
         "committed_total": 0,
-        "limit": 64,
-        "offset": 0,
         "staged": [
           {
             "cast_exact": true,
@@ -63,9 +61,6 @@
           }
         ],
         "staged_total": 1,
-        "state": "resolved",
-        "subject": "edits",
-        "total": 1,
         "where": "t3.L0.A"
       },
       "family": "qwen2",
@@ -78,6 +73,7 @@
         "frontier": [],
         "state": "paused"
       },
+      "more": [],
       "ports": [
         {
           "addr": "t3.L0.h",
@@ -90,7 +86,8 @@
             "kind": "native",
             "reason": null,
             "state": "resolved",
-            "upstream": []
+            "upstream": [],
+            "upstream_total": 0
           },
           "editable": true,
           "focus": false,
@@ -110,7 +107,8 @@
             "kind": "native",
             "reason": null,
             "state": "resolved",
-            "upstream": []
+            "upstream": [],
+            "upstream_total": 0
           },
           "editable": true,
           "focus": false,
@@ -130,7 +128,8 @@
             "kind": "native",
             "reason": null,
             "state": "resolved",
-            "upstream": []
+            "upstream": [],
+            "upstream_total": 0
           },
           "editable": true,
           "focus": false,
@@ -150,7 +149,8 @@
             "kind": "native",
             "reason": null,
             "state": "resolved",
-            "upstream": []
+            "upstream": [],
+            "upstream_total": 0
           },
           "editable": true,
           "focus": false,
@@ -170,7 +170,8 @@
             "kind": "edit",
             "reason": null,
             "state": "resolved",
-            "upstream": []
+            "upstream": [],
+            "upstream_total": 0
           },
           "editable": true,
           "focus": false,
@@ -198,7 +199,8 @@
                 "row": 3,
                 "staged": true
               }
-            ]
+            ],
+            "upstream_total": 1
           },
           "editable": true,
           "focus": false,
@@ -226,7 +228,8 @@
                 "row": 3,
                 "staged": true
               }
-            ]
+            ],
+            "upstream_total": 1
           },
           "editable": false,
           "focus": false,
@@ -254,7 +257,8 @@
                 "row": 3,
                 "staged": true
               }
-            ]
+            ],
+            "upstream_total": 1
           },
           "editable": true,
           "focus": false,
@@ -282,7 +286,8 @@
                 "row": 3,
                 "staged": true
               }
-            ]
+            ],
+            "upstream_total": 1
           },
           "editable": true,
           "focus": false,
@@ -310,7 +315,8 @@
                 "row": 3,
                 "staged": true
               }
-            ]
+            ],
+            "upstream_total": 1
           },
           "editable": true,
           "focus": false,
@@ -430,7 +436,7 @@
       ],
       "row": 3,
       "seq": 10,
-      "session": "qwen2-8a16dcab78be",
+      "session": "qwen2-b16329a9d6e4",
       "stop": {
         "address": "t3.L0.A",
         "layer": 0,
@@ -456,13 +462,13 @@
       ],
       "where": "t3.L0.A"
     },
-    "digest": "f9d58a843eb92953384548d5b25eeec8e8f04d821db010fce8a4a781972b29b1",
+    "digest": "2be98ce91499b40a59247e6af56965ed56fde3ca5ab7a9eb2c6db6cd2b539b41",
     "schema": "mdb-view-live-v1",
     "state": "resolved"
   },
   "stats": {
     "h": {
-      "bytes": 1614,
+      "bytes": 1624,
       "data": {
         "absmax": {
           "ev": "measured",
@@ -535,7 +541,7 @@
           "unit": null,
           "v": -0.044921875
         },
-        "note": "live run, live tier, value sha256 c376f2dcec69",
+        "note": "live run at t3.L0.A, read as `print` reads it (Run.read)",
         "op": "stats",
         "pointer": "842e7917eac7e8cdea604f4d7b98fdb5718e9eacc9c4c5990c5a6255d2942170",
         "shape": [1, 1, 16],
@@ -550,12 +556,12 @@
           "v": 0.021809120031160895
         }
       },
-      "digest": "a6831a59c856f2fe34f2e69d21f05351c9af845a782c382b5f673a4f7681fc8e",
+      "digest": "26aaf8d42318310bb6f9a4924e113f020d3f18629b9b9966b4a908dd0a59370f",
       "schema": "mdb-view-reduce-v1",
       "state": "resolved"
     },
     "p": {
-      "bytes": 1599,
+      "bytes": 1609,
       "data": {
         "absmax": {
           "ev": "measured",
@@ -628,7 +634,7 @@
           "unit": null,
           "v": 0.248046875
         },
-        "note": "live run, live tier, value sha256 bda254d8ec53",
+        "note": "live run at t3.L0.A, read as `print` reads it (Run.read)",
         "op": "stats",
         "pointer": "4b572a90e9fda06d088491e7e938d3697f8df4753747651b2d8d7edc448d00ce",
         "shape": [1, 2, 1, 4],
@@ -643,12 +649,12 @@
           "v": 0.0014443554157958047
         }
       },
-      "digest": "f86ed4f3ed2c776c234631ffdb4a715e6b2134dca79f37ee86a98ee620714df3",
+      "digest": "86c3c7202d68412d5cfe3b459667a933166e9d5a0f9431beecdeb64cddda5793",
       "schema": "mdb-view-reduce-v1",
       "state": "resolved"
     },
     "s": {
-      "bytes": 1651,
+      "bytes": 1661,
       "data": {
         "absmax": {
           "ev": "derived-exact",
@@ -721,7 +727,7 @@
           "unit": null,
           "v": -0.0147705078125
         },
-        "note": "live run, live tier, value sha256 f79adfb546a6",
+        "note": "live run at t3.L0.A, read as `print` reads it (Run.read)",
         "op": "stats",
         "pointer": "5194ab2345a3fa6db2325168fbd6826768c11b1c89a2440312819c72ad27d9c1",
         "shape": [1, 2, 1, 4],
@@ -736,12 +742,12 @@
           "v": 0.006559487863433233
         }
       },
-      "digest": "631104039ecba51bf53d7f0a2d6c5e67771a7f89675f3824077460cf5bc65435",
+      "digest": "3cd9c661832390d31233beae31c126fa0964e50b0fc2411b47f2df20fd71109c",
       "schema": "mdb-view-reduce-v1",
       "state": "resolved"
     },
     "v": {
-      "bytes": 1549,
+      "bytes": 1559,
       "data": {
         "absmax": {
           "ev": "supplied",
@@ -814,7 +820,7 @@
           "unit": null,
           "v": 0.25
         },
-        "note": "live run, live tier, value sha256 210e550f6b67",
+        "note": "live run at t3.L0.A, read as `print` reads it (Run.read)",
         "op": "stats",
         "pointer": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
         "shape": [1, 1, 8],
@@ -829,7 +835,7 @@
           "v": 0.0
         }
       },
-      "digest": "283da2f043727730653d1e0a1c1407b28140b163e84026d001a13f330d7ed896",
+      "digest": "45ff45d2ada411118fd2793eafe38fb4dfc4fbb45dd135f915def0948e013b7b",
       "schema": "mdb-view-reduce-v1",
       "state": "resolved"
     }
@@ -877,7 +883,7 @@
           "token": 3
         }
       ],
-      "session": "qwen2-8a16dcab78be",
+      "session": "qwen2-b16329a9d6e4",
       "stops": [
         "start",
         "emb",
@@ -925,12 +931,12 @@
       ],
       "where": "t3.L0.A"
     },
-    "digest": "8bb29b39e767e86b164c0a73191ea1008458750c48c3f12ebe75e262dc9b0191",
+    "digest": "219162e4627e4c23d3c9db40f81e6f2a9d6ba39baf2869c8917b6ed01955e569",
     "schema": "mdb-view-live-timeline-v1",
     "state": "resolved"
   },
   "topk": {
-    "bytes": 843,
+    "bytes": 853,
     "data": {
       "axis": null,
       "by": "abs",
@@ -977,18 +983,18 @@
         }
       ],
       "k": 3,
-      "note": "live run, live tier, value sha256 210e550f6b67",
+      "note": "live run at t3.L0.A, read as `print` reads it (Run.read)",
       "op": "topk",
       "pointer": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
       "score": "element value",
       "shape": [1, 1, 8]
     },
-    "digest": "7ecbf5ad5140c2c97639749f231b23105ae0630be9dcb7381e4b7acf1bcc75e4",
+    "digest": "96e374dca468e8f6930b4cd681413c24a3644c31edcc1012fe53d8843df193a5",
     "schema": "mdb-view-reduce-v1",
     "state": "resolved"
   },
   "uncomputed": {
-    "detail": "cannot export 't3.L1.v': t3.L1.v has not been computed at t3.L0.A",
+    "detail": "cannot read 't3.L1.v': t3.L1.v has not been computed at t3.L0.A",
     "refused": "unresolved",
     "state": "refused"
   }

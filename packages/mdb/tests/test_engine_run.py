@@ -1454,3 +1454,99 @@ def test_two_edits_on_one_port_label_each_selection_by_its_own_operations(adapte
     run.finish()
     again = run.read_info("L0.m", select=second)
     assert again["authority"] == "supplied" and run.read_info("L0.m", select=first)["authority"] == "derived-exact"
+
+
+# --- restore(defer_interrupt=True): an interrupt during the restore cannot roll it back -----------
+
+
+def _interrupt_at(monkeypatch, method, nth, *, after):
+    """Raise ``KeyboardInterrupt`` once, at the ``nth`` call of ``Session.<method>`` (before the
+    call ran, or after it ran)."""
+    original = getattr(Session, method)
+    state = {"calls": 0, "fired": False}
+
+    def wrapped(self, *args, **kwargs):
+        state["calls"] += 1
+        if state["calls"] != nth:
+            return original(self, *args, **kwargs)
+        state["fired"] = True
+        if not after:
+            raise KeyboardInterrupt
+        original(self, *args, **kwargs)
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(Session, method, wrapped)
+    return state
+
+
+def _excursion(adapter, mode, replay):
+    """A run away from a checkpoint (``t{ROW}.L1.v``: L0 committed with an edit, an edit staged
+    at L1.v) and that checkpoint. Rewind: the run took the checkpoint, then moved on to the next
+    row. Replay: a second run over the same tokens (holding the edit tensors) that never reached
+    the checkpoint's cut, so restoring it replays the committed path."""
+    run = Run_(adapter, mode)
+    run.until("L0.v")
+    run.set("L0.v", 0.5, "add")
+    run.until("L1.v")
+    run.set("L1.v", 2.0, "scale")
+    checkpoint = run.checkpoint("here")
+    if replay:
+        other = Run_(adapter, mode)
+        other.hold(run.edit_tensors())
+        other.until("L1.m")
+        return other, checkpoint
+    run.step("token")
+    return run, checkpoint
+
+
+FIRED: set = set()
+POINTS = [("restore", 1, False), ("restore", 1, True), ("capture", 1, False),
+          ("capture", 1, True), ("probe", 1, False), ("probe", 1, True), ("continue_", 1, False),
+          ("continue_", 2, True), ("capture", 4, False)]
+
+
+@pytest.mark.parametrize("point", POINTS, ids=lambda p: f"{p[0]}-{p[1]}-{'after' if p[2] else 'before'}")
+@pytest.mark.parametrize("replay", [False, True], ids=["rewind", "replay"])
+def test_a_deferred_interrupt_completes_the_restore_then_raises(adapter, mode, monkeypatch, point,
+                                                                replay):
+    method, nth, after = point
+    run, checkpoint = _excursion(adapter, mode, replay)
+    twin, _ = _excursion(adapter, mode, replay)
+    twin.restore(checkpoint)
+    state = _interrupt_at(monkeypatch, method, nth, after=after)
+    try:
+        run.restore(checkpoint, defer_interrupt=True)
+        raised = False
+    except KeyboardInterrupt:
+        raised = True
+    monkeypatch.undo()
+    assert raised is state["fired"]  # raised exactly when it fired, and only after completing
+    FIRED.add((method, nth, after, replay, state["fired"]))
+    assert run.where == checkpoint["where"] == twin.where
+    assert [e["port"] for e in run.edits] == [e["port"] for e in twin.edits] == ["v"]
+    assert len(run.committed_edits()) == 1
+    assert run.committed_edits() == twin.committed_edits()
+    assert _in_sync(run)
+    assert torch.equal(run.read(), twin.read())
+    assert run.read_info() == twin.read_info()
+
+
+def test_without_defer_the_same_interrupt_leaves_the_excursion(adapter, mode, monkeypatch):
+    """The control: the default restore is all-or-nothing, so an interrupt inside it rolls back to
+    where the excursion stood (what ``whatif`` must never leave behind)."""
+    run, checkpoint = _excursion(adapter, mode, False)
+    where = run.where
+    _interrupt_at(monkeypatch, "restore", 1, after=True)
+    with pytest.raises(KeyboardInterrupt):
+        run.restore(checkpoint)
+    monkeypatch.undo()
+    assert run.where == where != checkpoint["where"]
+    assert _in_sync(run)
+
+
+def test_the_deferred_interrupt_points_fire():
+    """Every injection point above fired in at least one case (the sweep is not vacuous)."""
+    if not FIRED:
+        pytest.skip("run with the deferred-interrupt sweep")
+    fired = {(m, n, a, r) for m, n, a, r, f in FIRED if f}
+    assert {(m, n, a) for m, n, a, _ in fired} == set(POINTS), sorted(FIRED)

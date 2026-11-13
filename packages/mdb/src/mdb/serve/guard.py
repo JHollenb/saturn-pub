@@ -9,8 +9,13 @@ Starlette's own error middleware (the 500 path) pass through it too.
   is 80) or an explicit ``--allow-host``; an ``Origin`` header, when present, must be
   ``http://`` plus one of those hosts. This is what stops DNS rebinding and cross-site requests
   from a browser: a foreign page can reach loopback, but it cannot make the browser send a
-  loopback ``Host``/``Origin``. Refusals are 403 (``host_not_allowed``, ``origin_not_allowed``);
-  a missing ``Host`` is 400; a WebSocket is closed before it is accepted.
+  loopback ``Host``/``Origin``. A request whose ``Sec-Fetch-Site`` (set by the browser, not by
+  page script) is anything but ``same-origin`` or ``none`` is refused too: a cross-site
+  ``<img>``/``<script>`` GET carries no ``Origin`` but does carry ``Sec-Fetch-Site:
+  cross-site``, and could otherwise queue work on a live session. A request without the header
+  (curl, older browsers) is judged by Host/Origin alone. Refusals are 403
+  (``host_not_allowed``, ``origin_not_allowed``, ``cross_site``); a missing ``Host`` is 400; a
+  WebSocket is closed before it is accepted.
 * Body limit: request bodies above ``body_limit`` bytes are refused 413 ``over_limit``. Streamed
   bytes are counted (``Content-Length`` is not trusted) and nothing past the limit is buffered.
 * Headers: CSP, ``X-Content-Type-Options``, ``Referrer-Policy``, ``Cross-Origin-Resource-Policy``
@@ -29,6 +34,7 @@ CSP = ("default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' 
        "connect-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; "
        "frame-ancestors 'none'")
 LOOPBACK_NAMES = ("127.0.0.1", "localhost", "[::1]")
+FETCH_SITES = ("same-origin", "none")  # Sec-Fetch-Site values accepted when the header is sent
 
 
 def _split(entry):
@@ -115,8 +121,10 @@ class SecurityLayer:
     def _check(self, scope):
         """``(status, reason, detail)`` when the request must be refused, else None."""
         host = _header(scope, b"host")
-        if host is _DUPLICATE or _header(scope, b"origin") is _DUPLICATE:
-            return 403, "duplicate_header", "a Host or Origin header occurs more than once"
+        site = _header(scope, b"sec-fetch-site")
+        if host is _DUPLICATE or _header(scope, b"origin") is _DUPLICATE or site is _DUPLICATE:
+            return 403, "duplicate_header", ("a Host, Origin or Sec-Fetch-Site header occurs "
+                                             "more than once")
         if host is None or not host.strip():
             return 400, "missing_host", "the request has no Host header"
         if not self.hosts.ok(host):
@@ -127,6 +135,10 @@ class SecurityLayer:
             origin = origin.strip().lower()
             if not origin.startswith("http://") or not self.hosts.ok(origin[len("http://"):]):
                 return 403, "origin_not_allowed", "the Origin is not this server"
+        if site is not None and site.strip().lower() not in FETCH_SITES:
+            return 403, "cross_site", ("the browser says this request comes from another site "
+                                       f"(Sec-Fetch-Site: {site.strip()[:32]}); only this "
+                                       "server's own pages may call it")
         return None
 
     # -- ASGI

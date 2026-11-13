@@ -29,6 +29,7 @@ _LAYER_PORT = re.compile(r"L(?P<layer>\d+)\.(?P<port>\w+)")
 STATS = ("norm", "min", "max", "mean", "abs_max")
 MAX_DISPLAYS = 8
 MAX_CHECKPOINTS = 4096
+MAX_CHECKPOINT_NAME = 64  # characters
 STEP_CAP = 4096          # most units one step/next/reverse-step may take
 PAGE = 32                # default page size of every list; 64 is the most one result may hold
 GLOBAL_OPERATORS = {
@@ -1376,16 +1377,21 @@ def _checkpoint_list(ctx) -> list[dict[str, Any]]:
 @op("checkpoint", "Name the cursor position (about 1 KB of plain data)",
     Arg("name", "str"), effect="mutate", usage="checkpoint [NAME]")
 def _op_checkpoint(ctx, name):
+    if name is not None and len(name) > MAX_CHECKPOINT_NAME:
+        raise Refused(f"a checkpoint name is at most {MAX_CHECKPOINT_NAME} characters (this one "
+                      f"has {len(name)})")
     if len(ctx.checkpoints) >= MAX_CHECKPOINTS and name not in ctx.checkpoints:
         raise Refused(f"at most {MAX_CHECKPOINTS} checkpoints; reuse a name or start again")
     name = name or ctx.next_checkpoint_name()
     checkpoint = ctx.run.checkpoint(name)
-    ctx.checkpoints[name] = checkpoint
     result = {"name": name, "where": checkpoint["where"],
               "bytes": len(json.dumps(checkpoint, sort_keys=True))}
     if _project(ctx) is not None:  # durable: recipe, edit blobs and cursor go to the project
+        # Durable first: an interrupt leaves no checkpoint, or a durable one `restart` finds;
+        # never an in-memory checkpoint that the project does not hold.
         stored = ctx.debugger.checkpoint(ctx.run, name)
         result["durable"] = {"recipe": stored["recipe"], "blobs": stored["blobs"]}
+    ctx.checkpoints[name] = checkpoint
     return result
 
 

@@ -51,6 +51,7 @@ class _Job:
     finish: Any       # raw value -> the request's value (runs after the job settled)
     future: Future
     interruptible: bool  # an op or console line; never a view or a reduction
+    cancelled: bool = False  # an interrupt arrived while it waited: it never runs
 
 
 class Interrupted(Exception):
@@ -93,6 +94,7 @@ class LiveSession:
         self._jobs: queue.Queue = queue.Queue(maxsize=queue_limit + 1)
         self._lock = threading.Lock()
         self._current: _Job | None = None
+        self._waiting: list[_Job] = []  # queued, not started (in order)
         self._sent = False
         self._pending = 0
         self.seq = 0  # ops and console lines completed
@@ -111,6 +113,7 @@ class LiveSession:
             if waiting >= self.queue_limit:
                 raise Busy(f"{waiting} requests are queued (limit {self.queue_limit})")
             self._pending += 1
+            self._waiting.append(job)
         self._jobs.put_nowait(job)
         return job.future
 
@@ -134,13 +137,17 @@ class LiveSession:
 
     def _attempt(self, job: _Job):
         """Run one job's ``fn``. A ``KeyboardInterrupt`` that fires inside ``fn`` gives
-        ``job.interrupted()``; one that fires after ``fn`` returned keeps its value. When this
-        returns no interrupt is pending, so ``finish`` cannot be cut short."""
+        ``job.interrupted()``; one that fires after ``fn`` returned keeps its value. A job an
+        interrupt cancelled while it waited never runs and also gives ``job.interrupted()``. When
+        this returns no interrupt is pending, so ``finish`` cannot be cut short."""
         value = _UNSET
         try:
             with self._lock:
-                self._current, self._sent = job, False
-            value = job.fn()
+                self._waiting.remove(job)
+                if not job.cancelled:
+                    self._current, self._sent = job, False
+            if not job.cancelled:
+                value = job.fn()
             self._settle()
         except KeyboardInterrupt:
             self._settle()
@@ -170,17 +177,26 @@ class LiveSession:
                 continue
 
     def interrupt(self) -> dict[str, Any]:
-        """Deliver Ctrl-C to the running op or console line (once); says whether one was
-        running. A running view or reduction is never interrupted."""
+        """Deliver Ctrl-C to the running op or console line (once) and cancel every queued job
+        (each gets the interrupted result: an op or console line ``interrupted at <where>``, a
+        view or reduction ``Interrupted``). Says whether one was running and how many queued
+        jobs were cancelled. A running view or reduction is never interrupted."""
         with self._lock:
+            cancelled = 0
+            for job in self._waiting:
+                if not job.cancelled:
+                    job.cancelled = True
+                    cancelled += 1
             if self._current is None or not self._current.interruptible:
-                return {"interrupted": False, "running": None,
-                        "reason": "nothing is running"}
+                return {"interrupted": False, "running": None, "cancelled": cancelled,
+                        "reason": "nothing is running" + (
+                            f"; cancelled {cancelled} queued" if cancelled else "")}
             if not self._sent:
                 ctypes.pythonapi.PyThreadState_SetAsyncExc(
                     ctypes.c_ulong(self._thread.ident), ctypes.py_object(KeyboardInterrupt))
                 self._sent = True
-            return {"interrupted": True, "running": self.running, "reason": None}
+            return {"interrupted": True, "running": self.running, "cancelled": cancelled,
+                    "reason": None}
 
     def close(self) -> None:
         """Stop the worker after the jobs already queued."""

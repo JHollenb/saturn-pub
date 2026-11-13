@@ -39,3 +39,48 @@ def test_without_a_project_checkpoints_stay_in_memory():
     run = dbg.run(TOKENS)
     run.until("L0.p")
     assert "durable" not in dispatch(dbg.ops(run), "checkpoint", {"name": "pre"})
+
+
+def test_a_checkpoint_name_is_at_most_64_characters(tmp_path):
+    dbg = mdb.attach(tiny_model("qwen2", "fp32"), project=tmp_path / "p")
+    run = dbg.run(TOKENS)
+    run.until("L0.p")
+    ctx = dbg.ops(run)
+    with pytest.raises(Refused, match="at most 64 characters .this one has 65"):
+        dispatch(ctx, "checkpoint", {"name": "n" * 65})
+    assert ctx.checkpoints == {} and dbg.checkpoints() == []  # nothing stored
+    assert dispatch(ctx, "checkpoint", {"name": "n" * 64})["durable"]["blobs"] == 0
+
+
+@pytest.mark.parametrize("where", ["save", "record", "select"])
+def test_an_interrupted_durable_checkpoint_is_durable_or_absent_never_memory_only(
+    tmp_path, monkeypatch, where
+):
+    """The durable write runs first; the in-memory entry is added only after it returned. An
+    interrupt at any point of the durable write leaves either no checkpoint or a durable one
+    that ``restart`` finds."""
+    from mdb.core import recipe as recipes
+
+    dbg = mdb.attach(tiny_model("qwen2", "fp32"), project=tmp_path / "p")
+    run = dbg.run(TOKENS)
+    run.until("L0.p")
+    ctx = dbg.ops(run)
+    target = {"save": (type(dbg), "_save_recipe"), "record": (recipes, "record_checkpoint"),
+              "select": (type(dbg.project), "select")}[where]
+    original = getattr(*target)
+
+    def interrupted(*args, **kwargs):
+        if where != "save":
+            original(*args, **kwargs)  # the step completed, then Ctrl-C landed
+        raise KeyboardInterrupt
+
+    monkeypatch.setattr(*target, interrupted)
+    with pytest.raises(KeyboardInterrupt):
+        dispatch(ctx, "checkpoint", {"name": "cp"})
+    monkeypatch.undo()
+    assert "cp" not in ctx.checkpoints
+    durable = [c["name"] for c in dbg.checkpoints()]
+    assert durable == ([] if where == "save" else ["cp"])
+    if durable:
+        run.until("L1.p")
+        assert dispatch(ctx, "restart", {"name": "cp"})["where"] == f"t{len(TOKENS) - 1}.L0.p"

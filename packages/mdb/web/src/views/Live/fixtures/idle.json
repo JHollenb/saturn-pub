@@ -1,6 +1,6 @@
 {
   "frame": {
-    "bytes": 286,
+    "bytes": 296,
     "data": {
       "breakpoints": [],
       "checkpoints": [],
@@ -17,15 +17,16 @@
         "frontier": [],
         "state": "paused"
       },
+      "more": [],
       "ports": [],
       "row": null,
       "seq": 0,
-      "session": "qwen2-8a16dcab78be",
+      "session": "qwen2-b16329a9d6e4",
       "stop": null,
       "tokens": [],
       "where": null
     },
-    "digest": "d544ded23d58baa0b4048f020fe3ee24eb90cceb0bfe8fd189be93b3bf272b15",
+    "digest": "0df7219cf522b6daa29c36796f5d2e1a8769f046a2ec9f140822d7b65277056c",
     "schema": "mdb-view-live-v1",
     "state": "resolved"
   },
@@ -39,11 +40,11 @@
       },
       "root": null,
       "rows": [],
-      "session": "qwen2-8a16dcab78be",
+      "session": "qwen2-b16329a9d6e4",
       "stops": [],
       "where": null
     },
-    "digest": "b0fe9ee164ae910ed5f4f076e52b325be9e2f2c0ae879e936eb24750be1c06e6",
+    "digest": "95997f0035284f797ad78c0e18c8be13107623b670fde02c6905944b93bedb2e",
     "schema": "mdb-view-live-timeline-v1",
     "state": "resolved"
   }

@@ -284,3 +284,26 @@
   cursor: pointer;
   font: inherit;
 }
+
+/* The edit marks of a pipeline row wrap inside their cell instead of being clipped. */
+.live-edit-cell {
+  min-width: 9em;
+}
+
+.live-mark {
+  white-space: normal;
+  overflow: visible;
+  display: inline;
+  line-height: 1.6;
+}
+
+.live-more {
+  margin: 2px 0;
+}
+
+.live-clip {
+  max-width: 16em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

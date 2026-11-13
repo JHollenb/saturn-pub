@@ -2,7 +2,7 @@
 // which the container (`Live.tsx`) wires to registry ops. Numbers come only from op results
 // (`{value, authority}`) and server reductions (`Num`), always through NumView; a port the run
 // has not computed shows no value at all.
-import { useState, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type {
   LiveCheckpoint,
   LiveEdit,
@@ -17,14 +17,27 @@ import { RefusedView } from '../../chrome/NotAvailable';
 import { Count, NumView } from '../../chrome/NumView';
 import { asNum } from '../../chrome/evidence';
 import type { ReduceEntry } from '../../state/reduce';
-import { summaryKey, type ConsoleLine, type Outcome, type Summary } from '../../state/live';
+import {
+  moreOf,
+  summaryKey,
+  type ConsoleLine,
+  type Extra,
+  type Outcome,
+  type Summary,
+} from '../../state/live';
 
 export interface LiveActions {
   op(name: string, args?: Record<string, unknown>): void;
   command(line: string): void;
   interrupt(): void;
   expand(addr: string | null): void;
+  /** Fetch the next page of a list the frame shortened (`more` field). */
+  more(field: string): void;
 }
+
+/** Report a pipeline row's element so the page can ask only for rows on screen; returns the
+ *  cleanup. Absent (tests, no IntersectionObserver): every row counts as shown. */
+export type WatchRow = (addr: string, el: Element) => () => void;
 
 export interface LiveViewProps {
   frame: LiveFrame | null;
@@ -37,16 +50,34 @@ export interface LiveViewProps {
   expanded: string | null;
   /** The URL's address when it is not the live cursor (a pasted link). */
   urlAddr: string | null;
+  /** Pages of shortened lists fetched so far, by `more` field. */
+  extra?: ReadonlyMap<string, Extra>;
+  watchRow?: WatchRow;
   act: LiveActions;
 }
 
 export function LiveView(props: LiveViewProps) {
   const { frame, running, act } = props;
+  const extra = props.extra ?? new Map<string, Extra>();
   if (!frame) {
-    return props.refused ? (
-      <RefusedView what="live session" refused={props.refused} />
-    ) : (
-      <div className="faint">loading live session…</div>
+    // No frame (refused, e.g. over the cap, or not loaded yet): the controls and the console
+    // still work; every op answers for itself.
+    return (
+      <div className="live" data-testid="live" data-running={running ? 'yes' : 'no'}>
+        <div className="live-status" role="status">
+          <span className="faint">{props.refused ? 'no live frame' : 'loading live session…'}</span>
+          <span className="live-state">
+            {running ? (
+              <span data-testid="state-running">running {running}…</span>
+            ) : (
+              <OutcomeText last={props.last} />
+            )}
+          </span>
+        </div>
+        <Controls frame={null} running={running} act={act} urlAddr={null} />
+        {props.refused && <RefusedView what="live frame" refused={props.refused} />}
+        <Console lines={props.console} disabled={!!running} act={act} />
+      </div>
     );
   }
   const hasRun = frame.where !== null;
@@ -58,7 +89,13 @@ export function LiveView(props: LiveViewProps) {
       {hasRun ? (
         <>
           {props.timeline && <Clock timeline={props.timeline} disabled={!!running} act={act} />}
-          <Pipeline frame={frame} summaries={props.summaries} expanded={props.expanded} act={act} />
+          <Pipeline
+            frame={frame}
+            summaries={props.summaries}
+            expanded={props.expanded}
+            act={act}
+            watchRow={props.watchRow}
+          />
         </>
       ) : (
         <div className="na" data-testid="no-run">
@@ -66,11 +103,44 @@ export function LiveView(props: LiveViewProps) {
         </div>
       )}
       <div className="live-tables">
-        <Breakpoints frame={frame} disabled={!!running} act={act} />
-        <Edits frame={frame} disabled={!!running || !hasRun} act={act} />
-        <Checkpoints frame={frame} disabled={!!running} act={act} />
+        <Breakpoints frame={frame} extra={extra} disabled={!!running} act={act} />
+        <Edits frame={frame} extra={extra} disabled={!!running || !hasRun} act={act} />
+        <Checkpoints frame={frame} extra={extra} disabled={!!running} act={act} />
       </div>
       <Console lines={props.console} disabled={!!running} act={act} />
+    </div>
+  );
+}
+
+/** "N more" for a list the frame shortened, with the pages fetched so far; nothing when the
+ *  frame showed it whole. */
+function More({
+  frame,
+  field,
+  extra,
+  act,
+  noun,
+}: {
+  frame: LiveFrame;
+  field: string;
+  extra: ReadonlyMap<string, Extra>;
+  act: LiveActions;
+  noun: string;
+}) {
+  const more = moreOf(frame, field);
+  if (!more) return null;
+  const got = extra.get(field);
+  const left = more.count - (got?.items.length ?? 0);
+  return (
+    <div className="live-more" data-testid={`more-${field}`}>
+      {left > 0 ? (
+        <button type="button" className="linklike" onClick={() => act.more(field)}>
+          <Count n={left} /> more {noun} not shown — show more
+        </button>
+      ) : (
+        <span className="faint">all shown</span>
+      )}
+      {got?.refused && <RefusedView what={`more ${noun}`} refused={got.refused} />}
     </div>
   );
 }
@@ -138,7 +208,7 @@ function Controls({
   act,
   urlAddr,
 }: {
-  frame: LiveFrame;
+  frame: LiveFrame | null;
   running: string | null;
   act: LiveActions;
   urlAddr: string | null;
@@ -146,7 +216,7 @@ function Controls({
   const [prompt, setPrompt] = useState('');
   const [until, setUntil] = useState('');
   const busy = !!running;
-  const noRun = frame.where === null;
+  const noRun = frame !== null && frame.where === null; // no frame: let the op answer
   const motion = (label: string, op: string, title: string) => (
     <button type="button" disabled={busy || noRun} onClick={() => act.op(op)} title={title}>
       {label}
@@ -284,11 +354,13 @@ function Pipeline({
   summaries,
   expanded,
   act,
+  watchRow,
 }: {
   frame: LiveFrame;
   summaries: ReadonlyMap<string, Summary>;
   expanded: string | null;
   act: LiveActions;
+  watchRow?: WatchRow;
 }) {
   return (
     <div className="table-scroll" aria-label="pipeline">
@@ -314,6 +386,7 @@ function Pipeline({
               summary={summaries.get(summaryKey(frame.seq, p.addr)) ?? null}
               open={p.cursor || p.addr === expanded}
               act={act}
+              watchRow={watchRow}
             />
           ))}
         </tbody>
@@ -327,14 +400,24 @@ function PortRow({
   summary,
   open,
   act,
+  watchRow,
 }: {
   port: LivePort;
   summary: Summary | null;
   open: boolean;
   act: LiveActions;
+  watchRow?: WatchRow;
 }) {
+  const ref = useRef<HTMLTableRowElement>(null);
+  const addr = port.addr;
+  const computed = port.computed;
+  useEffect(() => {
+    if (!watchRow || !computed || !ref.current) return;
+    return watchRow(addr, ref.current);
+  }, [watchRow, addr, computed]);
   return (
     <tr
+      ref={ref}
       className={port.cursor ? 'live-port here' : 'live-port'}
       data-port={port.port}
       data-computed={port.computed ? 'yes' : 'no'}
@@ -374,7 +457,7 @@ function PortRow({
           not computed yet
         </td>
       )}
-      <td>
+      <td className="live-edit-cell">
         <EditMark edit={port.edit} />
       </td>
     </tr>
@@ -439,19 +522,29 @@ export function EditMark({ edit }: { edit: LiveEdit | null }) {
   }
   const parts: ReactNode[] = [];
   if (edit.edited) {
+    const label = `edited (${edit.kind}${edit.by ? ` by ${edit.by}` : ''}) · ${edit.authority}`;
     parts.push(
-      <span key="e" className="chip" data-testid="edited" data-ev={edit.authority}>
-        <EvidenceMark ev={edit.authority} /> edited ({edit.kind}
-        {edit.by ? ` by ${edit.by}` : ''}) · {edit.authority}
+      <span
+        key="e"
+        className="chip live-mark"
+        data-testid="edited"
+        data-ev={edit.authority}
+        title={label}
+      >
+        <EvidenceMark ev={edit.authority} /> {label}
       </span>,
     );
   }
-  if (edit.upstream.length) {
-    const where = edit.upstream.map((u) => `t${u.row}.L${u.layer}.${u.port} ${u.op}`).join(', ');
+  const total = edit.upstream_total;
+  if (total) {
+    const listed = edit.upstream.map((u) => `t${u.row}.L${u.layer}.${u.port} ${u.op}`);
+    const label = `downstream of ${total} edit${total === 1 ? '' : 's'}: ${listed.join(', ')}${
+      total > listed.length ? `, and ${total - listed.length} more` : ''
+    }`;
     parts.push(
-      <span key="u" className="chip" data-testid="downstream" title={where}>
-        downstream of <Count n={edit.upstream.length} /> edit
-        {edit.upstream.length === 1 ? '' : 's'}
+      <span key="u" className="chip live-mark" data-testid="downstream" title={label}>
+        downstream of <Count n={total} /> edit
+        {total === 1 ? '' : 's'}
       </span>,
     );
   }
@@ -473,17 +566,22 @@ interface TableItem {
 
 function Breakpoints({
   frame,
+  extra,
   disabled,
   act,
 }: {
   frame: LiveFrame;
+  extra: ReadonlyMap<string, Extra>;
   disabled: boolean;
   act: LiveActions;
 }) {
   const [kind, setKind] = useState<'break' | 'watch'>('break');
   const [pattern, setPattern] = useState('');
   const [condition, setCondition] = useState('');
-  const items = frame.breakpoints as unknown as TableItem[];
+  const items = [
+    ...frame.breakpoints,
+    ...(extra.get('breakpoints')?.items ?? []),
+  ] as unknown as TableItem[];
   return (
     <section aria-label="breakpoints and watches">
       <h3>Breakpoints and watches</h3>
@@ -497,7 +595,9 @@ function Breakpoints({
                 </td>
                 <td>{b.kind}</td>
                 <td className="mono">{b.pattern}</td>
-                <td className="mono faint">{b.condition ?? b.predicate ?? b.mode ?? ''}</td>
+                <td className="mono faint live-clip" title={b.condition ?? b.predicate ?? ''}>
+                  {b.condition ?? b.predicate ?? b.mode ?? ''}
+                </td>
                 <td title="hits">
                   <Count n={b.hits} /> hits
                 </td>
@@ -524,6 +624,7 @@ function Breakpoints({
       ) : (
         <div className="faint">none</div>
       )}
+      <More frame={frame} field="breakpoints" extra={extra} act={act} noun="breakpoints" />
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -579,6 +680,7 @@ interface EditRecord {
   op: string;
   kind: string;
   layer?: number;
+  row?: number;
   value?: unknown;
   fired?: boolean;
 }
@@ -595,10 +697,12 @@ function EditLine({ e }: { e: EditRecord }) {
 
 function Edits({
   frame,
+  extra,
   disabled,
   act,
 }: {
   frame: LiveFrame;
+  extra: ReadonlyMap<string, Extra>;
   disabled: boolean;
   act: LiveActions;
 }) {
@@ -608,10 +712,18 @@ function Edits({
   const [value, setValue] = useState('');
   const edits = (frame.edits ?? {}) as {
     staged?: EditRecord[];
-    committed?: { row: number; layer: number; edits: EditRecord[] }[];
+    committed?: EditRecord[];
+    staged_total?: number;
   };
-  const staged = edits.staged ?? [];
-  const committed = edits.committed ?? [];
+  const staged = [
+    ...(edits.staged ?? []),
+    ...((extra.get('staged')?.items ?? []) as unknown as EditRecord[]),
+  ];
+  const committed = [
+    ...(edits.committed ?? []),
+    ...((extra.get('committed')?.items ?? []) as unknown as EditRecord[]),
+  ];
+  const anyStaged = (edits.staged_total ?? staged.length) > 0;
   const chosen = port || editable[0] || '';
   const number = Number(value);
   const valid = value.trim() !== '' && Number.isFinite(number);
@@ -629,18 +741,18 @@ function Edits({
         ) : (
           <span className="faint">none</span>
         )}
+        <More frame={frame} field="staged" extra={extra} act={act} noun="staged edits" />
       </div>
       {committed.length > 0 && (
         <div>
           committed:{' '}
-          {committed.map((g) => (
-            <div key={`${g.row}.${g.layer}`}>
-              t{g.row}.L{g.layer}:{' '}
-              {g.edits.map((e, i) => (
-                <EditLine key={i} e={e} />
-              ))}
+          {committed.map((e, i) => (
+            <div key={i} data-testid="committed-edit">
+              <span className="faint">t{e.row ?? '?'} </span>
+              <EditLine e={e} />
             </div>
           ))}
+          <More frame={frame} field="committed" extra={extra} act={act} noun="committed edits" />
         </div>
       )}
       <form
@@ -679,10 +791,10 @@ function Edits({
           stage
         </button>
       </form>
-      <button type="button" disabled={disabled || !staged.length} onClick={() => act.op('commit')}>
+      <button type="button" disabled={disabled || !anyStaged} onClick={() => act.op('commit')}>
         commit
       </button>
-      <button type="button" disabled={disabled || !staged.length} onClick={() => act.op('abort')}>
+      <button type="button" disabled={disabled || !anyStaged} onClick={() => act.op('abort')}>
         abort
       </button>
     </section>
@@ -691,22 +803,28 @@ function Edits({
 
 function Checkpoints({
   frame,
+  extra,
   disabled,
   act,
 }: {
   frame: LiveFrame;
+  extra: ReadonlyMap<string, Extra>;
   disabled: boolean;
   act: LiveActions;
 }) {
   const [name, setName] = useState('');
+  const rows = [
+    ...frame.checkpoints,
+    ...((extra.get('checkpoints')?.items ?? []) as unknown as LiveCheckpoint[]),
+  ];
   return (
     <section aria-label="checkpoints">
       <h3>Checkpoints</h3>
-      {frame.checkpoints.length ? (
+      {rows.length ? (
         <table>
           <tbody>
-            {frame.checkpoints.map((c: LiveCheckpoint) => (
-              <tr key={`${c.store}:${c.name}:${c.where}`}>
+            {rows.map((c: LiveCheckpoint) => (
+              <tr key={c.name}>
                 <td className="mono">{c.name}</td>
                 <td className="mono faint">{c.where}</td>
                 <td
@@ -731,6 +849,7 @@ function Checkpoints({
       ) : (
         <div className="faint">none</div>
       )}
+      <More frame={frame} field="checkpoints" extra={extra} act={act} noun="checkpoints" />
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -742,6 +861,7 @@ function Checkpoints({
           className="mono"
           aria-label="checkpoint name"
           placeholder="name (optional)"
+          maxLength={64}
           value={name}
           onChange={(e) => setName(e.target.value)}
         />

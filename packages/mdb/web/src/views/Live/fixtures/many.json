@@ -1,0 +1,3024 @@
+{
+  "breakpoints_page": {
+    "bytes": 7968,
+    "data": {
+      "addr": null,
+      "items": [
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 19,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t17.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 20,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t18.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 21,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t19.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 22,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t20.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 23,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t21.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 24,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t22.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 25,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t23.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 26,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t24.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 27,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t25.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 28,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t26.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 29,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t27.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 30,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t28.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 31,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t29.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 32,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t30.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 33,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t31.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 34,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t32.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 35,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t33.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 36,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t34.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 37,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t35.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 38,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t36.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 39,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t37.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 40,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t38.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 41,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t39.L*.p"
+        }
+      ],
+      "list": "breakpoints",
+      "next": null,
+      "offset": 17,
+      "total": 40
+    },
+    "digest": "6d610a6ca2f2ac803393890f9bdf84cf4a7b1f37fdc763143e33c3201ed20f49",
+    "schema": "mdb-view-live-items-v1",
+    "state": "resolved"
+  },
+  "committed_page": {
+    "bytes": 13175,
+    "data": {
+      "addr": null,
+      "items": [
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 0,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 6.103515625e-5
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 12,
+          "selection": null,
+          "transition": 64,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 1,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.000244140625
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 12,
+          "selection": null,
+          "transition": 65,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 0,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.000244140625
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 13,
+          "selection": null,
+          "transition": 71,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 1,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.00048828125
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 13,
+          "selection": null,
+          "transition": 72,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 0,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 6.103515625e-5
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 14,
+          "selection": null,
+          "transition": 78,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 1,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.00048828125
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 14,
+          "selection": null,
+          "transition": 79,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 0,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.00048828125
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 15,
+          "selection": null,
+          "transition": 85,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 1,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.000244140625
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 15,
+          "selection": null,
+          "transition": 86,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 0,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0009765625
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 16,
+          "selection": null,
+          "transition": 92,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 1,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0001220703125
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 16,
+          "selection": null,
+          "transition": 93,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 0,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 6.103515625e-5
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 17,
+          "selection": null,
+          "transition": 99,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 1,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.000244140625
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 17,
+          "selection": null,
+          "transition": 100,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 0,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.00048828125
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 18,
+          "selection": null,
+          "transition": 106,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 1,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.000244140625
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 18,
+          "selection": null,
+          "transition": 107,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 0,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0009765625
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 19,
+          "selection": null,
+          "transition": 113,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 1,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.000244140625
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 19,
+          "selection": null,
+          "transition": 114,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 0,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 6.103515625e-5
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 20,
+          "selection": null,
+          "transition": 120,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 1,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.00048828125
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 20,
+          "selection": null,
+          "transition": 121,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 0,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.000244140625
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 21,
+          "selection": null,
+          "transition": 127,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 1,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.000244140625
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 21,
+          "selection": null,
+          "transition": 128,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 0,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 6.103515625e-5
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 22,
+          "selection": null,
+          "transition": 134,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        },
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 1,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.000244140625
+          },
+          "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+          "row": 22,
+          "selection": null,
+          "transition": 135,
+          "value": {
+            "authority": "supplied",
+            "value": 1.5
+          }
+        }
+      ],
+      "list": "committed",
+      "next": null,
+      "offset": 17,
+      "total": 39
+    },
+    "digest": "fff0404ba0eb7034ae900dc571e16b64aee82560f5777d4ca90be305091cfa84",
+    "schema": "mdb-view-live-items-v1",
+    "state": "resolved"
+  },
+  "frame": {
+    "bytes": 30152,
+    "data": {
+      "breakpoints": [
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 2,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t0.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 3,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t1.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 4,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t2.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 5,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t3.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 6,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t4.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 7,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t5.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 8,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t6.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 9,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t7.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 10,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t8.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 11,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t9.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 12,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t10.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 13,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t11.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 14,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t12.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 15,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t13.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 16,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t14.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 17,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t15.L*.p"
+        },
+        {
+          "condition": "norm > 999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999",
+          "enabled": true,
+          "hits": 0,
+          "id": 18,
+          "ignore": 0,
+          "kind": "break",
+          "pattern": "t16.L*.p"
+        }
+      ],
+      "checkpoints": [
+        {
+          "name": "edited",
+          "store": "durable",
+          "where": "t3.L0.A"
+        }
+      ],
+      "checks": null,
+      "displays": [],
+      "edits": {
+        "committed": [
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 0,
+            "op": "replace",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": true,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "realised_sha256": "09fdd070c1e676cc1fb12cbe4952ca458683be52a61cd2e931ffc34153ba209f",
+            "row": 3,
+            "selection": null,
+            "transition": 1,
+            "value": {
+              "authority": "supplied",
+              "value": 0.25
+            }
+          },
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 0,
+            "op": "scale",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": false,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0009765625
+            },
+            "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+            "row": 4,
+            "selection": null,
+            "transition": 8,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          },
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 1,
+            "op": "scale",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": false,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0001220703125
+            },
+            "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+            "row": 4,
+            "selection": null,
+            "transition": 9,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          },
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 0,
+            "op": "scale",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": false,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.00048828125
+            },
+            "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+            "row": 5,
+            "selection": null,
+            "transition": 15,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          },
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 1,
+            "op": "scale",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": false,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.000244140625
+            },
+            "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+            "row": 5,
+            "selection": null,
+            "transition": 16,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          },
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 0,
+            "op": "scale",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": false,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0009765625
+            },
+            "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+            "row": 6,
+            "selection": null,
+            "transition": 22,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          },
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 1,
+            "op": "scale",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": false,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.00048828125
+            },
+            "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+            "row": 6,
+            "selection": null,
+            "transition": 23,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          },
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 0,
+            "op": "scale",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": false,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.00048828125
+            },
+            "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+            "row": 7,
+            "selection": null,
+            "transition": 29,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          },
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 1,
+            "op": "scale",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": false,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.000244140625
+            },
+            "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+            "row": 7,
+            "selection": null,
+            "transition": 30,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          },
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 0,
+            "op": "scale",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": false,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0009765625
+            },
+            "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+            "row": 8,
+            "selection": null,
+            "transition": 36,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          },
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 1,
+            "op": "scale",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": false,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0001220703125
+            },
+            "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+            "row": 8,
+            "selection": null,
+            "transition": 37,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          },
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 0,
+            "op": "scale",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": false,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 6.103515625e-5
+            },
+            "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+            "row": 9,
+            "selection": null,
+            "transition": 43,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          },
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 1,
+            "op": "scale",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": false,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0009765625
+            },
+            "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+            "row": 9,
+            "selection": null,
+            "transition": 44,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          },
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 0,
+            "op": "scale",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": false,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.00048828125
+            },
+            "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+            "row": 10,
+            "selection": null,
+            "transition": 50,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          },
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 1,
+            "op": "scale",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": false,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.000244140625
+            },
+            "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+            "row": 10,
+            "selection": null,
+            "transition": 51,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          },
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 0,
+            "op": "scale",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": false,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0009765625
+            },
+            "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+            "row": 11,
+            "selection": null,
+            "transition": 57,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          },
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 1,
+            "op": "scale",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": false,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.000244140625
+            },
+            "realised_sha256": "a0c1c13894ba37fc4262de301cecff957435587f82ffc8683729588ef0d86339",
+            "row": 11,
+            "selection": null,
+            "transition": 58,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          }
+        ],
+        "committed_total": 39,
+        "staged": [],
+        "staged_total": 0,
+        "where": "t22.sample"
+      },
+      "family": "qwen2",
+      "layer": 1,
+      "limits": {
+        "layers": 2,
+        "max_positions": 256
+      },
+      "live": {
+        "frontier": [],
+        "state": "paused"
+      },
+      "more": [
+        {
+          "count": 23,
+          "field": "breakpoints",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=breakpoints&offset=17",
+          "sum": null
+        },
+        {
+          "count": 22,
+          "field": "committed",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=committed&offset=17",
+          "sum": null
+        },
+        {
+          "count": 34,
+          "field": "upstream:t22.L1.h",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.h",
+          "sum": null
+        },
+        {
+          "count": 34,
+          "field": "upstream:t22.L1.a",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.a",
+          "sum": null
+        },
+        {
+          "count": 34,
+          "field": "upstream:t22.L1.q",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.q",
+          "sum": null
+        },
+        {
+          "count": 34,
+          "field": "upstream:t22.L1.k",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.k",
+          "sum": null
+        },
+        {
+          "count": 34,
+          "field": "upstream:t22.L1.v",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.v",
+          "sum": null
+        },
+        {
+          "count": 35,
+          "field": "upstream:t22.L1.qr",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.qr",
+          "sum": null
+        },
+        {
+          "count": 35,
+          "field": "upstream:t22.L1.kr",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.kr",
+          "sum": null
+        },
+        {
+          "count": 35,
+          "field": "upstream:t22.L1.s",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.s",
+          "sum": null
+        },
+        {
+          "count": 35,
+          "field": "upstream:t22.L1.p",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.p",
+          "sum": null
+        },
+        {
+          "count": 35,
+          "field": "upstream:t22.L1.A",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.A",
+          "sum": null
+        },
+        {
+          "count": 35,
+          "field": "upstream:t22.L1.o",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.o",
+          "sum": null
+        },
+        {
+          "count": 35,
+          "field": "upstream:t22.L1.r",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.r",
+          "sum": null
+        },
+        {
+          "count": 35,
+          "field": "upstream:t22.L1.n",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.n",
+          "sum": null
+        },
+        {
+          "count": 35,
+          "field": "upstream:t22.L1.g",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.g",
+          "sum": null
+        },
+        {
+          "count": 35,
+          "field": "upstream:t22.L1.sg",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.sg",
+          "sum": null
+        },
+        {
+          "count": 35,
+          "field": "upstream:t22.L1.u",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.u",
+          "sum": null
+        },
+        {
+          "count": 35,
+          "field": "upstream:t22.L1.f",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.f",
+          "sum": null
+        },
+        {
+          "count": 35,
+          "field": "upstream:t22.L1.m",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.m",
+          "sum": null
+        },
+        {
+          "count": 35,
+          "field": "upstream:t22.L1.h_out",
+          "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.h_out",
+          "sum": null
+        }
+      ],
+      "ports": [
+        {
+          "addr": "t22.L1.h",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 38
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "h = layer input (residual stream)",
+          "port": "h",
+          "proofs": ["P01"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t22.L1.a",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 38
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "a = RMSNorm(h) * w_in",
+          "port": "a",
+          "proofs": ["P02", "P03"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t22.L1.q",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 38
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "q = W_q a + b_q (pre-RoPE, flat)",
+          "port": "q",
+          "proofs": ["P04"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t22.L1.k",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 38
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "k = W_k a + b_k (pre-RoPE, flat)",
+          "port": "k",
+          "proofs": ["P04"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t22.L1.v",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "derived-exact",
+            "by": "v",
+            "edited": true,
+            "kind": "edit",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 38
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "v = W_v a + b_v (flat)",
+          "port": "v",
+          "proofs": ["P04"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t22.L1.qr",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 39
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "qr = RoPE(q) (query argument of eager attention)",
+          "port": "qr",
+          "proofs": ["P04"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t22.L1.kr",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 39
+          },
+          "editable": false,
+          "focus": false,
+          "operator": "kr = [cache; RoPE(k)] (key argument of eager attention, cached rows included)",
+          "port": "kr",
+          "proofs": ["P04"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t22.L1.s",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "derived-exact",
+            "by": null,
+            "edited": false,
+            "kind": "replica",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 39
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "s = scaling * qr repeat_kv(kr)^T + mask (replica of the native expression)",
+          "port": "s",
+          "proofs": ["P05", "P07", "P08", "P09"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t22.L1.p",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 39
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "p = softmax(s, float32).to(dtype) (native attention weights)",
+          "port": "p",
+          "proofs": ["P05", "P06", "P07", "P08", "P09"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t22.L1.A",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 39
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "A = concat_heads(p repeat_kv([cache; v])) (o_proj input)",
+          "port": "A",
+          "proofs": ["P06", "P07"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t22.L1.o",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 39
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "o = W_o A",
+          "port": "o",
+          "proofs": ["P06", "P07"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t22.L1.r",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 39
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "r = h + o",
+          "port": "r",
+          "proofs": ["P06", "P07", "P14"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t22.L1.n",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 39
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "n = RMSNorm(r) * w_post (mlp input)",
+          "port": "n",
+          "proofs": ["P02", "P03"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t22.L1.g",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 39
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "g = W_gate n",
+          "port": "g",
+          "proofs": ["P10", "P15"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t22.L1.sg",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 39
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "sg = silu(g)",
+          "port": "sg",
+          "proofs": ["P10", "P15"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t22.L1.u",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 39
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "u = W_up n",
+          "port": "u",
+          "proofs": ["P10", "P15"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t22.L1.f",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 39
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "f = sg * u (down_proj input)",
+          "port": "f",
+          "proofs": ["P10", "P15"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t22.L1.m",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 39
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "m = W_down f",
+          "port": "m",
+          "proofs": ["P14"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t22.L1.h_out",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 1,
+                "op": "scale",
+                "port": "v",
+                "row": 4,
+                "staged": false
+              },
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "v",
+                "row": 5,
+                "staged": false
+              }
+            ],
+            "upstream_total": 39
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "h_out = r + m (layer output)",
+          "port": "h_out",
+          "proofs": ["P14"],
+          "sublayer": "mlp"
+        }
+      ],
+      "row": 22,
+      "seq": 191,
+      "session": "qwen2-b16329a9d6e4",
+      "stop": {
+        "address": "t22.sample",
+        "operator": "sample = argmax(logits) (greedy)",
+        "port": "sample",
+        "proofs": [],
+        "row": 22
+      },
+      "tokens": [
+        {
+          "id": 3
+        },
+        {
+          "id": 20
+        },
+        {
+          "id": 12
+        },
+        {
+          "id": 3
+        },
+        {
+          "id": 20
+        },
+        {
+          "id": 12
+        },
+        {
+          "id": 4
+        },
+        {
+          "id": 12
+        },
+        {
+          "id": 3
+        },
+        {
+          "id": 20
+        },
+        {
+          "id": 12
+        },
+        {
+          "id": 3
+        },
+        {
+          "id": 20
+        },
+        {
+          "id": 12
+        },
+        {
+          "id": 4
+        },
+        {
+          "id": 12
+        }
+      ],
+      "where": "t22.sample"
+    },
+    "digest": "91855adafbca616c08df3f86614dd21b9a7c20372d62d7f52ff56b6ef2acc399",
+    "omitted": [
+      {
+        "count": 23,
+        "field": "breakpoints",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=breakpoints&offset=17",
+        "sum": null
+      },
+      {
+        "count": 22,
+        "field": "committed",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=committed&offset=17",
+        "sum": null
+      },
+      {
+        "count": 34,
+        "field": "upstream:t22.L1.h",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.h",
+        "sum": null
+      },
+      {
+        "count": 34,
+        "field": "upstream:t22.L1.a",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.a",
+        "sum": null
+      },
+      {
+        "count": 34,
+        "field": "upstream:t22.L1.q",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.q",
+        "sum": null
+      },
+      {
+        "count": 34,
+        "field": "upstream:t22.L1.k",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.k",
+        "sum": null
+      },
+      {
+        "count": 34,
+        "field": "upstream:t22.L1.v",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.v",
+        "sum": null
+      },
+      {
+        "count": 35,
+        "field": "upstream:t22.L1.qr",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.qr",
+        "sum": null
+      },
+      {
+        "count": 35,
+        "field": "upstream:t22.L1.kr",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.kr",
+        "sum": null
+      },
+      {
+        "count": 35,
+        "field": "upstream:t22.L1.s",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.s",
+        "sum": null
+      },
+      {
+        "count": 35,
+        "field": "upstream:t22.L1.p",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.p",
+        "sum": null
+      },
+      {
+        "count": 35,
+        "field": "upstream:t22.L1.A",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.A",
+        "sum": null
+      },
+      {
+        "count": 35,
+        "field": "upstream:t22.L1.o",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.o",
+        "sum": null
+      },
+      {
+        "count": 35,
+        "field": "upstream:t22.L1.r",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.r",
+        "sum": null
+      },
+      {
+        "count": 35,
+        "field": "upstream:t22.L1.n",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.n",
+        "sum": null
+      },
+      {
+        "count": 35,
+        "field": "upstream:t22.L1.g",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.g",
+        "sum": null
+      },
+      {
+        "count": 35,
+        "field": "upstream:t22.L1.sg",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.sg",
+        "sum": null
+      },
+      {
+        "count": 35,
+        "field": "upstream:t22.L1.u",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.u",
+        "sum": null
+      },
+      {
+        "count": 35,
+        "field": "upstream:t22.L1.f",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.f",
+        "sum": null
+      },
+      {
+        "count": 35,
+        "field": "upstream:t22.L1.m",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.m",
+        "sum": null
+      },
+      {
+        "count": 35,
+        "field": "upstream:t22.L1.h_out",
+        "reason": "GET /api/v1/s/qwen2-b16329a9d6e4/live/items?list=upstream&offset=4&addr=t22.L1.h_out",
+        "sum": null
+      }
+    ],
+    "schema": "mdb-view-live-v1",
+    "state": "resolved"
+  }
+}

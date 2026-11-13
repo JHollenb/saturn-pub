@@ -1051,7 +1051,28 @@ class Run:
             manifest["port"], value, manifest["op"], mask=mask, selection=manifest.get("selection")
         )
 
-    def restore(self, checkpoint: dict[str, Any]) -> str:
+    def restore(self, checkpoint: dict[str, Any], *, defer_interrupt: bool = False) -> str:
+        """Put the cursor, trail and staged edits back to ``checkpoint`` (all or nothing).
+
+        ``defer_interrupt``: a ``KeyboardInterrupt`` raised while restoring is remembered, the
+        restore is run again until it completes, and the interrupt is re-raised afterwards. For
+        a restore that undoes a temporary excursion (``whatif``): without it an interrupt
+        rolls the restore back, leaving the run where the excursion left it.
+        """
+        if not defer_interrupt:
+            return self._restore_atomic(checkpoint)
+        interrupted = None
+        while True:
+            try:
+                where = self._restore_atomic(checkpoint)
+                break
+            except KeyboardInterrupt as error:
+                interrupted = error
+        if interrupted is not None:
+            raise interrupted
+        return where
+
+    def _restore_atomic(self, checkpoint: dict[str, Any]) -> str:
         snapshot = _Snapshot(self)
         try:
             return self._restore(checkpoint)

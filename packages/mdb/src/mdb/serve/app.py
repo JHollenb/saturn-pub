@@ -4,9 +4,14 @@ With ``live`` (a ``serve.live.LiveSession``: ``mdb serve --tiny|--model``) the s
 a live debugger under that session's id: ``POST .../op`` dispatches through the op registry on
 the session's worker thread, ``POST .../console`` runs a REPL command line, ``POST
 .../interrupt`` delivers Ctrl-C to the running op, ``GET .../live`` and ``.../live/timeline``
-are the live frame and clock, ``POST .../reduce`` with an occurrence pointer reads the live run
-(``mdb.resolve``, live tier), and the events socket pushes one ``op`` event per completed op.
-Without ``live`` every op whose effect is not ``read`` is refused 403.
+are the live frame and clock (``GET .../live/items`` pages through a frame list the frame
+shortened), ``POST .../reduce`` with an occurrence pointer reads the live run the way ``print``
+does (``serve.live_reduce``; nothing is written to the project), and the events socket pushes
+one ``op`` event per completed op. Without ``live`` every op whose effect is not ``read`` is
+refused 403.
+
+Messages never name the server's absolute project path: refusal details, op results and console
+text show it as ``<project>`` (paths inside it stay relative to it).
 
 Routes live under ``/api/v1``; every body is a canonical-JSON ``Envelope`` or a ``Refused``
 (``{"refused": reason, "detail"?}``), at most 64 KiB (``CapMiddleware``). The built web app is
@@ -31,6 +36,7 @@ from .schema import (
     ConsoleResult,
     Event,
     Interrupt,
+    LiveState,
     Omitted,
     OpRequest,
     OpResult,
@@ -75,13 +81,32 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
     app.state.recorded, app.state.read_only = recorded, read_only
     app.state.reducer, app.state.live = reducer, live
 
+    roots = sorted({str(Path(project_path)), str(Path(project_path).expanduser().resolve()),
+                    *((str(live.debugger.project.root),) if live is not None
+                      and live.debugger.project is not None else ())}, key=len, reverse=True)
+
+    def scrub(value):
+        """``value`` with the absolute project path written ``<project>``."""
+        if isinstance(value, str):
+            for root in roots:
+                if root and root != "." and root in value:
+                    value = value.replace(root, "<project>")
+            return value
+        if isinstance(value, dict):
+            return {k: scrub(v) for k, v in value.items()}
+        if isinstance(value, list):
+            return [scrub(v) for v in value]
+        return value
+
     def respond(body, status=200):
+        if isinstance(body, dict) and "refused" in body:
+            body = scrub(body)
         return Response(canonical(body), status_code=status, media_type="application/json")
 
     def web_avail():
         if (static / "index.html").is_file():
             return ViewAvail(available=True)
-        return ViewAvail(available=False, reason=f"web build absent at {static}; run "
+        return ViewAvail(available=False, reason="web build absent (mdb/serve/static); run "
                          "`npm run build` in packages/mdb/web")
 
     def model(sid):
@@ -163,7 +188,16 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
 
     @app.get("/api/v1/s/{sid}/frame")
     def frame(sid: str, addr: str | None = None):
-        return respond(envelope("frame", frame_view.frame(model(sid), addr)))
+        block = frame_view.frame(model(sid), addr)
+        if is_live(sid):
+            # the recorded frame of the live session's project; the engine is attached
+            state = "running" if live.running else "paused"
+            block.live = LiveState(state=state, frontier=[
+                f"live session: the engine is attached ({state}, cursor {live.where or 'no run'})"
+                "; drive and read it from the Live view",
+                *(f.replace("replay needs the engine", "the Live view reads it from the engine")
+                  for f in block.live.frontier if f != frame_view.OFFLINE)])
+        return respond(envelope("frame", block))
 
     @app.get("/api/v1/s/{sid}/timeline")
     def timeline(sid: str, lens: str = "cuts", x0: int | None = None, x1: int | None = None,
@@ -213,8 +247,9 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
     @app.post("/api/v1/s/{sid}/reduce")
     async def reduce(sid: str, request: ReduceRequest):
         spec = dump(request.pointer)
-        if is_live(sid) and spec["kind"] == "occurrence":
-            from .live_reduce import reduce_live
+        from .live_reduce import names_origin, reduce_live
+
+        if is_live(sid) and spec["kind"] == "occurrence" and not names_origin(spec["address"]):
 
             result = await on_worker(submit(live.call, lambda: reduce_live(
                 live, spec, request.op, request.params)))
@@ -253,7 +288,7 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
             return respond(refused("op_failed", f"{type(error).__name__}: {error}"), 409)
         omitted: list[Omitted] = []
         data = OpResult(request_id=request.request_id, op=request.op, seq=0, where=None,
-                        result=bound_json(dump(result), field="result", omitted=omitted))
+                        result=scrub(bound_json(dump(result), field="result", omitted=omitted)))
         return respond(envelope("op", data, omitted))
 
     @app.post("/api/v1/s/{sid}/op")
@@ -265,7 +300,7 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
         if request.op not in ops.registry():
             return respond(refused("unknown-op", f"no operation {request.op!r}"), 404)
         body = await on_worker(submit(live.op, request.op, request.args))
-        result = body["result"]
+        result = scrub(body["result"])
         state = result.get("state", "resolved")
         state = state if state in ("resolved", "unresolved", "refused") else "refused"
         reason = None if state == "resolved" else (
@@ -282,7 +317,7 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
         body = await on_worker(submit(live.console, request.line))
         return respond(envelope("console", ConsoleResult(line=request.line, seq=body["seq"],
                                                          where=body["where"],
-                                                         text=body["text"])))
+                                                         text=scrub(body["text"]))))
 
     @app.post("/api/v1/s/{sid}/interrupt")
     def interrupt(sid: str):
@@ -294,8 +329,29 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
     async def live_frame(sid: str):
         if not is_live(sid):
             raise not_live(sid, "the live frame")
-        frame_data = await on_worker(submit(live.call, lambda: live_view.frame(live)))
-        return respond(envelope("live", frame_data))
+        frame_data, more = await on_worker(submit(live.call, lambda: live_view.frame(live)))
+        return respond(envelope("live", frame_data, more or None))
+
+    @app.get("/api/v1/s/{sid}/live/items")
+    async def live_items(sid: str, list: str, offset: int = 0, addr: str | None = None):  # noqa: A002
+        if not is_live(sid):
+            raise not_live(sid, "live lists")
+        if list not in live_view.LISTS:
+            raise ViewError("bad_request", f"no live list {list!r}; lists: "
+                            + ", ".join(live_view.LISTS), 400)
+        if offset < 0:
+            raise ViewError("bad_request", "offset is a non-negative integer", 400)
+        if list == "upstream" and not addr:
+            raise ViewError("bad_request", "the upstream list names a computed address (addr=)",
+                            400)
+
+        def page():
+            try:
+                return live_view.items(live, list, offset, addr)
+            except (ValueError, KeyError) as error:
+                raise ViewError("unresolved", f"{list}: {error}", 409) from error
+
+        return respond(envelope("live-items", await on_worker(submit(live.call, page))))
 
     @app.get("/api/v1/s/{sid}/live/timeline")
     async def live_timeline(sid: str):

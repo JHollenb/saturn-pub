@@ -694,9 +694,11 @@ class ConsoleResult(Model):
 
 
 class Interrupt(Model):
-    """``interrupted``: an op was running and Ctrl-C was delivered to it."""
+    """``interrupted``: an op was running and Ctrl-C was delivered to it. ``cancelled``: jobs
+    that were queued behind it and will not run (each answers as interrupted)."""
     interrupted: bool
     running: str | None
+    cancelled: int
     reason: str | None
 
 
@@ -718,6 +720,7 @@ class LiveEdit(Model):
     by: str | None
     reason: str | None
     upstream: list[LiveUpstream]
+    upstream_total: int
 
 
 class LivePort(Model):
@@ -736,8 +739,9 @@ class LivePort(Model):
 
 
 class LiveCheckpoint(Model):
-    """A checkpoint: ``memory`` (this process, the ``checkpoints`` op) or ``durable`` (stored in
-    the project; ``restart NAME`` replays it after a server restart)."""
+    """A checkpoint name and where its latest checkpoint stands: ``durable`` (stored in the
+    project; ``restart NAME`` replays it after a server restart) or ``memory`` (this process
+    only, the ``checkpoints`` op; a server without a project)."""
     name: str
     where: str
     store: Literal["memory", "durable"]
@@ -747,7 +751,10 @@ class LiveFrame(Model):
     """The live cursor: ``where`` (None before ``start``), the ``where`` op's ``stop`` and
     tokens, the listed layer's ports, staged and committed edits (the ``info edits`` op), the
     breakpoint/watch table (``info breakpoints``), displays and checkpoints. ``limits``:
-    ``layers``, ``max_positions``."""
+    ``layers``, ``max_positions``. The frame always fits the response cap: each list shows its
+    first items and ``more`` names every list it shortened (``field``: the list, or
+    ``upstream:<addr>`` for a port's upstream edits; ``count``: items left out; ``reason``: the
+    ``GET .../live/items`` request for the rest)."""
     session: str
     family: str
     live: LiveState
@@ -764,6 +771,20 @@ class LiveFrame(Model):
     breakpoints: list[dict[str, Any]]
     displays: list[dict[str, Any]]
     checkpoints: list[LiveCheckpoint]
+    more: list[Omitted]
+
+
+class LiveItems(Model):
+    """One page of a live frame list (``breakpoints``, ``displays``, ``checkpoints``,
+    ``staged``, ``committed`` edits, or ``upstream`` edits of the computed address ``addr``):
+    the items from ``offset`` that fit one response, ``total`` items in all, ``next`` the offset
+    of the following page (None at the end)."""
+    list: str
+    addr: str | None
+    offset: int
+    total: int
+    items: list[dict[str, Any]]
+    next: int | None
 
 
 class LiveRow(Model):
@@ -823,6 +844,7 @@ VIEWS = {
     "interrupt": Interrupt,
     "live": LiveFrame,
     "live-timeline": LiveTimeline,
+    "live-items": LiveItems,
     "event": Event,
 }
 SCHEMAS = {name: f"{SCHEMA_PREFIX}{name}-v1" for name in VIEWS}
@@ -837,4 +859,4 @@ EXPORTED = [Num, NumList, Omitted, Refused, AxisTick, ClockAxis, OccAddr, SlotPo
             RecordSummary, RecordPage, ArmRow, Link, RecordDetail, ReduceRequest, StatsResult,
             TopkEntry, TopkResult, SliceResult, HistogramResult, TileResult, ProjectResult,
             OpRequest, OpResult, ConsoleRequest, ConsoleResult, Interrupt, LiveUpstream, LiveEdit,
-            LivePort, LiveCheckpoint, LiveFrame, LiveRow, LiveStop, LiveTimeline, Event]
+            LivePort, LiveCheckpoint, LiveFrame, LiveItems, LiveRow, LiveStop, LiveTimeline, Event]

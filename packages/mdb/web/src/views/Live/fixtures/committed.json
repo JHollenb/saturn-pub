@@ -1,0 +1,2477 @@
+{
+  "frame": {
+    "bytes": 8045,
+    "data": {
+      "breakpoints": [],
+      "checkpoints": [
+        {
+          "name": "edited",
+          "store": "durable",
+          "where": "t3.L0.A"
+        }
+      ],
+      "checks": null,
+      "displays": [],
+      "edits": {
+        "committed": [
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 0,
+            "op": "replace",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": true,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "realised_sha256": "09fdd070c1e676cc1fb12cbe4952ca458683be52a61cd2e931ffc34153ba209f",
+            "row": 3,
+            "selection": null,
+            "transition": 1,
+            "value": {
+              "authority": "supplied",
+              "value": 0.25
+            }
+          }
+        ],
+        "committed_total": 1,
+        "staged": [],
+        "staged_total": 0,
+        "where": "t3.L0.h_out"
+      },
+      "family": "qwen2",
+      "layer": 0,
+      "limits": {
+        "layers": 2,
+        "max_positions": 256
+      },
+      "live": {
+        "frontier": [],
+        "state": "paused"
+      },
+      "more": [],
+      "ports": [
+        {
+          "addr": "t3.L0.h",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [],
+            "upstream_total": 0
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "h = layer input (residual stream)",
+          "port": "h",
+          "proofs": ["P01"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.a",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [],
+            "upstream_total": 0
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "a = RMSNorm(h) * w_in",
+          "port": "a",
+          "proofs": ["P02", "P03"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.q",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [],
+            "upstream_total": 0
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "q = W_q a + b_q (pre-RoPE, flat)",
+          "port": "q",
+          "proofs": ["P04"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.k",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [],
+            "upstream_total": 0
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "k = W_k a + b_k (pre-RoPE, flat)",
+          "port": "k",
+          "proofs": ["P04"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.v",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "supplied",
+            "by": "v",
+            "edited": true,
+            "kind": "edit",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [],
+            "upstream_total": 0
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "v = W_v a + b_v (flat)",
+          "port": "v",
+          "proofs": ["P04"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.qr",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              }
+            ],
+            "upstream_total": 1
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "qr = RoPE(q) (query argument of eager attention)",
+          "port": "qr",
+          "proofs": ["P04"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.kr",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              }
+            ],
+            "upstream_total": 1
+          },
+          "editable": false,
+          "focus": false,
+          "operator": "kr = [cache; RoPE(k)] (key argument of eager attention, cached rows included)",
+          "port": "kr",
+          "proofs": ["P04"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.s",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "derived-exact",
+            "by": null,
+            "edited": false,
+            "kind": "replica",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              }
+            ],
+            "upstream_total": 1
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "s = scaling * qr repeat_kv(kr)^T + mask (replica of the native expression)",
+          "port": "s",
+          "proofs": ["P05", "P07", "P08", "P09"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.p",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              }
+            ],
+            "upstream_total": 1
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "p = softmax(s, float32).to(dtype) (native attention weights)",
+          "port": "p",
+          "proofs": ["P05", "P06", "P07", "P08", "P09"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.A",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              }
+            ],
+            "upstream_total": 1
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "A = concat_heads(p repeat_kv([cache; v])) (o_proj input)",
+          "port": "A",
+          "proofs": ["P06", "P07"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.o",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              }
+            ],
+            "upstream_total": 1
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "o = W_o A",
+          "port": "o",
+          "proofs": ["P06", "P07"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.r",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              }
+            ],
+            "upstream_total": 1
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "r = h + o",
+          "port": "r",
+          "proofs": ["P06", "P07", "P14"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.n",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              }
+            ],
+            "upstream_total": 1
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "n = RMSNorm(r) * w_post (mlp input)",
+          "port": "n",
+          "proofs": ["P02", "P03"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L0.g",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              }
+            ],
+            "upstream_total": 1
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "g = W_gate n",
+          "port": "g",
+          "proofs": ["P10", "P15"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L0.sg",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              }
+            ],
+            "upstream_total": 1
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "sg = silu(g)",
+          "port": "sg",
+          "proofs": ["P10", "P15"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L0.u",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              }
+            ],
+            "upstream_total": 1
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "u = W_up n",
+          "port": "u",
+          "proofs": ["P10", "P15"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L0.f",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              }
+            ],
+            "upstream_total": 1
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "f = sg * u (down_proj input)",
+          "port": "f",
+          "proofs": ["P10", "P15"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L0.m",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              }
+            ],
+            "upstream_total": 1
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "m = W_down f",
+          "port": "m",
+          "proofs": ["P14"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L0.h_out",
+          "computed": true,
+          "cursor": true,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": false
+              }
+            ],
+            "upstream_total": 1
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "h_out = r + m (layer output)",
+          "port": "h_out",
+          "proofs": ["P14"],
+          "sublayer": "mlp"
+        }
+      ],
+      "row": 3,
+      "seq": 11,
+      "session": "qwen2-b16329a9d6e4",
+      "stop": {
+        "address": "t3.L0.h_out",
+        "layer": 0,
+        "operator": "h_out = r + m (layer output)",
+        "port": "h_out",
+        "proofs": ["P14"],
+        "row": 3,
+        "sublayer": "mlp"
+      },
+      "tokens": [
+        {
+          "id": 1
+        },
+        {
+          "id": 5
+        },
+        {
+          "id": 9
+        },
+        {
+          "id": 3
+        }
+      ],
+      "where": "t3.L0.h_out"
+    },
+    "digest": "f8c39f8a606ce6ac1f8c8f2eacba467caa9fca8a69a702841d07c57edbef7478",
+    "schema": "mdb-view-live-v1",
+    "state": "resolved"
+  },
+  "stats": {
+    "A": {
+      "bytes": 1623,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "c75375c17bce7e8488620881a8b6a20c93f6072aa7f1eee7a1095099a647d014",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.1474609375
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "c75375c17bce7e8488620881a8b6a20c93f6072aa7f1eee7a1095099a647d014",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.32405311306018897
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "c75375c17bce7e8488620881a8b6a20c93f6072aa7f1eee7a1095099a647d014",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.1474609375
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "c75375c17bce7e8488620881a8b6a20c93f6072aa7f1eee7a1095099a647d014",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.07147216796875
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "c75375c17bce7e8488620881a8b6a20c93f6072aa7f1eee7a1095099a647d014",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.0189208984375
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "c75375c17bce7e8488620881a8b6a20c93f6072aa7f1eee7a1095099a647d014",
+        "shape": [1, 1, 16],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "c75375c17bce7e8488620881a8b6a20c93f6072aa7f1eee7a1095099a647d014",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.038142895289906394
+        }
+      },
+      "digest": "33be6e9a838249664cfa90e2766fdbed719e6dff434da0c480541f09caa89d29",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "a": {
+      "bytes": 1605,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "04a7ca0e04c9ccc75e4dc2bae9dfb6b17bfee31027bbcac904e7a66ef382cf87",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 2.0625
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "04a7ca0e04c9ccc75e4dc2bae9dfb6b17bfee31027bbcac904e7a66ef382cf87",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 4.001103137311382
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "04a7ca0e04c9ccc75e4dc2bae9dfb6b17bfee31027bbcac904e7a66ef382cf87",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 1.7578125
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "04a7ca0e04c9ccc75e4dc2bae9dfb6b17bfee31027bbcac904e7a66ef382cf87",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.0201263427734375
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "04a7ca0e04c9ccc75e4dc2bae9dfb6b17bfee31027bbcac904e7a66ef382cf87",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -2.0625
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "04a7ca0e04c9ccc75e4dc2bae9dfb6b17bfee31027bbcac904e7a66ef382cf87",
+        "shape": [1, 1, 16],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "04a7ca0e04c9ccc75e4dc2bae9dfb6b17bfee31027bbcac904e7a66ef382cf87",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 1.0000732848342928
+        }
+      },
+      "digest": "dd18521f5dfca49fe47f27fd3c71f31e591d146a37531e448e69a864397484b7",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "f": {
+      "bytes": 1646,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "b44764540bea34508e3c4cfeabbec38f6c71f8621d606f9e3dc7810c3115a5fb",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.007781982421875
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 32.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 32.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "b44764540bea34508e3c4cfeabbec38f6c71f8621d606f9e3dc7810c3115a5fb",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.013902820501758407
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "b44764540bea34508e3c4cfeabbec38f6c71f8621d606f9e3dc7810c3115a5fb",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.0037078857421875
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "b44764540bea34508e3c4cfeabbec38f6c71f8621d606f9e3dc7810c3115a5fb",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.00014415383338928223
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "b44764540bea34508e3c4cfeabbec38f6c71f8621d606f9e3dc7810c3115a5fb",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.007781982421875
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "b44764540bea34508e3c4cfeabbec38f6c71f8621d606f9e3dc7810c3115a5fb",
+        "shape": [1, 1, 32],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "b44764540bea34508e3c4cfeabbec38f6c71f8621d606f9e3dc7810c3115a5fb",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.0024534634156275358
+        }
+      },
+      "digest": "08e9dedfc12c503ae7f76dafc7a2cfa7b0f586e36d76790361a00682779f44a6",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "g": {
+      "bytes": 1619,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "8b2d34a06076881ef174fea847f3a11c2fc90175d6014b2ef927fd1adfeec3e1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.240234375
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 32.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 32.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "8b2d34a06076881ef174fea847f3a11c2fc90175d6014b2ef927fd1adfeec3e1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.43146158217280534
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "8b2d34a06076881ef174fea847f3a11c2fc90175d6014b2ef927fd1adfeec3e1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.15625
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "8b2d34a06076881ef174fea847f3a11c2fc90175d6014b2ef927fd1adfeec3e1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.0018362998962402344
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "8b2d34a06076881ef174fea847f3a11c2fc90175d6014b2ef927fd1adfeec3e1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.240234375
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "8b2d34a06076881ef174fea847f3a11c2fc90175d6014b2ef927fd1adfeec3e1",
+        "shape": [1, 1, 32],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "8b2d34a06076881ef174fea847f3a11c2fc90175d6014b2ef927fd1adfeec3e1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.07625024446214392
+        }
+      },
+      "digest": "24cc60043dabb18fc5a48b720c0a163b380fb57db73c95059d8e47a984513cc7",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "h": {
+      "bytes": 1628,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "842e7917eac7e8cdea604f4d7b98fdb5718e9eacc9c4c5990c5a6255d2942170",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.044921875
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "842e7917eac7e8cdea604f4d7b98fdb5718e9eacc9c4c5990c5a6255d2942170",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.08725399283575154
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "842e7917eac7e8cdea604f4d7b98fdb5718e9eacc9c4c5990c5a6255d2942170",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.038330078125
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "842e7917eac7e8cdea604f4d7b98fdb5718e9eacc9c4c5990c5a6255d2942170",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.00043702125549316406
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "842e7917eac7e8cdea604f4d7b98fdb5718e9eacc9c4c5990c5a6255d2942170",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.044921875
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "842e7917eac7e8cdea604f4d7b98fdb5718e9eacc9c4c5990c5a6255d2942170",
+        "shape": [1, 1, 16],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "842e7917eac7e8cdea604f4d7b98fdb5718e9eacc9c4c5990c5a6255d2942170",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.021809120031160895
+        }
+      },
+      "digest": "2327a16dd4ee1fe7edd2f392f18b33f62e30403d3e8b8de1b74fbbc282f3ab39",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "h_out": {
+      "bytes": 1631,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "783bb996c66bf867c444728825144fd911d864e5171ae856b21783f216d81258",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.053466796875
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "783bb996c66bf867c444728825144fd911d864e5171ae856b21783f216d81258",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.09762348944295494
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "783bb996c66bf867c444728825144fd911d864e5171ae856b21783f216d81258",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.048583984375
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "783bb996c66bf867c444728825144fd911d864e5171ae856b21783f216d81258",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.0008728504180908203
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "783bb996c66bf867c444728825144fd911d864e5171ae856b21783f216d81258",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.053466796875
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "783bb996c66bf867c444728825144fd911d864e5171ae856b21783f216d81258",
+        "shape": [1, 1, 16],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "783bb996c66bf867c444728825144fd911d864e5171ae856b21783f216d81258",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.02439025907685914
+        }
+      },
+      "digest": "3bf557cda95883c07100cef6d54e68ad0631e7054afc5e7c784a0dd9f00b7e9c",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "k": {
+      "bytes": 1619,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "77558136e17cbe9782b8d98a63d17725fed2f2aa205725463928fed64dbc96ab",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.212890625
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 8.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 8.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "77558136e17cbe9782b8d98a63d17725fed2f2aa205725463928fed64dbc96ab",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.35683232161011036
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "77558136e17cbe9782b8d98a63d17725fed2f2aa205725463928fed64dbc96ab",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.146484375
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "77558136e17cbe9782b8d98a63d17725fed2f2aa205725463928fed64dbc96ab",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.026523590087890625
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "77558136e17cbe9782b8d98a63d17725fed2f2aa205725463928fed64dbc96ab",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.212890625
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "77558136e17cbe9782b8d98a63d17725fed2f2aa205725463928fed64dbc96ab",
+        "shape": [1, 1, 8],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "77558136e17cbe9782b8d98a63d17725fed2f2aa205725463928fed64dbc96ab",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.12333962212953795
+        }
+      },
+      "digest": "63ad5388c3be117beec2f8adbb04fe15d8b1105133cc674904e724eda4a5a445",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "kr": {
+      "bytes": 1626,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "bb565fce7a9324a8d9de0b18970350676e11f5e5ba7de8d326803507481df7c5",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.2119140625
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 32.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 32.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "bb565fce7a9324a8d9de0b18970350676e11f5e5ba7de8d326803507481df7c5",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.4731607837857861
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "bb565fce7a9324a8d9de0b18970350676e11f5e5ba7de8d326803507481df7c5",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.12451171875
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "bb565fce7a9324a8d9de0b18970350676e11f5e5ba7de8d326803507481df7c5",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.025144577026367188
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "bb565fce7a9324a8d9de0b18970350676e11f5e5ba7de8d326803507481df7c5",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.2119140625
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "bb565fce7a9324a8d9de0b18970350676e11f5e5ba7de8d326803507481df7c5",
+        "shape": [1, 1, 4, 8],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "bb565fce7a9324a8d9de0b18970350676e11f5e5ba7de8d326803507481df7c5",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.07977490504343734
+        }
+      },
+      "digest": "6b5b3cf2d5aa7cf061e2a319aad5a74669db3d210056b50c201cbc8b3f4a65a9",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "m": {
+      "bytes": 1653,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "af582477e40e47111fd2e5d937f2853f47732fdd9bf1f247d29faa5205d12efa",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.00048065185546875
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "af582477e40e47111fd2e5d937f2853f47732fdd9bf1f247d29faa5205d12efa",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.0008903991555679075
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "af582477e40e47111fd2e5d937f2853f47732fdd9bf1f247d29faa5205d12efa",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.000362396240234375
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "af582477e40e47111fd2e5d937f2853f47732fdd9bf1f247d29faa5205d12efa",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 5.3357332944869995e-5
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "af582477e40e47111fd2e5d937f2853f47732fdd9bf1f247d29faa5205d12efa",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.00048065185546875
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "af582477e40e47111fd2e5d937f2853f47732fdd9bf1f247d29faa5205d12efa",
+        "shape": [1, 1, 16],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "af582477e40e47111fd2e5d937f2853f47732fdd9bf1f247d29faa5205d12efa",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.00021611029831029098
+        }
+      },
+      "digest": "ffd038f90efea721eaf476ea0a039e5b66d9d1b660cda36c5ed3c5d49777a135",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "n": {
+      "bytes": 1601,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "f3aa41bcf55bc523e710a4439b0ebd4a2a7c9526de619e5fd9dede74d10bab8d",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 2.1875
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "f3aa41bcf55bc523e710a4439b0ebd4a2a7c9526de619e5fd9dede74d10bab8d",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 3.9937687036139
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "f3aa41bcf55bc523e710a4439b0ebd4a2a7c9526de619e5fd9dede74d10bab8d",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 1.984375
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "f3aa41bcf55bc523e710a4439b0ebd4a2a7c9526de619e5fd9dede74d10bab8d",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.0344390869140625
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "f3aa41bcf55bc523e710a4439b0ebd4a2a7c9526de619e5fd9dede74d10bab8d",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -2.1875
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "f3aa41bcf55bc523e710a4439b0ebd4a2a7c9526de619e5fd9dede74d10bab8d",
+        "shape": [1, 1, 16],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "f3aa41bcf55bc523e710a4439b0ebd4a2a7c9526de619e5fd9dede74d10bab8d",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.9978480485100882
+        }
+      },
+      "digest": "6d83a87d6a621b51b66b0fbd3b077af4fbe316c7bfff45ed25808581e01dd6bb",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "o": {
+      "bytes": 1635,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "ee93f0c466a7e5f63bcbe8ff0a09ed0c0b10b1436c576dbe14aecafa1ad517c6",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.0184326171875
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "ee93f0c466a7e5f63bcbe8ff0a09ed0c0b10b1436c576dbe14aecafa1ad517c6",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.03215527687839684
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "ee93f0c466a7e5f63bcbe8ff0a09ed0c0b10b1436c576dbe14aecafa1ad517c6",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.0184326171875
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "ee93f0c466a7e5f63bcbe8ff0a09ed0c0b10b1436c576dbe14aecafa1ad517c6",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.0012669563293457031
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "ee93f0c466a7e5f63bcbe8ff0a09ed0c0b10b1436c576dbe14aecafa1ad517c6",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.00860595703125
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "ee93f0c466a7e5f63bcbe8ff0a09ed0c0b10b1436c576dbe14aecafa1ad517c6",
+        "shape": [1, 1, 16],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "ee93f0c466a7e5f63bcbe8ff0a09ed0c0b10b1436c576dbe14aecafa1ad517c6",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.00793835222857543
+        }
+      },
+      "digest": "e18322d22d95ef49cd5f1a748159044659e0f7155c5207aeb89a68bc34800313",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "p": {
+      "bytes": 1613,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "4b572a90e9fda06d088491e7e938d3697f8df4753747651b2d8d7edc448d00ce",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.251953125
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 8.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 8.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "4b572a90e9fda06d088491e7e938d3697f8df4753747651b2d8d7edc448d00ce",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.707809104658661
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "4b572a90e9fda06d088491e7e938d3697f8df4753747651b2d8d7edc448d00ce",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.251953125
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "4b572a90e9fda06d088491e7e938d3697f8df4753747651b2d8d7edc448d00ce",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.250244140625
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "4b572a90e9fda06d088491e7e938d3697f8df4753747651b2d8d7edc448d00ce",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.248046875
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "4b572a90e9fda06d088491e7e938d3697f8df4753747651b2d8d7edc448d00ce",
+        "shape": [1, 2, 1, 4],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "4b572a90e9fda06d088491e7e938d3697f8df4753747651b2d8d7edc448d00ce",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.0014443554157958047
+        }
+      },
+      "digest": "8cfb06d34b1051177cfe4eaff6e60aaaac07f9a63612b3a012e0b12654c18693",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "q": {
+      "bytes": 1612,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "bf08de6b6ce683392111b3b62cdc5ef17aa9930677d094557ae7bd2c1ed244f9",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.21875
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "bf08de6b6ce683392111b3b62cdc5ef17aa9930677d094557ae7bd2c1ed244f9",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.43995354875918835
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "bf08de6b6ce683392111b3b62cdc5ef17aa9930677d094557ae7bd2c1ed244f9",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.13671875
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "bf08de6b6ce683392111b3b62cdc5ef17aa9930677d094557ae7bd2c1ed244f9",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.00566864013671875
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "bf08de6b6ce683392111b3b62cdc5ef17aa9930677d094557ae7bd2c1ed244f9",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.21875
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "bf08de6b6ce683392111b3b62cdc5ef17aa9930677d094557ae7bd2c1ed244f9",
+        "shape": [1, 1, 16],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "bf08de6b6ce683392111b3b62cdc5ef17aa9930677d094557ae7bd2c1ed244f9",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.10984221335904107
+        }
+      },
+      "digest": "ac6fefd60d2886d768230d17521a0cceb472d847cd42ba14de0807a43755c7bd",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "qr": {
+      "bytes": 1621,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "927591bfde5ae6dc285eaec0bc79bbbf3e6f4ba79a774aaf996cae786b4b91ae",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.2021484375
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "927591bfde5ae6dc285eaec0bc79bbbf3e6f4ba79a774aaf996cae786b4b91ae",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.4399461481344754
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "927591bfde5ae6dc285eaec0bc79bbbf3e6f4ba79a774aaf996cae786b4b91ae",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.138671875
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "927591bfde5ae6dc285eaec0bc79bbbf3e6f4ba79a774aaf996cae786b4b91ae",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.009002685546875
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "927591bfde5ae6dc285eaec0bc79bbbf3e6f4ba79a774aaf996cae786b4b91ae",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.2021484375
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "927591bfde5ae6dc285eaec0bc79bbbf3e6f4ba79a774aaf996cae786b4b91ae",
+        "shape": [1, 2, 1, 8],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "927591bfde5ae6dc285eaec0bc79bbbf3e6f4ba79a774aaf996cae786b4b91ae",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.10961747115123438
+        }
+      },
+      "digest": "5abb1fa03ccade304bc2bc521bdbec51e613d561e4341785cb69b80f32d1c75c",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "r": {
+      "bytes": 1630,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "f528a145078868ba1c06a51ca64d03361aee16467a30462bc9b953ca2a943068",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.053466796875
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "f528a145078868ba1c06a51ca64d03361aee16467a30462bc9b953ca2a943068",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.09733947158599045
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "f528a145078868ba1c06a51ca64d03361aee16467a30462bc9b953ca2a943068",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.04833984375
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "f528a145078868ba1c06a51ca64d03361aee16467a30462bc9b953ca2a943068",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.000827789306640625
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "f528a145078868ba1c06a51ca64d03361aee16467a30462bc9b953ca2a943068",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.053466796875
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "f528a145078868ba1c06a51ca64d03361aee16467a30462bc9b953ca2a943068",
+        "shape": [1, 1, 16],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "f528a145078868ba1c06a51ca64d03361aee16467a30462bc9b953ca2a943068",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.024320784535121424
+        }
+      },
+      "digest": "ee9caca67ec6a5b45c39a4c3240a82a568548ce59b5d65c0d9f2d21506843118",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "s": {
+      "bytes": 1665,
+      "data": {
+        "absmax": {
+          "ev": "derived-exact",
+          "note": null,
+          "proof": null,
+          "ptr": "5194ab2345a3fa6db2325168fbd6826768c11b1c89a2440312819c72ad27d9c1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.0147705078125
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 8.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 8.0
+        },
+        "l2": {
+          "ev": "derived-exact",
+          "note": null,
+          "proof": null,
+          "ptr": "5194ab2345a3fa6db2325168fbd6826768c11b1c89a2440312819c72ad27d9c1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.018712591408510355
+        },
+        "max": {
+          "ev": "derived-exact",
+          "note": null,
+          "proof": null,
+          "ptr": "5194ab2345a3fa6db2325168fbd6826768c11b1c89a2440312819c72ad27d9c1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.00897216796875
+        },
+        "mean": {
+          "ev": "derived-exact",
+          "note": null,
+          "proof": null,
+          "ptr": "5194ab2345a3fa6db2325168fbd6826768c11b1c89a2440312819c72ad27d9c1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.00086212158203125
+        },
+        "min": {
+          "ev": "derived-exact",
+          "note": null,
+          "proof": null,
+          "ptr": "5194ab2345a3fa6db2325168fbd6826768c11b1c89a2440312819c72ad27d9c1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.0147705078125
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "5194ab2345a3fa6db2325168fbd6826768c11b1c89a2440312819c72ad27d9c1",
+        "shape": [1, 2, 1, 4],
+        "std": {
+          "ev": "derived-exact",
+          "note": null,
+          "proof": null,
+          "ptr": "5194ab2345a3fa6db2325168fbd6826768c11b1c89a2440312819c72ad27d9c1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.006559487863433233
+        }
+      },
+      "digest": "bfa39cd52dbe8cbc2ee0b1b876ec464e48dc8559617bb5466e77c4b7f07262aa",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "sg": {
+      "bytes": 1626,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "e3ca7ad060eb71973a181eb0b71e437042de91e581c4fd8d9785e378ff4edf89",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.10595703125
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 32.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 32.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "e3ca7ad060eb71973a181eb0b71e437042de91e581c4fd8d9785e378ff4edf89",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.20980011205974533
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "e3ca7ad060eb71973a181eb0b71e437042de91e581c4fd8d9785e378ff4edf89",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.083984375
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "e3ca7ad060eb71973a181eb0b71e437042de91e581c4fd8d9785e378ff4edf89",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.0005066394805908203
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "e3ca7ad060eb71973a181eb0b71e437042de91e581c4fd8d9785e378ff4edf89",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.10595703125
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "e3ca7ad060eb71973a181eb0b71e437042de91e581c4fd8d9785e378ff4edf89",
+        "shape": [1, 1, 32],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "e3ca7ad060eb71973a181eb0b71e437042de91e581c4fd8d9785e378ff4edf89",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.03708430983341216
+        }
+      },
+      "digest": "d007f3c153336e7d8d312fba89e12b6238f28e763cf48aa5e9d24a0abf984bcf",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "u": {
+      "bytes": 1622,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "05e039c24890741961736c89ef41cb63c06cdf84c2615c9a4bd754777e11bbfd",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.2158203125
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 32.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 32.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "05e039c24890741961736c89ef41cb63c06cdf84c2615c9a4bd754777e11bbfd",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.42148167323818925
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "05e039c24890741961736c89ef41cb63c06cdf84c2615c9a4bd754777e11bbfd",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.2158203125
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "05e039c24890741961736c89ef41cb63c06cdf84c2615c9a4bd754777e11bbfd",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.004650115966796875
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "05e039c24890741961736c89ef41cb63c06cdf84c2615c9a4bd754777e11bbfd",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.11328125
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "05e039c24890741961736c89ef41cb63c06cdf84c2615c9a4bd754777e11bbfd",
+        "shape": [1, 1, 32],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "05e039c24890741961736c89ef41cb63c06cdf84c2615c9a4bd754777e11bbfd",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.07436288690509422
+        }
+      },
+      "digest": "88d02badd728b2ae8ae28f6ac858dcd404b40a6a14cf89e06695b6380dc79fdc",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "v": {
+      "bytes": 1563,
+      "data": {
+        "absmax": {
+          "ev": "supplied",
+          "note": null,
+          "proof": null,
+          "ptr": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.25
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 8.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 8.0
+        },
+        "l2": {
+          "ev": "supplied",
+          "note": null,
+          "proof": null,
+          "ptr": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.7071067811865476
+        },
+        "max": {
+          "ev": "supplied",
+          "note": null,
+          "proof": null,
+          "ptr": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.25
+        },
+        "mean": {
+          "ev": "supplied",
+          "note": null,
+          "proof": null,
+          "ptr": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.25
+        },
+        "min": {
+          "ev": "supplied",
+          "note": null,
+          "proof": null,
+          "ptr": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.25
+        },
+        "note": "live run at t3.L0.h_out, read as `print` reads it (Run.read)",
+        "op": "stats",
+        "pointer": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+        "shape": [1, 1, 8],
+        "std": {
+          "ev": "supplied",
+          "note": null,
+          "proof": null,
+          "ptr": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.0
+        }
+      },
+      "digest": "3fd3a5a234a1a1b1d15c62be011fbf47af7bfc04f6fc362c6fdb76d7d9d8c8a4",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    }
+  },
+  "timeline": {
+    "bytes": 704,
+    "data": {
+      "cursor": {
+        "index": 20,
+        "label": "L0.h_out",
+        "row": 3
+      },
+      "limits": {
+        "layers": 2,
+        "max_positions": 256
+      },
+      "root": {
+        "index": 0,
+        "label": "start",
+        "row": 3
+      },
+      "rows": [
+        {
+          "count": null,
+          "edits": [],
+          "row": 0,
+          "token": 1
+        },
+        {
+          "count": null,
+          "edits": [],
+          "row": 1,
+          "token": 5
+        },
+        {
+          "count": null,
+          "edits": [],
+          "row": 2,
+          "token": 9
+        },
+        {
+          "count": 21,
+          "edits": ["L0.v"],
+          "row": 3,
+          "token": 3
+        }
+      ],
+      "session": "qwen2-b16329a9d6e4",
+      "stops": [
+        "start",
+        "emb",
+        "L0.h",
+        "L0.a",
+        "L0.q",
+        "L0.k",
+        "L0.v",
+        "L0.qr",
+        "L0.kr",
+        "L0.s",
+        "L0.p",
+        "L0.A",
+        "L0.o",
+        "L0.r",
+        "L0.n",
+        "L0.g",
+        "L0.sg",
+        "L0.u",
+        "L0.f",
+        "L0.m",
+        "L0.h_out",
+        "L1.h",
+        "L1.a",
+        "L1.q",
+        "L1.k",
+        "L1.v",
+        "L1.qr",
+        "L1.kr",
+        "L1.s",
+        "L1.p",
+        "L1.A",
+        "L1.o",
+        "L1.r",
+        "L1.n",
+        "L1.g",
+        "L1.sg",
+        "L1.u",
+        "L1.f",
+        "L1.m",
+        "L1.h_out",
+        "fn",
+        "logits",
+        "sample"
+      ],
+      "where": "t3.L0.h_out"
+    },
+    "digest": "0ffcdce0cedeea757211bb17a482c0ab8037084f25fbaea81729384a2e5c4a7d",
+    "schema": "mdb-view-live-timeline-v1",
+    "state": "resolved"
+  }
+}

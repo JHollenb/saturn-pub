@@ -215,3 +215,40 @@ def test_ops_results_are_labelled_and_whatif_keeps_the_debugger_session(debugger
     verdicts = [item["verdict"] for item in results[4]["forecasts"]]
     # L0.a is computed before the L0.q edit; the margin is downstream of it
     assert verdicts == ["within-bound", "edited"]
+
+
+def test_an_interrupt_at_any_session_restore_of_a_whatif_leaves_the_session(debugger, monkeypatch):
+    """Ctrl-C right after each native restore a what-if makes (its excursions and its final
+    restore): the session ends exactly as it was. The final restore runs with
+    ``defer_interrupt``, so an interrupt there completes it before it is raised."""
+    from saturn_pub.core import Session
+
+    _, cursor, address, value, op, consumer, staged = SITES[2]  # a staged edit is kept
+    original = Session.restore
+    nth, interrupted_at = 0, []
+    while True:
+        nth += 1
+        run = debugger.run(PROMPT)
+        run.until(cursor)
+        run.set(*staged)
+        before = state_digest(run)
+        calls = {"n": 0}
+
+        def wrapped(self, *args, _nth=nth, _calls=calls, **kwargs):
+            _calls["n"] += 1
+            original(self, *args, **kwargs)
+            if _calls["n"] == _nth:
+                raise KeyboardInterrupt
+
+        monkeypatch.setattr(Session, "restore", wrapped)
+        try:
+            whatif(run, Edit(address, value, op), consumer)
+            interrupted = False
+        except KeyboardInterrupt:
+            interrupted = True
+        monkeypatch.undo()
+        assert state_digest(run) == before, f"interrupt after native restore #{nth}"
+        if not interrupted:
+            break  # past the what-if's last native restore
+        interrupted_at.append(nth)
+    assert len(interrupted_at) >= 2, interrupted_at

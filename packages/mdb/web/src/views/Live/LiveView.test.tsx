@@ -8,8 +8,10 @@ import type { ReduceEntry } from '../../state/reduce';
 import { LiveView, tokensOrText, type LiveViewProps } from './LiveView';
 import breakpointOp from './fixtures/breakpoint_op.json';
 import breakpoint from './fixtures/breakpoint.json';
+import committed from './fixtures/committed.json';
 import edited from './fixtures/edited.json';
 import idle from './fixtures/idle.json';
+import many from './fixtures/many.json';
 import refusedOp from './fixtures/refused_op.json';
 
 type Env<T> = { data: T };
@@ -18,6 +20,7 @@ const act = {
   command: () => undefined,
   interrupt: () => undefined,
   expand: () => undefined,
+  more: () => undefined,
 };
 
 function entry(body: Env<ReduceResult> | Refused): ReduceEntry {
@@ -179,9 +182,96 @@ describe('Live view', () => {
     }
     // the clock marks the edited stop
     expect(html).toMatch(/data-edited="yes"[^>]*>L0\.v</);
-    // the durable checkpoint is listed and can be restarted
-    expect(html).toContain('edited');
-    expect(html).toContain('memory');
+    // the checkpoint is listed once, durable (stored in the project), and can be restarted
+    const checkpoints = html.slice(html.indexOf('aria-label="checkpoints"'));
+    expect(checkpoints.match(/<tr>/g)).toHaveLength(1);
+    expect(checkpoints).toContain('durable');
+    // the edit chip carries its full label as a title (it wraps, never clipped)
+    expect(v).toMatch(/class="chip live-mark"[^>]*title="edited \(edit by v\) · supplied"/);
+  });
+
+  it('after commit every computed port shows its reduced value (none unresolved)', () => {
+    const frame = (committed.frame as Env<LiveFrame>).data;
+    expect(frame.where).toBe('t3.L0.h_out');
+    const html = render(
+      props({
+        frame,
+        timeline: (committed.timeline as Env<LiveTimeline>).data,
+        summaries: summaries(frame, 0, committed.stats as Record<string, Env<ReduceResult>>, null),
+      }),
+    );
+    const computed = frame.ports.filter((p) => p.computed);
+    expect(computed).toHaveLength(19);
+    for (const p of computed) {
+      const r = row(html, p.port);
+      expect(r, p.port).toMatch(/class="num" data-ev="(measured|supplied|derived-exact)"/);
+      expect(r, p.port).not.toContain('num-unresolved');
+    }
+  });
+
+  it('a frame that shortened its lists says how many more and offers the rest', () => {
+    const frame = (many.frame as Env<LiveFrame>).data;
+    const fields = frame.more.map((m) => m.field);
+    expect(fields).toContain('committed');
+    expect(fields).toContain('breakpoints');
+    const html = render(props({ frame, timeline: null }));
+    for (const field of ['committed', 'breakpoints']) {
+      const block = html.slice(html.indexOf(`data-testid="more-${field}"`));
+      const count = frame.more.find((m) => m.field === field)!.count;
+      expect(block).toMatch(new RegExp(`^[^]*?>${count}</span> more`));
+      expect(block.slice(0, 400)).toContain('show more');
+    }
+    // committed edits are listed one per line with their row
+    expect(html.match(/data-testid="committed-edit"/g)).toHaveLength(
+      (frame.edits as { committed: unknown[] }).committed.length,
+    );
+    // a port's upstream count is the total, not the few listed
+    const h = row(html, 'h');
+    const port = frame.ports.find((p) => p.port === 'h')!;
+    expect(port.edit!.upstream.length).toBeLessThan(port.edit!.upstream_total);
+    expect(h).toContain(`>${port.edit!.upstream_total}</span> edits`);
+    expect(h).toMatch(/and \d+ more"/);
+    // a long breakpoint condition is clipped in the table with the whole text as a title
+    expect(html).toMatch(/class="mono faint live-clip" title="norm &gt; 9{240}"/);
+  });
+
+  it('pages fetched with "more" are listed after the frame’s own items', () => {
+    const frame = (many.frame as Env<LiveFrame>).data;
+    const page = (many.committed_page as { data: { items: Record<string, unknown>[] } }).data;
+    const bps = (many.breakpoints_page as { data: { items: Record<string, unknown>[] } }).data;
+    const extra = new Map([
+      ['committed', { items: page.items, next: null, refused: null }],
+      ['breakpoints', { items: bps.items, next: null, refused: null }],
+    ]);
+    const html = render(props({ frame, timeline: null, extra }));
+    const shown = (frame.edits as { committed: unknown[] }).committed.length;
+    expect(html.match(/data-testid="committed-edit"/g)).toHaveLength(shown + page.items.length);
+    const block = html.slice(html.indexOf('data-testid="more-committed"'));
+    expect(block.slice(0, 200)).toContain('all shown');
+    const table = html.slice(html.indexOf('aria-label="breakpoints and watches"'));
+    expect(table.slice(0, table.indexOf('</table>')).match(/<tr /g)).toHaveLength(
+      frame.breakpoints.length + bps.items.length,
+    );
+  });
+
+  it('a refused frame leaves the controls and the console usable, with the refusal beside them', () => {
+    // The answer the server gave before this fix for an over-cap frame (the audit's 12-overcap).
+    const refused: Refused = {
+      refused: 'over_cap',
+      state: 'refused',
+      detail: null,
+      bytes: 69586,
+      cap: 65536,
+    };
+    const html = render(props({ frame: null, refused }));
+    expect(html).toContain('over_cap');
+    for (const label of ['step', 'next', 'finish', 'continue', 'reverse-step']) {
+      expect(button(html, label)).not.toContain('disabled');
+    }
+    expect(html).toContain('aria-label="prompt"');
+    expect(html).toContain('aria-label="console"');
+    expect(html).toContain('aria-label="command"');
+    expect(button(html, 'interrupt')).toContain('disabled');
   });
 
   it('labels each number by its authority and never renders a missing value as 0', () => {
