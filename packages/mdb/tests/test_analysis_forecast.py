@@ -160,3 +160,32 @@ def test_rewind_and_replay_to_the_target_still_verifies_with_its_order(debugger)
     [result] = forecast.verify(run, [view["id"]])
     assert result["verdict"] == "within-bound"
     assert result["order"]["descends"] and result["order"]["sealed_before_target"]
+
+
+def test_a_large_weight_is_multiplied_block_by_block_and_no_float64_weight_is_kept(
+        debugger, monkeypatch):
+    """The readout must not need a float64 copy of the whole unembedding: with the block size
+    forced below the vocabulary the logits and their bound are the ones of the single block."""
+    import torch
+
+    run = debugger.run(PROMPT)
+    run.until("t3.fn")
+    row = int(run.where.split(".")[0][1:])
+
+    def known(label):
+        return run.read(f"t{row}.{label}") if label == "fn" else None
+
+    whole = forecast.RowModel(run, row, known)
+    value, bound = whole.get("logits"), whole.bound("logits")
+    width = int(run.adapter.model.lm_head.weight.shape[1])
+    monkeypatch.setattr(forecast, "_CHUNK", 3 * width)  # three vocabulary rows per block
+    blocks = forecast.RowModel(run, row, known)
+    assert int(value.shape[-1]) > 3
+    assert torch.allclose(blocks.get("logits"), value, rtol=1e-13, atol=0.0)
+    assert torch.allclose(blocks.bound("logits"), bound, rtol=1e-13, atol=0.0)
+    # a row model holds values, never weights
+    held = [v for v in vars(blocks).values() if isinstance(v, dict)]
+    widest = max((t.numel() for d in held for t in d.values() if isinstance(t, torch.Tensor)),
+                 default=0)
+    assert widest <= int(value.numel())
+    assert not hasattr(blocks, "_weights")

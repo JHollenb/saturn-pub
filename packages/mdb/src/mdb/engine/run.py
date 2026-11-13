@@ -38,7 +38,10 @@ from .ports import PortController, PortEdit, check_deterministic, program_for, t
 GLOBAL_STOPS = ("start", "emb", "fn", "logits", "sample")
 CHECKPOINT_SCHEMA = "mdb-engine-checkpoint-v1"
 LOOKAHEADS = ("none", "layer")
-_READ_CACHE = 2  # full-layer probes of committed, unedited layers kept for reads
+# Full-layer probes of committed, unedited layers kept for reads. One entry is one row's ports
+# of one layer (about 85 KB + 48 bytes per token row at d=1536, d_ff=8960, bf16), so a whole
+# 28-layer row costs a few MB; analysis verbs walk every layer of a row more than once.
+_READ_CACHE = 64
 _ADDRESS = re.compile(r"(?:t(?P<row>\d+)\.)?(?P<rest>.+)")
 _LAYER_PORT = re.compile(r"L(?P<layer>\d+)\.(?P<port>\w+)")
 _SLOTS = {"start": "tokens", "logits": "logits", "sample": "sampled_token"}

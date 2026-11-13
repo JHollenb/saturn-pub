@@ -77,6 +77,12 @@ def _torch():
     return torch
 
 
+# Elements of a weight cast to float64 at one time by ``_affine`` (2^25 = 256 MiB). A larger
+# weight (the unembedding: vocabulary x width) is multiplied a block of rows at a time, so a
+# readout never holds a float64 copy of the whole matrix.
+_CHUNK = 1 << 25
+
+
 def _gamma(n: int, u: float) -> float:
     """``gamma_n = n u / (1 - n u)`` (Higham): relative error of an n-term float sum."""
     return n * u / (1.0 - n * u)
@@ -169,7 +175,6 @@ class RowModel:
         self.computed: list[str] = []
         self.premises: set[str] = set()
         self.cache_reads: dict[str, Any] = {}
-        self._weights: dict[tuple[str, str], Any] = {}
 
     # --- structure -----------------------------------------------------------------------
 
@@ -243,11 +248,11 @@ class RowModel:
         return value, self.bnds.get(label) if self.bounds else None
 
     def _weight(self, module: Any, name: str = "weight") -> Any:
-        key = (str(id(module)), name)
-        if key not in self._weights:
-            tensor = getattr(module, name, None)
-            self._weights[key] = None if tensor is None else f64(tensor)
-        return self._weights[key]
+        """A float64 copy of one weight, for the caller's one use. Nothing is kept: every stop
+        is computed once per row model, so a kept copy would only hold memory (a whole layer is
+        about 390 MB in float64 at d=1536, d_ff=8960)."""
+        tensor = getattr(module, name, None)
+        return None if tensor is None else f64(tensor)
 
     def _layer(self, layer: int) -> Any:
         return getattr(self.adapter.backbone, self.adapter.spec.layers)[layer]
@@ -274,7 +279,7 @@ class RowModel:
                 token, doubt = int(self.run.read(f"t{self.row}.start").reshape(-1)[-1]), None
             else:
                 token, doubt = self.token()
-            value = self._weight(embed)[token].clone()
+            value = f64(embed.weight[token])  # the one row, not the vocabulary
             if doubt is not None:
                 self.unbounded["emb"] = doubt
                 return value, None
@@ -369,19 +374,32 @@ class RowModel:
         return self.u if self.out16 else 0.0
 
     def _affine(self, x: Any, bx: Any, module: Any) -> tuple[Any, Any]:
-        weight, bias = self._weight(module), self._weight(module, "bias")
-        value = x @ weight.T + (0 if bias is None else bias)
-        if not self.bounds or bx is None:
-            return value, None
         torch = _torch()
-        absw = weight.abs()
-        size = (x.abs() + bx) @ absw.T + (0 if bias is None else bias.abs())
+        native, bias = module.weight, self._weight(module, "bias")
+        want = self.bounds and bx is not None
+        step = max(1, _CHUNK // int(native.shape[1]))
+        values, sizes, spreads = [], [], []
+        for start in range(0, int(native.shape[0]), step):
+            weight = f64(native[start:start + step])  # one block of output rows
+            values.append(x @ weight.T)
+            if want:
+                absw = weight.abs()
+                sizes.append((x.abs() + bx) @ absw.T)
+                spreads.append(bx @ absw.T)
+            del weight
+        one = len(values) == 1
+        value = (values[0] if one else torch.cat(values, -1)) + (0 if bias is None else bias)
+        if not want:
+            return value, None
+        size = ((sizes[0] if one else torch.cat(sizes, -1))
+                + (0 if bias is None else bias.abs()))
+        spread = spreads[0] if one else torch.cat(spreads, -1)
         gamma = _gamma(x.shape[-1] + (bias is not None), U32)
         rounds = (1 if self.out16 else 0) + (1 if bias is not None else 0)
         output = (1 + (self.u if self.out16 else U32)) ** rounds - 1
         self.premises.add("matmul accumulates in float32 in any order (gamma_n bound)")
         rounding = gamma * size + output * (1 + gamma) * size
-        return value, bx @ absw.T + rounding + torch.zeros_like(value)
+        return value, spread + rounding + torch.zeros_like(value)
 
     def _add(self, x: Any, bx: Any, y: Any, by: Any) -> tuple[Any, Any]:
         value = x + y

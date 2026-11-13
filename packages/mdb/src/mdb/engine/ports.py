@@ -508,7 +508,7 @@ MEASURED_FIELDS = (
 SUPPLIED_FIELDS = ("row_sum_tolerance",)
 
 
-def _with_labels(entry: dict[str, Any]) -> dict[str, Any]:
+def with_labels(entry: dict[str, Any]) -> dict[str, Any]:
     """Attach ``labels`` ``{field: authority}`` for the numeric quantities of a manifest entry
     (measurements are ``measured``, the row-sum tolerance is ``supplied``). Counts and shapes
     (``mask_count``, ``mask_shape``) are structure and stay unlabelled."""
@@ -518,7 +518,7 @@ def _with_labels(entry: dict[str, Any]) -> dict[str, Any]:
     return entry
 
 
-def _max_abs(value: torch.Tensor) -> float:
+def max_abs(value: torch.Tensor) -> float:
     return float(value.max()) if value.numel() else 0.0
 
 
@@ -652,11 +652,11 @@ class PortEdit:
         sel_cpu = None if sel is None else sel.to("cpu")
         if sel_cpu is not None:
             ideal = torch.where(sel_cpu, ideal, wide)
-        effect = _max_abs((actual.detach().to("cpu", torch.float64) - ideal).abs())
+        effect = max_abs((actual.detach().to("cpu", torch.float64) - ideal).abs())
         gap = (written.detach().to("cpu", torch.float64).expand(shape) - wanted).abs()
         if sel_cpu is not None:
             gap = gap[sel_cpu]
-        cast_error = _max_abs(gap)
+        cast_error = max_abs(gap)
         record: dict[str, Any] = {
             "realised_dtype": str(written.dtype),
             "realised_sha256": tensor_digest(written),
@@ -1122,7 +1122,7 @@ class PortController:
                     entry["replica_verified"] = None
                 if name == "p":
                     entry.update(_row_statistics(x))
-                _with_labels(entry)
+                with_labels(entry)
                 self._realised.append(entry)
                 self.fired[id(edit)] = entry
             self._mark_edited(name, name, "edit")
@@ -1161,7 +1161,7 @@ class PortController:
         predicted = h + new_o
         self.realisation = {
             "exact": bool(torch.equal(predicted, target)),
-            "max_abs_error": _max_abs((predicted.float() - target.float()).abs()),
+            "max_abs_error": max_abs((predicted.float() - target.float()).abs()),
         }
         return new_o
 
@@ -1171,7 +1171,7 @@ class PortController:
         r = args[0]
         target = self._live.get("r_target")
         if target is not None:
-            error = _max_abs((r.detach().to("cpu", torch.float64) - target.detach().to("cpu", torch.float64)).abs())
+            error = max_abs((r.detach().to("cpu", torch.float64) - target.detach().to("cpu", torch.float64)).abs())
             native = self._live["r_native"]
             self.realisation = {"exact": bool(torch.equal(r, target)), "max_abs_error": error}
             edits = self._edits_at["r"]
@@ -1190,7 +1190,7 @@ class PortController:
                     "realisation_max_abs_error": error,
                     "changed_fraction": changed_fraction(native, r),
                 }
-                _with_labels(entry)
+                with_labels(entry)
                 self._realised.append(entry)
                 self.fired[id(edit)] = entry
             self._mark_edited("r", "r", "edit")
@@ -1300,3 +1300,8 @@ def _equality(replica: torch.Tensor, native: torch.Tensor) -> dict[str, Any]:
 def observe_all(program: PortProgram) -> PortController:
     """An edit-free controller that captures every port of whichever layer runs."""
     return PortController(program, None)
+
+
+# Old private names, kept for one commit: engine/edits.py imported them.
+_with_labels = with_labels
+_max_abs = max_abs

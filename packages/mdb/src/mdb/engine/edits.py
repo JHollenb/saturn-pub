@@ -30,7 +30,7 @@ from typing import Any
 
 import torch
 
-from .ports import _max_abs, _with_labels, changed_fraction, tensor_digest
+from .ports import changed_fraction, max_abs, tensor_digest, with_labels
 
 CELL_OPS = ("replace", "add", "scale", "mix")
 CELL_BOUNDARY = {"k": "kr", "v": "p"}
@@ -208,8 +208,8 @@ class CellEdit:
         out[index] = written
         operand = self._operand(block).detach().to("cpu", torch.float64)
         cast = operand.to(block.dtype).to(torch.float64)
-        cast_error = _max_abs((cast - operand).abs())
-        effect = _max_abs((written.detach().to("cpu", torch.float64) - self.ideal(block)).abs())
+        cast_error = max_abs((cast - operand).abs())
+        effect = max_abs((written.detach().to("cpu", torch.float64) - self.ideal(block)).abs())
         record = {
             "realised_dtype": str(written.dtype),
             "realised_sha256": tensor_digest(written),
@@ -220,7 +220,7 @@ class CellEdit:
             "changed_fraction": changed_fraction(block, written),
             "count": int(block.numel()),
         }
-        return out, _with_labels(record)
+        return out, with_labels(record)
 
     # --- records ----------------------------------------------------------------------------
 
