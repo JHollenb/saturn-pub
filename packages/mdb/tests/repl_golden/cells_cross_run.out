@@ -20,10 +20,10 @@ compare A: cache.L0.v[kv0,row=1]=boiling:cache.L0.v[kv0,row=1]  B: cache.L1.k[kv
   order: A+B stages both sides' edits layer by layer; at one port A's edit is applied before B's (where both edit one port, the ops commute)
   session unchanged at t3.L0.h
 (mdb) whatif cache.L0.v[kv0,row=1] = boiling:cache.L0.v[kv0,row=1] --consumer M[4,9]
-whatif cache.L0.v[kv0,row=1] replace tensor f4a2e5f0c32a from boiling:cache.L0.v[kv0,row=1] -> t3.M[4,9]  (mode pending, record 57068350e236b82e)
-  sealed  linear ΔM = 0.0036469 [derived-local P14]   exact ΔM = 0.0046222 [derived-exact]  bound 38.056 [bound]
+whatif cache.L0.v[kv0,row=1] replace tensor f4a2e5f0c32a from boiling:cache.L0.v[kv0,row=1] -> t3.M[4,9]  (mode pending, record 6ecdda3d8a5c146d)
+  sealed  linear ΔM = 0.003647 [derived-local P14]   exact ΔM = 0.0046222 [derived-exact]  bound 38.057 [bound]
   native  ΔM = 0.0041504 [measured]   (base -0.11401 [measured] -> edited -0.10986 [measured])
-  error split (P20): linear 0.0036469 [derived-local P14] + nonlinear 0.00097522 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.00047178 [measured P20] (within bound 38.056 [bound])
+  error split (P20): linear 0.003647 [derived-local P14] + nonlinear 0.00097522 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.00047179 [measured P20] (within bound 38.057 [bound])
   session unchanged at t3.L0.h  (5 moves, restored)
 (mdb) set cache.L0.v[kv0,row=1] = boiling:cache.L0.v[kv0,row=1] mix 0.5
 staged cell cache.L0.v[kv0,row=1]: cache.L0.v mix 0.5 [supplied] tensor [1, 1, 1, 8] bfloat16 sha256 f4a2e5f0c32a from boiling:cache.L0.v[kv0,row=1] (live) [before the read] (NOT realised exactly, max abs error 0.00024414 [measured] as bfloat16) on [kv0,row=1] changed 1 [measured]  (1 cell edit(s) staged)

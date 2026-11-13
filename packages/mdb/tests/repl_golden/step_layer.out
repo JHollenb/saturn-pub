@@ -31,14 +31,14 @@ t3.L0.a  a = RMSNorm(h) * w_in  {P02 P03}
 t3.L0.a  bfloat16 [1, 1, 16]  (batch, row, d_model)
   norm 4.0011 min -2.0625 max 1.7578 mean -0.020126 abs_max 2.0625 [measured]
   top |v|: [0,0,14] -2.0625, [0,0,4] 1.7578, [0,0,5] 1.5781, [0,0,6] -1.5, [0,0,12] -1.0625 [measured]
-  pointer occurrence ~stepped sha256 d7603cc867779374 cut a5caf85c8929
+  pointer occurrence ~stepped sha256 d7603cc867779374 cut 0b72981ea843
 (mdb) step 2
 t3.L0.k  k = W_k a + b_k (pre-RoPE, flat)  {P04}
 (mdb) print q[h1] top=3
 t3.L0.q[h1]  bfloat16 [1, 1, 16] -> [1, 1, 8]  (batch, row, head*head_dim)
   norm 0.30873 min -0.20605 max 0.13672 mean -0.011932 abs_max 0.20605 [measured]
   top |v|: [0,0,13] -0.20605, [0,0,10] 0.13672, [0,0,15] 0.12793 [measured]
-  pointer occurrence ~stepped sha256 525585b406cae194 cut a5caf85c8929
+  pointer occurrence ~stepped sha256 525585b406cae194 cut 0b72981ea843
 (mdb) x k 4
 t3.L0.k  [0:4] of 8: 0.14648 -0.047607 0.083008 -0.21289 [measured]
 (mdb) next
@@ -48,7 +48,7 @@ t3.L0.p[h0]  bfloat16 [1, 2, 1, 4] -> [1, 1, 1, 4]  (batch, head, row, src)
   norm 0.50001 min 0.24902 max 0.25195 mean 0.25 abs_max 0.25195 [measured]
   top |v|: [0,0,0,0] 0.25195, [0,0,0,1] 0.25, [0,0,0,2] 0.24902, [0,0,0,3] 0.24902 [measured]
   first 4: 0.25195 0.25 0.24902 0.24902 [measured]
-  pointer occurrence ~stepped sha256 bda254d8ec53233c cut a5caf85c8929
+  pointer occurrence ~stepped sha256 bda254d8ec53233c cut 0b72981ea843
 (mdb) step
 t3.L0.n  n = RMSNorm(r) * w_post (mlp input)  {P02 P03}
 (mdb) step

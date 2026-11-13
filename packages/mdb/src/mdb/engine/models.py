@@ -20,6 +20,19 @@ def _dtype(dtype: Any) -> torch.dtype:
     return DTYPES[dtype]
 
 
+def cast_weights(model: Any, dtype: torch.dtype) -> Any:
+    """Cast the parameters of ``model`` to ``dtype`` and leave its buffers as built.
+
+    ``module.to(dtype)`` also casts floating buffers; RoPE's ``inv_freq`` is float32 by
+    construction and a bf16 copy of it is a different model (see ``load_local``). This is what
+    loading a checkpoint with a dtype does: weights in the dtype, buffers untouched.
+    """
+    with torch.no_grad():
+        for parameter in model.parameters():
+            parameter.data = parameter.data.to(dtype)
+    return model
+
+
 def tiny_model(
     family: str,
     dtype: Any = "bf16",
@@ -49,7 +62,7 @@ def tiny_model(
             max_position_embeddings=256,
             attn_implementation="eager",
         )
-        return Qwen2ForCausalLM(config).eval().to(target)
+        return cast_weights(Qwen2ForCausalLM(config).eval(), target)
     if family == "qwen3":
         from transformers import Qwen3Config, Qwen3ForCausalLM
 
@@ -65,7 +78,7 @@ def tiny_model(
             max_position_embeddings=256,
             attn_implementation="eager",
         )
-        return Qwen3ForCausalLM(config).eval().to(target)
+        return cast_weights(Qwen3ForCausalLM(config).eval(), target)
     raise ValueError("tiny family must be qwen2 or qwen3")
 
 

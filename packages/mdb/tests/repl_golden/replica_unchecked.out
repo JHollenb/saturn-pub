@@ -4,14 +4,14 @@ t3.L0.h  h = layer input (residual stream)  {P01}
 t3.L0.s  s = scaling * qr repeat_kv(kr)^T + mask (replica of the native expression)  {P05 P07 P08 P09}
 (mdb) print L0.s
 t3.L0.s  bfloat16 [1, 2, 1, 4]  (batch, head, row, src)
-  norm 0.018713 min -0.014771 max 0.0089722 mean -0.00086212 abs_max 0.014771 [derived-exact, replica unchecked until p]
-  top |v|: [0,1,0,2] -0.014771, [0,0,0,0] 0.0089722, [0,1,0,1] -0.0055542, [0,0,0,1] 0.0042419, [0,1,0,3] 0.0010986 [derived-exact, replica unchecked until p]
-  pointer occurrence ~stepped sha256 f79adfb546a6efac cut a5caf85c8929
+  norm 0.018617 min -0.014648 max 0.0089722 mean -0.00084829 abs_max 0.014648 [derived-exact, replica unchecked until p]
+  top |v|: [0,1,0,2] -0.014648, [0,0,0,0] 0.0089722, [0,1,0,1] -0.0055542, [0,0,0,1] 0.0042419, [0,1,0,3] 0.0010986 [derived-exact, replica unchecked until p]
+  pointer occurrence ~stepped sha256 84ff0698a5cadd75 cut 0b72981ea843
 (mdb) until L0.p
 t3.L0.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
 (mdb) print L0.s
 t3.L0.s  bfloat16 [1, 2, 1, 4]  (batch, head, row, src)
   replica check: equal max_abs_diff 0 [measured]
-  norm 0.018713 min -0.014771 max 0.0089722 mean -0.00086212 abs_max 0.014771 [derived-exact, replica of native]
-  top |v|: [0,1,0,2] -0.014771, [0,0,0,0] 0.0089722, [0,1,0,1] -0.0055542, [0,0,0,1] 0.0042419, [0,1,0,3] 0.0010986 [derived-exact, replica of native]
-  pointer occurrence ~stepped sha256 f79adfb546a6efac cut a5caf85c8929
+  norm 0.018617 min -0.014648 max 0.0089722 mean -0.00084829 abs_max 0.014648 [derived-exact, replica of native]
+  top |v|: [0,1,0,2] -0.014648, [0,0,0,0] 0.0089722, [0,1,0,1] -0.0055542, [0,0,0,1] 0.0042419, [0,1,0,3] 0.0010986 [derived-exact, replica of native]
+  pointer occurrence ~stepped sha256 84ff0698a5cadd75 cut 0b72981ea843

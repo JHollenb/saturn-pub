@@ -8,7 +8,7 @@ checkpoint pre at t3.L0.n (628 bytes)
 t3.L0.n  bfloat16 [1, 1, 16]  (batch, row, d_model)
   norm 3.9992 min -2.1094 max 1.8281 mean 0.029175 abs_max 2.1094 [measured]
   top |v|: [0,0,14] -2.1094, [0,0,4] 1.8281 [measured]
-  pointer occurrence ~stepped sha256 742f42b2b5091a76 cut a5caf85c8929
+  pointer occurrence ~stepped sha256 742f42b2b5091a76 cut 0b72981ea843
 (mdb) set n = 2 scale
 staged at t3.L0.n: n scale 2 [supplied] (realised exactly as bfloat16) changed 1 [measured]  (1 staged)
 (mdb) print n top=2
@@ -38,7 +38,7 @@ t3.L0.n  n = RMSNorm(r) * w_post (mlp input)  {P02 P03}
 t3.L0.n  bfloat16 [1, 1, 16]  (batch, row, d_model)
   norm 3.9992 min -2.1094 max 1.8281 mean 0.029175 abs_max 2.1094 [measured]
   top |v|: [0,0,14] -2.1094, [0,0,4] 1.8281 [measured]
-  pointer occurrence ~stepped sha256 742f42b2b5091a76 cut a5caf85c8929
+  pointer occurrence ~stepped sha256 742f42b2b5091a76 cut 0b72981ea843
 (mdb) info edits
 staged at t3.L0.n: none
 (mdb) set n[d=0:2] = 0.5

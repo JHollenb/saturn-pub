@@ -53,4 +53,4 @@ staged at t3.L0.q: none
 t3.L0.q  bfloat16 [1, 1, 16]  (batch, row, head*head_dim)
   norm 0.43995 min -0.21875 max 0.13672 mean -0.0056686 abs_max 0.21875 [measured]
   top |v|: [0,0,1] -0.21875, [0,0,13] -0.20605, [0,0,10] 0.13672, [0,0,15] 0.12793, [0,0,4] 0.11914 [measured]
-  pointer occurrence ~stepped sha256 525585b406cae194 cut a5caf85c8929
+  pointer occurrence ~stepped sha256 525585b406cae194 cut 0b72981ea843
