@@ -8,7 +8,7 @@ from pathlib import Path
 import numpy as np
 import torch
 
-from .analysis_metrics import fit_mean_writes, mean_write_baselines
+from .analysis_metrics import fit_mean_writes, mean_write_baselines, mean_write_forecast
 from .attention_ranking import trivial_route_baselines
 from .native_discovery import (
     SCHEMA,
@@ -27,8 +27,10 @@ from .native_discovery_learning import (
     KINDS,
     fit_predictors,
     forecast_arrays,
+    resolve_arms,
     score_forecast,
 )
+from .native_discovery_nominator import fit_contrast_nominator, nominate_sources, score_nominations
 from .native_discovery_symbols import discover_components, register_observations
 
 
@@ -55,7 +57,17 @@ def local_basis_baseline(discovery, targets, *, ridge=0.01):
 
 def run_on_model(model, tokenizer, *, corpus, out, binding, max_tokens=64, stages=3,
                  features=32, steps=60, interval_steps=10, seed=0, kinds=KINDS,
-                 max_wall_seconds=600, refuse_shared_prefix=SHARED_PREFIX_REFUSAL):
+                 max_wall_seconds=600, refuse_shared_prefix=SHARED_PREFIX_REFUSAL,
+                 arms=None, sealed_position_split=False, contrast_nominator=False):
+    """Capture, fit, seal held-out forecasts, observe, score and export.
+
+    Explicit, recorded options (defaults reproduce the original runs):
+    ``arms``: learned-arm preset or list (``native_discovery_learning.ARM_PRESETS``; ``None`` fits
+    the original configuration of every kind in ``kinds``). ``sealed_position_split``: seal a
+    position-split mean-write baseline (position 0 vs rest, fit on discovery) with the forecasts.
+    ``contrast_nominator``: seal a learning-free per-(layer, head) source nominator built by
+    contrast ranking over the discovery documents' native attention.
+    """
     from .forecast_transaction import ForecastTransaction
 
     if (max_tokens < 2 or stages < 1 or features < 1 or max_wall_seconds <= 0
@@ -70,6 +82,10 @@ def run_on_model(model, tokenizer, *, corpus, out, binding, max_tokens=64, stage
     base = getattr(model, "model", model)
     boundaries = boundaries_for(len(base.layers), stages)
     device = str(next(model.parameters()).device)
+    kv_groups = getattr(getattr(model, "config", None), "num_key_value_heads", None)
+    arm_specs = resolve_arms(list(kinds) if arms is None else arms, kv_groups=kv_groups)
+    options = {"arms": arm_specs, "sealed_position_split_mean_write": bool(sealed_position_split),
+               "contrast_nominator": bool(contrast_nominator), "native_kv_groups": kv_groups}
     checked_binding = {"model_identity": binding["model_identity"], "execution": binding["execution"]}
     if not checked_binding["model_identity"] or not isinstance(checked_binding["execution"], dict):
         raise DiscoveryError("model and numerical execution identities are required")
@@ -96,6 +112,7 @@ def run_on_model(model, tokenizer, *, corpus, out, binding, max_tokens=64, stage
     source = {p.name: file_hash(p) for p in Path(__file__).parent.glob("native_discovery*.py")}
     source.update({p.name: file_hash(p) for p in (Path(__file__).parent / "analysis_metrics.py",
                                                  Path(__file__).parent / "attention_ranking.py")})
+    print("DISCOVERY_SOURCE " + json.dumps(source, sort_keys=True), flush=True)
     save_json(out / "source.json", source)
     trace_root = out / "traces"
     trace_root.mkdir()
@@ -162,7 +179,12 @@ def run_on_model(model, tokenizer, *, corpus, out, binding, max_tokens=64, stage
     metadata, predictors = fit_predictors(captures["discovery"], captures["development"],
         root=out / "predictor", binding=checked_binding, boundaries=boundaries,
         features=features, steps=steps, interval_steps=interval_steps, seed=seed, device=device,
-        kinds=kinds, budget=budget, output_consumer=output_feedback)
+        kinds=kinds, budget=budget, output_consumer=output_feedback, arms=arm_specs)
+    nominator = None
+    if contrast_nominator:
+        nominator = fit_contrast_nominator([a["routes"] for _, a in captures["discovery"]],
+                                           document_ids=[r["document_id"] for r, _ in captures["discovery"]])
+        save_json(out / "contrast-nominator.json", sealed(nominator))
     catalog_arm = "sparse_consumer" if "sparse_consumer" in predictors else next(iter(predictors))
     catalog = discover_components(predictors[catalog_arm], captures["discovery"],
                                   root=out, predictor_identity=metadata["fingerprint"],
@@ -191,12 +213,19 @@ def run_on_model(model, tokenizer, *, corpus, out, binding, max_tokens=64, stage
             for kind, predictor in predictors.items():
                 transaction.predict(kind, lambda context, net=predictor: predict(net, context))
                 predictions[kind] = transaction.prediction(kind)
-            for name, states in (("hold_state", np.repeat(initial[None], stages, axis=0)),
-                                 ("mean_write", initial[None] + mean_write.cumsum(0)[:, None])):
+            baselines = [("hold_state", np.repeat(initial[None], stages, axis=0)),
+                         ("mean_write", initial[None] + mean_write.cumsum(0)[:, None])]
+            if sealed_position_split:
+                baselines.append(("split_mean_write", mean_write_forecast(
+                    initial, split_writes, split=True).astype(np.float32)))
+            for name, states in baselines:
                 transaction.predict(name, lambda context, states=states: {"predictions": {
                     "state": states, "consumer_logits": consume_last(states[-1])}})
-            baseline_predictions = {name: transaction.prediction(name)
-                                    for name in ("hold_state", "mean_write")}
+            baseline_predictions = {name: transaction.prediction(name) for name, _ in baselines}
+            if nominator is not None:
+                transaction.predict("contrast_nominator", lambda context: {"predictions": {
+                    "sources": nominate_sources(nominator, len(context.frontiers["initial"]))}})
+                nominated = transaction.prediction("contrast_nominator")
             transaction.seal()
             observed = []
 
@@ -228,7 +257,16 @@ def run_on_model(model, tokenizer, *, corpus, out, binding, max_tokens=64, stage
         symbols = register_observations(record, arrays, predictions[catalog_arm],
                     root=out / "symbols" / identity, catalog=catalog)
         symbol_counts.append(symbols)
-        held_results.append({"document": row["id"], "group": row["group"], "arms": arms,
+        optional = {}
+        if sealed_position_split:
+            optional["split_mean_write"] = [error_metrics(p, t) for p, t in zip(
+                baseline_predictions["split_mean_write"]["state"], arrays["states"][1:], strict=True)]
+            optional["split_mean_write_consumer"] = consumer_metrics(
+                baseline_predictions["split_mean_write"]["consumer_logits"], native_logits)
+            optional["split_mean_write_scope"] = "sealed with the forecasts; position-split mean write fit on discovery documents only"
+        if nominator is not None:
+            optional["contrast_nominator"] = score_nominations(nominated["sources"], arrays["routes"])
+        held_results.append({**optional, "document": row["id"], "group": row["group"], "arms": arms,
                              "native_output_consumer": consumers,
                              "hold_state_consumer": consumer_metrics(baseline_predictions["hold_state"]["consumer_logits"], native_logits),
                              "mean_write": mean_error,
@@ -244,6 +282,7 @@ def run_on_model(model, tokenizer, *, corpus, out, binding, max_tokens=64, stage
         "corpus": corpus["fingerprint"], "predictor": metadata["fingerprint"],
         "boundaries": list(boundaries), "heldout": held_results,
         "local_native_neuron_baseline": local_basis_baseline(captures["discovery"], captures["heldout"]),
+        **({"options": options} if (arms is not None or sealed_position_split or contrast_nominator) else {}),
         "components": len(catalog["components"]), "role_candidates": catalog["groups"],
         "role_candidates_nonempty": catalog.get("nonempty_groups"),
         "bindings": sum(s["bindings"] for s in symbol_counts),
@@ -317,7 +356,8 @@ print(json.dumps({"verified_archives":len(m["archives"]),"required_tensors":len(
 
 def run_pretrained(*, corpus, model, out, device="cuda", max_tokens=64, stages=3,
                    features=32, steps=60, interval_steps=10, seed=0, max_wall_seconds=600,
-                   refuse_shared_prefix=SHARED_PREFIX_REFUSAL):
+                   refuse_shared_prefix=SHARED_PREFIX_REFUSAL, arms=None,
+                   sealed_position_split=False, contrast_nominator=False):
     import transformers
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
@@ -343,7 +383,9 @@ def run_pretrained(*, corpus, model, out, device="cuda", max_tokens=64, stages=3
     result = run_on_model(native, tokenizer, corpus=corpus, out=out, binding=binding,
                           max_tokens=max_tokens, stages=stages, features=features, steps=steps,
                           interval_steps=interval_steps, seed=seed, max_wall_seconds=max_wall_seconds,
-                          refuse_shared_prefix=refuse_shared_prefix)
+                          refuse_shared_prefix=refuse_shared_prefix, arms=arms,
+                          sealed_position_split=sealed_position_split,
+                          contrast_nominator=contrast_nominator)
     # Publish retrieval metadata and extend custody without altering prior artifacts.
     root = Path(out)
     parameter_manifest(checkpoint, native, root)

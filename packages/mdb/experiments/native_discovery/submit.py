@@ -27,6 +27,21 @@ def stage(args):
         "steps": args.steps, "interval_steps": args.interval_steps, "seed": args.seed,
         "max_wall_seconds": args.wall_seconds, "output_scratch": "/mnt/hdd8tb/mdb/research",
         "corpus_fingerprint": corpus["fingerprint"], "retry": False}
+    # Explicit position-robust options, recorded only when requested (original plans unchanged).
+    if args.arms != "original":
+        config["arms"] = args.arms
+    if args.sealed_position_split:
+        config["sealed_position_split"] = True
+    if args.contrast_nominator:
+        config["contrast_nominator"] = True
+    from mdb.native_discovery_learning import ARM_PRESETS
+    from mdb.scheduling_contract import MAX_LOCAL_WORK_ITEMS
+    arms = len(ARM_PRESETS[args.arms])
+    # Logical training work is counted per update when that fits Saturn's local-work cap, otherwise
+    # per checkpointed training interval (the TrainingTransaction rollback unit); recorded below.
+    units, unit = args.steps, "update"
+    if len(corpus["documents"]) + arms * units + 32 > MAX_LOCAL_WORK_ITEMS:
+        units, unit = -(-args.steps // args.interval_steps), "training interval of <= interval_steps updates"
     for key, value in {"MDB_WORKER_UV_CACHE_DIR": "/mnt/hdd8tb/mdb/uv-cache",
         "MDB_WORKER_TORCH_HOME": "/mnt/hdd8tb/mdb/torch", "MDB_WORKER_MODEL_ROOTS": "",
         "MDB_WORKER_PYTHON": "3.14.6", "MDB_WORKER_UV_LINK_MODE": "symlink"}.items():
@@ -43,12 +58,13 @@ def stage(args):
         "dtype": "float32", "needs": {"cuda": True}, "batch_size": 1, "seq_len": args.max_tokens,
         "backend_options": {"physical_batch_size": 1, "full_prefill_logits": False},
         "scheduling_contract": one_lease_scheduling_contract(model_loads=1,
-            logical_branches=3, logical_operations=len(corpus["documents"]) + 3 * args.steps,
-            logical_checkpoint_replays=0, max_local_work_items=len(corpus["documents"]) + 3 * args.steps + 32,
+            logical_branches=arms, logical_operations=len(corpus["documents"]) + arms * units,
+            logical_checkpoint_replays=0, max_local_work_items=len(corpus["documents"]) + arms * units + 32,
             checkpoint_policy="one resident decoder; three reversible learned predictors; native held traces only after global forecast seal; no children or retries"),
         "geometry": {"documents": len(corpus["documents"]), "physical_batch": 1,
-                     "maximum_tokens": args.max_tokens, "fitting_arms": 3, "updates_per_arm": args.steps,
-                     "stages": args.stages, "features": args.features, "interventions": 0}}
+                     "maximum_tokens": args.max_tokens, "fitting_arms": arms, "updates_per_arm": args.steps,
+                     "stages": args.stages, "features": args.features, "interventions": 0,
+                     **({} if unit == "update" else {"training_work_unit": unit})}}
     request["request_sha256"] = hashlib.sha256(json.dumps(request, sort_keys=True).encode()).hexdigest()
     save_json(root / "request.json", request)
     stage_worker(root / "payload", worker=worker, config=config, request=request, config_bytes=raw,
@@ -59,7 +75,7 @@ def stage(args):
     return {"root": str(root), "request_sha256": request["request_sha256"], "geometry": request["geometry"]}
 
 
-def submit(root):
+def submit(root, *, priority=0, vram_mb=None, ram_mb=None):
     from mdb.job_support import guarded_mrun_launch
 
     root = root.resolve()
@@ -73,9 +89,11 @@ def submit(root):
         experiment="mdb-native-discovery", task="recorder", model=request["model"],
         payload=root / "payload", prefer_host="beast", gpu=True, needs={"cuda": True},
         timeout_s=request["config"]["max_wall_seconds"] + 120, retry_on_kill=False, preflight=True,
+        priority=priority, vram_mb=vram_mb, ram_mb=ram_mb,
         note="Ordinary prose/code discovery; " + json.dumps(request["geometry"], sort_keys=True) +
              ". One eager FP32 CUDA decoder; three small predictors; public checkpoint rollback; heldout predictions sealed before native forward; science wall bound; no patching, children, or retries.")
-    result = {"job_id": str(job), "request_sha256": request["request_sha256"]}
+    result = {"job_id": str(job), "request_sha256": request["request_sha256"],
+              "priority": priority, "vram_mb": vram_mb, "ram_mb": ram_mb}
     save_json(root / "submission.json", result)
     return result
 
@@ -95,7 +113,15 @@ if __name__ == "__main__":
     p.add_argument("--interval-steps", type=int, default=10)
     p.add_argument("--seed", type=int, default=20261112)
     p.add_argument("--wall-seconds", type=int, default=600)
+    p.add_argument("--arms", default="original", help="learned-arm preset (ARM_PRESETS)")
+    p.add_argument("--sealed-position-split", action="store_true")
+    p.add_argument("--contrast-nominator", action="store_true")
     p = sub.add_parser("submit")
     p.add_argument("root", type=Path)
+    p.add_argument("--priority", type=int, default=0)
+    p.add_argument("--vram-mb", type=float)
+    p.add_argument("--ram-mb", type=float)
     args = parser.parse_args()
-    print(json.dumps(stage(args) if args.action == "stage" else submit(args.root), sort_keys=True))
+    print(json.dumps(stage(args) if args.action == "stage" else
+                     submit(args.root, priority=args.priority, vram_mb=args.vram_mb, ram_mb=args.ram_mb),
+                     sort_keys=True))

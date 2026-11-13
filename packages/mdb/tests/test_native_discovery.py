@@ -351,3 +351,207 @@ def test_corpus_extractor_groups_byte_identical_files_into_one_split(tmp_path):
     module.build(tmp_path / "src", tmp_path / "next.json", count=5, seed=5, exclude_corpus=(out,))
     chosen = {r["source"] for r in load_corpus(tmp_path / "next.json")["documents"]}
     assert chosen == {f"packages/mdb/docs/fresh{i}.md" for i in range(5)}
+
+
+# ----------------------------------------------------------------- position-0-robust options
+
+def _sink_samples(n=4, length=5, width=6, stages=2, heads=4, value_width=4, seed=0):
+    """Tiny traces whose position 0 carries a massive activation after the first boundary."""
+    import torch
+    g = np.random.default_rng(seed)
+    out = []
+    for _ in range(n):
+        states = g.normal(size=(stages + 1, length, width)).astype(np.float32)
+        states[1:, 0] += 500.0
+        routes = np.tril(g.random((stages, heads, length, length))) + 1e-3 * np.tril(np.ones((length, length)))
+        routes = (routes / routes.sum(-1, keepdims=True)).astype(np.float32)
+        out.append({"states": torch.tensor(states), "routes": torch.tensor(routes),
+                    "values": torch.tensor(g.normal(size=(stages, length, value_width)).astype(np.float32))})
+    return out
+
+
+def test_split_position_mode_initialises_at_the_position_split_mean_write():
+    import torch
+
+    from mdb.analysis_metrics import fit_mean_writes, mean_write_forecast
+    from mdb.native_discovery_learning import StatePredictor, forecast_arrays
+    samples = _sink_samples()
+    fitted = fit_mean_writes([s["states"].numpy() for s in samples])
+    for mode, split in (("split", True), ("global", False)):
+        net = StatePredictor(width=6, features=4, heads=4, value_width=4, stages=2,
+                             kind="sparse_reconstruction", position_mode=mode)
+        net.initialize_scales(samples)
+        frontier = samples[0]["states"][0].numpy()
+        predicted = forecast_arrays(net, frontier)["state"]
+        np.testing.assert_allclose(predicted, mean_write_forecast(frontier, fitted, split=split),
+                                   rtol=1e-4, atol=1e-3)
+    # Per-class write scales: position 0's scale is its own, so its huge write cannot dominate.
+    span = net.spans[0]
+    assert span.row_write_scale(5).shape == ()
+    split_net = StatePredictor(width=6, features=4, heads=4, value_width=4, stages=2,
+                               kind="linear_features", position_mode="split")
+    split_net.initialize_scales(samples)
+    scale = split_net.spans[0].row_write_scale(5)
+    assert scale.shape == (5, 1) and float(scale[0]) > 100 * float(scale[1])
+    assert torch.all(scale[1:] == scale[1])
+
+
+def test_split_mode_loss_normalises_each_position_class_separately():
+    import torch
+
+    from mdb.native_discovery_learning import StatePredictor, sample_loss
+    samples = _sink_samples(n=3)
+    net = StatePredictor(width=6, features=4, heads=4, value_width=4, stages=2,
+                         kind="sparse_reconstruction", position_mode="split")
+    net.initialize_scales(samples)
+    sample = {k: v.clone() for k, v in samples[0].items()}
+    with torch.no_grad():
+        base = float(sample_loss(net, sample, auxiliary=False)[1][0]["state_loss"])
+        # An error of one position-0 write scale at position 0 adds exactly 1/T (one row, one unit).
+        sample["states"][1][0] += net.spans[0].write_scale[0]
+        moved = float(sample_loss(net, sample, auxiliary=False)[1][0]["state_loss"])
+    assert moved - base == pytest.approx(1 / 5, rel=0.2)
+
+
+def test_robust_development_metric_is_the_shared_centred_position0_excluded_error():
+    import torch
+
+    from mdb.analysis_metrics import relative_error
+    from mdb.native_discovery_learning import StatePredictor, evaluate
+    samples = _sink_samples(n=2)
+    net = StatePredictor(width=6, features=4, heads=4, value_width=4, stages=2, kind="linear_features")
+    net.initialize_scales(samples)
+    result = evaluate(net, samples)
+    expected = []
+    with torch.no_grad():
+        for s in samples:
+            rows = net.forecast(s["states"][0])
+            expected.append(np.mean([relative_error(r["state"].numpy(), s["states"][i + 1].numpy())
+                                     ["centered_relative_mse_excluding_position_0"] for i, r in enumerate(rows)]))
+    assert result["centered_error_excluding_position_0"] == pytest.approx(np.mean(expected), rel=1e-6)
+
+
+def test_kv_group_read_keeps_groups_separate():
+    import torch
+
+    from mdb.native_discovery_learning import SpanPredictor
+    t, heads, groups = 3, 4, 2
+    route = torch.zeros(heads, t, t)
+    route[:2, :, 0] = 1.0                     # KV group 0 heads read source 0
+    route[2:] = torch.eye(t)                  # KV group 1 heads read the current token
+    value = torch.arange(t * 4, dtype=torch.float32).reshape(t, 4)  # two groups of width 2
+    grouped = SpanPredictor(5, 3, heads, 4, kind="linear_features", read_groups=groups).read(route, value)
+    np.testing.assert_allclose(grouped[:, :2], value[[0, 0, 0], :2])
+    np.testing.assert_allclose(grouped[:, 2:], value[:, 2:])
+    averaged = SpanPredictor(5, 3, heads, 4, kind="linear_features").read(route, value)
+    np.testing.assert_allclose(averaged, 0.5 * (value[[0, 0, 0]] + value))
+    with pytest.raises(DiscoveryError, match="divide"):
+        SpanPredictor(5, 3, 4, 4, kind="linear_features", read_groups=3)
+
+
+def test_arm_presets_are_explicit_and_original_by_default():
+    from mdb.native_discovery_learning import ARM_PRESETS, KINDS, resolve_arms
+    assert [a["name"] for a in resolve_arms(None)] == list(KINDS)
+    assert all(a["position_mode"] == "global" and a["selection"] == "original" and a["read_groups"] == 1
+               for a in resolve_arms(None))
+    robust = resolve_arms("original+p0robust", kv_groups=2)
+    assert len(robust) == 6 and {a["read_groups"] for a in robust} == {1, 2}
+    assert len(ARM_PRESETS["original+p0robust"]) == 6
+    with pytest.raises(DiscoveryError, match="KV"):
+        resolve_arms("original+p0robust")
+    with pytest.raises(DiscoveryError, match="unknown arm option"):
+        resolve_arms([{"kind": "linear_features", "loss": "x"}])
+
+
+def test_contrast_nominator_recovers_per_head_rules_without_learning():
+    from mdb.native_discovery_nominator import (
+        fit_contrast_nominator,
+        nominate_sources,
+        one_hot_routes,
+        score_nominations,
+    )
+    length = 6
+    q = np.arange(length)
+    sources = np.stack([np.zeros(length, np.int64), np.maximum(q - 1, 0), q])  # sink, previous, current
+    routes = 0.9 * one_hot_routes(sources[None]) + 0.1 * np.tril(np.ones((length, length))) / (q + 1)[:, None]
+    fitted = fit_contrast_nominator([routes, routes], offsets=3)
+    assert [h["rule"] for h in fitted["heads"]] == ["position_0", "offset_1", "offset_0"]
+    assert fitted["learning"] == "none"
+    nominated = nominate_sources(fitted, length)
+    np.testing.assert_array_equal(nominated[0], sources)
+    scored = score_nominations(nominated, routes)
+    record = scored[0]["source_top1"]
+    assert record["nominator"]["top_source_agreement"] == 1.0
+    assert {"position_0", "previous_token", "uniform"} <= set(record["baselines"])
+    # One trivial rule cannot cover three different heads; the per-head rule beats every baseline.
+    assert record["beats_every_trivial_baseline"]
+    with pytest.raises(ValueError, match="causal"):
+        one_hot_routes(np.array([[1, 0]]))
+
+
+def test_position_robust_pipeline_seals_split_baseline_and_nominator(tmp_path):
+    import importlib.util
+
+    from mdb.native_discovery import verify_run
+    from mdb.native_discovery_learning import load_predictors
+    from mdb.native_discovery_run import run_on_model
+    corpus = prepare_corpus(documents(), seed=19)
+    save_json(tmp_path / "corpus.json", corpus)
+    root = tmp_path / "analysis"
+    run_on_model(tiny_model(), TinyTokenizer(), corpus=tmp_path / "corpus.json", out=root,
+                 binding={"model_identity": "tiny-random-mechanics", "execution": {"device": "cpu"}},
+                 max_tokens=12, stages=2, features=4, steps=2, interval_steps=1,
+                 arms="original+p0robust", sealed_position_split=True, contrast_nominator=True)
+    assert verify_run(root)["mechanics_status"] == "valid"
+    report = json.loads((root / "report.json").read_text())
+    names = {"linear_features", "sparse_reconstruction", "sparse_consumer"}
+    names |= {n + ".p0robust" for n in names}
+    assert report["options"]["sealed_position_split_mean_write"] and report["options"]["contrast_nominator"]
+    for row in report["heldout"]:
+        assert set(row["native_output_consumer"]) == names
+        assert len(row["split_mean_write"]) == 2 and "native_to_predicted_kl" in row["split_mean_write_consumer"]
+        # The sealed split baseline is the same forecast as the post-hoc one (fit on discovery only).
+        for sealed_row, posthoc in zip(row["split_mean_write"], row["position_split_mean_write"], strict=True):
+            assert sealed_row["relative_mse"] == pytest.approx(posthoc["relative_mse"], rel=1e-4)
+        assert {"position_0", "previous_token", "uniform"} <= set(
+            row["contrast_nominator"][0]["source_top1"]["baselines"])
+    for forecast in (root / "forecasts").iterdir():
+        kinds = [json.loads(p.read_text()) for p in sorted((forecast / "events").glob("*.json"))]
+        order = [e["kind"] for e in kinds]
+        sealed_names = {e["detail"]["name"] for e in kinds if e["kind"] == "forecast_persisted"}
+        assert {"split_mean_write", "contrast_nominator"} <= sealed_names
+        assert order.index("globally_sealed") < order.index("observation_persisted")
+    metadata, models = load_predictors(root / "predictor")
+    assert set(models) == names
+    robust = metadata["arms"]["sparse_consumer.p0robust"]
+    assert robust["arm_options"]["position_mode"] == "split"
+    assert robust["arm_options"]["selection"] == "position_robust"
+    assert "arm_options" not in metadata["arms"]["sparse_consumer"]
+    receipts = list((root / "predictor/sparse_consumer.p0robust/receipts").rglob("*.json"))
+    assert any("centered_error_excluding_position_0" in p.read_text() for p in receipts)
+    nominator = json.loads((root / "contrast-nominator.json").read_text())
+    assert nominator["learning"] == "none" and set(nominator["documents"]) == set(metadata["fitted_document_ids"])
+    # The artifact-only audit re-scores every sealed arm, including the new ones.
+    spec = importlib.util.spec_from_file_location(
+        "native_audit", Path(__file__).parents[1] / "experiments/native_discovery/audit.py")
+    audit = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(audit)
+    stage = tmp_path / "stage"
+    stage.mkdir()
+    (stage / "evidence").symlink_to(root)
+    import tarfile
+    with tarfile.open(stage / "evidence.tar.gz", "w:gz") as stream:
+        stream.add(root, arcname="evidence")
+    save_json(stage / "result.json", {"artifact": {"sha256": __import__("mdb.native_discovery", fromlist=["x"]).file_hash(stage / "evidence.tar.gz")}})
+    assert audit.audit(stage)["metric_checks"] > 0
+    spec = importlib.util.spec_from_file_location(
+        "native_rerun_report", Path(__file__).parents[1] / "experiments/native_discovery/rerun_report.py")
+    tables_module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(tables_module)
+    tables = tables_module.tables(stage)
+    assert set(tables["output_kl"]) == names | {"hold_state", "mean_write", "split_mean_write"}
+    assert "sparse_reconstruction.p0robust vs split_mean_write: output KL" in tables["paired"]
+    assert any(k.startswith("contrast_nominator vs") for k in tables["paired"])
+    row = tables["paired"]["sparse_consumer vs split_mean_write: output KL"]
+    assert row["candidate_better"] + row["candidate_worse"] + row["ties"] == row["n"] == len(tables["documents"])
+    assert row["bootstrap_95"][0] <= row["mean_difference"] <= row["bootstrap_95"][1]
