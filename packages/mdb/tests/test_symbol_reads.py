@@ -2,6 +2,8 @@
 import filecmp
 import importlib.util
 import json
+import shutil
+from collections import Counter
 from dataclasses import replace
 from pathlib import Path
 
@@ -23,25 +25,47 @@ from mdb.symbol_reads import (
     SymbolRead,
     SymbolReadError,
     check_bounded,
+    declare_root,
     file_pointer,
     load_reads,
+    model_identity,
+    parameter_pointer,
     passive_binding,
     passive_definition,
     passive_lifecycle,
     passive_use,
     project_reads,
     read_for_use,
+    resolve_pointer,
     save_reads,
+    verdict_rule,
+    verify_pointer,
 )
 
 PLAN = "c" * 64
 FLUX = Path("/Users/jakeholl/domains/saturn/experiments/2026-11-11-flux-read-graph")
+HAS_FLUX = (FLUX / "runs/full-a/result/capture.cat.4242.npz").exists()
+
+
+def control(**kw):
+    """A valid counted control: in-run, structured, judged clean."""
+    return {"arm": "z:rand4", "run_id": "job-1", "in_run": True, "matched_on": ["set_size"],
+            "judged_by": "picture", "judgement": "clean", "effect": .01, **kw}
+
+
+def result(verdict="supported", intervention="cut", run_id="job-1", **kw):
+    base = dict(scope="set", basis="score", effect=.6, floor=.01, floor_source="in-run sham",
+                floor_incomplete=False, control=control(), contrast_id="toy",
+                claim_scope="needed_set" if verdict == "supported" else None)
+    base.update(kw)
+    return CausalResult(intervention, "no-renormalisation", verdict, PLAN, run_id, **base)
 
 
 def passive_fixture(tmp_path):
     capture = tmp_path / "capture.npz"
     np.savez(capture, tok_w=np.ones((2, 3, 4, 8), np.float16))
-    sha = file_pointer(capture)["sha256"]
+    root = declare_root("toy", tmp_path)
+    sha = file_pointer(capture, root=root)["digest"]["sha256"]
     surface = PassiveSurface("toy-model", {"dtype": "fp32"},
         {"run": "toy", "capture_sha256": sha}, {"state_schema": "toy-capture-v1", "kind": "passive",
         "slots": [{"name": "text_rows", "role": "text-row"}, {"name": "ids", "role": "ids"}]},
@@ -121,32 +145,109 @@ def test_project_and_passive_variants_give_the_same_record_shape(tmp_path):
 def test_causal_status_defaults_to_unknown_and_results_need_provenance():
     assert CausalStatus().status == "unknown" and CausalStatus().label == UNKNOWN_LABEL
     with pytest.raises(SymbolReadError, match="needs a control"):
-        CausalResult("cut", "no-renormalisation", "supported", PLAN, "job-1", effect=.5)
+        result(control=None)
     with pytest.raises(SymbolReadError, match="cannot carry"):
-        CausalResult("cut", "no-renormalisation", "control_missing", PLAN, "job-1", control={"arm": "x"})
+        result("control_missing")
     with pytest.raises(SymbolReadError, match="verdict"):
-        CausalResult("cut", "no-renormalisation", "causal", PLAN, "job-1")
+        result("causal")
     with pytest.raises(SymbolReadError, match="sha256"):
-        CausalResult("cut", "no-renormalisation", "unresolved", "not-a-hash", "job-1")
+        CausalResult("cut", "no-renormalisation", "unresolved", "not-a-hash", "job-1", scope="set",
+                     basis="none", contrast_id="toy")
     with pytest.raises(SymbolReadError, match="names the run"):
-        CausalResult("keep", "renormalising", "unresolved", PLAN, "")
-    result = CausalResult("cut", "renormalising", "supported", PLAN, "job-1", effect=.4,
-                          control={"arm": "z:rand", "effect": 0.}, floor=.01)
-    status = CausalStatus((result,))
-    assert status.status == "intervened" and status.label == "cut (renormalising): supported"
+        CausalResult("keep", "renormalising", "unresolved", PLAN, "", scope="set", basis="none", contrast_id="toy")
+    ok = result()
+    status = CausalStatus((ok,))
+    assert status.status == "intervened" and status.label == "cut (no-renormalisation): supported"
     assert CausalStatus.from_dict(status.to_dict()) == status
+    assert ok.claim == "necessary" and ok.remaining_alternatives == ("generic_damage", "mass", "set_size")
+
+
+def test_writer_refuses_untyped_or_unbacked_supported_results(tmp_path):
+    """Audit finding 4: every probe.py case that the old writer accepted is refused now."""
+    with pytest.raises(SymbolReadError, match="numeric floor"):
+        result(floor=None, floor_source=None)                       # supported with floor=None
+    with pytest.raises(SymbolReadError, match="arm|matched_on|run id|in_run"):
+        result(control={"anything": 1})                             # junk control
+    with pytest.raises(SymbolReadError, match="finite number"):
+        result(effect="huge")                                       # effect is a string
+    with pytest.raises(SymbolReadError, match="exceed its floor"):
+        result(effect=.001, floor=.5)                               # effect below floor
+    with pytest.raises(SymbolReadError, match="same run"):
+        result(control=control(in_run=False))                       # other-job control counted
+    with pytest.raises(SymbolReadError, match="own run id"):
+        result(control=control(run_id="job-other"))
+    for bad in (" ", " job-1", ""):
+        with pytest.raises(SymbolReadError, match="names the run"):
+            result("unresolved", run_id=bad, control=None, basis="none")
+    with pytest.raises(SymbolReadError, match="judged clean"):
+        result(control=control(judgement="mixed"))
+    with pytest.raises(SymbolReadError, match="audit_statement"):
+        result(basis="audit_statement")
+    with pytest.raises(SymbolReadError, match="picture calls"):
+        result(basis="picture_only", effect=None, floor=None, floor_source=None)
+    picture_only = result(basis="picture_only", effect=None, floor=None, floor_source=None,
+                          picture={"calls": ["N", "N"], "levels": [3, 3]})
+    assert picture_only.verdict == "supported"
+    with pytest.raises(SymbolReadError, match="scope"):
+        CausalResult("cut", "no-renormalisation", "unresolved", PLAN, "job-1", basis="none")
+    with pytest.raises(SymbolReadError, match="contrast"):
+        result(contrast_id=None)
+    with pytest.raises(SymbolReadError, match="claims 'necessary'"):
+        result(claim="sufficient")
+    # Alternatives: only a clean in-run record that says so rules one out; identity needs all.
+    with pytest.raises(SymbolReadError, match="not backed"):
+        result(ruled_out=("set_size",))
+    with pytest.raises(SymbolReadError, match="size >= "):
+        result(control=control(rules_out=["set_size"], size=10, set_size=60), ruled_out=("set_size",))
+    sized = result(control=control(rules_out=["set_size"], size=60, set_size=60), ruled_out=("set_size",))
+    assert sized.remaining_alternatives == ("generic_damage", "mass") and sized.claim_scope == "needed_set"
+    with pytest.raises(SymbolReadError, match="rules out mass only"):
+        result(control=control(rules_out=["mass"], mass_held=[.1], set_mass_held=[.5]), ruled_out=("mass",))
+    with pytest.raises(SymbolReadError, match="claim_scope 'needed_set'"):
+        result(claim_scope="identity")
+    with pytest.raises(SymbolReadError, match="only on supported"):
+        result("not_supported", claim_scope="needed_set")
+    # Plan hash verifiable against a file.
+    plan = tmp_path / "plan.json"
+    plan.write_text("{}")
+    from mdb.symbol_reads import file_sha256
+    good = CausalResult("cut", "no-renormalisation", "unresolved", file_sha256(plan), "job-1",
+                        scope="set", basis="none", contrast_id="toy")
+    assert good.verify_plan(plan)
+    with pytest.raises(SymbolReadError, match="does not hash"):
+        result().verify_plan(plan)
+    # Keep: separates from its control by more than the floor.
+    with pytest.raises(SymbolReadError, match="separate from its control"):
+        result(intervention="keep", effect=.05, claim_scope="sufficient_set", control=control(effect=.04))
+
+
+def test_set_scope_results_never_attach_to_reads(tmp_path):
+    """Audit finding 4: SymbolRead.with_causal refuses a set result; ReadSet refuses a read result."""
+    source, lifecycle, reads, capture = passive_fixture(tmp_path)
+    with pytest.raises(SymbolReadError, match="member read"):
+        reads[0].with_causal(result())
+    read_result = result("not_supported", scope="read", control=None, effect=.0)
+    attached = reads[0].with_causal(read_result)
+    assert attached.causal.results[0].scope == "read"
+    read_set = ReadSet("own4", source, ReadSet.membership([(1, h) for h in range(4)],
+                       file_pointer(capture, root=declare_root("toy", tmp_path))), {"kind": "ranked"})
+    with pytest.raises(SymbolReadError, match="belongs on its SymbolRead"):
+        read_set.with_result(read_result)
+    with pytest.raises(SymbolReadError, match="'set'-scope"):
+        replace(read_set, causal=CausalStatus((read_result,)))
+    with pytest.raises(SymbolReadError, match="'read'-scope"):
+        replace(reads[0], causal=CausalStatus((result(),)))
 
 
 def test_set_level_status_is_not_propagated_to_member_reads(tmp_path):
     source, lifecycle, reads, capture = passive_fixture(tmp_path)
     members = [(1, h) for h in range(4)]
-    read_set = ReadSet("own4", source, ReadSet.membership(members, file_pointer(capture)),
-                       {"kind": "nominated"})
+    root = declare_root("toy", tmp_path)
+    read_set = ReadSet("own4", source, ReadSet.membership(members, file_pointer(capture, root=root)),
+                       {"kind": "ranked"})
     reads = [replace(r, sets=(read_set.set_id,)) for r in reads]
-    read_set = replace(read_set, member_reads=tuple(r.fingerprint for r in reads)).with_result(
-        CausalResult("cut", "no-renormalisation", "supported", PLAN, "job-1", effect=.6,
-                     control={"arm": "z:rand4", "effect": .01}))
-    assert read_set.set_id == ReadSet("own4", source, read_set.members, {"kind": "nominated"}).set_id
+    read_set = replace(read_set, member_reads=tuple(r.fingerprint for r in reads)).with_result(result())
+    assert read_set.set_id == ReadSet("own4", source, read_set.members, {"kind": "ranked"}).set_id
     save_reads(tmp_path / "reads.json", reads, (read_set,))
     loaded = load_reads(tmp_path / "reads.json")
     (saved_set,) = loaded["sets"]
@@ -155,6 +256,16 @@ def test_set_level_status_is_not_propagated_to_member_reads(tmp_path):
     assert set(saved_set.member_reads) == {r.fingerprint for r in loaded["reads"]}
     with pytest.raises(SymbolReadError, match="already exists"):
         save_reads(tmp_path / "reads.json", reads, (read_set,))
+
+
+def test_set_selection_kind_is_not_a_role_assignment(tmp_path):
+    """Audit finding 7: a set is 'ranked', never 'nominated' (that names a source role)."""
+    source, _, _, capture = passive_fixture(tmp_path)
+    pointer = file_pointer(capture, root=declare_root("toy", tmp_path))
+    with pytest.raises(SymbolReadError, match="use 'ranked'"):
+        ReadSet("own", source, ReadSet.membership([(1, 1)], pointer), {"kind": "nominated"})
+    with pytest.raises(SymbolReadError, match="selection kind"):
+        ReadSet("own", source, ReadSet.membership([(1, 1)], pointer), {})
 
 
 def test_records_refuse_arrays_and_long_sequences(tmp_path):
@@ -173,13 +284,116 @@ def test_records_refuse_arrays_and_long_sequences(tmp_path):
                     use_id="x", consumer="c", signed_observations=({"value": np.ones(2)},),
                     evidence_refs=surface_use.evidence_refs)
     # Large memberships are held by pointer + digest, never inline.
+    root = declare_root("toy", tmp_path)
     big = ReadSet("own240", source, ReadSet.membership([(b, h) for b in range(10) for h in range(24)],
-                  file_pointer(capture)), {"kind": "nominated"})
+                  file_pointer(capture, root=root)), {"kind": "ranked"})
     assert big.members["count"] == 240 and "units" not in big.members
     record = big.to_dict()
     assert max(len(v) for v in _sequences(record)) <= 64
-    pointer = file_pointer(capture, array="tok_w", selector=[None, 1, 2, [3]])
-    assert set(pointer) == {"kind", "path", "sha256", "array", "selector"}
+    pointer = file_pointer(capture, root=root, array="tok_w", selector=[None, 1, 2, [3]])
+    assert set(pointer) == {"kind", "locator", "digest", "array", "selector"}
+
+
+def test_size_budget_is_recursive_and_covers_every_record_and_meta(tmp_path):
+    """Audit finding 5: nested lists, passive use/definition metadata and meta are bounded."""
+    source, lifecycle, reads, capture = passive_fixture(tmp_path)
+    nested = [[0.1234567] * 48 for _ in range(48)]                 # 2304 floats, 35 KB: passed before
+    with pytest.raises(SymbolReadError, match="nested"):
+        replace(reads[0], metadata={"grid": nested})
+    with pytest.raises(SymbolReadError, match="nested"):
+        check_bounded({"a": [[0.1234567] * 60] * 60})
+    surface = PassiveSurface("m", {}, {}, {"state_schema": "s"}, "ref", "sess")
+    with pytest.raises(SymbolReadError, match="nested"):
+        passive_use(surface, lifecycle.binding, use_id="x", consumer="c", signed_observations=(),
+                    evidence_refs=(), metadata={"grid": nested})
+    with pytest.raises(SymbolReadError, match="nested"):
+        passive_definition(surface, lifecycle.binding, occurrence_id="d", clock=None, evidence_refs=(),
+                           metadata={"grid": nested})
+    wide = {str(i): [0.123456789] * 64 for i in range(256)}          # 16k values, flat lists
+    with pytest.raises(SymbolReadError, match="values in one record|bytes"):
+        check_bounded(wide)
+    with pytest.raises(SymbolReadError, match="bytes"):
+        check_bounded({str(i): "x" * 4000 for i in range(20)})       # 80 KB of text, few values
+    with pytest.raises(SymbolReadError, match="nested|bytes|values"):
+        save_reads(tmp_path / "meta.json", reads, meta={"m": [[[0.5] * 60] * 60] * 10})
+    with pytest.raises(SymbolReadError, match="bytes"):
+        save_reads(tmp_path / "meta2.json", reads, meta={str(i): "y" * 4000 for i in range(20)})
+    assert not (tmp_path / "meta.json").exists() and not (tmp_path / "meta2.json").exists()
+    # numpy scalars convert like Python scalars, np.bool_ included; arrays (also 0-d) do not.
+    assert check_bounded({"a": np.bool_(True), "b": np.float32(1.5), "c": np.int64(3)}) == \
+        {"a": True, "b": 1.5, "c": 3}
+    assert type(check_bounded(np.bool_(False))) is bool
+    with pytest.raises(SymbolReadError, match="array or tensor"):
+        check_bounded({"a": np.array(True)})
+
+
+def test_pointers_split_locator_and_digest_and_names_carry_identity_status(tmp_path):
+    """Audit finding 6: moving a file changes the root declaration, never the reference."""
+    first = tmp_path / "a"
+    (first / "runs").mkdir(parents=True)
+    (first / "runs" / "plan.json").write_text('{"x": 1}')
+    pointer = file_pointer(first / "runs" / "plan.json", root=declare_root("exp", first), role="plan")
+    assert pointer["locator"] == {"root": "exp", "path": "runs/plan.json"}
+    assert set(pointer["digest"]) == {"sha256", "size"} and pointer["digest"]["size"] == 8
+    assert str(tmp_path) not in json.dumps(pointer)
+    moved = tmp_path / "b"
+    shutil.move(first, moved)
+    assert file_pointer(moved / "runs" / "plan.json", root=declare_root("exp", moved), role="plan") == pointer
+    assert verify_pointer(pointer, {"exp": moved}) == resolve_pointer(pointer, {"exp": moved})
+    (moved / "runs" / "plan.json").write_text('{"x": 2}')
+    with pytest.raises(SymbolReadError, match="digest"):
+        verify_pointer(pointer, {"exp": moved})
+    with pytest.raises(SymbolReadError, match="undeclared root"):
+        resolve_pointer(pointer, {})
+    with pytest.raises(SymbolReadError, match="not under"):
+        file_pointer(tmp_path / "elsewhere.json", root=declare_root("exp", moved))
+    # A bare model name is not an identity.
+    unresolved = parameter_pointer("flux2-klein-4b-distilled", "w")
+    assert unresolved["model"]["identity_status"] == "unresolved" and unresolved["model"]["resolve_by"]
+    assert parameter_pointer("m", "w", checkpoint_sha256="d" * 64)["model"]["identity_status"] == "verified"
+    with pytest.raises(SymbolReadError, match="resolve"):
+        model_identity("flux2-klein-4b-distilled")
+    source, lifecycle, reads, _ = passive_fixture(tmp_path)
+    named = replace(reads[0], model=model_identity("toy-model", resolve_by="checkpoint sha256"))
+    assert named.to_dict()["model"]["identity_status"] == "unresolved"
+    with pytest.raises(SymbolReadError, match="identity_status"):
+        replace(reads[0], model={"name": "toy-model"})
+
+
+def test_verdict_rule_is_one_sealed_record_named_by_every_result(tmp_path):
+    """Audit finding 3: results name the rule id + sha256 declared once in meta."""
+    source, _, reads, capture = passive_fixture(tmp_path)
+    rule = verdict_rule("toy-rule-v1", {"levels": {"Y": 0, "N": 3}, "steps": ["picture decides"]})
+    root = declare_root("toy", tmp_path)
+    members = ReadSet.membership([(1, 0)], file_pointer(capture, root=root))
+    named = ReadSet("s", source, members, {"kind": "ranked"}).with_result(
+        result(rule_id=rule["id"], rule_sha256=rule["sha256"]))
+    save_reads(tmp_path / "ok.json", (), (named,), meta={"verdict_rule": rule})
+    assert load_reads(tmp_path / "ok.json")["meta"]["verdict_rule"]["sha256"] == rule["sha256"]
+    other = ReadSet("s", source, members, {"kind": "ranked"}).with_result(
+        result(rule_id="other", rule_sha256="e" * 64))
+    with pytest.raises(SymbolReadError, match="other than meta.verdict_rule"):
+        save_reads(tmp_path / "bad.json", (), (other,), meta={"verdict_rule": rule})
+    with pytest.raises(SymbolReadError, match="does not match its rule"):
+        save_reads(tmp_path / "bad2.json", (), (named,), meta={"verdict_rule": {**rule, "rule": {"x": 1}}})
+
+
+def test_qwen_view_causal_line_comes_from_the_data(tmp_path):
+    """Audit finding 7: the Qwen view's causal-status line is data, not a constant in the page."""
+    from mdb.symbol_attention_view import write_view
+    head = {"head": 0, "kv_head": 0, "allocation": [1.0], "source_mass": 1.0, "entropy_nats": 0.,
+            "source_value_return_norm": 0., "head_return_norm": 0., "token_labels": ["t"]}
+    row = {"session_id": "s", "arm": "native", "step": 0, "layer": 0, "binding": {}, "lifecycle_id": "l",
+           "definition": {}, "output": {}, "heads": [head], "uses": [{}]}
+    (tmp_path / "linked-symbols.json").write_text(json.dumps([row]))
+    (tmp_path / "formation-symbols.json").write_text("[]")
+    (tmp_path / "summary.json").write_text("{}")
+    write_view(tmp_path)
+    html = (tmp_path / "symbols-attention.html").read_text()
+    page, data = html.split("const data=", 1)[1].split(";\n", 1)[1], html.split("const data=", 1)[1]
+    assert "Causal status: <strong>'+esc(r.causal_label)+'</strong>" in page
+    assert '"causal_label": "' + UNKNOWN_LABEL + '"' in data
+    assert UNKNOWN_LABEL not in page
 
 
 def _sequences(value):
@@ -204,6 +418,195 @@ def test_nominated_role_carries_ranking_score_and_trivial_baselines():
         ReadSource("s", (2,), "learned", {})
     with pytest.raises(SymbolReadError, match="role assignment"):
         ReadSource("s", (2,), "guessed", {"by": "x"})
+
+
+def flux_module():
+    path = Path(__file__).resolve().parents[1] / "qualification" / "flux_read_graph_symbols.py"
+    spec = importlib.util.spec_from_file_location("flux_read_graph_symbols", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_flux_verdict_rule_is_symmetric_and_reference_controls_never_count():
+    """Audit finding 1 (cause): a Y- control is a weak effect, as it is for the set; screens
+    can only downgrade; with no counted control the verdict is control_missing, never supported."""
+    m = flux_module()
+    pics = {"calls": ["P", "P"], "levels": [2, 2]}
+    weak = {"arm": "z:rand120", "levels": [1, 0]}
+    assert m.decide("cut", "night", pics, dict(weak), [])[0] == "unresolved"     # was 'supported'
+    assert m.decide("cut", "night", pics, {"arm": "z:r", "levels": [0, 0]}, [])[0] == "supported"
+    assert m.decide("cut", "night", pics, {"arm": "z:r", "levels": [2, 3]}, [])[0] == "not_supported"
+    assert m.decide("cut", "red", pics, None, [])[0] == "control_missing"
+    assert m.decide("cut", "red", pics, None, [{"arm": "z:rand240", "levels": [2, 0]}])[0] == "unresolved"
+    assert m.decide("cut", "red", pics, None, [{"arm": "z:rand240", "levels": [0, 0]}])[0] == "control_missing"
+    carried = {"calls": ["Y", "Y"], "levels": [0, 0]}
+    assert m.decide("keep", "snow", carried, None, [{"arm": "z:keep-nounI", "levels": [1, 1]}])[:2] == \
+        ("unresolved", "picture_only")
+    assert m.decide("cut", "snow", carried, None, [])[:2] == ("not_supported", "picture_only")
+    assert m.decide("cut", "red", None, None, [], m.X1_OVERRIDE)[:2] == ("not_supported", "audit_statement")
+    assert m.judge_control("cut", [1, 1], [1, 0]) == m.judge_control("cut", [2, 2], [1, 0]) == "mixed"
+    rule = m.VERDICT_RULE
+    assert rule["rule"]["parameters"]["reference_cut_clean_max_abs_gone"] == .15
+    assert rule["rule"]["parameters"]["reference_keep_lost_min_gone"] == .7
+    assert {(c["run"], c["intervention"], c["set"]) for c in rule["rule"]["counted_controls"]} == \
+        set(m.COUNTED_CONTROLS)
+    assert not any(k[1] == "keep" for k in m.COUNTED_CONTROLS)   # no random keep arm was run in-run
+    with pytest.raises(TypeError):
+        m.convert(FLUX)                                           # the output directory is required
+
+
+@pytest.fixture(scope="module")
+def flux_out(tmp_path_factory):
+    if not HAS_FLUX:
+        pytest.skip("saved FLUX read-graph experiment not on this machine")
+    out = tmp_path_factory.mktemp("flux") / "flux"
+    summary = flux_module().convert(FLUX, out)
+    loaded = load_reads(out / "reads.json")
+    results = {(s.source.name, s.name, r.intervention, r.cut_type): r for s in loaded["sets"] for r in s.causal.results}
+    return summary, out, loaded, results
+
+
+# MEASURED on the saved experiment (2026-11-12): status x contrast after the audit-8 fixes.
+FLUX_TABLE = {"ball": {"control_missing": 6, "not_supported": 16, "supported": 5, "unresolved": 5},
+              "colour-words": {"control_missing": 16, "not_supported": 33, "supported": 13, "unresolved": 2},
+              "night": {"control_missing": 2, "not_supported": 20, "supported": 1, "unresolved": 9},
+              "rain": {"control_missing": 3, "not_supported": 12},
+              "snow": {"control_missing": 6, "not_supported": 19, "unresolved": 7}}
+
+
+def test_flux_converter_on_saved_files(flux_out):
+    summary, out, loaded, results = flux_out
+    assert summary["bindings"] == 6 and summary["reads"] == 360 == summary["uses"]
+    assert all(summary["checks"].values())
+    assert len(loaded["reads"]) == 360 and len(loaded["sets"]) == summary["read_sets"] == 114
+    assert all(r.causal.status == "unknown" for r in loaded["reads"])
+    by_fp = {r.fingerprint: r for r in loaded["reads"]}
+    intervened = [s for s in loaded["sets"] if s.causal.results]
+    assert intervened and all(by_fp[f].causal.status == "unknown" for s in intervened for f in s.member_reads)
+    assert not list(out.glob("*.npz"))
+    assert len(results) == summary["set_results"] == 175
+    assert all(len(r.plan_sha256) == 64 and r.run_id.startswith("job-") for r in results.values())
+
+
+def test_flux_supported_rests_only_on_in_run_matched_controls(flux_out):
+    """Audit finding 1: the 17 results that rested on another job's control, on the other pool's keep,
+    or on a Y- control are no longer supported; snow/rain keep their picture result."""
+    summary, out, loaded, results = flux_out
+    assert summary["set_results_by_contrast_verdict"] == FLUX_TABLE
+    assert summary["set_results_by_verdict"] == {"control_missing": 33, "not_supported": 100,
+                                                 "supported": 19, "unresolved": 23}
+    for r in results.values():
+        if r.verdict == "supported":
+            assert r.control["in_run"] is True and r.control["run_id"] == r.run_id
+            assert r.control["judgement"] == "clean" and r.basis == "picture"
+        for ref in r.reference_controls:
+            assert ref["in_run"] or ref["verdict_effect"] == "none"
+    # 14 that rested on the other-job Addendum 4 arm: control_missing, arm kept as a reference.
+    for key in [("cat:red", "headfree:own60", "cut"), ("cat:red", "headfree:own60", "keep"),
+                ("cat:black", "headfree:own60", "cut"), ("cat:ball", "headfree:own60", "keep"),
+                ("cat:red", "headx:color", "keep"), ("cat:black", "headx:light", "keep"),
+                ("cat:ball", "headx:scene", "keep")]:
+        r = results[(*key, "no-renormalisation")]
+        assert r.verdict == "control_missing" and r.control is None
+        other_job = [c for c in r.reference_controls if not c["in_run"]]
+        assert len(other_job) == 1 and other_job[0]["arm"] in ("z:rand60a", "z:keep-rand60a")
+        assert other_job[0]["run_id"] != r.run_id and other_job[0]["judged_by"] == "score"
+    for word in ("red", "black"):
+        r = results[(f"cat:{word}", "headfree:modI", "keep", "no-renormalisation")]
+        assert r.verdict == "control_missing"
+        assert [c["arm"] for c in r.reference_controls] == ["z:keep-nounI"]
+    # night: Y- on the control on one seed is a weak effect there too (symmetric rule).
+    assert results[("car:night", "headfree:own120", "cut", "no-renormalisation")].verdict == "unresolved"
+    night60 = results[("car:night", "headfree:own60", "cut", "no-renormalisation")]
+    assert night60.verdict == "unresolved" and "rand240" in night60.reason
+    for name in ("headx:color", "headx:light"):
+        assert results[("car:night", name, "cut", "no-renormalisation")].verdict == "unresolved"
+    # snow and rain: picture result kept, numbers dropped.
+    snow_rain = {k: r for k, r in results.items() if k[0] in ("cat:snow", "car:rain")}
+    assert len(snow_rain) == 47
+    assert all(r.effect is None and r.effect_per_seed is None and r.floor is None for r in snow_rain.values())
+    cuts_yy = [r for k, r in snow_rain.items() if k[2] == "cut" and r.picture and max(r.picture["levels"]) == 0]
+    assert len(cuts_yy) == 28 and all(r.verdict == "not_supported" and r.basis == "picture_only" for r in cuts_yy)
+    no_picture = [r for r in snow_rain.values() if r.picture is None]
+    assert len(no_picture) == 4 and all(r.verdict == "unresolved" for r in no_picture)
+    keeps = Counter(r.verdict for k, r in snow_rain.items() if k[2] == "keep")
+    assert keeps == {"control_missing": 9, "unresolved": 3, "not_supported": 3}
+    for key in [("cat:snow", "headfree:modI"), ("cat:snow", "headfree:nounI"), ("cat:snow", "headx:object")]:
+        assert results[(*key, "keep", "no-renormalisation")].verdict == "unresolved"
+    for r in snow_rain.values():
+        for c in (r.control, *r.reference_controls):
+            assert c is None or ("effect" not in c and "effect_per_seed" not in c)
+
+
+def test_flux_scope_contrasts_and_claim_vocabulary(flux_out):
+    """Audit finding 2: results carry their contrast and claim scope; the view shows scope, controls,
+    mass, borrowed floors and the L1 caveat next to each verdict."""
+    summary, out, loaded, results = flux_out
+    m = flux_module()
+    scope = loaded["meta"]["scope"]
+    assert (scope["prompts"], scope["seeds"], scope["independent_contrasts"]) == (2, 2, 3)
+    assert scope["source_to_contrast"] == m.CONTRASTS
+    assert summary["scope"]["independent_contrast_ids"] == ["colour-words", "ball", "night"]
+    per_contrast = Counter()
+    for v in summary["set_results_by_contrast_verdict"].values():
+        per_contrast.update(v)
+    assert dict(per_contrast) == summary["set_results_by_verdict"]
+    for (source, _, kind, _), r in results.items():
+        assert r.scope == "set" and r.contrast_id == m.CONTRASTS[source]
+        assert r.claim == {"cut": "necessary", "keep": "sufficient"}[kind]
+        assert r.claim_scope != "identity" and r.remaining_alternatives
+        assert (r.claim_scope is not None) == (r.verdict == "supported")
+        assert isinstance(r.floor_incomplete, bool)
+        if r.run_id == loaded["meta"]["jobs"]["headfree"] and r.floor is not None:
+            assert r.floor_source.startswith("borrowed:") and r.floor_incomplete
+        if r.verdict == "supported":
+            assert set(r.control["matched_on"]) >= {"set_size"} or "other_pool" in r.control["matched_on"]
+            assert r.control["mass_held"] and r.control["set_mass_held"]
+    red120 = results[("cat:red", "headfree:own120", "cut", "no-renormalisation")]
+    assert red120.control["arm"] == "z:rand120" and red120.control["mass_held"][0] < .2 < .7 < red120.control["set_mass_held"][0]
+    assert "not attributable to the word's own heads" in red120.metadata["caveat"]
+    # mass is ruled out only where a clean control holds at least the set's mass (night mod vs noun).
+    massed = [k for k, r in results.items() if "mass" in r.ruled_out]
+    assert massed == [("car:night", "headfree:mod", "cut", "no-renormalisation")]
+    html = (out / "symbol-reads.html").read_text()
+    for text in ('class="scope"', "independent contrasts", "Contrast: colour-words", "Contrast: night",
+                 "size-matched only", "borrowed:", "not attributable to the word", "OTHER JOB", "mass kind",
+                 "identity_status", "unresolved", "word mass held", "needed_set"):
+        assert text in html, text
+    assert html.index('class="scope"') < html.index("Read sets (")
+    assert "http" not in html
+
+
+def test_flux_verdict_rule_recorded_once_and_x1_marked(flux_out):
+    """Audit finding 3."""
+    summary, out, loaded, results = flux_out
+    from mdb.symbol_reads import seal_digest
+    rule = loaded["meta"]["verdict_rule"]
+    assert rule["sha256"] == seal_digest(rule["rule"]) == summary["verdict_rule"]["sha256"]
+    assert all((r.rule_id, r.rule_sha256) == (rule["id"], rule["sha256"]) for r in results.values())
+    x1 = [(k, r) for k, r in results.items() if r.basis == "audit_statement"]
+    assert len(x1) == 16 and all(r.verdict == "not_supported" and k[1].startswith("headx:")
+                                 and k[1].endswith("X") and k[0] != "cat:snow" for k, r in x1)
+    for text in ("counted_controls", "screens", "other_job_references", "x1_override", "parameters"):
+        assert text in rule["rule"]
+
+
+def test_flux_pointers_are_locator_plus_digest_and_identity_unresolved(flux_out):
+    """Audit finding 6."""
+    summary, out, loaded, results = flux_out
+    meta = loaded["meta"]
+    assert meta["model"]["identity_status"] == "unresolved" and meta["model"]["resolve_by"]
+    assert all(r.model["identity_status"] == "unresolved" for r in loaded["reads"])
+    lifecycles = json.loads((out / "lifecycles.json").read_text())
+    assert all(l["metadata"]["model"]["identity_status"] == "unresolved" for l in lifecycles)
+    roots = meta["roots"]
+    assert list(roots) == ["flux-read-graph"]
+    for pointer in meta["inputs"].values():
+        assert set(pointer) >= {"locator", "digest"} and "path" not in pointer
+        verify_pointer(pointer, roots)
+    text = (out / "reads.json").read_text()
+    assert text.count(str(FLUX)) == 1                     # only the root declaration
 
 
 def native_inputs():
@@ -241,34 +644,6 @@ def test_register_observations_delegates_and_stays_byte_identical(tmp_path):
                and r.surface == "passive-observation" for r in loaded["reads"])
     lifecycles = json.loads((tmp_path / "with-reads" / "lifecycles.json").read_text())
     assert {r.lifecycle_fingerprint for r in loaded["reads"]} == {row["fingerprint"] for row in lifecycles}
-
-
-@pytest.mark.skipif(not (FLUX / "runs/full-a/result/capture.cat.4242.npz").exists(),
-                    reason="saved FLUX read-graph experiment not on this machine")
-def test_flux_converter_on_saved_files(tmp_path):
-    path = Path(__file__).resolve().parents[1] / "qualification" / "flux_read_graph_symbols.py"
-    spec = importlib.util.spec_from_file_location("flux_read_graph_symbols", path)
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    summary = module.convert(FLUX, tmp_path / "flux")
-    assert summary["bindings"] == 6 and summary["reads"] == 360 == summary["uses"]
-    assert all(summary["checks"].values())
-    loaded = load_reads(tmp_path / "flux" / "reads.json")
-    assert len(loaded["reads"]) == 360 and len(loaded["sets"]) == summary["read_sets"]
-    assert all(r.causal.status == "unknown" for r in loaded["reads"])
-    by_fp = {r.fingerprint: r for r in loaded["reads"]}
-    intervened = [s for s in loaded["sets"] if s.causal.results]
-    assert intervened and all(by_fp[f].causal.status == "unknown" for s in intervened for f in s.member_reads)
-    for s in loaded["sets"]:
-        for r in s.causal.results:
-            if s.source.name in ("cat:snow", "car:rain"):
-                assert r.verdict == "unresolved" and r.effect is None and r.effect_per_seed is None
-            assert len(r.plan_sha256) == 64 and r.run_id.startswith("job-")
-    # Captures are referenced, not copied.
-    assert not list((tmp_path / "flux").glob("*.npz"))
-    assert all(p["kind"] == "file" and len(p["sha256"]) == 64 for p in loaded["meta"]["inputs"].values())
-    html = (tmp_path / "flux" / "symbol-reads.html").read_text()
-    assert "unknown (observed only" in html and "http" not in html and "control_missing" in html
 
 
 # Frozen copy of register_observations at b7318c7 (unchanged since be8c719; pre-consolidation),
