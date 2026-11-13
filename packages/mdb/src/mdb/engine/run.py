@@ -41,6 +41,14 @@ _LAYER_PORT = re.compile(r"L(?P<layer>\d+)\.(?P<port>\w+)")
 _SLOTS = {"start": "tokens", "logits": "logits", "sample": "sampled_token"}
 
 
+class ReplayMismatch(ValueError):
+    """A replay from the run root reached another cut than the checkpoint records."""
+
+    def __init__(self, expected: str, reached: str):
+        self.expected, self.reached = expected, reached
+        super().__init__("replay from the run root did not reproduce the checkpoint cut")
+
+
 @dataclass
 class _Mark:
     fingerprint: str
@@ -114,6 +122,10 @@ class Run:
     ``retain_rows`` bounds memory: boundary cuts of rows older than that many rows behind the
     cursor are dropped (each row's ``start`` cut is kept) and rebuilt on demand by replaying
     the native transitions, with their committed edits, from the nearest retained cut.
+
+    ``root`` (persistence): start the run at a stored boundary cut of a run over the same
+    ``tokens`` instead of prefilling them; ``root_transitions`` is the transition count that
+    cut had in the run that stored it, so ``restore`` finds a checkpoint taken at that cut.
     """
 
     def __init__(
@@ -123,6 +135,8 @@ class Run:
         *,
         retain_rows: int | None = None,
         lookahead: str = "none",
+        root: StateCut | None = None,
+        root_transitions: int = 0,
     ):
         from saturn_pub.adapters.decoder import DecoderAdapter
 
@@ -142,7 +156,15 @@ class Run:
         self.program = program_for(adapter)
         self.tokens = [int(token) for token in tokens]
         self.retain_rows = retain_rows
-        self.session = adapter.session(self.tokens)
+        if type(root_transitions) is not int or root_transitions < 0:
+            raise ValueError("root_transitions must be a nonnegative integer")
+        if root is None:
+            self.session = adapter.session(self.tokens)
+        else:
+            self.session = Session.from_cut(adapter, root)
+            held = [int(t) for t in self.session.read("tokens")[0].tolist()]
+            if held[: len(self.tokens)] != self.tokens:
+                raise ValueError("the root cut holds other token ids than this run's prompt")
         self._stops = (
             "start",
             "emb",
@@ -157,7 +179,7 @@ class Run:
         self._cache: PortController | None = None
         self._values: dict[str, torch.Tensor] = {}
         self._masks: dict[str, torch.Tensor] = {}
-        self._trail: list[_Mark] = [self._mark(0)]
+        self._trail: list[_Mark] = [self._mark(root_transitions)]
 
     # --- cursor -------------------------------------------------------------------------
 
@@ -931,6 +953,54 @@ class Run:
             ],
         }
 
+    def edit_tensors(self) -> dict[str, torch.Tensor]:
+        """Every tensor the edits of ``checkpoint()`` name, by payload sha256 (edit values and
+        masks, committed on the path and staged): what a durable checkpoint must store."""
+        out: dict[str, torch.Tensor] = {}
+        for edit in [*(e for mark in self._trail[:-1] for e in mark.edits), *self._edits]:
+            if isinstance(edit.value, torch.Tensor):
+                out[tensor_digest(edit.value)] = edit.value
+            if edit.mask is not None:
+                out[tensor_digest(edit.mask)] = edit.mask
+        return out
+
+    def hold(self, tensors: dict[str, torch.Tensor]) -> None:
+        """Hold edit values and masks (payload sha256 -> tensor) so ``restore`` can rebuild edits
+        this process did not stage, e.g. a checkpoint read back from a project store. Every
+        digest is checked first; nothing is held when one differs."""
+        for sha, value in tensors.items():
+            if tensor_digest(value) != sha:
+                raise ValueError(f"tensor held as {sha[:12]} has another payload digest")
+        for sha, value in tensors.items():
+            (self._masks if value.dtype == torch.bool else self._values)[sha] = value
+
+    def origin_of(self, target: str) -> dict[str, Any]:
+        """Where the value at a computed address comes from (what an occurrence pointer records).
+
+        ``cut``/``transitions``: the boundary mark the value is read at (``port`` None) or whose
+        layer transition computes it (``port`` the port name); ``edits``: that transition's
+        edit manifests (the staged ones for the pending layer, ``[]`` for a boundary value).
+        """
+        key = self.parse(target)
+        if key > self._key():
+            raise ValueError(f"{self.address(key)} has not been computed at {self.where}")
+        port = self._in_pending(key)
+        if port is not None:
+            mark = self._trail[-1]
+            return {"cut": mark.fingerprint, "transitions": mark.transitions, "port": port,
+                    "edits": self.edits}
+        for mark in reversed(self._trail):
+            if self._mark_key(mark) == key:
+                return {"cut": mark.fingerprint, "transitions": mark.transitions, "port": None,
+                        "edits": []}
+        located = self._layer_mark(key)
+        if located is None:
+            raise ValueError(f"{self.address(key)} is before the start of this run")
+        index, name = located
+        past = self._trail[index]
+        return {"cut": past.fingerprint, "transitions": past.transitions, "port": name,
+                "edits": [edit.manifest() for edit in past.edits]}
+
     def _numeric_scope(self) -> dict[str, Any]:
         """The adapter's bound numeric scope (thread count, determinism, matmul precision).
 
@@ -967,7 +1037,7 @@ class Run:
             if value is None:
                 raise ValueError(
                     f"edit value {described['sha256'][:12]} at {manifest['port']} is not held by "
-                    "this process; tensor blobs are not stored yet"
+                    "this process; restart it from a project (Debugger.restart) or Run.hold it"
                 )
         mask = None
         if "mask_sha256" in manifest:
@@ -975,7 +1045,7 @@ class Run:
             if mask is None:
                 raise ValueError(
                     f"edit mask {manifest['mask_sha256'][:12]} at {manifest['port']} is not held "
-                    "by this process; mask blobs are not stored yet"
+                    "by this process; restart it from a project (Debugger.restart) or Run.hold it"
                 )
         return PortEdit(
             manifest["port"], value, manifest["op"], mask=mask, selection=manifest.get("selection")
@@ -1011,7 +1081,7 @@ class Run:
                 self._edits = list(path.get(self._trail[-1].transitions, ()))
                 self._commit()
             if self._trail[-1].fingerprint != checkpoint["cut"]:
-                raise ValueError("replay from the run root did not reproduce the checkpoint cut")
+                raise ReplayMismatch(checkpoint["cut"], self._trail[-1].fingerprint)
         self._edits, self._cache, self._port = staged, None, None
         if checkpoint["port"] is not None:
             port = self.program.spec(checkpoint["port"]).name

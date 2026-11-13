@@ -23,7 +23,7 @@ non-negative ints are exempt. Lists, tuples and mappings are walked fully. The
 kind's ``numeric`` paths must exist and hold labelled numbers; a labelled-number mapping with
 extra keys is an error; NaN and +-Inf are refused everywhere. Sealing or verifying a record of
 an undeclared kind is refused. Pointers must be of a known kind (file, parameter, run,
-occurrence) and their free fields are typed: ``selector`` is a list whose entries are ``None``
+occurrence, tensor) and their free fields are typed: ``selector`` is a list whose entries are ``None``
 (the whole axis), a non-negative int or a list of non-negative ints; ``array`` is an array name
 (text) or ``{shape: [int, ...], dtype: str}``; ``role`` and ``json_pointer`` are text; a run
 pointer's ``plan`` is a file pointer; a parameter pointer's ``model`` is a canonical model
@@ -62,11 +62,12 @@ LEGACY_SCHEMAS = ("mdb-circuit-investigation-v1",)
 FIELDS = ("schema", "id", "session_id", "kind", "model_identity", "execution", "authority",
           "pointers", "body", "digest")
 NUM_KEYS = ("value", "authority", "proof", "unit", "pointer")
-POINTER_KINDS = ("file", "parameter", "run", "occurrence")
+POINTER_KINDS = ("file", "parameter", "run", "occurrence", "tensor")
 _POINTER_FIELDS = {
     "file": {"kind", "locator", "digest", "array", "selector", "json_pointer", "role"},
     "parameter": {"kind", "parameter", "model", "selector"},
     "run": {"kind", "run_id", "plan_sha256", "plan"},
+    "tensor": {"kind", "ref", "sha256", "shape", "dtype"},
 }
 _SHORT = 64
 
@@ -195,10 +196,10 @@ def _record_pointer(pointer):
         extra = set(pointer) - _POINTER_FIELDS.get(kind, set(pointer))
         if extra:
             raise RecordError(f"{kind} pointer has unknown fields {sorted(extra)}")
-        if kind != "occurrence":
-            _typed_pointer(pointer)
-        else:
+        if kind == "occurrence":
             _typed_occurrence(pointer)
+        elif kind != "tensor":    # validate_tensor_pointer already typed every field
+            _typed_pointer(pointer)
     except (TypeError, KeyError, AttributeError) as error:
         raise RecordError(f"malformed pointer: {error}") from error
     except RecordError:

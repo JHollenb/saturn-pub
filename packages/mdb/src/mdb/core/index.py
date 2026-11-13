@@ -1,10 +1,13 @@
 """Project index: sealed records, the cursor, replay recipes and occurrence locations.
 
-Functions take an ``mdb.project.Project`` (duck-typed: ``_db()``, ``_json()``, ``read_only``,
-``session()``, ``store``) so this module imports neither the project nor a framework.
+Functions take a project, duck-typed: ``mdb.core.project.Project`` (the engine's own), the lane
+``mdb_lanes.project.Project`` or ``mdb.core.project_read.ProjectReader``. What is used is
+``read_only``, ``session(sid)``, ``store`` and a connection: the public ``db()`` of the engine
+project, else the ``_db()`` the two other classes offer (the one duck-typed fallback, so this
+module imports neither class nor a framework). Row text is ``saturn_pub.values.canonical``.
 
-The index is purely additive to a schema-3 project (``project.py`` is unchanged and
-``user_version`` stays 3, so every other checkout opens the same directory)::
+The index is purely additive to a schema-3 project (``user_version`` stays 3, so every other
+checkout opens the same directory)::
 
     records(id PRIMARY KEY, session_id, kind, schema, body)   # mdb-record-v2, stored_form
     cursor(session_id PRIMARY KEY, record_id)
@@ -23,6 +26,8 @@ v2 records go only to ``records``; legacy writes stay with ``circuit_investigati
 from __future__ import annotations
 
 import json
+
+from saturn_pub.values import canonical
 
 from .pointers import RecordError, _sha
 from .records import LEGACY_SCHEMAS, SCHEMA, kind_spec, stored_form, verify_legacy, verify_record
@@ -51,6 +56,17 @@ class NotIndexed(LookupError):
     """The project index holds no such record, recipe or cursor."""
 
 
+def _connect(project):
+    """A connection context of ``project``: its public ``db()``, else its ``_db()``."""
+    opener = getattr(project, "db", None)
+    return opener() if callable(opener) else project._db()
+
+
+def _text(value):
+    """The canonical JSON text a row is stored as (what every project writer's ``_json`` is)."""
+    return canonical(value).decode("utf-8")
+
+
 def _tables(db):
     return {r[0] for r in db.execute("SELECT name FROM sqlite_master WHERE type='table'")}
 
@@ -72,7 +88,7 @@ def migrate(db):
 def ensure_tables(project):
     """Create the four index tables if absent, atomically. Called by every write below."""
     _writable(project)
-    with project._db() as db:
+    with _connect(project) as db:
         migrate(db)
 
 
@@ -101,7 +117,7 @@ def put_record(project, record):
         raise RecordError("record belongs to another model or execution than its session")
     body = stored_form(record)   # the bytes the size bound, the digest and the row all share
     ensure_tables(project)
-    with project._db() as db:
+    with _connect(project) as db:
         db.execute("INSERT OR IGNORE INTO records VALUES (?,?,?,?,?)",
                    (record["id"], record["session_id"], record["kind"], SCHEMA, body))
         existing = db.execute("SELECT body FROM records WHERE id=?", (record["id"],)).fetchone()
@@ -149,7 +165,7 @@ def _verified(project, sid, identifier, kind, schema, body):
 
 def get_record(project, sid, identifier):
     """A verified record: a v2 envelope, or a legacy circuit record ``{record_id, **body}``."""
-    with project._db() as db:
+    with _connect(project) as db:
         row = _row(db, sid, identifier)
     if row is None:
         raise NotIndexed(f"record {identifier} is not indexed in session {sid}")
@@ -171,7 +187,7 @@ def list_records(project, sid, *, kind=None, schema=None, strict=False):
     """
     project.session(sid)
     rows = []
-    with project._db() as db:
+    with _connect(project) as db:
         if _exists(db, "circuit_records"):
             rows += [(r[0], r[1], LEGACY_CIRCUIT, r[2]) for r in db.execute(
                 "SELECT id, kind, body FROM circuit_records WHERE session_id=? ORDER BY rowid",
@@ -205,7 +221,7 @@ def set_cursor(project, sid, record_id):
     _writable(project)
     get_record(project, sid, record_id)
     ensure_tables(project)
-    with project._db() as db:
+    with _connect(project) as db:
         db.execute("INSERT INTO cursor VALUES (?,?) ON CONFLICT(session_id) "
                    "DO UPDATE SET record_id=excluded.record_id", (sid, record_id))
     return record_id
@@ -214,7 +230,7 @@ def set_cursor(project, sid, record_id):
 def get_cursor(project, sid):
     """The record id under the session cursor, or None when no cursor is set."""
     project.session(sid)
-    with project._db() as db:
+    with _connect(project) as db:
         if not _exists(db, "cursor"):
             return None
         row = db.execute("SELECT record_id FROM cursor WHERE session_id=?", (sid,)).fetchone()
@@ -247,11 +263,11 @@ def put_recipe(project, sid, recipe):
     if expected is not None and expected != identifier:
         raise RecordError("recipe seal differs from its content")
     sealed = {**value, "fingerprint": identifier}
-    body = project._json(sealed)
+    body = _text(sealed)
     if len(body.encode()) > MAX_RECIPE_BYTES:
         raise RecordError(f"recipe exceeds {MAX_RECIPE_BYTES} bytes")
     ensure_tables(project)
-    with project._db() as db:
+    with _connect(project) as db:
         db.execute("INSERT OR IGNORE INTO recipes VALUES (?,?,?)", (identifier, sid, body))
         existing = db.execute("SELECT body FROM recipes WHERE id=?", (identifier,)).fetchone()
         if existing[0] != body:
@@ -259,9 +275,19 @@ def put_recipe(project, sid, recipe):
     return identifier
 
 
+def recipe_ids(project, sid):
+    """Ids of the recipes indexed under a session, in insertion order."""
+    project.session(sid)
+    with _connect(project) as db:
+        if not _exists(db, "recipes"):
+            return []
+        return [r[0] for r in db.execute(
+            "SELECT id FROM recipes WHERE session_id=? ORDER BY rowid", (sid,))]
+
+
 def get_recipe(project, identifier):
     """A verified recipe by id."""
-    with project._db() as db:
+    with _connect(project) as db:
         row = (db.execute("SELECT body FROM recipes WHERE id=?", (identifier,)).fetchone()
                if _exists(db, "recipes") else None)
     if row is None:
@@ -316,13 +342,13 @@ def index_occurrence(project, sid, address, *, layers, recipe_id=None, event_id=
         if not project.store.has_tensor(blob_id, verify=True):
             raise RecordError(f"tensor {blob_id} is not in the project store (or is corrupt)")
     if recipe_id is not None:
-        with project._db() as db:
+        with _connect(project) as db:
             if not _exists(db, "recipes") or db.execute(
                     "SELECT 1 FROM recipes WHERE id=?", (recipe_id,)).fetchone() is None:
                 raise RecordError(f"recipe {recipe_id} is not indexed")
     ensure_tables(project)
     new = dict(zip(_OCCURRENCE_COLUMNS, (recipe_id, event_id, cut_id, blob_id)))
-    with project._db() as db:
+    with _connect(project) as db:
         db.execute("BEGIN IMMEDIATE")
         row = db.execute("SELECT * FROM occurrences WHERE session_id=? AND address=?",
                          (sid, key)).fetchone()
@@ -346,7 +372,7 @@ def find_occurrence(project, sid, address, *, layers, ports=None, global_ports=N
     ``layers`` (required): look up under ``value_key`` (see ``index_occurrence``)."""
     key = _occurrence_key(address, ports, global_ports, layers)
     project.session(sid)
-    with project._db() as db:
+    with _connect(project) as db:
         if not _exists(db, "occurrences"):
             return None
         row = db.execute("SELECT * FROM occurrences WHERE session_id=? AND address=?",

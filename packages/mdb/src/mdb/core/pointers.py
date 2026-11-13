@@ -23,6 +23,9 @@ Pointer kinds and their fields:
 * ``run``: ``run_id``, optional ``plan_sha256`` and ``plan`` (a file pointer).
 * ``occurrence``: ``address`` (canonical address JSON), ``program``, ``recipe``, ``event``,
   ``cut``, ``value {shape, dtype, sha256}``, optional ``authority``.
+* ``tensor``: ``ref`` (the blob id in a saturn_pub ``LocalStore``), ``sha256`` (of the raw
+  little-endian payload, ``tensor_digest``), ``shape``, ``dtype``. ``resolve_tensor`` reads it
+  from a ``LocalStore``, checking both digests.
 """
 from __future__ import annotations
 
@@ -407,6 +410,36 @@ def validate_occurrence_pointer(pointer, *, ports=None, global_ports=None):
     return rebuilt
 
 
+# --------------------------------------------------------------------------- tensor pointer
+
+TENSOR_FIELDS = ("kind", "ref", "sha256", "shape", "dtype")
+
+
+def tensor_pointer(ref, *, sha256, shape, dtype):
+    """Point at one tensor blob of a saturn_pub ``LocalStore`` (``put_tensor``'s result).
+
+    ``ref`` is the blob id (sha256 of the stored file), ``sha256`` the payload digest, so the
+    pointer is checked twice on resolve: the store checks the file, the resolver the payload.
+    """
+    descriptor = _value_descriptor(shape, dtype, sha256)
+    if descriptor["sha256"] is None:
+        raise RecordError("a tensor pointer needs the payload sha256")
+    return check_bounded({"kind": "tensor", "ref": _sha(ref, "tensor blob ref"),
+                          "sha256": descriptor["sha256"], "shape": descriptor["shape"],
+                          "dtype": descriptor["dtype"]}, "tensor pointer")
+
+
+def validate_tensor_pointer(pointer):
+    """Re-validate a stored tensor pointer; returns it in canonical form or raises."""
+    if not isinstance(pointer, Mapping) or set(pointer) != set(TENSOR_FIELDS):
+        raise RecordError("tensor pointer fields are " + ", ".join(TENSOR_FIELDS))
+    rebuilt = tensor_pointer(pointer["ref"], sha256=pointer["sha256"], shape=pointer["shape"],
+                             dtype=pointer["dtype"])
+    if _canonical(rebuilt) != _canonical(check_bounded(dict(pointer), "tensor pointer")):
+        raise RecordError("tensor pointer is not in canonical form")
+    return rebuilt
+
+
 ESCAPE = "file pointer path must be non-empty, relative and stay under its root"
 
 
@@ -430,6 +463,8 @@ def validate_pointer(pointer):
     kind = pointer["kind"]
     if kind == "occurrence":
         return validate_occurrence_pointer(pointer)
+    if kind == "tensor":
+        return validate_tensor_pointer(pointer)
     pointer = check_bounded(dict(pointer), f"{kind} pointer")
     if kind == "file":
         locator, digest = pointer.get("locator"), pointer.get("digest")
@@ -554,6 +589,31 @@ def _resolve_parameter(pointer, *, parameters=None, model=None, checkpoint_sha25
             value = value[index]
         except (IndexError, KeyError, TypeError) as error:
             raise Unresolved("parameter selector is outside the parameter", refused=True) from error
+    return value
+
+
+def resolve_tensor(pointer, *, store=None, framework="torch"):
+    """The tensor a tensor pointer names, from ``store`` (a ``LocalStore``).
+
+    A missing blob is ``Unresolved``; a blob that fails the store's digest checks or whose
+    payload digest, shape or dtype differs from the pointer is a refusal naming the blob. Not
+    in the ``resolve`` registry (which stays file and parameter): call it directly.
+    """
+    pointer = _well_formed(pointer)
+    if store is None:
+        raise Unresolved("tensor pointer needs store= (the LocalStore holding its blob)")
+    ref = pointer["ref"]
+    if not store.has_tensor(ref):
+        raise Unresolved(f"tensor blob {ref} is missing from the store")
+    try:
+        info = store.tensor_info(ref)
+        value = store.get_tensor(ref, framework=framework)
+    except (ValueError, OSError) as error:
+        raise Unresolved(f"tensor blob {ref} is corrupt: {error}", refused=True) from error
+    if (info["sha256"], info["shape"], info["dtype"]) != (
+            pointer["sha256"], pointer["shape"], pointer["dtype"]):
+        raise Unresolved(f"tensor blob {ref} differs from its pointer (payload digest, shape or "
+                         "dtype)", refused=True)
     return value
 
 

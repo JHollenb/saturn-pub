@@ -25,10 +25,9 @@ def test_attach_run_ops_in_three_lines(family, dtype):
     assert dbg.family == family
 
 
-def test_attach_refusals_name_what_to_change():
+def test_attach_refusals_name_what_to_change(tmp_path):
     model = tiny_model("qwen2")
-    with pytest.raises(Refused, match="project persistence"):
-        attach(model, project="runs/t")
+    assert attach(model, project=tmp_path / "p").project is not None
     model.config._attn_implementation = "sdpa"
     with pytest.raises(Refused, match="attn_implementation='eager'"):
         attach(model)

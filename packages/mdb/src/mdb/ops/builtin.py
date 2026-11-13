@@ -1381,8 +1381,16 @@ def _op_checkpoint(ctx, name):
     name = name or ctx.next_checkpoint_name()
     checkpoint = ctx.run.checkpoint(name)
     ctx.checkpoints[name] = checkpoint
-    return {"name": name, "where": checkpoint["where"],
-            "bytes": len(json.dumps(checkpoint, sort_keys=True))}
+    result = {"name": name, "where": checkpoint["where"],
+              "bytes": len(json.dumps(checkpoint, sort_keys=True))}
+    if _project(ctx) is not None:  # durable: recipe, edit blobs and cursor go to the project
+        stored = ctx.debugger.checkpoint(ctx.run, name)
+        result["durable"] = {"recipe": stored["recipe"], "blobs": stored["blobs"]}
+    return result
+
+
+def _project(ctx):
+    return getattr(ctx.debugger, "project", None)
 
 
 @op("checkpoints", "List named checkpoints (paged: offset=, limit=)", _OFFSET, _LIMIT,
@@ -1393,12 +1401,19 @@ def _op_checkpoints(ctx, offset, limit):
 
 
 @op("restart", "Return to a named checkpoint (rewinds or replays)",
-    Arg("name", "str", required=True), effect="navigate", motion=True, usage="restart NAME")
+    Arg("name", "str", required=True), effect="navigate", motion=True, needs_live=False,
+    usage="restart NAME")
 def _op_restart(ctx, name):
-    if name not in ctx.checkpoints:
+    if ctx.run is not None and name in ctx.checkpoints:
+        ctx.run.restore(ctx.checkpoints[name])
+    elif _project(ctx) is not None:  # a checkpoint an earlier process stored in the project
+        ctx.set_run(ctx.debugger.restart(name))
+    elif ctx.run is None:
+        raise Refused("no run to rewind; start one with run, or attach with project= to "
+                      "restart a stored checkpoint")
+    else:
         known = ", ".join(ctx.checkpoints) or "none"
         raise Refused(f"no checkpoint {name!r} (have: {known})")
-    ctx.run.restore(ctx.checkpoints[name])
     ctx.table.reset_watches()
     return _moved(ctx, {"name": name})
 
