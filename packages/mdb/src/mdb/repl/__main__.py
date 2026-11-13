@@ -3,6 +3,10 @@
     python -m mdb.repl --tiny qwen2|qwen3 [--dtype bf16|fp32] --tokens "1 5 9 3"
         [--script FILE] [--json]
     python -m mdb.repl --model PATH [--dtype bf16|fp32] [--device cpu] --prompt TEXT
+    python -m mdb.repl --connect http://127.0.0.1:8765 [--tokens ...|--prompt TEXT] [--script FILE]
+
+``--connect`` drives the live session of a running ``mdb serve`` (``mdb.repl.remote``): the
+model stays in the server process and this process needs no model framework.
 """
 
 from __future__ import annotations
@@ -32,12 +36,27 @@ def _load(path: str, dtype: str, device: str, want_tokenizer: bool) -> Any:
     return attach(model, tokenizer)
 
 
+_FRAMEWORK = ("torch", "numpy", "safetensors", "transformers", "accelerate")
+
+
+def _missing(error: ModuleNotFoundError) -> int:
+    """Exit status 2 with the extra to install when a model framework is absent."""
+    name = (error.name or "").partition(".")[0]
+    if name not in _FRAMEWORK:
+        raise error
+    print(f"mdb engine: needs {name}, which is not installed "
+          "(pip install 'mdb-runtime[autoregressive]')", file=sys.stderr)
+    return 2
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m mdb.repl",
                                      description="gdb-style port-level model debugger")
     source = parser.add_mutually_exclusive_group(required=True)
     source.add_argument("--tiny", choices=("qwen2", "qwen3"), help="random tiny model")
     source.add_argument("--model", help="local Hugging Face checkpoint directory")
+    source.add_argument("--connect", metavar="URL",
+                        help="drive the live session of a running `mdb serve` at URL")
     parser.add_argument("--dtype", choices=("bf16", "fp32"), default="bf16")
     parser.add_argument("--device", default="cpu")
     parser.add_argument("--seed", type=int, default=113, help="tiny model seed")
@@ -48,10 +67,25 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if args.tokens and args.prompt:
         parser.error("give --tokens or --prompt, not both")
-    from mdb.ops import OpError
-    from mdb.ops.debugger import open_tiny
+    if args.connect:
+        if args.json:
+            parser.error("--json is not available with --connect; for op JSON use "
+                         "mdb.repl.remote.Remote(URL).op(NAME, ...)")
+        from .remote import main as remote_main
 
-    from .shell import Shell
+        start = None
+        if args.tokens:
+            start = "start " + " ".join(args.tokens.replace(",", " ").split())
+        elif args.prompt:
+            start = "start " + json.dumps(args.prompt)
+        return remote_main(args.connect, start=start, script=args.script)
+    try:
+        from mdb.ops import OpError
+        from mdb.ops.debugger import open_tiny
+
+        from .shell import Shell
+    except ModuleNotFoundError as error:
+        return _missing(error)
 
     try:
         if args.tiny:
@@ -63,6 +97,8 @@ def main(argv: list[str] | None = None) -> int:
     except OpError as error:
         print(f"error ({error.kind}): {error.message}", file=sys.stderr)
         return 2
+    except ModuleNotFoundError as error:
+        return _missing(error)
     shell = Shell(debugger.ops(), json_mode=args.json)
     if args.tokens or args.prompt:
         words = (args.tokens or "").replace(",", " ").split()
