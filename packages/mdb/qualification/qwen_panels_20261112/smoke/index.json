@@ -1,0 +1,59 @@
+{
+ "lanes": {
+  "bfloat16": [
+   {
+    "arms": [
+     "native-recipient",
+     "native-donor",
+     "sham-late",
+     "replay-recipient",
+     "coalition-L20-both"
+    ],
+    "arms_in_plan": 56,
+    "branches": 56,
+    "family": "value",
+    "file": "value-bfloat16.plan.json",
+    "name": "value-bfloat16",
+    "plan_sha256": "bdba6c579e528c6e66d4028261fc15d7ef74b7f515923df335d5d80711515f14",
+    "seal": "value-bfloat16.seal.json"
+   },
+   {
+    "arms_in_plan": 31,
+    "branches": 31,
+    "family": "read",
+    "file": "read-smoke-bfloat16.plan.json",
+    "name": "read-smoke-bfloat16",
+    "plan_sha256": "3d2db9ad75397cc31397aea11c7fc0b162178b6fd2655a7ec7bf06dc1d2255e7",
+    "seal": "read-smoke-bfloat16.seal.json"
+   }
+  ],
+  "float32": [
+   {
+    "arms": [
+     "native-recipient",
+     "native-donor",
+     "sham-late",
+     "replay-recipient",
+     "coalition-L20-both"
+    ],
+    "arms_in_plan": 56,
+    "branches": 56,
+    "family": "value",
+    "file": "value-float32.plan.json",
+    "name": "value-float32",
+    "plan_sha256": "6e62c42c751a67c3181b2a7c11f5b2456f8e51e3802d8b99cf63c7f04e8228cf",
+    "seal": "value-float32.seal.json"
+   },
+   {
+    "arms_in_plan": 31,
+    "branches": 31,
+    "family": "read",
+    "file": "read-smoke-float32.plan.json",
+    "name": "read-smoke-float32",
+    "plan_sha256": "860c8df436104c5044159e60d3b36db1eb0d5e956c58481f277e7a618de70cf1",
+    "seal": "read-smoke-float32.seal.json"
+   }
+  ]
+ },
+ "profile": "smoke"
+}

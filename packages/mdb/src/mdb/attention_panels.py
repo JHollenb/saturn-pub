@@ -491,7 +491,9 @@ class RandomControls:
     mass-matched, non-disjoint draw whose overlap with the target exceeds chance mean +
     ``overlap_sd`` sd is recorded as ``matched_by_reuse`` (it does not rule out mass).
     ``n`` must be >= 1 (no random control = ``random=None`` plus a written waiver).
-    numpy scalars/arrays are converted to Python numbers at construction.
+    numpy scalars/arrays are converted to Python numbers at construction. ``mass`` may also be a
+    mapping ``{item: per-unit mass}`` when items read different sources (each item's draws are
+    then matched to its own mass); a mapping must name every item of the panel.
     """
     n: int = 1
     strata: tuple | None = None
@@ -513,7 +515,10 @@ class RandomControls:
         if tol is not None and tol < 0:
             raise PanelError("RandomControls.mass_tolerance must be >= 0")
         object.__setattr__(self, "mass_tolerance", tol)
-        if self.mass is not None:
+        if isinstance(self.mass, dict):
+            object.__setattr__(self, "mass", {str(k): tuple(_number(m, "RandomControls.mass") for m in _plain(v))
+                                              for k, v in self.mass.items()})
+        elif self.mass is not None:
             object.__setattr__(self, "mass", tuple(_number(m, "RandomControls.mass") for m in _plain(self.mass)))
         if self.strata is not None:
             object.__setattr__(self, "strata", tuple(_plain(self.strata)))
@@ -590,6 +595,12 @@ def _draw_random(name, units, universe, spec, index, item, kind="cut"):
     target = [index[u] for u in units]
     blocks = [u[0] for u in universe] if spec.match_blocks else None
     seed = draw_seed(spec.seed, item, name, kind)
+    if isinstance(spec.mass, dict):
+        if item not in spec.mass:
+            raise PanelError(f"RandomControls.mass is per item but names no mass for {item!r}")
+        spec = replace(spec, mass=spec.mass[item])
+    if spec.mass is not None and len(spec.mass) != len(universe):
+        raise PanelError("RandomControls.mass needs one value per universe unit")
     entry = {"target": name, "item": item, "kind": kind, "n": spec.n, "seed": spec.seed, "draw_seed": seed,
              "seed_derivation": SEED_DERIVATION, "disjoint": spec.disjoint,
              "mass_tolerance": spec.mass_tolerance, "match_blocks": spec.match_blocks,
@@ -1126,7 +1137,7 @@ def _cell_label(cell):
 def value_panel(cells, *, label="all", singletons=True, complements=True, groups=None, doses=(0.5,),
                 controls=VALUE_CONTROLS, references=("native", "replay", "donor_native"), comparators=None,
                 fixed_distance=False, reference_dose=0, contexts=("default",), item=None, cell_label=_cell_label,
-                waive=None, allow_extrapolation=False):
+                waive=None, allow_extrapolation=False, port=None):
     """Value-replacement (Codex) panel over ``cells`` ((layer, kv group) tuples).
 
     Arms whose executable content (legacy kind, cell set, dose) coincides are emitted once; the
@@ -1141,6 +1152,8 @@ def value_panel(cells, *, label="all", singletons=True, complements=True, groups
     ``allow_extrapolation=True``. Bundles: the references form one lease atom, and the coalition
     test, its doses and every control of it (sham, wrong payload/target, reciprocal, fixed
     distance) form another, so a sham never lands in a different lease from its coalition.
+    ``port``: execution settings the worker must honour (for example the numerical lane), hashed
+    with the plan; ``None`` keeps the hash of plans written before this argument existed.
     """
     waive = dict(waive or {})
     for key, why in waive.items():
@@ -1227,7 +1240,8 @@ def value_panel(cells, *, label="all", singletons=True, complements=True, groups
                  "blend": "mdb.attention_panels.blend (dose 1: exact payload copy; other doses: FP32 lerp "
                           "rounded once to the recipient dtype)"}
     return Panel(family="value", arms=arms, contexts=list(contexts), aliases=aliases,
-                 sets={"cells": [list(c) for c in full]}, waivers=waive, execution=execution)
+                 sets={"cells": [list(c) for c in full]}, waivers=waive, execution=execution,
+                 port=dict(port or {}))
 
 
 def value_spec(arm):

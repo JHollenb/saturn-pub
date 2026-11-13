@@ -1,0 +1,9 @@
+{
+ "plan_sha256": "3d2db9ad75397cc31397aea11c7fc0b162178b6fd2655a7ec7bf06dc1d2255e7",
+ "predictions": {
+  "note": "smoke: one read-cut set (L20H5) with floors"
+ },
+ "predictions_sha256": "29cf916f47e342b946e2416c8adeb1916283b5056a96bf46016976c17f15bcc9",
+ "schema": "mdb-attention-panel-seal-v1",
+ "seal_sha256": "7c833c7dcfbfe79825b474d19bc397c9b37bb47b86e026b5b3b40fd23dfec2e8"
+}

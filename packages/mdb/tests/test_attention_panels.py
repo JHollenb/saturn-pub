@@ -896,3 +896,23 @@ def test_references_only_panel_is_refused_unless_waived():
                                   waive={"references_only": "measure the reference arms alone"}))
     assert not any(a.role == "test" for a in refs.arms)
     assert P.read_panel(tiny_spec(cut_sets=(), keep_sets=())).by_id()["z:own4-minus-own2:red"].role == "test"
+
+
+def test_random_mass_per_item_and_value_panel_port_block():
+    """Items that read different sources draw against their own mass; value plans can bind a lane."""
+    heavy_red = tuple(5.0 if u in {(0, 0), (2, 1)} else 0.01 for u in UNIVERSE)
+    heavy_ball = tuple(5.0 if u in {(1, 1), (3, 2)} else 0.01 for u in UNIVERSE)
+    panel = P.read_panel(tiny_spec(random=P.RandomControls(n=1, strata=STRATA, seed=3,
+                                                           mass={"red": heavy_red, "ball": heavy_ball})))
+    assert panel.controls["red:own2"]["reports"][0]["mass"]["target"] == pytest.approx(10.0)
+    assert panel.controls["ball:own2"]["reports"][0]["mass"]["target"] == pytest.approx(10.0)
+    with pytest.raises(P.PanelError, match="no mass for 'ball'"):
+        P.read_panel(tiny_spec(random=P.RandomControls(n=1, strata=STRATA, mass={"red": heavy_red})))
+    with pytest.raises(P.PanelError, match="one value per universe unit"):
+        P.read_panel(tiny_spec(random=P.RandomControls(n=1, strata=STRATA, mass=(1.0,) * 5)))
+    from mdb.value_coalition import LATE_CELLS
+    plain = P.value_panel(LATE_CELLS, label="late")
+    assert P.value_panel(LATE_CELLS, label="late", port=None).sha256() == plain.sha256()
+    lane = P.value_panel(LATE_CELLS, label="late", port={"dtype": "float32"})
+    assert lane.port == {"dtype": "float32"} and lane.sha256() != plain.sha256()
+    assert P.Panel.from_json(json.loads(lane.canonical())).sha256() == lane.sha256()
