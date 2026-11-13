@@ -1,0 +1,194 @@
+{
+  "aggregates": {
+    "mdb": {
+      "edited": {
+        "correct": 8,
+        "mean_preservation_kl_nats": 0.02879100644107287,
+        "mean_task_nll_nats": 2.4971289092985294,
+        "task_rows": 48
+      },
+      "native": {
+        "correct": 10,
+        "mean_preservation_kl_nats": 0.0,
+        "mean_task_nll_nats": 2.5003194372790554,
+        "task_rows": 48
+      }
+    },
+    "pytorch_hooks": {
+      "edited": {
+        "correct": 11,
+        "mean_preservation_kl_nats": 0.06348963531975944,
+        "mean_task_nll_nats": 2.464578205409149,
+        "task_rows": 48
+      },
+      "native": {
+        "correct": 10,
+        "mean_preservation_kl_nats": 0.0,
+        "mean_task_nll_nats": 2.5003194372790554,
+        "task_rows": 48
+      }
+    },
+    "wsp_python": {
+      "edited": {
+        "correct": 10,
+        "mean_preservation_kl_nats": 0.025782186285747837,
+        "mean_task_nll_nats": 2.4485220598677793,
+        "task_rows": 48
+      },
+      "native": {
+        "correct": 10,
+        "mean_preservation_kl_nats": 0.0,
+        "mean_task_nll_nats": 2.5003194372790554,
+        "task_rows": 48
+      }
+    }
+  },
+  "checkpoint_sha256": "fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe",
+  "checks": {
+    "checkpoint_tokenizer_and_config_pins_across_four_source_stages": "equal",
+    "focused_tests_passed": 14,
+    "test_scope": "latest harness including post-primary compatibility, input-binding and timeout fixes; original primary source payloads remain archived",
+    "primary_plan_execution_and_controller_identity_digests": "verified",
+    "ruff": "passed"
+  },
+  "controller_recovery_identity": "059c306a5b665b1298a5fa3dda42a437e3bb72e05c4e08f8b1b63deec4bb638b",
+  "costs": {
+    "mdb": {
+      "common_setup_anchor_forwards": 6,
+      "completed_candidate_probes": 27,
+      "discovery_native_calls": 30,
+      "discovery_native_rows": 480,
+      "editor_calls": 6,
+      "editor_seconds_sum": 981.7432030830532,
+      "editor_timeouts": 0,
+      "incomplete_programs": 1,
+      "input_tokens": 91018,
+      "local_projection_replays": 0,
+      "output_tokens": 23295,
+      "program_seconds": 302.8735578530468,
+      "token_scope": "known completed calls only; lower bound if a provider call timed out",
+      "token_usage_complete": true
+    },
+    "pytorch_hooks": {
+      "common_setup_anchor_forwards": 6,
+      "completed_candidate_probes": 33,
+      "discovery_native_calls": 36,
+      "discovery_native_rows": 576,
+      "editor_calls": 6,
+      "editor_seconds_sum": 728.9630167093128,
+      "editor_timeouts": 0,
+      "incomplete_programs": 0,
+      "input_tokens": 91469,
+      "local_projection_replays": 0,
+      "output_tokens": 17571,
+      "program_seconds": 105.93981846701354,
+      "token_scope": "known completed calls only; lower bound if a provider call timed out",
+      "token_usage_complete": true
+    },
+    "wsp_python": {
+      "common_setup_anchor_forwards": 6,
+      "completed_candidate_probes": 22,
+      "discovery_native_calls": 25,
+      "discovery_native_rows": 400,
+      "editor_calls": 6,
+      "editor_seconds_sum": 1172.9652665830217,
+      "editor_timeouts": 1,
+      "incomplete_programs": 1,
+      "input_tokens": 73132,
+      "local_projection_replays": 0,
+      "output_tokens": 21356,
+      "program_seconds": 81.55270626116544,
+      "token_scope": "known completed calls only; lower bound if a provider call timed out",
+      "token_usage_complete": false
+    }
+  },
+  "editor": {
+    "call_timeout_seconds": 240,
+    "model": "gpt-6-astra",
+    "parallel_inference_calls": 3,
+    "provider_random_seed": "not exposed",
+    "reasoning_effort": "high"
+  },
+  "execution": "CPU FP32 eager; full B16 prefixes; use_cache=False; one-token next-digit readout; at most two original down-projection weight gains in [-4,4]",
+  "execution_plan_identity": "d1c37b60a775f5ecec61570939029604ed4eb7acbf96386cae1392ecfc4f24e5",
+  "independent_audit": {
+    "full_vocabulary_first_batch_panels": 9,
+    "maximum_kl_reduction_difference_nats": 1.0400065009186221e-07,
+    "target_model_forwards": 0,
+    "target_model_loads": 0,
+    "verified_files": 1116
+  },
+  "instrument_status": "partial policy evidence: two numerical-kernel compatibility errors and one provider deadline; all branches retained",
+  "jobs": {
+    "audit": {
+      "archive_bytes": 7537,
+      "archive_member_count": 5,
+      "archive_sha256": "dac800ba38c8d7e3890d8f07a0b334e274dccaa090eaf2a08898ce46786e77d1",
+      "files_manifest_sha256": "bfcf7be4ca7ac94bc1adca9203319292835cf959f9160495d71d7f92a68ee65c",
+      "job_id": "job-7872bcb42502",
+      "request_sha256": "070a1ddf8929dbb69130135890a4f557ce32ec24688b9c23e00c5bc92822bf7f"
+    },
+    "evaluate": {
+      "archive_bytes": 97495946,
+      "archive_member_count": 83,
+      "archive_sha256": "542f974f498304853f202b1f879073d0037148793de34055440a33228bcba106",
+      "files_manifest_sha256": "3fb072748b07af072256c89a298b51b89c263851b111a7f18f81fe2bd0ef9c26",
+      "job_id": "job-c99fce7d9d9d",
+      "request_sha256": "563692be840b1747b315c3fe82f8493b7d46d6277b1ad56189ea2307e62cb567"
+    },
+    "kernel-replay": {
+      "archive_bytes": 117612551,
+      "archive_member_count": 207,
+      "archive_sha256": "37a69af07e2ea2ee92765acbf9153fb1df267d4e631bd0f04492646ded8f7601",
+      "files_manifest_sha256": "7dfbc3b6ffbe0132dcbf18deaf3117e947c75a7741341b454cccd2af5e79149c",
+      "job_id": "job-77b85abff86b",
+      "request_sha256": "dd82139183b9a04925730c0d24c036b934e741460328c85081022266ae1bac5f"
+    },
+    "prepare-recovery": {
+      "archive_bytes": 24386743,
+      "archive_member_count": 14,
+      "archive_sha256": "b89fc1bc13a4e977b6d353192c3225d8066d6c9e29f775674332f9e036c0190f",
+      "files_manifest_sha256": "37228e9989aa2b2f0faef523412ee2a67925d174312a8d2b537533ed23fc7f5a",
+      "job_id": "job-c5555a9ddd96",
+      "request_sha256": "6589b981e490bbcddc83db9222cf72872f6c3921362b8ce358f1c783105392b0"
+    },
+    "search-round-1": {
+      "archive_bytes": 262972110,
+      "archive_member_count": 547,
+      "archive_sha256": "c2d42fcf1bc27d7e8d309690490952a89e45ec91ba9cf9986068d0ab4b4ea497",
+      "files_manifest_sha256": "7ab560b595586e726240139a77177933e9c36d5c03c47053a4be9d32dad5d3ce",
+      "job_id": "job-ec55aced706b",
+      "request_sha256": "283e0eb8336287f009716150a4109261eb87ad872d5bc60d5a2e101b93e84fbe"
+    },
+    "search-round-2": {
+      "archive_bytes": 240278476,
+      "archive_member_count": 476,
+      "archive_sha256": "30f3e67839f3c58e6a493ab83a292e6b04b9fea52879fd18c3c3c59d3f76e197",
+      "files_manifest_sha256": "971ab28ed0a901b5a73da84ffc1e9de65f9cbbafa70bd59c4dc258969f85e141",
+      "job_id": "job-45df022132df",
+      "request_sha256": "585a64b616fc5ad9252d4452adb37d4bb50f407fc23eaf5bfab7be3703f7c6a8"
+    }
+  },
+  "limitations": [
+    "48 unique authored task prefixes and one shared8-prefix fresh preservation panel; three discovery samples, not powered superiority testing.",
+    "WSP-style third sample has a first-round missing-getattr error and a second-round provider timeout; MDB second sample has an overbroad assignment-validator error. Only one sample has all three workflows fully observed across both rounds.",
+    "WSP token usage excludes the timed-out call and is a lower bound; deadline duration is not provider compute time.",
+    "MDB editors used ordinary hooks, zero typed captures/local projection replays; MDB ParameterPatch/WeightStudy probes actually ran.",
+    "Model-bound hashes and HDD records remain paid work; no delta in cost is silently removed after the storage ablation.",
+    "Native budget applies to inspected root-entry programs under a trusted numerical policy, not adversarial code isolation or arbitrary descendant-path enforcement.",
+    "Full bundle pins actual model/tokenizer/config/seeds and input identities; individual WeightStudy input fields contain row-ID hashes rather than standalone native table identity.",
+    "No full network-buffer/training-state rollback or generation/KV continuation claim.",
+    "Exact qualification observations do not certify a general hostile-artifact admission validator.",
+    "Separate fixed-program kernel replay completes5 WSP and6 MDB probes after fixes, excluded from primary selections, quality and costs.",
+    "One-token arithmetic-prefix editing is not MATH-500, a published sparse-edit replication or a general mathematical-reasoning benchmark."
+  ],
+  "mechanics_status": "valid within recorded trusted-code parameter/input and source/transport scope",
+  "model": "Qwen2.5-0.5B-Instruct",
+  "original_restored_full_vocab_digest_matches": 18,
+  "plan_identity": "e8f9832b3e05785f4f70deb4e4cfdce2c5657f7d08205f40ee1667275cafc64f",
+  "primary_target_network_forwards": 172,
+  "report": "../../../../artifacts/mdb-workflow-comparison-20261110/native-pilot-01/audit/extracted/followup-result/comparison.json",
+  "schema": "mdb-pretrained-workflow-comparison-qualification-v1",
+  "terminal_status": "not certified; no general superiority or exclusion claim",
+  "trend_status": "MDB lower preservation KL than hooks in three paired samples, fewer correct answers overall and more measured program/editor work; no overall practical advantage established"
+}

@@ -1,0 +1,88 @@
+{
+  "audit_sha256": "c487fd20fd487f7db1f281665bfedcf4b337d6be9c5cd4448e5ecbb26ffd89a8",
+  "model_calls": 0,
+  "originals": [
+    {
+      "case": "binding-anchor/whole_Q",
+      "lane": "native",
+      "record": {
+        "bytes": 157557,
+        "path": "images/binding-anchor/whole_Q/native.png",
+        "sha256": "cd59ab8dd012ace5ac8927bff8cbd8cbfba9a55b452d306c15ab27d46d2ae777",
+        "source_path": "cases/binding-anchor/whole_Q/decoder/native-reference/image.png"
+      }
+    },
+    {
+      "case": "binding-anchor/residual_only",
+      "lane": "native",
+      "record": {
+        "bytes": 156758,
+        "path": "images/binding-anchor/residual_only/native.png",
+        "sha256": "0362f0e261ee9ce41ff4eea075be32040a3bdd5cd3f929aecab122efecc11daa",
+        "source_path": "cases/binding-anchor/residual_only/decoder/native-reference/image.png"
+      }
+    },
+    {
+      "case": "binding-anchor/write_only",
+      "lane": "native",
+      "record": {
+        "bytes": 150218,
+        "path": "images/binding-anchor/write_only/native.png",
+        "sha256": "e6f8d9feb3b6524d2112281b9ded273513dea503bcd4ac0e2572c06de85baf45",
+        "source_path": "cases/binding-anchor/write_only/decoder/native-reference/image.png"
+      }
+    },
+    {
+      "case": "binding-anchor/both_RW",
+      "lane": "native",
+      "record": {
+        "bytes": 155963,
+        "path": "images/binding-anchor/both_RW/native.png",
+        "sha256": "c3e658ea6b6e730acd0c60aaa32fc2ecb0cbf882dfa48156863f4b972a19d8a1",
+        "source_path": "cases/binding-anchor/both_RW/decoder/native-reference/image.png"
+      }
+    },
+    {
+      "case": "binding-wording/whole_Q",
+      "lane": "native",
+      "record": {
+        "bytes": 127678,
+        "path": "images/binding-wording/whole_Q/native.png",
+        "sha256": "dc48af3cbc7d3d9f17967927796e29a3af179d4171b115a612f7f8fe450ba662",
+        "source_path": "cases/binding-wording/whole_Q/decoder/native-reference/image.png"
+      }
+    },
+    {
+      "case": "binding-wording/residual_only",
+      "lane": "native",
+      "record": {
+        "bytes": 128778,
+        "path": "images/binding-wording/residual_only/native.png",
+        "sha256": "efcc26203046d79f90e3da9b39ef9741517b98e527157cb2d9c2c0fabddf62ab",
+        "source_path": "cases/binding-wording/residual_only/decoder/native-reference/image.png"
+      }
+    },
+    {
+      "case": "binding-wording/write_only",
+      "lane": "native",
+      "record": {
+        "bytes": 124654,
+        "path": "images/binding-wording/write_only/native.png",
+        "sha256": "71d56a3fcc93b455e86e652b52376bfbc32856b9c2cde379f2f02fed4b6e6a9f",
+        "source_path": "cases/binding-wording/write_only/decoder/native-reference/image.png"
+      }
+    },
+    {
+      "case": "binding-wording/both_RW",
+      "lane": "native",
+      "record": {
+        "bytes": 110405,
+        "path": "images/binding-wording/both_RW/native.png",
+        "sha256": "cff954483a1ceecbb3aa92ef7b79da31e6555016aa4d715a4c6f0e7edc573f3e",
+        "source_path": "cases/binding-wording/both_RW/decoder/native-reference/image.png"
+      }
+    }
+  ],
+  "schema": "mdb-binding-residual-write-figure-v1",
+  "scope": "Display of unchanged original native PNGs; the saved-only audit separately compares complete predicted and native arrays."
+}

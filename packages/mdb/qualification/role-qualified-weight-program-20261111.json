@@ -1,0 +1,399 @@
+{
+  "checkpoint_sha256": "dd924a11b4c220f385b51ffa522daea7c9f3d850e31b162bb5661df483c6d3ee",
+  "created_at": "2026-11-11T18:29:03.476687+00:00",
+  "current_source_sha256": {
+    "saturn-pub/packages/mdb/qualification/audit_wsp_binding.py": "99153e225b999f122341072521961ba3fc4c8083b5b23d8ca19e2b606d6afd65",
+    "saturn-pub/packages/mdb/qualification/submit_wsp_binding.py": "af1a7de72a3a4e6b1701c3be43a5864a45d56b36d05a4ee5c4daf6f11efb46f7",
+    "saturn-pub/packages/mdb/qualification/wsp_binding_audit_worker.py": "accfb0d6c0a7db14e4656d45f558996562d207fb95d5440bc4fe6e82695f5a31",
+    "saturn-pub/packages/mdb/qualification/wsp_binding_protocol.py": "61fceb3df6a8966aca78a2868c54726fccbd0ddcda16c070d1585580e53d5a6c",
+    "saturn-pub/packages/mdb/qualification/wsp_binding_qwen.py": "a06b3b041d801ecc4d195f4411fe73457fddf47de5f1ee13fecc31b53bd43ec5",
+    "saturn-pub/packages/mdb/src/mdb/payload.py": "c3dc3d4a2557d214e5261d81d9970b1a2b07509bb7cd1ab89acb4ab8e90139fa",
+    "saturn-pub/packages/mdb/src/mdb/wsp_binding.py": "2ca6f5cbbee1ae4d9e278b5c6bfb347eb511306531957a33cb6e2bf367505d5d",
+    "saturn-pub/packages/mdb/tests/test_payload_provenance.py": "68f2d08055e3be01a6dc7ee04bd54fdc2f4a0d7c340ace5a8e5ff72a2a36591b",
+    "saturn-pub/packages/mdb/tests/test_wsp_binding.py": "8f8142ca641893d18a4a1a5cb59973205e1fbf4e52812b85e06b34f40443d716",
+    "saturn-pub/packages/mdb/tests/test_wsp_binding_protocol.py": "4f4df1c6743214070baa1ce72ae3a688789b98a6e5b0e8552198cccd85ea8712"
+  },
+  "evidence_plane": {
+    "additional_address_citations": 0,
+    "additional_typed_receipts": 0,
+    "instrument_status": "target-streams-only",
+    "numerical_authority": "dedicated saved-data reader",
+    "run_exit": 0,
+    "timeline_records": {
+      "discovery": 10,
+      "initial_evaluation": 5,
+      "public_replay": 5
+    },
+    "verify_exit": 0
+  },
+  "execution": "hf-cpu-fp32-eager",
+  "files_verified": {
+    "discovery": 146,
+    "initial_evaluation": 81,
+    "public_evaluation": 81
+  },
+  "fitted": "linear applicability selector only; no gradients or optimizer steps",
+  "instrument_status": "observed; supplied-prefix final-digit ranking incomplete for whole-answer preservation",
+  "limits": [
+    "Fixed prompt family; target rewrites preserve carry class.",
+    "Authored roles and response; no automatic semantic discovery.",
+    "Whole-answer collateral remains; discovery scores a supplied-prefix final digit.",
+    "Public replay reproduces an opened split, not a new independent sample.",
+    "Rank one is correction dimensionality, not sparse support or speedup.",
+    "Initial mrun runtime provenance differs from public replay; raw records are unchanged."
+  ],
+  "mechanics_status": "valid with retained initial runtime-provenance correction",
+  "model": "Qwen2.5-1.5B-Instruct",
+  "numerical_comparisons": {
+    "native_vs_restored": {
+      "generated_ids_equal": true,
+      "logits_max_abs_difference": 0
+    },
+    "role-compiled_vs_role-factored": {
+      "generated_ids_equal": true,
+      "logits_max_abs_difference": 0.0000133514404296875
+    }
+  },
+  "profiles": {
+    "discovery": {
+      "archive_bytes": 282677562,
+      "archive_sha256": "cac1ef4ad79cc4f3c7784d2e3124399dce760f5ce18413faf323cbab8074373e",
+      "collection": "artifacts/mdb-role-selector-20261111/discovery-03",
+      "files_manifest_sha256": "67e71715b605ba90d2e366890990ceeff5715549477dafeb55bc5930ea8d2933",
+      "job_id": "job-2a86791b327a",
+      "lease_seconds": 359.02,
+      "payload_sha256": "efd5406f13b3a86b8675a46994630344c21b092633242feceff832d30dc13a04",
+      "peak_rss_mb": 8841,
+      "peak_vram_mb": 0,
+      "request_sha256": "5cb97b0e3477abd950775a969bcd8f798d8a36380c8ec15d165dee461090861b",
+      "runtime_package_sha256": null,
+      "runtime_provenance": "sealed mixed provenance: workspace mrun shadow; see correction",
+      "runtime_wheels": {
+        "mdb_runtime-0.1.0-py3-none-any.whl": "1e64ab11cc7b14607ef37a11424e5d7451141fa2122929ff214f3636b557fc47",
+        "mrun_pub-0.1.2-py3-none-any.whl": "dba51fcc1dde9262f7ebc4e2b2e641dd53e28be42de53d547af6c508fa58fbba",
+        "saturn_pub-0.4.1-py3-none-any.whl": "7deadd93c3f3c40d0b7c16dd148231d7f245b6eb79172a054533f6c0387b6e62"
+      },
+      "source_hashes": {
+        "flux_family_custody.py": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+        "parameter-artifacts.json": "f18104d7ea032c38d9467b97d1ffe511b7d170f191d0928fcc95439c903e9ec9",
+        "preflight.v1.json": "f6c9a667ad9c7ab265a3952e8df3cdd1b608b1e968f76b2e128bae5739329200",
+        "retrieve_weights.py": "b131ad8ff752579f16f03210e3e5906b41efd061b92ca49d66791053b7d0ea41",
+        "upstream.json": "420902a02465855ea34c798cc93e5c171790f782c346915f2373189d0433a6f1",
+        "upstream.npz": "9f4134af28fe685dd3fff49759919a165137fb82e16165229eb6fa394b415eac",
+        "wsp_binding_protocol.py": "61fceb3df6a8966aca78a2868c54726fccbd0ddcda16c070d1585580e53d5a6c",
+        "wsp_binding_qwen.py": "2c54a2930ecfd02a2e0c9b7b1e7d74f1c22b5cf2fdabf4c908ee2c390903b3b6"
+      }
+    },
+    "initial_evaluation": {
+      "archive_bytes": 384365049,
+      "archive_sha256": "555bb5b2a80ef090c62f861745b5adca9f670ee322219b9040054bba5486a34f",
+      "collection": "artifacts/mdb-role-selector-20261111/evaluation-01",
+      "files_manifest_sha256": "a3a6a35170b9b9c08ddeb18229b001f2a6f8d45138aa96ff75ccc26846e4c448",
+      "job_id": "job-dba097b24dcd",
+      "lease_seconds": 365.14,
+      "payload_sha256": "f2aa486264dbac6fdd55ed7ba012c87c6f733a83a0f39c921193fbe5aa83e5a5",
+      "peak_rss_mb": 9832.9,
+      "peak_vram_mb": 0,
+      "request_sha256": "89239baab841addc4d8975cfc66c839f1b62b321a98fff0faa98bd518a61814b",
+      "runtime_package_sha256": null,
+      "runtime_provenance": "sealed mixed provenance: workspace mrun shadow; see correction",
+      "runtime_wheels": {
+        "mdb_runtime-0.1.0-py3-none-any.whl": "1e64ab11cc7b14607ef37a11424e5d7451141fa2122929ff214f3636b557fc47",
+        "mrun_pub-0.1.2-py3-none-any.whl": "dba51fcc1dde9262f7ebc4e2b2e641dd53e28be42de53d547af6c508fa58fbba",
+        "saturn_pub-0.4.1-py3-none-any.whl": "7deadd93c3f3c40d0b7c16dd148231d7f245b6eb79172a054533f6c0387b6e62"
+      },
+      "source_hashes": {
+        "flux_family_custody.py": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+        "frozen-selection.json": "0a80c778e9e9daea05fb061ee0ad877e0c42fcaf4d0cac9212080f3cb08baa0c",
+        "parameter-artifacts.json": "f18104d7ea032c38d9467b97d1ffe511b7d170f191d0928fcc95439c903e9ec9",
+        "preflight.v1.json": "0fd1b3f3da23e96d64c7054416b1f3fa8c6cc01859c06483795ec1377463f816",
+        "retrieve_weights.py": "b131ad8ff752579f16f03210e3e5906b41efd061b92ca49d66791053b7d0ea41",
+        "selected-patch-manifest.json": "768eb9ecc4645f5e11cddda0948296bee108a462e326618e324258ef831c9dbe",
+        "selected.npz": "ebc7a30fbdc7d6bd573ef3faae012f9c62271ce6fd574477fbf856d15b98eafa",
+        "upstream.json": "69d40a2749e6998eca2c5e6225038ca472ba353907b48bb7ac459c8584e4c9f3",
+        "upstream.npz": "9f4134af28fe685dd3fff49759919a165137fb82e16165229eb6fa394b415eac",
+        "wsp_binding_protocol.py": "61fceb3df6a8966aca78a2868c54726fccbd0ddcda16c070d1585580e53d5a6c",
+        "wsp_binding_qwen.py": "a06b3b041d801ecc4d195f4411fe73457fddf47de5f1ee13fecc31b53bd43ec5"
+      }
+    },
+    "public_replay": {
+      "archive_bytes": 384365504,
+      "archive_sha256": "d116fc74d7d2153fa7a2b54f74b09633431823ef0d3091d25d31c8e06cc79f7e",
+      "collection": "artifacts/mdb-role-selector-20261111/evaluation-public-02",
+      "files_manifest_sha256": "93b50c6205fe250d1dcdb45b280a1f61f8bb108187f16f74cb672821e5466edc",
+      "job_id": "job-eff6e11ba683",
+      "lease_seconds": 361.73,
+      "payload_sha256": "046ab5a51109ee745e232983a6f2f661427735dbf205f768d4eb89b8c5a894aa",
+      "peak_rss_mb": 9387,
+      "peak_vram_mb": 0,
+      "request_sha256": "f3e5d9a241df2d6813ff033efa40eb405438cf0fa859a0a2d8768cc04b0fd40e",
+      "runtime_package_sha256": {
+        "mdb": "f1e57d007f7679f3bbb6ada2cc7b0eb034bb06db5a22605ba494bd303178d55d",
+        "mrun": "7ff3f73e259864f3469fbede1596a846652821c733eea6290dbacc05b720c8b1",
+        "saturn_pub": "5d3904f0d3e41dc08737a7394b54fb3a77137b2154d7ad984758f1a8c4105283"
+      },
+      "runtime_provenance": "installed public packages",
+      "runtime_wheels": {
+        "mdb_runtime-0.1.0-py3-none-any.whl": "607e9bad8e65b2cca058d44812761bf3e6da2439ffbf98e68df9b1d5640aadc4",
+        "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+        "saturn_pub-0.4.1-py3-none-any.whl": "7deadd93c3f3c40d0b7c16dd148231d7f245b6eb79172a054533f6c0387b6e62"
+      },
+      "source_hashes": {
+        "flux_family_custody.py": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+        "frozen-selection.json": "0a80c778e9e9daea05fb061ee0ad877e0c42fcaf4d0cac9212080f3cb08baa0c",
+        "parameter-artifacts.json": "f18104d7ea032c38d9467b97d1ffe511b7d170f191d0928fcc95439c903e9ec9",
+        "preflight.v1.json": "0fd1b3f3da23e96d64c7054416b1f3fa8c6cc01859c06483795ec1377463f816",
+        "retrieve_weights.py": "b131ad8ff752579f16f03210e3e5906b41efd061b92ca49d66791053b7d0ea41",
+        "selected-patch-manifest.json": "768eb9ecc4645f5e11cddda0948296bee108a462e326618e324258ef831c9dbe",
+        "selected.npz": "ebc7a30fbdc7d6bd573ef3faae012f9c62271ce6fd574477fbf856d15b98eafa",
+        "upstream.json": "69d40a2749e6998eca2c5e6225038ca472ba353907b48bb7ac459c8584e4c9f3",
+        "upstream.npz": "9f4134af28fe685dd3fff49759919a165137fb82e16165229eb6fa394b415eac",
+        "wsp_binding_protocol.py": "61fceb3df6a8966aca78a2868c54726fccbd0ddcda16c070d1585580e53d5a6c",
+        "wsp_binding_qwen.py": "a06b3b041d801ecc4d195f4411fe73457fddf47de5f1ee13fecc31b53bd43ec5"
+      }
+    },
+    "reader": {
+      "archive_bytes": 128369,
+      "archive_sha256": "8a1522975b8b135054ba7cc9321f2b2bcf5b4dd84d0c8ee453461a08f76f27e3",
+      "collection": "artifacts/mdb-role-selector-20261111/audit-04",
+      "files_manifest_sha256": "d78a6fe493713d1755362306918fdd7bcac378c7f93715d76e06fb288d29ddc6",
+      "job_id": "job-f471e27c5921",
+      "lease_seconds": 21.74,
+      "payload_sha256": "2a5229d9b992567ac92f072d556048e398e63430b4bea57956b3bad127fae0db",
+      "peak_rss_mb": 940.3,
+      "peak_vram_mb": 0,
+      "request_sha256": "669fcf86216476645b6878ca4580cbc966dbb85040bef006039f0999b880f278",
+      "runtime_package_sha256": {
+        "mdb": "f1e57d007f7679f3bbb6ada2cc7b0eb034bb06db5a22605ba494bd303178d55d",
+        "mrun": "7ff3f73e259864f3469fbede1596a846652821c733eea6290dbacc05b720c8b1",
+        "saturn_pub": "5d3904f0d3e41dc08737a7394b54fb3a77137b2154d7ad984758f1a8c4105283"
+      },
+      "runtime_provenance": "installed public packages",
+      "runtime_wheels": {
+        "mdb_runtime-0.1.0-py3-none-any.whl": "607e9bad8e65b2cca058d44812761bf3e6da2439ffbf98e68df9b1d5640aadc4",
+        "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+        "saturn_pub-0.4.1-py3-none-any.whl": "7deadd93c3f3c40d0b7c16dd148231d7f245b6eb79172a054533f6c0387b6e62"
+      },
+      "source_hashes": {
+        "audit_wsp_binding.py": "99153e225b999f122341072521961ba3fc4c8083b5b23d8ca19e2b606d6afd65",
+        "flux_family_custody.py": "e13c79dcb7e41d2583407f8adf2a5e3dae28cdbe6a51342fad1c78ee009ff12a",
+        "preflight.v1.json": "c79a36a8bb91dac2e4d577644fc3bf8fb7813a04696e4a0ab0a2b5401b346cb9",
+        "wsp_binding_audit_worker.py": "accfb0d6c0a7db14e4656d45f558996562d207fb95d5440bc4fe6e82695f5a31",
+        "wsp_binding_protocol.py": "61fceb3df6a8966aca78a2868c54726fccbd0ddcda16c070d1585580e53d5a6c"
+      }
+    }
+  },
+  "program": {
+    "column": 0,
+    "operand": "a",
+    "source": 7,
+    "target": 3
+  },
+  "public_runtime_replay_comparison": {
+    "arms": {
+      "broad": {
+        "generated_ids_equal": true,
+        "saved_full_logits_max_abs_difference": 0
+      },
+      "native": {
+        "generated_ids_equal": true,
+        "saved_full_logits_max_abs_difference": 0
+      },
+      "restored": {
+        "generated_ids_equal": true,
+        "saved_full_logits_max_abs_difference": 0
+      },
+      "role-compiled": {
+        "generated_ids_equal": true,
+        "saved_full_logits_max_abs_difference": 0
+      },
+      "role-factored": {
+        "generated_ids_equal": true,
+        "saved_full_logits_max_abs_difference": 0
+      }
+    },
+    "edited_parameter_manifests_equal": true,
+    "inputs_bytes_equal": true,
+    "scope": "same frozen candidate and inputs, public-runtime reproduction, not another independent split",
+    "selected_factors_bytes_equal": true
+  },
+  "remaining_changed_controls": [
+    {
+      "a": 432,
+      "b": 262,
+      "digit": 3,
+      "expected": "694",
+      "matched": false,
+      "original": "694",
+      "outputs": {
+        "broad": "794",
+        "native": "694",
+        "restored": "694",
+        "role-compiled": "700",
+        "role-factored": "700"
+      },
+      "potential_source_scalars": {
+        "broad": 0.28012477148791826,
+        "native": -0.09537281120833412,
+        "restored": -0.09537281120833412,
+        "role-compiled": -0.09537281120833412,
+        "role-factored": -0.09537281120833412
+      },
+      "role": "a.tens"
+    }
+  ],
+  "results": {
+    "broad": {
+      "control_mean_kl": 0.7403218303483824,
+      "control_repairs": 1,
+      "controls_identical_to_native": 46,
+      "generated_control_correct": 46,
+      "generated_original_target_correct": 0,
+      "generated_target_correct": 8,
+      "new_control_errors": 9
+    },
+    "native": {
+      "control_mean_kl": 0,
+      "control_repairs": 0,
+      "controls_identical_to_native": 56,
+      "generated_control_correct": 54,
+      "generated_original_target_correct": 8,
+      "generated_target_correct": 0,
+      "new_control_errors": 0
+    },
+    "restored": {
+      "control_mean_kl": 0,
+      "control_repairs": 0,
+      "controls_identical_to_native": 56,
+      "generated_control_correct": 54,
+      "generated_original_target_correct": 8,
+      "generated_target_correct": 0,
+      "new_control_errors": 0
+    },
+    "role-compiled": {
+      "control_mean_kl": 0.000029785538179019948,
+      "control_repairs": 0,
+      "controls_identical_to_native": 55,
+      "generated_control_correct": 53,
+      "generated_original_target_correct": 0,
+      "generated_target_correct": 8,
+      "new_control_errors": 1
+    },
+    "role-factored": {
+      "control_mean_kl": 0.000029785423915899346,
+      "control_repairs": 0,
+      "controls_identical_to_native": 55,
+      "generated_control_correct": 53,
+      "generated_original_target_correct": 0,
+      "generated_target_correct": 8,
+      "new_control_errors": 1
+    }
+  },
+  "runtime_correction": {
+    "path": "artifacts/mdb-role-selector-20261111/runtime-provenance-correction.json",
+    "sha256": "3b54b84d915bdd2c3768add0cbca54db1e6afd480f48883691bac8bb023c22e1"
+  },
+  "saved_audits": {
+    "artifacts/mdb-role-selector-20261111/audit-04/extracted/wsp-binding-audit-job-f471e27c5921/discovery-audit.json": "163f6ec6cdb1a33d48190962efd87b359dbf780651e190e7a4ac76f263ab6f8d",
+    "artifacts/mdb-role-selector-20261111/audit-04/extracted/wsp-binding-audit-job-f471e27c5921/evaluation-audit.json": "7325919d43968f42d94890c182d66e501088043b9296b4b01c01b4767c95629d",
+    "artifacts/mdb-role-selector-20261111/audit-04/extracted/wsp-binding-audit-job-f471e27c5921/initial-evaluation-audit.json": "8a9d360459d4434b7ed32fd70081b0c3c0999ef2be25301f38a2006dfb5c8e42",
+    "artifacts/mdb-role-selector-20261111/audit-04/extracted/wsp-binding-audit-job-f471e27c5921/replay-comparison.json": "ef8d66ea57fe8d125b47b013ee970c7fe7f575cc8f06e049d089ca4160b50fb8"
+  },
+  "schema": "mdb-role-qualified-weight-program-qualification-v1",
+  "scoped_diagnostics": {
+    "broad": {
+      "generated_control_correct": 24,
+      "generated_target_correct": 4
+    },
+    "native": {
+      "generated_control_correct": 31,
+      "generated_target_correct": 0
+    },
+    "other-only": {
+      "generated_control_correct": 28,
+      "generated_target_correct": 0
+    },
+    "source-only": {
+      "generated_control_correct": 29,
+      "generated_target_correct": 4
+    }
+  },
+  "selection": {
+    "arm": "candidate1",
+    "development_a": [
+      120,
+      308,
+      471,
+      500,
+      503,
+      507,
+      523,
+      525,
+      527,
+      530,
+      534,
+      535,
+      553,
+      554,
+      557,
+      570,
+      574,
+      575,
+      638,
+      663,
+      667,
+      668,
+      678
+    ],
+    "direction_sha256": "9f4134af28fe685dd3fff49759919a165137fb82e16165229eb6fa394b415eac",
+    "factors_sha256": "ebc7a30fbdc7d6bd573ef3faae012f9c62271ce6fd574477fbf856d15b98eafa",
+    "job_id": "job-2a86791b327a",
+    "manifest_sha256": "768eb9ecc4645f5e11cddda0948296bee108a462e326618e324258ef831c9dbe",
+    "policy": "maximum development rewritten-target log probability minus control KL; six fixed candidates",
+    "schema": "mdb-role-selector-selection-v1",
+    "selected": {
+      "dose": 1,
+      "key": "role0"
+    },
+    "terminal_status": "not-evaluated"
+  },
+  "selector_samples": {
+    "historical_positive": 16,
+    "historical_preservation": 128,
+    "new_positive": 4,
+    "other_preservation": 64,
+    "structured_preservation": 96
+  },
+  "split": {
+    "development_blocks": 4,
+    "development_rows": 35,
+    "fresh_blocks": 8,
+    "fresh_controls": 56,
+    "fresh_first_operands_disjoint": true,
+    "fresh_targets": 8,
+    "historical_diagnostic_controls": 3,
+    "new_development_targets": 4
+  },
+  "supplied": "historical role/source account, digit request, arithmetic labels and frozen response",
+  "terminal_status": "not-evaluated",
+  "tests": {
+    "installed_wheel_regressions": {
+      "groups": [
+        "selector: 2",
+        "contrast protocol: 1",
+        "package provenance: 2"
+      ],
+      "passed": 5
+    },
+    "payload_and_public_mrun": {
+      "passed": 14,
+      "seconds": 1.06
+    },
+    "research_mechanics": {
+      "passed": 10,
+      "seconds": 1.32
+    },
+    "ruff": "passed"
+  },
+  "trend_status": "all eight fresh rewrites retained; new control errors decrease from nine to one"
+}

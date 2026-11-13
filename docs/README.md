@@ -21,6 +21,7 @@ test suites and migration details. Installing one package does not install the o
 - [Custom backends: forward, capture, intervention and local debugger](../packages/mdb/docs/BACKENDS.md)
 - [Stateful TransformerLens layer debugger](../packages/mdb/docs/TRANSFORMERLENS-DEBUGGER.md)
 - [Usage: execution, history, memory, debugger and offline tools](../packages/mdb/docs/USAGE.md)
+- [Symbol table capabilities, computation forecasts and measured results](../packages/mdb/docs/SYMBOL-TABLE-CAPABILITIES.md)
 - [Experiment walkthroughs: rewind, residual edits, sibling memory and diffusion replay](../packages/mdb/docs/EXPERIMENTS.md)
 - [J-space reader/writer API](../packages/mdb/docs/JACOBIAN-WORKSPACE.md) and [reproducible proof](../packages/mdb/experiments/jacobian-reader-writer/README.md)
 - [Qualification records and model/backend boundaries](../packages/mdb/docs/QUALIFICATION.md)

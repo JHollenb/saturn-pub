@@ -1,0 +1,32 @@
+{
+  "schema": "mdb-workflow-storage-ablation-v1",
+  "job_id": "job-0b6a1fdc0135",
+  "request_sha256": "f8dc8e3305ab127be0d32a6209f82c5939550a49b81381b98f3ceb8d88ee8e2b",
+  "archive_sha256": "d2575fb5ba1f23b00fe0c694bfc8f3a3208265fd83afd821cfe842d054f6416f",
+  "report": "../../../../artifacts/mdb-workflow-comparison-20261110/storage-02/extracted/followup-result/storage.json",
+  "design": "same three fixed gain probes on one constructed CPU FP64 organism; medium x transaction-grouping 2x2; rotated order, one warmup and four retained repetitions per cell",
+  "medians_seconds": {
+    "hdd_per_probe": 10.151827621972188,
+    "hdd_shared_study": 6.375292256474495,
+    "tmpfs_per_probe": 0.021761163137853146,
+    "tmpfs_shared_study": 0.01565187005326152
+  },
+  "python_os_fsync": {
+    "calls_per_three_probe_block": {"per_probe": 153, "shared_study": 87},
+    "median_seconds": {"hdd_per_probe": 10.09249721467495, "hdd_shared_study": 6.339387452695519},
+    "scope": "wall time inside unchanged Python os.fsync calls; not syscall tracing or every storage operation"
+  },
+  "native_work": {"measured_and_warmup_forwards": 60, "plain_reference_forwards": 3, "oracle_generation_forwards": 2},
+  "mechanics_status": "valid; all twenty blocks match reference outputs and restore original parameter identity",
+  "instrument_status": "observed",
+  "trend_status": "HDD synchronization dominates this tiny-model record profile; grouping reduces synchronization count and elapsed time",
+  "terminal_status": "no end-to-end MDB workflow advantage claimed",
+  "limitations": [
+    "Tmpfs changes persistence semantics and is not a crash-durable replacement for HDD.",
+    "Post-timing tmpfs copy/hash verification is separate paid custody work; copytree is not an atomic/fsynced publication protocol.",
+    "Not every tensor-archive NPY write is fsynced by the public API.",
+    "Shared study predeclares all candidates; this grouping does not directly replace adaptive per-probe studies.",
+    "Host was shared with the short task-calibration job; retain individual timings and do not infer universal latency.",
+    "Removing synchronization does not remove all MDB overhead: plain three-probe reference total is 0.0005115 seconds in this run."
+  ]
+}

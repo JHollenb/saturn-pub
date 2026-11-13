@@ -1,0 +1,122 @@
+{
+  "artifact_root": "artifacts/mdb-workflow-comparison-20261110/pilot-03",
+  "by_arm": {
+    "mdb": {
+      "editor_seconds": 248.2792369578965,
+      "input_tokens": 82050,
+      "native_calls": 16,
+      "native_rows": 256,
+      "output_tokens": 6864,
+      "program_seconds": 53.900128870271146,
+      "script_errors": 0,
+      "specimens": 3,
+      "sum_preservation_mse_change": -0.199776004650601,
+      "sum_task_mse_change": -0.15570749207193674
+    },
+    "pytorch_hooks": {
+      "editor_seconds": 249.82253862568177,
+      "input_tokens": 79343,
+      "native_calls": 13,
+      "native_rows": 208,
+      "output_tokens": 7435,
+      "program_seconds": 0.017912898678332567,
+      "script_errors": 0,
+      "specimens": 3,
+      "sum_preservation_mse_change": -0.199776004650601,
+      "sum_task_mse_change": -0.15570749207193674
+    },
+    "wsp_python": {
+      "editor_seconds": 259.5340270427987,
+      "input_tokens": 78375,
+      "native_calls": 10,
+      "native_rows": 160,
+      "output_tokens": 7456,
+      "program_seconds": 0.01629038341343403,
+      "script_errors": 0,
+      "specimens": 3,
+      "sum_preservation_mse_change": -0.199776004650601,
+      "sum_task_mse_change": -0.15570749207193674
+    }
+  },
+  "calibration_history": "Sibling root and pilot-02 retain rejected model readiness, bootstrap failure, numerical-kernel incompatibilities and short deadlines. No final evaluation released in calibration.",
+  "checks": {
+    "focused_tests": "7 passed",
+    "ruff": "passed",
+    "standard_evidence_pack": "run and verify report evidence-incomplete-empty-target for all five scientific result trees"
+  },
+  "claim_scope": "Three paired constructed, untrained networks; no pretrained WSP or general tool-superiority claim.",
+  "date": "2026-11-10",
+  "editor": {
+    "call_timeout_seconds": 180,
+    "model": "gpt-6-astra",
+    "parallel_inference_calls": 3,
+    "provider_random_seed": "not exposed by CLI; fresh calls, not fixed-seed replication",
+    "reasoning_effort": "high"
+  },
+  "editor_calls": 18,
+  "heldout_function_rows_per_specimen": 48,
+  "heldout_preservation_rows_per_specimen": 48,
+  "independent_reader": {
+    "comparison_json_sha256": "02e3074ea3bbbb777b926c287c415211c582d59e6beb229e558ad3dce75a170d",
+    "independent_numpy_model_evaluations": 102,
+    "maximum_numpy_output_difference": 8.881784197001252e-16,
+    "maximum_probe_output_difference": 8.881784197001252e-16,
+    "maximum_scalar_mse_difference": 2.7755575615628914e-17,
+    "native_torch_forwards": 0
+  },
+  "instrument_status": "execution-qualified; repair-quality instrument reaches numerical ceiling",
+  "jobs": {
+    "audit": {
+      "archive_sha256": "a53befd9d956f68e27c4443ccfd89761019e194e2560b50d96d8c203a9b15214",
+      "files_manifest_sha256": "6ae06c649044fead786d093626c6c6933eca956af4c3c88cb993c132a5292e50",
+      "job_id": "job-71ca0d153c12",
+      "request_sha256": "e843c59677793c01eeb72fe5f89740d0e25f30dff06236730ef9958ee7e27e3c"
+    },
+    "evaluate": {
+      "archive_sha256": "0376577f5281e1b80b89e76343961e67af7d1a0a60a08ecdaa62e919bb06564d",
+      "files_manifest_sha256": "14151fd0891b3d2076652f62da9a432b763a1410545cb571debea51d23b9d308",
+      "job_id": "job-b94a98e068a4",
+      "request_sha256": "2c161c19da158e44ff5cf4ca7008b71b3020a7dbcd6ece7fa5bdd4d11d7868e9"
+    },
+    "prepare": {
+      "archive_sha256": "7de2a5c31171a23b3df19779ee28284ea3003a5ccd7834b7e9aa6ce8e3fe7572",
+      "files_manifest_sha256": "4e06e7f1130ab89103bd064e8e0bccf756542bb3ff35345da9a905c5b0e65a2a",
+      "job_id": "job-2f9a322739b3",
+      "request_sha256": "661089c419410701e70ad6bb206a8a63f37451e153037b72b9c69b269c23a1e2"
+    },
+    "search-round-1": {
+      "archive_sha256": "dbb4ffdc44bdd252f6e885c811d694ff3d42142c31a20553f981560d80d6d904",
+      "files_manifest_sha256": "cc317eafea9e7b7186bbe282f73d384b10494682d07ef4c2054adaeb01071cdd",
+      "job_id": "job-3f5b65584818",
+      "request_sha256": "acb845bfd5d852363b2cfba176b6c9cadd64d82ada34537c205aaf258213d5ef"
+    },
+    "search-round-2": {
+      "archive_sha256": "b9b5e8368dfdaf1b8d08297c40429f0239f8ade8c8a5818f128c4e5b29ebcef0",
+      "files_manifest_sha256": "d66376fadff4234db434f3609cd92522aa1984ac4822501d46bab6c23d0c631d",
+      "job_id": "job-7d066f2e08c0",
+      "request_sha256": "85d03ad8be0311c4e2eaf2f57b404c6394f02ea45d317b81f35e7c3b4e83a033"
+    }
+  },
+  "limits": [
+    "Two faulted specimens plus one healthy control; not a powered frequency or equivalence study.",
+    "Only a supplied two-site affine gain grammar and constructed function family.",
+    "No autograd or training; explicit analytical sensitivities allowed.",
+    "Equal editor-call/time and native-call ceilings; actual token and row costs retained, not equal total computation.",
+    "Persistent-HDD workflow profile includes stronger MDB bookkeeping; no isolated filesystem attribution.",
+    "No immutable provider revision or reproducible sampling seed exposed by the CLI.",
+    "Provider dollar charges and overall research-development labor are outside available measurements.",
+    "Independent reader is a separate implementation by the same investigation, not external replication."
+  ],
+  "mechanics_status": "collected inventories and model/editor source pins verified; independent numerical comparisons retained",
+  "numerical_programs": 18,
+  "plan_identity": "a60702b03f6d70a3cbd0a12bef0c517ea336f0f7fe2cb1d44940e7c9e56a02c9",
+  "runtime_wheels": {
+    "mdb_runtime-0.1.0-py3-none-any.whl": "d3c1daeb21bed3201808fc4e8da237336845bf496357b3e91e7fcbd9491568f1",
+    "mrun_pub-0.1.2-py3-none-any.whl": "2e474bfaacc781905da723fa29db51fc885972aa8a56f9001c57041987e7f65b",
+    "saturn_pub-0.4.1-py3-none-any.whl": "3893aca4723ad107b0a5ce97856af7d25a7f08da73fa505842a16c6717e3d6ed"
+  },
+  "schema": "mdb-workflow-comparison-qualification-v1",
+  "specimens": 3,
+  "terminal_status": "practical MDB advantage not established by this pilot",
+  "trend_status": "same observed repair quality; MDB uses more discovery forwards and numerical-program time; fewer output tokens offset by more input tokens"
+}

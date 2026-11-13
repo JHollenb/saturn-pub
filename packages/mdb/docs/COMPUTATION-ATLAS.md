@@ -1,10 +1,82 @@
 # Computation atlas
 
+The [prospective writer-family campaign](FLUX-PROSPECTIVE-WRITER-FAMILY.md)
+connects source-resolved joint0 equations, a frozen token-address resolver and
+complete image continuations. All eighteen route inequalities and six selected
+residual/MLP predictions held across four primary contexts and two separate shape
+probes. Thirty-six sealed numerical futures matched separate native execution
+exactly. Its combined atlas has 56 explicit occurrences, with source cohorts and
+strict applicability retained; the finite prospective conclusion remains separate
+from the atlas's generic candidate status and uncalibrated object semantics.
+
+The [family protocol compiler](COMPUTATION-FAMILY-PROTOCOLS.md) compares that
+sequential text writer with an [early parallel image writer](FLUX-PARALLEL-RELATION-FAMILY.md).
+It validates supplied formation DAGs, typed projection stages, held-port
+candidate menus and separate historical score domains without a model run.
+It reproduces PQP and RA selections while keeping source-copy anchors,
+receiving closure and nonlinear continuation distinct. This is a metadata
+prototype; it does not infer topology, generate semantic names or expand
+an occurrence's applicability.
+
 For the diffusion research implications and record requirements, see
 [diffusion symbol-table lessons](DIFFUSION-SYMBOL-TABLE-LESSONS.md).
 Its 18 curated causal observations remain campaign records; automatic import into
 this equation-catalog atlas is an open integration task. Their clocks, receiving
 states, consumers and counterexamples must survive that integration.
+
+The [frozen Explorer predictor bridge](FLUX-FROZEN-READER-BRIDGE.md) adds an
+existing-evidence comparison across eight binding conditions. Its unchanged
+reader/writer loses all eight velocity and image endpoints to holding own v2,
+while retaining part of the signed binding response. Hold preserves most of the
+late combined contrast. These are curated causal/response observations and
+counterexamples, not newly qualified exact equation-catalog records or a
+portable learned law.
+
+The [computation viewer](COMPUTATION-VIEWER.md) now joins the supplied curated
+records to their saved branch occurrences and image futures. `mdb view` exposes
+endpoint, signed-response and full-interaction comparisons, applicability and
+counterexamples. Exact run/model/case links are distinct from atlas qualification
+and runtime symbol authority; browsing does not promote a record or permit a write.
+
+The [contextual diffusion correction workflow](FLUX-INTERACTION-CORRECTIONS.md)
+now explicitly imports five new complete attention-equation occurrences through
+the public catalogue and atlas APIs. The older 18 records remain unchanged.
+These five retain source program, receiving-state anchor, exact entry cut,
+clock, attention/MLP writer roles, native consumer horizon, target/collateral
+observations and counterexamples. Five exact-context queries match uniquely;
+ten changed-clock/receiving-state queries match zero. This is an explicit
+maintainer import, not automatic semantic naming or a transferable rule.
+
+The [step1 pulse/writer](FLUX-STEP1-WRITERS.md) and
+[common-shape-future RAMT](FLUX-STEP1-OVERLAP.md) workflows add twelve explicit
+equation occurrences: four joint0 sequential frozen-return exits and eight
+single6 parallel gated exits. Paired working-text futures retain conditional
+target/collateral effects and pulse-repair counterexamples. Twelve exact
+queries match;24changed-clock/receiving-state queries abstain. Full-field
+numerical comparisons and two predicted-corner image futures do not expand
+source-observed A/M into independent formation forecasts or semantic labels.
+
+The [suffix-context workflow](FLUX-SUFFIX-CONTEXT.md) separates fixed image
+pairs, working text and latent, then explores predicted final latents with no
+new denoiser/readout calls. Sixteen local native Euler occurrences and four
+new native checks reuse `flux.euler.commit.bf16-reference.v1`; twenty separate
+curated causal/response pairs retain nonlinear pixel forecasts and degraded
+large-latent contexts. Exact arithmetic, sign, magnitude-change prediction and
+semantic instrument quality remain separate evidence fields.
+
+The [fixed correction receiver workflow](FLUX-RECEIVER-CROSS.md) adds sixteen
+occurrences of the same generic image-exit equation, with correction source,
+receiving state, signed dose and observer coverage explicit. Sixteen exact and
+thirty-two changed-context queries preserve applicability. Both competing
+directional models miss four of eight new cross cases, so their counterexamples
+remain attached separately from the accurate numerical write predictions.
+
+The [late interaction writer workflow](FLUX-INTERACTION-WRITERS.md) reuses the
+same generic parallel-gated-write law for eight new step3/single18 occurrences.
+Each keeps its operand recipe, receiving cut, numerical comparison and native
+image continuation. Both failed outgoing-text-dominance forecasts remain
+counterexamples; changing the receiver or clock abstains. The scout's two
+energy-ranked candidates remain separate curated trace records.
 
 `mdb.computation_atlas` imports explicitly selected, source-qualified
 `EquationCatalog` observations across runs. It stores immutable metadata using
@@ -165,3 +237,22 @@ accepts the Python API's provenance and supplement mappings as finite JSON.
 Importing and using this metadata API requires neither NumPy nor a model
 framework. Each ingestion/comparison accepts at most 256 records, and imported
 equation files are limited to 8 MiB. These are metadata integrity bounds.
+
+For the executable diffusion example, use
+`qualification/publish_flux_contextual_atlas.py RUN AUDIT NEW_OUTPUT`.
+Its numerical materialization uses NumPy and the already audited arrays; it
+performs zero model forwards. The resulting atlas can be queried without model
+frameworks through the ordinary API/CLI. Complete attention-field comparisons
+are separate from the observed RGB continuation, which is never presented as
+an independent image forecast.
+
+The same materializer accepts text-program and conditioning-program audits.
+The [text-program workflow](FLUX-TEXT-PROGRAM.md) adds four complete text A/M
+occurrences and six complete conditioning-to-initial-text occurrences. Generic
+law IDs are `flux.parallel-attention.reference.v1`,
+`flux.gated-MLP.reference.v1` and
+`flux.context-projector.linear.reference.v1`; routes distinguish single8 text
+updates from step3 conditioning projection. Ten exact-context queries and
+twenty changed-clock/receiving-state queries preserve applicability boundaries.
+Source encodings are observed, and complete predicted A+M share a single native
+future per role. This is explicit curation, not automatic rule induction.
