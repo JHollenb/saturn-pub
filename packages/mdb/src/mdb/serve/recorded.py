@@ -300,7 +300,7 @@ class SessionModel:
         (shown as unresolved). Absent tables read as empty. Sorted by (kind, id): the two tables
         share no insertion order."""
         from ..core import records as core_records  # declares the core kinds ("occurrence")
-        from ..core.index import NotIndexed, get_record
+        from ..core.index import get_record
 
         rows = []
         try:

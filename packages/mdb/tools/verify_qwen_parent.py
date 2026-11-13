@@ -4,8 +4,8 @@ from hashlib import sha256
 import json
 from pathlib import Path
 
-from mdb.bench_verify import verify
-from mdb.circuit_runtime import DirectoryArtifactStore
+from mdb_lanes.bench_verify import verify
+from mdb_lanes.circuit_runtime import DirectoryArtifactStore
 
 
 def main():

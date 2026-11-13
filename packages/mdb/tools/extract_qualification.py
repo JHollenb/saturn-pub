@@ -6,7 +6,7 @@ from extract_runtime import rewrite
 from _upstream import upstream_checkout
 
 root = Path(__file__).resolve().parents[1]
-destination = root / "qualification"
+destination = root.parent / "mdb-lanes" / "qualification"
 destination.mkdir(exist_ok=True)
 upstream = upstream_checkout()
 for family, directory in (("qwen", "2026-10-01-open-bench"), ("families", "2026-10-01-open-bench-families")):

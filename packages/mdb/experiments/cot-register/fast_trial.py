@@ -10,11 +10,11 @@ from pathlib import Path
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from mdb.bench import BenchSession
-from mdb.bench_jacobian import application_profile
-from mdb.bench_pointer import BenchPointer
-from mdb.bench_verify import verify
-from mdb.jacobian_io import FrozenJacobianLens
+from mdb_lanes.bench import BenchSession
+from mdb_lanes.bench_jacobian import application_profile
+from mdb_lanes.bench_pointer import BenchPointer
+from mdb_lanes.bench_verify import verify
+from mdb_lanes.jacobian_io import FrozenJacobianLens
 
 support = runpy.run_path("trial_support.py")
 sha_file, save_json = support["sha_file"], support["save_json"]
@@ -22,8 +22,8 @@ timed_step, capture_view = support["timed_step"], support["capture_view"]
 
 
 def install_hash_accounting(model):
-    import mdb.jacobian_io as io
-    import mdb.jacobian_workspace as workspace
+    import mdb_lanes.jacobian_io as io
+    import mdb_lanes.jacobian_workspace as workspace
     geometry = tuple(model.lm_head.weight.shape)
     counter = {"vocabulary_tensor_hash_calls": 0, "vocabulary_tensor_hash_bytes": 0}
     for module, name in ((io, "_header_tensor_sha256"), (io, "tensor_payload_identity"),

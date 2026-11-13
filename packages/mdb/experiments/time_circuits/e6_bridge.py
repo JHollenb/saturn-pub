@@ -3,7 +3,7 @@ from time import perf_counter
 
 import torch
 
-from mdb.research_session import NativeResearchSession, tensor_sha256
+from mdb_lanes.research_session import NativeResearchSession, tensor_sha256
 
 
 def graph_reference(graph, *, identity, prompt, replacement, completeness, influence):

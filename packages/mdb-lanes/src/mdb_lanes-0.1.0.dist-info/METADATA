@@ -1,0 +1,4 @@
+Metadata-Version: 2.1
+Name: mdb-lanes
+Version: 0.1.0
+Summary: Source-tree metadata of mdb-lanes: with this src directory on sys.path the lane entry points and version resolve as for an editable install (see lanes_compat.py). A built wheel carries its own metadata.

@@ -1,7 +1,7 @@
 """The engine CLI and package exports reach lane code only through entry points.
 
 ``mdb.core.plugins`` reads the ``mdb.lanes`` (verbs) and ``mdb.lanes.exports`` (attributes)
-groups. In this source tree they come from the stub ``mdb_lanes_compat-0.0.0.dist-info`` written
+groups. In this source tree they come from the stub ``mdb_lanes-0.1.0.dist-info`` written
 from ``mdb/lanes_compat.py``; after the split they come from ``packages/mdb-lanes``.
 """
 from __future__ import annotations
@@ -37,8 +37,16 @@ def no_plugin(monkeypatch):
     cached.cache_clear()
 
 
+@pytest.fixture()
+def plugin():
+    """The lane plug-in, present: skipped when the engine is tested without mdb-lanes."""
+    plugins.clear()
+    if not plugins.installed():
+        pytest.skip("mdb-lanes is not on the path; plug-in dispatch has nothing to dispatch to")
+
+
 def test_the_stub_distribution_matches_the_shim_tables():
-    lanes_compat = pytest.importorskip("mdb.lanes_compat")
+    lanes_compat = pytest.importorskip("mdb_lanes.lanes_compat")
     stub = lanes_compat.stub_dir()
     for name, text in lanes_compat.stub_files().items():
         assert (stub / name).read_text() == text, f"stale {name}: python -m mdb.lanes_compat --write"
@@ -68,7 +76,7 @@ def test_a_lane_export_without_the_plugin_names_mdb_lanes(no_plugin):
     assert mdb.attach.__module__ == "mdb.ops.debugger"
 
 
-def test_lanes_lists_and_runs_plugin_verbs(capsys):
+def test_lanes_lists_and_runs_plugin_verbs(capsys, plugin):
     assert cli.main(["lanes"]) == 0
     listed = capsys.readouterr().out.split()
     assert {"project", "bench", "open", "debug", "capabilities", "help"} <= set(listed)
@@ -77,7 +85,7 @@ def test_lanes_lists_and_runs_plugin_verbs(capsys):
     assert out.out.strip() and not out.err
 
 
-def test_a_bare_legacy_verb_falls_through_with_one_notice(capsys):
+def test_a_bare_legacy_verb_falls_through_with_one_notice(capsys, plugin):
     assert cli.main(["help"]) == 0
     out = capsys.readouterr()
     assert out.err.strip().splitlines() == [
@@ -85,12 +93,12 @@ def test_a_bare_legacy_verb_falls_through_with_one_notice(capsys):
     assert out.out.strip()
 
 
-def test_an_unknown_verb_exits_2(capsys):
+def test_an_unknown_verb_exits_2(capsys, plugin):
     assert cli.main(["no-such-verb"]) == 2
     assert "unknown verb" in capsys.readouterr().err
 
 
-def test_lane_exports_resolve_through_the_entry_point_group():
+def test_lane_exports_resolve_through_the_entry_point_group(plugin):
     # mdb.project before the split, mdb_lanes.project after it: whatever the group declares.
     declared = plugins.entries(plugins.EXPORT_GROUP)["Project"].value.split(":")[0]
     assert _run("import mdb; print(mdb.Project.__module__, mdb.StateGraph.__name__)").split() \

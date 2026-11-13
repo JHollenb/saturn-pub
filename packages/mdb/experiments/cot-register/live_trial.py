@@ -11,11 +11,11 @@ from pathlib import Path
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from mdb.bench import BenchSession
-from mdb.bench_jacobian import application_profile
-from mdb.bench_verify import verify
-from mdb.debugger_render import frame
-from mdb.jacobian_io import FrozenJacobianLens
+from mdb_lanes.bench import BenchSession
+from mdb_lanes.bench_jacobian import application_profile
+from mdb_lanes.bench_verify import verify
+from mdb_lanes.debugger_render import frame
+from mdb_lanes.jacobian_io import FrozenJacobianLens
 
 
 def sha_file(path):

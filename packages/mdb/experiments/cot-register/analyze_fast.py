@@ -31,8 +31,8 @@ def main():
     sys.path.insert(0, str(args.installed.resolve()))
     sys.meta_path.insert(0, NoUpstream())
     import mdb
-    from mdb.bench_pointer import BenchPointer
-    from mdb.bench_verify import verify
+    from mdb_lanes.bench_pointer import BenchPointer
+    from mdb_lanes.bench_verify import verify
     if not Path(mdb.__file__).resolve().is_relative_to(args.installed.resolve()):
         raise RuntimeError("audit must import the independently installed wheel")
     job = args.job.resolve()

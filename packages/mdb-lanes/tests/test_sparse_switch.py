@@ -1,0 +1,1255 @@
+import pytest
+
+torch = pytest.importorskip("torch")
+
+from mdb_lanes.sparse_switch import (  # noqa: E402
+    SCHEMA,
+    SparseSwitchView,
+    fisher_energy,
+    fisher_neuron_weights,
+    list_metrics,
+    switch_scores,
+    top_m_mask,
+)
+
+
+def setup(seed=0, n=32, d=6, items=40):
+    gen = torch.Generator().manual_seed(seed)
+    w_down = torch.randn(d, items, generator=gen, dtype=torch.float64)
+    a = torch.randn(d, d, generator=gen, dtype=torch.float64)
+    fisher = a @ a.T
+    g = torch.randn(n, items, generator=gen)
+    g_ref = torch.randn(items, generator=gen)
+    u = torch.randn(n, items, generator=gen)
+    return w_down, fisher, g, g_ref, u
+
+
+def test_weights_match_explicit_quadratic_forms():
+    w_down, fisher, *_ = setup()
+    w = fisher_neuron_weights(fisher, w_down)
+    explicit = torch.stack([(w_down[:, j] @ fisher @ w_down[:, j]).sqrt() for j in range(w_down.shape[1])])
+    assert torch.allclose(w, explicit)
+
+
+def test_top_m_mask_counts_and_identity_metrics():
+    w_down, fisher, g, g_ref, u = setup()
+    sc = switch_scores(g, g_ref, u, fisher_neuron_weights(fisher, w_down))
+    mask = top_m_mask(sc, 5)
+    assert (mask.sum(-1) == 5).all()
+    met = list_metrics(sc, sc, 5)
+    assert torch.allclose(met["recall"], torch.ones(len(sc)))
+    assert torch.allclose(met["mass_recall"], torch.ones(len(sc)))
+    assert (met["flip_in"] == 0).all() and (met["flip_out"] == 0).all() and (met["margin_ratio"] == 0).all()
+
+
+def test_wrong_list_has_lower_recall_and_mass():
+    w_down, fisher, g, g_ref, u = setup(1)
+    sc = switch_scores(g, g_ref, u, fisher_neuron_weights(fisher, w_down))
+    met = list_metrics(sc, -sc, 5)  # the bottom-5 list
+    assert (met["recall"] == 0).all()
+    assert (met["mass_recall"] < 1).all()
+    assert met["flip_in"].mean() > 0.5
+
+
+def test_view_energy_kept_and_report():
+    w_down, fisher, g, g_ref, u = setup(2)
+    s = ((g - g_ref) * u).double() @ w_down.T
+    view = SparseSwitchView()
+    view.add_switch_energy(3, fisher_energy(s, fisher))
+    view.add_energy(3, "exact", fisher_energy(s - s, fisher))
+    view.add_energy(3, "zero", fisher_energy(s, fisher))
+    view.add_lists(3, "self", 4, s.abs().float(), s.abs().float())
+    rep = view.report()
+    assert rep["schema"] == SCHEMA
+    assert rep["energy_kept"][3]["exact"] == pytest.approx(1.0)
+    assert rep["energy_kept"][3]["zero"] == pytest.approx(0.0)
+    assert rep["lists"][3]["self"][4]["recall"] == pytest.approx(1.0)
+    assert rep["lists"][3]["self"][4]["margin_ratio_median"] == pytest.approx(0.0)
+
+
+QWEN15 = {"d": 1536, "inter": 8960, "context": 128, "n_heads": 12, "n_kv": 2, "head_dim": 128}
+
+
+def test_flop_fractions_match_the_derived_shapes():
+    from mdb_lanes.sparse_switch import code_layer_macs, flop_fraction, layer_macs
+
+    layer = layer_macs(**QWEN15)
+    assert layer["mlp"] == 3 * 1536 * 8960
+    assert 28 * layer["total"] == pytest.approx(1.32e9, rel=0.01)
+    for p, f in ((512, 0.225), (1024, 0.275), (2048, 0.375)):
+        assert flop_fraction([("pool", {"p": p})] * 28, QWEN15) == pytest.approx(f, abs=0.002)
+    assert flop_fraction([("native", {})] * 28, QWEN15) == pytest.approx(1.0)
+    assert code_layer_macs("global_base", QWEN15) < code_layer_macs("token_base", QWEN15)
+
+
+def test_global_base_products_equal_the_base_matrix():
+    from mdb_lanes.sparse_switch import code_products, global_base_matrix
+
+    gen = torch.Generator().manual_seed(3)
+    d, items = 5, 11
+    w_down = torch.randn(d, items, generator=gen, dtype=torch.float64)
+    w_up = torch.randn(items, d, generator=gen, dtype=torch.float64)
+    n = torch.randn(4, d, generator=gen, dtype=torch.float64)
+    g_glob = torch.rand(items, generator=gen, dtype=torch.float64)
+    g = torch.randn(4, items, generator=gen, dtype=torch.float64)
+    u = n @ w_up.T
+    none = torch.zeros(items, dtype=torch.bool)
+    write = code_products(g, u, none, g_glob) @ w_down.T
+    assert torch.allclose(write, n @ global_base_matrix(w_down, g_glob, w_up).T)
+    keep = torch.zeros(items, dtype=torch.bool)
+    keep[:3] = True
+    exact = code_products(g, u, keep, g_glob)
+    assert torch.allclose(exact[:, :3], g[:, :3] * u[:, :3]) and torch.allclose(exact[:, 3:], g_glob[3:] * u[:, 3:])
+    g_tok = torch.rand(items, generator=gen, dtype=torch.float64)
+    hyb = code_products(g, u, none, g_glob, hybrid=(g_tok, u))
+    assert torch.allclose(hyb, g_tok * u)
+
+
+def test_pool_mass_and_spearman():
+    from mdb_lanes.sparse_switch import pool_from_counts, pool_mass, spearman
+
+    scores = torch.tensor([[5.0, 4.0, 3.0, 2.0, 1.0]])
+    pool = pool_from_counts(torch.tensor([9, 0, 8, 0, 0]), 2)
+    assert pool.tolist() == [True, False, True, False, False]
+    assert float(pool_mass(scores, pool, 2)[0]) == pytest.approx(5 / 9)
+    x = torch.arange(10.0)
+    assert spearman(x, x ** 3) == pytest.approx(1.0)
+    assert spearman(x, -x) == pytest.approx(-1.0)
+
+
+def _spd(gen, d, scale=1.0):
+    a = torch.randn(d, d, generator=gen, dtype=torch.float64) * scale
+    return a @ a.T + 1e-3 * torch.eye(d, dtype=torch.float64)
+
+
+def test_metric_proxy_is_pca_under_the_identity_metric():
+    from mdb_lanes.sparse_switch import metric_proxy
+
+    gen = torch.Generator().manual_seed(4)
+    d, k = 9, 3
+    S = _spd(gen, d)
+    pr = metric_proxy(torch.eye(d, dtype=torch.float64), S, k)
+    ev, Q = torch.linalg.eigh(S)
+    Pk = Q[:, -k:]
+    assert torch.allclose(pr["decode"] @ pr["encode"].T, Pk @ Pk.T, atol=1e-8)
+    assert pr["share"] == pytest.approx(float(ev[-k:].sum() / ev.sum()))
+
+
+def test_metric_proxy_matches_the_reduced_rank_solution_and_beats_pca():
+    from mdb_lanes.sparse_switch import metric_proxy, proxy_metric_share
+
+    gen = torch.Generator().manual_seed(5)
+    d, k = 10, 3
+    S, M = _spd(gen, d), _spd(gen, d)
+    pr = metric_proxy(M, S, k)
+    lm, V = torch.linalg.eigh(M)
+    Mh, Mmh = V @ torch.diag(lm.sqrt()) @ V.T, V @ torch.diag(lm.rsqrt()) @ V.T
+    lam, U = torch.linalg.eigh(Mh @ S @ Mh)
+    Uk = U[:, -k:]
+    B = Mmh @ Uk @ Uk.T @ Mh
+    assert torch.allclose(pr["decode"] @ pr["encode"].T, B, atol=1e-7)
+    share = proxy_metric_share(M, S, pr["encode"], pr["decode"])
+    assert share == pytest.approx(pr["share"], abs=1e-9)
+    ev, Q = torch.linalg.eigh(S)
+    assert proxy_metric_share(M, S, Q[:, -k:], Q[:, -k:]) <= share + 1e-12
+
+
+def test_proxy_gate_inputs_with_centres():
+    from mdb_lanes.sparse_switch import proxy_gate_inputs
+
+    gen = torch.Generator().manual_seed(6)
+    d, k, items = 6, 2, 7
+    n, c = torch.randn(4, d, generator=gen), torch.randn(4, d, generator=gen)
+    enc = torch.randn(d, k, generator=gen)
+    wg, wu = torch.randn(items, d, generator=gen), torch.randn(items, d, generator=gen)
+    dec = torch.randn(d, k, generator=gen)
+    a, u = proxy_gate_inputs(n, enc, wg @ dec, wu @ dec, center_n=c, center_a=c @ wg.T, center_u=c @ wu.T)
+    B = dec @ enc.T
+    nhat = c + (n - c) @ B.T
+    assert torch.allclose(a, nhat @ wg.T, atol=1e-5) and torch.allclose(u, nhat @ wu.T, atol=1e-5)
+
+
+def test_hybrid_error_scores_are_the_hybrid_base_residual():
+    from mdb_lanes.sparse_switch import code_products, hybrid_error_scores
+
+    gen = torch.Generator().manual_seed(7)
+    items = 8
+    g, u = torch.randn(3, items, generator=gen), torch.randn(3, items, generator=gen)
+    g_tok, u_tok, g_glob = torch.rand(items, generator=gen), torch.randn(3, items, generator=gen), torch.rand(items, generator=gen)
+    none = torch.zeros(items, dtype=torch.bool)
+    resid = g * u - code_products(g, u, none, g_glob, hybrid=(g_tok, u_tok))
+    w = torch.rand(items, generator=gen)
+    assert torch.allclose(hybrid_error_scores(g, u, g_tok, u_tok, g_glob, w), resid.abs() * w, atol=1e-6)
+
+
+def test_serving_ledger_and_column_equivalents():
+    from mdb_lanes.sparse_switch import (
+        ServingLedger,
+        column_equivalents,
+        column_equivalents_decide_after,
+        readout_fraction,
+        top1_margin,
+    )
+
+    assert column_equivalents(0.331, 0.0) == pytest.approx(331.0)
+    assert column_equivalents(0.331, 1.0) == pytest.approx(1000.0)
+    assert column_equivalents_decide_after(0.331, 0.25) == pytest.approx(581.0)
+    assert readout_fraction(QWEN15, 151936, 28) == pytest.approx(0.177, abs=0.002)
+    logits = torch.tensor([[3.0, 1.0, 0.5], [2.0, 1.9, -1.0]])
+    assert torch.allclose(top1_margin(logits), torch.tensor([2.0, 0.1]))
+    led = ServingLedger()
+    pos = torch.tensor([4, 20, 70, 100])
+    led.add(pos, torch.tensor([True, False, False, True]), torch.tensor([True, True, False, True]), torch.tensor([0.0, 1.0, 2.0, 1.0]))
+    rep = led.report(f=0.5)
+    assert rep["all"]["n"] == 4 and rep["all"]["rho"] == pytest.approx(0.5) and rep["all"]["agree"] == pytest.approx(0.75)
+    assert rep["all"]["column_equivalents"] == pytest.approx(750.0)
+    assert rep["64-127"]["n"] == 2 and rep["64-127"]["kl"] == pytest.approx(1.5)
+
+
+def test_serving_ledger_splits_served_and_native():
+    from mdb_lanes.sparse_switch import ServingLedger, column_equivalents_early_abort
+
+    led = ServingLedger()
+    pos = torch.tensor([4, 5, 6, 7])
+    led.add(pos, torch.tensor([True, True, False, False]), torch.tensor([True, True, True, False]), torch.tensor([0.0, 0.2, 1.0, 3.0]))
+    rep = led.report(f=0.3, readout=0.177, f_pre=0.1)["all"]
+    assert rep["agree_native"] == pytest.approx(1.0) and rep["agree_served"] == pytest.approx(0.5)
+    assert rep["kl_served"] == pytest.approx(2.0) and rep["kl_native"] == pytest.approx(0.1)
+    assert rep["decide_after_with_readout"] == pytest.approx(1000 * (0.3 + 0.5) + 177)
+    assert rep["column_equivalents_early_abort"] == pytest.approx(column_equivalents_early_abort(0.3, 0.1, 0.5))
+    assert column_equivalents_early_abort(0.3, 0.1, 0.5) == pytest.approx(1000 * (0.5 * 0.3 + 0.5 * 1.1))
+
+
+def test_ridge_from_moments_matches_the_explicit_gcv_ridge():
+    from mdb_lanes.sparse_switch import ridge_from_moments
+
+    gen = torch.Generator().manual_seed(8)
+    n, p, q = 60, 5, 3
+    X = torch.randn(n, p, generator=gen, dtype=torch.float64)
+    Y = X @ torch.randn(p, q, generator=gen, dtype=torch.float64) + 0.5 * torch.randn(n, q, generator=gen, dtype=torch.float64)
+    Xc, Yc = X - X.mean(0), Y - Y.mean(0)
+    grid = [0.01, 0.1, 1.0, 10.0, 100.0]
+    fit = ridge_from_moments(Xc.T @ Xc, Xc.T @ Yc, float((Yc ** 2).sum()), n, grid)
+    best = None
+    for lam in grid:
+        B = torch.linalg.solve(Xc.T @ Xc + lam * torch.eye(p, dtype=torch.float64), Xc.T @ Yc)
+        H = Xc @ torch.linalg.solve(Xc.T @ Xc + lam * torch.eye(p, dtype=torch.float64), Xc.T)
+        rss = float(((Yc - Xc @ B) ** 2).sum())
+        gcv = rss / (n - float(torch.trace(H))) ** 2
+        if best is None or gcv < best[0]:
+            best = (gcv, lam, B, rss)
+    assert fit["lam"] == best[1] and fit["rss"] == pytest.approx(best[3]) and torch.allclose(fit["beta"], best[2])
+
+
+def test_shrinkage_tables_and_lambda():
+    from mdb_lanes.sparse_switch import shrinkage_lambda, shrinkage_means
+
+    counts = torch.tensor([0, 1, 9])
+    emp = torch.tensor([[9.0], [2.0], [4.0]])
+    prior = torch.tensor([[1.0], [0.0], [0.0]])
+    cc = shrinkage_means(counts, emp, prior, 3.0)
+    assert cc[:, 0].tolist() == pytest.approx([1.0, 0.5, 3.0])
+    lam, between = shrinkage_lambda(2.0, torch.tensor([3.0, 1.5]), torch.tensor([1.0, 4.0]))
+    assert between == pytest.approx(0.5 * ((3.0 - 2.0) + (1.5 - 0.5))) and lam == pytest.approx(2.0 / between)
+
+
+def test_error_mass_and_gates():
+    from mdb_lanes.sparse_switch import error_mass, kl_gate, quantile_threshold, z_gate
+
+    sc = torch.tensor([[3.0, 2.0, 1.0], [1.0, 1.0, 1.0]])
+    keep = torch.tensor([[True, False, False], [False, False, True]])
+    assert error_mass(sc, keep).tolist() == pytest.approx([5.0, 2.0])
+    stat = torch.arange(100.0)
+    t = quantile_threshold(stat, 0.3)
+    assert float((stat < t).float().mean()) == pytest.approx(0.3, abs=0.011)
+    t2 = quantile_threshold(stat, 0.3, below=False)
+    assert float(kl_gate(stat, t2).float().mean()) == pytest.approx(0.3, abs=0.011)
+    assert z_gate(torch.tensor([1.0, 3.0]), torch.tensor([4.0, 4.0]), 1.0).tolist() == [True, False]
+
+
+def test_layer_bytes_match_the_derived_qwen_counts():
+    from mdb_lanes.sparse_switch import bytes_per_token, layer_bytes
+
+    nat = layer_bytes("native", QWEN15)
+    assert nat["shared"] / 1e6 == pytest.approx(93.6, abs=0.3)
+    a1 = layer_bytes("proxy", QWEN15, k=512, m=1024)
+    assert a1["total"] / 1e6 == pytest.approx(45.1, abs=0.3)
+    col = bytes_per_token([("native", {})] * 28, QWEN15, vocab=151936)
+    prx = bytes_per_token([("proxy", {"k": 512, "m": 1024})] * 28, QWEN15, vocab=151936)
+    assert prx["bytes_per_step"] / col["bytes_per_step"] == pytest.approx(0.56, abs=0.01)
+    b256 = layer_bytes("proxy", QWEN15, k=512, m=1024, batch=256)
+    assert b256["total"] == b256["shared"] + 256 * b256["per_row"]
+    un = layer_bytes("proxy", QWEN15, k=512, batch=256, impl="union", union=8960)
+    assert un["shared"] > nat["shared"]
+
+
+def test_timed_record_adds_bandwidth_and_ratios():
+    from mdb_lanes.sparse_switch import timed_record
+
+    timing = {"batch": 1, "claim": "speedups reported",
+              "arms": {"native": {"median_ms": 10.0, "p10_ms": 9.0, "p90_ms": 11.0},
+                       "a1": {"median_ms": 8.0, "p10_ms": 7.0, "p90_ms": 9.0}}}
+    rec = timed_record(timing, {"native": {"bytes_per_step": 3e9, "flop_fraction": 1.0},
+                                "a1": {"bytes_per_step": 1.5e9, "flop_fraction": 0.5}})
+    assert rec["arms"]["native"]["achieved_GBps"] == pytest.approx(300.0)
+    assert rec["arms"]["a1"]["time_ratio_vs_baseline"] == pytest.approx(0.8)
+    assert rec["arms"]["a1"]["byte_ratio_vs_baseline"] == pytest.approx(0.5)
+    refused = timed_record({**timing, "claim": "refused: parity gate missing or failed"},
+                           {"native": {"bytes_per_step": 3e9}, "a1": {"bytes_per_step": 1.5e9}})
+    assert refused["arms"]["a1"]["time_ratio_vs_baseline"] is None
+
+
+def test_pregate_table_shrinks_rare_keys_to_the_prior():
+    from mdb_lanes.sparse_switch import pregate_table
+
+    keys = torch.tensor([0, 0, 0, 0, 1, 1, 1, 1, 2])
+    vals = torch.tensor([1.0, 1.2, 0.8, 1.0, 3.0, 3.2, 2.8, 3.0, 9.0])
+    table, lam, st = pregate_table(keys, vals, 4)
+    assert lam > 0 and st["keys_ge2"] == 2
+    gm = float(vals.double().mean())
+    assert float(table[3]) == pytest.approx(gm)
+    assert gm < float(table[2]) < 9.0
+    assert abs(float(table[0]) - 1.0) < abs(gm - 1.0)
+    big, _, _ = pregate_table(keys, vals, 4, prior=torch.tensor([5.0, 5.0, 5.0, 5.0]))
+    assert float(big[3]) == pytest.approx(5.0)
+
+
+def test_quantize_rows_and_ledger_groups():
+    from mdb_lanes.sparse_switch import ServingLedger, quantize_rows
+
+    w = torch.tensor([[1.0, -0.5, 0.25], [10.0, 3.0, -7.0]])
+    dq, sc = quantize_rows(w, 8)
+    assert torch.allclose(dq, w, atol=float(sc.max()) / 2 + 1e-6)
+    dq4, _ = quantize_rows(w, 4)
+    assert float((dq4 - w).abs().max()) <= 10.0 / 7 / 2 + 1e-6
+    led = ServingLedger()
+    led.add(torch.tensor([4, 5, 6]), torch.tensor([False, False, True]), torch.tensor([True, False, True]),
+            torch.tensor([0.0, 1.0, 0.0]), groups=torch.tensor([0, 1, 1]))
+    rep = led.report()
+    assert rep["group:0"]["agree"] == pytest.approx(1.0) and rep["group:1"]["n"] == 2
+
+
+def test_spearman_ties_and_or_gate_thresholds():
+    from mdb_lanes.sparse_switch import average_ranks, or_gate_thresholds, spearman
+
+    assert average_ranks(torch.tensor([3.0, 1.0, 3.0, 2.0])).tolist() == [3.5, 1.0, 3.5, 2.0]
+    x = torch.tensor([0.0, 0.0, 0.0, 1.0, 1.0, 1.0])
+    y = torch.tensor([1.0, 2.0, 3.0, 4.0, 5.0, 6.0])
+    assert spearman(x, y, ties=True) == pytest.approx(0.8783, abs=1e-3)
+    g = torch.Generator().manual_seed(0)
+    m, e = torch.rand(20000, generator=g), torch.rand(20000, generator=g)
+    th = or_gate_thresholds(m, e, 0.5)
+    assert th["union_share"] == pytest.approx(0.5, abs=2e-3)
+    assert th["marginal_share"] == pytest.approx(1 - 0.5 ** 0.5, abs=5e-3)  # independent: 1 - (1 - s)^2 = 0.5
+
+
+def test_exact_select_cost_and_the_af_frontier_fractions():
+    from mdb_lanes.sparse_switch import bytes_per_token, flop_fraction, layer_bytes
+
+    def f(kind, **o):
+        return flop_fraction([(kind, o)] * 28, QWEN15)
+    assert f("exact_select", m=1024) == pytest.approx(0.792, abs=0.001)
+    assert f("exact_select", m=2048) == pytest.approx(0.825, abs=0.001)
+    assert f("proxy", k=512, m=2048) == pytest.approx(0.586, abs=0.001)
+    assert f("proxy", k=768, m=1024) == pytest.approx(0.592, abs=0.001)
+    assert f("proxy", k=1024, m=512) == pytest.approx(0.647, abs=0.001)
+    x1 = layer_bytes("exact_select", QWEN15, m=1024)
+    nat = layer_bytes("native", QWEN15)
+    assert nat["shared"] > x1["shared"] > 2 * 1536 * 8960 * 2
+    col = bytes_per_token([("native", {})] * 28, QWEN15, vocab=151936)
+    xb = bytes_per_token([("exact_select", {"m": 1024})] * 28, QWEN15, vocab=151936)
+    assert xb["bytes_per_step"] / col["bytes_per_step"] == pytest.approx(0.822, abs=0.002)
+
+
+def test_kl_law_fit_and_ledger_columns():
+    from mdb_lanes.sparse_switch import ServingLedger, fit_kl_law, kl_law
+
+    kl = torch.tensor([0.18, 0.25, 0.42, 0.51, 1.3, 2.7], dtype=torch.float64)
+    a = 0.967 - 0.403 * kl.sqrt()
+    a0, beta, rms = fit_kl_law(a, kl)
+    assert a0 == pytest.approx(0.967, abs=1e-9) and beta == pytest.approx(0.403, abs=1e-9) and rms < 1e-9
+    assert kl_law(0.25) == pytest.approx(0.967 - 0.403 * 0.5)
+    led = ServingLedger()
+    led.add(torch.tensor([4, 5]), torch.tensor([False, False]), torch.tensor([True, False]), torch.tensor([0.25, 0.25]))
+    r = led.report(law=(0.967, 0.403))["all"]
+    assert r["agree_law"] == pytest.approx(0.7655) and r["law_excess"] == pytest.approx(0.5 - 0.7655)
+
+
+def test_score_histogram_thresholds_hit_the_mean_count():
+    from mdb_lanes.sparse_switch import ScoreHistogram
+
+    g = torch.Generator().manual_seed(0)
+    s0 = torch.randn(400, 2000, generator=g).exp()
+    s1 = (torch.randn(400, 2000, generator=g) * 2).exp() * 3
+    h = ScoreHistogram(2, bins=20000)
+    h.add(0, s0, values=s0)
+    h.add(1, s1, values=s1)
+    for layer, s in ((0, s0), (1, s1)):
+        th = h.threshold(layer, 250)
+        assert float((s > th).sum(-1).float().mean()) == pytest.approx(250, rel=0.01)
+        cnt, mass, _ = h.above(layer, th)
+        assert cnt == pytest.approx(250, rel=0.01)
+        assert mass == pytest.approx(float((s * (s > th)).sum(-1).mean()), rel=0.01)
+    tg = h.global_threshold(500)
+    tot = float(((s0 > tg).sum(-1) + (s1 > tg).sum(-1)).float().mean())
+    assert tot == pytest.approx(500, rel=0.01)
+
+
+def test_ramp_weights_and_products():
+    from mdb_lanes.sparse_switch import code_products, ramp_products, ramp_weights
+
+    s = torch.tensor([[0.5, 1.0, 1.1, 1.2, 2.0]])
+    keep, om = ramp_weights(s, 1.0, 0.0)
+    assert keep.tolist() == [[False, False, True, True, True]] and om.tolist() == [[0, 0, 1, 1, 1]]
+    keep, om = ramp_weights(s, 1.0, 0.25)  # theta_hi = 4/3
+    assert keep.tolist() == [[False, False, True, True, True]]
+    assert om[0, 2] == pytest.approx(0.3, abs=1e-6) and om[0, 3] == pytest.approx(0.6, abs=1e-6) and om[0, 4] == 1.0
+    g, u = torch.randn(3, 5), torch.randn(3, 5)
+    gt, ut, gg = torch.randn(3, 5), torch.randn(3, 5), torch.randn(5)
+    hard = torch.rand(3, 5) > 0.5
+    assert torch.allclose(ramp_products(g, u, hard.float(), gg, hybrid=(gt, ut)),
+                          code_products(g, u, hard, gg, hybrid=(gt, ut)), atol=1e-6)
+
+
+def test_rank_waterfill_takes_the_largest_eigenvalues():
+    from mdb_lanes.sparse_switch import rank_waterfill
+
+    e = [torch.tensor([10.0, 1.0, 0.5, 0.1]), torch.tensor([5.0, 4.0, 3.0, 2.0])]
+    r = rank_waterfill(e, 4)
+    assert r["k"] == [1, 3] and r["theta"] == 3.0
+    assert r["kept_share"] == pytest.approx(22.0 / 25.6) and r["uniform_kept_share"] == pytest.approx(20.0 / 25.6)
+    rc = rank_waterfill(e, 4, cap=2)
+    assert rc["k"] == [2, 2] and rc["cap_binds"]
+
+
+def test_group_sets_and_jaccard():
+    from mdb_lanes.sparse_switch import group_sets, set_jaccard
+
+    g = torch.Generator().manual_seed(1)
+    s = torch.rand(6, 50, generator=g)
+    assert torch.equal(group_sets(s, 1, 10), top_m_mask(s, 10))
+    gs = group_sets(s, 2, 10)
+    assert torch.equal(gs[0], gs[1]) and int(gs[0].sum()) == 10
+    assert torch.equal(gs[0], top_m_mask(s[0] + s[1], 10))
+    j = set_jaccard(top_m_mask(s, 10), top_m_mask(s, 10))
+    assert torch.allclose(j, torch.ones(6))
+    tail = group_sets(s[:5], 2, 10)
+    assert torch.equal(tail[4], top_m_mask(s[4], 10))
+
+
+def test_integer_quantization_and_int4_packing():
+    from mdb_lanes.sparse_switch import (
+        dequantize_int,
+        pack_int4,
+        quantize_int,
+        quantize_rows,
+        unpack_int4,
+    )
+
+    g = torch.Generator().manual_seed(2)
+    w = torch.randn(6, 256, generator=g)
+    q, s = quantize_int(w, 8)
+    assert q.dtype == torch.int8 and int(q.abs().max()) <= 127
+    assert torch.allclose(dequantize_int(q, s), quantize_rows(w, 8)[0], atol=1e-6)
+    q4, s4 = quantize_int(w, 4, group=128)
+    assert s4.shape == (6, 2) and int(q4.abs().max()) <= 7
+    err4 = (dequantize_int(q4, s4, 128) - w).abs().max()
+    assert float(err4) <= float(s4.max()) / 2 + 1e-6
+    assert torch.equal(unpack_int4(pack_int4(q4)), q4)
+    assert pack_int4(q4).shape == (6, 128) and pack_int4(q4).dtype == torch.uint8
+
+
+def test_quantized_layer_bytes():
+    from mdb_lanes.sparse_switch import bytes_per_token, layer_bytes
+
+    sh = {"d": 8, "inter": 32, "context": 4, "n_heads": 2, "n_kv": 1, "head_dim": 4}
+    full = layer_bytes("exact_select", sh, m=4)
+    q8 = layer_bytes("exact_select", sh, m=4, qbits=8)
+    assert full["shared"] - q8["shared"] == 2 * 32 * 8 * 2 - (2 * 32 * 8 + 2 * 32 * 4)
+    q4g = layer_bytes("proxy", sh, k=8, m=4, qbits=4, group=4)
+    assert q4g["shared"] == layer_bytes("proxy", sh, k=8, m=4)["shared"] - 2 * 32 * 8 * 2 + 2 * 32 * 8 * 0.5 + 2 * 32 * 2 * 4
+    b16 = bytes_per_token([("native", {})], sh, vocab=10)["bytes_per_step"]
+    b8 = bytes_per_token([("native", {})], sh, vocab=10, readout_bits=8)["bytes_per_step"]
+    assert b16 - b8 == 10 * 8 * 2 - (10 * 8 + 10 * 4)
+
+
+def test_certified_candidates_contain_the_argmax_and_blockwise_recall():
+    from mdb_lanes.sparse_switch import blockwise_topk_recall, certified_candidates, head_subspace
+
+    g = torch.Generator().manual_seed(3)
+    W = torch.randn(500, 16, generator=g) @ torch.diag(torch.linspace(3, 0.1, 16))
+    h = torch.randn(40, 16, generator=g)
+    basis, ev = head_subspace(W, 6)
+    assert basis.shape == (16, 6) and bool((ev[:-1] >= ev[1:]).all())
+    Pe, Ph = W @ basis, h @ basis
+    lhat = Ph @ Pe.T
+    e_perp = ((W * W).sum(-1) - (Pe * Pe).sum(-1)).clamp_min(0).sqrt()
+    h_perp = ((h * h).sum(-1) - (Ph * Ph).sum(-1)).clamp_min(0).sqrt()
+    mask, sizes = certified_candidates(lhat, h_perp, e_perp)
+    top = (h @ W.T).argmax(-1)
+    assert bool(mask[torch.arange(40), top].all()) and bool((sizes >= 1).all())
+    assert blockwise_topk_recall(h @ W.T, top, 64, 1) == 1.0
+    assert 0.0 <= blockwise_topk_recall(lhat, top, 64, 1) <= 1.0
+
+
+def test_gate_frontier_and_dispersion():
+    from mdb_lanes.sparse_switch import gate_frontier, kl_law, kl_log_dispersion, metric_eigen_share
+
+    g = torch.Generator().manual_seed(4)
+    P, L = 2000, 4
+    kl = (torch.randn(P, generator=g) * 1.5 - 2).exp()
+    counts = kl[:, None] * torch.tensor([1.0, 2.0, 3.0, 4.0]) + 0.01 * torch.rand(P, L, generator=g)
+    agree = torch.rand(P, generator=g) > kl.clamp_max(1)
+    fr = gate_frontier(counts, kl, agree, 0.5, [0.1, 0.2, 0.3, 0.5], depths=[1, 3], rhos=[0.0, 0.2, 0.4], budget=800)
+    r0 = [r for r in fr["rows"] if r["rho"] == 0.0][0]
+    assert r0["rho_realized"] == 0.0 and r0["predicted"] == pytest.approx(kl_law(float(kl.mean())))
+    r2 = [r for r in fr["rows"] if r["depth"] == 3 and r["rho"] == 0.2][0]
+    assert r2["rho_realized"] == pytest.approx(0.2, abs=0.01) and r2["kl_kept"] < float(kl.mean())
+    assert r2["cost"] == pytest.approx(1000 * (0.8 * 0.5 + 0.2 * 1.5), rel=0.02)
+    assert fr["best"] is None or fr["best"]["cost"] <= 800
+    assert kl_log_dispersion(kl) == pytest.approx(float(kl.log().std()), rel=1e-6)
+    S = torch.diag(torch.tensor([4.0, 1.0, 0.0]))
+    sh = metric_eigen_share(S, torch.eye(3), [1, 2])
+    assert sh[1] == pytest.approx(0.8) and sh[2] == pytest.approx(1.0)
+
+
+def test_prior_art_keys_products_and_masks():
+    from mdb_lanes.sparse_switch import (
+        below_threshold_mass,
+        cats_scores,
+        gate_key_scores,
+        magnitude_mask,
+        zero_base_products,
+        zero_base_scores,
+    )
+
+    g = torch.tensor([[0.5, -0.2, 2.0, 0.0]])
+    u = torch.tensor([[1.0, 3.0, -1.0, 4.0]])
+    w = torch.tensor([1.0, 2.0, 0.5, 1.0])
+    assert torch.equal(cats_scores(g), g.abs())
+    assert torch.allclose(gate_key_scores(g, torch.tensor([0.5, 0.0, 1.0, 1.0]), u, w), torch.tensor([[0.0, 1.2, 0.5, 4.0]]))
+    assert torch.allclose(zero_base_scores(g, u, w), torch.tensor([[0.5, 1.2, 1.0, 0.0]]))
+    keep = torch.tensor([[True, False, True, False]])
+    assert torch.equal(zero_base_products(g, u, keep), torch.tensor([[0.5, 0.0, -2.0, 0.0]]))
+    assert torch.equal(magnitude_mask(u, 2.0), torch.tensor([[0.0, 3.0, 0.0, 4.0]]))
+    s = torch.tensor([[1.0, 2.0, 3.0]])
+    assert float(below_threshold_mass(s, 2.0)) == pytest.approx(5.0)
+
+
+def test_attention_cats_teal_macs_and_bytes():
+    from mdb_lanes.sparse_switch import code_layer_macs, layer_bytes, layer_macs
+
+    sh = {"d": 8, "inter": 32, "context": 4, "n_heads": 2, "n_kv": 1, "head_dim": 4}
+    L = layer_macs(**sh)
+    att = L["attention"]
+    assert code_layer_macs("cats", sh, m=4) == att + 8 * 32 + 2 * 4 * 8
+    assert code_layer_macs("cats_hybrid", sh, m=4) - code_layer_macs("cats", sh, m=4) == 64
+    assert code_layer_macs("exact_select_zero", sh, m=4) == att + 2 * 8 * 32 + 4 * 8
+    assert code_layer_macs("exact_select", sh, m=4, r=2) - code_layer_macs("exact_select", sh, m=4) == 2 * (32 + 8)
+    assert code_layer_macs("exact_select", sh, m=4, regather=True) - code_layer_macs("exact_select", sh, m=4) == 2 * 4 * 8
+    assert code_layer_macs("teal", sh, density=1.0) == pytest.approx(L["total"])
+    sc = 2 * 4 * 2 * 4
+    assert code_layer_macs("teal", sh, density=0.5) == pytest.approx(0.5 * (L["total"] - sc) + sc)
+    assert code_layer_macs("attention_only", sh) == att
+    c0 = layer_bytes("cats", sh, m=4, hybrid=False)
+    c1 = layer_bytes("cats", sh, m=4, hybrid=True)
+    assert c1["shared"] - c0["shared"] == 64 * 2 and c1["per_row"] - c0["per_row"] == (2 * 32 + 2 * 8) * 2
+    t1 = layer_bytes("teal", sh, density=1.0)
+    nat = layer_bytes("native", sh)
+    assert t1["total"] == pytest.approx(nat["total"])
+    assert layer_bytes("teal", sh, density=0.5)["shared"] < t1["shared"]
+    rg = layer_bytes("exact_select", sh, m=4, regather=True)["per_row"] - layer_bytes("exact_select", sh, m=4)["per_row"]
+    assert rg == 2 * 4 * 8 * 2
+
+
+def test_layer_choice_frontier_is_greedy_and_monotone():
+    from mdb_lanes.sparse_switch import layer_choice_frontier
+
+    ea, eb = [4.0, 1.0, 3.0, 2.0], [1.0, 1.5, 2.0, 0.0]
+    ta, tb = [1.0, 1.0, 1.0, 2.0], [2.0, 3.0, 1.5, 1.0]
+    fr = layer_choice_frontier(ea, eb, ta, tb)
+    assert fr["order"][0] == 3  # faster and better: swapped first
+    assert 1 not in fr["order"]  # worse and slower: never swapped
+    assert fr["order"][1:] == [0, 2]  # 3 / 1 = 3 before 1 / 0.5 = 2
+    errs = [r["error"] for r in fr["rows"]]
+    assert errs == sorted(errs, reverse=True) and fr["rows"][-1]["error"] == pytest.approx(1.0 + 1.0 + 2.0 + 0.0)
+
+
+def test_tail_proxy_maps_project_in_the_metric():
+    from mdb_lanes.sparse_switch import tail_proxy_maps
+
+    g = torch.Generator().manual_seed(7)
+    d, I = 6, 20
+    Wd = torch.randn(d, I, generator=g, dtype=torch.float64)
+    t = torch.randn(500, I, generator=g, dtype=torch.float64) * torch.linspace(2, 0.1, I, dtype=torch.float64)
+    y = t @ Wd.T
+    S = y.T @ y / len(y)
+    A = torch.randn(d, d, generator=g, dtype=torch.float64)
+    M = A @ A.T + 0.1 * torch.eye(d, dtype=torch.float64)
+    E, D, share = tail_proxy_maps(S, M, Wd, d)
+    assert share == pytest.approx(1.0)
+    assert torch.allclose((t @ E.double().T) @ D.double().T, y, atol=1e-4)  # full rank: exact
+    E2, D2, s2 = tail_proxy_maps(S, M, Wd, 2)
+    yh = (t @ E2.double().T) @ D2.double().T
+    err = (((y - yh) @ M) * (y - yh)).sum(-1).mean() / ((y @ M) * y).sum(-1).mean()
+    assert float(err) == pytest.approx(1 - s2, rel=1e-3, abs=1e-6)
+
+
+def test_readout_kl_ties_sigma_set_and_key_frontier():
+    from mdb_lanes.sparse_switch import (
+        bf16_tie_mask,
+        certified_candidates,
+        key_gate_frontier,
+        kl_law,
+        readout_kl_stats,
+        sigma_candidates,
+    )
+
+    lg = torch.tensor([[2.0, 2.0, 1.0], [3.0, 1.0, 0.0]]).to(torch.bfloat16)
+    assert bf16_tie_mask(lg).tolist() == [True, False]
+    ref = torch.tensor([[1.0, 0.0, -1.0]])
+    kl, ag = readout_kl_stats(ref, ref)
+    assert float(kl) == pytest.approx(0.0, abs=1e-7) and bool(ag)
+    lhat = torch.tensor([[1.0, 0.9, 0.0]])
+    hp, ep = torch.tensor([0.1]), torch.tensor([1.0, 1.0, 1.0])
+    m_cs, s_cs = certified_candidates(lhat, hp, ep)
+    m_s, s_s = sigma_candidates(lhat, hp, ep, 1.0, 4)
+    assert int(s_s) <= int(s_cs) and bool((m_s <= m_cs).all())
+    g = torch.Generator().manual_seed(5)
+    kl_ = (torch.randn(4000, generator=g) - 3).exp()
+    key = kl_ * (1 + 0.1 * torch.rand(4000, generator=g))
+    agree = torch.rand(4000, generator=g) > 0.1
+    fr = key_gate_frontier(key, kl_, agree, 0.8, [0.0, 0.1], repair=0.0)
+    assert fr["rows"][0]["predicted"] == pytest.approx(kl_law(float(kl_.mean())))
+    assert fr["rows"][1]["kl_kept"] < float(kl_.mean()) and fr["rows"][1]["cost"] == pytest.approx(1000 * (0.8 + 0.1), rel=0.02)
+    assert fr["spearman_key_kl"] > 0.9
+
+
+def test_wina_weight_dispersion_and_svd_remainder():
+    from mdb_lanes.sparse_switch import (
+        column_norm_weights,
+        fisher_neuron_weights,
+        logit_gain_dispersion,
+        svd_remainder_maps,
+    )
+
+    g = torch.Generator().manual_seed(11)
+    d, I = 8, 40
+    Wd = torch.randn(d, I, generator=g, dtype=torch.float64)
+    wn = column_norm_weights(Wd)
+    assert torch.allclose(wn.double(), torch.stack([Wd[:, j].norm() for j in range(I)]), rtol=1e-5)
+    psi = fisher_neuron_weights(torch.eye(d, dtype=torch.float64), Wd)  # isotropic metric: psi = l2 norm, rho = 1
+    disp = logit_gain_dispersion(psi, wn)
+    assert disp["sd_log_rho"] < 1e-5 and disp["spearman_psi_wnorm"] == pytest.approx(1.0)
+    A = torch.diag(torch.linspace(3, 0.1, d, dtype=torch.float64))
+    disp2 = logit_gain_dispersion(fisher_neuron_weights(A @ A.T, Wd), wn)
+    assert disp2["sd_log_rho"] > 0.05
+    E, D, share = svd_remainder_maps(Wd, d)
+    t = torch.randn(30, I, generator=g, dtype=torch.float64)
+    assert share == pytest.approx(1.0) and torch.allclose((t @ E.double().T) @ D.double().T, t @ Wd.T, atol=1e-4)
+    E2, D2, s2 = svd_remainder_maps(Wd, 3)
+    U, S, Vh = torch.linalg.svd(Wd, full_matrices=False)
+    assert torch.allclose(D2.double() @ E2.double(), (U[:, :3] * S[:3]) @ Vh[:3], atol=1e-4)
+    assert s2 == pytest.approx(float((S[:3] ** 2).sum() / (S ** 2).sum()), rel=1e-6)
+
+
+def test_teal_greedy_allocation_follows_the_cheapest_error_and_lands_on_target():
+    from mdb_lanes.sparse_switch import (
+        TEAL_MATRICES,
+        code_layer_macs,
+        teal_footprints,
+        teal_greedy_allocation,
+    )
+
+    shapes = {"d": 16, "inter": 64, "context": 8, "n_heads": 4, "n_kv": 2, "head_dim": 4}
+    foot = teal_footprints(shapes)
+    assert tuple(foot) == TEAL_MATRICES
+    cost = {"q": 1.0, "k": 5.0, "v": 5.0, "o": 2.0, "gate": 0.5, "up": 3.0, "down": 0.2}
+    res = teal_greedy_allocation(lambda p: sum(cost[n_] * p[n_] ** 2 for n_ in p), foot, 0.5, alpha=0.05, cap=0.95)
+    F = sum(foot.values())
+    assert res["P"] == pytest.approx(0.5) and sum(res["sparsity"][n_] * foot[n_] for n_ in foot) / F == pytest.approx(0.5)
+    assert res["path"][0]["matrix"] == "down"  # lowest error per step first
+    assert all(0 <= v <= 0.95 + 1e-12 for v in res["sparsity"].values())
+    dens = {n_: 1 - v for n_, v in res["sparsity"].items()}
+    full = code_layer_macs("native", shapes)
+    uni = code_layer_macs("teal", shapes, density=0.5)
+    assert code_layer_macs("teal_alloc", shapes, densities=dens) == pytest.approx(uni)  # footprint-weighted = MAC-weighted
+    assert code_layer_macs("teal_alloc", shapes, densities={n_: 1.0 for n_ in foot}) == pytest.approx(full)
+
+
+def test_g2u_costs_rsp_remainder_and_honest_gate_cost():
+    from mdb_lanes.sparse_switch import (
+        ServingLedger,
+        code_layer_macs,
+        column_equivalents_decide_after_honest,
+        key_gate_frontier,
+        layer_bytes,
+    )
+
+    shapes = {"d": 1536, "inter": 8960, "context": 128, "n_heads": 12, "n_kv": 2, "head_dim": 128}
+    full = code_layer_macs("native", shapes)
+    g2u = code_layer_macs("gate_exact_up_proxy", shapes, k=256, m=3007) / full
+    assert g2u == pytest.approx(0.719, abs=0.003)  # ADVISOR 16.3: G2U(3,007) = 0.719
+    x8 = code_layer_macs("exact_select", shapes, m=3007) / full
+    assert x8 == pytest.approx(0.856, abs=0.003)
+    assert code_layer_macs("exact_select_zero", shapes, m=10, r=256) - code_layer_macs("exact_select_zero", shapes, m=10) == 256 * (8960 + 1536)
+    b = layer_bytes("g2u", shapes, k=256, m=2255, qbits=8)["total"] / 1e6
+    assert 38 < b < 46  # ADVISOR 16.3: about 42 MB at 2,255
+    t8 = layer_bytes("exact_select", shapes, m=10, qbits=8, r=128, tail_qbits=8)["total"]
+    t16 = layer_bytes("exact_select", shapes, m=10, qbits=8, r=128)["total"]
+    assert t8 < t16
+    assert column_equivalents_decide_after_honest(0.8317, 0.06, 0.177, needs_readout=True) == pytest.approx(902.3, abs=0.1)
+    assert column_equivalents_decide_after_honest(0.8317, 0.06, 0.177, needs_readout=False) == pytest.approx(891.7, abs=0.1)
+    led = ServingLedger()
+    pos = torch.arange(4, 12)
+    led.add(pos, pos < 6, torch.ones(8, dtype=torch.bool), torch.zeros(8))
+    r = led.report(f=0.8, readout=0.177, needs_readout=True)["all"]
+    assert r["decide_after_honest"] == pytest.approx(1000 * (0.8 + 0.25 * 1.177))
+    g = torch.Generator().manual_seed(3)
+    kl_ = torch.rand(1000, generator=g)
+    fr = key_gate_frontier(kl_, kl_, kl_ > 0.5, 0.8, [0.1], needs_readout=True, readout=0.177)
+    assert fr["rows"][0]["cost_honest"] == pytest.approx(fr["rows"][0]["cost"] + 1000 * 0.1 * 0.177, rel=1e-3)
+
+
+def test_g2u_scores_reduce_to_exact_selection_at_full_rank():
+    from mdb_lanes.sparse_switch import gate_exact_up_proxy_scores, hybrid_error_scores
+
+    g_ = torch.Generator().manual_seed(4)
+    d, I = 6, 30
+    Wu = torch.randn(I, d, generator=g_, dtype=torch.float64)
+    n = torch.randn(5, d, generator=g_, dtype=torch.float64)
+    nt = torch.randn(5, d, generator=g_, dtype=torch.float64)
+    gate = torch.randn(5, I, generator=g_, dtype=torch.float64)
+    gt, gg, w = torch.randn(5, I, generator=g_), torch.randn(I, generator=g_), torch.rand(I, generator=g_)
+    ut = nt @ Wu.T
+    sc, uh = gate_exact_up_proxy_scores(gate, n, nt, torch.eye(d, dtype=torch.float64), Wu, ut, gt, gg, w)
+    assert torch.allclose(uh.double(), n @ Wu.T, atol=1e-4)
+    assert torch.allclose(sc, hybrid_error_scores(gate, n @ Wu.T, gt, ut, gg, w), atol=1e-4)
+
+
+def test_isotropic_tail_and_fp32_remainder_match_the_reference():
+    from mdb_lanes.sparse_switch import svd_remainder_maps, tail_proxy_maps
+
+    g = torch.Generator().manual_seed(9)
+    d, I = 8, 30
+    Wd = torch.randn(d, I, generator=g, dtype=torch.float64)
+    t = torch.randn(400, I, generator=g, dtype=torch.float64) * torch.linspace(2, 0.1, I, dtype=torch.float64)
+    y = t @ Wd.T
+    S = y.T @ y / len(y)
+    E1, D1, s1 = tail_proxy_maps(S, torch.eye(d, dtype=torch.float64), Wd, 3)
+    E2, D2, s2 = tail_proxy_maps(S, None, Wd, 3, isotropic=True, dtype=torch.float32)
+    assert s2 == pytest.approx(s1, rel=1e-4)
+    assert torch.allclose(D1.double() @ E1.double(), D2.double() @ E2.double(), atol=1e-3)  # same projector
+    Ea, Da, sa = svd_remainder_maps(Wd, 3)
+    Eb, Db, sb = svd_remainder_maps(Wd, 3, dtype=torch.float32)
+    assert sb == pytest.approx(sa, rel=1e-4) and torch.allclose(Da.double() @ Ea.double(), Db.double() @ Eb.double(), atol=1e-3)
+
+
+def test_pool_rescore_and_base_ledgers_match_the_derived_shapes():
+    from mdb_lanes.sparse_switch import code_layer_macs, layer_bytes
+
+    shapes = {"d": 1536, "inter": 8960, "context": 128, "n_heads": 12, "n_kv": 2, "head_dim": 128}
+    full = code_layer_macs("native", shapes)
+    gp = code_layer_macs("pool_rescore", shapes, k=256, m=2886, p=int(1.5 * 2886)) / full
+    assert gp == pytest.approx(0.759, abs=0.003)  # ADVISOR 17.2: G2U-P1.5 at count 2,886 = 758
+    x8 = code_layer_macs("exact_select", shapes, m=3498) / full
+    bt = code_layer_macs("exact_select", shapes, m=3498, b0="none") / full
+    lr = code_layer_macs("exact_select", shapes, m=3498, b0=256) / full
+    assert x8 - bt == pytest.approx(0.050, abs=0.001) and x8 - lr == pytest.approx(0.0333, abs=0.001)
+    assert code_layer_macs("pool_rescore", shapes, k=256, m=100, p=100) == code_layer_macs("gate_exact_up_proxy", shapes, k=256, m=100)
+    b16 = layer_bytes("exact_select", shapes, m=3420, qbits=8)["total"]
+    b8 = layer_bytes("exact_select", shapes, m=3420, qbits=8, down_qbits=8)["total"]
+    assert (b16 - b8) / 1e6 == pytest.approx(3420 * 1536 / 1e6 - 3420 * 4 / 1e6, rel=1e-6)
+    bn = layer_bytes("exact_select", shapes, m=3420, qbits=8, b0="none")["total"]
+    assert b16 - bn == 1536 * 1536 * 2
+    pb = layer_bytes("pool", shapes, k=256, m=2886, p=4329, qbits=8)["total"] / 1e6
+    gb = layer_bytes("g2u", shapes, k=256, m=2886, qbits=8)["total"] / 1e6
+    assert pb < gb  # int8 pool rows (1.5x) read fewer bytes than G2U's bf16 rows (ADVISOR 17.1 d)
+    assert 44 < pb < 50  # ADVISOR 17.2: about 47 MB
+
+
+def test_pool_mask_recall_jaccard_table_and_lowrank_b0():
+    from mdb_lanes.sparse_switch import (TokenTable, adjacent_set_jaccard, global_base_matrix, lowrank_b0_maps, metric_proxy,
+                                   pool_energy_recall, pool_rescore_mask, reading_metric, up_reading_metric)
+
+    g = torch.Generator().manual_seed(11)
+    s_ex = torch.rand(4, 50, generator=g)
+    s_px = s_ex + 0.05 * torch.randn(4, 50, generator=g)
+    keep, pool = pool_rescore_mask(s_px, -1.0, s_ex, 0.7)
+    assert pool.all() and torch.equal(keep, s_ex > 0.7)
+    e, c = pool_energy_recall(s_ex, s_ex > 0.7, pool)
+    assert torch.allclose(e, torch.ones(4)) and torch.allclose(c, torch.ones(4))
+    keep2, pool2 = pool_rescore_mask(s_px, 0.6, s_ex, 0.7)
+    assert (keep2 <= pool2).all() and (keep2 <= (s_ex > 0.7)).all()
+    e2, c2 = pool_energy_recall(s_ex, s_ex > 0.7, pool2)
+    assert ((e2 > 0.5) & (e2 <= 1)).all()
+    k3 = torch.zeros(2, 5, 7, dtype=torch.bool)
+    k3[..., :3] = True
+    ja = adjacent_set_jaccard(k3, torch.ones(2, 5, dtype=torch.bool))
+    assert ja[0] / ja[1] == pytest.approx(1.0) and ja[2] / ja[3] == pytest.approx(1.0)
+    tab = torch.randn(6, 4, generator=g)
+    rows = torch.randint(0, 6, (200,), generator=g)
+    tt = TokenTable(6, 4)
+    tt.add(rows, tab[rows])
+    a_, b_, n_ = tt.r2_terms(rows, tab[rows])
+    assert a_ == pytest.approx(0.0, abs=1e-6) and b_ > 0 and n_ == 200
+    d, I = 5, 12
+    Wd, Wu, Wg = torch.randn(d, I, generator=g), torch.randn(I, d, generator=g), torch.randn(I, d, generator=g)
+    gg = torch.rand(I, generator=g)
+    Mo = torch.randn(d, d, generator=g)
+    Mo = Mo @ Mo.T + torch.eye(d)
+    E, D, sh = lowrank_b0_maps(Wd, gg, Wu, Mo, d)
+    assert sh == pytest.approx(1.0, abs=1e-5) and torch.allclose(D @ E, global_base_matrix(Wd, gg, Wu), atol=1e-4)
+    E2, D2, sh2 = lowrank_b0_maps(Wd, gg, Wu, Mo, 2)
+    assert 0 < sh2 < 1
+    # input-weighted: inputs confined to a 2-d subspace -> rank 2 is exact on them; the isotropic rank-2 map is not
+    Bm = global_base_matrix(Wd, gg, Wu)
+    U2 = torch.linalg.qr(torch.randn(d, 2, generator=g, dtype=torch.float64))[0].float()
+    Sz = U2 @ torch.diag(torch.tensor([9.0, 4.0])) @ U2.T
+    E3, D3, sh3 = lowrank_b0_maps(Wd, gg, Wu, Mo, 2, second_moment=Sz)
+    dz = torch.randn(64, 2, generator=g) @ U2.T
+    err_w = (((Bm - D3 @ E3) @ dz.T).T @ Mo * ((Bm - D3 @ E3) @ dz.T).T).sum()
+    err_i = (((Bm - D2 @ E2) @ dz.T).T @ Mo * ((Bm - D2 @ E2) @ dz.T).T).sum()
+    assert sh3 == pytest.approx(1.0, abs=1e-4) and float(err_w) < 1e-6 * float((((Bm @ dz.T).T @ Mo) * (Bm @ dz.T).T).sum())
+    assert float(err_w) <= float(err_i)
+    w, e2_ = torch.rand(I, generator=g), torch.rand(I, generator=g)
+    assert torch.allclose(up_reading_metric(Wu, w, e2_), reading_metric(Wg, Wu, w, torch.zeros(I), e2_), atol=1e-5)
+    S = torch.randn(d, d, generator=g)
+    S = S @ S.T
+    p64 = metric_proxy(Mo, S, 3)
+    p32 = metric_proxy(Mo, S, 3, dtype=torch.float32)
+    assert p32["share"] == pytest.approx(p64["share"], rel=1e-4)
+    B64 = p64["decode"] @ p64["encode"].T
+    B32 = p32["decode"].double() @ p32["encode"].double().T
+    assert torch.allclose(B64, B32, atol=1e-3)
+
+
+def test_posterior_pool_key_sigma_and_two_side_key():
+    from mdb_lanes.sparse_switch import (gate_exact_up_proxy_scores, hybrid_error_scores, orth_residual_norm, posterior_pool_key,
+                                   proxy_residual_sigma, silu_prime, two_side_pool_key)
+
+    g = torch.Generator().manual_seed(11)
+    d, I, k, N = 8, 20, 3, 4000
+    Wu = torch.randn(I, d, generator=g)
+    A = torch.randn(d, d, generator=g)
+    S = A @ A.T / d
+    enc = torch.linalg.qr(torch.randn(d, k, generator=g))[0]
+    dec = Wu @ enc  # the projection decoder: u_hat = u_tok + (dz enc) dec^T
+    sig, nrm = proxy_residual_sigma(Wu, dec, enc, S, chunk=7)
+    L = torch.linalg.cholesky(S + 1e-6 * torch.eye(d))
+    dz = torch.randn(N, d, generator=g) @ L.T
+    r = dz @ Wu.T - (dz @ enc) @ dec.T
+    assert torch.allclose(r.var(0), sig ** 2, rtol=0.12)
+    assert torch.allclose(nrm, (Wu - dec @ enc.T).norm(dim=-1), atol=1e-5)
+    # z-key: neurons with g = g_ref have tau = 0 and an exact proxy score; the key is monotone in the proxied score
+    gg = torch.rand(I, generator=g)
+    w = torch.rand(I, generator=g) + 0.5
+    gv = gg.clone()
+    gv[:5] += 1.0
+    sc = torch.rand(2, I, generator=g)
+    z = posterior_pool_key(sc, 0.5, gv, gg, w, sig)
+    assert torch.isfinite(z).all() and (z[:, 5:].abs() > 1e6).all()
+    assert torch.equal((z[:, :5] > 0), (sc[:, :5] > 0.5))
+    z2 = posterior_pool_key(sc, 0.5, gv, gg, w, nrm, scale=torch.tensor([1.0, 2.0]))
+    z1 = posterior_pool_key(sc, 0.5, gv, gg, w, nrm)
+    assert torch.allclose(z2[1, :5] * 2, z1[1, :5], rtol=1e-5) and torch.allclose(z2[0], z1[0])
+    # position-conditional scale: ||P_perp dz|| for an orthonormal encoder is the norm of the residual projection
+    zc = dz[:5] @ enc
+    pn = orth_residual_norm(dz[:5], zc, enc)
+    assert torch.allclose(pn, (dz[:5] - zc @ enc.T).norm(dim=-1), atol=1e-4)
+    # two-side key: with sigma_a = 0 it reduces to the one-side scale |silu(a) - g_ref| w sigma_u
+    ah = torch.randn(2, I, generator=g)
+    uh = torch.randn(2, I, generator=g)
+    k2 = two_side_pool_key(sc, 0.5, ah, uh, gg, w, torch.zeros(I), sig)
+    k1 = posterior_pool_key(sc, 0.5, torch.nn.functional.silu(ah), gg, w, sig)
+    assert torch.allclose(k2, k1, rtol=1e-4)
+    k3 = two_side_pool_key(sc, 0.5, ah, uh, gg, w, sig, torch.zeros(I))
+    tau = w * (silu_prime(ah) * uh * sig).abs()
+    assert torch.allclose(k3, (sc - 0.5) / tau.clamp_min(1e-12), rtol=1e-4)
+    # the G2U key at full rank is the exact hybrid score (consistency of the proxy pieces used by the z-key)
+    n = torch.randn(3, d, generator=g)
+    nt = torch.randn(3, d, generator=g)
+    gq = torch.rand(3, I, generator=g)
+    ut = nt @ Wu.T
+    s1, uhat = gate_exact_up_proxy_scores(gq, n, nt, torch.eye(d), Wu, ut, gq * 0.5, gg, w)
+    assert torch.allclose(s1, hybrid_error_scores(gq, n @ Wu.T, gq * 0.5, ut, gg, w), atol=1e-4)
+
+
+def test_first_order_base_reduces_to_hybrid_and_ls_recovers_constants():
+    from mdb_lanes.sparse_switch import (FirstOrderMoments, code_layer_macs, first_order_base_matrix, first_order_base_scores,
+                                   first_order_base_taylor, global_base_matrix, hybrid_error_scores, silu_prime,
+                                   tail_residual_components)
+
+    g = torch.Generator().manual_seed(12)
+    d, I = 6, 15
+    Wd, Wu, Wg = torch.randn(d, I, generator=g), torch.randn(I, d, generator=g), torch.randn(I, d, generator=g)
+    gg = torch.rand(I, generator=g)
+    zc = torch.zeros(I)
+    assert torch.allclose(first_order_base_matrix(Wd, Wg, Wu, zc, gg), global_base_matrix(Wd, gg, Wu), atol=1e-5)
+    gv, u, a = torch.rand(4, I, generator=g), torch.randn(4, I, generator=g), torch.randn(4, I, generator=g)
+    gt, ut, at = torch.rand(4, I, generator=g), torch.randn(4, I, generator=g), torch.randn(4, I, generator=g)
+    w = torch.rand(I, generator=g)
+    assert torch.allclose(first_order_base_scores(gv, u, a, gt, ut, at, zc, gg, w), hybrid_error_scores(gv, u, gt, ut, gg, w), atol=1e-6)
+    # the write of the base over all neurons is y_tok + B_01 dz
+    c, dd = torch.randn(I, generator=g), torch.rand(I, generator=g)
+    nt, n = torch.randn(d, generator=g), torch.randn(d, generator=g)
+    dz = n - nt
+    b = gt[0] * (nt @ Wu.T) + dd * (dz @ Wu.T) + c * (dz @ Wg.T)
+    assert torch.allclose(Wd @ b, Wd @ (gt[0] * (nt @ Wu.T)) + first_order_base_matrix(Wd, Wg, Wu, c, dd) @ dz, atol=1e-4)
+    # LS recovers planted constants
+    N = 3000
+    da, du = torch.randn(N, I, generator=g), torch.randn(N, I, generator=g)
+    c0, d0 = torch.randn(I, generator=g), torch.randn(I, generator=g)
+    rho = c0 * da + d0 * du + 0.01 * torch.randn(N, I, generator=g)
+    mo = FirstOrderMoments(2, I)
+    mo.add(1, rho[:1500], da[:1500], du[:1500])
+    mo.add(1, rho[1500:], da[1500:], du[1500:])
+    cs, ds = mo.solve(1)
+    assert torch.allclose(cs, c0, atol=0.01) and torch.allclose(ds, d0, atol=0.01) and mo.n[1] == N
+    c0s, d0s = mo.solve(0, fallback=(torch.ones(I), torch.full((I,), 2.0)))
+    assert torch.allclose(c0s, torch.ones(I)) and torch.allclose(d0s, torch.full((I,), 2.0))
+    at2 = torch.randn(5, I, generator=g)
+    ct, dt = first_order_base_taylor(at2, ut[:1].expand(5, -1), torch.tensor([1.0, 1, 1, 1, 4]), gg)
+    ref = ((torch.tensor([1.0, 1, 1, 1, 4]) / 8)[:, None] * silu_prime(at2) * ut[:1]).sum(0)
+    assert torch.allclose(ct, ref, atol=1e-5) and torch.equal(dt, gg)
+    keep = torch.zeros(4, I, dtype=torch.bool)
+    keep[:, :3] = True
+    comp = tail_residual_components(gv, u, a, gt, ut, at, gg, keep)
+    assert torch.allclose(comp["total"], comp["gate_linear"] + comp["up_linear"] + comp["remainder"], atol=1e-5)
+    assert (comp["total"][:, :3] == 0).all()
+    tot = gv * u - (gt * ut + gg * (u - ut))
+    assert torch.allclose(comp["total"][:, 3:], tot[:, 3:], atol=1e-6)
+    sh = {"d": d, "inter": I, "context": 4, "n_heads": 2, "n_kv": 1, "head_dim": 3}
+    att = code_layer_macs("attention_only", sh)
+    assert code_layer_macs("pool2_rescore", sh, k=2, p=5, m=3) == att + d * d + 2 * (d + 2 * I) + 2 * 5 * d + 3 * d
+
+
+def test_first_order_moments_weighted_equals_subset():
+    from mdb_lanes.sparse_switch import FirstOrderMoments
+
+    g = torch.Generator().manual_seed(3)
+    da, du = torch.randn(200, 6, generator=g), torch.randn(200, 6, generator=g)
+    rho = 0.4 * da - 1.3 * du + 0.1 * torch.randn(200, 6, generator=g)
+    keep = torch.rand(200, 6, generator=g) > 0.5
+    mw, ms = FirstOrderMoments(1, 6), FirstOrderMoments(1, 6)
+    mw.add(0, rho, da, du, weight=keep.float())
+    for j in range(6):
+        sel = keep[:, j]
+        sub = FirstOrderMoments(1, 1)
+        sub.add(0, rho[sel, j:j + 1], da[sel, j:j + 1], du[sel, j:j + 1])
+        ms.m[0, :, j] = sub.m[0, :, 0]
+    assert torch.allclose(mw.m, ms.m)
+    c, d = mw.solve(0)
+    assert torch.allclose(c, torch.full((6,), 0.4), atol=0.05) and torch.allclose(d, torch.full((6,), -1.3), atol=0.05)
+
+
+def test_exact_family_law_outside_domain_is_nan():
+    import math
+
+    from mdb_lanes.sparse_switch import exact_family_at_cost, exact_family_law
+
+    m, kl, a = exact_family_at_cost(700.0)
+    assert m < 0 and math.isnan(kl) and math.isnan(a)
+    _, kl, a = exact_family_law(2254.0)
+    assert abs(kl - 0.0524) < 1e-12 and isinstance(a, float)
+
+
+def test_paired_bootstrap_chord_frontier_laws_and_readout_certificate():
+    import numpy as np
+
+    from mdb_lanes.sparse_switch import (chord_mixture, exact_family_at_cost, exact_family_law, gaussian_tail_fit,
+                                   paired_chunk_bootstrap, pool_family_law, sigma_candidates, sigma_margin_statistic,
+                                   two_level_readout_bytes)
+
+    rng = np.random.default_rng(3)
+    ch = np.repeat(np.arange(64), 124)
+    a = (rng.random(len(ch)) < 0.9).astype(float)
+    b = a.copy()
+    flip = rng.random(len(ch)) < 0.05
+    b[flip] = 1 - b[flip]
+    r = paired_chunk_bootstrap(a, b, ch, draws=500, seed=1)
+    assert r["positions"] == 7936 and r["chunks"] == 64 and r["delta"] == pytest.approx(float((a - b).mean()))
+    assert 0 < r["se"] < 0.01 and r["discordance"] == pytest.approx(float(flip.mean()))
+    same = paired_chunk_bootstrap(a, a, ch, draws=50)
+    assert same["delta"] == 0 and same["se"] == 0
+    mix, lam = chord_mixture(a, b, 638.0, 832.0, 735.0)
+    assert lam == pytest.approx(0.5) and mix.mean() == pytest.approx(0.5 * (a.mean() + b.mean()))
+    from mdb_lanes.sparse_switch import chord_paired_bootstrap
+
+    cz = chord_paired_bootstrap(a, a, b, 638.0, 832.0, 735.0, ch, draws=200, seed=1)
+    assert cz["frontier"] == pytest.approx(mix.mean()) and cz["delta"] == pytest.approx(a.mean() - mix.mean())
+    assert not cz["extrapolated"] and cz["lam"] == pytest.approx(0.5)
+    ex = chord_paired_bootstrap(a, a, b, 638.0, 832.0, 1026.0, ch, draws=50)  # lam 2: extrapolated, not clipped
+    assert ex["extrapolated"] and ex["frontier"] == pytest.approx(2 * b.mean() - a.mean())
+    # the exact family reproduces Part AJ's ladder anchors to the stated tolerance
+    for m, (c_ref, a_ref) in {2254: (831.5, 0.8846), 3498: (872.2, 0.9264), 4272: (897.3, 0.9461)}.items():
+        c_, kl_, a_ = exact_family_law(m)
+        assert c_ == pytest.approx(c_ref, abs=1.0) and a_ == pytest.approx(a_ref, abs=0.004)
+    m_, _, a907 = exact_family_at_cost(907.0)
+    assert 4500 < m_ < 4620 and a907 == pytest.approx(0.950, abs=0.003)
+    c_, kl_, a_ = pool_family_law(2800, 2.0, 0.031)
+    assert c_ == pytest.approx(796.4, abs=1.0) and a_ == pytest.approx(0.877, abs=0.01)
+    # certificate statistic: v* in the m-sigma set iff z* >= -m
+    gt = torch.Generator().manual_seed(4)
+    lhat = torch.randn(30, 50, generator=gt)
+    tgt = torch.randint(0, 50, (30,), generator=gt)
+    hp, ep = torch.rand(30, generator=gt) + 0.1, torch.rand(50, generator=gt)
+    zs = sigma_margin_statistic(lhat, tgt, hp, ep, 16)
+    for mm in (1.0, 2.0, 4.0):
+        mk, _ = sigma_candidates(lhat, hp, ep, mm, 16)
+        assert torch.equal(mk[torch.arange(30), tgt], zs >= -mm - 1e-6)
+    assert (zs <= 0).all()
+    tf = gaussian_tail_fit(rng.standard_normal(20000))
+    assert tf["survival"][1.0] == pytest.approx(0.1587, abs=0.01) and -0.8 < tf["log_survival_slope_vs_x2"] < -0.35
+    assert two_level_readout_bytes(1000, 16, 4, 10) == 16 * 4 * 2 + 1000 * 4 + 1000 * 4 + 10 * (16 + 4)
+
+
+def test_part_al_posterior_detector_waterfill_tail_readout():
+    import math
+
+    import numpy as np
+
+    from mdb_lanes.sparse_switch import (blocked_sigma_candidates, blocked_sigma_sd, count_at_energy, detector_capture,
+                                   fit_power_exponent, head_pool_threshold, missed_energy, pool_tail_signals,
+                                   posterior_energy_key, posterior_membership, posterior_recall, quantized_proxy_sigma,
+                                   sigma_candidates, tail_energy_curve, tolerance_verdict, waterfill_factor)
+
+    g = torch.Generator().manual_seed(7)
+    # posterior closed forms against Monte Carlo
+    sh, tau, th = torch.tensor([0.5, 1.0, 2.0, 0.1]), torch.tensor([0.3, 0.5, 0.2, 1.0]), 1.0
+    eps = torch.randn(200000, 4, generator=g)
+    s = sh + tau * eps
+    p_mc = (s.abs() > th).float().mean(0)
+    e_mc = (s * s * (s > th)).mean(0)
+    assert torch.allclose(posterior_membership(sh, th, tau), p_mc, atol=4e-3)
+    assert torch.allclose(posterior_energy_key(sh, th, tau), e_mc, rtol=0.03, atol=2e-3)
+    z = (sh - th) / tau
+    e = posterior_energy_key(sh, th, tau)
+    assert posterior_recall(e, z, -1e9) == pytest.approx(1.0)
+    assert float(posterior_recall(e, z, 0.0)) == pytest.approx(float(e[z >= 0].sum() / e.sum()))
+    # tail signals: D1 = realized / predicted members, D2 = expected missed energy outside the pool, D3 band share
+    pool = torch.tensor([[True, True, False, False]])
+    ex = torch.tensor([[2.0, 0.1, 3.0, 0.0]])
+    band = torch.tensor([[False, True, False, False]])
+    sig = pool_tail_signals(z[None], pool, ex, th, sh[None], tau[None], band=band)
+    pm = posterior_membership(sh, th, tau)
+    assert float(sig["D1"]) == pytest.approx(1.0 / float(pm[:2].sum()), rel=1e-5)
+    assert float(sig["D2"]) == pytest.approx(float(e[2:].sum()), rel=1e-5)
+    assert float(sig["D3"]) == 0.0
+    # detector capture: a perfect detector captures 1, a random one ~q of the total positive gain at top q
+    gain = torch.rand(10000, generator=g)
+    assert detector_capture(gain, gain, 0.1) == pytest.approx(1.0)
+    f_rand = detector_capture(torch.rand(10000, generator=g), gain, 0.1)
+    assert 0.4 < f_rand < 0.65  # E[gain] / E[gain | top 10%] = 0.5 / 0.95
+    # water-filling: missed energy, the factor and the fitted exponent
+    sc = torch.tensor([[0.5, 1.5, 0.2], [2.0, 0.1, 0.1]])
+    assert torch.allclose(missed_energy(sc, 1.0), torch.tensor([0.29, 0.02]))
+    assert torch.allclose(waterfill_factor(torch.tensor([4.0]), 1.5), torch.tensor([4.0 ** -0.25]))
+    xx = np.exp(np.random.default_rng(0).normal(size=2000))
+    gm, _, n = fit_power_exponent(xx, 0.1 * xx ** 1.4)
+    assert gm == pytest.approx(1.4, abs=1e-6) and n == 2000
+    # tail energy curve and its inversion
+    sp = torch.tensor([[3.0, 2.0, 1.0, 0.5]])
+    cur = tail_energy_curve(sp, [1, 2, 3])
+    assert torch.allclose(cur, torch.tensor([[5.25, 1.25, 0.25]]))
+    assert count_at_energy([1, 2, 3], cur[0].tolist(), 1.25) == pytest.approx(2.0)
+    assert count_at_energy([1, 2, 3], cur[0].tolist(), 0.75) == pytest.approx(2.5)
+    assert count_at_energy([1, 2, 3], cur[0].tolist(), 0.1) is None
+    # quantization term, head pool quantile
+    qs = quantized_proxy_sigma(torch.tensor([1.0, 0.0]), torch.tensor([0.0, math.sqrt(12.0)]), torch.tensor([2.0, 3.0]))
+    assert torch.allclose(qs, torch.tensor([[1.0, 2.0], [1.0, 3.0]]))
+    assert head_pool_threshold(torch.arange(101.0), 0.5) == pytest.approx(50.0)
+    # blocked sigma: one block reduces to the isotropic set; z* certifies membership
+    lhat = torch.randn(20, 40, generator=g)
+    hp, ep = torch.rand(20, generator=g) + 0.1, torch.rand(40, generator=g)
+    sd1 = blocked_sigma_sd(hp[:, None], ep[:, None], [16])
+    for mm in (2.0, 4.0):
+        m1, n1, _ = blocked_sigma_candidates(lhat, sd1, mm)
+        m0, n0 = sigma_candidates(lhat, hp, ep, mm, 16)
+        assert torch.equal(m1, m0) and torch.equal(n1, n0)
+    eb = torch.rand(40, 3, generator=g)
+    hb = torch.rand(20, 3, generator=g)
+    sd3 = blocked_sigma_sd(hb, eb, [4, 4, 8])
+    tgt = torch.randint(0, 40, (20,), generator=g)
+    mk, _, zs = blocked_sigma_candidates(lhat, sd3, 3.0, target=tgt)
+    assert torch.equal(mk[torch.arange(20), tgt], zs >= -3.0 - 1e-6)
+    # ledger verdicts
+    assert tolerance_verdict(0.5, 0.4, 0.6) == "IN"
+    assert tolerance_verdict(0.605, 0.4, 0.6, 0.007) == "IN (tolerance)"
+    assert tolerance_verdict(0.7, 0.4, 0.6, 0.007) == "OUT" and tolerance_verdict(None, 0, 1) == "n/m"
+
+
+def test_part_am_controller_two_side_margin_readout():
+    import math
+
+    import numpy as np
+
+    from mdb_lanes.sparse_switch import (RateController, head_bound_score, head_write_energy, kl_persistence, margin_capture,
+                                   proxy_residual_cross, proxy_residual_sigma, readout_escalation, redo_mixture,
+                                   silu_prime, smoothed_silu, spectrum_share, two_side_pool_key, two_side_posterior)
+    g = torch.Generator().manual_seed(0)
+    # the controller holds its rate on a shifted distribution it was not initialised on
+    rng = np.random.default_rng(0)
+    ctl = RateController(0.15, [0.0, 0.0], [1.35, 1.35])
+    sig = rng.normal(1.0, 1.0, 20000)  # tau0 = 0 is the 50% quantile of this sequence: far from 15%
+    fl = ctl.run(0, sig)
+    assert abs(fl[2000:].mean() - 0.15) < 0.01 and abs(ctl.realized()["by_key"][0] - fl.mean()) < 1e-12
+    assert np.isnan(ctl.realized()["by_key"][1])
+    fv = ctl.run(1, sig, valid=np.arange(sig.size) % 2 == 0)
+    assert not fv[1::2].any()
+    # smoothed silu: exact at sigma 0, the Monte-Carlo mean and slope otherwise
+    a = torch.tensor([-2.0, -0.5, 0.0, 0.7, 2.5])
+    m0, d0 = smoothed_silu(a, torch.zeros(5))
+    assert torch.allclose(m0, torch.nn.functional.silu(a)) and torch.allclose(d0, silu_prime(a))
+    s = torch.full((5,), 0.6)
+    m, d = smoothed_silu(a, s)
+    x = a[None] + s[None] * torch.randn(400000, 5, generator=g)
+    assert torch.allclose(m, torch.nn.functional.silu(x).mean(0), atol=7e-3)
+    assert torch.allclose(d, silu_prime(x).mean(0), atol=1e-2)
+    assert float((m - torch.nn.functional.silu(x).mean(0)).abs().max()) < 0.2 * float((m0 - torch.nn.functional.silu(x).mean(0)).abs().max())
+    # the cross residual covariance against its definition, and the one-side sigma
+    Wa, Wu = torch.randn(30, 8, generator=g), torch.randn(30, 8, generator=g)
+    enc = torch.randn(8, 3, generator=g)
+    Da, Du = torch.randn(30, 3, generator=g), torch.randn(30, 3, generator=g)
+    Xs = torch.randn(500, 8, generator=g)
+    S = Xs.T @ Xs / 500
+    sa, su, sau = proxy_residual_cross(Wa, Da, Wu, Du, enc, S, chunk=7)
+    va, vu = Wa - Da @ enc.T, Wu - Du @ enc.T
+    assert torch.allclose(sau, ((va @ S) * vu).sum(-1), atol=1e-4)
+    assert torch.allclose(sa, proxy_residual_sigma(Wa, Da, enc, S)[0], atol=1e-5)
+    # the two-side posterior: no cross term, no smoothing and no product = the AL key's tau and score
+    ah, uh, ut = torch.randn(4, 30, generator=g), torch.randn(4, 30, generator=g), torch.randn(4, 30, generator=g)
+    gt, gr, w = torch.rand(4, 30, generator=g), torch.rand(30, generator=g), torch.rand(30, generator=g) + 0.5
+    sh, tau = two_side_posterior(ah, uh, ut, gt, gr, w, sa, su)
+    sp_ = (torch.nn.functional.silu(ah) * uh - gt * ut - gr * (uh - ut)).abs() * w
+    assert torch.allclose(sh, sp_, atol=1e-6)
+    assert torch.allclose((sh - 0.3) / tau, two_side_pool_key(sh, 0.3, ah, uh, gr, w, sa, su), atol=1e-4)
+    # with every term on: tau against a Monte-Carlo of the first-order deviation with correlated residuals (scale 1)
+    j = 0
+    sa1, su1 = torch.tensor([0.3]), torch.tensor([0.4])
+    rho = 0.6
+    sau1 = torch.tensor([rho * 0.3 * 0.4])
+    a0, u0 = torch.tensor([[0.8]]), torch.tensor([[1.2]])
+    _, t_full = two_side_posterior(a0, u0, torch.zeros(1, 1), torch.zeros(1, 1), torch.zeros(1), torch.ones(1), sa1, su1, sau1, product=True)
+    z1 = torch.randn(400000, generator=g)
+    z2 = rho * z1 + math.sqrt(1 - rho * rho) * torch.randn(400000, generator=g)
+    ra, ru = 0.3 * z1, 0.4 * z2
+    gp = float(silu_prime(a0))
+    dev = gp * float(u0) * ra + float(torch.nn.functional.silu(a0)) * ru + gp * ra * ru
+    assert float(t_full) == pytest.approx(float(dev.std()), rel=0.02)
+    _, t_sc = two_side_posterior(a0, u0, torch.zeros(1, 1), torch.zeros(1, 1), torch.zeros(1), torch.ones(1), sa1, su1, sau1,
+                                 scale=torch.tensor([2.0]))
+    _, t_2 = two_side_posterior(a0, u0, torch.zeros(1, 1), torch.zeros(1, 1), torch.zeros(1), torch.ones(1), 2 * sa1, 2 * su1, 4 * sau1)
+    assert torch.allclose(t_sc, t_2)
+    assert j == 0
+    # margin capture and the re-do mixture
+    mg = np.array([0.1, 3.0, 0.2, 5.0, 0.05, 2.0, 4.0, 1.0, 6.0, 7.0])
+    ag = np.array([0, 1, 0, 1, 1, 1, 1, 0, 1, 1])
+    kk = np.array([0.5, 0.0, 0.3, 0.0, 0.1, 0.0, 0.0, 0.1, 0.0, 0.0])
+    mc = margin_capture(mg, ag, kk, qs=(0.2, 0.3))
+    assert mc[0.2]["phi"] == pytest.approx(1 / 3) and mc[0.3]["phi"] == pytest.approx(2 / 3)
+    assert mc[0.3]["kl_share"] == pytest.approx(0.9 / 1.0)
+    rm = redo_mixture(ag, kk, mg < 0.15, 0.7, 0.18)
+    assert rm["q"] == pytest.approx(0.2) and rm["agree"] == pytest.approx(0.8)
+    assert rm["column_equivalents_decide_after"] == pytest.approx(900.0) and rm["column_equivalents_honest"] == pytest.approx(936.0)
+    # KL persistence: a chunked sequence with repeated values is perfectly persistent
+    kv = np.repeat(np.array([1e-3, 1e-1, 1e-3, 1e-1]), 5)
+    kp = kl_persistence(kv, np.repeat([0, 1], 10), q=0.5)
+    assert kp["tail_persistence"] > 0.7 and kp["pairs"] == 18
+    # head write energy and its weights-only bound
+    o = torch.randn(5, 3, 4, generator=g)
+    Wo = torch.randn(6, 12, generator=g)
+    F = torch.eye(6)
+    e = head_write_energy(o, Wo, F, 4)
+    assert torch.allclose(e[2, 1], (Wo[:, 4:8] @ o[2, 1]).pow(2).sum(), rtol=1e-4)
+    assert bool((head_bound_score(o, Wo, 4) ** 2 >= e - 1e-4).all())
+    # spectrum share and the readout escalation statistics
+    C = torch.diag(torch.tensor([4.0, 3.0, 2.0, 1.0]))
+    assert spectrum_share(C, (1, 2, 4)) == pytest.approx({1: 0.4, 2: 0.7, 4: 1.0})
+    re = readout_escalation([100, 40000, 10], [5, 25000, 1], vocab=100000, d=8, r1=2, r2=5)
+    assert re["escalated_C1"] == 1 and re["escalated_C2"] == 1
+    assert re["expected_bytes"] == pytest.approx(100000 * 6 + (40110 / 3) * 7 + (25006 / 3) * 12)
+
+
+def test_part_am_fp32_margin_and_phi_max():
+    import numpy as np
+
+    from mdb_lanes.sparse_switch import margin_capture, top2_margin_fp32
+
+    g = torch.Generator().manual_seed(7)
+    w = torch.randn(1000, 16, generator=g)
+    h = torch.randn(5, 16, generator=g)
+    m = top2_margin_fp32(h.to(torch.bfloat16), w.to(torch.bfloat16), chunk=128)
+    ref = (h.to(torch.bfloat16).float() @ w.to(torch.bfloat16).float().T).topk(2, dim=-1).values
+    assert torch.allclose(m, ref[:, 0] - ref[:, 1], atol=1e-5)
+    assert (m >= 0).all()
+    agree = np.ones(1000)
+    agree[:100] = 0  # 10% disagreements
+    mc = margin_capture(np.arange(1000.0), agree, np.ones(1000), qs=(0.02, 0.2))
+    assert abs(mc[0.02]["phi_max"] - 0.2) < 1e-12 and mc[0.02]["phi"] == 0.2
+    assert mc[0.2]["phi_max"] == 1.0
+
+
+def test_part_an_late_redo_pool_controller_union_calibration_escalation():
+    import math
+
+    import numpy as np
+
+    from mdb_lanes.sparse_switch import (PoolRateController, escalated_readout_bytes, kurtosis_from_sums, late_error_share,
+                                   late_fix_share_map, late_redo_price, moment_sums, redo_fix_share, union_pool_sized,
+                                   union_pool_topk, zbin_calibration)
+
+    # prices: the readout-separate convention gives the honest dense re-do at L = n; the memo's convention too
+    assert late_redo_price(28, 28, 0.1766) == pytest.approx(1176.6)
+    assert late_redo_price(28, 28, 0.1766, convention="memo_21_4") == pytest.approx(1176.6)
+    assert late_redo_price(4, 28, 0.1766) == pytest.approx(1000 * 4 / 28 + 176.6)
+    assert late_redo_price(4, 28, 0.1766, convention="memo_21_4") == pytest.approx(823.4 * 4 / 28 + 353.2)
+    # the arctan map: v 0.5 -> 0.5, v 0 -> 0, v 1 -> 1; checked against a Monte Carlo of the Gaussian split
+    assert late_fix_share_map([0.0, 0.5, 1.0]) == pytest.approx([0.0, 0.5, 1.0])
+    rng = np.random.default_rng(0)
+    for v in (0.3, 0.7):  # Monte Carlo of the Gaussian split near the tie: flat mu >= 0, eps = eps_early + eps_late
+        n = 2000000
+        mu, el, ee = rng.uniform(0, 4, n), rng.normal(0, v ** 0.5, n), rng.normal(0, (1 - v) ** 0.5, n)
+        w = mu + el + ee
+        fl = np.abs(w) < 0.02
+        before, after = (w > 0)[fl], (mu + ee > 0)[fl]
+        net = (after.mean() - before.mean()) / (1 - before.mean())
+        assert abs(net - float(late_fix_share_map(v))) < 0.03
+    e = np.ones((28, 10))
+    e[-4:] = 3.0
+    assert late_error_share(e, 4) == pytest.approx(12 / 36)
+    fs = redo_fix_share([0, 0, 1, 1, 1], [1, 1, 1, 0, 1], [1, 1, 1, 1, 0])
+    assert fs["fixed"] == 1.0 and fs["broken"] == 0.5 and fs["p_dis_flag"] == 0.5 and fs["f"] == 0.5 and fs["unflagged_change"] == 0.0
+    # the pool controller holds the mean size on a shifted distribution (served z compressed toward 0)
+    kgrid = np.arange(100, 900, 10)
+    pc = PoolRateController(300, [1.0], gain=0.05)
+    sizes = []
+    for _ in range(20):
+        zz = np.sort(rng.normal(0.3, 1.0, (50, 1000)), axis=1)[:, ::-1]  # descending; native-quantile tau0 1.0 under-sizes
+        _, n_ = pc.run_grid(0, zz[:, kgrid - 1], kgrid)
+        sizes.append(n_)
+    assert abs(np.concatenate(sizes)[-300:].mean() / 300 - 1) < 0.05 and pc.realized()["target"] == 300
+    # union pool: forced members first, exact size
+    z = torch.tensor([[3.0, 2.0, 1.0, 0.0, -1.0]])
+    forced = torch.tensor([[False, False, False, False, True]])
+    pm = union_pool_topk(z, forced, 3)
+    assert pm.tolist() == [[True, True, False, False, True]]
+    zs2 = torch.tensor([[3.0, 2.0, 1.0, 0.0, -1.0], [0.0, 1.0, 2.0, 3.0, 4.0]])
+    ps = union_pool_sized(zs2, torch.tensor([[False, False, False, False, True], [True, False, False, False, False]]), torch.tensor([3, 1]))
+    assert ps.tolist() == [[True, True, False, False, True], [True, False, False, False, False]]
+    # calibration bins and kurtosis
+    zc = torch.tensor([-5.0, -2.5, -2.5, 0.5, 3.0])
+    mc = torch.tensor([0.0, 1.0, 0.0, 1.0, 1.0])
+    cb = zbin_calibration(zc, mc, edges=(-3.0, 0.0))
+    assert [b["n"] for b in cb] == [1, 2, 2] and cb[1]["realized"] == 0.5
+    assert cb[1]["predicted"] == pytest.approx(0.5 * (1 + math.erf(-2.5 / 2 ** 0.5)), rel=1e-5)
+    kg = kurtosis_from_sums(moment_sums(torch.randn(200000, generator=torch.Generator().manual_seed(1))))
+    assert abs(kg["excess_kurtosis"]) < 0.05 and abs(kg["sd"] - 1) < 0.01
+    kt = kurtosis_from_sums(moment_sums(torch.distributions.StudentT(8.0).sample((400000,))))
+    assert 0.6 < kt["excess_kurtosis"] < 1.8 and 6 < kt["nu_t"] < 14
+    # escalation bytes: escalated positions read the full r2 table
+    eb = escalated_readout_bytes([10, 1000], [1, 5], [False, True], vocab=1000, d=8, r1=2, r2=5)
+    two = np.array([1000 * 6 + 10 * 7 + 1 * 12, 1000 * 6 + 1000 * 7 + 5 * 12])
+    assert eb["expected_bytes_two_stage"] == pytest.approx(two.mean())
+    assert eb["expected_bytes"] == pytest.approx((two[0] + 1000 * 9 + 5 * 12) / 2)
+    assert eb["expected_bytes_memo_table2_only"] == pytest.approx((two[0] + 1000 * 7 + 5 * 12) / 2)

@@ -30,7 +30,7 @@ class NoUpstream(importlib.abc.MetaPathFinder):
 
 
 sys.meta_path.insert(0, NoUpstream())
-from mdb.worker_bootstrap import main
+from mdb_lanes.worker_bootstrap import main
 
-sys.argv = ["mdb.worker_bootstrap", "worker_e6.py"]
+sys.argv = ["mdb_lanes.worker_bootstrap", "worker_e6.py"]
 main()

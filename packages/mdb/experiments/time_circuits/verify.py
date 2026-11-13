@@ -5,10 +5,10 @@ from hashlib import sha256
 from pathlib import Path
 from zipfile import ZipFile
 
-from mdb.bench_publication import recover_locked
-from mdb.circuit_runtime import DirectoryArtifactStore
-from mdb.model_os_contracts import content_digest
-from mdb.vm_payload_cache import PayloadRef, PayloadStore
+from mdb_lanes.bench_publication import recover_locked
+from mdb_lanes.circuit_runtime import DirectoryArtifactStore
+from mdb_lanes.model_os_contracts import content_digest
+from mdb_lanes.vm_payload_cache import PayloadRef, PayloadStore
 
 
 def verify_source(root, *, request_sha256):

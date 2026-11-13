@@ -141,7 +141,7 @@ def test_layering_engine_and_core_do_not_import_upward():
     root = Path(mdb.__file__).parent
     for path in (root / "engine").rglob("*.py"):
         for name in _imports(path):
-            assert not name.startswith(("mdb.ops", "mdb.repl", "mdb.local_debugger")), (path, name)
+            assert not name.startswith(("mdb.ops", "mdb.repl", "mdb_lanes.local_debugger")), (path, name)
             assert not name.lstrip(".").startswith(("ops", "repl")) or name[0] != ".", (path, name)
     for path in (root / "core").rglob("*.py"):
         for name in _imports(path):

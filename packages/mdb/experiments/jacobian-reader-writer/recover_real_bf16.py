@@ -18,7 +18,7 @@ from typing import Any
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parents[1] / "src"))
 
-from mdb.job_support import (  # noqa: E402
+from mdb_lanes.job_support import (  # noqa: E402
     guarded_job_receipt,
     guarded_mrun_launch,
     one_lease_scheduling_contract,
@@ -32,7 +32,7 @@ RESULT_ROOT = HERE / "results" / f"recovery-{ORIGIN_JOB}"
 WORKER = HERE / "recovery_worker.py"
 WHEEL_NAME = "mdb_runtime-0.1.0-py3-none-any.whl"
 EXPECTED_SOURCE_SHA256 = {
-    "real_bf16_worker.py": "82f1a5917327864d7c63cfdebf5883af9e485017faf6a00d0bb5c686c33a3d21",
+    "real_bf16_worker.py": "92eb1b400bb1b838c82f46c6c64c745030c2cf75c77af2720fd5cb050e060246",
     "protocol.json": "2f9a406ef66d3096daca9f60b66bef485fa04b9ca910579eaa1f899d1a41b20c",
     WHEEL_NAME: "1120c5299ffe096a76db84ceaa71cd44348db8f03a46e6bf17e72e433b96ea2e",
 }

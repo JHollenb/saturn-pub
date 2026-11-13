@@ -35,4 +35,4 @@ def main(argv=None):
     args = parser.parse_args(["vm", *(argv or [])])
     return args.handler(args)
 '''
-(root / "src/mdb/vm_cli.py").write_text(text)
+(root.parent / "mdb-lanes" / "src/mdb_lanes/vm_cli.py").write_text(text)

@@ -6,7 +6,7 @@ from pathlib import Path
 import shutil
 import tempfile
 
-from mdb.bench_verify import verify
+from mdb_lanes.bench_verify import verify
 
 
 def main():

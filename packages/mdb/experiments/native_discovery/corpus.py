@@ -6,7 +6,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from mdb.native_discovery import digest, file_hash, prepare_corpus, save_json
+from mdb_lanes.native_discovery import digest, file_hash, prepare_corpus, save_json
 
 
 def build(source_root, out, *, count=20, skip=0, seed=20261112, exclude_corpus=(), one_per_basename=False):

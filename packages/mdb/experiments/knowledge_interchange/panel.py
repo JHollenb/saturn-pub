@@ -6,7 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
-from mdb.knowledge_interchange import (
+from mdb_lanes.knowledge_interchange import (
     ArtifactBinding,
     BindingExpectation,
     ExactLaw,

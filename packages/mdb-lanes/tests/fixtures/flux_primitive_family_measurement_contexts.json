@@ -1,0 +1,30 @@
+{
+  "scope": "Synthetic metadata-only fixture; no model or measured outcome",
+  "contexts": [
+    {
+      "id": "fixed-metadata-context-a",
+      "seed": 7301,
+      "panel": "fixture-primary",
+      "prompts": {
+        "P": "A copper cylinder stands left of a violet pyramid.\nTwo objects.",
+        "Q": "A copper cylinder stands right of a violet pyramid.\nTwo objects."
+      }
+    },
+    {
+      "id": "fixed-metadata-context-b",
+      "seed": 7321,
+      "panel": "fixture-wording",
+      "prompts": {
+        "P": "On white, a violet pyramid is right of a copper cylinder — two separate objects.",
+        "Q": "On white, a violet pyramid is left of a copper cylinder — two separate objects."
+      }
+    }
+  ],
+  "metric": {
+    "observable": "fixture signed natural-source axis",
+    "units": "dimensionless",
+    "reference": "natural P zero, natural Q one",
+    "scope": "metadata fixture only",
+    "direction": "minimize"
+  }
+}

@@ -46,7 +46,7 @@ def main():
     from circuit_tracer.graph import compute_graph_scores, compute_node_influence
     from transformers import AutoConfig, AutoTokenizer
 
-    from mdb.circuit_runtime import DirectoryArtifactStore
+    from mdb_lanes.circuit_runtime import DirectoryArtifactStore
     versions = {n: importlib.metadata.version(n) for n in ("torch", "transformers", "nnsight", "circuit-tracer", "numpy")}
     if versions["transformers"] != "4.57.3" or versions["nnsight"] != "0.8.0rc1" or versions["torch"] != "2.13.0":
         raise RuntimeError("E6 pinned instrument toolchain changed")

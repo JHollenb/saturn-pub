@@ -1,0 +1,632 @@
+"""Common/differential native-write factorial with a fresh fox/cat context.
+
+Two saved source exits and one newly observed native prefix. All suffix and RGB
+forecasts are globally sealed before target replay; selectors transfer unchanged.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import runpy
+import shutil
+import time
+from contextlib import contextmanager
+from pathlib import Path
+
+SCHEMA = "mdb-flux-common-differential-v1"
+RESULT = "flux-common-differential-result"
+BASE = "flux_centered_write_campaign.py"
+BASE_SHA256 = "bf4608c2c732d713c532a0edf81c4aef32d4d7dcc0a6ddf2867d3a9c1421e04a"
+HELPERS = {
+    BASE: BASE_SHA256,
+    "flux_raw_to_image.py": "b04db3835522a007a15293ef177e4463cf05e9d01122d47d42531dc72bd9700a",
+    "flux_functional_denoiser.py": "cb794daa5818ec3f9107f23839a41010f9569148da3708e39cedd364dff21923",
+    "flux_functional_decoder.py": "e2712298e42b37a263dea1b24f0f491082b8a01086b16fa66577f474c68f491f",
+    "flux_functional_vae.py": "576b94f3cd987e8849f6d4772c90a77f14fdfc9210dea608a9a3d16cf0f99a61",
+    "flux_functional_qwen_prefix.py": "763ae441d33396fe5cede5d96214c76e01aae779916ce5cf28e79cf5f5eb618a",
+    "flux_functional_qwen_prefix_worker.py": "7f13836ae94c84b7ed0f7df67b1f7b1d28a7e534a83d509fa7320a09a6d845df",
+    "flux_image_tail_microscope.py": "b9efb61874005c8b11307c197a2ea5299078b42d5b4ab4b5cc719f7a4a4a32bb",
+    "flux_source_receiver.py": "d483e41bfac018c8225662e8417bcef46f6916fa2a14d910f16e9a12beb5250c",
+}
+SOURCE_JOB = "job-445316274652"
+SOURCE_REQUEST = "badd4880754550c73743836a7b35a00acfbcfd15a825ffb03641433d7ec09927"
+SOURCE_MANIFEST = "c29177c6fbbf9217a84321bf948abc82db55b4f00abaae2078a591f1dcf77766"
+SOURCE_ROOT = "/mnt/big/mdb/research/job-445316274652/flux-centered-write-result"
+SOURCE_CONTEXT_IDS = ("fresh0s613", "fresh1s719")
+NEW_CONTEXT = dict(id="foxcat0s821", seed=821,
+    prompt="A red fox sitting to the left of a gray tabby cat. Two separate animals on a seamless white background. Studio photograph.")
+CONTEXT_IDS = SOURCE_CONTEXT_IDS + (NEW_CONTEXT["id"],)
+ARMS = ("baseline", "sham", "common-only", "differential-only", "both", "native-differential-remove")
+DIRECTION_ARMS = dict(top="top-positive", bottom="bottom-positive", random="random-positive")
+NEW_SELECTOR_CONTEXT = "fresh0s613"
+SCOPE = dict(kind="architectural", origin="two-saved-and-one-new-observed-native-joint0-exit-and-writer",
+    raw_prompt_forecast=False, source_writer_forecast=False, independent_kernel_prediction=False,
+    scope="Two exact saved roots plus one fresh fox/cat native prefix; frozen output selectors, native writer projection, common/differential factorial; all suffix targets held until seal")
+
+
+
+def require(ok, message):
+    if not ok:
+        raise ValueError(message)
+
+
+def canonical(value):
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+
+
+def sha(path):
+    with Path(path).open("rb") as stream:
+        return hashlib.file_digest(stream, "sha256").hexdigest()
+
+
+def read(path):
+    return json.loads(Path(path).read_text())
+
+
+def save(path, value):
+    path = Path(path); path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("xb") as stream:
+        stream.write(canonical(value) + b"\n")
+
+
+def previous():
+    for name, expected in HELPERS.items():
+        require(sha(Path(__file__).with_name(name)) == expected, "frozen helper differs: " + name)
+    return runpy.run_path(str(Path(__file__).with_name(BASE)))
+
+
+def path_keys():
+    return previous()["helpers"]()["_source_keys"]()
+
+
+def contract():
+    return dict(contexts=3, image_futures=18, reused_native_joint0_sources=2, new_native_joint0_sources=1,
+        native_qwen_source_calls=1, native_project_source_transitions=1, native_joint0_source_transitions=1, noise_draws=1,
+        functional_transitions=1980, native_target_transitions=1980,
+        functional_vae_calls=18, native_vae_reference_calls=18, native_vae_repeat_calls=3,
+        sham_acts_per_lane=3, additive_endpoint_acts_per_lane=12, native_source_restores=3,
+        first_consumer_port_sets_per_lane=18, component_hydrations=3,
+        cuda_placements=6, cpu_offloads=6, functional_module_forwards=0,
+        persistent_weight_banks=0, max_gpu_components=1)
+
+
+def make_config(base):
+    config = {k:v for k,v in base.items() if not k.startswith(("direction_", "spectral_")) and k not in (
+        "job_id", "request_sha256", "worker_sha256", "output", "_request_record",
+        "contexts", "primary_arms", "crossed_arms", "dose", "selection_protocol", "selection_protocol_sha256",
+        "centered_envelope", "endpoint_order", "spectral_intervention", "spectral_coordinate")}
+    config.update(schema=SCHEMA, context_ids=list(CONTEXT_IDS), arms=list(ARMS), output_name=RESULT,
+        source_native_root=SOURCE_ROOT, source_native_job=SOURCE_JOB, source_native_request=SOURCE_REQUEST,
+        source_native_manifest_sha256=SOURCE_MANIFEST, source_native_worker_sha256=BASE_SHA256,
+        new_context=dict(NEW_CONTEXT), new_selector_context=NEW_SELECTOR_CONTEXT,
+        source_frontier="two saved and one newly captured native joint0 exits plus passive M_base/x/R_attention; source writers observed",
+        literal_write="BF16(gate_ff * native_M_base); effective write H_joint0 - R_attention reported separately",
+        direction_geometry="normalize previous finite BF16 top/bottom payload per row; rowwise orthogonal sum/difference; no eigensearch/refit; fox uses frozen fresh0s613 fields",
+        payload_rule="FP64 C=-beta_top*a*uplus,D=-beta_top*b*uminus,both=-beta_top*ut,nativeD=-beta_minus*uminus; independent FP32 then BF16 casts",
+        finite_factorial="both is once-rounded top removal; separately rounded C+D and sequential endpoints reconciled explicitly",
+        
+        endpoint_contract="Add identical presealed BF16 payload to each lane own observed joint0 exit; does not rerun an internally edited FF",
+        first_consumer="step0/joint1 norm1, norm1_context, R_attention, x, M_base and gate_ff; unchanged original native modules",
+        helper_source_sha256=dict(HELPERS), height=512, width=512, steps=4, batch_size=1,
+        device="cuda", dtype="bfloat16", flux_mode="capture", capture_sites=True,
+        component_hydrations=3, cuda_placements=6, offloads=6, max_gpu_components=1,
+        max_wall_seconds=1800, forecast_transaction_bytes=4 << 30,
+        transport_limits=dict(max_expanded_bytes=8 << 30, max_member_bytes=134221824),
+        scientific_gates=[], retention="complete intervention/first-consumer/clock states, first consumer ports, full image arrays and all boundary hashes",
+        decoder_contract="18 functional forecasts,18 actual native-final decodes,3 same-native-final repeats")
+    return config
+
+
+def validate_config(config):
+    for key, expected in make_config({}).items():
+        require(config.get(key) == expected, "frozen experiment field differs: " + key)
+    for key in path_keys():
+        require(config.get(key) and sha(config[key]) == config.get(key + "_sha256"), "source metadata differs: " + key)
+    require(config.get("guidance_scale", 1.) == 1. and not config.get("reference_image", False)
+        and not config.get("retry", False) and not config.get("nested_mrun", False), "unsupported execution profile")
+    return contract()
+
+
+def projection_payloads(gated_write, effective_write, prior_payloads):
+    """Source-only FP64 geometry; all zero and finite-cast cases are retained."""
+    import numpy as np
+    import torch
+
+    base = previous(); rows = base["scalar_rows"]
+    def tensor(value):
+        return value.detach().double().cpu().numpy()
+    def record(value):
+        return rows(torch.from_numpy(np.ascontiguousarray(value)))
+    w, eff = tensor(gated_write), tensor(effective_write)
+    z, zeff = w-w.mean(-1, keepdims=True), eff-eff.mean(-1, keepdims=True)
+    units, betas, records, valid_directions = {}, {}, {}, {}
+    for name, payload in prior_payloads.items():
+        raw = tensor(payload); centered = raw-raw.mean(-1, keepdims=True)
+        lengths = np.sqrt(np.square(centered).sum(-1, keepdims=True))
+        u = np.divide(centered, lengths, out=np.zeros_like(centered), where=lengths > 0)
+        beta = (z*u).sum(-1, keepdims=True)
+        units[name], betas[name] = u, beta
+        valid_directions[name] = lengths > 0
+        total = np.square(z).sum(-1, keepdims=True)
+        valid = lengths > 0; nvalid = int(np.count_nonzero(valid))
+        mean = float(beta[valid].mean()) if nvalid else 0.; uniform_energy = nvalid*mean*mean
+        records[name] = dict(beta=record(beta.squeeze(-1)), effective_beta=record((zeff*u).sum(-1)),
+            zero_direction_rows=int(np.count_nonzero(lengths == 0)), native_projection_energy=record(np.square(beta.squeeze(-1))),
+            native_centered_write_energy=record(total.squeeze(-1)),
+            fraction_native_centered_energy=record(np.divide(beta*beta,total,out=np.zeros_like(beta),where=total>0).squeeze(-1)),
+            beta_spatial_mean_on_valid_directions=mean, valid_direction_rows=nvalid, uniform_amplitude_energy=uniform_energy,
+            varying_amplitude_energy=float(np.square(beta[valid]-mean).sum()),
+            global_native_centered_energy_fraction=None if float(total.sum())==0 else float(np.square(beta).sum()/total.sum()),
+            positive_rows=int(np.count_nonzero(beta>0)), negative_rows=int(np.count_nonzero(beta<0)), zero_beta_rows=int(np.count_nonzero(beta==0)))
+    c = np.clip((units["top"]*units["bottom"]).sum(-1,keepdims=True), -1., 1.)
+    joint_valid = valid_directions["top"] & valid_directions["bottom"]
+    dp, dm = np.sqrt(2+2*c), np.sqrt(2-2*c)
+    plus = np.divide(units["top"]+units["bottom"], dp, out=np.zeros_like(w), where=(dp>0)&joint_valid)
+    minus = np.divide(units["top"]-units["bottom"], dm, out=np.zeros_like(w), where=(dm>0)&joint_valid)
+    aa, bb = np.sqrt((1+c)/2), np.sqrt((1-c)/2)
+    bp, bm = (z*plus).sum(-1,keepdims=True), (z*minus).sum(-1,keepdims=True)
+    ideals = {
+        "common-only": -betas["top"]*aa*plus,
+        "differential-only": -betas["top"]*bb*minus,
+        "both": -betas["top"]*units["top"],
+        "native-differential-remove": -bm*minus,
+    }
+    payloads, arms = {}, {}
+    for arm, ideal in ideals.items():
+        payload = torch.from_numpy(ideal.astype("float32")).to(torch.bfloat16)
+        payloads[arm] = payload
+        delta = tensor(payload); post = z+delta-delta.mean(-1,keepdims=True)
+        arms[arm] = dict(kind="endpoint-common-differential-factor", direction=arm,
+            ideal_payload_norm=record(np.sqrt(np.square(ideal).sum(-1))),
+            cast_payload_norm=record(np.sqrt(np.square(delta).sum(-1))),
+            cast_payload_row_mean=record(delta.mean(-1)),
+            ideal_common_after=record((bp+(ideal*plus).sum(-1,keepdims=True)).squeeze(-1)),
+            ideal_differential_after=record((bm+(ideal*minus).sum(-1,keepdims=True)).squeeze(-1)),
+            cast_common_after=record((post*plus).sum(-1)),
+            cast_differential_after=record((post*minus).sum(-1)),
+            cast_centered_write_energy_after=record(np.square(post).sum(-1)),
+            double_to_float32_to_bf16_cast_error_rms=float(np.sqrt(np.square(delta-ideal).mean())))
+    total=float(np.square(z).sum())
+    common_differential=dict(cosine=record(c.squeeze(-1)),common_beta=record(bp.squeeze(-1)),differential_beta=record(bm.squeeze(-1)),
+        common_energy_fraction=None if total==0 else float(np.square(bp).sum()/total),
+        differential_energy_fraction=None if total==0 else float(np.square(bm).sum()/total),
+        zero_sum_rows=int(np.count_nonzero(dp==0)),zero_difference_rows=int(np.count_nonzero(dm==0)),
+        incomplete_direction_rows=int(np.count_nonzero(~joint_valid)),
+        orthogonality_max_abs=float(np.abs((plus*minus).sum(-1)).max()),
+        ideal_recomposition_max_abs=float(np.abs(ideals["common-only"]+ideals["differential-only"]-ideals["both"]).max()))
+    cosines={a+":"+b:record((units[a]*units[b]).sum(-1)) for a,b in (("top","bottom"),("top","random"),("bottom","random"))}
+    report=dict(schema="mdb-common-differential-geometry-v1",literal_writer="BF16(gate_ff*M_base)",
+        effective_writer="joint0_image - R_attention widened before subtraction",directions=records,arms=arms,
+        common_differential=common_differential,pairwise_output_direction_cosines=cosines,
+        literal_vs_effective_rms=float(np.sqrt(np.square(w-eff).mean())),
+        literal_centered_write_norm=record(np.sqrt(np.square(z).sum(-1))),
+        effective_centered_write_norm=record(np.sqrt(np.square(zeff).sum(-1))),
+        scope="Rowwise source-derived factorial; both is direct once-rounded top removal, not sum of rounded factors; endpoint Acts, not internal FF ablation.")
+
+    return payloads, report
+
+
+def save_interactions(output, roots, paths, ports, lane, base, old):
+    """Retain complete signed finite-difference tensors, never differences of RMS."""
+    import torch
+
+    interactions = {}
+    for identifier in roots:
+        def interaction(records, name):
+            arrays = [base["load_tensor"](directory, record, "cpu").double() for directory, record in records]
+            value = arrays[0] - arrays[1] - arrays[2] + arrays[3]
+            require(bool(torch.isfinite(value).all()), "nonfinite interaction: " + name)
+            return old["_save_tensor"](output, f"interactions/{lane}/{identifier}/{name}.npy", value)
+        arms = ("both", "common-only", "differential-only", "baseline")
+        port_values = {}
+        for name in ports[identifier + "/baseline"]:
+            records = [(output, ports[identifier + "/" + arm][name]) for arm in arms]
+            port_values[name] = interaction(records, "ports/" + name)
+        decoder_values = {}
+        for name in ("decoded", "pixels"):
+            records = []
+            for arm in arms:
+                directory = output / paths[identifier + "/" + arm]["root"]
+                record = read(directory / ("decoder-forecast.json" if lane == "forecast" else "decoder-native-reference.json"))[name]
+                records.append((directory, record))
+            decoder_values[name] = interaction(records, "decoder/" + name)
+        interactions[identifier] = dict(ports=port_values, decoder=decoder_values,
+            formula="Y_both - Y_common - Y_differential + Y_baseline",
+            scope="Signed FP64 finite difference; includes finite endpoint nonadditivity and subsequent consumer response.")
+    save(output / (lane + "-interactions.json"), interactions)
+    return interactions
+
+
+def source_inventory(config):
+    """Authenticate all original evidence bytes near compute; run no model."""
+    root = Path(config["source_native_root"]); wrapper = read(root/"files.json")
+    require(sha(root/"files.json")==SOURCE_MANIFEST and wrapper["job_id"]==SOURCE_JOB
+        and wrapper["request_sha256"]==SOURCE_REQUEST, "original native publication differs")
+    names={str(p.relative_to(root)) for p in root.rglob("*") if p.is_file() and p!=root/"files.json"}
+    require(names==set(wrapper["files"]), "original source inventory census differs")
+    for name, record in wrapper["files"].items():
+        path=root/name
+        require(not path.is_symlink() and not any(p.is_symlink() for p in path.parents)
+            and path.stat().st_size==record["bytes"] and sha(path)==record["sha256"], "original source member differs: "+name)
+    request=read(root/"request.json")
+    identity=hashlib.sha256(json.dumps({k:v for k,v in request.items() if k!="request_sha256"},sort_keys=True,allow_nan=False).encode()).hexdigest()
+    require(identity==SOURCE_REQUEST and request["source_hashes"].get(BASE)==BASE_SHA256, "original executed source differs")
+    return root, wrapper
+
+
+def consumer_equations(graph, model, state):
+    """Original joint equations at index1, also retaining its writer ports."""
+    import torch
+
+    block = model.transformer_blocks[1]; image, text, context = (state[name] for name in ("image", "text", "context"))
+    (shift, scale, gate), (shift_ff, scale_ff, gate_ff) = graph["_mods"](context["img_mod"], 2)
+    (cshift, cscale, cgate), (cshift_ff, cscale_ff, cgate_ff) = graph["_mods"](context["txt_mod"], 2)
+    image_ln, text_ln = graph["_norm"](block.norm1, image), graph["_norm"](block.norm1_context, text)
+    x = (1 + scale) * image_ln + shift
+    c = (1 + cscale) * text_ln + cshift
+    attn = block.attn
+    q, k, v = (graph["_linear"](getattr(attn, name), x).unflatten(-1, (-1, attn.head_dim)) for name in ("to_q", "to_k", "to_v"))
+    cq, ck, cv = (graph["_linear"](getattr(attn, name), c).unflatten(-1, (-1, attn.head_dim)) for name in ("add_q_proj", "add_k_proj", "add_v_proj"))
+    q = torch.cat([graph["_rms"](attn.norm_added_q, cq), graph["_rms"](attn.norm_q, q)], dim=1)
+    k = torch.cat([graph["_rms"](attn.norm_added_k, ck), graph["_rms"](attn.norm_k, k)], dim=1)
+    out = graph["_attention"](q, k, torch.cat([cv, v], dim=1), context["rope"])
+    cout, out = out[:, :text.shape[1]], out[:, text.shape[1]:]
+    residual = image + gate * graph["_linear"](attn.to_out[0], out)
+    operand = graph["_norm"](block.norm2, residual) * (1 + scale_ff) + shift_ff
+    write = graph["_ff"](block.ff, operand)
+    image = residual + gate_ff * write
+    text = text + cgate * graph["_linear"](attn.to_add_out, cout)
+    text = text + cgate_ff * graph["_ff"](block.ff_context, graph["_norm"](block.norm2_context, text) * (1 + cscale_ff) + cshift_ff)
+    return dict(state, image=image, text=text, phase="joint", cursor=2), dict(R_attention=residual, x=operand, M_base=write,
+        gate_ff=gate_ff, image_ln=image_ln, text_ln=text_ln)
+
+
+@contextmanager
+def passive_consumer_ports(model, record):
+    block=model.transformer_blocks[1]
+    handles=[block.norm1.register_forward_hook(lambda _m,_a,v:record("image_ln",v)),
+        block.norm1_context.register_forward_hook(lambda _m,_a,v:record("text_ln",v)),
+        block.norm2.register_forward_pre_hook(lambda _m,a:record("R_attention",a[0])),
+        block.ff.register_forward_pre_hook(lambda _m,a:record("x",a[0])),
+        block.ff.register_forward_hook(lambda _m,_a,v:record("M_base",v))]
+    try:
+        yield
+    finally:
+        for handle in reversed(handles):handle.remove()
+
+
+def fresh_adapter(model, scheduler_config, *, device):
+    """Bind storage guards after placement; never carry them across offload."""
+    from diffusers import FlowMatchEulerDiscreteScheduler
+    from saturn_pub.adapters.flux2 import Flux2KleinAdapter
+
+    return Flux2KleinAdapter(model,FlowMatchEulerDiscreteScheduler.from_config(scheduler_config),granularity="operation",device=device)
+
+
+def run(config, *, progress=None):
+    declared=validate_config(config); base=previous(); old=base["helpers"]()
+    import torch
+    from diffusers.pipelines.flux2.image_processor import Flux2ImageProcessor
+    from diffusers.pipelines.flux2.pipeline_flux2_klein import Flux2KleinPipeline
+    from saturn_pub.core import Session, StateCut
+    from saturn_pub.store import LocalStore
+    from saturn_pub.values import describe
+
+    from mdb_lanes.forecast_transaction import ForecastTransaction, verify_transaction
+
+    output=Path(config["output"]);output.mkdir(parents=True,exist_ok=False)
+    save(output/"plan.json",{k:v for k,v in config.items() if k!="_request_record"})
+    if config.get("_request_record"):save(output/"request.json",config["_request_record"])
+    started=time.monotonic(); events=[]; emissions=[]; placements=[]; observed={}
+    counts={k:0 for k in declared if "per_lane" not in k and k!="max_gpu_components"}
+    counts.update(contexts=3,image_futures=18)
+    phase,released=dict(kind="source-loading"),dict(native=False)
+    def event(kind,**details):
+        row=dict(number=len(events),kind=kind,seconds=time.monotonic()-started,**details)
+        require(row["seconds"]<=config["max_wall_seconds"],"finite wall bound exceeded")
+        events.append(row)
+        with (output/"timeline.jsonl").open("ab") as stream:stream.write(canonical(row)+b"\n")
+        if progress:progress(row)
+    def emit(kind,identifier,arm,lane,value):
+        row=dict(number=len(emissions),kind=kind,context=identifier,arm=arm,lane=lane,receipt=value.to_dict());emissions.append(row)
+        with (output/"receipt-emissions.jsonl").open("ab") as stream:stream.write(canonical(row)+b"\n")
+    source_root,source_manifest=source_inventory(config)
+    event("original_native_source_inventory_verified",files=len(source_manifest["files"]),bytes=source_manifest["expanded_bytes"])
+    torch.set_num_threads(config.get("cpu_threads",4));torch.use_deterministic_algorithms(True);torch.set_float32_matmul_precision("highest")
+    torch.backends.cuda.matmul.allow_tf32=False;torch.backends.cuda.matmul.allow_bf16_reduced_precision_reduction=True
+    torch.backends.cudnn.allow_tf32=False;torch.backends.cudnn.benchmark=False;torch.backends.cudnn.deterministic=True
+    require(torch.cuda.is_available(),"original CUDA profile required")
+    modules=old["_helper_modules"]({k:v for k,v in config.items() if k!="worker_sha256"})
+    qw,graph,decoder_graph=(modules[old[k]] for k in ("QWEN_WORKER","DENOISER_HELPER","DECODER_HELPER"))
+    runtime=qw["_runtime_contract"](config,torch);runtime["native_diffusers_sources"]=old["_native_source_contract"](config)["sources"]
+    save(output/"runtime-contract.json",runtime)
+    sources={}
+    for key in path_keys():
+        path=Path(config[key]);target=output/"source"/key/path.name;target.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(path,target)
+        sources[key]=dict(path=str(target.relative_to(output)),sha256=sha(target),bytes=target.stat().st_size)
+    binding=read(config["qwen_source_binding"]);tokenizer_files=qw["_copy_tokenizer_sources"](output,binding)
+    from transformers import AutoTokenizer
+    tokenizer=AutoTokenizer.from_pretrained(binding["checkpoint"]["model_root"]+"/tokenizer",local_files_only=True,padding_side="right")
+    require(tokenizer.is_fast and tokenizer.padding_side=="right","qualified tokenizer required")
+    qb,qm=qw["_load_recipe_bank"](Path(config["qwen_recipe_helper"]),Path(config["qwen_manifest"]),config["qwen_parameter_root"])
+    qwen=qw["_load_qwen"](config,torch.device("cpu"),qb,qm)
+    require(qwen.lm_head.weight is qwen.model.embed_tokens.weight,"Qwen tied alias differs")
+    flux,_,fm=old["_load_transformer"](config,runpy.run_path(config["flux_recipe_helper"]))
+    vae,_,vm=old["_load_vae"](config,runpy.run_path(config["vae_recipe_helper"]))
+    models=dict(qwen=qwen,flux=flux,vae=vae);prefixes=dict(qwen=None,flux=None,vae=("post_quant_conv.","decoder.","bn."))
+    identities={name:old["_component_signature"](model,prefixes=prefixes[name]) for name,model in models.items()}
+    original_identities=read(source_root/"source.json")["parameter_identities"]
+    for name in models:old["_assert_signature_equal"](original_identities[name],identities[name],name)
+    graph["validate_model"](flux);counts["component_hydrations"]=3
+    def place(name,device):
+        model=models[name]
+        if name=="vae":model.post_quant_conv.to(device);model.decoder.to(device)
+        else:model.to(device)
+        signature=old["_component_signature"](model,prefixes=prefixes[name]);old["_assert_signature_equal"](identities[name],signature,name)
+        placements.append(dict(component=name,device=device,signature=signature));counts["cuda_placements" if device=="cuda" else "cpu_offloads"]+=1
+        event("placement",component=name,device=device)
+        if device=="cpu":torch.cuda.empty_cache()
+    store=LocalStore(output/"state-store");source_store=LocalStore(source_root/"state-store")
+    def retain(cut):store.save(cut);return base["cut_record"](cut)
+    def component(adapter,state,parent):
+        cut=StateCut(adapter.model_identity,{**dict(adapter.execution),"composition":SCHEMA,"provenance":"component equations, not a native advance"},adapter.boundary(state),parent,state,adapter.point(state).to_dict(),adapter.surface(state).to_dict())
+        return retain(cut)
+    def patch(session,payload,identifier,arm,lane):
+        before,after,value=base["apply_slot_edit"](session,"image",payload,mode="replace" if arm=="sham" else "add")
+        unchanged=describe({k:v for k,v in before.payload.items() if k!="image"})==describe({k:v for k,v in after.payload.items() if k!="image"})
+        require(unchanged,"Act changed undeclared slots");emit("act",identifier,arm,lane,value)
+        key=("sham_acts_per_lane_" if arm=="sham" else "additive_endpoint_acts_per_lane_")+lane;counts[key]=counts.get(key,0)+1
+        return dict(slot="image",mode="replace" if arm=="sham" else "add",before=retain(before),after=retain(after),receipt=value.to_dict(),
+            all_other_slots_unchanged=unchanged,displacement=base["displacement_account"](before.payload["image"],after.payload["image"]))
+    roots={};source_accounts={}
+    prior_roots=read(source_root/"source-frontiers.json")["roots"]
+    def record_root(identifier,cut,account,records,chain,selector_context,prompt,seed,kind):
+        account["gate_ff"]=graph["_mods"](cut.payload["context"]["img_mod"],2)[1][2]
+        literal=account["gate_ff"]*account["M_base"]
+        effective=cut.payload["image"].double()-account["R_attention"].double()
+        old_account=read(source_root/f"writer/{selector_context}/account.json")
+        priors={name:base["load_tensor"](source_root,old_account["payloads"][arm],"cpu") for name,arm in DIRECTION_ARMS.items()}
+        selector_record=read(source_root/f"cases/{selector_context}/baseline/native-fork.json")["common"]
+        selector_cut=source_store.load(selector_record["cut"],device="cpu")
+        require(tuple(cut.payload["image"].shape)==tuple(selector_cut.payload["image"].shape)==tuple(priors["top"].shape)==tuple(priors["bottom"].shape)==tuple(literal.shape)
+            and cut.payload["image"].dtype==priors["top"].dtype==priors["bottom"].dtype==torch.bfloat16
+            and torch.equal(cut.payload["img_ids"],selector_cut.payload["img_ids"])
+            and cut.model_identity==selector_cut.model_identity
+            and cut.payload["phase"]=="joint" and cut.payload["step"]==0 and cut.payload["cursor"]==1,
+            "selector transfer image layout/model/clock differs")
+        payloads,geometry=projection_payloads(literal,effective,priors)
+        actual_before=cut.payload["image"]
+        c,d,both=(payloads[name] for name in ("common-only","differential-only","both"))
+        sum_payload=c+d
+        endpoint_both=actual_before+both
+        endpoint_sum=actual_before+sum_payload
+        endpoint_sequential=(actual_before+c)+d
+        endpoint_interaction=endpoint_both.double()-(actual_before+c).double()-(actual_before+d).double()+actual_before.double()
+        def differences(left,right):
+            delta=left.double()-right.double()
+            return dict(max_abs=float(delta.abs().max()),rms=float(delta.square().mean().sqrt()),nonzero=int(torch.count_nonzero(delta)),elements=delta.numel())
+        geometry["finite_reconciliation"]=dict(
+            cast_sum_vs_once_rounded=differences(sum_payload,both),
+            widened_cast_piece_sum_vs_once_rounded=differences(c.double()+d.double(),both.double()),
+            summed_payload_endpoint_vs_both=differences(endpoint_sum,endpoint_both),
+            sequential_endpoint_vs_both=differences(endpoint_sequential,endpoint_both),
+            actual_endpoint_interaction=differences(endpoint_interaction,torch.zeros_like(endpoint_interaction)),
+            scope="Diagnostics at observed source; only once-rounded both is consumed by target. No exact additive endpoint assumption.")
+        original={name:old["_save_tensor"](output,f"writer/{identifier}/original/{name}.npy",value) for name,value in account.items()}
+        original["literal_gated_write"]=old["_save_tensor"](output,f"writer/{identifier}/original/literal-gated-write.npy",literal)
+        original["effective_write"]=old["_save_tensor"](output,f"writer/{identifier}/original/effective-write.npy",effective)
+        prior_records={name:old["_save_tensor"](output,f"writer/{identifier}/prior-payloads/{name}.npy",value) for name,value in priors.items()}
+        endpoints={arm:old["_save_tensor"](output,f"writer/{identifier}/payloads/{arm}.npy",value) for arm,value in payloads.items()}
+        diagnostics={name:old["_save_tensor"](output,f"writer/{identifier}/finite/{name}.npy",value) for name,value in dict(cast_piece_sum=sum_payload,endpoint_both=endpoint_both,endpoint_sum=endpoint_sum,endpoint_sequential=endpoint_sequential,endpoint_interaction=endpoint_interaction).items()}
+        source_accounts[identifier]=dict(original=original,payloads=endpoints,prior_payloads=prior_records,
+            selector_source_context=selector_context,source_kind=kind,finite_diagnostics=diagnostics,
+            selector_layout=dict(reference_cut=selector_record,identical_image_grid=True,shape=list(literal.shape),dtype="bfloat16",clock="step0.joint0.exit"),
+            prior_payload_sources={name:old_account["payloads"][arm] for name,arm in DIRECTION_ARMS.items()},native_account_sources=records,
+            observed_native_common=retain(cut),source_ancestry=chain)
+        save(output/f"writer/{identifier}/account.json",source_accounts[identifier]);save(output/f"writer/{identifier}/geometry.json",geometry)
+        roots[identifier]=dict(prompt=prompt,seed=seed,arms=list(ARMS),source=retain(cut),source_ancestry=chain,
+            source_kind=kind,selector_source_context=selector_context)
+    for identifier in SOURCE_CONTEXT_IDS:
+        native_fork=read(source_root/f"cases/{identifier}/baseline/native-fork.json");cut=source_store.load(native_fork["common"]["cut"],device="cpu")
+        require(cut.fingerprint==native_fork["common"]["cut"] and cut.payload["phase"]=="joint" and cut.payload["step"]==0 and cut.payload["cursor"]==1,"observed source clock differs")
+        chain=[];ancestor=cut
+        while True:
+            chain.append(retain(ancestor))
+            if not ancestor.parent:break
+            parent_file=source_root/"state-store/cuts"/(ancestor.parent+".json")
+            if not parent_file.exists():break
+            require(len(chain)<16,"unexpected source ancestry depth");ancestor=source_store.load(ancestor.parent,device="cpu")
+        records=read(source_root/f"writer/{identifier}/native-account.json")
+        account={name:base["load_tensor"](source_root,record,"cpu") for name,record in records.items()}
+        record_root(identifier,cut,account,records,chain,identifier,prior_roots[identifier]["prompt"],prior_roots[identifier]["seed"],"reused-observed-native")
+        counts["reused_native_joint0_sources"]+=1
+    with base["instrument"](list(models.values()),phase,released,observed),torch.inference_mode():
+        place("qwen","cuda");phase["kind"]="source-qwen"
+        formatted,ids,mask=qw["_tokenize"](tokenizer,NEW_CONTEXT["prompt"],config)
+        result=qwen(input_ids=ids.to("cuda"),attention_mask=mask.to("cuda"),output_hidden_states=True,use_cache=False)
+        conditioning=torch.cat([result.hidden_states[index] for index in (9,18,27)],dim=-1).detach().cpu()
+        require(tuple(conditioning.shape)==(1,512,7680) and conditioning.dtype==torch.bfloat16 and tuple(ids.shape)==tuple(mask.shape)==(1,512),"fresh native conditioning geometry differs")
+        save(output/"conditioning-memo.json",{NEW_CONTEXT["id"]:dict(prompt=NEW_CONTEXT["prompt"],prompt_sha256=hashlib.sha256(NEW_CONTEXT["prompt"].encode()).hexdigest(),formatted_chat=formatted,
+            input_ids=old["_save_tensor"](output,"inputs/foxcat0s821/ids.npy",ids),attention_mask=old["_save_tensor"](output,"inputs/foxcat0s821/mask.npy",mask),
+            conditioning=old["_save_tensor"](output,"inputs/foxcat0s821/conditioning.npy",conditioning),selected_hidden_states=[9,18,27],
+            actual_full_layers=36,actual_LM_readout=True,tokenizer_files=tokenizer_files)})
+        counts["native_qwen_source_calls"]+=1
+        del result
+        place("qwen","cpu");place("flux","cuda");phase["kind"]="source-project"
+        source_adapter=fresh_adapter(flux,read(config["flux_scheduler_config"]),device="cuda")
+        conditioning=conditioning.to("cuda");front=base["frontend"](config,conditioning,NEW_CONTEXT["seed"],Flux2KleinPipeline);counts["noise_draws"]+=1
+        frontend={name:(old["_save_bytes"] if name in ("generator_before","generator_after") else old["_save_tensor"])(output,f"inputs/foxcat0s821/{name}.npy",value) for name,value in front.items() if isinstance(value,torch.Tensor)}
+        save(output/"inputs/foxcat0s821/frontend.json",dict(frontend,seed=NEW_CONTEXT["seed"],mu=front["mu"],base_sigmas=front["base_sigmas"]))
+        session=source_adapter.session(latent=front["packed_noise"],conditioning=conditioning,img_ids=front["img_ids"],txt_ids=front["txt_ids"],timesteps=front["timesteps"],sigmas=front["sigmas"])
+        initial=session.capture(retain=False);retain(initial)
+        value=session.continue_();emit("source-project",NEW_CONTEXT["id"],"source","source",value);counts["native_project_source_transitions"]+=1
+        projected=session.capture(retain=False);retain(projected)
+        require(projected.payload["phase"]=="joint" and projected.payload["cursor"]==projected.payload["step"]==0,"fresh source is not post-project")
+        phase["kind"]="source-joint0"
+        native_record,records=base["native_joint0"](old,output,store,session,NEW_CONTEXT["id"],"source",emit)
+        counts["native_joint0_source_transitions"]+=1;counts["new_native_joint0_sources"]+=1
+        cut=store.load(native_record["cut"],device="cpu")
+        chain=[retain(cut),retain(projected),retain(initial)]
+        account={name:base["load_tensor"](output,record,"cpu") for name,record in records.items()}
+        record_root(NEW_CONTEXT["id"],cut,account,records,chain,NEW_SELECTOR_CONTEXT,NEW_CONTEXT["prompt"],NEW_CONTEXT["seed"],"new-observed-native")
+        save(output/"writer/foxcat0s821/native-account.json",records)
+        del session,initial,projected,front,conditioning,source_adapter
+        place("flux","cpu")
+    save(output/"source-frontiers.json",dict(scope=SCOPE,source_job=SOURCE_JOB,source_request=SOURCE_REQUEST,source_manifest_sha256=SOURCE_MANIFEST,roots=roots))
+    processor=Flux2ImageProcessor(vae_scale_factor=2**(len(vae.config.block_out_channels)-1)*2)
+    paths={};row_records={};port_records={"forecast":{},"native":{}}
+    with base["instrument"](list(models.values()),phase,released,observed),torch.inference_mode():
+        place("flux","cuda");phase["kind"]="forecast-denoiser"
+        adapter=fresh_adapter(flux,read(config["flux_scheduler_config"]),device="cuda")
+        for identifier,root in roots.items():
+            parent=store.load(root["source"]["cut"],device="cuda")
+            require(parent.model_identity==adapter.model_identity,"reused source model identity differs")
+            for arm in ARMS:
+                key=identifier+"/"+arm;branch_root=output/"cases"/identifier/arm;branch_root.mkdir(parents=True)
+                state=parent.payload;start=component(adapter,state,parent.fingerprint);acts=[]
+                if arm!="baseline":
+                    branch=Session(adapter,state,parent=start["cut"])
+                    payload=branch.read("image") if arm=="sham" else base["load_tensor"](output,source_accounts[identifier]["payloads"][arm],"cuda")
+                    acts.append(patch(branch,payload,identifier,arm,"forecast"));state=branch.capture(retain=False).payload;start=acts[-1]["after"]
+                save(branch_root/"forecast-acts.json",acts)
+                rows=[dict(number=0,observed_joint0_source=True,retained=start,fields=base["tensor_tree"](state,old))];previous_cut=start["cut"]
+                for number in range(1,111):
+                    clock={k:state[k] for k in ("step","phase","cursor")}
+                    if number==1:
+                        state,ports=consumer_equations(graph,flux,state)
+                        port_records["forecast"][key]={name:old["_save_tensor"](output,f"cases/{identifier}/{arm}/first-consumer/forecast/{name}.npy",value) for name,value in ports.items()}
+                        counts["first_consumer_port_sets_per_lane_forecast"]=counts.get("first_consumer_port_sets_per_lane_forecast",0)+1
+                    else:state=base["step_equations"](graph,flux,state)
+                    counts["functional_transitions"]+=1;event_row=dict(step=clock["step"],phase=clock["phase"],index=clock["cursor"])
+                    row=dict(number=number,event=event_row,fields=base["tensor_tree"](state,old))
+                    if base["retain_transition"](event_row):row["retained"]=component(adapter,state,previous_cut);previous_cut=row["retained"]["cut"]
+                    rows.append(row)
+                require(state["step"]==4 and state["phase"]=="project" and state["cursor"]==0,"forecast suffix did not close")
+                save(branch_root/"forecast-rows.json",rows);paths[key]=dict(root=str(branch_root.relative_to(output)),forecast_final=previous_cut);row_records[key]=rows
+                event("forecast_suffix_completed",context=identifier,arm=arm,final_cut=previous_cut)
+                del state,ports
+        save(output/"first-consumer-forecasts.json",port_records["forecast"])
+        place("flux","cpu");place("vae","cuda");phase["kind"]="forecast-vae"
+        for key,path in paths.items():
+            branch_root=output/path["root"];final=store.load(path["forecast_final"],device="cpu").payload
+            argument=old["_decoder_input"](vae,final,config,{"Flux2KleinPipeline":Flux2KleinPipeline}).to("cuda")
+            decoded=decoder_graph["functional_decode"](vae,argument,observe=None,counts={},profile="original")
+            record=base["decoder_result"](old,branch_root,"forecast",decoded,processor)
+            record["decoder_input"]=old["_save_tensor"](branch_root,"decoder/forecast/decoder-input.npy",argument)
+            record.update(scope="own predicted latent through original shared-primitive functional VAE",macros_retained=False)
+            save(branch_root/"decoder-forecast.json",record);counts["functional_vae_calls"]+=1
+        responses={}
+        for key,path in paths.items():
+            identifier,arm=key.split("/")
+            if arm=="baseline":continue
+            basekey=identifier+"/baseline";selected=[]
+            for row,base_row in zip(row_records[key],row_records[basekey]):
+                if "retained" in row and "retained" in base_row:
+                    left,right=(store.load(r["retained"]["cut"],device="cpu").payload for r in (row,base_row))
+                    selected.append(dict(number=row["number"],left_cut=row["retained"]["cut"],right_cut=base_row["retained"]["cut"],fields=base["signed_fields"](left,right)))
+            a,b=(read(output/paths[k]["root"]/"decoder-forecast.json") for k in (key,basekey))
+            dec={name:base["signed_fields"](base["load_tensor"](output/path["root"],a[name],"cpu"),base["load_tensor"](output/paths[basekey]["root"],b[name],"cpu"))["/"] for name in ("decoded","pixels")}
+            ports={name:base["signed_fields"](base["load_tensor"](output,rec,"cpu"),base["load_tensor"](output,port_records["forecast"][basekey][name],"cpu"))["/"] for name,rec in port_records["forecast"][key].items()}
+            responses[key]=dict(orientation="arm-minus-own-baseline",full_retained_states=selected,decoder=dec,first_consumer=ports)
+        save(output/"forecast-responses.json",responses)
+        save_interactions(output,roots,paths,port_records["forecast"],"forecast",base,old)
+        place("vae","cpu")
+        inventory=old["_inventory"](output,exclude=("timeline.jsonl","receipt-emissions.jsonl"))
+        tx=ForecastTransaction(output/"forecast-transaction",model_identity=SCHEMA,input_identity=hashlib.sha256(canonical(roots)).hexdigest(),
+            source_identity=hashlib.sha256(canonical(HELPERS)).hexdigest(),frontier=dict(SCOPE,external_files=inventory),
+            execution_scope="Two saved and one fresh native joint0 source; all18 suffix/image forecasts sealed before current targets",
+            array_storage="files-v1",budgets=dict(max_predictions=1,max_executions=1,max_native_calls=3000,max_files=30000,max_bytes=config["forecast_transaction_bytes"],max_wall_ms=config["max_wall_seconds"]*1000))
+        tx.frontier("observed-native-joint0",dict(roots=roots,scope=SCOPE))
+        tx.predict("all-futures",lambda _ctx:dict(predictions=dict(external_files=inventory,paths=paths,targets_at_seal=0)))
+        seal=tx.seal();event("all_forecasts_globally_sealed",seal_sha256=seal["seal_sha256"],native_targets_at_seal=0)
+        def targets(_ctx):
+            old["_verify_inventory"](output,inventory);released["native"]=True;event("native_targets_released",seal_sha256=seal["seal_sha256"])
+            place("flux","cuda");phase["kind"]="target-denoiser"
+            native_adapter=fresh_adapter(flux,read(config["flux_scheduler_config"]),device="cuda")
+            for identifier,root in roots.items():
+                parent=store.load(root["source"]["cut"],device="cuda");master=Session(native_adapter,parent.payload,parent=parent.parent)
+                require(master.capture(retain=False).fingerprint==parent.fingerprint,"actual native source session differs")
+                for arm in ARMS:
+                    key=identifier+"/"+arm;branch_root=output/paths[key]["root"];branch=master.fork(parent);start=retain(branch.capture(retain=False));acts=[]
+                    save(branch_root/"native-fork.json",dict(common=root["source"],fork=start,scope="actual public same-state child of reused observed native joint0 exit"))
+                    if arm!="baseline":
+                        payload=branch.read("image") if arm=="sham" else base["load_tensor"](output,source_accounts[identifier]["payloads"][arm],"cuda")
+                        acts.append(patch(branch,payload,identifier,arm,"native"));start=acts[-1]["after"]
+                    save(branch_root/"native-acts.json",acts);state=branch.capture(retain=False).payload
+                    rows=[dict(number=0,observed_joint0_source=True,retained=start,fields=base["tensor_tree"](state,old))]
+                    ports={}
+                    def port(name,value):
+                        ports[name]=old["_save_tensor"](output,f"cases/{identifier}/{arm}/first-consumer/native/{name}.npy",value)
+                    for number in range(1,111):
+                        clock={k:state[k] for k in ("step","phase","cursor")}
+                        if number==1:
+                            port("gate_ff",graph["_mods"](state["context"]["img_mod"],2)[1][2])
+                            with passive_consumer_ports(flux,port):value=branch.continue_()
+                            port_records["native"][key]=ports
+                            counts["first_consumer_port_sets_per_lane_native"]=counts.get("first_consumer_port_sets_per_lane_native",0)+1
+                        else:value=branch.continue_()
+                        emit("native",identifier,arm,"native",value);counts["native_target_transitions"]+=1
+                        after=branch.capture(retain=False);state=after.payload
+                        event_row=dict(step=clock["step"],phase=clock["phase"],index=clock["cursor"])
+                        row=dict(number=number,event=event_row,fields=base["tensor_tree"](state,old),receipt=value.fingerprint)
+                        if base["retain_transition"](event_row):row["retained"]=retain(after)
+                        rows.append(row)
+                    require(state["step"]==4 and state["phase"]=="project" and state["cursor"]==0,"native suffix did not close")
+                    save(branch_root/"native-rows.json",rows);paths[key]["native_final"]=after.fingerprint
+                    event("native_suffix_completed",context=identifier,arm=arm,final_cut=after.fingerprint)
+                    if arm=="baseline":
+                        value=branch.restore(parent);emit("restore",identifier,arm,"native",value);restored=branch.capture(retain=False)
+                        require(restored.fingerprint==parent.fingerprint,"actual complete native rewind differs")
+                        save(branch_root/"native-rewind.json",dict(before=rows[-1]["retained"],after=retain(restored),receipt=value.to_dict()));counts["native_source_restores"]+=1
+            save(output/"first-consumer-native.json",port_records["native"])
+            place("flux","cpu");place("vae","cuda");phase["kind"]="target-vae"
+            for key,path in paths.items():
+                branch_root=output/path["root"];final=store.load(path["native_final"],device="cpu").payload
+                record=old["_native_decoder"](branch_root,vae,final,config,"native_reference",{"Flux2KleinPipeline":Flux2KleinPipeline},processor,{},{})
+                save(branch_root/"decoder-native-reference.json",record);counts["native_vae_reference_calls"]+=1
+                if key.endswith("/baseline"):
+                    repeat=base["native_repeat_decode"](old,branch_root,vae,final,config,{"Flux2KleinPipeline":Flux2KleinPipeline},processor,path["native_final"])
+                    save(branch_root/"decoder-native-repeat.json",repeat);counts["native_vae_repeat_calls"]+=1
+            save_interactions(output,roots,paths,port_records["native"],"native",base,old)
+            place("vae","cpu");return dict(counts=counts,observed=observed,target_paths=len(paths))
+        tx.execute("original-native-targets",targets);tx.close()
+    final={name:old["_component_signature"](model,prefixes=prefixes[name]) for name,model in models.items()}
+    for name in models:old["_assert_signature_equal"](identities[name],final[name],name)
+    old["_verify_inventory"](output,inventory)
+    for key,expected in declared.items():
+        if "per_lane" in key:
+            for lane in ("forecast","native"):require(counts[key+"_"+lane]==expected,"actual census differs: "+key+lane)
+        elif key not in ("max_gpu_components",):require(counts[key]==expected,"actual census differs: "+key)
+    save(output/"state-index.json",paths)
+    save(output/"native-contract.json",dict(counts=counts,observed=observed,placements=placements,identities_before=identities,identities_after=final,conditional_scope=SCOPE,no_modified_native_block=True))
+    save(output/"source.json",dict(schema=SCHEMA,job_id=config["job_id"],request_sha256=config["request_sha256"],sources=sources,
+        helper_source_sha256=HELPERS,parameter_identities=final,parameter_recipe_counts=dict(qwen=len(qm["artifacts"]),flux=len(fm["artifacts"]),vae=len(vm["artifacts"])),
+        inherited_native_source=dict(job_id=SOURCE_JOB,request_sha256=SOURCE_REQUEST,manifest_sha256=SOURCE_MANIFEST,output_root=SOURCE_ROOT),
+        final_resident_parameter_checks="completed before publication",forecast_seal=seal["seal_sha256"]))
+    result=dict(schema=SCHEMA,job_id=config["job_id"],request_sha256=config["request_sha256"],counts=counts,contract=declared,observed=observed,
+        forecast_seal=seal["seal_sha256"],transaction=verify_transaction(output/"forecast-transaction",expected_seal_sha256=seal["seal_sha256"]),
+        mechanics_status="completed",instrument_status="observed source writer; complete image/first-consumer forecasts and native replays",trend_status="uninterpreted observations retained",terminal_status="unassessed",seconds=time.monotonic()-started)
+    save(output/"summary.json",result);return result
+
+
+def worker(config_path):
+    import faulthandler
+
+    faulthandler.enable();faulthandler.dump_traceback_later(120,repeat=True);os.environ.setdefault("CUBLAS_WORKSPACE_CONFIG",":4096:8")
+    config=read(config_path);validate_config(config);request=read(os.environ["SATURN_DEBUG_REQUEST"])
+    identity=hashlib.sha256(json.dumps({k:v for k,v in request.items() if k!="request_sha256"},sort_keys=True,allow_nan=False).encode()).hexdigest()
+    require(identity==request["request_sha256"] and request["config"]==config,"request/config differs")
+    for name,expected in request["source_hashes"].items():require(sha(Path(config_path).parent/name)==expected,"executed source changed: "+name)
+    job=os.environ["MRUN_JOB_ID"];require(job.startswith("job-") and "/" not in job,"invalid job identity")
+    derived=dict(config,job_id=job,request_sha256=identity,_request_record=request,output=str(Path(config["output_scratch"])/job/RESULT))
+    result=run(derived,progress=lambda row:print("MDB_COMMON_DIFFERENTIAL_PHASE "+canonical(row).decode(),flush=True))
+    finalizer=runpy.run_path(str(Path(__file__).with_name("flux_image_tail_microscope.py")))
+    ready=finalizer["finalize"](derived["output"],job_id=result["job_id"],request_sha256=identity,**config["transport_limits"])
+    print("MDB_DIRECTORY_READY "+canonical(ready).decode(),flush=True);faulthandler.cancel_dump_traceback_later();return ready
+
+
+if __name__=="__main__":
+    parser=argparse.ArgumentParser(description=__doc__);parser.add_argument("--config",default=os.environ.get("SATURN_RUN_CONFIG"),required="SATURN_RUN_CONFIG" not in os.environ)
+    worker(parser.parse_args().config)

@@ -4,7 +4,7 @@ from pathlib import Path
 
 import torch
 
-from mdb.research_session import NativeResearchSession, tensor_sha256
+from mdb_lanes.research_session import NativeResearchSession, tensor_sha256
 
 
 @dataclass

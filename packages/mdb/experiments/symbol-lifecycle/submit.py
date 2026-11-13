@@ -26,9 +26,9 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
 
 
 def submit(args: argparse.Namespace) -> dict:
-    from mdb.bench_loading import resolve_bench_model
-    from mdb.execution_environment import intent
-    from mdb.job_support import (
+    from mdb_lanes.bench_loading import resolve_bench_model
+    from mdb_lanes.execution_environment import intent
+    from mdb_lanes.job_support import (
         decode_marker,
         guarded_mrun_launch,
         one_lease_scheduling_contract,
@@ -39,7 +39,7 @@ def submit(args: argparse.Namespace) -> dict:
     )
 
     if args.collect:
-        from mdb.job_support import guarded_job_receipt, terminal_job
+        from mdb_lanes.job_support import guarded_job_receipt, terminal_job
 
         job_id, body, logs = terminal_job(args.collect, wait=args.wait, max_wait_s=900)
         output = RESULTS / job_id

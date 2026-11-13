@@ -80,8 +80,8 @@ def load_installed_runtime(target: Path):
     sys.path.insert(0, str(target))
     sys.meta_path.insert(0, _UpstreamBlocker())
     import mdb
-    from mdb.bench_verify import verify
-    from mdb.circuit_runtime import DirectoryArtifactStore
+    from mdb_lanes.bench_verify import verify
+    from mdb_lanes.circuit_runtime import DirectoryArtifactStore
 
     mdb_file = Path(mdb.__file__).resolve()
     if not mdb_file.is_relative_to(target):
@@ -201,7 +201,7 @@ def optional_candidate_norms(candidates: list[dict], artifacts, bench_root: Path
     try:
         import torch
 
-        from mdb.vm_payload_cache import PayloadRef, PayloadStore
+        from mdb_lanes.vm_payload_cache import PayloadRef, PayloadStore
     except ImportError as exc:
         return {"available": False, "reason": f"optional torch/payload runtime unavailable: {exc}"}
     payloads = PayloadStore(bench_root / "vm/radix/cas", read_only=True)

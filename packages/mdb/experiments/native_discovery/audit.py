@@ -7,8 +7,8 @@ from pathlib import Path
 
 import numpy as np
 
-from mdb.forecast_transaction import load_forecast_tree
-from mdb.native_discovery import error_metrics, file_hash, save_json, verify_run
+from mdb_lanes.forecast_transaction import load_forecast_tree
+from mdb_lanes.native_discovery import error_metrics, file_hash, save_json, verify_run
 
 
 def logsoftmax(a):
@@ -36,7 +36,7 @@ def audit(stage, *, closures=False):
             prediction = load_forecast_tree(forecast, sealed["predictions"])
             kind = sealed["name"]
             if "state" not in prediction:  # learning-free source nominator: re-score its routes
-                from mdb.native_discovery_nominator import score_nominations
+                from mdb_lanes.native_discovery_nominator import score_nominations
                 rescored = score_nominations(prediction["sources"], native["native_routes"])
                 for got, saved in zip(rescored, row[kind], strict=True):
                     np.testing.assert_allclose(got["source_top1"]["nominator"]["top_source_agreement"],
@@ -59,7 +59,7 @@ def audit(stage, *, closures=False):
                 checks += 1
     snapshots = []
     if closures:
-        from mdb.native_discovery_learning import load_snapshot
+        from mdb_lanes.native_discovery_learning import load_snapshot
         paths = [*root.glob("predictor/*/candidates/*"), *root.glob("predictor/*/accepted")]
         for path in sorted(paths):
             snapshot = load_snapshot(path)

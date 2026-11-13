@@ -13,8 +13,8 @@ from pathlib import Path
 from saturn_pub.values import digest
 
 from mdb import Project
-from mdb.project_navigation import _operations
-from mdb.state_graph import StateGraph
+from mdb_lanes.project_navigation import _operations
+from mdb_lanes.state_graph import StateGraph
 
 
 def topology(edges):

@@ -181,7 +181,7 @@ def _clock(
     *,
     consumer: str,
 ) -> Any:
-    from mdb.symbol_lifecycle import ClockWitness
+    from mdb_lanes.symbol_lifecycle import ClockWitness
 
     ref = "cas://sha256/" + source_cut
     family = str(reading.get("family") or "native")
@@ -222,7 +222,7 @@ def _observation(source_cut: str, result_cut: str, project: Any) -> dict[str, An
 def _make_lifecycle(
     binding: Any, occurrence: Any, use: Any, *, execution_info: dict[str, Any]
 ) -> Any:
-    from mdb.symbol_lifecycle import SymbolLifecycle
+    from mdb_lanes.symbol_lifecycle import SymbolLifecycle
 
     return SymbolLifecycle.define(
         binding,
@@ -257,7 +257,7 @@ def _lifecycle_for(
     intervention: str,
     project: Any,
 ) -> Any:
-    from mdb.symbol_lifecycle import SymbolOccurrence, SymbolUse
+    from mdb_lanes.symbol_lifecycle import SymbolOccurrence, SymbolUse
 
     fingerprint = binding.to_dict()["fingerprint"]
     source_point = _cut(project, source_cut)["execution_point"]
@@ -327,7 +327,7 @@ class Guard(importlib.abc.MetaPathFinder):
 
 sys.meta_path.insert(0, Guard())
 from mdb import Project
-from mdb.symbol_trace import trace_symbol, verify_symbol_trace
+from mdb_lanes.symbol_trace import trace_symbol, verify_symbol_trace
 
 project = Project(sys.argv[1])
 sid = sys.argv[2]
@@ -384,7 +384,7 @@ def qualify(
     from saturn_pub.symbols import SymbolBinding, SymbolTable
 
     from mdb import BenchSession, Project
-    from mdb.symbol_trace import trace_symbol, verify_symbol_trace
+    from mdb_lanes.symbol_trace import trace_symbol, verify_symbol_trace
 
     output = Path(root).expanduser().resolve()
     output.mkdir(parents=True, exist_ok=False)

@@ -47,11 +47,11 @@ from dataclasses import dataclass
 
 from .pointers import (
     AUTHORITIES,
+    MAX_RECORD_BYTES,
     RecordError,
     _canonical,
     _identity_record,
     _sha,
-    MAX_RECORD_BYTES,
     check_bounded,
     seal_digest,
     validate_pointer,

@@ -5,7 +5,7 @@ import json
 from pathlib import Path
 import tarfile
 
-from mdb.bench_verify import verify
+from mdb_lanes.bench_verify import verify
 
 
 def main():

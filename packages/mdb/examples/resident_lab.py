@@ -115,7 +115,7 @@ def circuit_panel(session, spec):
 
 def diffusion_replay(session):
     """Called after prepare(); restore actual scheduler/RNG/block closure."""
-    from mdb.bench import tensor_digest
+    from mdb_lanes.bench import tensor_digest
 
     session.step("block")
     partial = session.checkpoint("lab-first-diffusion-block")
@@ -143,7 +143,7 @@ def main():
     import torch
     from transformers import MambaConfig, MambaForCausalLM, Qwen2Config, Qwen2ForCausalLM
     from mdb import BenchSession
-    from mdb.bench_verify import verify
+    from mdb_lanes.bench_verify import verify
 
     torch.set_num_threads(1)
     torch.manual_seed(113)

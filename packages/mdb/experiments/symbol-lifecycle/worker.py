@@ -201,7 +201,7 @@ def _spectral_native_record(*, symbol: str, scene_id: str, instance_id: str,
                             operator_reference: str, consumer: str) -> tuple[Any, Any, dict[str, Any]]:
     """Allocate and register one typed SAS address for this exact native binding."""
 
-    from mdb.spectral_address import (
+    from mdb_lanes.spectral_address import (
         AddressAllocator,
         SpectralAddressSpaceSpec,
         SpectralBinding,
@@ -311,7 +311,7 @@ def _vm_execution_bundle(*, run_id: str, parent_cut: str, candidate_cut: str,
                          result_cut: str, model_identity: Any, execution: Any,
                          context: str, operator_manifest: Any, consumer: str,
                          receipt: str) -> tuple[Any, dict[str, Any]]:
-    from mdb.vm_cache import VMCacheExecutionBundle
+    from mdb_lanes.vm_cache import VMCacheExecutionBundle
 
     plane_descriptor_payloads = {
         "source": {"source_cut": parent_cut},
@@ -692,7 +692,7 @@ def _public_probe(adapter: Any, parent_cut: Any, candidate_cut: Any, *, name: st
 
 def _clock_witness(cut: Any, *, provenance: tuple[str, ...], execution: str,
                    consumer: str, reset: str) -> Any:
-    from mdb.symbol_lifecycle import ClockWitness
+    from mdb_lanes.symbol_lifecycle import ClockWitness
 
     source_ref = cut.fingerprint
     return ClockWitness(
@@ -734,9 +734,9 @@ def run_native(args: argparse.Namespace) -> dict[str, Any]:
     from saturn_pub.symbols import SymbolBinding
 
     from mdb import Project
-    from mdb.bench_loading import load_bench_model, resolve_bench_model
-    from mdb.spectral_address import SpectralQuery
-    from mdb.symbol_lifecycle import SymbolLifecycle, SymbolOccurrence, SymbolUse
+    from mdb_lanes.bench_loading import load_bench_model, resolve_bench_model
+    from mdb_lanes.spectral_address import SpectralQuery
+    from mdb_lanes.symbol_lifecycle import SymbolLifecycle, SymbolOccurrence, SymbolUse
 
     root = Path(args.root).expanduser().resolve()
     export_root = Path(args.export_root).expanduser().resolve() if args.export_root else root.parent / "export"
@@ -1499,7 +1499,7 @@ def run_mechanics(args: argparse.Namespace) -> dict[str, Any]:
         # The base local checkout intentionally does not carry Torch.  Keep a
         # pure-Python Bench mechanics smoke available; the native CUDA worker
         # still requires the staged autoregressive wheels.
-        from mdb.counter_debugger import CounterDebuggerAdapter
+        from mdb_lanes.counter_debugger import CounterDebuggerAdapter
 
         adapter = CounterDebuggerAdapter()
         with BenchSession.from_backend(adapter, identity={"model_id": "counter-plus-one"}) as owner:

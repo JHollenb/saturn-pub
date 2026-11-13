@@ -5,8 +5,8 @@ import argparse
 import json
 from pathlib import Path
 
-from mdb.job_support import guarded_job_receipt, terminal_job
-from mdb.native_discovery import save_json
+from mdb_lanes.job_support import guarded_job_receipt, terminal_job
+from mdb_lanes.native_discovery import save_json
 
 
 def collect(stage):

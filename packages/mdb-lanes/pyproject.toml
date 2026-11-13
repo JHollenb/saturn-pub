@@ -1,0 +1,108 @@
+[project]
+name = "mdb-lanes"
+version = "0.1.0"
+description = "Experiment-specific lane modules split from the mdb engine."
+requires-python = ">=3.10"
+dependencies = ["mdb-runtime"]
+
+[project.optional-dependencies]
+all = ["mdb-runtime[all]"]
+autoregressive = ["mdb-runtime[autoregressive]"]
+dev = ["mdb-runtime[dev]"]
+diffusion = ["mdb-runtime[diffusion]"]
+discovery = ["mdb-runtime[discovery]"]
+mrun = ["mdb-runtime[mrun]"]
+serve = ["mdb-runtime[serve]"]
+transformerlens = ["mdb-runtime[transformerlens]"]
+
+[project.entry-points."mdb.lanes"]
+"analyze" = "mdb_lanes.lanes_compat:main"
+"atlas" = "mdb_lanes.lanes_compat:main"
+"attach" = "mdb_lanes.lanes_compat:main"
+"bench" = "mdb_lanes.lanes_compat:main"
+"bisect" = "mdb_lanes.lanes_compat:main"
+"cache" = "mdb_lanes.lanes_compat:main"
+"capabilities" = "mdb_lanes.lanes_compat:main"
+"circuits" = "mdb_lanes.lanes_compat:main"
+"cite" = "mdb_lanes.lanes_compat:main"
+"claims" = "mdb_lanes.lanes_compat:main"
+"compiled-state" = "mdb_lanes.lanes_compat:main"
+"context" = "mdb_lanes.lanes_compat:main"
+"custody" = "mdb_lanes.lanes_compat:main"
+"debug" = "mdb_lanes.lanes_compat:main"
+"discovery" = "mdb_lanes.lanes_compat:main"
+"doctor" = "mdb_lanes.lanes_compat:main"
+"edit-search" = "mdb_lanes.lanes_compat:main"
+"equations" = "mdb_lanes.lanes_compat:main"
+"evidence" = "mdb_lanes.lanes_compat:main"
+"family" = "mdb_lanes.lanes_compat:main"
+"forecast" = "mdb_lanes.lanes_compat:main"
+"forward-symbols" = "mdb_lanes.lanes_compat:main"
+"graph" = "mdb_lanes.lanes_compat:main"
+"help" = "mdb_lanes.lanes_compat:main"
+"hyperion" = "mdb_lanes.lanes_compat:main"
+"inspect" = "mdb_lanes.lanes_compat:main"
+"jobs" = "mdb_lanes.lanes_compat:main"
+"open" = "mdb_lanes.lanes_compat:main"
+"ports" = "mdb_lanes.lanes_compat:main"
+"project" = "mdb_lanes.lanes_compat:main"
+"public" = "mdb_lanes.lanes_compat:main"
+"replay" = "mdb_lanes.lanes_compat:main"
+"resume" = "mdb_lanes.lanes_compat:main"
+"run" = "mdb_lanes.lanes_compat:main"
+"script" = "mdb_lanes.lanes_compat:main"
+"states" = "mdb_lanes.lanes_compat:main"
+"storage" = "mdb_lanes.lanes_compat:main"
+"symbol-producers" = "mdb_lanes.lanes_compat:main"
+"symbol-trace" = "mdb_lanes.lanes_compat:main"
+"symbols" = "mdb_lanes.lanes_compat:main"
+"verify" = "mdb_lanes.lanes_compat:main"
+"view" = "mdb_lanes.lanes_compat:main"
+"vm" = "mdb_lanes.lanes_compat:main"
+"watch" = "mdb_lanes.lanes_compat:main"
+"wsp" = "mdb_lanes.lanes_compat:main"
+"xref" = "mdb_lanes.lanes_compat:main"
+
+[project.entry-points."mdb.lanes.exports"]
+"ActionNode" = "mdb_lanes.state_graph:ActionNode"
+"BenchError" = "mdb_lanes.errors:BenchError"
+"BenchSession" = "mdb_lanes.bench:BenchSession"
+"CausalContextVM" = "mdb_lanes.causal_context_vm:CausalContextVM"
+"Evidence" = "mdb_lanes.state_graph:Evidence"
+"ExecutionBinding" = "mdb_lanes.state_graph:ExecutionBinding"
+"ForwardResult" = "mdb_lanes.backends:ForwardResult"
+"GraphBinding" = "mdb_lanes.state_graph:GraphBinding"
+"GraphEdge" = "mdb_lanes.state_graph:GraphEdge"
+"GraphIntegrityError" = "mdb_lanes.state_graph:GraphIntegrityError"
+"GraphNode" = "mdb_lanes.state_graph:GraphNode"
+"GraphSnapshot" = "mdb_lanes.state_graph:GraphSnapshot"
+"GraphVerification" = "mdb_lanes.state_graph:GraphVerification"
+"MambaStateVM" = "mdb_lanes.mamba_state_vm:MambaStateVM"
+"ModelRunner" = "mdb_lanes.backends:ModelRunner"
+"NodeBinding" = "mdb_lanes.state_graph:NodeBinding"
+"OutputNode" = "mdb_lanes.state_graph:OutputNode"
+"Project" = "mdb_lanes.project:Project"
+"RunnerCapabilities" = "mdb_lanes.backends:RunnerCapabilities"
+"SaturnPubDebuggerAdapter" = "mdb_lanes.saturn_pub_adapter:SaturnPubDebuggerAdapter"
+"SourceNode" = "mdb_lanes.state_graph:SourceNode"
+"StateGraph" = "mdb_lanes.state_graph:StateGraph"
+"StateGraphError" = "mdb_lanes.state_graph:StateGraphError"
+"StateNode" = "mdb_lanes.state_graph:StateNode"
+"TransformerLensDebuggerAdapter" = "mdb_lanes.lens_debugger:TransformerLensDebuggerAdapter"
+"TransformerLensRunner" = "mdb_lanes.backend_torch:TransformerLensRunner"
+"TransformersRunner" = "mdb_lanes.backend_torch:TransformersRunner"
+"available_backends" = "mdb_lanes.backends:available_backends"
+"evidence" = "mdb_lanes.state_graph:evidence"
+"register_backend" = "mdb_lanes.backends:register_backend"
+
+[build-system]
+requires = ["hatchling>=1.25"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/mdb_lanes"]
+# Package data carried with src/mdb_lanes: mdb_lanes/assets/computation_viewer.html
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

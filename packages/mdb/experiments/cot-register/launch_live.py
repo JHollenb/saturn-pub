@@ -11,8 +11,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parents[1] / "src"))
 
-from mdb.execution_environment import intent  # noqa: E402
-from mdb.job_support import guarded_mrun_launch, one_lease_scheduling_contract  # noqa: E402
+from mdb_lanes.execution_environment import intent  # noqa: E402
+from mdb_lanes.job_support import guarded_mrun_launch, one_lease_scheduling_contract  # noqa: E402
 
 
 def main():

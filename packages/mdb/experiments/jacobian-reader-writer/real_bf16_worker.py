@@ -18,13 +18,13 @@ import torch
 import transformers
 from transformers import AutoModelForCausalLM, AutoTokenizer
 
-from mdb.bench import BenchSession
-from mdb.bench_circuit_measurement import _memory, _memory_delta, _memory_summary
-from mdb.bench_jacobian import _header_hash, _model_identity, application_profile
-from mdb.bench_qwen import tensor_digest
-from mdb.bench_verify import verify
-from mdb.jacobian_io import FrozenJacobianLens
-from mdb.jacobian_workspace import derive_dictionary_rows, metadata_sha256, tensor_payload_identity
+from mdb_lanes.bench import BenchSession
+from mdb_lanes.bench_circuit_measurement import _memory, _memory_delta, _memory_summary
+from mdb_lanes.bench_jacobian import _header_hash, _model_identity, application_profile
+from mdb_lanes.bench_qwen import tensor_digest
+from mdb_lanes.bench_verify import verify
+from mdb_lanes.jacobian_io import FrozenJacobianLens
+from mdb_lanes.jacobian_workspace import derive_dictionary_rows, metadata_sha256, tensor_payload_identity
 
 
 def file_sha(path):

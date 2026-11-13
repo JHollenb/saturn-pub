@@ -25,9 +25,9 @@ def main():
     args = parser.parse_args()
     sys.path.insert(0, str(args.installed.resolve()))
     sys.meta_path.insert(0, NoWorkspace())
-    from mdb.circuit_runtime import DirectoryArtifactStore
-    from mdb.future_forest import PersistentFutureForest
-    from mdb.vm_payload_cache import PayloadStore
+    from mdb_lanes.circuit_runtime import DirectoryArtifactStore
+    from mdb_lanes.future_forest import PersistentFutureForest
+    from mdb_lanes.vm_payload_cache import PayloadStore
 
     job = args.job.resolve()
     output = args.output.resolve()

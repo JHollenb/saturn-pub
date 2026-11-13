@@ -28,11 +28,11 @@ def main():
     import torch
 
     import mdb
-    from mdb.bench import BenchSession
-    from mdb.bench_jacobian import _header_hash, _model_identity, application_profile
-    from mdb.bench_verify import verify
-    from mdb.jacobian_workspace import metadata_sha256, tensor_payload_identity
-    from mdb.local_debugger import tiny_qwen
+    from mdb_lanes.bench import BenchSession
+    from mdb_lanes.bench_jacobian import _header_hash, _model_identity, application_profile
+    from mdb_lanes.bench_verify import verify
+    from mdb_lanes.jacobian_workspace import metadata_sha256, tensor_payload_identity
+    from mdb_lanes.local_debugger import tiny_qwen
 
     package = Path(mdb.__file__).resolve()
     if not package.is_relative_to(args.installed.resolve()):
@@ -94,7 +94,7 @@ def main():
         captured = json.loads((root / "capture.json").read_text())
         hydration = None
         if args.optimized:
-            from mdb.bench_pointer import BenchPointer
+            from mdb_lanes.bench_pointer import BenchPointer
             pointer = BenchPointer.open(captured["pointer"]["path"])
             browse = pointer.browse()
             plan = pointer.native_closure()

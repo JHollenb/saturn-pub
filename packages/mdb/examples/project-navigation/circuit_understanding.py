@@ -21,8 +21,8 @@ def main():
     from saturn_pub.adapters.decoder import DecoderAdapter
 
     from mdb import BenchSession, Project
-    from mdb.circuit_investigation import attach_replay, finding
-    from mdb.native_replay_recipe import SCHEMA, seal
+    from mdb_lanes.circuit_investigation import attach_replay, finding
+    from mdb_lanes.native_replay_recipe import SCHEMA, seal
 
     torch.set_num_threads(1)
     native = DecoderAdapter.tiny("qwen3", seed=17)

@@ -7,13 +7,13 @@ import json
 import os
 from pathlib import Path
 
-from mdb.native_discovery import canonical, file_hash, load_corpus, save_json
+from mdb_lanes.native_discovery import canonical, file_hash, load_corpus, save_json
 
 
 def stage(args):
-    from mdb.execution_environment import intent
-    from mdb.job_support import one_lease_scheduling_contract
-    from mdb.payload import stage_worker, worker_command
+    from mdb_lanes.execution_environment import intent
+    from mdb_lanes.job_support import one_lease_scheduling_contract
+    from mdb_lanes.payload import stage_worker, worker_command
 
     if not 1 <= args.wall_seconds <= 720:
         raise ValueError("this short-study launcher permits at most 720 science seconds")
@@ -34,8 +34,8 @@ def stage(args):
         config["sealed_position_split"] = True
     if args.contrast_nominator:
         config["contrast_nominator"] = True
-    from mdb.native_discovery_learning import ARM_PRESETS
-    from mdb.scheduling_contract import MAX_LOCAL_WORK_ITEMS
+    from mdb_lanes.native_discovery_learning import ARM_PRESETS
+    from mdb_lanes.scheduling_contract import MAX_LOCAL_WORK_ITEMS
     arms = len(ARM_PRESETS[args.arms])
     # Logical training work is counted per update when that fits Saturn's local-work cap, otherwise
     # per checkpointed training interval (the TrainingTransaction rollback unit); recorded below.
@@ -76,7 +76,7 @@ def stage(args):
 
 
 def submit(root, *, priority=0, vram_mb=None, ram_mb=None):
-    from mdb.job_support import guarded_mrun_launch
+    from mdb_lanes.job_support import guarded_mrun_launch
 
     root = root.resolve()
     if (root / "submission.json").exists():

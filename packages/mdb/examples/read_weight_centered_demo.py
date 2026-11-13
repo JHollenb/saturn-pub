@@ -10,7 +10,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from mdb.read_weight_centered import evaluate_centered_program
+from mdb_lanes.read_weight_centered import evaluate_centered_program
 
 
 def main():

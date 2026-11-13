@@ -13,15 +13,15 @@ from pathlib import Path
 def run(config):
     import torch
 
-    import mdb.analysis_metrics
-    import mdb.attention_ranking
-    import mdb.native_discovery_learning
-    from mdb.native_discovery import file_hash, save_json, verify_run
-    from mdb.native_discovery_run import run_pretrained
+    import mdb_lanes.analysis_metrics
+    import mdb_lanes.attention_ranking
+    import mdb_lanes.native_discovery_learning
+    from mdb_lanes.native_discovery import file_hash, save_json, verify_run
+    from mdb_lanes.native_discovery_run import run_pretrained
 
     # Which code actually runs: sha256 of the imported modules (compare with the source tree).
     imported = {m.__name__: {"path": m.__file__, "sha256": file_hash(m.__file__)} for m in (
-        mdb.analysis_metrics, mdb.attention_ranking, mdb.native_discovery_learning)}
+        mdb_lanes.analysis_metrics, mdb_lanes.attention_ranking, mdb_lanes.native_discovery_learning)}
     print("MDB_IMPORTED_SOURCE=" + json.dumps(imported, sort_keys=True), flush=True)
 
     if not os.environ.get("MRUN_JOB_ID"):

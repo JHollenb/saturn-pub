@@ -7,9 +7,9 @@ from argparse import Namespace
 import pytest
 import worker
 
-from mdb import bench_loading
-from mdb.ar.model import ArModelSpec
-from mdb.bench_loading import BenchModelSpec
+from mdb_lanes import bench_loading
+from mdb_lanes.ar.model import ArModelSpec
+from mdb_lanes.bench_loading import BenchModelSpec
 
 
 class _FixtureTokenizer:

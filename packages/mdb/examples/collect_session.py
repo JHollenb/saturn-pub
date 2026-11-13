@@ -3,7 +3,7 @@ import argparse
 import json
 from pathlib import Path
 
-from mdb.job_support import terminal_job
+from mdb_lanes.job_support import terminal_job
 
 
 def main():

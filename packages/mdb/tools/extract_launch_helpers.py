@@ -6,7 +6,7 @@ from pathlib import Path
 from _upstream import upstream_checkout
 
 source = upstream_checkout() / "src/saturn/job_support.py"
-destination = Path(__file__).resolve().parents[1] / "src/mdb/job_support.py"
+destination = Path(__file__).resolve().parents[1].parent / "mdb-lanes" / "src/mdb_lanes/job_support.py"
 names = {
     "_reject_nested_submission", "_mrun_launch", "reject_staged_target_collisions",
     "source_hash_manifest", "guarded_mrun_launch", "one_lease_scheduling_contract",

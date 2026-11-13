@@ -16,7 +16,7 @@ from pathlib import Path
 
 import numpy as np
 
-from mdb.native_discovery import verify_run
+from mdb_lanes.native_discovery import verify_run
 
 METRICS = ("relative_mse", "centered_relative_mse", "relative_mse_excluding_position_0",
            "centered_relative_mse_excluding_position_0")

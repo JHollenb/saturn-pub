@@ -1,0 +1,235 @@
+"""Prospective reader predictions and unchanged native suffix for selected routes."""
+import hashlib
+import runpy
+from pathlib import Path
+
+
+def specs(head,band):
+    return [dict(id='base',kind='base'),dict(id='full',kind='full'),
+        dict(id='dose375',kind='dose',dose=.375),dict(id='dose625',kind='dose',dose=.625),
+        dict(id='head-add',kind='head-add',head=head),dict(id='head-remove',kind='head-remove',head=head),
+        dict(id='band-add',kind='band-add',band=band),dict(id='band-remove',kind='band-remove',band=band)]
+
+
+def ports(base,changed,spec,bf16,nt=512):
+    kind=spec['kind'];full=kind in ('full','head-remove','band-remove')
+    result={key:(changed if full else base)[key].copy() for key in ('k','v')}
+    if kind=='dose':
+        for key in result:result[key][:,nt:]=bf16(base[key][:,nt:]+spec['dose']*(changed[key][:,nt:]-base[key][:,nt:]))
+    elif kind in ('band-add','band-remove'):
+        lo,hi=nt+spec['band']*256,nt+(spec['band']+1)*256
+        for key in result:result[key][:,lo:hi]=(base if full else changed)[key][:,lo:hi]
+    elif kind in ('band-cross','band-text','band-image','band-key','band-value','value-text','value-image','image-head-add','image-head-remove'):
+        lo,hi=nt+spec['band']*256,nt+(spec['band']+1)*256
+        selected=('k',) if kind=='band-key' else ('v',) if kind in ('band-value','value-text','value-image','image-head-add','image-head-remove') else ('k','v')
+        for key in selected:result[key][:,lo:hi]=changed[key][:,lo:hi]
+    elif kind=='own-v':
+        result['v'][:,nt:,spec['head']]=bf16(result['v'][:,nt:,spec['head']]*spec['scale'])
+    for key in result:
+        if not (result[key][:,:nt]==base[key][:,:nt]).all():raise ValueError('text KV was modified')
+    return result
+
+
+def split_stream(kind):
+    return 'text' if kind in ('band-text','value-text') else 'image' if kind in ('band-image','value-image','image-head-add','image-head-remove') else None
+
+
+def image_head_route(base,changed,spec,nt):
+    """An explicit output edit: all text heads stay baseline; image heads are named."""
+    heads=spec['heads']
+    if not heads or len(set(heads))!=len(heads) or any(type(i) is not int or not 0<=i<base.shape[2] for i in heads):
+        raise ValueError('invalid image head selection')
+    result=base.clone()
+    if spec['kind']=='image-head-add':result[:,nt:,heads]=changed[:,nt:,heads]
+    elif spec['kind']=='image-head-remove':
+        result[:,nt:]=changed[:,nt:];result[:,nt:,heads]=base[:,nt:,heads]
+    else:raise ValueError('unknown image head route')
+    return result
+
+
+def output_route(base,changed,kind,nt):
+    """Keep one complete stream from the base and one from the changed attention."""
+    if split_stream(kind) is None:raise ValueError('unknown attention output stream route')
+    result=base.clone()
+    if split_stream(kind)=='text':result[:,:nt]=changed[:,:nt]
+    else:result[:,nt:]=changed[:,nt:]
+    return result
+
+
+def payload_digest(value):
+    import numpy as np
+    if hasattr(value,'detach'):return hashlib.sha256(value.detach().view(__import__('torch').uint16).cpu().numpy().astype('<u2',copy=False).tobytes()).hexdigest()
+    return hashlib.sha256((np.ascontiguousarray(value,np.float32).view(np.uint32)>>16).astype('<u2').tobytes()).hexdigest()
+
+
+def run(*,pipe,adapter,parents,source,output,config,request,event,initial_counts=None):
+    import diffusers.models.transformers.transformer_flux2 as native
+    import torch
+    from saturn_pub import Session
+    from saturn_pub.values import describe
+
+    from mdb_lanes.forecast_transaction import ForecastTransaction, verify_transaction
+    from mdb_lanes.native_navigation import NativeCutNavigator
+    core=runpy.run_path(str(Path(__file__).with_name('flux_reader_arithmetic.py')))
+    attention=runpy.run_path(str(Path(__file__).with_name('flux_reader_attention.py')))
+    routes=runpy.run_path(str(Path(__file__).with_name('flux_reader_routes.py')))
+    h=core['H'];read,save,load,sha=[h[k] for k in ('read','save','load_array','sha')]
+    prefixes=read(source/'prefixes.json')['operands'];block=pipe.transformer.transformer_blocks[0]
+    modules=dict(projection=block.attn.to_add_out,norm=block.norm2_context,ff=block.ff_context)
+    for name,module in (('attn.to_add_out',modules['projection']),('ff_context.linear_in',modules['ff'].linear_in),('ff_context.linear_out',modules['ff'].linear_out)):
+        record=config['text_parameters'][name+'.weight']
+        if payload_digest(module.weight)!=record['descriptor']['sha256']:raise ValueError('original forecast parameter differs')
+    counts=dict(sdpa=0,staged_matmuls=0,staged_softmax=0,linear=0,layernorm=0,swiglu=0,
+        native_sdpa=0,native_blocks=0,native_transitions=0,images=0,model_loads=1,encodes=0,noise_draws=0)
+    if initial_counts:counts.update(initial_counts)
+    prior_counts=counts.copy();case_specs=config.get('case_specs',specs(config['selected_head'],config['selected_band']))
+    phase={'name':'forecast','case':None};allowed=set(modules['ff'].modules())|{modules['projection'],modules['norm']}
+    if config.get('reconstruct_values'):allowed.update((block.norm1,block.attn.to_v))
+    def guard(module,args):
+        if phase['name']=='forecast' and module not in allowed:raise ValueError('undeclared native module during primitive forecast')
+    handles=[torch.nn.modules.module.register_module_forward_pre_hook(guard)]
+    for b in [*pipe.transformer.transformer_blocks,*pipe.transformer.single_transformer_blocks]:
+        handles.append(b.register_forward_hook(lambda m,a,v:counts.__setitem__('native_blocks',counts['native_blocks']+1)))
+    observed={}
+    def after(m,args):
+        if phase['name']=='first':observed['after_attention']=h['array'](output,args[0])
+    def mlp(m,args,value):
+        if phase['name']=='first':observed['mlp']=h['array'](output,value)
+    handles.extend([block.norm2_context.register_forward_pre_hook(after),block.ff_context.register_forward_hook(mlp)])
+    prepared={};predictions={};profiles={};tensor=lambda x:torch.from_numpy(x.copy()).to('cuda',torch.bfloat16)
+    tx=ForecastTransaction(output/'transaction',model_identity=adapter.model_identity,input_identity={r:p.fingerprint for r,p in parents.items()},source_identity=request['request_sha256'],
+        frontier=dict(kind='architectural',boundary='observed positioned text Q/full KV; original parent text/modulation',step=3,block=0),
+        execution_scope='Counted CUDA native primitives forecast reader heads/text writes before any target consumer. Earlier prefix execution, when present, is separately counted. Then unchanged native suffixes. No independent Flash implementation or full image forecast.',
+        budgets=dict(max_native_calls=len(parents)*len(case_specs),max_bytes=16<<20,max_wall_ms=600000))
+    tx.frontier('selection',config.get('selection',dict(head=config['selected_head'],band=config['selected_band'],source='Left route screen only; fixed before native futures',source_audit_sha256=config['route_audit_sha256'])))
+    if 'semantic_hypotheses' in config:tx.frontier('semantic-hypotheses',config['semantic_hypotheses'])
+    with torch.inference_mode():
+        formed={};writer_records={}
+        if config.get('reconstruct_values'):
+            if payload_digest(block.attn.to_v.weight)!=config['value_parameter_sha256']:raise ValueError('value writer parameter differs from original recipe')
+            counts['value_formations']=0
+            for receiver,parent in parents.items():
+                shift,scale,*_=torch.chunk(parent.payload['context']['img_mod'].reshape(1,1,-1),6,dim=-1)
+                normalized=block.norm1(parent.payload['image']);counts['layernorm']+=1
+                operand=(1+scale)*normalized+shift
+                formed[receiver]=block.attn.to_v(operand).unflatten(-1,(24,128));counts['linear']+=1;counts['value_formations']+=1
+                writer_records[receiver]=dict(normalized=h['array'](output,normalized),modulated=h['array'](output,operand),values=h['array'](output,formed[receiver]),parent=parent.fingerprint)
+            save(output/'value-formation.json',writer_records);tx.frontier('value-formation',writer_records)
+        for receiver,parent in parents.items():
+            b,d=[{f:load(source,a) for f,a in prefixes[receiver+'.'+n].items()} for n in ('base','delta')]
+            receiving_base=b
+            if formed:
+                b={**b,'v':b['v'].copy()};d={**d,'v':d['v'].copy()}
+                other=('c1-' if receiver.startswith('c0-') else 'c0-')+receiver.split('-')[1]
+                b['v'][:,512:]=formed[receiver].float().cpu().numpy()
+                d['v'][:,512:]=formed[other].float().cpu().numpy()
+            q=tensor(b['q']);head0,p0=attention['attention'](q,tensor(b['k']),tensor(b['v']),'flash-text',counts)
+            head1,p1=(attention['attention'](q,tensor(d['k']),tensor(d['v']),'flash-text',counts)
+                if any(s['kind'] in ('full','head-add','head-remove') for s in case_specs) else (None,None))
+            text,mod=parent.payload['text'],parent.payload['context']['txt_mod']
+            for spec in case_specs:
+                key=receiver+'.'+spec['id'];kv=ports(b,d,spec,core['R']['bf16'])
+                prepared[key]=dict(spec=spec,base=b,receiving_base=receiving_base,changed=d,head_source=head1 if spec['kind']=='head-add' else head0)
+                def predict(_,spec=spec,key=key,kv=kv):
+                    if spec['kind'] in ('base','head-add') or split_stream(spec['kind'])=='image':head=head0
+                    elif spec['kind'] in ('full','head-remove'):head=head1
+                    else:
+                        head,profile=attention['attention'](q,tensor(kv['k']),tensor(kv['v']),'flash-text',counts);profiles[key]=profile
+                    if spec['kind']=='head-add':head=routes['mix_heads'](head0,head1,[spec['head']])
+                    elif spec['kind']=='head-remove':head=routes['mix_heads'](head1,head0,[spec['head']])
+                    values=core['native_tail'](head,text,mod,modules,counts=counts)
+                    fields={f:h['array'](output,values[f]) for f in ('head','after_attention','mlp','text')}
+                    predictions[key]=dict(fields=fields,ports={f:payload_digest(v) for f,v in kv.items()},spec=spec,
+                        structural_prediction=dict(reference='full' if spec['kind'] in ('head-remove','band-remove') else 'base',
+                            first_image_matches=('base' if spec['kind']=='head-add' else 'full') if spec['kind'].startswith('head-') else None,
+                            earliest_possible_image_change=1 if spec['kind'].startswith('head-') or split_stream(spec['kind'])=='text' else 0,
+                            expected_first_image_change=1 if spec['kind'].startswith('head-') or split_stream(spec['kind'])=='text' else (0 if spec['kind'] not in ('base',) else None)))
+                    return dict(predictions=predictions[key])
+                tx.predict(key,predict);event('prediction-persisted',case=key,counts=counts.copy())
+            profiles[receiver]=dict(base=p0,full=p1)
+        if any(counts[k]!=prior_counts[k] for k in ('native_blocks','native_sdpa','native_transitions')):raise ValueError('target consumer ran during forecasts')
+        for k in ('sdpa','linear','layernorm','swiglu'):
+            if counts[k]!=config['planned_counts'][k]:raise ValueError('forecast cohort census differs: '+k)
+        seal=tx.seal();verify_transaction(output/'transaction',expected_seal_sha256=seal['seal_sha256'])
+        save(output/'predictions.json',predictions);save(output/'profiles.json',profiles);event('all-predictions-sealed',seal_sha256=seal['seal_sha256'],counts=counts.copy())
+    original_dispatch=native.dispatch_attention_fn
+    footprint={}
+    def dispatch(q,k,v,*args,**kwargs):
+        counts['native_sdpa']+=1
+        if phase['name']!='first':return original_dispatch(q,k,v,*args,**kwargs)
+        item=prepared[phase['case']];b=item['base'];nt=b['q'].shape[1]
+        for name,value in (('q',q[:,:nt]),('k',k),('v',v)):
+            if not torch.equal(value.float().cpu(),torch.from_numpy(item['receiving_base'][name])):raise ValueError('native prefix differs before intervention: '+name)
+        def install(value,name):
+            desired=tensor(item['kv'][name]);out=torch.empty_strided(value.shape,value.stride(),device=value.device,dtype=value.dtype);out.copy_(desired)
+            if payload_digest(out)!=predictions[phase['case']]['ports'][name]:raise ValueError('installed ports differ from sealed inputs')
+            return out
+        item['kv']=ports(item['base'],item['changed'],item['spec'],core['R']['bf16'])
+        k,v=install(k,'k'),install(v,'v');del item['kv']
+        with torch.profiler.profile(activities=[torch.profiler.ProfilerActivity.CPU]) as trace:
+            result=original_dispatch(q,k,v,*args,**kwargs)
+            spec=item['spec']
+            if split_stream(spec['kind']) is not None:
+                counts['native_sdpa']+=1
+                originals={}
+                for name,current in (('k',k),('v',v)):
+                    value=torch.empty_strided(current.shape,current.stride(),device=current.device,dtype=current.dtype)
+                    value.copy_(tensor(b[name]));originals[name]=value
+                original=original_dispatch(q,originals['k'],originals['v'],*args,**kwargs)
+                result=(image_head_route(original,result,spec,nt) if spec['kind'].startswith('image-head-') else output_route(original,result,spec['kind'],nt))
+                preserved=result[:,nt:] if split_stream(spec['kind'])=='text' else result[:,:nt]
+                reference=original[:,nt:] if split_stream(spec['kind'])=='text' else original[:,:nt]
+                if not torch.equal(preserved,reference):raise ValueError('split output changed protected attention stream')
+            torch.cuda.synchronize()
+        selected=[dict(name=x.key,calls=x.count) for x in trace.key_averages() if 'scaled_dot' in x.key]
+        spec=item['spec'];changed=[]
+        if spec['kind'].startswith('head-'):
+            base=result;result=result.clone();i=spec['head'];replacement=item['head_source'].reshape(1,nt,24,128)
+            result[:,:nt,i,:]=replacement[:,:,i,:];changed=[i]
+            others=[j for j in range(24) if j!=i]
+            if not torch.equal(result[:,:nt,others],base[:,:nt,others]) or not torch.equal(result[:,nt:],base[:,nt:]):raise ValueError('head edit changed undeclared ports')
+        observed['head']=h['array'](output,result[:,:nt].flatten(2,3))
+        if split_stream(spec['kind'])=='text':changed=list(range(24))
+        image_heads=(spec['heads'] if spec['kind']=='image-head-add' else [i for i in range(24) if i not in spec['heads']]) if spec['kind'].startswith('image-head-') else (list(range(24)) if split_stream(spec['kind'])=='image' else [])
+        footprint.update(changed_text_heads=changed,changed_image_heads=image_heads,image_heads_preserved=split_stream(spec['kind'])!='image',
+            head_edit_reference='Native attention result under installed K/V before output-stream replacement',
+            kv_sha256={f:payload_digest(x) for f,x in (('k',k),('v',v))},
+            output_stream_route=spec['kind'] if split_stream(spec['kind']) is not None else 'native',
+            selected_aten_operations=selected,q_shape=list(q.shape),q_stride=list(q.stride()),k_stride=list(k.stride()),v_stride=list(v.stride()))
+        return result
+    cases={}
+    def receipt(rec,key):
+        with (output/'receipts.jsonl').open('a') as f:
+            import json
+            f.write(json.dumps(dict(case=key,receipt=rec.to_dict()),sort_keys=True)+'\n')
+    native.dispatch_attention_fn=dispatch
+    try:
+        with torch.inference_mode():
+            for key,item in prepared.items():
+                receiver=key.split('.')[0];nav=NativeCutNavigator(Session.from_cut(adapter,parents[receiver]),max_steps=27)
+                phase.update(name='first',case=key);observed.clear();footprint.clear();records=[]
+                def execute(_):
+                    rec=nav.step();receipt(rec,key);counts['native_transitions']+=1
+                    observed['text']=h['array'](output,nav.session.read('text'))
+                    return dict(fields=dict(observed),footprint=dict(footprint))
+                tx.execute(key,execute)
+                first=dict(observed);first_image=h['array'](output,nav.session.read('image'))
+                for local in range(27):
+                    if local:
+                        phase['name']='continuation';receipt(nav.step(),key);counts['native_transitions']+=1
+                    cut=nav.session.capture(retain=False);p=cut.payload
+                    fields={f:describe(p[f]) for f in ('text','image','noise_prediction','latent') if f in p}
+                    records.append(dict(local=local,point=dict(cut.execution_point),fields=fields))
+                phase['name']='decode';path=output/(key+'.png');adapter.decode(nav.session,height=512,width=512).save(path);counts['images']+=1
+                cases[key]=dict(first_fields=first,first_image=first_image,footprint=dict(footprint),records=records,
+                    latent=h['array'](output,nav.session.read('latent')),image=dict(path=path.name,sha256=sha(path)),spec=item['spec'])
+                save(output/'cases'/(key+'.json'),cases[key]);event('native-future-complete',case=key,counts=counts.copy())
+    finally:
+        native.dispatch_attention_fn=original_dispatch
+        for handle in handles:handle.remove()
+        tx.close()
+    verify_transaction(output/'transaction',expected_seal_sha256=seal['seal_sha256'])
+    save(output/'transaction-report.json',tx.report());save(output/'cases.json',cases)
+    if counts!=config['planned_counts']:
+        raise ValueError('native future physical census differs')
+    return counts

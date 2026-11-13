@@ -47,7 +47,7 @@ def main():
         previous_astra_review_sha256=sha(prior_path), previous_request_sha256=old["request_sha256"],
         qualification_sha256=sha(qual_path), changed_request_fields=changed,
         launcher_regression_checks="Root ran all five exact stager tests after the correction: 5 passed in0.06s; exact files F/I Ruff passed.",
-        launcher_test_sha256="0e7c3b26ac92f7b66f3afc443652f710415cedd4101bc5a857eb13ab08d334ea",
+        launcher_test_sha256="c09afe28bce37f7d74cb9054bddee23447bd95e3daa63f0ab85ecae4206a9f1f",
         changed_sources=source_changes, command_delta=["--config", "saturn_run_config.json"],
         scientific_code_config_selection_wheels_resources_unchanged=True,
         exact_source_and_wheel_files_rehashed=len(new["source_hashes"]) + len(new["runtime_wheels"]),

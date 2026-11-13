@@ -1,4 +1,0 @@
-Metadata-Version: 2.1
-Name: mdb-lanes-compat
-Version: 0.0.0
-Summary: Source-tree stub: declares the mdb.lanes entry points of the lane modules (see lanes_compat.py); not an installable distribution.

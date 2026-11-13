@@ -8,15 +8,15 @@ from hashlib import sha256
 from pathlib import Path
 from uuid import uuid4
 
-from mdb.execution_environment import intent
-from mdb.job_support import (
+from mdb_lanes.execution_environment import intent
+from mdb_lanes.job_support import (
     guarded_mrun_launch,
     one_lease_scheduling_contract,
     source_hash_manifest,
     terminal_job,
 )
-from mdb.payload import package_files, stage_worker, worker_command
-from mdb.tools import scheduler_api
+from mdb_lanes.payload import package_files, stage_worker, worker_command
+from mdb_lanes.tools import scheduler_api
 
 HERE = Path(__file__).resolve().parent
 RESULTS = HERE.parents[1] / "results/time-circuits"
@@ -72,7 +72,7 @@ def specification(experiment, smoke, e6_mode="interchange", unfreeze_attention=F
     operations = contexts if experiment == "e20" else len(payload["items"])
     consumer_calls = contexts * 10 if experiment == "e20" else len(payload["items"]) * (70 if e6_mode == "interchange" else 38)
     replays = contexts if experiment == "e20" else len(payload["items"]) * 2
-    sources = {name + "/" + relative: path for name in ("mdb", "mrun")
+    sources = {name + "/" + relative: path for name in ("mdb", "mdb_lanes", "mrun")
                for relative, path in package_files(name).items()}
     sources[worker.name] = worker
     sources.update({name: path for path, name in extras})
