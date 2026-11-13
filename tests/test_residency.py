@@ -294,6 +294,7 @@ def test_pinned_prefetch_host_embedding_equals_resident_on_cuda(tag):
     resident = build(residency="resident")
     plain = build(residency="streamed")
     fast = build(residency="streamed", pin_host=True, prefetch=True, host_embedding=True)
+    fast._residency.prefetch_min_bytes = 0  # noqa: SLF001 - tiny modules would bypass prefetch
     outputs = []
     for adapter in (resident, plain, fast):
         session = adapter.session(PROMPT)

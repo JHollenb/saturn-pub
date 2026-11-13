@@ -74,6 +74,11 @@ class BlockResidency:
             raise ValueError("prefetch and host embedding only apply to streamed residency")
         if prefetch and not pin_host:
             raise ValueError("prefetch needs pin_host=True: pageable copies cannot overlap")
+        # Modules smaller than this (rotary tables, norms) are copied inline and kept out of
+        # the successor chain: a decoder calls rotary before every layer, so chaining it
+        # would make every layer's successor "rotary" and drop the staged layer each time.
+        self.prefetch_min_bytes = 4 << 20
+        self._module_bytes: dict[int, int] = {}
         self._successor: dict[int, Any] = {}
         self._previous: Any = None
         self._staged: dict[int, tuple[dict[str, torch.Tensor], Any]] = {}
@@ -121,8 +126,18 @@ class BlockResidency:
             event.record(self._copy_stream)
         self._staged[key] = (tensors, event)
 
+    def _bytes(self, module: Any) -> int:
+        key = id(module)
+        size = self._module_bytes.get(key)
+        if size is None:
+            size = sum(t.numel() * t.element_size() for t in module.parameters()) + sum(
+                t.numel() * t.element_size() for t in module.buffers()
+            )
+            self._module_bytes[key] = size
+        return size
+
     def _fetch(self, module: Any) -> dict[str, torch.Tensor]:
-        if self._copy_stream is None:
+        if self._copy_stream is None or self._bytes(module) < self.prefetch_min_bytes:
             return self._copy(module)
         # Learn the successor edge, then serve this module from its staged copy if present.
         if self._previous is not None:
