@@ -76,9 +76,14 @@ def load_local(path: str, *, dtype: Any = "bf16", device: Any = "cpu") -> Any:
     """
     from transformers import AutoModelForCausalLM
 
+    # The dtype is given to the loader and the module is then moved by device only:
+    # ``module.to(dtype=...)`` also casts buffers, and a bf16 copy of RoPE's float32
+    # ``inv_freq`` (relative error up to 3.7e-3) is a different model from the one Hugging
+    # Face runs. Measured on Qwen2.5-1.5B: the declared margin moved by one bf16 step.
     model = AutoModelForCausalLM.from_pretrained(
         str(path),
         local_files_only=True,
         attn_implementation="eager",
+        dtype=_dtype(dtype),
     )
-    return model.eval().to(device=torch.device(device), dtype=_dtype(dtype))
+    return model.eval().to(torch.device(device))
