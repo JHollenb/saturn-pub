@@ -126,10 +126,15 @@ def lease_roots(panel, lease, items):
     roots = []
     for context, arm_id in lease["branches"]:
         item = ids[arm_id].item
-        spec = items[item]
-        wanted = [("native", spec["prompt"], None)]
-        if spec.get("word"):
-            wanted += [("del", spec["prompt"], spec["word"]), ("iso", spec["prompt"], spec["word"])]
+        if item is None:
+            # Panel-level reference arm (the shared ``native`` arm newer panels emit): it needs the
+            # native root of every prompt and nothing word-specific.
+            wanted = [("native", pid, None) for pid in dict.fromkeys(v["prompt"] for v in items.values())]
+        else:
+            spec = items[item]
+            wanted = [("native", spec["prompt"], None)]
+            if spec.get("word"):
+                wanted += [("del", spec["prompt"], spec["word"]), ("iso", spec["prompt"], spec["word"])]
         for kind, pid, word in wanted:
             key = (context, kind, pid, word)
             if key not in roots:

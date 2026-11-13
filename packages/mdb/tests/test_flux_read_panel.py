@@ -77,7 +77,8 @@ def test_roots_work_items_and_lease_cap():
     assert F.work_items(panel, lease, ITEMS) == panel.branch_count + 10
     cap, leases = F.leases_within(panel, ITEMS, limit=40)
     assert all(F.work_items(panel, x, ITEMS) <= 40 for x in leases)
-    assert sum(len(x["branches"]) for x in leases) == panel.branch_count
+    # Shared reference arms are replicated into every lease that needs them, so count distinct branches.
+    assert len({tuple(b) for x in leases for b in x["branches"]}) == panel.branch_count
 
 
 def test_cut_dict_round_trip():
