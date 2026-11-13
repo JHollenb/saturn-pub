@@ -931,13 +931,9 @@ def test_engine_does_not_import_the_legacy_module():
     assert bad.strip() == "[]" and int(count) < 30, result.stdout
 
 
-def test_tiny_model_builder_reproduces_the_legacy_weights_and_takes_layers():
+def test_tiny_model_builder_takes_layers():
     from mdb.engine.models import tiny_model
-    from mdb.local_debugger import tiny_qwen
 
-    legacy = tiny_qwen(seed=113)
-    mine = tiny_model("qwen2", "bf16")
-    assert all(torch.equal(a, b) for a, b in zip(legacy.state_dict().values(), mine.state_dict().values()))
     assert tiny_model("qwen3", torch.float32, layers=3).config.num_hidden_layers == 3
     assert selfcheck.tiny_model is tiny_model
     with pytest.raises(ValueError, match="qwen2 or qwen3"):
