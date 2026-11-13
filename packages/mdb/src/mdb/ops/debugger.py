@@ -341,9 +341,10 @@ def _durable(model: Any, tokenizer: Any, adapter: Any, project: Any, session: st
     return Debugger(model, tokenizer, adapter, project=opened, session_id=session)
 
 
-def open_tiny(family: str = "qwen2", dtype: str = "bf16", *, seed: int = 113) -> Debugger:
+def open_tiny(family: str = "qwen2", dtype: str = "bf16", *, seed: int = 113,
+              project: Any = None) -> Debugger:
     """A random tiny eager CPU model (no tokenizer) for demos and tests."""
-    return attach(_tiny(family, dtype, seed))
+    return attach(_tiny(family, dtype, seed), project=project)
 
 
 def _tiny(family: str, dtype: str, seed: int) -> Any:
