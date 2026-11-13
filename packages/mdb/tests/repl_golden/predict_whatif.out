@@ -1,0 +1,41 @@
+(mdb) start 1 5 9 3
+t3.L0.h  h = layer input (residual stream)  {P01}
+(mdb) until L1.a
+t3.L1.a  a = RMSNorm(h) * w_in  {P02 P03}
+(mdb) break L*.p
+Breakpoint 1 at L*.p
+(mdb) whatif L1.m=0.5 add consumer=M[4,9]
+whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 579b42095616cf72)
+  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  bound 0.07029 [bound]
+  native  ΔM = 0.16449 [measured]   (base -0.11401 [measured] -> edited 0.050476 [measured])
+  error split (P20): linear 1.4572 [derived-local P14] + nonlinear -1.2921 [derived-exact P20] + realisation -4.4976e-05 [derived-exact P20] + rounding -0.00059161 [measured P20] (within bound 0.061091 [bound])
+  session unchanged at t3.L1.a  (5 moves, restored)
+(mdb) whatif L0.v=0.25 add consumer=t3.logits[i=7]
+whatif t3.L0.v add 0.25 [supplied] -> t3.logits[i=7]  (mode rewind, record b2a642fc621732ed)
+  sealed  linear Δlogit = -0.018373 [derived-local P14]   exact Δlogit = -0.011992 [derived-exact]  bound 0.37496 [bound]
+  native  Δlogit = -0.011719 [measured]   (base -0.15332 [measured] -> edited -0.16504 [measured])
+  error split (P20): linear -0.018373 [derived-local P14] + nonlinear 0.0063806 [derived-exact P20] + realisation -4.5157e-05 [derived-exact P20] + rounding 0.00031881 [measured P20] (within bound 0.21229 [bound])
+  session unchanged at t3.L1.a  (7 moves, restored)
+(mdb) whatif L1.o 1.5 scale consumer=L1.h_out
+whatif t3.L1.o scale 1.5 [supplied] -> t3.L1.h_out  (mode pending, record c301f94ab986a5f7)
+  sealed  linear Δ = max_abs 0.0040993 [derived-local P14] norm 0.0082277 [derived-local P14]   exact Δ = max_abs 0.0041011 [derived-exact] norm 0.0082297 [derived-exact]  bound 0.0028421 [bound]
+  native  Δ = max_abs 0.0041046 [measured] norm 0.0081314 [measured]   (base max_abs 0.048584 [measured] norm 0.089818 [measured] -> edited max_abs 0.049805 [measured] norm 0.091607 [measured])
+  error split (P20): linear max_abs 0.0040993 [derived-local P14] norm 0.0082277 [derived-local P14] + nonlinear max_abs 4.0134e-06 [derived-exact P20] norm 7.6538e-06 [derived-exact P20] + realisation max_abs 4.2539e-05 [derived-exact P20] norm 7.3468e-05 [derived-exact P20] + rounding max_abs 0.00017617 [measured P20] norm 0.00027321 [measured P20] (within bound 0.0017521 [bound])
+  session unchanged at t3.L1.a  (5 moves, restored)
+(mdb) whatif L1.m=0.5 add consumer=t4.M[4,9]
+whatif t3.L1.m add 0.5 [supplied] -> t4.M[4,9]  (mode pending, record c7d2dda4400f1c61)
+  sealed  linear ΔM = refused (the edit flips the sampled token of t4 (20 -> 31): the first-order term does not cross a token change)   exact ΔM = 0.18443 [derived-exact]  bound unresolved (the sampled token of t3 is not certified: argmax not certified: the top logit's bound overlaps another)
+  native  ΔM = 0.18408 [measured]   (base -0.052979 [measured] -> edited 0.1311 [measured])
+  error split (P20): exact 0.18443 [derived-exact] + realisation 0 [derived-exact P20] + rounding -0.00034872 [measured P20] (bound unresolved (the sampled token of t3 is not certified: argmax not certified: the top logit's bound overlaps another))
+  session unchanged at t3.L1.a  (5 moves, restored)
+state: unresolved
+(mdb) where
+t3.L1.a  a = RMSNorm(h) * w_in  {P02 P03}
+tokens: 1 5 9 3
+staged edits: 0, lookahead none
+(mdb) whatif L1.m = 0.5 add --consumer M[4,9]
+whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 579b42095616cf72)
+  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  bound 0.07029 [bound]
+  native  ΔM = 0.16449 [measured]   (base -0.11401 [measured] -> edited 0.050476 [measured])
+  error split (P20): linear 1.4572 [derived-local P14] + nonlinear -1.2921 [derived-exact P20] + realisation -4.4976e-05 [derived-exact P20] + rounding -0.00059161 [measured P20] (within bound 0.061091 [bound])
+  session unchanged at t3.L1.a  (5 moves, restored)

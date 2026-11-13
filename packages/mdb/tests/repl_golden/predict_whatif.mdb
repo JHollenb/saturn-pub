@@ -1,0 +1,9 @@
+# Predicted versus natively measured change of a consumer under one edit; the session stays put.
+until L1.a
+break L*.p
+whatif L1.m=0.5 add consumer=M[4,9]
+whatif L0.v=0.25 add consumer=t3.logits[i=7]
+whatif L1.o 1.5 scale consumer=L1.h_out
+whatif L1.m=0.5 add consumer=t4.M[4,9]
+where
+whatif L1.m = 0.5 add --consumer M[4,9]

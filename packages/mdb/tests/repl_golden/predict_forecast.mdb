@@ -1,0 +1,12 @@
+# Seal forecasts before the native step, step past their targets, verify, then explain.
+forecast
+forecast L0.p
+forecast M[4,9]
+forecast L1.m
+step
+verify
+until t3.logits
+verify
+verify 1
+explain M[4,9]
+explain L1.o

@@ -234,6 +234,31 @@ def _set_args(text: str) -> dict[str, Any]:
     return args
 
 
+_WHATIF_USAGE = "write whatif ADDR = VALUE [replace|add|scale] --consumer M[a,b]|logits[i]|ADDR"
+
+
+def _whatif_args(text: str) -> dict[str, Any]:
+    """``whatif ADDR = VALUE [OP] --consumer C``; ``consumer=C`` is accepted too."""
+    words = split(text)
+    consumer, kept, i = None, [], 0
+    while i < len(words):
+        word = words[i][0]
+        if word == "--consumer" and i + 1 < len(words):
+            consumer, i = words[i + 1][0], i + 2
+        elif word.startswith(("consumer=", "--consumer=")):
+            consumer, i = word.split("=", 1)[1], i + 1
+        else:
+            kept.append(words[i])
+            i += 1
+    if not consumer or not kept:
+        raise BadArgs(_WHATIF_USAGE)
+    try:
+        args = _set_args(" ".join(text[start:end] for _, start, end in kept))
+    except BadArgs:
+        raise BadArgs(_WHATIF_USAGE) from None
+    return {**args, "consumer": consumer}
+
+
 def _up_args(text: str) -> dict[str, Any]:
     args: dict[str, Any] = {}
     for word, _, _ in split(text):
@@ -264,6 +289,7 @@ SPECIAL = {
     "tbreak": _break_args,
     "watch": _watch_args,
     "set": _set_args,
+    "whatif": _whatif_args,
     "up": _up_args,
     "condition": _condition_args,
 }

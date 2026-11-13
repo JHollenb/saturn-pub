@@ -179,10 +179,10 @@ verb is missing here; `python tests/test_readme.py` regenerates this table and t
 | `display` | `display [ADDR]` | mutate | Show an address after every stop (no address: list displays) |
 | `down` | `down [N]` | navigate | Move the focus back toward its consumer, N times |
 | `enable` | `enable [ID ...]` | mutate | Enable breakpoints and watches (all when no ids are given) |
-| `explain` | `explain` | not built yet (A5) | Per-layer readout of a consumer with proof IDs and remainder |
+| `explain` | `explain M[a,b]\|ADDR` | read | Exact accounting of a margin M[a,b] or of one port, with proof IDs and the measured remainder (cursor at the row's logits/sample) |
 | `export` | `export` | not built yet (B1) | Export a walkthrough bundle of records and pointers |
 | `finish` | `finish` | navigate | From a port inside a layer: run to that layer's h_out. From h_out or a token-level stop: run to this row's sample |
-| `forecast` | `forecast` | not built yet (A5) | Seal a forecast at the cursor before the native step |
+| `forecast` | `forecast [ADDR\|M[a,b]]` | mutate | Seal a prediction of the next stop (or a later stop of this row, or a margin M[a,b]) from values at the cursor, before native code runs |
 | `frame` | `frame [ADDR \| cursor]` | navigate | Show or set the focus address (print/list/backtrace default to it) |
 | `ignore` | `ignore N COUNT` | mutate | Ignore the next COUNT hits of breakpoint N (they are counted, not reported) |
 | `info` | `info ports\|breakpoints\|watch\|display\|checkpoints\|edits\|program [offset=N] [limit=N]` | read | Show debugger tables or the program (lists are paged: offset=, limit=) |
@@ -205,9 +205,9 @@ verb is missing here; `python tests/test_readme.py` regenerates this table and t
 | `undisplay` | `undisplay [ID ...]` | mutate | Remove displays (all when no ids are given) |
 | `until` | `until ADDR [budget=ROWS]` | navigate | Run to an address, stopping earlier at an armed breakpoint or watch |
 | `up` | `up [N] [PORT]` | navigate | Move the focus to a producer (toward the layer input), N times; `up PORT` picks the producer by name, the result lists the alternatives |
-| `verify` | `verify` | not built yet (A5) | Check a sealed forecast against the native receipt |
+| `verify` | `verify [ID ...]` | mutate | Compare open forecasts whose target the cursor has passed with the native values (residual, bound, order) |
 | `watch` | `watch ADDR [change\|level\|edge] [if PREDICATE]` | mutate | Watch an address: stop when it changes (or a predicate holds: level/edge); cache cells (cache.L<i>.k\|v) are evaluated at boundary stops only |
-| `whatif` | `whatif` | not built yet (A5) | Predicted versus measured effect of an edit on a consumer |
+| `whatif` | `whatif ADDR=EXPR [replace\|add\|scale] consumer=M[a,b]\|logits[i]\|ADDR` | navigate | Predicted, then natively measured change of a consumer under one edit; the session is left exactly where it was |
 | `where` | `where` | read | Show the cursor, its operator and the context tokens |
 | `x` | `x [ADDR] [COUNT] [OFFSET]` | read | Examine raw values: a bounded slice of the selected, flattened value |
 <!-- END verbs -->
@@ -220,8 +220,8 @@ Every number shown or stored carries exactly one label, and a state.
 |---|---|---|
 | `measured` | read from native execution | `print top=2` at `t3.L1.p` |
 | `derived-exact` | an exact identity on captured operands | the replica `s`; a value written by an `add` or `scale` edit |
-| `derived-local` | a linearisation or quadrature only | (forecasts, not built yet) |
-| `bound` | a theorem with stated premises | (not used by a built verb yet) |
+| `derived-local` | a linearisation or quadrature only | the linear term of `whatif` |
+| `bound` | a theorem with stated premises | the rounding bound of a `forecast` |
 | `supplied` | a value handed in by a user or a stored record | the edit request `m scale 0` |
 
 State is `resolved`, `unresolved` (could not be computed: never shown as zero) or `refused`
@@ -270,7 +270,48 @@ resolved | attention implementation is 'sdpa': qr, kr, s and p exist only inside
   attention dropout; any port of a layer that did not run; everything after the `max_bytes`
   cap (default 1 GiB). Captures are detached copies on the model's device.
 - Hooks are removed when the block exits, also when the forward raises. A second active
-  trace is refused. `project=` is refused until project persistence lands.
+  trace is refused. `project=` is not supported by `trace` yet.
+
+## Predictions: `forecast`, `verify`, `whatif`
+
+`forecast` seals a prediction from values at the cursor, before native code runs; `verify`
+compares it with what native code then produced (`tests/repl_golden/predict_forecast.out`):
+
+```
+(mdb) forecast L0.p
+forecast 2  t3.L0.p  sealed at t3.L0.h  record 6a5b7ce96f898a51
+  method 7 identities t3.L0.a .. t3.L0.p (last softmax P05)
+  predicted max_abs 0.25152 [derived-exact] norm 0.70712 [derived-exact]  ...  bound 0.0026798 [bound] per element
+(mdb) until t3.logits
+(mdb) verify
+forecast 2 t3.L0.p: within-bound  native max_abs 0.25195 [measured] norm 0.70781 [measured]  residual 0.00091045 [measured] <= bound 0.0026798 [bound]
+  order: sealed at t3.L0.h (stop 2) before the target (stop 10); cut descends through 4 receipts
+```
+
+`whatif` seals the predicted change of a consumer under one edit, measures it natively on a
+private branch, and restores the session (`tests/repl_golden/predict_whatif.out`):
+
+```
+(mdb) whatif L1.m = 0.5 add --consumer M[4,9]
+whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 579b42095616cf72)
+  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  bound 0.07029 [bound]
+  native  ΔM = 0.16449 [measured]   (base -0.11401 [measured] -> edited 0.050476 [measured])
+  error split (P20): linear 1.4572 [derived-local P14] + nonlinear -1.2921 [derived-exact P20] + realisation -4.4976e-05 [derived-exact P20] + rounding -0.00059161 [measured P20] (within bound 0.061091 [bound])
+  session unchanged at t3.L1.a  (5 moves, restored)
+```
+
+## Durable checkpoints
+
+```python
+dbg = mdb.attach(model, tok, project="runs/t")      # creates or reopens the project
+run = dbg.run(tokens); run.until("L1.sg"); run.set("L1.u", tensor, "add")
+dbg.checkpoint(run, "pre")                          # replay recipe + edit tensors as blobs
+# later, in another process with the same model and numeric scope:
+run = mdb.attach(model, tok, project="runs/t").restart("pre")    # same cut fingerprint
+```
+
+The REPL's `checkpoint NAME` / `restart NAME` do the same when a project is attached.
+`mdb.resolve(pointer, project=..., session=dbg)` turns an occurrence pointer back into a tensor.
 
 ## Recorded projects: `mdb serve`
 
@@ -351,8 +392,7 @@ engine imports no lane module and that its layers (`core`, `engine`, `analysis`,
 
 ## Not built yet
 
-- `explain`, `forecast`, `verify`, `whatif` (milestone A5, in progress). The verbs exist and refuse.
-- Project persistence: `attach(project=)`, `trace(project=)`, recipes and stored occurrence
-  origins (A2b, in progress).
+- `trace(project=)`, cache-cell edits (`set cache.L.v[...]`) and what-if values taken from
+  another run (`boiling:cache.L20.v[...]`).
 - `symbols`, `reads`, `circuit`, `compare`, `seek` (A6) and `export` (B1).
 - Live stepping in the web viewer (B2-B4) and remote workers over mrun.

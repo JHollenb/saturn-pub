@@ -17,8 +17,8 @@ from mdb.ops import (
     registry,
 )
 
-SLOTS = {"forecast", "verify", "whatif", "explain", "reads", "symbols", "circuit", "compare",
-         "seek", "export"}
+SLOTS = {"reads", "symbols", "circuit", "compare", "seek", "export"}
+PREDICT = {"explain", "forecast", "verify", "whatif"}
 GDB_VERBS = {"run", "start", "where", "frame", "step", "next", "finish", "until", "advance",
              "continue", "break", "tbreak", "delete", "watch", "display", "undisplay", "print",
              "x", "info", "list", "backtrace", "up", "down", "set", "commit", "abort",
@@ -28,7 +28,7 @@ GDB_VERBS = {"run", "start", "where", "frame", "step", "next", "finish", "until"
 
 def test_catalogue_has_every_verb_with_a_schema_and_round_trips_json():
     ops = registry()
-    assert GDB_VERBS | SLOTS <= set(ops)
+    assert GDB_VERBS | SLOTS | PREDICT <= set(ops)
     catalogue = describe()
     assert json.loads(json.dumps(catalogue)) == catalogue
     check_bounded(catalogue, "catalogue")
@@ -62,7 +62,7 @@ def test_unknown_bad_args_and_refusals_without_a_model():
     with pytest.raises(Refused, match="no model attached"):
         dispatch(ctx, "start", {"prompt": [1, 2]})
     for name in SLOTS:
-        with pytest.raises(Refused, match="not built yet: (A5|A6|B1)"):
+        with pytest.raises(Refused, match="not built yet: (A6|B1)"):
             dispatch(ctx, name, {"anything": 1})
     assert dispatch(ctx, "checkpoints", {}) == {
         "op": "checkpoints", "checkpoints": [], "total": 0, "offset": 0, "limit": 32,
@@ -142,7 +142,9 @@ def _fuzz_args(ctx, name):
         "info": {"subject": "edits"}, "list": {}, "backtrace": {}, "up": {"n": 1},
         "down": {"n": 1}, "checkpoints": {}, "restart": {"name": "fz"},
         "reverse-step": {"n": 1}, "reverse-next": {}, "reverse-finish": {},
-        "reverse-continue": {},
+        "reverse-continue": {}, "explain": {"address": "M[0,1]"},
+        "whatif": {"target": f"t{row}.L1.h_out=0.01", "op": "add",
+                   "consumer": f"t{row}.M[0,1]"},
     }[name]
 
 
@@ -175,7 +177,8 @@ def test_fuzz_read_and_navigate_ops_return_bounded_labelled_results(debugger):
                 # Values that do not exist at this cursor are refused, never invented.
                 assert any(word in str(error) for word in (
                     "not been computed", "not ahead", "no frame", "no consumer",
-                    "cannot reverse", "needs a layer")), (name, ctx.run.where, str(error))
+                    "cannot reverse", "needs a layer", "explain reads",
+                    "not downstream")), (name, ctx.run.where, str(error))
                 continue
             assert check_bounded(result, name) == result
             assert _unlabelled(result) == [], (name, ctx.run.where, _unlabelled(result))

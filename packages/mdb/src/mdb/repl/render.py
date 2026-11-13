@@ -468,7 +468,164 @@ def _render(result: dict[str, Any]) -> str:
         return "\n".join(_checkpoints(result["checkpoints"]) + _more(result))
     if name == "info":
         return "\n".join(_info(result))
+    if name in _PREDICT:
+        return "\n".join(_PREDICT[name](result))
     return json.dumps(result, sort_keys=True)
+
+
+# --------------------------------------------------------------------------- explain/forecast/
+# verify/whatif
+
+
+def _claimed(item: Any) -> str:
+    """A labelled number with its proof (``0.25 [derived-local P14]``), a labelled
+    ``{max_abs, norm}`` pair, or the state and reason of a field that has no number."""
+    if isinstance(item, dict) and item.get("state") in ("unresolved", "refused"):
+        return num(item)
+    if isinstance(item, dict) and "max_abs" in item and "value" not in item:
+        return f"max_abs {_claimed(item['max_abs'])} norm {_claimed(item['norm'])}"
+    proof = item.get("proof")
+    return f"{fmt(item['value'])} [{item['authority']}{' ' + proof if proof else ''}]"
+
+
+def _explain_lines(result: dict[str, Any]) -> list[str]:
+    data = result["explain"]
+    if data.get("state") == "refused":
+        return [f"explain {result['target']}: refused ({data['reason']})"]
+    if result["kind"] == "margin":
+        lines = [f"explain {result['target']}  native {_claimed(data['native_margin'])}  "
+                 f"float64 {_claimed(data['float64_margin'])}  eta {_claimed(data['eta'])}"]
+        for term in data["terms"]:
+            lines.append(f"  {term['name']:<19}{_claimed(term['value'])}")
+        for rem in data["remainders"]:
+            line = f"  ~{rem['name']:<18}{_claimed(rem['value'])}"
+            if "scale" in rem:
+                line += (f"  scale {_claimed(rem['scale'])} k {rem['k']} "
+                         f"{'within' if rem['within_rounding'] else 'OUTSIDE'}")
+            lines.append(line)
+        lines.append(f"  listed_sum {_claimed(data['listed_sum'])}  closure "
+                     f"{_claimed(data['closure'])}")
+    else:
+        lines = [f"explain {result['target']}  {data['function']} {data['proof']}: "
+                 f"{data['operator']}  {_proofs(data['proofs_declared'])}"]
+        if "eta_max_abs" in data:
+            lines.append(f"  eta_max_abs {_claimed(data['eta_max_abs'])}  eta_rel "
+                         f"{_claimed(data['eta_rel'])}  (against {data['against']})")
+        if "edit_delta_max_abs" in data:
+            lines.append(f"  written by an edit ({data['edit']['by']}): edit_delta_max_abs "
+                         f"{_claimed(data['edit_delta_max_abs'])}")
+        lines += [f"  note: {note}" for note in data.get("notes", ())]
+    if data.get("state") not in (None, "resolved"):
+        lines.append(f"  {data['state']}: {data.get('reason')}")
+    return lines
+
+
+def _predicted(body: dict[str, Any]) -> str:
+    if "token" in body:
+        return f"token {body['token']}"
+    if "value" in body:
+        return _claimed(body["value"])
+    return f"{_claimed(body)}  sha256 {body['sha256'][:16]}"
+
+
+def _forecast_lines(result: dict[str, Any]) -> list[str]:
+    view = result["forecast"]
+    chain = view["method"]
+    last = chain[-1]
+    method = (f"{last['identity']} {last['proof'] or ''}: {last['operator']}" if len(chain) == 1
+              else f"{len(chain)} identities {chain[0]['stop']} .. {last['stop']} (last "
+                   f"{last['identity']} {last['proof'] or ''})")
+    bound = view["bound"]
+    vector = "sha256" in view["predicted"]
+    spread = (f"bound {_claimed(bound['max'])}{' per element' if vector else ''}"
+              if "max" in bound else f"bound {num(bound)}")
+    return [f"forecast {view['id']}  {view['target']}  sealed at {view['sealed_at']}  "
+            f"record {view['record'][:16]}",
+            f"  method {method}",
+            f"  predicted {_predicted(view['predicted'])}  {spread}"]
+
+
+def _verify_lines(result: dict[str, Any]) -> list[str]:
+    if not result["forecasts"]:
+        return [f"no open forecasts (cursor {result['where']})"]
+    lines = []
+    for item in result["forecasts"]:
+        head = f"forecast {item['id']} {item['target']}: {item['verdict']}"
+        if item["verdict"] == "open":
+            lines.append(f"{head} ({item.get('reason', 'target not reached')})")
+            continue
+        if item["verdict"] == "edited":
+            lines.append(f"{head} ({'; '.join(item['edited_after_seal'])}): not a forecast "
+                         "failure")
+        else:
+            text = f"{head}  native {_claimed(item['native'])}" if "native" in item else head
+            if "residual_max_abs" in item:
+                text += f"  residual {_claimed(item['residual_max_abs'])}"
+            if "bound_max" in item:
+                text += (f" {'<=' if item['within_bound'] else '>'} bound "
+                         f"{_claimed(item['bound_max'])}")
+                if "worst_excess" in item:
+                    text += f" (worst excess {_claimed(item['worst_excess'])})"
+            elif item["verdict"] == "no-bound":
+                text += "  (no bound was stated)"
+            lines.append(text)
+        order = item["order"]
+        lineage = ("same cut (the target is a later port of the sealed layer)"
+                   if order["same_cut"] else
+                   f"cut {'descends' if order['descends'] else 'does not descend'} through "
+                   f"{order['receipts_after_seal']['count']} receipts")
+        lines.append(f"  order: sealed at {item['sealed_at']} (stop {order['sealed']['index']}) "
+                     f"{'before' if order['sealed_before_target'] else 'NOT before'} the target "
+                     f"(stop {order['target']['index']}); {lineage}")
+    return lines
+
+
+def _delta_name(consumer: dict[str, Any]) -> str:
+    return {"margin": "\u0394M", "logit": "\u0394logit"}.get(consumer["kind"], "\u0394")
+
+
+def _whatif_lines(result: dict[str, Any]) -> list[str]:
+    edit, consumer, delta = result["edit"], result["consumer"], _delta_name(result["consumer"])
+    value = (_claimed(edit["value"]) if "value" in edit
+             else f"tensor {edit['sha256'][:12]}" + (f" from {edit['source']}"
+                                                    if "source" in edit else ""))
+    where = edit["address"] + (f"[{edit['selection']}]" if "selection" in edit else "")
+    lines = [f"whatif {where} {edit['op']} {value} -> {consumer['address']}  "
+             f"(mode {result['mode']}, record {result['record'][:16]})"]
+    prediction = result["prediction"]
+    if prediction["state"] == "refused":
+        lines.append(f"  sealed  prediction refused ({prediction['reason']})")
+    else:
+        linear = prediction["linear"]
+        exact = prediction["exact"]
+        lines.append(f"  sealed  linear {delta} = "
+                     f"{_claimed(linear['value']) if 'value' in linear else num(linear)}   "
+                     f"exact {delta} = {_claimed(exact['value'])}  bound "
+                     f"{_claimed(exact['bound'])}")
+    measured = result["measured"]
+    lines.append(f"  native  {delta} = {_claimed(measured['delta'])}   (base "
+                 f"{_claimed(measured['base'])} -> edited {_claimed(measured['edited'])})")
+    split = result["split"]
+    if split.get("state") == "refused":
+        lines.append("  error split: none (no prediction)")
+    else:
+        parts = []
+        for term in split["terms"]:
+            text = f"{term['name']} {_claimed(term['value'])}"
+            if "within_bound" in term:
+                state = term["within_bound"]
+                text += (f" ({'within' if state else 'OUTSIDE'} bound {_claimed(term['bound'])})"
+                         if state is not None else f" (bound {num(term['bound'])})")
+            parts.append(text)
+        lines.append(f"  error split ({split['proof']}): " + " + ".join(parts))
+    session = result["session"]
+    lines.append(f"  session {'unchanged' if session['unchanged'] else 'CHANGED'} at "
+                 f"{result['where']}  ({len(result['measured']['moves'])} moves, restored)")
+    return lines
+
+
+_PREDICT = {"explain": _explain_lines, "forecast": _forecast_lines, "verify": _verify_lines,
+            "whatif": _whatif_lines}
 
 
 def render_error(error: Any) -> str:
