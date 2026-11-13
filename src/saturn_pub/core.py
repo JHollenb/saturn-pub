@@ -2,14 +2,15 @@
 
 from __future__ import annotations
 
+import copy
 import hashlib
 import inspect
 import marshal
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass, field
+from dataclasses import InitVar, dataclass, field
 from types import CodeType, MappingProxyType
-from typing import Any
+from typing import Any, NamedTuple
 
 from .contracts import (
     ExecutionPoint,
@@ -19,7 +20,7 @@ from .contracts import (
     SurfaceManifest,
     TransitionSpec,
 )
-from .values import clone, describe, digest, tensor
+from .values import clone, describe, describe_mapping, digest, tensor
 
 _OPERATION_REGISTRY: dict[tuple[str, str], tuple[str, Callable[..., Any], bool]] = {}
 
@@ -226,9 +227,50 @@ class Frame:
         object.__setattr__(self, "surface", MappingProxyType(clone(dict(self.surface))))
 
 
+def _statecut_manifest(
+    model_identity: str,
+    execution: Mapping[str, Any],
+    boundary: str,
+    parent: str | None,
+    payload: Any,
+    execution_point: Mapping[str, Any] | None,
+    surface: Mapping[str, Any] | None,
+) -> dict[str, Any]:
+    """The sealed manifest of a StateCut, given the ``describe`` of its payload."""
+    return {
+        "schema": "saturn-pub-statecut-v2",
+        "model_identity": model_identity,
+        "execution": dict(execution),
+        "boundary": boundary,
+        "parent": parent,
+        "payload": payload,
+        "execution_point": None if execution_point is None else describe(dict(execution_point)),
+        "surface": None if surface is None else describe(dict(surface)),
+    }
+
+
+def _slot_descriptors(described: Any) -> dict[str, Any] | None:
+    """``{slot: describe(value)}`` from the ``describe`` of a payload mapping (None when a key is
+    not a plain scalar, so the caller hashes instead)."""
+    out: dict[str, Any] = {}
+    for item in described["items"]:
+        key = item["key"]
+        if key.get("kind") != "scalar":
+            return None
+        out[key["value"]] = item["value"]
+    return out
+
+
 @dataclass(frozen=True)
 class StateCut:
-    """A sealed snapshot of an adapter's declared mutable execution closure."""
+    """A sealed snapshot of an adapter's declared mutable execution closure.
+
+    The payload is copied once at construction. ``_described`` (private, Session only) is the
+    ``describe`` of that payload when the caller already holds it for the very tensors it hands
+    in, so the fingerprint is sealed without hashing them again; with it, ``_sealed`` is the
+    fingerprint Session already digested from exactly these fields (``Session._seal``), so the
+    manifest is not described twice. ``verify`` always re-hashes.
+    """
 
     model_identity: str
     execution: Mapping[str, Any]
@@ -238,8 +280,10 @@ class StateCut:
     execution_point: Mapping[str, Any] | None = None
     surface: Mapping[str, Any] | None = None
     fingerprint: str = field(init=False)
+    _described: InitVar[Any] = None
+    _sealed: InitVar[str | None] = None
 
-    def __post_init__(self) -> None:
+    def __post_init__(self, _described: Any = None, _sealed: str | None = None) -> None:
         object.__setattr__(self, "execution", MappingProxyType(clone(dict(self.execution))))
         object.__setattr__(self, "_payload", clone(dict(self._payload)))
         if self.execution_point is not None:
@@ -250,29 +294,44 @@ class StateCut:
             )
         if self.surface is not None:
             object.__setattr__(self, "surface", MappingProxyType(clone(dict(self.surface))))
-        object.__setattr__(self, "fingerprint", digest(self.manifest()))
+        if _described is not None and _sealed is not None:
+            object.__setattr__(self, "fingerprint", _sealed)  # Session sealed these very fields
+            return
+        payload = describe(self._payload) if _described is None else _described
+        object.__setattr__(self, "fingerprint", digest(self._manifest(payload)))
 
     @property
     def payload(self) -> dict[str, Any]:
         return clone(self._payload)
 
+    def slot(self, name: str) -> Any:
+        """One payload slot as a private copy (``payload[name]`` without copying the others)."""
+        return clone(self._payload[name])
+
+    def _manifest(self, payload: Any) -> dict[str, Any]:
+        return _statecut_manifest(
+            self.model_identity,
+            self.execution,
+            self.boundary,
+            self.parent,
+            payload,
+            self.execution_point,
+            self.surface,
+        )
+
     def manifest(self) -> dict[str, Any]:
-        return {
-            "schema": "saturn-pub-statecut-v2",
-            "model_identity": self.model_identity,
-            "execution": dict(self.execution),
-            "boundary": self.boundary,
-            "parent": self.parent,
-            "payload": describe(self._payload),
-            "execution_point": (
-                None if self.execution_point is None else describe(dict(self.execution_point))
-            ),
-            "surface": None if self.surface is None else describe(dict(self.surface)),
-        }
+        return self._manifest(describe(self._payload))
+
+    def _verified(self) -> Any:
+        """Hash the payload once, refuse a cut whose content or metadata no longer matches its
+        fingerprint, and return the payload's ``describe``."""
+        described = describe(self._payload)
+        if digest(self._manifest(described)) != self.fingerprint:
+            raise ValueError("StateCut payload or metadata changed")
+        return described
 
     def verify(self) -> None:
-        if digest(self.manifest()) != self.fingerprint:
-            raise ValueError("StateCut payload or metadata changed")
+        self._verified()
 
 
 @dataclass(frozen=True)
@@ -548,6 +607,11 @@ class Adapter(ABC):
     @abstractmethod
     def validate(self, state: Mapping[str, Any]) -> None: ...
 
+    def validate_state(self, state: Mapping[str, Any]) -> None:
+        """``validate`` for a caller that ran ``validate_execution`` earlier in the same call; an
+        adapter whose ``validate`` repeats a check of ``validate_execution`` may skip it here."""
+        self.validate(state)
+
     @abstractmethod
     def advance(self, state: Mapping[str, Any]) -> Mapping[str, Any]: ...
 
@@ -604,6 +668,10 @@ class Adapter(ABC):
             raise ValueError(f"unsupported address at {self.boundary(state)}: {address}")
         return clone(state[address])
 
+    def read_part(self, state: Mapping[str, Any], address: str, index: Any) -> Any:
+        """``read(state, address)[index]``; an adapter may override it to copy only that part."""
+        return self.read(state, address)[index]
+
     def write(
         self, state: Mapping[str, Any], writes: Mapping[str, Any], invalidates: tuple[str, ...]
     ) -> Mapping[str, Any]:
@@ -623,15 +691,63 @@ class Adapter(ABC):
         return result
 
 
+def _validate_state(adapter: Any, state: Mapping[str, Any]) -> None:
+    """``adapter.validate_state(state)``, or ``validate`` for an adapter without it."""
+    getattr(adapter, "validate_state", adapter.validate)(state)
+
+
+def _adopt(value: Any) -> Any:
+    """``clone(value)`` for a value its owner hands over and no longer references: the same
+    content and layout, except that a contiguous tensor (of which ``clone`` would make an
+    identical copy, strides included) is kept instead of copied."""
+    if tensor(value):
+        return value if value.is_contiguous() and not value.requires_grad else clone(value)
+    if isinstance(value, Mapping):
+        return {key: _adopt(item) for key, item in value.items()}
+    if isinstance(value, tuple):
+        return tuple(_adopt(item) for item in value)
+    if isinstance(value, list):
+        return [_adopt(item) for item in value]
+    return copy.deepcopy(value)
+
+
+class _Seal(NamedTuple):
+    """What a StateCut of a state records, computed without copying the state."""
+
+    payload: dict[str, Any]  # the state's values plus the external closure, not copied
+    slots: dict[str, Any]  # {slot: describe(value)} of the state (external closure excluded)
+    described: Any  # describe of the payload
+    boundary: str
+    point: dict[str, Any]
+    surface: dict[str, Any]
+    fingerprint: str
+
+
 class Session:
     """Resident native executor with isolated branches and explicit commit."""
 
     def __init__(self, adapter: Adapter, state: Mapping[str, Any], *, parent: str | None = None):
         adapter.validate_execution()
-        adapter.validate(state)
+        _validate_state(adapter, state)
         adapter.surface(state).validate(state)
+        self._open(adapter, clone(state), parent)
+
+    def _open(
+        self,
+        adapter: Adapter,
+        state: dict[str, Any],
+        parent: str | None,
+        slots: dict[str, Any] | None = None,
+    ) -> None:
+        """Start on ``state``, validated by the caller and handed over (never copied here).
+
+        ``_slots`` is ``{slot: describe(value)}`` of ``_state`` or None until computed. It is set
+        only together with a validated ``_state``, and ``_state`` is private (every read copies),
+        so a cut of it is sealed from these descriptors without hashing or validating again.
+        """
         self.adapter = adapter
-        self._state = clone(state)
+        self._state = state
+        self._slots = slots
         self._external_state = clone(adapter.capture_external())
         self._parent = parent
         self._fork_parent = parent
@@ -653,12 +769,20 @@ class Session:
             self.adapter.surface(self._state).to_dict(),
         )
 
-    def read(self, address: str) -> Any:
+    def read(self, address: str, index: Any = None) -> Any:
+        """A private copy of ``address``; with ``index``, of ``address[index]`` only (one layer
+        of a per-layer cache slot, say), through the adapter's ``read_part``."""
         self._activate()
         self.adapter.validate_execution()
         if address == "__saturn_external__" and self._external_state is not None:
-            return clone(self._external_state)
-        return self.adapter.read(self._state, address)
+            value = clone(self._external_state)
+            return value if index is None else value[index]
+        if index is None:
+            return self.adapter.read(self._state, address)
+        read_part = getattr(self.adapter, "read_part", None)
+        if read_part is None:
+            return self.adapter.read(self._state, address)[index]
+        return read_part(self._state, address, index)
 
     def _activate(self) -> None:
         if self._external_state is not None:
@@ -689,132 +813,268 @@ class Session:
                         value = value[index]
             except (IndexError, KeyError, TypeError) as exc:
                 raise ValueError("state port selector is outside support") from exc
-        return clone(value)
+            return clone(value)  # a compact copy of the selected part, not a view of the read
+        return value  # ``read`` already returned a private copy
 
-    def _cut(self, state: Mapping[str, Any], parent: str | None) -> StateCut:
-        self.adapter.validate_execution()
-        self.adapter.validate(state)
+    def _seal(
+        self,
+        state: Mapping[str, Any],
+        parent: str | None,
+        slots: Mapping[str, Any] | None = None,
+        *,
+        execution_checked: bool = False,
+        state_checked: bool = False,
+    ) -> _Seal:
+        """What ``_cut(state, parent)`` records, copying nothing: validates as a cut does unless
+        the caller already did in this call (``execution_checked``: ``validate_execution``;
+        ``state_checked``: the state's own checks) and hashes only the slots missing from
+        ``slots`` (``{slot: describe(value)}`` known for these very values)."""
+        if not execution_checked:
+            self.adapter.validate_execution()
+        if not state_checked:
+            _validate_state(self.adapter, state)
         surface = self.adapter.surface(state)
-        surface.validate(state)
+        if not state_checked:
+            surface.validate(state)
         external = clone(self.adapter.capture_external())
-        payload = clone(dict(state))
-        if "__saturn_external__" in payload:
+        if "__saturn_external__" in state:
             raise ValueError("reserved external closure slot used by adapter")
+        own = {
+            name: slots[name] if slots is not None and name in slots else describe(value)
+            for name, value in state.items()
+        }
+        payload, described = dict(state), dict(own)
         if external is not None:
             payload["__saturn_external__"] = external
+            described["__saturn_external__"] = describe(external)
             surface = SurfaceManifest(
                 surface.slots + (SlotSpec("__saturn_external__", role="runtime"),),
                 surface.state_schema,
                 surface.consumer,
                 surface.horizon,
             )
+        sealed = describe_mapping(described)
+        boundary = self.adapter.boundary(state)
+        point = self.adapter.point(state).to_dict()
+        manifest = surface.to_dict()
+        fingerprint = digest(
+            _statecut_manifest(
+                self.adapter.model_identity,
+                self.adapter.execution,
+                boundary,
+                parent,
+                sealed,
+                point,
+                manifest,
+            )
+        )
+        return _Seal(payload, own, sealed, boundary, point, manifest, fingerprint)
+
+    def _cut(
+        self,
+        state: Mapping[str, Any],
+        parent: str | None,
+        slots: Mapping[str, Any] | None = None,
+        *,
+        state_checked: bool = False,
+    ) -> StateCut:
+        seal = self._seal(state, parent, slots, state_checked=state_checked)
         return StateCut(
             self.adapter.model_identity,
             self.adapter.execution,
-            self.adapter.boundary(state),
+            seal.boundary,
             parent,
-            payload,
-            execution_point=self.adapter.point(state).to_dict(),
-            surface=surface.to_dict(),
+            seal.payload,
+            execution_point=seal.point,
+            surface=seal.surface,
+            _described=seal.described,
+            _sealed=seal.fingerprint,
         )
+
+    def _head(self, *, execution_checked: bool = False) -> str:
+        """The fingerprint ``capture()`` would give now, with its checks, copying nothing (and
+        hashing nothing once the state's slot descriptors are known)."""
+        self._activate()
+        seal = self._seal(
+            self._state,
+            self._parent,
+            self._slots,
+            execution_checked=execution_checked,
+            state_checked=self._slots is not None,
+        )
+        self._slots = seal.slots
+        return seal.fingerprint
 
     def capture(self, *, retain: bool = True) -> StateCut:
         self._activate()
-        cut = self._cut(self._state, self._parent)
+        seal = self._seal(
+            self._state, self._parent, self._slots, state_checked=self._slots is not None
+        )
+        self._slots = seal.slots
+        cut = StateCut(
+            self.adapter.model_identity,
+            self.adapter.execution,
+            seal.boundary,
+            self._parent,
+            seal.payload,
+            execution_point=seal.point,
+            surface=seal.surface,
+            _described=seal.described,
+            _sealed=seal.fingerprint,
+        )
         if retain:
             self.history.append(cut)
         return cut
 
     @classmethod
     def from_cut(cls, adapter: Adapter, cut: StateCut) -> Session:
-        """Hydrate a declared closure, including registered external state."""
-        cut.verify()
+        """Hydrate a declared closure, including registered external state.
+
+        One hash (``verify``), one copy of the payload and one validation: the hydrated state is
+        that copy, its slot descriptors are the verified ones, and the restore receipt the
+        session starts with is the one ``restore(cut)`` writes there.
+        """
+        described = cut._verified()
         if cut.model_identity != adapter.model_identity or dict(cut.execution) != dict(
             adapter.execution
         ):
             raise ValueError("incompatible model identity or execution contract")
         state, external = cls._cut_state(cut)
+        slots = cls._state_slots(described)
         current = clone(adapter.capture_external())
         try:
             if external is not None:
                 adapter.restore_external(clone(external))
-            session = cls(adapter, state, parent=cut.parent)
-            session._compatible(cut)
-            session.restore(cut)
+            adapter.validate_execution()
+            _validate_state(adapter, state)
+            adapter.surface(state).validate(state)
+            session = cls.__new__(cls)
+            session._open(adapter, state, cut.parent, slots)
+            session._activate()
+            session._matches(cut, state, external)
+            session._settle(cut, state, external, slots, session._head(execution_checked=True))
             return session
         finally:
             adapter.restore_external(current)
 
-    def _compatible(self, cut: StateCut) -> None:
+    @staticmethod
+    def _state_slots(described: Any) -> dict[str, Any] | None:
+        """Slot descriptors of the state a cut's payload hydrates to (its external closure is
+        not part of the state)."""
+        slots = _slot_descriptors(described)
+        if slots is not None:
+            slots.pop("__saturn_external__", None)
+        return slots
+
+    def _matches(
+        self, cut: StateCut, state: Mapping[str, Any], external: Any, *, validate: bool = False
+    ) -> None:
+        """Refuse a cut whose boundary, execution point or state closure differs from what the
+        adapter derives from its payload ``state`` with the cut's external closure installed
+        (``validate``: run the state checks first, as building that cut would)."""
+        current = clone(self.adapter.capture_external())
+        try:
+            if external is not None:
+                self.adapter.restore_external(clone(external))
+            if validate:
+                _validate_state(self.adapter, state)
+            surface = self.adapter.surface(state)
+            if validate:
+                surface.validate(state)
+            if clone(self.adapter.capture_external()) is not None:
+                surface = SurfaceManifest(
+                    surface.slots + (SlotSpec("__saturn_external__", role="runtime"),),
+                    surface.state_schema,
+                    surface.consumer,
+                    surface.horizon,
+                )
+            if cut.boundary != self.adapter.boundary(state):
+                raise ValueError("boundary does not match payload")
+            if cut.execution_point is not None and dict(cut.execution_point) != (
+                self.adapter.point(state).to_dict()
+            ):
+                raise ValueError("execution point does not match payload")
+            if cut.surface is not None and dict(cut.surface) != surface.to_dict():
+                raise ValueError("state closure does not match adapter")
+        finally:
+            self.adapter.restore_external(current)
+
+    def _compatible(self, cut: StateCut) -> tuple[dict[str, Any], Any, dict[str, Any] | None]:
+        """Refuse a cut this session cannot take; returns ``(state, external, slots)``: a private
+        copy of its payload, its external closure and the state's verified slot descriptors."""
         self._activate()
         self.adapter.validate_execution()
-        cut.verify()
+        described = cut._verified()
         if cut.model_identity != self.adapter.model_identity or dict(cut.execution) != dict(
             self.adapter.execution
         ):
             raise ValueError("incompatible model identity or execution contract")
         state, external = self._cut_state(cut)
-        current = clone(self.adapter.capture_external())
-        try:
-            if external is not None:
-                self.adapter.restore_external(clone(external))
-            expected = self._cut(state, cut.parent)
-            if cut.boundary != expected.boundary:
-                raise ValueError("boundary does not match payload")
-            if cut.execution_point is not None and dict(cut.execution_point) != dict(
-                expected.execution_point or {}
-            ):
-                raise ValueError("execution point does not match payload")
-            if cut.surface is not None and dict(cut.surface) != dict(expected.surface or {}):
-                raise ValueError("state closure does not match adapter")
-        finally:
-            self.adapter.restore_external(current)
+        self._matches(cut, state, external, validate=True)
+        return state, external, self._state_slots(described)
 
     def fork(self, cut: StateCut | None = None) -> Session:
-        cut = cut or self.capture(retain=False)
-        self._compatible(cut)
-        state, external = self._cut_state(cut)
+        if cut is None:
+            parent = self._head()
+            state, external, slots = clone(self._state), self._external_state, self._slots
+        else:
+            state, external, slots = self._compatible(cut)
+            parent = cut.fingerprint
         current = clone(self.adapter.capture_external())
         try:
             if external is not None:
                 self.adapter.restore_external(clone(external))
-            return Session(self.adapter, state, parent=cut.fingerprint)
+            branch = Session.__new__(Session)
+            branch._open(self.adapter, state, parent, slots)
+            return branch
         finally:
             self.adapter.restore_external(current)
 
     def _record(
         self,
         operation: str,
-        before: StateCut,
+        before: str,
         *,
         state: Mapping[str, Any] | None = None,
+        owned: bool = False,
+        slots: Mapping[str, Any] | None = None,
+        checked: bool = False,
         **details: Any,
     ) -> Receipt:
+        """Make ``state`` (default: the current one) this session's state, with ``before`` (a
+        fingerprint) as its parent, and write the receipt. ``owned``: the caller hands ``state``
+        over and keeps no reference, so it is adopted rather than copied. ``slots``: descriptors
+        known for some of its values. ``checked``: the caller validated it (and the executor)
+        just now."""
         candidate = self._state if state is None else state
-        after = self._cut(candidate, before.fingerprint)
+        adopted = _adopt(candidate) if owned else clone(candidate)
+        seal = self._seal(
+            adopted, before, slots, execution_checked=checked, state_checked=checked
+        )
         receipt = Receipt.make(
             operation=operation,
-            parent=before.fingerprint,
+            parent=before,
             model_identity=self.adapter.model_identity,
             execution=dict(self.adapter.execution),
-            result=after.fingerprint,
-            boundary=after.boundary,
-            execution_point=dict(after.execution_point or {}),
+            result=seal.fingerprint,
+            boundary=seal.boundary,
+            execution_point=dict(seal.point),
             numerical_contract=self.adapter.numerical_contract().to_dict(),
             **details,
         )
-        self._state = clone(candidate)
+        self._state = adopted
+        self._slots = seal.slots
         self._external_state = clone(self.adapter.capture_external())
-        self._parent = before.fingerprint
+        self._parent = before
         self.receipts.append(receipt)
         return receipt
 
-    def _failed(self, operation: str, before: StateCut, error: Exception) -> None:
+    def _failed(self, operation: str, before: str, error: Exception) -> None:
         self.attempts.append(
             Receipt.make(
                 operation=operation,
-                parent=before.fingerprint,
-                result=before.fingerprint,
+                parent=before,
+                result=before,
                 status="refused",
                 error=type(error).__name__,
                 reason=str(error),
@@ -823,7 +1083,7 @@ class Session:
         )
 
     def apply(self, act: Act) -> Receipt:
-        before = self.capture(retain=False)
+        before = self._head()
         external = clone(self.adapter.capture_external())
         try:
             act.verify_implementation()
@@ -865,6 +1125,13 @@ class Session:
     def _accepts_ports(self) -> bool:
         return "ports" in inspect.signature(self.adapter.advance).parameters
 
+    def _advance_options(self) -> dict[str, Any]:
+        """``{"validated": True}`` for an adapter whose ``advance`` takes it: the session hands
+        ``advance`` only states it validated (with ``validate_execution``) in the same call."""
+        if "validated" in inspect.signature(self.adapter.advance).parameters:
+            return {"validated": True}
+        return {}
+
     def probe(self, controller: Any) -> dict[str, Any]:
         """Run the next transition on a throw-away candidate with ``controller`` installed.
 
@@ -882,8 +1149,11 @@ class Session:
         begin = getattr(controller, "begin", None)
         if begin is not None:
             begin()
+        options = self._advance_options()
+        if options:  # the state is validated; re-check the executor after the controller's begin
+            self.adapter.validate_execution()
         try:
-            self.adapter.advance(candidate, ports=controller)
+            self.adapter.advance(candidate, ports=controller, **options)
         except PortStop:
             stopped = True
         finally:
@@ -903,10 +1173,12 @@ class Session:
             ahead = self.adapter.ports_ahead(self._state, steps) if check_ahead else None
             if ahead is not None:
                 check_ahead(ahead)  # refuses before anything runs: no receipt, no attempt
-        before = self.capture(retain=False)
+        before = self._head()
         external = clone(self.adapter.capture_external())
         try:
             candidate = clone(self._state)
+            known = dict(self._slots or {})  # descriptors of candidate's values (clone keeps them)
+            options = self._advance_options()
             transitions = []
             begin_call = getattr(ports, "begin_call", None)
             if begin_call is not None:
@@ -917,11 +1189,12 @@ class Session:
                 slots = {slot.name for slot in self.adapter.surface(candidate).slots}
                 if set(spec.reads + spec.writes + spec.invalidates) - slots:
                     raise ValueError("transition footprint contains undeclared slots")
+                changed = set(spec.writes + spec.invalidates)
                 preserved = (
                     {
-                        name: describe(value)
+                        name: known[name] if name in known else describe(value)
                         for name, value in candidate.items()
-                        if name not in set(spec.writes + spec.invalidates)
+                        if name not in changed
                     }
                     if spec.footprint == "declared"
                     else {}
@@ -930,16 +1203,19 @@ class Session:
                 if begin is not None:
                     begin()
                 candidate = dict(
-                    self.adapter.advance(candidate)
+                    self.adapter.advance(candidate, **options)
                     if ports is None
-                    else self.adapter.advance(candidate, ports=ports)
+                    else self.adapter.advance(candidate, ports=ports, **options)
                 )
+                known = {}
                 for name, expected in preserved.items():
-                    if name not in candidate or describe(candidate[name]) != expected:
+                    observed = describe(candidate[name]) if name in candidate else None
+                    if observed != expected:
                         raise ValueError(f"native transition changed undeclared slot: {name}")
-                self.adapter.validate(candidate)
-                self.adapter.surface(candidate).validate(candidate)
+                    known[name] = observed
                 self.adapter.validate_execution()
+                _validate_state(self.adapter, candidate)
+                self.adapter.surface(candidate).validate(candidate)
                 transitions.append(
                     {
                         "before": entry,
@@ -950,7 +1226,7 @@ class Session:
                             {
                                 "entry": entry,
                                 "operation": spec.operation,
-                                "transaction_parent": before.fingerprint,
+                                "transaction_parent": before,
                                 "transition_index": len(transitions),
                                 "execution": dict(self.adapter.execution),
                             }
@@ -965,7 +1241,14 @@ class Session:
             if end_call is not None:
                 end_call()
             return self._record(
-                "continue", before, state=candidate, steps=steps, transitions=transitions
+                "continue",
+                before,
+                state=candidate,
+                owned=True,
+                slots=known,
+                checked=True,
+                steps=steps,
+                transitions=transitions,
             )
         except Exception as exc:
             self.adapter.restore_external(external)
@@ -995,8 +1278,9 @@ class Session:
                 if self.adapter.point(branch._state).logical_step != point.logical_step:
                     return self._record(
                         "step",
-                        before,
+                        before.fingerprint,
                         state=branch._state,
+                        slots=branch._slots,
                         steps=count,
                         granularity=granularity,
                         micro_receipts=[r.to_dict() for r in branch.receipts],
@@ -1005,7 +1289,7 @@ class Session:
         except Exception as exc:
             self.history.append(branch.capture())
             self._activate()
-            self._failed("step", before, exc)
+            self._failed("step", before.fingerprint, exc)
             raise
 
     def replay(self, cut: StateCut, *, steps: int = 1) -> Session:
@@ -1014,19 +1298,32 @@ class Session:
         return branch
 
     def restore(self, cut: StateCut) -> Receipt:
-        self._compatible(cut)
-        before = self.capture(retain=False)
-        state, external = self._cut_state(cut)
+        state, external, slots = self._compatible(cut)
+        return self._settle(cut, state, external, slots, self._head(execution_checked=True))
+
+    def _settle(
+        self,
+        cut: StateCut,
+        state: dict[str, Any],
+        external: Any,
+        slots: dict[str, Any] | None,
+        before: str,
+    ) -> Receipt:
+        """The rest of ``restore`` once ``cut`` is verified and compatible and ``state`` (a
+        private copy of its payload, validated) is in hand: check that it seals to the cut's
+        fingerprint, write the receipt (``before``: the fingerprint left) and take it over."""
         current = clone(self.adapter.capture_external())
         try:
             if external is not None:
                 self.adapter.restore_external(clone(external))
-            restored = self._cut(state, cut.parent)
+            restored = self._seal(
+                state, cut.parent, slots, execution_checked=True, state_checked=True
+            )
             if restored.fingerprint != cut.fingerprint:
                 raise ValueError("restore fingerprint mismatch")
             receipt = Receipt.make(
                 operation="restore",
-                parent=before.fingerprint,
+                parent=before,
                 result=cut.fingerprint,
                 verified_exact=True,
                 model_identity=self.adapter.model_identity,
@@ -1039,27 +1336,30 @@ class Session:
             self._failed("restore", before, exc)
             raise
         self._state = state
+        self._slots = restored.slots
         self._external_state = external
         self._parent = cut.parent
         self.receipts.append(receipt)
         return receipt
 
     def commit(self, branch: Session) -> Receipt:
-        parent = self.capture(retain=False)
-        if (
-            branch.adapter is not self.adapter
-            or branch._origin != parent.fingerprint
-            or branch._aborted
-        ):
+        parent = self._head()
+        if branch.adapter is not self.adapter or branch._origin != parent or branch._aborted:
             raise ValueError("branch was not forked from the current parent")
         candidate = branch.capture(retain=False)
-        self._compatible(candidate)
-        state, external = self._cut_state(candidate)
+        state, external, slots = self._compatible(candidate)
         current = clone(self._external_state)
         try:
             if external is not None:
                 self.adapter.restore_external(clone(external))
-            return self._record("commit", parent, state=state, candidate=candidate.fingerprint)
+            return self._record(
+                "commit",
+                parent,
+                state=state,
+                owned=True,
+                slots=slots,
+                candidate=candidate.fingerprint,
+            )
         except Exception as exc:
             self.adapter.restore_external(current)
             self._failed("commit", parent, exc)
@@ -1069,14 +1369,14 @@ class Session:
         """Keep candidate evidence inspectable, but remove its permission to commit."""
         if branch.adapter is not self.adapter:
             raise ValueError("candidate belongs to another resident adapter")
-        parent = self.capture(retain=False)
-        candidate = branch.capture(retain=False)
+        parent = self._head()
+        candidate = branch._head()
         branch._aborted = True
         receipt = Receipt.make(
             operation="abort",
-            parent=parent.fingerprint,
-            candidate=candidate.fingerprint,
-            result=parent.fingerprint,
+            parent=parent,
+            candidate=candidate,
+            result=parent,
             reason=reason,
             parent_unchanged=True,
             model_identity=self.adapter.model_identity,

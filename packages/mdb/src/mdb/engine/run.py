@@ -552,7 +552,7 @@ class Run:
         ``derived-exact``; an element no edit wrote keeps the native label. ``select`` (a bool
         tensor over the port) restricts the claim to those elements.
         """
-        return self._describe(self._read(target)[1], select)
+        return self._describe(self._read(target, value=False)[1], select)
 
     def _describe(self, context: dict[str, Any], select: torch.Tensor | None = None) -> dict[str, Any]:
         port, edits, committed = context["port"], context["edits"], context["committed"]
@@ -765,7 +765,11 @@ class Run:
             "cells": list(cells),
         }
 
-    def _read(self, target: str | None) -> tuple[torch.Tensor, dict[str, Any]]:
+    def _read(
+        self, target: str | None, *, value: bool = True
+    ) -> tuple[torch.Tensor | None, dict[str, Any]]:
+        """``(a private copy of the value at target, its context for _describe)``; with
+        ``value=False`` only the context is built and the value is neither copied nor read."""
         key = self._key() if target is None else self.parse(target)
         if key > self._key():
             raise ValueError(f"{self.address(key)} has not been computed at {self.where}")
@@ -777,13 +781,13 @@ class Run:
                 port, self._edits, self._trail[:-1], True, controller, mark.row, mark.layer,
                 boundary=False, cells=self._cells,
             )
-            return clone(controller.captures[port]), context
+            return (clone(controller.captures[port]) if value else None), context
         for index in range(len(self._trail) - 1, -1, -1):
             if self._mark_key(self._trail[index]) == key:
                 context = self._context(
                     None, [], self._trail[:index], False, None, key[0], None, boundary=True
                 )
-                return self._boundary_value(index), context
+                return (self._boundary_value(index) if value else None), context
         located = self._layer_mark(key)
         if located is not None:
             index, name = located
@@ -793,18 +797,19 @@ class Run:
                 name, past.edits, self._trail[:index], False, controller, past.row, past.layer,
                 boundary=False, cells=past.cells,
             )
-            return clone(controller.captures[name]), context
+            return (clone(controller.captures[name]) if value else None), context
         raise ValueError(f"{self.address(key)} is before the start of this run")
 
     def value(self) -> torch.Tensor:
         return self.read()
 
     def _boundary_value(self, index: int) -> torch.Tensor:
+        """A private copy of the slot that trail mark ``index`` reads (one slot, not the cut)."""
         mark = self._trail[index]
         slot = _SLOTS.get(mark.label, "hidden")
         if index == len(self._trail) - 1 and slot != "sampled_token":
             return self.session.read(slot)
-        return self._cut_of(index).payload[slot]
+        return self._cut_of(index).slot(slot)
 
     def set(
         self,
@@ -954,7 +959,7 @@ class Run:
             raise ValueError("kind must be 'k' or 'v'")
         if type(layer) is not int or not 0 <= layer < self.adapter.layers:
             raise ValueError(f"layer must be in 0..{self.adapter.layers - 1}")
-        value = self.session.read("keys" if kind == "k" else "values")[layer]
+        value = self.session.read("keys" if kind == "k" else "values", layer)
         if staged:
             for cell in self._cells:
                 if cell.layer == layer and cell.tensor == kind:
@@ -1109,7 +1114,7 @@ class Run:
         last = len(self._trail) - 1
         for index, mark in enumerate(self._trail):
             if mark.row == row and (mark.cut is not None or index == last):
-                out[mark.label] = clone(self._boundary_value(index))
+                out[mark.label] = self._boundary_value(index)  # already a private copy
         if self._cache is not None and row == self._trail[-1].row and self.pending_layer is not None:
             names = self.program.names
             limit = -1 if self._port is None else names.index(self._port)

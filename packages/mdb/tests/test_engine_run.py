@@ -1502,7 +1502,7 @@ def _excursion(adapter, mode, replay):
 FIRED: set = set()
 POINTS = [("restore", 1, False), ("restore", 1, True), ("capture", 1, False),
           ("capture", 1, True), ("probe", 1, False), ("probe", 1, True), ("continue_", 1, False),
-          ("continue_", 2, True), ("capture", 4, False)]
+          ("continue_", 2, True), ("capture", 2, False)]  # capture 2: the replay's second mark
 
 
 @pytest.mark.parametrize("point", POINTS, ids=lambda p: f"{p[0]}-{p[1]}-{'after' if p[2] else 'before'}")

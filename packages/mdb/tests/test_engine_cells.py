@@ -72,7 +72,8 @@ def _hand(op, value, dose, rows=ROWS):
         elif op == "scale":
             new[index] = block * torch.tensor(value).to(old.dtype)
         else:
-            new[index] = (block.float() + dose * (value[0].float() - block.float())).to(old.dtype)
+            x = block.double()  # float64 from the native bits, rounded once
+            new[index] = (x + dose * (value[0].double() - x)).to(old.dtype)
         if tensor == "k":
             slot.keys = new
         else:
@@ -161,7 +162,7 @@ def test_row_written_by_the_pending_layer_and_unwritten_rows_are_refused(adapter
     assert len(run.cells) == 1
 
 
-def test_mix_one_is_an_exact_copy_and_mix_half_is_one_rounded_fp32_interpolation(adapter):
+def test_mix_one_is_an_exact_copy_and_mix_half_is_one_rounded_fp64_interpolation(adapter):
     value = _value(3)
     runs = {}
     for label, op, dose in (("replace", "replace", None), ("mix1", "mix", 1.0),
@@ -175,8 +176,8 @@ def test_mix_one_is_an_exact_copy_and_mix_half_is_one_rounded_fp32_interpolation
              torch.tensor(DIMS).view(1, 1, -1))
     assert torch.equal(runs["replace"][2], runs["mix1"][2])
     run, before, after = runs["mix0.5"]
-    x = before[index].float()
-    hand = (x + 0.5 * (value[0].float() - x)).to(before.dtype)
+    x = before[index].double()
+    hand = (x + 0.5 * (value[0].double() - x)).to(before.dtype)
     assert torch.equal(after[index], hand)
     rest = torch.ones(before.shape, dtype=torch.bool)
     rest[index] = False

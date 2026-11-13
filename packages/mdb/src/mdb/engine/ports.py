@@ -483,7 +483,7 @@ def check_deterministic(module: Any) -> None:
 
 def tensor_digest(value: torch.Tensor) -> str:
     raw = value.detach().cpu().contiguous().reshape(-1).view(torch.uint8)
-    return hashlib.sha256(raw.numpy().tobytes()).hexdigest()
+    return hashlib.sha256(raw.numpy()).hexdigest()  # hashes the buffer, not a bytes copy
 
 
 def changed_fraction(before: torch.Tensor, after: torch.Tensor) -> float:
@@ -522,6 +522,13 @@ def max_abs(value: torch.Tensor) -> float:
     return float(value.max()) if value.numel() else 0.0
 
 
+def wide(value: torch.Tensor) -> torch.Tensor:
+    """``value`` in float64 on its own device (on the host for a device without float64)."""
+    if value.device.type == "mps":
+        return value.detach().to("cpu", torch.float64)
+    return value.detach().to(torch.float64)
+
+
 @dataclass(frozen=True)
 class PortEdit:
     """A staged edit: ``replace``, ``add`` or ``scale`` the value at one port.
@@ -554,7 +561,7 @@ class PortEdit:
         if self.mask is not None:
             if not isinstance(self.mask, torch.Tensor) or self.mask.dtype != torch.bool:
                 raise ValueError("edit mask must be a bool tensor")
-            object.__setattr__(self, "mask", self.mask.detach().to("cpu").clone())
+            object.__setattr__(self, "mask", self.mask.detach().to("cpu", copy=True))
         if self.selection is not None and not isinstance(self.selection, str):
             raise ValueError("edit selection must be a string")
 
@@ -597,33 +604,24 @@ class PortEdit:
         return self.mask.to(device).broadcast_to(tuple(shape))
 
     def apply(self, x: torch.Tensor) -> torch.Tensor:
-        return self.realise(x)[0]
+        """The edited value alone (``realise`` without the record)."""
+        self.validate(x.shape)
+        return self._result(x, self._operands(x.dtype)[0])
 
-    def _operands(self, x: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
-        """``(written, requested)``: the request cast to the port dtype and device, and the
-        request as float64 on the CPU."""
+    def _operands(self, dtype: torch.dtype) -> tuple[torch.Tensor, torch.Tensor]:
+        """``(written, requested)`` on the host: the request cast once to the port dtype (the
+        operand the arithmetic uses) and the request in float64. The value crosses to the host
+        at most once (a scalar or a host tensor not at all)."""
         value = self.value
         if isinstance(value, torch.Tensor):
-            return (
-                value.to(device=x.device, dtype=x.dtype),
-                value.detach().to("cpu", torch.float64),
-            )
-        return (
-            torch.tensor(value, dtype=x.dtype, device=x.device),
-            torch.tensor(value, dtype=torch.float64),
-        )
+            host = value.detach().to("cpu")
+            return host.to(dtype), host.to(torch.float64)
+        return torch.tensor(value, dtype=dtype), torch.tensor(value, dtype=torch.float64)
 
-    def realise(self, x: torch.Tensor) -> tuple[torch.Tensor, dict[str, Any]]:
-        """The edited value and the record of what entered the model.
-
-        The arithmetic uses the recorded cast operand (``written``, the request cast to the
-        port dtype and device): ``x op written``. ``cast_*`` compare the requested operand with
-        ``written`` (float64, over the selected elements); ``realised_*`` compare the result with
-        the ideal ``x_f64 op requested_f64`` (the effect error; for ``replace`` it equals the cast
-        error); ``changed_fraction`` is the fraction of elements whose bits changed.
-        """
-        self.validate(x.shape)
-        written, _ = self._operands(x)
+    def _result(self, x: torch.Tensor, written: torch.Tensor) -> torch.Tensor:
+        """``x op written`` on the selected elements, on ``x``'s device (``written`` moved there
+        once)."""
+        written = written.to(x.device)
         if self.op == "replace":
             full = torch.empty_like(x)
             full.copy_(written)
@@ -632,30 +630,49 @@ class PortEdit:
         else:
             full = x * written
         sel = self.selected(x.shape, x.device)
-        result = full if sel is None else torch.where(sel, full, x)
-        return result, self.measure(x, result)
+        return full if sel is None else torch.where(sel, full, x)
+
+    def realise(self, x: torch.Tensor) -> tuple[torch.Tensor, dict[str, Any]]:
+        """The edited value and the record of what entered the model.
+
+        The arithmetic uses the recorded cast operand (``written``, the request cast to the
+        port dtype): ``x op written``. ``cast_*`` compare the requested operand with ``written``
+        (float64, over the selected elements); ``realised_*`` compare the result with the ideal
+        ``x_f64 op requested_f64`` (the effect error; for ``replace`` it equals the cast error);
+        ``changed_fraction`` is the fraction of elements whose bits changed.
+        """
+        self.validate(x.shape)
+        written, requested = self._operands(x.dtype)
+        result = self._result(x, written)
+        return result, self._record(x, result, written, requested)
 
     def measure(self, x: torch.Tensor, actual: torch.Tensor) -> dict[str, Any]:
         """The record of this edit applied to ``x`` when the value that actually entered the
         model is ``actual``: ``realised_*`` is ``actual`` against the exact float64 result of
         ``x op requested`` (selected elements; the others must equal ``x``)."""
-        written, requested = self._operands(x)
+        return self._record(x, actual, *self._operands(x.dtype))
+
+    def _record(
+        self, x: torch.Tensor, actual: torch.Tensor, written: torch.Tensor, requested: torch.Tensor
+    ) -> dict[str, Any]:
+        """``measure`` given the host operands; ``x`` and ``actual`` cross to the host once each,
+        and the mask is the stored host mask."""
         shape = tuple(x.shape)
-        sel = self.selected(shape, x.device)
-        wide = x.detach().to("cpu", torch.float64)
+        before, after = x.detach().to("cpu"), actual.detach().to("cpu")
+        base = before.to(torch.float64)
         wanted = requested.expand(shape)
         ideal = (
             wanted
             if self.op == "replace"
-            else (wide + wanted if self.op == "add" else wide * wanted)
+            else (base + wanted if self.op == "add" else base * wanted)
         )
-        sel_cpu = None if sel is None else sel.to("cpu")
-        if sel_cpu is not None:
-            ideal = torch.where(sel_cpu, ideal, wide)
-        effect = max_abs((actual.detach().to("cpu", torch.float64) - ideal).abs())
-        gap = (written.detach().to("cpu", torch.float64).expand(shape) - wanted).abs()
-        if sel_cpu is not None:
-            gap = gap[sel_cpu]
+        sel = self.selected(shape)
+        if sel is not None:
+            ideal = torch.where(sel, ideal, base)
+        effect = max_abs((after.to(torch.float64) - ideal).abs())
+        gap = (written.to(torch.float64).expand(shape) - wanted).abs()
+        if sel is not None:
+            gap = gap[sel]
         cast_error = max_abs(gap)
         record: dict[str, Any] = {
             "realised_dtype": str(written.dtype),
@@ -664,10 +681,10 @@ class PortEdit:
             "cast_max_abs_error": cast_error,
             "realised_exact": effect == 0.0,
             "realised_max_abs_error": effect,
-            "changed_fraction": changed_fraction(x, actual),
+            "changed_fraction": changed_fraction(before, after),
         }
-        if sel_cpu is not None:
-            record["mask_count"] = int(sel_cpu.sum())
+        if sel is not None:
+            record["mask_count"] = int(sel.sum())
         return record
 
     def manifest(self) -> dict[str, Any]:
@@ -1137,19 +1154,18 @@ class PortController:
 
     def _realise_r(self, o: torch.Tensor) -> torch.Tensor:
         h = self._live["h"]
-        native = h + o
+        native = h + o  # a new tensor nothing writes: the original of r, held once uncopied
         target = native
-        records = []
-        inputs = []
+        inputs, outputs = [], []
         for edit in self._edits_at["r"]:
             inputs.append(target)
-            target, record = edit.realise(target)
-            records.append(record)
-        self.originals["r"] = native.detach().clone()
+            target = edit.apply(target)  # the records are made in _r_hook, once r is known
+            outputs.append(target)
+        self.originals["r"] = native
         self._live["r_target"] = target
-        self._live["r_records"] = records
         self._live["r_inputs"] = inputs
-        self._live["r_native"] = native.detach().clone()
+        self._live["r_outputs"] = outputs
+        self._live["r_native"] = native
         edits = self._edits_at["r"]
         if any(edit.mask is None for edit in edits):
             new_o = target - h
@@ -1161,7 +1177,7 @@ class PortController:
         predicted = h + new_o
         self.realisation = {
             "exact": bool(torch.equal(predicted, target)),
-            "max_abs_error": max_abs((predicted.float() - target.float()).abs()),
+            "max_abs_error": max_abs((wide(predicted) - wide(target)).abs()),
         }
         return new_o
 
@@ -1171,14 +1187,15 @@ class PortController:
         r = args[0]
         target = self._live.get("r_target")
         if target is not None:
-            error = max_abs((r.detach().to("cpu", torch.float64) - target.detach().to("cpu", torch.float64)).abs())
+            error = max_abs((wide(r) - wide(target)).abs())
             native = self._live["r_native"]
             self.realisation = {"exact": bool(torch.equal(r, target)), "max_abs_error": error}
             edits = self._edits_at["r"]
-            for position, (edit, record) in enumerate(zip(edits, self._live["r_records"])):
-                if position == len(edits) - 1:
-                    # the last edit's effect is what actually entered the model at r (r = h + o')
-                    record = edit.measure(self._live["r_inputs"][position], r)
+            outputs = self._live["r_outputs"]
+            for position, edit in enumerate(edits):
+                # the last edit's effect is what actually entered the model at r (r = h + o')
+                actual = r if position == len(edits) - 1 else outputs[position]
+                record = edit.measure(self._live["r_inputs"][position], actual)
                 # realised_* are measured against the exact float64 result of x op requested,
                 # as at every port; the cost of realising r through o is recorded separately.
                 entry = {
@@ -1289,11 +1306,11 @@ def _row_statistics(probs: torch.Tensor) -> dict[str, Any]:
 def _equality(replica: torch.Tensor, native: torch.Tensor) -> dict[str, Any]:
     # bit-for-bit, with NaN positions counted as equal (an overflowing edit makes both NaN)
     equal = bool(torch.equal(replica, native)) or bool(
-        torch.allclose(replica.double(), native.double(), rtol=0.0, atol=0.0, equal_nan=True)
+        torch.allclose(wide(replica), wide(native), rtol=0.0, atol=0.0, equal_nan=True)
     )
     result: dict[str, Any] = {"equal": equal}
-    if not equal:
-        result["max_abs_diff"] = float((replica.float() - native.float()).abs().max())
+    if not equal:  # measured: the float64 difference of the two native-dtype values (exact)
+        result["max_abs_diff"] = float((wide(replica) - wide(native)).abs().max())
     return result
 
 

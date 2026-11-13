@@ -135,17 +135,19 @@ def test_external_closure_rolls_back_if_publication_fails(operation):
     candidate = session.fork(parent)
     candidate.continue_()
     cut = candidate.capture()
-    original = session._cut
+    original = session._seal
     calls = 0
 
-    def fail_publication(state, ancestry):
+    # restore and commit each seal twice: the cut they leave (the receipt's parent), then the
+    # state they publish; the fault hits the second, inside the transaction
+    def fail_publication(state, ancestry, *args, **kwargs):
         nonlocal calls
         calls += 1
-        if calls == 3:
+        if calls == 2:
             raise RuntimeError("publication fault")
-        return original(state, ancestry)
+        return original(state, ancestry, *args, **kwargs)
 
-    session._cut = fail_publication
+    session._seal = fail_publication
     with pytest.raises(RuntimeError, match="publication fault"):
         if operation == "restore":
             session.restore(cut)

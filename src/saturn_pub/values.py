@@ -60,7 +60,7 @@ def describe(value: Any) -> Any:
     """
     if tensor(value):
         raw = value.detach().cpu().contiguous().reshape(-1).view(__import__("torch").uint8)
-        content_digest = hashlib.sha256(raw.numpy().tobytes()).hexdigest()
+        content_digest = hashlib.sha256(raw.numpy()).hexdigest()  # the buffer, not a bytes copy
         return {
             "kind": "tensor",
             "sha256": content_digest,
@@ -72,14 +72,23 @@ def describe(value: Any) -> Any:
             "stride": list(value.stride()),
         }
     if isinstance(value, Mapping):
-        items = [{"key": describe(key), "value": describe(item)} for key, item in value.items()]
-        items.sort(key=lambda item: canonical(item["key"]))
-        return {"kind": "mapping", "items": items}
+        return describe_mapping({key: describe(item) for key, item in value.items()})
     if isinstance(value, tuple):
         return {"kind": "tuple", "items": [describe(item) for item in value]}
     if isinstance(value, list):
         return {"kind": "list", "items": [describe(item) for item in value]}
     return _scalar(value)
+
+
+def describe_mapping(described: Mapping[Any, Any]) -> dict[str, Any]:
+    """``describe`` of a mapping whose items are already described (``{key: describe(item)}``).
+
+    Lets a caller that holds the descriptor of every item seal the mapping without hashing the
+    items again; ``describe`` of a mapping is defined through this function, so both agree.
+    """
+    items = [{"key": describe(key), "value": item} for key, item in described.items()]
+    items.sort(key=lambda item: canonical(item["key"]))
+    return {"kind": "mapping", "items": items}
 
 
 def legacy_describe_v1(value: Any) -> Any:

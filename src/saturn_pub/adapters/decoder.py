@@ -740,16 +740,19 @@ class DecoderAdapter(Adapter):
         return (1, self.num_kv_heads, length, self.head_dim)
 
     def _cache_values(self, cache: DynamicCache) -> tuple[list[torch.Tensor], list[torch.Tensor]]:
+        """The cache's per-layer tensors, taken over without a copy: every one is a fresh
+        ``torch.cat`` of the cache update (``_cache`` copies the input layers in), contiguous,
+        and the cache object is dropped by every caller."""
         empty = self._kv_shape(0)
         keys, values = [], []
         for layer in cache.layers:
             keys.append(
-                clone(layer.keys)
+                layer.keys
                 if getattr(layer, "keys", None) is not None
                 else torch.empty(empty, device=self.device, dtype=self.dtype)
             )
             values.append(
-                clone(layer.values)
+                layer.values
                 if getattr(layer, "values", None) is not None
                 else torch.empty(empty, device=self.device, dtype=self.dtype)
             )
@@ -1038,6 +1041,24 @@ class DecoderAdapter(Adapter):
 
     def validate(self, state: Mapping[str, Any]) -> None:
         self._verify_frozen_model()
+        self.validate_state(state)
+
+    def _all_finite(self, tensors: Sequence[Any]) -> bool | None:
+        """Whether every one of ``tensors`` is finite, with one host sync; None when one is not
+        a tensor on the execution device (the per-tensor checks then decide, and name it)."""
+        if not all(isinstance(t, torch.Tensor) and t.device == self.device for t in tensors):
+            return None
+        if not tensors:
+            return True
+        return bool(torch.stack([torch.isfinite(t).all() for t in tensors]).all())
+
+    def validate_state(self, state: Mapping[str, Any]) -> None:
+        """``validate`` without the frozen-model check, which ``validate_execution`` makes.
+
+        Finiteness of the K/V, hidden and logits tensors is one fused check (one host sync);
+        only when it fails do the per-tensor checks run, so the refusal names the same tensor
+        in the same order as before.
+        """
         expected_keys = {
             "tokens",
             "keys",
@@ -1061,7 +1082,7 @@ class DecoderAdapter(Adapter):
         if not 0 < tokens.shape[1] <= self.max_positions:
             raise ValueError("token count outside configured context")
         self._guard_window(tokens.shape[1])
-        if (tokens < 0).any() or (tokens >= self.vocab_size).any():
+        if bool(((tokens < 0) | (tokens >= self.vocab_size)).any()):
             raise ValueError("token ID outside vocabulary")
         layer = state["layer"]
         if type(layer) is not int or not 0 <= layer <= self.layers:
@@ -1086,6 +1107,9 @@ class DecoderAdapter(Adapter):
         keys, values = state["keys"], state["values"]
         if len(keys) != self.layers or len(values) != self.layers:
             raise ValueError("missing layer K/V")
+        finite = self._all_finite(
+            [*keys, *values, *(state[n] for n in ("hidden", "logits") if state[n] is not None)]
+        )
         for index, (key, value) in enumerate(zip(keys, values)):
             length = expected + (1 if state["hidden"] is not None and index < layer else 0)
             shape = self._kv_shape(length)
@@ -1095,14 +1119,14 @@ class DecoderAdapter(Adapter):
                 raise ValueError("K/V dtype mismatch")
             if key.device != self.device or value.device != self.device:
                 raise ValueError("K/V device mismatch")
-            if not torch.isfinite(key).all() or not torch.isfinite(value).all():
+            if not finite and (not torch.isfinite(key).all() or not torch.isfinite(value).all()):
                 raise ValueError("non-finite K/V")
         hidden = state["hidden"]
         if hidden is not None and (
             tuple(hidden.shape) != (1, 1, self.hidden_size)
             or hidden.dtype != self.dtype
             or hidden.device != self.device
-            or not torch.isfinite(hidden).all()
+            or (not finite and not torch.isfinite(hidden).all())
         ):
             raise ValueError("invalid hidden carrier")
         logits = state["logits"]
@@ -1110,7 +1134,7 @@ class DecoderAdapter(Adapter):
             tuple(logits.shape) != (1, self.vocab_size)
             or logits.dtype != self.dtype
             or logits.device != self.device
-            or not torch.isfinite(logits).all()
+            or (not finite and not torch.isfinite(logits).all())
         ):
             raise ValueError("invalid logit observation")
         if phase in {"sample", "commit"} and logits is None:
@@ -1120,8 +1144,7 @@ class DecoderAdapter(Adapter):
             tuple(sampled.shape) != (1, 1)
             or sampled.dtype != torch.long
             or sampled.device != self.device
-            or bool((sampled < 0).any())
-            or bool((sampled >= self.vocab_size).any())
+            or bool(((sampled < 0) | (sampled >= self.vocab_size)).any())
         ):
             raise ValueError("invalid sampled token")
         if (phase == "commit") != (sampled is not None):
@@ -1141,6 +1164,12 @@ class DecoderAdapter(Adapter):
                 raise ValueError(f"unsupported address at {self.boundary(state)}: {address}")
             return clone(state[address])
         return super().read(state, address)
+
+    def read_part(self, state: Mapping[str, Any], address: str, index: Any) -> Any:
+        """One layer of ``keys`` / ``values`` (``index``), copying that layer only."""
+        if address in ("keys", "values"):
+            return clone(state[address][index])
+        return super().read_part(state, address, index)
 
     def write(
         self, state: Mapping[str, Any], writes: Mapping[str, Any], invalidates: tuple[str, ...]
@@ -1193,9 +1222,19 @@ class DecoderAdapter(Adapter):
         return tuple(out)
 
     @torch.inference_mode()
-    def advance(self, state: Mapping[str, Any], *, ports: Any = None) -> Mapping[str, Any]:
-        self.validate(state)
-        out = clone(state)
+    def advance(
+        self, state: Mapping[str, Any], *, ports: Any = None, validated: bool = False
+    ) -> Mapping[str, Any]:
+        """The next native transition of ``state``, which is left unchanged.
+
+        The result shares the tensors of the slots the transition does not write with
+        ``state`` (they are never written in place) and holds new tensors for the rest.
+        ``validated``: the caller validated ``state`` and the executor (``validate_execution``)
+        in this same call, so the entry validation is not repeated.
+        """
+        if not validated:
+            self.validate(state)
+        out = {**state, "keys": list(state["keys"]), "values": list(state["values"])}
         tokens = out["tokens"].to(self.device)
         if out["hidden"] is None:
             if tokens.shape[1] >= self.max_positions:

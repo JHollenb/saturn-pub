@@ -18,8 +18,10 @@ the unedited tensor). ``timing`` says when, inside that transition:
   ``p`` computes the value mix natively).
 
 Operators (``CELL_OPS``): ``replace``, ``add``, ``scale`` as for ports (the operand cast to the
-cell dtype, one rounded op), and ``mix DOSE`` toward a value: ``cell + DOSE * (value - cell)`` in
-float32, rounded once to the cell dtype; ``mix 1`` is the exact copy of the value's words.
+cell dtype, one rounded op), and ``mix DOSE`` toward a value: ``cell + DOSE * (value - cell)``
+computed in float64 from the native bits of the cell and the value, rounded once to the cell
+dtype (on the cell's device; on the host for a device without float64); ``mix 1`` is the exact
+copy of the value's words and ``mix 0`` leaves the cell's words as they are.
 """
 
 from __future__ import annotations
@@ -103,7 +105,7 @@ class CellEdit:
                                  f"{list(value.shape)} for {len(self.rows)} row(s)")
             if not bool(torch.isfinite(value).all()):
                 raise ValueError("cell edit values must be finite")
-            object.__setattr__(self, "value", value.detach().to("cpu").clone())
+            object.__setattr__(self, "value", value.detach().to("cpu", copy=True))
         elif type(value) in (int, float):
             if value != value or value in (float("inf"), float("-inf")):
                 raise ValueError("edit scalars must be finite")
@@ -166,60 +168,94 @@ class CellEdit:
 
     # --- realisation ----------------------------------------------------------------------
 
-    def _operand(self, block: torch.Tensor) -> torch.Tensor:
+    def _requested(self) -> torch.Tensor:
+        """The request in float64 on the host, where the value is stored (an exact widening)."""
         if isinstance(self.value, torch.Tensor):
-            return self.value[0].to(block.device)
-        return torch.tensor(self.value, dtype=torch.float64, device=block.device)
+            return self.value[0].to(torch.float64)
+        return torch.tensor(self.value, dtype=torch.float64)
 
-    def ideal(self, block: torch.Tensor) -> torch.Tensor:
-        """The exact float64 result on the picked block ``block`` (the request, unrounded)."""
-        x = block.detach().to("cpu", torch.float64)
-        v = self._operand(block).detach().to("cpu", torch.float64).expand(x.shape)
+    def _cast(self, dtype: torch.dtype) -> torch.Tensor:
+        """The operand of ``replace``, ``add``, ``scale`` and ``mix 1``: the value cast once to
+        the cell dtype, on the host where the value is stored."""
+        if isinstance(self.value, torch.Tensor):
+            return self.value[0].to(dtype)
+        return torch.tensor(self.value, dtype=torch.float64).to(dtype)
+
+    def _exact(self, x: torch.Tensor, v: torch.Tensor) -> torch.Tensor:
+        """The float64 request on float64 ``x`` with the float64 operand ``v`` (same device)."""
         if self.exact_copy:
-            return v.clone()
+            return v.expand(x.shape).clone()
         if self.op == "add":
             return x + v
         if self.op == "scale":
             return x * v
         return x + self.dose * (v - x)
 
+    def ideal(self, block: torch.Tensor) -> torch.Tensor:
+        """The exact float64 result on the picked block ``block`` (the request, unrounded)."""
+        x = block.detach().to("cpu", torch.float64)
+        return self._exact(x, self._requested().expand(x.shape))
+
     def apply_block(self, block: torch.Tensor) -> torch.Tensor:
         """The written block: the native arithmetic of the operator on the picked block."""
-        operand = self._operand(block)
+        return self._apply(block, None if self.op == "mix" and not self.exact_copy else
+                           self._cast(block.dtype).to(block.device))
+
+    def _apply(
+        self, block: torch.Tensor, cast: torch.Tensor | None, host: torch.Tensor | None = None
+    ) -> torch.Tensor:
+        """``apply_block`` given the cast operand on the block's device (None for ``mix``, which
+        casts nothing: ``mix DOSE`` widens both sides to float64 and rounds the result once).
+        ``host``: the block already on the host, used where float64 needs the host."""
         if self.exact_copy:
-            return operand.to(block.dtype).expand(block.shape).clone()
+            return cast.expand(block.shape).clone()
         if self.op == "add":
-            return block + operand.to(block.dtype)
+            return block + cast
         if self.op == "scale":
-            return block * operand.to(block.dtype)
-        x = block.float()
-        return (x + self.dose * (operand.float() - x)).to(block.dtype)
+            return block * cast
+        if self.dose == 0.0:
+            return block.clone()  # exactly the identity (x + 0 * d would turn -0.0 into +0.0)
+        device = block.device if block.device.type != "mps" else torch.device("cpu")
+        x = (host if host is not None and device.type == "cpu" else block).to(device, torch.float64)
+        mixed = self._exact(x, self._requested().to(device))
+        return mixed.to(block.device, block.dtype)
 
     def realise(self, cache: torch.Tensor) -> tuple[torch.Tensor, dict[str, Any]]:
         """``(new cache tensor, record)``: a copy of ``cache`` with the block written (the input
         is never modified). The record: ``realised_sha256`` of the written block, its dtype,
-        ``cast_*`` (the operand against its cast), ``realised_*`` (the written block against
-        the exact float64 request), ``changed_fraction`` and ``count``."""
+        ``cast_*`` (the requested operand against its cast to the cell dtype; absent for ``mix``
+        below 1, which casts no operand), ``realised_*`` (the written block against the exact
+        float64 request), ``changed_fraction`` and ``count``.
+
+        The operand is computed once and each tensor crosses to the host once: the picked block
+        and the written block, for the record (the value is stored on the host already).
+        """
         self.check(cache.shape)
         index = self.index(cache.shape, cache.device)
         block = cache[index]
-        written = self.apply_block(block)
+        cast = None if self.op == "mix" and not self.exact_copy else self._cast(block.dtype)
+        before = block.detach().to("cpu")
+        written = self._apply(block, None if cast is None else cast.to(block.device), before)
         out = cache.clone()
         out[index] = written
-        operand = self._operand(block).detach().to("cpu", torch.float64)
-        cast = operand.to(block.dtype).to(torch.float64)
-        cast_error = max_abs((cast - operand).abs())
-        effect = max_abs((written.detach().to("cpu", torch.float64) - self.ideal(block)).abs())
-        record = {
+        after = written.detach().to("cpu")
+        requested = self._requested()
+        x = before.to(torch.float64)
+        effect = max_abs((after.to(torch.float64) - self._exact(x, requested.expand(x.shape))).abs())
+        record: dict[str, Any] = {
             "realised_dtype": str(written.dtype),
-            "realised_sha256": tensor_digest(written),
-            "cast_exact": cast_error == 0.0,
-            "cast_max_abs_error": cast_error,
+            "realised_sha256": tensor_digest(after),
+        }
+        if cast is not None:
+            cast_error = max_abs((cast.to(torch.float64) - requested).abs())
+            record["cast_exact"] = cast_error == 0.0
+            record["cast_max_abs_error"] = cast_error
+        record.update({
             "realised_exact": effect == 0.0,
             "realised_max_abs_error": effect,
-            "changed_fraction": changed_fraction(block, written),
+            "changed_fraction": changed_fraction(before, after),
             "count": int(block.numel()),
-        }
+        })
         return out, with_labels(record)
 
     # --- records ----------------------------------------------------------------------------

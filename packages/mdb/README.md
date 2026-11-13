@@ -130,6 +130,8 @@ checkpoint or a stored session (`boiling:cache.L0.v[kv0,row=1]`, `boiling:t3.L1.
 cache. Rows must already be in the cache; the row the pending layer writes is refused. The cell
 is realised before its reader (`kr` for keys, `A` for values) unless the cursor has passed the
 boundary (`kr`, `p`), in which case it lands after that read. Shorthand: `+= -= *= /=`.
+`mix DOSE` is `cell + DOSE * (value - cell)` in float64 from the native bits, rounded once to the
+cell dtype (`mix 1` is the exact copy of the value, `mix 0` leaves the cell as it is).
 `run name=boiling 1 7 9 3` starts a second run; `frame boiling:` and `frame main:` switch;
 `info runs` lists them. `ORIGIN:ADDR` takes a value from that run, a checkpoint or a stored
 session of the same model and numeric scope; `k`/`kn` occurrences are refused (before RoPE).
