@@ -35,8 +35,9 @@ the ablated contributions, ``rho`` and later layers frozen: ``derived-local``). 
 from __future__ import annotations
 
 import weakref
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, NamedTuple
 
 from mdb.core.kinds import CIRCUIT
 from mdb.core.pointers import RecordError, check_bounded
@@ -70,11 +71,27 @@ def _torch():
     return torch
 
 
+class Member(NamedTuple):
+    """A child folded into a ``+N more`` node (and, before grouping, a candidate child): what
+    ``test`` ablates. ``port`` is the address a ``replace 0`` edit writes, ``index`` where in
+    it: ``()`` the whole port, ``(i,)`` neuron ``i`` of ``f``, ``(h,)`` head ``h``'s block of
+    ``A``, ``(h, s)`` source ``s`` of head ``h`` in ``p``; None: not ablatable (the
+    embedding). ``value`` is its float64 contribution while the circuit is built; ``build``
+    folds the members' values into ``Circuit.complement`` and keeps None."""
+
+    name: str
+    kind: str
+    port: str
+    index: tuple[int, ...] | None
+    value: Any
+
+
 @dataclass
 class Node:
     """One node: ``value`` (float64) is the contribution its edge carries into its parent, and
-    so into the consumer; ``authority`` labels it. ``edits`` ablate it natively (empty for a
-    remainder or bias: they are not components)."""
+    so into the consumer; ``authority`` labels it. ``port`` and ``index`` (as in ``Member``)
+    say what ablates it natively (None for a remainder, bias or edit: not components).
+    ``grow`` builds the node's children; ``_group`` calls it only for a node it keeps."""
 
     name: str
     kind: str
@@ -83,11 +100,13 @@ class Node:
     authority: str
     proof: str | None = None
     children: list[Node] = field(default_factory=list)
-    edits: list[Edit] = field(default_factory=list)
-    members: list[Node] = field(default_factory=list)
+    port: str | None = None
+    index: tuple[int, ...] | None = None
+    members: list[Member] = field(default_factory=list)
     note: str | None = None
     bound: Any = None
     ref: str | None = None
+    grow: Callable[[], list[Node]] | None = field(default=None, repr=False)
 
     @property
     def within(self) -> bool | None:
@@ -122,6 +141,7 @@ class Circuit:
     consumer: Any
     where: str
     tests: list[dict[str, Any]] = field(default_factory=list)
+    complement: Any = None  # minus the members' summed contributions (the embedding aside)
 
 
 _LEDGERS: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
@@ -137,18 +157,49 @@ def ledger(run: Any) -> dict[int, Circuit]:
 # --------------------------------------------------------------------------- decomposition
 
 
-def _group(children: list[Node], top: int, parent: str) -> list[Node]:
-    """Keep the ``top`` largest exact children; the rest become one ``+N more`` node."""
+def _group(children: list[Any], top: int, parent: str,
+           promote: Callable[[Member], Node] | None = None) -> list[Node]:
+    """Keep the ``top`` largest exact children; the rest become one ``+N more`` node holding
+    them as ``Member`` tuples. A kept ``Member`` becomes its ``Node`` (``promote``) and a kept
+    node's subtree is built now: nothing is built for a child that is not kept."""
     exact = [c for c in children if c.kind not in _FIXED]
     fixed = [c for c in children if c.kind in _FIXED]
     exact.sort(key=lambda c: -size(c.value))
     kept, rest = exact[:top], exact[top:]
+    kept = [promote(c) if isinstance(c, Member) else c for c in kept]
+    for node in kept:
+        if node.grow is not None:
+            node.children, node.grow = node.grow(), None
     if rest:
         total = sum((c.value for c in rest[1:]), rest[0].value)
+        members = [c if isinstance(c, Member) else Member(c.name, c.kind, c.port, c.index,
+                                                            c.value) for c in rest]
         kept.append(Node(f"+{len(rest)} more", "more", f"{parent} (unlisted)", total, EXACT,
-                         members=rest,
+                         members=members,
                          note=f"+{len(rest)} more, sum of their exact contributions"))
     return kept + fixed
+
+
+def _selection(kind: str, index: tuple[int, ...]) -> str:
+    """The selection text of one ablated index (as ``Run.set`` records it)."""
+    if kind == "neuron":
+        return f"i={index[0]}"
+    if kind == "head":
+        return f"h{index[0]}"
+    return f"h{index[0]},src={index[1]}"
+
+
+def _promoter(proof: str, grow: Callable[[Member], Any] | None = None
+              ) -> Callable[[Member], Node]:
+    """``_group``'s ``promote`` for neurons, heads or sources: the kept member's node (its
+    address names the index), with ``grow(member)`` as its subtree builder."""
+
+    def promote(m: Member) -> Node:
+        return Node(m.name, m.kind, f"{m.port}[{_selection(m.kind, m.index)}]", m.value, EXACT,
+                    proof, port=m.port, index=m.index,
+                    grow=None if grow is None else (lambda: grow(m)))
+
+    return promote
 
 
 def _remainder(name: str, address: str, value: Any, why: str, bound: Any = None) -> Node:
@@ -161,11 +212,10 @@ def _through(reader: Any, bound: Any) -> Any:
     return reader.vector.abs() @ bound if reader.scalar else bound
 
 
-def _matmul_bound(weight: Any, x: Any, dtype: Any) -> Any:
-    """``|fl(W x) - W x|`` per output: float32 accumulation in any order, one rounding to
-    ``dtype``."""
-    exact = weight @ x
-    return (_gamma(x.numel(), _U32) * (weight.abs() @ x.abs()) * (1 + unit_roundoff(dtype))
+def _matmul_bound(exact: Any, spread: Any, n: int, dtype: Any) -> Any:
+    """``|fl(W x) - W x|`` per output from ``exact = W x`` and ``spread = |W| |x|`` (``n``
+    terms): float32 accumulation in any order, one rounding to ``dtype``."""
+    return (_gamma(n, _U32) * spread * (1 + unit_roundoff(dtype))
             + unit_roundoff(dtype) * exact.abs())
 
 
@@ -213,18 +263,14 @@ def _attn_children(run: Any, reader: Any, row: int, layer: int, depth: int, top:
         raise Refusal(f"t{row}.L{layer}.o has not been computed at {run.where}")
     heads, dh = mix.p.shape[0], mix.A.shape[1]
     blocks = mix.weight.reshape(mix.weight.shape[0], heads, dh)
-    children = []
+    checks = mix.checks()   # once per layer: the o_proj bound and every head's value-mix bound
+    children: list[Any] = []
     writes = torch.zeros_like(mix.o)
+    port = f"t{row}.L{layer}.A"
     for h in range(heads):
         write = blocks[:, h, :] @ mix.A[h]
         writes = writes + write
-        node = Node(f"L{layer}.h{h}", "head", f"t{row}.L{layer}.A[h{h}]", reader.apply(write),
-                    EXACT, "P07",
-                    edits=[Edit(f"t{row}.L{layer}.A", 0.0, "replace",
-                                head_mask(run, row, layer, h), f"h{h}")])
-        if depth > 2:
-            node.children = _source_children(run, reader, mix, h, top)
-        children.append(node)
+        children.append(Member(f"L{layer}.h{h}", "head", port, (h,), reader.apply(write)))
     address = f"t{row}.L{layer}.o"
     module = layer_module(run.adapter, layer).self_attn.o_proj
     bias = getattr(module, "bias", None)
@@ -238,22 +284,23 @@ def _attn_children(run: Any, reader: Any, row: int, layer: int, depth: int, top:
         children.append(Node(f"L{layer}.o bias", "bias", f"{address} (o_proj.bias)",
                              reader.apply(f64(bias)), EXACT, "P07"))
     children += _gap(run, reader, name=f"L{layer}.attn", address=address, native=mix.o,
-                     exact=writes, bound=_matmul_bound(mix.weight, mix.A.reshape(-1), mix.dtype),
+                     exact=writes, bound=checks["head_write"]["bound"],
                      why="native o minus sum_h W_o,h A_h (o_proj rounding)", info=info,
                      original=original)
-    return _group(children, top, address)
+    bounds = checks["value_mix"]["bound"]
+    sources = None if depth <= 2 else (
+        lambda m: _source_children(run, reader, mix, m.index[0], bounds[m.index[0]], top))
+    return _group(children, top, address, _promoter("P07", sources))
 
 
-def _source_children(run: Any, reader: Any, mix: Any, head: int, top: int) -> list:
+def _source_children(run: Any, reader: Any, mix: Any, head: int, bound: Any, top: int) -> list:
+    """Source rows of one head (``bound``: its value-mix rounding bound), the edit at ``A`` if
+    any and the bounded value-mix remainder."""
     row, layer = mix.row, mix.layer
-    parts = mix.o_parts()[head]                         # (T, d)
-    children = []
-    for s in range(parts.shape[0]):
-        children.append(Node(f"t{s}", "source", f"t{row}.L{layer}.p[h{head},src={s}]",
-                             reader.apply(parts[s]), EXACT, "P06",
-                             edits=[Edit(f"t{row}.L{layer}.p", 0.0, "replace",
-                                         head_mask(run, row, layer, head, s),
-                                         f"h{head},src={s}")]))
+    parts = mix.p[head][:, None] * mix.unit[head]      # (T, d): o_parts() of this head only
+    port = f"t{row}.L{layer}.p"
+    children: list[Any] = [Member(f"t{s}", "source", port, (head, s), reader.apply(parts[s]))
+                           for s in range(parts.shape[0])]
     dh = mix.A.shape[1]
     block = mix.weight.reshape(mix.weight.shape[0], -1, dh)[:, head, :]
     address = f"t{row}.L{layer}.A"
@@ -265,39 +312,39 @@ def _source_children(run: Any, reader: Any, mix: Any, head: int, top: int) -> li
         whole = _original(run, address)
         if whole is not None:
             original = block @ whole.reshape(-1, dh)[head]
-    bound = mix.checks()["value_mix"]["bound"][head]
     children += _gap(run, reader, name=f"L{layer}.h{head}", address=f"{address}[h{head}]",
                      native=block @ mix.A[head], exact=block @ mix.head_out()[head],
                      bound=block.abs() @ bound, why="native A_h minus sum_s p v (value-mix "
                                                      "rounding)", info=info, original=original)
-    return _group(children, top, f"{address}[h{head}]")
+    return _group(children, top, f"{address}[h{head}]", _promoter("P06"))
 
 
 def _mlp_children(run: Any, reader: Any, row: int, layer: int, top: int) -> list:
-    torch = _torch()
+    """Neurons of ``L<layer>.mlp``, any edit at ``m`` and the bounded down_proj remainder;
+    ``down_proj`` is cast once and its absolute value taken in place for the bound."""
     f = f64(run.read(f"t{row}.L{layer}.f")).reshape(-1)
-    m = f64(run.read(f"t{row}.L{layer}.m")).reshape(-1)
-    down = f64(layer_module(run.adapter, layer).mlp.down_proj.weight)     # (d, d_ff)
-    shape = tuple(run.address_shape(f"t{row}.L{layer}.f"))
-    children = []
-    for i in range(f.numel()):
-        mask = torch.zeros(shape, dtype=torch.bool)
-        mask[..., i] = True
-        children.append(Node(f"L{layer}.f{i}", "neuron", f"t{row}.L{layer}.f[i={i}]",
-                             reader.apply(down[:, i] * f[i]), EXACT, "P15",
-                             edits=[Edit(f"t{row}.L{layer}.f", 0.0, "replace", mask,
-                                         f"i={i}")]))
     address = f"t{row}.L{layer}.m"
+    native = run.read(address)
+    m = f64(native).reshape(-1)
+    down = f64(layer_module(run.adapter, layer).mlp.down_proj.weight)     # (d, d_ff)
+    port = f"t{row}.L{layer}.f"
+    children: list[Any] = [Member(f"L{layer}.f{i}", "neuron", port, (i,),
+                                  reader.apply(down[:, i] * f[i])) for i in range(f.numel())]
     info = _edited(run, address)
+    exact = down @ f
+    spread = down.abs_() @ f.abs()      # down is |W_down| from here on: no second copy
+    del down
     children += _gap(run, reader, name=f"L{layer}.mlp", address=address, native=m,
-                     exact=down @ f, bound=_matmul_bound(down, f, run.read(address).dtype),
+                     exact=exact, bound=_matmul_bound(exact, spread, f.numel(), native.dtype),
                      why="native m minus W_down f (down_proj rounding)", info=info,
                      original=None if info is None else _original(run, address))
-    return _group(children, top, address)
+    return _group(children, top, address, _promoter("P15"))
 
 
 def terms(run: Any, reader: Any, depth: int, top: int) -> list[Node]:
-    """Depth-1 nodes of the consumer (and their subtrees), without the top remainder."""
+    """Depth-1 nodes of the consumer, without the top remainder. Below depth 1 a node's
+    subtree is built when ``_group`` keeps it (``Node.grow``); for an ``o`` consumer the heads
+    come grouped already."""
     row = reader.row
     layers = run.adapter.layers
     if reader.kind == "o":
@@ -307,22 +354,23 @@ def terms(run: Any, reader: Any, depth: int, top: int) -> list[Node]:
     info = run.read_info(f"t{row}.L0.h")
     nodes.append(Node("embedding", "embedding", f"t{row}.L0.h", reader.apply(h0),
                       SUPPLIED if info["authority"] == SUPPLIED else EXACT,
-                      "P19" if reader.scalar else "P01",
+                      "P19" if reader.scalar else "P01", port=f"t{row}.L0.h",
                       note=None if info["kind"] == "native" else
                       f"t{row}.L0.h written by an edit ({','.join(info['ops'])})"))
     for layer in range(layers):
         for part, port in (("attn", "o"), ("mlp", "m")):
             if reader.reaches(layer, part) is not None:
                 continue
-            value = f64(run.read(f"t{row}.L{layer}.{port}")).reshape(-1)
-            node = Node(f"L{layer}.{part}", part, f"t{row}.L{layer}.{port}",
-                        reader.apply(value), EXACT, "P19" if reader.scalar else "P14",
-                        edits=[Edit(f"t{row}.L{layer}.{port}", 0.0, "replace")])
+            address = f"t{row}.L{layer}.{port}"
+            value = f64(run.read(address)).reshape(-1)
+            grow = None
             if depth > 1:
-                node.children = (_attn_children(run, reader, row, layer, depth, top)
-                                 if part == "attn" else
-                                 _mlp_children(run, reader, row, layer, top))
-            nodes.append(node)
+                grow = ((lambda layer=layer: _attn_children(run, reader, row, layer, depth, top))
+                        if part == "attn" else
+                        (lambda layer=layer: _mlp_children(run, reader, row, layer, top)))
+            nodes.append(Node(f"L{layer}.{part}", part, address, reader.apply(value), EXACT,
+                              "P19" if reader.scalar else "P14", port=address, index=(),
+                              grow=grow))
     if reader.scalar and reader.bias:
         nodes.append(Node("head bias", "bias", "lm_head.bias",
                           f64(reader.bias), EXACT, "P19"))
@@ -457,9 +505,21 @@ def build(run: Any, consumer: Any, *, top: int = 4, depth: int = 2,
     except RecordError as error:
         raise Refusal(f"the circuit record does not fit one record ({error}); lower top or "
                       "depth") from None
-    circuit = Circuit(ident, record, root, reader.target, run.where)
+    circuit = Circuit(ident, record, root, reader.target, run.where,
+                      complement=_fold_members(root))
     entries[ident] = circuit
     return circuit
+
+
+def _fold_members(root: Node) -> Any:
+    """``test``'s direct-path prediction for ablating every ``+N more`` member (the embedding
+    aside): minus their contributions summed in member order. The members then keep no value,
+    so a built circuit holds one number per group instead of one per folded child."""
+    values = []
+    for group in _groups(root):
+        values += [m.value for m in group.members if m.kind != "embedding"]
+        group.members = [m._replace(value=None) for m in group.members]
+    return -sum(values[1:], values[0]) if values else None
 
 
 def _stop(reader: Any) -> str:
@@ -492,22 +552,48 @@ def _groups(node: Node) -> list[Node]:
     return found
 
 
-def _merged(edits: list[Edit]) -> list[Edit]:
-    """One edit per port: the union of the masks of ``replace 0`` edits at the same address."""
+def _mask(run: Any, port: str, kind: str, indices: list[tuple[int, ...]]) -> Any:
+    """One bool mask over ``port`` selecting every index in ``indices`` (a neuron of ``f``, a
+    head's block of ``A``, a source of ``p``)."""
     torch = _torch()
-    by: dict[str, Edit] = {}
-    for edit in edits:
-        have = by.get(edit.address)
-        if have is None:
-            by[edit.address] = edit
-            continue
-        if have.mask is None or edit.mask is None:
-            by[edit.address] = Edit(edit.address, 0.0, "replace", None, None, "ablation")
+    mask = torch.zeros(tuple(run.address_shape(port)), dtype=torch.bool)
+    if kind == "neuron":
+        mask[..., [i for (i,) in indices]] = True
+    elif kind == "head":
+        dh = run.adapter.head_dim
+        for (h,) in indices:
+            mask[..., h * dh:(h + 1) * dh] = True
+    else:
+        for h, s in indices:
+            mask[0, h, 0, s] = True
+    return mask
+
+
+def _ablations(run: Any, items: list[Any]) -> list[Edit]:
+    """The ``replace 0`` edits that ablate ``items`` (nodes or members), one per port in
+    first-use order: a port used once gets its item's own edit; several items at one port share
+    one mask (their union) with their selections joined by ``|``, or the whole port when one of
+    them is the whole port. An item with no index (the embedding) is not ablatable."""
+    ports: dict[str, list[Any]] = {}
+    for item in items:
+        if item.index is not None:
+            ports.setdefault(item.port, []).append(item)
+    edits = []
+    for port, group in ports.items():
+        if len(group) == 1 and group[0].index == ():
+            edits.append(Edit(port, 0.0, "replace"))
+        elif len(group) == 1:
+            item = group[0]
+            edits.append(Edit(port, 0.0, "replace", _mask(run, port, item.kind, [item.index]),
+                              _selection(item.kind, item.index)))
+        elif any(item.index == () for item in group):
+            edits.append(Edit(port, 0.0, "replace", None, None, "ablation"))
         else:
-            by[edit.address] = Edit(edit.address, 0.0, "replace",
-                                    torch.logical_or(have.mask, edit.mask),
-                                    f"{have.selection}|{edit.selection}", "ablation")
-    return list(by.values())
+            edits.append(Edit(port, 0.0, "replace",
+                              _mask(run, port, group[0].kind, [item.index for item in group]),
+                              "|".join(_selection(item.kind, item.index) for item in group),
+                              "ablation"))
+    return edits
 
 
 def test(run: Any, circuit: Circuit, *, tolerance: float = 0.1) -> dict[str, Any]:
@@ -520,34 +606,38 @@ def test(run: Any, circuit: Circuit, *, tolerance: float = 0.1) -> dict[str, Any
                       f"{run.where} (restart there to test it)")
     if not 0 <= tolerance:
         raise Refusal("tolerance must be >= 0")
-    retained = _leaves(circuit.root)
-    others = [member for group in _groups(circuit.root) for member in group.members]
-    skipped = [n for n in retained + others if n.kind == "embedding"]
-    retained = [n for n in retained if n.kind != "embedding"]
-    others = [n for n in others if n.kind != "embedding"]
+    leaves = _leaves(circuit.root)
+    groups = _groups(circuit.root)
+    members = [(group, m) for group in groups for m in group.members]
+    skipped = ([(n.ref, n.port) for n in leaves if n.kind == "embedding"]
+               + [(f"{m.name} (in {group.ref})", m.port) for group, m in members
+                  if m.kind == "embedding"])
+    retained = [n for n in leaves if n.kind != "embedding"]
+    others = [m for _, m in members if m.kind != "embedding"]
     base = measure(run, [], circuit.consumer)
     out: dict[str, Any] = {"id": circuit.id, "record": circuit.record["id"],
                            "consumer": circuit.record["body"]["consumer"],
                            "base": claim(base["value"], base["authority"]),
                            "tolerance": num(float(tolerance), SUPPLIED)}
     if skipped:
-        group = {id(m): g.ref for g in _groups(circuit.root) for m in g.members}
-        out["excluded"] = {"nodes": [n.ref or f"{n.name} (in {group[id(n)]})" for n in skipped],
+        out["excluded"] = {"nodes": [ref for ref, _ in skipped],
                            "reason": "the embedding is ablated in neither set: zeroing "
-                                     f"{skipped[0].address} removes the input of every other "
+                                     f"{skipped[0][1]} removes the input of every other "
                                      "node, not its direct path"}
     deltas = {}
-    refs = {"retained": [n.ref for n in retained],
-            "complement": [g.ref for g in _groups(circuit.root)]}
+    refs = {"retained": [n.ref for n in retained], "complement": [g.ref for g in groups]}
+    predictions = {"retained": (-sum((n.value for n in retained[1:]), retained[0].value)
+                                if retained else None),
+                   "complement": circuit.complement}
     for name, nodes in (("retained", retained), ("complement", others)):
-        edits = _merged([e for node in nodes for e in node.edits])
+        edits = _ablations(run, nodes)
         if not edits:
             out[name] = {"state": "unresolved", "reason": f"no ablatable {name} node"}
             continue
         found = measure(run, edits, circuit.consumer)
         delta = found["value"] - base["value"]
         deltas[name] = delta
-        predicted = -sum((n.value for n in nodes[1:]), nodes[0].value)
+        predicted = predictions[name]
         out[name] = {"count": len(nodes), "nodes": refs[name][:64],
                      "edits": [e.address + (f"[{e.selection}]" if e.selection else "")
                                for e in edits][:16],

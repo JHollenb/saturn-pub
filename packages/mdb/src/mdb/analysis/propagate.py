@@ -300,6 +300,7 @@ def _chain(run: Any, p: Plan, *, bounds: bool, overrides: dict[str, Any] | None 
     torch = _torch()
     models: list[RowModel] = []
     here = p.here
+    rows: dict[tuple[int, str], tuple[Any, Any]] = {}   # cache rows 0..p.row-1, cast once
 
     def known_for(j: int):
         drop = p.affected.get(j, set()) if skip else set()
@@ -311,18 +312,26 @@ def _chain(run: Any, p: Plan, *, bounds: bool, overrides: dict[str, Any] | None 
 
         return known
 
-    for j in range(p.row, p.consumer_row + 1):
-        earlier = list(models)
-
-        def past(layer: int, kind: str, earlier=earlier) -> tuple[Any, Any]:
+    def cached(layer: int, kind: str) -> tuple[Any, Any]:
+        """The cache rows every row of the chain reads (``cell`` written in), read and cast
+        once per chain."""
+        if (layer, kind) not in rows:
             base = f64(run.read_cache(layer, kind)[..., : p.row, :])[0]
             spread0 = torch.zeros_like(base)
             if cell is not None:
                 base, spread0 = cell(layer, kind, base, spread0)
+            rows[layer, kind] = base, spread0
+        return rows[layer, kind]
+
+    for j in range(p.row, p.consumer_row + 1):
+        earlier = list(models)
+
+        def past(layer: int, kind: str, earlier=earlier) -> Any:
+            base, spread0 = cached(layer, kind)
             parts, spreads = [base], [spread0]
             for model in earlier:
                 name = f"L{layer}.kr" if kind == "k" else f"L{layer}.v"
-                value, spread = model.get(name), model.bound(name)
+                value, spread = yield from model.need(name)
                 shape = (model.kv_heads, -1, model.head_dim)
                 value = value.reshape(shape)[:, -1:, :]
                 parts.append(value)
@@ -331,14 +340,15 @@ def _chain(run: Any, p: Plan, *, bounds: bool, overrides: dict[str, Any] | None 
                 return torch.cat(parts, 1), None
             return torch.cat(parts, 1), torch.cat(spreads, 1)
 
-        def token(j=j, earlier=earlier) -> tuple[int, str | None]:
+        def token(j=j, earlier=earlier) -> Any:
             if j < len(run.tokens):
                 return run.tokens[j], None
             if tokens is not None:
                 return tokens[j], None
             previous = earlier[-1]
-            sampled = int(previous.get("sample"))
-            if bounds and previous.bound("sample") is None:
+            value, spread = yield from previous.need("sample")
+            sampled = int(value)
+            if bounds and spread is None:
                 return sampled, (f"the sampled token of t{j - 1} is not certified: "
                                  + previous.unbounded.get("sample", "no bound on its logits"))
             return sampled, None
@@ -371,7 +381,8 @@ def _request(run: Any, edit: Edit, shape: tuple[int, ...], x0: Any, b0: Any, u: 
              ) -> tuple[Any, Any, Any]:
     """``(requested, delta, bound)`` at the edited port in float64: the exact result of
     ``x0 op value`` on the selected elements and its rounding bound against the value the native
-    edit writes (the operand cast to the model dtype, one rounded op; ``b0`` the bound of ``x0``
+    edit writes (the operand cast to the model dtype, one rounded op; a ``mix`` is float64
+    rounded once and casts no operand; ``b0`` the bound of ``x0``
     itself when ``x0`` is a prediction)."""
     torch = _torch()
     port_shape = tuple(run.address_shape(edit.address))  # the edited row's frame, not the cursor's
@@ -467,6 +478,50 @@ def _written_cell(run: Any, edit: Edit) -> Any:
     return request.realise(run.read_cache(request.layer, request.tensor))[0]
 
 
+def _settle(run: Any, p: Plan, chain: list[RowModel], seen: dict[str, dict[str, Any]]
+            ) -> dict[str, Any]:
+    """Everything the report reads from one chain, so the chain (one float64 row model per row)
+    can be dropped before the next is built: the consumer's value and bound, the premises, why
+    its consumer is unbounded (the last row's reason, ``last``; the first row model's with a
+    reason, ``first``), the sampled tokens, and its operand digests (added to ``seen``). Read
+    in the order a whatif always read them, so every number and digest is unchanged."""
+    value, bound = _consumer_value(p, chain[-1])
+    out = {"value": value, "bound": bound,
+           "premises": set().union(*(m.premises for m in chain)),
+           "last": chain[-1].unbounded.get(p.consumer_label)}
+    out["tokens"] = _sampled_tokens(p, chain, run)
+    _operands(run, chain, seen)
+    out["first"] = next((m.unbounded[p.consumer_label] for m in chain
+                         if p.consumer_label in m.unbounded), None)
+    return out
+
+
+def _flip_reason(p: Plan, base: dict[str, Any], edited: dict[str, Any]) -> str | None:
+    """Why the first-order term is refused: the edit flips a sampled token of the chain."""
+    flipped = {j: (t, e) for (j, t), e in zip(base["tokens"].items(), edited["tokens"].values())
+               if t != e}
+    if not flipped:
+        return None
+    j, (was, now) = next(iter(flipped.items()))
+    return (f"the edit flips the sampled token of t{j} ({was} -> {now}): the first-order term "
+            "does not cross a token change")
+
+
+def _found(base: dict[str, Any], edited: dict[str, Any], seen: dict[str, dict[str, Any]],
+           shape: Any) -> dict[str, Any]:
+    """The prediction of two settled chains (``_settle``)."""
+    bound, base_bound = edited["bound"], base["bound"]
+    return {
+        "base": base["value"], "base_bound": base_bound, "exact": edited["value"] - base["value"],
+        "exact_bound": None if bound is None or base_bound is None else bound + base_bound,
+        "edit_shape": shape, "operands": list(seen.values()),
+        "unbounded": next((r for r in (edited["last"], base["last"]) if r is not None),
+                          "no rounding bound for this chain"),
+        "operand_reason": base["first"] if base["first"] is not None else edited["first"],
+        "premises": base["premises"] | edited["premises"],
+    }
+
+
 def _predict_cell(run: Any, p: Plan, edit: Edit) -> dict[str, Any]:
     """The prediction of a state-cell edit (``base``, ``exact`` and bounds, ``linear``), or
     ``reason``: the chain from the first affected row with the cell written into the cache rows
@@ -480,30 +535,19 @@ def _predict_cell(run: Any, p: Plan, edit: Edit) -> dict[str, Any]:
     if conflict is not None:
         return {"reason": conflict}
     written = _written_cell(run, edit)
-    base_chain = _chain(run, p, bounds=True)
-    edited = _chain(run, p, bounds=True, skip=True, cell=_cell_writer(edit, written, "ideal"))
-    base, base_bound = _consumer_value(p, base_chain[-1])
-    value, bound = _consumer_value(p, edited[-1])
-    out: dict[str, Any] = {
-        "base": base, "base_bound": base_bound, "exact": value - base,
-        "exact_bound": None if bound is None or base_bound is None else bound + base_bound,
-        "edit_shape": None, "written": written, "operands": base_chain + edited,
-        "unbounded": _unbounded(p, edited[-1], base_chain[-1]),
-        "premises": set().union(*(m.premises for m in base_chain + edited)),
-    }
-    tokens = _sampled_tokens(p, base_chain, run)
-    flipped = {j: (t, e) for (j, t), e in zip(tokens.items(),
-                                              _sampled_tokens(p, edited, run).values())
-               if t != e}
-    if flipped:
-        j, (was, now) = next(iter(flipped.items()))
-        out["linear_reason"] = (f"the edit flips the sampled token of t{j} ({was} -> {now}): "
-                                "the first-order term does not cross a token change")
+    seen: dict[str, dict[str, Any]] = {}
+    base = _settle(run, p, _chain(run, p, bounds=True), seen)
+    edited = _settle(run, p, _chain(run, p, bounds=True, skip=True,
+                                    cell=_cell_writer(edit, written, "ideal")), seen)
+    out = _found(base, edited, seen, None)
+    reason = _flip_reason(p, base, edited)
+    if reason is not None:
+        out["linear_reason"] = reason
         return out
     import torch.autograd.forward_ad as fwad
 
     with torch.inference_mode(False), fwad.dual_level():
-        dual = _chain(run, p, bounds=False, skip=True, tokens=tokens,
+        dual = _chain(run, p, bounds=False, skip=True, tokens=base["tokens"],
                       cell=_cell_writer(edit, written, "tangent"))
         primal, tangent = fwad.unpack_dual(_consumer_value(p, dual[-1])[0])
         out["linear"] = (torch.zeros_like(primal) if tangent is None else tangent).detach().clone()
@@ -521,35 +565,25 @@ def _predict(run: Any, p: Plan, edit: Edit) -> dict[str, Any]:
     conflict = _edits_on_path(run, p)
     if conflict is not None:
         return {"reason": conflict}
-    base_chain = _chain(run, p, bounds=True)
-    first = base_chain[0]
-    x0, b0 = first.get(p.label), first.bound(p.label)
+    chain = _chain(run, p, bounds=True)
+    x0, b0 = chain[0].get(p.label), chain[0].bound(p.label)
     shape = tuple(x0.shape)
-    requested, delta, spread = _request(run, edit, shape, x0, b0, first.u)
-    edited = _chain(run, p, bounds=True, skip=True,
-                    overrides={p.label: lambda value, bound: (requested, spread)})
-    base, base_bound = _consumer_value(p, base_chain[-1])
-    value, bound = _consumer_value(p, edited[-1])
-    out: dict[str, Any] = {
-        "base": base, "base_bound": base_bound, "exact": value - base,
-        "exact_bound": None if bound is None or base_bound is None else bound + base_bound,
-        "edit_shape": shape, "operands": base_chain + edited,
-        "unbounded": _unbounded(p, edited[-1], base_chain[-1]),
-        "premises": set().union(*(m.premises for m in base_chain + edited)),
-    }
-    tokens = _sampled_tokens(p, base_chain, run)
-    flipped = {j: (t, e) for (j, t), e in zip(tokens.items(),
-                                              _sampled_tokens(p, edited, run).values())
-               if t != e}
-    if flipped:
-        j, (was, now) = next(iter(flipped.items()))
-        out["linear_reason"] = (f"the edit flips the sampled token of t{j} ({was} -> {now}): "
-                                "the first-order term does not cross a token change")
+    requested, delta, spread = _request(run, edit, shape, x0, b0, chain[0].u)
+    seen: dict[str, dict[str, Any]] = {}
+    base = _settle(run, p, chain, seen)
+    del chain, x0, b0           # one chain of row models alive at a time
+    edited = _settle(run, p, _chain(run, p, bounds=True, skip=True,
+                                    overrides={p.label: lambda value, bound: (requested,
+                                                                              spread)}), seen)
+    out = _found(base, edited, seen, shape)
+    reason = _flip_reason(p, base, edited)
+    if reason is not None:
+        out["linear_reason"] = reason
         return out
     import torch.autograd.forward_ad as fwad
 
     with torch.inference_mode(False), fwad.dual_level():
-        dual = _chain(run, p, bounds=False, skip=True, tokens=tokens,
+        dual = _chain(run, p, bounds=False, skip=True, tokens=base["tokens"],
                       overrides={p.label: lambda value, bound: (fwad.make_dual(value, delta),
                                                                 None)})
         primal, tangent = fwad.unpack_dual(_consumer_value(p, dual[-1])[0])
@@ -666,12 +700,13 @@ def _measure(run: Any, p: Plan, edit: Edit, checkpoint: dict[str, Any]) -> dict[
 
 
 def _scalar(p: Plan, value: Any) -> Any:
-    flat = f64(value).reshape(-1)
+    """The consumer's float64 value from the tensor read at its stop (index, then cast)."""
+    flat = value.reshape(-1)
     if p.margin is not None:
-        return flat[p.margin.a] - flat[p.margin.b]
+        return f64(flat[p.margin.a]) - f64(flat[p.margin.b])
     if p.logit is not None:
-        return flat[p.logit.i]
-    return flat
+        return f64(flat[p.logit.i])
+    return f64(flat)
 
 
 def _claim(value: Any, authority: str, proof: str | None = None) -> dict[str, Any]:
@@ -683,10 +718,13 @@ def _claim(value: Any, authority: str, proof: str | None = None) -> dict[str, An
             "norm": num(float(flat.norm()), authority, proof=proof)}
 
 
-def _unbounded(p: Plan, *models: RowModel) -> str:
-    """Why the consumer of a chain has no rounding bound (the first reason found)."""
-    return next((m.unbounded[p.consumer_label] for m in models
-                 if p.consumer_label in m.unbounded), "no rounding bound for this chain")
+def _realised_reason(p: Plan, model: RowModel, found: dict[str, Any]) -> str:
+    """Why the consumer of the realised chain has no rounding bound: its own reason, else the
+    first one of the prediction's chains."""
+    if p.consumer_label in model.unbounded:
+        return model.unbounded[p.consumer_label]
+    reason = found["operand_reason"]
+    return reason if reason is not None else "no rounding bound for this chain"
 
 
 def _within(gap: Any, bound: Any, reason: str) -> dict[str, Any]:
@@ -726,10 +764,11 @@ def _edit_view(run: Any, p: Plan, edit: Edit) -> dict[str, Any]:
     return out
 
 
-def _operands(run: Any, models: list[RowModel]) -> list[dict[str, Any]]:
+def _operands(run: Any, models: list[RowModel], seen: dict[str, dict[str, Any]]) -> None:
+    """Add the address, digest and shape of every captured operand of ``models`` to ``seen``
+    (the first chain to read an address names it)."""
     from mdb.engine.ports import tensor_digest
 
-    seen: dict[str, dict[str, Any]] = {}
     for model in models:
         tensors = {**{f"t{model.row}.{n}": t for n, t in model.captured.items()},
                    **{f"{n}[row=0:{model.row}]": t for n, t in model.cache_reads.items()}}
@@ -737,7 +776,6 @@ def _operands(run: Any, models: list[RowModel]) -> list[dict[str, Any]]:
             seen.setdefault(address, {"address": address,
                                       "sha256": tensor_digest(tensor.contiguous()),
                                       "shape": list(tensor.shape)})
-    return list(seen.values())
 
 
 @dataclass
@@ -755,8 +793,9 @@ def _within_view(found: dict[str, Any]) -> dict[str, Any]:
         return {"bound": {"state": "unresolved", "reason": found["unbounded"]}}
     return {"bound": num(float(found["exact_bound"].reshape(-1).max()), BOUND),
             "premises": sorted(found["premises"] | {"round to nearest, no overflow or underflow",
-                                                    "the edit operand is cast to the model dtype "
-                                                    "and applied in one rounded op"})}
+                                                    "replace/add/scale: the operand is cast to "
+                                                    "the model dtype and applied in one rounded "
+                                                    "op; mix: float64, rounded once"})}
 
 
 def whatif(run: Any, edit: Edit, consumer: Any) -> WhatIf:
@@ -799,7 +838,7 @@ def whatif(run: Any, edit: Edit, consumer: Any) -> WhatIf:
                             "written at the edited port (rows chained through the cache)",
                    "linear": "forward-mode derivative of the same chain at the unedited point "
                              "(P14)"},
-        "operands": [] if reason else _operands(run, found["operands"]),
+        "operands": [] if reason else found["operands"],
     }
     record = seal_record(session_id=run_session_id(run), kind="whatif",
                          model_identity=run.adapter.model_identity,
@@ -854,7 +893,7 @@ def whatif(run: Any, edit: Edit, consumer: Any) -> WhatIf:
                         "exact change with the requested operand"},
             {"name": "rounding", "value": _claim(rounding, MEASURED, "P20"),
              "meaning": "native change minus the exact change with the written operand",
-             **_within(rounding, spread, _unbounded(p, chain[-1], *found["operands"]))},
+             **_within(rounding, spread, _realised_reason(p, chain[-1], found))},
         ]
         report["difference"] = {
             "native_minus_exact": {"value": _claim(native_change - exact, MEASURED),

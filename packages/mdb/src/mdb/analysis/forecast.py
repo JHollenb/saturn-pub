@@ -142,11 +142,17 @@ class RowModel:
     (value, bound)`` applied to it (the edits of ``propagate``; bound None when unknown).
     ``past(layer, kind)`` supplies the earlier rows' cache ``(value, bound)`` (default: the run's
     cache, bound 0) and ``token()`` the row's token id ``(id, reason)`` (reason None when the id
-    is certain; default: the run's token list). With ``bounds=True`` each value carries a
-    per-element rounding bound (``bound(label)``; None with a reason in ``unbounded`` when it
-    cannot be stated). Values use flat shapes: ``(d,)`` for residual ports, ``(H, d_h)`` for
-    ``qn``/``qr``, ``(H_KV, T, d_h)`` for ``kr``, ``(H, T)`` for ``s``/``p``, ``()`` for
-    ``sample``.
+    is certain; default: the run's token list). Both are generator functions: a value of
+    another row model is read with ``yield from model.need(label)``. With ``bounds=True`` each
+    value carries a per-element rounding bound (``bound(label)``; None with a reason in
+    ``unbounded`` when it cannot be stated). Values use flat shapes: ``(d,)`` for residual
+    ports, ``(H, d_h)`` for ``qn``/``qr``, ``(H_KV, T, d_h)`` for ``kr``, ``(H, T)`` for
+    ``s``/``p``, ``()`` for ``sample``.
+
+    Evaluation is iterative: every step is a generator that yields the ``(model, label)`` it
+    needs, and ``get`` runs them from one explicit stack, in the order a recursive evaluation
+    would. A chain of row models (``propagate``: each row reads the earlier rows' cache and
+    sampled token) therefore has no depth limit.
     """
 
     def __init__(self, run: Any, row: int, known: Callable[[str], Any], *, bounds: bool = True,
@@ -207,24 +213,33 @@ class RowModel:
 
     def get(self, label: str) -> Any:
         if label not in self.values:
-            self._compute(label)
+            _evaluate(self, label)
         return self.values[label]
 
     def bound(self, label: str) -> Any:
         self.get(label)
         return self.bnds.get(label)
 
-    def _compute(self, label: str) -> None:
+    def need(self, label: str) -> Any:
+        """Generator: ``(value, bound)`` of ``label`` once it is computed (``yield from`` it in
+        a step, a ``past`` or a ``token``; the driver computes the stop first when needed)."""
+        yield self, label
+        return self.values[label], self.bnds.get(label) if self.bounds else None
+
+    def _compute(self, label: str) -> Any:
         torch = _torch()
         native = self.known(label)
         if native is not None:
-            value = f64(native).reshape(self.shape(label)).clone()
+            value = f64(native)
+            if value is native:     # already float64 on the CPU: keep the capture unshared
+                value = value.clone()
+            value = value.reshape(self.shape(label))
             self.captured[label] = native
             bound = torch.zeros_like(value) if self.bounds else None
         else:
             if label == "start":
                 raise Refusal(NO_IDENTITY["start"])
-            value, bound = self._step(label)
+            value, bound = yield from self._step(label)
             self.computed.append(label)
             if bound is not None and not bool((torch.isfinite(bound) & (bound >= 0)).all()):
                 bound = None
@@ -243,10 +258,6 @@ class RowModel:
                 (self.unbounded[p] for p in self.producers(label) if p in self.unbounded),
                 "no rounding bound for this step")
 
-    def _in(self, label: str) -> tuple[Any, Any]:
-        value = self.get(label)
-        return value, self.bnds.get(label) if self.bounds else None
-
     def _weight(self, module: Any, name: str = "weight") -> Any:
         """A float64 copy of one weight, for the caller's one use. Nothing is kept: every stop
         is computed once per row model, so a kept copy would only hold memory (a whole layer is
@@ -257,11 +268,12 @@ class RowModel:
     def _layer(self, layer: int) -> Any:
         return getattr(self.adapter.backbone, self.adapter.spec.layers)[layer]
 
-    def _past(self, layer: int, kind: str) -> tuple[Any, Any]:
-        """``(value, bound)`` of cache rows ``0..row-1`` of ``layer`` (post-RoPE keys or values),
-        ``(H_KV, row, d_h)``: from ``past`` when given, else as captured (bound 0)."""
+    def _past(self, layer: int, kind: str) -> Any:
+        """Generator: ``(value, bound)`` of cache rows ``0..row-1`` of ``layer`` (post-RoPE keys
+        or values), ``(H_KV, row, d_h)``: from ``past`` when given, else as captured (bound
+        0)."""
         if self.past is not None:
-            value, bound = self.past(layer, kind)
+            value, bound = yield from self.past(layer, kind)
             return value, bound if self.bounds else None
         name = f"cache.L{layer}.{kind}"
         if name not in self.cache_reads:
@@ -271,14 +283,15 @@ class RowModel:
 
     # --- steps ----------------------------------------------------------------------------
 
-    def _step(self, label: str) -> tuple[Any, Any]:
+    def _step(self, label: str) -> Any:
+        """Generator: ``(value, bound)`` of ``label`` from the identity on its producers."""
         torch = _torch()
         if label == "emb":
             embed = getattr(self.adapter.backbone, self.adapter.spec.embed)
             if self.token is None:
                 token, doubt = int(self.run.read(f"t{self.row}.start").reshape(-1)[-1]), None
             else:
-                token, doubt = self.token()
+                token, doubt = yield from self.token()
             value = f64(embed.weight[token])  # the one row, not the vocabulary
             if doubt is not None:
                 self.unbounded["emb"] = doubt
@@ -286,79 +299,93 @@ class RowModel:
             return value, torch.zeros_like(value) if self.bounds else None
         if label == "fn":
             norm = getattr(self.adapter.backbone, self.adapter.spec.final_norm)
-            return self._rms(*self._in(f"L{self.layers - 1}.h_out"), norm, self.adapter.hidden_size)
+            x, bx = yield from self.need(f"L{self.layers - 1}.h_out")
+            return self._rms(x, bx, norm, self.adapter.hidden_size)
         if label == "logits":
             refusal = _readout_refusal(self.config)
             if refusal is not None:
                 raise Refusal(refusal)
             head = self.adapter.model.lm_head
-            return self._affine(*self._in("fn"), head)
+            x, bx = yield from self.need("fn")
+            return self._affine(x, bx, head)
         if label == "sample":
-            return self._argmax(*self._in("logits"))
+            x, bx = yield from self.need("logits")
+            return self._argmax(x, bx)
         layer, port = _split(label)
         module = self._layer(layer)
         attn, mlp = module.self_attn, module.mlp
         here = f"L{layer}."
         if port == "h":
-            return self._in(self.producers(label)[0])
+            return (yield from self.need(self.producers(label)[0]))
         if port == "a":
-            return self._rms(*self._in(here + "h"), module.input_layernorm,
-                             self.adapter.hidden_size)
+            x, bx = yield from self.need(here + "h")
+            return self._rms(x, bx, module.input_layernorm, self.adapter.hidden_size)
         if port in ("q", "k", "v"):
-            return self._affine(*self._in(here + "a"), getattr(attn, f"{port}_proj"))
+            x, bx = yield from self.need(here + "a")
+            return self._affine(x, bx, getattr(attn, f"{port}_proj"))
         if port in ("qn", "kn"):
             source = getattr(attn, f"{port[0]}_norm")
-            value, bound = self._in(here + port[0])
+            value, bound = yield from self.need(here + port[0])
             rows = self.heads if port == "qn" else self.kv_heads
             shaped = None if bound is None else bound.reshape(rows, self.head_dim)
             return self._rms(value.reshape(rows, self.head_dim), shaped, source, self.head_dim)
         if port == "qr":
             source = here + ("qn" if "qn" in self.program.names else "q")
-            value, bound = self._in(source)
+            value, bound = yield from self.need(source)
             return self._rope(value.reshape(self.heads, self.head_dim),
                               None if bound is None else bound.reshape(self.heads, self.head_dim))
         if port == "kr":
             source = here + ("kn" if "kn" in self.program.names else "k")
-            value, bound = self._in(source)
+            value, bound = yield from self.need(source)
             shape = (self.kv_heads, self.head_dim)
             new, new_bound = self._rope(value.reshape(shape),
                                         None if bound is None else bound.reshape(shape))
-            past, past_bound = self._past(layer, "k")
+            past, past_bound = yield from self._past(layer, "k")
             out = torch.cat((past, new.unsqueeze(1)), dim=1)
             if new_bound is None or past_bound is None:
                 return out, None
             return out, torch.cat((past_bound, new_bound.unsqueeze(1)), dim=1)
         if port == "s":
             self._attention_premises()
-            return self._scores(*self._in(here + "qr"), *self._in(here + "kr"),
-                                float(attn.scaling))
+            q, bq = yield from self.need(here + "qr")
+            k, bk = yield from self.need(here + "kr")
+            return self._scores(q, bq, k, bk, float(attn.scaling))
         if port == "p":
             self._attention_premises()
-            return self._softmax(*self._in(here + "s"))
+            s, bs = yield from self.need(here + "s")
+            return self._softmax(s, bs)
         if port == "A":
-            v, bv = self._in(here + "v")
-            past, past_bound = self._past(layer, "v")
+            v, bv = yield from self.need(here + "v")
+            past, past_bound = yield from self._past(layer, "v")
             values = torch.cat((past, v.reshape(self.kv_heads, 1, self.head_dim)), dim=1)
             bound = None if bv is None or past_bound is None else torch.cat(
                 (past_bound, bv.reshape(self.kv_heads, 1, self.head_dim)), dim=1)
-            return self._transport(*self._in(here + "p"), values, bound)
+            p, bp = yield from self.need(here + "p")
+            return self._transport(p, bp, values, bound)
         if port == "o":
-            return self._affine(*self._in(here + "A"), attn.o_proj)
+            x, bx = yield from self.need(here + "A")
+            return self._affine(x, bx, attn.o_proj)
         if port in ("r", "h_out"):
             left, right = ("h", "o") if port == "r" else ("r", "m")
-            return self._add(*self._in(here + left), *self._in(here + right))
+            x, bx = yield from self.need(here + left)
+            y, by = yield from self.need(here + right)
+            return self._add(x, bx, y, by)
         if port == "n":
-            return self._rms(*self._in(here + "r"), module.post_attention_layernorm,
-                             self.adapter.hidden_size)
+            x, bx = yield from self.need(here + "r")
+            return self._rms(x, bx, module.post_attention_layernorm, self.adapter.hidden_size)
         if port in ("g", "u"):
-            return self._affine(*self._in(here + "n"),
-                                mlp.gate_proj if port == "g" else mlp.up_proj)
+            x, bx = yield from self.need(here + "n")
+            return self._affine(x, bx, mlp.gate_proj if port == "g" else mlp.up_proj)
         if port == "sg":
-            return self._silu(*self._in(here + "g"))
+            x, bx = yield from self.need(here + "g")
+            return self._silu(x, bx)
         if port == "f":
-            return self._product(*self._in(here + "sg"), *self._in(here + "u"))
+            x, bx = yield from self.need(here + "sg")
+            y, by = yield from self.need(here + "u")
+            return self._product(x, bx, y, by)
         if port == "m":
-            return self._affine(*self._in(here + "f"), mlp.down_proj)
+            x, bx = yield from self.need(here + "f")
+            return self._affine(x, bx, mlp.down_proj)
         raise Refusal(f"no identity for port {port!r}")
 
     def _attention_premises(self) -> None:
@@ -548,6 +575,20 @@ class RowModel:
         return value, None
 
 
+def _evaluate(model: RowModel, label: str) -> None:
+    """Compute ``model``'s stop ``label`` and every stop it needs, in any row model, from one
+    explicit stack of step generators (no recursion: a chain of rows has no depth limit)."""
+    stack = [model._compute(label)]
+    while stack:
+        try:
+            owner, wanted = stack[-1].send(None)
+        except StopIteration:
+            stack.pop()
+            continue
+        if wanted not in owner.values:
+            stack.append(owner._compute(wanted))
+
+
 def _split(label: str) -> tuple[int, str]:
     layer, port = label.split(".", 1)
     return int(layer[1:]), port
@@ -690,8 +731,9 @@ def seal(run: Any, target: str | Margin | None = None) -> dict[str, Any]:
                          model_identity=run.adapter.model_identity,
                          execution=dict(run.adapter.execution), authority=EXACT, body=body,
                          pointers=pointers)
-    entry = Forecast(number, record, label, margin, key, value.detach().clone(),
-                     None if bound is None else bound.detach().clone(),
+    # the row model is dropped on return: the entry owns these tensors, no copy needed
+    entry = Forecast(number, record, label, margin, key, value.detach(),
+                     None if bound is None else bound.detach(),
                      frozenset(_edit_key(e) for e in body["edits_at_seal"]))
     entries[number] = entry
     return view(entry)
@@ -814,8 +856,8 @@ def _native(run: Any, entry: Forecast) -> tuple[Any, dict[str, Any]]:
     value = run.read(stop)
     info = run.read_info(stop)
     if entry.margin is not None:
-        flat = f64(value).reshape(-1)
-        return flat[entry.margin.a] - flat[entry.margin.b], info
+        flat = value.reshape(-1)
+        return f64(flat[entry.margin.a]) - f64(flat[entry.margin.b]), info
     if entry.label == "sample":
         return f64(value).reshape(()), info
     return f64(value).reshape(entry.predicted.shape), info

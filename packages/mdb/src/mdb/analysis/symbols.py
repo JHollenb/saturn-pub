@@ -342,10 +342,11 @@ class _Grid:
         self.missing: list[str] = []
         self.owners: list[str] = []
         self.deviation = self.bound = self.gap = self.tolerance = 0.0
+        weights: dict[int, Any] = {}    # float64 o_proj by layer, cast once for all rows
         for j in rows:
             for layer in range(layers):
                 try:
-                    mix = head_mix(run, j, layer)
+                    mix = head_mix(run, j, layer, weights)
                 except Refusal as error:
                     self.missing.append(f"t{j}.L{layer}: {error}")
                     continue

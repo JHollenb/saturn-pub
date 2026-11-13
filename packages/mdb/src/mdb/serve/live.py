@@ -26,6 +26,7 @@ import ctypes
 import io
 import queue
 import threading
+import traceback
 from concurrent.futures import Future
 from dataclasses import dataclass
 from typing import Any
@@ -80,6 +81,21 @@ def stopped_by(result: dict[str, Any]) -> str | None:
     return reason if isinstance(reason, str) else None
 
 
+def _release_frames(error: BaseException) -> None:
+    """Clear the locals of the finished frames in the tracebacks of ``error`` and of the
+    exceptions it chains, so a failed analysis (its row models, its float64 weights) is not
+    kept alive by the exception handed to the waiting request. The traceback's file and line
+    entries stay."""
+    todo, seen = [error], set()
+    while todo:
+        item = todo.pop()
+        if item is None or id(item) in seen:
+            continue
+        seen.add(id(item))
+        traceback.clear_frames(item.__traceback__)
+        todo += [item.__cause__, item.__context__]
+
+
 class LiveSession:
     """One attached debugger (``mdb.attach(..., project=)``) and the worker that owns it."""
 
@@ -131,9 +147,12 @@ class LiveSession:
             with self._lock:
                 self._pending -= 1
             if isinstance(value, BaseException):
+                _release_frames(value)
                 job.future.set_exception(value)
             else:
                 job.future.set_result(value)
+            # the worker waits for the next job holding neither this one nor its result
+            del job, value
 
     def _attempt(self, job: _Job):
         """Run one job's ``fn``. A ``KeyboardInterrupt`` that fires inside ``fn`` gives

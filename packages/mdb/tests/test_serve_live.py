@@ -10,9 +10,11 @@ durable checkpoints read back by a recorded-mode app, and the events socket.
 from __future__ import annotations
 
 import asyncio
+import gc
 import json
 import threading
 import time
+import weakref
 
 import pytest
 
@@ -773,6 +775,37 @@ def test_interrupt_cancels_every_queued_job_and_says_how_many(live):
         queued[2].result(timeout=10)
     assert live.ctx.run.where == where and live.ctx.run.edits == []  # nothing ran
     assert _op(c, sid, "step").json()["state"] == "resolved"  # later work runs
+
+
+class _Analysis:
+    """Stands in for what an op builds (row models, float64 weights)."""
+
+
+def test_the_worker_keeps_no_finished_or_failed_job_alive(live):
+    built = []
+
+    def fail():
+        work = _Analysis()
+        built.append(weakref.ref(work))
+        raise ValueError("the analysis failed")
+
+    def succeed():
+        work = _Analysis()
+        built.append(weakref.ref(work))
+        return work
+
+    failed = live.call(fail)
+    assert isinstance(failed.exception(timeout=10), ValueError)   # its holder keeps the error
+    done = live.call(succeed)
+    assert isinstance(done.result(timeout=10), _Analysis)
+    del done
+    deadline = time.monotonic() + 5
+    while any(ref() is not None for ref in built) and time.monotonic() < deadline:
+        gc.collect()
+        time.sleep(0.01)
+    # the worker, now waiting, holds neither the last result nor the failed job's frames
+    assert [ref() for ref in built] == [None, None]
+    assert "the analysis failed" in str(failed.exception())
 
 
 @pytest.mark.parametrize("site,status", [("cross-site", 403), ("same-site", 403),

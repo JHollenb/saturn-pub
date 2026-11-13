@@ -79,13 +79,13 @@ def consumer_stop(run: Any, consumer: Any) -> str:
 
 
 def consumer_value(consumer: Any, value: Any) -> Any:
-    """The consumer's float64 value from the tensor read at its stop."""
-    flat = f64(value).reshape(-1)
+    """The consumer's float64 value from the tensor read at its stop (index, then cast)."""
+    flat = value.reshape(-1)
     if isinstance(consumer, Margin):
-        return flat[consumer.a] - flat[consumer.b]
+        return f64(flat[consumer.a]) - f64(flat[consumer.b])
     if isinstance(consumer, Logit):
-        return flat[consumer.i]
-    return flat
+        return f64(flat[consumer.i])
+    return f64(flat)
 
 
 def _read(run: Any, consumer: Any) -> tuple[Any, str]:

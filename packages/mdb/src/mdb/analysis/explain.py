@@ -16,7 +16,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from . import finite
-from .finite import BOUND, EXACT, LOCAL, MEASURED, SUPPLIED, f64, num
+from .finite import BOUND, EXACT, LOCAL, MEASURED, SUPPLIED, f64, f64_at, num
 
 _RUN_STOPS = ("logits", "sample")
 # Edits at these ports change the residual stream at a layer boundary; explain_margin books them as
@@ -338,12 +338,12 @@ def _head_bound(caps: RowCapture, weight: Any, bias: Any, a: int, b: int) -> tup
     x = f64(caps.normed).reshape(-1)
     d = x.numel()
     gamma = d * u / (1.0 - d * u)
-    logits = f64(caps.logits).reshape(-1)
+    logits = caps.logits.reshape(-1)
     rounds = (1 if sixteen else 0) + (1 if bias is not None else 0)
     spacing = float(torch.finfo(dtype).eps)
     total = 0.0
     for j in (a, b):
-        total += gamma * float((f64(weight)[j] * x).abs().sum())
+        total += gamma * float((f64_at(weight, j) * x).abs().sum())   # one row, not the head
         total += rounds * 0.5 * _ulp(float(logits[j]), spacing)
     premises = ["round-to-nearest", f"logit dtype {dtype}",
                 "matmul accumulated in " + ("float32 (16-bit inputs)" if sixteen else str(dtype)),
@@ -524,8 +524,8 @@ def explain_margin(source: Any, a: int, b: int, *, first_order: bool = False) ->
     e_total = sum(sum(item.values()) for item in rounding) + removed
     components["residual_rounding"] = e_total
     h_last = _vec(caps.ports[-1]["h_out"])
-    logits = f64(caps.logits).reshape(-1)
-    native_margin = logits[a] - logits[b]
+    logits = caps.logits.reshape(-1)
+    native_margin = f64(logits[a]) - f64(logits[b])
     result = finite.readout_margin(h_last, weight, gamma, eps, a, b, components=components,
                                    native_margin=native_margin,
                                    native_normed=_vec(caps.normed), out_bias=head_bias)
@@ -602,7 +602,7 @@ def explain_margin(source: Any, a: int, b: int, *, first_order: bool = False) ->
         for item in rounding
     ]
     # rounding bounds (see the docstring)
-    diff = f64(weight)[a] - f64(weight)[b]
+    diff = f64_at(weight, a) - f64_at(weight, b)
     stream_dtype = caps.ports[0]["h"].dtype
     bound_rr = float(rho) * _stream_rounding_bound(caps, originals, c)
     head_bound, head_premises = _head_bound(caps, weight, head_bias, a, b)
@@ -767,10 +767,12 @@ def _first_order(caps: RowCapture, a: int, b: int, result: Any,
     adapter = caps.adapter
     layers = len(caps.ports)
     adjoints, primals = [], []
+    # One prefill, one layer transition per layer: consumer_gradient only reads the session
+    # (a capture it does not retain and cloned reads), so it stays at the same state.
+    session = adapter.session(list(caps.tokens))
+    session.continue_()
     for layer in range(layers):
-        session = adapter.session(list(caps.tokens))
-        session.continue_()
-        for _ in range(layer):
+        if layer:
             session.continue_()
         value, grad = consumer_gradient(session, int(a), int(b))
         adjoints.append(_vec(grad))
@@ -789,7 +791,8 @@ def _first_order(caps: RowCapture, a: int, b: int, result: Any,
             float(lam_r @ components[f"L{layer}.attn"]), LOCAL, "P14")})
         rows.append({"name": f"L{layer}.mlp", "value": num(
             float(lam_out @ components[f"L{layer}.mlp"]), LOCAL, "P14")})
-    native = float(f64(caps.logits).reshape(-1)[a] - f64(caps.logits).reshape(-1)[b])
+    logits = caps.logits.reshape(-1)
+    native = float(f64(logits[a]) - f64(logits[b]))
     return {
         "state": "resolved",
         "reason": None,

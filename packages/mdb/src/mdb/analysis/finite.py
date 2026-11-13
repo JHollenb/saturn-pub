@@ -54,6 +54,15 @@ def f64(x: Any) -> Any:
     return torch.as_tensor(x, dtype=torch.float64)
 
 
+def f64_at(x: Any, index: Any) -> Any:
+    """``f64(x)[index]`` without casting the rest of ``x`` (index, then cast: the same values).
+    A Parameter is detached first, as ``f64`` detaches it."""
+    torch = _torch()
+    if isinstance(x, torch.nn.Parameter):
+        x = x.detach()
+    return f64(x[index])
+
+
 def _maxabs(x: Any) -> float:
     if x is None:
         return float("nan")
@@ -325,7 +334,7 @@ def embedding_lookup(embedding: Any, token: int, *, native: Any = None) -> Ident
     ``h_{0,t} = Emb e_{w_t}``: the selected embedding row. Port: ``L0.h``. ``embedding`` is the
     ``(V, d)`` weight of the token embedding module.
     """
-    total = f64(embedding)[int(token)]
+    total = f64_at(embedding, int(token))     # the one row, not the vocabulary
     value, dtype, scale = _native(native)
     return IdentityResult("P01", "embedding_lookup", "A", EXACT, {}, total, native=value,
                           native_dtype=dtype, native_scale=scale)
@@ -1291,8 +1300,8 @@ def readout_margin(h: Any, out_weight: Any, gamma: Any, eps: float, a: int, b: i
     and ``reference``).
     ``extras['gradient']`` is the local ``J_N(h)^T (W_a - W_b)^T`` (``derived-local``).
     """
-    h, w, gm = f64(h), f64(out_weight), f64(gamma)
-    diff = w[a] - w[b]
+    h, gm = f64(h), f64(gamma)
+    diff = f64_at(out_weight, a) - f64_at(out_weight, b)     # two rows, not the vocabulary
     c = gm * diff
     rho = _rho(h, eps)
     if components is None:
@@ -1300,7 +1309,7 @@ def readout_margin(h: Any, out_weight: Any, gamma: Any, eps: float, a: int, b: i
     else:
         terms = {name: rho * (c @ f64(xi)) for name, xi in components.items()}
         terms["unlisted"] = rho * (c @ (h - sum(f64(xi) for xi in components.values())))
-    bias = 0.0 if out_bias is None else f64(out_bias)[a] - f64(out_bias)[b]
+    bias = 0.0 if out_bias is None else f64_at(out_bias, a) - f64_at(out_bias, b)
     if out_bias is not None:
         terms["head_bias"] = bias
     reference = diff @ (rho * gm * h) + bias
@@ -1318,6 +1327,10 @@ def readout_margin(h: Any, out_weight: Any, gamma: Any, eps: float, a: int, b: i
                           extras=extras,
                           assumptions=("rho^F is a function of the full final state; it is not "
                                        "attributed to components",))
+
+
+# Rows of c_b = Gamma (W_a - W_b) formed at one time by ``winner_certificate`` (2^25 floats).
+_WINNER_CHUNK = 1 << 25
 
 
 def winner_certificate(h: Any, out_weight: Any, gamma: Any, eps: float, *,
@@ -1347,16 +1360,28 @@ def winner_certificate(h: Any, out_weight: Any, gamma: Any, eps: float, *,
     a = int(torch.argmax(logits))
     others = [i for i in range(w.shape[0]) if i != a]
     margins = logits[a] - logits[others]
-    cs = gm[None, :] * (w[a][None, :] - w[others])
-    norms = cs.norm(dim=-1)
+    dv = None if delta is None else f64(delta)
+    # c_b = Gamma (W_a - W_b) a block of rows at a time: its norms and c_b . delta, never a
+    # second (V, d) float64 matrix; the winner's own row (c_a = 0) is dropped after
+    step = max(1, _WINNER_CHUNK // int(w.shape[1]))
+    norms, steer = [], []
+    for start in range(0, int(w.shape[0]), step):
+        block = gm[None, :] * (w[a][None, :] - w[start:start + step])
+        norms.append(block.norm(dim=-1))
+        if dv is not None:
+            steer.append(block @ dv)
+        del block
+    norms = torch.cat(norms)
+    norms = torch.cat((norms[:a], norms[a + 1:]))
     usable = norms > 0
     radius = (margins[usable] / (rho * norms[usable])).min()
     extras: dict[str, Any] = {"winner": a, "unique": bool((margins > 0).all()),
                               "bias": "supplied" if b_vec is not None else
                               ("bias_free" if bias_free else "unchecked")}
-    if delta is not None:
-        dv = f64(delta)
-        extras["condition_holds"] = bool(((cs @ dv) > -margins / rho).all())
+    if dv is not None:
+        along = torch.cat(steer)
+        along = torch.cat((along[:a], along[a + 1:]))
+        extras["condition_holds"] = bool((along > -margins / rho).all())
         moved = h + dv
         after = (_rho(moved, eps) * gm * moved) @ w.T
         extras["argmax_after"] = int(torch.argmax(after if b_vec is None else after + b_vec))
@@ -1377,8 +1402,8 @@ def winner_certificate(h: Any, out_weight: Any, gamma: Any, eps: float, *,
 
 def margin_error_bound(out_weight: Any, a: int, b: int, dy: Any) -> IdentityResult:
     """P19 pairwise margin bound. Chapter 07: ``|dM| <= ||W_a - W_b|| ||delta y||`` (T, bound)."""
-    w, dv = f64(out_weight), f64(dy)
-    diff = w[a] - w[b]
+    dv = f64(dy)
+    diff = f64_at(out_weight, a) - f64_at(out_weight, b)
     return IdentityResult("P19", "margin_error_bound", "T", BOUND, {},
                           diff.norm() * dv.norm(), extras={"actual": float(diff @ dv)},
                           assumptions=("pairwise only; other competitors not covered",))

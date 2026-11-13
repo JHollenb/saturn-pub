@@ -82,7 +82,7 @@ def test_native_ablation_equals_a_fresh_committed_run_and_restores(debugger):
     retained = circuits._leaves(circuit.root)
     others = [m for g in circuits._groups(circuit.root) for m in g.members]
     for name, nodes in (("retained", retained), ("complement", others)):
-        edits = circuits._merged([e for n in nodes for e in n.edits])
+        edits = circuits._ablations(run, nodes)
         assert result[name]["measured"]["value"] == float(_fresh(debugger, edits, margin))
         assert result[name]["delta"]["authority"] == "measured"
         assert result[name]["predicted_delta"]["authority"] == "derived-local"

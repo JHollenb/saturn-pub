@@ -161,18 +161,18 @@ def readout(run: Any, consumer: Any) -> Readout:
         rho = float((h_last.pow(2).mean() + eps) ** -0.5)
         weight = adapter.model.lm_head.weight
         bias_vec = getattr(adapter.model.lm_head, "bias", None)
-        logits = f64(run.read(stop)).reshape(-1)
+        logits = run.read(stop).reshape(-1)     # two entries are read: index, then cast
         info = run.read_info(stop)
         if isinstance(consumer, Margin):
             w = f64(weight[consumer.a]) - f64(weight[consumer.b])
             bias = 0.0 if bias_vec is None else float(f64(bias_vec[consumer.a])
                                                       - f64(bias_vec[consumer.b]))
-            native = logits[consumer.a] - logits[consumer.b]
+            native = f64(logits[consumer.a]) - f64(logits[consumer.b])
             kind = "margin"
         else:
             w = f64(weight[consumer.i])
             bias = 0.0 if bias_vec is None else float(f64(bias_vec[consumer.i]))
-            native = logits[consumer.i]
+            native = f64(logits[consumer.i])
             kind = "logit"
         return Readout(kind, consumer.text, row, consumer, vector=rho * gamma * w, rho=rho,
                        bias=bias, native=native, native_authority=info["authority"],
@@ -261,9 +261,11 @@ class HeadMix:
         return out
 
 
-def head_mix(run: Any, row: int, layer: int) -> HeadMix:
+def head_mix(run: Any, row: int, layer: int, weights: dict[int, Any] | None = None) -> HeadMix:
     """The ``HeadMix`` of reader row ``row`` at ``layer``; ``Refusal`` when its ``p`` has not
-    been computed in this run."""
+    been computed in this run. ``weights``: a cache of float64 ``o_proj`` weights by layer,
+    owned by the calling verb (each layer is cast once per verb, not once per reader row, and
+    the cache is dropped when the verb returns)."""
     torch = _torch()
     adapter = run.adapter
     where = f"t{row}.L{layer}.p"
@@ -276,14 +278,19 @@ def head_mix(run: Any, row: int, layer: int) -> HeadMix:
     p = run.read(where)
     native_dtype = p.dtype
     p64 = f64(p).reshape(heads, -1)
-    cache = f64(run.read_cache(layer, "v"))[0]          # (H_KV, T_now, d_h)
+    cache = run.read_cache(layer, "v")[0]       # (H_KV, T_now, d_h): sliced, then cast
     if cache.shape[1] > row:
-        values = cache[:, : row + 1, :]
+        values = f64(cache[:, : row + 1, :])
     else:
         own = f64(run.read(f"t{row}.L{layer}.v")).reshape(kv, 1, dh)
-        values = torch.cat([cache[:, :row, :], own], 1)
+        values = torch.cat([f64(cache[:, :row, :]), own], 1)
     module = layer_module(adapter, layer).self_attn.o_proj
-    weight = f64(module.weight)                          # (d, H d_h)
+    if weights is None:
+        weight = f64(module.weight)                      # (d, H d_h)
+    else:
+        if layer not in weights:
+            weights[layer] = f64(module.weight)
+        weight = weights[layer]
     blocks = weight.reshape(weight.shape[0], heads, dh).permute(1, 0, 2)   # (H, d, d_h)
     kappa = [h // (heads // kv) for h in range(heads)]
     unit = torch.einsum("hde,hse->hsd", blocks, values[kappa])
@@ -508,17 +515,16 @@ def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: 
     entries: list[dict[str, Any]] = []
     missing: list[str] = []
     checks: list[dict[str, Any]] = []
-    tensors: dict[str, Any] = {"mixes": {}}
+    weights: dict[int, Any] = {}        # float64 o_proj by layer, for this call only
     for j in found:
         for layer in range(layers):
             if source.layers is not None and layer not in source.layers:
                 continue
             try:
-                mix = head_mix(run, j, layer)
+                mix = head_mix(run, j, layer, weights)
             except Refusal as error:
                 missing.append(f"t{j}.L{layer}: {error}")
                 continue
-            tensors["mixes"][(j, layer)] = mix
             checks.append(mix.checks())
             try:
                 reader = _consumer_for(run, consumer, j, layer)
@@ -558,6 +564,8 @@ def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: 
                                     else reader.target)
                 entry["_value"] = value
                 entries.append(entry)
+    weights.clear()
+    mix = parts = None      # the last value mix is not needed by the verdicts' whatifs
     entries.sort(key=lambda e: (-e["_rank"], e["row"], e["layer"], e["name"]))
     listed, rest = entries[:top], entries[top:]
     for entry in listed:
@@ -594,8 +602,7 @@ def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: 
         report["not_computed"] = missing[:16]
         if len(missing) > 16:
             report["not_computed_total"] = len(missing)
-    tensors["entries"] = entries
-    return Reads(report, tensors)
+    return Reads(report, {"entries": entries})
 
 
 def _omitted_sum(rest: list[dict[str, Any]], values: list[Any], consumer: Any) -> dict:
