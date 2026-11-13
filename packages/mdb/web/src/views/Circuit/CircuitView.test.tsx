@@ -7,7 +7,19 @@ import { isRec, type Rec } from '../../chrome/labelled';
 import type { CircuitEntry, Slot } from '../../state/inspect';
 import { resultOf, slotFrom } from '../../state/opFixture';
 import { CircuitView, TestResult, type CircuitViewProps } from './CircuitView';
-import { flatten, layoutCircuit, naturalKey, walk, type CircuitLayout } from './layout';
+import {
+  LABEL_W,
+  LABEL_X,
+  MIN_SCALE,
+  NODE_R,
+  ROW_H,
+  flatten,
+  layoutCircuit,
+  naturalKey,
+  scaleFor,
+  walk,
+  type CircuitLayout,
+} from './layout';
 import buildD2 from './fixtures/build_d2.json';
 import buildK1 from './fixtures/build_k1.json';
 import buildK2 from './fixtures/build_k2.json';
@@ -122,6 +134,44 @@ describe('circuit layout', () => {
       expect(after.get(key), key).toEqual(xy);
     }
     expect(sharedD).toBeGreaterThan(3);
+  });
+
+  it('reserves each label box: no two labels overlap and no edge enters a label', () => {
+    for (const fx of [buildK1, buildK2, buildD2, buildO]) {
+      const layout = layoutCircuit(bodyOf(fx), [bodyOf(fx)]);
+      const boxes = layout.placed.map((p) => ({
+        id: p.node.id,
+        x0: p.x - NODE_R,
+        x1: p.x + LABEL_X + LABEL_W,
+        y0: p.y - ROW_H / 2,
+        y1: p.y + ROW_H / 2,
+      }));
+      for (const a of boxes)
+        for (const b of boxes) {
+          if (a.id >= b.id) continue;
+          const apart = a.x1 <= b.x0 || b.x1 <= a.x0 || a.y1 <= b.y0 || b.y1 <= a.y0;
+          expect(apart, `${a.id} / ${b.id}`).toBe(true);
+        }
+      for (const e of layout.edges) {
+        // an edge runs from the end of its parent's label box to the child's node, so it spans
+        // only the gap between two columns
+        const from = e.from.x + LABEL_X + LABEL_W;
+        const to = e.to.x - NODE_R;
+        expect(to).toBeGreaterThan(from);
+        for (const b of boxes) {
+          const inGap = b.x1 <= from || b.x0 >= to;
+          expect(inGap, `edge ${e.from.node.id}->${e.to.node.id} over ${b.id}`).toBe(true);
+        }
+      }
+    }
+  });
+
+  it('fits the box down to the smallest readable scale, then scrolls', () => {
+    expect(scaleFor('fit', 800, 1000)).toBe(1);
+    expect(scaleFor('fit', 1000, 900)).toBeCloseTo(0.9);
+    expect(scaleFor('fit', 1000, 300)).toBe(MIN_SCALE);
+    expect(scaleFor(1.5, 1000, 300)).toBe(1.5);
+    expect(scaleFor('fit', 1000, null)).toBe(1);
   });
 
   it('a +N more node is one node whatever N is', () => {

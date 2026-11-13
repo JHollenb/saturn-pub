@@ -206,9 +206,7 @@ function GraphSvg({ view, cursor }: { view: GraphView; cursor: string | null }) 
               strokeDasharray={EDGE_DASH[e.type]}
               markerEnd={`url(#${hatch}-arrow)`}
             >
-              <title>
-                {e.type} {e.relation} ({e.evidence})
-              </title>
+              <title>{`${e.type} ${e.relation} (${e.evidence})`}</title>
             </line>
           );
         })}

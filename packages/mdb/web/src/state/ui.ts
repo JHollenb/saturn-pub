@@ -6,10 +6,15 @@ import { useCursor } from './cursor';
 
 export type Theme = 'system' | 'light' | 'dark';
 
+/** At this viewport width and above the live session's Inspector starts open. */
+export const INSPECTOR_OPEN_WIDTH = 1600;
+
 interface UiState {
   lens: string;
   zoom: 'slice' | 'session';
   drawerOpen: boolean;
+  /** The Inspector panel of the live session: collapsible; starts open on wide screens. */
+  inspectorOpen: boolean;
   recordKind: string | null;
   symbolsAtCursor: boolean;
   /** Pointer chosen for reduction. Valid only for the address it was chosen at: cleared on every
@@ -25,6 +30,7 @@ export const useUi = create<UiState>((set) => ({
   lens: 'cuts',
   zoom: 'slice',
   drawerOpen: true,
+  inspectorOpen: typeof window !== 'undefined' && window.innerWidth >= INSPECTOR_OPEN_WIDTH,
   recordKind: null,
   symbolsAtCursor: false,
   inspect: null,

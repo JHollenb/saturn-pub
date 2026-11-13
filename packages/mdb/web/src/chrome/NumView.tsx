@@ -59,12 +59,13 @@ export function NumView({ n, showReason = false, bare = false, compact = false }
     n.ptr && `from ${n.ptr}`,
     n.recorded_authority && `recorded as ${n.recorded_authority}`,
     note,
+    `value ${String(n.v)}`,
   ]
     .filter(Boolean)
     .join(' · ');
   return (
     <span className="num" data-ev={n.ev} title={title}>
-      {!bare && <EvidenceMark ev={n.ev} />} {text}
+      {!bare && <EvidenceMark ev={n.ev} proof={n.proof} />} {text}
       {n.unit ? <span className="faint"> {n.unit}</span> : null}
       {showReason && note && <span className="faint"> {note}</span>}
       {needsChip(n.ev) && (

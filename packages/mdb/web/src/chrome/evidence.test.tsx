@@ -132,7 +132,7 @@ describe('supplied numbers with a note', () => {
     const n = asNum(body)!;
     const html = renderToStaticMarkup(<JsonTree value={{ w: body }} />);
     expect(n.ev).toBe('supplied');
-    expect(html).toContain('title="supplied · bare float in a legacy record"');
+    expect(html).toContain('title="supplied · bare float in a legacy record · value 0.5"');
     expect(html).toContain('> bare float in a legacy record</span>');
     expect(html).toContain('<line');
   });

@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { slotOf } from '../state/inspect';
+import { formatValue } from './evidence';
 import { cellOf, magnitude, seekable, srcOf, valOf } from './labelled';
 
 describe('labelled op values', () => {
@@ -40,6 +41,17 @@ describe('labelled op values', () => {
     expect(cellOf('t3.logits')).toEqual([3, null]);
     expect(srcOf('t3.L1.p[h0,src=2]')).toBe(2);
     expect(srcOf('t3.L1.o')).toBeNull();
+  });
+});
+
+describe('the number format of the views', () => {
+  it('4 significant digits, exponent below 1e-3, a real minus sign', () => {
+    expect(formatValue(-0.114013671875)).toBe('\u22120.114');
+    expect(formatValue(0.16448974609375)).toBe('0.1645');
+    expect(formatValue(1.388e-17)).toBe('1.388e\u221217');
+    expect(formatValue(-0.00030954)).toBe('\u22123.095e\u22124');
+    expect(formatValue(-3)).toBe('\u22123');
+    expect(formatValue(12.5)).toBe('12.5');
   });
 });
 

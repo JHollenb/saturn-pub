@@ -3,7 +3,17 @@
 import type { Ev } from '../api/types.gen';
 import { markStyle } from './evidence';
 
-export function EvidenceMark({ ev, size = 10 }: { ev: Ev; size?: number }) {
+export function EvidenceMark({
+  ev,
+  size = 10,
+  proof = null,
+}: {
+  ev: Ev;
+  size?: number;
+  /** The proof id behind a derived value: named in the accessible label and the tooltip. */
+  proof?: string | null;
+}) {
+  const label = `${ev}${proof ? ` · proof ${proof}` : ''}`;
   const style = markStyle(ev);
   const r = size / 2 - 1;
   const c = size / 2;
@@ -13,11 +23,11 @@ export function EvidenceMark({ ev, size = 10 }: { ev: Ev; size?: number }) {
       height={size}
       viewBox={`0 0 ${size} ${size}`}
       role="img"
-      aria-label={`${ev} evidence`}
+      aria-label={`${label} evidence`}
       data-ev={ev}
       style={{ verticalAlign: 'middle', flex: 'none' }}
     >
-      <title>{ev}</title>
+      <title>{label}</title>
       {style === 'solid' && <circle cx={c} cy={c} r={r} fill="currentColor" />}
       {style === 'hollow' && (
         <circle cx={c} cy={c} r={r} fill="none" stroke="currentColor" strokeWidth={1.4} />

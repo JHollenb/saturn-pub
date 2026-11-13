@@ -304,9 +304,9 @@ export function CompareResult({ result }: { result: Rec }) {
         <thead>
           <tr>
             <th>arm</th>
-            <th>consumer (native)</th>
-            <th>effect vs base</th>
-            <th>moves</th>
+            <th className="n">consumer (native)</th>
+            <th className="n">effect vs base</th>
+            <th className="n">moves</th>
           </tr>
         </thead>
         <tbody>
@@ -316,14 +316,14 @@ export function CompareResult({ result }: { result: Rec }) {
             return (
               <tr key={arm} data-arm={arm}>
                 <td>{arm}</td>
-                <td>
+                <td className="n">
                   {refusedArm ? (
                     <span className="faint">not run (see interaction)</span>
                   ) : (
                     <OpValue value={at(m, 'value') ?? m} what={`${arm} value`} />
                   )}
                 </td>
-                <td>
+                <td className="n">
                   {arm === 'base' ? (
                     <span className="faint">—</span>
                   ) : refusedArm && effects[arm] === undefined ? (
@@ -332,7 +332,7 @@ export function CompareResult({ result }: { result: Rec }) {
                     <OpValue value={effects[arm]} what={`${arm} effect`} />
                   )}
                 </td>
-                <td className="faint" title={strs(at(m, 'moves')).join('; ')}>
+                <td className="n faint" title={strs(at(m, 'moves')).join('; ')}>
                   {strs(at(m, 'moves')).length || ''}
                 </td>
               </tr>
@@ -402,9 +402,9 @@ function Forecasts({ forecast, forecasts, where, busy, act }: PredictProps) {
                 <th>id</th>
                 <th>target</th>
                 <th>sealed at</th>
-                <th>predicted</th>
-                <th>native</th>
-                <th>residual ≤ bound</th>
+                <th className="n">predicted</th>
+                <th className="n">native</th>
+                <th className="n">residual ≤ bound</th>
                 <th>verdict</th>
               </tr>
             </thead>
@@ -431,17 +431,17 @@ function ForecastRow({ f, busy, act }: { f: LiveForecast; busy: boolean; act: Pr
       </td>
       <td className="mono">{f.target}</td>
       <td className="mono faint">{f.sealed_at}</td>
-      <td>
+      <td className="n">
         <OpValue value={f.predicted} what="predicted" compact />
       </td>
-      <td>
+      <td className="n">
         {v && v.native !== undefined ? (
           <OpValue value={v.native} what="native" compact />
         ) : (
           <span className="faint">not measured</span>
         )}
       </td>
-      <td>
+      <td className="n">
         {v && v.residual_max_abs !== undefined ? (
           <>
             <OpValue value={v.residual_max_abs} what="residual" compact /> ≤{' '}

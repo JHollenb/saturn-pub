@@ -12,10 +12,14 @@ import { at, int, isRec, seekable, srcOf, str, strs, valOf, type Rec } from '../
 import type { CircuitEntry, FocusRead, Slot } from '../../state/inspect';
 import { SlotState } from '../Live/SlotState';
 import {
-  COL_W,
+  LABEL_W,
+  LABEL_X,
+  MIN_SCALE,
   NODE_R,
+  ROW_H,
   familyOf,
   layoutCircuit,
+  scaleFor,
   walk,
   type CircuitLayout,
   type Placed,
@@ -317,14 +321,37 @@ function Graph({
   const ablated = useMemo(() => ablatedIds(entry), [entry]);
   const reads = readNodes(entry, focus, layout);
   const box = useRef<HTMLDivElement>(null);
+  const [boxWidth, setBoxWidth] = useState<number | null>(null);
+  const [zoom, setZoom] = useState<'fit' | number>('fit');
+  useEffect(() => {
+    const el = box.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const watch = new ResizeObserver(() => setBoxWidth(el.clientWidth));
+    watch.observe(el);
+    setBoxWidth(el.clientWidth);
+    return () => watch.disconnect();
+  }, []);
+  const scale = scaleFor(zoom, layout.width, boxWidth);
+  const width = Math.ceil(layout.width * scale);
+  const height = Math.ceil(layout.height * scale);
+  const overflows = boxWidth !== null && width > boxWidth + 1;
   const current = layout.placed.find((p) => p.node.id === node) ?? null;
   useEffect(() => {
-    // keep the walked node in view
-    if (!current || !box.current || typeof box.current.scrollTo !== 'function') return;
+    // the keyboard walk keeps the walked node (and its label) in view
     const el = box.current;
-    if (current.x < el.scrollLeft || current.x > el.scrollLeft + el.clientWidth - 40)
-      el.scrollTo({ left: Math.max(0, current.x - 40) });
-  }, [current]);
+    if (!current || !el || typeof el.scrollTo !== 'function') return;
+    const left = (current.x - NODE_R - 8) * scale;
+    const right = (current.x + LABEL_X + LABEL_W + 8) * scale;
+    const top = (current.y - ROW_H) * scale;
+    const bottom = (current.y + ROW_H) * scale;
+    let x = el.scrollLeft;
+    let y = el.scrollTop;
+    if (left < x) x = left;
+    else if (right > x + el.clientWidth) x = right - el.clientWidth;
+    if (top < y) y = top;
+    else if (bottom > y + el.clientHeight) y = bottom - el.clientHeight;
+    if (x !== el.scrollLeft || y !== el.scrollTop) el.scrollTo({ left: Math.max(0, x), top: Math.max(0, y) });
+  }, [current, scale]);
   const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
     const key = KEYS[e.key];
     if (key) {
@@ -338,11 +365,38 @@ function Graph({
       act.node(null);
     }
   };
+  const step = (by: number) =>
+    setZoom(Math.round(Math.max(0.4, Math.min(2, scale + by)) * 10) / 10);
   return (
     <div className="circuit-graph-wrap">
+      <div className="circuit-zoom" role="group" aria-label="graph zoom">
+        <button type="button" aria-pressed={zoom === 'fit'} onClick={() => setZoom('fit')}>
+          fit
+        </button>
+        <button type="button" onClick={() => step(-0.1)} aria-label="zoom out">
+          −
+        </button>
+        <button type="button" onClick={() => step(0.1)} aria-label="zoom in">
+          +
+        </button>
+        <button type="button" aria-pressed={zoom === 1} onClick={() => setZoom(1)}>
+          100%
+        </button>
+        <span className="faint" data-testid="graph-scale">
+          {Math.round(scale * 100)}%
+          {zoom === 'fit' && scale <= MIN_SCALE && overflows
+            ? ` (smallest readable scale; the graph is wider than the pane)`
+            : ''}
+        </span>
+        {overflows && (
+          <span className="scroll-cue" data-testid="graph-scroll-cue">
+            scroll sideways for more columns →
+          </span>
+        )}
+      </div>
       <div
         ref={box}
-        className="circuit-graph"
+        className={overflows ? 'circuit-graph circuit-graph-overflow' : 'circuit-graph'}
         tabIndex={0}
         data-own-keys=""
         role="tree"
@@ -355,8 +409,9 @@ function Graph({
         data-testid="circuit-graph"
       >
         <svg
-          width={layout.width + COL_W}
-          height={layout.height}
+          width={width}
+          height={height}
+          viewBox={`0 0 ${layout.width} ${layout.height}`}
           role="presentation"
           style={{ display: 'block' }}
         >
@@ -394,7 +449,9 @@ function ablatedIds(entry: CircuitEntry): Map<string, string> {
 }
 
 function EdgeLine({ e }: { e: CircuitLayout['edges'][number] }) {
-  const x1 = e.from.x + NODE_R;
+  // an edge leaves its parent from the end of the parent's reserved label box, so it never
+  // crosses a label
+  const x1 = e.from.x + LABEL_X + LABEL_W;
   const x2 = e.to.x - NODE_R;
   const mid = (x1 + x2) / 2;
   const d = `M${x1},${e.from.y} C${mid},${e.from.y} ${mid},${e.to.y} ${x2},${e.to.y}`;
@@ -476,6 +533,19 @@ function NodeMark({
           strokeDasharray={ablated === 'complement' && !read ? '2 2' : undefined}
         />
       )}
+      {node.children.length > 0 && (
+        // the node's label box is part of its edge: a faint rule from the node to where its
+        // edges leave
+        <line
+          x1={x + NODE_R}
+          x2={x + LABEL_X + LABEL_W}
+          y1={y}
+          y2={y}
+          stroke="var(--ink-3)"
+          strokeWidth={1}
+          opacity={0.45}
+        />
+      )}
       {node.kind === 'consumer' ? (
         <rect x={x - NODE_R} y={y - NODE_R} width={2 * NODE_R} height={2 * NODE_R} {...common} />
       ) : node.kind === 'more' ? (
@@ -496,7 +566,7 @@ function NodeMark({
         <circle cx={x} cy={y} r={NODE_R} {...common} />
       )}
       <text
-        x={x + NODE_R + 4}
+        x={x + LABEL_X}
         y={y - 3}
         fontSize={10}
         fill="var(--ink)"
@@ -505,11 +575,11 @@ function NodeMark({
         paintOrder="stroke"
       >
         {p.label}
-        {ablated === 'retained' ? ' ✕R' : ablated === 'complement' ? ' ✕C' : ablated ? ' (excluded)' : ''}
       </text>
-      <foreignObject x={x + NODE_R + 2} y={y - 1} width={COL_W - NODE_R - 8} height={15}>
+      <foreignObject x={x + LABEL_X - 2} y={y} width={LABEL_W} height={14}>
         <span className="cnode-value">
           <OpValue value={node.value} what="value" compact showReason={false} />
+          {ablated === 'retained' ? ' ✕R' : ablated === 'complement' ? ' ✕C' : ablated ? ' excl.' : ''}
         </span>
       </foreignObject>
     </g>
@@ -644,10 +714,10 @@ export function TestResult({ test }: { test: Rec }) {
           <thead>
             <tr>
               <th>ablate</th>
-              <th>nodes</th>
-              <th>predicted Δ</th>
-              <th>measured Δ</th>
-              <th>consumer after</th>
+              <th className="n">nodes</th>
+              <th className="n">predicted Δ</th>
+              <th className="n">measured Δ</th>
+              <th className="n">consumer after</th>
               <th>edits</th>
             </tr>
           </thead>
@@ -667,17 +737,17 @@ export function TestResult({ test }: { test: Rec }) {
               return (
                 <tr key={set} data-set={set}>
                   <td>{set}</td>
-                  <td>{int(s.count) !== null ? <Count n={int(s.count)!} /> : '?'}</td>
-                  <td title={str(s.prediction) ?? undefined}>
+                  <td className="n">{int(s.count) !== null ? <Count n={int(s.count)!} /> : '?'}</td>
+                  <td className="n" title={str(s.prediction) ?? undefined}>
                     <OpValue value={s.predicted_delta} what="predicted_delta" />
                   </td>
-                  <td>
+                  <td className="n">
                     <OpValue value={s.delta} what="delta" />
                   </td>
-                  <td>
+                  <td className="n">
                     <OpValue value={s.measured} what="measured" />
                   </td>
-                  <td className="mono faint">{strs(s.edits).join(', ')}</td>
+                  <td className="mono faint edits">{strs(s.edits).join(', ')}</td>
                 </tr>
               );
             })}

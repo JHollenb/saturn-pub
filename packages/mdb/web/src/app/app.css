@@ -477,7 +477,7 @@
 }
 
 .symbols-table {
-  min-width: 56em;
+  min-width: 40em;
 }
 
 .symbols-table td {
@@ -489,19 +489,7 @@
 }
 
 .site {
-  display: block;
-}
-
-.readers {
-  list-style: none;
-  margin: 0 0 4px;
-  padding: 0;
-  min-width: 26em;
-}
-
-.readers li {
-  white-space: normal;
-  margin-bottom: 2px;
+  display: inline;
 }
 
 .lifetime {
@@ -661,4 +649,263 @@
 .arch {
   grid-template-columns: minmax(0, 1fr);
   min-width: 0;
+}
+
+/* Authority: the mark beside each number carries it; the spelled-out chip is shown only when the
+   view's "show labels" is on (the label and proof are always in the tooltip and aria-label). */
+.labels-off .num > .ev-chip {
+  display: none;
+}
+
+.view-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 10px;
+  align-items: center;
+  font-size: 11px;
+}
+
+.view-legend-toggle {
+  margin-left: auto;
+}
+
+/* Numbers in table columns: right-aligned so a column compares by eye. */
+td.n,
+th.n {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* The live session: the Live pane takes the width; no recorded Symbols list; the Inspector is a
+   collapsible panel on the right; the Records drawer is a collapsed bar at the bottom. */
+.app.app-live {
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'header header'
+    'banner banner'
+    'centre right'
+    'bottom bottom';
+}
+
+.app-live .app-right {
+  width: min(360px, 32vw);
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 4px;
+  align-content: start;
+}
+
+.app-live .app-right.app-right-closed {
+  width: auto;
+}
+
+.inspector-panel {
+  display: grid;
+  min-height: 0;
+}
+
+.app-right-closed .inspector-toggle {
+  writing-mode: vertical-rl;
+  padding: 8px 2px;
+}
+
+.app-live .app-bottom {
+  max-height: 34vh;
+  overflow: auto;
+}
+
+@media (max-width: 900px) {
+  .app.app-live {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto;
+    grid-template-areas: 'header' 'banner' 'centre' 'right' 'bottom';
+  }
+  .app-live .app-right {
+    width: auto;
+  }
+  .app-right-closed .inspector-toggle {
+    writing-mode: horizontal-tb;
+    padding: 2px 8px;
+  }
+}
+
+/* Symbols: one compact row per binding; its sites and readers in a disclosure sub-row. */
+.symbol-row > td {
+  vertical-align: middle;
+}
+
+.symbol-row[data-open='yes'] > td {
+  border-bottom: none;
+}
+
+.symbol-name {
+  white-space: nowrap;
+}
+
+.disclosure {
+  border: none;
+  background: none;
+  padding: 0 2px;
+  color: var(--ink-2);
+  cursor: pointer;
+}
+
+.symbol-sub > td {
+  padding: 0 6px 6px 26px;
+  background: var(--panel-2);
+}
+
+.sub-line {
+  padding: 3px 0;
+}
+
+.sub-line .site {
+  margin-right: 8px;
+}
+
+.reader-lines {
+  display: grid;
+  grid-template-columns: minmax(8em, max-content) minmax(7em, max-content) minmax(8em, max-content) minmax(0, 1fr);
+  column-gap: 14px;
+  margin-bottom: 4px;
+}
+
+.reader-line {
+  display: contents;
+}
+
+.reader-line > span {
+  padding: 1px 0;
+  min-width: 0;
+}
+
+.reader-line > .n {
+  text-align: right;
+  white-space: nowrap;
+}
+
+.reader-head > span {
+  font-size: 11px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.verdict .chip {
+  margin-right: 2px;
+}
+
+.unbound-parts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 16px;
+}
+
+.unbound-part {
+  white-space: nowrap;
+}
+
+/* Circuit graph: fit / zoom controls, and a visible cue when it scrolls. */
+.circuit-zoom {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  font-size: 11px;
+  margin-bottom: 2px;
+}
+
+.circuit-zoom button {
+  padding: 0 6px;
+}
+
+.circuit-zoom button[aria-pressed='true'] {
+  outline: 1px solid var(--ink-2);
+}
+
+.scroll-cue {
+  margin-left: auto;
+  color: var(--ink-2);
+}
+
+.circuit-graph-overflow {
+  box-shadow: inset -14px 0 10px -10px var(--ink-3);
+}
+
+.test-result td.edits {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  min-width: 14em;
+}
+
+.unbound-meaning summary {
+  cursor: pointer;
+  font-size: 11px;
+}
+
+/* A number and its mark never break apart. */
+.num {
+  white-space: nowrap;
+}
+
+/* Narrow screens: a binding stacks (name; status and lifetime; its numbers, each labelled)
+   instead of scrolling sideways; a reader's verdict wraps under its numbers. */
+@media (max-width: 600px) {
+  .table-scroll > table.symbols-table {
+    min-width: 0;
+  }
+  .symbols-table thead {
+    display: none;
+  }
+  .symbols-table,
+  .symbols-table tbody,
+  .symbols-table tr,
+  .symbols-table td {
+    display: block;
+  }
+  .symbols-table tr.symbol-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px 10px;
+    align-items: center;
+    padding: 3px 0;
+    border-top: 1px solid var(--rule);
+  }
+  .symbols-table tr.symbol-row > td {
+    border: none;
+    padding: 0;
+  }
+  .symbols-table tr.symbol-row > td.symbol-name {
+    flex: 1 0 100%;
+  }
+  .symbols-table td.n[data-label]::before {
+    content: attr(data-label) ' ';
+    color: var(--ink-3);
+    font-size: 11px;
+  }
+  .symbols-table td.n:empty {
+    display: none;
+  }
+  .symbol-sub > td {
+    padding-left: 10px;
+  }
+  .reader-lines {
+    grid-template-columns: minmax(6em, 1fr) max-content max-content;
+    column-gap: 10px;
+  }
+  .reader-line > span:last-child {
+    grid-column: 1 / -1;
+    padding-left: 10px;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .reader-line .verdict {
+    white-space: normal;
+  }
+  .reader-head > span:last-child {
+    display: none;
+  }
+}
+
+/* A summary in a number column: one line per part (max_abs, norm), right-aligned. */
+td.n .op-summary > span {
+  display: block;
 }

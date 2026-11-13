@@ -11,10 +11,19 @@
 import { isRec, magnitude, recs, str, valOf, type Rec } from '../../chrome/labelled';
 
 export const PAD = 16;
-export const COL_W = 200;
-export const ROW_H = 30;
 export const NODE_R = 7;
-export const MAX_LABEL = 20;
+/** Width reserved right of each node for its two label lines (name, value): no edge or other
+ *  label enters it. Edges leave a node from the end of its label. */
+export const LABEL_W = 136;
+/** Room between one column's labels and the next column's nodes, where the edges run. */
+export const EDGE_GAP = 56;
+export const LABEL_X = NODE_R + 5;
+export const COL_W = LABEL_X + LABEL_W + EDGE_GAP + NODE_R;
+/** Two label lines (10 px name above the node's centre, 10 px value below) plus a gap. */
+export const ROW_H = 34;
+export const MAX_LABEL = 21;
+/** Smallest scale the graph is drawn at to fit its box (10 px labels at 0.8 = 8 px). */
+export const MIN_SCALE = 0.8;
 
 export interface CNode {
   id: string;
@@ -172,7 +181,7 @@ export function layoutCircuit(body: unknown, family: unknown[]): CircuitLayout {
   return {
     placed,
     edges,
-    width: PAD * 2 + (maxCol + 1) * COL_W,
+    width: PAD * 2 + maxCol * COL_W + NODE_R + LABEL_X + LABEL_W,
     height: PAD * 2 + (maxSlot + 1) * ROW_H,
   };
 }
@@ -205,4 +214,12 @@ export function familyOf<T extends { id: number; body: Rec }>(all: T[], consumer
   return all
     .filter((c) => str(c.body.consumer) === consumer)
     .sort((a, b) => a.id - b.id);
+}
+
+/** The scale the graph is drawn at: `fit` fits the box's width (never above 1, never below
+ *  MIN_SCALE: past that the graph scrolls), a number is a zoom the user chose. */
+export function scaleFor(zoom: 'fit' | number, layoutWidth: number, boxWidth: number | null): number {
+  if (zoom !== 'fit') return zoom;
+  if (boxWidth === null || boxWidth <= 0) return 1;
+  return Math.max(MIN_SCALE, Math.min(1, boxWidth / layoutWidth));
 }

@@ -197,6 +197,9 @@ function Table({
   const total = int(page.total);
   const legends = bindings.map((b) => legendOf(b.lifetime)).find(Boolean) ?? null;
   const legend = legends ?? DEFAULT_LEGEND;
+  // disclosure per binding: open for the first one, any binding whose rows hold the cursor, and
+  // the row whose verdicts were just measured, until the user toggles it
+  const [toggled, setToggled] = useState<Map<string, boolean>>(new Map());
   return (
     <div className="symbols-result">
       <div className="symbols-head">
@@ -228,29 +231,45 @@ function Table({
             <tr>
               <th>symbol</th>
               <th>status</th>
-              <th>defined at</th>
               <th title="reader rows x layers; the cursor's cell is outlined">lifetime</th>
-              <th title="attention weight its rows receive, summed over heads and layers: a sum of weights, not a probability">
+              <th
+                className="n"
+                title="attention weight its rows receive, summed over heads and layers: a sum of weights, not a probability"
+              >
                 mass (Σ heads, layers)
               </th>
-              <th>to consumer</th>
-              <th>readers: mass · exact effect · causal verdict</th>
+              <th className="n">reads</th>
+              <th className="n">mean per read</th>
+              <th className="n">to consumer</th>
             </tr>
           </thead>
           <tbody>
-            {bindings.map((b, i) => (
-              <BindingRow
-                key={str(b.symbol) ?? i}
-                b={b}
-                here={here}
-                legend={legend}
-                reads={reads}
-                consumer={consumer}
-                busy={busy}
-                act={act}
-              />
-            ))}
-            <UnboundRow unbound={result.unbound} />
+            {bindings.map((b, i) => {
+              const name = str(b.symbol) ?? `#${i}`;
+              const rows = rowsOf(b);
+              const measuredRow =
+                reads.state === 'done' ? int(at(reads.result, 'source', 'row')) : null;
+              const auto =
+                i === 0 ||
+                (here !== null && rows.includes(here[0])) ||
+                (measuredRow !== null && rows.length === 1 && rows[0] === measuredRow);
+              const open = toggled.get(name) ?? auto;
+              return (
+                <BindingRows
+                  key={name}
+                  b={b}
+                  open={open}
+                  onToggle={() => setToggled(new Map(toggled).set(name, !open))}
+                  here={here}
+                  legend={legend}
+                  reads={reads}
+                  consumer={consumer}
+                  busy={busy}
+                  act={act}
+                />
+              );
+            })}
+            <UnboundRows unbound={result.unbound} />
           </tbody>
         </table>
       </div>
@@ -282,7 +301,9 @@ function Table({
 }
 
 function ReadsState({ reads, act }: { reads: Slot; act: SymbolsActions }) {
-  if (reads.state === 'idle') return null;
+  // a finished measurement shows in its binding's reader lines; only the other states (running,
+  // refused, interrupted) need a line of their own
+  if (reads.state === 'idle' || (reads.state === 'done' && reads.partial === null)) return null;
   return (
     <div className="symbols-reads">
       verdicts: <SlotState slot={reads} what="reads" onInterrupt={act.interrupt} idle="" />
@@ -303,8 +324,25 @@ export function siteTarget(site: string): string | null {
   return null;
 }
 
-function BindingRow({
+function rowsOf(b: Rec): number[] {
+  return Array.isArray(b.rows)
+    ? (b.rows as unknown[]).filter((r): r is number => typeof r === 'number')
+    : [];
+}
+
+/** `text` shortened in the middle to `max` characters (the full text goes in a title). */
+export function midTrunc(text: string, max = 32): string {
+  if (text.length <= max) return text;
+  const keep = max - 1;
+  return `${text.slice(0, Math.ceil(keep / 2))}…${text.slice(text.length - Math.floor(keep / 2))}`;
+}
+
+/** One binding: a compact row (name, status, lifetime, mass, reads, mean per read, to-consumer)
+ *  and, behind its disclosure, the definition sites and one line per reader. */
+function BindingRows({
   b,
+  open,
+  onToggle,
   here,
   legend,
   reads,
@@ -313,6 +351,8 @@ function BindingRow({
   act,
 }: {
   b: Rec;
+  open: boolean;
+  onToggle: () => void;
   here: [number, number | null] | null;
   legend: Record<string, string>;
   reads: Slot;
@@ -321,137 +361,172 @@ function BindingRow({
   act: SymbolsActions;
 }) {
   const name = str(b.symbol) ?? '?';
-  const rows = Array.isArray(b.rows)
-    ? (b.rows as unknown[]).filter((r): r is number => typeof r === 'number')
-    : [];
+  const rows = rowsOf(b);
   const measured = rows.length === 1 ? verdicts(reads, rows[0] ?? -1, consumer) : new Map();
   const token = int(b.token);
   const status = str(b.status) ?? 'unknown';
   const readers = recs(b.readers);
   const omitted = int(b.omitted);
   const extra = Object.entries(b).filter(([k]) => !KNOWN.has(k));
+  const sub = `symbol-sub-${name.replace(/[^A-Za-z0-9_-]/g, '_')}`;
   return (
-    <tr className="symbol-row" data-symbol={name} data-status={status}>
-      <td>
-        <strong className="mono">{name}</strong>
-        {token !== null && (
-          <span className="faint">
-            {' '}
-            id <Count n={token} />
-          </span>
-        )}
-        {str(b.text) !== null && <span className="mono"> “{str(b.text)}”</span>}
-        <div className="faint">{str(b.kind) ?? ''}</div>
-        {extra.map(([k, v]) => (
-          <div key={k} className="faint" data-field={k}>
-            {k}{' '}
-            {typeof v === 'number' && Number.isInteger(v) ? <Count n={v} /> : <OpValue value={v} what={k} />}
-          </div>
-        ))}
-      </td>
-      <td>
-        <span className={`chip status-chip status-${status}`} data-testid="status-chip">
-          {status}
-        </span>
-        {Array.isArray(b.edited_by) && (
-          <div className="faint" title={JSON.stringify(b.edited_by).slice(0, 400)}>
-            by <Count n={b.edited_by.length} /> edit{b.edited_by.length === 1 ? '' : 's'}
-          </div>
-        )}
-      </td>
-      <td>
-        {strs(b.definitions).map((site) => {
-          const target = siteTarget(site);
-          return target ? (
-            <button
-              key={site}
-              type="button"
-              className="linklike mono site"
-              title={`seek ${target} (asks first: it moves the session)`}
-              onClick={() => act.seek(target, `definition ${site} of ${name}`)}
-            >
-              {site}
-            </button>
-          ) : (
-            <span key={site} className="mono site">
-              {site}
-            </span>
-          );
-        })}
-      </td>
-      <td>
-        <Lifetime lifetime={b.lifetime} here={here} legend={legend} />
-      </td>
-      <td>
-        <OpValue value={b.mass} what="mass" />
-        <div className="faint">
-          {int(b.count) !== null ? (
-            <>
-              <Count n={int(b.count)!} /> reads
-            </>
-          ) : (
-            'reads not counted'
-          )}
-          {b.mean_mass !== undefined && (
-            <>
-              {' '}
-              · mean per read <OpValue value={b.mean_mass} what="mean_mass" compact />
-            </>
-          )}
-        </div>
-      </td>
-      <td>
-        <OpValue value={b.to_consumer} what="to_consumer" />
-      </td>
-      <td>
-        <ul className="readers">
-          {readers.map((r, i) => {
-            const reader = str(r.name) ?? '?';
-            const causal = measured.get(reader);
-            return (
-              <li key={`${reader}-${i}`}>
-                <button
-                  type="button"
-                  className="linklike mono"
-                  title="open this read in the Graph view"
-                  onClick={() => act.openRead({ reader, binding: name, rows })}
-                >
-                  {reader}
-                </button>{' '}
-                <span className="faint">mass</span> <OpValue value={r.mass} what="mass" compact />{' '}
-                <span className="faint">effect</span>{' '}
-                <OpValue value={r.effect} what="effect" compact />
-                {causal ? (
-                  <Verdict causal={causal} />
-                ) : (
-                  <span className="faint" title="run measure to get a native verdict">
-                    {' '}
-                    · verdict not measured
-                  </span>
-                )}
-              </li>
-            );
-          })}
-          {omitted !== null && omitted > 0 && (
-            <li className="faint">
-              +<Count n={omitted} /> more reads
-            </li>
-          )}
-        </ul>
-        {rows.length === 1 ? (
+    <>
+      <tr className="symbol-row" data-symbol={name} data-status={status} data-open={open ? 'yes' : 'no'}>
+        <td className="symbol-name">
           <button
             type="button"
-            disabled={busy}
-            title="reads tN: measures each listed read natively (moves the session and restores it)"
-            onClick={() => act.measure(`t${rows[0]}`, consumer)}
+            className="disclosure"
+            aria-expanded={open}
+            aria-controls={sub}
+            title={open ? 'hide sites and readers' : 'show sites and readers'}
+            onClick={onToggle}
           >
-            measure verdicts
-          </button>
-        ) : (
-          <span className="faint">verdicts are measured per source row</span>
-        )}
-      </td>
-    </tr>
+            {open ? '▾' : '▸'}
+          </button>{' '}
+          <strong className="mono">{name}</strong>
+          {token !== null && (
+            <span className="faint">
+              {' '}
+              id <Count n={token} />
+            </span>
+          )}
+          {str(b.text) !== null && <span className="mono"> “{str(b.text)}”</span>}{' '}
+          <span className="faint">{str(b.kind) ?? ''}</span>
+        </td>
+        <td>
+          <span className={`chip status-chip status-${status}`} data-testid="status-chip">
+            {status}
+          </span>
+          {Array.isArray(b.edited_by) && (
+            <span className="faint" title={JSON.stringify(b.edited_by).slice(0, 400)}>
+              {' '}
+              by <Count n={b.edited_by.length} /> edit{b.edited_by.length === 1 ? '' : 's'}
+            </span>
+          )}
+        </td>
+        <td>
+          <Lifetime lifetime={b.lifetime} here={here} legend={legend} />
+        </td>
+        <td className="n" data-label="mass">
+          <OpValue value={b.mass} what="mass" />
+        </td>
+        <td className="n" data-label="reads">
+          {int(b.count) !== null ? <Count n={int(b.count)!} /> : <span className="faint">—</span>}
+        </td>
+        <td className="n" data-label="mean per read">
+          {b.mean_mass !== undefined ? (
+            <OpValue value={b.mean_mass} what="mean_mass" />
+          ) : (
+            <span className="faint">—</span>
+          )}
+        </td>
+        <td className="n" data-label="to consumer">
+          <OpValue value={b.to_consumer} what="to_consumer" />
+        </td>
+      </tr>
+      {open && (
+        <tr className="symbol-sub" id={sub} data-sub={name}>
+          <td colSpan={7}>
+            <div className="sub-line">
+              <span className="faint">defined at</span>{' '}
+              {strs(b.definitions).map((site) => {
+                const target = siteTarget(site);
+                return target ? (
+                  <button
+                    key={site}
+                    type="button"
+                    className="linklike mono site"
+                    title={`${site}: seek ${target} (asks first: it moves the session)`}
+                    onClick={() => act.seek(target, `definition ${site} of ${name}`)}
+                  >
+                    {midTrunc(site)}
+                  </button>
+                ) : (
+                  <span key={site} className="mono site" title={site}>
+                    {midTrunc(site)}
+                  </span>
+                );
+              })}
+              {extra.map(([k, v]) => (
+                <span key={k} className="faint" data-field={k}>
+                  {' '}
+                  · {k}{' '}
+                  {typeof v === 'number' && Number.isInteger(v) ? (
+                    <Count n={v} />
+                  ) : (
+                    <OpValue value={v} what={k} />
+                  )}
+                </span>
+              ))}
+            </div>
+            <div className="reader-lines" role="table" aria-label={`readers of ${name}`}>
+              <div className="reader-line reader-head faint" role="row">
+                <span role="columnheader">reader</span>
+                <span role="columnheader" className="n">
+                  mass
+                </span>
+                <span role="columnheader" className="n">
+                  exact effect
+                </span>
+                <span role="columnheader">causal verdict</span>
+              </div>
+              {readers.map((r, i) => {
+                const reader = str(r.name) ?? '?';
+                const causal = measured.get(reader);
+                return (
+                  <div className="reader-line" role="row" key={`${reader}-${i}`} data-reader={reader}>
+                    <span role="cell">
+                      <button
+                        type="button"
+                        className="linklike mono"
+                        title={`${reader}: open this read in the Circuits view`}
+                        onClick={() => act.openRead({ reader, binding: name, rows })}
+                      >
+                        {midTrunc(reader, 24)}
+                      </button>
+                    </span>
+                    <span role="cell" className="n">
+                      <OpValue value={r.mass} what="mass" />
+                    </span>
+                    <span role="cell" className="n">
+                      <OpValue value={r.effect} what="effect" />
+                    </span>
+                    <span role="cell">
+                      {causal ? (
+                        <Verdict causal={causal} />
+                      ) : (
+                        <span className="faint" title="press measure verdicts for a native verdict">
+                          not measured
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                );
+              })}
+              {omitted !== null && omitted > 0 && (
+                <div className="reader-line faint" role="row">
+                  <span role="cell">
+                    +<Count n={omitted} /> more reads
+                  </span>
+                </div>
+              )}
+            </div>
+            {rows.length === 1 ? (
+              <button
+                type="button"
+                disabled={busy}
+                title="reads tN: measures each listed read natively (moves the session and restores it)"
+                onClick={() => act.measure(`t${rows[0]}`, consumer)}
+              >
+                measure verdicts
+              </button>
+            ) : (
+              <span className="faint">verdicts are measured per source row</span>
+            )}
+          </td>
+        </tr>
+      )}
+    </>
   );
 }
 
@@ -462,13 +537,13 @@ export function Verdict({ causal }: { causal: Rec }) {
   const reason = str(causal.reason);
   return (
     <span className="verdict" data-verdict={verdict}>
-      {' '}
-      · <span className="chip verdict-chip">{verdict}</span>
-      {reason && <span className="faint"> ({reason})</span>} Δ{' '}
-      <OpValue value={causal.delta} what="delta" compact />{' '}
-      <span className="faint">pred</span> <OpValue value={causal.predicted} what="predicted" compact />{' '}
-      <span className="faint">bound</span>{' '}
-      <OpValue value={causal.rounding_bound} what="rounding_bound" compact />
+      <span className="chip verdict-chip" title={reason ?? undefined}>
+        {verdict}
+      </span>
+      {reason && <span className="faint"> {reason}</span>} <span className="faint">Δ</span>{' '}
+      <OpValue value={causal.delta} what="delta" /> <span className="faint">pred</span>{' '}
+      <OpValue value={causal.predicted} what="predicted" /> <span className="faint">≤</span>{' '}
+      <OpValue value={causal.rounding_bound} what="rounding_bound" />
     </span>
   );
 }
@@ -530,7 +605,7 @@ function Legend({ legend, fromOp }: { legend: Record<string, string>; fromOp: bo
   );
 }
 
-function UnboundRow({ unbound }: { unbound: unknown }) {
+function UnboundRows({ unbound }: { unbound: unknown }) {
   if (!isRec(unbound)) {
     return (
       <tr className="symbol-row unbound" data-symbol="Unbound">
@@ -545,45 +620,56 @@ function UnboundRow({ unbound }: { unbound: unknown }) {
   }
   const parts = isRec(unbound.parts) ? unbound.parts : {};
   const listed = Object.entries(parts).filter(([k]) => k !== 'meaning');
+  const meaning = [str(unbound.meaning), str(parts.meaning)].filter(Boolean).join(' ');
   return (
-    <tr className="symbol-row unbound" data-symbol="Unbound">
-      <td>
-        <strong>Unbound</strong>
-        <div className="faint">what no listed binding carries</div>
-      </td>
-      <td />
-      <td className="faint">{str(unbound.meaning) ?? ''}</td>
-      <td />
-      <td>
-        <OpValue value={unbound.mass} what="mass" />
-      </td>
-      <td>
-        <OpValue value={unbound.readout} what="readout" />
-      </td>
-      <td>
-        {listed.length ? (
-          <ul className="readers">
-            {listed.map(([k, v]) => (
-              <li key={k} data-part={k}>
-                <span className="faint">{k.replace(/_/g, ' ')}</span>{' '}
-                <OpValue value={v} what={k} compact />
-                {isRec(v) && v.bound !== undefined && (
-                  <>
-                    {' '}
-                    <span className="faint">bound</span>{' '}
-                    <OpValue value={v.bound} what="bound" compact />
-                    {v.within === true ? ' within' : v.within === false ? ' OUTSIDE' : ''}
-                  </>
-                )}
-              </li>
-            ))}
-          </ul>
-        ) : (
-          <span className="faint">no parts given</span>
-        )}
-        {str(parts.meaning) && <div className="faint">{str(parts.meaning)}</div>}
-      </td>
-    </tr>
+    <>
+      <tr className="symbol-row unbound" data-symbol="Unbound" data-status="unbound">
+        <td className="symbol-name">
+          <strong>Unbound</strong>{' '}
+          <span className="faint" title={meaning || undefined}>
+            what no listed binding carries
+          </span>
+        </td>
+        <td />
+        <td />
+        <td className="n" data-label="mass">
+          <OpValue value={unbound.mass} what="mass" />
+        </td>
+        <td />
+        <td />
+        <td className="n" data-label="to consumer">
+          <OpValue value={unbound.readout} what="readout" />
+        </td>
+      </tr>
+      <tr className="symbol-sub unbound" data-sub="Unbound">
+        <td colSpan={7}>
+          {listed.length ? (
+            <span className="unbound-parts">
+              {listed.map(([k, v]) => (
+                <span key={k} data-part={k} className="unbound-part">
+                  <span className="faint">{k.replace(/_/g, ' ')}</span> <OpValue value={v} what={k} />
+                  {isRec(v) && v.bound !== undefined && (
+                    <>
+                      {' '}
+                      <span className="faint">≤</span> <OpValue value={v.bound} what="bound" />
+                      {v.within === true ? ' within' : v.within === false ? ' OUTSIDE' : ''}
+                    </>
+                  )}
+                </span>
+              ))}
+            </span>
+          ) : (
+            <span className="faint">no parts given</span>
+          )}
+          {meaning && (
+            <details className="unbound-meaning faint">
+              <summary>what the parts are</summary>
+              {meaning}
+            </details>
+          )}
+        </td>
+      </tr>
+    </>
   );
 }
 

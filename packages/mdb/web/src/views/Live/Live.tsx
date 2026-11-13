@@ -128,6 +128,8 @@ export function Live({ sid }: { sid: string }) {
           watchRow={watchRow}
           urlAddr={addr && where && addr !== where ? addr : null}
           tab={ins.tab}
+          labels={ins.labels[ins.tab]}
+          onLabels={(on) => ins.set({ labels: { ...ins.labels, [ins.tab]: on } })}
           forecasts={forecasts}
           circuitPorts={circuitPorts}
           seekLine={

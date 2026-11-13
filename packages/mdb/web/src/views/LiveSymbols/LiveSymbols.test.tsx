@@ -3,7 +3,7 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { slotFrom as slot, type Envelope as Env } from '../../state/opFixture';
-import { LiveSymbols, siteTarget, type LiveSymbolsProps } from './LiveSymbols';
+import { LiveSymbols, midTrunc, siteTarget, type LiveSymbolsProps } from './LiveSymbols';
 import { legendOf, parseStrip } from './strip';
 import declare from './fixtures/declare.json';
 import readsInterrupted from './fixtures/reads_interrupted.json';
@@ -42,6 +42,14 @@ function rowOf(html: string, symbol: string): string {
   return html.slice(start, html.indexOf('</tr>', start));
 }
 
+/** A binding's compact row and, when its disclosure is open, its sub-row (sites, readers). */
+function blockOf(html: string, symbol: string): string {
+  const start = html.indexOf(`data-symbol="${symbol}"`);
+  expect(start, symbol).toBeGreaterThan(-1);
+  const next = html.indexOf('data-symbol=', start + 1);
+  return html.slice(start, next > -1 ? next : html.indexOf('</tbody>', start));
+}
+
 describe('LiveSymbols', () => {
   it('draws every binding with status, sites, lifetime, labelled mass and readers', () => {
     const html = render({ slot: slot(symbolsMargin, 'symbols consumer=M[4,9]') });
@@ -53,22 +61,36 @@ describe('LiveSymbols', () => {
       expect(row).toContain(`data-status="${b.status}"`);
       expect(row).toContain('data-testid="status-chip"');
     }
-    const ctx = rowOf(html, 'ctx');
+    // the compact row: name, status, lifetime, mass, reads, mean per read, to-consumer
+    const ctxRow = rowOf(html, 'ctx');
+    expect(ctxRow).toContain('class="lifetime"');
+    expect(ctxRow).toContain('data-ev="derived-exact"'); // summed mass: exact arithmetic
+    // four right-aligned number columns, each labelled for the stacked narrow layout
+    expect(ctxRow.match(/<td class="n" data-label="[^"]+">/g)?.length).toBe(4);
+    expect(ctxRow).not.toContain('class="site');
+    // the first binding's disclosure is open: sites and one line per reader
+    expect(ctxRow).toContain('aria-expanded="true"');
+    const ctx = blockOf(html, 'ctx');
     expect(ctx).toContain('cache.L1.v[row=2]'); // a definition site, clickable
-    expect(ctx).toContain('title="seek t2.L1.v (asks first: it moves the session)"');
-    expect(ctx).toContain('class="lifetime"');
-    expect(ctx).toContain('data-ev="derived-exact"'); // summed mass: exact arithmetic
+    expect(ctx).toContain(
+      'title="cache.L1.v[row=2]: seek t2.L1.v (asks first: it moves the session)"',
+    );
     expect(ctx).toContain('data-ev="measured"'); // each reader's mass: measured
-    expect(ctx).toMatch(/reads/); // count of reads and mean mass per read
-    expect(ctx).toContain('mean per read');
+    expect(ctx).toMatch(/data-reader="t3\.L1\.h0"/);
     // the column says what the mass is: a sum over heads and layers, not a probability
     expect(html).toContain('mass (Σ heads, layers)');
     expect(html).toContain('not a probability');
+    expect(html).toContain('mean per read');
+    // a binding that is neither first nor under the cursor starts closed
+    expect(rowOf(html, 't0')).toContain('aria-expanded="false"');
+    expect(blockOf(html, 't0')).not.toContain('data-reader=');
+    // ... and the binding under the cursor (t3 at t3.logits) starts open
+    expect(rowOf(html, 't3')).toContain('aria-expanded="true"');
   });
 
   it('always shows the Unbound row with its parts and bounds', () => {
     const html = render({ slot: slot(symbolsMargin) });
-    const unbound = rowOf(html, 'Unbound');
+    const unbound = blockOf(html, 'Unbound');
     expect(unbound).toContain('data-part="embedding_mlp"');
     expect(unbound).toContain('data-part="remainder"');
     expect(unbound).toContain('data-ev="bound"');
@@ -115,7 +137,9 @@ describe('LiveSymbols', () => {
 
   it('measured verdicts of a source row appear beside its readers, quoting the op', () => {
     const html = render({ slot: slot(symbolsMargin), reads: slot(readsT2, 'reads t2') });
-    const t2 = rowOf(html, 't2');
+    // the row whose verdicts were measured opens by itself
+    expect(rowOf(html, 't2')).toContain('aria-expanded="true"');
+    const t2 = blockOf(html, 't2');
     const reads = (readsT2 as unknown as Env).data.result as {
       reads: { name: string; causal: { verdict: string; reason?: string } }[];
     };
@@ -126,7 +150,7 @@ describe('LiveSymbols', () => {
     }
     expect(t2).toContain('data-verdict=');
     // other rows were not measured: they say so
-    expect(rowOf(html, 't0')).toContain('verdict not measured');
+    expect(blockOf(html, 'ctx')).toContain('not measured');
   });
 
   it('lists the declared symbols from the ledger', () => {
@@ -150,6 +174,16 @@ describe('lifetime strip and sites', () => {
       '-': 'not part of the binding',
     });
     expect(legendOf({ strip: 't3:##' })).toBeNull();
+  });
+
+  it('shortens long addresses in the middle (the full text goes in the title)', () => {
+    expect(midTrunc('t3.L1.p[h0,src=1]')).toBe('t3.L1.p[h0,src=1]');
+    const long = 't3.L1.p[h0,src=0|h0,src=1|h1,src=0|h1,src=3]';
+    const short = midTrunc(long, 20);
+    expect(short).toHaveLength(20);
+    expect(short.startsWith('t3.L1.p[h')).toBe(true);
+    expect(short.endsWith('src=3]')).toBe(true);
+    expect(short).toContain('…');
   });
 
   it('maps definition sites to occurrences seek accepts', () => {

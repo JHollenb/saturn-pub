@@ -14,6 +14,7 @@ import type {
   Refused,
 } from '../../api/types.gen';
 import { EvidenceMark } from '../../chrome/EvidenceMark';
+import { ViewLegend } from './ViewLegend';
 import { RefusedView } from '../../chrome/NotAvailable';
 import { Count, NumView } from '../../chrome/NumView';
 import { asNum } from '../../chrome/evidence';
@@ -80,6 +81,9 @@ export interface LiveViewProps {
   forecasts?: LiveForecast[];
   /** Addresses of the selected circuit's nodes, marked on the pipeline. */
   circuitPorts?: ReadonlySet<string>;
+  /** The shown view's "show labels" setting (authority chips beside every number). */
+  labels?: boolean;
+  onLabels?(on: boolean): void;
 }
 
 export function LiveView(props: LiveViewProps) {
@@ -89,7 +93,11 @@ export function LiveView(props: LiveViewProps) {
     // No frame (refused, e.g. over the cap, or not loaded yet): the controls and the console
     // still work; every op answers for itself.
     return (
-      <div className="live" data-testid="live" data-running={running ? 'yes' : 'no'}>
+      <div
+      className={`live ${props.labels ? 'labels-on' : 'labels-off'}`}
+      data-testid="live"
+      data-running={running ? 'yes' : 'no'}
+    >
         <div className="live-status" role="status">
           <span className="faint">{props.refused ? 'no live frame' : 'loading live session…'}</span>
           <span className="live-state">
@@ -110,7 +118,11 @@ export function LiveView(props: LiveViewProps) {
   const tab = props.tab ?? 'pipeline';
   const pane = tab === 'pipeline' ? null : props.panes?.[tab];
   return (
-    <div className="live" data-testid="live" data-running={running ? 'yes' : 'no'}>
+    <div
+      className={`live ${props.labels ? 'labels-on' : 'labels-off'}`}
+      data-testid="live"
+      data-running={running ? 'yes' : 'no'}
+    >
       <Status {...props} frame={frame} />
       <Controls frame={frame} running={running} act={act} urlAddr={props.urlAddr} />
       {props.refused && <RefusedView what="request" refused={props.refused} />}
@@ -132,6 +144,9 @@ export function LiveView(props: LiveViewProps) {
             </button>
           ))}
         </div>
+      )}
+      {hasRun && props.onLabels && (
+        <ViewLegend labels={!!props.labels} onLabels={props.onLabels} />
       )}
       {pane ? (
         <div role="tabpanel" aria-labelledby={`live-tab-${tab}`} className="live-pane">
@@ -158,6 +173,13 @@ export function LiveView(props: LiveViewProps) {
       )}
       {!pane && (
         <div className="live-tables">
+          <Displays
+            frame={frame}
+            extra={extra}
+            summaries={props.summaries}
+            disabled={!!running}
+            act={act}
+          />
           <Breakpoints frame={frame} extra={extra} disabled={!!running} act={act} />
           <Edits frame={frame} extra={extra} disabled={!!running || !hasRun} act={act} />
           <Checkpoints frame={frame} extra={extra} disabled={!!running} act={act} />
@@ -165,6 +187,112 @@ export function LiveView(props: LiveViewProps) {
       )}
       <Console lines={props.console} disabled={!!running} act={act} />
     </div>
+  );
+}
+
+/** The address a display names at the cursor: a row-relative address (`L0.h`) is read in the
+ *  cursor's row; an absolute one (`t3.L0.a`) as given. */
+export function displayAt(address: string, row: number | null): string | null {
+  if (/^t\d+\./.test(address)) return address;
+  return row === null ? null : `t${row}.${address}`;
+}
+
+/** The frame's displays (`display ADDR`): each address, where it reads at the cursor, its value
+ *  when the pipeline already reduced that port, and print / undisplay. */
+function Displays({
+  frame,
+  extra,
+  summaries,
+  disabled,
+  act,
+}: {
+  frame: LiveFrame;
+  extra: ReadonlyMap<string, Extra>;
+  summaries: ReadonlyMap<string, Summary>;
+  disabled: boolean;
+  act: LiveActions;
+}) {
+  const [address, setAddress] = useState('');
+  const items = [...frame.displays, ...(extra.get('displays')?.items ?? [])] as {
+    id?: unknown;
+    address?: unknown;
+  }[];
+  return (
+    <section aria-label="displays" data-testid="displays">
+      <h3>Displays</h3>
+      {items.length ? (
+        <table>
+          <tbody>
+            {items.map((d, i) => {
+              const id = typeof d.id === 'number' ? d.id : null;
+              const addr = typeof d.address === 'string' ? d.address : '?';
+              const here = displayAt(addr, frame.row);
+              const summary = here ? (summaries.get(summaryKey(frame.seq, here)) ?? null) : null;
+              return (
+                <tr key={id ?? `d${i}`} data-display={id ?? ''}>
+                  <td>{id !== null ? <Count n={id} /> : '?'}</td>
+                  <td className="mono">{addr}</td>
+                  <td className="mono faint">{here && here !== addr ? `→ ${here}` : ''}</td>
+                  <td className="n">
+                    {summary ? (
+                      <Reduced
+                        entry={summary.stats}
+                        pick={(r) => ('l2' in r ? r.l2 : null)}
+                      />
+                    ) : (
+                      <span className="faint" title="not a port of the layer on screen">
+                        print to read
+                      </span>
+                    )}
+                  </td>
+                  <td>
+                    <button
+                      type="button"
+                      disabled={disabled}
+                      onClick={() => act.command(`print ${here ?? addr}`)}
+                    >
+                      print
+                    </button>
+                    {id !== null && (
+                      <button
+                        type="button"
+                        disabled={disabled}
+                        onClick={() => act.op('undisplay', { ids: [id] })}
+                      >
+                        undisplay
+                      </button>
+                    )}
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      ) : (
+        <div className="faint">none</div>
+      )}
+      <More frame={frame} field="displays" extra={extra} act={act} noun="displays" />
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (!address.trim()) return;
+          act.op('display', { address: address.trim() });
+          setAddress('');
+        }}
+      >
+        <input
+          className="mono"
+          aria-label="display address"
+          placeholder="L0.h (each stop) or t3.L0.a"
+          value={address}
+          onChange={(e) => setAddress(e.target.value)}
+          size={14}
+        />
+        <button type="submit" disabled={disabled || !address.trim()}>
+          display
+        </button>
+      </form>
+    </section>
   );
 }
 

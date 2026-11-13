@@ -220,6 +220,56 @@ describe('pipeline forecast column', () => {
     expect(a).toContain('within-bound');
   });
 
+  it('hides the authority chips unless the view shows labels; the mark and title keep them', () => {
+    const p: LiveViewProps = {
+      frame: (frameForecasts as unknown as { data: LiveFrame }).data,
+      timeline: null,
+      running: null,
+      last: null,
+      refused: null,
+      summaries: new Map(),
+      console: [],
+      expanded: null,
+      urlAddr: null,
+      act: act2,
+      forecasts: open,
+      labels: false,
+      onLabels: () => undefined,
+    };
+    const off = renderToStaticMarkup(<LiveView {...p} />);
+    expect(off).toContain('class="live labels-off"');
+    expect(off).toContain('data-testid="view-legend"');
+    expect(off).toMatch(/<input type="checkbox"\/> show labels/);
+    // the derived prediction's mark names its authority (and proof, when there is one)
+    expect(off).toMatch(/aria-label="derived-exact[^"]* evidence"/);
+    const on = renderToStaticMarkup(<LiveView {...p} labels />);
+    expect(on).toContain('class="live labels-on"');
+    expect(on).toMatch(/<input type="checkbox" checked=""\/> show labels/);
+  });
+
+  it('lists the frame\'s displays with where each reads at the cursor', () => {
+    const frame = (frameForecasts as unknown as { data: LiveFrame }).data;
+    const html = renderToStaticMarkup(
+      <LiveView
+        frame={{ ...frame, displays: [{ id: 1, address: 'L0.h' }, { id: 2, address: 't3.L0.a' }] }}
+        timeline={null}
+        running={null}
+        last={null}
+        refused={null}
+        summaries={new Map()}
+        console={[]}
+        expanded={null}
+        urlAddr={null}
+        act={act2}
+      />,
+    );
+    expect(html).toContain('data-testid="displays"');
+    expect(html).toContain('data-display="1"');
+    expect(html).toContain('→ t3.L0.h');
+    expect(html).toContain('data-display="2"');
+    expect(html).toMatch(/>undisplay<\/button>/);
+  });
+
   it('no forecasts prop: no column', () => {
     expect(pipeline(frameForecasts, undefined)).not.toContain('class="forecast"');
   });

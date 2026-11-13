@@ -79,10 +79,22 @@ export function numNote(n: Num): string | null {
   return n.note || null;
 }
 
+/** The one number format of the views: 4 significant digits, exponent form below 1e-3 (and at
+ *  1e6 and above), and a real minus sign (U+2212) so signs line up in tabular columns. The full
+ *  value goes in the element's title (see NumView). */
 export function formatValue(v: number): string {
+  return minus(plainValue(v));
+}
+
+function plainValue(v: number): string {
   if (!Number.isFinite(v)) return String(v);
   if (Number.isInteger(v) && Math.abs(v) < 1e15) return v.toString();
   const a = Math.abs(v);
   if (a !== 0 && (a < 1e-3 || a >= 1e6)) return v.toExponential(3);
   return Number(v.toPrecision(4)).toString();
+}
+
+/** ASCII hyphen-minus to the minus sign (in the mantissa and the exponent). */
+export function minus(text: string): string {
+  return text.replace(/-/g, '\u2212');
 }

@@ -97,7 +97,14 @@ interface InspectStore {
   overlay: boolean;
   focus: FocusRead | null;
   seek: PendingSeek | null;
-  set(patch: Partial<Pick<InspectStore, 'tab' | 'selected' | 'node' | 'overlay' | 'focus' | 'seek'>>): void;
+  /** Per view: authority spelled out as text chips beside every number (off: the mark carries
+   *  it, the label is in the tooltip). */
+  labels: Record<Tab, boolean>;
+  set(
+    patch: Partial<
+      Pick<InspectStore, 'tab' | 'selected' | 'node' | 'overlay' | 'focus' | 'seek' | 'labels'>
+    >,
+  ): void;
   /** Run one op for a panel and keep its answer in that panel's slot. */
   exec(key: PanelKey, name: string, args: Record<string, unknown>, label: string): Promise<Slot>;
   symbols(args: Record<string, unknown>): Promise<void>;
@@ -148,12 +155,14 @@ const FRESH = {
   overlay: true,
   focus: null,
   seek: null,
+  labels: { pipeline: false, symbols: false, graph: false, predict: false } as Record<Tab, boolean>,
 };
 
 export const useInspect = create<InspectStore>((set, get) => ({
   ...FRESH,
   set: (patch) => set(patch),
-  reset: () => set({ ...FRESH, circuits: new Map(), slots: { ...FRESH.slots } }),
+  reset: () =>
+    set({ ...FRESH, circuits: new Map(), slots: { ...FRESH.slots }, labels: { ...FRESH.labels } }),
   async exec(key, name, args, label) {
     set((s) => ({ slots: { ...s.slots, [key]: { state: 'running', label } } }));
     const slot = slotOf(label, await useLive.getState().run(name, args));
