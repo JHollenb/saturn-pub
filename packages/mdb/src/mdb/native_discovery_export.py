@@ -120,14 +120,14 @@ def index_observations(root, out):
                 emit(kind, report["boundaries"][p["span"] + 1], "own-depth-state/read-error",
                      {**p["state"], "route_kl": p["route_kl"],
                       **source_top1_metrics(p)})
-        for kind in ("mean_write", "hold_state"):
+        for kind in ("mean_write", "hold_state", "split_mean_write"):
             if kind not in document:
                 continue
             for boundary, errors in zip(report["boundaries"][1:], document.get(kind, []), strict=True):
                 emit(kind, boundary, "own-depth-state-error", errors)
         for kind, metrics in document.get("native_output_consumer", {}).items():
             emit(kind, report["boundaries"][-1], "paid-native-output-consumer", metrics)
-        for kind in ("mean_write", "hold_state"):
+        for kind in ("mean_write", "hold_state", "split_mean_write"):
             if kind + "_consumer" in document:
                 emit(kind, report["boundaries"][-1], "paid-native-output-consumer", document[kind + "_consumer"])
     out.mkdir(parents=True, exist_ok=False)

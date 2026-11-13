@@ -35,6 +35,15 @@ def audit(stage, *, closures=False):
             sealed = json.loads(path.read_text())
             prediction = load_forecast_tree(forecast, sealed["predictions"])
             kind = sealed["name"]
+            if "state" not in prediction:  # learning-free source nominator: re-score its routes
+                from mdb.native_discovery_nominator import score_nominations
+                rescored = score_nominations(prediction["sources"], native["native_routes"])
+                for got, saved in zip(rescored, row[kind], strict=True):
+                    np.testing.assert_allclose(got["source_top1"]["nominator"]["top_source_agreement"],
+                                               saved["source_top1"]["nominator"]["top_source_agreement"],
+                                               rtol=1e-12, atol=1e-12)
+                    checks += 1
+                continue
             for i, state in enumerate(prediction["state"]):
                 expected = row["arms"][kind][i]["state"] if kind in row["arms"] else row[kind][i]
                 actual = error_metrics(state, native["native_states"][i + 1])
