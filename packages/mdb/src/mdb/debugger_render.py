@@ -47,16 +47,25 @@ def frame(status):
     elif reason.get("watches"):
         fields.append("stop=watch")
     text = f"({runtime.get('branch', 'main')}) " + " ".join(fields)
+    focus = runtime.get("circuit_focus")
+    if focus:
+        text += (
+            f"\nFocus: {focus['component']} {short_ref(focus['record_id'])}"
+            f" target={focus['consumer']}"
+            + (" [historical occurrence]" if focus["historical"] else "")
+        )
     cot = runtime.get("cot") or {}
     if cot.get("enabled"):
         entries = cot.get("entries") or []
         if entries:
             entry = entries[-1]
             terms = ", ".join(repr(item["text"]) for item in entry["candidates"][:5])
-            text += (f"\nCoT register: token {entry['token_position']}, "
-                     f"after layer {entry['completed_layer_boundary']} [decoded candidates]"
-                     f"\n  Vocabulary readout: {terms}"
-                     "\n  Dependency has not been causally tested.")
+            text += (
+                f"\nCoT register: token {entry['token_position']}, "
+                f"after layer {entry['completed_layer_boundary']} [decoded candidates]"
+                f"\n  Vocabulary readout: {terms}"
+                "\n  Dependency has not been causally tested."
+            )
         else:
             text += "\nCoT register: waiting for a configured layer boundary."
         if entries and not cot.get("current_boundary_observed"):
@@ -72,6 +81,83 @@ def summary(value, *, depth=0):
     if isinstance(value, str):
         return value if len(value) <= 240 else value[:237] + "..."
     if isinstance(value, dict):
+        if "focus" in value and "state_materialized" in value:
+            selected = value["focus"]
+            return (
+                f"Selected: {selected['component']} node={short_ref(selected['node_id'])}\n"
+                f"Target: {selected['consumer']}\n"
+                f"Evidence: {value['authority']}; {len(value['frontier'])} frontiers; "
+                f"{len(value['results'])} saved results\n"
+                "Next: project seek | project explain --view mlp|attention|effect|frequency | project compare"
+            )
+        if value.get("schema") == "mdb-circuit-investigation-v1":
+            head = f"{value['kind']} {value['record_id']}"
+            if value["kind"] == "focus":
+                return (
+                    head
+                    + f"\nSelected: {value['component']} {value['boundary']}\nTarget: {value['consumer']}"
+                )
+            if value["kind"] == "comparison-plan":
+                return (
+                    head
+                    + f"\n{len(value['edits'])} edits; {value['steps']} transition budget; tokens={value['tokens']}\nNext: project compare --run"
+                )
+            if value["kind"] == "comparison":
+                return (
+                    head
+                    + f"\nSigned effects: {value['effects']}\nInteraction: {value['interaction']}\nParent preserved; terminal status: {value['terminal_status']}"
+                )
+            if value["kind"] == "materialization":
+                return (
+                    head
+                    + f"\n{value['execution_point']}\nValue: {summary(value['value'])}\nSample: {value['sample']}"
+                )
+            if value["kind"] == "interface-test":
+                return (
+                    head
+                    + f"\n{len(value['cases'])} cases; {len(value['witnesses'])} counterexamples; {value['repeated_argument_groups']} repeated-argument groups\n{value['scope']}"
+                )
+            if value["kind"] == "explanation":
+                result = value["result"]
+                effect = result.get("effect")
+                tail = (
+                    f"\nNative-primal matched: {effect['primal_logits_exact']}; gradient norm={effect['gradient_norm']:.6g}"
+                    if effect
+                    else f"\n{len(result.get('mlp', {}).get('neurons', []))} selected neurons; attention={result.get('attention', {}).get('probability_authority', 'unavailable')}"
+                )
+                details = []
+                if value["view"] == "mlp":
+                    details = [
+                        f"  neuron {n['neuron']}: gate={n['gate']:.5g} up={n['up']:.5g} product={n['product']:.5g}"
+                        for n in result["mlp"]["neurons"][:3]
+                    ]
+                elif value["view"] == "attention" and result["attention"].get("heads"):
+                    details = [
+                        f"  head {h['head']} KV{h['kv_group']}: "
+                        + ", ".join(f"row {s['row']}={s['mass']:.3g}" for s in h["top_sources"][:3])
+                        for h in result["attention"]["heads"][:3]
+                    ]
+                elif effect:
+                    details = [
+                        f"  neuron {n['neuron']}: product partial={n['product_partial']:+.5g}, activity projection={n['local_activity_projection']:+.5g}"
+                        for n in effect["neurons"][:3]
+                    ]
+                elif "frequency" in result:
+                    f = result["frequency"]
+                    details = [
+                        f"  {f['window']} source positions; return closure={f['return_closure_max_abs']:.3g}",
+                        "  Source correlation view; one receiver, not semantic frequency bands.",
+                    ]
+                return (
+                    head
+                    + f"\nView: {value['view']}; layer={result['layer']}"
+                    + tail
+                    + ("\n" + "\n".join(details) if details else "")
+                    + "\nUse --full or --json for operands, signed terms and parameter references."
+                )
+            return head
+        if value.get("authority") == "original-model-view":
+            return f"{value['tensor']} selector={value['selector']}\nshape={value['shape']} {value['dtype']}\nSample: {value['sample']} (transient)"
         if value.get("ok") is False or "error" in value:
             return "error: " + str(value.get("error", "operation failed"))
         if "runtime" in value and "state" in value:

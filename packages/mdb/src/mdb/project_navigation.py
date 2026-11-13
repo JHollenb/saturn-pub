@@ -192,6 +192,21 @@ def execute(
     view="declared",
     slice_id=None,
     branch=None,
+    node_id=None,
+    consumer=None,
+    steps=None,
+    tokens=None,
+    edits=(),
+    run_id=None,
+    record_id=None,
+    cases=None,
+    arguments=None,
+    result=None,
+    selector=None,
+    live=None,
+    linearize=False,
+    recipe=None,
+    occurrence=None,
 ):
     if sid is None:
         sessions = project.sessions()
@@ -199,6 +214,61 @@ def execute(
             raise ValueError("select --session-id for a project with zero or multiple sessions")
         sid = sessions[0]["session_id"]
     project.session(sid)
+    if action in {"focus", "explain", "seek", "compare", "contract", "record", "records", "parameter", "replay-bind"}:
+        import json
+
+        from . import circuit_investigation as circuit
+
+        def data(value):
+            if value is None or not isinstance(value, str):
+                return value
+            if value.startswith("@"):
+                from pathlib import Path
+
+                path = Path(value[1:])
+                if path.stat().st_size > 65536:
+                    raise ValueError("circuit JSON file is too large")
+                value = path.read_text()
+            if len(value) > 65536:
+                raise ValueError("circuit JSON argument is too large")
+            return json.loads(value)
+
+        if action == "focus":
+            if target is None and slice_id is None:
+                return circuit.select(project, sid, record_id) if record_id else circuit.current(project, sid)
+            return project.focus(sid, target, cut_id=cut_id, slice_id=slice_id, node_id=node_id,
+                                 consumer=data(consumer), steps=1 if steps is None else steps, context=context,
+                                 binding_id=binding_id, receipt_id=receipt_id)
+        if action == "replay-bind":
+            return circuit.attach_replay(project, sid, data(recipe), occurrence)
+        if action == "explain":
+            return project.explain(sid, focus_id=record_id, view=view, live=live)
+        if action == "seek":
+            return project.seek(sid, focus_id=record_id, live=live)
+        if action == "compare":
+            if run_id:
+                if edits or steps is not None or tokens is not None or linearize:
+                    raise ValueError("select a sealed plan or new plan options, not both")
+                return project.run_comparison(sid, run_id, live=live)
+            return project.plan_comparison(sid, [data(e) for e in edits], focus_id=record_id,
+                                           steps=steps, tokens=tokens, linearize=linearize)
+        if action == "contract":
+            return project.test_interface(sid, data(cases), data(arguments), data(result),
+                                          name=title or "interface", live=live)
+        if action == "record":
+            return project.circuit_record(sid, target or record_id)
+        if action == "records":
+            return project.circuit_records(sid)
+        if action == "parameter":
+            from .circuit_native import parameter_view
+
+            selected = circuit.current(project, sid, record_id)
+            with circuit.materialized(project, sid, selected, live) as native:
+                return parameter_view(native, target, data(selector) or [])
+    if action == "finding" and target is None:
+        from .circuit_investigation import finding
+
+        return finding(project, sid, title, record_id=record_id, note=note)
     if action == "analyze":
         return project.analyze(sid, analyzer=analyzer, version=version)
     if action == "analyses":
@@ -262,6 +332,7 @@ def execute(
             evidence=evidence,
             cut_id=cut_id,
             slice_id=slice_id,
+            investigation_id=record_id,
         )
     if action == "cut":
         return project.cut_descriptor(sid, target)
@@ -295,6 +366,7 @@ def add_arguments(parser, *, extra_actions=()):
             "slice",
             "slice-show",
             "symbol-history",
+            "focus", "explain", "seek", "compare", "contract", "record", "records", "parameter", "replay-bind",
         ),
     )
     parser.add_argument("target", nargs="?")
@@ -318,12 +390,26 @@ def add_arguments(parser, *, extra_actions=()):
     parser.add_argument("--context")
     parser.add_argument("--binding", dest="binding_id")
     parser.add_argument("--receipt", dest="receipt_id")
-    parser.add_argument("--view", choices=("declared",), default="declared")
+    parser.add_argument("--view", choices=("declared", "computation", "mlp", "attention", "effect", "frequency"), default="declared")
     parser.add_argument("--slice-id")
     parser.add_argument("--branch")
+    parser.add_argument("--node-id")
+    parser.add_argument("--consumer", help="JSON port/selector or logits token/contrast")
+    parser.add_argument("--steps", type=int)
+    parser.add_argument("--tokens", type=int)
+    parser.add_argument("--linearize", action="store_true", help="also compute a matched first-readout native adjoint")
+    parser.add_argument("--edit", dest="edits", action="append", default=[], help="JSON port/mode/value/selector; repeat for B")
+    parser.add_argument("--run", dest="run_id", nargs="?", const="@latest", help="execute a sealed comparison plan; defaults to this focus's latest")
+    parser.add_argument("--record-id")
+    parser.add_argument("--cases", help="JSON source/result cut pairs for an interface test")
+    parser.add_argument("--arguments", help="JSON argument port/selector list")
+    parser.add_argument("--result", help="JSON next-result port/selector")
+    parser.add_argument("--selector", help="JSON integer coordinates for a parameter view")
+    parser.add_argument("--recipe", help="sealed native replay recipe JSON or @FILE")
+    parser.add_argument("--occurrence", help="expected recipe occurrence for the focused cut")
 
 
-def command(project, sid, words):
+def command(project, sid, words, *, live=None):
     """Same queries in the attached debugger shell, with no second executor."""
 
     class Parser(argparse.ArgumentParser):
@@ -333,5 +419,5 @@ def command(project, sid, words):
     parser = Parser(prog="project", add_help=False)
     add_arguments(parser)
     args = vars(parser.parse_args(words))
-    result = execute(project, sid, **args)
+    result = execute(project, sid, **args, live=live)
     return result if isinstance(result, dict) else {"rows": result}

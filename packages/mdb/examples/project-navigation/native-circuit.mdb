@@ -1,0 +1,13 @@
+# Run with mdb public --tiny qwen3 --project NEW_DIRECTORY --script THIS_FILE.
+# Random CPU model: exercises the debugger, not trained semantic behavior.
+step 1
+project focus port:hidden
+project explain
+project seek
+project explain --view attention
+project explain --view mlp
+project explain --view effect
+project compare --edit '{"port":"hidden","selector":[0,0,1],"value":0.0001}' --linearize
+project compare --run
+project finding --title "Tiny console circuit comparison"
+project records

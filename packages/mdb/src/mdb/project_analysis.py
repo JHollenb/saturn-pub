@@ -253,6 +253,7 @@ def finding(
     evidence=(),
     cut_id=None,
     slice_id=None,
+    investigation_id=None,
 ):
     if kind not in {"observation", "inference", "causal-claim"}:
         raise ValueError("unknown finding kind")
@@ -270,6 +271,13 @@ def finding(
             raise ValueError("finding slice belongs to another component or cut")
         allowed.update(sliced["evidence"]["receipts"])
         allowed.update(sliced["evidence"]["cuts"])
+    if investigation_id:
+        from .circuit_investigation import current, record
+
+        investigation = record(project, sid, investigation_id)
+        focus = current(project, sid, investigation.get("focus_id", investigation_id))
+        if focus["component"] != item["id"] or focus["supporting_cut"] != cut_id:
+            raise ValueError("finding circuit record belongs to another component or cut")
     evidence = tuple(evidence) or (cut_id,)
     if not set(evidence) <= allowed:
         raise ValueError(
@@ -291,6 +299,7 @@ def finding(
             "evidence": list(evidence),
             "analysis_id": analysis["analysis_id"],
             "terminal_status": "not-established",
+            **({"investigation_id": investigation_id} if investigation_id else {}),
             **(
                 {
                     "slice_id": slice_id,

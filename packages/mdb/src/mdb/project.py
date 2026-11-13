@@ -399,6 +399,46 @@ class Project:
 
         return findings(self, session_id)
 
+    def focus(self, session_id, target=None, **options):
+        from .circuit_investigation import current, focus
+
+        return focus(self, session_id, target, **options) if target or options else current(self, session_id)
+
+    def explain(self, session_id, **options):
+        from .circuit_investigation import explain
+
+        return explain(self, session_id, **options)
+
+    def seek(self, session_id, **options):
+        from .circuit_investigation import seek
+
+        return seek(self, session_id, **options)
+
+    def plan_comparison(self, session_id, edits, **options):
+        from .circuit_investigation import plan
+
+        return plan(self, session_id, edits, **options)
+
+    def run_comparison(self, session_id, plan_id, **options):
+        from .circuit_investigation import run_comparison
+
+        return run_comparison(self, session_id, plan_id, **options)
+
+    def test_interface(self, session_id, cases, arguments, result, **options):
+        from .circuit_investigation import contract
+
+        return contract(self, session_id, cases, arguments, result, **options)
+
+    def circuit_record(self, session_id, identifier):
+        from .circuit_investigation import record
+
+        return record(self, session_id, identifier)
+
+    def circuit_records(self, session_id, **options):
+        from .circuit_investigation import records
+
+        return records(self, session_id, **options)
+
     def watch_events(self, session_id):
         events = json.loads(self.session(session_id)["debug_info"]).get("watch_events", [])
         for event in events:
@@ -612,7 +652,7 @@ class Project:
                         evidence="observed",
                         metadata={"role": "restore-target"},
                     )
-            slice_annotations = []
+            slice_annotations, circuit_annotations = [], []
             for entry in self._annotations(sid).list():
                 annotation = self._annotations(sid).show(entry["annotation_id"])
                 source = graph.add_source(
@@ -624,6 +664,8 @@ class Project:
                 graph.add_edge(source, nodes[entry["cut_id"]], "annotates", graph="knowledge")
                 if annotation.get("details", {}).get("slice_id"):
                     slice_annotations.append((source, annotation["details"]["slice_id"]))
+                if annotation.get("details", {}).get("investigation_id"):
+                    circuit_annotations.append((source, annotation["details"]["investigation_id"]))
             symbol_nodes = {}
             for binding in self.symbols(sid):
                 binding = SymbolBinding.from_dict(binding).to_dict()
@@ -653,6 +695,9 @@ class Project:
                 for annotation_node, slice_id in slice_annotations:
                     if slice_id == identifier:
                         graph.add_edge(annotation_node, source, "related_to", graph="knowledge")
+            from .circuit_investigation import add_graph_records
+
+            add_graph_records(self, sid, graph, nodes, circuit_annotations)
             for event in self.watch_events(sid):
                 output = graph.add_output(
                     output_ref=f"watch://sha256/{event['fingerprint']}",

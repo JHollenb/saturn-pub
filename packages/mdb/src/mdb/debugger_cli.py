@@ -63,6 +63,14 @@ HELP = GROUP_HELP + "\nFull MDB debugger commands:\n" + """
   project symbol-bind NAME --port PORT --context TEXT --claim TEXT [--context-slot PORT]
   project slice --port PORT --cut CUT | project slice-show SLICE_ID
   project finding COMPONENT --title TEXT [--slice-id SLICE_ID]
+  project focus PORT|SYMBOL [--cut CUT] | project focus --slice-id ID --node-id ID
+  project explain [--view computation|mlp|attention|effect|frequency] | project seek
+  project parameter TENSOR_NAME [--selector JSON]
+  project compare --edit JSON [--edit JSON] [--tokens N] [--steps N] [--linearize]
+  project compare --run [PLAN_ID] | project records | project record ID
+  project contract --cases JSON --arguments JSON --result JSON
+  project replay-bind --recipe @FILE --occurrence EVENT_ID
+  project finding --title TEXT [--record-id ID]
   history | repeat [N] | alias NAME COMMAND | let NAME VALUE
   save-session FILE | load-session FILE | reconnect | finish [DIR]
   export DIR (when the native backend supplies durable export)
@@ -957,6 +965,7 @@ class DebugShell:
                 "callers", "consumers", "trace", "backtrace", "finding", "findings",
                 "slice", "slice-show",
                 "symbol-bind",
+                "focus", "explain", "seek", "compare", "contract", "record", "records", "parameter", "replay-bind",
             ],
             "print": address_candidates,
             "inspect": address_candidates,

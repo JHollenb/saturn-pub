@@ -1,6 +1,8 @@
 # Future native circuit capabilities
 
-Status: proposed capabilities, November 12, 2026. Documentation only, based on consolidated `origin/main` at `b93b9f4`. No new runtime commands, adapters, numerical qualifications or semantic circuit claims are introduced here.
+Status: capability roadmap with a bounded implemented slice, November 12, 2026. Based on consolidated `origin/main` at `b93b9f4`. Tiny-model mechanics do not qualify additional pretrained profiles or semantic circuits.
+
+Implementation update: a [bounded console/API slice](NATIVE-CIRCUIT-INSPECTION.md) now implements Project focus, explicit seek/root hydration, resident Qwen argument expansion and first-readout adjoints, finite native panels and coordinate-interface counterexamples. It has tiny local CPU coverage. The broader capabilities and semantic proof obligations below remain the roadmap; integrated Hessian/path analysis and pretrained-model qualification are not delivered by the tiny checks.
 
 The objective is understanding the original computation. A user should be able to run a model, select an output or internal occurrence, inspect its arguments and writes, test a change, and follow the native result. These capabilities require no fitted predictor, new sparse model or semantic name. They extend the existing [Project workflow](SATURN-PUB-PROJECTS.md), [symbol slices](SYMBOL-SLICES.md) and [replayable circuit navigation plan](REPLAYABLE-CIRCUIT-DEBUGGER-PLAN.md).
 

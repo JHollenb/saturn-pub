@@ -183,11 +183,26 @@ class SaturnPubDebuggerAdapter(CallbackDebuggerAdapter):
         }
 
     def _status(self):
-        return {
+        result = {
             **self.cut_info(),
             "session_id": self.session_id,
             "native_format": "saturn-pub-statecut-v2",
         }
+        if self.project:
+            from .circuit_investigation import current
+
+            try:
+                selected = current(self.project, self.session_id)
+            except ValueError as error:
+                if str(error) != "select an occurrence with project focus first":
+                    raise
+            else:
+                result["circuit_focus"] = {
+                    "record_id": selected["record_id"], "component": selected["component"],
+                    "consumer": selected["consumer"], "boundary": selected["boundary"],
+                    "historical": selected["boundary"].get("cut") != result["cut_id"],
+                }
+        return result
 
     def validate_read(self, path):
         if path and path.startswith("symbol:"):
@@ -454,7 +469,7 @@ class SaturnPubDebuggerAdapter(CallbackDebuggerAdapter):
                 from .project_slice import bind_live_symbol
 
                 return bind_live_symbol(self, args[2:])
-            return command(self.project, self.session_id, args[1:])
+            return command(self.project, self.session_id, args[1:], live=self)
         if not args or args[0] not in {
             "info",
             "resolve",

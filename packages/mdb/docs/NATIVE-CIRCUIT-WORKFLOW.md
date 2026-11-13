@@ -1,6 +1,8 @@
 # Integrating circuit understanding into the MDB workflow
 
-Status: design proposal, November 12, 2026. Based on consolidated `origin/main` at `b93b9f4`. All new interactions below are proposed, not executable commands. This change documents capabilities only; it does not implement them or qualify additional model profiles.
+Status: integration design with a bounded implemented slice, November 12, 2026. Based on consolidated `origin/main` at `b93b9f4`. The broader interaction sketches below are design targets; the implemented runbook defines executable syntax and qualified scope.
+
+Implementation update: see the [implemented workflow and exact command syntax](NATIVE-CIRCUIT-INSPECTION.md). The focus/inspection, finite-panel and sampled-interface slices now have tiny CPU coverage. This document preserves the broader design; its command sketch is superseded by that runbook. Full semantic proofs, integrated mixed derivatives and large-model qualification remain future work.
 
 Start with the [four future capabilities](NATIVE-CIRCUIT-CAPABILITIES.md) and their [mathematical basis](NATIVE-CIRCUIT-MATH.md). This document specifies how a user reaches them through the existing debugger.
 

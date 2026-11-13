@@ -1,6 +1,6 @@
 # Mathematics for native circuit inspection and composition
 
-Status: self-contained mathematical reference for [future capabilities](NATIVE-CIRCUIT-CAPABILITIES.md), November 12, 2026. Identities apply under the assumptions stated here. The [workflow](NATIVE-CIRCUIT-WORKFLOW.md) is proposed; mathematical validity does not qualify a new native execution lane.
+Status: self-contained mathematical reference for the [capability roadmap](NATIVE-CIRCUIT-CAPABILITIES.md), November 12, 2026. Identities apply under the assumptions stated here. A [bounded workflow](NATIVE-CIRCUIT-INSPECTION.md) now has tiny CPU coverage; mathematical validity does not qualify a new pretrained execution lane.
 
 ## Read planes and consumer-linked attention
 

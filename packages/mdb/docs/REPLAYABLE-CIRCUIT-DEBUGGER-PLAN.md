@@ -4,7 +4,9 @@ The [future native circuit capabilities](NATIVE-CIRCUIT-CAPABILITIES.md) extend
 this plan with original read-plane inspection, interaction panels, interface
 sufficiency and consumer-linked mathematics. See the [workflow proposal](NATIVE-CIRCUIT-WORKFLOW.md)
 for console-first integration and the [mathematical reference](NATIVE-CIRCUIT-MATH.md)
-for proofs and boundaries. These additions are proposals, not implemented commands.
+for proofs and boundaries. A [bounded console/API implementation](NATIVE-CIRCUIT-INSPECTION.md)
+now connects focus, hydration, native inspection and branch comparisons with tiny
+CPU coverage; broader semantic and pretrained-model qualification remains planned.
 
 Status: implementation plan, November 12, 2026. Native execution, qualified logical references and replay are the foundation. Understanding computation is the objective; model acceleration and fitted predictors are outside the core workflow. No learned dictionary, semantic label, task grammar or predictor fit is required to open an investigation.
 

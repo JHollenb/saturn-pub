@@ -1,11 +1,12 @@
 # MDB
 
-The proposed [native circuit capabilities](docs/NATIVE-CIRCUIT-CAPABILITIES.md)
-connect original read arguments, nonlinear cooperation, symbolic state sufficiency
-and replay-backed native outcomes. The [workflow proposal](docs/NATIVE-CIRCUIT-WORKFLOW.md)
-integrates them with existing Project navigation and branch comparisons; the
-[mathematical reference](docs/NATIVE-CIRCUIT-MATH.md) gives the proofs and scope.
-These are future capabilities, not new runtime commands or semantic qualifications.
+The [native circuit inspection workflow](docs/NATIVE-CIRCUIT-INSPECTION.md) adds
+`project focus/explain/seek`, original parameter views, sealed native comparison
+panels and interface counterexamples to the existing Project. Tiny CPU Qwen
+checks cover original operands, local adjoints, finite accounting and replay;
+large-model and semantic qualification remain separate. The [capability roadmap](docs/NATIVE-CIRCUIT-CAPABILITIES.md),
+[integration design](docs/NATIVE-CIRCUIT-WORKFLOW.md) and [mathematical reference](docs/NATIVE-CIRCUIT-MATH.md)
+retain the future composition/proof work and its assumptions.
 
 The experimental [weight-space programming companion](docs/WEIGHT-SPACE-PROGRAMMING.md)
 adds `mdb wsp`: parameter differences, removable patches, response equations and

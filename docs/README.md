@@ -15,7 +15,7 @@ test suites and migration details. Installing one package does not install the o
 ## MDB
 
 - [Overview, use cases and quickstart](mdb.md)
-- [Future native circuit capabilities](../packages/mdb/docs/NATIVE-CIRCUIT-CAPABILITIES.md), [workflow proposal](../packages/mdb/docs/NATIVE-CIRCUIT-WORKFLOW.md) and [mathematical basis](../packages/mdb/docs/NATIVE-CIRCUIT-MATH.md)
+- [Native circuit inspection and comparison](../packages/mdb/docs/NATIVE-CIRCUIT-INSPECTION.md), [capability roadmap](../packages/mdb/docs/NATIVE-CIRCUIT-CAPABILITIES.md), [workflow design](../packages/mdb/docs/NATIVE-CIRCUIT-WORKFLOW.md) and [mathematical basis](../packages/mdb/docs/NATIVE-CIRCUIT-MATH.md)
 - [Installation and optional dependencies](../packages/mdb/docs/INSTALL.md)
 - [Local debugger console: Counter, tiny Qwen and local checkpoints](../packages/mdb/docs/LOCAL-DEBUGGER.md)
 - [Custom backends: forward, capture, intervention and local debugger](../packages/mdb/docs/BACKENDS.md)

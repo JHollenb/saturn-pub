@@ -1,0 +1,197 @@
+{
+  "active_parent_preserved": true,
+  "arms": [
+    {
+      "attention_closure": 0.0,
+      "decision": 25,
+      "local_prediction": 0.0,
+      "mask": 0,
+      "mlp_closure": 0.0,
+      "own_tokens": [
+        25
+      ],
+      "prediction_residual": 0.0,
+      "value": -0.13369715213775635
+    },
+    {
+      "attention_closure": 0.0,
+      "decision": 25,
+      "local_prediction": -6.709445046215734e-05,
+      "mask": 1,
+      "mlp_closure": 0.0,
+      "own_tokens": [
+        25
+      ],
+      "prediction_residual": 8.392857342442994e-08,
+      "value": -0.13376416265964508
+    },
+    {
+      "attention_closure": 0.0,
+      "decision": 25,
+      "local_prediction": 6.709445046215734e-05,
+      "mask": 2,
+      "mlp_closure": 0.0,
+      "own_tokens": [
+        25
+      ],
+      "prediction_residual": 8.929742545404906e-08,
+      "value": -0.13362996838986874
+    },
+    {
+      "attention_closure": 0.0,
+      "decision": 25,
+      "local_prediction": 0.0,
+      "mask": 3,
+      "mlp_closure": 0.0,
+      "own_tokens": [
+        25
+      ],
+      "prediction_residual": 0.0,
+      "value": -0.13369715213775635
+    }
+  ],
+  "comparison": "828a1986351474818f1cd7d98e6a7c755d976d6ad0b2970a3f5a7cfe6fabf4bc",
+  "device": "cpu",
+  "execution": {
+    "adapter": "native-decoder-v1",
+    "attention": "eager",
+    "batch": {
+      "padding": false,
+      "size": 1
+    },
+    "device": {
+      "index": null,
+      "type": "cpu"
+    },
+    "dtype": "torch.float32",
+    "environment_versions": {
+      "python": "3.10.14",
+      "torch": "2.13.0",
+      "transformers": "5.14.1"
+    },
+    "family": "qwen3",
+    "granularity": "layer",
+    "kernel": {
+      "attention": "transformers-eager",
+      "cache": "DynamicCache"
+    },
+    "model_program": "embed->decoder_layer[*]->final_norm->lm_head->greedy_argmax->token_commit",
+    "numeric_scope": {
+      "autocast": false,
+      "deterministic_algorithms": false,
+      "float32_matmul_precision": "highest",
+      "inference_mode": true,
+      "tensor_layout": "state-slot-bound-stride",
+      "tf32_matmul": false,
+      "torch_num_threads": 1
+    },
+    "parity": "bounded-logits",
+    "position": "rotary",
+    "sampler": "greedy"
+  },
+  "explanations": {
+    "attention": "5f0606c60f97d1d40d86cb459b247087997dc881e02d05de939f09a14dedce9f",
+    "effect": "67a85a17660a3efdd70fe23e6c39f4746651439e2de74687b709ce880759ff44",
+    "frequency": "2e834e0c755c7b0ad0a7be5a2626bb2bb83b6c33028dd17d730d759fef574284",
+    "mlp": "b8bc9b04eb2eaab34b59d219aa4f384e6a391aca5644f25456bccdabb8d1b368"
+  },
+  "finding": {
+    "annotation_id": "state-annotation://sha256/47605e05d1d4432c4044015aaf41879383e815f1ab4e6f99c2ce780d0a6ea9b0",
+    "body_sha256": "47605e05d1d4432c4044015aaf41879383e815f1ab4e6f99c2ce780d0a6ea9b0",
+    "consumer_refs": [],
+    "cut_id": "3da22a08af020155866e8b05fbd5e61e27bf00b2758e3ecfcec850bb78ccd724",
+    "details": {
+      "analysis_id": "503a8f9e358a7ef368c9d3e6fcc52aa6a06debb39eb149dd2a2dec9c25035fa1",
+      "component": "port:hidden",
+      "evidence": [
+        "3da22a08af020155866e8b05fbd5e61e27bf00b2758e3ecfcec850bb78ccd724"
+      ],
+      "investigation_id": "828a1986351474818f1cd7d98e6a7c755d976d6ad0b2970a3f5a7cfe6fabf4bc",
+      "kind": "observation",
+      "schema": "mdb-project-finding-v1",
+      "slice_complete": true,
+      "slice_id": "023ddc7fed373fdc66769d95a77ba7e15e6f591bbb5eee8bfc2f8354bb296bc1",
+      "symbol_binding": null,
+      "terminal_status": "not-established"
+    },
+    "geometry": {},
+    "immutable_parent_cut_id": "1be1722f0b76c01105e2b2823ac905f14be6ceaa21c49d111d51eb38f650484a",
+    "label": "Tiny native circuit workflow",
+    "model_input_binding": {
+      "cut_payload_sha256": "a212083504bce578f3667a596c226abc334e50f337bf6abddfaaa9eca0c996bc",
+      "kind": "cut-bound"
+    },
+    "namespace": "findings",
+    "native_act_refs": [],
+    "native_writer_clock": {
+      "boundary": "layer",
+      "cursor": {
+        "edge": "before",
+        "family": "qwen3",
+        "index": 0,
+        "local_clock": 0,
+        "logical_step": 2,
+        "next_operation": "decoder_layer.0",
+        "operator": "layer",
+        "phase": "layer"
+      },
+      "index": 0
+    },
+    "note": null,
+    "provenance": {
+      "authority": "descriptive-only",
+      "producer": {
+        "id": "tiny",
+        "kind": "bench-session",
+        "tool": "mdb"
+      },
+      "schema": "mdb-state-annotation-provenance-v1",
+      "selected_manifest_ref": null,
+      "semantic_claim": false
+    },
+    "qualified_label": "findings::Tiny native circuit workflow@sha256:47605e05d1d4432c4044015aaf41879383e815f1ab4e6f99c2ce780d0a6ea9b0",
+    "recipient_parent_cut_id": null,
+    "role": "observation",
+    "schema": "mdb-state-annotation-v1",
+    "scientific_source_cut_ids": [],
+    "session_binding": {
+      "family": "saturn-pub",
+      "lane": "public-session",
+      "model_identity_sha256": "69c94d7e2eab48b4216bae9b9d41ccc53849c5152793742589a79a6ba6b41ada",
+      "publication_mode": "project",
+      "session_id": "tiny"
+    },
+    "stage": "exploration",
+    "tags": [
+      "finding",
+      "port:hidden"
+    ]
+  },
+  "focus": "194210091b4be3a704faa4896bbb8d62e31580732a13602d758944b37e1c6cc1",
+  "gradient_norm": 11.367887278262886,
+  "graph_circuit_nodes": 14,
+  "interface_repeated_groups": 1,
+  "interface_witnesses": [
+    {
+      "left": 0,
+      "reason": "same-arguments-different-next-result",
+      "right": 1
+    },
+    {
+      "left": 0,
+      "reason": "same-arguments-different-next-result",
+      "right": 2
+    }
+  ],
+  "large_model_qualification": "deferred: Beast mrun unavailable",
+  "materialization": "3d163e01e70106c781e8b982cae37afc32ba6972ba0ddd287c74afb3cf6ce68a",
+  "model_identity": "fc7c0ab6887276b533a73632ba4bf55157c6c69cb43d3a162d08a03cb54ff4b1",
+  "native_primal_exact": true,
+  "parameters": 22720,
+  "reopen_exact": true,
+  "root_recipe_target_exact": true,
+  "schema": "mdb-tiny-circuit-workflow-v1",
+  "seconds": 4.651546875014901,
+  "source_frequency_closure": 1.3877787807814457e-17,
+  "specimen": "untrained random Qwen3; seed17; no semantic capability claim"
+}

@@ -1,0 +1,17 @@
+{
+  "schema": "mdb-circuit-workflow-source-seal-v1",
+  "wheel_sha256": "2e89254e3eb939f5179d6b26e0e17b7f5ebd2b69c8ed8a731cc0f228739c2fbc",
+  "source_sha256": {
+    "circuit_investigation.py": "32ae6f599e1127cdd867e5d5c0c78242af4a47b38f5873f5bc13a28243c70b2d",
+    "circuit_native.py": "9d4a3b10d519f939eb6df3a69198b9b788c865aaeb2a184f5530fbc5ce4f90ae",
+    "project.py": "26acb0d45bb79636d695104134c35b3ff528bfaf9cf93d1bcbef21ed38ae2ca3",
+    "project_analysis.py": "3813582f3605e14a662175e0e4fc30d2fefee45e01e3052488ef7a0ff2887601",
+    "project_navigation.py": "a86a33b21faa2ead8557a86597c13759b16a182780b892fce51fc67fddc674b7",
+    "saturn_pub_adapter.py": "884571e152dac8af9ff6a5df9f428430df4ad699c31fa4c6118aa852dfb89cd5",
+    "debugger_cli.py": "6df5e02070242c4cc3ad21e2f55dc663c6caf8de3ea1f52948aa570bc5f2f67c",
+    "debugger_render.py": "711153e4cabd1165d0820584cd64285a477beb54793862e2e777e2d9938869a0"
+  },
+  "source_matches_installed_wheel": true,
+  "focused_tests": 66,
+  "pretrained_qualification": "deferred"
+}
