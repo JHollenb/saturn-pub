@@ -28,3 +28,5 @@ The view has arm, generation-step, layer and head selectors. Gold source cells c
 ## Boundaries
 
 Semantic names, source rows and task grammar are supplied. An observed attention use does not establish individual-head necessity. The output reference records native readout provenance; it does not assign a separate causal output contribution to every head. This is an explicit integration API and a saved-evidence research view in an isolated worktree, rather than automatic recording and semantic discovery for arbitrary live chat. No inference speedup is claimed.
+
+The same observations can be expressed as backend-neutral read records with an explicit causal status (`project_reads` in `mdb.symbol_reads`); see [SYMBOL-READS.md](SYMBOL-READS.md).
