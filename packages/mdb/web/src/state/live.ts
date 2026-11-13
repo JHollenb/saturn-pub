@@ -3,7 +3,14 @@
 // (`POST /op`) or one REPL line (`POST /console`); the server runs them on one thread in order.
 import { create } from 'zustand';
 import { getView, postView } from '../api/client';
-import type { LiveFrame, LiveTimeline, Omitted, Refused, ReduceResult } from '../api/types.gen';
+import type {
+  LiveFrame,
+  LiveLedger,
+  LiveTimeline,
+  Omitted,
+  Refused,
+  ReduceResult,
+} from '../api/types.gen';
 import { useCursor } from './cursor';
 import { lruSet } from './lru';
 import type { ReduceEntry } from './reduce';
@@ -14,6 +21,19 @@ export type Outcome =
   | { kind: 'unresolved'; op: string; seq: number; where: string | null; reason: string }
   | { kind: 'refused'; op: string; seq: number; reason: string; type: string | null }
   | { kind: 'interrupted'; op: string; seq: number; where: string };
+
+/** One op this page sent, as the op route answered it: the REPL-equal result with the
+ *  envelope's state, or a refusal of the request itself (busy, network, not live). */
+export type OpRun =
+  | {
+      ok: true;
+      op: string;
+      seq: number;
+      result: Record<string, unknown>;
+      state: 'resolved' | 'unresolved' | 'refused';
+      reason: string | null;
+    }
+  | { ok: false; op: string; refused: Refused };
 
 export interface Summary {
   stats: ReduceEntry;
@@ -116,9 +136,15 @@ interface LiveStore {
   visible: ReadonlySet<string> | null;
   /** Pages of frame lists fetched past the frame, by `more` field (for the current frame). */
   extra: ReadonlyMap<string, Extra>;
+  /** The run's circuits, forecasts and declared symbols (`GET .../live/ledger`). */
+  ledger: LiveLedger | null;
+  ledgerRefused: Refused | null;
   setSid(sid: string | null): void;
   refresh(): Promise<void>;
   op(name: string, args?: Record<string, unknown>): Promise<void>;
+  /** Send one op and return its answer (null when another op of this page is running). The
+   *  frame, clock and ledger are re-read after it, as for `op`. */
+  run(name: string, args?: Record<string, unknown>): Promise<OpRun | null>;
   command(line: string): Promise<void>;
   interrupt(): Promise<void>;
   expand(addr: string | null): void;
@@ -194,6 +220,8 @@ export const useLive = create<LiveStore>((set, get) => {
     expanded: null,
     visible: null,
     extra: new Map(),
+    ledger: null,
+    ledgerRefused: null,
     setSid(sid) {
       if (sid === get().sid) return;
       set({
@@ -204,17 +232,22 @@ export const useLive = create<LiveStore>((set, get) => {
         refused: null,
         summaries: new Map(),
         extra: new Map(),
+        ledger: null,
+        ledgerRefused: null,
       });
       if (sid) void get().refresh();
     },
     async refresh() {
       const sid = get().sid;
       if (!sid) return;
-      const [frame, timeline] = await Promise.all([
+      const [frame, timeline, ledger] = await Promise.all([
         getView('live', path(sid, 'live')),
         getView('live-timeline', path(sid, 'live/timeline')),
+        getView('live-ledger', path(sid, 'live/ledger')),
       ]);
       if (get().sid !== sid) return;
+      if (ledger.ok) set({ ledger: ledger.env.data, ledgerRefused: null });
+      else set({ ledgerRefused: ledger.refused });
       // A refused frame keeps the last one (or none): controls and console stay usable.
       if (!frame.ok) return set({ refused: frame.refused });
       const current = get().frame;
@@ -231,21 +264,35 @@ export const useLive = create<LiveStore>((set, get) => {
       void summarize(frame.env.data);
     },
     async op(name, args = {}) {
+      await get().run(name, args);
+    },
+    async run(name, args = {}) {
       const sid = get().sid;
-      if (!sid || get().running) return;
+      if (!sid || get().running) return null;
       set({ running: name, refused: null });
       const r = await postView('op', path(sid, 'op'), {
         op: name,
         args,
         request_id: `${name}-${Date.now()}`,
       });
+      let answer: OpRun;
       if (r.ok) {
         const d = r.env.data;
         set({ running: null, last: outcomeOf(d.op, d.seq, d.result) });
+        answer = {
+          ok: true,
+          op: d.op,
+          seq: d.seq,
+          result: d.result,
+          state: r.env.state,
+          reason: r.env.reason ?? null,
+        };
       } else {
         set({ running: null, refused: r.refused });
+        answer = { ok: false, op: name, refused: r.refused };
       }
       await get().refresh();
+      return answer;
     },
     async command(line) {
       const sid = get().sid;

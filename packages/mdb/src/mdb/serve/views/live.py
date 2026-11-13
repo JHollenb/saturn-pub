@@ -1,4 +1,5 @@
-"""Live views: the cursor frame, its lists page by page, and the clock of a live session.
+"""Live views: the cursor frame, its lists page by page, the clock, and the run's ledger
+(circuits, forecasts, declared symbols) of a live session.
 
 All run on the live session's worker thread (``LiveSession.call``). Tables, ports and edits come
 from read ops through ``mdb.ops.dispatch`` (``where``, ``list``, ``info``, ``checkpoints``),
@@ -22,13 +23,17 @@ from ..schema import (
     CAP_BYTES,
     Ev,
     LiveCheckpoint,
+    LiveCircuit,
     LiveEdit,
+    LiveForecast,
     LiveFrame,
     LiveItems,
+    LiveLedger,
     LivePort,
     LiveRow,
     LiveState,
     LiveStop,
+    LiveSymbol,
     LiveTimeline,
     LiveUpstream,
     Omitted,
@@ -44,6 +49,8 @@ ITEM_BYTES = 2048                # an item larger than this is clipped in the fr
 UPSTREAM_SHOWN = 4               # upstream edits listed per port (all are counted)
 BUDGETS = {"breakpoints": 6144, "displays": 3072, "checkpoints": 4096, "staged": 6144,
            "committed": 10240}
+LEDGER_LIMIT = 64                  # entries per ledger list (the latest)
+LEDGER_BYTES = CAP_BYTES - 8192    # the ledger's data
 
 
 def _read(ctx, name, **args):
@@ -116,8 +123,10 @@ def _edits(ctx) -> tuple[list, list]:
 
 
 def _limits(debugger) -> dict[str, int]:
+    """The model's geometry the views lay out against: layers, positions, query and KV heads."""
     adapter = debugger.adapter
-    return {"layers": int(adapter.layers), "max_positions": int(adapter.max_positions)}
+    return {"layers": int(adapter.layers), "max_positions": int(adapter.max_positions),
+            "heads": int(adapter.num_heads), "kv_heads": int(adapter.num_kv_heads)}
 
 
 def _upstream(info) -> list[dict]:
@@ -265,6 +274,57 @@ def frame(session) -> tuple[LiveFrame, list[Omitted]]:
         if _size(built.model_dump(mode="json")) <= FRAME_BYTES or scale < 1 / 64:
             return built, more
         scale /= 2
+
+
+def _circuit_row(circuit) -> LiveCircuit:
+    body = circuit.record["body"]
+    last = circuit.tests[-1] if circuit.tests else None
+    return LiveCircuit(id=int(circuit.id), consumer=str(body["consumer"]), k=int(body["k"]),
+                       depth=int(body["depth"]), count=int(body["count"]),
+                       where=str(body["where"]), record=str(circuit.record["id"]),
+                       tests=len(circuit.tests),
+                       verdict=None if last is None else str(last.get("verdict")))
+
+
+def _forecast_row(entry) -> LiveForecast:
+    from mdb.analysis import forecast
+
+    view = forecast.view(entry)
+    bound = {k: v for k, v in view["bound"].items() if k != "premises"}
+    return LiveForecast(id=int(view["id"]), target=str(view["target"]),
+                        status=str(view["status"]), sealed_at=str(view["sealed_at"]),
+                        record=str(view["record"]), steps=len(view["method"]),
+                        predicted=view["predicted"], bound=bound,
+                        verdict=view.get("verdict"))
+
+
+def ledger(session, limit: int = LEDGER_LIMIT) -> tuple[LiveLedger, list[Omitted]]:
+    """The run's circuit ledger, its sealed forecasts and its declared symbols: the latest
+    ``limit`` of each, within ``LEDGER_BYTES`` (what is left out is named in ``more``). Read
+    from the ledgers the ``circuit``, ``forecast`` and ``symbol`` ops keep on the run; nothing is
+    recomputed. Without a run every list is empty."""
+    from mdb.analysis import circuits, forecast, symbols
+
+    run = session.ctx.run
+    rows: dict[str, list] = {"circuits": [], "forecasts": [], "symbols": []}
+    if run is not None:
+        rows["circuits"] = [_circuit_row(c) for _, c in sorted(circuits.ledger(run).items())]
+        rows["forecasts"] = [_forecast_row(e) for _, e in sorted(forecast.ledger(run).items())]
+        rows["symbols"] = [LiveSymbol(name=name, definitions=list(b.addresses),
+                                      rows=sorted({int(c.row) for c in b.cells}))
+                           for name, b in sorted(symbols.declared(run).items())]
+    budget = LEDGER_BYTES // 3
+    shown, more = {}, []
+    for name, items in rows.items():
+        latest = items[-limit:]
+        dumped = fit([i.model_dump(mode="json") for i in reversed(latest)], budget,
+                     clip_items=False)
+        shown[name] = items[len(items) - len(dumped):]
+        if len(shown[name]) < len(items):
+            more.append(Omitted(field=name, count=len(items) - len(shown[name]),
+                                reason="the earliest entries (lower ids)"))
+    return LiveLedger(session=session.sid, seq=session.seq,
+                      where=None if run is None else run.where, more=more, **shown), more
 
 
 def timeline(session) -> tuple[LiveTimeline, int]:

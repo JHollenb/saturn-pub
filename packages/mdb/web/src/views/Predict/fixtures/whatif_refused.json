@@ -1,0 +1,23 @@
+{
+  "bytes": 391,
+  "data": {
+    "op": "whatif",
+    "request_id": "whatif",
+    "result": {
+      "error": {
+        "message": "bad address 'L1.zz': column 7: unknown port 'zz'\n  t3.L1.zz\n        ^",
+        "reason": "bad address 'L1.zz': column 7: unknown port 'zz'\n  t3.L1.zz\n        ^",
+        "state": "refused",
+        "type": "bad-args"
+      },
+      "reason": "bad address 'L1.zz': column 7: unknown port 'zz'\n  t3.L1.zz\n        ^",
+      "state": "refused"
+    },
+    "seq": 30,
+    "where": "t3.logits"
+  },
+  "digest": "6365b37f1fd2026ff37334f81184800b489175685e71d1cba4b1a35c283a8ae4",
+  "reason": "bad address 'L1.zz': column 7: unknown port 'zz'\n  t3.L1.zz\n        ^",
+  "schema": "mdb-view-op-v1",
+  "state": "refused"
+}

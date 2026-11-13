@@ -751,8 +751,9 @@ class LiveFrame(Model):
     """The live cursor: ``where`` (None before ``start``), the ``where`` op's ``stop`` and
     tokens, the listed layer's ports, staged and committed edits (the ``info edits`` op), the
     breakpoint/watch table (``info breakpoints``), displays and checkpoints. ``limits``:
-    ``layers``, ``max_positions``. The frame always fits the response cap: each list shows its
-    first items and ``more`` names every list it shortened (``field``: the list, or
+    ``layers``, ``max_positions``, ``heads``, ``kv_heads``. The frame always fits the response
+    cap: each list shows its first items and ``more`` names every list it shortened (``field``:
+    the list, or
     ``upstream:<addr>`` for a port's upstream edits; ``count``: items left out; ``reason``: the
     ``GET .../live/items`` request for the rest)."""
     session: str
@@ -806,7 +807,7 @@ class LiveStop(Model):
 class LiveTimeline(Model):
     """The run's clock: every row's stops (``stops``, one program per row), the cursor and the
     run root (the first stop the run can step back to), and per-row edit marks. ``limits``:
-    ``layers``, ``max_positions``."""
+    ``layers``, ``max_positions``, ``heads``, ``kv_heads``."""
     session: str
     where: str | None
     stops: list[str]
@@ -814,6 +815,57 @@ class LiveTimeline(Model):
     root: LiveStop | None
     rows: list[LiveRow]
     limits: dict[str, int]
+
+
+class LiveCircuit(Model):
+    """One circuit of the run's ledger (the ``circuit`` op): its id, consumer, ``k`` (top) and
+    ``depth``, node ``count``, the cursor it was built at, its sealed record id, how many times
+    it was tested and the verdict text of the last test (None: never tested)."""
+    id: int
+    consumer: str
+    k: int
+    depth: int
+    count: int
+    where: str
+    record: str
+    tests: int
+    verdict: str | None
+
+
+class LiveForecast(Model):
+    """One sealed forecast of the run (the ``forecast`` op), as ``analysis.forecast.view`` gives
+    it: target, status (``open`` until ``verify`` closes it), where it was sealed, its record
+    id, the predicted summary and bound (labelled numbers, premises left out), the number of
+    identities in its method chain, and the last ``verify`` verdict (None before one)."""
+    id: int
+    target: str
+    status: str
+    sealed_at: str
+    record: str
+    steps: int
+    predicted: dict[str, Any]
+    bound: dict[str, Any]
+    verdict: dict[str, Any] | None
+
+
+class LiveSymbol(Model):
+    """A user symbol declared on the run (the ``symbol`` op): its name, the addresses it was
+    declared over and the token rows they cover."""
+    name: str
+    definitions: list[str]
+    rows: list[int]
+
+
+class LiveLedger(Model):
+    """What this run has built: circuits, sealed forecasts and declared symbols, the latest of
+    each (``more`` names what was left out). ``seq`` is the op count it was read at."""
+    session: str
+    seq: int
+    where: str | None
+    circuits: list[LiveCircuit]
+    forecasts: list[LiveForecast]
+    symbols: list[LiveSymbol]
+    more: list[Omitted]
 
 
 class Event(Model):
@@ -845,6 +897,7 @@ VIEWS = {
     "live": LiveFrame,
     "live-timeline": LiveTimeline,
     "live-items": LiveItems,
+    "live-ledger": LiveLedger,
     "event": Event,
 }
 SCHEMAS = {name: f"{SCHEMA_PREFIX}{name}-v1" for name in VIEWS}
@@ -859,4 +912,5 @@ EXPORTED = [Num, NumList, Omitted, Refused, AxisTick, ClockAxis, OccAddr, SlotPo
             RecordSummary, RecordPage, ArmRow, Link, RecordDetail, ReduceRequest, StatsResult,
             TopkEntry, TopkResult, SliceResult, HistogramResult, TileResult, ProjectResult,
             OpRequest, OpResult, ConsoleRequest, ConsoleResult, Interrupt, LiveUpstream, LiveEdit,
-            LivePort, LiveCheckpoint, LiveFrame, LiveItems, LiveRow, LiveStop, LiveTimeline, Event]
+            LivePort, LiveCheckpoint, LiveFrame, LiveItems, LiveRow, LiveStop, LiveTimeline,
+            LiveCircuit, LiveForecast, LiveSymbol, LiveLedger, Event]

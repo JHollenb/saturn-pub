@@ -1,0 +1,23 @@
+{
+  "bytes": 492,
+  "data": {
+    "op": "seek",
+    "request_id": "seek",
+    "result": {
+      "error": {
+        "message": "the stored recipe reaches t4.L0.p, but not t0.L0.k: t0 was prefilled before this run's first stepped row t3",
+        "reason": "the stored recipe reaches t4.L0.p, but not t0.L0.k: t0 was prefilled before this run's first stepped row t3",
+        "state": "refused",
+        "type": "refused"
+      },
+      "reason": "the stored recipe reaches t4.L0.p, but not t0.L0.k: t0 was prefilled before this run's first stepped row t3",
+      "state": "refused"
+    },
+    "seq": 41,
+    "where": "t4.L0.p"
+  },
+  "digest": "d5e2514081d993e9d6965da7a6c4cd966eb56fe4fccb3396c0e7e687d9e84de3",
+  "reason": "the stored recipe reaches t4.L0.p, but not t0.L0.k: t0 was prefilled before this run's first stepped row t3",
+  "schema": "mdb-view-op-v1",
+  "state": "refused"
+}

@@ -1,0 +1,23 @@
+{
+  "bytes": 272,
+  "data": {
+    "op": "circuit",
+    "request_id": "circuit",
+    "result": {
+      "error": {
+        "message": "no circuit 9 (have: 1, 2, 3, 4)",
+        "reason": "no circuit 9 (have: 1, 2, 3, 4)",
+        "state": "refused",
+        "type": "refused"
+      },
+      "reason": "no circuit 9 (have: 1, 2, 3, 4)",
+      "state": "refused"
+    },
+    "seq": 25,
+    "where": "t3.logits"
+  },
+  "digest": "e5347da163dba3bdee0e85746b40b08ce0101368a276a3b047325b0580acee6e",
+  "reason": "no circuit 9 (have: 1, 2, 3, 4)",
+  "schema": "mdb-view-op-v1",
+  "state": "refused"
+}

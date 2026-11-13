@@ -357,7 +357,7 @@ def test_interrupts_at_random_moments_leave_a_working_session(live):
 NEW_ROUTES = [("POST", "op", {"op": "where", "args": {}, "request_id": "g"}),
               ("POST", "console", {"line": "where"}), ("POST", "interrupt", None),
               ("GET", "live", None), ("GET", "live/timeline", None),
-              ("GET", "live/items?list=breakpoints", None),
+              ("GET", "live/items?list=breakpoints", None), ("GET", "live/ledger", None),
               ("POST", "reduce", {"pointer": {"kind": "occurrence", "address": "t3.L0.h"},
                                   "op": "stats"})]
 
@@ -397,7 +397,7 @@ def test_without_live_mode_every_writing_op_is_403(live):
     for name in writing:
         response = _op(recorded, live.sid, name)
         assert response.status_code == 403 and response.json()["refused"] == "read_only", name
-    for route in ("console", "interrupt", "live", "live/timeline"):
+    for route in ("console", "interrupt", "live", "live/timeline", "live/ledger"):
         method = "GET" if route.startswith("live") else "POST"
         response = recorded.request(method, f"/api/v1/s/{live.sid}/{route}",
                                     json={"line": "where"} if route == "console" else None)
@@ -823,3 +823,76 @@ def test_the_recorded_frame_of_the_live_session_says_it_is_live(live):
     text = " ".join(data["live"]["frontier"])
     assert "engine is attached" in text and "no engine attached" not in text
     assert live.ctx.run.where in text
+
+
+# --------------------------------------------------------------------------- ledger
+
+
+def _ledger(c, sid, **params):
+    response = c.get(f"/api/v1/s/{sid}/live/ledger", params=params)
+    assert response.status_code == 200, response.text[:300]
+    body = response.json()
+    assert body["schema"] == schema.SCHEMAS["live-ledger"]
+    return body
+
+
+def test_the_ledger_lists_the_circuits_forecasts_and_symbols_the_ops_made(live):
+    from mdb.analysis import circuits, forecast, symbols
+
+    c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
+    sid = live.sid
+    empty = _ledger(c, sid)["data"]
+    assert (empty["where"], empty["circuits"], empty["forecasts"], empty["symbols"]) == (
+        None, [], [], [])
+    _op(c, sid, "start", {"prompt": PROMPT})
+    _op(c, sid, "forecast", {"target": "L0.p"})
+    _op(c, sid, "until", {"target": "t3.logits"})
+    _op(c, sid, "verify", {})
+    built = _op(c, sid, "circuit", {"target": "L1.o", "top": 1, "depth": 2}).json()
+    _op(c, sid, "circuit", {"target": "test", "id": built["data"]["result"]["id"]})
+    _op(c, sid, "symbol", {"name": "ctx", "addresses": "t1"})
+    data = _ledger(c, sid)["data"]
+    run = live.ctx.run
+    assert data["where"] == run.where and data["seq"] == live.seq and data["more"] == []
+    (circuit,) = data["circuits"]
+    entry = circuits.ledger(run)[circuit["id"]]
+    body = entry.record["body"]
+    assert circuit == {"id": entry.id, "consumer": body["consumer"], "k": 1, "depth": 2,
+                       "count": body["count"], "where": body["where"],
+                       "record": entry.record["id"], "tests": 1,
+                       "verdict": entry.tests[-1]["verdict"]}
+    (sealed,) = data["forecasts"]
+    view = forecast.view(forecast.ledger(run)[sealed["id"]])
+    assert sealed["target"] == view["target"] == "t3.L0.p"
+    assert sealed["status"] == view["status"] and sealed["verdict"] == view["verdict"]
+    assert sealed["predicted"] == view["predicted"] and sealed["steps"] == len(view["method"])
+    assert "premises" not in sealed["bound"] and sealed["bound"]["max"] == view["bound"]["max"]
+    assert data["symbols"] == [{"name": "ctx", "definitions": ["t1"], "rows": [1]}]
+    assert set(symbols.declared(run)) == {"ctx"}
+
+
+def test_the_ledger_fits_the_cap_and_names_what_it_left_out(live):
+    c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
+    sid = live.sid
+    _op(c, sid, "start", {"prompt": PROMPT})
+    for _ in range(70):
+        assert _op(c, sid, "forecast", {"target": "M[4,9]"}).status_code == 200
+    body = _ledger(c, sid)
+    data = body["data"]
+    assert body["bytes"] <= schema.CAP_BYTES and body["omitted"] == data["more"]
+    (more,) = data["more"]
+    assert more["field"] == "forecasts" and more["count"] + len(data["forecasts"]) == 70
+    ids = [f["id"] for f in data["forecasts"]]
+    assert ids == list(range(71 - len(ids), 71))  # the latest, in id order
+    few = _ledger(c, sid, limit=3)["data"]
+    assert [f["id"] for f in few["forecasts"]] == [68, 69, 70]
+    assert few["more"][0]["count"] == 67
+
+
+@pytest.mark.parametrize("query", ["limit=0", "limit=65", "limit=-1", "limit=abc",
+                                   "limit=" + "9" * 400, "limit=1.5"])
+def test_malformed_ledger_queries_never_5xx(live, query):
+    c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
+    response = c.get(f"/api/v1/s/{live.sid}/live/ledger?{query}")
+    assert response.status_code in (400, 422), (query, response.status_code)
+    assert response.json()["state"] == "refused"

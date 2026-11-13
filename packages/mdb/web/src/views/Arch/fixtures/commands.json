@@ -1,0 +1,1117 @@
+{
+  "fixtures": {
+    "frame": {
+      "ops_before": [
+        {
+          "args": {
+            "prompt": [
+              1,
+              5,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {},
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "M[4,9]"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.m"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {},
+          "op": "step"
+        },
+        {
+          "args": {},
+          "op": "verify"
+        },
+        {
+          "args": {
+            "target": "t0.L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.p"
+          },
+          "op": "until"
+        },
+        {
+          "args": {},
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]"
+          },
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "depth": 3,
+            "target": "M[4,9]",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "target": "t3.logits"
+          },
+          "op": "until"
+        },
+        {
+          "args": {
+            "addresses": "t1, cache.L1.v[row=2]",
+            "name": "ctx"
+          },
+          "op": "symbol"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]"
+          },
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "source": "t2",
+            "top": 3
+          },
+          "op": "reads"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "source": "t3"
+          },
+          "interrupted": "cancelled while queued",
+          "op": "reads"
+        },
+        {
+          "args": {
+            "depth": 3,
+            "target": "M[4,9]",
+            "top": 1
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "depth": 3,
+            "target": "M[4,9]",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "depth": 2,
+            "target": "M[4,9]",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "depth": 2,
+            "target": "L1.o",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "id": 2,
+            "target": "test"
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "id": 1,
+            "target": "test"
+          },
+          "interrupted": "cancelled while queued",
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "id": 2,
+            "target": "show"
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "id": 9,
+            "target": "test"
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {},
+          "op": "verify"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "op": "add",
+            "target": "L1.m=0.5"
+          },
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "consumer": "L1.h_out",
+            "op": "scale",
+            "target": "L1.o",
+            "value": 1.5
+          },
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "consumer": "t4.M[4,9]",
+            "op": "add",
+            "target": "L1.m=0.5"
+          },
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "op": "add",
+            "target": "L1.zz=0.5"
+          },
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "op": "add",
+            "target": "L1.m=0.5"
+          },
+          "interrupted": "cancelled while queued",
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "a": "L1.m=0.5 add",
+            "b": "L0.v=0.25 add",
+            "consumer": "M[4,9]"
+          },
+          "op": "compare"
+        },
+        {
+          "args": {
+            "name": "here"
+          },
+          "op": "checkpoint"
+        },
+        {
+          "args": {
+            "a": "here",
+            "b": "L1.m=0.5 add",
+            "consumer": "t3.M[4,9]"
+          },
+          "op": "compare"
+        },
+        {
+          "args": {
+            "a": "nope",
+            "b": "L1.m=0.5 add"
+          },
+          "op": "compare"
+        },
+        {
+          "args": {
+            "target": "t3.L1.p"
+          },
+          "op": "seek"
+        },
+        {
+          "args": {
+            "op": "add",
+            "target": "L1.m",
+            "value": 0.5
+          },
+          "op": "set"
+        },
+        {
+          "args": {
+            "target": "t4.L0.p"
+          },
+          "op": "until"
+        },
+        {
+          "args": {
+            "op": "scale",
+            "target": "L0.v",
+            "value": 2.0
+          },
+          "op": "set"
+        },
+        {
+          "args": {
+            "name": "mid"
+          },
+          "op": "checkpoint"
+        }
+      ],
+      "request": {
+        "params": {},
+        "route": "GET live"
+      },
+      "server": "mdb serve --tiny qwen2 (in-process: create_app + LiveSession, seed 113)"
+    },
+    "seek_back": {
+      "ops_before": [
+        {
+          "args": {
+            "prompt": [
+              1,
+              5,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {},
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "M[4,9]"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.m"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {},
+          "op": "step"
+        },
+        {
+          "args": {},
+          "op": "verify"
+        },
+        {
+          "args": {
+            "target": "t0.L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.p"
+          },
+          "op": "until"
+        },
+        {
+          "args": {},
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]"
+          },
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "depth": 3,
+            "target": "M[4,9]",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "target": "t3.logits"
+          },
+          "op": "until"
+        },
+        {
+          "args": {
+            "addresses": "t1, cache.L1.v[row=2]",
+            "name": "ctx"
+          },
+          "op": "symbol"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]"
+          },
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "source": "t2",
+            "top": 3
+          },
+          "op": "reads"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "source": "t3"
+          },
+          "interrupted": "cancelled while queued",
+          "op": "reads"
+        },
+        {
+          "args": {
+            "depth": 3,
+            "target": "M[4,9]",
+            "top": 1
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "depth": 3,
+            "target": "M[4,9]",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "depth": 2,
+            "target": "M[4,9]",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "depth": 2,
+            "target": "L1.o",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "id": 2,
+            "target": "test"
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "id": 1,
+            "target": "test"
+          },
+          "interrupted": "cancelled while queued",
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "id": 2,
+            "target": "show"
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "id": 9,
+            "target": "test"
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {},
+          "op": "verify"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "op": "add",
+            "target": "L1.m=0.5"
+          },
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "consumer": "L1.h_out",
+            "op": "scale",
+            "target": "L1.o",
+            "value": 1.5
+          },
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "consumer": "t4.M[4,9]",
+            "op": "add",
+            "target": "L1.m=0.5"
+          },
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "op": "add",
+            "target": "L1.zz=0.5"
+          },
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "op": "add",
+            "target": "L1.m=0.5"
+          },
+          "interrupted": "cancelled while queued",
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "a": "L1.m=0.5 add",
+            "b": "L0.v=0.25 add",
+            "consumer": "M[4,9]"
+          },
+          "op": "compare"
+        },
+        {
+          "args": {
+            "name": "here"
+          },
+          "op": "checkpoint"
+        },
+        {
+          "args": {
+            "a": "here",
+            "b": "L1.m=0.5 add",
+            "consumer": "t3.M[4,9]"
+          },
+          "op": "compare"
+        },
+        {
+          "args": {
+            "a": "nope",
+            "b": "L1.m=0.5 add"
+          },
+          "op": "compare"
+        }
+      ],
+      "request": {
+        "args": {
+          "target": "t3.L1.p"
+        },
+        "op": "seek",
+        "route": "POST op"
+      },
+      "server": "mdb serve --tiny qwen2 (in-process: create_app + LiveSession, seed 113)"
+    },
+    "seek_refused": {
+      "ops_before": [
+        {
+          "args": {
+            "prompt": [
+              1,
+              5,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {},
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "M[4,9]"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.m"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {},
+          "op": "step"
+        },
+        {
+          "args": {},
+          "op": "verify"
+        },
+        {
+          "args": {
+            "target": "t0.L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.p"
+          },
+          "op": "until"
+        },
+        {
+          "args": {},
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]"
+          },
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "depth": 3,
+            "target": "M[4,9]",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "target": "t3.logits"
+          },
+          "op": "until"
+        },
+        {
+          "args": {
+            "addresses": "t1, cache.L1.v[row=2]",
+            "name": "ctx"
+          },
+          "op": "symbol"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]"
+          },
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "source": "t2",
+            "top": 3
+          },
+          "op": "reads"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "source": "t3"
+          },
+          "interrupted": "cancelled while queued",
+          "op": "reads"
+        },
+        {
+          "args": {
+            "depth": 3,
+            "target": "M[4,9]",
+            "top": 1
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "depth": 3,
+            "target": "M[4,9]",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "depth": 2,
+            "target": "M[4,9]",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "depth": 2,
+            "target": "L1.o",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "id": 2,
+            "target": "test"
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "id": 1,
+            "target": "test"
+          },
+          "interrupted": "cancelled while queued",
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "id": 2,
+            "target": "show"
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "id": 9,
+            "target": "test"
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {},
+          "op": "verify"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "op": "add",
+            "target": "L1.m=0.5"
+          },
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "consumer": "L1.h_out",
+            "op": "scale",
+            "target": "L1.o",
+            "value": 1.5
+          },
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "consumer": "t4.M[4,9]",
+            "op": "add",
+            "target": "L1.m=0.5"
+          },
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "op": "add",
+            "target": "L1.zz=0.5"
+          },
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "op": "add",
+            "target": "L1.m=0.5"
+          },
+          "interrupted": "cancelled while queued",
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "a": "L1.m=0.5 add",
+            "b": "L0.v=0.25 add",
+            "consumer": "M[4,9]"
+          },
+          "op": "compare"
+        },
+        {
+          "args": {
+            "name": "here"
+          },
+          "op": "checkpoint"
+        },
+        {
+          "args": {
+            "a": "here",
+            "b": "L1.m=0.5 add",
+            "consumer": "t3.M[4,9]"
+          },
+          "op": "compare"
+        },
+        {
+          "args": {
+            "a": "nope",
+            "b": "L1.m=0.5 add"
+          },
+          "op": "compare"
+        },
+        {
+          "args": {
+            "target": "t3.L1.p"
+          },
+          "op": "seek"
+        },
+        {
+          "args": {
+            "op": "add",
+            "target": "L1.m",
+            "value": 0.5
+          },
+          "op": "set"
+        },
+        {
+          "args": {
+            "target": "t4.L0.p"
+          },
+          "op": "until"
+        },
+        {
+          "args": {
+            "op": "scale",
+            "target": "L0.v",
+            "value": 2.0
+          },
+          "op": "set"
+        },
+        {
+          "args": {
+            "name": "mid"
+          },
+          "op": "checkpoint"
+        }
+      ],
+      "request": {
+        "args": {
+          "target": "t0.L0.k"
+        },
+        "op": "seek",
+        "route": "POST op"
+      },
+      "server": "mdb serve --tiny qwen2 (in-process: create_app + LiveSession, seed 113)"
+    },
+    "timeline": {
+      "ops_before": [
+        {
+          "args": {
+            "prompt": [
+              1,
+              5,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {},
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "M[4,9]"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.m"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {},
+          "op": "step"
+        },
+        {
+          "args": {},
+          "op": "verify"
+        },
+        {
+          "args": {
+            "target": "t0.L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.p"
+          },
+          "op": "until"
+        },
+        {
+          "args": {},
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]"
+          },
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "depth": 3,
+            "target": "M[4,9]",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "target": "t3.logits"
+          },
+          "op": "until"
+        },
+        {
+          "args": {
+            "addresses": "t1, cache.L1.v[row=2]",
+            "name": "ctx"
+          },
+          "op": "symbol"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]"
+          },
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "source": "t2",
+            "top": 3
+          },
+          "op": "reads"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "source": "t3"
+          },
+          "interrupted": "cancelled while queued",
+          "op": "reads"
+        },
+        {
+          "args": {
+            "depth": 3,
+            "target": "M[4,9]",
+            "top": 1
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "depth": 3,
+            "target": "M[4,9]",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "depth": 2,
+            "target": "M[4,9]",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "depth": 2,
+            "target": "L1.o",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "id": 2,
+            "target": "test"
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "id": 1,
+            "target": "test"
+          },
+          "interrupted": "cancelled while queued",
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "id": 2,
+            "target": "show"
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "id": 9,
+            "target": "test"
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {},
+          "op": "verify"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "op": "add",
+            "target": "L1.m=0.5"
+          },
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "consumer": "L1.h_out",
+            "op": "scale",
+            "target": "L1.o",
+            "value": 1.5
+          },
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "consumer": "t4.M[4,9]",
+            "op": "add",
+            "target": "L1.m=0.5"
+          },
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "op": "add",
+            "target": "L1.zz=0.5"
+          },
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "op": "add",
+            "target": "L1.m=0.5"
+          },
+          "interrupted": "cancelled while queued",
+          "op": "whatif"
+        },
+        {
+          "args": {
+            "a": "L1.m=0.5 add",
+            "b": "L0.v=0.25 add",
+            "consumer": "M[4,9]"
+          },
+          "op": "compare"
+        },
+        {
+          "args": {
+            "name": "here"
+          },
+          "op": "checkpoint"
+        },
+        {
+          "args": {
+            "a": "here",
+            "b": "L1.m=0.5 add",
+            "consumer": "t3.M[4,9]"
+          },
+          "op": "compare"
+        },
+        {
+          "args": {
+            "a": "nope",
+            "b": "L1.m=0.5 add"
+          },
+          "op": "compare"
+        },
+        {
+          "args": {
+            "target": "t3.L1.p"
+          },
+          "op": "seek"
+        },
+        {
+          "args": {
+            "op": "add",
+            "target": "L1.m",
+            "value": 0.5
+          },
+          "op": "set"
+        },
+        {
+          "args": {
+            "target": "t4.L0.p"
+          },
+          "op": "until"
+        },
+        {
+          "args": {
+            "op": "scale",
+            "target": "L0.v",
+            "value": 2.0
+          },
+          "op": "set"
+        },
+        {
+          "args": {
+            "name": "mid"
+          },
+          "op": "checkpoint"
+        }
+      ],
+      "request": {
+        "params": {},
+        "route": "GET live/timeline"
+      },
+      "server": "mdb serve --tiny qwen2 (in-process: create_app + LiveSession, seed 113)"
+    }
+  },
+  "recorder": "/private/tmp/claude-501/-Users-jakeholl-domains/a0257d4e-0d2c-4a3b-8a17-1b843f7dd193/scratchpad/build-b3/record.py"
+}

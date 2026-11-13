@@ -1,0 +1,28 @@
+{
+  "bytes": 198,
+  "data": {
+    "op": "symbol",
+    "request_id": "symbol",
+    "result": {
+      "declared": [
+        "ctx"
+      ],
+      "definitions": [
+        "t1",
+        "cache.L1.v[row=2]"
+      ],
+      "op": "symbol",
+      "rows": [
+        1,
+        2
+      ],
+      "state": "resolved",
+      "symbol": "ctx"
+    },
+    "seq": 14,
+    "where": "t3.logits"
+  },
+  "digest": "e8d5ac159cf337df0f162343fe0b608507ced4e629f29a6e3b10a052884a73a1",
+  "schema": "mdb-view-op-v1",
+  "state": "resolved"
+}

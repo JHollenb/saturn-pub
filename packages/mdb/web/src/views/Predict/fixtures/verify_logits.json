@@ -1,0 +1,149 @@
+{
+  "bytes": 2426,
+  "data": {
+    "op": "verify",
+    "request_id": "verify",
+    "result": {
+      "count": 3,
+      "forecasts": [
+        {
+          "bound_max": {
+            "authority": "bound",
+            "value": 0.0026798018788218043
+          },
+          "id": 2,
+          "native": {
+            "max_abs": {
+              "authority": "measured",
+              "value": 0.251953125
+            },
+            "norm": {
+              "authority": "measured",
+              "value": 0.707809104658661
+            }
+          },
+          "order": {
+            "current_cut": "b4673fc73ffbef1d576eae26120a27a7707d0eef1c9f119f874f92c9060c6c8a",
+            "descends": true,
+            "receipts_after_seal": {
+              "count": 70
+            },
+            "same_cut": false,
+            "sealed": {
+              "index": 2,
+              "row": 3
+            },
+            "sealed_before_target": true,
+            "sealed_cut": "a5caf85c892915ba136c619f1fb2c9a4b45fb60ef254a2f078778dcb70a39de3",
+            "target": {
+              "index": 10,
+              "row": 3
+            }
+          },
+          "record": "6a5b7ce96f898a514847a794cad90c2ea4d6bc6e43fd4c658973131dbc1d5308",
+          "residual_max_abs": {
+            "authority": "measured",
+            "value": 0.0009104526176358929
+          },
+          "sealed_at": "t3.L0.h",
+          "status": "closed",
+          "target": "t3.L0.p",
+          "verdict": "within-bound",
+          "within_bound": true
+        },
+        {
+          "bound_max": {
+            "authority": "bound",
+            "value": 16.825123307594925
+          },
+          "id": 3,
+          "native": {
+            "authority": "measured",
+            "value": -0.114013671875
+          },
+          "order": {
+            "current_cut": "b4673fc73ffbef1d576eae26120a27a7707d0eef1c9f119f874f92c9060c6c8a",
+            "descends": true,
+            "receipts_after_seal": {
+              "count": 70
+            },
+            "same_cut": false,
+            "sealed": {
+              "index": 2,
+              "row": 3
+            },
+            "sealed_before_target": true,
+            "sealed_cut": "a5caf85c892915ba136c619f1fb2c9a4b45fb60ef254a2f078778dcb70a39de3",
+            "target": {
+              "index": 41,
+              "row": 3
+            }
+          },
+          "record": "f76fa16799dffe05ba7779e873a9ed9fc2f2449f07e55f0f07ebb08e17bce192",
+          "residual_max_abs": {
+            "authority": "measured",
+            "value": 0.0005081543280717749
+          },
+          "sealed_at": "t3.L0.h",
+          "status": "closed",
+          "target": "t3.M[4,9]",
+          "verdict": "within-bound",
+          "within_bound": true
+        },
+        {
+          "bound_max": {
+            "authority": "bound",
+            "value": 0.021311659537551687
+          },
+          "id": 4,
+          "native": {
+            "max_abs": {
+              "authority": "measured",
+              "value": 0.000518798828125
+            },
+            "norm": {
+              "authority": "measured",
+              "value": 0.000790846475300109
+            }
+          },
+          "order": {
+            "current_cut": "b4673fc73ffbef1d576eae26120a27a7707d0eef1c9f119f874f92c9060c6c8a",
+            "descends": true,
+            "receipts_after_seal": {
+              "count": 70
+            },
+            "same_cut": false,
+            "sealed": {
+              "index": 2,
+              "row": 3
+            },
+            "sealed_before_target": true,
+            "sealed_cut": "a5caf85c892915ba136c619f1fb2c9a4b45fb60ef254a2f078778dcb70a39de3",
+            "target": {
+              "index": 38,
+              "row": 3
+            }
+          },
+          "record": "3e5d253dcf9cbe0d514d657725252a3cb2e36989d98c8980c8ce1c7a22ed00fe",
+          "residual_max_abs": {
+            "authority": "measured",
+            "value": 4.898754444678422e-06
+          },
+          "sealed_at": "t3.L0.h",
+          "status": "closed",
+          "target": "t3.L1.m",
+          "verdict": "within-bound",
+          "within_bound": true
+        }
+      ],
+      "op": "verify",
+      "state": "resolved",
+      "where": "t3.logits"
+    },
+    "seq": 26,
+    "where": "t3.logits"
+  },
+  "digest": "907c87a4eba9b746ae9bb68c4768abe1456f6d8fd7e4a4d165e5947c5150610e",
+  "schema": "mdb-view-op-v1",
+  "state": "resolved"
+}

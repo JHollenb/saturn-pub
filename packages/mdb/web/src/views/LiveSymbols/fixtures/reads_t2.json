@@ -1,0 +1,253 @@
+{
+  "bytes": 4205,
+  "data": {
+    "op": "reads",
+    "request_id": "reads",
+    "result": {
+      "checks": {
+        "head_write": {
+          "count": 2,
+          "eta_max_abs": {
+            "authority": "measured",
+            "proof": "P07",
+            "value": 1.8555670976638794e-05
+          },
+          "premises": [
+            "round to nearest, no overflow or underflow",
+            "matmul accumulates in float32 in any order (gamma_n bound), then one rounding to the model dtype"
+          ],
+          "within_bound": true,
+          "worst_ratio": {
+            "authority": "measured",
+            "proof": "P07",
+            "value": 0.8206949470460013
+          }
+        },
+        "value_mix": {
+          "count": 2,
+          "eta_max_abs": {
+            "authority": "measured",
+            "proof": "P06",
+            "value": 0.00020313262939453125
+          },
+          "premises": [
+            "round to nearest, no overflow or underflow",
+            "matmul accumulates in float32 in any order (gamma_n bound), then one rounding to the model dtype"
+          ],
+          "within_bound": true,
+          "worst_ratio": {
+            "authority": "measured",
+            "proof": "P06",
+            "value": 0.8656946525717193
+          }
+        }
+      },
+      "consumer": "t3.M[4,9]",
+      "omitted": {
+        "count": 1,
+        "mass": {
+          "authority": "derived-exact",
+          "value": 0.25
+        },
+        "meaning": "+1 more reads (ranked below the top 3), summed",
+        "to_consumer": {
+          "authority": "derived-exact",
+          "value": 0.0013231723719862578
+        }
+      },
+      "op": "reads",
+      "reads": [
+        {
+          "address": "t3.L0.p[h0,src=2]",
+          "causal": {
+            "beyond_rounding_bound": false,
+            "bound_exceeds_consumer": true,
+            "delta": {
+              "authority": "measured",
+              "value": 0.01416015625
+            },
+            "dose": "p[h, src] = 0 (the source removed from this head; the other weights kept)",
+            "min_effect": {
+              "authority": "supplied",
+              "value": 0.0
+            },
+            "predicted": {
+              "authority": "derived-exact",
+              "value": 0.013991595140439433
+            },
+            "reason": "changed, within rounding bound",
+            "record": "99501369c1854645a19eb2afb95ca76b5dee16e831c7b8cd5d06bc0c5e9e94cd",
+            "rounding_bound": {
+              "authority": "bound",
+              "value": 0.3321838682671776
+            },
+            "verdict": "unresolved"
+          },
+          "layer": 0,
+          "mass": {
+            "authority": "measured",
+            "value": 0.2490234375
+          },
+          "name": "t3.L0.h0",
+          "row": 3,
+          "to_consumer": {
+            "authority": "derived-exact",
+            "proof": "P19",
+            "value": -0.015324559213659343
+          },
+          "to_head": {
+            "norm": {
+              "authority": "derived-exact",
+              "proof": "P06",
+              "value": 0.038621050592571454
+            }
+          },
+          "to_o": {
+            "max_abs": {
+              "authority": "derived-exact",
+              "proof": "P07",
+              "value": 0.002221907348030072
+            },
+            "norm": {
+              "authority": "derived-exact",
+              "proof": "P07",
+              "value": 0.004264324410354339
+            }
+          }
+        },
+        {
+          "address": "t3.L0.p[h1,src=2]",
+          "causal": {
+            "beyond_rounding_bound": false,
+            "bound_exceeds_consumer": true,
+            "delta": {
+              "authority": "measured",
+              "value": -0.00244140625
+            },
+            "dose": "p[h, src] = 0 (the source removed from this head; the other weights kept)",
+            "min_effect": {
+              "authority": "supplied",
+              "value": 0.0
+            },
+            "predicted": {
+              "authority": "derived-exact",
+              "value": -0.0024233725372794362
+            },
+            "reason": "changed, within rounding bound",
+            "record": "dda6db6ef1cc4b92f4ba092e6718608bb056d216c384cc6bcbf595cf96b5e096",
+            "rounding_bound": {
+              "authority": "bound",
+              "value": 0.3165265589760481
+            },
+            "verdict": "unresolved"
+          },
+          "layer": 0,
+          "mass": {
+            "authority": "measured",
+            "value": 0.248046875
+          },
+          "name": "t3.L0.h1",
+          "row": 3,
+          "to_consumer": {
+            "authority": "derived-exact",
+            "proof": "P19",
+            "value": 0.002885583755236492
+          },
+          "to_head": {
+            "norm": {
+              "authority": "derived-exact",
+              "proof": "P06",
+              "value": 0.03846959549220843
+            }
+          },
+          "to_o": {
+            "max_abs": {
+              "authority": "derived-exact",
+              "proof": "P07",
+              "value": 0.001239346107468009
+            },
+            "norm": {
+              "authority": "derived-exact",
+              "proof": "P07",
+              "value": 0.002651563549265247
+            }
+          }
+        },
+        {
+          "address": "t3.L1.p[h0,src=2]",
+          "causal": {
+            "beyond_rounding_bound": false,
+            "bound_exceeds_consumer": false,
+            "delta": {
+              "authority": "measured",
+              "value": -0.0029296875
+            },
+            "dose": "p[h, src] = 0 (the source removed from this head; the other weights kept)",
+            "min_effect": {
+              "authority": "supplied",
+              "value": 0.0
+            },
+            "predicted": {
+              "authority": "derived-exact",
+              "value": -0.0033520799792354505
+            },
+            "reason": "changed, within rounding bound",
+            "record": "a104816a3f07821ac6572760db53ed0ee744ade4e2f8203bd10b753d75ef001f",
+            "rounding_bound": {
+              "authority": "bound",
+              "value": 0.029431326685861202
+            },
+            "verdict": "unresolved"
+          },
+          "layer": 1,
+          "mass": {
+            "authority": "measured",
+            "value": 0.2490234375
+          },
+          "name": "t3.L1.h0",
+          "row": 3,
+          "to_consumer": {
+            "authority": "derived-exact",
+            "proof": "P19",
+            "value": 0.0017853763541559728
+          },
+          "to_head": {
+            "norm": {
+              "authority": "derived-exact",
+              "proof": "P06",
+              "value": 0.07171487413457775
+            }
+          },
+          "to_o": {
+            "max_abs": {
+              "authority": "derived-exact",
+              "proof": "P07",
+              "value": 0.002616525125631597
+            },
+            "norm": {
+              "authority": "derived-exact",
+              "proof": "P07",
+              "value": 0.00540972895373867
+            }
+          }
+        }
+      ],
+      "rows": [
+        3
+      ],
+      "source": {
+        "address": "t2",
+        "row": 2,
+        "token": 9
+      },
+      "state": "resolved",
+      "total": 4,
+      "where": "t3.logits"
+    },
+    "seq": 16,
+    "where": "t3.logits"
+  },
+  "digest": "488024fda14f09b99fac8591d8f32659577c560d272102c93b2eba6944d2805b",
+  "schema": "mdb-view-op-v1",
+  "state": "resolved"
+}

@@ -1,0 +1,80 @@
+{
+  "bytes": 1247,
+  "data": {
+    "op": "compare",
+    "request_id": "compare",
+    "result": {
+      "consumer": "t3.M[4,9]",
+      "effects": {
+        "A": {
+          "authority": "measured",
+          "value": 0.0
+        },
+        "B": {
+          "authority": "measured",
+          "value": 0.16448974609375
+        }
+      },
+      "interaction": {
+        "reason": "A+B needs both sides to be edits (a checkpoint is a whole session state, not a change that composes)",
+        "state": "refused"
+      },
+      "kind": "scalar",
+      "measured": {
+        "A": {
+          "moves": [
+            "restore t3.logits",
+            "read t3.logits",
+            "restore t3.logits"
+          ],
+          "value": {
+            "authority": "measured",
+            "value": -0.114013671875
+          }
+        },
+        "B": {
+          "moves": [
+            "reverse-step layer to t3.L0.h_out",
+            "until t3.L1.h",
+            "set t3.L1.m",
+            "read t3.logits",
+            "restore t3.logits"
+          ],
+          "value": {
+            "authority": "measured",
+            "value": 0.05047607421875
+          }
+        },
+        "base": {
+          "moves": [
+            "read t3.logits",
+            "restore t3.logits"
+          ],
+          "value": {
+            "authority": "measured",
+            "value": -0.114013671875
+          }
+        }
+      },
+      "op": "compare",
+      "session": {
+        "after": "3ace215a4fc372171a02c9897a4755318437f0f2e10cafb16c543515ecc5bb4d",
+        "before": "3ace215a4fc372171a02c9897a4755318437f0f2e10cafb16c543515ecc5bb4d",
+        "debugger_after": "73c08de580ec93ea32e15ee78402b5f6657339933963fa5eee803f21533a3322",
+        "debugger_before": "73c08de580ec93ea32e15ee78402b5f6657339933963fa5eee803f21533a3322",
+        "unchanged": true
+      },
+      "sides": {
+        "A": "here",
+        "B": "L1.m=0.5 add"
+      },
+      "state": "resolved",
+      "where": "t3.logits"
+    },
+    "seq": 34,
+    "where": "t3.logits"
+  },
+  "digest": "42a73332d63506418e4bf54fc61fa1222ce01fc08ff7fded23a9ac1daf2aef03",
+  "schema": "mdb-view-op-v1",
+  "state": "resolved"
+}

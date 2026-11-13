@@ -1,0 +1,40 @@
+{
+  "bytes": 443,
+  "data": {
+    "op": "seek",
+    "request_id": "seek",
+    "result": {
+      "dropped_edits": [],
+      "moves": [
+        "reverse-step layer to t3.L0.h_out",
+        "until t3.L1.p"
+      ],
+      "op": "seek",
+      "restaged_edits": [],
+      "state": "resolved",
+      "stop": {
+        "address": "t3.L1.p",
+        "layer": 1,
+        "operator": "p = softmax(s, float32).to(dtype) (native attention weights)",
+        "port": "p",
+        "proofs": [
+          "P05",
+          "P06",
+          "P07",
+          "P08",
+          "P09"
+        ],
+        "row": 3,
+        "sublayer": "attn"
+      },
+      "target": "t3.L1.p",
+      "via": "run",
+      "where": "t3.L1.p"
+    },
+    "seq": 36,
+    "where": "t3.L1.p"
+  },
+  "digest": "770f68a0c523c63cd0be503503868299e651a5dd4dd76050c18355e6329acfeb",
+  "schema": "mdb-view-op-v1",
+  "state": "resolved"
+}

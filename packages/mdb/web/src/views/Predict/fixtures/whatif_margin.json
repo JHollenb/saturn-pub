@@ -1,0 +1,277 @@
+{
+  "bytes": 5029,
+  "data": {
+    "op": "whatif",
+    "request_id": "whatif",
+    "result": {
+      "consumer": {
+        "address": "t3.M[4,9]",
+        "index": 41,
+        "indices": [
+          4,
+          9
+        ],
+        "kind": "margin",
+        "row": 3
+      },
+      "difference": {
+        "native_minus_exact": {
+          "bound": {
+            "authority": "bound",
+            "value": 0.018065540892842
+          },
+          "value": {
+            "authority": "measured",
+            "value": -0.0003095494716101044
+          },
+          "within_bound": true
+        },
+        "native_minus_linear": {
+          "authority": "measured",
+          "value": -1.2916299592070808
+        }
+      },
+      "edit": {
+        "address": "t3.L1.m",
+        "layer": 1,
+        "op": "add",
+        "port": "m",
+        "row": 3,
+        "value": {
+          "authority": "supplied",
+          "value": 0.5
+        }
+      },
+      "measured": {
+        "base": {
+          "authority": "measured",
+          "value": -0.114013671875
+        },
+        "delta": {
+          "authority": "measured",
+          "value": 0.16448974609375
+        },
+        "edited": {
+          "authority": "measured",
+          "value": 0.05047607421875
+        },
+        "moves": [
+          "reverse-step layer to t3.L0.h_out",
+          "until t3.L1.h",
+          "set t3.L1.m",
+          "until t3.logits",
+          "restore t3.logits"
+        ]
+      },
+      "mode": "rewind",
+      "op": "whatif",
+      "prediction": {
+        "base": {
+          "authority": "derived-exact",
+          "value": -0.114013671875
+        },
+        "exact": {
+          "bound": {
+            "authority": "bound",
+            "value": 0.018065540892842
+          },
+          "premises": [
+            "RMSNorm in float32: mean of squares, rsqrt, scale, cast, gain",
+            "matmul accumulates in float32 in any order (gamma_n bound)",
+            "round to nearest, no overflow or underflow",
+            "the edit operand is cast to the model dtype and applied in one rounded op"
+          ],
+          "value": {
+            "authority": "derived-exact",
+            "value": 0.1647992955653601
+          }
+        },
+        "linear": {
+          "meaning": "gradient of the consumer times the edit displacement; not the effect",
+          "value": {
+            "authority": "derived-local",
+            "proof": "P14",
+            "value": 1.4561197053008308
+          }
+        },
+        "state": "resolved"
+      },
+      "record": "fe3585852519ce0aa20cd2bceedd3891fe112e3593b7f0fbf66032b6d744d620",
+      "sealed_record": {
+        "authority": "derived-local",
+        "body": {
+          "consumer": {
+            "address": "t3.M[4,9]",
+            "index": 41,
+            "indices": [
+              4,
+              9
+            ],
+            "kind": "margin",
+            "row": 3
+          },
+          "edit": {
+            "address": "t3.L1.m",
+            "layer": 1,
+            "op": "add",
+            "port": "m",
+            "row": 3,
+            "value": {
+              "authority": "supplied",
+              "value": 0.5
+            }
+          },
+          "method": {
+            "exact": "port-program identities on values at the cursor, the edit written at the edited port (rows chained through the cache)",
+            "linear": "forward-mode derivative of the same chain at the unedited point (P14)"
+          },
+          "mode": "rewind",
+          "operands": [
+            {
+              "address": "t3.L1.m",
+              "sha256": "11c25b0c685c73b5d2ab796d29b0acb52f851fa688dc292be0d482c61fb649b3",
+              "shape": [
+                1,
+                1,
+                16
+              ]
+            },
+            {
+              "address": "t3.logits",
+              "sha256": "6c16a594ce88a5f3214ee98a273387adc23bc7147183f90bcd352907529a05e0",
+              "shape": [
+                1,
+                32
+              ]
+            },
+            {
+              "address": "t3.L1.r",
+              "sha256": "b21e80307be701134ad8f2331905860d4764a1326666010250bd735980758f6e",
+              "shape": [
+                1,
+                1,
+                16
+              ]
+            },
+            {
+              "address": "t3.L1.f",
+              "sha256": "11d06497d27f009945d7a2e5a9ad14830c905a7ecb08ed642a498339045bcb68",
+              "shape": [
+                1,
+                1,
+                32
+              ]
+            }
+          ],
+          "prediction": {
+            "base": {
+              "authority": "derived-exact",
+              "value": -0.114013671875
+            },
+            "exact": {
+              "bound": {
+                "authority": "bound",
+                "value": 0.018065540892842
+              },
+              "premises": [
+                "RMSNorm in float32: mean of squares, rsqrt, scale, cast, gain",
+                "matmul accumulates in float32 in any order (gamma_n bound)",
+                "round to nearest, no overflow or underflow",
+                "the edit operand is cast to the model dtype and applied in one rounded op"
+              ],
+              "value": {
+                "authority": "derived-exact",
+                "value": 0.1647992955653601
+              }
+            },
+            "linear": {
+              "meaning": "gradient of the consumer times the edit displacement; not the effect",
+              "value": {
+                "authority": "derived-local",
+                "proof": "P14",
+                "value": 1.4561197053008308
+              }
+            },
+            "state": "resolved"
+          },
+          "schema": "mdb-whatif-v1",
+          "sealed_at": {
+            "cut": "b4673fc73ffbef1d576eae26120a27a7707d0eef1c9f119f874f92c9060c6c8a",
+            "index": 41,
+            "row": 3,
+            "transition": 5,
+            "where": "t3.logits"
+          }
+        },
+        "digest": "fe3585852519ce0aa20cd2bceedd3891fe112e3593b7f0fbf66032b6d744d620",
+        "execution_sha256": "54cb62b356d5532cde92a70f82c1a8ae7552fbcb7e276ca3e3fb210d0a23ca63",
+        "id": "fe3585852519ce0aa20cd2bceedd3891fe112e3593b7f0fbf66032b6d744d620",
+        "kind": "whatif",
+        "model_identity": "cb1ebc05fb0be6603ca90676fe18a6766881d56bc9efb35759ce6911ac877b6b",
+        "pointers": [],
+        "schema": "mdb-record-v2",
+        "session_id": "mdb-run:c0a945465fbb59a9e00107a0527fdf98"
+      },
+      "session": {
+        "after": "3ace215a4fc372171a02c9897a4755318437f0f2e10cafb16c543515ecc5bb4d",
+        "before": "3ace215a4fc372171a02c9897a4755318437f0f2e10cafb16c543515ecc5bb4d",
+        "debugger_after": "949aedb86ed8341120856f113522434b73166b530376ff6262657820ec143907",
+        "debugger_before": "949aedb86ed8341120856f113522434b73166b530376ff6262657820ec143907",
+        "unchanged": true
+      },
+      "split": {
+        "proof": "P20",
+        "rule": "native delta = sum of the terms (float64)",
+        "terms": [
+          {
+            "name": "linear",
+            "value": {
+              "authority": "derived-local",
+              "proof": "P14",
+              "value": 1.4561197053008308
+            }
+          },
+          {
+            "meaning": "exact minus linear: the curvature the first-order term misses",
+            "name": "nonlinear",
+            "value": {
+              "authority": "derived-exact",
+              "proof": "P20",
+              "value": -1.2913204097354707
+            }
+          },
+          {
+            "meaning": "exact change with the operand the edit wrote (read back) minus the exact change with the requested operand",
+            "name": "realisation",
+            "value": {
+              "authority": "derived-exact",
+              "proof": "P20",
+              "value": -4.518179042983794e-05
+            }
+          },
+          {
+            "bound": {
+              "authority": "bound",
+              "value": 0.009948872732965285
+            },
+            "meaning": "native change minus the exact change with the written operand",
+            "name": "rounding",
+            "value": {
+              "authority": "measured",
+              "proof": "P20",
+              "value": -0.00026436768118026643
+            },
+            "within_bound": true
+          }
+        ]
+      },
+      "state": "resolved",
+      "where": "t3.logits"
+    },
+    "seq": 27,
+    "where": "t3.logits"
+  },
+  "digest": "bc29784233aac950bc067953a59ecdaada251c31f8a28cb358153607f0acc755",
+  "schema": "mdb-view-op-v1",
+  "state": "resolved"
+}

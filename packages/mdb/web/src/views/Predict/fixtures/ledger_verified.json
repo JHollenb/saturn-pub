@@ -1,0 +1,173 @@
+{
+  "bytes": 2613,
+  "data": {
+    "circuits": [],
+    "forecasts": [
+      {
+        "bound": {
+          "elementwise": true,
+          "max": {
+            "authority": "bound",
+            "value": 0.016106113765349046
+          }
+        },
+        "id": 1,
+        "predicted": {
+          "dtype": "float64",
+          "max_abs": {
+            "authority": "derived-exact",
+            "value": 2.0572007759671638
+          },
+          "norm": {
+            "authority": "derived-exact",
+            "value": 3.995803420225478
+          },
+          "sha256": "96ed261df64982774eefd2a252cf103cad91ffdf2f3057d153c02a47b7b320fd",
+          "shape": [
+            16
+          ]
+        },
+        "record": "db5ed1366ed7e565e2949f06fcb029716f88056dc02250348b0ad45f2e6a08a9",
+        "sealed_at": "t3.L0.h",
+        "status": "closed",
+        "steps": 1,
+        "target": "t3.L0.a",
+        "verdict": {
+          "bound_max": {
+            "authority": "bound",
+            "value": 0.016106113765349046
+          },
+          "native": {
+            "max_abs": {
+              "authority": "measured",
+              "value": 2.0625
+            },
+            "norm": {
+              "authority": "measured",
+              "value": 4.001103137311382
+            }
+          },
+          "order": {
+            "current_cut": "a5caf85c892915ba136c619f1fb2c9a4b45fb60ef254a2f078778dcb70a39de3",
+            "descends": true,
+            "receipts_after_seal": {
+              "count": 0
+            },
+            "same_cut": true,
+            "sealed": {
+              "index": 2,
+              "row": 3
+            },
+            "sealed_before_target": true,
+            "sealed_cut": "a5caf85c892915ba136c619f1fb2c9a4b45fb60ef254a2f078778dcb70a39de3",
+            "target": {
+              "index": 3,
+              "row": 3
+            }
+          },
+          "residual_max_abs": {
+            "authority": "measured",
+            "value": 0.005299224032836225
+          },
+          "verdict": "within-bound",
+          "within_bound": true
+        }
+      },
+      {
+        "bound": {
+          "elementwise": true,
+          "max": {
+            "authority": "bound",
+            "value": 0.0026798018788218043
+          }
+        },
+        "id": 2,
+        "predicted": {
+          "dtype": "float64",
+          "max_abs": {
+            "authority": "derived-exact",
+            "value": 0.2515246078866365
+          },
+          "norm": {
+            "authority": "derived-exact",
+            "value": 0.7071158538274008
+          },
+          "sha256": "a37f6e74c9373a0ebf208cb5b8e1048ce99373ecfea129e0139909f05ed588a1",
+          "shape": [
+            2,
+            4
+          ]
+        },
+        "record": "6a5b7ce96f898a514847a794cad90c2ea4d6bc6e43fd4c658973131dbc1d5308",
+        "sealed_at": "t3.L0.h",
+        "status": "open",
+        "steps": 7,
+        "target": "t3.L0.p",
+        "verdict": null
+      },
+      {
+        "bound": {
+          "elementwise": true,
+          "max": {
+            "authority": "bound",
+            "value": 16.825123307594925
+          }
+        },
+        "id": 3,
+        "predicted": {
+          "shape": [],
+          "value": {
+            "authority": "derived-exact",
+            "proof": "P19",
+            "value": -0.11452182620307177
+          }
+        },
+        "record": "f76fa16799dffe05ba7779e873a9ed9fc2f2449f07e55f0f07ebb08e17bce192",
+        "sealed_at": "t3.L0.h",
+        "status": "open",
+        "steps": 39,
+        "target": "t3.M[4,9]",
+        "verdict": null
+      },
+      {
+        "bound": {
+          "elementwise": true,
+          "max": {
+            "authority": "bound",
+            "value": 0.021311659537551687
+          }
+        },
+        "id": 4,
+        "predicted": {
+          "dtype": "float64",
+          "max_abs": {
+            "authority": "derived-exact",
+            "value": 0.000519650786726456
+          },
+          "norm": {
+            "authority": "derived-exact",
+            "value": 0.0007882494432613616
+          },
+          "sha256": "af68c878180ad25b68a45678a65e8198a7974f279d63bfcbd38f63c50ba2d294",
+          "shape": [
+            16
+          ]
+        },
+        "record": "3e5d253dcf9cbe0d514d657725252a3cb2e36989d98c8980c8ce1c7a22ed00fe",
+        "sealed_at": "t3.L0.h",
+        "status": "open",
+        "steps": 36,
+        "target": "t3.L1.m",
+        "verdict": null
+      }
+    ],
+    "more": [],
+    "seq": 7,
+    "session": "qwen2-8a16dcab78be",
+    "symbols": [],
+    "where": "t3.L0.a"
+  },
+  "digest": "1daf43797224ac97facb133932976faebecfdf095c63db7045457d948455ff87",
+  "schema": "mdb-view-live-ledger-v1",
+  "state": "resolved"
+}

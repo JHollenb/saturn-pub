@@ -1,0 +1,92 @@
+{
+  "bytes": 1480,
+  "data": {
+    "op": "circuit",
+    "request_id": "circuit",
+    "result": {
+      "action": "test",
+      "id": 2,
+      "op": "circuit",
+      "state": "resolved",
+      "test": {
+        "base": {
+          "authority": "measured",
+          "value": -0.114013671875
+        },
+        "complement": {
+          "count": 7,
+          "delta": {
+            "authority": "measured",
+            "value": -0.004638671875
+          },
+          "edits": [
+            "t3.L1.m",
+            "t3.L0.m",
+            "t3.L0.o",
+            "t3.L1.p[h0,src=2|h0,src=3|h1,src=1|h1,src=2]"
+          ],
+          "measured": {
+            "authority": "measured",
+            "value": -0.11865234375
+          },
+          "nodes": [
+            "n15",
+            "n7",
+            "n12"
+          ],
+          "predicted_delta": {
+            "authority": "derived-local",
+            "value": -0.00022869209179575715
+          },
+          "prediction": "minus the ablated contributions (direct path; rho and later layers frozen)"
+        },
+        "consumer": "t3.M[4,9]",
+        "excluded": {
+          "nodes": [
+            "n2"
+          ],
+          "reason": "the embedding is ablated in neither set: zeroing t3.L0.h removes the input of every other node, not its direct path"
+        },
+        "id": 2,
+        "record": "ef89528099ee50be26360fce87dfd03701d35f5633f3891ee02394e88967e655",
+        "retained": {
+          "count": 4,
+          "delta": {
+            "authority": "measured",
+            "value": -0.029541015625
+          },
+          "edits": [
+            "t3.L1.p[h0,src=0|h0,src=1|h1,src=0|h1,src=3]"
+          ],
+          "measured": {
+            "authority": "measured",
+            "value": -0.1435546875
+          },
+          "nodes": [
+            "n5",
+            "n6",
+            "n10",
+            "n11"
+          ],
+          "predicted_delta": {
+            "authority": "derived-local",
+            "value": -0.03110063426616396
+          },
+          "prediction": "minus the ablated contributions (direct path; rho and later layers frozen)"
+        },
+        "rule": "|consumer change with everything but the retained set ablated| <= tolerance x |base|",
+        "tolerance": {
+          "authority": "supplied",
+          "value": 0.1
+        },
+        "verdict": "sufficient at this dose"
+      },
+      "where": "t3.logits"
+    },
+    "seq": 22,
+    "where": "t3.logits"
+  },
+  "digest": "849274a8dd20f5c880c71d33ffc380fa9c5dc3f35a8cfcde6a8526643ce33f5d",
+  "schema": "mdb-view-op-v1",
+  "state": "resolved"
+}

@@ -1,0 +1,18 @@
+{
+  "bytes": 160,
+  "data": {
+    "op": "whatif",
+    "request_id": "whatif",
+    "result": {
+      "interrupted": "t3.logits",
+      "reason": "interrupted at t3.logits",
+      "state": "unresolved"
+    },
+    "seq": 31,
+    "where": "t3.logits"
+  },
+  "digest": "77c146a1a47d9d543d0718f23e47a1d5384bee5ca3156e7111527c55d830f4dc",
+  "reason": "interrupted at t3.logits",
+  "schema": "mdb-view-op-v1",
+  "state": "unresolved"
+}

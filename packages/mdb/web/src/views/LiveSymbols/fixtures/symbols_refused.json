@@ -1,0 +1,23 @@
+{
+  "bytes": 558,
+  "data": {
+    "op": "symbols",
+    "request_id": "symbols",
+    "result": {
+      "error": {
+        "message": "t3.logits has not been computed at t3.L1.p: t3.M[4,9] needs it (the final state fixes the readout scale); run `until t3.logits`",
+        "reason": "t3.logits has not been computed at t3.L1.p: t3.M[4,9] needs it (the final state fixes the readout scale); run `until t3.logits`",
+        "state": "refused",
+        "type": "refused"
+      },
+      "reason": "t3.logits has not been computed at t3.L1.p: t3.M[4,9] needs it (the final state fixes the readout scale); run `until t3.logits`",
+      "state": "refused"
+    },
+    "seq": 11,
+    "where": "t3.L1.p"
+  },
+  "digest": "3c775c35ad38bb0046bbf90898fee3fdc85cb79a7f862275cc14b6cda0b9e132",
+  "reason": "t3.logits has not been computed at t3.L1.p: t3.M[4,9] needs it (the final state fixes the readout scale); run `until t3.logits`",
+  "schema": "mdb-view-op-v1",
+  "state": "refused"
+}

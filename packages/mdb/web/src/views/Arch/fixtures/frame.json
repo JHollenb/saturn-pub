@@ -1,0 +1,618 @@
+{
+  "bytes": 7407,
+  "data": {
+    "breakpoints": [],
+    "checkpoints": [
+      {
+        "name": "here",
+        "store": "durable",
+        "where": "t3.logits"
+      },
+      {
+        "name": "mid",
+        "store": "durable",
+        "where": "t4.L0.p"
+      }
+    ],
+    "checks": {
+      "s": {
+        "equal": true
+      }
+    },
+    "displays": [],
+    "edits": {
+      "committed": [
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 1,
+          "op": "add",
+          "port": "m",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": false,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.000518798828125
+          },
+          "realised_sha256": "0cd65a74756f9fd49c3a50100f647a91d9446331e7cc93bc83c0b9ca7e9856ab",
+          "row": 3,
+          "selection": null,
+          "transition": 2,
+          "value": {
+            "authority": "supplied",
+            "value": 0.5
+          }
+        }
+      ],
+      "committed_total": 1,
+      "staged": [
+        {
+          "cast_exact": true,
+          "cast_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "changed_fraction": {
+            "authority": "measured",
+            "value": 1.0
+          },
+          "fired": true,
+          "kind": "scalar",
+          "labels": {
+            "cast_max_abs_error": "measured",
+            "changed_fraction": "measured",
+            "realised_max_abs_error": "measured"
+          },
+          "layer": 0,
+          "op": "scale",
+          "port": "v",
+          "realised_dtype": "torch.bfloat16",
+          "realised_exact": true,
+          "realised_max_abs_error": {
+            "authority": "measured",
+            "value": 0.0
+          },
+          "realised_sha256": "b8811852747cfa3620c3dd2af5d59498c240f208e689b4052bac934c29faf094",
+          "selection": null,
+          "value": {
+            "authority": "supplied",
+            "value": 2.0
+          }
+        }
+      ],
+      "staged_total": 1,
+      "where": "t4.L0.p"
+    },
+    "family": "qwen2",
+    "layer": 0,
+    "limits": {
+      "heads": 2,
+      "kv_heads": 1,
+      "layers": 2,
+      "max_positions": 256
+    },
+    "live": {
+      "frontier": [],
+      "state": "paused"
+    },
+    "more": [],
+    "ports": [
+      {
+        "addr": "t4.L0.h",
+        "computed": true,
+        "cursor": false,
+        "edit": {
+          "authority": "measured",
+          "by": null,
+          "edited": false,
+          "kind": "native",
+          "reason": null,
+          "state": "resolved",
+          "upstream": [
+            {
+              "layer": 1,
+              "op": "add",
+              "port": "m",
+              "row": 3,
+              "staged": false
+            }
+          ],
+          "upstream_total": 1
+        },
+        "editable": true,
+        "focus": false,
+        "operator": "h = layer input (residual stream)",
+        "port": "h",
+        "proofs": [
+          "P01"
+        ],
+        "sublayer": "attn"
+      },
+      {
+        "addr": "t4.L0.a",
+        "computed": true,
+        "cursor": false,
+        "edit": {
+          "authority": "measured",
+          "by": null,
+          "edited": false,
+          "kind": "native",
+          "reason": null,
+          "state": "resolved",
+          "upstream": [
+            {
+              "layer": 1,
+              "op": "add",
+              "port": "m",
+              "row": 3,
+              "staged": false
+            }
+          ],
+          "upstream_total": 1
+        },
+        "editable": true,
+        "focus": false,
+        "operator": "a = RMSNorm(h) * w_in",
+        "port": "a",
+        "proofs": [
+          "P02",
+          "P03"
+        ],
+        "sublayer": "attn"
+      },
+      {
+        "addr": "t4.L0.q",
+        "computed": true,
+        "cursor": false,
+        "edit": {
+          "authority": "measured",
+          "by": null,
+          "edited": false,
+          "kind": "native",
+          "reason": null,
+          "state": "resolved",
+          "upstream": [
+            {
+              "layer": 1,
+              "op": "add",
+              "port": "m",
+              "row": 3,
+              "staged": false
+            }
+          ],
+          "upstream_total": 1
+        },
+        "editable": true,
+        "focus": false,
+        "operator": "q = W_q a + b_q (pre-RoPE, flat)",
+        "port": "q",
+        "proofs": [
+          "P04"
+        ],
+        "sublayer": "attn"
+      },
+      {
+        "addr": "t4.L0.k",
+        "computed": true,
+        "cursor": false,
+        "edit": {
+          "authority": "measured",
+          "by": null,
+          "edited": false,
+          "kind": "native",
+          "reason": null,
+          "state": "resolved",
+          "upstream": [
+            {
+              "layer": 1,
+              "op": "add",
+              "port": "m",
+              "row": 3,
+              "staged": false
+            }
+          ],
+          "upstream_total": 1
+        },
+        "editable": true,
+        "focus": false,
+        "operator": "k = W_k a + b_k (pre-RoPE, flat)",
+        "port": "k",
+        "proofs": [
+          "P04"
+        ],
+        "sublayer": "attn"
+      },
+      {
+        "addr": "t4.L0.v",
+        "computed": true,
+        "cursor": false,
+        "edit": {
+          "authority": "derived-exact",
+          "by": "v",
+          "edited": true,
+          "kind": "edit",
+          "reason": null,
+          "state": "resolved",
+          "upstream": [
+            {
+              "layer": 1,
+              "op": "add",
+              "port": "m",
+              "row": 3,
+              "staged": false
+            }
+          ],
+          "upstream_total": 1
+        },
+        "editable": true,
+        "focus": false,
+        "operator": "v = W_v a + b_v (flat)",
+        "port": "v",
+        "proofs": [
+          "P04"
+        ],
+        "sublayer": "attn"
+      },
+      {
+        "addr": "t4.L0.qr",
+        "computed": true,
+        "cursor": false,
+        "edit": {
+          "authority": "measured",
+          "by": null,
+          "edited": false,
+          "kind": "native",
+          "reason": null,
+          "state": "resolved",
+          "upstream": [
+            {
+              "layer": 1,
+              "op": "add",
+              "port": "m",
+              "row": 3,
+              "staged": false
+            },
+            {
+              "layer": 0,
+              "op": "scale",
+              "port": "v",
+              "row": 4,
+              "staged": true
+            }
+          ],
+          "upstream_total": 2
+        },
+        "editable": true,
+        "focus": false,
+        "operator": "qr = RoPE(q) (query argument of eager attention)",
+        "port": "qr",
+        "proofs": [
+          "P04"
+        ],
+        "sublayer": "attn"
+      },
+      {
+        "addr": "t4.L0.kr",
+        "computed": true,
+        "cursor": false,
+        "edit": {
+          "authority": "measured",
+          "by": null,
+          "edited": false,
+          "kind": "native",
+          "reason": null,
+          "state": "resolved",
+          "upstream": [
+            {
+              "layer": 1,
+              "op": "add",
+              "port": "m",
+              "row": 3,
+              "staged": false
+            },
+            {
+              "layer": 0,
+              "op": "scale",
+              "port": "v",
+              "row": 4,
+              "staged": true
+            }
+          ],
+          "upstream_total": 2
+        },
+        "editable": false,
+        "focus": false,
+        "operator": "kr = [cache; RoPE(k)] (key argument of eager attention, cached rows included)",
+        "port": "kr",
+        "proofs": [
+          "P04"
+        ],
+        "sublayer": "attn"
+      },
+      {
+        "addr": "t4.L0.s",
+        "computed": true,
+        "cursor": false,
+        "edit": {
+          "authority": "derived-exact",
+          "by": null,
+          "edited": false,
+          "kind": "replica",
+          "reason": null,
+          "state": "resolved",
+          "upstream": [
+            {
+              "layer": 1,
+              "op": "add",
+              "port": "m",
+              "row": 3,
+              "staged": false
+            },
+            {
+              "layer": 0,
+              "op": "scale",
+              "port": "v",
+              "row": 4,
+              "staged": true
+            }
+          ],
+          "upstream_total": 2
+        },
+        "editable": true,
+        "focus": false,
+        "operator": "s = scaling * qr repeat_kv(kr)^T + mask (replica of the native expression)",
+        "port": "s",
+        "proofs": [
+          "P05",
+          "P07",
+          "P08",
+          "P09"
+        ],
+        "sublayer": "attn"
+      },
+      {
+        "addr": "t4.L0.p",
+        "computed": true,
+        "cursor": true,
+        "edit": {
+          "authority": "measured",
+          "by": null,
+          "edited": false,
+          "kind": "native",
+          "reason": null,
+          "state": "resolved",
+          "upstream": [
+            {
+              "layer": 1,
+              "op": "add",
+              "port": "m",
+              "row": 3,
+              "staged": false
+            },
+            {
+              "layer": 0,
+              "op": "scale",
+              "port": "v",
+              "row": 4,
+              "staged": true
+            }
+          ],
+          "upstream_total": 2
+        },
+        "editable": true,
+        "focus": false,
+        "operator": "p = softmax(s, float32).to(dtype) (native attention weights)",
+        "port": "p",
+        "proofs": [
+          "P05",
+          "P06",
+          "P07",
+          "P08",
+          "P09"
+        ],
+        "sublayer": "attn"
+      },
+      {
+        "addr": "t4.L0.A",
+        "computed": false,
+        "cursor": false,
+        "edit": null,
+        "editable": true,
+        "focus": false,
+        "operator": "A = concat_heads(p repeat_kv([cache; v])) (o_proj input)",
+        "port": "A",
+        "proofs": [
+          "P06",
+          "P07"
+        ],
+        "sublayer": "attn"
+      },
+      {
+        "addr": "t4.L0.o",
+        "computed": false,
+        "cursor": false,
+        "edit": null,
+        "editable": true,
+        "focus": false,
+        "operator": "o = W_o A",
+        "port": "o",
+        "proofs": [
+          "P06",
+          "P07"
+        ],
+        "sublayer": "attn"
+      },
+      {
+        "addr": "t4.L0.r",
+        "computed": false,
+        "cursor": false,
+        "edit": null,
+        "editable": true,
+        "focus": false,
+        "operator": "r = h + o",
+        "port": "r",
+        "proofs": [
+          "P06",
+          "P07",
+          "P14"
+        ],
+        "sublayer": "attn"
+      },
+      {
+        "addr": "t4.L0.n",
+        "computed": false,
+        "cursor": false,
+        "edit": null,
+        "editable": true,
+        "focus": false,
+        "operator": "n = RMSNorm(r) * w_post (mlp input)",
+        "port": "n",
+        "proofs": [
+          "P02",
+          "P03"
+        ],
+        "sublayer": "mlp"
+      },
+      {
+        "addr": "t4.L0.g",
+        "computed": false,
+        "cursor": false,
+        "edit": null,
+        "editable": true,
+        "focus": false,
+        "operator": "g = W_gate n",
+        "port": "g",
+        "proofs": [
+          "P10",
+          "P15"
+        ],
+        "sublayer": "mlp"
+      },
+      {
+        "addr": "t4.L0.sg",
+        "computed": false,
+        "cursor": false,
+        "edit": null,
+        "editable": true,
+        "focus": false,
+        "operator": "sg = silu(g)",
+        "port": "sg",
+        "proofs": [
+          "P10",
+          "P15"
+        ],
+        "sublayer": "mlp"
+      },
+      {
+        "addr": "t4.L0.u",
+        "computed": false,
+        "cursor": false,
+        "edit": null,
+        "editable": true,
+        "focus": false,
+        "operator": "u = W_up n",
+        "port": "u",
+        "proofs": [
+          "P10",
+          "P15"
+        ],
+        "sublayer": "mlp"
+      },
+      {
+        "addr": "t4.L0.f",
+        "computed": false,
+        "cursor": false,
+        "edit": null,
+        "editable": true,
+        "focus": false,
+        "operator": "f = sg * u (down_proj input)",
+        "port": "f",
+        "proofs": [
+          "P10",
+          "P15"
+        ],
+        "sublayer": "mlp"
+      },
+      {
+        "addr": "t4.L0.m",
+        "computed": false,
+        "cursor": false,
+        "edit": null,
+        "editable": true,
+        "focus": false,
+        "operator": "m = W_down f",
+        "port": "m",
+        "proofs": [
+          "P14"
+        ],
+        "sublayer": "mlp"
+      },
+      {
+        "addr": "t4.L0.h_out",
+        "computed": false,
+        "cursor": false,
+        "edit": null,
+        "editable": true,
+        "focus": false,
+        "operator": "h_out = r + m (layer output)",
+        "port": "h_out",
+        "proofs": [
+          "P14"
+        ],
+        "sublayer": "mlp"
+      }
+    ],
+    "row": 4,
+    "seq": 40,
+    "session": "qwen2-8a16dcab78be",
+    "stop": {
+      "address": "t4.L0.p",
+      "layer": 0,
+      "operator": "p = softmax(s, float32).to(dtype) (native attention weights)",
+      "port": "p",
+      "proofs": [
+        "P05",
+        "P06",
+        "P07",
+        "P08",
+        "P09"
+      ],
+      "row": 4,
+      "sublayer": "attn"
+    },
+    "tokens": [
+      {
+        "id": 1
+      },
+      {
+        "id": 5
+      },
+      {
+        "id": 9
+      },
+      {
+        "id": 3
+      },
+      {
+        "id": 31
+      }
+    ],
+    "where": "t4.L0.p"
+  },
+  "digest": "27c0dee4d2aae01d980d7f88e44577e9fb6da3852ade2a2d5ffe55736997a08d",
+  "schema": "mdb-view-live-v1",
+  "state": "resolved"
+}

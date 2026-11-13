@@ -1,0 +1,107 @@
+{
+  "bytes": 777,
+  "data": {
+    "cursor": {
+      "index": 10,
+      "label": "L0.p",
+      "row": 4
+    },
+    "limits": {
+      "heads": 2,
+      "kv_heads": 1,
+      "layers": 2,
+      "max_positions": 256
+    },
+    "root": {
+      "index": 0,
+      "label": "start",
+      "row": 3
+    },
+    "rows": [
+      {
+        "count": null,
+        "edits": [],
+        "row": 0,
+        "token": 1
+      },
+      {
+        "count": null,
+        "edits": [],
+        "row": 1,
+        "token": 5
+      },
+      {
+        "count": null,
+        "edits": [],
+        "row": 2,
+        "token": 9
+      },
+      {
+        "count": 43,
+        "edits": [
+          "L1.m"
+        ],
+        "row": 3,
+        "token": 3
+      },
+      {
+        "count": 11,
+        "edits": [
+          "L0.v (staged)"
+        ],
+        "row": 4,
+        "token": 31
+      }
+    ],
+    "session": "qwen2-8a16dcab78be",
+    "stops": [
+      "start",
+      "emb",
+      "L0.h",
+      "L0.a",
+      "L0.q",
+      "L0.k",
+      "L0.v",
+      "L0.qr",
+      "L0.kr",
+      "L0.s",
+      "L0.p",
+      "L0.A",
+      "L0.o",
+      "L0.r",
+      "L0.n",
+      "L0.g",
+      "L0.sg",
+      "L0.u",
+      "L0.f",
+      "L0.m",
+      "L0.h_out",
+      "L1.h",
+      "L1.a",
+      "L1.q",
+      "L1.k",
+      "L1.v",
+      "L1.qr",
+      "L1.kr",
+      "L1.s",
+      "L1.p",
+      "L1.A",
+      "L1.o",
+      "L1.r",
+      "L1.n",
+      "L1.g",
+      "L1.sg",
+      "L1.u",
+      "L1.f",
+      "L1.m",
+      "L1.h_out",
+      "fn",
+      "logits",
+      "sample"
+    ],
+    "where": "t4.L0.p"
+  },
+  "digest": "772ed077d68dbbcbb02f7edc7bb003acd6889d7a4e2a489a0264b2fba060a9e8",
+  "schema": "mdb-view-live-timeline-v1",
+  "state": "resolved"
+}

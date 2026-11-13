@@ -1,0 +1,179 @@
+{
+  "bytes": 3051,
+  "data": {
+    "op": "forecast",
+    "request_id": "forecast",
+    "result": {
+      "forecast": {
+        "bound": {
+          "elementwise": true,
+          "max": {
+            "authority": "bound",
+            "value": 0.016106113765349046
+          },
+          "premises": [
+            "RMSNorm in float32: mean of squares, rsqrt, scale, cast, gain",
+            "float32 library functions within 4 ulp",
+            "model dtype bfloat16",
+            "round to nearest, no overflow or underflow"
+          ]
+        },
+        "id": 1,
+        "method": [
+          {
+            "identity": "rms_norm",
+            "operator": "a = RMSNorm(h) * w_in",
+            "proof": "P02",
+            "proofs": [
+              "P02",
+              "P03"
+            ],
+            "stop": "t3.L0.a"
+          }
+        ],
+        "predicted": {
+          "dtype": "float64",
+          "max_abs": {
+            "authority": "derived-exact",
+            "value": 2.0572007759671638
+          },
+          "norm": {
+            "authority": "derived-exact",
+            "value": 3.995803420225478
+          },
+          "sha256": "96ed261df64982774eefd2a252cf103cad91ffdf2f3057d153c02a47b7b320fd",
+          "shape": [
+            16
+          ]
+        },
+        "record": "db5ed1366ed7e565e2949f06fcb029716f88056dc02250348b0ad45f2e6a08a9",
+        "sealed_at": "t3.L0.h",
+        "status": "open",
+        "target": "t3.L0.a"
+      },
+      "op": "forecast",
+      "record": {
+        "authority": "derived-exact",
+        "body": {
+          "bound": {
+            "elementwise": true,
+            "max": {
+              "authority": "bound",
+              "value": 0.016106113765349046
+            },
+            "premises": [
+              "RMSNorm in float32: mean of squares, rsqrt, scale, cast, gain",
+              "float32 library functions within 4 ulp",
+              "model dtype bfloat16",
+              "round to nearest, no overflow or underflow"
+            ]
+          },
+          "edits_at_seal": [],
+          "method": {
+            "authority": "derived-exact",
+            "chain": [
+              {
+                "identity": "rms_norm",
+                "operator": "a = RMSNorm(h) * w_in",
+                "proof": "P02",
+                "proofs": [
+                  "P02",
+                  "P03"
+                ],
+                "stop": "t3.L0.a"
+              }
+            ],
+            "rule": "identities of the port program on values that exist at the cursor; no native call for the target"
+          },
+          "operands": [
+            {
+              "address": "t3.L0.h",
+              "dtype": "bfloat16",
+              "sha256": "c376f2dcec698975886997352d01cfbca20feb5166c98bba7feea1164f7ae8cb",
+              "shape": [
+                1,
+                1,
+                16
+              ]
+            }
+          ],
+          "predicted": {
+            "dtype": "float64",
+            "max_abs": {
+              "authority": "derived-exact",
+              "value": 2.0572007759671638
+            },
+            "norm": {
+              "authority": "derived-exact",
+              "value": 3.995803420225478
+            },
+            "sha256": "96ed261df64982774eefd2a252cf103cad91ffdf2f3057d153c02a47b7b320fd",
+            "shape": [
+              16
+            ]
+          },
+          "schema": "mdb-forecast-v1",
+          "sealed_at": {
+            "computed_past_cursor": [],
+            "cut": "a5caf85c892915ba136c619f1fb2c9a4b45fb60ef254a2f078778dcb70a39de3",
+            "index": 2,
+            "lookahead": "none",
+            "receipts": {
+              "count": 1
+            },
+            "row": 3,
+            "transition": 1,
+            "where": "t3.L0.h"
+          },
+          "target": {
+            "address": "t3.L0.a",
+            "index": 3,
+            "kind": "value",
+            "row": 3,
+            "stop": "t3.L0.a"
+          }
+        },
+        "digest": "db5ed1366ed7e565e2949f06fcb029716f88056dc02250348b0ad45f2e6a08a9",
+        "execution_sha256": "54cb62b356d5532cde92a70f82c1a8ae7552fbcb7e276ca3e3fb210d0a23ca63",
+        "id": "db5ed1366ed7e565e2949f06fcb029716f88056dc02250348b0ad45f2e6a08a9",
+        "kind": "forecast",
+        "model_identity": "cb1ebc05fb0be6603ca90676fe18a6766881d56bc9efb35759ce6911ac877b6b",
+        "pointers": [
+          {
+            "address": {
+              "clock": {
+                "layer": 0,
+                "token": 3
+              },
+              "kind": "occurrence",
+              "origin": null,
+              "port": "a",
+              "selector": {}
+            },
+            "authority": "derived-exact",
+            "cut": "a5caf85c892915ba136c619f1fb2c9a4b45fb60ef254a2f078778dcb70a39de3",
+            "event": null,
+            "kind": "occurrence",
+            "program": "forecast",
+            "recipe": null,
+            "value": {
+              "dtype": "float64",
+              "sha256": "96ed261df64982774eefd2a252cf103cad91ffdf2f3057d153c02a47b7b320fd",
+              "shape": [
+                16
+              ]
+            }
+          }
+        ],
+        "schema": "mdb-record-v2",
+        "session_id": "mdb-run:c0a945465fbb59a9e00107a0527fdf98"
+      },
+      "state": "resolved"
+    },
+    "seq": 2,
+    "where": "t3.L0.h"
+  },
+  "digest": "1ff463bf075179ecb246920fc5e86d63a02de15c3604db5f06434eaab8aafde6",
+  "schema": "mdb-view-op-v1",
+  "state": "resolved"
+}

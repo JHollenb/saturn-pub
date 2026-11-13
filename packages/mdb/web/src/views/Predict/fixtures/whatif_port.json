@@ -1,0 +1,368 @@
+{
+  "bytes": 6386,
+  "data": {
+    "op": "whatif",
+    "request_id": "whatif",
+    "result": {
+      "consumer": {
+        "address": "t3.L1.h_out",
+        "index": 39,
+        "kind": "value",
+        "row": 3
+      },
+      "difference": {
+        "native_minus_exact": {
+          "bound": {
+            "authority": "bound",
+            "value": 0.0006204781607480764
+          },
+          "value": {
+            "max_abs": {
+              "authority": "measured",
+              "value": 0.00012233174380911482
+            },
+            "norm": {
+              "authority": "measured",
+              "value": 0.0002178380961181446
+            }
+          },
+          "within_bound": true
+        },
+        "native_minus_linear": {
+          "max_abs": {
+            "authority": "measured",
+            "value": 0.00017722025487573842
+          },
+          "norm": {
+            "authority": "measured",
+            "value": 0.0002941934697386651
+          }
+        }
+      },
+      "edit": {
+        "address": "t3.L1.o",
+        "layer": 1,
+        "op": "scale",
+        "port": "o",
+        "row": 3,
+        "value": {
+          "authority": "supplied",
+          "value": 1.5
+        }
+      },
+      "measured": {
+        "base": {
+          "max_abs": {
+            "authority": "measured",
+            "value": 0.048583984375
+          },
+          "norm": {
+            "authority": "measured",
+            "value": 0.08981821720044039
+          }
+        },
+        "delta": {
+          "max_abs": {
+            "authority": "measured",
+            "value": 0.0041046142578125
+          },
+          "norm": {
+            "authority": "measured",
+            "value": 0.008131389455491569
+          }
+        },
+        "edited": {
+          "max_abs": {
+            "authority": "measured",
+            "value": 0.0498046875
+          },
+          "norm": {
+            "authority": "measured",
+            "value": 0.09160727712536894
+          }
+        },
+        "moves": [
+          "reverse-step layer to t3.L0.h_out",
+          "until t3.L1.h",
+          "set t3.L1.o",
+          "until t3.L1.h_out",
+          "restore t3.logits"
+        ]
+      },
+      "mode": "rewind",
+      "op": "whatif",
+      "prediction": {
+        "base": {
+          "max_abs": {
+            "authority": "derived-exact",
+            "value": 0.048583984375
+          },
+          "norm": {
+            "authority": "derived-exact",
+            "value": 0.08981821720044039
+          }
+        },
+        "exact": {
+          "bound": {
+            "authority": "bound",
+            "value": 0.0006204781607480764
+          },
+          "premises": [
+            "RMSNorm in float32: mean of squares, rsqrt, scale, cast, gain",
+            "SiLU in float32 as g / (1 + exp(-g)), cast to the model dtype",
+            "matmul accumulates in float32 in any order (gamma_n bound)",
+            "round to nearest, no overflow or underflow",
+            "the edit operand is cast to the model dtype and applied in one rounded op"
+          ],
+          "value": {
+            "max_abs": {
+              "authority": "derived-exact",
+              "value": 0.004099220371238362
+            },
+            "norm": {
+              "authority": "derived-exact",
+              "value": 0.008154252846770097
+            }
+          }
+        },
+        "linear": {
+          "meaning": "gradient of the consumer times the edit displacement; not the effect",
+          "value": {
+            "max_abs": {
+              "authority": "derived-local",
+              "proof": "P14",
+              "value": 0.004097944560473973
+            },
+            "norm": {
+              "authority": "derived-local",
+              "proof": "P14",
+              "value": 0.008212609011649495
+            }
+          }
+        },
+        "state": "resolved"
+      },
+      "record": "6fcc5eeeef0bdca830f48c9474d13205f947d06710203b80841818837b20c010",
+      "sealed_record": {
+        "authority": "derived-local",
+        "body": {
+          "consumer": {
+            "address": "t3.L1.h_out",
+            "index": 39,
+            "kind": "value",
+            "row": 3
+          },
+          "edit": {
+            "address": "t3.L1.o",
+            "layer": 1,
+            "op": "scale",
+            "port": "o",
+            "row": 3,
+            "value": {
+              "authority": "supplied",
+              "value": 1.5
+            }
+          },
+          "method": {
+            "exact": "port-program identities on values at the cursor, the edit written at the edited port (rows chained through the cache)",
+            "linear": "forward-mode derivative of the same chain at the unedited point (P14)"
+          },
+          "mode": "rewind",
+          "operands": [
+            {
+              "address": "t3.L1.o",
+              "sha256": "6298dbca49a1e7cc3197a046dabec7a21d9df36157cc5a0ebfc13ff4712ca7db",
+              "shape": [
+                1,
+                1,
+                16
+              ]
+            },
+            {
+              "address": "t3.L1.h_out",
+              "sha256": "f95d13ca44eb47c4281b4e74524716a1c0fdfa229d45b0324f755d22c54c6c67",
+              "shape": [
+                1,
+                1,
+                16
+              ]
+            },
+            {
+              "address": "t3.L1.h",
+              "sha256": "6ea4712c2a2b4983bf5024295c51d1a0a781feba035ef8048744030d1af978d0",
+              "shape": [
+                1,
+                1,
+                16
+              ]
+            },
+            {
+              "address": "t3.L1.A",
+              "sha256": "7ceb504c15ba168f0891ed86e8b2c3c54656cc35968fe6fcae8359ea2901f3e8",
+              "shape": [
+                1,
+                1,
+                16
+              ]
+            }
+          ],
+          "prediction": {
+            "base": {
+              "max_abs": {
+                "authority": "derived-exact",
+                "value": 0.048583984375
+              },
+              "norm": {
+                "authority": "derived-exact",
+                "value": 0.08981821720044039
+              }
+            },
+            "exact": {
+              "bound": {
+                "authority": "bound",
+                "value": 0.0006204781607480764
+              },
+              "premises": [
+                "RMSNorm in float32: mean of squares, rsqrt, scale, cast, gain",
+                "SiLU in float32 as g / (1 + exp(-g)), cast to the model dtype",
+                "matmul accumulates in float32 in any order (gamma_n bound)",
+                "round to nearest, no overflow or underflow",
+                "the edit operand is cast to the model dtype and applied in one rounded op"
+              ],
+              "value": {
+                "max_abs": {
+                  "authority": "derived-exact",
+                  "value": 0.004099220371238362
+                },
+                "norm": {
+                  "authority": "derived-exact",
+                  "value": 0.008154252846770097
+                }
+              }
+            },
+            "linear": {
+              "meaning": "gradient of the consumer times the edit displacement; not the effect",
+              "value": {
+                "max_abs": {
+                  "authority": "derived-local",
+                  "proof": "P14",
+                  "value": 0.004097944560473973
+                },
+                "norm": {
+                  "authority": "derived-local",
+                  "proof": "P14",
+                  "value": 0.008212609011649495
+                }
+              }
+            },
+            "state": "resolved"
+          },
+          "schema": "mdb-whatif-v1",
+          "sealed_at": {
+            "cut": "b4673fc73ffbef1d576eae26120a27a7707d0eef1c9f119f874f92c9060c6c8a",
+            "index": 41,
+            "row": 3,
+            "transition": 5,
+            "where": "t3.logits"
+          }
+        },
+        "digest": "6fcc5eeeef0bdca830f48c9474d13205f947d06710203b80841818837b20c010",
+        "execution_sha256": "54cb62b356d5532cde92a70f82c1a8ae7552fbcb7e276ca3e3fb210d0a23ca63",
+        "id": "6fcc5eeeef0bdca830f48c9474d13205f947d06710203b80841818837b20c010",
+        "kind": "whatif",
+        "model_identity": "cb1ebc05fb0be6603ca90676fe18a6766881d56bc9efb35759ce6911ac877b6b",
+        "pointers": [],
+        "schema": "mdb-record-v2",
+        "session_id": "mdb-run:c0a945465fbb59a9e00107a0527fdf98"
+      },
+      "session": {
+        "after": "3ace215a4fc372171a02c9897a4755318437f0f2e10cafb16c543515ecc5bb4d",
+        "before": "3ace215a4fc372171a02c9897a4755318437f0f2e10cafb16c543515ecc5bb4d",
+        "debugger_after": "949aedb86ed8341120856f113522434b73166b530376ff6262657820ec143907",
+        "debugger_before": "949aedb86ed8341120856f113522434b73166b530376ff6262657820ec143907",
+        "unchanged": true
+      },
+      "split": {
+        "proof": "P20",
+        "rule": "native delta = sum of the terms (float64)",
+        "terms": [
+          {
+            "name": "linear",
+            "value": {
+              "max_abs": {
+                "authority": "derived-local",
+                "proof": "P14",
+                "value": 0.004097944560473973
+              },
+              "norm": {
+                "authority": "derived-local",
+                "proof": "P14",
+                "value": 0.008212609011649495
+              }
+            }
+          },
+          {
+            "meaning": "exact minus linear: the curvature the first-order term misses",
+            "name": "nonlinear",
+            "value": {
+              "max_abs": {
+                "authority": "derived-exact",
+                "proof": "P20",
+                "value": 0.00020513586610629406
+              },
+              "norm": {
+                "authority": "derived-exact",
+                "proof": "P20",
+                "value": 0.00023526588056847658
+              }
+            }
+          },
+          {
+            "meaning": "exact change with the operand the edit wrote (read back) minus the exact change with the requested operand",
+            "name": "realisation",
+            "value": {
+              "max_abs": {
+                "authority": "derived-exact",
+                "proof": "P20",
+                "value": 1.5693571095917735e-05
+              },
+              "norm": {
+                "authority": "derived-exact",
+                "proof": "P20",
+                "value": 3.333733105240477e-05
+              }
+            }
+          },
+          {
+            "bound": {
+              "authority": "bound",
+              "value": 0.0005561479631907096
+            },
+            "meaning": "native change minus the exact change with the written operand",
+            "name": "rounding",
+            "value": {
+              "max_abs": {
+                "authority": "measured",
+                "proof": "P20",
+                "value": 0.00011477684927581333
+              },
+              "norm": {
+                "authority": "measured",
+                "proof": "P20",
+                "value": 0.0001989809063537072
+              }
+            },
+            "within_bound": true
+          }
+        ]
+      },
+      "state": "resolved",
+      "where": "t3.logits"
+    },
+    "seq": 28,
+    "where": "t3.logits"
+  },
+  "digest": "a77ba7f9d52f7b1508a8cdc6e788c1feb3cb47106c26f2105e1bb9deda463aa1",
+  "schema": "mdb-view-op-v1",
+  "state": "resolved"
+}

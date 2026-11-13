@@ -1,0 +1,23 @@
+{
+  "bytes": 377,
+  "data": {
+    "op": "compare",
+    "request_id": "compare",
+    "result": {
+      "error": {
+        "message": "no checkpoint 'nope' (have: here) and it is not an edit ADDR=VALUE",
+        "reason": "no checkpoint 'nope' (have: here) and it is not an edit ADDR=VALUE",
+        "state": "refused",
+        "type": "refused"
+      },
+      "reason": "no checkpoint 'nope' (have: here) and it is not an edit ADDR=VALUE",
+      "state": "refused"
+    },
+    "seq": 35,
+    "where": "t3.logits"
+  },
+  "digest": "b93b7fc79856a84256294bebf10c57eb7e81c171ee6c95e366220058c2848db8",
+  "reason": "no checkpoint 'nope' (have: here) and it is not an edit ADDR=VALUE",
+  "schema": "mdb-view-op-v1",
+  "state": "refused"
+}

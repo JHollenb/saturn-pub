@@ -231,6 +231,18 @@ export interface LiveCheckpoint {
   store: "memory" | "durable";
 }
 
+export interface LiveCircuit {
+  id: number;
+  consumer: string;
+  k: number;
+  depth: number;
+  count: number;
+  where: string;
+  record: string;
+  tests: number;
+  verdict: string | null;
+}
+
 export interface LiveEdit {
   state: "resolved" | "unresolved" | "refused";
   authority: "measured" | "derived-exact" | "derived-local" | "bound" | "supplied" | "unresolved" | "refused" | null;
@@ -240,6 +252,18 @@ export interface LiveEdit {
   reason: string | null;
   upstream: LiveUpstream[];
   upstream_total: number;
+}
+
+export interface LiveForecast {
+  id: number;
+  target: string;
+  status: string;
+  sealed_at: string;
+  record: string;
+  steps: number;
+  predicted: Record<string, unknown>;
+  bound: Record<string, unknown>;
+  verdict: Record<string, unknown> | null;
 }
 
 export interface LiveFrame {
@@ -271,6 +295,16 @@ export interface LiveItems {
   next: number | null;
 }
 
+export interface LiveLedger {
+  session: string;
+  seq: number;
+  where: string | null;
+  circuits: LiveCircuit[];
+  forecasts: LiveForecast[];
+  symbols: LiveSymbol[];
+  more: Omitted[];
+}
+
 export interface LivePort {
   port: string;
   addr: string;
@@ -300,6 +334,12 @@ export interface LiveStop {
   row: number;
   index: number;
   label: string;
+}
+
+export interface LiveSymbol {
+  name: string;
+  definitions: string[];
+  rows: number[];
 }
 
 export interface LiveTimeline {
@@ -714,5 +754,6 @@ export const SCHEMAS = {
   live: "mdb-view-live-v1",
   "live-timeline": "mdb-view-live-timeline-v1",
   "live-items": "mdb-view-live-items-v1",
+  "live-ledger": "mdb-view-live-ledger-v1",
   event: "mdb-view-event-v1",
 } as const;

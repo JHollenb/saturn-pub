@@ -6,6 +6,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import type {
   LiveCheckpoint,
   LiveEdit,
+  LiveForecast,
   LiveFrame,
   LivePort,
   LiveTimeline,
@@ -16,6 +17,8 @@ import { EvidenceMark } from '../../chrome/EvidenceMark';
 import { RefusedView } from '../../chrome/NotAvailable';
 import { Count, NumView } from '../../chrome/NumView';
 import { asNum } from '../../chrome/evidence';
+import { OpValue } from '../../chrome/OpValue';
+import type { Tab } from '../../state/inspect';
 import type { ReduceEntry } from '../../state/reduce';
 import {
   moreOf,
@@ -33,7 +36,20 @@ export interface LiveActions {
   expand(addr: string | null): void;
   /** Fetch the next page of a list the frame shortened (`more` field). */
   more(field: string): void;
+  /** Show another view of the live session. */
+  tab?(tab: Tab): void;
+  /** Seal a forecast of a port (the `forecast` op). */
+  forecast?(target: string): void;
+  /** Verify forecasts (the `verify` op). */
+  verify?(ids: number[]): void;
 }
+
+const TABS: [Tab, string][] = [
+  ['pipeline', 'Pipeline'],
+  ['symbols', 'Symbols'],
+  ['graph', 'Circuits'],
+  ['predict', 'Predict'],
+];
 
 /** Report a pipeline row's element so the page can ask only for rows on screen; returns the
  *  cleanup. Absent (tests, no IntersectionObserver): every row counts as shown. */
@@ -54,6 +70,16 @@ export interface LiveViewProps {
   extra?: ReadonlyMap<string, Extra>;
   watchRow?: WatchRow;
   act: LiveActions;
+  /** The view shown below the controls; the other views are `panes`. Absent: the pipeline. */
+  tab?: Tab;
+  panes?: Partial<Record<Exclude<Tab, 'pipeline'>, ReactNode>>;
+  /** The architecture strip (always visible) and a pending-seek confirmation line. */
+  strip?: ReactNode;
+  seekLine?: ReactNode;
+  /** The run's sealed forecasts: the pipeline's forecast column (absent: no column). */
+  forecasts?: LiveForecast[];
+  /** Addresses of the selected circuit's nodes, marked on the pipeline. */
+  circuitPorts?: ReadonlySet<string>;
 }
 
 export function LiveView(props: LiveViewProps) {
@@ -81,12 +107,37 @@ export function LiveView(props: LiveViewProps) {
     );
   }
   const hasRun = frame.where !== null;
+  const tab = props.tab ?? 'pipeline';
+  const pane = tab === 'pipeline' ? null : props.panes?.[tab];
   return (
     <div className="live" data-testid="live" data-running={running ? 'yes' : 'no'}>
       <Status {...props} frame={frame} />
       <Controls frame={frame} running={running} act={act} urlAddr={props.urlAddr} />
       {props.refused && <RefusedView what="request" refused={props.refused} />}
-      {hasRun ? (
+      {props.seekLine}
+      {hasRun && props.strip}
+      {props.panes && act.tab && (
+        <div className="live-tabs" role="tablist" aria-label="live views">
+          {TABS.map(([key, label]) => (
+            <button
+              key={key}
+              type="button"
+              role="tab"
+              id={`live-tab-${key}`}
+              aria-selected={tab === key}
+              className={tab === key ? 'live-tab here' : 'live-tab'}
+              onClick={() => act.tab?.(key)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      )}
+      {pane ? (
+        <div role="tabpanel" aria-labelledby={`live-tab-${tab}`} className="live-pane">
+          {pane}
+        </div>
+      ) : hasRun ? (
         <>
           {props.timeline && <Clock timeline={props.timeline} disabled={!!running} act={act} />}
           <Pipeline
@@ -95,6 +146,9 @@ export function LiveView(props: LiveViewProps) {
             expanded={props.expanded}
             act={act}
             watchRow={props.watchRow}
+            forecasts={props.forecasts}
+            circuitPorts={props.circuitPorts}
+            disabled={!!running}
           />
         </>
       ) : (
@@ -102,11 +156,13 @@ export function LiveView(props: LiveViewProps) {
           No run yet: give token ids (or text, when the model has a tokenizer) and press start.
         </div>
       )}
-      <div className="live-tables">
-        <Breakpoints frame={frame} extra={extra} disabled={!!running} act={act} />
-        <Edits frame={frame} extra={extra} disabled={!!running || !hasRun} act={act} />
-        <Checkpoints frame={frame} extra={extra} disabled={!!running} act={act} />
-      </div>
+      {!pane && (
+        <div className="live-tables">
+          <Breakpoints frame={frame} extra={extra} disabled={!!running} act={act} />
+          <Edits frame={frame} extra={extra} disabled={!!running || !hasRun} act={act} />
+          <Checkpoints frame={frame} extra={extra} disabled={!!running} act={act} />
+        </div>
+      )}
       <Console lines={props.console} disabled={!!running} act={act} />
     </div>
   );
@@ -355,12 +411,18 @@ function Pipeline({
   expanded,
   act,
   watchRow,
+  forecasts,
+  circuitPorts,
+  disabled,
 }: {
   frame: LiveFrame;
   summaries: ReadonlyMap<string, Summary>;
   expanded: string | null;
   act: LiveActions;
   watchRow?: WatchRow;
+  forecasts?: LiveForecast[];
+  circuitPorts?: ReadonlySet<string>;
+  disabled: boolean;
 }) {
   return (
     <div className="table-scroll" aria-label="pipeline">
@@ -376,6 +438,11 @@ function Pipeline({
             <th>‖value‖</th>
             <th>top |value|</th>
             <th>edit</th>
+            {forecasts && (
+              <th title="sealed prediction (hollow) beside the native value once verified">
+                forecast
+              </th>
+            )}
           </tr>
         </thead>
         <tbody>
@@ -387,6 +454,9 @@ function Pipeline({
               open={p.cursor || p.addr === expanded}
               act={act}
               watchRow={watchRow}
+              forecasts={forecasts}
+              inCircuit={circuitPorts?.has(p.addr) ?? false}
+              disabled={disabled}
             />
           ))}
         </tbody>
@@ -401,12 +471,18 @@ function PortRow({
   open,
   act,
   watchRow,
+  forecasts,
+  inCircuit,
+  disabled,
 }: {
   port: LivePort;
   summary: Summary | null;
   open: boolean;
   act: LiveActions;
   watchRow?: WatchRow;
+  forecasts?: LiveForecast[];
+  inCircuit: boolean;
+  disabled: boolean;
 }) {
   const ref = useRef<HTMLTableRowElement>(null);
   const addr = port.addr;
@@ -421,9 +497,17 @@ function PortRow({
       className={port.cursor ? 'live-port here' : 'live-port'}
       data-port={port.port}
       data-computed={port.computed ? 'yes' : 'no'}
+      data-circuit={inCircuit ? 'yes' : undefined}
       aria-current={port.cursor ? 'step' : undefined}
     >
-      <td>{port.cursor ? '▶' : ''}</td>
+      <td>
+        {port.cursor ? '▶' : ''}
+        {inCircuit && (
+          <span className="circuit-mark" title="a node of the selected circuit">
+            ◆
+          </span>
+        )}
+      </td>
       <td className="mono">
         {port.computed ? (
           <button
@@ -460,7 +544,77 @@ function PortRow({
       <td className="live-edit-cell">
         <EditMark edit={port.edit} />
       </td>
+      {forecasts && (
+        <td className="live-forecast" data-testid="forecast-cell">
+          <ForecastCell port={port} forecasts={forecasts} act={act} disabled={disabled} />
+        </td>
+      )}
     </tr>
+  );
+}
+
+/** A port's forecast: the latest sealed prediction (hollow: derived), and once `verify` closed
+ *  it, the native value (solid: measured) with the residual and its bound. A port the forecast
+ *  op can still predict (not computed yet) offers to seal one; nothing is predicted unasked. */
+export function ForecastCell({
+  port,
+  forecasts,
+  act,
+  disabled,
+}: {
+  port: LivePort;
+  forecasts: LiveForecast[];
+  act: LiveActions;
+  disabled: boolean;
+}) {
+  const f = forecasts
+    .filter((x) => x.target === port.addr)
+    .sort((a, b) => b.id - a.id)[0];
+  if (!f) {
+    return port.computed ? null : (
+      <button
+        type="button"
+        className="linklike"
+        disabled={disabled || !act.forecast}
+        title={`forecast ${port.addr}: seal a prediction from values at the cursor`}
+        onClick={() => act.forecast?.(port.addr)}
+      >
+        forecast
+      </button>
+    );
+  }
+  const v = f.verdict;
+  return (
+    <span className="forecast" data-forecast={f.id} data-status={f.status}>
+      <span className="faint">#{f.id} pred</span> <OpValue value={f.predicted} compact />
+      {v && v.native !== undefined ? (
+        <>
+          {' '}
+          <span className="faint">native</span> <OpValue value={v.native} compact />{' '}
+          <span className="faint">resid</span>{' '}
+          <OpValue value={v.residual_max_abs} what="residual" compact /> ≤{' '}
+          <OpValue value={v.bound_max} what="bound" compact />{' '}
+          <span className="chip">{typeof v.verdict === 'string' ? v.verdict : f.status}</span>
+        </>
+      ) : port.computed ? (
+        <>
+          {' '}
+          <button
+            type="button"
+            disabled={disabled || !act.verify}
+            onClick={() => act.verify?.([f.id])}
+            title="compare with the native value now that the cursor has passed it"
+          >
+            verify
+          </button>
+        </>
+      ) : (
+        <span className="faint" title="hollow until measured">
+          {' '}
+          awaiting native · bound <OpValue value={(f.bound as Record<string, unknown>).max} compact />
+        </span>
+      )}
+    </span>
   );
 }
 

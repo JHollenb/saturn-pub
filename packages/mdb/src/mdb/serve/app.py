@@ -5,7 +5,7 @@ a live debugger under that session's id: ``POST .../op`` dispatches through the 
 the session's worker thread, ``POST .../console`` runs a REPL command line, ``POST
 .../interrupt`` delivers Ctrl-C to the running op, ``GET .../live`` and ``.../live/timeline``
 are the live frame and clock (``GET .../live/items`` pages through a frame list the frame
-shortened), ``POST .../reduce`` with an occurrence pointer reads the live run the way ``print``
+shortened; ``GET .../live/ledger`` lists the run's circuits, forecasts and declared symbols), ``POST .../reduce`` with an occurrence pointer reads the live run the way ``print``
 does (``serve.live_reduce``; nothing is written to the project), and the events socket pushes
 one ``op`` event per completed op. Without ``live`` every op whose effect is not ``read`` is
 refused 403.
@@ -352,6 +352,16 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
                 raise ViewError("unresolved", f"{list}: {error}", 409) from error
 
         return respond(envelope("live-items", await on_worker(submit(live.call, page))))
+
+    @app.get("/api/v1/s/{sid}/live/ledger")
+    async def live_ledger(sid: str, limit: int = live_view.LEDGER_LIMIT):
+        if not is_live(sid):
+            raise not_live(sid, "the live ledger")
+        if not 1 <= limit <= live_view.LEDGER_LIMIT:
+            raise ViewError("bad_request", f"limit is an integer in 1..{live_view.LEDGER_LIMIT}",
+                            400)
+        block, more = await on_worker(submit(live.call, lambda: live_view.ledger(live, limit)))
+        return respond(envelope("live-ledger", block, more or None))
 
     @app.get("/api/v1/s/{sid}/live/timeline")
     async def live_timeline(sid: str):

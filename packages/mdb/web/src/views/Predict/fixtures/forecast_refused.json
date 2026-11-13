@@ -1,0 +1,23 @@
+{
+  "bytes": 346,
+  "data": {
+    "op": "forecast",
+    "request_id": "forecast",
+    "result": {
+      "error": {
+        "message": "forecasts stay in the cursor's row t3; t0 is another row",
+        "reason": "forecasts stay in the cursor's row t3; t0 is another row",
+        "state": "refused",
+        "type": "refused"
+      },
+      "reason": "forecasts stay in the cursor's row t3; t0 is another row",
+      "state": "refused"
+    },
+    "seq": 8,
+    "where": "t3.L0.a"
+  },
+  "digest": "53f34000c79573e242189a155cedde43f45f8aac07c13de565c64507ae1589d0",
+  "reason": "forecasts stay in the cursor's row t3; t0 is another row",
+  "schema": "mdb-view-op-v1",
+  "state": "refused"
+}

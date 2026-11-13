@@ -1,0 +1,164 @@
+{
+  "bytes": 2996,
+  "data": {
+    "op": "circuit",
+    "request_id": "circuit",
+    "result": {
+      "action": "build",
+      "id": 3,
+      "op": "circuit",
+      "record": {
+        "authority": "derived-exact",
+        "body": {
+          "closure": {
+            "bound": {
+              "authority": "bound",
+              "value": 2.0715980029488744e-15
+            },
+            "by_construction": true,
+            "meaning": "native consumer minus the sum of the depth-1 nodes: zero by construction (the remainders are defined as native minus the listed terms), so this checks float64 summation only; remainders_within is the rounding check",
+            "value": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 1.3877787807814457e-17
+            },
+            "within": true
+          },
+          "consumer": "t3.M[4,9]",
+          "count": 8,
+          "depth": 2,
+          "edits": {
+            "count": 0,
+            "meaning": "edit nodes: displacements edits wrote, never in a remainder"
+          },
+          "k": 2,
+          "kind": "margin",
+          "premises": [
+            "rho^F evaluated once at the native final state h_L (P19); not attributed to components"
+          ],
+          "remainders_within": true,
+          "root": {
+            "address": "t3.M[4,9]",
+            "children": [
+              {
+                "address": "t3.L0.h",
+                "id": "n2",
+                "kind": "embedding",
+                "name": "embedding",
+                "value": {
+                  "authority": "derived-exact",
+                  "proof": "P19",
+                  "value": -0.14577574990846898
+                }
+              },
+              {
+                "address": "t3.L1.o",
+                "children": [
+                  {
+                    "address": "t3.L1.A[h0]",
+                    "id": "n4",
+                    "kind": "head",
+                    "name": "L1.h0",
+                    "value": {
+                      "authority": "derived-exact",
+                      "proof": "P07",
+                      "value": 0.025083898094937676
+                    }
+                  },
+                  {
+                    "address": "t3.L1.A[h1]",
+                    "id": "n5",
+                    "kind": "head",
+                    "name": "L1.h1",
+                    "value": {
+                      "authority": "derived-exact",
+                      "proof": "P07",
+                      "value": 0.005537005909177741
+                    }
+                  },
+                  {
+                    "address": "t3.L1.o",
+                    "bound": {
+                      "authority": "bound",
+                      "value": 0.00022300924168833848
+                    },
+                    "id": "n6",
+                    "kind": "remainder",
+                    "name": "L1.attn remainder",
+                    "note": "native o minus sum_h W_o,h A_h (o_proj rounding)",
+                    "value": {
+                      "authority": "measured",
+                      "value": 1.8798053409314347e-05
+                    },
+                    "within": true
+                  }
+                ],
+                "id": "n3",
+                "kind": "attn",
+                "name": "L1.attn",
+                "value": {
+                  "authority": "derived-exact",
+                  "proof": "P19",
+                  "value": 0.030639702057524726
+                }
+              },
+              {
+                "address": "t3.M[4,9] (unlisted)",
+                "id": "n7",
+                "kind": "more",
+                "name": "+3 more",
+                "note": "+3 more, sum of their exact contributions",
+                "value": {
+                  "authority": "derived-exact",
+                  "value": 0.0006486187961142677
+                }
+              },
+              {
+                "address": "t3.M[4,9]",
+                "bound": {
+                  "authority": "bound",
+                  "value": 0.01613718522872853
+                },
+                "id": "n8",
+                "kind": "remainder",
+                "name": "remainder",
+                "note": "native consumer minus the listed terms: residual-add rounding, final norm (explain's a-priori k = 2 multiple, not a derived bound) and head",
+                "value": {
+                  "authority": "measured",
+                  "value": 0.00047375717982997556
+                },
+                "within": true
+              }
+            ],
+            "id": "n1",
+            "kind": "consumer",
+            "name": "t3.M[4,9]",
+            "value": {
+              "authority": "measured",
+              "value": -0.114013671875
+            }
+          },
+          "schema": "mdb-circuit-v1",
+          "where": "t3.logits"
+        },
+        "digest": "6a101595b444ffdee88c260c30471a795f141eec17f07d9002ed5e62015b5692",
+        "execution_sha256": "54cb62b356d5532cde92a70f82c1a8ae7552fbcb7e276ca3e3fb210d0a23ca63",
+        "id": "6a101595b444ffdee88c260c30471a795f141eec17f07d9002ed5e62015b5692",
+        "kind": "circuit",
+        "model_identity": "cb1ebc05fb0be6603ca90676fe18a6766881d56bc9efb35759ce6911ac877b6b",
+        "pointers": [],
+        "schema": "mdb-record-v2",
+        "session_id": "qwen2-8a16dcab78be"
+      },
+      "state": "resolved",
+      "stored": [
+        "6a101595b444ffdee88c260c30471a795f141eec17f07d9002ed5e62015b5692"
+      ]
+    },
+    "seq": 20,
+    "where": "t3.logits"
+  },
+  "digest": "d7b4131e63cf232cbc0710bfaef8695f29670232189a2a3d0f3f326ce1591a51",
+  "schema": "mdb-view-op-v1",
+  "state": "resolved"
+}

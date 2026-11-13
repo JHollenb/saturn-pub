@@ -1,0 +1,18 @@
+{
+  "bytes": 158,
+  "data": {
+    "op": "reads",
+    "request_id": "reads",
+    "result": {
+      "interrupted": "t3.logits",
+      "reason": "interrupted at t3.logits",
+      "state": "unresolved"
+    },
+    "seq": 17,
+    "where": "t3.logits"
+  },
+  "digest": "52572118c490891664df3fba0c8e9efb1c8f5cefbaa0f7b504ad71a0f46dba85",
+  "reason": "interrupted at t3.logits",
+  "schema": "mdb-view-op-v1",
+  "state": "unresolved"
+}

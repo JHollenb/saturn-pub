@@ -1,0 +1,538 @@
+{
+  "fixtures": {
+    "declare": {
+      "ops_before": [
+        {
+          "args": {
+            "prompt": [
+              1,
+              5,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {},
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "M[4,9]"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.m"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {},
+          "op": "step"
+        },
+        {
+          "args": {},
+          "op": "verify"
+        },
+        {
+          "args": {
+            "target": "t0.L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.p"
+          },
+          "op": "until"
+        },
+        {
+          "args": {},
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]"
+          },
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "depth": 3,
+            "target": "M[4,9]",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "target": "t3.logits"
+          },
+          "op": "until"
+        }
+      ],
+      "request": {
+        "args": {
+          "addresses": "t1, cache.L1.v[row=2]",
+          "name": "ctx"
+        },
+        "op": "symbol",
+        "route": "POST op"
+      },
+      "server": "mdb serve --tiny qwen2 (in-process: create_app + LiveSession, seed 113)"
+    },
+    "reads_interrupted": {
+      "ops_before": [
+        {
+          "args": {
+            "prompt": [
+              1,
+              5,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {},
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "M[4,9]"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.m"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {},
+          "op": "step"
+        },
+        {
+          "args": {},
+          "op": "verify"
+        },
+        {
+          "args": {
+            "target": "t0.L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.p"
+          },
+          "op": "until"
+        },
+        {
+          "args": {},
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]"
+          },
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "depth": 3,
+            "target": "M[4,9]",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "target": "t3.logits"
+          },
+          "op": "until"
+        },
+        {
+          "args": {
+            "addresses": "t1, cache.L1.v[row=2]",
+            "name": "ctx"
+          },
+          "op": "symbol"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]"
+          },
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]",
+            "source": "t2",
+            "top": 3
+          },
+          "op": "reads"
+        }
+      ],
+      "request": {
+        "args": {
+          "consumer": "M[4,9]",
+          "source": "t3"
+        },
+        "op": "reads",
+        "route": "POST op, then POST interrupt while it waited"
+      },
+      "server": "mdb serve --tiny qwen2 (in-process: create_app + LiveSession, seed 113)"
+    },
+    "reads_t2": {
+      "ops_before": [
+        {
+          "args": {
+            "prompt": [
+              1,
+              5,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {},
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "M[4,9]"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.m"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {},
+          "op": "step"
+        },
+        {
+          "args": {},
+          "op": "verify"
+        },
+        {
+          "args": {
+            "target": "t0.L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.p"
+          },
+          "op": "until"
+        },
+        {
+          "args": {},
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]"
+          },
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "depth": 3,
+            "target": "M[4,9]",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "target": "t3.logits"
+          },
+          "op": "until"
+        },
+        {
+          "args": {
+            "addresses": "t1, cache.L1.v[row=2]",
+            "name": "ctx"
+          },
+          "op": "symbol"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]"
+          },
+          "op": "symbols"
+        }
+      ],
+      "request": {
+        "args": {
+          "consumer": "M[4,9]",
+          "source": "t2",
+          "top": 3
+        },
+        "op": "reads",
+        "route": "POST op"
+      },
+      "server": "mdb serve --tiny qwen2 (in-process: create_app + LiveSession, seed 113)"
+    },
+    "symbols_margin": {
+      "ops_before": [
+        {
+          "args": {
+            "prompt": [
+              1,
+              5,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {},
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "M[4,9]"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.m"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {},
+          "op": "step"
+        },
+        {
+          "args": {},
+          "op": "verify"
+        },
+        {
+          "args": {
+            "target": "t0.L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.p"
+          },
+          "op": "until"
+        },
+        {
+          "args": {},
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "consumer": "M[4,9]"
+          },
+          "op": "symbols"
+        },
+        {
+          "args": {
+            "depth": 3,
+            "target": "M[4,9]",
+            "top": 2
+          },
+          "op": "circuit"
+        },
+        {
+          "args": {
+            "target": "t3.logits"
+          },
+          "op": "until"
+        },
+        {
+          "args": {
+            "addresses": "t1, cache.L1.v[row=2]",
+            "name": "ctx"
+          },
+          "op": "symbol"
+        }
+      ],
+      "request": {
+        "args": {
+          "consumer": "M[4,9]"
+        },
+        "op": "symbols",
+        "route": "POST op"
+      },
+      "server": "mdb serve --tiny qwen2 (in-process: create_app + LiveSession, seed 113)"
+    },
+    "symbols_none": {
+      "ops_before": [
+        {
+          "args": {
+            "prompt": [
+              1,
+              5,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {},
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "M[4,9]"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.m"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {},
+          "op": "step"
+        },
+        {
+          "args": {},
+          "op": "verify"
+        },
+        {
+          "args": {
+            "target": "t0.L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.p"
+          },
+          "op": "until"
+        }
+      ],
+      "request": {
+        "args": {},
+        "op": "symbols",
+        "route": "POST op"
+      },
+      "server": "mdb serve --tiny qwen2 (in-process: create_app + LiveSession, seed 113)"
+    },
+    "symbols_refused": {
+      "ops_before": [
+        {
+          "args": {
+            "prompt": [
+              1,
+              5,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {},
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "M[4,9]"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.m"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {},
+          "op": "step"
+        },
+        {
+          "args": {},
+          "op": "verify"
+        },
+        {
+          "args": {
+            "target": "t0.L0.p"
+          },
+          "op": "forecast"
+        },
+        {
+          "args": {
+            "target": "L1.p"
+          },
+          "op": "until"
+        },
+        {
+          "args": {},
+          "op": "symbols"
+        }
+      ],
+      "request": {
+        "args": {
+          "consumer": "M[4,9]"
+        },
+        "op": "symbols",
+        "route": "POST op"
+      },
+      "server": "mdb serve --tiny qwen2 (in-process: create_app + LiveSession, seed 113)"
+    }
+  },
+  "recorder": "/private/tmp/claude-501/-Users-jakeholl-domains/a0257d4e-0d2c-4a3b-8a17-1b843f7dd193/scratchpad/build-b3/record.py"
+}

@@ -1,0 +1,105 @@
+{
+  "bytes": 1672,
+  "data": {
+    "op": "compare",
+    "request_id": "compare",
+    "result": {
+      "consumer": "t3.M[4,9]",
+      "effects": {
+        "A": {
+          "authority": "measured",
+          "value": 0.16448974609375
+        },
+        "A+B": {
+          "authority": "measured",
+          "value": 0.1661376953125
+        },
+        "B": {
+          "authority": "measured",
+          "value": 0.0457763671875
+        }
+      },
+      "interaction": {
+        "formula": "(A+B) - A - B + base",
+        "value": {
+          "authority": "measured",
+          "value": -0.04412841796875
+        }
+      },
+      "kind": "scalar",
+      "measured": {
+        "A": {
+          "moves": [
+            "reverse-step layer to t3.L0.h_out",
+            "until t3.L1.h",
+            "set t3.L1.m",
+            "read t3.logits",
+            "restore t3.logits"
+          ],
+          "value": {
+            "authority": "measured",
+            "value": 0.05047607421875
+          }
+        },
+        "A+B": {
+          "moves": [
+            "reverse-step layer to t3.emb",
+            "until t3.L0.h",
+            "set t3.L0.v",
+            "until t3.L1.h",
+            "set t3.L1.m",
+            "read t3.logits",
+            "restore t3.logits"
+          ],
+          "value": {
+            "authority": "measured",
+            "value": 0.0521240234375
+          }
+        },
+        "B": {
+          "moves": [
+            "reverse-step layer to t3.emb",
+            "until t3.L0.h",
+            "set t3.L0.v",
+            "read t3.logits",
+            "restore t3.logits"
+          ],
+          "value": {
+            "authority": "measured",
+            "value": -0.0682373046875
+          }
+        },
+        "base": {
+          "moves": [
+            "read t3.logits",
+            "restore t3.logits"
+          ],
+          "value": {
+            "authority": "measured",
+            "value": -0.114013671875
+          }
+        }
+      },
+      "op": "compare",
+      "order": "A+B stages both sides' edits layer by layer; at one port A's edit is applied before B's (where both edit one port, the ops commute)",
+      "session": {
+        "after": "3ace215a4fc372171a02c9897a4755318437f0f2e10cafb16c543515ecc5bb4d",
+        "before": "3ace215a4fc372171a02c9897a4755318437f0f2e10cafb16c543515ecc5bb4d",
+        "debugger_after": "949aedb86ed8341120856f113522434b73166b530376ff6262657820ec143907",
+        "debugger_before": "949aedb86ed8341120856f113522434b73166b530376ff6262657820ec143907",
+        "unchanged": true
+      },
+      "sides": {
+        "A": "L1.m=0.5 add",
+        "B": "L0.v=0.25 add"
+      },
+      "state": "resolved",
+      "where": "t3.logits"
+    },
+    "seq": 32,
+    "where": "t3.logits"
+  },
+  "digest": "b0552495b36db0d93e92bfcb7dc4b578e132e94dac42271e26ba63bf28babd65",
+  "schema": "mdb-view-op-v1",
+  "state": "resolved"
+}

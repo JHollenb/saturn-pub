@@ -1,0 +1,387 @@
+{
+  "bytes": 5216,
+  "data": {
+    "op": "symbols",
+    "request_id": "symbols",
+    "result": {
+      "accounting": {
+        "deviation_bound": {
+          "authority": "bound",
+          "value": 0.015625476837158203
+        },
+        "heads": 4,
+        "listed_mass": {
+          "authority": "derived-exact",
+          "value": 3.9990234375
+        },
+        "max_head_deviation": {
+          "authority": "measured",
+          "value": 0.001953125
+        },
+        "meaning": "per head, bindings + Unbound = sum_s p (native); |sum_s p - 1| against T u_dtype + 2 T u_f32 (softmax in float32, each weight cast to the dtype)",
+        "partition": {
+          "max_gap": {
+            "authority": "derived-exact",
+            "value": 0.0
+          },
+          "meaning": "per head, the sum over all bindings of their mass minus sum_s p (float64 summation order only)"
+        },
+        "within_bound": true
+      },
+      "attribution": "a read (row, layer, head, source) belongs to the binding holding its value cell v",
+      "bindings": [
+        {
+          "count": 4,
+          "definitions": [
+            "t0.L*.k",
+            "t0.L*.v"
+          ],
+          "kind": "token",
+          "lifetime": {
+            "first": "t3.L0",
+            "last": "t3.L1",
+            "strip": "t3:##"
+          },
+          "mass": {
+            "authority": "derived-exact",
+            "value": 1.00390625
+          },
+          "mean_mass": {
+            "authority": "derived-exact",
+            "value": 0.2509765625
+          },
+          "omitted": 1,
+          "readers": [
+            {
+              "effect": {
+                "norm": {
+                  "authority": "derived-exact",
+                  "proof": "P07",
+                  "value": 0.005860306527078582
+                }
+              },
+              "mass": {
+                "authority": "measured",
+                "value": 0.25
+              },
+              "name": "t3.L1.h1"
+            },
+            {
+              "effect": {
+                "norm": {
+                  "authority": "derived-exact",
+                  "proof": "P07",
+                  "value": 0.005442683874777274
+                }
+              },
+              "mass": {
+                "authority": "measured",
+                "value": 0.25
+              },
+              "name": "t3.L1.h0"
+            },
+            {
+              "effect": {
+                "norm": {
+                  "authority": "derived-exact",
+                  "proof": "P07",
+                  "value": 0.004531661127978327
+                }
+              },
+              "mass": {
+                "authority": "measured",
+                "value": 0.251953125
+              },
+              "name": "t3.L0.h1"
+            }
+          ],
+          "rows": [
+            0
+          ],
+          "status": "read",
+          "symbol": "t0",
+          "to_consumer": {
+            "reason": "no scalar consumer",
+            "state": "unresolved"
+          },
+          "token": 1
+        },
+        {
+          "count": 4,
+          "definitions": [
+            "t1.L*.k",
+            "t1.L*.v"
+          ],
+          "kind": "token",
+          "lifetime": {
+            "first": "t3.L0",
+            "last": "t3.L1",
+            "strip": "t3:##"
+          },
+          "mass": {
+            "authority": "derived-exact",
+            "value": 0.998046875
+          },
+          "mean_mass": {
+            "authority": "derived-exact",
+            "value": 0.24951171875
+          },
+          "omitted": 1,
+          "readers": [
+            {
+              "effect": {
+                "norm": {
+                  "authority": "derived-exact",
+                  "proof": "P07",
+                  "value": 0.007425590870131707
+                }
+              },
+              "mass": {
+                "authority": "measured",
+                "value": 0.25
+              },
+              "name": "t3.L0.h0"
+            },
+            {
+              "effect": {
+                "norm": {
+                  "authority": "derived-exact",
+                  "proof": "P07",
+                  "value": 0.005160254574733939
+                }
+              },
+              "mass": {
+                "authority": "measured",
+                "value": 0.2490234375
+              },
+              "name": "t3.L1.h0"
+            },
+            {
+              "effect": {
+                "norm": {
+                  "authority": "derived-exact",
+                  "proof": "P07",
+                  "value": 0.005116846972087091
+                }
+              },
+              "mass": {
+                "authority": "measured",
+                "value": 0.25
+              },
+              "name": "t3.L0.h1"
+            }
+          ],
+          "rows": [
+            1
+          ],
+          "status": "read",
+          "symbol": "t1",
+          "to_consumer": {
+            "reason": "no scalar consumer",
+            "state": "unresolved"
+          },
+          "token": 5
+        },
+        {
+          "count": 4,
+          "definitions": [
+            "t2.L*.k",
+            "t2.L*.v"
+          ],
+          "kind": "token",
+          "lifetime": {
+            "first": "t3.L0",
+            "last": "t3.L1",
+            "strip": "t3:##"
+          },
+          "mass": {
+            "authority": "derived-exact",
+            "value": 0.99609375
+          },
+          "mean_mass": {
+            "authority": "derived-exact",
+            "value": 0.2490234375
+          },
+          "omitted": 1,
+          "readers": [
+            {
+              "effect": {
+                "norm": {
+                  "authority": "derived-exact",
+                  "proof": "P07",
+                  "value": 0.005580033122782655
+                }
+              },
+              "mass": {
+                "authority": "measured",
+                "value": 0.25
+              },
+              "name": "t3.L1.h1"
+            },
+            {
+              "effect": {
+                "norm": {
+                  "authority": "derived-exact",
+                  "proof": "P07",
+                  "value": 0.00540972895373867
+                }
+              },
+              "mass": {
+                "authority": "measured",
+                "value": 0.2490234375
+              },
+              "name": "t3.L1.h0"
+            },
+            {
+              "effect": {
+                "norm": {
+                  "authority": "derived-exact",
+                  "proof": "P07",
+                  "value": 0.004264324410354339
+                }
+              },
+              "mass": {
+                "authority": "measured",
+                "value": 0.2490234375
+              },
+              "name": "t3.L0.h0"
+            }
+          ],
+          "rows": [
+            2
+          ],
+          "status": "read",
+          "symbol": "t2",
+          "to_consumer": {
+            "reason": "no scalar consumer",
+            "state": "unresolved"
+          },
+          "token": 9
+        },
+        {
+          "count": 4,
+          "definitions": [
+            "t3.L*.k",
+            "t3.L*.v"
+          ],
+          "kind": "token",
+          "lifetime": {
+            "first": "t3.L0",
+            "last": "t3.L1",
+            "strip": "t3:##"
+          },
+          "mass": {
+            "authority": "derived-exact",
+            "value": 1.0009765625
+          },
+          "mean_mass": {
+            "authority": "derived-exact",
+            "value": 0.250244140625
+          },
+          "omitted": 1,
+          "readers": [
+            {
+              "effect": {
+                "norm": {
+                  "authority": "derived-exact",
+                  "proof": "P07",
+                  "value": 0.008804444314908066
+                }
+              },
+              "mass": {
+                "authority": "measured",
+                "value": 0.251953125
+              },
+              "name": "t3.L0.h1"
+            },
+            {
+              "effect": {
+                "norm": {
+                  "authority": "derived-exact",
+                  "proof": "P07",
+                  "value": 0.007571992999430585
+                }
+              },
+              "mass": {
+                "authority": "measured",
+                "value": 0.2490234375
+              },
+              "name": "t3.L0.h0"
+            },
+            {
+              "effect": {
+                "norm": {
+                  "authority": "derived-exact",
+                  "proof": "P07",
+                  "value": 0.00391963293140303
+                }
+              },
+              "mass": {
+                "authority": "measured",
+                "value": 0.25
+              },
+              "name": "t3.L1.h0"
+            }
+          ],
+          "rows": [
+            3
+          ],
+          "status": "read",
+          "symbol": "t3",
+          "to_consumer": {
+            "reason": "no scalar consumer",
+            "state": "unresolved"
+          },
+          "token": 3
+        }
+      ],
+      "consumer": "none: per-layer o (norm of each read's share); give consumer= or run until logits",
+      "legend": {
+        "#": "read with mass at or above min_mass",
+        "-": "no value cell of this binding at that layer",
+        ".": "read below min_mass",
+        "?": "not computed"
+      },
+      "mass_meaning": "a binding's mass is a sum over the heads and layers that read it (count reads; mean_mass per read)",
+      "min_mass": {
+        "authority": "supplied",
+        "value": 0.1
+      },
+      "op": "symbols",
+      "page": {
+        "limit": 16,
+        "offset": 0,
+        "total": 4
+      },
+      "records": [
+        "d2538f8e844980f6e296a440b7d0238804416446b9d774dee5f601ed165aa9ad"
+      ],
+      "rows": [
+        3
+      ],
+      "state": "unresolved",
+      "stored": [
+        "d2538f8e844980f6e296a440b7d0238804416446b9d774dee5f601ed165aa9ad"
+      ],
+      "unbound": {
+        "mass": {
+          "authority": "derived-exact",
+          "value": 0.0
+        },
+        "meaning": "attention mass of the bindings not on this page, per head summed; the consumer part no listed binding's reads carry, by part",
+        "readout": {
+          "reason": "no scalar consumer: the per-layer o shares have no common total",
+          "state": "unresolved"
+        },
+        "symbol": "Unbound"
+      },
+      "where": "t3.L1.p"
+    },
+    "seq": 10,
+    "where": "t3.L1.p"
+  },
+  "digest": "41bf397e99613763bab292fd1dce4049773b38740729ffe7f6a8522a868c6050",
+  "reason": "a part of the result is unresolved; see data.result",
+  "schema": "mdb-view-op-v1",
+  "state": "unresolved"
+}

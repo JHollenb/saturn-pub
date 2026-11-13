@@ -1,0 +1,303 @@
+{
+  "bytes": 5873,
+  "data": {
+    "op": "whatif",
+    "request_id": "whatif",
+    "result": {
+      "consumer": {
+        "address": "t4.M[4,9]",
+        "index": 41,
+        "indices": [
+          4,
+          9
+        ],
+        "kind": "margin",
+        "row": 4
+      },
+      "difference": {
+        "native_minus_exact": {
+          "bound": {
+            "authority": "bound",
+            "value": 202.1300721851782
+          },
+          "value": {
+            "authority": "measured",
+            "value": -0.00034964745583274115
+          },
+          "within_bound": true
+        }
+      },
+      "edit": {
+        "address": "t3.L1.m",
+        "layer": 1,
+        "op": "add",
+        "port": "m",
+        "row": 3,
+        "value": {
+          "authority": "supplied",
+          "value": 0.5
+        }
+      },
+      "measured": {
+        "base": {
+          "authority": "measured",
+          "value": -0.052978515625
+        },
+        "delta": {
+          "authority": "measured",
+          "value": 0.18408203125
+        },
+        "edited": {
+          "authority": "measured",
+          "value": 0.131103515625
+        },
+        "moves": [
+          "until t4.logits",
+          "restore t3.logits",
+          "reverse-step layer to t3.L0.h_out",
+          "until t3.L1.h",
+          "set t3.L1.m",
+          "until t4.logits",
+          "restore t3.logits"
+        ]
+      },
+      "mode": "rewind",
+      "op": "whatif",
+      "prediction": {
+        "base": {
+          "authority": "derived-exact",
+          "value": -0.05296786892938157
+        },
+        "exact": {
+          "bound": {
+            "authority": "bound",
+            "value": 202.1300721851782
+          },
+          "premises": [
+            "RMSNorm in float32: mean of squares, rsqrt, scale, cast, gain",
+            "RoPE: cos/sin of float32 angles (|angle error| <= 32 u32 |angle|), cast to the model dtype, two products and one sum rounded",
+            "SiLU in float32 as g / (1 + exp(-g)), cast to the model dtype",
+            "matmul accumulates in float32 in any order (gamma_n bound)",
+            "round to nearest, no overflow or underflow",
+            "single pending row: every cached source is visible and the attention mask adds 0",
+            "softmax in float32: exp(s - max) / sum, cast to the model dtype",
+            "the edit operand is cast to the model dtype and applied in one rounded op"
+          ],
+          "value": {
+            "authority": "derived-exact",
+            "value": 0.18443167870583274
+          }
+        },
+        "linear": {
+          "reason": "the edit flips the sampled token of t4 (20 -> 31): the first-order term does not cross a token change",
+          "state": "refused"
+        },
+        "state": "resolved"
+      },
+      "record": "87301877c7a96548375890150dfa84ad022cead2ab37d2422f0755721535896b",
+      "sealed_record": {
+        "authority": "derived-local",
+        "body": {
+          "consumer": {
+            "address": "t4.M[4,9]",
+            "index": 41,
+            "indices": [
+              4,
+              9
+            ],
+            "kind": "margin",
+            "row": 4
+          },
+          "edit": {
+            "address": "t3.L1.m",
+            "layer": 1,
+            "op": "add",
+            "port": "m",
+            "row": 3,
+            "value": {
+              "authority": "supplied",
+              "value": 0.5
+            }
+          },
+          "method": {
+            "exact": "port-program identities on values at the cursor, the edit written at the edited port (rows chained through the cache)",
+            "linear": "forward-mode derivative of the same chain at the unedited point (P14)"
+          },
+          "mode": "rewind",
+          "operands": [
+            {
+              "address": "t3.L1.m",
+              "sha256": "11c25b0c685c73b5d2ab796d29b0acb52f851fa688dc292be0d482c61fb649b3",
+              "shape": [
+                1,
+                1,
+                16
+              ]
+            },
+            {
+              "address": "t3.logits",
+              "sha256": "6c16a594ce88a5f3214ee98a273387adc23bc7147183f90bcd352907529a05e0",
+              "shape": [
+                1,
+                32
+              ]
+            },
+            {
+              "address": "t3.L0.v",
+              "sha256": "32b120e9183b80b599cfbd98db98d5cb4069f532a3394cec9afe93cbf196bf47",
+              "shape": [
+                1,
+                1,
+                8
+              ]
+            },
+            {
+              "address": "t3.L0.kr",
+              "sha256": "f3f87907320ae89f3940723e1007b0447ab535aee7540953bc1633d992c14585",
+              "shape": [
+                1,
+                1,
+                4,
+                8
+              ]
+            },
+            {
+              "address": "t3.L1.v",
+              "sha256": "5f8364244aab3ef2dfe9f73eed809d95ffe74159ffca7d7911ff0f987f7472dc",
+              "shape": [
+                1,
+                1,
+                8
+              ]
+            },
+            {
+              "address": "t3.L1.kr",
+              "sha256": "952cd8297f21d405e0e6f06079268d898be76ba15209e7e93574292c5e4460f6",
+              "shape": [
+                1,
+                1,
+                4,
+                8
+              ]
+            },
+            {
+              "address": "t3.L1.r",
+              "sha256": "b21e80307be701134ad8f2331905860d4764a1326666010250bd735980758f6e",
+              "shape": [
+                1,
+                1,
+                16
+              ]
+            },
+            {
+              "address": "t3.L1.f",
+              "sha256": "11d06497d27f009945d7a2e5a9ad14830c905a7ecb08ed642a498339045bcb68",
+              "shape": [
+                1,
+                1,
+                32
+              ]
+            }
+          ],
+          "prediction": {
+            "base": {
+              "authority": "derived-exact",
+              "value": -0.05296786892938157
+            },
+            "exact": {
+              "bound": {
+                "authority": "bound",
+                "value": 202.1300721851782
+              },
+              "premises": [
+                "RMSNorm in float32: mean of squares, rsqrt, scale, cast, gain",
+                "RoPE: cos/sin of float32 angles (|angle error| <= 32 u32 |angle|), cast to the model dtype, two products and one sum rounded",
+                "SiLU in float32 as g / (1 + exp(-g)), cast to the model dtype",
+                "matmul accumulates in float32 in any order (gamma_n bound)",
+                "round to nearest, no overflow or underflow",
+                "single pending row: every cached source is visible and the attention mask adds 0",
+                "softmax in float32: exp(s - max) / sum, cast to the model dtype",
+                "the edit operand is cast to the model dtype and applied in one rounded op"
+              ],
+              "value": {
+                "authority": "derived-exact",
+                "value": 0.18443167870583274
+              }
+            },
+            "linear": {
+              "reason": "the edit flips the sampled token of t4 (20 -> 31): the first-order term does not cross a token change",
+              "state": "refused"
+            },
+            "state": "resolved"
+          },
+          "schema": "mdb-whatif-v1",
+          "sealed_at": {
+            "cut": "b4673fc73ffbef1d576eae26120a27a7707d0eef1c9f119f874f92c9060c6c8a",
+            "index": 41,
+            "row": 3,
+            "transition": 5,
+            "where": "t3.logits"
+          }
+        },
+        "digest": "87301877c7a96548375890150dfa84ad022cead2ab37d2422f0755721535896b",
+        "execution_sha256": "54cb62b356d5532cde92a70f82c1a8ae7552fbcb7e276ca3e3fb210d0a23ca63",
+        "id": "87301877c7a96548375890150dfa84ad022cead2ab37d2422f0755721535896b",
+        "kind": "whatif",
+        "model_identity": "cb1ebc05fb0be6603ca90676fe18a6766881d56bc9efb35759ce6911ac877b6b",
+        "pointers": [],
+        "schema": "mdb-record-v2",
+        "session_id": "mdb-run:c0a945465fbb59a9e00107a0527fdf98"
+      },
+      "session": {
+        "after": "3ace215a4fc372171a02c9897a4755318437f0f2e10cafb16c543515ecc5bb4d",
+        "before": "3ace215a4fc372171a02c9897a4755318437f0f2e10cafb16c543515ecc5bb4d",
+        "debugger_after": "949aedb86ed8341120856f113522434b73166b530376ff6262657820ec143907",
+        "debugger_before": "949aedb86ed8341120856f113522434b73166b530376ff6262657820ec143907",
+        "unchanged": true
+      },
+      "split": {
+        "proof": "P20",
+        "rule": "native delta = sum of the terms (float64)",
+        "terms": [
+          {
+            "name": "exact",
+            "value": {
+              "authority": "derived-exact",
+              "value": 0.18443167870583274
+            }
+          },
+          {
+            "meaning": "exact change with the operand the edit wrote (read back) minus the exact change with the requested operand",
+            "name": "realisation",
+            "value": {
+              "authority": "derived-exact",
+              "proof": "P20",
+              "value": 0.0
+            }
+          },
+          {
+            "bound": {
+              "authority": "bound",
+              "value": 202.1300721851782
+            },
+            "meaning": "native change minus the exact change with the written operand",
+            "name": "rounding",
+            "value": {
+              "authority": "measured",
+              "proof": "P20",
+              "value": -0.00034964745583274115
+            },
+            "within_bound": true
+          }
+        ]
+      },
+      "state": "resolved",
+      "where": "t3.logits"
+    },
+    "seq": 29,
+    "where": "t3.logits"
+  },
+  "digest": "7fcb513ed0f9e0303cc5069b74b9d29648bd2aa141d2efd2706927f28cb9b097",
+  "schema": "mdb-view-op-v1",
+  "state": "resolved"
+}

@@ -8,11 +8,38 @@ import { Count } from '../../chrome/NumView';
 import { PointerChip } from '../../chrome/PointerChip';
 import { Receipt } from '../../chrome/Receipt';
 import { useCursor } from '../../state/cursor';
+import { useInspect } from '../../state/inspect';
 import { useSession } from '../../state/session';
 import { axisStatus } from '../Timeline/axis';
 import { useView } from '../../state/records';
 import { useUi } from '../../state/ui';
+import { flatten } from '../Circuit/layout';
 import { ReducePanel } from './ReducePanel';
+
+/** The circuit node walked to in the live Circuits view: its record as the op gave it. */
+function LiveNode() {
+  const live = useSession((s) => s.hello?.live ?? null);
+  const sid = useCursor((s) => s.sid);
+  const selected = useInspect((s) => s.selected);
+  const nodeId = useInspect((s) => s.node);
+  const entry = useInspect((s) => (selected === null ? null : (s.circuits.get(selected) ?? null)));
+  if (!live || sid !== live || !entry || nodeId === null) return null;
+  const node = flatten(entry.body).find((n) => n.id === nodeId);
+  if (!node) return null;
+  return (
+    <div className="inspector-node" data-testid="inspector-node">
+      <div className="muted">
+        circuit {String(entry.id)} node <strong>{node.name}</strong>
+      </div>
+      <JsonTree value={node.raw} name="node" depth={2} />
+      {node.children.length > 0 && (
+        <div className="faint">
+          <Count n={node.children.length} /> children (walk right to reach them)
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function Inspector() {
   const sid = useCursor((s) => s.sid);
@@ -25,6 +52,7 @@ export function Inspector() {
     <section className="panel" aria-label="inspector">
       <h2>Inspector</h2>
       <div className="panel-body">
+        <LiveNode />
         {!addr ? (
           <NotAvailable what="cursor" reason="No address yet: click a cell, or press g." />
         ) : (

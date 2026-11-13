@@ -307,3 +307,358 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* ---------------------------------------------------------------- live views (B3) */
+
+.live-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  border-bottom: 1px solid var(--rule);
+}
+
+.live-tab {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: none;
+  background: transparent;
+}
+
+.live-tab.here {
+  background: var(--panel-2);
+  font-weight: 600;
+  box-shadow: inset 0 -2px 0 var(--ink);
+}
+
+.live-pane {
+  display: grid;
+  gap: var(--gap);
+  min-width: 0;
+}
+
+.seek-line {
+  border: 1px solid var(--ink-2);
+  border-radius: var(--radius);
+  padding: 6px 8px;
+  background: var(--panel-2);
+}
+
+.slot-running {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.verdict-chip,
+.status-chip {
+  font-family: var(--mono);
+}
+
+.status-chip.status-edited {
+  border-style: dashed;
+  border-color: var(--role-intervention);
+}
+
+.status-chip.status-unread {
+  color: var(--ink-3);
+}
+
+/* architecture strip */
+.arch {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.arch-grid-wrap {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.arch-grid {
+  width: auto;
+  border-collapse: separate;
+  border-spacing: 2px;
+}
+
+.arch-grid th,
+.arch-grid td {
+  padding: 0;
+  border: none;
+  font-size: 10px;
+  font-weight: normal;
+  text-align: center;
+}
+
+.arch-grid th[scope='row'] {
+  text-align: right;
+  padding-right: 4px;
+  color: var(--ink-2);
+}
+
+.arch-here-col {
+  color: var(--ink);
+  font-weight: 600 !important;
+  text-decoration: underline;
+}
+
+.arch-cell,
+.arch-port {
+  display: inline-block;
+  min-width: 18px;
+  height: 16px;
+  padding: 0 2px;
+  border: 1px solid var(--ink-3);
+  border-radius: 2px;
+  font-size: 10px;
+  line-height: 14px;
+  vertical-align: middle;
+}
+
+.arch-legend .arch-cell {
+  min-width: 12px;
+  height: 10px;
+}
+
+.arch-full {
+  background: color-mix(in srgb, var(--ink) 28%, var(--panel));
+}
+
+.arch-partial {
+  background: linear-gradient(90deg, color-mix(in srgb, var(--ink) 28%, var(--panel)) 50%, var(--panel) 50%);
+}
+
+.arch-cache {
+  background: repeating-linear-gradient(45deg, var(--panel), var(--panel) 2px, var(--rule) 2px, var(--rule) 4px);
+}
+
+.arch-empty {
+  background: transparent;
+  border-style: dashed;
+}
+
+.arch-cursor {
+  outline: 2px solid var(--cursor);
+  outline-offset: 1px;
+}
+
+.arch-node {
+  box-shadow: inset 0 0 0 2px var(--role-symbol);
+}
+
+.arch-ports {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+  align-items: center;
+}
+
+.arch-port {
+  min-width: 0;
+  font-family: var(--mono);
+}
+
+/* symbols */
+.live-symbols,
+.circuit-view,
+.predict {
+  display: grid;
+  gap: var(--gap);
+  min-width: 0;
+}
+
+.symbols-consumer,
+.circuit-build,
+.symbols-declare form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.symbols-table {
+  min-width: 56em;
+}
+
+.symbols-table td {
+  font-size: 12px;
+}
+
+.symbol-row.unbound td {
+  background: var(--panel-2);
+}
+
+.site {
+  display: block;
+}
+
+.readers {
+  list-style: none;
+  margin: 0 0 4px;
+  padding: 0;
+  min-width: 26em;
+}
+
+.readers li {
+  white-space: normal;
+  margin-bottom: 2px;
+}
+
+.lifetime {
+  display: grid;
+  gap: 1px;
+}
+
+.life-row {
+  display: flex;
+  gap: 1px;
+  align-items: center;
+}
+
+.life-row > .faint {
+  min-width: 2.2em;
+  font-size: 10px;
+}
+
+.life-cell {
+  display: inline-block;
+  width: 14px;
+  height: 12px;
+  border: 1px solid var(--ink-3);
+  font-size: 9px;
+  line-height: 10px;
+  text-align: center;
+  vertical-align: middle;
+}
+
+.life-read {
+  background: var(--ink-2);
+}
+
+.life-below {
+  background: repeating-linear-gradient(90deg, var(--panel), var(--panel) 2px, var(--rule) 2px, var(--rule) 3px);
+}
+
+.life-pending {
+  border-style: dashed;
+  background: transparent;
+}
+
+.life-none {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--rule);
+}
+
+.life-cursor {
+  outline: 2px solid var(--cursor);
+  outline-offset: 0;
+}
+
+.life-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: center;
+}
+
+/* circuits */
+.circuit-graph {
+  overflow: auto;
+  max-height: 60vh;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+}
+
+.circuit-graph:focus-visible {
+  outline: 2px solid var(--focus);
+}
+
+.cnode-value {
+  font-size: 10px;
+  white-space: nowrap;
+  display: inline-block;
+  background: var(--panel);
+  padding-right: 2px;
+}
+
+.cnode-value .ev-chip {
+  display: none;
+}
+
+.circuit-legend svg {
+  vertical-align: middle;
+}
+
+.circuit-node-line,
+.circuit-focus,
+.circuit-head {
+  overflow-wrap: anywhere;
+}
+
+.circuit-mark {
+  color: var(--role-symbol);
+  margin-left: 2px;
+}
+
+.live-port[data-circuit='yes'] > td:first-child {
+  box-shadow: inset 3px 0 0 var(--role-symbol);
+}
+
+/* predictions */
+.predict-panel {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.predict-panel form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.whatif-table th {
+  white-space: nowrap;
+  width: 9em;
+}
+
+.split > svg {
+  display: block;
+  max-width: 100%;
+}
+
+.split-terms {
+  margin: 2px 0;
+  padding-left: 1.4em;
+}
+
+.forecast {
+  font-size: 11px;
+}
+
+.live-forecast {
+  min-width: 16em;
+}
+
+.op-summary {
+  white-space: normal;
+}
+
+.table-scroll > table.forecast-table {
+  min-width: 60em;
+}
+
+/* Grid tracks default to min-width:auto, so a wide child (the circuit SVG, a wide table) would
+   widen the whole pane and clip its text at narrow widths: one shrinkable column instead. */
+.live,
+.live-pane,
+.live-symbols,
+.circuit-view,
+.predict,
+.predict-panel,
+.arch {
+  grid-template-columns: minmax(0, 1fr);
+  min-width: 0;
+}

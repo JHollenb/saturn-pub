@@ -1,0 +1,113 @@
+{
+  "bytes": 2252,
+  "data": {
+    "op": "circuit",
+    "request_id": "circuit",
+    "result": {
+      "action": "build",
+      "id": 1,
+      "op": "circuit",
+      "record": {
+        "authority": "derived-exact",
+        "body": {
+          "closure": {
+            "bound": {
+              "authority": "bound",
+              "value": 2.0715980029488744e-15
+            },
+            "by_construction": true,
+            "meaning": "native consumer minus the sum of the depth-1 nodes: zero by construction (the remainders are defined as native minus the listed terms), so this checks float64 summation only; remainders_within is the rounding check",
+            "value": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 0.0
+            },
+            "within": true
+          },
+          "consumer": "t3.M[4,9]",
+          "count": 4,
+          "depth": 3,
+          "edits": {
+            "count": 0,
+            "meaning": "edit nodes: displacements edits wrote, never in a remainder"
+          },
+          "k": 1,
+          "kind": "margin",
+          "premises": [
+            "rho^F evaluated once at the native final state h_L (P19); not attributed to components"
+          ],
+          "remainders_within": true,
+          "root": {
+            "address": "t3.M[4,9]",
+            "children": [
+              {
+                "address": "t3.L0.h",
+                "id": "n2",
+                "kind": "embedding",
+                "name": "embedding",
+                "value": {
+                  "authority": "derived-exact",
+                  "proof": "P19",
+                  "value": -0.14577574990846898
+                }
+              },
+              {
+                "address": "t3.M[4,9] (unlisted)",
+                "id": "n3",
+                "kind": "more",
+                "name": "+4 more",
+                "note": "+4 more, sum of their exact contributions",
+                "value": {
+                  "authority": "derived-exact",
+                  "value": 0.031288320853638994
+                }
+              },
+              {
+                "address": "t3.M[4,9]",
+                "bound": {
+                  "authority": "bound",
+                  "value": 0.01613718522872853
+                },
+                "id": "n4",
+                "kind": "remainder",
+                "name": "remainder",
+                "note": "native consumer minus the listed terms: residual-add rounding, final norm (explain's a-priori k = 2 multiple, not a derived bound) and head",
+                "value": {
+                  "authority": "measured",
+                  "value": 0.00047375717982997556
+                },
+                "within": true
+              }
+            ],
+            "id": "n1",
+            "kind": "consumer",
+            "name": "t3.M[4,9]",
+            "value": {
+              "authority": "measured",
+              "value": -0.114013671875
+            }
+          },
+          "schema": "mdb-circuit-v1",
+          "where": "t3.logits"
+        },
+        "digest": "0b9ad225ff43165e95b4abee8a7a09434aa620f6c8783ffd351a880ae7c96568",
+        "execution_sha256": "54cb62b356d5532cde92a70f82c1a8ae7552fbcb7e276ca3e3fb210d0a23ca63",
+        "id": "0b9ad225ff43165e95b4abee8a7a09434aa620f6c8783ffd351a880ae7c96568",
+        "kind": "circuit",
+        "model_identity": "cb1ebc05fb0be6603ca90676fe18a6766881d56bc9efb35759ce6911ac877b6b",
+        "pointers": [],
+        "schema": "mdb-record-v2",
+        "session_id": "qwen2-8a16dcab78be"
+      },
+      "state": "resolved",
+      "stored": [
+        "0b9ad225ff43165e95b4abee8a7a09434aa620f6c8783ffd351a880ae7c96568"
+      ]
+    },
+    "seq": 18,
+    "where": "t3.logits"
+  },
+  "digest": "f02d4217d56ac657ff7d54e13f4dede7bcd3a86892f73dd3e94d3380b062904d",
+  "schema": "mdb-view-op-v1",
+  "state": "resolved"
+}

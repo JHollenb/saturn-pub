@@ -23,6 +23,9 @@
   --role-state: #5a6270;
   --role-cache: #b07a1f;
   --role-other: #7b7b82;
+  /* Sign of a contribution (always paired with a dash pattern: never colour alone). */
+  --sign-pos: #2f6fb3;
+  --sign-neg: #b2462e;
   --font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
   --gap: 8px;
@@ -49,6 +52,8 @@
     --role-state: #9aa2b0;
     --role-cache: #e0aa4c;
     --role-other: #a0a0a8;
+    --sign-pos: #6aa6e6;
+    --sign-neg: #e07a62;
   }
 }
 
@@ -71,6 +76,8 @@
   --role-state: #9aa2b0;
   --role-cache: #e0aa4c;
   --role-other: #a0a0a8;
+  --sign-pos: #6aa6e6;
+  --sign-neg: #e07a62;
 }
 
 * {

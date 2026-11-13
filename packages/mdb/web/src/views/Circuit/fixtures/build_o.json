@@ -1,0 +1,316 @@
+{
+  "bytes": 4884,
+  "data": {
+    "op": "circuit",
+    "request_id": "circuit",
+    "result": {
+      "action": "build",
+      "id": 4,
+      "op": "circuit",
+      "record": {
+        "authority": "derived-exact",
+        "body": {
+          "closure": {
+            "bound": {
+              "authority": "bound",
+              "value": 2.6084527905499986e-16
+            },
+            "by_construction": true,
+            "meaning": "native consumer minus the sum of the depth-1 nodes: zero by construction (the remainders are defined as native minus the listed terms), so this checks float64 summation only; remainders_within is the rounding check",
+            "value": {
+              "max_abs": {
+                "authority": "derived-exact",
+                "proof": "P14",
+                "value": 0.0
+              },
+              "norm": {
+                "authority": "derived-exact",
+                "proof": "P14",
+                "value": 0.0
+              }
+            },
+            "within": true
+          },
+          "consumer": "t3.L1.o",
+          "count": 12,
+          "depth": 2,
+          "edits": {
+            "count": 0,
+            "meaning": "edit nodes: displacements edits wrote, never in a remainder"
+          },
+          "k": 2,
+          "kind": "o",
+          "premises": [],
+          "remainders_within": true,
+          "root": {
+            "address": "t3.L1.o",
+            "children": [
+              {
+                "address": "t3.L1.A[h0]",
+                "children": [
+                  {
+                    "address": "t3.L1.p[h0,src=0]",
+                    "id": "n3",
+                    "kind": "source",
+                    "name": "t0",
+                    "value": {
+                      "max_abs": {
+                        "authority": "derived-exact",
+                        "proof": "P06",
+                        "value": 0.0030907653272151947
+                      },
+                      "norm": {
+                        "authority": "derived-exact",
+                        "proof": "P06",
+                        "value": 0.005442683874777274
+                      }
+                    }
+                  },
+                  {
+                    "address": "t3.L1.p[h0,src=2]",
+                    "id": "n4",
+                    "kind": "source",
+                    "name": "t2",
+                    "value": {
+                      "max_abs": {
+                        "authority": "derived-exact",
+                        "proof": "P06",
+                        "value": 0.002616525125631597
+                      },
+                      "norm": {
+                        "authority": "derived-exact",
+                        "proof": "P06",
+                        "value": 0.00540972895373867
+                      }
+                    }
+                  },
+                  {
+                    "address": "t3.L1.A[h0] (unlisted)",
+                    "id": "n5",
+                    "kind": "more",
+                    "name": "+2 more",
+                    "note": "+2 more, sum of their exact contributions",
+                    "value": {
+                      "max_abs": {
+                        "authority": "derived-exact",
+                        "value": 0.0028497583989519626
+                      },
+                      "norm": {
+                        "authority": "derived-exact",
+                        "value": 0.006392749493130896
+                      }
+                    }
+                  },
+                  {
+                    "address": "t3.L1.A[h0]",
+                    "bound": {
+                      "max_abs": {
+                        "authority": "bound",
+                        "value": 3.910879823480231e-05
+                      },
+                      "norm": {
+                        "authority": "bound",
+                        "value": 8.962692910654001e-05
+                      }
+                    },
+                    "id": "n6",
+                    "kind": "remainder",
+                    "name": "L1.h0 remainder",
+                    "note": "native A_h minus sum_s p v (value-mix rounding)",
+                    "value": {
+                      "max_abs": {
+                        "authority": "measured",
+                        "value": 1.040576353261713e-05
+                      },
+                      "norm": {
+                        "authority": "measured",
+                        "value": 2.0594681558025847e-05
+                      }
+                    },
+                    "within": true
+                  }
+                ],
+                "id": "n2",
+                "kind": "head",
+                "name": "L1.h0",
+                "value": {
+                  "max_abs": {
+                    "authority": "derived-exact",
+                    "proof": "P07",
+                    "value": 0.005073660984635353
+                  },
+                  "norm": {
+                    "authority": "derived-exact",
+                    "proof": "P07",
+                    "value": 0.010846423763803128
+                  }
+                }
+              },
+              {
+                "address": "t3.L1.A[h1]",
+                "children": [
+                  {
+                    "address": "t3.L1.p[h1,src=0]",
+                    "id": "n8",
+                    "kind": "source",
+                    "name": "t0",
+                    "value": {
+                      "max_abs": {
+                        "authority": "derived-exact",
+                        "proof": "P06",
+                        "value": 0.0025154026225209236
+                      },
+                      "norm": {
+                        "authority": "derived-exact",
+                        "proof": "P06",
+                        "value": 0.005860306527078582
+                      }
+                    }
+                  },
+                  {
+                    "address": "t3.L1.p[h1,src=2]",
+                    "id": "n9",
+                    "kind": "source",
+                    "name": "t2",
+                    "value": {
+                      "max_abs": {
+                        "authority": "derived-exact",
+                        "proof": "P06",
+                        "value": 0.002201257273554802
+                      },
+                      "norm": {
+                        "authority": "derived-exact",
+                        "proof": "P06",
+                        "value": 0.005580033122782655
+                      }
+                    }
+                  },
+                  {
+                    "address": "t3.L1.A[h1] (unlisted)",
+                    "id": "n10",
+                    "kind": "more",
+                    "name": "+2 more",
+                    "note": "+2 more, sum of their exact contributions",
+                    "value": {
+                      "max_abs": {
+                        "authority": "derived-exact",
+                        "value": 0.0030698802720507956
+                      },
+                      "norm": {
+                        "authority": "derived-exact",
+                        "value": 0.00573738641299125
+                      }
+                    }
+                  },
+                  {
+                    "address": "t3.L1.A[h1]",
+                    "bound": {
+                      "max_abs": {
+                        "authority": "bound",
+                        "value": 3.287683642568535e-05
+                      },
+                      "norm": {
+                        "authority": "bound",
+                        "value": 8.35429862463798e-05
+                      }
+                    },
+                    "id": "n11",
+                    "kind": "remainder",
+                    "name": "L1.h1 remainder",
+                    "note": "native A_h minus sum_s p v (value-mix rounding)",
+                    "value": {
+                      "max_abs": {
+                        "authority": "measured",
+                        "value": 8.312685167766176e-06
+                      },
+                      "norm": {
+                        "authority": "measured",
+                        "value": 1.6458785404234868e-05
+                      }
+                    },
+                    "within": true
+                  }
+                ],
+                "id": "n7",
+                "kind": "head",
+                "name": "L1.h1",
+                "value": {
+                  "max_abs": {
+                    "authority": "derived-exact",
+                    "proof": "P07",
+                    "value": 0.005457200109958649
+                  },
+                  "norm": {
+                    "authority": "derived-exact",
+                    "proof": "P07",
+                    "value": 0.009320092923923945
+                  }
+                }
+              },
+              {
+                "address": "t3.L1.o",
+                "bound": {
+                  "max_abs": {
+                    "authority": "bound",
+                    "value": 3.2361844045855476e-05
+                  },
+                  "norm": {
+                    "authority": "bound",
+                    "value": 6.449524056787119e-05
+                  }
+                },
+                "id": "n12",
+                "kind": "remainder",
+                "name": "L1.attn remainder",
+                "note": "native o minus sum_h W_o,h A_h (o_proj rounding)",
+                "value": {
+                  "max_abs": {
+                    "authority": "measured",
+                    "value": 1.8555670976638794e-05
+                  },
+                  "norm": {
+                    "authority": "measured",
+                    "value": 2.7903751759142848e-05
+                  }
+                },
+                "within": true
+              }
+            ],
+            "id": "n1",
+            "kind": "consumer",
+            "name": "t3.L1.o",
+            "value": {
+              "max_abs": {
+                "authority": "measured",
+                "value": 0.00830078125
+              },
+              "norm": {
+                "authority": "measured",
+                "value": 0.01651628898405911
+              }
+            }
+          },
+          "schema": "mdb-circuit-v1",
+          "where": "t3.logits"
+        },
+        "digest": "21609a4641aa2bd504b48f6be1d3122e979f4cf8aebde6d45353e4a0b75866a3",
+        "execution_sha256": "54cb62b356d5532cde92a70f82c1a8ae7552fbcb7e276ca3e3fb210d0a23ca63",
+        "id": "21609a4641aa2bd504b48f6be1d3122e979f4cf8aebde6d45353e4a0b75866a3",
+        "kind": "circuit",
+        "model_identity": "cb1ebc05fb0be6603ca90676fe18a6766881d56bc9efb35759ce6911ac877b6b",
+        "pointers": [],
+        "schema": "mdb-record-v2",
+        "session_id": "qwen2-8a16dcab78be"
+      },
+      "state": "resolved",
+      "stored": [
+        "21609a4641aa2bd504b48f6be1d3122e979f4cf8aebde6d45353e4a0b75866a3"
+      ]
+    },
+    "seq": 21,
+    "where": "t3.logits"
+  },
+  "digest": "0f16e98bbcc4d29d067c9add8c4f9c6f09e7439c427d1c62aa1453e7dfd6bba2",
+  "schema": "mdb-view-op-v1",
+  "state": "resolved"
+}
