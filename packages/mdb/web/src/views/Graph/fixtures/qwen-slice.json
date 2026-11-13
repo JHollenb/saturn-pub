@@ -1,0 +1,91 @@
+{
+  "bytes": 1975,
+  "data": {
+    "authority": "declared-dependency",
+    "center": "fd2bdf8c3af59dc15c1ce88033568e39233a2cbd41521fb138b0efde7d0a4cea",
+    "edges": [
+      {
+        "evidence": "declared",
+        "id": "17f22c5efb47a7a344c2bc0d03849d08a04d4d8bac24dec97b1fb3a9e3b359ef",
+        "relation": "describes",
+        "source": "1a391c7536bd11c23c0e3740ac3a7bb114f843b45bf31e367e83b98c994ef40b",
+        "target": "fd2bdf8c3af59dc15c1ce88033568e39233a2cbd41521fb138b0efde7d0a4cea",
+        "type": "attribution"
+      },
+      {
+        "evidence": "declared",
+        "id": "de673046fd9980a9f1c2a51374ec4949f1e9f62e81dc076dbdca97d5bd2c30e4",
+        "relation": "describes",
+        "source": "1a391c7536bd11c23c0e3740ac3a7bb114f843b45bf31e367e83b98c994ef40b",
+        "target": "489e91e451525513baa76aa9dccfc312b6f4a84c8b85b8850bbb6492f8c02deb",
+        "type": "attribution"
+      }
+    ],
+    "nodes": [
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "fd2bdf8c3af59dc15c1ce88033568e39233a2cbd41521fb138b0efde7d0a4cea",
+        "kind": "output",
+        "label": "keys",
+        "lane": 0,
+        "meta": {
+          "native_cut": "254c14a63c9e3bd990e2b940fa8a7d2e504c96441380f686026c3bc151ca6415",
+          "slot": "keys"
+        },
+        "role": "cache",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "1a391c7536bd11c23c0e3740ac3a7bb114f843b45bf31e367e83b98c994ef40b",
+        "kind": "source",
+        "label": "description.L1",
+        "lane": 0,
+        "meta": { "support": "metadata-support-verified" },
+        "role": "symbol",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "489e91e451525513baa76aa9dccfc312b6f4a84c8b85b8850bbb6492f8c02deb",
+        "kind": "output",
+        "label": "values",
+        "lane": 0,
+        "meta": {
+          "native_cut": "254c14a63c9e3bd990e2b940fa8a7d2e504c96441380f686026c3bc151ca6415",
+          "slot": "values"
+        },
+        "role": "cache",
+        "x": 2,
+        "y": 0
+      }
+    ],
+    "overlays": [],
+    "pruned": [],
+    "slice": {
+      "complete": true,
+      "component": "symbol:description.L1",
+      "cut": "254c14a63c9e3bd990e2b940fa8a7d2e504c96441380f686026c3bc151ca6415",
+      "id": "f8749b374ae7d6504b33b547e2dca3e56f29664733ea9e8f0b11a00a67ba49e8"
+    },
+    "slices": [
+      {
+        "complete": true,
+        "component": "symbol:description.L1",
+        "cut": "254c14a63c9e3bd990e2b940fa8a7d2e504c96441380f686026c3bc151ca6415",
+        "id": "f8749b374ae7d6504b33b547e2dca3e56f29664733ea9e8f0b11a00a67ba49e8"
+      }
+    ],
+    "zoom": "slice"
+  },
+  "digest": "edee4919f33f8296626c6ac6d42a8aca03fd8e5291fde6459d0527d35648e7f8",
+  "schema": "mdb-view-graph-v1"
+}

@@ -1,0 +1,187 @@
+.app {
+  display: grid;
+  height: 100%;
+  gap: var(--gap);
+  padding: var(--gap);
+  grid-template-columns: minmax(300px, 1.5fr) minmax(0, 3fr) minmax(280px, 1.2fr);
+  grid-template-rows: auto auto minmax(0, 1fr) minmax(120px, 34vh);
+  grid-template-areas:
+    'header header header'
+    'banner banner banner'
+    'left centre right'
+    'bottom bottom bottom';
+}
+
+.app-header {
+  grid-area: header;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap);
+  align-items: center;
+  min-width: 0;
+}
+
+.address-bar {
+  display: flex;
+  gap: 4px;
+  flex: 1 1 14em;
+  min-width: 0;
+}
+
+.address-bar button {
+  flex: none;
+}
+
+.address-input {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.header-chip {
+  flex: none;
+  max-width: 100%;
+}
+
+.app-banner {
+  grid-area: banner;
+}
+
+.app-left {
+  grid-area: left;
+  display: grid;
+  min-height: 0;
+}
+
+.app-centre {
+  grid-area: centre;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--gap);
+  min-height: 0;
+  min-width: 0;
+}
+
+.app-right {
+  grid-area: right;
+  display: grid;
+  min-height: 0;
+}
+
+.app-bottom {
+  grid-area: bottom;
+  display: grid;
+  min-height: 0;
+}
+
+.records-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: var(--gap);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 10vh;
+  z-index: 10;
+}
+
+.command {
+  position: fixed;
+  left: 50%;
+  top: 12vh;
+  transform: translateX(-50%);
+  width: min(640px, calc(100vw - 32px));
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 8px;
+  z-index: 11;
+}
+
+@media (max-width: 900px) {
+  .app {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto auto auto auto auto auto;
+    grid-template-areas: 'header' 'banner' 'centre' 'right' 'left' 'bottom';
+    height: auto;
+  }
+  .app-header {
+    flex-wrap: wrap;
+  }
+  .records-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* A panel whose body scrolls while its footer line stays visible. */
+.panel-col {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-col-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+}
+
+.panel-foot {
+  flex: none;
+  padding-top: 4px;
+}
+
+.arms-table td,
+.arms-table th {
+  white-space: nowrap;
+}
+
+.arms-table > table {
+  min-width: 44em;
+}
+
+/* Tables scroll inside their own container instead of being clipped by the panel. */
+.table-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+.panel-body {
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.table-scroll > table {
+  min-width: 16em;
+}
+
+.panel > h2 {
+  flex-wrap: wrap;
+}
+
+.panel select,
+.panel input {
+  max-width: 100%;
+}
+
+.records-body {
+  grid-template-columns: minmax(0, 3fr) minmax(26em, 2fr);
+}
+
+@media (max-width: 900px) {
+  .records-body {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

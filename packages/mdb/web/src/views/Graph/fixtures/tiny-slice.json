@@ -1,0 +1,125 @@
+{
+  "bytes": 3189,
+  "data": {
+    "authority": "declared-dependency",
+    "center": "63c91559715ef300c69ef1f9f33299fc56c019cd4e4d25facdef616fb98ada5a",
+    "edges": [
+      {
+        "evidence": "declared",
+        "id": "412b51d33685894b79edd1b1e1ff994463379860de68ecbe67cfbe794f363868",
+        "relation": "writes",
+        "source": "6102a4746fd93d07906854c0a24fe525485b6c0993a191dd4709465f07de8f20",
+        "target": "63c91559715ef300c69ef1f9f33299fc56c019cd4e4d25facdef616fb98ada5a",
+        "type": "declared"
+      },
+      {
+        "evidence": "declared",
+        "id": "ca09cd936e5a75996f37bda024ce281dcb4d4e2d6d32d9f0fdc818fa505e1e1b",
+        "relation": "reads",
+        "source": "6b793e02ae2eb2dbb4c40d5ed9507348c9061ae7d3d663faf70ee58ca7ad36ee",
+        "target": "6102a4746fd93d07906854c0a24fe525485b6c0993a191dd4709465f07de8f20",
+        "type": "declared"
+      }
+    ],
+    "nodes": [
+      {
+        "addr": "t2.L0.h",
+        "count": null,
+        "ev": null,
+        "id": "63c91559715ef300c69ef1f9f33299fc56c019cd4e4d25facdef616fb98ada5a",
+        "kind": "output",
+        "label": "hidden",
+        "lane": 0,
+        "meta": {
+          "native_cut": "f67bd60723be7d343604555cd25a0ed8937a776a96fc9192478103b015fe9544",
+          "slot": "hidden"
+        },
+        "role": "carrier",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "addr": "t1.logits",
+        "count": null,
+        "ev": null,
+        "id": "6102a4746fd93d07906854c0a24fe525485b6c0993a191dd4709465f07de8f20",
+        "kind": "action",
+        "label": "model.embed_tokens",
+        "lane": 0,
+        "meta": {
+          "operation": "model.embed_tokens",
+          "receipt": "97dfa9ba20d952f42398a739d13f5839bdf3af631853559aa2fc55d4ddd4e41a"
+        },
+        "role": "operation",
+        "x": 1,
+        "y": 3
+      },
+      {
+        "addr": "t1.logits",
+        "count": null,
+        "ev": null,
+        "id": "6b793e02ae2eb2dbb4c40d5ed9507348c9061ae7d3d663faf70ee58ca7ad36ee",
+        "kind": "output",
+        "label": "tokens",
+        "lane": 0,
+        "meta": {
+          "native_cut": "976df14bd60f1a5eba14b3ae7cd925cc80e1484558042c09be41c3f350494eb6",
+          "slot": "tokens"
+        },
+        "role": "cursor",
+        "x": 1,
+        "y": 3
+      }
+    ],
+    "overlays": [
+      {
+        "id": "focus:66de3eb9f0957c6056947b463956c35b5131531156672668fddba2c61a2068ba",
+        "kind": "focus",
+        "label": "focus port:hidden",
+        "nodes": ["63c91559715ef300c69ef1f9f33299fc56c019cd4e4d25facdef616fb98ada5a"],
+        "record": "66de3eb9f0957c6056947b463956c35b5131531156672668fddba2c61a2068ba",
+        "verdict": "not-established"
+      },
+      {
+        "id": "comparison:8db15b649e1281c43adddb2a6f8d81512ac249c74429265d5aa4c76a100964df",
+        "kind": "comparison",
+        "label": "comparison interaction -1.73e-07",
+        "nodes": ["63c91559715ef300c69ef1f9f33299fc56c019cd4e4d25facdef616fb98ada5a"],
+        "record": "8db15b649e1281c43adddb2a6f8d81512ac249c74429265d5aa4c76a100964df",
+        "verdict": "not-established"
+      },
+      {
+        "id": "interface-test:c69a2b702dab7de4ad1409737413d7bb4f3c2dd511b3057ef289259cabc3bf32",
+        "kind": "interface-test",
+        "label": "interface-test",
+        "nodes": ["63c91559715ef300c69ef1f9f33299fc56c019cd4e4d25facdef616fb98ada5a"],
+        "record": "c69a2b702dab7de4ad1409737413d7bb4f3c2dd511b3057ef289259cabc3bf32",
+        "verdict": "not-established"
+      }
+    ],
+    "pruned": [],
+    "slice": {
+      "complete": true,
+      "component": "port:hidden",
+      "cut": "f67bd60723be7d343604555cd25a0ed8937a776a96fc9192478103b015fe9544",
+      "id": "54f64ff0cef9209e0e62d2b1629859c8ae65a6e2dc9774c01f7569775d3289fa"
+    },
+    "slices": [
+      {
+        "complete": true,
+        "component": "symbol:demo.carrier",
+        "cut": "f67bd60723be7d343604555cd25a0ed8937a776a96fc9192478103b015fe9544",
+        "id": "82c3c75935019a9f1b1b22ff4420247689b9b208fedef29bdee164fa7c15c7ee"
+      },
+      {
+        "complete": true,
+        "component": "port:hidden",
+        "cut": "f67bd60723be7d343604555cd25a0ed8937a776a96fc9192478103b015fe9544",
+        "id": "54f64ff0cef9209e0e62d2b1629859c8ae65a6e2dc9774c01f7569775d3289fa"
+      }
+    ],
+    "zoom": "slice"
+  },
+  "digest": "bceb99d9b9ad8c1d86a25a7bcbad57f91188ee0b1a5df41fbc1210fe474044c8",
+  "schema": "mdb-view-graph-v1"
+}

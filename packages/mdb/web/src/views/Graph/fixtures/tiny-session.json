@@ -1,0 +1,1475 @@
+{
+  "bytes": 38396,
+  "data": {
+    "authority": "recorded history (execution + knowledge graphs)",
+    "center": "df285b9d315ae29e6f5e5e15189d7456273a7695525272bb7b6b73e12d8cf030",
+    "edges": [
+      {
+        "evidence": "declared",
+        "id": "0a84ed9cdb2fdfccacf68e231089e1b12a7bec766bd391dee742bdb96b2003c4",
+        "relation": "describes",
+        "source": "b945dea2ea0ad2e77031ecfc76bbfa4c872ac2492acb774a1d8cab3ed414319c",
+        "target": "5b497223b6779ac5ac5b8199717633f95befaed598aee097389b576069acd24d",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "0dc57ebf866a41f75c212d4c389c9fa8bb7bcf7bff1e7145e78cf19a042ddaf2",
+        "relation": "describes",
+        "source": "6ea0aa7830641253e291abdd7ddaead962bea06864bc5b2480dd40bd14a296a1",
+        "target": "1bed66b42534f7d997b5b0b3a9e964451fe9157c3466653c2d8f84fc50b37ca2",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "0e43fe630b49031163f224377bb143dc1e782a0fb64f9d6afdc203787054ce13",
+        "relation": "continues",
+        "source": "e386fd8357f5a06639f807f79f8cccf4a961a41b73c549358b08bedfd0be6189",
+        "target": "5b497223b6779ac5ac5b8199717633f95befaed598aee097389b576069acd24d",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "18d5a7f1f7eea9998063b73e58c684fa38b1fa7618cb67e7333b44fd10becf7d",
+        "relation": "reads",
+        "source": "21bbe273b03ffe0f169d50bee98b7f890030b56b997d2c2aac10b3800cbab908",
+        "target": "b5285d0c82692a6416ca68707f11c1d8e44a11f20875a8bad5ba35ed6506222a",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "1921f1f49fb95e6ac149b78a9ea3799fcbf37db96b4a6c13aa5645988a2804f9",
+        "relation": "writes",
+        "source": "180677b4229291449011048ea77714dccc6da1a645722e0ff62f23b0c1379538",
+        "target": "1bed66b42534f7d997b5b0b3a9e964451fe9157c3466653c2d8f84fc50b37ca2",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "2203c1564a1ed4d6842d7912c8871d113ddcec727a6ac7b03cc1330291780902",
+        "relation": "related_to",
+        "source": "6ea0aa7830641253e291abdd7ddaead962bea06864bc5b2480dd40bd14a296a1",
+        "target": "a10ca03ec363085df11c99cf71555c5ed943f9179f1d4e3ce7d66379699802f9",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "28bc2b998c51b66aa8fc123ca35588155a6d541f16332f9190a969f82f9812d0",
+        "relation": "describes",
+        "source": "5231efd3dc489c942d782b5c272f3a6bfbea14b91dd466732192ef480a8d194d",
+        "target": "1e0d98f4c87745a3438dbb430a29789b4776097a130e698c1784b29eefa696e6",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "28dbde9fb85b6416~te:state~c1379538",
+        "relation": "reads",
+        "source": "more:state:state",
+        "target": "180677b4229291449011048ea77714dccc6da1a645722e0ff62f23b0c1379538",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "2c7f441467ce9ccc782f5d0bf31eb093ab22fd2834159f5b052154a83572f094",
+        "relation": "related_to",
+        "source": "b945dea2ea0ad2e77031ecfc76bbfa4c872ac2492acb774a1d8cab3ed414319c",
+        "target": "a10ca03ec363085df11c99cf71555c5ed943f9179f1d4e3ce7d66379699802f9",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "2c88ddd3cbbf4eb1~e:symbol~cdcaf1ea",
+        "relation": "describes",
+        "source": "more:source:symbol",
+        "target": "4bbf10a8a45aaa78d5204041b964a7a6158a9f6aff69a80f3143bc3fcdcaf1ea",
+        "type": "attribution"
+      },
+      {
+        "evidence": "observed",
+        "id": "2e828b1fd4645c2d47d4c976230822abac887ce9693edd8b8ce976a23e986156",
+        "relation": "writes",
+        "source": "fb5f4c58ff8b14253f429f2565764db408d906bf98953f298da8d0c75e57bd73",
+        "target": "36ff227e82a5ceac73d53bfd3bf45d1cfb94a0d816699722938e964f02be196d",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "3042d82a1bb6246e52547d66271d91971c90292c39d1c6d9ba2137f4639af7cc",
+        "relation": "related_to",
+        "source": "6ea0aa7830641253e291abdd7ddaead962bea06864bc5b2480dd40bd14a296a1",
+        "target": "5231efd3dc489c942d782b5c272f3a6bfbea14b91dd466732192ef480a8d194d",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "30814cb0812c5aa0~6d30aacd~peration",
+        "relation": "reads",
+        "source": "b5279104113861509e6fa986f6c8cd018362f0e8424cbad670b95ecd6d30aacd",
+        "target": "more:action:operation",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "3133a804680b07a23b7f5602e4db53016b16e14faab84eabe7b35741df8e5966",
+        "relation": "related_to",
+        "source": "4ddfbb97f418d527813bba4d448ac2cea899e47fb16ea0cd8ceebd3075a54e3a",
+        "target": "5231efd3dc489c942d782b5c272f3a6bfbea14b91dd466732192ef480a8d194d",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "3350b64ba11c2c920991cfcd5a9c05ae56b875887a69049854ab94f86f8c67ea",
+        "relation": "reads",
+        "source": "82c071b46a931daf0b6a8f8aae96d260095b048e84585b72819d3de91deae0c2",
+        "target": "e19c363dfb6522af1e701e8bbd88fabe368c1dd6794b837713c8f7c10fc69225",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "35f6e37797aceb3a6b1c1339d5e25b5fc7468c6d43c931b5cb284739fac38399",
+        "relation": "continues",
+        "source": "e553d87bb2d11cfa262eaaa3b9c9aedd9a2f8bbe9451bf7ad9477379c49a4819",
+        "target": "e386fd8357f5a06639f807f79f8cccf4a961a41b73c549358b08bedfd0be6189",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "36c589e06433603913a453d0b81d12bb8d8af71a56e9ed1d82b1a094e9fb1b98",
+        "relation": "related_to",
+        "source": "6c11b9082c38a4e2b2564681fabafc5d67621e65be7a3146081daf37f751fae6",
+        "target": "5231efd3dc489c942d782b5c272f3a6bfbea14b91dd466732192ef480a8d194d",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "38a8f506833d9639fa20ac3165c52db06f89964d386c2490675ea592f05758ae",
+        "relation": "continues",
+        "source": "df285b9d315ae29e6f5e5e15189d7456273a7695525272bb7b6b73e12d8cf030",
+        "target": "e553d87bb2d11cfa262eaaa3b9c9aedd9a2f8bbe9451bf7ad9477379c49a4819",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "38d21109b7df5644~6d30aacd~te:state",
+        "relation": "continues",
+        "source": "b5279104113861509e6fa986f6c8cd018362f0e8424cbad670b95ecd6d30aacd",
+        "target": "more:state:state",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "419a78f1e86b027b0c65f6f9fb1d8b57c7f3bf8bcb5f1eb23d43936670ad8903",
+        "relation": "related_to",
+        "source": "288a792f4db946f4b496e1d60df60de34b2f0c881c98b3ea80fa584a04384cd8",
+        "target": "09c9358abd82bf85be1de654399e8317d709663f96b7c7ed3a96ff30111bc387",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "43f72efeefd656d22190315d8bbca32d6bef9446ab3dfd2c3bd9df18fa2e19fb",
+        "relation": "writes",
+        "source": "143d5f0a764515aa3d71d9f244d31e16a906178e5b9037e5cc4fb4d959cbe47f",
+        "target": "a57a1ce315f4a94ddbd276b0c4ce9ec0058d181b4a983cba6b6e23d6ecb6506a",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "448180c42f9f1aa4~peration~te:state",
+        "relation": "writes",
+        "source": "more:action:operation",
+        "target": "more:state:state",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "47761dda9b2d5a951bf55d9f459c7ea6829a0772828cd634f573d26a500970a4",
+        "relation": "writes",
+        "source": "a84b3bab0570ff56c398487a7cc7e6a6697ea1511466b4b633fd4a8f993c6c1b",
+        "target": "b5279104113861509e6fa986f6c8cd018362f0e8424cbad670b95ecd6d30aacd",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "48fbdecbe35a202e63c961fbb4b220a260ab07f59764aa9ba088d6c6b966e054",
+        "relation": "continues",
+        "source": "22df8979bb579a80162fb81dbfa9a943c5201deca6a5767561ebc339083209bf",
+        "target": "ba593082fff6d5b35dbf7241143fad36ec564d1d09939cc705eac9fc68e59716",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "49da269895d2c09e7f41654fd70c1b9cde663e797f022facfc1b8e4317e3e0b1",
+        "relation": "writes",
+        "source": "e19c363dfb6522af1e701e8bbd88fabe368c1dd6794b837713c8f7c10fc69225",
+        "target": "b207e03920f28529afbf7c83f36253749bb08b69e609fe7deef55cf2cd8b36f1",
+        "type": "intervention"
+      },
+      {
+        "evidence": "declared",
+        "id": "51ab4297f0dcd9a244368e06accdf27253cc235814a4e2a492b28a4b57ec3b7f",
+        "relation": "related_to",
+        "source": "09c9358abd82bf85be1de654399e8317d709663f96b7c7ed3a96ff30111bc387",
+        "target": "5231efd3dc489c942d782b5c272f3a6bfbea14b91dd466732192ef480a8d194d",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "55fd78f101dd0ba703518f4bbf00ef86dace3ba6b58a0f81fa9ecf1fc3897b8f",
+        "relation": "related_to",
+        "source": "9436c21664a4740a472ba8bd286cd090e2e93dced532404ed520834212a839e5",
+        "target": "288a792f4db946f4b496e1d60df60de34b2f0c881c98b3ea80fa584a04384cd8",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "57f71d446e482ecb6f33f5f52f692d7e0241d662fd4d3d6dae4282a1e0668758",
+        "relation": "related_to",
+        "source": "288a792f4db946f4b496e1d60df60de34b2f0c881c98b3ea80fa584a04384cd8",
+        "target": "6ea0aa7830641253e291abdd7ddaead962bea06864bc5b2480dd40bd14a296a1",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "64667e9b73d923c6e6e4782c35e47a40036f6fd8e81be8b4eae44985836ea04b",
+        "relation": "related_to",
+        "source": "a10ca03ec363085df11c99cf71555c5ed943f9179f1d4e3ce7d66379699802f9",
+        "target": "5231efd3dc489c942d782b5c272f3a6bfbea14b91dd466732192ef480a8d194d",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "691a9d03aaad32d99afacd5c6122b63c4049b84d916fea27bb4b52ba9a136b57",
+        "relation": "related_to",
+        "source": "7591a35d882a23de1eba2a8a7bc615d3aae9487918363922339ee2ab27a746d8",
+        "target": "5231efd3dc489c942d782b5c272f3a6bfbea14b91dd466732192ef480a8d194d",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "6b73aa2f30f908dab98e69a04250758634523c97c57b6bf89a240147c1411118",
+        "relation": "reads",
+        "source": "82c071b46a931daf0b6a8f8aae96d260095b048e84585b72819d3de91deae0c2",
+        "target": "fb5f4c58ff8b14253f429f2565764db408d906bf98953f298da8d0c75e57bd73",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "6cf15c8e50af86ba3ba9e28016604c9522a5adad638ef87cb5f3e6173d6ba743",
+        "relation": "describes",
+        "source": "b945dea2ea0ad2e77031ecfc76bbfa4c872ac2492acb774a1d8cab3ed414319c",
+        "target": "df285b9d315ae29e6f5e5e15189d7456273a7695525272bb7b6b73e12d8cf030",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "70467a1bb4f33d2301fc700b13449b64a44af7f581aeaece9af198b0a29ac9d7",
+        "relation": "writes",
+        "source": "e2e96302fa15e385623099107fa17fe49f45686176e4fe40067912cbfcbc668f",
+        "target": "df285b9d315ae29e6f5e5e15189d7456273a7695525272bb7b6b73e12d8cf030",
+        "type": "intervention"
+      },
+      {
+        "evidence": "declared",
+        "id": "73ec6d13ac1d234f24721d88499c1cef07c473a23dbd53e8cc08c31199fa633b",
+        "relation": "related_to",
+        "source": "09c9358abd82bf85be1de654399e8317d709663f96b7c7ed3a96ff30111bc387",
+        "target": "a10ca03ec363085df11c99cf71555c5ed943f9179f1d4e3ce7d66379699802f9",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "75808c216f696cda6a8f42aa12a2a140056e9a1e680a5a37b97c32377dda1368",
+        "relation": "continues",
+        "source": "22df8979bb579a80162fb81dbfa9a943c5201deca6a5767561ebc339083209bf",
+        "target": "df285b9d315ae29e6f5e5e15189d7456273a7695525272bb7b6b73e12d8cf030",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "78e19c612c7890abc9168d1c3a7bc9ad4a8bfd74677c6bd792dbcfff6243979f",
+        "relation": "related_to",
+        "source": "07a34dab1037965b99c343442fe3ccf45e8725e4c4e77522a5261f41758efc5a",
+        "target": "a10ca03ec363085df11c99cf71555c5ed943f9179f1d4e3ce7d66379699802f9",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "79e460cbce8dac0361a49aa562d4c1320fb730f512e3e91ce95510e8c5d4e2c2",
+        "relation": "describes",
+        "source": "09c9358abd82bf85be1de654399e8317d709663f96b7c7ed3a96ff30111bc387",
+        "target": "b3299c78ce61dca3e3c941efbabc3a3c1d09c397c20c22be02ebd0355acf1456",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "82800641fc8358ce9b7c67021196063c3059f96f04520f8a6b1f2c8ade11b4fc",
+        "relation": "related_to",
+        "source": "6817dd2d727c2263895f8e9c8e7fb81fb26bcef8c0458fb8ee96179fcfd8aa3f",
+        "target": "5231efd3dc489c942d782b5c272f3a6bfbea14b91dd466732192ef480a8d194d",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "869c6886db3f4ddf57ede0b41bf98c18255a4729d7b1764af234c302788b6c5b",
+        "relation": "related_to",
+        "source": "b945dea2ea0ad2e77031ecfc76bbfa4c872ac2492acb774a1d8cab3ed414319c",
+        "target": "5231efd3dc489c942d782b5c272f3a6bfbea14b91dd466732192ef480a8d194d",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "87f374e2a0e4356d0410ce6c3a482355e5f930c87224dbd7671d47661b007fb5",
+        "relation": "related_to",
+        "source": "288a792f4db946f4b496e1d60df60de34b2f0c881c98b3ea80fa584a04384cd8",
+        "target": "b945dea2ea0ad2e77031ecfc76bbfa4c872ac2492acb774a1d8cab3ed414319c",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "8811c69c067e49cff2ff1b3e0457a486a065517c4a97e132281c4ea74af868e3",
+        "relation": "describes",
+        "source": "750c73994cab9fd30206b8efc858232e1c6a3f2319c957b014f9841ae3c2f8be",
+        "target": "1e0d98f4c87745a3438dbb430a29789b4776097a130e698c1784b29eefa696e6",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "8c561bfe63c5c6692e4a8e1e04ca960c52317d72216e01b210ae1ef1a250e181",
+        "relation": "describes",
+        "source": "6ea0aa7830641253e291abdd7ddaead962bea06864bc5b2480dd40bd14a296a1",
+        "target": "b207e03920f28529afbf7c83f36253749bb08b69e609fe7deef55cf2cd8b36f1",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "8d35b3243a36298a822e059902698b4994b8abf727c74c8c3c6a28c01a6874f8",
+        "relation": "writes",
+        "source": "7deb533a55b3d9c88244a7f46e98cdf851afa8d5bfb60a765da5bc9211d64f27",
+        "target": "21bbe273b03ffe0f169d50bee98b7f890030b56b997d2c2aac10b3800cbab908",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "9169799fb782a3de5df52b54f5727e66ccc1dc7a4e9ae933d0c7e3db4ee4b320",
+        "relation": "reads",
+        "source": "a57a1ce315f4a94ddbd276b0c4ce9ec0058d181b4a983cba6b6e23d6ecb6506a",
+        "target": "5f63cbe7954673331a6b1a1b2415ef94b8b1481d5d8e70f2e24de3ab84e727a3",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "98a6bfb69bd8c951193523db7cb0839b77f4a92dc6adeb8ff030da549354f180",
+        "relation": "reads",
+        "source": "e553d87bb2d11cfa262eaaa3b9c9aedd9a2f8bbe9451bf7ad9477379c49a4819",
+        "target": "dbc0f9a4961dc3ba69e3ee09c427946ea286fce3dd35cd957845a54c7e439610",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "9a3d0655b2c17b12bac386ff85de5c4449d9bc73d3887bf10a898297fd5f2d2f",
+        "relation": "describes",
+        "source": "07a34dab1037965b99c343442fe3ccf45e8725e4c4e77522a5261f41758efc5a",
+        "target": "82c071b46a931daf0b6a8f8aae96d260095b048e84585b72819d3de91deae0c2",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "9b17eff1ea8885213cce77f91bec4f2b66649688417a556562833e70f724e8ae",
+        "relation": "writes",
+        "source": "395e99bcb4ae62894cdf25f45c6702f71edfa39eafc238535f050b5d3a2f9032",
+        "target": "1e0d98f4c87745a3438dbb430a29789b4776097a130e698c1784b29eefa696e6",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "a0f6c5e87e73645c118971768a1ef5bdb279319d413cac6d3ed6ec5e32005d69",
+        "relation": "reads",
+        "source": "1298a037a66d06e14037a52dd3f21c72aaad9b227ee9e396c5ea1129f6949daa",
+        "target": "395e99bcb4ae62894cdf25f45c6702f71edfa39eafc238535f050b5d3a2f9032",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "a58f9c3205868400ba48ff9b11c3fab5a8605b575833b6c9064872563c6f2276",
+        "relation": "reads",
+        "source": "e386fd8357f5a06639f807f79f8cccf4a961a41b73c549358b08bedfd0be6189",
+        "target": "3f1e0eccb060843945f55211a60d10d81f238bda4291546d8980ef0af1f02f6f",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "a951a7e1d9395a2c0dbbbcb65356ede8564de23f2b2d80deceead2b4850211b6",
+        "relation": "related_to",
+        "source": "8c477dbe7995c788913ca179209a032fdee8f63347240da6ae4b1994b4d5f996",
+        "target": "5231efd3dc489c942d782b5c272f3a6bfbea14b91dd466732192ef480a8d194d",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "ae9d2a85abacba7ffd94a92a398b17fed7dc4bc9e2bc65d5879c45bb27e3f38f",
+        "relation": "continues",
+        "source": "a57a1ce315f4a94ddbd276b0c4ce9ec0058d181b4a983cba6b6e23d6ecb6506a",
+        "target": "b3299c78ce61dca3e3c941efbabc3a3c1d09c397c20c22be02ebd0355acf1456",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "aef34669e59074b95e5d000510087df1384ded4759260399ef2392f7d6541931",
+        "relation": "writes",
+        "source": "5f63cbe7954673331a6b1a1b2415ef94b8b1481d5d8e70f2e24de3ab84e727a3",
+        "target": "b3299c78ce61dca3e3c941efbabc3a3c1d09c397c20c22be02ebd0355acf1456",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "b36d2743918dfcf65af20ac0da0c6159b26079d8f5342e335911f144c027137d",
+        "relation": "continues",
+        "source": "b207e03920f28529afbf7c83f36253749bb08b69e609fe7deef55cf2cd8b36f1",
+        "target": "b5279104113861509e6fa986f6c8cd018362f0e8424cbad670b95ecd6d30aacd",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "b627b6a22cd819d193648205124eb527be9d88504f71fa61a8faea06b5880c98",
+        "relation": "describes",
+        "source": "4bbf10a8a45aaa78d5204041b964a7a6158a9f6aff69a80f3143bc3fcdcaf1ea",
+        "target": "1e0d98f4c87745a3438dbb430a29789b4776097a130e698c1784b29eefa696e6",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "b7d0da5cb68a60c7da993ceb75af1d8042c7ce8c823dcff97995b36caccfe392",
+        "relation": "reads",
+        "source": "df285b9d315ae29e6f5e5e15189d7456273a7695525272bb7b6b73e12d8cf030",
+        "target": "a78f2c9e8ce80a73738bdf00882f0df96beb534154391604932f15e61854feb6",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "b7fef480420c5997c5da23e9c64bc5ba2e0b96228dbc6452524e260acdd70aaa",
+        "relation": "writes",
+        "source": "b5285d0c82692a6416ca68707f11c1d8e44a11f20875a8bad5ba35ed6506222a",
+        "target": "2ef78032adccf8f067c406ec04a7c1d49d6c1339c7f5c0725e5a52252591c57c",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "b97c2740a97cf4c4b80289f80c800268168fe2174c25f335d353565f23ea30cf",
+        "relation": "continues",
+        "source": "82c071b46a931daf0b6a8f8aae96d260095b048e84585b72819d3de91deae0c2",
+        "target": "36ff227e82a5ceac73d53bfd3bf45d1cfb94a0d816699722938e964f02be196d",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "ba1bf28b21060917f81d4ae1f8952bdf2966ef4ec4f1cf6754fcdff2eeda8fe3",
+        "relation": "continues",
+        "source": "22df8979bb579a80162fb81dbfa9a943c5201deca6a5767561ebc339083209bf",
+        "target": "82c071b46a931daf0b6a8f8aae96d260095b048e84585b72819d3de91deae0c2",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "bb74465cb1dfefa604f35a4e35a3780aff5044872e46d36c14e94171669ccaf4",
+        "relation": "reads",
+        "source": "b207e03920f28529afbf7c83f36253749bb08b69e609fe7deef55cf2cd8b36f1",
+        "target": "a84b3bab0570ff56c398487a7cc7e6a6697ea1511466b4b633fd4a8f993c6c1b",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "bc50155af6d0f61f29d97e5d2cf1b7b35c51ff04b2282ac647cfa6f438e6bd33",
+        "relation": "describes",
+        "source": "07a34dab1037965b99c343442fe3ccf45e8725e4c4e77522a5261f41758efc5a",
+        "target": "2ef78032adccf8f067c406ec04a7c1d49d6c1339c7f5c0725e5a52252591c57c",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "cee64dbeee764de418d76103fb9b2020e51b0d34ccc3462d6c8d4f1a975dbe40",
+        "relation": "writes",
+        "source": "92b023ec9d415866f24da4f61efc002d91d66b2a2493f6737ac3459ed5592842",
+        "target": "82c071b46a931daf0b6a8f8aae96d260095b048e84585b72819d3de91deae0c2",
+        "type": "intervention"
+      },
+      {
+        "evidence": "observed",
+        "id": "cf001638988a36d7~te:state~50b37ca2",
+        "relation": "continues",
+        "source": "more:state:state",
+        "target": "1bed66b42534f7d997b5b0b3a9e964451fe9157c3466653c2d8f84fc50b37ca2",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "d0cf741be51acb207929295c4e7d5b59774907c591cc3fa5c61884aa1c455bd0",
+        "relation": "writes",
+        "source": "a78f2c9e8ce80a73738bdf00882f0df96beb534154391604932f15e61854feb6",
+        "target": "e553d87bb2d11cfa262eaaa3b9c9aedd9a2f8bbe9451bf7ad9477379c49a4819",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "d2aa10fa1008c63f72bf0a319436c20af9d6b0610ec543065e81a24c0aab826b",
+        "relation": "reads",
+        "source": "22df8979bb579a80162fb81dbfa9a943c5201deca6a5767561ebc339083209bf",
+        "target": "c655f59b77fd4b3ecaf22ada10306bab7391216024ccee58e5292e71e8b9c844",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "d3c22781b78922285867b593c8c439eb0f041b2ead53a512425dae7924b7f49e",
+        "relation": "related_to",
+        "source": "9436c21664a4740a472ba8bd286cd090e2e93dced532404ed520834212a839e5",
+        "target": "750c73994cab9fd30206b8efc858232e1c6a3f2319c957b014f9841ae3c2f8be",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "d7578f488af6c5cf0d63ea2298bc69de84b505758fece7b699e7e1e7c37e83da",
+        "relation": "reads",
+        "source": "22df8979bb579a80162fb81dbfa9a943c5201deca6a5767561ebc339083209bf",
+        "target": "e2e96302fa15e385623099107fa17fe49f45686176e4fe40067912cbfcbc668f",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "e0104339dfe401cec0b0280d6d1f654a13a951d9b0bce2d07aec663fd190f424",
+        "relation": "continues",
+        "source": "1e0d98f4c87745a3438dbb430a29789b4776097a130e698c1784b29eefa696e6",
+        "target": "22df8979bb579a80162fb81dbfa9a943c5201deca6a5767561ebc339083209bf",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "e081308a0edd99a46867695fe4924808fa0e1571fead5ab7779c2578c66e3be1",
+        "relation": "writes",
+        "source": "3f1e0eccb060843945f55211a60d10d81f238bda4291546d8980ef0af1f02f6f",
+        "target": "5b497223b6779ac5ac5b8199717633f95befaed598aee097389b576069acd24d",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "e2f932711a6040742c6fe42279b0a78f7fdb68626209f7888be71fc746cb78fc",
+        "relation": "continues",
+        "source": "21bbe273b03ffe0f169d50bee98b7f890030b56b997d2c2aac10b3800cbab908",
+        "target": "2ef78032adccf8f067c406ec04a7c1d49d6c1339c7f5c0725e5a52252591c57c",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "e4eba026c5c87a410424997a3f7f1703beeb013554dd46ffa55626b4b3b87205",
+        "relation": "writes",
+        "source": "c655f59b77fd4b3ecaf22ada10306bab7391216024ccee58e5292e71e8b9c844",
+        "target": "ba593082fff6d5b35dbf7241143fad36ec564d1d09939cc705eac9fc68e59716",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "e55c3115db3e649509229cae00f024ce7caff2c6572caed90daf6bf02d99c421",
+        "relation": "related_to",
+        "source": "288a792f4db946f4b496e1d60df60de34b2f0c881c98b3ea80fa584a04384cd8",
+        "target": "07a34dab1037965b99c343442fe3ccf45e8725e4c4e77522a5261f41758efc5a",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "e9c9145d4b91204a3081a7d327c20fab598a8550e789558ac29c7e02cb06f730",
+        "relation": "continues",
+        "source": "36ff227e82a5ceac73d53bfd3bf45d1cfb94a0d816699722938e964f02be196d",
+        "target": "21bbe273b03ffe0f169d50bee98b7f890030b56b997d2c2aac10b3800cbab908",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "ece0ec9fd7eb4f0ab26b0ffd5d2b1a0de86ef620dab115d47401237a5fa19569",
+        "relation": "continues",
+        "source": "ba593082fff6d5b35dbf7241143fad36ec564d1d09939cc705eac9fc68e59716",
+        "target": "a57a1ce315f4a94ddbd276b0c4ce9ec0058d181b4a983cba6b6e23d6ecb6506a",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "f1ba90f1feacd6e2e575c0722cd2962f72498906a415f1310f7ef2fdbe82d82d",
+        "relation": "related_to",
+        "source": "288a792f4db946f4b496e1d60df60de34b2f0c881c98b3ea80fa584a04384cd8",
+        "target": "a10ca03ec363085df11c99cf71555c5ed943f9179f1d4e3ce7d66379699802f9",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "f3489514a409abf96e9bd20fe25a83f6b81b0ad973ef1a7d3b779dcce20440c4",
+        "relation": "related_to",
+        "source": "6a41ba09d0e6975f374297dc1909bc943d66252d2b7e6e273803c347437a6d7b",
+        "target": "5231efd3dc489c942d782b5c272f3a6bfbea14b91dd466732192ef480a8d194d",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "f4cc8e9380d0da525fb034f8dea0eeafa5b773ef0573999b8fe5aa774ab622e7",
+        "relation": "describes",
+        "source": "09c9358abd82bf85be1de654399e8317d709663f96b7c7ed3a96ff30111bc387",
+        "target": "22df8979bb579a80162fb81dbfa9a943c5201deca6a5767561ebc339083209bf",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "f5d594a1723f54d304b80ea5a42ba87a5a4ca17e6a838bb0ddbe90d46f5807c8",
+        "relation": "reads",
+        "source": "22df8979bb579a80162fb81dbfa9a943c5201deca6a5767561ebc339083209bf",
+        "target": "92b023ec9d415866f24da4f61efc002d91d66b2a2493f6737ac3459ed5592842",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "f70f1f869238d1bdddab7c0c222bf9cc1418d42b004197790bd5f01f0edd605b",
+        "relation": "reads",
+        "source": "ba593082fff6d5b35dbf7241143fad36ec564d1d09939cc705eac9fc68e59716",
+        "target": "143d5f0a764515aa3d71d9f244d31e16a906178e5b9037e5cc4fb4d959cbe47f",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "f7ec87e2ac0707a0203e44f14ee0524c193fb0972748af6957c2539b1083af7d",
+        "relation": "related_to",
+        "source": "288a792f4db946f4b496e1d60df60de34b2f0c881c98b3ea80fa584a04384cd8",
+        "target": "5231efd3dc489c942d782b5c272f3a6bfbea14b91dd466732192ef480a8d194d",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "f9d60fd61ae9fa6544def1884c016a0bb718acdda11c1beb4db9d831fe8505c9",
+        "relation": "annotates",
+        "source": "9436c21664a4740a472ba8bd286cd090e2e93dced532404ed520834212a839e5",
+        "target": "1e0d98f4c87745a3438dbb430a29789b4776097a130e698c1784b29eefa696e6",
+        "type": "unknown"
+      },
+      {
+        "evidence": "declared",
+        "id": "fc2e6e54f01b37ef93724491366527fbb79a81fb80a1a4ba130c97742987eec6",
+        "relation": "related_to",
+        "source": "07a34dab1037965b99c343442fe3ccf45e8725e4c4e77522a5261f41758efc5a",
+        "target": "5231efd3dc489c942d782b5c272f3a6bfbea14b91dd466732192ef480a8d194d",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "fef44ce1f181fb2959bd19bda7c6abb3306664506fdd751ac55933784acb4466",
+        "relation": "continues",
+        "source": "1298a037a66d06e14037a52dd3f21c72aaad9b227ee9e396c5ea1129f6949daa",
+        "target": "1e0d98f4c87745a3438dbb430a29789b4776097a130e698c1784b29eefa696e6",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "fefeb8be36139f459d7b9c2ba1de8321d97fd4c22c9eeb0f27e4390cb8e9f0e5",
+        "relation": "writes",
+        "source": "dbc0f9a4961dc3ba69e3ee09c427946ea286fce3dd35cd957845a54c7e439610",
+        "target": "e386fd8357f5a06639f807f79f8cccf4a961a41b73c549358b08bedfd0be6189",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "ff470a46ac84ee9485696505973c07715279d6f4b0f2aa29952c259b9a1f0046",
+        "relation": "continues",
+        "source": "82c071b46a931daf0b6a8f8aae96d260095b048e84585b72819d3de91deae0c2",
+        "target": "b207e03920f28529afbf7c83f36253749bb08b69e609fe7deef55cf2cd8b36f1",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "ff7d9010258273c6cfc72b65afaa60991b817e34b36dd579591c28f9cd335046",
+        "relation": "reads",
+        "source": "36ff227e82a5ceac73d53bfd3bf45d1cfb94a0d816699722938e964f02be196d",
+        "target": "7deb533a55b3d9c88244a7f46e98cdf851afa8d5bfb60a765da5bc9211d64f27",
+        "type": "dataflow"
+      }
+    ],
+    "nodes": [
+      {
+        "addr": "t2.L0.h",
+        "count": null,
+        "ev": null,
+        "id": "df285b9d315ae29e6f5e5e15189d7456273a7695525272bb7b6b73e12d8cf030",
+        "kind": "state",
+        "label": "cut c3781ee6",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "addr": "t2.L0.h",
+        "count": null,
+        "ev": null,
+        "id": "22df8979bb579a80162fb81dbfa9a943c5201deca6a5767561ebc339083209bf",
+        "kind": "state",
+        "label": "cut 6ae5b1e6",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "addr": "t2.L0.h",
+        "count": null,
+        "ev": "measured",
+        "id": "a78f2c9e8ce80a73738bdf00882f0df96beb534154391604932f15e61854feb6",
+        "kind": "action",
+        "label": "continue",
+        "lane": 0,
+        "meta": {
+          "operation": "continue",
+          "receipt": "969cd5e7fac788e2b7be70f86908a36f7dd674fe932757b63c043adbe8eb75ab"
+        },
+        "role": "operation",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "b945dea2ea0ad2e77031ecfc76bbfa4c872ac2492acb774a1d8cab3ed414319c",
+        "kind": "source",
+        "label": "circuit-comparison-arm",
+        "lane": 0,
+        "meta": {
+          "kind": "comparison-arm",
+          "record_id": "62d97e47607905f13d1096d8eced154fa82841aaf4792a8ed3a2c01eb9064ff1",
+          "terminal_status": "not-established"
+        },
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": "t2.L0.h",
+        "count": null,
+        "ev": "measured",
+        "id": "e2e96302fa15e385623099107fa17fe49f45686176e4fe40067912cbfcbc668f",
+        "kind": "action",
+        "label": "apply",
+        "lane": 0,
+        "meta": {
+          "operation": "apply",
+          "receipt": "bb6aa2ac764a66c5541bb46789be61ab7128b96ecf0130326553ed80ba09bdcf"
+        },
+        "role": "operation",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "addr": "t2.L1.h",
+        "count": null,
+        "ev": null,
+        "id": "e553d87bb2d11cfa262eaaa3b9c9aedd9a2f8bbe9451bf7ad9477379c49a4819",
+        "kind": "state",
+        "label": "cut 24cc2921",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 1
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "09c9358abd82bf85be1de654399e8317d709663f96b7c7ed3a96ff30111bc387",
+        "kind": "source",
+        "label": "circuit-comparison-arm",
+        "lane": 0,
+        "meta": {
+          "kind": "comparison-arm",
+          "record_id": "cb5592f658fdcf0de5145eab999c4c805cd56a0b77fb3bb75c0dda8060dccfbe",
+          "terminal_status": "not-established"
+        },
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": "t2.L0.h",
+        "count": null,
+        "ev": null,
+        "id": "1e0d98f4c87745a3438dbb430a29789b4776097a130e698c1784b29eefa696e6",
+        "kind": "state",
+        "label": "cut f67bd607",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "addr": "t2.L0.h",
+        "count": null,
+        "ev": null,
+        "id": "82c071b46a931daf0b6a8f8aae96d260095b048e84585b72819d3de91deae0c2",
+        "kind": "state",
+        "label": "cut 7088e224",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "addr": "t2.L0.h",
+        "count": null,
+        "ev": "measured",
+        "id": "92b023ec9d415866f24da4f61efc002d91d66b2a2493f6737ac3459ed5592842",
+        "kind": "action",
+        "label": "apply",
+        "lane": 0,
+        "meta": {
+          "operation": "apply",
+          "receipt": "9d9aa0e4b606540003fa6d686907a8387b1618bcf0053bc4e9a65c2bd63206ec"
+        },
+        "role": "operation",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "addr": "t2.L1.h",
+        "count": null,
+        "ev": null,
+        "id": "ba593082fff6d5b35dbf7241143fad36ec564d1d09939cc705eac9fc68e59716",
+        "kind": "state",
+        "label": "cut 93ded63e",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 1
+      },
+      {
+        "addr": "t2.L0.h",
+        "count": null,
+        "ev": "measured",
+        "id": "c655f59b77fd4b3ecaf22ada10306bab7391216024ccee58e5292e71e8b9c844",
+        "kind": "action",
+        "label": "continue",
+        "lane": 0,
+        "meta": {
+          "operation": "continue",
+          "receipt": "3534033b8d0869eb70c9bb4ea5c1b5d9ba852c1532ca3d92395214bc47566345"
+        },
+        "role": "operation",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "288a792f4db946f4b496e1d60df60de34b2f0c881c98b3ea80fa584a04384cd8",
+        "kind": "source",
+        "label": "circuit-comparison",
+        "lane": 0,
+        "meta": {
+          "kind": "comparison",
+          "record_id": "8db15b649e1281c43adddb2a6f8d81512ac249c74429265d5aa4c76a100964df",
+          "terminal_status": "not-established"
+        },
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "5231efd3dc489c942d782b5c272f3a6bfbea14b91dd466732192ef480a8d194d",
+        "kind": "source",
+        "label": "circuit-focus",
+        "lane": 0,
+        "meta": {
+          "kind": "focus",
+          "record_id": "66de3eb9f0957c6056947b463956c35b5131531156672668fddba2c61a2068ba",
+          "terminal_status": "not-established"
+        },
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": "t2.logits",
+        "count": null,
+        "ev": null,
+        "id": "5b497223b6779ac5ac5b8199717633f95befaed598aee097389b576069acd24d",
+        "kind": "state",
+        "label": "cut 416990b7",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 3
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "a10ca03ec363085df11c99cf71555c5ed943f9179f1d4e3ce7d66379699802f9",
+        "kind": "source",
+        "label": "circuit-comparison-plan",
+        "lane": 0,
+        "meta": {
+          "kind": "comparison-plan",
+          "record_id": "b0ac96b56adfa69c95018f5b1e92efd01cbdd989f8546c8a9f7c8d3ff565d307",
+          "terminal_status": "not-established"
+        },
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": "t2.L1.h",
+        "count": null,
+        "ev": "measured",
+        "id": "dbc0f9a4961dc3ba69e3ee09c427946ea286fce3dd35cd957845a54c7e439610",
+        "kind": "action",
+        "label": "continue",
+        "lane": 0,
+        "meta": {
+          "operation": "continue",
+          "receipt": "08d91854381f77aa308977be746333c86b392d753924554e5a4cf4747a439c8f"
+        },
+        "role": "operation",
+        "x": 2,
+        "y": 1
+      },
+      {
+        "addr": "t2.L1.h_out",
+        "count": null,
+        "ev": null,
+        "id": "e386fd8357f5a06639f807f79f8cccf4a961a41b73c549358b08bedfd0be6189",
+        "kind": "state",
+        "label": "cut 394f86f7",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 2
+      },
+      {
+        "addr": "t2.logits",
+        "count": null,
+        "ev": null,
+        "id": "b3299c78ce61dca3e3c941efbabc3a3c1d09c397c20c22be02ebd0355acf1456",
+        "kind": "state",
+        "label": "cut c4117130",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 3
+      },
+      {
+        "addr": "t1.logits",
+        "count": null,
+        "ev": null,
+        "id": "1298a037a66d06e14037a52dd3f21c72aaad9b227ee9e396c5ea1129f6949daa",
+        "kind": "state",
+        "label": "cut 976df14b",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 1,
+        "y": 3
+      },
+      {
+        "addr": "t1.logits",
+        "count": null,
+        "ev": "measured",
+        "id": "395e99bcb4ae62894cdf25f45c6702f71edfa39eafc238535f050b5d3a2f9032",
+        "kind": "action",
+        "label": "continue",
+        "lane": 0,
+        "meta": {
+          "operation": "continue",
+          "receipt": "97dfa9ba20d952f42398a739d13f5839bdf3af631853559aa2fc55d4ddd4e41a"
+        },
+        "role": "operation",
+        "x": 1,
+        "y": 3
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "4bbf10a8a45aaa78d5204041b964a7a6158a9f6aff69a80f3143bc3fcdcaf1ea",
+        "kind": "source",
+        "label": "symbol:demo.carrier",
+        "lane": 0,
+        "meta": { "support": "metadata-support-verified" },
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "750c73994cab9fd30206b8efc858232e1c6a3f2319c957b014f9841ae3c2f8be",
+        "kind": "source",
+        "label": "port:hidden",
+        "lane": 0,
+        "meta": { "support": "declared-port" },
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "9436c21664a4740a472ba8bd286cd090e2e93dced532404ed520834212a839e5",
+        "kind": "source",
+        "label": "Tiny native circuit workflow",
+        "lane": 0,
+        "meta": {},
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "07a34dab1037965b99c343442fe3ccf45e8725e4c4e77522a5261f41758efc5a",
+        "kind": "source",
+        "label": "circuit-comparison-arm",
+        "lane": 0,
+        "meta": {
+          "kind": "comparison-arm",
+          "record_id": "cc1037aaccdfb691f1d2f772ba2cfef7689eae2f9d6b3135073b46e4c0061e58",
+          "terminal_status": "not-established"
+        },
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": "t2.L1.h",
+        "count": null,
+        "ev": null,
+        "id": "36ff227e82a5ceac73d53bfd3bf45d1cfb94a0d816699722938e964f02be196d",
+        "kind": "state",
+        "label": "cut cab027f3",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 1
+      },
+      {
+        "addr": "t2.L0.h",
+        "count": null,
+        "ev": null,
+        "id": "b207e03920f28529afbf7c83f36253749bb08b69e609fe7deef55cf2cd8b36f1",
+        "kind": "state",
+        "label": "cut 87fbee22",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "addr": "t2.L0.h",
+        "count": null,
+        "ev": "measured",
+        "id": "e19c363dfb6522af1e701e8bbd88fabe368c1dd6794b837713c8f7c10fc69225",
+        "kind": "action",
+        "label": "apply",
+        "lane": 0,
+        "meta": {
+          "operation": "apply",
+          "receipt": "e61a7e7a17872ddb9d80f2d6a1e020fba82e0d9a47c591a9b4315c16cac812b2"
+        },
+        "role": "operation",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "addr": "t2.L0.h",
+        "count": null,
+        "ev": "measured",
+        "id": "fb5f4c58ff8b14253f429f2565764db408d906bf98953f298da8d0c75e57bd73",
+        "kind": "action",
+        "label": "continue",
+        "lane": 0,
+        "meta": {
+          "operation": "continue",
+          "receipt": "a52f7c917881143f6dc7681c4e6a71e38ef6668b14c712c767c8e0d6a6803992"
+        },
+        "role": "operation",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "addr": "t2.L1.h",
+        "count": null,
+        "ev": "measured",
+        "id": "143d5f0a764515aa3d71d9f244d31e16a906178e5b9037e5cc4fb4d959cbe47f",
+        "kind": "action",
+        "label": "continue",
+        "lane": 0,
+        "meta": {
+          "operation": "continue",
+          "receipt": "e54ee33572a1f51cb2e141838cda7dcbf4b4b6d7181adab58f425de8e23d7d2b"
+        },
+        "role": "operation",
+        "x": 2,
+        "y": 1
+      },
+      {
+        "addr": "t2.L1.h_out",
+        "count": null,
+        "ev": null,
+        "id": "a57a1ce315f4a94ddbd276b0c4ce9ec0058d181b4a983cba6b6e23d6ecb6506a",
+        "kind": "state",
+        "label": "cut ed3f7cf4",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 2
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "6ea0aa7830641253e291abdd7ddaead962bea06864bc5b2480dd40bd14a296a1",
+        "kind": "source",
+        "label": "circuit-comparison-arm",
+        "lane": 0,
+        "meta": {
+          "kind": "comparison-arm",
+          "record_id": "2769701517413d179c5db5dabe8d9d382c616a91159c6fa11f8c65af08aa1b5b",
+          "terminal_status": "not-established"
+        },
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "4ddfbb97f418d527813bba4d448ac2cea899e47fb16ea0cd8ceebd3075a54e3a",
+        "kind": "source",
+        "label": "circuit-materialization",
+        "lane": 0,
+        "meta": {
+          "kind": "materialization",
+          "record_id": "87101298c2b4261b2533199cdd1dc23d9064bb798da7da3a1659703da716b83a",
+          "terminal_status": "not-established"
+        },
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "6817dd2d727c2263895f8e9c8e7fb81fb26bcef8c0458fb8ee96179fcfd8aa3f",
+        "kind": "source",
+        "label": "circuit-replay-recipe",
+        "lane": 0,
+        "meta": {
+          "kind": "replay-recipe",
+          "record_id": "d8b17bf46fb24a23c1f75bb7c6f710020b20a15a56a084d15a7e8f9f724156fe",
+          "terminal_status": "not-established"
+        },
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "6a41ba09d0e6975f374297dc1909bc943d66252d2b7e6e273803c347437a6d7b",
+        "kind": "source",
+        "label": "circuit-explanation",
+        "lane": 0,
+        "meta": {
+          "kind": "explanation",
+          "record_id": "185223a1eee10e4e05fc23cf094c1ca055732031365e4a56bdf7388013cdbb56",
+          "terminal_status": "not-established"
+        },
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "6c11b9082c38a4e2b2564681fabafc5d67621e65be7a3146081daf37f751fae6",
+        "kind": "source",
+        "label": "circuit-interface-test",
+        "lane": 0,
+        "meta": {
+          "kind": "interface-test",
+          "record_id": "c69a2b702dab7de4ad1409737413d7bb4f3c2dd511b3057ef289259cabc3bf32",
+          "terminal_status": "not-established"
+        },
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "7591a35d882a23de1eba2a8a7bc615d3aae9487918363922339ee2ab27a746d8",
+        "kind": "source",
+        "label": "circuit-explanation",
+        "lane": 0,
+        "meta": {
+          "kind": "explanation",
+          "record_id": "e9b70fef8c6f061bfe07d0349e9083d19e2b4acfd6ab1b62b05415b652019e5a",
+          "terminal_status": "not-established"
+        },
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "8c477dbe7995c788913ca179209a032fdee8f63347240da6ae4b1994b4d5f996",
+        "kind": "source",
+        "label": "circuit-explanation",
+        "lane": 0,
+        "meta": {
+          "kind": "explanation",
+          "record_id": "039c25a521db2f4577b72735886ac541151972bb10457f4cfe7a5dafc674db1b",
+          "terminal_status": "not-established"
+        },
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": "t2.L1.h_out",
+        "count": null,
+        "ev": "measured",
+        "id": "3f1e0eccb060843945f55211a60d10d81f238bda4291546d8980ef0af1f02f6f",
+        "kind": "action",
+        "label": "continue",
+        "lane": 0,
+        "meta": {
+          "operation": "continue",
+          "receipt": "43b7daed78ddc715615ed71a8f6e644abde6657b60bba8f60654abe83516924e"
+        },
+        "role": "operation",
+        "x": 2,
+        "y": 2
+      },
+      {
+        "addr": "t2.L1.h_out",
+        "count": null,
+        "ev": "measured",
+        "id": "180677b4229291449011048ea77714dccc6da1a645722e0ff62f23b0c1379538",
+        "kind": "action",
+        "label": "continue",
+        "lane": 0,
+        "meta": {
+          "operation": "continue",
+          "receipt": "3d058f898bb20e6874ca6e1bff3b428b894cfc5e906c94c0f5af7b3b14fdb248"
+        },
+        "role": "operation",
+        "x": 2,
+        "y": 2
+      },
+      {
+        "addr": "t2.logits",
+        "count": null,
+        "ev": null,
+        "id": "1bed66b42534f7d997b5b0b3a9e964451fe9157c3466653c2d8f84fc50b37ca2",
+        "kind": "state",
+        "label": "cut 559b51e9",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 3
+      },
+      {
+        "addr": "t2.L1.h_out",
+        "count": null,
+        "ev": null,
+        "id": "21bbe273b03ffe0f169d50bee98b7f890030b56b997d2c2aac10b3800cbab908",
+        "kind": "state",
+        "label": "cut 263d1192",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 2
+      },
+      {
+        "addr": "t2.logits",
+        "count": null,
+        "ev": null,
+        "id": "2ef78032adccf8f067c406ec04a7c1d49d6c1339c7f5c0725e5a52252591c57c",
+        "kind": "state",
+        "label": "cut 43536cfb",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 3
+      },
+      {
+        "addr": "t2.L1.h_out",
+        "count": null,
+        "ev": "measured",
+        "id": "5f63cbe7954673331a6b1a1b2415ef94b8b1481d5d8e70f2e24de3ab84e727a3",
+        "kind": "action",
+        "label": "continue",
+        "lane": 0,
+        "meta": {
+          "operation": "continue",
+          "receipt": "34acf609a39ec0ae8c74d9c4950007f20002b7fb7cc51f9931b22218385673df"
+        },
+        "role": "operation",
+        "x": 2,
+        "y": 2
+      },
+      {
+        "addr": "t2.L1.h",
+        "count": null,
+        "ev": "measured",
+        "id": "7deb533a55b3d9c88244a7f46e98cdf851afa8d5bfb60a765da5bc9211d64f27",
+        "kind": "action",
+        "label": "continue",
+        "lane": 0,
+        "meta": {
+          "operation": "continue",
+          "receipt": "fa433d53d4452a3b0e6486b43fdb4ee557b945b3c6b0dc0c968fa0a756874baf"
+        },
+        "role": "operation",
+        "x": 2,
+        "y": 1
+      },
+      {
+        "addr": "t2.L0.h",
+        "count": null,
+        "ev": "measured",
+        "id": "a84b3bab0570ff56c398487a7cc7e6a6697ea1511466b4b633fd4a8f993c6c1b",
+        "kind": "action",
+        "label": "continue",
+        "lane": 0,
+        "meta": {
+          "operation": "continue",
+          "receipt": "88893fd3d9946e4d8f7337da99956afd146847afdc4a04fcb5595e60f92cbbbd"
+        },
+        "role": "operation",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "addr": "t2.L1.h",
+        "count": null,
+        "ev": null,
+        "id": "b5279104113861509e6fa986f6c8cd018362f0e8424cbad670b95ecd6d30aacd",
+        "kind": "state",
+        "label": "cut 8522bff3",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 1
+      },
+      {
+        "addr": "t2.L1.h_out",
+        "count": null,
+        "ev": "measured",
+        "id": "b5285d0c82692a6416ca68707f11c1d8e44a11f20875a8bad5ba35ed6506222a",
+        "kind": "action",
+        "label": "continue",
+        "lane": 0,
+        "meta": {
+          "operation": "continue",
+          "receipt": "31fb184d2fd1ba68df1c3494079b72de5035283103f81698641ac07d04a9f472"
+        },
+        "role": "operation",
+        "x": 2,
+        "y": 2
+      },
+      {
+        "addr": null,
+        "count": 1,
+        "ev": null,
+        "id": "more:action:operation",
+        "kind": "aggregate",
+        "label": "+1 more operation",
+        "lane": 1,
+        "meta": {},
+        "role": "operation",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": null,
+        "count": 1,
+        "ev": null,
+        "id": "more:source:symbol",
+        "kind": "aggregate",
+        "label": "+1 more symbol",
+        "lane": 2,
+        "meta": {},
+        "role": "symbol",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": null,
+        "count": 1,
+        "ev": null,
+        "id": "more:state:state",
+        "kind": "aggregate",
+        "label": "+1 more state",
+        "lane": 3,
+        "meta": {},
+        "role": "state",
+        "x": null,
+        "y": null
+      }
+    ],
+    "overlays": [],
+    "pruned": [
+      { "count": 1, "group": "action/operation", "node": "more:action:operation", "sum": null },
+      { "count": 1, "group": "source/symbol", "node": "more:source:symbol", "sum": null },
+      { "count": 1, "group": "state/state", "node": "more:state:state", "sum": null }
+    ],
+    "slice": null,
+    "slices": [
+      {
+        "complete": true,
+        "component": "symbol:demo.carrier",
+        "cut": "f67bd60723be7d343604555cd25a0ed8937a776a96fc9192478103b015fe9544",
+        "id": "82c3c75935019a9f1b1b22ff4420247689b9b208fedef29bdee164fa7c15c7ee"
+      },
+      {
+        "complete": true,
+        "component": "port:hidden",
+        "cut": "f67bd60723be7d343604555cd25a0ed8937a776a96fc9192478103b015fe9544",
+        "id": "54f64ff0cef9209e0e62d2b1629859c8ae65a6e2dc9774c01f7569775d3289fa"
+      }
+    ],
+    "zoom": "session"
+  },
+  "digest": "999e041335c5b26fc18398002b1c81c8cf6a7a3a4031caed62239672341e01f3",
+  "schema": "mdb-view-graph-v1"
+}

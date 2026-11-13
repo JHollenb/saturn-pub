@@ -1,0 +1,146 @@
+{
+  "bytes": 3147,
+  "data": {
+    "authority": "recorded history (execution + knowledge graphs)",
+    "center": null,
+    "edges": [
+      {
+        "evidence": "declared",
+        "id": "0b5b1decfed05f85812db13d8c2dfc04469c7b2a42f0a9e9c716d1cbff82044e",
+        "relation": "describes",
+        "source": "cf07148203b765a3151357de87a1eaa0b825981f520d319975d1d7fb766ddcc9",
+        "target": "6eb47cfb2f399d3ee4e2843b6620547de57747b9048df6de060798d0d81bc247",
+        "type": "attribution"
+      },
+      {
+        "evidence": "observed",
+        "id": "253eb305b4d08e38e306e20ceea2f2be352506d37e0e4a8888827cf775726c32",
+        "relation": "writes",
+        "source": "3cab63ae56893bbcb95c635b9cecb5f41dae8772ef6f7a85af04ba6ff23c94f1",
+        "target": "f0705efc73045487c6ef0c59c136a38c0a5c8851e17f1d4ae4f2d3bd93273151",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "observed",
+        "id": "34d0b78fff65328a8b5e3b284c342e236048ba61c5712e437017c8daab926287",
+        "relation": "continues",
+        "source": "3e9c47cd6fe721ff64eb512d0984187307290378a26825795b878e7061c56587",
+        "target": "f0705efc73045487c6ef0c59c136a38c0a5c8851e17f1d4ae4f2d3bd93273151",
+        "type": "dataflow"
+      },
+      {
+        "evidence": "declared",
+        "id": "4b7e99b29bd770381087324446f14876c2bedbb7445f27b5e9e9367905d93c54",
+        "relation": "describes",
+        "source": "6eb47cfb2f399d3ee4e2843b6620547de57747b9048df6de060798d0d81bc247",
+        "target": "3e9c47cd6fe721ff64eb512d0984187307290378a26825795b878e7061c56587",
+        "type": "unknown"
+      },
+      {
+        "evidence": "observed",
+        "id": "f30c6a1ea1d16ecf4c218cdbc639e2037ac6e89434aaeb1f16d140f84284efcf",
+        "relation": "reads",
+        "source": "3e9c47cd6fe721ff64eb512d0984187307290378a26825795b878e7061c56587",
+        "target": "3cab63ae56893bbcb95c635b9cecb5f41dae8772ef6f7a85af04ba6ff23c94f1",
+        "type": "dataflow"
+      }
+    ],
+    "nodes": [
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "036a2d0ff372c192cb481be320f995dab9c88a9e947da3b44faed03f863f3684",
+        "kind": "source",
+        "label": "output.logits",
+        "lane": 0,
+        "meta": {},
+        "role": "symbol",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": "measured",
+        "id": "3cab63ae56893bbcb95c635b9cecb5f41dae8772ef6f7a85af04ba6ff23c94f1",
+        "kind": "action",
+        "label": "continue",
+        "lane": 0,
+        "meta": {
+          "operation": "continue",
+          "receipt": "f18b4c22dce79551ae7d32defb809a61ccf5bfe835ce9e50629a0dfc9448e7cb"
+        },
+        "role": "operation",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "3e9c47cd6fe721ff64eb512d0984187307290378a26825795b878e7061c56587",
+        "kind": "state",
+        "label": "cut 254c14a6",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 0
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "6eb47cfb2f399d3ee4e2843b6620547de57747b9048df6de060798d0d81bc247",
+        "kind": "source",
+        "label": "symbol:description.L1",
+        "lane": 1,
+        "meta": { "support": "metadata-support-verified" },
+        "role": "record",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": null,
+        "count": null,
+        "ev": null,
+        "id": "cf07148203b765a3151357de87a1eaa0b825981f520d319975d1d7fb766ddcc9",
+        "kind": "source",
+        "label": "description.L1",
+        "lane": 0,
+        "meta": {},
+        "role": "symbol",
+        "x": null,
+        "y": null
+      },
+      {
+        "addr": "t2.logits",
+        "count": null,
+        "ev": null,
+        "id": "f0705efc73045487c6ef0c59c136a38c0a5c8851e17f1d4ae4f2d3bd93273151",
+        "kind": "state",
+        "label": "cut 93bf9bbe",
+        "lane": 0,
+        "meta": {},
+        "role": "state",
+        "x": 2,
+        "y": 5
+      }
+    ],
+    "overlays": [],
+    "pruned": [],
+    "slice": null,
+    "slices": [
+      {
+        "complete": true,
+        "component": "symbol:description.L1",
+        "cut": "254c14a63c9e3bd990e2b940fa8a7d2e504c96441380f686026c3bc151ca6415",
+        "id": "f8749b374ae7d6504b33b547e2dca3e56f29664733ea9e8f0b11a00a67ba49e8"
+      }
+    ],
+    "zoom": "session"
+  },
+  "digest": "8b72d0b78d59627cbb8dc5e74ad3f1af65d4c366cec2ae9d4e97965a2f81ef55",
+  "schema": "mdb-view-graph-v1"
+}

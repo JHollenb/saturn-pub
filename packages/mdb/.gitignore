@@ -14,3 +14,7 @@ preflight-receipts/
 *.egg-info/
 .writer.lock
 .accepted.lock
+.venv-serve/
+web/node_modules/
+web/dist/
+src/mdb/serve/static/

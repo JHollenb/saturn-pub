@@ -14,6 +14,7 @@ transformerlens = ["mdb-runtime[autoregressive]", "transformer-lens==4.2.0"]
 diffusion = ["mrun-pub @ git+https://github.com/JHollenb/mrun-pub.git@3a8ec7ef6f2678a889c0b1415cbf32efca8b8561", "torch==2.13.0", "numpy>=2.0", "safetensors>=0.5", "transformers==5.14.1", "accelerate==1.14.0", "diffusers==0.39.0", "pillow>=10.0"]
 all = ["mrun-pub @ git+https://github.com/JHollenb/mrun-pub.git@3a8ec7ef6f2678a889c0b1415cbf32efca8b8561", "torch==2.13.0", "numpy>=2.0", "safetensors>=0.5", "transformers==5.14.1", "accelerate==1.14.0", "diffusers==0.39.0", "pillow>=10.0"]
 dev = ["pytest>=8.0", "ruff>=0.5", "hatchling>=1.25"]
+serve = ["fastapi>=0.115", "uvicorn>=0.30", "pydantic>=2.7", "websockets>=12", "numpy>=2.0"]
 
 [project.scripts]
 mdb = "mdb.cli:main"
@@ -24,6 +25,10 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/mdb"]
+# The built web app (gitignored; run `npm run build` in web/ BEFORE `python -m build`/`uv build`:
+# hatch only packs files that exist, so a wheel built without it serves the API but answers
+# `/` with Refused web_build_absent).
+artifacts = ["src/mdb/serve/static/**"]
 
 [tool.hatch.metadata]
 allow-direct-references = true

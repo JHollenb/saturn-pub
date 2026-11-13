@@ -1,0 +1,253 @@
+/* Design tokens. Hue is reserved for ROLES (graph node roles, symbol roles). Evidence class is
+   carried by mark shape and fill pattern only (solid / hollow / hatched / dashed-empty), drawn in
+   the neutral ink colour, so it never competes with role hue. */
+:root {
+  color-scheme: light dark;
+  --bg: #fbfbfa;
+  --panel: #ffffff;
+  --panel-2: #f3f3f1;
+  --ink: #1c1c1e;
+  --ink-2: #55555b;
+  --ink-3: #8a8a90;
+  --rule: #dcdcd8;
+  --focus: #1c1c1e;
+  --cursor: #1c1c1e;
+  --cell: #2b2b2f;
+  --cell-empty: transparent;
+  --refused-bg: #f6efe6;
+  /* Roles (hue). */
+  --role-symbol: #2f6fb3;
+  --role-input: #4a8a3c;
+  --role-output: #b2462e;
+  --role-intervention: #8a4fb0;
+  --role-state: #5a6270;
+  --role-cache: #b07a1f;
+  --role-other: #7b7b82;
+  --font: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --mono: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  --gap: 8px;
+  --radius: 4px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --bg: #141416;
+    --panel: #1b1b1e;
+    --panel-2: #232327;
+    --ink: #ececee;
+    --ink-2: #b2b2b8;
+    --ink-3: #7c7c84;
+    --rule: #34343a;
+    --focus: #ececee;
+    --cursor: #ececee;
+    --cell: #d8d8dc;
+    --refused-bg: #2b241c;
+    --role-symbol: #6aa6e6;
+    --role-input: #7fbf6c;
+    --role-output: #e07a62;
+    --role-intervention: #b98ae0;
+    --role-state: #9aa2b0;
+    --role-cache: #e0aa4c;
+    --role-other: #a0a0a8;
+  }
+}
+
+:root[data-theme='dark'] {
+  --bg: #141416;
+  --panel: #1b1b1e;
+  --panel-2: #232327;
+  --ink: #ececee;
+  --ink-2: #b2b2b8;
+  --ink-3: #7c7c84;
+  --rule: #34343a;
+  --focus: #ececee;
+  --cursor: #ececee;
+  --cell: #d8d8dc;
+  --refused-bg: #2b241c;
+  --role-symbol: #6aa6e6;
+  --role-input: #7fbf6c;
+  --role-output: #e07a62;
+  --role-intervention: #b98ae0;
+  --role-state: #9aa2b0;
+  --role-cache: #e0aa4c;
+  --role-other: #a0a0a8;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 13px/1.4 var(--font);
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  padding: 2px 6px;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 1px;
+}
+
+code,
+.mono {
+  font-family: var(--mono);
+  font-size: 12px;
+}
+
+.muted {
+  color: var(--ink-2);
+}
+
+.faint {
+  color: var(--ink-3);
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th,
+td {
+  text-align: left;
+  padding: 3px 6px;
+  border-bottom: 1px solid var(--rule);
+  vertical-align: top;
+}
+
+th {
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+/* Evidence styles (shape/pattern only). */
+.ev-chip {
+  display: inline-block;
+  border: 1px solid var(--ink-3);
+  border-radius: 8px;
+  padding: 0 5px;
+  font-size: 11px;
+  color: var(--ink-2);
+  margin-left: 4px;
+}
+
+.num {
+  font-family: var(--mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.num > .ev-chip {
+  white-space: normal;
+}
+
+.json-str {
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+
+.num-unresolved {
+  display: inline-block;
+  min-width: 3.5em;
+  border: 1px dashed var(--ink-3);
+  border-radius: var(--radius);
+  color: var(--ink-3);
+  padding: 0 4px;
+  font-size: 11px;
+}
+
+.num-refused {
+  display: inline-block;
+  background: var(--refused-bg);
+  border-radius: var(--radius);
+  padding: 0 4px;
+  font-size: 11px;
+}
+
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  overflow: auto;
+  min-height: 0;
+  min-width: 0;
+}
+
+.panel > h2 {
+  font-size: 12px;
+  margin: 0;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--rule);
+  position: sticky;
+  top: 0;
+  background: var(--panel);
+  z-index: 1;
+  display: flex;
+  gap: var(--gap);
+  align-items: center;
+}
+
+.panel-body {
+  padding: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 0 6px;
+  font-size: 11px;
+  background: var(--panel-2);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.na {
+  border: 1px dashed var(--ink-3);
+  border-radius: var(--radius);
+  padding: 8px;
+  color: var(--ink-2);
+}
+
+.row-button {
+  all: unset;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+}
+
+.row-button:focus-visible {
+  outline: 2px solid var(--focus);
+}
+
+.selected-row {
+  background: var(--panel-2);
+}
