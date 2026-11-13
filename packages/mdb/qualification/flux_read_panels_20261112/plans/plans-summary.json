@@ -1,0 +1,661 @@
+{
+ "full": {
+  "arms": 1284,
+  "branches": 2568,
+  "contexts": [
+   "4242",
+   "9001"
+  ],
+  "identity": {
+   "ball:mod": {
+    "other_item_cut": true,
+    "random_cut": false
+   },
+   "ball:modI": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": true,
+    "random_keep": true
+   },
+   "ball:noun": {
+    "other_item_cut": true,
+    "random_cut": false
+   },
+   "ball:nounI": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "ball:own120": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "ball:own240": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "ball:own240-minus-own60": {
+    "other_item_cut": true,
+    "random_cut": true
+   },
+   "ball:own60": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "black:mod": {
+    "other_item_cut": true,
+    "random_cut": false
+   },
+   "black:modI": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": true,
+    "random_keep": true
+   },
+   "black:noun": {
+    "other_item_cut": true,
+    "random_cut": false
+   },
+   "black:nounI": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": true,
+    "random_keep": true
+   },
+   "black:own120": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "black:own240": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "black:own240-minus-own60": {
+    "other_item_cut": true,
+    "random_cut": true
+   },
+   "black:own60": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "night:mod": {
+    "other_item_cut": true,
+    "random_cut": true
+   },
+   "night:modI": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": true,
+    "random_keep": true
+   },
+   "night:noun": {
+    "other_item_cut": true,
+    "random_cut": false
+   },
+   "night:nounI": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": true,
+    "random_keep": true
+   },
+   "night:own120": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "night:own240": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "night:own240-minus-own60": {
+    "other_item_cut": true,
+    "random_cut": true
+   },
+   "night:own60": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "rain:mod": {
+    "other_item_cut": true,
+    "random_cut": true
+   },
+   "rain:modI": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": true,
+    "random_keep": true
+   },
+   "rain:noun": {
+    "other_item_cut": true,
+    "random_cut": false
+   },
+   "rain:nounI": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "rain:own120": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "rain:own240": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "rain:own240-minus-own60": {
+    "other_item_cut": true,
+    "random_cut": true
+   },
+   "rain:own60": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "red:mod": {
+    "other_item_cut": true,
+    "random_cut": false
+   },
+   "red:modI": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "red:noun": {
+    "other_item_cut": true,
+    "random_cut": false
+   },
+   "red:nounI": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": true,
+    "random_keep": true
+   },
+   "red:own120": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "red:own240": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "red:own240-minus-own60": {
+    "other_item_cut": true,
+    "random_cut": true
+   },
+   "red:own60": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "snow:mod": {
+    "other_item_cut": true,
+    "random_cut": false
+   },
+   "snow:modI": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": true,
+    "random_keep": true
+   },
+   "snow:noun": {
+    "other_item_cut": true,
+    "random_cut": false
+   },
+   "snow:nounI": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "snow:own120": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "snow:own240": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "snow:own240-minus-own60": {
+    "other_item_cut": true,
+    "random_cut": true
+   },
+   "snow:own60": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   }
+  },
+  "lease_cap": 251,
+  "leases": [
+   {
+    "branches": 234,
+    "contexts": [
+     "4242"
+    ],
+    "items": [
+     "black",
+     "red"
+    ],
+    "lease": 0,
+    "lease_sha256": "46cc0d4fada290ca57a7a8b6a2660720cc09133ade0d6911f5ef304669906eb6",
+    "work_items": 239
+   },
+   {
+    "branches": 232,
+    "contexts": [
+     "4242"
+    ],
+    "items": [
+     "ball",
+     "black"
+    ],
+    "lease": 1,
+    "lease_sha256": "800b399e2145f46f745a66285cc73eafbbf1dd624c15a25df5598341e9a3126e",
+    "work_items": 237
+   },
+   {
+    "branches": 247,
+    "contexts": [
+     "4242"
+    ],
+    "items": [
+     "ball",
+     "snow"
+    ],
+    "lease": 2,
+    "lease_sha256": "c7a1560569be1346ec81a430f62a82c56f35da6a9c82c912b8bcf6c707b0f892",
+    "work_items": 252
+   },
+   {
+    "branches": 242,
+    "contexts": [
+     "4242"
+    ],
+    "items": [
+     "night",
+     "snow"
+    ],
+    "lease": 3,
+    "lease_sha256": "cbbe38fd17c3a78711a99f3c0f253c65997e34d5c0ca1dd62fb76fdc9dcae4a9",
+    "work_items": 248
+   },
+   {
+    "branches": 242,
+    "contexts": [
+     "4242"
+    ],
+    "items": [
+     "night",
+     "rain"
+    ],
+    "lease": 4,
+    "lease_sha256": "ab50e4618167343a5ac9dbbb5996bd719ee6c499713a2fe6ac6138a28ca574c1",
+    "work_items": 247
+   },
+   {
+    "branches": 239,
+    "contexts": [
+     "4242",
+     "9001"
+    ],
+    "items": [
+     "car",
+     "cat",
+     "rain",
+     "red"
+    ],
+    "lease": 5,
+    "lease_sha256": "21e5c1e47bac3631210565c24a56842fdb4d80b0420ffe8df3fca78c41e2d111",
+    "work_items": 246
+   },
+   {
+    "branches": 242,
+    "contexts": [
+     "9001"
+    ],
+    "items": [
+     "black",
+     "red"
+    ],
+    "lease": 6,
+    "lease_sha256": "672f6f451504ac78a6c26bfac5e3f9b6d91084fde8292854d901b79fa841eb4b",
+    "work_items": 247
+   },
+   {
+    "branches": 249,
+    "contexts": [
+     "9001"
+    ],
+    "items": [
+     "ball",
+     "black",
+     "snow"
+    ],
+    "lease": 7,
+    "lease_sha256": "5378fe80f669666524ac3982f4cffb1fe0f113493307e505acbfc747fa70f14c",
+    "work_items": 256
+   },
+   {
+    "branches": 247,
+    "contexts": [
+     "9001"
+    ],
+    "items": [
+     "night",
+     "snow"
+    ],
+    "lease": 8,
+    "lease_sha256": "b83aba04c7cb2d0dabebc4573abd3ae0a7d6dd990949c83d3ece54a041cbf5f5",
+    "work_items": 253
+   },
+   {
+    "branches": 247,
+    "contexts": [
+     "9001"
+    ],
+    "items": [
+     "night",
+     "rain"
+    ],
+    "lease": 9,
+    "lease_sha256": "9814952b9179cf2d328d892b99fab71ba9fcd62bb325a4eaa8e588924ceaa011",
+    "work_items": 252
+   },
+   {
+    "branches": 147,
+    "contexts": [
+     "9001"
+    ],
+    "items": [
+     "car",
+     "cat",
+     "rain"
+    ],
+    "lease": 10,
+    "lease_sha256": "2d0437f8fd081fb84f7ae74856423c38248a61b81255e941f7d07a79a8abf5af",
+    "work_items": 151
+   }
+  ],
+  "plan_sha256": "94ef887ec1567c0b41ff8d25bf09f1a0e56cb0636c08845ac0502c9a68ab2536",
+  "random_status": {
+   "ball:keep-modI": "emitted",
+   "ball:keep-nounI": "emitted",
+   "ball:keep-own120": "emitted",
+   "ball:keep-own240": "emitted",
+   "ball:keep-own60": "emitted",
+   "ball:mod": "emitted",
+   "ball:modI": "emitted",
+   "ball:noun": "emitted",
+   "ball:nounI": "emitted",
+   "ball:own120": "emitted",
+   "ball:own240": "emitted",
+   "ball:own240-minus-own60": "emitted",
+   "ball:own60": "emitted",
+   "black:keep-modI": "emitted",
+   "black:keep-nounI": "emitted",
+   "black:keep-own120": "emitted",
+   "black:keep-own240": "emitted",
+   "black:keep-own60": "emitted",
+   "black:mod": "emitted",
+   "black:modI": "emitted",
+   "black:noun": "emitted",
+   "black:nounI": "emitted",
+   "black:own120": "emitted",
+   "black:own240": "emitted",
+   "black:own240-minus-own60": "emitted",
+   "black:own60": "emitted",
+   "night:keep-modI": "emitted",
+   "night:keep-nounI": "emitted",
+   "night:keep-own120": "emitted",
+   "night:keep-own240": "emitted",
+   "night:keep-own60": "emitted",
+   "night:mod": "emitted",
+   "night:modI": "emitted",
+   "night:noun": "emitted",
+   "night:nounI": "emitted",
+   "night:own120": "emitted",
+   "night:own240": "emitted",
+   "night:own240-minus-own60": "emitted",
+   "night:own60": "emitted",
+   "rain:keep-modI": "emitted",
+   "rain:keep-nounI": "emitted",
+   "rain:keep-own120": "emitted",
+   "rain:keep-own240": "emitted",
+   "rain:keep-own60": "emitted",
+   "rain:mod": "emitted",
+   "rain:modI": "emitted",
+   "rain:noun": "emitted",
+   "rain:nounI": "emitted",
+   "rain:own120": "emitted",
+   "rain:own240": "emitted",
+   "rain:own240-minus-own60": "emitted",
+   "rain:own60": "emitted",
+   "red:keep-modI": "emitted",
+   "red:keep-nounI": "emitted",
+   "red:keep-own120": "emitted",
+   "red:keep-own240": "emitted",
+   "red:keep-own60": "emitted",
+   "red:mod": "emitted",
+   "red:modI": "emitted",
+   "red:noun": "emitted",
+   "red:nounI": "emitted",
+   "red:own120": "emitted",
+   "red:own240": "emitted",
+   "red:own240-minus-own60": "emitted",
+   "red:own60": "emitted",
+   "snow:keep-modI": "emitted",
+   "snow:keep-nounI": "emitted",
+   "snow:keep-own120": "emitted",
+   "snow:keep-own240": "emitted",
+   "snow:keep-own60": "emitted",
+   "snow:mod": "emitted",
+   "snow:modI": "emitted",
+   "snow:noun": "emitted",
+   "snow:nounI": "emitted",
+   "snow:own120": "emitted",
+   "snow:own240": "emitted",
+   "snow:own240-minus-own60": "emitted",
+   "snow:own60": "emitted"
+  },
+  "roles": {
+   "control": 336,
+   "floor": 762,
+   "reference": 30,
+   "test": 156
+  }
+ },
+ "legacy": {
+  "arms": 112,
+  "branches": 224,
+  "contexts": [
+   "4242",
+   "9001"
+  ],
+  "identity": {},
+  "lease_cap": 256,
+  "leases": [
+   {
+    "branches": 224,
+    "contexts": [
+     "4242",
+     "9001"
+    ],
+    "items": [
+     "ball",
+     "black",
+     "car",
+     "cat",
+     "night",
+     "rain",
+     "red",
+     "snow"
+    ],
+    "lease": 0,
+    "lease_sha256": "af1460788c532d4e3e8bed3746bf5c32995887771c92c4e90e6fc4b6c5c856fc",
+    "work_items": 252
+   }
+  ],
+  "plan_sha256": "b52a26a9a5f66166da91cc88dcea43ed46947cc7c02d5f728065b8977d107f7d",
+  "random_status": {},
+  "roles": {
+   "control": 12,
+   "reference": 22,
+   "test": 78
+  }
+ },
+ "smoke-legacy": {
+  "arms": 20,
+  "branches": 20,
+  "contexts": [
+   "4242"
+  ],
+  "identity": {},
+  "lease_cap": 256,
+  "leases": [
+   {
+    "branches": 20,
+    "contexts": [
+     "4242"
+    ],
+    "items": [
+     "ball",
+     "cat"
+    ],
+    "lease": 0,
+    "lease_sha256": "662102e915ea85893e807a272203a6908f7ae0d239e3c7154e4aee86ae777a2e",
+    "work_items": 23
+   }
+  ],
+  "plan_sha256": "ce7dc5cf8b519277b7bb4ae18c6e8984bc2dd4e889a2a86557ef568201405011",
+  "random_status": {},
+  "roles": {
+   "control": 2,
+   "reference": 5,
+   "test": 13
+  }
+ },
+ "smoke-new": {
+  "arms": 218,
+  "branches": 218,
+  "contexts": [
+   "4242"
+  ],
+  "identity": {
+   "ball:mod": {
+    "other_item_cut": true,
+    "random_cut": false
+   },
+   "ball:modI": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": true,
+    "random_keep": true
+   },
+   "ball:noun": {
+    "other_item_cut": true,
+    "random_cut": false
+   },
+   "ball:nounI": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "ball:own120": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "ball:own240": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   },
+   "ball:own240-minus-own60": {
+    "other_item_cut": true,
+    "random_cut": true
+   },
+   "ball:own60": {
+    "other_item_cut": true,
+    "other_item_keep": true,
+    "random_cut": false,
+    "random_keep": false
+   }
+  },
+  "lease_cap": 256,
+  "leases": [
+   {
+    "branches": 218,
+    "contexts": [
+     "4242"
+    ],
+    "items": [
+     "ball",
+     "cat"
+    ],
+    "lease": 0,
+    "lease_sha256": "55a0ee5bbd4fbc5c20c55f8bdc5931e25755dbca40d0cc442d7e679c34a06800",
+    "work_items": 221
+   }
+  ],
+  "plan_sha256": "7e14e78c3cd196c559e9dac07abdf343ffdf35d69c1752406363c9607ef6dcaf",
+  "random_status": {
+   "ball:keep-modI": "emitted",
+   "ball:keep-nounI": "emitted",
+   "ball:keep-own120": "emitted",
+   "ball:keep-own240": "emitted",
+   "ball:keep-own60": "emitted",
+   "ball:mod": "emitted",
+   "ball:modI": "emitted",
+   "ball:noun": "emitted",
+   "ball:nounI": "emitted",
+   "ball:own120": "emitted",
+   "ball:own240": "emitted",
+   "ball:own240-minus-own60": "emitted",
+   "ball:own60": "emitted"
+  },
+  "roles": {
+   "control": 56,
+   "floor": 129,
+   "reference": 7,
+   "test": 26
+  }
+ }
+}

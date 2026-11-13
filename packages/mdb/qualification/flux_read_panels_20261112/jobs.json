@@ -1,0 +1,230 @@
+[
+ {
+  "job_id": "job-a34e4d6fe9dc",
+  "job": "smoke",
+  "mrun_state": "succeeded",
+  "mrun_wall_s": 620,
+  "worker_s": 540,
+  "peak_vram_allocated_mb": 7991,
+  "budget_stopped": true,
+  "passes": [
+   {
+    "tag": "smoke-legacy",
+    "executed": 20,
+    "planned": 20,
+    "lease": 0,
+    "seconds_mean": 0.42
+   },
+   {
+    "tag": "smoke-new",
+    "executed": 140,
+    "planned": 218,
+    "lease": 0,
+    "seconds_mean": 0.422
+   }
+  ]
+ },
+ {
+  "job_id": "job-2b516ba78da6",
+  "job": "legacy",
+  "mrun_state": "succeeded",
+  "mrun_wall_s": 250,
+  "worker_s": 211,
+  "peak_vram_allocated_mb": 7991,
+  "budget_stopped": false,
+  "passes": [
+   {
+    "tag": "legacy",
+    "executed": 224,
+    "planned": 224,
+    "lease": 0,
+    "seconds_mean": 0.402
+   }
+  ]
+ },
+ {
+  "job_id": "job-68368184de20",
+  "job": "full-0",
+  "mrun_state": "succeeded",
+  "mrun_wall_s": 292,
+  "worker_s": 261,
+  "peak_vram_allocated_mb": 7991,
+  "budget_stopped": false,
+  "passes": [
+   {
+    "tag": "full-00",
+    "executed": 234,
+    "planned": 234,
+    "lease": 0,
+    "seconds_mean": 0.464
+   }
+  ]
+ },
+ {
+  "job_id": "job-9b9ec68fc42a",
+  "job": "full-1",
+  "mrun_state": "succeeded",
+  "mrun_wall_s": 354,
+  "worker_s": 295,
+  "peak_vram_allocated_mb": 7991,
+  "budget_stopped": false,
+  "passes": [
+   {
+    "tag": "full-01",
+    "executed": 232,
+    "planned": 232,
+    "lease": 1,
+    "seconds_mean": 0.475
+   }
+  ]
+ },
+ {
+  "job_id": "job-c4b924f3295d",
+  "job": "full-2",
+  "mrun_state": "succeeded",
+  "mrun_wall_s": 429,
+  "worker_s": 360,
+  "peak_vram_allocated_mb": 7991,
+  "budget_stopped": false,
+  "passes": [
+   {
+    "tag": "full-02",
+    "executed": 247,
+    "planned": 247,
+    "lease": 2,
+    "seconds_mean": 0.471
+   }
+  ]
+ },
+ {
+  "job_id": "job-ea0bcbfe960f",
+  "job": "full-3",
+  "mrun_state": "succeeded",
+  "mrun_wall_s": 269,
+  "worker_s": 237,
+  "peak_vram_allocated_mb": 7991,
+  "budget_stopped": false,
+  "passes": [
+   {
+    "tag": "full-03",
+    "executed": 242,
+    "planned": 242,
+    "lease": 3,
+    "seconds_mean": 0.465
+   }
+  ]
+ },
+ {
+  "job_id": "job-17f61da18312",
+  "job": "full-4",
+  "mrun_state": "succeeded",
+  "mrun_wall_s": 400,
+  "worker_s": 382,
+  "peak_vram_allocated_mb": 7991,
+  "budget_stopped": false,
+  "passes": [
+   {
+    "tag": "full-04",
+    "executed": 242,
+    "planned": 242,
+    "lease": 4,
+    "seconds_mean": 0.467
+   }
+  ]
+ },
+ {
+  "job_id": "job-baa6927a1a6c",
+  "job": "full-5",
+  "mrun_state": "succeeded",
+  "mrun_wall_s": 333,
+  "worker_s": 296,
+  "peak_vram_allocated_mb": 7991,
+  "budget_stopped": false,
+  "passes": [
+   {
+    "tag": "full-05",
+    "executed": 239,
+    "planned": 239,
+    "lease": 5,
+    "seconds_mean": 0.47
+   }
+  ]
+ },
+ {
+  "job_id": "job-de42c09696dd",
+  "job": "full-6",
+  "mrun_state": "succeeded",
+  "mrun_wall_s": 253,
+  "worker_s": 239,
+  "peak_vram_allocated_mb": 7991,
+  "budget_stopped": false,
+  "passes": [
+   {
+    "tag": "full-06",
+    "executed": 242,
+    "planned": 242,
+    "lease": 6,
+    "seconds_mean": 0.472
+   }
+  ]
+ },
+ {
+  "job_id": "job-d8790bc10fbb",
+  "job": "full-7",
+  "mrun_state": "not in any mrun state listing: the Beast mrun agent was stopped by systemd at 16:40:11 PST, the second it leased this job; the worker kept running unsupervised",
+  "mrun_wall_s": null,
+  "worker_s": 955,
+  "peak_vram_allocated_mb": 7991,
+  "budget_stopped": true,
+  "passes": [
+   {
+    "tag": "full-07",
+    "executed": 0,
+    "planned": 249,
+    "lease": 7,
+    "seconds_mean": null
+   }
+  ],
+  "note": "imports took 866 s (HDD uv cache) against 28 s warm in job-2b516ba78da6; the 540 s budget stopped it before the first branch; the 7 roots ran"
+ },
+ {
+  "job_id": "job-a41e454eefe1",
+  "job": "full-8",
+  "mrun_state": "queued",
+  "mrun_wall_s": null,
+  "worker_s": null,
+  "peak_vram_allocated_mb": null,
+  "budget_stopped": null,
+  "passes": null
+ },
+ {
+  "job_id": "job-2c64f0609f8f",
+  "job": "full-9",
+  "mrun_state": "queued",
+  "mrun_wall_s": null,
+  "worker_s": null,
+  "peak_vram_allocated_mb": null,
+  "budget_stopped": null,
+  "passes": null
+ },
+ {
+  "job_id": "job-0ef55a497c49",
+  "job": "full-10",
+  "mrun_state": "queued",
+  "mrun_wall_s": null,
+  "worker_s": null,
+  "peak_vram_allocated_mb": null,
+  "budget_stopped": null,
+  "passes": null
+ },
+ {
+  "job_id": "job-af5bfaf0fde2",
+  "job": "regenerate",
+  "mrun_state": "queued",
+  "mrun_wall_s": null,
+  "worker_s": null,
+  "peak_vram_allocated_mb": null,
+  "budget_stopped": null,
+  "passes": null
+ }
+]

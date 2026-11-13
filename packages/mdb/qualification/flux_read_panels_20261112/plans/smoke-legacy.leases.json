@@ -1,0 +1,94 @@
+{
+ "cap": 256,
+ "leases": [
+  {
+   "branches": [
+    [
+     "4242",
+     "iso:ball"
+    ],
+    [
+     "4242",
+     "del:ball"
+    ],
+    [
+     "4242",
+     "z:none:ball"
+    ],
+    [
+     "4242",
+     "z:own60:ball"
+    ],
+    [
+     "4242",
+     "m:own60:ball"
+    ],
+    [
+     "4242",
+     "z:own120:ball"
+    ],
+    [
+     "4242",
+     "z:rand120:ball"
+    ],
+    [
+     "4242",
+     "z:own240:ball"
+    ],
+    [
+     "4242",
+     "z:rand240:ball"
+    ],
+    [
+     "4242",
+     "z:mod:ball"
+    ],
+    [
+     "4242",
+     "z:noun:ball"
+    ],
+    [
+     "4242",
+     "z:modI:ball"
+    ],
+    [
+     "4242",
+     "z:nounI:ball"
+    ],
+    [
+     "4242",
+     "z:keep-own60:ball"
+    ],
+    [
+     "4242",
+     "z:keep-own120:ball"
+    ],
+    [
+     "4242",
+     "z:keep-own240:ball"
+    ],
+    [
+     "4242",
+     "z:keep-modI:ball"
+    ],
+    [
+     "4242",
+     "z:keep-nounI:ball"
+    ],
+    [
+     "4242",
+     "native:cat"
+    ],
+    [
+     "4242",
+     "m:img<-alltext:cat"
+    ]
+   ],
+   "lease": 0,
+   "lease_sha256": "662102e915ea85893e807a272203a6908f7ae0d239e3c7154e4aee86ae777a2e",
+   "of": 1,
+   "plan_sha256": "ce7dc5cf8b519277b7bb4ae18c6e8984bc2dd4e889a2a86557ef568201405011"
+  }
+ ],
+ "plan_sha256": "ce7dc5cf8b519277b7bb4ae18c6e8984bc2dd4e889a2a86557ef568201405011"
+}
