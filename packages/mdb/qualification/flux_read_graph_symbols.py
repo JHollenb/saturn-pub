@@ -144,7 +144,7 @@ COUNTED_CONTROLS = {
     ("headfree", "cut", "modI"): ("nounI", *_POOL), ("headfree", "cut", "nounI"): ("modI", *_POOL),
     **{("headx", "cut", c): ("heavy60", *_HEAVY) for c in HEADX_CATEGORIES},
 }
-# In-run arms that are NOT matched for the claim. They never make a result supported; when no
+# In-run arms that are NOT matched for the claim. They never make a result pass; when no
 # counted control exists and a screen shows the effect on any seed, the result is unresolved.
 SCREENS = {
     ("headfree", "cut", "own60"): [("rand120", ["joint_single_counts"], "larger random draw (120 vs 60); not size-matched"),
@@ -173,8 +173,8 @@ RULE = {
         "3. No picture call: a headx <cat>X cut (not snow) takes the AUDIT X1 sentence -> not_supported, "
         "basis 'audit_statement'; anything else -> unresolved, basis 'none'.",
         "4. Present, with a counted control (counted_controls): the control is judged by the SAME thresholds "
-        "(symmetric: a Y- control counts as a weak effect). Control absent -> supported. Control present and at "
-        "least as strong on every seed -> not_supported. Otherwise -> unresolved.",
+        "(symmetric: a Y- control counts as a weak effect). Control absent -> passes (step 9 sets the status). "
+        "Control present and at least as strong on every seed -> not_supported. Otherwise -> unresolved.",
         "5. Present, no counted control: if an in-run screen (screens) shows the effect on any seed "
         "(cut: level >= 1; keep: level <= 1) -> unresolved; else -> control_missing.",
         "6. Other-job references (other_job_references) are recorded under reference_controls with a pixel "
@@ -186,7 +186,10 @@ RULE = {
         "is mass-matched or holds at least the set's mass on every seed (attention_panels: mass_relation 'more'). "
         "Alternatives are ruled out only when the set's effect is present. An other-item control (the same units "
         "cut on another informative word's rows in the same run, picture Y/Y) rules out generic_damage. "
-        "claim_scope on supported: needed_set / sufficient_set unless nothing remains (identity).",
+        "claim_scope: identity on supported; needed_set / sufficient_set on set_only.",
+        "9. A passing result is 'supported' (claim_scope identity) only if no alternative remains; otherwise it "
+        "is 'set_only' (claim_scope needed_set / sufficient_set, remaining_alternatives non-empty): the "
+        "attention_panels vocabulary.",
     ],
     "counted_controls": [{"run": r, "intervention": k, "set": s, "control": c, "matched_on": m, "how": h}
                          for (r, k, s), (c, m, h) in COUNTED_CONTROLS.items()],
@@ -196,7 +199,7 @@ RULE = {
                     "basis": "audit_statement", "source": X1_OVERRIDE},
     "pixel_unusable_words": PIXEL_UNUSABLE,
 }
-VERDICT_RULE = verdict_rule("flux-read-graph-picture-rule-v2", RULE)
+VERDICT_RULE = verdict_rule("flux-read-graph-picture-rule-v3", RULE)
 
 
 def level(call):
@@ -248,7 +251,10 @@ def judge_reference_pixel(kind, value):
 
 
 def decide(kind, word, pics, control, screens, override=None):
-    """(verdict, basis, reason). Mutates ``control['judgement']``. The whole rule is ``RULE``."""
+    """(verdict, basis, reason). Mutates ``control['judgement']``. The whole rule is ``RULE``.
+
+    ``"supported"`` here means "passes steps 1-5"; ``set_results`` applies step 9 (``set_only``
+    when an alternative remains)."""
     if pics is None:
         if override:
             return "not_supported", "audit_statement", override
@@ -621,7 +627,9 @@ def set_results(run, name, members, ctx):
         for r in references:
             ruled |= set(r.get("rules_out") or ())
         remaining = [a for a in sorted(ALTERNATIVES[claim]) if a not in ruled]
-        claim_scope = None if verdict != "supported" else ("identity" if not remaining else CLAIM_SCOPES[claim])
+        if verdict == "supported" and remaining:
+            verdict = "set_only"          # rule step 9: the attention_panels vocabulary
+        claim_scope = {"supported": "identity", "set_only": CLAIM_SCOPES[claim]}.get(verdict)
         if control is not None and verdict == "control_missing":
             raise AssertionError("a counted control cannot give control_missing")
         references = screens + references

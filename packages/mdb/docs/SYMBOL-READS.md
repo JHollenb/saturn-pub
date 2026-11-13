@@ -51,7 +51,7 @@ A `CausalResult` records one intervention. Its fields are typed and validated on
 | `claim` | `necessary` for cut, `sufficient` for keep (vocabulary shared with `attention_panels`); derived and checked |
 | `claim_text` | The claim in words |
 | `ruled_out`, `remaining_alternatives` | Partition of the claim's alternatives: necessary `generic_damage`, `mass`, `set_size`; sufficient `mass`, `set_size`. Each ruled-out item must appear in the `rules_out` of a clean in-run record. `set_size` needs `size >= 0.9 × set_size`; `mass` needs `matched_on` to include `mass` or `mass_held >= set_mass_held` on every seed |
-| `claim_scope` | Only on `supported`: `needed_set` (necessary) or `sufficient_set` (sufficient) while any alternative remains; `identity` only when none remains |
+| `claim_scope` | `identity` on `supported`; `needed_set` (necessary) or `sufficient_set` (sufficient) on `set_only`; empty otherwise |
 | `contrast_id` | Required on set-scope results: the independent contrast the result belongs to |
 | `rule_id`, `rule_sha256` | The verdict rule that produced the verdict (both or neither) |
 | `plan_sha256`, `plan`, `run_id` | sha256 of the plan file; optional plan file pointer whose digest must equal it; non-empty run id without surrounding whitespace. `result.verify_plan(path)` checks a plan file against the hash |
@@ -59,12 +59,13 @@ A `CausalResult` records one intervention. Its fields are typed and validated on
 
 | Verdict | Meaning | Constraint enforced |
 |---|---|---|
-| `supported` | Effect present and the counted control does not show it | A counted in-run control judged `clean`; basis `score`/`picture`/`picture_only`; unless `picture_only`, numeric `effect`, numeric `floor`, a `floor_incomplete` bool, and cut `effect > floor` / keep `control.effect - effect > floor`; `claim_scope` set |
+| `supported` | Effect present, the counted control does not show it, and every alternative explanation is ruled out | As `set_only`, plus `remaining_alternatives` empty and `claim_scope: identity` |
+| `set_only` | The weaker, set-level claim: effect present and the counted control does not show it, but at least one alternative is open | A counted in-run control judged `clean`; basis `score`/`picture`/`picture_only`; unless `picture_only`, numeric `effect`, numeric `floor`, a `floor_incomplete` bool, and cut `effect > floor` / keep `control.effect - effect > floor`; `remaining_alternatives` non-empty; `claim_scope` `needed_set` / `sufficient_set` |
 | `not_supported` | No effect, or the counted control shows the same | `claim_scope` empty |
 | `unresolved` | Seeds disagree, the effect is partial, a control partly shows it, or nothing decides | `claim_scope` empty |
 | `control_missing` | Effect present, no counted control | No `control` (unmatched arms go under `reference_controls`) |
 
-`supported` here keeps the four-status scheme of the audited converter. `attention_panels` calls a result that holds only against some alternatives `set_only`; here that is `supported` with `claim_scope: needed_set` and a non-empty `remaining_alternatives`.
+One vocabulary with `attention_panels.verdicts` (since 2026-11-12): `supported` means no alternative is left open; a result that holds only against the alternatives its controls ruled out is `set_only`, never `supported`. `set_results_from_panel_verdict(panel, record, run_id=..., contrast_id=...)` converts an `attention_panels.verdicts` record into set-scope results, one per cut type (`zero` → `no-renormalisation`, `renorm` → `renormalising`). Each result carries the panel's headline status and scope unchanged; the per-cut-type status goes to `metadata.panel.cut_type_status`. A control is judged `clean` when the test beat it beyond the floor in every context of that cut type, `same` when it refuted the test in every context, otherwise `mixed`. On a passing result the counted control is the clean control that rules out the most; the rest are reference controls (`downgrade_only` for refuters). `effect` and `floor` come from the worst context. If the panel's `ruled_out` is not backed by a control that is clean in every context of a cut type, the function raises instead of guessing.
 
 Set-level results go on the `ReadSet`. A set result says that the set as a whole was cut or kept; it does not show that any member head is necessary on its own.
 
@@ -132,15 +133,17 @@ Checks recorded in `summary.json` (measured on this machine): own60/120/240 reco
 
 ### Verdict rule
 
-The rule is written once, in the converter's `RULE`, and stored as `meta.verdict_rule` with id `flux-read-graph-picture-rule-v2` and its sha256. Every result names both. In short:
+The rule is written once, in the converter's `RULE`, and stored as `meta.verdict_rule` with id `flux-read-graph-picture-rule-v3` and its sha256 (v3 = v2 plus step 9, the `set_only` vocabulary). Every result names both. In short:
 
 1. Each seed's picture call (AUDIT.md picture grids) maps to a level: Y = 0, Y− = 1, P = 2, N = 3.
 2. Set state. Cut: present if every seed ≥ 1, absent if every seed is 0. Keep: carried if every seed ≤ 1, lost if every seed ≥ 2. Otherwise mixed → `unresolved`. Absent → `not_supported`.
 3. No picture call: a headx `<cat>X` cut (not snow) takes the AUDIT X1 sentence → `not_supported` with basis `audit_statement` (16 results); otherwise `unresolved`, basis `none`.
-4. Present, with a counted control: the control is judged by the same thresholds (symmetric: a Y− control is a weak effect). Control absent → `supported`; control present and at least as strong on every seed → `not_supported`; otherwise `unresolved`.
+4. Present, with a counted control: the control is judged by the same thresholds (symmetric: a Y− control is a weak effect). Control absent → passes; control present and at least as strong on every seed → `not_supported`; otherwise `unresolved`.
 5. Present, no counted control: if an in-run screen shows the effect on any seed → `unresolved`; else `control_missing`.
 6. Other-job references are recorded with a pixel judgement (|gone| ≤ .15 for cut, gone ≥ .7 for keep) and never change a verdict.
 7. snow and rain: the pixel score is unusable (AUDIT L3, X2); picture calls decide (basis `picture_only`) and no effect, floor or control numbers are recorded.
+8. Alternatives (below).
+9. A passing result is `supported` (scope `identity`) only if no alternative remains, otherwise `set_only` (scope `needed_set` / `sufficient_set`).
 
 Which arm controls which:
 
@@ -163,18 +166,20 @@ Headfree floors are borrowed from the headx `z:sham-iso` arm of the same word (a
 
 Status × contrast (175 set results):
 
-| contrast | supported | not_supported | unresolved | control_missing |
-|---|---|---|---|---|
-| colour-words (red, black) | 13 | 33 | 2 | 16 |
-| ball | 5 | 16 | 5 | 6 |
-| night | 1 | 20 | 9 | 2 |
-| snow | 0 | 19 | 7 | 6 |
-| rain | 0 | 12 | 0 | 3 |
-| all | 19 | 100 | 23 | 33 |
+MEASURED with rule v3 (2026-11-12, output `scratchpad/flux-symbols-v3/run1`); the only change from v2 is that the 19 former `supported` results are now `set_only`:
 
-By intervention: cut 19 supported / 79 not_supported / 17 unresolved / 5 control_missing; keep 0 / 21 / 6 / 28.
+| contrast | supported | set_only | not_supported | unresolved | control_missing |
+|---|---|---|---|---|---|
+| colour-words (red, black) | 0 | 13 | 33 | 2 | 16 |
+| ball | 0 | 5 | 16 | 5 | 6 |
+| night | 0 | 1 | 20 | 9 | 2 |
+| snow | 0 | 0 | 19 | 7 | 6 |
+| rain | 0 | 0 | 12 | 0 | 3 |
+| all | 0 | 19 | 100 | 23 | 33 |
 
-The 19 `supported` results are all cuts with an in-run picture control: red mod, modI, own120, own240, attribute, colour, light; black mod, modI (weak: Y−/Y−), own120, own240, attribute, colour; ball noun, nounI, own120, object, scene; night mod. All carry `claim_scope: needed_set`. `mass` is ruled out on one: night `mod` against `noun`, which holds more of night's mass (.55/.56 vs .48/.47 by seed) and leaves night intact. `generic_damage` stays open there because the car prompt has no informative other word. No result reaches `identity`.
+By intervention: cut 0 supported / 19 set_only / 79 not_supported / 17 unresolved / 5 control_missing; keep 0 / 0 / 21 / 6 / 28.
+
+The 19 `set_only` results are all cuts with an in-run picture control: red mod, modI, own120, own240, attribute, colour, light; black mod, modI (weak: Y−/Y−), own120, own240, attribute, colour; ball noun, nounI, own120, object, scene; night mod. All carry `claim_scope: needed_set` (under rule v2 they were labelled `supported` with that scope). `mass` is ruled out on one: night `mod` against `noun`, which holds more of night's mass (.55/.56 vs .48/.47 by seed) and leaves night intact. `generic_damage` stays open there because the car prompt has no informative other word. No result reaches `identity`.
 
 Differences from the audit-8 corrected table (21 / 100 / 20 / 34), all from applying the rule as written:
 
@@ -185,7 +190,7 @@ What the conversion does not claim:
 
 - Two prompts, two seeds (seed-9001 mass is within .06 of 4242, so it is a held-out image seed, not a held-out selection), and about three independent cut contrasts: the colour words (red and black share 29 of 60 own heads and the same pools), ball, and night. Counts of results are not counts of independent evidence; every result names its `contrast_id`.
 - Results are set-level only. No head is shown to be individually necessary, and the 60 member reads stay `unknown`.
-- No keep result is supported: no in-run random keep arm was run.
+- No keep result passes (neither `supported` nor `set_only`): no in-run random keep arm was run.
 - Write mass omits the adaLN gate (FINDINGS). It is a read observation, not a measure of what is written.
 - Hand-assigned categories (headx) are recorded as selection metadata, not as findings about categories.
 - No checkpoint hash for FLUX.2 Klein was available: `model.identity_status` is `unresolved`, with what would resolve it. No parameter pointers were added because parameter names were not verified offline.

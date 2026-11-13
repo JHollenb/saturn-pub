@@ -47,7 +47,8 @@ VALUE_KINDS = ("singleton", "complement", "coalition", "dose", "wrong_target", "
 # ``set_only``: the claim holds for this unit set against the alternatives that were ruled out,
 # but at least one alternative (``remaining_alternatives``) is open; it is NOT ``supported``.
 STATUSES = ("supported", "set_only", "not_supported", "unresolved", "control_missing")
-WAIVABLE = ("floors", "both_cut_types", "random_cut", "random_keep", "other_item", "partial_universe")
+WAIVABLE = ("floors", "both_cut_types", "random_cut", "random_keep", "other_item", "partial_universe",
+            "references_only")
 VALUE_WAIVABLE = ("sham", "native_reference")
 VALUE_CONTROLS = ("sham", "wrong_payload", "wrong_target", "reciprocal")
 VALUE_REFERENCES = ("native", "replay", "donor_native")
@@ -357,15 +358,39 @@ class Panel:
                              f"{len(self.contexts)} contexts), over the cap of {cap}; split it with leases()")
         return self.branch_count
 
+    def shared_needs(self):
+        """{arm id: [arm ids that must run in the same lease]} beyond the arm's own bundle.
+
+        A keep arm (test or random/other-item keep control) is scored against the all-cut of its
+        item and cut type (recovery = 1 - keep / all-cut, and the all-cut floor), so that all-cut
+        and its floor arms must come from the same lease.
+        """
+        ids = self.by_id()
+        floors = {}
+        for a in self.arms:
+            if a.floor_of is not None:
+                floors.setdefault(a.floor_of, []).append(a.arm)
+        needs = {}
+        for a in self.arms:
+            if a.family == "read" and a.kind == "keep" and a.cut_type in PREFIX:
+                ac = f"{PREFIX[a.cut_type]}:none:{a.item}"
+                if ac in ids:
+                    needs[a.arm] = [ac, *floors.get(ac, ())]
+        return needs
+
     def leases(self, cap=FLUX_LANE_CAP, *, max_total=None, seal=None):
         """Deterministic split into leases of at most ``cap`` branches.
 
         Atoms are (context, bundle): a test set's arms, its floors, twins and controls stay in one
         lease for one context. Atoms are packed in plan order (context-major); an atom larger
-        than ``cap`` is refused. ``max_total`` refuses the whole panel first. Each lease carries
-        the plan hash, the seal hash (``None`` when ``seal`` is not given; a given seal is
-        verified first) and ``depends_on``: (context, arm) references run in another lease, so
-        outcomes are scored only after those leases have run.
+        than ``cap`` is refused. Shared references an atom is scored against
+        (:meth:`shared_needs`: the all-cut of every keep arm, with its floors) are placed in the
+        same lease: when their own bundle went to an earlier lease they are run again here as
+        copies, listed under ``replicated`` and counted against ``cap`` (so the sum of lease
+        sizes can exceed ``branch_count``). ``max_total`` refuses the whole panel first. Each
+        lease carries the plan hash, the seal hash (``None`` when ``seal`` is not given; a given
+        seal is verified first) and ``depends_on``: (context, arm) references run in another
+        lease, so outcomes are scored only after those leases have run.
         """
         if max_total is not None:
             self.check_budget(max_total)
@@ -384,28 +409,47 @@ class Panel:
                 bundles.append((key, []))
             bundles[-1][1].append(a.arm)
         plan_sha = self.sha256()
-        leases, current = [], []
+        needs = self.shared_needs()
+        leases, copies, current, copied = [], [], [], []
+        placed = set()
         for context in self.contexts:
             for key, arms in bundles:
-                if len(arms) > cap:
-                    raise PanelError(f"bundle {key!r} has {len(arms)} arms, over the lease cap {cap}")
-                if len(current) + len(arms) > cap:
+                extra = list(dict.fromkeys(n for a in arms for n in needs.get(a, ()) if n not in arms))
+                if len(arms) + len(extra) > cap:
+                    raise PanelError(f"bundle {key!r} has {len(arms)} arms (+{len(extra)} shared references), over "
+                                     f"the lease cap {cap}")
+                inside = {(c, a) for c, a in current}
+                if len(current) + len(arms) + sum((context, n) not in inside for n in extra) > cap:
                     leases.append(current)
-                    current = []
+                    copies.append(copied)
+                    current, copied, inside = [], [], set()
+                for n in extra:
+                    if (context, n) in inside:
+                        continue
+                    if (context, n) not in placed:
+                        raise PanelError(f"{n!r} is a shared reference of bundle {key!r} but comes after it in the "
+                                         "plan; emit references first")
+                    current.append([context, n])
+                    copied.append([context, n])
                 current += [[context, arm] for arm in arms]
+                placed |= {(context, arm) for arm in arms}
         if current:
             leases.append(current)
+            copies.append(copied)
         ids = self.by_id()
         out = []
-        for i, b in enumerate(leases):
+        for i, (b, rep) in enumerate(zip(leases, copies)):
             inside = {(c, a) for c, a in b}
             deps = sorted({(c, ids[a].reference) for c, a in b
                            if ids[a].reference in ids and (c, ids[a].reference) not in inside})
             body = {"plan_sha256": plan_sha, "lease": i, "branches": b}
             if seal_sha is not None:
                 body["seal_sha256"] = seal_sha
+            if rep:
+                body["replicated"] = rep
             out.append({"plan_sha256": plan_sha, "seal_sha256": seal_sha, "lease": i, "of": len(leases),
-                        "branches": b, "depends_on": [list(d) for d in deps], "lease_sha256": sha256_json(body)})
+                        "branches": b, "replicated": rep, "depends_on": [list(d) for d in deps],
+                        "lease_sha256": sha256_json(body)})
         return out
 
 
@@ -528,18 +572,32 @@ def _mass_relation(report, reuse_above):
     return "less" if m["control"] <= m["target"] else "more"
 
 
-def _draw_random(name, units, universe, spec, index, item):
+SEED_DERIVATION = "int(sha256(canonical_json([seed, item, set name, kind]))[:16], 16) % 2**63"
+
+
+def draw_seed(seed, item, name, kind):
+    """The seed of one random draw: independent per (item, set name, kind), deterministic in ``seed``.
+
+    Before this, every draw of a panel used ``RandomControls.seed`` itself, so two items with
+    sets of the same shape (e.g. red and ball) got the identical random draw.
+    """
+    return int(sha256_json([int(seed), str(item), str(name), str(kind)])[:16], 16) % 2 ** 63
+
+
+def _draw_random(name, units, universe, spec, index, item, kind="cut"):
     """(entry, [(set, mass_relation), ...] or None)."""
     from .attention_ranking import matched_control_sets
     target = [index[u] for u in units]
     blocks = [u[0] for u in universe] if spec.match_blocks else None
-    entry = {"target": name, "item": item, "n": spec.n, "seed": spec.seed, "disjoint": spec.disjoint,
+    seed = draw_seed(spec.seed, item, name, kind)
+    entry = {"target": name, "item": item, "kind": kind, "n": spec.n, "seed": spec.seed, "draw_seed": seed,
+             "seed_derivation": SEED_DERIVATION, "disjoint": spec.disjoint,
              "mass_tolerance": spec.mass_tolerance, "match_blocks": spec.match_blocks,
              "overlap_sd": spec.overlap_sd}
     try:
         drawn = matched_control_sets(target, len(universe), strata=spec.strata, blocks=blocks, mass=spec.mass,
                                      mass_tolerance=spec.mass_tolerance, disjoint=spec.disjoint,
-                                     seed=spec.seed, n_sets=spec.n)
+                                     seed=seed, n_sets=spec.n)
     except ValueError as error:
         entry.update(status="control_missing", reason=str(error), sets=[])
         return _plain(entry), None
@@ -781,6 +839,9 @@ def read_panel(spec):
                 sets[item][name] = units_of(set(sets[item][big]) - set(sets[item][small]))
             nested_sets.append(name)
     cut_sets = tuple(dict.fromkeys((*spec.cut_sets, *nested_sets)))
+    if not cut_sets and not spec.keep_sets and "references_only" not in waive:
+        raise PanelError("no cut_sets, keep_sets or nested series: the panel would hold references only (no test "
+                         "arm); pass the sets to test or waive['references_only'] = reason")
     default = _types(spec.cut_types)
     cut_types = {s: _types(spec.cut_type_overrides.get(s, default)) for s in cut_sets}
     keep_types = {s: _types(spec.keep_type_overrides.get(s, default)) for s in spec.keep_sets}
@@ -903,7 +964,7 @@ def read_panel(spec):
                 # matched random controls (cut and keep)
                 if spec.random is not None:
                     key = f"{item}:{core}"
-                    entry, drawn = _draw_random(s, units, universe, spec.random, index, item)
+                    entry, drawn = _draw_random(s, units, universe, spec.random, index, item, kind)
                     controls[key] = entry
                     if drawn is None:
                         identity.setdefault(f"{item}:{s}", {})["random_" + kind] = {

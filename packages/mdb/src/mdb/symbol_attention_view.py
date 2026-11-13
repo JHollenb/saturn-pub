@@ -130,7 +130,7 @@ def write_reads_view(directory):
         for r in s.causal.results:
             by_contrast.setdefault(r.contrast_id or "(none)", Counter())[r.verdict] += 1
             totals[r.verdict] += 1
-    statuses = ("supported", "not_supported", "unresolved", "control_missing")
+    statuses = ("supported", "set_only", "not_supported", "unresolved", "control_missing")
     count_rows = "".join(
         "<tr><th>" + escape(c) + "</th>" + "".join(cell(by_contrast[c][v], "v " + v) for v in statuses)
         + cell(sum(by_contrast[c].values())) + "</tr>" for c in sorted(by_contrast))
@@ -177,7 +177,7 @@ def write_reads_view(directory):
                 caveat = (r.metadata or {}).get("caveat", "")
                 row = (cell(s.source.name) + cell(s.name) + cell(s.members["count"])
                        + cell(f"{r.intervention} / {r.cut_type} ({(r.metadata or {}).get('arm', '')})")
-                       + cell(r.claim) + cell(r.verdict, "v " + r.verdict) + cell(r.basis) + cell(picture)
+                       + cell(r.claim) + cell(r.verdict if r.verdict != "set_only" else "set_only (weaker)", "v " + r.verdict) + cell(r.basis) + cell(picture)
                        + cell(effect) + cell(control_text(r.control, counted=True), "ctl") + cell(refs, "ref")
                        + cell(floor_text(r), "floor") + cell(scope_text) + cell(caveat, "caveat")
                        + cell(r.reason or "", "muted") + cell(r.run_id))
@@ -195,10 +195,10 @@ def write_reads_view(directory):
     options = "".join(f"<option>{escape(n)}</option>" for n in sources)
     html = f"""<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>MDB symbol reads</title>
-<style>:root{{--bg:#0f172a;--fg:#e2e8f0;--muted:#94a3b8;--line:#334155;--ok:#4ade80;--no:#f87171;--un:#fbbf24;--cm:#c084fc}}
+<style>:root{{--bg:#0f172a;--fg:#e2e8f0;--muted:#94a3b8;--line:#334155;--ok:#4ade80;--no:#f87171;--un:#fbbf24;--cm:#c084fc;--set:#38bdf8}}
 body{{font:14px system-ui;margin:24px;color:var(--fg);background:var(--bg)}}table{{border-collapse:collapse;font-size:12px;margin:8px 0 24px}}
 th,td{{border:1px solid var(--line);padding:5px 7px;text-align:left;vertical-align:top}}.muted{{color:var(--muted)}}
-.v.supported{{color:var(--ok)}}.v.not_supported{{color:var(--no)}}.v.unresolved{{color:var(--un)}}.v.control_missing{{color:var(--cm)}}.v.unknown{{color:var(--muted)}}
+.v.supported{{color:var(--ok)}}.v.set_only{{color:var(--set);font-style:italic}}.v.not_supported{{color:var(--no)}}.v.unresolved{{color:var(--un)}}.v.control_missing{{color:var(--cm)}}.v.unknown{{color:var(--muted)}}
 td.ctl,td.ref,td.floor,td.caveat{{max-width:340px}}td.caveat{{color:var(--un)}}
 .scope{{border:2px solid var(--un);border-radius:8px;padding:8px 16px;margin:12px 0}}.big{{font-size:18px;font-weight:600}}
 .scroll{{overflow-x:auto}}select{{padding:6px;background:#1e293b;color:var(--fg);border:1px solid var(--line)}}</style>
@@ -208,7 +208,10 @@ td.ctl,td.ref,td.floor,td.caveat{{max-width:340px}}td.caveat{{color:var(--un)}}
 {identity_html}{rule_html}
 <p>Reads are observations: causal status <strong>unknown</strong> unless a per-read intervention is recorded.
 Set results apply to the set as a whole and are not copied onto member heads. Only the counted control (in-run,
-matched for the claim) can make a result supported; reference controls are shown but never counted.</p>
+matched for the claim) can make a result pass; reference controls are shown but never counted.
+<span class="v supported">supported</span> = every alternative explanation ruled out (scope identity);
+<span class="v set_only">set_only</span> = WEAKER, set-level claim (needed_set / sufficient_set) with alternatives still open,
+listed under "remaining". set_only is not supported.</p>
 <label>Source <select id="src"><option value="">all</option>{options}</select></label>
 <h2>Read sets ({len(sets)}), grouped by contrast</h2>{set_html}
 <h2>Observed reads ({len(reads)})</h2><div class="scroll"><table><tr><th>source</th><th>role</th><th>block</th><th>head</th><th>KV group</th><th>step</th><th>mass</th><th>mass kind</th><th>causal status</th><th>in sets</th></tr>{''.join(read_rows)}</table></div>

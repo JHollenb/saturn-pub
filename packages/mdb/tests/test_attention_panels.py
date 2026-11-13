@@ -71,8 +71,9 @@ def test_full_read_panel_emits_both_cut_types_floors_keep_random_other_and_neste
     # random controls for both cut and keep, controlling the same-type test arm
     assert ids["z:rand0-own2:red"].control_for == ("z:own2:red",)
     assert ids["m:keep-rand0-own2:red"].control_for == ("m:keep-own2:red",)
-    rand = set(ids["z:rand0-own2:red"].units)
-    assert set(ids["z:keep-rand0-own2:red"].units) == set(UNIVERSE) - rand
+    assert set(ids["z:rand0-own2:red"].units) == {tuple(u) for u in panel.controls["red:own2"]["sets"][0]}
+    keep_draw = {tuple(u) for u in panel.controls["red:keep-own2"]["sets"][0]}   # its own draw (own seed)
+    assert set(ids["z:keep-rand0-own2:red"].units) == set(UNIVERSE) - keep_draw
     report = panel.controls["red:own2"]["reports"][0]
     assert report["strata_counts"]["matched"] and report["distinct_blocks"]["matched"]
     # other item, same units: rows of the other word, units of this word's set
@@ -152,8 +153,10 @@ def test_budget_cap_and_deterministic_lease_split():
     assert panel.check_budget(n) == n
     leases = panel.leases(40)
     assert leases == panel.leases(40)
-    flat = [tuple(b) for lease in leases for b in lease["branches"]]
+    copies = {tuple(b) for lease in leases for b in lease["replicated"]}
+    flat = [tuple(b) for lease in leases for b in lease["branches"] if b not in lease["replicated"]]
     assert sorted(flat) == sorted((c, a.arm) for c in panel.contexts for a in panel.arms)
+    assert copies <= set(flat)
     assert all(len(lease["branches"]) <= 40 and lease["plan_sha256"] == panel.sha256() for lease in leases)
     # a test arm, its floors and its controls never straddle a lease
     for lease in leases:
@@ -280,7 +283,7 @@ def test_full_headfree_panel_contains_every_executed_arm_and_adds_the_missing_co
     assert "z:own240-minus-own60:red" in ids and "z:own60@rows-black:red" in ids
     leases = panel.leases(P.FLUX_LANE_CAP)
     assert all(len(lease["branches"]) <= 256 for lease in leases)
-    assert sum(len(lease["branches"]) for lease in leases) == panel.branch_count
+    assert sum(len(lease["branches"]) - len(lease["replicated"]) for lease in leases) == panel.branch_count
 
 
 # ------------------------------------------------------------------ reproduction: value panels
@@ -836,3 +839,60 @@ def test_finding12_value_spec_documents_worker_details_and_blend_dtypes():
     before, payload = torch.zeros(3, dtype=torch.bfloat16), torch.ones(3, dtype=torch.float32)
     assert P.blend(before, payload, 1).dtype == torch.float32          # exact payload copy
     assert P.blend(before, payload, 0.5).dtype == torch.bfloat16       # lerp cast to before's dtype
+
+
+# ------------------------------------------------------------------ leftovers (2026-11-12 fix pass)
+
+def test_random_draws_are_independent_per_item_set_and_kind_yet_deterministic():
+    """Same seed, different items with same-shaped sets: draws used to be identical (seed reused)."""
+    big = [(b, h) for b in range(6) for h in range(8)]
+    sets = {"red": {"s": [(0, 0), (1, 1), (2, 2)]}, "ball": {"s": [(3, 3), (4, 4), (5, 5)]}}
+    spec = P.ReadPanelSpec(items=("red", "ball"), universe=big, sets=sets, cut_sets=("s",), keep_sets=("s",),
+                           random=P.RandomControls(n=1, seed=7, match_blocks=False))
+    a, b = P.read_panel(spec), P.read_panel(spec)
+    assert a.sha256() == b.sha256()                                            # deterministic
+    red, ball = a.controls["red:s"], a.controls["ball:s"]
+    assert red["seed"] == ball["seed"] == 7 and red["draw_seed"] != ball["draw_seed"]
+    assert red["draw_seed"] == P.draw_seed(7, "red", "s", "cut") and red["seed_derivation"] == P.SEED_DERIVATION
+    # identical target shapes: the old shared seed gave the same draw (as a pattern of flat indices)
+    from mdb.attention_ranking import matched_control_sets
+    idx = {u: i for i, u in enumerate(big)}
+    old = [sorted(int(i) for i in matched_control_sets([idx[u] for u in sets[w]["s"]], len(big), seed=7,
+                                                       n_sets=1)[0]["units"]) for w in ("red", "ball")]
+    assert old[0] == old[1]                                                    # the bug: one draw for both items
+    new = [sorted(idx[tuple(u)] for u in a.controls[f"{w}:s"]["sets"][0]) for w in ("red", "ball")]
+    assert new[0] != new[1]
+    assert a.controls["red:keep-s"]["draw_seed"] != red["draw_seed"]          # cut and keep draws differ too
+    assert P.draw_seed(7, "red", "s", "cut") != P.draw_seed(8, "red", "s", "cut")
+
+
+def test_keep_arms_share_a_lease_with_their_all_cut_reference():
+    panel = P.read_panel(tiny_spec())
+    needs = panel.shared_needs()
+    assert needs["z:keep-own2:red"] == ["z:none:red", "z:none:red/sham_recompute", "z:none:red/cut_recompute"]
+    assert needs["m:keep-rand0-own2:red"] == ["m:none:red", "m:none:red/sham"]
+    keep_bundle = sum(1 for a in panel.arms if a.bundle == "keep-own2:red")
+    extra = 5                                                                  # z all-cut + 2 floors, m all-cut + sham
+    for cap in range(keep_bundle + extra, panel.branch_count + 1, 3):
+        leases = panel.leases(cap)
+        for lease in leases:
+            names = {(c, a) for c, a in lease["branches"]}
+            assert len(lease["branches"]) <= cap                               # copies count against the cap
+            for c, a in names:
+                for n in needs.get(a, ()):
+                    assert (c, n) in names, (cap, a, n)
+        primary = [tuple(b) for lease in leases for b in lease["branches"] if b not in lease["replicated"]]
+        assert sorted(primary) == sorted((c, a.arm) for c in panel.contexts for a in panel.arms)
+    small = panel.leases(keep_bundle + extra)
+    assert any(lease["replicated"] for lease in small)
+    with pytest.raises(P.PanelError, match="shared references"):
+        panel.leases(keep_bundle + extra - 1)
+
+
+def test_references_only_panel_is_refused_unless_waived():
+    with pytest.raises(P.PanelError, match="references only"):
+        P.read_panel(tiny_spec(cut_sets=(), keep_sets=(), nested=()))
+    refs = P.read_panel(tiny_spec(cut_sets=(), keep_sets=(), nested=(),
+                                  waive={"references_only": "measure the reference arms alone"}))
+    assert not any(a.role == "test" for a in refs.arms)
+    assert P.read_panel(tiny_spec(cut_sets=(), keep_sets=())).by_id()["z:own4-minus-own2:red"].role == "test"

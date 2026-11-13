@@ -60,7 +60,11 @@ ROLE_ASSIGNMENTS = ("supplied", "nominated", "learned")
 SET_SELECTION_KINDS = ("ranked", "random", "group", "category", "category-unique", "control", "supplied")
 INTERVENTIONS = ("cut", "keep")
 CUT_TYPES = ("renormalising", "no-renormalisation")
-VERDICTS = ("supported", "not_supported", "unresolved", "control_missing")
+# One vocabulary with ``attention_panels.STATUSES``: ``supported`` = no alternative explanation
+# left open (scope ``identity``); ``set_only`` = the weaker, set-level claim (scope ``needed_set``
+# / ``sufficient_set``) with ``remaining_alternatives`` non-empty. ``set_only`` is NOT ``supported``.
+VERDICTS = ("supported", "set_only", "not_supported", "unresolved", "control_missing")
+PASSING = ("supported", "set_only")
 RESULT_SCOPES = ("read", "set")
 # What decided the verdict. ``picture``: audited picture calls (scores attached as context);
 # ``picture_only``: picture calls, score omitted as unusable; ``score``: the numeric score;
@@ -469,8 +473,9 @@ class CausalResult:
     matched for this claim, as a structured record (arm, run_id, in_run=True, matched_on,
     judged_by, judgement); ``reference_controls``: other arms (other runs, unmatched in-run
     arms) that never make a result ``supported``. ``ruled_out`` / ``remaining_alternatives``
-    partition ``ALTERNATIVES[claim]``; ``claim_scope`` is set only on ``supported`` and is
-    ``identity`` only when nothing remains.
+    partition ``ALTERNATIVES[claim]``. ``supported`` needs nothing remaining (``claim_scope``
+    ``identity``); ``set_only`` needs something remaining (``claim_scope`` ``needed_set`` /
+    ``sufficient_set``); every other verdict has no ``claim_scope``.
     """
     intervention: str
     cut_type: str
@@ -558,21 +563,27 @@ class CausalResult:
             raise SymbolReadError("remaining_alternatives must be the alternatives not ruled out")
         setter(self, "ruled_out", ruled)
         setter(self, "remaining_alternatives", remaining)
-        if self.verdict == "supported":
+        if self.verdict == "supported" and remaining:
+            raise SymbolReadError(f"'supported' needs every alternative ruled out (remaining: {', '.join(remaining)}); "
+                                  "a set-level claim with alternatives open is 'set_only'")
+        if self.verdict == "set_only" and not remaining:
+            raise SymbolReadError("'set_only' leaves an alternative open; with none remaining the result is "
+                                  "'supported' (scope identity)")
+        if self.verdict in PASSING:
             expected = "identity" if not remaining else CLAIM_SCOPES[claim]
             if self.claim_scope != expected:
-                raise SymbolReadError(f"a supported {claim} result has claim_scope '{expected}' "
+                raise SymbolReadError(f"a {self.verdict} {claim} result has claim_scope '{expected}' "
                                       f"(remaining: {', '.join(remaining) or 'none'})")
         elif self.claim_scope is not None:
-            raise SymbolReadError("claim_scope is set only on supported results")
+            raise SymbolReadError("claim_scope is set only on supported / set_only results")
         if self.scope == "set" and not (isinstance(self.contrast_id, str) and self.contrast_id.strip()):
             raise SymbolReadError("a set-level result names its independent contrast ('contrast_id')")
         if (self.rule_id is None) != (self.rule_sha256 is None):
             raise SymbolReadError("rule_id and rule_sha256 come together")
         if self.rule_sha256 is not None:
             setter(self, "rule_sha256", _sha(self.rule_sha256, "rule sha256"))
-        if self.verdict == "supported":
-            self._check_supported()
+        if self.verdict in PASSING:
+            self._check_passing()
         if self.verdict == "control_missing" and self.control is not None:
             raise SymbolReadError("'control_missing' cannot carry a counted control; "
                                   "record unmatched arms under reference_controls")
@@ -580,24 +591,25 @@ class CausalResult:
         setter(self, "metadata", check_bounded(dict(self.metadata), "result metadata"))
         self.to_dict()
 
-    def _check_supported(self):
+    def _check_passing(self):
+        v = f"'{self.verdict}'"
         if self.control is None:
-            raise SymbolReadError("'supported' needs a control; use 'control_missing'")
+            raise SymbolReadError(f"{v} needs a control; use 'control_missing'")
         if self.control["judgement"] != "clean":
-            raise SymbolReadError("'supported' needs a control judged clean")
+            raise SymbolReadError(f"{v} needs a control judged clean")
         if self.basis not in ("score", "picture", "picture_only"):
-            raise SymbolReadError(f"'supported' cannot rest on basis '{self.basis}'")
+            raise SymbolReadError(f"{v} cannot rest on basis '{self.basis}'")
         if self.basis == "picture_only":
             return
         if self.effect is None or self.floor is None or self.floor_incomplete is None:
-            raise SymbolReadError("'supported' needs a numeric effect, a numeric floor and floor_incomplete "
+            raise SymbolReadError(f"{v} needs a numeric effect, a numeric floor and floor_incomplete "
                                   "(or basis 'picture_only' with picture calls)")
         if self.intervention == "cut" and not self.effect > self.floor:
-            raise SymbolReadError("'supported' cut effect must exceed its floor")
+            raise SymbolReadError(f"{v} cut effect must exceed its floor")
         if self.intervention == "keep":
             control_effect = self.control.get("effect")
             if control_effect is None or not control_effect - self.effect > self.floor:
-                raise SymbolReadError("'supported' keep must separate from its control by more than the floor")
+                raise SymbolReadError(f"{v} keep must separate from its control by more than the floor")
 
     def verify_plan(self, path):
         """Check the plan file at ``path`` hashes to ``plan_sha256``."""
@@ -967,6 +979,185 @@ def passive_lifecycle(binding, *, definitions, uses, claim_boundary, metadata=No
     return SymbolLifecycle.define(binding, definitions=tuple(definitions), uses=tuple(uses),
         mechanics_status="valid", instrument_status="observations-only", trend_status="not-assessed",
         terminal_status="not-assessed", claim_boundary=claim_boundary, metadata=metadata or {})
+
+
+# --------------------------------------------------------------------------- from attention_panels
+
+PANEL_CUT_TYPES = {"zero": "no-renormalisation", "renorm": "renormalising"}
+
+
+def _panel_control_profile(panel, arm, n_units):
+    """(matched_on, how, size, mass_held, set_mass_held) for one panel control arm."""
+    def size_of(a):
+        if a.units is None:
+            return n_units
+        return n_units - len(a.units) if a.kind == "keep" else len(a.units)
+    size = size_of(arm)
+    mass_held = set_mass = None
+    if arm.control == "random":
+        matched_on = ["set_size", "strata", "blocks"] + (["mass"] if arm.mass_relation == "matched" else [])
+        how = f"matched random draw (attention_ranking.matched_control_sets); mass relation {arm.mass_relation}"
+        core = (arm.unit_set or "").removeprefix("keep-")
+        k, _, target = core.removeprefix("rand").partition("-")
+        keep = (arm.unit_set or "").startswith("keep-")
+        entry = panel.controls.get(f"{arm.item}:{'keep-' if keep else ''}{target}") or {}
+        reports = entry.get("reports") or []
+        if k.isdigit() and int(k) < len(reports):
+            mass = reports[int(k)].get("mass") or {}
+            if "target" in mass and "control" in mass:
+                mass_held, set_mass = [float(mass["control"])], [float(mass["target"])]
+    elif arm.control == "other_item":
+        matched_on, how = ["same_units"], f"the same units on {arm.rows_item}'s rows, same run"
+    else:
+        matched_on, how = ["hand_drawn"], "hand-drawn control set (mass and structure unknown)"
+    return matched_on, how, size, mass_held, set_mass
+
+
+def set_results_from_panel_verdict(panel, record, *, run_id, contrast_id, plan=None, rule=None,
+                                   effect_units=None):
+    """Convert one ``attention_panels.verdicts`` record into set-scope ``CausalResult``s.
+
+    One result per cut type the panel ran (``zero`` -> ``no-renormalisation``, ``renorm`` ->
+    ``renormalising``). Every result carries the panel's headline ``status`` as its verdict
+    (the status that counts: both cut types must agree), the per-cut-type status in
+    ``metadata.panel.cut_type_status``, and the panel's ``claim_scope`` / ``ruled_out``; nothing
+    is re-derived. A control is judged ``clean`` when the test beat it beyond the floor in every
+    context of that cut type, ``same`` when it refuted the test in every context, else ``mixed``.
+    For a passing verdict the counted control is the clean control that rules out the most of
+    the panel's ``ruled_out``; the others go under ``reference_controls``. ``effect`` / ``floor``
+    are taken from the worst context (smallest margin over ``floor_factor`` x floor; for keep,
+    smallest margin of the counted control over its comparison floor). Raises
+    ``SymbolReadError`` when the panel's ruled-out set is not backed by a control that is clean
+    in every context of a cut type (possible only with several contexts): such a verdict needs a
+    look by hand rather than a silent re-derivation.
+    """
+    from .attention_panels import CUT_TYPES as PANEL_TYPES
+    status = record["status"]
+    if status not in VERDICTS:
+        raise SymbolReadError(f"panel status {status!r} is not a symbol_reads verdict")
+    claim = record["claim"]
+    intervention = {"necessary": "cut", "sufficient": "keep"}[claim]
+    arms = panel.by_id()
+    n_units = (panel.execution.get("universe") or {}).get("n_units")
+    if n_units is None:
+        n_units = max((len(a.units) for a in panel.arms if a.units), default=0)
+    ruled_panel = set(record.get("ruled_out") or ())
+    ff = float((record.get("thresholds") or {}).get("floor_factor", 1.0))
+    picture = record.get("picture")
+    out = []
+    for t in PANEL_TYPES:
+        pt = (record.get("cut_types") or {}).get(t)
+        if pt is None:
+            continue
+        rows = pt["contexts"]
+        test = arms[pt["arm"]]
+        comps = {}
+        for row in rows:
+            for comp in row.get("controls") or ():
+                comps.setdefault(comp["control"], {})[row["context"]] = comp
+            for ref in row.get("references") or ():
+                comps.setdefault(ref["control"], {})[row["context"]] = {**ref, "reference_only": True}
+        records = {}
+        for name, by_ctx in comps.items():
+            seen = [by_ctx.get(r["context"]) for r in rows]
+            reference_only = any(c and c.get("reference_only") for c in seen)
+            complete = all(c is not None and "control_effect" in c for c in seen)
+            if reference_only or not complete:
+                judgement = None
+            elif all(c.get("beyond_floor") is True and not c.get("refutes") for c in seen):
+                judgement = "clean"
+            elif all(c.get("refutes") for c in seen):
+                judgement = "same"
+            else:
+                judgement = "mixed"
+            rules = set(ALTERNATIVES[claim])
+            for c in seen:
+                rules &= set((c or {}).get("rules_out") or ())
+            rules = sorted(rules & ruled_panel) if judgement == "clean" else []
+            arm = arms[name]
+            matched_on, how, size, mass_held, set_mass = _panel_control_profile(panel, arm, n_units)
+            rec = {"arm": name, "run_id": run_id, "in_run": True, "matched_on": matched_on, "how_matched": how,
+                   "judged_by": "score", "judgement": judgement, "control_kind": arm.control,
+                   "mass_relation": arm.mass_relation, "size": size,
+                   "set_size": _panel_control_profile(panel, test, n_units)[2],
+                   "effect_per_seed": [None if c is None else c.get("control_effect") for c in seen],
+                   "margin_per_seed": [None if c is None else c.get("margin") for c in seen],
+                   "floor_per_seed": [None if c is None else c.get("floor") for c in seen],
+                   "rules_out": rules}
+            if mass_held is not None:
+                rec.update(mass_held=mass_held, set_mass_held=set_mass)
+            if reference_only:
+                rec["note"] = "reported reference only; never counted for sufficiency"
+            records[name] = rec
+        backed = set().union(*(set(r["rules_out"]) for r in records.values())) if records else set()
+        ruled = ruled_panel & backed
+        if status in PASSING and ruled != ruled_panel:
+            raise SymbolReadError(f"panel verdict for {record['item']}:{record['unit_set']} ({t}) rules out "
+                                  f"{sorted(ruled_panel - backed)} without a control clean in every context; "
+                                  "check it by hand")
+        counted = None
+        if status in PASSING:
+            clean = [r for r in records.values() if r["judgement"] == "clean"]
+            if clean:
+                counted = max(clean, key=lambda r: (len(r["rules_out"]), r["arm"]))
+        effects = [r.get("effect") for r in rows]
+        worst = None
+        if counted is not None and intervention == "keep":
+            i = min(range(len(rows)), key=lambda j: (counted["margin_per_seed"][j] or 0) - (counted["floor_per_seed"][j] or 0))
+            worst = (rows[i], rows[i].get("effect"), counted["floor_per_seed"][i], counted["effect_per_seed"][i])
+        elif all(r.get("effect") is not None and r.get("floor") is not None for r in rows):
+            i = min(range(len(rows)), key=lambda j: rows[j]["effect"] - ff * rows[j]["floor"])
+            worst = (rows[i], rows[i]["effect"], ff * rows[i]["floor"], None)
+        refs = []
+        for r in records.values():
+            if r is counted:
+                continue
+            r = dict(r)
+            r["verdict_effect"] = "downgrade_only" if r["judgement"] == "same" else "none"
+            if r["judgement"] is None and r.get("rules_out"):
+                r["rules_out"] = []
+            refs.append(r)
+        if counted is not None:
+            counted = dict(counted)
+            counted["effect"] = worst[3] if worst and worst[3] is not None else counted["effect_per_seed"][0]
+        basis = "picture" if picture is not None and record.get("overridden_by_picture") else "score"
+        pic = None
+        if picture is not None:
+            pic = {"calls": [f"{picture.get('by')}: {picture.get('status')}"
+                             + (f" ({picture['note']})" if picture.get("note") else "")]}
+        floor_parts = None if worst is None else worst[0].get("floor_parts")
+        result = CausalResult(
+            intervention=intervention, cut_type=PANEL_CUT_TYPES[t], verdict=status,
+            plan_sha256=panel.sha256(), run_id=run_id, scope="set", basis=basis,
+            effect=None if worst is None else worst[1], effect_units=effect_units,
+            effect_per_seed=tuple(effects) if all(e is not None for e in effects) else None,
+            floor=None if worst is None else worst[2],
+            floor_source=None if worst is None else (
+                "attention_panels floor x floor_factor, worst context "
+                f"{worst[0]['context']!r}" + (" (comparison floor of the counted keep control)"
+                                               if worst[3] is not None else "")),
+            floor_incomplete=bool(record.get("floor_incomplete")),
+            control=counted, reference_controls=tuple(refs), picture=pic, claim=claim,
+            claim_text=record.get("claim_statement") or (
+                f"cutting {record['unit_set']} damages {record['item']}" if claim == "necessary"
+                else f"keeping only {record['unit_set']} carries {record['item']}"),
+            claim_scope=record.get("claim_scope") if status in PASSING else None,
+            ruled_out=tuple(sorted(ruled)), contrast_id=contrast_id,
+            rule_id=None if rule is None else rule["id"], rule_sha256=None if rule is None else rule["sha256"],
+            plan=plan, reason=f"{record.get('why')}; this cut type: {pt['status']}",
+            metadata={"panel": {"item": record["item"], "unit_set": record["unit_set"], "arm": pt["arm"],
+                                "cut_type": t, "cut_type_status": pt["status"],
+                                "headline_status": status, "scalar_status": record.get("scalar_status"),
+                                "contexts": [r["context"] for r in rows],
+                                "worst_context": None if worst is None else worst[0]["context"],
+                                "floor_parts": floor_parts, "findings": list(record.get("findings") or ()),
+                                "floor_factor": ff, "remaining_alternatives":
+                                    list(record.get("remaining_alternatives") or ()),
+                                "rule": "mdb.attention_panels.verdicts"}})
+        out.append(result)
+    if not out:
+        raise SymbolReadError("the panel verdict record has no cut type")
+    return tuple(out)
 
 
 # --------------------------------------------------------------------------- persistence

@@ -53,10 +53,13 @@ def control(**kw):
             "judged_by": "picture", "judgement": "clean", "effect": .01, **kw}
 
 
-def result(verdict="supported", intervention="cut", run_id="job-1", **kw):
+def result(verdict="set_only", intervention="cut", run_id="job-1", **kw):
+    """A passing set result; with nothing ruled out it is the weaker ``set_only`` claim."""
+    scopes = {"cut": "needed_set", "keep": "sufficient_set"}
     base = dict(scope="set", basis="score", effect=.6, floor=.01, floor_source="in-run sham",
                 floor_incomplete=False, control=control(), contrast_id="toy",
-                claim_scope="needed_set" if verdict == "supported" else None)
+                claim_scope=scopes[intervention] if verdict == "set_only" else
+                "identity" if verdict == "supported" else None)
     base.update(kw)
     return CausalResult(intervention, "no-renormalisation", verdict, PLAN, run_id, **base)
 
@@ -157,7 +160,7 @@ def test_causal_status_defaults_to_unknown_and_results_need_provenance():
         CausalResult("keep", "renormalising", "unresolved", PLAN, "", scope="set", basis="none", contrast_id="toy")
     ok = result()
     status = CausalStatus((ok,))
-    assert status.status == "intervened" and status.label == "cut (no-renormalisation): supported"
+    assert status.status == "intervened" and status.label == "cut (no-renormalisation): set_only"
     assert CausalStatus.from_dict(status.to_dict()) == status
     assert ok.claim == "necessary" and ok.remaining_alternatives == ("generic_damage", "mass", "set_size")
 
@@ -187,7 +190,7 @@ def test_writer_refuses_untyped_or_unbacked_supported_results(tmp_path):
         result(basis="picture_only", effect=None, floor=None, floor_source=None)
     picture_only = result(basis="picture_only", effect=None, floor=None, floor_source=None,
                           picture={"calls": ["N", "N"], "levels": [3, 3]})
-    assert picture_only.verdict == "supported"
+    assert picture_only.verdict == "set_only"
     with pytest.raises(SymbolReadError, match="scope"):
         CausalResult("cut", "no-renormalisation", "unresolved", PLAN, "job-1", basis="none")
     with pytest.raises(SymbolReadError, match="contrast"):
@@ -205,8 +208,19 @@ def test_writer_refuses_untyped_or_unbacked_supported_results(tmp_path):
         result(control=control(rules_out=["mass"], mass_held=[.1], set_mass_held=[.5]), ruled_out=("mass",))
     with pytest.raises(SymbolReadError, match="claim_scope 'needed_set'"):
         result(claim_scope="identity")
-    with pytest.raises(SymbolReadError, match="only on supported"):
+    with pytest.raises(SymbolReadError, match="only on supported / set_only"):
         result("not_supported", claim_scope="needed_set")
+    # One vocabulary with attention_panels: supported = nothing remains; set_only = something remains.
+    with pytest.raises(SymbolReadError, match="'set_only'"):
+        result("supported", claim_scope="needed_set")
+    with pytest.raises(SymbolReadError, match="'supported'"):
+        result("supported")
+    full = control(rules_out=["generic_damage", "mass", "set_size"], matched_on=["set_size", "mass"],
+                   size=60, set_size=60)
+    identity = result("supported", control=full, ruled_out=("generic_damage", "mass", "set_size"))
+    assert identity.claim_scope == "identity" and identity.remaining_alternatives == ()
+    with pytest.raises(SymbolReadError, match="with none remaining"):
+        result("set_only", control=full, ruled_out=("generic_damage", "mass", "set_size"), claim_scope="needed_set")
     # Plan hash verifiable against a file.
     plan = tmp_path / "plan.json"
     plan.write_text("{}")
@@ -251,7 +265,7 @@ def test_set_level_status_is_not_propagated_to_member_reads(tmp_path):
     save_reads(tmp_path / "reads.json", reads, (read_set,))
     loaded = load_reads(tmp_path / "reads.json")
     (saved_set,) = loaded["sets"]
-    assert saved_set.causal.results[0].verdict == "supported"
+    assert saved_set.causal.results[0].verdict == "set_only"
     assert all(r.causal.status == "unknown" and r.causal.label == UNKNOWN_LABEL for r in loaded["reads"])
     assert set(saved_set.member_reads) == {r.fingerprint for r in loaded["reads"]}
     with pytest.raises(SymbolReadError, match="already exists"):
@@ -467,10 +481,11 @@ def flux_out(tmp_path_factory):
     return summary, out, loaded, results
 
 
-# MEASURED on the saved experiment (2026-11-12): status x contrast after the audit-8 fixes.
-FLUX_TABLE = {"ball": {"control_missing": 6, "not_supported": 16, "supported": 5, "unresolved": 5},
-              "colour-words": {"control_missing": 16, "not_supported": 33, "supported": 13, "unresolved": 2},
-              "night": {"control_missing": 2, "not_supported": 20, "supported": 1, "unresolved": 9},
+# MEASURED on the saved experiment (2026-11-12): status x contrast after the audit-8 fixes and the
+# set_only vocabulary (rule v3): the 19 former `supported` (all needed_set) are `set_only`.
+FLUX_TABLE = {"ball": {"control_missing": 6, "not_supported": 16, "set_only": 5, "unresolved": 5},
+              "colour-words": {"control_missing": 16, "not_supported": 33, "set_only": 13, "unresolved": 2},
+              "night": {"control_missing": 2, "not_supported": 20, "set_only": 1, "unresolved": 9},
               "rain": {"control_missing": 3, "not_supported": 12},
               "snow": {"control_missing": 6, "not_supported": 19, "unresolved": 7}}
 
@@ -495,9 +510,10 @@ def test_flux_supported_rests_only_on_in_run_matched_controls(flux_out):
     summary, out, loaded, results = flux_out
     assert summary["set_results_by_contrast_verdict"] == FLUX_TABLE
     assert summary["set_results_by_verdict"] == {"control_missing": 33, "not_supported": 100,
-                                                 "supported": 19, "unresolved": 23}
+                                                 "set_only": 19, "unresolved": 23}
     for r in results.values():
-        if r.verdict == "supported":
+        assert r.verdict != "supported"                       # nothing reaches identity
+        if r.verdict == "set_only":
             assert r.control["in_run"] is True and r.control["run_id"] == r.run_id
             assert r.control["judgement"] == "clean" and r.basis == "picture"
         for ref in r.reference_controls:
@@ -556,11 +572,11 @@ def test_flux_scope_contrasts_and_claim_vocabulary(flux_out):
         assert r.scope == "set" and r.contrast_id == m.CONTRASTS[source]
         assert r.claim == {"cut": "necessary", "keep": "sufficient"}[kind]
         assert r.claim_scope != "identity" and r.remaining_alternatives
-        assert (r.claim_scope is not None) == (r.verdict == "supported")
+        assert (r.claim_scope is not None) == (r.verdict == "set_only")
         assert isinstance(r.floor_incomplete, bool)
         if r.run_id == loaded["meta"]["jobs"]["headfree"] and r.floor is not None:
             assert r.floor_source.startswith("borrowed:") and r.floor_incomplete
-        if r.verdict == "supported":
+        if r.verdict == "set_only":
             assert set(r.control["matched_on"]) >= {"set_size"} or "other_pool" in r.control["matched_on"]
             assert r.control["mass_held"] and r.control["set_mass_held"]
     red120 = results[("cat:red", "headfree:own120", "cut", "no-renormalisation")]
@@ -572,7 +588,8 @@ def test_flux_scope_contrasts_and_claim_vocabulary(flux_out):
     html = (out / "symbol-reads.html").read_text()
     for text in ('class="scope"', "independent contrasts", "Contrast: colour-words", "Contrast: night",
                  "size-matched only", "borrowed:", "not attributable to the word", "OTHER JOB", "mass kind",
-                 "identity_status", "unresolved", "word mass held", "needed_set"):
+                 "identity_status", "unresolved", "word mass held", "needed_set", "set_only (weaker)",
+                 "v set_only"):
         assert text in html, text
     assert html.index('class="scope"') < html.index("Read sets (")
     assert "http" not in html
@@ -751,3 +768,89 @@ def legacy_register_observations(record, arrays, prediction, *, root, catalog, m
     return {"bindings": len(rows), "uses": len(rows), "native_observation_cuts": len(cuts),
             "inactive_feature_abstentions": abstained,
             "semantics": "anonymous learned candidates", "causal_tests": 0}
+
+
+# ------------------------------------------------------------------ panel verdict -> set result
+
+def _panel_outcomes(panel, item, effect, control, *, floor=0.01, keep=None, keep_random=None, allcut=1.0):
+    out = {}
+    for a in panel.arms:
+        if a.item != item or a.role == "floor":
+            continue
+        is_keep = a.kind == "keep"
+        if a.role == "test":
+            out[a.arm] = keep if is_keep else effect
+        elif a.control == "random":
+            out[a.arm] = keep_random if is_keep else control
+        elif a.control == "other_item":
+            out[a.arm] = 0.9 if is_keep else control
+        elif a.kind == "all_cut":
+            out[a.arm] = allcut
+    for a in panel.arms:
+        if a.item == item and a.role == "floor" and a.floor_of in out:
+            out[a.arm] = out[a.floor_of] if a.kind == "floor_cut_recompute" else floor
+    pairs = {}
+    from mdb.attention_panels import twin_pairs
+    for key in twin_pairs(panel):
+        a, b = key.split("|")
+        if a in out and b in out:
+            pairs[key] = abs(out[a] - out[b])
+    return out, pairs
+
+
+def _panel_verdicts(panel, item, **kw):
+    from mdb import attention_panels as P
+    out, pairs = _panel_outcomes(panel, item, **kw)
+    rec = P.results_record(panel, {"c0": out}, pair_distances={"c0": pairs}, metric="toy distance")
+    return {(v["item"], v["unit_set"]): v for v in P.verdicts(panel, rec)}
+
+
+def test_panel_verdict_converts_to_set_results_without_re_deriving():
+    from mdb import attention_panels as P
+    from mdb.symbol_reads import set_results_from_panel_verdict
+    universe = [(b, h) for b in range(4) for h in range(3)]
+
+    def panel(**kw):
+        base = dict(items=("red", "ball"), universe=universe, sets={"red": {"s": [(0, 0)]}, "ball": {"s": [(1, 1)]}},
+                    contexts=("c0",), cut_sets=("s",), random=P.RandomControls(n=1, seed=0),
+                    references=("condition", "all_cut"))
+        base.update(kw)
+        return P.read_panel(P.ReadPanelSpec(**base))
+
+    # set_only: random of unknown mass beaten + other item beaten -> mass remains
+    p = panel()
+    v = _panel_verdicts(p, "red", effect=.5, control=.05)[("red", "s")]
+    assert v["status"] == "set_only"
+    results = set_results_from_panel_verdict(p, v, run_id="job-x", contrast_id="toy", effect_units="toy distance")
+    assert [r.cut_type for r in results] == ["no-renormalisation", "renormalising"]
+    for r in results:
+        assert r.verdict == "set_only" and r.claim_scope == "needed_set" and r.scope == "set"
+        assert r.remaining_alternatives == ("mass",) and r.ruled_out == ("generic_damage", "set_size")
+        assert r.plan_sha256 == p.sha256() and r.control["judgement"] == "clean"
+        assert r.control["run_id"] == "job-x" and r.control["in_run"]
+        assert r.effect == .5 and r.floor == pytest.approx(.01) and r.claim_text.startswith("WEAKER CLAIM")
+        assert r.metadata["panel"]["cut_type_status"] == "set_only"
+    # supported (identity): mass-matched disjoint random + other item beaten
+    flat = tuple(1.0 for _ in universe)
+    pi = panel(random=P.RandomControls(n=1, mass=flat, mass_tolerance=.1, disjoint=True, seed=0))
+    v = _panel_verdicts(pi, "red", effect=.5, control=.05)[("red", "s")]
+    assert v["status"] == "supported"
+    for r in set_results_from_panel_verdict(pi, v, run_id="job-x", contrast_id="toy"):
+        assert r.verdict == "supported" and r.claim_scope == "identity" and r.remaining_alternatives == ()
+        assert "mass" in r.control["matched_on"]
+    # not_supported: the random control did as much damage; no counted control, refuter recorded
+    v = _panel_verdicts(p, "red", effect=.5, control=.9)[("red", "s")]
+    assert v["status"] == "not_supported"
+    for r in set_results_from_panel_verdict(p, v, run_id="job-x", contrast_id="toy"):
+        assert r.verdict == "not_supported" and r.control is None and r.claim_scope is None
+        refuter = [c for c in r.reference_controls if c["control_kind"] == "random"][0]
+        assert refuter["judgement"] == "same" and refuter["verdict_effect"] == "downgrade_only"
+    # keep: set_only sufficient_set; the counted control is the beaten random keep
+    pk = panel(sets={"red": {"s": [(0, 0), (1, 1)]}, "ball": {"s": [(2, 2), (3, 1)]}}, cut_sets=(), keep_sets=("s",))
+    v = _panel_verdicts(pk, "red", effect=0, control=0, keep=.1, keep_random=.8)[("red", "keep-s")]
+    assert v["status"] == "set_only" and v["claim_scope"] == "sufficient_set"
+    for r in set_results_from_panel_verdict(pk, v, run_id="job-x", contrast_id="toy"):
+        assert r.intervention == "keep" and r.verdict == "set_only" and r.claim_scope == "sufficient_set"
+        assert r.control["control_kind"] == "random" and r.control["effect"] == .8 and r.effect == .1
+        assert r.control["size"] == r.control["set_size"] == 2
+        assert any(c["control_kind"] == "other_item" and c["judgement"] is None for c in r.reference_controls)
