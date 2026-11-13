@@ -1,5 +1,12 @@
 # MDB
 
+The proposed [native circuit capabilities](docs/NATIVE-CIRCUIT-CAPABILITIES.md)
+connect original read arguments, nonlinear cooperation, symbolic state sufficiency
+and replay-backed native outcomes. The [workflow proposal](docs/NATIVE-CIRCUIT-WORKFLOW.md)
+integrates them with existing Project navigation and branch comparisons; the
+[mathematical reference](docs/NATIVE-CIRCUIT-MATH.md) gives the proofs and scope.
+These are future capabilities, not new runtime commands or semantic qualifications.
+
 The experimental [weight-space programming companion](docs/WEIGHT-SPACE-PROGRAMMING.md)
 adds `mdb wsp`: parameter differences, removable patches, response equations and
 sealed native/control arms. `mdb wsp demo ./toy-wsp` runs a tiny CPU policy assay;

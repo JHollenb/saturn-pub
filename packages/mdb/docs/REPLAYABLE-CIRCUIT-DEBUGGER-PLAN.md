@@ -1,5 +1,11 @@
 # Replayable circuit navigation in MDB
 
+The [future native circuit capabilities](NATIVE-CIRCUIT-CAPABILITIES.md) extend
+this plan with original read-plane inspection, interaction panels, interface
+sufficiency and consumer-linked mathematics. See the [workflow proposal](NATIVE-CIRCUIT-WORKFLOW.md)
+for console-first integration and the [mathematical reference](NATIVE-CIRCUIT-MATH.md)
+for proofs and boundaries. These additions are proposals, not implemented commands.
+
 Status: implementation plan, November 12, 2026. Native execution, qualified logical references and replay are the foundation. Understanding computation is the objective; model acceleration and fitted predictors are outside the core workflow. No learned dictionary, semantic label, task grammar or predictor fit is required to open an investigation.
 
 Update: the first root-based regeneration path is now implemented in `mdb.native_replay_recipe` and qualified on historical cached BF16/eager CUDA Qwen. A 28,066-byte input/Act recipe regenerates 100 declared boundary occurrences (84 unique cuts), matching 92 native receipts, 140 attention recaptures and 24 full logits arrays, with 24 own-token commits. No historical activation or StateCut payload is supplied or loaded. Generic graph-to-live seek, automatic indexing, arbitrary mutable closure and cache eviction remain planned.
