@@ -1,8 +1,10 @@
 // The session event socket. A recorded project only sends hello + heartbeats; the indicator
-// shows whether the server is reachable, not that a model is running.
+// shows whether the server is reachable, not that a model is running. On the live session each
+// completed op arrives as an `op` event (no tensors); the live store re-fetches what is stale.
 import { useEffect, useState } from 'react';
 import { API } from '../api/client';
 import { SCHEMAS } from '../api/types.gen';
+import { useLive } from '../state/live';
 
 export type Link = 'connecting' | 'open' | 'closed';
 
@@ -17,8 +19,14 @@ export function useEvents(sid: string | null): Link {
     setLink('connecting');
     ws.onmessage = (m) => {
       try {
-        const body = JSON.parse(String(m.data)) as { schema?: string };
+        const body = JSON.parse(String(m.data)) as {
+          schema?: string;
+          data?: { type?: string; data?: Record<string, unknown> };
+        };
         setLink(body.schema === SCHEMAS.event ? 'open' : 'closed');
+        if (body.data?.type === 'op' && body.data.data && useLive.getState().sid === sid) {
+          useLive.getState().onEvent(body.data.data);
+        }
       } catch {
         setLink('closed');
       }

@@ -125,7 +125,8 @@ def capabilities(model) -> Capabilities:
         ops=ops_available())
 
 
-def hello(recorded, *, read_only, web) -> Hello:
+def hello(recorded, *, read_only, web, live=None) -> Hello:
+    """``live``: the live session id (``mdb serve --tiny|--model``), else None."""
     from ..recorded import SessionUnreadable
 
     sessions = recorded.sessions()
@@ -142,7 +143,9 @@ def hello(recorded, *, read_only, web) -> Hello:
         "records": ViewAvail(available=any(m.records() or m.findings() for m in models)),
         "reduce": ViewAvail(available=True),
         "ops": ops_available(),
-        "live": ViewAvail(available=False, reason="recorded project; no engine attached"),
+        "live": ViewAvail(available=True) if live else ViewAvail(
+            available=False, reason="recorded project; no engine attached"),
     }
     return Hello(version=__version__, schemas=dict(SCHEMAS), cap=CAP_BYTES,
-                 sessions=len(sessions), readOnly=read_only, capabilities=caps, web=web)
+                 sessions=len(sessions), readOnly=read_only, capabilities=caps, web=web,
+                 live=live)

@@ -1,0 +1,995 @@
+{
+  "frame": {
+    "bytes": 6309,
+    "data": {
+      "breakpoints": [],
+      "checkpoints": [
+        {
+          "name": "edited",
+          "store": "memory",
+          "where": "t3.L0.A"
+        }
+      ],
+      "checks": {
+        "mix": {
+          "equal": true
+        },
+        "mix_replica": {
+          "equal": true
+        },
+        "s": {
+          "equal": true
+        }
+      },
+      "displays": [],
+      "edits": {
+        "committed": [],
+        "committed_total": 0,
+        "limit": 64,
+        "offset": 0,
+        "staged": [
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 1.0
+            },
+            "fired": true,
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 0,
+            "op": "replace",
+            "port": "v",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": true,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "realised_sha256": "09fdd070c1e676cc1fb12cbe4952ca458683be52a61cd2e931ffc34153ba209f",
+            "selection": null,
+            "value": {
+              "authority": "supplied",
+              "value": 0.25
+            }
+          }
+        ],
+        "staged_total": 1,
+        "state": "resolved",
+        "subject": "edits",
+        "total": 1,
+        "where": "t3.L0.A"
+      },
+      "family": "qwen2",
+      "layer": 0,
+      "limits": {
+        "layers": 2,
+        "max_positions": 256
+      },
+      "live": {
+        "frontier": [],
+        "state": "paused"
+      },
+      "ports": [
+        {
+          "addr": "t3.L0.h",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": []
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "h = layer input (residual stream)",
+          "port": "h",
+          "proofs": ["P01"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.a",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": []
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "a = RMSNorm(h) * w_in",
+          "port": "a",
+          "proofs": ["P02", "P03"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.q",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": []
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "q = W_q a + b_q (pre-RoPE, flat)",
+          "port": "q",
+          "proofs": ["P04"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.k",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": []
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "k = W_k a + b_k (pre-RoPE, flat)",
+          "port": "k",
+          "proofs": ["P04"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.v",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "supplied",
+            "by": "v",
+            "edited": true,
+            "kind": "edit",
+            "reason": null,
+            "state": "resolved",
+            "upstream": []
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "v = W_v a + b_v (flat)",
+          "port": "v",
+          "proofs": ["P04"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.qr",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": true
+              }
+            ]
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "qr = RoPE(q) (query argument of eager attention)",
+          "port": "qr",
+          "proofs": ["P04"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.kr",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": true
+              }
+            ]
+          },
+          "editable": false,
+          "focus": false,
+          "operator": "kr = [cache; RoPE(k)] (key argument of eager attention, cached rows included)",
+          "port": "kr",
+          "proofs": ["P04"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.s",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "derived-exact",
+            "by": null,
+            "edited": false,
+            "kind": "replica",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": true
+              }
+            ]
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "s = scaling * qr repeat_kv(kr)^T + mask (replica of the native expression)",
+          "port": "s",
+          "proofs": ["P05", "P07", "P08", "P09"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.p",
+          "computed": true,
+          "cursor": false,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": true
+              }
+            ]
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "p = softmax(s, float32).to(dtype) (native attention weights)",
+          "port": "p",
+          "proofs": ["P05", "P06", "P07", "P08", "P09"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.A",
+          "computed": true,
+          "cursor": true,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "replace",
+                "port": "v",
+                "row": 3,
+                "staged": true
+              }
+            ]
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "A = concat_heads(p repeat_kv([cache; v])) (o_proj input)",
+          "port": "A",
+          "proofs": ["P06", "P07"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.o",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "o = W_o A",
+          "port": "o",
+          "proofs": ["P06", "P07"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.r",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "r = h + o",
+          "port": "r",
+          "proofs": ["P06", "P07", "P14"],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L0.n",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "n = RMSNorm(r) * w_post (mlp input)",
+          "port": "n",
+          "proofs": ["P02", "P03"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L0.g",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "g = W_gate n",
+          "port": "g",
+          "proofs": ["P10", "P15"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L0.sg",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "sg = silu(g)",
+          "port": "sg",
+          "proofs": ["P10", "P15"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L0.u",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "u = W_up n",
+          "port": "u",
+          "proofs": ["P10", "P15"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L0.f",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "f = sg * u (down_proj input)",
+          "port": "f",
+          "proofs": ["P10", "P15"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L0.m",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "m = W_down f",
+          "port": "m",
+          "proofs": ["P14"],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L0.h_out",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "h_out = r + m (layer output)",
+          "port": "h_out",
+          "proofs": ["P14"],
+          "sublayer": "mlp"
+        }
+      ],
+      "row": 3,
+      "seq": 10,
+      "session": "qwen2-8a16dcab78be",
+      "stop": {
+        "address": "t3.L0.A",
+        "layer": 0,
+        "operator": "A = concat_heads(p repeat_kv([cache; v])) (o_proj input)",
+        "port": "A",
+        "proofs": ["P06", "P07"],
+        "row": 3,
+        "sublayer": "attn"
+      },
+      "tokens": [
+        {
+          "id": 1
+        },
+        {
+          "id": 5
+        },
+        {
+          "id": 9
+        },
+        {
+          "id": 3
+        }
+      ],
+      "where": "t3.L0.A"
+    },
+    "digest": "f9d58a843eb92953384548d5b25eeec8e8f04d821db010fce8a4a781972b29b1",
+    "schema": "mdb-view-live-v1",
+    "state": "resolved"
+  },
+  "stats": {
+    "h": {
+      "bytes": 1614,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "842e7917eac7e8cdea604f4d7b98fdb5718e9eacc9c4c5990c5a6255d2942170",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.044921875
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 16.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "842e7917eac7e8cdea604f4d7b98fdb5718e9eacc9c4c5990c5a6255d2942170",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.08725399283575154
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "842e7917eac7e8cdea604f4d7b98fdb5718e9eacc9c4c5990c5a6255d2942170",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.038330078125
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "842e7917eac7e8cdea604f4d7b98fdb5718e9eacc9c4c5990c5a6255d2942170",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.00043702125549316406
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "842e7917eac7e8cdea604f4d7b98fdb5718e9eacc9c4c5990c5a6255d2942170",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.044921875
+        },
+        "note": "live run, live tier, value sha256 c376f2dcec69",
+        "op": "stats",
+        "pointer": "842e7917eac7e8cdea604f4d7b98fdb5718e9eacc9c4c5990c5a6255d2942170",
+        "shape": [1, 1, 16],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "842e7917eac7e8cdea604f4d7b98fdb5718e9eacc9c4c5990c5a6255d2942170",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.021809120031160895
+        }
+      },
+      "digest": "a6831a59c856f2fe34f2e69d21f05351c9af845a782c382b5f673a4f7681fc8e",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "p": {
+      "bytes": 1599,
+      "data": {
+        "absmax": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "4b572a90e9fda06d088491e7e938d3697f8df4753747651b2d8d7edc448d00ce",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.251953125
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 8.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 8.0
+        },
+        "l2": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "4b572a90e9fda06d088491e7e938d3697f8df4753747651b2d8d7edc448d00ce",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.707809104658661
+        },
+        "max": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "4b572a90e9fda06d088491e7e938d3697f8df4753747651b2d8d7edc448d00ce",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.251953125
+        },
+        "mean": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "4b572a90e9fda06d088491e7e938d3697f8df4753747651b2d8d7edc448d00ce",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.250244140625
+        },
+        "min": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "4b572a90e9fda06d088491e7e938d3697f8df4753747651b2d8d7edc448d00ce",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.248046875
+        },
+        "note": "live run, live tier, value sha256 bda254d8ec53",
+        "op": "stats",
+        "pointer": "4b572a90e9fda06d088491e7e938d3697f8df4753747651b2d8d7edc448d00ce",
+        "shape": [1, 2, 1, 4],
+        "std": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": "4b572a90e9fda06d088491e7e938d3697f8df4753747651b2d8d7edc448d00ce",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.0014443554157958047
+        }
+      },
+      "digest": "f86ed4f3ed2c776c234631ffdb4a715e6b2134dca79f37ee86a98ee620714df3",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "s": {
+      "bytes": 1651,
+      "data": {
+        "absmax": {
+          "ev": "derived-exact",
+          "note": null,
+          "proof": null,
+          "ptr": "5194ab2345a3fa6db2325168fbd6826768c11b1c89a2440312819c72ad27d9c1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.0147705078125
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 8.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 8.0
+        },
+        "l2": {
+          "ev": "derived-exact",
+          "note": null,
+          "proof": null,
+          "ptr": "5194ab2345a3fa6db2325168fbd6826768c11b1c89a2440312819c72ad27d9c1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.018712591408510355
+        },
+        "max": {
+          "ev": "derived-exact",
+          "note": null,
+          "proof": null,
+          "ptr": "5194ab2345a3fa6db2325168fbd6826768c11b1c89a2440312819c72ad27d9c1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.00897216796875
+        },
+        "mean": {
+          "ev": "derived-exact",
+          "note": null,
+          "proof": null,
+          "ptr": "5194ab2345a3fa6db2325168fbd6826768c11b1c89a2440312819c72ad27d9c1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.00086212158203125
+        },
+        "min": {
+          "ev": "derived-exact",
+          "note": null,
+          "proof": null,
+          "ptr": "5194ab2345a3fa6db2325168fbd6826768c11b1c89a2440312819c72ad27d9c1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": -0.0147705078125
+        },
+        "note": "live run, live tier, value sha256 f79adfb546a6",
+        "op": "stats",
+        "pointer": "5194ab2345a3fa6db2325168fbd6826768c11b1c89a2440312819c72ad27d9c1",
+        "shape": [1, 2, 1, 4],
+        "std": {
+          "ev": "derived-exact",
+          "note": null,
+          "proof": null,
+          "ptr": "5194ab2345a3fa6db2325168fbd6826768c11b1c89a2440312819c72ad27d9c1",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.006559487863433233
+        }
+      },
+      "digest": "631104039ecba51bf53d7f0a2d6c5e67771a7f89675f3824077460cf5bc65435",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    },
+    "v": {
+      "bytes": 1549,
+      "data": {
+        "absmax": {
+          "ev": "supplied",
+          "note": null,
+          "proof": null,
+          "ptr": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.25
+        },
+        "count": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 8.0
+        },
+        "dtype": "bfloat16",
+        "finite": {
+          "ev": "measured",
+          "note": null,
+          "proof": null,
+          "ptr": null,
+          "reason": null,
+          "recorded_authority": null,
+          "unit": "values",
+          "v": 8.0
+        },
+        "l2": {
+          "ev": "supplied",
+          "note": null,
+          "proof": null,
+          "ptr": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.7071067811865476
+        },
+        "max": {
+          "ev": "supplied",
+          "note": null,
+          "proof": null,
+          "ptr": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.25
+        },
+        "mean": {
+          "ev": "supplied",
+          "note": null,
+          "proof": null,
+          "ptr": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.25
+        },
+        "min": {
+          "ev": "supplied",
+          "note": null,
+          "proof": null,
+          "ptr": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.25
+        },
+        "note": "live run, live tier, value sha256 210e550f6b67",
+        "op": "stats",
+        "pointer": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+        "shape": [1, 1, 8],
+        "std": {
+          "ev": "supplied",
+          "note": null,
+          "proof": null,
+          "ptr": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+          "reason": null,
+          "recorded_authority": null,
+          "unit": null,
+          "v": 0.0
+        }
+      },
+      "digest": "283da2f043727730653d1e0a1c1407b28140b163e84026d001a13f330d7ed896",
+      "schema": "mdb-view-reduce-v1",
+      "state": "resolved"
+    }
+  },
+  "timeline": {
+    "bytes": 705,
+    "data": {
+      "cursor": {
+        "index": 11,
+        "label": "L0.A",
+        "row": 3
+      },
+      "limits": {
+        "layers": 2,
+        "max_positions": 256
+      },
+      "root": {
+        "index": 0,
+        "label": "start",
+        "row": 3
+      },
+      "rows": [
+        {
+          "count": null,
+          "edits": [],
+          "row": 0,
+          "token": 1
+        },
+        {
+          "count": null,
+          "edits": [],
+          "row": 1,
+          "token": 5
+        },
+        {
+          "count": null,
+          "edits": [],
+          "row": 2,
+          "token": 9
+        },
+        {
+          "count": 12,
+          "edits": ["L0.v (staged)"],
+          "row": 3,
+          "token": 3
+        }
+      ],
+      "session": "qwen2-8a16dcab78be",
+      "stops": [
+        "start",
+        "emb",
+        "L0.h",
+        "L0.a",
+        "L0.q",
+        "L0.k",
+        "L0.v",
+        "L0.qr",
+        "L0.kr",
+        "L0.s",
+        "L0.p",
+        "L0.A",
+        "L0.o",
+        "L0.r",
+        "L0.n",
+        "L0.g",
+        "L0.sg",
+        "L0.u",
+        "L0.f",
+        "L0.m",
+        "L0.h_out",
+        "L1.h",
+        "L1.a",
+        "L1.q",
+        "L1.k",
+        "L1.v",
+        "L1.qr",
+        "L1.kr",
+        "L1.s",
+        "L1.p",
+        "L1.A",
+        "L1.o",
+        "L1.r",
+        "L1.n",
+        "L1.g",
+        "L1.sg",
+        "L1.u",
+        "L1.f",
+        "L1.m",
+        "L1.h_out",
+        "fn",
+        "logits",
+        "sample"
+      ],
+      "where": "t3.L0.A"
+    },
+    "digest": "8bb29b39e767e86b164c0a73191ea1008458750c48c3f12ebe75e262dc9b0191",
+    "schema": "mdb-view-live-timeline-v1",
+    "state": "resolved"
+  },
+  "topk": {
+    "bytes": 843,
+    "data": {
+      "axis": null,
+      "by": "abs",
+      "dtype": "bfloat16",
+      "entries": [
+        {
+          "index": [0, 0, 0],
+          "v": {
+            "ev": "supplied",
+            "note": null,
+            "proof": null,
+            "ptr": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+            "reason": null,
+            "recorded_authority": null,
+            "unit": null,
+            "v": 0.25
+          }
+        },
+        {
+          "index": [0, 0, 1],
+          "v": {
+            "ev": "supplied",
+            "note": null,
+            "proof": null,
+            "ptr": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+            "reason": null,
+            "recorded_authority": null,
+            "unit": null,
+            "v": 0.25
+          }
+        },
+        {
+          "index": [0, 0, 2],
+          "v": {
+            "ev": "supplied",
+            "note": null,
+            "proof": null,
+            "ptr": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+            "reason": null,
+            "recorded_authority": null,
+            "unit": null,
+            "v": 0.25
+          }
+        }
+      ],
+      "k": 3,
+      "note": "live run, live tier, value sha256 210e550f6b67",
+      "op": "topk",
+      "pointer": "1d77f5d7701067c984c9f42e79429902eb1081081c3b4b8f64c304c51a32ab92",
+      "score": "element value",
+      "shape": [1, 1, 8]
+    },
+    "digest": "7ecbf5ad5140c2c97639749f231b23105ae0630be9dcb7381e4b7acf1bcc75e4",
+    "schema": "mdb-view-reduce-v1",
+    "state": "resolved"
+  },
+  "uncomputed": {
+    "detail": "cannot export 't3.L1.v': t3.L1.v has not been computed at t3.L0.A",
+    "refused": "unresolved",
+    "state": "refused"
+  }
+}

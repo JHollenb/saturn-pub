@@ -322,13 +322,14 @@ def tile(array, params, base):
                       nonfinite=int((~np.isfinite(out)).sum()), ev="measured")
 
 
-def project(model, array, params, base):
+def project(array, params, base, direction_of):
+    """``direction_of(spec)`` reads the direction pointer (the same tier as the tensor's)."""
     import numpy as np
 
     spec = params.get("direction")
     if not isinstance(spec, dict):
         raise ReduceError("bad_params", "direction is a pointer spec")
-    direction, _ = resolve(model, spec)
+    direction = direction_of(spec)
     direction = np.asarray(direction, dtype=np.float64).reshape(-1)
     values = np.asarray(array, dtype=np.float64)
     if values.ndim == 0 or values.shape[-1] != direction.size:
@@ -411,30 +412,38 @@ class Reducer:
                 self._cache.move_to_end(key)
                 return self._cache[key][0]
         array, info = resolve(model, spec)
-        base = {"op": op, "pointer": spec_digest(spec), "shape": list(info["shape"]),
-                "dtype": info["dtype"], "note": None}
-        try:
-            if op == "stats":
-                result = stats(array, base)
-            elif op == "topk":
-                result = topk(array, params, base)
-            elif op == "slice":
-                result = slice_(array, params, base)
-            elif op == "histogram":
-                result = histogram(array, params, base)
-            elif op == "tile":
-                result = tile(array, params, base)
-            else:
-                result = project(model, array, params, base)
-        except ReduceError:
-            raise
-        except (ValueError, ArithmeticError, TypeError, IndexError) as error:
-            # numpy rejected a well-formed request (bad axis, bad range, ...): the caller's
-            # parameters, not a server fault.
-            raise ReduceError("bad_params", f"{op}: {type(error).__name__}: "
-                              f"{str(error)[:300]}") from error
+        result = reduce_array(array, info, spec, op, params,
+                              direction_of=lambda d: resolve(model, d)[0])
         self._store(key, result)
         return result
 
 
-__all__ = ["Reducer", "ReduceError", "resolve"]
+def reduce_array(array, info, spec: dict, op: str, params: dict, *, direction_of):
+    """One reduction of an array already read through ``spec`` (``info``: shape, dtype).
+    ``direction_of(spec)`` reads the ``project`` direction. Every value statistic is labelled
+    ``measured``; a caller whose tensor carries another authority relabels the result."""
+    _check_params(op, params)
+    base = {"op": op, "pointer": spec_digest(spec), "shape": list(info["shape"]),
+            "dtype": info["dtype"], "note": None}
+    try:
+        if op == "stats":
+            return stats(array, base)
+        if op == "topk":
+            return topk(array, params, base)
+        if op == "slice":
+            return slice_(array, params, base)
+        if op == "histogram":
+            return histogram(array, params, base)
+        if op == "tile":
+            return tile(array, params, base)
+        return project(array, params, base, direction_of)
+    except ReduceError:
+        raise
+    except (ValueError, ArithmeticError, TypeError, IndexError) as error:
+        # numpy rejected a well-formed request (bad axis, bad range, ...): the caller's
+        # parameters, not a server fault.
+        raise ReduceError("bad_params", f"{op}: {type(error).__name__}: "
+                          f"{str(error)[:300]}") from error
+
+
+__all__ = ["Reducer", "ReduceError", "reduce_array", "resolve"]

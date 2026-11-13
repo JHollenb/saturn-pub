@@ -2,11 +2,16 @@
 // the requested view, or a Refused body. Refusal is a first-class state, never an exception.
 import type {
   Capabilities,
+  ConsoleResult,
   Envelope,
   Event,
   Frame,
   GraphView,
   Hello,
+  Interrupt,
+  LiveFrame,
+  LiveTimeline,
+  OpResult,
   RecordDetail,
   RecordPage,
   ReduceResult,
@@ -36,7 +41,11 @@ export interface ViewTypes {
   records: RecordPage;
   record: RecordDetail;
   reduce: ReduceResult;
-  op: unknown;
+  op: OpResult;
+  console: ConsoleResult;
+  interrupt: Interrupt;
+  live: LiveFrame;
+  'live-timeline': LiveTimeline;
   event: Event;
 }
 // Compile-time check that the map covers exactly the generated schema names.

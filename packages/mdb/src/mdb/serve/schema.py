@@ -284,6 +284,8 @@ class Capabilities(Model):
 
 
 class Hello(Model):
+    """``live`` is the session id of the attached debugger (``mdb serve --tiny|--model``), None
+    on a read-only server over a recorded project."""
     version: str
     schemas: dict[str, str]
     cap: int
@@ -291,6 +293,7 @@ class Hello(Model):
     readOnly: bool
     capabilities: dict[str, ViewAvail]
     web: ViewAvail
+    live: str | None = None
 
 
 # --------------------------------------------------------------------------- timeline / branches
@@ -666,8 +669,136 @@ class OpRequest(Model):
     request_id: str
 
 
+class OpResult(Model):
+    """One op of a live session. ``result`` is exactly the JSON ``python -m mdb.repl --json``
+    prints for the same command (an op result, ``{error, state, reason}`` or ``{interrupted,
+    state, reason}``); its numbers are registry-labelled (``{value, authority}``). ``seq``
+    numbers ops and console lines in execution order; ``where`` is the cursor after it."""
+    request_id: str
+    op: str
+    seq: int
+    where: str | None
+    result: dict[str, Any]
+
+
+class ConsoleRequest(Model):
+    line: str = Field(max_length=4096)
+
+
+class ConsoleResult(Model):
+    """One console line: ``text`` is what the REPL prints for it."""
+    line: str
+    seq: int
+    where: str | None
+    text: str
+
+
+class Interrupt(Model):
+    """``interrupted``: an op was running and Ctrl-C was delivered to it."""
+    interrupted: bool
+    running: str | None
+    reason: str | None
+
+
+class LiveUpstream(Model):
+    row: int
+    layer: int
+    port: str
+    op: str
+    staged: bool
+
+
+class LiveEdit(Model):
+    """Provenance of a computed port value (``Run.read_info``): ``authority`` is None and
+    ``state`` refused when the engine declined to label it."""
+    state: State
+    authority: Ev | None
+    edited: bool
+    kind: str
+    by: str | None
+    reason: str | None
+    upstream: list[LiveUpstream]
+
+
+class LivePort(Model):
+    """One port of the listed layer in program order (the ``list`` op). ``edit`` is None for a
+    port the run has not computed yet (nothing to say, never "unedited")."""
+    port: str
+    addr: str
+    sublayer: str | None
+    operator: str
+    proofs: list[str]
+    editable: bool
+    cursor: bool
+    focus: bool
+    computed: bool
+    edit: LiveEdit | None = None
+
+
+class LiveCheckpoint(Model):
+    """A checkpoint: ``memory`` (this process, the ``checkpoints`` op) or ``durable`` (stored in
+    the project; ``restart NAME`` replays it after a server restart)."""
+    name: str
+    where: str
+    store: Literal["memory", "durable"]
+
+
+class LiveFrame(Model):
+    """The live cursor: ``where`` (None before ``start``), the ``where`` op's ``stop`` and
+    tokens, the listed layer's ports, staged and committed edits (the ``info edits`` op), the
+    breakpoint/watch table (``info breakpoints``), displays and checkpoints. ``limits``:
+    ``layers``, ``max_positions``."""
+    session: str
+    family: str
+    live: LiveState
+    seq: int
+    where: str | None
+    stop: dict[str, Any] | None
+    row: int | None
+    layer: int | None
+    limits: dict[str, int]
+    ports: list[LivePort]
+    checks: dict[str, Any] | None = None
+    tokens: list[dict[str, Any]]
+    edits: dict[str, Any] | None
+    breakpoints: list[dict[str, Any]]
+    displays: list[dict[str, Any]]
+    checkpoints: list[LiveCheckpoint]
+
+
+class LiveRow(Model):
+    """One token row: ``token`` its id; ``count`` stops computed in it (all for a finished row,
+    None for a prefilled row whose ports were never stepped); ``edits`` ports edited there."""
+    row: int
+    token: int | None
+    count: int | None
+    edits: list[str]
+
+
+class LiveStop(Model):
+    """A stop of the run's clock: token ``row`` and ``index`` into ``stops``."""
+    row: int
+    index: int
+    label: str
+
+
+class LiveTimeline(Model):
+    """The run's clock: every row's stops (``stops``, one program per row), the cursor and the
+    run root (the first stop the run can step back to), and per-row edit marks. ``limits``:
+    ``layers``, ``max_positions``."""
+    session: str
+    where: str | None
+    stops: list[str]
+    cursor: LiveStop | None
+    root: LiveStop | None
+    rows: list[LiveRow]
+    limits: dict[str, int]
+
+
 class Event(Model):
-    type: Literal["hello", "heartbeat"]
+    """``op``: a live op or console line completed (``data``: op, seq, source, where, stopped,
+    state, stale views). Events carry no tensors; clients re-fetch the stale views."""
+    type: Literal["hello", "heartbeat", "op"]
     seq: int
     at: int  # epoch milliseconds (a clock position, not a measurement)
     data: dict[str, Any] = {}
@@ -687,7 +818,11 @@ VIEWS = {
     "records": RecordPage,
     "record": RecordDetail,
     "reduce": None,  # ReduceResult union
-    "op": None,  # registry-defined
+    "op": OpResult,
+    "console": ConsoleResult,
+    "interrupt": Interrupt,
+    "live": LiveFrame,
+    "live-timeline": LiveTimeline,
     "event": Event,
 }
 SCHEMAS = {name: f"{SCHEMA_PREFIX}{name}-v1" for name in VIEWS}
@@ -701,4 +836,5 @@ EXPORTED = [Num, NumList, Omitted, Refused, AxisTick, ClockAxis, OccAddr, SlotPo
             GraphNode, GraphEdge, PrunedGroup, CircuitOverlay, SliceRef, GraphView, NamedNum,
             RecordSummary, RecordPage, ArmRow, Link, RecordDetail, ReduceRequest, StatsResult,
             TopkEntry, TopkResult, SliceResult, HistogramResult, TileResult, ProjectResult,
-            OpRequest, Event]
+            OpRequest, OpResult, ConsoleRequest, ConsoleResult, Interrupt, LiveUpstream, LiveEdit,
+            LivePort, LiveCheckpoint, LiveFrame, LiveRow, LiveStop, LiveTimeline, Event]

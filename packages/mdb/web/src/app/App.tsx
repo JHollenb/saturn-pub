@@ -1,4 +1,5 @@
-// Layout: header; left Symbols; centre Timeline over Graph; right Inspector; bottom Records.
+// Layout: header; left Symbols; centre Timeline over Graph (or, on the live session, the Live
+// debugger); right Inspector; bottom Records.
 import { useEffect } from 'react';
 import { AddressBar } from '../chrome/AddressBar';
 import { CommandLine } from '../chrome/CommandLine';
@@ -11,6 +12,7 @@ import { useSession } from '../state/session';
 import { useUi, type Theme } from '../state/ui';
 import { Graph } from '../views/Graph/Graph';
 import { Inspector } from '../views/Inspector/Inspector';
+import { Live } from '../views/Live/Live';
 import { Records } from '../views/Records/Records';
 import { Symbols } from '../views/Symbols/Symbols';
 import { Timeline } from '../views/Timeline/Timeline';
@@ -38,14 +40,17 @@ export function App() {
     useCursor.getState().syncFromLocation();
     void boot();
   }, [boot]);
+  const liveSid = hello?.live ?? null;
+  const isLive = !!liveSid && sid === liveSid;
   useEffect(() => {
     const first = sessions[0];
-    if (!sid && first) setSession(first.id, first.home);
+    if (!sid && liveSid) setSession(liveSid);
+    else if (!sid && first) setSession(first.id, first.home);
     else if (sid && !addr) {
       const s = sessions.find((x) => x.id === sid);
       if (s?.home) useCursor.getState().go(s.home);
     }
-  }, [sid, addr, sessions, setSession]);
+  }, [sid, addr, sessions, setSession, liveSid]);
   useEffect(() => {
     if (sid) void loadCaps(sid);
   }, [sid, loadCaps]);
@@ -63,19 +68,33 @@ export function App() {
           value={sid ?? ''}
           onChange={(e) => {
             const s = sessions.find((x) => x.id === e.target.value);
-            if (s) setSession(s.id, s.home);
+            if (e.target.value === liveSid) setSession(liveSid);
+            else if (s) setSession(s.id, s.home);
           }}
         >
+          {liveSid && !sessions.some((s) => s.id === liveSid) && (
+            <option value={liveSid}>{liveSid} · live</option>
+          )}
           {sessions.map((s) => (
             <option key={s.id} value={s.id}>
-              {s.id} · {s.model}
+              {s.id} · {s.id === liveSid ? 'live' : s.model}
             </option>
           ))}
         </select>
         <AddressBar />
-        <span className="chip header-chip" title="server link (recorded project: no live model)">
-          {hello?.readOnly ? 'read-only' : 'writable'} · {link}
+        <span
+          className="chip header-chip"
+          title={
+            liveSid ? `live session ${liveSid}` : 'server link (recorded project: no live model)'
+          }
+        >
+          {liveSid ? 'live' : hello?.readOnly ? 'read-only' : 'writable'} · {link}
         </span>
+        {liveSid && !isLive && (
+          <button type="button" onClick={() => setSession(liveSid)} title="open the live debugger">
+            live
+          </button>
+        )}
         <select
           aria-label="theme"
           value={theme}
@@ -94,7 +113,7 @@ export function App() {
           <RefusedView what="server" refused={refused} />
         </div>
       )}
-      {hello && !sessions.length ? (
+      {hello && !sessions.length && !liveSid ? (
         <div className="app-banner">
           <NotAvailable what="sessions" reason="This project holds no sessions." />
         </div>
@@ -105,14 +124,22 @@ export function App() {
               <Symbols />
             </ErrorBoundary>
           </aside>
-          <main className="app-centre">
-            <ErrorBoundary name="Timeline">
-              <Timeline />
-            </ErrorBoundary>
-            <ErrorBoundary name="Graph">
-              <Graph />
-            </ErrorBoundary>
-          </main>
+          {isLive && liveSid ? (
+            <main className="app-centre app-centre-live">
+              <ErrorBoundary name="Live">
+                <Live sid={liveSid} />
+              </ErrorBoundary>
+            </main>
+          ) : (
+            <main className="app-centre">
+              <ErrorBoundary name="Timeline">
+                <Timeline />
+              </ErrorBoundary>
+              <ErrorBoundary name="Graph">
+                <Graph />
+              </ErrorBoundary>
+            </main>
+          )}
           <aside className="app-right">
             <ErrorBoundary name="Inspector">
               <Inspector />

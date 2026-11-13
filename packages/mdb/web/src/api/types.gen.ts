@@ -94,8 +94,19 @@ export interface ClockAxis {
   note: string | null;
 }
 
+export interface ConsoleRequest {
+  line: string;
+}
+
+export interface ConsoleResult {
+  line: string;
+  seq: number;
+  where: string | null;
+  text: string;
+}
+
 export interface Event {
-  type: "hello" | "heartbeat";
+  type: "hello" | "heartbeat" | "op";
   seq: number;
   at: number;
   data: Record<string, unknown>;
@@ -167,6 +178,7 @@ export interface Hello {
   readOnly: boolean;
   capabilities: Record<string, ViewAvail>;
   web: ViewAvail;
+  live: string | null;
 }
 
 export interface HistogramResult {
@@ -180,6 +192,12 @@ export interface HistogramResult {
   counts: number[];
   nonfinite: number;
   ev: "measured" | "derived-exact" | "derived-local" | "bound" | "supplied" | "unresolved" | "refused";
+}
+
+export interface Interrupt {
+  interrupted: boolean;
+  running: string | null;
+  reason: string | null;
 }
 
 export interface LensInfo {
@@ -206,9 +224,88 @@ export interface Link {
   id: string;
 }
 
+export interface LiveCheckpoint {
+  name: string;
+  where: string;
+  store: "memory" | "durable";
+}
+
+export interface LiveEdit {
+  state: "resolved" | "unresolved" | "refused";
+  authority: "measured" | "derived-exact" | "derived-local" | "bound" | "supplied" | "unresolved" | "refused" | null;
+  edited: boolean;
+  kind: string;
+  by: string | null;
+  reason: string | null;
+  upstream: LiveUpstream[];
+}
+
+export interface LiveFrame {
+  session: string;
+  family: string;
+  live: LiveState;
+  seq: number;
+  where: string | null;
+  stop: Record<string, unknown> | null;
+  row: number | null;
+  layer: number | null;
+  limits: Record<string, number>;
+  ports: LivePort[];
+  checks: Record<string, unknown> | null;
+  tokens: Record<string, unknown>[];
+  edits: Record<string, unknown> | null;
+  breakpoints: Record<string, unknown>[];
+  displays: Record<string, unknown>[];
+  checkpoints: LiveCheckpoint[];
+}
+
+export interface LivePort {
+  port: string;
+  addr: string;
+  sublayer: string | null;
+  operator: string;
+  proofs: string[];
+  editable: boolean;
+  cursor: boolean;
+  focus: boolean;
+  computed: boolean;
+  edit: LiveEdit | null;
+}
+
+export interface LiveRow {
+  row: number;
+  token: number | null;
+  count: number | null;
+  edits: string[];
+}
+
 export interface LiveState {
   state: "offline" | "paused" | "running";
   frontier: string[];
+}
+
+export interface LiveStop {
+  row: number;
+  index: number;
+  label: string;
+}
+
+export interface LiveTimeline {
+  session: string;
+  where: string | null;
+  stops: string[];
+  cursor: LiveStop | null;
+  root: LiveStop | null;
+  rows: LiveRow[];
+  limits: Record<string, number>;
+}
+
+export interface LiveUpstream {
+  row: number;
+  layer: number;
+  port: string;
+  op: string;
+  staged: boolean;
 }
 
 export interface NamedNum {
@@ -258,6 +355,14 @@ export interface OpRequest {
   op: string;
   args: Record<string, unknown>;
   request_id: string;
+}
+
+export interface OpResult {
+  request_id: string;
+  op: string;
+  seq: number;
+  where: string | null;
+  result: Record<string, unknown>;
 }
 
 export interface PointerRef {
@@ -592,5 +697,9 @@ export const SCHEMAS = {
   record: "mdb-view-record-v1",
   reduce: "mdb-view-reduce-v1",
   op: "mdb-view-op-v1",
+  console: "mdb-view-console-v1",
+  interrupt: "mdb-view-interrupt-v1",
+  live: "mdb-view-live-v1",
+  "live-timeline": "mdb-view-live-timeline-v1",
   event: "mdb-view-event-v1",
 } as const;

@@ -1,4 +1,12 @@
-"""FastAPI application over a recorded project: ``create_app(project_path)``.
+"""FastAPI application over a recorded project: ``create_app(project_path, live=None)``.
+
+With ``live`` (a ``serve.live.LiveSession``: ``mdb serve --tiny|--model``) the server also holds
+a live debugger under that session's id: ``POST .../op`` dispatches through the op registry on
+the session's worker thread, ``POST .../console`` runs a REPL command line, ``POST
+.../interrupt`` delivers Ctrl-C to the running op, ``GET .../live`` and ``.../live/timeline``
+are the live frame and clock, ``POST .../reduce`` with an occurrence pointer reads the live run
+(``mdb.resolve``, live tier), and the events socket pushes one ``op`` event per completed op.
+Without ``live`` every op whose effect is not ``read`` is refused 403.
 
 Routes live under ``/api/v1``; every body is a canonical-JSON ``Envelope`` or a ``Refused``
 (``{"refused": reason, "detail"?}``), at most 64 KiB (``CapMiddleware``). The built web app is
@@ -17,9 +25,21 @@ from .caps import CapMiddleware, bound_json, canonical, dump, envelope, refused,
 from .guard import BODY_LIMIT, CSP, SecurityLayer  # noqa: F401 - CSP re-exported
 from .recorded import Recorded, SessionUnreadable
 from .reduce import ReduceError, Reducer
-from .schema import CAP_BYTES, Event, Omitted, OpRequest, ReduceRequest, ViewAvail
+from .schema import (
+    CAP_BYTES,
+    ConsoleRequest,
+    ConsoleResult,
+    Event,
+    Interrupt,
+    Omitted,
+    OpRequest,
+    OpResult,
+    ReduceRequest,
+    ViewAvail,
+)
 from .views import frame as frame_view
 from .views import graph as graph_view
+from .views import live as live_view
 from .views import records as records_view
 from .views import sessions as sessions_view
 from .views import symbols as symbols_view
@@ -28,25 +48,32 @@ from .views.common import ViewError
 
 STATIC = Path(__file__).resolve().parent / "static"
 MAX_BRANCH_NODES = 256
+WRITE_EFFECTS = ("navigate", "mutate", "native")
 
 
 def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0, cap=CAP_BYTES,
-               port=None, allow_hosts=(), body_limit=BODY_LIMIT):
+               port=None, allow_hosts=(), body_limit=BODY_LIMIT, live=None):
     """The server as an ASGI app. ``port`` is the bound port (the Host guard accepts the loopback
     names with it; None accepts any port on them, for embedding and tests); ``allow_hosts`` are
-    extra ``HOST[:PORT]`` values to accept (see ``guard``)."""
+    extra ``HOST[:PORT]`` values to accept (see ``guard``). ``live``: a ``LiveSession`` whose
+    debugger is attached with this project (live mode; ``read_only`` is then False)."""
     from fastapi import FastAPI, Request, WebSocket, WebSocketDisconnect
     from fastapi.exceptions import RequestValidationError
     from fastapi.responses import FileResponse, Response
+    from starlette.concurrency import run_in_threadpool
     from starlette.exceptions import HTTPException as StarletteHTTPException
 
+    from .live import Busy, Interrupted
+
+    if live is not None:
+        read_only = False
     recorded = Recorded(project_path)
     reducer = Reducer()
     contexts = {}  # session id -> mdb.ops.Context (no debugger attached: recorded project)
     static = Path(static_dir) if static_dir else STATIC
     app = FastAPI(title="mdb serve", docs_url=None, redoc_url=None, openapi_url=None)
     app.state.recorded, app.state.read_only = recorded, read_only
-    app.state.reducer = reducer
+    app.state.reducer, app.state.live = reducer, live
 
     def respond(body, status=200):
         return Response(canonical(body), status_code=status, media_type="application/json")
@@ -64,6 +91,31 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
             raise ViewError("not_found", f"unknown session {sid!r}", 404) from error
         except SessionUnreadable as error:
             raise ViewError("session_unreadable", error.reason, 409) from error
+
+    def is_live(sid):
+        return live is not None and sid == live.sid
+
+    def not_live(sid, what):
+        if live is None:
+            return ViewError("not_live", f"{what} needs a live session; this server holds none "
+                             "(start it with --tiny or --model)", 403)
+        return ViewError("not_live", f"{what}: session {sid!r} is recorded; the live session "
+                         f"is {live.sid!r}", 403)
+
+    async def on_worker(future):
+        """Await a live job; a full queue is 409 ``busy``, an interrupted read 409."""
+        try:
+            return await asyncio.wrap_future(future)
+        except Interrupted as error:
+            raise ViewError("interrupted", "the request was interrupted before it finished",
+                            409) from error
+
+    def submit(make, *args):
+        try:
+            return make(*args)
+        except Busy as error:
+            raise ViewError("busy", f"the live session is busy: {error}; retry after the "
+                            "running op finishes (or interrupt it)", 409) from error
 
     @app.exception_handler(ViewError)
     async def _view_error(request: Request, error: ViewError):
@@ -94,8 +146,9 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
 
     @app.get("/api/v1/hello")
     def hello():
-        return respond(envelope("hello", sessions_view.hello(recorded, read_only=read_only,
-                                                             web=web_avail())))
+        return respond(envelope("hello", sessions_view.hello(
+            recorded, read_only=read_only, web=web_avail(),
+            live=None if live is None else live.sid)))
 
     @app.get("/api/v1/sessions")
     def sessions():
@@ -158,12 +211,19 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
         return respond(envelope("record", detail, omitted))
 
     @app.post("/api/v1/s/{sid}/reduce")
-    def reduce(sid: str, request: ReduceRequest):
-        result = reducer.run(model(sid), dump(request.pointer), request.op, request.params)
+    async def reduce(sid: str, request: ReduceRequest):
+        spec = dump(request.pointer)
+        if is_live(sid) and spec["kind"] == "occurrence":
+            from .live_reduce import reduce_live
+
+            result = await on_worker(submit(live.call, lambda: reduce_live(
+                live, spec, request.op, request.params)))
+            return respond(envelope("reduce", result))
+        result = await run_in_threadpool(reducer.run, model(sid), spec, request.op,
+                                         request.params)
         return respond(envelope("reduce", result))
 
-    @app.post("/api/v1/s/{sid}/op")
-    def op(sid: str, request: OpRequest):
+    def recorded_op(sid, request):
         model(sid)
         try:
             from .. import ops
@@ -179,9 +239,11 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
         found = ops.registry().get(request.op)
         if found is None:
             return respond(refused("unknown-op", f"no operation {request.op!r}"), 404)
-        if read_only and found.effect in ("native", "mutate"):
-            return respond(refused("read_only", f"{request.op} has effect {found.effect}; this "
-                                   "server is read-only over a recorded project"), 403)
+        if found.effect in WRITE_EFFECTS:
+            why = ("this server is read-only over a recorded project" if live is None else
+                   f"session {sid!r} is recorded; the live session is {live.sid!r}")
+            return respond(refused("read_only", f"{request.op} has effect {found.effect}; "
+                                   f"{why}"), 403)
         context = contexts.setdefault(sid, ops.Context())
         try:
             result = dispatch(context, request.op, request.args)
@@ -190,9 +252,59 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
         except (AttributeError, TypeError, ValueError, LookupError) as error:
             return respond(refused("op_failed", f"{type(error).__name__}: {error}"), 409)
         omitted: list[Omitted] = []
-        data = {"request_id": request.request_id, "op": request.op,
-                "result": bound_json(dump(result), field="result", omitted=omitted)}
+        data = OpResult(request_id=request.request_id, op=request.op, seq=0, where=None,
+                        result=bound_json(dump(result), field="result", omitted=omitted))
         return respond(envelope("op", data, omitted))
+
+    @app.post("/api/v1/s/{sid}/op")
+    async def op(sid: str, request: OpRequest):
+        if not is_live(sid):
+            return await run_in_threadpool(recorded_op, sid, request)
+        from .. import ops
+
+        if request.op not in ops.registry():
+            return respond(refused("unknown-op", f"no operation {request.op!r}"), 404)
+        body = await on_worker(submit(live.op, request.op, request.args))
+        result = body["result"]
+        state = result.get("state", "resolved")
+        state = state if state in ("resolved", "unresolved", "refused") else "refused"
+        reason = None if state == "resolved" else (
+            result.get("reason") or "a part of the result is unresolved; see data.result")
+        data = OpResult(request_id=request.request_id, op=request.op, seq=body["seq"],
+                        where=body["where"], result=result)
+        return respond(envelope("op", data, state=state, reason=reason),
+                       409 if state == "refused" else 200)
+
+    @app.post("/api/v1/s/{sid}/console")
+    async def console(sid: str, request: ConsoleRequest):
+        if not is_live(sid):
+            raise not_live(sid, "the console")
+        body = await on_worker(submit(live.console, request.line))
+        return respond(envelope("console", ConsoleResult(line=request.line, seq=body["seq"],
+                                                         where=body["where"],
+                                                         text=body["text"])))
+
+    @app.post("/api/v1/s/{sid}/interrupt")
+    def interrupt(sid: str):
+        if not is_live(sid):
+            raise not_live(sid, "interrupt")
+        return respond(envelope("interrupt", Interrupt(**live.interrupt())))
+
+    @app.get("/api/v1/s/{sid}/live")
+    async def live_frame(sid: str):
+        if not is_live(sid):
+            raise not_live(sid, "the live frame")
+        frame_data = await on_worker(submit(live.call, lambda: live_view.frame(live)))
+        return respond(envelope("live", frame_data))
+
+    @app.get("/api/v1/s/{sid}/live/timeline")
+    async def live_timeline(sid: str):
+        if not is_live(sid):
+            raise not_live(sid, "the live timeline")
+        block, left_out = await on_worker(submit(live.call, lambda: live_view.timeline(live)))
+        omitted = [Omitted(field="rows", count=left_out, reason="earliest rows")] \
+            if left_out else None
+        return respond(envelope("live-timeline", block, omitted))
 
     @app.get("/api/v1/s/{sid}/export")
     def export(sid: str):
@@ -215,6 +327,23 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
                 body = canonical(refused("over_cap", bytes=len(body), cap=cap))
             await websocket.send_text(body.decode())
 
+        if is_live(sid):
+            events = live.subscribe()
+            try:
+                await send("hello", {"session": sid,
+                                     "live": "running" if live.running else "paused",
+                                     "seq": live.seq, "running": live.running})
+                while True:
+                    try:
+                        event = await asyncio.wait_for(events.get(), timeout=heartbeat)
+                    except asyncio.TimeoutError:
+                        await send("heartbeat", {"session": sid})
+                        continue
+                    await send("op", event)
+            except (WebSocketDisconnect, RuntimeError):
+                return
+            finally:
+                live.unsubscribe(events)
         try:
             try:
                 model(sid)

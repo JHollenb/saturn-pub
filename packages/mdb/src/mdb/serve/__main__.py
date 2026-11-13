@@ -1,5 +1,10 @@
-"""``python -m mdb.serve --project PATH [--port N] [--host 127.0.0.1] [--allow-remote
---allow-host HOST[:PORT] ...]``.
+"""``python -m mdb.serve --project PATH [--tiny qwen2|qwen3 | --model DIR] [--port N]
+[--host 127.0.0.1] [--allow-remote --allow-host HOST[:PORT] ...]``.
+
+Without ``--tiny``/``--model`` the server is a read-only viewer of the recorded project. With
+one of them it also holds a live debugger attached with ``--project`` (``mdb serve --project
+runs/t --tiny qwen2``): the web app steps it through the op registry, and checkpoints made
+there are stored in the project. Live mode executes model code and accepts edits.
 
 Binds loopback by default. There is no authentication, which is acceptable only on loopback:
 a non-loopback host is refused unless ``--allow-remote`` is given, and then a warning is printed.
@@ -34,8 +39,17 @@ def main(argv=None):
     parser.add_argument("--allow-host", action="append", default=[], metavar="HOST[:PORT]",
                         help="also accept this Host header (repeatable); HOST alone means "
                         "HOST:<port>. Required with --allow-remote")
+    source = parser.add_mutually_exclusive_group()
+    source.add_argument("--tiny", choices=("qwen2", "qwen3"),
+                        help="live mode on a random tiny model (tests, demos)")
+    source.add_argument("--model", metavar="DIR",
+                        help="live mode on a local Hugging Face checkpoint (never downloads)")
+    parser.add_argument("--dtype", choices=("bf16", "fp32"), default="bf16")
+    parser.add_argument("--device", default="cpu")
+    parser.add_argument("--seed", type=int, default=113, help="tiny model seed")
     parser.add_argument("--heartbeat", type=float, default=10.0, help=argparse.SUPPRESS)
     args = parser.parse_args(argv)
+    live_mode = bool(args.tiny or args.model)
     if not 1 <= args.port <= 65535:
         print("mdb serve: --port must be 1..65535 (the Host guard needs the bound port)",
               file=sys.stderr)
@@ -53,6 +67,10 @@ def main(argv=None):
         print(f"mdb serve: WARNING: serving {args.project} on {args.host} without "
               "authentication; anyone who can reach this port can read the project.",
               file=sys.stderr)
+        if live_mode:
+            print("mdb serve: WARNING: LIVE MODE on a non-loopback host: anyone who can reach "
+                  "this port can run the model, stage edits and write checkpoints into "
+                  f"{args.project}.", file=sys.stderr)
     try:
         import uvicorn
     except ImportError:
@@ -61,9 +79,22 @@ def main(argv=None):
         return 2
     from .app import create_app
 
+    live = None
+    if live_mode:
+        from ..core.errors import OpError
+        from .live import LiveSession, open_debugger
+
+        try:
+            debugger = open_debugger(args.project, tiny=args.tiny, model=args.model,
+                                     dtype=args.dtype, device=args.device, seed=args.seed)
+        except (OpError, ValueError, OSError) as error:
+            print(f"mdb serve: cannot attach the live model: "
+                  f"{getattr(error, 'message', error)}", file=sys.stderr)
+            return 1
+        live = LiveSession(debugger)
     try:
         app = create_app(args.project, heartbeat=args.heartbeat, port=args.port,
-                         allow_hosts=args.allow_host)
+                         allow_hosts=args.allow_host, live=live)
     except (ValueError, OSError) as error:
         print(f"mdb serve: {error}", file=sys.stderr)
         return 1
@@ -72,9 +103,15 @@ def main(argv=None):
     if not (STATIC / "index.html").is_file():
         print(f"mdb serve: web build absent at {STATIC}; run `npm run build` in "
               "packages/mdb/web (the API at /api/v1 is served without it)", file=sys.stderr)
-    print(f"mdb serve: http://{args.host}:{args.port}/  (project {args.project})",
+    mode = f"live session {live.sid}" if live else "read-only"
+    print(f"mdb serve: http://{args.host}:{args.port}/  (project {args.project}; {mode})",
           file=sys.stderr)
-    uvicorn.run(app, host=args.host, port=args.port, log_level="warning")
+    try:
+        uvicorn.run(app, host=args.host, port=args.port, log_level="warning")
+    finally:
+        if live is not None:
+            live.interrupt()
+            live.close()
     return 0
 
 

@@ -1,0 +1,23 @@
+{
+  "bytes": 291,
+  "data": {
+    "op": "step",
+    "request_id": "step",
+    "result": {
+      "error": {
+        "message": "argument 'n' must be an integer, got 'x'",
+        "reason": "argument 'n' must be an integer, got 'x'",
+        "state": "refused",
+        "type": "bad-args"
+      },
+      "reason": "argument 'n' must be an integer, got 'x'",
+      "state": "refused"
+    },
+    "seq": 4,
+    "where": "t3.L1.p"
+  },
+  "digest": "34bfb28154ed42c5f06ec7fdc006bf7ccfd51d200b8486c5456b92ad7b2a94bc",
+  "reason": "argument 'n' must be an integer, got 'x'",
+  "schema": "mdb-view-op-v1",
+  "state": "refused"
+}

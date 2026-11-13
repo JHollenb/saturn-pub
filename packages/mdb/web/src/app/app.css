@@ -185,3 +185,102 @@
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+.app-centre-live {
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.live {
+  display: grid;
+  gap: var(--gap);
+}
+
+.live h3 {
+  font-size: 12px;
+  margin: 0 0 4px;
+}
+
+.live-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: baseline;
+}
+
+.live-state {
+  margin-left: auto;
+}
+
+.live-controls,
+.live-controls form,
+.live form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.live-stops {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px;
+}
+
+.live-stop {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 0 3px;
+  border: 1px solid var(--rule);
+  background: transparent;
+  color: var(--ink-3);
+}
+
+.live-stop.done {
+  color: var(--ink);
+  background: var(--panel-2);
+}
+
+.live-stop.here {
+  outline: 2px solid var(--cursor);
+  color: var(--ink);
+}
+
+.live-stop[data-edited='yes'] {
+  border-style: dashed;
+  border-color: var(--role-intervention);
+}
+
+.live-row-here {
+  outline: 1px solid var(--cursor);
+}
+
+.live-port.here {
+  background: var(--panel-2);
+}
+
+.live-port[data-computed='no'] {
+  color: var(--ink-3);
+}
+
+.live-tables {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: var(--gap);
+}
+
+.live-console pre {
+  max-height: 16em;
+  overflow: auto;
+  white-space: pre-wrap;
+  margin: 0 0 4px;
+}
+
+.linklike {
+  border: none;
+  background: none;
+  padding: 0;
+  color: inherit;
+  text-decoration: underline dotted;
+  cursor: pointer;
+  font: inherit;
+}

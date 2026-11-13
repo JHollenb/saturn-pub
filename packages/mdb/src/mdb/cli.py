@@ -3,8 +3,9 @@
 Engine verbs (implemented in this distribution):
 
     mdb engine ...                port-level REPL (``python -m mdb.repl``)
-    mdb serve --project DIR [--port N] [--allow-host H ...] [--allow-remote]
-                                  read-only web viewer of a recorded project (``mdb.serve``)
+    mdb serve --project DIR [--tiny qwen2|qwen3 | --model DIR] [--port N] [--allow-host H ...]
+              [--allow-remote]    web viewer of a recorded project (``mdb.serve``); with --tiny
+                                  or --model it also holds a live debugger the web app steps
     mdb lanes [VERB ...]          list, or run, a verb of the lanes plug-in
     mdb version
 
@@ -20,7 +21,8 @@ import sys
 ENGINE_VERBS = ("engine", "serve", "lanes", "version")
 USAGE = ("usage: mdb {engine,serve,lanes,version} ...  |  mdb lanes VERB ...\n"
          "  engine   port-level model REPL (mdb engine --tiny qwen2 --tokens '1 5 9')\n"
-         "  serve    read-only viewer: mdb serve --project DIR [--port N]\n"
+         "  serve    web viewer: mdb serve --project DIR [--port N]; live debugger with\n"
+         "           --tiny qwen2 | --model DIR (mdb serve --help)\n"
          "  lanes    commands of the mdb-lanes plug-in (mdb lanes lists them)\n"
          "  version  print the engine version")
 

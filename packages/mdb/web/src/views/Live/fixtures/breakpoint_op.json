@@ -1,0 +1,36 @@
+{
+  "bytes": 420,
+  "data": {
+    "op": "continue",
+    "request_id": "continue",
+    "result": {
+      "budget": 8,
+      "hits": [
+        {
+          "id": 1,
+          "kind": "break",
+          "pattern": "L1.p"
+        }
+      ],
+      "hits_total": 1,
+      "op": "continue",
+      "reason": "breakpoint",
+      "state": "resolved",
+      "stop": {
+        "address": "t3.L1.p",
+        "layer": 1,
+        "operator": "p = softmax(s, float32).to(dtype) (native attention weights)",
+        "port": "p",
+        "proofs": ["P05", "P06", "P07", "P08", "P09"],
+        "row": 3,
+        "sublayer": "attn"
+      },
+      "where": "t3.L1.p"
+    },
+    "seq": 3,
+    "where": "t3.L1.p"
+  },
+  "digest": "b1abe3c5ec886b2fd8072a642510c1ab55b99ec51eea569465e559af4b9a212d",
+  "schema": "mdb-view-op-v1",
+  "state": "resolved"
+}

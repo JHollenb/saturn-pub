@@ -102,7 +102,8 @@ def render() -> str:
                   "measurement:\n"
                   "// everything else numeric is a Num/NumList with an evidence class.\n"
                   f"export const STRUCTURAL_KEYS: readonly string[] = [{keys}];")
-    schemas = ",\n".join(f"  {k}: {json.dumps(v)}" for k, v in SCHEMAS.items())
+    schemas = ",\n".join(f"  {k if k.isidentifier() else json.dumps(k)}: {json.dumps(v)}"
+                          for k, v in SCHEMAS.items())
     blocks.append(f"export const SCHEMAS = {{\n{schemas},\n}} as const;")
     return "\n\n".join(blocks) + "\n"
 

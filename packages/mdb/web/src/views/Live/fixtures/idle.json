@@ -1,0 +1,50 @@
+{
+  "frame": {
+    "bytes": 286,
+    "data": {
+      "breakpoints": [],
+      "checkpoints": [],
+      "checks": null,
+      "displays": [],
+      "edits": null,
+      "family": "qwen2",
+      "layer": null,
+      "limits": {
+        "layers": 2,
+        "max_positions": 256
+      },
+      "live": {
+        "frontier": [],
+        "state": "paused"
+      },
+      "ports": [],
+      "row": null,
+      "seq": 0,
+      "session": "qwen2-8a16dcab78be",
+      "stop": null,
+      "tokens": [],
+      "where": null
+    },
+    "digest": "d544ded23d58baa0b4048f020fe3ee24eb90cceb0bfe8fd189be93b3bf272b15",
+    "schema": "mdb-view-live-v1",
+    "state": "resolved"
+  },
+  "timeline": {
+    "bytes": 134,
+    "data": {
+      "cursor": null,
+      "limits": {
+        "layers": 2,
+        "max_positions": 256
+      },
+      "root": null,
+      "rows": [],
+      "session": "qwen2-8a16dcab78be",
+      "stops": [],
+      "where": null
+    },
+    "digest": "b0fe9ee164ae910ed5f4f076e52b325be9e2f2c0ae879e936eb24750be1c06e6",
+    "schema": "mdb-view-live-timeline-v1",
+    "state": "resolved"
+  }
+}
