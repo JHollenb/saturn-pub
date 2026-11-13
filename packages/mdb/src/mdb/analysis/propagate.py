@@ -21,6 +21,16 @@ measured natively, with the session left exactly where it was.
    requested one (both ``derived-exact``) and ``rounding = native - exact(realised)``
    (``measured``, with its ``bound``). The linear number is never reported as the effect.
 
+A state-cell edit (``Edit.cell``: ``cache.L<l>.k|v[kv,row,d]``, ops ``replace | add | scale |
+mix``) is staged where the cursor is when the consumer is still ahead (``pending``), else at
+the entry ``t<c>.L<l>.h`` of the consumer's row (``rewind``). It reaches every read of the cell
+not yet made: the first is the cell layer's ``kr`` (keys) or ``A`` (values) of the cursor's row
+when that read is still ahead (``first_read``), else of the next row, and the same read in every
+later row. The prediction writes the cell into the cache rows the chain reads (float64, the
+requested operation unrounded; the written value's distance is the edit's bound) and refuses
+when the first affected row has not started at the cursor; the linear term is the forward-mode
+derivative through the attention read (a value cell enters ``A`` linearly, P06/P07).
+
 The session's ``state_digest`` (cursor, cut fingerprint, transition count, staged and committed
 edits, lookahead state) is taken before and after; a difference raises. Every edit tensor the
 checkpoint names is held (``Run.hold``) before anything native runs, so the restore can rebuild
@@ -37,10 +47,13 @@ from mdb.core.pointers import seal_digest
 from mdb.core.records import num, seal_record
 
 from .finite import BOUND, EXACT, LOCAL, MEASURED, SUPPLIED, f64
-from .forecast import Logit, Margin, Refusal, RowModel, _session_id, _split, producers
+from .forecast import Logit, Margin, Refusal, RowModel, _split, producers, run_session_id
 
 SCHEMA = "mdb-whatif-v1"
 OPS = ("replace", "add", "scale")
+CELL_OPS = ("replace", "add", "scale", "mix")
+CELL_READ = {"k": "kr", "v": "A"}       # mdb.engine.edits.CELL_READ (engine is torch-heavy)
+CELL_BOUNDARY = {"k": "kr", "v": "p"}   # mdb.engine.edits.CELL_BOUNDARY
 
 
 def _torch():
@@ -62,6 +75,9 @@ class Edit:
     mask: Any = None
     selection: str | None = None
     source: str | None = None
+    cell: dict[str, Any] | None = None   # {layer, tensor, rows, kv, d}: a state-cell edit
+    dose: float | None = None            # mix only
+    origin: dict[str, Any] | None = None  # pointer of a value from another run
 
 
 @dataclass
@@ -82,6 +98,7 @@ class Plan:
     affected: dict[int, set[str]]
     here: tuple[int, int]
     mode: str
+    stage_at: str | None = None  # a cell edit: the cursor it is staged at
 
     @property
     def edit_stop(self) -> str:
@@ -103,11 +120,13 @@ def state_digest(run: Any) -> str:
 # --------------------------------------------------------------------------- planning
 
 
-def affected(run: Any, row: int, label: str, last_row: int) -> dict[int, set[str]]:
+def affected(run: Any, row: int, label: str, last_row: int, *, every_row: bool = False
+             ) -> dict[int, set[str]]:
     """Stops of rows ``row..last_row`` whose value an edit at ``t<row>.<label>`` can change: the
     stops downstream of it in its own row, and in each later row the stops downstream of a cache
     row it changed (``L<i>.kr`` reads the key cache, ``L<i>.A`` the value cache) or of a sampled
-    token it changed (``emb`` of a row past the prompt)."""
+    token it changed (``emb`` of a row past the prompt). ``every_row``: ``label`` is a cache
+    read every later row makes again (a state-cell edit), so it seeds every row."""
     program, layers = run.program, run.adapter.layers
     children: dict[str, list[str]] = {}
     for stop in run.stops():
@@ -131,6 +150,8 @@ def affected(run: Any, row: int, label: str, last_row: int) -> dict[int, set[str
         keys |= {i for i in range(layers) if f"L{i}.kr" in previous}
         values |= {i for i in range(layers) if f"L{i}.v" in previous}
         seeds = {f"L{i}.kr" for i in keys} | {f"L{i}.A" for i in values}
+        if every_row:
+            seeds.add(label)
         if "sample" in previous and j >= len(run.tokens):
             seeds.add("emb")
         out[j] = closure(seeds)
@@ -155,8 +176,72 @@ def _consumer(run: Any, consumer: Any) -> tuple[int, str, Margin | None, Logit |
     return key[0], label, None, None, f"t{key[0]}.{label}"
 
 
+def _read_ahead(run: Any, layer: int, tensor: str) -> bool:
+    """Whether the cursor's row has still to read ``cache.L<layer>.<tensor>`` (an edit staged
+    now is realised before that read)."""
+    status = run.status()
+    here = run.parse(run.where)
+    if status["pending_layer"] == layer and status["port"] is not None:
+        names = run.program.names
+        return names.index(status["port"]) < names.index(CELL_BOUNDARY[tensor])
+    return here < run.parse(f"t{here[0]}.L{layer}.{CELL_READ[tensor]}")
+
+
+def _later_edits(run: Any, row: int, layer: int) -> str | None:
+    """A committed edit or cell edit after ``(row, layer)``: rewinding there would drop it."""
+    later = [e for e in run.committed_edits() if (int(e["row"]), int(e["layer"])) > (row, layer)]
+    later += [e for e in run.committed_cells() if (int(e["row"]), int(e["layer"])) >= (row, layer)]
+    if later:
+        first = later[0]
+        return (f"the committed edit at t{first['row']}.L{first['layer']} ({first['port']}) comes "
+                "after the stage point: stepping back to it would drop that edit from the "
+                "measured run")
+    return None
+
+
+def cell_plan(run: Any, edit: Edit, consumer: Any) -> Plan:
+    """Resolve and check a state-cell what-if without running anything native: where it is
+    staged, its first read, the stops it reaches and whether the consumer is among them."""
+    if edit.op not in CELL_OPS:
+        raise Refusal(f"a cell op is one of {', '.join(CELL_OPS)}")
+    cell = edit.cell
+    layer, tensor, rows = int(cell["layer"]), cell["tensor"], list(cell["rows"])
+    read = f"L{layer}.{CELL_READ[tensor]}"
+    row_c, label_c, margin, logit, text = _consumer(run, consumer)
+    key_c = run.parse(f"t{row_c}.{label_c}")
+    here = run.parse(run.where)
+    if key_c > here:
+        mode, stage_at = "pending", run.where
+        first = here[0] if _read_ahead(run, layer, tensor) else here[0] + 1
+        length = int(run.read_cache(layer, tensor, staged=False).shape[2])
+        if max(rows) >= length:
+            raise Refusal(f"{edit.address}: row {max(rows)} is not in the cache at {run.where} "
+                          f"(it holds rows 0..{length - 1})")
+    else:
+        mode, first = "rewind", row_c
+        stage_at = f"t{row_c}.L{layer}.h"
+        if max(rows) >= row_c:
+            raise Refusal(f"{text} is computed at the cursor and its row t{row_c} reads cache "
+                          f"rows 0..{row_c - 1} only: the cell rows {rows} cannot reach it")
+        if run.edits or run.cells:
+            raise Refusal("the consumer is already computed and edits are staged: reaching the "
+                          "stage point means stepping back, which drops the staged edits; commit "
+                          "or abort them first")
+        conflict = _later_edits(run, row_c, layer)
+        if conflict is not None:
+            raise Refusal(conflict)
+    reach = affected(run, first, read, max(row_c, first), every_row=True)
+    if row_c < first or label_c not in reach[row_c]:
+        raise Refusal(f"{text} is not downstream of {edit.address} staged at {stage_at}: its "
+                      f"first read is t{first}.{read}")
+    return Plan(first, read, run.parse(f"t{first}.{read}"), row_c, label_c, key_c, text, margin,
+                logit, reach, here, mode, stage_at)
+
+
 def plan(run: Any, edit: Edit, consumer: Any) -> Plan:
     """Resolve and check a what-if request without running anything native."""
+    if edit.cell is not None:
+        return cell_plan(run, edit, consumer)
     if edit.op not in OPS:
         raise Refusal(f"op must be one of {', '.join(OPS)}")
     key = run.parse(edit.address)
@@ -204,11 +289,14 @@ def plan(run: Any, edit: Edit, consumer: Any) -> Plan:
 
 
 def _chain(run: Any, p: Plan, *, bounds: bool, overrides: dict[str, Any] | None = None,
-           skip: bool = False, tokens: dict[int, int] | None = None) -> list[RowModel]:
+           skip: bool = False, tokens: dict[int, int] | None = None,
+           cell: Any = None) -> list[RowModel]:
     """Row models for rows ``p.row .. p.consumer_row``. Stops at or before the cursor are taken
     as captured, except (``skip``) the ones the edit reaches; row ``j > p.row`` reads the cache
     rows ``p.row..j-1`` from the chain and its token from the prompt, from ``tokens`` or from the
-    chain's argmax of row ``j - 1``."""
+    chain's argmax of row ``j - 1``. ``cell(layer, kind, value, spread)`` rewrites the cache
+    rows ``0..p.row-1`` every row reads (a state-cell edit; the first row then reads them
+    through it too)."""
     torch = _torch()
     models: list[RowModel] = []
     here = p.here
@@ -228,7 +316,10 @@ def _chain(run: Any, p: Plan, *, bounds: bool, overrides: dict[str, Any] | None 
 
         def past(layer: int, kind: str, earlier=earlier) -> tuple[Any, Any]:
             base = f64(run.read_cache(layer, kind)[..., : p.row, :])[0]
-            parts, spreads = [base], [torch.zeros_like(base)]
+            spread0 = torch.zeros_like(base)
+            if cell is not None:
+                base, spread0 = cell(layer, kind, base, spread0)
+            parts, spreads = [base], [spread0]
             for model in earlier:
                 name = f"L{layer}.kr" if kind == "k" else f"L{layer}.v"
                 value, spread = model.get(name), model.bound(name)
@@ -255,7 +346,8 @@ def _chain(run: Any, p: Plan, *, bounds: bool, overrides: dict[str, Any] | None 
         first = j == p.row
         models.append(RowModel(run, j, known_for(j), bounds=bounds,
                                overrides=(overrides or {}) if first else None,
-                               past=None if first else past, token=None if first else token))
+                               past=None if first and cell is None else past,
+                               token=None if first else token))
     return models
 
 
@@ -323,9 +415,106 @@ def _edits_on_path(run: Any, p: Plan) -> str | None:
     return None
 
 
+def _cell_edit(edit: Edit, value: Any = None) -> Any:
+    """``edit`` as the engine's ``CellEdit`` (``value`` replaces its value when given)."""
+    from mdb.engine.edits import CellEdit
+
+    cell = edit.cell
+    return CellEdit(int(cell["layer"]), cell["tensor"], tuple(cell["rows"]),
+                    edit.value if value is None else value, edit.op, kv=cell.get("kv"),
+                    d=cell.get("d"), dose=edit.dose, selection=edit.selection,
+                    origin=edit.origin)
+
+
+def _cell_writer(edit: Edit, written: Any, mode: str) -> Any:
+    """``_chain``'s ``cell`` for a state-cell edit, on the cache rows ``0..row-1`` it reads.
+    ``written`` is the whole cache tensor with the block the engine writes. ``mode``:
+    ``ideal`` the float64 request on the selected block, its distance to the written block
+    added to the spread; ``written`` the written block itself; ``tangent`` the unedited rows
+    with the displacement ``ideal - base`` as forward-mode tangent (no spread)."""
+    import torch.autograd.forward_ad as fwad
+
+    torch = _torch()
+    request = _cell_edit(edit)
+
+    def write(layer: int, kind: str, value: Any, spread: Any) -> tuple[Any, Any]:
+        if (layer, kind) != (request.layer, request.tensor):
+            return value, spread
+        x = value.unsqueeze(0)
+        index = request.index(x.shape)
+        ideal = request.ideal(x[index])
+        actual = f64(written[..., : x.shape[2], :])[index]
+        if mode == "tangent":
+            direction = torch.zeros_like(x)
+            direction[index] = ideal - x[index]
+            return fwad.make_dual(value, direction[0]), None
+        out = x.clone()
+        out[index] = ideal if mode == "ideal" else actual
+        if spread is None:
+            return out[0], None
+        grown = spread.unsqueeze(0).clone()
+        if mode == "ideal":
+            grown[index] = grown[index] + (ideal - actual).abs()
+        return out[0], grown[0]
+
+    return write
+
+
+def _written_cell(run: Any, edit: Edit) -> Any:
+    """The cache tensor at the cursor with the block the cell edit writes, by the engine's own
+    arithmetic (``CellEdit.realise``, the code the native layer call runs)."""
+    request = _cell_edit(edit)
+    return request.realise(run.read_cache(request.layer, request.tensor))[0]
+
+
+def _predict_cell(run: Any, p: Plan, edit: Edit) -> dict[str, Any]:
+    """The prediction of a state-cell edit (``base``, ``exact`` and bounds, ``linear``), or
+    ``reason``: the chain from the first affected row with the cell written into the cache rows
+    every row reads."""
+    torch = _torch()
+    if p.row > p.here[0]:
+        return {"reason": f"the first read of {edit.address} is t{p.row}.{p.label}, in a row "
+                          f"that has not started at the cursor {run.where}: none of its "
+                          "operands exist yet"}
+    conflict = _edits_on_path(run, p)
+    if conflict is not None:
+        return {"reason": conflict}
+    written = _written_cell(run, edit)
+    base_chain = _chain(run, p, bounds=True)
+    edited = _chain(run, p, bounds=True, skip=True, cell=_cell_writer(edit, written, "ideal"))
+    base, base_bound = _consumer_value(p, base_chain[-1])
+    value, bound = _consumer_value(p, edited[-1])
+    out: dict[str, Any] = {
+        "base": base, "base_bound": base_bound, "exact": value - base,
+        "exact_bound": None if bound is None or base_bound is None else bound + base_bound,
+        "edit_shape": None, "written": written, "operands": base_chain + edited,
+        "unbounded": _unbounded(p, edited[-1], base_chain[-1]),
+        "premises": set().union(*(m.premises for m in base_chain + edited)),
+    }
+    tokens = _sampled_tokens(p, base_chain, run)
+    flipped = {j: (t, e) for (j, t), e in zip(tokens.items(),
+                                              _sampled_tokens(p, edited, run).values())
+               if t != e}
+    if flipped:
+        j, (was, now) = next(iter(flipped.items()))
+        out["linear_reason"] = (f"the edit flips the sampled token of t{j} ({was} -> {now}): "
+                                "the first-order term does not cross a token change")
+        return out
+    import torch.autograd.forward_ad as fwad
+
+    with torch.inference_mode(False), fwad.dual_level():
+        dual = _chain(run, p, bounds=False, skip=True, tokens=tokens,
+                      cell=_cell_writer(edit, written, "tangent"))
+        primal, tangent = fwad.unpack_dual(_consumer_value(p, dual[-1])[0])
+        out["linear"] = (torch.zeros_like(primal) if tangent is None else tangent).detach().clone()
+    return out
+
+
 def _predict(run: Any, p: Plan, edit: Edit) -> dict[str, Any]:
     """The prediction's tensors (``base``, ``exact`` and bounds, ``linear``), or ``reason``."""
     torch = _torch()
+    if edit.cell is not None:
+        return _predict_cell(run, p, edit)
     if p.row > p.here[0]:
         return {"reason": f"the edit site t{p.row}.{p.label} is in a row that has not started at "
                           f"the cursor {run.where}: none of its operands exist yet"}
@@ -371,7 +560,19 @@ def _predict(run: Any, p: Plan, edit: Edit) -> dict[str, Any]:
 # --------------------------------------------------------------------------- measurement
 
 
-def _guard(run: Any, checkpoint: dict[str, Any]) -> None:
+def stage(run: Any, edit: Edit) -> dict[str, Any]:
+    """Stage ``edit`` on ``run`` at the cursor (``Run.set`` at its port, or ``Run.set_cell`` for
+    a state-cell edit); returns the engine's manifest."""
+    if edit.cell is None:
+        return run.set(edit.address, edit.value, edit.op, mask=edit.mask,
+                       selection=edit.selection)
+    cell = edit.cell
+    return run.set_cell(int(cell["layer"]), cell["tensor"], edit.value, edit.op,
+                        rows=cell["rows"], kv=cell.get("kv"), d=cell.get("d"), dose=edit.dose,
+                        selection=edit.selection, origin=edit.origin)
+
+
+def guard(run: Any, checkpoint: dict[str, Any]) -> None:
     """Hold every edit tensor the checkpoint names so ``restore`` can rebuild it; refuse, before
     anything native runs, a checkpoint naming a tensor this run does not hold."""
     held = run.edit_tensors()
@@ -386,9 +587,45 @@ def _guard(run: Any, checkpoint: dict[str, Any]) -> None:
     run.hold(held)
 
 
+def _measure_cell(run: Any, p: Plan, edit: Edit, checkpoint: dict[str, Any]) -> dict[str, Any]:
+    """``_measure`` of a state-cell edit: staged at ``p.stage_at``; ``realised`` is the cache
+    tensor the native layer call wrote, read back at the consumer."""
+    layer, tensor = int(edit.cell["layer"]), edit.cell["tensor"]
+    out: dict[str, Any] = {"moves": []}
+    try:
+        if p.mode == "pending":
+            run.until(p.consumer_stop)
+            out["moves"].append(f"until {p.consumer_stop}")
+        out["base"] = run.read(p.consumer_stop).clone()
+        out["base_info"] = run.read_info(p.consumer_stop)
+        if p.mode == "pending":
+            run.restore(checkpoint)
+            out["moves"].append(f"restore {checkpoint['where']}")
+        else:
+            while run.parse(run.where) >= run.parse(p.stage_at):
+                run.reverse_step("layer")
+            out["moves"].append(f"reverse-step layer to {run.where}")
+            if run.where != p.stage_at:
+                run.until(p.stage_at)
+                out["moves"].append(f"until {p.stage_at}")
+        stage(run, edit)
+        out["moves"].append(f"set {edit.address} at {run.where}")
+        run.until(p.consumer_stop)
+        out["moves"].append(f"until {p.consumer_stop}")
+        out["edited"] = run.read(p.consumer_stop).clone()
+        out["edited_info"] = run.read_info(p.consumer_stop)
+        out["realised"] = run.read_cache(layer, tensor, staged=False).clone()
+    finally:
+        run.restore(checkpoint, defer_interrupt=True)
+    out["moves"].append(f"restore {checkpoint['where']}")
+    return out
+
+
 def _measure(run: Any, p: Plan, edit: Edit, checkpoint: dict[str, Any]) -> dict[str, Any]:
     """Native consumer values without and with the edit, the value the edit wrote, and the
     native-call trail; restores ``checkpoint`` whatever happens."""
+    if edit.cell is not None:
+        return _measure_cell(run, p, edit, checkpoint)
     layer = _split(p.label)[0]
     entry = f"t{p.row}.L{layer}.h"
     out: dict[str, Any] = {"moves": []}
@@ -465,6 +702,16 @@ def _edit_view(run: Any, p: Plan, edit: Edit) -> dict[str, Any]:
     torch = _torch()
     out: dict[str, Any] = {"address": p.edit_stop, "row": p.row, "layer": _split(p.label)[0],
                            "port": _split(p.label)[1], "op": edit.op}
+    if edit.cell is not None:
+        cell = edit.cell
+        out.update(address=edit.address, layer=int(cell["layer"]),
+                   port=f"cache.L{cell['layer']}.{cell['tensor']}",
+                   cell={key: cell.get(key) for key in ("layer", "tensor", "rows", "kv", "d")},
+                   stage_at=p.stage_at, first_read=p.edit_stop)
+        if edit.dose is not None:
+            out["dose"] = num(float(edit.dose), SUPPLIED)
+        if edit.origin is not None:
+            out["origin"] = dict(edit.origin)
     if isinstance(edit.value, torch.Tensor):
         out.update(sha256=tensor_digest(edit.value.contiguous()),
                    shape=list(edit.value.shape))
@@ -520,7 +767,7 @@ def whatif(run: Any, edit: Edit, consumer: Any) -> WhatIf:
     p = plan(run, edit, consumer)
     before = state_digest(run)
     checkpoint = run.checkpoint()
-    _guard(run, checkpoint)
+    guard(run, checkpoint)
     try:
         found = _predict(run, p, edit)
     except Refusal as error:
@@ -554,7 +801,7 @@ def whatif(run: Any, edit: Edit, consumer: Any) -> WhatIf:
                              "(P14)"},
         "operands": [] if reason else _operands(run, found["operands"]),
     }
-    record = seal_record(session_id=_session_id(run), kind="whatif",
+    record = seal_record(session_id=run_session_id(run), kind="whatif",
                          model_identity=run.adapter.model_identity,
                          execution=dict(run.adapter.execution),
                          authority=LOCAL if reason is None else SUPPLIED, body=body)
@@ -577,11 +824,15 @@ def whatif(run: Any, edit: Edit, consumer: Any) -> WhatIf:
     tensors = {"native_base": native["base"], "native_edited": native["edited"],
                "realised": native["realised"], "native_delta": change}
     if reason is None:
-        shape = found["edit_shape"]
-        realised = f64(native["realised"]).reshape(shape)
-        chain = _chain(run, p, bounds=True, skip=True,
-                       overrides={p.label: lambda value, bound: (realised,
-                                                                 torch.zeros_like(realised))})
+        if edit.cell is not None:
+            chain = _chain(run, p, bounds=True, skip=True,
+                           cell=_cell_writer(edit, native["realised"], "written"))
+        else:
+            shape = found["edit_shape"]
+            realised = f64(native["realised"]).reshape(shape)
+            chain = _chain(run, p, bounds=True, skip=True,
+                           overrides={p.label: lambda value, bound: (realised,
+                                                                     torch.zeros_like(realised))})
         value, bound = _consumer_value(p, chain[-1])
         at_realised = value - found["base"]
         spread = None if bound is None or found["base_bound"] is None else (
@@ -621,5 +872,7 @@ def whatif(run: Any, edit: Edit, consumer: Any) -> WhatIf:
     return WhatIf(report, record, tensors)
 
 
-__all__ = ["OPS", "WHATIF", "Edit", "Plan", "WhatIf", "affected", "plan", "state_digest",
-           "whatif"]
+_guard = guard  # old private name, kept for one commit
+
+__all__ = ["CELL_OPS", "OPS", "WHATIF", "Edit", "Plan", "WhatIf", "affected", "cell_plan",
+           "guard", "plan", "stage", "state_digest", "whatif"]

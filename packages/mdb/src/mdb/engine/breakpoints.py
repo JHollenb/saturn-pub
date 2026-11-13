@@ -607,7 +607,13 @@ def _selected_mask(shape: tuple[int, ...] | None, selection: Selection | None) -
 def _unedited(run: Any, port: str | None) -> bool:
     """No edit anywhere in the run (the label is then measured without asking the engine).
     ``s`` is a replica port: it is always labelled by the engine."""
-    return port != "s" and not run.edits and not run.committed_edits()
+    return (port != "s" and not run.edits and not run.committed_edits()
+            and not getattr(run, "cells", None) and not _committed_cells(run))
+
+
+def _committed_cells(run: Any) -> list[dict[str, Any]]:
+    found = getattr(run, "committed_cells", None)
+    return found() if found is not None else []
 
 
 def provenance(run: Any, address: str, selection: Selection | None = None) -> dict[str, Any]:
@@ -634,8 +640,8 @@ def provenance(run: Any, address: str, selection: Selection | None = None) -> di
     out: dict[str, Any] = {
         "authority": info["authority"], "edited": bool(info["edited"]), "kind": info["kind"],
         "by": info["by"], "ops": list(info.get("ops") or []),
-        "under_edits": [{"address": f"t{u['row']}.L{u['layer']}.{u['port']}", "op": u["op"],
-                         "staged": bool(u["staged"])} for u in ups[:UNDER_SHOWN]],
+        "under_edits": [{"address": u.get("cell") or f"t{u['row']}.L{u['layer']}.{u['port']}",
+                         "op": u["op"], "staged": bool(u["staged"])} for u in ups[:UNDER_SHOWN]],
         "under_edits_total": len(ups),
         "replica_equal": info.get("replica_equal"), "max_abs_diff": info.get("max_abs_diff"),
         "replica_checked": info.get("replica_checked"), "port": port, "state": info["state"], "reason": info["reason"],
@@ -691,11 +697,58 @@ def cell_provenance(
         return False
 
     ups = [e for e in run.committed_edits() if reaches(e)]
-    return {"authority": "measured", "edited": False, "kind": "native", "by": None, "ops": [],
-            "under_edits": [{"address": f"t{e['row']}.L{e['layer']}.{e['port']}",
-                             "op": e["op"], "staged": False} for e in ups[:UNDER_SHOWN]],
-            "under_edits_total": len(ups), "replica_equal": None, "max_abs_diff": None,
-            "state": "resolved", "reason": None}
+    out = {"authority": "measured", "edited": False, "kind": "native", "by": None, "ops": [],
+           "under_edits": [{"address": f"t{e['row']}.L{e['layer']}.{e['port']}",
+                            "op": e["op"], "staged": False} for e in ups[:UNDER_SHOWN]],
+           "under_edits_total": len(ups), "replica_equal": None, "max_abs_diff": None,
+           "state": "resolved", "reason": None}
+    if tensor is not None:
+        out.update(_cell_writes(run, layer, tensor, selection))
+    return out
+
+
+def _cell_writes(run: Any, layer: int, tensor: str, selection: Selection | None
+                 ) -> dict[str, Any]:
+    """The label of a cell read under the state-cell edits that wrote it (committed, then
+    staged, in order): ``supplied`` when every selected element's last write is an exact copy
+    of a supplied value (``replace``, ``mix 1``), ``derived-exact`` when any selected element
+    was written otherwise; nothing when no cell edit wrote a selected element."""
+    from .edits import CellEdit
+
+    staged = getattr(run, "staged_cells", None)
+    writes = [*_committed_cells(run), *(staged() if staged is not None else [])]
+    writes = [w for w in writes if (w["cell"]["layer"], w["cell"]["tensor"]) == (layer, tensor)]
+    if not writes:
+        return {}
+    shape = tuple(run.read_cache(layer, tensor).shape)
+    chosen = _selected_mask(shape, selection)
+    chosen = torch.ones(shape, dtype=torch.bool) if chosen is None else chosen
+    touched = torch.zeros(shape, dtype=torch.bool)
+    copied = torch.zeros(shape, dtype=torch.bool)
+    ops = []
+    for write in writes:
+        cell = write["cell"]
+        rows = [r for r in cell["rows"] if r < shape[2]]
+        if not rows:
+            continue
+        edit = CellEdit(layer, tensor, tuple(rows), 0.0, "add", kv=cell["kv"], d=cell["d"])
+        cover = edit.mask(shape)
+        if not bool((cover & chosen).any()):
+            continue
+        ops.append(write["op"])
+        touched |= cover
+        exact = write["op"] == "replace" or (write["op"] == "mix" and write.get("dose") == 1.0)
+        copied = (copied | cover) if exact else (copied & ~cover)
+    if not bool((touched & chosen).any()):
+        return {}
+    supplied = bool((copied | ~chosen).all())
+    out: dict[str, Any] = {"authority": "supplied" if supplied else "derived-exact",
+                           "edited": True, "kind": "edit", "by": f"cache.L{layer}.{tensor}",
+                           "ops": ops}
+    written, total = int((touched & chosen).sum()), int(chosen.sum())
+    if written < total:
+        out["mixed"] = {"written": written, "untouched": total - written}
+    return out
 
 
 # --------------------------------------------------------------------------- table

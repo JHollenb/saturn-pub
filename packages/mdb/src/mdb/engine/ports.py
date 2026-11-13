@@ -812,6 +812,7 @@ class PortController:
         edits: Sequence[PortEdit] = (),
         capture: bool | Iterable[str] = True,
         layers: int | None = None,
+        cells: Sequence[Any] = (),
     ):
         self.program = program
         self.layer = layer
@@ -825,6 +826,11 @@ class PortController:
         self.edits = tuple(edits)
         if self.edits and layer is None:
             raise ValueError("edits need an explicit layer")
+        self.cells = tuple(cells)  # engine.edits.CellEdit, realised in this layer's call
+        if self.cells and layer is None:
+            raise ValueError("cell edits need an explicit layer")
+        self.cell_records: dict[int, dict[str, Any]] = {}
+        self._adapter: Any = None
         self._edits_at: dict[str, list[PortEdit]] = {}
         for edit in self.edits:
             spec = program.spec(edit.port)
@@ -864,17 +870,17 @@ class PortController:
     def begin(self) -> None:
         """Start of one transition (probe or commit): forget what an earlier one recorded."""
         self._realised, self._seen_layer, self._installed_now = [], None, False
-        self.fired = {}
+        self.fired, self.cell_records = {}, {}
 
     def _carries(self) -> bool:
-        return self.layer is not None and bool(self._edits_at or self.stop)
+        return self.layer is not None and bool(self._edits_at or self.stop or self.cells)
 
     def check_ahead(self, ahead: Sequence[Any]) -> None:
         """Before a multi-step ``continue_``: refuse when the controller carries edits (or a
         stop) for a layer that none of the coming transitions runs (``ahead`` is the adapter's
         ``ports_ahead``), so nothing is silently dropped."""
         if self._carries() and self.layer not in ahead:
-            what = "edits" if self._edits_at else "a stop"
+            what = "edits" if self._edits_at or self.cells else "a stop"
             raise ValueError(
                 f"port controller carries {what} for layer {self.layer} but the coming "
                 f"transition(s) run {self._ahead_text(ahead)}; nothing was run"
@@ -900,7 +906,8 @@ class PortController:
     def _missing(self) -> list[str]:
         if self._seen_layer is None or self._seen_layer != self.layer:
             return []
-        return sorted(set(self._edits_at) - {r["port"] for r in self._realised})
+        cells = [cell.text for i, cell in enumerate(self.cells) if i not in self.cell_records]
+        return sorted(set(self._edits_at) - {r["port"] for r in self._realised}) + cells
 
     def unfired_before_stop(self) -> list[str]:
         """Edited ports at or before the stop port whose edit did not fire (stop probes only)."""
@@ -908,11 +915,13 @@ class PortController:
             return []
         limit = self.program.index(self.stop)
         done = {r["port"] for r in self._realised}
+        cells = [cell.text for i, cell in enumerate(self.cells)
+                 if cell.timing == "before" and i not in self.cell_records]
         return sorted(
             port
             for port in self._edits_at
             if self.program.index(port) <= limit and port not in done
-        )
+        ) + cells
 
     def manifest(self) -> list[dict[str, Any]] | None:
         """Edits whose hooks fired in the transition that just ran; consumed once.
@@ -963,9 +972,10 @@ class PortController:
         self.captures, self.originals, self.order, self.checks = {}, {}, [], {}
         self.edited_captures, self.capture_notes, self.replica_verified = {}, {}, None
         self.replica_max_abs_diff = None
-        self.realisation, self.fired = None, {}
+        self.realisation, self.fired, self.cell_records = None, {}, {}
         self._realised, self._live = [], {}
         self._layer_index = layer_index
+        self._adapter = adapter
         self._local.depth = 0
         attention = layer_module.self_attn
         handles = self._register(layer_module)
@@ -1017,6 +1027,10 @@ class PortController:
             # entry counter first, exit counter (always called) last: hooks and the eager
             # interceptor act only on the outermost entry of the layer.
             handles.append(layer.register_forward_pre_hook(self._enter))
+            if self.cells:
+                handles.append(
+                    layer.register_forward_pre_hook(self._cells_before, with_kwargs=True)
+                )
             for port in self.program.ports:
                 if port.hook not in {"pre", "out"}:
                     continue
@@ -1028,6 +1042,8 @@ class PortController:
                 else:
                     hook = module.register_forward_hook(self._out(port.name))
                 handles.append(hook)
+            if self.cells:  # not always_call: an interrupted call realises no "after" cell
+                handles.append(layer.register_forward_hook(self._cells_after, with_kwargs=True))
             handles.append(layer.register_forward_hook(self._exit, always_call=True))
         except Exception:
             for handle in handles:
@@ -1040,6 +1056,37 @@ class PortController:
 
     def _exit(self, module: Any, args: tuple[Any, ...], output: Any) -> None:
         self._local.depth = max(getattr(self._local, "depth", 0) - 1, 0)
+
+    def _write_cells(self, kwargs: dict[str, Any], timing: str) -> None:
+        """Realise the ``timing`` cell edits into the cache object the native layer was handed
+        (copy-on-write: each written layer tensor is replaced by an edited copy)."""
+        if not self._engaged():
+            return
+        cache = kwargs.get(self._adapter.spec.cache_kwarg)
+        if cache is None:
+            raise ValueError("the layer call carries no key/value cache to edit")
+        for index, cell in enumerate(self.cells):
+            if cell.timing != timing or index in self.cell_records:
+                continue
+            if cell.layer >= len(cache.layers):
+                raise ValueError(f"{cell.port}: the cache holds no layer {cell.layer}")
+            slot = cache.layers[cell.layer]
+            name = "keys" if cell.tensor == "k" else "values"
+            current = getattr(slot, name, None)
+            if current is None:
+                raise ValueError(f"{cell.port} holds no rows yet")
+            written, record = cell.realise(current)
+            setattr(slot, name, written)
+            self.cell_records[index] = {**record, "realised_timing": timing,
+                                        "realised_in_layer": self._layer_index}
+
+    def _cells_before(self, module: Any, args: tuple[Any, ...], kwargs: dict[str, Any]) -> None:
+        self._write_cells(kwargs, "before")
+
+    def _cells_after(
+        self, module: Any, args: tuple[Any, ...], kwargs: dict[str, Any], output: Any
+    ) -> None:
+        self._write_cells(kwargs, "after")
 
     def _engaged(self) -> bool:
         """True only inside this controller's own transition, in the calling thread, at the

@@ -7,6 +7,12 @@ multi-edit form of the measurement step of ``propagate.whatif`` and refuses what
 (an edit that is not a layer port, a consumer that is not downstream, a rewind that would drop
 staged or later committed edits).
 
+State-cell edits (``Edit.cell``) are staged where ``propagate.cell_plan`` puts them (at the
+cursor when the consumer is ahead, else at the entry of the consumer row's cell layer); a set
+that would rewind past a cell staged at the cursor is refused. Two cell edits conflict in A+B
+when they write overlapping elements of one cache tensor with ops that do not commute (``mix``
+never commutes).
+
 ``compare(run, a, b, consumer)``: a side is a list of edits (``propagate.Edit``; applied on the
 current session) or a checkpoint (an in-memory ``Run.checkpoint()`` dict, or a ``Run``
 replayed from a durable recipe). The consumer is measured at ``base`` (the current session), at
@@ -23,7 +29,7 @@ from typing import Any
 
 from .finite import MEASURED, f64
 from .forecast import Logit, Margin, Refusal
-from .propagate import Edit, plan, state_digest
+from .propagate import Edit, plan, stage, state_digest
 from .reads import claim
 
 
@@ -96,24 +102,46 @@ def _layer_key(run: Any, edit: Edit) -> tuple[int, int]:
     return row, layer
 
 
+def _stage_key(run: Any, edit: Edit, p: Any) -> tuple[int, int]:
+    """The order key of where an edit is staged: a cell at its plan's ``stage_at``, a port edit
+    in its layer (keyed by the layer's entry; a pending layer is staged at the cursor)."""
+    if edit.cell is not None:
+        return run.parse(p.stage_at)
+    row, layer = _layer_key(run, edit)
+    return run.parse(f"t{row}.L{layer}.h")
+
+
 def measure(run: Any, edits: list[Edit], consumer: Any) -> dict[str, Any]:
     """The consumer measured natively with every edit in ``edits`` applied (none: the base);
     the session is restored and checked unchanged. Returns ``value`` (float64), ``authority``,
     ``moves``."""
     plans = [plan(run, edit, consumer) for edit in edits]
     consumer_stop(run, consumer)
+    keys = [_stage_key(run, edit, p) for edit, p in zip(edits, plans)]
+    rewind = any(p.mode == "rewind" for p in plans)
+    if rewind and any(e.cell is not None and p.mode == "pending" for e, p in zip(edits, plans)):
+        raise Refusal("this set mixes a cell edit staged at the cursor with an edit that needs "
+                      "stepping back: the cell would be staged earlier than at the cursor")
     before = state_digest(run)
     checkpoint = run.checkpoint()
     _guard(run, [checkpoint])
     moves: list[str] = []
     try:
-        if any(p.mode == "rewind" for p in plans):
-            first = min(_layer_key(run, edit) for edit in edits)
-            entry = run.parse(f"t{first[0]}.L{first[1]}.h")
+        if rewind:
+            entry = min(keys)
             while run.parse(run.where) >= entry:
                 run.reverse_step("layer")
             moves.append(f"reverse-step layer to {run.where}")
-        for edit in sorted(edits, key=lambda e: _layer_key(run, e)):
+        order = sorted(range(len(edits)), key=lambda i: keys[i])
+        for i in order:
+            edit = edits[i]
+            if edit.cell is not None:
+                if run.parse(run.where) != keys[i]:
+                    run.until(run.address(keys[i]))
+                    moves.append(f"until {run.where}")
+                stage(run, edit)
+                moves.append(f"set {edit.address}")
+                continue
             row, layer = _layer_key(run, edit)
             status = run.status()
             here = run.parse(run.where)
@@ -184,14 +212,25 @@ def _side(run: Any, side: Side, consumer: Any) -> dict[str, Any]:
 
 def _commute(x: Edit, y: Edit) -> bool:
     """Whether applying ``x`` then ``y`` at one port equals ``y`` then ``x`` (real arithmetic):
-    two adds, two scales, or two replaces with the same scalar value."""
+    two adds, two scales, or two replaces with the same scalar value (a ``mix`` never)."""
     if x.op == y.op and x.op in ("add", "scale"):
         return True
     return (x.op == y.op == "replace" and not hasattr(x.value, "shape")
             and not hasattr(y.value, "shape") and float(x.value) == float(y.value))
 
 
+def _cell_overlap(x: Edit, y: Edit) -> bool:
+    """Whether two cell edits write a common element of one cache tensor."""
+    a, b = x.cell, y.cell
+    if (a["layer"], a["tensor"]) != (b["layer"], b["tensor"]):
+        return False
+    return all(a.get(key) is None or b.get(key) is None or set(a[key]) & set(b[key])
+               for key in ("rows", "kv", "d"))
+
+
 def _overlap(x: Edit, y: Edit) -> bool:
+    if x.cell is not None or y.cell is not None:
+        return x.cell is not None and y.cell is not None and _cell_overlap(x, y)
     if x.mask is None or y.mask is None:
         return True
     import torch
@@ -203,7 +242,8 @@ def _order_conflict(a: list[Edit], b: list[Edit]) -> str | None:
     """Why A+B is order-dependent (same port, overlapping masks, ops that do not commute)."""
     for x in a:
         for y in b:
-            if x.address == y.address and _overlap(x, y) and not _commute(x, y):
+            same = (x.cell is not None and y.cell is not None) or x.address == y.address
+            if same and _overlap(x, y) and not _commute(x, y):
                 return (f"A and B both edit {x.address} on overlapping elements with ops that "
                         f"do not commute ({x.op}, {y.op}): A+B depends on the order")
     return None

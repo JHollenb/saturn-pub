@@ -215,9 +215,15 @@ def _motion(result: dict[str, Any]) -> list[str]:
         lines.append(f"ignoring breakpoint {' '.join(map(str, result['ignored']['ids']))} "
                      f"{result['ignored']['count']} more time(s)")
     if "committed" in result:
-        lines.append(f"committed {result['committed']} edit(s)")
+        lines.append(f"committed {result['committed']} edit(s)"
+                     + (f" and {result['committed_cells']} cell edit(s)"
+                        if result.get("committed_cells") else ""))
     if result.get("op") == "abort":
-        lines.append(f"dropped {result.get('count', 0)} staged edit(s)")
+        lines.append(f"dropped {result.get('count', 0)} staged edit(s)"
+                     + (f" and {result['staged_cells']} cell edit(s)"
+                        if result.get("staged_cells") else ""))
+    if result.get("op") in ("start", "run") and result.get("run") not in (None, "main"):
+        lines.append(f"run {result['run']}")
     lines.append(stop_line(result["stop"]))
     if result.get("focus"):
         lines.append(f"focus {result['focus']}")
@@ -226,11 +232,17 @@ def _motion(result: dict[str, Any]) -> list[str]:
 
 
 def _edit(edit: dict[str, Any]) -> str:
+    op = edit["op"] + (f" {num(edit['dose'])}" if "dose" in edit else "")
     if edit["kind"] == "scalar":
-        text = f"{edit['port']} {edit['op']} {num(edit['value'])}"
+        text = f"{edit['port']} {op} {num(edit['value'])}"
     else:
-        text = (f"{edit['port']} {edit['op']} tensor {edit['shape']} {edit['dtype']} "
+        text = (f"{edit['port']} {op} tensor {edit['shape']} {edit['dtype']} "
                 f"sha256 {edit['sha256'][:12]}")
+    if edit.get("origin"):
+        origin = edit["origin"]
+        text += f" from {origin['origin']}:{origin['address'].split(':', 1)[-1]} ({origin['via']})"
+    if edit.get("cell"):
+        text += f" [{edit['cell']['timing']} the read]"
     if "realised_exact" in edit:
         if edit["realised_exact"]:
             text += " (realised exactly"
@@ -305,6 +317,11 @@ def _info(result: dict[str, Any]) -> list[str]:
         return lines + _more(result)
     if subject == "checkpoints":
         return _checkpoints(result["checkpoints"]) + _more(result)
+    if subject == "runs":
+        return [f"{'*' if r['current'] else ' '} {r['name']:<10}{r['where']}  "
+                f"{r['prompt_tokens']} tokens, staged {r['staged']}"
+                + (f" + {r['staged_cells']} cell(s)" if r["staged_cells"] else "")
+                for r in result["runs"]] + _more(result) or ["no runs"]
     lines = [f"staged at {result['where']}: " + (
         "; ".join(_edit(e) for e in result["staged"]) or "none")]
     for entry in result["committed"]:
@@ -312,6 +329,13 @@ def _info(result: dict[str, Any]) -> list[str]:
                 if entry.get("omitted") else "")
         lines.append(f"committed L{entry['layer']} (transition {entry['transition']}): "
                      + "; ".join(_edit(e) for e in entry["edits"]) + more)
+    cells = result.get("cells")
+    if cells:
+        for e in cells["staged"]:
+            lines.append(f"staged cell: {_edit(e)}")
+        for e in cells["committed"]:
+            lines.append(f"committed cell (t{e['row']} L{e['layer']} transition "
+                         f"{e['transition']}): {_edit(e)}")
     return lines + _more(result)
 
 
@@ -371,10 +395,14 @@ def _render(result: dict[str, Any]) -> str:
         more = "" if total == len(result["tokens"]) else f" (last {len(result['tokens'])})"
         lines.append(f"tokens{more}: {_token_text(result['tokens'])}")
         lines.append(f"staged edits: {result['staged']}"
+                     + (f" + {result['staged_cells']} cell edit(s)"
+                        if result.get("staged_cells") else "")
                      + (f", lookahead {result['lookahead']}" if result.get("lookahead") else ""))
         for port in result.get("computed_past_cursor", ()):
             lines.append(f"{port} was computed by the native call but is not held")
         return "\n".join(lines)
+    if name == "frame" and "run" in result:
+        return f"run {result['run']}\n" + stop_line(result["stop"])
     if name == "frame":
         lines = [f"focus {result['focus']}  (cursor {result['cursor']})"]
         if "frame" in result:
@@ -454,6 +482,16 @@ def _render(result: dict[str, Any]) -> str:
                 else f"Breakpoint {item['id']}: if {what}")
     if name == "display":
         return "\n".join(_displays(result)) or "no displays"
+    if name == "set" and "cell" in result:
+        cell = result["cell"]
+        lines = [f"staged cell {result['target']}: "
+                 + "; ".join(_edit(e) for e in result["edits"])
+                 + f"  ({result['staged_cells']} cell edit(s) staged)",
+                 f"  realised {cell['timing']} {cell['read']} reads it (boundary "
+                 f"{cell['boundary']}); reads already made are not recomputed"]
+        if "source" in result:
+            lines.append(f"  value from {result['source']}")
+        return "\n".join(lines)
     if name == "set":
         lines = [f"staged at {result['target']}: " + "; ".join(_edit(e) for e in result["edits"])
                  + f"  ({result['staged']} staged)"]
@@ -591,7 +629,8 @@ def _whatif_lines(result: dict[str, Any]) -> list[str]:
     value = (_claimed(edit["value"]) if "value" in edit
              else f"tensor {edit['sha256'][:12]}" + (f" from {edit['source']}"
                                                     if "source" in edit else ""))
-    where = edit["address"] + (f"[{edit['selection']}]" if "selection" in edit else "")
+    where = edit["address"] + (f"[{edit['selection']}]"
+                               if "selection" in edit and "cell" not in edit else "")
     lines = [f"whatif {where} {edit['op']} {value} -> {consumer['address']}  "
              f"(mode {result['mode']}, record {result['record'][:16]})"]
     prediction = result["prediction"]

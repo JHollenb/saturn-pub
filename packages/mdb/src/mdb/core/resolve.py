@@ -91,7 +91,7 @@ def _open(project, session):
     return project
 
 
-def _recipes_for(project, branch, current):
+def recipes_for(project, branch, current):
     """Recipe ids that stand for origin ``branch``: recipes indexed by session ``branch``, the
     recipe under its cursor, and the recipes of checkpoints named ``branch``."""
     found = []
@@ -124,7 +124,7 @@ def _target(pointer, occurrence, project, session):
                 wanted = index.get_record(project, current, cursor)["body"]["recipe"]
         return current, wanted, current is not None
     branch = origin.branch
-    candidates = _recipes_for(project, branch, current)
+    candidates = recipes_for(project, branch, current)
     if not candidates:
         raise _Refusal(f"address origin {branch}: is not the attached session "
                        f"{current!r} and the project holds no recipe for {branch!r}; it is "
@@ -276,3 +276,4 @@ def _replay(context):
 
 
 _TIER = {"live": _live, "blob": _blob, "cut": _cut, "replay": _replay}
+_recipes_for = recipes_for  # old private name, kept for one commit

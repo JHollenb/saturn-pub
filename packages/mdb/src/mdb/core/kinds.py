@@ -24,7 +24,8 @@ WHATIF = declare_kind(
     required=("schema", "edit", "consumer", "sealed_at", "mode", "prediction"),
     plain_numeric=("edit.row", "edit.layer", "edit.mask_count", "edit.shape", "consumer.row",
                    "consumer.index", "consumer.indices", "sealed_at.row", "sealed_at.index",
-                   "sealed_at.transition", "operands.*.shape"),
+                   "sealed_at.transition", "operands.*.shape", "edit.cell.**",
+                   "edit.origin.shape"),
 )
 
 CIRCUIT = declare_kind(

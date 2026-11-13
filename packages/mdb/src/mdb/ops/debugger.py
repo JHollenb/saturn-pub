@@ -11,6 +11,15 @@ boundary cut; ``dbg.restart("pre")`` (any later process) rebuilds that cursor wi
 fingerprint; ``dbg.export(run, "t3.L1.u")`` returns an occurrence pointer ``mdb.resolve``
 turns back into the tensor.
 
+Named runs: ``dbg.run(prompt, name="boiling")`` keeps one live run per name (``runs``; the
+default name is ``main``). A state-cell edit of one run can take its value from another:
+``cell_value("boiling:cache.L1.v[kv0,row=2]", run=target)`` (or ``boiling:t2.L1.v[kv0]``, the
+value row 2 wrote at ``v``; ``kr`` works too) resolves the origin as a live named run, else as a
+project session id or durable checkpoint name (restored from its stored cut, else replayed
+from the token ids), refuses another model identity, another numeric scope or a row the donor
+has not computed, and returns the selected block ``(1, kv, rows, d)`` with its pointer (names
+and digests, never the array).
+
 This module lives in ``mdb.ops`` (the lowest layer that may know the operation registry);
 ``mdb.attach`` / ``mdb.open_tiny`` / ``mdb.Debugger`` resolve here lazily.
 """
@@ -25,9 +34,18 @@ from saturn_pub.values import digest
 
 from mdb.core import index
 from mdb.core import recipe as recipes
-from mdb.core.address import AddressError, Origin, parse
+from mdb.core.address import (
+    DEFAULT_GLOBALS,
+    AddressError,
+    Occurrence,
+    Origin,
+    StateCell,
+    format_address,
+    parse,
+)
 from mdb.core.errors import Refused
 from mdb.core.pointers import RecordError, Unresolved, occurrence_pointer
+from mdb.engine.edits import CELL_AXES
 from mdb.engine.ports import PROGRAMS, program_for, tensor_digest
 from mdb.engine.run import ReplayMismatch, Run
 
@@ -50,6 +68,8 @@ class Debugger:
         self.project = project
         self.session_id = session_id
         self.live: Run | None = None
+        self.runs: dict[str, Run] = {}
+        self.run_checkpoints: dict[str, dict[str, Any]] = {}  # in-memory, of runs not shown
 
     @property
     def family(self) -> str:
@@ -94,19 +114,81 @@ class Debugger:
         *,
         retain_rows: int | None = None,
         lookahead: str | None = None,
+        name: str | None = None,
     ) -> Run:
         """Prefill all but the last token; the cursor starts where the ``start`` op leaves it,
         at ``t<last>.L0.<first port>`` (this is the one implementation of ``start``).
 
         ``lookahead`` (``"none"``, the engine default, or ``"layer"``) is passed to ``Run``.
+        ``name`` (a branch name, default ``main``) keeps the run in ``runs`` under that name,
+        replacing an earlier run of the same name; other values can then name it as an origin.
         """
+        name = run_name(name)
         options: dict[str, Any] = {"retain_rows": retain_rows}
         if lookahead is not None:
             options["lookahead"] = lookahead
         run = Run(self.adapter, self.tokens(prompt), **options)
         run.until(f"L0.{run.program.names[0]}")
+        run.name = name
+        self.runs[name] = run
         self.live = run
         return run
+
+    # --- values from another run ----------------------------------------------------------
+
+    def _donor(self, branch: str) -> tuple[Run, str, str | None]:
+        """``(run, via, recipe id)`` standing for origin ``branch``: the live run of that name
+        (``via`` ``live``), else the project's latest recipe for that session id or checkpoint
+        name, restored from its stored boundary cut (``cut``) or replayed from the token ids
+        (``replay``)."""
+        if branch in self.runs:
+            return self.runs[branch], "live", None
+        if self.project is None:
+            raise Refused(f"unknown origin {branch!r}: no run of that name (info runs) and no "
+                          "project to look a session or checkpoint up in")
+        from mdb.core.resolve import recipes_for
+
+        found = recipes_for(self.project, branch, self.session_id)
+        if not found:
+            raise Refused(f"unknown origin {branch!r}: no run of that name (info runs) and the "
+                          "project holds no session or checkpoint of that name")
+        recipe = recipes.load(self.project, found[-1])
+        recipes.check_binding(recipe, model_identity=self.adapter.model_identity,
+                              numeric_scope=self._numeric_scope())
+        checkpoint = recipes.to_checkpoint(recipe)
+        for session in self.project.sessions():
+            sid = session["session_id"]
+            if recipe["cut"] in self.project.cut_ids(sid):
+                root = self.project.load_cut(sid, recipe["cut"])
+                return (self._restored(checkpoint, recipe, self.project.store, root), "cut",
+                        recipe["fingerprint"])
+        return (self._restored(checkpoint, recipe, self.project.store), "replay",
+                recipe["fingerprint"])
+
+    def cell_value(self, text: str, *, run: Run) -> tuple[Any, dict[str, Any]]:
+        """The value ``ORIGIN:ADDR`` names, for a state-cell edit of ``run``: the selected
+        block ``(1, kv, rows, d)`` of a cache cell or of a ``v``/``kr`` occurrence of the run
+        ``ORIGIN`` stands for, and its pointer ``{origin, via, address, sha256, shape, dtype,
+        where, cut, recipe}``. Refuses (``Refused``) an unknown origin, another model identity
+        or numeric scope than ``run``'s, and a row the donor has not computed."""
+        try:
+            address = parse(text, ports=self.program.names, global_ports=DEFAULT_GLOBALS)
+        except AddressError as error:
+            raise Refused(f"bad value address {text!r}: {error}") from None
+        origin = address.origin
+        if origin is None or origin.branch is None:
+            raise Refused(f"{text!r} names no run: write ORIGIN:ADDR (a run name, a session id "
+                          "or a checkpoint name)")
+        if origin.edits:
+            raise Refused("an origin with edits (@cut+edit) is not a run; name a run")
+        donor, via, recipe = self._donor(origin.branch)
+        _same_binding(donor, run, origin.branch)
+        block = cell_block(donor, address, label=origin.branch)
+        pointer = {"origin": origin.branch, "via": via,
+                   "address": format_address(address), "sha256": tensor_digest(block),
+                   "shape": list(block.shape), "dtype": str(block.dtype).removeprefix("torch."),
+                   "where": donor.where, "cut": donor.checkpoint()["cut"], "recipe": recipe}
+        return block, pointer
 
     # --- durable checkpoints (project=) ---------------------------------------------------
 
@@ -276,6 +358,85 @@ class Debugger:
         from mdb.repl.shell import Shell  # sanctioned upward import: Debugger.repl convenience
 
         return Shell(self.ops(run), **options).loop()
+
+
+def run_name(name: str | None) -> str:
+    """A run name (default ``main``): a branch name, so ``NAME:ADDR`` can name a value of it."""
+    if name is None:
+        return "main"
+    try:
+        Origin(branch=name)
+    except AddressError as error:
+        raise Refused(f"run name {name!r} is not a branch name: {error}") from None
+    return name
+
+
+def _same_binding(donor: Run, run: Run, label: str) -> None:
+    """Refuse a donor run of another model identity or numeric scope, naming what differs."""
+    if donor.adapter.model_identity != run.adapter.model_identity:
+        raise Refused(f"{label}: another model (identity {str(donor.adapter.model_identity)[:16]}"
+                      f", this run {str(run.adapter.model_identity)[:16]})")
+    mine, theirs = run._numeric_scope(), donor._numeric_scope()
+    differing = sorted(k for k in set(mine) | set(theirs) if mine.get(k) != theirs.get(k))
+    if differing:
+        detail = ", ".join(f"{k}: {label} {theirs.get(k)!r}, this run {mine.get(k)!r}"
+                           for k in differing)
+        raise Refused(f"{label}: another numeric scope ({detail})")
+
+
+def cell_block(run: Run, address: Any, *, label: str | None = None) -> Any:
+    """The block ``(1, kv, rows, d)`` an address of ``run`` selects, for a state-cell value:
+    a cache cell ``cache.L<l>.k|v[kv,row,d]`` as the next read sees it, or the key (``kr``) or
+    value (``v``) row ``t<r>.L<l>`` wrote (one row; ``k`` is before RoPE and is refused)."""
+    from mdb.engine import breakpoints as bp
+
+    label = label or "this run"
+    head_dim = run.adapter.head_dim
+    if isinstance(address, StateCell):
+        if not 0 <= address.layer < run.adapter.layers:
+            raise Refused(f"{label}: no layer {address.layer}")
+        value = run.read_cache(address.layer, address.tensor)
+        row = None
+        keys = dict(address.selector.keys)
+        wanted = keys.get("row")
+        length = int(value.shape[2])
+        top = (wanted.stop - 1 if hasattr(wanted, "stop") else max(wanted.values)
+               if hasattr(wanted, "values") else wanted)
+        if top is not None and top >= length:
+            raise Refused(f"{label} has not computed row {top} of cache.L{address.layer}."
+                          f"{address.tensor} (it holds rows 0..{length - 1} at {run.where})")
+    elif isinstance(address, Occurrence) and address.layer is not None:
+        if address.port not in ("v", "kr"):
+            raise Refused(f"a cell value comes from a cache cell or a v/kr occurrence, not "
+                          f"{address.port}" + (" (k is before RoPE; the cache holds kr)"
+                                               if address.port in ("k", "kn") else ""))
+        target = f"t{address.token}.L{address.layer}.{address.port}"
+        try:
+            found = run.read(target)
+        except ValueError as error:
+            raise Refused(f"{label} has not computed {target}: {error}") from None
+        kv_heads = run.adapter.num_kv_heads
+        if address.port == "v":
+            value = found.reshape(1, 1, kv_heads, head_dim).transpose(1, 2)
+        else:
+            value = found[:, :, address.token:address.token + 1, :]
+        row = address.token
+    else:
+        raise Refused(f"a cell value is a cache cell or a v/kr occurrence, not "
+                      f"{format_address(address)}")
+    try:
+        picks = bp.plan(CELL_AXES, list(value.shape), address.selector, head_dim=head_dim,
+                        row=row)
+    except (bp.SelectionError, bp.SelectionRange) as error:
+        raise Refused(f"{label}: {error}") from None
+    import torch
+
+    out = value
+    for axis, pick in enumerate(picks):
+        if pick is not None:
+            out = out.index_select(axis, torch.tensor(list(pick), dtype=torch.long,
+                                                      device=out.device))
+    return out.detach().clone()
 
 
 def attach(

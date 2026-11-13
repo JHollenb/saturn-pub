@@ -23,6 +23,7 @@ then ``fn``, ``logits``, ``sample``; the commit after ``sample`` leads to the ne
 from __future__ import annotations
 
 import re
+from collections import OrderedDict
 from collections.abc import Sequence
 from dataclasses import dataclass
 from typing import Any
@@ -31,11 +32,13 @@ import torch
 from saturn_pub.core import Session, StateCut
 from saturn_pub.values import clone, digest
 
+from .edits import CELL_BOUNDARY, CellEdit, is_cell
 from .ports import PortController, PortEdit, check_deterministic, program_for, tensor_digest
 
 GLOBAL_STOPS = ("start", "emb", "fn", "logits", "sample")
 CHECKPOINT_SCHEMA = "mdb-engine-checkpoint-v1"
 LOOKAHEADS = ("none", "layer")
+_READ_CACHE = 2  # full-layer probes of committed, unedited layers kept for reads
 _ADDRESS = re.compile(r"(?:t(?P<row>\d+)\.)?(?P<rest>.+)")
 _LAYER_PORT = re.compile(r"L(?P<layer>\d+)\.(?P<port>\w+)")
 _SLOTS = {"start": "tokens", "logits": "logits", "sample": "sampled_token"}
@@ -60,6 +63,8 @@ class _Mark:
     transitions: int
     edits: tuple[PortEdit, ...] = ()
     fired: tuple[dict[str, Any], ...] = ()  # the receipt's port_edits for this layer transition
+    cells: tuple[CellEdit, ...] = ()  # state-cell edits realised in this layer transition
+    cell_fired: tuple[dict[str, Any], ...] = ()  # their realisation records, in order
 
 
 def _coverage(
@@ -85,6 +90,14 @@ def _coverage(
     return count, int(chosen.sum()), count > 0 and bool((replaced | ~chosen).all())
 
 
+def _cell_upstream(row: int, cell: CellEdit, staged: bool) -> dict[str, Any]:
+    """An ``upstream_edits`` entry for a state-cell edit: ``row`` of the transition that realises
+    it, the cell's ``layer``, ``port`` ``cache.L<l>.<k|v>``, ``op``, ``staged`` and ``cell`` (the
+    address with its selector)."""
+    return {"row": row, "layer": cell.layer, "port": cell.port, "op": cell.op, "staged": staged,
+            "cell": cell.text}
+
+
 class _Snapshot:
     """Everything one cursor move can change, so a move that is interrupted (``BaseException``,
     ``KeyboardInterrupt`` included) after the native session has moved puts the session back to
@@ -95,17 +108,22 @@ class _Snapshot:
     def __init__(self, run: Run):
         self.run = run
         self.trail = list(run._trail)
-        self.marks = [(mark, mark.cut, mark.edits, mark.fired) for mark in run._trail]
+        self.marks = [(mark, mark.cut, mark.edits, mark.fired, mark.cells, mark.cell_fired)
+                      for mark in run._trail]
         self.edits, self.port, self.cache = list(run._edits), run._port, run._cache
+        self.cells = list(run._cells)
         self.last = run._trail[-1]
         self.cut, self.fingerprint = self.last.cut, self.last.fingerprint
 
     def rollback(self) -> None:
         run = self.run
-        for mark, cut, edits, fired in self.marks:
+        for mark, cut, edits, fired, cells, cell_fired in self.marks:
             mark.cut, mark.edits, mark.fired = cut, edits, fired
+            mark.cells, mark.cell_fired = cells, cell_fired
         run._trail = list(self.trail)
         run._edits, run._port, run._cache = list(self.edits), self.port, self.cache
+        run._cells = list(self.cells)
+        run._drop_reads()
         for attempt in range(3):  # a second interrupt during the rollback is retried
             try:
                 if run.session.capture(retain=False).fingerprint != self.fingerprint:
@@ -126,7 +144,18 @@ class Run:
     ``root`` (persistence): start the run at a stored boundary cut of a run over the same
     ``tokens`` instead of prefilling them; ``root_transitions`` is the transition count that
     cut had in the run that stored it, so ``restore`` finds a checkpoint taken at that cut.
+
+    Read cache (reads of committed layers): a committed layer whose transition carried no port
+    edit and no cell edit is read from ONE full-layer probe of its boundary cut, kept for the
+    last ``_READ_CACHE`` such layers and keyed by (boundary cut fingerprint, layer): the probe is
+    a pure function of that cut, so an entry cannot go stale. A committed layer with edits or
+    cells keeps its per-port stop-probe, but on the Session hydrated from the same cut (one
+    held, keyed by fingerprint; ``Session.probe`` runs on a clone and leaves it unchanged).
+    Values are cloned out of the cache. Both are dropped on restore, reverse, prune (when a
+    cut is dropped), a rolled-back move and ``close``; ``cache_reads = False`` bypasses both.
     """
+
+    cache_reads = True
 
     def __init__(
         self,
@@ -153,6 +182,7 @@ class Run:
         check_deterministic(adapter.model)
         self.lookahead = lookahead
         self.adapter = adapter
+        self.name: str | None = None  # the debugger's name for this run (an origin of values)
         self.program = program_for(adapter)
         self.tokens = [int(token) for token in tokens]
         self.retain_rows = retain_rows
@@ -176,10 +206,13 @@ class Run:
         self._index = {label: index for index, label in enumerate(self._stops)}
         self._port: str | None = None
         self._edits: list[PortEdit] = []
+        self._cells: list[CellEdit] = []
         self._cache: PortController | None = None
         self._values: dict[str, torch.Tensor] = {}
         self._masks: dict[str, torch.Tensor] = {}
         self._trail: list[_Mark] = [self._mark(root_transitions)]
+        self._reads: OrderedDict[tuple[str, int], PortController] = OrderedDict()
+        self._hydrated: tuple[str, Session] | None = None
 
     # --- cursor -------------------------------------------------------------------------
 
@@ -222,6 +255,11 @@ class Run:
     @property
     def edits(self) -> list[dict[str, Any]]:
         return [edit.manifest() for edit in self._edits]
+
+    @property
+    def cells(self) -> list[dict[str, Any]]:
+        """Manifests of the staged state-cell edits (``CellEdit.manifest``), in staging order."""
+        return [cell.manifest() for cell in self._cells]
 
     @property
     def checks(self) -> dict[str, Any]:
@@ -315,23 +353,35 @@ class Run:
 
     # --- native motion ------------------------------------------------------------------
 
-    def _controller(self, layer: int, edits: Sequence[PortEdit], **options: Any) -> Any:
+    def _controller(
+        self, layer: int, edits: Sequence[PortEdit], cells: Sequence[CellEdit] = (),
+        **options: Any,
+    ) -> Any:
         return PortController(
-            self.program, layer, edits=tuple(edits), layers=self.adapter.layers, **options
+            self.program, layer, edits=tuple(edits), layers=self.adapter.layers,
+            cells=tuple(cells), **options,
         )
 
-    def _advance(self, session: Session, layer: int, edits: Sequence[PortEdit]) -> Any:
+    def _advance(
+        self, session: Session, layer: int, edits: Sequence[PortEdit],
+        cells: Sequence[CellEdit] = (),
+    ) -> tuple[Any, PortController | None]:
+        """One native transition (with the edits and cell edits for its layer); returns the
+        receipt and the controller that carried them (None when nothing was carried)."""
         check_deterministic(self.adapter.model)
-        if edits:
-            return session.continue_(1, ports=self._controller(layer, edits, capture=False))
-        return session.continue_(1)
+        if edits or cells:
+            controller = self._controller(layer, edits, cells, capture=False)
+            return session.continue_(1, ports=controller), controller
+        return session.continue_(1), None
 
     def _commit(self) -> Any:
         mark = self._trail[-1]
-        edits = tuple(self._edits) if mark.phase == "layer" else ()
+        layer = mark.phase == "layer"
+        edits = tuple(self._edits) if layer else ()
+        cells = tuple(self._cells) if layer else ()  # carried across non-layer transitions
         snapshot = _Snapshot(self)
         try:
-            receipt = self._advance(self.session, mark.layer, edits)
+            receipt, controller = self._advance(self.session, mark.layer, edits, cells)
             new = self._mark(mark.transitions + 1)
             fired = tuple(
                 dict(entry) for entry in receipt.to_dict()["transitions"][0].get("port_edits", ())
@@ -339,6 +389,11 @@ class Run:
             mark.edits = edits
             if edits:
                 mark.fired = fired
+            if cells:
+                mark.cells = cells
+                mark.cell_fired = tuple(dict(controller.cell_records[i])
+                                        for i in range(len(cells)))
+                self._cells = []
             self._edits, self._port, self._cache = [], None, None
             self._trail.append(new)
         except BaseException:
@@ -368,7 +423,7 @@ class Run:
         port = self._port if port is None else port
         if self.lookahead == "layer":
             if self._cache is None:
-                controller = self._controller(layer, self._edits)
+                controller = self._controller(layer, self._edits, self._cells)
                 if self._probe(self.session, controller)["stopped"]:
                     raise RuntimeError("full-layer probe stopped unexpectedly")
                 self._cache = controller
@@ -378,7 +433,7 @@ class Run:
         stop = self.program.spec(port).name
         if self._cache is None or self._cache.stop != stop:
             controller = self._controller(
-                layer, self._edits, stop=stop, capture=self._upto(stop)
+                layer, self._edits, self._cells, stop=stop, capture=self._upto(stop)
             )
             if not self._probe(self.session, controller)["stopped"]:
                 raise RuntimeError("stop-probe did not stop at its port")
@@ -453,14 +508,15 @@ class Run:
         return self.finish()
 
     def abort(self) -> str:
-        saved = (self._edits, self._cache)
-        self._edits = []
+        """Drop every staged edit, port and state-cell alike."""
+        saved = (self._edits, self._cells, self._cache)
+        self._edits, self._cells = [], []
         self._cache = None
         try:
             if self._port is not None:
                 self._ensure_cache()
         except BaseException:
-            self._edits, self._cache = saved  # a refused abort changes nothing
+            self._edits, self._cells, self._cache = saved  # a refused abort changes nothing
             raise
         return self.where
 
@@ -508,6 +564,10 @@ class Run:
             for e in mark.edits
             if id(e) not in skip
         ]
+        upstream += [_cell_upstream(mark.row, cell, False) for mark in committed
+                     for cell in mark.cells]
+        upstream += [_cell_upstream(context["row"], cell, staged)
+                     for cell in context.get("cells", ()) if cell.timing == "before"]
         info: dict[str, Any] = {
             "edited": False,
             "by": None,
@@ -529,6 +589,7 @@ class Run:
         if port is None and not boundary:
             return info
         index = names.index(port) if port is not None else len(names) - 1
+
         if port is not None:
             for e in sorted(edits, key=lambda e: names.index(spec(e.port).name)):
                 if names.index(spec(e.port).name) < index:
@@ -625,6 +686,42 @@ class Run:
         else:
             info["replica_checked"] = True
 
+    def _committed_probe(self, index: int, name: str) -> PortController:
+        """The probe that serves port ``name`` of the committed layer at trail mark ``index``:
+        the cached full-layer probe when that transition carried no edits and no cells (see the
+        class docstring), else a stop-probe with its edits and cells."""
+        past = self._trail[index]
+        if self.cache_reads and not past.edits and not past.cells:
+            key = (past.fingerprint, past.layer)
+            controller = self._reads.get(key)
+            if controller is not None:
+                self._reads.move_to_end(key)
+                return controller
+            controller = self._controller(past.layer, ())
+            if self._probe(self._session_at(index), controller)["stopped"]:
+                raise RuntimeError("full-layer probe stopped unexpectedly")
+            self._reads[key] = controller
+            while len(self._reads) > _READ_CACHE:
+                self._reads.popitem(last=False)
+            return controller
+        # a committed read is not bound by the cursor: stop after s (at p) so the replica
+        # check of s has run and its label can be resolved
+        stop = "p" if name == "s" else name
+        controller = self._controller(
+            past.layer, past.edits, past.cells, stop=stop, capture=(name,)
+        )
+        self._probe(self._session_at(index), controller)
+        return controller
+
+    def _drop_reads(self) -> None:
+        """Forget the read cache and the hydrated Session (see the class docstring)."""
+        self._reads = OrderedDict()
+        self._hydrated = None
+
+    def close(self) -> None:
+        """Release the read cache and the hydrated Session; the run stays usable."""
+        self._drop_reads()
+
     def _layer_mark(self, key: tuple[int, int]) -> tuple[int, str] | None:
         """(trail index, port) of a ``L<i>.<port>`` stop whose layer transition was committed."""
         match = _LAYER_PORT.fullmatch(self._stops[key[1]])
@@ -647,6 +744,7 @@ class Run:
         layer: int | None,
         *,
         boundary: bool,
+        cells: Sequence[CellEdit] = (),
     ) -> dict[str, Any]:
         """What ``_describe`` needs. ``boundary_edits`` are the ``h_out`` edits of the committed
         transition that produced this value (``L<i>.h_out`` and ``L<i+1>.h`` are one value)."""
@@ -661,6 +759,7 @@ class Run:
         return {
             "port": port, "edits": list(edits), "committed": list(committed), "staged": staged,
             "controller": controller, "row": row, "layer": layer, "boundary_edits": carried,
+            "cells": list(cells),
         }
 
     def _read(self, target: str | None) -> tuple[torch.Tensor, dict[str, Any]]:
@@ -673,7 +772,7 @@ class Run:
             controller = self._ensure_cache(self._port)
             context = self._context(
                 port, self._edits, self._trail[:-1], True, controller, mark.row, mark.layer,
-                boundary=False,
+                boundary=False, cells=self._cells,
             )
             return clone(controller.captures[port]), context
         for index in range(len(self._trail) - 1, -1, -1):
@@ -686,16 +785,12 @@ class Run:
         if located is not None:
             index, name = located
             past = self._trail[index]
-            # a committed read is not bound by the cursor: stop after s (at p) so the replica
-            # check of s has run and its label can be resolved
-            stop = "p" if name == "s" else name
-            controller = self._controller(past.layer, past.edits, stop=stop, capture=(name,))
-            self._probe(self._session_at(index), controller)
+            controller = self._committed_probe(index, name)
             context = self._context(
                 name, past.edits, self._trail[:index], False, controller, past.row, past.layer,
-                boundary=False,
+                boundary=False, cells=past.cells,
             )
-            return controller.captures[name], context
+            return clone(controller.captures[name]), context
         raise ValueError(f"{self.address(key)} is before the start of this run")
 
     def value(self) -> torch.Tensor:
@@ -847,14 +942,108 @@ class Run:
             records.append(record)
         return records
 
-    def read_cache(self, layer: int, kind: str) -> torch.Tensor:
+    def read_cache(self, layer: int, kind: str, *, staged: bool = True) -> torch.Tensor:
         """The key (``"k"``) or value (``"v"``) cache tensor of ``layer`` at the current boundary,
-        read straight from the state slot (no capture, no fingerprinting)."""
+        read straight from the state slot (no capture, no fingerprinting). ``staged`` (default):
+        with the staged state-cell edits on it written in staging order, as the next read of the
+        cell will see it (``False``: the state slot as committed)."""
         if kind not in ("k", "v"):
             raise ValueError("kind must be 'k' or 'v'")
         if type(layer) is not int or not 0 <= layer < self.adapter.layers:
             raise ValueError(f"layer must be in 0..{self.adapter.layers - 1}")
-        return self.session.read("keys" if kind == "k" else "values")[layer]
+        value = self.session.read("keys" if kind == "k" else "values")[layer]
+        if staged:
+            for cell in self._cells:
+                if cell.layer == layer and cell.tensor == kind:
+                    value = cell.realise(value)[0]
+        return value
+
+    def set_cell(
+        self,
+        layer: int,
+        tensor: str,
+        value: Any,
+        op: str = "replace",
+        *,
+        rows: Sequence[int],
+        kv: Sequence[int] | None = None,
+        d: Sequence[int] | None = None,
+        dose: float | None = None,
+        selection: str | None = None,
+        origin: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
+        """Stage one state-cell edit of ``cache.L<layer>.<tensor>`` (``engine.edits.CellEdit``);
+        returns its request manifest.
+
+        The cell is the key/value row as later reads see it. The edit is realised natively in
+        the next layer transition, by copy-on-write of the cache tensor that transition hands
+        the layer, and takes effect for every read of it not yet made: when the cursor is in
+        the cell's own layer at or past the read boundary (``kr`` for k, ``p`` for v) the
+        current row's read has happened and the edit is realised at that layer's exit (timing
+        ``after``); otherwise at the entry of the transition (``before``). Reads already made
+        are not recomputed. The rows must already be written into the cache at the cursor (the
+        row the pending layer writes becomes a cell when it commits). Atomic: on any failure,
+        ``KeyboardInterrupt`` included, nothing stays staged.
+        """
+        if tensor not in ("k", "v"):
+            raise ValueError("a cache cell is k or v")
+        if type(layer) is not int or not 0 <= layer < self.adapter.layers:
+            raise ValueError(f"layer must be in 0..{self.adapter.layers - 1}")
+        mark = self._trail[-1]
+        timing = "before"
+        if mark.phase == "layer" and mark.layer == layer and self._port is not None:
+            names = self.program.names
+            if names.index(self._port) >= names.index(CELL_BOUNDARY[tensor]):
+                timing = "after"
+        edit = CellEdit(layer, tensor, tuple(rows), value, op, kv=None if kv is None else
+                        tuple(kv), d=None if d is None else tuple(d), dose=dose, timing=timing,
+                        staged_at=mark.transitions, selection=selection, origin=origin)
+        current = self.read_cache(layer, tensor, staged=False)
+        length = int(current.shape[2])
+        if max(edit.rows) >= length and mark.phase == "layer" and layer == mark.layer \
+                and max(edit.rows) == mark.row:
+            raise ValueError(f"row {mark.row} of {edit.port} is written by the pending layer "
+                             "transition; it becomes a cell when the layer commits")
+        edit.check(current.shape)
+        saved_cells, saved_cache = list(self._cells), self._cache
+        try:
+            self._cells.append(edit)
+            self._cache = None
+            if self.lookahead == "layer" or self._port is not None:
+                self._ensure_cache(self._port)
+        except BaseException:
+            self._cells[:] = saved_cells
+            self._cache = saved_cache
+            raise
+        if isinstance(edit.value, torch.Tensor):
+            self._values[tensor_digest(edit.value)] = edit.value
+        return edit.manifest()
+
+    def staged_cells(self) -> list[dict[str, Any]]:
+        """One record per staged cell edit: its manifest, ``fired`` (the current probe realised
+        it: a ``before`` edit once a port of the pending layer is held) and, then, the
+        realisation record (``realised_sha256``, ``cast_*``, ``realised_*``,
+        ``changed_fraction``, ``count``, ``realised_timing``, ``realised_in_layer``)."""
+        records = []
+        cache = self._cache
+        for index, cell in enumerate(self._cells):
+            entry = None if cache is None else cache.cell_records.get(index)
+            record = {**cell.manifest(), "fired": entry is not None}
+            if entry is not None:
+                record.update(entry)
+            records.append(record)
+        return records
+
+    def committed_cells(self) -> list[dict[str, Any]]:
+        """One record per committed (realised) cell edit, in commit order: the manifest, the
+        realisation record and ``row``/``layer``/``transition`` of the transition that realised
+        it (``layer`` is that transition's layer; the cell's own layer is ``cell.layer``)."""
+        return [
+            {**cell.manifest(), **record, "row": mark.row, "layer": mark.layer,
+             "transition": mark.transitions}
+            for mark in self._trail[:-1]
+            for cell, record in zip(mark.cells, mark.cell_fired)
+        ]
 
     def committed_edits(self) -> list[dict[str, Any]]:
         """One record per committed (fired) edit of this run, in commit order: ``row``, ``layer``,
@@ -904,7 +1093,7 @@ class Run:
         if len(kept) == len(past.edits):
             return None
         controller = self._controller(
-            past.layer, kept, stop="p" if name == "s" else name, capture=(name,)
+            past.layer, kept, past.cells, stop="p" if name == "s" else name, capture=(name,)
         )
         self._probe(self._session_at(index), controller)
         return clone(controller.captures[name])
@@ -941,20 +1130,23 @@ class Run:
             "port": self._port,
             "lookahead": self.lookahead,
             "numeric_scope": self._numeric_scope(),
-            "edits": [edit.manifest() for edit in self._edits],
+            "edits": [*(edit.manifest() for edit in self._edits),
+                      *(cell.manifest() for cell in self._cells)],
             "path_edits": self._path_manifest(len(self._trail) - 1),
         }
 
     def _path_manifest(self, index: int) -> list[dict[str, Any]]:
-        """The committed edits on the path to trail mark ``index`` (as a checkpoint lists them)."""
+        """The committed edits on the path to trail mark ``index`` (as a checkpoint lists them):
+        port edits then the state-cell edits realised in that transition."""
         return [
             {
                 "transition": item.transitions,
                 "layer": item.layer,
-                "edits": [edit.manifest() for edit in item.edits],
+                "edits": [*(edit.manifest() for edit in item.edits),
+                          *(cell.manifest() for cell in item.cells)],
             }
             for item in self._trail[:index]
-            if item.edits
+            if item.edits or item.cells
         ]
 
     def edit_tensors(self) -> dict[str, torch.Tensor]:
@@ -966,6 +1158,9 @@ class Run:
                 out[tensor_digest(edit.value)] = edit.value
             if edit.mask is not None:
                 out[tensor_digest(edit.mask)] = edit.mask
+        for cell in [*(c for mark in self._trail[:-1] for c in mark.cells), *self._cells]:
+            if isinstance(cell.value, torch.Tensor):
+                out[tensor_digest(cell.value)] = cell.value
         return out
 
     def hold(self, tensors: dict[str, torch.Tensor]) -> None:
@@ -992,7 +1187,7 @@ class Run:
         if port is not None:
             mark = self._trail[-1]
             return {"cut": mark.fingerprint, "transitions": mark.transitions, "port": port,
-                    "edits": self.edits}
+                    "edits": [*self.edits, *self.cells]}
         for mark in reversed(self._trail):
             if self._mark_key(mark) == key:
                 return {"cut": mark.fingerprint, "transitions": mark.transitions, "port": None,
@@ -1003,7 +1198,8 @@ class Run:
         index, name = located
         past = self._trail[index]
         return {"cut": past.fingerprint, "transitions": past.transitions, "port": name,
-                "edits": [edit.manifest() for edit in past.edits]}
+                "edits": [*(edit.manifest() for edit in past.edits),
+                          *(cell.manifest() for cell in past.cells)]}
 
     def _numeric_scope(self) -> dict[str, Any]:
         """The adapter's bound numeric scope (thread count, determinism, matmul precision).
@@ -1032,7 +1228,9 @@ class Run:
                 "the model before restoring"
             )
 
-    def _edit_from(self, manifest: dict[str, Any]) -> PortEdit:
+    def _edit_from(self, manifest: dict[str, Any]) -> PortEdit | CellEdit:
+        """The edit a checkpoint manifest describes (a ``CellEdit`` for a state-cell manifest),
+        with its tensors from what this run holds."""
         described = manifest["value"]
         if described["kind"] == "scalar":
             value: Any = described["value"]
@@ -1043,6 +1241,8 @@ class Run:
                     f"edit value {described['sha256'][:12]} at {manifest['port']} is not held by "
                     "this process; restart it from a project (Debugger.restart) or Run.hold it"
                 )
+        if is_cell(manifest):
+            return CellEdit.from_manifest(manifest, value)
         mask = None
         if "mask_sha256" in manifest:
             mask = self._masks.get(manifest["mask_sha256"])
@@ -1092,7 +1292,8 @@ class Run:
         if checkpoint["prompt_sha256"] != digest(self.tokens):
             raise ValueError("checkpoint belongs to another prompt")
         self._refuse_other_numeric_scope(checkpoint)
-        staged =[self._edit_from(manifest) for manifest in checkpoint["edits"]]
+        self._drop_reads()
+        staged = [self._edit_from(manifest) for manifest in checkpoint["edits"]]
         # A mark stands for the checkpoint only with the same cut AND the same committed edits
         # before it: an edit whose result is bit-identical (``add 0``) leaves the cut unchanged
         # but must not survive the restore.
@@ -1107,11 +1308,15 @@ class Run:
             }
             self._restore_mark(0)
             while self._trail[-1].transitions < checkpoint["transitions"]:
-                self._edits = list(path.get(self._trail[-1].transitions, ()))
+                here = path.get(self._trail[-1].transitions, ())
+                self._edits = [e for e in here if isinstance(e, PortEdit)]
+                self._cells = [e for e in here if isinstance(e, CellEdit)]
                 self._commit()
             if self._trail[-1].fingerprint != checkpoint["cut"]:
                 raise ReplayMismatch(checkpoint["cut"], self._trail[-1].fingerprint)
-        self._edits, self._cache, self._port = staged, None, None
+        self._edits = [e for e in staged if isinstance(e, PortEdit)]
+        self._cells = [e for e in staged if isinstance(e, CellEdit)]
+        self._cache, self._port = None, None
         if checkpoint["port"] is not None:
             port = self.program.spec(checkpoint["port"]).name
             self._ensure_cache(port)
@@ -1123,6 +1328,7 @@ class Run:
         if type(n) is not int or n < 1:
             raise ValueError("n must be a positive integer")
         root = self._mark_key(self._trail[0])
+        self._drop_reads()
         for _ in range(n):
             key = self._previous(self._key())
             while key >= root and not accept(self._stops[key[1]]):
@@ -1150,9 +1356,19 @@ class Run:
             self._ensure_cache(port)
             self._port = port
 
+    def _restaged_cells(self, index: int) -> list[CellEdit]:
+        """The cell edits that were staged at trail mark ``index``: those realised by the first
+        committed layer transition at or after it whose staging point is not after the mark."""
+        at = self._trail[index].transitions
+        for mark in self._trail[index:-1]:
+            if mark.phase == "layer":
+                return [cell for cell in mark.cells if cell.staged_at <= at]
+        return [cell for cell in self._cells if cell.staged_at <= at]
+
     def _restore_mark(self, index: int) -> None:
         current = index == len(self._trail) - 1
         edits = list(self._edits) if current else list(self._trail[index].edits)
+        cells = list(self._cells) if current else self._restaged_cells(index)
         if not current:
             snapshot = _Snapshot(self)
             try:
@@ -1161,13 +1377,15 @@ class Run:
                 self._trail = self._trail[: index + 1]
                 mark = self._trail[index]
                 mark.cut, mark.edits, mark.fired = cut, (), ()
+                mark.cells, mark.cell_fired = (), ()
                 self._cache = None
-                self._edits, self._port = edits, None
+                self._drop_reads()
+                self._edits, self._cells, self._port = edits, cells, None
             except BaseException:
                 snapshot.rollback()
                 raise
             return
-        self._edits, self._port = edits, None
+        self._edits, self._cells, self._port = edits, cells, None
 
     def _cut_of(self, index: int) -> StateCut:
         mark = self._trail[index]
@@ -1176,21 +1394,31 @@ class Run:
         base = max(i for i in range(index) if self._trail[i].cut is not None)
         session = Session.from_cut(self.adapter, self._trail[base].cut)
         for item in self._trail[base:index]:
-            self._advance(session, item.layer, item.edits)
+            self._advance(session, item.layer, item.edits, item.cells)
         cut = session.capture(retain=False)
         if cut.fingerprint != mark.fingerprint:
             raise RuntimeError("replay from a retained cut did not reproduce the boundary")
         return cut
 
     def _session_at(self, index: int) -> Session:
+        """A Session at trail mark ``index`` for probing only: the run's own session for the
+        last mark, else the hydrated Session for that cut (reused while the fingerprint matches;
+        ``Session.probe`` leaves it unchanged)."""
         if index == len(self._trail) - 1:
             return self.session
-        return Session.from_cut(self.adapter, self._cut_of(index))
+        fingerprint = self._trail[index].fingerprint
+        if self.cache_reads and self._hydrated is not None and self._hydrated[0] == fingerprint:
+            return self._hydrated[1]
+        session = Session.from_cut(self.adapter, self._cut_of(index))
+        if self.cache_reads:
+            self._hydrated = (fingerprint, session)
+        return session
 
     def _prune(self) -> None:
         if self.retain_rows is None:
             return
         horizon = self._trail[-1].row - self.retain_rows
         for mark in self._trail[1:-1]:
-            if mark.row < horizon and mark.label != "start":
+            if mark.row < horizon and mark.label != "start" and mark.cut is not None:
                 mark.cut = None
+                self._drop_reads()

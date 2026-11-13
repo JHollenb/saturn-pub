@@ -10,9 +10,14 @@ torch-free; each op imports the analysis layer when it runs.
   cursor's row, or a margin) from values at the cursor (``analysis.forecast.seal``).
 - ``verify [IDS]``: compare the open forecasts whose target the cursor has passed with the
   native values (``analysis.forecast.verify``).
-- ``whatif ADDR=EXPR [replace|add|scale] consumer=C``: predicted, then natively measured change
-  of a consumer under one edit, the session left exactly where it was
-  (``analysis.propagate.whatif``).
+- ``whatif ADDR=EXPR [replace|add|scale|mix DOSE] consumer=C``: predicted, then natively
+  measured change of a consumer under one edit, the session left exactly where it was
+  (``analysis.propagate.whatif``). ADDR may be a state cell ``cache.L<i>.k|v[kv,row,d]`` and
+  EXPR then ``ORIGIN:ADDR`` (a value of another run).
+
+Assignments (``parse_assignment``, no ``eval``): ``ADDR = EXPR``, ``ADDR += X`` (add X),
+``ADDR -= X`` (add -X), ``ADDR *= X`` (scale X), ``ADDR /= X`` (scale by the float64 1/X, which
+the edit casts to the model dtype: not a rounded division); ``-=`` and ``/=`` take a number.
 
 Margins are ``M[a,b]`` / ``t<row>.M[a,b]`` with token ids or quoted token texts (one token each);
 a single logit is ``logits[i]`` / ``t<row>.logits[i=7]``.
@@ -26,7 +31,13 @@ from typing import Any
 
 from mdb.core.pointers import seal_digest
 
-from .builtin import _bp, _finite_limit, _target, _value_source
+from .builtin import (
+    cell_request,
+    finite_limit,
+    resolve_target,
+    selector_mask,
+    value_source,
+)
 from .errors import BadArgs, Refused
 from .registry import Arg, Op, register
 
@@ -72,7 +83,7 @@ def _margin(ctx, text: str):
     return Margin(_row(ctx, match), _token_id(ctx, match["a"]), _token_id(ctx, match["b"]))
 
 
-def _record_view(record: dict[str, Any]) -> dict[str, Any]:
+def record_view(record: dict[str, Any]) -> dict[str, Any]:
     """A sealed record for an op result: every field except ``execution`` (the adapter's
     execution settings, plain configuration numbers), which is replaced by its digest; the
     record's ``id`` still seals the whole envelope."""
@@ -83,7 +94,7 @@ def _record_view(record: dict[str, Any]) -> dict[str, Any]:
 
 def _whole_stop(ctx, text: str, verb: str) -> str:
     """The canonical ``t<row>.<stop>`` of an address naming one whole stop."""
-    found = _target(ctx, text)
+    found = resolve_target(ctx, text)
     if found.cell is not None:
         raise Refused(f"{verb} takes a stop of the token rows, not the cache cell {found.text}")
     if found.selector:
@@ -101,7 +112,7 @@ def _explain(ctx, address):
     row = int(_ROW.match(run.where)["row"])
     margin = _margin(ctx, address)
     if margin is None:
-        found = _target(ctx, address)
+        found = resolve_target(ctx, address)
         if found.layer_port is None:
             raise Refused(f"explain takes a margin M[a,b] or a layer port, not {found.text}")
         target_row = found.row
@@ -142,7 +153,7 @@ def _forecast(ctx, target):
     except forecast.Refusal as error:
         raise Refused(str(error)) from None
     entry = forecast.ledger(ctx.run)[view["id"]]
-    return {"forecast": view, "record": _record_view(entry.record)}
+    return {"forecast": view, "record": record_view(entry.record)}
 
 
 def _verify(ctx, ids):
@@ -159,7 +170,7 @@ def _verify(ctx, ids):
 # --------------------------------------------------------------------------- whatif
 
 
-def _session_digest(ctx) -> str:
+def session_digest(ctx) -> str:
     """What ``whatif`` must leave unchanged at the debugger level: the run's state digest,
     breakpoints and watches, displays, focus and named checkpoints."""
     from mdb.analysis.propagate import state_digest
@@ -173,41 +184,40 @@ def _session_digest(ctx) -> str:
     })
 
 
-def _edit(ctx, target: str, value: Any, op: str):
-    """The requested edit as ``propagate.Edit``: a selector becomes a mask over the port, a
-    value is a scalar or the value at another computed address of this run."""
+def build_edit(ctx, target: str, value: Any, op: str, dose: float | None = None):
+    """The requested edit as ``propagate.Edit``. A port: a selector becomes a mask over it, a
+    value is a scalar or the value at another computed address of this run. A state cell
+    (``cache.L<i>.k|v[...]``): ``builtin.cell_request`` (ops ``replace|add|scale|mix``, values
+    also ``ORIGIN:ADDR``)."""
     import torch
 
     from mdb.analysis.propagate import Edit
 
     run = ctx.run
-    found = _target(ctx, target)
+    found = resolve_target(ctx, target)
+    if found.cell is not None:
+        request = cell_request(ctx, found, value, op, dose)
+        cell = {key: request[key] for key in ("layer", "tensor", "rows", "kv", "d")}
+        return Edit(found.text, request["value"], op, None, request["selection"],
+                    request["source"], cell=cell, dose=dose, origin=request["origin"])
     if found.layer_port is None:
-        raise Refused(f"edits apply to layer ports, not {found.text}")
+        raise Refused(f"edits apply to layer ports or state cells, not {found.text}")
+    if op == "mix" or dose is not None:
+        raise Refused("mix DOSE applies to state cells (cache.L<i>.k|v)")
     if isinstance(value, str) and ":" in value.partition("[")[0]:
-        raise Refused(f"{value}: a value from another origin needs the origin resolver, which "
-                      "is not built yet; use a scalar or an address of this run")
-    value, source = _value_source(ctx, value)
-    _finite_limit(run, value)
+        raise Refused(f"{value}: a value from another run goes into a state cell "
+                      "(cache.L<i>.k|v); a port takes a number or an address of this run")
+    value, source = value_source(ctx, value)
+    finite_limit(run, value)
     mask = selection = None
     if found.selector:
-        bp = _bp()
+        from mdb.engine import breakpoints as bp
+
         shape = tuple(run.port_shape(found.layer_port[1]))
         axes = bp.stop_axes(run.program, found.label)
-        try:
-            picks = bp.plan(axes, list(shape), found.selector, head_dim=run.adapter.head_dim,
-                            row=found.row if "row" in axes else None, tokenizer=ctx.tokenizer)
-        except bp.SelectionRange as error:
-            raise Refused(f"{found.text}: {error}") from None
-        except bp.SelectionError as error:
-            raise BadArgs(f"{found.text}: {error}") from None
-        index = tuple(
-            torch.tensor(list(range(shape[a]) if pick is None else pick), dtype=torch.long).view(
-                [-1 if b == a else 1 for b in range(len(shape))])
-            for a, pick in enumerate(picks))
-        mask = torch.zeros(shape, dtype=torch.bool)
-        mask[index] = True
-        chosen = tuple(shape[a] if pick is None else len(pick) for a, pick in enumerate(picks))
+        mask, index, chosen = selector_mask(
+            axes, shape, found.selector, head_dim=run.adapter.head_dim,
+            row=found.row if "row" in axes else None, tokenizer=ctx.tokenizer, text=found.text)
         if isinstance(value, torch.Tensor):
             if torch.broadcast_shapes(value.shape, chosen) != chosen:
                 raise BadArgs(f"{source} does not broadcast to the selection {list(chosen)}")
@@ -218,7 +228,8 @@ def _edit(ctx, target: str, value: Any, op: str):
     return Edit(found.run_target, value, op, mask, selection, source)
 
 
-def _consumer(ctx, text: str):
+def parse_consumer(ctx, text: str):
+    """A whatif/compare consumer: a margin ``M[a,b]``, a logit ``logits[i]`` or a whole stop."""
     from mdb.analysis.forecast import Logit
 
     margin = _margin(ctx, text)
@@ -230,7 +241,65 @@ def _consumer(ctx, text: str):
     return _whole_stop(ctx, text, "a whatif consumer")
 
 
-def _split_assignment(target: str, value: Any) -> tuple[str, Any]:
+_SUGAR = {"+": "add", "-": "add", "*": "scale", "/": "scale"}
+
+
+def _number(text: str) -> float | None:
+    try:
+        return float(text)
+    except ValueError:
+        return None
+
+
+def parse_assignment(text: str, *, usage: str = "ADDR=EXPR [replace|add|scale|mix DOSE]"
+                     ) -> tuple[str, Any, str | None, float | None]:
+    """``ADDR = EXPR [OP [DOSE]]`` or ``ADDR OP= X`` (``+= -= *= /=``) -> ``(address, value, op,
+    dose)``; ``op`` None when none was written. Parsed, never evaluated: EXPR is a number or an
+    address (``ORIGIN:ADDR`` included); ``-=`` and ``/=`` take a number (``-= X`` is ``add -X``,
+    ``/= X`` is ``scale`` by the float64 ``1/X``)."""
+    depth, at = 0, -1
+    for index, char in enumerate(text):
+        depth += char == "["
+        depth -= char == "]"
+        if char == "=" and depth == 0:
+            at = index
+            break
+    if at <= 0:
+        raise BadArgs(f"write {usage}")
+    left, right = text[:at].strip(), text[at + 1:].split()
+    sugar = left[-1] if left and left[-1] in _SUGAR else None
+    if sugar is not None:
+        left = left[:-1].strip()
+    if not left or not right:
+        raise BadArgs(f"write {usage}")
+    expr, rest = right[0], right[1:]
+    number = _number(expr)
+    value: Any = expr if number is None else number
+    op: str | None = None
+    dose: float | None = None
+    if sugar is not None:
+        if rest:
+            raise BadArgs(f"{sugar}= takes one value and no op word")
+        op = _SUGAR[sugar]
+        if sugar in "-/":
+            if number is None:
+                raise BadArgs(f"{sugar}= takes a number, not {expr!r}")
+            if sugar == "/" and number == 0:
+                raise BadArgs("/= 0 divides by zero")
+            value = -number if sugar == "-" else 1.0 / number
+        return left, value, op, dose
+    if rest:
+        op = rest[0]
+        if op == "mix":
+            if len(rest) != 2 or _number(rest[1]) is None:
+                raise BadArgs("mix takes a dose: ADDR = VALUE mix DOSE")
+            dose = _number(rest[1])
+        elif len(rest) != 1:
+            raise BadArgs(f"write {usage}")
+    return left, value, op, dose
+
+
+def split_assignment(target: str, value: Any) -> tuple[str, Any]:
     """``ADDR=EXPR`` in one word (``=`` outside brackets) -> ``(ADDR, EXPR)``."""
     depth = 0
     for index, char in enumerate(target):
@@ -249,24 +318,24 @@ def _split_assignment(target: str, value: Any) -> tuple[str, Any]:
     return target, value
 
 
-def _whatif(ctx, target, value, op, consumer):
+def _whatif(ctx, target, value, op, consumer, dose=None):
     from mdb.analysis import forecast, propagate
 
-    address, value = _split_assignment(target, value)
-    edit = _edit(ctx, address, value, op)
-    chosen = _consumer(ctx, consumer)
-    before = _session_digest(ctx)
+    address, value = split_assignment(target, value)
+    edit = build_edit(ctx, address, value, op, dose)
+    chosen = parse_consumer(ctx, consumer)
+    before = session_digest(ctx)
     try:
         result = propagate.whatif(ctx.run, edit, chosen)
     except forecast.Refusal as error:
         raise Refused(str(error)) from None
-    after = _session_digest(ctx)
+    after = session_digest(ctx)
     if after != before:
         raise RuntimeError("whatif changed the debugger session")
     report = dict(result.report)
     report["session"] = {**report["session"], "debugger_before": before,
                          "debugger_after": after}
-    return {**report, "where": ctx.run.where, "sealed_record": _record_view(result.record)}
+    return {**report, "where": ctx.run.where, "sealed_record": record_view(result.record)}
 
 
 # --------------------------------------------------------------------------- registration
@@ -286,8 +355,14 @@ register(Op("verify", "Compare open forecasts whose target the cursor has passed
 register(Op("whatif", "Predicted, then natively measured change of a consumer under one edit; "
             "the session is left exactly where it was",
             (Arg("target", "str", required=True), Arg("value", "value"),
-             Arg("op", "choice", default="replace", choices=("replace", "add", "scale")),
-             Arg("consumer", "str", required=True, positional=False)),
+             Arg("op", "choice", default="replace", choices=("replace", "add", "scale", "mix")),
+             Arg("consumer", "str", required=True, positional=False),
+             Arg("dose", "number", positional=False, help="mix only (state cells)")),
             "navigate", True, _whatif,
-            usage="whatif ADDR=EXPR [replace|add|scale] consumer=M[a,b]|logits[i]|ADDR"),
+            usage="whatif ADDR=EXPR [replace|add|scale|mix DOSE] "
+                  "consumer=M[a,b]|logits[i]|ADDR"),
          replace=True)
+
+# old private names, kept for one commit
+_record_view, _session_digest, _edit = record_view, session_digest, build_edit
+_consumer, _split_assignment = parse_consumer, split_assignment

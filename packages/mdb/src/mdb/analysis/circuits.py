@@ -43,7 +43,7 @@ from mdb.core.pointers import RecordError, check_bounded
 from mdb.core.records import num, seal_record
 
 from .finite import BOUND, EXACT, LOCAL, MEASURED, SUPPLIED, f64
-from .forecast import Margin, Refusal, _session_id
+from .forecast import Margin, Refusal, run_session_id
 from .propagate import Edit
 from .reads import (
     _U32,
@@ -296,7 +296,7 @@ def _mlp_children(run: Any, reader: Any, row: int, layer: int, top: int) -> list
     return _group(children, top, address)
 
 
-def _terms(run: Any, reader: Any, depth: int, top: int) -> list[Node]:
+def terms(run: Any, reader: Any, depth: int, top: int) -> list[Node]:
     """Depth-1 nodes of the consumer (and their subtrees), without the top remainder."""
     row = reader.row
     layers = run.adapter.layers
@@ -366,7 +366,7 @@ def _stream(run: Any, reader: Any) -> tuple[Any, list[tuple[str, Any, dict]]]:
     return bound, edits
 
 
-def _top_gap(run: Any, reader: Any, gap: Any) -> list[Node]:
+def top_gap(run: Any, reader: Any, gap: Any) -> list[Node]:
     """The consumer minus its depth-1 terms: an ``edit`` node per edited residual port and the
     bounded remainder (residual-add rounding; for a margin or logit also the final norm and
     the head, as ``explain_margin`` bounds them)."""
@@ -419,11 +419,11 @@ def build(run: Any, consumer: Any, *, top: int = 4, depth: int = 2,
     if reader.native is None or not computed(run, _stop(reader)):
         raise Refusal(f"{_stop(reader)} has not been computed at {run.where}: run `until "
                       f"{_stop(reader)}` first")
-    nodes = _terms(run, reader, depth, top)
+    nodes = terms(run, reader, depth, top)
     native = f64(reader.native)
     listed = sum((n.value for n in nodes[1:]), nodes[0].value)
     if reader.kind != "o":
-        nodes += _top_gap(run, reader, native - listed)
+        nodes += top_gap(run, reader, native - listed)
         nodes = _group(nodes, top, reader.text)
     root = Node(reader.text, "consumer", reader.text, native,
                 reader.native_authority or MEASURED, children=nodes)
@@ -451,7 +451,7 @@ def build(run: Any, consumer: Any, *, top: int = 4, depth: int = 2,
             "premises": reader.premises}
     try:
         check_bounded(body, "circuit record")
-        record = seal_record(session_id=session_id or _session_id(run), kind="circuit",
+        record = seal_record(session_id=session_id or run_session_id(run), kind="circuit",
                              model_identity=run.adapter.model_identity,
                              execution=dict(run.adapter.execution), authority=EXACT, body=body)
     except RecordError as error:
@@ -569,4 +569,9 @@ def test(run: Any, circuit: Circuit, *, tolerance: float = 0.1) -> dict[str, Any
     return out
 
 
-__all__ = ["CIRCUIT", "Circuit", "KINDS", "Node", "SCHEMA", "build", "ledger", "test"]
+# Old private names, kept for one commit: symbols.py imported them.
+_terms = terms
+_top_gap = top_gap
+
+__all__ = ["CIRCUIT", "Circuit", "KINDS", "Node", "SCHEMA", "build", "ledger", "terms", "test",
+           "top_gap"]

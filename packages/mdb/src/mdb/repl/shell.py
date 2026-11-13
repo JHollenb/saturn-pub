@@ -23,6 +23,7 @@ from typing import Any, TextIO
 
 from mdb.ops import OpError, dispatch, registry
 from mdb.ops.errors import BadArgs, UnknownOp, internal
+from mdb.ops.predict import parse_assignment
 
 from .render import render, render_error
 
@@ -158,6 +159,8 @@ def _prompt_args(text: str) -> dict[str, Any]:
             if not _INT.fullmatch(match["value"]):
                 raise BadArgs(f"budget must be an integer, got {match['value']!r}")
             args["budget"] = int(match["value"])
+        elif match and match["key"] == "name" and not rest:
+            args["name"] = match["value"]
         else:
             rest.append(word)
     if rest:
@@ -213,28 +216,30 @@ def _equals_outside_brackets(word: str) -> int:
     return -1
 
 
+_SET_USAGE = "set ADDR = VALUE [replace|add|scale|mix DOSE]  (or ADDR += X, -=, *=, /=)"
+_SUGAR = ("+=", "-=", "*=", "/=")
+
+
 def _set_args(text: str) -> dict[str, Any]:
+    """``ADDR = VALUE [OP [DOSE]]``, ``ADDR VALUE [OP]`` or ``ADDR += X`` (``-= *= /=``), via
+    ``mdb.ops.predict.parse_assignment`` (parsed, never evaluated)."""
     words = [word for word, _, _ in split(text)]
-    if words and words[0] != "=":
-        at = _equals_outside_brackets(words[0])
-        if at > 0:  # set q[h1]=2  /  set q=-1 : no spaces around the =
-            left, right = words[0][:at], words[0][at + 1:]
-            words = [left, "=", *([right] if right else []), *words[1:]]
-    if len(words) >= 2 and words[1] == "=":
-        words = [words[0], *words[2:]]
-    if len(words) not in (2, 3):
-        raise BadArgs("write set ADDR = VALUE [replace|add|scale]")
-    args: dict[str, Any] = {"target": words[0]}
-    try:
-        args["value"] = float(words[1])
-    except ValueError:
-        args["value"] = words[1]
-    if len(words) == 3:
-        args["op"] = words[2]
+    if not words:
+        raise BadArgs(f"write {_SET_USAGE}")
+    joined = " ".join(words)
+    if _equals_outside_brackets(joined) < 0:
+        joined = " ".join([words[0], "=", *words[1:]])
+    target, value, op, dose = parse_assignment(joined, usage=_SET_USAGE)
+    args: dict[str, Any] = {"target": target, "value": value}
+    if op is not None:
+        args["op"] = op
+    if dose is not None:
+        args["dose"] = dose
     return args
 
 
-_WHATIF_USAGE = "write whatif ADDR = VALUE [replace|add|scale] --consumer M[a,b]|logits[i]|ADDR"
+_WHATIF_USAGE = ("write whatif ADDR = VALUE [replace|add|scale|mix DOSE] --consumer "
+                 "M[a,b]|logits[i]|ADDR")
 
 
 def _whatif_args(text: str) -> dict[str, Any]:
@@ -310,12 +315,15 @@ def _with_consumer(name: str):
     return parse_args
 
 
-_COMPARE_USAGE = "write compare A B [--consumer C]; a side is ADDR=VALUE [op] or a checkpoint"
+_COMPARE_USAGE = ("write compare A B [--consumer C]; a side is ADDR=VALUE [op] (ADDR += X ...) "
+                  "or a checkpoint")
+_OP_WORDS = ("replace", "add", "scale", "mix")
 
 
 def _compare_args(text: str) -> dict[str, Any]:
-    """``compare A B [--consumer C]``: a side is ``ADDR=VALUE [replace|add|scale]`` (spaces
-    around ``=`` allowed) or a checkpoint name."""
+    """``compare A B [--consumer C]``: a side is ``ADDR=VALUE [replace|add|scale|mix DOSE]``
+    (spaces around ``=`` allowed; ``ADDR += X`` and the other sugar too) or a checkpoint
+    name."""
     consumer, rest = _consumer_option(text)
     args: dict[str, Any] = {}
     words = [word for word, _, _ in split(rest)]
@@ -323,11 +331,18 @@ def _compare_args(text: str) -> dict[str, Any]:
     i = 0
     while i < len(words):
         word = words[i]
-        if i + 2 < len(words) and words[i + 1] == "=":
-            word, i = f"{word}={words[i + 2]}", i + 2
-        if word in ("replace", "add", "scale") and sides and \
-                _equals_outside_brackets(sides[-1][0]) > 0 and len(sides[-1]) == 1:
-            sides[-1].append(word)
+        if i + 2 < len(words) and words[i + 1] in ("=", *_SUGAR):
+            word, i = f"{word}{words[i + 1]}{words[i + 2]}", i + 2
+        elif word.endswith(("=", *_SUGAR)) and _equals_outside_brackets(word) == len(word) - 1 \
+                and i + 1 < len(words):
+            word, i = f"{word}{words[i + 1]}", i + 1
+        last = sides[-1] if sides else None
+        if last and _equals_outside_brackets(last[0]) > 0 and word in _OP_WORDS \
+                and len(last) == 1:
+            last.append(word)
+            if word == "mix" and i + 1 < len(words):
+                last.append(words[i + 1])
+                i += 1
         else:
             sides.append([word])
         i += 1

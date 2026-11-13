@@ -4,8 +4,13 @@ when it runs.
 Addresses accepted by ops (``ADDR``): a canonical occurrence ``t3.L0.p[h0,src=2]``, the same
 without the row (the cursor's row), a bare port of the focus/cursor layer (``p[h0]``), a
 global (``emb fn logits sample start``), or a cache cell ``cache.L0.v[kv0,row=2]`` read at the
-current clock. Origins (``boiling:...``, ``@cut+edit:...``) and ``~program`` are refused until
-branches exist.
+current clock. A target with an origin (``boiling:...``, ``@cut+edit:...``) and ``~program`` are
+refused; a run is switched to with ``frame NAME:``.
+
+State cells: ``set cache.L1.v[kv0,row=2] = VALUE [replace|add|scale|mix DOSE]`` stages a cell
+edit (``Run.set_cell``). VALUE is a number, an address of this run, or ``ORIGIN:ADDR`` (a cache
+cell or a ``v``/``kr`` occurrence of another named run, project session or checkpoint;
+``Debugger.cell_value``).
 """
 
 from __future__ import annotations
@@ -137,7 +142,7 @@ def _current_layer(ctx) -> int | None:
     return ctx.run.pending_layer
 
 
-def _target(ctx, text: str | None) -> Target:
+def resolve_target(ctx, text: str | None) -> Target:
     run = ctx.run
     program = run.program
     text = (text or "").strip() or ctx.focus or run.where
@@ -232,6 +237,34 @@ def _prov_json(raw: dict[str, Any]) -> dict[str, Any]:
         if raw.get("max_abs_diff") is not None:
             out["replica_max_abs_diff"] = _num(raw["max_abs_diff"])
     return out
+
+
+def selector_mask(axes: tuple[str, ...], shape: tuple[int, ...], selector: Any, *, head_dim: int,
+                  row: int | None = None, tokenizer: Any = None, text: str = "value"
+                  ) -> tuple[Any, tuple[Any, ...], tuple[int, ...]]:
+    """A selector over a value of ``shape`` (axis names ``axes``) as ``(mask, index, chosen)``:
+    the bool mask of the picked elements, the advanced index of the picked block and its shape.
+    A selection out of range is ``Refused``, one that does not apply ``BadArgs`` (``text`` names
+    the address in both)."""
+    import torch
+
+    bp = _bp()
+    try:
+        picks = bp.plan(axes, list(shape), selector, head_dim=head_dim, row=row,
+                        tokenizer=tokenizer)
+    except bp.SelectionRange as error:
+        raise Refused(f"{text}: {error}") from None
+    except bp.SelectionError as error:
+        raise BadArgs(f"{text}: {error}") from None
+    index = tuple(
+        torch.tensor(list(range(shape[axis]) if pick is None else pick), dtype=torch.long).view(
+            [-1 if a == axis else 1 for a in range(len(shape))])
+        for axis, pick in enumerate(picks)
+    )
+    mask = torch.zeros(shape, dtype=torch.bool)
+    mask[index] = True
+    chosen = tuple(shape[a] if pick is None else len(pick) for a, pick in enumerate(picks))
+    return mask, index, chosen
 
 
 def _read_info(ctx, target: Target, selection=None) -> dict[str, Any]:
@@ -483,7 +516,7 @@ def _displays(ctx) -> list[dict[str, Any]]:
     out = []
     for number, text in sorted(ctx.displays.items())[:MAX_DISPLAYS]:
         try:
-            item = _reduction(ctx, _target(ctx, text), k=3, pointer=False)
+            item = _reduction(ctx, resolve_target(ctx, text), k=3, pointer=False)
             item.pop("axes", None)
             out.append({"id": number, **item})
         except (OpError, ValueError) as error:
@@ -491,7 +524,7 @@ def _displays(ctx) -> list[dict[str, Any]]:
     return out
 
 
-def _moved(ctx, extra: dict[str, Any] | None = None) -> dict[str, Any]:
+def moved(ctx, extra: dict[str, Any] | None = None) -> dict[str, Any]:
     ctx.focus, ctx.focus_stack = None, []
     out: dict[str, Any] = {"where": ctx.run.where, "stop": _stop(ctx)}
     if extra:
@@ -517,38 +550,60 @@ def _hits(hits: list[dict[str, Any]]) -> list[dict[str, Any]]:
 # --------------------------------------------------------------------------- run / start
 
 
-def _start(ctx, prompt) -> None:
+def _switch(ctx, run) -> None:
+    """Make ``run`` the context's run, keeping each named run's in-memory checkpoints with it
+    (``Debugger.run_checkpoints``) so switching back finds them."""
+    debugger = ctx.debugger
+    keep = getattr(debugger, "run_checkpoints", None)
+    if keep is None:
+        keep = debugger.run_checkpoints = {}
+    old = getattr(ctx.run, "name", None)
+    if old is not None and debugger.runs.get(old) is ctx.run:
+        keep[old] = dict(ctx.checkpoints)
+    ctx.set_run(run)
+    ctx.checkpoints.update(keep.pop(run.name, {}) if run.name is not None else {})
+    debugger.live = run
+
+
+def _start(ctx, prompt, name: str | None = None) -> None:
     if ctx.debugger is None:
         raise Refused("no model attached; use mdb.attach(model) or --tiny")
     if prompt is None:
         if ctx.run is None:
             raise BadArgs("start needs a prompt (text or token ids)")
         prompt = list(ctx.run.tokens)
-    run = ctx.debugger.run(prompt)  # the one implementation of start: cursor at t<last>.L0.h
-    ctx.set_run(run)
+    run = ctx.debugger.run(prompt, name=name)  # the one start: cursor at t<last>.L0.h
+    getattr(ctx.debugger, "run_checkpoints", {}).pop(run.name, None)  # a new run of that name
+    _switch(ctx, run)
 
 
 _PROMPT = Arg("prompt", "prompt", help="prompt text (needs a tokenizer) or token ids; "
               "omitted = the current run's prompt")
+_NAME = Arg("name", "str", positional=False,
+            help="name of the run (default main): other runs take values from it as NAME:ADDR")
+
+
+def _started(ctx) -> dict[str, Any]:
+    return {"prompt_tokens": len(ctx.run.tokens), "run": ctx.run.name}
 
 
 @op("start", "Prefill a prompt and stop at the pending token's first port (L0.h)", _PROMPT,
-    effect="native", needs_live=False, usage="start [TEXT | ID ID ...]")
-def _op_start(ctx, prompt):
-    _start(ctx, prompt)
-    return _moved(ctx, {"prompt_tokens": len(ctx.run.tokens)})
+    _NAME, effect="native", needs_live=False, usage="start [name=NAME] [TEXT | ID ID ...]")
+def _op_start(ctx, prompt, name):
+    _start(ctx, prompt, name)
+    return moved(ctx, _started(ctx))
 
 
 @op("run", "Like start, then continue to the first armed breakpoint or watch", _PROMPT,
     Arg("budget", "int", default=8, minimum=0, maximum=STEP_CAP, positional=False,
-        help="token rows continue may enter (minimum 1, at most 4096)"),
-    effect="native", needs_live=False, usage="run [TEXT | ID ID ...] [budget=N]")
-def _op_run(ctx, prompt, budget):
-    _start(ctx, prompt)
+        help="token rows continue may enter (minimum 1, at most 4096)"), _NAME,
+    effect="native", needs_live=False,
+    usage="run [name=NAME] [TEXT | ID ID ...] [budget=N]")
+def _op_run(ctx, prompt, budget, name):
+    _start(ctx, prompt, name)
     if not ctx.table.armed():
-        return _moved(ctx, {"prompt_tokens": len(ctx.run.tokens), "reason": "no-breakpoints"})
-    return _continue(ctx, budget=budget, extra=None,
-                     more={"prompt_tokens": len(ctx.run.tokens)})
+        return moved(ctx, {**_started(ctx), "reason": "no-breakpoints"})
+    return _continue(ctx, budget=budget, extra=None, more=_started(ctx))
 
 
 # --------------------------------------------------------------------------- cursor
@@ -559,6 +614,10 @@ def _op_where(ctx):
     run = ctx.run
     out = {"where": run.where, "stop": _stop(ctx), "staged": len(run.edits),
            "lookahead": getattr(run, "lookahead", None)}
+    if getattr(run, "cells", None):
+        out["staged_cells"] = len(run.cells)
+    if getattr(run, "name", None) is not None:
+        out["run"] = run.name
     if ctx.focus:
         out["focus"] = ctx.focus
     past = run.status().get("computed_past_cursor") or []
@@ -568,18 +627,29 @@ def _op_where(ctx):
     return out
 
 
-@op("frame", "Show or set the focus address (print/list/backtrace default to it)",
-    Arg("address", "address", help="an address, or 'cursor' to follow the cursor again"),
-    effect="navigate", usage="frame [ADDR | cursor]")
+@op("frame", "Show or set the focus address (print/list/backtrace default to it); NAME: "
+    "switches to the named run",
+    Arg("address", "address", help="an address, 'cursor' to follow the cursor again, or NAME: "
+        "(a run started with name=NAME)"),
+    effect="navigate", usage="frame [ADDR | cursor | NAME:]")
 def _op_frame(ctx, address):
+    if address is not None and address.endswith(":") and "[" not in address:
+        name = address[:-1]
+        runs = getattr(ctx.debugger, "runs", {})
+        if name not in runs:
+            raise Refused(f"no run named {name!r} (have: {', '.join(runs) or 'none'})")
+        if runs[name] is not ctx.run:
+            _switch(ctx, runs[name])
+        return {"focus": ctx.run.where, "cursor": ctx.run.where, "run": name,
+                "where": ctx.run.where, "stop": _stop(ctx)}
     if address == "cursor":
         ctx.focus, ctx.focus_stack = None, []
     elif address is not None:
-        target = _target(ctx, address)
+        target = resolve_target(ctx, address)
         ctx.focus, ctx.focus_stack = target.text, []
     focus = ctx.focus or ctx.run.where
     out: dict[str, Any] = {"focus": focus, "cursor": ctx.run.where}
-    target = _target(ctx, focus)
+    target = resolve_target(ctx, focus)
     if target.label is not None:
         out["frame"] = _stop(ctx, target.run_target)
     return out
@@ -642,14 +712,14 @@ def _step_forward(ctx, n: int, unit: str, budget: int) -> dict[str, Any]:
         except ValueError as error:
             if "capacity" not in str(error):
                 raise
-            return _moved(ctx, {"reason": "end-of-context"})
-    return _moved(ctx)
+            return moved(ctx, {"reason": "end-of-context"})
+    return moved(ctx)
 
 
 def _step_back(ctx, n: int, unit: str, budget: int) -> dict[str, Any]:
     _capped(ctx, unit, n, budget, reverse=True)
     ctx.run.reverse_step(unit, n)
-    return _moved(ctx)
+    return moved(ctx)
 
 
 @op("step", "Step one port (or N units; layer/token units enter at most `budget` rows)", _N,
@@ -678,21 +748,21 @@ def _op_finish(ctx):
         raise Refused(f"already at t{row}.sample, the end of the row; use `step token`")
     else:
         run.until(f"t{row}.sample")
-    return _moved(ctx)
+    return moved(ctx)
 
 
 def _run_to(ctx, target: str, budget: int, *, name: str) -> dict[str, Any]:
     """Run to an address, stopping earlier at an armed breakpoint or watch."""
     bp = _bp()
     run = ctx.run
-    found = _target(ctx, target)
+    found = resolve_target(ctx, target)
     if found.cell is not None:
         raise BadArgs(f"{name} takes a port occurrence, not a cache cell")
     if name == "advance" and found.selector:
         raise BadArgs("advance takes a port occurrence without selectors")
     key, here = run.parse(found.run_target), run.parse(run.where)
     if key == here and name == "until":
-        return _moved(ctx)
+        return moved(ctx)
     if key <= here:
         raise Refused(f"{found.run_target} is "
                       + ("behind the cursor " if name == "until" else "not ahead of the cursor ")
@@ -751,7 +821,7 @@ def _stopped(ctx, result: dict[str, Any], payload: dict[str, Any]) -> dict[str, 
         payload["omitted"] = len(hits) - PAGE
     if "error" in result:
         payload["error"] = dict(result["error"])
-    out = _moved(ctx, payload)
+    out = moved(ctx, payload)
     selection = _selection_of(hits)
     if selection is not None:
         ctx.focus = f"{ctx.run.where}{selection}"
@@ -904,7 +974,7 @@ def _op_display(ctx, address):
     if address is not None:
         if len(ctx.displays) >= MAX_DISPLAYS:
             raise Refused(f"at most {MAX_DISPLAYS} displays")
-        target = _target(ctx, address)
+        target = resolve_target(ctx, address)
         _check_selector(ctx, target)
         if target.cell is None and target.label is not None:
             text = address.strip()
@@ -940,7 +1010,7 @@ def _op_undisplay(ctx, ids):
         help="also show the first N selected values"),
     effect="read", usage="print [ADDR] [top=K] [slice=N]")
 def _op_print(ctx, address, top, slice):  # noqa: A002 - the arg name is the wire name
-    return _reduction(ctx, _target(ctx, address), k=top, slice_count=slice)
+    return _reduction(ctx, resolve_target(ctx, address), k=top, slice_count=slice)
 
 
 @op("x", "Examine raw values: a bounded slice of the selected, flattened value",
@@ -948,7 +1018,7 @@ def _op_print(ctx, address, top, slice):  # noqa: A002 - the arg name is the wir
     Arg("offset", "int", default=0, minimum=0), effect="read",
     usage="x [ADDR] [COUNT] [OFFSET]")
 def _op_x(ctx, address, count, offset):
-    target = _target(ctx, address)
+    target = resolve_target(ctx, address)
     value = _read(ctx, target)
     selection = _select(ctx, target, value)
     provenance = _read_info(ctx, target, selection)
@@ -993,14 +1063,14 @@ def _edit_json(record: dict[str, Any]) -> dict[str, Any]:
     for key, item in record.items():
         if key in ("port", "op", "value"):
             continue
-        if key == "row_sum_tolerance":
+        if key in ("row_sum_tolerance", "dose"):
             out[key] = _num(item, "supplied")
         else:
             out[key] = _labelled(key, item)
     return out
 
 
-def _value_source(ctx, value):
+def value_source(ctx, value):
     """A scalar, or the tensor at another computed address of the same run."""
     if not isinstance(value, str):
         return value, None
@@ -1008,12 +1078,12 @@ def _value_source(ctx, value):
         return float(value), None
     except ValueError:
         pass
-    source = _target(ctx, value)
+    source = resolve_target(ctx, value)
     tensor = _read(ctx, source)
     return _select(ctx, source, tensor).value, source.text
 
 
-def _finite_limit(run, value) -> None:
+def finite_limit(run, value) -> None:
     import torch
 
     dtype = run.adapter.dtype
@@ -1025,43 +1095,135 @@ def _finite_limit(run, value) -> None:
                 f"(|x| <= {limit:.6g}); nothing was staged")
 
 
-@op("set", "Stage an edit at a port of the pending layer: set ADDR = VALUE [op]",
+def _cell_block(ctx, text: str):
+    """The block ``(1, kv, rows, d)`` an address of this run names, as a cell value."""
+    from .debugger import cell_block
+
+    run = ctx.run
+    found = resolve_target(ctx, text)
+    if found.cell is not None:
+        return cell_block(run, found.cell), found.text
+    if found.layer_port is None:
+        raise Refused(f"a cell value is a cache cell or a v/kr occurrence, not {found.text}")
+    parsed = addresses.parse(found.text, ports=run.program.names, global_ports=GLOBALS)
+    return cell_block(run, parsed), found.text
+
+
+def cell_request(ctx, found: Target, value: Any, op: str, dose: float | None) -> dict[str, Any]:
+    """A state-cell edit request from op arguments: ``{layer, tensor, rows, kv, d, value, op,
+    dose, selection, source, origin}``. The selector picks kv heads, rows (default: every row
+    written at the cursor) and head-dim offsets; a tensor value must have the picked block's
+    shape ``(1, kv, rows, d)`` exactly."""
+    from mdb.engine.edits import CELL_AXES, CELL_OPS
+
+    run = ctx.run
+    cell = found.cell
+    if op not in CELL_OPS:
+        raise BadArgs(f"a cell op is one of {', '.join(CELL_OPS)}")
+    if (op == "mix") != (dose is not None):
+        raise BadArgs("mix needs a dose (set ADDR = VALUE mix DOSE), and only mix takes one")
+    current = run.read_cache(cell.layer, cell.tensor, staged=False)
+    length = int(current.shape[2])
+    bp = _bp()
+    sizes = [1, int(current.shape[1]), None, int(current.shape[3])]
+    try:
+        picks = bp.plan(CELL_AXES, sizes, cell.selector, head_dim=run.adapter.head_dim)
+    except bp.SelectionRange as error:
+        raise Refused(f"{found.text}: {error}") from None
+    except bp.SelectionError as error:
+        raise BadArgs(f"{found.text}: {error}") from None
+    rows = list(range(length)) if picks[2] is None else list(picks[2])
+    if not rows:
+        raise Refused(f"{found.text} holds no rows yet at {run.where}")
+    kv = None if picks[1] is None else list(picks[1])
+    d = None if picks[3] is None else list(picks[3])
+    source = origin = None
+    if isinstance(value, str):
+        try:
+            value = float(value)
+        except ValueError:
+            source = value.strip()
+            if ":" in source.partition("[")[0]:
+                value, origin = ctx.debugger.cell_value(source, run=run)
+            else:
+                value, source = _cell_block(ctx, source)
+    if isinstance(value, (int, float)):
+        finite_limit(run, value)
+    else:
+        want = (1, len(kv) if kv else int(current.shape[1]), len(rows),
+                len(d) if d else int(current.shape[3]))
+        if tuple(value.shape) != want:
+            differ = ", ".join(f"{axis} {have} vs {need}" for axis, have, need
+                               in zip(CELL_AXES, value.shape, want) if have != need)
+            raise Refused(f"{source} selects shape {list(value.shape)}; {found.text} selects "
+                          f"{list(want)} ({differ}); select the same block on both sides")
+    selection = found.text.partition("[")[2].rstrip("]") or None
+    return {"layer": cell.layer, "tensor": cell.tensor, "rows": rows, "kv": kv, "d": d,
+            "value": value, "op": op, "dose": dose, "selection": selection, "source": source,
+            "origin": origin}
+
+
+def _set_cell(ctx, found: Target, value: Any, op: str, dose: float | None) -> dict[str, Any]:
+    from mdb.engine.edits import CELL_BOUNDARY, CELL_READ
+
+    run = ctx.run
+    request = cell_request(ctx, found, value, op, dose)
+    try:
+        run.set_cell(request["layer"], request["tensor"], request["value"], op,
+                     rows=request["rows"], kv=request["kv"], d=request["d"], dose=dose,
+                     selection=request["selection"], origin=request["origin"])
+    except ValueError as error:
+        raise Refused(f"{found.text}: {error}") from None
+    record = run.staged_cells()[-1]
+    tensor = request["tensor"]
+    out: dict[str, Any] = {
+        "target": found.text, "edits": [_edit_json(record)], "staged": len(run.edits),
+        "staged_cells": len(run.cells), "where": run.where,
+        "cell": {"layer": request["layer"], "tensor": tensor, "rows": request["rows"],
+                 "kv": request["kv"], "d": request["d"], "timing": record["cell"]["timing"],
+                 "read": f"L{request['layer']}.{CELL_READ[tensor]}",
+                 "boundary": f"L{request['layer']}.{CELL_BOUNDARY[tensor]}"},
+    }
+    if request["source"] is not None:
+        out["source"] = request["source"]
+    if request["origin"] is not None:
+        out["origin"] = dict(request["origin"])
+    return out
+
+
+@op("set", "Stage an edit at a port of the pending layer, or of a state cell "
+    "(cache.L<i>.k|v[kv,row,d]): set ADDR = VALUE [op]",
     Arg("target", "address", required=True), Arg("value", "value", required=True),
-    Arg("op", "choice", default="replace", choices=("replace", "add", "scale")),
-    effect="mutate", usage="set ADDR = VALUE|ADDR [replace|add|scale]")
-def _op_set(ctx, target, value, op):
+    Arg("op", "choice", default="replace", choices=("replace", "add", "scale", "mix")),
+    Arg("dose", "number", positional=False, help="mix only: cell + dose * (value - cell)"),
+    effect="mutate", usage="set ADDR = VALUE|ADDR|ORIGIN:ADDR [replace|add|scale|mix DOSE]")
+def _op_set(ctx, target, value, op, dose=None):
     import torch
 
     run = ctx.run
-    found = _target(ctx, target)
+    found = resolve_target(ctx, target)
+    if found.cell is not None:
+        return _set_cell(ctx, found, value, op, dose)
     if found.layer_port is None:
         raise Refused(f"edits apply to ports of the pending layer, not {found.text}")
-    value, source = _value_source(ctx, value)
-    _finite_limit(run, value)
+    if op == "mix" or dose is not None:
+        raise Refused("mix DOSE applies to state cells (cache.L<i>.k|v); a port takes "
+                      "replace, add or scale")
+    if isinstance(value, str) and ":" in value.partition("[")[0]:
+        raise Refused(f"{value}: a value from another run goes into a state cell "
+                      "(cache.L<i>.k|v); a port takes a number or an address of this run")
+    value, source = value_source(ctx, value)
+    finite_limit(run, value)
     kwargs: dict[str, Any] = {}
     if found.selector:
         # ONE edit: the selector becomes a mask over the port (shape known without running
         # anything), so replace/add/scale apply to the selected elements only and the rest
         # stay bit-identical. Same behaviour ahead of the cursor as at it.
-        bp = _bp()
         shape = tuple(run.port_shape(found.layer_port[1]))
         axes = _axes(ctx, found)
-        row = found.row if "row" in axes else None
-        try:
-            picks = bp.plan(axes, list(shape), found.selector, head_dim=run.adapter.head_dim,
-                            row=row, tokenizer=ctx.tokenizer)
-        except bp.SelectionRange as error:
-            raise Refused(f"{found.text}: {error}") from None
-        except bp.SelectionError as error:
-            raise BadArgs(f"{found.text}: {error}") from None
-        index = tuple(
-            torch.tensor(list(range(shape[axis]) if pick is None else pick), dtype=torch.long).view(
-                [-1 if a == axis else 1 for a in range(len(shape))])
-            for axis, pick in enumerate(picks)
-        )
-        mask = torch.zeros(shape, dtype=torch.bool)
-        mask[index] = True
-        chosen = tuple(shape[a] if pick is None else len(pick) for a, pick in enumerate(picks))
+        mask, index, chosen = selector_mask(
+            axes, shape, found.selector, head_dim=run.adapter.head_dim,
+            row=found.row if "row" in axes else None, tokenizer=ctx.tokenizer, text=found.text)
         if isinstance(value, torch.Tensor):
             if torch.broadcast_shapes(value.shape, chosen) != chosen:
                 raise BadArgs(f"{source} does not broadcast to the selection {list(chosen)}")
@@ -1084,6 +1246,7 @@ def _op_set(ctx, target, value, op):
     effect="mutate", motion=True)
 def _op_commit(ctx):
     committed = len(ctx.run.edits)
+    cells = len(getattr(ctx.run, "cells", ()))
     try:
         ctx.run.commit()
     except ValueError as error:
@@ -1094,14 +1257,22 @@ def _op_commit(ctx):
                 "edited ports with `print`, then run `abort` to drop the staged edits."
             ) from error
         raise
-    return _moved(ctx, {"committed": committed})
+    extra = {"committed": committed}
+    if cells:
+        extra["committed_cells"] = cells
+    return moved(ctx, extra)
 
 
-@op("abort", "Drop the staged edits of the pending layer", effect="mutate")
+@op("abort", "Drop the staged edits of the pending layer (and the staged cell edits)",
+    effect="mutate")
 def _op_abort(ctx):
     dropped = len(ctx.run.edits)
+    cells = len(getattr(ctx.run, "cells", ()))
     ctx.run.abort()
-    return _moved(ctx, {"count": dropped})
+    extra = {"count": dropped}
+    if cells:
+        extra["staged_cells"] = cells
+    return moved(ctx, extra)
 
 
 # --------------------------------------------------------------------------- program
@@ -1156,7 +1327,7 @@ def _op_list(ctx, layer):
 
 
 def _focus_parts(ctx, address: str | None) -> tuple[int, str]:
-    target = _target(ctx, address)
+    target = resolve_target(ctx, address)
     if target.label is None:
         raise BadArgs("backtrace and up/down follow port occurrences, not cache cells")
     return target.row, target.label
@@ -1279,7 +1450,7 @@ def _op_down(ctx, n):
     if ctx.focus == run.where:
         ctx.focus = None
     focus = ctx.focus or run.where
-    return {"focus": focus, "frame": _stop(ctx, _target(ctx, focus).run_target)}
+    return {"focus": focus, "frame": _stop(ctx, resolve_target(ctx, focus).run_target)}
 
 
 # --------------------------------------------------------------------------- info
@@ -1310,11 +1481,18 @@ def _program_info(ctx) -> dict[str, Any]:
 @op("info", "Show debugger tables or the program (lists are paged: offset=, limit=)",
     Arg("subject", "choice", required=True,
         choices=("ports", "breakpoints", "watch", "display", "checkpoints", "edits",
-                 "program")),
+                 "program", "runs")),
     _OFFSET, _LIMIT,
     effect="read", needs_live=False, usage="info ports|breakpoints|watch|display|checkpoints|"
-    "edits|program [offset=N] [limit=N]")
+    "edits|program|runs [offset=N] [limit=N]")
 def _op_info(ctx, subject, offset, limit):
+    if subject == "runs":
+        runs = getattr(ctx.debugger, "runs", {}) if ctx.debugger is not None else {}
+        items = [{"name": name, "where": run.where, "prompt_tokens": len(run.tokens),
+                  "staged": len(run.edits), "staged_cells": len(run.cells),
+                  "current": run is ctx.run} for name, run in runs.items()]
+        shown, meta = _page(items, offset, limit)
+        return {"subject": subject, "runs": shown, **meta}
     if subject == "program":
         return {"subject": subject, "program": _program_info(ctx)}
     if subject == "ports":
@@ -1358,9 +1536,16 @@ def _op_info(ctx, subject, offset, limit):
         if len(edits) > limit:
             item["omitted"] = len(edits) - limit
         out_committed.append(item)
-    return {"subject": subject, "staged": out_staged, "committed": out_committed,
-            "where": ctx.run.where, "staged_total": len(staged),
-            "committed_total": len(entries), "total": total, "offset": offset, "limit": limit}
+    out = {"subject": subject, "staged": out_staged, "committed": out_committed,
+           "where": ctx.run.where, "staged_total": len(staged),
+           "committed_total": len(entries), "total": total, "offset": offset, "limit": limit}
+    staged_cells, committed_cells = ctx.run.staged_cells(), ctx.run.committed_cells()
+    if staged_cells or committed_cells:
+        out["cells"] = {"staged": [_edit_json(m) for m in staged_cells[:limit]],
+                        "committed": [_edit_json(m) for m in committed_cells[:limit]],
+                        "staged_total": len(staged_cells),
+                        "committed_total": len(committed_cells)}
+    return out
 
 
 # --------------------------------------------------------------------------- checkpoints
@@ -1386,7 +1571,7 @@ def _op_checkpoint(ctx, name):
     checkpoint = ctx.run.checkpoint(name)
     result = {"name": name, "where": checkpoint["where"],
               "bytes": len(json.dumps(checkpoint, sort_keys=True))}
-    if _project(ctx) is not None:  # durable: recipe, edit blobs and cursor go to the project
+    if project_of(ctx) is not None:  # durable: recipe, edit blobs and cursor go to the project
         # Durable first: an interrupt leaves no checkpoint, or a durable one `restart` finds;
         # never an in-memory checkpoint that the project does not hold.
         stored = ctx.debugger.checkpoint(ctx.run, name)
@@ -1395,7 +1580,7 @@ def _op_checkpoint(ctx, name):
     return result
 
 
-def _project(ctx):
+def project_of(ctx):
     return getattr(ctx.debugger, "project", None)
 
 
@@ -1412,7 +1597,7 @@ def _op_checkpoints(ctx, offset, limit):
 def _op_restart(ctx, name):
     if ctx.run is not None and name in ctx.checkpoints:
         ctx.run.restore(ctx.checkpoints[name])
-    elif _project(ctx) is not None:  # a checkpoint an earlier process stored in the project
+    elif project_of(ctx) is not None:  # a checkpoint an earlier process stored in the project
         ctx.set_run(ctx.debugger.restart(name))
     elif ctx.run is None:
         raise Refused("no run to rewind; start one with run, or attach with project= to "
@@ -1421,7 +1606,7 @@ def _op_restart(ctx, name):
         known = ", ".join(ctx.checkpoints) or "none"
         raise Refused(f"no checkpoint {name!r} (have: {known})")
     ctx.table.reset_watches()
-    return _moved(ctx, {"name": name})
+    return moved(ctx, {"name": name})
 
 
 # --------------------------------------------------------------------------- reverse
@@ -1470,3 +1655,7 @@ for _name, _summary, _milestone in (
     ("export", "Export a walkthrough bundle of records and pointers", "B1"),
 ):
     slot(_name, _summary, _milestone)
+
+# old private names, kept for one commit
+_target, _value_source, _finite_limit = resolve_target, value_source, finite_limit
+_moved, _project = moved, project_of

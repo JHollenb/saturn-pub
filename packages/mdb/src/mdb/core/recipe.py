@@ -13,7 +13,11 @@ its ``edits`` (staged in the pending layer at the target), ``target`` its ``wher
 What a checkpoint holds as a tensor digest the recipe holds as a ``tensor`` pointer
 (``mdb.core.pointers.tensor_pointer``: blob ref + payload sha256) into the project store; an
 edit is ``{port, op, value, mask?, mask_count?, selection?}`` with ``value`` either a tensor
-pointer or ``{kind: "scalar", value: num(x, "supplied")}``. Token ids are inline up to
+pointer or ``{kind: "scalar", value: num(x, "supplied")}``. A state-cell edit
+(``mdb.engine.edits.CellEdit``) adds ``cell`` ``{layer, tensor, rows, kv, d, timing,
+staged_at}``, ``dose`` (``mix`` only, a supplied number) and ``origin`` (the pointer of a value
+taken from another run: names and digests, never the array; the value itself is the edit's
+tensor pointer). Recipes written before cells existed read unchanged. Token ids are inline up to
 ``MAX_INLINE_ITEMS`` and a tensor pointer (int64) beyond. Arrays are never inline: the recipe
 passes ``check_bounded`` (no array, at most 64 KiB) before it is sealed and again when read.
 
@@ -53,7 +57,8 @@ FIELDS = ("schema", "name", "model_identity", "layers", "tokens", "prompt_sha256
           "numeric_scope", "lookahead", "transitions", "staged", "target", "cut", "fingerprint")
 CODES = ("model-identity", "numeric-scope", "missing-blob", "corrupt-blob", "malformed",
            "fingerprint")
-_EDIT_KEYS = {"port", "op", "value", "mask", "mask_count", "selection"}
+_EDIT_KEYS = {"port", "op", "value", "mask", "mask_count", "selection", "cell", "dose", "origin"}
+_CELL_KEYS = {"layer", "tensor", "rows", "kv", "d", "timing", "staged_at"}
 
 
 class RecipeError(Refused):
@@ -94,6 +99,12 @@ def _edit(manifest, tensors, store):
     out = {"port": manifest["port"], "op": manifest["op"], "value": value}
     if "selection" in manifest:
         out["selection"] = manifest["selection"]
+    if "cell" in manifest:
+        out["cell"] = dict(manifest["cell"])
+    if "dose" in manifest:
+        out["dose"] = num(manifest["dose"], "supplied")
+    if "origin" in manifest:
+        out["origin"] = dict(manifest["origin"])
     if "mask_sha256" in manifest:
         sha = manifest["mask_sha256"]
         if sha not in tensors:
@@ -153,7 +164,17 @@ def seal(body):
 
 def _check_edit(edit, label):
     if not isinstance(edit, Mapping) or not {"port", "op", "value"} <= set(edit) <= _EDIT_KEYS:
-        raise _malformed(f"{label} is {{port, op, value, mask?, mask_count?, selection?}}")
+        raise _malformed(f"{label} is {{port, op, value, mask?, mask_count?, selection?, cell?, "
+                         "dose?, origin?}")
+    if "cell" in edit and (not isinstance(edit["cell"], Mapping)
+                           or set(edit["cell"]) != _CELL_KEYS):
+        raise _malformed(f"{label} cell is {{{', '.join(sorted(_CELL_KEYS))}}}")
+    if ("dose" in edit or "origin" in edit) and "cell" not in edit:
+        raise _malformed(f"{label}: dose and origin belong to a state-cell edit")
+    if "dose" in edit and check_num(edit["dose"], f"{label} dose")["authority"] != "supplied":
+        raise _malformed(f"{label} dose is a supplied number")
+    if "origin" in edit and not isinstance(edit["origin"], Mapping):
+        raise _malformed(f"{label} origin is an object")
     value = edit["value"]
     if isinstance(value, Mapping) and value.get("kind") == "scalar":
         if set(value) != {"kind", "value"}:
@@ -209,8 +230,14 @@ def _manifest(edit):
         described = {"kind": "tensor", "sha256": value["sha256"], "shape": list(value["shape"]),
                      "dtype": "torch." + value["dtype"]}
     out = {"port": edit["port"], "op": edit["op"], "value": described}
+    if "cell" in edit:
+        out["cell"] = dict(edit["cell"])
+    if "dose" in edit:
+        out["dose"] = edit["dose"]["value"]
     if "selection" in edit:
         out["selection"] = edit["selection"]
+    if "origin" in edit:
+        out["origin"] = dict(edit["origin"])
     if "mask" in edit:
         out.update(mask_sha256=edit["mask"]["sha256"], mask_count=edit["mask_count"],
                    mask_shape=list(edit["mask"]["shape"]))

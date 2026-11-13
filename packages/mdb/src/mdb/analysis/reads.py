@@ -83,10 +83,10 @@ def layer_module(adapter: Any, layer: int) -> Any:
 def computed(run: Any, address: str) -> bool:
     """Whether ``address`` (``t<row>.<stop>``) is at or before the cursor and inside this run."""
     key = run.parse(address)
-    return key <= run.parse(run.where) and key[0] >= _first_row(run)
+    return key <= run.parse(run.where) and key[0] >= first_row(run)
 
 
-def _first_row(run: Any) -> int:
+def first_row(run: Any) -> int:
     """The first token row this run stepped (earlier rows were prefilled into the cache)."""
     return len(run.tokens) - 1
 
@@ -267,9 +267,9 @@ def head_mix(run: Any, row: int, layer: int) -> HeadMix:
     torch = _torch()
     adapter = run.adapter
     where = f"t{row}.L{layer}.p"
-    if row < _first_row(run):
+    if row < first_row(run):
         raise Refusal(f"t{row} was prefilled before this run started (first stepped row "
-                      f"t{_first_row(run)}): its attention weights were never stopped at")
+                      f"t{first_row(run)}): its attention weights were never stopped at")
     if not computed(run, where):
         raise Refusal(f"{where} has not been computed at {run.where}")
     heads, kv, dh = adapter.num_heads, adapter.num_kv_heads, adapter.head_dim
@@ -315,7 +315,7 @@ def head_mask(run: Any, row: int, layer: int, head: int, source: int | None = No
     return mask
 
 
-def _edited_block(mix: HeadMix, run: Any, head: int) -> str | None:
+def edited_block(mix: HeadMix, run: Any, head: int) -> str | None:
     """Why head ``head``'s value mix does not reach ``o`` natively (an edit wrote its block of
     ``A``, or ``o`` itself), else None."""
     row, layer = mix.row, mix.layer
@@ -397,7 +397,7 @@ def reader_rows(run: Any, source: Source, rows: str | None) -> list[int]:
     if rows is None:
         found = [here]
     elif rows == "all":
-        found = list(range(max(source.row, _first_row(run)), here + 1))
+        found = list(range(max(source.row, first_row(run)), here + 1))
     elif re.fullmatch(r"\d+", rows):
         found = [int(rows)]
     elif re.fullmatch(r"\d+:\d+", rows):
@@ -532,11 +532,11 @@ def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: 
                 entry: dict[str, Any] = {
                     "name": f"t{j}.L{layer}.h{h}", "address": f"t{j}.L{layer}.p[h{h},src={s}]",
                     "row": j, "layer": layer,
-                    "mass": num(float(mix.p[h, s]), _label(run, mix, h, s)),
+                    "mass": num(float(mix.p[h, s]), source_label(run, mix, h, s)),
                     "to_head": {"norm": num(float(mix.source_parts()[h, s].norm()), EXACT,
                                             "P06")},
                 }
-                blocked = _edited_block(mix, run, h)
+                blocked = edited_block(mix, run, h)
                 entry["to_o"] = refused(blocked) if blocked else claim(part, EXACT, "P07")
                 value = None
                 if isinstance(reader, Refusal):
@@ -611,7 +611,7 @@ def _omitted_sum(rest: list[dict[str, Any]], values: list[Any], consumer: Any) -
     return claim(sum(values[1:], values[0]), EXACT)
 
 
-def _label(run: Any, mix: HeadMix, head: int, source: int) -> str:
+def source_label(run: Any, mix: HeadMix, head: int, source: int) -> str:
     info = run.read_info(f"t{mix.row}.L{mix.layer}.p",
                          select=head_mask(run, mix.row, mix.layer, head, source))
     return info["authority"] or MEASURED
@@ -642,5 +642,9 @@ def _check_summary(checks: list[dict[str, Any]]) -> dict[str, Any]:
     return out
 
 
-__all__ = ["HeadMix", "Readout", "Reads", "Source", "VERDICTS", "claim", "head_mask", "head_mix",
-           "parse_source", "reader_rows", "readout", "reads", "verdict"]
+# old private names, kept for one commit
+_edited_block, _first_row, _label = edited_block, first_row, source_label
+
+__all__ = ["HeadMix", "Readout", "Reads", "Source", "VERDICTS", "claim", "edited_block",
+           "first_row", "head_mask", "head_mix", "parse_source", "reader_rows", "readout", "reads",
+           "source_label", "verdict"]

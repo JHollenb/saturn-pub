@@ -572,6 +572,10 @@ def _labelled_edits(run: Any) -> list[dict[str, Any]]:
     for edit in run.staged_info():
         out.append({"row": row, "layer": int(edit["layer"]), "port": edit["port"],
                     "op": edit["op"]})
+    out += [{"row": int(e["row"]), "layer": int(e["cell"]["layer"]), "port": e["port"],
+             "op": e["op"]} for e in run.committed_cells()]
+    out += [{"row": row, "layer": int(e["cell"]["layer"]), "port": e["port"], "op": e["op"]}
+            for e in run.staged_cells()]
     return out
 
 
@@ -664,7 +668,7 @@ def seal(run: Any, target: str | Margin | None = None) -> dict[str, Any]:
             f"t{row}.{label}", program="forecast", shape=list(value.shape), dtype="float64",
             sha256=tensor_digest(value.contiguous()), cut=checkpoint["cut"], authority=EXACT,
             ports=run.program.names))
-    record = seal_record(session_id=_session_id(run), kind="forecast",
+    record = seal_record(session_id=run_session_id(run), kind="forecast",
                          model_identity=run.adapter.model_identity,
                          execution=dict(run.adapter.execution), authority=EXACT, body=body,
                          pointers=pointers)
@@ -675,7 +679,8 @@ def seal(run: Any, target: str | Margin | None = None) -> dict[str, Any]:
     return view(entry)
 
 
-def _session_id(run: Any) -> str:
+def run_session_id(run: Any) -> str:
+    """The record session id of an in-process run: its model identity and prompt digest."""
     checkpoint = run.checkpoint()
     return "mdb-run:" + seal_digest({"model": checkpoint["model_identity"],
                                      "prompt": checkpoint["prompt_sha256"]})[:32]
@@ -865,5 +870,7 @@ def verify(run: Any, ids: list[int] | None = None) -> list[dict[str, Any]]:
     return results
 
 
+_session_id = run_session_id  # old private name, kept for one commit
+
 __all__ = ["FORECAST", "IDENTITY", "Logit", "Margin", "NO_IDENTITY", "Refusal", "RowModel",
-           "ledger", "seal", "verify", "view"]
+           "ledger", "run_session_id", "seal", "verify", "view"]

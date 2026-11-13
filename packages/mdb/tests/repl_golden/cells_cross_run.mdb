@@ -1,0 +1,19 @@
+# State cells: a donor run, values from it (ORIGIN:ADDR), mix, sugar, compare and whatif.
+run name=boiling 1 7 9 3
+until t3.logits
+run 1 5 9 3
+info runs
+compare cache.L0.v[kv0,row=1] = boiling:cache.L0.v[kv0,row=1] cache.L1.k[kv0,row=1] = boiling:cache.L1.k[kv0,row=1] --consumer M[4,9]
+whatif cache.L0.v[kv0,row=1] = boiling:cache.L0.v[kv0,row=1] --consumer M[4,9]
+set cache.L0.v[kv0,row=1] = boiling:cache.L0.v[kv0,row=1] mix 0.5
+set cache.L1.k[row=1] += 0.25
+print cache.L1.k[row=1]
+where
+info edits
+until t3.L1.p
+set cache.L1.v[row=2] *= 2
+commit
+info edits
+frame boiling:
+where
+frame main:

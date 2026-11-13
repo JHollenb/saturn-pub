@@ -50,19 +50,19 @@ from mdb.core.kinds import SYMBOL_TABLE
 from mdb.core.records import seal_record
 
 from .finite import BOUND, EXACT, MEASURED, SUPPLIED, f64, num
-from .forecast import Margin, Refusal, _session_id
+from .forecast import Margin, Refusal, run_session_id
 from .reads import (
     Source,
-    _edited_block,
-    _first_row,
-    _label,
     claim,
     computed,
+    edited_block,
+    first_row,
     head_mix,
     parse_source,
     readout,
     refused,
     size,
+    source_label,
     unit_roundoff,
 )
 
@@ -113,7 +113,7 @@ def declare(run: Any, name: str, addresses: list[str]) -> Binding:
     if late:
         raise Refusal(f"t{late[0].row} has not been computed at {run.where}")
     for cell in cells:
-        if cell.layers is None or cell.row < _first_row(run):
+        if cell.layers is None or cell.row < first_row(run):
             continue
         for layer in cell.layers:
             for port in cell.ports or _PORTS:
@@ -170,7 +170,7 @@ def _default_consumer(run: Any) -> Margin | None:
 def _status_edits(run: Any, row: int, layers: int, here: tuple[int, int]) -> list[str]:
     """The edits ``Run.read_info`` reports on this row's ``k``/``v`` (own or upstream in the
     row); a prefilled row has none."""
-    if row < _first_row(run):
+    if row < first_row(run):
         return []
     found: list[str] = []
     for layer in range(layers):
@@ -297,13 +297,13 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
 
 def _unbound_parts(run: Any, reader: Any, listed_effect: float) -> dict[str, Any]:
     """The consumer minus the listed bindings' reads, by part (see the module docstring)."""
-    from .circuits import _terms, _top_gap
+    from .circuits import terms, top_gap
 
-    terms = _terms(run, reader, 1, 1)
+    listed = terms(run, reader, 1, 1)
     native = float(f64(reader.native))
-    attention = sum(float(t.value) for t in terms if t.kind == "attn")
-    other = sum(float(t.value) for t in terms if t.kind != "attn")
-    tail = _top_gap(run, reader, f64(native - attention - other))
+    attention = sum(float(t.value) for t in listed if t.kind == "attn")
+    other = sum(float(t.value) for t in listed if t.kind != "attn")
+    tail = top_gap(run, reader, f64(native - attention - other))
     edits = [t for t in tail if t.kind == "edit"]
     rest = tail[-1]
     parts: dict[str, Any] = {
@@ -374,7 +374,7 @@ class _Grid:
                     None if reader.row == j else f"{reader.text} is in another row"))
                 blocked = {}
                 for h in range(heads):
-                    reason = _edited_block(mix, run, h)
+                    reason = edited_block(mix, run, h)
                     if reason:
                         blocked[h] = reason
                     share = torch.zeros(n, parts.shape[-1], dtype=torch.float64)
@@ -386,7 +386,7 @@ class _Grid:
                         cover[b, h] = True
                         sources[b, h] += 1
                         share[b] += parts[h, s]
-                        if edited_p and _label(run, mix, h, s) == SUPPLIED:
+                        if edited_p and source_label(run, mix, h, s) == SUPPLIED:
                             supplied[b, h] = True
                     for b in range(n):
                         if not cover[b, h]:
@@ -537,7 +537,7 @@ def _records(run: Any, report: dict[str, Any], session_id: str | None) -> list[d
                                                          "accounting")}}
     if "consumer_total" in report:
         body["consumer_total"] = report["consumer_total"]
-    return [seal_record(session_id=session_id or _session_id(run), kind="symbol-table",
+    return [seal_record(session_id=session_id or run_session_id(run), kind="symbol-table",
                         model_identity=run.adapter.model_identity,
                         execution=dict(run.adapter.execution), authority=EXACT, body=body)]
 
