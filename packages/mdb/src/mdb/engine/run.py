@@ -918,6 +918,7 @@ class Run:
             "transitions": mark.transitions,
             "port": self._port,
             "lookahead": self.lookahead,
+            "numeric_scope": self._numeric_scope(),
             "edits": [edit.manifest() for edit in self._edits],
             "path_edits": [
                 {
@@ -929,6 +930,33 @@ class Run:
                 if item.edits
             ],
         }
+
+    def _numeric_scope(self) -> dict[str, Any]:
+        """The adapter's bound numeric scope (thread count, determinism, matmul precision).
+
+        A cut's fingerprint binds this scope, so a checkpoint replays only under the same one.
+        """
+        execution = getattr(self.adapter, "execution", None) or {}
+        return dict(execution.get("numeric_scope") or {})
+
+    def _refuse_other_numeric_scope(self, checkpoint: dict[str, Any]) -> None:
+        recorded = checkpoint.get("numeric_scope")
+        if not isinstance(recorded, dict):
+            return  # a checkpoint written before the scope was recorded
+        mine = self._numeric_scope()
+        differing = sorted(
+            name for name in set(recorded) | set(mine) if recorded.get(name) != mine.get(name)
+        )
+        if differing:
+            detail = ", ".join(
+                f"{name}: checkpoint {recorded.get(name)!r}, this process {mine.get(name)!r}"
+                for name in differing
+            )
+            raise ValueError(
+                "checkpoint was taken under another numeric scope "
+                f"({detail}); a cut binds the numeric scope, so set the same scope and rewrap "
+                "the model before restoring"
+            )
 
     def _edit_from(self, manifest: dict[str, Any]) -> PortEdit:
         described = manifest["value"]
@@ -968,7 +996,8 @@ class Run:
             raise ValueError("checkpoint belongs to another model identity")
         if checkpoint["prompt_sha256"] != digest(self.tokens):
             raise ValueError("checkpoint belongs to another prompt")
-        staged = [self._edit_from(manifest) for manifest in checkpoint["edits"]]
+        self._refuse_other_numeric_scope(checkpoint)
+        staged =[self._edit_from(manifest) for manifest in checkpoint["edits"]]
         found = [i for i, m in enumerate(self._trail) if m.fingerprint == checkpoint["cut"]]
         if found:
             self._restore_mark(found[-1])

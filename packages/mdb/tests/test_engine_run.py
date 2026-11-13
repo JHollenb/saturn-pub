@@ -447,7 +447,13 @@ from saturn_pub.adapters.decoder import DecoderAdapter
 from mdb.engine import Run
 from mdb.engine.ports import tensor_digest
 from test_engine_ports import build_model
+import torch
 args = json.loads(sys.argv[1])
+scope = args["checkpoint"]["numeric_scope"]  # a cut binds the numeric scope: match the parent's
+torch.set_num_threads(scope["torch_num_threads"])
+torch.use_deterministic_algorithms(scope["deterministic_algorithms"])
+torch.set_float32_matmul_precision(scope["float32_matmul_precision"])
+torch.backends.cuda.matmul.allow_tf32 = scope["tf32_matmul"]
 adapter = DecoderAdapter(build_model(args["family"], args["dtype"]), granularity="operation")
 run = Run(adapter, args["tokens"], lookahead=args["lookahead"])
 run.restore(args["checkpoint"])
@@ -488,6 +494,27 @@ def test_t3_restore_in_a_fresh_process(case, adapter, mode):
     )
     assert result.returncode == 0, result.stderr[-2000:]
     assert json.loads(result.stdout.strip().splitlines()[-1]) == expected
+
+
+def test_restore_names_the_numeric_scope_that_differs():
+    before = torch.get_num_threads()
+    other = 2 if before != 2 else 3
+    run = Run_(_adapter("qwen2", "fp32"), "none")
+    run.until("L0.p")
+    checkpoint = json.loads(json.dumps(run.checkpoint("scoped")))
+    assert checkpoint["numeric_scope"]["torch_num_threads"] == before
+    try:
+        torch.set_num_threads(other)
+        if torch.get_num_threads() != other:
+            pytest.skip("this torch build does not change its thread count")
+        fresh = Run_(_adapter("qwen2", "fp32"), "none")
+        with pytest.raises(ValueError, match="torch_num_threads: checkpoint .* this process"):
+            fresh.restore(checkpoint)
+        assert fresh.where == Run_(_adapter("qwen2", "fp32"), "none").where  # nothing moved
+    finally:
+        torch.set_num_threads(before)
+    legacy = {key: value for key, value in checkpoint.items() if key != "numeric_scope"}
+    assert Run_(_adapter("qwen2", "fp32"), "none").restore(legacy) == run.where
 
 
 # --- round 2 ---------------------------------------------------------------------------------
