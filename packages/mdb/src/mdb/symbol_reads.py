@@ -31,7 +31,6 @@ most ``MAX_RECORD_ITEMS`` values in total; at most ``MAX_RECORD_BYTES`` of canon
 """
 from __future__ import annotations
 
-import hashlib
 import json
 import math
 import numbers
@@ -40,19 +39,35 @@ from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any
 
-try:
-    import numpy as _np
-except ImportError:  # pragma: no cover - numpy is a dependency of mdb
-    _np = None
+from .core.pointers import (  # noqa: F401 - moved to mdb.core.pointers; re-exported unchanged
+    MAX_INLINE_ITEMS,
+    MAX_META_BYTES,
+    MAX_RECORD_BYTES,
+    MAX_RECORD_ITEMS,
+    MAX_TEXT_BYTES,
+    _bounded,
+    _canonical,
+    _identity_record,
+    _number,
+    _sealed,
+    _sha,
+    _text,
+    check_bounded,
+    declare_root,
+    file_pointer,
+    file_sha256,
+    model_identity,
+    parameter_pointer,
+    resolve_pointer,
+    run_pointer,
+    seal_digest,
+    verify_pointer,
+)
+from .core.pointers import RecordError as SymbolReadError
 
 READ_SCHEMA = "mdb-symbol-read-v2"
 READ_SET_SCHEMA = "mdb-symbol-read-set-v2"
 READS_DOCUMENT_SCHEMA = "mdb-symbol-reads-v2"
-MAX_INLINE_ITEMS = 64
-MAX_RECORD_ITEMS = 4096
-MAX_RECORD_BYTES = 64 * 1024
-MAX_META_BYTES = 64 * 1024
-MAX_TEXT_BYTES = 4 * 1024
 
 ROLE_ASSIGNMENTS = ("supplied", "nominated", "learned")
 # How a ReadSet's members were chosen. Deliberately disjoint from ROLE_ASSIGNMENTS: a set is
@@ -81,219 +96,7 @@ SIZE_MATCH_MIN_RATIO = 0.9
 UNKNOWN_LABEL = "unknown (observed only; no intervention)"
 
 
-class SymbolReadError(ValueError):
-    """A read record is malformed, unbounded, or claims more than its evidence."""
-
-
-# --------------------------------------------------------------------------- bounds and seals
-
-def check_bounded(value, label="record", *, max_bytes=MAX_RECORD_BYTES, max_items=MAX_RECORD_ITEMS):
-    """Return ``value`` as plain JSON, refusing arrays, tensors, bytes and oversized data.
-
-    Enforced recursively: no tensor-like value (0-d arrays included), no raw bytes, no
-    non-finite number, text <= ``MAX_TEXT_BYTES``, mappings <= 4 x ``MAX_INLINE_ITEMS`` keys,
-    any sequence <= ``MAX_INLINE_ITEMS`` items counting every item of the sequences nested in
-    it (a 48 x 48 list holds 2352), <= ``max_items`` values in total, and <= ``max_bytes`` of
-    canonical JSON. numpy scalars (``np.bool_``, ``np.int64``, ``np.float32``...) convert.
-    """
-    count = [0]
-    out = _bounded(value, label, 0, count, max_items, None)
-    if max_bytes is not None:
-        size = len(_canonical(out).encode())
-        if size > max_bytes:
-            raise SymbolReadError(f"{label} is {size} bytes (> {max_bytes}); store it by pointer")
-    return out
-
-
-def _bounded(value, label, depth, count, max_items, run):
-    if depth > 16:
-        raise SymbolReadError(label + " nests too deeply")
-    count[0] += 1
-    if count[0] > max_items:
-        raise SymbolReadError(f"{label}: more than {max_items} values in one record; store it by pointer")
-    if _np is not None and isinstance(value, _np.generic):
-        value = value.item()
-    if value is None or isinstance(value, (bool, str)):
-        if isinstance(value, str) and len(value.encode()) > MAX_TEXT_BYTES:
-            raise SymbolReadError(label + " text exceeds the inline limit")
-        return value
-    if isinstance(value, numbers.Integral):
-        return int(value)
-    if isinstance(value, numbers.Real):
-        if not math.isfinite(float(value)):
-            raise SymbolReadError(label + " is not finite")
-        return float(value)
-    if isinstance(value, (bytes, bytearray, memoryview)):
-        raise SymbolReadError(label + " holds raw bytes; reference the artifact by pointer")
-    if any(hasattr(value, a) for a in ("shape", "ndim", "detach", "__array__")):
-        raise SymbolReadError(label + " holds an array or tensor; reference it by pointer")
-    if isinstance(value, Mapping):
-        if len(value) > MAX_INLINE_ITEMS * 4:
-            raise SymbolReadError(label + " has too many keys")
-        out = {}
-        for key, item in value.items():
-            if not isinstance(key, str):
-                raise SymbolReadError(label + " has a non-text key")
-            out[key] = _bounded(item, f"{label}.{key}", depth + 1, count, max_items, None)
-        return out
-    if isinstance(value, (list, tuple)):
-        if len(value) > MAX_INLINE_ITEMS:
-            raise SymbolReadError(
-                f"{label} has {len(value)} items (> {MAX_INLINE_ITEMS}); store it by pointer")
-        # Items of directly nested sequences share the outermost sequence's item budget.
-        run = [0] if run is None else run
-        run[0] += len(value)
-        if run[0] > MAX_INLINE_ITEMS:
-            raise SymbolReadError(f"{label} holds more than {MAX_INLINE_ITEMS} items across nested "
-                                  "sequences; store it by pointer")
-        return [_bounded(item, f"{label}[{i}]", depth + 1, count, max_items,
-                         run if isinstance(item, (list, tuple)) else None)
-                for i, item in enumerate(value)]
-    raise SymbolReadError(f"{label} has unsupported type {type(value).__name__}")
-
-
-def _canonical(value):
-    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False, allow_nan=False)
-
-
-def seal_digest(value):
-    return hashlib.sha256(_canonical(value).encode()).hexdigest()
-
-
-def _sealed(body, label):
-    body = check_bounded(body, label)
-    return {**body, "fingerprint": seal_digest(body)}
-
-
-def _sha(value, label):
-    text = str(value or "").removeprefix("sha256:")
-    if len(text) != 64 or any(c not in "0123456789abcdef" for c in text):
-        raise SymbolReadError(label + " must be a sha256 hex digest")
-    return text
-
-
-def _text(value, label):
-    if not isinstance(value, str) or not value.strip() or value != value.strip():
-        raise SymbolReadError(label + " must be non-empty text without surrounding whitespace")
-    return value
-
-
-def _number(value, label, *, optional=True):
-    if value is None and optional:
-        return None
-    if isinstance(value, bool) or not isinstance(value, numbers.Real) or not math.isfinite(float(value)):
-        raise SymbolReadError(label + " must be a finite number")
-    return float(value)
-
-
-def file_sha256(path):
-    h = hashlib.sha256()
-    with open(path, "rb") as handle:
-        for block in iter(lambda: handle.read(1 << 20), b""):
-            h.update(block)
-    return h.hexdigest()
-
-
-# --------------------------------------------------------------------------- pointers and identity
-
-def declare_root(name, path):
-    """A named storage root: pointers hold ``name`` + a relative path, never the absolute path."""
-    return {"name": _text(name, "root name"), "path": str(Path(path).resolve())}
-
-
-def file_pointer(path, *, root, array=None, selector=None, json_pointer=None, sha256=None, role=None):
-    """Reference saved bytes: locator (root name + relative path) and digest (sha256 + size).
-
-    ``root`` comes from ``declare_root``; the file must lie under it. ``sha256`` is computed when
-    not supplied. The bytes are never copied.
-    """
-    path = Path(path).resolve()
-    try:
-        relative = path.relative_to(Path(root["path"]))
-    except ValueError as error:
-        raise SymbolReadError(f"{path} is not under the declared root {root['name']!r}") from error
-    pointer = {"kind": "file", "locator": {"root": root["name"], "path": relative.as_posix()},
-               "digest": {"sha256": _sha(sha256, "file sha256") if sha256 else file_sha256(path),
-                          "size": path.stat().st_size}}
-    for key, value in (("array", array), ("selector", selector), ("json_pointer", json_pointer),
-                       ("role", role)):
-        if value is not None:
-            pointer[key] = list(value) if isinstance(value, tuple) else value
-    return check_bounded(pointer, "file pointer")
-
-
-def resolve_pointer(pointer, roots):
-    """Path of a file pointer under ``roots`` ({name: path}); refuses an undeclared root."""
-    locator = pointer["locator"]
-    if locator["root"] not in roots:
-        raise SymbolReadError(f"pointer names undeclared root {locator['root']!r}")
-    return Path(roots[locator["root"]]) / locator["path"]
-
-
-def verify_pointer(pointer, roots):
-    """Resolve a file pointer and check its digest (size, then sha256)."""
-    path = resolve_pointer(pointer, roots)
-    digest = pointer["digest"]
-    if path.stat().st_size != digest["size"] or file_sha256(path) != digest["sha256"]:
-        raise SymbolReadError(f"{path} does not match its pointer digest")
-    return path
-
-
-def model_identity(name, *, checkpoint_sha256=None, resolve_by=None):
-    """A model name plus whether it is a verified identity.
-
-    With ``checkpoint_sha256`` the status is ``verified``. Without it the name only stands in
-    for an identity: status ``unresolved``, and ``resolve_by`` must say what would resolve it.
-    """
-    record = {"name": _text(name, "model name")}
-    if checkpoint_sha256 is not None:
-        record.update(identity_status="verified", checkpoint_sha256=_sha(checkpoint_sha256, "checkpoint sha256"))
-    else:
-        if not resolve_by:
-            raise SymbolReadError("an unverified model name says what would resolve it ('resolve_by')")
-        record.update(identity_status="unresolved", resolve_by=str(resolve_by))
-    return check_bounded(record, "model identity")
-
-
-def _identity_record(value):
-    if value is None:
-        return None
-    value = dict(value)
-    if value.get("identity_status") == "verified":
-        return model_identity(value.get("name"), checkpoint_sha256=value.get("checkpoint_sha256"))
-    if value.get("identity_status") == "unresolved":
-        return model_identity(value.get("name"), resolve_by=value.get("resolve_by"))
-    raise SymbolReadError("model identity_status must be 'verified' or 'unresolved'")
-
-
-def parameter_pointer(model_identity_name, parameter, *, selector=None, checkpoint_sha256=None, resolve_by=None):
-    """Reference a model parameter by model identity + parameter name (+ optional selector).
-
-    Without ``checkpoint_sha256`` the model name is not a verified identity: the pointer says
-    ``identity_status: "unresolved"`` and needs ``resolve_by``.
-    """
-    if not model_identity_name or not parameter:
-        raise SymbolReadError("parameter pointer needs a model identity and parameter name")
-    pointer = {"kind": "parameter", "parameter": str(parameter),
-               "model": model_identity(str(model_identity_name), checkpoint_sha256=checkpoint_sha256,
-                                       resolve_by=resolve_by or ("checkpoint sha256 of the file holding "
-                                                                 "this parameter"))}
-    if selector is not None:
-        pointer["selector"] = list(selector)
-    return check_bounded(pointer, "parameter pointer")
-
-
-def run_pointer(run_id, *, plan_sha256=None, plan=None):
-    """Reference a run by id, its plan hash and optionally the plan's file pointer."""
-    pointer = {"kind": "run", "run_id": _text(run_id, "run id")}
-    if plan_sha256 is not None:
-        pointer["plan_sha256"] = _sha(plan_sha256, "plan sha256")
-    if plan is not None:
-        if plan_sha256 is not None and plan["digest"]["sha256"] != pointer["plan_sha256"]:
-            raise SymbolReadError("plan pointer digest differs from plan sha256")
-        pointer["plan"] = dict(plan)
-    return check_bounded(pointer, "run pointer")
-
+# --------------------------------------------------------------------------- verdict rule
 
 def verdict_rule(rule_id, rule):
     """A verdict rule written in one place: ``{"id", "sha256", "rule"}`` (sha256 of ``rule``)."""
