@@ -1,0 +1,19 @@
+# Step through one layer port by port on tiny Qwen2 (BF16).
+where
+list
+step
+print
+step 2
+print q[h1] top=3
+x k 4
+next
+print p[h0] slice=4
+step
+step
+backtrace
+step
+next
+print
+step
+finish
+info program

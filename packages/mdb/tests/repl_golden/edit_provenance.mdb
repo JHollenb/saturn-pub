@@ -1,0 +1,17 @@
+# Selector edit as one masked set, provenance tags, info edits, commit, restart (tiny Qwen2 BF16).
+until L0.q
+checkpoint pre
+set L0.q[h1] = 2.0
+print L0.q
+print L0.q[h0]
+info edits
+until L0.p
+print L0.p
+commit
+print L0.h_out
+until L1.p
+print L1.p
+info edits
+restart pre
+info edits
+print L0.q

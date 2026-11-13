@@ -1,0 +1,4 @@
+until L0.s
+print L0.s
+until L0.p
+print L0.s

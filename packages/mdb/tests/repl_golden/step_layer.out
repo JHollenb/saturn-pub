@@ -1,0 +1,88 @@
+(mdb) start 1 5 9 3
+t3.L0.h  h = layer input (residual stream)  {P01}
+(mdb) where
+t3.L0.h  h = layer input (residual stream)  {P01}
+tokens: 1 5 9 3
+staged edits: 0, lookahead none
+(mdb) list
+L0 at row 3  (cursor t3.L0.h)
+=> h     h = layer input (residual stream)  {P01}
+   a     a = RMSNorm(h) * w_in  {P02 P03}  .
+   q     q = W_q a + b_q (pre-RoPE, flat)  {P04}  .
+   k     k = W_k a + b_k (pre-RoPE, flat)  {P04}  .
+   v     v = W_v a + b_v (flat)  {P04}  .
+   qr    qr = RoPE(q) (query argument of eager attention)  {P04}  .
+   kr    kr = [cache; RoPE(k)] (key argument of eager attention, cached rows included)  {P04}  .
+   s     s = scaling * qr repeat_kv(kr)^T + mask (replica of the native expression)  {P05 P07 P08 P09}  .
+   p     p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}  .
+   A     A = concat_heads(p repeat_kv([cache; v])) (o_proj input)  {P06 P07}  .
+   o     o = W_o A  {P06 P07}  .
+   r     r = h + o  {P06 P07 P14}  .
+   n     n = RMSNorm(r) * w_post (mlp input)  {P02 P03}  .
+   g     g = W_gate n  {P10 P15}  .
+   sg    sg = silu(g)  {P10 P15}  .
+   u     u = W_up n  {P10 P15}  .
+   f     f = sg * u (down_proj input)  {P10 P15}  .
+   m     m = W_down f  {P14}  .
+   h_out h_out = r + m (layer output)  {P14}  .
+(mdb) step
+t3.L0.a  a = RMSNorm(h) * w_in  {P02 P03}
+(mdb) print
+t3.L0.a  bfloat16 [1, 1, 16]  (batch, row, d_model)
+  norm 4.0011 min -2.0625 max 1.7578 mean -0.020126 abs_max 2.0625 [measured]
+  top |v|: [0,0,14] -2.0625, [0,0,4] 1.7578, [0,0,5] 1.5781, [0,0,6] -1.5, [0,0,12] -1.0625 [measured]
+  pointer occurrence ~stepped sha256 d7603cc867779374 cut a5caf85c8929
+(mdb) step 2
+t3.L0.k  k = W_k a + b_k (pre-RoPE, flat)  {P04}
+(mdb) print q[h1] top=3
+t3.L0.q[h1]  bfloat16 [1, 1, 16] -> [1, 1, 8]  (batch, row, head*head_dim)
+  norm 0.30873 min -0.20605 max 0.13672 mean -0.011932 abs_max 0.20605 [measured]
+  top |v|: [0,0,13] -0.20605, [0,0,10] 0.13672, [0,0,15] 0.12793 [measured]
+  pointer occurrence ~stepped sha256 525585b406cae194 cut a5caf85c8929
+(mdb) x k 4
+t3.L0.k  [0:4] of 8: 0.14648 -0.047607 0.083008 -0.21289 [measured]
+(mdb) next
+t3.L0.r  r = h + o  {P06 P07 P14}
+(mdb) print p[h0] slice=4
+t3.L0.p[h0]  bfloat16 [1, 2, 1, 4] -> [1, 1, 1, 4]  (batch, head, row, src)
+  norm 0.50001 min 0.24902 max 0.25195 mean 0.25 abs_max 0.25195 [measured]
+  top |v|: [0,0,0,0] 0.25195, [0,0,0,1] 0.25, [0,0,0,2] 0.24902, [0,0,0,3] 0.24902 [measured]
+  first 4: 0.25195 0.25 0.24902 0.24902 [measured]
+  pointer occurrence ~stepped sha256 bda254d8ec53233c cut a5caf85c8929
+(mdb) step
+t3.L0.n  n = RMSNorm(r) * w_post (mlp input)  {P02 P03}
+(mdb) step
+t3.L0.g  g = W_gate n  {P10 P15}
+(mdb) backtrace
+g <- n <- r <- o <- A <- v,p <- s <- qr,kr <- q,k <- a <- h
+#0  t3.L0.g  g = W_gate n  {P10 P15}  <- n
+#1  t3.L0.n  n = RMSNorm(r) * w_post (mlp input)  {P02 P03}  <- r
+#2  t3.L0.r  r = h + o  {P06 P07 P14}  <- h,o
+#3  t3.L0.o  o = W_o A  {P06 P07}  <- A
+#4  t3.L0.A  A = concat_heads(p repeat_kv([cache; v])) (o_proj input)  {P06 P07}  <- p,v + cache
+#5  t3.L0.v  v = W_v a + b_v (flat)  {P04}  <- a
+#5  t3.L0.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}  <- s
+#6  t3.L0.s  s = scaling * qr repeat_kv(kr)^T + mask (replica of the native expression)  {P05 P07 P08 P09}  <- qr,kr
+#7  t3.L0.qr  qr = RoPE(q) (query argument of eager attention)  {P04}  <- q
+#7  t3.L0.kr  kr = [cache; RoPE(k)] (key argument of eager attention, cached rows included)  {P04}  <- k + cache
+#8  t3.L0.q  q = W_q a + b_q (pre-RoPE, flat)  {P04}  <- a
+#8  t3.L0.k  k = W_k a + b_k (pre-RoPE, flat)  {P04}  <- a
+#9  t3.L0.a  a = RMSNorm(h) * w_in  {P02 P03}  <- h
+#10 t3.L0.h  h = layer input (residual stream)  {P01}  <- prev_layer
+(mdb) step
+t3.L0.sg  sg = silu(g)  {P10 P15}
+(mdb) next
+t3.L0.h_out  h_out = r + m (layer output)  {P14}
+(mdb) print
+t3.L0.h_out  bfloat16 [1, 1, 16]  (batch, row, d_model)
+  norm 0.088279 min -0.046143 max 0.040527 mean 0.00074005 abs_max 0.046143 [measured]
+  top |v|: [0,0,14] -0.046143, [0,0,4] 0.040527, [0,0,5] 0.037109, [0,0,6] -0.033936, [0,0,12] -0.018677 [measured]
+  pointer occurrence ~stepped sha256 6ea4712c2a2b4983
+(mdb) step
+t3.L1.h  h = layer input (residual stream)  {P01}
+(mdb) finish
+t3.L1.h_out  h_out = r + m (layer output)  {P14}
+(mdb) info program
+qwen2 (transformers.models.qwen2.modeling_qwen2), 2 layers, d_model 16, heads 2/1 x 8, vocab 32, bfloat16 on cpu, attention eager, lookahead none
+ports: h a q k v qr kr s p A o r n g sg u f m h_out
+globals: emb fn logits M sample start

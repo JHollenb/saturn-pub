@@ -1,0 +1,19 @@
+# Checkpoint, stage an edit, commit, see it downstream, restart, and abort.
+until L0.n
+checkpoint pre
+print n top=2
+set n = 2 scale
+print n top=2
+info edits
+commit
+until L1.a
+print top=2
+info edits
+restart pre
+print n top=2
+info edits
+set n[d=0:2] = 0.5
+x n 4
+abort
+x n 4
+checkpoints

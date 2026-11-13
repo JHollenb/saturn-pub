@@ -25,6 +25,9 @@ TOOLS["wsp"] = "wsp"
 
 def main(argv=None):
     argv = list(sys.argv[1:] if argv is None else argv)
+    if argv and argv[0] == "engine":
+        from .repl.__main__ import main as engine_main
+        return engine_main(argv[1:])
     if argv and argv[0] == "help":
         from .debugger_cli import HELP
         print(HELP)

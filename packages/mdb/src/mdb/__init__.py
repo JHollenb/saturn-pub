@@ -33,6 +33,9 @@ __all__ = [
     "ActionNode",
     "OutputNode",
     "evidence",
+    "attach",
+    "open_tiny",
+    "Debugger",
 ]
 
 _EXPORTS = {
@@ -66,6 +69,9 @@ _EXPORTS = {
     "ActionNode": ("state_graph", "ActionNode"),
     "OutputNode": ("state_graph", "OutputNode"),
     "evidence": ("state_graph", "evidence"),
+    "attach": ("ops.debugger", "attach"),
+    "open_tiny": ("ops.debugger", "open_tiny"),
+    "Debugger": ("ops.debugger", "Debugger"),
 }
 
 

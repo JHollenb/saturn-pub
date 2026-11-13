@@ -1,0 +1,56 @@
+(mdb) start 1 5 9 3
+t3.L0.h  h = layer input (residual stream)  {P01}
+(mdb) break L*.p
+Breakpoint 1 at L*.p
+(mdb) tbreak L1.o
+Temporary breakpoint 2 at L1.o
+(mdb) watch L0.h[d=0]
+Watch 3 (change) on L0.h[d=0]
+(mdb) break logits if argmax == 6
+Breakpoint 4 at t*.logits if argmax == 6
+(mdb) info breakpoints
+1   break  L*.p  hits 0
+2   tbreak L1.o  hits 0
+3   watch  L0.h[d=0] change  hits 0
+4   break  t*.logits if argmax == 6  hits 0
+(mdb) continue
+Breakpoint 1, L*.p
+t3.L0.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
+(mdb) print p top=2
+t3.L0.p  bfloat16 [1, 2, 1, 4]  (batch, head, row, src)
+  norm 0.70781 min 0.24805 max 0.25195 mean 0.25024 abs_max 0.25195 [measured]
+  top |v|: [0,0,0,0] 0.25195, [0,1,0,0] 0.25195 [measured]
+  pointer occurrence ~stepped sha256 bda254d8ec53233c cut a5caf85c8929
+(mdb) c
+Breakpoint 1, L*.p
+t3.L1.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
+(mdb) c
+Temporary breakpoint 2, L1.o
+t3.L1.o  o = W_o A  {P06 P07}
+(mdb) c
+Watch 3 (change) L0.h[d=0]  old norm 0.016357 min 0.016357 max 0.016357 mean 0.016357 abs_max 0.016357 [measured]
+  new norm 0.011169 min -0.011169 max -0.011169 mean -0.011169 abs_max 0.011169 [measured]
+t4.L0.h  h = layer input (residual stream)  {P01}
+focus t4.L0.h[d=0]
+(mdb) c
+Breakpoint 1, L*.p
+t4.L0.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
+(mdb) info breakpoints
+1   break  L*.p  hits 3
+3   watch  L0.h[d=0] change  hits 1
+4   break  t*.logits if argmax == 6  hits 0
+(mdb) reverse-continue
+Breakpoint 1, L*.p
+t3.L1.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}
+(mdb) delete 1
+deleted 1
+(mdb) c
+Watch 3 (change) L0.h[d=0]  old norm 0.011169 min -0.011169 max -0.011169 mean -0.011169 abs_max 0.011169 [measured]
+  new norm 0.0048828 min 0.0048828 max 0.0048828 mean 0.0048828 abs_max 0.0048828 [measured]
+t5.L0.h  h = layer input (residual stream)  {P01}
+focus t5.L0.h[d=0]
+(mdb) delete
+deleted 3 4
+(mdb) continue budget=1
+stopped: budget
+t6.start  tokens of the context so far (before the pending row is embedded)

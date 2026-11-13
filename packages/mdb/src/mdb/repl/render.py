@@ -1,0 +1,477 @@
+"""Op result JSON -> compact text. Deterministic: fixed float format, no timings."""
+
+from __future__ import annotations
+
+import json
+from typing import Any
+
+STAT_ORDER = ("norm", "min", "max", "mean", "abs_max")
+
+
+def fmt(value: Any) -> str:
+    if isinstance(value, bool):
+        return "true" if value else "false"
+    if isinstance(value, float):
+        text = f"{value:.5g}"
+        return "0" if text in ("-0", "0") else text
+    return str(value)
+
+
+def tag(authority: str, qualifier: str = "") -> str:
+    return f"[{authority}, {qualifier}]" if qualifier else f"[{authority}]"
+
+
+def qualifier(provenance: dict[str, Any] | None) -> str:
+    """Why a value carries its label: ``under edit t3.L0.q``, ``replica of native``,
+    ``realised through o``, ``mixed 4 written/12 untouched``, ``untouched, port edit: replace``."""
+    if not provenance:
+        return ""
+    parts = []
+    kind = provenance.get("edit_kind")
+    if provenance.get("replica_checked") is False:
+        at = provenance.get("replica_check_at")
+        parts.append(f"replica unchecked until {at}" if at else "replica unchecked")
+    elif kind == "replica":
+        parts.append("replica of native")
+    elif kind == "realisation":
+        parts.append("realised through o")
+    if provenance.get("mixed"):
+        mixed = provenance["mixed"]
+        parts.append(f"mixed {mixed['written']} written/{mixed['untouched']} untouched")
+    if provenance.get("same_port_edit"):
+        parts.append("untouched; port edited: " + ",".join(provenance["same_port_edit"]["ops"]))
+    under = provenance.get("under_edits") or []
+    if under:
+        first = under[0]
+        text = f"under edit {first['address']}"
+        extra = provenance.get("under_edits_total", len(under)) - 1
+        parts.append(text + (f" +{extra} more" if extra > 0 else ""))
+    return ", ".join(parts)
+
+
+def num(item: Any) -> str:
+    if isinstance(item, dict) and item.get("state") == "unresolved":
+        return f"unresolved ({item['reason']})"
+    if isinstance(item, dict) and item.get("state") == "refused":
+        return f"refused ({item['reason']})"
+    if isinstance(item, dict) and "value" in item:
+        return f"{fmt(item['value'])} {tag(item.get('authority', '?'))}"
+    return fmt(item)
+
+
+def _proofs(proofs: list[str]) -> str:
+    return "{" + " ".join(proofs) + "}" if proofs else ""
+
+
+def stop_line(stop: dict[str, Any]) -> str:
+    parts = [stop["address"], stop.get("operator", "")]
+    if stop.get("proofs"):
+        parts.append(_proofs(stop["proofs"]))
+    return "  ".join(part for part in parts if part)
+
+
+def _nonfinite(counts: dict[str, Any]) -> str:
+    parts = [f"{counts[k]} {label}" for k, label in (("nan", "nan"), ("posinf", "+inf"),
+                                                      ("neginf", "-inf")) if counts.get(k)]
+    return ", ".join(parts)
+
+
+def stats_line(stats: dict[str, Any], why: str = "") -> str:
+    present = [name for name in STAT_ORDER if name in stats]
+    unresolved = [name for name in present if stats[name].get("state") == "unresolved"]
+    tail = ""
+    if stats.get("nonfinite"):
+        tail = f"  (over finite elements; non-finite: {_nonfinite(stats['nonfinite'])})"
+    if unresolved:
+        return f"unresolved: {stats[unresolved[0]]['reason']}{tail}"
+    authorities = {stats[name]["authority"] for name in present}
+    body = " ".join(f"{name} {fmt(stats[name]['value'])}" for name in present)
+    if len(authorities) == 1:
+        return f"{body} {tag(authorities.pop(), why)}{tail}"
+    return " ".join(f"{name} {num(stats[name])}" for name in present) + tail
+
+
+def _token_text(tokens: list[dict[str, Any]]) -> str:
+    out = []
+    for token in tokens:
+        text = token.get("text")
+        out.append(str(token["id"]) if text is None else f"{token['id']}:{json.dumps(text)}")
+    return " ".join(out)
+
+
+def _index(index: list[int]) -> str:
+    return "[" + ",".join(str(i) for i in index) + "]"
+
+
+def reduction_lines(result: dict[str, Any], indent: str = "  ") -> list[str]:
+    head = f"{result['address']}  {result['dtype']} {result['shape']}"
+    if "selected_shape" in result:
+        head += f" -> {result['selected_shape']}"
+    if result.get("axes"):
+        head += "  (" + ", ".join(result["axes"]) + ")"
+    lines = [head]
+    provenance = result.get("provenance") or {}
+    why = qualifier(provenance)
+    if provenance.get("state") == "refused":
+        lines.append(f"{indent}label refused: {provenance.get('reason')}")
+    if provenance.get("edited"):
+        by = f" by {provenance['by']}" if provenance.get("by") else ""
+        lines.append(f"{indent}edited{by}: {provenance.get('authority', 'refused')}")
+    if provenance.get("realisation_exact") is False:
+        lines.append(f"{indent}realisation inexact: max abs error "
+                     f"{num(provenance.get('realisation_max_abs_error'))}")
+    if "replica_equal" in provenance:
+        found = provenance["replica_equal"]
+        if isinstance(found, dict):
+            lines.append(f"{indent}replica check: unresolved ({found['reason']})")
+        else:
+            text = "equal" if found else "differs"
+            if "replica_max_abs_diff" in provenance:
+                text += f" max_abs_diff {num(provenance['replica_max_abs_diff'])}"
+            lines.append(f"{indent}replica check: {text}")
+    if "tokens" in result:
+        total = result.get("tokens_total", len(result["tokens"]))
+        more = "" if total == len(result["tokens"]) else f" (last {len(result['tokens'])})"
+        label = provenance.get("authority")
+        qualified = f" {tag(label, why)}" if label else ""
+        lines.append(f"{indent}tokens{more}: {_token_text(result['tokens'])}{qualified}")
+    if "stats" in result:
+        lines.append(indent + stats_line(result["stats"], why))
+    nonfinite = (result.get("stats") or {}).get("nonfinite")
+    if nonfinite and not result.get("top"):
+        lines.append(f"{indent}top |v|: none (non-finite: {_nonfinite(nonfinite)})")
+    if result.get("top") and any("authority" not in e["value"] for e in result["top"]):
+        lines.append(f"{indent}top |v|: {num(result['top'][0]['value'])}")
+    elif result.get("top"):
+        authorities = {entry["value"]["authority"] for entry in result["top"]}
+        items = []
+        for entry in result["top"]:
+            text = f"{_index(entry['index'])} {fmt(entry['value']['value'])}"
+            if "text" in entry:
+                text += f" {json.dumps(entry['text'])}"
+            items.append(text)
+        suffix = f" {tag(authorities.pop(), why)}" if len(authorities) == 1 else ""
+        lines.append(f"{indent}top |v|: " + ", ".join(items) + suffix)
+    if "slice" in result and not isinstance(result["slice"]["values"], list):
+        lines.append(f"{indent}first values: {num(result['slice']['values'])}")
+    elif "slice" in result:
+        values = " ".join(fmt(v) for v in result["slice"]["values"])
+        lines.append(f"{indent}first {len(result['slice']['values'])}: {values} "
+                     f"{tag(result['slice']['authority'], why)}")
+    if "pointer" in result:
+        pointer = result["pointer"]
+        sha = (pointer["value"].get("sha256") or "")[:16]
+        cut = f" cut {pointer['cut'][:12]}" if pointer.get("cut") else ""
+        lines.append(f"{indent}pointer {pointer['kind']} ~{pointer['program']} sha256 {sha}{cut}")
+    elif "pointer_omitted" in result:
+        lines.append(f"{indent}pointer omitted: {result['pointer_omitted']}")
+    return lines
+
+
+def _displays(result: dict[str, Any]) -> list[str]:
+    lines = []
+    for item in result.get("displays", ()):
+        if "unavailable" in item:
+            lines.append(f"{item['id']}: {item['address']}  <{item['unavailable']}>")
+            continue
+        body = reduction_lines(item, indent="     ")
+        lines.append(f"{item['id']}: {body[0]}")
+        lines.extend(body[1:])
+    return lines
+
+
+def _hit_lines(hits: list[dict[str, Any]]) -> list[str]:
+    lines = []
+    for hit in hits:
+        kind = hit["kind"]
+        if kind == "watch":
+            line = f"Watch {hit['id']} ({hit['mode']}) {hit['pattern']}"
+            if "old" in hit:
+                line += f"  old {stats_line(hit['old'], qualifier(hit.get('old_provenance')))}"
+            lines.append(line)
+            lines.append(f"  new {stats_line(hit['new'], qualifier(hit.get('new_provenance')))}")
+        elif kind == "advance":
+            lines.append(f"Advanced to {hit['pattern']}")
+        else:
+            name = "Temporary breakpoint" if kind == "tbreak" else "Breakpoint"
+            lines.append(f"{name} {hit['id']}, {hit['pattern']}")
+    return lines
+
+
+def _motion(result: dict[str, Any]) -> list[str]:
+    lines = []
+    reason = result.get("reason")
+    if reason in ("budget", "end-of-context", "start-of-run", "no-breakpoints"):
+        lines.append(f"stopped: {reason}")
+    elif reason == "error":
+        error = result.get("error") or {}
+        lines.append(f"stopped: error in breakpoint {error.get('id')}: {error.get('message')}")
+    lines.extend(_hit_lines(result.get("hits", ())))
+    if result.get("omitted"):
+        lines.append(f"... {result['omitted']} more of {result['hits_total']} hits not shown")
+    if result.get("note"):
+        lines.append(f"note: {result['note']}")
+    if result.get("ignored"):
+        lines.append(f"ignoring breakpoint {' '.join(map(str, result['ignored']['ids']))} "
+                     f"{result['ignored']['count']} more time(s)")
+    if "committed" in result:
+        lines.append(f"committed {result['committed']} edit(s)")
+    if result.get("op") == "abort":
+        lines.append(f"dropped {result.get('count', 0)} staged edit(s)")
+    lines.append(stop_line(result["stop"]))
+    if result.get("focus"):
+        lines.append(f"focus {result['focus']}")
+    lines.extend(_displays(result))
+    return lines
+
+
+def _edit(edit: dict[str, Any]) -> str:
+    if edit["kind"] == "scalar":
+        text = f"{edit['port']} {edit['op']} {num(edit['value'])}"
+    else:
+        text = (f"{edit['port']} {edit['op']} tensor {edit['shape']} {edit['dtype']} "
+                f"sha256 {edit['sha256'][:12]}")
+    if "realised_exact" in edit:
+        if edit["realised_exact"]:
+            text += " (realised exactly"
+        else:
+            text += " (NOT realised exactly"
+            if "realised_max_abs_error" in edit:
+                text += f", max abs error {num(edit['realised_max_abs_error'])}"
+        if edit.get("realised_dtype"):
+            text += f" as {str(edit['realised_dtype']).removeprefix('torch.')}"
+        if edit.get("realised_at"):
+            text += f" via {edit['realised_at']}"
+            if edit.get("realisation_exact") is False:  # the cost of going through o
+                text += (f"; realisation inexact, max abs error "
+                         f"{num(edit.get('realisation_max_abs_error'))}")
+        text += ")"
+    if edit.get("selection"):
+        text += f" on [{edit['selection']}]"
+        if "mask_count" in edit:
+            text += f" ({edit['mask_count']} elements)"
+    if edit.get("fired") is False:
+        text += " (not fired yet)"
+    if "changed_fraction" in edit:
+        text += f" changed {num(edit['changed_fraction'])}"
+    if "cast_max_abs_error" in edit and not edit.get("cast_exact", True):
+        text += f" cast error {num(edit['cast_max_abs_error'])}"
+    if "is_distribution" in edit:
+        text += (f" row sums {num(edit.get('row_sum_min'))}..{num(edit.get('row_sum_max'))}"
+                 f" tol {num(edit.get('row_sum_tolerance'))}"
+                 f" {'a distribution' if edit['is_distribution'] else 'NOT a distribution'}")
+    if edit.get("mix"):
+        text += f" mix {edit['mix']}"
+        if "replica_verified" in edit:
+            text += " verified" if edit["replica_verified"] else " UNVERIFIED"
+    return text
+
+
+def _info(result: dict[str, Any]) -> list[str]:
+    subject = result["subject"]
+    if subject == "program":
+        program = result["program"]
+        lines = [f"{program['family']} ({program['modeling']}), {program['layers']} layers, "
+                 f"d_model {program['hidden_size']}, heads {program['heads']}/"
+                 f"{program['kv_heads']} x {program['head_dim']}, vocab {program['vocab_size']}, "
+                 f"{program['dtype']} on {program['device']}, attention {program['attention']}"
+                 + (f", lookahead {program['lookahead']}" if program.get("lookahead") else "")]
+        lines.append("ports: " + " ".join(program["port_names"]))
+        lines.append("globals: " + " ".join(program["globals"]))
+        return lines
+    if subject == "ports":
+        return [f"{p['name']:<6}{p['sublayer']:<5}{p['operator']}  {_proofs(p['proofs'])}"
+                + ("" if p["editable"] else "  (not editable)") for p in result["ports"]]
+    if subject in ("breakpoints", "watch"):
+        if not result["items"]:
+            if result.get("total"):
+                return [_page_note(result)]
+            return ["no breakpoints or watches" if subject == "breakpoints" else "no watches"]
+        lines = []
+        for item in result["items"]:
+            extra = ""
+            if item["kind"] == "watch":
+                extra = f" {item['mode']}"
+                if item.get("predicate"):
+                    extra += f" if {item['predicate']}"
+            elif item.get("condition"):
+                extra = f" if {item['condition']}"
+            lines.append(f"{item['id']:<4}{item['kind']:<7}{item['pattern']}{extra}  "
+                         f"hits {item['hits']}" + _flags(item))
+        lines.extend(_more(result))
+        return lines
+    if subject == "display":
+        lines = [f"{d['id']}: {d['address']}" for d in result["displays"]] or ["no displays"]
+        return lines + _more(result)
+    if subject == "checkpoints":
+        return _checkpoints(result["checkpoints"]) + _more(result)
+    lines = [f"staged at {result['where']}: " + (
+        "; ".join(_edit(e) for e in result["staged"]) or "none")]
+    for entry in result["committed"]:
+        more = (f" (+{entry['omitted']} more of {entry['edits_total']})"
+                if entry.get("omitted") else "")
+        lines.append(f"committed L{entry['layer']} (transition {entry['transition']}): "
+                     + "; ".join(_edit(e) for e in entry["edits"]) + more)
+    return lines + _more(result)
+
+
+def _flags(item: dict[str, Any]) -> str:
+    flags = []
+    if not item.get("enabled", True):
+        flags.append("disabled")
+    if item.get("ignore"):
+        flags.append(f"ignore next {item['ignore']}")
+    return f"  ({', '.join(flags)})" if flags else ""
+
+
+def _page_note(result: dict[str, Any]) -> str:
+    return f"(offset {result['offset']} is past the {result['total']} items)"
+
+
+def _more(result: dict[str, Any]) -> list[str]:
+    """A page footer when the list has more than was shown."""
+    total, offset = result.get("total", 0), result.get("offset", 0)
+    shown = offset + result.get("limit", 0)
+    if total > shown or offset:
+        return [f"(items {offset + 1}-{min(shown, total)} of {total}; "
+                f"use offset= and limit= for the rest)"]
+    return []
+
+
+def _checkpoints(items: list[dict[str, Any]]) -> list[str]:
+    if not items:
+        return ["no checkpoints"]
+    return [f"{c['name']:<10}{c['where']}  staged {c['staged']}, committed {c['committed']}"
+            for c in items]
+
+
+def _frame(stop: dict[str, Any]) -> str:
+    return stop_line(stop)
+
+
+def render(result: dict[str, Any]) -> str:
+    """Compact text of one op result; a result whose state is not ``resolved`` says so."""
+    text = _render(result)
+    if result.get("state", "resolved") != "resolved":
+        text += f"\nstate: {result['state']}"
+    return text
+
+
+def _render(result: dict[str, Any]) -> str:
+    name = result.get("op")
+    if name in ("start", "run", "step", "next", "finish", "until", "advance", "continue",
+                "commit", "abort", "restart", "reverse-step", "reverse-next", "reverse-finish",
+                "reverse-continue"):
+        return "\n".join(_motion(result))
+    if name == "where":
+        lines = [stop_line(result["stop"])]
+        if result.get("focus"):
+            lines.append(f"focus {result['focus']}")
+        total = result["tokens_total"]
+        more = "" if total == len(result["tokens"]) else f" (last {len(result['tokens'])})"
+        lines.append(f"tokens{more}: {_token_text(result['tokens'])}")
+        lines.append(f"staged edits: {result['staged']}"
+                     + (f", lookahead {result['lookahead']}" if result.get("lookahead") else ""))
+        for port in result.get("computed_past_cursor", ()):
+            lines.append(f"{port} was computed by the native call but is not held")
+        return "\n".join(lines)
+    if name == "frame":
+        lines = [f"focus {result['focus']}  (cursor {result['cursor']})"]
+        if "frame" in result:
+            lines.append(_frame(result["frame"]))
+        return "\n".join(lines)
+    if name in ("up", "down"):
+        line = _frame(result["frame"])
+        if result.get("computed") is False:
+            line += "  (not computed yet)"
+        if result.get("alternatives"):
+            line += "\n  also produced by: " + ", ".join(result["alternatives"])
+        return line
+    if name == "print":
+        return "\n".join(reduction_lines(result))
+    if name == "x":
+        head = (f"{result['address']}  [{result['offset']}:{result['offset'] + result['count']}]"
+                f" of {result['numel']}")
+        if "values" in result:
+            values = result["values"]
+            if values.get("state") in ("unresolved", "refused"):
+                return f"{head}: {num(values)}"
+            text = f"{head}: " + " ".join(fmt(v) for v in values["values"]) + \
+                f" {tag(values['authority'], qualifier(result.get('provenance')))}"
+            if result.get("nonfinite"):
+                text += f"  (non-finite: {_nonfinite(result['nonfinite'])})"
+            return text
+        return f"{head}: {_token_text(result['tokens'])}"
+    if name == "list":
+        lines = [f"L{result['layer']} at row {result['row']}  (cursor {result['where']})"]
+        for row in result["ports"]:
+            mark = "=>" if row["cursor"] else ("*" if row["focus"] else " ")
+            state = "" if row["computed"] else "  ."
+            lines.append(f"{mark:>2} {row['port']:<6}{row['operator']}  {_proofs(row['proofs'])}"
+                         f"{state}")
+        for check, value in result.get("checks", {}).items():
+            text = "equal" if value.get("equal") else "differs"
+            if "max_abs_diff" in value:
+                text += f" max_abs_diff {num(value['max_abs_diff'])}"
+            lines.append(f"   replica check {check}: {text}")
+        return "\n".join(lines)
+    if name == "backtrace":
+        lines = [result["chain"]]
+        for frame in result["frames"]:
+            inputs = frame.get("inputs")
+            reads = f"  <- {','.join(inputs)}" if inputs else ""
+            if frame.get("reads"):
+                reads += (" + " if inputs else "  <- ") + ",".join(frame["reads"])
+            lines.append(f"#{frame['level']:<2} {_frame(frame)}{reads}")
+        return "\n".join(lines)
+    if name in ("break", "tbreak"):
+        item = result["breakpoint"]
+        cond = f" if {item['condition']}" if item["condition"] else ""
+        label = "Temporary breakpoint" if item["kind"] == "tbreak" else "Breakpoint"
+        return f"{label} {item['id']} at {item['pattern']}{cond}"
+    if name == "watch":
+        item = result["watch"]
+        pred = f" if {item['predicate']}" if item["predicate"] else ""
+        return f"Watch {item['id']} ({item['mode']}) on {item['pattern']}{pred}"
+    if name in ("delete", "undisplay"):
+        text = "deleted " + (" ".join(str(i) for i in result["deleted"]) or "nothing")
+        if result.get("omitted"):
+            text += f" ... ({result['deleted_total']} in all)"
+        return text
+    if name in ("enable", "disable"):
+        text = f"{name}d " + (" ".join(str(i) for i in result["ids"]) or "nothing")
+        if result.get("omitted"):
+            text += f" ... ({result['total']} in all)"
+        return text
+    if name in ("condition", "ignore"):
+        item = result.get("breakpoint") or result["watch"]
+        if name == "ignore":
+            return (f"Will ignore next {result['ignore']} crossings of breakpoint {item['id']}."
+                    if result["ignore"] else f"Will stop next time breakpoint {item['id']} is "
+                    "reached.")
+        what = item.get("condition") if "condition" in item else item.get("predicate")
+        return (f"Breakpoint {item['id']} now unconditional." if what is None
+                else f"Breakpoint {item['id']}: if {what}")
+    if name == "display":
+        return "\n".join(_displays(result)) or "no displays"
+    if name == "set":
+        lines = [f"staged at {result['target']}: " + "; ".join(_edit(e) for e in result["edits"])
+                 + f"  ({result['staged']} staged)"]
+        if "source" in result:
+            lines.append(f"  value from {result['source']}")
+        if "realised_as" in result:
+            lines.append(f"  realised as {result['realised_as']}")
+        return "\n".join(lines)
+    if name == "checkpoint":
+        return f"checkpoint {result['name']} at {result['where']} ({result['bytes']} bytes)"
+    if name == "checkpoints":
+        return "\n".join(_checkpoints(result["checkpoints"]) + _more(result))
+    if name == "info":
+        return "\n".join(_info(result))
+    return json.dumps(result, sort_keys=True)
+
+
+def render_error(error: Any) -> str:
+    data = error.to_json() if hasattr(error, "to_json") else {"type": "error",
+                                                              "message": str(error)}
+    return f"error ({data['type']}): {data['message']}"
