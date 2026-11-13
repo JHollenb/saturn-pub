@@ -32,13 +32,13 @@ import weakref
 from collections import Counter
 from typing import Any
 
-from .builtin import GLOBALS, _moved, _project
+from .builtin import GLOBALS, moved, project_of
 from .errors import BadArgs, Refused
-from .predict import _consumer, _edit, _record_view, _session_digest, _split_assignment
+from .predict import build_edit, parse_assignment, parse_consumer, record_view, session_digest
 from .registry import Arg, Op, register
 
 _ROW = re.compile(r"t(?P<row>\d+)\.")
-_OPS = ("replace", "add", "scale")
+_OPS = ("replace", "add", "scale", "mix")
 _SYMBOLS: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
 
 
@@ -49,11 +49,11 @@ def _refusal():
 
 
 def _declared_consumer(ctx, text: str | None):
-    return None if text is None else _consumer(ctx, text)
+    return None if text is None else parse_consumer(ctx, text)
 
 
 def _session_id(ctx) -> str | None:
-    project = _project(ctx)
+    project = project_of(ctx)
     return None if project is None or project.read_only else ctx.debugger.session_id
 
 
@@ -67,7 +67,7 @@ def _store(ctx, records: list[dict[str, Any]]) -> list[str]:
 
 
 def _unchanged(ctx, before: str, verb: str) -> None:
-    if _session_digest(ctx) != before:
+    if session_digest(ctx) != before:
         raise RuntimeError(f"{verb} changed the debugger session")
 
 
@@ -77,7 +77,7 @@ def _unchanged(ctx, before: str, verb: str) -> None:
 def _reads(ctx, source, rows, consumer, top, causal, min_effect):
     from mdb.analysis import reads as reads_mod
 
-    before = _session_digest(ctx)
+    before = session_digest(ctx)
     try:
         result = reads_mod.reads(ctx.run, source, rows=rows,
                                  consumer=_declared_consumer(ctx, consumer), top=top,
@@ -167,7 +167,7 @@ def _circuit(ctx, target, id, top, depth, tolerance):  # noqa: A002 - the wire n
             raise Refused(f"no circuit {id} (have: {', '.join(map(str, ledger)) or 'none'})")
         circuit = ledger[id]
         if target == "show":
-            out = {"action": "show", "id": id, "record": _record_view(circuit.record),
+            out = {"action": "show", "id": id, "record": record_view(circuit.record),
                    "tests": circuit.tests[-1:]}
             if circuit.tests:
                 last = circuit.tests[-1]
@@ -178,7 +178,7 @@ def _circuit(ctx, target, id, top, depth, tolerance):  # noqa: A002 - the wire n
             if texts:
                 out["token_text"] = texts
             return out
-        before = _session_digest(ctx)
+        before = session_digest(ctx)
         try:
             result = circuits.test(run, circuit, tolerance=float(tolerance))
         except _refusal() as error:
@@ -188,11 +188,11 @@ def _circuit(ctx, target, id, top, depth, tolerance):  # noqa: A002 - the wire n
     if id is not None:
         raise BadArgs("circuit CONSUMER takes top= and depth=, not an id")
     try:
-        circuit = circuits.build(run, _consumer(ctx, target), top=top, depth=depth,
+        circuit = circuits.build(run, parse_consumer(ctx, target), top=top, depth=depth,
                                  session_id=_session_id(ctx))
     except _refusal() as error:
         raise Refused(str(error)) from None
-    out = {"action": "build", "id": circuit.id, "record": _record_view(circuit.record)}
+    out = {"action": "build", "id": circuit.id, "record": record_view(circuit.record)}
     stored = _store(ctx, [circuit.record])
     if stored:
         out["stored"] = stored
@@ -220,22 +220,24 @@ def _source_texts(ctx, root: dict[str, Any]) -> dict[str, str]:
 
 
 def _side(ctx, text: str):
-    """An edit ``ADDR=VALUE [op]`` or a checkpoint name (in memory first, then durable)."""
+    """An edit ``ADDR=VALUE [op]`` (``predict.parse_assignment``: also ``ADDR += X`` and the
+    other sugar, ``mix DOSE``, a state cell target and an ``ORIGIN:ADDR`` value) or a checkpoint
+    name (in memory first, then durable)."""
     from mdb.analysis.compare import Side
 
     words = text.split()
-    if words and "=" in words[0].partition("[")[0] + words[0].rpartition("]")[2]:
-        op = words[1] if len(words) > 1 else "replace"
-        if op not in _OPS or len(words) > 2:
-            raise BadArgs(f"an edit side is ADDR=VALUE [replace|add|scale], not {text!r}")
-        address, value = _split_assignment(words[0], None)
-        return Side(text, edits=[_edit(ctx, address, value, op)])
+    if _assigns(text):
+        usage = "ADDR=VALUE [replace|add|scale|mix DOSE] or ADDR += X"
+        address, value, op, dose = parse_assignment(text, usage=usage)
+        if (op or "replace") not in _OPS:
+            raise BadArgs(f"an edit side is {usage}, not {text!r}")
+        return Side(text, edits=[build_edit(ctx, address, value, op or "replace", dose)])
     if len(words) != 1:
         raise BadArgs(f"a side is an edit ADDR=VALUE [op] or a checkpoint name, not {text!r}")
     name = words[0]
     if name in ctx.checkpoints:
         return Side(name, checkpoint=ctx.checkpoints[name])
-    project = _project(ctx)
+    project = project_of(ctx)
     if project is not None:
         from mdb.core import recipe as recipes
 
@@ -250,19 +252,30 @@ def _side(ctx, text: str):
     raise Refused(f"no checkpoint {name!r} (have: {known}) and it is not an edit ADDR=VALUE")
 
 
+def _assigns(text: str) -> bool:
+    """Whether a compare side is an assignment: an ``=`` outside brackets."""
+    depth = 0
+    for char in text:
+        depth += char == "["
+        depth -= char == "]"
+        if char == "=" and depth == 0:
+            return True
+    return False
+
+
 def _compare(ctx, a, b, consumer):
     from mdb.analysis import compare
 
     run = ctx.run
     if consumer is None:
         consumer = f"t{_ROW.match(run.where)['row']}.logits"
-    chosen = _consumer(ctx, consumer)
-    before = _session_digest(ctx)
+    chosen = parse_consumer(ctx, consumer)
+    before = session_digest(ctx)
     try:
         result = compare.compare(run, _side(ctx, a), _side(ctx, b), chosen)
     except _refusal() as error:
         raise Refused(str(error)) from None
-    after = _session_digest(ctx)
+    after = session_digest(ctx)
     if after != before:
         raise RuntimeError("compare changed the debugger session")
     report = result["report"]
@@ -375,8 +388,13 @@ def _seek(ctx, target):
         recipe_id = pointer["recipe"]
         origin = "pointer"
     else:
+        head = text.partition("[")[0]
+        relative = (":" not in head and not head.startswith(("@", "cache."))
+                    and not _ROW.match(head))
+        # `L20.p` and `logits` mean the cursor's row, as they do for `until` and `print`
+        full = f"t{_ROW.match(run.where)['row']}.{text}" if relative else text
         try:
-            parsed = addresses.parse(text, ports=run.program.names, global_ports=GLOBALS)
+            parsed = addresses.parse(full, ports=run.program.names, global_ports=GLOBALS)
         except addresses.AddressError as error:
             raise BadArgs(f"bad address {text!r}: {error}") from None
         recipe_id = None
@@ -392,15 +410,15 @@ def _seek(ctx, target):
         try:
             moves = _seek_within(run, plain)
         except ValueError as error:
-            if _project(ctx) is None:
+            if project_of(ctx) is None:
                 raise Refused(f"cannot reach {plain}: {error}; an occurrence outside this run "
                               "is reachable only through a stored recipe (attach with project= "
                               "and checkpoint)") from None
             recipe_id = _origin_recipe(ctx, ctx.debugger.session_id, plain)
         else:
-            return _moved(ctx, {"target": plain, "moves": moves, "via": "run",
+            return moved(ctx, {"target": plain, "moves": moves, "via": "run",
                                 **_dropped(before, _edit_list(run))})
-    if _project(ctx) is None:
+    if project_of(ctx) is None:
         raise Refused(f"{text}: reaching another origin needs a stored recipe; attach with "
                       "project=")
     if origin == "@cut":
@@ -420,7 +438,7 @@ def _seek(ctx, target):
     ctx.set_run(replayed)
     ctx.debugger.live = replayed
     _bind_declared(ctx)
-    return _moved(ctx, {"target": plain, "moves": moves, "via": "recipe",
+    return moved(ctx, {"target": plain, "moves": moves, "via": "recipe",
                         "recipe": recipe_id, **_dropped(before, _edit_list(replayed))})
 
 

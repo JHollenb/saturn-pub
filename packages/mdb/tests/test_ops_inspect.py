@@ -99,6 +99,15 @@ def test_seek_forward_and_backward_within_the_run(debugger):
         dispatch(ctx, "seek", {"target": "other:t3.L0.p"})
     with pytest.raises(Refused, match="no selector"):
         dispatch(ctx, "seek", {"target": "t3.L0.p[h0]"})
+    # without a row the target is on the cursor's row, as for `until`
+    near = _clean(dispatch(ctx, "seek", {"target": "L1.p"}))
+    assert near["target"] == "t3.L1.p" and ctx.run.where == "t3.L1.p"
+    assert _clean(dispatch(ctx, "seek", {"target": "L0.q"}))["target"] == "t3.L0.q"
+    assert _clean(dispatch(ctx, "seek", {"target": "logits"}))["target"] == "t3.logits"
+    with pytest.raises(BadArgs, match="bad address 'p'"):
+        dispatch(ctx, "seek", {"target": "p"})
+    with pytest.raises(Refused, match="no selector"):
+        dispatch(ctx, "seek", {"target": "L0.p[h0]"})
 
 
 def test_seek_by_stored_recipe(tmp_path):
