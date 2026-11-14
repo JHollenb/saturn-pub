@@ -84,6 +84,19 @@ class Edge:
             raise Refusal(f"edge kind {self.kind!r} is not one of {EDGE_KINDS}")
 
 
+@dataclass(frozen=True)
+class LabelSymbol:
+    """A declared label (ported from ``mdb_lanes.compiled_state.Symbol``): a finite value
+    (``cardinality`` distinct values at most) fixed by the tokens at rows up to
+    ``visible_from`` (a row, or the name of an item role). A binding whose rows all lie before
+    that row cannot see the label: ``item_report`` lists it under ``hidden_labels`` instead
+    (a token position is never silently reinterpreted, the ``symbol_lifecycle`` rule)."""
+
+    name: str
+    cardinality: int | None = None
+    visible_from: int | str | None = None
+
+
 @dataclass
 class Map:
     slots: list[Slot]
@@ -91,6 +104,7 @@ class Map:
     consumer_rule: dict[str, Any]
     candidate_sets: dict[str, list[int]]
     constants: dict[str, Any] = field(default_factory=dict)
+    symbols: list[LabelSymbol] = field(default_factory=list)
 
     def __post_init__(self):
         names = [s.name for s in self.slots]
@@ -105,9 +119,12 @@ class Map:
         return next(s for s in self.slots if s.name == name)
 
     def to_json(self) -> dict[str, Any]:
-        return {"schema": SCHEMA, "slots": [asdict(s) for s in self.slots],
-                "edges": [asdict(e) for e in self.edges], "consumer_rule": self.consumer_rule,
-                "candidate_sets": self.candidate_sets, "constants": self.constants}
+        out = {"schema": SCHEMA, "slots": [asdict(s) for s in self.slots],
+               "edges": [asdict(e) for e in self.edges], "consumer_rule": self.consumer_rule,
+               "candidate_sets": self.candidate_sets, "constants": self.constants}
+        if self.symbols:            # only when declared: older maps keep their digest
+            out["symbols"] = [asdict(s) for s in self.symbols]
+        return out
 
     def digest(self) -> str:
         """sha256 of the canonical JSON (sorted keys, no whitespace)."""
@@ -126,7 +143,8 @@ class Map:
                  for s in data["slots"]]
         edges = [Edge(**e) for e in data["edges"]]
         return cls(slots, edges, data["consumer_rule"], data["candidate_sets"],
-                   data.get("constants", {}))
+                   data.get("constants", {}),
+                   [LabelSymbol(**x) for x in data.get("symbols", ())])
 
 
 def _reader_row(run: Any, item: dict[str, Any], rule: str) -> int:
@@ -243,12 +261,31 @@ def item_report(m: Map, run: Any, item: dict[str, Any], *, consumer: Any = None,
             from .symbols import label_claim
 
             out["labels"] = {k: label_claim(v) for k, v in labels.items()}
+            _hide_labels(m, item, bound, tab.report)
         if frame:
             out["_table"] = tab
         return out
     finally:
         for name in list(bound):
             declared(run).pop(name, None)
+
+
+def _hide_labels(m: Map, item: dict[str, Any], bound: dict[str, Binding],
+                 report: dict[str, Any]) -> None:
+    """Move a label off the rows of a binding that cannot see it (``LabelSymbol``)."""
+    for sym in m.symbols:
+        if sym.visible_from is None:
+            continue
+        row = sym.visible_from if isinstance(sym.visible_from, int) else item.get(sym.visible_from)
+        if row is None:
+            continue
+        for view in report.get("bindings", []):
+            binding = bound.get(view.get("symbol"))
+            if binding is None or sym.name not in view.get("labels", {}):
+                continue
+            if max(c.row for c in binding.cells) < int(row):
+                view["labels"].pop(sym.name)
+                view.setdefault("hidden_labels", []).append(sym.name)
 
 
 def _bindings_by_name(report: dict[str, Any]) -> dict[str, Any]:
@@ -289,6 +326,13 @@ def freeze(m: Map, reports: list[dict[str, Any]], categorical: list[str], *,
             unbound[name] = unbound.get(name, 0) + 1
     if unbound:
         constants["unbound_slots"] = unbound
+    for sym in m.symbols:
+        if sym.cardinality is None:
+            continue
+        seen = {summ.json_key(_label(r, f"labels.{sym.name}")) for r in reports} - {None}
+        if len(seen) > sym.cardinality:
+            raise Refusal(f"label {sym.name} takes {len(seen)} values, more than its declared "
+                          f"cardinality {sym.cardinality}")
     if switch is not None:
         constants["by_switch"] = summ.summarize_by(keyed, switch)
         constants["switch_fallback"] = "pooled summary for an unseen switch value"
@@ -298,7 +342,7 @@ def freeze(m: Map, reports: list[dict[str, Any]], categorical: list[str], *,
                 raise Refusal(f"supplied constant {name} needs its source record "
                               "(circuit_map.supplied_constant)")
         constants["supplied"] = dict(supplied)
-    return Map(m.slots, m.edges, m.consumer_rule, m.candidate_sets, constants)
+    return Map(m.slots, m.edges, m.consumer_rule, m.candidate_sets, constants, list(m.symbols))
 
 
 def supplied_constant(value: Any, *, source: str, authority: str = "measured",

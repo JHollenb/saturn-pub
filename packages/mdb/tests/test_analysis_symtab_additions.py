@@ -414,3 +414,32 @@ def test_token_metadata_classes_pieces_and_constancy(debugger):
     frame = pd.DataFrame({"position": [0, 1, 0, 1], "token": [7, 8, 7, 9]})
     const = fr.token_constancy(frame)
     assert list(const["constant"]) == [True, False]
+
+
+def test_label_symbols_hide_invisible_labels_and_bound_cardinality(debugger):
+    m = cm.Map([cm.Slot("carrier", "carrier", "gt", layers=(0,), kv=(0,)),
+                cm.Slot("desc", "descriptor", "rest")], [], {"kind": "margin"}, {},
+               symbols=[cm.LabelSymbol("country", cardinality=1, visible_from="gt")])
+    again = cm.Map.from_json(json.loads(json.dumps(m.to_json())))
+    assert again.digest() == m.digest() and again.symbols == m.symbols
+    assert "symbols" not in _three_slot_map().to_json()      # older maps keep their digest
+    reports = []
+    for country in ("Japan", "Peru"):
+        run = debugger.run(PROMPT)
+        run.until("t5.logits")
+        reports.append(cm.item_report(m, run, {"name": country, "span": [1, 2, 3, 4], "gt": 3,
+                                               "labels": {"country": country}},
+                                      consumer=Margin(5, 4, 9)))
+    views = {v["symbol"]: v for v in reports[0]["table"]["bindings"]}
+    assert "country" in views["carrier"]["labels"]                 # row 3 sees the label
+    assert "country" in views["desc"]["labels"]                    # desc holds row 4 too
+    m2 = cm.Map(m.slots, [], {"kind": "margin"}, {},
+                symbols=[cm.LabelSymbol("country", visible_from=4)])
+    run = debugger.run(PROMPT)
+    run.until("t5.logits")
+    hidden = cm.item_report(m2, run, {"name": "h", "span": [1, 2, 3], "gt": 3,
+                                      "labels": {"country": "Peru"}}, consumer=Margin(5, 4, 9))
+    carrier = next(v for v in hidden["table"]["bindings"] if v["symbol"] == "carrier")
+    assert "country" not in carrier["labels"] and carrier["hidden_labels"] == ["country"]
+    with pytest.raises(Refusal, match="cardinality"):
+        cm.freeze(m, reports, [])
