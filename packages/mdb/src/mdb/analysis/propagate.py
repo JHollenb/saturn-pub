@@ -391,7 +391,7 @@ def _request(run: Any, edit: Edit, shape: tuple[int, ...], x0: Any, b0: Any, u: 
     else:
         value = torch.full(shape, float(edit.value), dtype=torch.float64)
     mask = (torch.ones(shape, dtype=torch.bool) if edit.mask is None
-            else edit.mask.broadcast_to(port_shape).reshape(shape))
+            else edit.mask.to(device=x0.device, dtype=torch.bool).broadcast_to(port_shape).reshape(shape))
     on: Any = None
     if edit.op == "replace":
         full = value
@@ -798,10 +798,12 @@ def _within_view(found: dict[str, Any]) -> dict[str, Any]:
                                                     "op; mix: float64, rounded once"})}
 
 
-def whatif(run: Any, edit: Edit, consumer: Any) -> WhatIf:
+def whatif(run: Any, edit: Edit, consumer: Any, *, before_native: Any = None) -> WhatIf:
     """Predict, seal, measure and split the change of ``consumer`` (a ``Margin``, a ``Logit`` or
     a stop address) under ``edit``; the session is left exactly where it was (checked by
-    ``state_digest``; a difference raises ``RuntimeError``)."""
+    ``state_digest``; a difference raises ``RuntimeError``). ``before_native(record)``
+    may persist and flush the sealed prediction; an exception prevents measurement.
+    """
     torch = _torch()
     p = plan(run, edit, consumer)
     before = state_digest(run)
@@ -844,6 +846,10 @@ def whatif(run: Any, edit: Edit, consumer: Any) -> WhatIf:
                          model_identity=run.adapter.model_identity,
                          execution=dict(run.adapter.execution),
                          authority=LOCAL if reason is None else SUPPLIED, body=body)
+    # An evidence writer can persist/flush the sealed forecast before the first
+    # counterfactual measurement. Writer failure prevents native release.
+    if before_native is not None:
+        before_native(record)
     native = _measure(run, p, edit, checkpoint)
     after = state_digest(run)
     if after != before:

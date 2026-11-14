@@ -264,7 +264,8 @@ Start with the [documentation index](docs/README.md) to choose a package and wor
 
 ### MDB
 
-- [Overview, use cases and quickstart](docs/mdb.md)
+- [Engine README: `mdb engine` REPL, `mdb serve` and web viewer, state-cell edits, measured numbers](packages/mdb/README.md)
+- [Overview, use cases and quickstart](docs/mdb.md) (lane-era tool)
 - [Installation](packages/mdb/docs/INSTALL.md)
 - [Usage, memory and debugger](packages/mdb/docs/USAGE.md)
 - [Local MDB console: Counter, tiny Qwen and local checkpoints](packages/mdb/docs/LOCAL-DEBUGGER.md)

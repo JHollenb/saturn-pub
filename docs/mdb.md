@@ -1,3 +1,5 @@
+> Note: this page describes the lane-era `mdb` tool (now `mdb-lanes`). The current port-level engine (`mdb engine`, `mdb serve`, the web viewer) is documented in [../packages/mdb/README.md](../packages/mdb/README.md).
+
 # MDB: durable model debugging
 
 MDB is the repository's `mdb-runtime` distribution, imported as `mdb` and built

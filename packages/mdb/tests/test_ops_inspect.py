@@ -56,8 +56,8 @@ def test_every_verb_returns_labelled_bounded_results(debugger):
     table = _clean(dispatch(ctx, "symbols", {"consumer": "M[4,9]"}))
     assert table["bindings"][0]["symbol"] == "ctx" and "stored" not in table
     built = _clean(dispatch(ctx, "circuit", {"target": "M[4,9]", "top": 2, "depth": 2}))
-    tested = _clean(dispatch(ctx, "circuit", {"target": "test", "id": built["id"]}))
-    assert tested["test"]["verdict"] in ("sufficient at this dose", "not sufficient at this dose")
+    with pytest.raises(Refused, match="circuit test is disabled.*issue M4"):
+        dispatch(ctx, "circuit", {"target": "test", "id": built["id"]})
     shown = _clean(dispatch(ctx, "circuit", {"target": "show", "id": built["id"]}))
     assert shown["record"]["body"]["root"]["name"] == built["record"]["body"]["root"]["name"]
     before = _session_digest(ctx)
@@ -175,7 +175,6 @@ INJECT = [
     ("reads", "t3.logits", "restore", {"source": "t1", "consumer": "M[4,9]", "top": 2}),
     ("compare", "t3.logits", "restore", {"a": "L1.m=0.5 add", "b": "L0.v=0.25 add",
                                          "consumer": "M[4,9]"}),
-    ("circuit", "t3.logits", "restore", None),
     ("seek", "t3.L0.q", "continue_", {"target": "t3.L1.m"}),
 ]
 
@@ -192,9 +191,6 @@ def test_inject_an_interrupt_at_each_native_call_and_the_session_is_unchanged(de
     fired_any = False
     for nth in range(1, 25):
         ctx = _ctx(debugger, where)
-        if verb == "circuit":
-            built = dispatch(ctx, "circuit", {"target": "M[4,9]", "top": 2, "depth": 2})
-            args = {"target": "test", "id": built["id"]}
         before, digest = ctx.run.checkpoint(), state_digest(ctx.run)
         calls = {"n": 0}
 
@@ -278,10 +274,31 @@ def test_declared_symbols_and_circuits_outlive_the_run(tmp_path):
     assert table["bindings"][0]["symbol"] == "ctx"
 
 
-def test_circuit_show_marks_what_the_last_test_ablated(debugger):
+def test_circuit_test_op_is_refused_before_any_work(debugger):
     ctx = _ctx(debugger)
     built = dispatch(ctx, "circuit", {"target": "M[4,9]", "top": 2, "depth": 3})
-    tested = dispatch(ctx, "circuit", {"target": "test", "id": built["id"]})
+    before = _session_digest(ctx)
+    for ident in (built["id"], 999, None):  # refused first, even for an unknown id
+        with pytest.raises(Refused, match=r"circuit test is disabled: zero-ablating the "
+                                          r"complement says nothing on a real model \(issue M4\)"):
+            dispatch(ctx, "circuit", {"target": "test", "id": ident})
+    assert _session_digest(ctx) == before
+    assert not circuits_tests(ctx, built["id"])
+
+
+def circuits_tests(ctx, ident):
+    from mdb.analysis import circuits
+
+    return circuits.ledger(ctx.run)[ident].tests
+
+
+def test_circuit_show_marks_what_the_last_test_ablated(debugger):
+    ctx = _ctx(debugger)
+    from mdb.analysis import circuits
+
+    built = dispatch(ctx, "circuit", {"target": "M[4,9]", "top": 2, "depth": 3})
+    # the op is disabled (M4); the analysis function still records tests that show reads back
+    tested = {"test": circuits.test(ctx.run, circuits.ledger(ctx.run)[built["id"]])}
     shown = _clean(dispatch(ctx, "circuit", {"target": "show", "id": built["id"]}))
     assert shown["ablated"]["retained"] == tested["test"]["retained"]["nodes"]
     ids = set()

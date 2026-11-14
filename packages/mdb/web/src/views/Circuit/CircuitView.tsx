@@ -673,7 +673,10 @@ const TEST_KNOWN = new Set([
   'verdict',
 ]);
 
-function TestPanel({ entry, testSlot, busy, act }: { entry: CircuitEntry } & CircuitViewProps) {
+const CIRCUIT_TEST_DISABLED =
+  'circuit test is disabled: zero-ablating the complement says nothing on a real model (issue M4)';
+
+function TestPanel({ entry, testSlot, act }: { entry: CircuitEntry } & CircuitViewProps) {
   const running = testSlot.state === 'running';
   const test = entry.test;
   return (
@@ -681,14 +684,14 @@ function TestPanel({ entry, testSlot, busy, act }: { entry: CircuitEntry } & Cir
       <div>
         <button
           type="button"
-          disabled={busy}
+          disabled
           onClick={() => act.test(entry.id)}
-          title="ablates the retained set and its complement natively (moves the session and restores it)"
+          title={CIRCUIT_TEST_DISABLED}
         >
           circuit test {entry.id}
         </button>{' '}
-        <span className="faint">
-          native ablation of the retained nodes and of their complement; the session is restored
+        <span className="faint" data-testid="test-disabled">
+          {CIRCUIT_TEST_DISABLED}
         </span>
       </div>
       {(testSlot.state !== 'idle' || running) && (

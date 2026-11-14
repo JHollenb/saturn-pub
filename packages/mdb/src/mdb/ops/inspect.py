@@ -155,9 +155,15 @@ def _symbol(ctx, name, addresses):
 # --------------------------------------------------------------------------- circuit
 
 
+CIRCUIT_TEST_DISABLED = ("circuit test is disabled: zero-ablating the complement says nothing "
+                         "on a real model (issue M4)")
+
+
 def _circuit(ctx, target, id, top, depth, tolerance):  # noqa: A002 - the wire name
     from mdb.analysis import circuits
 
+    if target == "test":
+        raise Refused(CIRCUIT_TEST_DISABLED)
     run = ctx.run
     ledger = circuits.ledger(run)
     if target in ("test", "show"):

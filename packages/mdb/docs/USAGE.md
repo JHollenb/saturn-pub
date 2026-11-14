@@ -1,3 +1,5 @@
+> Note: this page describes the lane-era `mdb` tool (now `mdb-lanes`). The current port-level engine (`mdb engine`, `mdb serve`, the web viewer) is documented in [../README.md](../README.md).
+
 # MDB usage guide
 
 For caller-owned or custom execution backends, see the

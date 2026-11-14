@@ -26,7 +26,7 @@ test suites and migration details. Installing one package does not install the o
 - [J-space reader/writer API](../packages/mdb/docs/JACOBIAN-WORKSPACE.md) and [reproducible proof](../packages/mdb/experiments/jacobian-reader-writer/README.md)
 - [Qualification records and model/backend boundaries](../packages/mdb/docs/QUALIFICATION.md)
 - [E6/E20 paper experiments and research-session boundaries](../packages/mdb/experiments/time_circuits/README.md)
-- [Package README](../packages/mdb/README.md) and [extraction provenance](../packages/mdb/PROVENANCE.json)
+- [Package README: the port-level engine (`mdb engine`, `mdb serve`, web viewer)](../packages/mdb/README.md) and [extraction provenance](../packages/mdb/PROVENANCE.json)
 
 The detailed MDB guides live with its package so its source distribution retains
 its documentation. The links above are the repository-wide entry points.

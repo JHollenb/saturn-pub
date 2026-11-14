@@ -882,7 +882,8 @@ def test_the_ledger_lists_the_circuits_forecasts_and_symbols_the_ops_made(live):
     _op(c, sid, "until", {"target": "t3.logits"})
     _op(c, sid, "verify", {})
     built = _op(c, sid, "circuit", {"target": "L1.o", "top": 1, "depth": 2}).json()
-    _op(c, sid, "circuit", {"target": "test", "id": built["data"]["result"]["id"]})
+    refused = _op(c, sid, "circuit", {"target": "test", "id": built["data"]["result"]["id"]}).json()
+    assert "circuit test is disabled" in json.dumps(refused) and "issue M4" in json.dumps(refused)
     _op(c, sid, "symbol", {"name": "ctx", "addresses": "t1"})
     data = _ledger(c, sid)["data"]
     run = live.ctx.run
@@ -892,8 +893,8 @@ def test_the_ledger_lists_the_circuits_forecasts_and_symbols_the_ops_made(live):
     body = entry.record["body"]
     assert circuit == {"id": entry.id, "consumer": body["consumer"], "k": 1, "depth": 2,
                        "count": body["count"], "where": body["where"],
-                       "record": entry.record["id"], "tests": 1,
-                       "verdict": entry.tests[-1]["verdict"]}
+                       "record": entry.record["id"], "tests": 0,
+                       "verdict": None}
     (sealed,) = data["forecasts"]
     view = forecast.view(forecast.ledger(run)[sealed["id"]])
     assert sealed["target"] == view["target"] == "t3.L0.p"

@@ -262,6 +262,15 @@ describe('CircuitView', () => {
     expect(html).toContain('retained');
   });
 
+  it('the Test control is disabled with the M4 reason as its title', () => {
+    const e = entryOf(buildK2);
+    const html = render({ circuits: new Map([[e.id, e]]), selected: e.id, busy: false });
+    const button = html.match(/<button[^>]*>circuit test \d+<\/button>/)?.[0] ?? '';
+    expect(button).toContain('disabled');
+    expect(button).toContain('title="circuit test is disabled: zero-ablating the complement says nothing on a real model (issue M4)"');
+    expect(html).toContain('data-testid="test-disabled"');
+  });
+
   it('refused, running and interrupted states are stated with their reason', () => {
     const refused = render({ slot: slotFrom(buildRefused, 'circuit M[4,9] top=2 depth=3') });
     expect(refused).toContain('data-testid="circuit-refused"');

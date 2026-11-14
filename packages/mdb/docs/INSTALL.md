@@ -25,6 +25,8 @@ See the [local debugger guide](LOCAL-DEBUGGER.md) for opening local checkpoints;
 these language-model entry points need no mrun installation or scheduler.
 Qwen stateful execution requires BF16 and checks it before creating the session.
 The model-library extra retains the qualified dependency pins below.
+The port-level engine (`mdb engine`) needs `.[autoregressive]` for a model; `mdb serve` also needs
+`.[serve]` (see [the package README](../README.md)).
 
 Diffusion also installs mrun-pub's native
 checkpoint/phase adapter, even for a caller-owned pipeline. For scheduler launches,
