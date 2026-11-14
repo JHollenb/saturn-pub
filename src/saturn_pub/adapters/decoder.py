@@ -1328,6 +1328,14 @@ class DecoderAdapter(Adapter):
             return clone(state[address])
         return super().read(state, address)
 
+    def supply_next_token(self, token_id: int | None) -> None:
+        """Arm (or with None disarm) a supplied token for the next ``sample`` transition only, in
+        place of the greedy argmax: a forced decision, for re-walking a stored sampled chain.
+        The caller records it (mdb ``Run.feed`` keeps it on its trail and replays it)."""
+        if token_id is not None and not (isinstance(token_id, int) and 0 <= token_id < self.vocab_size):
+            raise ValueError(f"supplied token must be an id in 0..{self.vocab_size - 1}")
+        self._supplied_token = token_id
+
     def read_part(self, state: Mapping[str, Any], address: str, index: Any) -> Any:
         """One layer of ``keys`` / ``values`` (``index``), copying that layer only."""
         if address in ("keys", "values"):
@@ -1433,9 +1441,16 @@ class DecoderAdapter(Adapter):
             )
             out["phase"] = "sample"
         elif self.granularity == "operation" and out["phase"] == "sample":
+            supplied = getattr(self, "_supplied_token", None)
             forced = self._forced(out)  # a stepped prompt row: the prompt's next token
-            out["sampled_token"] = (out["logits"].argmax(-1, keepdim=True) if forced is None
-                                    else forced)
+            if supplied is not None:   # a supplied decision (mdb Run.feed): one transition only
+                self._supplied_token = None
+                out["sampled_token"] = torch.tensor([[supplied]], dtype=torch.long,
+                                                    device=out["logits"].device)
+            elif forced is not None:
+                out["sampled_token"] = forced
+            else:
+                out["sampled_token"] = out["logits"].argmax(-1, keepdim=True)
             out["phase"] = "commit"
         elif self.granularity == "operation" and out["phase"] == "commit":
             out["tokens"] = torch.cat((tokens, out["sampled_token"]), dim=-1)

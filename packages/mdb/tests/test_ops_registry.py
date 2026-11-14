@@ -154,6 +154,7 @@ def _fuzz_args(ctx, name):
         "sweep": {"port": "h", "origin": "donor", "consumer": f"t{row}.M[0,1]", "top": 2},
         "features": {"address": f"t{row}.L0.h_out", "top": 2},
         "feature": {"feature": 0, "layer": 0},
+        "feed": {"ids": [2, 3]},
     }[name]
 
 
@@ -187,7 +188,7 @@ def test_fuzz_read_and_navigate_ops_return_bounded_labelled_results(debugger):
             except Refused as error:
                 # Values that do not exist at this cursor are refused, never invented.
                 assert any(word in str(error) for word in (
-                    "not been computed", "not ahead", "no frame", "no consumer",
+                    "not been computed", "has not computed", "not ahead", "no frame", "no consumer",
                     "cannot reverse", "needs a layer", "explain reads",
                     "not downstream", "no SAE")), (name, ctx.run.where, str(error))
                 continue

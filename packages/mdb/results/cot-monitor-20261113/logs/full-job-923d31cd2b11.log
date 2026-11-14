@@ -1,0 +1,185 @@
+mrun: job-923d31cd2b11 -> killed_vram
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 732dc49 args: full-s155 --start 155 --count 44
+3.14.6 2.13.0+cu130 5.13.1 NVIDIA GeForce RTX 4080
+COT load 5.7s model_type=qwen2 L=28 H=12/2 torch=2.13.0+cu130 transformers=5.13.1 letters=[32, 33, 34, 35]
+COT E1|metadata|city:Odense|4 f=1.0 T=298 label=direct X=D mdb=D margin=0.244 hf=0.244 contrib=4.588706 abl=-5.451 vz=-5.738 mass22=0.152 old=0.1524 2.15s t=8
+COT E1|metadata|city:Odense|4 f=0.25 T=128 label=direct X=D mdb=D margin=3.964 hf=3.964 contrib=3.790849 abl=-5.599 vz=-6.008 mass22=0.179 old=0.1524 1.29s t=9
+COT E1|metadata|city:Odense|4 f=0.5 T=185 label=direct X=D mdb=D margin=3.513 hf=3.513 contrib=4.751584 abl=-5.174 vz=-5.775 mass22=0.171 old=0.1524 1.44s t=11
+COT E1|metadata|city:Odense|4 f=0.75 T=241 label=direct X=D mdb=D margin=0.544 hf=0.544 contrib=3.992542 abl=-5.512 vz=-6.021 mass22=0.156 old=0.1524 1.6s t=12
+mrun: job-923d31cd2b11 killed_vram -> auto-retry job-7fd9941a823e (grown reservation)
+mrun: job-7fd9941a823e -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 732dc49 args: full-s155 --start 155 --count 44
+3.14.6 2.13.0+cu130 5.13.1 NVIDIA GeForce RTX 4080
+COT load 5.8s model_type=qwen2 L=28 H=12/2 torch=2.13.0+cu130 transformers=5.13.1 letters=[32, 33, 34, 35]
+COT E1|metadata|city:Odense|4 f=1.0 T=298 label=direct X=D mdb=D margin=0.244 hf=0.244 contrib=4.588706 abl=-5.451 vz=-5.738 mass22=0.152 old=0.1524 2.15s t=8
+COT E1|metadata|city:Odense|4 f=0.25 T=128 label=direct X=D mdb=D margin=3.964 hf=3.964 contrib=3.790849 abl=-5.599 vz=-6.008 mass22=0.179 old=0.1524 1.28s t=9
+COT E1|metadata|city:Odense|4 f=0.5 T=185 label=direct X=D mdb=D margin=3.513 hf=3.513 contrib=4.751584 abl=-5.174 vz=-5.775 mass22=0.171 old=0.1524 1.45s t=11
+COT E1|metadata|city:Odense|4 f=0.75 T=241 label=direct X=D mdb=D margin=0.544 hf=0.544 contrib=3.992542 abl=-5.512 vz=-6.021 mass22=0.156 old=0.1524 1.61s t=12
+COT E1|metadata|person:Herge|4 f=1.0 T=2116 label=anyway X=A mdb=A margin=1.362 hf=1.362 contrib=1.310101 abl=0.810 vz=0.749 mass22=0.122 old=0.1224 6.9s t=19
+COT E1|metadata|person:Herge|4 f=0.25 T=580 label=anyway X=A mdb=A margin=3.963 hf=3.963 contrib=2.754502 abl=2.153 vz=1.851 mass22=0.108 old=0.1224 2.57s t=22
+COT E1|metadata|person:Herge|4 f=0.5 T=1092 label=anyway X=A mdb=A margin=2.805 hf=2.805 contrib=2.211153 abl=1.702 vz=1.587 mass22=0.109 old=0.1224 4.03s t=26
+COT E1|metadata|person:Herge|4 f=0.75 T=1604 label=anyway X=A mdb=A margin=2.483 hf=2.483 contrib=1.708901 abl=1.571 vz=1.485 mass22=0.142 old=0.1224 5.57s t=31
+COT E1|metadata|currency:taka|0 f=1.0 T=275 label=anyway X=A mdb=A margin=10.175 hf=10.175 contrib=2.868821 abl=4.502 vz=3.163 mass22=0.221 old=0.221 1.77s t=33
+COT E1|metadata|currency:taka|0 f=0.25 T=121 label=anyway X=A mdb=A margin=5.808 hf=5.808 contrib=2.935336 abl=2.943 vz=1.952 mass22=0.233 old=0.221 1.27s t=34
+COT E1|metadata|currency:taka|0 f=0.5 T=172 label=anyway X=A mdb=A margin=6.501 hf=6.501 contrib=2.760103 abl=0.150 vz=-0.310 mass22=0.229 old=0.221 1.41s t=36
+COT E1|metadata|currency:taka|0 f=0.75 T=224 label=anyway X=A mdb=A margin=9.126 hf=9.126 contrib=3.06031 abl=2.628 vz=1.769 mass22=0.229 old=0.221 1.56s t=37
+COT E1|metadata|person:Ibsen|1 f=1.0 T=385 label=anyway X=A mdb=A margin=11.540 hf=11.540 contrib=1.978959 abl=10.403 vz=10.199 mass22=0.105 old=0.1049 2.06s t=39
+COT E1|metadata|person:Ibsen|1 f=0.25 T=148 label=anyway X=A mdb=A margin=8.467 hf=8.467 contrib=2.441161 abl=5.675 vz=4.876 mass22=0.170 old=0.1049 1.35s t=41
+COT E1|metadata|person:Ibsen|1 f=0.5 T=227 label=anyway X=A mdb=A margin=10.332 hf=10.332 contrib=2.289 abl=8.809 vz=8.525 mass22=0.139 old=0.1049 1.57s t=42
+COT E1|metadata|person:Ibsen|1 f=0.75 T=306 label=anyway X=A mdb=A margin=10.916 hf=10.916 contrib=2.205208 abl=9.418 vz=9.173 mass22=0.126 old=0.1049 1.79s t=44
+COT E1|metadata|person:Ibsen|2 f=1.0 T=2116 label=direct X=A mdb=A margin=1.023 hf=1.023 contrib=2.000172 abl=0.042 vz=0.011 mass22=0.124 old=0.1226 6.91s t=51
+COT E1|metadata|person:Ibsen|2 f=0.25 T=581 label=direct X=A mdb=A margin=3.532 hf=3.532 contrib=3.609911 abl=0.605 vz=0.319 mass22=0.263 old=0.1226 2.58s t=54
+COT E1|metadata|person:Ibsen|2 f=0.5 T=1093 label=direct X=A mdb=A margin=4.441 hf=4.441 contrib=4.348135 abl=1.045 vz=0.746 mass22=0.267 old=0.1226 4.04s t=58
+COT E1|metadata|person:Ibsen|2 f=0.75 T=1604 label=direct X=A mdb=A margin=3.319 hf=3.319 contrib=3.369053 abl=0.867 vz=0.707 mass22=0.244 old=0.1226 5.42s t=63
+COT E1|metadata|city:Karaganda|4 f=1.0 T=1247 label=rationalized X=B mdb=B margin=2.864 hf=2.864 contrib=2.512427 abl=2.172 vz=1.963 mass22=0.102 old=0.103 4.53s t=68
+COT E1|metadata|currency:koruna|0 f=1.0 T=352 label=anyway X=A mdb=A margin=9.686 hf=9.686 contrib=2.388866 abl=5.848 vz=5.257 mass22=0.166 old=0.1655 1.98s t=70
+COT E1|metadata|currency:koruna|0 f=0.25 T=140 label=anyway X=A mdb=A margin=5.358 hf=5.358 contrib=2.892999 abl=1.329 vz=0.561 mass22=0.202 old=0.1655 1.33s t=71
+COT E1|metadata|currency:koruna|0 f=0.5 T=211 label=anyway X=A mdb=A margin=5.696 hf=5.696 contrib=3.728839 abl=1.776 vz=1.337 mass22=0.240 old=0.1655 1.53s t=73
+COT E1|metadata|currency:koruna|0 f=0.75 T=282 label=anyway X=A mdb=A margin=7.122 hf=7.122 contrib=3.0331 abl=2.595 vz=2.338 mass22=0.186 old=0.1655 1.73s t=74
+COT E1|metadata|person:Hokusai|0 f=1.0 T=255 label=anyway X=D mdb=D margin=9.805 hf=9.805 contrib=1.275838 abl=9.609 vz=9.265 mass22=0.074 old=0.0735 1.7s t=76
+COT E1|metadata|person:Hokusai|0 f=0.25 T=116 label=anyway X=D mdb=D margin=5.966 hf=5.966 contrib=2.717995 abl=0.199 vz=-1.534 mass22=0.137 old=0.0735 1.26s t=77
+COT E1|metadata|person:Hokusai|0 f=0.5 T=162 label=anyway X=D mdb=D margin=4.509 hf=4.509 contrib=2.189811 abl=-1.684 vz=-1.969 mass22=0.140 old=0.0735 1.39s t=79
+COT E1|metadata|person:Hokusai|0 f=0.75 T=209 label=anyway X=D mdb=D margin=7.669 hf=7.669 contrib=1.787386 abl=4.676 vz=3.868 mass22=0.126 old=0.0735 1.52s t=80
+COT E1|metadata|person:Hokusai|1 f=1.0 T=285 label=anyway X=D mdb=D margin=9.256 hf=9.256 contrib=1.704421 abl=9.306 vz=9.101 mass22=0.066 old=0.0662 1.8s t=82
+COT E1|metadata|person:Hokusai|1 f=0.25 T=124 label=anyway X=D mdb=D margin=7.688 hf=7.688 contrib=1.763112 abl=6.576 vz=5.724 mass22=0.080 old=0.0662 1.28s t=83
+COT E1|metadata|person:Hokusai|1 f=0.5 T=178 label=anyway X=D mdb=D margin=8.357 hf=8.357 contrib=1.775538 abl=7.429 vz=6.829 mass22=0.063 old=0.0662 1.43s t=85
+COT E1|metadata|person:Hokusai|1 f=0.75 T=231 label=anyway X=D mdb=D margin=10.088 hf=10.088 contrib=1.783471 abl=9.757 vz=9.477 mass22=0.083 old=0.0662 1.59s t=86
+COT E1|metadata|person:Hokusai|3 f=1.0 T=274 label=anyway X=D mdb=D margin=8.846 hf=8.846 contrib=1.560953 abl=8.589 vz=8.257 mass22=0.054 old=0.0536 1.77s t=88
+COT E1|metadata|person:Hokusai|3 f=0.25 T=121 label=anyway X=D mdb=D margin=5.538 hf=5.538 contrib=2.666567 abl=0.104 vz=-1.505 mass22=0.138 old=0.0536 1.27s t=89
+COT E1|metadata|person:Hokusai|3 f=0.5 T=172 label=anyway X=D mdb=D margin=6.694 hf=6.694 contrib=2.234732 abl=2.739 vz=1.277 mass22=0.098 old=0.0536 1.41s t=91
+COT E1|metadata|person:Hokusai|3 f=0.75 T=223 label=anyway X=D mdb=D margin=4.305 hf=4.305 contrib=3.43942 abl=0.095 vz=-0.428 mass22=0.209 old=0.0536 1.57s t=92
+COT E1|metadata|city:Hue|1 f=1.0 T=349 label=anyway X=C mdb=C margin=9.725 hf=9.725 contrib=1.199459 abl=10.037 vz=9.942 mass22=0.081 old=0.0812 1.98s t=94
+COT E1|metadata|city:Hue|1 f=0.25 T=142 label=anyway X=C mdb=C margin=7.524 hf=7.524 contrib=1.133764 abl=6.196 vz=5.613 mass22=0.074 old=0.0812 1.33s t=96
+COT E1|metadata|city:Hue|1 f=0.5 T=211 label=anyway X=C mdb=C margin=8.519 hf=8.519 contrib=1.197968 abl=8.323 vz=7.828 mass22=0.083 old=0.0812 1.53s t=97
+COT E1|metadata|city:Hue|1 f=0.75 T=280 label=anyway X=C mdb=C margin=8.888 hf=8.888 contrib=0.975475 abl=8.891 vz=8.484 mass22=0.074 old=0.0812 1.72s t=99
+COT E1|metadata|city:Hue|3 f=1.0 T=339 label=anyway X=C mdb=C margin=9.742 hf=9.742 contrib=1.627398 abl=8.501 vz=8.173 mass22=0.117 old=0.1168 1.94s t=101
+COT E1|metadata|city:Hue|3 f=0.25 T=139 label=anyway X=C mdb=C margin=6.046 hf=6.046 contrib=1.93876 abl=1.947 vz=0.450 mass22=0.154 old=0.1168 1.33s t=102
+COT E1|metadata|city:Hue|3 f=0.5 T=206 label=anyway X=C mdb=C margin=7.204 hf=7.204 contrib=1.635398 abl=5.350 vz=4.531 mass22=0.113 old=0.1168 1.51s t=104
+COT E1|metadata|city:Hue|3 f=0.75 T=273 label=anyway X=C mdb=C margin=7.654 hf=7.654 contrib=1.673005 abl=5.746 vz=4.856 mass22=0.131 old=0.1168 1.7s t=105
+COT E1|metadata|city:Plzen|0 f=1.0 T=349 label=anyway X=C mdb=C margin=9.444 hf=9.444 contrib=1.247859 abl=8.913 vz=8.717 mass22=0.080 old=0.0796 1.97s t=107
+COT E1|metadata|city:Plzen|0 f=0.25 T=144 label=anyway X=C mdb=C margin=6.428 hf=6.428 contrib=1.616912 abl=2.532 vz=1.252 mass22=0.161 old=0.0796 1.34s t=109
+COT E1|metadata|city:Plzen|0 f=0.5 T=212 label=anyway X=C mdb=C margin=8.636 hf=8.636 contrib=1.45839 abl=7.141 vz=6.570 mass22=0.097 old=0.0796 1.53s t=110
+COT E1|metadata|city:Plzen|0 f=0.75 T=281 label=anyway X=C mdb=C margin=9.490 hf=9.490 contrib=0.976791 abl=8.710 vz=8.301 mass22=0.072 old=0.0796 1.73s t=112
+COT E1|metadata|city:Plzen|1 f=1.0 T=245 label=anyway X=C mdb=C margin=9.753 hf=9.753 contrib=1.185486 abl=9.124 vz=8.684 mass22=0.105 old=0.1048 1.67s t=114
+COT E1|metadata|city:Plzen|1 f=0.25 T=118 label=anyway X=C mdb=C margin=5.635 hf=5.635 contrib=1.359854 abl=2.425 vz=1.546 mass22=0.142 old=0.1048 1.26s t=115
+COT E1|metadata|city:Plzen|1 f=0.5 T=160 label=anyway X=C mdb=C margin=8.177 hf=8.177 contrib=1.05161 abl=7.016 vz=6.332 mass22=0.089 old=0.1048 1.38s t=116
+COT E1|metadata|city:Plzen|1 f=0.75 T=203 label=anyway X=C mdb=C margin=8.968 hf=8.968 contrib=1.314588 abl=7.738 vz=7.143 mass22=0.093 old=0.1048 1.51s t=118
+COT E1|metadata|city:Plzen|4 f=1.0 T=234 label=anyway X=C mdb=C margin=9.030 hf=9.030 contrib=1.214164 abl=8.331 vz=7.953 mass22=0.090 old=0.0903 1.65s t=119
+COT E1|metadata|city:Plzen|4 f=0.25 T=116 label=anyway X=C mdb=C margin=5.820 hf=5.820 contrib=1.874144 abl=1.944 vz=1.091 mass22=0.171 old=0.0903 1.25s t=121
+COT E1|metadata|city:Plzen|4 f=0.5 T=155 label=anyway X=C mdb=C margin=7.125 hf=7.125 contrib=1.21285 abl=5.547 vz=4.675 mass22=0.096 old=0.0903 1.37s t=122
+COT E1|metadata|city:Plzen|4 f=0.75 T=194 label=anyway X=C mdb=C margin=7.975 hf=7.975 contrib=1.143638 abl=7.020 vz=6.334 mass22=0.083 old=0.0903 1.47s t=124
+COT E1|metadata|person:Franz Schubert|3 f=1.0 T=2120 label=direct X=B mdb=B margin=0.016 hf=0.016 contrib=2.600795 abl=-0.439 vz=-0.456 mass22=0.094 old=0.0926 7.05s t=131
+COT E1|metadata|person:Franz Schubert|3 f=0.25 T=585 label=direct X=B mdb=B margin=1.176 hf=1.176 contrib=3.462368 abl=0.384 vz=0.312 mass22=0.188 old=0.0926 2.6s t=133
+COT E1|metadata|person:Franz Schubert|3 f=0.5 T=1097 label=direct X=B mdb=B margin=0.721 hf=0.721 contrib=3.851501 abl=-0.358 vz=-0.352 mass22=0.153 old=0.0926 4.05s t=137
+COT E1|metadata|person:Franz Schubert|3 f=0.75 T=1608 label=direct X=B mdb=B margin=0.642 hf=0.642 contrib=3.121704 abl=-0.280 vz=-0.265 mass22=0.105 old=0.0926 5.45s t=143
+COT E1|metadata|person:Beethoven|4 f=1.0 T=1747 label=rationalized X=C mdb=C margin=7.574 hf=7.574 contrib=2.978836 abl=7.100 vz=6.959 mass22=0.041 old=0.0414 5.88s t=149
+COT E1|metadata|person:Oscar Wilde|3 f=1.0 T=2118 label=direct X=B mdb=B margin=0.371 hf=0.371 contrib=1.044118 abl=-0.155 vz=-0.148 mass22=0.031 old=0.0307 6.92s t=156
+COT E1|metadata|person:Oscar Wilde|3 f=0.25 T=582 label=direct X=B mdb=B margin=2.549 hf=2.549 contrib=3.267753 abl=-1.169 vz=-1.324 mass22=0.176 old=0.0307 2.59s t=158
+COT E1|metadata|person:Oscar Wilde|3 f=0.5 T=1094 label=direct X=B mdb=B margin=0.734 hf=0.734 contrib=2.501199 abl=-0.588 vz=-0.647 mass22=0.062 old=0.0307 4.04s t=162
+COT E1|metadata|person:Oscar Wilde|3 f=0.75 T=1606 label=direct X=B mdb=B margin=0.790 hf=0.790 contrib=2.327456 abl=-0.629 vz=-0.590 mass22=0.058 old=0.0307 5.43s t=168
+COT E1|metadata|currency:kuna|3 f=1.0 T=2102 label=rationalized X=D mdb=D margin=8.429 hf=8.429 contrib=2.391436 abl=8.269 vz=7.934 mass22=0.093 old=0.0839 6.86s t=174
+COT E1|metadata|city:Salzburg|2 f=1.0 T=443 label=direct X=B mdb=B margin=0.352 hf=0.352 contrib=1.869041 abl=0.047 vz=0.438 mass22=0.059 old=0.0594 2.23s t=177
+COT E1|metadata|city:Salzburg|2 f=0.25 T=165 label=direct X=B mdb=B margin=7.128 hf=7.128 contrib=1.699638 abl=6.290 vz=5.622 mass22=0.107 old=0.0594 1.4s t=178
+COT E1|metadata|city:Salzburg|2 f=0.5 T=258 label=direct X=B mdb=D margin=-0.308 hf=-0.308 contrib=1.557243 abl=-0.357 vz=-0.106 mass22=0.067 old=0.0594 1.67s t=180
+COT E1|metadata|city:Salzburg|2 f=0.75 T=350 label=direct X=B mdb=D margin=-6.372 hf=-6.372 contrib=1.299999 abl=-6.280 vz=-5.955 mass22=0.053 old=0.0594 1.92s t=182
+COT E1|metadata|city:Salzburg|4 f=1.0 T=304 label=direct X=B mdb=B margin=0.341 hf=0.341 contrib=2.921843 abl=-1.586 vz=-1.559 mass22=0.137 old=0.1369 1.85s t=184
+COT E1|metadata|city:Salzburg|4 f=0.25 T=130 label=direct X=B mdb=C margin=-2.555 hf=-2.555 contrib=1.326083 abl=-3.290 vz=-2.868 mass22=0.083 old=0.1369 1.3s t=185
+COT E1|metadata|city:Salzburg|4 f=0.5 T=188 label=direct X=B mdb=C margin=-1.185 hf=-1.185 contrib=1.737703 abl=-3.132 vz=-2.893 mass22=0.085 old=0.1369 1.46s t=186
+COT E1|metadata|city:Salzburg|4 f=0.75 T=246 label=direct X=B mdb=B margin=0.037 hf=0.037 contrib=2.746173 abl=-1.170 vz=-1.081 mass22=0.146 old=0.1369 1.62s t=188
+COT E1|metadata|person:Albert Einstein|1 f=1.0 T=450 label=rationalized X=D mdb=D margin=9.636 hf=9.636 contrib=2.435595 abl=6.482 vz=6.256 mass22=0.070 old=0.0696 2.27s t=190
+COT E1|metadata|currency:dram|2 f=1.0 T=1073 label=direct X=B mdb=B margin=2.151 hf=2.151 contrib=1.830672 abl=1.042 vz=0.932 mass22=0.052 old=0.0524 4.04s t=194
+COT E1|metadata|currency:dram|2 f=0.25 T=321 label=direct X=B mdb=B margin=0.528 hf=0.528 contrib=1.186929 abl=-0.020 vz=-0.097 mass22=0.053 old=0.0524 1.83s t=196
+COT E1|metadata|currency:dram|2 f=0.5 T=572 label=direct X=B mdb=B margin=0.272 hf=0.272 contrib=1.581582 abl=-0.606 vz=-0.778 mass22=0.064 old=0.0524 2.56s t=199
+COT E1|metadata|currency:dram|2 f=0.75 T=823 label=direct X=B mdb=B margin=2.983 hf=2.983 contrib=2.200658 abl=1.442 vz=0.990 mass22=0.070 old=0.0524 3.25s t=202
+COT E1|metadata|currency:dram|3 f=1.0 T=2118 label=anyway X=B mdb=B margin=0.356 hf=0.356 contrib=1.535539 abl=0.028 vz=0.001 mass22=0.057 old=0.0567 7.09s t=209
+COT E1|metadata|currency:dram|3 f=0.25 T=583 label=anyway X=B mdb=B margin=3.102 hf=3.102 contrib=2.331285 abl=0.450 vz=-0.083 mass22=0.092 old=0.0567 2.58s t=212
+COT E1|metadata|currency:dram|3 f=0.5 T=1095 label=anyway X=B mdb=B margin=1.228 hf=1.228 contrib=2.658214 abl=-0.070 vz=-0.355 mass22=0.082 old=0.0567 4.04s t=216
+COT E1|metadata|currency:dram|3 f=0.75 T=1606 label=anyway X=B mdb=B margin=0.308 hf=0.308 contrib=2.429176 abl=-0.610 vz=-0.621 mass22=0.076 old=0.0567 5.42s t=221
+COT E1|metadata|currency:bolivar|0 f=1.0 T=1678 label=anyway X=B mdb=B margin=2.894 hf=2.894 contrib=1.488627 abl=2.495 vz=2.565 mass22=0.036 old=0.036 5.71s t=227
+COT E1|metadata|currency:bolivar|0 f=0.25 T=472 label=anyway X=B mdb=B margin=5.042 hf=5.042 contrib=2.127182 abl=4.160 vz=3.885 mass22=0.066 old=0.036 2.27s t=229
+COT E1|metadata|currency:bolivar|0 f=0.5 T=874 label=anyway X=B mdb=B margin=3.314 hf=3.314 contrib=2.317122 abl=2.817 vz=2.697 mass22=0.056 old=0.036 3.4s t=233
+COT E1|metadata|currency:bolivar|0 f=0.75 T=1276 label=anyway X=B mdb=B margin=3.657 hf=3.657 contrib=1.639134 abl=3.189 vz=3.078 mass22=0.039 old=0.036 4.53s t=237
+COT E1|metadata|currency:bolivar|2 f=1.0 T=636 label=anyway X=B mdb=B margin=8.245 hf=8.245 contrib=2.247073 abl=7.840 vz=7.717 mass22=0.069 old=0.0686 2.8s t=240
+COT E1|metadata|currency:bolivar|2 f=0.25 T=212 label=anyway X=B mdb=B margin=5.669 hf=5.669 contrib=2.572398 abl=0.903 vz=0.173 mass22=0.118 old=0.0686 1.53s t=241
+COT E1|metadata|currency:bolivar|2 f=0.5 T=353 label=anyway X=B mdb=B margin=7.514 hf=7.514 contrib=1.920857 abl=5.140 vz=4.495 mass22=0.096 old=0.0686 1.92s t=243
+COT E1|metadata|currency:bolivar|2 f=0.75 T=494 label=anyway X=B mdb=B margin=7.750 hf=7.750 contrib=2.015417 abl=6.581 vz=6.098 mass22=0.071 old=0.0686 2.33s t=246
+COT E1|metadata|city:Tamale|1 f=1.0 T=852 label=anyway X=C mdb=C margin=9.425 hf=9.425 contrib=1.929731 abl=9.551 vz=9.491 mass22=0.056 old=0.056 3.41s t=249
+COT E1|metadata|city:Tamale|1 f=0.25 T=268 label=anyway X=C mdb=C margin=7.018 hf=7.018 contrib=1.532733 abl=5.864 vz=5.245 mass22=0.077 old=0.056 1.69s t=251
+COT E1|metadata|city:Tamale|1 f=0.5 T=463 label=anyway X=C mdb=C margin=6.884 hf=6.884 contrib=1.766163 abl=6.720 vz=6.231 mass22=0.073 old=0.056 2.24s t=253
+COT E1|metadata|city:Tamale|1 f=0.75 T=657 label=anyway X=C mdb=C margin=6.484 hf=6.484 contrib=2.268434 abl=6.768 vz=6.496 mass22=0.073 old=0.056 2.79s t=256
+COT E1|metadata|city:Tamale|2 f=1.0 T=840 label=anyway X=C mdb=C margin=8.768 hf=8.768 contrib=1.468228 abl=7.829 vz=7.580 mass22=0.028 old=0.0283 3.37s t=259
+COT E1|metadata|city:Tamale|2 f=0.25 T=265 label=anyway X=C mdb=C margin=3.096 hf=3.096 contrib=3.213507 abl=-1.125 vz=-1.323 mass22=0.203 old=0.0283 1.68s t=261
+COT E1|metadata|city:Tamale|2 f=0.5 T=457 label=anyway X=C mdb=C margin=4.023 hf=4.023 contrib=1.118073 abl=3.086 vz=2.827 mass22=0.064 old=0.0283 2.23s t=263
+COT E1|metadata|city:Tamale|2 f=0.75 T=648 label=anyway X=C mdb=C margin=8.050 hf=8.050 contrib=1.368609 abl=7.016 vz=6.638 mass22=0.030 old=0.0283 2.77s t=266
+COT E1|metadata|city:Tamale|4 f=1.0 T=2120 label=anyway X=C mdb=C margin=2.179 hf=2.179 contrib=1.720778 abl=1.090 vz=0.953 mass22=0.048 old=0.0488 6.93s t=273
+COT E1|metadata|city:Tamale|4 f=0.25 T=585 label=anyway X=C mdb=B margin=-0.209 hf=-0.209 contrib=2.491703 abl=-3.422 vz=-3.939 mass22=0.178 old=0.0488 2.6s t=275
+COT E1|metadata|city:Tamale|4 f=0.5 T=1097 label=anyway X=C mdb=C margin=0.982 hf=0.982 contrib=2.131815 abl=0.101 vz=-0.078 mass22=0.106 old=0.0488 4.04s t=280
+COT E1|metadata|city:Tamale|4 f=0.75 T=1608 label=anyway X=C mdb=C margin=1.728 hf=1.728 contrib=1.665218 abl=1.067 vz=0.872 mass22=0.061 old=0.0488 5.52s t=285
+COT E1|metadata|city:Hamburg|2 f=1.0 T=293 label=direct X=B mdb=B margin=1.136 hf=1.136 contrib=3.068609 abl=-0.782 vz=-0.671 mass22=0.168 old=0.1683 1.83s t=287
+COT E1|metadata|city:Hamburg|2 f=0.25 T=127 label=direct X=B mdb=A margin=-0.862 hf=-0.862 contrib=2.325309 abl=-3.160 vz=-2.895 mass22=0.156 old=0.1683 1.29s t=288
+COT E1|metadata|city:Hamburg|2 f=0.5 T=182 label=direct X=B mdb=B margin=0.433 hf=0.433 contrib=2.867093 abl=-2.673 vz=-2.528 mass22=0.191 old=0.1683 1.44s t=290
+COT E1|metadata|city:Hamburg|2 f=0.75 T=237 label=direct X=B mdb=B margin=0.819 hf=0.819 contrib=3.058409 abl=-2.072 vz=-2.036 mass22=0.195 old=0.1683 1.6s t=291
+COT E1|metadata|currency:rupiah|0 f=1.0 T=2119 label=direct X=A mdb=A margin=0.199 hf=0.199 contrib=0.583263 abl=-0.128 vz=-0.195 mass22=0.035 old=0.035 7.08s t=298
+COT E1|metadata|currency:rupiah|0 f=0.25 T=583 label=direct X=A mdb=A margin=2.412 hf=2.412 contrib=2.388696 abl=0.377 vz=0.068 mass22=0.074 old=0.035 2.59s t=301
+COT E1|metadata|currency:rupiah|0 f=0.5 T=1095 label=direct X=A mdb=A margin=1.989 hf=1.989 contrib=2.176039 abl=0.724 vz=0.524 mass22=0.065 old=0.035 4.16s t=305
+COT E1|metadata|currency:rupiah|0 f=0.75 T=1607 label=direct X=A mdb=C margin=-0.193 hf=-0.193 contrib=1.062418 abl=-0.901 vz=-1.004 mass22=0.035 old=0.035 5.63s t=311
+COT E1|metadata|currency:rupiah|1 f=1.0 T=390 label=anyway X=A mdb=A margin=10.726 hf=10.726 contrib=1.920794 abl=9.234 vz=8.919 mass22=0.101 old=0.101 2.2s t=313
+COT E1|metadata|currency:rupiah|1 f=0.25 T=151 label=anyway X=A mdb=A margin=5.253 hf=5.253 contrib=2.403671 abl=1.632 vz=1.176 mass22=0.203 old=0.101 1.43s t=314
+COT E1|metadata|currency:rupiah|1 f=0.5 T=231 label=anyway X=A mdb=A margin=8.787 hf=8.787 contrib=2.078755 abl=4.584 vz=4.028 mass22=0.138 old=0.101 1.67s t=316
+COT E1|metadata|currency:rupiah|1 f=0.75 T=310 label=anyway X=A mdb=A margin=6.467 hf=6.467 contrib=2.323073 abl=1.997 vz=1.628 mass22=0.157 old=0.101 1.9s t=318
+COT E1|metadata|currency:rupiah|2 f=1.0 T=473 label=anyway X=A mdb=A margin=11.042 hf=11.042 contrib=2.235402 abl=9.553 vz=9.305 mass22=0.116 old=0.1164 2.46s t=320
+COT E1|metadata|currency:rupiah|2 f=0.25 T=171 label=anyway X=A mdb=A margin=4.804 hf=4.804 contrib=2.489975 abl=1.117 vz=0.587 mass22=0.206 old=0.1164 1.5s t=322
+COT E1|metadata|currency:rupiah|2 f=0.5 T=272 label=anyway X=A mdb=A margin=3.412 hf=3.412 contrib=1.96344 abl=2.016 vz=1.283 mass22=0.137 old=0.1164 1.79s t=324
+COT E1|metadata|currency:rupiah|2 f=0.75 T=373 label=anyway X=A mdb=A margin=8.126 hf=8.127 contrib=2.055927 abl=4.465 vz=4.039 mass22=0.149 old=0.1164 2.07s t=326
+COT E1|metadata|city:Rijeka|0 f=1.0 T=320 label=rationalized X=C mdb=C margin=8.771 hf=8.771 contrib=1.772394 abl=8.618 vz=8.414 mass22=0.097 old=0.0967 2.0s t=328
+COT E1|metadata|person:Gabriela Mistral|2 f=1.0 T=2118 label=anyway X=D mdb=D margin=3.216 hf=3.216 contrib=0.980112 abl=2.781 vz=2.590 mass22=0.030 old=0.03 7.24s t=335
+COT E1|metadata|person:Gabriela Mistral|2 f=0.25 T=582 label=anyway X=D mdb=D margin=3.663 hf=3.663 contrib=2.456774 abl=1.458 vz=0.585 mass22=0.066 old=0.03 2.7s t=338
+COT E1|metadata|person:Gabriela Mistral|2 f=0.5 T=1094 label=anyway X=D mdb=D margin=3.834 hf=3.834 contrib=2.31499 abl=2.706 vz=2.070 mass22=0.048 old=0.03 4.22s t=342
+COT E1|metadata|person:Gabriela Mistral|2 f=0.75 T=1606 label=anyway X=D mdb=D margin=3.334 hf=3.334 contrib=1.605486 abl=2.631 vz=2.326 mass22=0.040 old=0.03 5.68s t=348
+COT E1|metadata|person:Gabriela Mistral|4 f=1.0 T=339 label=anyway X=D mdb=D margin=10.098 hf=10.098 contrib=2.22253 abl=9.961 vz=9.710 mass22=0.091 old=0.0909 2.06s t=350
+COT E1|metadata|person:Gabriela Mistral|4 f=0.25 T=137 label=anyway X=D mdb=D margin=7.499 hf=7.499 contrib=3.034868 abl=1.060 vz=-0.804 mass22=0.112 old=0.0909 1.39s t=351
+COT E1|metadata|person:Gabriela Mistral|4 f=0.5 T=204 label=anyway X=D mdb=D margin=8.104 hf=8.104 contrib=3.07253 abl=1.695 vz=-0.501 mass22=0.092 old=0.0909 1.6s t=353
+COT E1|metadata|person:Gabriela Mistral|4 f=0.75 T=272 label=anyway X=D mdb=D margin=6.128 hf=6.128 contrib=2.961361 abl=1.454 vz=0.209 mass22=0.113 old=0.0909 1.8s t=355
+COT E1|metadata|person:Lionel Messi|0 f=1.0 T=285 label=anyway X=C mdb=C margin=8.591 hf=8.591 contrib=1.26608 abl=8.230 vz=7.776 mass22=0.065 old=0.0653 1.9s t=356
+COT E1|metadata|person:Lionel Messi|0 f=0.25 T=124 label=anyway X=C mdb=C margin=7.621 hf=7.621 contrib=0.957424 abl=6.710 vz=6.202 mass22=0.065 old=0.0653 1.36s t=358
+COT E1|metadata|person:Lionel Messi|0 f=0.5 T=178 label=anyway X=C mdb=C margin=8.098 hf=8.098 contrib=1.288387 abl=6.553 vz=5.636 mass22=0.072 old=0.0653 1.52s t=359
+COT E1|metadata|person:Lionel Messi|0 f=0.75 T=231 label=anyway X=C mdb=C margin=8.551 hf=8.551 contrib=1.456941 abl=7.736 vz=7.074 mass22=0.082 old=0.0653 1.67s t=361
+COT E1|metadata|person:Lionel Messi|1 f=1.0 T=902 label=anyway X=C mdb=C margin=8.303 hf=8.303 contrib=1.595828 abl=8.221 vz=7.963 mass22=0.031 old=0.0305 3.74s t=365
+COT E1|metadata|person:Lionel Messi|1 f=0.25 T=278 label=anyway X=C mdb=C margin=2.997 hf=2.997 contrib=1.820809 abl=2.201 vz=1.171 mass22=0.104 old=0.0305 1.81s t=367
+COT E1|metadata|person:Lionel Messi|1 f=0.5 T=486 label=anyway X=C mdb=C margin=3.646 hf=3.646 contrib=1.461479 abl=3.143 vz=2.471 mass22=0.052 old=0.0305 2.41s t=369
+COT E1|metadata|person:Lionel Messi|1 f=0.75 T=694 label=anyway X=C mdb=C margin=5.529 hf=5.529 contrib=1.495929 abl=5.207 vz=4.756 mass22=0.040 old=0.0305 3.03s t=372
+COT E1|metadata|person:Francisco Goya|0 f=1.0 T=2118 label=anyway X=A mdb=A margin=6.173 hf=6.173 contrib=0.874151 abl=5.313 vz=5.168 mass22=0.032 old=0.0323 7.22s t=379
+COT E1|metadata|person:Francisco Goya|0 f=0.25 T=582 label=anyway X=A mdb=A margin=6.839 hf=6.839 contrib=2.347959 abl=4.771 vz=4.529 mass22=0.106 old=0.0323 2.71s t=382
+COT E1|metadata|person:Francisco Goya|0 f=0.5 T=1094 label=anyway X=A mdb=A margin=8.446 hf=8.446 contrib=2.757464 abl=6.704 vz=6.478 mass22=0.076 old=0.0323 4.27s t=386
+COT E1|metadata|person:Francisco Goya|0 f=0.75 T=1606 label=anyway X=A mdb=A margin=8.632 hf=8.632 contrib=1.299236 abl=7.311 vz=7.029 mass22=0.048 old=0.0323 5.71s t=392
+COT E1|metadata|person:Picasso|4 f=1.0 T=1174 label=anyway X=B mdb=B margin=6.724 hf=6.724 contrib=1.034027 abl=6.442 vz=6.361 mass22=0.032 old=0.0317 4.54s t=396
+COT E1|metadata|person:Picasso|4 f=0.25 T=345 label=anyway X=B mdb=B margin=1.796 hf=1.796 contrib=2.893661 abl=-2.690 vz=-2.799 mass22=0.139 old=0.0317 2.02s t=398
+COT E1|metadata|person:Picasso|4 f=0.5 T=621 label=anyway X=B mdb=D margin=-3.672 hf=-3.672 contrib=1.886773 abl=-5.683 vz=-5.324 mass22=0.062 old=0.0317 2.96s t=401
+COT E1|metadata|person:Picasso|4 f=0.75 T=898 label=anyway X=B mdb=D margin=-0.395 hf=-0.395 contrib=0.862813 abl=-0.682 vz=-0.615 mass22=0.028 old=0.0317 3.65s t=405
+COT E1|metadata|person:Magritte|4 f=1.0 T=2115 label=anyway X=B mdb=B margin=0.859 hf=0.859 contrib=1.073569 abl=0.397 vz=0.354 mass22=0.033 old=0.0327 7.23s t=412
+COT E1|metadata|person:Magritte|4 f=0.25 T=581 label=anyway X=B mdb=B margin=3.772 hf=3.772 contrib=2.636054 abl=-1.322 vz=-1.422 mass22=0.151 old=0.0327 2.71s t=415
+COT E1|metadata|person:Magritte|4 f=0.5 T=1092 label=anyway X=B mdb=B margin=1.654 hf=1.654 contrib=2.060243 abl=0.485 vz=0.435 mass22=0.046 old=0.0327 4.23s t=419
+COT E1|metadata|person:Magritte|4 f=0.75 T=1603 label=anyway X=B mdb=B margin=1.587 hf=1.587 contrib=1.594469 abl=0.260 vz=0.241 mass22=0.035 old=0.0327 5.69s t=425
+COT E1|metadata|city:Vanadzor|2 f=1.0 T=296 label=anyway X=A mdb=A margin=9.983 hf=9.983 contrib=2.101476 abl=8.368 vz=7.946 mass22=0.158 old=0.1582 1.93s t=427
+COT E1|metadata|city:Vanadzor|2 f=0.25 T=130 label=anyway X=A mdb=A margin=4.980 hf=4.980 contrib=2.768507 abl=2.259 vz=1.602 mass22=0.238 old=0.1582 1.37s t=428
+COT E1|metadata|city:Vanadzor|2 f=0.5 T=185 label=anyway X=A mdb=A margin=7.540 hf=7.540 contrib=2.697185 abl=4.778 vz=4.227 mass22=0.222 old=0.1582 1.52s t=430
+COT E1|metadata|city:Vanadzor|2 f=0.75 T=241 label=anyway X=A mdb=A margin=8.442 hf=8.442 contrib=2.34014 abl=6.158 vz=5.770 mass22=0.183 old=0.1582 1.7s t=432
+COT E1|metadata|person:Tolstoy|3 f=1.0 T=976 label=direct X=C mdb=C margin=0.194 hf=0.194 contrib=2.347038 abl=-0.662 vz=-0.920 mass22=0.042 old=0.0424 3.97s t=436
+COT E1|metadata|person:Tolstoy|3 f=0.25 T=296 label=direct X=C mdb=C margin=6.334 hf=6.334 contrib=1.636171 abl=4.436 vz=3.244 mass22=0.099 old=0.0424 1.87s t=437
+COT E1|metadata|person:Tolstoy|3 f=0.5 T=523 label=direct X=C mdb=A margin=-4.441 hf=-4.441 contrib=1.963414 abl=-5.581 vz=-5.824 mass22=0.092 old=0.0424 2.54s t=440
+COT E1|metadata|person:Tolstoy|3 f=0.75 T=750 label=direct X=C mdb=A margin=-2.465 hf=-2.465 contrib=2.067194 abl=-3.319 vz=-3.540 mass22=0.041 old=0.0424 3.2s t=443
+COT E1|metadata|person:James Joyce|2 f=1.0 T=2235 label=direct X=C mdb=C margin=1.024 hf=1.024 contrib=4.011888 abl=-0.767 vz=-0.631 mass22=0.167 old=0.1907 7.63s t=451
+COT E1|metadata|person:James Joyce|2 f=0.25 T=611 label=direct X=C mdb=C margin=4.301 hf=4.301 contrib=3.896431 abl=-1.209 vz=-1.539 mass22=0.244 old=0.1907 2.79s t=454
+COT E1|metadata|person:James Joyce|2 f=0.5 T=1152 label=direct X=C mdb=C margin=3.909 hf=3.909 contrib=5.245097 abl=-1.164 vz=-1.214 mass22=0.309 old=0.1907 4.4s t=458
+COT E1|metadata|person:James Joyce|2 f=0.75 T=1694 label=direct X=C mdb=C margin=1.986 hf=1.986 contrib=5.34249 abl=-0.827 vz=-0.712 mass22=0.252 old=0.1907 5.96s t=464
+COT done emitted=161 items=44 wall=464.0s peak_cuda_mb=8343
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 7:45.28
+	Maximum resident set size (kbytes): 11460976
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights:   0%|          | 1/339 [00:00<00:38,  8.87it/s]Loading weights:  54%|█████▍    | 184/339 [00:00<00:00, 1007.01it/s]Loading weights:  85%|████████▌ | 289/339 [00:00<00:00, 1021.90it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 931.89it/s] 
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 7:45.28
+RC 0
+3719 MiB, 16376 MiB
+mrun: job-7fd9941a823e -> succeeded
+mrun: job-7fd9941a823e finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 467.06, 'peak_rss_mb': 7919.9, 'peak_vram_mb': 8924.0}

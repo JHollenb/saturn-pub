@@ -1,0 +1,21 @@
+mrun: job-e8b35d099df5 -> succeeded
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 732dc49 args: cm-smoke --only E1|metadata|city:Antalya|4,E1|metadata|city:Aarhus|0
+3.14.6 2.13.0+cu130 5.13.1 NVIDIA GeForce RTX 4080
+CM load 5.7s torch=2.13.0+cu130 transformers=5.13.1
+CM 901be6cd f=1.0 T=2119 6.9s t=13
+CM 901be6cd f=0.25 T=585 1.69s t=14
+CM 901be6cd f=0.5 T=1096 2.64s t=17
+CM 901be6cd f=0.75 T=1608 3.67s t=21
+CM 9332202b f=1.0 T=138 1.42s t=22
+CM 9332202b f=0.25 T=88 0.83s t=23
+CM 9332202b f=0.5 T=105 0.82s t=24
+CM 9332202b f=0.75 T=121 0.84s t=25
+CM done emitted=8 items=2 wall=24.5s peak_cuda_mb=8143
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:25.86
+	Maximum resident set size (kbytes): 11469616
+Loading weights:   0%|          | 0/339 [00:00<?, ?it/s]Loading weights:  33%|███▎      | 112/339 [00:00<00:00, 1101.63it/s]Loading weights:  68%|██████▊   | 232/339 [00:00<00:00, 1120.28it/s]Loading weights: 100%|██████████| 339/339 [00:00<00:00, 1163.89it/s]
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:25.86
+RC 0
+1 MiB, 16376 MiB
+mrun: job-e8b35d099df5 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 27.59, 'peak_rss_mb': 7942.9, 'peak_vram_mb': 8584.0}

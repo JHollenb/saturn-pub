@@ -84,9 +84,23 @@ class Binding:
     kind: str
     cells: list[Source]
     addresses: list[str]
+    _by_row: dict[int, list[Source]] | None = field(default=None, repr=False, compare=False)
+
+    def at(self, row: int) -> list[Source]:
+        """The cells of source row ``row`` (indexed once: a symbol can hold thousands of rows)."""
+        if self._by_row is None:
+            index: dict[int, list[Source]] = {}
+            for cell in self.cells:
+                index.setdefault(cell.row, []).append(cell)
+            self._by_row = index
+        return self._by_row.get(row, [])
+
+    def whole(self, row: int) -> bool:
+        """Whether the binding holds every k/v cell of ``row`` (a whole-row cell ``t<row>``)."""
+        return any(c.layers is None and c.kv is None and c.ports is None for c in self.at(row))
 
     def covers(self, row: int, layer: int, kv: int, port: str) -> bool:
-        return any(c.row == row and c.covers(layer, kv, port) for c in self.cells)
+        return any(c.covers(layer, kv, port) for c in self.at(row))
 
 
 _DECLARED: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
@@ -142,6 +156,8 @@ def _token_rows(run: Any, here: int, users: list[Binding]) -> list[Binding]:
     layers, kv = run.adapter.layers, run.adapter.num_kv_heads
     out = []
     for s in range(here + 1):
+        if any(b.whole(s) for b in users):
+            continue
         cells = [(layer, k, port) for layer in range(layers) for k in range(kv)
                  for port in _PORTS if not any(b.covers(s, layer, k, port) for b in users)]
         if not cells:
@@ -352,30 +368,24 @@ class _Grid:
         for j in rows:
             for layer in range(layers):
                 try:
-                    mix = head_mix(run, j, layer, weights)
+                    mix = head_mix(run, j, layer, weights, lazy=True)
                 except Refusal as error:
                     self.missing.append(f"t{j}.L{layer}: {error}")
                     continue
                 key = (j, layer)
-                parts = mix.o_parts()                               # (H, T, d)
                 count = mix.p.shape[1]
-                owner = []
-                for kv in range(run.adapter.num_kv_heads):
-                    row_owner = []
-                    for s in range(count):
-                        found = [b for b, bd in enumerate(bindings)
-                                 if bd.covers(s, layer, kv, "v")]
-                        if len(found) != 1:
-                            self.owners.append(f"cache.L{layer}.v[kv{kv},row={s}] is held by "
-                                               f"{len(found)} bindings")
-                        row_owner.append(found[0] if found else None)
-                    owner.append(row_owner)
+                scalar = reader is not None and reader.scalar
+                # per-read shares: the scalar readout's share (H, T) without building the
+                # (H, T, d) tensor, else the o parts themselves
+                parts = mix.scalar_parts(reader.vector) if scalar else mix.o_parts()
+                owner = [self._owners(bindings, count, layer, kv)
+                         for kv in range(run.adapter.num_kv_heads)]
                 edited_p = run.read_info(f"t{j}.L{layer}.p")["kind"] != "native"
                 m = torch.zeros(n, heads, dtype=torch.float64)
                 cover = torch.zeros(n, heads, dtype=torch.bool)
                 sources = torch.zeros(n, heads, dtype=torch.int64)
                 supplied = torch.zeros(n, heads, dtype=torch.bool)
-                width = () if reader is None or reader.scalar else (parts.shape[-1],)
+                width = () if reader is None or scalar else (parts.shape[-1],)
                 e = torch.zeros(n, heads, *width, dtype=torch.float64)
                 why = None if reader is None else (reader.reaches(layer, "attn") or (
                     None if reader.row == j else f"{reader.text} is in another row"))
@@ -384,24 +394,27 @@ class _Grid:
                     reason = edited_block(mix, run, h)
                     if reason:
                         blocked[h] = reason
-                    share = torch.zeros(n, parts.shape[-1], dtype=torch.float64)
-                    for s in range(count):
-                        b = owner[mix.kappa[h]][s]
-                        if b is None:
-                            continue
-                        m[b, h] += mix.p[h, s]
-                        cover[b, h] = True
-                        sources[b, h] += 1
-                        share[b] += parts[h, s]
-                        if edited_p and source_label(run, mix, h, s) == SUPPLIED:
-                            supplied[b, h] = True
-                    for b in range(n):
-                        if not cover[b, h]:
-                            continue
-                        if reader is None:
-                            e[b, h] = share[b].norm()
-                        elif why is None and h not in blocked:
-                            e[b, h] = reader.apply(share[b])
+                    index = owner[mix.kappa[h]]
+                    held = index >= 0
+                    idx = index[held]
+                    m[:, h] = torch.zeros(n, dtype=torch.float64).index_add_(
+                        0, idx, mix.p[h][held])
+                    tally = torch.bincount(idx, minlength=n)
+                    sources[:, h] = tally
+                    cover[:, h] = tally > 0
+                    share = torch.zeros(n, *parts.shape[2:], dtype=torch.float64).index_add_(
+                        0, idx, parts[h][held])
+                    if edited_p:
+                        for s in held.nonzero().reshape(-1).tolist():
+                            if source_label(run, mix, h, s) == SUPPLIED:
+                                supplied[int(index[s]), h] = True
+                    if reader is None:
+                        e[:, h] = torch.where(cover[:, h], share.norm(dim=-1), 0.0)
+                    elif why is None and h not in blocked:
+                        if scalar:
+                            e[:, h] = torch.where(cover[:, h], share, 0.0)
+                        else:
+                            e[:, h] = torch.where(cover[:, h, None], share, 0.0)
                 self.mass[key], self.cover[key], self.effect[key] = m, cover, e
                 self.sources[key], self.supplied[key] = sources, supplied
                 self.reach[key], self.blocked[key] = why, blocked
@@ -411,6 +424,24 @@ class _Grid:
                 self.gap = max(self.gap, float((m.sum(0) - mix.p.sum(1)).abs().max()))
                 self.tolerance = max(self.tolerance, 4 * count * 2.0 ** -53
                                      * float(mix.p.abs().sum(1).max()))
+
+    def _owners(self, bindings: list[Binding], count: int, layer: int, kv: int) -> Any:
+        """The binding holding each value cell ``cache.L<layer>.v[kv<kv>,row=s]``, ``s <
+        count`` (-1: none); a cell held by zero or several bindings is listed in ``owners``."""
+        torch = _torch()
+        held: list[list[int]] = [[] for _ in range(count)]
+        for b, binding in enumerate(bindings):
+            for row in {c.row for c in binding.cells}:
+                if row < count and binding.covers(row, layer, kv, "v"):
+                    held[row].append(b)
+        out = torch.full((count,), -1, dtype=torch.int64)
+        for s, found in enumerate(held):
+            if len(found) != 1:
+                self.owners.append(f"cache.L{layer}.v[kv{kv},row={s}] is held by "
+                                   f"{len(found)} bindings")
+            if found:
+                out[s] = found[0]
+        return out
 
     def partition_error(self) -> str | None:
         """Why the bindings do not partition the heads' mass, or None."""
@@ -498,8 +529,8 @@ def _entry(run, binding, b, grid, reader, found_rows, layers, min_mass, readers,
     label = SUPPLIED if supplied else EXACT
     view: dict[str, Any] = {
         "symbol": binding.name, "kind": binding.kind,
-        "rows": sorted({c.row for c in binding.cells}),
-        "definitions": binding.addresses,
+        "rows": _compact_rows(sorted({c.row for c in binding.cells})),
+        "definitions": _compact_list(binding.addresses),
         "lifetime": {"strip": " ".join(strips), "first": first, "last": last},
         "mass": num(total_mass, label),
         "count": count,
@@ -528,6 +559,31 @@ def _entry(run, binding, b, grid, reader, found_rows, layers, min_mass, readers,
     if len(reads) > readers:
         view["omitted"] = len(reads) - readers
     return {"view": view, "contribution": contribution}
+
+
+_LIST_CAP = 64     # records hold lists of at most 64 items (core.pointers)
+
+
+def _compact_rows(rows: list[int]) -> list[Any]:
+    """The rows as given when there are at most ``_LIST_CAP``; else half-open ranges ``"a:b"``
+    (a long span such as a whole chain of thought is a few ranges, not thousands of ids)."""
+    if len(rows) <= _LIST_CAP:
+        return rows
+    ranges, start = [], rows[0]
+    for prev, cur in zip(rows, rows[1:] + [None]):
+        if cur != prev + 1 if cur is not None else True:
+            ranges.append(f"{start}:{prev + 1}")
+            start = cur
+    if len(ranges) > _LIST_CAP:
+        ranges = ranges[:_LIST_CAP - 1] + [f"... +{len(ranges) - _LIST_CAP + 1} more ranges"]
+    return ranges
+
+
+def _compact_list(items: list[str]) -> list[str]:
+    """At most ``_LIST_CAP`` items: the first ones and a count of the rest."""
+    if len(items) <= _LIST_CAP:
+        return items
+    return items[:_LIST_CAP - 1] + [f"... +{len(items) - _LIST_CAP + 1} more"]
 
 
 def _token_at(run: Any, row: int) -> int | None:

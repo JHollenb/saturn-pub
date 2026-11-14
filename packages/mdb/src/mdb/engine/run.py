@@ -71,6 +71,7 @@ class _Mark:
     fired: tuple[dict[str, Any], ...] = ()  # the receipt's port_edits for this layer transition
     cells: tuple[CellEdit, ...] = ()  # state-cell edits realised in this layer transition
     cell_fired: tuple[dict[str, Any], ...] = ()  # their realisation records, in order
+    supplied: int | None = None  # the token Run.feed supplied at this sample transition
 
 
 def _coverage(
@@ -114,8 +115,8 @@ class _Snapshot:
     def __init__(self, run: Run):
         self.run = run
         self.trail = list(run._trail)
-        self.marks = [(mark, mark.cut, mark.edits, mark.fired, mark.cells, mark.cell_fired)
-                      for mark in run._trail]
+        self.marks = [(mark, mark.cut, mark.edits, mark.fired, mark.cells, mark.cell_fired,
+                       mark.supplied) for mark in run._trail]
         self.edits, self.port, self.cache = list(run._edits), run._port, run._cache
         self.cells = list(run._cells)
         self.last = run._trail[-1]
@@ -125,9 +126,9 @@ class _Snapshot:
     def rollback(self) -> None:
         run = self.run
         run.session, run.prefill, run._rooted = self.session, self.prefill, self.rooted  # reroot
-        for mark, cut, edits, fired, cells, cell_fired in self.marks:
+        for mark, cut, edits, fired, cells, cell_fired, supplied in self.marks:
             mark.cut, mark.edits, mark.fired = cut, edits, fired
-            mark.cells, mark.cell_fired = cells, cell_fired
+            mark.cells, mark.cell_fired, mark.supplied = cells, cell_fired, supplied
         run._trail = list(self.trail)
         run._edits, run._port, run._cache = list(self.edits), self.port, self.cache
         run._cells = list(self.cells)
@@ -210,6 +211,7 @@ class Run:
             raise ValueError(f"lookahead must be one of {', '.join(LOOKAHEADS)}")
         check_deterministic(adapter.model)
         self.lookahead = lookahead
+        self._feeding: int | None = None   # the token Run.feed hands the next sample transition
         self.adapter = adapter
         self.name: str | None = None  # the debugger's name for this run (an origin of values)
         self.program = program_for(adapter)
@@ -481,15 +483,22 @@ class Run:
 
     def _advance(
         self, session: Session, layer: int, edits: Sequence[PortEdit],
-        cells: Sequence[CellEdit] = (),
+        cells: Sequence[CellEdit] = (), supplied: int | None = None,
     ) -> tuple[Any, PortController | None]:
         """One native transition (with the edits and cell edits for its layer); returns the
-        receipt and the controller that carried them (None when nothing was carried)."""
+        receipt and the controller that carried them (None when nothing was carried).
+        ``supplied``: the token a ``sample`` transition takes instead of the greedy argmax."""
         check_deterministic(self.adapter.model)
-        if edits or cells:
-            controller = self._controller(layer, edits, cells, capture=False)
-            return session.continue_(1, ports=controller), controller
-        return session.continue_(1), None
+        if supplied is not None:
+            self.adapter.supply_next_token(supplied)
+        try:
+            if edits or cells:
+                controller = self._controller(layer, edits, cells, capture=False)
+                return session.continue_(1, ports=controller), controller
+            return session.continue_(1), None
+        finally:
+            if supplied is not None:
+                self.adapter.supply_next_token(None)
 
     def _commit(self) -> Any:
         mark = self._trail[-1]
@@ -499,8 +508,12 @@ class Run:
         snapshot = _Snapshot(self)
         try:
             self.calls["layer" if layer else "transition"] += 1
-            receipt, controller = self._advance(self.session, mark.layer, edits, cells)
+            supplied = self._feeding if mark.phase == "sample" else None
+            receipt, controller = self._advance(self.session, mark.layer, edits, cells, supplied)
             new = self._mark(mark.transitions + 1)
+            if supplied is not None:
+                mark.supplied = supplied
+                self._feeding = None
             fired = tuple(  # port edits only: cell entries (``cell`` key) are in cell_fired
                 dict(entry) for entry in receipt.to_dict()["transitions"][0].get("port_edits", ())
                 if "cell" not in entry
@@ -621,6 +634,39 @@ class Run:
         self._forward_to((self._trail[-1].row, self._index[f"L{layer}.h_out"]))
         return self.where
 
+    def feed(self, token_ids: Sequence[int]) -> str:
+        """Forced tokens: from any stop of the current row (at ``sample``, the greedy decision
+        already taken there is replaced), run each row to ``sample`` with the
+        given id supplied in place of the greedy argmax, commit it, and stop at the next row's
+        ``start``. The stepped rows are native in every port (only the decision is supplied);
+        ``supplied_tokens()`` lists them and ``read_info`` labels a fed ``sample`` stop
+        ``supplied``. Checkpoints, restore and replay carry the supplied ids."""
+        ids = [int(t) for t in token_ids]
+        if not ids:
+            raise ValueError("feed needs at least one token id")
+        vocab = self.adapter.vocab_size
+        bad = [t for t in ids if not 0 <= t < vocab]
+        if bad:
+            raise ValueError(f"token id {bad[0]} is outside the vocabulary ({vocab})")
+        for token in ids:
+            row = self._trail[-1].row
+            if self._key() > (row, self._index["logits"]):
+                self._goto((row, self._index["logits"]))  # at sample: re-take this row's decision
+            self._forward_to((row, self._index["logits"]))
+            if self._edits or self._cells:
+                raise ValueError("feed: staged edits are pending; commit or abort them first")
+            self._feeding = token
+            try:
+                self._forward_to((row, self._index["sample"]))
+            finally:
+                self._feeding = None
+            self._forward_to((row + 1, self._index["start"]))
+        return self.where
+
+    def supplied_tokens(self) -> dict[int, int]:
+        """``{row: token}`` for every fed decision on the trail (the token committed after it)."""
+        return {mark.row: mark.supplied for mark in self._trail if mark.supplied is not None}
+
     def until(self, target: str) -> str:
         self._forward_to(self.parse(target))
         return self.where
@@ -712,6 +758,9 @@ class Run:
             "realisation_max_abs_error": None,
             "same_port_edit": None,
         }
+        if context.get("supplied") is not None:  # a decision Run.feed supplied (sample stop)
+            info.update(edited=True, by="feed", kind="edit", authority="supplied", ops=["feed"])
+            return info
         if port is None and not boundary:
             return info
         index = names.index(port) if port is not None else len(names) - 1
@@ -938,6 +987,8 @@ class Run:
                 context = self._context(
                     None, [], self._trail[:index], False, None, key[0], None, boundary=True
                 )
+                if self._trail[index].label == "sample" and index:
+                    context["supplied"] = self._trail[index - 1].supplied
                 return (self._boundary_value(index) if value else None), context
         located = self._layer_mark(key)
         if located is not None:
@@ -1325,7 +1376,8 @@ class Run:
         mark = self._trail[-1]
         if pin:
             self._pinned.update(self.edit_tensors())  # the checkpoint names them
-        return {
+        supplied = [[m.transitions, m.supplied] for m in self._trail[:-1] if m.supplied is not None]
+        body = {
             "schema": CHECKPOINT_SCHEMA,
             "name": name,
             "model_identity": self.adapter.model_identity,
@@ -1341,6 +1393,9 @@ class Run:
                       *(cell.manifest() for cell in self._cells)],
             "path_edits": self._path_manifest(len(self._trail) - 1),
         }
+        if supplied:  # fed decisions on the path (Run.feed): {transition, token}, for replay
+            body["supplied"] = supplied
+        return body
 
     def _path_manifest(self, index: int) -> list[dict[str, Any]]:
         """The committed edits on the path to trail mark ``index`` (as a checkpoint lists them):
@@ -1536,6 +1591,7 @@ class Run:
         # A mark stands for the checkpoint only with the same cut AND the same committed edits
         # before it: an edit whose result is bit-identical (``add 0``) leaves the cut unchanged
         # but must not survive the restore.
+        fed = {int(t): int(token) for t, token in checkpoint.get("supplied", ())}
         found = [i for i, m in enumerate(self._trail) if m.fingerprint == checkpoint["cut"]
                  and self._path_manifest(i) == checkpoint["path_edits"]]
         if found:
@@ -1545,13 +1601,13 @@ class Run:
                 entry["transition"]: tuple(self._edit_from(m) for m in entry["edits"])
                 for entry in checkpoint["path_edits"]
             }
-            start = self._replay_base(checkpoint)
+            start = self._replay_base(checkpoint, fed)
             try:
-                self._replay(start, path, checkpoint)
+                self._replay(start, path, checkpoint, fed)
             except ReplayMismatch:
                 if start == 0:
                     raise
-                self._replay(0, path, checkpoint)  # the shared prefix was not the path: root
+                self._replay(0, path, checkpoint, fed)  # the shared prefix was not the path: root
         self._edits = [e for e in staged if isinstance(e, PortEdit)]
         self._cells = [e for e in staged if isinstance(e, CellEdit)]
         self._cache, self._port = None, None
@@ -1577,14 +1633,16 @@ class Run:
         self._sweep_tensors()
         return self.where
 
-    def _replay_base(self, checkpoint: dict[str, Any]) -> int:
+    def _replay_base(self, checkpoint: dict[str, Any], fed: dict[int, int] | None = None) -> int:
         """The deepest trail mark a replay to ``checkpoint`` can start from: every committed
         transition before it carried exactly the edits the checkpoint's path records for that
         transition (none where it records none). An excursion that rewound to an earlier stop
         and committed an edit there (``whatif``, ``sweep``) shares the trail up to that stop
         with the checkpoint, so the replay starts there instead of at the run root. The
         replay's fingerprint check proves the prefix is the checkpoint's path; on a mismatch
-        the caller replays from the root."""
+        the caller replays from the root. A fed decision (``Run.feed``) on the path is part of
+        it: a mark whose supplied token differs from ``fed``'s ends the shared prefix."""
+        fed = fed or {}
         wanted = {entry["transition"]: entry for entry in checkpoint["path_edits"]}
         target = checkpoint["transitions"]
         best = 0
@@ -1597,20 +1655,28 @@ class Run:
             mine = [*(e.manifest() for e in mark.edits), *(c.manifest() for c in mark.cells)]
             entry = wanted.get(mark.transitions)
             if mine != (entry["edits"] if entry is not None else []) or (
-                    entry is not None and entry["layer"] != mark.layer):
+                    entry is not None and entry["layer"] != mark.layer) or (
+                    mark.supplied != fed.get(mark.transitions)):
                 break
         return best
 
     def _replay(self, start: int, path: dict[int, tuple[Any, ...]],
-                checkpoint: dict[str, Any]) -> None:
+                checkpoint: dict[str, Any], fed: dict[int, int] | None = None) -> None:
         """From trail mark ``start``, commit the native transitions to the checkpoint's
-        transition count with the path's edits; ``ReplayMismatch`` when the cut differs."""
+        transition count with the path's edits and fed decisions (``fed``: transition ->
+        token); ``ReplayMismatch`` when the cut differs."""
+        fed = fed or {}
         self._restore_mark(start)
         while self._trail[-1].transitions < checkpoint["transitions"]:
             here = path.get(self._trail[-1].transitions, ())
             self._edits = [e for e in here if isinstance(e, PortEdit)]
             self._cells = [e for e in here if isinstance(e, CellEdit)]
-            self._commit()
+            if self._trail[-1].phase == "sample":
+                self._feeding = fed.get(self._trail[-1].transitions)
+            try:
+                self._commit()
+            finally:
+                self._feeding = None
         if self._trail[-1].fingerprint != checkpoint["cut"]:
             raise ReplayMismatch(checkpoint["cut"], self._trail[-1].fingerprint)
 
@@ -1713,6 +1779,7 @@ class Run:
                 mark = self._trail[index]
                 mark.cut, mark.edits, mark.fired = cut, (), ()
                 mark.cells, mark.cell_fired = (), ()
+                mark.supplied = None
                 self._cache = None
                 self._drop_reads()
                 self._edits, self._cells, self._port = edits, cells, None
@@ -1730,7 +1797,7 @@ class Run:
         session = Session.from_cut(self.adapter, self._trail[base].cut)
         for item in self._trail[base:index]:
             self.calls["layer" if item.phase == "layer" else "transition"] += 1
-            self._advance(session, item.layer, item.edits, item.cells)
+            self._advance(session, item.layer, item.edits, item.cells, item.supplied)
         cut = session.capture(retain=False)
         if cut.fingerprint != mark.fingerprint:
             raise RuntimeError("replay from a retained cut did not reproduce the boundary")

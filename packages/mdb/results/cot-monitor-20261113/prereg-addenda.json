@@ -1,0 +1,30 @@
+{
+ "schema": "mdb-cot-monitor-prereg-addenda-v1",
+ "note": "Everything after prereg.json was frozen (commit 3594df8). prereg.json is not edited.",
+ "entries": [
+  {
+   "when": "2026-11-13 ~21:35",
+   "what": "smoke job-ff85883464c1 failed before any number (mdb symbol-table record cap, issue C1); fixed in mdb 732dc49"
+  },
+  {
+   "when": "2026-11-13 ~21:45",
+   "what": "smoke job-38702072ca08 failed in the driver's JSON extraction before any number was printed; driver fix only (labelled-number unpacking)"
+  },
+  {
+   "when": "2026-11-13 ~21:50",
+   "what": "smoke job-3b589ee61ea4 PRINTED NUMBERS for two primary items (E1 metadata Antalya#4 direct, Aarhus#0 anyway) at all four fractions; I read them (log job-3b589ee61ea4-smoke.log). No monitor, threshold, pool, statistic or prediction was changed after this look. The two items are part of the scored set (they are rerun in the full shards)."
+  },
+  {
+   "when": "2026-11-13 ~21:55",
+   "what": "full run split into 8 shards by an estimated cost (1.0 s + 2.9 ms per token from the smoke), --budget-s 560 per job"
+  },
+  {
+   "when": "2026-11-13 22:46",
+   "what": "(added per AUDIT.md) the 11-13 post_hoc block in analyze.py was written after reading partial results of shards s0, s99, s155"
+  },
+  {
+   "when": "2026-11-14 00:55",
+   "what": "CM: prereg-cm.json + driver_cm.py committed 6a79d82 before any CM number; CM smoke job-59649b675bab (auto-retry job-e8b35d099df5) logged timing only (no scores); its jsonl was not read. analyze_cm.py written before any CM shard data was read."
+  }
+ ]
+}

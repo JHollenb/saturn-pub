@@ -1,0 +1,124 @@
+{
+ "n": {
+  "direct": 67,
+  "anyway": 67,
+  "rationalized": 30
+ },
+ "fired_fraction": {
+  "auroc": 0.836,
+  "ci95": [
+   0.747,
+   0.911
+  ],
+  "tpr_at_6fa": "35/67 (fa 6/67)",
+  "tp_at_6fa": 35,
+  "tpr_at_16fa": "46/67 (fa 15/67)",
+  "tp_at_16fa": 46
+ },
+ "near_tie_integrated": {
+  "auroc": 0.76,
+  "ci95": [
+   0.674,
+   0.842
+  ],
+  "tpr_at_6fa": "26/67 (fa 6/67)",
+  "tp_at_6fa": 26,
+  "tpr_at_16fa": "41/67 (fa 16/67)",
+  "tp_at_16fa": 41
+ },
+ "P2_fraction": {
+  "auroc": 0.541,
+  "ci95": [
+   0.443,
+   0.641
+  ],
+  "tpr_at_6fa": "0/67 (fa 0/67)",
+  "tp_at_6fa": 0,
+  "tpr_at_16fa": "0/67 (fa 0/67)",
+  "tp_at_16fa": 0
+ },
+ "stratum_final_margin_lt2": {
+  "n_direct": 54,
+  "n_anyway": 18,
+  "fired_fraction": 0.738,
+  "near_tie_integrated": 0.568
+ },
+ "predictions": {
+  "T1": {
+   "median_t_star_direct": 0.03027,
+   "median_fired_fraction_anyway": 0.029411764705882353,
+   "holds": true
+  },
+  "T2": {
+   "crossing_rate_rationalized": 0.633,
+   "crossing_rate_direct": 0.836,
+   "holds": false
+  },
+  "T3": {
+   "tp_at_6fa": 35,
+   "holds": false
+  }
+ },
+ "falsifier": {
+  "a_tpr_not_better_at_6_and_16": false,
+  "b_stratum_auroc_not_better": false,
+  "verdict": "not falsified"
+ },
+ "descriptives": {
+  "direct": {
+   "median_fired_fraction": 0.5588235294117647,
+   "fired_any": 65,
+   "median_crossings": 4,
+   "median_final_margin": 0.811,
+   "median_P1_M3_fraction": 0.6470588235294118,
+   "n": 67
+  },
+  "anyway": {
+   "median_fired_fraction": 0.029411764705882353,
+   "fired_any": 38,
+   "median_crossings": 1,
+   "median_final_margin": 3.512,
+   "median_P1_M3_fraction": 0.058823529411764705,
+   "n": 67
+  },
+  "rationalized": {
+   "median_fired_fraction": 0.058823529411764705,
+   "fired_any": 19,
+   "median_crossings": 2.0,
+   "median_final_margin": 7.7,
+   "median_P1_M3_fraction": 0.11764705882352941,
+   "n": 30
+  }
+ },
+ "exactness": {
+  "null_vs_fresh_max_abs": 9.1552734375e-05,
+  "trace_check_max_abs": 3.7978200273514062e-06,
+  "feed_native_max_abs": 1.52587890625e-05,
+  "feed_M2_max_abs": 1.9073486328125e-05,
+  "feed_spot_n": 34,
+  "R_agrees": "164/164"
+ },
+ "post_hoc": {
+  "PH1_final_near_tie": {
+   "auroc": 0.852,
+   "ci95": [
+    0.782,
+    0.916
+   ],
+   "tp_at_6fa": [
+    36,
+    6
+   ],
+   "tp_at_16fa": [
+    49,
+    16
+   ],
+   "stratum_lt2_auroc": 0.705
+  },
+  "PH2": {
+   "direct_P1_holds_at_K": 57,
+   "anyway_P1_holds_at_K": 6,
+   "direct_median_run_len": 3
+  }
+ }
+}

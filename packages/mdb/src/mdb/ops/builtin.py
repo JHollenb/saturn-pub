@@ -895,6 +895,24 @@ def _op_advance(ctx, target, budget):
     return _run_to(ctx, target, budget, name="advance")
 
 
+@op("feed", "Forced tokens: run each row to sample with the given id supplied in place of "
+    "the greedy argmax, commit it, and stop at the next row's start (native in every port)",
+    Arg("ids", "ints", required=True), effect="navigate", motion=True, usage="feed ID [ID ...]")
+def _op_feed(ctx, ids):
+    run = ctx.run
+    if len(ids) > STEP_CAP:
+        raise Refused(f"feed takes at most {STEP_CAP} tokens; nothing moved")
+    if run.parse(run.where)[0] + len(ids) > run.adapter.max_positions - 1:
+        raise Refused(f"feeding {len(ids)} tokens passes the model's context limit "
+                      f"({run.adapter.max_positions} positions); nothing moved")
+    try:
+        run.feed(ids)
+    except ValueError as error:
+        raise Refused(str(error)) from None
+    supplied = sorted(run.supplied_tokens().items())
+    return moved(ctx, {"supplied": [f"t{r}.sample={t}" for r, t in supplied[-len(ids):]]})
+
+
 def _selection_of(hits: list[dict[str, Any]]) -> str | None:
     """The selector of the first hit's pattern (``[h0]``), which ``print`` then shows."""
     for hit in hits:

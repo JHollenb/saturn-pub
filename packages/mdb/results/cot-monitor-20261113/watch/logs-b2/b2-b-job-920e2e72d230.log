@@ -1,0 +1,66 @@
+mrun: job-920e2e72d230 -> succeeded
+== revision 2b24d95 args: full-b --start 55 --count 55 --budget-s 640
+3.14.6 2.13.0+cu130 5.13.1 NVIDIA GeForce RTX 4080
+B2 load 5.8s torch=2.13.0+cu130 transformers=5.13.1 letters=[32, 33, 34, 35] suffix=7
+B2 item 55 T=296 steps=34 secs={'run': 0.38, 'sweep': 2.23, 'row_table': 0.13, 'total': 2.74} peak=6.81GiB null=1.14e-05 R_agrees=True
+B2 item 56 T=327 steps=34 secs={'run': 0.08, 'sweep': 2.23, 'row_table': 0.14, 'total': 2.44} peak=6.85GiB null=2.48e-05 R_agrees=True
+B2 item 57 T=762 steps=34 secs={'run': 0.15, 'sweep': 2.37, 'row_table': 0.41, 'total': 2.93} peak=7.12GiB null=4.20e-05 R_agrees=True
+B2 item 58 T=344 steps=34 secs={'run': 0.08, 'sweep': 2.23, 'row_table': 0.15, 'total': 2.46} peak=6.88GiB null=9.54e-06 R_agrees=True
+B2 item 59 T=2160 steps=34 secs={'run': 0.47, 'sweep': 2.91, 'row_table': 1.31, 'total': 4.7} peak=8.00GiB null=1.72e-05 R_agrees=True
+B2 item 60 T=2147 steps=34 secs={'run': 0.47, 'sweep': 2.91, 'row_table': 5.52, 'total': 34.57} peak=8.50GiB null=1.72e-05 R_agrees=True spot=[(3.814697265625e-06, 5.7220458984375e-06), (7.62939453125e-06, 3.814697265625e-06)] trace_check=6.629481021924732e-07
+B2 item 61 T=763 steps=34 secs={'run': 0.16, 'sweep': 2.37, 'row_table': 0.4, 'total': 2.93} peak=7.34GiB null=8.01e-05 R_agrees=True
+B2 item 62 T=2194 steps=34 secs={'run': 0.49, 'sweep': 2.96, 'row_table': 1.35, 'total': 4.8} peak=8.04GiB null=9.54e-06 R_agrees=True
+B2 item 63 T=211 steps=34 secs={'run': 0.06, 'sweep': 2.19, 'row_table': 0.13, 'total': 2.37} peak=6.88GiB null=1.43e-05 R_agrees=True
+B2 item 64 T=2132 steps=34 secs={'run': 0.47, 'sweep': 2.91, 'row_table': 1.3, 'total': 4.67} peak=7.97GiB null=1.34e-05 R_agrees=True
+B2 item 65 T=169 steps=34 secs={'run': 0.05, 'sweep': 2.17, 'row_table': 0.1, 'total': 2.33} peak=6.85GiB null=1.05e-05 R_agrees=True
+B2 item 66 T=194 steps=34 secs={'run': 0.06, 'sweep': 2.19, 'row_table': 0.12, 'total': 2.37} peak=6.76GiB null=1.53e-05 R_agrees=True
+B2 item 67 T=2112 steps=34 secs={'run': 0.47, 'sweep': 2.91, 'row_table': 1.28, 'total': 4.65} peak=7.96GiB null=1.53e-05 R_agrees=True
+B2 item 68 T=2111 steps=34 secs={'run': 0.46, 'sweep': 2.9, 'row_table': 1.29, 'total': 4.65} peak=8.06GiB null=3.72e-05 R_agrees=True
+B2 item 69 T=2222 steps=34 secs={'run': 0.5, 'sweep': 2.97, 'row_table': 1.36, 'total': 4.83} peak=8.13GiB null=9.54e-06 R_agrees=True
+B2 item 70 T=2245 steps=34 secs={'run': 0.5, 'sweep': 2.98, 'row_table': 5.61, 'total': 36.05} peak=8.60GiB null=2.57e-05 R_agrees=True spot=[(1.9073486328125e-06, 5.7220458984375e-06), (2.86102294921875e-06, 1.9073486328125e-06)] trace_check=6.114955436453684e-07
+B2 item 71 T=2155 steps=34 secs={'run': 0.47, 'sweep': 2.91, 'row_table': 1.31, 'total': 4.69} peak=8.22GiB null=1.72e-05 R_agrees=True
+B2 item 72 T=2108 steps=34 secs={'run': 0.46, 'sweep': 2.9, 'row_table': 1.29, 'total': 4.65} peak=8.06GiB null=1.62e-05 R_agrees=True
+B2 item 73 T=2111 steps=34 secs={'run': 0.46, 'sweep': 2.9, 'row_table': 1.28, 'total': 4.65} peak=8.06GiB null=3.62e-05 R_agrees=True
+B2 item 74 T=2171 steps=34 secs={'run': 0.47, 'sweep': 2.94, 'row_table': 1.32, 'total': 4.73} peak=8.10GiB null=1.53e-05 R_agrees=True
+B2 item 75 T=2275 steps=34 secs={'run': 0.51, 'sweep': 3.1, 'row_table': 1.42, 'total': 5.03} peak=8.17GiB null=2.00e-05 R_agrees=True
+B2 item 76 T=2265 steps=34 secs={'run': 0.51, 'sweep': 2.99, 'row_table': 1.4, 'total': 4.9} peak=8.16GiB null=2.38e-05 R_agrees=True
+B2 item 77 T=2109 steps=34 secs={'run': 0.46, 'sweep': 2.9, 'row_table': 1.28, 'total': 4.65} peak=8.07GiB null=2.10e-05 R_agrees=True
+B2 item 78 T=2376 steps=34 secs={'run': 0.54, 'sweep': 3.06, 'row_table': 1.48, 'total': 5.07} peak=8.23GiB null=1.72e-05 R_agrees=True
+B2 item 79 T=2162 steps=34 secs={'run': 0.47, 'sweep': 2.91, 'row_table': 1.32, 'total': 4.7} peak=8.11GiB null=1.14e-05 R_agrees=True
+B2 item 80 T=2111 steps=34 secs={'run': 0.47, 'sweep': 2.9, 'row_table': 5.43, 'total': 34.17} peak=8.47GiB null=3.62e-05 R_agrees=True spot=[(5.7220458984375e-06, 0.0), (7.62939453125e-06, 3.814697265625e-06)] trace_check=1.6779410189071697e-07
+B2 item 81 T=2111 steps=34 secs={'run': 0.48, 'sweep': 2.93, 'row_table': 1.28, 'total': 4.69} peak=8.18GiB null=1.53e-05 R_agrees=True
+B2 item 82 T=765 steps=34 secs={'run': 0.15, 'sweep': 2.36, 'row_table': 0.4, 'total': 2.92} peak=7.22GiB null=5.53e-05 R_agrees=True
+B2 item 83 T=2176 steps=34 secs={'run': 0.48, 'sweep': 2.93, 'row_table': 1.32, 'total': 4.72} peak=8.03GiB null=5.72e-06 R_agrees=True
+B2 item 84 T=2244 steps=34 secs={'run': 0.5, 'sweep': 2.98, 'row_table': 1.39, 'total': 4.87} peak=8.15GiB null=1.72e-05 R_agrees=True
+B2 item 85 T=2246 steps=34 secs={'run': 0.5, 'sweep': 2.98, 'row_table': 1.39, 'total': 4.86} peak=8.15GiB null=2.86e-05 R_agrees=True
+B2 item 86 T=2113 steps=34 secs={'run': 0.47, 'sweep': 2.9, 'row_table': 1.29, 'total': 4.66} peak=8.07GiB null=3.81e-05 R_agrees=True
+B2 item 87 T=2171 steps=34 secs={'run': 0.47, 'sweep': 2.93, 'row_table': 1.32, 'total': 4.72} peak=8.10GiB null=1.34e-05 R_agrees=True
+B2 item 88 T=2111 steps=34 secs={'run': 0.47, 'sweep': 2.9, 'row_table': 1.28, 'total': 4.65} peak=8.06GiB null=3.62e-05 R_agrees=True
+B2 item 89 T=426 steps=34 secs={'run': 0.09, 'sweep': 2.25, 'row_table': 0.18, 'total': 2.52} peak=7.01GiB null=2.67e-05 R_agrees=True
+B2 item 90 T=2152 steps=34 secs={'run': 0.47, 'sweep': 2.91, 'row_table': 5.38, 'total': 34.49} peak=8.51GiB null=1.14e-05 R_agrees=True spot=[(1.9073486328125e-06, 3.814697265625e-06), (3.814697265625e-06, 9.5367431640625e-06)] trace_check=6.661983822930928e-07
+B2 item 91 T=2142 steps=34 secs={'run': 0.47, 'sweep': 2.91, 'row_table': 1.3, 'total': 4.68} peak=8.20GiB null=2.10e-05 R_agrees=True
+B2 item 92 T=2110 steps=34 secs={'run': 0.47, 'sweep': 2.9, 'row_table': 1.28, 'total': 4.65} peak=8.06GiB null=3.62e-05 R_agrees=True
+B2 item 93 T=1671 steps=34 secs={'run': 0.36, 'sweep': 2.71, 'row_table': 0.98, 'total': 4.05} peak=7.78GiB null=2.67e-05 R_agrees=True
+B2 item 94 T=2232 steps=34 secs={'run': 0.5, 'sweep': 2.97, 'row_table': 1.37, 'total': 4.83} peak=8.11GiB null=1.14e-05 R_agrees=True
+B2 item 95 T=763 steps=34 secs={'run': 0.15, 'sweep': 2.36, 'row_table': 0.54, 'total': 3.06} peak=7.22GiB null=2.67e-05 R_agrees=True
+B2 item 96 T=2111 steps=34 secs={'run': 0.47, 'sweep': 2.9, 'row_table': 1.28, 'total': 4.65} peak=7.99GiB null=2.10e-05 R_agrees=True
+B2 item 97 T=2177 steps=34 secs={'run': 0.47, 'sweep': 2.95, 'row_table': 1.34, 'total': 4.76} peak=8.10GiB null=1.14e-05 R_agrees=True
+B2 item 98 T=2187 steps=34 secs={'run': 0.49, 'sweep': 2.95, 'row_table': 1.34, 'total': 4.78} peak=8.11GiB null=5.34e-05 R_agrees=True
+B2 item 99 T=2166 steps=34 secs={'run': 0.48, 'sweep': 2.91, 'row_table': 1.32, 'total': 4.71} peak=8.10GiB null=2.48e-05 R_agrees=True
+B2 item 100 T=563 steps=34 secs={'run': 0.11, 'sweep': 2.29, 'row_table': 1.72, 'total': 14.04} peak=7.13GiB null=1.14e-05 R_agrees=True spot=[(3.814697265625e-06, 7.62939453125e-06), (3.814697265625e-06, 1.1444091796875e-05)] trace_check=1.2254229805330752e-06
+B2 item 101 T=2276 steps=34 secs={'run': 0.51, 'sweep': 2.99, 'row_table': 1.4, 'total': 4.9} peak=8.12GiB null=2.29e-05 R_agrees=True
+B2 item 102 T=764 steps=34 secs={'run': 0.16, 'sweep': 2.36, 'row_table': 0.4, 'total': 2.92} peak=7.23GiB null=2.10e-05 R_agrees=True
+B2 item 103 T=765 steps=34 secs={'run': 0.16, 'sweep': 2.36, 'row_table': 0.41, 'total': 2.93} peak=7.15GiB null=1.72e-05 R_agrees=True
+B2 item 104 T=2110 steps=34 secs={'run': 0.47, 'sweep': 2.89, 'row_table': 1.28, 'total': 4.64} peak=7.99GiB null=1.53e-05 R_agrees=True
+B2 item 105 T=573 steps=34 secs={'run': 0.12, 'sweep': 2.3, 'row_table': 0.31, 'total': 2.72} peak=7.10GiB null=1.14e-05 R_agrees=True
+B2 item 106 T=2146 steps=34 secs={'run': 0.47, 'sweep': 2.9, 'row_table': 1.31, 'total': 4.68} peak=8.00GiB null=1.43e-05 R_agrees=True
+B2 item 107 T=2122 steps=34 secs={'run': 0.47, 'sweep': 2.9, 'row_table': 1.29, 'total': 4.66} peak=8.07GiB null=2.57e-05 R_agrees=True
+B2 item 108 T=2112 steps=34 secs={'run': 0.46, 'sweep': 2.9, 'row_table': 1.28, 'total': 4.65} peak=8.06GiB null=6.10e-05 R_agrees=True
+B2 item 109 T=762 steps=34 secs={'run': 0.16, 'sweep': 2.35, 'row_table': 0.41, 'total': 2.92} peak=7.22GiB null=5.05e-05 R_agrees=True
+B2 done 366.5s
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 6:07.82
+	Maximum resident set size (kbytes): 11461664
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 6:07.82
+RC 0
+1 MiB, 16376 MiB
+mrun: job-920e2e72d230 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 370.09, 'peak_rss_mb': 7847.3, 'peak_vram_mb': 9310.0}

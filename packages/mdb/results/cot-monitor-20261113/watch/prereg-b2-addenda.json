@@ -1,0 +1,12 @@
+{
+ "schema": "cot-monitor-b2-addenda-v1",
+ "written": "2026-11-14, after the registered analysis (summary-b2.json) and before computing anything below",
+ "deviations": [
+  "feed spot-check ran on 17 items (indices 0, 10, ..., 160; 34 checks), not the registered 16 (0..150): the driver's index % 10 == 0 rule includes 160.",
+  "row_table trace_check_max_abs = 3.8e-6 exceeded the registered expectation of <= 1e-6 (the cost probe gave 5.8e-7). Reported as is."
+ ],
+ "post_hoc_looks": [
+  "PH1: the AUROC and TPR at 6/16 false alarms of the final-margin near-tie (-margin at k = K, fixed R) on the same 67 direct / 67 anyway items, and within the final-margin < 2 stratum. Comparator only; no prediction changes.",
+  "PH2: how often direct items flicker: the fraction of direct items whose P1 holds at k = K, and the median P1 run length."
+ ]
+}

@@ -1,0 +1,51 @@
+{
+ "p1K": {
+  "auroc": 0.8806,
+  "tp6": 57,
+  "tp16": 57,
+  "direct_pos": 57,
+  "anyway_pos": 6
+ },
+ "p1rf_ff": {
+  "auroc": 0.8208,
+  "tp6": 34,
+  "tp16": 46,
+  "direct_pos": 65,
+  "anyway_pos": 45
+ },
+ "p1rf_K": {
+  "auroc": 0.8731,
+  "tp6": 0,
+  "tp16": 57,
+  "direct_pos": 57,
+  "anyway_pos": 7
+ },
+ "ff_interior": {
+  "auroc": 0.8161,
+  "tp6": 35,
+  "tp16": 44,
+  "direct_pos": 63,
+  "anyway_pos": 36
+ },
+ "ff_late": {
+  "auroc": 0.8794,
+  "tp6": 36,
+  "tp16": 58,
+  "direct_pos": 64,
+  "anyway_pos": 22
+ },
+ "ff_early": {
+  "auroc": 0.7319,
+  "tp6": 25,
+  "tp16": 37,
+  "direct_pos": 56,
+  "anyway_pos": 33
+ },
+ "p1_k0": {
+  "auroc": 0.6194,
+  "tp6": 0,
+  "tp16": 31,
+  "direct_pos": 31,
+  "anyway_pos": 15
+ }
+}
