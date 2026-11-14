@@ -1,0 +1,27 @@
+{
+ "experiment": "4: the attribution-graph gap, split into brackets with floors",
+ "written": "2026-11-14T12:35-08:00",
+ "status": "sealed before job D; single seed",
+ "model": "Qwen3-1.7B-Base bf16 eager CUDA",
+ "libraries": "nnsight 0.8.2 (frozen-pattern, frozen-norm-scale gradient; module-output interventions only, no .source); mwhanna lowl0 transcoders L20..L24 (Base-fit) as nodes. circuit-tracer 0.5.0 is installed --no-deps but its attribution under transformers 5.x is unverified; per the memo's allowed path the edge is the nnsight frozen gradient (circuit-tracer not used)",
+ "panel": "32 base items: the first 8 by id of each 1a family (currency, person, landmark, city), consumer M[answer, donor answer]",
+ "memo_predictions_verbatim": "memo_sections.json section 4 (c)",
+ "predictions": {
+  "G1": "the re-routing bracket (arm0 - arm1) has median magnitude <= 0.1 of |arm0| over node-items",
+  "G2": "the nonlinearity bracket (arm2 - (-A)) is the largest of the three on >= 0.6 of node-items, and median (arm2 - (-A)) / (arm0 - (-A)) >= 0.5",
+  "G3": "the norm-scale bracket (arm1 - arm2) is below the floor on >= 0.7 of node-items",
+  "G4": "Spearman between -A and arm0 over node-items >= 0.85",
+  "nulls": "the four arms for a matched-norm random active feature at node 1's layer (all brackets within floor on >= 0.75); the machinery null (p and scales frozen, no feature edit) reproduces the base margin within 2 spacings on every item, else the job's arms are not clean",
+  "falsifier": "G1 fails with re-routing >= 0.3 of |arm0| on the median node"
+ },
+ "operational_definitions": {
+  "nodes": "per item the 5 active transcoder features at L20..L24 (answer row) with the largest direct effect rho_F c . a_s d_s on M (float64); node write w = a_s d_s; removal = m += -w",
+  "edge A": "g . w with g = dM/dm_l (nnsight, one forward + backward per (item, layer)) under: q_proj and k_proj outputs detached at every later layer (the answer row's p depends on the edit only through its own q and k, so this freezes p exactly), input_layernorm / post_attention_layernorm / final norm outputs replaced by input * gamma * rho_base (rho_base from a clean nnsight pass, detached); MLPs live. The edge forecast -A is sealed as a supplied-forecast record before the arms",
+  "arm0": "native, m += -w at the answer row",
+  "arm1": "arm0 + the answer row's p at every later layer set to the base run's p (Run.set at t<last>.L<l'>.p)",
+  "arm2": "arm1 + a = gamma_in * (h * rho_base) and n = gamma_post * (r * rho_base) at every later layer (h, r read at the stop, written before the layer continues) + the final rho frozen: M2 = rho_F,base c . h_out,last (c = gamma_F (W_U[a] - W_U[b]))",
+  "floor": "2 bf16 spacings at the larger |logit| of (answer, foil)",
+  "largest bracket": "by |value|; re-routing, norm, nonlinearity",
+  "transcoder-error bracket": "deferred, as in the memo"
+ }
+}
