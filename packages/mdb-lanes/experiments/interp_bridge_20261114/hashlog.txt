@@ -1,0 +1,7 @@
+# sha256 log (append only). Columns: local time | sha256 | file | note
+2026-11-14 00:51 PST | 3588b15e2ab60b20e26ff1d72d3f2bc335a3543979acc91572c151bd4695ce7e | PREREG.md | before smoke job; no job of this experiment has run
+2026-11-14 00:51 PST | dd9de615f8e6ac225db2826b4cd77f1479d97a7f42410f660b8efa6423842c63 | bridge.py | before smoke job; no job of this experiment has run
+2026-11-14 00:51 PST | 9ed812164b6fae73546be6d12b760d3e83ab4bb35bcb9177f26030e0a67142e9 | interp_bridge_worker.py | before smoke job; no job of this experiment has run
+2026-11-14 00:51 PST | 0fc5da1882275359b03ec5bdf315b344e4945eee2347456a29b3ca3f34c608d5 | stage.py | before smoke job; no job of this experiment has run
+2026-11-14 00:51 PST | 110b1e4d3133bbb49fc9f1ad72ce01d41534eee6e824fc75bb127f565bf2364f | toy_check.py | before smoke job; no job of this experiment has run
+2026-11-14 00:51 PST | caaf32e811b3e23f16dc7c37360067e185130398d14e2b74d5a814d2684bb5bf | runs/smoke/request.json (request_sha256) | staged smoke, not yet submitted
