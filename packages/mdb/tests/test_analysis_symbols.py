@@ -170,3 +170,66 @@ def test_records_round_trip_through_the_index_and_a_fresh_project(tmp_path):
     assert record["body"]["bindings"][0]["symbol"] == "ctx"
     listed = index.list_records(reopened, dbg.session_id, kind="symbol-table", strict=True)
     assert [r["id"] for r in listed] == stored
+
+
+def _reference_grid(run, bindings, reader, row):
+    """The table's per-(layer, head) mass and scalar effect per binding, by brute force over
+    every (head, source) read with the full (H, T, d) value mix (the pre-vectorisation rule)."""
+    from mdb.analysis.reads import head_mix
+
+    out = {}
+    for layer in range(run.adapter.layers):
+        mix = head_mix(run, row, layer)
+        parts = mix.o_parts()
+        m = torch.zeros(len(bindings), mix.p.shape[0], dtype=torch.float64)
+        e = torch.zeros_like(m)
+        for h in range(mix.p.shape[0]):
+            for s in range(mix.p.shape[1]):
+                owners = [b for b, bd in enumerate(bindings) if bd.covers(s, layer, mix.kappa[h], "v")]
+                assert len(owners) == 1
+                m[owners[0], h] += mix.p[h, s]
+                e[owners[0], h] += reader.apply(parts[h, s])
+        out[layer] = (m, e)
+    return out
+
+
+@pytest.mark.parametrize("cells", [["t1", "t2"], ["t1", "cache.L0.v[kv0,row=2]"]])
+def test_vectorised_grid_equals_brute_force_reads(debugger, cells):
+    from mdb.analysis.reads import readout
+
+    prompt = [1, 5, 9, 3, 7, 2, 11, 4, 6, 8]
+    run = debugger.run(prompt)
+    run.until("logits")
+    here = len(prompt) - 1
+    symbols.declare(run, "span", cells)
+    symbols.declare(run, "late", [f"t{s}" for s in range(5, 9)])
+    margin = Margin(here, 4, 9)
+    table = symbols.table(run, consumer=margin, limit=16)
+    _sums(table)
+    users = list(symbols.declared(run).values())
+    bindings = users + symbols._token_rows(run, here, users)
+    assert table.tensors["bindings"] == [b.name for b in bindings]
+    reference = _reference_grid(run, bindings, readout(run, margin), here)
+    for layer, (m, e) in reference.items():
+        assert torch.allclose(table.tensors["mass"][(here, layer)], m, rtol=0, atol=1e-15)
+        assert torch.allclose(table.tensors["effect"][(here, layer)], e, rtol=0, atol=1e-12)
+    late = next(b for b in table.report["bindings"] if b["symbol"] == "late")
+    assert late["rows"] == [5, 6, 7, 8]
+    native = table.report["consumer_total"]["value"]
+    listed = sum(b["to_consumer"]["value"] for b in table.report["bindings"])
+    assert listed + table.report["unbound"]["readout"]["value"] == pytest.approx(native, abs=1e-12)
+
+
+def test_scalar_parts_equal_o_parts_through_the_readout(debugger):
+    from mdb.analysis.reads import head_mix, readout
+
+    run = debugger.run(PROMPT)
+    run.until("t3.logits")
+    reader = readout(run, Margin(3, 4, 9))
+    for layer in range(run.adapter.layers):
+        lazy = head_mix(run, 3, layer, lazy=True)
+        assert lazy.unit is None
+        fast = lazy.scalar_parts(reader.vector)
+        full = head_mix(run, 3, layer).o_parts() @ reader.vector
+        assert torch.allclose(fast, full, rtol=0, atol=1e-13)
+        assert torch.equal(lazy.o_parts(), head_mix(run, 3, layer).o_parts())

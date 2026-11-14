@@ -238,9 +238,32 @@ class HeadMix:
         """``p[h, s] v[kappa(h), s]`` in float64, shape (H, T, d_h)."""
         return self.p[..., None] * self.values[self.kappa]
 
+    def units(self) -> Any:
+        """``W_o,h v[kappa(h), s]`` in float64, shape (H, T, d); built on first use when
+        ``head_mix(..., lazy=True)`` left it out (it is the largest tensor of the mix)."""
+        if self.unit is None:
+            torch = _torch()
+            heads = self.p.shape[0]
+            dh = self.values.shape[-1]
+            blocks = self.weight.reshape(self.weight.shape[0], heads, dh).permute(1, 0, 2)
+            self.unit = torch.einsum("hde,hse->hsd", blocks, self.values[self.kappa])
+        return self.unit
+
     def o_parts(self) -> Any:
         """``p[h, s] W_o,h v[kappa(h), s]`` in float64, shape (H, T, d)."""
-        return self.p[..., None] * self.unit
+        return self.p[..., None] * self.units()
+
+    def scalar_parts(self, vector: Any) -> Any:
+        """``vector . (p[h, s] W_o,h v[kappa(h), s])`` in float64, shape (H, T): the share of a
+        scalar readout ``vector`` (d,) that each read carries. The same quantity as
+        ``o_parts() @ vector``, summed in another order: ``W_o,h^T vector`` first (P07), so the
+        (H, T, d) tensor is never built."""
+        torch = _torch()
+        heads = self.p.shape[0]
+        dh = self.values.shape[-1]
+        blocks = self.weight.reshape(self.weight.shape[0], heads, dh)     # (d, H, d_h)
+        back = torch.einsum("dhe,d->he", blocks, f64(vector).reshape(-1))  # (H, d_h)
+        return self.p * torch.einsum("hse,he->hs", self.values[self.kappa], back)
 
     def checks(self) -> dict[str, Any]:
         """Native ``A`` against the float64 mix and native ``o`` against ``sum_h W_o,h A_h``:
@@ -274,11 +297,13 @@ class HeadMix:
         return out
 
 
-def head_mix(run: Any, row: int, layer: int, weights: dict[int, Any] | None = None) -> HeadMix:
+def head_mix(run: Any, row: int, layer: int, weights: dict[int, Any] | None = None, *,
+             lazy: bool = False) -> HeadMix:
     """The ``HeadMix`` of reader row ``row`` at ``layer``; ``Refusal`` when its ``p`` has not
     been computed in this run. ``weights``: a cache of float64 ``o_proj`` weights by layer,
     owned by the calling verb (each layer is cast once per verb, not once per reader row, and
-    the cache is dropped when the verb returns)."""
+    the cache is dropped when the verb returns). ``lazy``: leave ``unit`` (H, T, d) out until
+    ``units()``/``o_parts()`` asks for it (long contexts: it is H T d float64 numbers)."""
     torch = _torch()
     adapter = run.adapter
     where = f"t{row}.L{layer}.p"
@@ -306,7 +331,7 @@ def head_mix(run: Any, row: int, layer: int, weights: dict[int, Any] | None = No
         weight = weights[layer]
     blocks = weight.reshape(weight.shape[0], heads, dh).permute(1, 0, 2)   # (H, d, d_h)
     kappa = [h // (heads // kv) for h in range(heads)]
-    unit = torch.einsum("hde,hse->hsd", blocks, values[kappa])
+    unit = None if lazy else torch.einsum("hde,hse->hsd", blocks, values[kappa])
     mix = HeadMix(row, layer, p64, values, unit, weight, kappa, dtype=native_dtype,
                   acc=accumulation(run, native_dtype))
     mix.info["p"] = run.read_info(where)
