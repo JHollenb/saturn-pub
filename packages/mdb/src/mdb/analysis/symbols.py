@@ -56,6 +56,7 @@ records, one per page of at most ``PAGE`` bindings.
 
 from __future__ import annotations
 
+import math
 import weakref
 from dataclasses import dataclass, field
 from typing import Any
@@ -86,6 +87,18 @@ STATUSES = ("live", "read", "unread", "edited", "unresolved")
 LEGEND = {"#": "read with mass at or above min_mass", ".": "read below min_mass",
           "-": "no value cell of this binding at that layer", "?": "not computed"}
 _U32 = 2.0 ** -24
+# one line per added column (the full reference: docs/SYMBOL-TABLE-SCHEMA.md)
+COLUMN_NOTES = {
+    "contrast": "sum over its reads of p (c.W_O v_s - c.W_O vbar_h): the effect against the "
+                "head's own mean value (derived-exact P19)",
+    "mask_delta": "sum over its reads of -contrast/(1-p): each read masked alone with "
+                  "renormalisation, DIRECT path only, every other input held (derived-exact)",
+    "share": "to_consumer / consumer_total; share_of_abs divides by |consumer_total|",
+    "mass_nonsink": "mass renormalised per head over the non-sink sources (sink rows: "
+                    "report.sink); mass and to_consumer stay exact",
+    "sink_ratio": "t0 only: its value-vector norm over the median row's, median over layers",
+    "causal": "status unknown (observed only) or a measured liveness result (analysis.liveness)",
+}
 _PORTS = ("k", "v")
 
 
@@ -99,6 +112,12 @@ class Binding:
     cells: list[Source]
     addresses: list[str]
     _by_row: dict[int, list[Source]] | None = field(default=None, repr=False, compare=False)
+    # the circuit-map slot that bound it (``circuit_map.bind``), and labels (review 2.7):
+    # ``labels[name] = (value, authority)``, supplied or derived
+    role: str | None = field(default=None, compare=False)
+    slot: str | None = field(default=None, compare=False)
+    map_digest: str | None = field(default=None, compare=False)
+    labels: dict[str, Any] = field(default_factory=dict, compare=False)
 
     def at(self, row: int) -> list[Source]:
         """The cells of source row ``row`` (indexed once: a symbol can hold thousands of rows)."""
@@ -179,11 +198,13 @@ def declare(run: Any, name: str, addresses: list[str]) -> Binding:
 @dataclass(frozen=True)
 class Candidates:
     """A declared candidate token set for content readouts; ``truth`` is the token the caller
-    expects (its rank is reported), or None."""
+    expects (its rank is reported), or None. ``info``: the ``candidates.CandidateSet`` it was
+    built from (words, pieces, provenance), when it was built from words."""
 
     name: str
     tokens: tuple[int, ...]
     truth: int | None = None
+    info: Any = field(default=None, compare=False, repr=False)
 
 
 def readout_basis(run: Any, row: int) -> tuple[float, Any]:
@@ -208,8 +229,10 @@ def _scores(run: Any, write: Any, tokens: tuple[int, ...], basis: tuple[float, A
 
 
 def content(run: Any, write: Any, sets: list[Candidates], basis: tuple[float, Any], *,
-            tokenizer: Any = None, top: int = 5) -> dict[str, Any]:
-    """The content readout of one binding's write (see the module docstring)."""
+            tokenizer: Any = None, top: int = 5, flags: bool = False) -> dict[str, Any]:
+    """The content readout of one binding's write (see the module docstring). ``flags``: add
+    ``truth`` and the candidate flags (``candidates.content_flags``) per set."""
+    from .candidates import content_flags
     from .sae import logit_lens
 
     out: dict[str, Any] = {}
@@ -230,6 +253,10 @@ def content(run: Any, write: Any, sets: list[Candidates], basis: tuple[float, An
             where = cand.tokens.index(cand.truth)
             item["truth_rank"] = int((scores > scores[where]).sum()) + 1
             item["names_truth"] = cand.tokens[best] == cand.truth
+            if flags:
+                item["truth"] = int(cand.truth)
+        if flags:
+            item["flags"] = content_flags(cand, cand.tokens[best], sets)
         out[cand.name] = item
     ids = logit_lens(run, write, top=top)
     out["vocab_top"] = {"tokens": ids, "authority": "derived-local",
@@ -617,17 +644,62 @@ class Table:
     records: list[dict[str, Any]]
     tensors: dict[str, Any] = field(default_factory=dict)
 
+    def to_frame(self, level: str = "binding", *, item: str | None = None,
+                 foreign: bool = False) -> Any:
+        """A long pandas DataFrame (``analysis.frame.to_frame``: binding, read or head)."""
+        from .frame import to_frame
+
+        return to_frame(self, level, item=item, foreign=foreign)
+
+    def to_arrow(self, level: str = "binding", **kw: Any) -> Any:
+        from .frame import to_arrow
+
+        return to_arrow(self.to_frame(level, **kw))
+
+    def to_parquet(self, path: str, level: str = "binding", **kw: Any) -> str:
+        from .frame import to_parquet
+
+        return to_parquet(self.to_frame(level, **kw), path)
+
 
 def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: float = 0.1,
           readers: int = 3, offset: int = 0, limit: int = PAGE,
           session_id: str | None = None, tokenizer: Any = None,
           pending: dict[str, dict[str, Any]] | None = None,
           sets: list[Candidates] | None = None, content_layers: bool = False,
-          hops: dict[str, dict[str, Any]] | None = None) -> Table:
+          hops: dict[str, dict[str, Any]] | None = None, sink: tuple[int, ...] | None = (0,),
+          co: list[Any] | None = None, lexical_null: bool = False,
+          switch: dict[str, str] | None = None, labels: dict[str, Any] | None = None,
+          derive: dict[str, str] | None = None, foreign: bool = False,
+          causal: bool | str = False, min_effect: float = 0.0,
+          components: list[Any] | None = None,
+          neuronpedia: dict[str, Any] | None = None) -> Table:
     """The symbol table at the cursor (see the module docstring); ``offset``/``limit`` page
     the bindings (declared symbols first, then token rows in order). ``pending``: declared
     symbols that cannot be bound on this run yet (name -> ``addresses``, ``reason``), listed
-    ``unresolved``."""
+    ``unresolved``.
+
+    Additions (review 2026-11-14; ``docs/SYMBOL-TABLE-SCHEMA.md`` lists every column):
+
+    * ``sink``: sink rows for ``mass_nonsink`` (default ``(0,)``: t0; ``None`` or ``()``: off);
+      token row 0 also gets ``sink_ratio``. ``contrast``, ``mask_delta`` and ``share`` are added
+      under a scalar consumer.
+    * ``sets`` built from words (``candidates.CandidateSet.candidates``) add ``truth`` and
+      ``flags`` per set; ``lexical_null`` adds the truth token's own readout per set; ``co``
+      (``candidates.CoReadout`` items) adds orthogonalised co-readouts with the whole subspace
+      of another set removed; ``switch`` (target set -> set it switches on) adds the switched
+      readout.
+    * ``labels``: item-level labels (name -> value, ``supplied``), reported and attached to
+      every binding; ``derive``: label name -> dotted path within a binding row (e.g.
+      ``content.countries.best``), a derived label per binding.
+    * ``foreign``: TransformerLens / nnsight / pyvene names per binding and per read.
+    * ``causal`` (``True``, ``"mask"`` or ``"zero"``): the causal-liveness column
+      (``analysis.liveness``), per binding on this page; without it every binding's ``causal``
+      is ``unknown``.
+    * ``components``: ``components.ComponentBinding`` items (feature bindings): a separate
+      ``components`` section with per-feature activation, direct effect, content, SAELens ids
+      and a Neuronpedia link from the supplied ``neuronpedia`` id mapping.
+    """
     from .reads import reader_rows
 
     if not 0 <= min_mass <= 1:
@@ -643,12 +715,25 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
     users = list(declared(run).values())
     bindings = users + _token_rows(run, here_key[0], users)
     n = len(bindings)
-    grid = _Grid(run, bindings, reader, found_rows, keep_writes=bool(sets))
+    sink = tuple(sink or ())
+    grid = _Grid(run, bindings, reader, found_rows, keep_writes=bool(sets), sink=sink)
+    names = None
+    if foreign:
+        names = {"head_dim": run.adapter.head_dim, "kv_heads": run.adapter.num_kv_heads,
+                 "layers": layers}
+    item_labels = {k: label_claim(v) for k, v in (labels or {}).items()}
     entries = [_entry(run, binding, b, grid, reader, found_rows, layers, min_mass, readers,
-                      here_key, tokenizer) for b, binding in enumerate(bindings)]
+                      here_key, tokenizer, names, item_labels)
+               for b, binding in enumerate(bindings)]
     shown = entries[offset:offset + limit]
+    if sink and 0 in sink:
+        for b in range(offset, min(offset + limit, n)):
+            if bindings[b].kind == "token" and bindings[b].cells[0].row == 0:
+                entries[b]["view"]["sink_ratio"] = _sink_ratio(run, here_key[0])
+    flagged = any(getattr(c, "info", None) is not None for c in (sets or ()))
     if sets:
         basis = readout_basis(run, here_key[0])
+        subspaces = _subspaces(run, sets, co or (), basis)
         for b in range(offset, min(offset + limit, n)):
             per_layer: dict[int, Any] = {}
             for (j, layer), w in grid.write.items():
@@ -659,10 +744,13 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
                 view["content"] = {"state": "unresolved", "reason": "no read of this binding"}
                 continue
             total = sum(per_layer.values())
-            view["content"] = content(run, total, sets, basis, tokenizer=tokenizer)
+            view["content"] = content(run, total, sets, basis, tokenizer=tokenizer,
+                                      flags=flagged or lexical_null or bool(co) or bool(switch))
             view["content"]["meaning"] = ("readout of the binding's write into the reader "
                                           "row(s), summed over its reads, through rho * gamma * "
                                           "W_U (P19)")
+            _content_extras(run, view["content"], total, sets, basis, co or (), subspaces,
+                            lexical_null, switch or {})
             if content_layers:
                 view["content_lifetime"] = {
                     c.name: _content_strip(run, per_layer, layers, c, view["content"][c.name]["best"],
@@ -681,6 +769,29 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
                        "replacement": hop.get("replacement", "supplied by the caller")}
         if hop.get("edge") is not None:
             view["hop"]["edge"] = hop["edge"]
+    for b in range(offset, min(offset + limit, n)):
+        view = entries[b]["view"]
+        for name, path in (derive or {}).items():
+            try:
+                from .summary import leaf
+
+                value = leaf(view, path)
+            except (KeyError, IndexError, ValueError, TypeError):
+                continue
+            view.setdefault("labels", {})[name] = label_claim(value, "derived")
+    page_bindings = [bindings[b] for b in range(offset, min(offset + limit, n))]
+    if causal:
+        from .liveness import liveness
+
+        form = "mask" if causal is True else str(causal)
+        found_causal = liveness(run, page_bindings, reader, form=form, min_effect=min_effect)
+        for b in range(offset, min(offset + limit, n)):
+            entries[b]["view"]["causal"] = found_causal[bindings[b].name]
+    else:
+        from .liveness import UNKNOWN
+
+        for b in range(offset, min(offset + limit, n)):
+            entries[b]["view"]["causal"] = dict(UNKNOWN)
     listed = sorted(range(offset, min(offset + limit, n)))
     keys = sorted(grid.mass)
     unbound_mass = {key: grid.total[key] - grid.mass[key][listed].sum(0) for key in keys}
@@ -695,6 +806,7 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
         "attribution": "a read (row, layer, head, source) belongs to the binding holding its "
                        "value cell v",
         "legend": LEGEND,
+        "columns": COLUMN_NOTES,
         "bindings": [e["view"] for e in shown],
         "page": {"offset": offset, "limit": limit, "total": n},
     }
@@ -743,12 +855,121 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
     }
     if grid.missing:
         report["not_computed"] = grid.missing[:16]
+    if item_labels:
+        report["labels"] = item_labels
+    if derive:
+        report["derived_labels"] = dict(derive)
+    if sink:
+        report["sink"] = [f"t{r}" for r in sink]
+    if sets:
+        report["candidate_sets"] = [
+            {**c.info.describe(), "truth": c.truth} if getattr(c, "info", None) is not None
+            else {"name": c.name, "size": len(c.tokens), "truth": c.truth,
+                  "source": "token ids"} for c in sets][:PAGE]
+    if components:
+        report["components"] = [_component_row(run, cb, consumer, sets, tokenizer, neuronpedia)
+                                for cb in components][:PAGE]
     records = _records(run, report, session_id)
     report["records"] = [r["id"] for r in records]
     tensors = {"mass": grid.mass, "effect": grid.effect, "write": grid.write, "total_mass": grid.total,
                "unbound_mass": unbound_mass, "contribution": contribution,
-               "bindings": [b.name for b in bindings], "listed": listed}
+               "contrast": grid.contrast, "mask_delta": grid.mask_delta,
+               "sink_mass": grid.sink_mass, "nonsink_total": grid.nonsink_total,
+               "cover": grid.cover, "sources": grid.sources, "supplied": grid.supplied,
+               "bindings": [b.name for b in bindings], "listed": listed,
+               "binding_objects": bindings}
     return Table(report, records, tensors)
+
+
+def _sink_ratio(run: Any, here: int) -> dict[str, Any]:
+    """Row 0's value norm over the median row's, per layer (mean over KV heads), summarised as
+    the median over layers (derived-exact from the cache)."""
+    torch = _torch()
+    ratios = []
+    for layer in range(run.adapter.layers):
+        try:
+            v = f64(run.read_cache(layer, "v", staged=False))[0, :, :here + 1]   # (kv, T, dh)
+        except (ValueError, IndexError, RuntimeError):
+            continue
+        norms = v.norm(dim=-1).mean(0)                                         # (T,)
+        if norms.numel() < 2:
+            continue
+        median = float(norms.median())
+        if median > 0:
+            ratios.append(float(norms[0]) / median)
+    if not ratios:
+        return {"state": "unresolved", "reason": "no cache layer with two rows"}
+    ratios_t = torch.tensor(ratios, dtype=torch.float64)
+    return num(float(ratios_t.median()), EXACT)
+
+
+def _subspaces(run: Any, sets: list[Candidates], co: Any, basis: tuple[float, Any]) -> dict:
+    from .candidates import subspace
+
+    by_name = {c.name: c for c in sets}
+    out = {}
+    for spec in co:
+        if spec.target not in by_name:
+            raise Refusal(f"co-readout target {spec.target} is not a candidate set of the table")
+        if spec.project_out is not None:
+            if spec.project_out not in by_name:
+                raise Refusal(f"co-readout projects out {spec.project_out}, not a candidate set "
+                              "of the table")
+            tokens = by_name[spec.project_out].tokens
+        elif spec.tokens:
+            tokens = tuple(spec.tokens)
+        else:
+            raise Refusal("a co-readout names project_out (a set) or tokens")
+        out[spec] = subspace(run, tokens, basis[1], spec.k)
+    return out
+
+
+def _content_extras(run: Any, found: dict[str, Any], write: Any, sets: list[Candidates],
+                    basis: tuple[float, Any], co: Any, subspaces: dict, lexical: bool,
+                    switch: dict[str, str]) -> None:
+    """Lexical nulls, co-readouts and switched readouts of one binding's content."""
+    from . import candidates as cands
+
+    by_name = {c.name: c for c in sets}
+    if lexical:
+        for c in sets:
+            if c.truth is not None and c.truth in c.tokens:
+                found[c.name]["lexical_null"] = cands.lexical_null(run, c, c.truth, basis)
+    for spec in co:
+        target = found[spec.target]
+        target.setdefault("co", {})[spec.project_out or "tokens"] = cands.co_readout(
+            run, write, by_name[spec.target], subspaces[spec], basis, spec)
+    for target, on in switch.items():
+        if target not in by_name or on not in by_name:
+            raise Refusal(f"switch {target}:{on} names a set the table does not read")
+        found[target]["switched"] = cands.switched(
+            by_name[target], found[on], by_name[on],
+            lambda tokens: _scores(run, write, tokens, basis))
+
+
+def _component_row(run: Any, cb: Any, consumer: Any, sets: Any, tokenizer: Any,
+                   neuronpedia: dict[str, Any] | None) -> dict[str, Any]:
+    """One feature binding's section row (``components.component_table`` plus names)."""
+    from mdb.interop.names import ct_node, neuronpedia_url
+
+    from .components import component_table
+
+    if consumer is None:
+        consumer = _default_consumer(run)
+    row = component_table(run, cb, consumer, sets=sets, tokenizer=tokenizer)
+    ref = (cb.basis or {}).get("saelens") or {}
+    for entry in row["components"]:
+        if entry.get("feature") is None:
+            continue
+        f = int(entry["feature"])
+        entry["saelens"] = {"release": ref.get("release"), "sae_id": ref.get("sae_id"),
+                            "hook_name": ref.get("hook_name"), "feature": f}
+        entry["neuronpedia"] = neuronpedia_url(neuronpedia, ref.get("release"),
+                                               ref.get("sae_id"), f)
+        if (cb.basis or {}).get("transcoder"):
+            entry["ct_node"] = ct_node(cb.layer, cb.row, f)
+    row["kind"] = "feature"
+    return row
 
 
 def _remainder_bound(rest: Any) -> dict[str, Any]:
@@ -791,8 +1012,15 @@ class _Grid:
     mix; reads are owned by the binding holding their value cell."""
 
     def __init__(self, run: Any, bindings: list[Binding], reader: Any, rows: list[int], *,
-                 keep_writes: bool = False):
+                 keep_writes: bool = False, sink: tuple[int, ...] = ()):
         torch = _torch()
+        self.sink = tuple(int(s) for s in sink)
+        # scalar consumer only: per binding and head, the contrast-form effect and the
+        # direct-path mask prediction (review 2.5); per binding and head the mass from sink rows
+        self.contrast: dict[tuple[int, int], Any] = {}
+        self.mask_delta: dict[tuple[int, int], Any] = {}
+        self.sink_mass: dict[tuple[int, int], Any] = {}
+        self.nonsink_total: dict[tuple[int, int], Any] = {}
         self.write: dict[tuple[int, int], Any] = {}   # (row, layer) -> (bindings, d), on request
         n, heads, layers = len(bindings), run.adapter.num_heads, run.adapter.layers
         self.mass: dict[tuple[int, int], Any] = {}
@@ -837,6 +1065,14 @@ class _Grid:
                 full = (parts if not scalar else mix.o_parts()) if keep_writes else None
                 total_write = (torch.zeros(n, full.shape[-1], dtype=torch.float64)
                                if keep_writes else None)
+                con = torch.zeros(n, heads, dtype=torch.float64) if scalar else None
+                mdel = torch.zeros(n, heads, dtype=torch.float64) if scalar else None
+                sinkm = torch.zeros(n, heads, dtype=torch.float64)
+                den = torch.zeros(heads, dtype=torch.float64)
+                sink_rows = [s for s in self.sink if s < count]
+                is_sink = torch.zeros(count, dtype=torch.bool)
+                if sink_rows:
+                    is_sink[sink_rows] = True
                 for h in range(heads):
                     reason = edited_block(mix, run, h)
                     if reason:
@@ -857,14 +1093,28 @@ class _Grid:
                         for s in held.nonzero().reshape(-1).tolist():
                             if source_label(run, mix, h, s) == SUPPLIED:
                                 supplied[int(index[s]), h] = True
+                    ph = mix.p[h]
+                    in_sink = held & is_sink
+                    sinkm[:, h] = torch.zeros(n, dtype=torch.float64).index_add_(
+                        0, index[in_sink], ph[in_sink])
+                    den[h] = ph.sum() - ph[is_sink].sum()
                     if reader is None:
                         e[:, h] = torch.where(cover[:, h], share.norm(dim=-1), 0.0)
                     elif why is None and h not in blocked:
                         if scalar:
                             e[:, h] = torch.where(cover[:, h], share, 0.0)
+                            # contrast p_s (x_s - xbar_h) = parts_s - p_s sum_s' parts_s'
+                            c_all = parts[h] - ph * parts[h].sum()
+                            con[:, h] = torch.zeros(n, dtype=torch.float64).index_add_(
+                                0, idx, c_all[held])
+                            mdel[:, h] = torch.zeros(n, dtype=torch.float64).index_add_(
+                                0, idx, (-c_all / (1 - ph))[held])
                         else:
                             e[:, h] = torch.where(cover[:, h, None], share, 0.0)
                 self.mass[key], self.cover[key], self.effect[key] = m, cover, e
+                self.sink_mass[key], self.nonsink_total[key] = sinkm, den
+                if scalar:
+                    self.contrast[key], self.mask_delta[key] = con, mdel
                 if total_write is not None:
                     self.write[key] = total_write
                 self.sources[key], self.supplied[key] = sources, supplied
@@ -911,11 +1161,12 @@ def _torch():
 
 
 def _entry(run, binding, b, grid, reader, found_rows, layers, min_mass, readers, here_key,
-           tokenizer) -> dict[str, Any]:
+           tokenizer, foreign=None, item_labels=None) -> dict[str, Any]:
     """One binding's row of the table (``view``) and its float64 contribution (None when an
     edit blocks one of its reads)."""
     strips, first, last = [], None, None
     total_mass, count, supplied = 0.0, 0, False
+    contrast_sum, mask_sum, nonsink, nonsink_ok = 0.0, 0.0, 0.0, True
     contribution: float | None = 0.0
     blocked_by = None
     scalar = reader is not None and reader.scalar
@@ -933,6 +1184,14 @@ def _entry(run, binding, b, grid, reader, found_rows, layers, min_mass, readers,
                 continue
             m = grid.mass[key][b]
             total_mass += float(m.sum())
+            if grid.sink:
+                den = grid.nonsink_total[key]
+                own = m - grid.sink_mass[key][b]
+                live = covered & (own != 0)
+                if bool((den[live] <= 0).any()):
+                    nonsink_ok = False
+                elif bool(live.any()):
+                    nonsink += float((own[live] / den[live]).sum())
             count += int(covered.sum())
             supplied = supplied or bool(grid.supplied[key][b].any())
             above = bool((m[covered] >= min_mass).any())
@@ -959,10 +1218,20 @@ def _entry(run, binding, b, grid, reader, found_rows, layers, min_mass, readers,
                     rank = size(value)
                     if scalar:
                         contribution += float(value)
+                        contrast_sum += float(grid.contrast[key][b, h])
+                        mask_sum += float(grid.mask_delta[key][b, h])
                 label = (SUPPLIED if grid.supplied[key][b, h] else
                          MEASURED if int(grid.sources[key][b, h]) == 1 else EXACT)
-                reads.append((rank, {"name": f"t{j}.L{layer}.h{h}",
-                                     "mass": num(float(m[h]), label), "effect": shown}))
+                read = {"name": f"t{j}.L{layer}.h{h}", "mass": num(float(m[h]), label),
+                        "effect": shown}
+                if scalar and key in grid.contrast and not (reason and reader is not None) \
+                        and grid.reach[key] is None:
+                    read["contrast"] = num(float(grid.contrast[key][b, h]), EXACT, "P19")
+                if foreign is not None:
+                    from mdb.interop.names import read_names
+
+                    read["foreign"] = read_names(j, layer, h)
+                reads.append((rank, read))
         strips.append(f"t{j}:{''.join(marks)}")
     reads.sort(key=lambda r: -r[0])
     edits = []
@@ -1002,14 +1271,56 @@ def _entry(run, binding, b, grid, reader, found_rows, layers, min_mass, readers,
         view["to_consumer"] = refused(blocked_by)
     elif scalar:
         view["to_consumer"] = num(contribution, EXACT, "P19")
+        view["contrast"] = num(contrast_sum, EXACT, "P19")
+        if math.isfinite(mask_sum):
+            view["mask_delta"] = num(mask_sum, EXACT, "P19")
+        else:
+            view["mask_delta"] = refused("a read has p = 1: masking its only source does not "
+                                         "renormalise")
+        native = reader.native
+        if native is not None and float(f64(native)) != 0.0:
+            total = float(f64(native))
+            view["share"] = num(contribution / total, EXACT)
+            view["share_of_abs"] = num(contribution / abs(total), EXACT)
     else:
         contribution = None
         view["to_consumer"] = {"state": "unresolved", "reason": "no scalar consumer"}
+    if grid.sink:
+        if not nonsink_ok:
+            view["mass_nonsink"] = refused("a head reads only sink rows (no non-sink mass)")
+        else:
+            view["mass_nonsink"] = num(nonsink, label)
+    if binding.slot is not None:
+        view["slot"] = binding.slot
+        view["role"] = binding.role
+        if binding.map_digest is not None:
+            view["map_digest"] = binding.map_digest
+    if binding.labels or item_labels:
+        view["labels"] = {**(item_labels or {}),
+                          **{k: label_claim(v) for k, v in binding.labels.items()}}
+    if foreign is not None:
+        from mdb.interop.names import binding_names
+
+        view["foreign"] = binding_names(binding.cells, **foreign)
     if edits:
         view["edited_by"] = edits[:8]
     if len(reads) > readers:
         view["omitted"] = len(reads) - readers
     return {"view": view, "contribution": contribution}
+
+
+def label_claim(value: Any, authority: str = SUPPLIED) -> dict[str, Any]:
+    """A label as a record leaf: a number is a claim ``{value, authority}``; any other value
+    is ``{label, source}`` (``source``: ``supplied`` or ``derived``). ``value`` may already be
+    such a leaf, or a ``(value, authority)`` pair."""
+    if isinstance(value, dict) and ("label" in value or "value" in value):
+        return dict(value)
+    if isinstance(value, tuple) and len(value) == 2:
+        value, authority = value
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return num(value, authority if authority in (SUPPLIED, EXACT, MEASURED, BOUND,
+                                                     "derived-local") else EXACT)
+    return {"label": value, "source": "derived" if authority == "derived" else str(authority)}
 
 
 _LIST_CAP = 64     # records hold lists of at most 64 items (core.pointers)
@@ -1049,6 +1360,9 @@ def _records(run: Any, report: dict[str, Any], session_id: str | None) -> list[d
     body = {"schema": SCHEMA, **{k: report[k] for k in ("where", "consumer", "rows", "min_mass",
                                                          "bindings", "unbound", "page",
                                                          "accounting")}}
+    for key in ("labels", "derived_labels", "candidate_sets", "components"):
+        if key in report:
+            body[key] = report[key]
     if "consumer_total" in report:
         body["consumer_total"] = report["consumer_total"]
     body["procedure"] = procedure(run)

@@ -35,6 +35,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from dataclasses import asdict, dataclass, field
 from typing import Any
 
@@ -155,9 +156,10 @@ def slot_rows(slot: Slot, run: Any, item: dict[str, Any], taken: set[int] = froz
     reader = _reader_row(run, item, slot.reader_rule)
     p = f64(run.read(f"t{reader}.L{slot.rule_layer}.p"))
     p = p.reshape(p.shape[-3] if p.dim() >= 3 else 1, -1)       # (heads, rows)
-    rows = [r for r in span if r != 0]
+    sink = {int(r) for r in item.get("sink", (0,))}               # sink rows (default t0)
+    rows = [r for r in span if r not in sink]
     if not rows:
-        raise Refusal(f"slot {slot.name}: the span holds only t0")
+        raise Refusal(f"slot {slot.name}: the span holds only sink rows")
     score = {r: float(sum(p[h, r] for h in slot.rule_heads)) for r in rows}
     return [max(rows, key=lambda r: (score[r], r))]
 
@@ -173,8 +175,10 @@ def bind(m: Map, run: Any, item: dict[str, Any]) -> dict[str, Binding]:
     """Declare every slot of ``m`` on ``run`` for ``item`` (``rest`` slots last, over the rows the
     others left). Declared symbols must not overlap, so a row slot never binds a row that holds
     a cell slot's cells (``rest`` skips those rows). Returns slot name -> Binding; a slot that
-    binds no row is skipped."""
+    binds no row is skipped (``item_report`` lists it under ``unbound_slots``). Each Binding
+    carries its slot's ``role``, ``slot`` and the map's ``map_digest``."""
     out: dict[str, Binding] = {}
+    digest = m.digest()
     taken: set[int] = set()
     cell_rows: set[int] = set()
     order = [s for s in m.slots if s.rows_rule != "rest"] + [s for s in m.slots
@@ -188,28 +192,60 @@ def bind(m: Map, run: Any, item: dict[str, Any]) -> dict[str, Binding]:
             rows = [r for r in rows if r not in cell_rows]
         if not rows:
             continue
-        out[slot.name] = declare(run, slot.name, slot_addresses(slot, rows))
+        binding = declare(run, slot.name, slot_addresses(slot, rows))
+        binding.role, binding.slot, binding.map_digest = slot.role, slot.name, digest
+        out[slot.name] = binding
         (taken if slot.layers is None else cell_rows).update(rows)
     return out
 
 
+def cache_slots(m: Map) -> list[str]:
+    """The slots ``bind`` declares as cache bindings (rule-only slots excluded)."""
+    return [s.name for s in m.slots
+            if not (s.role in ("composer", "consumer", "reader") and s.layers is None
+                    and s.rows_rule != "rest")]
+
+
 def item_report(m: Map, run: Any, item: dict[str, Any], *, consumer: Any = None,
                 truths: dict[str, int | None] | None = None, tokenizer: Any = None,
-                content_layers: bool = False) -> dict[str, Any]:
+                content_layers: bool = False, sets: list[Any] | None = None,
+                labels: dict[str, Any] | None = None, frame: bool = False,
+                **options: Any) -> dict[str, Any]:
     """One item's report: bind the map's slots, then ``symbols.table`` at the cursor over the
     declared slots only (they page first), with content over the map's candidate sets
-    (``truths``: set name -> the item's true token). The declared symbols are removed after."""
+    (``truths``: set name -> the item's true token). The declared symbols are removed after.
+
+    ``sets``: ``candidates.CandidateSet`` objects (flags, pairs) used instead of the map's
+    token lists; ``labels``: item labels (default ``item["labels"]``), carried on every row;
+    ``options``: passed to ``symbols.table`` (``co``, ``lexical_null``, ``switch``, ``derive``,
+    ``sink``, ``foreign``, ``causal``). The report lists ``unbound_slots`` (slots that bound no
+    row on this item) and, with ``frame``, keeps the ``Table`` under ``"_table"`` (not JSON)."""
     from .symbols import table
 
+    labels = dict(item.get("labels") or {}, **(labels or {}))
     bound = bind(m, run, item)
     try:
-        sets = [Candidates(name, tuple(tokens), (truths or {}).get(name))
-                for name, tokens in m.candidate_sets.items()]
+        if sets is not None:
+            cands = [s.candidates((truths or {}).get(s.name)) if hasattr(s, "candidates")
+                     else s for s in sets]
+        else:
+            cands = [Candidates(name, tuple(tokens), (truths or {}).get(name))
+                     for name, tokens in m.candidate_sets.items()]
         n = max(1, len(bound))
-        tab = table(run, consumer=consumer, limit=min(n, 16), sets=sets or None,
-                    content_layers=content_layers, tokenizer=tokenizer)
+        tab = table(run, consumer=consumer, limit=min(n, 16), sets=cands or None,
+                    content_layers=content_layers, tokenizer=tokenizer, labels=labels or None,
+                    **options)
         rows = {name: b.addresses for name, b in bound.items()}
-        return {"item": item.get("name"), "slots": rows, "table": tab.report}
+        out = {"item": item.get("name"), "slots": rows, "table": tab.report,
+               "unbound_slots": [s for s in cache_slots(m) if s not in bound],
+               "map_digest": m.digest()}
+        if labels:
+            from .symbols import label_claim
+
+            out["labels"] = {k: label_claim(v) for k, v in labels.items()}
+        if frame:
+            out["_table"] = tab
+        return out
     finally:
         for name in list(bound):
             declared(run).pop(name, None)
@@ -229,17 +265,206 @@ def _bindings_by_name(report: dict[str, Any]) -> dict[str, Any]:
     return {**report, "table": {**table, "bindings": keyed}}
 
 
-def freeze(m: Map, reports: list[dict[str, Any]], categorical: list[str]) -> Map:
+def freeze(m: Map, reports: list[dict[str, Any]], categorical: list[str], *,
+           switch: str | None = None, ties: str = "value",
+           supplied: dict[str, Any] | None = None) -> Map:
     """``m`` with ``constants`` filled from per-item ``reports``: ``summary`` (numeric claims and
     verdict counts over the paths every report has) and ``modes`` (the most common value of
     each categorical dotted path, with counts). Table bindings are keyed by symbol name
-    (``table.bindings.<slot>.*``), never by page position."""
+    (``table.bindings.<slot>.*``), never by page position. Mode ties are broken by value
+    (``ties``; AUDIT-B1: first appearance depends on item order) and reported.
+
+    ``switch``: a label path (``labels.family.label``, or ``labels.depth.value`` for a number): constants are also stored per switch
+    value under ``by_switch`` (the pooled ``summary`` stays the fallback for an unseen value,
+    the ``mdb_lanes.compiled_state`` rule). ``supplied``: constants measured elsewhere, each
+    ``supplied_constant(...)`` (value plus the record it came from), never free text."""
     constants = dict(m.constants)
     keyed = [_bindings_by_name(r) for r in reports]
     constants["summary"] = summ.summarize(keyed)
-    constants["modes"] = summ.modes(keyed, categorical)
+    constants["modes"] = summ.modes(keyed, categorical, ties=ties)
     constants["n_items"] = len(reports)
+    unbound: dict[str, int] = {}
+    for r in reports:
+        for name in r.get("unbound_slots", ()):
+            unbound[name] = unbound.get(name, 0) + 1
+    if unbound:
+        constants["unbound_slots"] = unbound
+    if switch is not None:
+        constants["by_switch"] = summ.summarize_by(keyed, switch)
+        constants["switch_fallback"] = "pooled summary for an unseen switch value"
+    if supplied:
+        for name, entry in supplied.items():
+            if not isinstance(entry, dict) or "source" not in entry:
+                raise Refusal(f"supplied constant {name} needs its source record "
+                              "(circuit_map.supplied_constant)")
+        constants["supplied"] = dict(supplied)
     return Map(m.slots, m.edges, m.consumer_rule, m.candidate_sets, constants)
+
+
+def supplied_constant(value: Any, *, source: str, authority: str = "measured",
+                      note: str = "") -> dict[str, Any]:
+    """A constant measured elsewhere, with its provenance: ``source`` is the record id (or
+    sealed file sha256) it came from (``mdb_lanes.computation_atlas``: effects are
+    caller-supplied measurements with provenance)."""
+    if not isinstance(source, str) or not source.strip():
+        raise Refusal("a supplied constant names the record it came from")
+    return {"value": value, "authority": authority, "source": source, "note": note,
+            "label": "supplied"}
+
+
+# --------------------------------------------------------------------------- MapTable
+
+_SITE = re.compile(r"cache\.L(?P<l>\d+)\.[kv]\[kv(?P<g>\d+),row=(?P<r>\d+)\]")
+
+
+def _site(report: dict[str, Any], slot: str) -> Any:
+    """``(layer, kv, row - last)`` of a slot's first cell on this item, or ``("row", row -
+    last)`` for a row slot (positions relative to the reader row, so items of different
+    lengths compare)."""
+    addresses = (report.get("slots") or {}).get(slot) or []
+    if not addresses:
+        return None
+    last = None
+    where = (report.get("table") or {}).get("where", "")
+    if where.startswith("t"):
+        last = int(where.split(".")[0][1:])
+    match = _SITE.search(addresses[0])
+    if match:
+        r = int(match["r"])
+        return (int(match["l"]), int(match["g"]), r - last if last is not None else r)
+    if addresses[0].startswith("t") and addresses[0][1:].isdigit():
+        r = int(addresses[0][1:])
+        return ("row", r - last if last is not None else r)
+    return addresses[0]
+
+
+def _binding(report: dict[str, Any], slot: str) -> dict[str, Any] | None:
+    bindings = (report.get("table") or {}).get("bindings") or []
+    if isinstance(bindings, dict):
+        return bindings.get(slot)
+    return next((b for b in bindings if isinstance(b, dict) and b.get("symbol") == slot), None)
+
+
+def _label(report: dict[str, Any], switch: str) -> Any:
+    try:
+        return summ.leaf(report, switch)
+    except (KeyError, IndexError, ValueError, TypeError):
+        return None
+
+
+@dataclass
+class MapTable:
+    """A cross-item view of a map: one row per slot (review 2.1). Every row keeps the per-item
+    values behind it (``items``: item name, site, the binding row), so different native
+    locations are never silently merged (the ``mdb_lanes.symbol_trace`` safeguard)."""
+
+    rows: list[dict[str, Any]]
+    items: list[dict[str, Any]]
+    switch: str | None = None
+
+    @classmethod
+    def build(cls, m: Map, reports: list[dict[str, Any]], *, switch: str | None = None,
+              null: str | None = "answer_permutation") -> MapTable:
+        names = [s.name for s in m.slots if s.name in set(cache_slots(m))]
+        rows, items = [], []
+        for slot in m.slots:
+            if slot.name not in names:
+                continue
+            found = [(r, _binding(r, slot.name)) for r in reports]
+            bound = [(r, b) for r, b in found if b is not None]
+            row: dict[str, Any] = {"slot": slot.name, "role": slot.role, "n_items": len(reports),
+                                   "n_bound": len(bound)}
+            for key in ("mass", "to_consumer", "contrast", "mass_nonsink", "mask_delta"):
+                values = [(b[key]["value"], b[key]["authority"]) for _, b in bound
+                          if isinstance(b.get(key), dict) and "value" in b[key]
+                          and isinstance(b[key]["value"], (int, float))]
+                if values:
+                    row[key] = summ.numeric_stat(key, values)
+            sites = [{"site": json.dumps(_site(r, slot.name))} for r, _ in bound]
+            mode = summ.modes(sites, ["site"], ties="value")[0]
+            row["site_mode"] = mode
+            row["baselines"] = {"constant_site": {
+                "same_site": mode["count"], "n": mode["n"],
+                "meaning": "items whose bound site (layer, kv, row - last) equals the modal "
+                           "site: a rule that always picks one constant site scores the same "
+                           "on these (TP1: the constant L20 KV6 site matched the forecast "
+                           "174/178)"}}
+            content = {}
+            for set_name in m.candidate_sets or {}:
+                entries = [(r, (b.get("content") or {}).get(set_name)) for r, b in bound]
+                entries = [(r, e) for r, e in entries if isinstance(e, dict) and "best" in e]
+                if not entries:
+                    continue
+                named = [e for _, e in entries if "names_truth" in e]
+                best_mode = summ.modes([{"best": e["best"]} for _, e in entries], ["best"],
+                                       ties="value")[0]
+                item = {"n": len(entries), "best_mode": best_mode}
+                if named:
+                    item["names_truth"] = {"count": sum(bool(e["names_truth"]) for e in named),
+                                           "n": len(named)}
+                if null == "answer_permutation":
+                    item["answer_permutation"] = _permutation_null(entries)
+                for flag in ("collision", "first_subword"):
+                    flagged = [e for _, e in entries if (e.get("flags") or {}).get(flag)]
+                    if flagged:
+                        item[f"{flag}_count"] = len(flagged)
+                content[set_name] = item
+            if content:
+                row["content"] = content
+            if switch is not None:
+                groups: dict[Any, list[float]] = {}
+                for r, b in bound:
+                    value = _label(r, switch)
+                    tc = b.get("to_consumer")
+                    if isinstance(tc, dict) and isinstance(tc.get("value"), (int, float)):
+                        groups.setdefault(summ.json_key(value), []).append(
+                            (tc["value"], tc["authority"]))
+                row["by_switch"] = [{"value": k, "n": len(v),
+                                     "to_consumer": summ.numeric_stat("to_consumer", v)}
+                                    for k, v in sorted(groups.items(), key=lambda kv: str(kv[0]))]
+            rows.append(row)
+            for r, b in bound:
+                items.append({"item": r.get("item"), "slot": slot.name,
+                              "site": _site(r, slot.name), "binding": b,
+                              "labels": r.get("labels")})
+        return cls(rows, items, switch)
+
+    def frame(self) -> Any:
+        """The per-item rows behind the statistics as a long DataFrame."""
+        from .frame import flatten
+
+        import pandas as pd
+
+        out = []
+        for entry in self.items:
+            row = {"item": entry["item"], "slot": entry["slot"],
+                   "site": json.dumps(entry["site"])}
+            for key, value in (entry.get("labels") or {}).items():
+                row[f"item_labels.{key}"] = (value.get("label", value.get("value"))
+                                             if isinstance(value, dict) else value)
+            row.update(flatten(entry["binding"], skip=("readers",)))
+            out.append(row)
+        return pd.DataFrame(out)
+
+    def to_json(self) -> dict[str, Any]:
+        return {"schema": SCHEMA + "/table", "rows": self.rows, "switch": self.switch,
+                "items": [{**e, "site": e["site"]} for e in self.items]}
+
+
+def _permutation_null(entries: list[tuple[dict[str, Any], dict[str, Any]]]) -> dict[str, Any]:
+    """The answer-permutation null of ``names_truth``: the expected count when each item's best
+    is compared with the other items' truths (mean over all derangement pairs; AUDIT-SCALE:
+    the real chance is an answer permutation, not a shuffled direction)."""
+    pairs = [(e["best"], e["truth"]) for _, e in entries if "truth" in e]
+    n = len(pairs)
+    if n < 2:
+        return {"state": "unresolved", "reason": "needs truth on at least two items "
+                                                 "(content.<set>.truth)"}
+    hits = sum(1 for i, (b, _) in enumerate(pairs) for j, (_, t) in enumerate(pairs)
+               if i != j and b == t)
+    observed = sum(1 for b, t in pairs if b == t)
+    return {"observed": observed, "expected": hits / (n - 1), "n": n,
+            "meaning": "expected names_truth count if each item's truth were another item's"}
 
 
 # --------------------------------------------------------------------------- cell census

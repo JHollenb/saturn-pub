@@ -80,7 +80,28 @@ SYMBOL_TABLE = declare_kind(
                    "bindings.*.hop.edge.mlp.*.omitted.count", "bindings.*.hop.edge.reread.*.layer",
                    "bindings.*.hop.edge.mlp.*.spectral.bins",
                    "bindings.*.hop.edge.mlp.*.spectral.top_bins",
-                   "bindings.*.hop.edge.mlp.*.spectral.neurons_at_same_fraction"),
+                   "bindings.*.hop.edge.mlp.*.spectral.neurons_at_same_fraction",
+                   # review 2026-11-14 additions: candidate flags, nulls, co-readouts, switched
+                   # readouts, foreign names, feature components, candidate-set provenance
+                   "bindings.*.content.*.truth", "bindings.*.content.*.lexical_null.best",
+                   "bindings.*.content.*.lexical_null.truth_rank",
+                   "bindings.*.content.*.lexical_null.source_token",
+                   "bindings.*.content.*.co.*.rank", "bindings.*.content.*.co.*.*.best",
+                   "bindings.*.content.*.co.*.*.truth_rank",
+                   "bindings.*.content.*.switched.best", "bindings.*.content.*.switched.truth",
+                   "bindings.*.content.*.switched.decoded",
+                   "bindings.*.content.*.switched.truth_rank",
+                   "bindings.*.labels.**", "bindings.*.foreign.**", "bindings.*.readers.*.foreign.**",
+                   "labels.**", "candidate_sets.*.size", "candidate_sets.*.truth",
+                   "candidate_sets.*.words_collide_within", "candidate_sets.*.multi_piece_words",
+                   "candidate_sets.*.first_tokens_shared_across",
+                   "components.*.reader_row", "components.*.components.*.feature",
+                   "components.*.components.*.saelens.feature",
+                   "components.*.components.*.ct_node.**", "components.*.basis.k",
+                   "components.*.components.*.content.*.best",
+                   "components.*.components.*.content.*.size",
+                   "components.*.components.*.content.*.truth_rank",
+                   "components.*.components.*.content.vocab_top.tokens"),
 )
 
 # ``symbol NAME = whatif|compare.a|EACH:ITEM`` (M23): a named symbol declared from a transplant
@@ -117,5 +138,30 @@ SUPPLIED_FORECAST = declare_kind(
     plain_numeric=("target.row", "target.indices", "edit.row", "edit.layer", *PROCEDURE),
 )
 
-__all__ = ["CIRCUIT", "CIRCUIT_TEST", "FORECAST", "PROCEDURE", "SUPPLIED_FORECAST", "SWEEP", "SYMBOL", "SYMBOL_TABLE",
+# Sealed traces, watch hits and circuit maps (symbol-table additions review 2026-11-14, 2.9).
+# The payload (a trace's per-step records; a watch's per-step truth values; a map's exact JSON)
+# is a sha256-checked JSON blob (``core.bounded.put_json``); the record keeps what a reader
+# needs to find and check it: counts, names, predicate texts and the payload's sha256.
+TRACE = declare_kind(
+    "trace",
+    required=("schema", "trace_kind", "count", "payload", "sha256"),
+    plain_numeric=("count", "payload.bytes", "payload.tensor.shape.*", "meta.**",
+                   "columns.count"),
+)
+
+WATCH_HITS = declare_kind(
+    "watch-hits",
+    required=("schema", "trace", "predicate", "mode", "n", "hits"),
+    plain_numeric=("n", "hits", "hits_omitted", "fired_at", "fired_index", "crossings",
+                   "undefined", "payload.bytes", "payload.tensor.shape.*"),
+)
+
+CIRCUIT_MAP = declare_kind(
+    "circuit-map",
+    required=("schema", "digest", "slots", "edges", "payload"),
+    plain_numeric=("slots.**", "candidate_sets.*.size", "n_items", "payload.bytes",
+                   "payload.tensor.shape.*", "table.bytes", "table.tensor.shape.*"),
+)
+
+__all__ = ["CIRCUIT", "CIRCUIT_MAP", "TRACE", "WATCH_HITS", "CIRCUIT_TEST", "FORECAST", "PROCEDURE", "SUPPLIED_FORECAST", "SWEEP", "SYMBOL", "SYMBOL_TABLE",
            "WHATIF", "procedure"]

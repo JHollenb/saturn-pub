@@ -44,7 +44,8 @@ class Trace:
     """A per-step (or per-row) readout table: ``records`` in order, each a dict with ``step``,
     ``margin``, ``argmax_letter``, ``letters`` and the tables ``to_consumer``, ``mass``,
     ``share`` and ``ablated`` (``{binding or arm: float}``); ``meta`` says how it was made
-    (labels, checks, timings). ``breakpoints.replay`` evaluates watch predicates over it."""
+    (labels, checks, timings). ``breakpoints.replay`` evaluates watch predicates over it.
+    ``seal`` makes it a ``trace`` record; ``to_frame`` a long DataFrame."""
 
     kind: str
     records: list[dict[str, Any]]
@@ -57,6 +58,21 @@ class Trace:
 
     def to_json(self) -> dict[str, Any]:
         return {"kind": self.kind, "meta": self.meta, "records": self.records}
+
+    def seal(self, *, session_id: str, run: Any = None, store: Any = None,
+             **identity: Any) -> dict[str, Any]:
+        """This trace as a sealed ``trace`` record (``analysis.sealed.seal_trace``): the step
+        records in a sha256-checked blob (``store``: a project or its store), so "sealed
+        before scoring" is a record, not a file time (issue C3)."""
+        from .sealed import seal_trace
+
+        return seal_trace(self, session_id=session_id, run=run, store=store, **identity)
+
+    def to_frame(self, table: str | None = None) -> Any:
+        """The records as a long pandas DataFrame (``analysis.frame.trace_frame``)."""
+        from .frame import trace_frame
+
+        return trace_frame(self, table)
 
 
 # --------------------------------------------------------------------------- shared helpers

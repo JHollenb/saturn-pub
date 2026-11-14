@@ -1328,9 +1328,13 @@ class TraceEnv:
         return float(value)
 
 
-def replay(predicate: TraceCondition | str, steps: Sequence[dict[str, Any]], *, X: str, R: str,
-           mode: str = "edge") -> dict[str, Any]:
+def replay(predicate: TraceCondition | str, steps: Any, *, X: str | None = None,
+           R: str | None = None, mode: str = "edge", store: Any = None) -> dict[str, Any]:
     """Evaluate a trace watch over a sealed ``Trace`` (record and replay: nothing runs).
+
+    ``steps``: the step records, a ``rows.Trace``, or a sealed ``trace`` record (a dict of kind
+    ``trace``; its blob is read from ``store`` and checked against its sha256). ``X``/``R``
+    default to the trace's ``meta``.
 
     ``steps`` in probe order. ``level`` fires where the predicate holds; ``edge`` where it holds
     and did not at the previous step (before the first step counts as not holding); ``change``
@@ -1343,6 +1347,17 @@ def replay(predicate: TraceCondition | str, steps: Sequence[dict[str, Any]], *, 
     if mode not in WATCH_MODES:
         raise ConditionError(f"mode must be one of {', '.join(WATCH_MODES)}")
     condition = predicate if isinstance(predicate, TraceCondition) else TraceCondition(predicate)
+    meta: dict[str, Any] = {}
+    if isinstance(steps, dict) and steps.get("kind") == "trace":
+        from mdb.analysis.sealed import load_trace
+
+        steps = load_trace(steps, store=store)
+    if hasattr(steps, "records") and hasattr(steps, "meta"):
+        meta, steps = dict(steps.meta), steps.records
+    X = X if X is not None else meta.get("X")
+    R = R if R is not None else meta.get("R")
+    if X is None or R is None:
+        raise ConditionError("replay needs X and R (the trace's meta has none)")
     holds: list[bool] = []
     undefined: list[Any] = []
     for record in steps:
