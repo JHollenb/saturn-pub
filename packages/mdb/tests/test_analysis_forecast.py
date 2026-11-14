@@ -157,6 +157,76 @@ def test_edit_after_sealing_is_reported_not_failed_and_unreached_stays_open(debu
     assert again["verdict"] == "edited"  # the committed L0.v edit reaches L1.a upstream
 
 
+@pytest.mark.parametrize("port,value,op", [("v", 0.5, "add"), ("r", 0.3, "add"),
+                                           ("m", 0.0, "replace"), ("s", 0.0, "replace")])
+def test_seal_including_staged_edits_forecasts_through_the_edited_layer(debugger, port, value,
+                                                                        op):
+    """SC3: a forecast sealed before the edited layer computes, with staged='include', covers the
+    edit's own layer (a repair forecast) and is confirmed; the default still refuses."""
+    margin = forecast.Margin(3, 5, 9)
+    base = debugger.run(PROMPT)
+    base.until("t3.L1.h")
+    unedited = forecast.seal(base, margin)["predicted"]["value"]["value"]
+    run = debugger.run(PROMPT)
+    run.until("t3.L1.h")
+    run.set(f"t3.L1.{port}", value, op)
+    with pytest.raises(forecast.Refusal, match="staged edit"):
+        forecast.seal(run, margin)
+    view = forecast.seal(run, margin, staged="include")
+    entry = forecast.ledger(run)[view["id"]]
+    block = entry.record["body"]["staged"]
+    verify_record(entry.record)
+    assert block["mode"] == "include" and block["count"] == 1
+    assert [e["address"] for e in block["included"]["ports"]] == [f"t3.L1.{port}"]
+    assert len(block["sha256"]) == 64
+    if port in ("v", "r"):   # the edit moves the margin: the forecast is of the edited run
+        assert view["predicted"]["value"]["value"] != unedited
+    run.until("t3.logits")
+    [result] = forecast.verify(run, [view["id"]])
+    assert result["verdict"] == "confirmed", result
+    assert result["staged_included"] == [f"t3.L1.{port} {op}"]
+
+
+def test_seal_including_a_staged_edit_decides_the_edited_target_itself(debugger):
+    run = debugger.run(PROMPT)
+    run.until("t3.L1.h")
+    run.set("t3.L1.v", 0.5, "add")
+    view = forecast.seal(run, "t3.L1.v", staged="include")
+    run.until("t3.L1.o")
+    [result] = forecast.verify(run, [view["id"]])
+    assert result["verdict"] == "confirmed", result   # not 'edited': the edit is in the chain
+    run = debugger.run(PROMPT)
+    run.until("t3.L1.h")
+    run.set("t3.L1.r", 0.5, "add")
+    with pytest.raises(forecast.Refusal, match="realisation"):
+        forecast.seal(run, "t3.L1.o", staged="include")
+    with pytest.raises(ValueError, match="staged must be"):
+        forecast.seal(run, "t3.L1.n", staged="yes")
+
+
+def test_a_staged_cell_edit_is_in_the_operands_of_a_forecast_sealed_before_its_layer(debugger):
+    """A staged set_cell at layer 1 (cursor at t3.L0.h, before it): the chain's cache reads see
+    it in either mode, the record names it, and the forecast of the edited run is confirmed."""
+    margin = forecast.Margin(3, 5, 9)
+    base = debugger.run(PROMPT)
+    base.until("t3.L0.h")
+    unedited = forecast.seal(base, margin)["predicted"]["value"]["value"]
+    for mode in forecast.STAGED_MODES:
+        run = debugger.run(PROMPT)
+        run.until("t3.L0.h")
+        run.set_cell(1, "v", 0.5, "add", rows=[1])
+        view = forecast.seal(run, margin, staged=mode)
+        block = forecast.ledger(run)[view["id"]].record["body"]["staged"]
+        assert block["mode"] == mode and [c["address"] for c in block["included"]["cells"]] \
+            == ["cache.L1.v"]
+        assert view["predicted"]["value"]["value"] != unedited
+        run.until("t3.logits")
+        [result] = forecast.verify(run, [view["id"]])
+        assert result["verdict"] == "confirmed", result
+    # nothing staged, default mode: no staged block (legacy record bytes)
+    assert "staged" not in forecast.ledger(base)[1].record["body"]
+
+
 def test_rewind_and_replay_to_the_target_still_verifies_with_its_order(debugger):
     run = debugger.run(PROMPT)
     run.until("t3.L0.n")

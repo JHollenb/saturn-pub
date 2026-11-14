@@ -854,6 +854,7 @@ class Forecast:
     verdict: dict[str, Any] | None = field(default=None)
     chain: list = field(default_factory=list)   # the full identity chain (the record keeps a summary)
     emulated: Any = None   # the emulated prediction (EmulatedRowModel): what verify decides on
+    included: frozenset = frozenset()   # staged port edits the chains apply (staged="include")
 
 
 _LEDGERS: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
@@ -893,6 +894,71 @@ def _staged_between(run: Any, row: int, low: tuple[int, int], high: tuple[int, i
     return found
 
 
+STAGED_MODES = ("refuse", "include")
+STAGED_RULE = {
+    "refuse": "a staged port edit between the cursor and the target refuses the seal; staged "
+              "cache-cell edits are in the operands (the cache reads see them)",
+    "include": "the staged port edits of the pending layer are applied where the chain computes "
+               "their stop (exact: the real-number edit with the bound of its native write; "
+               "emulated: the engine's own PortEdit on the dtype value); staged cache-cell edits "
+               "are in the operands (the cache reads see them)",
+}
+
+
+def _staged_edits(run: Any, row: int) -> tuple[dict[str, Any], dict[str, Any], list[dict]]:
+    """``(exact, emulated, manifests)``: the ``RowModel.edits`` functions of the staged port
+    edits of the pending layer (``propagate``'s edit functions, M55) and their manifests."""
+    from mdb.engine.ports import PortEdit
+
+    from .propagate import _edit_function
+
+    layer = run.status()["pending_layer"]
+    if layer is None:
+        return {}, {}, []
+    tensors = run.edit_tensors()
+    stops: dict[str, list[Any]] = {}
+    manifests = []
+    for manifest in run.edits:
+        described = manifest["value"]
+        value = (described["value"] if described["kind"] == "scalar"
+                 else tensors[described["sha256"]])
+        mask = tensors[manifest["mask_sha256"]] if manifest.get("mask_sha256") else None
+        port = run.program.spec(manifest["port"]).name
+        stops.setdefault(f"L{layer}.{port}", []).append(
+            PortEdit(port, value, manifest["op"], mask=mask))
+        manifests.append({"address": f"t{row}.L{layer}.{port}", "row": row, "layer": int(layer),
+                          "port": manifest["port"], "op": manifest["op"],
+                          "value": _value_view(described),
+                          "mask_sha256": manifest.get("mask_sha256"),
+                          "selection": manifest.get("selection")})
+    exact = {label: _edit_function(run, f"t{row}.{label}", label, edits, "exact")
+             for label, edits in stops.items()}
+    emulated = {label: _edit_function(run, f"t{row}.{label}", label, edits, "emulated")
+                for label, edits in stops.items()}
+    return exact, emulated, manifests
+
+
+def _value_view(described: dict[str, Any]) -> dict[str, Any]:
+    """An edit's value descriptor with its scalar as a labelled number (``supplied``)."""
+    if described["kind"] == "scalar":
+        return {"kind": "scalar", "value": num(float(described["value"]), "supplied")}
+    return {k: described[k] for k in ("kind", "sha256", "shape", "dtype") if k in described}
+
+
+def _staged_view(run: Any, mode: str, ports: list[dict[str, Any]]) -> dict[str, Any]:
+    """The sealed ``staged`` block: the mode, the staged edits the chain includes (port edits in
+    ``include`` mode; cache cells always, through the cache reads) and their digest."""
+    row = run.parse(run.where)[0]
+    cells = [{"address": c["port"], "row": row, "layer": int(c["cell"]["layer"]),
+              "port": c["port"], "op": c["op"], "value": _value_view(c["value"]),
+              "rows": list(c["cell"]["rows"]), "kv": c["cell"]["kv"], "d": c["cell"]["d"],
+              "timing": c["cell"]["timing"]}
+             for c in run.cells]
+    included = {"ports": ports, "cells": cells}
+    return {"mode": mode, "rule": STAGED_RULE[mode], "included": included,
+            "count": len(ports) + len(cells), "sha256": seal_digest(included)}
+
+
 def _resolve_target(run: Any, target: str | Margin | None) -> tuple[str, Margin | None,
                                                                  tuple[int, int]]:
     here = run.parse(run.where)
@@ -918,8 +984,19 @@ def _resolve_target(run: Any, target: str | Margin | None) -> tuple[str, Margin 
     return run.stops()[key[1]], None, key
 
 
-def seal(run: Any, target: str | Margin | None = None, *, store: Any = None) -> dict[str, Any]:
+def seal(run: Any, target: str | Margin | None = None, *, store: Any = None,
+         staged: str = "refuse") -> dict[str, Any]:
     """Predict ``target`` (default: the next stop) from values at the cursor and seal it.
+
+    ``staged`` (SC3): ``"refuse"`` (default) refuses while a staged port edit sits between the
+    cursor and the target; ``"include"`` applies the staged port edits of the pending layer in
+    both chains where they compute the edited stop, so a forecast sealed before the edited
+    layer computes covers the edit's own layer (a repair forecast, not an engine-fidelity check
+    sealed after the edit). Staged cache-cell edits are in the operands in either mode (the
+    chain's cache reads see them, ``Run.read_cache(staged=True)``). The record's
+    ``staged`` block names the mode, every staged edit the chain includes and their sha256;
+    ``verify`` then decides a target that an included edit wrote instead of reporting it
+    ``edited``.
 
     The record keeps a bounded summary of the identity chain (``method.summary``); the full
     chain is stored as a JSON blob in ``store`` (a project ``LocalStore``) and the record points
@@ -946,19 +1023,30 @@ def seal(run: Any, target: str | Margin | None = None, *, store: Any = None) -> 
         if port in status["computed_past_cursor"]:
             raise Refusal(f"{address} was already computed by the native call at {run.where} "
                           "(computed_past_cursor); seal before that call")
-    staged = _staged_between(run, row, here, key)
-    if staged:
-        raise Refusal(f"staged edit(s) at {', '.join(staged)} rewrite an operand between the "
-                      "cursor and the target; use whatif to predict an edit")
+    if staged not in STAGED_MODES:
+        raise ValueError(f"staged must be one of {STAGED_MODES}")
+    between = _staged_between(run, row, here, key)
+    exact_edits: dict[str, Any] = {}
+    emulated_edits: dict[str, Any] = {}
+    ports: list[dict[str, Any]] = []
+    if between and staged == "refuse":
+        raise Refusal(f"staged edit(s) at {', '.join(between)} rewrite an operand between the "
+                      "cursor and the target; seal with staged='include' to forecast through "
+                      "them, or use whatif to predict an edit's effect")
+    if staged == "include":
+        exact_edits, emulated_edits, ports = _staged_edits(run, row)
+        if label.endswith(".o") and f"{label[:-2]}.r" in exact_edits:
+            raise Refusal(f"{address} is the realisation of a staged r edit (o' = op(h + o) - h); "
+                          "forecast the r port or a later stop")
 
     known = _known(run, row, here)
-    model = RowModel(run, row, known)
+    model = RowModel(run, row, known, edits=exact_edits)
     value = model.get(label)
     bound = model.bound(label)
     if margin is not None:
         value = value[margin.a] - value[margin.b]
         bound = None if bound is None else bound[margin.a] + bound[margin.b]
-    emulator = EmulatedRowModel(run, row, known)
+    emulator = EmulatedRowModel(run, row, known, edits=emulated_edits)
     emulated = _target(emulator, label, margin)
     checkpoint = run.checkpoint()
     entries = ledger(run)
@@ -970,6 +1058,9 @@ def seal(run: Any, target: str | Margin | None = None, *, store: Any = None) -> 
     body["emulated"] = _emulated_view(emulated, label, margin, emulator,
                                       _rounding_origin(model, emulator, row, run.adapter.dtype))
     body["digests"] = {"exact": _digest(value), "emulated": _digest(emulated)}
+    staged_view = _staged_view(run, staged, ports)
+    if staged == "include" or staged_view["count"]:   # absent otherwise: legacy record bytes
+        body["staged"] = staged_view
     body["procedure"] = procedure(run)        # the prefill split the operands come from
     pointers = [] if chain_pointer is None else [chain_pointer]
     body["operands"], operands_summary = bound_list(
@@ -994,7 +1085,8 @@ def seal(run: Any, target: str | Margin | None = None, *, store: Any = None) -> 
     entry = Forecast(number, record, label, margin, key, value.detach(),
                      None if bound is None else bound.detach(),
                      frozenset(_edit_key(e) for e in body["edits_at_seal"]), chain=chain,
-                     emulated=emulated.detach())
+                     emulated=emulated.detach(),
+                     included=frozenset(_edit_key(e) for e in ports))
     entries[number] = entry
     return view(entry)
 
@@ -1326,7 +1418,8 @@ def _native(run: Any, entry: Forecast) -> tuple[Any, dict[str, Any], Any]:
     return f64(value).reshape(entry.predicted.shape), info, value
 
 
-def verify(run: Any, ids: list[int] | None = None) -> list[dict[str, Any]]:
+def verify(run: Any, ids: list[int] | None = None, *, kernel_path: str = "mdb-stepped",
+           calibration: Any = None, stable_floors: float | None = None) -> list[dict[str, Any]]:
     """Compare open forecasts (or the given ids) whose target the cursor has passed with the
     native value. Each result: ``verdict`` (``confirmed | not confirmed | unresolved | edited |
     open``), decided by the measured residual native - emulated (P20) against ``floor`` =
@@ -1335,7 +1428,15 @@ def verify(run: Any, ids: list[int] | None = None) -> list[dict[str, Any]]:
     emulation and native part (``_parting``); ``rounding_effect`` = native - exact
     (``measured``); the sealed ``rounding_origin``; ``bound_max`` / ``within_bound`` against the
     exact prediction only when the bound is finite (information, not the verdict); and
-    ``order`` (sealing stop before the target; lineage of cuts)."""
+    ``order`` (sealing stop before the target; lineage of cuts).
+
+    Every decided result names ``kernel_path``, the realisation the native value comes from
+    (``mdb-stepped`` for this run; a caller replaying another path declares its own). A margin
+    forecast also carries ``stability`` (SC6, ``analysis.stability``): the sign of the native
+    margin is ``stable`` only when ``|M| > k`` noise floors (2 spacings at the larger |logit|,
+    the ``supplied.judge`` floor), else ``kernel-sensitive``; ``k`` from ``calibration`` (per
+    model), else ``stable_floors``, else ``stability.STABLE_FLOORS`` = 4. The ``verdict`` field
+    is unchanged."""
     entries = ledger(run)
     here = run.parse(run.where)
     chosen = [entries[i] for i in ids] if ids else [e for e in entries.values()
@@ -1367,9 +1468,20 @@ def verify(run: Any, ids: list[int] | None = None) -> list[dict[str, Any]]:
         native, info, raw = _native(run, entry)
         later = [e for e in info["upstream_edits"] if _edit_key(e) not in entry.edits]
         verdict: dict[str, Any] = {"order": order}
-        if info["edited"] or info["kind"] in ("edit", "realisation") or later:
+        written = info["edited"] or info["kind"] in ("edit", "realisation")
+        if written and entry.included and entry.label.startswith("L"):
+            # sealed with staged="include": the target's own layer edits are in the chain
+            layer = _split(entry.label)[0]
+            own = {_edit_key(e) for e in _labelled_edits(run)
+                   if int(e["row"]) == entry.key[0] and int(e["layer"]) == layer
+                   and not str(e["port"]).startswith("cache.")}
+            written = not own <= entry.included
+        if entry.included:
+            verdict["staged_included"] = sorted(
+                f"t{k[0]}.L{k[1]}.{k[2]} {k[3]}" for k in entry.included)
+        if written or later:
             what = [f"t{e['row']}.L{e['layer']}.{e['port']} {e['op']}" for e in later]
-            if info["edited"] or info["kind"] in ("edit", "realisation"):
+            if written:
                 what.insert(0, f"{entry.label} written by {info['by']}")
             verdict.update(verdict="edited", edited_after_seal=what,
                            note="an edit reached the target after sealing; not a forecast "
@@ -1380,10 +1492,33 @@ def verify(run: Any, ids: list[int] | None = None) -> list[dict[str, Any]]:
                 verdict.update(verdict="unresolved", state="unresolved", reason=info["reason"])
             else:
                 verdict.update(_decide(run, entry, native, raw, label))
+                verdict["kernel_path"] = kernel_path
+                if entry.margin is not None:
+                    verdict["stability"] = _margin_stability(
+                        native, raw, entry.margin, kernel_path, calibration, stable_floors)
         entry.status = "closed"
         entry.verdict = verdict
         results.append({**out, "status": "closed", **verdict})
     return results
+
+
+STABILITY_FLOOR_SPACINGS = 2.0   # the noise floor stability counts in (supplied.judge's)
+
+
+def _margin_stability(native: Any, raw: Any, margin: Margin, kernel_path: str,
+                      calibration: Any, stable_floors: float | None) -> dict[str, Any]:
+    """The stability of a margin's sign (SC6): ``|M|`` in noise floors (2 spacings of the
+    dtype at the larger |logit| of the pair) against ``k``."""
+    from .stability import stability
+
+    flat = raw.reshape(-1).detach().abs().float()
+    size = max(float(flat[margin.a]), float(flat[margin.b]))
+    floor = STABILITY_FLOOR_SPACINGS * _verdict.spacing(size, raw.dtype)
+    out = stability(float(native), floor, kernel_path=kernel_path, calibration=calibration,
+                    k=stable_floors)
+    out["floor"] = num(floor, MEASURED)
+    out["floor_spacings"] = num(STABILITY_FLOOR_SPACINGS, "supplied")
+    return out
 
 
 def _decide(run: Any, entry: Forecast, native: Any, raw: Any, label: str) -> dict[str, Any]:

@@ -52,10 +52,20 @@ def seal(run: Any, *, target: dict[str, Any], edit: dict[str, Any], value: float
 
 
 def judge(record: dict[str, Any], native_delta: float, *, magnitude: float, dtype: Any,
-          floor_spacings: float = 2.0, extra_floor: float = 0.0) -> dict[str, Any]:
+          floor_spacings: float = 2.0, extra_floor: float = 0.0,
+          kernel_path: str | None = None, calibration: Any = None,
+          stable_floors: float | None = None) -> dict[str, Any]:
     """Score a sealed supplied forecast against the native change. ``magnitude`` is the
     consumer's size for the spacing (e.g. the larger |logit| of the margin's pair);
-    ``extra_floor`` adds a measured kernel-path delta (batched vs stepped) to the floor."""
+    ``extra_floor`` adds a measured kernel-path delta (batched vs stepped) to the floor.
+
+    The floor is a noise bound, not a stability margin (SC6): ``stability`` marks the verdict
+    ``stable`` only when ``|native| > k`` floors, else ``kernel-sensitive`` (``native_effect``
+    and ``sign_agrees`` are unchanged). ``k`` comes from the model's ``calibration``
+    (``stability.Calibration``, its JSON or a path), else ``stable_floors``, else
+    ``stability.STABLE_FLOORS`` = 4; ``kernel_path`` names the realisation ``native_delta`` was
+    measured on (``mdb-stepped``, ``batched``, or any declared string; ``undeclared`` if None)."""
+    from .stability import stability
     from .verdict import spacing
 
     body = record["body"]
@@ -69,6 +79,8 @@ def judge(record: dict[str, Any], native_delta: float, *, magnitude: float, dtyp
         "native_effect": abs(native) > floor,
         "sign_agrees": (supplied > 0) == (native > 0) if abs(native) > floor else None,
     }
+    out.update(stability(native, floor, kernel_path=kernel_path, calibration=calibration,
+                         k=stable_floors))
     for key in ("exact", "linear"):
         if key in body:
             out[f"{key}_error"] = num(native - float(body[key]["value"]), MEASURED)

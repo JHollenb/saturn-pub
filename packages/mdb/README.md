@@ -505,7 +505,20 @@ first stop where exact and emulated part by more than a spacing; on Qwen2.5-1.5B
 an L0 score (`t22.L0.s[h3]: score spacing 64 at |s| 1.51e+04`), and the exact chain is 35 to 78
 spacings off at L0.m because rounded scores tie and the native softmax is not the softmax of the
 real scores (M42). The worst-case bound against `exact` is printed only when finite
-(information):
+(information).
+
+Staged edits (SC3): by default a staged port edit between the cursor and the target refuses
+the seal. `forecast.seal(run, target, staged="include")` applies the staged port edits of the
+pending layer in both chains where they compute the edited stop (exact: the real-number edit
+with the bound of its native write; emulated: the engine's own `PortEdit` on the dtype value), so
+a forecast sealed before the edited layer computes covers the edit's own layer: a repair
+forecast, not a fidelity check sealed after the edit. Staged cache-cell edits (`set_cell`) are
+in the operands in either mode (the chain's cache reads see them). The record's `staged` block
+names the mode, every staged edit included and their sha256, and `verify` decides a target an
+included edit wrote (`staged_included`) instead of reporting it `edited`. Measured on the tiny
+models (8 configs): `v`/`r`/`m`/`s` port edits at L1 and a cell edit at L1, sealed at the layer's
+`h` or earlier, `confirmed` at M[5,9] (`tests/test_analysis_forecast.py`); residual 0 spacings
+on tiny Qwen3 bf16/fp32 and Qwen2 bf16.
 
 ```
 (mdb) forecast L0.p
@@ -590,6 +603,31 @@ chain) the verdict is native only: `effect` when the native edited and base valu
 finite (`bound` label) and never decide a verdict. `verify` holds native against the emulated
 prediction the same way: `confirmed` within one spacing, else `not confirmed` or `unresolved` by
 where emulation and native part.
+
+### Verdict stability across realisations (SC6)
+
+The floor is a noise bound: it says whether one realisation of a forward moved the consumer,
+not whether the verdict survives another realisation of the same forward. Showcase exp6
+(`results/showcase-20261114/exp6`, audit `AUDIT-SHOWCASE.md` correction 1) re-ran mdb's
+patch effects on Qwen3-0.6B-Base and Qwen2.5-0.5B (bf16) through TransformerLens: every verdict
+lost (sign reversed, or fallen to the 2-spacing floor) was within 4 floors, and none above 4
+floors was lost on any path (0/110, 0/104). Any reordering moves 3-spacing verdicts: kernel path
+(TL batched vs mdb stepped) 60/274 and 16/228, batch composition (TL batched vs batch-1) 72/286
+and 19/241, processing (processed vs unprocessed bridge) 46/257 and 82/249. On Qwen2.5,
+processing, not the kernel path, dominates.
+
+`mdb.analysis.stability` adds a margin rule beside the verdict (the verdict field is
+unchanged): `stability` is `stable` when `|effect| > k` floors, else `kernel-sensitive`, and
+every result names the `kernel_path` its native number came from (`mdb-stepped`, `batched`, or a
+caller-declared string). `k` defaults to `STABLE_FLOORS = 4` (`supplied`, from that table);
+`stability.calibrate(pairs, model=...)` measures it per model from `(reference, other, floor)`
+effect pairs of two realisations (the smallest `k` above which no verdict is lost, with the
+loss table by bin) as a `Calibration` saved to JSON. `supplied.judge(..., kernel_path=,
+calibration=, stable_floors=)` and `forecast.verify(run, kernel_path="mdb-stepped",
+calibration=, stable_floors=)` take it; `verify` marks margin forecasts (`|M|` against 2 spacings
+at the larger logit). Calibrated on exp6 (mdb stepped as reference): kernel path only k = 2.125
+(Qwen3-0.6B-Base) and 2.0 (Qwen2.5-0.5B); every path pooled (TL batched, processed, batch-1) k =
+2.125 and 3.75.
 
 ## Following a value: `reads`, `symbols`, `circuit`, `compare`
 

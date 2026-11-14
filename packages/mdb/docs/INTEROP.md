@@ -106,3 +106,37 @@ rows = verify.verify(dbg, run, [verify.Claim("L22.A[h6]", 0.0, "scale", "M[9625,
 ```
 
 Limits: mdb edits ports only at the pending row (issue I3), so position-wise activation patching at earlier rows has no native counterpart yet; native verification costs about 5 s per edit on a 1.5B model (issue I4).
+
+## circuit-tracer attribution graphs (SC8)
+
+`mdb.interop.circuit_tracer_graph` reads a circuit-tracer 0.5.0 `Graph` (the object, its
+`to_pt` file, or a plain dict of its tensors: `adjacency_matrix`, `active_features`,
+`input_tokens`, `logit_token_ids`, `n_layers`) without importing circuit-tracer. `graph_edges`
+names every node by its mdb address (`core.foreign_names.ct_*`: a feature reads
+`t<r>.L<l>.n` and writes `t<r>.L<l>.m`; an error node is `t<r>.L<l>.m` minus the
+reconstruction; a token node is `t<r>.emb`; a logit node `t<r>.logits[i=<tok>]`) and returns
+each nonzero entry as a `circuit_map.Edge` (`read` across rows, `compose` within a row,
+`consume` into a logit) with circuit-tracer's weight (`supplied`). `direct_effects(run, graph,
+transcoders)` recomputes the whole adjacency in float64 from an mdb run (`derived-exact` on the
+run's `p`, `h`, `r`, `n`, `m`: attention patterns and norm scales frozen, MLPs blocked), and
+`compare` reports the agreement. With every MLP write a node (`zero_rows=0`, `b_dec` = 0) the
+direct effects into a logit sum to its demeaned native logit (`tests/test_interop_circuit_tracer_graph.py`).
+
+Measured (laptop CPU, fp32, 2026-11-14), circuit-tracer nnsight backend against mdb's
+`direct_effects`, random ReLU transcoders, prompt "The capital of France is", 3 logit targets:
+a tiny random Qwen3 (2 layers, d 64, 32 features): 6,023 edges, Pearson r 1 - 4e-14, max gap
+3.7e-7 of the largest edge, all signs agree; Qwen3-0.6B (local HF snapshot, not the Base
+model; 28 layers, 16 features per layer): 413,933 edges, Pearson r 1 - 7e-12, max gap 2.3e-6
+of the largest edge, 413,932 signs agree.
+
+circuit-tracer does not run in mdb's library environment (transformers 5.13.1, nnsight 0.8.2,
+TransformerLens 4.4): the nnsight backend fails on `from nnsight.intervention.tracing.tracer
+import Barrier` (`ModuleNotFoundError: No module named 'nnsight.intervention.tracing'`; the class
+moved to `nnsight.intervention.barrier` in 0.8) and the TransformerLens backend on `from
+transformer_lens import HookedTransformer` (removed in TL 4.0). The graphs above came from a
+separate venv with circuit-tracer's declared pins: torch 2.8.0 (CPU), transformers 4.57.3,
+huggingface-hub 0.36.2, nnsight 0.7.0 (0.6.3 also imports `Barrier`; not run end to end),
+TransformerLens 3.2.1. Its TransformerLens backend there accepts only official model names
+(`from_pretrained`), so a local or random model goes through the nnsight backend. A tokenizer
+saved by transformers 5 does not load under 4.57.3 (`AttributeError: 'list' object has no
+attribute 'keys'` in `_set_model_specific_special_tokens`); save it with 4.57.

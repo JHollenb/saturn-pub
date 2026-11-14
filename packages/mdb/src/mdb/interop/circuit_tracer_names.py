@@ -3,9 +3,11 @@ addresses (``core.foreign_names.ct_*``).
 
 circuit-tracer 0.5.0 declares ``huggingface-hub<1.0``; under hub 1.x its package import fails
 on ``HF_HUB_ENABLE_HF_TRANSFER`` (obsidian/reviews/2026-11-14-library-env-setup.md).
-``import_circuit_tracer`` sets that constant to False before importing. Whether attribution
-itself runs under transformers 5.x is not checked here; the node ids and the module locations
-of circuit-tracer's Qwen3 mapping are (``tests/test_interop_symtab.py``).
+``import_circuit_tracer`` sets that constant to False before importing. Attribution itself does
+not run under transformers 5.x / nnsight 0.8 / TransformerLens 4 (``ReplacementModel`` import
+errors; ``circuit_tracer_graph`` and docs/INTEROP.md give the pins that run it); the node ids
+and the module locations of circuit-tracer's Qwen3 mapping are checked
+(``tests/test_interop_symtab.py``).
 """
 
 from __future__ import annotations

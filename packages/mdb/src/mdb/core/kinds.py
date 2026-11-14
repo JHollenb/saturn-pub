@@ -41,6 +41,9 @@ FORECAST = declare_kind(
                    "operands_summary.count", "operands_summary.listed",
                    "operands_summary.rest.count", "operands_summary.pointer.bytes",
                    "emulated.shape", "emulated.token", "emulated.rounding_origin.head",
+                   "staged.count", "staged.included.*.*.row", "staged.included.*.*.layer",
+                   "staged.included.*.*.value.shape", "staged.included.cells.*.rows",
+                   "staged.included.cells.*.kv", "staged.included.cells.*.d",
                    *PROCEDURE),
 )
 
