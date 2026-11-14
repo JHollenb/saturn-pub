@@ -16,6 +16,7 @@ torch = pytest.importorskip("torch")
 pytest.importorskip("transformers")
 
 import mdb  # noqa: E402
+from mdb.analysis.forecast import NOT_INFORMATIVE  # noqa: E402
 from mdb.core import index  # noqa: E402
 from mdb.core.bounded import load_json  # noqa: E402
 from mdb.core.records import verify_record  # noqa: E402
@@ -24,6 +25,7 @@ from mdb.engine.models import tiny_model  # noqa: E402
 from mdb.ops import Refused, dispatch  # noqa: E402
 from mdb.ops.lines import parse  # noqa: E402
 from mdb.ops.predict import session_digest  # noqa: E402
+from mdb.ops.registry import has_unresolved  # noqa: E402
 from mdb.repl.render import heat_table, render  # noqa: E402
 from mdb.repl.shell import Shell  # noqa: E402
 
@@ -158,9 +160,16 @@ def test_a_cross_row_whatif_bound_says_it_is_a_worst_case_without_the_sign(tiny)
                                    "consumer": CONSUMER})
     exact = out["prediction"]["exact"]
     assert exact["operands"]["source"] == "forecast" and exact["operands"]["stops"]["value"] > 0
-    assert exact["bound"]["value"] > 1000 * abs(exact["value"]["value"])   # measured: 43197
+    # measured: the consumer bound 43197 against |exact| 0.165e-3 is finite but says nothing there:
+    # the note (with the consumer bound and the first wide stage), the number kept, no "bound"
+    assert "bound" not in exact and exact["bound_informative"] is False
+    assert exact["bound_value"]["value"] > 1000 * abs(exact["value"]["value"])
+    assert exact["bound_note"].startswith(NOT_INFORMATIVE) and "at the consumer" in exact[
+        "bound_note"] and exact["bound_from"] in exact["bound_note"]
     assert exact["wider_than_value"] and "forecast from the cursor" in exact["bound_scope"]
-    assert "no sign" in render(out)
+    assert not has_unresolved(out) and out["state"] == "resolved"
+    shown = render(out)
+    assert "no sign" in shown and exact["bound_note"] in shown and "within bound" not in shown
     # the measured change is what emulation predicted, bit for bit: the bound is loose, not wrong
     assert out["measured"]["delta"]["value"] == out["prediction"]["emulated"]["value"]["value"]
 

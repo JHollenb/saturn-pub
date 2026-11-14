@@ -79,9 +79,12 @@ def test_whatif_bound_takes_the_reduced_precision_premise_under_cuda(debugger, m
     cpu = whatif(run, edit, consumer).report
     monkeypatch.setattr(forecast, "accumulation", lambda owner: accumulation(_cuda_view(owner)))
     cuda = whatif(run, edit, consumer).report
-    fp32_bound = cpu["prediction"]["exact"]["bound"]["value"]
+    # the consumer bound (measured 144 at fp32) is wider than |exact| 3e-4: the note and the
+    # number kept (`bound_value`), the premises still stated
+    fp32_bound = cpu["prediction"]["exact"]["bound_value"]["value"]
     reduced = cuda["prediction"]["exact"]
-    assert reduced["bound"]["value"] > fp32_bound          # u = 2^-8 instead of 2^-24
+    assert reduced["bound_value"]["value"] > fp32_bound    # u = 2^-8 instead of 2^-24
+    assert reduced["bound_informative"] is False and "bound" not in reduced
     assert any("cuBLAS may round partial sums to bf16" in p for p in reduced["premises"])
     assert not any("cuBLAS" in p for p in cpu["prediction"]["exact"]["premises"])
     assert cuda["measured"]["delta"] == cpu["measured"]["delta"]     # nothing native changed
@@ -180,7 +183,8 @@ def test_measure_accumulation_records_per_stage_type_and_flags_a_bad_measurement
     assert record["premise"] == "fp32-then-round" and record["batch"] == 1
     assert record["max_deviation_milli"] == max(record["by_type_milli"].values())
     assert record["max_deviation_milli"] <= 2000 and "max_ulp_index" in record
-    assert {"q_proj", "gate_proj", "down_proj", "lm_head"} <= set(record["by_type"])
+    assert {"q_proj", "gate_proj", "down_proj", "lm_head"} <= set(record["by_type_milli"])
+    assert set(record["by_type_ulp_index"]) == set(record["by_type_milli"])
     monkeypatch.setattr(numerics, "_stage_deviation", lambda *a: (9, 9.0))
     bad = numerics.measure_accumulation(model.model.layers, model.lm_head)
     assert bad["premise"] == "unsupported" and bad["max_deviation_milli"] == 9000
@@ -216,7 +220,7 @@ def test_whatif_bound_prints_the_measured_premise(debugger, monkeypatch):
 
     monkeypatch.setattr(forecast, "accumulation", view)
     exact = whatif(run, Edit("t3.L1.m", 1.5, "scale"), Margin(3, 4, 9)).report["prediction"]["exact"]
-    assert "bound" in exact
+    assert "bound" in exact or exact["bound_value"]["value"] > 0     # a bound, or the note on it
     assert any("measured on this device" in p for p in exact["premises"])
 
 

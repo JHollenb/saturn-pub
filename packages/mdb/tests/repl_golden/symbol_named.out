@@ -18,16 +18,16 @@ set pairs: 4 items  (inline)
   c         2 6 10 4 8  @subject=2 $answer=6 $foil=7 pair a
   d         3 11 5 4   $answer=4 $foil=9 pair a
 (mdb) whatif t1.L1.v[kv0] = clean:t1.L1.v[kv0] --consumer M[4,9]
-whatif t1.L1.v[kv0] replace tensor e8298c9893e5 from clean:t1.L1.v[kv0] -> t5.M[4,9]  (mode rewind, record 1b644b7ee1545371)
-  sealed  linear ΔM = -0.014724 [derived-local P14]   exact ΔM = -0.014033 [derived-exact]  bound 0.094232 [bound] (worst case, >= |exact|: no sign)   emulated ΔM = -0.014526 [derived-exact]
+whatif t1.L1.v[kv0] replace tensor e8298c9893e5 from clean:t1.L1.v[kv0] -> t5.M[4,9]  (mode rewind, record 0700feb5c1c65afa)
+  sealed  linear ΔM = -0.014724 [derived-local P14]   exact ΔM = -0.014033 [derived-exact]  (worst-case rounding interval not informative from t5.logits (consumer bound 0.0942 >= |value| 0.014; no earlier stage was wide)) (worst case, >= |exact|: no sign)   emulated ΔM = -0.014526 [derived-exact]
   native  ΔM = -0.014526 [measured]   (base -0.038208 [measured] -> edited -0.052734 [measured])
-  error split (P20): linear -0.014724 [derived-local P14] + nonlinear 0.00069021 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect -0.00049304 [derived-exact P20] (within bound 0.091995 [bound]) + residual 0 [measured P20]
+  error split (P20): linear -0.014724 [derived-local P14] + nonlinear 0.00069021 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect -0.00049304 [derived-exact P20] (worst-case rounding interval not informative from t5.logits (consumer bound 0.092 >= |value| 0.014; no earlier stage was wide)) + residual 0 [measured P20]
   verdict (P20): effect  native ΔM -0.014526 [measured P20] = 60 spacings, emulated ΔM -0.014526 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) -0.014033 [derived-exact P20]; floor 0.00024414 [supplied P20] = 1 bfloat16 spacing (supplied)
   edited run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 12/12 (worst |native - identity|/bound 0.729 at t5.L1.sg); 1 not checked
   base run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 13/13 (worst |native - identity|/bound 0.898 at t5.L1.r)
   session unchanged at t5.logits  (5 moves, restored)
 (mdb) symbol subj = whatif
-symbol subj = t@subject.L1.v[kv0]  (record 31a630421b6afd3d)
+symbol subj = t@subject.L1.v[kv0]  (record 845497e4adfc0afa)
   role    writer L1.v[kv0] (occurrence, L1 v)
   row     t1 (id 5): role @subject (set item pairs/a); prompt 6 rows sha256 6cc0862f50c8
   readers of cache.L1.v[kv0,row=1] at t5 (2 of 2 listed, at t5.logits):
@@ -36,7 +36,7 @@ symbol subj = t@subject.L1.v[kv0]  (record 31a630421b6afd3d)
   effect  whatif t1.L1.v[kv0] = clean:t1.L1.v[kv0] -> t5.M[4,9]: base -0.038208 [measured] -> edited -0.052734 [measured], Δ -0.014526 [measured], verdict effect
   origin  the last whatif; donor clean:t1.L1.v[kv0] sha256 e8298c9893e5; run main; prefill=0: no row batched, first stepped row t0
 (mdb) symbol show subj
-symbol subj = t@subject.L1.v[kv0]  (record 31a630421b6afd3d)
+symbol subj = t@subject.L1.v[kv0]  (record 845497e4adfc0afa)
   role    writer L1.v[kv0] (occurrence, L1 v)
   row     t1 (id 5): role @subject (set item pairs/a); prompt 6 rows sha256 6cc0862f50c8
   readers of cache.L1.v[kv0,row=1] at t5 (2 of 2 listed, at t5.logits):
@@ -52,10 +52,10 @@ t1.L1.v[kv0]  bfloat16 [1, 1, 8]  (batch, row, kv_head*head_dim)
   pointer occurrence ~stepped sha256 7158d3c78d6c35fd
   symbol subj = t1.L1.v[kv0]  (row 1: its declaring prompt)
 (mdb) whatif subj = clean:subj --consumer M[4,9]
-whatif t1.L1.v[kv0] replace tensor e8298c9893e5 from clean:t1.L1.v[kv0] -> t5.M[4,9]  (mode rewind, record 1b644b7ee1545371)
-  sealed  linear ΔM = -0.014724 [derived-local P14]   exact ΔM = -0.014033 [derived-exact]  bound 0.094232 [bound] (worst case, >= |exact|: no sign)   emulated ΔM = -0.014526 [derived-exact]
+whatif t1.L1.v[kv0] replace tensor e8298c9893e5 from clean:t1.L1.v[kv0] -> t5.M[4,9]  (mode rewind, record 0700feb5c1c65afa)
+  sealed  linear ΔM = -0.014724 [derived-local P14]   exact ΔM = -0.014033 [derived-exact]  (worst-case rounding interval not informative from t5.logits (consumer bound 0.0942 >= |value| 0.014; no earlier stage was wide)) (worst case, >= |exact|: no sign)   emulated ΔM = -0.014526 [derived-exact]
   native  ΔM = -0.014526 [measured]   (base -0.038208 [measured] -> edited -0.052734 [measured])
-  error split (P20): linear -0.014724 [derived-local P14] + nonlinear 0.00069021 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect -0.00049304 [derived-exact P20] (within bound 0.091995 [bound]) + residual 0 [measured P20]
+  error split (P20): linear -0.014724 [derived-local P14] + nonlinear 0.00069021 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect -0.00049304 [derived-exact P20] (worst-case rounding interval not informative from t5.logits (consumer bound 0.092 >= |value| 0.014; no earlier stage was wide)) + residual 0 [measured P20]
   verdict (P20): effect  native ΔM -0.014526 [measured P20] = 60 spacings, emulated ΔM -0.014526 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) -0.014033 [derived-exact P20]; floor 0.00024414 [supplied P20] = 1 bfloat16 spacing (supplied)
   edited run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 12/12 (worst |native - identity|/bound 0.729 at t5.L1.sg); 1 not checked
   base run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 13/13 (worst |native - identity|/bound 0.898 at t5.L1.r)
@@ -91,4 +91,4 @@ symbols at t5.logits  consumer t5.M[4,9] = -0.038208 [measured]  min_mass 0.1 [s
   accounting: 4 heads, listed mass 0.66895 [derived-exact], max |sum p - 1| 0 [measured] <= 0.023438 [bound], partition gap 0 [derived-exact]
   (bindings 1-1 of 6)
 (mdb) symbol delete subj
-symbol subj deleted (record 31a630421b6afd3d); removed from this session; a record stored in a project stays there
+symbol subj deleted (record 845497e4adfc0afa); removed from this session; a record stored in a project stays there

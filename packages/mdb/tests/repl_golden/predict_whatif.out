@@ -5,8 +5,8 @@ t3.L1.a  a = RMSNorm(h) * w_in  {P02 P03}
 (mdb) break L*.p
 Breakpoint 1 at L*.p
 (mdb) whatif L1.m=0.5 add consumer=M[4,9]
-whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 4239e73df2585a4e)
-  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  (worst-case rounding interval not informative from t3.L1.m (interval 0.000669 >= |x| 0.000517))  (operands forecast from t3.L1.a)   emulated ΔM = 0.16449 [derived-exact]
+whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 6d20c588e1d2db75)
+  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  bound 0.07029 [bound]  (operands forecast from t3.L1.a)   emulated ΔM = 0.16449 [derived-exact]
   native  ΔM = 0.16449 [measured]   (base -0.11401 [measured] -> edited 0.050476 [measured])
   error split (P20): linear 1.4572 [derived-local P14] + nonlinear -1.2921 [derived-exact P20] + operands 4.2358e-05 [derived-exact P20] + realisation -4.5182e-05 [derived-exact P20] + rounding effect -0.00063376 [derived-exact P20] (within bound 0.01905 [bound]) + residual 0 [measured P20]
   verdict (P20): effect  native ΔM 0.16449 [measured P20] = 3.4e+02 spacings, emulated ΔM 0.16449 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) 0.16512 [derived-exact P20]; floor 0.00048828 [supplied P20] = 1 bfloat16 spacing (supplied)
@@ -14,17 +14,17 @@ whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 4239e73df2
   base run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 19/19 (worst |native - identity|/bound 0.885 at t3.L1.sg)
   session unchanged at t3.L1.a  (5 moves, restored)
 (mdb) whatif L0.v=0.25 add consumer=t3.logits[i=7]
-whatif t3.L0.v add 0.25 [supplied] -> t3.logits[i=7]  (mode rewind, record ff99865b7c14b031)
-  sealed  linear Δlogit = -0.018372 [derived-local P14]   exact Δlogit = -0.01183 [derived-exact]  (worst-case rounding interval not informative from t3.L0.m (interval 0.000811 >= |x| 0.000401))  (operands forecast from t3.L1.a)   emulated Δlogit = -0.011719 [derived-exact]
+whatif t3.L0.v add 0.25 [supplied] -> t3.logits[i=7]  (mode rewind, record a46acb32d1ecc9ac)
+  sealed  linear Δlogit = -0.018372 [derived-local P14]   exact Δlogit = -0.01183 [derived-exact]  (worst-case rounding interval not informative from t3.L0.m (interval 0.000811 >= |x| 0.000401); at the consumer t3.logits the bound is 0.505 >= |value| 0.0118) (worst case, >= |exact|: no sign)  (operands forecast from t3.L1.a)   emulated Δlogit = -0.011719 [derived-exact]
   native  Δlogit = -0.011719 [measured]   (base -0.15332 [measured] -> edited -0.16504 [measured])
-  error split (P20): linear -0.018372 [derived-local P14] + nonlinear 0.0065423 [derived-exact P20] + operands 0 [derived-exact P20] + realisation -4.5157e-05 [derived-exact P20] + rounding effect 0.00015624 [derived-exact P20] (worst-case rounding interval not informative from t3.L0.m (interval 0.00058 >= |x| 0.000401)) + residual 0 [measured P20]
+  error split (P20): linear -0.018372 [derived-local P14] + nonlinear 0.0065423 [derived-exact P20] + operands 0 [derived-exact P20] + realisation -4.5157e-05 [derived-exact P20] + rounding effect 0.00015624 [derived-exact P20] (worst-case rounding interval not informative from t3.L0.m (interval 0.00058 >= |x| 0.000401); at the consumer t3.logits the bound is 0.342 >= |value| 0.0118) + residual 0 [measured P20]
   verdict (P20): effect  native Δlogit -0.011719 [measured P20] = 12 spacings, emulated Δlogit -0.011719 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact Δlogit (written value, measured operands) -0.011875 [derived-exact P20]; floor 0.00097656 [supplied P20] = 1 bfloat16 spacing (supplied)
   edited run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 31/31 (worst |native - identity|/bound 0.966 at t3.L1.r); 1 not checked
   base run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 19/19 (worst |native - identity|/bound 0.885 at t3.L1.sg)
   session unchanged at t3.L1.a  (7 moves, restored)
 (mdb) whatif L1.o 1.5 scale consumer=L1.h_out
-whatif t3.L1.o scale 1.5 [supplied] -> t3.L1.h_out  (mode pending, record 9095f072ff860aa4)
-  sealed  linear Δ = max_abs 0.0040993 [derived-local P14] norm 0.0082277 [derived-local P14]   exact Δ = max_abs 0.0041011 [derived-exact] norm 0.0082297 [derived-exact]  (worst-case rounding interval not informative from t3.L1.m (interval 0.000964 >= |x| 0.000503))  (operands forecast from t3.L1.a)   emulated Δ = max_abs 0.0041046 [derived-exact] norm 0.0081314 [derived-exact]
+whatif t3.L1.o scale 1.5 [supplied] -> t3.L1.h_out  (mode pending, record db06883c2202890c)
+  sealed  linear Δ = max_abs 0.0040993 [derived-local P14] norm 0.0082277 [derived-local P14]   exact Δ = max_abs 0.0041011 [derived-exact] norm 0.0082297 [derived-exact]  bound 0.0028421 [bound]  (operands forecast from t3.L1.a)   emulated Δ = max_abs 0.0041046 [derived-exact] norm 0.0081314 [derived-exact]
   native  Δ = max_abs 0.0041046 [measured] norm 0.0081314 [measured]   (base max_abs 0.048584 [measured] norm 0.089818 [measured] -> edited max_abs 0.049805 [measured] norm 0.091607 [measured])
   error split (P20): linear max_abs 0.0040993 [derived-local P14] norm 0.0082277 [derived-local P14] + nonlinear max_abs 4.0134e-06 [derived-exact P20] norm 7.6537e-06 [derived-exact P20] + operands max_abs 1.246e-05 [derived-exact P20] norm 2.1379e-05 [derived-exact P20] + realisation max_abs 1.5694e-05 [derived-exact P20] norm 3.3337e-05 [derived-exact P20] + rounding effect max_abs 0.00018408 [derived-exact P20] norm 0.0002879 [derived-exact P20] (within bound 0.0010968 [bound]) + residual max_abs 0 [measured P20] norm 0 [measured P20]
   verdict (P20): effect  native Δ 0.0041046 [measured P20] = 17 spacings, emulated Δ 0.0041046 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact Δ (written value, measured operands) 0.0040999 [derived-exact P20]; floor 0.00024414 [supplied P20] = 1 bfloat16 spacing (supplied)
@@ -32,10 +32,10 @@ whatif t3.L1.o scale 1.5 [supplied] -> t3.L1.h_out  (mode pending, record 9095f0
   base run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 17/17 (worst |native - identity|/bound 0.885 at t3.L1.sg)
   session unchanged at t3.L1.a  (5 moves, restored)
 (mdb) whatif L1.m=0.5 add consumer=t4.M[4,9]
-whatif t3.L1.m add 0.5 [supplied] -> t4.M[4,9]  (mode pending, record 80a47e7eb108c7e5)
-  sealed  linear ΔM = refused (the edit flips the sampled token of t4 (20 -> 31): the first-order term does not cross a token change)   exact ΔM = 0.18443 [derived-exact]  (worst-case rounding interval not informative from t3.L1.m (interval 0.000669 >= |x| 0.000517))  (operands forecast from t3.L1.a)   emulated ΔM = 0.18408 [derived-exact]
+whatif t3.L1.m add 0.5 [supplied] -> t4.M[4,9]  (mode pending, record 8f9693c696208b81)
+  sealed  linear ΔM = refused (the edit flips the sampled token of t4 (20 -> 31): the first-order term does not cross a token change)   exact ΔM = 0.18443 [derived-exact]  (worst-case rounding interval not informative from t3.L1.m (interval 0.000669 >= |x| 0.000517); not carried past t3.sample (argmax not certified: the top logit's bound overlaps another))  (operands forecast from t3.L1.a)   emulated ΔM = 0.18408 [derived-exact]
   native  ΔM = 0.18408 [measured]   (base -0.052979 [measured] -> edited 0.1311 [measured])
-  error split (P20): exact 0.18443 [derived-exact] + operands 9.2579e-07 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect -0.00034934 [derived-exact P20] (worst-case rounding interval not informative from t4.L0.m (interval 0.00152 >= |x| 0.000612)) + residual 0 [measured P20]
+  error split (P20): exact 0.18443 [derived-exact] + operands 9.2579e-07 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect -0.00034934 [derived-exact P20] (worst-case rounding interval not informative from t4.L0.m (interval 0.00152 >= |x| 0.000612); at the consumer t4.logits the bound is 202 >= |value| 0.184) + residual 0 [measured P20]
   verdict (P20): effect  native ΔM 0.18408 [measured P20] = 3.8e+02 spacings, emulated ΔM 0.18408 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) 0.18443 [derived-exact P20]; floor 0.00048828 [supplied P20] = 1 bfloat16 spacing (supplied)
   edited run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 60/60 (worst |native - identity|/bound 0.973 at t4.L0.f); 1 not checked
   base run stages [per-stage bound, not a chain bound]: each stage within its own rounding bound on native operands: 61/61 (worst |native - identity|/bound 0.958 at t4.L0.f)
@@ -45,8 +45,8 @@ t3.L1.a  a = RMSNorm(h) * w_in  {P02 P03}
 tokens: 1 5 9 3
 staged edits: 0, lookahead none
 (mdb) whatif L1.m = 0.5 add --consumer M[4,9]
-whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 4239e73df2585a4e)
-  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  (worst-case rounding interval not informative from t3.L1.m (interval 0.000669 >= |x| 0.000517))  (operands forecast from t3.L1.a)   emulated ΔM = 0.16449 [derived-exact]
+whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 6d20c588e1d2db75)
+  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  bound 0.07029 [bound]  (operands forecast from t3.L1.a)   emulated ΔM = 0.16449 [derived-exact]
   native  ΔM = 0.16449 [measured]   (base -0.11401 [measured] -> edited 0.050476 [measured])
   error split (P20): linear 1.4572 [derived-local P14] + nonlinear -1.2921 [derived-exact P20] + operands 4.2358e-05 [derived-exact P20] + realisation -4.5182e-05 [derived-exact P20] + rounding effect -0.00063376 [derived-exact P20] (within bound 0.01905 [bound]) + residual 0 [measured P20]
   verdict (P20): effect  native ΔM 0.16449 [measured P20] = 3.4e+02 spacings, emulated ΔM 0.16449 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) 0.16512 [derived-exact P20]; floor 0.00048828 [supplied P20] = 1 bfloat16 spacing (supplied)

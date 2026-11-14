@@ -73,16 +73,28 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
+from mdb.core.bounded import MAX_ITEMS, bound_list, load_json
 from mdb.core.kinds import WHATIF, procedure
 from mdb.core.pointers import seal_digest
-from mdb.core.bounded import MAX_ITEMS, bound_list, load_json
 from mdb.core.records import num, seal_record
 
 from .accumulation import bound_state
 from .finite import BOUND, EXACT, LOCAL, MEASURED, SUPPLIED, f64
-from .forecast import (EMULATION_PREMISE, EMULATION_PREMISES, EmulatedRowModel, Logit, Margin,
-                       Refusal, RowModel, _split, containment, producers, run_session_id,
-                       stage_checks, stage_parting)
+from .forecast import (
+    EMULATION_PREMISE,
+    EMULATION_PREMISES,
+    EmulatedRowModel,
+    Logit,
+    Margin,
+    Refusal,
+    RowModel,
+    _split,
+    containment,
+    producers,
+    run_session_id,
+    stage_checks,
+    stage_parting,
+)
 from .verdict import FLOOR_SPACINGS, NOT_CONFIRMED, decide, magnitude, spacing
 
 SCHEMA = "mdb-whatif-v1"
@@ -604,6 +616,7 @@ def _settle(run: Any, p: Plan, chain: list[RowModel], seen: dict[str, dict[str, 
     out["first"] = next((m.unbounded[p.consumer_label] for m in chain
                          if p.consumer_label in m.unbounded), None)
     out["broken"] = next((m.broken for m in chain if m.broken is not None), None)
+    out["wide"] = next((m.wide for m in chain if m.wide is not None), None)
     out["walk"] = _walk(chain)
     return out
 
@@ -632,6 +645,7 @@ def _found(base: dict[str, Any], edited: dict[str, Any], seen: dict[str, dict[st
         "operand_reason": base["first"] if base["first"] is not None else edited["first"],
         "premises": base["premises"] | edited["premises"],
         "broken": edited["broken"] or base["broken"],
+        "wide": edited["wide"] or base["wide"],
         "walk_base": base["walk"], "walk_edited": edited["walk"],
     }
 
@@ -971,7 +985,9 @@ def _written_exact(run: Any, p: Plan, edit: Edit, found: dict[str, Any], realise
                 bound + found["base_bound"]),
             "spread_reason": _realised_reason(p, chain[-1], found),
             "spread_broken": next((m.broken for m in chain if m.broken is not None),
-                                  found.get("broken"))}
+                                  found.get("broken")),
+            "spread_wide": next((m.wide for m in chain if m.wide is not None),
+                                found.get("wide"))}
 
 
 def _measured_exact(run: Any, p: Plan, edit: Edit, realised: Any) -> dict[str, Any]:
@@ -1137,10 +1153,30 @@ def _bound_note(reason: str, broken: dict[str, str] | None) -> dict[str, Any]:
     return {"bound_note": f"no worst-case interval bound ({bound_state(reason)}: {reason})"}
 
 
+def _informative(bound: Any, size: Any, stage: str, wide: dict[str, str] | None
+                 ) -> dict[str, Any] | None:
+    """The note (and the recorded numeric bound) when a finite ``bound`` is at least ``size``,
+    the consumer's ``|exact delta|`` (it does not fix the change's sign): None when it says
+    something. Never printed as ``within bound <huge>``."""
+    from .forecast import consumer_note
+
+    worst = float(bound.reshape(-1).max())
+    size = float(size.abs().max()) if size is not None and size.numel() else float("inf")
+    note = consumer_note(worst, size, stage, wide)
+    if note is None:
+        return None
+    return {"bound_note": note["text"], "bound_informative": False, "bound_from": note["stage"],
+            "bound_value": num(worst, BOUND)}
+
+
 def _within(gap: Any, bound: Any, reason: str,
-            broken: dict[str, str] | None = None) -> dict[str, Any]:
+            broken: dict[str, str] | None = None, size: Any = None, stage: str = "",
+            wide: dict[str, str] | None = None) -> dict[str, Any]:
     if bound is None:
         return _bound_note(reason, broken)
+    note = _informative(bound, size, stage, wide)
+    if note is not None:
+        return note
     return {"bound": num(float(bound.reshape(-1).max()), BOUND),
             "within_bound": bool((gap.abs() <= bound).all())}
 
@@ -1199,14 +1235,18 @@ class WhatIf:
     tensors: dict[str, Any]
 
 
-def _within_view(found: dict[str, Any]) -> dict[str, Any]:
+def _within_view(found: dict[str, Any], stage: str = "") -> dict[str, Any]:
     if found["exact_bound"] is None:
         return _bound_note(found["unbounded"], found.get("broken"))
+    premises = sorted(found["premises"] | {"round to nearest, no overflow or underflow",
+                                           "replace/add/scale: the operand is cast to "
+                                           "the model dtype and applied in one rounded "
+                                           "op; mix: float64, rounded once"})
+    note = _informative(found["exact_bound"], found["exact"], stage, found.get("wide"))
+    if note is not None:     # a finite interval at least |exact|: the note, the number kept
+        return {**note, "premises": premises}
     return {"bound": num(float(found["exact_bound"].reshape(-1).max()), BOUND),
-            "premises": sorted(found["premises"] | {"round to nearest, no overflow or underflow",
-                                                    "replace/add/scale: the operand is cast to "
-                                                    "the model dtype and applied in one rounded "
-                                                    "op; mix: float64, rounded once"})}
+            "premises": premises}
 
 
 def _bound_scope(view: dict[str, Any], ahead: int) -> dict[str, Any]:
@@ -1218,7 +1258,7 @@ def _bound_scope(view: dict[str, Any], ahead: int) -> dict[str, Any]:
     bound through a few forecast layers reaches 1e4..1e5 while the realised gap stays within
     a spacing. ``wider_than_value``: the bound is at least ``|exact|``, so it does not fix the
     change's sign; it never decides a verdict either way."""
-    bound, value = view.get("bound"), view.get("value")
+    bound, value = view.get("bound") or view.get("bound_value"), view.get("value")
     if not isinstance(bound, dict) or not isinstance(value, dict) \
             or not isinstance(value.get("value"), float):
         return {}
@@ -1339,7 +1379,7 @@ def _prepare(run: Any, edit: Edit, consumer: Any, before_native: Any = None,
     if reason is not None:
         prediction = {"state": "refused", "reason": reason}
     else:
-        exact_view = {"value": _claim(found["exact"], EXACT), **_within_view(found)}
+        exact_view = {"value": _claim(found["exact"], EXACT), **_within_view(found, p.consumer_stop)}
         stops = len(run.stops())
         ahead = sum(1 for j in range(p.row, p.consumer_row + 1) for i in range(stops)
                     if p.here < (j, i) <= p.consumer_key)
@@ -1524,7 +1564,8 @@ def _finish(run: Any, prep: _Prepared, native: dict[str, Any], after: str) -> Wh
                  "meaning": "the emulated change (the dtype's rounding where eager HF rounds, "
                             "sealed) minus the exact change with the written operand; derived "
                             "under the emulation premises",
-                 **_within(rounding, spread, post["spread_reason"], post.get("spread_broken"))},
+                 **_within(rounding, spread, post["spread_reason"], post.get("spread_broken"),
+                           post["exact"], p.consumer_stop, post.get("spread_wide"))},
                 {"name": "residual", "value": _claim(native_change - emulated, MEASURED, "P20"),
                  "meaning": "native change minus the emulated change"}]
         else:
@@ -1533,7 +1574,8 @@ def _finish(run: Any, prep: _Prepared, native: dict[str, Any], after: str) -> Wh
                                      "operand (no emulated chain: "
                                      f"{found.get('emulated_reason', 'not computed')})",
                           **_within(rounding, spread, post["spread_reason"],
-                                    post.get("spread_broken"))})
+                                    post.get("spread_broken"), post["exact"],
+                                    p.consumer_stop, post.get("spread_wide"))})
         report["exact"] = {
             "requested": _claim(post["exact"], EXACT, "P20"),
             "written": _claim(at_realised, EXACT, "P20"),
@@ -1545,7 +1587,8 @@ def _finish(run: Any, prep: _Prepared, native: dict[str, Any], after: str) -> Wh
         report["difference"] = {
             "native_minus_exact": {"value": _claim(native_change - exact, MEASURED),
                                    **_within(native_change - exact, found["exact_bound"],
-                                             found["unbounded"], found.get("broken"))},
+                                             found["unbounded"], found.get("broken"), exact,
+                                             p.consumer_stop, found.get("wide"))},
             **({"native_minus_linear": _claim(native_change - found["linear"], MEASURED)}
                if "linear" in found else {}),
         }

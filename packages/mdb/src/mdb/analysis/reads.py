@@ -490,7 +490,12 @@ def _verdict(result: Any, min_effect: float) -> dict[str, Any]:
     if emulated is not None:   # the emulated change (M51): what the verdict holds native against
         out["emulated"] = (emulated["value"] if "value" in emulated
                            else {"state": emulated["state"], "reason": emulated["reason"]})
-    if bound is not None:   # the worst-case interval bound: shown beside, never decides
+    terms = {} if result.report["split"].get("state") == "refused" else {
+        t["name"]: t for t in result.report["split"]["terms"]}
+    term = terms.get("rounding effect") or terms.get("rounding") or {}
+    if "bound_note" in term:   # no informative interval (cut, or at least |exact|): say why
+        out["bound_note"] = term["bound_note"]
+    elif bound is not None:   # the worst-case interval bound: shown beside, never decides
         out["rounding_bound"] = claim(f64(bound).reshape(-1).max(), BOUND)
     effect = result.report["effect"]
     out["effect"] = {key: value for key, value in effect.items() if key != "state"}

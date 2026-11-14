@@ -38,13 +38,13 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from mdb.core.bounded import MAX_ITEMS, bound_list, load_json, put_json
-from mdb.core.pointers import occurrence_pointer, seal_digest
 from mdb.core.kinds import FORECAST, procedure
+from mdb.core.pointers import occurrence_pointer, seal_digest
 from mdb.core.records import num, seal_record
 
+from . import verdict as _verdict
 from .accumulation import PREMISE_FAILS, accumulation, bound_state
 from .explain import _readout_refusal, _rope_refusal
-from . import verdict as _verdict
 from .finite import BOUND, EXACT, MEASURED, f64
 
 SCHEMA = "mdb-forecast-v1"
@@ -167,11 +167,14 @@ class RowModel:
     committed edits (M55).
 
     The worst-case bound (M56) assumes every rounding error aligns. ``broken`` records the first
-    stop where it stops being informative (not finite, or ``cut`` and at least the value's
-    magnitude): ``{stage, cause, text}``, the cause with its numbers. The bound is not
-    propagated past that stop (its descendants carry the reason); no inf or nan ever leaves the
-    bound code. ``cut=False`` (the per-stage bounds on native operands, ``stage_checks``) keeps a
-    finite bound however wide.
+    stop where the bound cannot be carried on (not finite, would overflow, or a premise fails):
+    ``{stage, cause, text}``, the cause with its numbers. The bound is not propagated past that
+    stop (its descendants carry the reason); no inf or nan ever leaves the bound code. A finite
+    bound is kept however wide (an intermediate element can have a wide interval while the bound
+    at the consumer is useful): ``wide`` remembers the first stop where it became at least the
+    value's magnitude (``cut``; ``{stage, cause, text}``), and the consumer decides whether the
+    bound it ends with says anything (``consumer_note``). ``cut=False`` (the per-stage bounds on
+    native operands, ``stage_checks``) records no wide stop.
     """
 
     def __init__(self, run: Any, row: int, known: Callable[[str], Any], *, bounds: bool = True,
@@ -196,6 +199,7 @@ class RowModel:
         self._failed: str | None = None
         self._vague: str | None = None      # a step's numbers, named if its bound is uninformative
         self.broken: dict[str, str] | None = None
+        self.wide: dict[str, str] | None = None
         self.cut = cut
         self.bounds = bounds
         self.overrides = dict(overrides or {})
@@ -276,6 +280,11 @@ class RowModel:
             elif self.bounds and (bound is not None or self._vague is not None):
                 broken = self._uninformative(label, value, bound)
                 if broken is not None:
+                    if self.wide is not None:   # it was already wide before it stopped here
+                        broken = {"stage": self.wide["stage"], "cause": broken["cause"],
+                                  "stopped_at": broken["stage"],
+                                  "text": f"{self.wide['text']}; not carried past "
+                                          f"{broken['stage']} ({broken['cause']})"}
                     bound = None
                     self.unbounded[label] = broken["text"]
                     if self.broken is None:
@@ -295,9 +304,11 @@ class RowModel:
                 "no rounding bound for this step")
 
     def _uninformative(self, label: str, value: Any, bound: Any) -> dict[str, str] | None:
-        """``{stage, cause, text}`` when the worst-case bound of a computed stop says nothing:
-        none with the step's numbers (``_vague``), not finite, or (``cut``) at least the largest
-        ``|value|`` (it does not fix any element's sign); None while it is informative."""
+        """``{stage, cause, text}`` when the worst-case bound of a computed stop cannot be carried
+        on: none with the step's numbers (``_vague``) or not finite. A finite bound is kept; the
+        first stop where it is (``cut``) at least the largest ``|value|`` is remembered in
+        ``wide`` (it does not fix any element's sign there) without cutting. None while the bound
+        goes on."""
         torch = _torch()
         stage = f"t{self.row}.{label}"
         size = float(value.abs().max()) if value.numel() else 0.0
@@ -307,9 +318,11 @@ class RowModel:
             cause = self._vague or "the propagated interval is not finite"
         else:
             worst = float(bound.max()) if bound.numel() else 0.0
-            if not self.cut or worst == 0.0 or worst < size:
-                return None
-            cause = self._vague or f"interval {worst:.3g} >= |x| {size:.3g}"
+            if self.cut and worst != 0.0 and worst >= size and self.wide is None:
+                cause = self._vague or f"interval {worst:.3g} >= |x| {size:.3g}"
+                self.wide = {"stage": stage, "cause": cause,
+                             "text": f"{NOT_INFORMATIVE} {stage} ({cause})"}
+            return None
         return {"stage": stage, "cause": cause, "text": f"{NOT_INFORMATIVE} {stage} ({cause})"}
 
     def _weight(self, module: Any, name: str = "weight") -> Any:
@@ -606,7 +619,7 @@ class RowModel:
         top, size = float(spread.max()), float(s.abs().max())
         if not 2 * top <= EXP_LIMIT:        # exp(2 x interval) overflows float64 (or nan)
             self._vague = (f"score interval {top:.3g} at |s| {size:.3g}, softmax worst case "
-                           f"exp(2*{top:.3g}) = 1e{2 * top / math.log(10):.0f}, beyond float64")
+                           f"exp(2*{top:.3g}) = 1e{2 * top / math.log(10):.3g}, beyond float64")
             return value, None
         self._vague = (f"score interval {top:.3g} at |s| {size:.3g}, softmax worst case "
                        f"exp(2*{top:.3g}) = {math.exp(2 * top):.2g}")
@@ -1172,7 +1185,7 @@ def _body(run, model, label, margin, address, key, here, value, bound, checkpoin
     else:
         predicted = {"shape": list(value.shape), "dtype": "float64",
                      "sha256": tensor_digest(value.contiguous()), **_summary(value, EXACT)}
-    bound_view = bound_view_of(model, label, bound, run.adapter.dtype)
+    bound_view = bound_view_of(model, label, bound, run.adapter.dtype, value)
     return {
         "schema": SCHEMA,
         "target": {"address": address, "stop": f"t{row}.{label}", "row": key[0],
@@ -1201,7 +1214,27 @@ BOUND_ROLE = ("information: the worst-case interval (every rounding error aligne
               "prediction; it never decides a verdict or a result's state")
 
 
-def bound_view_of(model: RowModel, label: str, bound: Any, dtype: Any) -> dict[str, Any]:
+def consumer_note(worst: float, size: float, stage: str,
+                  wide: dict[str, str] | None) -> dict[str, Any] | None:
+    """Whether the worst-case bound at the consumer says anything: None when it is finite and
+    smaller than ``|value|`` (``size``; zero bound always informative), else ``{stage, text,
+    value}``: the note names the first wide stage of the chain (``wide``, with its numbers) and
+    the consumer bound beside ``|value|``, so the reader sees the size. ``value`` is the number
+    (kept in the record as ``bound_value``, never printed as a confirmation)."""
+    if not math.isfinite(worst) or worst == 0.0 or worst < size:
+        return None
+    if wide is None:
+        text = (f"{NOT_INFORMATIVE} {stage} (consumer bound {worst:.3g} >= |value| {size:.3g}; "
+                "no earlier stage was wide)")
+        return {"stage": stage, "text": text, "value": worst}
+    first = wide["stage"]
+    text = (f"{NOT_INFORMATIVE} {first} ({wide['cause']}); at the consumer {stage} the bound is "
+            f"{worst:.3g} >= |value| {size:.3g}")
+    return {"stage": first, "text": text, "value": worst}
+
+
+def bound_view_of(model: RowModel, label: str, bound: Any, dtype: Any,
+                  value: Any = None) -> dict[str, Any]:
     """The sealed ``bound`` sub-dict of a forecast (M56): the worst-case interval with its
     premises; or, where it stopped being informative, the stop and the cause with its numbers
     (``informative: False``, no state: an uninformative worst case is information, not an
@@ -1215,12 +1248,19 @@ def bound_view_of(model: RowModel, label: str, bound: Any, dtype: Any) -> dict[s
                     "information": True, "role": BOUND_ROLE}
         return {"state": bound_state(reason), "reason": reason, "information": True,
                 "role": BOUND_ROLE}
-    return {"max": num(float(bound.reshape(-1).max()), BOUND), "elementwise": True,
-            "information": True, "role": BOUND_ROLE,
-            "premises": sorted(model.premises | {
-                "round to nearest; underflow bounded absolutely where stated, no overflow",
-                f"float32 library functions within {LIBRARY_ULPS} ulp",
-                f"model dtype {str(dtype).removeprefix('torch.')}"})}
+    worst = float(bound.reshape(-1).max())
+    size = float(value.abs().max()) if value is not None and value.numel() else math.inf
+    premises = sorted(model.premises | {
+        "round to nearest; underflow bounded absolutely where stated, no overflow",
+        f"float32 library functions within {LIBRARY_ULPS} ulp",
+        f"model dtype {str(dtype).removeprefix('torch.')}"})
+    note = consumer_note(worst, size, f"t{model.row}.{label}", model.wide)
+    if note is not None:     # finite, at least |value|: the note, the number kept
+        return {"informative": False, "from": note["stage"], "note": note["text"],
+                "bound_value": num(worst, BOUND), "information": True, "role": BOUND_ROLE,
+                "premises": premises}
+    return {"max": num(worst, BOUND), "elementwise": True,
+            "information": True, "role": BOUND_ROLE, "premises": premises}
 
 
 def view(entry: Forecast) -> dict[str, Any]:
@@ -1380,7 +1420,9 @@ def _decide(run: Any, entry: Forecast, native: Any, raw: Any, label: str) -> dic
         out.update(_parting(run, entry, label, checks))
     bound = entry.bound
     sealed = entry.record["body"]["bound"]
-    if bound is not None and bool(bound.isfinite().all()):
+    if sealed.get("informative") is False:     # finite but not informative: the note, no "within"
+        out["bound_note"] = sealed["note"]
+    elif bound is not None and bool(bound.isfinite().all()):
         # information only: the worst-case propagated bound of the exact prediction
         exact_gap = (native - entry.predicted).abs()
         within = bool((exact_gap <= bound).all())
