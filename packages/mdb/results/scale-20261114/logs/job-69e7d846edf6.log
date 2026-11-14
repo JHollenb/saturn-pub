@@ -1,0 +1,68 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 03fb5c6df73fc24a0a4daeb355d3dc3621ebec96 script sweep.py args /mnt/big/llm-models/Qwen2.5-3B /mnt/ssd1tb/cache/beast/scale/Qwen2.5-3B sw-Qwen2.5-3B-b 64-128
+load 6.0s
+A1 {"id": "d3-lm:the Astronomical Clock of the Old Town", "s": 0.76}
+A1 {"id": "d3-lm:Tivoli Gardens", "s": 0.34}
+A1 {"id": "d3-lm:the Khan el-Khalili bazaar", "s": 0.46}
+A1 {"id": "d3-lm:Suomenlinna fortress", "s": 0.31}
+A1 {"id": "d3-lm:Notre-Dame Cathedral", "s": 0.34}
+A1 {"id": "d3-lm:the Brandenburg Gate", "s": 0.24}
+A1 {"id": "d3-lm:the Acropolis", "s": 0.23}
+A1 {"id": "d3-lm:Fisherman's Bastion", "s": 0.31}
+A1 {"id": "d3-lm:the Colosseum", "s": 0.31}
+A1 {"id": "d3-lm:Shibuya Crossing", "s": 0.21}
+A1 {"id": "d3-lm:Gyeongbokgung Palace", "s": 0.47}
+A1 {"id": "d3-lm:the Anne Frank House", "s": 0.29}
+A1 {"id": "d3-per:Franz Schubert", "s": 0.28}
+A1 {"id": "d3-per:Charlie Chaplin", "s": 0.27}
+A1 {"id": "d3-per:Franz Kafka", "s": 0.18}
+A1 {"id": "d3-per:Niels Bohr", "s": 0.28}
+A1 {"id": "d3-per:Naguib Mahfouz", "s": 0.32}
+A1 {"id": "d3-per:Claude Monet", "s": 0.26}
+A1 {"id": "d3-per:Alexander von Humboldt", "s": 0.24}
+A1 {"id": "d3-per:Pericles", "s": 0.21}
+A1 {"id": "d3-per:Erno Rubik", "s": 0.28}
+A1 {"id": "d3-per:Ennio Morricone", "s": 0.3}
+A1 {"id": "d3-per:Hokusai", "s": 0.28}
+A1 {"id": "d3-per:Baruch Spinoza", "s": 0.33}
+A1 {"id": "d3-per:Marie Curie", "s": 0.16}
+A1 {"id": "d3-per:Fernando Pessoa", "s": 0.15}
+A1 {"id": "d4-work:The Blue Danube waltz", "s": 0.28}
+A1 {"id": "d4-work:the film The Great Dictator", "s": 0.26}
+A1 {"id": "d4-work:The Metamorphosis", "s": 0.22}
+A1 {"id": "d4-work:the book Either/Or", "s": 0.21}
+A1 {"id": "d4-work:the novel Palace Walk", "s": 0.2}
+A1 {"id": "d4-work:Candide", "s": 0.15}
+A1 {"id": "d4-work:The Arcades Project", "s": 0.2}
+A1 {"id": "d4-work:The Republic", "s": 0.16}
+A1 {"id": "d4-work:the Rubik's Cube", "s": 0.21}
+A1 {"id": "d4-work:the Commentaries on the Gallic War", "s": 0.26}
+A1 {"id": "d4-work:The Great Wave off Kanagawa", "s": 0.26}
+A1 {"id": "d4-work:The Book of Disquiet", "s": 0.23}
+A1 {"id": "d4-work:Eugene Onegin", "s": 0.14}
+A1 {"id": "d4-work:the play Fuenteovejuna", "s": 0.25}
+A1 {"id": "dist-city:Chicago", "s": 0.14}
+A1 {"id": "dist-city:Melbourne", "s": 0.12}
+A1 {"id": "dist-city:Salzburg", "s": 0.16}
+A1 {"id": "dist-city:Antwerp", "s": 0.16}
+A1 {"id": "dist-city:Liverpool", "s": 0.14}
+A1 {"id": "dist-city:Plovdiv", "s": 0.17}
+A1 {"id": "dist-city:Toronto", "s": 0.12}
+A1 {"id": "dist-city:Valparaiso", "s": 0.19}
+A1 {"id": "dist-city:Shanghai", "s": 0.14}
+A1 {"id": "dist-city:Brno", "s": 0.14}
+A1 {"id": "dist-city:Aarhus", "s": 0.14}
+A1 {"id": "dist-city:Alexandria", "s": 0.14}
+A1 {"id": "obsc-city:Perth", "s": 0.12}
+A1 {"id": "obsc-city:Graz", "s": 0.12}
+A1 {"id": "obsc-city:Ghent", "s": 0.15}
+A1 {"id": "obsc-city:Leeds", "s": 0.12}
+A1 {"id": "obsc-city:Varna", "s": 0.15}
+A1 {"id": "obsc-city:Calgary", "s": 0.13}
+A1 {"id": "obsc-city:Wuhan", "s": 0.14}
+A1 {"id": "obsc-city:Ostrava", "s": 0.14}
+A1 {"id": "obsc-city:Odense", "s": 0.14}
+A1 {"id": "obsc-city:Luxor", "s": 0.14}
+A1 {"id": "obsc-city:Turku", "s": 0.15}
+A1 {"id": "obsc-city:Dortmund", "s": 0.13}
+TOTAL 20.2s peak 6186 MB
