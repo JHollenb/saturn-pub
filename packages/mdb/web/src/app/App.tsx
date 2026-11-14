@@ -14,6 +14,12 @@ import { useUi, type Theme } from '../state/ui';
 import { Graph } from '../views/Graph/Graph';
 import { Inspector } from '../views/Inspector/Inspector';
 import { Live } from '../views/Live/Live';
+import {
+  NoCuts,
+  RecordedCircuits,
+  RecordedSymbols,
+  useRecordKinds,
+} from '../views/Recorded/Recorded';
 import { Records } from '../views/Records/Records';
 import { Symbols } from '../views/Symbols/Symbols';
 import { Timeline } from '../views/Timeline/Timeline';
@@ -43,6 +49,13 @@ export function App() {
   }, [boot]);
   const liveSid = hello?.live ?? null;
   const isLive = !!liveSid && sid === liveSid;
+  // a recorded session's engine records (symbol tables, circuits) are drawn from the records;
+  // a session with no retained cuts says so where a view needs cuts
+  const current = sessions.find((s) => s.id === sid);
+  const kinds = useRecordKinds(!isLive ? sid : null);
+  const noCuts = !isLive && current !== undefined && current.cuts === 0;
+  const tables = (kinds?.['symbol-table'] ?? 0) > 0;
+  const circuits = (kinds?.circuit ?? 0) > 0;
   useEffect(() => {
     const first = sessions[0];
     if (!sid && liveSid) setSession(liveSid);
@@ -79,7 +92,7 @@ export function App() {
   }, [theme]);
 
   return (
-    <div className={isLive ? 'app app-live' : 'app'}>
+    <div className={isLive ? 'app app-live' : noCuts ? 'app app-records' : 'app'}>
       <header className="app-header">
         <strong>mdb</strong>
         <select
@@ -142,7 +155,18 @@ export function App() {
             // the recorded project's symbol list; the live session has its own Symbols tab
             <aside className="app-left">
               <ErrorBoundary name="Symbols">
-                <Symbols />
+                {tables && sid ? (
+                  noCuts ? (
+                    <RecordedSymbols sid={sid} />
+                  ) : (
+                    <div className="app-left-stack">
+                      <RecordedSymbols sid={sid} />
+                      <Symbols />
+                    </div>
+                  )
+                ) : (
+                  <Symbols />
+                )}
               </ErrorBoundary>
             </aside>
           )}
@@ -152,13 +176,31 @@ export function App() {
                 <Live sid={liveSid} />
               </ErrorBoundary>
             </main>
+          ) : noCuts && sid ? (
+            <main className="app-centre app-centre-records">
+              <NoCuts title="Timeline" what="timeline (token row by depth)" session={current} />
+              <ErrorBoundary name="Circuits">
+                {circuits ? (
+                  <RecordedCircuits sid={sid} />
+                ) : (
+                  <NoCuts title="Graph" what="recorded-history graph" session={current} />
+                )}
+              </ErrorBoundary>
+            </main>
           ) : (
             <main className="app-centre">
               <ErrorBoundary name="Timeline">
                 <Timeline />
               </ErrorBoundary>
               <ErrorBoundary name="Graph">
-                <Graph />
+                {circuits && sid ? (
+                  <div className="app-centre-stack">
+                    <Graph />
+                    <RecordedCircuits sid={sid} />
+                  </div>
+                ) : (
+                  <Graph />
+                )}
               </ErrorBoundary>
             </main>
           )}

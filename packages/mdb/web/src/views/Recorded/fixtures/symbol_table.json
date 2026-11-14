@@ -1,0 +1,659 @@
+{
+  "authority": "derived-exact",
+  "body": {
+    "accounting": {
+      "deviation_bound": {
+        "authority": "bound",
+        "value": 0.031250953674316406
+      },
+      "heads": 4,
+      "listed_mass": {
+        "authority": "derived-exact",
+        "value": 4.00146484375
+      },
+      "max_head_deviation": {
+        "authority": "measured",
+        "value": 0.0009765625
+      },
+      "meaning": "per head, bindings + Unbound = sum_s p (native); |sum_s p - 1| against T u_dtype + 2 T u_f32 (softmax in float32, each weight cast to the dtype)",
+      "partition": {
+        "max_gap": {
+          "authority": "derived-exact",
+          "value": 0.0
+        },
+        "meaning": "per head, the sum over all bindings of their mass minus sum_s p (float64 summation order only)"
+      },
+      "within_bound": true
+    },
+    "bindings": [
+      {
+        "count": 4,
+        "definitions": [
+          "t0.L*.k",
+          "t0.L*.v"
+        ],
+        "kind": "token",
+        "lifetime": {
+          "first": "t7.L0",
+          "last": "t7.L1",
+          "strip": "t7:##"
+        },
+        "mass": {
+          "authority": "derived-exact",
+          "value": 0.49951171875
+        },
+        "mean_mass": {
+          "authority": "derived-exact",
+          "value": 0.1248779296875
+        },
+        "omitted": 1,
+        "readers": [
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 0.0028663558984723943
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.12451171875
+            },
+            "name": "t7.L1.h0"
+          },
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 0.002371980151334275
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.125
+            },
+            "name": "t7.L1.h1"
+          },
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": -0.0015601047237035904
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.125
+            },
+            "name": "t7.L0.h0"
+          }
+        ],
+        "rows": [
+          0
+        ],
+        "status": "read",
+        "symbol": "t0",
+        "to_consumer": {
+          "authority": "derived-exact",
+          "proof": "P19",
+          "value": 0.0048239103790239995
+        },
+        "token": 1
+      },
+      {
+        "count": 4,
+        "definitions": [
+          "t1.L*.k",
+          "t1.L*.v"
+        ],
+        "kind": "token",
+        "lifetime": {
+          "first": "t7.L0",
+          "last": "t7.L1",
+          "strip": "t7:##"
+        },
+        "mass": {
+          "authority": "derived-exact",
+          "value": 0.50146484375
+        },
+        "mean_mass": {
+          "authority": "derived-exact",
+          "value": 0.1253662109375
+        },
+        "omitted": 1,
+        "readers": [
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 0.004694746635831153
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.12451171875
+            },
+            "name": "t7.L1.h1"
+          },
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": -0.0012660146004579407
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.1259765625
+            },
+            "name": "t7.L0.h0"
+          },
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 0.0011094995036534986
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.125
+            },
+            "name": "t7.L1.h0"
+          }
+        ],
+        "rows": [
+          1
+        ],
+        "status": "read",
+        "symbol": "t1",
+        "to_consumer": {
+          "authority": "derived-exact",
+          "proof": "P19",
+          "value": 0.0035968983833214985
+        },
+        "token": 5
+      },
+      {
+        "count": 4,
+        "definitions": [
+          "t2.L*.k",
+          "t2.L*.v"
+        ],
+        "kind": "token",
+        "lifetime": {
+          "first": "t7.L0",
+          "last": "t7.L1",
+          "strip": "t7:##"
+        },
+        "mass": {
+          "authority": "derived-exact",
+          "value": 0.5
+        },
+        "mean_mass": {
+          "authority": "derived-exact",
+          "value": 0.125
+        },
+        "omitted": 1,
+        "readers": [
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 0.006030026419080979
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.12451171875
+            },
+            "name": "t7.L1.h1"
+          },
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 0.002095645605992754
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.125
+            },
+            "name": "t7.L0.h0"
+          },
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 0.0020887993176379226
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.1259765625
+            },
+            "name": "t7.L1.h0"
+          }
+        ],
+        "rows": [
+          2
+        ],
+        "status": "read",
+        "symbol": "t2",
+        "to_consumer": {
+          "authority": "derived-exact",
+          "proof": "P19",
+          "value": 0.009956390421570132
+        },
+        "token": 9
+      },
+      {
+        "count": 4,
+        "definitions": [
+          "t3.L*.k",
+          "t3.L*.v"
+        ],
+        "kind": "token",
+        "lifetime": {
+          "first": "t7.L0",
+          "last": "t7.L1",
+          "strip": "t7:##"
+        },
+        "mass": {
+          "authority": "derived-exact",
+          "value": 0.50146484375
+        },
+        "mean_mass": {
+          "authority": "derived-exact",
+          "value": 0.1253662109375
+        },
+        "omitted": 1,
+        "readers": [
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": -0.004610609597957956
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.1259765625
+            },
+            "name": "t7.L1.h1"
+          },
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": -0.0032768855953881418
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.1259765625
+            },
+            "name": "t7.L0.h1"
+          },
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": -0.0014564242233214492
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.125
+            },
+            "name": "t7.L1.h0"
+          }
+        ],
+        "rows": [
+          3
+        ],
+        "status": "read",
+        "symbol": "t3",
+        "to_consumer": {
+          "authority": "derived-exact",
+          "proof": "P19",
+          "value": -0.009197282707174032
+        },
+        "token": 3
+      },
+      {
+        "count": 4,
+        "definitions": [
+          "t4.L*.k",
+          "t4.L*.v"
+        ],
+        "kind": "token",
+        "lifetime": {
+          "first": "t7.L0",
+          "last": "t7.L1",
+          "strip": "t7:##"
+        },
+        "mass": {
+          "authority": "derived-exact",
+          "value": 0.49853515625
+        },
+        "mean_mass": {
+          "authority": "derived-exact",
+          "value": 0.1246337890625
+        },
+        "omitted": 1,
+        "readers": [
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 0.005049650098638893
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.12451171875
+            },
+            "name": "t7.L0.h1"
+          },
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 0.003619599767514671
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.1240234375
+            },
+            "name": "t7.L0.h0"
+          },
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 0.00299820498532259
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.125
+            },
+            "name": "t7.L1.h0"
+          }
+        ],
+        "rows": [
+          4
+        ],
+        "status": "read",
+        "symbol": "t4",
+        "to_consumer": {
+          "authority": "derived-exact",
+          "proof": "P19",
+          "value": 0.012078911567820493
+        },
+        "token": 7
+      },
+      {
+        "count": 4,
+        "definitions": [
+          "t5.L*.k",
+          "t5.L*.v"
+        ],
+        "kind": "token",
+        "lifetime": {
+          "first": "t7.L0",
+          "last": "t7.L1",
+          "strip": "t7:##"
+        },
+        "mass": {
+          "authority": "derived-exact",
+          "value": 0.4990234375
+        },
+        "mean_mass": {
+          "authority": "derived-exact",
+          "value": 0.124755859375
+        },
+        "omitted": 1,
+        "readers": [
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 0.004044557316869443
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.12451171875
+            },
+            "name": "t7.L1.h1"
+          },
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 0.004007635944967702
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.125
+            },
+            "name": "t7.L0.h1"
+          },
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": -0.0022716829117090435
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.125
+            },
+            "name": "t7.L0.h0"
+          }
+        ],
+        "rows": [
+          5
+        ],
+        "status": "read",
+        "symbol": "t5",
+        "to_consumer": {
+          "authority": "derived-exact",
+          "proof": "P19",
+          "value": 0.006550875827493247
+        },
+        "token": 2
+      },
+      {
+        "count": 4,
+        "definitions": [
+          "t6.L*.k",
+          "t6.L*.v"
+        ],
+        "kind": "token",
+        "lifetime": {
+          "first": "t7.L0",
+          "last": "t7.L1",
+          "strip": "t7:##"
+        },
+        "mass": {
+          "authority": "derived-exact",
+          "value": 0.5
+        },
+        "mean_mass": {
+          "authority": "derived-exact",
+          "value": 0.125
+        },
+        "omitted": 1,
+        "readers": [
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": -0.0027669240297569556
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.1240234375
+            },
+            "name": "t7.L1.h1"
+          },
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": -0.0020705935617878267
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.1259765625
+            },
+            "name": "t7.L1.h0"
+          },
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 0.001975208417192889
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.125
+            },
+            "name": "t7.L0.h0"
+          }
+        ],
+        "rows": [
+          6
+        ],
+        "status": "read",
+        "symbol": "t6",
+        "to_consumer": {
+          "authority": "derived-exact",
+          "proof": "P19",
+          "value": -0.004605737396343191
+        },
+        "token": 11
+      },
+      {
+        "count": 4,
+        "definitions": [
+          "t7.L*.k",
+          "t7.L*.v"
+        ],
+        "kind": "token",
+        "lifetime": {
+          "first": "t7.L0",
+          "last": "t7.L1",
+          "strip": "t7:##"
+        },
+        "mass": {
+          "authority": "derived-exact",
+          "value": 0.50146484375
+        },
+        "mean_mass": {
+          "authority": "derived-exact",
+          "value": 0.1253662109375
+        },
+        "omitted": 1,
+        "readers": [
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": -0.0033983466293918798
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.125
+            },
+            "name": "t7.L0.h1"
+          },
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 0.0027457228318921033
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.12451171875
+            },
+            "name": "t7.L1.h0"
+          },
+          {
+            "effect": {
+              "authority": "derived-exact",
+              "proof": "P19",
+              "value": 0.0025058605667667277
+            },
+            "mass": {
+              "authority": "measured",
+              "value": 0.1259765625
+            },
+            "name": "t7.L1.h1"
+          }
+        ],
+        "rows": [
+          7
+        ],
+        "status": "read",
+        "symbol": "t7",
+        "to_consumer": {
+          "authority": "derived-exact",
+          "proof": "P19",
+          "value": 0.0007744842182441061
+        },
+        "token": 4
+      }
+    ],
+    "consumer": "t7.M[14,12]",
+    "consumer_total": {
+      "authority": "measured",
+      "value": 0.005859375
+    },
+    "min_mass": {
+      "authority": "supplied",
+      "value": 0.1
+    },
+    "page": {
+      "limit": 16,
+      "offset": 0,
+      "total": 8
+    },
+    "rows": [
+      7
+    ],
+    "schema": "mdb-symbol-table-v1",
+    "unbound": {
+      "mass": {
+        "authority": "derived-exact",
+        "value": 0.0
+      },
+      "meaning": "attention mass of the bindings not on this page, per head summed; the consumer part no listed binding's reads carry, by part",
+      "parts": {
+        "attention_not_listed": {
+          "authority": "derived-exact",
+          "proof": "P19",
+          "value": 8.542768353270169e-07
+        },
+        "embedding_mlp": {
+          "authority": "derived-exact",
+          "proof": "P19",
+          "value": -0.018639680604619856
+        },
+        "meaning": "embedding, MLP and head-bias terms; the layers' attention output (native o, read exactly) minus the listed reads (reads of bindings off this page, heads an edit wrote, o_proj rounding); residual-stream edits; the measured remainder (residual-add, final-norm and head rounding) with its bound",
+        "remainder": {
+          "bound": {
+            "authority": "bound",
+            "value": 0.013893705644321113
+          },
+          "value": {
+            "authority": "measured",
+            "value": 0.0005197506338282809
+          },
+          "within": true
+        }
+      },
+      "readout": {
+        "authority": "measured",
+        "value": -0.01811907569395625
+      },
+      "symbol": "Unbound"
+    },
+    "where": "t7.logits"
+  },
+  "consumer": "t7.M[14,12]",
+  "id": "31c0a5e58a68ca48b76fc89d529a605b4abbc51f7c3af2b452a826c280b8fb9b",
+  "kind": "symbol-table",
+  "record_schema": "mdb-symbol-table-v1",
+  "where": "t7.logits"
+}

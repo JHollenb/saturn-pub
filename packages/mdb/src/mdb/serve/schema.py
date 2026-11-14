@@ -41,6 +41,9 @@ STRUCTURAL_KEYS = (
     "nodes", "own_tokens", "query_head", "receiver_row", "repeated_argument_groups", "row", "size",
     "source_row", "src", "steps", "stride", "token_id", "token_ids", "tokens",
     "torch_num_threads", "transition", "n",
+    # engine record bodies (circuit, symbol-table) drawn by the recorded views: a circuit's depth,
+    # a table's head count, page offset and limit, and how many readers a binding left out
+    "depth", "heads", "offset", "limit", "omitted",
 )
 State = Literal["resolved", "unresolved", "refused"]
 Verdict = Literal["supported", "set_only", "not_supported", "unresolved", "control_missing",
@@ -566,6 +569,22 @@ class RecordDetail(Model):
     links: list[Link]
 
 
+class StoredBody(Model):
+    """The whole sealed body of one engine record a recorded view draws (kind ``circuit`` or
+    ``symbol-table``): the op's own JSON as it was sealed, so the recorded page draws it with the
+    Live view's components. Numbers are labelled as the Records drawer labels them: a stored
+    ``{value, authority}`` keeps its class (and proof, unit); any other number is ``supplied``;
+    a stored ``{v, ev}`` look-alike is never passed through. ``consumer`` and ``where`` are the
+    body's own (the consumer and the cursor the op ran at)."""
+    id: str
+    kind: str
+    record_schema: str
+    authority: str
+    consumer: str | None
+    where: str | None
+    body: dict[str, Any]
+
+
 # --------------------------------------------------------------------------- reduce / ops / events
 
 ReduceOp = Literal["stats", "topk", "slice", "histogram", "tile", "project"]
@@ -897,6 +916,7 @@ VIEWS = {
     "graph": GraphView,
     "records": RecordPage,
     "record": RecordDetail,
+    "stored": StoredBody,
     "reduce": None,  # ReduceResult union
     "op": OpResult,
     "console": ConsoleResult,
@@ -916,8 +936,9 @@ EXPORTED = [Num, NumList, Omitted, Refused, AxisTick, ClockAxis, OccAddr, SlotPo
             TimelineBlock, BranchNode, BranchInfo, BranchTree, ReadSourceView, ReaderView,
             ReadEdge, LifePoint, Lifetime, UseView, SymbolRow, SymbolPage, SymbolDetail,
             GraphNode, GraphEdge, PrunedGroup, CircuitOverlay, SliceRef, GraphView, NamedNum,
-            RecordSummary, RecordPage, ArmRow, Link, RecordDetail, ReduceRequest, StatsResult,
-            TopkEntry, TopkResult, SliceResult, HistogramResult, TileResult, ProjectResult,
+            RecordSummary, RecordPage, ArmRow, Link, RecordDetail, StoredBody, ReduceRequest,
+            StatsResult, TopkEntry, TopkResult, SliceResult, HistogramResult, TileResult,
+            ProjectResult,
             OpRequest, OpResult, ConsoleRequest, ConsoleResult, Interrupt, LiveUpstream, LiveEdit,
             LivePort, LiveCheckpoint, LiveFrame, LiveItems, LiveRow, LiveStop, LiveTimeline,
             LiveCircuit, LiveForecast, LiveSymbol, LiveLedger, Event]

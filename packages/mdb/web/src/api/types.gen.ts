@@ -589,6 +589,16 @@ export interface StatsResult {
   l2: Num;
 }
 
+export interface StoredBody {
+  id: string;
+  kind: string;
+  record_schema: string;
+  authority: string;
+  consumer: string | null;
+  where: string | null;
+  body: Record<string, unknown>;
+}
+
 export interface SymbolDetail {
   row: SymbolRow;
   binding: Record<string, unknown>;
@@ -735,7 +745,7 @@ export const CAP_BYTES = 65536;
 
 // Keys whose own value is structure (an int or a list of ints), never a measurement:
 // everything else numeric is a Num/NumList with an evidence class.
-export const STRUCTURAL_KEYS: readonly string[] = ["at", "i", "x", "y", "x0", "x1", "y0", "y1", "w", "h", "level", "lane", "count", "bytes", "cap", "seq", "page", "pages", "total", "order", "mask", "k", "bins", "axis", "axes", "fixed", "shape", "outShape", "full", "index", "selector", "select", "item", "block", "head", "kvGroup", "step", "clock", "pos", "token", "layer", "nonfinite", "counts", "cuts", "receipts", "symbols", "records", "sessions", "rows", "id", "locationsMore", "readersMore", "usesMore", "evidenceMore", "limits", "kinds", "attention_selector", "contrast", "decision", "edges", "kv_group", "kv_head", "left", "right", "local_clock", "logical_step", "native_payload_reads", "native_transition_index", "neuron", "nodes", "own_tokens", "query_head", "receiver_row", "repeated_argument_groups", "row", "size", "source_row", "src", "steps", "stride", "token_id", "token_ids", "tokens", "torch_num_threads", "transition", "n"];
+export const STRUCTURAL_KEYS: readonly string[] = ["at", "i", "x", "y", "x0", "x1", "y0", "y1", "w", "h", "level", "lane", "count", "bytes", "cap", "seq", "page", "pages", "total", "order", "mask", "k", "bins", "axis", "axes", "fixed", "shape", "outShape", "full", "index", "selector", "select", "item", "block", "head", "kvGroup", "step", "clock", "pos", "token", "layer", "nonfinite", "counts", "cuts", "receipts", "symbols", "records", "sessions", "rows", "id", "locationsMore", "readersMore", "usesMore", "evidenceMore", "limits", "kinds", "attention_selector", "contrast", "decision", "edges", "kv_group", "kv_head", "left", "right", "local_clock", "logical_step", "native_payload_reads", "native_transition_index", "neuron", "nodes", "own_tokens", "query_head", "receiver_row", "repeated_argument_groups", "row", "size", "source_row", "src", "steps", "stride", "token_id", "token_ids", "tokens", "torch_num_threads", "transition", "n", "depth", "heads", "offset", "limit", "omitted"];
 
 export const SCHEMAS = {
   hello: "mdb-view-hello-v1",
@@ -749,6 +759,7 @@ export const SCHEMAS = {
   graph: "mdb-view-graph-v1",
   records: "mdb-view-records-v1",
   record: "mdb-view-record-v1",
+  stored: "mdb-view-stored-v1",
   reduce: "mdb-view-reduce-v1",
   op: "mdb-view-op-v1",
   console: "mdb-view-console-v1",

@@ -17,6 +17,7 @@ from ..schema import (
     RecordDetail,
     RecordPage,
     RecordSummary,
+    StoredBody,
     num,
 )
 from ..schema import unresolved as unresolved_num
@@ -425,6 +426,64 @@ def _detail(model, entry, order, identifier):
         if len(canonical(detail.model_dump(mode="json", by_alias=True))) < 56 * 1024:
             return detail, omitted
     return detail, omitted
+
+
+DRAWN_KINDS = ("circuit", "symbol-table")
+V2_KEYS = ("value", "authority", "proof", "unit", "note", "reason")
+STORED_BYTES = 60 * 1024
+
+
+def _lean(value, *, schema, kind, recorded, path="", key=None):
+    """A stored body with every number labelled as ``label_floats`` labels it, but keeping a v2
+    ``{value, authority, ...}`` in its own (op) form, so the body is the op's JSON the Live view
+    draws. A v2 number's other keys (``bound``, ``within``) are kept and labelled too."""
+    if isinstance(value, dict):
+        if "ev" in value and "v" in value and is_number(value["v"]):
+            return _forged(value, path or "value")
+        if _v2_number(value) is not None:
+            out = {k: value[k] for k in V2_KEYS if k in value and (
+                k == "value" or isinstance(value[k], str))}
+            for k, v in value.items():
+                if k not in V2_KEYS:
+                    out[k] = _lean(v, schema=schema, kind=kind, recorded=recorded,
+                                   path=f"{path}.{k}" if path else str(k), key=k)
+            return out
+        return {k: _lean(v, schema=schema, kind=kind, recorded=recorded,
+                         path=f"{path}.{k}" if path else str(k), key=k) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_lean(v, schema=schema, kind=kind, recorded=recorded, path=path, key=key)
+                for v in value]
+    return label_floats(value, schema=schema, kind=kind, recorded=recorded, path=path, key=key)
+
+
+def stored_body(model, identifier) -> StoredBody:
+    """The whole sealed body of one ``circuit`` or ``symbol-table`` record (``StoredBody``).
+    Another kind, an unreadable row or a body over ``STORED_BYTES`` is refused, never cut: a
+    drawn circuit or table with nodes silently missing would not close."""
+    for raw in model.records():
+        if not isinstance(raw, dict) or record_id(raw) != identifier:
+            continue
+        kind = as_str(raw.get("kind"))
+        if raw.get("unreadable"):
+            raise ViewError("unreadable", f"record {short(identifier)}: "
+                            f"{as_str(raw.get('unreadable'))}", 409)
+        if kind not in DRAWN_KINDS or raw.get("schema") != "mdb-record-v2":
+            raise ViewError("not_drawn", f"record {short(identifier)} is a {kind or '?'} record; "
+                            "only engine circuit and symbol-table records are drawn (the "
+                            "Records drawer shows the rest)", 409)
+        body = as_dict(raw.get("body"))
+        lean = _lean(body, schema=as_str(raw.get("schema")), kind=kind,
+                     recorded=as_str(raw.get("authority")) or None)
+        size = len(canonical(lean))
+        if size > STORED_BYTES:
+            raise ViewError("over_cap", f"record {short(identifier)}: its body is {size} bytes, "
+                            f"over the {STORED_BYTES} the page draws at once; the REPL prints "
+                            "it whole", 409)
+        return StoredBody(id=identifier, kind=kind, record_schema=as_str(body.get("schema")),
+                          authority=as_str(raw.get("authority")),
+                          consumer=as_str(body.get("consumer")) or None,
+                          where=as_str(body.get("where")) or None, body=lean)
+    raise ViewError("not_found", f"record {short(identifier)} is not in session {model.sid}", 404)
 
 
 def record_detail(model, identifier) -> tuple[RecordDetail, list]:

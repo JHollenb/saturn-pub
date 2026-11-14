@@ -244,6 +244,11 @@ def create_app(project_path, *, read_only=True, static_dir=None, heartbeat=10.0,
                                     reason=marker.reason))
         return respond(envelope("record", detail, omitted))
 
+    @app.get("/api/v1/s/{sid}/stored/{identifier}")
+    def stored(sid: str, identifier: str):
+        """One engine record's whole body (circuit, symbol-table) for the recorded views."""
+        return respond(envelope("stored", records_view.stored_body(model(sid), identifier)))
+
     @app.post("/api/v1/s/{sid}/reduce")
     async def reduce(sid: str, request: ReduceRequest):
         spec = dump(request.pointer)

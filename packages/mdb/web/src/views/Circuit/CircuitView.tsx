@@ -82,6 +82,45 @@ export function CircuitView(props: CircuitViewProps) {
   );
 }
 
+/** A circuit record's sealed body drawn read-only (recorded mode): the head, the same layered
+ *  graph and keyboard walk as the Live tab, no seek, no test. */
+export function StoredCircuit({ id, body }: { id: number; body: Rec }) {
+  const [node, setNode] = useState<string | null>(null);
+  const entry: CircuitEntry = useMemo(() => ({ id, body, test: null, ablated: null }), [id, body]);
+  const circuits = useMemo(() => new Map([[id, entry]]), [id, entry]);
+  const act: CircuitActions = useMemo(
+    () => ({
+      build: () => undefined,
+      select: () => undefined,
+      test: () => undefined,
+      node: setNode,
+      seek: () => undefined,
+      overlay: () => undefined,
+      interrupt: () => undefined,
+    }),
+    [],
+  );
+  return (
+    <div className="circuit-view" data-testid="stored-circuit">
+      <CircuitHead entry={entry} />
+      <Graph
+        entry={entry}
+        ledger={[]}
+        circuits={circuits}
+        selected={id}
+        node={node}
+        focus={null}
+        slot={{ state: 'idle' }}
+        testSlot={{ state: 'idle' }}
+        busy={false}
+        overlay={false}
+        act={act}
+        readOnly
+      />
+    </div>
+  );
+}
+
 // --------------------------------------------------------------------------- build
 
 function BuildForm({
@@ -259,7 +298,15 @@ function CircuitHead({ entry }: { entry: CircuitEntry }) {
             ? 'all within their rounding bounds'
             : b.remainders_within === false
               ? 'NOT all within their rounding bounds'
-              : 'within: not stated'}
+              : b.unexamined === true
+                ? 'not all checked: the subtrees under the +N more groups were never expanded'
+                : 'within: not stated (a bound was refused)'}
+          {b.unexamined === true && b.unexamined_count !== undefined && (
+            <>
+              {' '}
+              (<OpValue value={b.unexamined_count} what="unexamined_count" compact /> unexamined)
+            </>
+          )}
         </div>
       )}
       {isRec(b.edits) && (
@@ -334,7 +381,8 @@ function Graph({
   focus,
   busy,
   act,
-}: { entry: CircuitEntry } & CircuitViewProps) {
+  readOnly = false,
+}: { entry: CircuitEntry; readOnly?: boolean } & CircuitViewProps) {
   const consumer = str(entry.body.consumer);
   const family = useMemo(
     () => familyOf([...circuits.values()], consumer).map((c) => c.body),
@@ -403,7 +451,7 @@ function Graph({
     if (key) {
       e.preventDefault();
       act.node(walk(layout, node, key));
-    } else if (e.key === 'Enter' && current) {
+    } else if (e.key === 'Enter' && current && !readOnly) {
       e.preventDefault();
       const target = seekable(current.node.address);
       if (target && !busy) act.seek(target, `circuit ${entry.id} node ${current.node.name}`);
@@ -450,7 +498,7 @@ function Graph({
         tabIndex={0}
         data-own-keys=""
         role="tree"
-        aria-label={`circuit ${entry.id} for ${consumer ?? '?'}: arrows walk, Enter asks to seek`}
+        aria-label={`circuit ${entry.id} for ${consumer ?? '?'}: arrows walk${readOnly ? '' : ', Enter asks to seek'}`}
         aria-activedescendant={current ? `cnode-${entry.id}-${current.node.id}` : undefined}
         onKeyDown={onKey}
         onFocus={() => {
@@ -481,8 +529,8 @@ function Graph({
           ))}
         </svg>
       </div>
-      <GraphLegend />
-      {current && <NodeLine p={current} entry={entry} busy={busy} act={act} />}
+      <GraphLegend readOnly={readOnly} />
+      {current && <NodeLine p={current} entry={entry} busy={busy} act={act} readOnly={readOnly} />}
     </div>
   );
 }
@@ -652,7 +700,7 @@ function NodeMark({
   );
 }
 
-function GraphLegend() {
+function GraphLegend({ readOnly = false }: { readOnly?: boolean }) {
   return (
     <div className="faint circuit-legend" data-testid="circuit-legend">
       <span>
@@ -677,8 +725,10 @@ function GraphLegend() {
       </span>{' '}
       · width ∝ |exact contribution| · <EvidenceMark ev="measured" /> measured{' '}
       <EvidenceMark ev="derived-exact" /> derived · rounded box: +N more (their Σ) · diamond:
-      remainder (measured, with its bound; never dropped) · square: consumer · after a test: ✕R
-      ablated with the retained set, ✕C with the complement · arrows walk, Enter asks to seek
+      remainder (measured, with its bound; never dropped) · square: consumer
+      {readOnly
+        ? ' · arrows walk (recorded: no seek, no test)'
+        : ' · after a test: ✕R ablated with the retained set, ✕C with the complement · arrows walk, Enter asks to seek'}
     </div>
   );
 }
@@ -688,13 +738,15 @@ function NodeLine({
   entry,
   busy,
   act,
+  readOnly = false,
 }: {
   p: Placed;
   entry: CircuitEntry;
   busy: boolean;
   act: CircuitActions;
+  readOnly?: boolean;
 }) {
-  const target = seekable(p.node.address);
+  const target = readOnly ? null : seekable(p.node.address);
   return (
     <div className="circuit-node-line" data-testid="circuit-node-line">
       <strong>{p.node.name}</strong> <span className="faint">{p.node.kind}</span>{' '}
@@ -715,10 +767,12 @@ function NodeLine({
         >
           seek {target}…
         </button>
+      ) : readOnly ? (
+        <span className="faint">(recorded: no session to seek)</span>
       ) : (
         <span className="faint">(no occurrence to seek)</span>
       )}{' '}
-      <span className="faint">full record in the Inspector</span>
+      {!readOnly && <span className="faint">full record in the Inspector</span>}
     </div>
   );
 }

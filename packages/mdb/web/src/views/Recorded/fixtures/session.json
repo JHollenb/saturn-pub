@@ -1,0 +1,15 @@
+{
+  "adapter": "native-decoder-v1",
+  "cuts": 0,
+  "family": "qwen2",
+  "granularity": "operation",
+  "home": null,
+  "id": "qwen2-872f0e348e89",
+  "model": "cb1ebc05fb0be660",
+  "reason": null,
+  "receipts": 0,
+  "records": 4,
+  "selected": "",
+  "state": "resolved",
+  "symbols": 0
+}
