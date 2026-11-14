@@ -262,6 +262,58 @@
     ]
    },
    "n_items": 128
+  },
+  "Qwen3-1.7B-Base": {
+   "files": [
+    "capture-Qwen3-1.7B-Base.json"
+   ],
+   "accuracy": {
+    "currency": [
+     10,
+     12
+    ],
+    "person": [
+     10,
+     12
+    ],
+    "landmark": [
+     9,
+     12
+    ],
+    "city": [
+     12,
+     12
+    ],
+    "d2": [
+     14,
+     14
+    ],
+    "d3-lm": [
+     10,
+     14
+    ],
+    "d3-per": [
+     11,
+     14
+    ],
+    "d4-work": [
+     6,
+     14
+    ],
+    "dist-city": [
+     9,
+     12
+    ],
+    "obsc-city": [
+     9,
+     12
+    ],
+    "d3_pooled": [
+     21,
+     28
+    ]
+   },
+   "n_items": 128
   }
  }
 }
