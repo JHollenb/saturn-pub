@@ -1,0 +1,48 @@
+{
+ "frozen_at": "2026-11-14T05:21:00Z (2026-11-13 21:21 PST), before any model run of this experiment",
+ "experiment": "obsidian/research/2026-11-13-211248-mdb-experiment-tracker.md entry 1: where the latent two-hop bridge lives, predicted by the symbol table",
+ "model": "/mnt/big/llm-models/Qwen3-1.7B-Base, bf16, eager attention, CUDA (Beast RTX 4080), mdb engine on branch mdb-twohop; SAE /mnt/big/llm-models/SAE-Res-Qwen3-1.7B-Base-W32K-L0_50 (Qwen-Scope, k=50, resid_post = L<l>.h_out = L<l+1>.h)",
+ "seed": "single deterministic pass, no sampling",
+ "panel": {
+  "candidates": "candidates.json from gen_panel.py (149 items, 4 descriptor families: currency, person, landmark, city; hop 2 = capital; two-shot prefix whose bridges, Switzerland and France, are excluded). Every prompt ends '... {descriptor} is': descriptor rows = span, last descriptor row r0 = n-2, answer row = n-1 (the pending row of an mdb run).",
+  "admission": "native argmax at the answer row of the mdb stepped run == the single-token capital. Two-hop accuracy over all 149 candidates is recorded, with hop 1 alone (country) and hop 2 alone (capital) for every candidate.",
+  "donors": "per admitted recipient, up to 2 different-bridge donors: admitted, same family, same token length n (so every row aligns and K cells need no re-rotation), different bridge and different answer token; first two in candidate order after the recipient, cyclically. Recipients with no such donor are dropped. If more than 64 remain, the first 64 in a family round-robin order are kept.",
+  "same_bridge_control": "per recipient, one admitted item with the same bridge: same family and same n if one exists (all span rows aligned), else any family (V of the last descriptor row only, copied across rows; V carries no position).",
+  "consumer": "M[a, b_d] = logit(recipient capital) - logit(donor capital) at the answer row."
+ },
+ "forecast_rule": {
+  "sealed_where": "job 1, from the recipient's native run only (passive: no edit runs in job 1), written to forecast.json and committed to git before job 2 (the first intervention) is submitted.",
+  "F1_primary_symbol_table": "c_d(r,l,g) = sum over query heads h of KV group g of to_consumer of the read of source row r by the answer row at layer l (mdb reads, causal=false: the exact direct contribution p[h,r] W_o,h v[g,r] through the final-norm readout to M[a,b_d], P19). c(r,l,g) = mean over the item's donors d. Forecast carrier = argmax over r in span, l in 0..27, g in 0..7 of c(r,l,g).",
+  "F2_country_consumer": "same with consumer M[country token of the bridge, country token of the donor's bridge] (items whose countries are single tokens).",
+  "F3_attention_mass_comparison": "argmax of summed attention mass sum_h p[h, r] over (r,l,g). Not a forecast we back; the comparison the task rules out as primary.",
+  "symbols_table": "the mdb symbols table with the declared symbol desc = descriptor rows is also stored (to_consumer of the binding) for the record."
+ },
+ "ground_truth": {
+  "site_sweep": "V-only single-cell transplant from each different-bridge donor at every (r in span, l, g): the recipient's value cell cache.L<l>.v[kv g, row r] replaced by the donor's, answer row run natively; batched over arms with mdb.analysis.sweep (one native forward of the answer row per chunk; null arm in each chunk). K-only single cells are swept too (reported, not used for the ground truth).",
+  "effect": "e(r,l,g) = mean over donors of dM_d = M_d(edited) - M_d(native). GT carrier = argmin e (largest move toward the donor).",
+  "hit": "hit@1: F1 site == GT site; hit@3: F1 site in GT top 3; layer hit: same layer; chance hit@1 = 1/(|span| x 28 x 8).",
+  "validation": "per item, the forecast-site and GT-site V transplants are re-measured through the mdb stepped path (Run.set_cell, run to logits); the batched value must agree within the noise floor."
+ },
+ "noise_floor": "floor(item) = max(2 x bf16 spacing at |M|, max |batched null - stepped native| of that item, max |stepped self-transplant|). Changes within the floor are 'no effect'. Every verdict states its floor.",
+ "arms_through_mdb": "at the F1 site and at the GT site: V-only, K-only, K+V single cell; bands over all span rows and all KV heads for layers L..27 with L in {0,4,8,12,16,20,24}: V-only, K-only, K+V; same-bridge control at the F1 site, GT site and the V band from L=8; self-transplant (recipient's own cell) no-op.",
+ "census": "at the GT carrier (l*, g*, r0 = last descriptor row; l* >= 1): the descriptor-row residual x = L<l*>.h (SAE layer l*-1) of recipient and donor, read on runs truncated at the descriptor row (it is their pending row); SAE identity x = b + Phi + E. Arms: full (x_donor), phi (x_rec + Phi_don - Phi_rec), E (x_rec + E_don - E_rec), null (x_rec); each edited residual runs natively to its value cell cache.L<l*>.v[kv g*, row r0], and only that cell is transplanted into the recipient's full run. sigma_Phi = dM_phi / dM_full, sigma_E = dM_E / dM_full over pairs with |dM_full| >= 1 (null subtracted). The census uses the GT carrier's row (r0 or another span row).",
+ "predictions": {
+  "P1_hit1": "F1 hit@1 >= 0.35 of items (point guess 0.45)",
+  "P1_hit3": "F1 hit@3 >= 0.60 (point guess 0.65)",
+  "P1_vs_mass": "F1 hit@1 exceeds F3 (attention mass) hit@1 by >= 0.10",
+  "P1_F2": "F2 (country consumer) hit@1 >= F1 hit@1",
+  "P1_depth": "GT carrier layer in 18..24 (relative depth 0.64-0.86; Qwen2.5-1.5B prior L22/28 = 0.79) on >= 70% of items",
+  "P1_concentration": "one (l,g) is the GT carrier for >= 50% of items",
+  "P1_row": "GT row = last descriptor row r0 on >= 80% of items",
+  "P2_single_V": "V-only at the F1 site: flip to the donor's answer >= 0.20 of different-bridge pairs (point guess 0.35); at the GT site >= 0.30 (point guess 0.45)",
+  "P2_single_K": "K-only at the F1 site and at the GT site: flip <= 0.05, median |dM| / |M_native - M_donor| <= 0.05",
+  "P2_KV_vs_V": "K+V single cell flip within 0.10 of V-only at the same site",
+  "P2_bands": "bands from L <= 16: V-only flip >= 0.80, K-only flip <= 0.05, K+V within 0.10 of V-only; bands from L = 24: flip <= 0.10",
+  "P3_census": "median sigma_Phi >= 0.75 and median sigma_E <= 0.20 (point guess 0.85 / 0.10); full arm equals the direct cell transplant within the floor on >= 90% of pairs",
+  "P4_controls": "same-bridge donors keep the recipient's answer on >= 0.90 of recipients at the F1 site, the GT site and in the V band from L=8",
+  "P5_accuracy": "two-hop accuracy over the 149 candidates in 0.45-0.75 (point guess 0.60)",
+  "P5_errors": "of two-hop errors where hop 1 alone and hop 2 alone are both right, >= 0.5 answer a non-capital (city of the right country or a copy of the descriptor), i.e. second-hop shortcuts (point guess 0.7)",
+  "P6_noise": "batched null vs stepped native |dM| <= 2 x bf16 spacing at |M| on >= 95% of items"
+ },
+ "owner_hypotheses_recorded": "Prior (Qwen2.5-1.5B): values carry the bridge, keys do not; one late value head carries ~half. Owner question: does the bridge live in SAE features, the SAE error, or only in the value cell (census)."
+}
