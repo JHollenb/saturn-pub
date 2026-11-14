@@ -1,0 +1,52 @@
+{
+ "frozen_at": "2026-11-14T06:40Z (2026-11-13 22:40 PST), before any run of the chain job (Z1). Already read when frozen: entry-1 results (job1-4, gt.json), Y2 para/dist (job-2b124c6f555b: hub-set readability on correct items view 45/56, B_const 53/56, B_lens L24 50/56, B_mass 16/56; causal content-donor 41/63, answer-donor 19/63). Y2 long/obsc/lang (job-62646c9ebe5e) queued, unread.",
+ "question": "Can the symbol table itself (mdb.analysis.symbols.table with sets=, content_layers=, hops=; commit 4371aab) name the hidden intermediate of the two-hop chain, and is that name the causal content?",
+ "source": "advisor memo obsidian/model-math/ADVISOR-2026-11-13-symbol-table-latent-chain.md section 3.2; coordinator falsifiers 2026-11-13",
+ "model": "Qwen3-1.7B-Base bf16 eager CUDA (/mnt/big/llm-models/Qwen3-1.7B-Base), single seed",
+ "items": "the 64 entry-1 panel recipients (job1-panel.json; 16 each of currency, person, landmark, city; all answered correctly natively)",
+ "declarations": {
+  "bridge": "cache.L20.v[kv6,row=r0], r0 = the gt.json row (gt.json gives L20 KV6 on 64/64, so on this panel the declared site equals the B_const site: this job tests the site's CONTENT, not where the site is)",
+  "r0rest": "every other V cell of row r0 (all layers x KV heads except L20 KV6): its content_lifetime strip is the per-layer content of the descriptor row",
+  "desc": "the remaining span rows (t<r> for r in span, r != r0), when the span is longer than one row"
+ },
+ "candidate_sets": "countries = the 42 country_token of candidates.json; capitals = the 42 capital_tokens; entities = the first token of ' ' + descriptor for each of the 149 candidates (deduplicated); all = countries U capitals U entities (deduplicated). Truth: country_token for countries and all, the item's answer for capitals, its descriptor's first token for entities.",
+ "table_call": "symbols.table(run, consumer=Margin(j, answer, donor0_answer), sets=[countries, capitals, entities, all], content_layers=True, hops={'bridge': ...}, limit=#declared) at t<j>.logits on the native run",
+ "metrics": {
+  "readable@1(S)": "fraction of the 64 items whose bridge binding content[S].best == the truth of S (countries, all); derived-exact readout (P19) of the binding's write into the answer row",
+  "capital_in_cell": "fraction whose bridge content[capitals].best == the answer (second hop already done in the cell)",
+  "entity_in_cell": "fraction whose content[all].best is an entity token",
+  "first_appearance": "first layer at which r0rest's content_lifetime strip on countries is 'C' when r0rest's best country is the true country",
+  "hop": "native_delta = measured change of M = l(answer) - l(donor0 answer) when the bridge cell takes donor 0's V (stepped Run.set_cell, re-measured here and cross-checked against job2 GT.V.d0); direct_delta = (w_donor - w_native) . reader, w = sum over the group's heads of p[h,r0] W_o,h v[6,r0] at L20 with the native p and the native reader (exact, P19); indirect_share = 1 - direct/native"
+ },
+ "baselines_frozen": {
+  "B_const": "identical to the view on this panel (see declarations); reported, not compared",
+  "B_mass": "the same content readout of the (row in span, layer, KV head) write with the largest attention mass from the answer row",
+  "B_lens": "the descriptor row r0's residual at L20.h and at L24.h on the run truncated at r0, RMS-normalised, through gamma * W_U, best of each set; the falsifier uses the better of the two layers",
+  "B_answer": "the answer row's residual at L20.h_out on the native run through the same readout"
+ },
+ "causal_arms": {
+  "T_diff": "64 items: donor 0 of the panel (different bridge); V cell at L20 KV6 from the donor's own r0 written into the recipient's r0 (V has no RoPE); after it, re-take the table: content_moves = content[countries].best == donor country; answer_moves = argmax == donor answer; together = content_moves == answer_moves",
+  "T_city": "the city recipients with a same-country different-city candidate (12 of 16: Busan, Porto, Rotterdam, Gothenburg have none); donor = that city (correct preferred); consumer Margin(j, answer, native runner-up); content_moves = content[entities].best == the donor's entity token; answer_moves = argmax != answer; together as above; also content[countries].best (expected unchanged)"
+ },
+ "predictions": {
+  "Z1": "readable@1(countries) >= 0.80 (guess 0.92; Y2 hub-set B_const on hard families 0.95, job4 proxy 103/108)",
+  "Z2": "readable@1(all) >= 0.60 (guess 0.70): the country beats capitals and entities in the cell",
+  "Z3": "B_lens (better of L20/L24) readable@1(countries) is below the view by >= 0.10 (guess view 0.92 vs lens 0.75); on all, below by >= 0.20",
+  "Z4": "B_answer readable@1(countries) <= 0.50 (the bridge is not yet in the answer row's own residual at L20)",
+  "Z5": "B_mass readable@1(countries) <= view - 0.10",
+  "Z6": "T_diff: content_moves on >= 0.85 of items; together on >= 0.60 (Y2 hard families gave 0.65)",
+  "Z7": "T_city: content[countries] unchanged on >= 0.80; entity content moves on >= 0.50; together on >= 0.60",
+  "Z8": "first_appearance <= 20 on >= 0.70 of items with a readable r0rest (guess median L16-18)",
+  "Z9": "hop indirect_share median between 0.3 and 0.9 (most of the effect flows through later layers, not the direct path)",
+  "Z10": "capital_in_cell <= 0.30 (the cell carries the bridge, not the finished answer)"
+ },
+ "falsifiers": {
+  "F_read": "readable@1(all) <= 0.35",
+  "F_lens": "B_lens readable@1 >= the view's readable@1 on countries or on all (coordinator wording; the memo's softer version, lens >= view + 0.10, is reported beside it)",
+  "F_causal": "together < 0.60 on T_diff, or on T_city when it has >= 8 items",
+  "meaning": "any one: the symbol table, as a linear readout of the binding's write, does not see this chain's middle; the honest view is then reads plus transplants with no named intermediate"
+ },
+ "relation_to_prereg_hard": "no conflict: prereg_hard.json covers the 10 hard families (different items) with the site found by to_consumer and naming over hubs only; this job covers the 64 entry-1 items with the site declared from ground truth, sets that include competitors (capitals, entities), a different consumer (answer vs donor-0 answer), and adds B_answer. prereg_hard's PR1-PR8 are judged on Y2 jobs only, Z1-Z10 on this job only.",
+ "budget": "one batched mrun job, smoke on 4 items first; <= 10 min; priority 70; vram 5000",
+ "rules": "single seed; unknown is not negative; a count below 8 is reported, not judged"
+}
