@@ -22,4 +22,10 @@ for the recompute arms; delta arms differ in the last bits. Any other outcome is
 measured, with the largest difference. The lane margins are also checked offline against the
 saved rows of jobs job-b33e6b98c328, job-4a433df3f30b, job-7c3232ad65bb (run-to-run determinism).
 
-Out of scope: BF16, renormalising cuts, set cuts over several layers, keep arms (lane path only).
+Added before submission of the second attempt (the first, job-48b15af5a630, failed at import in
+the worker, before any model load): 4. five set cuts over several layers (`z:named3`, its two
+random draws, `z:rank12`, `z:keep-named3`, each `freezing/cut_recompute`) measured by engine staged
+runs (`qwen_engine.staged_cut_run`, no what-if) vs the lane's same arms and their delta twins.
+Prediction: equal to the recompute arms (tiny test).
+
+Out of scope: BF16, renormalising cuts, the other multi-layer and keep arms.

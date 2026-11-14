@@ -16,6 +16,12 @@ import time
 from pathlib import Path
 
 
+# floor_cut_recompute arms whose set spans layers: measured by engine staged runs (one run each)
+STAGED = ("z:named3:freezing/cut_recompute", "z:rand0-named3:freezing/cut_recompute",
+          "z:rand1-named3:freezing/cut_recompute", "z:rank12:freezing/cut_recompute",
+          "z:keep-named3:freezing/cut_recompute")
+
+
 def sha(path):
     h = hashlib.sha256()
     with Path(path).open("rb") as stream:
@@ -48,7 +54,8 @@ def main():
     import mdb_lanes.qwen_panels as Q
     import saturn_pub
     import saturn_pub.numerics as numerics
-    import mdb.engine.trace as engine_trace
+    import importlib
+    engine_trace = importlib.import_module("mdb.engine.trace")   # mdb.engine.trace the attribute is the function
     from mdb.analysis.forecast import Margin
     modules = {m.__name__: {"file": m.__file__, "sha256": sha(m.__file__)}
                for m in (mdb, engine_trace, saturn_pub, numerics, P, ap, QE, Q)}
@@ -131,6 +138,8 @@ def main():
         if cuts:
             chosen.append(arm.arm)
             chosen.append(arm.floor_of)            # the delta arm it is the recompute twin of
+    for name in STAGED:                            # multi-layer sets: engine staged runs (no what-if)
+        chosen += [name, panel.by_id()[name].floor_of]
     chosen = list(dict.fromkeys(chosen))
     lport = ap.AttentionPort(ap.QwenBackend(model, identity=identity), **P.port_kwargs(panel, rows_table))
     P.check_port(panel, lport, forwards=Q.GENERATED)
@@ -149,7 +158,9 @@ def main():
     event("engine_run", seconds=round(time.monotonic() - t_engine, 2),
           margin=QE.margin_of(engine_native, hot, cold), vram_peak_mb=torch.cuda.max_memory_allocated() / 2 ** 20)
     t_cuts = time.monotonic()
-    rows, lane_only = QE.engine_rows(panel, run, rows_table, hot=hot, cold=cold, row=Q.RECEIVER_ROW)
+    rows, lane_only = QE.engine_rows(panel, run, rows_table, hot=hot, cold=cold, row=Q.RECEIVER_ROW,
+                                     staged={"dbg": dbg, "tokens": ids, "prefill": Q.SOURCE_ROW + 1,
+                                             "only": set(STAGED)})
     event("engine_cuts", rows=len(rows), seconds=round(time.monotonic() - t_cuts, 2),
           vram_peak_mb=torch.cuda.max_memory_allocated() / 2 ** 20)
     t_contrib = time.monotonic()
@@ -174,7 +185,7 @@ def main():
             "lane_delta_margin": QE.margin_of(lane[twin], hot, cold), "delta_arm": twin,
             "margin_equal": r["margin"] == QE.margin_of(lane[name], hot, cold),
             "margin_equal_delta": r["margin"] == QE.margin_of(lane[twin], hot, cold),
-            "engine": r["engine"]}
+            "engine": r["engine"], "staged": r["engine"].get("kind") == "staged"}
     result = {
         "schema": "mdb-qwen-engine-equivalence-v1", "job": job, "plan_sha256": panel.sha256(),
         "modules": modules, "identity": identity, "trace_info": trace_info,
@@ -193,7 +204,9 @@ def main():
                     "delta_equal": sum(a["margin_equal_delta"] for a in arms.values()),
                     "max_abs_recompute": max(abs(a["engine_margin"] - a["lane_margin"]) for a in arms.values()),
                     "max_abs_delta": max(abs(a["engine_margin"] - a["lane_delta_margin"]) for a in arms.values()),
-                    "verdicts": sorted({a["engine"]["verdict"] for a in arms.values()})},
+                    "staged_arms": sum(a["staged"] for a in arms.values()),
+                    "staged_equal": sum(a["margin_equal"] for a in arms.values() if a["staged"]),
+                    "verdicts": sorted({a["engine"].get("verdict", "staged: none") for a in arms.values()})},
         "lane_margins": {name: QE.margin_of(v, hot, cold) for name, v in lane.items()},
         "contributions_named": {k: contrib[tuple(v)] for k, v in Q.NAMED_HEADS.items()},
         "contributions_top": sorted(([list(k), v] for k, v in contrib.items() if v["to_consumer"] is not None),

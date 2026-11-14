@@ -65,7 +65,7 @@ def stage(run, vram_mb, ram_mb, est_wall_s, timeout_s):
     source_hashes = {WORKER: sha(HERE / WORKER), **{name: sha(path) for path, name in extras},
                      **{f"mdb_lanes/{m}.py": sha(lanes_src / f"{m}.py")
                         for m in ("attention_port", "attention_panels", "qwen_panels", "qwen_engine")}}
-    work = 1 + 48 + 25 + 1
+    work = 1 + 58 + 30 + 1
     request = dict(schema="mdb-qwen-engine-equivalence-request-v1", config=config, model=Q.MODEL,
                    task_family="forward", backend="transformers", device="cuda", dtype="float32", batch_size=1,
                    needs={"cuda": True}, execution_environment=environment,

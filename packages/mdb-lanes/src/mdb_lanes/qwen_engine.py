@@ -52,7 +52,7 @@ def zero_method(arm, panel):
     return ((panel.execution or {}).get("zero_method") or {}).get("port_default") or "delta"
 
 
-def expressible(arm, rows_table, panel=None):
+def expressible(arm, rows_table, panel=None, *, staged=False):
     """``(cuts, None)`` with ``cuts = [(layer, (heads...), receiver_row, source_row)]`` (one engine
     edit per layer) when the arm is a zero cut the engine makes with the same arithmetic in one
     what-if, else ``(None, reason)``. The native arm maps to ``([], None)`` (nothing cut).
@@ -61,7 +61,10 @@ def expressible(arm, rows_table, panel=None):
     is the lane's ``zero_method="recompute"`` (MEASURED bit for bit on tiny Qwen2 FP32, CPU,
     ``tests/test_qwen_engine.py``); the lane's default ``delta`` method subtracts ``P[cut] @ V[cut]``
     from the native output and rounds again, so a ``delta`` arm stays on the lane path. With
-    ``panel`` the plan's default zero method is used; without it ``delta`` is assumed."""
+    ``panel`` the plan's default zero method is used; without it ``delta`` is assumed.
+
+    ``staged``: also accept a set over several layers or source rows (measured natively by
+    :func:`staged_cut_run`, one run per arm, without a what-if verdict)."""
     if arm.family != "read":
         return None, "not a read arm"
     if arm.kind == "native":
@@ -79,14 +82,14 @@ def expressible(arm, rows_table, panel=None):
     if not arm.units:
         return None, "no units"
     layers = sorted({int(u[0]) for u in arm.units})
-    if len(layers) != 1:
+    if len(layers) != 1 and not staged:
         return None, f"units span layers {layers}: a what-if takes one edit"
     receivers = [r for name in arm.receivers for r in rows_table[name]]
     sources = [s for name in arm.sources for s in rows_table[name]]
     if len(receivers) != 1:
         return None, "the engine cut is made on one receiver row"
-    heads = tuple(sorted({int(u[1]) for u in arm.units}))
-    return [(layers[0], heads, receivers[0], s) for s in sources], None
+    return [(layer, tuple(sorted({int(u[1]) for u in arm.units if int(u[0]) == layer})), receivers[0], s)
+            for layer in layers for s in sources], None
 
 
 # ------------------------------------------------------------------------------- attention
@@ -198,21 +201,98 @@ def engine_cuts(run, cuts, consumer):
     return out
 
 
+def staged_cut_run(dbg, tokens, cuts, *, prefill, row, name="staged"):
+    """A new engine run with every zero cut ``(layer, heads, row, source)`` of ``cuts`` staged at
+    its layer (any number of layers and sources; one masked edit per layer), stopped at
+    ``t<row>.logits``. A native measurement only: no sealed prediction and no P20 verdict (that
+    needs ``whatif``, one edit). This is how a set cut over several layers goes through the
+    engine; its arithmetic is the lane's ``recompute`` zero cut at every layer."""
+    by_layer = {}
+    for layer, heads, r, source in cuts:
+        if r != row:
+            raise EngineLaneError("staged cuts are made on one receiver row")
+        by_layer.setdefault(int(layer), []).append((tuple(heads), int(source)))
+    run = dbg.run(list(tokens), prefill=prefill, name=name)
+    for layer in sorted(by_layer):
+        run.until(f"t{row}.L{layer}.h")
+        mask, picked = None, []
+        for heads, source in by_layer[layer]:
+            m = _mask(run, layer, heads, row, source)
+            mask = m if mask is None else (mask | m)
+            picked.append(",".join(f"h{h}" for h in heads) + f",src={source}")
+        run.set(f"L{layer}.p", 0.0, "replace", mask=mask, selection=";".join(picked))
+    run.until(f"t{row}.logits")
+    return run
+
+
+# ------------------------------------------------------------------------------- replay recipes
+
+def v2_checkpoint(dbg, run, name):
+    """Make ``run`` durable as a replay recipe v2 (``mdb.core.recipe``) in the debugger's project
+    (``mdb.attach(..., project=DIR)``): edits, masks and cell doses as the engine records them.
+    Returns ``(checkpoint summary, recipe)``; ``dbg.restart(name)`` replays it."""
+    from mdb.core import recipe as R
+    summary = dbg.checkpoint(run, name)
+    return summary, R.load(dbg.project, summary["recipe"])
+
+
+def read_recipe(recipe):
+    """Verify a stored lane recipe of either schema and say which: ``("v1", recipe)`` for
+    ``mdb-native-qwen-replay-recipe-v1`` (``native_replay_recipe.validate``), ``("v2", recipe)``
+    for ``mdb-replay-recipe-v2`` (``mdb.core.recipe.verify``). Old v1 recipes stay readable."""
+    schema = recipe.get("schema") if isinstance(recipe, dict) else None
+    if schema == "mdb-native-qwen-replay-recipe-v1":
+        from .native_replay_recipe import validate
+        return "v1", validate(recipe)
+    if schema == "mdb-replay-recipe-v2":
+        from mdb.core import recipe as R
+        return "v2", R.verify(recipe)
+    raise EngineLaneError(f"unknown recipe schema {schema!r}")
+
+
+# What replay recipe v2 does not express for the Qwen panel lane (ASSERTED from mdb.core.recipe and
+# mdb.engine.edits; each is a statement about the schema, not a measurement):
+V2_GAPS = {
+    "renormalising read cut": "no op renormalises the remaining weights; only a supplied p tensor "
+                              "(replace) could stand for it, which is not the lane's FP32 masked softmax",
+    "delta zero cut": "native_out - P[cut] @ V[cut] rounded again is not an edit of a port; v2 holds the "
+                      "recompute arithmetic (p[h,s] = 0 at the p port)",
+    "FP32 blend dose": "cell mix DOSE interpolates in float64 and rounds once; attention_panels.blend "
+                       "interpolates in FP32 (equal at dose 0 and 1; other doses not yet compared)",
+    "FLUX": "no FLUX / diffusers port program in mdb.engine.ports",
+    "lane batching": "the lane's prefill (rows 0..18 in one forward, then one row at a time) is v2's "
+                     "prefill=19; other row groupings are not expressible",
+}
+
+
 def margin_of(logits, a, b):
     """``float(logits[a]) - float(logits[b])`` in Python float64 (the lane's margin arithmetic)."""
     return float(logits[a]) - float(logits[b])
 
 
-def engine_rows(panel, run, rows_table, *, hot, cold, row):
+def engine_rows(panel, run, rows_table, *, hot, cold, row, staged=None):
     """Worker rows for every engine-expressible arm of ``panel``, measured through the engine, and
     ``{arm: reason}`` for the arms left to the lane path. Rows carry ``arm``, ``margin`` (hot -
     cold of the native logits) and the engine's verdict, so ``qwen_panels.read_results`` scores
-    them with the panel's own controls."""
+    them with the panel's own controls.
+
+    ``staged``: ``{"dbg", "tokens", "prefill", "only"}`` measures the zero-recompute arms whose set
+    spans layers or source rows by :func:`staged_cut_run` (``only``: a set of arm names to limit
+    them to, or None for all); their rows carry ``engine.kind == "staged"`` and no verdict."""
     from mdb.analysis.forecast import Margin
     consumer = Margin(row, hot, cold)
     rows, lane_only, wanted = [], {}, []
     for arm in panel.arms:
         cuts, why = expressible(arm, rows_table, panel)
+        if cuts is None and staged is not None and (staged.get("only") is None or arm.arm in staged["only"]):
+            cuts, why = expressible(arm, rows_table, panel, staged=True)
+            if cuts:
+                run_s = staged_cut_run(staged["dbg"], staged["tokens"], cuts, prefill=staged["prefill"], row=row,
+                                       name="staged")
+                rows.append({"arm": arm.arm, "margin": margin_of(run_logits(run_s, row), hot, cold),
+                             "path": "engine", "engine": {"kind": "staged", "cuts": [[c[0], list(c[1]), c[2], c[3]]
+                                                                                   for c in cuts]}})
+                continue
         if cuts is None:
             lane_only[arm.arm] = why
         elif not cuts:

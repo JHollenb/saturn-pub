@@ -135,3 +135,72 @@ def test_contributions_are_the_engine_reads_numbers(tiny):
         got = mine[(entry["layer"], int(entry["name"].rsplit(".h", 1)[1]))]
         assert got["mass"] == entry["mass"]["value"]
         assert got["to_consumer"] == entry["to_consumer"]["value"]
+
+
+def test_staged_set_cut_over_two_layers_is_the_lane_recompute_set(tiny):
+    torch, model, forward, run = tiny
+    import mdb
+    from mdb_lanes import attention_port as ap
+    dbg = mdb.attach(model)
+    staged = QE.staged_cut_run(dbg, TOKENS, [(0, (1,), LAST, 1), (1, (0,), LAST, 2), (1, (1,), LAST, 1)],
+                               prefill=PREFILL, row=LAST)
+    port = ap.AttentionPort(ap.QwenBackend(model), rows={"receiver": [LAST], "a": [1], "b": [2]},
+                            zero_method="recompute")
+    cuts = [ap.cut(["receiver"], ["a"], heads=[(0, 1), (1, 1)], renormalize=False),
+            ap.cut(["receiver"], ["b"], heads=[(1, 0)], renormalize=False)]
+    with port.apply(*cuts, forwards=1):
+        lane = forward()
+    assert torch.equal(QE.run_logits(staged, LAST), lane)
+
+
+def test_single_staged_cut_equals_the_whatif_measurement(tiny):
+    torch, model, forward, run = tiny
+    import mdb
+    from mdb.analysis.forecast import Margin
+    dbg = mdb.attach(model)
+    staged = QE.staged_cut_run(dbg, TOKENS, [(1, (0,), LAST, 2)], prefill=PREFILL, row=LAST)
+    (measured,) = QE.engine_cuts(run, [(1, (0,), LAST, 2)], Margin(LAST, HOT, COLD))
+    assert torch.equal(QE.run_logits(staged, LAST), measured["edited_logits"])
+
+
+def test_v2_recipe_round_trip_and_v1_still_reads(tiny, tmp_path):
+    torch, model, forward, run = tiny
+    import mdb
+    from mdb_lanes import native_replay_recipe as nrr
+    dbg = mdb.attach(model, project=tmp_path / "proj")
+    staged = QE.staged_cut_run(dbg, TOKENS, [(0, (1,), LAST, 1), (1, (0,), LAST, 2)], prefill=PREFILL, row=LAST)
+    summary, recipe = QE.v2_checkpoint(dbg, staged, "set-cut")
+    kind, checked = QE.read_recipe(recipe)
+    assert kind == "v2" and checked["prefill"] == PREFILL
+    assert [len(t["edits"]) for t in recipe["transitions"] if t["edits"]] == [1, 1]
+    replayed = mdb.attach(model, project=tmp_path / "proj").restart("set-cut")
+    assert torch.equal(QE.run_logits(replayed, LAST), QE.run_logits(staged, LAST))
+    v1 = nrr.seal({"schema": nrr.SCHEMA, "model_identity": "m", "execution": {},
+                   "roots": [{"id": "r", "token_ids": [1, 2]}],
+                   "events": [{"id": "e", "session": "r", "kind": "continue", "steps": 1}]})
+    assert QE.read_recipe(v1)[0] == "v1"
+    with pytest.raises(QE.EngineLaneError):
+        QE.read_recipe({"schema": "other"})
+
+
+def test_engine_rows_staged_set_over_two_layers(tiny):
+    torch, model, forward, run = tiny
+    if not PLAN.exists():
+        pytest.skip("saved Qwen plan not in this checkout")
+    import mdb
+    from mdb_lanes import attention_port as ap
+    panel = P.Panel.from_json(json.loads(PLAN.read_text()))
+    name = "z:named3:freezing/cut_recompute"
+    arm = replace(panel.by_id()[name], units=[[0, 1], [1, 0], [1, 1]])
+    small = replace(panel, arms=[a for a in panel.arms if a.arm == "native"] + [arm])
+    table = {"receiver": [LAST], "own:freezing": [2], "own:icy": [1]}
+    rows, lane_only = QE.engine_rows(small, run, table, hot=HOT, cold=COLD, row=LAST)
+    assert name in lane_only and "span layers" in lane_only[name]
+    staged = {"dbg": mdb.attach(model), "tokens": TOKENS, "prefill": PREFILL, "only": None}
+    rows, lane_only = QE.engine_rows(small, run, table, hot=HOT, cold=COLD, row=LAST, staged=staged)
+    by = {r["arm"]: r for r in rows}
+    assert not lane_only and by[name]["engine"]["kind"] == "staged"
+    port = ap.AttentionPort(ap.QwenBackend(model), rows={"receiver": [LAST], "src": [2]}, zero_method="recompute")
+    with port.apply(ap.cut(["receiver"], ["src"], heads=[(0, 1), (1, 0), (1, 1)], renormalize=False), forwards=1):
+        lane = forward()
+    assert by[name]["margin"] == QE.margin_of(lane, HOT, COLD)
