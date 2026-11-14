@@ -1,0 +1,15 @@
+mrun: job-07ff257021c4 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 9d4533e script exp2_base.py
+[   17.0s] load
+[   18.5s] saelens
+[   26.6s] A currency:yen 8.08s
+[   34.2s] A currency:won 7.61s
+[   34.8s] C d1:France 0.61s
+[   35.6s] C d2:Paris 0.80s
+[   35.6s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:37.47
+	Maximum resident set size (kbytes): 10112176
+mrun: job-07ff257021c4 -> succeeded
+mrun: job-07ff257021c4 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 38.02, 'peak_rss_mb': 9913.0, 'peak_vram_mb': 3956.0}

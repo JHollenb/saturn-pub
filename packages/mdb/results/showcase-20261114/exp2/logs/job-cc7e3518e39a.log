@@ -1,0 +1,87 @@
+mrun: job-cc7e3518e39a -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 16d6b63 script exp2_base.py
+[   21.9s] load
+[   25.5s] saelens
+[   35.2s] A landmark:Mount Fuji 9.69s
+[   45.0s] A landmark:the Great Wall 9.78s
+[   54.7s] A landmark:the Forbidden City 9.66s
+[   66.1s] A landmark:the Colosseum 11.48s
+[   76.9s] A landmark:the Parthenon 10.79s
+[   86.6s] A landmark:the Acropolis 9.63s
+[   99.7s] A landmark:the pyramids of Giza 13.10s
+[  108.4s] A landmark:the Sphinx 8.75s
+[  117.2s] A landmark:Uluru 8.79s
+[  127.8s] A landmark:Borobudur 10.58s
+[  138.7s] A landmark:Persepolis 10.92s
+[  151.5s] A landmark:the Cliffs of Moher 12.82s
+[  161.1s] A landmark:Mount Rushmore 9.61s
+[  169.9s] A landmark:Masada 8.76s
+[  181.7s] A landmark:Schonbrunn Palace 11.84s
+[  194.7s] A landmark:the Rijksmuseum 12.94s
+[  202.5s] A city:Kyoto 7.79s
+[  211.2s] A city:Busan 8.68s
+[  219.0s] A city:Shanghai 7.84s
+[  226.5s] A city:Shenzhen 7.53s
+[  233.9s] A city:Saint Petersburg 7.32s
+[  240.7s] A city:Munich 6.81s
+[  247.3s] A city:Hamburg 6.65s
+[  254.0s] A city:Milan 6.64s
+[  260.6s] A city:Naples 6.66s
+[  267.5s] A city:Barcelona 6.89s
+[  274.8s] A city:Seville 7.26s
+[  281.4s] A city:Porto 6.65s
+[  288.2s] A city:Rotterdam 6.82s
+[  296.5s] A city:Gothenburg 8.30s
+[  303.8s] A city:Krakow 7.24s
+[  311.6s] A city:Gdansk 7.85s
+[  312.3s] C d1:France 0.63s
+[  312.9s] C d2:Paris 0.65s
+[  313.5s] C d1:Italy 0.64s
+[  314.2s] C d2:Rome 0.64s
+[  314.8s] C d1:Germany 0.62s
+[  315.6s] C d2:Berlin 0.81s
+[  316.2s] C d1:Spain 0.62s
+[  316.9s] C d2:Madrid 0.64s
+[  317.5s] C d1:Japan 0.62s
+[  318.1s] C d2:Tokyo 0.64s
+[  318.8s] C d1:Russia 0.62s
+[  319.4s] C d2:Moscow 0.64s
+[  320.6s] C d1:the Czech Republic 1.21s
+[  321.2s] C d2:Prague 0.64s
+[  322.4s] C d1:the United Kingdom 1.21s
+[  323.1s] C d2:London 0.64s
+[  323.7s] C d1:Austria 0.62s
+[  324.3s] C d2:Vienna 0.64s
+[  325.0s] C d1:Greece 0.62s
+[  325.6s] C d2:Athens 0.64s
+[  326.5s] C d1:the Netherlands 0.91s
+[  327.1s] C d2:Amsterdam 0.64s
+[  327.8s] C d1:Denmark 0.62s
+[  328.4s] C d2:Copenhagen 0.64s
+[  329.0s] C d1:Hungary 0.62s
+[  329.6s] C d2:Budapest 0.64s
+[  330.3s] C d1:Portugal 0.62s
+[  330.9s] C d2:Lisbon 0.64s
+[  331.5s] C d1:Sweden 0.62s
+[  332.2s] C d2:Stockholm 0.64s
+[  332.8s] C d1:Egypt 0.62s
+[  333.6s] C d2:Cairo 0.81s
+[  334.2s] C d1:Turkey 0.62s
+[  334.9s] C d2:Ankara 0.64s
+[  335.5s] C d1:Poland 0.62s
+[  336.1s] C d2:Warsaw 0.64s
+[  337.0s] C d1:South Korea 0.91s
+[  337.7s] C d2:Seoul 0.64s
+[  338.3s] C d1:Thailand 0.62s
+[  338.9s] C d2:Bangkok 0.64s
+[  339.5s] C d1:Finland 0.62s
+[  340.2s] C d2:Helsinki 0.64s
+[  340.8s] C d1:Norway 0.62s
+[  341.4s] C d2:Oslo 0.64s
+[  341.4s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 5:43.57
+	Maximum resident set size (kbytes): 9989192
+mrun: job-cc7e3518e39a -> succeeded
+mrun: job-cc7e3518e39a finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 344.11, 'peak_rss_mb': 9797.7, 'peak_vram_mb': 3976.0}
