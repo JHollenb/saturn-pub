@@ -1,0 +1,19 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 28dfc65477d481becd2e1c8f730c7921045aae83 mode eb2 0..0
+EB2 {"recipient": "city:Kyoto", "donor": "city:Osaka", "native": " Tokyo", "cell": "copied", "cell_text": " Osaka", "band": "copied", "band_text": " Osaka"}
+EB2 {"recipient": "city:Shanghai", "donor": "city:Shenzhen", "native": " Beijing", "cell": "kept", "cell_text": " Beijing", "band": "kept", "band_text": " Beijing"}
+EB2 {"recipient": "city:Shenzhen", "donor": "city:Shanghai", "native": " Beijing", "cell": "copied", "cell_text": " Shanghai", "band": "copied", "band_text": " Shanghai"}
+EB2 {"recipient": "city:Saint Petersburg", "donor": "city:Novosibirsk", "native": " Moscow", "cell": "kept", "cell_text": " Moscow", "band": "kept", "band_text": " Moscow"}
+EB2 {"recipient": "city:Munich", "donor": "city:Hamburg", "native": " Berlin", "cell": "kept", "cell_text": " Berlin", "band": "kept", "band_text": " Berlin"}
+EB2 {"recipient": "city:Hamburg", "donor": "city:Munich", "native": " Berlin", "cell": "kept", "cell_text": " Berlin", "band": "kept", "band_text": " Berlin"}
+EB2 {"recipient": "city:Milan", "donor": "city:Naples", "native": " Rome", "cell": "kept", "cell_text": " Rome", "band": "kept", "band_text": " Rome"}
+EB2 {"recipient": "city:Naples", "donor": "city:Milan", "native": " Rome", "cell": "kept", "cell_text": " Rome", "band": "copied", "band_text": " Milan"}
+EB2 {"recipient": "city:Barcelona", "donor": "city:Seville", "native": " Madrid", "cell": "kept", "cell_text": " Madrid", "band": "kept", "band_text": " Madrid"}
+EB2 {"recipient": "city:Seville", "donor": "city:Barcelona", "native": " Madrid", "cell": "kept", "cell_text": " Madrid", "band": "kept", "band_text": " Madrid"}
+EB2 {"recipient": "city:Krakow", "donor": "city:Gdansk", "native": " Warsaw", "cell": "kept", "cell_text": " Warsaw", "band": "kept", "band_text": " Warsaw"}
+EB2 {"recipient": "city:Gdansk", "donor": "city:Krakow", "native": " Warsaw", "cell": "kept", "cell_text": " Warsaw", "band": "copied", "band_text": " Krak"}
+TOTAL 21.5s
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:23.14
+	Maximum resident set size (kbytes): 4350908
+-rw-rw-r-- 1 beast beast 1881 Nov 13 23:01 eb-eb2-0-0.jsonl

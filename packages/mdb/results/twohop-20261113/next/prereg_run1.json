@@ -1,0 +1,40 @@
+{
+ "frozen_at": "2026-11-13 ~23:50 PST, before any run of Run 1a/1b. Known: Z1, Z2, Y2, FT1, Run 0 (next/run0.json), J1 smoke (3 items), Run 1 smoke (job-065d133e810b: checkpoint at t_j.L20.h + restore = bitwise-equal arms at 0.10 s vs 0.31 s fresh). Audit rules (ext/AUDIT-Z1-Z2.md): accounting from measured terms is never called a forecast; forecasts use only pre-edit quantities; capital co-readout beside every country readout; neuron recurrence gets an answer-token-fixed null.",
+ "model": "Qwen3-1.7B-Base bf16 eager CUDA; single seed; one model load per job; code = merged tree (mdb-engine-refactor merged at 1b5aae6)",
+ "items": "next/r1_items.json. base = the 64 entry-1 recipients (gt row, donor 0); hard = the 114 Y2 panel recipients with a ground-truth carrier (x1 panel donor 0); depth = 154 d1-d4 candidates (capture only, NOT scored until a depth prereg exists).",
+ "jobs": {"1a": "base 64 (capture + all arms) + depth 154 (capture only)", "1b": "hard 114 (capture + liveness sweep + t0/relay cuts)"},
+ "capture": "per item, torch.save of bf16/f32 tensors on /mnt/ssd1tb/cache/beast/twohop-run1/: K and V cache of every row at every layer (bf16, exact); answer-row ports h, p, A, o, r, h_out at every layer and n, g, sg, u, f, m at layers 20-27 (f32 of the native bf16), m at all layers; logits of the kept tokens; the donor's V cells at the span rows and its answer-row h at L20. Arm results are written to separate files (arms-*.jsonl, arm-*.pt) that the offline forecast step does not open before its forecasts are committed.",
+ "arms_base": {
+  "liveness": "cell_sweep: donor-0 V cell at every (span row, layer 4-27, KV head) into the recipient; consumer M[answer, donor-0 answer]; plus the relay row (largest summed answer-row attention mass outside t0, the span and the answer row) cells at layers 4-27 x KV and its all-layer V band",
+  "coalition": "the top 4 single V cells of the liveness sweep by |effect|: all 6 pairs (cell_sweep two-cell arms); interaction = pair - sum of singles",
+  "cuts": "answer row, all 28 layers: t0 zero (p=0) and mask (s=-1e4); relay row zero and mask",
+  "code_swaps": "L20 KV6 cell at the gt row replaced (checkpoint at t_j.L20.h, restore per arm): panel-mean, country-mean (other correct candidates of the bridge country), other-country-mean (seeded), city-family-mean (city items), donor 0; edited answer-row ports at L20-27 + logits captured for offline hop ladders",
+  "two_by_two": "payload x receiver via restore at t_j.L20.h: A = donor-0 cell, B = donor-0's answer-row h at L20 (receiver state; same length donors), A+B; interaction I = dM(A+B) - dM(A) - dM(B)",
+  "knockout": "items whose country has a named set (8 countries, >= 3 items; next/r1_items.json named_neurons, from Z2 ablate, in-sample): replace the named neurons' f at the answer row (L20-27) with the panel-mean f; vs (i) the same count of random neurons from the same layers (seeded), (ii) an answer-token-fixed null: the same count drawn from the top-5x neurons of the same layers ranked by |gamma (W_U[a]-W_U[b]) . W_down[:, i]| (direct answer-direction writers), named excluded"
+ },
+ "arms_hard": "liveness sweep (span rows x L4-27 x KV, donor 0) and t0/relay zero/mask cuts as above; capture as above",
+ "offline": {
+  "seal_first": "from the captures only (native state, weights, pre-edit operands: donor cells, mean cells, cut closed forms, knock-out values), a first-order passive forecast of dM for every intervention arm: one reverse-mode pass of M through a float32 replica of the answer-row computation (other rows' K/V fixed from the capture, as set_cell semantics) gives dM/d o_l, dM/d h_20 and dM/d f_l; forecast = gradient . pre-edit operand change (P07 for cells, P09 for cuts, Delta f for knock-outs). The replica is validated against the captured ports (max |h_out replica - native| reported) before use. Forecasts are committed before any arms file is opened.",
+  "then": "score forecasts against native; contrast vs share ranking against the liveness sweep (Spearman); mask-cut closed form with the f32-renormalised p; relay detection from reads (contrast); K/V typing views; content strip vs causal-liveness strip; address rule (R_argmax: argmax over span rows of p[h12]+p[h13] at L20 excluding t0; R_last; R_first; random) against the gt row on the 114 hard items; declared-carrier readout (gt cell write through gamma W_U; countries, capitals co-readout, all-set) on the 114; B_answer pre-read at L20.h (and L20.h_out) on base and hard; hop ladders of the code swaps from the edited captures"
+ },
+ "predictions": {
+  "P1_forecast": "first-order passive forecast vs native dM: Spearman >= 0.8 over single liveness cells (pooled per item, median over items); for the donor code swap, sign-of-margin flip set mismatch <= 0.25 of base items; for t0 cuts the first-order forecast misses by > 50% of |dM| on most items (large edits)",
+  "P2_lifetime": "memo job 4 falsifiers: first causal layer (single cell |dM| > 0.5) later than the content strip's first C by > 8 layers on >= 32/64 items -> content strip is not lifetime; single-cell strip empty outside L20 on < 48/64 -> the one-cell reading was site selection. Prediction: neither fires; first causal layer median L18-20",
+  "P3_contrast_ranking": "Spearman(contrast-form contribution, liveness effect) over sites >= 0.3 (median over items), above the share form's (entry 1: 0.10)",
+  "P4_cuts": "mask-cut closed form with f32-renormalised p within 2 bf16 spacings on >= 0.9 of items (FT1 failure explained); relay-row band transplant moves dM by > 0.5 of the cell transplant on < 16/64 items (no hidden relay)",
+  "P5_code": "J1 predictions J1a-J1e of next/prereg_j1.json, judged here (country-mean |dM| < panel-mean |dM| on >= 48/63; country-mean keeps the answer on >= 44/47 non-city items with members, >= 12/16 city; content after swaps: country unchanged >= 0.9 with country-mean; other-country-mean names the other country >= 0.8 and flips to its capital >= 0.3)",
+  "P6_two_by_two": "|I| <= 0.25 |dM(A)| on >= 0.6 of items (payload and receiver mostly additive)",
+  "P7_coalition": "pairs of the top cells are sub-additive (|pair| < |sum of singles|) on >= 0.6 of pairs (redundant copies)",
+  "P8_knockout": "named-set |dM| exceeds the random set's by >= 2 floors (0.5) on >= 0.6 of eligible items, and exceeds the answer-token-fixed null's on >= 0.5; if it does not beat the answer-token null, the recurrence is the answer token's, not the bridge's",
+  "P9_address": "R_argmax beats R_last by >= 0.05 on the 114 hard items (memo falsifier: it does not)",
+  "P10_readouts": "declared-carrier readout on the 114: countries >= 0.90 (capital co-readout reported); B_answer pre-read at L20.h names the country on <= 0.50 of base items (Z4 retest without the cell's read)"
+ },
+ "falsifiers": {
+  "forecast": "P1 single-cell Spearman < 0.5: the passive first-order view cannot rank the chain's sites",
+  "lifetime": "as P2",
+  "address": "R_argmax - R_last < 0.05",
+  "knockout": "named set does not beat random by 2 floors on >= 40/64-equivalent (0.6) of eligible items: the recurring neurons are a census, not a composer"
+ },
+ "budget": "1a and 1b each <= 10 min (estimates 9 and 7 min from the smoke), smoke on 3 items first; priority 70; vram 5000",
+ "rules": "single seed; unknown is not negative; counts below 8 reported, not judged; 3-hop captures not opened for scoring until a depth prereg is committed"
+}

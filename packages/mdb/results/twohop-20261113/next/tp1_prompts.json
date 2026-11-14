@@ -1,0 +1,484 @@
+{
+"prompts": [
+{
+"name": "currency:yen",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the country whose currency is the yen is"
+},
+{
+"name": "currency:won",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the country whose currency is the won is"
+},
+{
+"name": "currency:ruble",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the country whose currency is the ruble is"
+},
+{
+"name": "currency:rouble",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the country whose currency is the rouble is"
+},
+{
+"name": "currency:yuan",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the country whose currency is the yuan is"
+},
+{
+"name": "currency:renminbi",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the country whose currency is the renminbi is"
+},
+{
+"name": "currency:baht",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the country whose currency is the baht is"
+},
+{
+"name": "currency:zloty",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the country whose currency is the zloty is"
+},
+{
+"name": "currency:forint",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the country whose currency is the forint is"
+},
+{
+"name": "currency:krona",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the country whose currency is the krona is"
+},
+{
+"name": "currency:rupiah",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the country whose currency is the rupiah is"
+},
+{
+"name": "currency:shekel",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the country whose currency is the shekel is"
+},
+{
+"name": "currency:koruna",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the country whose currency is the koruna is"
+},
+{
+"name": "currency:pound sterling",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the country whose currency is the pound sterling is"
+},
+{
+"name": "currency:sterling",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the country whose currency is the sterling is"
+},
+{
+"name": "currency:rial",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the country whose currency is the rial is"
+},
+{
+"name": "person:Hokusai",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the home country of Hokusai is"
+},
+{
+"name": "person:Akira Kurosawa",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the home country of Akira Kurosawa is"
+},
+{
+"name": "person:Haruki Murakami",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the home country of Haruki Murakami is"
+},
+{
+"name": "person:Mao Zedong",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the home country of Mao Zedong is"
+},
+{
+"name": "person:Miguel de Cervantes",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the home country of Miguel de Cervantes is"
+},
+{
+"name": "person:Giuseppe Verdi",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the home country of Giuseppe Verdi is"
+},
+{
+"name": "person:Mozart",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the home country of Mozart is"
+},
+{
+"name": "person:Frederic Chopin",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the home country of Frederic Chopin is"
+},
+{
+"name": "person:Jean Sibelius",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the home country of Jean Sibelius is"
+},
+{
+"name": "person:Henrik Ibsen",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the home country of Henrik Ibsen is"
+},
+{
+"name": "person:Edvard Munch",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the home country of Edvard Munch is"
+},
+{
+"name": "person:Socrates",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the home country of Socrates is"
+},
+{
+"name": "person:Plato",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the home country of Plato is"
+},
+{
+"name": "person:Soren Kierkegaard",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the home country of Soren Kierkegaard is"
+},
+{
+"name": "person:Hans Christian Andersen",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the home country of Hans Christian Andersen is"
+},
+{
+"name": "person:Rembrandt",
+"kind": "twohop",
+"text": "The capital of the country whose currency is the Swiss franc is Bern.\nThe capital of the country containing the city of Lyon is Paris.\nThe capital of the home country of Rembrandt is"
+},
+{
+"name": "s0",
+"kind": "plain",
+"text": "Paris is the capital of France, and the river is the Seine."
+},
+{
+"name": "s0",
+"kind": "lead_The",
+"text": "The Paris is the capital of France, and the river is the Seine."
+},
+{
+"name": "s0",
+"kind": "lead_newline",
+"text": "\nParis is the capital of France, and the river is the Seine."
+},
+{
+"name": "s0",
+"kind": "lead_eot",
+"text": "<|endoftext|>Paris is the capital of France, and the river is the Seine."
+},
+{
+"name": "s1",
+"kind": "plain",
+"text": "42 people walked into the hall; the band  played until midnight."
+},
+{
+"name": "s1",
+"kind": "lead_The",
+"text": "The 42 people walked into the hall; the band  played until midnight."
+},
+{
+"name": "s1",
+"kind": "lead_newline",
+"text": "\n42 people walked into the hall; the band  played until midnight."
+},
+{
+"name": "s1",
+"kind": "lead_eot",
+"text": "<|endoftext|>42 people walked into the hall; the band  played until midnight."
+},
+{
+"name": "s2",
+"kind": "plain",
+"text": "\"Stop,\" said the guard, and the door closed."
+},
+{
+"name": "s2",
+"kind": "lead_The",
+"text": "The \"Stop,\" said the guard, and the door closed."
+},
+{
+"name": "s2",
+"kind": "lead_newline",
+"text": "\n\"Stop,\" said the guard, and the door closed."
+},
+{
+"name": "s2",
+"kind": "lead_eot",
+"text": "<|endoftext|>\"Stop,\" said the guard, and the door closed."
+},
+{
+"name": "s3",
+"kind": "plain",
+"text": "Water boils at 100 degrees. The kettle whistled."
+},
+{
+"name": "s3",
+"kind": "lead_The",
+"text": "The Water boils at 100 degrees. The kettle whistled."
+},
+{
+"name": "s3",
+"kind": "lead_newline",
+"text": "\nWater boils at 100 degrees. The kettle whistled."
+},
+{
+"name": "s3",
+"kind": "lead_eot",
+"text": "<|endoftext|>Water boils at 100 degrees. The kettle whistled."
+},
+{
+"name": "s4",
+"kind": "plain",
+"text": "Mount Everest is the highest mountain in the world."
+},
+{
+"name": "s4",
+"kind": "lead_The",
+"text": "The Mount Everest is the highest mountain in the world."
+},
+{
+"name": "s4",
+"kind": "lead_newline",
+"text": "\nMount Everest is the highest mountain in the world."
+},
+{
+"name": "s4",
+"kind": "lead_eot",
+"text": "<|endoftext|>Mount Everest is the highest mountain in the world."
+},
+{
+"name": "s5",
+"kind": "plain",
+"text": "In 1969, the first humans walked on the Moon."
+},
+{
+"name": "s5",
+"kind": "lead_The",
+"text": "The In 1969, the first humans walked on the Moon."
+},
+{
+"name": "s5",
+"kind": "lead_newline",
+"text": "\nIn 1969, the first humans walked on the Moon."
+},
+{
+"name": "s5",
+"kind": "lead_eot",
+"text": "<|endoftext|>In 1969, the first humans walked on the Moon."
+},
+{
+"name": "s6",
+"kind": "plain",
+"text": "Bananas are yellow, apples are red, and the sky is blue."
+},
+{
+"name": "s6",
+"kind": "lead_The",
+"text": "The Bananas are yellow, apples are red, and the sky is blue."
+},
+{
+"name": "s6",
+"kind": "lead_newline",
+"text": "\nBananas are yellow, apples are red, and the sky is blue."
+},
+{
+"name": "s6",
+"kind": "lead_eot",
+"text": "<|endoftext|>Bananas are yellow, apples are red, and the sky is blue."
+},
+{
+"name": "s7",
+"kind": "plain",
+"text": "Coffee, tea, and juice were served at the meeting."
+},
+{
+"name": "s7",
+"kind": "lead_The",
+"text": "The Coffee, tea, and juice were served at the meeting."
+},
+{
+"name": "s7",
+"kind": "lead_newline",
+"text": "\nCoffee, tea, and juice were served at the meeting."
+},
+{
+"name": "s7",
+"kind": "lead_eot",
+"text": "<|endoftext|>Coffee, tea, and juice were served at the meeting."
+},
+{
+"name": "s8",
+"kind": "plain",
+"text": "Shakespeare wrote Hamlet; the play is set in Denmark."
+},
+{
+"name": "s8",
+"kind": "lead_The",
+"text": "The Shakespeare wrote Hamlet; the play is set in Denmark."
+},
+{
+"name": "s8",
+"kind": "lead_newline",
+"text": "\nShakespeare wrote Hamlet; the play is set in Denmark."
+},
+{
+"name": "s8",
+"kind": "lead_eot",
+"text": "<|endoftext|>Shakespeare wrote Hamlet; the play is set in Denmark."
+},
+{
+"name": "s9",
+"kind": "plain",
+"text": "Seven  days make a week, and  twelve months make a year."
+},
+{
+"name": "s9",
+"kind": "lead_The",
+"text": "The Seven  days make a week, and  twelve months make a year."
+},
+{
+"name": "s9",
+"kind": "lead_newline",
+"text": "\nSeven  days make a week, and  twelve months make a year."
+},
+{
+"name": "s9",
+"kind": "lead_eot",
+"text": "<|endoftext|>Seven  days make a week, and  twelve months make a year."
+},
+{
+"name": "s10",
+"kind": "plain",
+"text": "Dogs bark.\nCats meow.\nThe birds sing at dawn."
+},
+{
+"name": "s10",
+"kind": "lead_The",
+"text": "The Dogs bark.\nCats meow.\nThe birds sing at dawn."
+},
+{
+"name": "s10",
+"kind": "lead_newline",
+"text": "\nDogs bark.\nCats meow.\nThe birds sing at dawn."
+},
+{
+"name": "s10",
+"kind": "lead_eot",
+"text": "<|endoftext|>Dogs bark.\nCats meow.\nThe birds sing at dawn."
+},
+{
+"name": "s11",
+"kind": "plain",
+"text": "Tokyo is a large city in Japan with many trains."
+},
+{
+"name": "s11",
+"kind": "lead_The",
+"text": "The Tokyo is a large city in Japan with many trains."
+},
+{
+"name": "s11",
+"kind": "lead_newline",
+"text": "\nTokyo is a large city in Japan with many trains."
+},
+{
+"name": "s11",
+"kind": "lead_eot",
+"text": "<|endoftext|>Tokyo is a large city in Japan with many trains."
+},
+{
+"name": "s12",
+"kind": "plain",
+"text": "Light travels faster than sound, so the flash comes first."
+},
+{
+"name": "s12",
+"kind": "lead_The",
+"text": "The Light travels faster than sound, so the flash comes first."
+},
+{
+"name": "s12",
+"kind": "lead_newline",
+"text": "\nLight travels faster than sound, so the flash comes first."
+},
+{
+"name": "s12",
+"kind": "lead_eot",
+"text": "<|endoftext|>Light travels faster than sound, so the flash comes first."
+},
+{
+"name": "s13",
+"kind": "plain",
+"text": "Gold is a metal. Silver is a metal. The coin was made of gold."
+},
+{
+"name": "s13",
+"kind": "lead_The",
+"text": "The Gold is a metal. Silver is a metal. The coin was made of gold."
+},
+{
+"name": "s13",
+"kind": "lead_newline",
+"text": "\nGold is a metal. Silver is a metal. The coin was made of gold."
+},
+{
+"name": "s13",
+"kind": "lead_eot",
+"text": "<|endoftext|>Gold is a metal. Silver is a metal. The coin was made of gold."
+},
+{
+"name": "s14",
+"kind": "plain",
+"text": "A recipe: flour, sugar, eggs, and the butter."
+},
+{
+"name": "s14",
+"kind": "lead_The",
+"text": "The A recipe: flour, sugar, eggs, and the butter."
+},
+{
+"name": "s14",
+"kind": "lead_newline",
+"text": "\nA recipe: flour, sugar, eggs, and the butter."
+},
+{
+"name": "s14",
+"kind": "lead_eot",
+"text": "<|endoftext|>A recipe: flour, sugar, eggs, and the butter."
+},
+{
+"name": "s15",
+"kind": "plain",
+"text": "Quickly, the fox jumped over the lazy dog."
+},
+{
+"name": "s15",
+"kind": "lead_The",
+"text": "The Quickly, the fox jumped over the lazy dog."
+},
+{
+"name": "s15",
+"kind": "lead_newline",
+"text": "\nQuickly, the fox jumped over the lazy dog."
+},
+{
+"name": "s15",
+"kind": "lead_eot",
+"text": "<|endoftext|>Quickly, the fox jumped over the lazy dog."
+}
+]
+}

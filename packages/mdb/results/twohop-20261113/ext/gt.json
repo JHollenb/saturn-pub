@@ -1,0 +1,322 @@
+{
+"currency:yen": {
+"row": 36,
+"layer": 20,
+"kv": 6
+},
+"currency:won": {
+"row": 36,
+"layer": 20,
+"kv": 6
+},
+"currency:ruble": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"currency:rouble": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"currency:yuan": {
+"row": 36,
+"layer": 20,
+"kv": 6
+},
+"currency:renminbi": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"currency:baht": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"currency:zloty": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"currency:forint": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"currency:krona": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"currency:rupiah": {
+"row": 38,
+"layer": 20,
+"kv": 6
+},
+"currency:shekel": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"currency:koruna": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"currency:pound sterling": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"currency:sterling": {
+"row": 36,
+"layer": 20,
+"kv": 6
+},
+"currency:rial": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"person:Hokusai": {
+"row": 36,
+"layer": 20,
+"kv": 6
+},
+"person:Akira Kurosawa": {
+"row": 38,
+"layer": 20,
+"kv": 6
+},
+"person:Haruki Murakami": {
+"row": 38,
+"layer": 20,
+"kv": 6
+},
+"person:Mao Zedong": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"person:Miguel de Cervantes": {
+"row": 38,
+"layer": 20,
+"kv": 6
+},
+"person:Giuseppe Verdi": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"person:Mozart": {
+"row": 34,
+"layer": 20,
+"kv": 6
+},
+"person:Frederic Chopin": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"person:Jean Sibelius": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"person:Henrik Ibsen": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"person:Edvard Munch": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"person:Socrates": {
+"row": 35,
+"layer": 20,
+"kv": 6
+},
+"person:Plato": {
+"row": 34,
+"layer": 20,
+"kv": 6
+},
+"person:Soren Kierkegaard": {
+"row": 38,
+"layer": 20,
+"kv": 6
+},
+"person:Hans Christian Andersen": {
+"row": 36,
+"layer": 20,
+"kv": 6
+},
+"person:Rembrandt": {
+"row": 35,
+"layer": 20,
+"kv": 6
+},
+"landmark:Mount Fuji": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"landmark:the Great Wall": {
+"row": 38,
+"layer": 20,
+"kv": 6
+},
+"landmark:the Forbidden City": {
+"row": 38,
+"layer": 20,
+"kv": 6
+},
+"landmark:the Colosseum": {
+"row": 39,
+"layer": 20,
+"kv": 6
+},
+"landmark:the Parthenon": {
+"row": 39,
+"layer": 20,
+"kv": 6
+},
+"landmark:the Acropolis": {
+"row": 38,
+"layer": 20,
+"kv": 6
+},
+"landmark:the pyramids of Giza": {
+"row": 41,
+"layer": 20,
+"kv": 6
+},
+"landmark:the Sphinx": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"landmark:Uluru": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"landmark:Borobudur": {
+"row": 39,
+"layer": 20,
+"kv": 6
+},
+"landmark:Persepolis": {
+"row": 38,
+"layer": 20,
+"kv": 6
+},
+"landmark:the Cliffs of Moher": {
+"row": 41,
+"layer": 20,
+"kv": 6
+},
+"landmark:Mount Rushmore": {
+"row": 38,
+"layer": 20,
+"kv": 6
+},
+"landmark:Masada": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"landmark:Schonbrunn Palace": {
+"row": 39,
+"layer": 20,
+"kv": 6
+},
+"landmark:the Rijksmuseum": {
+"row": 39,
+"layer": 20,
+"kv": 6
+},
+"city:Kyoto": {
+"row": 36,
+"layer": 20,
+"kv": 6
+},
+"city:Busan": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"city:Shanghai": {
+"row": 36,
+"layer": 20,
+"kv": 6
+},
+"city:Shenzhen": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"city:Saint Petersburg": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"city:Munich": {
+"row": 36,
+"layer": 20,
+"kv": 6
+},
+"city:Hamburg": {
+"row": 36,
+"layer": 20,
+"kv": 6
+},
+"city:Milan": {
+"row": 36,
+"layer": 20,
+"kv": 6
+},
+"city:Naples": {
+"row": 36,
+"layer": 20,
+"kv": 6
+},
+"city:Barcelona": {
+"row": 36,
+"layer": 20,
+"kv": 6
+},
+"city:Seville": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"city:Porto": {
+"row": 36,
+"layer": 20,
+"kv": 6
+},
+"city:Rotterdam": {
+"row": 36,
+"layer": 20,
+"kv": 6
+},
+"city:Gothenburg": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"city:Krakow": {
+"row": 37,
+"layer": 20,
+"kv": 6
+},
+"city:Gdansk": {
+"row": 38,
+"layer": 20,
+"kv": 6
+}
+}

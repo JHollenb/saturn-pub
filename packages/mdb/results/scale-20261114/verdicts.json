@@ -1,0 +1,880 @@
+{
+ "models": {
+  "Qwen2.5-0.5B": {
+   "L_c": 21,
+   "kv_c": 0,
+   "layers": 24,
+   "frac": 0.875,
+   "tail": 3,
+   "mode": [
+    20,
+    28
+   ],
+   "pick": [
+    16,
+    18
+   ],
+   "in_pick": false,
+   "in_A1": false,
+   "in_A2": false,
+   "accuracy": {
+    "d2": 1.0,
+    "d3": 0.6428571428571429,
+    "d4": 0.21428571428571427,
+    "currency": 0.5833333333333334,
+    "person": 0.75,
+    "landmark": 0.5833333333333334,
+    "city": 0.4166666666666667,
+    "d3-lm": 0.6428571428571429,
+    "d3-per": 0.6428571428571429,
+    "d4-work": 0.21428571428571427,
+    "dist-city": 0.3333333333333333,
+    "obsc-city": 0.25
+   },
+   "acc_bands_hit": [
+    false,
+    false,
+    false
+   ],
+   "base_carrier_agree": [
+    20,
+    28
+   ],
+   "base_carrier_names_country": [
+    15,
+    28
+   ],
+   "base_write_window_le5": [
+    5,
+    28
+   ],
+   "concentration_by_family": {
+    "currency": 0.3695652173913043,
+    "person": 0.39464285714285713,
+    "landmark": 0.3624161073825503,
+    "city": 0.4442748091603053,
+    "d2": 0.5894210672105966,
+    "d3-lm": 0.31125827814569534,
+    "d3-per": 0.36507936507936506,
+    "d4-work": 0.24347826086956523,
+    "dist-city": 0.6578616352201258,
+    "obsc-city": 0.5191040843214756
+   },
+   "mlp_share": {
+    "0.5": {
+     "median": -0.03207419752922825,
+     "iqr": [
+      -0.2668953037861085,
+      0.46361378634052663
+     ]
+    },
+    "1.0": {
+     "median": 0.09748268321894858,
+     "iqr": [
+      -0.08457311047246598,
+      0.4126796861280708
+     ]
+    }
+   },
+   "mlp_band": [
+    0.4,
+    0.6
+   ],
+   "mlp_in_band": false,
+   "dose_move": 0.0953808119236634,
+   "B2_auc": 0.48072562358276644,
+   "B6": {
+    "language_drop_median": 0.375,
+    "capital_drop_median": 0.84375
+   },
+   "projected_language": [
+    [
+     9,
+     56
+    ],
+    [
+     30,
+     56
+    ]
+   ]
+  },
+  "Qwen2.5-1.5B": {
+   "L_c": 22,
+   "kv_c": 1,
+   "layers": 28,
+   "frac": 0.7857142857142857,
+   "tail": 6,
+   "mode": [
+    38,
+    40
+   ],
+   "pick": [
+    22,
+    22
+   ],
+   "in_pick": true,
+   "in_A1": null,
+   "in_A2": null,
+   "accuracy": {
+    "d2": 1.0,
+    "d3": 0.75,
+    "d4": 0.35714285714285715,
+    "currency": 0.6666666666666666,
+    "person": 0.9166666666666666,
+    "landmark": 0.75,
+    "city": 1.0,
+    "d3-lm": 0.7857142857142857,
+    "d3-per": 0.7142857142857143,
+    "d4-work": 0.35714285714285715,
+    "dist-city": 0.8333333333333334,
+    "obsc-city": 1.0
+   },
+   "acc_bands_hit": [
+    true,
+    true,
+    true
+   ],
+   "base_carrier_agree": [
+    38,
+    40
+   ],
+   "base_carrier_names_country": [
+    37,
+    40
+   ],
+   "base_write_window_le5": [
+    4,
+    40
+   ],
+   "concentration_by_family": {
+    "currency": 0.4376689976689977,
+    "person": 0.3356164383561644,
+    "landmark": 0.2698961937716263,
+    "city": 0.5465811965811966,
+    "d2": 0.7505774355937223,
+    "d3-lm": 0.5208333333333334,
+    "d3-per": 0.4775974025974026,
+    "d4-work": 0.631578947368421,
+    "dist-city": 0.6164600284127599,
+    "obsc-city": 0.5287506741537388
+   },
+   "mlp_share": {
+    "0.5": {
+     "median": 0.5021106260709356,
+     "iqr": [
+      0.385673174020011,
+      0.6538952663012578
+     ]
+    },
+    "1.0": {
+     "median": 0.6243331395725912,
+     "iqr": [
+      0.5294530169224028,
+      0.7029252335572878
+     ]
+    }
+   },
+   "mlp_band": [
+    0.35,
+    0.55
+   ],
+   "mlp_in_band": false,
+   "dose_move": 0.08024344725503482,
+   "B2_auc": 0.7716346153846154,
+   "B6": {
+    "language_drop_median": 0.75,
+    "capital_drop_median": 3.28125
+   },
+   "projected_language": [
+    [
+     30,
+     56
+    ],
+    [
+     42,
+     56
+    ]
+   ]
+  },
+  "Qwen2.5-3B": {
+   "L_c": 27,
+   "kv_c": 1,
+   "layers": 36,
+   "frac": 0.75,
+   "tail": 9,
+   "mode": [
+    31,
+    42
+   ],
+   "pick": [
+    25,
+    28
+   ],
+   "in_pick": true,
+   "in_A1": true,
+   "in_A2": true,
+   "accuracy": {
+    "d2": 1.0,
+    "d3": 0.9642857142857143,
+    "d4": 0.6428571428571429,
+    "currency": 0.8333333333333334,
+    "person": 0.9166666666666666,
+    "landmark": 0.75,
+    "city": 1.0,
+    "d3-lm": 1.0,
+    "d3-per": 0.9285714285714286,
+    "d4-work": 0.6428571428571429,
+    "dist-city": 0.9166666666666666,
+    "obsc-city": 0.9166666666666666
+   },
+   "acc_bands_hit": [
+    true,
+    true,
+    true
+   ],
+   "base_carrier_agree": [
+    31,
+    42
+   ],
+   "base_carrier_names_country": [
+    32,
+    42
+   ],
+   "base_write_window_le5": [
+    0,
+    42
+   ],
+   "concentration_by_family": {
+    "currency": 0.44756953701235225,
+    "person": 0.4444444444444444,
+    "landmark": 0.39100346020761245,
+    "city": 0.47012308573064265,
+    "d2": 0.5978217022993142,
+    "d3-lm": 0.4328090740428403,
+    "d3-per": 0.36764705882352944,
+    "d4-work": 0.6717171717171717,
+    "dist-city": 0.46,
+    "obsc-city": 0.5111111111111111
+   },
+   "mlp_share": {
+    "0.5": {
+     "median": 0.6605174013913071,
+     "iqr": [
+      0.4012658585983719,
+      0.8135469418918203
+     ]
+    },
+    "1.0": {
+     "median": 0.6969527116342473,
+     "iqr": [
+      0.5515314589509052,
+      0.7897118279485363
+     ]
+    }
+   },
+   "mlp_band": [
+    0.55,
+    0.75
+   ],
+   "mlp_in_band": true,
+   "dose_move": 0.052657610090515256,
+   "B2_auc": 0.6087962962962963,
+   "B6": {
+    "language_drop_median": 0.4375,
+    "capital_drop_median": 0.46875
+   },
+   "projected_language": [
+    [
+     17,
+     56
+    ],
+    [
+     44,
+     56
+    ]
+   ]
+  },
+  "Qwen3-0.6B-Base": {
+   "L_c": 20,
+   "kv_c": 6,
+   "layers": 28,
+   "frac": 0.7142857142857143,
+   "tail": 8,
+   "mode": [
+    30,
+    30
+   ],
+   "pick": [
+    19,
+    22
+   ],
+   "in_pick": true,
+   "in_A1": true,
+   "in_A2": true,
+   "accuracy": {
+    "d2": 1.0,
+    "d3": 0.75,
+    "d4": 0.35714285714285715,
+    "currency": 0.4166666666666667,
+    "person": 0.75,
+    "landmark": 0.5833333333333334,
+    "city": 0.75,
+    "d3-lm": 0.7857142857142857,
+    "d3-per": 0.7142857142857143,
+    "d4-work": 0.35714285714285715,
+    "dist-city": 0.3333333333333333,
+    "obsc-city": 0.8333333333333334
+   },
+   "acc_bands_hit": [
+    false,
+    false,
+    false
+   ],
+   "base_carrier_agree": [
+    30,
+    30
+   ],
+   "base_carrier_names_country": [
+    28,
+    30
+   ],
+   "base_write_window_le5": [
+    1,
+    30
+   ],
+   "concentration_by_family": {
+    "currency": 0.3262411347517731,
+    "person": 0.4551083591331269,
+    "landmark": 0.4794952681388013,
+    "city": 0.649171270718232,
+    "d2": 0.6451612903225806,
+    "d3-lm": 0.3,
+    "d3-per": 0.3498106060606061,
+    "d4-work": 0.40963855421686746,
+    "dist-city": 0.5646812552772305,
+    "obsc-city": 0.6140744832444722
+   },
+   "mlp_share": {
+    "0.5": {
+     "median": 0.6148866773623165,
+     "iqr": [
+      0.47308696350704793,
+      0.7538533965965841
+     ]
+    },
+    "1.0": {
+     "median": 0.6124863103238909,
+     "iqr": [
+      0.5253019940332037,
+      0.745643307324129
+     ]
+    }
+   },
+   "mlp_band": [
+    0.45,
+    0.65
+   ],
+   "mlp_in_band": true,
+   "dose_move": 0.04015334565478182,
+   "B2_auc": 0.6550480769230769,
+   "B6": {
+    "language_drop_median": 0.75,
+    "capital_drop_median": 2.84375
+   },
+   "projected_language": [
+    [
+     34,
+     56
+    ],
+    [
+     40,
+     56
+    ]
+   ]
+  },
+  "Qwen3-1.7B-Base": {
+   "L_c": 20,
+   "kv_c": 6,
+   "layers": 28,
+   "frac": 0.7142857142857143,
+   "tail": 8,
+   "mode": [
+    41,
+    41
+   ],
+   "pick": [
+    20,
+    20
+   ],
+   "in_pick": true,
+   "in_A1": null,
+   "in_A2": null,
+   "accuracy": {
+    "d2": 1.0,
+    "d3": 0.75,
+    "d4": 0.42857142857142855,
+    "currency": 0.8333333333333334,
+    "person": 0.8333333333333334,
+    "landmark": 0.75,
+    "city": 1.0,
+    "d3-lm": 0.7142857142857143,
+    "d3-per": 0.7857142857142857,
+    "d4-work": 0.42857142857142855,
+    "dist-city": 0.75,
+    "obsc-city": 0.75
+   },
+   "acc_bands_hit": null,
+   "base_carrier_agree": [
+    41,
+    41
+   ],
+   "base_carrier_names_country": [
+    39,
+    41
+   ],
+   "base_write_window_le5": [
+    22,
+    41
+   ],
+   "concentration_by_family": {
+    "currency": 0.6243622949533003,
+    "person": 0.6153961584633854,
+    "landmark": 0.4715447154471545,
+    "city": 0.7039766407119021,
+    "d2": 0.8184798534798534,
+    "d3-lm": 0.35363485016648166,
+    "d3-per": 0.3855421686746988,
+    "d4-work": 0.4454022988505747,
+    "dist-city": 0.5333333333333333,
+    "obsc-city": 0.7603305785123967
+   },
+   "mlp_share": {
+    "0.5": {
+     "median": 0.46053940594934095,
+     "iqr": [
+      0.27266633537682283,
+      0.6494549792909818
+     ]
+    },
+    "1.0": {
+     "median": 0.6010980905329832,
+     "iqr": [
+      0.4501728490005543,
+      0.7066889892633437
+     ]
+    }
+   },
+   "mlp_band": null,
+   "mlp_in_band": null,
+   "dose_move": 0.10117801791023262,
+   "B2_auc": 0.6506172839506172,
+   "B6": {
+    "language_drop_median": 1.0,
+    "capital_drop_median": 1.6875
+   },
+   "projected_language": [
+    [
+     31,
+     56
+    ],
+    [
+     39,
+     56
+    ]
+   ]
+  },
+  "Qwen3-4B-Base": {
+   "L_c": 24,
+   "kv_c": 6,
+   "layers": 36,
+   "frac": 0.6666666666666666,
+   "tail": 12,
+   "mode": [
+    42,
+    42
+   ],
+   "pick": [
+    24,
+    27
+   ],
+   "in_pick": true,
+   "in_A1": true,
+   "in_A2": false,
+   "accuracy": {
+    "d2": 1.0,
+    "d3": 0.8571428571428571,
+    "d4": 0.6428571428571429,
+    "currency": 0.9166666666666666,
+    "person": 0.9166666666666666,
+    "landmark": 0.6666666666666666,
+    "city": 1.0,
+    "d3-lm": 0.8571428571428571,
+    "d3-per": 0.8571428571428571,
+    "d4-work": 0.6428571428571429,
+    "dist-city": 1.0,
+    "obsc-city": 1.0
+   },
+   "acc_bands_hit": [
+    true,
+    false,
+    true
+   ],
+   "base_carrier_agree": [
+    42,
+    42
+   ],
+   "base_carrier_names_country": [
+    41,
+    42
+   ],
+   "base_write_window_le5": [
+    12,
+    42
+   ],
+   "concentration_by_family": {
+    "currency": 0.24,
+    "person": 0.344,
+    "landmark": 0.34792779517406525,
+    "city": 0.5398959619114794,
+    "d2": 0.7217345505617978,
+    "d3-lm": 0.23842170763145032,
+    "d3-per": 0.38980660757453667,
+    "d4-work": 0.28378378378378377,
+    "dist-city": 0.5037280701754386,
+    "obsc-city": 0.6375180375180376
+   },
+   "mlp_share": {
+    "0.5": {
+     "median": 0.5777112244960299,
+     "iqr": [
+      0.47391816107008833,
+      0.7589227361904005
+     ]
+    },
+    "1.0": {
+     "median": 0.5234592697749312,
+     "iqr": [
+      0.4564024669993224,
+      0.5959336652541074
+     ]
+    }
+   },
+   "mlp_band": [
+    0.6,
+    0.75
+   ],
+   "mlp_in_band": false,
+   "dose_move": 0.12324019320214835,
+   "B2_auc": 0.6380471380471381,
+   "B6": {
+    "language_drop_median": 0.3125,
+    "capital_drop_median": 0.625
+   },
+   "projected_language": [
+    [
+     40,
+     56
+    ],
+    [
+     51,
+     56
+    ]
+   ]
+  }
+ },
+ "verdicts": {
+  "a_rule": "A1",
+  "a_mode_ge_0.80": {
+   "Qwen2.5-0.5B": 0.7142857142857143,
+   "Qwen2.5-1.5B": 0.95,
+   "Qwen2.5-3B": 0.7380952380952381,
+   "Qwen3-0.6B-Base": 1.0,
+   "Qwen3-1.7B-Base": 1.0,
+   "Qwen3-4B-Base": 1.0
+  },
+  "d2_kv_index_qwen3": {
+   "Qwen3-0.6B-Base": 6,
+   "Qwen3-1.7B-Base": 6,
+   "Qwen3-4B-Base": 6
+  },
+  "B4_cells": [
+   {
+    "model": "Qwen2.5-0.5B",
+    "family": "currency",
+    "acc": 0.5833333333333334,
+    "readable_share": 1.0
+   },
+   {
+    "model": "Qwen2.5-0.5B",
+    "family": "person",
+    "acc": 0.75,
+    "readable_share": 0.6666666666666666
+   },
+   {
+    "model": "Qwen2.5-0.5B",
+    "family": "landmark",
+    "acc": 0.5833333333333334,
+    "readable_share": 0.6
+   },
+   {
+    "model": "Qwen2.5-0.5B",
+    "family": "city",
+    "acc": 0.4166666666666667,
+    "readable_share": 0.2857142857142857
+   },
+   {
+    "model": "Qwen2.5-0.5B",
+    "family": "d3-lm",
+    "acc": 0.6428571428571429,
+    "readable_share": 0.8
+   },
+   {
+    "model": "Qwen2.5-0.5B",
+    "family": "d3-per",
+    "acc": 0.6428571428571429,
+    "readable_share": 0.2
+   },
+   {
+    "model": "Qwen2.5-0.5B",
+    "family": "d4-work",
+    "acc": 0.21428571428571427,
+    "readable_share": 1.0
+   },
+   {
+    "model": "Qwen2.5-0.5B",
+    "family": "dist-city",
+    "acc": 0.3333333333333333,
+    "readable_share": 0.25
+   },
+   {
+    "model": "Qwen2.5-0.5B",
+    "family": "obsc-city",
+    "acc": 0.25,
+    "readable_share": 0.3333333333333333
+   },
+   {
+    "model": "Qwen2.5-1.5B",
+    "family": "currency",
+    "acc": 0.6666666666666666,
+    "readable_share": 0.5
+   },
+   {
+    "model": "Qwen2.5-1.5B",
+    "family": "person",
+    "acc": 0.9166666666666666,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen2.5-1.5B",
+    "family": "landmark",
+    "acc": 0.75,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen2.5-1.5B",
+    "family": "d3-lm",
+    "acc": 0.7857142857142857,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen2.5-1.5B",
+    "family": "d3-per",
+    "acc": 0.7142857142857143,
+    "readable_share": 0.5
+   },
+   {
+    "model": "Qwen2.5-1.5B",
+    "family": "d4-work",
+    "acc": 0.35714285714285715,
+    "readable_share": 0.6666666666666666
+   },
+   {
+    "model": "Qwen2.5-1.5B",
+    "family": "dist-city",
+    "acc": 0.8333333333333334,
+    "readable_share": 0.5
+   },
+   {
+    "model": "Qwen2.5-3B",
+    "family": "currency",
+    "acc": 0.8333333333333334,
+    "readable_share": 1.0
+   },
+   {
+    "model": "Qwen2.5-3B",
+    "family": "person",
+    "acc": 0.9166666666666666,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen2.5-3B",
+    "family": "landmark",
+    "acc": 0.75,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen2.5-3B",
+    "family": "d3-per",
+    "acc": 0.9285714285714286,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen2.5-3B",
+    "family": "d4-work",
+    "acc": 0.6428571428571429,
+    "readable_share": 0.2
+   },
+   {
+    "model": "Qwen2.5-3B",
+    "family": "dist-city",
+    "acc": 0.9166666666666666,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen2.5-3B",
+    "family": "obsc-city",
+    "acc": 0.9166666666666666,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen3-0.6B-Base",
+    "family": "currency",
+    "acc": 0.4166666666666667,
+    "readable_share": 0.7142857142857143
+   },
+   {
+    "model": "Qwen3-0.6B-Base",
+    "family": "person",
+    "acc": 0.75,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen3-0.6B-Base",
+    "family": "landmark",
+    "acc": 0.5833333333333334,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen3-0.6B-Base",
+    "family": "city",
+    "acc": 0.75,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen3-0.6B-Base",
+    "family": "d3-lm",
+    "acc": 0.7857142857142857,
+    "readable_share": 1.0
+   },
+   {
+    "model": "Qwen3-0.6B-Base",
+    "family": "d3-per",
+    "acc": 0.7142857142857143,
+    "readable_share": 0.25
+   },
+   {
+    "model": "Qwen3-0.6B-Base",
+    "family": "d4-work",
+    "acc": 0.35714285714285715,
+    "readable_share": 0.7777777777777778
+   },
+   {
+    "model": "Qwen3-0.6B-Base",
+    "family": "dist-city",
+    "acc": 0.3333333333333333,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen3-0.6B-Base",
+    "family": "obsc-city",
+    "acc": 0.8333333333333334,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen3-1.7B-Base",
+    "family": "currency",
+    "acc": 0.8333333333333334,
+    "readable_share": 0.5
+   },
+   {
+    "model": "Qwen3-1.7B-Base",
+    "family": "person",
+    "acc": 0.8333333333333334,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen3-1.7B-Base",
+    "family": "landmark",
+    "acc": 0.75,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen3-1.7B-Base",
+    "family": "d3-lm",
+    "acc": 0.7142857142857143,
+    "readable_share": 0.5
+   },
+   {
+    "model": "Qwen3-1.7B-Base",
+    "family": "d3-per",
+    "acc": 0.7857142857142857,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen3-1.7B-Base",
+    "family": "d4-work",
+    "acc": 0.42857142857142855,
+    "readable_share": 0.625
+   },
+   {
+    "model": "Qwen3-1.7B-Base",
+    "family": "dist-city",
+    "acc": 0.75,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen3-1.7B-Base",
+    "family": "obsc-city",
+    "acc": 0.75,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen3-4B-Base",
+    "family": "currency",
+    "acc": 0.9166666666666666,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen3-4B-Base",
+    "family": "person",
+    "acc": 0.9166666666666666,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen3-4B-Base",
+    "family": "landmark",
+    "acc": 0.6666666666666666,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen3-4B-Base",
+    "family": "d3-lm",
+    "acc": 0.8571428571428571,
+    "readable_share": 0.0
+   },
+   {
+    "model": "Qwen3-4B-Base",
+    "family": "d3-per",
+    "acc": 0.8571428571428571,
+    "readable_share": 0.5
+   },
+   {
+    "model": "Qwen3-4B-Base",
+    "family": "d4-work",
+    "acc": 0.6428571428571429,
+    "readable_share": 0.6
+   }
+  ],
+  "B4_spearman": 0.4596361393771199
+ }
+}

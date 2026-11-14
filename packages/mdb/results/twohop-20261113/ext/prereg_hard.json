@@ -1,0 +1,35 @@
+{
+ "frozen_at": "2026-11-14T06:21:30Z (2026-11-13 22:21 PST). X1 passive jobs for the hard families (job-cd319af564d0, job-8cc14ae853a1) were queued and unread; no chain-view or ground-truth job had been submitted.",
+ "reframe": "owner 2026-11-13: the goal is SEEING the latent chain; headline metric = chain readability. Order: harder prompts, then entity vs bridge, then multi-hop.",
+ "model": "Qwen3-1.7B-Base bf16 eager CUDA",
+ "families": "para-currency, para-city, dist-currency, dist-city, long-currency, long-city, obsc-currency, obsc-city, lang-currency, lang-city (ext/candidates_ext.json); every candidate gets a view (correct and wrong items); panel recipients (X1) get the causal check and the ground-truth sweep.",
+ "chain_view_definition": {
+  "run": "the item's native mdb run, cursor at the answer row's logits (passive)",
+  "consumer": "the symbols default: margin between the answer row's two largest logits (top1 - top2); no donor needed",
+  "descriptor_binding": "the descriptor rows (span); lifetime = first and last layer at which the answer row's summed attention mass on the span is >= 0.1 (the symbols lifetime rule)",
+  "bridge_binding": "the (row in span, layer, KV head) with the largest summed to_consumer (reads, P19) for that consumer: the symbol-table site",
+  "content_readout": "the binding's write into the answer row (sum over the group's heads of p[h,r] W_o,h v[g,r]) times the final-norm gain, through the unembedding (derived-local); named bridge = best of the panel's hub tokens (single-token country names); also the full-vocabulary top 5",
+  "first_appearance": "the first layer l at which the most-attended KV group's write at the bridge row names the same hub token as the bridge binding",
+  "readers": "the top 3 (layer, head) reads of the span by to_consumer",
+  "readability": "an item is readable when the bridge binding's named hub = the true hidden intermediate (bridge country)"
+ },
+ "baselines_frozen": {
+  "B_const": "the same readout at L20 KV6, last descriptor row",
+  "B_mass": "the same readout at the (row, layer, KV head) with the largest summed attention mass from the answer row",
+  "B_lens": "logit lens of the last descriptor row's residual at L24.h (read on the run truncated at that row), best of the hub tokens",
+  "report": "readability of the view and of each baseline, per family and pooled; the view's margin over each"
+ },
+ "errors": "on wrong items: view diagnosis = 'wrong bridge' if the named hub != true bridge, else 'second-hop'. Compared with the answer: wrong-capital errors (answer = capital of country X): agreement if named hub == X; non-capital errors: agreement if named hub == true bridge.",
+ "causal_check": "panel recipients x different-bridge donors: V transplant of the donor's cell at the view's bridge site (stepped, Run.set_cell); after it, re-read the binding's content (donor hub named?) and the answer (donor's answer?); report the 2x2 table and the agreement rate.",
+ "forecast_and_gt": "F1 (X1, sealed) vs GT from cell_sweep V over span x layers x KV heads, as in entry 1, with B_const and B_mass hit rates beside it",
+ "predictions": {
+  "PR1": "readability on correct items, pooled over the 10 families >= 0.80 (guess 0.88); per family >= 0.70 except para (>= 0.55)",
+  "PR2": "the view beats B_lens by >= 0.20 pooled; it is within 0.05 of B_const or better pooled, and better than B_const on para and long",
+  "PR3": "the view beats B_mass by >= 0.05 pooled",
+  "PR4": "wrong-capital errors: named hub == the answer's country on >= 0.50; non-capital errors: named hub == true bridge on >= 0.60",
+  "PR5": "causal check: content and answer move together (both to the donor or neither) on >= 0.60 of pairs; content names the donor's hub on >= 0.80",
+  "PR6": "the bridge binding is L20 KV6 on >= 0.70 of correct items in every family (lang included: the read is relation-independent)",
+  "PR7": "accuracy (as in prereg_ext PH1): para drops >= 0.10 vs base, dist <= 0.15, long <= 0.10, obsc <= 0.60, lang >= 0.60; F1 hit@1 >= 0.60 except para >= 0.40; F1 - B_const >= 0 pooled",
+  "PR8": "first appearance of the named bridge at the bridge row is at a layer <= 20 on >= 0.70 of readable items (guess median L16-18)"
+ }
+}

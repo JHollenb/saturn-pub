@@ -1,0 +1,334 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+smoke_gate_cmd: smoke env SMOKE=1 OUTF=smoke.json BUDGET=120 bash run.sh
+DRIVER_RC 1
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.90
+	Maximum resident set size (kbytes): 1852180
+Traceback (most recent call last):
+  File "/mnt/big/mrun-scratch/job-e14f3f4acb80/a3_beast_cpu.py", line 140, in <module>
+    lf[fam] = {"med_all": st.median([code(per[i]["L_first"]) for i in ids]),
+                          ~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/beast/.local/share/uv/python/cpython-3.14.6-linux-x86_64-gnu/lib/python3.14/statistics.py", line 343, in median
+    raise StatisticsError("no median for empty data")
+statistics.StatisticsError: no median for empty data
+Command exited with non-zero status 1
+	Command being timed: "timeout 120 python a3_beast_cpu.py smoke.json"
+	User time (seconds): 1.07
+	System time (seconds): 0.28
+	Percent of CPU this job got: 150%
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:00.90
+smoke_gate=passed smoke_s=0.911; running env BUDGET=540 bash run.sh
+Qwen2.5-0.5B 0.4
+Qwen3-0.6B-Base 2.2
+Qwen2.5-1.5B 1.2
+Qwen3-1.7B-Base 4.2
+Qwen2.5-3B 1.8
+Qwen3-4B-Base 6.1
+{
+ "matched_depth": {
+  "Qwen3-0.6B-Base|Qwen3-1.7B-Base": {
+   "mean_corr_same_kv": 0.1317,
+   "mean_corr_diff_kv": 0.0061,
+   "best_match_same_index_per_layer_mean_of_8": 4.464
+  },
+  "Qwen3-1.7B-Base|Qwen3-4B-Base": {
+   "mean_corr_same_kv": 0.0248,
+   "mean_corr_diff_kv": 0.0195,
+   "best_match_same_index_per_layer_mean_of_8": 1.321
+  },
+  "Qwen3-0.6B-Base|Qwen3-4B-Base": {
+   "mean_corr_same_kv": 0.0233,
+   "mean_corr_diff_kv": 0.0149,
+   "best_match_same_index_per_layer_mean_of_8": 1.179
+  }
+ },
+ "carrier_layer_corr_8x8": {
+  "Qwen3-0.6B-Base|Qwen3-1.7B-Base": [
+   [
+    0.095,
+    -0.001,
+    -0.008,
+    -0.033,
+    0.036,
+    -0.032,
+    -0.008,
+    -0.002
+   ],
+   [
+    0.006,
+    0.067,
+    0.035,
+    -0.014,
+    0.039,
+    0.006,
+    0.024,
+    -0.017
+   ],
+   [
+    0.03,
+    0.02,
+    0.748,
+    -0.091,
+    0.084,
+    -0.105,
+    0.614,
+    -0.076
+   ],
+   [
+    -0.003,
+    -0.007,
+    -0.215,
+    0.086,
+    -0.03,
+    0.035,
+    -0.221,
+    0.035
+   ],
+   [
+    0.021,
+    0.002,
+    0.107,
+    -0.019,
+    0.085,
+    -0.054,
+    0.095,
+    -0.048
+   ],
+   [
+    0.01,
+    0.019,
+    -0.183,
+    0.045,
+    -0.043,
+    0.109,
+    -0.154,
+    0.057
+   ],
+   [
+    0.01,
+    0.015,
+    0.574,
+    -0.054,
+    0.032,
+    -0.044,
+    0.714,
+    -0.037
+   ],
+   [
+    -0.02,
+    -0.032,
+    -0.117,
+    0.003,
+    -0.004,
+    0.001,
+    -0.071,
+    0.075
+   ]
+  ],
+  "Qwen3-1.7B-Base|Qwen3-4B-Base": [
+   [
+    -0.035,
+    0.026,
+    0.012,
+    0.045,
+    0.013,
+    -0.02,
+    0.016,
+    -0.022
+   ],
+   [
+    0.002,
+    0.01,
+    -0.013,
+    0.004,
+    0.031,
+    0.036,
+    0.026,
+    0.015
+   ],
+   [
+    -0.056,
+    0.081,
+    0.144,
+    0.15,
+    0.621,
+    -0.037,
+    0.508,
+    -0.097
+   ],
+   [
+    0.011,
+    -0.03,
+    -0.007,
+    -0.05,
+    -0.082,
+    0.007,
+    -0.068,
+    0.022
+   ],
+   [
+    -0.01,
+    0.041,
+    0.025,
+    0.021,
+    0.083,
+    -0.015,
+    0.059,
+    -0.004
+   ],
+   [
+    0.012,
+    0.01,
+    -0.027,
+    -0.027,
+    -0.075,
+    0.039,
+    -0.075,
+    0.045
+   ],
+   [
+    -0.03,
+    0.051,
+    0.126,
+    0.143,
+    0.456,
+    -0.024,
+    0.697,
+    -0.073
+   ],
+   [
+    0.008,
+    -0.014,
+    -0.039,
+    -0.035,
+    -0.073,
+    -0.006,
+    -0.055,
+    0.029
+   ]
+  ],
+  "Qwen3-0.6B-Base|Qwen3-4B-Base": [
+   [
+    -0.016,
+    0.01,
+    0.013,
+    0.008,
+    -0.012,
+    -0.014,
+    -0.003,
+    -0.006
+   ],
+   [
+    0.01,
+    0.028,
+    0.014,
+    -0.017,
+    0.039,
+    -0.003,
+    0.046,
+    0.006
+   ],
+   [
+    -0.042,
+    0.085,
+    0.155,
+    0.144,
+    0.58,
+    -0.04,
+    0.528,
+    -0.113
+   ],
+   [
+    0.017,
+    -0.027,
+    -0.046,
+    -0.045,
+    -0.173,
+    0.005,
+    -0.202,
+    0.037
+   ],
+   [
+    -0.013,
+    0.036,
+    0.037,
+    0.02,
+    0.1,
+    -0.007,
+    0.096,
+    -0.022
+   ],
+   [
+    -0.003,
+    -0.026,
+    -0.053,
+    -0.07,
+    -0.154,
+    0.012,
+    -0.135,
+    0.046
+   ],
+   [
+    -0.028,
+    0.046,
+    0.101,
+    0.098,
+    0.418,
+    -0.009,
+    0.618,
+    -0.062
+   ],
+   [
+    -0.0,
+    -0.058,
+    -0.062,
+    -0.067,
+    -0.109,
+    -0.045,
+    -0.077,
+    0.005
+   ]
+  ]
+ },
+ "country_copy_top1_of_57_at_carrier_layer": {
+  "Qwen3-0.6B-Base": [
+   0,
+   1,
+   57,
+   0,
+   6,
+   0,
+   57,
+   0
+  ],
+  "Qwen3-1.7B-Base": [
+   1,
+   0,
+   57,
+   0,
+   3,
+   0,
+   57,
+   0
+  ],
+  "Qwen3-4B-Base": [
+   0,
+   6,
+   9,
+   9,
+   57,
+   0,
+   54,
+   0
+  ]
+ }
+}
+Qwen2.5-0.5B {"cities": {"raw": {"hits": [19, 48], "perm_null_expect": 0.61, "hits_where_lex_fails": [0, 0], "perm_null_where_lex_fails": 0}, "rank1": {"hits": [10, 48], "perm_null_expect": 0.81, "hits_where_lex_fails": [0, 0], "perm_null_where_lex_fails": 0}, "full": {"hits": [7, 48], "perm_null_expect": 0.92, "hits_where_lex_fails": [0, 0], "perm_null_where_lex_fails": 0}, "lex": {"hits": [48, 48], "perm_null_expect": 0.0, "hits_where_lex_fails": [0, 0], "perm_null_where_lex_fails": 0}}, "languages": {"raw": {"hits": [30, 56], "perm_null_expect": 1.04, "hits_where_lex_fails": [2, 12], "perm_null_where_lex_fails": 0.5}, "rank1": {"hits": [9, 56], "perm_null_expect": 1.94, "hits_where_lex_fails": [1, 12], "perm_null_where_lex_fails": 0.55}, "full": {"hits": [12, 56], "perm_null_expect": 1.72, "hits_where_lex_fails": [3, 12], "perm_null_where_lex_fails": 0.22}, "lex": {"hits": [44, 56], "perm_null_expect": 0.0, "hits_where_lex_fails": [0, 12], "perm_null_where_lex_fails": 0.0}}} {"d2": {"med_all": 16.5, "fake20_med_all": 22.0, "share_real_le_fake_median": null}, "d3-lm": {"med_all": 17.0, "fake20_med_all": 20.0, "share_real_le_fake_median": null}, "d3-per": {"med_all": 15.0, "fake20_med_all": 22.0, "share_real_le_fake_median": null}, "d4-work": {"med_all": 16.5, "fake20_med_all": 21.0, "share_real_le_fake_median": null}}
+Qwen3-0.6B-Base {"cities": {"raw": {"hits": [37, 48], "perm_null_expect": 0.35, "hits_where_lex_fails": [0, 0], "perm_null_where_lex_fails": 0}, "rank1": {"hits": [31, 48], "perm_null_expect": 0.46, "hits_where_lex_fails": [0, 0], "perm_null_where_lex_fails": 0}, "full": {"hits": [26, 48], "perm_null_expect": 0.54, "hits_where_lex_fails": [0, 0], "perm_null_where_lex_fails": 0}, "lex": {"hits": [48, 48], "perm_null_expect": 0.0, "hits_where_lex_fails": [0, 0], "perm_null_where_lex_fails": 0}}, "languages": {"raw": {"hits": [40, 56], "perm_null_expect": 0.97, "hits_where_lex_fails": [4, 8], "perm_null_where_lex_fails": 0.26}, "rank1": {"hits": [34, 56], "perm_null_expect": 1.41, "hits_where_lex_fails": [5, 8], "perm_null_where_lex_fails": 0.18}, "full": {"hits": [27, 56], "perm_null_expect": 1.86, "hits_where_lex_fails": [2, 8], "perm_null_where_lex_fails": 0.34}, "lex": {"hits": [48, 56], "perm_null_expect": 0.33, "hits_where_lex_fails": [0, 8], "perm_null_where_lex_fails": 0.33}}} {"d2": {"med_all": 1.5, "fake20_med_all": 5.0, "share_real_le_fake_median": null}, "d3-lm": {"med_all": 2.5, "fake20_med_all": 5.0, "share_real_le_fake_median": null}, "d3-per": {"med_all": 3.5, "fake20_med_all": 5.0, "share_real_le_fake_median": null}, "d4-work": {"med_all": 5.5, "fake20_med_all": 5.0, "share_real_le_fake_median": null}}
+Qwen2.5-1.5B {"cities": {"raw": {"hits": [43, 48], "perm_null_expect": 0.09, "hits_where_lex_fails": [1, 2], "perm_null_where_lex_fails": 0.0}, "rank1": {"hits": [30, 48], "perm_null_expect": 0.51, "hits_where_lex_fails": [1, 2], "perm_null_where_lex_fails": 0.0}, "full": {"hits": [22, 48], "perm_null_expect": 0.7, "hits_where_lex_fails": [1, 2], "perm_null_where_lex_fails": 0.09}, "lex": {"hits": [46, 48], "perm_null_expect": 0.09, "hits_where_lex_fails": [0, 2], "perm_null_where_lex_fails": 0.09}}, "languages": {"raw": {"hits": [43, 56], "perm_null_expect": 0.64, "hits_where_lex_fails": [3, 8], "perm_null_where_lex_fails": 0.33}, "rank1": {"hits": [30, 56], "perm_null_expect": 1.07, "hits_where_lex_fails": [3, 8], "perm_null_where_lex_fails": 0.25}, "full": {"hits": [16, 56], "perm_null_expect": 1.21, "hits_where_lex_fails": [2, 8], "perm_null_where_lex_fails": 0.08}, "lex": {"hits": [48, 56], "perm_null_expect": 0.64, "hits_where_lex_fails": [0, 8], "perm_null_where_lex_fails": 0.64}}} {"d2": {"med_all": 3.5, "fake20_med_all": 23.0, "share_real_le_fake_median": null}, "d3-lm": {"med_all": 20.5, "fake20_med_all": 23.0, "share_real_le_fake_median": null}, "d3-per": {"med_all": 21.0, "fake20_med_all": 22.5, "share_real_le_fake_median": null}, "d4-work": {"med_all": 18.0, "fake20_med_all": 23.0, "share_real_le_fake_median": null}}
+Qwen3-1.7B-Base {"cities": {"raw": {"hits": [42, 48], "perm_null_expect": 0.22, "hits_where_lex_fails": [0, 0], "perm_null_where_lex_fails": 0}, "rank1": {"hits": [32, 48], "perm_null_expect": 0.41, "hits_where_lex_fails": [0, 0], "perm_null_where_lex_fails": 0}, "full": {"hits": [34, 48], "perm_null_expect": 0.3, "hits_where_lex_fails": [0, 0], "perm_null_where_lex_fails": 0}, "lex": {"hits": [48, 48], "perm_null_expect": 0.0, "hits_where_lex_fails": [0, 0], "perm_null_where_lex_fails": 0}}, "languages": {"raw": {"hits": [41, 56], "perm_null_expect": 0.58, "hits_where_lex_fails": [4, 8], "perm_null_where_lex_fails": 0.17}, "rank1": {"hits": [31, 56], "perm_null_expect": 1.4, "hits_where_lex_fails": [4, 8], "perm_null_where_lex_fails": 0.19}, "full": {"hits": [30, 56], "perm_null_expect": 0.93, "hits_where_lex_fails": [3, 8], "perm_null_where_lex_fails": 0.25}, "lex": {"hits": [48, 56], "perm_null_expect": 0.33, "hits_where_lex_fails": [0, 8], "perm_null_where_lex_fails": 0.33}}} {"d2": {"med_all": 0.0, "fake20_med_all": 5.0, "share_real_le_fake_median": null}, "d3-lm": {"med_all": 2.5, "fake20_med_all": 5.0, "share_real_le_fake_median": null}, "d3-per": {"med_all": 2.0, "fake20_med_all": 6.0, "share_real_le_fake_median": null}, "d4-work": {"med_all": 3.0, "fake20_med_all": 6.0, "share_real_le_fake_median": null}}
+Qwen2.5-3B {"cities": {"raw": {"hits": [38, 48], "perm_null_expect": 0.33, "hits_where_lex_fails": [0, 0], "perm_null_where_lex_fails": 0}, "rank1": {"hits": [19, 48], "perm_null_expect": 0.76, "hits_where_lex_fails": [0, 0], "perm_null_where_lex_fails": 0}, "full": {"hits": [23, 48], "perm_null_expect": 0.65, "hits_where_lex_fails": [0, 0], "perm_null_where_lex_fails": 0}, "lex": {"hits": [48, 48], "perm_null_expect": 0.0, "hits_where_lex_fails": [0, 0], "perm_null_where_lex_fails": 0}}, "languages": {"raw": {"hits": [44, 56], "perm_null_expect": 0.67, "hits_where_lex_fails": [4, 4], "perm_null_where_lex_fails": 0.0}, "rank1": {"hits": [17, 56], "perm_null_expect": 2.61, "hits_where_lex_fails": [4, 4], "perm_null_where_lex_fails": 0.0}, "full": {"hits": [9, 56], "perm_null_expect": 2.51, "hits_where_lex_fails": [0, 4], "perm_null_where_lex_fails": 0.17}, "lex": {"hits": [52, 56], "perm_null_expect": 0.33, "hits_where_lex_fails": [0, 4], "perm_null_where_lex_fails": 0.33}}} {"d2": {"med_all": 10.0, "fake20_med_all": 24.0, "share_real_le_fake_median": null}, "d3-lm": {"med_all": 7.5, "fake20_med_all": 18.5, "share_real_le_fake_median": null}, "d3-per": {"med_all": 16.0, "fake20_med_all": 21.5, "share_real_le_fake_median": null}, "d4-work": {"med_all": 19.5, "fake20_med_all": 23.0, "share_real_le_fake_median": null}}
+Qwen3-4B-Base {"cities": {"raw": {"hits": [45, 48], "perm_null_expect": 0.09, "hits_where_lex_fails": [0, 2], "perm_null_where_lex_fails": 0.0}, "rank1": {"hits": [40, 48], "perm_null_expect": 0.19, "hits_where_lex_fails": [0, 2], "perm_null_where_lex_fails": 0.0}, "full": {"hits": [38, 48], "perm_null_expect": 0.54, "hits_where_lex_fails": [0, 2], "perm_null_where_lex_fails": 0.17}, "lex": {"hits": [46, 48], "perm_null_expect": 0.09, "hits_where_lex_fails": [0, 2], "perm_null_where_lex_fails": 0.09}}, "languages": {"raw": {"hits": [51, 56], "perm_null_expect": 0.3, "hits_where_lex_fails": [7, 8], "perm_null_where_lex_fails": 0.0}, "rank1": {"hits": [40, 56], "perm_null_expect": 1.04, "hits_where_lex_fails": [7, 8], "perm_null_where_lex_fails": 0.0}, "full": {"hits": [29, 56], "perm_null_expect": 0.69, "hits_where_lex_fails": [4, 8], "perm_null_where_lex_fails": 0.0}, "lex": {"hits": [48, 56], "perm_null_expect": 0.64, "hits_where_lex_fails": [0, 8], "perm_null_where_lex_fails": 0.64}}} {"d2": {"med_all": 0.0, "fake20_med_all": 5.5, "share_real_le_fake_median": null}, "d3-lm": {"med_all": 4.0, "fake20_med_all": 5.0, "share_real_le_fake_median": null}, "d3-per": {"med_all": 3.5, "fake20_med_all": 4.0, "share_real_le_fake_median": null}, "d4-work": {"med_all": 8.0, "fake20_med_all": 5.0, "share_real_le_fake_median": null}}
+TOTAL 17.5
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:18.25
+	Maximum resident set size (kbytes): 5056044

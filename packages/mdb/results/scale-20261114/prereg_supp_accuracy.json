@@ -1,0 +1,137 @@
+{
+ "note": "answer argmax only, from the supplement Job C logs, before any readout",
+ "models": {
+  "Qwen2.5-0.5B": {
+   "d5": [
+    7,
+    28
+   ],
+   "d6": [
+    7,
+    25
+   ],
+   "d5-short": [
+    7,
+    16
+   ],
+   "native-city": [
+    10,
+    28
+   ],
+   "english-city": [
+    9,
+    28
+   ]
+  },
+  "Qwen2.5-1.5B": {
+   "d5": [
+    12,
+    28
+   ],
+   "d6": [
+    8,
+    25
+   ],
+   "d5-short": [
+    9,
+    16
+   ],
+   "native-city": [
+    25,
+    28
+   ],
+   "english-city": [
+    22,
+    28
+   ]
+  },
+  "Qwen2.5-3B": {
+   "d5": [
+    10,
+    28
+   ],
+   "d6": [
+    6,
+    25
+   ],
+   "d5-short": [
+    6,
+    16
+   ],
+   "native-city": [
+    24,
+    28
+   ],
+   "english-city": [
+    25,
+    28
+   ]
+  },
+  "Qwen3-0.6B-Base": {
+   "d5": [
+    6,
+    28
+   ],
+   "d6": [
+    5,
+    25
+   ],
+   "d5-short": [
+    4,
+    16
+   ],
+   "native-city": [
+    18,
+    28
+   ],
+   "english-city": [
+    18,
+    28
+   ]
+  },
+  "Qwen3-1.7B-Base": {
+   "d5": [
+    11,
+    28
+   ],
+   "d6": [
+    6,
+    25
+   ],
+   "d5-short": [
+    9,
+    16
+   ],
+   "native-city": [
+    22,
+    28
+   ],
+   "english-city": [
+    15,
+    28
+   ]
+  },
+  "Qwen3-4B-Base": {
+   "d5": [
+    13,
+    28
+   ],
+   "d6": [
+    7,
+    25
+   ],
+   "d5-short": [
+    7,
+    16
+   ],
+   "native-city": [
+    24,
+    28
+   ],
+   "english-city": [
+    24,
+    28
+   ]
+  }
+ }
+}

@@ -1,0 +1,71 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 477afe3ddb4c079b5c5d6d13d1bd1f341339e008 script capture.py args /mnt/big/llm-models/Qwen3-4B-Base /mnt/ssd1tb/cache/beast/scale/Qwen3-4B-Base 64-128 -b
+load 6.5s
+C {"id": "d3-lm:the Astronomical Clock of the Old Town", "s": 10.25}
+C {"id": "d3-lm:Tivoli Gardens", "s": 5.0}
+C {"id": "d3-lm:the Khan el-Khalili bazaar", "s": 8.97}
+C {"id": "d3-lm:Suomenlinna fortress", "s": 5.83}
+C {"id": "d3-lm:Notre-Dame Cathedral", "s": 4.85}
+C {"id": "d3-lm:the Brandenburg Gate", "s": 4.99}
+C {"id": "d3-lm:the Acropolis", "s": 3.89}
+C {"id": "d3-lm:Fisherman's Bastion", "s": 5.89}
+C {"id": "d3-lm:the Colosseum", "s": 5.96}
+C {"id": "d3-lm:Shibuya Crossing", "s": 3.96}
+C {"id": "d3-lm:Gyeongbokgung Palace", "s": 8.7}
+C {"id": "d3-lm:the Anne Frank House", "s": 4.66}
+C {"id": "d3-per:Franz Schubert", "s": 4.88}
+C {"id": "d3-per:Charlie Chaplin", "s": 3.81}
+C {"id": "d3-per:Franz Kafka", "s": 2.8}
+C {"id": "d3-per:Niels Bohr", "s": 4.86}
+C {"id": "d3-per:Naguib Mahfouz", "s": 6.62}
+C {"id": "d3-per:Claude Monet", "s": 3.93}
+C {"id": "d3-per:Alexander von Humboldt", "s": 4.87}
+C {"id": "d3-per:Pericles", "s": 2.82}
+C {"id": "d3-per:Erno Rubik", "s": 4.66}
+C {"id": "d3-per:Ennio Morricone", "s": 5.87}
+C {"id": "d3-per:Hokusai", "s": 3.84}
+C {"id": "d3-per:Baruch Spinoza", "s": 5.79}
+C {"id": "d3-per:Marie Curie", "s": 3.81}
+C {"id": "d3-per:Fernando Pessoa", "s": 2.82}
+C {"id": "d4-work:The Blue Danube waltz", "s": 7.91}
+C {"id": "d4-work:the film The Great Dictator", "s": 6.76}
+C {"id": "d4-work:The Metamorphosis", "s": 5.87}
+C {"id": "d4-work:the book Either/Or", "s": 5.83}
+C {"id": "d4-work:the novel Palace Walk", "s": 5.03}
+C {"id": "d4-work:Candide", "s": 2.86}
+C {"id": "d4-work:The Arcades Project", "s": 4.75}
+C {"id": "d4-work:The Republic", "s": 2.87}
+C {"id": "d4-work:the Rubik's Cube", "s": 6.0}
+C {"id": "d4-work:the Commentaries on the Gallic War", "s": 8.96}
+C {"id": "d4-work:The Great Wave off Kanagawa", "s": 7.79}
+C {"id": "d4-work:The Book of Disquiet", "s": 5.99}
+C {"id": "d4-work:Eugene Onegin", "s": 3.82}
+C {"id": "d4-work:the play Fuenteovejuna", "s": 7.52}
+C {"id": "dist-city:Chicago", "s": 11.74}
+C {"id": "dist-city:Melbourne", "s": 11.74}
+C {"id": "dist-city:Salzburg", "s": 14.59}
+C {"id": "dist-city:Antwerp", "s": 13.73}
+C {"id": "dist-city:Liverpool", "s": 14.46}
+C {"id": "dist-city:Plovdiv", "s": 15.55}
+C {"id": "dist-city:Toronto", "s": 12.43}
+C {"id": "dist-city:Valparaiso", "s": 20.98}
+C {"id": "dist-city:Shanghai", "s": 21.11}
+C {"id": "dist-city:Brno", "s": 19.74}
+C {"id": "dist-city:Aarhus", "s": 20.81}
+C {"id": "dist-city:Alexandria", "s": 13.58}
+C {"id": "obsc-city:Perth", "s": 1.83}
+C {"id": "obsc-city:Graz", "s": 1.85}
+C {"id": "obsc-city:Ghent", "s": 2.72}
+C {"id": "obsc-city:Leeds", "s": 1.82}
+C {"id": "obsc-city:Varna", "s": 2.68}
+C {"id": "obsc-city:Calgary", "s": 1.82}
+C {"id": "obsc-city:Wuhan", "s": 2.67}
+C {"id": "obsc-city:Ostrava", "s": 3.57}
+C {"id": "obsc-city:Odense", "s": 2.69}
+C {"id": "obsc-city:Luxor", "s": 2.85}
+C {"id": "obsc-city:Turku", "s": 2.7}
+C {"id": "obsc-city:Dortmund", "s": 1.84}
+TOTAL 442.4s peak 7928 MB
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 7:23.87
+	Maximum resident set size (kbytes): 4884168

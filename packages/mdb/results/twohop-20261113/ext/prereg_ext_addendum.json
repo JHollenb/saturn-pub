@@ -1,0 +1,26 @@
+{
+ "frozen_at": "2026-11-14T06:18:00Z (2026-11-13 22:18 PST). X1 jobs (passive) were submitted at 22:16 and no X1 output had been read; no X2 (ground truth) or entity-vs-bridge job had been submitted.",
+ "why": "coordinator request 2026-11-13: frozen baselines for every new panel, and a preregistered entity-vs-bridge test (paper outline research/papers/cot/paper-outline.md, gap 2).",
+ "A_baselines": {
+  "B_const": "always-same-site rule: L20 KV6 at the last descriptor row r0 (the entry-1 carrier; scores 55/64 on entry 1). For Qwen3-4B-Base the constant site is undefined before data; it is the modal GT site of its own panel, reported as an in-sample upper bound, not a fair baseline.",
+  "B_mass": "attention-mass rule F3 (argmax summed attention mass over (row, layer, KV head)).",
+  "report": "per family and pooled: F1 hit@1 minus each baseline's hit@1.",
+  "PB1": "pooled over depth families (d2, d3-lm, d3-per, d4-work) on 1.7B: F1 - B_const >= +0.05 (point guess +0.10: multi-token descriptors move the carrier row off r0 more often); F1 is never below B_const on any family by more than 1 item",
+  "PB2": "pooled over all extension families on 1.7B: F1 - B_mass >= +0.10"
+ },
+ "B_entity_vs_bridge": {
+  "model": "Qwen3-1.7B-Base bf16; carrier L20 KV6 at r0; recipients = the 64 entry-1 recipients",
+  "EB1_weight_edit": "one single-request MEMIT patch per recipient (mdb_lanes.memit, EasyEdit Qwen2.5 defaults: layers 4-8, 25 z steps; C0 from >= 200k wikitext-103 tokens) rewriting hop 1 (attribute prompt per family: currency 'The {X} is the currency of', person '{X} was born in the country of', landmark '{X} is located in the country of', city '{X} is a city in the country of') to the first donor's country. The descriptor tokens are untouched. With the patch installed: hop-1 efficacy (attribute prompt and a paraphrase), the two-hop answer (new capital / old / other), the carrier readout (attention-weighted L20 KV6 write at r0, best of the panel's country tokens: new / old / other), and two site tests: (i) plant the patched run's L20 KV6 r0 value cell into the unpatched model; (ii) restore the native cell under the patch. Locality: two-hop argmax of 8 other recipients under each patch.",
+  "EB2_same_country_diff_entity": "city-family recipients with a same-country different-city donor (any length; V of the donor's last descriptor row copied into r0 at L20 KV6, single cell, and the V band L8-27 at r0). Scoring frozen: recipient capital kept / donor city copied (argmax is the first token of the donor's city) / other.",
+  "EB3_non_answer_entity_donors": "already measured in entry 1: currency/person/landmark donors whose entity cannot be an answer; their flip-to-donor-capital rate is reported beside city-family donors (no new run).",
+  "decision_rule": "bridge reading supported if, among edits with hop-1 efficacy, the carrier readout names the new country on >= 0.5 AND planting the edited cell in the unpatched model gives the new capital on >= 0.3. Entity-only (subject enrichment) reading supported if planting gives the new capital on <= 0.1 and the readout names the old country on >= 0.5. Anything else: mixed, reported with numbers.",
+  "predictions": {
+   "PE1": "hop-1 efficacy >= 0.70 of edits (guess 0.85)",
+   "PE2": "among efficacious edits, two-hop answer = new capital on >= 0.40 (guess 0.55)",
+   "PE3": "carrier readout names the new country on >= 0.50 of efficacious edits (guess 0.65)",
+   "PE4": "planting the edited cell in the unpatched model gives the new capital on >= 0.30 of efficacious edits (guess 0.45); restoring the native cell under the patch gives the old capital on >= 0.30 (guess 0.4)",
+   "PE5": "EB2 single cell: recipient capital kept >= 0.60, donor city copied <= 0.30 (guess 0.75 / 0.15); band: kept >= 0.5",
+   "PE6": "locality: >= 0.90 of other recipients keep their two-hop answer under a single edit"
+  }
+ }
+}

@@ -1,0 +1,20 @@
+{
+ "frozen_at": "2026-11-14T06:16:30Z (2026-11-13 22:16 PST), before any model run of the extension",
+ "extension": "Depth and difficulty extension of tracker entry 1 (coordinator request 2026-11-13)",
+ "models": "primary /mnt/big/llm-models/Qwen3-1.7B-Base (bf16 eager CUDA, 28 layers); second model /mnt/big/llm-models/Qwen3-4B-Base (bf16, 36 layers, same qwen3 port program) on the depth panel. Qwen3-14B-Base holds no weights on Beast (0 bytes) and is out of scope. SAE census only on 1.7B (the only Qwen-Scope SAE on Beast).",
+ "candidates": "ext/candidates_ext.json from ext/gen_ext.py: 487 items. Depth panel (final relation = official language; hub = country, never written): d1 22 (country named), d2 22 (capital named, country latent), d3-lm 43 (landmark in the capital: city + country latent), d3-per 38 (person born in the capital), d4-work 29 (work whose creator was born in the capital: person + city + country latent). Two-shot prefix with excluded countries Indonesia, Iran. Difficulty panel (2 hops, currency and city descriptors): para (question form, descriptor not adjacent to the answer row), dist (same-family distractor mentioned first), long (+~250 tokens of filler), obsc (less famous descriptors), lang (hop 2 = official language).",
+ "method": "same as entry 1, per family: X1 passive (accuracy, hop 1 and hop 2 alone, admission = argmax in the accepted answer set, up to 16 recipients per family with same-family same-length different-bridge different-answer donors, sealed F1/F2/F3 forecast + naming ranks of the country and the latent capital at the last descriptor row) committed before X2; X2 = cell_sweep V and K over every descriptor row x layer x KV head (ground truth = best mean V site), stepped V/K/KV at F1 and GT, V/K/K+V bands from early/middle/late starts; X3 = SAE census at the GT carrier (1.7B, depth families). Per-hop carriers: every V site above the item floor is listed with the naming ranks of its write for the country, the latent capital and the answer.",
+ "predictions": {
+  "PD1_accuracy_by_depth_1.7B": "accuracy falls with depth: d1 >= 0.85, d2 >= 0.70, d3 (lm, per) 0.35-0.75, d4-work <= 0.45 (point guesses 0.95 / 0.80 / 0.55 / 0.25)",
+  "PD2_forecast_depth": "F1 hit@1 >= 0.50 on each depth family with >= 6 recipients (guess 0.75); hit@3 >= 0.75",
+  "PD3_carrier_depth": "the GT carrier at d3/d4 lies at layers 18-22 on >= 60% of items (depth does not push it later than ~L22) and is KV head 6 on >= 50%",
+  "PD4_per_hop_carriers": "a second, distinct carrier above the floor whose write ranks the latent capital city above the country exists on >= 25% of d3-lm items (guess 0.30); i.e. mostly one country carrier, intermediate city carriers rare",
+  "PD5_KV_depth": "K-only single cell at GT flips <= 0.05 and V-only bands from early starts flip >= 0.70 at every depth family",
+  "PD6_census_depth": "median sigma_Phi >= 0.70 and median sigma_E <= 0.25 at the depth carriers (1.7B)",
+  "PH1_accuracy_difficulty": "relative to the base 2-hop families of entry 1 (currency 0.75, city 0.81): para drops by >= 0.10, dist by <= 0.15, long by <= 0.10, obsc accuracy <= 0.60, lang >= 0.60",
+  "PH2_forecast_difficulty": "F1 hit@1 >= 0.60 on dist, long, obsc, lang families; >= 0.40 on para (descriptor not adjacent)",
+  "PH3_carrier_difficulty": "the GT carrier is L20 KV6 on >= 70% of difficulty-panel recipients",
+  "PM1_bigger_model": "Qwen3-4B-Base depth accuracy >= 1.7B's at d3 and d4 (point guess +0.15); its GT carrier sits at relative depth 0.6-0.8"
+ },
+ "rules": "single seed; runs <= 10 min on mrun, priority 70, right-sized vram; unknown is not negative; a family with < 6 recipients is reported, not judged"
+}

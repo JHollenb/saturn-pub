@@ -1,0 +1,56 @@
+{
+ "frozen_at": "2026-11-14, before any B1 run and before any 1c outcome (logits, arms, chain readability, edges) is opened. Design: advisor memo obsidian/model-math/ADVISOR-2026-11-14-mdb-as-debugger-map-and-watchpoints.md section 1. Builder: mdb-twohop.",
+ "model": "Qwen3-1.7B-Base bf16, HF eager, CUDA (native job); float32 CPU replica (sealed forecast); single seed",
+ "already_known": {
+  "accuracy": "X1 passive job-6241e40f42a5 (ext/x1-17-depth-panel.json, sha256 9d66a740...6832): d1 22/22, d2 22/22, d3-lm 39/43, d3-per 32/38, d4-work 12/29 = 127/154 correct. B1 uses these X1 'correct' flags as the correct/wrong split (same prompts, same model); it does not re-derive them from the 1c logits.",
+  "site_forecast": "X1 sealed F1/F2/F3 site forecasts (ext/x1-17-depth-forecast.json, sha256 3417fbb7...3766) exist for 54 of the 154 1c items (d2 16, d3-lm 16, d3-per 16, d4-work 6; 86 with the dist families). On d2:Paris F1 names L20 KV6 at the descriptor row. That file also holds country_rank_r0 / capital_rank_r0 per layer at r0 for those 54 items, so the r0 country readout is partly known for them.",
+  "two_hop_map": "Run 1 (audited, next/AUDIT-RUN1-TP1.md): L20 KV6 at the gt row is the native top cell on 174/178; R_argmax (L20 h12+h13) 0.93 vs R_last 0.90 on hard; first causal layer median L18; hop shares 0.45 direct / 0.55 MLP; carrier names country 63/64 base, 108/114 hard."
+ },
+ "map": {
+  "slots": [
+   {"name": "carrier", "role": "carrier", "rows_rule": "R_argmax", "layers": [20], "kv": [6], "rule_layer": 20, "rule_heads": [12, 13], "note": "span rows, t0 excluded, ties to the later row"},
+   {"name": "desc", "role": "descriptor", "rows_rule": "rest"}
+  ],
+  "edges": ["desc --read--> carrier", "carrier --read (L20 h12,h13)--> answer row", "answer row --compose (L21-27 MLP)--> M"],
+  "consumer": "M = logit(answer) - logit(foil); depth foil = the cell-transplant donor's answer (language); base freeze foil = the Run 1 donor's answer",
+  "candidate_sets": "next/b1_sets.json (sha256 63181877fb9f98cf5889468f1671a22b98786c41372d5b870c33799d0e8f729b; built by next/b1_sets.py from the tokenizer only): countries 57, cities 43 (capitals), languages 26, persons_surname 37, persons_given 36. Person truth: d3-per the person, d4-work the work's creator (CREATOR mapping per the memo; a second reader found no wrong creator or birthplace; name-split conventions for Natsume Soseki, Calderon de la Barca and Lope de Vega noted). The surname set has 37 tokens (the memo asked >= 40; the source lists hold 38 people). A person's rank is the better of its surname-set and given-set ranks.",
+  "freeze": "job F (native, base 64 items of Run 1a only, no 1c): per item circuit_map.item_report (bind the slots by symbols.declare, symbols.table at t<last>.logits with consumer M and content over countries and cities) plus the cell census of every span row x layer x KV head (country truth margin); circuit_map.freeze = summary.summarize + summary.modes over best_cell.layer, best_cell.kv, best_cell.at_carrier, carrier_names_country. The frozen map JSON and its sha256 are committed before any 1c outcome is opened. Hop shares are copied into the constants from the audited Run 1 ladders (donor 0.45 / 0.55 / -0.01).",
+  "custody": "the B1 depth job writes arms to a file and logs ids and seconds only; the S5 forecast is computed from the 1c captures (native state, pre-edit operands) by a CPU job and committed before the arms file is opened."
+ },
+ "definitions": {
+  "cell_score": "the OV readout of a value cell at unit mass: gamma_F * W_U[t] . W_g v (W_g = sum of W_O,h over the KV group's heads), per unit final rho (exact ranks; circuit_map.cell_census)",
+  "names": "rank 1 within the candidate set",
+  "truth_margin": "score(truth) - max over the set's other tokens",
+  "carrier_cell": "(R_argmax row, L20, KV6), R_argmax from the answer row's L20 p (captured)",
+  "correct_items": "X1 'correct' flag; correct d2-d4 = 105 items (22 + 39 + 32 + 12)",
+  "first_naming_layer": "the lowest layer at which any span-row value cell (any KV head) names the token at rank 1 within its set",
+  "language_in_mlp": "the lowest layer l at which the answer row's captured MLP write m_l names the language at rank 1 within languages"
+ },
+ "arms": {
+  "a_native_pass": "dbg.run(ids, prefill=span[0]) to t<last>.logits; p and h at every span row for layers 0..22 saved to /mnt/ssd1tb/cache/beast/twohop-b1/span/",
+  "b_cell_transplant": "edited run (prefill=span[0]) to t<last>.L20.h, set_cell(20, v, donor's carrier cell, rows=[R_argmax], kv=[6]), to logits; hop_edge(native, edited, Margin(last, answer, donor answer), cell_layer=20). Donor: the X1 donor[0] when it is listed for the item and its language differs; otherwise the same-family item with a different language and the nearest prompt length (ties by id). The donor's carrier cell is its own (R_argmax, L20, KV6) value.",
+  "c_E1_upstream": "d3-lm, d3-per, d4-work only. Source cells: the V of every span row before the carrier row, all KV heads, layers 0..19. Donor: same family, same span length, different language, nearest prompt length, ties by id; control donor: same family, same span length, same country, another item, nearest length. The run steps to t<carrier>.L0.h, then set_cell(x, v, donor V of the aligned span rows, rows=source rows, kv=all) for x in 0..19. Measured: the carrier cell's value (C over countries, saved v), hop_edge(native, edited, cell_readout(CellTarget(carrier, 20, 6, a=truth country, b=donor country)), cell_layer=0), then the full M to logits (M = answer vs donor answer) and the argmax. An item with no eligible donor (or control) is excluded and counted."
+ },
+ "predictions": {
+  "S1_site_transfer": "among the span-row cells of every layer and KV head, the cell with the largest country truth_margin is L20 KV6 on >= 0.70 of correct d2-d4 items, and its row is the R_argmax row. The always-same-site null (L20 KV6 at the last span row) is reported beside it; the map is credited only on items where R_argmax differs from the last span row.",
+  "S2_stacking": "at the carrier cell the country is named on >= 0.85 of correct items (d2-d4) and the latent capital ranks <= 3 within cities on >= 0.70. d4: the creator ranks <= 3 within persons at the carrier cell on >= 0.40 of correct d4 items, OR first_naming_layer person < city < country on >= 0.60 of correct d4 items (the ladder). The predicted outcome is the ladder.",
+  "S3_hop3_at_answer_row": "the carrier cell names the language on <= 0.30 of items (d2-d4); language_in_mlp >= L21 on >= 0.80 of correct items. Falsifier: the carrier cell names the language on > 0.30.",
+  "S4_readable_errors": "on the 27 wrong d3/d4 items the carrier cell names a wrong country or ranks the true country > 3 on >= 0.60, against <= 0.20 on correct d3/d4 items",
+  "S5_edge_forecast": "the sign of the sealed first-order forecast of arm b on M (replica gradient dM/do_20 at the answer row . sum_h W_O,h p[h, carrier] (v_donor - v_native)) matches the native sign on >= 0.80 of items with |native dM| >= 0.125",
+  "S6_edge_E1": "the E1 donor moves the carrier cell to name the donor's country on >= 0.60 of eligible d3/d4 items and the argmax to the donor's language on >= 0.50; the same-country control moves neither (carrier still names the true country and the argmax is unchanged) on >= 0.80. Hop-3 ladder (arm b, hop_edge): median MLP share >= 0.50."
+ },
+ "nulls": {
+  "always_same_site": "L20 KV6 at the last span row",
+  "mass": "the span cell (row, layer, kv) with the largest answer-row attention mass (sum of p over the KV group's heads)",
+  "lens": "logit lens (gamma_F W_U over the set) of the answer-row h at L20 (pre-read) and L24 (captured)",
+  "shuffled_map": "the carrier slot bound to a random other span row (L20 KV6), and separately to a random (layer, kv) drawn from the frozen map's best-cell distribution; seed 0",
+  "cross_item": "the carrier cell of another item of the same family with another country must not name this item's country (rate)"
+ },
+ "falsifiers": {
+  "F_map": "the frozen site rule names the country on fewer items than the always-same-site null by more than 1 item per family",
+  "F_stack": "neither the same-cell nor the ladder reading of S2 reaches its bar on d4",
+  "F_edge": "S6's donor arm moves the carrier cell's country readout on < 0.40 of eligible items"
+ },
+ "budget": "job F (freeze, base 64) and job D (depth 154) each <= 10 min wall, priority 70, smoke on 3 items first; the S5 forecast and all scoring are CPU jobs reading captures",
+ "rules": "single seed; unknown is not negative; capital co-readout beside every country readout; accounting (hop shares) is not a forecast"
+}

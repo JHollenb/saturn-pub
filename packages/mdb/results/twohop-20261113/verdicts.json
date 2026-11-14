@@ -1,0 +1,110 @@
+{
+ "written_at": "2026-11-14T05:58:01Z (2026-11-13 21:58 PST)",
+ "status": "MEASURED, not audited; single seed",
+ "sources": "analysis.json (job 2), census.json (job 3), job4.jsonl (job 4), job1-panel.json, prereg.json",
+ "jobs": {
+  "job1_passive_panel_forecast": "job-be3f28e325fe",
+  "job2_smoke": "job-febd18f58dd4",
+  "job2": [
+   "job-78d3d94817f7",
+   "job-b56b92d517ef",
+   "job-e72fd4657de5",
+   "job-5eca7ed779d6"
+  ],
+  "job3_smoke": "job-deefef037da1",
+  "job3": [
+   "job-ca18b737458b",
+   "job-3b4723dbe988"
+  ],
+  "job4_errors": "job-2c65055cef64"
+ },
+ "sealing": "forecast committed in c3942bd (job1-forecast.json sha256 727b8a90cb8a11f9924f039b8c7cac46c5a3b20c66c18c6c821be4900dd587d1) before job 2 was submitted",
+ "predictions": {
+  "P1_hit1": {
+   "claim": ">= 0.35",
+   "measured": "59/64 = 0.922",
+   "verdict": "held"
+  },
+  "P1_hit3": {
+   "claim": ">= 0.60",
+   "measured": "64/64 = 1.0",
+   "verdict": "held"
+  },
+  "P1_vs_mass": {
+   "claim": "F1 - F3 >= 0.10",
+   "measured": "0.922 - 0.797 (51/64) = 0.125",
+   "verdict": "held (margin 0.025)"
+  },
+  "P1_F2": {
+   "claim": "F2 hit1 >= F1 hit1",
+   "measured": "59/64 = 59/64",
+   "verdict": "held (equal), but not independent: F2 picked the F1 site on 64/64"
+  },
+  "P1_depth": {
+   "claim": "GT layer in 18..24 on >= 70%",
+   "measured": "64/64 (all L20)",
+   "verdict": "held"
+  },
+  "P1_concentration": {
+   "claim": "one (l,g) is GT for >= 50%",
+   "measured": "L20 KV6 for 64/64",
+   "verdict": "held"
+  },
+  "P1_row": {
+   "claim": "GT row = r0 on >= 80%",
+   "measured": "55/64 = 0.859",
+   "verdict": "held"
+  },
+  "P2_single_V_F1": {
+   "claim": "flip >= 0.20",
+   "measured": "71/123 = 0.577; median fraction moved 0.61",
+   "verdict": "held"
+  },
+  "P2_single_V_GT": {
+   "claim": "flip >= 0.30",
+   "measured": "71/123 = 0.577",
+   "verdict": "held"
+  },
+  "P2_single_K": {
+   "claim": "flip <= 0.05 and median |frac| <= 0.05",
+   "measured": "flip 0/123 at F1 and GT; median |frac| 0.0135 (F1), 0.0133 (GT)",
+   "verdict": "held"
+  },
+  "P2_KV_vs_V": {
+   "claim": "K+V within 0.10 of V",
+   "measured": "F1 0.577 vs 0.577; GT 0.585 vs 0.577",
+   "verdict": "held"
+  },
+  "P2_bands": {
+   "claim": "L<=16: V flip >= 0.80, K <= 0.05, K+V within 0.10 of V; L=24 flip <= 0.10",
+   "measured": "V 0.902 at every start 0..16; K 0/123; K+V 0.984-1.0 (gap 0.081-0.098); L24: V, K, K+V flip 0/123",
+   "verdict": "held (K+V gap at most 0.098)"
+  },
+  "P3_census": {
+   "claim": "median sigma_Phi >= 0.75, median sigma_E <= 0.20; full = direct within floor on >= 90%",
+   "measured": "sigma_Phi 0.823 (IQR 0.70-0.93), sigma_E 0.088 (IQR 0.04-0.15), 123/123 pairs; full = direct 123/123",
+   "verdict": "held"
+  },
+  "P4_controls": {
+   "claim": "same-bridge donors keep the answer >= 0.90 at F1, GT, V band from L8",
+   "measured": "F1 47/53 = 0.887, GT 49/55 = 0.891, band 52/63 = 0.825",
+   "verdict": "failed. Every single-cell failure is a city-family control that makes the model answer that city (Kyoto, Sydney, Cork, Chicago, Barcelona, Krakow); non-city controls keep 33/33 (F1), 36/36 (GT), 37/40 (band)"
+  },
+  "P5_accuracy": {
+   "claim": "0.45-0.75",
+   "measured": "108/149 = 0.725",
+   "verdict": "held"
+  },
+  "P5_errors": {
+   "claim": ">= 0.5 of errors with both hops right are non-capital answers",
+   "measured": "32/34 = 0.94 (24 other word or city, 8 descriptor copies by word-prefix test; reconcile.py)",
+   "verdict": "held"
+  },
+  "P6_noise": {
+   "claim": "batched null within 2 bf16 spacing at |M| on >= 95%",
+   "measured": "25/64 at |M| (prereg wording); 64/64 at the larger |logit| of each pair (reconcile.py)",
+   "verdict": "failed (under the frozen wording)"
+  }
+ },
+ "corrected_at": "2026-11-13 23:10 PST, see reconcile.py / reconcile.json"
+}

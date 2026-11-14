@@ -1,0 +1,30 @@
+{
+ "frozen_at": "2026-11-13 ~23:45 PST, before any run of J1. Known: Z2 panel-mean ablation flips 0/64 (median dM share direct 0.73); EB2 single-cell same-country city donor keeps the capital 10/12; Z1 T_city country readout unchanged 12/12, entity readout moved 8/12. Audit rules (ext/AUDIT-Z1-Z2.md) applied: no measured-ledger accounting is called a forecast; capital co-readout reported beside every country readout.",
+ "question": "Advisor memo job 1 (P30/P44): is the L20 KV6 cell's usable code the country direction, or the entity? Decompose the cell transplant effect into a country part and a within-country (entity) part.",
+ "model": "Qwen3-1.7B-Base bf16 eager CUDA; single seed; one model load; instrument symbols.hop_edge + symbols.table content (merged tree, commit 1b5aae6)",
+ "items": "64 entry-1 panel recipients; consumer M[answer, donor-0 answer] (as Z2)",
+ "arms": {
+  "panel_mean": "mean L20 KV6 V cell of the 64 recipients (each at its gt row)",
+  "country_mean": "mean cell of the correct candidates sharing the item's bridge country, excluding the item (gt row for panel recipients, last descriptor row otherwise); 63/64 items have >= 1 such member (n reported; 54 have >= 2)",
+  "other_country_mean": "mean cell of a random other country with >= 2 correct candidates (seed = item index)",
+  "city_family_mean": "city items only: mean cell of all other correct city-family candidates",
+  "donor0": "donor 0's own cell (reproduces Z2's donor arm)"
+ },
+ "metrics": {
+  "dM": "native margin change per arm (hop_edge consumer.native_delta), with direct and MLP terms and closure gap",
+  "country_part": "dM(panel_mean) - dM(country_mean): the effect of the item's country direction relative to the panel average",
+  "entity_part": "dM(country_mean): what remains when the country is held and only the entity mix changes",
+  "content": "after each edit: best country, best capital (co-readout), best entity on the declared bridge cell",
+  "flips": "argmax != the item's answer"
+ },
+ "predictions": {
+  "J1a": "|dM(country_mean)| < |dM(panel_mean)| on >= 48/63 items (the country direction is most of the cell's effect); guess median |entity_part| / |dM(panel_mean)| = 0.25",
+  "J1b": "country_mean keeps the answer on >= 44/47 non-city items with members; on city items it keeps it on >= 12/16",
+  "J1c": "after country_mean the country readout is unchanged on >= 0.90 and the capital co-readout unchanged on >= 0.90; after other_country_mean the country readout names the other country on >= 0.80 and the answer flips to its capital on >= 0.30",
+  "J1d": "city_family_mean (city items): answer kept on >= 12/16 and the entity readout is not the item's own city on >= 0.75",
+  "J1e": "hop_edge closure within 2 bf16 spacings on >= 0.95 of all edited runs"
+ },
+ "falsifier": "memo: |dM(country_mean)| >= |dM(panel_mean)| on >= 32/64 items, OR the country-mean cell changes the answer on more than 6/48 non-city items: then the cell's usable content is not the country direction and 'bridge' is the wrong name for the cell",
+ "budget": "one mrun job, smoke on 3 items first, <= 10 min, priority 70, vram 5000, ram 12000",
+ "rules": "single seed; unknown is not negative; counts below 8 reported, not judged"
+}

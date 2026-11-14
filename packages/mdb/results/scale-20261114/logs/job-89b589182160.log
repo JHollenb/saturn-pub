@@ -1,0 +1,118 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision eeacf0d295dfa77bf1bfb3722a901d813501243a script score.py args /mnt/big/llm-models/Qwen2.5-0.5B /mnt/ssd1tb/cache/beast/scale/Qwen2.5-0.5B /mnt/big/mrun-scratch/job-11c7ea0426ea/sw-Qwen2.5-0.5B capture-Qwen2.5-0.5B.json /mnt/big/mrun-scratch/job-b830ee76c2ec/fc-Qwen2.5-0.5B /mnt/big/mrun-scratch/job-849799774415/a2-Qwen2.5-0.5B-split.json,/mnt/big/mrun-scratch/job-10a44c39962b/a2-Qwen2.5-0.5B-rest.json score-Qwen2.5-0.5B.json
+{
+ "model": "Qwen2.5-0.5B",
+ "layers": 24,
+ "heads": 14,
+ "kv": 2,
+ "L_c": 21,
+ "kv_c": 0,
+ "frac_depth": 0.875,
+ "tail": 3,
+ "mode": [
+  20,
+  28
+ ],
+ "mode_counts": [
+  [
+   [
+    21,
+    0
+   ],
+   20
+  ],
+  [
+   [
+    17,
+    0
+   ],
+   6
+  ],
+  [
+   [
+    20,
+    0
+   ],
+   2
+  ]
+ ],
+ "split": {
+  "0.5": {
+   "direct": {
+    "median": 1.1685690759573766,
+    "iqr": [
+     0.6725876728441503,
+     1.4557112240409547
+    ]
+   },
+   "mlp": {
+    "median": -0.03207419752922825,
+    "iqr": [
+     -0.2668953037861085,
+     0.46361378634052663
+    ]
+   },
+   "reread": {
+    "median": -0.007068947318577771,
+    "iqr": [
+     -0.037438234052740486,
+     0.017506702365091907
+    ]
+   },
+   "norm": {
+    "median": -0.07032774603649732,
+    "iqr": [
+     -0.15050466700015072,
+     -0.03888716469588367
+    ]
+   }
+  },
+  "1.0": {
+   "direct": {
+    "median": 0.9110730873867661,
+    "iqr": [
+     0.6284470249697625,
+     1.1696194547119054
+    ]
+   },
+   "mlp": {
+    "median": 0.09748268321894858,
+    "iqr": [
+     -0.08457311047246598,
+     0.4126796861280708
+    ]
+   },
+   "reread": {
+    "median": -0.0016788569923439642,
+    "iqr": [
+     -0.026187423137506365,
+     0.016380456429682968
+    ]
+   },
+   "norm": {
+    "median": -0.014895825423807126,
+    "iqr": [
+     -0.05364279444913053,
+     -0.003301626207212162
+    ]
+   }
+  }
+ },
+ "split_dose_move_median": 0.0953808119236634,
+ "B2_auc_slack_d3d4": 0.48072562358276644,
+ "B6": {
+  "language_drop_median": 0.375,
+  "capital_drop_median": 0.84375
+ },
+ "projected_language_hits": [
+  9,
+  56
+ ],
+ "projected_language_shuffled_hits": [
+  30,
+  56
+ ]
+}
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:06.85
+	Maximum resident set size (kbytes): 2151312

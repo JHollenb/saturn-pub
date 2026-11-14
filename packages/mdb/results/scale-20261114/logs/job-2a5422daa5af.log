@@ -1,0 +1,71 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 477afe3ddb4c079b5c5d6d13d1bd1f341339e008 script capture.py args /mnt/big/llm-models/Qwen2.5-3B /mnt/ssd1tb/cache/beast/scale/Qwen2.5-3B 0-64 -a
+load 6.7s
+C {"id": "currency:afghani", "s": 3.2}
+C {"id": "currency:dollar", "s": 1.61}
+C {"id": "currency:pound sterling", "s": 2.23}
+C {"id": "currency:lev", "s": 1.46}
+C {"id": "currency:renminbi", "s": 2.89}
+C {"id": "currency:koruna", "s": 2.17}
+C {"id": "currency:forint", "s": 2.17}
+C {"id": "currency:rupiah", "s": 3.05}
+C {"id": "currency:rial", "s": 2.22}
+C {"id": "currency:shekel", "s": 2.19}
+C {"id": "currency:yen", "s": 1.46}
+C {"id": "currency:shilling", "s": 2.17}
+C {"id": "person:Mozart", "s": 1.45}
+C {"id": "person:Charles Dickens", "s": 2.32}
+C {"id": "person:Pablo Neruda", "s": 2.87}
+C {"id": "person:Confucius", "s": 2.94}
+C {"id": "person:Fidel Castro", "s": 2.87}
+C {"id": "person:Antonin Dvorak", "s": 4.46}
+C {"id": "person:Hans Christian Andersen", "s": 2.88}
+C {"id": "person:Jean Sibelius", "s": 3.58}
+C {"id": "person:Goethe", "s": 2.32}
+C {"id": "person:Plato", "s": 1.52}
+C {"id": "person:Franz Liszt", "s": 2.87}
+C {"id": "person:James Joyce", "s": 2.16}
+C {"id": "landmark:Mount Rushmore", "s": 2.86}
+C {"id": "landmark:Uluru", "s": 2.34}
+C {"id": "landmark:Schonbrunn Palace", "s": 4.4}
+C {"id": "landmark:Stonehenge", "s": 2.9}
+C {"id": "landmark:Niagara Falls", "s": 2.18}
+C {"id": "landmark:the Forbidden City", "s": 3.03}
+C {"id": "landmark:the Sphinx", "s": 2.17}
+C {"id": "landmark:Neuschwanstein Castle", "s": 4.38}
+C {"id": "landmark:the Acropolis", "s": 3.06}
+C {"id": "landmark:Borobudur", "s": 3.59}
+C {"id": "landmark:Persepolis", "s": 3.6}
+C {"id": "landmark:Babylon", "s": 1.47}
+C {"id": "city:Chicago", "s": 1.61}
+C {"id": "city:Melbourne", "s": 1.53}
+C {"id": "city:Salzburg", "s": 2.18}
+C {"id": "city:Antwerp", "s": 2.17}
+C {"id": "city:Liverpool", "s": 1.46}
+C {"id": "city:Plovdiv", "s": 2.88}
+C {"id": "city:Toronto", "s": 1.62}
+C {"id": "city:Valparaiso", "s": 3.65}
+C {"id": "city:Shanghai", "s": 1.49}
+C {"id": "city:Brno", "s": 2.16}
+C {"id": "city:Aarhus", "s": 2.19}
+C {"id": "city:Alexandria", "s": 1.47}
+C {"id": "d2:Vienna", "s": 1.62}
+C {"id": "d2:London", "s": 1.46}
+C {"id": "d2:Prague", "s": 1.47}
+C {"id": "d2:Copenhagen", "s": 1.48}
+C {"id": "d2:Cairo", "s": 1.47}
+C {"id": "d2:Helsinki", "s": 1.47}
+C {"id": "d2:Paris", "s": 1.51}
+C {"id": "d2:Berlin", "s": 1.48}
+C {"id": "d2:Athens", "s": 1.47}
+C {"id": "d2:Budapest", "s": 1.48}
+C {"id": "d2:Rome", "s": 1.62}
+C {"id": "d2:Tokyo", "s": 1.47}
+C {"id": "d2:Seoul", "s": 1.47}
+C {"id": "d2:Amsterdam", "s": 1.47}
+C {"id": "d3-lm:Schonbrunn Palace", "s": 4.61}
+C {"id": "d3-lm:Big Ben", "s": 2.63}
+TOTAL 154.3s peak 6177 MB
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:35.79
+	Maximum resident set size (kbytes): 4916424

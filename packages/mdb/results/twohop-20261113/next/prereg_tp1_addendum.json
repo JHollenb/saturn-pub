@@ -1,0 +1,16 @@
+{
+ "frozen_at": "2026-11-14 ~00:30 PST, before any TP1 run; amends prereg_tp1.json (owner: build TP1 through the integrated stack). prereg_tp1.json's measures, classes, predictions T1-T4 and falsifier stand.",
+ "library_split": {
+  "nnsight 0.8.2 (mdb_interop.nn.wrap on a weight-sharing clone; interop source mdb-interop 31ca719 vendored in next/interop_pkg)": "the one forward + ONE backward per prompt: h at every layer input and the final-norm input, v_proj output, attention p, dM/dh for every row and layer",
+  "mdb": "exact parts: forward-mode Jacobian check of the nnsight gradient on 2 items (propagate.whatif linear term at t_j.L20.h along a random and the gradient direction, P14); the global / per-position / per-token mean ablations as native stepped runs (Run.set at t_r.L14.h with prefill=r); authority labels in the write-up",
+  "SAELens 6.55.5": "TopKSAE built from the Qwen-Scope W32K-L0_50 weights (k=50, no b_dec on input); relative reconstruction error ||h - SAE(h)|| / ||h|| per row at layers 0, 4, 8, 14, 20, 24, 27 (resid_post); active sets checked against mdb.analysis.sae FeatureBasis.select on 2 prompts x 2 rows x 7 layers",
+  "TransformerLens 4.4.0": "TransformerBridge on a separate float32 CPU copy, compatibility mode (fold_ln, center_writing_weights, center_unembed); resid_pre norms of 8 prompts at layers 1, 7, 14, 21, 27 against native ||h|| and against the identity h - mean_d(h); if TL cannot load Qwen3, the arm is reported as skipped"
+ },
+ "added_predictions": {
+  "I1": "nnsight grad . u equals mdb's forward-mode linear term within 2% relative on 4/4 (item, direction) checks",
+  "I2": "TL centring removes little of the artifact rows' dominance: for the top-1% energy rows, ||h - mean_d(h)|| / ||h|| >= 0.9 (massive dims are not a common offset), so their share of total energy falls by < 0.1; TL's centred resid_pre equals h - mean_d(h) within 1e-2 relative",
+  "I3 (coordinator's)": "artifact rows (top-1% energy, and the t0 class) have the largest SAE relative reconstruction error: their median error exceeds the median of all other rows at each of the 7 SAE layers (>= 5/7 layers)",
+  "I4": "SAELens and mdb select the same active set on >= 26/28 checked rows"
+ },
+ "budget": "one mrun job <= 5 min target (hard limit 10 min); priority 70; vram 6000; ram 24000 (TL float32 CPU copy)"
+}

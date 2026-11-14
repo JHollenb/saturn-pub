@@ -1,0 +1,40 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 870fcfa9ef8a624275f8fe4e44195dcece00fd0f recipients 16..32
+load 4.0s; recipients 16..31 (16)
+ITEM {"id": "person:Hokusai", "tokens": [26194, 63061, 37741, 26194], "native": [31.375, 22.875, 24.875, 31.375], "native_argmax": 26194, "donor_prompt": [[20.375, 29.5, 21.375, 20.375], [20.375, 22.625, 31.25, 20.375]], "control_prompt": [31.875, 20.25, 23.25, 31.875], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -7.375}, "stepped_seconds": 26.21276238199789, "seconds": 28.758632053999463, "F1": [36, 20, 6], "null_vs_stepped": 0.25, "sweep_seconds": 0.62, "arms": 2912}
+T 32.8s
+ITEM {"id": "person:Akira Kurosawa", "tokens": [26194, 24081, 67289, 26194], "native": [31.875, 21.75, 23.25, 31.875], "native_argmax": 26194, "donor_prompt": [[19.875, 29.75, 22.625, 19.875], [20.375, 19.5, 31.0, 20.375]], "control_prompt": [32.5, 21.625, 22.625, 32.5], "gt": {"row": 38, "layer": 20, "kv": 6, "effect": -9.0625}, "stepped_seconds": 26.974247821999597, "seconds": 29.607534482995106, "F1": [38, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 1.15, "arms": 5600}
+T 62.4s
+ITEM {"id": "person:Haruki Murakami", "tokens": [26194, 24081, 67289, 26194], "native": [32.5, 21.625, 22.625, 32.5], "native_argmax": 26194, "donor_prompt": [[19.875, 29.75, 22.625, 19.875], [20.375, 19.5, 31.0, 20.375]], "control_prompt": [31.875, 21.75, 23.25, 31.875], "gt": {"row": 38, "layer": 20, "kv": 6, "effect": -9.0}, "stepped_seconds": 26.603366948998882, "seconds": 29.272917476999282, "F1": [38, 20, 6], "null_vs_stepped": 0.25, "sweep_seconds": 1.15, "arms": 5600}
+T 91.7s
+ITEM {"id": "person:Mao Zedong", "tokens": [26549, 21718, 72176, 26549], "native": [32.25, 23.125, 22.375, 32.25], "native_argmax": 26549, "donor_prompt": [[20.125, 29.5, 21.875, 20.125], [19.25, 21.5, 29.0, 19.25]], "control_prompt": [31.625, 25.25, 20.0, 31.625], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -3.3125}, "stepped_seconds": 26.061913999001263, "seconds": 28.228358687993023, "F1": [34, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.8, "arms": 3808}
+T 119.9s
+ITEM {"id": "person:Miguel de Cervantes", "tokens": [24081, 67289, 94311, 24081], "native": [29.75, 22.625, 17.875, 29.75], "native_argmax": 24081, "donor_prompt": [[19.5, 31.0, 16.125, 19.5], [17.125, 20.375, 29.75, 17.125]], "control_prompt": [30.0, 23.25, 21.5, 30.0], "gt": {"row": 38, "layer": 20, "kv": 6, "effect": -9.125}, "stepped_seconds": 26.821795645999373, "seconds": 29.160588380000263, "F1": [38, 20, 6], "null_vs_stepped": 0.25, "sweep_seconds": 0.97, "arms": 4704}
+T 149.1s
+ITEM {"id": "person:Giuseppe Verdi", "tokens": [21718, 72176, 76334, 21718], "native": [29.5, 21.875, 19.625, 29.5], "native_argmax": 21718, "donor_prompt": [[21.5, 29.0, 17.5, 21.5], [17.875, 20.375, 29.5, 17.875]], "control_prompt": [31.625, 17.875, 20.75, 31.625], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -10.375}, "stepped_seconds": 26.475755261002632, "seconds": 28.655561505998776, "F1": [37, 20, 6], "null_vs_stepped": 0.0, "sweep_seconds": 0.79, "arms": 3808}
+T 177.7s
+ITEM {"id": "person:Mozart", "tokens": [46287, 45826, 46287], "native": [29.5, 19.125, 29.5], "native_argmax": 46287, "donor_prompt": [[23.25, 30.25, 23.25]], "control_prompt": [32.0, 19.75, 32.0], "gt": {"row": 34, "layer": 20, "kv": 6, "effect": -12.25}, "stepped_seconds": 14.060838327997772, "seconds": 15.233163312004763, "F1": [34, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.16, "arms": 672}
+T 193.0s
+ITEM {"id": "person:Frederic Chopin", "tokens": [72176, 76334, 57858, 72176], "native": [29.0, 17.5, 19.0, 29.0], "native_argmax": 72176, "donor_prompt": [[20.375, 29.5, 23.75, 20.375], [19.875, 19.875, 28.625, 19.875]], "control_prompt": [28.5, 21.875, 22.0, 28.5], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -12.6875}, "stepped_seconds": 26.49948413799575, "seconds": 28.6546042580012, "F1": [37, 20, 6], "null_vs_stepped": 0.25, "sweep_seconds": 0.79, "arms": 3808}
+T 221.6s
+ITEM {"id": "person:Jean Sibelius", "tokens": [76334, 57858, 57858, 76334], "native": [29.5, 23.75, 23.75, 29.5], "native_argmax": 76334, "donor_prompt": [[19.875, 28.625, 28.625, 19.875], [21.625, 29.875, 29.875, 21.625]], "control_prompt": [30.75, 26.375, 26.375, 30.75], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -10.5}, "stepped_seconds": 26.103745178996178, "seconds": 28.2711686870025, "F1": [37, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.79, "arms": 3808}
+T 249.9s
+ITEM {"id": "person:Henrik Ibsen", "tokens": [57858, 52082, 52082, 57858], "native": [28.625, 24.125, 24.125, 28.625], "native_argmax": 57858, "donor_prompt": [[25.25, 30.0, 30.0, 25.25], [26.625, 30.0, 30.0, 26.625]], "control_prompt": [29.875, 25.25, 25.25, 29.875], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -6.8125}, "stepped_seconds": 26.09360308900068, "seconds": 28.373712323998916, "F1": [37, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.91, "arms": 4480}
+T 278.3s
+ITEM {"id": "person:Edvard Munch", "tokens": [57858, 52082, 52082, 57858], "native": [29.875, 25.25, 25.25, 29.875], "native_argmax": 57858, "donor_prompt": [[25.25, 30.0, 30.0, 25.25], [26.625, 30.0, 30.0, 26.625]], "control_prompt": [28.625, 24.125, 24.125, 28.625], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -6.3125}, "stepped_seconds": 26.53908158500417, "seconds": 28.817188127999543, "F1": [37, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.91, "arms": 4480}
+T 307.1s
+ITEM {"id": "person:Socrates", "tokens": [45826, 32877, 7148, 45826], "native": [32.25, 21.5, 24.5, 32.25], "native_argmax": 45826, "donor_prompt": [[23.625, 31.125, 26.75, 23.625], [24.25, 25.75, 31.375, 24.25]], "control_prompt": [30.25, 21.25, 24.25, 30.25], "gt": {"row": 35, "layer": 20, "kv": 6, "effect": -6.625}, "stepped_seconds": 31.89466423599515, "seconds": 33.74989047800045, "F1": [35, 20, 6], "null_vs_stepped": 0.0, "sweep_seconds": 0.44, "arms": 2016}
+T 340.8s
+ITEM {"id": "person:Plato", "tokens": [45826, 46287, 45826], "native": [30.25, 23.25, 30.25], "native_argmax": 45826, "donor_prompt": [[19.125, 29.5, 19.125]], "control_prompt": [32.25, 21.875, 32.25], "gt": {"row": 34, "layer": 20, "kv": 6, "effect": -6.375}, "stepped_seconds": 16.230678091997106, "seconds": 17.47365483500471, "F1": [34, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.18, "arms": 672}
+T 358.3s
+ITEM {"id": "person:Soren Kierkegaard", "tokens": [63061, 32877, 63061], "native": [30.25, 22.875, 30.25], "native_argmax": 63061, "donor_prompt": [[20.5, 31.5, 20.5]], "control_prompt": [29.5, 21.625, 29.5], "gt": {"row": 38, "layer": 20, "kv": 6, "effect": -2.875}, "stepped_seconds": 15.966975916999218, "seconds": 17.662614356006088, "F1": [38, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.62, "arms": 2912}
+T 376.0s
+ITEM {"id": "person:Hans Christian Andersen", "tokens": [63061, 37741, 37741, 63061], "native": [29.5, 21.375, 21.375, 29.5], "native_argmax": 63061, "donor_prompt": [[22.625, 31.25, 31.25, 22.625], [21.25, 29.0, 29.0, 21.25]], "control_prompt": [30.75, 25.5, 25.5, 30.75], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -5.0625}, "stepped_seconds": 33.2152174369985, "seconds": 35.743579230998876, "F1": [36, 20, 6], "null_vs_stepped": 0.375, "sweep_seconds": 0.91, "arms": 2912}
+T 411.7s
+ITEM {"id": "person:Rembrandt", "tokens": [37741, 69595, 54578, 37741], "native": [31.25, 20.75, 17.625, 31.25], "native_argmax": 37741, "donor_prompt": [[22.375, 30.375, 19.0, 22.375], [18.25, 18.875, 29.625, 18.25]], "control_prompt": [29.0, 20.125, 15.3125, 29.0], "gt": {"row": 35, "layer": 20, "kv": 6, "effect": -3.125}, "stepped_seconds": 31.757111750004697, "seconds": 34.18720515399764, "F1": [35, 20, 6], "null_vs_stepped": 0.25, "sweep_seconds": 0.82, "arms": 3360}
+T 445.9s
+TOTAL 445.9s
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 7:27.45
+	Maximum resident set size (kbytes): 4351616
+-rw-rw-r-- 1 beast beast 3456797 Nov 13 21:42 job2-16-32.jsonl

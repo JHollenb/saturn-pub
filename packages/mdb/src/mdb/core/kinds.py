@@ -74,7 +74,13 @@ SYMBOL_TABLE = declare_kind(
     required=("schema", "where", "consumer", "bindings", "unbound", "page"),
     plain_numeric=("page.offset", "page.limit", "page.total", "rows", "bindings.*.rows",
                    "bindings.*.token", "bindings.*.omitted", "bindings.*.count",
-                   "accounting.heads", *PROCEDURE),
+                   "accounting.heads", *PROCEDURE, "bindings.*.content.*.best",
+                   "bindings.*.content.*.size", "bindings.*.content.*.truth_rank",
+                   "bindings.*.content.vocab_top.tokens", "bindings.*.hop.edge.mlp.*.layer",
+                   "bindings.*.hop.edge.mlp.*.omitted.count", "bindings.*.hop.edge.reread.*.layer",
+                   "bindings.*.hop.edge.mlp.*.spectral.bins",
+                   "bindings.*.hop.edge.mlp.*.spectral.top_bins",
+                   "bindings.*.hop.edge.mlp.*.spectral.neurons_at_same_fraction"),
 )
 
 # ``symbol NAME = whatif|compare.a|EACH:ITEM`` (M23): a named symbol declared from a transplant

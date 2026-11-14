@@ -1,0 +1,2478 @@
+{
+ "summary": {
+  "pairs": 123,
+  "recipients": 64,
+  "skipped_layer0": [],
+  "pairs_with_abs_full_ge_1": 123,
+  "median_sigma_phi": 0.8225806451612904,
+  "median_sigma_E": 0.08823529411764706,
+  "median_sigma_sum": 0.92,
+  "q25_q75_sigma_phi": [
+   0.7,
+   0.9292929292929293
+  ],
+  "q25_q75_sigma_E": [
+   0.038461538461538464,
+   0.15037593984962405
+  ],
+  "full_equals_direct_within_floor": "123/123",
+  "median_null": 0.0,
+  "median_full": -8.25,
+  "median_rec_error_fraction_of_norm": 0.4429195820078775,
+  "linearised_dv_share_error_median": 0.2768835558507097,
+  "linearised_dv_share_features_median": 0.7231164441492903,
+  "bridges_with_recurring_recipient_features": 19,
+  "bridges_with_ge2_recipients": 19,
+  "most_common_top_features": [
+   [
+    14971,
+    6,
+    [
+     " lut",
+     "marsh",
+     "ruz",
+     " TAM",
+     "partner"
+    ]
+   ],
+   [
+    5458,
+    5,
+    [
+     "\u6b66\u6c49\u5e02",
+     "\u6c72",
+     "\u56e2\u957f",
+     "\u5f00\u5c01",
+     "ead"
+    ]
+   ],
+   [
+    10025,
+    5,
+    [
+     " Munich",
+     " Frankfurt",
+     "\u67cf\u6797",
+     " K\u00f6ln",
+     " Germany"
+    ]
+   ],
+   [
+    24531,
+    4,
+    [
+     " Czech",
+     " Slovak",
+     "owski",
+     " Slovakia",
+     "czy"
+    ]
+   ],
+   [
+    31893,
+    4,
+    [
+     "\u8239\u53ea",
+     "\u6e14\u8239",
+     "\u8239\u4e0a",
+     "\u8239\u8236",
+     "\u8239"
+    ]
+   ],
+   [
+    14375,
+    4,
+    [
+     "gaard",
+     " Lund",
+     " Norway",
+     " Svens",
+     "\u5a01\u6d77"
+    ]
+   ],
+   [
+    1529,
+    3,
+    [
+     "\u6cb9\u8102",
+     " oils",
+     "\u6cb9",
+     " oil",
+     "Oil"
+    ]
+   ],
+   [
+    5762,
+    3,
+    [
+     "(java",
+     " JDK",
+     " Java",
+     "Java",
+     " java"
+    ]
+   ]
+  ]
+ },
+ "rows": [
+  {
+   "id": "city:Barcelona",
+   "donor": "city:Porto",
+   "full": -4.625,
+   "phi": -1.75,
+   "E": -0.5,
+   "direct": -4.625,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.39390685816956794,
+   "don_err_frac": 0.42711933153074827,
+   "sigma_phi": 0.3783783783783784,
+   "sigma_E": 0.10810810810810811
+  },
+  {
+   "id": "city:Barcelona",
+   "donor": "city:Rotterdam",
+   "full": -9.25,
+   "phi": -8.5,
+   "E": -0.5,
+   "direct": -9.125,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.39390685816956794,
+   "don_err_frac": 0.4179082592489925,
+   "sigma_phi": 0.918918918918919,
+   "sigma_E": 0.05405405405405406
+  },
+  {
+   "id": "city:Busan",
+   "donor": "city:Shenzhen",
+   "full": -7.5,
+   "phi": -6.5,
+   "E": -0.5,
+   "direct": -7.5,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4403560805936151,
+   "don_err_frac": 0.4475723468830995,
+   "sigma_phi": 0.8666666666666667,
+   "sigma_E": 0.06666666666666667
+  },
+  {
+   "id": "city:Busan",
+   "donor": "city:Saint Petersburg",
+   "full": -11.0,
+   "phi": -10.5,
+   "E": -1.125,
+   "direct": -11.0,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4403560805936151,
+   "don_err_frac": 0.43201493428609716,
+   "sigma_phi": 0.9545454545454546,
+   "sigma_E": 0.10227272727272728
+  },
+  {
+   "id": "city:Gdansk",
+   "donor": "city:Tampere",
+   "full": -6.25,
+   "phi": -5.75,
+   "E": 0.5,
+   "direct": -6.375,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.41381564245222907,
+   "don_err_frac": 0.40536398678944413,
+   "sigma_phi": 0.92,
+   "sigma_E": -0.08
+  },
+  {
+   "id": "city:Gdansk",
+   "donor": "city:Isfahan",
+   "full": -16.125,
+   "phi": -14.25,
+   "E": -0.5,
+   "direct": -16.125,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.41381564245222907,
+   "don_err_frac": 0.41554342170521924,
+   "sigma_phi": 0.8837209302325582,
+   "sigma_E": 0.031007751937984496
+  },
+  {
+   "id": "city:Gothenburg",
+   "donor": "city:Gdansk",
+   "full": -2.5,
+   "phi": -2.0,
+   "E": -0.375,
+   "direct": -2.75,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.34093987713444396,
+   "don_err_frac": 0.26273845758338793,
+   "sigma_phi": 0.8,
+   "sigma_E": 0.15
+  },
+  {
+   "id": "city:Gothenburg",
+   "donor": "city:Tampere",
+   "full": -2.125,
+   "phi": -1.5,
+   "E": -0.5,
+   "direct": -2.125,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.34093987713444396,
+   "don_err_frac": 0.26876304169645615,
+   "sigma_phi": 0.7058823529411765,
+   "sigma_E": 0.23529411764705882
+  },
+  {
+   "id": "city:Hamburg",
+   "donor": "city:Milan",
+   "full": -5.25,
+   "phi": -4.5,
+   "E": -0.375,
+   "direct": -5.25,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.40260203968083136,
+   "don_err_frac": 0.40023629491917617,
+   "sigma_phi": 0.8571428571428571,
+   "sigma_E": 0.07142857142857142
+  },
+  {
+   "id": "city:Hamburg",
+   "donor": "city:Naples",
+   "full": -7.0,
+   "phi": -5.5,
+   "E": -0.625,
+   "direct": -6.875,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.40260203968083136,
+   "don_err_frac": 0.42582963732625956,
+   "sigma_phi": 0.7857142857142857,
+   "sigma_E": 0.08928571428571429
+  },
+  {
+   "id": "city:Krakow",
+   "donor": "city:Salzburg",
+   "full": -5.0,
+   "phi": -4.875,
+   "E": -0.375,
+   "direct": -5.0,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4188236883937479,
+   "don_err_frac": 0.4297604973052788,
+   "sigma_phi": 0.975,
+   "sigma_E": 0.075
+  },
+  {
+   "id": "city:Krakow",
+   "donor": "city:Antwerp",
+   "full": -5.25,
+   "phi": -3.5,
+   "E": -0.75,
+   "direct": -5.375,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4188236883937479,
+   "don_err_frac": 0.4071442052152845,
+   "sigma_phi": 0.6666666666666666,
+   "sigma_E": 0.14285714285714285
+  },
+  {
+   "id": "city:Kyoto",
+   "donor": "city:Shanghai",
+   "full": -4.625,
+   "phi": -5.0,
+   "E": 0.5,
+   "direct": -4.5,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4243070668796595,
+   "don_err_frac": 0.40226724120569407,
+   "sigma_phi": 1.0810810810810811,
+   "sigma_E": -0.10810810810810811
+  },
+  {
+   "id": "city:Kyoto",
+   "donor": "city:Munich",
+   "full": -9.75,
+   "phi": -7.625,
+   "E": -0.375,
+   "direct": -9.625,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4243070668796595,
+   "don_err_frac": 0.3971659209621128,
+   "sigma_phi": 0.782051282051282,
+   "sigma_E": 0.038461538461538464
+  },
+  {
+   "id": "city:Milan",
+   "donor": "city:Barcelona",
+   "full": -6.625,
+   "phi": -5.875,
+   "E": 0.0,
+   "direct": -6.625,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.40023629491917617,
+   "don_err_frac": 0.39390685816956794,
+   "sigma_phi": 0.8867924528301887,
+   "sigma_E": -0.0
+  },
+  {
+   "id": "city:Milan",
+   "donor": "city:Porto",
+   "full": -6.625,
+   "phi": -4.0,
+   "E": -0.5,
+   "direct": -6.75,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.40023629491917617,
+   "don_err_frac": 0.42711933153074827,
+   "sigma_phi": 0.6037735849056604,
+   "sigma_E": 0.07547169811320754
+  },
+  {
+   "id": "city:Munich",
+   "donor": "city:Milan",
+   "full": -7.75,
+   "phi": -7.25,
+   "E": -0.5,
+   "direct": -7.75,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.3971659209621128,
+   "don_err_frac": 0.40023629491917617,
+   "sigma_phi": 0.9354838709677419,
+   "sigma_E": 0.06451612903225806
+  },
+  {
+   "id": "city:Munich",
+   "donor": "city:Naples",
+   "full": -9.375,
+   "phi": -8.625,
+   "E": -0.75,
+   "direct": -9.375,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.3971659209621128,
+   "don_err_frac": 0.42582963732625956,
+   "sigma_phi": 0.92,
+   "sigma_E": 0.08
+  },
+  {
+   "id": "city:Naples",
+   "donor": "city:Barcelona",
+   "full": -7.5,
+   "phi": -6.875,
+   "E": -1.25,
+   "direct": -7.5,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.42582963732625956,
+   "don_err_frac": 0.39390685816956794,
+   "sigma_phi": 0.9166666666666666,
+   "sigma_E": 0.16666666666666666
+  },
+  {
+   "id": "city:Naples",
+   "donor": "city:Porto",
+   "full": -6.0,
+   "phi": -4.0,
+   "E": -1.125,
+   "direct": -5.875,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.42582963732625956,
+   "don_err_frac": 0.42711933153074827,
+   "sigma_phi": 0.6666666666666666,
+   "sigma_E": 0.1875
+  },
+  {
+   "id": "city:Porto",
+   "donor": "city:Rotterdam",
+   "full": -7.875,
+   "phi": -6.375,
+   "E": -1.25,
+   "direct": -7.75,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.42711933153074827,
+   "don_err_frac": 0.4179082592489925,
+   "sigma_phi": 0.8095238095238095,
+   "sigma_E": 0.15873015873015872
+  },
+  {
+   "id": "city:Porto",
+   "donor": "city:Bergen",
+   "full": -11.75,
+   "phi": -10.125,
+   "E": -1.25,
+   "direct": -11.625,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.42711933153074827,
+   "don_err_frac": 0.38685697563207,
+   "sigma_phi": 0.8617021276595744,
+   "sigma_E": 0.10638297872340426
+  },
+  {
+   "id": "city:Rotterdam",
+   "donor": "city:Bergen",
+   "full": -9.75,
+   "phi": -9.875,
+   "E": -0.125,
+   "direct": -9.875,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4179082592489925,
+   "don_err_frac": 0.38685697563207,
+   "sigma_phi": 1.0128205128205128,
+   "sigma_E": 0.01282051282051282
+  },
+  {
+   "id": "city:Rotterdam",
+   "donor": "city:Istanbul",
+   "full": -10.875,
+   "phi": -11.125,
+   "E": 0.75,
+   "direct": -10.875,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4179082592489925,
+   "don_err_frac": 0.41505114605666976,
+   "sigma_phi": 1.0229885057471264,
+   "sigma_E": -0.06896551724137931
+  },
+  {
+   "id": "city:Saint Petersburg",
+   "donor": "city:Seville",
+   "full": -11.625,
+   "phi": -7.875,
+   "E": -1.0,
+   "direct": -11.5,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.43201493428609716,
+   "don_err_frac": 0.41587866578713945,
+   "sigma_phi": 0.6774193548387096,
+   "sigma_E": 0.08602150537634409
+  },
+  {
+   "id": "city:Saint Petersburg",
+   "donor": "city:Krakow",
+   "full": -7.25,
+   "phi": -7.25,
+   "E": -0.25,
+   "direct": -7.25,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.43201493428609716,
+   "don_err_frac": 0.4188236883937479,
+   "sigma_phi": 1.0,
+   "sigma_E": 0.034482758620689655
+  },
+  {
+   "id": "city:Seville",
+   "donor": "city:Krakow",
+   "full": -12.0,
+   "phi": -10.625,
+   "E": -1.0,
+   "direct": -11.875,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.41587866578713945,
+   "don_err_frac": 0.4188236883937479,
+   "sigma_phi": 0.8854166666666666,
+   "sigma_E": 0.08333333333333333
+  },
+  {
+   "id": "city:Seville",
+   "donor": "city:Salzburg",
+   "full": -8.625,
+   "phi": -7.0,
+   "E": -1.125,
+   "direct": -8.5,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.41587866578713945,
+   "don_err_frac": 0.4297604973052788,
+   "sigma_phi": 0.8115942028985508,
+   "sigma_E": 0.13043478260869565
+  },
+  {
+   "id": "city:Shanghai",
+   "donor": "city:Munich",
+   "full": -8.25,
+   "phi": -7.5,
+   "E": 0.0,
+   "direct": -8.0,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.40226724120569407,
+   "don_err_frac": 0.3971659209621128,
+   "sigma_phi": 0.9090909090909091,
+   "sigma_E": -0.0
+  },
+  {
+   "id": "city:Shanghai",
+   "donor": "city:Hamburg",
+   "full": -7.75,
+   "phi": -7.375,
+   "E": 0.0,
+   "direct": -7.625,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.40226724120569407,
+   "don_err_frac": 0.40260203968083136,
+   "sigma_phi": 0.9516129032258065,
+   "sigma_E": -0.0
+  },
+  {
+   "id": "city:Shenzhen",
+   "donor": "city:Saint Petersburg",
+   "full": -6.375,
+   "phi": -6.375,
+   "E": -0.125,
+   "direct": -6.25,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4475723468830995,
+   "don_err_frac": 0.43201493428609716,
+   "sigma_phi": 1.0,
+   "sigma_E": 0.0196078431372549
+  },
+  {
+   "id": "city:Shenzhen",
+   "donor": "city:Seville",
+   "full": -8.125,
+   "phi": -6.25,
+   "E": -0.75,
+   "direct": -8.0,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4475723468830995,
+   "don_err_frac": 0.41587866578713945,
+   "sigma_phi": 0.7692307692307693,
+   "sigma_E": 0.09230769230769231
+  },
+  {
+   "id": "currency:baht",
+   "donor": "currency:forint",
+   "full": -16.625,
+   "phi": -8.875,
+   "E": -2.5,
+   "direct": -16.625,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.484343528249372,
+   "don_err_frac": 0.48619960905316584,
+   "sigma_phi": 0.5338345864661654,
+   "sigma_E": 0.15037593984962405
+  },
+  {
+   "id": "currency:baht",
+   "donor": "currency:krona",
+   "full": -17.25,
+   "phi": -11.625,
+   "E": -1.875,
+   "direct": -17.25,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.484343528249372,
+   "don_err_frac": 0.48257283226720427,
+   "sigma_phi": 0.6739130434782609,
+   "sigma_E": 0.10869565217391304
+  },
+  {
+   "id": "currency:forint",
+   "donor": "currency:krona",
+   "full": -11.875,
+   "phi": -11.0,
+   "E": -0.5,
+   "direct": -11.875,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.48619960905316584,
+   "don_err_frac": 0.48257283226720427,
+   "sigma_phi": 0.9263157894736842,
+   "sigma_E": 0.042105263157894736
+  },
+  {
+   "id": "currency:forint",
+   "donor": "currency:shekel",
+   "full": -16.375,
+   "phi": -10.0,
+   "E": -3.125,
+   "direct": -16.375,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.48619960905316584,
+   "don_err_frac": 0.5068945097998987,
+   "sigma_phi": 0.6106870229007634,
+   "sigma_E": 0.19083969465648856
+  },
+  {
+   "id": "currency:koruna",
+   "donor": "currency:pound sterling",
+   "full": -9.875,
+   "phi": -8.0,
+   "E": -0.5,
+   "direct": -9.875,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4862527565502266,
+   "don_err_frac": 0.48173398557267033,
+   "sigma_phi": 0.810126582278481,
+   "sigma_E": 0.05063291139240506
+  },
+  {
+   "id": "currency:koruna",
+   "donor": "currency:rial",
+   "full": -19.9375,
+   "phi": -19.3125,
+   "E": -2.6875,
+   "direct": -19.6875,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4862527565502266,
+   "don_err_frac": 0.48484764053315316,
+   "sigma_phi": 0.9686520376175548,
+   "sigma_E": 0.13479623824451412
+  },
+  {
+   "id": "currency:krona",
+   "donor": "currency:shekel",
+   "full": -3.125,
+   "phi": -2.125,
+   "E": -0.375,
+   "direct": -3.25,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.48257283226720427,
+   "don_err_frac": 0.5068945097998987,
+   "sigma_phi": 0.68,
+   "sigma_E": 0.12
+  },
+  {
+   "id": "currency:krona",
+   "donor": "currency:koruna",
+   "full": -3.75,
+   "phi": -3.625,
+   "E": -0.125,
+   "direct": -3.75,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.48257283226720427,
+   "don_err_frac": 0.4862527565502266,
+   "sigma_phi": 0.9666666666666667,
+   "sigma_E": 0.03333333333333333
+  },
+  {
+   "id": "currency:pound sterling",
+   "donor": "currency:rial",
+   "full": -4.75,
+   "phi": -4.25,
+   "E": -0.75,
+   "direct": -4.875,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.48173398557267033,
+   "don_err_frac": 0.48484764053315316,
+   "sigma_phi": 0.8947368421052632,
+   "sigma_E": 0.15789473684210525
+  },
+  {
+   "id": "currency:pound sterling",
+   "donor": "currency:ruble",
+   "full": -4.5,
+   "phi": -4.0,
+   "E": -0.375,
+   "direct": -4.5,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.48173398557267033,
+   "don_err_frac": 0.4625222466893659,
+   "sigma_phi": 0.8888888888888888,
+   "sigma_E": 0.08333333333333333
+  },
+  {
+   "id": "currency:renminbi",
+   "donor": "currency:zloty",
+   "full": -4.25,
+   "phi": -4.0,
+   "E": -0.375,
+   "direct": -4.375,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.3979071430615507,
+   "don_err_frac": 0.4050779723784822,
+   "sigma_phi": 0.9411764705882353,
+   "sigma_E": 0.08823529411764706
+  },
+  {
+   "id": "currency:renminbi",
+   "donor": "currency:rupiah",
+   "full": -2.375,
+   "phi": -1.75,
+   "E": -0.25,
+   "direct": -2.25,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.3979071430615507,
+   "don_err_frac": 0.3316001844033771,
+   "sigma_phi": 0.7368421052631579,
+   "sigma_E": 0.10526315789473684
+  },
+  {
+   "id": "currency:rial",
+   "donor": "currency:ruble",
+   "full": -10.625,
+   "phi": -9.375,
+   "E": -0.375,
+   "direct": -10.5,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.48484764053315316,
+   "don_err_frac": 0.4625222466893659,
+   "sigma_phi": 0.8823529411764706,
+   "sigma_E": 0.03529411764705882
+  },
+  {
+   "id": "currency:rial",
+   "donor": "currency:rouble",
+   "full": -11.25,
+   "phi": -9.875,
+   "E": -0.375,
+   "direct": -11.125,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.48484764053315316,
+   "don_err_frac": 0.45494355666512687,
+   "sigma_phi": 0.8777777777777778,
+   "sigma_E": 0.03333333333333333
+  },
+  {
+   "id": "currency:rouble",
+   "donor": "currency:baht",
+   "full": -17.75,
+   "phi": -9.0,
+   "E": -4.125,
+   "direct": -17.625,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.45494355666512687,
+   "don_err_frac": 0.484343528249372,
+   "sigma_phi": 0.5070422535211268,
+   "sigma_E": 0.2323943661971831
+  },
+  {
+   "id": "currency:rouble",
+   "donor": "currency:forint",
+   "full": -13.25,
+   "phi": -9.125,
+   "E": -2.75,
+   "direct": -13.125,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.45494355666512687,
+   "don_err_frac": 0.48619960905316584,
+   "sigma_phi": 0.6886792452830188,
+   "sigma_E": 0.20754716981132076
+  },
+  {
+   "id": "currency:ruble",
+   "donor": "currency:baht",
+   "full": -4.375,
+   "phi": -2.125,
+   "E": -1.125,
+   "direct": -4.375,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4625222466893659,
+   "don_err_frac": 0.484343528249372,
+   "sigma_phi": 0.4857142857142857,
+   "sigma_E": 0.2571428571428571
+  },
+  {
+   "id": "currency:ruble",
+   "donor": "currency:forint",
+   "full": -3.0,
+   "phi": -2.0,
+   "E": -1.125,
+   "direct": -2.875,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4625222466893659,
+   "don_err_frac": 0.48619960905316584,
+   "sigma_phi": 0.6666666666666666,
+   "sigma_E": 0.375
+  },
+  {
+   "id": "currency:rupiah",
+   "donor": "currency:afghani",
+   "full": -11.625,
+   "phi": -5.875,
+   "E": -5.375,
+   "direct": -11.875,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4669764728240604,
+   "don_err_frac": 0.4803328322724525,
+   "sigma_phi": 0.5053763440860215,
+   "sigma_E": 0.46236559139784944
+  },
+  {
+   "id": "currency:rupiah",
+   "donor": "currency:renminbi",
+   "full": -12.0,
+   "phi": -8.5,
+   "E": -2.375,
+   "direct": -12.125,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4669764728240604,
+   "don_err_frac": 0.4492907131556001,
+   "sigma_phi": 0.7083333333333334,
+   "sigma_E": 0.19791666666666666
+  },
+  {
+   "id": "currency:shekel",
+   "donor": "currency:koruna",
+   "full": -13.75,
+   "phi": -10.625,
+   "E": -1.875,
+   "direct": -13.875,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.5068945097998987,
+   "don_err_frac": 0.4862527565502266,
+   "sigma_phi": 0.7727272727272727,
+   "sigma_E": 0.13636363636363635
+  },
+  {
+   "id": "currency:shekel",
+   "donor": "currency:pound sterling",
+   "full": -10.125,
+   "phi": -6.25,
+   "E": -1.25,
+   "direct": -10.125,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.5068945097998987,
+   "don_err_frac": 0.48173398557267033,
+   "sigma_phi": 0.6172839506172839,
+   "sigma_E": 0.12345679012345678
+  },
+  {
+   "id": "currency:sterling",
+   "donor": "currency:dollar",
+   "full": -8.75,
+   "phi": -9.0,
+   "E": 0.0,
+   "direct": -8.75,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.45769815371915495,
+   "don_err_frac": 0.40357620396466876,
+   "sigma_phi": 1.0285714285714285,
+   "sigma_E": -0.0
+  },
+  {
+   "id": "currency:sterling",
+   "donor": "currency:yen",
+   "full": -10.625,
+   "phi": -10.25,
+   "E": 0.375,
+   "direct": -10.5,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.45769815371915495,
+   "don_err_frac": 0.41927442921114966,
+   "sigma_phi": 0.9647058823529412,
+   "sigma_E": -0.03529411764705882
+  },
+  {
+   "id": "currency:won",
+   "donor": "currency:yuan",
+   "full": -12.375,
+   "phi": -11.5,
+   "E": -0.875,
+   "direct": -12.25,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4747195079723728,
+   "don_err_frac": 0.4079814173210235,
+   "sigma_phi": 0.9292929292929293,
+   "sigma_E": 0.0707070707070707
+  },
+  {
+   "id": "currency:won",
+   "donor": "currency:sterling",
+   "full": -14.875,
+   "phi": -14.875,
+   "E": 0.375,
+   "direct": -14.75,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4747195079723728,
+   "don_err_frac": 0.45769815371915495,
+   "sigma_phi": 1.0,
+   "sigma_E": -0.025210084033613446
+  },
+  {
+   "id": "currency:yen",
+   "donor": "currency:won",
+   "full": -10.875,
+   "phi": -9.875,
+   "E": -0.625,
+   "direct": -10.75,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.41927442921114966,
+   "don_err_frac": 0.4747195079723728,
+   "sigma_phi": 0.9080459770114943,
+   "sigma_E": 0.05747126436781609
+  },
+  {
+   "id": "currency:yen",
+   "donor": "currency:yuan",
+   "full": -11.75,
+   "phi": -11.125,
+   "E": -0.875,
+   "direct": -11.625,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.41927442921114966,
+   "don_err_frac": 0.4079814173210235,
+   "sigma_phi": 0.9468085106382979,
+   "sigma_E": 0.07446808510638298
+  },
+  {
+   "id": "currency:yuan",
+   "donor": "currency:sterling",
+   "full": -9.25,
+   "phi": -10.125,
+   "E": 0.625,
+   "direct": -9.25,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4079814173210235,
+   "don_err_frac": 0.45769815371915495,
+   "sigma_phi": 1.0945945945945945,
+   "sigma_E": -0.06756756756756757
+  },
+  {
+   "id": "currency:yuan",
+   "donor": "currency:dollar",
+   "full": -5.875,
+   "phi": -5.875,
+   "E": -0.125,
+   "direct": -5.75,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4079814173210235,
+   "don_err_frac": 0.40357620396466876,
+   "sigma_phi": 1.0,
+   "sigma_E": 0.02127659574468085
+  },
+  {
+   "id": "currency:zloty",
+   "donor": "currency:rupiah",
+   "full": -7.75,
+   "phi": -6.5,
+   "E": -0.375,
+   "direct": -7.75,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4050779723784822,
+   "don_err_frac": 0.3316001844033771,
+   "sigma_phi": 0.8387096774193549,
+   "sigma_E": 0.04838709677419355
+  },
+  {
+   "id": "currency:zloty",
+   "donor": "currency:afghani",
+   "full": -17.0625,
+   "phi": -11.9375,
+   "E": -1.9375,
+   "direct": -17.125,
+   "null": 0.0625,
+   "direct_ok": true,
+   "rec_err_frac": 0.4050779723784822,
+   "don_err_frac": 0.4206593743216886,
+   "sigma_phi": 0.6996336996336996,
+   "sigma_E": 0.11355311355311355
+  },
+  {
+   "id": "landmark:Borobudur",
+   "donor": "landmark:Persepolis",
+   "full": -7.75,
+   "phi": -6.375,
+   "E": 0.0,
+   "direct": -7.75,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4521695073792906,
+   "don_err_frac": 0.43962747598997354,
+   "sigma_phi": 0.8225806451612904,
+   "sigma_E": -0.0
+  },
+  {
+   "id": "landmark:Borobudur",
+   "donor": "landmark:the Parthenon",
+   "full": -7.875,
+   "phi": -4.875,
+   "E": -2.0,
+   "direct": -7.75,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4521695073792906,
+   "don_err_frac": 0.44497216577695187,
+   "sigma_phi": 0.6190476190476191,
+   "sigma_E": 0.25396825396825395
+  },
+  {
+   "id": "landmark:Masada",
+   "donor": "landmark:Mount Fuji",
+   "full": -18.375,
+   "phi": -12.0,
+   "E": -2.125,
+   "direct": -18.375,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.46345361878251917,
+   "don_err_frac": 0.46908087510245783,
+   "sigma_phi": 0.6530612244897959,
+   "sigma_E": 0.11564625850340136
+  },
+  {
+   "id": "landmark:Masada",
+   "donor": "landmark:the Sphinx",
+   "full": -9.875,
+   "phi": -5.125,
+   "E": -4.375,
+   "direct": -10.0,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.46345361878251917,
+   "don_err_frac": 0.4464613803722109,
+   "sigma_phi": 0.5189873417721519,
+   "sigma_E": 0.4430379746835443
+  },
+  {
+   "id": "landmark:Mount Fuji",
+   "donor": "landmark:the Sphinx",
+   "full": -18.875,
+   "phi": -14.25,
+   "E": -2.5,
+   "direct": -18.875,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.46908087510245783,
+   "don_err_frac": 0.4464613803722109,
+   "sigma_phi": 0.7549668874172185,
+   "sigma_E": 0.13245033112582782
+  },
+  {
+   "id": "landmark:Mount Fuji",
+   "donor": "landmark:Uluru",
+   "full": -15.5,
+   "phi": -11.5,
+   "E": -2.625,
+   "direct": -15.5,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.46908087510245783,
+   "don_err_frac": 0.5016457397964086,
+   "sigma_phi": 0.7419354838709677,
+   "sigma_E": 0.1693548387096774
+  },
+  {
+   "id": "landmark:Mount Rushmore",
+   "donor": "landmark:the Great Wall",
+   "full": -12.625,
+   "phi": -11.625,
+   "E": 0.125,
+   "direct": -12.625,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.5292011218543295,
+   "don_err_frac": 0.41946482369554117,
+   "sigma_phi": 0.9207920792079208,
+   "sigma_E": -0.009900990099009901
+  },
+  {
+   "id": "landmark:Mount Rushmore",
+   "donor": "landmark:the Forbidden City",
+   "full": -12.0,
+   "phi": -12.0,
+   "E": 0.8125,
+   "direct": -12.125,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.5292011218543295,
+   "don_err_frac": 0.436786512981124,
+   "sigma_phi": 1.0,
+   "sigma_E": -0.06770833333333333
+  },
+  {
+   "id": "landmark:Persepolis",
+   "donor": "landmark:the Parthenon",
+   "full": -6.25,
+   "phi": -5.25,
+   "E": -0.5,
+   "direct": -6.25,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.39779435909024513,
+   "don_err_frac": 0.34653797678765497,
+   "sigma_phi": 0.84,
+   "sigma_E": 0.08
+  },
+  {
+   "id": "landmark:Persepolis",
+   "donor": "landmark:Borobudur",
+   "full": -6.0,
+   "phi": -5.875,
+   "E": -0.25,
+   "direct": -5.875,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.39779435909024513,
+   "don_err_frac": 0.2667246180832657,
+   "sigma_phi": 0.9791666666666666,
+   "sigma_E": 0.041666666666666664
+  },
+  {
+   "id": "landmark:Schonbrunn Palace",
+   "donor": "landmark:the Colosseum",
+   "full": -7.875,
+   "phi": -5.0,
+   "E": -1.75,
+   "direct": -7.875,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4030625828816464,
+   "don_err_frac": 0.46761494219724664,
+   "sigma_phi": 0.6349206349206349,
+   "sigma_E": 0.2222222222222222
+  },
+  {
+   "id": "landmark:Uluru",
+   "donor": "landmark:Masada",
+   "full": -14.625,
+   "phi": -12.25,
+   "E": -0.375,
+   "direct": -14.375,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.5016457397964086,
+   "don_err_frac": 0.46345361878251917,
+   "sigma_phi": 0.8376068376068376,
+   "sigma_E": 0.02564102564102564
+  },
+  {
+   "id": "landmark:Uluru",
+   "donor": "landmark:Mount Fuji",
+   "full": -12.0,
+   "phi": -8.625,
+   "E": -0.75,
+   "direct": -12.0,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.5016457397964086,
+   "don_err_frac": 0.46908087510245783,
+   "sigma_phi": 0.71875,
+   "sigma_E": 0.0625
+  },
+  {
+   "id": "landmark:the Acropolis",
+   "donor": "landmark:Mount Rushmore",
+   "full": -7.125,
+   "phi": -3.5,
+   "E": -1.0,
+   "direct": -7.375,
+   "null": -0.25,
+   "direct_ok": true,
+   "rec_err_frac": 0.4597735646907091,
+   "don_err_frac": 0.5292011218543295,
+   "sigma_phi": 0.49122807017543857,
+   "sigma_E": 0.14035087719298245
+  },
+  {
+   "id": "landmark:the Acropolis",
+   "donor": "landmark:the Great Wall",
+   "full": -14.75,
+   "phi": -13.0,
+   "E": -0.5,
+   "direct": -14.875,
+   "null": -0.25,
+   "direct_ok": true,
+   "rec_err_frac": 0.4597735646907091,
+   "don_err_frac": 0.41946482369554117,
+   "sigma_phi": 0.8813559322033898,
+   "sigma_E": 0.03389830508474576
+  },
+  {
+   "id": "landmark:the Cliffs of Moher",
+   "donor": "landmark:the Rijksmuseum",
+   "full": -6.625,
+   "phi": -9.375,
+   "E": 0.25,
+   "direct": -6.625,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.44837267565029315,
+   "don_err_frac": 0.403793512077775,
+   "sigma_phi": 1.4150943396226414,
+   "sigma_E": -0.03773584905660377
+  },
+  {
+   "id": "landmark:the Cliffs of Moher",
+   "donor": "landmark:the pyramids of Giza",
+   "full": -12.0,
+   "phi": -9.125,
+   "E": -1.375,
+   "direct": -11.875,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.44837267565029315,
+   "don_err_frac": 0.4989312711662955,
+   "sigma_phi": 0.7604166666666666,
+   "sigma_E": 0.11458333333333333
+  },
+  {
+   "id": "landmark:the Colosseum",
+   "donor": "landmark:Schonbrunn Palace",
+   "full": -4.25,
+   "phi": -2.5,
+   "E": -1.25,
+   "direct": -4.125,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.46761494219724664,
+   "don_err_frac": 0.4030625828816464,
+   "sigma_phi": 0.5882352941176471,
+   "sigma_E": 0.29411764705882354
+  },
+  {
+   "id": "landmark:the Forbidden City",
+   "donor": "landmark:the Acropolis",
+   "full": -13.625,
+   "phi": -13.0,
+   "E": -0.625,
+   "direct": -13.5,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.436786512981124,
+   "don_err_frac": 0.4597735646907091,
+   "sigma_phi": 0.9541284403669725,
+   "sigma_E": 0.045871559633027525
+  },
+  {
+   "id": "landmark:the Forbidden City",
+   "donor": "landmark:Mount Rushmore",
+   "full": -4.625,
+   "phi": -4.125,
+   "E": 0.125,
+   "direct": -4.625,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.436786512981124,
+   "don_err_frac": 0.5292011218543295,
+   "sigma_phi": 0.8918918918918919,
+   "sigma_E": -0.02702702702702703
+  },
+  {
+   "id": "landmark:the Great Wall",
+   "donor": "landmark:the Acropolis",
+   "full": -14.25,
+   "phi": -14.0,
+   "E": -2.0,
+   "direct": -14.25,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.41946482369554117,
+   "don_err_frac": 0.4597735646907091,
+   "sigma_phi": 0.9824561403508771,
+   "sigma_E": 0.14035087719298245
+  },
+  {
+   "id": "landmark:the Great Wall",
+   "donor": "landmark:Mount Rushmore",
+   "full": -6.625,
+   "phi": -7.5,
+   "E": -0.625,
+   "direct": -6.625,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.41946482369554117,
+   "don_err_frac": 0.5292011218543295,
+   "sigma_phi": 1.1320754716981132,
+   "sigma_E": 0.09433962264150944
+  },
+  {
+   "id": "landmark:the Parthenon",
+   "donor": "landmark:Borobudur",
+   "full": -11.0,
+   "phi": -7.875,
+   "E": -0.625,
+   "direct": -11.125,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.44497216577695187,
+   "don_err_frac": 0.4521695073792906,
+   "sigma_phi": 0.7159090909090909,
+   "sigma_E": 0.056818181818181816
+  },
+  {
+   "id": "landmark:the Parthenon",
+   "donor": "landmark:Persepolis",
+   "full": -9.375,
+   "phi": -9.0,
+   "E": 0.125,
+   "direct": -9.5,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.44497216577695187,
+   "don_err_frac": 0.43962747598997354,
+   "sigma_phi": 0.96,
+   "sigma_E": -0.013333333333333334
+  },
+  {
+   "id": "landmark:the Rijksmuseum",
+   "donor": "landmark:the pyramids of Giza",
+   "full": -6.875,
+   "phi": -4.125,
+   "E": -2.5,
+   "direct": -6.75,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.42151893720728123,
+   "don_err_frac": 0.36558628068496696,
+   "sigma_phi": 0.6,
+   "sigma_E": 0.36363636363636365
+  },
+  {
+   "id": "landmark:the Rijksmuseum",
+   "donor": "landmark:the Cliffs of Moher",
+   "full": -6.25,
+   "phi": -3.375,
+   "E": -1.375,
+   "direct": -6.25,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.42151893720728123,
+   "don_err_frac": 0.3693767723806043,
+   "sigma_phi": 0.54,
+   "sigma_E": 0.22
+  },
+  {
+   "id": "landmark:the Sphinx",
+   "donor": "landmark:Uluru",
+   "full": -11.25,
+   "phi": -9.25,
+   "E": -0.5,
+   "direct": -11.125,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4464613803722109,
+   "don_err_frac": 0.5016457397964086,
+   "sigma_phi": 0.8222222222222222,
+   "sigma_E": 0.044444444444444446
+  },
+  {
+   "id": "landmark:the Sphinx",
+   "donor": "landmark:Masada",
+   "full": -9.125,
+   "phi": -4.75,
+   "E": -3.75,
+   "direct": -9.0,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4464613803722109,
+   "don_err_frac": 0.46345361878251917,
+   "sigma_phi": 0.5205479452054794,
+   "sigma_E": 0.410958904109589
+  },
+  {
+   "id": "landmark:the pyramids of Giza",
+   "donor": "landmark:the Cliffs of Moher",
+   "full": -6.25,
+   "phi": -4.375,
+   "E": -0.5,
+   "direct": -6.25,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4989312711662955,
+   "don_err_frac": 0.44837267565029315,
+   "sigma_phi": 0.7,
+   "sigma_E": 0.08
+  },
+  {
+   "id": "landmark:the pyramids of Giza",
+   "donor": "landmark:the Rijksmuseum",
+   "full": -1.875,
+   "phi": -1.75,
+   "E": -0.125,
+   "direct": -2.0,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4989312711662955,
+   "don_err_frac": 0.403793512077775,
+   "sigma_phi": 0.9333333333333333,
+   "sigma_E": 0.06666666666666667
+  },
+  {
+   "id": "person:Akira Kurosawa",
+   "donor": "person:Miguel de Cervantes",
+   "full": -9.375,
+   "phi": -7.5,
+   "E": -0.875,
+   "direct": -9.375,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4376688752196082,
+   "don_err_frac": 0.4429195820078775,
+   "sigma_phi": 0.8,
+   "sigma_E": 0.09333333333333334
+  },
+  {
+   "id": "person:Akira Kurosawa",
+   "donor": "person:Antonin Dvorak",
+   "full": -8.25,
+   "phi": -6.625,
+   "E": -0.625,
+   "direct": -8.25,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4376688752196082,
+   "don_err_frac": 0.4598864937392726,
+   "sigma_phi": 0.803030303030303,
+   "sigma_E": 0.07575757575757576
+  },
+  {
+   "id": "person:Edvard Munch",
+   "donor": "person:August Strindberg",
+   "full": -5.375,
+   "phi": -2.5,
+   "E": -0.75,
+   "direct": -5.25,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.48266889639104354,
+   "don_err_frac": 0.4606758887145836,
+   "sigma_phi": 0.46511627906976744,
+   "sigma_E": 0.13953488372093023
+  },
+  {
+   "id": "person:Edvard Munch",
+   "donor": "person:Ingmar Bergman",
+   "full": -7.5,
+   "phi": -5.625,
+   "E": -0.375,
+   "direct": -7.5,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.48266889639104354,
+   "don_err_frac": 0.4556057092907617,
+   "sigma_phi": 0.75,
+   "sigma_E": 0.05
+  },
+  {
+   "id": "person:Frederic Chopin",
+   "donor": "person:Jean Sibelius",
+   "full": -11.875,
+   "phi": -6.75,
+   "E": -2.375,
+   "direct": -11.875,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4350786926410882,
+   "don_err_frac": 0.44717740750328355,
+   "sigma_phi": 0.5684210526315789,
+   "sigma_E": 0.2
+  },
+  {
+   "id": "person:Frederic Chopin",
+   "donor": "person:Henrik Ibsen",
+   "full": -13.25,
+   "phi": -11.875,
+   "E": -0.5,
+   "direct": -13.5,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4350786926410882,
+   "don_err_frac": 0.4484944109825656,
+   "sigma_phi": 0.8962264150943396,
+   "sigma_E": 0.03773584905660377
+  },
+  {
+   "id": "person:Giuseppe Verdi",
+   "donor": "person:Frederic Chopin",
+   "full": -10.125,
+   "phi": -7.25,
+   "E": -1.5,
+   "direct": -10.25,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.44235325960085414,
+   "don_err_frac": 0.4350786926410882,
+   "sigma_phi": 0.7160493827160493,
+   "sigma_E": 0.14814814814814814
+  },
+  {
+   "id": "person:Giuseppe Verdi",
+   "donor": "person:Jean Sibelius",
+   "full": -11.0,
+   "phi": -8.0,
+   "E": -1.375,
+   "direct": -10.875,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.44235325960085414,
+   "don_err_frac": 0.44717740750328355,
+   "sigma_phi": 0.7272727272727273,
+   "sigma_E": 0.125
+  },
+  {
+   "id": "person:Hans Christian Andersen",
+   "donor": "person:Rembrandt",
+   "full": -5.0,
+   "phi": -3.875,
+   "E": -0.875,
+   "direct": -5.0,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.47727150571219173,
+   "don_err_frac": 0.45264902702616683,
+   "sigma_phi": 0.775,
+   "sigma_E": 0.175
+  },
+  {
+   "id": "person:Hans Christian Andersen",
+   "donor": "person:Johannes Vermeer",
+   "full": -5.125,
+   "phi": -5.125,
+   "E": -0.375,
+   "direct": -5.125,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.47727150571219173,
+   "don_err_frac": 0.4658729359986734,
+   "sigma_phi": 1.0,
+   "sigma_E": 0.07317073170731707
+  },
+  {
+   "id": "person:Haruki Murakami",
+   "donor": "person:Miguel de Cervantes",
+   "full": -9.5,
+   "phi": -7.125,
+   "E": -0.875,
+   "direct": -9.625,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4648793334987688,
+   "don_err_frac": 0.4429195820078775,
+   "sigma_phi": 0.75,
+   "sigma_E": 0.09210526315789473
+  },
+  {
+   "id": "person:Haruki Murakami",
+   "donor": "person:Antonin Dvorak",
+   "full": -7.75,
+   "phi": -5.125,
+   "E": -0.625,
+   "direct": -7.75,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4648793334987688,
+   "don_err_frac": 0.4598864937392726,
+   "sigma_phi": 0.6612903225806451,
+   "sigma_E": 0.08064516129032258
+  },
+  {
+   "id": "person:Henrik Ibsen",
+   "donor": "person:August Strindberg",
+   "full": -5.875,
+   "phi": -4.125,
+   "E": -0.5,
+   "direct": -5.875,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4484944109825656,
+   "don_err_frac": 0.4606758887145836,
+   "sigma_phi": 0.7021276595744681,
+   "sigma_E": 0.0851063829787234
+  },
+  {
+   "id": "person:Henrik Ibsen",
+   "donor": "person:Ingmar Bergman",
+   "full": -7.75,
+   "phi": -7.25,
+   "E": 0.0,
+   "direct": -7.75,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4484944109825656,
+   "don_err_frac": 0.4556057092907617,
+   "sigma_phi": 0.9354838709677419,
+   "sigma_E": -0.0
+  },
+  {
+   "id": "person:Hokusai",
+   "donor": "person:Hans Christian Andersen",
+   "full": -7.25,
+   "phi": -5.875,
+   "E": -1.375,
+   "direct": -7.125,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4267438923011233,
+   "don_err_frac": 0.47727150571219173,
+   "sigma_phi": 0.8103448275862069,
+   "sigma_E": 0.1896551724137931
+  },
+  {
+   "id": "person:Hokusai",
+   "donor": "person:Rembrandt",
+   "full": -7.25,
+   "phi": -5.5,
+   "E": -1.125,
+   "direct": -7.5,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4267438923011233,
+   "don_err_frac": 0.45264902702616683,
+   "sigma_phi": 0.7586206896551724,
+   "sigma_E": 0.15517241379310345
+  },
+  {
+   "id": "person:Jean Sibelius",
+   "donor": "person:Henrik Ibsen",
+   "full": -11.125,
+   "phi": -9.625,
+   "E": -1.0,
+   "direct": -11.25,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.44717740750328355,
+   "don_err_frac": 0.4484944109825656,
+   "sigma_phi": 0.8651685393258427,
+   "sigma_E": 0.0898876404494382
+  },
+  {
+   "id": "person:Jean Sibelius",
+   "donor": "person:Edvard Munch",
+   "full": -9.75,
+   "phi": -8.375,
+   "E": -1.375,
+   "direct": -9.625,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.44717740750328355,
+   "don_err_frac": 0.48266889639104354,
+   "sigma_phi": 0.8589743589743589,
+   "sigma_E": 0.14102564102564102
+  },
+  {
+   "id": "person:Mao Zedong",
+   "donor": "person:Giuseppe Verdi",
+   "full": -2.75,
+   "phi": -2.0,
+   "E": -0.625,
+   "direct": -2.75,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4553662218501299,
+   "don_err_frac": 0.44235325960085414,
+   "sigma_phi": 0.7272727272727273,
+   "sigma_E": 0.22727272727272727
+  },
+  {
+   "id": "person:Mao Zedong",
+   "donor": "person:Frederic Chopin",
+   "full": -3.875,
+   "phi": -2.0,
+   "E": -1.0,
+   "direct": -3.75,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4553662218501299,
+   "don_err_frac": 0.4350786926410882,
+   "sigma_phi": 0.5161290322580645,
+   "sigma_E": 0.25806451612903225
+  },
+  {
+   "id": "person:Miguel de Cervantes",
+   "donor": "person:Antonin Dvorak",
+   "full": -8.875,
+   "phi": -7.5,
+   "E": -1.375,
+   "direct": -9.0,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4429195820078775,
+   "don_err_frac": 0.4598864937392726,
+   "sigma_phi": 0.8450704225352113,
+   "sigma_E": 0.15492957746478872
+  },
+  {
+   "id": "person:Miguel de Cervantes",
+   "donor": "person:Kahlil Gibran",
+   "full": -8.75,
+   "phi": -5.5,
+   "E": -2.125,
+   "direct": -8.875,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4429195820078775,
+   "don_err_frac": 0.5089761470269636,
+   "sigma_phi": 0.6285714285714286,
+   "sigma_E": 0.24285714285714285
+  },
+  {
+   "id": "person:Mozart",
+   "donor": "person:Plato",
+   "full": -12.375,
+   "phi": -11.125,
+   "E": -2.375,
+   "direct": -12.25,
+   "null": -0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.43787906649817926,
+   "don_err_frac": 0.4313345229530896,
+   "sigma_phi": 0.898989898989899,
+   "sigma_E": 0.1919191919191919
+  },
+  {
+   "id": "person:Plato",
+   "donor": "person:Mozart",
+   "full": -6.375,
+   "phi": -4.75,
+   "E": -0.75,
+   "direct": -6.375,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4313345229530896,
+   "don_err_frac": 0.43787906649817926,
+   "sigma_phi": 0.7450980392156863,
+   "sigma_E": 0.11764705882352941
+  },
+  {
+   "id": "person:Rembrandt",
+   "donor": "person:Franz Liszt",
+   "full": -1.875,
+   "phi": -1.875,
+   "E": 0.125,
+   "direct": -1.875,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4268966668248013,
+   "don_err_frac": 0.2906030026085794,
+   "sigma_phi": 1.0,
+   "sigma_E": -0.06666666666666667
+  },
+  {
+   "id": "person:Rembrandt",
+   "donor": "person:Pablo Neruda",
+   "full": -3.625,
+   "phi": -2.75,
+   "E": -1.0,
+   "direct": -3.625,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.4268966668248013,
+   "don_err_frac": 0.2718933213071376,
+   "sigma_phi": 0.7586206896551724,
+   "sigma_E": 0.27586206896551724
+  },
+  {
+   "id": "person:Socrates",
+   "donor": "person:James Joyce",
+   "full": -8.375,
+   "phi": -9.125,
+   "E": -0.375,
+   "direct": -8.375,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.45540417069780714,
+   "don_err_frac": 0.45105122074175125,
+   "sigma_phi": 1.0895522388059702,
+   "sigma_E": 0.04477611940298507
+  },
+  {
+   "id": "person:Socrates",
+   "donor": "person:William Shakespeare",
+   "full": -4.875,
+   "phi": -4.5,
+   "E": 0.125,
+   "direct": -4.75,
+   "null": 0.0,
+   "direct_ok": true,
+   "rec_err_frac": 0.45540417069780714,
+   "don_err_frac": 0.45472732790939674,
+   "sigma_phi": 0.9230769230769231,
+   "sigma_E": -0.02564102564102564
+  },
+  {
+   "id": "person:Soren Kierkegaard",
+   "donor": "person:W. B. Yeats",
+   "full": -3.0,
+   "phi": -2.5,
+   "E": -0.375,
+   "direct": -2.875,
+   "null": 0.125,
+   "direct_ok": true,
+   "rec_err_frac": 0.4143470855977917,
+   "don_err_frac": 0.29353886608855395,
+   "sigma_phi": 0.8333333333333334,
+   "sigma_E": 0.125
+  }
+ ],
+ "recurring": {
+  "Spain": {
+   "recipients": 3,
+   "features": {
+    "11201": {
+     "items": [
+      "city:Barcelona",
+      "city:Seville",
+      "person:Miguel de Cervantes"
+     ],
+     "lens": [
+      "\u897f\u73ed\u7259",
+      " Garc\u00eda",
+      " pesos",
+      " Mar\u00eda",
+      "\u58a8\u897f\u54e5"
+     ]
+    },
+    "30986": {
+     "items": [
+      "city:Barcelona",
+      "city:Seville"
+     ],
+     "lens": [
+      "Oregon",
+      "\u5d03",
+      " Canyon",
+      " Yosemite",
+      " Hawaiian"
+     ]
+    }
+   }
+  },
+  "Korea": {
+   "recipients": 2,
+   "features": {
+    "11471": {
+     "items": [
+      "city:Busan",
+      "currency:won"
+     ],
+     "lens": [
+      "\u662f\u97e9\u56fd",
+      " Seoul",
+      " Korean",
+      " Korea",
+      " Koreans"
+     ]
+    },
+    "1890": {
+     "items": [
+      "city:Busan",
+      "currency:won"
+     ],
+     "lens": [
+      "\u73f2",
+      "\u5409\u6797",
+      "utta",
+      "\u5951",
+      "\u977a"
+     ]
+    },
+    "32521": {
+     "items": [
+      "city:Busan",
+      "currency:won"
+     ],
+     "lens": [
+      "\u5728\u65e5\u672c",
+      " japan",
+      "\u4e1c\u4eac",
+      "Japan",
+      " Miy"
+     ]
+    }
+   }
+  },
+  "Poland": {
+   "recipients": 4,
+   "features": {
+    "2502": {
+     "items": [
+      "city:Gdansk",
+      "city:Krakow",
+      "currency:zloty",
+      "person:Frederic Chopin"
+     ],
+     "lens": [
+      "\u6d31",
+      "\u6606\u660e",
+      "\u5927\u7406",
+      " Rohingya",
+      " Tcl"
+     ]
+    },
+    "24531": {
+     "items": [
+      "city:Gdansk",
+      "city:Krakow",
+      "currency:zloty",
+      "person:Frederic Chopin"
+     ],
+     "lens": [
+      " Czech",
+      " Slovak",
+      "owski",
+      " Slovakia",
+      "czy"
+     ]
+    }
+   }
+  },
+  "Sweden": {
+   "recipients": 2,
+   "features": {
+    "14375": {
+     "items": [
+      "city:Gothenburg",
+      "currency:krona"
+     ],
+     "lens": [
+      "gaard",
+      " Lund",
+      " Norway",
+      " Svens",
+      "\u5a01\u6d77"
+     ]
+    },
+    "25065": {
+     "items": [
+      "city:Gothenburg",
+      "currency:krona"
+     ],
+     "lens": [
+      " h\u00e4r",
+      "dsn",
+      "borg",
+      " Utf",
+      "atch"
+     ]
+    }
+   }
+  },
+  "Germany": {
+   "recipients": 2,
+   "features": {
+    "10025": {
+     "items": [
+      "city:Hamburg",
+      "city:Munich"
+     ],
+     "lens": [
+      " Munich",
+      " Frankfurt",
+      "\u67cf\u6797",
+      " K\u00f6ln",
+      " Germany"
+     ]
+    },
+    "21698": {
+     "items": [
+      "city:Hamburg",
+      "city:Munich"
+     ],
+     "lens": [
+      "\u6709\u591a",
+      "enthal",
+      " \u0434\u0443\u0445",
+      "utt",
+      "\u03b7"
+     ]
+    }
+   }
+  },
+  "Japan": {
+   "recipients": 6,
+   "features": {
+    "32521": {
+     "items": [
+      "city:Kyoto",
+      "currency:yen",
+      "landmark:Mount Fuji",
+      "person:Akira Kurosawa",
+      "person:Haruki Murakami",
+      "person:Hokusai"
+     ],
+     "lens": [
+      "\u5728\u65e5\u672c",
+      " japan",
+      "\u4e1c\u4eac",
+      "Japan",
+      " Miy"
+     ]
+    },
+    "31083": {
+     "items": [
+      "city:Kyoto",
+      "landmark:Mount Fuji"
+     ],
+     "lens": [
+      " Buddhist",
+      " Buddhism",
+      " meditation",
+      "\u4f5b\u6559",
+      "\u7985"
+     ]
+    },
+    "15308": {
+     "items": [
+      "currency:yen",
+      "landmark:Mount Fuji"
+     ],
+     "lens": [
+      "-Americ",
+      "\u670d\u52a1\u4e1a",
+      "REV",
+      " B\u1ea3n",
+      "\u5e1d\u56fd"
+     ]
+    }
+   }
+  },
+  "Italy": {
+   "recipients": 4,
+   "features": {
+    "26232": {
+     "items": [
+      "city:Milan",
+      "city:Naples",
+      "person:Giuseppe Verdi"
+     ],
+     "lens": [
+      " Italy",
+      "\u610f\u5927\u5229",
+      " Italian",
+      "Italy",
+      " Italians"
+     ]
+    }
+   }
+  },
+  "Netherlands": {
+   "recipients": 3,
+   "features": {
+    "27085": {
+     "items": [
+      "city:Rotterdam",
+      "landmark:the Rijksmuseum",
+      "person:Rembrandt"
+     ],
+     "lens": [
+      " van",
+      " Netherlands",
+      " Dutch",
+      " Rotterdam",
+      "\u8377\u5170"
+     ]
+    },
+    "10025": {
+     "items": [
+      "city:Rotterdam",
+      "person:Rembrandt"
+     ],
+     "lens": [
+      " Munich",
+      " Frankfurt",
+      "\u67cf\u6797",
+      " K\u00f6ln",
+      " Germany"
+     ]
+    },
+    "16678": {
+     "items": [
+      "landmark:the Rijksmuseum",
+      "person:Rembrandt"
+     ],
+     "lens": [
+      "\u7ed8\u753b",
+      " paintings",
+      " painting",
+      "\u753b\u5bb6",
+      " painters"
+     ]
+    }
+   }
+  },
+  "Russia": {
+   "recipients": 3,
+   "features": {
+    "23913": {
+     "items": [
+      "city:Saint Petersburg",
+      "currency:rouble",
+      "currency:ruble"
+     ],
+     "lens": [
+      " Moscow",
+      "Russia",
+      "\u83ab\u65af\u79d1",
+      " Belarus",
+      " Kiev"
+     ]
+    },
+    "18616": {
+     "items": [
+      "currency:rouble",
+      "currency:ruble"
+     ],
+     "lens": [
+      " Moscow",
+      " Ukrainian",
+      " Ukr",
+      ".ru",
+      "_vk"
+     ]
+    },
+    "1529": {
+     "items": [
+      "currency:rouble",
+      "currency:ruble"
+     ],
+     "lens": [
+      "\u6cb9\u8102",
+      " oils",
+      "\u6cb9",
+      " oil",
+      "Oil"
+     ]
+    }
+   }
+  },
+  "China": {
+   "recipients": 7,
+   "features": {
+    "17491": {
+     "items": [
+      "city:Shanghai",
+      "city:Shenzhen",
+      "currency:renminbi",
+      "currency:yuan",
+      "landmark:the Forbidden City",
+      "landmark:the Great Wall",
+      "person:Mao Zedong"
+     ],
+     "lens": [
+      " Tian",
+      " Taipei",
+      "jiang",
+      " Zheng",
+      " Guang"
+     ]
+    },
+    "27252": {
+     "items": [
+      "currency:renminbi",
+      "currency:yuan"
+     ],
+     "lens": [
+      "hua",
+      "jian",
+      "cheng",
+      "zhou",
+      "jing"
+     ]
+    }
+   }
+  },
+  "Britain": {
+   "recipients": 2,
+   "features": {
+    "10710": {
+     "items": [
+      "currency:pound sterling",
+      "currency:sterling"
+     ],
+     "lens": [
+      "\u4f26\u6566",
+      " Airways",
+      "\u9996\u76f8",
+      "\u7687\u5bb6",
+      "\u82f1\u683c\u5170"
+     ]
+    },
+    "20698": {
+     "items": [
+      "currency:pound sterling",
+      "currency:sterling"
+     ],
+     "lens": [
+      "\u82f1\u683c\u5170",
+      "\u82f1\u56fd",
+      " Britain",
+      " England",
+      "\u4f26\u6566"
+     ]
+    },
+    "25967": {
+     "items": [
+      "currency:pound sterling",
+      "currency:sterling"
+     ],
+     "lens": [
+      " Whilst",
+      "Whilst",
+      " recognised",
+      " realised",
+      " Initialise"
+     ]
+    }
+   }
+  },
+  "Iran": {
+   "recipients": 2,
+   "features": {
+    "11596": {
+     "items": [
+      "currency:rial",
+      "landmark:Persepolis"
+     ],
+     "lens": [
+      "\u4f0a\u65af\u5170",
+      " Ibrahim",
+      "\u963f\u62c9\u4f2f",
+      " Sheikh",
+      " Ibn"
+     ]
+    },
+    "24255": {
+     "items": [
+      "currency:rial",
+      "landmark:Persepolis"
+     ],
+     "lens": [
+      "Iran",
+      " Tehran",
+      " \u0627\u0644\u0625\u064a\u0631\u0627\u0646\u064a",
+      " Iran",
+      " Iranian"
+     ]
+    }
+   }
+  },
+  "Indonesia": {
+   "recipients": 2,
+   "features": {
+    "29308": {
+     "items": [
+      "currency:rupiah",
+      "landmark:Borobudur"
+     ],
+     "lens": [
+      "\u5c9b",
+      "\u70ed\u5e26",
+      "\u9a6c\u6765\u897f\u4e9a",
+      "\u6930",
+      "\u7fa4\u5c9b"
+     ]
+    }
+   }
+  },
+  "Israel": {
+   "recipients": 2,
+   "features": {
+    "28432": {
+     "items": [
+      "currency:shekel",
+      "landmark:Masada"
+     ],
+     "lens": [
+      " Rabbi",
+      " Israeli",
+      " Israelis",
+      "Israeli",
+      "-Israel"
+     ]
+    },
+    "13884": {
+     "items": [
+      "currency:shekel",
+      "landmark:Masada"
+     ],
+     "lens": [
+      ".microsoft",
+      ".xaml",
+      ".dll",
+      "Microsoft",
+      ".azure"
+     ]
+    }
+   }
+  },
+  "Austria": {
+   "recipients": 2,
+   "features": {
+    "10025": {
+     "items": [
+      "landmark:Schonbrunn Palace",
+      "person:Mozart"
+     ],
+     "lens": [
+      " Munich",
+      " Frankfurt",
+      "\u67cf\u6797",
+      " K\u00f6ln",
+      " Germany"
+     ]
+    }
+   }
+  },
+  "Greece": {
+   "recipients": 4,
+   "features": {
+    "22638": {
+     "items": [
+      "landmark:the Acropolis",
+      "landmark:the Parthenon",
+      "person:Plato",
+      "person:Socrates"
+     ],
+     "lens": [
+      "\u5e0c\u814a",
+      " Greek",
+      " Greece",
+      "Greek",
+      " Greeks"
+     ]
+    },
+    "12427": {
+     "items": [
+      "landmark:the Acropolis",
+      "landmark:the Parthenon"
+     ],
+     "lens": [
+      " erected",
+      "-building",
+      "\u5dcd",
+      "\u4e00\u5ea7",
+      "\u9876\u90e8"
+     ]
+    },
+    "14971": {
+     "items": [
+      "landmark:the Acropolis",
+      "landmark:the Parthenon",
+      "person:Socrates"
+     ],
+     "lens": [
+      " lut",
+      "marsh",
+      "ruz",
+      " TAM",
+      "partner"
+     ]
+    },
+    "15497": {
+     "items": [
+      "person:Plato",
+      "person:Socrates"
+     ],
+     "lens": [
+      " philosophical",
+      " philosophers",
+      "\u54f2\u5b66",
+      "\u903b\u8f91",
+      "\u8bba\u8bc1"
+     ]
+    }
+   }
+  },
+  "Egypt": {
+   "recipients": 2,
+   "features": {
+    "5458": {
+     "items": [
+      "landmark:the Sphinx",
+      "landmark:the pyramids of Giza"
+     ],
+     "lens": [
+      "\u6b66\u6c49\u5e02",
+      "\u6c72",
+      "\u56e2\u957f",
+      "\u5f00\u5c01",
+      "ead"
+     ]
+    },
+    "13110": {
+     "items": [
+      "landmark:the Sphinx",
+      "landmark:the pyramids of Giza"
+     ],
+     "lens": [
+      "arian",
+      "ical",
+      "\u0e42\u0e1a\u0e23\u0e32\u0e13",
+      "erne",
+      "aries"
+     ]
+    }
+   }
+  },
+  "Norway": {
+   "recipients": 2,
+   "features": {
+    "19243": {
+     "items": [
+      "person:Edvard Munch",
+      "person:Henrik Ibsen"
+     ],
+     "lens": [
+      " Streams",
+      "LTR",
+      " NH",
+      "/sys",
+      "\u5175\u56e2"
+     ]
+    }
+   }
+  },
+  "Denmark": {
+   "recipients": 2,
+   "features": {
+    "14375": {
+     "items": [
+      "person:Hans Christian Andersen",
+      "person:Soren Kierkegaard"
+     ],
+     "lens": [
+      "gaard",
+      " Lund",
+      " Norway",
+      " Svens",
+      "\u5a01\u6d77"
+     ]
+    }
+   }
+  }
+ }
+}

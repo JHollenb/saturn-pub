@@ -1,0 +1,1082 @@
+{
+ "ALL": {
+  "n": 333,
+  "accuracy": [
+   206,
+   333,
+   0.619
+  ],
+  "readable_bridge": [
+   165,
+   206,
+   0.801
+  ],
+  "readable_const": [
+   194,
+   206,
+   0.942
+  ],
+  "readable_mass": [
+   131,
+   206,
+   0.636
+  ],
+  "readable_lens": [
+   185,
+   206,
+   0.898
+  ],
+  "bridge_site_L20_KV6": [
+   160,
+   206,
+   0.777
+  ],
+  "bridge_row_is_r0": [
+   167,
+   206,
+   0.811
+  ],
+  "first_appearance_median": 16,
+  "first_appearance_le_20": [
+   164,
+   165,
+   0.994
+  ],
+  "errors_wrong_capital_view_names_answer_country": [
+   3,
+   11,
+   0.273
+  ],
+  "errors_other_view_names_true_bridge": [
+   17,
+   116,
+   0.147
+  ],
+  "causal_pairs": 226,
+  "causal_content_donor": [
+   155,
+   226,
+   0.686
+  ],
+  "causal_answer_donor": [
+   107,
+   226,
+   0.473
+  ],
+  "causal_together": [
+   172,
+   226,
+   0.761
+  ],
+  "causal_2x2 (content_donor, answer_donor)": {
+   "True,True": 104,
+   "True,False": 51,
+   "False,True": 3,
+   "False,False": 68
+  },
+  "gt_hit_view": [
+   78,
+   114,
+   0.684
+  ],
+  "gt_hit_F1": [
+   104,
+   114,
+   0.912
+  ],
+  "gt_hit_F3": [
+   73,
+   114,
+   0.64
+  ],
+  "gt_hit_const": [
+   103,
+   114,
+   0.904
+  ],
+  "gt_hit_mass_view": [
+   73,
+   114,
+   0.64
+  ],
+  "gt_sites": [
+   [
+    20,
+    6
+   ]
+  ],
+  "gt_effect_median": -8.6875
+ },
+ "dist-city": {
+  "n": 52,
+  "accuracy": [
+   36,
+   52,
+   0.692
+  ],
+  "readable_bridge": [
+   26,
+   36,
+   0.722
+  ],
+  "readable_const": [
+   34,
+   36,
+   0.944
+  ],
+  "readable_mass": [
+   2,
+   36,
+   0.056
+  ],
+  "readable_lens": [
+   34,
+   36,
+   0.944
+  ],
+  "bridge_site_L20_KV6": [
+   27,
+   36,
+   0.75
+  ],
+  "bridge_row_is_r0": [
+   32,
+   36,
+   0.889
+  ],
+  "first_appearance_median": 18.0,
+  "first_appearance_le_20": [
+   26,
+   26,
+   1.0
+  ],
+  "errors_wrong_capital_view_names_answer_country": [
+   0,
+   5,
+   0.0
+  ],
+  "errors_other_view_names_true_bridge": [
+   4,
+   11,
+   0.364
+  ],
+  "causal_pairs": 32,
+  "causal_content_donor": [
+   23,
+   32,
+   0.719
+  ],
+  "causal_answer_donor": [
+   11,
+   32,
+   0.344
+  ],
+  "causal_together": [
+   20,
+   32,
+   0.625
+  ],
+  "causal_2x2 (content_donor, answer_donor)": {
+   "True,True": 11,
+   "True,False": 12,
+   "False,True": 0,
+   "False,False": 9
+  },
+  "gt_hit_view": [
+   11,
+   16,
+   0.688
+  ],
+  "gt_hit_F1": [
+   14,
+   16,
+   0.875
+  ],
+  "gt_hit_F3": [
+   0,
+   16,
+   0.0
+  ],
+  "gt_hit_const": [
+   16,
+   16,
+   1.0
+  ],
+  "gt_hit_mass_view": [
+   0,
+   16,
+   0.0
+  ],
+  "gt_sites": [
+   [
+    20,
+    6
+   ]
+  ],
+  "gt_effect_median": -4.46875
+ },
+ "dist-currency": {
+  "n": 24,
+  "accuracy": [
+   19,
+   24,
+   0.792
+  ],
+  "readable_bridge": [
+   18,
+   19,
+   0.947
+  ],
+  "readable_const": [
+   18,
+   19,
+   0.947
+  ],
+  "readable_mass": [
+   13,
+   19,
+   0.684
+  ],
+  "readable_lens": [
+   16,
+   19,
+   0.842
+  ],
+  "bridge_site_L20_KV6": [
+   14,
+   19,
+   0.737
+  ],
+  "bridge_row_is_r0": [
+   15,
+   19,
+   0.789
+  ],
+  "first_appearance_median": 18.0,
+  "first_appearance_le_20": [
+   18,
+   18,
+   1.0
+  ],
+  "errors_wrong_capital_view_names_answer_country": [
+   1,
+   2,
+   0.5
+  ],
+  "errors_other_view_names_true_bridge": [
+   0,
+   3,
+   0.0
+  ],
+  "causal_pairs": 31,
+  "causal_content_donor": [
+   18,
+   31,
+   0.581
+  ],
+  "causal_answer_donor": [
+   8,
+   31,
+   0.258
+  ],
+  "causal_together": [
+   21,
+   31,
+   0.677
+  ],
+  "causal_2x2 (content_donor, answer_donor)": {
+   "True,True": 8,
+   "True,False": 10,
+   "False,True": 0,
+   "False,False": 13
+  },
+  "gt_hit_view": [
+   10,
+   16,
+   0.625
+  ],
+  "gt_hit_F1": [
+   14,
+   16,
+   0.875
+  ],
+  "gt_hit_F3": [
+   9,
+   16,
+   0.562
+  ],
+  "gt_hit_const": [
+   13,
+   16,
+   0.812
+  ],
+  "gt_hit_mass_view": [
+   9,
+   16,
+   0.562
+  ],
+  "gt_sites": [
+   [
+    20,
+    6
+   ]
+  ],
+  "gt_effect_median": -8.34375
+ },
+ "lang-city": {
+  "n": 33,
+  "accuracy": [
+   32,
+   33,
+   0.97
+  ],
+  "readable_bridge": [
+   27,
+   32,
+   0.844
+  ],
+  "readable_const": [
+   32,
+   32,
+   1.0
+  ],
+  "readable_mass": [
+   32,
+   32,
+   1.0
+  ],
+  "readable_lens": [
+   30,
+   32,
+   0.938
+  ],
+  "bridge_site_L20_KV6": [
+   27,
+   32,
+   0.844
+  ],
+  "bridge_row_is_r0": [
+   29,
+   32,
+   0.906
+  ],
+  "first_appearance_median": 18,
+  "first_appearance_le_20": [
+   27,
+   27,
+   1.0
+  ],
+  "errors_wrong_capital_view_names_answer_country": [
+   0,
+   0,
+   null
+  ],
+  "errors_other_view_names_true_bridge": [
+   1,
+   1,
+   1.0
+  ],
+  "causal_pairs": 31,
+  "causal_content_donor": [
+   29,
+   31,
+   0.935
+  ],
+  "causal_answer_donor": [
+   26,
+   31,
+   0.839
+  ],
+  "causal_together": [
+   28,
+   31,
+   0.903
+  ],
+  "causal_2x2 (content_donor, answer_donor)": {
+   "True,True": 26,
+   "True,False": 3,
+   "False,True": 0,
+   "False,False": 2
+  },
+  "gt_hit_view": [
+   14,
+   16,
+   0.875
+  ],
+  "gt_hit_F1": [
+   16,
+   16,
+   1.0
+  ],
+  "gt_hit_F3": [
+   16,
+   16,
+   1.0
+  ],
+  "gt_hit_const": [
+   15,
+   16,
+   0.938
+  ],
+  "gt_hit_mass_view": [
+   16,
+   16,
+   1.0
+  ],
+  "gt_sites": [
+   [
+    20,
+    6
+   ]
+  ],
+  "gt_effect_median": -15.375
+ },
+ "lang-currency": {
+  "n": 15,
+  "accuracy": [
+   14,
+   15,
+   0.933
+  ],
+  "readable_bridge": [
+   9,
+   14,
+   0.643
+  ],
+  "readable_const": [
+   11,
+   14,
+   0.786
+  ],
+  "readable_mass": [
+   9,
+   14,
+   0.643
+  ],
+  "readable_lens": [
+   11,
+   14,
+   0.786
+  ],
+  "bridge_site_L20_KV6": [
+   9,
+   14,
+   0.643
+  ],
+  "bridge_row_is_r0": [
+   8,
+   14,
+   0.571
+  ],
+  "first_appearance_median": 6,
+  "first_appearance_le_20": [
+   9,
+   9,
+   1.0
+  ],
+  "errors_wrong_capital_view_names_answer_country": [
+   0,
+   0,
+   null
+  ],
+  "errors_other_view_names_true_bridge": [
+   0,
+   1,
+   0.0
+  ],
+  "causal_pairs": 24,
+  "causal_content_donor": [
+   10,
+   24,
+   0.417
+  ],
+  "causal_answer_donor": [
+   10,
+   24,
+   0.417
+  ],
+  "causal_together": [
+   22,
+   24,
+   0.917
+  ],
+  "causal_2x2 (content_donor, answer_donor)": {
+   "True,True": 9,
+   "True,False": 1,
+   "False,True": 1,
+   "False,False": 13
+  },
+  "gt_hit_view": [
+   5,
+   12,
+   0.417
+  ],
+  "gt_hit_F1": [
+   10,
+   12,
+   0.833
+  ],
+  "gt_hit_F3": [
+   8,
+   12,
+   0.667
+  ],
+  "gt_hit_const": [
+   12,
+   12,
+   1.0
+  ],
+  "gt_hit_mass_view": [
+   8,
+   12,
+   0.667
+  ],
+  "gt_sites": [
+   [
+    20,
+    6
+   ]
+  ],
+  "gt_effect_median": -11.75
+ },
+ "long-city": {
+  "n": 52,
+  "accuracy": [
+   48,
+   52,
+   0.923
+  ],
+  "readable_bridge": [
+   41,
+   48,
+   0.854
+  ],
+  "readable_const": [
+   46,
+   48,
+   0.958
+  ],
+  "readable_mass": [
+   30,
+   48,
+   0.625
+  ],
+  "readable_lens": [
+   47,
+   48,
+   0.979
+  ],
+  "bridge_site_L20_KV6": [
+   41,
+   48,
+   0.854
+  ],
+  "bridge_row_is_r0": [
+   40,
+   48,
+   0.833
+  ],
+  "first_appearance_median": 9,
+  "first_appearance_le_20": [
+   40,
+   41,
+   0.976
+  ],
+  "errors_wrong_capital_view_names_answer_country": [
+   0,
+   0,
+   null
+  ],
+  "errors_other_view_names_true_bridge": [
+   1,
+   4,
+   0.25
+  ],
+  "causal_pairs": 32,
+  "causal_content_donor": [
+   25,
+   32,
+   0.781
+  ],
+  "causal_answer_donor": [
+   14,
+   32,
+   0.438
+  ],
+  "causal_together": [
+   21,
+   32,
+   0.656
+  ],
+  "causal_2x2 (content_donor, answer_donor)": {
+   "True,True": 14,
+   "True,False": 11,
+   "False,True": 0,
+   "False,False": 7
+  },
+  "gt_hit_view": [
+   12,
+   16,
+   0.75
+  ],
+  "gt_hit_F1": [
+   16,
+   16,
+   1.0
+  ],
+  "gt_hit_F3": [
+   7,
+   16,
+   0.438
+  ],
+  "gt_hit_const": [
+   14,
+   16,
+   0.875
+  ],
+  "gt_hit_mass_view": [
+   7,
+   16,
+   0.438
+  ],
+  "gt_sites": [
+   [
+    20,
+    6
+   ]
+  ],
+  "gt_effect_median": -5.9375
+ },
+ "long-currency": {
+  "n": 24,
+  "accuracy": [
+   19,
+   24,
+   0.792
+  ],
+  "readable_bridge": [
+   16,
+   19,
+   0.842
+  ],
+  "readable_const": [
+   19,
+   19,
+   1.0
+  ],
+  "readable_mass": [
+   18,
+   19,
+   0.947
+  ],
+  "readable_lens": [
+   17,
+   19,
+   0.895
+  ],
+  "bridge_site_L20_KV6": [
+   13,
+   19,
+   0.684
+  ],
+  "bridge_row_is_r0": [
+   12,
+   19,
+   0.632
+  ],
+  "first_appearance_median": 12.5,
+  "first_appearance_le_20": [
+   16,
+   16,
+   1.0
+  ],
+  "errors_wrong_capital_view_names_answer_country": [
+   2,
+   3,
+   0.667
+  ],
+  "errors_other_view_names_true_bridge": [
+   0,
+   2,
+   0.0
+  ],
+  "causal_pairs": 32,
+  "causal_content_donor": [
+   20,
+   32,
+   0.625
+  ],
+  "causal_answer_donor": [
+   13,
+   32,
+   0.406
+  ],
+  "causal_together": [
+   25,
+   32,
+   0.781
+  ],
+  "causal_2x2 (content_donor, answer_donor)": {
+   "True,True": 13,
+   "True,False": 7,
+   "False,True": 0,
+   "False,False": 12
+  },
+  "gt_hit_view": [
+   10,
+   16,
+   0.625
+  ],
+  "gt_hit_F1": [
+   16,
+   16,
+   1.0
+  ],
+  "gt_hit_F3": [
+   14,
+   16,
+   0.875
+  ],
+  "gt_hit_const": [
+   11,
+   16,
+   0.688
+  ],
+  "gt_hit_mass_view": [
+   14,
+   16,
+   0.875
+  ],
+  "gt_sites": [
+   [
+    20,
+    6
+   ]
+  ],
+  "gt_effect_median": -9.71875
+ },
+ "obsc-city": {
+  "n": 37,
+  "accuracy": [
+   30,
+   37,
+   0.811
+  ],
+  "readable_bridge": [
+   24,
+   30,
+   0.8
+  ],
+  "readable_const": [
+   29,
+   30,
+   0.967
+  ],
+  "readable_mass": [
+   22,
+   30,
+   0.733
+  ],
+  "readable_lens": [
+   28,
+   30,
+   0.933
+  ],
+  "bridge_site_L20_KV6": [
+   24,
+   30,
+   0.8
+  ],
+  "bridge_row_is_r0": [
+   27,
+   30,
+   0.9
+  ],
+  "first_appearance_median": 16.0,
+  "first_appearance_le_20": [
+   24,
+   24,
+   1.0
+  ],
+  "errors_wrong_capital_view_names_answer_country": [
+   0,
+   0,
+   null
+  ],
+  "errors_other_view_names_true_bridge": [
+   4,
+   7,
+   0.571
+  ],
+  "causal_pairs": 32,
+  "causal_content_donor": [
+   26,
+   32,
+   0.812
+  ],
+  "causal_answer_donor": [
+   21,
+   32,
+   0.656
+  ],
+  "causal_together": [
+   27,
+   32,
+   0.844
+  ],
+  "causal_2x2 (content_donor, answer_donor)": {
+   "True,True": 21,
+   "True,False": 5,
+   "False,True": 0,
+   "False,False": 6
+  },
+  "gt_hit_view": [
+   13,
+   16,
+   0.812
+  ],
+  "gt_hit_F1": [
+   16,
+   16,
+   1.0
+  ],
+  "gt_hit_F3": [
+   13,
+   16,
+   0.812
+  ],
+  "gt_hit_const": [
+   16,
+   16,
+   1.0
+  ],
+  "gt_hit_mass_view": [
+   13,
+   16,
+   0.812
+  ],
+  "gt_sites": [
+   [
+    20,
+    6
+   ]
+  ],
+  "gt_effect_median": -9.71875
+ },
+ "obsc-currency": {
+  "n": 20,
+  "accuracy": [
+   7,
+   20,
+   0.35
+  ],
+  "readable_bridge": [
+   3,
+   7,
+   0.429
+  ],
+  "readable_const": [
+   4,
+   7,
+   0.571
+  ],
+  "readable_mass": [
+   4,
+   7,
+   0.571
+  ],
+  "readable_lens": [
+   2,
+   7,
+   0.286
+  ],
+  "bridge_site_L20_KV6": [
+   4,
+   7,
+   0.571
+  ],
+  "bridge_row_is_r0": [
+   4,
+   7,
+   0.571
+  ],
+  "first_appearance_median": 6,
+  "first_appearance_le_20": [
+   3,
+   3,
+   1.0
+  ],
+  "errors_wrong_capital_view_names_answer_country": [
+   0,
+   1,
+   0.0
+  ],
+  "errors_other_view_names_true_bridge": [
+   1,
+   12,
+   0.083
+  ],
+  "causal_pairs": 12,
+  "causal_content_donor": [
+   4,
+   12,
+   0.333
+  ],
+  "causal_answer_donor": [
+   4,
+   12,
+   0.333
+  ],
+  "causal_together": [
+   8,
+   12,
+   0.667
+  ],
+  "causal_2x2 (content_donor, answer_donor)": {
+   "True,True": 2,
+   "True,False": 2,
+   "False,True": 2,
+   "False,False": 6
+  },
+  "gt_hit_view": [
+   3,
+   6,
+   0.5
+  ],
+  "gt_hit_F1": [
+   2,
+   6,
+   0.333
+  ],
+  "gt_hit_F3": [
+   6,
+   6,
+   1.0
+  ],
+  "gt_hit_const": [
+   6,
+   6,
+   1.0
+  ],
+  "gt_hit_mass_view": [
+   6,
+   6,
+   1.0
+  ],
+  "gt_sites": [
+   [
+    20,
+    6
+   ]
+  ],
+  "gt_effect_median": -11.96875
+ },
+ "para-city": {
+  "n": 52,
+  "accuracy": [
+   0,
+   52,
+   0.0
+  ],
+  "readable_bridge": [
+   0,
+   0,
+   null
+  ],
+  "readable_const": [
+   0,
+   0,
+   null
+  ],
+  "readable_mass": [
+   0,
+   0,
+   null
+  ],
+  "readable_lens": [
+   0,
+   0,
+   null
+  ],
+  "bridge_site_L20_KV6": [
+   0,
+   0,
+   null
+  ],
+  "bridge_row_is_r0": [
+   0,
+   0,
+   null
+  ],
+  "first_appearance_median": null,
+  "first_appearance_le_20": [
+   0,
+   0,
+   null
+  ],
+  "errors_wrong_capital_view_names_answer_country": [
+   0,
+   0,
+   null
+  ],
+  "errors_other_view_names_true_bridge": [
+   4,
+   52,
+   0.077
+  ]
+ },
+ "para-currency": {
+  "n": 24,
+  "accuracy": [
+   1,
+   24,
+   0.042
+  ],
+  "readable_bridge": [
+   1,
+   1,
+   1.0
+  ],
+  "readable_const": [
+   1,
+   1,
+   1.0
+  ],
+  "readable_mass": [
+   1,
+   1,
+   1.0
+  ],
+  "readable_lens": [
+   0,
+   1,
+   0.0
+  ],
+  "bridge_site_L20_KV6": [
+   1,
+   1,
+   1.0
+  ],
+  "bridge_row_is_r0": [
+   0,
+   1,
+   0.0
+  ],
+  "first_appearance_median": 9,
+  "first_appearance_le_20": [
+   1,
+   1,
+   1.0
+  ],
+  "errors_wrong_capital_view_names_answer_country": [
+   0,
+   0,
+   null
+  ],
+  "errors_other_view_names_true_bridge": [
+   2,
+   23,
+   0.087
+  ]
+ }
+}

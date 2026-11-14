@@ -1,0 +1,684 @@
+{
+ "d1:Austria": {
+  "cell": "d1:Denmark"
+ },
+ "d1:Denmark": {
+  "cell": "d1:Austria"
+ },
+ "d1:Egypt": {
+  "cell": "d1:Austria"
+ },
+ "d1:Finland": {
+  "cell": "d1:Austria"
+ },
+ "d1:France": {
+  "cell": "d1:Austria"
+ },
+ "d1:Germany": {
+  "cell": "d1:Denmark"
+ },
+ "d1:Greece": {
+  "cell": "d1:Austria"
+ },
+ "d1:Hungary": {
+  "cell": "d1:Austria"
+ },
+ "d1:Italy": {
+  "cell": "d1:Austria"
+ },
+ "d1:Japan": {
+  "cell": "d1:Austria"
+ },
+ "d1:Norway": {
+  "cell": "d1:Austria"
+ },
+ "d1:Poland": {
+  "cell": "d1:Austria"
+ },
+ "d1:Portugal": {
+  "cell": "d1:Austria"
+ },
+ "d1:Russia": {
+  "cell": "d1:Austria"
+ },
+ "d1:South Korea": {
+  "cell": "d1:the Netherlands"
+ },
+ "d1:Spain": {
+  "cell": "d1:Austria"
+ },
+ "d1:Sweden": {
+  "cell": "d1:Austria"
+ },
+ "d1:Thailand": {
+  "cell": "d1:Austria"
+ },
+ "d1:Turkey": {
+  "cell": "d1:Austria"
+ },
+ "d1:the Czech Republic": {
+  "cell": "d1:the United Kingdom"
+ },
+ "d1:the Netherlands": {
+  "cell": "d1:South Korea"
+ },
+ "d1:the United Kingdom": {
+  "cell": "d1:the Czech Republic"
+ },
+ "d2:Amsterdam": {
+  "cell": "d2:Copenhagen"
+ },
+ "d2:Ankara": {
+  "cell": "d2:Amsterdam"
+ },
+ "d2:Athens": {
+  "cell": "d2:Amsterdam"
+ },
+ "d2:Bangkok": {
+  "cell": "d2:Amsterdam"
+ },
+ "d2:Berlin": {
+  "cell": "d2:Madrid"
+ },
+ "d2:Budapest": {
+  "cell": "d2:Lisbon"
+ },
+ "d2:Cairo": {
+  "cell": "d2:Ankara"
+ },
+ "d2:Copenhagen": {
+  "cell": "d2:Budapest"
+ },
+ "d2:Helsinki": {
+  "cell": "d2:Amsterdam"
+ },
+ "d2:Lisbon": {
+  "cell": "d2:Stockholm"
+ },
+ "d2:London": {
+  "cell": "d2:Vienna"
+ },
+ "d2:Madrid": {
+  "cell": "d2:Tokyo"
+ },
+ "d2:Moscow": {
+  "cell": "d2:Prague"
+ },
+ "d2:Oslo": {
+  "cell": "d2:Amsterdam"
+ },
+ "d2:Paris": {
+  "cell": "d2:Rome"
+ },
+ "d2:Prague": {
+  "cell": "d2:London"
+ },
+ "d2:Rome": {
+  "cell": "d2:Berlin"
+ },
+ "d2:Seoul": {
+  "cell": "d2:Amsterdam"
+ },
+ "d2:Stockholm": {
+  "cell": "d2:Cairo"
+ },
+ "d2:Tokyo": {
+  "cell": "d2:Moscow"
+ },
+ "d2:Vienna": {
+  "cell": "d2:Athens"
+ },
+ "d2:Warsaw": {
+  "cell": "d2:Amsterdam"
+ },
+ "d3-lm:Anitkabir": {
+  "cell": "d3-lm:Fisherman's Bastion",
+  "e1": "d3-lm:Fisherman's Bastion",
+  "control": null
+ },
+ "d3-lm:Big Ben": {
+  "cell": "d3-lm:the Kremlin",
+  "e1": "d3-lm:Red Square",
+  "control": "d3-lm:Buckingham Palace"
+ },
+ "d3-lm:Buckingham Palace": {
+  "cell": "d3-lm:Red Square",
+  "e1": "d3-lm:Red Square",
+  "control": "d3-lm:Big Ben"
+ },
+ "d3-lm:Fisherman's Bastion": {
+  "cell": "d3-lm:Anitkabir",
+  "e1": "d3-lm:Anitkabir",
+  "control": null
+ },
+ "d3-lm:Gyeongbokgung Palace": {
+  "cell": "d3-lm:the Khan el-Khalili bazaar",
+  "e1": "d3-lm:the Khan el-Khalili bazaar",
+  "control": null
+ },
+ "d3-lm:Notre-Dame Cathedral": {
+  "cell": "d3-lm:the Trevi Fountain",
+  "e1": "d3-lm:Saint Basil's Cathedral",
+  "control": null
+ },
+ "d3-lm:Red Square": {
+  "cell": "d3-lm:Big Ben",
+  "e1": "d3-lm:Big Ben",
+  "control": "d3-lm:the Kremlin"
+ },
+ "d3-lm:Retiro Park": {
+  "cell": "d3-lm:Shibuya Crossing",
+  "e1": "d3-lm:Shibuya Crossing",
+  "control": null
+ },
+ "d3-lm:Saint Basil's Cathedral": {
+  "cell": "d3-lm:the Parthenon",
+  "e1": "d3-lm:Notre-Dame Cathedral",
+  "control": null
+ },
+ "d3-lm:Schonbrunn Palace": {
+  "cell": "d3-lm:Anitkabir",
+  "e1": "d3-lm:Anitkabir",
+  "control": "d3-lm:St. Stephen's Cathedral"
+ },
+ "d3-lm:Shibuya Crossing": {
+  "cell": "d3-lm:the Charles Bridge",
+  "e1": "d3-lm:Retiro Park",
+  "control": null
+ },
+ "d3-lm:St. Stephen's Cathedral": {
+  "cell": "d3-lm:Anitkabir",
+  "e1": "d3-lm:Anitkabir",
+  "control": "d3-lm:Schonbrunn Palace"
+ },
+ "d3-lm:Suomenlinna fortress": {
+  "cell": "d3-lm:Anitkabir",
+  "e1": "d3-lm:Anitkabir",
+  "control": null
+ },
+ "d3-lm:Tivoli Gardens": {
+  "cell": "d3-lm:Notre-Dame Cathedral",
+  "e1": "d3-lm:Notre-Dame Cathedral",
+  "control": null
+ },
+ "d3-lm:Tower Bridge": {
+  "cell": "d3-lm:Red Square",
+  "e1": "d3-lm:Red Square",
+  "control": "d3-lm:Big Ben"
+ },
+ "d3-lm:Wat Arun": {
+  "cell": "d3-lm:Retiro Park",
+  "e1": "d3-lm:Retiro Park",
+  "control": "d3-lm:the Grand Palace"
+ },
+ "d3-lm:the Acropolis": {
+  "cell": "d3-lm:Retiro Park",
+  "e1": "d3-lm:Retiro Park",
+  "control": null
+ },
+ "d3-lm:the Anne Frank House": {
+  "cell": "d3-lm:Notre-Dame Cathedral",
+  "e1": "d3-lm:Notre-Dame Cathedral",
+  "control": null
+ },
+ "d3-lm:the Astronomical Clock of the Old Town": {
+  "cell": "d3-lm:Gyeongbokgung Palace",
+  "e1": null,
+  "control": null
+ },
+ "d3-lm:the Belem Tower": {
+  "cell": "d3-lm:Notre-Dame Cathedral",
+  "e1": "d3-lm:Notre-Dame Cathedral",
+  "control": null
+ },
+ "d3-lm:the Belvedere palace": {
+  "cell": "d3-lm:Anitkabir",
+  "e1": "d3-lm:Anitkabir",
+  "control": "d3-lm:Schonbrunn Palace"
+ },
+ "d3-lm:the Brandenburg Gate": {
+  "cell": "d3-lm:the Prado Museum",
+  "e1": "d3-lm:Notre-Dame Cathedral",
+  "control": "d3-lm:the Reichstag building"
+ },
+ "d3-lm:the Charles Bridge": {
+  "cell": "d3-lm:the Acropolis",
+  "e1": "d3-lm:Retiro Park",
+  "control": null
+ },
+ "d3-lm:the Colosseum": {
+  "cell": "d3-lm:Anitkabir",
+  "e1": "d3-lm:Anitkabir",
+  "control": null
+ },
+ "d3-lm:the Eiffel Tower": {
+  "cell": "d3-lm:Schonbrunn Palace",
+  "e1": "d3-lm:Anitkabir",
+  "control": null
+ },
+ "d3-lm:the Grand Palace": {
+  "cell": "d3-lm:Retiro Park",
+  "e1": "d3-lm:Retiro Park",
+  "control": "d3-lm:Wat Arun"
+ },
+ "d3-lm:the Jeronimos Monastery": {
+  "cell": "d3-lm:the Palace of Culture and Science",
+  "e1": "d3-lm:the Palace of Culture and Science",
+  "control": null
+ },
+ "d3-lm:the Khan el-Khalili bazaar": {
+  "cell": "d3-lm:Gyeongbokgung Palace",
+  "e1": "d3-lm:Gyeongbokgung Palace",
+  "control": null
+ },
+ "d3-lm:the Kremlin": {
+  "cell": "d3-lm:Big Ben",
+  "e1": "d3-lm:Big Ben",
+  "control": "d3-lm:Red Square"
+ },
+ "d3-lm:the Little Mermaid statue": {
+  "cell": "d3-lm:Anitkabir",
+  "e1": "d3-lm:Anitkabir",
+  "control": null
+ },
+ "d3-lm:the Louvre": {
+  "cell": "d3-lm:Retiro Park",
+  "e1": "d3-lm:Retiro Park",
+  "control": null
+ },
+ "d3-lm:the Meiji Shrine": {
+  "cell": "d3-lm:Saint Basil's Cathedral",
+  "e1": "d3-lm:Notre-Dame Cathedral",
+  "control": null
+ },
+ "d3-lm:the Palace of Culture and Science": {
+  "cell": "d3-lm:the Jeronimos Monastery",
+  "e1": "d3-lm:the Jeronimos Monastery",
+  "control": null
+ },
+ "d3-lm:the Pantheon": {
+  "cell": "d3-lm:Retiro Park",
+  "e1": "d3-lm:Retiro Park",
+  "control": null
+ },
+ "d3-lm:the Parthenon": {
+  "cell": "d3-lm:Notre-Dame Cathedral",
+  "e1": "d3-lm:Notre-Dame Cathedral",
+  "control": null
+ },
+ "d3-lm:the Prado Museum": {
+  "cell": "d3-lm:the Meiji Shrine",
+  "e1": "d3-lm:Notre-Dame Cathedral",
+  "control": null
+ },
+ "d3-lm:the Reichstag building": {
+  "cell": "d3-lm:the Prado Museum",
+  "e1": "d3-lm:Notre-Dame Cathedral",
+  "control": "d3-lm:the Brandenburg Gate"
+ },
+ "d3-lm:the Rijksmuseum": {
+  "cell": "d3-lm:the Jeronimos Monastery",
+  "e1": "d3-lm:the Jeronimos Monastery",
+  "control": null
+ },
+ "d3-lm:the Senso-ji temple": {
+  "cell": "d3-lm:the Rijksmuseum",
+  "e1": "d3-lm:the Jeronimos Monastery",
+  "control": null
+ },
+ "d3-lm:the Szechenyi thermal bath": {
+  "cell": "d3-lm:Gyeongbokgung Palace",
+  "e1": null,
+  "control": null
+ },
+ "d3-lm:the Trevi Fountain": {
+  "cell": "d3-lm:the Brandenburg Gate",
+  "e1": "d3-lm:Notre-Dame Cathedral",
+  "control": null
+ },
+ "d3-lm:the Vasa Museum": {
+  "cell": "d3-lm:Notre-Dame Cathedral",
+  "e1": "d3-lm:Notre-Dame Cathedral",
+  "control": null
+ },
+ "d3-lm:the Vigeland sculpture park": {
+  "cell": "d3-lm:Anitkabir",
+  "e1": "d3-lm:Anitkabir",
+  "control": null
+ },
+ "d3-per:Alexander Pushkin": {
+  "cell": "d3-per:Virginia Woolf",
+  "e1": "d3-per:Charlie Chaplin",
+  "control": null
+ },
+ "d3-per:Alexander von Humboldt": {
+  "cell": "d3-per:Lope de Vega",
+  "e1": "d3-per:August Strindberg",
+  "control": "d3-per:Marlene Dietrich"
+ },
+ "d3-per:August Strindberg": {
+  "cell": "d3-per:Alexander von Humboldt",
+  "e1": "d3-per:Alexander von Humboldt",
+  "control": "d3-per:Greta Garbo"
+ },
+ "d3-per:Baruch Spinoza": {
+  "cell": "d3-per:Edith Piaf",
+  "e1": "d3-per:Edith Piaf",
+  "control": null
+ },
+ "d3-per:Charlie Chaplin": {
+  "cell": "d3-per:Alexander Pushkin",
+  "e1": "d3-per:Alexander Pushkin",
+  "control": "d3-per:John Keats"
+ },
+ "d3-per:Claude Monet": {
+  "cell": "d3-per:Hokusai",
+  "e1": "d3-per:Alexander Pushkin",
+  "control": "d3-per:Georges Bizet"
+ },
+ "d3-per:Edith Piaf": {
+  "cell": "d3-per:Ennio Morricone",
+  "e1": "d3-per:Baruch Spinoza",
+  "control": null
+ },
+ "d3-per:Ennio Morricone": {
+  "cell": "d3-per:Natsume Soseki",
+  "e1": "d3-per:Baruch Spinoza",
+  "control": null
+ },
+ "d3-per:Erno Rubik": {
+  "cell": "d3-per:Alexander von Humboldt",
+  "e1": "d3-per:Alexander von Humboldt",
+  "control": "d3-per:Harry Houdini"
+ },
+ "d3-per:Fernando Pessoa": {
+  "cell": "d3-per:Franz Kafka",
+  "e1": "d3-per:Franz Kafka",
+  "control": null
+ },
+ "d3-per:Franz Kafka": {
+  "cell": "d3-per:Fernando Pessoa",
+  "e1": "d3-per:Fernando Pessoa",
+  "control": null
+ },
+ "d3-per:Franz Schubert": {
+  "cell": "d3-per:August Strindberg",
+  "e1": "d3-per:August Strindberg",
+  "control": "d3-per:Ludwig Wittgenstein"
+ },
+ "d3-per:Fyodor Dostoevsky": {
+  "cell": "d3-per:Pedro Calderon de la Barca",
+  "e1": null,
+  "control": null
+ },
+ "d3-per:Georges Bizet": {
+  "cell": "d3-per:Hokusai",
+  "e1": "d3-per:Alexander Pushkin",
+  "control": "d3-per:Claude Monet"
+ },
+ "d3-per:Greta Garbo": {
+  "cell": "d3-per:Alexander von Humboldt",
+  "e1": "d3-per:Alexander von Humboldt",
+  "control": "d3-per:August Strindberg"
+ },
+ "d3-per:Harry Houdini": {
+  "cell": "d3-per:Alexander von Humboldt",
+  "e1": "d3-per:Alexander von Humboldt",
+  "control": "d3-per:Erno Rubik"
+ },
+ "d3-per:Hokusai": {
+  "cell": "d3-per:Alexander Pushkin",
+  "e1": "d3-per:Alexander Pushkin",
+  "control": null
+ },
+ "d3-per:Johann Strauss II": {
+  "cell": "d3-per:Alexander Pushkin",
+  "e1": "d3-per:Alexander Pushkin",
+  "control": null
+ },
+ "d3-per:John Keats": {
+  "cell": "d3-per:Alexander Pushkin",
+  "e1": "d3-per:Alexander Pushkin",
+  "control": "d3-per:Charlie Chaplin"
+ },
+ "d3-per:Julius Caesar": {
+  "cell": "d3-per:Fernando Pessoa",
+  "e1": "d3-per:Fernando Pessoa",
+  "control": "d3-per:Sophia Loren"
+ },
+ "d3-per:Lope de Vega": {
+  "cell": "d3-per:Yukio Mishima",
+  "e1": "d3-per:Alexander von Humboldt",
+  "control": null
+ },
+ "d3-per:Ludwig Wittgenstein": {
+  "cell": "d3-per:August Strindberg",
+  "e1": "d3-per:August Strindberg",
+  "control": "d3-per:Franz Schubert"
+ },
+ "d3-per:Marie Curie": {
+  "cell": "d3-per:Alexander Pushkin",
+  "e1": "d3-per:Alexander Pushkin",
+  "control": null
+ },
+ "d3-per:Marlene Dietrich": {
+  "cell": "d3-per:Lope de Vega",
+  "e1": "d3-per:August Strindberg",
+  "control": "d3-per:Alexander von Humboldt"
+ },
+ "d3-per:Mikhail Lermontov": {
+  "cell": "d3-per:Edith Piaf",
+  "e1": "d3-per:Baruch Spinoza",
+  "control": null
+ },
+ "d3-per:Naguib Mahfouz": {
+  "cell": "d3-per:Rainer Maria Rilke",
+  "e1": "d3-per:Rainer Maria Rilke",
+  "control": null
+ },
+ "d3-per:Natsume Soseki": {
+  "cell": "d3-per:Mikhail Lermontov",
+  "e1": "d3-per:Baruch Spinoza",
+  "control": null
+ },
+ "d3-per:Niels Bohr": {
+  "cell": "d3-per:Alexander von Humboldt",
+  "e1": "d3-per:Alexander von Humboldt",
+  "control": null
+ },
+ "d3-per:Pedro Calderon de la Barca": {
+  "cell": "d3-per:Fyodor Dostoevsky",
+  "e1": null,
+  "control": null
+ },
+ "d3-per:Pericles": {
+  "cell": "d3-per:Fernando Pessoa",
+  "e1": "d3-per:Fernando Pessoa",
+  "control": null
+ },
+ "d3-per:Plato": {
+  "cell": "d3-per:Fernando Pessoa",
+  "e1": null,
+  "control": null
+ },
+ "d3-per:Rainer Maria Rilke": {
+  "cell": "d3-per:Naguib Mahfouz",
+  "e1": "d3-per:Naguib Mahfouz",
+  "control": null
+ },
+ "d3-per:Sophia Loren": {
+  "cell": "d3-per:Walter Benjamin",
+  "e1": "d3-per:Fernando Pessoa",
+  "control": "d3-per:Julius Caesar"
+ },
+ "d3-per:Soren Kierkegaard": {
+  "cell": "d3-per:Naguib Mahfouz",
+  "e1": "d3-per:Naguib Mahfouz",
+  "control": null
+ },
+ "d3-per:Virginia Woolf": {
+  "cell": "d3-per:Johann Strauss II",
+  "e1": "d3-per:Alexander Pushkin",
+  "control": "d3-per:Charlie Chaplin"
+ },
+ "d3-per:Voltaire": {
+  "cell": "d3-per:Sophia Loren",
+  "e1": "d3-per:Fernando Pessoa",
+  "control": null
+ },
+ "d3-per:Walter Benjamin": {
+  "cell": "d3-per:Pericles",
+  "e1": "d3-per:Fernando Pessoa",
+  "control": null
+ },
+ "d3-per:Yukio Mishima": {
+  "cell": "d3-per:Franz Schubert",
+  "e1": "d3-per:Alexander von Humboldt",
+  "control": null
+ },
+ "d4-work:Candide": {
+  "cell": "d4-work:The Republic",
+  "e1": "d4-work:The Republic",
+  "control": null
+ },
+ "d4-work:Eugene Onegin": {
+  "cell": "d4-work:the opera Carmen",
+  "e1": "d4-work:the opera Carmen",
+  "control": null
+ },
+ "d4-work:The Arcades Project": {
+  "cell": "d4-work:the novel Kokoro",
+  "e1": "d4-work:the novel Kokoro",
+  "control": null
+ },
+ "d4-work:The Blue Danube waltz": {
+  "cell": "d4-work:The Great Wave off Kanagawa",
+  "e1": "d4-work:The Great Wave off Kanagawa",
+  "control": null
+ },
+ "d4-work:The Book of Disquiet": {
+  "cell": "d4-work:The Metamorphosis",
+  "e1": "d4-work:The Metamorphosis",
+  "control": null
+ },
+ "d4-work:The Great Wave off Kanagawa": {
+  "cell": "d4-work:the novel A Hero of Our Time",
+  "e1": "d4-work:The Blue Danube waltz",
+  "control": null
+ },
+ "d4-work:The Metamorphosis": {
+  "cell": "d4-work:The Book of Disquiet",
+  "e1": "d4-work:The Book of Disquiet",
+  "control": null
+ },
+ "d4-work:The Republic": {
+  "cell": "d4-work:Candide",
+  "e1": "d4-work:Candide",
+  "control": null
+ },
+ "d4-work:the Commentaries on the Gallic War": {
+  "cell": "d4-work:The Blue Danube waltz",
+  "e1": null,
+  "control": null
+ },
+ "d4-work:the Duino Elegies": {
+  "cell": "d4-work:the book Fear and Trembling",
+  "e1": "d4-work:the book Fear and Trembling",
+  "control": null
+ },
+ "d4-work:the Rubik's Cube": {
+  "cell": "d4-work:The Book of Disquiet",
+  "e1": "d4-work:The Book of Disquiet",
+  "control": null
+ },
+ "d4-work:the Tractatus Logico-Philosophicus": {
+  "cell": "d4-work:the poem Ode to a Nightingale",
+  "e1": null,
+  "control": null
+ },
+ "d4-work:the Unfinished Symphony": {
+  "cell": "d4-work:the novel Kokoro",
+  "e1": "d4-work:the novel Kokoro",
+  "control": null
+ },
+ "d4-work:the book Either/Or": {
+  "cell": "d4-work:The Book of Disquiet",
+  "e1": "d4-work:The Book of Disquiet",
+  "control": null
+ },
+ "d4-work:the book Fear and Trembling": {
+  "cell": "d4-work:the Duino Elegies",
+  "e1": "d4-work:the Duino Elegies",
+  "control": null
+ },
+ "d4-work:the film The Great Dictator": {
+  "cell": "d4-work:the Duino Elegies",
+  "e1": "d4-work:the Duino Elegies",
+  "control": "d4-work:the novel Mrs Dalloway"
+ },
+ "d4-work:the novel A Hero of Our Time": {
+  "cell": "d4-work:the play Fuenteovejuna",
+  "e1": "d4-work:The Blue Danube waltz",
+  "control": null
+ },
+ "d4-work:the novel Crime and Punishment": {
+  "cell": "d4-work:the novel Mrs Dalloway",
+  "e1": "d4-work:the Duino Elegies",
+  "control": null
+ },
+ "d4-work:the novel Kokoro": {
+  "cell": "d4-work:The Arcades Project",
+  "e1": "d4-work:The Arcades Project",
+  "control": null
+ },
+ "d4-work:the novel Mrs Dalloway": {
+  "cell": "d4-work:the painting Impression, Sunrise",
+  "e1": "d4-work:the Duino Elegies",
+  "control": "d4-work:the film The Great Dictator"
+ },
+ "d4-work:the novel Palace Walk": {
+  "cell": "d4-work:The Arcades Project",
+  "e1": "d4-work:The Arcades Project",
+  "control": null
+ },
+ "d4-work:the novel The Sound of Waves": {
+  "cell": "d4-work:the Duino Elegies",
+  "e1": "d4-work:the Duino Elegies",
+  "control": null
+ },
+ "d4-work:the novel The Trial": {
+  "cell": "d4-work:The Arcades Project",
+  "e1": "d4-work:The Arcades Project",
+  "control": null
+ },
+ "d4-work:the opera Carmen": {
+  "cell": "d4-work:Eugene Onegin",
+  "e1": "d4-work:Eugene Onegin",
+  "control": null
+ },
+ "d4-work:the painting Impression, Sunrise": {
+  "cell": "d4-work:the novel Crime and Punishment",
+  "e1": "d4-work:the Duino Elegies",
+  "control": null
+ },
+ "d4-work:the play Fuenteovejuna": {
+  "cell": "d4-work:The Great Wave off Kanagawa",
+  "e1": "d4-work:The Blue Danube waltz",
+  "control": null
+ },
+ "d4-work:the play Life Is a Dream": {
+  "cell": "d4-work:the Duino Elegies",
+  "e1": "d4-work:the Duino Elegies",
+  "control": null
+ },
+ "d4-work:the play Miss Julie": {
+  "cell": "d4-work:The Arcades Project",
+  "e1": "d4-work:The Arcades Project",
+  "control": null
+ },
+ "d4-work:the poem Ode to a Nightingale": {
+  "cell": "d4-work:the Commentaries on the Gallic War",
+  "e1": null,
+  "control": null
+ }
+}

@@ -1,0 +1,11 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 25bad7b00832093ac3e5f43f0ade5ddff990fec5 mode 1a pick 0,50,70
+pre-pass 25.6s
+load 29.6s; 3 items
+R1 {"id": "currency:yen", "relay": 26, "arms": 385, "s": 5.57}
+R1 {"id": "city:Shanghai", "relay": 26, "arms": 385, "s": 6.55}
+TOTAL 42.4s
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:43.79
+	Maximum resident set size (kbytes): 4354100
+45M	/mnt/ssd1tb/cache/beast/twohop-run1-smoke2

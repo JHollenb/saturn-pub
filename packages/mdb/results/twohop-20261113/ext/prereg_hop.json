@@ -1,0 +1,45 @@
+{
+ "frozen_at": "2026-11-14T06:50Z (2026-11-13 22:50 PST), before any run of the hop job (Z2). Already read when frozen: entry-1 results, Y2 para/dist, the 3-item Z1 smoke (job-f7740fbb15fe: direct_delta / native_delta 0.36, 0.68, 0.40) and the first 5 items of the aborted Z1 run (job-73fd30fbb451: indirect share median 0.58). Z1 full (job-1ee4fe8e9656) running, unread.",
+ "question": "Hop 2 (bridge content -> capital) at the answer row: is the edge MLP-mediated, does it close exactly, is it nameable at neuron granularity, and does a channel-DFT (rfft / polar) basis concentrate it better than the plain neuron basis?",
+ "source": "advisor memo obsidian/model-math/ADVISOR-2026-11-13-symbol-table-latent-chain.md section 4.2-4.5; coordinator 2026-11-13 (owner control arm: channel-rfft polar view vs neuron basis vs permuted channels)",
+ "instrument": "mdb.analysis.symbols.hop_edge (commit b7c8e89): Delta M_native = c.delta + c.Delta h_in (0 by construction) + sum_{l>=20} c.Delta m_l + sum_{l>20} c.Delta o_l + Delta_norm + residual-add rounding + rounding; per neuron Delta f_i = b0 Delta s + s0 Delta b + Delta s Delta b on captured sg, u; effect c.W_down[:,i] Delta f_i (P15, exact); top 8 per layer + exact remainder; linear = one-layer Jacobian on the layer's actual input change (P14, derived-local); spectral = Parseval split of each neuron's Delta a over the 1025 channel-rfft bins of Delta n, |effect|-weighted, top 32 bins, against a fixed random channel permutation per layer and against the neuron basis at the same unit fraction (32/1025 of 6144 = 192 neurons). Attached to the bridge binding via symbols.table(hops={'bridge': {..., 'edge': ...}}).",
+ "model": "Qwen3-1.7B-Base bf16 eager CUDA, single seed, one model load for every arm (capture once)",
+ "items_and_arms": {
+  "donor": "64 entry-1 panel recipients; donor 0's V cell at L20 KV6, gt.json row, same row (reproduces job2 GT.V.d0; custody: native delta equal to the saved one)",
+  "ablate": "same 64; the panel-mean cell (mean over the 64 recipients' own L20 KV6 V at their gt row) written into the cell",
+  "city": "the 12 city recipients with a same-country different-city candidate (as Z1 T_city); reported, not judged",
+  "consumer": "Margin(j, answer, donor-0 answer) for donor and ablate; Margin(j, answer, native runner-up) for city"
+ },
+ "metrics": {
+  "closure": "|gap| = |native_delta - sum of terms| (rounding term) within floor = 2 x bf16 spacing at the larger |logit| of the two margin tokens over both runs",
+  "shares": "direct, mlp (sum of captured c.Delta m), reread (sum c.Delta o, l>20), norm, each over native_delta; medians and IQR per arm",
+  "against_unbound": "ablate arm: sum_l c.Delta m_l over the native Unbound embedding_mlp term (c.h_0 + sum over all 28 layers of c.m_l)",
+  "flip_set": "a pair flips when M changes sign; predicted flip = sign(M0 + direct + mlp) != sign(M0); mismatch rate over the donor pairs (and the ablate pairs, reported)",
+  "spearman": "Spearman rank of mlp against native_delta over the donor pairs",
+  "concentration": "per (item, layer): top-8 |effect| share of sum |effect|; median over layers 20-27 and items",
+  "recurrence": "an item's named neurons = its top 8 per layer (64 names); a neuron recurs in a country when named on >= 3 items of that country (8 countries have >= 3 panel items); null = the same count with country labels shuffled within the panel (200 shuffles, seed 0), reported as mean and the fraction of shuffles >= observed",
+  "linear_share": "sum_l linear / sum_l exact (MLP) per pair; median",
+  "spectral": "per (item, layer) on the donor arm: channel top-32-bin credit share, its permuted-channel control, and the neuron basis top-192 share; medians and the median paired difference native - permuted"
+ },
+ "predictions": {
+  "H1": "closure within the floor on >= 60/64 donor pairs (a failure is a bookkeeping bug, not a finding)",
+  "H2": "donor arm: median mlp share >= 0.5 (guess 0.55) and reread is not the largest term in median",
+  "H3": "ablate arm: median against_unbound between 0.05 and 0.5 (guess 0.2)",
+  "H4": "flip-set mismatch (direct + mlp vs observed) <= 0.20 on donor pairs",
+  "H5": "Spearman(mlp, native_delta) >= 0.6 on donor pairs",
+  "H6": "concentration: median top-8 share < 0.5 (dense at neuron granularity; guess 0.3)",
+  "H7": "recurrence: >= 4 of the 8 countries have >= 1 recurring neuron (ablate arm), and the observed count exceeds the shuffle null in >= 95% of shuffles",
+  "H8": "median linear share between 0.3 and 0.9 (finite edits needed; guess 0.5)",
+  "H9": "channel top-32-bin credit share minus its permuted control: median |difference| <= 0.02 (the channel spectrum adds nothing, as on Qwen2.5-0.5B L12); the neuron basis top-192 share exceeds the channel top-32-bin share in median"
+ },
+ "falsifiers": {
+  "F_mlp": "donor arm median mlp share < 0.3 with reread the largest term",
+  "F_dense": "top-8 neurons carry < 0.5 of every layer's exact MLP term (all layers, median over items) AND no neuron recurs within a country on >= 3 of its items",
+  "F_flip": "flip-set mismatch > 0.20 after closure holds",
+  "F_spectral": "channel top-32-bin credit share within 0.02 of the permuted control (median): spectral framing retired for this hop",
+  "meaning": "F_mlp / F_dense / F_flip: the table cannot see hop 2 as a nameable MLP edge; F_spectral: expected outcome, measured once at our site"
+ },
+ "relation_to_other_preregs": "no conflict: prereg_chain.json (Z1) judges content readability on the same 64 items; prereg_hard.json judges the hard families. Z2 judges only the hop ladder.",
+ "budget": "one batched mrun job, smoke on 3 items first, <= 10 min, priority 70, vram 5000, ram 12000 (float64 weight cache)",
+ "rules": "single seed; unknown is not negative; a count below 8 is reported, not judged"
+}

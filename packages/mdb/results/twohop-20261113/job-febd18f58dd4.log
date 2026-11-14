@@ -1,0 +1,15 @@
+mrun: job-febd18f58dd4 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 2d54d00fd0eedfdb9f193e7ac97c98c30bf6e6cc recipients 0..2
+load 3.8s; recipients 0..1 (2)
+ITEM {"id": "currency:yen", "tokens": [26194, 50189, 26549, 26194], "native": [31.875, 25.5, 25.375, 31.875], "native_argmax": 26194, "donor_prompt": [[24.875, 30.5, 24.75, 24.875], [26.125, 24.125, 32.25, 26.125]], "control_prompt": [31.375, 23.875, 24.75, 31.375], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -11.375}, "stepped_seconds": 22.379961335005646, "seconds": 24.225877487006073, "F1": [36, 20, 6], "null_vs_stepped": 0.0, "sweep_seconds": 0.24, "arms": 1120}
+T 28.0s
+ITEM {"id": "currency:won", "tokens": [50189, 26549, 7148, 50189], "native": [30.5, 24.75, 21.375, 30.5], "native_argmax": 50189, "donor_prompt": [[24.125, 32.25, 26.625, 24.125], [20.875, 21.625, 31.75, 20.875]], "control_prompt": [28.875, 24.625, 22.375, 28.875], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -13.4375}, "stepped_seconds": 22.19822687099804, "seconds": 23.72976281100273, "F1": [36, 20, 6], "null_vs_stepped": 0.25, "sweep_seconds": 0.23, "arms": 1120}
+T 51.8s
+TOTAL 51.8s
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:53.22
+	Maximum resident set size (kbytes): 4352644
+-rw-rw-r-- 1 beast beast 145416 Nov 13 21:34 job2-0-2.jsonl
+mrun: job-febd18f58dd4 -> succeeded
+mrun: job-febd18f58dd4 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 54.56, 'peak_rss_mb': 1901.2, 'peak_vram_mb': 4442.0}
