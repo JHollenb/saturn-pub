@@ -23,7 +23,9 @@ every per-item result holds ordinary canonical addresses:
   of the paired item's run, a clean run of that prompt at the same stop (``AT``), started once
   per ``each`` and released with the item runs. It is the cross-run value of ``set``/``whatif``
   /``compare`` (``ORIGIN:ADDR``), so it reaches what those reach: a port of the run's last row
-  or a cache cell.
+  or a cache cell. An address with no row (``L20.A[h5]``) means the paired item's last row,
+  ``pair-SET-PAIR:t<its last>.L20.A[h5]``, whatever length the two prompts are; the item row's
+  ``donor`` lists the donor addresses used.
 
 An item whose template does not bind (an undefined role or variable, a role past its prompt,
 no pair) or whose op is refused is a per-item refusal with its reason; the other items run.
@@ -272,6 +274,19 @@ def _bind_plain(text: str, item: Bound) -> str:
     return _VAR.sub(lambda m: str(item.var(m["var"])), text)
 
 
+_ROWED = re.compile(r"(?:t-?\d+(?![\w]))|cache\.")
+
+
+def _pair_address(addr: str, pair: Bound) -> str:
+    """``addr`` bound for the paired item. A port address with no row (``L20.A[h5]``) names
+    the paired item's own last row (``t<last>.L20.A[h5]``), not whatever row the asking item's
+    cursor is at; ``t@ROLE`` and a cache cell (it carries ``row=``) already name theirs."""
+    bound = _bind_plain(addr, pair)
+    if _ROWED.match(bound) or bound.isdigit():
+        return bound
+    return f"t{pair.row('last')}.{bound}"
+
+
 def bind_text(text: str, item: Bound, pair: Bound | None = None,
               pair_run: str | None = None) -> str:
     """The template ``text`` with ``@pair:ADDR``, ``t@ROLE``, ``=@ROLE``, ``@ROLE`` and
@@ -281,7 +296,7 @@ def bind_text(text: str, item: Bound, pair: Bound | None = None,
         out.append(_bind_plain(text[last:match.start()], item))
         if pair is None or pair_run is None:
             raise Unbound(f"@pair: item {item.item.name} has no pair")
-        out.append(f"{pair_run}:{_bind_plain(match['addr'], pair)}")
+        out.append(f"{pair_run}:{_pair_address(match['addr'], pair)}")
         last = match.end()
     out.append(_bind_plain(text[last:], item))
     return "".join(out)
@@ -516,6 +531,13 @@ def _one(debugger: Any, saved: dict[str, Any], found: PromptSet, item: Item,
     bound_args = {k: str(v) for k, v in calls[-1][1].items() if v != steps[-1].args.get(k)}
     if bound_args:
         row["bound"] = bound_args
+    if pair is not None:
+        found_at = sorted({m[0] for _, args in calls for v in args.values()
+                           if isinstance(v, str)
+                           for m in re.finditer(re.escape(pair_run) + r":[^\s,;=]+(?:\[[^\]]*\])?",
+                                                v)})
+        if found_at:
+            row["donor"] = found_at
     return row, result
 
 

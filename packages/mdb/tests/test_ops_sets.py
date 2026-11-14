@@ -203,6 +203,43 @@ def test_pair_takes_the_value_from_the_paired_items_clean_run_as_by_hand(tiny):
     assert not any(name.startswith("pair-") for name in tiny.runs)   # donors released
 
 
+def test_pair_address_without_a_row_is_the_paired_items_last_row_for_other_lengths(tiny):
+    items = [{"name": "p", "tokens": [1, 5, 9, 3], "roles": {"subject": 1},
+              "vars": {"answer": 4, "foil": 9}, "pair": "q"},
+             {"name": "q", "tokens": [1, 7, 9, 3, 2], "roles": {"subject": 2},
+              "vars": {"answer": 4, "foil": 9}}]
+    port = "whatif L1.A[h1] = @pair:L1.A[h1] --consumer M[$answer,$foil]"
+    out = tiny.each(items, port)
+    row = {r["name"]: r for r in out.summary["items"]}["p"]
+    assert row["state"] != "refused", row
+    assert row["bound"]["value"] == "pair-tmp-q:t4.L1.A[h1]" or row["bound"]["value"].endswith(
+        ":t4.L1.A[h1]")
+    assert row["donor"] == [row["bound"]["value"]]
+    hand = _by_hand(tiny, items[0]["tokens"], "whatif", {
+        "target": "L1.A[h1]", "value": "clean:t4.L1.A[h1]", "consumer": "M[4,9]"},
+        donor=items[1]["tokens"])
+    assert stats.claims(out.results["p"]) == stats.claims(hand)
+    cell = "whatif cache.L0.v[row=@subject] = @pair:cache.L0.v[row=@subject] " \
+           "--consumer M[$answer,$foil]"
+    out = tiny.each(items, cell)
+    row = {r["name"]: r for r in out.summary["items"]}["p"]
+    assert row["state"] != "refused", row
+    assert row["bound"]["value"].endswith(":cache.L0.v[row=2]")
+    hand = _by_hand(tiny, items[0]["tokens"], "whatif", {
+        "target": "cache.L0.v[row=1]", "value": "clean:cache.L0.v[row=2]",
+        "consumer": "M[4,9]"}, donor=items[1]["tokens"])
+    assert stats.claims(out.results["p"]) == stats.claims(hand)
+
+
+def test_pair_address_binding_rows():
+    found = make_set("s", [{"name": "a", "tokens": [1, 5, 9, 3], "pair": "b"},
+                           {"name": "b", "tokens": [1, 7, 9, 3, 2], "roles": {"subject": 2}}])
+    a, b = (Bound(_NoModel(), item) for item in found.items)
+    assert bind_text("@pair:L20.A[h5]", a, b, "p") == "p:t4.L20.A[h5]"
+    assert bind_text("@pair:t@subject.L20.A[h5]", a, b, "p") == "p:t2.L20.A[h5]"
+    assert bind_text("@pair:t1.L20.A", a, b, "p") == "p:t1.L20.A"
+
+
 def test_the_callers_run_cursor_and_digest_are_unchanged_and_keep_holds_runs(tiny):
     from mdb.ops.predict import session_digest
 
