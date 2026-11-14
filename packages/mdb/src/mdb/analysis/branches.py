@@ -44,6 +44,12 @@ Built-in nulls (each derived from an arm ``like`` and recorded with its rule):
 (``sweep.cell_sweep``; kernel path ``batched``, with its measured null-vs-stepped delta added to
 the floor of those arms; twice the delta: a margin is a difference of two logits) and re-measures the ``k`` largest on the stepped path (the exp5 pattern).
 
+``probes`` (amplitude programme 2026-11-14): named callables ``probe(run) -> number | list`` read
+on every stepped arm (and the base) after the consumer's logits are computed and before the
+restore, so an arm can report a value OTHER than the consumer (a cache cell's projection, a
+port's norm) from the branch it ran; stored per row as ``probes`` (measured). Batched arms carry
+no probes (their forward is not a ``Run``).
+
 ``interchange`` (subspace.py) builds on this object.
 """
 
@@ -146,8 +152,10 @@ class Branches:
                  name: str = "branches", row: int | None = None, floor: float | None = None,
                  floor_spacings: float = 2.0, extra_floor: float = 0.0,
                  calibration: Any = None, stable_floors: float | None = None,
-                 kernel_path: str = MDB_STEPPED, reference: Any = None):
+                 kernel_path: str = MDB_STEPPED, reference: Any = None,
+                 probes: dict[str, Any] | None = None):
         self.debuggee, self.consumer, self.name = run, consumer, name
+        self.probes = dict(probes or {})
         self.row = consumer.row if hasattr(consumer, "row") else row
         if self.row is None:
             raise Refusal("a callable consumer needs row= (the logits row it reads)")
@@ -172,6 +180,7 @@ class Branches:
         self.base_logits = logits.detach().clone()
         self.M0 = self._value(logits)
         self.base_argmax = int(logits.reshape(-1).argmax())
+        self.base_probes = self._probe()
         self.base_seconds = time.monotonic() - started
         run.restore(self.checkpoint)
         self.extra_floor = abs(float(extra_floor))
@@ -203,6 +212,17 @@ class Branches:
         if isinstance(self.consumer, Logit):
             return float(lg[self.consumer.i])
         return float(self.consumer(lg))
+
+    def _probe(self) -> dict[str, Any]:
+        """Every probe evaluated on the debuggee where it stands (after the consumer)."""
+        out = {}
+        for key, probe in self.probes.items():
+            value = probe(self.debuggee)
+            if isinstance(value, (list, tuple)):
+                out[key] = [num(float(v), MEASURED) for v in value]
+            else:
+                out[key] = num(float(value), MEASURED)
+        return out
 
     def _to_consumer(self, final_scale: str = "native") -> Any:
         stop = f"t{self.row}.logits"
@@ -402,6 +422,7 @@ class Branches:
             for e in [*(c for c in cells_first if c.cell), *ports]:
                 self._stage(e)
             logits = self._to_consumer(arm.final_scale)
+            probed = self._probe()
             start = int(self.checkpoint["transitions"])
             committed = [c for c in run.committed_edits() if c["transition"] >= start]
             hold_edits = [c for c in committed if c.get("origin", {}).get("kind") == "hold"]
@@ -413,8 +434,11 @@ class Branches:
                 if any(h["name"] == hold_name for h in run.holds):
                     run.release(hold_name)
             run.restore(self.checkpoint)
-        return self._row(arm, logits, user, cells, holds, len(hold_edits),
-                         time.monotonic() - started, self.kernel_path)
+        row = self._row(arm, logits, user, cells, holds, len(hold_edits),
+                        time.monotonic() - started, self.kernel_path)
+        if self.probes:
+            row["probes"] = probed
+        return row
 
     def _row(self, arm: Arm, logits: Any, edits: list, cells: list, holds: list, fired: int,
              seconds: float, kernel_path: str, extra: float = 0.0) -> dict[str, Any]:
@@ -580,7 +604,9 @@ class Branches:
                    "path_edits": _safe(self.path["edits"], SUPPLIED),
                    "path_cells": _safe(self.path["cells"], SUPPLIED)},
             "consumer": consumer,
-            "base": {"M": num(self.M0, MEASURED), "argmax": self.base_argmax},
+            "base": {"M": num(self.M0, MEASURED), "argmax": self.base_argmax,
+                     **({"probes": self.base_probes} if self.probes else {})},
+            "probes": sorted(self.probes),
             "floor": ({"value": num(self.floor, MEASURED), "rule": self.floor_rule,
                        "spacings": num(self.floor_spacings, SUPPLIED),
                        "extra": num(self.extra_floor, MEASURED)} if self.floor is not None

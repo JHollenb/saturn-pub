@@ -129,3 +129,30 @@ def test_interchange_rides_on_branches(dbg):
     assert out["floor"]["value"] == br.floor
     br.add_null("self", "self", like="M")
     assert br.run(["self"])[0]["dM"]["value"] == 0.0
+
+
+def test_probes_read_each_arm_before_restore(dbg, donor):
+    """A probe reads a value other than the consumer on every stepped arm (amplitude programme):
+    the self-patch null probes the base value; an upstream h edit changes a later cache cell and
+    the probe equals the same read on a hand run."""
+    def cell(run):
+        return f64(run.read_cache(1, "v", staged=False)[0, 0, 2]).reshape(-1).tolist()
+
+    src = dbg.run(D, name="pr-donor", prefill=2)
+    src.until(f"t{LAST}.logits")
+    run = dbg.run(P, name="pr", prefill=2)
+    br = Branches(run, Margin(LAST, 3, 7), at="t2.L0.h", probes={"v": cell, "n": lambda r: 1.5})
+    br.add("H", [edit("t2.L0.h", src.ref("t2.L0.h"))])
+    br.add_null("self", "self", like="H")
+    rows = {r["name"]: r for r in br.run()}
+    base = [x["value"] for x in br.base_probes["v"]]
+    assert [x["value"] for x in rows["self"]["probes"]["v"]] == base
+    hand = dbg.run(P, name="pr-hand", prefill=2)
+    hand.until("t2.L0.h")
+    hand.set("t2.L0.h", src.read("t2.L0.h"))
+    hand.until(f"t{LAST}.logits")
+    assert [x["value"] for x in rows["H"]["probes"]["v"]] == cell(hand) != base
+    assert rows["H"]["probes"]["n"]["value"] == 1.5
+    rec = br.seal()
+    verify_record(rec)
+    assert rec["body"]["probes"] == ["n", "v"] and "probes" in rec["body"]["base"]
