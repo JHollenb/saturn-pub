@@ -26,6 +26,7 @@ import random
 import sys
 import time
 
+import nnsight
 import torch
 from safetensors.torch import load_file
 
@@ -143,7 +144,7 @@ for item in panel:
             # base rho at every row for the frozen-scale trace (read from an nnsight clean pass)
             nm = nn.wrap(model)
             with torch.no_grad(), nm.trace(torch.tensor([ids], device=dev)):
-                saved = {}
+                saved = nnsight.save({})
                 for x2 in range(x + 1, NL):
                     L2 = nm.model.layers[x2]
                     saved[("a", x2)] = L2.input_layernorm.input.save()

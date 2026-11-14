@@ -21,10 +21,17 @@
   "patch effects": "per item 2H+1: zero each query head's A (hook_z) at L_c and at L_c+1 at the last row, and the carrier V interchange from the donor (the carrier KV group's v at the carrier row, sequence scope). H = 14 (0.5B) or 16 (0.6B), so 29 or 33 per item, not the memo's 20 (stated deviation)",
   "carrier row": "argmax over span rows (t0 excluded, ties to the later row) of the answer row's L_c attention summed over the carrier KV group's query heads",
   "mdb native": "stepped bf16 CUDA: head zeroing by a masked Run.set of A at the last row from a checkpoint at t<last>.L<Lc>.h; V interchange by a masked Run.set of v at t<crow>.L<Lc> with prefill = carrier row (sequence scope)",
-  "TL legs": "all arms of an item in one batch (base + 2H + 1) for U16, P16, U32, P32; U16 also batch 1 per arm; fp32 legs on CUDA with TF32 off (deviation: memo says CPU; same arithmetic class, faster)",
+  "TL legs": "U16 and P16: all arms of an item in one batch (base + 2H + 1) on CUDA; U16 also batch 1 per arm; U32 and P32: fp32 on CPU, base forward only (R1 margins, R4 pattern)",
   "floor": "2 bf16 spacings at the largest |logit| of (answer, foil) over the item's arms",
   "claims": "each P16 patch effect (arm - base, same batch) sealed as a supplied-forecast record and judged by analysis.supplied.judge against mdb's native effect (deviation: the memo names interop.verify, whose stepped re-measure costs 5-6 s per claim, issue I4; the native arms here are mdb's own stepped arms)",
   "R2 statistic": "|P16 effect - mdb effect| <= floor per patch; |P16 base - mdb base| <= floor per item",
   "spacing unit": "bf16 spacing at the larger |logit| of the pair"
- }
+ },
+ "amendments": [
+  {
+   "at": "2026-11-14T13:30-08:00",
+   "before": "any full exp6 run (after the combined smoke job-c5870c6a3277, killed_vram at 15.3 GB with all four bridges on CUDA; no prediction read)",
+   "change": "U32/P32 run on CPU as the memo specifies, base forward only (they feed R1 and R4 only); TL hook_z/hook_v are 4-D on the bridge (batch, pos, heads, d_head): the smoke's batched arms indexed them as flat and are discarded"
+  }
+ ]
 }

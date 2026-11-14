@@ -11,7 +11,7 @@ donor's at t<crow>.L<Lc>.h). Carrier row: argmax of the answer row's L_c attenti
 the carrier KV group's query heads, over the span (t0 excluded, ties later).
 TransformerLens 4.4 TransformerBridge: (U16) unprocessed bf16 over the same weights
 (tl.bridge, shared clone); (P16) processed bf16 = a second bf16 copy, enable_compatibility_mode();
-(U32, P32) the same in fp32 (CUDA, TF32 off). Patches by run_with_hooks with names_filter-style
+(U32, P32) the same in fp32 on CPU, base forward only (R1, R4). Patches by run_with_hooks with names_filter-style
 hook names from mdb.interop.names.to_tl (A -> hook_z, v -> v.hook_out, p -> hook_pattern), all
 arms of an item in one batch; U16 also at batch 1 per arm (kernel-path null). Each P16 patch
 effect is sealed as a supplied-forecast record (library transformer-lens, processing recorded)
@@ -46,15 +46,15 @@ tok = AutoTokenizer.from_pretrained(MODEL)
 U16 = tl.bridge(ad.model, tok)
 
 
-def copy_bridge(dtype):
-    m = AutoModelForCausalLM.from_pretrained(MODEL, torch_dtype=dtype, attn_implementation="eager").cuda().eval()
+def copy_bridge(dtype, device="cuda"):
+    m = AutoModelForCausalLM.from_pretrained(MODEL, torch_dtype=dtype, attn_implementation="eager").to(device).eval()
     return tl.bridge(m, tok, in_place=True)
 
 
 P16 = copy_bridge(torch.bfloat16)
 P16.enable_compatibility_mode()
-U32 = copy_bridge(torch.float32)
-P32 = copy_bridge(torch.float32)
+U32 = copy_bridge(torch.float32, "cpu")
+P32 = copy_bridge(torch.float32, "cpu")
 P32.enable_compatibility_mode()
 PROC = {k: tl.processing(b) for k, b in (("U16", U16), ("P16", P16), ("U32", U32), ("P32", P32))}
 log("load")
@@ -136,7 +136,7 @@ def tl_donor_v(bridge, item, crow):
     got = {}
 
     def grab(x, hook):
-        got["v"] = x[0, crow, KVC * DH:(KVC + 1) * DH].clone()
+        got["v"] = (x[0, crow, KVC] if x.dim() == 4 else x[0, crow, KVC * DH:(KVC + 1) * DH]).reshape(-1).clone()
         return x
     bridge.run_with_hooks(torch.tensor([item["ids"]], device="cuda"), fwd_hooks=[(HV, grab)])
     return got["v"]
@@ -154,7 +154,10 @@ def tl_arms(bridge, item, crow, donor_v, batch=True):
                 arm = j if batch else fn.arm
                 k = arm - 1 - (0 if x_layer == LC else H)
                 if 0 <= k < H and (arm - 1) // H == (0 if x_layer == LC else 1):
-                    x[j, -1, k * DH:(k + 1) * DH] = 0
+                    if x.dim() == 4:                    # TL bridge: (batch, pos, heads, d_head)
+                        x[j, -1, k] = 0
+                    else:
+                        x[j, -1, k * DH:(k + 1) * DH] = 0
             return x
         return fn
 
@@ -162,7 +165,10 @@ def tl_arms(bridge, item, crow, donor_v, batch=True):
         for j in range(x.shape[0]):
             arm = j if batch else vx.arm
             if arm == n - 1:
-                x[j, crow, KVC * DH:(KVC + 1) * DH] = donor_v.to(x.dtype)
+                if x.dim() == 4:
+                    x[j, crow, KVC] = donor_v.to(x.dtype).reshape(-1)
+                else:
+                    x[j, crow, KVC * DH:(KVC + 1) * DH] = donor_v.to(x.dtype)
         return x
 
     def keep_p(x, hook):
@@ -179,6 +185,17 @@ def tl_arms(bridge, item, crow, donor_v, batch=True):
             fn.arm = arm
         rows.append(bridge.run_with_hooks(ids, fwd_hooks=hooks)[0, -1].float().cpu())
     return torch.stack(rows), pat["p"]
+
+
+def tl_base(bridge, item):
+    """fp32 CPU leg: the base forward only (R1 margins, R4 pattern at L_c, last row)."""
+    pat = {}
+
+    def keep_p(x, hook):
+        pat["p"] = x[0, :, -1].float().cpu().clone()
+        return x
+    lg = bridge.run_with_hooks(torch.tensor([item["ids"]]), fwd_hooks=[(HP, keep_p)])[:, -1].float().cpu()
+    return lg, pat["p"]
 
 
 recs = []
@@ -199,7 +216,11 @@ for item in base:
            "mdb": M(native).tolist(),
            "max_abs_logit": float(native[:, [a, b]].abs().max())}
     pats = {}
-    for name, br in (("U16", U16), ("P16", P16), ("U32", U32), ("P32", P32)):
+    for name, br in (("U32", U32), ("P32", P32)):
+        L_, p_ = tl_base(br, item)
+        rec[name] = M(L_).tolist()
+        pats[name] = p_
+    for name, br in (("U16", U16), ("P16", P16)):
         dvb = tl_donor_v(br, donor, dcrow)
         L_, p_ = tl_arms(br, item, crow, dvb, batch=True)
         rec[name] = M(L_).tolist()
