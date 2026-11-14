@@ -302,7 +302,8 @@ class LiveSession:
                     and stop["where"] == self.where:
                 kinds = {self.ctx.table.items[i].kind for i in stop["ids"]
                          if i in self.ctx.table.items}
-                stopped = "watch" if kinds == {"watch"} else "breakpoint"
+                stopped = ("watch+breakpoint" if "watch" in kinds and kinds - {"watch"} else
+                           "watch" if kinds == {"watch"} else "breakpoint")
             body = self._done(label, effect, "console", stopped,
                               "refused" if out.startswith("error") else "resolved")
             body["text"] = out

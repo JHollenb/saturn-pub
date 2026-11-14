@@ -176,3 +176,37 @@ def test_supplied_forecast_seals_and_is_judged(debugger):
     assert abs(out["ratio"]["value"] - 0.75) < 1e-12
     small = supplied.judge(rec, 0.01, magnitude=10.0, dtype=torch.bfloat16)
     assert small["native_effect"] is False and small["sign_agrees"] is None
+
+
+def test_offline_component_binding_equals_live_bitwise(debugger, basis, tmp_path):
+    """SC5: a capture of h (and the value cache) at declared rows builds the same binding as the
+    live run, bitwise, with no forward pass; the capture survives save/load; provenance says so."""
+    run = _run(debugger)
+    cell = "cache.L1.v[kv0,row=2]"
+    live = components.component_binding(run, "c", cell, basis)
+    cap = components.ResidualCapture.from_run(run, rows=[2, 3], layers=[1])
+    path = str(tmp_path / "h.pt")
+    cap.save(path)
+    for source in (cap, components.ResidualCapture.load(path)):
+        off = components.component_binding(None, "c", cell, basis, capture=source,
+                                           adapter=debugger.adapter)
+        assert [c.name for c in off.components] == [c.name for c in live.components]
+        for a, b in zip(off.components, live.components):
+            assert torch.equal(a.value, b.value) and torch.equal(a.residual, b.residual)
+        assert torch.equal(off.native, live.native) and torch.equal(off.linear, live.linear)
+        assert off.rho == live.rho and off.active == live.active
+        assert off.provenance["offline"] and off.provenance["native_cell"] == "capture.values"
+        assert "capture" in off.provenance["h"]
+    assert not live.provenance["offline"] and live.provenance["h"] == "live Run.read"
+    # h without values: the native cell is read from the run; without a run it is refused
+    thin = components.ResidualCapture.from_run(run, rows=[2], layers=[1], values=False)
+    mixed = components.component_binding(run, "c", cell, basis, capture=thin)
+    assert torch.equal(mixed.native, live.native)
+    with pytest.raises(Refusal, match="no value cache"):
+        components.component_binding(None, "c", cell, basis, capture=thin,
+                                     adapter=debugger.adapter)
+    with pytest.raises(Refusal, match="holds no h"):
+        components.component_binding(None, "c", "cache.L1.v[kv0,row=1]", basis, capture=cap,
+                                     adapter=debugger.adapter)
+    with pytest.raises(Refusal, match="not stepped"):
+        components.ResidualCapture.from_run(run, rows=[0], layers=[1])

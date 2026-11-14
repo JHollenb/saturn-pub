@@ -247,6 +247,44 @@ def saelens_ref(repo: str | None, layer: int, port: str) -> dict[str, Any]:
     return out
 
 
+def saelens_from_local(release: str, sae_id: str, local_dir: str, *, device: str = "cpu",
+                       cfg_overrides: dict[str, Any] | None = None) -> Any:
+    """``SAE.from_pretrained(release, sae_id)`` with SAELens's OWN registered converter, reading
+    the checkpoint from ``local_dir`` instead of the Hugging Face hub (offline / non-cache layout).
+
+    SAELens resolves a release through ``pretrained_saes.yaml`` and the converter named there; for
+    the Qwen-Scope suites that is ``qwen_scope`` = ``sae_lens.loading.pretrained_sae_loaders.
+    qwen_scope_sae_huggingface_loader``, which fetches the file with the module-global
+    ``hf_hub_download(repo_id, filename=folder_name)``. This passes that converter, unchanged, as
+    ``from_pretrained(..., converter=...)`` while that one name is rebound (for the duration of
+    the call) to return ``local_dir/<filename>`` (``local_dir`` may also be the single file).
+    Nothing of mdb's ``to_saelens`` is used, so SAELens's loader and a ``FeatureBasis`` over the
+    same file can be compared. ``cfg_overrides`` (e.g. a tiny ``d_in``/``d_sae``/``activation_fn_
+    kwargs``) are merged last into the converter's config, exactly as SAELens's own overrides are."""
+    from sae_lens import SAE
+    from sae_lens.loading import pretrained_sae_loaders as loaders
+
+    converter = loaders.NAMED_PRETRAINED_SAE_LOADERS["qwen_scope"]
+    local = os.path.abspath(os.path.expanduser(local_dir))
+
+    def fetch(repo_id: str, filename: str | None = None, **_kw: Any) -> str:
+        path = local if os.path.isfile(local) else os.path.join(local, os.path.basename(filename or ""))
+        if not os.path.isfile(path):
+            raise SaeError(f"{path} does not exist (SAELens asked for {repo_id}/{filename})")
+        return path
+
+    def convert(**kw: Any) -> Any:
+        kw["cfg_overrides"] = {**(kw.get("cfg_overrides") or {}), **(cfg_overrides or {})}
+        return converter(**kw)
+
+    saved = loaders.hf_hub_download
+    loaders.hf_hub_download = fetch
+    try:
+        return SAE.from_pretrained(release, sae_id, device=device, converter=convert).eval()
+    finally:
+        loaders.hf_hub_download = saved
+
+
 # Rows where a residual SAE is off its training distribution: Qwen-Scope's report (arXiv
 # 2605.11887, section 2.2) filters activations with extreme L2 norm from training, "especially
 # ... the first token of each input sequence" (the attention-sink row). mdb prompts carry no BOS,

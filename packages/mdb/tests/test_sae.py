@@ -226,3 +226,30 @@ def test_to_saelens_matches_the_identity(debugger, sae_dir):
         recon = theirs.decode(acts)[0]
     assert sorted(acts[0].nonzero().reshape(-1).tolist()) == sorted(dec.ids)
     assert torch.allclose(recon.double(), dec.recon, atol=1e-5)
+
+
+def test_saelens_from_local_equals_featurebasis(tmp_path):
+    """SAELens's own ``qwen_scope`` converter, pointed at a local Qwen-Scope-format file, builds
+    the same SAE as mdb's FeatureBasis: same tensors bitwise, same active set on random inputs."""
+    pytest.importorskip("sae_lens")
+    d, f, k = 16, 64, 5
+    g = torch.Generator().manual_seed(3)
+    state = {"W_enc": torch.randn(f, d, generator=g), "b_enc": torch.randn(f, generator=g) * 0.1,
+             "W_dec": torch.randn(d, f, generator=g) / 8, "b_dec": torch.randn(d, generator=g) * 0.1}
+    torch.save(state, tmp_path / "layer19.sae.pt")
+    (tmp_path / "config.json").write_text(json.dumps({"k": k, "hook_point": "resid_post"}))
+    theirs = sae.saelens_from_local(
+        "qwen-scope-3-1.7b-base-w32k-l50", "layer19", str(tmp_path),
+        cfg_overrides={"d_in": d, "d_sae": f, "activation_fn_kwargs": {"k": k}})
+    basis = sae.open_set("s", str(tmp_path)).get(19)
+    assert theirs.cfg.metadata.hook_name == "blocks.19.hook_resid_post"
+    assert torch.equal(theirs.W_enc, basis.W_enc.T) and torch.equal(theirs.W_dec, basis.W_dec.T)
+    assert torch.equal(theirs.b_enc, basis.b_enc) and torch.equal(theirs.b_dec, basis.b_dec)
+    xs = torch.randn(8, d, generator=g) * 3
+    with torch.no_grad():
+        acts = theirs.encode(xs)
+    for row, x in zip(acts, xs):
+        assert sorted(row.nonzero().reshape(-1).tolist()) == sorted(basis.encode(x)["ids"])
+    # the shim restores the module's hub function
+    from sae_lens.loading import pretrained_sae_loaders as loaders
+    assert loaders.hf_hub_download.__module__.startswith("huggingface_hub")
