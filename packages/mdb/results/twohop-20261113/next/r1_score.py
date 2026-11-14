@@ -7,6 +7,7 @@ captures in CAPDIR (cap/, arm/). Prereg: next/prereg_run1.json.
 import json
 import math
 import random
+import zlib
 import statistics as st
 import sys
 from pathlib import Path
@@ -34,6 +35,20 @@ CAPITALS = sorted(set(base_c["capital_tokens"].values()) | {i["capital_token"] f
 ENT = sorted({tok(" " + i["descriptor"], add_special_tokens=False)["input_ids"][0] for i in allc})
 ALL = sorted(set(COUNTRIES) | set(CAPITALS) | set(ENT))
 g_of = torch.arange(H) // (H // KV)
+BRIDGE = {}
+for i in allc:
+    if i.get("country_token") and i.get("bridge"):
+        BRIDGE.setdefault(i["bridge"], {"country": i["country_token"]})
+for b_, t_ in base_c["capital_tokens"].items():
+    BRIDGE.setdefault(b_, {})["capital"] = t_
+L0PRED = {}
+for tag in ("1a", "1b"):
+    L0PRED.update(torch.load(f"forecasts-{tag}-l0pred.pt", weights_only=False))
+
+
+def bf16_spacing(x):
+    x = x.abs().clamp_min(2.0 ** -126)
+    return torch.exp2(torch.floor(torch.log2(x)) - 7)
 
 
 def safe(i):
@@ -210,14 +225,30 @@ for iid, a in arms.items():
     r_arg = max(score, key=score.get)
     res["address"].setdefault(a["group"], []).append(
         {"gt": it["row"], "argmax": r_arg, "last": it["last_row"], "first": span[0],
-         "random": random.Random(hash(iid) % 1000).choice(span)})
+         "random": random.Random(zlib.crc32(iid.encode())).choice(span)})
     rd = res["readouts"].setdefault(a["group"], {"declared": [], "B_answer_h": [], "B_answer_hout": []})
     rd["declared"].append(readout(cell_write(cap, 20, it["row"], 6), it))
     for nm_, port in (("B_answer_h", "L20.h"), ("B_answer_hout", "L20.h_out")):
         rd[nm_].append(readout(cap[port].reshape(-1), it))
+    armc = torch.load(Path(CAPDIR) / "arm" / f"{safe(iid)}.pt", map_location="cpu", weights_only=False)
+    # mask-cut f32 check at L0 (measured Delta o_0 vs the closed forms, bf16 vs replica-f32 p)
+    l0 = L0PRED.get(iid, {})
+    for kind in ("t0_zero", "t0_mask", "relay_zero", "relay_mask"):
+        key = f"{kind}.L0.o"
+        if key not in armc or f"{kind}|bf" not in l0:
+            continue
+        o_cut = armc[key].reshape(-1)
+        meas = o_cut - cap["L0.o"].reshape(-1)
+        sp_ = bf16_spacing(o_cut) + bf16_spacing(cap["L0.o"].reshape(-1))
+        row_ = {"group": a["group"]}
+        for st_ in ("bf", "f32"):
+            e = (meas - l0[f"{kind}|{st_}"]).abs()
+            row_[f"rel_err_{st_}"] = float(e.norm() / meas.norm().clamp_min(1e-9))
+            row_[f"within2_{st_}"] = bool((e <= 2 * sp_).all())
+            row_[f"frac_within2_{st_}"] = float((e <= 2 * sp_).float().mean())
+        res["cuts"].setdefault(kind, []).append(row_)
     # hop ladders of code swaps (base)
     if a["group"] == "base":
-        armc = torch.load(Path(CAPDIR) / "arm" / f"{safe(iid)}.pt", map_location="cpu", weights_only=False)
         lad = {}
         for n_ in a.get("swaps", {}):
             pre = f"swap_{n_}."
@@ -231,16 +262,6 @@ for iid, a in arms.items():
             content = readout(cell_write(cap, 20, it["row"], 6, cap["swap_values"][n_]), it)
             lad[n_] = {"native": nat, "direct": d, "mlp": mlp, "reread": rr, "content": content}
         res["hop_ladders"][iid] = lad
-        # mask-cut f32 check at L0 (measured Delta o_0 vs closed forms)
-        l0 = torch.load(f"forecasts-1a-l0pred.pt", weights_only=False).get(iid, {})
-        for kind in ("t0_zero", "t0_mask", "relay_zero", "relay_mask"):
-            key = f"{kind}.L0.o"
-            if key not in armc or f"{kind}|bf" not in l0:
-                continue
-            meas = armc[key].reshape(-1) - cap["L0.o"].reshape(-1)
-            res["cuts"].setdefault(kind, []).append(
-                {"rel_err_bf": float((meas - l0[f"{kind}|bf"]).norm() / meas.norm().clamp_min(1e-9)),
-                 "rel_err_f32": float((meas - l0[f"{kind}|f32"]).norm() / meas.norm().clamp_min(1e-9))})
 res["contrast"] = {"share_spearman": q(sp_share), "contrast_spearman": q(sp_contrast),
                    "contrast_beats_share": rate(c_ > s_ for c_, s_ in zip(sp_contrast, sp_share)
                                                 if not (math.isnan(c_) or math.isnan(s_)))}
@@ -255,19 +276,26 @@ for g, rd in res["readouts"].items():
 for kind, rows in res["cuts"].items():
     res["cuts"][kind] = {"rel_err_bf": q([r["rel_err_bf"] for r in rows]),
                          "rel_err_f32": q([r["rel_err_f32"] for r in rows]),
-                         "f32_better": rate(r["rel_err_f32"] < r["rel_err_bf"] for r in rows)}
+                         "f32_better": rate(r["rel_err_f32"] < r["rel_err_bf"] for r in rows),
+                         "within2_bf": rate(r["within2_bf"] for r in rows),
+                         "within2_f32": rate(r["within2_f32"] for r in rows),
+                         "frac_elems_within2_f32": q([r["frac_within2_f32"] for r in rows]),
+                         "frac_elems_within2_bf": q([r["frac_within2_bf"] for r in rows])}
 # relay band vs cell transplant; code; 2x2; coalition; knock-out (natives)
 rel, code, tbt, coal, ko = [], {}, [], [], {}
 for iid, a in arms.items():
     if a["group"] != "base":
         continue
     M0 = a["native"]["logits"][0] - a["native"]["logits"][1]
-    dmv = dict(zip([tuple(k) if k[0] == "relay_band" else None for k in a["sweep"]["keys"]], a["sweep"]["dM"]))
     band = [dm for k, dm in zip(a["sweep"]["keys"], a["sweep"]["dM"]) if k[0] == "relay_band"][0]
     cell = a["swaps"]["donor0"]["logits"][0] - a["swaps"]["donor0"]["logits"][1] - M0
     rel.append(abs(band) > 0.5 * abs(cell))
     for n_, v in a["swaps"].items():
-        code.setdefault(n_, []).append({"dM": v["logits"][0] - v["logits"][1] - M0,
+        oc = BRIDGE.get(a.get("other_country"), {})
+        cont = res["hop_ladders"].get(iid, {}).get(n_, {}).get("content")
+        code.setdefault(n_, []).append({"names_other": bool(cont) and cont["countries"]["best"] == oc.get("country"),
+                                        "flips_other_capital": v["argmax"] == oc.get("capital"),
+                                        "dM": v["logits"][0] - v["logits"][1] - M0,
                                         "kept": v["argmax"] == items[iid]["answer"], "family": a["family"],
                                         "content": res["hop_ladders"].get(iid, {}).get(n_, {}).get("content")})
     t = a.get("two_by_two", {})
@@ -283,15 +311,15 @@ for iid, a in arms.items():
         ko.setdefault("named_beats_random", []).append(abs(d["named"]) - abs(d["random"]) >= 0.5)
         ko.setdefault("named_beats_answer_null", []).append(abs(d["named"]) - abs(d["answer_null"]) >= 0.5)
 res["cuts"]["relay_band_gt_half_cell"] = rate(rel)
-cm = {r["id"] if False else i: r for i, r in enumerate([])}
 res["code"] = {n_: {"dM": q([x["dM"] for x in v]), "abs_dM": q([abs(x["dM"]) for x in v]),
                     "kept": rate(x["kept"] for x in v),
                     "kept_non_city": rate(x["kept"] for x in v if x["family"] != "city"),
                     "kept_city": rate(x["kept"] for x in v if x["family"] == "city"),
                     "content_country_ok": rate(x["content"]["countries"]["ok"] for x in v if x["content"]),
-                    "content_capital_ok": rate(x["content"]["capitals"]["ok"] for x in v if x["content"])}
+                    "content_capital_ok": rate(x["content"]["capitals"]["ok"] for x in v if x["content"]),
+                    "content_names_other_country": rate(x["names_other"] for x in v),
+                    "argmax_is_other_capital": rate(x["flips_other_capital"] for x in v)}
                for n_, v in code.items()}
-pm = {i: x["dM"] for i, x in enumerate(code.get("panel_mean", []))}
 res["code"]["country_lt_panel"] = None
 if "country_mean" in code:
     pairs = []

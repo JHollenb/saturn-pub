@@ -66,6 +66,7 @@ for k, pr in enumerate(prompts):
     ids = tok(pr["text"], add_special_tokens=False)["input_ids"]
     n = len(ids)
     x = torch.tensor([ids], device="cuda")
+    grads = []  # filled inside the backward block (its locals do not reach this frame; job-9044d2a117a4)
     with nm.trace(x):
         emb = nm.model.embed_tokens.output
         emb.requires_grad_(True)
@@ -81,7 +82,8 @@ for k, pr in enumerate(prompts):
         tv, ti = top.values.save(), top.indices.save()
         M = top.values[0] - top.values[1]
         with M.backward():
-            grads = [h.grad.save() for h in reversed(hs)]
+            for h in reversed(hs):
+                grads.append(h.grad.save())
     grads = list(reversed(grads))
     hstack = torch.stack([h[0].detach().float() for h in hs_s])            # (L+1, n, d)
     gstack = torch.stack([g[0].detach().float() for g in grads])
