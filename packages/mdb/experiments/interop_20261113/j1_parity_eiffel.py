@@ -201,17 +201,22 @@ lap("dla")
 bridge = cache = None
 torch.cuda.empty_cache()
 
-# processed TL (HookedTransformer numerics), bf16 and fp32 copies
+# processed TL (HookedTransformer numerics), bf16 and fp32 copies, on the CPU (the GPU is
+# shared with another job; 18-token forwards)
 for dtype_name, dtype in (("bf16", torch.bfloat16), ("fp32", torch.float32)):
     try:
-        copy = load_local(MODEL, dtype="bf16" if dtype is torch.bfloat16 else "fp32", device=DEV)
+        copy = load_local(MODEL, dtype="bf16" if dtype is torch.bfloat16 else "fp32", device="cpu")
+        with torch.no_grad():
+            m_cpu = margin(copy(ids.cpu()).logits)  # same dtype, CPU kernels, unprocessed
         b2 = tl.bridge(copy, tok, in_place=True)
         before = copy.model.layers[0]._original_component.self_attn.v_proj.weight.detach().clone() \
             if hasattr(copy.model.layers[0], "_original_component") else None
         b2.enable_compatibility_mode(disable_warnings=True)
-        lg, c2 = b2.run_with_cache(ids)
-        _, rc2 = b2.run_with_cache(torch.tensor([rome], device=DEV))
+        lg, c2 = b2.run_with_cache(ids.cpu())
+        _, rc2 = b2.run_with_cache(torch.tensor([rome]))
         out = {"M": margin(lg), "M_minus_hf": margin(lg) - R["base_M_hf_full"],
+               "M_unprocessed_same_device": m_cpu, "M_minus_unprocessed_same_device":
+               margin(lg) - m_cpu, "device": "cpu",
                "processed": tl.processed(b2), "top1": int(lg[0, -1].argmax())}
         if before is not None:
             after = copy.model.layers[0]._original_component.self_attn.v_proj.weight
@@ -219,12 +224,12 @@ for dtype_name, dtype in (("bf16", torch.bfloat16), ("fp32", torch.float32)):
         pattern = {}
         for layer in (0, 22, 27):
             hk = f"blocks.{layer}.attn.hook_pattern"
-            pattern[layer] = float((c2[hk].double() - t[f"L{layer}.p"].double()).abs().max())
+            pattern[layer] = float((c2[hk].double() - t[f"L{layer}.p"].double().cpu()).abs().max())
         out["pattern_max_diff_vs_native"] = pattern
         res = {}
         for layer in (0, 22, 27):
             a = c2[f"blocks.{layer}.hook_resid_post"][0].double()
-            b = t[f"L{layer}.h_out"][0].double()
+            b = t[f"L{layer}.h_out"][0].double().cpu()
             res[layer] = {"raw": float((a - b).abs().max()),
                           "centred": float(((a - a.mean(-1, keepdim=True))
                                             - (b - b.mean(-1, keepdim=True))).abs().max())}
@@ -243,13 +248,13 @@ for dtype_name, dtype in (("bf16", torch.bfloat16), ("fp32", torch.float32)):
             value[:, -1, 6] = 0
             return value
         with torch.no_grad():
-            out["zero_L22h6_last"] = margin(b2.run_with_hooks(ids, fwd_hooks=[(z, zh)])) - out["M"]
+            out["zero_L22h6_last"] = margin(b2.run_with_hooks(ids.cpu(), fwd_hooks=[(z, zh)])) - out["M"]
 
             def vp(value, hook):
                 value[:, 11, 1] = rc2["blocks.22.attn.hook_v"][:, 11, 1]
                 return value
             out["patch_v_L22kv1_row11_sequence"] = margin(b2.run_with_hooks(
-                ids, fwd_hooks=[("blocks.22.attn.hook_v", vp)])) - out["M"]
+                ids.cpu(), fwd_hooks=[("blocks.22.attn.hook_v", vp)])) - out["M"]
         R[f"tl_processed_{dtype_name}"] = out
         b2 = c2 = rc2 = copy = None
     except Exception as error:
