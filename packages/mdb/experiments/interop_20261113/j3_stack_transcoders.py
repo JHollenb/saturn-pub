@@ -230,7 +230,20 @@ for i in range(min(N_VERIFY, len(recipients))):
         rows.append(row)
     lap(f"verify prompt {i}")
 R["mdb_verify"] = rows
-model = dbg = run = None
+
+
+def _dump():
+    nodes_out = {l: {"input": v["input"], "error_direct": v["error_direct"],
+                     "features": [{k: x for k, x in f.items() if k != "vector"}
+                                  for f in v["features"]]} for l, v in nodes.items()}
+    json.dump({**R, "nodes": nodes_out}, open(OUT, "w"), indent=1, default=str)
+
+
+_dump()  # checkpoint before the post-trained model
+model = dbg = run = batch = None
+import gc  # noqa: E402
+
+gc.collect()
 torch.cuda.empty_cache()
 
 # ------------------------------------------------------------- FVU on the post-trained model
@@ -252,10 +265,5 @@ R["fvu_post"] = fvu_post
 R["fvu_ratio_base_over_post"] = {l: fvus[l][fvus[l]["used"]]["fvu"] / fvu_post[l] for l in chosen}
 R["peak_vram_gb"] = torch.cuda.max_memory_allocated() / 2**30
 lap("fvu post")
-for layer in nodes:
-    for f in nodes[layer]["features"]:
-        f.pop("vector")
-R["nodes"] = {l: {"input": v["input"], "features": v["features"],
-                  "error_direct": v["error_direct"]} for l, v in nodes.items()}
-json.dump(R, open(OUT, "w"), indent=1, default=str)
+_dump()
 lap("done")

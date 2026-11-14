@@ -12,10 +12,11 @@ warnings.filterwarnings("ignore")
 T0 = time.time()
 MODEL, OUT = sys.argv[1], sys.argv[2]
 DTYPE = sys.argv[3] if len(sys.argv) > 3 else "bf16"
+from transformers import AutoTokenizer  # noqa: E402
+
 import mdb  # noqa: E402
 from mdb.engine.models import load_local  # noqa: E402
 from mdb.interop import tl  # noqa: E402
-from transformers import AutoTokenizer  # noqa: E402
 
 tok = AutoTokenizer.from_pretrained(MODEL)
 e = lambda s: tok.encode(s, add_special_tokens=False)  # noqa: E731
