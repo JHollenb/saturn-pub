@@ -1,0 +1,40 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 870fcfa9ef8a624275f8fe4e44195dcece00fd0f recipients 48..64
+load 4.0s; recipients 48..63 (16)
+ITEM {"id": "city:Kyoto", "tokens": [26194, 26549, 19846, 26194], "native": [30.375, 26.875, 25.125, 30.375], "native_argmax": 26194, "donor_prompt": [[29.125, 31.875, 27.125, 29.125], [22.625, 22.0, 29.5, 22.625]], "control_prompt": [31.875, 25.375, 23.875, 31.875], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -7.125}, "stepped_seconds": 26.96837781299837, "seconds": 29.38986974600266, "F1": [36, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.45, "arms": 1120}
+T 33.4s
+ITEM {"id": "city:Busan", "tokens": [50189, 26549, 22415, 50189], "native": [28.875, 24.625, 22.375, 28.875], "native_argmax": 50189, "donor_prompt": [[26.0, 31.0, 26.5, 26.0], [21.875, 24.125, 30.375, 21.875]], "control_prompt": [30.5, 24.75, 22.375, 30.5], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -9.1875}, "stepped_seconds": 26.454443441005424, "seconds": 28.25673044999712, "F1": [37, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.42, "arms": 2016}
+T 61.6s
+ITEM {"id": "city:Shanghai", "tokens": [26549, 19846, 19846, 26549], "native": [31.875, 27.125, 27.125, 31.875], "native_argmax": 26549, "donor_prompt": [[22.0, 29.5, 29.5, 22.0], [22.25, 30.0, 30.0, 22.25]], "control_prompt": [31.0, 26.5, 26.5, 31.0], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -7.625}, "stepped_seconds": 26.175142391002737, "seconds": 27.950604888996168, "F1": [36, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.26, "arms": 1120}
+T 89.6s
+ITEM {"id": "city:Shenzhen", "tokens": [26549, 22415, 24081, 26549], "native": [31.0, 26.5, 25.25, 31.0], "native_argmax": 26549, "donor_prompt": [[24.125, 30.375, 24.0, 24.125], [21.625, 22.0, 30.0, 21.625]], "control_prompt": [32.25, 23.875, 23.5, 32.25], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -7.25}, "stepped_seconds": 26.937707036995562, "seconds": 28.796398844999203, "F1": [37, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.44, "arms": 2016}
+T 118.4s
+ITEM {"id": "city:Saint Petersburg", "tokens": [22415, 24081, 72176, 22415], "native": [30.375, 24.0, 25.75, 30.375], "native_argmax": 22415, "donor_prompt": [[22.0, 30.0, 20.75, 22.0], [23.25, 22.25, 28.5, 23.25]], "control_prompt": [31.625, 21.625, 23.25, 31.625], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -9.875}, "stepped_seconds": 27.186754219997965, "seconds": 29.001345667995338, "F1": [37, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.43, "arms": 2016}
+T 147.4s
+ITEM {"id": "city:Munich", "tokens": [19846, 21718, 21718, 19846], "native": [29.5, 23.75, 23.75, 29.5], "native_argmax": 19846, "donor_prompt": [[25.875, 30.5, 30.5, 25.875], [24.5, 31.625, 31.625, 24.5]], "control_prompt": [30.0, 25.375, 25.375, 30.0], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -8.3125}, "stepped_seconds": 26.891145989000506, "seconds": 28.511271978000877, "F1": [36, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.26, "arms": 1120}
+T 175.9s
+ITEM {"id": "city:Hamburg", "tokens": [19846, 21718, 21718, 19846], "native": [30.0, 25.375, 25.375, 30.0], "native_argmax": 19846, "donor_prompt": [[25.875, 30.5, 30.5, 25.875], [24.5, 31.625, 31.625, 24.5]], "control_prompt": [29.5, 23.75, 23.75, 29.5], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -6.125}, "stepped_seconds": 26.25771006499417, "seconds": 27.864859667002747, "F1": [36, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.25, "arms": 1120}
+T 203.8s
+ITEM {"id": "city:Milan", "tokens": [21718, 24081, 80701, 21718], "native": [30.5, 26.375, 23.375, 30.5], "native_argmax": 21718, "donor_prompt": [[26.875, 30.0, 24.75, 26.875], [27.75, 27.625, 30.25, 27.75]], "control_prompt": [31.625, 26.25, 26.0, 31.625], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -6.5}, "stepped_seconds": 26.212023872001737, "seconds": 27.830502071999945, "F1": [36, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.25, "arms": 1120}
+T 231.6s
+ITEM {"id": "city:Naples", "tokens": [21718, 24081, 80701, 21718], "native": [31.625, 26.25, 26.0, 31.625], "native_argmax": 21718, "donor_prompt": [[26.875, 30.0, 24.75, 26.875], [27.75, 27.625, 30.25, 27.75]], "control_prompt": [30.5, 26.375, 23.375, 30.5], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -6.8125}, "stepped_seconds": 27.214728845996433, "seconds": 28.82585674100119, "F1": [36, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.26, "arms": 1120}
+T 260.4s
+ITEM {"id": "city:Barcelona", "tokens": [24081, 80701, 37741, 24081], "native": [30.0, 24.75, 23.5, 30.0], "native_argmax": 24081, "donor_prompt": [[27.625, 30.25, 25.625, 27.625], [24.75, 23.5, 29.875, 24.75]], "control_prompt": [30.0, 25.75, 23.25, 30.0], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -6.3125}, "stepped_seconds": 25.51941840100335, "seconds": 27.145110921002924, "F1": [36, 20, 6], "null_vs_stepped": 0.375, "sweep_seconds": 0.24, "arms": 1120}
+T 287.6s
+ITEM {"id": "city:Seville", "tokens": [24081, 72176, 46287, 24081], "native": [30.0, 20.75, 23.375, 30.0], "native_argmax": 24081, "donor_prompt": [[22.25, 28.5, 26.5, 22.25], [23.25, 19.375, 30.125, 23.25]], "control_prompt": [29.75, 18.625, 23.375, 29.75], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -9.75}, "stepped_seconds": 25.518427469993185, "seconds": 27.252251448000607, "F1": [37, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.4, "arms": 2016}
+T 314.8s
+ITEM {"id": "city:Porto", "tokens": [80701, 37741, 57858], "native": [30.25, 25.625, 22.25], "native_argmax": 80701, "donor_prompt": [[23.5, 29.875, 24.75], [22.25, 23.625, 30.5]], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -9.4375}, "stepped_seconds": 21.65959041700262, "seconds": 22.855246273000375, "F1": [36, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.2, "arms": 896}
+T 337.7s
+ITEM {"id": "city:Rotterdam", "tokens": [37741, 57858, 70244, 37741], "native": [29.875, 24.75, 22.0, 29.875], "native_argmax": 37741, "donor_prompt": [[23.625, 30.5, 20.625, 23.625], [25.125, 23.75, 30.75, 25.125]], "control_prompt": [31.25, 22.625, 15.9375, 31.25], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -10.375}, "stepped_seconds": 22.628680033994897, "seconds": 24.168565827996645, "F1": [36, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.24, "arms": 1120}
+T 361.8s
+ITEM {"id": "city:Gothenburg", "tokens": [52082, 72176, 76334, 52082], "native": [30.625, 22.5, 26.625, 30.625], "native_argmax": 52082, "donor_prompt": [[24.5, 28.0, 23.375, 24.5], [27.875, 25.0, 30.75, 27.875]], "control_prompt": [29.25, 23.0, 26.875, 29.25], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -2.25}, "stepped_seconds": 22.230669260003197, "seconds": 24.17636654299713, "F1": [37, 20, 6], "null_vs_stepped": 0.25, "sweep_seconds": 0.56, "arms": 2912}
+T 386.0s
+ITEM {"id": "city:Krakow", "tokens": [72176, 46287, 37169, 72176], "native": [28.5, 26.5, 24.0, 28.5], "native_argmax": 72176, "donor_prompt": [[19.375, 30.125, 23.75, 19.375], [23.0, 23.25, 29.625, 23.0]], "control_prompt": [28.0, 23.375, 23.125, 28.0], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -5.3125}, "stepped_seconds": 31.68128190200514, "seconds": 33.39218863900169, "F1": [37, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.39, "arms": 2016}
+T 419.4s
+ITEM {"id": "city:Gdansk", "tokens": [72176, 76334, 52695, 72176], "native": [28.0, 23.375, 17.5, 28.0], "native_argmax": 72176, "donor_prompt": [[25.0, 30.75, 22.625, 25.0], [21.125, 20.25, 30.625, 21.125]], "control_prompt": [28.75, 18.25, 15.9375, 28.75], "gt": {"row": 38, "layer": 20, "kv": 6, "effect": -11.375}, "stepped_seconds": 33.1946205130007, "seconds": 35.98775508200197, "F1": [38, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.63, "arms": 2912}
+T 455.4s
+TOTAL 455.4s
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 7:36.85
+	Maximum resident set size (kbytes): 4351544
+-rw-rw-r-- 1 beast beast 1647852 Nov 13 21:50 job2-48-64.jsonl

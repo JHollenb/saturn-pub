@@ -1,0 +1,43 @@
+mrun: job-78d3d94817f7 -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 870fcfa9ef8a624275f8fe4e44195dcece00fd0f recipients 0..16
+load 3.9s; recipients 0..15 (16)
+ITEM {"id": "currency:yen", "tokens": [26194, 50189, 26549, 26194], "native": [31.875, 25.5, 25.375, 31.875], "native_argmax": 26194, "donor_prompt": [[24.875, 30.5, 24.75, 24.875], [26.125, 24.125, 32.25, 26.125]], "control_prompt": [31.375, 23.875, 24.75, 31.375], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -11.375}, "stepped_seconds": 26.598632121000264, "seconds": 28.535478384997987, "F1": [36, 20, 6], "null_vs_stepped": 0.0, "sweep_seconds": 0.27, "arms": 1120}
+T 32.5s
+ITEM {"id": "currency:won", "tokens": [50189, 26549, 7148, 50189], "native": [30.5, 24.75, 21.375, 30.5], "native_argmax": 50189, "donor_prompt": [[24.125, 32.25, 26.625, 24.125], [20.875, 21.625, 31.75, 20.875]], "control_prompt": [28.875, 24.625, 22.375, 28.875], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -13.4375}, "stepped_seconds": 26.76120744599757, "seconds": 28.383205602003727, "F1": [36, 20, 6], "null_vs_stepped": 0.25, "sweep_seconds": 0.25, "arms": 1120}
+T 60.9s
+ITEM {"id": "currency:ruble", "tokens": [22415, 59016, 69595, 22415], "native": [31.625, 21.375, 22.875, 31.625], "native_argmax": 22415, "donor_prompt": [[20.25, 31.375, 19.625, 20.25], [22.0, 20.875, 31.125, 22.0]], "control_prompt": [31.375, 19.875, 22.875, 31.375], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -3.5625}, "stepped_seconds": 26.806576255003165, "seconds": 28.643247799001983, "F1": [36, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.48, "arms": 2240}
+T 89.5s
+ITEM {"id": "currency:rouble", "tokens": [22415, 59016, 69595, 22415], "native": [31.375, 19.875, 22.875, 31.375], "native_argmax": 22415, "donor_prompt": [[20.25, 31.375, 19.625, 20.25], [22.0, 20.875, 31.125, 22.0]], "control_prompt": [31.625, 21.375, 22.875, 31.625], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -15.25}, "stepped_seconds": 26.54707976800273, "seconds": 28.400249398000597, "F1": [37, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.49, "arms": 2240}
+T 117.9s
+ITEM {"id": "currency:yuan", "tokens": [26549, 7148, 6515, 26549], "native": [32.25, 26.625, 26.375, 32.25], "native_argmax": 26549, "donor_prompt": [[21.625, 31.75, 22.75, 21.625], [27.0, 29.25, 32.5, 27.0]], "control_prompt": [32.5, 26.375, 25.5, 32.5], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -7.5}, "stepped_seconds": 26.723749952994694, "seconds": 28.324269728000218, "F1": [36, 20, 6], "null_vs_stepped": 0.0, "sweep_seconds": 0.25, "arms": 1120}
+T 146.2s
+ITEM {"id": "currency:renminbi", "tokens": [26549, 72176, 63033, 26549], "native": [32.5, 21.375, 22.875, 32.5], "native_argmax": 26549, "donor_prompt": [[17.625, 28.75, 14.75, 17.625], [24.125, 20.375, 32.0, 24.125]], "control_prompt": [32.25, 22.375, 21.25, 32.25], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -3.0625}, "stepped_seconds": 25.85007018900069, "seconds": 27.85819959299988, "F1": [37, 20, 6], "null_vs_stepped": 0.25, "sweep_seconds": 0.62, "arms": 2912}
+T 174.1s
+ITEM {"id": "currency:baht", "tokens": [59016, 69595, 52082, 59016], "native": [31.375, 19.625, 19.25, 31.375], "native_argmax": 59016, "donor_prompt": [[20.875, 31.125, 21.75, 20.875], [19.375, 23.625, 29.25, 19.375]], "control_prompt": [30.25, 20.875, 20.625, 30.25], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -16.75}, "stepped_seconds": 26.599123630003305, "seconds": 28.561075162993802, "F1": [37, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.42, "arms": 2016}
+T 202.7s
+ITEM {"id": "currency:zloty", "tokens": [72176, 63033, 86545, 72176], "native": [28.75, 14.75, 15.875, 28.75], "native_argmax": 72176, "donor_prompt": [[20.375, 32.0, 20.625, 20.375], [18.25, 22.125, 30.0, 18.25]], "control_prompt": [29.0, 15.375, 15.5625, 29.0], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -12.78125}, "stepped_seconds": 25.845561424001062, "seconds": 27.789767109999957, "F1": [37, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.59, "arms": 2912}
+T 230.5s
+ITEM {"id": "currency:forint", "tokens": [69595, 52082, 25445, 69595], "native": [31.125, 21.75, 20.125, 31.125], "native_argmax": 69595, "donor_prompt": [[23.625, 29.25, 20.625, 23.625], [22.0, 22.25, 30.875, 22.0]], "control_prompt": [30.375, 21.125, 19.75, 30.375], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -14.1875}, "stepped_seconds": 26.34135932999925, "seconds": 28.30760151999857, "F1": [37, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.43, "arms": 2016}
+T 258.8s
+ITEM {"id": "currency:krona", "tokens": [52082, 25445, 67289, 52082], "native": [29.25, 20.625, 23.875, 29.25], "native_argmax": 52082, "donor_prompt": [[22.25, 30.875, 23.875, 22.25], [22.375, 18.5, 28.0, 22.375]], "control_prompt": [30.0, 20.375, 21.625, 30.0], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -3.3125}, "stepped_seconds": 25.962420440999267, "seconds": 27.725554613003624, "F1": [36, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.41, "arms": 2016}
+T 286.5s
+ITEM {"id": "currency:rupiah", "tokens": [63033, 86545, 26549, 63033], "native": [32.0, 20.625, 24.125, 32.0], "native_argmax": 63033, "donor_prompt": [[22.125, 30.0, 22.25, 22.125], [22.875, 17.375, 32.5, 22.875]], "control_prompt": [27.875, 19.25, 23.75, 27.875], "gt": {"row": 38, "layer": 20, "kv": 6, "effect": -12.125}, "stepped_seconds": 27.256022163004673, "seconds": 29.391112708995934, "F1": [38, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.59, "arms": 2912}
+T 315.9s
+ITEM {"id": "currency:shekel", "tokens": [25445, 67289, 7148, 25445], "native": [30.875, 23.875, 25.5, 30.875], "native_argmax": 25445, "donor_prompt": [[18.5, 28.0, 20.875, 18.5], [21.25, 22.375, 32.5, 21.25]], "control_prompt": [29.25, 19.375, 21.25, 29.25], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -12.125}, "stepped_seconds": 31.722247994002828, "seconds": 33.576284875001875, "F1": [37, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.44, "arms": 2016}
+T 349.5s
+ITEM {"id": "currency:koruna", "tokens": [67289, 7148, 52695, 67289], "native": [28.0, 20.875, 15.5625, 28.0], "native_argmax": 67289, "donor_prompt": [[22.375, 32.5, 18.875, 22.375], [22.0, 24.625, 29.375, 22.0]], "control_prompt": [31.0, 24.0, 18.875, 31.0], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -14.3125}, "stepped_seconds": 32.225880928999686, "seconds": 34.25474535599642, "F1": [37, 20, 6], "null_vs_stepped": 0.5, "sweep_seconds": 0.46, "arms": 2016}
+T 383.7s
+ITEM {"id": "currency:pound sterling", "tokens": [7148, 52695, 22415, 7148], "native": [32.5, 18.875, 23.75, 32.5], "native_argmax": 7148, "donor_prompt": [[24.625, 29.375, 24.375, 24.625], [24.25, 22.625, 31.625, 24.25]], "control_prompt": [31.75, 18.75, 22.75, 31.75], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -4.6875}, "stepped_seconds": 31.934899644002144, "seconds": 33.82429027000035, "F1": [36, 20, 6], "null_vs_stepped": 0.25, "sweep_seconds": 0.47, "arms": 2016}
+T 417.5s
+ITEM {"id": "currency:sterling", "tokens": [7148, 6515, 26194, 7148], "native": [31.75, 22.75, 23.25, 31.75], "native_argmax": 7148, "donor_prompt": [[29.25, 32.5, 27.5, 29.25], [25.25, 24.75, 31.875, 25.25]], "control_prompt": [31.375, 23.0, 21.625, 31.375], "gt": {"row": 36, "layer": 20, "kv": 6, "effect": -9.5}, "stepped_seconds": 31.112781538999116, "seconds": 33.00153480500012, "F1": [36, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.26, "arms": 1120}
+T 450.6s
+ITEM {"id": "currency:rial", "tokens": [52695, 22415, 22415, 52695], "native": [29.375, 24.375, 24.375, 29.375], "native_argmax": 52695, "donor_prompt": [[22.625, 31.625, 31.625, 22.625], [21.625, 31.375, 31.375, 21.625]], "control_prompt": [29.25, 21.5, 21.5, 29.25], "gt": {"row": 37, "layer": 20, "kv": 6, "effect": -10.6875}, "stepped_seconds": 26.218435271999624, "seconds": 28.030699241004186, "F1": [37, 20, 6], "null_vs_stepped": 0.125, "sweep_seconds": 0.43, "arms": 2016}
+T 478.6s
+TOTAL 478.6s
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 8:00.15
+	Maximum resident set size (kbytes): 4352160
+-rw-rw-r-- 1 beast beast 2038262 Nov 13 21:43 job2-0-16.jsonl
+mrun: job-78d3d94817f7 -> succeeded
+mrun: job-78d3d94817f7 finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 481.16, 'peak_rss_mb': 1907.7, 'peak_vram_mb': 4462.0}
