@@ -63,7 +63,7 @@ def test_unknown_bad_args_and_refusals_without_a_model():
     with pytest.raises(Refused, match="no model attached"):
         dispatch(ctx, "start", {"prompt": [1, 2]})
     for name in SLOTS:
-        with pytest.raises(Refused, match="not built yet: (A6|B1)"):
+        with pytest.raises(Refused, match="not built yet: walkthrough export"):
             dispatch(ctx, name, {"anything": 1})
     assert dispatch(ctx, "checkpoints", {}) == {
         "op": "checkpoints", "checkpoints": [], "total": 0, "offset": 0, "limit": 32,

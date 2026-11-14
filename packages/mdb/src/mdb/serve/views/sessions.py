@@ -113,7 +113,7 @@ def capabilities(model) -> Capabilities:
                              reason=None if model.records() or model.findings()
                              else "no sealed records or findings in this session"),
         "pipeline": ViewAvail(available=False, reason="needs the engine's port program"),
-        "compare": ViewAvail(available=False, reason="later milestone (B4)"),
+        "compare": ViewAvail(available=False, reason="no compare view yet; use the compare op"),
     }
     return Capabilities(
         session=model.sid, axes=model.axes(), layers=layer_count(model), ports=ports,

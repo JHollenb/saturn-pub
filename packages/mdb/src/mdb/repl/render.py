@@ -129,6 +129,14 @@ def reduction_lines(result: dict[str, Any], indent: str = "  ") -> list[str]:
             if "replica_max_abs_diff" in provenance:
                 text += f" max_abs_diff {num(provenance['replica_max_abs_diff'])}"
             lines.append(f"{indent}replica check: {text}")
+    if "margin" in result:
+        margin = result["margin"]
+        value = margin["value"]
+        sides = f"logits[{_token_text([margin['a']])}] - logits[{_token_text([margin['b']])}]"
+        lines.append(f"{indent}{sides} = " + (
+            f"{fmt(value['value'])} {tag(value['authority'], why)}" if "authority" in value
+            else num(value)))
+        return lines
     if "tokens" in result:
         total = result.get("tokens_total", len(result["tokens"]))
         more = "" if total == len(result["tokens"]) else f" (last {len(result['tokens'])})"

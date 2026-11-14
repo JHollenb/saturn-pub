@@ -147,10 +147,13 @@ def resolve_target(ctx, text: str | None) -> Target:
     program = run.program
     text = (text or "").strip() or ctx.focus or run.where
     if "~" in text:
-        raise Refused("~program addresses are not built yet: A6 (compare)")
+        raise Refused("a ~program pointer is not a value this verb can read; read the stop itself "
+                      "(print ADDR)")
     base, bracket, tail = text.partition("[")
     if ":" in base or base.startswith("@"):
-        raise Refused("origins (branches, @cut+edit) are not built yet: A6 (compare)")
+        raise Refused("an address in another run or cut (NAME:ADDR, @cut+edit:ADDR) cannot be "
+                      "read with this verb; use it as an edit value (set ADDR = NAME:ADDR), or "
+                      "move to that run with `frame NAME:`")
     if base.startswith("cache."):
         try:
             cell = addresses.parse(text, ports=program.names, global_ports=GLOBALS)
@@ -181,7 +184,8 @@ def resolve_target(ctx, text: str | None) -> Target:
     except addresses.AddressError as error:
         raise BadArgs(f"bad address {text!r}: {error}") from None
     if parsed.port == "M":
-        raise Refused("the declared margin M is not built yet: A5 (explain)")
+        raise Refused("M[a,b] is a derived value, not a stop or a port: read it with print, x or "
+                      "display, analyse it with explain, forecast, whatif or compare")
     layer_port = _LAYER_PORT.fullmatch(label)
     if layer_port is not None and int(layer_port["layer"]) >= run.adapter.layers:
         raise BadArgs(f"no layer {layer_port['layer']} in a {run.adapter.layers}-layer model")
@@ -524,6 +528,41 @@ def _reduction(ctx, target: Target, *, k: int = 5, slice_count: int = 0,
     return out
 
 
+def _margin_reading(ctx, address: str | None) -> dict[str, Any] | None:
+    """``print``/``x``/``display`` of a declared margin ``M[a,b]`` (token ids or quoted texts, as
+    ``explain``/``forecast``/``whatif`` read them): the difference of the row's two logits at
+    the cursor, ``measured`` (the label of the logits stop's provenance), or ``Refused`` when
+    that row's logits are not computed yet. None when ``address`` is not a margin."""
+    from .predict import _margin
+
+    if address is None or ctx.run is None:
+        return None
+    margin = _margin(ctx, address)
+    if margin is None:
+        return None
+    run = ctx.run
+    stop = f"t{margin.row}.logits"
+    try:
+        logits = run.read(stop)
+    except ValueError:
+        raise Refused(f"M[{margin.a},{margin.b}] is the difference of two logits of row "
+                      f"t{margin.row}, not computed at {run.where}: run `until {stop}` first"
+                      ) from None
+    flat = logits.reshape(-1)
+    high, low = flat[margin.a].double(), flat[margin.b].double()   # slice, then one widening
+    provenance = _prov_json({**_bp().provenance(run, stop, None), "port": None})
+    authority, reason = _claim(provenance)
+    text = f"t{margin.row}.M[{margin.a},{margin.b}]"
+    number = (lambda v: _num(float(v), authority) if authority else _unresolved(reason or "refused"))
+    return {
+        "address": text, "shape": [], "dtype": "float64", "axes": [], "provenance": provenance,
+        "margin": {"a": _token(ctx, margin.a), "b": _token(ctx, margin.b),
+                   "logit_a": number(high), "logit_b": number(low), "value": number(high - low),
+                   "rule": f"logits[a] - logits[b] of {stop}; the exact float64 difference of "
+                           "the two stored logits"},
+    }
+
+
 # --------------------------------------------------------------------------- stops
 
 
@@ -552,7 +591,8 @@ def _displays(ctx) -> list[dict[str, Any]]:
     out = []
     for number, text in sorted(ctx.displays.items())[:MAX_DISPLAYS]:
         try:
-            item = _reduction(ctx, resolve_target(ctx, text), k=3, pointer=False)
+            item = _margin_reading(ctx, text) or _reduction(
+                ctx, resolve_target(ctx, text), k=3, pointer=False)
             item.pop("axes", None)
             out.append({"id": number, **item})
         except (OpError, ValueError) as error:
@@ -986,6 +1026,12 @@ def _op_ignore(ctx, id, count):  # noqa: A002
     usage="watch ADDR [change|level|edge] [if PREDICATE]")
 def _op_watch(ctx, address, mode, predicate):
     bp = _bp()
+    from .predict import _margin
+
+    if ctx.run is not None and _margin(ctx, address) is not None:
+        raise Refused("watch takes a stop, a port or a cache cell, not the derived margin "
+                      "M[a,b]; watch logits[a] and logits[b], or `display M[a,b]` to see it "
+                      "after every stop")
     try:
         item = ctx.table.add_watch(address, _program(ctx), predicate=predicate, mode=mode,
                                    adapter=_adapter(ctx))
@@ -1010,12 +1056,17 @@ def _op_display(ctx, address):
     if address is not None:
         if len(ctx.displays) >= MAX_DISPLAYS:
             raise Refused(f"at most {MAX_DISPLAYS} displays")
-        target = resolve_target(ctx, address)
-        _check_selector(ctx, target)
-        if target.cell is None and target.label is not None:
+        from .predict import _margin
+
+        if _margin(ctx, address) is not None:
             text = address.strip()
         else:
-            text = target.text
+            target = resolve_target(ctx, address)
+            _check_selector(ctx, target)
+            if target.cell is None and target.label is not None:
+                text = address.strip()
+            else:
+                text = target.text
         ctx.displays[ctx.next_display_id()] = text
     return {"displays": _displays(ctx)}
 
@@ -1046,6 +1097,9 @@ def _op_undisplay(ctx, ids):
         help="also show the first N selected values"),
     effect="read", usage="print [ADDR] [top=K] [slice=N]")
 def _op_print(ctx, address, top, slice):  # noqa: A002 - the arg name is the wire name
+    margin = _margin_reading(ctx, address)
+    if margin is not None:
+        return margin
     return _reduction(ctx, resolve_target(ctx, address), k=top, slice_count=slice)
 
 
@@ -1054,6 +1108,16 @@ def _op_print(ctx, address, top, slice):  # noqa: A002 - the arg name is the wir
     Arg("offset", "int", default=0, minimum=0), effect="read",
     usage="x [ADDR] [COUNT] [OFFSET]")
 def _op_x(ctx, address, count, offset):
+    margin = _margin_reading(ctx, address)
+    if margin is not None:
+        if offset:
+            raise BadArgs(f"offset {offset} is past the 1 selected value")
+        value = margin["margin"]["value"]
+        values = ({"values": [value["value"]], "authority": value["authority"]}
+                  if "authority" in value else value)
+        return {"address": margin["address"], "shape": [], "selected_shape": [],
+                "dtype": "float64", "offset": 0, "count": 1, "numel": 1, "values": values,
+                "provenance": margin["provenance"], "margin": margin["margin"]}
     target = resolve_target(ctx, address)
     value = _read(ctx, target)
     selection = _select(ctx, target, value)
@@ -1764,19 +1828,8 @@ def _op_reverse_continue(ctx):
 
 # --------------------------------------------------------------------------- slots
 
-for _name, _summary, _milestone in (
-    ("forecast", "Seal a forecast at the cursor before the native step", "A5"),
-    ("verify", "Check a sealed forecast against the native receipt", "A5"),
-    ("whatif", "Predicted versus measured effect of an edit on a consumer", "A5"),
-    ("explain", "Per-layer readout of a consumer with proof IDs and remainder", "A5"),
-    ("reads", "Who reads a value: attention reads with mass and causal verdict", "A6"),
-    ("symbols", "Symbol bindings at the cursor with readers and lifetimes", "A6"),
-    ("circuit", "Circuit records: nodes, edges, consumer, unlisted remainder", "A6"),
-    ("compare", "Compare branches (sham, A, B, A+B, predicted-only)", "A6"),
-    ("seek", "Seek to an occurrence through recorded projects", "A6"),
-    ("export", "Export a walkthrough bundle of records and pointers", "B1"),
-):
-    slot(_name, _summary, _milestone)
+slot("export", "Export a walkthrough bundle of records and pointers",
+     "walkthrough export has no command yet; sealed records stay in the project store")
 
 # old private names, kept for one commit
 _target, _value_source, _finite_limit = resolve_target, value_source, finite_limit

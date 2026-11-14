@@ -187,7 +187,7 @@ def test_nested_trace_project_and_bad_addresses_are_refused():
         with torch.no_grad():
             model(BATCH)
     assert outer["L0.m"].shape[0] == 3  # the outer trace kept working
-    with pytest.raises(Refused, match="not built yet"):
+    with pytest.raises(Refused, match="does not write to a project"):
         mdb.trace(model, ports=["L0.m"], project="runs/x")
     for bad, message in (("L0.qn", "no port 'qn'"), ("L9.m", "does not exist"),
                          ("t3.L0.m", "L<layer>.<port>")):

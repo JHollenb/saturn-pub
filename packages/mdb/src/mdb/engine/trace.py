@@ -130,7 +130,8 @@ class Trace:
     ):
         if project is not None:
             raise Refused(
-                "project persistence is not built yet; trace without project= for now"
+                "mdb.trace does not write to a project; call it without project= (a debugger "
+                "attached with a project records cuts and records)"
             )
         if type(max_bytes) is not int or max_bytes <= 0:
             raise BadArgs("max_bytes must be a positive integer")
