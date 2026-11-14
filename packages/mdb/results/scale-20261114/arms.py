@@ -67,7 +67,7 @@ if PART == "split":
         reader = readout(nat, Margin(last, a, b))
         rec = {}
         for alpha in (0.5, 1.0):
-            ed = dbg.run(ids, name=f"d{alpha}")
+            ed = dbg.run(ids, name=f"dose{int(alpha * 10)}")
             ed.until(f"t{last}.L{x}.h")
             ed.set_cell(x, "v", bf(v0 + alpha * (vd - v0)).reshape(1, 1, 1, -1), rows=[r], kv=[k])
             ed.until(f"t{last}.logits")
@@ -131,14 +131,15 @@ else:
             rec["closure_null"] = [float(out["null"][0, 0]), float(out["null"][0, 1])]
             rec["same_n"], rec["other_n"] = len(same), len(other)
             del base
-        if it["family"] in ("d3-lm", "d3-per", "d4-work") and not correct[iid] and LC + 4 < L and LC - 4 >= 0:
+        if it["family"] in ("d3-lm", "d3-per", "d4-work") and not correct[iid] and LC - 4 >= 0:
             cap = sc.load_cap(CAPDIR, iid)
-            hv = cap["rows"][r_at]["h"][LC + 4]
+            top = min(LC + 4, L - 1)                  # clamped on shallow-tail models (deviation, logged)
+            hv = cap["rows"][r_at]["h"][top]
             run = dbg.run(ids, name="bp", prefill=it["span"][0])
             run.until(f"t{r_at}.L{LC - 4}.h")
             run.set(f"t{r_at}.L{LC - 4}.h", bf(hv).reshape(1, 1, -1))
             run.until(f"t{last}.logits")
-            rec["backpatch"] = {"row": r_at, "logits": logits_at(run, last, [a])[0], "argmax": logits_at(run, last, [a])[1]}
+            rec["backpatch"] = {"row": r_at, "from_layer": top, "logits": logits_at(run, last, [a])[0], "argmax": logits_at(run, last, [a])[1]}
             del run, cap
         if it["block"] in ("base", "depth"):
             blk = it["block"]
