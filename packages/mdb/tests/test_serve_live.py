@@ -764,22 +764,36 @@ def test_every_computed_port_reduces_live_and_nothing_is_written(live, history):
         files = [p for p in root.rglob("*") if p.is_file()]
         return len(files), sum(p.stat().st_size for p in files)
 
+    def reduce_op(address, op, params=None):
+        response = c.post(f"/api/v1/s/{sid}/reduce", json={
+            "pointer": {"kind": "occurrence", "address": address}, "op": op,
+            "params": params or {}})
+        assert response.status_code == 200, (address, response.text[:300])
+        return response.json()["data"]
+
+    # Only the reductions are bracketed: under committed edits the `print` op mints an
+    # occurrence pointer and stores the edit recipe (M8), a write of `print`, not of a reduce.
+    # `print` is only the reference the reduction's label is compared with.
     before = size()
     ports = [p for p in _frame(c, sid)["data"]["ports"] if p["computed"]]
     assert ports
+    reduced = {}
     for port in ports:
-        for op, params in (("stats", {}), ("topk", {"k": 3})):
-            response = c.post(f"/api/v1/s/{sid}/reduce", json={
-                "pointer": {"kind": "occurrence", "address": port["addr"]}, "op": op,
-                "params": params})
-            assert response.status_code == 200, (port["addr"], response.text[:300])
+        reduce_op(port["addr"], "stats")
+        reduce_op(port["addr"], "topk", {"k": 3})
+        reduced[port["addr"]] = reduce_op(port["addr"], "stats")
+    assert size() == before
+    for port in ports:
         printed = _op(c, sid, "print", {"address": port["addr"]}).json()["data"]["result"]
-        stats = c.post(f"/api/v1/s/{sid}/reduce", json={
-            "pointer": {"kind": "occurrence", "address": port["addr"]}, "op": "stats"}
-        ).json()["data"]
+        stats = reduced[port["addr"]]
         if printed["shape"] == stats["shape"] and "stats" in printed:  # same value, same label
             assert stats["max"]["ev"] == printed["stats"]["max"]["authority"]
-    assert size() == before
+    # the recipe `print` stored is the same row on a second print: that read adds nothing
+    after_print = size()
+    for port in ports:
+        _op(c, sid, "print", {"address": port["addr"]})
+        reduce_op(port["addr"], "stats")
+    assert size() == after_print
 
 
 def test_interrupt_cancels_every_queued_job_and_says_how_many(live):
@@ -871,9 +885,9 @@ def test_refusals_name_the_project_relatively_never_its_absolute_path(live):
     c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
     body = _op(c, live.sid, "restart", {"name": "nope"}).json()
     reason = body["data"]["result"]["reason"]
-    assert root not in json.dumps(body) and "<project>" in reason, reason
+    assert root not in json.dumps(body) and "this project" in reason, reason  # no path at all
     text = c.post(f"/api/v1/s/{live.sid}/console", json={"line": "restart nope"}).json()
-    assert root not in text["data"]["text"] and "<project>" in text["data"]["text"]
+    assert root not in text["data"]["text"] and "this project" in text["data"]["text"]
 
 
 def test_the_recorded_frame_of_the_live_session_says_it_is_live(live):
