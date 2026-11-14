@@ -1,0 +1,2 @@
+usage: mrun attach [-h] job_id
+mrun attach: error: the following arguments are required: job_id

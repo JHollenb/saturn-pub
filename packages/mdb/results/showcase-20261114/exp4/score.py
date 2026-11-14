@@ -3,8 +3,26 @@ import json
 import statistics as st
 import sys
 
-sys.path.insert(0, sys.path[0] + "/../exp5")
-from score import spearman  # noqa: E402
+def spearman(x, y):
+    def rank(v):
+        o = sorted(range(len(v)), key=lambda i: v[i])
+        r = [0.0] * len(v)
+        i = 0
+        while i < len(o):
+            j = i
+            while j + 1 < len(o) and v[o[j + 1]] == v[o[i]]:
+                j += 1
+            for k in range(i, j + 1):
+                r[o[k]] = (i + j) / 2
+            i = j + 1
+        return r
+    rx, ry = rank(x), rank(y)
+    mx, my = st.mean(rx), st.mean(ry)
+    num = sum((a - mx) * (b - my) for a, b in zip(rx, ry))
+    den = (sum((a - mx) ** 2 for a in rx) * sum((b - my) ** 2 for b in ry)) ** 0.5
+    return num / den if den else None
+
+
 
 R = [json.loads(line) for line in open(sys.argv[1])]
 N = [dict(nd, floor=r["floor"], item=r["id"]) for r in R for nd in r["nodes"] if nd["kind"] == "node"]

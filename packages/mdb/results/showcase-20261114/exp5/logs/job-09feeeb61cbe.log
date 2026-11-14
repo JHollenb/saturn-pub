@@ -1,0 +1,96 @@
+mrun: job-09feeeb61cbe -> running
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision aa67c76 script exp4_brackets.py
+[    5.0s] load
+[    9.3s] D city:Barcelona 4.28s
+[   13.0s] D city:Busan 3.64s
+[   16.7s] D city:Gdansk 3.76s
+[   20.4s] D city:Gothenburg 3.7s
+[   24.1s] D city:Hamburg 3.66s
+[   27.8s] D city:Krakow 3.74s
+[   31.5s] D city:Kyoto 3.67s
+[   35.1s] D city:Milan 3.6s
+[   38.9s] D currency:baht 3.77s
+[   42.8s] D currency:forint 3.92s
+[   46.4s] D currency:koruna 3.63s
+[   50.0s] D currency:krona 3.62s
+[   53.7s] D currency:pound sterling 3.63s
+[   57.5s] D currency:renminbi 3.85s
+[   61.3s] D currency:rial 3.76s
+[   65.0s] D currency:rouble 3.71s
+[   68.7s] D landmark:Borobudur 3.71s
+[   72.4s] D landmark:Masada 3.69s
+[   76.2s] D landmark:Mount Fuji 3.82s
+[   79.8s] D landmark:Mount Rushmore 3.59s
+[   83.4s] D landmark:Persepolis 3.64s
+[   87.2s] D landmark:Schonbrunn Palace 3.73s
+[   90.8s] D landmark:Uluru 3.69s
+[   94.6s] D landmark:the Acropolis 3.75s
+[   98.2s] D person:Akira Kurosawa 3.6s
+[  101.8s] D person:Edvard Munch 3.63s
+[  105.6s] D person:Frederic Chopin 3.74s
+[  109.4s] D person:Giuseppe Verdi 3.8s
+[  113.0s] D person:Hans Christian Andersen 3.65s
+[  116.6s] D person:Haruki Murakami 3.6s
+[  120.3s] D person:Henrik Ibsen 3.64s
+[  124.1s] D person:Hokusai 3.78s
+[  124.1s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 2:06.15
+	Maximum resident set size (kbytes): 5471340
+== revision aa67c76 script exp5_neurons.py
+[    4.1s] load
+[    4.9s] grads 8 groups
+[    4.9s] named 19 countries
+[   10.6s] sealed 26 items
+[   11.7s] batch Spain 1 items 67 arms 1.1s
+[   12.8s] batch Korea 1 items 67 arms 1.1s
+[   13.9s] batch Poland 2 items 67 arms 1.1s
+[   15.0s] batch Sweden 1 items 67 arms 1.1s
+[   16.3s] batch Germany 1 items 67 arms 1.2s
+[   18.5s] batch Japan 3 items 67 arms 2.2s
+[   20.7s] batch Italy 2 items 67 arms 2.2s
+[   21.8s] batch Netherlands 1 items 67 arms 1.1s
+[   22.8s] batch Russia 1 items 67 arms 1.1s
+[   26.1s] batch China 3 items 67 arms 3.3s
+[   27.2s] batch Britain 1 items 67 arms 1.1s
+[   28.3s] batch Iran 1 items 67 arms 1.1s
+[   29.4s] batch Indonesia 1 items 67 arms 1.1s
+[   30.5s] batch Israel 1 items 67 arms 1.1s
+[   31.6s] batch Austria 1 items 67 arms 1.1s
+[   33.8s] batch Greece 2 items 67 arms 2.2s
+[   34.9s] batch Egypt 1 items 67 arms 1.1s
+[   36.0s] batch Norway 1 items 67 arms 1.1s
+[   37.1s] batch Denmark 1 items 67 arms 1.1s
+[   37.8s] S city:Seville 0.71s
+[   38.5s] S currency:won 0.70s
+[   39.2s] S city:Krakow 0.71s
+[   39.9s] S person:Frederic Chopin 0.71s
+[   40.6s] S currency:krona 0.71s
+[   41.3s] S city:Munich 0.71s
+[   42.0s] S currency:yen 0.71s
+[   42.7s] S person:Akira Kurosawa 0.71s
+[   43.4s] S person:Hokusai 0.71s
+[   44.2s] S city:Naples 0.71s
+[   44.9s] S person:Giuseppe Verdi 0.71s
+[   45.6s] S landmark:the Rijksmuseum 0.73s
+[   46.3s] S currency:rouble 0.71s
+[   47.0s] S city:Shenzhen 0.71s
+[   47.7s] S currency:yuan 0.71s
+[   48.4s] S landmark:the Great Wall 0.72s
+[   49.1s] S currency:sterling 0.71s
+[   49.9s] S landmark:Persepolis 0.72s
+[   50.6s] S landmark:Borobudur 0.72s
+[   51.3s] S landmark:Masada 0.71s
+[   52.0s] S person:Mozart 0.70s
+[   52.7s] S landmark:the Parthenon 0.72s
+[   53.4s] S person:Socrates 0.70s
+[   54.1s] S landmark:the pyramids of Giza 0.73s
+[   54.9s] S person:Henrik Ibsen 0.71s
+[   55.6s] S person:Soren Kierkegaard 0.72s
+[   55.6s] TOTAL
+DRIVER_RC 0
+	Elapsed (wall clock) time (h:mm:ss or m:ss): 0:57.02
+	Maximum resident set size (kbytes): 4358608
+mrun: job-09feeeb61cbe -> succeeded
+mrun: job-09feeeb61cbe finished: succeeded result={'status': 'ok', 'returncode': 0, 'elapsed_s': 183.54, 'peak_rss_mb': 5296.6, 'peak_vram_mb': 7120.0}

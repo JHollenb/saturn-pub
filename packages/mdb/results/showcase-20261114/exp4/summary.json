@@ -1,0 +1,38 @@
+{
+ "items": 32,
+ "node_items": 160,
+ "G1": {
+  "median_rerouting_over_arm0": 0.10526315789473684,
+  "holds": false,
+  "falsifier_fires": false
+ },
+ "G2": {
+  "largest_counts": {
+   "rerouting": 50,
+   "norm": 76,
+   "nonlin": 34
+  },
+  "nonlin_largest_share": 0.2125,
+  "median_(arm2+A)/(arm0+A)": 0.04935510495851417,
+  "holds": false
+ },
+ "G3": {
+  "norm_below_floor": "135/160",
+  "holds": true
+ },
+ "G4": {
+  "spearman_edge_vs_arm0": 0.9320421884935253,
+  "holds": true
+ },
+ "median_arm0_over_edge": 0.8941227539658851,
+ "median_arm0_over_direct": 0.5142892180048069,
+ "median_edge_over_direct": 0.5886819834780306,
+ "nodes_above_floor": "103/160",
+ "null_machinery_within_floor": "192/192",
+ "random_node_all_brackets_within_floor": "26/32",
+ "median_abs_brackets": {
+  "rerouting": 0.125,
+  "norm": 0.09524437590235779,
+  "nonlin": 0.04872874763818895
+ }
+}
