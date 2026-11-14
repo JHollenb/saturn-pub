@@ -1329,12 +1329,13 @@ class TraceEnv:
 
 
 def replay(predicate: TraceCondition | str, steps: Any, *, X: str | None = None,
-           R: str | None = None, mode: str = "edge", store: Any = None) -> dict[str, Any]:
+           R: str | None = None, mode: str = "edge", store: Any = None,
+           project: Any = None, session_id: str | None = None) -> dict[str, Any]:
     """Evaluate a trace watch over a sealed ``Trace`` (record and replay: nothing runs).
 
     ``steps``: the step records, a ``rows.Trace``, or a sealed ``trace`` record (a dict of kind
-    ``trace``; its blob is read from ``store`` and checked against its sha256). ``X``/``R``
-    default to the trace's ``meta``.
+    ``trace``; its blob is read from ``store`` and checked against its sha256), or a record id
+    indexed in ``project`` under ``session_id``. ``X``/``R`` default to the trace's ``meta``.
 
     ``steps`` in probe order. ``level`` fires where the predicate holds; ``edge`` where it holds
     and did not at the previous step (before the first step counts as not holding); ``change``
@@ -1348,10 +1349,18 @@ def replay(predicate: TraceCondition | str, steps: Any, *, X: str | None = None,
         raise ConditionError(f"mode must be one of {', '.join(WATCH_MODES)}")
     condition = predicate if isinstance(predicate, TraceCondition) else TraceCondition(predicate)
     meta: dict[str, Any] = {}
-    if isinstance(steps, dict) and steps.get("kind") == "trace":
-        from mdb.analysis.sealed import load_trace
+    if isinstance(steps, str):
+        if project is None or session_id is None:
+            raise ConditionError("replay of a record id needs project= and session_id=")
+        from mdb.core import index
 
-        steps = load_trace(steps, store=store)
+        steps = index.get_record(project, session_id, steps)
+        store = project.store if store is None else store
+    if isinstance(steps, dict) and steps.get("kind") == "trace":
+        from mdb.core.bounded import load_json      # the sealed trace's blob, sha256-checked
+
+        data = load_json(steps["body"]["payload"], store=getattr(store, "store", store))
+        meta, steps = dict(data["meta"]), data["records"]
     if hasattr(steps, "records") and hasattr(steps, "meta"):
         meta, steps = dict(steps.meta), steps.records
     X = X if X is not None else meta.get("X")

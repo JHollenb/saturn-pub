@@ -967,7 +967,7 @@ def _content_extras(run: Any, found: dict[str, Any], write: Any, sets: list[Cand
 def _component_row(run: Any, cb: Any, consumer: Any, sets: Any, tokenizer: Any,
                    neuronpedia: dict[str, Any] | None) -> dict[str, Any]:
     """One feature binding's section row (``components.component_table`` plus names)."""
-    from mdb.interop.names import ct_node, neuronpedia_url
+    from mdb.core.foreign_names import ct_node, neuronpedia_url
 
     from .components import component_table
 
@@ -1248,7 +1248,7 @@ def _entry(run, binding, b, grid, reader, found_rows, layers, min_mass, readers,
                         and grid.reach[key] is None:
                     read["contrast"] = num(float(grid.contrast[key][b, h]), EXACT, "P19")
                 if foreign is not None:
-                    from mdb.interop.names import read_names
+                    from mdb.core.foreign_names import read_names
 
                     read["foreign"] = read_names(j, layer, h)
                 reads.append((rank, read))
@@ -1322,7 +1322,7 @@ def _entry(run, binding, b, grid, reader, found_rows, layers, min_mass, readers,
         view["labels"] = {**(item_labels or {}),
                           **{k: label_claim(v) for k, v in binding.labels.items()}}
     if foreign is not None:
-        from mdb.interop.names import binding_names
+        from mdb.core.foreign_names import binding_names
 
         view["foreign"] = binding_names(binding.cells, **foreign)
     if edits:

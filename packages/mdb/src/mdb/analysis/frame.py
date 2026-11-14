@@ -232,7 +232,7 @@ def to_frame(table: Any, level: str = "binding", *, item: str | None = None,
                     row["contrast"] = float(contrast[b, h])
                     row["mask_delta"] = float(mask[b, h])
                 if foreign:
-                    from mdb.interop.names import read_names
+                    from mdb.core.foreign_names import read_names
 
                     names_ = read_names(j, layer, h)
                     row["tl_hook"], row["tl_index"] = names_["tl"]["hook"], names_["tl"]["index"]

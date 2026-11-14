@@ -443,3 +443,35 @@ def test_label_symbols_hide_invisible_labels_and_bound_cardinality(debugger):
     assert "country" not in carrier["labels"] and carrier["hidden_labels"] == ["country"]
     with pytest.raises(Refusal, match="cardinality"):
         cm.freeze(m, reports, [])
+
+
+def test_replay_by_record_id_and_co_permutation_null(debugger, tmp_path):
+    from mdb.analysis.rows import row_table
+    from mdb.core import index
+    from mdb.engine.breakpoints import replay
+    from mdb.ops.debugger import open_tiny
+
+    stored = open_tiny("qwen3", "fp32", project=tmp_path / "p")
+    run = stored.run(PROMPT)
+    run.until("t5.logits")
+    trace = row_table(run, {"a": [0, 1, 2], "b": [3, 4, 5]}, letters=[4, 9], X="A", R="B")
+    record = trace.seal(session_id=stored.session_id, run=run, store=stored.project)
+    rid = index.put_record(stored.project, record)
+    out = replay('mass["a"] > mass["b"]', rid, project=stored.project,
+                 session_id=stored.session_id)
+    assert out["holds"] == replay('mass["a"] > mass["b"]', trace)["holds"]
+    (countries, _, capitals), _ = _sets()
+    m = cm.Map([cm.Slot("carrier", "carrier", "gt", layers=(0,), kv=(0,)),
+                cm.Slot("desc", "descriptor", "rest")], [], {"kind": "margin"},
+               {"countries": list(countries.tokens), "capitals": list(capitals.tokens)})
+    reports = []
+    for gt, truth in ((1, "Tokyo"), (2, "Paris")):
+        run = debugger.run(PROMPT)
+        run.until("t5.logits")
+        reports.append(cm.item_report(
+            m, run, {"name": f"i{gt}", "span": [1, 2, 3, 4], "gt": gt},
+            consumer=Margin(5, 4, 9), sets=[countries, capitals],
+            truths={"capitals": truth}, co=[cs.CoReadout("capitals", "countries")]))
+    assert len(reports[0]["prompt_sha256"]) == 64
+    row = next(r for r in cm.MapTable.build(m, reports).rows if r["slot"] == "carrier")
+    assert row["content"]["capitals"]["co_permutation"]["countries"]["n"] == 2

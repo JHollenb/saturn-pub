@@ -254,7 +254,9 @@ def item_report(m: Map, run: Any, item: dict[str, Any], *, consumer: Any = None,
                     content_layers=content_layers, tokenizer=tokenizer, labels=labels or None,
                     **options)
         rows = {name: b.addresses for name, b in bound.items()}
+        tokens = [int(t) for t in run.tokens]
         out = {"item": item.get("name"), "slots": rows, "table": tab.report,
+               "prompt_sha256": hashlib.sha256(json.dumps(tokens).encode()).hexdigest(),
                "unbound_slots": [s for s in cache_slots(m) if s not in bound],
                "map_digest": m.digest()}
         if labels:
@@ -448,6 +450,12 @@ class MapTable:
                                            "n": len(named)}
                 if null == "answer_permutation":
                     item["answer_permutation"] = _permutation_null(entries)
+                    for other in sorted({k for _, e in entries for k in (e.get("co") or {})}):
+                        projected = [(r, {**e["co"][other]["projected"],
+                                          **({"truth": e["truth"]} if "truth" in e else {})})
+                                     for r, e in entries if other in (e.get("co") or {})]
+                        item.setdefault("co_permutation", {})[other] = \
+                            _permutation_null(projected)
                 for flag in ("collision", "first_subword"):
                     flagged = [e for _, e in entries if (e.get("flags") or {}).get(flag)]
                     if flagged:
@@ -470,6 +478,7 @@ class MapTable:
             for r, b in bound:
                 items.append({"item": r.get("item"), "slot": slot.name,
                               "site": _site(r, slot.name), "binding": b,
+                              "prompt_sha256": r.get("prompt_sha256"),
                               "labels": r.get("labels")})
         return cls(rows, items, switch)
 
