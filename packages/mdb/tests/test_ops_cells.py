@@ -242,3 +242,22 @@ def test_whatif_of_a_cell_rewinds_when_the_consumer_is_computed(debugger):
     with pytest.raises(Refused, match="cannot reach it|not downstream"):
         dispatch(ctx, "whatif", {"target": "cache.L1.v[row=3]", "value": 0.0,
                                  "consumer": "M[4,9]"})
+
+
+# --- seek switches runs (M9) -------------------------------------------------------------------
+
+
+def test_seek_with_a_run_name_switches_to_that_run_and_moves_it(debugger):
+    ctx = _ctx(debugger)
+    donor = debugger.runs["boiling"]
+    assert ctx.run is not donor
+    start = donor.where
+    result = dispatch(ctx, "seek", {"target": "boiling:t3.L0.p"})
+    assert ctx.run is donor and result["run"] == "boiling" and result["via"] == "run"
+    assert donor.where == "t3.L0.p" != start and result["where"] == "t3.L0.p"
+    # a named run seeks backwards too, and switching back finds the other run where it was
+    dispatch(ctx, "seek", {"target": "boiling:t3.L0.h"})
+    assert ctx.run.where == "t3.L0.h"
+    with pytest.raises(Refused, match=r"no run named 'nobody'.*have: .*boiling"):
+        dispatch(ctx, "seek", {"target": "nobody:t3.L0.p"})
+    assert ctx.run is donor

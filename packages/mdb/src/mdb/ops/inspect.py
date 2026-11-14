@@ -371,8 +371,28 @@ def _origin_recipe(ctx, branch: str, address: str) -> str:
         cursor = index.get_cursor(project, branch)
         if cursor is not None:
             return index.get_record(project, branch, cursor)["body"]["recipe"]
-    raise Refused(f"origin {branch}: names no durable checkpoint and no session with a stored "
-                  "recipe in this project")
+    known = ", ".join(getattr(ctx.debugger, "runs", None) or ()) or "none"
+    raise Refused(f"origin {branch}: names no run (have: {known}), no durable checkpoint and no "
+                  "session with a stored recipe in this project")
+
+
+def _seek_named(ctx, name: str, plain: str):
+    """``seek NAME:ADDR``: make the run named ``NAME`` current (as ``frame NAME:``), then move it
+    to ``plain``. All or nothing: a failed move puts the previous run back as the current one."""
+    from .builtin import _switch
+
+    previous, target = ctx.run, ctx.debugger.runs[name]
+    if target is not previous:
+        _switch(ctx, target)
+    before = _edit_list(target)
+    try:
+        moves = _seek_within(target, plain)
+    except ValueError as error:
+        if target is not previous:
+            _switch(ctx, previous)
+        raise Refused(f"cannot reach {name}:{plain}: {error}") from None
+    return moved(ctx, {"target": plain, "moves": moves, "via": "run", "run": name,
+                       **_dropped(before, _edit_list(target))})
 
 
 def _seek(ctx, target):
@@ -410,6 +430,10 @@ def _seek(ctx, target):
         raise Refused("seek moves to an occurrence t<row>.<stop> (no selector, no cache cell)")
     plain = addresses.format_address(addresses.Occurrence(parsed.token, parsed.port,
                                                           parsed.layer))
+    runs = getattr(ctx.debugger, "runs", None) or {}
+    named = origin if origin in runs else None  # a run started with name=NAME: switch to it
+    if named is not None:
+        return _seek_named(ctx, named, plain)
     own = origin is None or origin == getattr(ctx.debugger, "session_id", None)
     before = _edit_list(run)
     if own and recipe_id is None:
@@ -425,8 +449,8 @@ def _seek(ctx, target):
             return moved(ctx, {"target": plain, "moves": moves, "via": "run",
                                 **_dropped(before, _edit_list(run))})
     if project_of(ctx) is None:
-        raise Refused(f"{text}: reaching another origin needs a stored recipe; attach with "
-                      "project=")
+        raise Refused(f"{text}: no run named {origin!r} (have: {', '.join(runs) or 'none'}); "
+                      "reaching another origin needs a stored recipe; attach with project=")
     if origin == "@cut":
         raise Refused("an @cut origin names no recipe; use a checkpoint name or a pointer")
     if recipe_id is None:

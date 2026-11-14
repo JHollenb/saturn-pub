@@ -434,3 +434,75 @@ def test_a_measurement_interrupted_in_its_restore_still_restores(adapter, monkey
         compare.measure(run, [edit], Logit(ROW, 3))
     monkeypatch.undo()
     assert fired["n"] == 1 and state_digest(run) == before and _in_sync(run)
+
+
+# --- receipt and reverse inside a pending layer (M9) ---------------------------------------------
+
+
+def test_a_committed_cell_edit_is_in_the_receipt_of_the_transition_it_took_effect_in(adapter):
+    run = Run(adapter, PROMPT)
+    run.until(f"t{ROW}.L0.q")
+    run.set(f"t{ROW}.L0.m", 0.5, "add")
+    manifest = run.set_cell(1, "v", 0.25, "add", rows=[1, 3])
+    run.until(f"t{ROW}.L0.h_out")
+    entries = run.session.receipts[-1].to_dict()["transitions"][0]["port_edits"]
+    cells = [e for e in entries if "cell" in e]
+    assert [e["port"] for e in entries if "cell" not in e] == ["m"]
+    [entry] = cells
+    assert entry["port"] == "cache.L1.v" and entry["op"] == "add"
+    assert entry["value"] == manifest["value"] and entry["cell"]["rows"] == [1, 3]
+    assert entry["realised_sha256"] == run.committed_cells()[0]["realised_sha256"]
+    assert "origin" not in entry
+    # the run's own edit listing still holds the port edit alone, the cell its own record
+    assert [e["port"] for e in run.committed_edits()] == ["m"]
+    assert len(run.committed_cells()) == 1
+    # a transition that carried no cell records none
+    run.until(f"t{ROW}.L1.h_out")
+    assert not any("cell" in e for e in
+                   run.session.receipts[-1].to_dict()["transitions"][0].get("port_edits", ()))
+
+
+def _forward(run):
+    run.until(f"t{ROW}.logits")
+    six = run.read().reshape(-1)
+    run.until(f"t{ROW + 1}.logits")
+    return six, run.read().reshape(-1)
+
+
+def _back_to(run, where):
+    while run.where != where:
+        run.reverse_step("port")
+
+
+def test_reverse_inside_the_pending_layer_rederives_an_after_cells_timing(adapter):
+    # staged after the k read (timing after), then reversed to before it: the read is ahead
+    # again, so the cell is a before cell; stepping forward equals staging it there
+    run = Run(adapter, PROMPT)
+    run.until(f"t{ROW}.L1.kr")
+    assert run.set_cell(1, "k", 0.5, "add", rows=[1, 3])["cell"]["timing"] == "after"
+    _back_to(run, f"t{ROW}.L1.q")
+    assert run.cells[0]["cell"]["timing"] == "before"
+    reversed_values = _forward(run)
+    fresh = Run(adapter, PROMPT)
+    fresh.until(f"t{ROW}.L1.q")
+    assert fresh.set_cell(1, "k", 0.5, "add", rows=[1, 3])["cell"]["timing"] == "before"
+    for got, want in zip(reversed_values, _forward(fresh)):
+        assert torch.equal(got, want)
+    assert run.committed_cells()[0]["realised_timing"] == "before"
+
+
+def test_reverse_keeps_a_before_cell_before_and_an_after_cell_after_past_the_boundary(adapter):
+    for stage, back, timing in ((f"t{ROW}.L1.q", f"t{ROW}.L1.q", "before"),
+                                (f"t{ROW}.L1.kr", f"t{ROW}.L1.kr", "after")):
+        plain = Run(adapter, PROMPT)
+        plain.until(stage)
+        plain.set_cell(1, "k", 0.5, "add", rows=[1, 3])
+        want = _forward(plain)
+        run = Run(adapter, PROMPT)
+        run.until(stage)
+        run.set_cell(1, "k", 0.5, "add", rows=[1, 3])
+        run.until(f"t{ROW}.L1.p")  # past the boundary
+        _back_to(run, back)
+        assert run.cells[0]["cell"]["timing"] == timing
+        for got, expect in zip(_forward(run), want):
+            assert torch.equal(got, expect)

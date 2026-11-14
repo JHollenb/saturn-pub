@@ -25,7 +25,7 @@ from __future__ import annotations
 import re
 from collections import OrderedDict
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any
 
 import torch
@@ -403,8 +403,9 @@ class Run:
         try:
             receipt, controller = self._advance(self.session, mark.layer, edits, cells)
             new = self._mark(mark.transitions + 1)
-            fired = tuple(
+            fired = tuple(  # port edits only: cell entries (``cell`` key) are in cell_fired
                 dict(entry) for entry in receipt.to_dict()["transitions"][0].get("port_edits", ())
+                if "cell" not in entry
             ) if edits else ()
             mark.edits = edits
             if edits:
@@ -1422,12 +1423,27 @@ class Run:
         self._sweep_tensors()
         return self.where
 
+    def _retime_cells(self, port: str | None) -> None:
+        """After the cursor moved back to ``port`` (None: a boundary): a staged ``after`` cell
+        whose boundary read (``kr``/``p``) is no longer behind the cursor becomes ``before``,
+        as if it were staged here. Only downgrades: a cell staged ``before`` stays ``before``."""
+        mark, names = self._trail[-1], self.program.names
+        retimed = []
+        for cell in self._cells:
+            behind = (port is not None and mark.phase == "layer" and mark.layer == cell.layer
+                      and names.index(port) >= names.index(CELL_BOUNDARY[cell.tensor]))
+            retimed.append(replace(cell, timing="before")
+                           if cell.timing == "after" and not behind else cell)
+        if any(a is not b for a, b in zip(retimed, self._cells)):
+            self._cells, self._cache = retimed, None
+
     def _goto(self, key: tuple[int, int]) -> None:
         if key >= self._key():
             self._forward_to(key)
             return
         port = self._in_pending(key)
         if port is not None:
+            self._retime_cells(port)
             self._ensure_cache(port)
             self._port = port
             return
@@ -1437,8 +1453,11 @@ class Run:
             port = self._in_pending(key)
             if port is None:
                 raise RuntimeError(f"cannot place the cursor at {self.address(key)}")
+            self._retime_cells(port)
             self._ensure_cache(port)
             self._port = port
+        else:
+            self._retime_cells(None)
 
     def _restaged_cells(self, index: int) -> list[CellEdit]:
         """The cell edits that were staged at trail mark ``index``: those realised by the first

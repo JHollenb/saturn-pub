@@ -137,7 +137,7 @@ def test_seek_by_stored_recipe(tmp_path):
     longer = dbg.ops(dbg.run([*PROMPT, 7]))
     cursor = _clean(dispatch(longer, "seek", {"target": f"{dbg.session_id}:t3.L1.p"}))
     assert cursor["recipe"] == dbg.checkpoints()[0]["recipe"] and longer.run.where == "t3.L1.p"
-    with pytest.raises(Refused, match="names no durable checkpoint"):
+    with pytest.raises(Refused, match="names no run .*no durable checkpoint"):
         dispatch(ctx, "seek", {"target": "nobody:t3.L0.p"})
     # the stored recipe reaches t3.L1.h; t1 was prefilled before it
     with pytest.raises(Refused, match="but not t1.L0.p"):

@@ -961,6 +961,14 @@ class PortController:
                 "(its value mix is a replica that does not match the native computation)"
             )
         realised, self._realised, self._seen_layer = self._realised, [], None
+        # State-cell edits realised in this call ride in the same list (entries carry a
+        # ``cell`` key and the cell's ``port`` ``cache.L<l>.<k|v>``): address, op, operand
+        # digest, origin and the realisation record. ``cell_records`` stays for the run.
+        cells = [
+            {**self.cells[i].manifest(), **self.cell_records[i]}
+            for i in sorted(self.cell_records)
+        ]
+        realised = [*realised, *cells]
         return realised or None
 
     def probe_check(self) -> None:
