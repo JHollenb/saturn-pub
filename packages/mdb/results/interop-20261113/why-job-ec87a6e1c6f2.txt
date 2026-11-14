@@ -1,0 +1,29 @@
+job-ec87a6e1c6f2  succeeded  mdb-interop-j2  host=beast
+reservation: ram=6000MB vram=5500MB cpu=4 source=declared
+needs: {"cuda": true, "host": "beast"}
+result: peak_rss=3026.4MB peak_vram=5308.0MB elapsed=260.93s
+memory enforcement: linux-cgroup-v2 — strict (kernel boundary)
+execution phases: payload.prepare -> dispatch.vram_guard -> process.launch -> process.monitor -> process.finalize -> finished
+queue note: mdb interop J2: nnsight batch city pairs + mdb verify sample, rev 1ccd97d
+meta: {"observed_peak_rss_mb": 2511.7, "observed_peak_rss_ts": 1794632516.9304516, "observed_peak_vram_mb": 5308.0, "observed_peak_vram_ts": 1794632516.9304516}
+recent events (newest first, 20):
+  696s ago job.telemetry host=beast
+  699s ago job.finished host=beast state=succeeded reason=succeeded
+  699s ago job.logs_append
+  699s ago job.agent_phase host=beast state=running reason=process.finalize
+  700s ago job.logs_append
+  701s ago job.telemetry host=beast
+  706s ago job.telemetry host=beast
+  712s ago job.telemetry host=beast
+  717s ago job.telemetry host=beast
+  722s ago job.telemetry host=beast
+  727s ago job.telemetry host=beast
+  728s ago job.logs_append
+  732s ago job.telemetry host=beast
+  737s ago job.telemetry host=beast
+  742s ago job.telemetry host=beast
+  748s ago job.telemetry host=beast
+  753s ago job.telemetry host=beast
+  758s ago job.telemetry host=beast
+  758s ago job.logs_append
+  763s ago job.telemetry host=beast
