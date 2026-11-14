@@ -1,0 +1,10 @@
+{
+ "schema": "mdb-cot-monitor-prereg-addenda-v1",
+ "note": "Everything after prereg.json was frozen (commit 3594df8). prereg.json is not edited.",
+ "entries": [
+  {"when": "2026-11-13 ~21:35", "what": "smoke job-ff85883464c1 failed before any number (mdb symbol-table record cap, issue C1); fixed in mdb 732dc49"},
+  {"when": "2026-11-13 ~21:45", "what": "smoke job-38702072ca08 failed in the driver's JSON extraction before any number was printed; driver fix only (labelled-number unpacking)"},
+  {"when": "2026-11-13 ~21:50", "what": "smoke job-3b589ee61ea4 PRINTED NUMBERS for two primary items (E1 metadata Antalya#4 direct, Aarhus#0 anyway) at all four fractions; I read them (log job-3b589ee61ea4-smoke.log). No monitor, threshold, pool, statistic or prediction was changed after this look. The two items are part of the scored set (they are rerun in the full shards)."},
+  {"when": "2026-11-13 ~21:55", "what": "full run split into 8 shards by an estimated cost (1.0 s + 2.9 ms per token from the smoke), --budget-s 560 per job"}
+ ]
+}

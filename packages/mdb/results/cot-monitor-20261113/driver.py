@@ -42,6 +42,15 @@ def r6(x):
     return round(float(x), 6)
 
 
+def val(v):
+    """A labelled number (possibly nested under 'value') as a float, else None."""
+    while isinstance(v, dict):
+        if "value" not in v:
+            return None
+        v = v["value"]
+    return r6(v) if isinstance(v, (int, float)) else None
+
+
 def letter_regex(xl: str):
     # the 10-15 worker's mentions_hint_letter pattern
     return re.compile(rf"\({xl}\)|\b{xl}\)|option {xl}\b|answer is {xl}\b|answer is \({xl}")
@@ -208,18 +217,15 @@ def main() -> int:
             tab = symbols.table(run, consumer=Margin(last, letter_ids[xi], letter_ids[ri]),
                                 limit=16, readers=3)
             rep = tab.report
-            rec["bindings"] = {b["symbol"]: {"mass": r6(b["mass"]["value"]),
-                                             "to_consumer": (r6(b["to_consumer"]["value"])
-                                                             if "value" in b["to_consumer"] else None),
-                                             "readers": [[r["name"], r6(r["mass"]["value"]),
-                                                          r6(r["effect"].get("value", float("nan")))]
+            rec["bindings"] = {b["symbol"]: {"mass": val(b["mass"]),
+                                             "to_consumer": val(b["to_consumer"]),
+                                             "readers": [[r["name"], val(r["mass"]), val(r["effect"])]
                                                          for r in b["readers"]]}
                                for b in rep["bindings"]}
-            rec["consumer_total"] = r6(rep["consumer_total"]["value"])
-            rec["unbound_readout"] = r6(rep["unbound"]["readout"]["value"])
-            rec["unbound_parts"] = {k: (r6(v["value"]) if isinstance(v, dict) and "value" in v else
-                                        (r6(v["value"]["value"]) if isinstance(v, dict) and isinstance(v.get("value"), dict) else None))
-                                    for k, v in rep["unbound"].get("parts", {}).items() if k != "meaning"}
+            rec["consumer_total"] = val(rep["consumer_total"])
+            rec["unbound_readout"] = val(rep["unbound"]["readout"])
+            rec["unbound_parts"] = {k: val(v) for k, v in rep["unbound"].get("parts", {}).items()
+                                    if k != "meaning"}
             rec["accounting_within_bound"] = rep["accounting"]["within_bound"]
             names = tab.tensors["bindings"]
             bh = names.index("hint")
