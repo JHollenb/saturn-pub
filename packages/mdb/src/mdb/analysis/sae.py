@@ -457,7 +457,7 @@ def edit_vector(basis: FeatureBasis, terms: Sequence[tuple], values: Any) -> Any
 _TERM = re.compile(
     r"(?P<sign>[+-]?)(?:(?P<pre>[0-9.eE+-]+)\*)?"
     r"(?:(?P<feat>feature)\[(?P<id>\d+)(?P<coef>,coef)?\]|(?P<word>error|recon|bias))"
-    r"(?:@(?P<origin>[A-Za-z_][\w-]*))?"
+    r"(?:@(?P<origin>[A-Za-z_]\w*))?"
     r"(?:\*(?P<post>[-+]?[0-9.]+(?:[eE][-+]?\d+)?))?")
 
 

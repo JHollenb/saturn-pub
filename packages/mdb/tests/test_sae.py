@@ -171,6 +171,11 @@ def test_parse_terms():
     assert terms == [("feature", 12, True, -1.0, None), ("feature", 3, False, 2.0, None),
                      ("error", None, False, -1.0, None), ("recon", None, False, 0.5, "rome")]
     assert sae.is_expression("feature[1]") and not sae.is_expression("L0.h")
+    # an origin ends at the next sign: run names take no '-' (regression: job-702270785e57)
+    assert sae.parse_terms("recon@rome-recon") == [("recon", None, False, 1.0, "rome"),
+                                                   ("recon", None, False, -1.0, None)]
+    assert sae.parse_terms("feature[7,coef]@rome-feature[7,coef]") == [
+        ("feature", 7, True, 1.0, "rome"), ("feature", 7, True, -1.0, None)]
     with pytest.raises(sae.SaeError):
         sae.parse_terms("feature[x]")
 
