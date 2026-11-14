@@ -5,6 +5,12 @@ h12+h13 over the span, t0 excluded) on the captured answer-row p.
 
 python b1_forecast.py MODEL CAPDIR OUT
 """
+import json
+import math  # noqa: F401 - spacing() below, copied from r1_forecast
+import sys
+import time
+from pathlib import Path
+
 import torch
 
 from mdb.repl.__main__ import _load
