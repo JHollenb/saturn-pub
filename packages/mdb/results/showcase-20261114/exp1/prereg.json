@@ -1,0 +1,35 @@
+{
+ "experiment": "1: break on a wrong country feature in the carrier cell, repair by one named component, continue",
+ "written": "2026-11-14T11:16-08:00",
+ "status": "sealed before any showcase job; single seed",
+ "model": "Qwen3-1.7B-Base bf16 eager CUDA",
+ "sae": "Qwen-Scope W32K-L0_50 layer 19 (site of t<crow>.L20.h), SAELens to_saelens() strict copy checked on every census item",
+ "memo_predictions_verbatim": "see memo_sections.json section 1 (c)",
+ "census_rule_frozen_before_depth_arms": {
+  "items": "the 64 base items (1a) plus the 44 d1/d2 depth items (never scored here; disclosed deviation: the memo names base 64 only; d1/d2 are added because 9 of the 17 wrong-item countries have <= 1 base item, e.g. Czech 1 base item, 7 wrong items)",
+  "admission": "feature f is a country feature of country c when it is active at L19 (carrier row) on >= 2 census items of c and on >= 0.5 of c's census items, and on <= 2/57 (0.035) of the census items of other countries; if two countries qualify the larger share wins; label(f) = c's country token",
+  "a_truth": "median activation of the country's admitted feature with the largest median activation over c's census items where it is active (supplied constant, frozen in census.json before the depth job)",
+  "frozen_in": "exp1/census.json committed before the depth job"
+ },
+ "panel": "the 110 d3-lm/d3-per/d4-work items of 1c: 27 wrong, 83 correct (b1-score.json); consumers M[true language, native argmax] on wrong items and the argmax",
+ "predictions": {
+  "W1": "the watch fires on >= 20/27 wrong d3/d4 items and <= 10/83 correct ones (below 15/27 means the country code is not in the dictionary's country features at this row)",
+  "W2": "R1 moves the argmax to the true language on >= 11 of the items where the watch fired, and R1's margin move is >= 0.6 of R2's on the median item",
+  "W3": "R1 produces a donor-entity copy on 0 items, R2 on >= 3 of the city-donor items",
+  "W4": "R3 moves M by less than the floor on >= 0.75 of items",
+  "nulls": "random active non-country feature component swapped at matched norm (expect <= 2 repairs); the same R1 edit on correct items (expect <= 3/83 argmax changes); the always-last-row cell instead of R_argmax (watch evaluated there too)",
+  "falsifier": "R1 repairs fewer items than the random-feature null plus 2, or W1 fails"
+ },
+ "operational_definitions": {
+  "watch": "mdb breakpoints.Table.add_watch('t<last>.L20.h', mode='level', compiled=FeatureCondition('best_feature(COUNTRIES) >= 0 and best_feature(COUNTRIES) != truth')) with FeatureContext(basis L19, row=carrier, layer=20, kv=6, sets COUNTRIES = admitted features, labels = their country tokens, truth = item country token); run by breakpoints.run_forward from t<last>.start; the carrier row comes from a native run of the same item (R_argmax needs the answer row's L20 p, which is after the stop)",
+  "R1": "set carrier += component(truth) - component(best_wrong): component(truth) = Binding.component image of a_truth(country) * d_f(truth feature); component(best_wrong) the measured component of the most active wrong country feature; items whose country has no admitted feature get R1 = -component(best_wrong) only and are reported separately; on correct items R1 = +component(truth) - component(most active non-truth country feature, if any)",
+  "R2": "whole-cell donor: the carrier cell of a correct d3/d4/d2/d1 item of the same country (same family first, then d3/d4, then d2, then d1; first by id), set at the recipient's carrier",
+  "R3": "error-component swap: carrier - error(recipient) + error(donor of R2)",
+  "random null": "remove a uniformly drawn (seed 20261114) active non-country feature component and add the image of a uniformly drawn inactive non-country feature, the summed change rescaled to ||R1 change||",
+  "repair": "argmax == true language token after the arm",
+  "entity copy": "the argmax token's text (stripped, lowercased) is a word of the donor's entity name (R2) or of the recipient's own entity name (R1)",
+  "floor": "2 bf16 spacings at the larger |logit| of the pair",
+  "verify": "for R1 arms mdb forecast.seal on the margin after the edit is committed (cursor past L20 of the answer row) and forecast.verify at the logits; refusals recorded"
+ },
+ "arms_on": "all 27 wrong items (R1, R2, R3, random) and R1 on all 83 correct; R2/R3/random also on 27 correct items matched by family (first by id)"
+}
