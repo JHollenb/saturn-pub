@@ -322,7 +322,7 @@ def cell_readout(run: Any, target: CellTarget) -> Any:
 
 def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons: int = 8,
              spectral: bool = False, top_bins: int = 32, seed: int = 0,
-             cache: dict | None = None) -> dict[str, Any]:
+             cache: dict | None = None, neurons: bool = True) -> dict[str, Any]:
     """The exact hop ladder of a finite cell edit at the consumer's row (advisor memo 4.2).
 
     With a ``cell`` reader (``cell_readout``) the consumer is a value cell's content at an
@@ -346,6 +346,9 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
     under a random channel permutation and against the neuron basis at the same unit fraction.
     ``cache``: a dict the caller keeps across calls on the same model; it holds the float64
     gate/up/down weights, their channel rfft and the permutation per layer (values unchanged).
+    ``neurons=False``: the layer terms only (direct, captured MLP writes, re-reads, norm,
+    rounding) from the two runs' ports; no MLP weight is read (no float64 weight copies), so the
+    per-neuron split, ``exact``/``linear`` per layer and ``spectral`` are omitted.
     """
     torch = _torch()
     from .reads import layer_module
@@ -398,6 +401,11 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
                            "meaning": "c . Delta o at the consumer row: later heads re-reading "
                                       "changed rows, not an MLP path"})
             closure_sum += d_o
+        if not neurons:
+            captured = float(c @ (port(edited, layer, "m") - port(run, layer, "m")))
+            closure_sum += captured
+            mlp.append({"layer": layer, "captured": num(captured, MEASURED)})
+            continue
         g0, g1 = port(run, layer, "g"), port(edited, layer, "g")
         s0, s1 = port(run, layer, "sg"), port(edited, layer, "sg")
         b0, b1 = port(run, layer, "u"), port(edited, layer, "u")
@@ -515,8 +523,10 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
                    "reread": share_of(reread_total), "norm": share_of(norm_term),
                    "meaning": "each exact term over the native delta; signed"},
         "totals": {"mlp": num(mlp_total, MEASURED), "reread": num(reread_total, EXACT),
-                   "mlp_exact": num(sum(e["exact"]["value"] for e in mlp), EXACT),
-                   "mlp_linear": num(sum(e["linear"]["value"] for e in mlp), "derived-local")},
+                   "mlp_exact": num(sum(e["exact"]["value"] for e in mlp), EXACT) if neurons
+                   else {"state": "not computed", "reason": "neurons=False"},
+                   "mlp_linear": num(sum(e["linear"]["value"] for e in mlp), "derived-local")
+                   if neurons else {"state": "not computed", "reason": "neurons=False"}},
     }
 
 

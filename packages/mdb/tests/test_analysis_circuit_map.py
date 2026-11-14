@@ -160,6 +160,12 @@ def test_hop_edge_cell_consumer_closes_on_the_cells_native_change(debugger):
     d_m = sum(edited.read(f"t3.L{x}.m").double().reshape(-1) - run.read(f"t3.L{x}.m").double().reshape(-1)
               for x in range(top))
     assert edge["totals"]["mlp"]["value"] == pytest.approx(float(c @ d_m), rel=1e-9, abs=1e-12)
+    fast = symbols.hop_edge(run, edited, reader, cell_layer=0, neurons=False)
+    for key in ("direct", "upstream", "norm", "rounding"):
+        assert fast[key]["value"] == edge[key]["value"]
+    for key in ("mlp", "reread"):
+        assert fast["totals"][key]["value"] == edge["totals"][key]["value"]
+    assert all(set(e) == {"layer", "captured"} for e in fast["mlp"])
     with pytest.raises(Refusal):
         symbols.hop_edge(run, edited, reader, cell_layer=top)
 
