@@ -358,6 +358,7 @@ export interface LiveUpstream {
   port: string;
   op: string;
   staged: boolean;
+  selection: string | null;
 }
 
 export interface NamedNum {

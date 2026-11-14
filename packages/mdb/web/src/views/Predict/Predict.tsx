@@ -7,10 +7,11 @@ import { useState } from 'react';
 import type { LiveCheckpoint, LiveForecast } from '../../api/types.gen';
 import { Count } from '../../chrome/NumView';
 import { OpValue } from '../../chrome/OpValue';
-import { at, isRec, str, strs, type Rec } from '../../chrome/labelled';
+import { at, editAddress, isRec, str, strs, type Rec } from '../../chrome/labelled';
 import type { Slot } from '../../state/inspect';
 import { SlotState } from '../Live/SlotState';
 import { SplitBar } from './SplitBar';
+import { ResidualVsFloor, VerdictChip } from './VerifyVerdict';
 
 export type EditOp = 'replace' | 'add' | 'scale';
 
@@ -107,18 +108,33 @@ function WhatIf({ whatif, port, busy, act }: PredictProps) {
         Runs <code>whatif</code>: seals the prediction, then measures natively and restores the
         session. It does not stage the edit.
       </div>
-      <SlotState
-        slot={whatif}
-        what="whatif"
-        onInterrupt={act.interrupt}
-        idle="No what-if yet."
-      />
+      <SlotState slot={whatif} what="whatif" onInterrupt={act.interrupt} idle="No what-if yet." />
       {result && <WhatIfResult result={result} busy={busy} act={act} />}
     </section>
   );
 }
 
 const OPS: readonly EditOp[] = ['replace', 'add', 'scale'];
+
+/** The full address of a what-if's edit: the port with its selector (`t17.L22.A[h6]`), since
+ *  the selector limits what the edit wrote. Null when the result names no address. */
+export function editAddressOf(result: Rec): string | null {
+  const edit = isRec(result.edit) ? result.edit : {};
+  const address = str(edit.address);
+  return address === null ? null : editAddress(address, edit.selection);
+}
+
+/** The `set` that stages a what-if's edit as it was measured (same port, selector, op and
+ *  value), or null when the result does not say enough to stage it. */
+export function stageOf(result: Rec): { target: string; value: number; op: EditOp } | null {
+  const edit = isRec(result.edit) ? result.edit : {};
+  const address = editAddressOf(result);
+  const op = str(edit.op);
+  const value = at(edit, 'value', 'value');
+  if (address === null || typeof value !== 'number' || op === null) return null;
+  if (!(OPS as readonly string[]).includes(op)) return null;
+  return { target: address.replace(/^t\d+\./, ''), value, op: op as EditOp };
+}
 
 export function WhatIfResult({
   result,
@@ -134,19 +150,14 @@ export function WhatIfResult({
   const measured = isRec(result.measured) ? result.measured : {};
   const session = isRec(result.session) ? result.session : {};
   const moves = strs(measured.moves);
-  const address = str(edit.address);
+  const address = editAddressOf(result);
   const opName = str(edit.op);
-  const supplied = at(edit, 'value', 'value');
-  const stageable =
-    address !== null &&
-    typeof supplied === 'number' &&
-    opName !== null &&
-    (OPS as readonly string[]).includes(opName);
+  const staged = stageOf(result);
   const exact = prediction.exact;
   return (
     <div className="whatif-result" data-testid="whatif-result">
       <div>
-        edit <code>{address ?? '?'}</code> {opName ?? '?'}{' '}
+        edit <code data-testid="whatif-edit-address">{address ?? '?'}</code> {opName ?? '?'}{' '}
         <OpValue value={edit.value} what="edit value" /> → consumer{' '}
         <code>{str(at(result, 'consumer', 'address')) ?? '?'}</code>{' '}
         <span className="faint">
@@ -159,7 +170,10 @@ export function WhatIfResult({
           <tr>
             <th>sealed linear Δ</th>
             <td>
-              <OpValue value={at(prediction, 'linear', 'value') ?? prediction.linear} what="linear" />
+              <OpValue
+                value={at(prediction, 'linear', 'value') ?? prediction.linear}
+                what="linear"
+              />
               {str(at(prediction, 'linear', 'meaning')) && (
                 <div className="faint">{str(at(prediction, 'linear', 'meaning'))}</div>
               )}
@@ -169,7 +183,8 @@ export function WhatIfResult({
             <th>sealed exact Δ</th>
             <td>
               <OpValue value={at(exact, 'value') ?? exact} what="exact" />{' '}
-              <span className="faint">bound</span> <OpValue value={at(exact, 'bound')} what="bound" />
+              <span className="faint">bound</span>{' '}
+              <OpValue value={at(exact, 'bound')} what="bound" />
             </td>
           </tr>
           <tr>
@@ -185,9 +200,15 @@ export function WhatIfResult({
           <tr>
             <th>native − exact</th>
             <td>
-              <OpValue value={at(result, 'difference', 'native_minus_exact')} what="native minus exact" />{' '}
+              <OpValue
+                value={at(result, 'difference', 'native_minus_exact')}
+                what="native minus exact"
+              />{' '}
               <span className="faint">bound</span>{' '}
-              <OpValue value={at(result, 'difference', 'native_minus_exact', 'bound')} what="bound" />
+              <OpValue
+                value={at(result, 'difference', 'native_minus_exact', 'bound')}
+                what="bound"
+              />
               {at(result, 'difference', 'native_minus_exact', 'within_bound') === true
                 ? ' within'
                 : at(result, 'difference', 'native_minus_exact', 'within_bound') === false
@@ -214,10 +235,8 @@ export function WhatIfResult({
       <div className="whatif-stage">
         <button
           type="button"
-          disabled={busy || !stageable}
-          onClick={() =>
-            stageable && act.stage(address!.replace(/^t\d+\./, ''), supplied as number, opName as EditOp)
-          }
+          disabled={busy || !staged}
+          onClick={() => staged && act.stage(staged.target, staged.value, staged.op)}
           title="the set op: stages this edit at the pending layer (commit applies it)"
         >
           stage this edit
@@ -283,7 +302,12 @@ function Compare({ compare, checkpoints, busy, act }: PredictProps) {
           compare
         </button>
       </form>
-      <SlotState slot={compare} what="compare" onInterrupt={act.interrupt} idle="No comparison yet." />
+      <SlotState
+        slot={compare}
+        what="compare"
+        onInterrupt={act.interrupt}
+        idle="No comparison yet."
+      />
       {result && <CompareResult result={result} />}
     </section>
   );
@@ -298,7 +322,8 @@ export function CompareResult({ result }: { result: Rec }) {
     <div className="compare-result" data-testid="compare-result">
       <div>
         A <code>{str(at(result, 'sides', 'A')) ?? '?'}</code> · B{' '}
-        <code>{str(at(result, 'sides', 'B')) ?? '?'}</code> → <code>{str(result.consumer) ?? '?'}</code>
+        <code>{str(at(result, 'sides', 'B')) ?? '?'}</code> →{' '}
+        <code>{str(result.consumer) ?? '?'}</code>
       </div>
       <table>
         <thead>
@@ -404,7 +429,12 @@ function Forecasts({ forecast, forecasts, where, busy, act }: PredictProps) {
                 <th>sealed at</th>
                 <th className="n">predicted</th>
                 <th className="n">native</th>
-                <th className="n">residual ≤ bound</th>
+                <th
+                  className="n"
+                  title="the verdict compares the measured residual with the floor (dtype spacings); the bound is information"
+                >
+                  residual vs floor
+                </th>
                 <th>verdict</th>
               </tr>
             </thead>
@@ -443,10 +473,7 @@ function ForecastRow({ f, busy, act }: { f: LiveForecast; busy: boolean; act: Pr
       </td>
       <td className="n">
         {v && v.residual_max_abs !== undefined ? (
-          <>
-            <OpValue value={v.residual_max_abs} what="residual" compact /> ≤{' '}
-            <OpValue value={v.bound_max ?? at(f.bound, 'max')} what="bound" compact />
-          </>
+          <ResidualVsFloor v={v} />
         ) : (
           <>
             <span className="faint">bound</span>{' '}
@@ -455,8 +482,7 @@ function ForecastRow({ f, busy, act }: { f: LiveForecast; busy: boolean; act: Pr
         )}
       </td>
       <td>
-        <span className="chip">{str(v?.verdict) ?? f.status}</span>
-        {str(v?.reason) && <span className="faint"> {str(v?.reason)}</span>}
+        <VerdictChip v={v} status={f.status} />
         {f.status === 'open' && (
           <button type="button" disabled={busy} onClick={() => act.verify([f.id])}>
             verify

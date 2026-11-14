@@ -703,11 +703,14 @@ class Interrupt(Model):
 
 
 class LiveUpstream(Model):
+    """One edit upstream of a value: ``selection`` is the selector text that limits it (``h6``
+    for ``L22.A[h6]``, ``row=2`` for a state cell), None for the whole port."""
     row: int
     layer: int
     port: str
     op: str
     staged: bool
+    selection: str | None = None
 
 
 class LiveEdit(Model):
@@ -790,7 +793,8 @@ class LiveItems(Model):
 
 class LiveRow(Model):
     """One token row: ``token`` its id; ``count`` stops computed in it (all for a finished row,
-    None for a prefilled row whose ports were never stepped); ``edits`` ports edited there."""
+    None for a prefilled row whose ports were never stepped); ``edits`` ports edited there,
+    each with its selector (``L22.A[h6]``)."""
     row: int
     token: int | None
     count: int | None

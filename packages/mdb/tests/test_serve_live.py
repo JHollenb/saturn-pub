@@ -563,6 +563,23 @@ def test_live_frame_and_timeline_follow_the_cursor(live):
     assert [r["token"] for r in block["rows"]] == PROMPT
 
 
+def test_the_clock_marks_and_upstream_edits_keep_the_selector(live):
+    """M19: an edit limited by a selector (``L0.A[h1]``) is shown with it on the clock's row
+    marks (committed and staged); upstream entries carry the selection field."""
+    c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
+    _op(c, live.sid, "start", {"prompt": PROMPT})
+    _op(c, live.sid, "set", {"target": "L0.A[h1]", "value": 0.5, "op": "scale"})
+    _op(c, live.sid, "until", {"target": "L1.h"})
+    _op(c, live.sid, "set", {"target": "L1.A[h0]", "value": 0, "op": "scale"})
+    block = c.get(f"/api/v1/s/{live.sid}/live/timeline").json()["data"]
+    assert block["rows"][3]["edits"] == ["L0.A[h1]", "L1.A[h0] (staged)"]
+    frame = c.get(f"/api/v1/s/{live.sid}/live").json()["data"]
+    schema.LiveFrame.model_validate(frame)
+    assert [e["selection"] for e in frame["edits"]["committed"]] == ["h1"]
+    upstream = [u for p in frame["ports"] if p["edit"] for u in p["edit"]["upstream"]]
+    assert upstream and all("selection" in u for u in upstream)
+
+
 def test_events_push_one_op_event_per_completed_op(live):
     app = create_app(live.debugger.project.root, port=PORT, live=live, heartbeat=5.0)
     c = _client(app)

@@ -1,5 +1,5 @@
 {
-  "bytes": 5255,
+  "bytes": 6764,
   "data": {
     "circuits": [
       {
@@ -8,7 +8,7 @@
         "depth": 3,
         "id": 1,
         "k": 1,
-        "record": "0b9ad225ff43165e95b4abee8a7a09434aa620f6c8783ffd351a880ae7c96568",
+        "record": "c445da757990d49144ecdedf119c43760fbd1991c44d917a2faeca97768c086f",
         "tests": 0,
         "verdict": null,
         "where": "t3.logits"
@@ -19,9 +19,9 @@
         "depth": 3,
         "id": 2,
         "k": 2,
-        "record": "ef89528099ee50be26360fce87dfd03701d35f5633f3891ee02394e88967e655",
-        "tests": 1,
-        "verdict": "sufficient at this dose",
+        "record": "152baf3e7d79b4c2052a5a8a83aa0c39b633ddb60f0e164f99b290bf5115121c",
+        "tests": 0,
+        "verdict": null,
         "where": "t3.logits"
       },
       {
@@ -30,7 +30,7 @@
         "depth": 2,
         "id": 3,
         "k": 2,
-        "record": "6a101595b444ffdee88c260c30471a795f141eec17f07d9002ed5e62015b5692",
+        "record": "a1eebc5c5e616b0057226d9f17fb34b8f2ab776efb65b8bcf444f56a0f458786",
         "tests": 0,
         "verdict": null,
         "where": "t3.logits"
@@ -41,7 +41,7 @@
         "depth": 2,
         "id": 4,
         "k": 2,
-        "record": "21609a4641aa2bd504b48f6be1d3122e979f4cf8aebde6d45353e4a0b75866a3",
+        "record": "4fc933e609afeddbc9c91ff9c9b302ea8e67c29f9eca1c8e6e1543adee8739a2",
         "tests": 0,
         "verdict": null,
         "where": "t3.logits"
@@ -72,15 +72,23 @@
             16
           ]
         },
-        "record": "db5ed1366ed7e565e2949f06fcb029716f88056dc02250348b0ad45f2e6a08a9",
+        "record": "f5ff4bc2d08606da4e6347973c02b438f0e9904932fd856d73720ad8a3cf31bc",
         "sealed_at": "t3.L0.h",
         "status": "closed",
         "steps": 1,
         "target": "t3.L0.a",
         "verdict": {
+          "basis": "measured residual, P20",
           "bound_max": {
             "authority": "bound",
             "value": 0.016106113765349046
+          },
+          "criterion": "confirmed when max |native - predicted| <= floor = 4 x dtype spacing at the magnitude of the consumer; not confirmed otherwise; P20: residual = native - predicted",
+          "dtype": "bfloat16",
+          "floor": {
+            "authority": "measured",
+            "proof": "P20",
+            "value": 0.0625
           },
           "native": {
             "max_abs": {
@@ -93,7 +101,7 @@
             }
           },
           "order": {
-            "current_cut": "a5caf85c892915ba136c619f1fb2c9a4b45fb60ef254a2f078778dcb70a39de3",
+            "current_cut": "439f61729c7514675a515419333e839cca66dce84875e706d166ad574c693447",
             "descends": true,
             "receipts_after_seal": {
               "count": 0
@@ -104,7 +112,7 @@
               "row": 3
             },
             "sealed_before_target": true,
-            "sealed_cut": "a5caf85c892915ba136c619f1fb2c9a4b45fb60ef254a2f078778dcb70a39de3",
+            "sealed_cut": "439f61729c7514675a515419333e839cca66dce84875e706d166ad574c693447",
             "target": {
               "index": 3,
               "row": 3
@@ -114,7 +122,13 @@
             "authority": "measured",
             "value": 0.005299224032836225
           },
-          "verdict": "within-bound",
+          "spacing": {
+            "authority": "measured",
+            "proof": "P20",
+            "value": 0.015625
+          },
+          "state": "resolved",
+          "verdict": "confirmed",
           "within_bound": true
         }
       },
@@ -123,7 +137,7 @@
           "elementwise": true,
           "max": {
             "authority": "bound",
-            "value": 0.0026798018788218043
+            "value": 0.0026798062274879146
           }
         },
         "id": 2,
@@ -131,27 +145,35 @@
           "dtype": "float64",
           "max_abs": {
             "authority": "derived-exact",
-            "value": 0.2515246078866365
+            "value": 0.25152444329974266
           },
           "norm": {
             "authority": "derived-exact",
-            "value": 0.7071158538274008
+            "value": 0.7071158540972974
           },
-          "sha256": "a37f6e74c9373a0ebf208cb5b8e1048ce99373ecfea129e0139909f05ed588a1",
+          "sha256": "cb1cc1226f21049d09afc9e5fc126253790365c39ee25401232724d0970e98a5",
           "shape": [
             2,
             4
           ]
         },
-        "record": "6a5b7ce96f898a514847a794cad90c2ea4d6bc6e43fd4c658973131dbc1d5308",
+        "record": "8267ec1f7e9f6f515c3d3428c02f910d0b76274f2c6468e9cd74325212fecf15",
         "sealed_at": "t3.L0.h",
         "status": "closed",
         "steps": 7,
         "target": "t3.L0.p",
         "verdict": {
+          "basis": "measured residual, P20",
           "bound_max": {
             "authority": "bound",
-            "value": 0.0026798018788218043
+            "value": 0.0026798062274879146
+          },
+          "criterion": "confirmed when max |native - predicted| <= floor = 4 x dtype spacing at the magnitude of the consumer; not confirmed otherwise; P20: residual = native - predicted",
+          "dtype": "bfloat16",
+          "floor": {
+            "authority": "measured",
+            "proof": "P20",
+            "value": 0.0078125
           },
           "native": {
             "max_abs": {
@@ -164,10 +186,10 @@
             }
           },
           "order": {
-            "current_cut": "b4673fc73ffbef1d576eae26120a27a7707d0eef1c9f119f874f92c9060c6c8a",
+            "current_cut": "7e5fd815baaa83033b8df79cec96c42b1fe3ac183ddfb08f23a4b8a2523374a0",
             "descends": true,
             "receipts_after_seal": {
-              "count": 70
+              "count": 29
             },
             "same_cut": false,
             "sealed": {
@@ -175,7 +197,7 @@
               "row": 3
             },
             "sealed_before_target": true,
-            "sealed_cut": "a5caf85c892915ba136c619f1fb2c9a4b45fb60ef254a2f078778dcb70a39de3",
+            "sealed_cut": "439f61729c7514675a515419333e839cca66dce84875e706d166ad574c693447",
             "target": {
               "index": 10,
               "row": 3
@@ -183,9 +205,15 @@
           },
           "residual_max_abs": {
             "authority": "measured",
-            "value": 0.0009104526176358929
+            "value": 0.000910616889171878
           },
-          "verdict": "within-bound",
+          "spacing": {
+            "authority": "measured",
+            "proof": "P20",
+            "value": 0.001953125
+          },
+          "state": "resolved",
+          "verdict": "confirmed",
           "within_bound": true
         }
       },
@@ -194,7 +222,7 @@
           "elementwise": true,
           "max": {
             "authority": "bound",
-            "value": 16.825123307594925
+            "value": 16.825425490715915
           }
         },
         "id": 3,
@@ -203,28 +231,36 @@
           "value": {
             "authority": "derived-exact",
             "proof": "P19",
-            "value": -0.11452182620307177
+            "value": -0.11452169292217187
           }
         },
-        "record": "f76fa16799dffe05ba7779e873a9ed9fc2f2449f07e55f0f07ebb08e17bce192",
+        "record": "376ac2947ba92b3a7c69e8cc5724bd754ddd62846c80cca268a772208561fd09",
         "sealed_at": "t3.L0.h",
         "status": "closed",
         "steps": 39,
         "target": "t3.M[4,9]",
         "verdict": {
+          "basis": "measured residual, P20",
           "bound_max": {
             "authority": "bound",
-            "value": 16.825123307594925
+            "value": 16.825425490715915
+          },
+          "criterion": "confirmed when max |native - predicted| <= floor = 4 x dtype spacing at the magnitude of the consumer; not confirmed otherwise; P20: residual = native - predicted",
+          "dtype": "bfloat16",
+          "floor": {
+            "authority": "measured",
+            "proof": "P20",
+            "value": 0.001953125
           },
           "native": {
             "authority": "measured",
             "value": -0.114013671875
           },
           "order": {
-            "current_cut": "b4673fc73ffbef1d576eae26120a27a7707d0eef1c9f119f874f92c9060c6c8a",
+            "current_cut": "7e5fd815baaa83033b8df79cec96c42b1fe3ac183ddfb08f23a4b8a2523374a0",
             "descends": true,
             "receipts_after_seal": {
-              "count": 70
+              "count": 29
             },
             "same_cut": false,
             "sealed": {
@@ -232,7 +268,7 @@
               "row": 3
             },
             "sealed_before_target": true,
-            "sealed_cut": "a5caf85c892915ba136c619f1fb2c9a4b45fb60ef254a2f078778dcb70a39de3",
+            "sealed_cut": "439f61729c7514675a515419333e839cca66dce84875e706d166ad574c693447",
             "target": {
               "index": 41,
               "row": 3
@@ -240,9 +276,15 @@
           },
           "residual_max_abs": {
             "authority": "measured",
-            "value": 0.0005081543280717749
+            "value": 0.0005080210471718749
           },
-          "verdict": "within-bound",
+          "spacing": {
+            "authority": "measured",
+            "proof": "P20",
+            "value": 0.00048828125
+          },
+          "state": "resolved",
+          "verdict": "confirmed",
           "within_bound": true
         }
       },
@@ -251,7 +293,7 @@
           "elementwise": true,
           "max": {
             "authority": "bound",
-            "value": 0.021311659537551687
+            "value": 0.021311697762868894
           }
         },
         "id": 4,
@@ -259,26 +301,34 @@
           "dtype": "float64",
           "max_abs": {
             "authority": "derived-exact",
-            "value": 0.000519650786726456
+            "value": 0.0005196506748530023
           },
           "norm": {
             "authority": "derived-exact",
-            "value": 0.0007882494432613616
+            "value": 0.0007882493822337447
           },
-          "sha256": "af68c878180ad25b68a45678a65e8198a7974f279d63bfcbd38f63c50ba2d294",
+          "sha256": "4e96ef75ffb0c469a3f25fc9077cb8ecc8bb073860c71718405b75087d2f8a33",
           "shape": [
             16
           ]
         },
-        "record": "3e5d253dcf9cbe0d514d657725252a3cb2e36989d98c8980c8ce1c7a22ed00fe",
+        "record": "460a87f365a5006482011db61d8a20249384ab3ab202566a492a4bb77007ea3e",
         "sealed_at": "t3.L0.h",
         "status": "closed",
         "steps": 36,
         "target": "t3.L1.m",
         "verdict": {
+          "basis": "measured residual, P20",
           "bound_max": {
             "authority": "bound",
-            "value": 0.021311659537551687
+            "value": 0.021311697762868894
+          },
+          "criterion": "confirmed when max |native - predicted| <= floor = 4 x dtype spacing at the magnitude of the consumer; not confirmed otherwise; P20: residual = native - predicted",
+          "dtype": "bfloat16",
+          "floor": {
+            "authority": "measured",
+            "proof": "P20",
+            "value": 1.52587890625e-05
           },
           "native": {
             "max_abs": {
@@ -291,10 +341,10 @@
             }
           },
           "order": {
-            "current_cut": "b4673fc73ffbef1d576eae26120a27a7707d0eef1c9f119f874f92c9060c6c8a",
+            "current_cut": "7e5fd815baaa83033b8df79cec96c42b1fe3ac183ddfb08f23a4b8a2523374a0",
             "descends": true,
             "receipts_after_seal": {
-              "count": 70
+              "count": 29
             },
             "same_cut": false,
             "sealed": {
@@ -302,7 +352,7 @@
               "row": 3
             },
             "sealed_before_target": true,
-            "sealed_cut": "a5caf85c892915ba136c619f1fb2c9a4b45fb60ef254a2f078778dcb70a39de3",
+            "sealed_cut": "439f61729c7514675a515419333e839cca66dce84875e706d166ad574c693447",
             "target": {
               "index": 38,
               "row": 3
@@ -310,16 +360,22 @@
           },
           "residual_max_abs": {
             "authority": "measured",
-            "value": 4.898754444678422e-06
+            "value": 4.898713108634242e-06
           },
-          "verdict": "within-bound",
+          "spacing": {
+            "authority": "measured",
+            "proof": "P20",
+            "value": 3.814697265625e-06
+          },
+          "state": "resolved",
+          "verdict": "confirmed",
           "within_bound": true
         }
       }
     ],
     "more": [],
-    "seq": 35,
-    "session": "qwen2-8a16dcab78be",
+    "seq": 32,
+    "session": "qwen2-872f0e348e89",
     "symbols": [
       {
         "definitions": [
@@ -335,7 +391,7 @@
     ],
     "where": "t3.logits"
   },
-  "digest": "fad7d952f808af3e780a80a375fbd75859f317b3fbc8078e93bf72b2f3c50690",
+  "digest": "462f62a7be225c0ce5ce6e11d974259ba5f629ff9da67bfa82da6e8bba7d5f42",
   "schema": "mdb-view-live-ledger-v1",
   "state": "resolved"
 }

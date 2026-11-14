@@ -425,11 +425,21 @@
 }
 
 .arch-partial {
-  background: linear-gradient(90deg, color-mix(in srgb, var(--ink) 28%, var(--panel)) 50%, var(--panel) 50%);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ink) 28%, var(--panel)) 50%,
+    var(--panel) 50%
+  );
 }
 
 .arch-cache {
-  background: repeating-linear-gradient(45deg, var(--panel), var(--panel) 2px, var(--rule) 2px, var(--rule) 4px);
+  background: repeating-linear-gradient(
+    45deg,
+    var(--panel),
+    var(--panel) 2px,
+    var(--rule) 2px,
+    var(--rule) 4px
+  );
 }
 
 .arch-empty {
@@ -524,7 +534,13 @@
 }
 
 .life-below {
-  background: repeating-linear-gradient(90deg, var(--panel), var(--panel) 2px, var(--rule) 2px, var(--rule) 3px);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--panel),
+    var(--panel) 2px,
+    var(--rule) 2px,
+    var(--rule) 3px
+  );
 }
 
 .life-pending {
@@ -765,7 +781,10 @@ th.n {
 
 .reader-lines {
   display: grid;
-  grid-template-columns: minmax(8em, max-content) minmax(7em, max-content) minmax(8em, max-content) minmax(0, 1fr);
+  grid-template-columns: minmax(8em, max-content) minmax(7em, max-content) minmax(
+      8em,
+      max-content
+    ) minmax(0, 1fr);
   column-gap: 14px;
   margin-bottom: 4px;
 }
@@ -908,4 +927,9 @@ th.n {
 /* A summary in a number column: one line per part (max_abs, norm), right-aligned. */
 td.n .op-summary > span {
   display: block;
+}
+
+/* a forecast the measured residual did not confirm (verify, M29) */
+.verdict-not {
+  color: var(--sign-neg);
 }

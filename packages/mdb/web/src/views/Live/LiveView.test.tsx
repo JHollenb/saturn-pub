@@ -13,6 +13,7 @@ import edited from './fixtures/edited.json';
 import idle from './fixtures/idle.json';
 import many from './fixtures/many.json';
 import refusedOp from './fixtures/refused_op.json';
+import selectorEdits from './fixtures/selector_edits.json';
 
 type Env<T> = { data: T };
 const act = {
@@ -210,7 +211,7 @@ describe('Live view', () => {
   });
 
   it('a frame that shortened its lists says how many more and offers the rest', () => {
-    const frame = (many.frame as Env<LiveFrame>).data;
+    const frame = (many.frame as unknown as Env<LiveFrame>).data; // captured before LiveUpstream.selection
     const fields = frame.more.map((m) => m.field);
     expect(fields).toContain('committed');
     expect(fields).toContain('breakpoints');
@@ -236,7 +237,7 @@ describe('Live view', () => {
   });
 
   it('pages fetched with "more" are listed after the frame’s own items', () => {
-    const frame = (many.frame as Env<LiveFrame>).data;
+    const frame = (many.frame as unknown as Env<LiveFrame>).data; // captured before LiveUpstream.selection
     const page = (many.committed_page as { data: { items: Record<string, unknown>[] } }).data;
     const bps = (many.breakpoints_page as { data: { items: Record<string, unknown>[] } }).data;
     const extra = new Map([
@@ -297,6 +298,19 @@ describe('Live view', () => {
     // a port whose summary has not arrived shows a placeholder, not a number
     expect(row(html, 'q')).toContain('…');
     expect(row(html, 'q')).not.toContain('class="num"');
+  });
+
+  it('edits show their selector in the edit list and the clock (issue M19)', () => {
+    const frame = (selectorEdits.frame as unknown as Env<LiveFrame>).data;
+    const timeline = (selectorEdits.timeline as unknown as Env<LiveTimeline>).data;
+    const html = render(props({ frame, timeline }));
+    const staged = html.slice(html.indexOf('data-testid="staged-edit"'));
+    expect(staged.slice(0, staged.indexOf('</div>'))).toContain('L1.A[h0] scale');
+    const committedEdit = html.slice(html.indexOf('data-testid="committed-edit"'));
+    expect(committedEdit.slice(0, committedEdit.indexOf('</div>'))).toContain('L0.A[h1] scale');
+    // the clock's row marks carry the selector, and the edited stop is still marked edited
+    expect(html).toContain('title="L0.A[h1], L1.A[h0] (staged)"');
+    expect(html).toMatch(/data-edited="yes"[^>]*>L0\.A</);
   });
 
   it('a pasted link to another address offers `until` instead of moving the model', () => {

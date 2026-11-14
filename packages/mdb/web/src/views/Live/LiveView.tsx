@@ -18,7 +18,9 @@ import { ViewLegend } from './ViewLegend';
 import { RefusedView } from '../../chrome/NotAvailable';
 import { Count, NumView } from '../../chrome/NumView';
 import { asNum } from '../../chrome/evidence';
+import { editAddress } from '../../chrome/labelled';
 import { OpValue } from '../../chrome/OpValue';
+import { ResidualVsFloor, VerdictChip } from '../Predict/VerifyVerdict';
 import type { Tab } from '../../state/inspect';
 import type { ReduceEntry } from '../../state/reduce';
 import {
@@ -94,10 +96,10 @@ export function LiveView(props: LiveViewProps) {
     // still work; every op answers for itself.
     return (
       <div
-      className={`live ${props.labels ? 'labels-on' : 'labels-off'}`}
-      data-testid="live"
-      data-running={running ? 'yes' : 'no'}
-    >
+        className={`live ${props.labels ? 'labels-on' : 'labels-off'}`}
+        data-testid="live"
+        data-running={running ? 'yes' : 'no'}
+      >
         <div className="live-status" role="status">
           <span className="faint">{props.refused ? 'no live frame' : 'loading live session…'}</span>
           <span className="live-state">
@@ -145,9 +147,7 @@ export function LiveView(props: LiveViewProps) {
           ))}
         </div>
       )}
-      {hasRun && props.onLabels && (
-        <ViewLegend labels={!!props.labels} onLabels={props.onLabels} />
-      )}
+      {hasRun && props.onLabels && <ViewLegend labels={!!props.labels} onLabels={props.onLabels} />}
       {pane ? (
         <div role="tabpanel" aria-labelledby={`live-tab-${tab}`} className="live-pane">
           {pane}
@@ -235,10 +235,7 @@ function Displays({
                   <td className="mono faint">{here && here !== addr ? `→ ${here}` : ''}</td>
                   <td className="n">
                     {summary ? (
-                      <Reduced
-                        entry={summary.stats}
-                        pick={(r) => ('l2' in r ? r.l2 : null)}
-                      />
+                      <Reduced entry={summary.stats} pick={(r) => ('l2' in r ? r.l2 : null)} />
                     ) : (
                       <span className="faint" title="not a port of the layer on screen">
                         print to read
@@ -489,7 +486,10 @@ function Clock({
   const cursor = timeline.cursor;
   if (!cursor) return null;
   const row = timeline.rows.find((r) => r.row === cursor.row);
-  const edited = new Set((row?.edits ?? []).map((e) => e.replace(' (staged)', '')));
+  // a row's edit marks carry their selector (`L1.A[h0]`); a stop is edited whatever the selector
+  const edited = new Set(
+    (row?.edits ?? []).map((e) => e.replace(' (staged)', '').replace(/\[.*\]$/, '')),
+  );
   return (
     <div className="live-clock" aria-label="clock">
       <div className="faint">
@@ -695,9 +695,7 @@ export function ForecastCell({
   act: LiveActions;
   disabled: boolean;
 }) {
-  const f = forecasts
-    .filter((x) => x.target === port.addr)
-    .sort((a, b) => b.id - a.id)[0];
+  const f = forecasts.filter((x) => x.target === port.addr).sort((a, b) => b.id - a.id)[0];
   if (!f) {
     return port.computed ? null : (
       <button
@@ -719,10 +717,8 @@ export function ForecastCell({
         <>
           {' '}
           <span className="faint">native</span> <OpValue value={v.native} compact />{' '}
-          <span className="faint">resid</span>{' '}
-          <OpValue value={v.residual_max_abs} what="residual" compact /> ≤{' '}
-          <OpValue value={v.bound_max} what="bound" compact />{' '}
-          <span className="chip">{typeof v.verdict === 'string' ? v.verdict : f.status}</span>
+          <span className="faint">resid</span> <ResidualVsFloor v={v} />{' '}
+          <VerdictChip v={v} status={f.status} />
         </>
       ) : port.computed ? (
         <>
@@ -739,7 +735,8 @@ export function ForecastCell({
       ) : (
         <span className="faint" title="hollow until measured">
           {' '}
-          awaiting native · bound <OpValue value={(f.bound as Record<string, unknown>).max} compact />
+          awaiting native · bound{' '}
+          <OpValue value={(f.bound as Record<string, unknown>).max} compact />
         </span>
       )}
     </span>
@@ -819,7 +816,10 @@ export function EditMark({ edit }: { edit: LiveEdit | null }) {
   }
   const total = edit.upstream_total;
   if (total) {
-    const listed = edit.upstream.map((u) => `t${u.row}.L${u.layer}.${u.port} ${u.op}`);
+    const listed = edit.upstream.map(
+      (u) =>
+        `t${u.row}.${u.port.startsWith('cache.') ? '' : `L${u.layer}.`}${editAddress(u.port, u.selection)} ${u.op}`,
+    );
     const label = `downstream of ${total} edit${total === 1 ? '' : 's'}: ${listed.join(', ')}${
       total > listed.length ? `, and ${total - listed.length} more` : ''
     }`;
@@ -965,14 +965,17 @@ interface EditRecord {
   row?: number;
   value?: unknown;
   fired?: boolean;
+  /** The selector text that limits the edit (`h6` for `L22.A[h6]`); absent: the whole port. */
+  selection?: string | null;
 }
 
 function EditLine({ e }: { e: EditRecord }) {
   const value = asNum(e.value);
   return (
-    <span className="mono">
+    <span className="mono" data-testid="edit-address">
       {e.layer !== undefined ? `L${e.layer}.` : ''}
-      {e.port} {e.op} {value ? <NumView n={value} /> : <span className="faint">{e.kind}</span>}
+      {editAddress(e.port, e.selection)} {e.op}{' '}
+      {value ? <NumView n={value} /> : <span className="faint">{e.kind}</span>}
     </span>
   );
 }

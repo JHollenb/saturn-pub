@@ -129,9 +129,27 @@ def _limits(debugger) -> dict[str, int]:
             "heads": int(adapter.num_heads), "kv_heads": int(adapter.num_kv_heads)}
 
 
+def _selection(record) -> str | None:
+    """The selector text of an edit record: its ``selection``, else the bracket of a state
+    cell's address (``cache.L1.v[row=2]`` -> ``row=2``); None for a whole port."""
+    selection = record.get("selection")
+    if isinstance(selection, str) and selection:
+        return selection
+    cell = record.get("cell")
+    if isinstance(cell, str) and "[" in cell:
+        return cell.partition("[")[2].rstrip("]") or None
+    return None
+
+
 def _upstream(info) -> list[dict]:
-    return [{k: item[k] for k in ("row", "layer", "port", "op", "staged")}
-            for item in info["upstream_edits"]]
+    return [{**{k: item[k] for k in ("row", "layer", "port", "op", "staged")},
+             "selection": _selection(item)} for item in info["upstream_edits"]]
+
+
+def _mark(layer, record) -> str:
+    """A row's edit mark: ``L<layer>.<port>`` with the edit's selector (``L22.A[h6]``)."""
+    selection = _selection(record)
+    return f"L{layer}.{record['port']}" + (f"[{selection}]" if selection else "")
 
 
 def edit_of(run, addr: str, shown: int = UPSTREAM_SHOWN) -> LiveEdit:
@@ -340,10 +358,10 @@ def timeline(session) -> tuple[LiveTimeline, int]:
     context = [int(t) for t in run.session.read("tokens")[0].tolist()]
     marks: dict[int, list[str]] = {}
     for record in run.committed_edits():
-        marks.setdefault(int(record["row"]), []).append(f"L{record['layer']}.{record['port']}")
+        marks.setdefault(int(record["row"]), []).append(_mark(record["layer"], record))
     pending = run.pending_layer
     for record in run.staged_info():
-        marks.setdefault(here_row, []).append(f"L{pending}.{record['port']} (staged)")
+        marks.setdefault(here_row, []).append(f"{_mark(pending, record)} (staged)")
     rows = []
     for row in range(here_row + 1):
         count = None if row < root_row else len(stops) if row < here_row else here_index + 1
