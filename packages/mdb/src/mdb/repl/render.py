@@ -685,6 +685,9 @@ def _whatif_lines(result: dict[str, Any]) -> list[str]:
         linear = prediction["linear"]
         exact = prediction["exact"]
         bound = f"  bound {_claimed(exact['bound'])}" if "bound" in exact else ""
+        operands = exact.get("operands", {})
+        if operands.get("source") == "forecast":
+            bound += f"  (operands forecast from {operands['at']})"
         lines.append(f"  sealed  linear {delta} = "
                      f"{_claimed(linear['value']) if 'value' in linear else num(linear)}   "
                      f"exact {delta} = {_claimed(exact['value'])}{bound}")
@@ -704,22 +707,23 @@ def _whatif_lines(result: dict[str, Any]) -> list[str]:
             parts.append(text)
         lines.append(f"  error split ({split['proof']}): " + " + ".join(parts))
     if "effect" in result:
-        lines.append("  " + effect_line(result["effect"], delta))
+        lines.append("  " + effect_line(result["effect"], delta,
+                                        exact_note=" (written value, measured operands)"))
     session = result["session"]
     lines.append(f"  session {'unchanged' if session['unchanged'] else 'CHANGED'} at "
                  f"{result['where']}  ({len(result['measured']['moves'])} moves, restored)")
     return lines
 
 
-def effect_line(effect: dict[str, Any], delta: str = "\u0394") -> str:
+def effect_line(effect: dict[str, Any], delta: str = "\u0394", exact_note: str = "") -> str:
     """The P20 verdict: native, exact and residual against the floor (all measured /
-    derived-exact, never a bound)."""
+    derived-exact, never a bound). ``exact_note`` says which exact change the verdict used."""
     floor = (f"floor {_claimed(effect['floor'])} = max(|residual|, 2 x spacing "
              f"{_claimed(effect['spacing'])})" if "residual" in effect else
              f"floor {_claimed(effect['floor'])} = 2 x spacing {_claimed(effect['spacing'])}")
     numbers = f"native {delta} {_claimed(effect['native'])}"
     if "exact" in effect:
-        numbers += (f", exact {delta} {_claimed(effect['exact'])}, residual "
+        numbers += (f", exact {delta}{exact_note} {_claimed(effect['exact'])}, residual "
                     f"{_claimed(effect['residual'])}")
     else:
         numbers += f" ({effect['basis']})"

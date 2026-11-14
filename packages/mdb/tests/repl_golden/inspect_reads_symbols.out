@@ -36,11 +36,11 @@ t3.logits  logits = lm_head(fn)
 (mdb) reads t1 --consumer M[4,9] top=3
 reads t1 at t3.logits  rows t3  consumer t3.M[4,9]  (4 reads)
   t3.L1.h0   mass 0.24902 [measured]  effect 0.011455 [derived-exact P19]
-    causal: Δ -0.015137 [measured], predicted -0.01456 [derived-exact], residual -0.00057636 [measured P20]; floor 0.00097656 [measured P20]
+    causal: Δ -0.015137 [measured], predicted -0.014201 [derived-exact], residual -0.00093616 [measured P20]; floor 0.00097656 [measured P20]
   t3.L0.h1   mass 0.25 [measured]  effect -0.0081352 [derived-exact P19]
-    causal: Δ 0.0065918 [measured], predicted 0.0057368 [derived-exact], residual 0.00085497 [measured P20]; floor 0.00097656 [measured P20]
+    causal: Δ 0.0065918 [measured], predicted 0.0061741 [derived-exact], residual 0.00041766 [measured P20]; floor 0.00097656 [measured P20]
   t3.L0.h0   mass 0.25 [measured]  effect -0.0025448 [derived-exact P19]
-    not causal at this dose (no effect above the noise floor): Δ 0.00048828 [measured], predicted 0.00076056 [derived-exact], residual -0.00027228 [measured P20]; floor 0.00097656 [measured P20]
+    unresolved (changed, native Δ 0.00048828 is within the floor 0.00097656 but the exact Δ 0.0011979 is not): Δ 0.00048828 [measured], predicted 0.0011979 [derived-exact], residual -0.0007096 [measured P20]; floor 0.00097656 [measured P20]
   +1 more: mass Σ 0.24902 [derived-exact]  effect Σ -0.0017941 [derived-exact]
   value_mix: eta_max_abs 0.00020313 [measured P06] worst |eta|/bound 0.86569 [measured P06] within bound (2 layer rows)
   head_write: eta_max_abs 1.8556e-05 [measured P07] worst |eta|/bound 0.82069 [measured P07] within bound (2 layer rows)

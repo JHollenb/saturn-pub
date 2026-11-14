@@ -132,7 +132,7 @@ staged at t3.L0.A[h1]: A replace tensor [1, 1, 16] bfloat16 sha256 f111ca510505 
 t3.logits  [6:8] of 32: -0.1709 -0.14844 [measured, under edit t3.L0.A]
 (mdb) whatif L1.m = clean:L1.m --consumer M[6,7]
 whatif t3.L1.m replace tensor 7b16b2586286 from clean:t3.L1.m -> t3.M[6,7]  (mode rewind, ...)
-  sealed  linear ΔM = -0.00021867 [derived-local P14]   exact ΔM = -0.00035917 [derived-exact]  ...
+  sealed  linear ΔM = -0.00021868 [derived-local P14]   exact ΔM = -0.00021847 [derived-exact]  ...
   native  ΔM = -0.00097656 [measured]   (base -0.022461 [measured] -> edited -0.023438 [measured])
   ...
 (mdb) set L0.A[h1] = clean:L0.A[h0:2]
@@ -415,19 +415,36 @@ private branch, and restores the session (`tests/repl_golden/predict_whatif.out`
 
 ```
 (mdb) whatif L1.m = 0.5 add --consumer M[4,9]
-whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 5d511215876ce57d)
-  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  bound 0.07029 [bound]
+whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 6b04afb367ee5bf5)
+  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  bound 0.07029 [bound]  (operands forecast from t3.L1.a)
   native  ΔM = 0.16449 [measured]   (base -0.11401 [measured] -> edited 0.050476 [measured])
-  error split (P20): linear 1.4572 [derived-local P14] + nonlinear -1.2921 [derived-exact P20] + realisation -4.4976e-05 [derived-exact P20] + rounding -0.00059161 [measured P20] (within bound 0.061091 [bound])
-  verdict (P20): effect  native ΔM 0.16449 [measured P20], exact ΔM 0.16508 [derived-exact P20], residual -0.00059161 [measured P20]; floor 0.00097656 [measured P20] = max(|residual|, 2 x spacing 0.00048828 [measured P20])
+  error split (P20): linear 1.4572 [derived-local P14] + nonlinear -1.2921 [derived-exact P20] + operands 4.2358e-05 [derived-exact P20] + realisation -4.5182e-05 [derived-exact P20] + rounding -0.00063376 [measured P20] (within bound 0.01905 [bound])
+  verdict (P20): effect  native ΔM 0.16449 [measured P20], exact ΔM (written value, measured operands) 0.16512 [derived-exact P20], residual -0.00063376 [measured P20]; floor 0.00097656 [measured P20] = max(|residual|, 2 x spacing 0.00048828 [measured P20])
   session unchanged at t3.L1.a  (5 moves, restored)
 ```
+
+The exact change is `F(x1) - F(x0)` (P09 section 1): the base and the edited chains hold the
+edited port at its value `x0` or write the edit there, and recompute the same stops (those the
+edit reaches) in float64 from the same operands; the base is never the native value, which
+would put the base run's rounding into the exact change (with a no-op edit `L1.m *= 1` the
+exact change is 0, at any cursor). The sealed value uses the operands at the cursor. When the
+consumer is ahead of the cursor, the stops past it exist only as the chain's own float64 values,
+and the sealed line says `(operands forecast from t3.L1.a)` (`prediction.exact.operands` in the
+result; the label stays `derived-exact`: an exact identity on the operands captured at the
+cursor, not a linearisation). After the native run the chain is evaluated again at the consumer
+on the measured operands of the unedited run (`exact` in the result, `requested` and `written`;
+computed after the seal and never shown as sealed); the split gains `operands` (that value minus
+the sealed one) and `realisation` and `rounding` are taken on the measured operands. The verdict
+line says which exact change it holds native against: the written value on measured operands.
+That number, the residual and the verdict are the same wherever the cursor was (tested at three
+cursors for a port, a head-selected and a cross-run edit, to `spacing / 2^20`).
 
 ### Verdicts (P20)
 
 `whatif`, `reads` and `compare` judge an effect from the P20 accounting
-(`mdb.analysis.verdict`): native change = exact change (float64 chain, `derived-exact`) +
-residual (`measured`). The floor is `max(|residual|, 2 x spacing)`, spacing being the gap between
+(`mdb.analysis.verdict`): native change = exact change (float64 chain on the measured operands,
+written value, `derived-exact`) + residual (`measured`). The floor is
+`max(|residual|, 2 x spacing)`, spacing being the gap between
 adjacent values of the consumer's dtype at its magnitude. A change is an `effect` when the
 native change is above the floor and the exact change has its sign and exceeds the residual;
 `no effect above the noise floor` when both are within the floor; otherwise `unresolved`, with
@@ -524,18 +541,18 @@ set recall: 4 items  (tests/fixtures/prompt_set_tiny.jsonl)
 each recall: whatif L1.A[h1] *= 0 --consumer M[$answer,$foil]
   4 items at t@last.logits; runs released; result each2
   item  native      exact       verdict
-  a     -0.0083008  -0.0078665  effect
-  b     0.0065918   0.006382    effect
-  c     0.034058    0.034175    effect
-  d     0.024658    0.024404    effect
+  a     -0.0083008  -0.0074347  effect
+  b     0.0065918   0.0061747   effect
+  c     0.034058    0.034368    effect
+  d     0.024658    0.024872    effect
   labels: native measured, exact derived-exact
 summary: none refused; statistics over all 4 items
   measured.delta  [measured]
     n 4  mean 0.014252  min -0.0083008  max 0.034058  sign + 3/4
   prediction.exact.value  [derived-exact]
-    n 4  mean 0.014274  min -0.0078665  max 0.034175  sign + 3/4
+    n 4  mean 0.014495  min -0.0074347  max 0.034368  sign + 3/4
   effect.verdict: effect 4
-  +28 more in the record (promptset result each2 [ITEM])
+  +30 more in the record (promptset result each2 [ITEM])
 (mdb) each recall: reads t@subject --consumer M[$answer,$foil] top=2
 ...
   item  read      mass        effect      causal      verdict
@@ -548,7 +565,7 @@ summary: 1 of 4 items refused (d) and excluded; statistics over the 3 others
 ...
 (mdb) each recall: whatif cache.L0.v[row=@subject] = @pair:cache.L0.v[row=@subject] --consumer M[$answer,$foil]
 ...
-  a     0.0041504   0.0041846   effect
+  a     0.0041504   0.0046219   effect
 ```
 
 The result of `each` is one summary record (at most 64 KiB): a row per item (its key numbers,

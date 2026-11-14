@@ -5,41 +5,41 @@ t3.L1.a  a = RMSNorm(h) * w_in  {P02 P03}
 (mdb) break L*.p
 Breakpoint 1 at L*.p
 (mdb) whatif L1.m=0.5 add consumer=M[4,9]
-whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 5d511215876ce57d)
-  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  bound 0.07029 [bound]
+whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 6b04afb367ee5bf5)
+  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  bound 0.07029 [bound]  (operands forecast from t3.L1.a)
   native  ΔM = 0.16449 [measured]   (base -0.11401 [measured] -> edited 0.050476 [measured])
-  error split (P20): linear 1.4572 [derived-local P14] + nonlinear -1.2921 [derived-exact P20] + realisation -4.4976e-05 [derived-exact P20] + rounding -0.00059161 [measured P20] (within bound 0.061091 [bound])
-  verdict (P20): effect  native ΔM 0.16449 [measured P20], exact ΔM 0.16508 [derived-exact P20], residual -0.00059161 [measured P20]; floor 0.00097656 [measured P20] = max(|residual|, 2 x spacing 0.00048828 [measured P20])
+  error split (P20): linear 1.4572 [derived-local P14] + nonlinear -1.2921 [derived-exact P20] + operands 4.2358e-05 [derived-exact P20] + realisation -4.5182e-05 [derived-exact P20] + rounding -0.00063376 [measured P20] (within bound 0.01905 [bound])
+  verdict (P20): effect  native ΔM 0.16449 [measured P20], exact ΔM (written value, measured operands) 0.16512 [derived-exact P20], residual -0.00063376 [measured P20]; floor 0.00097656 [measured P20] = max(|residual|, 2 x spacing 0.00048828 [measured P20])
   session unchanged at t3.L1.a  (5 moves, restored)
 (mdb) whatif L0.v=0.25 add consumer=t3.logits[i=7]
-whatif t3.L0.v add 0.25 [supplied] -> t3.logits[i=7]  (mode rewind, record 786d066bcf2578bc)
-  sealed  linear Δlogit = -0.018373 [derived-local P14]   exact Δlogit = -0.011992 [derived-exact]  bound 0.37496 [bound]
+whatif t3.L0.v add 0.25 [supplied] -> t3.logits[i=7]  (mode rewind, record 2626276dc234873e)
+  sealed  linear Δlogit = -0.018372 [derived-local P14]   exact Δlogit = -0.01183 [derived-exact]  bound 0.50465 [bound]  (operands forecast from t3.L1.a)
   native  Δlogit = -0.011719 [measured]   (base -0.15332 [measured] -> edited -0.16504 [measured])
-  error split (P20): linear -0.018373 [derived-local P14] + nonlinear 0.0063806 [derived-exact P20] + realisation -4.5157e-05 [derived-exact P20] + rounding 0.00031882 [measured P20] (within bound 0.21229 [bound])
-  verdict (P20): effect  native Δlogit -0.011719 [measured P20], exact Δlogit -0.012038 [derived-exact P20], residual 0.00031882 [measured P20]; floor 0.0019531 [measured P20] = max(|residual|, 2 x spacing 0.00097656 [measured P20])
+  error split (P20): linear -0.018372 [derived-local P14] + nonlinear 0.0065423 [derived-exact P20] + operands 0 [derived-exact P20] + realisation -4.5157e-05 [derived-exact P20] + rounding 0.00015624 [measured P20] (within bound 0.34198 [bound])
+  verdict (P20): effect  native Δlogit -0.011719 [measured P20], exact Δlogit (written value, measured operands) -0.011875 [derived-exact P20], residual 0.00015624 [measured P20]; floor 0.0019531 [measured P20] = max(|residual|, 2 x spacing 0.00097656 [measured P20])
   session unchanged at t3.L1.a  (7 moves, restored)
 (mdb) whatif L1.o 1.5 scale consumer=L1.h_out
-whatif t3.L1.o scale 1.5 [supplied] -> t3.L1.h_out  (mode pending, record 56c387016a68ddef)
-  sealed  linear Δ = max_abs 0.0040993 [derived-local P14] norm 0.0082277 [derived-local P14]   exact Δ = max_abs 0.0041011 [derived-exact] norm 0.0082297 [derived-exact]  bound 0.0028421 [bound]
+whatif t3.L1.o scale 1.5 [supplied] -> t3.L1.h_out  (mode pending, record 128bd005047080ed)
+  sealed  linear Δ = max_abs 0.0040993 [derived-local P14] norm 0.0082277 [derived-local P14]   exact Δ = max_abs 0.0041011 [derived-exact] norm 0.0082297 [derived-exact]  bound 0.0028421 [bound]  (operands forecast from t3.L1.a)
   native  Δ = max_abs 0.0041046 [measured] norm 0.0081314 [measured]   (base max_abs 0.048584 [measured] norm 0.089818 [measured] -> edited max_abs 0.049805 [measured] norm 0.091607 [measured])
-  error split (P20): linear max_abs 0.0040993 [derived-local P14] norm 0.0082277 [derived-local P14] + nonlinear max_abs 4.0134e-06 [derived-exact P20] norm 7.6537e-06 [derived-exact P20] + realisation max_abs 4.2534e-05 [derived-exact P20] norm 7.3468e-05 [derived-exact P20] + rounding max_abs 0.00017617 [measured P20] norm 0.00027322 [measured P20] (within bound 0.0017521 [bound])
-  verdict (P20): effect  native Δ 0.0041046 [measured P20], exact Δ 0.0040972 [derived-exact P20], residual 7.4636e-06 [measured P20]; floor 0.00048828 [measured P20] = max(|residual|, 2 x spacing 0.00024414 [measured P20])
+  error split (P20): linear max_abs 0.0040993 [derived-local P14] norm 0.0082277 [derived-local P14] + nonlinear max_abs 4.0134e-06 [derived-exact P20] norm 7.6537e-06 [derived-exact P20] + operands max_abs 1.246e-05 [derived-exact P20] norm 2.1379e-05 [derived-exact P20] + realisation max_abs 1.5694e-05 [derived-exact P20] norm 3.3337e-05 [derived-exact P20] + rounding max_abs 0.00018408 [measured P20] norm 0.0002879 [measured P20] (within bound 0.0010968 [bound])
+  verdict (P20): effect  native Δ 0.0041046 [measured P20], exact Δ (written value, measured operands) 0.0040999 [derived-exact P20], residual 4.737e-06 [measured P20]; floor 0.00048828 [measured P20] = max(|residual|, 2 x spacing 0.00024414 [measured P20])
   session unchanged at t3.L1.a  (5 moves, restored)
 (mdb) whatif L1.m=0.5 add consumer=t4.M[4,9]
-whatif t3.L1.m add 0.5 [supplied] -> t4.M[4,9]  (mode pending, record a35a5316d303c822)
-  sealed  linear ΔM = refused (the edit flips the sampled token of t4 (20 -> 31): the first-order term does not cross a token change)   exact ΔM = 0.18443 [derived-exact]
+whatif t3.L1.m add 0.5 [supplied] -> t4.M[4,9]  (mode pending, record dc3426ea876d04e5)
+  sealed  linear ΔM = refused (the edit flips the sampled token of t4 (20 -> 31): the first-order term does not cross a token change)   exact ΔM = 0.18443 [derived-exact]  (operands forecast from t3.L1.a)
   native  ΔM = 0.18408 [measured]   (base -0.052979 [measured] -> edited 0.1311 [measured])
-  error split (P20): exact 0.18443 [derived-exact] + realisation 0 [derived-exact P20] + rounding -0.00034842 [measured P20]
-  verdict (P20): effect  native ΔM 0.18408 [measured P20], exact ΔM 0.18443 [derived-exact P20], residual -0.00034842 [measured P20]; floor 0.00097656 [measured P20] = max(|residual|, 2 x spacing 0.00048828 [measured P20])
+  error split (P20): exact 0.18443 [derived-exact] + operands 9.2579e-07 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.00034934 [measured P20] (within bound 202.13 [bound])
+  verdict (P20): effect  native ΔM 0.18408 [measured P20], exact ΔM (written value, measured operands) 0.18443 [derived-exact P20], residual -0.00034934 [measured P20]; floor 0.00097656 [measured P20] = max(|residual|, 2 x spacing 0.00048828 [measured P20])
   session unchanged at t3.L1.a  (5 moves, restored)
 (mdb) where
 t3.L1.a  a = RMSNorm(h) * w_in  {P02 P03}
 tokens: 1 5 9 3
 staged edits: 0, lookahead none
 (mdb) whatif L1.m = 0.5 add --consumer M[4,9]
-whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 5d511215876ce57d)
-  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  bound 0.07029 [bound]
+whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 6b04afb367ee5bf5)
+  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  bound 0.07029 [bound]  (operands forecast from t3.L1.a)
   native  ΔM = 0.16449 [measured]   (base -0.11401 [measured] -> edited 0.050476 [measured])
-  error split (P20): linear 1.4572 [derived-local P14] + nonlinear -1.2921 [derived-exact P20] + realisation -4.4976e-05 [derived-exact P20] + rounding -0.00059161 [measured P20] (within bound 0.061091 [bound])
-  verdict (P20): effect  native ΔM 0.16449 [measured P20], exact ΔM 0.16508 [derived-exact P20], residual -0.00059161 [measured P20]; floor 0.00097656 [measured P20] = max(|residual|, 2 x spacing 0.00048828 [measured P20])
+  error split (P20): linear 1.4572 [derived-local P14] + nonlinear -1.2921 [derived-exact P20] + operands 4.2358e-05 [derived-exact P20] + realisation -4.5182e-05 [derived-exact P20] + rounding -0.00063376 [measured P20] (within bound 0.01905 [bound])
+  verdict (P20): effect  native ΔM 0.16449 [measured P20], exact ΔM (written value, measured operands) 0.16512 [derived-exact P20], residual -0.00063376 [measured P20]; floor 0.00097656 [measured P20] = max(|residual|, 2 x spacing 0.00048828 [measured P20])
   session unchanged at t3.L1.a  (5 moves, restored)

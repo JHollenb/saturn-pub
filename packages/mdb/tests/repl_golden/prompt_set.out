@@ -25,18 +25,18 @@ summary: none refused; statistics over all 4 items
 each recall: whatif L1.A[h1] *= 0 --consumer M[$answer,$foil]
   4 items at t@last.logits; runs released; result each2
   item  native      exact       verdict
-  a     -0.0083008  -0.0078665  effect
-  b     0.0065918   0.006382    effect
-  c     0.034058    0.034175    effect
-  d     0.024658    0.024404    effect
+  a     -0.0083008  -0.0074347  effect
+  b     0.0065918   0.0061747   effect
+  c     0.034058    0.034368    effect
+  d     0.024658    0.024872    effect
   labels: native measured, exact derived-exact
 summary: none refused; statistics over all 4 items
   measured.delta  [measured]
     n 4  mean 0.014252  min -0.0083008  max 0.034058  sign + 3/4
   prediction.exact.value  [derived-exact]
-    n 4  mean 0.014274  min -0.0078665  max 0.034175  sign + 3/4
+    n 4  mean 0.014495  min -0.0074347  max 0.034368  sign + 3/4
   effect.verdict: effect 4
-  +28 more in the record (promptset result each2 [ITEM])
+  +30 more in the record (promptset result each2 [ITEM])
 (mdb) each recall: reads t@subject --consumer M[$answer,$foil] top=2
 each recall: reads t@subject --consumer M[$answer,$foil] top=2
   4 items at t@last.logits; runs released; result each3
@@ -62,25 +62,25 @@ summary: 1 of 4 items refused (d) and excluded; statistics over the 3 others
 each recall: whatif cache.L0.v[row=@subject] = @pair:cache.L0.v[row=@subject] --consumer M[$answer,$foil]
   4 items at t@last.logits; runs released; result each4
   item  native      exact       verdict
-  a     0.0041504   0.0041846   effect
-  b     -0.0043945  -0.004285   effect
-  c     0.019943    0.019882    effect
+  a     0.0041504   0.0046219   effect
+  b     -0.0043945  -0.0039496  effect
+  c     0.019943    0.019549    effect
   d     refused: no role 'subject' (roles: last)
   labels: native measured, exact derived-exact
 summary: 1 of 4 items refused (d) and excluded; statistics over the 3 others
   measured.delta  [measured]
     n 3  mean 0.0065664  min -0.0043945  max 0.019943  sign + 2/3
   prediction.exact.value  [derived-exact]
-    n 3  mean 0.0065938  min -0.004285  max 0.019882  sign + 2/3
+    n 3  mean 0.0067405  min -0.0039496  max 0.019549  sign + 2/3
   effect.verdict: effect 3
-  +26 more in the record (promptset result each4 [ITEM])
+  +28 more in the record (promptset result each4 [ITEM])
 (mdb) promptset result each2 a
 each2 item a:
-whatif t3.L1.A[h1] scale 0 [supplied] -> t3.M[4,9]  (mode rewind, record b3c9bb7d97d468b9)
-  sealed  linear ΔM = -0.0079279 [derived-local P14]   exact ΔM = -0.0078665 [derived-exact]  bound 0.022114 [bound]
+whatif t3.L1.A[h1] scale 0 [supplied] -> t3.M[4,9]  (mode rewind, record 756d06d8d573b9d9)
+  sealed  linear ΔM = -0.0079277 [derived-local P14]   exact ΔM = -0.0074347 [derived-exact]  bound 0.045715 [bound]
   native  ΔM = -0.0083008 [measured]   (base -0.11401 [measured] -> edited -0.12231 [measured])
-  error split (P20): linear -0.0079279 [derived-local P14] + nonlinear 6.1323e-05 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.00043425 [measured P20] (within bound 0.022114 [bound])
-  verdict (P20): effect  native ΔM -0.0083008 [measured P20], exact ΔM -0.0078665 [derived-exact P20], residual -0.00043425 [measured P20]; floor 0.00097656 [measured P20] = max(|residual|, 2 x spacing 0.00048828 [measured P20])
+  error split (P20): linear -0.0079277 [derived-local P14] + nonlinear 0.00049298 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding -0.00086605 [measured P20] (within bound 0.045715 [bound])
+  verdict (P20): effect  native ΔM -0.0083008 [measured P20], exact ΔM (written value, measured operands) -0.0074347 [derived-exact P20], residual -0.00086605 [measured P20]; floor 0.00097656 [measured P20] = max(|residual|, 2 x spacing 0.00048828 [measured P20])
   session unchanged at t3.logits  (5 moves, restored)
 (mdb) where
 t3.L0.h  h = layer input (residual stream)  {P01}
