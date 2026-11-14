@@ -754,9 +754,6 @@ def _reads_lines(result: dict[str, Any]) -> list[str]:
     return lines
 
 
-def _symbols_lines(result: dict[str, Any]) -> list[str]:
-    head = f"symbols at {result['where']}  consumer {result['consumer']}"
-    if "consumer_total" in result:
 def _display_width(text: str) -> int:
     """Terminal columns: wide characters count 2, combining marks 0."""
     import unicodedata
@@ -779,6 +776,9 @@ def _symbol_name(item: dict[str, Any]) -> str:
     return name
 
 
+def _symbols_lines(result: dict[str, Any]) -> list[str]:
+    head = f"symbols at {result['where']}  consumer {result['consumer']}"
+    if "consumer_total" in result:
         head += f" = {_claimed(result['consumer_total'])}"
     lines = [head + f"  min_mass {_claimed(result['min_mass'])}",
              "  mass: a sum over the heads and layers that read the binding (n reads, mean per "
@@ -848,13 +848,13 @@ def _walk(node: dict[str, Any], depth: int = 0, marks: dict[str, str] | None = N
     line = f"{'  ' * depth}{name}  {_short(node['value'])}"
     if "bound" in node:
         line += f" {'within' if node['within'] else 'OUTSIDE'} {_short(node['bound'])}"
+    if node.get("unexamined"):
+        line += (f"  (not examined, {int(node['unexamined_count']['value'])} subtree(s) "
+                 "not expanded)")
     if node["id"] in marks:
         line += f"  [ablated: {marks[node['id']]}]"
     lines = [line]
     for child in node.get("children", ()):
-    if node.get("unexamined"):
-        line += (f"  (not examined, {int(node['unexamined_count']['value'])} subtree(s) "
-                 "not expanded)")
         lines += _walk(child, depth + 1, marks, texts)
     return lines
 
