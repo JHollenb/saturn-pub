@@ -232,6 +232,8 @@ def _motion(result: dict[str, Any]) -> list[str]:
                         if result.get("staged_cells") else ""))
     if result.get("op") in ("start", "run") and result.get("run") not in (None, "main"):
         lines.append(f"run {result['run']}")
+    if result.get("op") in ("start", "run"):
+        lines.extend(_procedure_lines(result))
     lines.append(stop_line(result["stop"]))
     if result.get("focus"):
         lines.append(f"focus {result['focus']}")
@@ -329,6 +331,7 @@ def _info(result: dict[str, Any]) -> list[str]:
         return [f"{'*' if r['current'] else ' '} {r['name']:<10}{r['where']}  "
                 f"{r['prompt_tokens']} tokens, staged {r['staged']}"
                 + (f" + {r['staged_cells']} cell(s)" if r["staged_cells"] else "")
+                + "".join(f", {line}" for line in _procedure_lines(r))
                 for r in result["runs"]] + _more(result) or ["no runs"]
     lines = [f"staged at {result['where']}: " + (
         "; ".join(_edit(e) for e in result["staged"]) or "none")]
@@ -415,6 +418,7 @@ def _render(result: dict[str, Any]) -> str:
                      + (f", lookahead {result['lookahead']}" if result.get("lookahead") else ""))
         for port in result.get("computed_past_cursor", ()):
             lines.append(f"{port} was computed by the native call but is not held")
+        lines.extend(_procedure_lines(result))
         return "\n".join(lines)
     if name == "frame" and "run" in result:
         return f"run {result['run']}\n" + stop_line(result["stop"])
@@ -1163,3 +1167,93 @@ def _promptset_lines(result: dict[str, Any]) -> list[str]:
 
 _INSPECT["each"] = _each_lines
 _INSPECT["promptset"] = _promptset_lines
+
+
+# --------------------------------------------------------------------------- procedure / sweep
+
+
+def _procedure_lines(result: dict[str, Any]) -> list[str]:
+    """The prefill split of a run (``prefill``) as one line, when it is not the default (all
+    prompt rows but the last batched); the JSON always carries it."""
+    prefill = result.get("prefill")
+    if not isinstance(prefill, dict) or prefill.get("default", True):
+        return []
+    return [prefill["text"]]
+
+
+_HEAT_WIDTH = 80
+
+
+def _heat_cell(value: float, scale: float, width: int) -> str:
+    """One cell of the heat table: the signed tenths of the largest |delta| (``+9`` .. ``-9``),
+    ``.`` below a twentieth, ``0`` for an exact zero."""
+    if value == 0:
+        text = "0"
+    elif scale == 0 or abs(value) / scale < 0.05:
+        text = "."
+    else:
+        tenths = min(9, max(1, round(abs(value) / scale * 10)))
+        text = ("+" if value > 0 else "-") + str(tenths)
+    return text.rjust(width)
+
+
+def _token_label(item: dict[str, Any], width: int) -> str:
+    text = item.get("text")
+    if text is None:
+        return str(item.get("token", "?"))[-width:].rjust(width)
+    shown = text.replace(" ", "·").replace("\n", "↵")
+    return shown[:width].rjust(width)
+
+
+def heat_table(result: dict[str, Any], width: int = _HEAT_WIDTH) -> list[str]:
+    """The rows x layers table of a ``sweep`` as text of at most ``width`` columns: one line per
+    layer, one column per position (row index, and the token text when a tokenizer exists), a
+    cell the signed tenths of the largest |delta|. Positions that do not fit are cut from the
+    left and said so (the record holds them all)."""
+    table = result["table"]
+    rows, layers, grid = table["rows"], table["layers"], table["delta"]["value"]
+    scale = max((abs(v) for line in grid for v in line), default=0.0)
+    label = max(len(f"L{layers[-1]}"), 3) + 1
+    cell = 3 if label + 3 * len(rows) <= width else 2
+    fit = max(1, (width - label) // cell)
+    start = max(0, len(rows) - fit)
+    shown = list(range(start, len(rows)))
+    tokens = {item["row"]: item for item in table.get("tokens", ())}
+    lines = [" " * label + "".join(f"t{rows[j]}"[-cell:].rjust(cell) for j in shown)]
+    if any("text" in tokens.get(rows[j], {}) for j in shown):
+        lines.append(" " * label + "".join(_token_label(tokens[rows[j]], cell) for j in shown))
+    for i, layer in enumerate(layers):
+        lines.append(f"L{layer}".ljust(label)
+                     + "".join(_heat_cell(grid[i][j], scale, cell) for j in shown))
+    if start:
+        lines.append(f"(t{rows[0]}..t{rows[start - 1]} cut to fit; the table holds them)")
+    lines.append(f"cell: tenths of max |Δ| {fmt(scale)} [measured] (9 caps); '.' < 1/20, "
+                 "'0' exact")
+    return lines
+
+
+def _sweep_lines(result: dict[str, Any]) -> list[str]:
+    base = result["base"]
+    lines = [f"sweep {result['port']} = {result['origin']}:{result['port']} -> "
+             f"{result['consumer']}  ({result['cells']['count']} cells; base "
+             f"{num(base)})"]
+    lines.extend(f"  {line}" for line in _procedure_lines(result))
+    if "table" in result:
+        lines.extend(heat_table(result))
+    else:
+        pointer = result["table_pointer"]
+        lines.append(f"  table: {pointer['state']} blob sha256 {pointer['sha256'][:12]} "
+                     f"({pointer.get('reason') or str(pointer.get('bytes', '')) + ' bytes'})")
+    top = ", ".join(f"t{item['row']}.L{item['layer']} {num(item['delta'])}"
+                    for item in result["top"])
+    lines.append(f"  top |Δ|: {top}")
+    native = result["cost"]["native"]
+    lines.append(f"  cost: {native['layer']['value']} layer calls, "
+                 f"{native['probe']['value']} probes, "
+                 f"{native['transition']['value']} other transitions [measured] "
+                 "(wall time in the record)")
+    lines.append(f"  session unchanged at {result['where']}")
+    return lines
+
+
+_INSPECT["sweep"] = _sweep_lines

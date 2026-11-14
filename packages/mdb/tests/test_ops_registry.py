@@ -151,6 +151,7 @@ def _fuzz_args(ctx, name):
         "compare": {"a": f"t{row}.L1.h_out=0.01 add", "b": "fz",
                     "consumer": f"t{row}.M[0,1]"},
         "seek": {"target": ahead},
+        "sweep": {"port": "h", "origin": "donor", "consumer": f"t{row}.M[0,1]", "top": 2},
     }[name]
 
 
@@ -159,6 +160,8 @@ def test_fuzz_read_and_navigate_ops_return_bounded_labelled_results(debugger):
     rng = random.Random(1234)
     names = sorted(name for name, item in registry().items()
                    if item.effect in ("read", "navigate") and item.milestone is None)
+    dispatch(ctx, "start", {"prompt": [1, 7, 9, 3], "name": "donor"})   # sweep's origin
+    dispatch(ctx, "until", {"target": "t4.logits"})
     dispatch(ctx, "break", {"pattern": "L*.p"})
     dispatch(ctx, "watch", {"address": "L*.h[d=0]"})
     stops = None

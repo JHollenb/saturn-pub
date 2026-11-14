@@ -57,6 +57,8 @@ staged at t3.L1.p: none
 ```
 
 `start` prefills all tokens but the last; the last token (row 3) is the one you step through.
+`start prefill=K` batches only the first K rows and steps the rest one row at a time, so their
+ports are stops too (see [Prefill split and position patching](#prefill-split-and-position-patching)).
 `mdb engine MODEL [PROMPT]` names what to debug, as `gdb PROGRAM` does. `MODEL` is a checkpoint
 directory, the name of a model in the local Hugging Face cache (`mdb engine qwen2.5-1.5b
 "Weather: freezing"`; the name lookup was run against a real cache, the model was not loaded
@@ -85,7 +87,7 @@ tensor has another shape or sits at another position, so do not swap them blindl
 | `blocks.L.mlp.hook_post` | `L<L>.f` (`down_proj` input) |
 | `blocks.L.hook_mlp_out` | `L<L>.m` |
 | activation cache (`run_with_cache`, `trace`) | reading ports with `print` / `x` at a stop, or `mdb.trace` in Python; one prompt, one row at a time |
-| activation patching | `set ADDR = OTHERRUN:ADDR` for ports (`set L0.A[h1] = clean:L0.A[h1]`, see the example) and state cells; `whatif` and `compare` take the same value and measure the edit natively, then restore |
+| activation patching | `set ADDR = OTHERRUN:ADDR` for ports (`set L0.A[h1] = clean:L0.A[h1]`, see the example) and state cells; `whatif` and `compare` take the same value and measure the edit natively, then restore; at earlier positions after `start prefill=K`; the position x layer sweep is `sweep PORT = OTHERRUN --consumer C` |
 | head or path ablation | `set L<L>.A[h5] *= 0` (selector `[h5]`); `whatif` for the effect without leaving the stop |
 | direct logit attribution | `explain M[a,b]` (exact split of a margin, with a measured remainder) |
 | KV cache | state cells `cache.L<L>.k` / `v[kv0,row=2]`; readable, editable, and takeable from another run |
@@ -94,7 +96,8 @@ tensor has another shape or sits at another position, so do not swap them blindl
 
 Example: patch one head's output from a clean run into a corrupted run and read a logit
 difference. TransformerLens style, not run (patched at the last position: an mdb port edit acts
-on the cursor's row; the earlier prompt rows are prefilled and live in the cache cells):
+on the cursor's row; by default the earlier prompt rows are prefilled and live in the cache
+cells, and `start prefill=K` makes them stepped rows with ports, see below):
 
 ```python
 # pseudocode, not run
@@ -152,6 +155,72 @@ says to attach with `project=`. A whole-residual patch reproduces the clean run 
 when only the last row differs, `set L1.h = clean:L1.h` gives the clean logits; when an earlier
 row differs, add its cache cells (`set cache.L<l>.k|v[row=0:3] = clean:cache.L<l>.k|v[row=0:3]`
 for every layer), as `tests/test_ops_port_origin.py` checks.
+
+### Prefill split and position patching
+
+`start prefill=K` (and `run prefill=K`, `Run(adapter, prompt, prefill=K)`) computes prompt rows
+`0..K-1` in one batched call and steps rows `K..` one row at a time through the same transitions
+a generated row takes, with the prompt's next token forced at `sample` instead of the argmax.
+`prefill=0` steps every row; the default is all rows but the last. A stepped prompt row has
+every port, so `until t1.L0.m`, `print`, `set tR.L.PORT = clean:tR.L.PORT`, `whatif` and
+`compare` work there; on a row that was prefilled they are refused with a message that names
+`start ... prefill=K` for a `K` no larger than the row.
+
+The split is part of the procedure (issue M26): a batched and a stepped row can differ in the
+last bits of their cached K/V (measured on the tiny fp32 Qwen2: logits differ by 3e-8 between
+`prefill=0` and the default; M5 measured it on Qwen2.5-1.5B), so the checkpoint, the replay
+recipe and every restore carry `prefill`; `where` and `info runs` show it when it is not the
+default. A recipe written before the field existed reads as the default split.
+
+`sweep PORT [rows=R0:R1] [layers=L0:L1] = ORIGIN --consumer C [top=K]` patches `PORT` from the
+run `ORIGIN` at each (row, layer), runs natively to the consumer (a margin or one logit),
+reads it and moves on; the session is restored once at the end and checked unchanged. The
+result is one record: the layers x rows table of deltas (`measured`), the top cells by |Δ|,
+and the native call counts. A table too large for the record is stored as a sha256-checked
+blob with the top cells kept inline. Cells are visited from the latest layer entry back, each
+from a trail mark below it, so no cell replays from row 0: a cell `(r, l)` with the consumer
+in row `c` of an `L`-layer model costs `(L - l) + L(c - r)` layer calls, and the final restore
+`(L - l0) + L(c - r0)`. In a prompt set, `each SET: sweep h rows=@last = @pair:h --consumer
+M[$answer,$foil]` takes the origin from each item's pair; a pair of another length is a
+per-item refusal.
+
+Tiny Qwen2 (bf16), clean `1 7 9 3 6 2`, corrupted `1 5 9 3 6 2` (row 1 differs), both stepped
+from row 0, real output (`tests/repl_golden/prompt_rows.mdb`):
+
+```
+(mdb) start name=clean prefill=0 1 7 9 3 6 2
+(mdb) until t5.logits
+(mdb) start prefill=0 1 5 9 3 6 2
+prefill=0: no row batched, rows 0..5 stepped (tokens forced)
+t0.L0.h  h = layer input (residual stream)  {P01}
+(mdb) until t2.L1.h
+(mdb) print t1.L0.m
+t1.L0.m  bfloat16 [1, 1, 16]  (batch, row, d_model)
+  norm 0.0017112 min -0.0005455 max 0.0007515 mean 0.00010715 abs_max 0.0007515 [measured]
+(mdb) until t5.logits
+(mdb) sweep h = clean --consumer t5.M[4,9]
+sweep h = clean:h -> t5.M[4,9]  (12 cells; base -0.038208 [measured])
+  prefill=0: no row batched, rows 0..5 stepped (tokens forced)
+     t0 t1 t2 t3 t4 t5
+L0    0 -8  0  0  0  0
+L1    0 -9 -2 -1 -1 +5
+cell: tenths of max |Δ| 0.014893 [measured] (9 caps); '.' < 1/20, '0' exact
+  top |Δ|: t1.L1 -0.014893 [measured], t1.L0 -0.011353 [measured], t5.L1 0.0081177 [measured], ...
+  cost: 90 layer calls, 35 probes, 201 other transitions [measured] (wall time in the record)
+  session unchanged at t5.logits
+```
+
+Row 0 is the same token in both runs, so its cells are exactly 0; at `L0` only the differing
+row 1 moves the margin (the other rows' layer inputs are the same embeddings). `whatif t1.L1.h
+= clean:t1.L1.h --consumer t5.M[4,9]` measures the same -0.014893 natively, with an exact
+prediction across rows. Patching the whole residual `tR.L2.h` from clean at every stepped row
+of one layer gives the clean logits bit for bit when both runs use the same split
+(`tests/test_engine_prefill.py`). Memory (measured, `Run.held_bytes()` at the last logits of a
+12-layer tiny Qwen2, 24-token prompt): 31480 bytes in 407 trail marks with every row stepped
+against 19136 bytes in 16 marks with the default split; a sweep leaves it unchanged. Time
+(measured, same model, laptop CPU): a sweep of 4 rows x 12 layers made 1224 layer calls in
+8.0 s; one row x 12 layers 20 rows before the consumer made 3210 in 18.8 s, so the cost is the
+rows between the cell and the consumer.
 
 mdb adds, and the others do not: a prediction sealed before the native measurement with the gap
 split by cause (`forecast`, `verify`), an authority label and state on every number, and
@@ -317,11 +386,12 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `reverse-finish` | `reverse-finish` | navigate | Step back to the boundary before the pending layer (its input) |
 | `reverse-next` | `reverse-next [N]` | navigate | Step back to the previous sublayer end |
 | `reverse-step` | `reverse-step [N] [unit] [budget=ROWS]` | navigate | Step back one port (or N units; layer/token units enter at most `budget` rows) |
-| `run` | `run [name=NAME] [TEXT \| ID ID ...] [budget=N]` | native | Like start, then continue to the first armed breakpoint or watch |
+| `run` | `run [name=NAME] [prefill=K] [TEXT \| ID ID ...] [budget=N]` | native | Like start, then continue to the first armed breakpoint or watch |
 | `seek` | `seek ADDR \| seek ORIGIN:ADDR \| seek POINTER-JSON` | navigate | Move the session to an occurrence: forward, backward, or by replaying a stored recipe (ORIGIN:ADDR or an occurrence pointer) |
 | `set` | `set ADDR = VALUE\|ADDR\|ORIGIN:ADDR [replace\|add\|scale\|mix DOSE]` | mutate | Stage an edit at a port of the pending layer, or of a state cell (cache.L<i>.k\|v[kv,row,d]): set ADDR = VALUE [op] |
-| `start` | `start [name=NAME] [TEXT \| ID ID ...]` | native | Prefill a prompt and stop at the pending token's first port (L0.h) |
+| `start` | `start [name=NAME] [prefill=K] [TEXT \| ID ID ...]` | native | Prefill a prompt and stop at the first stepped row's first port (L0.h) |
 | `step` | `step [N] [port\|sublayer\|layer\|token] [budget=ROWS]` | navigate | Step one port (or N units; layer/token units enter at most `budget` rows) |
+| `sweep` | `sweep PORT [rows=R0:R1] [layers=L0:L1] = ORIGIN --consumer C [top=K]` | navigate | Patch PORT from another run at every (row, layer) of a range, measure the consumer natively for each, restore: one table of deltas (activation patching) |
 | `symbol` | `symbol NAME = ADDR[,ADDR...]` | mutate | Declare a user symbol over cache rows: symbol NAME = ADDR[,ADDR...] |
 | `symbols` | `symbols [consumer=C] [rows=R\|A:B\|all] [min_mass=X] [offset=N] [limit=N]` | mutate | Symbol table at the cursor: bindings with definition sites, lifetimes, readers, status and an Unbound row (stored as records with a project) |
 | `tbreak` | `tbreak PATTERN [if CONDITION]` | mutate | Set a breakpoint that deletes itself after its first hit |

@@ -1863,3 +1863,5 @@ slot("export", "Export a walkthrough bundle of records and pointers",
 # old private names, kept for one commit
 _target, _value_source, _finite_limit = resolve_target, value_source, finite_limit
 _moved, _project = moved, project_of
+
+from . import sweep as _sweep  # noqa: E402,F401 - registers `sweep` (it imports from here)
