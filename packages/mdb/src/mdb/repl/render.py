@@ -544,6 +544,12 @@ def _explain_lines(result: dict[str, Any]) -> list[str]:
                  f"float64 {_claimed(data['float64_margin'])}  eta {_claimed(data['eta'])}"]
         for term in data["terms"]:
             lines.append(f"  {term['name']:<19}{_claimed(term['value'])}")
+        summary = data.get("terms_summary")
+        if summary and summary["rest"]["count"]:
+            rest = summary["rest"]
+            lines.append(f"  +{rest['count']} more, sum = {_claimed(rest['sum'])}"
+                         f"  (of {summary['count']} terms; full list "
+                         f"{summary['pointer']['state']}, sha256 {summary['pointer']['sha256'][:16]})")
         for rem in data["remainders"]:
             line = f"  ~{rem['name']:<18}{_claimed(rem['value'])}"
             if "scale" in rem:

@@ -1148,3 +1148,79 @@ def test_first_order_column_on_an_edited_row_is_refused_not_raised(bundle):
     assert column["state"] == "refused" and column["authority"] is None
     assert "this row" in column["reason"] and "rows" not in column
     assert out["state"] == "resolved" and not walk(out)
+
+
+# ---------------------------------------------------------------- M31: terms past the record cap
+
+
+def _deep_ctx(project=None, layers=40):
+    from mdb.engine.models import tiny_model
+    from mdb.ops.debugger import attach
+
+    debugger = attach(tiny_model("qwen2", "bf16", layers=layers), None, project=project)
+    ctx = debugger.ops()
+    from mdb.ops import dispatch
+
+    dispatch(ctx, "start", {"prompt": [1, 5, 9, 3]})
+    dispatch(ctx, "until", {"target": "t3.logits"})
+    return ctx
+
+
+def _check_deep_explain(ctx, store):
+    from mdb.core.pointers import check_bounded
+    from mdb.ops import dispatch
+
+    result = dispatch(ctx, "explain", {"address": "M[4,9]"})       # refused on the old code
+    data = result["explain"]
+    summary = data["terms_summary"]
+    assert summary["count"] == 1 + 2 * 40 > 64 and len(data["terms"]) == explain.MAX_TERMS
+    assert summary["listed"] == len(data["terms"])
+    assert summary["rest"]["count"] == summary["count"] - summary["listed"]
+    assert summary["rest"]["sum"]["authority"] == "derived-exact"
+    check_bounded(result, "explain result")
+    assert len(json.dumps(result, sort_keys=True, separators=(",", ":"))) < 64 * 1024
+    # listed + rest + remainder is the native margin exactly as before
+    listed = sum(t["value"]["value"] for t in data["terms"])
+    rest = summary["rest"]["sum"]["value"]
+    assert listed + rest == pytest.approx(data["listed_sum"]["value"], rel=1e-12, abs=1e-12)
+    assert data["listed_sum"]["value"] + sum(
+        r["value"]["value"] for r in data["remainders"]) == pytest.approx(
+            data["native_margin"]["value"], abs=1e-9)
+    # the kept terms are the largest in magnitude
+    full = explain.load_terms(summary, store=store, run=ctx.run)
+    assert len(full) == summary["count"]
+    floor = min(abs(t["value"]["value"]) for t in data["terms"])
+    kept = {t["name"] for t in data["terms"]}
+    assert all(abs(t["value"]["value"]) <= floor for t in full if t["name"] not in kept)
+    assert [t for t in full if t["name"] in kept] == data["terms"]
+    return summary
+
+
+def test_explain_of_a_margin_on_a_40_layer_model_is_bounded_without_a_project():
+    ctx = _deep_ctx()
+    summary = _check_deep_explain(ctx, None)
+    assert summary["pointer"]["state"] == "absent" and "no project" in summary["pointer"]["reason"]
+    with pytest.raises(ValueError, match="not held"):
+        explain.load_terms(summary, store=None, run=type("R", (), {})())
+
+
+def test_explain_of_a_margin_on_a_40_layer_model_stores_the_full_terms_with_a_project(tmp_path):
+    from mdb.core.project import Project
+
+    project = Project(tmp_path / "p")
+    ctx = _deep_ctx(project)
+    summary = _check_deep_explain(ctx, project.store)
+    assert summary["pointer"]["state"] == "stored" and "tensor" in summary["pointer"]
+
+
+def test_explain_of_a_margin_on_a_70_layer_model_bounds_per_layer_rounding_too():
+    from mdb.ops import dispatch
+
+    ctx = _deep_ctx(layers=70)
+    data = dispatch(ctx, "explain", {"address": "M[4,9]"})["explain"]   # per_layer: 70 > 64
+    rem = next(r for r in data["remainders"] if r["name"] == "residual_rounding")
+    assert rem["per_layer_count"] == 70 and len(rem["per_layer"]) == explain.MAX_TERMS
+    full = explain.load_full(data["terms_summary"], run=ctx.run)
+    assert len(full["per_layer"]) == 70 and len(full["terms"]) == 141
+    assert all(entry == {k: v for k, v in full["per_layer"][entry["layer"]].items()}
+               | {"layer": entry["layer"]} for entry in rem["per_layer"])

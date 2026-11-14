@@ -10,7 +10,10 @@ numbers are ``derived-local`` and never presented as a decomposition. Every resu
 
 from __future__ import annotations
 
+import hashlib
+import json
 import math
+import weakref
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any
@@ -714,6 +717,117 @@ def explain_margin(source: Any, a: int, b: int, *, first_order: bool = False) ->
     if first_order:
         out["first_order"] = _first_order(caps, a, b, result, components)
     return out
+
+
+MAX_TERMS = 64          # listed terms in a result (the record's sequence bound)
+_FULL_TERMS: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
+
+
+def _full_bytes(full: dict[str, Any]) -> bytes:
+    return json.dumps(full, sort_keys=True, separators=(",", ":")).encode()
+
+
+def _per_layer(result: dict[str, Any]) -> list[dict[str, Any]]:
+    for rem in result["remainders"]:
+        if rem["name"] == "residual_rounding" and "per_layer" in rem:
+            return rem["per_layer"]
+    return []
+
+
+def bound_terms(result: dict[str, Any], *, store: Any = None, run: Any = None,
+                cap: int = MAX_TERMS) -> dict[str, Any]:
+    """Bound the lists of ``result`` that grow with the layers to ``cap`` items (in place;
+    returns ``result``): ``terms`` (two per layer plus the embedding) and the residual-rounding
+    remainder's ``per_layer`` entries.
+
+    Over the cap ``terms`` keeps the terms with the largest ``|value|`` (unresolved terms first:
+    they carry a state the reader must see), in their original order, and ``terms_summary``
+    gives ``count``, ``listed``, ``rest`` (``count`` and ``sum``, ``derived-exact``, so listed +
+    rest still adds to ``listed_sum``) and ``pointer`` to the full lists. ``per_layer`` keeps the
+    entries with the largest magnitude, each tagged with its ``layer``, and the remainder gets
+    ``per_layer_count``. The full lists are JSON bytes put in ``store`` (a project
+    ``LocalStore``, a tensor pointer to uint8 bytes, checked by ``sha256``) or, with no store,
+    held in memory per ``run`` (``load_terms`` / ``load_full`` resolve both). Within the cap
+    nothing changes and no summary is added.
+    """
+    terms, per_layer = result["terms"], _per_layer(result)
+    if len(terms) <= cap and len(per_layer) <= cap:
+        return result
+    import numpy as np
+
+    from mdb.core.pointers import tensor_pointer
+
+    full = {"terms": terms, "per_layer": per_layer}
+    raw = _full_bytes(full)
+    digest = hashlib.sha256(raw).hexdigest()
+    if store is not None:
+        stored = store.put_tensor(np.frombuffer(raw, dtype=np.uint8).copy())
+        pointer: dict[str, Any] = {
+            "state": "stored", "ref": stored["ref"], "bytes": len(raw), "sha256": digest,
+            "tensor": tensor_pointer(stored["ref"], sha256=stored["sha256"],
+                                     shape=stored["shape"], dtype=stored["dtype"])}
+    else:
+        if run is not None:
+            _FULL_TERMS.setdefault(run, {})[digest] = full
+        pointer = {"state": "absent", "sha256": digest,
+                   "reason": "no project store: the full lists are held in memory on the "
+                             "run (explain.load_full), not stored"}
+
+    def top(items: list[dict[str, Any]], size: float) -> list[tuple[int, dict[str, Any]]]:
+        def rank(item: tuple[int, dict[str, Any]]) -> tuple[int, float]:
+            return (0, 0.0) if "value" not in item[1] else (1, -abs(item[1]["value"]["value"]))
+
+        return sorted(sorted(enumerate(items), key=rank)[:int(size)], key=lambda item: item[0])
+
+    keep = top(terms, cap)
+    kept = {index for index, _ in keep}
+    rest = [t for i, t in enumerate(terms) if i not in kept]
+    result["terms"] = [t for _, t in keep]
+    result["terms_summary"] = {
+        "count": len(terms), "listed": len(keep),
+        "rest": {"count": len(rest),
+                 "sum": claim_sum(sum(t["value"]["value"] for t in rest if "value" in t)),
+                 "unresolved": sum(1 for t in rest if "value" not in t)},
+        "pointer": pointer}
+    if len(per_layer) > cap:
+        magnitude = [{"value": {"value": max((abs(c["value"]) for c in entry.values()
+                                              if isinstance(c, dict) and "value" in c),
+                                             default=0.0)}} for entry in per_layer]
+        chosen = top(magnitude, cap)
+        for rem in result["remainders"]:
+            if rem["name"] == "residual_rounding" and "per_layer" in rem:
+                rem["per_layer"] = [{"layer": i, **per_layer[i]} for i, _ in chosen]
+                rem["per_layer_count"] = len(per_layer)
+    return result
+
+
+def claim_sum(value: float) -> dict[str, Any]:
+    return num(float(value), EXACT, "P19")
+
+
+def load_full(summary: Mapping[str, Any], *, store: Any = None, run: Any = None
+              ) -> dict[str, Any]:
+    """The full ``{"terms", "per_layer"}`` lists ``terms_summary`` points at: from ``store``
+    (stored blob, checked against the summary's ``sha256``) or from the run's in-memory copy;
+    ``ValueError`` if absent or changed."""
+    pointer = summary["pointer"]
+    if pointer["state"] == "stored":
+        from mdb.core.pointers import resolve_tensor
+
+        raw = resolve_tensor(pointer["tensor"], store=store, framework="numpy").tobytes()
+        if hashlib.sha256(raw).hexdigest() != pointer["sha256"]:
+            raise ValueError("the stored term list differs from the summary's sha256")
+        return json.loads(raw)
+    held = _FULL_TERMS.get(run, {}).get(pointer["sha256"]) if run is not None else None
+    if held is None:
+        raise ValueError("the full term list is not held: " + pointer["reason"])
+    return held
+
+
+def load_terms(summary: Mapping[str, Any], *, store: Any = None, run: Any = None
+               ) -> list[dict[str, Any]]:
+    """The full term list ``terms_summary`` points at (see ``load_full``)."""
+    return load_full(summary, store=store, run=run)["terms"]
 
 
 def _layer_module(adapter: Any, layer: int) -> Any:
