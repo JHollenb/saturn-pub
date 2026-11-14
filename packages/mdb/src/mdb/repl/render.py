@@ -612,19 +612,16 @@ def _forecast_lines(result: dict[str, Any]) -> list[str]:
 
 
 def _floor_text(item: dict[str, Any]) -> str:
-    """``residual 0.0026 = 1.4 spacings <= floor 0.0625 = 6.2 spacings (3 x sqrt(14 rounded
-    ops), 3 supplied)``: the residual in dtype spacings next to the floor in spacings."""
+    """``residual 0 = 0 spacings <= floor 0.0156 = 1 bfloat16 spacing (supplied)``: the residual
+    native - emulated in dtype spacings next to the floor in spacings."""
     text = ""
     if "residual_spacings" in item:
         text += f" = {item['residual_spacings']['value']:.2g} spacings"
     text += f" {'<=' if item['verdict'] == 'confirmed' else '>'} floor {_claimed(item['floor'])}"
     if "floor_spacings" in item:
-        text += (f" = {item['floor_spacings']['value']:.3g} {item.get('dtype', '?')} spacings "
-                 f"({item['coefficient']['value']:g} x sqrt({int(item['rounded_steps']['value'])} "
-                 f"rounded ops), {item['coefficient']['value']:g} {item['coefficient']['authority']})")
-    if "element_limit" in item:
-        limit = item["element_limit"]
-        text += f"; element {limit['index']} limited by its sealed bound {_claimed(limit)}"
+        count = item["floor_spacings"]["value"]
+        text += (f" = {count:g} {item.get('dtype', '?')} spacing{'' if count == 1 else 's'} "
+                 f"({item['floor_spacings']['authority']})")
     return text
 
 
@@ -643,17 +640,25 @@ def _verify_lines(result: dict[str, Any]) -> list[str]:
         else:
             text = f"{head}  native {_claimed(item['native'])}" if "native" in item else head
             if "residual_max_abs" in item:
-                text += f"  residual {_claimed(item['residual_max_abs'])}"
+                text += f"  residual vs emulated {_claimed(item['residual_max_abs'])}"
             if "floor" in item:
                 text += _floor_text(item) + f"  [P20, {item.get('state', 'resolved')}]"
-            elif "reason" in item:
+            if "reason" in item:
                 text += f"  ({item['reason']})"
-            if "bound_max" in item:
-                text += (f"; worst-case bound {_claimed(item['bound_max'])} "
-                         f"({'holds' if item['within_bound'] else 'exceeded'}, information)")
-                if "worst_excess" in item:
-                    text += f" (worst excess {_claimed(item['worst_excess'])})"
             lines.append(text)
+            effect = item.get("rounding_effect")
+            if effect is not None:
+                text = f"  rounding effect native - exact {_claimed(effect['max_abs'])}"
+                if "spacings" in effect:
+                    text += f" = {effect['spacings']['value']:.3g} spacings"
+                if "bound_max" in item:
+                    text += (f"; worst-case bound {_claimed(item['bound_max'])} "
+                             f"({'holds' if item['within_bound'] else 'exceeded'}, information)")
+                    if "worst_excess" in item:
+                        text += f" (worst excess {_claimed(item['worst_excess'])})"
+                lines.append(text)
+            if "rounding_origin" in item:
+                lines.append(f"  rounding origin (sealed): {item['rounding_origin']['text']}")
         order = item["order"]
         lineage = ("same cut (the target is a later port of the sealed layer)"
                    if order["same_cut"] else

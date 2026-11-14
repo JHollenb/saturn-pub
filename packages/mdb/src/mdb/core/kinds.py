@@ -21,7 +21,8 @@ FORECAST = declare_kind(
                    "method.summary.proof_counts.*.count", "method.summary.layer_counts.*.layer",
                    "method.summary.layer_counts.*.count", "method.summary.chain_pointer.bytes",
                    "operands_summary.count", "operands_summary.listed",
-                   "operands_summary.rest.count", "operands_summary.pointer.bytes"),
+                   "operands_summary.rest.count", "operands_summary.pointer.bytes",
+                   "emulated.shape", "emulated.token", "emulated.rounding_origin.head"),
 )
 
 WHATIF = declare_kind(

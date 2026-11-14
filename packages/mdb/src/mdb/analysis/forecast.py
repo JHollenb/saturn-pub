@@ -14,6 +14,12 @@ stop whose operands are themselves predictions propagates the operands' bounds t
 identity (linear maps exactly, SiLU by its Lipschitz constant, RMS and softmax by their exact
 range over the operand box), so a forecast several stops ahead keeps a bound.
 
+``EmulatedRowModel`` evaluates the same chain with the run's dtype rounding at every point where
+eager HF rounds, each step with the backend's own kernels: a second prediction, of the native
+bits (``derived-exact`` under ``EMULATION_PREMISE``). ``verify`` decides on it (M42): the exact
+chain can sit tens of spacings from native where rounded attention scores tie, and that
+``rounding_effect`` (native - exact) is reported beside the verdict, not hidden in a floor.
+
 ``seal`` stores a sealed record (``mdb.core.records``, kind ``forecast``, no arrays: the
 prediction is reached by an occurrence pointer and its digest) in the run's ledger. ``verify``
 compares every open forecast whose target the cursor has passed with the native value, proves
@@ -55,7 +61,8 @@ FORECAST = declare_kind(
                    "method.summary.proof_counts.*.count", "method.summary.layer_counts.*.layer",
                    "method.summary.layer_counts.*.count", "method.summary.chain_pointer.bytes",
                    "operands_summary.count", "operands_summary.listed",
-                   "operands_summary.rest.count", "operands_summary.pointer.bytes"),
+                   "operands_summary.rest.count", "operands_summary.pointer.bytes",
+                   "emulated.shape", "emulated.token", "emulated.rounding_origin.head"),
 )
 
 # (function, proof) of the identity that computes each port from its producers
@@ -617,6 +624,126 @@ class RowModel:
         return value, None
 
 
+EMULATION_PREMISE = "rounding points of eager HF attention/MLP on this backend"
+EMULATION_PREMISES = (
+    "every step runs as eager HF writes it, on the dtype values of its operands, with the "
+    "torch kernels of the run's device: affine maps as F.linear (bias fused), scores as "
+    "matmul(q, k^T) x scaling and the value mix as matmul(p, v) at the native call's batch-1 "
+    "shapes, RMSNorm in float32 (cast, then gain), RoPE with float32 cos/sin of float32 angles "
+    "from the model's inv_freq buffer, softmax in float32 cast to the dtype, SiLU, gate x up, "
+    "residual adds",
+    "the backend's kernels are deterministic at those shapes (the same operands give the same "
+    "bits)",
+    "single pending row: every cached source is visible and the attention mask adds 0",
+)
+EMULATION_SUMS = ("kernel", "round-once")
+
+
+class EmulatedRowModel(RowModel):
+    """The chain of ``RowModel`` with the run's dtype rounding at every point where eager HF
+    rounds (``EMULATION_PREMISES``): a prediction of the native bits, not of the real-number
+    value; ``derived-exact`` under ``EMULATION_PREMISE``, no rounding bound.
+
+    ``sums="kernel"`` (default) runs each matmul with the backend's own kernel at the native
+    shapes; ``"round-once"`` takes its exact float64 sum rounded once to the dtype (float32
+    accumulation then one rounding). Measured, every stop from the sealing stop to the logits:
+    tiny qwen2/qwen3/llama/mistral (CPU, 2-28 layers, 3 prompts) ``kernel`` bit-exact in bf16
+    and fp32, ``round-once`` bit-exact in bf16 and 3-10.5 spacings off in fp32; Qwen2.5-1.5B
+    on CUDA (3 prompts, sealed at L0.h and L14.h; bf16 28 layers and an fp32 2-layer cut)
+    ``kernel`` bit-exact (100% of elements at every stop, M[a,b] equal), ``round-once`` 0-8
+    spacings in bf16 (1-ulp sum differences carried forward) and 1-35 in fp32, where the
+    exact chain is 35-78 spacings off at L0.m in bf16 (the rounded-score ties of M42)."""
+
+    def __init__(self, run: Any, row: int, known: Callable[[str], Any], *,
+                 sums: str = "kernel", **options: Any):
+        if sums not in EMULATION_SUMS:
+            raise ValueError(f"sums must be one of {EMULATION_SUMS}")
+        options["bounds"] = False
+        super().__init__(run, row, known, **options)
+        self.dtype = self.adapter.dtype
+        self.sums = sums
+        self.device = getattr(self.adapter, "device", None) or "cpu"
+
+    def _on(self, tensor: Any, dtype: Any = None) -> Any:
+        """``tensor`` on the run's device in ``dtype`` (default the model dtype): an exact cast
+        for a value that is already a dtype value."""
+        return tensor.to(self.device, self.dtype if dtype is None else dtype)
+
+    def _back(self, tensor: Any) -> Any:
+        return tensor.to("cpu", _torch().float64)
+
+    def _param(self, module: Any, name: str = "weight") -> Any:
+        tensor = getattr(module, name, None)
+        return None if tensor is None else tensor.detach().to(self.device)
+
+    def _affine(self, x: Any, bx: Any, module: Any) -> tuple[Any, Any]:
+        if self.sums == "round-once":
+            value, _ = RowModel._affine(self, x, None, module)
+            return self._back(self._on(value)), None
+        out = _torch().nn.functional.linear(self._on(x).reshape(1, 1, -1), self._param(module),
+                                            self._param(module, "bias"))
+        return self._back(out).reshape(-1), None
+
+    def _add(self, x: Any, bx: Any, y: Any, by: Any) -> tuple[Any, Any]:
+        return self._back(self._on(x) + self._on(y)), None
+
+    def _rms(self, x: Any, bx: Any, module: Any, width: int) -> tuple[Any, Any]:
+        torch = _torch()
+        shape = x.shape
+        rows = self._on(x).reshape(-1, width).to(torch.float32)
+        variance = rows.pow(2).mean(-1, keepdim=True)
+        rows = rows * torch.rsqrt(variance + float(module.variance_epsilon))
+        return self._back(self._param(module) * rows.to(self.dtype)).reshape(shape), None
+
+    def _rope(self, x: Any, bx: Any) -> tuple[Any, Any]:
+        torch = _torch()
+        refusal = _rope_refusal(self.config)
+        if refusal is not None:
+            raise Refusal(refusal)
+        rotary = self._rotary()
+        buffer = getattr(rotary, "inv_freq", None)
+        inv = self._on(self._inv_freq(x.shape[-1]) if buffer is None else buffer.detach(),
+                       torch.float32)
+        freqs = inv * torch.tensor(float(self.row), dtype=torch.float32, device=inv.device)
+        angles = torch.cat((freqs, freqs))
+        scale = float(getattr(rotary, "attention_scaling", 1.0) or 1.0)
+        cos = (angles.cos() * scale).to(self.dtype)
+        sin = (angles.sin() * scale).to(self.dtype)
+        q = self._on(x)
+        half = q.shape[-1] // 2
+        rotated = torch.cat((-q[..., half:], q[..., :half]), dim=-1)
+        return self._back(q * cos + rotated * sin), None
+
+    def _scores(self, q: Any, bq: Any, k: Any, bk: Any, scaling: float) -> tuple[Any, Any]:
+        torch = _torch()
+        keys = self._kappa(k)                                     # (H, T, d_h)
+        if self.sums == "round-once":
+            raw = self._on(torch.einsum("hd,htd->ht", q, keys))
+        else:
+            raw = torch.matmul(self._on(q).unsqueeze(0).unsqueeze(2),       # (1, H, 1, d_h)
+                               self._on(keys).unsqueeze(0).transpose(2, 3))  # (1, H, d_h, T)
+        return self._back(raw * scaling).reshape(q.shape[0], -1), None
+
+    def _softmax(self, s: Any, bs: Any) -> tuple[Any, Any]:
+        torch = _torch()
+        return self._back(torch.softmax(self._on(s), dim=-1, dtype=torch.float32)
+                          .to(self.dtype)), None
+
+    def _transport(self, p: Any, bp: Any, values: Any, bv: Any) -> tuple[Any, Any]:
+        if self.sums == "round-once":
+            value, _ = RowModel._transport(self, p, None, values, None)
+            return self._back(self._on(value)), None
+        out = _torch().matmul(self._on(p).unsqueeze(0).unsqueeze(2),         # (1, H, 1, T)
+                              self._on(self._kappa(values)).unsqueeze(0))    # (1, H, T, d_h)
+        return self._back(out).reshape(-1), None
+
+    def _silu(self, g: Any, bg: Any) -> tuple[Any, Any]:
+        return self._back(_torch().nn.functional.silu(self._on(g))), None
+
+    def _product(self, x: Any, bx: Any, y: Any, by: Any) -> tuple[Any, Any]:
+        return self._back(self._on(x) * self._on(y)), None
+
+
 def _evaluate(model: RowModel, label: str) -> None:
     """Compute ``model``'s stop ``label`` and every stop it needs, in any row model, from one
     explicit stack of step generators (no recursion: a chain of rows has no depth limit)."""
@@ -654,6 +781,7 @@ class Forecast:
     status: str = "open"
     verdict: dict[str, Any] | None = field(default=None)
     chain: list = field(default_factory=list)   # the full identity chain (the record keeps a summary)
+    emulated: Any = None   # the emulated prediction (EmulatedRowModel): what verify decides on
 
 
 _LEDGERS: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
@@ -751,17 +879,15 @@ def seal(run: Any, target: str | Margin | None = None, *, store: Any = None) -> 
         raise Refusal(f"staged edit(s) at {', '.join(staged)} rewrite an operand between the "
                       "cursor and the target; use whatif to predict an edit")
 
-    def known(name: str) -> Any:
-        if name == "start" or run.parse(f"t{row}.{name}") > here:
-            return None
-        return run.read(f"t{row}.{name}")
-
+    known = _known(run, row, here)
     model = RowModel(run, row, known)
     value = model.get(label)
     bound = model.bound(label)
     if margin is not None:
         value = value[margin.a] - value[margin.b]
         bound = None if bound is None else bound[margin.a] + bound[margin.b]
+    emulator = EmulatedRowModel(run, row, known)
+    emulated = _target(emulator, label, margin)
     checkpoint = run.checkpoint()
     entries = ledger(run)
     number = max(entries, default=0) + 1
@@ -769,6 +895,9 @@ def seal(run: Any, target: str | Margin | None = None, *, store: Any = None) -> 
     summary, chain_pointer = _store_chain(chain, store)
     body = _body(run, model, label, margin, address, key, here, value, bound, checkpoint,
                  status, summary)
+    body["emulated"] = _emulated_view(emulated, label, margin, emulator,
+                                      _rounding_origin(model, emulator, row, run.adapter.dtype))
+    body["digests"] = {"exact": _digest(value), "emulated": _digest(emulated)}
     pointers = [] if chain_pointer is None else [chain_pointer]
     body["operands"], operands_summary = bound_list(
         body["operands"], MAX_ITEMS, store=store, run=run,
@@ -791,9 +920,88 @@ def seal(run: Any, target: str | Margin | None = None, *, store: Any = None) -> 
     # the row model is dropped on return: the entry owns these tensors, no copy needed
     entry = Forecast(number, record, label, margin, key, value.detach(),
                      None if bound is None else bound.detach(),
-                     frozenset(_edit_key(e) for e in body["edits_at_seal"]), chain=chain)
+                     frozenset(_edit_key(e) for e in body["edits_at_seal"]), chain=chain,
+                     emulated=emulated.detach())
     entries[number] = entry
     return view(entry)
+
+
+def _known(run: Any, row: int, here: tuple[int, int]) -> Callable[[str], Any]:
+    """The operands of a forecast sealed at ``here``: the native stops of ``row`` at or before
+    it (None for later stops and the token list)."""
+
+    def known(name: str) -> Any:
+        if name == "start" or run.parse(f"t{row}.{name}") > here:
+            return None
+        return run.read(f"t{row}.{name}")
+
+    return known
+
+
+def _target(model: RowModel, label: str, margin: Margin | None) -> Any:
+    value = model.get(label)
+    return value if margin is None else value[margin.a] - value[margin.b]
+
+
+def _digest(value: Any) -> str:
+    """sha256 of a prediction as float64 (vector, margin scalar or token id alike)."""
+    from mdb.engine.ports import tensor_digest
+
+    torch = _torch()
+    return tensor_digest(torch.as_tensor(value, dtype=torch.float64).reshape(-1).contiguous())
+
+
+def _emulated_view(value: Any, label: str, margin: Margin | None, model: EmulatedRowModel,
+                   origin: dict[str, Any]) -> dict[str, Any]:
+    """The second sealed prediction: the emulated chain (``derived-exact`` under its premise)."""
+    out: dict[str, Any] = {"authority": EXACT, "premise": EMULATION_PREMISE,
+                           "premises": list(EMULATION_PREMISES), "sums": model.sums,
+                           "sha256": _digest(value)}
+    if margin is not None:
+        out["margin"] = num(float(value), EXACT, proof="P19")
+    elif label == "sample":
+        out["token"] = int(value)
+    else:
+        out.update(shape=list(value.shape), **_summary(value, EXACT))
+    out["rounding_origin"] = origin
+    return out
+
+
+def _rounding_origin(model: RowModel, emulator: EmulatedRowModel, row: int,
+                     dtype: Any) -> dict[str, Any]:
+    """The first stop of the chain where the exact and the emulated values part by more than one
+    spacing of the dtype at the stop's magnitude (scores and softmax: the head, and the score
+    magnitude and spacing that rounding acts on). Sealed with the forecast: where the rounding
+    effect ``native - exact`` is born, before the native value exists."""
+    for name in emulator.computed:
+        if name == "sample" or name not in model.values:
+            continue
+        exact, emulated = model.values[name], emulator.values[name]
+        size = float(emulated.abs().max())
+        step = _verdict.spacing(size, dtype)
+        gap = (exact - emulated).abs()
+        parts = float(gap.max()) / step
+        if parts <= 1.0:
+            continue
+        out: dict[str, Any] = {"state": "found", "stop": f"t{row}.{name}",
+                               "spacings": num(parts, EXACT), "magnitude": num(size, EXACT),
+                               "spacing": num(step, EXACT)}
+        port = name.rsplit(".", 1)[-1]
+        if port in ("s", "p"):
+            head = int(gap.reshape(gap.shape[0], -1).max(-1).values.argmax())
+            scores = emulator.values.get(name[:-1] + "s", emulated) if port == "p" else emulated
+            score = float(scores[head].abs().max())
+            score_step = _verdict.spacing(score, dtype)
+            out.update(head=head, score_magnitude=num(score, EXACT),
+                       score_spacing=num(score_step, EXACT))
+            out["text"] = (f"t{row}.{name}[h{head}]: score spacing {score_step:g} at |s| "
+                           f"{score:.3g}; exact and emulated part by {parts:.3g} spacings")
+        else:
+            out["text"] = (f"t{row}.{name}: exact and emulated part by {parts:.3g} spacings at "
+                           f"|x| {size:.3g}")
+        return out
+    return {"state": "none", "text": "exact and emulated agree within one spacing at every "
+                                     "stop of the chain"}
 
 
 def run_session_id(run: Any) -> str:
@@ -944,6 +1152,7 @@ def view(entry: Forecast) -> dict[str, Any]:
            "status": entry.status, "sealed_at": body["sealed_at"]["where"],
            "method": entry.chain[:MAX_ITEMS], "method_summary": body["method"]["summary"],
            "predicted": body["predicted"],
+           "emulated": body.get("emulated"),
            "bound": body["bound"]}
     if len(entry.chain) > MAX_ITEMS:       # M40: the view obeys the record bound too
         out["method_listed"] = {
@@ -1001,13 +1210,14 @@ def _native(run: Any, entry: Forecast) -> tuple[Any, dict[str, Any], Any]:
 
 def verify(run: Any, ids: list[int] | None = None) -> list[dict[str, Any]]:
     """Compare open forecasts (or the given ids) whose target the cursor has passed with the
-    native value. Each result: ``verdict`` (``confirmed | not confirmed | edited | open``),
-    decided by the measured residual (native - predicted, P20) against ``floor`` = 3 (supplied) x
-    sqrt(n rounded steps) x the model dtype's spacing at the magnitude of the consumer (a margin:
-    the sum of its two logits' spacings), judged per element; the sealed bound only tightens it; ``native``,
-    ``residual_max_abs`` (``measured``), ``floor``, ``spacing``; ``bound_max`` / ``within_bound``
-    only when the bound is finite (information, not the verdict); and ``order`` (sealing stop
-    before the target; lineage of cuts)."""
+    native value. Each result: ``verdict`` (``confirmed | not confirmed | unresolved | edited |
+    open``), decided by the measured residual native - emulated (P20) against ``floor`` =
+    ``verdict.FLOOR_SPACINGS`` (supplied) x the dtype spacing at the consumer's magnitude (a
+    margin: the sum of its two logits' spacings), judged per element; above the floor, where
+    emulation and native part (``_parting``); ``rounding_effect`` = native - exact
+    (``measured``); the sealed ``rounding_origin``; ``bound_max`` / ``within_bound`` against the
+    exact prediction only when the bound is finite (information, not the verdict); and
+    ``order`` (sealing stop before the target; lineage of cuts)."""
     entries = ledger(run)
     here = run.parse(run.where)
     chosen = [entries[i] for i in ids] if ids else [e for e in entries.values()
@@ -1051,37 +1261,137 @@ def verify(run: Any, ids: list[int] | None = None) -> list[dict[str, Any]]:
             if label is None:
                 verdict.update(verdict="unresolved", state="unresolved", reason=info["reason"])
             else:
-                gap = (native - entry.predicted).abs()
-                verdict["residual_max_abs"] = num(float(gap.max()), label)
-                verdict["native"] = (num(float(native), label) if native.dim() == 0
-                                     else _summary(native, label))
-                # the consumer's magnitude: the margin's two logits, else the largest element
-                size = _verdict.magnitude(entry.margin if entry.margin is not None else object(),
-                                          raw)
-                # a margin is the difference of two rounded logits (both spacings); the sealed
-                # per-element bound can only tighten the floor at its own element
-                partner = None
-                if entry.margin is not None:
-                    flat = raw.reshape(-1).detach().abs().float()
-                    size, partner = float(flat[entry.margin.a]), float(flat[entry.margin.b])
-                decided = _verdict.confirm(gap, size, raw.dtype, count=_rounded_steps(entry),
-                                           partner=partner, limit=entry.bound)
-                verdict.update({k: decided[k] for k in (
-                    "verdict", "state", "floor", "floor_spacings", "spacing", "residual_spacings",
-                    "rounded_steps", "coefficient", "dtype", "criterion", "index", "element_limit")
-                    if k in decided}, basis="measured residual, P20")
-                bound = entry.bound
-                if bound is not None and bool(bound.isfinite().all()):
-                    # information only: the worst-case propagated bound, finite here
-                    within = bool((gap <= bound).all())
-                    verdict.update(within_bound=within,
-                                   bound_max=num(float(bound.max()), BOUND))
-                    if not within:
-                        verdict["worst_excess"] = num(float((gap - bound).max()), label)
+                verdict.update(_decide(run, entry, native, raw, label))
         entry.status = "closed"
         entry.verdict = verdict
         results.append({**out, "status": "closed", **verdict})
     return results
+
+
+def _decide(run: Any, entry: Forecast, native: Any, raw: Any, label: str) -> dict[str, Any]:
+    """The verdict of one reached, unedited forecast from its native value (``label`` the
+    native value's authority)."""
+    out: dict[str, Any] = {}
+    gap = (native - entry.emulated).abs()
+    out["residual_max_abs"] = num(float(gap.max()), label)
+    out["native"] = (num(float(native), label) if native.dim() == 0
+                     else _summary(native, label))
+    # the consumer's magnitude: the margin's two logits (both spacings), else the largest element
+    size = _verdict.magnitude(entry.margin if entry.margin is not None else object(), raw)
+    partner = None
+    if entry.margin is not None:
+        flat = raw.reshape(-1).detach().abs().float()
+        size, partner = float(flat[entry.margin.a]), float(flat[entry.margin.b])
+    decided = _verdict.confirm(gap, size, raw.dtype, partner=partner)
+    out.update({k: decided[k] for k in (
+        "verdict", "state", "floor", "floor_spacings", "spacing", "residual_spacings", "dtype",
+        "criterion", "index") if k in decided}, basis="measured residual native - emulated, P20")
+    step = decided["spacing"]["value"]
+    effect = float((native - entry.predicted).abs().max())
+    out["rounding_effect"] = {"max_abs": num(effect, label),
+                              "basis": "native - exact (the float64 chain), measured"}
+    if step:
+        out["rounding_effect"]["spacings"] = num(effect / step, label)
+    out["rounding_origin"] = entry.record["body"]["emulated"]["rounding_origin"]
+    out["rounded_steps"] = num(_rounded_steps(entry), EXACT)
+    if decided["verdict"] != _verdict.CONFIRMED:
+        out.update(_parting(run, entry, label))
+    bound = entry.bound
+    if bound is not None and bool(bound.isfinite().all()):
+        # information only: the worst-case propagated bound of the exact prediction
+        exact_gap = (native - entry.predicted).abs()
+        within = bool((exact_gap <= bound).all())
+        out.update(within_bound=within, bound_max=num(float(bound.max()), BOUND))
+        if not within:
+            out["worst_excess"] = num(float((exact_gap - bound).max()), label)
+    return out
+
+
+MAX_TIES = 3
+
+
+def _parting(run: Any, entry: Forecast, label: str) -> dict[str, Any]:
+    """Where emulation and native part, for a residual above the floor.
+
+    ``not confirmed`` when the prediction is not the emulated chain of the sealed operands (the
+    held prediction or an operand read now differs from its sealed digest) or when a stage of
+    the chain, from the first stop where emulated and native part by more than the floor to the
+    target, does not reproduce its native value from its native operands within the rounding
+    bound of its identity (``bound``, premises as for a forecast): the identity does not
+    describe that native step. Otherwise ``unresolved``: every such stage is the native step,
+    and the residual is rounding drift between stages (one-spacing differences of the sums
+    carried forward); native top-score ties where the emulated softmax parts are named."""
+    body = entry.record["body"]
+    sealed_digest = body["digests"]["emulated"]
+    row = entry.key[0]
+    if _digest(entry.emulated) != sealed_digest:
+        return {"verdict": _verdict.NOT_CONFIRMED, "state": "resolved",
+                "reason": "the held prediction differs from its sealed digest"}
+    sealed = (body["sealed_at"]["row"], body["sealed_at"]["index"])
+    emulator = EmulatedRowModel(run, row, _known(run, row, sealed))
+    if _digest(_target(emulator, entry.label, entry.margin)) != sealed_digest:
+        return {"verdict": _verdict.NOT_CONFIRMED, "state": "resolved",
+                "reason": "the emulated chain of the operands read now differs from the sealed "
+                          "prediction: an operand is not the one sealed"}
+    dtype = run.adapter.dtype
+    floor = _verdict.FLOOR_SPACINGS
+
+    def read(name: str) -> Any:
+        return f64(run.read(f"t{row}.{name}")).reshape(emulator.shape(name))
+
+    chain = [name for name in emulator.computed if name != "sample"]
+    first, parts, step = None, 0.0, 0.0
+    for name in chain:
+        native = read(name)
+        step = _verdict.spacing(float(native.abs().max()), dtype)
+        parts = float((emulator.values[name] - native).abs().max()) / step
+        if parts > floor:
+            first = name
+            break
+    if first is None:       # every stop within the floor; the target (margin, token) is not
+        first = chain[-1] if chain else entry.label
+    unchecked, ties = [], []
+    stages = (emulator.computed[emulator.computed.index(first):] if first in emulator.computed
+              else [entry.label])
+    for name in stages:
+        stage = RowModel(run, row, lambda n, at=name: None if n == at else run.read(
+            f"t{row}.{n}"))
+        value, bound = stage.get(name), stage.bound(name)
+        native = (f64(run.read(f"t{row}.sample")).reshape(()) if name == "sample"
+                  else read(name))
+        if bound is None:
+            unchecked.append(f"t{row}.{name} ({stage.unbounded.get(name, 'no bound')})")
+            continue
+        excess = float(((native - value).abs() - bound).max())
+        if excess > 0:
+            return {"verdict": _verdict.NOT_CONFIRMED, "state": "resolved",
+                    "parting": {"stop": f"t{row}.{first}", "spacings": num(parts, label),
+                                "stage": f"t{row}.{name}", "excess": num(excess, label)},
+                    "reason": f"t{row}.{name}: the native value lies {excess:.3g} outside the "
+                              "rounding bound of its identity on the native operands"}
+        if name.endswith(".p"):
+            scores, emulated = read(name[:-1] + "s"), emulator.values[name]
+            top = scores.topk(min(2, scores.shape[-1]), dim=-1).values
+            apart = (emulated != native).any(-1)
+            for head in range(scores.shape[0]):
+                if top.shape[-1] == 2 and top[head, 0] == top[head, 1] and bool(apart[head]):
+                    size = float(top[head, 0].abs())
+                    ties.append(f"t{row}.{name}[h{head}]: native top scores tie at "
+                                f"{float(top[head, 0]):g} (score spacing "
+                                f"{_verdict.spacing(size, dtype):g})")
+    reason = (f"rounding drift: emulated and native part first at t{row}.{first} by "
+              f"{parts:.3g} spacings; every stage from there to the target reproduces its native "
+              "value from its native operands within its rounding bound")
+    if ties:
+        reason += "; at native ties: " + "; ".join(ties[:MAX_TIES]) + (
+            f" (+{len(ties) - MAX_TIES} more)" if len(ties) > MAX_TIES else "")
+    if unchecked:
+        reason += "; not checked (no bound): " + ", ".join(unchecked[:MAX_TIES]) + (
+            f" (+{len(unchecked) - MAX_TIES} more)" if len(unchecked) > MAX_TIES else "")
+    return {"verdict": _verdict.UNRESOLVED, "state": "unresolved", "reason": reason,
+            "parting": {"stop": f"t{row}.{first}", "spacings": num(parts, label),
+                        "spacing": num(step, label), "ties": ties[:MAX_ITEMS],
+                        "stages_checked": {"count": len(stages) - len(unchecked)}}}
 
 
 _session_id = run_session_id  # old private name, kept for one commit

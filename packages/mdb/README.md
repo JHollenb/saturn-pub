@@ -384,30 +384,56 @@ print({k: t.info("L1.s")[k] for k in ("state", "authority", "kind", "replica_equ
 
 ## Predictions: `forecast`, `verify`, `whatif`
 
-`forecast` seals a prediction from values at the cursor, before native code runs; `verify`
-compares it with what native code then produced (`tests/repl_golden/predict_forecast.out`). The
-verdict is `confirmed` when, at every element, the measured residual (native - predicted, P20) is
-within the floor, else `not confirmed`; both are `resolved`. The floor is
-`3 x sqrt(n) x spacing`: `spacing` is the model dtype's gap at the consumer's magnitude (a margin
-is a difference of two rounded logits: the sum of their two spacings), `n` the rounded
-operations between the sealed operands and the target (their errors add as a random walk;
-`derived-exact`, a count of the forecast's chain), and `3` is `supplied`: the largest measured
-residual / (sqrt(n) x spacing) over 12264 correct forecasts on tiny Qwen2/Qwen3 (BF16 and FP32,
-2 to 28 layers) was 2.18 (see the `coefficient.support` of the result). The residual is printed
-in spacings too, so a pass near the floor is visible. An element's sealed worst-case bound
-(`bound`, finite entries only) can tighten the floor at that element and never loosen it; it is
-named in the line when it does. Spacing at an element's own magnitude is not used: a small
-element of a sum rounds at the scale of its operands (measured up to 10^4 own spacings). The
-whole-vector worst-case bound is printed only when finite:
+`forecast` seals two predictions from values at the cursor, before native code runs, and
+`verify` compares them with what native code then produced
+(`tests/repl_golden/predict_forecast.out`):
+
+- `exact`: the float64 chain of the port program's identities (`derived-exact`, real
+  arithmetic on the captured operands), with its per-element worst-case rounding `bound`;
+- `emulated`: the same chain with the run's dtype rounding at every point where eager HF
+  rounds, each step run as eager HF writes it with the backend's own kernels at the native
+  call's batch-1 shapes (`derived-exact` under the premise "rounding points of eager HF
+  attention/MLP on this backend"; the premise list is in the record, `emulated.premises`).
+
+Both sha256s are sealed (`digests`). The verdict is decided on native - emulated: `confirmed`
+when every element is within the floor, `1 x spacing` (`supplied`), `spacing` being the dtype's
+gap at the consumer's magnitude (a margin, a difference of two rounded logits: the sum of their
+two spacings). The floor does not widen with depth. Measured: emulated equals native bit for bit
+at every stop from the sealing stop to the logits on tiny Qwen2/Qwen3/Llama/Mistral (BF16 and
+FP32, 2 to 28 layers) and on Qwen2.5-1.5B (CUDA, BF16 28 layers and an FP32 2-layer cut, 3
+prompts). Above the floor `verify` says where emulation and native part: `not confirmed` when the
+prediction is not the emulated chain of the sealed operands (an operand or the held prediction
+differs from its sealed digest) or when a stage from that stop to the target does not reproduce
+its native value from its native operands within the worst-case bound of its identity;
+otherwise `unresolved` (rounding drift between stages, each stage being the native step), with
+the parting stop and any native top-score tie the emulated softmax splits differently.
+`rounding_effect` is native - exact (`measured`), and the sealed `rounding_origin` names the
+first stop where exact and emulated part by more than a spacing; on Qwen2.5-1.5B BF16 that is
+an L0 score (`t22.L0.s[h3]: score spacing 64 at |s| 1.51e+04`), and the exact chain is 35 to 78
+spacings off at L0.m because rounded scores tie and the native softmax is not the softmax of the
+real scores (M42). The worst-case bound against `exact` is printed only when finite
+(information):
 
 ```
 (mdb) forecast L0.p
-forecast 1  t3.L0.p  sealed at t3.L0.h  record f8059f3549dad257
-  predicted max_abs 0.25152 [derived-exact] norm 0.70712 [derived-exact]  sha256 cb1cc1226f21049d  bound 0.0026798 [bound] per element
+forecast 1  t3.L0.p  sealed at t3.L0.h  record 96acb5fd3797bace
+  method 7 identities t3.L0.a .. t3.L0.p (last softmax P05); chain not stored (no project)
+  predicted max_abs 0.25152 [derived-exact] norm 0.70712 [derived-exact]  sha256 a8cee3618668d88c  bound 0.0026798 [bound] per element
+(mdb) forecast M[4,9]
+forecast 2  t3.M[4,9]  sealed at t3.L0.h  record 6d61cae9d3fa30fb
+  method 39 identities t3.L0.a .. t3.logits (last readout_logits P19); chain not stored (no project)
+  predicted -0.11452 [derived-exact P19]  bound 16.825 [bound]
 (mdb) until t3.logits
 t3.logits  logits = lm_head(fn)
 (mdb) verify
-forecast 1 t3.L0.p: confirmed  native max_abs 0.25195 [measured] norm 0.70781 [measured]  residual 0.00091062 [measured] = 0.47 spacings <= floor 0.015502 [supplied P20] = 7.94 bfloat16 spacings (3 x sqrt(7 rounded ops), 3 supplied); element 4 limited by its sealed bound 0.0026096 [bound P20]  [P20, resolved]; worst-case bound 0.0026798 [bound] (holds, information)
+forecast 1 t3.L0.p: confirmed  native max_abs 0.25195 [measured] norm 0.70781 [measured]  residual vs emulated 0 [measured] = 0 spacings <= floor 0.0019531 [supplied P20] = 1 bfloat16 spacing (supplied)  [P20, resolved]
+  rounding effect native - exact 0.00091062 [measured] = 0.466 spacings; worst-case bound 0.0026798 [bound] (holds, information)
+  rounding origin (sealed): exact and emulated agree within one spacing at every stop of the chain
+  order: sealed at t3.L0.h (stop 2) before the target (stop 10); cut descends through 4 receipts
+forecast 2 t3.M[4,9]: confirmed  native -0.11401 [measured]  residual vs emulated 0 [measured] = 0 spacings <= floor 0.00073242 [supplied P20] = 1 bfloat16 spacing (supplied)  [P20, resolved]
+  rounding effect native - exact 0.00050802 [measured] = 0.694 spacings; worst-case bound 16.825 [bound] (holds, information)
+  rounding origin (sealed): t3.L0.f: exact and emulated part by 1.83 spacings at |x| 0.00723
+  order: sealed at t3.L0.h (stop 2) before the target (stop 41); cut descends through 4 receipts
 ```
 
 `whatif` seals the predicted change of a consumer under one edit, measures it natively on a
@@ -450,9 +476,9 @@ native change is above the floor and the exact change has its sign and exceeds t
 `no effect above the noise floor` when both are within the floor; otherwise `unresolved`, with
 the numbers. With no exact chain (as in `compare`) the native change is held against `2 x
 spacing` alone and the line says so. Worst-case rounding bounds are still shown where they are
-finite (`bound` label) and never decide a verdict. `verify` follows the same rule: a forecast
-is `confirmed` when its measured residual (native - predicted) is within the floor, `not
-confirmed` otherwise, whatever the bound (`no-bound` is no longer a verdict).
+finite (`bound` label) and never decide a verdict. `verify` holds native against the emulated
+prediction (above): `confirmed` within one spacing, else `not confirmed` or `unresolved` by where
+emulation and native part, whatever the bound (`no-bound` is no longer a verdict).
 
 ## Following a value: `reads`, `symbols`, `circuit`, `compare`
 

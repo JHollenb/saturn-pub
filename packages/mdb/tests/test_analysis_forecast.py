@@ -1,6 +1,8 @@
 """Sealed forecasts on tiny Qwen2/Qwen3 (BF16 and FP32): next-port forecasts land within their
-stated rounding bound, sealing precedes the native value, a wrong operand fails ``verify``, an
-edit after sealing is reported as ``edited`` and an unreached target stays open."""
+stated rounding bound, sealing precedes the native value, verify decides on the emulated
+prediction (a wrong operand, prediction or identity is not confirmed; drift whose every stage
+is the native step is unresolved), an edit after sealing is reported as ``edited`` and an
+unreached target stays open."""
 
 import json
 
@@ -132,7 +134,8 @@ def test_a_wrong_operand_makes_verify_fail(debugger, monkeypatch):
     run.step()
     [result] = forecast.verify(run, [view["id"]])
     assert result["verdict"] == "not confirmed"
-    assert result["within_bound"] is False
+    assert "operand is not the one sealed" in result["reason"]
+    assert result["within_bound"] is False          # information: against the exact prediction
     assert result["worst_excess"]["value"] > 0
 
 
@@ -176,83 +179,83 @@ def test_a_wrong_prediction_is_not_confirmed_and_confirm_reads_the_floor():
 
     from mdb.analysis import verdict
 
-    # bf16 near 20: spacing 0.125; 4 rounded steps: floor 3 x sqrt(4) x 0.125 = 0.75
-    inside = verdict.confirm(torch.tensor(0.74, dtype=torch.float64), 20.0, torch.bfloat16, count=4)
-    outside = verdict.confirm(torch.tensor(0.76, dtype=torch.float64), 20.0, torch.bfloat16, count=4)
+    # bf16 near 20: spacing 0.125; floor 1 (supplied) x 0.125
+    inside = verdict.confirm(torch.tensor(0.125, dtype=torch.float64), 20.0, torch.bfloat16)
+    outside = verdict.confirm(torch.tensor(0.126, dtype=torch.float64), 20.0, torch.bfloat16)
     assert (inside["verdict"], outside["verdict"]) == ("confirmed", "not confirmed")
-    assert inside["state"] == outside["state"] == "resolved"
-    assert outside["floor"]["value"] == 0.75 and outside["floor"]["authority"] == "supplied"
-    assert outside["floor_spacings"]["value"] == 6.0 and outside["rounded_steps"]["value"] == 4
+    assert outside["floor"]["value"] == 0.125 and outside["floor"]["authority"] == "supplied"
+    assert outside["floor_spacings"]["value"] == verdict.FLOOR_SPACINGS == 1.0
+    assert outside["floor_spacings"]["authority"] == "supplied" and outside["floor_spacings"]["support"]
     assert outside["residual_spacings"]["authority"] == "measured"
-    assert abs(outside["residual_spacings"]["value"] - 0.76 / 0.125) < 1e-12
-    assert outside["coefficient"]["authority"] == "supplied" and outside["coefficient"]["support"]
+    assert abs(outside["residual_spacings"]["value"] - 0.126 / 0.125) < 1e-12
+    assert not hasattr(verdict, "COEFFICIENT") and not hasattr(verdict, "COEFFICIENT_SUPPORT")
     # a margin is a difference of two rounded values: the floor takes both spacings
-    margin = verdict.confirm(torch.tensor(0.1), 20.0, torch.bfloat16, count=1, partner=1.0)
+    margin = verdict.confirm(torch.tensor(0.1), 20.0, torch.bfloat16, partner=1.0)
     assert margin["spacing"]["value"] == 0.125 + 2.0 ** -7 and margin["verdict"] == "confirmed"
     assert verdict.confirm(torch.tensor(1), 5, torch.int64)["verdict"] == "not confirmed"
-
-
-def test_the_floor_is_judged_per_element_and_the_sealed_bound_tightens_it():
-    """A wrong small element inside a vector whose largest element is big: the largest-element
-    floor (spacing of 8.0, here 0.0625 x 3) admits it; the element's own sealed bound does not."""
-    import torch
-
-    from mdb.analysis import verdict
-
+    # a vector is judged per element: one element above the floor decides, and is named
     gap = torch.zeros(8, dtype=torch.float64)
-    gap[3] = 0.1                                   # the wrong element, 1.6 spacings of 8.0
-    limit = torch.full((8,), 0.5, dtype=torch.float64)
-    limit[3] = 0.01                                # its own bound: it is a small element
-    alone = verdict.confirm(gap, 8.0, torch.bfloat16, count=1)
-    held = verdict.confirm(gap, 8.0, torch.bfloat16, count=1, limit=limit)
-    assert alone["verdict"] == "confirmed" and "element_limit" not in alone
-    assert held["verdict"] == "not confirmed" and held["index"] == 3
-    assert held["element_limit"]["value"] == 0.01 and held["element_limit"]["authority"] == "bound"
-    # a bound looser than the floor, or infinite, never loosens it
-    loose = torch.full((8,), float("inf"), dtype=torch.float64)
-    assert verdict.confirm(gap * 100, 8.0, torch.bfloat16, count=1, limit=loose)["verdict"] \
-        == "not confirmed"
+    gap[3] = 0.07                                  # 1.1 spacings of 8.0 (spacing 0.0625)
+    vector = verdict.confirm(gap, 8.0, torch.bfloat16)
+    assert vector["verdict"] == "not confirmed" and vector["index"] == 3
 
 
-def test_a_wrong_small_element_of_a_real_vector_port_is_not_confirmed_by_its_bound():
-    """On tiny bf16 Qwen2 find a port whose sealed bound at some element is below the floor of its
-    largest element; a wrong value there of 3x the bound is below that floor, yet not confirmed."""
+def _tie_model(layers=2):
+    """Tiny bf16 Qwen2 whose layer-0 keys share a large bias on the two lowest-frequency RoPE
+    dimensions of each head (RoPE leaves them nearly unrotated) and whose queries share a
+    bias there too: every score is about 1.06e4 (bf16 spacing 64) and the score differences
+    between keys (below 1) round away, so the native scores tie, as Qwen2.5-1.5B's k bias makes
+    them tie at L0 (M42)."""
     import torch
 
-    run = open_tiny("qwen2", "bf16").run(PROMPT)
-    found = None
-    for label in ("L0.a", "L0.q", "L0.k", "L0.v", "L0.p", "L0.o", "L0.r"):
-        run = open_tiny("qwen2", "bf16").run(PROMPT)
-        view = forecast.seal(run, f"t3.{label}")
-        entry = forecast.ledger(run)[view["id"]]
-        run.step()
-        [probe] = forecast.verify(run, [view["id"]])
-        flat_bound = entry.bound.reshape(-1)
-        k = int(flat_bound.argmin())
-        if float(flat_bound[k]) * 4 < probe["floor"]["value"]:
-            found = (label, k, float(flat_bound[k]), probe["floor"]["value"])
-            break
-    assert found is not None, "no port with a bound tighter than its floor"
-    label, k, bound_k, floor = found
-    run = open_tiny("qwen2", "bf16").run(PROMPT)
-    view = forecast.seal(run, f"t3.{label}")
-    entry = forecast.ledger(run)[view["id"]]
-    flat = entry.predicted.reshape(-1).clone()
-    flat[k] += 3 * bound_k
-    entry.predicted = flat.reshape(entry.predicted.shape)
-    run.step()
-    [result] = forecast.verify(run, [view["id"]])
-    assert result["residual_max_abs"]["value"] < result["floor"]["value"]  # old rule: confirmed
-    assert result["verdict"] == "not confirmed" and result["index"] == k
-    assert result["element_limit"]["authority"] == "bound"
+    from mdb.engine.models import tiny_model
+    from mdb.ops.debugger import attach
+
+    model = tiny_model("qwen2", "bf16", layers=layers)
+    attn = model.model.layers[0].self_attn
+    dh = attn.head_dim
+    with torch.no_grad():
+        attn.k_proj.weight.mul_(0.01)
+        for bias, value in ((attn.k_proj.bias, 300.0), (attn.q_proj.bias, 50.0)):
+            for start in range(0, bias.shape[0], dh):
+                bias[start + dh // 2 - 1] = value
+                bias[start + dh - 1] = value
+    return attach(model, None)
+
+
+TIE_PROMPT = [1, 5, 9, 3, 7, 2, 11, 4]
+
+
+def test_rounded_score_ties_put_the_exact_chain_tens_of_spacings_off_and_emulation_on_native():
+    """M42 on a constructed tiny model: rounding the scores to bf16 ties them, so the native
+    softmax is not the softmax of the real-number scores. The exact chain is tens of spacings
+    off from L0.p on (the old rule, 3 x sqrt(n) spacings, did not confirm it); the emulated
+    prediction is the native value, and the sealed origin names the score spacing."""
+    run = _tie_model().run(TIE_PROMPT)
+    row = run.parse(run.where)[0]
+    ids = [forecast.seal(run, f"t{row}.L0.{port}")["id"] for port in ("p", "A", "m")]
+    run.until(f"t{row}.L0.m")
+    scores = run.read(f"t{row}.L0.s").float().reshape(2, -1)
+    assert bool((scores == scores[:, :1]).all())              # every native score tied
+    for result in forecast.verify(run, ids):
+        assert result["verdict"] == "confirmed", result
+        assert result["residual_spacings"]["value"] == 0.0     # emulated: the native bits
+        assert result["rounding_effect"]["spacings"]["value"] > 15, result["rounding_effect"]
+        assert result["rounding_effect"]["max_abs"]["authority"] == "measured"
+        origin = result["rounding_origin"]
+        assert origin["stop"] == f"t{row}.L0.p" and origin["score_spacing"]["value"] == 64.0
+        assert origin["text"].startswith(f"t{row}.L0.p[h") and "score spacing 64 at |s|" in \
+            origin["text"]
 
 
 @pytest.mark.parametrize("family,dtype,layers", [(f, d, n) for f in ("qwen2", "qwen3")
-                                                  for d in ("bf16", "fp32") for n in (2, 6, 12)])
+                                                  for d in ("bf16", "fp32")
+                                                  for n in (2, 6, 12, 28)])
 def test_correct_margin_and_vector_forecasts_are_confirmed_with_their_residual_in_spacings(
         family, dtype, layers):
-    """Forecasts sealed at L0.h of a deep tiny model (margin and every later port, residuals up to
-    about 15 spacings of the largest logit in fp32) are confirmed; none sits above its floor."""
+    """Forecasts sealed at L0.h (margin, the last layer's m, fn, logits): the emulated
+    prediction is within the floor of native. The exact chain is up to about 10 spacings off in
+    fp32 at 28 layers, which the emulated one is not (measured: 0)."""
     from mdb.engine.models import tiny_model
     from mdb.ops.debugger import attach
 
@@ -264,19 +267,75 @@ def test_correct_margin_and_vector_forecasts_are_confirmed_with_their_residual_i
     for result in forecast.verify(run, ids):
         assert result["verdict"] == "confirmed", result
         assert result["residual_spacings"]["value"] <= result["floor_spacings"]["value"]
-        assert result["rounded_steps"]["value"] >= layers
+        assert result["rounded_steps"]["value"] >= layers          # information
+        assert result["rounding_effect"]["max_abs"]["authority"] == "measured"
 
 
 def test_a_forecast_whose_prediction_is_perturbed_is_not_confirmed(debugger):
     run = debugger.run(PROMPT)
     view = forecast.seal(run)
     entry = forecast.ledger(run)[view["id"]]
-    entry.predicted = entry.predicted + 1.0   # a deliberately wrong prediction
+    entry.emulated = entry.emulated + 1.0   # a deliberately wrong prediction
     run.step()
     [result] = forecast.verify(run, [view["id"]])
     assert result["verdict"] == "not confirmed" and result["state"] == "resolved"
     assert result["residual_max_abs"]["value"] > result["floor"]["value"]
     assert result["residual_spacings"]["value"] > result["floor_spacings"]["value"]
+    assert "sealed digest" in result["reason"]
+
+
+def test_a_wrong_identity_is_not_confirmed_at_the_stage_it_gets_wrong(monkeypatch):
+    """Both chains use a wrong SiLU (x 1.01): the prediction is its chain's value, but the native
+    L0.sg lies outside the bound of the (wrong) identity on its native operand."""
+    from mdb.engine.models import tiny_model
+    from mdb.ops.debugger import attach
+
+    def wrong(original):
+        def silu(self, g, bg):
+            value, bound = original(self, g, bg)
+            return value * 1.01, bound
+        return silu
+
+    monkeypatch.setattr(forecast.RowModel, "_silu", wrong(forecast.RowModel._silu))
+    monkeypatch.setattr(forecast.EmulatedRowModel, "_silu",
+                        wrong(forecast.EmulatedRowModel._silu))
+    run = attach(tiny_model("qwen2", "bf16"), None).run(PROMPT)
+    run.until("t3.L0.n")
+    view = forecast.seal(run, "t3.L0.m")
+    run.until("t3.L0.m")
+    [result] = forecast.verify(run, [view["id"]])
+    assert result["verdict"] == "not confirmed", result
+    assert result["parting"]["stage"] == "t3.L0.sg" and result["parting"]["stop"] == "t3.L0.sg"
+
+
+def test_drift_whose_every_stage_is_the_native_step_is_unresolved_and_names_the_tie(monkeypatch):
+    """A one-spacing difference of the emulated scores (as a backend kernel differing by one
+    rounding would make it) at a native tie: the emulated softmax splits that head differently,
+    every stage reproduces native from its native operands, so the verdict is unresolved (not a
+    wider floor) with the parting stop and the tie named."""
+
+    def shifted(original):
+        def scores(self, q, bq, k, bk, scaling):
+            value, bound = original(self, q, bq, k, bk, scaling)
+            value = value.clone()
+            value[1, 0] += 64.0                    # one spacing at 1.06e4, head 1, key 0
+            return value, bound
+        return scores
+
+    monkeypatch.setattr(forecast.EmulatedRowModel, "_scores",
+                        shifted(forecast.EmulatedRowModel._scores))
+    run = _tie_model().run(TIE_PROMPT)
+    row = run.parse(run.where)[0]
+    view = forecast.seal(run, f"t{row}.L0.A")
+    run.until(f"t{row}.L0.A")
+    [result] = forecast.verify(run, [view["id"]])
+    assert result["verdict"] == "unresolved" and result["state"] == "unresolved", result
+    # the scores part by one spacing (within the floor); the softmax is where they part
+    assert result["parting"]["stop"] == f"t{row}.L0.p"
+    assert result["parting"]["stages_checked"]["count"] == 2       # L0.p and L0.A
+    assert any(tie.startswith(f"t{row}.L0.p[h1]: native top scores tie") for tie in
+               result["parting"]["ties"]), result["parting"]
+    assert "rounding drift" in result["reason"] and "tie" in result["reason"]
 
 
 def test_a_large_weight_is_multiplied_block_by_block_and_no_float64_weight_is_kept(
