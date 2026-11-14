@@ -1,0 +1,368 @@
+{
+ "n": 64,
+ "view_readable@1(countries)": [
+  63,
+  64,
+  0.984
+ ],
+ "view_readable@1(all)": [
+  41,
+  64,
+  0.641
+ ],
+ "view_readable@1(capitals)": [
+  61,
+  64,
+  0.953
+ ],
+ "view_readable@1(entities)": [
+  13,
+  64,
+  0.203
+ ],
+ "view_all_best_kind": {
+  "country": 42,
+  "capital": 14,
+  "entity": 8
+ },
+ "capital_in_cell": [
+  61,
+  64,
+  0.953
+ ],
+ "entity_in_cell (all-set best is an entity)": [
+  8,
+  64,
+  0.125
+ ],
+ "B_mass(countries)": [
+  53,
+  64,
+  0.828
+ ],
+ "B_answer(countries)": [
+  60,
+  64,
+  0.938
+ ],
+ "B_lens_L20(countries)": [
+  38,
+  64,
+  0.594
+ ],
+ "B_lens_L24(countries)": [
+  58,
+  64,
+  0.906
+ ],
+ "B_lens_better(countries)": [
+  58,
+  64,
+  0.906
+ ],
+ "B_mass(all)": [
+  34,
+  64,
+  0.531
+ ],
+ "B_answer(all)": [
+  8,
+  64,
+  0.125
+ ],
+ "B_lens_L20(all)": [
+  25,
+  64,
+  0.391
+ ],
+ "B_lens_L24(all)": [
+  27,
+  64,
+  0.422
+ ],
+ "B_lens_better(all)": [
+  27,
+  64,
+  0.422
+ ],
+ "B_mass_site_is_bridge": [
+  51,
+  64,
+  0.797
+ ],
+ "T_diff": {
+  "content_moves": [
+   61,
+   64,
+   0.953
+  ],
+  "answer_moves": [
+   35,
+   64,
+   0.547
+  ],
+  "together": [
+   36,
+   64,
+   0.562
+  ],
+  "2x2 (content, answer)": {
+   "True,True": 34,
+   "True,False": 27,
+   "False,True": 1,
+   "False,False": 2
+  }
+ },
+ "T_city": {
+  "n": 12,
+  "country_unchanged": [
+   12,
+   12,
+   1.0
+  ],
+  "content_moves(entity)": [
+   8,
+   12,
+   0.667
+  ],
+  "answer_moves": [
+   2,
+   12,
+   0.167
+  ],
+  "answer_is_donor_city": [
+   2,
+   12,
+   0.167
+  ],
+  "together": [
+   6,
+   12,
+   0.5
+  ],
+  "items": [
+   {
+    "donor": "city:Osaka",
+    "argmax_text": " Osaka",
+    "content_entity_was": " Osaka",
+    "content_entity": " Osaka",
+    "content_country": " Japan",
+    "together": true
+   },
+   {
+    "donor": "city:Shenzhen",
+    "argmax_text": " Beijing",
+    "content_entity_was": " Shanghai",
+    "content_entity": " yuan",
+    "content_country": " China",
+    "together": true
+   },
+   {
+    "donor": "city:Shanghai",
+    "argmax_text": " Shanghai",
+    "content_entity_was": " yuan",
+    "content_entity": " Shanghai",
+    "content_country": " China",
+    "together": true
+   },
+   {
+    "donor": "city:Novosibirsk",
+    "argmax_text": " Moscow",
+    "content_entity_was": " Freder",
+    "content_entity": " Anton",
+    "content_country": " Russia",
+    "together": true
+   },
+   {
+    "donor": "city:Hamburg",
+    "argmax_text": " Berlin",
+    "content_entity_was": " Munich",
+    "content_entity": " Hamburg",
+    "content_country": " Germany",
+    "together": false
+   },
+   {
+    "donor": "city:Munich",
+    "argmax_text": " Berlin",
+    "content_entity_was": " Hamburg",
+    "content_entity": " Munich",
+    "content_country": " Germany",
+    "together": false
+   },
+   {
+    "donor": "city:Naples",
+    "argmax_text": " Rome",
+    "content_entity_was": " Milan",
+    "content_entity": " Naples",
+    "content_country": " Italy",
+    "together": false
+   },
+   {
+    "donor": "city:Milan",
+    "argmax_text": " Rome",
+    "content_entity_was": " Naples",
+    "content_entity": " Milan",
+    "content_country": " Italy",
+    "together": false
+   },
+   {
+    "donor": "city:Seville",
+    "argmax_text": " Madrid",
+    "content_entity_was": " Barcelona",
+    "content_entity": " Miguel",
+    "content_country": " Spain",
+    "together": true
+   },
+   {
+    "donor": "city:Barcelona",
+    "argmax_text": " Madrid",
+    "content_entity_was": " Miguel",
+    "content_entity": " Barcelona",
+    "content_country": " Spain",
+    "together": false
+   },
+   {
+    "donor": "city:Gdansk",
+    "argmax_text": " Warsaw",
+    "content_entity_was": " Krak",
+    "content_entity": " Krak",
+    "content_country": " Poland",
+    "together": true
+   },
+   {
+    "donor": "city:Krakow",
+    "argmax_text": " Warsaw",
+    "content_entity_was": " Krak",
+    "content_entity": " Krak",
+    "content_country": " Poland",
+    "together": false
+   }
+  ]
+ },
+ "r0rest_readable(countries)": [
+  49,
+  64,
+  0.766
+ ],
+ "first_appearance_le_20": [
+  49,
+  49,
+  1.0
+ ],
+ "first_appearance_median": 7,
+ "hop_indirect_share_median": 0.5466940910172162,
+ "hop_indirect_share_quartiles": [
+  0.4609399432850915,
+  0.5466940910172162,
+  0.6523339991544832
+ ],
+ "hop_native_vs_job2_max_abs_diff": 0.0,
+ "hop_direct_median": -3.505006441776853,
+ "hop_native_median": -7.8125,
+ "by_family": {
+  "city": {
+   "countries": [
+    16,
+    16,
+    1.0
+   ],
+   "all": [
+    9,
+    16,
+    0.562
+   ],
+   "lens24": [
+    15,
+    16,
+    0.938
+   ],
+   "T_diff_together": [
+    12,
+    16,
+    0.75
+   ]
+  },
+  "currency": {
+   "countries": [
+    15,
+    16,
+    0.938
+   ],
+   "all": [
+    10,
+    16,
+    0.625
+   ],
+   "lens24": [
+    14,
+    16,
+    0.875
+   ],
+   "T_diff_together": [
+    9,
+    16,
+    0.562
+   ]
+  },
+  "landmark": {
+   "countries": [
+    16,
+    16,
+    1.0
+   ],
+   "all": [
+    10,
+    16,
+    0.625
+   ],
+   "lens24": [
+    16,
+    16,
+    1.0
+   ],
+   "T_diff_together": [
+    9,
+    16,
+    0.562
+   ]
+  },
+  "person": {
+   "countries": [
+    16,
+    16,
+    1.0
+   ],
+   "all": [
+    12,
+    16,
+    0.75
+   ],
+   "lens24": [
+    13,
+    16,
+    0.812
+   ],
+   "T_diff_together": [
+    6,
+    16,
+    0.375
+   ]
+  }
+ },
+ "verdicts": {
+  "Z1 view(countries)>=0.80": true,
+  "Z2 view(all)>=0.60": true,
+  "Z3 lens<=view-0.10 (countries) and <=view-0.20 (all)": false,
+  "Z4 B_answer(countries)<=0.50": false,
+  "Z5 B_mass(countries)<=view-0.10": true,
+  "Z6 T_diff content>=0.85 and together>=0.60": false,
+  "Z7 T_city country>=0.80, entity>=0.50, together>=0.60": false,
+  "Z8 first_appearance<=20 on >=0.70": true,
+  "Z9 indirect share median in [0.3,0.9]": true,
+  "Z10 capital_in_cell<=0.30": false,
+  "F_read (view(all)<=0.35)": false,
+  "F_lens (lens>=view on countries or all)": false,
+  "F_lens_memo (lens>=view+0.10)": false,
+  "F_causal (together<0.60 on T_diff, or T_city n>=8)": true
+ }
+}
