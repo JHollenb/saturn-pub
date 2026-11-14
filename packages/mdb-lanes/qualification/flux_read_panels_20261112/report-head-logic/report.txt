@@ -1,0 +1,168 @@
+(a) legacy precision vs saved job-a0bca63168b4 PNGs
+  arms 244, pixel-identical 244, not identical 0, reference missing 0
+  roots compared 31, identical 31
+
+(b) gone = (d(arm) - d(iso)) / (d(none) - d(iso)), d = 1 - MAD(arm, del) / MAD(native, del)
+
+  red:
+    source                     own60     own120     own240    rand120    rand240        mod       noun       modI      nounI keep-own60 eep-own120 eep-own240  keep-modI keep-nounI    m:own60
+    old 4242                    0.48       0.53       0.66       0.04       0.12       0.51       0.13       0.25       0.03       0.16       0.14       0.03       0.24       0.66       0.31
+    legacy 4242                 0.48       0.53       0.66       0.04       0.12       0.51       0.13       0.25       0.03       0.16       0.14       0.03       0.24       0.66       0.31
+    full 4242                   0.47       0.52       0.64       0.02       0.13       0.54       0.14       0.27       0.02       0.14       0.14       0.05       0.28       0.66       0.29
+      floor bound 4242         0.092      0.087      0.094      0.069      0.075      0.077      0.094      0.083      0.075      0.072      0.113      0.090      0.074      0.109      0.082
+    old 9001                    0.61       0.61       0.73       0.14       0.23       0.74       0.07       0.46      -0.01       0.11       0.13       0.06       0.17       0.93       0.36
+    legacy 9001                 0.61       0.61       0.73       0.14       0.23       0.74       0.07       0.46      -0.01       0.11       0.13       0.06       0.17       0.93       0.36
+    full 9001                   0.61       0.62       0.81       0.14       0.23       0.76       0.06       0.46       0.00       0.14       0.17       0.06       0.13       1.00       0.37
+      floor bound 9001         0.140      0.138      0.198      0.118      0.099      0.111      0.113      0.097      0.115      0.118      0.138      0.107      0.140      0.119      0.111
+
+  black:
+    source                     own60     own120     own240    rand120    rand240        mod       noun       modI      nounI keep-own60 eep-own120 eep-own240  keep-modI keep-nounI    m:own60
+    old 4242                    0.31       0.57       0.72       0.24      -0.03       0.87       0.11       0.14       0.11       0.03       0.06      -0.01       0.19       0.58       0.45
+    legacy 4242                 0.31       0.57       0.72       0.24      -0.03       0.87       0.11       0.14       0.11       0.03       0.06      -0.01       0.19       0.58       0.45
+    full 4242                   0.31       0.59       0.71       0.23      -0.05       0.85       0.11       0.13       0.12       0.04       0.04       0.00       0.20       0.58       0.42
+      floor bound 4242         0.047      0.056      0.054      0.030      0.067      0.048      0.031      0.052      0.042      0.033      0.066      0.045      0.097      0.035      0.025
+    old 9001                    0.39       0.66       0.77       0.12       0.10       0.86       0.09       0.21       0.08       0.03       0.01       0.01       0.10       0.67       0.34
+    legacy 9001                 0.39       0.66       0.77       0.12       0.10       0.86       0.09       0.21       0.08       0.03       0.01       0.01       0.10       0.67       0.34
+    full 9001                   0.39       0.65       0.77       0.11       0.11       0.85       0.08       0.21       0.07       0.03       0.01       0.01       0.10       0.67       0.33
+      floor bound 9001         0.035      0.034      0.034      0.032      0.031      0.033      0.031      0.034      0.032      0.033      0.028      0.030      0.026      0.030      0.024
+
+  ball:
+    source                     own60     own120     own240    rand120    rand240        mod       noun       modI      nounI keep-own60 eep-own120 eep-own240  keep-modI keep-nounI    m:own60
+    old 4242                    0.51       0.47       0.66      -0.41       0.25      -0.05       0.41      -0.09       0.28      -0.20      -0.06      -0.12       1.14       0.30       0.30
+    legacy 4242                 0.51       0.47       0.66      -0.41       0.25      -0.05       0.41      -0.09       0.28      -0.20      -0.06      -0.12       1.14       0.30       0.30
+    full 4242                   0.51       0.46       0.68      -0.40       0.24      -0.04       0.44      -0.08       0.30      -0.19      -0.05      -0.11       1.12       0.29       0.29
+      floor bound 4242         0.071      0.056      0.060      0.098      0.083      0.069      0.076      0.057      0.089      0.064      0.070      0.055      0.048      0.086      0.071
+    old 9001                    0.47       0.45       0.49      -0.14       0.42      -0.00       0.42      -0.02       0.23      -0.04       0.07       0.12       1.02       0.80       0.38
+    legacy 9001                 0.47       0.45       0.49      -0.14       0.42      -0.00       0.42      -0.02       0.23      -0.04       0.07       0.12       1.02       0.80       0.38
+    full 9001                   0.46       0.43       0.48      -0.15       0.41       0.00       0.39      -0.03       0.22      -0.04       0.07       0.11       0.99       0.80       0.37
+      floor bound 9001         0.041      0.049      0.053      0.056      0.045      0.039      0.065      0.042      0.063      0.049      0.052      0.060      0.052      0.056      0.041
+
+  snow:
+    source                     own60     own120     own240    rand120    rand240        mod       noun       modI      nounI keep-own60 eep-own120 eep-own240  keep-modI keep-nounI    m:own60
+    old 4242                    0.27       0.36       0.46       0.32       0.49       0.44       0.29       0.27       0.04       0.65       0.45       0.40       0.70       0.81       0.32
+    legacy 4242                 0.27       0.36       0.46       0.32       0.49       0.44       0.29       0.27       0.04       0.65       0.45       0.40       0.70       0.81       0.32
+    full 4242                   0.26       0.36       0.45       0.32       0.46       0.44       0.30       0.27       0.03       0.66       0.45       0.41       0.70       0.81       0.32
+      floor bound 4242         0.020      0.029      0.016      0.033      0.047      0.016      0.022      0.017      0.014      0.024      0.021      0.030      0.024      0.020      0.020
+    old 9001                    0.13       0.13       0.17       0.13       0.16       0.10       0.16       0.11       0.09       0.56       0.25       0.09       0.63       0.74       0.17
+    legacy 9001                 0.13       0.13       0.17       0.13       0.16       0.10       0.16       0.11       0.09       0.56       0.25       0.09       0.63       0.74       0.17
+    full 9001                   0.12       0.13       0.17       0.13       0.15       0.09       0.16       0.11       0.09       0.56       0.25       0.09       0.62       0.73       0.17
+      floor bound 9001         0.020      0.011      0.011      0.012      0.022      0.011      0.010      0.017      0.037      0.016      0.019      0.012      0.015      0.014      0.013
+
+  night:
+    source                     own60     own120     own240    rand120    rand240        mod       noun       modI      nounI keep-own60 eep-own120 eep-own240  keep-modI keep-nounI    m:own60
+    old 4242                    0.56       0.66       0.85       0.11       0.45       0.44       0.16       0.20       0.09       0.69       0.57       0.37       0.86       1.05       0.54
+    legacy 4242                 0.56       0.66       0.85       0.11       0.45       0.44       0.16       0.20       0.09       0.69       0.57       0.37       0.86       1.05       0.54
+    full 4242                   0.56       0.66       0.85       0.11       0.46       0.50       0.15       0.19       0.07       0.69       0.57       0.37       0.86       1.06       0.55
+      floor bound 4242         0.053      0.055      0.073      0.049      0.064      0.209      0.077      0.036      0.040      0.058      0.053      0.072      0.090      0.028      0.053
+    old 9001                    0.28       0.40       0.57       0.08       0.20       0.22       0.01       0.12      -0.01       0.48       0.32       0.16       0.73       0.99       0.22
+    legacy 9001                 0.28       0.40       0.57       0.08       0.20       0.22       0.01       0.12      -0.01       0.48       0.32       0.16       0.73       0.99       0.22
+    full 9001                   0.28       0.40       0.58       0.08       0.20       0.23       0.01       0.12      -0.01       0.48       0.32       0.15       0.73       0.99       0.22
+      floor bound 9001         0.033      0.020      0.045      0.022      0.020      0.024      0.021      0.020      0.025      0.024      0.028      0.020      0.025      0.016      0.017
+
+  rain:
+    source                     own60     own120     own240    rand120    rand240        mod       noun       modI      nounI keep-own60 eep-own120 eep-own240  keep-modI keep-nounI    m:own60
+    old 4242                   -0.10      -0.26       0.22       0.24      -0.06      -0.02      -0.36       0.15      -0.24       0.38       0.42       0.15       0.74       0.89      -0.12
+    legacy 4242                -0.10      -0.26       0.22       0.24      -0.06      -0.02      -0.36       0.15      -0.24       0.38       0.42       0.15       0.74       0.89      -0.12
+    full 4242                  -0.10      -0.27       0.22       0.25      -0.06      -0.01      -0.37       0.16      -0.25       0.40       0.43       0.15       0.75       0.90      -0.12
+      floor bound 4242         0.137      0.167      0.128      0.081      0.110      0.121      0.075      0.159      0.129      0.135      0.102      0.097      0.135      0.095      0.137
+    old 9001                    0.09      -0.09       0.66       0.58       0.27       0.48      -0.19       0.23      -0.15       1.41       1.21       0.66       1.50       1.49       0.03
+    legacy 9001                 0.09      -0.09       0.66       0.58       0.27       0.48      -0.19       0.23      -0.15       1.41       1.21       0.66       1.50       1.49       0.03
+    full 9001                   0.10      -0.08       0.70       0.56       0.26       0.48      -0.20       0.24      -0.14       1.41       1.22       0.67       1.51       1.49       0.03
+      floor bound 9001         0.127      0.121      0.122      0.364      0.108      0.139      0.115      0.124      0.187      0.226      0.105      0.102      0.363      0.109      0.118
+
+(c) regeneration from recipes
+  4242:z:own60:ball match=True same_lane=True conditioning=True image_rgb=True init_latent=True latent=True png=True
+  4242:m:own60:red match=True same_lane=True conditioning=True image_rgb=True init_latent=True latent=True png=True
+  4242:z:keep-own60:red match=True same_lane=True conditioning=True image_rgb=True init_latent=True latent=True png=True
+
+(d) verdicts (px MAD vs iso; picture judgement slot left empty: picture=None)
+  red    own60       necessary  status=not_supported   agree=True missing=[] picture=None
+      zero   4242 not_supported   effect=0.0311 floor=0.0033 | rand0-own60(random,sep=None) e=0.0070 m=+0.0241 >floor=True; own60@rows-black(other_item,sep=None) e=0.0400 m=-0.0088 >floor=False
+      zero   9001 not_supported   effect=0.0282 floor=0.0031 | rand0-own60(random,sep=None) e=0.0060 m=+0.0222 >floor=True; own60@rows-black(other_item,sep=None) e=0.0302 m=-0.0020 >floor=False
+      renorm 4242 not_supported   effect=0.0270 floor=0.0029 | rand0-own60(random,sep=None) e=0.0107 m=+0.0163 >floor=True; own60@rows-black(other_item,sep=None) e=0.0250 m=+0.0020 >floor=False
+      renorm 9001 not_supported   effect=0.0176 floor=0.0025 | rand0-own60(random,sep=None) e=0.0050 m=+0.0126 >floor=True; own60@rows-black(other_item,sep=None) e=0.0218 m=-0.0043 >floor=False
+  red    modI        necessary  status=not_supported   agree=True missing=[] picture=None
+      zero   4242 not_supported   effect=0.0235 floor=0.0030 | rand0-modI(random,sep=None) e=0.0122 m=+0.0113 >floor=True; modI@rows-black(other_item,sep=None) e=0.0255 m=-0.0020 >floor=False
+      zero   9001 not_supported   effect=0.0226 floor=0.0022 | rand0-modI(random,sep=None) e=0.0108 m=+0.0118 >floor=True; modI@rows-black(other_item,sep=None) e=0.0230 m=-0.0004 >floor=False
+      renorm 4242 set_only        effect=0.0204 floor=0.0025 | rand0-modI(random,sep=None) e=0.0126 m=+0.0078 >floor=True; modI@rows-black(other_item,sep=None) e=0.0135 m=+0.0069 >floor=True
+      renorm 9001 not_supported   effect=0.0111 floor=0.0022 | rand0-modI(random,sep=None) e=0.0104 m=+0.0007 >floor=False; modI@rows-black(other_item,sep=None) e=0.0146 m=-0.0035 >floor=False
+  red    nounI       necessary  status=not_supported   agree=True missing=[] picture=None
+      zero   4242 not_supported   effect=0.0122 floor=0.0027 | rand0-nounI(random,sep=None) e=0.0122 m=+0.0000 >floor=False; nounI@rows-black(other_item,sep=None) e=0.0273 m=-0.0151 >floor=False
+      zero   9001 not_supported   effect=0.0092 floor=0.0026 | rand0-nounI(random,sep=None) e=0.0117 m=-0.0025 >floor=False; nounI@rows-black(other_item,sep=None) e=0.0118 m=-0.0026 >floor=False
+      renorm 4242 not_supported   effect=0.0112 floor=0.0027 | rand0-nounI(random,sep=None) e=0.0157 m=-0.0044 >floor=False; nounI@rows-black(other_item,sep=None) e=0.0271 m=-0.0159 >floor=False
+      renorm 9001 not_supported   effect=0.0089 floor=0.0026 | rand0-nounI(random,sep=None) e=0.0071 m=+0.0019 >floor=False; nounI@rows-black(other_item,sep=None) e=0.0107 m=-0.0018 >floor=False
+  red    keep-own60  sufficient status=not_supported   agree=True missing=[] picture=None
+      zero   4242 set_only        effect=0.0131 floor=0.0026 allcut=0.0504 | keep-rand0-own60(random,sep=None) e=0.0430 m=+0.0299 >floor=True
+      zero   9001 not_supported   effect=0.0141 floor=0.0026 allcut=0.0409 | keep-rand0-own60(random,sep=None) e=0.0352 m=+0.0211 >floor=True
+      renorm 4242 not_supported   effect=0.0161 floor=0.0025 allcut=0.0511 | keep-rand0-own60(random,sep=None) e=0.0415 m=+0.0254 >floor=True
+      renorm 9001 not_supported   effect=0.0134 floor=0.0026 allcut=0.0407 | keep-rand0-own60(random,sep=None) e=0.0296 m=+0.0162 >floor=True
+  red    keep-modI   sufficient status=not_supported   agree=True missing=[] picture=None
+      zero   4242 not_supported   effect=0.0219 floor=0.0026 allcut=0.0504 | keep-rand0-modI(random,sep=None) e=0.0402 m=+0.0182 >floor=True
+      zero   9001 not_supported   effect=0.0157 floor=0.0031 allcut=0.0409 | keep-rand0-modI(random,sep=None) e=0.0326 m=+0.0168 >floor=True
+      renorm 4242 not_supported   effect=0.0226 floor=0.0026 allcut=0.0511 | keep-rand0-modI(random,sep=None) e=0.0284 m=+0.0058 >floor=True
+      renorm 9001 not_supported   effect=0.0160 floor=0.0022 allcut=0.0407 | keep-rand0-modI(random,sep=None) e=0.0227 m=+0.0068 >floor=True
+  red    keep-nounI  sufficient status=not_supported   agree=True missing=[] picture=None
+      zero   4242 not_supported   effect=0.0410 floor=0.0039 allcut=0.0504 | keep-rand0-nounI(random,sep=None) e=0.0415 m=+0.0005 >floor=False
+      zero   9001 not_supported   effect=0.0361 floor=0.0026 allcut=0.0409 | keep-rand0-nounI(random,sep=None) e=0.0307 m=-0.0054 >floor=False
+      renorm 4242 not_supported   effect=0.0327 floor=0.0027 allcut=0.0511 | keep-rand0-nounI(random,sep=None) e=0.0414 m=+0.0087 >floor=True
+      renorm 9001 not_supported   effect=0.0252 floor=0.0018 allcut=0.0407 | keep-rand0-nounI(random,sep=None) e=0.0243 m=-0.0009 >floor=False
+  black  own60       necessary  status=set_only        agree=True missing=[] picture=None
+      zero   4242 set_only        effect=0.0615 floor=0.0031 | rand0-own60(random,sep=None) e=0.0051 m=+0.0564 >floor=True; own60@rows-ball(other_item,sep=None) e=0.0144 m=+0.0471 >floor=True
+      zero   9001 set_only        effect=0.0441 floor=0.0030 | rand0-own60(random,sep=None) e=0.0061 m=+0.0380 >floor=True; own60@rows-ball(other_item,sep=None) e=0.0172 m=+0.0269 >floor=True
+      renorm 4242 set_only        effect=0.0387 floor=0.0017 | rand0-own60(random,sep=None) e=0.0063 m=+0.0324 >floor=True; own60@rows-ball(other_item,sep=None) e=0.0130 m=+0.0257 >floor=True
+      renorm 9001 set_only        effect=0.0411 floor=0.0021 | rand0-own60(random,sep=None) e=0.0071 m=+0.0340 >floor=True; own60@rows-ball(other_item,sep=None) e=0.0155 m=+0.0256 >floor=True
+  black  modI        necessary  status=not_supported   agree=False missing=[] picture=None
+      zero   4242 supported       effect=0.0373 floor=0.0034 | rand0-modI(random,sep=None) e=0.0143 m=+0.0230 >floor=True; modI@rows-ball(other_item,sep=None) e=0.0072 m=+0.0301 >floor=True
+      zero   9001 supported       effect=0.0266 floor=0.0029 | rand0-modI(random,sep=None) e=0.0162 m=+0.0104 >floor=True; modI@rows-ball(other_item,sep=None) e=0.0057 m=+0.0209 >floor=True
+      renorm 4242 not_supported   effect=0.0163 floor=0.0019 | rand0-modI(random,sep=None) e=0.0154 m=+0.0009 >floor=False; modI@rows-ball(other_item,sep=None) e=0.0078 m=+0.0085 >floor=True
+      renorm 9001 not_supported   effect=0.0167 floor=0.0019 | rand0-modI(random,sep=None) e=0.0143 m=+0.0024 >floor=False; modI@rows-ball(other_item,sep=None) e=0.0075 m=+0.0092 >floor=True
+  black  nounI       necessary  status=not_supported   agree=True missing=[] picture=None
+      zero   4242 not_supported   effect=0.0170 floor=0.0028 | rand0-nounI(random,sep=None) e=0.0196 m=-0.0026 >floor=False; nounI@rows-ball(other_item,sep=None) e=0.0320 m=-0.0149 >floor=False
+      zero   9001 not_supported   effect=0.0145 floor=0.0028 | rand0-nounI(random,sep=None) e=0.0107 m=+0.0038 >floor=True; nounI@rows-ball(other_item,sep=None) e=0.0250 m=-0.0105 >floor=False
+      renorm 4242 not_supported   effect=0.0212 floor=0.0028 | rand0-nounI(random,sep=None) e=0.0076 m=+0.0136 >floor=True; nounI@rows-ball(other_item,sep=None) e=0.0223 m=-0.0012 >floor=False
+      renorm 9001 not_supported   effect=0.0161 floor=0.0019 | rand0-nounI(random,sep=None) e=0.0097 m=+0.0063 >floor=True; nounI@rows-ball(other_item,sep=None) e=0.0238 m=-0.0077 >floor=False
+  black  keep-own60  sufficient status=set_only        agree=True missing=[] picture=None
+      zero   4242 set_only        effect=0.0101 floor=0.0022 allcut=0.1261 | keep-rand0-own60(random,sep=None) e=0.1031 m=+0.0930 >floor=True
+      zero   9001 set_only        effect=0.0099 floor=0.0028 allcut=0.1169 | keep-rand0-own60(random,sep=None) e=0.0855 m=+0.0756 >floor=True
+      renorm 4242 set_only        effect=0.0137 floor=0.0018 allcut=0.1122 | keep-rand0-own60(random,sep=None) e=0.0968 m=+0.0831 >floor=True
+      renorm 9001 set_only        effect=0.0120 floor=0.0024 allcut=0.1186 | keep-rand0-own60(random,sep=None) e=0.0906 m=+0.0786 >floor=True
+  black  keep-modI   sufficient status=supported       agree=True missing=[] picture=None
+      zero   4242 supported       effect=0.0252 floor=0.0064 allcut=0.1261 | keep-rand0-modI(random,sep=None) e=0.0766 m=+0.0514 >floor=True
+      zero   9001 supported       effect=0.0209 floor=0.0022 allcut=0.1169 | keep-rand0-modI(random,sep=None) e=0.0515 m=+0.0306 >floor=True
+      renorm 4242 supported       effect=0.0262 floor=0.0019 allcut=0.1122 | keep-rand0-modI(random,sep=None) e=0.0513 m=+0.0250 >floor=True
+      renorm 9001 supported       effect=0.0199 floor=0.0016 allcut=0.1186 | keep-rand0-modI(random,sep=None) e=0.0453 m=+0.0254 >floor=True
+  black  keep-nounI  sufficient status=not_supported   agree=True missing=[] picture=None
+      zero   4242 not_supported   effect=0.1099 floor=0.0023 allcut=0.1261 | keep-rand0-nounI(random,sep=None) e=0.0328 m=-0.0771 >floor=False
+      zero   9001 not_supported   effect=0.0836 floor=0.0026 allcut=0.1169 | keep-rand0-nounI(random,sep=None) e=0.0297 m=-0.0538 >floor=False
+      renorm 4242 not_supported   effect=0.0855 floor=0.0021 allcut=0.1122 | keep-rand0-nounI(random,sep=None) e=0.0252 m=-0.0603 >floor=False
+      renorm 9001 not_supported   effect=0.0609 floor=0.0024 allcut=0.1186 | keep-rand0-nounI(random,sep=None) e=0.0268 m=-0.0342 >floor=False
+  ball   own60       necessary  status=not_supported   agree=True missing=[] picture=None
+      zero   4242 not_supported   effect=0.0537 floor=0.0038 | rand0-own60(random,sep=None) e=0.0277 m=+0.0260 >floor=True; own60@rows-snow(other_item,sep=None) e=0.0536 m=+0.0001 >floor=False
+      zero   9001 set_only        effect=0.0410 floor=0.0020 | rand0-own60(random,sep=None) e=0.0099 m=+0.0311 >floor=True; own60@rows-snow(other_item,sep=None) e=0.0220 m=+0.0190 >floor=True
+      renorm 4242 not_supported   effect=0.0351 floor=0.0038 | rand0-own60(random,sep=None) e=0.0283 m=+0.0068 >floor=True; own60@rows-snow(other_item,sep=None) e=0.0886 m=-0.0535 >floor=False
+      renorm 9001 set_only        effect=0.0364 floor=0.0020 | rand0-own60(random,sep=None) e=0.0116 m=+0.0248 >floor=True; own60@rows-snow(other_item,sep=None) e=0.0257 m=+0.0107 >floor=True
+  ball   modI        necessary  status=not_supported   agree=True missing=[] picture=None
+      zero   4242 not_supported   effect=0.0135 floor=0.0031 | rand0-modI(random,sep=None) e=0.0291 m=-0.0156 >floor=False; modI@rows-snow(other_item,sep=None) e=0.0667 m=-0.0532 >floor=False
+      zero   9001 not_supported   effect=0.0066 floor=0.0020 | rand0-modI(random,sep=None) e=0.0157 m=-0.0091 >floor=False; modI@rows-snow(other_item,sep=None) e=0.0319 m=-0.0254 >floor=False
+      renorm 4242 not_supported   effect=0.0138 floor=0.0029 | rand0-modI(random,sep=None) e=0.0264 m=-0.0126 >floor=False; modI@rows-snow(other_item,sep=None) e=0.0260 m=-0.0122 >floor=False
+      renorm 9001 not_supported   effect=0.0071 floor=0.0017 | rand0-modI(random,sep=None) e=0.0157 m=-0.0086 >floor=False; modI@rows-snow(other_item,sep=None) e=0.0244 m=-0.0173 >floor=False
+  ball   nounI       necessary  status=not_supported   agree=True missing=[] picture=None
+      zero   4242 not_supported   effect=0.0338 floor=0.0048 | rand0-nounI(random,sep=None) e=0.0172 m=+0.0166 >floor=True; nounI@rows-snow(other_item,sep=None) e=0.0358 m=-0.0020 >floor=False
+      zero   9001 set_only        effect=0.0242 floor=0.0031 | rand0-nounI(random,sep=None) e=0.0188 m=+0.0054 >floor=True; nounI@rows-snow(other_item,sep=None) e=0.0202 m=+0.0040 >floor=True
+      renorm 4242 not_supported   effect=0.0222 floor=0.0048 | rand0-nounI(random,sep=None) e=0.0173 m=+0.0050 >floor=True; nounI@rows-snow(other_item,sep=None) e=0.0778 m=-0.0556 >floor=False
+      renorm 9001 set_only        effect=0.0296 floor=0.0020 | rand0-nounI(random,sep=None) e=0.0157 m=+0.0139 >floor=True; nounI@rows-snow(other_item,sep=None) e=0.0260 m=+0.0036 >floor=True
+  ball   keep-own60  sufficient status=not_supported   agree=True missing=[] picture=None
+      zero   4242 not_supported   effect=0.0297 floor=0.0035 allcut=0.0981 | keep-rand0-own60(random,sep=None) e=0.0738 m=+0.0441 >floor=True
+      zero   9001 set_only        effect=0.0139 floor=0.0024 allcut=0.0682 | keep-rand0-own60(random,sep=None) e=0.0680 m=+0.0541 >floor=True
+      renorm 4242 not_supported   effect=0.0372 floor=0.0035 allcut=0.0858 | keep-rand0-own60(random,sep=None) e=0.0629 m=+0.0258 >floor=True
+      renorm 9001 set_only        effect=0.0171 floor=0.0022 allcut=0.0649 | keep-rand0-own60(random,sep=None) e=0.0596 m=+0.0424 >floor=True
+  ball   keep-modI   sufficient status=not_supported   agree=True missing=[] picture=None
+      zero   4242 not_supported   effect=0.0913 floor=0.0026 allcut=0.0981 | keep-rand0-modI(random,sep=None) e=0.0554 m=-0.0359 >floor=False
+      zero   9001 not_supported   effect=0.0685 floor=0.0025 allcut=0.0682 | keep-rand0-modI(random,sep=None) e=0.0581 m=-0.0104 >floor=False
+      renorm 4242 not_supported   effect=0.0681 floor=0.0026 allcut=0.0858 | keep-rand0-modI(random,sep=None) e=0.0461 m=-0.0220 >floor=False
+      renorm 9001 not_supported   effect=0.0626 floor=0.0021 allcut=0.0649 | keep-rand0-modI(random,sep=None) e=0.0469 m=-0.0157 >floor=False
+  ball   keep-nounI  sufficient status=not_supported   agree=True missing=[] picture=None
+      zero   4242 not_supported   effect=0.0447 floor=0.0046 allcut=0.0981 | keep-rand0-nounI(random,sep=None) e=0.0663 m=+0.0215 >floor=True
+      zero   9001 not_supported   effect=0.0577 floor=0.0027 allcut=0.0682 | keep-rand0-nounI(random,sep=None) e=0.0645 m=+0.0067 >floor=True
+      renorm 4242 not_supported   effect=0.0367 floor=0.0030 allcut=0.0858 | keep-rand0-nounI(random,sep=None) e=0.0626 m=+0.0260 >floor=True
+      renorm 9001 not_supported   effect=0.0370 floor=0.0025 allcut=0.0649 | keep-rand0-nounI(random,sep=None) e=0.0612 m=+0.0242 >floor=True

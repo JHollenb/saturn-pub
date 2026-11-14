@@ -21,7 +21,22 @@ PYTHONPATH=$W/src:$W/packages/mdb/src:$W/packages/mdb-lanes/src python -m mdb la
 PYTHONPATH=$W/src:$W/packages/mdb/src:$W/packages/mdb-lanes/src python -c "import mdb; print(mdb.BenchSession.__module__)"
 ```
 
-The first prints the 46 lane verbs; the second prints `mdb_lanes.bench`.
+The first prints the 48 lane verbs; the second prints `mdb_lanes.bench`.
+
+The two attention read-panel lanes are verbs too (`src/mdb_lanes/panel_lanes.py`):
+
+```
+mdb lanes qwen-panels info                      # the case, schemas, launcher, worker, docs
+mdb lanes flux-read-panels check PLAN.json --seal SEAL.json
+mdb lanes qwen-panels --qualification $W/packages/mdb-lanes/qualification plans --profile smoke --out DIR
+mdb lanes flux-read-panels --qualification $W/packages/mdb-lanes/qualification stage RUN --plans P --job smoke
+```
+
+`plans`, `stage`, `submit`, `report` (FLUX) and `analyze` (Qwen) run the hash-bound launchers in
+`qualification/` unchanged; their directory is passed explicitly (`--qualification` or
+`MDB_LANES_QUALIFICATION`), never searched for. How the lanes meet the refactored engine
+(`mdb.trace`, `analysis/reads.py`, `propagate.whatif`, replay recipe v2) is in
+[`docs/ENGINE-INTEGRATION.md`](docs/ENGINE-INTEGRATION.md).
 
 ## Tests
 

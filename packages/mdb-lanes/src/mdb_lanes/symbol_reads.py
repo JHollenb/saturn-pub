@@ -789,8 +789,11 @@ def passive_lifecycle(binding, *, definitions, uses, claim_boundary, metadata=No
 PANEL_CUT_TYPES = {"zero": "no-renormalisation", "renorm": "renormalising"}
 
 
-def _panel_control_profile(panel, arm, n_units):
-    """(matched_on, how, size, mass_held, set_mass_held) for one panel control arm."""
+def _panel_control_profile(panel, arm, n_units, relation=None):
+    """(matched_on, how, size, mass_held, set_mass_held) for one panel control arm. ``relation``:
+    the mass relation the verdict used (re-labelled from the draw report since 2026-11-13);
+    the arm's stored label when not given."""
+    relation = arm.mass_relation if relation is None else relation
     def size_of(a):
         if a.units is None:
             return n_units
@@ -798,8 +801,8 @@ def _panel_control_profile(panel, arm, n_units):
     size = size_of(arm)
     mass_held = set_mass = None
     if arm.control == "random":
-        matched_on = ["set_size", "strata", "blocks"] + (["mass"] if arm.mass_relation == "matched" else [])
-        how = f"matched random draw (attention_ranking.matched_control_sets); mass relation {arm.mass_relation}"
+        matched_on = ["set_size", "strata", "blocks"] + (["mass"] if relation == "matched" else [])
+        how = f"matched random draw (attention_ranking.matched_control_sets); mass relation {relation}"
         core = (arm.unit_set or "").removeprefix("keep-")
         k, _, target = core.removeprefix("rand").partition("-")
         keep = (arm.unit_set or "").startswith("keep-")
@@ -865,8 +868,11 @@ def set_results_from_panel_verdict(panel, record, *, run_id, contrast_id, plan=N
             seen = [by_ctx.get(r["context"]) for r in rows]
             reference_only = any(c and c.get("reference_only") for c in seen)
             complete = all(c is not None and "control_effect" in c for c in seen)
+            excluded = next((c["excluded"] for c in seen if c and c.get("excluded")), None)
             if reference_only or not complete:
                 judgement = None
+            elif excluded:
+                judgement = "excluded"
             elif all(c.get("beyond_floor") is True and not c.get("refutes") for c in seen):
                 judgement = "clean"
             elif all(c.get("refutes") for c in seen):
@@ -878,10 +884,11 @@ def set_results_from_panel_verdict(panel, record, *, run_id, contrast_id, plan=N
                 rules &= set((c or {}).get("rules_out") or ())
             rules = sorted(rules & ruled_panel) if judgement == "clean" else []
             arm = arms[name]
-            matched_on, how, size, mass_held, set_mass = _panel_control_profile(panel, arm, n_units)
+            relation = next((c["mass_relation"] for c in seen if c and c.get("mass_relation")), arm.mass_relation)
+            matched_on, how, size, mass_held, set_mass = _panel_control_profile(panel, arm, n_units, relation)
             rec = {"arm": name, "run_id": run_id, "in_run": True, "matched_on": matched_on, "how_matched": how,
                    "judged_by": "score", "judgement": judgement, "control_kind": arm.control,
-                   "mass_relation": arm.mass_relation, "size": size,
+                   "mass_relation": relation, "size": size,
                    "set_size": _panel_control_profile(panel, test, n_units)[2],
                    "effect_per_seed": [None if c is None else c.get("control_effect") for c in seen],
                    "margin_per_seed": [None if c is None else c.get("margin") for c in seen],
@@ -891,6 +898,8 @@ def set_results_from_panel_verdict(panel, record, *, run_id, contrast_id, plan=N
                 rec.update(mass_held=mass_held, set_mass_held=set_mass)
             if reference_only:
                 rec["note"] = "reported reference only; never counted for sufficiency"
+            if excluded:
+                rec["note"] = "excluded at verdict time: " + excluded
             records[name] = rec
         backed = set().union(*(set(r["rules_out"]) for r in records.values())) if records else set()
         ruled = ruled_panel & backed

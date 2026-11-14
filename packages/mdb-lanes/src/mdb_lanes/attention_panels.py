@@ -58,6 +58,22 @@ ALTERNATIVES = {"necessary": ("generic_damage", "mass", "set_size"), "sufficient
 RULES_OUT_BY_MASS = {"unknown": ("set_size",), "less": ("set_size",), "matched_by_reuse": ("set_size",),
                      "matched": ("mass", "set_size"), "more": ("mass", "set_size")}
 DEFAULT_RECOVERY = 0.7
+# The parameters below are CHOICES made in the 2026-11-13 fix pass (after the audit; not in any
+# plan sealed before then). Each can be set per plan (ReadPanelSpec -> execution
+# ["verdict_parameters"]) or per call; docs/ATTENTION-PANELS.md states the defaults.
+# Mass matching: a control's mass is "matched" when |control - target| <= max(MASS_REL_TOLERANCE x
+# target, MASS_ABS_FLOOR). The relative part replaces the absolute 0.02 that called a control with
+# 11x a 0.0015 target "matched"; the floor keeps near-zero targets from demanding exact zero.
+MASS_REL_TOLERANCE = 0.10
+MASS_ABS_FLOOR = 1e-3
+# An other-item control rules out generic damage only when it cuts at least this share of the
+# target's mass (other-item mass / target mass); a near-empty cut rules nothing out.
+OTHER_ITEM_MIN_SHARE = 0.10
+# Necessity: a passing record whose effect is below this fraction of the all-cut effect (in any
+# cut type and context) is reported ``unresolved`` with reason ``effect_below_min_fraction``.
+DEFAULT_MIN_EFFECT_FRACTION = 0.05
+VERDICT_PARAMETERS = ("recovery_threshold", "min_effect_fraction", "mass_rel_tolerance", "mass_abs_floor",
+                      "other_item_min_share")
 FLUX_LANE_CAP = 256
 # Arm fields added after the first release: left out of the JSON when at their default
 _OMIT_IF_DEFAULT = {"rules_out": (), "mass_relation": None}
@@ -494,6 +510,15 @@ class RandomControls:
     numpy scalars/arrays are converted to Python numbers at construction. ``mass`` may also be a
     mapping ``{item: per-unit mass}`` when items read different sources (each item's draws are
     then matched to its own mass); a mapping must name every item of the panel.
+
+    ``mass_rel_tolerance`` (with ``mass_abs_floor``) requests relative mass matching: within
+    ``max(mass_rel_tolerance x target mass, mass_abs_floor)``. ``mass_tolerance`` is the older
+    absolute search tolerance (kept so old specs still build). Whatever the search used, the
+    mass relation of every draw is LABELLED with the relative rule (``mass_rel_tolerance`` or
+    ``MASS_REL_TOLERANCE``, ``mass_abs_floor`` or ``MASS_ABS_FLOOR``): a draw outside it is
+    ``less`` / ``more``, never ``matched``. ``exclude_named`` (default True): units of every named
+    test set of the panel are never drawn, so a random control cannot be another hypothesis.
+    Identical draws are flagged and emitted once.
     """
     n: int = 1
     strata: tuple | None = None
@@ -503,6 +528,9 @@ class RandomControls:
     disjoint: bool = False
     seed: int = 0
     overlap_sd: float = 3.0
+    mass_rel_tolerance: float | None = None
+    mass_abs_floor: float | None = None
+    exclude_named: bool = True
 
     def __post_init__(self):
         n = _number(self.n, "RandomControls.n", integer=True)
@@ -515,6 +543,14 @@ class RandomControls:
         if tol is not None and tol < 0:
             raise PanelError("RandomControls.mass_tolerance must be >= 0")
         object.__setattr__(self, "mass_tolerance", tol)
+        for name in ("mass_rel_tolerance", "mass_abs_floor"):
+            v = _number(getattr(self, name), f"RandomControls.{name}", allow_none=True)
+            if v is not None and v < 0:
+                raise PanelError(f"RandomControls.{name} must be >= 0")
+            object.__setattr__(self, name, v)
+        if self.mass_rel_tolerance is not None and tol is not None:
+            raise PanelError("pass mass_rel_tolerance (relative) or mass_tolerance (absolute), not both")
+        object.__setattr__(self, "exclude_named", bool(self.exclude_named))
         if isinstance(self.mass, dict):
             object.__setattr__(self, "mass", {str(k): tuple(_number(m, "RandomControls.mass") for m in _plain(v))
                                               for k, v in self.mass.items()})
@@ -566,15 +602,36 @@ def _chance_overlap(target_idx, strata, n_units):
     return mean, math.sqrt(var)
 
 
-def _mass_relation(report, reuse_above):
+def mass_relation(control, target, *, rel_tolerance=MASS_REL_TOLERANCE, abs_floor=MASS_ABS_FLOOR):
+    """``matched`` / ``less`` / ``more`` (``unknown`` if either mass is None), with the relative
+    rule ``|control - target| <= max(rel_tolerance x |target|, abs_floor)``."""
+    from .attention_ranking import mass_tolerance_for
+    if control is None or target is None:
+        return "unknown"
+    if abs(control - target) <= mass_tolerance_for(target, rel_tolerance=rel_tolerance, abs_floor=abs_floor):
+        return "matched"
+    return "less" if control <= target else "more"
+
+
+def _mass_relation(report, reuse_above, rel_tolerance=MASS_REL_TOLERANCE, abs_floor=MASS_ABS_FLOOR):
+    """Relation of one draw report, always by the relative rule (the report's own ``matched`` flag
+    may come from an absolute search tolerance and is not trusted for the label)."""
     m = report.get("mass", {})
     if "target" not in m:
         return "unknown"
-    if m.get("matched"):
-        if reuse_above is not None and report["overlap_with_target"] > reuse_above:
-            return "matched_by_reuse"
-        return "matched"
-    return "less" if m["control"] <= m["target"] else "more"
+    relation = mass_relation(m["control"], m["target"], rel_tolerance=rel_tolerance, abs_floor=abs_floor)
+    if relation == "matched" and reuse_above is not None and report["overlap_with_target"] > reuse_above:
+        return "matched_by_reuse"
+    return relation
+
+
+def _named_units(spec_sets, names):
+    """Union of the units of the named test sets (all items) of a read panel."""
+    out = set()
+    for item_sets in spec_sets.values():
+        for name in names:
+            out |= set(item_sets.get(name, ()))
+    return out
 
 
 SEED_DERIVATION = "int(sha256(canonical_json([seed, item, set name, kind]))[:16], 16) % 2**63"
@@ -589,8 +646,10 @@ def draw_seed(seed, item, name, kind):
     return int(sha256_json([int(seed), str(item), str(name), str(kind)])[:16], 16) % 2 ** 63
 
 
-def _draw_random(name, units, universe, spec, index, item, kind="cut"):
-    """(entry, [(set, mass_relation), ...] or None)."""
+def _draw_random(name, units, universe, spec, index, item, kind="cut", named=None):
+    """(entry, [(draw index, set, mass_relation), ...] or None). ``named``: units of every named
+    test set of the panel; never drawn when ``spec.exclude_named``. Identical draws are flagged in
+    ``entry["duplicates"]`` and returned once (a duplicated draw is one control, not two)."""
     from .attention_ranking import matched_control_sets
     target = [index[u] for u in units]
     blocks = [u[0] for u in universe] if spec.match_blocks else None
@@ -601,14 +660,24 @@ def _draw_random(name, units, universe, spec, index, item, kind="cut"):
         spec = replace(spec, mass=spec.mass[item])
     if spec.mass is not None and len(spec.mass) != len(universe):
         raise PanelError("RandomControls.mass needs one value per universe unit")
+    rel = MASS_REL_TOLERANCE if spec.mass_rel_tolerance is None else spec.mass_rel_tolerance
+    floor = MASS_ABS_FLOOR if spec.mass_abs_floor is None else spec.mass_abs_floor
+    matching = spec.mass_tolerance is not None or spec.mass_rel_tolerance is not None
+    exclude = None
+    if spec.exclude_named and named:
+        exclude = sorted(index[u] for u in set(named) - set(units))
     entry = {"target": name, "item": item, "kind": kind, "n": spec.n, "seed": spec.seed, "draw_seed": seed,
              "seed_derivation": SEED_DERIVATION, "disjoint": spec.disjoint,
              "mass_tolerance": spec.mass_tolerance, "match_blocks": spec.match_blocks,
-             "overlap_sd": spec.overlap_sd}
+             "overlap_sd": spec.overlap_sd, "mass_rel_tolerance": rel, "mass_abs_floor": floor,
+             "mass_label_rule": "matched iff |control - target| <= max(mass_rel_tolerance x target, mass_abs_floor)",
+             "exclude_named": spec.exclude_named, "excluded_named_units": 0 if exclude is None else len(exclude)}
     try:
         drawn = matched_control_sets(target, len(universe), strata=spec.strata, blocks=blocks, mass=spec.mass,
                                      mass_tolerance=spec.mass_tolerance, disjoint=spec.disjoint,
-                                     seed=seed, n_sets=spec.n)
+                                     seed=seed, n_sets=spec.n, exclude=exclude,
+                                     mass_rel_tolerance=spec.mass_rel_tolerance,
+                                     mass_abs_floor=floor if spec.mass_rel_tolerance is not None else 0.0)
     except ValueError as error:
         entry.update(status="control_missing", reason=str(error), sets=[])
         return _plain(entry), None
@@ -618,24 +687,28 @@ def _draw_random(name, units, universe, spec, index, item, kind="cut"):
         reports.append(_plain(d["report"]))
     entry["reports"] = reports
     entry["sets"] = [[list(u) for u in s] for s in sets]
+    entry["duplicates"] = [{"draw": k, "duplicate_of": r["duplicate_of"]} for k, r in enumerate(reports)
+                           if r.get("duplicate_of") is not None]
+    entry["independent_draws"] = len(reports) - len(entry["duplicates"])
     reuse_above = None
     if not spec.disjoint:
         mean, sd = _chance_overlap(target, spec.strata, len(universe))
         reuse_above = mean + spec.overlap_sd * sd
-    relations = [_mass_relation(r, reuse_above) for r in reports]
+    relations = [_mass_relation(r, reuse_above, rel, floor) for r in reports]
     entry["mass_relations"] = relations
     if spec.mass is None:
         entry["identity"] = {"separable": None, "why": "no per-unit mass supplied: a random set that is not "
                              "mass-matched tests mass and identity together"}
-    elif spec.mass_tolerance is None:
+    elif not matching:
         entry["identity"] = {"separable": False, "why": "mass supplied but not matched (no tolerance): the "
                              "control tests mass as well as identity",
                              "target_mass": reports[0]["mass"]["target"],
                              "control_mass": [r["mass"]["control"] for r in reports]}
     else:
-        ok = all(r["mass"]["matched"] for r in reports)
+        ok = all(r in ("matched", "matched_by_reuse") for r in relations)
         info = {"separable": bool(ok), "target_mass": reports[0]["mass"]["target"],
-                "control_mass": [r["mass"]["control"] for r in reports], "tolerance": spec.mass_tolerance}
+                "control_mass": [r["mass"]["control"] for r in reports], "tolerance": spec.mass_tolerance,
+                "mass_rel_tolerance": rel, "mass_abs_floor": floor}
         if ok and not spec.disjoint:
             mean, sd = _chance_overlap(target, spec.strata, len(universe))
             overlaps = [r["overlap_with_target"] for r in reports]
@@ -648,17 +721,19 @@ def _draw_random(name, units, universe, spec, index, item, kind="cut"):
                                f"{spec.overlap_sd:g} sd): the control shares the identity it should vary; "
                                "use disjoint=True or the other-item control")
         if not ok:
+            from .attention_ranking import mass_tolerance_for
             bound = _mass_bound(universe, target, spec.strata, spec.mass, spec.disjoint)
-            reach = info["target_mass"] - spec.mass_tolerance
+            reach = info["target_mass"] - mass_tolerance_for(info["target_mass"], rel_tolerance=rel, abs_floor=floor)
             info["max_reachable_mass_bound"] = bound
-            info["why"] = ("random sets could not be mass-matched: " +
+            info["why"] = ("random sets could not be mass-matched (relative rule): " +
                            (f"no {'disjoint ' if spec.disjoint else ''}stratum-matched set can reach the "
                             f"target mass (bound {bound:.4g} < {reach:.4g})" if bound < reach else
                             "swap search ended outside tolerance") +
                            "; identity cannot be separated from mass by random draws, use the other-item control")
         entry["identity"] = info
     entry["status"] = "emitted"
-    return _plain(entry), list(zip(sets, relations))
+    dup = {d["draw"] for d in entry["duplicates"]}
+    return _plain(entry), [(k, s, r) for k, (s, r) in enumerate(zip(sets, relations)) if k not in dup]
 
 
 @dataclass(frozen=True)
@@ -677,6 +752,12 @@ class ReadPanelSpec:
     ``zero_method`` (the per-arm zero method; ``None`` = the port's own, recorded as
     ``port_zero_method``, default ``"delta"``), ``empty`` (the port's empty-row policy),
     ``row_table`` (bound by digest; the worker must pass the same table), ``forwards_per_image``.
+
+    Verdict parameters (hashed into ``execution["verdict_parameters"]`` only when at least one is
+    set, so plans built without them keep their hash): ``recovery_threshold``,
+    ``min_effect_fraction``, ``mass_rel_tolerance``, ``mass_abs_floor``, ``other_item_min_share``.
+    Unset ones fall back to the module defaults when :func:`verdicts` runs, and the verdict
+    records which source each value came from.
     """
     items: tuple
     universe: tuple
@@ -706,6 +787,24 @@ class ReadPanelSpec:
     empty: str = "raise"
     row_table: dict | None = None
     forwards_per_image: int | None = None
+    recovery_threshold: float | None = None
+    min_effect_fraction: float | None = None
+    mass_rel_tolerance: float | None = None
+    mass_abs_floor: float | None = None
+    other_item_min_share: float | None = None
+
+
+def _check_verdict_parameters(values):
+    out = {}
+    for name in VERDICT_PARAMETERS:
+        v = values.get(name)
+        if v is None:
+            continue
+        v = _number(v, name)
+        if v < 0 or (name == "recovery_threshold" and not 0 < v <= 1):
+            raise PanelError(f"{name} out of range ({v})")
+        out[name] = v
+    return out
 
 
 def _types(t):
@@ -757,12 +856,16 @@ def _execution(spec, universe):
     if strata is not None and len(strata) != len(universe):
         raise PanelError("RandomControls.strata needs one label per universe unit")
     unbound = [k for k, v in (("row_table", rows), ("forwards_per_image", forwards)) if v is None]
-    return {"port": "mdb.attention_port.AttentionPort", "precision": precision,
-            "zero_method": {"zero": spec.zero_method or spec.port_zero_method, "renorm": None,
-                            "port_default": spec.port_zero_method, "per_arm": spec.zero_method,
-                            "floors": "recompute (attention_port.floor_arms)"},
-            "empty": spec.empty, "row_table": rows, "forwards_per_image": forwards,
-            "universe": _geometry(universe, strata), "unbound": unbound}
+    out = {"port": "mdb.attention_port.AttentionPort", "precision": precision,
+           "zero_method": {"zero": spec.zero_method or spec.port_zero_method, "renorm": None,
+                           "port_default": spec.port_zero_method, "per_arm": spec.zero_method,
+                           "floors": "recompute (attention_port.floor_arms)"},
+           "empty": spec.empty, "row_table": rows, "forwards_per_image": forwards,
+           "universe": _geometry(universe, strata), "unbound": unbound}
+    params = _check_verdict_parameters({k: getattr(spec, k) for k in VERDICT_PARAMETERS})
+    if params:                  # absent when unset: plans built without them keep their hash
+        out["verdict_parameters"] = params
+    return out
 
 
 def read_panel(spec):
@@ -874,6 +977,8 @@ def read_panel(spec):
         raise PanelError("every item needs an other-item control (same units, another item's rows); pass "
                          "other_items or waive['other_item'] = reason")
     ref_types = default if spec.reference_types is None else _types(spec.reference_types)
+    # every named test unit of the panel (all items, cut, keep and nested sets): random draws avoid them
+    named_units = _named_units(sets, (*cut_sets, *spec.keep_sets))
 
     arms, controls, identity, notes = [], {}, {}, []
 
@@ -975,14 +1080,14 @@ def read_panel(spec):
                 # matched random controls (cut and keep)
                 if spec.random is not None:
                     key = f"{item}:{core}"
-                    entry, drawn = _draw_random(s, units, universe, spec.random, index, item, kind)
+                    entry, drawn = _draw_random(s, units, universe, spec.random, index, item, kind, named=named_units)
                     controls[key] = entry
                     if drawn is None:
                         identity.setdefault(f"{item}:{s}", {})["random_" + kind] = {
                             "status": "control_missing", "why": entry["reason"]}
                     else:
                         identity.setdefault(f"{item}:{s}", {})["random_" + kind] = entry["identity"]
-                        for k, (rset, relation) in enumerate(drawn):
+                        for k, rset, relation in drawn:
                             rcore = f"keep-rand{k}-{s}" if keep else f"rand{k}-{s}"
                             arms += family_arms(item, rcore, kind, "control",
                                                 complement(rset) if keep else units_of(rset), rcore, types, bundle,
@@ -1496,10 +1601,19 @@ def _rank(statuses):
     return "control_missing"
 
 
-def _compare(panel, results, context, c, out, ff, f_test, margin_of):
-    """One control against the test in one context (shared by both claims)."""
+def _compare(panel, results, context, c, info, out, ff, f_test, margin_of):
+    """One control against the test in one context (shared by both claims).
+
+    ``info`` (from :func:`_profiled`): an ``excluded`` control (a draw that contains a named test
+    unit, or a duplicate of an earlier draw) is listed but neither refutes nor rules anything out.
+    """
+    extra = {k: info[k] for k in ("excluded", "duplicate_of", "mass_relation_stored", "other_item_mass",
+                                  "target_mass", "other_item_share", "named_overlap") if k in info}
     if c.arm not in out:
-        return {"control": c.arm, "kind": c.control, "outcome": "missing"}, False
+        return {"control": c.arm, "kind": c.control, "outcome": "missing", **extra}, False
+    if info.get("excluded"):
+        return {"control": c.arm, "kind": c.control, "mass_relation": c.mass_relation, "control_effect": out[c.arm],
+                "beyond_floor": None, "refutes": False, "rules_out": [], **extra}, False
     fc, cparts = _floor(panel, results, c.arm, context)
     margin = margin_of(out[c.arm])
     bound = ff * (f_test if fc is None else max(f_test, fc))
@@ -1514,38 +1628,146 @@ def _compare(panel, results, context, c, out, ff, f_test, margin_of):
                "unknown", "less", "matched_by_reuse"),
            "control_effect": out[c.arm], "margin": margin, "floor": bound, "control_floor_missing": fc is None,
            "beyond_floor": beyond if decided else None, "refutes": refutes,
-           "rules_out": sorted(c.rules_out) if (beyond and fc is not None) else []}
+           "rules_out": sorted(c.rules_out) if (beyond and fc is not None) else [], **extra}
     if not can_refute and not beyond:
         row["note"] = "heavier than the target: an equal effect is explained by its extra mass (neither refutes nor supports)"
     return row, bool(fc is not None and cparts.get("floor_incomplete"))
 
 
-def _profiled(panel, c):
-    """A control arm with ``mass_relation``/``rules_out`` filled in for plans written before
-    those fields existed (other-item arms then carried ``separates_identity=True``; random arms
-    are profiled from their stored draw report)."""
-    if c.control == "other_item" and c.separates_identity is True and not c.rules_out:
-        return replace(c, rules_out=("generic_damage",) if c.claim == "necessary" else ())
-    if c.control == "random" and c.mass_relation is None:
-        core = c.unit_set or ""
-        keep = core.startswith("keep-")
-        body = core.removeprefix("keep-")
-        k, _, target = body.removeprefix("rand").partition("-")
-        entry = panel.controls.get(f"{c.item}:{'keep-' if keep else ''}{target}", {})
+def _random_entry(panel, c):
+    """(controls entry, draw index or None, target set name) of a random control arm."""
+    core = c.unit_set or ""
+    keep = core.startswith("keep-")
+    body = core.removeprefix("keep-")
+    k, _, target = body.removeprefix("rand").partition("-")
+    entry = panel.controls.get(f"{c.item}:{'keep-' if keep else ''}{target}", {})
+    return entry, (int(k) if k.isdigit() else None), target
+
+
+def named_test_units(panel):
+    """{item: {set name: units}} of every named test set (cut, keep and nested) of a read panel."""
+    out = {}
+    for a in panel.arms:
+        if a.family == "read" and a.role == "test" and a.item is not None and a.unit_set:
+            core = a.unit_set.removeprefix("keep-")
+            units = panel.sets.get(a.item, {}).get(core)
+            if units is not None:
+                out.setdefault(a.item, {})[core] = {tuple(u) for u in units}
+    return out
+
+
+def _unit_mass_lookup(panel, item_mass):
+    """{item: {unit: mass}} from ``item_mass`` ({item: {unit: mass}} or {item: flat full-grid vector,
+    row-major over (block, head)})."""
+    if not item_mass:
+        return {}
+    geo = panel.execution.get("universe") or {}
+    out = {}
+    for item, values in item_mass.items():
+        if isinstance(values, dict):
+            out[item] = {_unit(k): float(v) for k, v in values.items()}
+            continue
+        values = [float(v) for v in _plain(values)]
+        blocks, heads = geo.get("blocks"), geo.get("heads")
+        if not heads or not geo.get("full_grid") or len(values) != blocks * heads:
+            raise PanelError("item_mass as a flat vector needs a plan with a full (block, head) grid of the same size; "
+                             "pass {item: {unit: mass}} instead")
+        out[item] = {(i // heads, i % heads): v for i, v in enumerate(values)}
+    return out
+
+
+def _set_mass(panel, item, units, lookup):
+    """Total ``item`` mass through ``units``: from ``lookup`` when supplied, else from a stored draw
+    report whose target is exactly this set for this item; ``None`` if neither exists."""
+    units = {tuple(u) for u in units}
+    if item in lookup:
+        try:
+            return float(sum(lookup[item][u] for u in units))
+        except KeyError:
+            return None
+    for name, s in panel.sets.get(item, {}).items():
+        if {tuple(u) for u in s} == units:
+            for key in (f"{item}:{name}", f"{item}:keep-{name}"):
+                reports = panel.controls.get(key, {}).get("reports") or []
+                if reports and "target" in reports[0].get("mass", {}):
+                    return float(reports[0]["mass"]["target"])
+    return None
+
+
+def _profiled(panel, c, params, lookup=None, named=None, exclude_named=True):
+    """(arm, info): a control arm with ``mass_relation``/``rules_out`` recomputed under the
+    current rules, and what the comparison must know (``excluded``, ``duplicate_of``, masses).
+
+    Random controls: the mass relation is re-labelled from the stored draw report with the
+    relative rule (the stored label may come from an absolute tolerance); a draw that contains a
+    unit of another named test set of the same item, or that repeats an earlier draw, is
+    ``excluded``. Other-item controls: mass relation and share (other-item mass / target mass)
+    from ``lookup`` or the stored reports; they rule out generic damage (necessity only) when the
+    share is known and at least ``other_item_min_share``. Plans written before ``rules_out`` /
+    ``mass_relation`` existed are profiled the same way.
+    """
+    rel, floor = params["mass_rel_tolerance"], params["mass_abs_floor"]
+    lookup = lookup or {}
+    info = {"mass_relation_stored": c.mass_relation}
+    if c.control == "random":
+        entry, k, target = _random_entry(panel, c)
         reports = entry.get("reports") or []
-        if not k.isdigit() or int(k) >= len(reports):
-            return replace(c, mass_relation="unknown", rules_out=RULES_OUT_BY_MASS["unknown"])
-        relation = _mass_relation(reports[int(k)], None)
-        info = entry.get("identity") or {}
-        if relation == "matched" and info.get("separable") is False:
+        if k is None or k >= len(reports):
+            return replace(c, mass_relation="unknown", rules_out=RULES_OUT_BY_MASS["unknown"]), info
+        ident = entry.get("identity") or {}
+        reuse = False
+        if not entry.get("disjoint"):
+            if "chance_overlap_mean" in ident:
+                reuse = reports[k]["overlap_with_target"] > (ident["chance_overlap_mean"] + ident.get(
+                    "overlap_sd_threshold", entry.get("overlap_sd", 3.0)) * ident["chance_overlap_sd"])
+            else:
+                reuse = c.mass_relation == "matched_by_reuse" or str(ident.get("why", "")).startswith(
+                    "mass was reached by re-using")
+        relation = _mass_relation(reports[k], None, rel, floor)
+        if relation == "matched" and reuse:
             relation = "matched_by_reuse"
-        return replace(c, mass_relation=relation, rules_out=RULES_OUT_BY_MASS[relation])
+        m = reports[k].get("mass", {})
+        if "target" in m:
+            info.update(target_mass=m["target"], control_mass=m["control"])
+        sets = entry.get("sets") or []
+        if k < len(sets):
+            drawn = [tuple(u) for u in sets[k]]
+            dup = next((j for j in range(k) if j < len(sets) and sorted(map(tuple, sets[j])) == sorted(drawn)), None)
+            if dup is not None:
+                info.update(duplicate_of=dup, excluded=f"identical to draw {dup}: a duplicated draw counts once")
+            own = {tuple(u) for u in panel.sets.get(c.item, {}).get(target, ())}
+            others = set()
+            for name, units in (named or {}).get(c.item, {}).items():
+                if name != target:
+                    others |= units
+            hit = sorted(set(drawn) & (others - own))
+            if hit:
+                info["named_overlap"] = [list(u) for u in hit]
+                if exclude_named and "excluded" not in info:
+                    info["excluded"] = (f"draw contains {len(hit)} unit(s) of other named test sets of {c.item} "
+                                        f"(e.g. {list(hit[0])}): not a random control")
+        return replace(c, mass_relation=relation, rules_out=RULES_OUT_BY_MASS[relation]), info
+    if c.control == "other_item":
+        units = c.units or ()
+        keep = (c.kind == "keep")
+        core = (c.unit_set or "").removeprefix("keep-")
+        set_units = panel.sets.get(c.item, {}).get(core, units if not keep else ())
+        target_mass = _set_mass(panel, c.item, set_units, lookup)
+        other_mass = _set_mass(panel, c.rows_item, set_units, lookup)
+        relation = mass_relation(other_mass, target_mass, rel_tolerance=rel, abs_floor=floor)
+        share = (None if other_mass is None or target_mass is None or target_mass <= 0
+                 else other_mass / target_mass)
+        info.update(target_mass=target_mass, other_item_mass=other_mass, other_item_share=share)
+        rules = ()
+        if c.claim == "necessary" and share is not None and share >= params["other_item_min_share"]:
+            rules = ("generic_damage",)
+        return replace(c, mass_relation=relation, rules_out=rules), info
     if c.control == "external" and c.mass_relation is None:
-        return replace(c, mass_relation="unknown")
-    return c
+        return replace(c, mass_relation="unknown"), info
+    return c, info
 
 
-def _necessity_row(panel, results, t, controls, context, ff):
+def _necessity_row(panel, results, t, controls, allcut, context, ff):
     out = results["outcomes"].get(context, {})
     row = {"context": context}
     if t.arm not in out:
@@ -1553,17 +1775,19 @@ def _necessity_row(panel, results, t, controls, context, ff):
     e = out[t.arm]
     f, parts = _floor(panel, results, t.arm, context)
     row.update(effect=e, floor=f, floor_parts=parts)
+    row.update(_effect_fraction(panel, results, allcut, context, ff, e))
     if f is None:
         return {**row, "status": "control_missing", "why": "floor arm missing"}
     incomplete = bool(parts.get("floor_incomplete"))
     comps = []
-    for c in controls:
-        comp, inc = _compare(panel, results, context, c, out, ff, f, lambda ce: e - ce)
+    for c, info in controls:
+        comp, inc = _compare(panel, results, context, c, info, out, ff, f, lambda ce: e - ce)
         comps.append(comp)
         incomplete |= inc
     row["controls"] = comps
     row["floor_incomplete"] = incomplete
     row["ruled_out"] = sorted({r for x in comps for r in x.get("rules_out", ())})
+    row["excluded_controls"] = [x["control"] for x in comps if x.get("excluded")]
     if e <= ff * f:
         return {**row, "status": "unresolved", "why": "test effect inside its floor"}
     refuters = [x for x in comps if x.get("refutes")]
@@ -1576,9 +1800,28 @@ def _necessity_row(panel, results, t, controls, context, ff):
                 "why": "twin gap not measured (no delta-vs-recompute pair distance): the floor is a lower bound"}
     if not set(row["ruled_out"]) & {"set_size", "generic_damage"}:
         return {**row, "status": "control_missing",
-                "why": "no control rules out a generic-damage explanation (no random or other-item control beaten "
-                       "beyond the floor with outcome and floor present)"}
+                "why": "no valid control rules out a generic-damage explanation (no random control without named "
+                       "test units, and no other-item control with a known, non-negligible mass share, beaten beyond "
+                       "the floor with outcome and floor present)"}
     return {**row, "status": _PASS}
+
+
+def _effect_fraction(panel, results, allcut, context, ff, effect):
+    """``effect / all-cut effect`` in one context (``None`` with a note when it is undefined)."""
+    out = results["outcomes"].get(context, {})
+    if allcut is None or allcut.arm not in out:
+        return {"effect_fraction": None, "effect_fraction_note": "no all-cut reference outcome"}
+    a = out[allcut.arm]
+    fa, _ = _floor(panel, results, allcut.arm, context)
+    row = {"all_cut_effect": a, "all_cut_floor": fa}
+    if fa is None or a <= ff * fa:
+        return {**row, "effect_fraction": None,
+                "effect_fraction_note": "all-cut effect inside (or without) its floor: fraction undefined"}
+    frac = effect / a
+    row["effect_fraction"] = frac
+    if frac > 1:
+        row["effect_fraction_note"] = "cutting this set moves the outcome more than cutting every unit"
+    return row
 
 
 def _sufficiency_row(panel, results, t, controls, allcut, context, ff, threshold):
@@ -1600,32 +1843,35 @@ def _sufficiency_row(panel, results, t, controls, allcut, context, ff, threshold
         return {**row, "status": "control_missing", "why": "all-cut floor missing"}
     incomplete = bool(parts.get("floor_incomplete") or aparts.get("floor_incomplete"))
     if a <= ff * fa:
-        return {**row, "floor_incomplete": incomplete, "status": "unresolved",
+        return {**row, "floor_incomplete": incomplete, "status": "unresolved", "effect_fraction": None,
+                "effect_fraction_note": "all-cut effect inside its floor: fraction undefined",
                 "why": "cutting every unit is inside its floor: nothing to recover"}
     recovery = 1 - k / a
-    row["recovery"] = recovery
+    row.update(recovery=recovery, effect_fraction=recovery, keep_fraction_of_all_cut=k / a)
     comps, refs = [], []
-    for c in controls:
+    for c, info in controls:
         if c.control != "random":
             if c.arm in out:
                 refs.append({"control": c.arm, "kind": c.control, "control_effect": out[c.arm],
                              "recovery": 1 - out[c.arm] / a,
                              "note": "reported reference only; never counted for sufficiency"})
             continue
-        comp, inc = _compare(panel, results, context, c, out, ff, f, lambda ce: ce - k)
+        comp, inc = _compare(panel, results, context, c, info, out, ff, f, lambda ce: ce - k)
         if "control_effect" in comp:
             comp["recovery"] = 1 - comp["control_effect"] / a
         comps.append(comp)
         incomplete |= inc
     row.update(controls=comps, references=refs, floor_incomplete=incomplete,
-               ruled_out=sorted({r for x in comps for r in x.get("rules_out", ())}))
+               ruled_out=sorted({r for x in comps for r in x.get("rules_out", ())}),
+               excluded_controls=[x["control"] for x in comps if x.get("excluded")])
     if recovery < threshold:
         return {**row, "status": "not_supported", "finding": "low_recovery",
                 "why": f"keeping the set recovers {recovery:.3g} of the all-cut effect, below {threshold:g}"}
     usable = [x for x in comps if "control_effect" in x and x["beyond_floor"] is not None]
     if not usable:
         return {**row, "status": "control_missing",
-                "why": "no random keep control with outcome and floor (other-item keep does not count)"}
+                "why": "no valid random keep control with outcome and floor (other-item keep does not count; "
+                       "draws with named test units or duplicates are excluded)"}
     refuters = [x for x in usable if x["refutes"]]
     if refuters:
         return {**row, "status": "not_supported", "refuted_by": [x["control"] for x in refuters],
@@ -1659,45 +1905,87 @@ def _statement(claim, item, unit_set, scope, remaining):
             + ", ".join(remaining) + " (these alternatives remain open)")
 
 
-def verdicts(panel, results, *, judgements=None, floor_factor=1.0, recovery_threshold=DEFAULT_RECOVERY,
-             twin_gap_waiver=None, floor_factor_waiver=None):
+_DEFAULTS = {"recovery_threshold": DEFAULT_RECOVERY, "min_effect_fraction": DEFAULT_MIN_EFFECT_FRACTION,
+             "mass_rel_tolerance": MASS_REL_TOLERANCE, "mass_abs_floor": MASS_ABS_FLOOR,
+             "other_item_min_share": OTHER_ITEM_MIN_SHARE}
+DEFAULT_SOURCE = "module default (a choice; not sealed in this plan)"
+
+
+def verdict_parameters(panel, **given):
+    """({name: value}, {name: source}): each verdict parameter from the call (``argument``), else
+    the plan's ``execution["verdict_parameters"]`` (``plan``), else the module default."""
+    plan = (panel.execution or {}).get("verdict_parameters") or {}
+    values, sources = {}, {}
+    explicit = _check_verdict_parameters({k: v for k, v in given.items() if v is not None})
+    for name in VERDICT_PARAMETERS:
+        if name in explicit:
+            values[name], sources[name] = explicit[name], "argument"
+        elif name in plan:
+            values[name], sources[name] = float(plan[name]), "plan"
+        else:
+            values[name], sources[name] = _DEFAULTS[name], DEFAULT_SOURCE
+    return values, sources
+
+
+def verdicts(panel, results, *, judgements=None, floor_factor=1.0, recovery_threshold=None,
+             twin_gap_waiver=None, floor_factor_waiver=None, min_effect_fraction=None, mass_rel_tolerance=None,
+             mass_abs_floor=None, other_item_min_share=None, item_mass=None, exclude_named_draws=True):
     """One verdict record per (item, unit set, claim). Rules: docs/ATTENTION-PANELS.md,
     "What a verdict does and does not say".
 
     Necessity (cut, "these units are needed for this item"), per cut type and context:
-    ``unresolved`` if the effect is inside its floor; ``not_supported`` if any control whose mass
-    is not known to exceed the target's (random, other-item, external) has an effect not smaller
-    than the test's by more than ``floor_factor`` x the larger floor (``refuted_by``);
+    ``unresolved`` if the effect is inside its floor; ``not_supported`` if any valid control whose
+    mass is not known to exceed the target's (random, other-item, external) has an effect not
+    smaller than the test's by more than ``floor_factor`` x the larger floor (``refuted_by``);
     ``unresolved`` (``twin_gap_not_measured``) if a delta-vs-recompute pair distance is missing
-    and ``twin_gap_waiver`` is not given; ``control_missing`` if no beaten control rules out
+    and ``twin_gap_waiver`` is not given; ``control_missing`` if no valid beaten control rules out
     ``set_size`` or ``generic_damage``. Otherwise the ruled-out alternatives decide the status:
     ``supported`` (scope ``identity``) only if ``set_size``, ``mass`` and ``generic_damage`` are
     all ruled out, else ``set_only`` (scope ``needed_set``) with ``remaining_alternatives``.
+    A passing necessity record whose effect is below ``min_effect_fraction`` of the all-cut
+    effect in any cut type and context becomes ``unresolved`` (finding
+    ``effect_below_min_fraction``); ``effect_fraction`` is reported on every record.
+
+    Controls (see :func:`_profiled`): random mass relations are re-labelled with the relative
+    rule (``mass_rel_tolerance``, ``mass_abs_floor``); a random draw containing a unit of another
+    named test set of the same item, or duplicating an earlier draw, is excluded
+    (``exclude_named_draws=False`` turns the named-unit check into a flag only); other-item
+    controls rule out generic damage only with a known mass share >= ``other_item_min_share``
+    (``item_mass``: {item: {unit: mass}} or flat full-grid vectors, used when the plan's stored
+    reports cannot give the other item's mass through the set).
 
     Sufficiency (keep, "these units alone carry the item"): the all-cut effect must clear its
     floor; recovery = 1 - keep_effect / all_cut_effect must reach ``recovery_threshold``;
-    a matched random KEEP control must recover clearly less (``not_supported`` with finding
-    ``any_same_size_set_suffices`` otherwise); no random keep -> ``control_missing``. The
+    a valid random KEEP control must recover clearly less (``not_supported`` with finding
+    ``any_same_size_set_suffices`` otherwise); no valid random keep -> ``control_missing``. The
     other-item keep control is a reported reference only. Scope ``identity`` needs ``mass``
     ruled out too, else ``set_only`` (scope ``sufficient_set``).
 
     Both cut types must be present and pass; alternatives count as ruled out only if ruled out
     in every context and both cut types. Across contexts the worst status wins.
 
+    Every parameter left ``None`` comes from the plan (``execution["verdict_parameters"]``) or the
+    module default; ``thresholds["parameter_sources"]`` records which.
+
     ``judgements[(item, unit_set, claim)] = {"status", "by", "note"}``: a picture judgement on
     whether the effect is real. It may move the status between supported / set_only /
-    not_supported / unresolved, but cannot repair a missing control, a missing cut type or an
-    incomplete floor (``picture_blocked_by``), and an upgrade is capped by the scope the
-    controls allow. Unknown keys raise.
+    not_supported / unresolved, but cannot repair a missing control, a missing cut type, an
+    incomplete floor or an effect below the minimum fraction (``picture_blocked_by``), and an
+    upgrade is capped by the scope the controls allow. Unknown keys raise.
     """
     attach_results(panel, results)
     ff, ff_waiver = _floor_factor(floor_factor, floor_factor_waiver)
-    threshold = _number(recovery_threshold, "recovery_threshold")
-    if not 0 < threshold <= 1:
-        raise PanelError("recovery_threshold must be in (0, 1]")
+    params, sources = verdict_parameters(panel, recovery_threshold=recovery_threshold,
+                                         min_effect_fraction=min_effect_fraction,
+                                         mass_rel_tolerance=mass_rel_tolerance, mass_abs_floor=mass_abs_floor,
+                                         other_item_min_share=other_item_min_share)
+    threshold = params["recovery_threshold"]
+    min_fraction = params["min_effect_fraction"]
     twin_waiver = _waiver_text(twin_gap_waiver, "twin_gap_waiver")
     judgements = judgements or {}
     arms = panel.by_id()
+    lookup = _unit_mass_lookup(panel, item_mass)
+    named = named_test_units(panel)
     groups = {}
     for a in panel.arms:
         if a.family == "read" and a.role == "test":
@@ -1710,14 +1998,16 @@ def verdicts(panel, results, *, judgements=None, floor_factor=1.0, recovery_thre
     for (item, unit_set, claim), tests in groups.items():
         per_type, all_rows, any_incomplete, refuted_by, findings = {}, [], False, [], set()
         for t in tests:
-            controls = [_profiled(panel, c) for c in panel.arms if t.arm in c.control_for]
+            controls = [_profiled(panel, c, params, lookup, named, exclude_named_draws)
+                        for c in panel.arms if t.arm in c.control_for]
             allcut = arms.get(f"{PREFIX[t.cut_type]}:none:{item}")
             ctx_rows = []
             for context in panel.contexts:
                 if claim == "sufficient":
                     row = _sufficiency_row(panel, results, t, controls, allcut, context, ff, threshold)
                 else:
-                    row = _necessity_row(panel, results, t, controls, context, ff)
+                    row = _necessity_row(panel, results, t, controls, allcut, context, ff)
+                row["cut_type"] = t.cut_type
                 if row.get("reason") == "twin_gap_not_measured" and twin_waiver is not None:
                     row = {**row, "status": _PASS, "twin_gap_waived": twin_waiver}
                     if claim == "necessary" and not set(row["ruled_out"]) & {"set_size", "generic_damage"}:
@@ -1739,9 +2029,11 @@ def verdicts(panel, results, *, judgements=None, floor_factor=1.0, recovery_thre
                 status = _scope(claim, ruled)[0]
             per_type[t.cut_type] = {
                 "arm": t.arm, "status": status, "contexts": ctx_rows, "ruled_out": sorted(ruled),
-                "mass_confounded_controls": [c.arm for c in controls
+                "mass_confounded_controls": [c.arm for c, _ in controls
                                              if c.control == "random" and c.mass_relation != "matched"],
-                "separating_controls": [c.arm for c in controls if c.mass_relation == "matched"],
+                "separating_controls": [c.arm for c, i in controls
+                                        if c.mass_relation == "matched" and not i.get("excluded")],
+                "excluded_controls": {c.arm: i["excluded"] for c, i in controls if i.get("excluded")},
                 "refuting_controls": sorted({x["control"] for x in refuted_by if x["cut_type"] == t.cut_type})}
         present = set(per_type)
         statuses = {per_type[t]["status"] for t in present}
@@ -1764,6 +2056,25 @@ def verdicts(panel, results, *, judgements=None, floor_factor=1.0, recovery_thre
             scalar, why = "not_supported", "cut types disagree; the result does not count"
         else:
             scalar, why = _rank(statuses), "cut types disagree"
+        fractions = [{"cut_type": r["cut_type"], "context": r["context"], "value": r.get("effect_fraction")}
+                     for r in all_rows if "effect_fraction" in r]
+        known = [f["value"] for f in fractions if f["value"] is not None]
+        effect_fraction = {
+            "definition": ("effect / all-cut effect (same cut type and context)" if claim == "necessary" else
+                           "recovery = 1 - keep effect / all-cut effect (same cut type and context)"),
+            "min": min(known) if known else None, "max": max(known) if known else None,
+            "unknown": len(fractions) - len(known), "by": fractions}
+        small_effect = False
+        if claim == "necessary" and scalar in passing:
+            if fractions and not known:
+                effect_fraction["note"] = "no defined fraction (all-cut missing or inside its floor); not checked"
+            elif known and min(known) < min_fraction:
+                small_effect = True
+                findings.add("effect_below_min_fraction")
+                why = (f"controls beaten, but the effect is {min(known):.3g} of the all-cut effect (max "
+                       f"{max(known):.3g}), below min_effect_fraction {min_fraction:g} "
+                       f"({sources['min_effect_fraction']}): not reported as a needed set")
+                scalar = "unresolved"
         _, scope, remaining = _scope(claim, ruled)
         if scalar not in passing:
             scope = None
@@ -1771,14 +2082,20 @@ def verdicts(panel, results, *, judgements=None, floor_factor=1.0, recovery_thre
         entry = panel.controls.get(f"{item}:{unit_set}", {})
         thresholds = {"floor_factor": ff, "floor_factor_waiver": ff_waiver,
                       "refute_rule": "control effect >= test effect - floor_factor * max(test floor, control floor)",
-                      "overlap_sd": entry.get("overlap_sd"), "mass_tolerance": entry.get("mass_tolerance")}
+                      "overlap_sd": entry.get("overlap_sd"), "mass_tolerance": entry.get("mass_tolerance"),
+                      "mass_rel_tolerance": params["mass_rel_tolerance"], "mass_abs_floor": params["mass_abs_floor"],
+                      "other_item_min_share": params["other_item_min_share"],
+                      "exclude_named_draws": bool(exclude_named_draws),
+                      "parameter_sources": dict(sources)}
         if claim == "sufficient":
             thresholds["recovery_threshold"] = threshold
+        else:
+            thresholds["min_effect_fraction"] = min_fraction
         rec = {"item": item, "unit_set": unit_set, "claim": claim, "scalar_status": scalar, "why": why,
                "claim_scope": scope,
                "claim_statement": None if scope is None else _statement(claim, item, unit_set, scope, remaining),
                "ruled_out": sorted(ruled), "remaining_alternatives": remaining,
-               "refuted_by": refuted_by, "findings": sorted(findings),
+               "refuted_by": refuted_by, "findings": sorted(findings), "effect_fraction": effect_fraction,
                "floor_incomplete": any_incomplete, "twin_gap_waiver": twin_waiver, "thresholds": thresholds,
                "cut_types": per_type, "cut_types_agree": agree, "missing_cut_types": missing,
                "waivers": dict(panel.waivers), "identity": panel.identity.get(f"{item}:{core}"),
@@ -1796,6 +2113,8 @@ def verdicts(panel, results, *, judgements=None, floor_factor=1.0, recovery_thre
                     blocked.append("control_missing")
                 if any_incomplete and twin_waiver is None:
                     blocked.append("floor_incomplete")
+                if small_effect:
+                    blocked.append("effect_below_min_fraction")
                 minimal = {"set_size", "generic_damage"} if claim == "necessary" else {"set_size"}
                 if not ruled & minimal and "control_missing" not in blocked:
                     blocked.append("no_control_rules_out_generic_damage")

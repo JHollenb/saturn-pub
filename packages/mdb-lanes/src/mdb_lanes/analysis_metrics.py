@@ -176,6 +176,13 @@ def rounding_bound(values, *, dtype=None, step=None, allow_inferred_step=False):
     return float_spacing(values, dtype) / 2.0
 
 
+LOW_PRECISION = frozenset(("bfloat16", "bf16", "float16", "fp16", "half"))
+
+
+def _dtype_key(dtype):
+    return None if dtype is None else str(dtype).replace("torch.", "").lower()
+
+
 class Bounded:
     """A value with a worst-case absolute bound that propagates through linear arithmetic.
 
@@ -183,14 +190,25 @@ class Bounded:
     merge terms by key, so a quantity that enters twice (for example the native margin in both
     the full effect and every singleton effect) cancels exactly instead of double-counting its
     bound. ``bound = sum(|coefficient| * unit_bound)``. Products of two bounded values are refused.
+
+    Each term also carries what it bounds (``meta[key] = (kind, dtype, source)``): ``readout``
+    terms are the rounding of a stored value (``dtype`` when known); ``compute`` terms (added by
+    :meth:`with_compute_error`) bound the arithmetic error of the path that produced a value.
+    A readout rounding bound is NOT a full uncertainty bound in low precision: BF16 compute error
+    through a deep network is larger than the half-ULP of the stored result (MEASURED on Qwen
+    2026-11-12: BF16 - FP32 full effect 0.47-0.60 against a readout bound of 0.25). So
+    ``resolved`` is False while any nonzero low-precision (BF16/FP16) readout term has no
+    compute-error term for its source; ``readout_rounding_resolved`` keeps the old meaning
+    (``|value| > bound``). FP32 and FP64 values are unchanged: ``resolved = |value| > bound``.
     """
 
-    __slots__ = ("value", "terms", "base")
+    __slots__ = ("value", "terms", "base", "meta")
     _counter = [0]
 
-    def __init__(self, value, bound=0.0, *, key=None, terms=None, base=None):
+    def __init__(self, value, bound=0.0, *, key=None, terms=None, base=None, meta=None, dtype=None, source=None):
         self.value = float(value)
         self.base = dict(base or {})  # explicit key -> stored value, to catch one key, two values
+        self.meta = dict(meta or {})
         if terms is not None:
             self.terms = dict(terms)
             return
@@ -202,26 +220,81 @@ class Bounded:
         else:
             self.base[key] = self.value
         self.terms = {key: (1.0, float(bound))} if bound else {}
+        if bound:
+            if source is None:
+                source = key[0] if isinstance(key, tuple) and len(key) == 2 and key[0] != "anonymous" else key
+            self.meta[key] = ("readout", _dtype_key(dtype), source)
 
     @property
     def bound(self):
         return float(sum(abs(c) * b for c, b in self.terms.values()))
 
+    def _part(self, kind):
+        return float(sum(abs(c) * b for k, (c, b) in self.terms.items()
+                         if self.meta.get(k, ("readout",))[0] == kind))
+
+    @property
+    def readout_bound(self):
+        """The part of ``bound`` that bounds the rounding of stored values."""
+        return self._part("readout")
+
+    @property
+    def compute_bound(self):
+        """The part of ``bound`` from compute-error terms (0 when none was supplied)."""
+        return self._part("compute")
+
+    def _sources(self, kind, low_only=False):
+        out = set()
+        for k, (c, _) in self.terms.items():
+            m = self.meta.get(k)
+            if c != 0 and m is not None and m[0] == kind and (not low_only or m[1] in LOW_PRECISION):
+                out.add(m[2])
+        return out
+
+    @property
+    def uncovered_low_precision(self):
+        """Sources of low-precision readout terms that carry no compute-error term."""
+        return self._sources("readout", low_only=True) - self._sources("compute")
+
+    def with_compute_error(self, error, *, source, note=None):
+        """A copy with one compute-error term ``("compute", source)`` of unit bound ``error``.
+
+        ``source`` names the quantity whose computation the term covers (e.g. an arm whose margin
+        was computed in BF16); its low-precision readout terms then count as covered. ``error``
+        should come from a measurement (e.g. the recompute-sham floor of the same lane); it is
+        recorded as given, not checked.
+        """
+        error = float(error)
+        if error < 0 or not math.isfinite(error):
+            raise ValueError("compute error must be finite and non-negative")
+        key = ("compute", source)
+        if key in self.terms:
+            raise ValueError(f"compute-error term for {source!r} already present")
+        terms, meta = dict(self.terms), dict(self.meta)
+        terms[key] = (1.0, error)
+        meta[key] = ("compute", note, source)
+        return Bounded(self.value, terms=terms, base=self.base, meta=meta)
+
     def _merge(self, other, sign):
         other = _bounded(other)
         terms = dict(self.terms)
         base = dict(self.base)
+        meta = dict(self.meta)
         for key, value in other.base.items():
             if key in base and base[key] != value:
                 raise ValueError(f"key {key!r} is reused with a different value "
                                  f"({base[key]!r} vs {value!r}); one key names one quantity")
             base[key] = value
+        for key, m in other.meta.items():
+            if key in meta and meta[key] != m:
+                raise ValueError(f"key {key!r} carries two different term descriptions")
+            meta[key] = m
         for key, (c, b) in other.terms.items():
             old = terms.get(key, (0.0, b))
             if old[1] != b:
                 raise ValueError("one key carries two different unit bounds")
             terms[key] = (old[0] + sign * c, b)
-        return Bounded(self.value + sign * other.value, terms=terms, base=base)
+        return Bounded(self.value + sign * other.value, terms=terms, base=base, meta=meta)
 
     def __add__(self, other):
         return self._merge(other, 1.0)
@@ -241,17 +314,35 @@ class Bounded:
         if isinstance(scalar, Bounded):
             raise TypeError("product of two bounded values is not linear; bound it explicitly")
         return Bounded(self.value * scalar, terms={k: (c * scalar, b) for k, (c, b) in self.terms.items()},
-                       base=self.base)
+                       base=self.base, meta=self.meta)
 
     __rmul__ = __mul__
 
     @property
-    def resolved(self):
+    def readout_rounding_resolved(self):
+        """``|value| > bound``: resolved against the bound as built (readout rounding only, plus any
+        compute terms). In BF16 without a compute term this is NOT an uncertainty statement."""
         return abs(self.value) > self.bound
 
+    @property
+    def resolved(self):
+        """``|value| > bound``, and in low precision only when every low-precision readout source
+        also carries a compute-error term (else False: unresolved). FP32 unchanged."""
+        return abs(self.value) > self.bound and not self.uncovered_low_precision
+
     def as_dict(self):
-        return {"value": self.value, "bound": self.bound, "resolved": self.resolved,
-                "status": "resolved" if self.resolved else "inside rounding bound"}
+        out = {"value": self.value, "bound": self.bound, "resolved": self.resolved,
+               "status": "resolved" if self.resolved else "inside rounding bound"}
+        low = self._sources("readout", low_only=True)
+        if low:
+            out.update(readout_bound=self.readout_bound, compute_error_bound=self.compute_bound,
+                       readout_rounding_resolved=self.readout_rounding_resolved)
+            if self.uncovered_low_precision:
+                out["status"] = ("unresolved: low-precision readout-rounding bound only (no compute-error term); "
+                                 + ("outside" if self.readout_rounding_resolved else "inside") + " the rounding bound")
+            elif not self.resolved:
+                out["status"] = "inside rounding + compute-error bound"
+        return out
 
     def __repr__(self):
         return f"Bounded({self.value!r} +/- {self.bound!r})"
@@ -266,7 +357,7 @@ def bounded_values(values, *, dtype=None, step=None, keys=None):
     v = np.asarray(values, np.float64)
     b = rounding_bound(v, dtype=dtype, step=step)
     keys = [None] * v.size if keys is None else list(keys)
-    return [Bounded(float(x), float(y), key=k)
+    return [Bounded(float(x), float(y), key=k, dtype=dtype)
             for x, y, k in zip(v.ravel(), np.ravel(b), keys, strict=True)]
 
 

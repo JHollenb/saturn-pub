@@ -1,0 +1,9 @@
+{
+ "plan_sha256": "8590b4f71741cd61367c933031b81023dcc0541d895b394eeef996d5c41c3fdc",
+ "predictions": {
+  "note": "no numeric prediction; named heads L20H5, L21H0, L20H11 and label-free top 3/12"
+ },
+ "predictions_sha256": "167ac1ea9988308dd909160eae4185fbc066613f1c29786ba5beafc736c09f02",
+ "schema": "mdb-attention-panel-seal-v1",
+ "seal_sha256": "cca9c1de93ad904ab574c9432d3cf653dcba39460f75834d335ac7357a002f89"
+}

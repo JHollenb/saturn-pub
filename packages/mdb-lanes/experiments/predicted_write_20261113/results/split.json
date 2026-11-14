@@ -1,0 +1,1513 @@
+{
+ "G1": "failed",
+ "G1_G2": {
+  "all": {
+   "common_share": {
+    "G1": 0.027410329338012074,
+    "G2": 0.10502175194279546
+   },
+   "orderings": {
+    "common G1 < G2": true,
+    "pad G1 < G2": false,
+    "word_plus_real G1 > G2": false
+   },
+   "pad_share": {
+    "G1": 0.32544626689381057,
+    "G2": 0.19863254065896083
+   },
+   "word_plus_real_share": {
+    "G1": 0.014132911352084861,
+    "G2": 0.03043394976653385
+   }
+  },
+  "joint": {
+   "common_share": {
+    "G1": 0.01937197069519103,
+    "G2": 0.05247347007018161
+   },
+   "orderings": {
+    "common G1 < G2": true,
+    "pad G1 < G2": false,
+    "word_plus_real G1 > G2": false
+   },
+   "pad_share": {
+    "G1": 0.15575169875275544,
+    "G2": 0.06933072959340368
+   },
+   "word_plus_real_share": {
+    "G1": 0.1403366768510832,
+    "G2": 0.22865507362985182
+   }
+  },
+  "single": {
+   "common_share": {
+    "G1": 0.027418539318188394,
+    "G2": 0.10515831293922599
+   },
+   "orderings": {
+    "common G1 < G2": true,
+    "pad G1 < G2": false,
+    "word_plus_real G1 > G2": false
+   },
+   "pad_share": {
+    "G1": 0.32561486257886924,
+    "G2": 0.198826684591634
+   },
+   "word_plus_real_share": {
+    "G1": 0.01400130304405949,
+    "G2": 0.030131532434367714
+   }
+  }
+ },
+ "G2": "failed",
+ "invariant": {
+  "ball": {
+   "dP_rowsum_max_abs": 8.549541234970093e-07,
+   "invariant_max_abs_diff": 0.000102996826171875,
+   "routing_max_abs": 42.29191970825195
+  },
+  "black": {
+   "dP_rowsum_max_abs": 8.67992639541626e-07,
+   "invariant_max_abs_diff": 6.103515625e-05,
+   "routing_max_abs": 32.171207427978516
+  },
+  "night": {
+   "dP_rowsum_max_abs": 8.706410881131887e-07,
+   "invariant_max_abs_diff": 6.771087646484375e-05,
+   "routing_max_abs": 27.161684036254883
+  },
+  "rain": {
+   "dP_rowsum_max_abs": 6.407499313354492e-07,
+   "invariant_max_abs_diff": 6.4849853515625e-05,
+   "routing_max_abs": 41.185482025146484
+  },
+  "red": {
+   "dP_rowsum_max_abs": 8.195638656616211e-07,
+   "invariant_max_abs_diff": 5.91278076171875e-05,
+   "routing_max_abs": 25.97494125366211
+  },
+  "snow": {
+   "dP_rowsum_max_abs": 7.767230272293091e-07,
+   "invariant_max_abs_diff": 8.392333984375e-05,
+   "routing_max_abs": 44.97415542602539
+  }
+ },
+ "words": {
+  "ball": {
+   "alignment": {
+    "shift": 1,
+    "word": [
+     13
+    ],
+    "word_partner_rows": [
+     511
+    ]
+   },
+   "all": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.000000058704574,
+    "norm_ratio": {
+     "interaction": 0.8964504908879564,
+     "payload": 0.9769066661626179,
+     "routing": 0.6532811003377486
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8282280866573224,
+     "pad": 0.4980525676227119,
+     "real": 0.0783825804338837,
+     "word": 0.0809479812615551
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7079046176885029,
+     "pad": 0.27349577309378326,
+     "real": 0.010424281238282783,
+     "word": 0.008175312842496158
+    },
+    "projection_share": {
+     "interaction": -0.05312996483452944,
+     "payload": 0.7815760227391689,
+     "routing": 0.2715539601940424
+    },
+    "remainder_alg_rel": 9.637549637938717e-07,
+    "remainder_native_rel": 0.0035365017141163616,
+    "text_common_norm_ratio": 0.24813036165369073,
+    "text_common_projection_share": 0.018492241224968765,
+    "text_payload_share_of_payload": 0.1371923869902994,
+    "text_specific_projection_share": 0.9815077654141686,
+    "total_norm": 37655.860861030684
+   },
+   "deleted_observer_run_equals_root": true,
+   "joint": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.000020342142964,
+    "norm_ratio": {
+     "interaction": 0.753369843189891,
+     "payload": 0.8614656691753763,
+     "routing": 0.7783497073351278
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8442192042379393,
+     "pad": 0.28622493415395683,
+     "real": 0.21784344399729708,
+     "word": 0.3673946735726945
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7125347944170338,
+     "pad": 0.08703461541301466,
+     "real": 0.056740441891406396,
+     "word": 0.14369016252041703
+    },
+    "projection_share": {
+     "interaction": -0.14383196214061914,
+     "payload": 0.6360971661970308,
+     "routing": 0.5077347765111963
+    },
+    "remainder_alg_rel": 1.544319112745752e-06,
+    "remainder_native_rel": 0.005837965212616061,
+    "text_common_norm_ratio": 0.19989889523838975,
+    "text_common_projection_share": 0.007472995128429529,
+    "text_payload_share_of_payload": 0.2105193069595987,
+    "text_specific_projection_share": 0.992526962457557,
+    "total_norm": 1500.5435882715085
+   },
+   "single": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.0000000264442863,
+    "norm_ratio": {
+     "interaction": 0.8966598697223661,
+     "payload": 0.9770794067249658,
+     "routing": 0.6530631066226277
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8282081250725432,
+     "pad": 0.49825872353611406,
+     "real": 0.07805609040632093,
+     "word": 0.07996122142196632
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7078988932084601,
+     "pad": 0.2737263027773069,
+     "real": 0.010367018642736342,
+     "word": 0.008007770198239433
+    },
+    "projection_share": {
+     "interaction": -0.05298570710291057,
+     "payload": 0.7818074007734634,
+     "routing": 0.27117832448782053
+    },
+    "remainder_alg_rel": 9.625527349011232e-07,
+    "remainder_native_rel": 0.0035316469599315195,
+    "text_common_norm_ratio": 0.24818767885535112,
+    "text_common_projection_share": 0.018506747639442486,
+    "text_payload_share_of_payload": 0.13709749940931995,
+    "text_specific_projection_share": 0.9814932590642714,
+    "total_norm": 37625.95149793557
+   },
+   "step0": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.0000097405158808,
+    "norm_ratio": {
+     "interaction": 1.1246559580753415,
+     "payload": 1.0401568614354082,
+     "routing": 0.7648749329107364
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.7281071616969407,
+     "pad": 0.6098477857808352,
+     "real": 0.10912694669726256,
+     "word": 0.10997680201499119
+    },
+    "payload_groups_projection_share": {
+     "img": 0.5558028237272052,
+     "pad": 0.40717695228011586,
+     "real": 0.021607081090221573,
+     "word": 0.015413128863541679
+    },
+    "projection_share": {
+     "interaction": -0.1278032318346033,
+     "payload": 0.7902904319053466,
+     "routing": 0.3375128111194894
+    },
+    "remainder_alg_rel": 1.1901394735086115e-06,
+    "remainder_native_rel": 0.004137867596434174,
+    "text_common_norm_ratio": 0.3015381926522167,
+    "text_common_projection_share": 0.03329279652277008,
+    "text_payload_share_of_payload": 0.2339854939304064,
+    "text_specific_projection_share": 0.966707209003925,
+    "total_norm": 17338.549522302998
+   },
+   "step1": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999951744021187,
+    "norm_ratio": {
+     "interaction": 0.8461035453551654,
+     "payload": 0.9629930533727508,
+     "routing": 0.6322147686856474
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.846166163356334,
+     "pad": 0.46717603267739904,
+     "real": 0.07867290776072923,
+     "word": 0.08312615218220296
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7379406854421071,
+     "pad": 0.24322463610665496,
+     "real": 0.0103883154661758,
+     "word": 0.008446338502945468
+    },
+    "projection_share": {
+     "interaction": -0.04043571484632186,
+     "payload": 0.7755080021153512,
+     "routing": 0.26492774586221085
+    },
+    "remainder_alg_rel": 9.220668934939229e-07,
+    "remainder_native_rel": 0.0034168165136369924,
+    "text_common_norm_ratio": 0.22474729865088897,
+    "text_common_projection_share": 0.011926172313825893,
+    "text_payload_share_of_payload": 0.12229345247700614,
+    "text_specific_projection_share": 0.9880738338831025,
+    "total_norm": 23338.699419415894
+   },
+   "step2": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.999999253656294,
+    "norm_ratio": {
+     "interaction": 0.8214125332073731,
+     "payload": 0.9613762146216415,
+     "routing": 0.6167904186713957
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8637663478601222,
+     "pad": 0.45517286790013955,
+     "real": 0.0539446830616896,
+     "word": 0.05641232217333403
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7651346490868407,
+     "pad": 0.22668559671250482,
+     "real": 0.004188757069812633,
+     "word": 0.003990992216659807
+    },
+    "projection_share": {
+     "interaction": -0.029952915994029973,
+     "payload": 0.7837156784208232,
+     "routing": 0.24623723391926422
+    },
+    "remainder_alg_rel": 8.763374719431761e-07,
+    "remainder_native_rel": 0.0033068208120084846,
+    "text_common_norm_ratio": 0.1910959534768393,
+    "text_common_projection_share": 0.006557010453481928,
+    "text_payload_share_of_payload": 0.1018463189796778,
+    "text_specific_projection_share": 0.9934429879637994,
+    "total_norm": 18017.20761917834
+   },
+   "step3": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.0000001037448414,
+    "norm_ratio": {
+     "interaction": 0.7784369417890528,
+     "payload": 0.9478314225808047,
+     "routing": 0.5958914291831188
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8742779731395673,
+     "pad": 0.43572712150051307,
+     "real": 0.04449411113598769,
+     "word": 0.046799705781119104
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7847788435898333,
+     "pad": 0.21001292776268174,
+     "real": 0.0025782620510038114,
+     "word": 0.0026299572769825424
+    },
+    "projection_share": {
+     "interaction": -0.020832867717693507,
+     "payload": 0.7815392255905615,
+     "routing": 0.23929366405620578
+    },
+    "remainder_alg_rel": 8.491096656009104e-07,
+    "remainder_native_rel": 0.003285999399806703,
+    "text_common_norm_ratio": 0.1943422064671439,
+    "text_common_projection_share": 0.008227156364358428,
+    "text_payload_share_of_payload": 0.09741576891565336,
+    "text_specific_projection_share": 0.9917728672644481,
+    "total_norm": 15748.774449636623
+   }
+  },
+  "black": {
+   "alignment": {
+    "shift": 1,
+    "word": [
+     7
+    ],
+    "word_partner_rows": [
+     511
+    ]
+   },
+   "all": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999991439613968,
+    "norm_ratio": {
+     "interaction": 0.8721234760707942,
+     "payload": 0.9733959421545915,
+     "routing": 0.6067503270424697
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8237886274856038,
+     "pad": 0.5184849496613833,
+     "real": 0.06270821034926953,
+     "word": 0.051073305541134914
+    },
+    "payload_groups_projection_share": {
+     "img": 0.6993547725367216,
+     "pad": 0.28983564804022655,
+     "real": 0.006229305656183663,
+     "word": 0.004580272030388387
+    },
+    "projection_share": {
+     "interaction": 0.005004904159006531,
+     "payload": 0.7838941242202995,
+     "routing": 0.21110097654479887
+    },
+    "remainder_alg_rel": 9.786093685605627e-07,
+    "remainder_native_rel": 0.003677522171356654,
+    "text_common_norm_ratio": 0.408210256237027,
+    "text_common_projection_share": 0.0537302892398771,
+    "text_payload_share_of_payload": 0.1462110126103125,
+    "text_specific_projection_share": 0.9462697256121715,
+    "total_norm": 36539.313216034025
+   },
+   "deleted_observer_run_equals_root": true,
+   "joint": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.000006953092165,
+    "norm_ratio": {
+     "interaction": 0.7278525904463549,
+     "payload": 0.8582770344597107,
+     "routing": 0.6874113883382749
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8518798875495398,
+     "pad": 0.3727899574300788,
+     "real": 0.2848368428981809,
+     "word": 0.11641981867484144
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7344932202043348,
+     "pad": 0.15350536866383527,
+     "real": 0.08873852851832133,
+     "word": 0.02326286950931808
+    },
+    "projection_share": {
+     "interaction": 0.02250315880868478,
+     "payload": 0.6278935370510624,
+     "routing": 0.34960329614655905
+    },
+    "remainder_alg_rel": 1.7968343192266806e-06,
+    "remainder_native_rel": 0.00710370903369329,
+    "text_common_norm_ratio": 0.268316138565343,
+    "text_common_projection_share": 0.045422664586500655,
+    "text_payload_share_of_payload": 0.15123491441478581,
+    "text_specific_projection_share": 0.954577431428204,
+    "total_norm": 1257.2864329334332
+   },
+   "single": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999991347044749,
+    "norm_ratio": {
+     "interaction": 0.8722803343188061,
+     "payload": 0.9735243254841475,
+     "routing": 0.6066483479444799
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8237623039602091,
+     "pad": 0.5186003123615942,
+     "real": 0.06213848943988092,
+     "word": 0.05097448679034781
+    },
+    "payload_groups_projection_share": {
+     "img": 0.699322397807662,
+     "pad": 0.28996125563391373,
+     "real": 0.006153285970842182,
+     "word": 0.00456305886157594
+    },
+    "projection_share": {
+     "interaction": 0.0049841618578694985,
+     "payload": 0.7840790461580242,
+     "routing": 0.2109367969235239
+    },
+    "remainder_alg_rel": 9.772330039714281e-07,
+    "remainder_native_rel": 0.0036715640648253313,
+    "text_common_norm_ratio": 0.4083081883676227,
+    "text_common_projection_share": 0.05373730837932096,
+    "text_payload_share_of_payload": 0.14620624358629256,
+    "text_specific_projection_share": 0.946262706404153,
+    "total_norm": 36517.67573552566
+   },
+   "step0": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.0000097055740436,
+    "norm_ratio": {
+     "interaction": 1.0854334732286648,
+     "payload": 1.0279557906846333,
+     "routing": 0.6825111916504147
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.7351638669678634,
+     "pad": 0.6282976424528254,
+     "real": 0.08794014721187546,
+     "word": 0.07168889078078866
+    },
+    "payload_groups_projection_share": {
+     "img": 0.5620485184671861,
+     "pad": 0.41594679459914735,
+     "real": 0.012567186408129077,
+     "word": 0.009437444088827603
+    },
+    "projection_share": {
+     "interaction": -0.018940025829378006,
+     "payload": 0.7864280819165594,
+     "routing": 0.2325119589438077
+    },
+    "remainder_alg_rel": 1.2132091839136047e-06,
+    "remainder_native_rel": 0.004409140200429534,
+    "text_common_norm_ratio": 0.35343674844945444,
+    "text_common_projection_share": 0.054146088331773735,
+    "text_payload_share_of_payload": 0.22577489702494657,
+    "text_specific_projection_share": 0.9458539500289675,
+    "total_norm": 16509.38205026956
+   },
+   "step1": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999943616736237,
+    "norm_ratio": {
+     "interaction": 0.867313837470208,
+     "payload": 0.9725408599705282,
+     "routing": 0.6088090917741806
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8290688851179403,
+     "pad": 0.5106472001291792,
+     "real": 0.05975767051937582,
+     "word": 0.05366540608489111
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7075028519529476,
+     "pad": 0.2820802117778741,
+     "real": 0.005974416559903488,
+     "word": 0.004442555557299315
+    },
+    "projection_share": {
+     "interaction": 0.011879910104708612,
+     "payload": 0.7828269404742639,
+     "routing": 0.2052931417248436
+    },
+    "remainder_alg_rel": 9.73207544079328e-07,
+    "remainder_native_rel": 0.003704076043008278,
+    "text_common_norm_ratio": 0.4141822305311797,
+    "text_common_projection_share": 0.05497882325969572,
+    "text_payload_share_of_payload": 0.13832262476222593,
+    "text_specific_projection_share": 0.9450211835865864,
+    "total_norm": 21750.027632761274
+   },
+   "step2": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999969147108084,
+    "norm_ratio": {
+     "interaction": 0.7836055881126935,
+     "payload": 0.9541537054528737,
+     "routing": 0.5753232891745301
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8567811913018397,
+     "pad": 0.4691152375569292,
+     "real": 0.0486768591705743,
+     "word": 0.03364577498407796
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7543086810685619,
+     "pad": 0.24019705643504835,
+     "real": 0.0031474704218503345,
+     "word": 0.0023468003824934193
+    },
+    "projection_share": {
+     "interaction": 0.015079196826572548,
+     "payload": 0.7824228869079953,
+     "routing": 0.20249791516003723
+    },
+    "remainder_alg_rel": 8.719737661899659e-07,
+    "remainder_native_rel": 0.003305561828807778,
+    "text_common_norm_ratio": 0.44112123575467244,
+    "text_common_projection_share": 0.05215167708752292,
+    "text_payload_share_of_payload": 0.11722714250263098,
+    "text_specific_projection_share": 0.9478483147927245,
+    "total_norm": 18101.96274007238
+   },
+   "step3": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999995798329486,
+    "norm_ratio": {
+     "interaction": 0.7241872804933102,
+     "payload": 0.9398155911771087,
+     "routing": 0.5553695905014125
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8730904262908175,
+     "pad": 0.4364531740699709,
+     "real": 0.04374359941012447,
+     "word": 0.028911010819626874
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7837047775346142,
+     "pad": 0.21181191282695191,
+     "real": 0.002804655965861167,
+     "word": 0.0016786343836899345
+    },
+    "projection_share": {
+     "interaction": 0.004901596169556749,
+     "payload": 0.7850257841118765,
+     "routing": 0.21007264447035628
+    },
+    "remainder_alg_rel": 8.297044242383115e-07,
+    "remainder_native_rel": 0.0032033979338755335,
+    "text_common_norm_ratio": 0.47185660817334707,
+    "text_common_projection_share": 0.0516037650450805,
+    "text_payload_share_of_payload": 0.1136026824838479,
+    "text_specific_projection_share": 0.9483962431833649,
+    "total_norm": 16180.75886813805
+   }
+  },
+  "night": {
+   "alignment": {
+    "shift": 1,
+    "word": [
+     17
+    ],
+    "word_partner_rows": [
+     511
+    ]
+   },
+   "all": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.0000021863910642,
+    "norm_ratio": {
+     "interaction": 0.7565081864180264,
+     "payload": 0.9428150057119802,
+     "routing": 0.5472723388066641
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8479800233292204,
+     "pad": 0.4307760582913211,
+     "real": 0.09614564549786021,
+     "word": 0.09005731940027718
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7495226633659812,
+     "pad": 0.21870431084034128,
+     "real": 0.01742430197133789,
+     "word": 0.014348732330263125
+    },
+    "projection_share": {
+     "interaction": -0.006118803447988186,
+     "payload": 0.7962840225914868,
+     "routing": 0.2098347782571712
+    },
+    "remainder_alg_rel": 8.398573577690728e-07,
+    "remainder_native_rel": 0.0031487433496375293,
+    "text_common_norm_ratio": 0.4502130949025643,
+    "text_common_projection_share": 0.07014801923542457,
+    "text_payload_share_of_payload": 0.15982948600044503,
+    "text_specific_projection_share": 0.9298519741991204,
+    "total_norm": 40954.383158420525
+   },
+   "deleted_observer_run_equals_root": true,
+   "joint": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.0000008261401931,
+    "norm_ratio": {
+     "interaction": 0.6760777315242862,
+     "payload": 0.85505619155644,
+     "routing": 0.6609796122890054
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.839277349074408,
+     "pad": 0.2583661253067156,
+     "real": 0.17763990215645648,
+     "word": 0.38659842026682073
+    },
+    "payload_groups_projection_share": {
+     "img": 0.710560915684211,
+     "pad": 0.0842102981505966,
+     "real": 0.045332261861685534,
+     "word": 0.15989654095736597
+    },
+    "projection_share": {
+     "interaction": -0.044188849682284696,
+     "payload": 0.651427366145545,
+     "routing": 0.3927614667956987
+    },
+    "remainder_alg_rel": 1.4129883454576445e-06,
+    "remainder_native_rel": 0.005356216848478235,
+    "text_common_norm_ratio": 0.3755383397103549,
+    "text_common_projection_share": 0.0862192986775647,
+    "text_payload_share_of_payload": 0.2013779240533453,
+    "text_specific_projection_share": 0.91378072290664,
+    "total_norm": 1590.9507807341968
+   },
+   "single": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.0000021884468946,
+    "norm_ratio": {
+     "interaction": 0.7566232752366554,
+     "payload": 0.9429414596347875,
+     "routing": 0.5470826000110199
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8479907831275222,
+     "pad": 0.4309474112613928,
+     "real": 0.09600133683789787,
+     "word": 0.08907670088324016
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7495710835983925,
+     "pad": 0.21887145507128172,
+     "real": 0.017389618981369037,
+     "word": 0.014167850846756765
+    },
+    "projection_share": {
+     "interaction": -0.006061265814565631,
+     "payload": 0.7965029534839293,
+     "routing": 0.20955830975267936
+    },
+    "remainder_alg_rel": 8.386947878234778e-07,
+    "remainder_native_rel": 0.003144234350191119,
+    "text_common_norm_ratio": 0.4503226888418097,
+    "text_common_projection_share": 0.07012229663803088,
+    "text_payload_share_of_payload": 0.15977812873384328,
+    "text_specific_projection_share": 0.9298776967514597,
+    "total_norm": 40923.46973925843
+   },
+   "step0": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.0000135734722044,
+    "norm_ratio": {
+     "interaction": 1.0138051686778276,
+     "payload": 1.0234315060522894,
+     "routing": 0.6530373365367822
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.6657744691067199,
+     "pad": 0.5757135746294986,
+     "real": 0.13790840919893466,
+     "word": 0.17444822518840092
+    },
+    "payload_groups_projection_share": {
+     "img": 0.5034836374955327,
+     "pad": 0.39647416280296754,
+     "real": 0.0463765770344639,
+     "word": 0.053665662174984335
+    },
+    "projection_share": {
+     "interaction": -0.07841680548841394,
+     "payload": 0.8334854322133105,
+     "routing": 0.2449313159795849
+    },
+    "remainder_alg_rel": 1.1904758430038144e-06,
+    "remainder_native_rel": 0.0043913435538096915,
+    "text_common_norm_ratio": 0.5270270859746471,
+    "text_common_projection_share": 0.08706756027176649,
+    "text_payload_share_of_payload": 0.3611964952717054,
+    "text_specific_projection_share": 0.9129324174428572,
+    "total_norm": 15371.642099939512
+   },
+   "step1": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999995307080202,
+    "norm_ratio": {
+     "interaction": 0.7700463787198861,
+     "payload": 0.9352729437399939,
+     "routing": 0.5509114753178221
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8457530611962908,
+     "pad": 0.46172537437773903,
+     "real": 0.10392856691386222,
+     "word": 0.08329887855199587
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7335209282973938,
+     "pad": 0.23746239527623625,
+     "real": 0.01685826005560752,
+     "word": 0.012158410377731256
+    },
+    "projection_share": {
+     "interaction": 0.01935759430670756,
+     "payload": 0.7796537808714505,
+     "routing": 0.20098860505919036
+    },
+    "remainder_alg_rel": 8.562576456537434e-07,
+    "remainder_native_rel": 0.0032400098015046255,
+    "text_common_norm_ratio": 0.3963693585942979,
+    "text_common_projection_share": 0.06340928174399553,
+    "text_payload_share_of_payload": 0.16475801999931763,
+    "text_specific_projection_share": 0.9365907106001035,
+    "total_norm": 23802.054469883577
+   },
+   "step2": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.0000022472791827,
+    "norm_ratio": {
+     "interaction": 0.6624132861233839,
+     "payload": 0.9261635480762486,
+     "routing": 0.5119020679381318
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.9000046883419889,
+     "pad": 0.3502793806740441,
+     "real": 0.07085135214705968,
+     "word": 0.04290028246619071
+    },
+    "payload_groups_projection_share": {
+     "img": 0.8376343686776266,
+     "pad": 0.15071146569879212,
+     "real": 0.008153694209541635,
+     "word": 0.00350050118195185
+    },
+    "projection_share": {
+     "interaction": -0.0014382949119624473,
+     "payload": 0.7970226691465409,
+     "routing": 0.20441565924009422
+    },
+    "remainder_alg_rel": 7.070175986253561e-07,
+    "remainder_native_rel": 0.0026537565018390314,
+    "text_common_norm_ratio": 0.42138822360979883,
+    "text_common_projection_share": 0.06546282396989385,
+    "text_payload_share_of_payload": 0.10080932858729441,
+    "text_specific_projection_share": 0.9345371744951355,
+    "total_norm": 22153.39791295782
+   },
+   "step3": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999990169966949,
+    "norm_ratio": {
+     "interaction": 0.6573025831077189,
+     "payload": 0.9230400554116336,
+     "routing": 0.5131690024801728
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.9036035413941202,
+     "pad": 0.3379548205232571,
+     "real": 0.07016066983311736,
+     "word": 0.032570078235033884
+    },
+    "payload_groups_projection_share": {
+     "img": 0.8465895640105685,
+     "pad": 0.14323679797143038,
+     "real": 0.008301138887197444,
+     "word": 0.0018724787724476526
+    },
+    "projection_share": {
+     "interaction": -0.005199518490172017,
+     "payload": 0.7969849732983286,
+     "routing": 0.20821455547761733
+    },
+    "remainder_alg_rel": 6.990822920457985e-07,
+    "remainder_native_rel": 0.002637666479403782,
+    "text_common_norm_ratio": 0.4196329721393423,
+    "text_common_projection_share": 0.05198649130888276,
+    "text_payload_share_of_payload": 0.0985148036704299,
+    "text_specific_projection_share": 0.9480135404824889,
+    "total_norm": 19587.32454831281
+   }
+  },
+  "rain": {
+   "alignment": {
+    "shift": 1,
+    "word": [
+     15
+    ],
+    "word_partner_rows": [
+     511
+    ]
+   },
+   "all": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.999998072615265,
+    "norm_ratio": {
+     "interaction": 0.6547625909689784,
+     "payload": 0.923302112885256,
+     "routing": 0.5009405862420575
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8568834667555241,
+     "pad": 0.40086153660162077,
+     "real": 0.09085949581772935,
+     "word": 0.08504224928439573
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7695069371042906,
+     "pad": 0.20184822924105075,
+     "real": 0.016897171052683284,
+     "word": 0.01174765996691916
+    },
+    "projection_share": {
+     "interaction": 0.002207074938250346,
+     "payload": 0.8011272669145132,
+     "routing": 0.1966656590971645
+    },
+    "remainder_alg_rel": 7.319686546535693e-07,
+    "remainder_native_rel": 0.0026147160639090586,
+    "text_common_norm_ratio": 0.6404163804198311,
+    "text_common_projection_share": 0.18544329939137347,
+    "text_payload_share_of_payload": 0.17779514464505897,
+    "text_specific_projection_share": 0.8145567117313548,
+    "total_norm": 48745.90400677021
+   },
+   "deleted_observer_run_equals_root": true,
+   "joint": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999974928305853,
+    "norm_ratio": {
+     "interaction": 0.6553211369927331,
+     "payload": 0.8599924356882054,
+     "routing": 0.6334899727168934
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8290647952838629,
+     "pad": 0.2117736321721117,
+     "real": 0.15146930514554724,
+     "word": 0.41554156558908284
+    },
+    "payload_groups_projection_share": {
+     "img": 0.6901647005427257,
+     "pad": 0.0733578549108374,
+     "real": 0.040558386892957314,
+     "word": 0.19591900062537168
+    },
+    "projection_share": {
+     "interaction": -0.06974602035971683,
+     "payload": 0.6899695248769029,
+     "routing": 0.37977650521798534
+    },
+    "remainder_alg_rel": 1.160696532419401e-06,
+    "remainder_native_rel": 0.004176196483489028,
+    "text_common_norm_ratio": 0.2251409501380204,
+    "text_common_projection_share": 0.054098434693997485,
+    "text_payload_share_of_payload": 0.25245799557625026,
+    "text_specific_projection_share": 0.9459016838685231,
+    "total_norm": 2036.8067378266057
+   },
+   "single": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999980736292905,
+    "norm_ratio": {
+     "interaction": 0.6547616136714974,
+     "payload": 0.9234090372065612,
+     "routing": 0.5006780220201704
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8569249814325232,
+     "pad": 0.40108066865912395,
+     "real": 0.0907368015491749,
+     "word": 0.08355362970044056
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7696272986489259,
+     "pad": 0.202043148121528,
+     "real": 0.01686127717560216,
+     "word": 0.011468273501401671
+    },
+    "projection_share": {
+     "interaction": 0.002332918723759185,
+     "payload": 0.8013216784403648,
+     "routing": 0.19634540377043888
+    },
+    "remainder_alg_rel": 7.309985843501176e-07,
+    "remainder_native_rel": 0.0026111672169813003,
+    "text_common_norm_ratio": 0.6410860797876092,
+    "text_common_projection_share": 0.1857569024970582,
+    "text_payload_share_of_payload": 0.1776827074822,
+    "text_specific_projection_share": 0.8142431083691435,
+    "total_norm": 48703.3322858919
+   },
+   "step0": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999975291765963,
+    "norm_ratio": {
+     "interaction": 0.6950182424010274,
+     "payload": 0.9613373958028222,
+     "routing": 0.47565490587386405
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.6959686905779183,
+     "pad": 0.5312312677122127,
+     "real": 0.14917503224422943,
+     "word": 0.1375748736654904
+    },
+    "payload_groups_projection_share": {
+     "img": 0.5502444028791763,
+     "pad": 0.3636634668578795,
+     "real": 0.05342957699171074,
+     "word": 0.03266258561098157
+    },
+    "projection_share": {
+     "interaction": -0.02256240667721373,
+     "payload": 0.8561066094701764,
+     "routing": 0.1664557191718568
+    },
+    "remainder_alg_rel": 8.946836375919801e-07,
+    "remainder_native_rel": 0.003090439140232495,
+    "text_common_norm_ratio": 0.742505560421052,
+    "text_common_projection_share": 0.24693409803630714,
+    "text_payload_share_of_payload": 0.3903765731610278,
+    "text_specific_projection_share": 0.7530658914122864,
+    "total_norm": 21286.270342626143
+   },
+   "step1": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999950156428357,
+    "norm_ratio": {
+     "interaction": 0.6559852979470265,
+     "payload": 0.9122133265242199,
+     "routing": 0.5147967323200855
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8718246244898458,
+     "pad": 0.4007001867083265,
+     "real": 0.08145580534494291,
+     "word": 0.08154732212905548
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7861777568152647,
+     "pad": 0.19328565643026785,
+     "real": 0.010806320809422069,
+     "word": 0.009730234624200487
+    },
+    "projection_share": {
+     "interaction": 0.011812739182409606,
+     "payload": 0.7833775310509158,
+     "routing": 0.20480978918029785
+    },
+    "remainder_alg_rel": 7.306515729675982e-07,
+    "remainder_native_rel": 0.0026339201785600817,
+    "text_common_norm_ratio": 0.5924298893746964,
+    "text_common_projection_share": 0.17842815543674892,
+    "text_payload_share_of_payload": 0.1567180757788809,
+    "text_specific_projection_share": 0.8215718942167947,
+    "total_norm": 29015.13996673224
+   },
+   "step2": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999998217019699,
+    "norm_ratio": {
+     "interaction": 0.6462685126808411,
+     "payload": 0.9156833652025107,
+     "routing": 0.5036114579060277
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.9076722760187431,
+     "pad": 0.3330355473938604,
+     "real": 0.05490253125244976,
+     "word": 0.04952792139159949
+    },
+    "payload_groups_projection_share": {
+     "img": 0.8514900894544518,
+     "pad": 0.13979022613300504,
+     "real": 0.004763541774514105,
+     "word": 0.003956129799431702
+    },
+    "projection_share": {
+     "interaction": 0.00973826727321146,
+     "payload": 0.788752674273648,
+     "routing": 0.2015090619093653
+    },
+    "remainder_alg_rel": 6.585977665924936e-07,
+    "remainder_native_rel": 0.0023790479816458306,
+    "text_common_norm_ratio": 0.5145291315355158,
+    "text_common_projection_share": 0.1073171464470041,
+    "text_payload_share_of_payload": 0.09960678883638321,
+    "text_specific_projection_share": 0.892682854511032,
+    "total_norm": 24583.02859443889
+   },
+   "step3": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.0000017693600574,
+    "norm_ratio": {
+     "interaction": 0.6231048000114043,
+     "payload": 0.9154584255443787,
+     "routing": 0.4961426091518914
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.9149676902026341,
+     "pad": 0.3109715489249251,
+     "real": 0.05544644921488144,
+     "word": 0.04537144935897665
+    },
+    "payload_groups_projection_share": {
+     "img": 0.8660818223132989,
+     "pad": 0.12599038976396473,
+     "real": 0.004679578519458975,
+     "word": 0.0032482333441723153
+    },
+    "projection_share": {
+     "interaction": -0.000760094507581762,
+     "payload": 0.7959054735667582,
+     "routing": 0.20485459054916838
+    },
+    "remainder_alg_rel": 6.457406809748686e-07,
+    "remainder_native_rel": 0.0023603709953028103,
+    "text_common_norm_ratio": 0.516666060160296,
+    "text_common_projection_share": 0.08591664429726868,
+    "text_payload_share_of_payload": 0.09534681322093144,
+    "text_specific_projection_share": 0.9140833439376973,
+    "total_norm": 21836.991783984995
+   }
+  },
+  "red": {
+   "alignment": {
+    "shift": 1,
+    "word": [
+     12
+    ],
+    "word_partner_rows": [
+     511
+    ]
+   },
+   "all": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.000000847976908,
+    "norm_ratio": {
+     "interaction": 1.2396215997476918,
+     "payload": 1.073852711044167,
+     "routing": 0.7885170875216402
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.7470318415274575,
+     "pad": 0.6278359061434661,
+     "real": 0.05718919650528606,
+     "word": 0.06259945199555893
+    },
+    "payload_groups_projection_share": {
+     "img": 0.5740030689805422,
+     "pad": 0.4130073795474219,
+     "real": 0.005106838553212745,
+     "word": 0.007882723735690845
+    },
+    "projection_share": {
+     "interaction": -0.01662046987160396,
+     "payload": 0.782126506559241,
+     "routing": 0.23449396544993972
+    },
+    "remainder_alg_rel": 1.3016825283012014e-06,
+    "remainder_native_rel": 0.005081999204863571,
+    "text_common_norm_ratio": 0.17559857904064477,
+    "text_common_projection_share": 0.010008457549190362,
+    "text_payload_share_of_payload": 0.14897696624261322,
+    "text_specific_projection_share": 0.9899915473686561,
+    "total_norm": 26373.63784317605
+   },
+   "deleted_observer_run_equals_root": true,
+   "joint": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.0000216643341733,
+    "norm_ratio": {
+     "interaction": 0.9441008476186072,
+     "payload": 0.8502188896039491,
+     "routing": 0.7805432901128214
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8126576740956237,
+     "pad": 0.47322746396552784,
+     "real": 0.29134244652812563,
+     "word": 0.11665750659990291
+    },
+    "payload_groups_projection_share": {
+     "img": 0.6647068554831401,
+     "pad": 0.2267151121814164,
+     "real": 0.09005451552033877,
+     "word": 0.018523512593447956
+    },
+    "projection_share": {
+     "interaction": 0.07985901747019604,
+     "payload": 0.5617509229137098,
+     "routing": 0.35839007539508305
+    },
+    "remainder_alg_rel": 2.3119330970217276e-06,
+    "remainder_native_rel": 0.009341860581243559,
+    "text_common_norm_ratio": 0.18565117101444462,
+    "text_common_projection_share": 0.005220252370642895,
+    "text_payload_share_of_payload": 0.14907155561484892,
+    "text_specific_projection_share": 0.994779751916032,
+    "total_norm": 943.7354412163467
+   },
+   "single": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.0000008212882856,
+    "norm_ratio": {
+     "interaction": 1.2399552755732508,
+     "payload": 1.0741095429464549,
+     "routing": 0.788527258854017
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.746976806255623,
+     "pad": 0.6279448024024641,
+     "real": 0.05661313015064006,
+     "word": 0.06253724589273874
+    },
+    "payload_groups_projection_share": {
+     "img": 0.5739302060447766,
+     "pad": 0.413157029325387,
+     "real": 0.005038599537302292,
+     "word": 0.00787417592148228
+    },
+    "projection_share": {
+     "interaction": -0.016744164797961335,
+     "payload": 0.782409046841544,
+     "routing": 0.23433512007650467
+    },
+    "remainder_alg_rel": 1.2998834373636958e-06,
+    "remainder_native_rel": 0.005074242793797095,
+    "text_common_norm_ratio": 0.17559187485614006,
+    "text_common_projection_share": 0.01001156193580174,
+    "text_payload_share_of_payload": 0.1489768791724871,
+    "text_specific_projection_share": 0.989988442982454,
+    "total_norm": 26356.747456770914
+   },
+   "step0": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.000018792173327,
+    "norm_ratio": {
+     "interaction": 1.8427924416630113,
+     "payload": 1.2812736169467627,
+     "routing": 1.08598762954276
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.581244093003648,
+     "pad": 0.774424895782427,
+     "real": 0.07738431809291814,
+     "word": 0.08176334203529707
+    },
+    "payload_groups_projection_share": {
+     "img": 0.3531450296009867,
+     "pad": 0.6185692593813819,
+     "real": 0.01083223584478991,
+     "word": 0.017453479667382595
+    },
+    "projection_share": {
+     "interaction": -0.07507717033013243,
+     "payload": 0.7939695373738945,
+     "routing": 0.281107685915755
+    },
+    "remainder_alg_rel": 1.9352489112396813e-06,
+    "remainder_native_rel": 0.007245051355169913,
+    "text_common_norm_ratio": 0.18918978152588858,
+    "text_common_projection_share": 0.012472827760012723,
+    "text_payload_share_of_payload": 0.2702499922823664,
+    "text_specific_projection_share": 0.9875271910403951,
+    "total_norm": 10052.480652920638
+   },
+   "step1": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999970049051331,
+    "norm_ratio": {
+     "interaction": 1.1841543569988724,
+     "payload": 1.0668799584031807,
+     "routing": 0.7548867778996585
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.7552477703422095,
+     "pad": 0.6150968074321692,
+     "real": 0.056093821245867204,
+     "word": 0.0739199483951621
+    },
+    "payload_groups_projection_share": {
+     "img": 0.5860466617676071,
+     "pad": 0.3993496720569628,
+     "real": 0.005275526402667908,
+     "word": 0.009328137776379593
+    },
+    "projection_share": {
+     "interaction": -0.02109765986918967,
+     "payload": 0.7888818369981866,
+     "routing": 0.23221583096274157
+    },
+    "remainder_alg_rel": 1.2610007508212785e-06,
+    "remainder_native_rel": 0.0049940062918316245,
+    "text_common_norm_ratio": 0.16311161372291863,
+    "text_common_projection_share": 0.010554528571501411,
+    "text_payload_share_of_payload": 0.1477152602612111,
+    "text_specific_projection_share": 0.9894454751632169,
+    "total_norm": 16027.16709400267
+   },
+   "step2": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999950484984379,
+    "norm_ratio": {
+     "interaction": 1.069491167985842,
+     "payload": 1.0198141655509323,
+     "routing": 0.7121484112609915
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8012446292561305,
+     "pad": 0.5676178790616095,
+     "real": 0.044314362636822396,
+     "word": 0.03907644126311151
+    },
+    "payload_groups_projection_share": {
+     "img": 0.6573553689268264,
+     "pad": 0.33822216733931215,
+     "real": 0.002174790212407231,
+     "word": 0.0022476926693387497
+    },
+    "projection_share": {
+     "interaction": 0.003754178250906393,
+     "payload": 0.7766136606199187,
+     "routing": 0.21963216378294803
+    },
+    "remainder_alg_rel": 1.097803880866751e-06,
+    "remainder_native_rel": 0.004355368093199588,
+    "text_common_norm_ratio": 0.16208855644610431,
+    "text_common_projection_share": 0.007852397179099762,
+    "text_payload_share_of_payload": 0.11428881486556183,
+    "text_specific_projection_share": 0.9921475745919712,
+    "total_norm": 13729.429508625775
+   },
+   "step3": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.0000026383380332,
+    "norm_ratio": {
+     "interaction": 1.0025066106678893,
+     "payload": 0.9954299456153748,
+     "routing": 0.6915167001636864
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8182215100853245,
+     "pad": 0.5387546568956033,
+     "real": 0.04689291067803741,
+     "word": 0.03046891955169383
+    },
+    "payload_groups_projection_share": {
+     "img": 0.6875246248073134,
+     "pad": 0.30848493400766086,
+     "real": 0.0022356711066344394,
+     "word": 0.0017548022901290761
+    },
+    "projection_share": {
+     "interaction": 0.004946402552262847,
+     "payload": 0.7694354975908921,
+     "routing": 0.22561805665438567
+    },
+    "remainder_alg_rel": 1.0501026335034595e-06,
+    "remainder_native_rel": 0.00423729913081246,
+    "text_common_norm_ratio": 0.1922067430239194,
+    "text_common_projection_share": 0.00579255278328776,
+    "text_payload_share_of_payload": 0.11066779218277963,
+    "text_specific_projection_share": 0.9942074707493458,
+    "total_norm": 12212.660894099115
+   }
+  },
+  "snow": {
+   "alignment": {
+    "shift": 1,
+    "word": [
+     16
+    ],
+    "word_partner_rows": [
+     511
+    ]
+   },
+   "all": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999960643739998,
+    "norm_ratio": {
+     "interaction": 0.680516149521768,
+     "payload": 0.9319679248475453,
+     "routing": 0.5336037918446495
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8736468227012755,
+     "pad": 0.3748313531931823,
+     "real": 0.06019676238076538,
+     "word": 0.13231434266198855
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7937709343186985,
+     "pad": 0.17534508189549042,
+     "real": 0.007313738518381731,
+     "word": 0.02357024546001636
+    },
+    "projection_share": {
+     "interaction": -0.025112589966961283,
+     "payload": 0.7996585912297972,
+     "routing": 0.225454003428853
+    },
+    "remainder_alg_rel": 7.375402550762129e-07,
+    "remainder_native_rel": 0.002436508484557657,
+    "text_common_norm_ratio": 0.36691441224630295,
+    "text_common_projection_share": 0.059473937201588355,
+    "text_payload_share_of_payload": 0.14048684525935212,
+    "text_specific_projection_share": 0.9405260753525346,
+    "total_norm": 55287.7335903465
+   },
+   "deleted_observer_run_equals_root": true,
+   "joint": {
+    "native_diff_vs_fp32_total_norm_ratio": 1.0000034627327314,
+    "norm_ratio": {
+     "interaction": 0.6692824107283337,
+     "payload": 0.8862046657341263,
+     "routing": 0.6876040048818854
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8346604545824409,
+     "pad": 0.18544477693316191,
+     "real": 0.10802277088362827,
+     "word": 0.46068512618920676
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7053169386813221,
+     "pad": 0.05042403571877701,
+     "real": 0.02086068667054361,
+     "word": 0.22339834388163135
+    },
+    "projection_share": {
+     "interaction": -0.1418600214643373,
+     "payload": 0.7057281524533678,
+     "routing": 0.4361318731830322
+    },
+    "remainder_alg_rel": 1.1092493189633527e-06,
+    "remainder_native_rel": 0.003654210985221281,
+    "text_common_norm_ratio": 0.11798666826234203,
+    "text_common_projection_share": 0.017102676838982655,
+    "text_payload_share_of_payload": 0.2362381316964932,
+    "text_specific_projection_share": 0.9828973619385559,
+    "total_norm": 2439.889353460297
+   },
+   "single": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999960499373537,
+    "norm_ratio": {
+     "interaction": 0.6805378889053857,
+     "payload": 0.9320550272451058,
+     "routing": 0.5332598133411067
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8737140600269967,
+     "pad": 0.3750809592386081,
+     "real": 0.06007876358741882,
+     "word": 0.1310098479399959
+    },
+    "payload_groups_projection_share": {
+     "img": 0.7939269728041248,
+     "pad": 0.17556545058209225,
+     "real": 0.007289840838502138,
+     "word": 0.023217735959471367
+    },
+    "projection_share": {
+     "interaction": -0.024884777940435147,
+     "payload": 0.7998418799183422,
+     "routing": 0.22504290271479585
+    },
+    "remainder_alg_rel": 7.366315943357927e-07,
+    "remainder_native_rel": 0.0024335367767171403,
+    "text_common_norm_ratio": 0.36738695039212427,
+    "text_common_projection_share": 0.05959573968258887,
+    "text_payload_share_of_payload": 0.14032198832008871,
+    "text_specific_projection_share": 0.940404272796151,
+    "total_norm": 55233.870274497334
+   },
+   "step0": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999984334668257,
+    "norm_ratio": {
+     "interaction": 0.8307694443781606,
+     "payload": 0.9472184378698566,
+     "routing": 0.6014621500811556
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.799525944048828,
+     "pad": 0.46830328989086856,
+     "real": 0.08132848966618986,
+     "word": 0.18557952059103422
+    },
+    "payload_groups_projection_share": {
+     "img": 0.6752415038949141,
+     "pad": 0.26562577694282075,
+     "real": 0.01375381069161619,
+     "word": 0.045378907339095775
+    },
+    "projection_share": {
+     "interaction": -0.03560520114311449,
+     "payload": 0.7792790549228479,
+     "routing": 0.2563261750280329
+    },
+    "remainder_alg_rel": 8.667386276693733e-07,
+    "remainder_native_rel": 0.002795904915179783,
+    "text_common_norm_ratio": 0.39553461451566174,
+    "text_common_projection_share": 0.08421061253263125,
+    "text_payload_share_of_payload": 0.21467718266648397,
+    "text_specific_projection_share": 0.9157894012860687,
+    "total_norm": 26183.806574614326
+   },
+   "step1": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999940888702337,
+    "norm_ratio": {
+     "interaction": 0.6485246231515307,
+     "payload": 0.9260246033306408,
+     "routing": 0.5186262421960071
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.88432823971325,
+     "pad": 0.36377975781065797,
+     "real": 0.05461669345977128,
+     "word": 0.11902832924770959
+    },
+    "payload_groups_projection_share": {
+     "img": 0.8100970066019482,
+     "pad": 0.1640040790595076,
+     "real": 0.006628224325146791,
+     "word": 0.019270660556101153
+    },
+    "projection_share": {
+     "interaction": -0.013704569705157193,
+     "payload": 0.7956026947256613,
+     "routing": 0.21810188014466828
+    },
+    "remainder_alg_rel": 7.255869612897786e-07,
+    "remainder_native_rel": 0.002429060269197319,
+    "text_common_norm_ratio": 0.3390080597916566,
+    "text_common_projection_share": 0.04620047987410679,
+    "text_payload_share_of_payload": 0.13172272670368584,
+    "text_specific_projection_share": 0.9537995450451383,
+    "total_norm": 33326.40326823276
+   },
+   "step2": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.9999948528160517,
+    "norm_ratio": {
+     "interaction": 0.6199475894495301,
+     "payload": 0.9289833772999817,
+     "routing": 0.5089031160568732
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.8987810478109457,
+     "pad": 0.33090950244236167,
+     "real": 0.05195700029898428,
+     "word": 0.1052898957403192
+    },
+    "payload_groups_projection_share": {
+     "img": 0.8381764078524353,
+     "pad": 0.14173876676945985,
+     "real": 0.004650187658760492,
+     "word": 0.015434681234707679
+    },
+    "projection_share": {
+     "interaction": -0.027866391227188828,
+     "payload": 0.8115446545494271,
+     "routing": 0.21632172181583506
+    },
+    "remainder_alg_rel": 6.755805186863108e-07,
+    "remainder_native_rel": 0.00223262839964807,
+    "text_common_norm_ratio": 0.35966621436131685,
+    "text_common_projection_share": 0.04568605056312331,
+    "text_payload_share_of_payload": 0.11508379254660266,
+    "text_specific_projection_share": 0.9543139378188393,
+    "total_norm": 26795.795998538884
+   },
+   "step3": {
+    "native_diff_vs_fp32_total_norm_ratio": 0.999998718437804,
+    "norm_ratio": {
+     "interaction": 0.6061563017798443,
+     "payload": 0.9286036378405935,
+     "routing": 0.5037245950008665
+    },
+    "payload_groups_norm_ratio": {
+     "img": 0.9105474666654773,
+     "pad": 0.3074827343663417,
+     "real": 0.04711149156822961,
+     "word": 0.10269140521934061
+    },
+    "payload_groups_projection_share": {
+     "img": 0.8575737508772756,
+     "pad": 0.12423420866532936,
+     "real": 0.003769123195493452,
+     "word": 0.014422922174862454
+    },
+    "projection_share": {
+     "interaction": -0.03156334265871006,
+     "payload": 0.8179862523942889,
+     "routing": 0.2135770893892957
+    },
+    "remainder_alg_rel": 6.585662983046915e-07,
+    "remainder_native_rel": 0.002212267880008299,
+    "text_common_norm_ratio": 0.35626484615591036,
+    "text_common_projection_share": 0.03649705311714148,
+    "text_payload_share_of_payload": 0.10197145422960295,
+    "text_specific_projection_share": 0.9635029564053427,
+    "total_norm": 23291.155420633924
+   }
+  }
+ }
+}

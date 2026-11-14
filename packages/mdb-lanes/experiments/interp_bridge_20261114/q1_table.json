@@ -1,0 +1,729 @@
+{
+ "capture_compare": {
+  "s0.b10.h13": {
+   "dispatch_kwargs": [
+    "attn_mask",
+    "backend",
+    "parallel_config"
+   ],
+   "dispatch_positional_args": 3,
+   "k": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "kernel_vs_fp32_pv": {
+    "bitwise_equal": false,
+    "max_abs": 0.004662156105041504,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "out": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "p": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     768
+    ]
+   },
+   "q": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "scale": [
+    0.08838834764831845,
+    0.08838834764831845
+   ],
+   "v": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   }
+  },
+  "s0.b2.h7": {
+   "dispatch_kwargs": [
+    "attn_mask",
+    "backend",
+    "parallel_config"
+   ],
+   "dispatch_positional_args": 3,
+   "k": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "kernel_vs_fp32_pv": {
+    "bitwise_equal": false,
+    "max_abs": 0.06685829162597656,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "out": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "p": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     768
+    ]
+   },
+   "q": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "scale": [
+    0.08838834764831845,
+    0.08838834764831845
+   ],
+   "v": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   }
+  },
+  "s0.b20.h21": {
+   "dispatch_kwargs": [
+    "attn_mask",
+    "backend",
+    "parallel_config"
+   ],
+   "dispatch_positional_args": 3,
+   "k": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "kernel_vs_fp32_pv": {
+    "bitwise_equal": false,
+    "max_abs": 0.0085601806640625,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "out": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "p": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     768
+    ]
+   },
+   "q": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "scale": [
+    0.08838834764831845,
+    0.08838834764831845
+   ],
+   "v": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   }
+  },
+  "s2.b10.h13": {
+   "dispatch_kwargs": [
+    "attn_mask",
+    "backend",
+    "parallel_config"
+   ],
+   "dispatch_positional_args": 3,
+   "k": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "kernel_vs_fp32_pv": {
+    "bitwise_equal": false,
+    "max_abs": 0.007189035415649414,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "out": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "p": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     768
+    ]
+   },
+   "q": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "scale": [
+    0.08838834764831845,
+    0.08838834764831845
+   ],
+   "v": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   }
+  },
+  "s2.b2.h7": {
+   "dispatch_kwargs": [
+    "attn_mask",
+    "backend",
+    "parallel_config"
+   ],
+   "dispatch_positional_args": 3,
+   "k": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "kernel_vs_fp32_pv": {
+    "bitwise_equal": false,
+    "max_abs": 0.06887245178222656,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "out": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "p": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     768
+    ]
+   },
+   "q": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "scale": [
+    0.08838834764831845,
+    0.08838834764831845
+   ],
+   "v": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   }
+  },
+  "s2.b20.h21": {
+   "dispatch_kwargs": [
+    "attn_mask",
+    "backend",
+    "parallel_config"
+   ],
+   "dispatch_positional_args": 3,
+   "k": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "kernel_vs_fp32_pv": {
+    "bitwise_equal": false,
+    "max_abs": 0.005008220672607422,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "out": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "p": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     768
+    ]
+   },
+   "q": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   },
+   "scale": [
+    0.08838834764831845,
+    0.08838834764831845
+   ],
+   "v": {
+    "bitwise_equal": true,
+    "max_abs": 0.0,
+    "shape": [
+     768,
+     128
+    ]
+   }
+  }
+ },
+ "cut_mask": {
+  "latent_equal_port": true,
+  "port_vs_native": {
+   "latent_equal": false,
+   "latent_rel": 0.049888014793395996,
+   "px_mad": 0.0033139893785119057,
+   "px_max": 0.2888889014720917,
+   "rgb_equal": false
+  },
+  "rgb_equal_port": true,
+  "vs_port": {
+   "latent_equal": true,
+   "latent_rel": 0.0,
+   "px_mad": 0.0,
+   "px_max": 0.0,
+   "rgb_equal": true
+  }
+ },
+ "cut_zero": {
+  "latent_equal_port": true,
+  "port_vs_native": {
+   "latent_equal": false,
+   "latent_rel": 0.05359283462166786,
+   "px_mad": 0.003211167175322771,
+   "px_max": 0.2993464171886444,
+   "rgb_equal": false
+  },
+  "rgb_equal_port": true,
+  "vs_port": {
+   "latent_equal": true,
+   "latent_rel": 0.0,
+   "px_mad": 0.0,
+   "px_max": 0.0,
+   "rgb_equal": true
+  }
+ },
+ "errors": null,
+ "extras": {
+  "assignment_ops_attn_output": [
+   "attn_output_0"
+  ],
+  "identities": {
+   "joint_to_add_out_in == dispatch_out[text rows].flatten": true,
+   "joint_to_out_in == dispatch_out[image rows].flatten": true,
+   "single_to_out_in[:, :, :inner] == dispatch_out.flatten": true
+  },
+  "joint_block": 2,
+  "joint_source_ops": [
+   "joint_attention_kwargs_0",
+   "Flux2Modulation_split_0",
+   "Flux2Modulation_split_1",
+   "self_norm1_0",
+   "norm_hidden_states_0",
+   "norm_hidden_states_1",
+   "self_norm1_context_0",
+   "norm_encoder_hidden_states_0",
+   "norm_encoder_hidden_states_1",
+   "self_attn_0",
+   "attention_outputs_0",
+   "attn_output_0",
+   "hidden_states_0",
+   "self_norm2_0",
+   "norm_hidden_states_2",
+   "norm_hidden_states_3",
+   "self_ff_0",
+   "ff_output_0",
+   "hidden_states_1",
+   "context_attn_output_0",
+   "encoder_hidden_states_0",
+   "self_norm2_context_0",
+   "norm_encoder_hidden_states_2",
+   "norm_encoder_hidden_states_3",
+   "self_ff_context_0",
+   "context_ff_output_0",
+   "encoder_hidden_states_1",
+   "encoder_hidden_states_clip_0",
+   "encoder_hidden_states_2"
+  ],
+  "latent_sha256": "a3cef09bc04a61f4ba68adfb861de0c825349ea6a3cea3c71505772ee8cee605",
+  "shapes": {
+   "joint_dispatch_out": [
+    1,
+    768,
+    24,
+    128
+   ],
+   "joint_ff_linear_in_out": [
+    1,
+    256,
+    18432
+   ],
+   "joint_gate_msa": [
+    1,
+    1,
+    3072
+   ],
+   "joint_to_add_out_in": [
+    1,
+    512,
+    3072
+   ],
+   "joint_to_out_in": [
+    1,
+    256,
+    3072
+   ],
+   "single_dispatch_out": [
+    1,
+    768,
+    24,
+    128
+   ],
+   "single_mlp_act_in": [
+    1,
+    768,
+    18432
+   ],
+   "single_to_out_in": [
+    1,
+    768,
+    12288
+   ]
+  },
+  "single_block": 10,
+  "single_source_ops": [
+   "text_seq_len_0",
+   "torch_cat_0",
+   "hidden_states_0",
+   "Flux2Modulation_split_0",
+   "self_norm_0",
+   "norm_hidden_states_0",
+   "norm_hidden_states_1",
+   "joint_attention_kwargs_0",
+   "self_attn_0",
+   "attn_output_0",
+   "hidden_states_1",
+   "hidden_states_clip_0",
+   "hidden_states_2",
+   "encoder_hidden_states_0",
+   "hidden_states_3"
+  ],
+  "split_op": "Flux2Modulation_split_0"
+ },
+ "grad_check": {
+  "block": 10,
+  "note": "probe gradient came from the checkpointed step-level backward (bridge.backward_trajectory)",
+  "peak_mb": 9494.912109375,
+  "seconds": 0.08092798199504614,
+  "step": 3,
+  "vs_probe": {
+   "bitwise_equal": false,
+   "max_abs": 2.2649765014648438e-06,
+   "shape": [
+    1,
+    768,
+    24,
+    128
+   ]
+  },
+  "word": "red"
+ },
+ "job": "job-8fd7bb3b1604",
+ "native_after_traces_equal": true,
+ "peak_vram_allocated_mb": 9494.912109375,
+ "port_zero_after_wrap_equal": true,
+ "roots": {
+  "root:del:ball": {
+   "equal": true,
+   "sha": "5ae513b07654816e"
+  },
+  "root:del:red": {
+   "equal": true,
+   "sha": "c1f45449277b655d"
+  },
+  "root:iso:ball": {
+   "equal": true,
+   "sha": "6c0076c6ed240204"
+  },
+  "root:iso:red": {
+   "equal": true,
+   "sha": "7bae8fef22723c01"
+  },
+  "root:native": {
+   "equal": true,
+   "sha": "a3cef09bc04a61f4"
+  }
+ },
+ "software": {
+  "adapter_execution_sha256": "fd7748ca237a77c7e494391dd810bc590c22d05861ae5200e428b2b0cbd147b7",
+  "bridge_sha256": "dd9de615f8e6ac225db2826b4cd77f1479d97a7f42410f660b8efa6423842c63",
+  "cuda": "13.0",
+  "cudnn": 92000,
+  "device": "NVIDIA GeForce RTX 4080",
+  "diffusers": "0.39.0",
+  "host": "pop-os",
+  "mdb.attention_panels_sha256": "66f50720bbcc614d338db20066872f140a68a468970be130b70d53ef9edb227c",
+  "mdb.attention_port_sha256": "e315da2a0cc1f8fa2925b5f172807e5db417fb01bc2132d79bcc43e929745c87",
+  "mdb.flux_read_panels_sha256": "4f39e9de36291f95b453ba8212d95faa7dcc10de0dfe41800882f3942b3b8940",
+  "nnsight": "0.8.2",
+  "numpy": "2.5.4",
+  "pillow": "13.0.0",
+  "python": "3.14.6",
+  "saturn_pub": "0.4.1",
+  "tf32": false,
+  "torch": "2.13.0+cu130",
+  "transformers": "5.14.1",
+  "worker_sha256": "9ed812164b6fae73546be6d12b760d3e83ab4bb35bcb9177f26030e0a67142e9"
+ },
+ "timing": {
+  "native_no_port": {
+   "equal_native": [
+    true,
+    true,
+    true
+   ],
+   "peak_mb": [
+    7730,
+    7730,
+    7730
+   ],
+   "seconds": [
+    0.3324,
+    0.333,
+    0.3328
+   ]
+  },
+  "nnsight_capture": {
+   "equal_native": [
+    true,
+    true,
+    true
+   ],
+   "peak_mb": [
+    7760,
+    7760,
+    7760
+   ],
+   "seconds": [
+    0.356,
+    0.3377,
+    0.3366
+   ]
+  },
+  "nnsight_mask": {
+   "equal_native": [
+    null,
+    null,
+    null
+   ],
+   "peak_mb": [
+    7760,
+    7760,
+    7760
+   ],
+   "seconds": [
+    0.3378,
+    0.3374,
+    0.3377
+   ]
+  },
+  "nnsight_noop_trace": {
+   "equal_native": [
+    true,
+    true,
+    true
+   ],
+   "peak_mb": [
+    7739,
+    7739,
+    7739
+   ],
+   "seconds": [
+    0.3353,
+    0.3348,
+    0.3347
+   ]
+  },
+  "nnsight_wrapped_no_trace": {
+   "equal_native": [
+    true,
+    true,
+    true
+   ],
+   "peak_mb": [
+    7739,
+    7739,
+    7739
+   ],
+   "seconds": [
+    0.3351,
+    0.3344,
+    0.334
+   ]
+  },
+  "nnsight_zero": {
+   "equal_native": [
+    null,
+    null,
+    null
+   ],
+   "peak_mb": [
+    7760,
+    7760,
+    7760
+   ],
+   "seconds": [
+    0.3399,
+    0.338,
+    0.3381
+   ]
+  },
+  "port_capture": {
+   "equal_native": [
+    true,
+    true,
+    true
+   ],
+   "peak_mb": [
+    7773,
+    7773,
+    7773
+   ],
+   "seconds": [
+    0.3606,
+    0.3418,
+    0.341
+   ]
+  },
+  "port_mask": {
+   "equal_native": [
+    null,
+    null,
+    null
+   ],
+   "peak_mb": [
+    7730,
+    7730,
+    7730
+   ],
+   "seconds": [
+    0.3356,
+    0.3357,
+    0.3353
+   ]
+  },
+  "port_zero": {
+   "equal_native": [
+    null,
+    null,
+    null
+   ],
+   "peak_mb": [
+    7730,
+    7730,
+    7730
+   ],
+   "seconds": [
+    0.3549,
+    0.3356,
+    0.3352
+   ]
+  }
+ },
+ "worker_seconds": 37.79542433698953,
+ "wrap_seconds": 0.002409484004601836
+}

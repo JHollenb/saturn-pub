@@ -1,0 +1,125 @@
+[
+ {
+  "arm": "z:own60:ball",
+  "context": "4242",
+  "forward_count": 4,
+  "hashes": {
+   "conditioning_sha256": {
+    "equal": true,
+    "expected": "a1f5bf061ac9e1894336957bcc9c5d3be14ad0c46aee62e04bb4b5aae7bb2980",
+    "observed": "a1f5bf061ac9e1894336957bcc9c5d3be14ad0c46aee62e04bb4b5aae7bb2980"
+   },
+   "image_rgb_sha256": {
+    "equal": true,
+    "expected": "3f0340165705778d1c1e824adfd300f6290b1393e66a9b991a4dd233413ec042",
+    "observed": "3f0340165705778d1c1e824adfd300f6290b1393e66a9b991a4dd233413ec042"
+   },
+   "init_latent_sha256": {
+    "equal": true,
+    "expected": "047d9512b95888b6a777f82f6ddafb886b63ae925414b07582319e3cd3a90db3",
+    "observed": "047d9512b95888b6a777f82f6ddafb886b63ae925414b07582319e3cd3a90db3"
+   },
+   "latent_sha256": {
+    "equal": true,
+    "expected": "2fb042ad10862f84f11bc0d7b6d8395dedb8ee8ece2edc3b405c24b4877f1c21",
+    "observed": "2fb042ad10862f84f11bc0d7b6d8395dedb8ee8ece2edc3b405c24b4877f1c21"
+   },
+   "png_sha256": {
+    "equal": true,
+    "expected": "8ff53aeb7ce5f2b1cdeff69f11f3ce7fc1e98ef65e4c765870161bbad75985ef",
+    "observed": "8ff53aeb7ce5f2b1cdeff69f11f3ce7fc1e98ef65e4c765870161bbad75985ef"
+   }
+  },
+  "lane_drift": {},
+  "match": true,
+  "pass_tag": "smoke-legacy",
+  "port_calls": 100,
+  "port_cuts_equal": true,
+  "precision": "legacy",
+  "recipe": "693f20dd7b7ddb741a996a22c5a76ef0c9a6201427e0d37d00c8d3507d578777",
+  "same_lane": true,
+  "seconds": 0.4898370639999712
+ },
+ {
+  "arm": "m:own60:red",
+  "context": "4242",
+  "forward_count": 4,
+  "hashes": {
+   "conditioning_sha256": {
+    "equal": true,
+    "expected": "2232a2a3e3dfa12e0051c98eb89962abc7d8e33d11d3fed778422b1fed519e7f",
+    "observed": "2232a2a3e3dfa12e0051c98eb89962abc7d8e33d11d3fed778422b1fed519e7f"
+   },
+   "image_rgb_sha256": {
+    "equal": true,
+    "expected": "81f8746424eb23b51334db696aa01d2437b4e5fbbd208fd71c82d7a137ae310f",
+    "observed": "81f8746424eb23b51334db696aa01d2437b4e5fbbd208fd71c82d7a137ae310f"
+   },
+   "init_latent_sha256": {
+    "equal": true,
+    "expected": "047d9512b95888b6a777f82f6ddafb886b63ae925414b07582319e3cd3a90db3",
+    "observed": "047d9512b95888b6a777f82f6ddafb886b63ae925414b07582319e3cd3a90db3"
+   },
+   "latent_sha256": {
+    "equal": true,
+    "expected": "be12bb05726d50aad4ef0507c682e9f70d0015ffd6d557ca570f798093b68a44",
+    "observed": "be12bb05726d50aad4ef0507c682e9f70d0015ffd6d557ca570f798093b68a44"
+   },
+   "png_sha256": {
+    "equal": true,
+    "expected": "8227820039bad3fbd9bc6eaa84c24b6e56ecb86d05c6ed231500105dad98cea0",
+    "observed": "8227820039bad3fbd9bc6eaa84c24b6e56ecb86d05c6ed231500105dad98cea0"
+   }
+  },
+  "lane_drift": {},
+  "match": true,
+  "pass_tag": "full-00",
+  "port_calls": 100,
+  "port_cuts_equal": true,
+  "precision": "native",
+  "recipe": "b7b5577f1441a6c6745e2163ce50982c202b28cb34b532919bdf4c6879c7bb25",
+  "same_lane": true,
+  "seconds": 0.40697698699995044
+ },
+ {
+  "arm": "z:keep-own60:red",
+  "context": "4242",
+  "forward_count": 4,
+  "hashes": {
+   "conditioning_sha256": {
+    "equal": true,
+    "expected": "2232a2a3e3dfa12e0051c98eb89962abc7d8e33d11d3fed778422b1fed519e7f",
+    "observed": "2232a2a3e3dfa12e0051c98eb89962abc7d8e33d11d3fed778422b1fed519e7f"
+   },
+   "image_rgb_sha256": {
+    "equal": true,
+    "expected": "4cfc9db18d9dc9a7a6946a715ae8e6ae3ea79d56dc399fe306868bec0124d006",
+    "observed": "4cfc9db18d9dc9a7a6946a715ae8e6ae3ea79d56dc399fe306868bec0124d006"
+   },
+   "init_latent_sha256": {
+    "equal": true,
+    "expected": "047d9512b95888b6a777f82f6ddafb886b63ae925414b07582319e3cd3a90db3",
+    "observed": "047d9512b95888b6a777f82f6ddafb886b63ae925414b07582319e3cd3a90db3"
+   },
+   "latent_sha256": {
+    "equal": true,
+    "expected": "1e126c0bafc9729a3fe6b5935dee707b9d99a03da2487899d95fe6660582ac4c",
+    "observed": "1e126c0bafc9729a3fe6b5935dee707b9d99a03da2487899d95fe6660582ac4c"
+   },
+   "png_sha256": {
+    "equal": true,
+    "expected": "7a5d2d623f1755eb1383efcf75ac8013957bc191d3ce34a62b530ed9a6d55476",
+    "observed": "7a5d2d623f1755eb1383efcf75ac8013957bc191d3ce34a62b530ed9a6d55476"
+   }
+  },
+  "lane_drift": {},
+  "match": true,
+  "pass_tag": "full-00",
+  "port_calls": 100,
+  "port_cuts_equal": true,
+  "precision": "native",
+  "recipe": "3c5eba477ec1182c2a123b2fdcba26e90180046371b07ee4d27cb5420145c581",
+  "same_lane": true,
+  "seconds": 0.5684618170000135
+ }
+]

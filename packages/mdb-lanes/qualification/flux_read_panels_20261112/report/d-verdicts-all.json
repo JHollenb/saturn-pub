@@ -4745,9 +4745,34 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.1185762882232666,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-modI:black",
+        "control_effect": 0.0453266017138958,
+        "floor": 0.0020683337934315205,
+        "kind": "random",
+        "margin": 0.025385478511452675,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:keep-modI@rows-ball:black",
+        "control_effect": 0.06219540163874626,
+        "floor": 0.002341934945434332,
+        "kind": "other_item",
+        "margin": 0.04225427843630314,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.019941123202443123,
+      "floor": 0.001601015916094184,
+      "floor_parts": {
+       "sham": 0.001601015916094184
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [],
@@ -4755,7 +4780,7 @@
      "m:keep-rand0-modI:black",
      "m:keep-modI@rows-ball:black"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:keep-modI:black",
@@ -4793,9 +4818,36 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.11688604205846786,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:keep-rand0-modI:black",
+        "control_effect": 0.051507968455553055,
+        "floor": 0.004523562733083963,
+        "kind": "random",
+        "margin": 0.030589044094085693,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:keep-modI@rows-ball:black",
+        "control_effect": 0.058874987065792084,
+        "floor": 0.0029111376497894526,
+        "kind": "other_item",
+        "margin": 0.03795606270432472,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.02091892436146736,
+      "floor": 0.0022409274242818356,
+      "floor_parts": {
+       "sham_recompute": 0.001601015916094184,
+       "twin_gap": 0.0022409274242818356,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [],
@@ -4803,7 +4855,7 @@
      "z:keep-rand0-modI:black",
      "z:keep-modI@rows-ball:black"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -4839,8 +4891,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "keep-modI",
   "waivers": {},
   "why": "both cut types agree"
@@ -4883,9 +4935,35 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.1185762882232666,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:keep-rand0-nounI:black",
+        "control_effect": 0.026766767725348473,
+        "floor": 0.00273064523935318,
+        "kind": "random",
+        "margin": -0.034166986122727394,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:keep-nounI@rows-ball:black",
+        "control_effect": 0.0372665673494339,
+        "floor": 0.002373030874878168,
+        "kind": "other_item",
+        "margin": -0.023667186498641968,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.06093375384807587,
+      "floor": 0.002373030874878168,
+      "floor_parts": {
+       "sham": 0.002373030874878168
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -4893,7 +4971,7 @@
      "m:keep-rand0-nounI:black",
      "m:keep-nounI@rows-ball:black"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:keep-nounI:black",
@@ -4932,9 +5010,37 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.11688604205846786,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:keep-rand0-nounI:black",
+        "control_effect": 0.02972605638206005,
+        "floor": 0.00273064523935318,
+        "kind": "random",
+        "margin": -0.05383262224495411,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:keep-nounI@rows-ball:black",
+        "control_effect": 0.05419323593378067,
+        "floor": 0.0026161742862313986,
+        "kind": "other_item",
+        "margin": -0.02936544269323349,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.08355867862701416,
+      "floor": 0.0026161742862313986,
+      "floor_parts": {
+       "sham_recompute": 0.002373030874878168,
+       "twin_gap": 0.0026161742862313986,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -4942,7 +5048,7 @@
      "z:keep-rand0-nounI:black",
      "z:keep-nounI@rows-ball:black"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -4978,8 +5084,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "keep-nounI",
   "waivers": {},
   "why": "both cut types agree"
@@ -5022,8 +5128,32 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-own60:ball",
+        "control_effect": 0.011594106443226337,
+        "floor": 0.0019741281867027283,
+        "kind": "random",
+        "margin": 0.024813703261315823,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:own60@rows-snow:ball",
+        "control_effect": 0.025673620402812958,
+        "floor": 0.002051160205155611,
+        "kind": "other_item",
+        "margin": 0.010734189301729202,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.03640780970454216,
+      "floor": 0.0019741281867027283,
+      "floor_parts": {
+       "sham": 0.0019741281867027283
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -5032,7 +5162,7 @@
     "separating_controls": [
      "m:own60@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:own60:ball",
@@ -5071,8 +5201,34 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-own60:ball",
+        "control_effect": 0.009892462752759457,
+        "floor": 0.0019741281867027283,
+        "kind": "random",
+        "margin": 0.031131000258028507,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:own60@rows-snow:ball",
+        "control_effect": 0.02203303389251232,
+        "floor": 0.0023097617086023092,
+        "kind": "other_item",
+        "margin": 0.018990429118275642,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.041023463010787964,
+      "floor": 0.0019741281867027283,
+      "floor_parts": {
+       "sham_recompute": 0.0019741281867027283,
+       "twin_gap": 0.0019237843807786703,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -5081,7 +5237,7 @@
     "separating_controls": [
      "z:own60@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -5121,8 +5277,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "own60",
   "waivers": {},
   "why": "both cut types agree"
@@ -5174,8 +5330,42 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand120:ball",
+        "control_effect": 0.01719890907406807,
+        "floor": 0.0027133917901664972,
+        "kind": "external",
+        "margin": 0.01920178160071373,
+        "separates_identity": null
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-own120:ball",
+        "control_effect": 0.017443088814616203,
+        "floor": 0.0023775985464453697,
+        "kind": "random",
+        "margin": 0.018957601860165596,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:own120@rows-snow:ball",
+        "control_effect": 0.038800567388534546,
+        "floor": 0.0028141795191913843,
+        "kind": "other_item",
+        "margin": -0.0023998767137527466,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.0364006906747818,
+      "floor": 0.0023775985464453697,
+      "floor_parts": {
+       "sham": 0.0023775985464453697
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -5185,7 +5375,7 @@
     "separating_controls": [
      "m:own120@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:own120:ball",
@@ -5233,8 +5423,43 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand120:ball",
+        "control_effect": 0.016911126673221588,
+        "floor": 0.0027133917901664972,
+        "kind": "external",
+        "margin": 0.026273898780345917,
+        "separates_identity": null
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-own120:ball",
+        "control_effect": 0.015045585110783577,
+        "floor": 0.0023775985464453697,
+        "kind": "random",
+        "margin": 0.028139440342783928,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:own120@rows-snow:ball",
+        "control_effect": 0.02846284583210945,
+        "floor": 0.0028141795191913843,
+        "kind": "other_item",
+        "margin": 0.014722179621458054,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.043185025453567505,
+      "floor": 0.0023775985464453697,
+      "floor_parts": {
+       "sham_recompute": 0.0023775985464453697,
+       "twin_gap": 0.001974307931959629,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -5244,7 +5469,7 @@
     "separating_controls": [
      "z:own120@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -5284,8 +5509,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "own120",
   "waivers": {},
   "why": "both cut types agree"
@@ -5337,8 +5562,42 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:rand240:ball",
+        "control_effect": 0.03805442526936531,
+        "floor": 0.0025844997726380825,
+        "kind": "external",
+        "margin": 0.00131293386220932,
+        "separates_identity": null
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-own240:ball",
+        "control_effect": 0.022438757121562958,
+        "floor": 0.0025844997726380825,
+        "kind": "random",
+        "margin": 0.016928602010011673,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:own240@rows-snow:ball",
+        "control_effect": 0.05083915591239929,
+        "floor": 0.002811347134411335,
+        "kind": "other_item",
+        "margin": -0.011471796780824661,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.03936735913157463,
+      "floor": 0.0025844997726380825,
+      "floor_parts": {
+       "sham": 0.0025844997726380825
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -5348,7 +5607,7 @@
     "separating_controls": [
      "m:own240@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:own240:ball",
@@ -5396,8 +5655,44 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand240:ball",
+        "control_effect": 0.03899871185421944,
+        "floor": 0.0025844997726380825,
+        "kind": "external",
+        "margin": 0.008207514882087708,
+        "separates_identity": null
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-own240:ball",
+        "control_effect": 0.01921396702528,
+        "floor": 0.0025844997726380825,
+        "kind": "random",
+        "margin": 0.027992259711027145,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:own240@rows-snow:ball",
+        "control_effect": 0.06389519572257996,
+        "floor": 0.006436017341911793,
+        "kind": "other_item",
+        "margin": -0.016688968986272812,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.047206226736307144,
+      "floor": 0.0025844997726380825,
+      "floor_parts": {
+       "sham_recompute": 0.0025844997726380825,
+       "twin_gap": 0.002073978539556265,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -5407,7 +5702,7 @@
     "separating_controls": [
      "z:own240@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -5447,8 +5742,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "own240",
   "waivers": {},
   "why": "both cut types agree"
@@ -5491,8 +5786,33 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:rand0-mod:ball",
+        "control_effect": 0.04189431294798851,
+        "floor": 0.0019712960347533226,
+        "kind": "random",
+        "margin": -0.023902785032987595,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:mod@rows-snow:ball",
+        "control_effect": 0.07034377753734589,
+        "floor": 0.00254787877202034,
+        "kind": "other_item",
+        "margin": -0.05235224962234497,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.017991527915000916,
+      "floor": 0.0018664989620447159,
+      "floor_parts": {
+       "sham": 0.0018664989620447159
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -5501,7 +5821,7 @@
     "separating_controls": [
      "m:mod@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:mod:ball",
@@ -5540,8 +5860,35 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:rand0-mod:ball",
+        "control_effect": 0.0371384359896183,
+        "floor": 0.0019712960347533226,
+        "kind": "random",
+        "margin": -0.025674937292933464,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:mod@rows-snow:ball",
+        "control_effect": 0.09415876120328903,
+        "floor": 0.00254787877202034,
+        "kind": "other_item",
+        "margin": -0.0826952625066042,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.011463498696684837,
+      "floor": 0.0018664989620447159,
+      "floor_parts": {
+       "sham_recompute": 0.0018664989620447159,
+       "twin_gap": 0.0017247417708858848,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -5550,7 +5897,7 @@
     "separating_controls": [
      "z:mod@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -5575,8 +5922,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "mod",
   "waivers": {},
   "why": "both cut types agree"
@@ -5619,8 +5966,33 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-noun:ball",
+        "control_effect": 0.011415249668061733,
+        "floor": 0.002628181828185916,
+        "kind": "random",
+        "margin": 0.026056909002363682,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:noun@rows-snow:ball",
+        "control_effect": 0.057244691997766495,
+        "floor": 0.002628181828185916,
+        "kind": "other_item",
+        "margin": -0.01977253332734108,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.037472158670425415,
+      "floor": 0.002628181828185916,
+      "floor_parts": {
+       "sham": 0.002628181828185916
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -5629,7 +6001,7 @@
     "separating_controls": [
      "m:noun@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:noun:ball",
@@ -5668,8 +6040,35 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-noun:ball",
+        "control_effect": 0.0108082490041852,
+        "floor": 0.0031186172273010015,
+        "kind": "random",
+        "margin": 0.03027585055679083,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:noun@rows-snow:ball",
+        "control_effect": 0.038760434836149216,
+        "floor": 0.0031186172273010015,
+        "kind": "other_item",
+        "margin": 0.0023236647248268127,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.04108409956097603,
+      "floor": 0.0031186172273010015,
+      "floor_parts": {
+       "sham_recompute": 0.002628181828185916,
+       "twin_gap": 0.0031186172273010015,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -5678,7 +6077,7 @@
     "separating_controls": [
      "z:noun@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -5703,8 +6102,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "noun",
   "waivers": {},
   "why": "both cut types agree"
@@ -5747,8 +6146,33 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:rand0-modI:ball",
+        "control_effect": 0.015660785138607025,
+        "floor": 0.0017490959726274014,
+        "kind": "random",
+        "margin": -0.008600334171205759,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:modI@rows-snow:ball",
+        "control_effect": 0.02437877655029297,
+        "floor": 0.002178177237510681,
+        "kind": "other_item",
+        "margin": -0.017318325582891703,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.007060450967401266,
+      "floor": 0.0017490959726274014,
+      "floor_parts": {
+       "sham": 0.0017490959726274014
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -5756,7 +6180,7 @@
      "m:rand0-modI:ball",
      "m:modI@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:modI:ball",
@@ -5795,8 +6219,35 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:rand0-modI:ball",
+        "control_effect": 0.015653423964977264,
+        "floor": 0.0024380553513765335,
+        "kind": "random",
+        "margin": -0.009098746813833714,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:modI@rows-snow:ball",
+        "control_effect": 0.03193417191505432,
+        "floor": 0.0027913411613553762,
+        "kind": "other_item",
+        "margin": -0.02537949476391077,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.006554677151143551,
+      "floor": 0.0020140204578638077,
+      "floor_parts": {
+       "sham_recompute": 0.0017490959726274014,
+       "twin_gap": 0.0020140204578638077,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -5804,7 +6255,7 @@
      "z:rand0-modI:ball",
      "z:modI@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -5840,8 +6291,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "modI",
   "waivers": {},
   "why": "both cut types agree"
@@ -5884,8 +6335,32 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-nounI:ball",
+        "control_effect": 0.01571701094508171,
+        "floor": 0.0025268355384469032,
+        "kind": "random",
+        "margin": 0.013856416568160057,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:nounI@rows-snow:ball",
+        "control_effect": 0.025981727987527847,
+        "floor": 0.0022497838363051414,
+        "kind": "other_item",
+        "margin": 0.0035916995257139206,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.029573427513241768,
+      "floor": 0.0019685234874486923,
+      "floor_parts": {
+       "sham": 0.0019685234874486923
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -5894,7 +6369,7 @@
     "separating_controls": [
      "m:nounI@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:nounI:ball",
@@ -5933,8 +6408,34 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-nounI:ball",
+        "control_effect": 0.018768729642033577,
+        "floor": 0.0030662985518574715,
+        "kind": "random",
+        "margin": 0.0054378751665353775,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:nounI@rows-snow:ball",
+        "control_effect": 0.020209698006510735,
+        "floor": 0.0030662985518574715,
+        "kind": "other_item",
+        "margin": 0.00399690680205822,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.024206604808568954,
+      "floor": 0.0030662985518574715,
+      "floor_parts": {
+       "sham_recompute": 0.0019685234874486923,
+       "twin_gap": 0.0030662985518574715,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -5943,7 +6444,7 @@
     "separating_controls": [
      "z:nounI@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -5983,8 +6484,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "nounI",
   "waivers": {},
   "why": "both cut types agree"
@@ -6027,8 +6528,33 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-own240-minus-own60:ball",
+        "control_effect": 0.007166205905377865,
+        "floor": 0.002751169726252556,
+        "kind": "random",
+        "margin": 0.006758705712854862,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:own240-minus-own60@rows-snow:ball",
+        "control_effect": 0.018559275195002556,
+        "floor": 0.0021294886246323586,
+        "kind": "other_item",
+        "margin": -0.004634363576769829,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.013924911618232727,
+      "floor": 0.0021294886246323586,
+      "floor_parts": {
+       "sham": 0.0021294886246323586
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -6036,7 +6562,7 @@
      "m:rand0-own240-minus-own60:ball",
      "m:own240-minus-own60@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:own240-minus-own60:ball",
@@ -6075,8 +6601,35 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-own240-minus-own60:ball",
+        "control_effect": 0.01128262747079134,
+        "floor": 0.002751169726252556,
+        "kind": "random",
+        "margin": 0.004561879672110081,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:own240-minus-own60@rows-snow:ball",
+        "control_effect": 0.01966530829668045,
+        "floor": 0.002320532687008381,
+        "kind": "other_item",
+        "margin": -0.00382080115377903,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.01584450714290142,
+      "floor": 0.002320532687008381,
+      "floor_parts": {
+       "sham_recompute": 0.0021294886246323586,
+       "twin_gap": 0.002320532687008381,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -6084,7 +6637,7 @@
      "z:rand0-own240-minus-own60:ball",
      "z:own240-minus-own60@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -6107,8 +6660,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "own240-minus-own60",
   "waivers": {},
   "why": "both cut types agree"
@@ -6150,9 +6703,34 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.06489931792020798,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-own60:ball",
+        "control_effect": 0.05957663804292679,
+        "floor": 0.002558669541031122,
+        "kind": "random",
+        "margin": 0.04244654253125191,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:keep-own60@rows-snow:ball",
+        "control_effect": 0.09750653803348541,
+        "floor": 0.0024986716452986,
+        "kind": "other_item",
+        "margin": 0.08037644252181053,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.01713009551167488,
+      "floor": 0.0022190469317138195,
+      "floor_parts": {
+       "sham": 0.0022190469317138195
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -6161,7 +6739,7 @@
     "separating_controls": [
      "m:keep-own60@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:keep-own60:ball",
@@ -6199,9 +6777,36 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.06818823516368866,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:keep-rand0-own60:ball",
+        "control_effect": 0.06801476329565048,
+        "floor": 0.002558669541031122,
+        "kind": "random",
+        "margin": 0.05408297013491392,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:keep-own60@rows-snow:ball",
+        "control_effect": 0.13986311852931976,
+        "floor": 0.00257656117901206,
+        "kind": "other_item",
+        "margin": 0.1259313253685832,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.01393179316073656,
+      "floor": 0.002364294370636344,
+      "floor_parts": {
+       "sham_recompute": 0.0022190469317138195,
+       "twin_gap": 0.002364294370636344,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -6210,7 +6815,7 @@
     "separating_controls": [
      "z:keep-own60@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -6250,8 +6855,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "keep-own60",
   "waivers": {},
   "why": "both cut types agree"
@@ -6293,9 +6898,34 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.06489931792020798,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-own120:ball",
+        "control_effect": 0.04514884203672409,
+        "floor": 0.0024966569617390633,
+        "kind": "random",
+        "margin": 0.025983165949583054,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:keep-own120@rows-snow:ball",
+        "control_effect": 0.08936183154582977,
+        "floor": 0.0024966569617390633,
+        "kind": "other_item",
+        "margin": 0.07019615545868874,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.019165676087141037,
+      "floor": 0.0024966569617390633,
+      "floor_parts": {
+       "sham": 0.0024966569617390633
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -6304,7 +6934,7 @@
     "separating_controls": [
      "m:keep-own120@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:keep-own120:ball",
@@ -6342,9 +6972,36 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.06818823516368866,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:keep-rand0-own120:ball",
+        "control_effect": 0.06699496507644653,
+        "floor": 0.0024966569617390633,
+        "kind": "random",
+        "margin": 0.04951232299208641,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:keep-own120@rows-snow:ball",
+        "control_effect": 0.10100580751895905,
+        "floor": 0.00350022641941905,
+        "kind": "other_item",
+        "margin": 0.08352316543459892,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.017482642084360123,
+      "floor": 0.0024966569617390633,
+      "floor_parts": {
+       "sham_recompute": 0.0024966569617390633,
+       "twin_gap": 0.0017315035220235586,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -6353,7 +7010,7 @@
     "separating_controls": [
      "z:keep-own120@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -6393,8 +7050,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "keep-own120",
   "waivers": {},
   "why": "both cut types agree"
@@ -6436,9 +7093,34 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.06489931792020798,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-own240:ball",
+        "control_effect": 0.04059142991900444,
+        "floor": 0.0020401300862431526,
+        "kind": "random",
+        "margin": 0.019030163064599037,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:keep-own240@rows-snow:ball",
+        "control_effect": 0.08320674300193787,
+        "floor": 0.0025431914255023003,
+        "kind": "other_item",
+        "margin": 0.06164547614753246,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.021561266854405403,
+      "floor": 0.0019478988833725452,
+      "floor_parts": {
+       "sham": 0.0019478988833725452
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -6447,7 +7129,7 @@
     "separating_controls": [
      "m:keep-own240@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:keep-own240:ball",
@@ -6485,9 +7167,36 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.06818823516368866,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:keep-rand0-own240:ball",
+        "control_effect": 0.05971071124076843,
+        "floor": 0.0028998078778386116,
+        "kind": "random",
+        "margin": 0.04181765764951706,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:keep-own240@rows-snow:ball",
+        "control_effect": 0.09681420028209686,
+        "floor": 0.0028998078778386116,
+        "kind": "other_item",
+        "margin": 0.07892114669084549,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.017893053591251373,
+      "floor": 0.0028998078778386116,
+      "floor_parts": {
+       "sham_recompute": 0.0019478988833725452,
+       "twin_gap": 0.0028998078778386116,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -6496,7 +7205,7 @@
     "separating_controls": [
      "z:keep-own240@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -6536,8 +7245,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "keep-own240",
   "waivers": {},
   "why": "both cut types agree"
@@ -6580,9 +7289,35 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.06489931792020798,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:keep-rand0-modI:ball",
+        "control_effect": 0.04691922292113304,
+        "floor": 0.0021015640813857317,
+        "kind": "random",
+        "margin": -0.015712205320596695,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:keep-modI@rows-snow:ball",
+        "control_effect": 0.1065274327993393,
+        "floor": 0.0023506113793700933,
+        "kind": "other_item",
+        "margin": 0.04389600455760956,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.06263142824172974,
+      "floor": 0.0021015640813857317,
+      "floor_parts": {
+       "sham": 0.0021015640813857317
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -6590,7 +7325,7 @@
      "m:keep-rand0-modI:ball",
      "m:keep-modI@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:keep-modI:ball",
@@ -6629,9 +7364,37 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.06818823516368866,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:keep-rand0-modI:ball",
+        "control_effect": 0.058055147528648376,
+        "floor": 0.002532500308007002,
+        "kind": "random",
+        "margin": -0.010423146188259125,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:keep-modI@rows-snow:ball",
+        "control_effect": 0.1871231347322464,
+        "floor": 0.007831389084458351,
+        "kind": "other_item",
+        "margin": 0.1186448410153389,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.0684782937169075,
+      "floor": 0.002532500308007002,
+      "floor_parts": {
+       "sham_recompute": 0.0021015640813857317,
+       "twin_gap": 0.002532500308007002,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -6639,7 +7402,7 @@
      "z:keep-rand0-modI:ball",
      "z:keep-modI@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -6675,8 +7438,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "keep-modI",
   "waivers": {},
   "why": "both cut types agree"
@@ -6718,9 +7481,34 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.06489931792020798,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-nounI:ball",
+        "control_effect": 0.06116707623004913,
+        "floor": 0.002509781625121832,
+        "kind": "random",
+        "margin": 0.024153903126716614,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:keep-nounI@rows-snow:ball",
+        "control_effect": 0.14706677198410034,
+        "floor": 0.002509781625121832,
+        "kind": "other_item",
+        "margin": 0.11005359888076782,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.03701317310333252,
+      "floor": 0.002509781625121832,
+      "floor_parts": {
+       "sham": 0.002509781625121832
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -6729,7 +7517,7 @@
     "separating_controls": [
      "m:keep-nounI@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:keep-nounI:ball",
@@ -6767,9 +7555,36 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.06818823516368866,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:keep-rand0-nounI:ball",
+        "control_effect": 0.06448554992675781,
+        "floor": 0.002890214091166854,
+        "kind": "random",
+        "margin": 0.006738990545272827,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:keep-nounI@rows-snow:ball",
+        "control_effect": 0.15723516047000885,
+        "floor": 0.0035930557642132044,
+        "kind": "other_item",
+        "margin": 0.09948860108852386,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.057746559381484985,
+      "floor": 0.0026939441449940205,
+      "floor_parts": {
+       "sham_recompute": 0.002509781625121832,
+       "twin_gap": 0.0026939441449940205,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -6778,7 +7593,7 @@
     "separating_controls": [
      "z:keep-nounI@rows-snow:ball"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -6818,8 +7633,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "keep-nounI",
   "waivers": {},
   "why": "both cut types agree"
@@ -6861,8 +7676,32 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-own60:snow",
+        "control_effect": 0.022173672914505005,
+        "floor": 0.002059418009594083,
+        "kind": "random",
+        "margin": 0.0510883629322052,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:own60@rows-red:snow",
+        "control_effect": 0.00571859534829855,
+        "floor": 0.0022209815215319395,
+        "kind": "other_item",
+        "margin": 0.06754344049841166,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.0732620358467102,
+      "floor": 0.002059418009594083,
+      "floor_parts": {
+       "sham": 0.002059418009594083
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -6871,7 +7710,7 @@
     "separating_controls": [
      "m:own60@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:own60:snow",
@@ -6909,8 +7748,34 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-own60:snow",
+        "control_effect": 0.062574602663517,
+        "floor": 0.0031300662085413933,
+        "kind": "random",
+        "margin": 0.005511455237865448,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:own60@rows-red:snow",
+        "control_effect": 0.005765847861766815,
+        "floor": 0.0031300662085413933,
+        "kind": "other_item",
+        "margin": 0.06232021003961563,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.06808605790138245,
+      "floor": 0.0031300662085413933,
+      "floor_parts": {
+       "sham_recompute": 0.002059418009594083,
+       "twin_gap": 0.0031300662085413933,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -6919,7 +7784,7 @@
     "separating_controls": [
      "z:own60@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -6959,8 +7824,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "own60",
   "waivers": {},
   "why": "both cut types agree"
@@ -7011,8 +7876,41 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:rand120:snow",
+        "control_effect": 0.0811135321855545,
+        "floor": 0.0018813589122146368,
+        "kind": "external",
+        "margin": -0.003994755446910858,
+        "separates_identity": null
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-own120:snow",
+        "control_effect": 0.03194147348403931,
+        "floor": 0.002274975646287203,
+        "kind": "random",
+        "margin": 0.04517730325460434,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:own120@rows-red:snow",
+        "control_effect": 0.011075068265199661,
+        "floor": 0.002007837174460292,
+        "kind": "other_item",
+        "margin": 0.06604370847344398,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.07711877673864365,
+      "floor": 0.0016691320342943072,
+      "floor_parts": {
+       "sham": 0.0016691320342943072
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -7022,7 +7920,7 @@
     "separating_controls": [
      "m:own120@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:own120:snow",
@@ -7069,8 +7967,43 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand120:snow",
+        "control_effect": 0.07445762306451797,
+        "floor": 0.0018813589122146368,
+        "kind": "external",
+        "margin": 0.0026444271206855774,
+        "separates_identity": null
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-own120:snow",
+        "control_effect": 0.06799857318401337,
+        "floor": 0.002274975646287203,
+        "kind": "random",
+        "margin": 0.009103477001190186,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:own120@rows-red:snow",
+        "control_effect": 0.010717194527387619,
+        "floor": 0.002007837174460292,
+        "kind": "other_item",
+        "margin": 0.06638485565781593,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.07710205018520355,
+      "floor": 0.0016691320342943072,
+      "floor_parts": {
+       "sham_recompute": 0.0016691320342943072,
+       "twin_gap": 0.00148044154047966,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -7080,7 +8013,7 @@
     "separating_controls": [
      "z:own120@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -7120,8 +8053,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "own120",
   "waivers": {},
   "why": "both cut types agree"
@@ -7172,8 +8105,41 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand240:snow",
+        "control_effect": 0.0723019689321518,
+        "floor": 0.0034805797040462494,
+        "kind": "external",
+        "margin": 0.013913057744503021,
+        "separates_identity": null
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-own240:snow",
+        "control_effect": 0.06979475915431976,
+        "floor": 0.0024709664285182953,
+        "kind": "random",
+        "margin": 0.016420267522335052,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:own240@rows-red:snow",
+        "control_effect": 0.011232323944568634,
+        "floor": 0.0022230560425668955,
+        "kind": "other_item",
+        "margin": 0.07498270273208618,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.08621502667665482,
+      "floor": 0.0017463434487581253,
+      "floor_parts": {
+       "sham": 0.0017463434487581253
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -7183,7 +8149,7 @@
     "separating_controls": [
      "m:own240@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:own240:snow",
@@ -7230,8 +8196,43 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:rand240:snow",
+        "control_effect": 0.07987736910581589,
+        "floor": 0.0034805797040462494,
+        "kind": "external",
+        "margin": 0.0031155645847320557,
+        "separates_identity": null
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-own240:snow",
+        "control_effect": 0.07837604731321335,
+        "floor": 0.0024709664285182953,
+        "kind": "random",
+        "margin": 0.004616886377334595,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:own240@rows-red:snow",
+        "control_effect": 0.014316074550151825,
+        "floor": 0.003252655267715454,
+        "kind": "other_item",
+        "margin": 0.06867685914039612,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.08299293369054794,
+      "floor": 0.0017463434487581253,
+      "floor_parts": {
+       "sham_recompute": 0.0017463434487581253,
+       "twin_gap": 0.0013770607765763998,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -7241,7 +8242,7 @@
     "separating_controls": [
      "z:own240@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -7281,8 +8282,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "own240",
   "waivers": {},
   "why": "both cut types agree"
@@ -7324,8 +8325,32 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-mod:snow",
+        "control_effect": 0.0656641498208046,
+        "floor": 0.0017380857607349753,
+        "kind": "random",
+        "margin": 0.008864767849445343,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:mod@rows-red:snow",
+        "control_effect": 0.02032245323061943,
+        "floor": 0.0023681442253291607,
+        "kind": "other_item",
+        "margin": 0.05420646443963051,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.07452891767024994,
+      "floor": 0.0016947229159995914,
+      "floor_parts": {
+       "sham": 0.0016947229159995914
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -7334,7 +8359,7 @@
     "separating_controls": [
      "m:mod@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:mod:snow",
@@ -7372,8 +8397,34 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-mod:snow",
+        "control_effect": 0.029266536235809326,
+        "floor": 0.0017760631162673235,
+        "kind": "random",
+        "margin": 0.058635592460632324,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:mod@rows-red:snow",
+        "control_effect": 0.030270425602793694,
+        "floor": 0.0023681442253291607,
+        "kind": "other_item",
+        "margin": 0.05763170309364796,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.08790212869644165,
+      "floor": 0.0017414964968338609,
+      "floor_parts": {
+       "sham_recompute": 0.0016947229159995914,
+       "twin_gap": 0.0017414964968338609,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -7382,7 +8433,7 @@
     "separating_controls": [
      "z:mod@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -7407,8 +8458,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "mod",
   "waivers": {},
   "why": "both cut types agree"
@@ -7450,8 +8501,32 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-noun:snow",
+        "control_effect": 0.028965670615434647,
+        "floor": 0.0017965079750865698,
+        "kind": "random",
+        "margin": 0.04576766863465309,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:noun@rows-red:snow",
+        "control_effect": 0.008940553292632103,
+        "floor": 0.001766449073329568,
+        "kind": "other_item",
+        "margin": 0.06579278595745564,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.07473333925008774,
+      "floor": 0.0016236348310485482,
+      "floor_parts": {
+       "sham": 0.0016236348310485482
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -7460,7 +8535,7 @@
     "separating_controls": [
      "m:noun@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:noun:snow",
@@ -7498,8 +8573,34 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-noun:snow",
+        "control_effect": 0.06556519865989685,
+        "floor": 0.003994252532720566,
+        "kind": "random",
+        "margin": 0.0113462433218956,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:noun@rows-red:snow",
+        "control_effect": 0.009976714849472046,
+        "floor": 0.002260594628751278,
+        "kind": "other_item",
+        "margin": 0.0669347271323204,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.07691144198179245,
+      "floor": 0.0016236348310485482,
+      "floor_parts": {
+       "sham_recompute": 0.0016236348310485482,
+       "twin_gap": 0.0016087949043139815,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -7508,7 +8609,7 @@
     "separating_controls": [
      "z:noun@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -7533,8 +8634,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "noun",
   "waivers": {},
   "why": "both cut types agree"
@@ -7577,8 +8678,33 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:rand0-modI:snow",
+        "control_effect": 0.06860431283712387,
+        "floor": 0.0025826049968600273,
+        "kind": "random",
+        "margin": -0.007099583745002747,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:modI@rows-red:snow",
+        "control_effect": 0.010795364156365395,
+        "floor": 0.0025826049968600273,
+        "kind": "other_item",
+        "margin": 0.05070936493575573,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.061504729092121124,
+      "floor": 0.0025826049968600273,
+      "floor_parts": {
+       "sham": 0.0025826049968600273
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -7586,7 +8712,7 @@
      "m:rand0-modI:snow",
      "m:modI@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:modI:snow",
@@ -7624,8 +8750,34 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-modI:snow",
+        "control_effect": 0.0618341788649559,
+        "floor": 0.003341016359627247,
+        "kind": "random",
+        "margin": 0.010156869888305664,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:modI@rows-red:snow",
+        "control_effect": 0.021540682762861252,
+        "floor": 0.0025826049968600273,
+        "kind": "other_item",
+        "margin": 0.050450365990400314,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.07199104875326157,
+      "floor": 0.0025826049968600273,
+      "floor_parts": {
+       "sham_recompute": 0.0025826049968600273,
+       "twin_gap": 0.0016672569327056408,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [],
@@ -7633,10 +8785,10 @@
      "z:rand0-modI:snow",
      "z:modI@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
-  "cut_types_agree": true,
+  "cut_types_agree": false,
   "identity": {
    "other_item_cut": {
     "other": "red",
@@ -7669,11 +8821,11 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "modI",
   "waivers": {},
-  "why": "both cut types agree"
+  "why": "cut types disagree; the result does not count"
  },
  {
   "claim": "necessary",
@@ -7712,8 +8864,32 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-nounI:snow",
+        "control_effect": 0.015746012330055237,
+        "floor": 0.002174108289182186,
+        "kind": "random",
+        "margin": 0.04885496944189072,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:nounI@rows-red:snow",
+        "control_effect": 0.005078783258795738,
+        "floor": 0.002174108289182186,
+        "kind": "other_item",
+        "margin": 0.059522198513150215,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.06460098177194595,
+      "floor": 0.002174108289182186,
+      "floor_parts": {
+       "sham": 0.002174108289182186
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -7722,7 +8898,7 @@
     "separating_controls": [
      "m:nounI@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:nounI:snow",
@@ -7760,8 +8936,34 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:rand0-nounI:snow",
+        "control_effect": 0.053148336708545685,
+        "floor": 0.005799257196485996,
+        "kind": "random",
+        "margin": -0.014643289148807526,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:nounI@rows-red:snow",
+        "control_effect": 0.005219682585448027,
+        "floor": 0.005799257196485996,
+        "kind": "other_item",
+        "margin": 0.03328536497429013,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.03850504755973816,
+      "floor": 0.005799257196485996,
+      "floor_parts": {
+       "sham_recompute": 0.002174108289182186,
+       "twin_gap": 0.005799257196485996,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -7770,7 +8972,7 @@
     "separating_controls": [
      "z:nounI@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -7810,8 +9012,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "nounI",
   "waivers": {},
   "why": "both cut types agree"
@@ -7854,8 +9056,33 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:rand0-own240-minus-own60:snow",
+        "control_effect": 0.06804423034191132,
+        "floor": 0.002088559325784445,
+        "kind": "random",
+        "margin": -0.004875838756561279,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:own240-minus-own60@rows-red:snow",
+        "control_effect": 0.0087363850325346,
+        "floor": 0.0022018332965672016,
+        "kind": "other_item",
+        "margin": 0.05443200655281544,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.06316839158535004,
+      "floor": 0.002045555505901575,
+      "floor_parts": {
+       "sham": 0.002045555505901575
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -7863,7 +9090,7 @@
      "m:rand0-own240-minus-own60:snow",
      "m:own240-minus-own60@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:own240-minus-own60:snow",
@@ -7902,8 +9129,35 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:rand0-own240-minus-own60:snow",
+        "control_effect": 0.06824065744876862,
+        "floor": 0.003043320495635271,
+        "kind": "random",
+        "margin": -0.0015328973531723022,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:own240-minus-own60@rows-red:snow",
+        "control_effect": 0.01031041331589222,
+        "floor": 0.003043320495635271,
+        "kind": "other_item",
+        "margin": 0.056397346779704094,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.06670776009559631,
+      "floor": 0.003043320495635271,
+      "floor_parts": {
+       "sham_recompute": 0.002045555505901575,
+       "twin_gap": 0.003043320495635271,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -7911,7 +9165,7 @@
      "z:rand0-own240-minus-own60:snow",
      "z:own240-minus-own60@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -7934,8 +9188,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "own240-minus-own60",
   "waivers": {},
   "why": "both cut types agree"
@@ -7978,9 +9232,35 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.22160589694976807,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-own60:snow",
+        "control_effect": 0.1639367640018463,
+        "floor": 0.0025060316547751427,
+        "kind": "random",
+        "margin": 0.07975062727928162,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:keep-own60@rows-red:snow",
+        "control_effect": 0.023400243371725082,
+        "floor": 0.0025060316547751427,
+        "kind": "other_item",
+        "margin": -0.060785893350839615,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.0841861367225647,
+      "floor": 0.0025060316547751427,
+      "floor_parts": {
+       "sham": 0.0025060316547751427
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -7989,7 +9269,7 @@
     "separating_controls": [
      "m:keep-own60@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:keep-own60:snow",
@@ -8028,9 +9308,37 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.19412899017333984,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:keep-rand0-own60:snow",
+        "control_effect": 0.15146245062351227,
+        "floor": 0.002699927892535925,
+        "kind": "random",
+        "margin": 0.009127482771873474,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:keep-own60@rows-red:snow",
+        "control_effect": 0.03654703497886658,
+        "floor": 0.0027690413407981396,
+        "kind": "other_item",
+        "margin": -0.10578793287277222,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.1423349678516388,
+      "floor": 0.0025060316547751427,
+      "floor_parts": {
+       "sham_recompute": 0.0025060316547751427,
+       "twin_gap": 0.0017273548291996121,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -8039,7 +9347,7 @@
     "separating_controls": [
      "z:keep-own60@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -8079,8 +9387,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "keep-own60",
   "waivers": {},
   "why": "both cut types agree"
@@ -8123,9 +9431,35 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.22160589694976807,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-own120:snow",
+        "control_effect": 0.15882006287574768,
+        "floor": 0.002531961537897587,
+        "kind": "random",
+        "margin": 0.08431430160999298,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:keep-own120@rows-red:snow",
+        "control_effect": 0.01991509459912777,
+        "floor": 0.002212285064160824,
+        "kind": "other_item",
+        "margin": -0.05459066666662693,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.0745057612657547,
+      "floor": 0.002019386040046811,
+      "floor_parts": {
+       "sham": 0.002019386040046811
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -8134,7 +9468,7 @@
     "separating_controls": [
      "m:keep-own120@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:keep-own120:snow",
@@ -8173,9 +9507,37 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.19412899017333984,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:keep-rand0-own120:snow",
+        "control_effect": 0.14793775975704193,
+        "floor": 0.002924800617620349,
+        "kind": "random",
+        "margin": 0.05187086760997772,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:keep-own120@rows-red:snow",
+        "control_effect": 0.030861210078001022,
+        "floor": 0.002924800617620349,
+        "kind": "other_item",
+        "margin": -0.06520568206906319,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.09606689214706421,
+      "floor": 0.002924800617620349,
+      "floor_parts": {
+       "sham_recompute": 0.002019386040046811,
+       "twin_gap": 0.002924800617620349,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -8184,7 +9546,7 @@
     "separating_controls": [
      "z:keep-own120@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -8224,8 +9586,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "keep-own120",
   "waivers": {},
   "why": "both cut types agree"
@@ -8268,9 +9630,35 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.22160589694976807,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-own240:snow",
+        "control_effect": 0.09291868656873703,
+        "floor": 0.0019140505464747548,
+        "kind": "random",
+        "margin": 0.020962901413440704,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:keep-own240@rows-red:snow",
+        "control_effect": 0.018852103501558304,
+        "floor": 0.0022714652586728334,
+        "kind": "other_item",
+        "margin": -0.05310368165373802,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.07195578515529633,
+      "floor": 0.0019140505464747548,
+      "floor_parts": {
+       "sham": 0.0019140505464747548
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -8279,7 +9667,7 @@
     "separating_controls": [
      "m:keep-own240@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:keep-own240:snow",
@@ -8318,9 +9706,37 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.19412899017333984,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:keep-rand0-own240:snow",
+        "control_effect": 0.0881500244140625,
+        "floor": 0.0019140505464747548,
+        "kind": "random",
+        "margin": 0.006274595856666565,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:keep-own240@rows-red:snow",
+        "control_effect": 0.028750192373991013,
+        "floor": 0.0022714652586728334,
+        "kind": "other_item",
+        "margin": -0.05312523618340492,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.08187542855739594,
+      "floor": 0.0019140505464747548,
+      "floor_parts": {
+       "sham_recompute": 0.0019140505464747548,
+       "twin_gap": 0.0015149284154176712,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -8329,7 +9745,7 @@
     "separating_controls": [
      "z:keep-own240@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -8369,8 +9785,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "keep-own240",
   "waivers": {},
   "why": "both cut types agree"
@@ -8413,9 +9829,35 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.22160589694976807,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-modI:snow",
+        "control_effect": 0.17054888606071472,
+        "floor": 0.0023099612444639206,
+        "kind": "random",
+        "margin": 0.04865899682044983,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:keep-modI@rows-red:snow",
+        "control_effect": 0.015872769057750702,
+        "floor": 0.00272569851949811,
+        "kind": "other_item",
+        "margin": -0.10601712018251419,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.12188988924026489,
+      "floor": 0.0023099612444639206,
+      "floor_parts": {
+       "sham": 0.0023099612444639206
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -8423,7 +9865,7 @@
      "m:keep-rand0-modI:snow",
      "m:keep-modI@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:keep-modI:snow",
@@ -8462,9 +9904,37 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.19412899017333984,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:keep-rand0-modI:snow",
+        "control_effect": 0.1831042319536209,
+        "floor": 0.0023112776689231396,
+        "kind": "random",
+        "margin": 0.034980639815330505,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:keep-modI@rows-red:snow",
+        "control_effect": 0.02028242126107216,
+        "floor": 0.0030313129536807537,
+        "kind": "other_item",
+        "margin": -0.12784117087721825,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.1481235921382904,
+      "floor": 0.0023112776689231396,
+      "floor_parts": {
+       "sham_recompute": 0.0023099612444639206,
+       "twin_gap": 0.0023112776689231396,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -8472,7 +9942,7 @@
      "z:keep-rand0-modI:snow",
      "z:keep-modI@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -8508,8 +9978,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "keep-modI",
   "waivers": {},
   "why": "both cut types agree"
@@ -8552,9 +10022,35 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.22160589694976807,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:keep-rand0-nounI:snow",
+        "control_effect": 0.1492384970188141,
+        "floor": 0.002097614575177431,
+        "kind": "random",
+        "margin": -0.008068755269050598,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:keep-nounI@rows-red:snow",
+        "control_effect": 0.025652578100562096,
+        "floor": 0.0021012648940086365,
+        "kind": "other_item",
+        "margin": -0.1316546741873026,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.15730725228786469,
+      "floor": 0.002097614575177431,
+      "floor_parts": {
+       "sham": 0.002097614575177431
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -8563,7 +10059,7 @@
     "separating_controls": [
      "m:keep-nounI@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:keep-nounI:snow",
@@ -8602,9 +10098,37 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.19412899017333984,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:keep-rand0-nounI:snow",
+        "control_effect": 0.15772828459739685,
+        "floor": 0.002278825268149376,
+        "kind": "random",
+        "margin": 0.0028532445430755615,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:keep-nounI@rows-red:snow",
+        "control_effect": 0.037565164268016815,
+        "floor": 0.002418408403173089,
+        "kind": "other_item",
+        "margin": -0.11730987578630447,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.1548750400543213,
+      "floor": 0.002097614575177431,
+      "floor_parts": {
+       "sham_recompute": 0.002097614575177431,
+       "twin_gap": 0.0018291997257620096,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -8613,7 +10137,7 @@
     "separating_controls": [
      "z:keep-nounI@rows-red:snow"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -8653,8 +10177,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "keep-nounI",
   "waivers": {},
   "why": "both cut types agree"
@@ -8696,8 +10220,32 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-own60:night",
+        "control_effect": 0.023110583424568176,
+        "floor": 0.004235940054059029,
+        "kind": "random",
+        "margin": 0.07223901897668839,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:own60@rows-rain:night",
+        "control_effect": 0.04211585223674774,
+        "floor": 0.004690990783274174,
+        "kind": "other_item",
+        "margin": 0.05323375016450882,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.09534960240125656,
+      "floor": 0.004235940054059029,
+      "floor_parts": {
+       "sham": 0.004235940054059029
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -8706,7 +10254,7 @@
     "separating_controls": [
      "m:own60@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:own60:night",
@@ -8744,8 +10292,34 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-own60:night",
+        "control_effect": 0.03259783983230591,
+        "floor": 0.008315402083098888,
+        "kind": "random",
+        "margin": 0.07829023897647858,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:own60@rows-rain:night",
+        "control_effect": 0.045756444334983826,
+        "floor": 0.008315402083098888,
+        "kind": "other_item",
+        "margin": 0.06513163447380066,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.11088807880878448,
+      "floor": 0.008315402083098888,
+      "floor_parts": {
+       "sham_recompute": 0.004235940054059029,
+       "twin_gap": 0.008315402083098888,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -8754,7 +10328,7 @@
     "separating_controls": [
      "z:own60@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -8794,8 +10368,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "own60",
   "waivers": {},
   "why": "both cut types agree"
@@ -8846,8 +10420,41 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand120:night",
+        "control_effect": 0.06420603394508362,
+        "floor": 0.005498629063367844,
+        "kind": "external",
+        "margin": 0.06690572202205658,
+        "separates_identity": null
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-own120:night",
+        "control_effect": 0.031204883009195328,
+        "floor": 0.00427557248622179,
+        "kind": "random",
+        "margin": 0.09990687295794487,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:own120@rows-rain:night",
+        "control_effect": 0.047261934727430344,
+        "floor": 0.004896016791462898,
+        "kind": "other_item",
+        "margin": 0.08384982123970985,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.1311117559671402,
+      "floor": 0.003986752592027187,
+      "floor_parts": {
+       "sham": 0.003986752592027187
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -8857,7 +10464,7 @@
     "separating_controls": [
      "m:own120@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:own120:night",
@@ -8904,8 +10511,43 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand120:night",
+        "control_effect": 0.058522023260593414,
+        "floor": 0.005498629063367844,
+        "kind": "external",
+        "margin": 0.08056824654340744,
+        "separates_identity": null
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-own120:night",
+        "control_effect": 0.040153197944164276,
+        "floor": 0.010331596247851849,
+        "kind": "random",
+        "margin": 0.09893707185983658,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:own120@rows-rain:night",
+        "control_effect": 0.052108284085989,
+        "floor": 0.0068445345386862755,
+        "kind": "other_item",
+        "margin": 0.08698198571801186,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.13909026980400085,
+      "floor": 0.005047387909144163,
+      "floor_parts": {
+       "sham_recompute": 0.003986752592027187,
+       "twin_gap": 0.005047387909144163,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -8915,7 +10557,7 @@
     "separating_controls": [
      "z:own120@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -8955,8 +10597,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "own120",
   "waivers": {},
   "why": "both cut types agree"
@@ -9007,8 +10649,41 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand240:night",
+        "control_effect": 0.0700707733631134,
+        "floor": 0.005061350297182798,
+        "kind": "external",
+        "margin": 0.10424688458442688,
+        "separates_identity": null
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-own240:night",
+        "control_effect": 0.045672230422496796,
+        "floor": 0.005416311789304018,
+        "kind": "random",
+        "margin": 0.1286454275250435,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:own240@rows-rain:night",
+        "control_effect": 0.06772714853286743,
+        "floor": 0.005073597654700279,
+        "kind": "other_item",
+        "margin": 0.10659050941467285,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.17431765794754028,
+      "floor": 0.004090053495019674,
+      "floor_parts": {
+       "sham": 0.004090053495019674
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -9018,7 +10693,7 @@
     "separating_controls": [
      "m:own240@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:own240:night",
@@ -9065,8 +10740,43 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand240:night",
+        "control_effect": 0.0862613096833229,
+        "floor": 0.011303212493658066,
+        "kind": "external",
+        "margin": 0.09452717751264572,
+        "separates_identity": null
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-own240:night",
+        "control_effect": 0.05560857430100441,
+        "floor": 0.011303212493658066,
+        "kind": "random",
+        "margin": 0.12517991289496422,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:own240@rows-rain:night",
+        "control_effect": 0.07222349941730499,
+        "floor": 0.011303212493658066,
+        "kind": "other_item",
+        "margin": 0.10856498777866364,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.18078848719596863,
+      "floor": 0.011303212493658066,
+      "floor_parts": {
+       "sham_recompute": 0.004090053495019674,
+       "twin_gap": 0.011303212493658066,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -9076,7 +10786,7 @@
     "separating_controls": [
      "z:own240@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -9116,8 +10826,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "own240",
   "waivers": {},
   "why": "both cut types agree"
@@ -9159,8 +10869,32 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-mod:night",
+        "control_effect": 0.03144054487347603,
+        "floor": 0.006018764805048704,
+        "kind": "random",
+        "margin": 0.06277891620993614,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:mod@rows-rain:night",
+        "control_effect": 0.051078468561172485,
+        "floor": 0.006018764805048704,
+        "kind": "other_item",
+        "margin": 0.043140992522239685,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.09421946108341217,
+      "floor": 0.006018764805048704,
+      "floor_parts": {
+       "sham": 0.006018764805048704
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [],
@@ -9168,7 +10902,7 @@
      "m:rand0-mod:night",
      "m:mod@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:mod:night",
@@ -9206,8 +10940,34 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-mod:night",
+        "control_effect": 0.03831541910767555,
+        "floor": 0.008708659559488297,
+        "kind": "random",
+        "margin": 0.05717965587973595,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:mod@rows-rain:night",
+        "control_effect": 0.05472514033317566,
+        "floor": 0.010792071931064129,
+        "kind": "other_item",
+        "margin": 0.04076993465423584,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.0954950749874115,
+      "floor": 0.006018764805048704,
+      "floor_parts": {
+       "sham_recompute": 0.006018764805048704,
+       "twin_gap": 0.005716002080589533,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [],
@@ -9215,7 +10975,7 @@
      "z:rand0-mod:night",
      "z:mod@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -9238,8 +10998,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "mod",
   "waivers": {},
   "why": "both cut types agree"
@@ -9282,8 +11042,33 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:rand0-noun:night",
+        "control_effect": 0.08458732068538666,
+        "floor": 0.005289255175739527,
+        "kind": "random",
+        "margin": -0.04980873316526413,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:noun@rows-rain:night",
+        "control_effect": 0.05301886424422264,
+        "floor": 0.005289255175739527,
+        "kind": "other_item",
+        "margin": -0.018240276724100113,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.03477858752012253,
+      "floor": 0.005289255175739527,
+      "floor_parts": {
+       "sham": 0.005289255175739527
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -9292,7 +11077,7 @@
     "separating_controls": [
      "m:noun@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:noun:night",
@@ -9331,8 +11116,35 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:rand0-noun:night",
+        "control_effect": 0.09093207865953445,
+        "floor": 0.005342251621186733,
+        "kind": "random",
+        "margin": -0.03177792206406593,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:noun@rows-rain:night",
+        "control_effect": 0.05717827379703522,
+        "floor": 0.005342251621186733,
+        "kind": "other_item",
+        "margin": 0.001975882798433304,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.05915415659546852,
+      "floor": 0.005342251621186733,
+      "floor_parts": {
+       "sham_recompute": 0.005289255175739527,
+       "twin_gap": 0.005342251621186733,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -9341,7 +11153,7 @@
     "separating_controls": [
      "z:noun@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -9366,8 +11178,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "noun",
   "waivers": {},
   "why": "both cut types agree"
@@ -9410,8 +11222,33 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-modI:night",
+        "control_effect": 0.028431691229343414,
+        "floor": 0.0030165130738168955,
+        "kind": "random",
+        "margin": 0.01577259972691536,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:modI@rows-rain:night",
+        "control_effect": 0.04064861685037613,
+        "floor": 0.006438131909817457,
+        "kind": "other_item",
+        "margin": 0.0035556741058826447,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.044204290956258774,
+      "floor": 0.002724601421505213,
+      "floor_parts": {
+       "sham": 0.002724601421505213
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -9419,7 +11256,7 @@
      "m:rand0-modI:night",
      "m:modI@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:modI:night",
@@ -9457,8 +11294,35 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-modI:night",
+        "control_effect": 0.02881820872426033,
+        "floor": 0.005045173689723015,
+        "kind": "random",
+        "margin": 0.024876609444618225,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:modI@rows-rain:night",
+        "control_effect": 0.047286029905080795,
+        "floor": 0.007217865902930498,
+        "kind": "other_item",
+        "margin": 0.00640878826379776,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.053694818168878555,
+      "floor": 0.005045173689723015,
+      "floor_parts": {
+       "sham_recompute": 0.002724601421505213,
+       "twin_gap": 0.005045173689723015,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -9466,7 +11330,7 @@
      "z:rand0-modI:night",
      "z:modI@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -9502,8 +11366,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "modI",
   "waivers": {},
   "why": "both cut types agree"
@@ -9546,8 +11410,33 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:rand0-nounI:night",
+        "control_effect": 0.032743923366069794,
+        "floor": 0.006178871728479862,
+        "kind": "random",
+        "margin": -0.0006129443645477295,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:nounI@rows-rain:night",
+        "control_effect": 0.044698819518089294,
+        "floor": 0.006178871728479862,
+        "kind": "other_item",
+        "margin": -0.01256784051656723,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.032130979001522064,
+      "floor": 0.006178871728479862,
+      "floor_parts": {
+       "sham": 0.006178871728479862
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -9555,7 +11444,7 @@
      "m:rand0-nounI:night",
      "m:nounI@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:nounI:night",
@@ -9594,8 +11483,35 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:rand0-nounI:night",
+        "control_effect": 0.03549359738826752,
+        "floor": 0.006178871728479862,
+        "kind": "random",
+        "margin": -0.004161663353443146,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:nounI@rows-rain:night",
+        "control_effect": 0.05009452626109123,
+        "floor": 0.006178871728479862,
+        "kind": "other_item",
+        "margin": -0.01876259222626686,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.03133193403482437,
+      "floor": 0.006178871728479862,
+      "floor_parts": {
+       "sham_recompute": 0.006178871728479862,
+       "twin_gap": 0.005528528243303299,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -9603,7 +11519,7 @@
      "z:rand0-nounI:night",
      "z:nounI@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -9639,8 +11555,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "nounI",
   "waivers": {},
   "why": "both cut types agree"
@@ -9683,8 +11599,33 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:rand0-own240-minus-own60:night",
+        "control_effect": 0.041173677891492844,
+        "floor": 0.005513329990208149,
+        "kind": "random",
+        "margin": -0.016479291021823883,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:own240-minus-own60@rows-rain:night",
+        "control_effect": 0.053961001336574554,
+        "floor": 0.004546082112938166,
+        "kind": "other_item",
+        "margin": -0.029266614466905594,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.02469438686966896,
+      "floor": 0.004545523319393396,
+      "floor_parts": {
+       "sham": 0.004545523319393396
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -9692,7 +11633,7 @@
      "m:rand0-own240-minus-own60:night",
      "m:own240-minus-own60@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:own240-minus-own60:night",
@@ -9731,8 +11672,35 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:rand0-own240-minus-own60:night",
+        "control_effect": 0.04903654381632805,
+        "floor": 0.006121187936514616,
+        "kind": "random",
+        "margin": -0.0008841156959533691,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:own240-minus-own60@rows-rain:night",
+        "control_effect": 0.0573100820183754,
+        "floor": 0.006121187936514616,
+        "kind": "other_item",
+        "margin": -0.009157653898000717,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.04815242812037468,
+      "floor": 0.006121187936514616,
+      "floor_parts": {
+       "sham_recompute": 0.004545523319393396,
+       "twin_gap": 0.006121187936514616,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -9740,7 +11708,7 @@
      "z:rand0-own240-minus-own60:night",
      "z:own240-minus-own60@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -9763,8 +11731,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "own240-minus-own60",
   "waivers": {},
   "why": "both cut types agree"
@@ -9807,9 +11775,35 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.2939755320549011,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-own60:night",
+        "control_effect": 0.25735771656036377,
+        "floor": 0.005980288609862328,
+        "kind": "random",
+        "margin": 0.11793011426925659,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:keep-own60@rows-rain:night",
+        "control_effect": 0.0871497094631195,
+        "floor": 0.005980288609862328,
+        "kind": "other_item",
+        "margin": -0.05227789282798767,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.13942760229110718,
+      "floor": 0.005980288609862328,
+      "floor_parts": {
+       "sham": 0.005980288609862328
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -9818,7 +11812,7 @@
     "separating_controls": [
      "m:keep-own60@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:keep-own60:night",
@@ -9857,9 +11851,37 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.3079928457736969,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:keep-rand0-own60:night",
+        "control_effect": 0.2663538157939911,
+        "floor": 0.0071147046983242035,
+        "kind": "random",
+        "margin": 0.10409718751907349,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:keep-own60@rows-rain:night",
+        "control_effect": 0.10725006461143494,
+        "floor": 0.005980288609862328,
+        "kind": "other_item",
+        "margin": -0.055006563663482666,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.1622566282749176,
+      "floor": 0.005980288609862328,
+      "floor_parts": {
+       "sham_recompute": 0.005980288609862328,
+       "twin_gap": 0.004170975182205439,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -9868,7 +11890,7 @@
     "separating_controls": [
      "z:keep-own60@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -9908,8 +11930,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "keep-own60",
   "waivers": {},
   "why": "both cut types agree"
@@ -9952,9 +11974,35 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.2939755320549011,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-own120:night",
+        "control_effect": 0.25776463747024536,
+        "floor": 0.0028369580395519733,
+        "kind": "random",
+        "margin": 0.13929371535778046,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:keep-own120@rows-rain:night",
+        "control_effect": 0.08395059406757355,
+        "floor": 0.0032960777170956135,
+        "kind": "other_item",
+        "margin": -0.03452032804489136,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.1184709221124649,
+      "floor": 0.0028369580395519733,
+      "floor_parts": {
+       "sham": 0.0028369580395519733
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -9963,7 +12011,7 @@
     "separating_controls": [
      "m:keep-own120@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:keep-own120:night",
@@ -10002,9 +12050,37 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.3079928457736969,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:keep-rand0-own120:night",
+        "control_effect": 0.26295527815818787,
+        "floor": 0.011854622513055801,
+        "kind": "random",
+        "margin": 0.1330336183309555,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:keep-own120@rows-rain:night",
+        "control_effect": 0.10236066579818726,
+        "floor": 0.0069935317151248455,
+        "kind": "other_item",
+        "margin": -0.027560994029045105,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.12992165982723236,
+      "floor": 0.0069935317151248455,
+      "floor_parts": {
+       "sham_recompute": 0.0028369580395519733,
+       "twin_gap": 0.0069935317151248455,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -10013,7 +12089,7 @@
     "separating_controls": [
      "z:keep-own120@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -10053,8 +12129,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "keep-own120",
   "waivers": {},
   "why": "both cut types agree"
@@ -10097,9 +12173,35 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.2939755320549011,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-own240:night",
+        "control_effect": 0.21825502812862396,
+        "floor": 0.006162536330521107,
+        "kind": "random",
+        "margin": 0.12630493938922882,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:keep-own240@rows-rain:night",
+        "control_effect": 0.0639946460723877,
+        "floor": 0.005097991321235895,
+        "kind": "other_item",
+        "margin": -0.027955442667007446,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.09195008873939514,
+      "floor": 0.005097991321235895,
+      "floor_parts": {
+       "sham": 0.005097991321235895
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -10108,7 +12210,7 @@
     "separating_controls": [
      "m:keep-own240@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:keep-own240:night",
@@ -10147,9 +12249,37 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.3079928457736969,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:keep-rand0-own240:night",
+        "control_effect": 0.23049752414226532,
+        "floor": 0.006162536330521107,
+        "kind": "random",
+        "margin": 0.1323215365409851,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:keep-own240@rows-rain:night",
+        "control_effect": 0.08846119046211243,
+        "floor": 0.005097991321235895,
+        "kind": "other_item",
+        "margin": -0.009714797139167786,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.09817598760128021,
+      "floor": 0.005097991321235895,
+      "floor_parts": {
+       "sham_recompute": 0.005097991321235895,
+       "twin_gap": 0.004154938273131847,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -10158,7 +12288,7 @@
     "separating_controls": [
      "z:keep-own240@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -10198,8 +12328,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "keep-own240",
   "waivers": {},
   "why": "both cut types agree"
@@ -10242,9 +12372,35 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.2939755320549011,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-modI:night",
+        "control_effect": 0.26706618070602417,
+        "floor": 0.004761699587106705,
+        "kind": "random",
+        "margin": 0.05879369378089905,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:keep-modI@rows-rain:night",
+        "control_effect": 0.08482871949672699,
+        "floor": 0.004309919662773609,
+        "kind": "other_item",
+        "margin": -0.12344376742839813,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.20827248692512512,
+      "floor": 0.003174466546624899,
+      "floor_parts": {
+       "sham": 0.003174466546624899
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -10252,7 +12408,7 @@
      "m:keep-rand0-modI:night",
      "m:keep-modI@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:keep-modI:night",
@@ -10291,9 +12447,37 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.3079928457736969,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:keep-rand0-modI:night",
+        "control_effect": 0.2775232195854187,
+        "floor": 0.00620897114276886,
+        "kind": "random",
+        "margin": 0.0623420774936676,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:keep-modI@rows-rain:night",
+        "control_effect": 0.10035520792007446,
+        "floor": 0.00620897114276886,
+        "kind": "other_item",
+        "margin": -0.11482593417167664,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.2151811420917511,
+      "floor": 0.00620897114276886,
+      "floor_parts": {
+       "sham_recompute": 0.003174466546624899,
+       "twin_gap": 0.00620897114276886,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -10301,7 +12485,7 @@
      "z:keep-rand0-modI:night",
      "z:keep-modI@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -10337,8 +12521,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "keep-modI",
   "waivers": {},
   "why": "both cut types agree"
@@ -10381,9 +12565,35 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.2939755320549011,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:keep-rand0-nounI:night",
+        "control_effect": 0.23238447308540344,
+        "floor": 0.004562736954540014,
+        "kind": "random",
+        "margin": -0.03921148180961609,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:keep-nounI@rows-rain:night",
+        "control_effect": 0.08907938003540039,
+        "floor": 0.0038916694466024637,
+        "kind": "other_item",
+        "margin": -0.18251657485961914,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.27159595489501953,
+      "floor": 0.0038916694466024637,
+      "floor_parts": {
+       "sham": 0.0038916694466024637
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -10391,7 +12601,7 @@
      "m:keep-rand0-nounI:night",
      "m:keep-nounI@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:keep-nounI:night",
@@ -10430,9 +12640,37 @@
       "why": "effect not beyond every separating control"
      },
      {
+      "all_cut_effect": 0.3079928457736969,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:keep-rand0-nounI:night",
+        "control_effect": 0.24909493327140808,
+        "floor": 0.004753222689032555,
+        "kind": "random",
+        "margin": -0.04135534167289734,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:keep-nounI@rows-rain:night",
+        "control_effect": 0.10505464673042297,
+        "floor": 0.004207935184240341,
+        "kind": "other_item",
+        "margin": -0.18539562821388245,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.2904502749443054,
+      "floor": 0.004052893724292517,
+      "floor_parts": {
+       "sham_recompute": 0.0038916694466024637,
+       "twin_gap": 0.004052893724292517,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -10440,7 +12678,7 @@
      "z:keep-rand0-nounI:night",
      "z:keep-nounI@rows-rain:night"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -10476,8 +12714,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "keep-nounI",
   "waivers": {},
   "why": "both cut types agree"
@@ -10520,8 +12758,33 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:rand0-own60:rain",
+        "control_effect": 0.021023361012339592,
+        "floor": 0.008412419818341732,
+        "kind": "random",
+        "margin": 0.008379029110074043,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:own60@rows-night:rain",
+        "control_effect": 0.06655311584472656,
+        "floor": 0.004891529213637114,
+        "kind": "other_item",
+        "margin": -0.03715072572231293,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.029402390122413635,
+      "floor": 0.004586473107337952,
+      "floor_parts": {
+       "sham": 0.004586473107337952
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -10530,7 +12793,7 @@
     "separating_controls": [
      "m:own60@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:own60:rain",
@@ -10568,8 +12831,35 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-own60:rain",
+        "control_effect": 0.026091650128364563,
+        "floor": 0.008412419818341732,
+        "kind": "random",
+        "margin": 0.017328601330518723,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:own60@rows-night:rain",
+        "control_effect": 0.07352650165557861,
+        "floor": 0.005464162677526474,
+        "kind": "other_item",
+        "margin": -0.030106250196695328,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.043420251458883286,
+      "floor": 0.004948914051055908,
+      "floor_parts": {
+       "sham_recompute": 0.004586473107337952,
+       "twin_gap": 0.004948914051055908,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -10578,7 +12868,7 @@
     "separating_controls": [
      "z:own60@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -10618,8 +12908,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "own60",
   "waivers": {},
   "why": "both cut types agree"
@@ -10671,8 +12961,42 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:rand120:rain",
+        "control_effect": 0.061208903789520264,
+        "floor": 0.00783228687942028,
+        "kind": "external",
+        "margin": -0.02010248228907585,
+        "separates_identity": null
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-own120:rain",
+        "control_effect": 0.028971873223781586,
+        "floor": 0.007135548163205385,
+        "kind": "random",
+        "margin": 0.012134548276662827,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:own120@rows-night:rain",
+        "control_effect": 0.07029331475496292,
+        "floor": 0.004831272177398205,
+        "kind": "other_item",
+        "margin": -0.02918689325451851,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.04110642150044441,
+      "floor": 0.004692047368735075,
+      "floor_parts": {
+       "sham": 0.004692047368735075
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -10682,7 +13006,7 @@
     "separating_controls": [
      "m:own120@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:own120:rain",
@@ -10730,8 +13054,44 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:rand120:rain",
+        "control_effect": 0.06806327402591705,
+        "floor": 0.014174317941069603,
+        "kind": "external",
+        "margin": -0.009846463799476624,
+        "separates_identity": null
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-own120:rain",
+        "control_effect": 0.04560939967632294,
+        "floor": 0.007135548163205385,
+        "kind": "random",
+        "margin": 0.012607410550117493,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:own120@rows-night:rain",
+        "control_effect": 0.08731887489557266,
+        "floor": 0.004831272177398205,
+        "kind": "other_item",
+        "margin": -0.029102064669132233,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.05821681022644043,
+      "floor": 0.004692047368735075,
+      "floor_parts": {
+       "sham_recompute": 0.004692047368735075,
+       "twin_gap": 0.004340417683124542,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -10741,7 +13101,7 @@
     "separating_controls": [
      "z:own120@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -10781,8 +13141,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "own120",
   "waivers": {},
   "why": "both cut types agree"
@@ -10834,8 +13194,42 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand240:rain",
+        "control_effect": 0.03964672237634659,
+        "floor": 0.0047582886181771755,
+        "kind": "external",
+        "margin": 0.030067376792430878,
+        "separates_identity": null
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-own240:rain",
+        "control_effect": 0.04702407866716385,
+        "floor": 0.0055434685200452805,
+        "kind": "random",
+        "margin": 0.022690020501613617,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:own240@rows-night:rain",
+        "control_effect": 0.08903521299362183,
+        "floor": 0.0047582886181771755,
+        "kind": "other_item",
+        "margin": -0.01932111382484436,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.06971409916877747,
+      "floor": 0.0047582886181771755,
+      "floor_parts": {
+       "sham": 0.0047582886181771755
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -10845,7 +13239,7 @@
     "separating_controls": [
      "m:own240@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:own240:rain",
@@ -10893,8 +13287,44 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand240:rain",
+        "control_effect": 0.039867326617240906,
+        "floor": 0.0047582886181771755,
+        "kind": "external",
+        "margin": 0.03447744995355606,
+        "separates_identity": null
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-own240:rain",
+        "control_effect": 0.06140487641096115,
+        "floor": 0.0055434685200452805,
+        "kind": "random",
+        "margin": 0.012939900159835815,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:own240@rows-night:rain",
+        "control_effect": 0.11243544518947601,
+        "floor": 0.012692400254309177,
+        "kind": "other_item",
+        "margin": -0.03809066861867905,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.07434477657079697,
+      "floor": 0.0047582886181771755,
+      "floor_parts": {
+       "sham_recompute": 0.0047582886181771755,
+       "twin_gap": 0.0037947911769151688,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -10904,7 +13334,7 @@
     "separating_controls": [
      "z:own240@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -10944,8 +13374,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "own240",
   "waivers": {},
   "why": "both cut types agree"
@@ -10988,8 +13418,33 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-mod:rain",
+        "control_effect": 0.039467766880989075,
+        "floor": 0.006738600786775351,
+        "kind": "random",
+        "margin": 0.012878816574811935,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:mod@rows-night:rain",
+        "control_effect": 0.10653530061244965,
+        "floor": 0.006624169647693634,
+        "kind": "other_item",
+        "margin": -0.054188717156648636,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.05234658345580101,
+      "floor": 0.005427162162959576,
+      "floor_parts": {
+       "sham": 0.005427162162959576
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -10997,7 +13452,7 @@
      "m:rand0-mod:rain",
      "m:mod@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:mod:rain",
@@ -11036,8 +13491,35 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-mod:rain",
+        "control_effect": 0.0366891510784626,
+        "floor": 0.006738600786775351,
+        "kind": "random",
+        "margin": 0.024832308292388916,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:mod@rows-night:rain",
+        "control_effect": 0.1104341447353363,
+        "floor": 0.006624169647693634,
+        "kind": "other_item",
+        "margin": -0.04891268536448479,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.06152145937085152,
+      "floor": 0.005427162162959576,
+      "floor_parts": {
+       "sham_recompute": 0.005427162162959576,
+       "twin_gap": 0.003810109570622444,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -11045,7 +13527,7 @@
      "z:rand0-mod:rain",
      "z:mod@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -11068,8 +13550,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "mod",
   "waivers": {},
   "why": "both cut types agree"
@@ -11111,8 +13593,33 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:rand0-noun:rain",
+        "control_effect": 0.04784272611141205,
+        "floor": 0.005507724825292826,
+        "kind": "random",
+        "margin": -0.0023803487420082092,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:noun@rows-night:rain",
+        "control_effect": 0.04486708343029022,
+        "floor": 0.004497433081269264,
+        "kind": "other_item",
+        "margin": 0.0005952939391136169,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.04546237736940384,
+      "floor": 0.004484967328608036,
+      "floor_parts": {
+       "sham": 0.004484967328608036
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -11121,7 +13628,7 @@
     "separating_controls": [
      "m:noun@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:noun:rain",
@@ -11159,8 +13666,35 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:rand0-noun:rain",
+        "control_effect": 0.06261832267045975,
+        "floor": 0.005507724825292826,
+        "kind": "random",
+        "margin": -0.011936064809560776,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:noun@rows-night:rain",
+        "control_effect": 0.0652051717042923,
+        "floor": 0.00565313221886754,
+        "kind": "other_item",
+        "margin": -0.014522913843393326,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.05068225786089897,
+      "floor": 0.004484967328608036,
+      "floor_parts": {
+       "sham_recompute": 0.004484967328608036,
+       "twin_gap": 0.0035652511287480593,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -11169,7 +13703,7 @@
     "separating_controls": [
      "z:noun@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -11194,8 +13728,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "noun",
   "waivers": {},
   "why": "both cut types agree"
@@ -11238,8 +13772,33 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-modI:rain",
+        "control_effect": 0.025600876659154892,
+        "floor": 0.007404780946671963,
+        "kind": "random",
+        "margin": 0.017241396009922028,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:modI@rows-night:rain",
+        "control_effect": 0.04347771778702736,
+        "floor": 0.004840985871851444,
+        "kind": "other_item",
+        "margin": -0.0006354451179504395,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.04284227266907692,
+      "floor": 0.004840985871851444,
+      "floor_parts": {
+       "sham": 0.004840985871851444
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -11247,7 +13806,7 @@
      "m:rand0-modI:rain",
      "m:modI@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:modI:rain",
@@ -11286,8 +13845,35 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:rand0-modI:rain",
+        "control_effect": 0.03233279287815094,
+        "floor": 0.007404780946671963,
+        "kind": "random",
+        "margin": 0.021825801581144333,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:modI@rows-night:rain",
+        "control_effect": 0.05423581972718239,
+        "floor": 0.005135310813784599,
+        "kind": "other_item",
+        "margin": -7.722526788711548e-05,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.05415859445929527,
+      "floor": 0.004840985871851444,
+      "floor_parts": {
+       "sham_recompute": 0.004840985871851444,
+       "twin_gap": 0.002893904224038124,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -11295,7 +13881,7 @@
      "z:rand0-modI:rain",
      "z:modI@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -11331,8 +13917,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "modI",
   "waivers": {},
   "why": "both cut types agree"
@@ -11374,8 +13960,33 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:rand0-nounI:rain",
+        "control_effect": 0.03572667017579079,
+        "floor": 0.007285842671990395,
+        "kind": "random",
+        "margin": 0.0021736696362495422,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "m:nounI@rows-night:rain",
+        "control_effect": 0.0535307414829731,
+        "floor": 0.007285842671990395,
+        "kind": "other_item",
+        "margin": -0.01563040167093277,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.03790033981204033,
+      "floor": 0.007285842671990395,
+      "floor_parts": {
+       "sham": 0.007285842671990395
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -11384,7 +13995,7 @@
     "separating_controls": [
      "m:nounI@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:nounI:rain",
@@ -11423,8 +14034,35 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:rand0-nounI:rain",
+        "control_effect": 0.048996470868587494,
+        "floor": 0.007285842671990395,
+        "kind": "random",
+        "margin": -0.003305930644273758,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": false,
+        "control": "z:nounI@rows-night:rain",
+        "control_effect": 0.05742572620511055,
+        "floor": 0.007285842671990395,
+        "kind": "other_item",
+        "margin": -0.011735185980796814,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.045690540224313736,
+      "floor": 0.007285842671990395,
+      "floor_parts": {
+       "sham_recompute": 0.007285842671990395,
+       "twin_gap": 0.0046356599777936935,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [
@@ -11433,7 +14071,7 @@
     "separating_controls": [
      "z:nounI@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -11473,8 +14111,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "nounI",
   "waivers": {},
   "why": "both cut types agree"
@@ -11517,8 +14155,32 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:rand0-own240-minus-own60:rain",
+        "control_effect": 0.04800841957330704,
+        "floor": 0.00526637677103281,
+        "kind": "random",
+        "margin": 0.008250758051872253,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:own240-minus-own60@rows-night:rain",
+        "control_effect": 0.03464171662926674,
+        "floor": 0.007945321500301361,
+        "kind": "other_item",
+        "margin": 0.021617460995912552,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.05625917762517929,
+      "floor": 0.00526637677103281,
+      "floor_parts": {
+       "sham": 0.00526637677103281
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [],
@@ -11526,7 +14188,7 @@
      "m:rand0-own240-minus-own60:rain",
      "m:own240-minus-own60@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    },
    "zero": {
     "arm": "z:own240-minus-own60:rain",
@@ -11565,8 +14227,35 @@
      },
      {
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:rand0-own240-minus-own60:rain",
+        "control_effect": 0.059219423681497574,
+        "floor": 0.006510615348815918,
+        "kind": "random",
+        "margin": -0.0006378404796123505,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:own240-minus-own60@rows-night:rain",
+        "control_effect": 0.04927007108926773,
+        "floor": 0.007945321500301361,
+        "kind": "other_item",
+        "margin": 0.009311512112617493,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.05858158320188522,
+      "floor": 0.00526637677103281,
+      "floor_parts": {
+       "sham_recompute": 0.00526637677103281,
+       "twin_gap": 0.005194670520722866,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "not_supported",
+      "why": "effect not beyond every separating control"
      }
     ],
     "mass_confounded_controls": [],
@@ -11574,7 +14263,7 @@
      "z:rand0-own240-minus-own60:rain",
      "z:own240-minus-own60@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "not_supported"
    }
   },
   "cut_types_agree": true,
@@ -11597,8 +14286,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "not_supported",
+  "status": "not_supported",
   "unit_set": "own240-minus-own60",
   "waivers": {},
   "why": "both cut types agree"
@@ -11640,9 +14329,34 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.09727972745895386,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-own60:rain",
+        "control_effect": 0.08562669903039932,
+        "floor": 0.008798178285360336,
+        "kind": "random",
+        "margin": 0.012764662504196167,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:keep-own60@rows-night:rain",
+        "control_effect": 0.18599677085876465,
+        "floor": 0.008798178285360336,
+        "kind": "other_item",
+        "margin": 0.11313473433256149,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.07286203652620316,
+      "floor": 0.008798178285360336,
+      "floor_parts": {
+       "sham": 0.008798178285360336
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -11651,7 +14365,7 @@
     "separating_controls": [
      "m:keep-own60@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:keep-own60:rain",
@@ -11689,9 +14403,36 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.12727689743041992,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:keep-rand0-own60:rain",
+        "control_effect": 0.09000218659639359,
+        "floor": 0.008798178285360336,
+        "kind": "random",
+        "margin": 0.002135656774044037,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:keep-own60@rows-night:rain",
+        "control_effect": 0.22057518362998962,
+        "floor": 0.008798178285360336,
+        "kind": "other_item",
+        "margin": 0.13270865380764008,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.08786652982234955,
+      "floor": 0.008798178285360336,
+      "floor_parts": {
+       "sham_recompute": 0.008798178285360336,
+       "twin_gap": 0.0026343651115894318,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -11700,7 +14441,7 @@
     "separating_controls": [
      "z:keep-own60@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -11740,8 +14481,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "keep-own60",
   "waivers": {},
   "why": "both cut types agree"
@@ -11783,9 +14524,34 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.09727972745895386,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-own120:rain",
+        "control_effect": 0.08001057058572769,
+        "floor": 0.004839629400521517,
+        "kind": "random",
+        "margin": 0.005054213106632233,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:keep-own120@rows-night:rain",
+        "control_effect": 0.15927207469940186,
+        "floor": 0.004463545046746731,
+        "kind": "other_item",
+        "margin": 0.0843157172203064,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.07495635747909546,
+      "floor": 0.004101522266864777,
+      "floor_parts": {
+       "sham": 0.004101522266864777
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -11794,7 +14560,7 @@
     "separating_controls": [
      "m:keep-own120@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:keep-own120:rain",
@@ -11832,9 +14598,36 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.12727689743041992,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:keep-rand0-own120:rain",
+        "control_effect": 0.08689352124929428,
+        "floor": 0.004839629400521517,
+        "kind": "random",
+        "margin": 0.004597857594490051,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:keep-own120@rows-night:rain",
+        "control_effect": 0.1763506978750229,
+        "floor": 0.006694659125059843,
+        "kind": "other_item",
+        "margin": 0.09405503422021866,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.08229566365480423,
+      "floor": 0.004101522266864777,
+      "floor_parts": {
+       "sham_recompute": 0.004101522266864777,
+       "twin_gap": 0.002563237212598324,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -11843,7 +14636,7 @@
     "separating_controls": [
      "z:keep-own120@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -11883,8 +14676,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "keep-own120",
   "waivers": {},
   "why": "both cut types agree"
@@ -11926,9 +14719,34 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.09727972745895386,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-own240:rain",
+        "control_effect": 0.07952906936407089,
+        "floor": 0.0039711943827569485,
+        "kind": "random",
+        "margin": 0.018820926547050476,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:keep-own240@rows-night:rain",
+        "control_effect": 0.12781821191310883,
+        "floor": 0.006220838986337185,
+        "kind": "other_item",
+        "margin": 0.06711006909608841,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.060708142817020416,
+      "floor": 0.0039711943827569485,
+      "floor_parts": {
+       "sham": 0.0039711943827569485
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -11937,7 +14755,7 @@
     "separating_controls": [
      "m:keep-own240@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:keep-own240:rain",
@@ -11975,9 +14793,36 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.12727689743041992,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:keep-rand0-own240:rain",
+        "control_effect": 0.08400958776473999,
+        "floor": 0.0039711943827569485,
+        "kind": "random",
+        "margin": 0.01382002979516983,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:keep-own240@rows-night:rain",
+        "control_effect": 0.13061204552650452,
+        "floor": 0.006220838986337185,
+        "kind": "other_item",
+        "margin": 0.06042248755693436,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.07018955796957016,
+      "floor": 0.0039711943827569485,
+      "floor_parts": {
+       "sham_recompute": 0.0039711943827569485,
+       "twin_gap": 0.003681417088955641,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -11986,7 +14831,7 @@
     "separating_controls": [
      "z:keep-own240@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -12026,8 +14871,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "keep-own240",
   "waivers": {},
   "why": "both cut types agree"
@@ -12069,9 +14914,34 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.09727972745895386,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "m:keep-rand0-modI:rain",
+        "control_effect": 0.08898541331291199,
+        "floor": 0.0060376934707164764,
+        "kind": "random",
+        "margin": 0.008768178522586823,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:keep-modI@rows-night:rain",
+        "control_effect": 0.18414700031280518,
+        "floor": 0.004894820041954517,
+        "kind": "other_item",
+        "margin": 0.10392976552248001,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.08021723479032516,
+      "floor": 0.004672161303460598,
+      "floor_parts": {
+       "sham": 0.004672161303460598
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [],
@@ -12079,7 +14949,7 @@
      "m:keep-rand0-modI:rain",
      "m:keep-modI@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:keep-modI:rain",
@@ -12117,9 +14987,36 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.12727689743041992,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": true,
+        "control": "z:keep-rand0-modI:rain",
+        "control_effect": 0.11197580397129059,
+        "floor": 0.014124272391200066,
+        "kind": "random",
+        "margin": 0.015581801533699036,
+        "separates_identity": true
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:keep-modI@rows-night:rain",
+        "control_effect": 0.1981736421585083,
+        "floor": 0.014124272391200066,
+        "kind": "other_item",
+        "margin": 0.10177963972091675,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.09639400243759155,
+      "floor": 0.014124272391200066,
+      "floor_parts": {
+       "sham_recompute": 0.004672161303460598,
+       "twin_gap": 0.014124272391200066,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [],
@@ -12127,7 +15024,7 @@
      "z:keep-rand0-modI:rain",
      "z:keep-modI@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -12163,8 +15060,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "keep-modI",
   "waivers": {},
   "why": "both cut types agree"
@@ -12206,9 +15103,34 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.09727972745895386,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "m:keep-rand0-nounI:rain",
+        "control_effect": 0.08462431281805038,
+        "floor": 0.006070444826036692,
+        "kind": "random",
+        "margin": -3.544241189956665e-05,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "m:keep-nounI@rows-night:rain",
+        "control_effect": 0.2602614164352417,
+        "floor": 0.005331899970769882,
+        "kind": "other_item",
+        "margin": 0.17560166120529175,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.08465975522994995,
+      "floor": 0.004258299246430397,
+      "floor_parts": {
+       "sham": 0.004258299246430397
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -12217,7 +15139,7 @@
     "separating_controls": [
      "m:keep-nounI@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "supported"
    },
    "zero": {
     "arm": "z:keep-nounI:rain",
@@ -12255,9 +15177,36 @@
       "status": "supported"
      },
      {
+      "all_cut_effect": 0.12727689743041992,
       "context": "9001",
-      "status": "control_missing",
-      "why": "test outcome missing"
+      "controls": [
+       {
+        "beyond_floor": false,
+        "control": "z:keep-rand0-nounI:rain",
+        "control_effect": 0.10381604731082916,
+        "floor": 0.006070444826036692,
+        "kind": "random",
+        "margin": 0.004795953631401062,
+        "separates_identity": false
+       },
+       {
+        "beyond_floor": true,
+        "control": "z:keep-nounI@rows-night:rain",
+        "control_effect": 0.2830979824066162,
+        "floor": 0.007842080667614937,
+        "kind": "other_item",
+        "margin": 0.1840778887271881,
+        "separates_identity": true
+       }
+      ],
+      "effect": 0.0990200936794281,
+      "floor": 0.004258299246430397,
+      "floor_parts": {
+       "sham_recompute": 0.004258299246430397,
+       "twin_gap": 0.002537366934120655,
+       "twin_gap_source": "pair distance"
+      },
+      "status": "supported"
      }
     ],
     "mass_confounded_controls": [
@@ -12266,7 +15215,7 @@
     "separating_controls": [
      "z:keep-nounI@rows-night:rain"
     ],
-    "status": "control_missing"
+    "status": "supported"
    }
   },
   "cut_types_agree": true,
@@ -12306,8 +15255,8 @@
   "missing_cut_types": [],
   "overridden_by_picture": false,
   "picture": null,
-  "scalar_status": "control_missing",
-  "status": "control_missing",
+  "scalar_status": "supported",
+  "status": "supported",
   "unit_set": "keep-nounI",
   "waivers": {},
   "why": "both cut types agree"

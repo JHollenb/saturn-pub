@@ -120,24 +120,45 @@ def _counts(labels, units):
     return {k.item() if hasattr(k, "item") else k: int(c) for k, c in zip(keys, counts, strict=True)}
 
 
+def mass_tolerance_for(target_mass, *, rel_tolerance, abs_floor=0.0):
+    """Mass-matching tolerance ``max(rel_tolerance * |target_mass|, abs_floor)``.
+
+    The relative part makes "matched" mean "within a fraction of the target's own mass" (an
+    absolute tolerance of 0.02 called a control with 11x a 0.0015 target "matched"); the absolute
+    floor keeps near-zero targets from demanding an exact zero.
+    """
+    if rel_tolerance is None or rel_tolerance < 0 or abs_floor is None or abs_floor < 0:
+        raise ValueError("mass tolerance needs rel_tolerance >= 0 and abs_floor >= 0")
+    return max(float(rel_tolerance) * abs(float(target_mass)), float(abs_floor))
+
+
 def matched_control_sets(target, n_units, *, strata=None, blocks=None, mass=None,
                          mass_tolerance=None, disjoint=False, seed=0, n_sets=1,
-                         max_tries=500, swap_steps=4000):
+                         max_tries=500, swap_steps=4000, exclude=None, mass_rel_tolerance=None,
+                         mass_abs_floor=0.0):
     """Random unit sets matched to ``target`` (flat unit indices in ``range(n_units)``).
 
     Always matched: count per stratum (``strata`` = one label per unit; default one stratum).
     Matched when ``blocks`` is given: number of distinct blocks touched (and, when every block lies
-    in one stratum, distinct blocks per stratum). Matched when ``mass`` and ``mass_tolerance`` are
-    given: total mass within an absolute tolerance, by block- and stratum-preserving swaps.
-    ``disjoint=True`` draws only from units outside the target. Deterministic given ``seed``.
+    in one stratum, distinct blocks per stratum). Matched when ``mass`` and a tolerance are given,
+    by block- and stratum-preserving swaps: ``mass_rel_tolerance`` (preferred) matches the total
+    mass within ``max(mass_rel_tolerance * target mass, mass_abs_floor)``; ``mass_tolerance``
+    alone is the older absolute tolerance. ``disjoint=True`` draws only from units outside the
+    target; ``exclude`` (flat indices) are never drawn (e.g. the other named test units of a
+    panel). Deterministic given ``seed``.
 
     Returns a list of ``{"units": sorted int array, "report": {...}}``; each report lists matched
-    and ``unmatched`` constraints, overlap with the target, and target vs control mass whenever
-    ``mass`` is supplied (even if mass matching was not requested).
+    and ``unmatched`` constraints, overlap with the target, target vs control mass whenever
+    ``mass`` is supplied (even if mass matching was not requested), and ``duplicate_of``: the
+    index of an earlier identical set (``None`` if the set is new). A duplicate is not an
+    independent control; callers count it once.
     """
     target = np.unique(np.asarray(target, dtype=np.int64))
     if target.size == 0 or target.min() < 0 or target.max() >= n_units:
         raise ValueError("target must be a nonempty set of unit indices")
+    if mass_rel_tolerance is not None and mass_tolerance is not None:
+        raise ValueError("pass mass_rel_tolerance (relative, with mass_abs_floor) or mass_tolerance (absolute), "
+                         "not both")
     strata = np.zeros(n_units, np.int64) if strata is None else np.asarray(strata)
     if strata.shape != (n_units,):
         raise ValueError("one stratum label per unit is required")
@@ -151,10 +172,21 @@ def matched_control_sets(target, n_units, *, strata=None, blocks=None, mass=None
             raise ValueError("one finite mass per unit is required")
     if mass_tolerance is not None and (mass is None or mass_tolerance < 0):
         raise ValueError("mass matching needs per-unit mass and a non-negative tolerance")
+    if mass_rel_tolerance is not None:
+        if mass is None:
+            raise ValueError("mass matching needs per-unit mass and a non-negative tolerance")
+        mass_tolerance = mass_tolerance_for(float(mass[target].sum()), rel_tolerance=mass_rel_tolerance,
+                                            abs_floor=mass_abs_floor)
     rng = np.random.default_rng(seed)
     allowed = np.ones(n_units, bool)
     if disjoint:
         allowed[target] = False
+    excluded = np.zeros(0, np.int64)
+    if exclude is not None:
+        excluded = np.setdiff1d(np.unique(np.asarray(list(exclude), dtype=np.int64)), target)
+        if excluded.size and (excluded.min() < 0 or excluded.max() >= n_units):
+            raise ValueError("exclude must hold unit indices in range(n_units)")
+        allowed[excluded] = False
     quota = _counts(strata, target)
     block_mode = None
     if blocks is not None:
@@ -183,9 +215,15 @@ def matched_control_sets(target, n_units, *, strata=None, blocks=None, mass=None
         if mass_tolerance is not None:
             chosen, swaps = _match_mass(rng, chosen, strata, blocks, allowed, mass,
                                         float(mass[target].sum()), mass_tolerance, swap_steps)
-        out.append({"units": np.sort(chosen), "report": _report(
-            target, np.sort(chosen), strata, blocks, mass, mass_tolerance, disjoint, seed,
-            index, attempts, swaps, block_mode)})
+        report = _report(target, np.sort(chosen), strata, blocks, mass, mass_tolerance, disjoint, seed,
+                         index, attempts, swaps, block_mode)
+        if mass_rel_tolerance is not None and "mass" in report and "target" in report["mass"]:
+            report["mass"].update(rel_tolerance=float(mass_rel_tolerance), abs_floor=float(mass_abs_floor))
+        if exclude is not None:
+            report["excluded_units"] = int(excluded.size)
+        units = np.sort(chosen)
+        report["duplicate_of"] = next((j for j, prev in enumerate(out) if np.array_equal(prev["units"], units)), None)
+        out.append({"units": units, "report": report})
     return out
 
 

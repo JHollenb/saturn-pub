@@ -1,12 +1,12 @@
 # FLUX read panels: sealed attention panels on the FLUX.2 Klein lane
 
-This lane runs an `mdb.attention_panels` plan on FLUX.2 Klein 4B through `mdb.attention_port`. It replaces the one-off worker `saturn/experiments/2026-11-11-flux-read-graph/read_graph_worker.py` for read-cut experiments. It has three parts:
+This lane runs an `mdb_lanes.attention_panels` plan on FLUX.2 Klein 4B through `mdb_lanes.attention_port`. It replaces the one-off worker `saturn/experiments/2026-11-11-flux-read-graph/read_graph_worker.py` for read-cut experiments. It has three parts:
 
-- `src/mdb/flux_read_panels.py`: framework-free logic. It checks plans and leases, builds and verifies regeneration recipes, maps worker rows to panel results, and computes the headfree "gone" score.
-- `qualification/flux_read_panel_worker.py`: the mrun worker. It has two modes, panel and `--regenerate`.
-- `qualification/flux_read_panel_stage.py`: offline commands to build plans, stage, submit and report.
+- `packages/mdb-lanes/src/mdb_lanes/flux_read_panels.py`: framework-free logic. It checks plans and leases, builds and verifies regeneration recipes, maps worker rows to panel results, and computes the headfree "gone" score.
+- `packages/mdb-lanes/qualification/flux_read_panel_worker.py`: the mrun worker. It has two modes, panel and `--regenerate`.
+- `packages/mdb-lanes/qualification/flux_read_panel_stage.py`: offline commands to build plans, stage, submit and report.
 
-Unit tests are in `tests/test_flux_read_panel.py`. Sealed plans, tables and verdicts are in `qualification/flux_read_panels_20261112/`.
+Unit tests are in `packages/mdb-lanes/tests/test_flux_read_panel.py`. Sealed plans, tables and verdicts are in `packages/mdb-lanes/qualification/flux_read_panels_20261112/`.
 
 ## End to end
 
@@ -14,11 +14,11 @@ Use the mdb interpreter, with `PYTHONPATH` pointing at the checkout under test. 
 
 ```bash
 PY=/Users/jakeholl/domains/saturn-pub/packages/mdb/.venv/bin/python
-export PYTHONPATH=<worktree>/packages/mdb/src
-cd packages/mdb/qualification
+export PYTHONPATH=<worktree>/packages/mdb-lanes/src:<worktree>/packages/mdb/src:<worktree>/src
+cd packages/mdb-lanes/qualification
 $PY flux_read_panel_stage.py plans flux_read_panels_20261112/plans          # 1 build + 2 seal + leases
 $PY flux_read_panel_stage.py stage RUN --plans .../plans --job smoke         # 3 stage (also: legacy, full:N)
-$PY flux_read_panel_stage.py submit RUN                                      # 4 submit (mrun, priority 70)
+$PY flux_read_panel_stage.py submit RUN [--attempt N]                        # 4 submit (mrun, priority 70)
 rtk proxy rsync -a beast:/mnt/hdd8tb/mdb/research/<job>/ <results>/<job>/    # 5 collect
 $PY flux_read_panel_stage.py report --plans .../plans --results <results>/job-* --out OUT   # 6 verdicts
 $PY flux_read_panel_stage.py stage RUN --plans .../plans --job regenerate \
@@ -112,9 +112,9 @@ This is the FLUX counterpart of the Qwen hydration path in `native_replay_recipe
 
 Klein 4B, 256 px, 4 steps, BF16, TF32 off, prompts `cat` and `car`, seeds 4242 and 9001.
 
-Every number below is MEASURED from the saved job outputs unless it says otherwise. Per-job wall time and VRAM are in `qualification/flux_read_panels_20261112/jobs.json`. The full text report is `report/report.txt`, written by the `report` command. Images and recipes are on Beast under `/mnt/hdd8tb/mdb/research/<job>/flux-read-panel/` and on the laptop under `artifacts/mdb-flux-read-panels-20261112/results/`. They are not committed.
+Every number below is MEASURED from the saved job outputs unless it says otherwise. Per-job wall time and VRAM are in `packages/mdb-lanes/qualification/flux_read_panels_20261112/jobs.json`. The full text report is `report/report.txt`, written by the `report` command. The primary verdict report is `report/e-report-20261113.txt` with `report/e-summary-20261113.json` and `report/e-verdicts-fixed-20261113.json`: all 78 records recomputed from the saved results with the verdict logic of 2026-11-13 by `packages/mdb-lanes/qualification/panel_verdicts_recompute_20261113.py` (no new runs). `report/d-verdicts-*.json` hold the sealed-logic verdicts and are kept as history. Images and recipes are on Beast under `/mnt/hdd8tb/mdb/research/<job>/flux-read-panel/` and on the laptop under `artifacts/mdb-flux-read-panels-20261112/results/`. They are not committed.
 
-The sealed plans are in `qualification/flux_read_panels_20261112/plans/`:
+The sealed plans are in `packages/mdb-lanes/qualification/flux_read_panels_20261112/plans/`:
 
 | plan | sha256 | arms | branches | contents |
 |---|---|---|---|---|
@@ -128,12 +128,12 @@ The full panel holds, per word:
 - every old arm;
 - both cut types for every set;
 - the floor arms of every cut (`/sham_recompute` and `/cut_recompute` for zero cuts, `/sham` for renormalising cuts);
-- a matched random set for cut and keep (`rand0-*`, disjoint, stratum, block and mass matched with tolerance 0.02);
+- a matched random set for cut and keep (`rand0-*`, disjoint, stratum and block matched, mass searched within an absolute tolerance of 0.02). The random-control mass is each word's own write-mass share from the seed-4242 capture only (`flux_read_panel_stage.word_masses`), applied to both contexts: whether a draw is mass-matched in the 9001 context is not measured. Re-labelled with the relative rule of 2026-11-13 (within 10% of the target's mass, absolute floor 0.001), 22 of the 78 draws are matched, 52 carry less mass and 4 more; the absolute search had flagged 24 as matched, including the `own240-minus-own60` draws of ball, rain and snow with 4.3× to 11.3× the target's mass (target 0.0015 to 0.0039, control 0.0167 to 0.0189);
 - the other-item control (`@rows-<next word>`);
 - `own240-minus-own60`;
 - prompt-level `native:<pid>` and `img<-alltext` in both types, with floors.
 
-All 78 random draws were emitted, and `panel.identity` records whether each one separates identity from mass. A test checks that the `legacy` plan equals the 224 executed (seed, arm) pairs. Another checks that every one of those arms appears in `full` with the same kind, cut type, rows, units and condition.
+All 78 random draws were emitted, and `panel.identity` records whether each one separates identity from mass. The draws did not exclude the word's other named test sets: all 78 contain at least one unit of another named set of the same word (MEASURED; the overlap is about what a uniform draw gives, median 1.4× the expected count, because the named sets of a word cover a large part of the 600 heads). A test checks that the `legacy` plan equals the 224 executed (seed, arm) pairs. Another checks that every one of those arms appears in `full` with the same kind, cut type, rows, units and condition.
 
 ### Jobs
 
@@ -150,11 +150,18 @@ Klein 4B on Beast (RTX 4080). Priority 70, 10,400 MB VRAM request (7,991 MB peak
 | job-17f61da18312 | full lease 4 | 400 | 382 | 7,991 | 242/242 |
 | job-baa6927a1a6c | full lease 5 | 333 | 296 | 7,991 | 239/239 |
 | job-de42c09696dd | full lease 6 | 253 | 239 | 7,991 | 242/242 |
-| job-d8790bc10fbb | full lease 7 | (see below) | 955 | 7,991 | 0/249 (budget stop) |
-| job-a41e454eefe1, job-2c64f0609f8f, job-0ef55a497c49 | full leases 8-10 | did not run | | | |
-| job-af5bfaf0fde2 | regenerate 3 arms | did not run | | | |
+| job-eb99a2f1d947 | full lease 7 (attempt 2) | 259 | 246 | 7,991 | 249/249 |
+| job-03723dc2595b | full lease 8 (attempt 3) | 196 | 194 | 7,991 | 247/247 |
+| job-2c64f0609f8f | full lease 9 | 278 | 252 | 7,991 | 247/247 |
+| job-0ef55a497c49 | full lease 10 | 147 | 141 | 7,991 | 147/147 |
+| job-af5bfaf0fde2 | regenerate 3 arms (separate job) | 25 | 21 | 7,991 | 3/3 match |
 
-**Leases 7-10 and the regeneration job did not complete.** The Beast mrun host agent was stopped by systemd at 16:40:11 PST, in the same second it leased job-d8790bc10fbb (`journalctl --user -u mrun-agent`: `Stopping mrun-agent.service`). It was still inactive when this was written. That job's worker spent 866 s importing from the HDD-backed uv cache, against 28.6 s in job-2b516ba78da6, so its 540 s budget stopped it before the first branch. It ran past the 900 s mrun timeout because no agent was supervising it. The remaining three leases and the regeneration job are staged and queued. They need the agent back and full lease 7 resubmitted.
+All 2,568 branches of the `full` plan ran (sum over the 11 leases). Failed attempts, kept in `jobs.json` and not used:
+
+- job-d8790bc10fbb (lease 7) and job-a41e454eefe1 (lease 8): `lost`, "lease expired (agent silent)". The Beast mrun host agent was stopped by systemd at 16:40:11 PST on 2026-11-12. Lease 7's worker spent 866 s importing from the HDD-backed uv cache and its 540 s budget stopped it before the first branch; lease 8 likewise budget-stopped after roots only. Partial outputs stay on Beast and are excluded from the report.
+- job-871e9014eda6 (lease 8, attempt 2): `killed_vram`. mrun's wedged-queue clamp lowered its reservation from 10,400 to 5,776 MB while another user's job held the GPU, and the job was killed at that ceiling during model load. Attempt 3 ran on an idle GPU.
+
+mrun's guarded admission is idempotent on (experiment, command, payload, reservation, priority, ...), so resubmitting a lost job returns the lost job id. `submit --attempt N` appends `-attemptN` to the experiment name to admit a fresh job on byte-identical payloads (checked with `diff -r` against the original staged payload).
 
 Timing:
 
@@ -177,66 +184,174 @@ The comparison was done twice, both times against the saved images:
 
 `native:<pid>` equals both the old `native.<pid>.<seed>.png` and the old `arm.<pid>.<seed>.sham.png`. The gone table computed from the legacy pass equals `runs/headfree/headfree_table.json` with a maximum absolute difference of 0 over all 6 words, 2 seeds and 15 columns.
 
-Determinism across jobs: 183 (context, arm or root) keys were computed in two or more jobs, 160 arms and 23 roots. Every one has identical latent and RGB hashes. Inside each lease, every `iso:`, `del:` and `native:` arm run through the port is bit-identical to its port-free root.
+Determinism across jobs: 188 (context, arm or root) keys were computed in two or more succeeded jobs, 160 arms and 28 roots (recount by the 2026-11-13 audit; this text said 183 with 23 roots before, and the recount was not repeated in the fix pass). Every one has identical latent and RGB hashes. Inside each lease, every `iso:`, `del:` and `native:` arm run through the port is bit-identical to its port-free root.
 
 ### (b) Gone scores at new precision against the old table
 
 The gone score is `gone = (d(arm) - d(iso)) / (d(none) - d(iso))`, with `d = 1 - MAD(arm, del) / MAD(native, del)`, as in `headfree_table.py`. The "old" row is also the legacy-precision result, which is identical.
 
-The "floor bound" row is the arm's floor in gone units: `floor_px / (MAD(native, del) × span)`. The floor in px is the larger of two distances: the recompute sham's distance from iso, and the direct delta-to-recompute twin gap. By the triangle inequality, a gone difference smaller than this bound cannot be separated from arithmetic noise.
+The "floor bound" row is the arm's floor in gone units: `floor_px / (MAD(native, del) × span)`. The floor in px is the larger of two distances: the recompute sham's distance from iso, and the direct delta-to-recompute twin gap. Within one lane (two arms sharing the same del, iso and none images), the triangle inequality makes a gone difference smaller than this bound inseparable from arithmetic noise. The inequality does not cover a comparison across lanes (old precision vs new): the span differs between lanes, and the floor measures only the new lane's sham drift. Measured directly, the cross-lane image distance of an arm exceeds this floor bound in 56 of the 180 cells (up to 1.92×; audit 2026-11-13).
 
-`-` / "not run" marks arms in leases 7-10. The table shows a column subset; `report/b-gone-full.json` holds every column, including all `m:` twins, `own240-minus-own60`, the random controls and the other-item controls.
+All 6 words × 2 seeds are complete. Over the 180 cells of the report's 15 columns, the largest |new − old| is 0.08 (red 9001 own240, floor bound 0.198). At full precision, 0 of the 180 gone differences exceed their floor bound; the one apparent miss, black 4242 `m:own60` (0.42 vs 0.45), is a rounding artifact: |Δ| = 0.02358 against a bound of 0.02508. That the new precision stays within this floor is an OBSERVATION (0/180 gone-table cells exceed it), not a consequence of the triangle inequality, since the direct image distance exceeds the bound in 56/180 cells. The table shows a column subset; `report/b-gone-full.json` holds every column, including all `m:` twins, `own240-minus-own60`, the random controls and the other-item controls.
 
 | word | seed | source | own60 | own240 | rand240 | modI | nounI | keep-own60 | keep-nounI | m:own60 |
 |---|---|---|---|---|---|---|---|---|---|---|
 | red | 4242 | old (= legacy, exact) | 0.48 | 0.66 | 0.12 | 0.25 | 0.03 | 0.16 | 0.66 | 0.31 |
-| | | new precision | 0.47 | 0.64 | 0.13 | 0.27 | 0.02 | 0.14 | 0.66 | 0.29 |
-| | | floor bound | 0.092 | 0.094 | 0.075 | 0.083 | 0.075 | 0.072 | 0.109 | 0.082 |
+|  |  | new precision | 0.47 | 0.64 | 0.13 | 0.27 | 0.02 | 0.14 | 0.66 | 0.29 |
+|  |  | floor bound | 0.092 | 0.094 | 0.075 | 0.083 | 0.075 | 0.072 | 0.109 | 0.082 |
 | red | 9001 | old (= legacy, exact) | 0.61 | 0.73 | 0.23 | 0.46 | -0.01 | 0.11 | 0.93 | 0.36 |
-| | | new precision | 0.61 | 0.81 | 0.23 | 0.46 | 0.00 | 0.14 | 1.00 | 0.37 |
-| | | floor bound | 0.140 | 0.198 | 0.099 | 0.097 | 0.115 | 0.118 | 0.119 | 0.111 |
+|  |  | new precision | 0.61 | 0.81 | 0.23 | 0.46 | 0.00 | 0.14 | 1.00 | 0.37 |
+|  |  | floor bound | 0.140 | 0.198 | 0.099 | 0.097 | 0.115 | 0.118 | 0.119 | 0.111 |
 | black | 4242 | old (= legacy, exact) | 0.31 | 0.72 | -0.03 | 0.14 | 0.11 | 0.03 | 0.58 | 0.45 |
-| | | new precision | 0.31 | 0.71 | -0.05 | 0.13 | 0.12 | 0.04 | 0.58 | 0.42 |
-| | | floor bound | 0.047 | 0.054 | 0.067 | 0.052 | 0.042 | 0.033 | 0.035 | 0.025 |
+|  |  | new precision | 0.31 | 0.71 | -0.05 | 0.13 | 0.12 | 0.04 | 0.58 | 0.42 |
+|  |  | floor bound | 0.047 | 0.054 | 0.067 | 0.052 | 0.042 | 0.033 | 0.035 | 0.025 |
 | black | 9001 | old (= legacy, exact) | 0.39 | 0.77 | 0.10 | 0.21 | 0.08 | 0.03 | 0.67 | 0.34 |
-| | | new precision | 0.39 | 0.77 | 0.11 | 0.21 | 0.07 | 0.03 | - | 0.33 |
-| | | floor bound | 0.035 | 0.034 | 0.031 | 0.034 | 0.032 | 0.033 | - | 0.024 |
+|  |  | new precision | 0.39 | 0.77 | 0.11 | 0.21 | 0.07 | 0.03 | 0.67 | 0.33 |
+|  |  | floor bound | 0.035 | 0.034 | 0.031 | 0.034 | 0.032 | 0.033 | 0.030 | 0.024 |
 | ball | 4242 | old (= legacy, exact) | 0.51 | 0.66 | 0.25 | -0.09 | 0.28 | -0.20 | 0.30 | 0.30 |
-| | | new precision | 0.51 | 0.68 | 0.24 | -0.08 | 0.30 | -0.19 | 0.29 | 0.29 |
-| | | floor bound | 0.071 | 0.060 | 0.083 | 0.057 | 0.089 | 0.064 | 0.086 | 0.071 |
+|  |  | new precision | 0.51 | 0.68 | 0.24 | -0.08 | 0.30 | -0.19 | 0.29 | 0.29 |
+|  |  | floor bound | 0.071 | 0.060 | 0.083 | 0.057 | 0.089 | 0.064 | 0.086 | 0.071 |
 | ball | 9001 | old (= legacy, exact) | 0.47 | 0.49 | 0.42 | -0.02 | 0.23 | -0.04 | 0.80 | 0.38 |
-| | | new precision | not run | not run | not run | not run | not run | not run | not run | not run |
+|  |  | new precision | 0.46 | 0.48 | 0.41 | -0.03 | 0.22 | -0.04 | 0.80 | 0.37 |
+|  |  | floor bound | 0.041 | 0.053 | 0.045 | 0.042 | 0.063 | 0.049 | 0.056 | 0.041 |
 | snow | 4242 | old (= legacy, exact) | 0.27 | 0.46 | 0.49 | 0.27 | 0.04 | 0.65 | 0.81 | 0.32 |
-| | | new precision | 0.26 | 0.45 | 0.46 | 0.27 | 0.03 | 0.66 | 0.81 | 0.32 |
-| | | floor bound | 0.020 | 0.016 | 0.047 | 0.017 | 0.014 | 0.024 | 0.020 | 0.020 |
+|  |  | new precision | 0.26 | 0.45 | 0.46 | 0.27 | 0.03 | 0.66 | 0.81 | 0.32 |
+|  |  | floor bound | 0.020 | 0.016 | 0.047 | 0.017 | 0.014 | 0.024 | 0.020 | 0.020 |
 | snow | 9001 | old (= legacy, exact) | 0.13 | 0.17 | 0.16 | 0.11 | 0.09 | 0.56 | 0.74 | 0.17 |
-| | | new precision | not run | not run | not run | not run | not run | not run | not run | not run |
+|  |  | new precision | 0.12 | 0.17 | 0.15 | 0.11 | 0.09 | 0.56 | 0.73 | 0.17 |
+|  |  | floor bound | 0.020 | 0.011 | 0.022 | 0.017 | 0.037 | 0.016 | 0.014 | 0.013 |
 | night | 4242 | old (= legacy, exact) | 0.56 | 0.85 | 0.45 | 0.20 | 0.09 | 0.69 | 1.05 | 0.54 |
-| | | new precision | 0.56 | 0.85 | 0.46 | 0.19 | 0.07 | 0.69 | 1.06 | 0.55 |
-| | | floor bound | 0.053 | 0.073 | 0.064 | 0.036 | 0.040 | 0.058 | 0.028 | 0.053 |
+|  |  | new precision | 0.56 | 0.85 | 0.46 | 0.19 | 0.07 | 0.69 | 1.06 | 0.55 |
+|  |  | floor bound | 0.053 | 0.073 | 0.064 | 0.036 | 0.040 | 0.058 | 0.028 | 0.053 |
 | night | 9001 | old (= legacy, exact) | 0.28 | 0.57 | 0.20 | 0.12 | -0.01 | 0.48 | 0.99 | 0.22 |
-| | | new precision | not run | not run | not run | not run | not run | not run | not run | not run |
+|  |  | new precision | 0.28 | 0.58 | 0.20 | 0.12 | -0.01 | 0.48 | 0.99 | 0.22 |
+|  |  | floor bound | 0.033 | 0.045 | 0.020 | 0.020 | 0.025 | 0.024 | 0.016 | 0.017 |
 | rain | 4242 | old (= legacy, exact) | -0.10 | 0.22 | -0.06 | 0.15 | -0.24 | 0.38 | 0.89 | -0.12 |
-| | | new precision | -0.10 | 0.22 | -0.06 | 0.16 | -0.25 | 0.40 | 0.90 | -0.12 |
-| | | floor bound | 0.137 | 0.128 | 0.110 | 0.159 | 0.129 | 0.135 | 0.095 | 0.137 |
+|  |  | new precision | -0.10 | 0.22 | -0.06 | 0.16 | -0.25 | 0.40 | 0.90 | -0.12 |
+|  |  | floor bound | 0.137 | 0.128 | 0.110 | 0.159 | 0.129 | 0.135 | 0.095 | 0.137 |
 | rain | 9001 | old (= legacy, exact) | 0.09 | 0.66 | 0.27 | 0.23 | -0.15 | 1.41 | 1.49 | 0.03 |
-| | | new precision | not run | not run | not run | not run | not run | not run | not run | not run |
+|  |  | new precision | 0.10 | 0.70 | 0.26 | 0.24 | -0.14 | 1.41 | 1.49 | 0.03 |
+|  |  | floor bound | 0.127 | 0.122 | 0.108 | 0.124 | 0.187 | 0.226 | 0.109 | 0.118 |
 
 ### (c) Regeneration from recipes
 
-**Not run.** The separate job job-af5bfaf0fde2 is staged and queued. It regenerates three arms:
+The separate job job-af5bfaf0fde2 rebuilt three arms from their recipes alone (checkpoint, prompt text, seed), on the same host and software lane. All three matched every recorded hash: conditioning, initial noise, final latent, decoded RGB and PNG. `lane_drift` was empty, `port.calls == 100` and `forward_count == 4` for each, and the rebuilt cut specs equal the recipe's (`report/c-regenerate.json`).
 
-- `smoke-legacy@4242:z:own60:ball` (legacy precision);
-- `full-00@4242:m:own60:red` (renormalising cut);
-- `full-00@4242:z:keep-own60:red` (delta zero cut, 540 heads).
+| arm | precision | cut | conditioning | init noise | latent | RGB | PNG |
+|---|---|---|---|---|---|---|---|
+| `smoke-legacy@4242:z:own60:ball` | legacy | zero | = | = | = | = | = |
+| `full-00@4242:m:own60:red` | native | renormalising | = | = | = | = | = |
+| `full-00@4242:z:keep-own60:red` | native | delta zero, 540 heads | = | = | = | = | = |
 
-It could not start because the mrun host agent is down. The regenerate path was exercised only locally, against a fake model lane (`compare_regeneration` and the recipe and port round trip). Hash equality on the GPU lane is therefore **not yet measured**. The cross-job determinism in (a), 183 keys with identical hashes, comes from re-executing the panel, not from recipes.
+The job confirmed the staged shared-module bytes (`attention_port` e315da2a, `attention_panels` 31a8595b, `flux_read_panels` f50dfcfe) and worker 1cfb7550. Its 21 s worker time includes the load.
 
 ### (d) Verdicts: `attach_results` → `arm_effects` → `verdicts`
 
-The outcome for each arm is its px MAD from its reference arm, `iso:<word>`. These rows are copied from `report/d-verdicts-selected.json` without editing. The picture-judgement slot is empty (`picture=None`): no picture judgement was made.
+The outcome for each arm is its px MAD from its reference arm, `iso:<word>`. The picture-judgement slot is empty (`picture=None`): no picture judgement was made. Every count in this section is MEASURED by running the named version of `verdicts()` on the same saved results (`report/d-results-px.json`, plan `94ef887e...`); no new job ran.
 
-Seed 9001 is missing for `ball` and partly for `black` (leases 7-10), so those records are `control_missing` across contexts. For a keep claim the separating control must have a **larger** effect, so a positive margin means the control's effect exceeds the keep arm's. Random controls marked mass-confounded (`separates_identity=False`) are reported in the JSON but never counted, and are left out of the column below.
+**Primary: all 78 records under the verdict logic of 2026-11-13** (`report/e-report-20261113.txt`, `report/e-summary-20261113.json`, records in `report/e-verdicts-fixed-20261113.json`; written by `packages/mdb-lanes/qualification/panel_verdicts_recompute_20261113.py`).
+
+| verdict logic | supported | set_only | not_supported | control_missing |
+|---|---|---|---|---|
+| sealed: `attention_panels` 5e09d95 (sha 31a8595b), the module the plan was sealed with | 27 | 0 | 51 | 0 |
+| pre-fix: 166b334 (sha 4a39dbaa; the same file at the audited tip 420b38e; after the move to mdb-lanes the same bytes are at 4bbe3e7 `packages/mdb-lanes/src/mdb_lanes/attention_panels.py`), the branch's logic before this fix pass | 2 | 13 | 63 | 0 |
+| **fixed: this fix pass (primary)** | **0** | **15** | **46** | **17** |
+| fixed, with the named-unit check reported as a flag only | 2 | 14 | 61 | 1 |
+
+The sealed logic predates the verdict fixes of 2026-11-12 (9451fc8, fde00c9) and of 2026-11-13, so its table is history, not a verdict. It counted only controls flagged `separates_identity`: every other-item control (including other-item KEEP controls, which are not sufficiency controls: on ball, `keep-own60@rows-snow` does more damage than the all-cut itself) and random controls only when mass-matched. Random or external sets of the same size that were not mass-matched were ignored even when they did equal damage (`snow own120`: `rand120` 0.1156 against the test's 0.1166, sealed `supported`). Between sealed and pre-fix logic, 25 of the 78 records change; between pre-fix and fixed, 22 change.
+
+What the fix pass changed, and its effect here:
+- **Random draws that contain a named test unit are excluded.** All 78 FLUX random draws contain at least one head of another named set of the same word (the overlap is near what a uniform draw gives, because a word's named sets cover a large part of the 600 heads). Under the rule, no FLUX random control is valid: no record can be `supported`, every keep record that is not refuted first by low recovery is `control_missing`, and set size is ruled out for no record. This is the main reason for the 17 `control_missing`. With the check reported as a flag only, `black keep-modI` and `night mod` stay `supported` (each beats a disjoint random control that is mass-matched by the relative rule, on seed-4242 mass). Whether those two survive a random draw that avoids the named sets is not yet known; it needs a new draw and a new run.
+- **Other-item controls carry a mass relation** (other word's write-mass share through the same heads over this word's, seed-4242 capture). They rule out generic damage only with a share of at least 0.10 (a choice), and a heavier one (more than 10% above) cannot refute. Shares range 0.34 to 2.07 over the named sets and up to 12.8 for `own240-minus-own60` (snow), so no FLUX other-item cut is near empty. `ball noun` and `night modI` stay `not_supported`: their other-item controls (shares 1.07 and 1.06) are matched by the relative rule, so they may refute.
+- **Relative mass labels.** `snow own240-minus-own60` was `not_supported` only because of a "matched" random control carrying 11× the target's mass; re-labelled `more`, it cannot refute, and the record is `set_only` (generic damage ruled out by the other-item control). `rain own240-minus-own60` (random control 4.3× the target's mass) is `control_missing`.
+- **Effect fraction.** Every record now carries its effect as a fraction of the all-cut effect (necessity) or its recovery (sufficiency). The smallest necessity fraction of any FLUX record is 0.056 (`black own240-minus-own60`, `not_supported` anyway); no FLUX verdict depends on the 5% minimum-fraction choice (MEASURED: re-run with the bar at 0 changes no record).
+
+**The 0.7 recovery threshold is post hoc.** `DEFAULT_RECOVERY = 0.7` is not in the sealed plan; it was added to the verdict code after the plan was sealed. Every keep verdict that is `not_supported` only because recovery is below 0.7 is marked in the last column, with the status it would have without a recovery threshold. Under the fixed logic that status is `control_missing` (no valid random keep control) for 20 records. With the named-unit check as a flag only, 18 records depend on the threshold: 15 would be at most `set_only` without it and 3 (`snow`, `night`, `rain` `keep-modI`) at most `supported`; `ball keep-own60` is one of the 15 (recovery 0.698 / 0.796 zero, 0.567 / 0.736 renorm, seeds 4242 / 9001; zero 4242 misses 0.7 by 0.0024). So `ball keep-own60` is reported as **at most `set_only`**: not_supported only via a threshold that was not sealed, and mass is open in any case.
+
+Per record (necessity fraction = effect / all-cut effect; sufficiency fraction = recovery; over both cut types and both seeds):
+
+| record | claim | sealed logic | pre-fix logic | **fixed** | fixed, named check as flag | effect fraction min–max | depends on the post-hoc 0.7 recovery threshold |
+|---|---|---|---|---|---|---|---|
+| red own60 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.432–0.690 | – |
+| red own120 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.392–0.685 | – |
+| red own240 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.493–0.782 | – |
+| red mod | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.541–0.819 | – |
+| red noun | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.315–0.366 | – |
+| red modI | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.273–0.551 | – |
+| red nounI | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.220–0.242 | – |
+| red own240-minus-own60 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.145–0.187 | – |
+| red keep-own60 | sufficient | not_supported | not_supported | **control_missing** | not_supported | 0.655–0.740 | flag: at most set_only without it |
+| red keep-own120 | sufficient | not_supported | not_supported | **control_missing** | not_supported | 0.681–0.760 | flag: at most set_only without it |
+| red keep-own240 | sufficient | not_supported | not_supported | **control_missing** | not_supported | 0.672–0.804 | flag: at most set_only without it |
+| red keep-modI | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.557–0.615 | fixed: control_missing without it; flag: at most set_only without it |
+| red keep-nounI | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.119–0.380 | fixed: control_missing without it |
+| black own60 | necessary | supported | set_only | **set_only** | set_only | 0.345–0.488 | – |
+| black own120 | necessary | supported | set_only | **set_only** | set_only | 0.579–0.709 | – |
+| black own240 | necessary | supported | set_only | **set_only** | set_only | 0.670–0.755 | – |
+| black mod | necessary | supported | set_only | **set_only** | set_only | 0.814–0.890 | – |
+| black noun | necessary | not_supported | not_supported | **control_missing** | not_supported | 0.115–0.182 | – |
+| black modI | necessary | not_supported | not_supported | **set_only** | not_supported | 0.141–0.296 | – |
+| black nounI | necessary | not_supported | not_supported | **control_missing** | not_supported | 0.124–0.189 | – |
+| black own240-minus-own60 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.056–0.081 | – |
+| black keep-own60 | sufficient | supported | set_only | **control_missing** | set_only | 0.878–0.920 | – |
+| black keep-own120 | sufficient | supported | set_only | **control_missing** | set_only | 0.906–0.933 | – |
+| black keep-own240 | sufficient | supported | set_only | **control_missing** | set_only | 0.923–0.951 | – |
+| black keep-modI | sufficient | supported | supported | **control_missing** | supported | 0.766–0.832 | – |
+| black keep-nounI | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.129–0.486 | fixed: control_missing without it |
+| ball own60 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.409–0.602 | – |
+| ball own120 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.426–0.633 | – |
+| ball own240 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.487–0.692 | – |
+| ball mod | necessary | not_supported | not_supported | **control_missing** | not_supported | 0.109–0.277 | – |
+| ball noun | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.402–0.603 | – |
+| ball modI | necessary | not_supported | not_supported | **control_missing** | not_supported | 0.096–0.161 | – |
+| ball nounI | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.259–0.456 | – |
+| ball own240-minus-own60 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.215–0.306 | – |
+| ball keep-own60 | sufficient | supported | not_supported | **control_missing** | not_supported | 0.567–0.796 | flag: at most set_only without it |
+| ball keep-own120 | sufficient | supported | not_supported | **control_missing** | not_supported | 0.654–0.837 | flag: at most set_only without it |
+| ball keep-own240 | sufficient | supported | not_supported | **control_missing** | not_supported | 0.668–0.778 | flag: at most set_only without it |
+| ball keep-modI | sufficient | not_supported | not_supported | **not_supported** | not_supported | -0.004–0.206 | fixed: control_missing without it |
+| ball keep-nounI | sufficient | supported | not_supported | **not_supported** | not_supported | 0.153–0.573 | fixed: control_missing without it; flag: at most set_only without it |
+| snow own60 | necessary | supported | set_only | **set_only** | set_only | 0.331–0.451 | – |
+| snow own120 | necessary | supported | not_supported | **not_supported** | not_supported | 0.348–0.530 | – |
+| snow own240 | necessary | supported | not_supported | **not_supported** | not_supported | 0.389–0.581 | – |
+| snow mod | necessary | supported | set_only | **set_only** | set_only | 0.336–0.536 | – |
+| snow noun | necessary | supported | set_only | **set_only** | set_only | 0.337–0.455 | – |
+| snow modI | necessary | not_supported | not_supported | **set_only** | not_supported | 0.278–0.395 | – |
+| snow nounI | necessary | supported | not_supported | **set_only** | not_supported | 0.101–0.319 | – |
+| snow own240-minus-own60 | necessary | not_supported | not_supported | **set_only** | set_only | 0.285–0.427 | – |
+| snow keep-own60 | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.259–0.620 | fixed: control_missing without it; flag: at most set_only without it |
+| snow keep-own120 | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.399–0.664 | fixed: control_missing without it; flag: at most set_only without it |
+| snow keep-own240 | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.475–0.675 | fixed: control_missing without it; flag: at most set_only without it |
+| snow keep-modI | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.213–0.450 | fixed: control_missing without it; flag: at most supported without it |
+| snow keep-nounI | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.134–0.290 | fixed: control_missing without it |
+| night own60 | necessary | supported | set_only | **set_only** | set_only | 0.324–0.568 | – |
+| night own120 | necessary | supported | set_only | **set_only** | set_only | 0.446–0.646 | – |
+| night own240 | necessary | supported | set_only | **set_only** | set_only | 0.587–0.810 | – |
+| night mod | necessary | supported | supported | **set_only** | supported | 0.310–0.521 | – |
+| night noun | necessary | not_supported | not_supported | **control_missing** | not_supported | 0.118–0.249 | – |
+| night modI | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.150–0.272 | – |
+| night nounI | necessary | not_supported | not_supported | **control_missing** | not_supported | 0.102–0.161 | – |
+| night own240-minus-own60 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.084–0.201 | – |
+| night keep-own60 | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.307–0.526 | fixed: control_missing without it; flag: at most set_only without it |
+| night keep-own120 | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.400–0.597 | fixed: control_missing without it; flag: at most set_only without it |
+| night keep-own240 | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.546–0.687 | fixed: control_missing without it; flag: at most set_only without it |
+| night keep-modI | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.199–0.301 | fixed: control_missing without it; flag: at most supported without it |
+| night keep-nounI | sufficient | not_supported | not_supported | **not_supported** | not_supported | 0.004–0.076 | fixed: control_missing without it |
+| rain own60 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.302–0.560 | – |
+| rain own120 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.423–0.715 | – |
+| rain own240 | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.584–0.717 | – |
+| rain mod | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.483–0.538 | – |
+| rain noun | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.398–0.686 | – |
+| rain modI | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.293–0.503 | – |
+| rain nounI | necessary | not_supported | not_supported | **not_supported** | not_supported | 0.359–0.561 | – |
+| rain own240-minus-own60 | necessary | not_supported | not_supported | **control_missing** | control_missing | 0.388–0.578 | – |
+| rain keep-own60 | sufficient | supported | not_supported | **not_supported** | not_supported | 0.251–0.371 | fixed: control_missing without it |
+| rain keep-own120 | sufficient | supported | not_supported | **not_supported** | not_supported | 0.229–0.415 | fixed: control_missing without it |
+| rain keep-own240 | sufficient | supported | not_supported | **not_supported** | not_supported | 0.376–0.542 | fixed: control_missing without it; flag: at most set_only without it |
+| rain keep-modI | sufficient | supported | not_supported | **not_supported** | not_supported | 0.175–0.289 | fixed: control_missing without it; flag: at most supported without it |
+| rain keep-nounI | sufficient | supported | not_supported | **not_supported** | not_supported | 0.130–0.226 | fixed: control_missing without it |
+
+**Secondary, superseded: the sealed-logic table (18 records, as first reported).** These rows are copied from `report/d-verdicts-selected.json` without editing. They were computed with `attention_panels` 31a8595b (5e09d95), the module sealed with the plan, which predates the verdict fixes; do not read them as verdicts. For a keep claim the separating control must have a **larger** effect, so a positive margin means the control's effect exceeds the keep arm's. Random controls marked mass-confounded (`separates_identity=False`) were not counted by that logic and are left out of the column below.
 
 | item | unit set | claim | status | both types agree | zero cut 4242: effect / floor | renorm 4242: effect / floor | separating controls 4242 (zero): effect, margin, beyond floor | 9001 |
 |---|---|---|---|---|---|---|---|---|
@@ -250,15 +365,16 @@ Seed 9001 is missing for `ball` and partly for `black` (leases 7-10), so those r
 | black | modI | necessary | not_supported | False | supported: 0.0373 / 0.0034 | not_supported: 0.0163 / 0.0019 | rand0-modI (random) 0.0143, +0.0230, True; modI@rows-ball (other_item) 0.0072, +0.0301, True | zero supported, renorm not_supported |
 | black | nounI | necessary | not_supported | True | not_supported: 0.0170 / 0.0028 | not_supported: 0.0212 / 0.0028 | rand0-nounI (random) 0.0196, -0.0026, False; nounI@rows-ball (other_item) 0.0320, -0.0149, False | zero not_supported, renorm not_supported |
 | black | keep-own60 | sufficient | supported | True | supported: 0.0101 / 0.0022 | supported: 0.0137 / 0.0018 | keep-own60@rows-ball (other_item) 0.0724, +0.0623, True | zero supported, renorm supported |
-| black | keep-modI | sufficient | control_missing | True | supported: 0.0252 / 0.0064 | supported: 0.0262 / 0.0019 | keep-rand0-modI (random) 0.0766, +0.0514, True; keep-modI@rows-ball (other_item) 0.1009, +0.0757, True | not run |
-| black | keep-nounI | sufficient | control_missing | True | not_supported: 0.1099 / 0.0023 | not_supported: 0.0855 / 0.0021 | keep-rand0-nounI (random) 0.0328, -0.0771, False; keep-nounI@rows-ball (other_item) 0.0686, -0.0413, False | not run |
-| ball | own60 | necessary | control_missing | True | not_supported: 0.0537 / 0.0038 | not_supported: 0.0351 / 0.0038 | own60@rows-snow (other_item) 0.0536, +0.0001, False | not run |
-| ball | modI | necessary | control_missing | True | not_supported: 0.0135 / 0.0031 | not_supported: 0.0138 / 0.0029 | rand0-modI (random) 0.0291, -0.0156, False; modI@rows-snow (other_item) 0.0667, -0.0532, False | not run |
-| ball | nounI | necessary | control_missing | True | not_supported: 0.0338 / 0.0048 | not_supported: 0.0222 / 0.0048 | nounI@rows-snow (other_item) 0.0358, -0.0020, False | not run |
-| ball | keep-own60 | sufficient | control_missing | True | supported: 0.0297 / 0.0035 | supported: 0.0372 / 0.0035 | keep-own60@rows-snow (other_item) 0.1990, +0.1694, True | not run |
-| ball | keep-modI | sufficient | control_missing | True | not_supported: 0.0913 / 0.0026 | not_supported: 0.0681 / 0.0026 | keep-rand0-modI (random) 0.0554, -0.0359, False; keep-modI@rows-snow (other_item) 0.2117, +0.1204, True | not run |
-| ball | keep-nounI | sufficient | control_missing | True | supported: 0.0447 / 0.0046 | supported: 0.0367 / 0.0030 | keep-nounI@rows-snow (other_item) 0.2291, +0.1843, True | not run |
+| black | keep-modI | sufficient | supported | True | supported: 0.0252 / 0.0064 | supported: 0.0262 / 0.0019 | keep-rand0-modI (random) 0.0766, +0.0514, True; keep-modI@rows-ball (other_item) 0.1009, +0.0757, True | zero supported, renorm supported |
+| black | keep-nounI | sufficient | not_supported | True | not_supported: 0.1099 / 0.0023 | not_supported: 0.0855 / 0.0021 | keep-rand0-nounI (random) 0.0328, -0.0771, False; keep-nounI@rows-ball (other_item) 0.0686, -0.0413, False | zero not_supported, renorm not_supported |
+| ball | own60 | necessary | not_supported | True | not_supported: 0.0537 / 0.0038 | not_supported: 0.0351 / 0.0038 | own60@rows-snow (other_item) 0.0536, +0.0001, False | zero supported, renorm supported |
+| ball | modI | necessary | not_supported | True | not_supported: 0.0135 / 0.0031 | not_supported: 0.0138 / 0.0029 | rand0-modI (random) 0.0291, -0.0156, False; modI@rows-snow (other_item) 0.0667, -0.0532, False | zero not_supported, renorm not_supported |
+| ball | nounI | necessary | not_supported | True | not_supported: 0.0338 / 0.0048 | not_supported: 0.0222 / 0.0048 | nounI@rows-snow (other_item) 0.0358, -0.0020, False | zero supported, renorm supported |
+| ball | keep-own60 | sufficient | supported | True | supported: 0.0297 / 0.0035 | supported: 0.0372 / 0.0035 | keep-own60@rows-snow (other_item) 0.1990, +0.1694, True | zero supported, renorm supported |
+| ball | keep-modI | sufficient | not_supported | True | not_supported: 0.0913 / 0.0026 | not_supported: 0.0681 / 0.0026 | keep-rand0-modI (random) 0.0554, -0.0359, False; keep-modI@rows-snow (other_item) 0.2117, +0.1204, True | zero not_supported, renorm not_supported |
+| ball | keep-nounI | sufficient | supported | True | supported: 0.0447 / 0.0046 | supported: 0.0367 / 0.0030 | keep-nounI@rows-snow (other_item) 0.2291, +0.1843, True | zero supported, renorm supported |
 
+The 18-record comparison first reported here ("changes 4 of the 18 records", `report-head-logic/`) covered only a subset; over all 78 records the pre-fix logic changes 25 records against the sealed logic (table above). The `report` command needed one change to run under the pre-fix logic: control entries no longer always carry `separates_identity`, so the text report reads it with `.get`.
 
 ## Workarounds and gaps in the shared modules
 
@@ -277,3 +393,18 @@ None of these blocked the run. The shared modules were not edited; each workarou
 6. Already documented in `ATTENTION-PORT.md`: `port.log` recompute counters are empty under `precision="legacy"`, so legacy rows have `recomputed=None`.
 
 Scheduler limit: one mrun job may run at most 256 local work items (`scheduling_contract.MAX_LOCAL_WORK_ITEMS`). One lease plus its reference roots is therefore one job, and `leases_within` sizes the lease cap so that every lease fits.
+
+## Gated read mass: the corrected trivial baseline (2026-11-14)
+
+`flux_read_panels.unit_mass` (the lane's per-unit "write mass", `p_tj · |O_h v_j|` summed over the word's rows and steps, averaged over image receivers) leaves out the block's outer attention gate `g`. FLUX.2 Klein shares one modulation, so one gate vector per step, over all 5 joint blocks and another over all 20 single blocks (diffusers `transformer_flux2.py`, `Flux2Modulation`). The joint gate is about 50 times smaller per unit of mass than the single gate.
+
+- Measured on the predicted-write capture (job-86df2dd47809, audit `artifacts/audit-predicted-write-interp-bridge-20261114.md`): block position explains 99.7–99.8% of the variance of log(image-receiver predicted write / mass); joint/single ratio 0.018–0.024 per word.
+- Consequence: a set ranked or matched by raw mass is mostly joint-block heads (62–86% of each word's mass sits there), whose writes are small. Raw mass is therefore a weak baseline, and "beats mass" claims must be re-checked against gated mass.
+
+**Use gated mass as the trivial baseline.** `flux_read_panels.gated_unit_mass(mass, heads, joint, scales)` multiplies `unit_mass` by one scale per stratum (joint, single) and renormalises. `flux_read_panels.stratum_gate_scale(numerator, mass, heads, joint)` gives the two scales as sum(numerator)/sum(mass) per stratum, where the numerator is a gated per-unit quantity from the same capture (the experiment used the image-receiver zero-cut predicted write, so the two scales are fitted on that capture; only their ratio changes rankings). Measured: gated mass has Spearman 0.997–0.999 with image-receiver predicted write over the 600 units. `unit_mass` is unchanged, so sealed plans that used it stay valid.
+
+What gated mass does not include: the text-receiver part of a head's write (`others:<w>` receivers, 70–86% of the predicted write in that experiment) and per-unit detail of `g ⊙ O_h v` beyond one scale per stratum. Whether those add anything to selecting heads whose cut removes a word is the question of `experiments/predicted_write_20261113/PREREG-ADDENDUM-2.md`.
+
+## Lease check fix (2026-11-14)
+
+`check_lease` rebuilt the lease hash body without `seal_sha256` and `replicated`, while `Panel.leases` includes them when set. The worker therefore refused every lease with replicated shared references (job-c1b2bf48ff0d of the predicted-write experiment) and would have refused every lease built with `seal=`. Fixed by adding those two fields to the body when present; `tests/test_flux_read_panel.py::test_check_lease_accepts_replicated_and_sealed_leases` covers both, including the real lease that failed.

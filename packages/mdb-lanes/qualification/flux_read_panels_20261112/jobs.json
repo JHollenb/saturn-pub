@@ -9,18 +9,30 @@
   "budget_stopped": true,
   "passes": [
    {
-    "tag": "smoke-legacy",
     "executed": 20,
-    "planned": 20,
     "lease": 0,
-    "seconds_mean": 0.42
+    "lease_sha256": "662102e915ea85893e807a272203a6908f7ae0d239e3c7154e4aee86ae777a2e",
+    "of": 1,
+    "plan_sha256": "ce7dc5cf8b519277b7bb4ae18c6e8984bc2dd4e889a2a86557ef568201405011",
+    "planned": 20,
+    "precision": "legacy",
+    "seconds_max": 0.8711480568163097,
+    "seconds_mean": 0.4204110815189779,
+    "tag": "smoke-legacy",
+    "zero_method": "delta"
    },
    {
-    "tag": "smoke-new",
     "executed": 140,
-    "planned": 218,
     "lease": 0,
-    "seconds_mean": 0.422
+    "lease_sha256": "55a0ee5bbd4fbc5c20c55f8bdc5931e25755dbca40d0cc442d7e679c34a06800",
+    "of": 1,
+    "plan_sha256": "7e14e78c3cd196c559e9dac07abdf343ffdf35d69c1752406363c9607ef6dcaf",
+    "planned": 218,
+    "precision": "native",
+    "seconds_max": 1.0016300519928336,
+    "seconds_mean": 0.42157380330110233,
+    "tag": "smoke-new",
+    "zero_method": "delta"
    }
   ]
  },
@@ -34,11 +46,17 @@
   "budget_stopped": false,
   "passes": [
    {
-    "tag": "legacy",
     "executed": 224,
-    "planned": 224,
     "lease": 0,
-    "seconds_mean": 0.402
+    "lease_sha256": "af1460788c532d4e3e8bed3746bf5c32995887771c92c4e90e6fc4b6c5c856fc",
+    "of": 1,
+    "plan_sha256": "b52a26a9a5f66166da91cc88dcea43ed46947cc7c02d5f728065b8977d107f7d",
+    "planned": 224,
+    "precision": "legacy",
+    "seconds_max": 0.7189206560142338,
+    "seconds_mean": 0.40182205448218156,
+    "tag": "legacy",
+    "zero_method": "delta"
    }
   ]
  },
@@ -52,11 +70,17 @@
   "budget_stopped": false,
   "passes": [
    {
-    "tag": "full-00",
     "executed": 234,
-    "planned": 234,
     "lease": 0,
-    "seconds_mean": 0.464
+    "lease_sha256": "46cc0d4fada290ca57a7a8b6a2660720cc09133ade0d6911f5ef304669906eb6",
+    "of": 11,
+    "plan_sha256": "94ef887ec1567c0b41ff8d25bf09f1a0e56cb0636c08845ac0502c9a68ab2536",
+    "planned": 234,
+    "precision": "native",
+    "seconds_max": 1.050249789841473,
+    "seconds_mean": 0.4641863906549083,
+    "tag": "full-00",
+    "zero_method": "delta"
    }
   ]
  },
@@ -70,11 +94,17 @@
   "budget_stopped": false,
   "passes": [
    {
-    "tag": "full-01",
     "executed": 232,
-    "planned": 232,
     "lease": 1,
-    "seconds_mean": 0.475
+    "lease_sha256": "800b399e2145f46f745a66285cc73eafbbf1dd624c15a25df5598341e9a3126e",
+    "of": 11,
+    "plan_sha256": "94ef887ec1567c0b41ff8d25bf09f1a0e56cb0636c08845ac0502c9a68ab2536",
+    "planned": 232,
+    "precision": "native",
+    "seconds_max": 2.8214893378317356,
+    "seconds_mean": 0.4745662522939805,
+    "tag": "full-01",
+    "zero_method": "delta"
    }
   ]
  },
@@ -88,11 +118,17 @@
   "budget_stopped": false,
   "passes": [
    {
-    "tag": "full-02",
     "executed": 247,
-    "planned": 247,
     "lease": 2,
-    "seconds_mean": 0.471
+    "lease_sha256": "c7a1560569be1346ec81a430f62a82c56f35da6a9c82c912b8bcf6c707b0f892",
+    "of": 11,
+    "plan_sha256": "94ef887ec1567c0b41ff8d25bf09f1a0e56cb0636c08845ac0502c9a68ab2536",
+    "planned": 247,
+    "precision": "native",
+    "seconds_max": 1.9522980451583862,
+    "seconds_mean": 0.4706710536817187,
+    "tag": "full-02",
+    "zero_method": "delta"
    }
   ]
  },
@@ -106,11 +142,17 @@
   "budget_stopped": false,
   "passes": [
    {
-    "tag": "full-03",
     "executed": 242,
-    "planned": 242,
     "lease": 3,
-    "seconds_mean": 0.465
+    "lease_sha256": "cbbe38fd17c3a78711a99f3c0f253c65997e34d5c0ca1dd62fb76fdc9dcae4a9",
+    "of": 11,
+    "plan_sha256": "94ef887ec1567c0b41ff8d25bf09f1a0e56cb0636c08845ac0502c9a68ab2536",
+    "planned": 242,
+    "precision": "native",
+    "seconds_max": 2.0018639750778675,
+    "seconds_mean": 0.46513366946288626,
+    "tag": "full-03",
+    "zero_method": "delta"
    }
   ]
  },
@@ -124,11 +166,17 @@
   "budget_stopped": false,
   "passes": [
    {
-    "tag": "full-04",
     "executed": 242,
-    "planned": 242,
     "lease": 4,
-    "seconds_mean": 0.467
+    "lease_sha256": "ab50e4618167343a5ac9dbbb5996bd719ee6c499713a2fe6ac6138a28ca574c1",
+    "of": 11,
+    "plan_sha256": "94ef887ec1567c0b41ff8d25bf09f1a0e56cb0636c08845ac0502c9a68ab2536",
+    "planned": 242,
+    "precision": "native",
+    "seconds_max": 1.5421316400170326,
+    "seconds_mean": 0.46729650980146403,
+    "tag": "full-04",
+    "zero_method": "delta"
    }
   ]
  },
@@ -142,11 +190,17 @@
   "budget_stopped": false,
   "passes": [
    {
-    "tag": "full-05",
     "executed": 239,
-    "planned": 239,
     "lease": 5,
-    "seconds_mean": 0.47
+    "lease_sha256": "21e5c1e47bac3631210565c24a56842fdb4d80b0420ffe8df3fca78c41e2d111",
+    "of": 11,
+    "plan_sha256": "94ef887ec1567c0b41ff8d25bf09f1a0e56cb0636c08845ac0502c9a68ab2536",
+    "planned": 239,
+    "precision": "native",
+    "seconds_max": 1.604165282100439,
+    "seconds_mean": 0.4701752544587252,
+    "tag": "full-05",
+    "zero_method": "delta"
    }
   ]
  },
@@ -160,71 +214,171 @@
   "budget_stopped": false,
   "passes": [
    {
-    "tag": "full-06",
     "executed": 242,
-    "planned": 242,
     "lease": 6,
-    "seconds_mean": 0.472
+    "lease_sha256": "672f6f451504ac78a6c26bfac5e3f9b6d91084fde8292854d901b79fa841eb4b",
+    "of": 11,
+    "plan_sha256": "94ef887ec1567c0b41ff8d25bf09f1a0e56cb0636c08845ac0502c9a68ab2536",
+    "planned": 242,
+    "precision": "native",
+    "seconds_max": 1.2097642365843058,
+    "seconds_mean": 0.47165117369703025,
+    "tag": "full-06",
+    "zero_method": "delta"
    }
   ]
  },
  {
   "job_id": "job-d8790bc10fbb",
   "job": "full-7",
-  "mrun_state": "not in any mrun state listing: the Beast mrun agent was stopped by systemd at 16:40:11 PST, the second it leased this job; the worker kept running unsupervised",
-  "mrun_wall_s": null,
+  "mrun_state": "lost",
+  "mrun_wall_s": 60,
   "worker_s": 955,
   "peak_vram_allocated_mb": 7991,
   "budget_stopped": true,
   "passes": [
    {
-    "tag": "full-07",
     "executed": 0,
-    "planned": 249,
     "lease": 7,
-    "seconds_mean": null
+    "lease_sha256": "5378fe80f669666524ac3982f4cffb1fe0f113493307e505acbfc747fa70f14c",
+    "of": 11,
+    "plan_sha256": "94ef887ec1567c0b41ff8d25bf09f1a0e56cb0636c08845ac0502c9a68ab2536",
+    "planned": 249,
+    "precision": "native",
+    "seconds_max": null,
+    "seconds_mean": null,
+    "tag": "full-07",
+    "zero_method": "delta"
    }
   ],
-  "note": "imports took 866 s (HDD uv cache) against 28 s warm in job-2b516ba78da6; the 540 s budget stopped it before the first branch; the 7 roots ran"
+  "note": "agent silent; lease expired. Partial roots only on Beast, superseded by retry",
+  "mrun_detail": "lease expired (agent silent)"
  },
  {
   "job_id": "job-a41e454eefe1",
   "job": "full-8",
-  "mrun_state": "queued",
-  "mrun_wall_s": null,
+  "mrun_state": "lost",
+  "mrun_wall_s": 519,
   "worker_s": null,
   "peak_vram_allocated_mb": null,
   "budget_stopped": null,
-  "passes": null
+  "passes": null,
+  "mrun_detail": "lease expired (agent silent)",
+  "note": "agent silent; lease expired. Partial roots only on Beast, superseded by retry"
  },
  {
   "job_id": "job-2c64f0609f8f",
   "job": "full-9",
-  "mrun_state": "queued",
-  "mrun_wall_s": null,
-  "worker_s": null,
-  "peak_vram_allocated_mb": null,
-  "budget_stopped": null,
-  "passes": null
+  "mrun_state": "succeeded",
+  "mrun_wall_s": 278,
+  "worker_s": 252,
+  "peak_vram_allocated_mb": 7991,
+  "budget_stopped": false,
+  "passes": [
+   {
+    "executed": 247,
+    "lease": 9,
+    "lease_sha256": "9814952b9179cf2d328d892b99fab71ba9fcd62bb325a4eaa8e588924ceaa011",
+    "of": 11,
+    "plan_sha256": "94ef887ec1567c0b41ff8d25bf09f1a0e56cb0636c08845ac0502c9a68ab2536",
+    "planned": 247,
+    "precision": "native",
+    "seconds_max": 1.174640586999999,
+    "seconds_mean": 0.4592770276194339,
+    "tag": "full-09",
+    "zero_method": "delta"
+   }
+  ]
  },
  {
   "job_id": "job-0ef55a497c49",
   "job": "full-10",
-  "mrun_state": "queued",
-  "mrun_wall_s": null,
-  "worker_s": null,
-  "peak_vram_allocated_mb": null,
-  "budget_stopped": null,
-  "passes": null
+  "mrun_state": "succeeded",
+  "mrun_wall_s": 147,
+  "worker_s": 141,
+  "peak_vram_allocated_mb": 7991,
+  "budget_stopped": false,
+  "passes": [
+   {
+    "executed": 147,
+    "lease": 10,
+    "lease_sha256": "2d0437f8fd081fb84f7ae74856423c38248a61b81255e941f7d07a79a8abf5af",
+    "of": 11,
+    "plan_sha256": "94ef887ec1567c0b41ff8d25bf09f1a0e56cb0636c08845ac0502c9a68ab2536",
+    "planned": 147,
+    "precision": "native",
+    "seconds_max": 0.6112735739999948,
+    "seconds_mean": 0.4783083848163258,
+    "tag": "full-10",
+    "zero_method": "delta"
+   }
+  ]
  },
  {
   "job_id": "job-af5bfaf0fde2",
   "job": "regenerate",
-  "mrun_state": "queued",
-  "mrun_wall_s": null,
-  "worker_s": null,
-  "peak_vram_allocated_mb": null,
+  "mrun_state": "succeeded",
+  "mrun_wall_s": 25,
+  "worker_s": 21,
+  "peak_vram_allocated_mb": 7991,
   "budget_stopped": null,
-  "passes": null
+  "passes": null,
+  "regenerated": 3,
+  "all_match": true
+ },
+ {
+  "job_id": "job-eb99a2f1d947",
+  "job": "full-7 (attempt 2)",
+  "mrun_state": "succeeded",
+  "mrun_wall_s": 259,
+  "worker_s": 246,
+  "peak_vram_allocated_mb": 7991,
+  "budget_stopped": false,
+  "passes": [
+   {
+    "executed": 249,
+    "lease": 7,
+    "lease_sha256": "5378fe80f669666524ac3982f4cffb1fe0f113493307e505acbfc747fa70f14c",
+    "of": 11,
+    "plan_sha256": "94ef887ec1567c0b41ff8d25bf09f1a0e56cb0636c08845ac0502c9a68ab2536",
+    "planned": 249,
+    "precision": "native",
+    "seconds_max": 1.2129380850019515,
+    "seconds_mean": 0.48947270002821436,
+    "tag": "full-07",
+    "zero_method": "delta"
+   }
+  ]
+ },
+ {
+  "job_id": "job-871e9014eda6",
+  "job": "full-8 (attempt 2)",
+  "mrun_state": "killed_vram",
+  "mrun_wall_s": 24,
+  "mrun_detail": "wedged queue: kill ceiling exceeded idle beast admission; clamped to the admissible figure after 120s (vram 10400 -> 5776 MB)"
+ },
+ {
+  "job_id": "job-03723dc2595b",
+  "job": "full-8 (attempt 3)",
+  "mrun_state": "succeeded",
+  "mrun_wall_s": 196,
+  "worker_s": 194,
+  "peak_vram_allocated_mb": 7991,
+  "budget_stopped": false,
+  "passes": [
+   {
+    "executed": 247,
+    "lease": 8,
+    "lease_sha256": "b83aba04c7cb2d0dabebc4573abd3ae0a7d6dd990949c83d3ece54a041cbf5f5",
+    "of": 11,
+    "plan_sha256": "94ef887ec1567c0b41ff8d25bf09f1a0e56cb0636c08845ac0502c9a68ab2536",
+    "planned": 247,
+    "precision": "native",
+    "seconds_max": 0.6307142840014421,
+    "seconds_mean": 0.4533569858380773,
+    "tag": "full-08",
+    "zero_method": "delta"
+   }
+  ]
  }
 ]

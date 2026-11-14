@@ -1,0 +1,4 @@
+2026-11-14T00:33:01-08:00 PREREG.md sha256 688060256e7c5a03633b1e30df85ceeb308ed037e9943055dd76b8c9d2563fb1 (seal, before any non-smoke job; smoke jobs job-fb014d69786e, job-01a5f4b7790e done)
+2026-11-14T00:54:36-08:00 PREREG-ADDENDUM-1.md sha256 bb64134ef8212d6f24ea6b45c006adf6511b8ae23c80b0a9cbcd00c0df6063d8 (execution addendum, before any main/f3 panel arm ran)
+2026-11-14T02:09:30-08:00 PREREG-ADDENDUM-2.md sha256 276be6aad63d046bf3abcaf881c95acbb612a7f1290991803a13d405c1618fc7 (gated mass vs PW, value-swap controls; before any addendum-2 job; plan gm sha256 1d5e93e99256d7da87aa02927c755446df7010ecb6af336682850842b726b623)
+2026-11-14T02:08:43-08:00 correction to the line above: its time 02:09:30 was typed before checking the clock; the hash was computed at about 02:08:35 and the addendum was committed in 30ee143 at 02:08:38 (git), before any addendum-2 job

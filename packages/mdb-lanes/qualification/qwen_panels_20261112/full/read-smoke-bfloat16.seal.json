@@ -1,0 +1,9 @@
+{
+ "plan_sha256": "3d2db9ad75397cc31397aea11c7fc0b162178b6fd2655a7ec7bf06dc1d2255e7",
+ "predictions": {
+  "note": "BF16 backend floors: one read-cut set (L20H5) with floors"
+ },
+ "predictions_sha256": "d978a0ccd1f06776e111bbec742a36b506b80f571331c309717a6b08a163900f",
+ "schema": "mdb-attention-panel-seal-v1",
+ "seal_sha256": "0e82d84f7e3a5c8b21e8cd8bb1d2c066a6ee8fd1b36004981a1f78d5a2d4cc1b"
+}

@@ -802,7 +802,10 @@ def _panel_verdicts(panel, item, **kw):
     from mdb_lanes import attention_panels as P
     out, pairs = _panel_outcomes(panel, item, **kw)
     rec = P.results_record(panel, {"c0": out}, pair_distances={"c0": pairs}, metric="toy distance")
-    return {(v["item"], v["unit_set"]): v for v in P.verdicts(panel, rec)}
+    # equal per-item mass: the other-item control cuts the same mass share (since 2026-11-13 an
+    # other-item control of unknown mass share rules nothing out)
+    equal = {it: {(b, h): 1.0 for b in range(4) for h in range(3)} for it in ("red", "ball")}
+    return {(v["item"], v["unit_set"]): v for v in P.verdicts(panel, rec, item_mass=equal)}
 
 
 def test_panel_verdict_converts_to_set_results_without_re_deriving():

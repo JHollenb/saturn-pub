@@ -103,6 +103,8 @@ def check_lease(panel, lease):
     if lease.get("plan_sha256") != plan_sha:
         raise PanelError("lease belongs to a different plan")
     body = {"plan_sha256": plan_sha, "lease": lease["lease"], "branches": lease["branches"]}
+    # Panel.leases hashes seal_sha256 and replicated into the body when they are set (audit 2026-11-14).
+    body.update({k: lease[k] for k in ("seal_sha256", "replicated") if lease.get(k)})
     if sha256_json(body) != lease.get("lease_sha256"):
         raise PanelError("lease seal differs from its branches")
     ids = panel.by_id()
@@ -226,6 +228,50 @@ def unit_mass(tok_w, rows, heads):
     if not z > 0:
         raise PanelError("item has no write mass")
     return tuple(t / z for t in totals)
+
+
+def stratum_gate_scale(numerator, mass, heads, joint):
+    """One scale per stratum (joint blocks ``< joint``, single blocks ``>= joint``): sum(numerator)/sum(mass).
+
+    ``numerator`` and ``mass`` are flat per-unit vectors in universe order (``block * heads + head``).
+    Typical numerator: the image-receiver predicted write of a zero cut of the item's rows from the
+    same capture as ``mass`` (both under one conditioning), so the ratio is the outer attention gate
+    that ``unit_mass`` leaves out, averaged over the stratum. FLUX.2 shares one modulation (one
+    gate) over all joint blocks and one over all single blocks, so one number per stratum is the
+    whole correction at the resolution of a stratum. Returns ``(joint_scale, single_scale)``.
+    """
+    if len(numerator) != len(mass) or len(mass) % heads:
+        raise PanelError("numerator and mass must be flat per-unit vectors of equal length")
+    sums = {0: [0.0, 0.0], 1: [0.0, 0.0]}
+    for i, (n, m) in enumerate(zip(numerator, mass)):
+        s = 0 if i // heads < joint else 1
+        sums[s][0] += float(n)
+        sums[s][1] += float(m)
+    if not (sums[0][1] > 0 and sums[1][1] > 0):
+        raise PanelError("a stratum has no mass")
+    return sums[0][0] / sums[0][1], sums[1][0] / sums[1][1]
+
+
+def gated_unit_mass(mass, heads, joint, scales):
+    """Gated read mass: ``unit_mass`` times one gate scale per stratum, renormalised to sum 1.
+
+    The corrected trivial baseline for "how much does this head write from the item's rows":
+    ``unit_mass`` is ``p * |O_h v|`` without the block's outer attention gate g, and FLUX.2's gate is
+    about 50x smaller in the 5 joint blocks than in the 20 single blocks (audit 2026-11-14:
+    block position explains 99.7-99.8% of log(PW_img / mass)). ``scales = (joint_scale,
+    single_scale)``, e.g. from :func:`stratum_gate_scale`. Only the ratio of the two scales changes
+    the ranking. ``unit_mass`` itself is unchanged (sealed plans depend on it).
+    """
+    js, ss = (float(x) for x in scales)
+    if not (js > 0 and ss > 0):
+        raise PanelError("gate scales must be positive")
+    if len(mass) % heads:
+        raise PanelError("mass must be a flat per-unit vector")
+    out = [float(m) * (js if i // heads < joint else ss) for i, m in enumerate(mass)]
+    z = sum(out)
+    if not z > 0:
+        raise PanelError("item has no gated mass")
+    return tuple(x / z for x in out)
 
 
 # --------------------------------------------------------------------------------------- rows

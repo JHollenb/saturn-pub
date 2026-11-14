@@ -326,7 +326,10 @@ def stage(run, job, plans, vram_mb, ram_mb, est_wall_s, timeout_s, recipes=None,
                 config_bytes=len(raw))
 
 
-def submit(run, priority):
+def submit(run, priority, attempt=1):
+    """Submit a staged run. mrun's guarded admission is idempotent on (experiment, command, payload, ...), so
+    resubmitting a lost job returns the lost job id; ``attempt`` > 1 adds ``-attempt<N>`` to the experiment
+    name to admit a fresh job on the same unchanged payload bytes."""
     bind()
     from mdb_lanes.job_support import guarded_mrun_launch
     run = Path(run)
@@ -340,8 +343,10 @@ def submit(run, priority):
         if sha(run / "payload" / name) != digest:
             raise ValueError("staged payload changed: " + name)
     resource = request["resource_exception"]
-    job = guarded_mrun_launch(staged["command"], request=request, experiment="mdb-flux-read-panel-" +
-                              request["config"]["job"].replace(":", "-"),
+    experiment = "mdb-flux-read-panel-" + request["config"]["job"].replace(":", "-")
+    if attempt > 1:
+        experiment += f"-attempt{attempt}"
+    job = guarded_mrun_launch(staged["command"], request=request, experiment=experiment,
                               task="forward", model=request["model"], payload=run / "payload", prefer_host="beast",
                               gpu=True, needs=request["needs"], ram_mb=resource["ram_mb"], vram_mb=resource["vram_mb"],
                               disk_gb=resource["disk_gb"], cpu_threads=resource["cpu_threads"],
@@ -469,7 +474,7 @@ def report(plans, results, out):
                          f"agree={r['cut_types_agree']} missing={r['missing_cut_types']} picture={r['picture']}")
             for t, ct in r["cut_types"].items():
                 for c in ct["contexts"]:
-                    ctrl = "; ".join(f"{x['control'].split(':')[1]}({x['kind']},sep={x['separates_identity']}) "
+                    ctrl = "; ".join(f"{x['control'].split(':')[1]}({x['kind']},sep={x.get('separates_identity')}) "
                                      f"e={x['control_effect']:.4f} m={x['margin']:+.4f} >floor={x['beyond_floor']}"
                                      for x in c.get("controls", []))
                     lines.append(f"      {t:<6} {c['context']} {c['status']:<15} effect={c.get('effect', float('nan')):.4f} "
@@ -498,6 +503,7 @@ if __name__ == "__main__":
     p = sub.add_parser("submit")
     p.add_argument("run", type=Path)
     p.add_argument("--priority", type=int, default=70)
+    p.add_argument("--attempt", type=int, default=1)
     p = sub.add_parser("report")
     p.add_argument("--plans", type=Path, required=True)
     p.add_argument("--results", type=Path, nargs="+", required=True)
@@ -512,6 +518,6 @@ if __name__ == "__main__":
         print(json.dumps(stage(a.run.resolve(), a.job, a.plans, a.vram_mb, a.ram_mb, a.est_wall_s, a.timeout_s,
                                a.recipes, a.arms), sort_keys=True))
     elif a.cmd == "submit":
-        print(json.dumps(submit(a.run.resolve(), a.priority), sort_keys=True))
+        print(json.dumps(submit(a.run.resolve(), a.priority, a.attempt), sort_keys=True))
     else:
         report(a.plans, a.results, a.out)

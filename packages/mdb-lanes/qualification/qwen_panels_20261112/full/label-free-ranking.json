@@ -1,0 +1,551 @@
+{
+ "sets": {
+  "L20H11": [
+   [
+    20,
+    11
+   ]
+  ],
+  "L20H5": [
+   [
+    20,
+    5
+   ]
+  ],
+  "L21H0": [
+   [
+    21,
+    0
+   ]
+  ],
+  "named3": [
+   [
+    20,
+    5
+   ],
+   [
+    21,
+    0
+   ],
+   [
+    20,
+    11
+   ]
+  ],
+  "rank12": [
+   [
+    12,
+    9
+   ],
+   [
+    13,
+    0
+   ],
+   [
+    13,
+    2
+   ],
+   [
+    13,
+    11
+   ],
+   [
+    16,
+    4
+   ],
+   [
+    16,
+    7
+   ],
+   [
+    17,
+    0
+   ],
+   [
+    18,
+    0
+   ],
+   [
+    20,
+    5
+   ],
+   [
+    20,
+    11
+   ],
+   [
+    21,
+    0
+   ],
+   [
+    23,
+    3
+   ]
+  ],
+  "rank3": [
+   [
+    17,
+    0
+   ],
+   [
+    18,
+    0
+   ],
+   [
+    20,
+    5
+   ]
+  ]
+ },
+ "source": "/Users/jakeholl/domains/artifacts/mdb-qwen-panels-20261112/job-9020b3bfd5e7/qwen-panels/float32/receiver-attention.json",
+ "source_sha256": "025a58beafc499c6b42c4709d40e61b4b4d83b399440ba8e28bf924d756ef5d3",
+ "summary": {
+  "content_rows": [
+   0,
+   2,
+   4,
+   6,
+   8,
+   10,
+   12,
+   14,
+   16,
+   18,
+   20
+  ],
+  "item_row": 18,
+  "named_rank": {
+   "L20H11": 5,
+   "L20H5": 0,
+   "L21H0": 4
+  },
+  "named_raw_mass_rank": {
+   "L20H11": 5,
+   "L20H5": 0,
+   "L21H0": 4
+  },
+  "raw_mass_top12": [
+   [
+    20,
+    5
+   ],
+   [
+    18,
+    0
+   ],
+   [
+    16,
+    7
+   ],
+   [
+    17,
+    0
+   ],
+   [
+    21,
+    0
+   ],
+   [
+    20,
+    11
+   ],
+   [
+    16,
+    4
+   ],
+   [
+    16,
+    5
+   ],
+   [
+    12,
+    9
+   ],
+   [
+    13,
+    11
+   ],
+   [
+    16,
+    1
+   ],
+   [
+    26,
+    10
+   ]
+  ],
+  "recovered": {
+   "rank12": [
+    "L20H11",
+    "L20H5",
+    "L21H0"
+   ],
+   "rank3": [
+    "L20H5"
+   ]
+  },
+  "recovered_by_raw_mass": {
+   "raw12": [
+    "L20H11",
+    "L20H5",
+    "L21H0"
+   ],
+   "raw3": [
+    "L20H5"
+   ]
+  },
+  "rest": "mean share of 10 other items",
+  "top24": [
+   [
+    20,
+    5,
+    0.17468896622835
+   ],
+   [
+    18,
+    0,
+    0.1401797224801343
+   ],
+   [
+    17,
+    0,
+    0.13033110645171264
+   ],
+   [
+    16,
+    7,
+    0.10686297064129584
+   ],
+   [
+    21,
+    0,
+    0.0638540491075413
+   ],
+   [
+    20,
+    11,
+    0.062153412293673944
+   ],
+   [
+    13,
+    11,
+    0.036340358943051244
+   ],
+   [
+    13,
+    2,
+    0.03622233617756929
+   ],
+   [
+    16,
+    4,
+    0.03588453259877715
+   ],
+   [
+    12,
+    9,
+    0.03091284338581463
+   ],
+   [
+    23,
+    3,
+    0.02591956984101599
+   ],
+   [
+    13,
+    0,
+    0.02586509955645254
+   ],
+   [
+    16,
+    5,
+    0.023482774693674695
+   ],
+   [
+    15,
+    10,
+    0.02252773558308649
+   ],
+   [
+    18,
+    7,
+    0.022208932776093884
+   ],
+   [
+    16,
+    8,
+    0.021857723921859095
+   ],
+   [
+    26,
+    10,
+    0.02168286489253052
+   ],
+   [
+    16,
+    1,
+    0.021480644511211507
+   ],
+   [
+    17,
+    5,
+    0.015652111845052923
+   ],
+   [
+    23,
+    5,
+    0.013687021345199455
+   ],
+   [
+    17,
+    8,
+    0.012862815341321757
+   ],
+   [
+    15,
+    2,
+    0.012622857653844308
+   ],
+   [
+    21,
+    4,
+    0.01134951022889671
+   ],
+   [
+    14,
+    1,
+    0.011200774972322478
+   ]
+  ],
+  "top_source_baselines": {
+   "all_heads": {
+    "baseline_policy": "trivial baselines always computed on the same rows; cannot be disabled",
+    "baselines": {
+     "offset_0_from_end": {
+      "native_weight_at_choice": 0.0829656204610252,
+      "rows": 336,
+      "top_source_agreement": 0.0744047619047619
+     },
+     "offset_1_from_end": {
+      "native_weight_at_choice": 0.08415450806429167,
+      "rows": 336,
+      "top_source_agreement": 0.08333333333333333
+     },
+     "offset_2_from_end": {
+      "native_weight_at_choice": 0.06271867808368892,
+      "rows": 336,
+      "top_source_agreement": 0.05357142857142857
+     },
+     "offset_3_from_end": {
+      "native_weight_at_choice": 0.07237641749806098,
+      "rows": 336,
+      "top_source_agreement": 0.0625
+     },
+     "position_0": {
+      "native_weight_at_choice": 0.38014392489797394,
+      "rows": 336,
+      "top_source_agreement": 0.5863095238095238
+     },
+     "previous_token": {
+      "excluded_rows": 0,
+      "native_weight_at_choice": 0.08415450806429167,
+      "nominator_top_source_agreement_same_rows": 0.0625,
+      "note": "rows with query position 0 excluded (no previous token)",
+      "rows": 336,
+      "top_source_agreement": 0.08333333333333333
+     },
+     "uniform": {
+      "kind": "expected value",
+      "native_weight_at_choice": 0.04545454539253589,
+      "rows": 336,
+      "top_source_agreement": 0.04545454545454547
+     }
+    },
+    "beats_every_trivial_baseline": false,
+    "best_trivial": {
+     "name": "position_0",
+     "top_source_agreement": 0.5863095238095238
+    },
+    "margin_over_best_trivial": -0.5238095238095238,
+    "nominator": {
+     "name": "source row 18",
+     "native_weight_at_choice": 0.07237641749806098,
+     "rows": 336,
+     "top_source_agreement": 0.0625
+    },
+    "rows": 336
+   },
+   "named3": {
+    "baseline_policy": "trivial baselines always computed on the same rows; cannot be disabled",
+    "baselines": {
+     "offset_0_from_end": {
+      "native_weight_at_choice": 0.008587433258071542,
+      "rows": 3,
+      "top_source_agreement": 0.0
+     },
+     "offset_1_from_end": {
+      "native_weight_at_choice": 0.05900227092206478,
+      "rows": 3,
+      "top_source_agreement": 0.0
+     },
+     "offset_2_from_end": {
+      "native_weight_at_choice": 0.004375550236242513,
+      "rows": 3,
+      "top_source_agreement": 0.0
+     },
+     "offset_3_from_end": {
+      "native_weight_at_choice": 0.7446431318918864,
+      "rows": 3,
+      "top_source_agreement": 1.0
+     },
+     "position_0": {
+      "native_weight_at_choice": 0.0990360180536906,
+      "rows": 3,
+      "top_source_agreement": 0.0
+     },
+     "previous_token": {
+      "excluded_rows": 0,
+      "native_weight_at_choice": 0.05900227092206478,
+      "nominator_top_source_agreement_same_rows": 1.0,
+      "note": "rows with query position 0 excluded (no previous token)",
+      "rows": 3,
+      "top_source_agreement": 0.0
+     },
+     "uniform": {
+      "kind": "expected value",
+      "native_weight_at_choice": 0.04545454671738574,
+      "rows": 3,
+      "top_source_agreement": 0.04545454545454545
+     }
+    },
+    "beats_every_trivial_baseline": false,
+    "best_trivial": {
+     "name": "offset_3_from_end",
+     "top_source_agreement": 1.0
+    },
+    "margin_over_best_trivial": 0.0,
+    "nominator": {
+     "name": "source row 18",
+     "native_weight_at_choice": 0.7446431318918864,
+     "rows": 3,
+     "top_source_agreement": 1.0
+    },
+    "rows": 3
+   },
+   "rank12": {
+    "baseline_policy": "trivial baselines always computed on the same rows; cannot be disabled",
+    "baselines": {
+     "offset_0_from_end": {
+      "native_weight_at_choice": 0.015073009708430618,
+      "rows": 12,
+      "top_source_agreement": 0.0
+     },
+     "offset_1_from_end": {
+      "native_weight_at_choice": 0.06829436290233086,
+      "rows": 12,
+      "top_source_agreement": 0.0
+     },
+     "offset_2_from_end": {
+      "native_weight_at_choice": 0.059027672929611676,
+      "rows": 12,
+      "top_source_agreement": 0.0
+     },
+     "offset_3_from_end": {
+      "native_weight_at_choice": 0.5709567169348398,
+      "rows": 12,
+      "top_source_agreement": 0.9166666666666666
+     },
+     "position_0": {
+      "native_weight_at_choice": 0.15534767570594946,
+      "rows": 12,
+      "top_source_agreement": 0.08333333333333333
+     },
+     "previous_token": {
+      "excluded_rows": 0,
+      "native_weight_at_choice": 0.06829436290233086,
+      "nominator_top_source_agreement_same_rows": 0.9166666666666666,
+      "note": "rows with query position 0 excluded (no previous token)",
+      "rows": 12,
+      "top_source_agreement": 0.0
+     },
+     "uniform": {
+      "kind": "expected value",
+      "native_weight_at_choice": 0.045454544562298416,
+      "rows": 12,
+      "top_source_agreement": 0.04545454545454545
+     }
+    },
+    "beats_every_trivial_baseline": false,
+    "best_trivial": {
+     "name": "offset_3_from_end",
+     "top_source_agreement": 0.9166666666666666
+    },
+    "margin_over_best_trivial": 0.0,
+    "nominator": {
+     "name": "source row 18",
+     "native_weight_at_choice": 0.5709567169348398,
+     "rows": 12,
+     "top_source_agreement": 0.9166666666666666
+    },
+    "rows": 12
+   },
+   "rank3": {
+    "baseline_policy": "trivial baselines always computed on the same rows; cannot be disabled",
+    "baselines": {
+     "offset_0_from_end": {
+      "native_weight_at_choice": 0.010828268248587847,
+      "rows": 3,
+      "top_source_agreement": 0.0
+     },
+     "offset_1_from_end": {
+      "native_weight_at_choice": 0.026889843866229057,
+      "rows": 3,
+      "top_source_agreement": 0.0
+     },
+     "offset_2_from_end": {
+      "native_weight_at_choice": 0.053839994284013905,
+      "rows": 3,
+      "top_source_agreement": 0.0
+     },
+     "offset_3_from_end": {
+      "native_weight_at_choice": 0.8298693497975668,
+      "rows": 3,
+      "top_source_agreement": 1.0
+     },
+     "position_0": {
+      "native_weight_at_choice": 0.05064968143900236,
+      "rows": 3,
+      "top_source_agreement": 0.0
+     },
+     "previous_token": {
+      "excluded_rows": 0,
+      "native_weight_at_choice": 0.026889843866229057,
+      "nominator_top_source_agreement_same_rows": 1.0,
+      "note": "rows with query position 0 excluded (no previous token)",
+      "rows": 3,
+      "top_source_agreement": 0.0
+     },
+     "uniform": {
+      "kind": "expected value",
+      "native_weight_at_choice": 0.04545454673680207,
+      "rows": 3,
+      "top_source_agreement": 0.04545454545454545
+     }
+    },
+    "beats_every_trivial_baseline": false,
+    "best_trivial": {
+     "name": "offset_3_from_end",
+     "top_source_agreement": 1.0
+    },
+    "margin_over_best_trivial": 0.0,
+    "nominator": {
+     "name": "source row 18",
+     "native_weight_at_choice": 0.8298693497975668,
+     "rows": 3,
+     "top_source_agreement": 1.0
+    },
+    "rows": 3
+   }
+  }
+ }
+}

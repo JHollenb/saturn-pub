@@ -1,0 +1,2087 @@
+{
+ "counts": {
+  "fixed": {
+   "control_missing": 17,
+   "not_supported": 46,
+   "set_only": 15
+  },
+  "fixed_named_check_flag_only": {
+   "control_missing": 1,
+   "not_supported": 61,
+   "set_only": 14,
+   "supported": 2
+  },
+  "prefix": {
+   "not_supported": 63,
+   "set_only": 13,
+   "supported": 2
+  },
+  "sealed": {
+   "not_supported": 51,
+   "supported": 27
+  }
+ },
+ "item_mass": "each word's own image<-row write-mass share per (block, head), full-a capture seed 4242 (flux_read_panel_stage.word_masses); also the mass the sealed random draws were matched on, applied to both contexts (9001 mass not measured)",
+ "logic": {
+  "fixed": {
+   "module_sha256": "66f50720bbcc614d338db20066872f140a68a468970be130b70d53ef9edb227c"
+  },
+  "prefix": {
+   "commit": "166b334",
+   "module_sha256": "4a39dbaab313099de9bee07e36bc421f44900a2c113ff976d991ec79dd62aea7"
+  },
+  "sealed": {
+   "commit": "5e09d95",
+   "module_sha256": "31a8595b8bda0873f45bd177cee57bf535f96bb4f7fa4a0b259a9a93c8f7b4e6"
+  }
+ },
+ "min_effect_fraction": {
+  "in_sealed_plan": false,
+  "records_whose_verdict_depends_on_it": [],
+  "value": 0.05
+ },
+ "plan_sha256": "94ef887ec1567c0b41ff8d25bf09f1a0e56cb0636c08845ac0502c9a68ab2536",
+ "post_hoc_recovery_threshold": {
+  "in_sealed_plan": false,
+  "records_whose_verdict_depends_on_it_fixed": [
+   "red keep-modI",
+   "red keep-nounI",
+   "black keep-nounI",
+   "ball keep-modI",
+   "ball keep-nounI",
+   "snow keep-own60",
+   "snow keep-own120",
+   "snow keep-own240",
+   "snow keep-modI",
+   "snow keep-nounI",
+   "night keep-own60",
+   "night keep-own120",
+   "night keep-own240",
+   "night keep-modI",
+   "night keep-nounI",
+   "rain keep-own60",
+   "rain keep-own120",
+   "rain keep-own240",
+   "rain keep-modI",
+   "rain keep-nounI"
+  ],
+  "records_whose_verdict_depends_on_it_named_flag_only": [
+   "red keep-own60",
+   "red keep-own120",
+   "red keep-own240",
+   "red keep-modI",
+   "ball keep-own60",
+   "ball keep-own120",
+   "ball keep-own240",
+   "ball keep-nounI",
+   "snow keep-own60",
+   "snow keep-own120",
+   "snow keep-own240",
+   "snow keep-modI",
+   "night keep-own60",
+   "night keep-own120",
+   "night keep-own240",
+   "night keep-modI",
+   "rain keep-own240",
+   "rain keep-modI"
+  ],
+  "value": 0.7
+ },
+ "random_mass_labels_stored_vs_relabelled": {
+  "None -> less": 52,
+  "None -> matched": 22,
+  "None -> more": 4
+ },
+ "records": 78,
+ "rows": [
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.6897898731901136,
+   "effect_fraction_min": 0.43229704903893823,
+   "excluded_controls": [
+    "m:rand0-own60:red",
+    "z:rand0-own60:red"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "red own60",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.6853030348253093,
+   "effect_fraction_min": 0.39183096373523796,
+   "excluded_controls": [
+    "m:rand0-own120:red",
+    "z:rand0-own120:red"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "red own120",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.7815896352145584,
+   "effect_fraction_min": 0.49327904552585666,
+   "excluded_controls": [
+    "m:rand0-own240:red",
+    "z:rand0-own240:red"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "red own240",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.8187802315038432,
+   "effect_fraction_min": 0.5414303286887471,
+   "excluded_controls": [
+    "m:rand0-mod:red",
+    "z:rand0-mod:red"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "red mod",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.36596024532580834,
+   "effect_fraction_min": 0.3150112235794537,
+   "excluded_controls": [
+    "m:rand0-noun:red",
+    "z:rand0-noun:red"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "red noun",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.5514157143215931,
+   "effect_fraction_min": 0.2729535063749567,
+   "excluded_controls": [
+    "m:rand0-modI:red",
+    "z:rand0-modI:red"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "red modI",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.24240196285154156,
+   "effect_fraction_min": 0.2195847660257452,
+   "excluded_controls": [
+    "m:rand0-nounI:red",
+    "z:rand0-nounI:red"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "red nounI",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.1867230557309146,
+   "effect_fraction_min": 0.14543837568761941,
+   "excluded_controls": [
+    "m:rand0-own240-minus-own60:red",
+    "z:rand0-own240-minus-own60:red"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "red own240-minus-own60",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.7399724435483381,
+   "effect_fraction_min": 0.6553584220160511,
+   "excluded_controls": [
+    "m:keep-rand0-own60:red",
+    "z:keep-rand0-own60:red"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "red keep-own60",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most set_only",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.7598096706380333,
+   "effect_fraction_min": 0.6810639226114914,
+   "excluded_controls": [
+    "m:keep-rand0-own120:red",
+    "z:keep-rand0-own120:red"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "red keep-own120",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most set_only",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.8038442143038833,
+   "effect_fraction_min": 0.6722333066772563,
+   "excluded_controls": [
+    "m:keep-rand0-own240:red",
+    "z:keep-rand0-own240:red"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "red keep-own240",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most set_only",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.6153994899067863,
+   "effect_fraction_min": 0.5568593412017119,
+   "excluded_controls": [
+    "m:keep-rand0-modI:red",
+    "z:keep-rand0-modI:red"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "red keep-modI",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most set_only",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.3802964832103175,
+   "effect_fraction_min": 0.11858375061559523,
+   "excluded_controls": [
+    "m:keep-rand0-nounI:red",
+    "z:keep-rand0-nounI:red"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "red keep-nounI",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.4879379675850991,
+   "effect_fraction_min": 0.3451507475965369,
+   "excluded_controls": [
+    "m:rand0-own60:black",
+    "z:rand0-own60:black"
+   ],
+   "findings": [],
+   "fixed": "set_only",
+   "fixed_named_check_flag_only": "set_only",
+   "prefix": "set_only",
+   "record": "black own60",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "set_only",
+   "reported_named_check_flag_only": "set_only",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "set_only"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.7092433939295971,
+   "effect_fraction_min": 0.5788610647545518,
+   "excluded_controls": [
+    "m:rand0-own120:black",
+    "z:rand0-own120:black"
+   ],
+   "findings": [],
+   "fixed": "set_only",
+   "fixed_named_check_flag_only": "set_only",
+   "prefix": "set_only",
+   "record": "black own120",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "set_only",
+   "reported_named_check_flag_only": "set_only",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "set_only"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.7545011767836503,
+   "effect_fraction_min": 0.66952225621597,
+   "excluded_controls": [
+    "m:rand0-own240:black",
+    "z:rand0-own240:black"
+   ],
+   "findings": [],
+   "fixed": "set_only",
+   "fixed_named_check_flag_only": "set_only",
+   "prefix": "set_only",
+   "record": "black own240",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "set_only",
+   "reported_named_check_flag_only": "set_only",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "set_only"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.8903642035190955,
+   "effect_fraction_min": 0.8139223024258815,
+   "excluded_controls": [
+    "m:rand0-mod:black",
+    "z:rand0-mod:black"
+   ],
+   "findings": [],
+   "fixed": "set_only",
+   "fixed_named_check_flag_only": "set_only",
+   "prefix": "set_only",
+   "record": "black mod",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "set_only",
+   "reported_named_check_flag_only": "set_only",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "set_only"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.18163050406331332,
+   "effect_fraction_min": 0.11497559855331813,
+   "excluded_controls": [
+    "m:rand0-noun:black",
+    "z:rand0-noun:black"
+   ],
+   "findings": [],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "black noun",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.29589503501046566,
+   "effect_fraction_min": 0.141213688435593,
+   "excluded_controls": [
+    "m:rand0-modI:black",
+    "z:rand0-modI:black"
+   ],
+   "findings": [],
+   "fixed": "set_only",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "black modI",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "set_only",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "set_only"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.18879825184575344,
+   "effect_fraction_min": 0.12392376769795908,
+   "excluded_controls": [
+    "m:rand0-nounI:black",
+    "z:rand0-nounI:black"
+   ],
+   "findings": [],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "black nounI",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.08146710840813726,
+   "effect_fraction_min": 0.05576697471126321,
+   "excluded_controls": [
+    "m:rand0-own240-minus-own60:black",
+    "z:rand0-own240-minus-own60:black"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "black own240-minus-own60",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.9199295191198098,
+   "effect_fraction_min": 0.8775888019865088,
+   "excluded_controls": [
+    "m:keep-rand0-own60:black",
+    "z:keep-rand0-own60:black"
+   ],
+   "findings": [],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "set_only",
+   "prefix": "set_only",
+   "record": "black keep-own60",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "set_only",
+   "ruled_out": [],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.9332192450443101,
+   "effect_fraction_min": 0.9057560451744835,
+   "excluded_controls": [
+    "m:keep-rand0-own120:black",
+    "z:keep-rand0-own120:black"
+   ],
+   "findings": [],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "set_only",
+   "prefix": "set_only",
+   "record": "black keep-own120",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "set_only",
+   "ruled_out": [],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.9509126664732727,
+   "effect_fraction_min": 0.9231158388543164,
+   "excluded_controls": [
+    "m:keep-rand0-own240:black",
+    "z:keep-rand0-own240:black"
+   ],
+   "findings": [],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "set_only",
+   "prefix": "set_only",
+   "record": "black keep-own240",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "set_only",
+   "ruled_out": [],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.8318287450110085,
+   "effect_fraction_min": 0.7662178652998354,
+   "excluded_controls": [
+    "m:keep-rand0-modI:black",
+    "z:keep-rand0-modI:black"
+   ],
+   "findings": [],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "supported",
+   "prefix": "supported",
+   "record": "black keep-modI",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "supported",
+   "ruled_out": [],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.4861219324613699,
+   "effect_fraction_min": 0.12873864248393396,
+   "excluded_controls": [
+    "m:keep-rand0-nounI:black",
+    "z:keep-rand0-nounI:black"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "black keep-nounI",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.6016208355049731,
+   "effect_fraction_min": 0.40921519036148596,
+   "excluded_controls": [
+    "m:rand0-own60:ball",
+    "z:rand0-own60:ball"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "ball own60",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.633320767870001,
+   "effect_fraction_min": 0.4255025617217855,
+   "excluded_controls": [
+    "m:rand0-own120:ball",
+    "z:rand0-own120:ball"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "ball own120",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.6922928364839867,
+   "effect_fraction_min": 0.4873091474283523,
+   "excluded_controls": [
+    "m:rand0-own240:ball",
+    "z:rand0-own240:ball"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "ball own240",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.2772221417969451,
+   "effect_fraction_min": 0.1092135707773882,
+   "excluded_controls": [
+    "m:rand0-mod:ball",
+    "z:rand0-mod:ball"
+   ],
+   "findings": [],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "ball mod",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.6025100878817579,
+   "effect_fraction_min": 0.40249591369813836,
+   "excluded_controls": [
+    "m:rand0-noun:ball",
+    "z:rand0-noun:ball"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "ball noun",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.16079806243900507,
+   "effect_fraction_min": 0.09612621789387538,
+   "excluded_controls": [
+    "m:rand0-modI:ball",
+    "z:rand0-modI:ball"
+   ],
+   "findings": [],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "ball modI",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.45568163828164615,
+   "effect_fraction_min": 0.2590971995350187,
+   "excluded_controls": [
+    "m:rand0-nounI:ball",
+    "z:rand0-nounI:ball"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "ball nounI",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.3062038233995079,
+   "effect_fraction_min": 0.21456175603190536,
+   "excluded_controls": [
+    "m:rand0-own240-minus-own60:ball",
+    "z:rand0-own240-minus-own60:ball"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "ball own240-minus-own60",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.7956862627798957,
+   "effect_fraction_min": 0.5667157491831304,
+   "excluded_controls": [
+    "m:keep-rand0-own60:ball",
+    "z:keep-rand0-own60:ball"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "ball keep-own60",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most set_only",
+   "ruled_out": [],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.8371513284555597,
+   "effect_fraction_min": 0.6536998769116086,
+   "excluded_controls": [
+    "m:keep-rand0-own120:ball",
+    "z:keep-rand0-own120:ball"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "ball keep-own120",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most set_only",
+   "ruled_out": [],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.7784210240894125,
+   "effect_fraction_min": 0.6677735984696416,
+   "excluded_controls": [
+    "m:keep-rand0-own240:ball",
+    "z:keep-rand0-own240:ball"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "ball keep-own240",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most set_only",
+   "ruled_out": [],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.2057207010289439,
+   "effect_fraction_min": -0.0042537917651417345,
+   "excluded_controls": [
+    "m:keep-rand0-modI:ball",
+    "z:keep-rand0-modI:ball"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "ball keep-modI",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.5727331337033106,
+   "effect_fraction_min": 0.15313016618098418,
+   "excluded_controls": [
+    "m:keep-rand0-nounI:ball",
+    "z:keep-rand0-nounI:ball"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "ball keep-nounI",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most set_only",
+   "ruled_out": [],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.45129706708515693,
+   "effect_fraction_min": 0.33059605748359977,
+   "excluded_controls": [
+    "m:rand0-own60:snow",
+    "z:rand0-own60:snow"
+   ],
+   "findings": [],
+   "fixed": "set_only",
+   "fixed_named_check_flag_only": "set_only",
+   "prefix": "set_only",
+   "record": "snow own60",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "set_only",
+   "reported_named_check_flag_only": "set_only",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "set_only"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.5302408021668676,
+   "effect_fraction_min": 0.3479996597569077,
+   "excluded_controls": [
+    "m:rand0-own120:snow",
+    "z:rand0-own120:snow"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "snow own120",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.5808077574012731,
+   "effect_fraction_min": 0.389046626751983,
+   "excluded_controls": [
+    "m:rand0-own240:snow",
+    "z:rand0-own240:snow"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "snow own240",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.5359039148801561,
+   "effect_fraction_min": 0.33631288109243584,
+   "excluded_controls": [
+    "m:rand0-mod:snow",
+    "z:rand0-mod:snow"
+   ],
+   "findings": [],
+   "fixed": "set_only",
+   "fixed_named_check_flag_only": "set_only",
+   "prefix": "set_only",
+   "record": "snow mod",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "set_only",
+   "reported_named_check_flag_only": "set_only",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "set_only"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.4551540383849865,
+   "effect_fraction_min": 0.3372353365985912,
+   "excluded_controls": [
+    "m:rand0-noun:snow",
+    "z:rand0-noun:snow"
+   ],
+   "findings": [],
+   "fixed": "set_only",
+   "fixed_named_check_flag_only": "set_only",
+   "prefix": "set_only",
+   "record": "snow noun",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "set_only",
+   "reported_named_check_flag_only": "set_only",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "set_only"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.39542437936115293,
+   "effect_fraction_min": 0.2775410308962245,
+   "excluded_controls": [
+    "m:rand0-modI:snow",
+    "z:rand0-modI:snow"
+   ],
+   "findings": [],
+   "fixed": "set_only",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "snow modI",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "set_only",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "set_only"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.3186181266240111,
+   "effect_fraction_min": 0.10102106288384709,
+   "excluded_controls": [
+    "m:rand0-nounI:snow",
+    "z:rand0-nounI:snow"
+   ],
+   "findings": [],
+   "fixed": "set_only",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "snow nounI",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "set_only",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "set_only"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.4271116512780976,
+   "effect_fraction_min": 0.2850483333467817,
+   "excluded_controls": [
+    "m:rand0-own240-minus-own60:snow",
+    "z:rand0-own240-minus-own60:snow"
+   ],
+   "findings": [],
+   "fixed": "set_only",
+   "fixed_named_check_flag_only": "set_only",
+   "prefix": "not_supported",
+   "record": "snow own240-minus-own60",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "set_only",
+   "reported_named_check_flag_only": "set_only",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "set_only"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.6201087702027741,
+   "effect_fraction_min": 0.2590874948852405,
+   "excluded_controls": [
+    "m:keep-rand0-own60:snow",
+    "z:keep-rand0-own60:snow"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "snow keep-own60",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most set_only",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.6637916125370837,
+   "effect_fraction_min": 0.39923299418502267,
+   "excluded_controls": [
+    "m:keep-rand0-own120:snow",
+    "z:keep-rand0-own120:snow"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "snow keep-own120",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most set_only",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.6752984187437634,
+   "effect_fraction_min": 0.4748328538212937,
+   "excluded_controls": [
+    "m:keep-rand0-own240:snow",
+    "z:keep-rand0-own240:snow"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "snow keep-own240",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most set_only",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.4499700101938444,
+   "effect_fraction_min": 0.21278436942299106,
+   "excluded_controls": [
+    "m:keep-rand0-modI:snow",
+    "z:keep-rand0-modI:snow"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "snow keep-modI",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.29014861764476474,
+   "effect_fraction_min": 0.13380364574295123,
+   "excluded_controls": [
+    "m:keep-rand0-nounI:snow",
+    "z:keep-rand0-nounI:snow"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "snow keep-nounI",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.5679563702594718,
+   "effect_fraction_min": 0.32434536893175736,
+   "excluded_controls": [
+    "m:rand0-own60:night",
+    "z:rand0-own60:night"
+   ],
+   "findings": [],
+   "fixed": "set_only",
+   "fixed_named_check_flag_only": "set_only",
+   "prefix": "set_only",
+   "record": "night own60",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "set_only",
+   "reported_named_check_flag_only": "set_only",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "set_only"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.6459308944817174,
+   "effect_fraction_min": 0.4459954712919936,
+   "excluded_controls": [
+    "m:rand0-own120:night",
+    "z:rand0-own120:night"
+   ],
+   "findings": [],
+   "fixed": "set_only",
+   "fixed_named_check_flag_only": "set_only",
+   "prefix": "set_only",
+   "record": "night own120",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "set_only",
+   "reported_named_check_flag_only": "set_only",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "set_only"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.8096823393912115,
+   "effect_fraction_min": 0.5869892423696299,
+   "excluded_controls": [
+    "m:rand0-own240:night",
+    "z:rand0-own240:night"
+   ],
+   "findings": [],
+   "fixed": "set_only",
+   "fixed_named_check_flag_only": "set_only",
+   "prefix": "set_only",
+   "record": "night own240",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "set_only",
+   "reported_named_check_flag_only": "set_only",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "set_only"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.5211564710694107,
+   "effect_fraction_min": 0.3100561467508183,
+   "excluded_controls": [
+    "m:rand0-mod:night",
+    "z:rand0-mod:night"
+   ],
+   "findings": [],
+   "fixed": "set_only",
+   "fixed_named_check_flag_only": "supported",
+   "prefix": "supported",
+   "record": "night mod",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "set_only",
+   "reported_named_check_flag_only": "supported",
+   "ruled_out": [
+    "generic_damage"
+   ],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "set_only"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.24875466917407962,
+   "effect_fraction_min": 0.11830436117257366,
+   "excluded_controls": [
+    "m:rand0-noun:night",
+    "z:rand0-noun:night"
+   ],
+   "findings": [],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "night noun",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.2723468012717294,
+   "effect_fraction_min": 0.1503672453529345,
+   "excluded_controls": [
+    "m:rand0-modI:night",
+    "z:rand0-modI:night"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "night modI",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.1612631130544568,
+   "effect_fraction_min": 0.10172942152638849,
+   "excluded_controls": [
+    "m:rand0-nounI:night",
+    "z:rand0-nounI:night"
+   ],
+   "findings": [],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "night nounI",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.20051785939489036,
+   "effect_fraction_min": 0.08400150412877622,
+   "excluded_controls": [
+    "m:rand0-own240-minus-own60:night",
+    "z:rand0-own240-minus-own60:night"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "night own240-minus-own60",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.5257169829186039,
+   "effect_fraction_min": 0.3071869310505563,
+   "excluded_controls": [
+    "m:keep-rand0-own60:night",
+    "z:keep-rand0-own60:night"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "night keep-own60",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most set_only",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.5970041408400615,
+   "effect_fraction_min": 0.40046428713269333,
+   "excluded_controls": [
+    "m:keep-rand0-own120:night",
+    "z:keep-rand0-own120:night"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "night keep-own120",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most set_only",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.6872185651075782,
+   "effect_fraction_min": 0.5457699468017191,
+   "excluded_controls": [
+    "m:keep-rand0-own240:night",
+    "z:keep-rand0-own240:night"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "night keep-own240",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most set_only",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.30134369987977194,
+   "effect_fraction_min": 0.19874261010240757,
+   "excluded_controls": [
+    "m:keep-rand0-modI:night",
+    "z:keep-rand0-modI:night"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "night keep-modI",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.07612734639324381,
+   "effect_fraction_min": 0.0041205613669349495,
+   "excluded_controls": [
+    "m:keep-rand0-nounI:night",
+    "z:keep-rand0-nounI:night"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "night keep-nounI",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.5597871566726356,
+   "effect_fraction_min": 0.3022458110279931,
+   "excluded_controls": [
+    "m:rand0-own60:rain",
+    "z:rand0-own60:rain"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "rain own60",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.7147907927261901,
+   "effect_fraction_min": 0.4225589706528406,
+   "excluded_controls": [
+    "m:rand0-own120:rain",
+    "z:rand0-own120:rain"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "rain own120",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.7166354284677924,
+   "effect_fraction_min": 0.5841183912535264,
+   "excluded_controls": [
+    "m:rand0-own240:rain",
+    "z:rand0-own240:rain"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "rain own240",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.5381037223597084,
+   "effect_fraction_min": 0.48336705728142243,
+   "excluded_controls": [
+    "m:rand0-mod:rain",
+    "z:rand0-mod:rain"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "rain mod",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.6858808245783252,
+   "effect_fraction_min": 0.3982046929499211,
+   "excluded_controls": [
+    "m:rand0-noun:rain",
+    "z:rand0-noun:rain"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "rain noun",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.5028434251418287,
+   "effect_fraction_min": 0.29342094305299216,
+   "excluded_controls": [
+    "m:rand0-modI:rain",
+    "z:rand0-modI:rain"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "rain modI",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.5609551995294696,
+   "effect_fraction_min": 0.3589853394194493,
+   "excluded_controls": [
+    "m:rand0-nounI:rain",
+    "z:rand0-nounI:rain"
+   ],
+   "findings": [],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "rain nounI",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "necessary",
+   "depends_on_post_hoc_recovery_threshold": false,
+   "effect_fraction_max": 0.578323758656882,
+   "effect_fraction_min": 0.3875467590819262,
+   "excluded_controls": [
+    "m:rand0-own240-minus-own60:rain",
+    "z:rand0-own240-minus-own60:rain"
+   ],
+   "findings": [],
+   "fixed": "control_missing",
+   "fixed_named_check_flag_only": "control_missing",
+   "prefix": "not_supported",
+   "record": "rain own240-minus-own60",
+   "remaining": [
+    "generic_damage",
+    "mass",
+    "set_size"
+   ],
+   "reported": "control_missing",
+   "reported_named_check_flag_only": "control_missing",
+   "ruled_out": [],
+   "sealed": "not_supported",
+   "status_without_min_effect_bar": "control_missing"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.37085928825644665,
+   "effect_fraction_min": 0.2510049274454792,
+   "excluded_controls": [
+    "m:keep-rand0-own60:rain",
+    "z:keep-rand0-own60:rain"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "rain keep-own60",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.41532758624360877,
+   "effect_fraction_min": 0.22947607443984164,
+   "excluded_controls": [
+    "m:keep-rand0-own120:rain",
+    "z:keep-rand0-own120:rain"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "rain keep-own120",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.5424188359812895,
+   "effect_fraction_min": 0.3759425072131748,
+   "excluded_controls": [
+    "m:keep-rand0-own240:rain",
+    "z:keep-rand0-own240:rain"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "rain keep-own240",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most set_only",
+   "ruled_out": [],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.28900157155469375,
+   "effect_fraction_min": 0.17539618083148956,
+   "excluded_controls": [
+    "m:keep-rand0-modI:rain",
+    "z:keep-rand0-modI:rain"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "rain keep-modI",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported only via the post-hoc 0.7 recovery threshold; without it: at most supported",
+   "ruled_out": [],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "not_supported"
+  },
+  {
+   "claim": "sufficient",
+   "depends_on_post_hoc_recovery_threshold": true,
+   "effect_fraction_max": 0.22604267069979378,
+   "effect_fraction_min": 0.1297286963959553,
+   "excluded_controls": [
+    "m:keep-rand0-nounI:rain",
+    "z:keep-rand0-nounI:rain"
+   ],
+   "findings": [
+    "low_recovery"
+   ],
+   "fixed": "not_supported",
+   "fixed_named_check_flag_only": "not_supported",
+   "prefix": "not_supported",
+   "record": "rain keep-nounI",
+   "remaining": [
+    "mass",
+    "set_size"
+   ],
+   "reported": "not_supported only via the post-hoc 0.7 recovery threshold; without it: control_missing",
+   "reported_named_check_flag_only": "not_supported",
+   "ruled_out": [],
+   "sealed": "supported",
+   "status_without_min_effect_bar": "not_supported"
+  }
+ ]
+}

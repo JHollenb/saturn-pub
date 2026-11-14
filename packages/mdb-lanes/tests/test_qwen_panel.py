@@ -113,10 +113,21 @@ def test_read_plan_has_named_and_label_free_sets_same_layer_random_heads_and_oth
     assert ids["z:named3@rows-icy:freezing"].sources == ("own:icy",)
     keep = ids["z:keep-L20H5:freezing"]
     assert len(keep.units) == 335 and (20, 5) not in keep.units
-    for k in range(2):
+    entry = panel.controls["freezing:named3"]
+    emitted = [k for k in range(2) if f"z:rand{k}-named3:freezing" in ids]
+    # identical draws are flagged and emitted once (2026-11-13: they used to be emitted twice)
+    assert len(emitted) == entry["independent_draws"] >= 1
+    assert all(f"z:rand{d['draw']}-named3:freezing" not in ids for d in entry["duplicates"])
+    named = {tuple(u) for s in panel.sets["freezing"].values() for u in s}     # every set here is a test set
+    for k in emitted:
         rand = ids[f"z:rand{k}-named3:freezing"]
         assert sorted(layer for layer, _ in rand.units) == [20, 20, 21]          # same layers
         assert not set(rand.units) & {(20, 5), (20, 11), (21, 0)}               # disjoint
+    # no random draw of any set contains a named test unit of the panel (other than none: disjoint)
+    for key, e in panel.controls.items():
+        target = {tuple(u) for u in panel.sets[e["item"]][e["target"]]}
+        for s in e.get("sets", []):
+            assert not {tuple(u) for u in s} & (named - target), key
     assert P.port_kwargs(panel, Q.row_table())["rows"] == {"receiver": [21], "own:freezing": [18], "own:icy": [2]}
     # per-item mass: freezing draws are matched against attention to row 18, icy against row 2
     assert panel.controls["freezing:L20H5"]["reports"][0]["mass"]["target"] > 0.4

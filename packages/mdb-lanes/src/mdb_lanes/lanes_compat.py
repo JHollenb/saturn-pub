@@ -41,7 +41,9 @@ TOOLS = {
 }
 BENCH_VERBS = ("open", "resume", "inspect", "verify", "bench")
 DEBUGGER_VERBS = ("attach", "jobs", "run", "debug", "script", "doctor", "replay")
-VERBS = sorted({*TOOLS, *BENCH_VERBS, *DEBUGGER_VERBS, "help", "capabilities"})
+# verbs whose module's ``main(argv)`` receives the verb itself first (``panel_lanes.VERBS``)
+PANEL_VERBS = ("flux-read-panels", "qwen-panels")
+VERBS = sorted({*TOOLS, *BENCH_VERBS, *DEBUGGER_VERBS, *PANEL_VERBS, "help", "capabilities"})
 
 # attribute of the ``mdb`` package -> "lane_module:attribute"
 EXPORTS = {
@@ -86,6 +88,8 @@ def main(argv):
         return _module("bench_cli").main(argv[1:] if verb == "bench" else argv)
     if verb in TOOLS:
         return _module(TOOLS[verb]).main(argv[1:])
+    if verb in PANEL_VERBS:
+        return _module("panel_lanes").main(argv)
     if verb in DEBUGGER_VERBS:
         if argv[:2] == ["debug", "vm"]:
             return _module("vm_cli").main(argv[2:])
