@@ -59,6 +59,8 @@ for item in items:
     ids, span = item["ids"], item["span"]
     last = len(ids) - 1
     start = min(span + item.get("distractor", {}).get("rows", []))
+    if __import__("os").environ.get("NOSTEP"):          # supplement: no span-row ports needed
+        start = last
     run = dbg.run(ids, name="nat", prefill=start)
     run.until(f"t{last}.logits")
     cap = {"id": item["id"], "span": span, "last": last, "prefill": start,
