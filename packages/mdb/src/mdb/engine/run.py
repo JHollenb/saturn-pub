@@ -558,7 +558,8 @@ class Run:
         when refused), ``state`` (``resolved`` | ``refused``) and ``reason`` (why, when refused),
         ``ops`` (every operation that wrote the value, in order), ``selective`` (any such edit
         has a mask), ``upstream_edits`` (every edit that fired before this value in program
-        order: ``{row, layer, port, op, staged}``), ``replica_equal`` and ``max_abs_diff``
+        order: ``{row, layer, port, op, staged, selection}``; ``selection`` is the edit's
+        selector text, e.g. ``h0``, None for a whole port), ``replica_equal`` and ``max_abs_diff``
         (replica check of ``s`` / of the value mix at ``A``; None when not applicable or not
         reached) with ``max_abs_diff_authority``, ``realisation_exact`` and
         ``realisation_max_abs_error`` (``o`` and ``r`` under an ``r`` edit), and
@@ -581,7 +582,8 @@ class Run:
         boundary = context["boundary_edits"]
         skip = {id(e) for e in boundary}
         upstream = [
-            {"row": mark.row, "layer": mark.layer, "port": e.port, "op": e.op, "staged": False}
+            {"row": mark.row, "layer": mark.layer, "port": e.port, "op": e.op, "staged": False,
+             "selection": e.selection}
             for mark in committed
             for e in mark.edits
             if id(e) not in skip
@@ -618,7 +620,7 @@ class Run:
                     upstream.append(
                         {
                             "row": context["row"], "layer": context["layer"], "port": e.port,
-                            "op": e.op, "staged": staged,
+                            "op": e.op, "staged": staged, "selection": e.selection,
                         }
                     )
         label_port = "h_out" if port is None else port

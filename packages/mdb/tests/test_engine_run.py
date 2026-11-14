@@ -663,6 +663,26 @@ def test_read_info_r_edit_realisation_and_replicas(adapter, mode):
     assert _info_at(plain, "L1.A")["kind"] == "native"
 
 
+def test_upstream_edits_carry_the_selection_staged_and_committed(adapter, mode):
+    """M37: an upstream entry names the edit's selector (``h0``), None for a whole port."""
+    run = Run_(adapter, mode)
+    run.until("L0.h")
+    heads = torch.zeros(run.port_shape("a"), dtype=torch.bool)
+    heads[..., :4] = True
+    run.set("L0.a", 0.5, "scale", mask=heads, selection="h0")
+    assert [e["selection"] for e in _info_at(run, "L0.n")["upstream_edits"]] == ["h0"]  # staged
+    run.finish()
+    run.until("L2.q")
+    ups = run.read_info()["upstream_edits"]
+    assert [(e["port"], e["staged"], e["selection"]) for e in ups] == [("a", False, "h0")]
+    run.set("L2.m", 0.25, "add")  # a whole-port edit has no selection
+    run.finish()
+    run.step("token")
+    run.until("L0.q")
+    assert [(e["port"], e["selection"]) for e in run.read_info()["upstream_edits"]] == [
+        ("a", "h0"), ("m", None)]
+
+
 def test_read_info_n_under_an_a_edit_and_committed_upstream_edits(adapter, mode):
     run = Run_(adapter, mode)
     run.until("L0.h")
@@ -674,7 +694,8 @@ def test_read_info_n_under_an_a_edit_and_committed_upstream_edits(adapter, mode)
     run.until("L2.q")
     q = run.read_info()
     assert q["kind"] == "native" and q["authority"] == "measured"
-    assert q["upstream_edits"] == [{"row": ROW, "layer": 0, "port": "a", "op": "scale", "staged": False}]
+    assert q["upstream_edits"] == [{"row": ROW, "layer": 0, "port": "a", "op": "scale", "staged": False,
+                                    "selection": None}]
     # committed layer-0 value re-probed after the fact still lists its own edit's position
     assert run.read_info("L0.m")["upstream_edits"][0]["staged"] is False
     run.set("L2.m", 0.25, "add")

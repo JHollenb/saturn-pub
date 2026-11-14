@@ -578,6 +578,7 @@ def test_the_clock_marks_and_upstream_edits_keep_the_selector(live):
     assert [e["selection"] for e in frame["edits"]["committed"]] == ["h1"]
     upstream = [u for p in frame["ports"] if p["edit"] for u in p["edit"]["upstream"]]
     assert upstream and all("selection" in u for u in upstream)
+    assert {u["selection"] for u in upstream if u["port"] == "A"} >= {"h1"}  # M37: the value
 
 
 def test_events_push_one_op_event_per_completed_op(live):
