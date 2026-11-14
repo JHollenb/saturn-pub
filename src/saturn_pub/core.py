@@ -1389,9 +1389,7 @@ class Session:
         just now."""
         candidate = self._state if state is None else state
         adopted = _adopt(candidate) if owned else clone(candidate)
-        seal = self._seal(
-            adopted, before, slots, execution_checked=checked, state_checked=checked
-        )
+        seal = self._seal(adopted, before, slots, execution_checked=checked, state_checked=checked)
         receipt = Receipt.make(
             operation=operation,
             parent=before,

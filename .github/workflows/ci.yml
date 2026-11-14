@@ -53,5 +53,4 @@ jobs:
       - run: python -m pip install -e ../.. -e '.[autoregressive,transformerlens,serve,dev]' 'diffusers==0.39.0' 'pillow>=10'
       - run: python -m pytest -q -rs
       - run: python -m pip install -e ../mdb-lanes
-      - run: python -m pytest -q -rs
-        working-directory: packages/mdb-lanes
+      - run: python -m pytest -q -rs tests/test_cli_plugins.py

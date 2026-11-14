@@ -124,8 +124,15 @@ def test_known_descriptors_seal_the_same_fingerprints_as_hashing(adapter):
     for _ in range(12):  # embed, layers, norm, readout, sample, commit and the next row
         session.continue_()
         cut = session.capture()
-        rebuilt = StateCut(cut.model_identity, cut.execution, cut.boundary, cut.parent,
-                           cut.payload, cut.execution_point, cut.surface)  # hashes everything
+        rebuilt = StateCut(
+            cut.model_identity,
+            cut.execution,
+            cut.boundary,
+            cut.parent,
+            cut.payload,
+            cut.execution_point,
+            cut.surface,
+        )  # hashes everything
         assert rebuilt.fingerprint == cut.fingerprint
         fingerprints.append(cut.fingerprint)
     assert [r.to_dict()["result"] for r in session.receipts] == fingerprints
@@ -179,8 +186,15 @@ def test_a_non_finite_state_is_refused(adapter, slot, message):
         payload["keys"][1][..., 0, 0] = float("nan")
     else:
         payload["hidden"][..., 0] = float("inf")
-    forged = StateCut(cut.model_identity, cut.execution, cut.boundary, cut.parent, payload,
-                      cut.execution_point, cut.surface)
+    forged = StateCut(
+        cut.model_identity,
+        cut.execution,
+        cut.boundary,
+        cut.parent,
+        payload,
+        cut.execution_point,
+        cut.surface,
+    )
     with pytest.raises(ValueError, match=message):
         Session.from_cut(adapter, forged)
     with pytest.raises(ValueError, match=message):
