@@ -590,6 +590,11 @@ def _forecast_lines(result: dict[str, Any]) -> list[str]:
             f"  predicted {_predicted(view['predicted'])}  {spread}"]
 
 
+def _steps(item: dict[str, Any]) -> str:
+    spacing = item["spacing"]["value"]
+    return f"{item['floor']['value'] / spacing:g}" if spacing else "0"
+
+
 def _verify_lines(result: dict[str, Any]) -> list[str]:
     if not result["forecasts"]:
         return [f"no open forecasts (cursor {result['where']})"]
@@ -606,13 +611,18 @@ def _verify_lines(result: dict[str, Any]) -> list[str]:
             text = f"{head}  native {_claimed(item['native'])}" if "native" in item else head
             if "residual_max_abs" in item:
                 text += f"  residual {_claimed(item['residual_max_abs'])}"
+            if "floor" in item:
+                text += (f" {'<=' if item['verdict'] == 'confirmed' else '>'} floor "
+                         f"{_claimed(item['floor'])} ({_steps(item)} x {item.get('dtype', '?')} "
+                         "spacing)"
+                         f"  [P20, {item.get('state', 'resolved')}]")
+            elif "reason" in item:
+                text += f"  ({item['reason']})"
             if "bound_max" in item:
-                text += (f" {'<=' if item['within_bound'] else '>'} bound "
-                         f"{_claimed(item['bound_max'])}")
+                text += (f"; worst-case bound {_claimed(item['bound_max'])} "
+                         f"({'holds' if item['within_bound'] else 'exceeded'}, information)")
                 if "worst_excess" in item:
                     text += f" (worst excess {_claimed(item['worst_excess'])})"
-            elif item["verdict"] == "no-bound":
-                text += "  (no bound was stated)"
             lines.append(text)
         order = item["order"]
         lineage = ("same cut (the target is a later port of the sealed layer)"

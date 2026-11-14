@@ -36,6 +36,7 @@ from mdb.core.records import declare_kind, num, seal_record
 
 from .accumulation import accumulation, bound_state
 from .explain import _readout_refusal, _rope_refusal
+from . import verdict as _verdict
 from .finite import BOUND, EXACT, f64
 
 SCHEMA = "mdb-forecast-v1"
@@ -958,24 +959,29 @@ def _lineage(run: Any, sealed: dict[str, Any]) -> dict[str, Any]:
             "same_cut": current == sealed["cut"]}
 
 
-def _native(run: Any, entry: Forecast) -> tuple[Any, dict[str, Any]]:
+def _native(run: Any, entry: Forecast) -> tuple[Any, dict[str, Any], Any]:
+    """The native value as float64, its read info, and the raw native tensor (its dtype and
+    magnitude set the verdict floor)."""
     row = entry.key[0]
     stop = f"t{row}.{entry.label}"
     value = run.read(stop)
     info = run.read_info(stop)
     if entry.margin is not None:
         flat = value.reshape(-1)
-        return f64(flat[entry.margin.a]) - f64(flat[entry.margin.b]), info
+        return f64(flat[entry.margin.a]) - f64(flat[entry.margin.b]), info, value
     if entry.label == "sample":
-        return f64(value).reshape(()), info
-    return f64(value).reshape(entry.predicted.shape), info
+        return f64(value).reshape(()), info, value
+    return f64(value).reshape(entry.predicted.shape), info, value
 
 
 def verify(run: Any, ids: list[int] | None = None) -> list[dict[str, Any]]:
     """Compare open forecasts (or the given ids) whose target the cursor has passed with the
-    native value. Each result: ``verdict`` (``within-bound | outside-bound | no-bound | edited |
-    open``), ``predicted`` / ``native`` summaries, ``residual_max_abs`` (``measured``),
-    ``within_bound``, and ``order`` (sealing stop before the target; lineage of cuts)."""
+    native value. Each result: ``verdict`` (``confirmed | not confirmed | edited | open``),
+    decided by the measured residual (native - predicted, P20) against ``floor`` = 2 x the model
+    dtype's spacing at the magnitude of the consumer, never by the worst-case bound; ``native``,
+    ``residual_max_abs`` (``measured``), ``floor``, ``spacing``; ``bound_max`` / ``within_bound``
+    only when the bound is finite (information, not the verdict); and ``order`` (sealing stop
+    before the target; lineage of cuts)."""
     entries = ledger(run)
     here = run.parse(run.where)
     chosen = [entries[i] for i in ids] if ids else [e for e in entries.values()
@@ -1004,7 +1010,7 @@ def verify(run: Any, ids: list[int] | None = None) -> list[dict[str, Any]]:
                                       "(rewound onto another path); the sealed target was not "
                                       "reached"})
             continue
-        native, info = _native(run, entry)
+        native, info, raw = _native(run, entry)
         later = [e for e in info["upstream_edits"] if _edit_key(e) not in entry.edits]
         verdict: dict[str, Any] = {"order": order}
         if info["edited"] or info["kind"] in ("edit", "realisation") or later:
@@ -1017,21 +1023,32 @@ def verify(run: Any, ids: list[int] | None = None) -> list[dict[str, Any]]:
         else:
             label = info["authority"]  # measured, or derived-exact for the replica s
             if label is None:
-                verdict.update(verdict="no-bound", reason=info["reason"])
+                verdict.update(verdict="unresolved", state="unresolved", reason=info["reason"])
             else:
                 gap = (native - entry.predicted).abs()
                 verdict["residual_max_abs"] = num(float(gap.max()), label)
                 verdict["native"] = (num(float(native), label) if native.dim() == 0
                                      else _summary(native, label))
-                if entry.bound is None:
-                    verdict.update(verdict="no-bound", within_bound=None)
-                else:
-                    within = bool((gap <= entry.bound).all())
-                    verdict.update(verdict="within-bound" if within else "outside-bound",
-                                   within_bound=within,
-                                   bound_max=num(float(entry.bound.max()), BOUND))
+                # the consumer's magnitude: the margin's two logits, else the largest element
+                size = _verdict.magnitude(entry.margin if entry.margin is not None else object(),
+                                          raw)
+                # 2 spacings for a scalar; a margin (two logits, each up to 2 spacings off) and a
+                # vector port (elements round at their own magnitudes) get 4
+                steps = 2 if native.dim() == 0 and entry.margin is None else 4
+                decided = _verdict.confirm(gap, size, raw.dtype,
+                                           steps=steps)
+                verdict.update(verdict=decided["verdict"], state=decided["state"],
+                               floor=decided["floor"], spacing=decided["spacing"],
+                               dtype=decided["dtype"], criterion=decided["criterion"],
+                               basis="measured residual, P20")
+                bound = entry.bound
+                if bound is not None and bool(bound.isfinite().all()):
+                    # information only: the worst-case propagated bound, finite here
+                    within = bool((gap <= bound).all())
+                    verdict.update(within_bound=within,
+                                   bound_max=num(float(bound.max()), BOUND))
                     if not within:
-                        verdict["worst_excess"] = num(float((gap - entry.bound).max()), label)
+                        verdict["worst_excess"] = num(float((gap - bound).max()), label)
         entry.status = "closed"
         entry.verdict = verdict
         results.append({**out, "status": "closed", **verdict})

@@ -363,7 +363,11 @@ print({k: t.info("L1.s")[k] for k in ("state", "authority", "kind", "replica_equ
 ## Predictions: `forecast`, `verify`, `whatif`
 
 `forecast` seals a prediction from values at the cursor, before native code runs; `verify`
-compares it with what native code then produced (`tests/repl_golden/predict_forecast.out`):
+compares it with what native code then produced (`tests/repl_golden/predict_forecast.out`). The
+verdict is `confirmed` when the measured residual (native - predicted, P20) is within the floor,
+a multiple of the model dtype's spacing at the consumer's magnitude (2 for a scalar, 4 for a
+margin or a vector port), else `not confirmed`; both are `resolved`. The worst-case propagated
+bound is printed only when finite and never decides:
 
 ```
 (mdb) forecast L0.p
@@ -372,7 +376,7 @@ forecast 1  t3.L0.p  sealed at t3.L0.h  record f8059f3549dad257
 (mdb) until t3.logits
 t3.logits  logits = lm_head(fn)
 (mdb) verify
-forecast 1 t3.L0.p: within-bound  native max_abs 0.25195 [measured] norm 0.70781 [measured]  residual 0.00091062 [measured] <= bound 0.0026798 [bound]
+forecast 1 t3.L0.p: confirmed  native max_abs 0.25195 [measured] norm 0.70781 [measured]  residual 0.00091062 [measured] <= floor 0.0078125 [measured P20] (4 x bfloat16 spacing)  [P20, resolved]; worst-case bound 0.0026798 [bound] (holds, information)
 ```
 
 `whatif` seals the predicted change of a consumer under one edit, measures it natively on a
@@ -398,7 +402,9 @@ native change is above the floor and the exact change has its sign and exceeds t
 `no effect above the noise floor` when both are within the floor; otherwise `unresolved`, with
 the numbers. With no exact chain (as in `compare`) the native change is held against `2 x
 spacing` alone and the line says so. Worst-case rounding bounds are still shown where they are
-finite (`bound` label) and never decide a verdict.
+finite (`bound` label) and never decide a verdict. `verify` follows the same rule: a forecast
+is `confirmed` when its measured residual (native - predicted) is within the floor, `not
+confirmed` otherwise, whatever the bound (`no-bound` is no longer a verdict).
 
 ## Following a value: `reads`, `symbols`, `circuit`, `compare`
 

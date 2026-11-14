@@ -351,7 +351,7 @@ register(Op("forecast", "Seal a prediction of the next stop (or a later stop of 
             (Arg("target", "address"),), "mutate", True, _forecast,
             usage="forecast [ADDR|M[a,b]]"), replace=True)
 register(Op("verify", "Compare open forecasts whose target the cursor has passed with the "
-            "native values (residual, bound, order)",
+            "native values (confirmed or not by the measured residual against its floor, order)",
             (Arg("ids", "ints"),), "mutate", True, _verify, usage="verify [ID ...]"),
          replace=True)
 register(Op("whatif", "Predicted, then natively measured change of a consumer under one edit; "

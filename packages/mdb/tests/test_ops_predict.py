@@ -214,7 +214,7 @@ def test_ops_results_are_labelled_and_whatif_keeps_the_debugger_session(debugger
         assert unlabelled(result) == [], (result["op"], unlabelled(result))
     verdicts = [item["verdict"] for item in results[4]["forecasts"]]
     # L0.a is computed before the L0.q edit; the margin is downstream of it
-    assert verdicts == ["within-bound", "edited"]
+    assert verdicts == ["confirmed", "edited"]
 
 
 def test_an_interrupt_at_any_session_restore_of_a_whatif_leaves_the_session(debugger, monkeypatch):

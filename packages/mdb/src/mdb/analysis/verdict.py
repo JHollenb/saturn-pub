@@ -118,5 +118,29 @@ def decide(native: Any, exact: Any, residual: Any, size: float, dtype: Any,
     return out
 
 
-__all__ = ["CRITERION", "EFFECT", "NATIVE_ONLY", "NO_EFFECT", "UNRESOLVED", "decide",
-           "magnitude", "spacing"]
+CONFIRMED = "confirmed"
+NOT_CONFIRMED = "not confirmed"
+CONFIRM_CRITERION = ("confirmed when max |native - predicted| <= floor = 2 x dtype spacing at the "
+                     "magnitude of the consumer; not confirmed otherwise; P20: residual = native "
+                     "- predicted")
+
+
+def confirm(residual: Any, size: float, dtype: Any, steps: int = 2) -> dict[str, Any]:
+    """The verdict on one forecast: confirmed when the measured residual (native - predicted;
+    scalar or vector, the largest ``|.|`` is judged) is within ``steps x spacing`` (2; a margin of two logits, each up to 2 spacings off after a deep chain, and a vector
+    port, whose elements round at their own magnitudes, are given 4) of ``dtype`` at
+    ``size``, the consumer's magnitude. A non-floating ``dtype`` (token ids) has no spacing: the
+    floor is 0. Always ``resolved``; the worst-case propagated bound never decides this."""
+    torch = _torch()
+    worst = float(torch.as_tensor(residual, dtype=torch.float64).abs().max())
+    floating = dtype is not None and torch.empty(0, dtype=dtype).is_floating_point()
+    step = spacing(size, dtype) if floating else 0.0
+    floor = steps * step
+    return {"verdict": CONFIRMED if worst <= floor else NOT_CONFIRMED, "state": "resolved",
+            "residual": _num(worst, MEASURED), "spacing": _num(step, MEASURED),
+            "floor": _num(floor, MEASURED), "criterion": CONFIRM_CRITERION.replace("2 x", f"{steps} x", 1),
+            "dtype": str(dtype).removeprefix("torch.")}
+
+
+__all__ = ["CONFIRMED", "CONFIRM_CRITERION", "CRITERION", "EFFECT", "NATIVE_ONLY", "NOT_CONFIRMED",
+           "NO_EFFECT", "UNRESOLVED", "confirm", "decide", "magnitude", "spacing"]

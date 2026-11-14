@@ -19,7 +19,7 @@ forecast 4  t3.L1.m  sealed at t3.L0.h  record 0e18d44ff8b37b15
 (mdb) step
 t3.L0.a  a = RMSNorm(h) * w_in  {P02 P03}
 (mdb) verify
-forecast 1 t3.L0.a: within-bound  native max_abs 2.0625 [measured] norm 4.0011 [measured]  residual 0.0052992 [measured] <= bound 0.016106 [bound]
+forecast 1 t3.L0.a: confirmed  native max_abs 2.0625 [measured] norm 4.0011 [measured]  residual 0.0052992 [measured] <= floor 0.0625 [measured P20] (4 x bfloat16 spacing)  [P20, resolved]; worst-case bound 0.016106 [bound] (holds, information)
   order: sealed at t3.L0.h (stop 2) before the target (stop 3); same cut (the target is a later port of the sealed layer)
 forecast 2 t3.L0.p: open (target not reached (cursor t3.L0.a))
 forecast 3 t3.M[4,9]: open (target not reached (cursor t3.L0.a))
@@ -27,14 +27,14 @@ forecast 4 t3.L1.m: open (target not reached (cursor t3.L0.a))
 (mdb) until t3.logits
 t3.logits  logits = lm_head(fn)
 (mdb) verify
-forecast 2 t3.L0.p: within-bound  native max_abs 0.25195 [measured] norm 0.70781 [measured]  residual 0.00091062 [measured] <= bound 0.0026798 [bound]
+forecast 2 t3.L0.p: confirmed  native max_abs 0.25195 [measured] norm 0.70781 [measured]  residual 0.00091062 [measured] <= floor 0.0078125 [measured P20] (4 x bfloat16 spacing)  [P20, resolved]; worst-case bound 0.0026798 [bound] (holds, information)
   order: sealed at t3.L0.h (stop 2) before the target (stop 10); cut descends through 4 receipts
-forecast 3 t3.M[4,9]: within-bound  native -0.11401 [measured]  residual 0.00050802 [measured] <= bound 16.825 [bound]
+forecast 3 t3.M[4,9]: confirmed  native -0.11401 [measured]  residual 0.00050802 [measured] <= floor 0.0019531 [measured P20] (4 x bfloat16 spacing)  [P20, resolved]; worst-case bound 16.825 [bound] (holds, information)
   order: sealed at t3.L0.h (stop 2) before the target (stop 41); cut descends through 4 receipts
-forecast 4 t3.L1.m: within-bound  native max_abs 0.0005188 [measured] norm 0.00079085 [measured]  residual 4.8987e-06 [measured] <= bound 0.021312 [bound]
+forecast 4 t3.L1.m: confirmed  native max_abs 0.0005188 [measured] norm 0.00079085 [measured]  residual 4.8987e-06 [measured] <= floor 1.5259e-05 [measured P20] (4 x bfloat16 spacing)  [P20, resolved]; worst-case bound 0.021312 [bound] (holds, information)
   order: sealed at t3.L0.h (stop 2) before the target (stop 38); cut descends through 4 receipts
 (mdb) verify 1
-forecast 1 t3.L0.a: within-bound  native max_abs 2.0625 [measured] norm 4.0011 [measured]  residual 0.0052992 [measured] <= bound 0.016106 [bound]
+forecast 1 t3.L0.a: confirmed  native max_abs 2.0625 [measured] norm 4.0011 [measured]  residual 0.0052992 [measured] <= floor 0.0625 [measured P20] (4 x bfloat16 spacing)  [P20, resolved]; worst-case bound 0.016106 [bound] (holds, information)
   order: sealed at t3.L0.h (stop 2) before the target (stop 3); same cut (the target is a later port of the sealed layer)
 (mdb) explain M[4,9]
 explain t3.M[4,9]  native -0.11401 [measured P19]  float64 -0.1142 [derived-exact P19]  eta 0.00019104 [measured P19]

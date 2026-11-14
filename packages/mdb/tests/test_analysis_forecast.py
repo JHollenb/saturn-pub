@@ -47,7 +47,7 @@ def test_next_port_forecast_is_within_its_bound_at_every_port_with_an_identity(d
             continue
         run.step()
         [result] = forecast.verify(run, [view["id"]])
-        assert result["verdict"] == "within-bound", (where, result)
+        assert result["verdict"] == "confirmed", (where, result)
         assert result["residual_max_abs"]["authority"] in ("measured", "derived-exact")
         assert result["bound_max"]["authority"] == "bound"
         verified[view["target"]] = result
@@ -63,7 +63,7 @@ def test_next_port_forecast_is_within_its_bound_at_every_port_with_an_identity(d
         view = forecast.seal(again, f"t3.L{layer}.A")
         again.until(f"t3.L{layer}.o")
         [result] = forecast.verify(again, [view["id"]])
-        assert result["verdict"] == "within-bound", result
+        assert result["verdict"] == "confirmed", result
     # the stops with no forecast at the cursor before them, and why: the token list of the next
     # row has no identity, and A is computed by the native call that stops at p
     assert forecast.NO_IDENTITY == {"start": forecast.NO_IDENTITY["start"]}
@@ -130,7 +130,7 @@ def test_a_wrong_operand_makes_verify_fail(debugger, monkeypatch):
     monkeypatch.setattr(run, "read", read)
     run.step()
     [result] = forecast.verify(run, [view["id"]])
-    assert result["verdict"] == "outside-bound"
+    assert result["verdict"] == "not confirmed"
     assert result["within_bound"] is False
     assert result["worst_excess"]["value"] > 0
 
@@ -160,11 +160,37 @@ def test_rewind_and_replay_to_the_target_still_verifies_with_its_order(debugger)
     run.reverse_step("layer")      # back to the boundary the sealing stop belongs to
     run.until("t3.L1.h")
     [result] = forecast.verify(run, [view["id"]])
-    # 28 random layers: the propagated bound is not finite, which is stated (no-bound), never a
-    # false within-bound; the record still verifies against the native value
-    assert result["verdict"] in ("within-bound", "no-bound")
+    # 28 random layers: the worst-case bound may be infinite, which never decides the verdict:
+    # the measured residual is within the dtype floor
+    assert result["verdict"] == "confirmed" and result["state"] == "resolved"
+    assert result["floor"]["authority"] == "measured" and result["floor"]["proof"] == "P20"
     assert result["residual_max_abs"]["value"] < 0.05
     assert result["order"]["descends"] and result["order"]["sealed_before_target"]
+
+
+def test_a_wrong_prediction_is_not_confirmed_and_confirm_reads_the_floor():
+    import torch
+
+    from mdb.analysis import verdict
+
+    # bf16 near 20: spacing 0.125, floor 0.25
+    inside = verdict.confirm(torch.tensor(0.2), 20.0, torch.bfloat16)
+    outside = verdict.confirm(torch.tensor(0.3), 20.0, torch.bfloat16)
+    assert (inside["verdict"], outside["verdict"]) == ("confirmed", "not confirmed")
+    assert inside["state"] == outside["state"] == "resolved"
+    assert outside["floor"]["value"] == 0.25 and outside["floor"]["proof"] == "P20"
+    assert verdict.confirm(torch.tensor(1), 5, torch.int64)["verdict"] == "not confirmed"
+
+
+def test_a_forecast_whose_prediction_is_perturbed_is_not_confirmed(debugger):
+    run = debugger.run(PROMPT)
+    view = forecast.seal(run)
+    entry = forecast.ledger(run)[view["id"]]
+    entry.predicted = entry.predicted + 1.0   # a deliberately wrong prediction
+    run.step()
+    [result] = forecast.verify(run, [view["id"]])
+    assert result["verdict"] == "not confirmed" and result["state"] == "resolved"
+    assert result["residual_max_abs"]["value"] > result["floor"]["value"]
 
 
 def test_a_large_weight_is_multiplied_block_by_block_and_no_float64_weight_is_kept(
@@ -225,9 +251,10 @@ def _check_deep(run, view, store):
     run.until("logits")
     before = (entry.predicted.clone(), None if entry.bound is None else entry.bound.clone())
     (result,) = forecast.verify(run, [view["id"]])
-    # 28 random layers: the propagated bound is not finite, which is stated (no-bound), never a
-    # false within-bound; the record still verifies against the native value
-    assert result["verdict"] in ("within-bound", "no-bound")
+    # 28 random layers: the worst-case bound may be infinite, which never decides the verdict:
+    # the measured residual is within the dtype floor
+    assert result["verdict"] == "confirmed" and result["state"] == "resolved"
+    assert result["floor"]["authority"] == "measured" and result["floor"]["proof"] == "P20"
     assert result["residual_max_abs"]["value"] < 0.05
     assert float(entry.predicted) == float(before[0])
     return entry, summary, result
