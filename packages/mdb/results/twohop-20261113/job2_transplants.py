@@ -46,6 +46,11 @@ def stepped(ids, cells=(), name="arm"):
     return run.read().reshape(-1).float().cpu()
 
 
+def keep(logits, toks):
+    """The kept logits and the argmax of one arm."""
+    return logits[toks].tolist() + [int(logits.argmax())]
+
+
 def cache_of(ids, name):
     """K and V caches (all layers) of a run's prefill rows, and its native logits."""
     run = dbg.run(ids, name=name)
@@ -117,19 +122,19 @@ for index, entry in enumerate(panel):
             continue
         for k in range(len(donors)):
             vk, kk = dv[k][layer][:, g:g + 1, r:r + 1], dk[k][layer][:, g:g + 1, r:r + 1]
-            arms_s[f"{label}.V.d{k}"] = stepped(ids, [(layer, "v", vk, [r], [g])])[toks].tolist()
-            arms_s[f"{label}.K.d{k}"] = stepped(ids, [(layer, "k", kk, [r], [g])])[toks].tolist()
-            arms_s[f"{label}.KV.d{k}"] = stepped(ids, [(layer, "v", vk, [r], [g]),
-                                                       (layer, "k", kk, [r], [g])])[toks].tolist()
+            arms_s[f"{label}.V.d{k}"] = keep(stepped(ids, [(layer, "v", vk, [r], [g])]), toks)
+            arms_s[f"{label}.K.d{k}"] = keep(stepped(ids, [(layer, "k", kk, [r], [g])]), toks)
+            arms_s[f"{label}.KV.d{k}"] = keep(stepped(ids, [(layer, "v", vk, [r], [g]),
+                                                            (layer, "k", kk, [r], [g])]), toks)
         if control is not None and label != "F2":
             src = r if entry["control_aligned"] else control["row"]
             if entry["control_aligned"] or r == r0:
                 cvv = cv[layer][:, g:g + 1, src:src + 1]
-                arms_s[f"{label}.V.ctl"] = stepped(ids, [(layer, "v", cvv, [r], [g])])[toks].tolist()
+                arms_s[f"{label}.V.ctl"] = keep(stepped(ids, [(layer, "v", cvv, [r], [g])]), toks)
     # self-transplant: the recipient's own cell at the GT site (a no-op by construction)
     r, layer, g = gt
-    arms_s["self.V"] = stepped(ids, [(layer, "v", rv[layer][:, g:g + 1, r:r + 1], [r], [g])])[toks].tolist()
-    arms_s["native_again"] = stepped(ids)[toks].tolist()
+    arms_s["self.V"] = keep(stepped(ids, [(layer, "v", rv[layer][:, g:g + 1, r:r + 1], [r], [g])]), toks)
+    arms_s["native_again"] = keep(stepped(ids), toks)
     span_t = torch.tensor(span)
     for start in BANDS:
         for k in range(len(donors)):
@@ -140,7 +145,7 @@ for index, entry in enumerate(panel):
                         cells.append((layer, "v", dv[k][layer][:, :, span_t], span, None))
                     if "K" in kind:
                         cells.append((layer, "k", dk[k][layer][:, :, span_t], span, None))
-                arms_s[f"band{start}.{kind}.d{k}"] = stepped(ids, cells)[toks].tolist()
+                arms_s[f"band{start}.{kind}.d{k}"] = keep(stepped(ids, cells), toks)
     if control is not None:
         cells = []
         for layer in range(8, L):
@@ -149,7 +154,7 @@ for index, entry in enumerate(panel):
             else:
                 cells.append((layer, "v", cv[layer][:, :, control["row"]:control["row"] + 1], [r0],
                               None))
-        arms_s["band8.V.ctl"] = stepped(ids, cells)[toks].tolist()
+        arms_s["band8.V.ctl"] = keep(stepped(ids, cells), toks)
     rec["stepped"] = arms_s
     rec["stepped_seconds"] = time.monotonic() - t
     rec["seconds"] = time.monotonic() - t_item
