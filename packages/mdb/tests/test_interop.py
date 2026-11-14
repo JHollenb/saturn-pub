@@ -251,3 +251,24 @@ def test_bridge_leaves_mdb_model_untouched_and_bridged_tree_refused():
     tl.bridge(other, _tokenizer("qwen2"), in_place=True)
     with pytest.raises(Refused, match="TransformerLens bridge"):
         mdb.attach(other)
+
+
+def test_batch_whatif_per_prompt_vectors_match_import_whatif():
+    """A per-prompt vector added at L1.m (e.g. minus one transcoder feature's write) measured in
+    an nnsight batch equals mdb's whatif with the same vector as an import value."""
+    _tools()
+    from mdb.interop import nn, verify
+
+    warnings.filterwarnings("ignore")
+    model, dbg = _debugger()
+    recipients = [TOKENS[0], [3, 1, 4, 1, 5, 9]]
+    vectors = torch.randn(2, 16, generator=torch.Generator().manual_seed(0)) * 0.3
+    batch = nn.batch_whatif(model, recipients, [(4, 9), (4, 9)],
+                            {"vec": [nn.Edit("L1.m", vectors, "add")]})
+    for i, tokens in enumerate(recipients):
+        dbg.import_values("vec", {"t5.L1.m": vectors[i].reshape(1, 1, 16)}, tokens=tokens,
+                          provenance={"tool": "test"})
+        run = dbg.run(tokens)
+        [row] = verify.verify(dbg, run, [verify.Claim("L1.m", "vec:t5.L1.m", "add", "M[4,9]")])
+        assert row["state"] == "resolved", row.get("reason")
+        assert abs(batch["arms"]["vec"]["delta"][i] - row["native"]) < 1e-5

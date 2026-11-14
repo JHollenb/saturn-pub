@@ -123,8 +123,12 @@ for address in ports:
     port = address.split(".")[1]
     spec = names.BY_PORT[port]
     layout = {"rot_q": "bh", "rot_k": "bh_k"}.get(spec.tl_layout, spec.nn_layout) or "scores"
-    d = diff(run.read(f"t{LAST}.{address}"), names.to_mdb(layout, t[address], LAST))
     s = per.setdefault(port, {"equal": 0, "n": 0, "max": 0.0})
+    try:
+        d = diff(run.read(f"t{LAST}.{address}"), names.to_mdb(layout, t[address], LAST))
+    except Exception as error:  # record the refusal / defect per port
+        s.setdefault("errors", []).append(f"{address}: {type(error).__name__}: {error}"[:200])
+        continue
     s["n"] += 1
     s["equal"] += int(d.get("equal", False))
     s["max"] = max(s["max"], d.get("max", float("inf")))

@@ -109,11 +109,24 @@ class Edit:
         if self.scope not in ("reader", "sequence"):
             raise ValueError("scope is 'reader' (mdb: only the last row reads the cell) or "
                              "'sequence' (activation patching)")
-        if not (self.value in ("donor", "self") or isinstance(self.value, (int, float))):
-            raise ValueError("value is a number, 'donor' or 'self'")
-        if self.value == "self" and (self.donor_row is None or not
-                                     self.address.startswith("cache.")):
+        kind = value_kind(self.value)
+        if kind is None:
+            raise ValueError("value is a number, 'donor', 'self' or a per-prompt tensor "
+                             "(prompts, columns)")
+        if kind == "self" and (self.donor_row is None or not
+                               self.address.startswith("cache.")):
             raise ValueError("'self' takes a cell address and a donor_row")
+
+
+def value_kind(value: Any) -> str | None:
+    """``number``, ``donor``, ``self`` or ``tensor`` (one row of columns per prompt)."""
+    if isinstance(value, str):
+        return value if value in ("donor", "self") else None
+    if isinstance(value, (int, float)) and not isinstance(value, bool):
+        return "number"
+    if getattr(value, "ndim", None) == 2:
+        return "tensor"
+    return None
 
 
 EAGER_ARGS = ("qr", "kr")
@@ -173,7 +186,7 @@ def plan(edit: Edit, config: Any) -> _Plan:
         heads_ = _indices(keys["kv"], kv) if "kv" in keys else list(range(kv))
         cols = [h * head_dim + d for h in heads_ for d in
                 (_indices(keys["d"], head_dim) if "d" in keys else range(head_dim))]
-        if cell.tensor == "k" and edit.value in ("donor", "self") and edit.donor_row is not None:
+        if cell.tensor == "k" and value_kind(edit.value) in ("donor", "self") and edit.donor_row is not None:
             if len(rows) != 1 or edit.donor_row != rows[0]:
                 raise ValueError(f"{text}: a key cell from another row would carry that row's "
                                  "rotation; nnsight patches k before RoPE, so donor_row must "
@@ -225,12 +238,17 @@ def _apply(x: Any, plan_: _Plan, value: Any, rows: Sequence[int]) -> None:
         x[:, row] = block
 
 
-def _value(p: _Plan, donor_vals: dict[Any, Any], device: Any) -> Any:
-    """The edit operand: a float, or the donor's values ``(batch, rows, columns)``."""
+def _value(p: _Plan, donor_vals: dict[Any, Any], device: Any, chunk: Sequence[int]) -> Any:
+    """The edit operand: a float, or values ``(batch, rows, columns)`` (donor, own clean
+    value, or the supplied per-prompt tensor)."""
     import torch
 
-    if p.edit.value not in ("donor", "self"):
+    kind = value_kind(p.edit.value)
+    if kind == "number":
         return float(p.edit.value)
+    if kind == "tensor":
+        rows = p.edit.value[torch.tensor(list(chunk))].to(device)
+        return rows[:, None, :].expand(-1, len(p.rows), -1)
     src = donor_vals[(p.edit.value, p.layer, p.port)]
     if p.kind == "cell":
         src_rows = [p.edit.donor_row] * len(p.rows) if p.edit.donor_row is not None else p.rows
@@ -255,7 +273,7 @@ def batch_whatif(model: Any, recipients: Sequence[Sequence[int]],
     nm = wrap(model)
     config = model.config
     plans = {name: [plan(e, config) for e in edits] for name, edits in arms.items()}
-    needs_donor = any(p.edit.value == "donor" for ps in plans.values() for p in ps)
+    needs_donor = any(value_kind(p.edit.value) == "donor" for ps in plans.values() for p in ps)
     if needs_donor and (donors is None or len(donors) != len(recipients)):
         raise ValueError("donor values need one donor prompt per recipient")
     groups: dict[tuple[int, int], list[int]] = {}
@@ -281,7 +299,7 @@ def batch_whatif(model: Any, recipients: Sequence[Sequence[int]],
                 return (last.gather(1, a_ids[:, None]) - last.gather(1, b_ids[:, None]))[:, 0]
 
             clean_A, donor_vals = {}, {}
-            own = {(p.layer, p.port) for ps in plans.values() for p in ps if p.edit.value == "self"}
+            own = {(p.layer, p.port) for ps in plans.values() for p in ps if value_kind(p.edit.value) == "self"}
             keys = sorted({(layer, "A") for layer in reader_layers} | own,
                           key=lambda lp: (lp[0], PORT_ORDER.index(lp[1])))
             with torch.no_grad(), nm.trace(ids):
@@ -298,7 +316,7 @@ def batch_whatif(model: Any, recipients: Sequence[Sequence[int]],
             if needs_donor:
                 d_ids = torch.tensor([list(donors[i]) for i in chunk], device=device)
                 wanted = sorted({(p.layer, p.port) for ps in plans.values() for p in ps
-                                 if p.edit.value == "donor"},
+                                 if value_kind(p.edit.value) == "donor"},
                                 key=lambda lp: (lp[0], PORT_ORDER.index(lp[1])))
                 with torch.no_grad(), nm.trace(d_ids):
                     for layer, port in wanted:
@@ -317,7 +335,7 @@ def batch_whatif(model: Any, recipients: Sequence[Sequence[int]],
                                 # reader scope: earlier rows read the clean cache at this layer
                                 x[:, :-1] = clean_A[layer][:, :-1]
                             for p in [p for p in here if p.port == port]:
-                                _apply(x, p, _value(p, donor_vals, device), p.rows)
+                                _apply(x, p, _value(p, donor_vals, device, chunk), p.rows)
                     edited = nm.output.logits.save()
                 traces += 1
                 for j, i in enumerate(chunk):
