@@ -49,7 +49,10 @@ FAMS = ("d3-lm", "d3-per", "d4-work")
 depth = sorted([i for i in items("depth") if i["family"] in FAMS], key=lambda i: i["id"])
 by_id = {i["id"]: i for i in items("depth")}
 rng = random.Random(20261114)
-if PICK:
+TAG = "-smoke" if PICK else ""
+if PICK in ("s0", "s1"):
+    depth, TAG = depth[int(PICK[1])::2], "-" + PICK
+elif PICK:
     depth = [depth[int(k)] for k in PICK.split(",")]
 DONORS = {}
 
@@ -111,7 +114,7 @@ def arm(run, ckw, crow, last, value, toks, seal=False):
 
 
 recs = []
-fh = open(f"{OUT}/exp1-items{'-smoke' if PICK else ''}.jsonl", "w")
+fh = open(f"{OUT}/exp1-items{TAG}.jsonl", "w")
 for item in depth:
     t0 = time.monotonic()
     iid, ids, span = item["id"], item["ids"], item["span"]
