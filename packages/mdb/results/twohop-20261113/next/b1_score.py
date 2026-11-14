@@ -25,11 +25,11 @@ ad = dbg.adapter
 L, H, KV = ad.layers, ad.num_heads, ad.num_kv_heads
 final = getattr(ad.backbone, ad.spec.final_norm)
 gamma = final.weight.double()
-W_U = ad.model.lm_head.weight.double()
+W_U = ad.model.lm_head.weight.detach()          # sliced before any cast (strict casts)
 WR = {x: cm.group_writers(layer_module(ad, x).self_attn.o_proj.weight, H, KV) for x in range(L)}
 S = json.load(open("b1_sets.json"))
 SETS, T = S["sets"], S["truths"]
-RO = {k: gamma[None, :] * W_U[v] for k, v in SETS.items()}
+RO = {k: gamma[None, :] * W_U[v].double() for k, v in SETS.items()}
 MAP = json.load(open("b1-map.json"))
 FC = json.load(open("b1-forecast.json"))
 X1 = {r["id"]: r["correct"] for r in json.load(open("x1-17-depth-panel.json"))["rows"]}
@@ -90,7 +90,6 @@ for iid in sorted(T):
     t = T[iid]
     cap = torch.load(Path(CAPDIR) / "cap" / "depth" / f"{safe(iid)}.pt", map_location="cpu",
                      weights_only=False)
-    caps[iid] = cap
     span = t["span"]
     crow = carrier_row(cap, span)
     values = {x: cap[f"v{x}"].double() for x in range(L)}
@@ -163,6 +162,8 @@ for iid in sorted(T):
     fl, fk = rng.choice(frozen_cells)
     rec["null_shuffle_cell"] = names("countries", crow, fl, fk)
     per[iid] = rec
+    caps[iid] = cap["v20"][0, 6, crow].double().clone()
+    del cap, values, cen, sc
 
 # cross-item null: another same-family item with another country; its carrier cell names mine
 for iid, rec in per.items():
@@ -172,9 +173,7 @@ for iid, rec in per.items():
         rec["null_cross"] = None
         continue
     k = random.Random(iid).choice(pool)
-    cap = caps[k]
-    crow = per[k]["carrier_row"]
-    w = sum(WR[20][6] @ cap["v20"][0, 6, crow].double() for _ in [0])
+    w = WR[20][6] @ caps[k]
     rec["null_cross"] = best(readout(w, "countries"), "countries") == t["country"]
 
 # arms
