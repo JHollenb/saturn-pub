@@ -1,0 +1,23 @@
+{
+ "experiment": "7: interchange intervention accuracy at the carrier cell, with a floor and a training-free subspace",
+ "written": "2026-11-14T13:50-08:00",
+ "status": "sealed before job G; single seed; DAS NOT run (needs owner approval)",
+ "model": "Qwen3-1.7B-Base bf16 eager CUDA",
+ "libraries": "pyvene 0.1.8 (site-libs2, Qwen3 shim mdb.interop.pyvene_compat); Qwen-Scope L19 via mdb FeatureBasis",
+ "panel": "the 64 Run 1a base pairs (recipient, its different-bridge donor), consumer M[answer, donor answer] (deviation: the memo names entry 1's 123 pairs; the 1a pairs carry donors in r1_items.json and the same carrier rule)",
+ "memo_predictions_verbatim": "memo_sections.json section 7 (c)",
+ "predictions": {
+  "I1": "whole-cell IIA is 0.55 to 0.65",
+  "I2": "the SAE-pushforward subspace reaches >= 0.8 of whole-cell IIA at rank <= 12; the random subspace of the same rank <= 0.2 of it",
+  "I3": "the pyvene and mdb whole-cell margins agree within one bf16 step on every pair",
+  "falsifier_I2": "the pushforward subspace is below 0.5 of whole-cell IIA"
+ },
+ "operational_definitions": {
+  "flip": "M0 > floor and M_after < -floor, floor = 2 bf16 spacings at the larger |logit| of (answer, donor answer)",
+  "scope": "sequence scope at the carrier row for both tools (mdb: prefill = carrier row, v port of KV group 6 set at t<crow>.L20; pyvene: v_proj.output interchange at the carrier position, subspace = KV group 6)",
+  "Pi_SAE": "orthonormal basis (QR) of the recipient-rho cell images of the frozen exp1 census country features (exp1/census.json) active at L19 at the carrier row of the recipient or the donor",
+  "random subspace": "QR of a Gaussian (seed 20261114) of the same rank",
+  "one bf16 step": "1 spacing at the larger |logit|; the kernel-path delta pyvene clean - mdb native is reported beside it",
+  "nulls not run": "same-bridge controls and the K cell are not in this panel (stated)"
+ }
+}

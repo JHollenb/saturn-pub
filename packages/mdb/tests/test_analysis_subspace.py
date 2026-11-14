@@ -150,3 +150,30 @@ def test_decompose_is_a_component_binding_that_closes(debugger):
     assert abs(sum(parts) - tab["cell_to_consumer"]["value"]) < 1e-9
     row = subspace.table_row(run, sb, Margin(4, 4, 9))
     assert abs(parts[0] - row["subspace_to_consumer"]["value"]) < 1e-12
+
+
+def test_interchange_takes_a_value_ref_as_a_selector_edit(debugger):
+    """A donor ``ValueRef`` (P5) gives the same margins as the bare tensor, and both arms are
+    selector edits ``t<row>.L<l>.v[kv<g>]`` whose origin keeps the ref's pointer."""
+    layer, kv, row = 1, 0, 2
+    donor = debugger.run(SOURCE, name="donor", prefill=row)
+    donor.until(f"t{len(SOURCE) - 1}.logits")
+    ref = donor.ref(f"t{row}.L{layer}.v[kv{kv}]")
+    tensor = subspace.f64(ref.value).reshape(-1)
+    g = torch.Generator().manual_seed(5)
+    sb = subspace.subspace_binding("s", layer, kv, torch.randn(debugger.adapter.head_dim, 2,
+                                                                generator=g, dtype=torch.float64))
+    margin = Margin(4, 4, 9)
+    a = subspace.interchange(debugger, sb, PROMPT, row, tensor, margin, floor=0.5)
+    b = subspace.interchange(debugger, sb, PROMPT, row, ref, margin, floor=0.5, keep=True)
+    for key in ("M0", "M", "M_whole"):
+        assert a[key]["value"] == b[key]["value"]
+    br = b["branches"]
+    for name in ("M", "M_whole"):
+        (e,) = br.arm(name).edits
+        assert e.target == f"t{row}.L{layer}.v[kv{kv}]"
+        assert e.origin["source"]["origin"] == "donor"
+        assert e.origin["source"]["sha256"] == ref.pointer["sha256"]
+    br.add_null("self", "self", like="M_whole")
+    (selfrow,) = br.run(["self"])
+    assert selfrow["dM"]["value"] == 0.0

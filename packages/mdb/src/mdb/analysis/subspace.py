@@ -267,7 +267,10 @@ def interchange(debugger: Any, sb: SubspaceBinding, ids: list[int], row: int, so
     logits), against the base ``M0`` and ONE floor shared with every other arm of the branch
     point: the caller's ``floor``, else the branches' default (2 spacings at the base margin)
     for a margin or logit. ``branches`` in the result is the ``Branches`` object (seal it, add
-    nulls, compare) when ``keep``; ``arms`` is its plain table (JSON-able) always."""
+    nulls, compare) when ``keep``; ``arms`` is its plain table (JSON-able) always.
+    ``source_value``: a ``d_h`` tensor, or a ``ValueRef`` (``donor.ref("t<r>.L<l>.v[kv<g>]")``):
+    then both arms are selector edits ``t<row>.L<l>.v[kv<g>]`` whose origin carries the ref's
+    pointer under ``source`` (the donor run, address, sha256, cut)."""
     from .branches import Branches, edit
 
     torch = _torch()
@@ -281,12 +284,26 @@ def interchange(debugger: Any, sb: SubspaceBinding, ids: list[int], row: int, so
     shape = run.port_shape("v")
     mask = torch.zeros(shape, dtype=torch.bool)
     mask.reshape(-1)[sb.kv * dh:(sb.kv + 1) * dh] = True
-    for key, value in (("M", sb.swap(native, source_value)), ("M_whole", f64(source_value))):
+    from mdb.engine.refs import ValueRef
+
+    pointer = None
+    if isinstance(source_value, ValueRef):           # a donor read with Run.ref: keep its origin
+        pointer = dict(source_value.pointer)
+        source_value = source_value.value
+    source_value = f64(source_value).reshape(-1).cpu()
+    if source_value.numel() != dh:
+        raise Refusal(f"interchange source has {source_value.numel()} values; the cell has {dh}")
+    for key, value in (("M", sb.swap(native, source_value)), ("M_whole", source_value)):
+        origin = {"kind": "subspace-interchange", "subspace": sb.name, "digest": sb.digest(),
+                  "arm": key}
+        if pointer is not None:
+            origin["source"] = pointer
+            # selector edit (P5): ONE masked edit at the KV group, value cast once
+            br.add(key, [edit(f"t{row}.L{sb.layer}.v[kv{sb.kv}]", value, origin=origin)])
+            continue
         full = torch.zeros(shape, dtype=adapter.dtype)
         full.reshape(-1)[sb.kv * dh:(sb.kv + 1) * dh] = value.reshape(-1).to(adapter.dtype)
-        br.add(key, [edit(f"t{row}.L{sb.layer}.v", full, mask=mask,
-                          origin={"kind": "subspace-interchange", "subspace": sb.name,
-                                  "digest": sb.digest(), "arm": key})])
+        br.add(key, [edit(f"t{row}.L{sb.layer}.v", full, mask=mask, origin=origin)])
     rows = {r["name"]: r for r in br.run()}
     out = {"M0": num(br.M0, MEASURED), "M": rows["M"]["M"], "M_whole": rows["M_whole"]["M"]}
     out["mass_of_delta"] = sb.mass(f64(source_value) - native)
