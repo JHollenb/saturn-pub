@@ -1,0 +1,3 @@
+<frozen runpy>:130: RuntimeWarning: 'mrun.os_limit' found in sys.modules after import of package 'mrun', but prior to execution of 'mrun.os_limit'; this may result in unpredictable behaviour
+== revision 00f21b9e837a60883afa62965c02b2daac0f51fc script retrace.py args /mnt/big/llm-models/Qwen3-4B-Base /mnt/ssd1tb/cache/beast/scale/Qwen3-4B-Base /mnt/big/mrun-scratch/job-814cba27cc43/score-Qwen3-4B-Base.json rt-Qwen3-4B-Base.json
+TOTAL 128
