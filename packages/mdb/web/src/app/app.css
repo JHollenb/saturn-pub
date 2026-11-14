@@ -824,6 +824,8 @@ th.n {
 
 /* Circuit graph: fit / zoom controls, and a visible cue when it scrolls. */
 .circuit-zoom {
+  /* revealing the graph scrolls this bar to the top of the panel, below its sticky heading */
+  scroll-margin-top: 40px;
   display: flex;
   flex-wrap: wrap;
   gap: 4px;

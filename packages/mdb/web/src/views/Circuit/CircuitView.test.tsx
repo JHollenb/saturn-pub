@@ -16,6 +16,7 @@ import {
   flatten,
   layoutCircuit,
   naturalKey,
+  rootScroll,
   scaleFor,
   walk,
   type CircuitLayout,
@@ -84,6 +85,18 @@ describe('circuit layout', () => {
   const k1 = bodyOf(buildK1);
   const k2 = bodyOf(buildK2);
   const d2 = bodyOf(buildD2);
+
+  it('show and fit scroll the pane to the consumer (root), at any scale (issue M20)', () => {
+    const layout = layoutCircuit(k2, [k2]);
+    const root = layout.placed.find((p) => p.node.kind === 'consumer')!;
+    for (const scale of [MIN_SCALE, 1, 1.5, 2]) {
+      const { left, top } = rootScroll(layout, scale);
+      // the root's node and label sit inside a pane scrolled to (left, top)
+      expect(root.x * scale - NODE_R * scale).toBeGreaterThanOrEqual(left);
+      expect(root.y * scale - NODE_R * scale).toBeGreaterThanOrEqual(top);
+      expect(top).toBe(0); // the root is the graph's first row: the pane opens at its head
+    }
+  });
 
   it('every circuit the op built keeps its +N more and remainder nodes', () => {
     for (const fx of [buildK1, buildK2, buildD2, buildO]) {

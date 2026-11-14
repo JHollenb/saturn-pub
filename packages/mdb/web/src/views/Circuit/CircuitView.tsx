@@ -19,6 +19,7 @@ import {
   ROW_H,
   familyOf,
   layoutCircuit,
+  rootScroll,
   scaleFor,
   walk,
   type CircuitLayout,
@@ -210,11 +211,7 @@ function Ledger({ ledger, circuits, selected, busy, overlay, act }: CircuitViewP
         <div className="faint">none yet</div>
       )}
       <label className="muted">
-        <input
-          type="checkbox"
-          checked={overlay}
-          onChange={(e) => act.overlay(e.target.checked)}
-        />{' '}
+        <input type="checkbox" checked={overlay} onChange={(e) => act.overlay(e.target.checked)} />{' '}
         highlight the selected circuit's nodes on the pipeline and the architecture strip
       </label>
     </section>
@@ -232,7 +229,11 @@ function CircuitHead({ entry }: { entry: CircuitEntry }) {
       <div>
         closure <OpValue value={at(closure, 'value')} what="closure" />{' '}
         <span className="faint">within</span> <OpValue value={at(closure, 'bound')} what="bound" />
-        {at(closure, 'within') === true ? ' within' : at(closure, 'within') === false ? ' OUTSIDE' : ''}
+        {at(closure, 'within') === true
+          ? ' within'
+          : at(closure, 'within') === false
+            ? ' OUTSIDE'
+            : ''}
         {str(at(closure, 'meaning')) && (
           <span className="faint"> ({str(at(closure, 'meaning'))})</span>
         )}
@@ -258,7 +259,11 @@ function CircuitHead({ entry }: { entry: CircuitEntry }) {
 }
 
 /** Where a read the Symbols view pointed at sits in the selected circuit. */
-function readNodes(entry: CircuitEntry | null, focus: FocusRead | null, layout: CircuitLayout | null) {
+function readNodes(
+  entry: CircuitEntry | null,
+  focus: FocusRead | null,
+  layout: CircuitLayout | null,
+) {
   if (!entry || !focus || !layout) return new Set<string>();
   const m = /^t(\d+)\.L(\d+)\.h(\d+)$/.exec(focus.reader);
   if (!m) return new Set<string>();
@@ -282,9 +287,13 @@ function FocusLine({ focus, entry }: { focus: FocusRead; entry: CircuitEntry | n
       read <code>{focus.reader}</code> of <code>{focus.binding}</code> (rows{' '}
       {focus.rows.map((r) => `t${r}`).join(', ')}):{' '}
       {!entry ? (
-        <span className="faint">no circuit shown; build one for the consumer to place this read.</span>
+        <span className="faint">
+          no circuit shown; build one for the consumer to place this read.
+        </span>
       ) : found.size ? (
-        <span>highlighted in circuit {entry.id} ({found.size} node{found.size === 1 ? '' : 's'}).</span>
+        <span>
+          highlighted in circuit {entry.id} ({found.size} node{found.size === 1 ? '' : 's'}).
+        </span>
       ) : (
         <span className="faint">
           not among circuit {entry.id}'s listed nodes (it may sit in a +N more group, or need depth
@@ -350,8 +359,31 @@ function Graph({
     else if (right > x + el.clientWidth) x = right - el.clientWidth;
     if (top < y) y = top;
     else if (bottom > y + el.clientHeight) y = bottom - el.clientHeight;
-    if (x !== el.scrollLeft || y !== el.scrollTop) el.scrollTo({ left: Math.max(0, x), top: Math.max(0, y) });
+    if (x !== el.scrollLeft || y !== el.scrollTop)
+      el.scrollTo({ left: Math.max(0, x), top: Math.max(0, y) });
   }, [current, scale]);
+  // Show (a new circuit in this pane) and fit bring the consumer into view: the pane is one DOM
+  // element reused across circuits, so without this a circuit opens where the previous one was
+  // scrolled (often its tail), and a zoom keeps a scroll offset that no longer holds the root.
+  const [reveal, setReveal] = useState(0);
+  const bar = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = box.current;
+    if (!el || typeof el.scrollTo !== 'function') return;
+    el.scrollTo(rootScroll(layout, scale));
+    // and when the pane's scroll parent (the Live tab) has the root off screen, it scrolls the
+    // graph's zoom bar to its top: the root sits just under it
+    const root = el.querySelector('[data-kind="consumer"]');
+    const outer = scrollParent(el.parentElement);
+    if (root && outer && bar.current && typeof bar.current.scrollIntoView === 'function') {
+      const r = root.getBoundingClientRect();
+      const o = outer.getBoundingClientRect();
+      const top = Math.max(o.top, 0);
+      const bottom = Math.min(o.bottom, window.innerHeight);
+      if (r.top < top || r.bottom > bottom) bar.current.scrollIntoView({ block: 'start' });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- on show and on fit/zoom only
+  }, [entry.id, reveal]);
   const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
     const key = KEYS[e.key];
     if (key) {
@@ -365,12 +397,16 @@ function Graph({
       act.node(null);
     }
   };
-  const step = (by: number) =>
-    setZoom(Math.round(Math.max(0.4, Math.min(2, scale + by)) * 10) / 10);
+  // a zoom step keeps the walked node in view (the walk effect above); with none, the root
+  const zoomTo = (to: 'fit' | number) => {
+    setZoom(to);
+    if (to === 'fit' || !current) setReveal((n) => n + 1);
+  };
+  const step = (by: number) => zoomTo(Math.round(Math.max(0.4, Math.min(2, scale + by)) * 10) / 10);
   return (
     <div className="circuit-graph-wrap">
-      <div className="circuit-zoom" role="group" aria-label="graph zoom">
-        <button type="button" aria-pressed={zoom === 'fit'} onClick={() => setZoom('fit')}>
+      <div ref={bar} className="circuit-zoom" role="group" aria-label="graph zoom">
+        <button type="button" aria-pressed={zoom === 'fit'} onClick={() => zoomTo('fit')}>
           fit
         </button>
         <button type="button" onClick={() => step(-0.1)} aria-label="zoom out">
@@ -379,7 +415,7 @@ function Graph({
         <button type="button" onClick={() => step(0.1)} aria-label="zoom in">
           +
         </button>
-        <button type="button" aria-pressed={zoom === 1} onClick={() => setZoom(1)}>
+        <button type="button" aria-pressed={zoom === 1} onClick={() => zoomTo(1)}>
           100%
         </button>
         <span className="faint" data-testid="graph-scale">
@@ -435,6 +471,15 @@ function Graph({
       {current && <NodeLine p={current} entry={entry} busy={busy} act={act} />}
     </div>
   );
+}
+
+/** The nearest ancestor that scrolls vertically (or the document's scrolling element). */
+function scrollParent(el: HTMLElement | null): HTMLElement | null {
+  for (let at = el; at; at = at.parentElement) {
+    const y = getComputedStyle(at).overflowY;
+    if ((y === 'auto' || y === 'scroll') && at.scrollHeight > at.clientHeight) return at;
+  }
+  return (document.scrollingElement as HTMLElement | null) ?? null;
 }
 
 /** The set the last test ablated each node in (the op's `ablated` node ids), and the nodes it
@@ -497,7 +542,8 @@ function NodeMark({
 }) {
   const { node, x, y } = p;
   const val = valOf(node.value);
-  const ev = val.kind === 'num' ? val.n.ev : val.kind === 'summary' ? val.parts[0]![1].ev : val.n.ev;
+  const ev =
+    val.kind === 'num' ? val.n.ev : val.kind === 'summary' ? val.parts[0]![1].ev : val.n.ev;
   const hollowKind = node.kind === 'more' || node.kind === 'remainder';
   const style = hollowKind ? 'hollow' : markStyle(ev);
   const fill = style === 'solid' ? 'var(--ink-2)' : 'var(--panel)';
@@ -579,7 +625,13 @@ function NodeMark({
       <foreignObject x={x + LABEL_X - 2} y={y} width={LABEL_W} height={14}>
         <span className="cnode-value">
           <OpValue value={node.value} what="value" compact showReason={false} />
-          {ablated === 'retained' ? ' ✕R' : ablated === 'complement' ? ' ✕C' : ablated ? ' excl.' : ''}
+          {ablated === 'retained'
+            ? ' ✕R'
+            : ablated === 'complement'
+              ? ' ✕C'
+              : ablated
+                ? ' excl.'
+                : ''}
         </span>
       </foreignObject>
     </g>
@@ -757,17 +809,19 @@ export function TestResult({ test }: { test: Rec }) {
           </tbody>
         </table>
       </div>
-      {[...new Set(SETS.map((set) => str(at(test, set, 'prediction'))).filter((p) => p !== null))].map(
-        (p) => (
-          <div key={p} className="faint" data-testid="test-prediction">
-            predicted Δ: {p}
-          </div>
-        ),
-      )}
+      {[
+        ...new Set(SETS.map((set) => str(at(test, set, 'prediction'))).filter((p) => p !== null)),
+      ].map((p) => (
+        <div key={p} className="faint" data-testid="test-prediction">
+          predicted Δ: {p}
+        </div>
+      ))}
       {isRec(test.excluded) && (
         <div data-testid="test-excluded">
           excluded from both sets: {strs(test.excluded.nodes).join(', ') || 'none'}
-          {str(test.excluded.reason) && <span className="faint"> — {str(test.excluded.reason)}</span>}
+          {str(test.excluded.reason) && (
+            <span className="faint"> — {str(test.excluded.reason)}</span>
+          )}
         </div>
       )}
       <div>

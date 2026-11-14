@@ -210,16 +210,32 @@ export function walk(layout: CircuitLayout, id: string | null, key: WalkKey): st
 }
 
 /** The circuits of one consumer, in id order: a circuit's layout family. */
-export function familyOf<T extends { id: number; body: Rec }>(all: T[], consumer: string | null): T[] {
-  return all
-    .filter((c) => str(c.body.consumer) === consumer)
-    .sort((a, b) => a.id - b.id);
+export function familyOf<T extends { id: number; body: Rec }>(
+  all: T[],
+  consumer: string | null,
+): T[] {
+  return all.filter((c) => str(c.body.consumer) === consumer).sort((a, b) => a.id - b.id);
 }
 
 /** The scale the graph is drawn at: `fit` fits the box's width (never above 1, never below
  *  MIN_SCALE: past that the graph scrolls), a number is a zoom the user chose. */
-export function scaleFor(zoom: 'fit' | number, layoutWidth: number, boxWidth: number | null): number {
+export function scaleFor(
+  zoom: 'fit' | number,
+  layoutWidth: number,
+  boxWidth: number | null,
+): number {
   if (zoom !== 'fit') return zoom;
   if (boxWidth === null || boxWidth <= 0) return 1;
   return Math.max(MIN_SCALE, Math.min(1, boxWidth / layoutWidth));
+}
+
+/** Where the graph pane scrolls to show the consumer (the root, column 0): its node and the
+ *  row above it at the pane's top-left, at ``scale``. ``{left: 0, top: 0}`` for an empty graph. */
+export function rootScroll(layout: CircuitLayout, scale: number): { left: number; top: number } {
+  const root = layout.placed.find((p) => p.node.parent === null) ?? layout.placed[0];
+  if (!root) return { left: 0, top: 0 };
+  return {
+    left: Math.max(0, Math.floor((root.x - NODE_R - PAD) * scale)),
+    top: Math.max(0, Math.floor((root.y - ROW_H) * scale)),
+  };
 }
