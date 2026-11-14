@@ -888,6 +888,20 @@ run = mdb.attach(model, tok, project="runs/t").restart("pre")  # later, another 
 The REPL's `checkpoint NAME` / `restart NAME` do the same when a project is attached;
 `mdb.resolve(pointer, project=..., session=dbg)` turns an occurrence pointer into a tensor.
 
+## Branches, pools, holds, core files, custody
+
+Debugger objects for the loops experiment drivers kept writing by hand (gap audit 2026-11-14), all in [docs/BRANCHES-POOLS-HOLDS.md](docs/BRANCHES-POOLS-HOLDS.md):
+
+- `run.set("t5.L20.v[kv6]", donor.ref("t5.L20.v[kv6]"))` takes REPL selectors and cross-run values with their origin pointer.
+- `run.hold("t@last.L>20.p", source=base)` and `run.hold("t@last.L>20.norm_scale", source=base)` keep attention weights, norm scales or cells at a reference run's values.
+- `dbg.branches(run, Margin(...), at=...)` gives named arms from one checkpoint with one shared floor, built-in nulls (`random`, `self`, `answer`), stability band, kernel path and sealed record. `subspace.interchange` uses it.
+- `dbg.pool(items, "cache.L20.v[kv6,row=@carrier]")` gives sealed value sets with a leave-one-out mean (the item excluded by construction), donor rules and matched-norm random.
+- `run.dump(path)` and `dbg.run_from(path)` write a core file and reload it as a steppable run on any device/dtype, with a null check on load.
+- `sae.open_transcoders` and `components.transcoder_binding` handle transcoders as MLP-write component bindings.
+- `dbg.custody(script=, prereg=)` and `dbg.records_to(path)` give every sealed record custody and a sink.
+
+The direct-effect vector `rho_F gamma (W_U[a] - W_U[b])` is `reads.readout(run, Margin(row, a, b)).vector`. Do not recompute it.
+
 ## SAE feature bases: `sae`, `features`, `feature`
 
 `sae load qs DIR` reads a per-layer residual SAE set (Qwen-Scope layout: `config.json` with `k`
