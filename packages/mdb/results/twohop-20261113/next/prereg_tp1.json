@@ -1,0 +1,19 @@
+{
+ "frozen_at": "2026-11-14 ~00:05 PST, before any TP1 run. Prior evidence (cited by the coordinator, not re-read here): token-0 energy share 0.83-0.99 on Qwen; 11 sink neurons ~4e7 on the first token, global-mean ablation worse than deletion and rescued by a per-position mean; 'BOS mass' was a position/prompt-length effect; sink mass vs causal effect ~ -0.17. FT1 (this branch): masking t0 at the answer row changes the QA default to ' in' 32/32, but random matched-mass cuts are as destructive.",
+ "question": "Owner: are high-energy, high-mass rows (t0, function words, punctuation, whitespace) artifact/bias rows (high magnitude, constant across prompts, LOW sensitivity)? Position effect or token effect?",
+ "model": "Qwen3-1.7B-Base bf16, HF eager, CUDA; single seed; one load; one forward + one backward per prompt",
+ "prompts": "next/tp1_prompts.json: 32 entry-1 two-hop prompts (all start with 'The') + 16 varied sentences x 4 variants (plain, leading 'The ', leading newline, leading <|endoftext|> pseudo-BOS); sentences start with nouns, digits, quotes, prepositions; contain articles, commas, semicolons, double spaces and newlines at many positions",
+ "measures": "per (prompt, row, layer input l = 0..28): ||h||, top-3 |h| dims; attention mass received (summed over heads; from the last row, and summed over all query rows); ||v|| (summed over KV heads); last-row reader-weighted ||v - a||; sensitivity ||dM/dh|| and grad.h; constancy = cos(h, mean over prompts at the same position) and cos(h, mean over prompts with the same token id), both means excluding nothing (reported with n). Consumer M = top1 - top2 logit at the last row. Per-row arrays saved to /mnt/ssd1tb/cache/beast/twohop-tp1/ for offline re-slicing.",
+ "classes": "token class: t0 (row 0, any token), special (<|endoftext|>), whitespace/newline, punctuation, function word (the, a, an, of, in, on, at, to, is, are, was, and, or, so, with, by, for, from, as, that, this, it, its), content (rest). Position buckets: 0, 1, 2-3, 4-7, 8-15, 16-31, 32+.",
+ "ablations": "rows in the top 1% of ||h|| at the L14 input (last rows excluded) and a matched set of median-||h|| rows: replace h at the L14 input by the global mean, the per-position mean (positions with >= 3 prompts) and the per-token mean (tokens with >= 3 occurrences); native forward; dM and argmax kept",
+ "predictions": {
+  "T1": "the top-1% energy rows (non-last rows, pooled over layers 1-27) have below-median sensitivity ||dM/dh|| (median of the top-1% set below the median of all rows)",
+  "T2_primary": "row 0: constancy by position (cos to the position-0 mean) exceeds constancy by token (cos to the same-token mean, for the row-0 tokens that also occur elsewhere) at mid layers; mid-sentence function words: constancy by token exceeds constancy by position",
+  "T2_alternative": "the reverse ordering for either class; the data decide, reported both ways",
+  "T3": "for the top-1% rows, replacing h by the per-position mean changes M less (smaller |dM|) than replacing it by the global mean, on >= 0.7 of rows",
+  "T4": "the leading <|endoftext|> takes over the sink: with the pseudo-BOS prefix, row 0 (<|endoftext|>) carries the largest ||h|| and the 'The'/first word at row 1 drops to a typical norm"
+ },
+ "falsifier": "Spearman(||h||, ||dM/dh|| x ||h||) > 0.5 over non-t0 rows (layers 1-27 pooled, per-prompt rank then pooled median): the high-energy rows are the sensitive ones and the artifact reading fails",
+ "budget": "one mrun job <= 5 min, priority 70, vram ~6000 (backward with attentions on <= 60-token prompts)",
+ "rules": "single seed; unknown is not negative"
+}
