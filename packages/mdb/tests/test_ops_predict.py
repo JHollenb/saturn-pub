@@ -198,7 +198,7 @@ def test_ops_results_are_labelled_and_whatif_keeps_the_debugger_session(debugger
                                             "consumer": "t3.L1.h_out"}))
     assert _session_digest(ctx) == before
     assert results[-1]["edit"]["mask_count"] == 4 and results[-1]["edit"]["source"]
-    with pytest.raises(Refused, match="goes into a state cell"):  # A7: cells take origins
+    with pytest.raises(Refused, match="unknown origin 'boiling'"):  # M28: ports take origins
         dispatch(ctx, "whatif", {"target": "L1.o=boiling:L1.o", "consumer": "M[4,9]"})
     with pytest.raises(Refused, match="not downstream"):
         dispatch(ctx, "whatif", {"target": "L1.m=0.5", "consumer": "L0.o"})

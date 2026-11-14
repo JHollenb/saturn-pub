@@ -85,24 +85,22 @@ tensor has another shape or sits at another position, so do not swap them blindl
 | `blocks.L.mlp.hook_post` | `L<L>.f` (`down_proj` input) |
 | `blocks.L.hook_mlp_out` | `L<L>.m` |
 | activation cache (`run_with_cache`, `trace`) | reading ports with `print` / `x` at a stop, or `mdb.trace` in Python; one prompt, one row at a time |
-| activation patching | `set ADDR = OTHERRUN:ADDR` for state cells only (see the example); `whatif` and `compare` measure an edit natively and restore. A port of another run is refused: a port takes a number or an address of this run |
+| activation patching | `set ADDR = OTHERRUN:ADDR` for ports (`set L0.A[h1] = clean:L0.A[h1]`, see the example) and state cells; `whatif` and `compare` take the same value and measure the edit natively, then restore |
 | head or path ablation | `set L<L>.A[h5] *= 0` (selector `[h5]`); `whatif` for the effect without leaving the stop |
 | direct logit attribution | `explain M[a,b]` (exact split of a margin, with a measured remainder) |
 | KV cache | state cells `cache.L<L>.k` / `v[kv0,row=2]`; readable, editable, and takeable from another run |
 | `run_with_cache` over a batch, batched forward | not available: batch 1 (issue M22) |
 | SAE features, dictionary units | none (issue M23) |
 
-Example: patch one value cell from a clean run into a corrupted run and read a logit difference.
-Cross-run patching works on cache cells, not on `A[h1]` (the first attempt, `set L0.A[h1] =
-clean:L0.A[h1]`, was refused with the message above), so the closest mdb has to "patch one head's
-output" is to patch the value vector that head reads at the one differing row. TransformerLens
-style, not run:
+Example: patch one head's output from a clean run into a corrupted run and read a logit
+difference. TransformerLens style, not run (patched at the last position: an mdb port edit acts
+on the cursor's row; the earlier prompt rows are prefilled and live in the cache cells):
 
 ```python
 # pseudocode, not run
 _, clean_cache = model.run_with_cache(clean_tokens)
 def patch(z, hook):              # z: [batch, pos, head, d_head]
-    z[:, :, 1] = clean_cache[hook.name][:, :, 1]
+    z[:, -1, 1] = clean_cache[hook.name][:, -1, 1]
     return z
 patched = model.run_with_hooks(corrupt_tokens, fwd_hooks=[("blocks.0.attn.hook_z", patch)])
 diff = patched[0, -1, 6] - patched[0, -1, 7]
@@ -125,15 +123,35 @@ t3.logits  [6:8] of 32: -0.14355 -0.12451 [measured]
 (mdb) x logits 2 6
 t3.logits  [6:8] of 32: -0.16699 -0.15332 [measured]
 (mdb) restart s0
-(mdb) set cache.L0.v[kv0,row=1] = clean:cache.L0.v[kv0,row=1]
-staged cell cache.L0.v[kv0,row=1]: cache.L0.v replace tensor [1, 1, 1, 8] bfloat16 ...
-  realised before L0.A reads it (boundary L0.p); reads already made are not recomputed
+(mdb) set L0.A[h1] = clean:L0.A[h1]
+staged at t3.L0.A[h1]: A replace tensor [1, 1, 16] bfloat16 sha256 f111ca510505 from clean:t3.L0.A[h1] (live) on [h1] (8 elements) (not fired yet)  (1 staged)
+  value from clean:t3.L0.A[h1]
+  realised as one masked replace on the selected elements
 (mdb) until logits
 (mdb) x logits 2 6
-t3.logits  [6:8] of 32: -0.16895 -0.13672 [measured, under edit cache.L0.v[kv0,row=1]]
+t3.logits  [6:8] of 32: -0.1709 -0.14844 [measured, under edit t3.L0.A]
+(mdb) whatif L1.m = clean:L1.m --consumer M[6,7]
+whatif t3.L1.m replace tensor 7b16b2586286 from clean:t3.L1.m -> t3.M[6,7]  (mode rewind, ...)
+  sealed  linear ΔM = -0.00021867 [derived-local P14]   exact ΔM = -0.00035917 [derived-exact]  ...
+  native  ΔM = -0.00097656 [measured]   (base -0.022461 [measured] -> edited -0.023438 [measured])
+  ...
+(mdb) set L0.A[h1] = clean:L0.A[h0:2]
+error (refused): clean:t3.L0.A[h=0:2] selects shape [1, 1, 16]; t3.L0.A[h1] selects [1, 1, 8]; select the same block on both sides (the same port kind, heads and row length)
 ```
 
-Logit difference (token 6 minus token 7, from the printed values): clean -0.0190, corrupted -0.0137, patched -0.0322. The patch moves it away from the clean value here; this is a random tiny model, so the numbers only show the mechanics.
+Logit difference (token 6 minus token 7, from the printed values): clean -0.0190, corrupted
+-0.0137, head 1 of L0 patched -0.0225. The patch moves it away from the clean value here; this is
+a random tiny model, so the numbers only show the mechanics. The value of another run can name
+another row or layer (`set L0.m = clean:t3.L1.m`); a missing row is the cursor's row, as for an
+address of this run. Both selections must have the same shape. The edit records where its value
+came from (`origin`: run, address, payload sha256, the clean run's cut) in its manifest, the
+receipt and `info edits`; fetching it leaves the clean run where it was. With a project attached
+the value is stored as a blob with the edited run's recipe, so a pointer to a value read under
+the patch still resolves after the clean run is gone; without one such a pointer is refused and
+says to attach with `project=`. A whole-residual patch reproduces the clean run bit for bit:
+when only the last row differs, `set L1.h = clean:L1.h` gives the clean logits; when an earlier
+row differs, add its cache cells (`set cache.L<l>.k|v[row=0:3] = clean:cache.L<l>.k|v[row=0:3]`
+for every layer), as `tests/test_ops_port_origin.py` checks.
 
 mdb adds, and the others do not: a prediction sealed before the native measurement with the gap
 split by cause (`forecast`, `verify`), an authority label and state on every number, and
@@ -203,8 +221,9 @@ in which case it lands after the read; the reply says which. `mix DOSE` is
 (`mix 1` is the exact copy, `mix 0` leaves the cell).
 `run name=boiling 1 7 9 3` starts a second run (`start` takes `name=` too); `frame boiling:` and
 `frame main:` switch; `info runs` lists them. `ORIGIN:ADDR` takes a value from another run, a
-checkpoint or a stored session of the same model and numeric scope, as `v` or `kr` occurrences
-or cache cells; `k`/`kn` occurrences are refused (before RoPE). `seek` does not switch runs
+checkpoint or a stored session of the same model and numeric scope: into a cell, as `v` or `kr`
+occurrences or cache cells (`k`/`kn` occurrences are refused, before RoPE); into a port, as any
+occurrence of the same selected shape (the activation patching example above). `seek` does not switch runs
 (use `frame NAME:`), and a target without a row (`seek L20.p`) is on the cursor's row.
 
 ```

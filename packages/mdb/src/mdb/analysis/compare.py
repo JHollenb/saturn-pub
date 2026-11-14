@@ -155,7 +155,8 @@ def measure(run: Any, edits: list[Edit], consumer: Any) -> dict[str, Any]:
             if not pending:
                 run.until(f"t{row}.L{layer}.h")
                 moves.append(f"until t{row}.L{layer}.h")
-            run.set(edit.address, edit.value, edit.op, mask=edit.mask, selection=edit.selection)
+            run.set(edit.address, edit.value, edit.op, mask=edit.mask, selection=edit.selection,
+                    origin=edit.origin)
             moves.append(f"set {edit.address}" + (f"[{edit.selection}]" if edit.selection
                                                   else ""))
         value, authority, scale = _read(run, consumer)

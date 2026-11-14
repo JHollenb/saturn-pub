@@ -331,11 +331,18 @@ def _info(result: dict[str, Any]) -> list[str]:
                      + "; ".join(_edit(e) for e in entry["edits"]) + more)
     cells = result.get("cells")
     if cells:
+        omitted = cells.get("omitted") or {}
         for e in cells["staged"]:
             lines.append(f"staged cell: {_edit(e)}")
+        if omitted.get("staged"):
+            lines.append(f"staged cell: +{omitted['staged']} more of {cells['staged_total']} "
+                         "(use limit= for the rest)")
         for e in cells["committed"]:
             lines.append(f"committed cell (t{e['row']} L{e['layer']} transition "
                          f"{e['transition']}): {_edit(e)}")
+        if omitted.get("committed"):
+            lines.append(f"committed cell: +{omitted['committed']} more of "
+                         f"{cells['committed_total']} (use limit= for the rest)")
     return lines + _more(result)
 
 

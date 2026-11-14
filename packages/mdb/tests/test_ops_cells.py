@@ -17,6 +17,7 @@ from mdb.engine.ports import tensor_digest  # noqa: E402
 from mdb.ops import BadArgs, Refused, dispatch  # noqa: E402
 from mdb.ops.debugger import open_tiny  # noqa: E402
 from mdb.ops.predict import build_edit, parse_assignment, session_digest  # noqa: E402
+from mdb.repl.render import render  # noqa: E402
 from mdb.repl.shell import _compare_args, _set_args  # noqa: E402
 
 PROMPT, DONOR = [1, 5, 9, 3], [1, 7, 9, 3]
@@ -272,3 +273,6 @@ def test_info_edits_says_how_many_cell_edits_it_left_out(debugger):
     assert info["cells"]["omitted"] == {"staged": 1}
     full = dispatch(ctx, "info", {"subject": "edits", "limit": 2})
     assert "omitted" not in full["cells"] and unlabelled(info) == []
+    shown = render(info).splitlines()
+    assert "staged cell: +1 more of 2 (use limit= for the rest)" in shown
+    assert not any("more of" in line for line in render(full).splitlines())

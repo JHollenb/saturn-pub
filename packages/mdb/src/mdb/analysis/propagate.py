@@ -606,7 +606,7 @@ def stage(run: Any, edit: Edit) -> dict[str, Any]:
     a state-cell edit); returns the engine's manifest."""
     if edit.cell is None:
         return run.set(edit.address, edit.value, edit.op, mask=edit.mask,
-                       selection=edit.selection)
+                       selection=edit.selection, origin=edit.origin)
     cell = edit.cell
     return run.set_cell(int(cell["layer"]), cell["tensor"], edit.value, edit.op,
                         rows=cell["rows"], kv=cell.get("kv"), d=cell.get("d"), dose=edit.dose,
@@ -740,7 +740,8 @@ def _edited(run: Any, p: Plan, edit: Edit, entry: str, out: dict[str, Any],
         run.until(entry)
         out["moves"].append(f"until {entry}")
     cut = cut or (run.checkpoint() if keep else None)
-    run.set(p.edit_stop, edit.value, edit.op, mask=edit.mask, selection=edit.selection)
+    run.set(p.edit_stop, edit.value, edit.op, mask=edit.mask, selection=edit.selection,
+            origin=edit.origin)
     out["moves"].append(f"set {p.edit_stop}")
     if run.parse(run.where) < p.consumer_key:
         run.until(p.consumer_stop)
@@ -863,8 +864,8 @@ def _edit_view(run: Any, p: Plan, edit: Edit) -> dict[str, Any]:
                    stage_at=p.stage_at, first_read=p.edit_stop)
         if edit.dose is not None:
             out["dose"] = num(float(edit.dose), SUPPLIED)
-        if edit.origin is not None:
-            out["origin"] = dict(edit.origin)
+    if edit.origin is not None:
+        out["origin"] = dict(edit.origin)
     if isinstance(edit.value, torch.Tensor):
         out.update(sha256=tensor_digest(edit.value.contiguous()),
                    shape=list(edit.value.shape))

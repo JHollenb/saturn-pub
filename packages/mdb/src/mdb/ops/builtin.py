@@ -1199,6 +1199,101 @@ def cell_request(ctx, found: Target, value: Any, op: str, dose: float | None) ->
             "origin": origin}
 
 
+def _is_origin_value(value: Any) -> bool:
+    """``ORIGIN:ADDR``: a value text with a ``:`` before any selector bracket."""
+    return isinstance(value, str) and ":" in value.partition("[")[0]
+
+
+def origin_port_value(ctx, text: str):
+    """``(tensor, pointer)`` of ``ORIGIN:ADDR`` for a port edit: the occurrence ADDR names in
+    the run ORIGIN stands for, with ADDR's selector applied there. ADDR is read with this
+    run's defaults (a missing row is the cursor's row, a bare port the current layer, as for an
+    address of this run) and may name another row or layer than the edited port. The fetch is
+    ``Debugger.origin_value`` (the one cell edits use): the donor's cursor and state are left
+    as they were. The selected block is sliced first and then cast once to this run's dtype."""
+    run = ctx.run
+    branch, _, rest = (part.strip() for part in text.strip().partition(":"))
+    if branch.startswith("@"):
+        raise Refused(f"{text}: an @cut origin is not a run; name a run (info runs), a project "
+                      "session id or a durable checkpoint name")
+    if not branch or not rest:
+        raise BadArgs(f"{text}: write ORIGIN:ADDR (a run name, then an address of that run)")
+    if ctx.debugger is None:
+        raise Refused(f"{text}: a value from another run needs the debugger's named runs "
+                      "(mdb.attach, then start ... name=NAME)")
+    if rest.startswith("cache."):
+        raise Refused(f"{text}: a port takes a port or stop occurrence of another run, not a "
+                      "cache cell; put a cache cell into a cache cell (set cache.L<i>.k|v[...] = "
+                      f"{text})")
+    source = resolve_target(ctx, rest)
+    if source.label == "start":
+        raise Refused(f"{text}: start is the token list, not a value")
+    label = f"{branch}:{source.text}"
+
+    def pick(donor):
+        from .debugger import NotHeld
+
+        try:
+            tensor = donor.read(source.run_target)
+        except ValueError as error:
+            if donor.parse(source.run_target) > donor.parse(donor.where):
+                raise NotHeld(f"{branch} has not computed {source.run_target} (it is at "
+                              f"{donor.where}): run it there first (frame {branch}: then "
+                              f"until {source.run_target})") from None
+            raise NotHeld(f"{label}: {error} (a prompt row before the first stop is prefilled "
+                          "in one call and holds no ports; its keys and values are the cache "
+                          "cells cache.L<i>.k|v[row=N], which a cell edit takes)") from None
+        block = _select(ctx, source, tensor).value
+        if block.dtype != run.adapter.dtype:
+            block = block.to(run.adapter.dtype)
+        return block.detach().clone()
+
+    return ctx.debugger.origin_value(branch, label, run=run, pick=pick)
+
+
+def port_request(ctx, found: Target, value: Any) -> dict[str, Any]:
+    """A port edit request from op arguments: ``{value, mask, selection, source, origin}``.
+
+    ``value`` is a number, an address of this run (its value) or ``ORIGIN:ADDR`` (the value of
+    another run, ``origin_port_value``; ``origin`` is then its pointer). A selector on the
+    edited port becomes ONE masked edit (shape known without running anything): the op applies
+    to the selected elements only and the rest stay bit-identical, the same ahead of the cursor
+    as at it. A value of this run broadcasts to the selection; a value of another run must
+    have the selected block's shape exactly (a patch copies a block, it does not broadcast)."""
+    import torch
+
+    run = ctx.run
+    origin = None
+    if _is_origin_value(value):
+        value, origin = origin_port_value(ctx, value)
+        source = origin["address"]
+    else:
+        value, source = value_source(ctx, value)
+    finite_limit(run, value)
+    shape = tuple(run.port_shape(found.layer_port[1]))
+    mask = selection = None
+    if found.selector:
+        axes = _axes(ctx, found)
+        mask, index, chosen = selector_mask(
+            axes, shape, found.selector, head_dim=run.adapter.head_dim,
+            row=found.row if "row" in axes else None, tokenizer=ctx.tokenizer, text=found.text)
+        selection = found.text.partition("[")[2].rstrip("]")
+    else:
+        index, chosen = None, shape
+    if origin is not None and tuple(value.shape) != tuple(chosen):
+        raise Refused(f"{source} selects shape {list(value.shape)}; {found.text} selects "
+                      f"{list(chosen)}; select the same block on both sides (the same port "
+                      "kind, heads and row length)")
+    if index is not None and isinstance(value, torch.Tensor):
+        if torch.broadcast_shapes(value.shape, chosen) != chosen:
+            raise BadArgs(f"{source} does not broadcast to the selection {list(chosen)}")
+        full = torch.zeros(shape, dtype=run.adapter.dtype)
+        full[index] = value.to(run.adapter.dtype).expand(chosen)
+        value = full
+    return {"value": value, "mask": mask, "selection": selection, "source": source,
+            "origin": origin}
+
+
 def _set_cell(ctx, found: Target, value: Any, op: str, dose: float | None) -> dict[str, Any]:
     from mdb.engine.edits import CELL_BOUNDARY, CELL_READ
 
@@ -1234,8 +1329,6 @@ def _set_cell(ctx, found: Target, value: Any, op: str, dose: float | None) -> di
     Arg("dose", "number", positional=False, help="mix only: cell + dose * (value - cell)"),
     effect="mutate", usage="set ADDR = VALUE|ADDR|ORIGIN:ADDR [replace|add|scale|mix DOSE]")
 def _op_set(ctx, target, value, op, dose=None):
-    import torch
-
     run = ctx.run
     found = resolve_target(ctx, target)
     if found.cell is not None:
@@ -1245,34 +1338,17 @@ def _op_set(ctx, target, value, op, dose=None):
     if op == "mix" or dose is not None:
         raise Refused("mix DOSE applies to state cells (cache.L<i>.k|v); a port takes "
                       "replace, add or scale")
-    if isinstance(value, str) and ":" in value.partition("[")[0]:
-        raise Refused(f"{value}: a value from another run goes into a state cell "
-                      "(cache.L<i>.k|v); a port takes a number or an address of this run")
-    value, source = value_source(ctx, value)
-    finite_limit(run, value)
-    kwargs: dict[str, Any] = {}
-    if found.selector:
-        # ONE edit: the selector becomes a mask over the port (shape known without running
-        # anything), so replace/add/scale apply to the selected elements only and the rest
-        # stay bit-identical. Same behaviour ahead of the cursor as at it.
-        shape = tuple(run.port_shape(found.layer_port[1]))
-        axes = _axes(ctx, found)
-        mask, index, chosen = selector_mask(
-            axes, shape, found.selector, head_dim=run.adapter.head_dim,
-            row=found.row if "row" in axes else None, tokenizer=ctx.tokenizer, text=found.text)
-        if isinstance(value, torch.Tensor):
-            if torch.broadcast_shapes(value.shape, chosen) != chosen:
-                raise BadArgs(f"{source} does not broadcast to the selection {list(chosen)}")
-            full = torch.zeros(shape, dtype=run.adapter.dtype)
-            full[index] = value.to(run.adapter.dtype).expand(chosen)
-            value = full
-        kwargs = {"mask": mask, "selection": found.text.partition("[")[2].rstrip("]")}
-    manifest = run.set(found.run_target, value, op, **kwargs)  # atomic: failure stages nothing
+    request = port_request(ctx, found, value)
+    # atomic: failure stages nothing
+    manifest = run.set(found.run_target, request["value"], op, mask=request["mask"],
+                       selection=request["selection"], origin=request["origin"])
     staged = run.staged_info()
     out = {"target": found.text, "edits": [_edit_json(staged[-1] if staged else manifest)],
            "staged": len(run.edits), "where": run.where}
-    if source is not None:
-        out["source"] = source
+    if request["source"] is not None:
+        out["source"] = request["source"]
+    if request["origin"] is not None:
+        out["origin"] = dict(request["origin"])
     if found.selector:
         out["realised_as"] = f"one masked {op} on the selected elements"
     return out

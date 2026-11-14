@@ -594,7 +594,8 @@ class PortEdit:
 
     ``mask`` (bool, broadcastable to the port) limits the op to the elements where it is true;
     the other elements stay bit-identical. ``selection`` is an opaque description of what the
-    mask selects, recorded verbatim.
+    mask selects, recorded verbatim. ``origin`` is the pointer of a value taken from another run
+    (``{origin, via, address, sha256, ...}``, names and digests), recorded verbatim.
     """
 
     port: str
@@ -602,6 +603,7 @@ class PortEdit:
     op: str = "replace"
     mask: Any = None
     selection: str | None = None
+    origin: dict[str, Any] | None = None
 
     def __post_init__(self) -> None:
         if self.op not in EDIT_OPS:
@@ -764,6 +766,8 @@ class PortEdit:
             entry["mask_sha256"] = tensor_digest(self.mask)
             entry["mask_count"] = int(self.mask.sum())
             entry["mask_shape"] = list(self.mask.shape)
+        if self.origin is not None:
+            entry["origin"] = dict(self.origin)
         return entry
 
     @property

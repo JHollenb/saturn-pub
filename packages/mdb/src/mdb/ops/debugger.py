@@ -18,7 +18,9 @@ value row 2 wrote at ``v``; ``kr`` works too) resolves the origin as a live name
 project session id or durable checkpoint name (restored from its stored cut, else replayed
 from the token ids), refuses another model identity, another numeric scope or a row the donor
 has not computed, and returns the selected block ``(1, kv, rows, d)`` with its pointer (names
-and digests, never the array).
+and digests, never the array). A port edit takes ``ORIGIN:ADDR`` the same way (``set
+L0.A[h1] = clean:L0.A[h1]``, the clean-to-corrupted activation patch): both go through
+``origin_value``.
 
 This module lives in ``mdb.ops`` (the lowest layer that may know the operation registry);
 ``mdb.attach`` / ``mdb.open_tiny`` / ``mdb.Debugger`` resolve here lazily.
@@ -138,12 +140,13 @@ class Debugger:
 
     # --- values from another run ----------------------------------------------------------
 
-    def _donor(self, branch: str) -> tuple[Run, str, str | None]:
+    def _donor(self, branch: str, *, replay: bool = False) -> tuple[Run, str, str | None]:
         """``(run, via, recipe id)`` standing for origin ``branch``: the live run of that name
         (``via`` ``live``), else the project's latest recipe for that session id or checkpoint
         name, restored from its stored boundary cut (``cut``) or replayed from the token ids
-        (``replay``)."""
-        if branch in self.runs:
+        (``replay``; always with ``replay=True``: a replayed run holds the transitions before
+        its cursor, a run restored from the cut starts at it)."""
+        if branch in self.runs and not replay:
             return self.runs[branch], "live", None
         if self.project is None:
             raise Refused(f"unknown origin {branch!r}: no run of that name (info runs) and no "
@@ -158,7 +161,7 @@ class Debugger:
         recipes.check_binding(recipe, model_identity=self.adapter.model_identity,
                               numeric_scope=self._numeric_scope())
         checkpoint = recipes.to_checkpoint(recipe)
-        for session in self.project.sessions():
+        for session in () if replay else self.project.sessions():
             sid = session["session_id"]
             if recipe["cut"] in self.project.cut_ids(sid):
                 root = self.project.load_cut(sid, recipe["cut"])
@@ -183,13 +186,33 @@ class Debugger:
                           "or a checkpoint name)")
         if origin.edits:
             raise Refused("an origin with edits (@cut+edit) is not a run; name a run")
-        donor, via, recipe = self._donor(origin.branch)
-        _same_binding(donor, run, origin.branch)
-        block = cell_block(donor, address, label=origin.branch)
-        pointer = {"origin": origin.branch, "via": via,
-                   "address": format_address(address), "sha256": tensor_digest(block),
-                   "shape": list(block.shape), "dtype": str(block.dtype).removeprefix("torch."),
-                   "where": donor.where, "cut": donor.checkpoint()["cut"], "recipe": recipe}
+        return self.origin_value(origin.branch, format_address(address), run=run,
+                                 pick=lambda donor: cell_block(donor, address,
+                                                               label=origin.branch))
+
+    def origin_value(self, branch: str, address: str, *, run: Run, pick: Any
+                     ) -> tuple[Any, dict[str, Any]]:
+        """The one fetch of a value from another run (cell and port edits both use it):
+        ``pick(donor)`` reads the selected tensor from the run origin ``branch`` stands for
+        (``_donor``: a live named run, else a project session or checkpoint restored from its
+        cut or replayed), after refusing another model identity or numeric scope than ``run``'s.
+        Reading leaves the donor's cursor and state as they were. Returns the tensor and its
+        pointer ``{origin, via, address, sha256, shape, dtype, where, cut, recipe}``."""
+        donor, via, recipe = self._donor(branch)
+        _same_binding(donor, run, branch)
+        try:
+            block = pick(donor)
+        except NotHeld:
+            if via != "cut":
+                raise
+            # restored from its cut, the donor starts at its cursor: replay it from the token
+            # ids, which computes the transitions before the cursor too
+            donor, via, recipe = self._donor(branch, replay=True)
+            block = pick(donor)
+        pointer = {"origin": branch, "via": via, "address": address,
+                   "sha256": tensor_digest(block), "shape": list(block.shape),
+                   "dtype": str(block.dtype).removeprefix("torch."), "where": donor.where,
+                   "cut": donor.checkpoint(pin=False)["cut"], "recipe": recipe}
         return block, pointer
 
     # --- durable checkpoints (project=) ---------------------------------------------------
@@ -377,6 +400,12 @@ class Debugger:
         return Shell(self.ops(run), **options).loop()
 
 
+class NotHeld(Refused):
+    """A value the donor run does not hold at its cursor (not computed yet, or before the
+    transitions it holds); ``Debugger.origin_value`` retries a donor restored from its cut by
+    replay before refusing."""
+
+
 def run_name(name: str | None) -> str:
     """A run name (default ``main``): a branch name, so ``NAME:ADDR`` can name a value of it."""
     if name is None:
@@ -431,7 +460,7 @@ def cell_block(run: Run, address: Any, *, label: str | None = None) -> Any:
         try:
             found = run.read(target)
         except ValueError as error:
-            raise Refused(f"{label} has not computed {target}: {error}") from None
+            raise NotHeld(f"{label} has not computed {target}: {error}") from None
         kv_heads = run.adapter.num_kv_heads
         if address.port == "v":
             value = found.reshape(1, 1, kv_heads, head_dim).transpose(1, 2)

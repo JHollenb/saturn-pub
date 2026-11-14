@@ -122,8 +122,11 @@ def _target(pointer, occurrence, project, session):
             raise _Refusal(f"origin @{origin.cut[:12]} is not this pointer's cut")
         if origin.edits and wanted is None:
             raise _Refusal(f"origin @{origin.cut[:12]}+{len(origin.edits)} edit(s): the pointer "
-                           "names no recipe, so its edits cannot be reproduced (a value read "
-                           "under edits is resolvable when it was read with a writable project)")
+                           "names no recipe, so its edits cannot be reproduced: it was read "
+                           "without a writable project, and the edit values (a tensor supplied "
+                           "or taken from another run) were never stored. Read it again with "
+                           "the debugger attached with project= (mdb.attach(model, project="
+                           "PATH)): the recipe and every edit tensor are then stored as blobs")
         if origin.edits and pointer["event"] is None:
             raise _Refusal("an edited origin needs the pointer's recipe event")
         origin = None

@@ -15,9 +15,10 @@ What a checkpoint holds as a tensor digest the recipe holds as a ``tensor`` poin
 edit is ``{port, op, value, mask?, mask_count?, selection?}`` with ``value`` either a tensor
 pointer or ``{kind: "scalar", value: num(x, "supplied")}``. A state-cell edit
 (``mdb.engine.edits.CellEdit``) adds ``cell`` ``{layer, tensor, rows, kv, d, timing,
-staged_at}``, ``dose`` (``mix`` only, a supplied number) and ``origin`` (the pointer of a value
-taken from another run: names and digests, never the array; the value itself is the edit's
-tensor pointer). Recipes written before cells existed read unchanged. Token ids are inline up to
+staged_at}`` and ``dose`` (``mix`` only, a supplied number). Any edit, port or cell, may carry
+``origin`` (the pointer of a value taken from another run: names and digests, never the array;
+the value itself is the edit's tensor pointer, a blob, so the recipe replays after the other run
+is gone). Recipes written before cells existed read unchanged. Token ids are inline up to
 ``MAX_INLINE_ITEMS`` and a tensor pointer (int64) beyond. Arrays are never inline: the recipe
 passes ``check_bounded`` (no array, at most 64 KiB) before it is sealed and again when read.
 
@@ -177,8 +178,8 @@ def _check_edit(edit, label):
     if "cell" in edit and (not isinstance(edit["cell"], Mapping)
                            or set(edit["cell"]) != _CELL_KEYS):
         raise _malformed(f"{label} cell is {{{', '.join(sorted(_CELL_KEYS))}}}")
-    if ("dose" in edit or "origin" in edit) and "cell" not in edit:
-        raise _malformed(f"{label}: dose and origin belong to a state-cell edit")
+    if "dose" in edit and "cell" not in edit:
+        raise _malformed(f"{label}: a dose belongs to a state-cell edit")
     if "dose" in edit and check_num(edit["dose"], f"{label} dose")["authority"] != "supplied":
         raise _malformed(f"{label} dose is a supplied number")
     if "origin" in edit and not isinstance(edit["origin"], Mapping):

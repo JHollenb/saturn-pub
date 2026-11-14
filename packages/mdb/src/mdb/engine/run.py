@@ -859,11 +859,13 @@ class Run:
         *,
         mask: torch.Tensor | None = None,
         selection: str | None = None,
+        origin: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         """Stage one edit at a port of the pending layer; returns the edit's request manifest.
 
         ``mask`` (bool, broadcastable to the port) limits the op to the elements where it is
-        true (the rest stay bit-identical); ``selection`` is an opaque string recorded verbatim.
+        true (the rest stay bit-identical); ``selection`` is an opaque string and ``origin`` the
+        pointer of a value taken from another run, both recorded verbatim in the manifest.
         Validation is by shape only (the port's shape is derived, nothing past the cursor runs);
         whether the edit fires is checked when the layer commits. Atomic: on any failure,
         ``KeyboardInterrupt`` included, nothing stays staged.
@@ -881,7 +883,7 @@ class Run:
         spec = self.program.spec(port)
         if not spec.editable:
             raise ValueError(f"port {port} is not editable: {spec.edit}")
-        edit = PortEdit(port, value, op, mask=mask, selection=selection)
+        edit = PortEdit(port, value, op, mask=mask, selection=selection, origin=origin)
         shape = self.port_shape(port)
         edit.validate(shape)
         if edit.mask is not None:
@@ -891,6 +893,7 @@ class Run:
                 op,
                 mask=edit.mask.broadcast_to(shape).contiguous(),
                 selection=selection,
+                origin=origin,
             )
         saved_edits, saved_cache = list(self._edits), self._cache
         try:
@@ -1334,7 +1337,8 @@ class Run:
                     "by this process; restart it from a project (Debugger.restart) or Run.hold it"
                 )
         return PortEdit(
-            manifest["port"], value, manifest["op"], mask=mask, selection=manifest.get("selection")
+            manifest["port"], value, manifest["op"], mask=mask, selection=manifest.get("selection"),
+            origin=manifest.get("origin"),
         )
 
     def restore(self, checkpoint: dict[str, Any], *, defer_interrupt: bool = False) -> str:

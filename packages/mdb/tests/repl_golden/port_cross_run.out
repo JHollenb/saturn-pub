@@ -1,0 +1,38 @@
+(mdb) start 1 5 9 3
+t3.L0.h  h = layer input (residual stream)  {P01}
+(mdb) run name=clean 1 7 9 3
+stopped: no-breakpoints
+run clean
+t3.L0.h  h = layer input (residual stream)  {P01}
+(mdb) until t3.logits
+t3.logits  logits = lm_head(fn)
+(mdb) x logits 2 6
+t3.logits  [6:8] of 32: -0.14355 -0.12451 [measured]
+(mdb) start 1 5 9 3
+t3.L0.h  h = layer input (residual stream)  {P01}
+(mdb) compare L0.A[h1] = clean:L0.A[h1] L1.h = clean:L1.h --consumer M[6,7]
+compare A: L0.A[h1]=clean:L0.A[h1]  B: L1.h=clean:L1.h  -> t3.M[6,7]
+  base -0.013672 [measured]  A -0.022461 [measured]  B -0.032227 [measured]  A+B -0.032227 [measured]
+  effects A -0.0087891 [measured]  B -0.018555 [measured]  A+B -0.018555 [measured]
+  verdicts (P20 floor = 2 x dtype spacing; native only, no exact chain): A effect (floor 0.0019531 [measured P20])  B effect (floor 0.0019531 [measured P20])  A+B effect (floor 0.0019531 [measured P20])
+  interaction (A+B) - A - B + base = 0.0087891 [measured]
+  order: A+B stages both sides' edits layer by layer; at one port A's edit is applied before B's (where both edit one port, the ops commute)
+  session unchanged at t3.L0.h
+(mdb) whatif L1.m = clean:L1.m --consumer M[6,7]
+whatif t3.L1.m replace tensor 7b16b2586286 from clean:t3.L1.m -> t3.M[6,7]  (mode ahead, record 69b1bd3f9a9cc90a)
+  sealed  linear ΔM = -8.7269e-05 [derived-local P14]   exact ΔM = -8.7152e-05 [derived-exact]  bound 15.914 [bound]
+  native  ΔM = 0 [measured]   (base -0.013672 [measured] -> edited -0.013672 [measured])
+  error split (P20): linear -8.7269e-05 [derived-local P14] + nonlinear 1.1679e-07 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding 8.7152e-05 [measured P20] (within bound 15.914 [bound])
+  verdict (P20): no effect above the noise floor  native ΔM 0 [measured P20], exact ΔM -8.7152e-05 [derived-exact P20], residual 8.7152e-05 [measured P20]; floor 0.0019531 [measured P20] = max(|residual|, 2 x spacing 0.00097656 [measured P20])
+  session unchanged at t3.L0.h  (6 moves, restored)
+(mdb) set L0.A[h1] = clean:L0.A[h1]
+staged at t3.L0.A[h1]: A replace tensor [1, 1, 16] bfloat16 sha256 f111ca510505 from clean:t3.L0.A[h1] (live) on [h1] (8 elements) (not fired yet)  (1 staged)
+  value from clean:t3.L0.A[h1]
+  realised as one masked replace on the selected elements
+(mdb) until t3.logits
+t3.logits  logits = lm_head(fn)
+(mdb) x logits 2 6
+t3.logits  [6:8] of 32: -0.1709 -0.14844 [measured, under edit t3.L0.A]
+(mdb) info edits
+staged at t3.logits: none
+committed L0 (transition 1): A replace tensor [1, 1, 16] bfloat16 sha256 f111ca510505 from clean:t3.L0.A[h1] (live) (realised exactly as bfloat16) on [h1] (8 elements) changed 0.5 [measured]
