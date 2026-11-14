@@ -1,0 +1,34 @@
+{
+ "red.zero.anti": {
+  "rho_rid_vs_eid": 0.762406015037594,
+  "rho_mass_vs_eid": 0.41353383458646614
+ },
+ "red.zero.diag": {
+  "rho_rid_vs_eid": 0.35789473684210527,
+  "rho_mass_vs_eid": 0.518796992481203
+ },
+ "red.mask.anti": {
+  "rho_rid_vs_eid": 0.6631578947368421,
+  "rho_mass_vs_eid": 0.4150375939849624
+ },
+ "red.mask.diag": {
+  "rho_rid_vs_eid": 0.6210526315789474,
+  "rho_mass_vs_eid": 0.6526315789473685
+ },
+ "ball.zero.anti": {
+  "rho_rid_vs_eid": 0.6345864661654136,
+  "rho_mass_vs_eid": 0.5849624060150376
+ },
+ "ball.zero.diag": {
+  "rho_rid_vs_eid": 0.6406015037593985,
+  "rho_mass_vs_eid": 0.22255639097744362
+ },
+ "ball.mask.anti": {
+  "rho_rid_vs_eid": 0.5909774436090226,
+  "rho_mass_vs_eid": 0.6390977443609023
+ },
+ "ball.mask.diag": {
+  "rho_rid_vs_eid": 0.5533834586466165,
+  "rho_mass_vs_eid": 0.362406015037594
+ }
+}
