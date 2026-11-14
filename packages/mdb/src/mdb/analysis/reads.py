@@ -457,17 +457,19 @@ def _consumer_for(run: Any, consumer: Any, row: int, layer: int) -> Readout:
     return readout(run, consumer)
 
 
-def verdict(run: Any, address: str, mask: Any, selection: str, target: Any,
-            min_effect: float) -> dict[str, Any]:
-    """The causal verdict of one read: ``p`` at ``address`` set to 0 on ``mask`` through
-    ``propagate.whatif`` (prediction sealed, measured natively, session restored)."""
-    from .propagate import Edit, whatif
+def _request(address: str, mask: Any, selection: str, target: Any) -> tuple[Any, Any]:
+    """The what-if of one read: ``p`` at ``address`` set to 0 on ``mask``."""
+    from .propagate import Edit
 
-    try:
-        result = whatif(run, Edit(address, 0.0, "replace", mask, selection,
-                                  "remove the source's weight in this head"), target)
-    except Refusal as error:
-        return {"verdict": "unresolved", "reason": str(error)}
+    return (Edit(address, 0.0, "replace", mask, selection,
+                 "remove the source's weight in this head"), target)
+
+
+def _verdict(result: Any, min_effect: float) -> dict[str, Any]:
+    """The causal verdict of one read from its what-if ``result`` (a ``WhatIf``, or the
+    ``Refusal`` the what-if gave before anything native ran)."""
+    if isinstance(result, Refusal):
+        return {"verdict": "unresolved", "reason": str(result)}
     delta = f64(result.tensors["native_delta"]).reshape(-1)
     bound = result.tensors.get("rounding_bound")
     out: dict[str, Any] = {
@@ -485,6 +487,19 @@ def verdict(run: Any, address: str, mask: Any, selection: str, target: Any,
     out["effect"] = {key: value for key, value in effect.items() if key != "state"}
     out.update(_decide(delta, effect, min_effect))
     return out
+
+
+def verdict(run: Any, address: str, mask: Any, selection: str, target: Any,
+            min_effect: float) -> dict[str, Any]:
+    """The causal verdict of one read: ``p`` at ``address`` set to 0 on ``mask`` through
+    ``propagate.whatif`` (prediction sealed, measured natively, session restored)."""
+    from .propagate import whatif
+
+    try:
+        result = whatif(run, *_request(address, mask, selection, target))
+    except Refusal as error:
+        result = error
+    return _verdict(result, min_effect)
 
 
 def _decide(delta: Any, effect: dict[str, Any], min_effect: float) -> dict[str, Any]:
@@ -571,6 +586,8 @@ def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: 
     mix = parts = None      # the last value mix is not needed by the verdicts' whatifs
     entries.sort(key=lambda e: (-e["_rank"], e["row"], e["layer"], e["name"]))
     listed, rest = entries[:top], entries[top:]
+    measured: list[dict[str, Any]] = []
+    requests = []
     for entry in listed:
         j, layer, h, s = entry["_mask"]
         if not causal:
@@ -578,8 +595,14 @@ def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: 
         elif entry["_target"] is None:
             entry["causal"] = {"verdict": "unresolved", "reason": entry["to_consumer"]["reason"]}
         else:
-            entry["causal"] = verdict(run, f"t{j}.L{layer}.p", head_mask(run, j, layer, h, s),
-                                      f"h{h},src={s}", entry["_target"], min_effect)
+            measured.append(entry)
+            requests.append(_request(f"t{j}.L{layer}.p", head_mask(run, j, layer, h, s),
+                                     f"h{h},src={s}", entry["_target"]))
+    if requests:    # one excursion for all the listed reads (the rewinds and the restore shared)
+        from .propagate import whatif_many
+
+        for entry, result in zip(measured, whatif_many(run, requests), strict=True):
+            entry["causal"] = _verdict(result, min_effect)
     report: dict[str, Any] = {
         "source": {"row": source.row, "address": source.text or f"t{source.row}",
                    "token": int(run.tokens[source.row]) if source.row < len(run.tokens) else

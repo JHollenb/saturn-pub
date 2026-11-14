@@ -628,12 +628,45 @@ def guard(run: Any, checkpoint: dict[str, Any]) -> None:
     run.hold(held)
 
 
+def _complete_restore(run: Any, checkpoint: dict[str, Any], state: list[bool]) -> None:
+    """``run.restore(checkpoint)`` that completes whatever interrupts it, then re-raises the
+    interrupt (``state[0]`` is set once the restore has completed)."""
+    interrupted = None
+    while True:
+        try:
+            run.restore(checkpoint, defer_interrupt=True)
+            break
+        except KeyboardInterrupt as error:      # before the restore ran, or inside it
+            interrupted = error
+    state[0] = True
+    if interrupted is not None:
+        raise interrupted
+
+
+def _restoring(run: Any, checkpoint: dict[str, Any], body: Any) -> Any:
+    """``body()``, then ``checkpoint`` restored whatever happens, interrupts included: the
+    restore is unconditional, so an interrupt landing exactly at the entry of the ``finally``
+    (before its first statement) still finds the restore done before it propagates. An interrupt
+    during the restore cannot roll it back to the edited excursion either."""
+    state = [False]
+    try:
+        try:
+            return body()
+        finally:
+            _complete_restore(run, checkpoint, state)
+    except KeyboardInterrupt:
+        if not state[0]:
+            _complete_restore(run, checkpoint, state)
+        raise
+
+
 def _measure_cell(run: Any, p: Plan, edit: Edit, checkpoint: dict[str, Any]) -> dict[str, Any]:
     """``_measure`` of a state-cell edit: staged at ``p.stage_at``; ``realised`` is the cache
     tensor the native layer call wrote, read back at the consumer."""
     layer, tensor = int(edit.cell["layer"]), edit.cell["tensor"]
     out: dict[str, Any] = {"moves": []}
-    try:
+
+    def body() -> None:
         if p.mode == "pending":
             run.until(p.consumer_stop)
             out["moves"].append(f"until {p.consumer_stop}")
@@ -656,8 +689,8 @@ def _measure_cell(run: Any, p: Plan, edit: Edit, checkpoint: dict[str, Any]) -> 
         out["edited"] = run.read(p.consumer_stop).clone()
         out["edited_info"] = run.read_info(p.consumer_stop)
         out["realised"] = run.read_cache(layer, tensor, staged=False).clone()
-    finally:
-        run.restore(checkpoint, defer_interrupt=True)
+
+    _restoring(run, checkpoint, body)
     out["moves"].append(f"restore {checkpoint['where']}")
     return out
 
@@ -670,7 +703,8 @@ def _measure(run: Any, p: Plan, edit: Edit, checkpoint: dict[str, Any]) -> dict[
     layer = _split(p.label)[0]
     entry = f"t{p.row}.L{layer}.h"
     out: dict[str, Any] = {"moves": []}
-    try:
+
+    def body() -> None:
         ahead = p.consumer_key > p.here
         if ahead:
             run.until(p.consumer_stop)
@@ -680,27 +714,101 @@ def _measure(run: Any, p: Plan, edit: Edit, checkpoint: dict[str, Any]) -> dict[
         if ahead:
             run.restore(checkpoint)
             out["moves"].append(f"restore {checkpoint['where']}")
-        if p.mode == "rewind":
-            while run.parse(run.where) >= run.parse(entry):
-                run.reverse_step("layer")
-            out["moves"].append(f"reverse-step layer to {run.where}")
-        if p.mode != "pending" and run.where != entry:
-            run.until(entry)
-            out["moves"].append(f"until {entry}")
-        run.set(p.edit_stop, edit.value, edit.op, mask=edit.mask, selection=edit.selection)
-        out["moves"].append(f"set {p.edit_stop}")
-        if run.parse(run.where) < p.consumer_key:
-            run.until(p.consumer_stop)
-            out["moves"].append(f"until {p.consumer_stop}")
-        out["edited"] = run.read(p.consumer_stop).clone()
-        out["edited_info"] = run.read_info(p.consumer_stop)
-        out["realised"] = run.read(p.edit_stop).clone()
-    finally:
-        # An interrupt (Ctrl-C) during this restore must not roll it back to the edited
-        # excursion: the restore completes first and the interrupt is raised after it.
-        run.restore(checkpoint, defer_interrupt=True)
+        _edited(run, p, edit, entry, out)
+
+    _restoring(run, checkpoint, body)
     out["moves"].append(f"restore {checkpoint['where']}")
     return out
+
+
+def _edited(run: Any, p: Plan, edit: Edit, entry: str, out: dict[str, Any],
+            cut: dict[str, Any] | None = None, keep: bool = False) -> dict[str, Any] | None:
+    """From the current cursor: reach ``entry`` (the layer's entry: back by layer boundaries in
+    ``rewind`` mode, forward otherwise, or ``restore(cut)`` of a checkpoint taken at it), stage
+    the edit, run to the consumer and read the edited value and the value the edit wrote into
+    ``out``. With ``keep``, returns the checkpoint at ``entry`` taken before the edit (``cut``
+    itself when given): restoring it drops the edit and keeps the edits committed at that layer, which
+    stepping back stages again."""
+    if cut is not None:
+        run.restore(cut)
+        out["moves"].append(f"restore the cut at {entry}")
+    elif p.mode == "rewind":
+        while run.parse(run.where) >= run.parse(entry):
+            run.reverse_step("layer")
+        out["moves"].append(f"reverse-step layer to {run.where}")
+    if p.mode != "pending" and run.where != entry:
+        run.until(entry)
+        out["moves"].append(f"until {entry}")
+    cut = cut or (run.checkpoint() if keep else None)
+    run.set(p.edit_stop, edit.value, edit.op, mask=edit.mask, selection=edit.selection)
+    out["moves"].append(f"set {p.edit_stop}")
+    if run.parse(run.where) < p.consumer_key:
+        run.until(p.consumer_stop)
+        out["moves"].append(f"until {p.consumer_stop}")
+    out["edited"] = run.read(p.consumer_stop).clone()
+    out["edited_info"] = run.read_info(p.consumer_stop)
+    out["realised"] = run.read(p.edit_stop).clone()
+    return cut
+
+
+def _measure_batch(run: Any, items: list[_Prepared]) -> list[dict[str, Any]]:
+    """``_measure`` of several prepared what-ifs made at the same cursor, in one excursion.
+
+    A what-if in ``rewind`` mode (a layer already committed, the consumer not ahead) starts from
+    a clean boundary of the original run, and the trail's marks below an edit are untouched by
+    it: so they are measured from the latest entry to the earliest, each stepping back by layer
+    boundaries from where the previous one ended, and the cursor is restored once at the end
+    (the replay from the earliest entry) instead of after every one. The consumer's unedited
+    value is read at the cursor before the first leaves it. The other what-ifs are measured one
+    by one, first. Returns the native measurements in the order of ``items``; the session is
+    restored whatever happens."""
+    checkpoint = items[0].checkpoint
+    results: list[dict[str, Any] | None] = [None] * len(items)
+    batch = []
+    for i, item in enumerate(items):
+        if item.edit.cell is None and item.p.mode == "rewind":
+            batch.append(i)
+        else:
+            results[i] = _measure(run, item.p, item.edit, item.checkpoint)
+    base = {i: (run.read(items[i].p.consumer_stop).clone(),
+                run.read_info(items[i].p.consumer_stop)) for i in batch}
+    entries = {i: f"t{items[i].p.row}.L{_split(items[i].p.label)[0]}.h" for i in batch}
+    batch.sort(key=lambda i: (run.parse(entries[i]), i), reverse=True)
+
+    def body() -> None:
+        cuts: dict[str, dict[str, Any]] = {}   # entry -> checkpoint there (several heads per layer)
+        for i in batch:
+            out: dict[str, Any] = {"moves": [], "base": base[i][0], "base_info": base[i][1]}
+            cuts[entries[i]] = _edited(run, items[i].p, items[i].edit, entries[i], out,
+                                       cuts.get(entries[i]), keep=True)
+            results[i] = out
+
+    if batch:
+        _restoring(run, checkpoint, body)
+        for i in batch:
+            results[i]["moves"].append(f"restore {checkpoint['where']}")
+    return results
+
+
+def whatif_many(run: Any, requests: list[tuple[Edit, Any]]) -> list[WhatIf | Refusal]:
+    """``whatif`` of each ``(edit, consumer)`` at the cursor, measured in one excursion: the
+    predictions are sealed first (each needs the cursor's values), the native measurements share
+    their rewinds and one final restore (``_measure_batch``), and each is then split and judged
+    at the cursor again. Every result is the one ``whatif`` returns, number for number (the
+    ``measured.moves`` trail names the shared steps); a request ``whatif`` refuses before
+    anything native runs comes back as its ``Refusal``."""
+    before = state_digest(run)
+    prepared: list[_Prepared | Refusal] = []
+    for edit, consumer in requests:
+        try:
+            prepared.append(_prepare(run, edit, consumer, before=before))
+        except Refusal as error:
+            prepared.append(error)
+    ready = [item for item in prepared if isinstance(item, _Prepared)]
+    natives = iter(_measure_batch(run, ready) if ready else [])
+    after = state_digest(run) if ready else before
+    return [item if isinstance(item, Refusal) else _finish(run, item, next(natives), after)
+            for item in prepared]
 
 
 # --------------------------------------------------------------------------- report
@@ -806,15 +914,27 @@ def _within_view(found: dict[str, Any]) -> dict[str, Any]:
                                                     "op; mix: float64, rounded once"})}
 
 
-def whatif(run: Any, edit: Edit, consumer: Any, *, before_native: Any = None) -> WhatIf:
-    """Predict, seal, measure and split the change of ``consumer`` (a ``Margin``, a ``Logit`` or
-    a stop address) under ``edit``; the session is left exactly where it was (checked by
-    ``state_digest``; a difference raises ``RuntimeError``). ``before_native(record)``
-    may persist and flush the sealed prediction; an exception prevents measurement.
-    """
-    torch = _torch()
+@dataclass
+class _Prepared:
+    """A what-if up to its sealed prediction: everything that needs the cursor's values."""
+
+    p: Plan
+    edit: Edit
+    checkpoint: dict[str, Any]
+    found: dict[str, Any]
+    prediction: dict[str, Any]
+    body: dict[str, Any]
+    record: dict[str, Any]
+    before: str
+
+
+def _prepare(run: Any, edit: Edit, consumer: Any, before_native: Any = None,
+             before: str | None = None) -> _Prepared:
+    """Plan, hold the edit tensors, predict and seal; nothing native runs. ``before``: the
+    ``state_digest`` of the cursor when the caller already has it."""
     p = plan(run, edit, consumer)
-    before = state_digest(run)
+    if before is None:
+        before = state_digest(run)
     checkpoint = run.checkpoint()
     guard(run, checkpoint)
     try:
@@ -858,8 +978,27 @@ def whatif(run: Any, edit: Edit, consumer: Any, *, before_native: Any = None) ->
     # counterfactual measurement. Writer failure prevents native release.
     if before_native is not None:
         before_native(record)
-    native = _measure(run, p, edit, checkpoint)
-    after = state_digest(run)
+    return _Prepared(p, edit, checkpoint, found, prediction, body, record, before)
+
+
+def whatif(run: Any, edit: Edit, consumer: Any, *, before_native: Any = None) -> WhatIf:
+    """Predict, seal, measure and split the change of ``consumer`` (a ``Margin``, a ``Logit`` or
+    a stop address) under ``edit``; the session is left exactly where it was (checked by
+    ``state_digest``; a difference raises ``RuntimeError``). ``before_native(record)``
+    may persist and flush the sealed prediction; an exception prevents measurement.
+    """
+    prep = _prepare(run, edit, consumer, before_native)
+    native = _measure(run, prep.p, edit, prep.checkpoint)
+    return _finish(run, prep, native, state_digest(run))
+
+
+def _finish(run: Any, prep: _Prepared, native: dict[str, Any], after: str) -> WhatIf:
+    """Split and judge the native change of a prepared what-if (needs the cursor's values, so
+    the session is back where it was); ``after``: the session digest then."""
+    torch = _torch()
+    p, edit, found, prediction = prep.p, prep.edit, prep.found, prep.prediction
+    body, record, before = prep.body, prep.record, prep.before
+    reason = found.get("reason")
     if after != before:
         raise RuntimeError("whatif did not leave the session where it was (state digest "
                            f"{before[:12]} -> {after[:12]})")

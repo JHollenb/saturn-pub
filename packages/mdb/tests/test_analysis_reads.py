@@ -196,3 +196,35 @@ def test_mid_row_reads_list_uncomputed_layers_and_refusals(debugger):
     late = reads(run, "t1", consumer=Margin(3, 4, 9), causal=False).report["reads"]
     assert all(e["to_consumer"]["state"] == "refused" for e in late)
     assert "has not been computed" in late[0]["to_consumer"]["reason"]
+
+
+def test_causal_verdicts_share_one_excursion_and_equal_one_whatif_per_read():
+    """top=6 reads on a 12-layer tiny model: each verdict (delta, effect, record id) is bit for
+    bit what a solo ``whatif`` of that read gives, the session ends where it started, and the
+    whole call makes at most 70 native layer calls (one whatif per read: 127; measured 62)."""
+    from mdb.analysis.reads import layer_module, verdict
+    from mdb.engine.models import tiny_model
+    from mdb.ops.debugger import attach
+
+    run = attach(tiny_model("qwen2", "bf16", layers=12)).run(PROMPT)
+    run.until("t3.logits")
+    margin = Margin(3, 4, 9)
+    calls = [0]
+    hooks = [layer_module(run.adapter, i).register_forward_hook(
+        lambda *_: calls.__setitem__(0, calls[0] + 1)) for i in range(run.adapter.layers)]
+    before = state_digest(run)
+    batched = reads(run, "t1", consumer=margin, top=6)
+    used = calls[0]
+    for hook in hooks:
+        hook.remove()
+    assert state_digest(run) == before
+    assert used <= 70, used
+    listed = batched.tensors["entries"][:6]
+    assert [e["name"] for e in batched.report["reads"]] == [e["name"] for e in listed]
+    assert len({e["layer"] for e in listed}) >= 3 and len({e["name"] for e in listed}) == 6
+    for entry in listed:
+        j, layer, head, source = entry["_mask"]
+        solo = verdict(run, f"t{j}.L{layer}.p", head_mask(run, j, layer, head, source),
+                       f"h{head},src={source}", entry["_target"], 0.0)
+        assert entry["causal"] == solo, entry["name"]
+    assert state_digest(run) == before
