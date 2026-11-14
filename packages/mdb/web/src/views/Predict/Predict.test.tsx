@@ -7,8 +7,17 @@ import type { LiveFrame, LiveLedger } from '../../api/types.gen';
 import { valOf, type Rec } from '../../chrome/labelled';
 import { resultOf, slotFrom } from '../../state/opFixture';
 import { LiveView, type LiveViewProps } from '../Live/LiveView';
-import { CompareResult, Predict, WhatIfResult, forecastsOf, type PredictProps } from './Predict';
+import {
+  CompareResult,
+  Predict,
+  WhatIfResult,
+  editAddressOf,
+  forecastsOf,
+  stageOf,
+  type PredictProps,
+} from './Predict';
 import { SplitBar } from './SplitBar';
+import { ResidualVsFloor, VerdictChip } from './VerifyVerdict';
 import compareCheckpoint from './fixtures/compare_checkpoint.json';
 import compareEdits from './fixtures/compare_edits.json';
 import compareRefused from './fixtures/compare_refused.json';
@@ -19,6 +28,7 @@ import frameVerified from './fixtures/frame_verified.json';
 import ledgerOpen from './fixtures/ledger_open.json';
 import ledgerVerified from './fixtures/ledger_verified.json';
 import verifyFirst from './fixtures/verify_first.json';
+import whatifHead from './fixtures/whatif_head.json';
 import whatifInterrupted from './fixtures/whatif_interrupted.json';
 import whatifMargin from './fixtures/whatif_margin.json';
 import whatifPort from './fixtures/whatif_port.json';
@@ -85,6 +95,71 @@ describe('what-if', () => {
     expect(html).toContain('The session was restored: unchanged at');
     expect(html).toMatch(/<button[^>]*>stage this edit<\/button>/);
     expect(html).not.toMatch(/<button[^>]*disabled=""[^>]*>stage this edit/);
+  });
+
+  it('shows and stages the edit with its selector (whatif L1.A[h0], issue M19)', () => {
+    // the op answers address t3.L1.A and selection h0: the header shows both, never the whole port
+    const result = resultOf(whatifHead);
+    expect(editAddressOf(result)).toBe('t3.L1.A[h0]');
+    expect(whatif(whatifHead)).toContain('data-testid="whatif-edit-address">t3.L1.A[h0]</code>');
+    // stage this edit stages the same head, not the whole layer
+    expect(stageOf(result)).toEqual({ target: 'L1.A[h0]', value: 0, op: 'scale' });
+    // a whole-port edit has no selector to add
+    expect(editAddressOf(resultOf(whatifPort))).toBe('t3.L1.o');
+  });
+
+  it("shows the emulated prediction, the verdict against it and each run's stages (M55/M56)", () => {
+    const result = resultOf<Rec>(whatifHead);
+    const html = whatif(whatifHead);
+    expect(html).toContain('sealed emulated Δ');
+    expect(html).toContain('the native change predicted bit for bit');
+    expect(html).toContain('data-testid="whatif-verdict"');
+    expect(html).toContain('data-verdict="effect"');
+    expect(html).toContain('rests on native = emulated within 0 spacings');
+    // the exact chain's finite interval is information, labelled as such
+    expect(html).toContain('worst-case interval');
+    expect(html).not.toContain('data-testid="bound-note"');
+    const stages = (result.stages as Rec).edited as Rec;
+    expect(html).toContain('data-stages="edited"');
+    expect(html).toContain('data-stages="base"');
+    expect(html).toContain(
+      `edited run stages [per-stage bound, not a chain bound]: ${String(stages.text)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')}`,
+    );
+    expect(String(stages.text)).toMatch(
+      /^each stage within its own rounding bound on native operands: \d+\/\d+/,
+    );
+  });
+
+  it('an uninformative interval is shown as its note, never as a huge bound (M56/M57)', () => {
+    const result = resultOf<Rec>(whatifHead);
+    const prediction = result.prediction as Rec;
+    const exact = { ...(prediction.exact as Rec) };
+    delete exact.bound;
+    const note =
+      'worst-case rounding interval not informative from t3.L0.p (score interval 12.9 at |s| 16.8)';
+    exact.bound_note = note;
+    const terms = ((result.split as Rec).terms as Rec[]).map((t) => {
+      if (t.name !== 'rounding effect') return t;
+      const rest: Rec = { ...t, bound_note: note };
+      delete rest.bound;
+      delete rest.within_bound;
+      return rest;
+    });
+    const changed = {
+      ...result,
+      prediction: { ...prediction, exact },
+      split: { ...(result.split as Rec), terms },
+    };
+    const html = renderToStaticMarkup(<WhatIfResult result={changed} busy={false} act={act} />);
+    expect(html).toContain('data-testid="bound-note"');
+    expect(html).toContain(`(${note.replace(/>/g, '&gt;')})`);
+    const from = html.indexOf('<li data-term="rounding effect"');
+    const term = html.slice(from, html.indexOf('</li>', from));
+    expect(term).toContain(note.replace(/>/g, '&gt;'));
+    expect(term).not.toContain('>bound</span>');
   });
 
   it('a port consumer gives summaries (max_abs, norm), never one number', () => {
@@ -155,16 +230,41 @@ describe('forecasts', () => {
     expect(html).not.toMatch(/data-ev="measured"/);
   });
 
-  it('a verified forecast shows the native value, residual ≤ bound and the verdict', () => {
+  it('a verified forecast shows the native value, residual ≤ floor and the verdict', () => {
     expect(slotFrom(verifyFirst).state).toBe('done');
     const html = render({ forecasts: verified });
     const at = html.indexOf('data-forecast="1"');
     const row = html.slice(at, html.indexOf('</tr>', at));
     expect(row).toContain('data-status="closed"');
     expect(row).toContain('data-ev="measured"');
-    expect(row).toContain('data-ev="bound"');
-    expect(row).toContain('within-bound');
+    expect(row).toContain('data-ev="bound"'); // the finite worst-case bound, as information
+    expect(row).toContain('data-verdict="confirmed"');
+    expect(row).toMatch(/≤ <span class="faint">floor<\/span>/);
+    expect(row).not.toContain('within-bound');
     expect(forecastsOf(verified, 't3.L0.a').map((f) => f.id)).toEqual([1]);
+  });
+
+  it('renders the three verify verdicts (M29): confirmed, not confirmed, unresolved', () => {
+    const base = resultOf<{ forecasts: Rec[] }>(verifyFirst).forecasts.find(
+      (f) => f.verdict === 'confirmed',
+    )!;
+    const notConfirmed = { ...base, verdict: 'not confirmed', within_bound: false };
+    const html = (v: Rec) =>
+      renderToStaticMarkup(
+        <>
+          <ResidualVsFloor v={v} />
+          <VerdictChip v={v} status="closed" />
+        </>,
+      );
+    expect(html(base)).toContain('data-verdict="confirmed"');
+    const no = html(notConfirmed);
+    expect(no).toContain('data-verdict="not confirmed"');
+    expect(no).toMatch(/&gt; <span class="faint">floor/);
+    expect(no).toContain(' exceeded'); // the bound is information only
+    const unresolved = html({ verdict: 'unresolved', state: 'unresolved', reason: 'no label' });
+    expect(unresolved).toContain('data-verdict="unresolved"');
+    expect(unresolved).toContain('no label');
+    expect(unresolved).not.toContain('floor');
   });
 });
 
@@ -217,7 +317,8 @@ describe('pipeline forecast column', () => {
     expect(a).toContain('data-ev="derived-exact"');
     expect(a).toContain('data-ev="measured"');
     expect(a).toContain('resid');
-    expect(a).toContain('within-bound');
+    expect(a).toContain('data-verdict="confirmed"');
+    expect(a).toContain('floor');
   });
 
   it('hides the authority chips unless the view shows labels; the mark and title keep them', () => {
@@ -247,11 +348,17 @@ describe('pipeline forecast column', () => {
     expect(on).toMatch(/<input type="checkbox" checked=""\/> show labels/);
   });
 
-  it('lists the frame\'s displays with where each reads at the cursor', () => {
+  it("lists the frame's displays with where each reads at the cursor", () => {
     const frame = (frameForecasts as unknown as { data: LiveFrame }).data;
     const html = renderToStaticMarkup(
       <LiveView
-        frame={{ ...frame, displays: [{ id: 1, address: 'L0.h' }, { id: 2, address: 't3.L0.a' }] }}
+        frame={{
+          ...frame,
+          displays: [
+            { id: 1, address: 'L0.h' },
+            { id: 2, address: 't3.L0.a' },
+          ],
+        }}
         timeline={null}
         running={null}
         last={null}

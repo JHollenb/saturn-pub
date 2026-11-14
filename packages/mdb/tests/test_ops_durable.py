@@ -84,3 +84,10 @@ def test_an_interrupted_durable_checkpoint_is_durable_or_absent_never_memory_onl
     if durable:
         run.until("L1.p")
         assert dispatch(ctx, "restart", {"name": "cp"})["where"] == f"t{len(TOKENS) - 1}.L0.p"
+
+
+def test_a_missing_durable_checkpoint_names_the_session_not_a_filesystem_path(tmp_path):
+    dbg = mdb.attach(tiny_model("qwen2", "fp32"), project=tmp_path / "p", session="mine")
+    with pytest.raises(Refused, match="no durable checkpoint 'nope'") as raised:
+        dispatch(dbg.ops(None), "restart", {"name": "nope"})
+    assert str(tmp_path) not in str(raised.value) and "mine" in str(raised.value)

@@ -10,16 +10,47 @@ measured natively, with the session left exactly where it was.
    same chain, and a sampled token is the chain's own argmax. ``exact = edited - base`` is
    ``derived-exact`` with a rounding ``bound`` (the forecast bounds plus the cast of the edit
    operand), and the first-order term ``linear = J delta`` (forward-mode derivative of the same
-   chain at the unedited point, P14) is ``derived-local``. The prediction is sealed as a record
-   (kind ``whatif``) before anything native runs.
+   chain at the unedited point, P14) is ``derived-local``. ``exact`` is ``F(x1) - F(x0)`` (P09
+   section 1): both chains hold the edited port at ``x0`` or write the edit there and recompute
+   the same stops (those the edit reaches) from the same operands; the base is never the native
+   value (that would fold the base run's rounding into the exact change). The prediction is
+   sealed as a record (kind ``whatif``) before anything native runs. When the consumer is ahead
+   of the cursor, the operands past the cursor exist only as the chain's own float64 values: the
+   sealed exact change says so (``prediction.exact.operands.source == "forecast"``). Beside them
+   the **emulated** chains (``EmulatedRowModel``, forecast's premises: the dtype's rounding where
+   eager HF rounds, backend kernels on the model's device) give the emulated base and edited
+   values; their difference predicts the native change itself (``prediction.emulated``,
+   ``derived-exact`` under those premises). The edit is written there by the engine's own
+   arithmetic (``PortEdit.apply``, the cell write) on the emulated value. A staged edit ahead of
+   the cursor refuses the emulated chains (they would not see it); a refused emulation leaves the
+   rest of the prediction as it was. The emulated base does not depend on the edit: the what-ifs
+   of one ``whatif_many`` call share it (per first row, consumer and cursor).
 2. **Measurement**: checkpoint, stage the edit (moving to the edited layer first: forward, or back
    by layer boundaries when the layer is already committed), run natively to the consumer, read
-   it, restore; the consumer's unedited value is read the same way. Labelled ``measured``.
-3. **Split** of the native change (P20): ``native = linear + nonlinear + realisation +
-   rounding`` with ``nonlinear = exact - linear``, ``realisation`` the change of the exact value
-   when the edit operand is the value the edit actually wrote (read back natively) instead of the
-   requested one (both ``derived-exact``) and ``rounding = native - exact(realised)``
-   (``measured``, with its ``bound``). The linear number is never reported as the effect.
+   it, restore; the consumer's unedited value is read the same way. Labelled ``measured``. With
+   the consumer ahead of the cursor the edited branch runs first, then the unedited branch to
+   the consumer, where the exact chain is computed again on the measured operands (``report
+   ["exact"]``, after the seal, never presented as sealed).
+3. **Split** of the native change (P20): ``native = linear + nonlinear [+ operands] +
+   realisation + rounding`` with ``nonlinear = exact - linear``, ``operands`` (forecast seal
+   only) the exact change on measured operands minus the sealed one, ``realisation`` the change
+   of the exact value on measured operands when the edit operand is the value the edit actually
+   wrote (read back natively) instead of the requested one (all ``derived-exact``), ``rounding
+   effect = emulated - exact(written, measured operands)`` (``derived-exact`` under the emulation
+   premises; the worst-case interval ``bound`` on the native rounding is kept beside it only when
+   finite) and ``residual = native - emulated`` (``measured``: 0 when the emulation holds).
+   Without an emulated change the last two are one term, ``rounding = native - exact``
+   (``measured``). The linear number is never reported as the effect.
+4. **Verdict** (``report["effect"]``, ``verdict.decide``): the native change against the
+   emulated one within the floor of ``verdict.FLOOR_SPACINGS`` (1, supplied, the constant verify
+   uses) dtype spacings at the consumer. ``effect`` when they agree and the native change is not
+   zero; ``no effect`` when they agree and it is zero (the note gives the exact change the dtype
+   cannot show); beyond the floor verify's rule: ``not confirmed`` when a stage of the edited or
+   base run lies outside the bound of its identity on its native operands (the parting stop
+   named), else ``unresolved`` (rounding drift, or a chain over several rows: not stage-checked).
+   With no emulated change (refused): ``effect`` iff the native edited and base values differ.
+   The exact change is reported beside the verdict, never decides it. The result's ``state`` is
+   the verdict's; the interval bound never sets it.
 
 A state-cell edit (``Edit.cell``: ``cache.L<l>.k|v[kv,row,d]``, ops ``replace | add | scale |
 mix``) is staged where the cursor is when the consumer is still ahead (``pending``), else at
@@ -42,12 +73,29 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from mdb.core.kinds import WHATIF
+from mdb.core.bounded import MAX_ITEMS, bound_list, load_json
+from mdb.core.kinds import WHATIF, procedure
 from mdb.core.pointers import seal_digest
 from mdb.core.records import num, seal_record
 
+from .accumulation import bound_state
 from .finite import BOUND, EXACT, LOCAL, MEASURED, SUPPLIED, f64
-from .forecast import Logit, Margin, Refusal, RowModel, _split, producers, run_session_id
+from .forecast import (
+    EMULATION_PREMISE,
+    EMULATION_PREMISES,
+    EmulatedRowModel,
+    Logit,
+    Margin,
+    Refusal,
+    RowModel,
+    _split,
+    containment,
+    producers,
+    run_session_id,
+    stage_checks,
+    stage_parting,
+)
+from .verdict import FLOOR_SPACINGS, NOT_CONFIRMED, decide, magnitude, spacing
 
 SCHEMA = "mdb-whatif-v1"
 OPS = ("replace", "add", "scale")
@@ -288,19 +336,107 @@ def plan(run: Any, edit: Edit, consumer: Any) -> Plan:
 # --------------------------------------------------------------------------- prediction
 
 
+def _port_edits(run: Any, p: Plan) -> dict[int, dict[str, list[Any]]]:
+    """Every port edit that fires (staged at the pending layer) or fired (committed) in the
+    rows ``p.row .. p.consumer_row``, as the engine's ``PortEdit`` (value and mask from the run's
+    held edit tensors), by row and stop, in firing order (M55). The chains apply them where they
+    compute the stop; a captured value already carries its edit."""
+    from mdb.engine.ports import PortEdit
+
+    tensors = run.edit_tensors()
+    rows = range(p.row, p.consumer_row + 1)
+    found: list[tuple[int, int, dict[str, Any]]] = [
+        (int(e["row"]), int(e["layer"]), e) for e in run.committed_edits()]
+    layer = run.status()["pending_layer"]
+    if layer is not None:
+        found += [(p.here[0], int(layer), e) for e in run.edits]
+    out: dict[int, dict[str, list[Any]]] = {}
+    for row, layer, manifest in found:
+        if row not in rows:
+            continue
+        described = manifest["value"]
+        value = (described["value"] if described["kind"] == "scalar"
+                 else tensors[described["sha256"]])
+        mask = tensors[manifest["mask_sha256"]] if manifest.get("mask_sha256") else None
+        port = run.program.spec(manifest["port"]).name
+        edit = PortEdit(port, value, manifest["op"], mask=mask)
+        out.setdefault(row, {}).setdefault(f"L{layer}.{port}", []).append(edit)
+    return out
+
+
+def _edit_functions(run: Any, p: Plan, kind: str) -> dict[int, dict[str, Any]]:
+    """``RowModel.edits`` per row for a chain of ``kind``: ``exact`` (float64 with the rounding
+    bound of the native write), ``linear`` (float64, no bound: the forward-mode chain) or
+    ``emulated`` (the engine's own ``PortEdit.apply`` on the dtype value). An ``r`` edit is
+    realised natively as an ``o`` edit (``o' = op(h + o) - h``, ``r = h + o'``): exactly
+    ``r' = op(r)``, emulated as the engine does it."""
+    out: dict[int, dict[str, Any]] = {}
+    for row, stops in _port_edits(run, p).items():
+        for label, edits in stops.items():
+            address = f"t{row}.{label}"
+            out.setdefault(row, {})[label] = _edit_function(run, address, label, edits, kind)
+    return out
+
+
+def _edit_function(run: Any, address: str, label: str, edits: list[Any], kind: str) -> Any:
+    torch = _torch()
+    port = _split(label)[1]
+    here = f"L{_split(label)[0]}."
+
+    def emulated(model: Any, name: str, value: Any, bound: Any) -> tuple[Any, Any]:
+        shape = tuple(run.address_shape(address))
+        x = model._on(value).reshape(shape)
+        target = x
+        for edit in edits:
+            target = edit.apply(target)
+        if port == "r":
+            h = model._on(model.values[here + "h"]).reshape(shape)
+            new = h + (target - h)
+            union = None
+            for edit in edits:
+                selected = edit.selected(shape, x.device)
+                if selected is None:
+                    union = None
+                    break
+                union = selected if union is None else union | selected
+            target = new if union is None else torch.where(union, new, x)
+        return model._back(target).reshape(value.shape), None
+
+    def exact(model: Any, name: str, value: Any, bound: Any) -> tuple[Any, Any]:
+        # the real-number edit and the bound of its native write (``_request``: the operand
+        # cast to the dtype, one rounded op)
+        for edit in edits:
+            request = Edit(address, edit.value, edit.op, edit.mask)
+            value, _, bound = _request(run, request, tuple(value.shape), value, bound, model.u)
+        if kind == "linear" or not model.bounds:
+            return value, None
+        if port == "r" and bound is not None:     # o' = r' - h and r = h + o', both rounded
+            h, u = model.values[here + "h"], model.u
+            bound = bound + u * ((value - h).abs() * (1 + u) + value.abs())
+        return value, bound
+
+    return emulated if kind == "emulated" else exact
+
+
 def _chain(run: Any, p: Plan, *, bounds: bool, overrides: dict[str, Any] | None = None,
            skip: bool = False, tokens: dict[int, int] | None = None,
-           cell: Any = None) -> list[RowModel]:
+           cell: Any = None, model: type = RowModel) -> list[RowModel]:
     """Row models for rows ``p.row .. p.consumer_row``. Stops at or before the cursor are taken
     as captured, except (``skip``) the ones the edit reaches; row ``j > p.row`` reads the cache
     rows ``p.row..j-1`` from the chain and its token from the prompt, from ``tokens`` or from the
     chain's argmax of row ``j - 1``. ``cell(layer, kind, value, spread)`` rewrites the cache
     rows ``0..p.row-1`` every row reads (a state-cell edit; the first row then reads them
-    through it too)."""
+    through it too). ``model``: ``RowModel`` (float64) or ``EmulatedRowModel`` (the dtype's
+    rounding, no bounds). Every staged or committed port edit of those rows is applied where
+    the chain computes its stop (``_edit_functions``, M55); staged cells are in the cache the
+    rows read (``Run.read_cache``)."""
     torch = _torch()
     models: list[RowModel] = []
     here = p.here
     rows: dict[tuple[int, str], tuple[Any, Any]] = {}   # cache rows 0..p.row-1, cast once
+    kind = ("emulated" if issubclass(model, EmulatedRowModel) else "exact" if bounds
+            else "linear")
+    fired = _edit_functions(run, p, kind)
 
     def known_for(j: int):
         drop = p.affected.get(j, set()) if skip else set()
@@ -354,10 +490,10 @@ def _chain(run: Any, p: Plan, *, bounds: bool, overrides: dict[str, Any] | None 
             return sampled, None
 
         first = j == p.row
-        models.append(RowModel(run, j, known_for(j), bounds=bounds,
-                               overrides=(overrides or {}) if first else None,
-                               past=None if first and cell is None else past,
-                               token=None if first else token))
+        models.append(model(run, j, known_for(j), bounds=bounds,
+                            overrides=(overrides or {}) if first else None,
+                            past=None if first and cell is None else past,
+                            token=None if first else token, edits=fired.get(j)))
     return models
 
 
@@ -410,20 +546,6 @@ def _request(run: Any, edit: Edit, shape: tuple[int, ...], x0: Any, b0: Any, u: 
     else:
         bound = None if on is None or b0 is None else torch.where(mask, on, b0)
     return requested, requested - x0, bound
-
-
-def _edits_on_path(run: Any, p: Plan) -> str | None:
-    """A staged or committed edit (other than at the edited port) on a stop the edit reaches:
-    the chain recomputes those stops from identities and would not see it."""
-    row = p.here[0]
-    found = [(int(e["row"]), int(e["layer"]), e["port"]) for e in run.committed_edits()]
-    found += [(row, int(e["layer"]), e["port"]) for e in run.staged_info()]
-    for j, layer, port in found:
-        stop = f"L{layer}.{run.program.spec(port).name}"
-        if (j, stop) != (p.row, p.label) and stop in p.affected.get(j, set()):
-            return (f"the edit at t{j}.{stop} lies on the path of this edit; the prediction "
-                    "recomputes that stop from its identity and does not model the edit")
-    return None
 
 
 def _cell_edit(edit: Edit, value: Any = None) -> Any:
@@ -493,6 +615,9 @@ def _settle(run: Any, p: Plan, chain: list[RowModel], seen: dict[str, dict[str, 
     _operands(run, chain, seen)
     out["first"] = next((m.unbounded[p.consumer_label] for m in chain
                          if p.consumer_label in m.unbounded), None)
+    out["broken"] = next((m.broken for m in chain if m.broken is not None), None)
+    out["wide"] = next((m.wide for m in chain if m.wide is not None), None)
+    out["walk"] = _walk(chain)
     return out
 
 
@@ -519,30 +644,113 @@ def _found(base: dict[str, Any], edited: dict[str, Any], seen: dict[str, dict[st
                           "no rounding bound for this chain"),
         "operand_reason": base["first"] if base["first"] is not None else edited["first"],
         "premises": base["premises"] | edited["premises"],
+        "broken": edited["broken"] or base["broken"],
+        "wide": edited["wide"] or base["wide"],
+        "walk_base": base["walk"], "walk_edited": edited["walk"],
     }
 
 
-def _predict_cell(run: Any, p: Plan, edit: Edit) -> dict[str, Any]:
+WRITE_PREMISE = ("the edit is written by the engine's own arithmetic (PortEdit.apply, "
+                 "CellEdit.realise) on the emulated value of the edited port or cache")
+
+
+def _emulated_base(run: Any, p: Plan, shared: dict | None) -> dict[str, Any]:
+    """The emulated unedited chain (``EmulatedRowModel``: stops at or before the cursor as
+    captured, the rest with the dtype's rounding): the consumer's value, the sampled tokens and
+    the edited port's value ``x0`` (no row model is kept). The consumer's value does not depend
+    on the edit, so the what-ifs of one call with the same first row, consumer and cursor share
+    it (``shared``); ``x0`` is kept per edited port (a fresh first row model, evaluated only up
+    to that port, for a port not seen yet)."""
+    key = (p.row, p.consumer_stop, p.here)
+    out = None if shared is None else shared.get(key)
+    if out is None:
+        chain = _chain(run, p, bounds=False, model=EmulatedRowModel)
+        out = {"x0": {p.label: chain[0].get(p.label)},
+               "value": _consumer_value(p, chain[-1])[0],
+               "tokens": _sampled_tokens(p, chain, run), "walk": _walk(chain)}
+        del chain               # one chain of row models alive at a time
+        if shared is not None:
+            shared[key] = out
+    if p.label not in out["x0"]:
+        first = _chain(run, p, bounds=False, model=EmulatedRowModel)[0]
+        out["x0"][p.label] = first.get(p.label)
+        del first
+    return out
+
+
+def _emulated_written(run: Any, p: Plan, edit: Edit, x0: Any) -> Any:
+    """The value a port edit writes, by the engine's arithmetic (``PortEdit.apply``) on the
+    emulated (or captured) value of the port in the model dtype, as float64 in the chain's
+    shape."""
+    from mdb.engine.ports import PortEdit
+
+    shape = tuple(run.address_shape(p.edit_stop))
+    port = run.program.spec(_split(p.label)[1]).name
+    x = x0.reshape(shape).to(getattr(run.adapter, "device", None) or "cpu", run.adapter.dtype)
+    written = PortEdit(port, edit.value, edit.op, mask=edit.mask).apply(x)
+    return f64(written).reshape(x0.shape)
+
+
+def _emulated_edited(run: Any, p: Plan, edit: Edit, written: Any) -> list[RowModel]:
+    """The emulated edited chain: the stops the edit reaches recomputed with the dtype's rounding,
+    the edit written at its port (``written``: a port edit's value) or into the cache (a cell
+    edit: the engine's own write, ``_written_cell``)."""
+    if edit.cell is not None:
+        return _chain(run, p, bounds=False, skip=True, model=EmulatedRowModel,
+                      cell=_cell_writer(edit, _written_cell(run, edit), "written"))
+    return _chain(run, p, bounds=False, skip=True, model=EmulatedRowModel,
+                  overrides={p.label: lambda value, bound: (written, None)})
+
+
+def _emulate(run: Any, p: Plan, edit: Edit, shared: dict | None) -> dict[str, Any]:
+    """The emulated base and edited consumer values and their change, or ``emulated_reason``.
+    Staged and committed port edits are applied where the chains compute their stops (M55,
+    ``_edit_functions``); ``emulated_walk_*``: the stops each chain computed, by row (the stages
+    the measurement's checks walk)."""
+    try:
+        base = _emulated_base(run, p, shared)
+        written = None if edit.cell is not None else _emulated_written(run, p, edit,
+                                                                       base["x0"][p.label])
+        chain = _emulated_edited(run, p, edit, written)
+        edited = _consumer_value(p, chain[-1])[0]
+        walk = _walk(chain)
+        del chain
+    except Refusal as error:
+        return {"emulated_reason": str(error)}
+    return {"emulated_base": base["value"], "emulated_edited": edited,
+            "emulated": edited - base["value"], "emulated_written": written,
+            "emulated_walk_base": base["walk"], "emulated_walk_edited": walk}
+
+
+def _walk(chain: list[RowModel]) -> list[tuple[int, str]]:
+    """The stops a chain computed, ``(row, stop)`` in row order."""
+    return [(model.row, name) for model in chain for name in model.computed]
+
+
+def _predict_cell(run: Any, p: Plan, edit: Edit, *, linear: bool = True,
+                  emulate: bool = True, shared: dict | None = None) -> dict[str, Any]:
     """The prediction of a state-cell edit (``base``, ``exact`` and bounds, ``linear``), or
     ``reason``: the chain from the first affected row with the cell written into the cache rows
-    every row reads."""
+    every row reads. The base chain recomputes the same stops as the edited one, from the same
+    operands (P09 section 1: ``F(x1) - F(x0)``, never ``F(x1)`` minus a native value)."""
     torch = _torch()
     if p.row > p.here[0]:
         return {"reason": f"the first read of {edit.address} is t{p.row}.{p.label}, in a row "
                           f"that has not started at the cursor {run.where}: none of its "
                           "operands exist yet"}
-    conflict = _edits_on_path(run, p)
-    if conflict is not None:
-        return {"reason": conflict}
     written = _written_cell(run, edit)
     seen: dict[str, dict[str, Any]] = {}
-    base = _settle(run, p, _chain(run, p, bounds=True), seen)
+    base = _settle(run, p, _chain(run, p, bounds=True, skip=True), seen)
     edited = _settle(run, p, _chain(run, p, bounds=True, skip=True,
                                     cell=_cell_writer(edit, written, "ideal")), seen)
     out = _found(base, edited, seen, None)
+    if emulate:
+        out.update(_emulate(run, p, edit, shared))
     reason = _flip_reason(p, base, edited)
     if reason is not None:
         out["linear_reason"] = reason
+        return out
+    if not linear:
         return out
     import torch.autograd.forward_ad as fwad
 
@@ -554,37 +762,51 @@ def _predict_cell(run: Any, p: Plan, edit: Edit) -> dict[str, Any]:
     return out
 
 
-def _predict(run: Any, p: Plan, edit: Edit) -> dict[str, Any]:
-    """The prediction's tensors (``base``, ``exact`` and bounds, ``linear``), or ``reason``."""
+def _predict(run: Any, p: Plan, edit: Edit, *, linear: bool = True, emulate: bool = True,
+             shared: dict | None = None) -> dict[str, Any]:
+    """The prediction's tensors (``base``, ``exact`` and bounds, ``linear``), or ``reason``.
+
+    ``exact = F(x1) - F(x0)`` (P09 section 1, P20): both chains hold the edited port at its value
+    at the cursor (``x0``: captured, or the chain's own value when the port is ahead) and
+    recompute the same stops (those the edit reaches) from the same operands, every other stop
+    taken as captured when it is at or before ``p.here``. ``linear`` (P14) is the forward-mode
+    derivative of that base chain at ``x0``. ``linear=False`` skips it (the post-hoc exact
+    chain on measured operands, ``_measured_exact``). With ``emulate`` the emulated base and
+    edited chains (``_emulate``) predict the native change itself; ``shared`` holds the emulated
+    base across the what-ifs of one call."""
     torch = _torch()
     if edit.cell is not None:
-        return _predict_cell(run, p, edit)
+        return _predict_cell(run, p, edit, linear=linear, emulate=emulate, shared=shared)
     if p.row > p.here[0]:
         return {"reason": f"the edit site t{p.row}.{p.label} is in a row that has not started at "
                           f"the cursor {run.where}: none of its operands exist yet"}
-    conflict = _edits_on_path(run, p)
-    if conflict is not None:
-        return {"reason": conflict}
-    chain = _chain(run, p, bounds=True)
-    x0, b0 = chain[0].get(p.label), chain[0].bound(p.label)
-    shape = tuple(x0.shape)
-    requested, delta, spread = _request(run, edit, shape, x0, b0, chain[0].u)
     seen: dict[str, dict[str, Any]] = {}
-    base = _settle(run, p, chain, seen)
-    del chain, x0, b0           # one chain of row models alive at a time
+    head = _chain(run, p, bounds=True)[:1]
+    x0, b0, u = head[0].get(p.label), head[0].bound(p.label), head[0].u
+    _operands(run, head, seen)
+    del head                    # one chain of row models alive at a time
+    shape = tuple(x0.shape)
+    requested, delta, spread = _request(run, edit, shape, x0, b0, u)
+    base = _settle(run, p, _chain(run, p, bounds=True, skip=True,
+                                  overrides={p.label: lambda value, bound: (x0, b0)}), seen)
     edited = _settle(run, p, _chain(run, p, bounds=True, skip=True,
                                     overrides={p.label: lambda value, bound: (requested,
                                                                               spread)}), seen)
     out = _found(base, edited, seen, shape)
+    if emulate:
+        out.update(_emulate(run, p, edit, shared))
     reason = _flip_reason(p, base, edited)
     if reason is not None:
         out["linear_reason"] = reason
         return out
+    if not linear:
+        return out
     import torch.autograd.forward_ad as fwad
 
     with torch.inference_mode(False), fwad.dual_level():
+        point = x0.clone()
         dual = _chain(run, p, bounds=False, skip=True, tokens=base["tokens"],
-                      overrides={p.label: lambda value, bound: (fwad.make_dual(value, delta),
+                      overrides={p.label: lambda value, bound: (fwad.make_dual(point, delta),
                                                                 None)})
         primal, tangent = fwad.unpack_dual(_consumer_value(p, dual[-1])[0])
         out["linear"] = (torch.zeros_like(primal) if tangent is None else tangent).detach().clone()
@@ -599,7 +821,7 @@ def stage(run: Any, edit: Edit) -> dict[str, Any]:
     a state-cell edit); returns the engine's manifest."""
     if edit.cell is None:
         return run.set(edit.address, edit.value, edit.op, mask=edit.mask,
-                       selection=edit.selection)
+                       selection=edit.selection, origin=edit.origin)
     cell = edit.cell
     return run.set_cell(int(cell["layer"]), cell["tensor"], edit.value, edit.op,
                         rows=cell["rows"], kv=cell.get("kv"), d=cell.get("d"), dose=edit.dose,
@@ -621,27 +843,54 @@ def guard(run: Any, checkpoint: dict[str, Any]) -> None:
     run.hold(held)
 
 
-def _measure_cell(run: Any, p: Plan, edit: Edit, checkpoint: dict[str, Any]) -> dict[str, Any]:
+def _complete_restore(run: Any, checkpoint: dict[str, Any], state: list[bool]) -> None:
+    """``run.restore(checkpoint)`` that completes whatever interrupts it, then re-raises the
+    interrupt (``state[0]`` is set once the restore has completed)."""
+    interrupted = None
+    while True:
+        try:
+            run.restore(checkpoint, defer_interrupt=True)
+            break
+        except KeyboardInterrupt as error:      # before the restore ran, or inside it
+            interrupted = error
+    state[0] = True
+    if interrupted is not None:
+        raise interrupted
+
+
+def _restoring(run: Any, checkpoint: dict[str, Any], body: Any) -> Any:
+    """``body()``, then ``checkpoint`` restored whatever happens, interrupts included: the
+    restore is unconditional, so an interrupt landing exactly at the entry of the ``finally``
+    (before its first statement) still finds the restore done before it propagates. An interrupt
+    during the restore cannot roll it back to the edited excursion either."""
+    state = [False]
+    try:
+        try:
+            return body()
+        finally:
+            _complete_restore(run, checkpoint, state)
+    except KeyboardInterrupt:
+        if not state[0]:
+            _complete_restore(run, checkpoint, state)
+        raise
+
+
+def _check(run: Any, out: dict[str, Any], side: str) -> None:
+    """Run the what-if's check of ``side`` (``edited`` or ``base``) while the native state of
+    that run is at the consumer (``_checker``)."""
+    check = out.get("check")
+    if check is not None:
+        out[f"check_{side}"] = check(run, side, out[side])
+
+
+def _measure_cell(run: Any, p: Plan, edit: Edit, checkpoint: dict[str, Any],
+                  check: Any = None) -> dict[str, Any]:
     """``_measure`` of a state-cell edit: staged at ``p.stage_at``; ``realised`` is the cache
     tensor the native layer call wrote, read back at the consumer."""
     layer, tensor = int(edit.cell["layer"]), edit.cell["tensor"]
-    out: dict[str, Any] = {"moves": []}
-    try:
-        if p.mode == "pending":
-            run.until(p.consumer_stop)
-            out["moves"].append(f"until {p.consumer_stop}")
-        out["base"] = run.read(p.consumer_stop).clone()
-        out["base_info"] = run.read_info(p.consumer_stop)
-        if p.mode == "pending":
-            run.restore(checkpoint)
-            out["moves"].append(f"restore {checkpoint['where']}")
-        else:
-            while run.parse(run.where) >= run.parse(p.stage_at):
-                run.reverse_step("layer")
-            out["moves"].append(f"reverse-step layer to {run.where}")
-            if run.where != p.stage_at:
-                run.until(p.stage_at)
-                out["moves"].append(f"until {p.stage_at}")
+    out: dict[str, Any] = {"moves": [], "check": check}
+
+    def edited() -> None:
         stage(run, edit)
         out["moves"].append(f"set {edit.address} at {run.where}")
         run.until(p.consumer_stop)
@@ -649,51 +898,219 @@ def _measure_cell(run: Any, p: Plan, edit: Edit, checkpoint: dict[str, Any]) -> 
         out["edited"] = run.read(p.consumer_stop).clone()
         out["edited_info"] = run.read_info(p.consumer_stop)
         out["realised"] = run.read_cache(layer, tensor, staged=False).clone()
-    finally:
-        run.restore(checkpoint, defer_interrupt=True)
-    out["moves"].append(f"restore {checkpoint['where']}")
-    return out
+        _check(run, out, "edited")
 
-
-def _measure(run: Any, p: Plan, edit: Edit, checkpoint: dict[str, Any]) -> dict[str, Any]:
-    """Native consumer values without and with the edit, the value the edit wrote, and the
-    native-call trail; restores ``checkpoint`` whatever happens."""
-    if edit.cell is not None:
-        return _measure_cell(run, p, edit, checkpoint)
-    layer = _split(p.label)[0]
-    entry = f"t{p.row}.L{layer}.h"
-    out: dict[str, Any] = {"moves": []}
-    try:
-        ahead = p.consumer_key > p.here
-        if ahead:
-            run.until(p.consumer_stop)
-            out["moves"].append(f"until {p.consumer_stop}")
-        out["base"] = run.read(p.consumer_stop).clone()
-        out["base_info"] = run.read_info(p.consumer_stop)
-        if ahead:
+    def body() -> None:
+        if p.mode == "pending":     # the consumer is ahead: edited branch first, then the base
+            edited()
             run.restore(checkpoint)
             out["moves"].append(f"restore {checkpoint['where']}")
-        if p.mode == "rewind":
-            while run.parse(run.where) >= run.parse(entry):
-                run.reverse_step("layer")
-            out["moves"].append(f"reverse-step layer to {run.where}")
-        if p.mode != "pending" and run.where != entry:
-            run.until(entry)
-            out["moves"].append(f"until {entry}")
-        run.set(p.edit_stop, edit.value, edit.op, mask=edit.mask, selection=edit.selection)
-        out["moves"].append(f"set {p.edit_stop}")
-        if run.parse(run.where) < p.consumer_key:
-            run.until(p.consumer_stop)
-            out["moves"].append(f"until {p.consumer_stop}")
-        out["edited"] = run.read(p.consumer_stop).clone()
-        out["edited_info"] = run.read_info(p.consumer_stop)
-        out["realised"] = run.read(p.edit_stop).clone()
-    finally:
-        # An interrupt (Ctrl-C) during this restore must not roll it back to the edited
-        # excursion: the restore completes first and the interrupt is raised after it.
-        run.restore(checkpoint, defer_interrupt=True)
+            _base_ahead(run, p, edit, out)
+            return
+        out["base"] = run.read(p.consumer_stop).clone()
+        out["base_info"] = run.read_info(p.consumer_stop)
+        _check(run, out, "base")    # the unedited run already stands past the consumer
+        while run.parse(run.where) >= run.parse(p.stage_at):
+            run.reverse_step("layer")
+        out["moves"].append(f"reverse-step layer to {run.where}")
+        if run.where != p.stage_at:
+            run.until(p.stage_at)
+            out["moves"].append(f"until {p.stage_at}")
+        edited()
+
+    _restoring(run, checkpoint, body)
     out["moves"].append(f"restore {checkpoint['where']}")
     return out
+
+
+def _measure(run: Any, p: Plan, edit: Edit, checkpoint: dict[str, Any],
+             check: Any = None) -> dict[str, Any]:
+    """Native consumer values without and with the edit, the value the edit wrote, and the
+    native-call trail; restores ``checkpoint`` whatever happens. ``check(run, side, value)``
+    (``_checker``) runs while each native run is at the consumer."""
+    if edit.cell is not None:
+        return _measure_cell(run, p, edit, checkpoint, check)
+    layer = _split(p.label)[0]
+    entry = f"t{p.row}.L{layer}.h"
+    out: dict[str, Any] = {"moves": [], "check": check}
+
+    def body() -> None:
+        if p.consumer_key > p.here:  # edited branch first, then the base and its exact chain
+            _edited(run, p, edit, entry, out)
+            run.restore(checkpoint)
+            out["moves"].append(f"restore {checkpoint['where']}")
+            _base_ahead(run, p, edit, out)
+            return
+        out["base"] = run.read(p.consumer_stop).clone()
+        out["base_info"] = run.read_info(p.consumer_stop)
+        _check(run, out, "base")    # the unedited run already stands past the consumer
+        _edited(run, p, edit, entry, out)
+
+    _restoring(run, checkpoint, body)
+    out["moves"].append(f"restore {checkpoint['where']}")
+    return out
+
+
+def _base_ahead(run: Any, p: Plan, edit: Edit, out: dict[str, Any]) -> None:
+    """From the checkpoint, with the consumer ahead of it: run the unedited branch to the
+    consumer, read it, and compute there (every operand of the chain now measured) the exact
+    change on measured operands (``out["posthoc"]``, ``_measured_exact``; the edited branch has
+    already put the written operand in ``out["realised"]``). Runs after the prediction was
+    sealed, so nothing it computes is presented as sealed."""
+    run.until(p.consumer_stop)
+    out["moves"].append(f"until {p.consumer_stop}")
+    out["base"] = run.read(p.consumer_stop).clone()
+    out["base_info"] = run.read_info(p.consumer_stop)
+    _check(run, out, "base")
+    out["posthoc"] = _measured_exact(run, p, edit, out["realised"])
+
+
+def _written_exact(run: Any, p: Plan, edit: Edit, found: dict[str, Any], realised: Any
+                   ) -> dict[str, Any]:
+    """The exact change with the operand the edit wrote (``realised``, read back natively) on
+    the operands of ``found``'s chains: ``at_realised`` (its consumer minus ``found["base"]``),
+    its rounding ``spread`` (None when unbounded) and ``spread_reason``."""
+    torch = _torch()
+    if edit.cell is not None:
+        chain = _chain(run, p, bounds=True, skip=True,
+                       cell=_cell_writer(edit, realised, "written"))
+    else:
+        written = f64(realised).reshape(found["edit_shape"])
+        chain = _chain(run, p, bounds=True, skip=True,
+                       overrides={p.label: lambda value, bound: (written,
+                                                                 torch.zeros_like(written))})
+    value, bound = _consumer_value(p, chain[-1])
+    return {"at_realised": value - found["base"],
+            "spread": None if bound is None or found["base_bound"] is None else (
+                bound + found["base_bound"]),
+            "spread_reason": _realised_reason(p, chain[-1], found),
+            "spread_broken": next((m.broken for m in chain if m.broken is not None),
+                                  found.get("broken")),
+            "spread_wide": next((m.wide for m in chain if m.wide is not None),
+                                found.get("wide"))}
+
+
+def _measured_exact(run: Any, p: Plan, edit: Edit, realised: Any) -> dict[str, Any]:
+    """The exact chains again with the cursor at (or past) the consumer, so every operand they
+    read is the native value of the unedited run: ``base``, ``exact`` and bounds (requested
+    operand) and ``at_realised`` (written operand), or ``reason``. P09 section 1 / P20 define
+    ``native delta = F(x1) - F(x0) + residual`` on the retained operands; before the native run
+    those operands past the cursor exist only as the chain's own forecast."""
+    from dataclasses import replace
+
+    q = replace(p, here=run.parse(run.where))
+    try:
+        post = _predict(run, q, edit, linear=False, emulate=False)
+    except Refusal as error:
+        return {"reason": str(error)}
+    if post.get("reason") is None:
+        post.update(_written_exact(run, q, edit, post, realised))
+    return post
+
+
+def _edited(run: Any, p: Plan, edit: Edit, entry: str, out: dict[str, Any],
+            cut: dict[str, Any] | None = None, keep: bool = False) -> dict[str, Any] | None:
+    """From the current cursor: reach ``entry`` (the layer's entry: back by layer boundaries in
+    ``rewind`` mode, forward otherwise, or ``restore(cut)`` of a checkpoint taken at it), stage
+    the edit, run to the consumer and read the edited value and the value the edit wrote into
+    ``out``. With ``keep``, returns the checkpoint at ``entry`` taken before the edit (``cut``
+    itself when given): restoring it drops the edit and keeps the edits committed at that layer, which
+    stepping back stages again."""
+    if cut is not None:
+        run.restore(cut)
+        out["moves"].append(f"restore the cut at {entry}")
+    elif p.mode == "rewind":
+        while run.parse(run.where) >= run.parse(entry):
+            run.reverse_step("layer")
+        out["moves"].append(f"reverse-step layer to {run.where}")
+    if p.mode != "pending" and run.where != entry:
+        run.until(entry)
+        out["moves"].append(f"until {entry}")
+    cut = cut or (run.checkpoint() if keep else None)
+    run.set(p.edit_stop, edit.value, edit.op, mask=edit.mask, selection=edit.selection,
+            origin=edit.origin)
+    out["moves"].append(f"set {p.edit_stop}")
+    if run.parse(run.where) < p.consumer_key:
+        run.until(p.consumer_stop)
+        out["moves"].append(f"until {p.consumer_stop}")
+    out["edited"] = run.read(p.consumer_stop).clone()
+    out["edited_info"] = run.read_info(p.consumer_stop)
+    out["realised"] = run.read(p.edit_stop).clone()
+    _check(run, out, "edited")
+    return cut
+
+
+def _measure_batch(run: Any, items: list[_Prepared]) -> list[dict[str, Any]]:
+    """``_measure`` of several prepared what-ifs made at the same cursor, in one excursion.
+
+    A what-if in ``rewind`` mode with the consumer at or before the cursor starts from
+    a clean boundary of the original run, and the trail's marks below an edit are untouched by
+    it: so they are measured from the latest entry to the earliest, each stepping back by layer
+    boundaries from where the previous one ended, and the cursor is restored once at the end
+    (the replay from the earliest entry) instead of after every one. The consumer's unedited
+    value is read at the cursor before the first leaves it. The other what-ifs are measured one
+    by one, first. Returns the native measurements in the order of ``items``; the session is
+    restored whatever happens."""
+    checkpoint = items[0].checkpoint
+    results: list[dict[str, Any] | None] = [None] * len(items)
+    batch = []
+    for i, item in enumerate(items):
+        if (item.edit.cell is None and item.p.mode == "rewind"
+                and item.p.consumer_key <= item.p.here):
+            batch.append(i)
+        else:
+            results[i] = _measure(run, item.p, item.edit, item.checkpoint, item.check)
+    base = {i: (run.read(items[i].p.consumer_stop).clone(),
+                run.read_info(items[i].p.consumer_stop)) for i in batch}
+    # the unedited run stands past every batched consumer: check its stages there, as `_measure`
+    checked = {i: items[i].check(run, "base", base[i][0]) for i in batch
+               if items[i].check is not None}
+    entries = {i: f"t{items[i].p.row}.L{_split(items[i].p.label)[0]}.h" for i in batch}
+    batch.sort(key=lambda i: (run.parse(entries[i]), i), reverse=True)
+
+    def body() -> None:
+        cuts: dict[str, dict[str, Any]] = {}   # entry -> checkpoint there (several heads per layer)
+        for i in batch:
+            out: dict[str, Any] = {"moves": [], "base": base[i][0], "base_info": base[i][1],
+                                   "check": items[i].check}
+            if i in checked:
+                out["check_base"] = checked[i]
+            cuts[entries[i]] = _edited(run, items[i].p, items[i].edit, entries[i], out,
+                                       cuts.get(entries[i]), keep=True)
+            results[i] = out
+
+    if batch:
+        _restoring(run, checkpoint, body)
+        for i in batch:
+            results[i]["moves"].append(f"restore {checkpoint['where']}")
+    return results
+
+
+def whatif_many(run: Any, requests: list[tuple[Edit, Any]], *, store: Any = None,
+                stages: bool = True) -> list[WhatIf | Refusal]:
+    """``whatif`` of each ``(edit, consumer)`` at the cursor, measured in one excursion: the
+    predictions are sealed first (each needs the cursor's values), the native measurements share
+    their rewinds and one final restore (``_measure_batch``), and each is then split and judged
+    at the cursor again. Every result is the one ``whatif`` returns, number for number (the
+    ``measured.moves`` trail names the shared steps); a request ``whatif`` refuses before
+    anything native runs comes back as its ``Refusal``. ``stages`` False: no per-stage
+    containment in the reports (a caller that drops it; the checks then run only where emulated
+    and native part beyond the floor, which the verdict needs), saving their layer probes."""
+    before = state_digest(run)
+    prepared: list[_Prepared | Refusal] = []
+    shared: dict = {}      # the emulated base chains, shared by the what-ifs of this call
+    for edit, consumer in requests:
+        try:
+            prepared.append(_prepare(run, edit, consumer, before=before, store=store,
+                                     shared=shared, stages=stages))
+        except Refusal as error:
+            prepared.append(error)
+    shared.clear()         # nothing wider than the call: the row models go here
+    ready = [item for item in prepared if isinstance(item, _Prepared)]
+    natives = iter(_measure_batch(run, ready) if ready else [])
+    after = state_digest(run) if ready else before
+    return [item if isinstance(item, Refusal) else _finish(run, item, next(natives), after)
+            for item in prepared]
 
 
 # --------------------------------------------------------------------------- report
@@ -727,9 +1144,39 @@ def _realised_reason(p: Plan, model: RowModel, found: dict[str, Any]) -> str:
     return reason if reason is not None else "no rounding bound for this chain"
 
 
-def _within(gap: Any, bound: Any, reason: str) -> dict[str, Any]:
+def _bound_note(reason: str, broken: dict[str, str] | None) -> dict[str, Any]:
+    """Why a worst-case interval is absent, as information (M56/M57): the stop where it stopped
+    being informative and the cause with its numbers, else the refused premise or the reason."""
+    if broken is not None and bound_state(reason) != "refused":
+        return {"bound_note": broken["text"], "bound_informative": False,
+                "bound_from": broken["stage"]}
+    return {"bound_note": f"no worst-case interval bound ({bound_state(reason)}: {reason})"}
+
+
+def _informative(bound: Any, size: Any, stage: str, wide: dict[str, str] | None
+                 ) -> dict[str, Any] | None:
+    """The note (and the recorded numeric bound) when a finite ``bound`` is at least ``size``,
+    the consumer's ``|exact delta|`` (it does not fix the change's sign): None when it says
+    something. Never printed as ``within bound <huge>``."""
+    from .forecast import consumer_note
+
+    worst = float(bound.reshape(-1).max())
+    size = float(size.abs().max()) if size is not None and size.numel() else float("inf")
+    note = consumer_note(worst, size, stage, wide)
+    if note is None:
+        return None
+    return {"bound_note": note["text"], "bound_informative": False, "bound_from": note["stage"],
+            "bound_value": num(worst, BOUND)}
+
+
+def _within(gap: Any, bound: Any, reason: str,
+            broken: dict[str, str] | None = None, size: Any = None, stage: str = "",
+            wide: dict[str, str] | None = None) -> dict[str, Any]:
     if bound is None:
-        return {"bound": {"state": "unresolved", "reason": reason}, "within_bound": None}
+        return _bound_note(reason, broken)
+    note = _informative(bound, size, stage, wide)
+    if note is not None:
+        return note
     return {"bound": num(float(bound.reshape(-1).max()), BOUND),
             "within_bound": bool((gap.abs() <= bound).all())}
 
@@ -748,8 +1195,8 @@ def _edit_view(run: Any, p: Plan, edit: Edit) -> dict[str, Any]:
                    stage_at=p.stage_at, first_read=p.edit_stop)
         if edit.dose is not None:
             out["dose"] = num(float(edit.dose), SUPPLIED)
-        if edit.origin is not None:
-            out["origin"] = dict(edit.origin)
+    if edit.origin is not None:
+        out["origin"] = dict(edit.origin)
     if isinstance(edit.value, torch.Tensor):
         out.update(sha256=tensor_digest(edit.value.contiguous()),
                    shape=list(edit.value.shape))
@@ -788,29 +1235,143 @@ class WhatIf:
     tensors: dict[str, Any]
 
 
-def _within_view(found: dict[str, Any]) -> dict[str, Any]:
+def _within_view(found: dict[str, Any], stage: str = "") -> dict[str, Any]:
     if found["exact_bound"] is None:
-        return {"bound": {"state": "unresolved", "reason": found["unbounded"]}}
+        return _bound_note(found["unbounded"], found.get("broken"))
+    premises = sorted(found["premises"] | {"round to nearest, no overflow or underflow",
+                                           "replace/add/scale: the operand is cast to "
+                                           "the model dtype and applied in one rounded "
+                                           "op; mix: float64, rounded once"})
+    note = _informative(found["exact_bound"], found["exact"], stage, found.get("wide"))
+    if note is not None:     # a finite interval at least |exact|: the note, the number kept
+        return {**note, "premises": premises}
     return {"bound": num(float(found["exact_bound"].reshape(-1).max()), BOUND),
-            "premises": sorted(found["premises"] | {"round to nearest, no overflow or underflow",
-                                                    "replace/add/scale: the operand is cast to "
-                                                    "the model dtype and applied in one rounded "
-                                                    "op; mix: float64, rounded once"})}
+            "premises": premises}
 
 
-def whatif(run: Any, edit: Edit, consumer: Any, *, before_native: Any = None) -> WhatIf:
-    """Predict, seal, measure and split the change of ``consumer`` (a ``Margin``, a ``Logit`` or
-    a stop address) under ``edit``; the session is left exactly where it was (checked by
-    ``state_digest``; a difference raises ``RuntimeError``). ``before_native(record)``
-    may persist and flush the sealed prediction; an exception prevents measurement.
-    """
-    torch = _torch()
+def _bound_scope(view: dict[str, Any], ahead: int) -> dict[str, Any]:
+    """What the sealed worst-case bound covers, said plainly (M54): it is interval arithmetic
+    on the dtype's rounding, compounded through every stop of the chain, and through each
+    forecast stop (one past the cursor, computed by the chain, not captured) on top of the
+    rounding of the operands. Each RMSNorm scales an input interval by about ``1/rms`` of its
+    input, so on a model with a small residual (the random tiny models: rms near 0.016) a
+    bound through a few forecast layers reaches 1e4..1e5 while the realised gap stays within
+    a spacing. ``wider_than_value``: the bound is at least ``|exact|``, so it does not fix the
+    change's sign; it never decides a verdict either way."""
+    bound, value = view.get("bound") or view.get("bound_value"), view.get("value")
+    if not isinstance(bound, dict) or not isinstance(value, dict) \
+            or not isinstance(value.get("value"), float):
+        return {}
+    wider = bound["value"] >= abs(value["value"])
+    scope = ("worst-case interval of the dtype's rounding through the chain"
+             + (f", {ahead} of its stops forecast from the cursor" if ahead else "")
+             + ("; at least |exact|: it does not fix the sign" if wider else ""))
+    return {"bound_scope": scope, "wider_than_value": wider}
+
+
+@dataclass
+class _Prepared:
+    """A what-if up to its sealed prediction: everything that needs the cursor's values."""
+
+    p: Plan
+    edit: Edit
+    checkpoint: dict[str, Any]
+    found: dict[str, Any]
+    prediction: dict[str, Any]
+    body: dict[str, Any]
+    record: dict[str, Any]
+    before: str
+    check: Any = None
+
+
+CHECK_ERRORS = (Refusal, KeyError, IndexError, ValueError, RuntimeError)
+
+
+def _checker(p: Plan, edit: Edit, found: dict[str, Any], report: bool = True) -> Any:
+    """``check(run, side, value)``, run while the native run of ``side`` (``edited`` or
+    ``base``) stands at the consumer: every stage the side's chain walked (the emulated chain's
+    stops, else the exact chain's), over every row of the chain, checked by its identity on its
+    native operands (``forecast.stage_checks``; ``stages``: the containment summary, M56); the
+    spacings between the native consumer value and the emulated one; beyond the floor, where
+    they part (``finding``, ``stage_parting`` across the rows, M55: not confirmed when a stage
+    lies outside its identity's bound on its native operands, else unresolved).
+
+    The checks read every walked port natively: a port inside a committed layer costs a probe
+    of that layer (one native layer call per layer not yet probed). With ``report`` False (a
+    caller that drops ``stages``, as ``reads``) they run only when needed: beyond the floor."""
+
+    def checked(run: Any, side: str) -> tuple[list[dict[str, Any]] | None, dict[str, Any]]:
+        walk = found.get(f"emulated_walk_{side}") or found[f"walk_{side}"]
+        skip: dict[tuple[int, str], str] = {}
+        if side == "edited" and edit.cell is not None:
+            skip = {(j, p.label): "reads the edited cell"
+                    for j in range(p.row, p.consumer_row + 1)}
+        try:
+            checks = stage_checks(run, walk, skip)
+        except CHECK_ERRORS as error:
+            return None, {"state": "refused", "reason": f"stages not checked ({error})"}
+        # no wall-clock field: `each` holds a what-if's numbers bit for bit against running it
+        # by hand; the cost is stated as a count (`cost`)
+        return checks, containment(checks, MEASURED)
+
+    def check(run: Any, side: str, value: Any) -> dict[str, Any]:
+        out: dict[str, Any] = {}
+        checks = stages = None
+        if report:
+            checks, stages = checked(run, side)
+            out["stages"] = stages
+        predicted = found.get(f"emulated_{side}")
+        if predicted is None:
+            return out
+        native = _scalar(p, value).reshape(predicted.shape)
+        step = spacing(magnitude(p.margin or p.logit, value), value.dtype)
+        gap = float((native - predicted).abs().max())
+        out["spacings"] = gap / step
+        if gap <= FLOOR_SPACINGS * step:
+            return out
+        if not report:
+            checks, stages = checked(run, side)
+        try:
+            if checks is None:
+                raise Refusal(stages["reason"])
+            chain = (_chain(run, p, bounds=False, model=EmulatedRowModel) if side == "base"
+                     else _emulated_edited(run, p, edit, found["emulated_written"]))
+            chain[-1].get(p.consumer_label)
+            finding = stage_parting(run, chain, MEASURED, checks)
+        except CHECK_ERRORS as error:
+            finding = {"verdict": "unresolved", "state": "unresolved",
+                       "reason": f"stages not checked ({error})"}
+        finding["reason"] = f"{side} run: {finding['reason']}"
+        out["finding"] = finding
+        return out
+
+    return check
+
+
+def _parting(native: dict[str, Any]) -> dict[str, Any] | None:
+    """The verdict-relevant finding of the measurement's checks: a ``not confirmed`` one first,
+    else the first ``unresolved`` one, else None."""
+    findings = [native[key]["finding"] for key in ("check_edited", "check_base")
+                if native.get(key) and "finding" in native[key]]
+    return next((f for f in findings if f["verdict"] == NOT_CONFIRMED),
+                findings[0] if findings else None)
+
+
+def _prepare(run: Any, edit: Edit, consumer: Any, before_native: Any = None,
+             before: str | None = None, store: Any = None,
+             shared: dict | None = None, stages: bool = True) -> _Prepared:
+    """Plan, hold the edit tensors, predict and seal; nothing native runs. ``before``: the
+    ``state_digest`` of the cursor when the caller already has it. ``store``: a project store
+    for the full operand list when it is over the record bound (see ``bound_operands``).
+    ``shared``: the emulated base chains of one call (``_emulated_base``). ``stages``: report
+    the per-stage containment (``_checker``)."""
     p = plan(run, edit, consumer)
-    before = state_digest(run)
+    if before is None:
+        before = state_digest(run)
     checkpoint = run.checkpoint()
     guard(run, checkpoint)
     try:
-        found = _predict(run, p, edit)
+        found = _predict(run, p, edit, shared=shared)
     except Refusal as error:
         found = {"reason": str(error)}
     reason = found.get("reason")
@@ -818,15 +1379,49 @@ def whatif(run: Any, edit: Edit, consumer: Any, *, before_native: Any = None) ->
     if reason is not None:
         prediction = {"state": "refused", "reason": reason}
     else:
-        exact_view = {"value": _claim(found["exact"], EXACT), **_within_view(found)}
+        exact_view = {"value": _claim(found["exact"], EXACT), **_within_view(found, p.consumer_stop)}
+        stops = len(run.stops())
+        ahead = sum(1 for j in range(p.row, p.consumer_row + 1) for i in range(stops)
+                    if p.here < (j, i) <= p.consumer_key)
+        if p.consumer_key > p.here:
+            exact_view["operands"] = {
+                "source": "forecast", "at": run.where,
+                "stops": num(ahead, EXACT),
+                "premise": f"the stops after {run.where} are this chain's own float64 values "
+                           "from the operands captured there (a forecast), not native ones; "
+                           "the exact change on measured operands is computed after the "
+                           "native run (split term operands)"}
+        else:
+            exact_view["operands"] = {"source": "measured", "at": run.where}
+        exact_view.update(_bound_scope(exact_view, ahead))
         if "linear" in found:
             linear_view: dict[str, Any] = {"value": _claim(found["linear"], LOCAL, "P14"),
                                            "meaning": "gradient of the consumer times the edit "
                                                       "displacement; not the effect"}
         else:
             linear_view = {"state": "refused", "reason": found["linear_reason"]}
+        if found.get("emulated") is not None:
+            emulated_view: dict[str, Any] = {
+                "value": _claim(found["emulated"], EXACT),
+                "base": _claim(found["emulated_base"], EXACT),
+                "edited": _claim(found["emulated_edited"], EXACT),
+                "premise": EMULATION_PREMISE,
+                "premises": [*EMULATION_PREMISES, WRITE_PREMISE],
+                "meaning": "the native change predicted bit for bit: base and edited chains "
+                           "with the dtype's rounding where eager HF rounds"}
+        else:
+            emulated_view = {"state": "refused",
+                             "reason": found.get("emulated_reason", "not computed")}
         prediction = {"state": "resolved", "linear": linear_view, "exact": exact_view,
-                      "base": _claim(found["base"], EXACT)}
+                      "emulated": emulated_view, "base": _claim(found["base"], EXACT)}
+        applied = [f"t{row}.{label} {' then '.join(e.op for e in edits)}"
+                   for row, stops in sorted(_port_edits(run, p).items())
+                   for label, edits in stops.items()]
+        if applied:     # M55: the chains honour every staged and committed edit of their rows
+            prediction["other_edits"] = {
+                "applied": applied[:MAX_ITEMS], "count": num(len(applied), EXACT),
+                "rule": "staged and committed port edits of the chain's rows, applied where the "
+                        "chains compute their stop (a captured value already carries its edit)"}
     body = {
         "schema": SCHEMA, "edit": _edit_view(run, p, edit),
         "consumer": {"address": p.consumer_text, "row": p.consumer_key[0],
@@ -836,22 +1431,81 @@ def whatif(run: Any, edit: Edit, consumer: Any, *, before_native: Any = None) ->
         "sealed_at": {"where": run.where, "cut": checkpoint["cut"], "row": p.here[0],
                       "index": p.here[1], "transition": int(checkpoint["transitions"])},
         "mode": p.mode, "prediction": prediction,
-        "method": {"exact": "port-program identities on values at the cursor, the edit "
-                            "written at the edited port (rows chained through the cache)",
+        "method": {"exact": "F(x1) - F(x0): port-program identities on values at the cursor, "
+                            "base and edited chains recomputing the same stops (those the edit "
+                            "reaches) with the port at its value x0 or the edit written there "
+                            "(rows chained through the cache)",
                    "linear": "forward-mode derivative of the same chain at the unedited point "
-                             "(P14)"},
-        "operands": [] if reason else found["operands"],
+                             "(P14)",
+                   "emulated": "the same chains with the dtype's rounding at every eager-HF "
+                               "rounding point (EmulatedRowModel); the base takes the stops at "
+                               "or before the cursor as captured"},
     }
+    body["procedure"] = procedure(run)    # the prefill split the edit and consumer rows run under
+    pointers: list[dict[str, Any]] = []
+    if reason:
+        body["operands"] = []
+    else:
+        body["operands"], summary = bound_list(
+            found["operands"], MAX_ITEMS, store=store, run=run,
+            keep=f"the first {MAX_ITEMS} in capture order (a row's ports, then its cache reads)")
+        if summary is not None:
+            tensor = summary["pointer"].pop("tensor", None)
+            pointers = [] if tensor is None else [tensor]
+            body["operands_summary"] = summary
     record = seal_record(session_id=run_session_id(run), kind="whatif",
                          model_identity=run.adapter.model_identity,
                          execution=dict(run.adapter.execution),
-                         authority=LOCAL if reason is None else SUPPLIED, body=body)
+                         authority=LOCAL if reason is None else SUPPLIED, body=body,
+                         pointers=pointers)
     # An evidence writer can persist/flush the sealed forecast before the first
     # counterfactual measurement. Writer failure prevents native release.
     if before_native is not None:
         before_native(record)
-    native = _measure(run, p, edit, checkpoint)
-    after = state_digest(run)
+    return _Prepared(p, edit, checkpoint, found, prediction, body, record, before,
+                     _checker(p, edit, found, stages) if reason is None else None)
+
+
+def load_operands(record: dict[str, Any], *, store: Any = None, run: Any = None
+                  ) -> list[dict[str, Any]]:
+    """The full operand list of a ``whatif`` record: ``body.operands`` itself within the record
+    bound, else the blob ``body.operands_summary.pointer`` names (project ``store``, or the
+    run's in-memory copy), checked against its sha256; ``ValueError`` if absent or changed."""
+    body = record["body"]
+    summary = body.get("operands_summary")
+    if summary is None:
+        return body["operands"]
+    pointer = summary["pointer"]
+    tensor = next((p for p in record["pointers"]
+                   if p.get("kind") == "tensor" and p.get("ref") == pointer.get("ref")), None)
+    return load_json(pointer, store=store, run=run, tensor=tensor)
+
+
+def whatif(run: Any, edit: Edit, consumer: Any, *, before_native: Any = None,
+           store: Any = None) -> WhatIf:
+    """Predict, seal, measure and split the change of ``consumer`` (a ``Margin``, a ``Logit`` or
+    a stop address) under ``edit``; the session is left exactly where it was (checked by
+    ``state_digest``; a difference raises ``RuntimeError``). ``before_native(record)``
+    may persist and flush the sealed prediction; an exception prevents measurement.
+    """
+    prep = _prepare(run, edit, consumer, before_native, store=store)
+    native = _measure(run, prep.p, edit, prep.checkpoint, prep.check)
+    return _finish(run, prep, native, state_digest(run))
+
+
+def _finish(run: Any, prep: _Prepared, native: dict[str, Any], after: str) -> WhatIf:
+    """Split and judge the native change of a prepared what-if (needs the cursor's values, so
+    the session is back where it was); ``after``: the session digest then.
+
+    The split and the verdict use the exact chain on measured operands: computed at the cursor
+    when the consumer was already captured at the seal (the sealed chain itself), else at the
+    consumer inside the measurement (``_base_ahead``); then ``operands`` (that minus the sealed
+    exact change) joins the split, so ``native = linear + nonlinear + operands + realisation +
+    rounding effect + residual`` still holds term by term. The verdict holds the native change
+    against the sealed emulated one (``verdict.decide``), the same at any cursor."""
+    p, edit, found, prediction = prep.p, prep.edit, prep.found, prep.prediction
+    body, record, before = prep.body, prep.record, prep.before
+    reason = found.get("reason")
     if after != before:
         raise RuntimeError("whatif did not leave the session where it was (state digest "
                            f"{before[:12]} -> {after[:12]})")
@@ -859,6 +1513,8 @@ def whatif(run: Any, edit: Edit, consumer: Any, *, before_native: Any = None) ->
     edited_label = native["edited_info"]["authority"] or MEASURED
     base, edited = _scalar(p, native["base"]), _scalar(p, native["edited"])
     change = edited - base
+    size = magnitude(p.margin or p.logit, native["base"], native["edited"])
+    dtype = native["base"].dtype
     measured = {"base": _claim(base, base_label), "edited": _claim(edited, edited_label),
                 "delta": _claim(change, MEASURED), "moves": native["moves"]}
     report: dict[str, Any] = {
@@ -866,23 +1522,21 @@ def whatif(run: Any, edit: Edit, consumer: Any, *, before_native: Any = None) ->
         "record": record["id"], "prediction": prediction, "measured": measured,
         "session": {"before": before, "after": after, "unchanged": True},
     }
+    stages = {side: native[f"check_{side}"]["stages"] for side in ("edited", "base")
+              if "stages" in (native.get(f"check_{side}") or {})}
+    if stages:      # each walked stage on its native operands (M56), information
+        report["stages"] = stages
     tensors = {"native_base": native["base"], "native_edited": native["edited"],
                "realised": native["realised"], "native_delta": change}
+    forecast = "posthoc" in native   # the operands past the cursor were forecast at the seal
+    post = native.get("posthoc")
+    if reason is None and post is not None and post.get("reason") is not None:
+        reason = f"the exact chain on measured operands is refused ({post['reason']})"
+        report["exact"] = {"state": "refused", "reason": reason}
     if reason is None:
-        if edit.cell is not None:
-            chain = _chain(run, p, bounds=True, skip=True,
-                           cell=_cell_writer(edit, native["realised"], "written"))
-        else:
-            shape = found["edit_shape"]
-            realised = f64(native["realised"]).reshape(shape)
-            chain = _chain(run, p, bounds=True, skip=True,
-                           overrides={p.label: lambda value, bound: (realised,
-                                                                     torch.zeros_like(realised))})
-        value, bound = _consumer_value(p, chain[-1])
-        at_realised = value - found["base"]
-        spread = None if bound is None or found["base_bound"] is None else (
-            bound + found["base_bound"])
-        exact = found["exact"]
+        if post is None:       # every operand was measured when the prediction was sealed
+            post = {**found, **_written_exact(run, p, edit, found, native["realised"])}
+        exact, at_realised, spread = found["exact"], post["at_realised"], post["spread"]
         native_change = change.reshape(exact.shape)
         terms = []
         if "linear" in found:
@@ -892,28 +1546,68 @@ def whatif(run: Any, edit: Edit, consumer: Any, *, before_native: Any = None) ->
                        "meaning": "exact minus linear: the curvature the first-order term misses"}]
         else:
             terms.append({"name": "exact", "value": _claim(exact, EXACT)})
+        if forecast:
+            terms.append({"name": "operands", "value": _claim(post["exact"] - exact, EXACT, "P20"),
+                          "meaning": "exact change on the measured operands minus the sealed "
+                                     "exact change on operands forecast from "
+                                     f"{body['sealed_at']['where']}"})
         rounding = native_change - at_realised
-        terms += [
-            {"name": "realisation", "value": _claim(at_realised - exact, EXACT, "P20"),
+        terms.append(
+            {"name": "realisation", "value": _claim(at_realised - post["exact"], EXACT, "P20"),
              "meaning": "exact change with the operand the edit wrote (read back) minus the "
-                        "exact change with the requested operand"},
-            {"name": "rounding", "value": _claim(rounding, MEASURED, "P20"),
-             "meaning": "native change minus the exact change with the written operand",
-             **_within(rounding, spread, _realised_reason(p, chain[-1], found))},
-        ]
+                        "exact change with the requested operand, both on measured operands"})
+        emulated = found.get("emulated")
+        if emulated is not None:
+            emulated = emulated.reshape(native_change.shape)
+            terms += [
+                {"name": "rounding effect", "value": _claim(emulated - at_realised, EXACT, "P20"),
+                 "meaning": "the emulated change (the dtype's rounding where eager HF rounds, "
+                            "sealed) minus the exact change with the written operand; derived "
+                            "under the emulation premises",
+                 **_within(rounding, spread, post["spread_reason"], post.get("spread_broken"),
+                           post["exact"], p.consumer_stop, post.get("spread_wide"))},
+                {"name": "residual", "value": _claim(native_change - emulated, MEASURED, "P20"),
+                 "meaning": "native change minus the emulated change"}]
+        else:
+            terms.append({"name": "rounding", "value": _claim(rounding, MEASURED, "P20"),
+                          "meaning": "native change minus the exact change with the written "
+                                     "operand (no emulated chain: "
+                                     f"{found.get('emulated_reason', 'not computed')})",
+                          **_within(rounding, spread, post["spread_reason"],
+                                    post.get("spread_broken"), post["exact"],
+                                    p.consumer_stop, post.get("spread_wide"))})
+        report["exact"] = {
+            "requested": _claim(post["exact"], EXACT, "P20"),
+            "written": _claim(at_realised, EXACT, "P20"),
+            "operands": "measured",
+            "meaning": "F(x1) - F(x0) (P09 section 1) on the native operands of the unedited "
+                       "run; written: x1 the value the edit wrote (read back). The verdict "
+                       "holds native against the written one",
+        }
         report["difference"] = {
             "native_minus_exact": {"value": _claim(native_change - exact, MEASURED),
                                    **_within(native_change - exact, found["exact_bound"],
-                                             found["unbounded"])},
+                                             found["unbounded"], found.get("broken"), exact,
+                                             p.consumer_stop, found.get("wide"))},
             **({"native_minus_linear": _claim(native_change - found["linear"], MEASURED)}
                if "linear" in found else {}),
         }
         report["split"] = {"proof": "P20", "terms": terms,
                            "rule": "native delta = sum of the terms (float64)"}
-        tensors.update(exact=exact, exact_bound=found["exact_bound"],
-                       linear=found.get("linear"), at_realised=at_realised, rounding_bound=spread)
+        tensors.update(exact=exact, exact_bound=found["exact_bound"], exact_measured=post["exact"],
+                       linear=found.get("linear"), at_realised=at_realised, rounding_bound=spread,
+                       emulated=emulated)
+        effect = decide(native_change, emulated, size, dtype, exact=at_realised,
+                        why_native_only=f"the emulated chain is refused "
+                                        f"({found.get('emulated_reason')})",
+                        parting=_parting(native))
     else:
         report["split"] = {"state": "refused", "reason": reason}
+        effect = decide(change, None, size, dtype,
+                        why_native_only=f"the prediction is refused ({reason})")
+    # the verdict follows the P20 accounting (measured), never the worst-case interval bound
+    report["effect"] = effect
+    report["state"] = effect["state"]
     return WhatIf(report, record, tensors)
 
 

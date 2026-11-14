@@ -16,6 +16,7 @@ from transformers.masking_utils import ALL_MASK_ATTENTION_FUNCTIONS, AttentionMa
 
 from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest
 from ..core import Adapter, Session
+from ..numerics import check_numeric_environment, live_numeric_environment
 from ..values import clone, describe, digest
 
 
@@ -330,10 +331,7 @@ class SharedQwenAdapter(Adapter):
                 "phase_relocation": False,
                 "private_capacity": capacity,
                 "temporary_attention_copies": "head-repeat-and-float32-casts",
-                "tf32_matmul": bool(torch.backends.cuda.matmul.allow_tf32),
-                "torch_num_threads": torch.get_num_threads(),
-                "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
-                "float32_matmul_precision": torch.get_float32_matmul_precision(),
+                **live_numeric_environment(),
                 "tensor_layout": "state-slot-bound-stride",
             },
             "resource_scope": {
@@ -360,15 +358,7 @@ class SharedQwenAdapter(Adapter):
                 "model parameters or buffers changed after adapter identity was frozen; "
                 "rewrap the model in a new adapter"
             )
-        expected = self.execution["numeric_scope"]
-        live = {
-            "tf32_matmul": bool(torch.backends.cuda.matmul.allow_tf32),
-            "torch_num_threads": torch.get_num_threads(),
-            "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
-            "float32_matmul_precision": torch.get_float32_matmul_precision(),
-        }
-        if any(expected[name] != value for name, value in live.items()):
-            raise ValueError("live numerical environment drifted from the execution ABI; rewrap")
+        check_numeric_environment(self.execution["numeric_scope"])
 
     @torch.inference_mode()
     def session(self, prefix: list[int], pending_token: int) -> Session:

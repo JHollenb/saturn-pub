@@ -1,20 +1,17 @@
 {
-  "bytes": 5911,
+  "bytes": 11198,
   "data": {
     "op": "circuit",
     "request_id": "circuit",
     "result": {
       "ablated": {
         "complement": [
-          "n15",
-          "n7",
-          "n12"
+          "n15"
         ],
         "retained": [
-          "n5",
-          "n6",
-          "n10",
-          "n11"
+          "n2",
+          "n4",
+          "n9"
         ]
       },
       "action": "show",
@@ -29,7 +26,7 @@
               "value": 2.0715980029488744e-15
             },
             "by_construction": true,
-            "meaning": "native consumer minus the sum of the depth-1 nodes: zero by construction (the remainders are defined as native minus the listed terms), so this checks float64 summation only; remainders_within is the rounding check",
+            "meaning": "native consumer minus the sum of the depth-1 nodes: zero by construction (the remainders are defined as native minus the listed terms), so this checks float64 summation only; remainders_within is the rounding check; subtrees under the unexamined `+N more` groups were never expanded, so nothing here covers them",
             "value": {
               "authority": "derived-exact",
               "proof": "P19",
@@ -46,10 +43,14 @@
           },
           "k": 2,
           "kind": "margin",
+          "ledger_id": {
+            "authority": "derived-exact",
+            "value": 2
+          },
           "premises": [
             "rho^F evaluated once at the native final state h_L (P19); not attributed to components"
           ],
-          "remainders_within": true,
+          "remainders_within": null,
           "root": {
             "address": "t3.M[4,9]",
             "children": [
@@ -222,7 +223,12 @@
                 "id": "n15",
                 "kind": "more",
                 "name": "+3 more",
-                "note": "+3 more, sum of their exact contributions",
+                "note": "+3 more, sum of their exact contributions; 3 have subtrees that were not expanded (not examined)",
+                "unexamined": true,
+                "unexamined_count": {
+                  "authority": "derived-exact",
+                  "value": 3
+                },
                 "value": {
                   "authority": "derived-exact",
                   "value": 0.0006486187961142677
@@ -254,98 +260,380 @@
             }
           },
           "schema": "mdb-circuit-v1",
+          "unexamined": true,
+          "unexamined_count": {
+            "authority": "derived-exact",
+            "value": 3
+          },
           "where": "t3.logits"
         },
-        "digest": "ef89528099ee50be26360fce87dfd03701d35f5633f3891ee02394e88967e655",
-        "execution_sha256": "54cb62b356d5532cde92a70f82c1a8ae7552fbcb7e276ca3e3fb210d0a23ca63",
-        "id": "ef89528099ee50be26360fce87dfd03701d35f5633f3891ee02394e88967e655",
+        "digest": "c074d7b7e67934e71efea3efaf021d0d9b0cc8359781f5b0b48036e5fa11fa5f",
+        "execution_sha256": "725442e80dfcf7a96dfa7b46a2baa4ca712ccb62231b99f3301e0ea3093759f0",
+        "id": "c074d7b7e67934e71efea3efaf021d0d9b0cc8359781f5b0b48036e5fa11fa5f",
         "kind": "circuit",
         "model_identity": "cb1ebc05fb0be6603ca90676fe18a6766881d56bc9efb35759ce6911ac877b6b",
         "pointers": [],
         "schema": "mdb-record-v2",
-        "session_id": "qwen2-8a16dcab78be"
+        "session_id": "qwen2-872f0e348e89"
       },
       "state": "resolved",
       "tests": [
         {
-          "base": {
-            "authority": "measured",
-            "value": -0.114013671875
-          },
-          "complement": {
-            "count": 7,
-            "delta": {
-              "authority": "measured",
-              "value": -0.004638671875
+          "circuit": "c074d7b7e67934e71efea3efaf021d0d9b0cc8359781f5b0b48036e5fa11fa5f",
+          "components": {
+            "by_unit": {
+              "embedding": {
+                "circuit": {
+                  "authority": "derived-exact",
+                  "value": 1
+                },
+                "complement": {
+                  "authority": "derived-exact",
+                  "value": 0
+                },
+                "from_groups": {
+                  "authority": "derived-exact",
+                  "value": 0
+                },
+                "not_listed": {
+                  "authority": "derived-exact",
+                  "value": 0
+                },
+                "total": {
+                  "authority": "derived-exact",
+                  "value": 1
+                },
+                "unexamined": {
+                  "authority": "derived-exact",
+                  "value": 0
+                }
+              },
+              "head": {
+                "circuit": {
+                  "authority": "derived-exact",
+                  "value": 2
+                },
+                "complement": {
+                  "authority": "derived-exact",
+                  "value": 2
+                },
+                "from_groups": {
+                  "authority": "derived-exact",
+                  "value": 2
+                },
+                "not_listed": {
+                  "authority": "derived-exact",
+                  "value": 0
+                },
+                "total": {
+                  "authority": "derived-exact",
+                  "value": 4
+                },
+                "unexamined": {
+                  "authority": "derived-exact",
+                  "value": 2
+                }
+              },
+              "mlp": {
+                "circuit": {
+                  "authority": "derived-exact",
+                  "value": 0
+                },
+                "complement": {
+                  "authority": "derived-exact",
+                  "value": 2
+                },
+                "from_groups": {
+                  "authority": "derived-exact",
+                  "value": 2
+                },
+                "not_listed": {
+                  "authority": "derived-exact",
+                  "value": 0
+                },
+                "total": {
+                  "authority": "derived-exact",
+                  "value": 2
+                },
+                "unexamined": {
+                  "authority": "derived-exact",
+                  "value": 2
+                }
+              }
             },
-            "edits": [
-              "t3.L1.m",
-              "t3.L0.m",
-              "t3.L0.o",
-              "t3.L1.p[h0,src=2|h0,src=3|h1,src=1|h1,src=2]"
-            ],
-            "measured": {
-              "authority": "measured",
-              "value": -0.11865234375
+            "circuit": {
+              "authority": "derived-exact",
+              "value": 3
             },
-            "nodes": [
-              "n15",
-              "n7",
-              "n12"
-            ],
-            "predicted_delta": {
-              "authority": "derived-local",
-              "value": -0.00022869209179575715
+            "coarsened": {
+              "grouped_sources": {
+                "authority": "derived-exact",
+                "value": 0
+              },
+              "rule": "a source-row node is its head",
+              "source_nodes": {
+                "authority": "derived-exact",
+                "value": 4
+              }
             },
-            "prediction": "minus the ablated contributions (direct path; rho and later layers frozen)"
+            "complement": {
+              "authority": "derived-exact",
+              "value": 4
+            },
+            "definition": "components at the consumer's row: the row input L0.h (embedding), each head's block of L<l>.A (o_proj input), and per layer the MLP output L<l>.m, or each neuron of L<l>.f where the circuit expanded that MLP into neurons; source-row nodes count as their head (p is not patched); remainder, bias and edit nodes are not components",
+            "from_groups": {
+              "authority": "derived-exact",
+              "value": 4
+            },
+            "groups": "`+N more` groups and unexamined members are in the complement; paged groups were examined (enumerated from the node tree)",
+            "list": {
+              "bytes": {
+                "authority": "derived-exact",
+                "value": 473
+              },
+              "ref": "9855a6786103d08e6807dd46d5d3b8d6ad24d8b0dbafcbc848f5a76c93d3a01d",
+              "sha256": "9e68f70f5cc7126101b56ec1d122c03000421e2ad857a18a5b2f81fea21cd75a",
+              "state": "stored",
+              "tensor_sha256": "9e68f70f5cc7126101b56ec1d122c03000421e2ad857a18a5b2f81fea21cd75a"
+            },
+            "not_listed": {
+              "authority": "derived-exact",
+              "value": 0
+            },
+            "rows": "the test is over the consumer row's components; earlier rows are this run's (they reach the consumer row only through the cache, which a fully patched A does not read)",
+            "total": {
+              "authority": "derived-exact",
+              "value": 7
+            },
+            "unexamined": {
+              "authority": "derived-exact",
+              "value": 4
+            }
           },
           "consumer": "t3.M[4,9]",
-          "excluded": {
-            "nodes": [
-              "n2"
-            ],
-            "reason": "the embedding is ablated in neither set: zeroing t3.L0.h removes the input of every other node, not its direct path"
-          },
-          "id": 2,
-          "record": "ef89528099ee50be26360fce87dfd03701d35f5633f3891ee02394e88967e655",
-          "retained": {
-            "count": 4,
-            "delta": {
+          "cost": {
+            "passes": {
+              "authority": "derived-exact",
+              "value": 4
+            },
+            "per_pass": {
+              "base": {
+                "calls": {
+                  "completed": {
+                    "authority": "measured",
+                    "value": 0
+                  },
+                  "entered": {
+                    "authority": "measured",
+                    "value": 0
+                  }
+                },
+                "edits": {
+                  "authority": "derived-exact",
+                  "value": 0
+                },
+                "seconds": {
+                  "authority": "measured",
+                  "value": 0.0003058339934796095
+                }
+              },
+              "full": {
+                "calls": {
+                  "completed": {
+                    "authority": "measured",
+                    "value": 4
+                  },
+                  "entered": {
+                    "authority": "measured",
+                    "value": 11
+                  }
+                },
+                "edits": {
+                  "authority": "derived-exact",
+                  "value": 5
+                },
+                "seconds": {
+                  "authority": "measured",
+                  "value": 0.041781875072047114
+                }
+              },
+              "keep": {
+                "calls": {
+                  "completed": {
+                    "authority": "measured",
+                    "value": 4
+                  },
+                  "entered": {
+                    "authority": "measured",
+                    "value": 9
+                  }
+                },
+                "edits": {
+                  "authority": "derived-exact",
+                  "value": 3
+                },
+                "seconds": {
+                  "authority": "measured",
+                  "value": 0.03896883316338062
+                }
+              },
+              "ko": {
+                "calls": {
+                  "completed": {
+                    "authority": "measured",
+                    "value": 4
+                  },
+                  "entered": {
+                    "authority": "measured",
+                    "value": 8
+                  }
+                },
+                "edits": {
+                  "authority": "derived-exact",
+                  "value": 2
+                },
+                "seconds": {
+                  "authority": "measured",
+                  "value": 0.03864374989643693
+                }
+              }
+            },
+            "reference_read": {
+              "calls": {
+                "completed": {
+                  "authority": "measured",
+                  "value": 2
+                },
+                "entered": {
+                  "authority": "measured",
+                  "value": 2
+                }
+              },
+              "what": "layer calls to read the reference values (committed reads, cached per layer)"
+            },
+            "seconds": {
               "authority": "measured",
-              "value": -0.029541015625
-            },
-            "edits": [
-              "t3.L1.p[h0,src=0|h0,src=1|h1,src=0|h1,src=3]"
-            ],
-            "measured": {
+              "value": 0.12943550013005733
+            }
+          },
+          "full_equals_ref": true,
+          "full_meaning": "patching every component reproduces the reference's consumer bit for bit: the components are the whole row",
+          "id": {
+            "authority": "derived-exact",
+            "value": 2
+          },
+          "margins": {
+            "base": {
               "authority": "measured",
-              "value": -0.1435546875
+              "value": -0.114013671875
             },
-            "nodes": [
-              "n5",
-              "n6",
-              "n10",
-              "n11"
-            ],
-            "predicted_delta": {
-              "authority": "derived-local",
-              "value": -0.03110063426616396
+            "full": {
+              "authority": "measured",
+              "value": -0.1396484375
             },
-            "prediction": "minus the ablated contributions (direct path; rho and later layers frozen)"
+            "keep": {
+              "authority": "measured",
+              "value": -0.10986328125
+            },
+            "ko": {
+              "authority": "measured",
+              "value": -0.144775390625
+            },
+            "ref": {
+              "authority": "measured",
+              "value": -0.1396484375
+            }
           },
-          "rule": "|consumer change with everything but the retained set ablated| <= tolerance x |base|",
-          "tolerance": {
-            "authority": "supplied",
-            "value": 0.1
+          "meaning": {
+            "base": "this run, nothing patched",
+            "full": "every component patched from the reference",
+            "keep": "keep-only: every component outside the circuit patched from the reference; the circuit's components computed natively",
+            "ko": "knock-out: only the circuit's components patched from the reference",
+            "ref": "the consumer read in the reference run at its @last row"
           },
-          "verdict": "sufficient at this dose"
+          "nodes": {
+            "circuit": {
+              "count": {
+                "authority": "derived-exact",
+                "value": 3
+              },
+              "refs": [
+                "n2",
+                "n4",
+                "n9"
+              ]
+            },
+            "group": {
+              "count": {
+                "authority": "derived-exact",
+                "value": 1
+              },
+              "refs": [
+                "n15"
+              ]
+            }
+          },
+          "ratios": {
+            "faithfulness": {
+              "authority": "measured",
+              "value": 1.161904761904762
+            },
+            "formulas": {
+              "faithfulness": "(keep - ref) / (base - ref)",
+              "knockout_share": "(base - ko) / (base - ref)"
+            },
+            "knockout_share": {
+              "authority": "measured",
+              "value": 1.2
+            },
+            "meaning": {
+              "faithfulness": "the share of base - ref that the circuit keeps when everything else takes the reference's values (1: all of it, 0: none)",
+              "knockout_share": "the share of base - ref that patching only the circuit removes (1: all of it, 0: none)"
+            }
+          },
+          "reading": {
+            "keep_vs_base": "keep differs from base",
+            "keep_vs_ref": "keep differs from ref",
+            "knockout": "measurable effect",
+            "rule": "each word compares two measured margins at one spacing (resolution.rule); no other threshold"
+          },
+          "record": "d010ede8025f16a9907de830cc110262c369fcd36619e0b995c8f2e43b80e41b",
+          "reference": {
+            "edited": false,
+            "kind": "run",
+            "name": "clean",
+            "row": {
+              "authority": "derived-exact",
+              "value": 3
+            },
+            "where": "t3.logits"
+          },
+          "resolution": {
+            "dtype": "bfloat16",
+            "magnitude": {
+              "authority": "measured",
+              "value": 0.1005859375
+            },
+            "rule": "one spacing = the gap between adjacent values of the consumer's dtype at the largest |logit| the consumer read in base, ref, ko and keep; a difference under one spacing is not measurable",
+            "spacing": {
+              "authority": "derived-exact",
+              "value": 0.00048828125
+            }
+          },
+          "schema": "mdb-circuit-test-v1",
+          "session": {
+            "after": "b64d7b9d9c9b684a541d1494f1f30514b313bfeb588f96e6b2c28e74991a3430",
+            "before": "b64d7b9d9c9b684a541d1494f1f30514b313bfeb588f96e6b2c28e74991a3430",
+            "unchanged": true
+          },
+          "where": "t3.logits"
         }
       ]
     },
-    "seq": 24,
+    "seq": 9,
     "where": "t3.logits"
   },
-  "digest": "c69405299886681b9e65e30e8b2e4941afe1ca3cabb8c997162d46364a087b0e",
+  "digest": "d42952fbc291e3a8072e2920ba68f25ac7cd17de939595e3949169fd50afb075",
   "schema": "mdb-view-op-v1",
   "state": "resolved"
 }

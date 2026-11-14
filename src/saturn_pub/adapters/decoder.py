@@ -23,7 +23,13 @@ import transformers
 from transformers import DynamicCache
 
 from ..contracts import ExecutionPoint, SlotSpec, SurfaceManifest, TransitionSpec
-from ..core import Adapter, Session
+from ..core import Adapter, Session, seal_append
+from ..numerics import (
+    check_numeric_environment,
+    live_numeric_environment,
+    measure_accumulation,
+    needs_accumulation_measurement,
+)
 from ..values import clone, digest, identity
 from ._residency import BlockResidency
 
@@ -503,7 +509,16 @@ SUPPORTED_FAMILIES = (
 
 
 class DecoderAdapter(Adapter):
-    """Generic native decoder adapter. Same session grammar as ``QwenAdapter``."""
+    """Generic native decoder adapter. Same session grammar as ``QwenAdapter``.
+
+    ``shares_state``: ``advance`` never writes a tensor of its input state in place (the K/V
+    tensors the native layer sees are copies made by ``_cache``; the hidden carrier and the
+    logits are only read), and its result keeps the input's tensor for every K/V layer the
+    transition did not change, so consecutive cuts of a Session share them. Native calls run
+    under ``torch.no_grad`` (version counters kept) rather than inference mode.
+    """
+
+    shares_state = True
 
     def __init__(
         self,
@@ -549,6 +564,14 @@ class DecoderAdapter(Adapter):
         self.backbone = getattr(model, spec.backbone)
         self._layer_modules = getattr(self.backbone, spec.layers)
         self.layers = len(self._layer_modules)
+        layer_types = getattr(config, "layer_types", None)
+        if layer_types is not None and len(layer_types) != self.layers:
+            raise ValueError(
+                f"config.layer_types has {len(layer_types)} entries but the model has "
+                f"{self.layers} decoder layers (num_hidden_layers = {config.num_hidden_layers}); "
+                f"layer_types must have exactly {self.layers} entries, so trim it together with "
+                "num_hidden_layers when truncating a config"
+            )
         self.hidden_size = config.hidden_size
         self.vocab_size = config.vocab_size
         self.max_positions = config.max_position_embeddings
@@ -606,17 +629,25 @@ class DecoderAdapter(Adapter):
             "model_program": self._model_program(),
             "kernel": {"attention": "transformers-eager", "cache": "DynamicCache"},
             "numeric_scope": {
-                "inference_mode": True,
+                # native calls run under torch.no_grad (not inference mode) so that state
+                # tensors keep version counters: the shares_state guard needs them
+                "inference_mode": False,
+                "grad_enabled": False,
                 "autocast": False,
-                "tf32_matmul": bool(torch.backends.cuda.matmul.allow_tf32),
-                "torch_num_threads": torch.get_num_threads(),
-                "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
-                "float32_matmul_precision": torch.get_float32_matmul_precision(),
+                **live_numeric_environment(),
                 "tensor_layout": "state-slot-bound-stride",
             },
             "sampler": "greedy",
             "parity": parity,
         }
+        if self._residency.mode == "resident" and needs_accumulation_measurement(
+            self.device.type, self.dtype
+        ):
+            # the accumulation precision of native 16-bit matmuls, measured on this device
+            # (a handful of linear stages, no forward); bounds read it from the scope
+            self.execution["numeric_scope"]["accumulation"] = measure_accumulation(
+                self._layer_modules, getattr(model, "lm_head", None)
+            )
         # Resident execution keeps the historical contract verbatim; only streamed residency
         # adds a field, so existing resident receipts stay byte-identical.
         if self._residency.mode == "streamed":
@@ -717,27 +748,94 @@ class DecoderAdapter(Adapter):
             raise ValueError(
                 "model configuration changed after adapter identity was frozen; rewrap"
             )
-        expected = self.execution["numeric_scope"]
-        current = {
-            "tf32_matmul": bool(torch.backends.cuda.matmul.allow_tf32),
-            "torch_num_threads": torch.get_num_threads(),
-            "deterministic_algorithms": torch.are_deterministic_algorithms_enabled(),
-            "float32_matmul_precision": torch.get_float32_matmul_precision(),
-        }
-        if any(expected[name] != value for name, value in current.items()):
-            raise ValueError("live numerical environment drifted from the execution ABI; rewrap")
+        check_numeric_environment(self.execution["numeric_scope"])
 
     # --- external key/value cache -------------------------------------------------------
 
     def _cache(self, keys: Sequence[torch.Tensor], values: Sequence[torch.Tensor]) -> DynamicCache:
+        """A native cache holding copies of ``keys``/``values`` (``DynamicCache.update`` copies:
+        the native layer and its hooks never see the state's own tensors)."""
         cache = DynamicCache(config=self.model.config)
         for index, (key, value) in enumerate(zip(keys, values)):
             if key.shape[-2]:
                 cache.update(key.to(self.device), value.to(self.device), index)
         return cache
 
+    @staticmethod
+    def _populated(cache: DynamicCache) -> list[tuple[Any, ...] | None]:
+        """Per layer: ``(keys, keys version, values, values version)`` of the tensors ``_cache``
+        put in the cache, or None for a layer it left empty (or whose tensors keep no version
+        counter, as under inference mode: a write to them could not be told)."""
+        out: list[tuple[Any, ...] | None] = []
+        for layer in cache.layers:
+            key, value = getattr(layer, "keys", None), getattr(layer, "values", None)
+            if key is None or value is None or key.is_inference() or value.is_inference():
+                out.append(None)
+            else:
+                out.append((key, key._version, value, value._version))
+        return out
+
     def _kv_shape(self, length: int) -> tuple[int, int, int, int]:
         return (1, self.num_kv_heads, length, self.head_dim)
+
+    @staticmethod
+    def _same_layout(a: torch.Tensor, b: torch.Tensor) -> bool:
+        return (
+            a.shape == b.shape
+            and a.stride() == b.stride()
+            and a.dtype == b.dtype
+            and a.device == b.device
+        )
+
+    def _cache_values_shared(
+        self,
+        cache: DynamicCache,
+        populated: Sequence[tuple[Any, ...] | None],
+        keys: Sequence[torch.Tensor],
+        values: Sequence[torch.Tensor],
+    ) -> tuple[list[torch.Tensor], list[torch.Tensor]]:
+        """``_cache_values`` with the input's own tensors for every layer the transition left
+        alone: the cache still holds the very copy ``_cache`` put there, unwritten (same object,
+        same version counter), so it is bitwise the input, which is kept instead (same layout
+        required). A layer the native code or a cell edit replaced or wrote is taken over."""
+        out_keys, out_values = self._cache_values(cache)
+        for index, entry in enumerate(populated):
+            layer = cache.layers[index]
+            current_key = getattr(layer, "keys", None)
+            current_value = getattr(layer, "values", None)
+            if entry is None:
+                if current_key is None and current_value is None:
+                    out_keys[index], out_values[index] = keys[index], values[index]
+                continue
+            key, key_version, value, value_version = entry
+            if (
+                current_key is key
+                and current_value is value
+                and key._version == key_version
+                and value._version == value_version
+                and self._same_layout(key, keys[index])
+                and self._same_layout(value, values[index])
+            ):
+                out_keys[index], out_values[index] = keys[index], values[index]
+        for index in range(len(out_keys)):
+            for new, old in ((out_keys[index], keys[index]), (out_values[index], values[index])):
+                self._declare_append(new, old)
+        return out_keys, out_values
+
+    @staticmethod
+    def _declare_append(new: torch.Tensor, old: torch.Tensor) -> None:
+        """Declare a layer tensor the transition grew by rows (``seal_append``) when its leading
+        rows are bitwise the input's, so a cut holds only the appended rows of it."""
+        if new is old or new.dim() != 4 or old.dim() != 4:
+            return
+        rows = old.shape[2]
+        if new.shape[2] <= rows or new.shape[:2] != old.shape[:2] or new.shape[3] != old.shape[3]:
+            return
+        if new.dtype != old.dtype or new.device != old.device:
+            return
+        if rows and not torch.equal(new.narrow(2, 0, rows), old):
+            return  # a cell edit rewrote cached rows: the tensor is held whole
+        seal_append(new, old, 2)
 
     def _cache_values(self, cache: DynamicCache) -> tuple[list[torch.Tensor], list[torch.Tensor]]:
         """The cache's per-layer tensors, taken over without a copy: every one is a fresh
@@ -761,7 +859,7 @@ class DecoderAdapter(Adapter):
     def _embed(self, tokens: torch.Tensor) -> torch.Tensor:
         run = self._residency.run
         embed_module = getattr(self.backbone, self.spec.embed)
-        hidden = run(embed_module, tokens[:, -1:])
+        hidden = run(embed_module, tokens[:, -1:].clone())  # modules never see state tensors
         if self._embed_scale is not None:
             hidden = hidden * torch.tensor(self._embed_scale, dtype=hidden.dtype)
         if self.spec.position == "absolute":
@@ -848,33 +946,63 @@ class DecoderAdapter(Adapter):
 
     # --- session / grammar --------------------------------------------------------------
 
-    @torch.inference_mode()
-    def session(self, token_ids: Sequence[int]) -> Session:
+    @torch.no_grad()
+    def session(self, token_ids: Sequence[int], *, prefill: int | None = None) -> Session:
+        """A session over the prompt ``token_ids``: the first ``prefill`` rows are computed in
+        one batched native call (default: all but the last), the next row is pending.
+
+        With ``prefill`` below ``len(token_ids) - 1`` the remaining prompt rows are stepped one
+        row at a time by the same transitions as generated rows: the state then holds the whole
+        prompt in the ``prompt`` slot and the ``sample`` transition of a prompt row writes the
+        prompt's next token (``forced_token``) instead of the argmax. The default procedure has
+        no ``prompt`` slot, so its states, cuts and fingerprints are those of before the slot
+        existed. The split is part of the cut: a batched and a stepped row can differ in their
+        cached K/V bits, and the root cut of each procedure is a different state."""
         self.validate_execution()
         tokens = torch.tensor([list(token_ids)], dtype=torch.long, device=self.device)
         if tokens.shape[-1] < 1:
             raise ValueError("at least one pending token is required")
-        self._guard_window(tokens.shape[-1])
+        count = tokens.shape[-1]
+        if prefill is None:
+            prefill = count - 1
+        if isinstance(prefill, bool) or not isinstance(prefill, int) or not 0 <= prefill < count:
+            raise ValueError(f"prefill must be an integer in 0..{count - 1} (the prompt has "
+                             f"{count} tokens; the row after the prefilled ones is pending)")
+        self._guard_window(count)
+        prompt = tokens
+        tokens = tokens[:, : prefill + 1].clone()
         cache = DynamicCache(config=self.model.config)
-        if tokens.shape[-1] > 1:
+        if prefill > 0:
             if self._residency.mode == "streamed":
                 cache = self._streamed_backbone(tokens[:, :-1])[1]
             else:
                 cache = self.model(tokens[:, :-1], use_cache=True).past_key_values
         keys, values = self._cache_values(cache)
-        return Session(
-            self,
-            {
-                "tokens": tokens,
-                "keys": keys,
-                "values": values,
-                "layer": 0,
-                "phase": "embed",
-                "hidden": None,
-                "logits": None,
-                "sampled_token": None,
-            },
-        )
+        state = {
+            "tokens": tokens,
+            "keys": keys,
+            "values": values,
+            "layer": 0,
+            "phase": "embed",
+            "hidden": None,
+            "logits": None,
+            "sampled_token": None,
+        }
+        if prefill < count - 1:
+            state["prompt"] = prompt
+        return Session(self, state)
+
+    @staticmethod
+    def _forced(state: Mapping[str, Any]) -> torch.Tensor | None:
+        """The prompt token the pending row's ``sample`` writes (``[1, 1]``), or None when the
+        row is the prompt's last (or past it) and ``sample`` is the native argmax."""
+        prompt = state.get("prompt")
+        if prompt is None:
+            return None
+        row = state["tokens"].shape[1]
+        if row >= prompt.shape[1]:
+            return None
+        return prompt[:, row : row + 1].clone()
 
     def _guard_window(self, count: int) -> None:
         if self.sliding_window is not None and count > self.sliding_window:
@@ -899,7 +1027,7 @@ class DecoderAdapter(Adapter):
             "embed": f"{self.spec.backbone}.{self.spec.embed}",
             "normalization": f"{self.spec.backbone}.{self.spec.final_norm}",
             "readout": "lm_head",
-            "sample": "greedy_argmax",
+            "sample": "greedy_argmax" if self._forced(state) is None else "forced_token",
             "commit": "token_commit",
         }.get(
             phase,
@@ -931,14 +1059,15 @@ class DecoderAdapter(Adapter):
             reads, writes = {
                 "normalization": (("hidden",), ("hidden", "phase")),
                 "readout": (("hidden",), ("logits", "phase")),
-                "sample": (("logits",), ("sampled_token", "phase")),
+                "sample": (("logits",) if self._forced(state) is None else ("tokens", "prompt"),
+                           ("sampled_token", "phase")),
                 "commit": (
                     ("tokens", "sampled_token"),
                     ("tokens", "hidden", "sampled_token", "layer", "phase"),
                 ),
             }[phase]
         else:
-            reads = ("hidden", "tokens")
+            reads = ("hidden", "tokens") + (("prompt",) if "prompt" in state else ())
             writes = ("logits", "tokens", "hidden", "layer", "phase")
         return TransitionSpec(
             self.point(state).next_operation,
@@ -1024,6 +1153,16 @@ class DecoderAdapter(Adapter):
                 },
             ),
         )
+        if "prompt" in state:  # a stepped prompt: the tokens its sample transitions force
+            slots += (
+                SlotSpec(
+                    "prompt",
+                    role="decision",
+                    producer="prefill",
+                    consumer="forced_token",
+                    schema=tensor_schema(state["prompt"]),
+                ),
+            )
         return SurfaceManifest(
             slots=slots,
             state_schema=f"saturn-pub-decoder-{self.spec.model_type}-state-v1",
@@ -1069,6 +1208,8 @@ class DecoderAdapter(Adapter):
             "logits",
             "sampled_token",
         }
+        if "prompt" in state:
+            expected_keys.add("prompt")
         if set(state) != expected_keys:
             raise ValueError("decoder state schema keys differ from the execution contract")
         tokens = state["tokens"]
@@ -1149,15 +1290,37 @@ class DecoderAdapter(Adapter):
             raise ValueError("invalid sampled token")
         if (phase == "commit") != (sampled is not None):
             raise ValueError("sampled token exists only at the commit boundary")
+        prompt = state.get("prompt")
+        if prompt is not None:
+            if (
+                prompt.ndim != 2
+                or prompt.shape[0] != 1
+                or prompt.dtype != torch.long
+                or prompt.device != self.device
+                or prompt.shape[1] < 2
+            ):
+                raise ValueError("a stepped prompt is batch-one integer tokens, two or more")
+            shared = min(tokens.shape[1], prompt.shape[1])
+            if not torch.equal(tokens[:, :shared], prompt[:, :shared]):
+                raise ValueError("the tokens differ from the stepped prompt they follow")
+            forced = self._forced(state)
+            if sampled is not None and forced is not None and not torch.equal(sampled, forced):
+                raise ValueError("a prompt row's sampled token must be the prompt's next token")
 
     def read(self, state: Mapping[str, Any], address: str) -> Any:
         """Read a listed address, or one of the cache/decision slots that exist in the state.
 
         ``keys`` and ``values`` (per-layer cache tensors) are always present; ``sampled_token``
-        only at the operation-granularity commit boundary. They are readable here but are not in
-        ``addresses()``, so frames, cuts and receipts are unchanged.
+        only at the operation-granularity commit boundary; ``prompt`` only in a session whose
+        prompt rows are stepped (``session(..., prefill=K)``). They are readable here but are
+        not in ``addresses()``, so frames, cuts and receipts are unchanged.
         """
         if address in ("keys", "values"):
+            return clone(state[address])
+        if address == "prompt":
+            if state.get("prompt") is None:
+                raise ValueError(f"unsupported address at {self.boundary(state)}: {address} "
+                                 "(this session prefilled its prompt)")
             return clone(state[address])
         if address == "sampled_token":
             if state["sampled_token"] is None:
@@ -1221,14 +1384,16 @@ class DecoderAdapter(Adapter):
                     bare, layer, phase = True, 0, None
         return tuple(out)
 
-    @torch.inference_mode()
+    @torch.no_grad()
     def advance(
         self, state: Mapping[str, Any], *, ports: Any = None, validated: bool = False
     ) -> Mapping[str, Any]:
         """The next native transition of ``state``, which is left unchanged.
 
         The result shares the tensors of the slots the transition does not write with
-        ``state`` (they are never written in place) and holds new tensors for the rest.
+        ``state`` (they are never written in place) and holds new tensors for the rest; in a
+        layer transition every K/V layer other than the ones the layer (or a cell edit) wrote
+        is the input's own tensor (``shares_state``).
         ``validated``: the caller validated ``state`` and the executor (``validate_execution``)
         in this same call, so the entry validation is not repeated.
         """
@@ -1243,12 +1408,17 @@ class DecoderAdapter(Adapter):
             out["logits"] = None
             out["phase"] = "layer"
             return out
-        hidden = out["hidden"].to(self.device)
+        # native modules and their hooks get a private copy of the carrier (as they got a copy of
+        # the whole state before shares_state): a hook writing its input cannot reach the state
+        hidden = out["hidden"].to(self.device, copy=True)
         layer = out["layer"]
         if layer < self.layers:
             cache = self._cache(out["keys"], out["values"])
+            populated = self._populated(cache)
             out["hidden"] = self._run_layer(layer, hidden, cache, tokens.shape[1] - 1, ports)
-            out["keys"], out["values"] = self._cache_values(cache)
+            out["keys"], out["values"] = self._cache_values_shared(
+                cache, populated, out["keys"], out["values"]
+            )
             out["layer"] = layer + 1
             if self.granularity == "operation" and out["layer"] == self.layers:
                 out["phase"] = "normalization"
@@ -1263,10 +1433,13 @@ class DecoderAdapter(Adapter):
             )
             out["phase"] = "sample"
         elif self.granularity == "operation" and out["phase"] == "sample":
-            out["sampled_token"] = out["logits"].argmax(-1, keepdim=True)
+            forced = self._forced(out)  # a stepped prompt row: the prompt's next token
+            out["sampled_token"] = (out["logits"].argmax(-1, keepdim=True) if forced is None
+                                    else forced)
             out["phase"] = "commit"
         elif self.granularity == "operation" and out["phase"] == "commit":
             out["tokens"] = torch.cat((tokens, out["sampled_token"]), dim=-1)
+            seal_append(out["tokens"], tokens, 1)  # cuts hold the new token only
             out["hidden"] = None
             out["sampled_token"] = None
             out["layer"] = 0
@@ -1278,7 +1451,10 @@ class DecoderAdapter(Adapter):
                 run(self.model.lm_head, run(final_norm, hidden))[:, -1]
             )
             out["logits"] = logits
-            out["tokens"] = torch.cat((tokens, logits.argmax(-1, keepdim=True)), dim=-1)
+            forced = self._forced(out)
+            chosen = logits.argmax(-1, keepdim=True) if forced is None else forced
+            out["tokens"] = torch.cat((tokens, chosen), dim=-1)
+            seal_append(out["tokens"], tokens, 1)  # cuts hold the new token only
             out["hidden"] = None
             out["layer"] = 0
             out["phase"] = "embed"

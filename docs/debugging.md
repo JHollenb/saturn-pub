@@ -2,7 +2,10 @@
 
 This is the `saturn_pub` debugger. The separate `mdb` package provides
 [durable model debugging](mdb.md), with its own
-[debugger and memory guide](../packages/mdb/docs/USAGE.md#debugger-symbols-and-circuits).
+[debugger and memory guide](../packages/mdb/docs/USAGE.md#debugger-symbols-and-circuits)
+(the lane-era tool). For a gdb-style debugger that stops inside each decoder layer at named
+ports, with checkpoints, edits, `whatif`, `forecast` and `verify`, see the engine in the
+[package README](../packages/mdb/README.md) (`mdb engine`, `mdb serve`).
 
 For qualified symbols, native-operation provenance, temporal trajectory comparisons, and
 a complete repair demonstration, see [symbols and causal paths](debug-symbols-paths.md).

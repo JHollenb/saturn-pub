@@ -7,7 +7,7 @@ package whose workflow and numerical contract fit the job.
 | Package | Starting point | Best fit |
 | --- | --- | --- |
 | `saturn-pub` / `saturn_pub` | [Capability usage guide](usage.md) | Local causal experiments, interpretability integrations and reversible training |
-| `mdb-runtime` / `mdb` | [MDB overview and quickstart](mdb.md) | Durable debugger sessions, managed branch memory and resumable model execution |
+| `mdb-runtime` / `mdb` | [Engine README](../packages/mdb/README.md) (current); [MDB overview and quickstart](mdb.md) (lane-era) | A port-level debugger for decoder models (`mdb engine`, `mdb serve`); the lane-era durable sessions, managed branch memory and resumable execution |
 
 See [two packages, one repository](monorepo.md) for installation, builds, separate
 test suites and migration details. Installing one package does not install the other.

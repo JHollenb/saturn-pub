@@ -186,6 +186,27 @@ describe('lifetime strip and sites', () => {
     expect(short).toContain('…');
   });
 
+  it('lists named symbols from transplants with their measured delta and binding here', () => {
+    const env = structuredClone(symbolsMargin) as unknown as Env;
+    const result = env.data.result as Record<string, unknown>;
+    result.named = [
+      { symbol: 'subj', source: 't@subject.L1.v[kv0]', consumer: 't5.M[4,9]',
+        delta: { value: -0.014526, authority: 'measured' }, verdict: 'effect', record: 'r1',
+        here: { address: 't1.L1.v[kv0]', row: 1, how: 'its declaring prompt' } },
+      { symbol: 'far', source: 't1.L0.v[kv0]', consumer: 't5.M[4,9]',
+        delta: { value: 0.5, authority: 'measured' }, verdict: 'effect', record: 'r2',
+        here: { state: 'refused', reason: 'absolute row t1; the prefix differs' } },
+    ];
+    const html = render({ slot: slot(env as never, 'symbols consumer=M[4,9]') });
+    const named = html.slice(html.indexOf('data-testid="symbols-named"'));
+    expect(named).toContain('data-named="subj"');
+    expect(named).toContain('t@subject.L1.v[kv0]');
+    expect(named).toContain('t1.L1.v[kv0]');
+    expect(named).toContain('-0.014526');
+    expect(named).toContain('refused: absolute row t1; the prefix differs');
+    expect(render({ slot: slot(symbolsMargin, 'symbols') })).not.toContain('symbols-named');
+  });
+
   it('maps definition sites to occurrences seek accepts', () => {
     expect(siteTarget('t0.L*.k')).toBe('t0.L0.k');
     expect(siteTarget('t1')).toBe('t1.L0.k');

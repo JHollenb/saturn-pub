@@ -1,0 +1,7 @@
+# Tiny Llama (BF16, no projection biases): logits, a margin explained, reads, a what-if.
+until t3.logits
+print logits top=3
+explain M[4,9]
+reads t1 --consumer M[4,9] top=3
+whatif L1.m=0.5 add consumer=M[4,9]
+info program

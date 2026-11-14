@@ -1,0 +1,15 @@
+# Named symbols (M23): declare one from a transplant whatif (role, source row, readers, measured
+# effect), show it, use the name as an address, reuse it across a prompt set through the role.
+start name=clean prefill=0 1 7 9 3 6 2
+until t5.logits
+start name=main prefill=0 1 5 9 3 6 2
+until t5.logits
+set define pairs [{"name": "a", "tokens": [1, 5, 9, 3, 6, 2], "roles": {"subject": 1}, "vars": {"answer": 4, "foil": 9}, "pair": "b"}, {"name": "b", "tokens": [1, 7, 9, 3, 6, 2], "roles": {"subject": 1}, "vars": {"answer": 4, "foil": 9}, "pair": "a"}, {"name": "c", "tokens": [2, 6, 10, 4, 8], "roles": {"subject": 2}, "vars": {"answer": 6, "foil": 7}, "pair": "a"}, {"name": "d", "tokens": [3, 11, 5, 4], "vars": {"answer": 4, "foil": 9}, "pair": "a"}]
+whatif t1.L1.v[kv0] = clean:t1.L1.v[kv0] --consumer M[4,9]
+symbol subj = whatif
+symbol show subj
+print subj
+whatif subj = clean:subj --consumer M[4,9]
+each pairs prefill=@subject: whatif subj = @pair:subj --consumer t@last.M[$answer,$foil]
+symbols consumer=M[4,9] limit=1
+symbol delete subj

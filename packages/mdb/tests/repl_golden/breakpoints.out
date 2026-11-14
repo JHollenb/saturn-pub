@@ -20,7 +20,7 @@ t3.L0.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 
 t3.L0.p  bfloat16 [1, 2, 1, 4]  (batch, head, row, src)
   norm 0.70781 min 0.24805 max 0.25195 mean 0.25024 abs_max 0.25195 [measured]
   top |v|: [0,0,0,0] 0.25195, [0,1,0,0] 0.25195 [measured]
-  pointer occurrence ~stepped sha256 bda254d8ec53233c cut 0b72981ea843
+  pointer occurrence ~stepped sha256 bda254d8ec53233c cut e6d022022db7
 (mdb) c
 Breakpoint 1, L*.p
 t3.L1.p  p = softmax(s, float32).to(dtype) (native attention weights)  {P05 P06 P07 P08 P09}

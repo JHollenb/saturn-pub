@@ -57,7 +57,7 @@ import torch
 from mdb.core.errors import BadArgs, Refused
 from mdb.core.pointers import RecordError, check_bounded, seal_digest
 
-from .ports import _acquire, _equality, _release, program_for, tensor_digest
+from .ports import _acquire, _equality, _release, config_refusal, program_for, tensor_digest
 
 DEFAULT_MAX_BYTES = 1 << 30
 SCHEMA = "mdb-trace-v1"
@@ -130,7 +130,8 @@ class Trace:
     ):
         if project is not None:
             raise Refused(
-                "project persistence is not built yet; trace without project= for now"
+                "mdb.trace does not write to a project; call it without project= (a debugger "
+                "attached with a project records cuts and records)"
             )
         if type(max_bytes) is not int or max_bytes <= 0:
             raise BadArgs("max_bytes must be a positive integer")
@@ -143,6 +144,9 @@ class Trace:
             self.program = program_for(getattr(config, "model_type", None))
         except ValueError as error:
             raise Refused(str(error)) from None
+        refusal = config_refusal(self.program.family, config)
+        if refusal is not None:
+            raise Refused(refusal)
         if isinstance(ports, str):
             raise BadArgs("ports is a list of addresses, e.g. ['L0.m']")
         self.model = model

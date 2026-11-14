@@ -1,0 +1,34 @@
+{
+  "schema": "mdb-features-v1",
+  "about": "Feature requests for mdb. One entry per feature. status: requested | planned | in-progress | done | dropped. plan: path to a plan document, or null. Bugs go in issues.jsonl, not here.",
+  "features": [
+    {
+      "id": "F1",
+      "title": "Predictor-only replay",
+      "status": "requested",
+      "requested": "2026-11-14",
+      "requested_by": "owner",
+      "plan": null,
+      "summary": "Reopen a saved run and step through it without running the model. Unedited values come from the saved record. When the user stages an edit, a predictor propagates it downstream and every later value is shown as predicted. A native forward pass runs only when the user asks for one, and then predicted and measured are shown side by side.",
+      "requirements": [
+        "Save level is the user's choice at record time (full port capture, layer boundaries only, or cuts plus recipe). Replay shows values that were not saved as predicted, never as measured.",
+        "All stepping verbs (step, next, finish, until, reverse) work in replay with no native forward.",
+        "Predictor is tiered: a cheap chain first (linear propagation plus exact identities on saved operands), then the float64 exact chain on request. The predictor sits behind one interface so a new predictor can be swapped in without touching the verbs.",
+        "A staged edit is propagated by the predictor from the edit point to everything downstream that the user steps to.",
+        "Native run is explicit (for example verify): it runs the real forward with the edits and reports predicted against measured.",
+        "Model load is the user's choice at open time: cold (no model in memory, weights read from disk only for the stages the predictor touches, model loads only for a native run) or warm (model resident, idle).",
+        "Edit targets go beyond port values and logits: MLP weights (rows, neurons, low-rank updates), neuron-level edits applied at every row (knock out, scale, clamp), and replacing a whole MLP (zero, identity, another layer's or checkpoint's MLP, a user function).",
+        "Third-party libraries (for example TransformerLens) may be imported where they already do an edit well."
+      ],
+      "known_facts": [
+        "Measured on Qwen2.5-1.5B bf16 cuda: the emulated predictor equals native bit for bit but runs the same kernels on the affected layers, so it is not the cheap tier.",
+        "Measured: the float64 exact chain is within about 0.01 to 0.08 of native on the consumer margin; its worst-case rounding bound is not informative across a softmax (issue M56).",
+        "Port-value edits at one occurrence already work (set). Weight edits, all-row neuron edits and whole-MLP replacement are new."
+      ],
+      "open_questions": [
+        "Disk size of a full port capture per token on a real model (not measured).",
+        "How far the cheap chain can be trusted across layers before it must be shown as unresolved (not measured)."
+      ]
+    }
+  ]
+}

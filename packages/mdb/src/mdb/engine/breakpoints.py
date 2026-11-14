@@ -1206,7 +1206,7 @@ def run_reverse(run: Any, table: Table, *, tokenizer: Any = None) -> dict[str, A
     stops = run.stops()
     here = run.parse(run.where)
     row, index = here
-    root = (len(run.tokens) - 1, 0)
+    root = run.parse(run.root)   # the first stepped row's start (prefill=K), or a stored cut
     # Cache cells are read at the current boundary only: a past boundary's cells are gone, so
     # cell breakpoints/watches are not evaluated on the backward walk.
     items = [i for i in table.armed() if i.parsed.kind != "cell"]

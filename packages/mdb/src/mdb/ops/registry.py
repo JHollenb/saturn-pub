@@ -39,6 +39,7 @@ INTEGER_KEYS = frozenset({
     "total", "limit", "omitted", "hits_total", "nan", "posinf", "neginf", "edits_total",
     "deleted_total", "mask_count", "mask_shape", "under_edits_total", "staged_total", "committed_total", "depth", "line", "lines",
     "kv", "d", "staged_at", "staged_cells", "committed_cells", "realised_in_layer",
+    "prefill", "first_row", "prompt_rows",       # a record's procedure (prefill split, M54)
 })
 
 
@@ -156,6 +157,19 @@ def registry() -> dict[str, Op]:
     return dict(_REGISTRY)
 
 
+# (before, after): ``before(ctx, name, values) -> (values, notes)`` rewrites validated arguments
+# (``ops.named`` expands symbol names into addresses; its notes go in the result as
+# ``symbol_uses``), ``after(ctx, name, result)`` observes each successful result.
+_HOOKS: list[tuple[Callable[..., Any] | None, Callable[..., Any] | None]] = []
+
+
+def hook(*, before: Callable[..., Any] | None = None,
+         after: Callable[..., Any] | None = None) -> None:
+    """Register an argument rewriter and/or a result observer run by ``dispatch``."""
+    if (before, after) not in _HOOKS:
+        _HOOKS.append((before, after))
+
+
 def describe() -> dict[str, Any]:
     """The whole catalogue as JSON (name, summary, args, effect, needs_live)."""
     return {"schema": SCHEMA, "ops": [_REGISTRY[name].to_json() for name in sorted(_REGISTRY)]}
@@ -237,8 +251,12 @@ def validate(op: Op, args: dict[str, Any] | None) -> dict[str, Any]:
 
 
 def has_unresolved(node: Any) -> bool:
-    """Whether any field of a result is ``{"state": "unresolved", ...}``."""
+    """Whether any field of a result is ``{"state": "unresolved", ...}``. A field marked
+    ``"information": True`` (a forecast's worst-case interval, M56) is information beside the
+    result and never makes it unresolved."""
     if isinstance(node, dict):
+        if node.get("information") is True:
+            return False
         if node.get("state") == "unresolved":
             return True
         return any(has_unresolved(item) for item in node.values())
@@ -264,7 +282,12 @@ def dispatch(ctx: Any, name: str, args: dict[str, Any] | None = None) -> dict[st
     values = validate(found, args)
     if found.needs_live and getattr(ctx, "run", None) is None:
         raise Refused(f"{name} needs a live run; start one with `start`")
+    notes: list[Any] = []
     try:
+        for before, _ in _HOOKS:
+            if before is not None:
+                values, extra = before(ctx, found.name, values)
+                notes += extra
         result = found.fn(ctx, **values)
     except OpError:
         raise
@@ -273,8 +296,14 @@ def dispatch(ctx: Any, name: str, args: dict[str, Any] | None = None) -> dict[st
     except Exception as error:  # noqa: BLE001 - the contract: never a traceback to the user
         raise internal(error) from error
     body = {"op": found.name, **result}
+    if notes:
+        body.setdefault("symbol_uses", notes)
     body.setdefault("state", "unresolved" if has_unresolved(result) else "resolved")
     try:
-        return check_bounded(body, f"{name} result")
+        out = check_bounded(body, f"{name} result")
     except RecordError as error:
         raise Refused(f"result exceeds the record bound: {error}") from error
+    for _, after in _HOOKS:
+        if after is not None:
+            after(ctx, found.name, out)
+    return out

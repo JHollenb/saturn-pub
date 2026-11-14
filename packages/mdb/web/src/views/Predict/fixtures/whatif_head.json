@@ -1,0 +1,511 @@
+{
+  "bytes": 12978,
+  "data": {
+    "op": "whatif",
+    "request_id": "whatif",
+    "result": {
+      "consumer": {
+        "address": "t3.M[4,9]",
+        "index": 41,
+        "indices": [
+          4,
+          9
+        ],
+        "kind": "margin",
+        "row": 3
+      },
+      "difference": {
+        "native_minus_exact": {
+          "bound": {
+            "authority": "bound",
+            "value": 0.04563120247620159
+          },
+          "value": {
+            "authority": "measured",
+            "value": -0.0006757491679302008
+          },
+          "within_bound": true
+        },
+        "native_minus_linear": {
+          "authority": "measured",
+          "value": -7.462833938490232e-05
+        }
+      },
+      "edit": {
+        "address": "t3.L1.A",
+        "layer": 1,
+        "mask_count": 8,
+        "op": "scale",
+        "port": "A",
+        "row": 3,
+        "selection": "h0",
+        "value": {
+          "authority": "supplied",
+          "value": 0.0
+        }
+      },
+      "effect": {
+        "basis": "P20: native against the emulated delta",
+        "criterion": "effect when native Δ and emulated Δ agree within the floor (1 x dtype spacing at the consumer, supplied) and on the sign, and native Δ != 0; no effect when they agree and both are 0; within the floor but not on the sign unresolved; beyond the floor not confirmed or unresolved by where emulation and native part; P20: native Δ = exact Δ + rounding effect (emulated - exact) + residual (native - emulated)",
+        "dtype": "bfloat16",
+        "emulated": {
+          "authority": "derived-exact",
+          "proof": "P20",
+          "value": -0.027099609375
+        },
+        "exact": {
+          "authority": "derived-exact",
+          "proof": "P20",
+          "value": -0.0264238602070698
+        },
+        "floor": {
+          "authority": "supplied",
+          "proof": "P20",
+          "value": 0.00048828125
+        },
+        "floor_spacings": {
+          "authority": "supplied",
+          "proof": "P20",
+          "value": 1.0
+        },
+        "native": {
+          "authority": "measured",
+          "proof": "P20",
+          "value": -0.027099609375
+        },
+        "residual": {
+          "authority": "measured",
+          "proof": "P20",
+          "value": 0.0
+        },
+        "residual_spacings": {
+          "authority": "measured",
+          "proof": "P20",
+          "value": 0.0
+        },
+        "rests_on": "rests on native = emulated within 0 spacings at a change of 56 spacings",
+        "rounding_effect": {
+          "authority": "derived-exact",
+          "proof": "P20",
+          "value": -0.0006757491679302008
+        },
+        "size_spacings": {
+          "authority": "measured",
+          "proof": "P20",
+          "value": 55.5
+        },
+        "spacing": {
+          "authority": "measured",
+          "proof": "P20",
+          "value": 0.00048828125
+        },
+        "state": "resolved",
+        "verdict": "effect"
+      },
+      "exact": {
+        "meaning": "F(x1) - F(x0) (P09 section 1) on the native operands of the unedited run; written: x1 the value the edit wrote (read back). The verdict holds native against the written one",
+        "operands": "measured",
+        "requested": {
+          "authority": "derived-exact",
+          "proof": "P20",
+          "value": -0.0264238602070698
+        },
+        "written": {
+          "authority": "derived-exact",
+          "proof": "P20",
+          "value": -0.0264238602070698
+        }
+      },
+      "measured": {
+        "base": {
+          "authority": "measured",
+          "value": -0.114013671875
+        },
+        "delta": {
+          "authority": "measured",
+          "value": -0.027099609375
+        },
+        "edited": {
+          "authority": "measured",
+          "value": -0.14111328125
+        },
+        "moves": [
+          "reverse-step layer to t3.L0.h_out",
+          "until t3.L1.h",
+          "set t3.L1.A",
+          "until t3.logits",
+          "restore t3.logits"
+        ]
+      },
+      "mode": "rewind",
+      "op": "whatif",
+      "prediction": {
+        "base": {
+          "authority": "derived-exact",
+          "value": -0.11444546658439239
+        },
+        "emulated": {
+          "base": {
+            "authority": "derived-exact",
+            "value": -0.114013671875
+          },
+          "edited": {
+            "authority": "derived-exact",
+            "value": -0.14111328125
+          },
+          "meaning": "the native change predicted bit for bit: base and edited chains with the dtype's rounding where eager HF rounds",
+          "premise": "rounding points of eager HF attention/MLP on this backend",
+          "premises": [
+            "every step runs as eager HF writes it, on the dtype values of its operands, with the torch kernels of the run's device: affine maps as F.linear (bias fused), scores as matmul(q, k^T) x scaling and the value mix as matmul(p, v) at the native call's batch-1 shapes, RMSNorm in float32 (cast, then gain), RoPE with float32 cos/sin of float32 angles from the model's inv_freq buffer, softmax in float32 cast to the dtype, SiLU, gate x up, residual adds",
+            "the backend's kernels are deterministic at those shapes (the same operands give the same bits)",
+            "single pending row: every cached source is visible and the attention mask adds 0",
+            "the edit is written by the engine's own arithmetic (PortEdit.apply, CellEdit.realise) on the emulated value of the edited port or cache"
+          ],
+          "value": {
+            "authority": "derived-exact",
+            "value": -0.027099609375
+          }
+        },
+        "exact": {
+          "bound": {
+            "authority": "bound",
+            "value": 0.04563120247620159
+          },
+          "bound_scope": "worst-case interval of the dtype's rounding through the chain; at least |exact|: it does not fix the sign",
+          "operands": {
+            "at": "t3.logits",
+            "source": "measured"
+          },
+          "premises": [
+            "RMSNorm in float32: mean of squares, rsqrt, scale, cast, gain",
+            "SiLU in float32 as g / (1 + exp(-g)), cast to the model dtype",
+            "matmul accumulates in float32 in any order (gamma_n bound)",
+            "replace/add/scale: the operand is cast to the model dtype and applied in one rounded op; mix: float64, rounded once",
+            "round to nearest, no overflow or underflow"
+          ],
+          "value": {
+            "authority": "derived-exact",
+            "value": -0.0264238602070698
+          },
+          "wider_than_value": true
+        },
+        "linear": {
+          "meaning": "gradient of the consumer times the edit displacement; not the effect",
+          "value": {
+            "authority": "derived-local",
+            "proof": "P14",
+            "value": -0.027024981035615098
+          }
+        },
+        "state": "resolved"
+      },
+      "record": "e98d8b515d08a7587546acec7a6cfa69fa0ca41dd0be87be4a1625cde853e295",
+      "sealed_record": {
+        "authority": "derived-local",
+        "body": {
+          "consumer": {
+            "address": "t3.M[4,9]",
+            "index": 41,
+            "indices": [
+              4,
+              9
+            ],
+            "kind": "margin",
+            "row": 3
+          },
+          "edit": {
+            "address": "t3.L1.A",
+            "layer": 1,
+            "mask_count": 8,
+            "op": "scale",
+            "port": "A",
+            "row": 3,
+            "selection": "h0",
+            "value": {
+              "authority": "supplied",
+              "value": 0.0
+            }
+          },
+          "method": {
+            "emulated": "the same chains with the dtype's rounding at every eager-HF rounding point (EmulatedRowModel); the base takes the stops at or before the cursor as captured",
+            "exact": "F(x1) - F(x0): port-program identities on values at the cursor, base and edited chains recomputing the same stops (those the edit reaches) with the port at its value x0 or the edit written there (rows chained through the cache)",
+            "linear": "forward-mode derivative of the same chain at the unedited point (P14)"
+          },
+          "mode": "rewind",
+          "operands": [
+            {
+              "address": "t3.L1.A",
+              "sha256": "7ceb504c15ba168f0891ed86e8b2c3c54656cc35968fe6fcae8359ea2901f3e8",
+              "shape": [
+                1,
+                1,
+                16
+              ]
+            },
+            {
+              "address": "t3.L1.h",
+              "sha256": "6ea4712c2a2b4983bf5024295c51d1a0a781feba035ef8048744030d1af978d0",
+              "shape": [
+                1,
+                1,
+                16
+              ]
+            },
+            {
+              "address": "t3.L1.v",
+              "sha256": "5f8364244aab3ef2dfe9f73eed809d95ffe74159ffca7d7911ff0f987f7472dc",
+              "shape": [
+                1,
+                1,
+                8
+              ]
+            },
+            {
+              "address": "t3.L1.p",
+              "sha256": "a3a32de6269f57e64ec2825dc2abf4dffa0d498bbe149705702b567a195b2794",
+              "shape": [
+                1,
+                2,
+                1,
+                4
+              ]
+            },
+            {
+              "address": "cache.L1.v[row=0:3]",
+              "sha256": "5679e5f50203415ddd9207c3523bbaab6250e544702039727d43289f946ba8d3",
+              "shape": [
+                1,
+                1,
+                3,
+                8
+              ]
+            }
+          ],
+          "prediction": {
+            "base": {
+              "authority": "derived-exact",
+              "value": -0.11444546658439239
+            },
+            "emulated": {
+              "base": {
+                "authority": "derived-exact",
+                "value": -0.114013671875
+              },
+              "edited": {
+                "authority": "derived-exact",
+                "value": -0.14111328125
+              },
+              "meaning": "the native change predicted bit for bit: base and edited chains with the dtype's rounding where eager HF rounds",
+              "premise": "rounding points of eager HF attention/MLP on this backend",
+              "premises": [
+                "every step runs as eager HF writes it, on the dtype values of its operands, with the torch kernels of the run's device: affine maps as F.linear (bias fused), scores as matmul(q, k^T) x scaling and the value mix as matmul(p, v) at the native call's batch-1 shapes, RMSNorm in float32 (cast, then gain), RoPE with float32 cos/sin of float32 angles from the model's inv_freq buffer, softmax in float32 cast to the dtype, SiLU, gate x up, residual adds",
+                "the backend's kernels are deterministic at those shapes (the same operands give the same bits)",
+                "single pending row: every cached source is visible and the attention mask adds 0",
+                "the edit is written by the engine's own arithmetic (PortEdit.apply, CellEdit.realise) on the emulated value of the edited port or cache"
+              ],
+              "value": {
+                "authority": "derived-exact",
+                "value": -0.027099609375
+              }
+            },
+            "exact": {
+              "bound": {
+                "authority": "bound",
+                "value": 0.04563120247620159
+              },
+              "bound_scope": "worst-case interval of the dtype's rounding through the chain; at least |exact|: it does not fix the sign",
+              "operands": {
+                "at": "t3.logits",
+                "source": "measured"
+              },
+              "premises": [
+                "RMSNorm in float32: mean of squares, rsqrt, scale, cast, gain",
+                "SiLU in float32 as g / (1 + exp(-g)), cast to the model dtype",
+                "matmul accumulates in float32 in any order (gamma_n bound)",
+                "replace/add/scale: the operand is cast to the model dtype and applied in one rounded op; mix: float64, rounded once",
+                "round to nearest, no overflow or underflow"
+              ],
+              "value": {
+                "authority": "derived-exact",
+                "value": -0.0264238602070698
+              },
+              "wider_than_value": true
+            },
+            "linear": {
+              "meaning": "gradient of the consumer times the edit displacement; not the effect",
+              "value": {
+                "authority": "derived-local",
+                "proof": "P14",
+                "value": -0.027024981035615098
+              }
+            },
+            "state": "resolved"
+          },
+          "procedure": {
+            "default": true,
+            "first_row": 3,
+            "prefill": 3,
+            "prompt_rows": 4,
+            "text": "prefill=3: rows 0..2 batched, first stepped row t3"
+          },
+          "schema": "mdb-whatif-v1",
+          "sealed_at": {
+            "cut": "7e5fd815baaa83033b8df79cec96c42b1fe3ac183ddfb08f23a4b8a2523374a0",
+            "index": 41,
+            "row": 3,
+            "transition": 5,
+            "where": "t3.logits"
+          }
+        },
+        "digest": "e98d8b515d08a7587546acec7a6cfa69fa0ca41dd0be87be4a1625cde853e295",
+        "execution_sha256": "725442e80dfcf7a96dfa7b46a2baa4ca712ccb62231b99f3301e0ea3093759f0",
+        "id": "e98d8b515d08a7587546acec7a6cfa69fa0ca41dd0be87be4a1625cde853e295",
+        "kind": "whatif",
+        "model_identity": "cb1ebc05fb0be6603ca90676fe18a6766881d56bc9efb35759ce6911ac877b6b",
+        "pointers": [],
+        "schema": "mdb-record-v2",
+        "session_id": "mdb-run:c0a945465fbb59a9e00107a0527fdf98"
+      },
+      "session": {
+        "after": "b64d7b9d9c9b684a541d1494f1f30514b313bfeb588f96e6b2c28e74991a3430",
+        "before": "b64d7b9d9c9b684a541d1494f1f30514b313bfeb588f96e6b2c28e74991a3430",
+        "debugger_after": "90563ea19828fbafbf7d6bc0fffd18b5f93965cc5ecd0359597f18356079824b",
+        "debugger_before": "90563ea19828fbafbf7d6bc0fffd18b5f93965cc5ecd0359597f18356079824b",
+        "unchanged": true
+      },
+      "split": {
+        "proof": "P20",
+        "rule": "native delta = sum of the terms (float64)",
+        "terms": [
+          {
+            "name": "linear",
+            "value": {
+              "authority": "derived-local",
+              "proof": "P14",
+              "value": -0.027024981035615098
+            }
+          },
+          {
+            "meaning": "exact minus linear: the curvature the first-order term misses",
+            "name": "nonlinear",
+            "value": {
+              "authority": "derived-exact",
+              "proof": "P20",
+              "value": 0.0006011208285452985
+            }
+          },
+          {
+            "meaning": "exact change with the operand the edit wrote (read back) minus the exact change with the requested operand, both on measured operands",
+            "name": "realisation",
+            "value": {
+              "authority": "derived-exact",
+              "proof": "P20",
+              "value": 0.0
+            }
+          },
+          {
+            "bound": {
+              "authority": "bound",
+              "value": 0.04563120247620159
+            },
+            "meaning": "the emulated change (the dtype's rounding where eager HF rounds, sealed) minus the exact change with the written operand; derived under the emulation premises",
+            "name": "rounding effect",
+            "value": {
+              "authority": "derived-exact",
+              "proof": "P20",
+              "value": -0.0006757491679302008
+            },
+            "within_bound": true
+          },
+          {
+            "meaning": "native change minus the emulated change",
+            "name": "residual",
+            "value": {
+              "authority": "measured",
+              "proof": "P20",
+              "value": 0.0
+            }
+          }
+        ]
+      },
+      "stages": {
+        "base": {
+          "authority": "bound",
+          "checked": {
+            "authority": "derived-exact",
+            "value": 12
+          },
+          "cost": "12 float64 identity evaluations on native operands",
+          "kind": "per-stage bound on native operands",
+          "premise": "per stage: the rounding bound of each stage's own identity evaluated on that stage's native operands (read after the native run), against |native - identity|; it says each native step is its identity up to its own rounding, not how far a target can sit from the exact chain (that is a chain bound)",
+          "premises": [
+            "RMSNorm in float32: mean of squares, rsqrt, scale, cast, gain",
+            "SiLU in float32 as g / (1 + exp(-g)), cast to the model dtype",
+            "float32 library functions within 4 ulp",
+            "matmul accumulates in float32 in any order (gamma_n bound)",
+            "round to nearest; underflow bounded absolutely where stated"
+          ],
+          "text": "each stage within its own rounding bound on native operands: 12/12 (worst |native - identity|/bound 0.885 at t3.L1.sg)",
+          "walked": {
+            "authority": "derived-exact",
+            "value": 12
+          },
+          "within": {
+            "authority": "derived-exact",
+            "value": 12
+          },
+          "worst_ratio": {
+            "authority": "measured",
+            "value": 0.8854015391664217
+          },
+          "worst_stage": "t3.L1.sg"
+        },
+        "edited": {
+          "authority": "bound",
+          "checked": {
+            "authority": "derived-exact",
+            "value": 11
+          },
+          "cost": "11 float64 identity evaluations on native operands",
+          "kind": "per-stage bound on native operands",
+          "not_checked": [
+            "t3.L1.A (written by an edit (A))"
+          ],
+          "not_checked_count": {
+            "authority": "derived-exact",
+            "value": 1
+          },
+          "premise": "per stage: the rounding bound of each stage's own identity evaluated on that stage's native operands (read after the native run), against |native - identity|; it says each native step is its identity up to its own rounding, not how far a target can sit from the exact chain (that is a chain bound)",
+          "premises": [
+            "RMSNorm in float32: mean of squares, rsqrt, scale, cast, gain",
+            "SiLU in float32 as g / (1 + exp(-g)), cast to the model dtype",
+            "float32 library functions within 4 ulp",
+            "matmul accumulates in float32 in any order (gamma_n bound)",
+            "round to nearest; underflow bounded absolutely where stated"
+          ],
+          "text": "each stage within its own rounding bound on native operands: 11/11 (worst |native - identity|/bound 0.904 at t3.L1.sg); 1 not checked",
+          "walked": {
+            "authority": "derived-exact",
+            "value": 12
+          },
+          "within": {
+            "authority": "derived-exact",
+            "value": 11
+          },
+          "worst_ratio": {
+            "authority": "measured",
+            "value": 0.9035522379438549
+          },
+          "worst_stage": "t3.L1.sg"
+        }
+      },
+      "state": "resolved",
+      "where": "t3.logits"
+    },
+    "seq": 3,
+    "where": "t3.logits"
+  },
+  "digest": "38d29df2e727b3535a460153d26de64d9d052da1ea9b96f411193c53c4d3c2b6",
+  "schema": "mdb-view-op-v1",
+  "state": "resolved"
+}

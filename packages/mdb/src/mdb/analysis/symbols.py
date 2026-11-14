@@ -46,7 +46,7 @@ import weakref
 from dataclasses import dataclass, field
 from typing import Any
 
-from mdb.core.kinds import SYMBOL_TABLE
+from mdb.core.kinds import SYMBOL_TABLE, procedure
 from mdb.core.records import seal_record
 
 from .finite import BOUND, EXACT, MEASURED, SUPPLIED, f64, num
@@ -295,6 +295,14 @@ def table(run: Any, *, consumer: Any = None, rows: str | None = None, min_mass: 
     return Table(report, records, tensors)
 
 
+def _remainder_bound(rest: Any) -> dict[str, Any]:
+    """The remainder's rounding bound, or a refused bound when its premise fails (no number)."""
+    if rest.bound is None:
+        return {"bound": {"state": "refused", "reason": "the rounding bound's accumulation "
+                          "premise fails on this run (see `explain`)"}, "within": None}
+    return {"bound": num(float(rest.bound), BOUND), "within": bool(rest.within)}
+
+
 def _unbound_parts(run: Any, reader: Any, listed_effect: float) -> dict[str, Any]:
     """The consumer minus the listed bindings' reads, by part (see the module docstring)."""
     from .circuits import terms, top_gap
@@ -309,9 +317,7 @@ def _unbound_parts(run: Any, reader: Any, listed_effect: float) -> dict[str, Any
     parts: dict[str, Any] = {
         "embedding_mlp": num(other, EXACT, "P19"),
         "attention_not_listed": num(attention - listed_effect, EXACT, "P19"),
-        "remainder": {"value": num(float(rest.value), MEASURED), "bound": num(float(rest.bound),
-                                                                              BOUND),
-                      "within": bool(rest.within)},
+        "remainder": {"value": num(float(rest.value), MEASURED), **_remainder_bound(rest)},
         "meaning": "embedding, MLP and head-bias terms; the layers' attention output (native o, "
                    "read exactly) minus the listed reads (reads of bindings off this page, "
                    "heads an edit wrote, o_proj rounding); residual-stream edits; the measured "
@@ -538,6 +544,7 @@ def _records(run: Any, report: dict[str, Any], session_id: str | None) -> list[d
                                                          "accounting")}}
     if "consumer_total" in report:
         body["consumer_total"] = report["consumer_total"]
+    body["procedure"] = procedure(run)
     return [seal_record(session_id=session_id or run_session_id(run), kind="symbol-table",
                         model_identity=run.adapter.model_identity,
                         execution=dict(run.adapter.execution), authority=EXACT, body=body)]

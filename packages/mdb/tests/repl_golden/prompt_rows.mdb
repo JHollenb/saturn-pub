@@ -1,0 +1,16 @@
+# Stepped prompt rows (M35/M26): start prefill=K steps rows K.. one at a time, tokens forced,
+# so their ports are stops; sweep patches a port from another run at every (row, layer).
+start name=clean prefill=0 1 7 9 3 6 2
+until t5.logits
+start prefill=0 1 5 9 3 6 2
+where
+info runs
+until t2.L1.h
+print t1.L0.m
+set t2.L1.A[h1] = clean:t2.L1.A[h1]
+abort
+until t5.logits
+sweep h = clean --consumer t5.M[4,9]
+sweep A[h1] rows=1:4 = clean --consumer t5.M[4,9] top=3
+start prefill=3 1 5 9 3 6 2
+where

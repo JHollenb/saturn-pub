@@ -45,7 +45,8 @@ def _checkpoint(tokens=TOKENS):
               "mask_shape": [1, 1, 16]}
     return {
         "schema": recipes.CHECKPOINT_SCHEMA, "name": "pre", "model_identity": "m" * 64,
-        "prompt_sha256": digest(tokens), "where": "t3.L1.sg", "cut": "c" * 64, "transitions": 2,
+        "prompt_sha256": digest(tokens), "prefill": len(tokens) - 1, "where": "t3.L1.sg",
+        "cut": "c" * 64, "transitions": 2,
         "port": "sg", "lookahead": "none", "numeric_scope": dict(SCOPE),
         "edits": [{"port": "u", "op": "add", "value": {"kind": "scalar", "value": 0.125}}],
         "path_edits": [{"transition": 1, "layer": 0, "edits": [
@@ -85,6 +86,20 @@ def test_a_recipe_is_the_checkpoint_one_to_one_with_tensors_as_blob_pointers(sto
     assert set(loaded) == set(_held())
     for sha, tensor in _held().items():
         assert torch.equal(loaded[sha], tensor) and loaded[sha].dtype == tensor.dtype
+
+
+def test_the_prefill_split_is_part_of_the_recipe_and_old_recipes_read_as_default(store):
+    stepped = _recipe(store, {**_checkpoint(), "prefill": 0})
+    assert stepped["prefill"] == 0 and recipes.to_checkpoint(stepped)["prefill"] == 0
+    assert stepped["fingerprint"] != _recipe(store)["fingerprint"]
+    old = {k: v for k, v in _recipe(store).items() if k not in ("prefill", "fingerprint")}
+    old = recipes.seal(old)   # a recipe written before the field existed
+    assert "prefill" not in recipes.to_checkpoint(recipes.verify(old))
+    for bad in (len(TOKENS), -1, "2"):
+        with pytest.raises(recipes.RecipeError, match="prefill"):
+            _recipe(store, {**_checkpoint(), "prefill": bad})
+    with pytest.raises(recipes.RecipeError, match="prefill"):
+        recipes.verify(recipes.seal({**old, "prefill": -1}))
 
 
 def test_long_prompts_are_held_by_pointer(store):

@@ -39,6 +39,10 @@ STALE = {"read": [], "navigate": ["frame", "timeline"], "mutate": ["frame", "tim
          "native": ["frame", "timeline", "tables"]}
 # Local REPL commands the web console refuses: they read or write files on the server, or end it.
 CONSOLE_REFUSED = ("source", "record", "quit")
+# `promptset load` / `set load` read a file on the server (and its error text says whether the
+# file exists): refused on the console and the op route; a set is sent inline (`promptset define`).
+SET_LOAD_REFUSED = ("`promptset load` reads a file on the server and is not available from the "
+                    "web; send the set inline: promptset define NAME ITEMS (items as JSON)")
 
 
 class Busy(Exception):
@@ -235,12 +239,14 @@ class LiveSession:
     def op(self, name: str, args: dict[str, Any]) -> Future:
         """Dispatch one registered op; the future's value is ``{seq, result, where}`` where
         ``result`` is exactly what ``python -m mdb.repl --json`` prints for it."""
-        from mdb.ops import OpError, dispatch, registry
+        from mdb.ops import OpError, Refused, dispatch, registry
 
         effect = registry()[name].effect
 
         def run():
             self.running = name
+            if name == "promptset" and args.get("action") == "load":
+                return error_json(Refused(SET_LOAD_REFUSED))
             try:
                 return dispatch(self.ctx, name, args)
             except OpError as error:
@@ -269,12 +275,15 @@ class LiveSession:
         except OpError:
             name = None  # the shell prints the same error itself
         label = name or verb or "console"
+        set_load = name in ("set", "promptset") and text.split()[1:2] == ["load"]
         ops = registry()
         effect = ops[name].effect if name in ops else "read"
         before = []
 
         def run():
             self.running = label
+            if set_load:
+                return f"error: {SET_LOAD_REFUSED}"
             if name in CONSOLE_REFUSED:
                 return (f"error: `{name}` is not available from the web console (it reads or "
                         "writes files on the server, or ends the session)")

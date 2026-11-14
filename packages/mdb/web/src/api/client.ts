@@ -19,6 +19,7 @@ import type {
   ReduceResult,
   Refused,
   SessionSummary,
+  StoredBody,
   SymbolDetail,
   SymbolPage,
   TimelineBlock,
@@ -42,6 +43,7 @@ export interface ViewTypes {
   graph: GraphView;
   records: RecordPage;
   record: RecordDetail;
+  stored: StoredBody;
   reduce: ReduceResult;
   op: OpResult;
   console: ConsoleResult;

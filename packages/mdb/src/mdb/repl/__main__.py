@@ -5,10 +5,10 @@
 
 ``MODEL`` is what to debug, as ``gdb PROGRAM`` names a program: a checkpoint directory, the
 name of a model in the local Hugging Face cache (``qwen2.5-1.5b``; never downloaded),
-``tiny:qwen2`` / ``tiny:qwen3`` (a random tiny model), or the ``http://`` address of a running
-``mdb serve`` whose live session to drive. The same choices as flags:
+``tiny:qwen2`` / ``tiny:qwen3`` / ``tiny:llama`` / ``tiny:mistral`` (a random tiny model), or
+the ``http://`` address of a running ``mdb serve`` whose live session to drive. The same choices as flags:
 
-    python -m mdb.repl --tiny qwen2|qwen3 [--dtype bf16|fp32] --tokens "1 5 9 3"
+    python -m mdb.repl --tiny qwen2|qwen3|llama|mistral [--dtype bf16|fp32] --tokens "1 5 9 3"
     python -m mdb.repl --model PATH|NAME [--dtype bf16|fp32] [--device cpu] --prompt TEXT
     python -m mdb.repl --connect http://127.0.0.1:8765 [--tokens ...|--prompt TEXT] [--script FILE]
 
@@ -58,15 +58,19 @@ def _missing(error: ModuleNotFoundError) -> int:
     return 2
 
 
+# engine.models.TINY_FAMILIES, spelled out: this module must import without a model framework
+TINY = ("qwen2", "qwen3", "llama", "mistral")
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m mdb.repl",
                                      description="gdb-style port-level model debugger")
     parser.add_argument("target", nargs="?", metavar="MODEL",
-                        help="checkpoint directory, cached model name, tiny:qwen2|tiny:qwen3, "
+                        help="checkpoint directory, cached model name, tiny:FAMILY, "
                              "or the http:// address of a running `mdb serve`")
     parser.add_argument("text", nargs="?", metavar="PROMPT", help="prompt text to start on")
     source = parser.add_mutually_exclusive_group()
-    source.add_argument("--tiny", choices=("qwen2", "qwen3"), help="random tiny model")
+    source.add_argument("--tiny", choices=TINY, help="random tiny model")
     source.add_argument("--model", metavar="PATH|NAME",
                         help="checkpoint directory, or the name of a locally cached model")
     source.add_argument("--connect", metavar="URL",
@@ -89,8 +93,8 @@ def main(argv: list[str] | None = None) -> int:
             args.connect = args.target
         elif args.target.startswith("tiny:"):
             args.tiny = args.target[len("tiny:"):]
-            if args.tiny not in ("qwen2", "qwen3"):
-                parser.error("tiny models are tiny:qwen2 and tiny:qwen3")
+            if args.tiny not in TINY:
+                parser.error("tiny models are " + ", ".join(f"tiny:{name}" for name in TINY))
         else:
             args.model = args.target
     elif not flagged:

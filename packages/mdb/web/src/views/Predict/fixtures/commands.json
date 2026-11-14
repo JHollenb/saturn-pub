@@ -1206,6 +1206,38 @@
       },
       "server": "mdb serve --tiny qwen2 (in-process: create_app + LiveSession, seed 113)"
     },
+    "whatif_head": {
+      "ops_before": [
+        {
+          "args": {
+            "prompt": [
+              1,
+              5,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {
+            "target": "t3.logits"
+          },
+          "op": "until"
+        }
+      ],
+      "request": {
+        "args": {
+          "consumer": "M[4,9]",
+          "op": "scale",
+          "target": "L1.A[h0]",
+          "value": 0
+        },
+        "op": "whatif",
+        "route": "POST op"
+      },
+      "server": "mdb.serve.app.create_app over LiveSession(open_debugger(<tmp>, tiny='qwen2')), FastAPI TestClient, same ops_before (in-process; round 7, M55/M56: emulated prediction, effect against it, per-stage containment)"
+    },
     "whatif_interrupted": {
       "ops_before": [
         {

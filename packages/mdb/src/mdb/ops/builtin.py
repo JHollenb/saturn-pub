@@ -18,7 +18,7 @@ from __future__ import annotations
 import json
 import math
 import re
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any
 
 from mdb.core import address as addresses
@@ -147,10 +147,13 @@ def resolve_target(ctx, text: str | None) -> Target:
     program = run.program
     text = (text or "").strip() or ctx.focus or run.where
     if "~" in text:
-        raise Refused("~program addresses are not built yet: A6 (compare)")
+        raise Refused("a ~program pointer is not a value this verb can read; read the stop itself "
+                      "(print ADDR)")
     base, bracket, tail = text.partition("[")
     if ":" in base or base.startswith("@"):
-        raise Refused("origins (branches, @cut+edit) are not built yet: A6 (compare)")
+        raise Refused("an address in another run or cut (NAME:ADDR, @cut+edit:ADDR) cannot be "
+                      "read with this verb; use it as an edit value (set ADDR = NAME:ADDR), or "
+                      "move to that run with `frame NAME:`")
     if base.startswith("cache."):
         try:
             cell = addresses.parse(text, ports=program.names, global_ports=GLOBALS)
@@ -181,7 +184,8 @@ def resolve_target(ctx, text: str | None) -> Target:
     except addresses.AddressError as error:
         raise BadArgs(f"bad address {text!r}: {error}") from None
     if parsed.port == "M":
-        raise Refused("the declared margin M is not built yet: A5 (explain)")
+        raise Refused("M[a,b] is a derived value, not a stop or a port: read it with print, x or "
+                      "display, analyse it with explain, forecast, whatif or compare")
     layer_port = _LAYER_PORT.fullmatch(label)
     if layer_port is not None and int(layer_port["layer"]) >= run.adapter.layers:
         raise BadArgs(f"no layer {layer_port['layer']} in a {run.adapter.layers}-layer model")
@@ -350,7 +354,33 @@ def _tokens(ctx, ids: list[int], keep: int = 16) -> dict[str, Any]:
 
 
 def _edited(ctx) -> bool:
-    return bool(ctx.run.edits) or bool(ctx.run.checkpoint()["path_edits"])
+    return ctx.run.edited
+
+
+def _edited_origin(ctx, target: Target) -> tuple[Any, str | None, int, str]:
+    """``(origin, recipe id, event, cut)`` of a value read under edits: ``@cut+ref...`` (the
+    boundary cut it is computed from and the reference of each edit applied in that transition,
+    ``mdb.core.recipe.edit_ref``) and, with a writable project, the stored recipe of the cursor
+    (edit values and masks as blobs) that reproduces it. Raises ``Refused`` when the recipe
+    cannot be stored (an edit tensor not held, an over-large recipe)."""
+    from mdb.core import recipe as recipes
+    from mdb.core.pointers import RecordError
+
+    run = ctx.run
+    origin = run.origin_of(target.run_target)
+    edits = tuple(recipes.edit_ref(m) for m in origin["edits"])
+    project = project_of(ctx)
+    recipe = None
+    if project is not None and not project.read_only:
+        try:
+            sealed = recipes.from_checkpoint(run.checkpoint(pin=False), tokens=run.tokens,
+                                             layers=run.adapter.layers,
+                                             tensors=run.edit_tensors(), store=project.store)
+            recipe = recipes.save(project, ctx.debugger.session_id, sealed)
+        except RecordError as error:
+            raise Refused(f"the edits do not fit one replay recipe: {error}") from error
+    return (addresses.Origin(cut=origin["cut"], edits=edits), recipe, origin["transitions"],
+            origin["cut"])
 
 
 def _pointer(ctx, target: Target, value) -> tuple[dict | None, str | None]:
@@ -361,20 +391,28 @@ def _pointer(ctx, target: Target, value) -> tuple[dict | None, str | None]:
         return None, "cache cells are read at the current clock; no occurrence pointer"
     if target.label == "start":
         return None, "start is the token list, not a port occurrence"
-    if _edited(ctx):
-        return None, "edited run: occurrence origins (@cut+edit) are not wired yet"
     run = ctx.run
-    cut = None
-    layer_port = target.layer_port
-    if layer_port is not None and run.pending_layer == layer_port[0] and (
-        _split(run.where)[0] == target.row
-    ):
-        cut = run.checkpoint()["cut"]
+    cut = recipe = event = None
     address = addresses.parse(target.run_target, ports=run.program.names,
                               global_ports=GLOBALS)
     authority, reason = _claim(_read_info(ctx, target))
     if authority is None:
         return None, f"no occurrence pointer: the value's label was refused ({reason})"
+    if _edited(ctx):
+        # M8: an edited value is addressed by its cut and the edits applied after it; with a
+        # writable project the recipe (and every edit tensor, as a blob) is stored so
+        # mdb.resolve and seek can reproduce it bitwise; without one it resolves to a refusal.
+        try:
+            origin, recipe, event, cut = _edited_origin(ctx, target)
+        except (Refused, ValueError) as error:
+            return None, f"no occurrence pointer: {error}"
+        address = replace(address, origin=origin)
+    else:
+        layer_port = target.layer_port
+        if layer_port is not None and run.pending_layer == layer_port[0] and (
+            _split(run.where)[0] == target.row
+        ):
+            cut = run.checkpoint(pin=False)["cut"]
     try:
         pointer = occurrence_pointer(
             address,
@@ -382,6 +420,8 @@ def _pointer(ctx, target: Target, value) -> tuple[dict | None, str | None]:
             shape=list(value.shape),
             dtype=str(value.dtype).removeprefix("torch."),
             sha256=tensor_digest(value.contiguous()),
+            recipe=recipe,
+            event=event,
             cut=cut,
             authority=authority,
             ports=run.program.names,
@@ -488,6 +528,41 @@ def _reduction(ctx, target: Target, *, k: int = 5, slice_count: int = 0,
     return out
 
 
+def _margin_reading(ctx, address: str | None) -> dict[str, Any] | None:
+    """``print``/``x``/``display`` of a declared margin ``M[a,b]`` (token ids or quoted texts, as
+    ``explain``/``forecast``/``whatif`` read them): the difference of the row's two logits at
+    the cursor, ``measured`` (the label of the logits stop's provenance), or ``Refused`` when
+    that row's logits are not computed yet. None when ``address`` is not a margin."""
+    from .predict import _margin
+
+    if address is None or ctx.run is None:
+        return None
+    margin = _margin(ctx, address)
+    if margin is None:
+        return None
+    run = ctx.run
+    stop = f"t{margin.row}.logits"
+    try:
+        logits = run.read(stop)
+    except ValueError:
+        raise Refused(f"M[{margin.a},{margin.b}] is the difference of two logits of row "
+                      f"t{margin.row}, not computed at {run.where}: run `until {stop}` first"
+                      ) from None
+    flat = logits.reshape(-1)
+    high, low = flat[margin.a].double(), flat[margin.b].double()   # slice, then one widening
+    provenance = _prov_json({**_bp().provenance(run, stop, None), "port": None})
+    authority, reason = _claim(provenance)
+    text = f"t{margin.row}.M[{margin.a},{margin.b}]"
+    number = (lambda v: _num(float(v), authority) if authority else _unresolved(reason or "refused"))
+    return {
+        "address": text, "shape": [], "dtype": "float64", "axes": [], "provenance": provenance,
+        "margin": {"a": _token(ctx, margin.a), "b": _token(ctx, margin.b),
+                   "logit_a": number(high), "logit_b": number(low), "value": number(high - low),
+                   "rule": f"logits[a] - logits[b] of {stop}; the exact float64 difference of "
+                           "the two stored logits"},
+    }
+
+
 # --------------------------------------------------------------------------- stops
 
 
@@ -516,7 +591,8 @@ def _displays(ctx) -> list[dict[str, Any]]:
     out = []
     for number, text in sorted(ctx.displays.items())[:MAX_DISPLAYS]:
         try:
-            item = _reduction(ctx, resolve_target(ctx, text), k=3, pointer=False)
+            item = _margin_reading(ctx, text) or _reduction(
+                ctx, resolve_target(ctx, text), k=3, pointer=False)
             item.pop("axes", None)
             out.append({"id": number, **item})
         except (OpError, ValueError) as error:
@@ -565,14 +641,22 @@ def _switch(ctx, run) -> None:
     debugger.live = run
 
 
-def _start(ctx, prompt, name: str | None = None) -> None:
+def _start(ctx, prompt, name: str | None = None, prefill: int | None = None) -> None:
     if ctx.debugger is None:
         raise Refused("no model attached; use mdb.attach(model) or --tiny")
     if prompt is None:
         if ctx.run is None:
             raise BadArgs("start needs a prompt (text or token ids)")
         prompt = list(ctx.run.tokens)
-    run = ctx.debugger.run(prompt, name=name)  # the one start: cursor at t<last>.L0.h
+    if prefill is not None:
+        count = len(ctx.debugger.tokens(prompt))
+        if prefill > count - 1:
+            raise Refused(f"prefill={prefill} is past the prompt: it has {count} tokens, so "
+                          f"prefill is 0..{count - 1} (the row after the prefilled ones is the "
+                          "first stepped row)")
+    # the one start: cursor at t<first stepped row>.L0.h; the prompt rows from `prefill` on are
+    # stepped one row at a time, tokens forced (one session, built under that split)
+    run = ctx.debugger.run(prompt, name=name, **({} if prefill is None else {"prefill": prefill}))
     getattr(ctx.debugger, "run_checkpoints", {}).pop(run.name, None)  # a new run of that name
     _switch(ctx, run)
 
@@ -581,26 +665,41 @@ _PROMPT = Arg("prompt", "prompt", help="prompt text (needs a tokenizer) or token
               "omitted = the current run's prompt")
 _NAME = Arg("name", "str", positional=False,
             help="name of the run (default main): other runs take values from it as NAME:ADDR")
+_PREFILL = Arg("prefill", "int", minimum=0, positional=False,
+               help="prompt rows computed in one batched call (default all but the last); the "
+                    "rest are stepped one row at a time with their tokens forced, so their "
+                    "ports are stops (0 steps every row)")
+
+
+def procedure_json(run) -> dict[str, Any]:
+    """The run's prefill split as op JSON: ``rows`` (prompt rows batched), ``text`` and
+    ``default`` (all prompt rows but the last batched, the procedure of ``start`` without
+    ``prefill=``)."""
+    procedure = run.procedure
+    return {"rows": procedure["prefill"], "text": procedure["text"],
+            "default": procedure["prefill"] == procedure["prompt_rows"] - 1}
 
 
 def _started(ctx) -> dict[str, Any]:
-    return {"prompt_tokens": len(ctx.run.tokens), "run": ctx.run.name}
+    return {"prompt_tokens": len(ctx.run.tokens), "run": ctx.run.name,
+            "prefill": procedure_json(ctx.run)}
 
 
-@op("start", "Prefill a prompt and stop at the pending token's first port (L0.h)", _PROMPT,
-    _NAME, effect="native", needs_live=False, usage="start [name=NAME] [TEXT | ID ID ...]")
-def _op_start(ctx, prompt, name):
-    _start(ctx, prompt, name)
+@op("start", "Prefill a prompt and stop at the first stepped row's first port (L0.h)",
+    _PROMPT, _NAME, _PREFILL, effect="native", needs_live=False,
+    usage="start [name=NAME] [prefill=K] [TEXT | ID ID ...]")
+def _op_start(ctx, prompt, name, prefill):
+    _start(ctx, prompt, name, prefill)
     return moved(ctx, _started(ctx))
 
 
 @op("run", "Like start, then continue to the first armed breakpoint or watch", _PROMPT,
     Arg("budget", "int", default=8, minimum=0, maximum=STEP_CAP, positional=False,
-        help="token rows continue may enter (minimum 1, at most 4096)"), _NAME,
+        help="token rows continue may enter (minimum 1, at most 4096)"), _NAME, _PREFILL,
     effect="native", needs_live=False,
-    usage="run [name=NAME] [TEXT | ID ID ...] [budget=N]")
-def _op_run(ctx, prompt, budget, name):
-    _start(ctx, prompt, name)
+    usage="run [name=NAME] [prefill=K] [TEXT | ID ID ...] [budget=N]")
+def _op_run(ctx, prompt, budget, name, prefill):
+    _start(ctx, prompt, name, prefill)
     if not ctx.table.armed():
         return moved(ctx, {**_started(ctx), "reason": "no-breakpoints"})
     return _continue(ctx, budget=budget, extra=None, more=_started(ctx))
@@ -613,7 +712,7 @@ def _op_run(ctx, prompt, budget, name):
 def _op_where(ctx):
     run = ctx.run
     out = {"where": run.where, "stop": _stop(ctx), "staged": len(run.edits),
-           "lookahead": getattr(run, "lookahead", None)}
+           "lookahead": getattr(run, "lookahead", None), "prefill": procedure_json(run)}
     if getattr(run, "cells", None):
         out["staged_cells"] = len(run.cells)
     if getattr(run, "name", None) is not None:
@@ -674,7 +773,7 @@ def _walk(run, unit: str, n: int, *, reverse: bool) -> tuple[int, int]:
     stops = run.stops()
     size = len(stops)
     key = run.parse(run.where)
-    root = (len(run.tokens) - 1, 0)
+    root = run.parse(run.root)
     for _ in range(n):
         while True:
             row, index = key
@@ -763,6 +862,8 @@ def _run_to(ctx, target: str, budget: int, *, name: str) -> dict[str, Any]:
     key, here = run.parse(found.run_target), run.parse(run.where)
     if key == here and name == "until":
         return moved(ctx)
+    if key[0] < getattr(run, "first_row", 0):
+        raise Refused(f"{found.run_target}: {run.prefilled_reason(key[0])}")
     if key <= here:
         raise Refused(f"{found.run_target} is "
                       + ("behind the cursor " if name == "until" else "not ahead of the cursor ")
@@ -950,6 +1051,12 @@ def _op_ignore(ctx, id, count):  # noqa: A002
     usage="watch ADDR [change|level|edge] [if PREDICATE]")
 def _op_watch(ctx, address, mode, predicate):
     bp = _bp()
+    from .predict import _margin
+
+    if ctx.run is not None and _margin(ctx, address) is not None:
+        raise Refused("watch takes a stop, a port or a cache cell, not the derived margin "
+                      "M[a,b]; watch logits[a] and logits[b], or `display M[a,b]` to see it "
+                      "after every stop")
     try:
         item = ctx.table.add_watch(address, _program(ctx), predicate=predicate, mode=mode,
                                    adapter=_adapter(ctx))
@@ -974,12 +1081,17 @@ def _op_display(ctx, address):
     if address is not None:
         if len(ctx.displays) >= MAX_DISPLAYS:
             raise Refused(f"at most {MAX_DISPLAYS} displays")
-        target = resolve_target(ctx, address)
-        _check_selector(ctx, target)
-        if target.cell is None and target.label is not None:
+        from .predict import _margin
+
+        if _margin(ctx, address) is not None:
             text = address.strip()
         else:
-            text = target.text
+            target = resolve_target(ctx, address)
+            _check_selector(ctx, target)
+            if target.cell is None and target.label is not None:
+                text = address.strip()
+            else:
+                text = target.text
         ctx.displays[ctx.next_display_id()] = text
     return {"displays": _displays(ctx)}
 
@@ -1010,6 +1122,9 @@ def _op_undisplay(ctx, ids):
         help="also show the first N selected values"),
     effect="read", usage="print [ADDR] [top=K] [slice=N]")
 def _op_print(ctx, address, top, slice):  # noqa: A002 - the arg name is the wire name
+    margin = _margin_reading(ctx, address)
+    if margin is not None:
+        return margin
     return _reduction(ctx, resolve_target(ctx, address), k=top, slice_count=slice)
 
 
@@ -1018,6 +1133,16 @@ def _op_print(ctx, address, top, slice):  # noqa: A002 - the arg name is the wir
     Arg("offset", "int", default=0, minimum=0), effect="read",
     usage="x [ADDR] [COUNT] [OFFSET]")
 def _op_x(ctx, address, count, offset):
+    margin = _margin_reading(ctx, address)
+    if margin is not None:
+        if offset:
+            raise BadArgs(f"offset {offset} is past the 1 selected value")
+        value = margin["margin"]["value"]
+        values = ({"values": [value["value"]], "authority": value["authority"]}
+                  if "authority" in value else value)
+        return {"address": margin["address"], "shape": [], "selected_shape": [],
+                "dtype": "float64", "offset": 0, "count": 1, "numel": 1, "values": values,
+                "provenance": margin["provenance"], "margin": margin["margin"]}
     target = resolve_target(ctx, address)
     value = _read(ctx, target)
     selection = _select(ctx, target, value)
@@ -1163,6 +1288,107 @@ def cell_request(ctx, found: Target, value: Any, op: str, dose: float | None) ->
             "origin": origin}
 
 
+def _is_origin_value(value: Any) -> bool:
+    """``ORIGIN:ADDR``: a value text with a ``:`` before any selector bracket."""
+    return isinstance(value, str) and ":" in value.partition("[")[0]
+
+
+def origin_port_value(ctx, text: str):
+    """``(tensor, pointer)`` of ``ORIGIN:ADDR`` for a port edit: the occurrence ADDR names in
+    the run ORIGIN stands for, with ADDR's selector applied there. ADDR is read with this
+    run's defaults (a missing row is the cursor's row, a bare port the current layer, as for an
+    address of this run) and may name another row or layer than the edited port. The fetch is
+    ``Debugger.origin_value`` (the one cell edits use): the donor's cursor and state are left
+    as they were. The selected block is sliced first and then cast once to this run's dtype."""
+    run = ctx.run
+    branch, _, rest = (part.strip() for part in text.strip().partition(":"))
+    if branch.startswith("@"):
+        raise Refused(f"{text}: an @cut origin is not a run; name a run (info runs), a project "
+                      "session id or a durable checkpoint name")
+    if not branch or not rest:
+        raise BadArgs(f"{text}: write ORIGIN:ADDR (a run name, then an address of that run)")
+    if ctx.debugger is None:
+        raise Refused(f"{text}: a value from another run needs the debugger's named runs "
+                      "(mdb.attach, then start ... name=NAME)")
+    if rest.startswith("cache."):
+        raise Refused(f"{text}: a port takes a port or stop occurrence of another run, not a "
+                      "cache cell; put a cache cell into a cache cell (set cache.L<i>.k|v[...] = "
+                      f"{text})")
+    source = resolve_target(ctx, rest)
+    if source.label == "start":
+        raise Refused(f"{text}: start is the token list, not a value")
+    label = f"{branch}:{source.text}"
+
+    def pick(donor):
+        from .debugger import NotHeld
+
+        try:
+            tensor = donor.read(source.run_target)
+        except ValueError as error:
+            if donor.parse(source.run_target) > donor.parse(donor.where):
+                raise NotHeld(f"{branch} has not computed {source.run_target} (it is at "
+                              f"{donor.where}): run it there first (frame {branch}: then "
+                              f"until {source.run_target})") from None
+            raise NotHeld(f"{label}: {error} (start {branch} with `start name={branch} "
+                          "prefill=K ...` to step that row; the keys and values of a prefilled "
+                          "row are the cache cells cache.L<i>.k|v[row=N], which a cell edit "
+                          "takes)") from None
+        block = _select(ctx, source, tensor).value
+        # one move: the selected block to this run's device and dtype together (a donor of
+        # another device is moved, never mixed with this run's tensors)
+        if block.dtype != run.adapter.dtype or block.device != run.adapter.device:
+            block = block.to(device=run.adapter.device, dtype=run.adapter.dtype)
+        return block.detach().clone()
+
+    return ctx.debugger.origin_value(branch, label, run=run, pick=pick)
+
+
+def port_request(ctx, found: Target, value: Any) -> dict[str, Any]:
+    """A port edit request from op arguments: ``{value, mask, selection, source, origin}``.
+
+    ``value`` is a number, an address of this run (its value) or ``ORIGIN:ADDR`` (the value of
+    another run, ``origin_port_value``; ``origin`` is then its pointer). A selector on the
+    edited port becomes ONE masked edit (shape known without running anything): the op applies
+    to the selected elements only and the rest stay bit-identical, the same ahead of the cursor
+    as at it. A value of this run broadcasts to the selection; a value of another run must
+    have the selected block's shape exactly (a patch copies a block, it does not broadcast)."""
+    import torch
+
+    run = ctx.run
+    origin = None
+    if _is_origin_value(value):
+        value, origin = origin_port_value(ctx, value)
+        source = origin["address"]
+    else:
+        value, source = value_source(ctx, value)
+    finite_limit(run, value)
+    shape = tuple(run.port_shape(found.layer_port[1]))
+    mask = selection = None
+    if found.selector:
+        axes = _axes(ctx, found)
+        mask, index, chosen = selector_mask(
+            axes, shape, found.selector, head_dim=run.adapter.head_dim,
+            row=found.row if "row" in axes else None, tokenizer=ctx.tokenizer, text=found.text)
+        selection = found.text.partition("[")[2].rstrip("]")
+    else:
+        index, chosen = None, shape
+    if origin is not None and tuple(value.shape) != tuple(chosen):
+        raise Refused(f"{source} selects shape {list(value.shape)}; {found.text} selects "
+                      f"{list(chosen)}; select the same block on both sides (the same port "
+                      "kind, heads and row length)")
+    if index is not None and isinstance(value, torch.Tensor):
+        if torch.broadcast_shapes(value.shape, chosen) != chosen:
+            raise BadArgs(f"{source} does not broadcast to the selection {list(chosen)}")
+        # the block is built where the value lives (a donor's value is on the model's device;
+        # the host-built index and mask move to it, the selector's tensors are tiny)
+        where = value.device
+        full = torch.zeros(shape, dtype=run.adapter.dtype, device=where)
+        full[tuple(axis.to(where) for axis in index)] = value.to(run.adapter.dtype).expand(chosen)
+        value = full
+    return {"value": value, "mask": mask, "selection": selection, "source": source,
+            "origin": origin}
+
+
 def _set_cell(ctx, found: Target, value: Any, op: str, dose: float | None) -> dict[str, Any]:
     from mdb.engine.edits import CELL_BOUNDARY, CELL_READ
 
@@ -1198,8 +1424,6 @@ def _set_cell(ctx, found: Target, value: Any, op: str, dose: float | None) -> di
     Arg("dose", "number", positional=False, help="mix only: cell + dose * (value - cell)"),
     effect="mutate", usage="set ADDR = VALUE|ADDR|ORIGIN:ADDR [replace|add|scale|mix DOSE]")
 def _op_set(ctx, target, value, op, dose=None):
-    import torch
-
     run = ctx.run
     found = resolve_target(ctx, target)
     if found.cell is not None:
@@ -1209,34 +1433,17 @@ def _op_set(ctx, target, value, op, dose=None):
     if op == "mix" or dose is not None:
         raise Refused("mix DOSE applies to state cells (cache.L<i>.k|v); a port takes "
                       "replace, add or scale")
-    if isinstance(value, str) and ":" in value.partition("[")[0]:
-        raise Refused(f"{value}: a value from another run goes into a state cell "
-                      "(cache.L<i>.k|v); a port takes a number or an address of this run")
-    value, source = value_source(ctx, value)
-    finite_limit(run, value)
-    kwargs: dict[str, Any] = {}
-    if found.selector:
-        # ONE edit: the selector becomes a mask over the port (shape known without running
-        # anything), so replace/add/scale apply to the selected elements only and the rest
-        # stay bit-identical. Same behaviour ahead of the cursor as at it.
-        shape = tuple(run.port_shape(found.layer_port[1]))
-        axes = _axes(ctx, found)
-        mask, index, chosen = selector_mask(
-            axes, shape, found.selector, head_dim=run.adapter.head_dim,
-            row=found.row if "row" in axes else None, tokenizer=ctx.tokenizer, text=found.text)
-        if isinstance(value, torch.Tensor):
-            if torch.broadcast_shapes(value.shape, chosen) != chosen:
-                raise BadArgs(f"{source} does not broadcast to the selection {list(chosen)}")
-            full = torch.zeros(shape, dtype=run.adapter.dtype)
-            full[index] = value.to(run.adapter.dtype).expand(chosen)
-            value = full
-        kwargs = {"mask": mask, "selection": found.text.partition("[")[2].rstrip("]")}
-    manifest = run.set(found.run_target, value, op, **kwargs)  # atomic: failure stages nothing
+    request = port_request(ctx, found, value)
+    # atomic: failure stages nothing (check: an edit the cursor's values see is realised now)
+    manifest = run.set(found.run_target, request["value"], op, mask=request["mask"],
+                       selection=request["selection"], origin=request["origin"], check=True)
     staged = run.staged_info()
     out = {"target": found.text, "edits": [_edit_json(staged[-1] if staged else manifest)],
            "staged": len(run.edits), "where": run.where}
-    if source is not None:
-        out["source"] = source
+    if request["source"] is not None:
+        out["source"] = request["source"]
+    if request["origin"] is not None:
+        out["origin"] = dict(request["origin"])
     if found.selector:
         out["realised_as"] = f"one masked {op} on the selected elements"
     return out
@@ -1490,6 +1697,7 @@ def _op_info(ctx, subject, offset, limit):
         runs = getattr(ctx.debugger, "runs", {}) if ctx.debugger is not None else {}
         items = [{"name": name, "where": run.where, "prompt_tokens": len(run.tokens),
                   "staged": len(run.edits), "staged_cells": len(run.cells),
+                  "prefill": procedure_json(run),
                   "current": run is ctx.run} for name, run in runs.items()]
         shown, meta = _page(items, offset, limit)
         return {"subject": subject, "runs": shown, **meta}
@@ -1545,6 +1753,11 @@ def _op_info(ctx, subject, offset, limit):
                         "committed": [_edit_json(m) for m in committed_cells[:limit]],
                         "staged_total": len(staged_cells),
                         "committed_total": len(committed_cells)}
+        left = {kind: len(listed) - limit for kind, listed in
+                (("staged", staged_cells), ("committed", committed_cells))
+                if len(listed) > limit}
+        if left:    # +N more: never a silent cut at ``limit``
+            out["cells"]["omitted"] = left
     return out
 
 
@@ -1642,20 +1855,11 @@ def _op_reverse_continue(ctx):
 
 # --------------------------------------------------------------------------- slots
 
-for _name, _summary, _milestone in (
-    ("forecast", "Seal a forecast at the cursor before the native step", "A5"),
-    ("verify", "Check a sealed forecast against the native receipt", "A5"),
-    ("whatif", "Predicted versus measured effect of an edit on a consumer", "A5"),
-    ("explain", "Per-layer readout of a consumer with proof IDs and remainder", "A5"),
-    ("reads", "Who reads a value: attention reads with mass and causal verdict", "A6"),
-    ("symbols", "Symbol bindings at the cursor with readers and lifetimes", "A6"),
-    ("circuit", "Circuit records: nodes, edges, consumer, unlisted remainder", "A6"),
-    ("compare", "Compare branches (sham, A, B, A+B, predicted-only)", "A6"),
-    ("seek", "Seek to an occurrence through recorded projects", "A6"),
-    ("export", "Export a walkthrough bundle of records and pointers", "B1"),
-):
-    slot(_name, _summary, _milestone)
+slot("export", "Export a walkthrough bundle of records and pointers",
+     "walkthrough export has no command yet; sealed records stay in the project store")
 
 # old private names, kept for one commit
 _target, _value_source, _finite_limit = resolve_target, value_source, finite_limit
 _moved, _project = moved, project_of
+
+from . import sweep as _sweep  # noqa: E402,F401 - registers `sweep` (it imports from here)

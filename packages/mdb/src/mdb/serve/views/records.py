@@ -1,10 +1,14 @@
 """Records drawer: sealed records, findings, slices and symbol lifecycles of one session."""
 from __future__ import annotations
 
+import hashlib
+import json
 import math
 from collections import Counter
 
 from ...core.address import format_address, from_json
+from ...core.circuit_pages import PAGE_SCHEMA, PageError, locate
+from .. import blobs
 from ..caps import NONFINITE, bound_json, canonical, nonfinite
 from ..schema import (
     STRUCTURAL_KEYS,
@@ -17,6 +21,7 @@ from ..schema import (
     RecordDetail,
     RecordPage,
     RecordSummary,
+    StoredBody,
     num,
 )
 from ..schema import unresolved as unresolved_num
@@ -425,6 +430,116 @@ def _detail(model, entry, order, identifier):
         if len(canonical(detail.model_dump(mode="json", by_alias=True))) < 56 * 1024:
             return detail, omitted
     return detail, omitted
+
+
+DRAWN_KINDS = ("circuit", "symbol-table")
+V2_KEYS = ("value", "authority", "proof", "unit", "note", "reason")
+STORED_BYTES = 60 * 1024
+
+
+def _lean(value, *, schema, kind, recorded, path="", key=None):
+    """A stored body with every number labelled as ``label_floats`` labels it, but keeping a v2
+    ``{value, authority, ...}`` in its own (op) form, so the body is the op's JSON the Live view
+    draws. A v2 number's other keys (``bound``, ``within``) are kept and labelled too."""
+    if isinstance(value, dict):
+        if "ev" in value and "v" in value and is_number(value["v"]):
+            return _forged(value, path or "value")
+        if _v2_number(value) is not None:
+            out = {k: value[k] for k in V2_KEYS if k in value and (
+                k == "value" or isinstance(value[k], str))}
+            for k, v in value.items():
+                if k not in V2_KEYS:
+                    out[k] = _lean(v, schema=schema, kind=kind, recorded=recorded,
+                                   path=f"{path}.{k}" if path else str(k), key=k)
+            return out
+        return {k: _lean(v, schema=schema, kind=kind, recorded=recorded,
+                         path=f"{path}.{k}" if path else str(k), key=k) for k, v in value.items()}
+    if isinstance(value, list):
+        return [_lean(v, schema=schema, kind=kind, recorded=recorded, path=path, key=key)
+                for v in value]
+    return label_floats(value, schema=schema, kind=kind, recorded=recorded, path=path, key=key)
+
+
+class _PageRefused(PageError):
+    """A stored child page that is missing or fails its checks (not an unknown node id)."""
+
+
+def _page_loader(model):
+    """``circuit_pages.find``'s ``load`` for a recorded project: the page blob read from the
+    project store with numpy only, its payload and JSON digests checked against the pointer."""
+    def load(pointer):
+        if pointer.get("state") != "stored":
+            raise _PageRefused("this page was held in memory by a run without a project "
+                               f"({as_str(pointer.get('reason')) or 'absent'}); the recorded "
+                               "project does not hold it")
+        try:
+            array, info = blobs.tensor_blob(model.store_root, as_str(pointer.get("ref")))
+            raw = array.tobytes()
+            if (info["sha256"] != pointer.get("tensor_sha256") or info["dtype"] != "uint8"
+                    or len(raw) != as_int(as_dict(pointer.get("bytes")).get("value"))):
+                raise ValueError("the blob differs from its pointer")
+            if hashlib.sha256(raw).hexdigest() != pointer.get("sha256"):
+                raise ValueError("the page differs from the pointer's sha256")
+            page = json.loads(raw)
+            if not isinstance(page, dict) or page.get("schema") != PAGE_SCHEMA:
+                raise ValueError("not a circuit page")
+        except (blobs.BlobError, OSError, ValueError, AttributeError, TypeError) as error:
+            raise _PageRefused(f"page {short(as_str(pointer.get('sha256')))} refused: "
+                               f"{error}") from None
+        return page
+    return load
+
+
+def stored_body(model, identifier, node=None) -> StoredBody:
+    """The whole sealed body of one ``circuit`` or ``symbol-table`` record (``StoredBody``).
+    Another kind, an unreadable row or a body over ``STORED_BYTES`` is refused, never cut: a
+    drawn circuit or table with nodes silently missing would not close. A circuit record is
+    paged (its root page is the body; a group that did not fit is a ``paged`` pointer to a child
+    page): ``node`` (``n12``) returns that node's page instead, ``body`` being the page
+    (``{schema, node, ...}``), read from the project store and checked against its sha256."""
+    for raw in model.records():
+        if not isinstance(raw, dict) or record_id(raw) != identifier:
+            continue
+        kind = as_str(raw.get("kind"))
+        if raw.get("unreadable"):
+            raise ViewError("unreadable", f"record {short(identifier)}: "
+                            f"{as_str(raw.get('unreadable'))}", 409)
+        if kind not in DRAWN_KINDS or raw.get("schema") != "mdb-record-v2":
+            raise ViewError("not_drawn", f"record {short(identifier)} is a {kind or '?'} record; "
+                            "only engine circuit and symbol-table records are drawn (the "
+                            "Records drawer shows the rest)", 409)
+        body = as_dict(raw.get("body"))
+        shown, page_schema = body, as_str(body.get("schema"))
+        if node is not None:
+            if kind != "circuit":
+                raise ViewError("not_drawn", f"record {short(identifier)} is a {kind} record; "
+                                "only a circuit has node pages", 409)
+            try:
+                count = as_dict(body.get("count")).get("value", body.get("count"))
+                shown = locate(as_dict(body.get("root")), as_int(count) or 0, node,
+                               _page_loader(model))
+            except _PageRefused as error:
+                raise ViewError("page_refused", f"record {short(identifier)}: {error}",
+                                409) from None
+            except PageError as error:
+                raise ViewError("no_node", f"record {short(identifier)}: {error}", 404) from None
+            page_schema = PAGE_SCHEMA
+        lean = _lean(shown, schema=as_str(raw.get("schema")), kind=kind,
+                     recorded=as_str(raw.get("authority")) or None)
+        size = len(canonical(lean))
+        if size > STORED_BYTES:
+            raise ViewError("over_cap", f"record {short(identifier)}: its body is {size} bytes, "
+                            f"over the {STORED_BYTES} the page draws at once; the REPL prints "
+                            "it whole", 409)
+        ledger = body.get("ledger_id")
+        return StoredBody(id=identifier, kind=kind, record_schema=page_schema,
+                          authority=as_str(raw.get("authority")),
+                          consumer=as_str(body.get("consumer")) or None,
+                          where=as_str(body.get("where")) or None, body=lean,
+                          ledger_id=(as_int(ledger.get("value") if isinstance(ledger, dict)
+                                            else ledger) if ledger is not None else None),
+                          node=node)
+    raise ViewError("not_found", f"record {short(identifier)} is not in session {model.sid}", 404)
 
 
 def record_detail(model, identifier) -> tuple[RecordDetail, list]:

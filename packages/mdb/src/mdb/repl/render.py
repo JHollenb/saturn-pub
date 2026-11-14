@@ -129,6 +129,14 @@ def reduction_lines(result: dict[str, Any], indent: str = "  ") -> list[str]:
             if "replica_max_abs_diff" in provenance:
                 text += f" max_abs_diff {num(provenance['replica_max_abs_diff'])}"
             lines.append(f"{indent}replica check: {text}")
+    if "margin" in result:
+        margin = result["margin"]
+        value = margin["value"]
+        sides = f"logits[{_token_text([margin['a']])}] - logits[{_token_text([margin['b']])}]"
+        lines.append(f"{indent}{sides} = " + (
+            f"{fmt(value['value'])} {tag(value['authority'], why)}" if "authority" in value
+            else num(value)))
+        return lines
     if "tokens" in result:
         total = result.get("tokens_total", len(result["tokens"]))
         more = "" if total == len(result["tokens"]) else f" (last {len(result['tokens'])})"
@@ -224,6 +232,8 @@ def _motion(result: dict[str, Any]) -> list[str]:
                         if result.get("staged_cells") else ""))
     if result.get("op") in ("start", "run") and result.get("run") not in (None, "main"):
         lines.append(f"run {result['run']}")
+    if result.get("op") in ("start", "run"):
+        lines.extend(_procedure_lines(result))
     lines.append(stop_line(result["stop"]))
     if result.get("focus"):
         lines.append(f"focus {result['focus']}")
@@ -321,6 +331,7 @@ def _info(result: dict[str, Any]) -> list[str]:
         return [f"{'*' if r['current'] else ' '} {r['name']:<10}{r['where']}  "
                 f"{r['prompt_tokens']} tokens, staged {r['staged']}"
                 + (f" + {r['staged_cells']} cell(s)" if r["staged_cells"] else "")
+                + "".join(f", {line}" for line in _procedure_lines(r))
                 for r in result["runs"]] + _more(result) or ["no runs"]
     lines = [f"staged at {result['where']}: " + (
         "; ".join(_edit(e) for e in result["staged"]) or "none")]
@@ -331,11 +342,18 @@ def _info(result: dict[str, Any]) -> list[str]:
                      + "; ".join(_edit(e) for e in entry["edits"]) + more)
     cells = result.get("cells")
     if cells:
+        omitted = cells.get("omitted") or {}
         for e in cells["staged"]:
             lines.append(f"staged cell: {_edit(e)}")
+        if omitted.get("staged"):
+            lines.append(f"staged cell: +{omitted['staged']} more of {cells['staged_total']} "
+                         "(use limit= for the rest)")
         for e in cells["committed"]:
             lines.append(f"committed cell (t{e['row']} L{e['layer']} transition "
                          f"{e['transition']}): {_edit(e)}")
+        if omitted.get("committed"):
+            lines.append(f"committed cell: +{omitted['committed']} more of "
+                         f"{cells['committed_total']} (use limit= for the rest)")
     return lines + _more(result)
 
 
@@ -376,6 +394,10 @@ def _frame(stop: dict[str, Any]) -> str:
 def render(result: dict[str, Any]) -> str:
     """Compact text of one op result; a result whose state is not ``resolved`` says so."""
     text = _render(result)
+    for use in result.get("symbol_uses", ()):
+        token = f" {json.dumps(use['text'], ensure_ascii=False)}" if "text" in use else ""
+        text += f"\n  symbol {use['symbol']} = {use['address']}  (row {use['row']}{token}: " \
+                f"{use['how']})"
     if result.get("state", "resolved") != "resolved":
         text += f"\nstate: {result['state']}"
     return text
@@ -400,6 +422,7 @@ def _render(result: dict[str, Any]) -> str:
                      + (f", lookahead {result['lookahead']}" if result.get("lookahead") else ""))
         for port in result.get("computed_past_cursor", ()):
             lines.append(f"{port} was computed by the native call but is not held")
+        lines.extend(_procedure_lines(result))
         return "\n".join(lines)
     if name == "frame" and "run" in result:
         return f"run {result['run']}\n" + stop_line(result["stop"])
@@ -537,11 +560,19 @@ def _explain_lines(result: dict[str, Any]) -> list[str]:
                  f"float64 {_claimed(data['float64_margin'])}  eta {_claimed(data['eta'])}"]
         for term in data["terms"]:
             lines.append(f"  {term['name']:<19}{_claimed(term['value'])}")
+        summary = data.get("terms_summary")
+        if summary and summary["rest"]["count"]:
+            rest = summary["rest"]
+            lines.append(f"  +{rest['count']} more, sum = {_claimed(rest['sum'])}"
+                         f"  (of {summary['count']} terms; full list "
+                         f"{summary['pointer']['state']}, sha256 {summary['pointer']['sha256'][:16]})")
         for rem in data["remainders"]:
             line = f"  ~{rem['name']:<18}{_claimed(rem['value'])}"
             if "scale" in rem:
                 line += (f"  scale {_claimed(rem['scale'])} k {rem['k']} "
                          f"{'within' if rem['within_rounding'] else 'OUTSIDE'}")
+            elif rem.get("bound", {}).get("state") == "refused":
+                line += f"  bound refused ({rem['bound']['reason']})"
             lines.append(line)
         lines.append(f"  listed_sum {_claimed(data['listed_sum'])}  closure "
                      f"{_claimed(data['closure'])}")
@@ -570,19 +601,54 @@ def _predicted(body: dict[str, Any]) -> str:
 
 def _forecast_lines(result: dict[str, Any]) -> list[str]:
     view = result["forecast"]
-    chain = view["method"]
-    last = chain[-1]
-    method = (f"{last['identity']} {last['proof'] or ''}: {last['operator']}" if len(chain) == 1
-              else f"{len(chain)} identities {chain[0]['stop']} .. {last['stop']} (last "
+    summary = view["method_summary"]
+    count, first, last = summary["count"], summary["first"][0], summary["last"][-1]
+    method = (f"{last['identity']} {last['proof'] or ''}: {last['operator']}" if count == 1
+              else f"{count} identities {first['stop']} .. {last['stop']} (last "
                    f"{last['identity']} {last['proof'] or ''})")
-    bound = view["bound"]
+    pointer = summary["chain_pointer"]
+    method += (f"; chain blob {pointer['ref'][:16]}" if pointer["state"] == "stored"
+               else "; chain not stored (no project)")
     vector = "sha256" in view["predicted"]
-    spread = (f"bound {_claimed(bound['max'])}{' per element' if vector else ''}"
-              if "max" in bound else f"bound {num(bound)}")
+    emulated = view.get("emulated") or {}
+    if "margin" in emulated:
+        second = _claimed(emulated["margin"])
+    elif "token" in emulated:
+        second = f"token {emulated['token']}"
+    elif "max_abs" in emulated:
+        second = f"{_claimed(emulated)}  sha256 {emulated['sha256'][:16]}"
+    else:
+        second = "none"
     return [f"forecast {view['id']}  {view['target']}  sealed at {view['sealed_at']}  "
             f"record {view['record'][:16]}",
             f"  method {method}",
-            f"  predicted {_predicted(view['predicted'])}  {spread}"]
+            f"  predicted exact {_predicted(view['predicted'])}   emulated {second}",
+            f"  {bound_text(view['bound'], vector)}"]
+
+
+def bound_text(bound: dict[str, Any], vector: bool = False) -> str:
+    """The sealed worst-case interval as information (M56): its largest value, or the stop where
+    it stopped being informative and why, or why there is none."""
+    if "max" in bound:
+        return (f"worst-case rounding interval {_claimed(bound['max'])}"
+                f"{' per element' if vector else ''} (information, not the verdict)")
+    if "note" in bound:
+        return bound["note"]
+    return f"worst-case rounding interval {bound.get('state', 'absent')} ({bound.get('reason')})"
+
+
+def _floor_text(item: dict[str, Any]) -> str:
+    """``residual 0 = 0 spacings <= floor 0.0156 = 1 bfloat16 spacing (supplied)``: the residual
+    native - emulated in dtype spacings next to the floor in spacings."""
+    text = ""
+    if "residual_spacings" in item:
+        text += f" = {item['residual_spacings']['value']:.2g} spacings"
+    text += f" {'<=' if item['verdict'] == 'confirmed' else '>'} floor {_claimed(item['floor'])}"
+    if "floor_spacings" in item:
+        count = item["floor_spacings"]["value"]
+        text += (f" = {count:g} {item.get('dtype', '?')} spacing{'' if count == 1 else 's'} "
+                 f"({item['floor_spacings']['authority']})")
+    return text
 
 
 def _verify_lines(result: dict[str, Any]) -> list[str]:
@@ -600,15 +666,29 @@ def _verify_lines(result: dict[str, Any]) -> list[str]:
         else:
             text = f"{head}  native {_claimed(item['native'])}" if "native" in item else head
             if "residual_max_abs" in item:
-                text += f"  residual {_claimed(item['residual_max_abs'])}"
-            if "bound_max" in item:
-                text += (f" {'<=' if item['within_bound'] else '>'} bound "
-                         f"{_claimed(item['bound_max'])}")
-                if "worst_excess" in item:
-                    text += f" (worst excess {_claimed(item['worst_excess'])})"
-            elif item["verdict"] == "no-bound":
-                text += "  (no bound was stated)"
+                text += f"  residual vs emulated {_claimed(item['residual_max_abs'])}"
+            if "floor" in item:
+                text += _floor_text(item) + f"  [P20, {item.get('state', 'resolved')}]"
+            if "reason" in item:
+                text += f"  ({item['reason']})"
             lines.append(text)
+            effect = item.get("rounding_effect")
+            if effect is not None:
+                text = f"  rounding effect native - exact {_claimed(effect['max_abs'])}"
+                if "spacings" in effect:
+                    text += f" = {effect['spacings']['value']:.3g} spacings"
+                if "bound_max" in item:
+                    text += (f"; worst-case bound {_claimed(item['bound_max'])} "
+                             f"({'holds' if item['within_bound'] else 'exceeded'}, information)")
+                    if "worst_excess" in item:
+                        text += f" (worst excess {_claimed(item['worst_excess'])})"
+                elif "bound_note" in item:
+                    text += f"; {item['bound_note']}"
+                lines.append(text)
+            if "stages" in item:
+                lines.append(f"  {stages_text(item['stages'])}")
+            if "rounding_origin" in item:
+                lines.append(f"  rounding origin (sealed): {item['rounding_origin']['text']}")
         order = item["order"]
         lineage = ("same cut (the target is a later port of the sealed layer)"
                    if order["same_cut"] else
@@ -618,6 +698,13 @@ def _verify_lines(result: dict[str, Any]) -> list[str]:
                      f"{'before' if order['sealed_before_target'] else 'NOT before'} the target "
                      f"(stop {order['target']['index']}); {lineage}")
     return lines
+
+
+def stages_text(stages: dict[str, Any]) -> str:
+    """The per-stage containment on native operands (M56), labelled as a per-stage bound."""
+    if stages.get("state") in ("refused", "unresolved"):
+        return f"stages: {stages['state']} ({stages['reason']})"
+    return f"stages [per-stage bound, not a chain bound]: {stages['text']}"
 
 
 def _delta_name(consumer: dict[str, Any]) -> str:
@@ -639,10 +726,19 @@ def _whatif_lines(result: dict[str, Any]) -> list[str]:
     else:
         linear = prediction["linear"]
         exact = prediction["exact"]
+        bound = f"  bound {_claimed(exact['bound'])}" if "bound" in exact else ""
+        if "bound_note" in exact:
+            bound = f"  ({exact['bound_note']})"
+        if exact.get("wider_than_value"):
+            bound += " (worst case, >= |exact|: no sign)"
+        operands = exact.get("operands", {})
+        if operands.get("source") == "forecast":
+            bound += f"  (operands forecast from {operands['at']})"
+        emulated = prediction.get("emulated", {})
         lines.append(f"  sealed  linear {delta} = "
                      f"{_claimed(linear['value']) if 'value' in linear else num(linear)}   "
-                     f"exact {delta} = {_claimed(exact['value'])}  bound "
-                     f"{_claimed(exact['bound'])}")
+                     f"exact {delta} = {_claimed(exact['value'])}{bound}   emulated {delta} = "
+                     + (_claimed(emulated["value"]) if "value" in emulated else num(emulated)))
     measured = result["measured"]
     lines.append(f"  native  {delta} = {_claimed(measured['delta'])}   (base "
                  f"{_claimed(measured['base'])} -> edited {_claimed(measured['edited'])})")
@@ -653,16 +749,49 @@ def _whatif_lines(result: dict[str, Any]) -> list[str]:
         parts = []
         for term in split["terms"]:
             text = f"{term['name']} {_claimed(term['value'])}"
-            if "within_bound" in term:
+            if term.get("within_bound") is not None:
                 state = term["within_bound"]
-                text += (f" ({'within' if state else 'OUTSIDE'} bound {_claimed(term['bound'])})"
-                         if state is not None else f" (bound {num(term['bound'])})")
+                text += f" ({'within' if state else 'OUTSIDE'} bound {_claimed(term['bound'])})"
+            elif term.get("bound_note"):
+                text += f" ({term['bound_note']})"
             parts.append(text)
         lines.append(f"  error split ({split['proof']}): " + " + ".join(parts))
+    if "effect" in result:
+        lines.append("  " + effect_line(result["effect"], delta,
+                                        exact_note=" (written value, measured operands)"))
+    for side, stages in result.get("stages", {}).items():
+        lines.append(f"  {side} run {stages_text(stages)}")
+    other = (result.get("prediction") or {}).get("other_edits")
+    if other:
+        lines.append(f"  other edits in the chains: {', '.join(other['applied'])}")
     session = result["session"]
     lines.append(f"  session {'unchanged' if session['unchanged'] else 'CHANGED'} at "
                  f"{result['where']}  ({len(result['measured']['moves'])} moves, restored)")
     return lines
+
+
+def effect_line(effect: dict[str, Any], delta: str = "\u0394", exact_note: str = "") -> str:
+    """The P20 verdict: native against the emulated change within the floor (1 spacing,
+    supplied), the exact change beside it; ``exact_note`` says which exact change it is."""
+    numbers = f"native {delta} {_claimed(effect['native'])}"
+    if "size_spacings" in effect:
+        numbers += f" = {effect['size_spacings']['value']:.2g} spacings"
+    if "emulated" in effect:
+        numbers += (f", emulated {delta} {_claimed(effect['emulated'])}, residual "
+                    f"{_claimed(effect['residual'])} = "
+                    f"{effect['residual_spacings']['value']:.2g} spacings")
+    if "exact" in effect:
+        numbers += f"; exact {delta}{exact_note} {_claimed(effect['exact'])}"
+    if "emulated" not in effect:
+        numbers += f" ({effect['basis']})"
+    count = effect["floor_spacings"]["value"]
+    floor = (f"floor {_claimed(effect['floor'])} = {count:g} {effect['dtype']} "
+             f"spacing{'' if count == 1 else 's'} ({effect['floor_spacings']['authority']})")
+    text = f"verdict (P20): {effect['verdict']}  {numbers}; {floor}"
+    for key in ("note", "reason"):
+        if effect.get(key):
+            text += f"  [{effect[key]}]"
+    return text
 
 
 _PREDICT = {"explain": _explain_lines, "forecast": _forecast_lines, "verify": _verify_lines,
@@ -685,14 +814,18 @@ def _verdict(causal: dict[str, Any]) -> str:
         return f"unresolved ({causal['reason']})"
     head = causal["verdict"] + (f" ({causal['reason']})" if causal.get("reason") else "")
     text = f"{head}: Δ {_short(causal['delta'])}"
+    effect = causal.get("effect") or {}
+    emulated = causal.get("emulated")
+    if isinstance(emulated, dict) and emulated.get("state") is None:
+        text += f", emulated {_short(emulated)}"
+    if "residual" in effect:
+        text += (f", residual {_claimed(effect['residual'])} = "
+                 f"{effect['residual_spacings']['value']:.2g} spacings")
     predicted = causal.get("predicted")
     if isinstance(predicted, dict) and predicted.get("state") is None:
-        text += f", predicted {_short(predicted)}"
-    if causal.get("beyond_rounding_bound") is not None:
-        text += (" (beyond" if causal["beyond_rounding_bound"] else " (within") + \
-            f" rounding bound {_claimed(causal['rounding_bound'])})"
-    if causal.get("bound_exceeds_consumer"):
-        text += "  bound exceeds the consumer"
+        text += f"; exact {_short(predicted)}"
+    if "floor" in effect:
+        text += f"; floor {_claimed(effect['floor'])}"
     return text
 
 
@@ -720,6 +853,28 @@ def _reads_lines(result: dict[str, Any]) -> list[str]:
     return lines
 
 
+def _display_width(text: str) -> int:
+    """Terminal columns: wide characters count 2, combining marks 0."""
+    import unicodedata
+
+    return sum(0 if unicodedata.combining(c) else 2 if unicodedata.east_asian_width(c) in "WF"
+               else 1 for c in text)
+
+
+def _pad(text: str, width: int) -> str:
+    return text + " " * max(width - _display_width(text), 0)
+
+
+def _symbol_name(item: dict[str, Any]) -> str:
+    """A binding's name; token text is quoted with escapes so spaces and newlines show."""
+    name = item["symbol"]
+    if "text" in item:
+        name += f" {json.dumps(item['text'], ensure_ascii=False)}"
+    elif "token" in item:
+        name += f" (id {item['token']})"
+    return name
+
+
 def _symbols_lines(result: dict[str, Any]) -> list[str]:
     head = f"symbols at {result['where']}  consumer {result['consumer']}"
     if "consumer_total" in result:
@@ -728,15 +883,13 @@ def _symbols_lines(result: dict[str, Any]) -> list[str]:
              "  mass: a sum over the heads and layers that read the binding (n reads, mean per "
              "read)",
              "  life: " + "  ".join(f"{mark} {text}" for mark, text in result["legend"].items())]
-    for item in result["bindings"]:
-        name = item["symbol"]
-        if "text" in item:
-            name += f" {json.dumps(item['text'])}"
-        elif "token" in item:
-            name += f" (id {item['token']})"
+    names = [_symbol_name(item) for item in result["bindings"]]
+    names += [item["symbol"] for item in result.get("unresolved_symbols", ())] + ["Unbound"]
+    width = max(len(n) if n.isascii() else _display_width(n) for n in names) + 1
+    for item, name in zip(result["bindings"], names):
         life = item["lifetime"]
         span = f" ({life['first']}..{life['last']})" if life["first"] else ""
-        lines.append(f"  {name:<12}{item['status']:<7}mass {_claimed(item['mass'])} over "
+        lines.append(f"  {_pad(name, width)}{item['status']:<7}mass {_claimed(item['mass'])} over "
                      f"{item['count']} reads (mean {_short(item['mean_mass'])})  to_consumer "
                      f"{_short(item['to_consumer'])}  life {life['strip']}{span}")
         lines.append(f"    defined {', '.join(item['definitions'])}")
@@ -747,10 +900,14 @@ def _symbols_lines(result: dict[str, Any]) -> list[str]:
         if item.get("edited_by"):
             lines.append(f"    edited by {', '.join(item['edited_by'])}")
     for item in result.get("unresolved_symbols", ()):
-        lines.append(f"  {item['symbol']:<12}unresolved  defined {', '.join(item['definitions'])}"
+        lines.append(f"  {_pad(item['symbol'], width)}unresolved  defined {', '.join(item['definitions'])}"
                      f"  ({item['reason']})")
+    for item in result.get("named", ()):
+        lines.append(f"  named {item['symbol']} = {item['source']} -> {item['consumer']}  Δ "
+                     f"{_claimed(item['delta'])} {item['verdict']}  here "
+                     f"{_named_here(item['here'])}")
     unbound = result["unbound"]
-    lines.append(f"  Unbound     mass {_short(unbound['mass'])}  readout "
+    lines.append(f"  {_pad('Unbound', width)}mass {_short(unbound['mass'])}  readout "
                  f"{_short(unbound['readout'])}")
     parts = unbound.get("parts")
     if parts:
@@ -759,9 +916,12 @@ def _symbols_lines(result: dict[str, Any]) -> list[str]:
                 f"listed {_claimed(parts['attention_not_listed'])}")
         if "residual_edits" in parts:
             text += f" + residual edits {_claimed(parts['residual_edits'])}"
-        lines.append(text + f" + remainder {_claimed(remainder['value'])} "
-                     f"{'within' if remainder['within'] else 'OUTSIDE'} "
-                     f"{_claimed(remainder['bound'])}")
+        if remainder["within"] is None:
+            tail = "bound refused (accumulation premise fails)"
+        else:
+            tail = (f"bound {_claimed(remainder['bound'])}: "
+                    f"{'within' if remainder['within'] else 'OUTSIDE'}")
+        lines.append(text + f" + remainder {_claimed(remainder['value'])}, {tail}")
     accounting = result["accounting"]
     partition = accounting["partition"]
     split = (f"partition gap {_claimed(partition['max_gap'])}" if "max_gap" in partition
@@ -782,7 +942,7 @@ def _symbols_lines(result: dict[str, Any]) -> list[str]:
 
 
 def _walk(node: dict[str, Any], depth: int = 0, marks: dict[str, str] | None = None,
-          texts: dict[str, str] | None = None) -> list[str]:
+          texts: dict[str, str] | None = None, circuit: Any = None) -> list[str]:
     marks, texts = marks or {}, texts or {}
     name = node["name"] if node["name"] == node["address"] else (
         f"{node['name']}  {node['address']}")
@@ -791,46 +951,104 @@ def _walk(node: dict[str, Any], depth: int = 0, marks: dict[str, str] | None = N
     line = f"{'  ' * depth}{name}  {_short(node['value'])}"
     if "bound" in node:
         line += f" {'within' if node['within'] else 'OUTSIDE'} {_short(node['bound'])}"
+    if node.get("unexamined"):
+        line += (f"  (not examined, {int(node['unexamined_count']['value'])} subtree(s) "
+                 "not expanded)")
     if node["id"] in marks:
-        line += f"  [ablated: {marks[node['id']]}]"
+        line += f"  [patched in: {'ko' if marks[node['id']] == 'retained' else 'keep'}]"
     lines = [line]
     for child in node.get("children", ()):
-        lines += _walk(child, depth + 1, marks, texts)
+        lines += _walk(child, depth + 1, marks, texts, circuit)
+    paged = node.get("paged")
+    if paged:
+        lines.append(f"{'  ' * (depth + 1)}[paged: {_claimed(paged['children'])} children examined, "
+                     f"{_claimed(paged['descendants'])} nodes below, stored as page "
+                     f"{paged['pointer']['sha256'][:12]}; circuit show {circuit} "
+                     f"node={node['id']}]")
     return lines
 
 
+def _count(item: Any) -> str:
+    """A labelled count's value (its label is derived-exact or measured; the caller says which)."""
+    return str(int(item["value"]))
+
+
 def _circuit_test_lines(test: dict[str, Any]) -> list[str]:
-    lines = [f"circuit {test['id']} test  {test['consumer']}  base "
-             f"{_short(test['base'])}  tolerance {_claimed(test['tolerance'])}"]
-    if "excluded" in test:
-        lines.append(f"  not ablated: {', '.join(test['excluded']['nodes'])} "
-                     f"({test['excluded']['reason']})")
-    for name in ("retained", "complement"):
-        part = test[name]
-        if part.get("state"):
-            lines.append(f"  ablate {name}: {num(part)}")
-            continue
-        lines.append(f"  ablate {name} ({part['count']} nodes): Δ {_short(part['delta'])}"
-                     f"  predicted {_short(part['predicted_delta'])}")
-        lines.append(f"    edits {', '.join(part['edits'])}")
-    lines.append(f"  verdict: {test['verdict']}  ({test['rule']})")
+    """``circuit test ID ref=NAME``: the reference, the component counts, the four measured
+    margins, the two ratios (or why they are refused), the one-spacing readings and the native
+    layer calls per pass (wall time is in the result, not printed)."""
+    ref = test["reference"]
+    where = (f"run, row t{_count(ref['row'])}" if ref["kind"] == "run"
+             else f"mean over {_count(ref['items'])} items at their @last")
+    lines = [f"circuit {_count(test['id'])} test  {test['consumer']}  "
+             f"ref {ref['name']} ({where})"]
+    comp = test["components"]
+    count = {key: _count(comp[key]) for key in
+             ("total", "circuit", "complement", "from_groups", "unexamined")}
+    coarse = _count(comp["coarsened"]["source_nodes"])
+    lines.append(f"  components [derived-exact] {count['total']}: circuit {count['circuit']}, "
+                 f"complement {count['complement']} ({count['from_groups']} from +N more groups, "
+                 f"{count['unexamined']} of them never expanded); {coarse} source node(s) "
+                 "counted as their head")
+    lines.append(f"  {test['components']['rows']}")
+    margins = test["margins"]
+    for key in ("base", "ref", "ko", "keep", "full"):
+        extra = ""
+        if key == "full" and "full_equals_ref" in test:
+            extra = "  (= ref bit for bit)" if test["full_equals_ref"] else "  (differs from ref)"
+        lines.append(f"  {key:<5} {_claimed(margins[key])}  {test['meaning'][key]}{extra}")
+    ratios = test["ratios"]
+    if ratios.get("state"):
+        lines.append(f"  ratios {num(ratios)}")
+    else:
+        for key, label in (("faithfulness", "faithfulness"), ("knockout_share",
+                                                               "knock-out share")):
+            lines.append(f"  {label} {ratios['formulas'][key]} = {_claimed(ratios[key])}: "
+                         f"{ratios['meaning'][key]}")
+    reading, res = test["reading"], test["resolution"]
+    lines.append(f"  reading: knock-out {reading['knockout']}; {reading['keep_vs_base']}; "
+                 f"{reading['keep_vs_ref']} (one spacing {_claimed(res['spacing'])} "
+                 f"{res['dtype']})")
+    passes = test["cost"]["per_pass"]
+    lines.append("  layer calls completed [measured] " + "  ".join(
+        f"{key} {_count(passes[key]['calls']['completed'])}"
+        for key in ("ko", "keep", "full")) + "; edits [derived-exact] " + "  ".join(
+        f"{key} {_count(passes[key]['edits'])}" for key in ("ko", "keep", "full")))
     return lines
 
 
 def _circuit_lines(result: dict[str, Any]) -> list[str]:
     if result["action"] == "test":
-        return _circuit_test_lines(result["test"])
+        lines = _circuit_test_lines(result["test"])
+        if result.get("stored"):
+            lines.append(f"  stored record {result['stored'][0][:16]}")
+        return lines
+    if "page" in result:
+        page = result["page"]
+        lines = [f"circuit {result['id']} node {result['node']}  "
+                 f"({'inline subtree' if page.get('state') == 'inline' else 'stored page'})"]
+        marks = {}
+        lines += ["  " + line for line in _walk(page["node"], 0, marks, result.get("token_text"),
+                                                result["id"])]
+        return lines
     body = result["record"]["body"]
     lines = [f"circuit {result['id']}  {body['consumer']}  top {body['k']} depth "
              f"{body['depth']}  ({body['count']} nodes, record {result['record']['id'][:16]})"]
     marks = {ref: name for name, refs in result.get("ablated", {}).items() for ref in refs}
-    lines += ["  " + line for line in _walk(body["root"], 0, marks, result.get("token_text"))]
+    lines += ["  " + line for line in _walk(body["root"], 0, marks, result.get("token_text"),
+                                            result["id"])]
     closure = body["closure"]
     lines.append(f"  closure {_short(closure['value'])} "
                  f"{'within' if closure['within'] else 'OUTSIDE'} {_claimed(closure['bound'])} "
                  f"(zero by construction: float64 summation only)")
-    lines.append(f"  remainders {'all within' if body['remainders_within'] else 'NOT all within'}"
-                 f" their rounding bounds; {body['edits']['count']} edit node(s)")
+    within = body["remainders_within"]
+    state = ("all within their rounding bounds" if within
+             else "NOT all within their rounding bounds" if within is not None
+             else "not all bounded (a rounding bound was refused)")
+    if body.get("unexamined") and within is not False:
+        state = (f"{int(body['unexamined_count']['value'])} dropped subtree(s) not examined; no claim "
+                 "about their rounding bounds")
+    lines.append(f"  remainders: {state}; {body['edits']['count']} edit node(s)")
     for test in result.get("tests", ()):
         lines += ["  " + line for line in _circuit_test_lines(test)]
     if result.get("stored"):
@@ -846,6 +1064,11 @@ def _compare_lines(result: dict[str, Any]) -> list[str]:
                                   for name, item in measured.items()))
     lines.append("  effects " + "  ".join(f"{name} {_short(value)}"
                                           for name, value in effects.items()))
+    verdicts = result.get("verdicts") or {}
+    if verdicts:
+        lines.append("  verdicts (native only, no exact or emulated chain: effect when edited and "
+                     "base differ): " + "  ".join(f"{name} {v['verdict']}"
+                                                  for name, v in verdicts.items()))
     interaction = result["interaction"]
     if interaction.get("state"):
         lines.append(f"  interaction {num(interaction)}")
@@ -860,8 +1083,78 @@ def _compare_lines(result: dict[str, Any]) -> list[str]:
 
 
 def _symbol_lines(result: dict[str, Any]) -> list[str]:
+    action = result.get("action")
+    if action == "delete":
+        return [f"symbol {result['symbol']} deleted (record {result['record'][:16]}); "
+                f"{result['note']}"]
+    if action in ("declare", "show"):
+        body = result["body"] if action == "declare" else result["record"]["body"]
+        record = result["record"] if action == "declare" else result["record"]["id"]
+        lines = [f"symbol {result['symbol']} = {body['row']['address']}  (record {record[:16]}"
+                 + (f", stored {result['stored'][0][:16]}" if result.get("stored") else "")
+                 + ")"]
+        lines += _named_symbol_lines(body)
+        if action == "show":
+            lines.append("  here: " + _named_here(result["here"]))
+        return lines
     return [f"symbol {result['symbol']} = {', '.join(result['definitions'])}  (declared: "
             f"{', '.join(result['declared'])})"]
+
+
+def _named_here(here: dict[str, Any]) -> str:
+    if here.get("state"):
+        return f"{here['state']} ({here['reason']})"
+    return f"{here['address']} (row {here['row']}: {here['how']})"
+
+
+def _named_symbol_lines(body: dict[str, Any]) -> list[str]:
+    """A named symbol (M23) as schema plus bindings: role, row, readers, evidence, origin."""
+    row, role, evidence = body["row"], body["role"], body["evidence"]
+    writer = role["writer"]
+    token = ""
+    if "text" in row:
+        token = f" {json.dumps(row['text'], ensure_ascii=False)}"
+    elif "token" in row:
+        token = f" (id {row['token']})"
+    how = (f"role @{row['role']} ({row['role_source']})" if row["rule"] == "role"
+           else "absolute (no role names this row)")
+    lines = [f"  role    writer {writer['address']} ({writer['form']}, L{writer['layer']} "
+             f"{writer['port']})",
+             f"  row     t{row['row']}{token}: {how}; prompt {row['prompt_rows']} rows sha256 "
+             f"{row['prompt_sha256'][:12]}"]
+    readers = role["readers"]
+    if readers.get("state") != "resolved":
+        lines.append(f"  readers {readers['state']} ({readers['reason']})")
+    else:
+        lines.append(f"  readers of {readers['source']} at t{readers['rows'][0]} "
+                     f"({len(readers['listed'])} of {readers['count']} listed, at "
+                     f"{readers['at']}):")
+        for read in readers["listed"]:
+            causal = read.get("causal") or {}
+            verdict = (f"  {causal['verdict']} (Δ {_claimed(causal['delta'])})"
+                       if "delta" in causal else
+                       f"  causal {causal['verdict']} ({causal.get('reason')})" if causal
+                       else "  causal not measured")
+            lines.append(f"    {read['name']}  mass {_claimed(read['mass'])}  effect "
+                         f"{_claimed(read['effect'])}{verdict}")
+    lines.append(f"  effect  {evidence['op']} {evidence['edit']} -> {body['consumer']['address']}"
+                 f": base {_claimed(evidence['base'])} -> edited {_claimed(evidence['edited'])},"
+                 f" Δ {_claimed(evidence['delta'])}, verdict {evidence['verdict']}")
+    origin = body["origin"]
+    donor = origin.get("donor", {})
+    text = f"  origin  {origin['from']}; donor {donor.get('address', '?')}"
+    if donor.get("sha256"):
+        text += f" sha256 {donor['sha256'][:12]}"
+    if origin.get("run"):
+        text += f"; run {origin['run']}"
+    if body.get("procedure"):
+        text += f"; {body['procedure']['text']}"
+    lines.append(text)
+    edits = origin.get("edits") or {}
+    if edits.get("committed") or edits.get("staged"):
+        lines.append(f"  edits   committed {', '.join(edits.get('committed') or ['none'])}; "
+                     f"staged {', '.join(edits.get('staged') or ['none'])}")
+    return lines
 
 
 def _seek_lines(result: dict[str, Any]) -> list[str]:
@@ -882,3 +1175,271 @@ def render_error(error: Any) -> str:
     data = error.to_json() if hasattr(error, "to_json") else {"type": "error",
                                                               "message": str(error)}
     return f"error ({data['type']}): {data['message']}"
+
+
+# --------------------------------------------------------------------------- each / prompt sets
+
+
+def _cell(item: Any, labelled: bool, digits: int = 5) -> str:
+    if isinstance(item, dict) and item.get("state") in ("unresolved", "refused"):
+        return item["state"]
+    if digits != 5 and isinstance(item["value"], float) and not isinstance(item["value"], bool):
+        text = f"{item['value']:.{digits}g}"
+        value = "0" if text in ("-0", "0") else text
+        return f"{value} {tag(item.get('authority', '?'))}" if labelled else value
+    return num(item) if labelled else fmt(item["value"])
+
+
+def _each_table(rows: list[dict[str, Any]], columns: list[str], uniform: dict[str, str],
+                digits: int) -> list[tuple[list[str], str | None]]:
+    """The table as (cells, refusal text) rows, header first; a refused row has its name only
+    and the refusal text, which does not size any column."""
+    has_label = any("label" in row.get("key", {}) for row in rows)
+    has_verdict = any("verdict" in row.get("key", {}) for row in rows)
+    table: list[tuple[list[str], str | None]] = [
+        (["item"] + (["read"] if has_label else []) + columns
+         + (["verdict"] if has_verdict else []), None)]
+    for row in rows:
+        if row["state"] == "refused":
+            table.append(([row["name"]], f"refused: {row['reason']}"))
+            continue
+        key = row.get("key", {})
+        cells = [row["name"]] + ([key.get("label", "-")] if has_label else [])
+        for name in columns:
+            item = key.get("columns", {}).get(name)
+            cells.append("-" if item is None else _cell(item, name not in uniform, digits))
+        if has_verdict:
+            verdict = key.get("verdict", "")
+            if row["state"] != "resolved":
+                verdict = f"{verdict} ({row['state']})".strip()
+            cells.append(verdict)
+        table.append((cells, None))
+    return table
+
+
+def _table_lines(table: list[tuple[list[str], str | None]]) -> tuple[list[str], int]:
+    """Aligned lines (every column as wide as its widest cell by display width, two spaces
+    between, the last column unpadded) and the width of the widest line."""
+    count = len(table[0][0])
+    widths = [max(_display_width(cells[i]) for cells, refusal in table
+                  if refusal is None or i == 0) for i in range(count)]
+    out, widest = [], 0
+    for cells, refusal in table:
+        if refusal is not None:
+            line = "  " + _pad(cells[0], widths[0]) + "  " + refusal
+        else:
+            line = "  " + "  ".join(_pad(c, widths[i]) if i < count - 1 else c
+                                    for i, c in enumerate(cells)).rstrip()
+            widest = max(widest, _display_width(line))
+        out.append(line)
+    return out, widest
+
+
+def _stat_lines(stat: dict[str, Any]) -> list[str]:
+    def body(item: dict[str, Any]) -> str:
+        agree = item["agree"]
+        return (f"n {item['n']}  mean {fmt(item['mean']['value'])}  min "
+                f"{fmt(item['min']['value'])}  max {fmt(item['max']['value'])}  sign "
+                f"{agree['sign']} {agree['count']}/{item['n']}")
+
+    if stat.get("mixed"):
+        lines = [f"  {stat['path']}  (mixed labels, summarised per label)"]
+        for label, item in stat["by_authority"].items():
+            lines.append(f"    {tag(label)} {body(item)}")
+        return lines
+    return [f"  {stat['path']}  {tag(stat['mean']['authority'])}", f"    {body(stat)}"]
+
+
+def _each_lines(result: dict[str, Any]) -> list[str]:
+    """``each``: one row per item (name, key numbers, verdict), then the summary lines."""
+    rows = result["items"]
+    split = f" prefill={result['prefill']}" if "prefill" in result else ""
+    lines = [f"each {result['set']}: {result['line']}",
+             f"  {result['total']} items at {result['at']}{split}; runs "
+             f"{result['runs'].split(' ')[0]}; result {result['id']}"]
+    columns: list[str] = []
+    for row in rows:
+        for name in row.get("key", {}).get("columns", {}):
+            if name not in columns:
+                columns.append(name)
+    labels: dict[str, set[str]] = {name: set() for name in columns}
+    for row in rows:
+        for name, item in row.get("key", {}).get("columns", {}).items():
+            labels[name].add(item.get("authority", item.get("state", "?")))
+    uniform = {name: next(iter(found)) for name, found in labels.items() if len(found) == 1}
+    for digits in (5, 4, 3):       # shorten only numbers until the common case fits 80 columns
+        table_lines, widest = _table_lines(_each_table(rows, columns, uniform, digits))
+        if widest <= 80 or digits == 3:
+            break
+    lines += table_lines
+    if uniform:
+        lines.append("  labels: " + ", ".join(f"{name} {uniform[name]}" for name in columns
+                                              if name in uniform))
+    statistics = result["statistics"]
+    lines.append(f"summary: {statistics['exclusion']}")
+    numeric = statistics["numeric"]
+    shown = numeric[:len(columns) or 2]
+    for stat in shown:
+        lines += _stat_lines(stat)
+    verdicts = [item for item in statistics["verdicts"]
+                if item["path"].rsplit(".", 1)[-1] == "verdict" or len(item["counts"]) > 1
+                or item["counts"][0]["label"] != "resolved"]
+    for item in verdicts[:4]:
+        counts = " / ".join(f"{c['label']} {c['count']}" for c in item["counts"])
+        lines.append(f"  {item['path']}: {counts}")
+    more = (len(numeric) - len(shown) + len(statistics["verdicts"]) - len(verdicts[:4])
+            + statistics["omitted"]["count"])
+    partial = statistics["partial"]["count"]
+    tail = []
+    if more:
+        tail.append(f"+{more} more in the record")
+    if partial:
+        tail.append(f"{partial} paths in some items only")
+    if tail:
+        lines.append("  " + "; ".join(tail) + f" (promptset result {result['id']} [ITEM])")
+    if "stored" in result:
+        stored = result["stored"]
+        lines.append(f"  stored record {stored[:16]}" if isinstance(stored, str)
+                     else f"  not stored: {stored['reason']}")
+    return lines
+
+
+def _promptset_lines(result: dict[str, Any]) -> list[str]:
+    if result["action"] == "list":
+        return [f"{item['set']:<12}{item['total']} items  ({item['source']})"
+                for item in result["sets"]] or ["no prompt sets"]
+    if result["action"] == "result":
+        if "result" in result:
+            return [f"{result['id']} item {result['item']}:", _render(result["result"])]
+        return _each_lines({**result["summary"], "id": result["id"]})
+    lines = [f"set {result['set']}: {result['total']} items  ({result['source']})"]
+    shown = result["items"]
+    if result["action"] in ("load", "define") and len(shown) > 10:   # show prints them all
+        shown = shown[:5]
+    for item in shown:
+        prompt = (json.dumps(item["prompt"]) if "prompt" in item
+                  else " ".join(map(str, item["ids"]))
+                  + (" ..." if item["prompt_tokens"] > len(item["ids"]) else ""))
+        roles = " ".join(f"@{r['name']}={r['row']}" for r in item["roles"])
+        variables = " ".join(f"${v['name']}={v.get('token', json.dumps(v.get('text')))}"
+                             for v in item["vars"])
+        pair = f" pair {item['pair']}" if "pair" in item else ""
+        lines.append(f"  {item['name']:<10}{prompt}  {roles} {variables}{pair}".rstrip())
+    if len(shown) < len(result["items"]):
+        lines.append(f"  +{len(result['items']) - len(shown)} more (set show {result['set']})")
+    return lines
+
+
+_INSPECT["each"] = _each_lines
+_INSPECT["promptset"] = _promptset_lines
+
+
+# --------------------------------------------------------------------------- procedure / sweep
+
+
+def _procedure_lines(result: dict[str, Any]) -> list[str]:
+    """The prefill split of a run (``prefill``) as one line, when it is not the default (all
+    prompt rows but the last batched); the JSON always carries it."""
+    prefill = result.get("prefill")
+    if not isinstance(prefill, dict) or prefill.get("default", True):
+        return []
+    return [prefill["text"]]
+
+
+_HEAT_WIDTH = 80
+
+
+def _heat_cell(value: float, scale: float, width: int) -> str:
+    """One cell of the heat table: the signed tenths of the largest |delta| (``+9`` .. ``-9``),
+    ``.`` below a twentieth, ``0`` for an exact zero."""
+    if value == 0:
+        text = "0"
+    elif scale == 0 or abs(value) / scale < 0.05:
+        text = "."
+    else:
+        tenths = min(9, max(1, round(abs(value) / scale * 10)))
+        text = ("+" if value > 0 else "-") + str(tenths)
+    return text.rjust(width)
+
+
+def _token_label(item: dict[str, Any], width: int) -> str:
+    text = item.get("text")
+    if text is None:
+        return str(item.get("token", "?"))[-width:].rjust(width)
+    shown = text.replace(" ", "·").replace("\n", "↵")
+    return shown[:width].rjust(width)
+
+
+def heat_table(result: dict[str, Any], width: int = _HEAT_WIDTH) -> list[str]:
+    """The rows x layers table of a ``sweep`` as text of at most ``width`` columns: one line per
+    layer, one column per position (row index, and the token text when a tokenizer exists), a
+    cell the signed tenths of the largest |delta|. Positions that do not fit are cut from the
+    left and said so (the record holds them all). A sweep whose table is a blob is drawn from
+    its ``heat`` text (the same codes, computed by the op)."""
+    if "table" in result:
+        table = result["table"]
+        rows, layers, grid = table["rows"], table["layers"], table["delta"]["value"]
+        scale = max((abs(v) for line in grid for v in line), default=0.0)
+        tokens = {item["row"]: item for item in table.get("tokens", ())}
+
+        def code(i: int, j: int, cell: int) -> str:
+            return _heat_cell(grid[i][j], scale, cell)
+    else:
+        heat = result["heat"]
+        low, high = (int(x) for x in heat["rows"].split(":"))
+        first, last = (int(x) for x in heat["layers"].split(":"))
+        rows, layers = list(range(low, high)), list(range(first, last))
+        codes = [line.split(" ") for line in heat["cells"].split("\n")]
+        scale = heat["scale"]["value"]
+        tokens = {r: {"row": r, "text": t} for r, t in zip(rows, heat.get("tokens", ()))}
+
+        def code(i: int, j: int, cell: int) -> str:
+            return codes[i][j].rjust(cell)
+    label = max(len(f"L{layers[-1]}"), 3) + 1
+    need = max(3, len(f"t{rows[-1]}") + 1)          # t18 needs 4 columns, not a jammed 3
+    cell = next((c for c in (need, 3) if label + c * len(rows) <= width), 2)
+    fit = max(1, (width - label) // cell)
+    start = max(0, len(rows) - fit)
+    shown = list(range(start, len(rows)))
+    lines = [" " * label + "".join(f"t{rows[j]}"[-cell:].rjust(cell) for j in shown)]
+    if any("text" in tokens.get(rows[j], {}) for j in shown):
+        lines.append(" " * label + "".join(_token_label(tokens[rows[j]], cell) for j in shown))
+    for i, layer in enumerate(layers):
+        lines.append(f"L{layer}".ljust(label) + "".join(code(i, j, cell) for j in shown))
+    if start:
+        lines.append(f"(t{rows[0]}..t{rows[start - 1]} cut to fit; the table holds them)")
+    lines.append(f"cell: tenths of max |Δ| {fmt(scale)} [measured] (9 caps); '.' < 1/20, "
+                 "'0' exact")
+    return lines
+
+
+def _sweep_lines(result: dict[str, Any]) -> list[str]:
+    base = result["base"]
+    lines = [f"sweep {result['port']} = {result['origin']}:{result['port']} -> "
+             f"{result['consumer']}  ({result['cells']['count']} cells; base "
+             f"{num(base)})"]
+    lines.extend(f"  {line}" for line in _procedure_lines(result))
+    if "table" in result:
+        lines.extend(heat_table(result))
+    else:
+        pointer = result["table_pointer"]
+        lines.append(f"  table: {pointer['state']} blob sha256 {pointer['sha256'][:12]} "
+                     f"({pointer.get('reason') or str(pointer.get('bytes', '')) + ' bytes'})")
+        if "cells" in result.get("heat", {}):
+            lines.extend(heat_table(result))
+    top = ", ".join(f"t{item['row']}.L{item['layer']} {num(item['delta'])}"
+                    for item in result["top"])
+    lines.append(f"  top |Δ|: {top}")
+    cost = result["cost"]
+    native = cost["native"]
+    planned = cost.get("planned", {}).get("layer")
+    lines.append(f"  cost: {native['layer']['value']} layer calls"
+                 + (f" (planned {planned['value']})" if planned else "")
+                 + f", {native['probe']['value']} probes, "
+                 f"{native['transition']['value']} other transitions [measured] "
+                 "(wall time in the result: cost.seconds)")
+    lines.append(f"  session unchanged at {result['where']}")
+    return lines
+
+
+_INSPECT["sweep"] = _sweep_lines

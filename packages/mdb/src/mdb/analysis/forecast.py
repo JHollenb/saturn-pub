@@ -7,11 +7,18 @@ ports at or before the cursor (``Run.read``), the key/value cache rows of earlie
 P10 SwiGLU, P19 readout) in float64 from those values, one stop of the token row at a time;
 nothing native runs for the target. The prediction is ``derived-exact`` (exact real arithmetic
 on captured operands) and carries a per-element rounding ``bound``: how far the native value can
-sit from it under stated premises (round to nearest, float32 accumulation for 16-bit models,
-float32 library functions within ``LIBRARY_ULPS`` ulp, no overflow or underflow). The bound of a
+sit from it under stated premises (round to nearest, the matmul accumulation precision of
+``accumulation.accumulation`` (float32 unless the run's numeric scope allows CUDA reduced-precision
+reductions, when a matmul bound is refused past ``n u >= 1``), float32 library functions within ``LIBRARY_ULPS`` ulp, no overflow or underflow). The bound of a
 stop whose operands are themselves predictions propagates the operands' bounds through the
 identity (linear maps exactly, SiLU by its Lipschitz constant, RMS and softmax by their exact
 range over the operand box), so a forecast several stops ahead keeps a bound.
+
+``EmulatedRowModel`` evaluates the same chain with the run's dtype rounding at every point where
+eager HF rounds, each step with the backend's own kernels: a second prediction, of the native
+bits (``derived-exact`` under ``EMULATION_PREMISE``). ``verify`` decides on it (M42): the exact
+chain can sit tens of spacings from native where rounded attention scores tie, and that
+``rounding_effect`` (native - exact) is reported beside the verdict, not hidden in a floor.
 
 ``seal`` stores a sealed record (``mdb.core.records``, kind ``forecast``, no arrays: the
 prediction is reached by an occurrence pointer and its digest) in the run's ledger. ``verify``
@@ -23,31 +30,31 @@ of counting it as a failure. A forecast whose target was never reached stays ope
 
 from __future__ import annotations
 
+import math
+import time
 import weakref
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any
 
+from mdb.core.bounded import MAX_ITEMS, bound_list, load_json, put_json
+from mdb.core.kinds import FORECAST, procedure
 from mdb.core.pointers import occurrence_pointer, seal_digest
-from mdb.core.records import declare_kind, num, seal_record
+from mdb.core.records import num, seal_record
 
+from . import verdict as _verdict
+from .accumulation import PREMISE_FAILS, accumulation, bound_state
 from .explain import _readout_refusal, _rope_refusal
-from .finite import BOUND, EXACT, f64
+from .finite import BOUND, EXACT, MEASURED, f64
 
 SCHEMA = "mdb-forecast-v1"
 U32 = 2.0 ** -24          # unit roundoff of float32, the accumulation precision
+F32_SUBNORMAL = 2.0 ** -149   # spacing of float32 below its smallest normal (absolute underflow)
+EXP_LIMIT = math.log(1.7976931348623157e308)   # exp() of more overflows float64 (709.78)
 LIBRARY_ULPS = 4          # premise: float32 exp, rsqrt, sin, cos within 4 ulp
 SILU_LIPSCHITZ = 1.1      # sup |silu'(g)| = 1.0998 (attained near g = 2.4)
+NOT_INFORMATIVE = "worst-case rounding interval not informative from"
 NO_IDENTITY = {"start": "the token list is an input of the row, not a computed value"}
-
-FORECAST = declare_kind(
-    "forecast",
-    required=("schema", "target", "sealed_at", "method", "operands", "predicted", "bound"),
-    plain_numeric=("sealed_at.row", "sealed_at.index", "sealed_at.transition",
-                   "sealed_at.receipts.count", "target.row", "target.index", "target.indices",
-                   "operands.*.shape", "predicted.shape", "predicted.token",
-                   "edits_at_seal.*.row", "edits_at_seal.*.layer"),
-)
 
 # (function, proof) of the identity that computes each port from its producers
 IDENTITY = {
@@ -153,12 +160,29 @@ class RowModel:
     needs, and ``get`` runs them from one explicit stack, in the order a recursive evaluation
     would. A chain of row models (``propagate``: each row reads the earlier rows' cache and
     sampled token) therefore has no depth limit.
+
+    ``edits`` maps a stop to ``fn(model, label, value, bound) -> (value, bound)``: an edit that
+    fired (or will fire) at that port natively, applied only when this model computes the stop
+    (a captured value already carries it). ``propagate`` builds them from the run's staged and
+    committed edits (M55).
+
+    The worst-case bound (M56) assumes every rounding error aligns. ``broken`` records the first
+    stop where the bound cannot be carried on (not finite, would overflow, or a premise fails):
+    ``{stage, cause, text}``, the cause with its numbers. The bound is not propagated past that
+    stop (its descendants carry the reason); no inf or nan ever leaves the bound code. A finite
+    bound is kept however wide (an intermediate element can have a wide interval while the bound
+    at the consumer is useful): ``wide`` remembers the first stop where it became at least the
+    value's magnitude (``cut``; ``{stage, cause, text}``), and the consumer decides whether the
+    bound it ends with says anything (``consumer_note``). ``cut=False`` (the per-stage bounds on
+    native operands, ``stage_checks``) records no wide stop.
     """
 
     def __init__(self, run: Any, row: int, known: Callable[[str], Any], *, bounds: bool = True,
                  overrides: dict[str, Callable[[Any, Any], tuple[Any, Any]]] | None = None,
                  past: Callable[[int, str], tuple[Any, Any]] | None = None,
-                 token: Callable[[], tuple[int, str | None]] | None = None):
+                 token: Callable[[], tuple[int, str | None]] | None = None,
+                 edits: dict[str, Callable[..., tuple[Any, Any]]] | None = None,
+                 cut: bool = True):
         torch = _torch()
         adapter = run.adapter
         self.run, self.row, self.known = run, row, known
@@ -171,8 +195,15 @@ class RowModel:
         dtype = adapter.dtype
         self.out16 = dtype in (torch.bfloat16, torch.float16)
         self.u = float(torch.finfo(dtype).eps) / 2.0
+        self.acc = accumulation(run)   # matmul accumulation premise, from the numeric scope
+        self._failed: str | None = None
+        self._vague: str | None = None      # a step's numbers, named if its bound is uninformative
+        self.broken: dict[str, str] | None = None
+        self.wide: dict[str, str] | None = None
+        self.cut = cut
         self.bounds = bounds
         self.overrides = dict(overrides or {})
+        self.edits = dict(edits or {})
         self.past, self.token = past, token
         self.values: dict[str, Any] = {}
         self.bnds: dict[str, Any] = {}
@@ -241,10 +272,24 @@ class RowModel:
                 raise Refusal(NO_IDENTITY["start"])
             value, bound = yield from self._step(label)
             self.computed.append(label)
-            if bound is not None and not bool((torch.isfinite(bound) & (bound >= 0)).all()):
-                bound = None
-                self.unbounded[label] = ("the propagated bound is not finite: the operands' "
-                                         "bounds are too wide for this identity")
+            edit = self.edits.get(label)
+            if edit is not None:
+                value, bound = edit(self, label, value, bound)
+            if bound is None and self._failed is not None:
+                self.unbounded[label] = self._failed     # a premise of this step's bound fails
+            elif self.bounds and (bound is not None or self._vague is not None):
+                broken = self._uninformative(label, value, bound)
+                if broken is not None:
+                    if self.wide is not None:   # it was already wide before it stopped here
+                        broken = {"stage": self.wide["stage"], "cause": broken["cause"],
+                                  "stopped_at": broken["stage"],
+                                  "text": f"{self.wide['text']}; not carried past "
+                                          f"{broken['stage']} ({broken['cause']})"}
+                    bound = None
+                    self.unbounded[label] = broken["text"]
+                    if self.broken is None:
+                        self.broken = broken
+            self._failed = self._vague = None
         override = self.overrides.get(label)
         if override is not None:
             value, bound = override(value, bound)
@@ -257,6 +302,28 @@ class RowModel:
             self.unbounded[label] = next(
                 (self.unbounded[p] for p in self.producers(label) if p in self.unbounded),
                 "no rounding bound for this step")
+
+    def _uninformative(self, label: str, value: Any, bound: Any) -> dict[str, str] | None:
+        """``{stage, cause, text}`` when the worst-case bound of a computed stop cannot be carried
+        on: none with the step's numbers (``_vague``) or not finite. A finite bound is kept; the
+        first stop where it is (``cut``) at least the largest ``|value|`` is remembered in
+        ``wide`` (it does not fix any element's sign there) without cutting. None while the bound
+        goes on."""
+        torch = _torch()
+        stage = f"t{self.row}.{label}"
+        size = float(value.abs().max()) if value.numel() else 0.0
+        if bound is None:
+            cause = self._vague or "no interval"
+        elif not bool((torch.isfinite(bound) & (bound >= 0)).all()):
+            cause = self._vague or "the propagated interval is not finite"
+        else:
+            worst = float(bound.max()) if bound.numel() else 0.0
+            if self.cut and worst != 0.0 and worst >= size and self.wide is None:
+                cause = self._vague or f"interval {worst:.3g} >= |x| {size:.3g}"
+                self.wide = {"stage": stage, "cause": cause,
+                             "text": f"{NOT_INFORMATIVE} {stage} ({cause})"}
+            return None
+        return {"stage": stage, "cause": cause, "text": f"{NOT_INFORMATIVE} {stage} ({cause})"}
 
     def _weight(self, module: Any, name: str = "weight") -> Any:
         """A float64 copy of one weight, for the caller's one use. Nothing is kept: every stop
@@ -400,6 +467,16 @@ class RowModel:
         """Relative error of one rounding to the model dtype after a float32 computation."""
         return self.u if self.out16 else 0.0
 
+    def _gamma(self, n: int) -> float | None:
+        """``gamma_n`` of an ``n``-term native matmul sum under ``self.acc``; None (the reason
+        kept for ``_compute``) when its premise fails."""
+        gamma = self.acc.gamma(n)
+        if gamma is None:
+            self._failed = self.acc.refusal(n)
+        else:
+            self.premises.add(self.acc.premise)
+        return gamma
+
     def _affine(self, x: Any, bx: Any, module: Any) -> tuple[Any, Any]:
         torch = _torch()
         native, bias = module.weight, self._weight(module, "bias")
@@ -421,10 +498,11 @@ class RowModel:
         size = ((sizes[0] if one else torch.cat(sizes, -1))
                 + (0 if bias is None else bias.abs()))
         spread = spreads[0] if one else torch.cat(spreads, -1)
-        gamma = _gamma(x.shape[-1] + (bias is not None), U32)
+        gamma = self._gamma(x.shape[-1] + (bias is not None))
+        if gamma is None:
+            return value, None
         rounds = (1 if self.out16 else 0) + (1 if bias is not None else 0)
         output = (1 + (self.u if self.out16 else U32)) ** rounds - 1
-        self.premises.add("matmul accumulates in float32 in any order (gamma_n bound)")
         rounding = gamma * size + output * (1 + gamma) * size
         return value, spread + rounding + torch.zeros_like(value)
 
@@ -466,11 +544,8 @@ class RowModel:
         refusal = _rope_refusal(self.config)
         if refusal is not None:
             raise Refusal(refusal)
-        rope = getattr(self.config, "rope_parameters", None) or {}
-        theta = float(rope.get("rope_theta", getattr(self.config, "rope_theta", 10000.0)))
         half = x.shape[-1] // 2
-        inv = theta ** (-2.0 * torch.arange(half, dtype=torch.float64) / x.shape[-1])
-        angle = self.row * inv
+        angle = self.row * self._inv_freq(x.shape[-1])
         cos, sin = torch.cos(angle), torch.sin(angle)
         first, second = x[..., :half], x[..., half:]
         value = torch.cat((first * cos - second * sin, first * sin + second * cos), dim=-1)
@@ -496,6 +571,22 @@ class RowModel:
         ), dim=-1)
         return value, bound
 
+    def _rotary(self) -> Any:
+        return getattr(self.adapter.backbone, "rotary_emb", None)
+
+    def _inv_freq(self, width: int) -> Any:
+        """The RoPE inverse frequencies the model runs with: float64 of its float32
+        ``rotary_emb.inv_freq`` buffer (M49: the buffer, not ``theta^(-2i/d)`` recomputed in
+        float64, which differs from it by the buffer's float32 rounding); the formula only for a
+        model without the buffer."""
+        buffer = getattr(self._rotary(), "inv_freq", None)
+        if buffer is not None:
+            return f64(buffer)
+        torch = _torch()
+        rope = getattr(self.config, "rope_parameters", None) or {}
+        theta = float(rope.get("rope_theta", getattr(self.config, "rope_theta", 10000.0)))
+        return theta ** (-2.0 * torch.arange(width // 2, dtype=torch.float64) / width)
+
     def _kappa(self, tensor: Any) -> Any:
         groups = self.heads // self.kv_heads
         return tensor.repeat_interleave(groups, dim=0)
@@ -509,7 +600,9 @@ class RowModel:
         bkeys = self._kappa(bk)
         size = torch.einsum("hd,htd->ht", q.abs() + bq, keys.abs() + bkeys)
         prop = scaling * (size - torch.einsum("hd,htd->ht", q.abs(), keys.abs()))
-        gamma = _gamma(q.shape[-1], U32)
+        gamma = self._gamma(q.shape[-1])
+        if gamma is None:
+            return value, None
         dot = gamma * size + self._out_round() * (1 + gamma) * size
         product = (1 + U32) ** 2 * (1 + (self.u if self.out16 else U32))
         return value, prop + scaling * dot * product + (product - 1) * scaling * size * (
@@ -520,16 +613,42 @@ class RowModel:
         value = torch.softmax(s, dim=-1)
         if not self.bounds or bs is None:
             return value, None
+        self.premises.add("softmax in float32: exp(s - max) / sum, cast to the model dtype; "
+                          "float32 underflow and the cast's underflow bounded absolutely")
         spread = bs.max(dim=-1, keepdim=True).values
+        top, size = float(spread.max()), float(s.abs().max())
+        if not 2 * top <= EXP_LIMIT:        # exp(2 x interval) overflows float64 (or nan)
+            self._vague = (f"score interval {top:.3g} at |s| {size:.3g}, softmax worst case "
+                           f"exp(2*{top:.3g}) = 1e{2 * top / math.log(10):.3g}, beyond float64")
+            return value, None
+        self._vague = (f"score interval {top:.3g} at |s| {size:.3g}, softmax worst case "
+                       f"exp(2*{top:.3g}) = {math.exp(2 * top):.2g}")
         prop = value * torch.expm1(2 * spread)
         shift = (s - s.max(dim=-1, keepdim=True).values).abs() + 2 * spread
         each = torch.expm1(U32 * shift) + LIBRARY_ULPS * U32 * (1 + torch.expm1(U32 * shift))
         worst = each.max(dim=-1, keepdim=True).values
-        gamma = _gamma(s.shape[-1], U32)
-        rel = ((1 + each) * (1 + gamma) * (1 + U32) ** 2 / (1 - worst - gamma)
-               * (1 + self._out_round()) - 1)
-        self.premises.add("softmax in float32: exp(s - max) / sum, cast to the model dtype")
-        return value, prop + rel * value * torch.exp(2 * spread)
+        n = s.shape[-1]
+        gamma = _gamma(n, U32)
+        # exp of a shifted score below float32's normal range is off by up to LIBRARY_ULPS
+        # subnormal spacings (0 where the exact value is 1e-56); the n such errors in the sum
+        # count against its lower end (the sum is >= 1: the top score contributes exp(0))
+        under = LIBRARY_ULPS * F32_SUBNORMAL
+        denominator = 1 - worst - gamma - n * under
+        lowest = float(denominator.min())
+        if not lowest > 0:
+            self._failed = (f"{PREMISE_FAILS}softmax bound: 1 - worst - gamma = {lowest:.3g} <= 0 "
+                            f"(score shift up to {float(shift.max()):.3g} over {n} sources)")
+            return value, None
+        out = self._out_round()
+        rel = (1 + each) * (1 + gamma) * (1 + U32) ** 2 / denominator * (1 + out) - 1
+        # absolute: exp underflow over the sum, the quotient's underflow (half a float32
+        # subnormal spacing) and the cast's (half the model dtype's subnormal spacing)
+        cast = 0.0
+        if self.out16:
+            info = torch.finfo(self.adapter.dtype)
+            cast = float(info.tiny) * float(info.eps) / 2
+        absolute = (under / denominator * (1 + U32) + F32_SUBNORMAL / 2) * (1 + out) + cast
+        return value, prop + rel * value * torch.exp(2 * spread) + absolute
 
     def _transport(self, p: Any, bp: Any, values: Any, bv: Any) -> tuple[Any, Any]:
         torch = _torch()
@@ -540,7 +659,9 @@ class RowModel:
         bmix = self._kappa(bv)
         size = torch.einsum("ht,htd->hd", p.abs() + bp, mix.abs() + bmix).reshape(-1)
         prop = size - torch.einsum("ht,htd->hd", p.abs(), mix.abs()).reshape(-1)
-        gamma = _gamma(p.shape[-1], U32)
+        gamma = self._gamma(p.shape[-1])
+        if gamma is None:
+            return value, None
         return value, prop + gamma * size + self._out_round() * (1 + gamma) * size
 
     def _silu(self, g: Any, bg: Any) -> tuple[Any, Any]:
@@ -571,8 +692,128 @@ class RowModel:
         rest = torch.cat((logits[:index] + bl[:index], logits[index + 1:] + bl[index + 1:]))
         if float(logits[index] - bl[index]) > float(rest.max()):
             return value, torch.zeros_like(value)
-        self.unbounded["sample"] = "argmax not certified: the top logit's bound overlaps another"
+        self._vague = "argmax not certified: the top logit's bound overlaps another"
         return value, None
+
+
+EMULATION_PREMISE = "rounding points of eager HF attention/MLP on this backend"
+EMULATION_PREMISES = (
+    "every step runs as eager HF writes it, on the dtype values of its operands, with the "
+    "torch kernels of the run's device: affine maps as F.linear (bias fused), scores as "
+    "matmul(q, k^T) x scaling and the value mix as matmul(p, v) at the native call's batch-1 "
+    "shapes, RMSNorm in float32 (cast, then gain), RoPE with float32 cos/sin of float32 angles "
+    "from the model's inv_freq buffer, softmax in float32 cast to the dtype, SiLU, gate x up, "
+    "residual adds",
+    "the backend's kernels are deterministic at those shapes (the same operands give the same "
+    "bits)",
+    "single pending row: every cached source is visible and the attention mask adds 0",
+)
+EMULATION_SUMS = ("kernel", "round-once")
+
+
+class EmulatedRowModel(RowModel):
+    """The chain of ``RowModel`` with the run's dtype rounding at every point where eager HF
+    rounds (``EMULATION_PREMISES``): a prediction of the native bits, not of the real-number
+    value; ``derived-exact`` under ``EMULATION_PREMISE``, no rounding bound.
+
+    ``sums="kernel"`` (default) runs each matmul with the backend's own kernel at the native
+    shapes; ``"round-once"`` takes its exact float64 sum rounded once to the dtype (float32
+    accumulation then one rounding). Measured, every stop from the sealing stop to the logits:
+    tiny qwen2/qwen3/llama/mistral (CPU, 2-28 layers, 3 prompts) ``kernel`` bit-exact in bf16
+    and fp32, ``round-once`` bit-exact in bf16 and 3-10.5 spacings off in fp32; Qwen2.5-1.5B
+    on CUDA (3 prompts, sealed at L0.h and L14.h; bf16 28 layers and an fp32 2-layer cut)
+    ``kernel`` bit-exact (100% of elements at every stop, M[a,b] equal), ``round-once`` 0-8
+    spacings in bf16 (1-ulp sum differences carried forward) and 1-35 in fp32, where the
+    exact chain is 35-78 spacings off at L0.m in bf16 (the rounded-score ties of M42)."""
+
+    def __init__(self, run: Any, row: int, known: Callable[[str], Any], *,
+                 sums: str = "kernel", **options: Any):
+        if sums not in EMULATION_SUMS:
+            raise ValueError(f"sums must be one of {EMULATION_SUMS}")
+        options["bounds"] = False
+        super().__init__(run, row, known, **options)
+        self.dtype = self.adapter.dtype
+        self.sums = sums
+        self.device = getattr(self.adapter, "device", None) or "cpu"
+
+    def _on(self, tensor: Any, dtype: Any = None) -> Any:
+        """``tensor`` on the run's device in ``dtype`` (default the model dtype): an exact cast
+        for a value that is already a dtype value."""
+        return tensor.to(self.device, self.dtype if dtype is None else dtype)
+
+    def _back(self, tensor: Any) -> Any:
+        return tensor.to("cpu", _torch().float64)
+
+    def _param(self, module: Any, name: str = "weight") -> Any:
+        tensor = getattr(module, name, None)
+        return None if tensor is None else tensor.detach().to(self.device)
+
+    def _affine(self, x: Any, bx: Any, module: Any) -> tuple[Any, Any]:
+        if self.sums == "round-once":
+            value, _ = RowModel._affine(self, x, None, module)
+            return self._back(self._on(value)), None
+        out = _torch().nn.functional.linear(self._on(x).reshape(1, 1, -1), self._param(module),
+                                            self._param(module, "bias"))
+        return self._back(out).reshape(-1), None
+
+    def _add(self, x: Any, bx: Any, y: Any, by: Any) -> tuple[Any, Any]:
+        return self._back(self._on(x) + self._on(y)), None
+
+    def _rms(self, x: Any, bx: Any, module: Any, width: int) -> tuple[Any, Any]:
+        torch = _torch()
+        shape = x.shape
+        rows = self._on(x).reshape(-1, width).to(torch.float32)
+        variance = rows.pow(2).mean(-1, keepdim=True)
+        rows = rows * torch.rsqrt(variance + float(module.variance_epsilon))
+        return self._back(self._param(module) * rows.to(self.dtype)).reshape(shape), None
+
+    def _rope(self, x: Any, bx: Any) -> tuple[Any, Any]:
+        torch = _torch()
+        refusal = _rope_refusal(self.config)
+        if refusal is not None:
+            raise Refusal(refusal)
+        rotary = self._rotary()
+        buffer = getattr(rotary, "inv_freq", None)
+        inv = self._on(self._inv_freq(x.shape[-1]) if buffer is None else buffer.detach(),
+                       torch.float32)
+        freqs = inv * torch.tensor(float(self.row), dtype=torch.float32, device=inv.device)
+        angles = torch.cat((freqs, freqs))
+        scale = float(getattr(rotary, "attention_scaling", 1.0) or 1.0)
+        cos = (angles.cos() * scale).to(self.dtype)
+        sin = (angles.sin() * scale).to(self.dtype)
+        q = self._on(x)
+        half = q.shape[-1] // 2
+        rotated = torch.cat((-q[..., half:], q[..., :half]), dim=-1)
+        return self._back(q * cos + rotated * sin), None
+
+    def _scores(self, q: Any, bq: Any, k: Any, bk: Any, scaling: float) -> tuple[Any, Any]:
+        torch = _torch()
+        keys = self._kappa(k)                                     # (H, T, d_h)
+        if self.sums == "round-once":
+            raw = self._on(torch.einsum("hd,htd->ht", q, keys))
+        else:
+            raw = torch.matmul(self._on(q).unsqueeze(0).unsqueeze(2),       # (1, H, 1, d_h)
+                               self._on(keys).unsqueeze(0).transpose(2, 3))  # (1, H, d_h, T)
+        return self._back(raw * scaling).reshape(q.shape[0], -1), None
+
+    def _softmax(self, s: Any, bs: Any) -> tuple[Any, Any]:
+        torch = _torch()
+        return self._back(torch.softmax(self._on(s), dim=-1, dtype=torch.float32)
+                          .to(self.dtype)), None
+
+    def _transport(self, p: Any, bp: Any, values: Any, bv: Any) -> tuple[Any, Any]:
+        if self.sums == "round-once":
+            value, _ = RowModel._transport(self, p, None, values, None)
+            return self._back(self._on(value)), None
+        out = _torch().matmul(self._on(p).unsqueeze(0).unsqueeze(2),         # (1, H, 1, T)
+                              self._on(self._kappa(values)).unsqueeze(0))    # (1, H, T, d_h)
+        return self._back(out).reshape(-1), None
+
+    def _silu(self, g: Any, bg: Any) -> tuple[Any, Any]:
+        return self._back(_torch().nn.functional.silu(self._on(g))), None
+
+    def _product(self, x: Any, bx: Any, y: Any, by: Any) -> tuple[Any, Any]:
+        return self._back(self._on(x) * self._on(y)), None
 
 
 def _evaluate(model: RowModel, label: str) -> None:
@@ -611,6 +852,8 @@ class Forecast:
     edits: frozenset
     status: str = "open"
     verdict: dict[str, Any] | None = field(default=None)
+    chain: list = field(default_factory=list)   # the full identity chain (the record keeps a summary)
+    emulated: Any = None   # the emulated prediction (EmulatedRowModel): what verify decides on
 
 
 _LEDGERS: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
@@ -675,8 +918,13 @@ def _resolve_target(run: Any, target: str | Margin | None) -> tuple[str, Margin 
     return run.stops()[key[1]], None, key
 
 
-def seal(run: Any, target: str | Margin | None = None) -> dict[str, Any]:
+def seal(run: Any, target: str | Margin | None = None, *, store: Any = None) -> dict[str, Any]:
     """Predict ``target`` (default: the next stop) from values at the cursor and seal it.
+
+    The record keeps a bounded summary of the identity chain (``method.summary``); the full
+    chain is stored as a JSON blob in ``store`` (a project ``LocalStore``) and the record points
+    at it (``method.chain_pointer``, a tensor pointer to the uint8 bytes). Without a store the
+    pointer is absent with its reason and the full chain stays on the ledger entry.
 
     Returns the forecast view (``id``, ``target``, ``method``, ``predicted``, ``bound``,
     ``record``); raises ``Refusal`` when the target is already computed (at or before the cursor,
@@ -703,23 +951,34 @@ def seal(run: Any, target: str | Margin | None = None) -> dict[str, Any]:
         raise Refusal(f"staged edit(s) at {', '.join(staged)} rewrite an operand between the "
                       "cursor and the target; use whatif to predict an edit")
 
-    def known(name: str) -> Any:
-        if name == "start" or run.parse(f"t{row}.{name}") > here:
-            return None
-        return run.read(f"t{row}.{name}")
-
+    known = _known(run, row, here)
     model = RowModel(run, row, known)
     value = model.get(label)
     bound = model.bound(label)
     if margin is not None:
         value = value[margin.a] - value[margin.b]
         bound = None if bound is None else bound[margin.a] + bound[margin.b]
+    emulator = EmulatedRowModel(run, row, known)
+    emulated = _target(emulator, label, margin)
     checkpoint = run.checkpoint()
     entries = ledger(run)
     number = max(entries, default=0) + 1
+    chain = _chain(run, model, row)
+    summary, chain_pointer = _store_chain(chain, store)
     body = _body(run, model, label, margin, address, key, here, value, bound, checkpoint,
-                 status)
-    pointers = []
+                 status, summary)
+    body["emulated"] = _emulated_view(emulated, label, margin, emulator,
+                                      _rounding_origin(model, emulator, row, run.adapter.dtype))
+    body["digests"] = {"exact": _digest(value), "emulated": _digest(emulated)}
+    body["procedure"] = procedure(run)        # the prefill split the operands come from
+    pointers = [] if chain_pointer is None else [chain_pointer]
+    body["operands"], operands_summary = bound_list(
+        body["operands"], MAX_ITEMS, store=store, run=run,
+        keep=f"the first {MAX_ITEMS} in capture order (a row's ports, then its cache reads)")
+    if operands_summary is not None:       # M40: the operand list grows with the layers too
+        tensor = operands_summary["pointer"].pop("tensor", None)
+        pointers += [] if tensor is None else [tensor]
+        body["operands_summary"] = operands_summary
     if margin is None and label != "sample":
         from mdb.engine.ports import tensor_digest
 
@@ -734,9 +993,88 @@ def seal(run: Any, target: str | Margin | None = None) -> dict[str, Any]:
     # the row model is dropped on return: the entry owns these tensors, no copy needed
     entry = Forecast(number, record, label, margin, key, value.detach(),
                      None if bound is None else bound.detach(),
-                     frozenset(_edit_key(e) for e in body["edits_at_seal"]))
+                     frozenset(_edit_key(e) for e in body["edits_at_seal"]), chain=chain,
+                     emulated=emulated.detach())
     entries[number] = entry
     return view(entry)
+
+
+def _known(run: Any, row: int, here: tuple[int, int]) -> Callable[[str], Any]:
+    """The operands of a forecast sealed at ``here``: the native stops of ``row`` at or before
+    it (None for later stops and the token list)."""
+
+    def known(name: str) -> Any:
+        if name == "start" or run.parse(f"t{row}.{name}") > here:
+            return None
+        return run.read(f"t{row}.{name}")
+
+    return known
+
+
+def _target(model: RowModel, label: str, margin: Margin | None) -> Any:
+    value = model.get(label)
+    return value if margin is None else value[margin.a] - value[margin.b]
+
+
+def _digest(value: Any) -> str:
+    """sha256 of a prediction as float64 (vector, margin scalar or token id alike)."""
+    from mdb.engine.ports import tensor_digest
+
+    torch = _torch()
+    return tensor_digest(torch.as_tensor(value, dtype=torch.float64).reshape(-1).contiguous())
+
+
+def _emulated_view(value: Any, label: str, margin: Margin | None, model: EmulatedRowModel,
+                   origin: dict[str, Any]) -> dict[str, Any]:
+    """The second sealed prediction: the emulated chain (``derived-exact`` under its premise)."""
+    out: dict[str, Any] = {"authority": EXACT, "premise": EMULATION_PREMISE,
+                           "premises": list(EMULATION_PREMISES), "sums": model.sums,
+                           "sha256": _digest(value)}
+    if margin is not None:
+        out["margin"] = num(float(value), EXACT, proof="P19")
+    elif label == "sample":
+        out["token"] = int(value)
+    else:
+        out.update(shape=list(value.shape), **_summary(value, EXACT))
+    out["rounding_origin"] = origin
+    return out
+
+
+def _rounding_origin(model: RowModel, emulator: EmulatedRowModel, row: int,
+                     dtype: Any) -> dict[str, Any]:
+    """The first stop of the chain where the exact and the emulated values part by more than one
+    spacing of the dtype at the stop's magnitude (scores and softmax: the head, and the score
+    magnitude and spacing that rounding acts on). Sealed with the forecast: where the rounding
+    effect ``native - exact`` is born, before the native value exists."""
+    for name in emulator.computed:
+        if name == "sample" or name not in model.values:
+            continue
+        exact, emulated = model.values[name], emulator.values[name]
+        size = float(emulated.abs().max())
+        step = _verdict.spacing(size, dtype)
+        gap = (exact - emulated).abs()
+        parts = float(gap.max()) / step
+        if parts <= 1.0:
+            continue
+        out: dict[str, Any] = {"state": "found", "stop": f"t{row}.{name}",
+                               "spacings": num(parts, EXACT), "magnitude": num(size, EXACT),
+                               "spacing": num(step, EXACT)}
+        port = name.rsplit(".", 1)[-1]
+        if port in ("s", "p"):
+            head = int(gap.reshape(gap.shape[0], -1).max(-1).values.argmax())
+            scores = emulator.values.get(name[:-1] + "s", emulated) if port == "p" else emulated
+            score = float(scores[head].abs().max())
+            score_step = _verdict.spacing(score, dtype)
+            out.update(head=head, score_magnitude=num(score, EXACT),
+                       score_spacing=num(score_step, EXACT))
+            out["text"] = (f"t{row}.{name}[h{head}]: score spacing {score_step:g} at |s| "
+                           f"{score:.3g}; exact and emulated part by {parts:.3g} spacings")
+        else:
+            out["text"] = (f"t{row}.{name}: exact and emulated part by {parts:.3g} spacings at "
+                           f"|x| {size:.3g}")
+        return out
+    return {"state": "none", "text": "exact and emulated agree within one spacing at every "
+                                     "stop of the chain"}
 
 
 def run_session_id(run: Any) -> str:
@@ -763,17 +1101,76 @@ def _summary(value: Any, authority: str) -> dict[str, Any]:
             "norm": num(float(flat.norm()), authority)}
 
 
-def _body(run, model, label, margin, address, key, here, value, bound, checkpoint,
-          status) -> dict[str, Any]:
-    from mdb.engine.ports import tensor_digest
-
-    row = here[0]
+def _chain(run: Any, model: RowModel, row: int) -> list[dict[str, Any]]:
+    """The identities the row model evaluated, in order (can be hundreds on a real model)."""
     chain = []
     for name in model.computed:
         operator, proofs = _operator(run.program, name)
         function, proof = IDENTITY[name.split(".", 1)[-1]]
         chain.append({"stop": f"t{row}.{name}", "operator": operator, "proofs": proofs,
                       "identity": function, "proof": proof})
+    return chain
+
+
+EDGE_STEPS = 3          # identities kept at each end of the chain in the record summary
+MAX_LAYER_COUNTS = 64   # per-layer totals are listed only up to the record's sequence bound
+
+
+def _store_chain(chain: list[dict[str, Any]], store: Any) -> tuple[dict[str, Any], Any]:
+    """``(summary, tensor pointer or None)``: the bounded summary the record holds (count, proof
+    use, first and last identities, per-layer totals) and, with a store, the pointer to the full
+    chain blob (JSON bytes as a uint8 tensor)."""
+    proofs: dict[str, int] = {}
+    for step in chain:
+        for proof in {step["proof"], *step["proofs"]} - {None}:
+            proofs[proof] = proofs.get(proof, 0) + 1
+    layers: dict[int, int] = {}
+    for step in chain:
+        port = step["stop"].split(".", 1)[1]
+        if port in GLOBAL_OPERATORS:
+            continue
+        layer = _split(port)[0]
+        layers[layer] = layers.get(layer, 0) + 1
+    summary: dict[str, Any] = {
+        "count": len(chain),
+        "proof_counts": [{"proof": k, "count": v} for k, v in sorted(proofs.items())],
+        "first": chain[:EDGE_STEPS], "last": chain[-EDGE_STEPS:],
+        "global_steps": {"count": sum(1 for s in chain
+                                      if s["stop"].split(".", 1)[1] in GLOBAL_OPERATORS)}}
+    if layers and len(layers) <= MAX_LAYER_COUNTS:
+        summary["layer_counts"] = [{"layer": i, "count": layers.get(i, 0)}
+                                   for i in range(max(layers) + 1)]
+    held = put_json(chain, store=store, absent_reason=(
+        "no project store: the full chain is held in memory on the forecast entry "
+        "(Forecast.chain), not stored"))
+    summary["chain_sha256"] = held["sha256"]
+    if held["state"] != "stored":
+        summary["chain_pointer"] = {"state": "absent", "reason": held["reason"]}
+        return summary, None
+    summary["chain_pointer"] = {"state": "stored", "ref": held["ref"], "bytes": held["bytes"]}
+    return summary, held["tensor"]
+
+
+def load_chain(record: dict[str, Any], store: Any) -> list[dict[str, Any]]:
+    """The full identity chain a forecast record points at, from ``store``; checked against the
+    record's ``chain_sha256`` (``Unresolved`` or a refusal when absent or changed)."""
+    summary = record["body"]["method"]["summary"]
+    if summary["chain_pointer"]["state"] != "stored":
+        raise Refusal("the record holds no chain pointer: " + summary["chain_pointer"]["reason"])
+    pointer = next(p for p in record["pointers"] if p.get("kind") == "tensor"
+                   and p["ref"] == summary["chain_pointer"]["ref"])
+    try:
+        return load_json({"state": "stored", "sha256": summary["chain_sha256"]}, store=store,
+                         tensor=pointer)
+    except ValueError:
+        raise Refusal("the stored chain differs from the record's chain_sha256") from None
+
+
+def _body(run, model, label, margin, address, key, here, value, bound, checkpoint,
+          status, summary) -> dict[str, Any]:
+    from mdb.engine.ports import tensor_digest
+
+    row = here[0]
     operands = [{"address": f"t{row}.{name}", "sha256": tensor_digest(tensor.contiguous()),
                  "shape": list(tensor.shape), "dtype": str(tensor.dtype).removeprefix("torch.")}
                 for name, tensor in model.captured.items()]
@@ -788,15 +1185,7 @@ def _body(run, model, label, margin, address, key, here, value, bound, checkpoin
     else:
         predicted = {"shape": list(value.shape), "dtype": "float64",
                      "sha256": tensor_digest(value.contiguous()), **_summary(value, EXACT)}
-    if bound is None:
-        reason = model.unbounded.get(label, "no rounding bound for this step")
-        bound_view: dict[str, Any] = {"state": "unresolved", "reason": reason}
-    else:
-        bound_view = {"max": num(float(bound.reshape(-1).max()), BOUND), "elementwise": True,
-                      "premises": sorted(model.premises | {
-                          "round to nearest, no overflow or underflow",
-                          f"float32 library functions within {LIBRARY_ULPS} ulp",
-                          f"model dtype {str(run.adapter.dtype).removeprefix('torch.')}"})}
+    bound_view = bound_view_of(model, label, bound, run.adapter.dtype, value)
     return {
         "schema": SCHEMA,
         "target": {"address": address, "stop": f"t{row}.{label}", "row": key[0],
@@ -806,10 +1195,12 @@ def _body(run, model, label, margin, address, key, here, value, bound, checkpoin
                    **({"indices": [margin.a, margin.b]} if margin is not None else {})},
         "sealed_at": {"where": run.where, "cut": checkpoint["cut"], "row": here[0],
                       "index": here[1], "transition": int(checkpoint["transitions"]),
-                      "receipts": {"count": len(run.session.receipts)},
+                      "receipts": {"count": len(run.session.receipts),
+                                   "last": (run.session.receipts[-1].fingerprint
+                                            if run.session.receipts else None)},
                       "lookahead": status["lookahead"],
                       "computed_past_cursor": list(status["computed_past_cursor"])},
-        "method": {"authority": EXACT, "chain": chain,
+        "method": {"authority": EXACT, "summary": summary,
                    "rule": "identities of the port program on values that exist at the cursor; "
                            "no native call for the target"},
         "operands": operands,
@@ -819,13 +1210,73 @@ def _body(run, model, label, margin, address, key, here, value, bound, checkpoin
     }
 
 
+BOUND_ROLE = ("information: the worst-case interval (every rounding error aligned) beside the "
+              "prediction; it never decides a verdict or a result's state")
+
+
+def consumer_note(worst: float, size: float, stage: str,
+                  wide: dict[str, str] | None) -> dict[str, Any] | None:
+    """Whether the worst-case bound at the consumer says anything: None when it is finite and
+    smaller than ``|value|`` (``size``; zero bound always informative), else ``{stage, text,
+    value}``: the note names the first wide stage of the chain (``wide``, with its numbers) and
+    the consumer bound beside ``|value|``, so the reader sees the size. ``value`` is the number
+    (kept in the record as ``bound_value``, never printed as a confirmation)."""
+    if not math.isfinite(worst) or worst == 0.0 or worst < size:
+        return None
+    if wide is None:
+        text = (f"{NOT_INFORMATIVE} {stage} (consumer bound {worst:.3g} >= |value| {size:.3g}; "
+                "no earlier stage was wide)")
+        return {"stage": stage, "text": text, "value": worst}
+    first = wide["stage"]
+    text = (f"{NOT_INFORMATIVE} {first} ({wide['cause']}); at the consumer {stage} the bound is "
+            f"{worst:.3g} >= |value| {size:.3g}")
+    return {"stage": first, "text": text, "value": worst}
+
+
+def bound_view_of(model: RowModel, label: str, bound: Any, dtype: Any,
+                  value: Any = None) -> dict[str, Any]:
+    """The sealed ``bound`` sub-dict of a forecast (M56): the worst-case interval with its
+    premises; or, where it stopped being informative, the stop and the cause with its numbers
+    (``informative: False``, no state: an uninformative worst case is information, not an
+    unresolved result); or the refused premise; else unresolved with the reason. Always marked
+    ``information`` (``ops.registry.has_unresolved`` does not count it)."""
+    if bound is None:
+        reason = model.unbounded.get(label, "no rounding bound for this step")
+        if model.broken is not None and bound_state(reason) != "refused":
+            return {"informative": False, "from": model.broken["stage"],
+                    "cause": model.broken["cause"], "note": model.broken["text"],
+                    "information": True, "role": BOUND_ROLE}
+        return {"state": bound_state(reason), "reason": reason, "information": True,
+                "role": BOUND_ROLE}
+    worst = float(bound.reshape(-1).max())
+    size = float(value.abs().max()) if value is not None and value.numel() else math.inf
+    premises = sorted(model.premises | {
+        "round to nearest; underflow bounded absolutely where stated, no overflow",
+        f"float32 library functions within {LIBRARY_ULPS} ulp",
+        f"model dtype {str(dtype).removeprefix('torch.')}"})
+    note = consumer_note(worst, size, f"t{model.row}.{label}", model.wide)
+    if note is not None:     # finite, at least |value|: the note, the number kept
+        return {"informative": False, "from": note["stage"], "note": note["text"],
+                "bound_value": num(worst, BOUND), "information": True, "role": BOUND_ROLE,
+                "premises": premises}
+    return {"max": num(worst, BOUND), "elementwise": True,
+            "information": True, "role": BOUND_ROLE, "premises": premises}
+
+
 def view(entry: Forecast) -> dict[str, Any]:
     """The bounded JSON of one forecast: its id, record digest and sealed body."""
     body = entry.record["body"]
     out = {"id": entry.id, "record": entry.record["id"], "target": body["target"]["address"],
            "status": entry.status, "sealed_at": body["sealed_at"]["where"],
-           "method": body["method"]["chain"], "predicted": body["predicted"],
+           "method": entry.chain[:MAX_ITEMS], "method_summary": body["method"]["summary"],
+           "predicted": body["predicted"],
+           "emulated": body.get("emulated"),
            "bound": body["bound"]}
+    if len(entry.chain) > MAX_ITEMS:       # M40: the view obeys the record bound too
+        out["method_listed"] = {
+            "count": len(entry.chain), "listed": MAX_ITEMS,
+            "keep": f"the first {MAX_ITEMS} identities; all of them are in Forecast.chain and "
+                    "(with a project) behind method_summary.chain_pointer (load_chain)"}
     if entry.verdict is not None:
         out["verdict"] = entry.verdict
     return out
@@ -835,39 +1286,56 @@ def view(entry: Forecast) -> dict[str, Any]:
 
 
 def _lineage(run: Any, sealed: dict[str, Any]) -> dict[str, Any]:
-    """Whether the current cut descends from the sealed cut through native transitions recorded
-    after sealing (``Session.receipts``): ``continue`` receipts whose parent is the sealed cut or
-    a descendant of it."""
-    current = run.checkpoint()["cut"]
-    reached = {sealed["cut"]}
-    receipts = run.session.receipts[sealed["receipts"]["count"]:]
-    for receipt in receipts:
-        data = receipt.to_dict()
-        if data.get("operation") == "continue" and data.get("parent") in reached:
-            reached.add(data["result"])
+    """Whether the sealed cut is an ancestor of the current cut: the sealed cut (its fingerprint
+    at its transition count) is a mark of the run's trail, which holds the whole path of the
+    current cut however deep the model is and is rebuilt identically by a restore (``whatif``).
+    A cut on another path (an edit or a rewind before the seal) is not on the trail."""
+    trail = run.cut_trail()
+    current = trail[-1][0]
+    wanted = (sealed["cut"], sealed.get("transition"))
+    at = next((i for i in range(len(trail) - 1, -1, -1)
+               if trail[i][0] == wanted[0] and (wanted[1] is None or trail[i][1] == wanted[1])),
+              None)
+    after = 0 if at is None else trail[-1][1] - trail[at][1]
     return {"sealed_cut": sealed["cut"], "current_cut": current,
-            "receipts_after_seal": {"count": len(receipts)}, "descends": current in reached,
+            "receipts_after_seal": {"count": after}, "descends": at is not None,
             "same_cut": current == sealed["cut"]}
 
 
-def _native(run: Any, entry: Forecast) -> tuple[Any, dict[str, Any]]:
+def _rounded_steps(entry: Forecast) -> int:
+    """Rounded operations between the sealed operands and the target: the identities of the chain
+    up to and including the target's (a margin: through the logits). Each rounds its result to the
+    model dtype, so their errors accumulate; ``derived-exact``, a count of the chain."""
+    stops = [step["stop"] for step in entry.chain]
+    address = f"t{entry.key[0]}.{entry.label}"
+    return stops.index(address) + 1 if address in stops else max(len(stops), 1)
+
+
+def _native(run: Any, entry: Forecast) -> tuple[Any, dict[str, Any], Any]:
+    """The native value as float64, its read info, and the raw native tensor (its dtype and
+    magnitude set the verdict floor)."""
     row = entry.key[0]
     stop = f"t{row}.{entry.label}"
     value = run.read(stop)
     info = run.read_info(stop)
     if entry.margin is not None:
         flat = value.reshape(-1)
-        return f64(flat[entry.margin.a]) - f64(flat[entry.margin.b]), info
+        return f64(flat[entry.margin.a]) - f64(flat[entry.margin.b]), info, value
     if entry.label == "sample":
-        return f64(value).reshape(()), info
-    return f64(value).reshape(entry.predicted.shape), info
+        return f64(value).reshape(()), info, value
+    return f64(value).reshape(entry.predicted.shape), info, value
 
 
 def verify(run: Any, ids: list[int] | None = None) -> list[dict[str, Any]]:
     """Compare open forecasts (or the given ids) whose target the cursor has passed with the
-    native value. Each result: ``verdict`` (``within-bound | outside-bound | no-bound | edited |
-    open``), ``predicted`` / ``native`` summaries, ``residual_max_abs`` (``measured``),
-    ``within_bound``, and ``order`` (sealing stop before the target; lineage of cuts)."""
+    native value. Each result: ``verdict`` (``confirmed | not confirmed | unresolved | edited |
+    open``), decided by the measured residual native - emulated (P20) against ``floor`` =
+    ``verdict.FLOOR_SPACINGS`` (supplied) x the dtype spacing at the consumer's magnitude (a
+    margin: the sum of its two logits' spacings), judged per element; above the floor, where
+    emulation and native part (``_parting``); ``rounding_effect`` = native - exact
+    (``measured``); the sealed ``rounding_origin``; ``bound_max`` / ``within_bound`` against the
+    exact prediction only when the bound is finite (information, not the verdict); and
+    ``order`` (sealing stop before the target; lineage of cuts)."""
     entries = ledger(run)
     here = run.parse(run.where)
     chosen = [entries[i] for i in ids] if ids else [e for e in entries.values()
@@ -896,7 +1364,7 @@ def verify(run: Any, ids: list[int] | None = None) -> list[dict[str, Any]]:
                                       "(rewound onto another path); the sealed target was not "
                                       "reached"})
             continue
-        native, info = _native(run, entry)
+        native, info, raw = _native(run, entry)
         later = [e for e in info["upstream_edits"] if _edit_key(e) not in entry.edits]
         verdict: dict[str, Any] = {"order": order}
         if info["edited"] or info["kind"] in ("edit", "realisation") or later:
@@ -909,28 +1377,263 @@ def verify(run: Any, ids: list[int] | None = None) -> list[dict[str, Any]]:
         else:
             label = info["authority"]  # measured, or derived-exact for the replica s
             if label is None:
-                verdict.update(verdict="no-bound", reason=info["reason"])
+                verdict.update(verdict="unresolved", state="unresolved", reason=info["reason"])
             else:
-                gap = (native - entry.predicted).abs()
-                verdict["residual_max_abs"] = num(float(gap.max()), label)
-                verdict["native"] = (num(float(native), label) if native.dim() == 0
-                                     else _summary(native, label))
-                if entry.bound is None:
-                    verdict.update(verdict="no-bound", within_bound=None)
-                else:
-                    within = bool((gap <= entry.bound).all())
-                    verdict.update(verdict="within-bound" if within else "outside-bound",
-                                   within_bound=within,
-                                   bound_max=num(float(entry.bound.max()), BOUND))
-                    if not within:
-                        verdict["worst_excess"] = num(float((gap - entry.bound).max()), label)
+                verdict.update(_decide(run, entry, native, raw, label))
         entry.status = "closed"
         entry.verdict = verdict
         results.append({**out, "status": "closed", **verdict})
     return results
 
 
+def _decide(run: Any, entry: Forecast, native: Any, raw: Any, label: str) -> dict[str, Any]:
+    """The verdict of one reached, unedited forecast from its native value (``label`` the
+    native value's authority)."""
+    out: dict[str, Any] = {}
+    gap = (native - entry.emulated).abs()
+    out["residual_max_abs"] = num(float(gap.max()), label)
+    out["native"] = (num(float(native), label) if native.dim() == 0
+                     else _summary(native, label))
+    # the consumer's magnitude: the margin's two logits (both spacings), else the largest element
+    size = _verdict.magnitude(entry.margin if entry.margin is not None else object(), raw)
+    partner = None
+    if entry.margin is not None:
+        flat = raw.reshape(-1).detach().abs().float()
+        size, partner = float(flat[entry.margin.a]), float(flat[entry.margin.b])
+    decided = _verdict.confirm(gap, size, raw.dtype, partner=partner)
+    out.update({k: decided[k] for k in (
+        "verdict", "state", "floor", "floor_spacings", "spacing", "residual_spacings", "dtype",
+        "criterion", "index") if k in decided}, basis="measured residual native - emulated, P20")
+    step = decided["spacing"]["value"]
+    effect = float((native - entry.predicted).abs().max())
+    out["rounding_effect"] = {"max_abs": num(effect, label),
+                              "basis": "native - exact (the float64 chain), measured"}
+    if step:
+        out["rounding_effect"]["spacings"] = num(effect / step, label)
+    out["rounding_origin"] = entry.record["body"]["emulated"]["rounding_origin"]
+    out["rounded_steps"] = num(_rounded_steps(entry), EXACT)
+    row = entry.key[0]
+    started = time.perf_counter()
+    checks = stage_checks(run, [(row, step["stop"].split(".", 1)[1]) for step in entry.chain])
+    out["stages"] = containment(checks, label, seconds=time.perf_counter() - started)
+    if decided["verdict"] != _verdict.CONFIRMED:
+        out.update(_parting(run, entry, label, checks))
+    bound = entry.bound
+    sealed = entry.record["body"]["bound"]
+    if sealed.get("informative") is False:     # finite but not informative: the note, no "within"
+        out["bound_note"] = sealed["note"]
+    elif bound is not None and bool(bound.isfinite().all()):
+        # information only: the worst-case propagated bound of the exact prediction
+        exact_gap = (native - entry.predicted).abs()
+        within = bool((exact_gap <= bound).all())
+        out.update(within_bound=within, bound_max=num(float(bound.max()), BOUND))
+        if not within:
+            out["worst_excess"] = num(float((exact_gap - bound).max()), label)
+    elif "note" in sealed:
+        out["bound_note"] = sealed["note"]
+    else:
+        out["bound_note"] = f"no worst-case interval ({sealed['state']}: {sealed['reason']})"
+    return out
+
+
+MAX_TIES = 3
+PER_STAGE = ("per stage: the rounding bound of each stage's own identity evaluated on that "
+             "stage's native operands (read after the native run), against |native - identity|; "
+             "it says each native step is its identity up to its own rounding, not how far a "
+             "target can sit from the exact chain (that is a chain bound)")
+
+
+def stage_checks(run: Any, stages: list[tuple[int, str]],
+                 skip: dict[tuple[int, str], str] | None = None) -> list[dict[str, Any]]:
+    """Each stage ``(row, stop)`` of a walked chain evaluated by its identity on its native
+    operands (``RowModel`` with bounds, ``cut=False``: one identity, every producer read
+    natively), the cursor at or past every stage: ``{stop, row, name, ratio, excess, within}``
+    with ``ratio`` the largest ``|native - identity| / bound`` over elements with a positive
+    bound and ``excess`` the largest ``|native - identity| - bound``; or ``{.., unchecked}``
+    with why (``skip``, a port an edit wrote, no bound). Costs one float64 identity per stage
+    (about one exact chain evaluation with bounds) and the native reads."""
+    skip = skip or {}
+    out: list[dict[str, Any]] = []
+    for row, name in stages:
+        stop = f"t{row}.{name}"
+        item: dict[str, Any] = {"stop": stop, "row": row, "name": name}
+        out.append(item)
+        if (row, name) in skip:
+            item["unchecked"] = skip[row, name]
+            continue
+        info = run.read_info(stop)
+        if info["edited"] or info["kind"] in ("edit", "realisation"):
+            item["unchecked"] = f"written by an edit ({info['by']})"
+            continue
+        if info["authority"] is None:
+            item["unchecked"] = info.get("reason") or "no native label"
+            continue
+        model = RowModel(run, row, lambda n, at=name, r=row: None if n == at else run.read(
+            f"t{r}.{n}"), cut=False)
+        try:
+            value, bound = model.get(name), model.bound(name)
+        except Refusal as error:
+            item["unchecked"] = str(error)
+            continue
+        if bound is None:
+            item["unchecked"] = model.unbounded.get(name, "no bound")
+            continue
+        native = f64(run.read(stop)).reshape(value.shape)
+        gap = (native - value).abs()
+        positive = bound > 0
+        ratio = (gap[positive] / bound[positive]) if bool(positive.any()) else gap.new_zeros(1)
+        item.update(ratio=float(ratio.max()), excess=float((gap - bound).max()),
+                    premises=model.premises)
+        item["within"] = item["excess"] <= 0
+        if bool(((~positive) & (gap > 0)).any()):
+            item["zero_bound_exceeded"] = True
+        del model, value, bound, native, gap
+    return out
+
+
+def containment(checks: list[dict[str, Any]], label: str,
+                seconds: float | None = None) -> dict[str, Any]:
+    """The summary of ``stage_checks`` (M56): ``each stage within its own rounding bound on
+    native operands: 77/77`` with the worst ratio and its stage, the failing stages and the
+    unchecked ones (each list capped at ``MAX_TIES``, with its count). A finite statement about
+    every native step walked; labelled as a per-stage bound (``PER_STAGE``), not a chain bound."""
+    done = [c for c in checks if "ratio" in c]
+    failing = [c for c in done if not c["within"]]
+    unchecked = [c for c in checks if "unchecked" in c]
+    premises: set[str] = set()
+    for c in done:
+        premises |= c["premises"]
+    out: dict[str, Any] = {"checked": num(len(done), EXACT),
+                           "within": num(len(done) - len(failing), EXACT),
+                           "walked": num(len(checks), EXACT),
+                           "kind": "per-stage bound on native operands",
+                           "authority": BOUND, "premise": PER_STAGE,
+                           "premises": sorted(premises | {
+                               "round to nearest; underflow bounded absolutely where stated",
+                               f"float32 library functions within {LIBRARY_ULPS} ulp"}),
+                           "cost": f"{len(done)} float64 identity evaluations on native operands"}
+    text = (f"each stage within its own rounding bound on native operands: "
+            f"{len(done) - len(failing)}/{len(done)}")
+    if done:
+        worst = max(done, key=lambda c: c["ratio"])
+        out["worst_ratio"] = num(worst["ratio"], label)
+        out["worst_stage"] = worst["stop"]
+        text += f" (worst |native - identity|/bound {worst['ratio']:.3g} at {worst['stop']})"
+    if failing:
+        out["failing"] = [{"stop": c["stop"], "ratio": num(c["ratio"], label),
+                           "excess": num(c["excess"], label),
+                           **({"zero_bound_exceeded": True} if c.get("zero_bound_exceeded")
+                              else {})} for c in failing[:MAX_TIES]]
+        out["failing_count"] = num(len(failing), EXACT)
+        text += "; outside: " + ", ".join(
+            f"{c['stop']} by {c['excess']:.3g}" for c in failing[:MAX_TIES]) + (
+            f" (+{len(failing) - MAX_TIES} more)" if len(failing) > MAX_TIES else "")
+    if unchecked:
+        out["not_checked"] = [f"{c['stop']} ({c['unchecked']})" for c in unchecked[:MAX_TIES]]
+        out["not_checked_count"] = num(len(unchecked), EXACT)
+        text += f"; {len(unchecked)} not checked"
+    if seconds is not None:
+        out["seconds"] = num(seconds, MEASURED)
+    out["text"] = text
+    return out
+
+
+def _parting(run: Any, entry: Forecast, label: str,
+             checks: list[dict[str, Any]]) -> dict[str, Any]:
+    """Where emulation and native part, for a residual above the floor.
+
+    ``not confirmed`` when the prediction is not the emulated chain of the sealed operands (the
+    held prediction or an operand read now differs from its sealed digest) or when a stage of
+    the chain, from the first stop where emulated and native part by more than the floor to the
+    target, does not reproduce its native value from its native operands within the rounding
+    bound of its identity (``checks``, ``stage_checks``): the identity does not describe that
+    native step. Otherwise ``unresolved``: every such stage is the native step, and the residual
+    is rounding drift between stages (one-spacing differences of the sums carried forward);
+    native top-score ties where the emulated softmax parts are named."""
+    body = entry.record["body"]
+    sealed_digest = body["digests"]["emulated"]
+    row = entry.key[0]
+    if _digest(entry.emulated) != sealed_digest:
+        return {"verdict": _verdict.NOT_CONFIRMED, "state": "resolved",
+                "reason": "the held prediction differs from its sealed digest"}
+    sealed = (body["sealed_at"]["row"], body["sealed_at"]["index"])
+    emulator = EmulatedRowModel(run, row, _known(run, row, sealed))
+    if _digest(_target(emulator, entry.label, entry.margin)) != sealed_digest:
+        return {"verdict": _verdict.NOT_CONFIRMED, "state": "resolved",
+                "reason": "the emulated chain of the operands read now differs from the sealed "
+                          "prediction: an operand is not the one sealed"}
+    return stage_parting(run, [emulator], label, checks)
+
+
+def stage_parting(run: Any, emulators: list[EmulatedRowModel], label: str,
+                  checks: list[dict[str, Any]]) -> dict[str, Any]:
+    """Where emulated row models (one per row of a chain, in row order, each evaluated through
+    what the chain needed) and the native values part, the cursor at or past every stop they
+    computed (``_parting``; the whatif checks of ``propagate`` use it inside the edited
+    excursion, over several rows too: M55). The first stop, in row order, where they part by
+    more than ``verdict.FLOOR_SPACINGS`` spacings; from there on, each stage's check on its
+    native operands (``checks``, ``stage_checks`` over the same walk): a native value outside
+    its identity's bound is ``not confirmed`` (the identity does not describe the native step),
+    else ``unresolved`` (rounding drift), naming native top-score ties where the emulated softmax
+    parts. ``label``: the authority of the native values."""
+    dtype = run.adapter.dtype
+    floor = _verdict.FLOOR_SPACINGS
+    first, parts, step = None, 0.0, 0.0
+    walk = [(m, name) for m in emulators for name in m.computed if name != "sample"]
+    for model, name in walk:
+        native = f64(run.read(f"t{model.row}.{name}")).reshape(model.shape(name))
+        step = _verdict.spacing(float(native.abs().max()), dtype)
+        parts = float((model.values[name] - native).abs().max()) / step
+        if parts > floor:
+            first = (model.row, name)
+            break
+    if first is None:       # every stop within the floor; the target (margin, token) is not
+        first = (walk[-1][0].row, walk[-1][1]) if walk else None
+    order = [(c["row"], c["name"]) for c in checks]
+    start = order.index(first) if first in order else 0
+    first_text = f"t{first[0]}.{first[1]}" if first is not None else "the target"
+    unchecked, ties = [], []
+    by_row = {m.row: m for m in emulators}
+    for item in checks[start:]:
+        if "unchecked" in item:
+            unchecked.append(f"{item['stop']} ({item['unchecked']})")
+            continue
+        if not item["within"]:
+            return {"verdict": _verdict.NOT_CONFIRMED, "state": "resolved",
+                    "parting": {"stop": first_text, "spacings": num(parts, label),
+                                "stage": item["stop"], "excess": num(item["excess"], label)},
+                    "reason": f"{item['stop']}: the native value lies {item['excess']:.3g} "
+                              "outside the rounding bound of its identity on the native operands"}
+        name, row = item["name"], item["row"]
+        model = by_row.get(row)
+        if name.endswith(".p") and model is not None and name in model.values:
+            scores = f64(run.read(f"t{row}.{name[:-1]}s")).reshape(model.shape(name))
+            native = f64(run.read(item["stop"])).reshape(model.shape(name))
+            top = scores.topk(min(2, scores.shape[-1]), dim=-1).values
+            apart = (model.values[name] != native).any(-1)
+            for head in range(scores.shape[0]):
+                if top.shape[-1] == 2 and top[head, 0] == top[head, 1] and bool(apart[head]):
+                    size = float(top[head, 0].abs())
+                    ties.append(f"{item['stop']}[h{head}]: native top scores tie at "
+                                f"{float(top[head, 0]):g} (score spacing "
+                                f"{_verdict.spacing(size, dtype):g})")
+    reason = (f"rounding drift: emulated and native part first at {first_text} by "
+              f"{parts:.3g} spacings; every stage from there to the target reproduces its native "
+              "value from its native operands within its rounding bound")
+    if ties:
+        reason += "; at native ties: " + "; ".join(ties[:MAX_TIES]) + (
+            f" (+{len(ties) - MAX_TIES} more)" if len(ties) > MAX_TIES else "")
+    if unchecked:
+        reason += "; not checked: " + ", ".join(unchecked[:MAX_TIES]) + (
+            f" (+{len(unchecked) - MAX_TIES} more)" if len(unchecked) > MAX_TIES else "")
+    return {"verdict": _verdict.UNRESOLVED, "state": "unresolved", "reason": reason,
+            "parting": {"stop": first_text, "spacings": num(parts, label),
+                        "spacing": num(step, label), "ties": ties[:MAX_ITEMS],
+                        "stages_checked": {"count": len(checks) - start - len(unchecked)}}}
+
+
 _session_id = run_session_id  # old private name, kept for one commit
 
-__all__ = ["FORECAST", "IDENTITY", "Logit", "Margin", "NO_IDENTITY", "Refusal", "RowModel",
-           "ledger", "run_session_id", "seal", "verify", "view"]
+__all__ = ["FORECAST", "IDENTITY", "Logit", "Margin", "NOT_INFORMATIVE", "NO_IDENTITY",
+           "PER_STAGE", "Refusal", "RowModel", "bound_view_of", "containment", "ledger",
+           "run_session_id", "seal", "stage_checks", "verify", "view"]

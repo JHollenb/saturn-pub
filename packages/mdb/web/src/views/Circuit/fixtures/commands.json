@@ -860,6 +860,24 @@
       "ops_before": [
         {
           "args": {
+            "name": "clean",
+            "prompt": [
+              1,
+              7,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {
+            "target": "t3.logits"
+          },
+          "op": "until"
+        },
+        {
+          "args": {
             "prompt": [
               1,
               5,
@@ -870,99 +888,10 @@
           "op": "start"
         },
         {
-          "args": {},
-          "op": "forecast"
-        },
-        {
-          "args": {
-            "target": "L0.p"
-          },
-          "op": "forecast"
-        },
-        {
-          "args": {
-            "target": "M[4,9]"
-          },
-          "op": "forecast"
-        },
-        {
-          "args": {
-            "target": "L1.m"
-          },
-          "op": "forecast"
-        },
-        {
-          "args": {},
-          "op": "step"
-        },
-        {
-          "args": {},
-          "op": "verify"
-        },
-        {
-          "args": {
-            "target": "t0.L0.p"
-          },
-          "op": "forecast"
-        },
-        {
-          "args": {
-            "target": "L1.p"
-          },
-          "op": "until"
-        },
-        {
-          "args": {},
-          "op": "symbols"
-        },
-        {
-          "args": {
-            "consumer": "M[4,9]"
-          },
-          "op": "symbols"
-        },
-        {
-          "args": {
-            "depth": 3,
-            "target": "M[4,9]",
-            "top": 2
-          },
-          "op": "circuit"
-        },
-        {
           "args": {
             "target": "t3.logits"
           },
           "op": "until"
-        },
-        {
-          "args": {
-            "addresses": "t1, cache.L1.v[row=2]",
-            "name": "ctx"
-          },
-          "op": "symbol"
-        },
-        {
-          "args": {
-            "consumer": "M[4,9]"
-          },
-          "op": "symbols"
-        },
-        {
-          "args": {
-            "consumer": "M[4,9]",
-            "source": "t2",
-            "top": 3
-          },
-          "op": "reads"
-        },
-        {
-          "args": {
-            "consumer": "M[4,9]",
-            "source": "t3"
-          },
-          "interrupted": "cancelled while queued",
-          "op": "reads"
         },
         {
           "args": {
@@ -982,22 +911,6 @@
         },
         {
           "args": {
-            "depth": 2,
-            "target": "M[4,9]",
-            "top": 2
-          },
-          "op": "circuit"
-        },
-        {
-          "args": {
-            "depth": 2,
-            "target": "L1.o",
-            "top": 2
-          },
-          "op": "circuit"
-        },
-        {
-          "args": {
             "id": 2,
             "target": "test"
           },
@@ -1005,10 +918,10 @@
         },
         {
           "args": {
-            "id": 1,
+            "id": 2,
+            "ref": "clean",
             "target": "test"
           },
-          "interrupted": "cancelled while queued",
           "op": "circuit"
         }
       ],
@@ -1184,6 +1097,24 @@
       "ops_before": [
         {
           "args": {
+            "name": "clean",
+            "prompt": [
+              1,
+              7,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {
+            "target": "t3.logits"
+          },
+          "op": "until"
+        },
+        {
+          "args": {
             "prompt": [
               1,
               5,
@@ -1194,99 +1125,10 @@
           "op": "start"
         },
         {
-          "args": {},
-          "op": "forecast"
-        },
-        {
-          "args": {
-            "target": "L0.p"
-          },
-          "op": "forecast"
-        },
-        {
-          "args": {
-            "target": "M[4,9]"
-          },
-          "op": "forecast"
-        },
-        {
-          "args": {
-            "target": "L1.m"
-          },
-          "op": "forecast"
-        },
-        {
-          "args": {},
-          "op": "step"
-        },
-        {
-          "args": {},
-          "op": "verify"
-        },
-        {
-          "args": {
-            "target": "t0.L0.p"
-          },
-          "op": "forecast"
-        },
-        {
-          "args": {
-            "target": "L1.p"
-          },
-          "op": "until"
-        },
-        {
-          "args": {},
-          "op": "symbols"
-        },
-        {
-          "args": {
-            "consumer": "M[4,9]"
-          },
-          "op": "symbols"
-        },
-        {
-          "args": {
-            "depth": 3,
-            "target": "M[4,9]",
-            "top": 2
-          },
-          "op": "circuit"
-        },
-        {
           "args": {
             "target": "t3.logits"
           },
           "op": "until"
-        },
-        {
-          "args": {
-            "addresses": "t1, cache.L1.v[row=2]",
-            "name": "ctx"
-          },
-          "op": "symbol"
-        },
-        {
-          "args": {
-            "consumer": "M[4,9]"
-          },
-          "op": "symbols"
-        },
-        {
-          "args": {
-            "consumer": "M[4,9]",
-            "source": "t2",
-            "top": 3
-          },
-          "op": "reads"
-        },
-        {
-          "args": {
-            "consumer": "M[4,9]",
-            "source": "t3"
-          },
-          "interrupted": "cancelled while queued",
-          "op": "reads"
         },
         {
           "args": {
@@ -1306,16 +1148,72 @@
         },
         {
           "args": {
-            "depth": 2,
+            "id": 2,
+            "target": "test"
+          },
+          "op": "circuit"
+        }
+      ],
+      "request": {
+        "args": {
+          "id": 2,
+          "ref": "clean",
+          "target": "test"
+        },
+        "op": "circuit",
+        "route": "POST op"
+      },
+      "server": "mdb serve --tiny qwen2 (in-process: create_app + LiveSession, seed 113)"
+    },
+    "test_noref": {
+      "ops_before": [
+        {
+          "args": {
+            "name": "clean",
+            "prompt": [
+              1,
+              7,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {
+            "target": "t3.logits"
+          },
+          "op": "until"
+        },
+        {
+          "args": {
+            "prompt": [
+              1,
+              5,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {
+            "target": "t3.logits"
+          },
+          "op": "until"
+        },
+        {
+          "args": {
+            "depth": 3,
             "target": "M[4,9]",
-            "top": 2
+            "top": 1
           },
           "op": "circuit"
         },
         {
           "args": {
-            "depth": 2,
-            "target": "L1.o",
+            "depth": 3,
+            "target": "M[4,9]",
             "top": 2
           },
           "op": "circuit"
@@ -1335,6 +1233,24 @@
       "ops_before": [
         {
           "args": {
+            "name": "clean",
+            "prompt": [
+              1,
+              7,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {
+            "target": "t3.logits"
+          },
+          "op": "until"
+        },
+        {
+          "args": {
             "prompt": [
               1,
               5,
@@ -1345,99 +1261,10 @@
           "op": "start"
         },
         {
-          "args": {},
-          "op": "forecast"
-        },
-        {
-          "args": {
-            "target": "L0.p"
-          },
-          "op": "forecast"
-        },
-        {
-          "args": {
-            "target": "M[4,9]"
-          },
-          "op": "forecast"
-        },
-        {
-          "args": {
-            "target": "L1.m"
-          },
-          "op": "forecast"
-        },
-        {
-          "args": {},
-          "op": "step"
-        },
-        {
-          "args": {},
-          "op": "verify"
-        },
-        {
-          "args": {
-            "target": "t0.L0.p"
-          },
-          "op": "forecast"
-        },
-        {
-          "args": {
-            "target": "L1.p"
-          },
-          "op": "until"
-        },
-        {
-          "args": {},
-          "op": "symbols"
-        },
-        {
-          "args": {
-            "consumer": "M[4,9]"
-          },
-          "op": "symbols"
-        },
-        {
-          "args": {
-            "depth": 3,
-            "target": "M[4,9]",
-            "top": 2
-          },
-          "op": "circuit"
-        },
-        {
           "args": {
             "target": "t3.logits"
           },
           "op": "until"
-        },
-        {
-          "args": {
-            "addresses": "t1, cache.L1.v[row=2]",
-            "name": "ctx"
-          },
-          "op": "symbol"
-        },
-        {
-          "args": {
-            "consumer": "M[4,9]"
-          },
-          "op": "symbols"
-        },
-        {
-          "args": {
-            "consumer": "M[4,9]",
-            "source": "t2",
-            "top": 3
-          },
-          "op": "reads"
-        },
-        {
-          "args": {
-            "consumer": "M[4,9]",
-            "source": "t3"
-          },
-          "interrupted": "cancelled while queued",
-          "op": "reads"
         },
         {
           "args": {
@@ -1457,22 +1284,6 @@
         },
         {
           "args": {
-            "depth": 2,
-            "target": "M[4,9]",
-            "top": 2
-          },
-          "op": "circuit"
-        },
-        {
-          "args": {
-            "depth": 2,
-            "target": "L1.o",
-            "top": 2
-          },
-          "op": "circuit"
-        },
-        {
-          "args": {
             "id": 2,
             "target": "test"
           },
@@ -1480,10 +1291,10 @@
         },
         {
           "args": {
-            "id": 1,
+            "id": 2,
+            "ref": "clean",
             "target": "test"
           },
-          "interrupted": "cancelled while queued",
           "op": "circuit"
         },
         {
@@ -1497,6 +1308,7 @@
       "request": {
         "args": {
           "id": 9,
+          "ref": "clean",
           "target": "test"
         },
         "op": "circuit",
@@ -1505,5 +1317,6 @@
       "server": "mdb serve --tiny qwen2 (in-process: create_app + LiveSession, seed 113)"
     }
   },
-  "recorder": "/private/tmp/claude-501/-Users-jakeholl-domains/a0257d4e-0d2c-4a3b-8a17-1b843f7dd193/scratchpad/build-b3/record.py"
+  "recorder": "/private/tmp/claude-501/-Users-jakeholl-domains/a0257d4e-0d2c-4a3b-8a17-1b843f7dd193/scratchpad/build-b3/record.py",
+  "recorder_m4": "/private/tmp/claude-501/-Users-jakeholl-domains/a0257d4e-0d2c-4a3b-8a17-1b843f7dd193/scratchpad/r6-m4/record_test_fixtures.py"
 }

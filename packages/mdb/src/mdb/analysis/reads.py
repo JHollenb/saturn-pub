@@ -13,10 +13,17 @@ point) as itself, and ``o`` of the read's own layer (the default consumer) as it
 The causal verdict of a read is a native measurement: the source's weight in that head is set to
 zero (``p[h, src] = 0``, a masked ``replace`` at the ``p`` port) through
 ``analysis.propagate.whatif``, which measures the consumer natively and restores the session.
-``causal`` when the measured change exceeds both ``min_effect`` (default 0) and the rounding
-bound of the prediction; ``not causal at this dose`` when it is exactly 0; ``unresolved`` (with
-the reason) when it changed but within the bound, or the measurement could not be made. Mass and
-effect are always reported side by side; a small mass never hides a read.
+The verdict follows whatif's P20 verdict (``verdict.decide``: the native change against the
+emulated change, the base and edited chains with the dtype's rounding where eager HF rounds,
+within one spacing at the consumer): ``causal`` when whatif finds an effect (the native change is
+not zero, as the emulation predicts) and the change exceeds ``min_effect`` (default 0); ``not
+causal at this dose`` when whatif finds no effect (the dtype shows no change at the consumer);
+``unresolved`` (with the reason) otherwise, or when the measurement could not be made. Both facts
+are kept when they differ: a read whose exact change is real but below the dtype's resolution
+at the consumer is ``not causal at this dose`` with the reason ``no change at bfloat16
+resolution; exact ΔM 0.33``, and a native change that is rounding only carries its exact change.
+No worst-case rounding bound gates it. Mass and effect are always reported side by side; a small
+mass never hides a read.
 """
 
 from __future__ import annotations
@@ -26,8 +33,10 @@ import re
 from dataclasses import dataclass, field
 from typing import Any
 
+from .accumulation import FP32_PREMISE, Accumulation, accumulation
 from .finite import BOUND, EXACT, MEASURED, SUPPLIED, f64, num
 from .forecast import Logit, Margin, Refusal
+from .verdict import EFFECT, NO_EFFECT
 
 RESIDUAL_PORTS = ("h", "r", "h_out")
 VERDICTS = ("causal", "not causal at this dose", "unresolved")
@@ -87,8 +96,9 @@ def computed(run: Any, address: str) -> bool:
 
 
 def first_row(run: Any) -> int:
-    """The first token row this run stepped (earlier rows were prefilled into the cache)."""
-    return len(run.tokens) - 1
+    """The first token row this run stepped (earlier rows were prefilled into the cache):
+    ``Run.first_row``, the row of its root (``prefill=K`` steps rows from ``K``)."""
+    return int(run.first_row)
 
 
 # --------------------------------------------------------------------------- consumers
@@ -221,6 +231,7 @@ class HeadMix:
     o: Any = None
     dtype: Any = None
     info: dict[str, Any] = field(default_factory=dict)
+    acc: Any = None          # accumulation.Accumulation of the run (None: float32 premise)
 
     def head_out(self) -> Any:
         """``A_h = sum_s p[h, s] v[kappa(h), s]`` in float64, shape (H, d_h)."""
@@ -238,26 +249,33 @@ class HeadMix:
 
     def checks(self) -> dict[str, Any]:
         """Native ``A`` against the float64 mix and native ``o`` against ``sum_h W_o,h A_h``:
-        ``eta`` (measured) and its rounding ``bound`` (round to nearest; matmuls accumulate in
-        float32 in any order, then one rounding to the model dtype)."""
+        ``eta`` (measured) and its rounding ``bound`` (round to nearest; matmul partial sums kept
+        at the precision of ``acc``, float32 by default, in any order, then one rounding to the
+        model dtype). ``bound`` is None, with ``refused`` the reason, when that premise fails
+        (``accumulation``: reduced-precision reductions and ``n u >= 1``)."""
         out: dict[str, Any] = {}
         u = unit_roundoff(self.dtype)
+        acc = self.acc if self.acc is not None else Accumulation(_U32, FP32_PREMISE)
         premises = ["round to nearest, no overflow or underflow",
-                    "matmul accumulates in float32 in any order (gamma_n bound), then one "
-                    "rounding to the model dtype"]
+                    f"{acc.premise}, then one rounding to the model dtype"]
+
+        def check(eta: Any, n: int, spread: Any, exact: Any, proof: str) -> dict[str, Any]:
+            gamma = acc.gamma(n)
+            if gamma is None:
+                return {"eta": eta, "bound": None, "refused": acc.refusal(n),
+                        "premises": premises, "proof": proof}
+            return {"eta": eta, "bound": gamma * spread * (1 + u) + u * exact.abs(),
+                    "premises": premises, "proof": proof}
+
         if self.A is not None:
             exact = self.head_out()
             spread = (self.p.abs()[..., None] * self.values[self.kappa].abs()).sum(1)
-            bound = _gamma(self.p.shape[1], _U32) * spread * (1 + u) + u * exact.abs()
-            out["value_mix"] = {"eta": self.A - exact, "bound": bound, "premises": premises,
-                                "proof": "P06"}
+            out["value_mix"] = check(self.A - exact, self.p.shape[1], spread, exact, "P06")
         if self.o is not None and self.A is not None:
             flat = self.A.reshape(-1)
             exact = self.weight @ flat
             spread = self.weight.abs() @ flat.abs()
-            bound = _gamma(flat.numel(), _U32) * spread * (1 + u) + u * exact.abs()
-            out["head_write"] = {"eta": self.o - exact, "bound": bound, "premises": premises,
-                                 "proof": "P07"}
+            out["head_write"] = check(self.o - exact, flat.numel(), spread, exact, "P07")
         return out
 
 
@@ -294,7 +312,8 @@ def head_mix(run: Any, row: int, layer: int, weights: dict[int, Any] | None = No
     blocks = weight.reshape(weight.shape[0], heads, dh).permute(1, 0, 2)   # (H, d, d_h)
     kappa = [h // (heads // kv) for h in range(heads)]
     unit = torch.einsum("hde,hse->hsd", blocks, values[kappa])
-    mix = HeadMix(row, layer, p64, values, unit, weight, kappa, dtype=native_dtype)
+    mix = HeadMix(row, layer, p64, values, unit, weight, kappa, dtype=native_dtype,
+                  acc=accumulation(run, native_dtype))
     mix.info["p"] = run.read_info(where)
     for port in ("A", "o"):
         address = f"t{row}.L{layer}.{port}"
@@ -443,17 +462,19 @@ def _consumer_for(run: Any, consumer: Any, row: int, layer: int) -> Readout:
     return readout(run, consumer)
 
 
-def verdict(run: Any, address: str, mask: Any, selection: str, target: Any,
-            min_effect: float) -> dict[str, Any]:
-    """The causal verdict of one read: ``p`` at ``address`` set to 0 on ``mask`` through
-    ``propagate.whatif`` (prediction sealed, measured natively, session restored)."""
-    from .propagate import Edit, whatif
+def _request(address: str, mask: Any, selection: str, target: Any) -> tuple[Any, Any]:
+    """The what-if of one read: ``p`` at ``address`` set to 0 on ``mask``."""
+    from .propagate import Edit
 
-    try:
-        result = whatif(run, Edit(address, 0.0, "replace", mask, selection,
-                                  "remove the source's weight in this head"), target)
-    except Refusal as error:
-        return {"verdict": "unresolved", "reason": str(error)}
+    return (Edit(address, 0.0, "replace", mask, selection,
+                 "remove the source's weight in this head"), target)
+
+
+def _verdict(result: Any, min_effect: float) -> dict[str, Any]:
+    """The causal verdict of one read from its what-if ``result`` (a ``WhatIf``, or the
+    ``Refusal`` the what-if gave before anything native ran)."""
+    if isinstance(result, Refusal):
+        return {"verdict": "unresolved", "reason": str(result)}
     delta = f64(result.tensors["native_delta"]).reshape(-1)
     bound = result.tensors.get("rounding_bound")
     out: dict[str, Any] = {
@@ -465,36 +486,49 @@ def verdict(run: Any, address: str, mask: Any, selection: str, target: Any,
     prediction = result.report["prediction"]
     out["predicted"] = (prediction["exact"]["value"] if prediction["state"] == "resolved"
                         else {"state": prediction["state"], "reason": prediction["reason"]})
-    if bound is not None:
-        bound = f64(bound).reshape(-1)
-        out["beyond_rounding_bound"] = bool((delta.abs() > bound).any())
-        out["rounding_bound"] = claim(bound.max(), BOUND)
-        base = result.report["measured"]["base"]
-        scale = base["value"] if "value" in base else base["max_abs"]["value"]
-        out["bound_exceeds_consumer"] = float(bound.max()) > abs(scale)
-    else:
-        out["beyond_rounding_bound"] = None
-    out.update(_decide(delta, bound, min_effect, prediction))
+    emulated = prediction.get("emulated")
+    if emulated is not None:   # the emulated change (M51): what the verdict holds native against
+        out["emulated"] = (emulated["value"] if "value" in emulated
+                           else {"state": emulated["state"], "reason": emulated["reason"]})
+    terms = {} if result.report["split"].get("state") == "refused" else {
+        t["name"]: t for t in result.report["split"]["terms"]}
+    term = terms.get("rounding effect") or terms.get("rounding") or {}
+    if "bound_note" in term:   # no informative interval (cut, or at least |exact|): say why
+        out["bound_note"] = term["bound_note"]
+    elif bound is not None:   # the worst-case interval bound: shown beside, never decides
+        out["rounding_bound"] = claim(f64(bound).reshape(-1).max(), BOUND)
+    effect = result.report["effect"]
+    out["effect"] = {key: value for key, value in effect.items() if key != "state"}
+    out.update(_decide(delta, effect, min_effect))
     return out
 
 
-def _decide(delta: Any, bound: Any, min_effect: float, prediction: dict[str, Any]
-            ) -> dict[str, Any]:
-    """``causal`` only when the measured change exceeds both ``min_effect`` and the rounding
-    bound; exactly 0 is ``not causal at this dose``; a change inside the bound (or with no
-    bound to compare with) is ``unresolved``."""
-    if not bool((delta != 0).any()):
-        return {"verdict": "not causal at this dose"}
-    if bound is None:
-        why = ("the prediction carries no rounding bound" if prediction["state"] == "resolved"
-               else f"the prediction is {prediction['state']}: {prediction.get('reason')}")
-        return {"verdict": "unresolved",
-                "reason": f"changed, but no rounding bound to compare with ({why})"}
-    if size(delta) <= min_effect:
-        return {"verdict": "unresolved", "reason": "changed, at or below min_effect"}
-    if not bool((delta.abs() > bound).any()):
-        return {"verdict": "unresolved", "reason": "changed, within rounding bound"}
-    return {"verdict": "causal"}
+def verdict(run: Any, address: str, mask: Any, selection: str, target: Any,
+            min_effect: float) -> dict[str, Any]:
+    """The causal verdict of one read: ``p`` at ``address`` set to 0 on ``mask`` through
+    ``propagate.whatif`` (prediction sealed, measured natively, session restored)."""
+    from .propagate import whatif
+
+    try:
+        result = whatif(run, *_request(address, mask, selection, target))
+    except Refusal as error:
+        result = error
+    return _verdict(result, min_effect)
+
+
+def _decide(delta: Any, effect: dict[str, Any], min_effect: float) -> dict[str, Any]:
+    """The read's verdict from whatif's P20 verdict ``effect`` (``verdict.decide``): ``causal``
+    on an effect beyond ``min_effect``; ``not causal at this dose`` on no effect (the reason
+    says the dtype shows no change and gives the exact change); else ``unresolved`` with the
+    whatif verdict and its reason (``not confirmed`` or ``unresolved``)."""
+    if effect["verdict"] == NO_EFFECT:
+        return {"verdict": "not causal at this dose",
+                "reason": effect.get("note", f"no change at {effect['dtype']} resolution")}
+    if effect["verdict"] == EFFECT:
+        if size(delta) <= min_effect:
+            return {"verdict": "unresolved", "reason": "changed, at or below min_effect"}
+        return {"verdict": "causal", **({"reason": effect["note"]} if "note" in effect else {})}
+    return {"verdict": "unresolved", "reason": f"whatif {effect['verdict']}: {effect['reason']}"}
 
 
 def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: Any = None,
@@ -568,6 +602,8 @@ def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: 
     mix = parts = None      # the last value mix is not needed by the verdicts' whatifs
     entries.sort(key=lambda e: (-e["_rank"], e["row"], e["layer"], e["name"]))
     listed, rest = entries[:top], entries[top:]
+    measured: list[dict[str, Any]] = []
+    requests = []
     for entry in listed:
         j, layer, h, s = entry["_mask"]
         if not causal:
@@ -575,8 +611,16 @@ def reads(run: Any, source: str | Source, *, rows: str | None = None, consumer: 
         elif entry["_target"] is None:
             entry["causal"] = {"verdict": "unresolved", "reason": entry["to_consumer"]["reason"]}
         else:
-            entry["causal"] = verdict(run, f"t{j}.L{layer}.p", head_mask(run, j, layer, h, s),
-                                      f"h{h},src={s}", entry["_target"], min_effect)
+            measured.append(entry)
+            requests.append(_request(f"t{j}.L{layer}.p", head_mask(run, j, layer, h, s),
+                                     f"h{h},src={s}", entry["_target"]))
+    if requests:    # one excursion for all the listed reads (the rewinds and the restore shared)
+        from .propagate import whatif_many
+
+        # the per-stage containment is not part of a read's verdict: not computed (M56c)
+        for entry, result in zip(measured, whatif_many(run, requests, stages=False),
+                                 strict=True):
+            entry["causal"] = _verdict(result, min_effect)
     report: dict[str, Any] = {
         "source": {"row": source.row, "address": source.text or f"t{source.row}",
                    "token": int(run.tokens[source.row]) if source.row < len(run.tokens) else
@@ -637,6 +681,10 @@ def _check_summary(checks: list[dict[str, Any]]) -> dict[str, Any]:
         found = [c[name] for c in checks if name in c]
         if not found:
             out[name] = unresolved("not computed at the cursor (the port is past it)")
+            continue
+        failed = next((c["refused"] for c in found if c["bound"] is None), None)
+        if failed is not None:
+            out[name] = refused(failed)
             continue
         eta = max(float(c["eta"].abs().max()) for c in found)
         ratio = max(float((c["eta"].abs() / c["bound"].clamp_min(1e-300)).max())

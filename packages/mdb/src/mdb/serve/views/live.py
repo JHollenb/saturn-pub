@@ -129,9 +129,27 @@ def _limits(debugger) -> dict[str, int]:
             "heads": int(adapter.num_heads), "kv_heads": int(adapter.num_kv_heads)}
 
 
+def _selection(record) -> str | None:
+    """The selector text of an edit record: its ``selection``, else the bracket of a state
+    cell's address (``cache.L1.v[row=2]`` -> ``row=2``); None for a whole port."""
+    selection = record.get("selection")
+    if isinstance(selection, str) and selection:
+        return selection
+    cell = record.get("cell")
+    if isinstance(cell, str) and "[" in cell:
+        return cell.partition("[")[2].rstrip("]") or None
+    return None
+
+
 def _upstream(info) -> list[dict]:
-    return [{k: item[k] for k in ("row", "layer", "port", "op", "staged")}
-            for item in info["upstream_edits"]]
+    return [{**{k: item[k] for k in ("row", "layer", "port", "op", "staged")},
+             "selection": _selection(item)} for item in info["upstream_edits"]]
+
+
+def _mark(layer, record) -> str:
+    """A row's edit mark: ``L<layer>.<port>`` with the edit's selector (``L22.A[h6]``)."""
+    selection = _selection(record)
+    return f"L{layer}.{record['port']}" + (f"[{selection}]" if selection else "")
 
 
 def edit_of(run, addr: str, shown: int = UPSTREAM_SHOWN) -> LiveEdit:
@@ -276,14 +294,30 @@ def frame(session) -> tuple[LiveFrame, list[Omitted]]:
         scale /= 2
 
 
-def _circuit_row(circuit) -> LiveCircuit:
+def _test_summary(test: dict | None) -> str | None:
+    """The last ``circuit test`` in one line: its two measured ratios against the reference, or
+    why they were refused (there is no pass/fail verdict)."""
+    if test is None:
+        return None
+    ref, ratios = test.get("reference", {}), test.get("ratios", {})
+    if ratios.get("state"):
+        return f"ref {ref.get('name')}: ratios {ratios['state']}"
+    return (f"ref {ref.get('name')}: faithfulness {ratios['faithfulness']['value']:.4g}, "
+            f"knock-out share {ratios['knockout_share']['value']:.4g} [measured]")
+
+
+def _circuit_row(circuit, carried=None) -> LiveCircuit:
+    """A ledger row; ``carried`` is the debugger's ``carried_circuits`` (id -> circuit built by
+    an earlier run), the test ``circuit show`` uses for ``from_previous_run``."""
     body = circuit.record["body"]
     last = circuit.tests[-1] if circuit.tests else None
+    previous = (carried or {}).get(circuit.id) is circuit
     return LiveCircuit(id=int(circuit.id), consumer=str(body["consumer"]), k=int(body["k"]),
                        depth=int(body["depth"]), count=int(body["count"]),
                        where=str(body["where"]), record=str(circuit.record["id"]),
                        tests=len(circuit.tests),
-                       verdict=None if last is None else str(last.get("verdict")))
+                       verdict=_test_summary(last),
+                       from_previous_run=previous)
 
 
 def _forecast_row(entry) -> LiveForecast:
@@ -293,7 +327,7 @@ def _forecast_row(entry) -> LiveForecast:
     bound = {k: v for k, v in view["bound"].items() if k != "premises"}
     return LiveForecast(id=int(view["id"]), target=str(view["target"]),
                         status=str(view["status"]), sealed_at=str(view["sealed_at"]),
-                        record=str(view["record"]), steps=len(view["method"]),
+                        record=str(view["record"]), steps=int(view["method_summary"]["count"]),
                         predicted=view["predicted"], bound=bound,
                         verdict=view.get("verdict"))
 
@@ -308,7 +342,9 @@ def ledger(session, limit: int = LEDGER_LIMIT) -> tuple[LiveLedger, list[Omitted
     run = session.ctx.run
     rows: dict[str, list] = {"circuits": [], "forecasts": [], "symbols": []}
     if run is not None:
-        rows["circuits"] = [_circuit_row(c) for _, c in sorted(circuits.ledger(run).items())]
+        carried = getattr(session.debugger, "carried_circuits", None)
+        rows["circuits"] = [_circuit_row(c, carried)
+                            for _, c in sorted(circuits.ledger(run).items())]
         rows["forecasts"] = [_forecast_row(e) for _, e in sorted(forecast.ledger(run).items())]
         rows["symbols"] = [LiveSymbol(name=name, definitions=list(b.addresses),
                                       rows=sorted({int(c.row) for c in b.cells}))
@@ -323,8 +359,11 @@ def ledger(session, limit: int = LEDGER_LIMIT) -> tuple[LiveLedger, list[Omitted
         if len(shown[name]) < len(items):
             more.append(Omitted(field=name, count=len(items) - len(shown[name]),
                                 reason="the earliest entries (lower ids)"))
+    names = [name for name, other in (getattr(session.debugger, "runs", None) or {}).items()
+             if other is not run]
     return LiveLedger(session=session.sid, seq=session.seq,
-                      where=None if run is None else run.where, more=more, **shown), more
+                      where=None if run is None else run.where, more=more,
+                      runs=names[:LEDGER_LIMIT], **shown), more
 
 
 def timeline(session) -> tuple[LiveTimeline, int]:
@@ -336,22 +375,26 @@ def timeline(session) -> tuple[LiveTimeline, int]:
                             rows=[], limits=_limits(debugger)), 0
     stops = list(run.stops())
     here_row, here_index = run.parse(run.where)
-    root_row = len(run.tokens) - 1  # the run's root: its first stepped row starts at stop 0
+    # the run's root: the first stepped row's start (prefill=K), or a stored cut's stop
+    root_row, root_index = run.parse(run.root)
     context = [int(t) for t in run.session.read("tokens")[0].tolist()]
     marks: dict[int, list[str]] = {}
     for record in run.committed_edits():
-        marks.setdefault(int(record["row"]), []).append(f"L{record['layer']}.{record['port']}")
+        marks.setdefault(int(record["row"]), []).append(_mark(record["layer"], record))
     pending = run.pending_layer
     for record in run.staged_info():
-        marks.setdefault(here_row, []).append(f"L{pending}.{record['port']} (staged)")
+        marks.setdefault(here_row, []).append(f"{_mark(pending, record)} (staged)")
     rows = []
     for row in range(here_row + 1):
-        count = None if row < root_row else len(stops) if row < here_row else here_index + 1
+        first = root_index if row == root_row else 0    # stops of this row the run has
+        count = (None if row < root_row else len(stops) - first if row < here_row
+                 else here_index + 1 - first)
         rows.append(LiveRow(row=row, token=context[row] if row < len(context) else None,
                             count=count, edits=marks.get(row, [])))
     left_out = max(0, len(rows) - MAX_ROWS)
     return LiveTimeline(
         session=session.sid, where=run.where, stops=stops,
         cursor=LiveStop(row=here_row, index=here_index, label=stops[here_index]),
-        root=LiveStop(row=root_row, index=0, label=stops[0]), rows=rows[left_out:],
+        root=LiveStop(row=root_row, index=root_index, label=stops[root_index]),
+        rows=rows[left_out:],
         limits=_limits(debugger)), left_out

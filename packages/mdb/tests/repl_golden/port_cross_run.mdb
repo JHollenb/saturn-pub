@@ -1,0 +1,11 @@
+# Ports from another run (M28): a clean run, then head 1's output and a residual patched in.
+run name=clean 1 7 9 3
+until t3.logits
+x logits 2 6
+start 1 5 9 3
+compare L0.A[h1] = clean:L0.A[h1] L1.h = clean:L1.h --consumer M[6,7]
+whatif L1.m = clean:L1.m --consumer M[6,7]
+set L0.A[h1] = clean:L0.A[h1]
+until t3.logits
+x logits 2 6
+info edits

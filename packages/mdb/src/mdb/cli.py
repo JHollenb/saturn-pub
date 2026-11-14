@@ -5,8 +5,8 @@ Engine verbs (implemented in this distribution):
     mdb engine MODEL [PROMPT]     port-level REPL (``python -m mdb.repl``); MODEL is a checkpoint
                                   directory, a locally cached model name, tiny:qwen2, or the
                                   http:// address of a running ``mdb serve`` (remote session)
-    mdb serve --project DIR [--tiny qwen2|qwen3 | --model DIR] [--port N] [--allow-host H ...]
-              [--allow-remote]    web viewer of a recorded project (``mdb.serve``); with --tiny
+    mdb serve --project DIR [--tiny qwen2|qwen3|llama|mistral | --model DIR] [--port N]
+              [--allow-host H ...] [--allow-remote]    web viewer of a recorded project (``mdb.serve``); with --tiny
                                   or --model it also holds a live debugger the web app steps
     mdb lanes [VERB ...]          list, or run, a verb of the lanes plug-in
     mdb version
@@ -21,12 +21,16 @@ Importing this module loads no model framework, no numpy, no web framework and n
 import sys
 
 ENGINE_VERBS = ("engine", "serve", "lanes", "version")
+# Literal copy of ``mdb.engine.models.TINY_FAMILIES``: this module imports no torch (a test
+# compares the two).
+TINY_FAMILIES = ("qwen2", "qwen3", "llama", "mistral")
 USAGE = ("usage: mdb {engine,serve,lanes,version} ...  |  mdb lanes VERB ...\n"
          "  engine   port-level model REPL: mdb engine MODEL [PROMPT] [--project DIR]\n"
-         "           MODEL = checkpoint directory | cached model name | tiny:qwen2 |\n"
+         f"           MODEL = checkpoint directory | cached model name |\n"
+         f"           tiny:{'|'.join(TINY_FAMILIES)} |\n"
          "           http://HOST:PORT of a running mdb serve (mdb engine --help)\n"
          "  serve    web viewer: mdb serve --project DIR [--port N]; live debugger with\n"
-         "           --tiny qwen2 | --model DIR (mdb serve --help)\n"
+         f"           --tiny {'|'.join(TINY_FAMILIES)} | --model DIR (mdb serve --help)\n"
          "  lanes    commands of the mdb-lanes plug-in (mdb lanes lists them)\n"
          "  version  print the engine version")
 

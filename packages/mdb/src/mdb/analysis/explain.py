@@ -15,6 +15,8 @@ from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any
 
+from mdb.core.bounded import keep_indices, load_json, put_json
+
 from . import finite
 from .finite import BOUND, EXACT, LOCAL, MEASURED, SUPPLIED, f64, f64_at, num
 
@@ -321,7 +323,8 @@ def _stream_rounding_bound(caps: RowCapture, originals: Sequence[Mapping[str, An
     return float(c.abs() @ total)
 
 
-def _head_bound(caps: RowCapture, weight: Any, bias: Any, a: int, b: int) -> tuple[float, list]:
+def _head_bound(caps: RowCapture, weight: Any, bias: Any, a: int, b: int,
+                acc: Any = None) -> tuple[float | None, list]:
     """Bound on ``|native margin - (W_a - W_b).fn - (b_a - b_b)|`` and its premises.
 
     Each native logit is ``fl(W_j . fn + b_j)``. A length-``d`` dot product in accumulation
@@ -329,15 +332,26 @@ def _head_bound(caps: RowCapture, weight: Any, bias: Any, a: int, b: int) -> tup
     (any summation order, FMA allowed); a 16-bit output is then rounded once more
     (``1/2 ulp`` of the logit), and a bias add rounds once more. The margin is the float64
     difference of the two native logits, so the bound is the sum over ``j in {a, b}``.
+
+    ``acc`` (``accumulation.Accumulation`` of the run) gives ``u`` for a 16-bit head: float32
+    unless CUDA reduced-precision reductions are allowed; when ``gamma_d`` does not exist there
+    the bound is None and the premises' last entry is the refusal.
     """
     import torch
 
     dtype = caps.logits.dtype
     sixteen = dtype in (torch.bfloat16, torch.float16)
-    u = 2.0 ** -24 if sixteen else float(torch.finfo(dtype).eps) / 2.0
     x = f64(caps.normed).reshape(-1)
     d = x.numel()
-    gamma = d * u / (1.0 - d * u)
+    if sixteen and acc is not None:
+        premise = acc.premise
+        gamma = acc.gamma(d)
+        if gamma is None:
+            return None, ["round-to-nearest", f"logit dtype {dtype}", acc.refusal(d)]
+    else:
+        u = 2.0 ** -24 if sixteen else float(torch.finfo(dtype).eps) / 2.0
+        premise = "matmul accumulated in " + ("float32 (16-bit inputs)" if sixteen else str(dtype))
+        gamma = d * u / (1.0 - d * u)
     logits = caps.logits.reshape(-1)
     rounds = (1 if sixteen else 0) + (1 if bias is not None else 0)
     spacing = float(torch.finfo(dtype).eps)
@@ -346,7 +360,7 @@ def _head_bound(caps: RowCapture, weight: Any, bias: Any, a: int, b: int) -> tup
         total += gamma * float((f64_at(weight, j) * x).abs().sum())   # one row, not the head
         total += rounds * 0.5 * _ulp(float(logits[j]), spacing)
     premises = ["round-to-nearest", f"logit dtype {dtype}",
-                "matmul accumulated in " + ("float32 (16-bit inputs)" if sixteen else str(dtype)),
+                premise,
                 "head output rounded once" if sixteen else "no extra output rounding"]
     if bias is not None:
         premises.append("bias added with one rounding")
@@ -605,7 +619,10 @@ def explain_margin(source: Any, a: int, b: int, *, first_order: bool = False) ->
     diff = f64_at(weight, a) - f64_at(weight, b)
     stream_dtype = caps.ports[0]["h"].dtype
     bound_rr = float(rho) * _stream_rounding_bound(caps, originals, c)
-    head_bound, head_premises = _head_bound(caps, weight, head_bias, a, b)
+    from .accumulation import accumulation
+
+    head_bound, head_premises = _head_bound(caps, weight, head_bias, a, b,
+                                            accumulation(caps.adapter, caps.logits.dtype))
     scale_fn = float(diff.abs().sum()) * _ulp(
         float(_vec(caps.normed).abs().max()), float(torch.finfo(caps.normed.dtype).eps))
     stream_premises = ["round-to-nearest", "one rounding per residual add",
@@ -641,7 +658,10 @@ def explain_margin(source: Any, a: int, b: int, *, first_order: bool = False) ->
         bounded({"name": "head", "value": claim(result.extras["eta_head"], MEASURED, "P19"),
                  "meaning": "native margin - (W_a - W_b).(native fn output) - head bias, float64"},
                 head_bound, 1, "gamma_d (sum_i |W_ai x_i| + sum_i |W_bi x_i|) + output roundings; "
-                "k = 1", BOUND, head_premises),
+                "k = 1", BOUND, head_premises) if head_bound is not None else
+        {"name": "head", "value": claim(result.extras["eta_head"], MEASURED, "P19"),
+         "meaning": "native margin - (W_a - W_b).(native fn output) - head bias, float64",
+         "bound": {"state": "refused", "reason": head_premises[-1]}},
     ]
     unresolved = bool(missing)
     if unresolved:
@@ -677,7 +697,8 @@ def explain_margin(source: Any, a: int, b: int, *, first_order: bool = False) ->
         "rho_F_note": "final-norm scale evaluated once at the full measured h_L; not attributed",
         "terms": terms,
         "remainders": remainders,
-        "all_within_rounding": None if unresolved or refused else all(
+        "all_within_rounding": None if unresolved or refused or any(
+            "bound" in r for r in remainders) else all(
             r["within_rounding"] for r in remainders if "k" in r),
         "listed_sum": listed_sum,
         "closure": {"state": "unresolved", "reason": reason_missing} if unresolved else claim(
@@ -697,6 +718,85 @@ def explain_margin(source: Any, a: int, b: int, *, first_order: bool = False) ->
     return out
 
 
+MAX_TERMS = 64          # listed terms in a result (the record's sequence bound)
+
+def _per_layer(result: dict[str, Any]) -> list[dict[str, Any]]:
+    for rem in result["remainders"]:
+        if rem["name"] == "residual_rounding" and "per_layer" in rem:
+            return rem["per_layer"]
+    return []
+
+
+def bound_terms(result: dict[str, Any], *, store: Any = None, run: Any = None,
+                cap: int = MAX_TERMS) -> dict[str, Any]:
+    """Bound the lists of ``result`` that grow with the layers to ``cap`` items (in place;
+    returns ``result``): ``terms`` (two per layer plus the embedding) and the residual-rounding
+    remainder's ``per_layer`` entries.
+
+    Over the cap ``terms`` keeps the terms with the largest ``|value|`` (unresolved terms first:
+    they carry a state the reader must see), in their original order, and ``terms_summary``
+    gives ``count``, ``listed``, ``rest`` (``count`` and ``sum``, ``derived-exact``, so listed +
+    rest still adds to ``listed_sum``) and ``pointer`` to the full lists. ``per_layer`` keeps the
+    entries with the largest magnitude, each tagged with its ``layer``, and the remainder gets
+    ``per_layer_count``. The full lists are JSON bytes put in ``store`` (a project
+    ``LocalStore``, a tensor pointer to uint8 bytes, checked by ``sha256``) or, with no store,
+    held in memory per ``run`` (``load_terms`` / ``load_full`` resolve both). Within the cap
+    nothing changes and no summary is added.
+    """
+    terms, per_layer = result["terms"], _per_layer(result)
+    if len(terms) <= cap and len(per_layer) <= cap:
+        return result
+    full = {"terms": terms, "per_layer": per_layer}
+    pointer = put_json(full, store=store, run=run,
+                       absent_reason="no project store: the full lists are held in memory on "
+                                     "the run (explain.load_full), not stored")
+
+    def top(items: list[dict[str, Any]], size: float) -> list[tuple[int, dict[str, Any]]]:
+        def rank(item: dict[str, Any]) -> tuple[int, float]:
+            return (0, 0.0) if "value" not in item else (1, -abs(item["value"]["value"]))
+
+        return [(i, items[i]) for i in keep_indices(items, int(size), rank)]
+
+    keep = top(terms, cap)
+    kept = {index for index, _ in keep}
+    rest = [t for i, t in enumerate(terms) if i not in kept]
+    result["terms"] = [t for _, t in keep]
+    result["terms_summary"] = {
+        "count": len(terms), "listed": len(keep),
+        "rest": {"count": len(rest),
+                 "sum": claim_sum(sum(t["value"]["value"] for t in rest if "value" in t)),
+                 "unresolved": sum(1 for t in rest if "value" not in t)},
+        "pointer": pointer}
+    if len(per_layer) > cap:
+        magnitude = [{"value": {"value": max((abs(c["value"]) for c in entry.values()
+                                              if isinstance(c, dict) and "value" in c),
+                                             default=0.0)}} for entry in per_layer]
+        chosen = top(magnitude, cap)
+        for rem in result["remainders"]:
+            if rem["name"] == "residual_rounding" and "per_layer" in rem:
+                rem["per_layer"] = [{"layer": i, **per_layer[i]} for i, _ in chosen]
+                rem["per_layer_count"] = len(per_layer)
+    return result
+
+
+def claim_sum(value: float) -> dict[str, Any]:
+    return num(float(value), EXACT, "P19")
+
+
+def load_full(summary: Mapping[str, Any], *, store: Any = None, run: Any = None
+              ) -> dict[str, Any]:
+    """The full ``{"terms", "per_layer"}`` lists ``terms_summary`` points at: from ``store``
+    (stored blob, checked against the summary's ``sha256``) or from the run's in-memory copy;
+    ``ValueError`` if absent or changed."""
+    return load_json(summary["pointer"], store=store, run=run)
+
+
+def load_terms(summary: Mapping[str, Any], *, store: Any = None, run: Any = None
+               ) -> list[dict[str, Any]]:
+    """The full term list ``terms_summary`` points at (see ``load_full``)."""
+    return load_full(summary, store=store, run=run)["terms"]
+
+
 def _layer_module(adapter: Any, layer: int) -> Any:
     """Decoder layer ``layer`` of a saturn_pub ``DecoderAdapter`` (its public backbone/spec)."""
     return getattr(adapter.backbone, adapter.spec.layers)[layer]
@@ -709,18 +809,20 @@ def consumer_gradient(session: Any, token: int, contrast: int) -> tuple[float, A
     The same computation as the lane function ``circuit_native.consumer_gradient`` restricted to
     what ``_first_order`` reads (the primal and the hidden adjoint): the adapter's own layer
     executor under autograd, the past KV fixed (detached clones of the captured cache), final norm,
-    LM head and logit softcap; no argmax/rounding derivative. Resident Qwen2/Qwen3
-    ``DecoderAdapter`` with one pending token, batch one, only.
+    LM head and logit softcap; no argmax/rounding derivative. Resident ``DecoderAdapter`` of a
+    family with a port program (``engine.ports.FAMILIES``), one pending token, batch one, only.
     """
     import torch
     from saturn_pub.adapters.decoder import DecoderAdapter
 
+    from mdb.engine.ports import PROGRAMS
+
     adapter = session.adapter
     if (not isinstance(adapter, DecoderAdapter)
-            or adapter.spec.model_type not in {"qwen2", "qwen3"}
+            or adapter.spec.model_type not in PROGRAMS
             or adapter.execution.get("residency", "resident") != "resident"):
-        raise ValueError("native circuit expansion currently supports resident public "
-                         "Qwen2/Qwen3 DecoderAdapter")
+        raise ValueError("native circuit expansion supports a resident public DecoderAdapter "
+                         f"of a port-program family ({', '.join(PROGRAMS)})")
     adapter.validate_execution()
     state = session.capture(retain=False).payload
     index = state["layer"]
@@ -850,14 +952,15 @@ def explain_port(source: Any, layer: int, port: str) -> dict[str, Any]:
 
     caps = _as_capture(source)
     adapter = caps.adapter
-    spec = program_for(adapter).spec(port)
+    spec_program = program_for(adapter)
+    spec = spec_program.spec(port)
     module = _layer_module(adapter, layer)
     attn = module.self_attn
     ports = caps.ports[layer]
     heads, kv_heads, d_h = adapter.num_heads, adapter.num_kv_heads, adapter.head_dim
     t = caps.position
     kappa = finite.gqa_kappa(heads, kv_heads)
-    qwen3 = caps.family == "qwen3"
+    q_src, k_src = spec_program.spec("qr").inputs[0], spec_program.spec("kr").inputs[0]
     notes: list[str] = []
     producers = _PRODUCERS.get(port, ())
     native = ports[port]
@@ -896,12 +999,12 @@ def explain_port(source: Any, layer: int, port: str) -> dict[str, Any]:
         source_port = port[0]
         res = norm(ports[source_port], getattr(attn, f"{source_port}_norm"), native, width=d_h)
     elif port == "qr":
-        producers = ("qn",) if qwen3 else ("q",)
+        producers = (q_src,)
         qbar = f64(ports[producers[0]]).reshape(heads, d_h)
         res = finite.rope_rotate(qbar, t, _theta(adapter.model.config),
                                  native=native[0, :, 0, :])
     elif port == "kr":
-        producers = ("kn",) if qwen3 else ("k",)
+        producers = (k_src,)
         kbar = f64(ports[producers[0]]).reshape(kv_heads, d_h)
         res = finite.rope_rotate(kbar, t, _theta(adapter.model.config),
                                  native=native[0, :, t, :])

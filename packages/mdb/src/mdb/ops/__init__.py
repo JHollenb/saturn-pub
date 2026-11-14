@@ -9,6 +9,7 @@
 from . import builtin as _builtin  # noqa: F401 - registers the built-in ops
 from . import inspect as _inspect  # noqa: F401 - reads/symbols/circuit/compare/seek
 from . import predict as _predict  # noqa: F401 - explain/forecast/verify/whatif
+from . import sets as _sets  # noqa: F401 - each/promptset (prompt sets)
 from .context import Context
 from .errors import BadArgs, OpError, Refused, UnknownOp
 from .registry import INTEGER_KEYS, Arg, Op, describe, dispatch, register, registry
