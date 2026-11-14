@@ -215,21 +215,26 @@ def run_item(item, full):
 
 base = items("base")
 census_extra = [i for i in items("depth") if i["family"] in ("d1", "d2")]
-if PICK:
+TAG = "-smoke" if PICK and PICK[0] != "s" else ""
+if PICK == "s0":
+    base, census_extra, TAG = base[:32], [], "-s0"
+elif PICK == "s1":
+    base, TAG = base[32:], "-s1"
+elif PICK:
     base = [base[int(k)] for k in PICK.split(",")]
     census_extra = census_extra[:2]
 recs = []
-with open(f"{OUT}/exp2-items{'-smoke' if PICK else ''}.jsonl", "w") as fh:
+with open(f"{OUT}/exp2-items{TAG}.jsonl", "w") as fh:
     for item in base:
         rec, s = run_item(item, True)
         fh.write(json.dumps(rec, default=float) + "\n")
         fh.flush()
         log(f"A {item['id']} {s:.2f}s")
-with open(f"{OUT}/census-items{'-smoke' if PICK else ''}.jsonl", "w") as fh:
+with open(f"{OUT}/census-items{TAG}.jsonl", "w") as fh:
     for item in census_extra:
         rec, s = run_item(item, False)
         fh.write(json.dumps(rec, default=float) + "\n")
         fh.flush()
         log(f"C {item['id']} {s:.2f}s")
-dump(prov, f"{OUT}/provenance{'-smoke' if PICK else ''}.json")
+dump(prov, f"{OUT}/provenance{TAG}.json")
 log("TOTAL")
