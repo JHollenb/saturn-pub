@@ -42,7 +42,7 @@ def check_artifacts(directory: Path, namespace: str, sibling: str) -> Path:
     return wheel
 
 
-def check_installed(wheels: list[Path]) -> None:
+def check_installed(wheels: list[Path], *, with_lanes: bool = False) -> None:
     with tempfile.TemporaryDirectory(prefix="saturn-packages-") as temporary:
         root = Path(temporary)
         environment = root / "venv"
@@ -96,7 +96,7 @@ class Guard(importlib.abc.MetaPathFinder):
 sys.meta_path.insert(0, Guard())
 import {namespace} as package
 assert pathlib.Path(package.__file__).is_relative_to(pathlib.Path(sys.prefix))
-if '{namespace}' == 'mdb':
+if '{namespace}' == 'mdb' and {with_lanes!r}:
     import saturn_pub
     assert pathlib.Path(saturn_pub.__file__).is_relative_to(pathlib.Path(sys.prefix))
     from mdb import BenchSession
@@ -151,6 +151,15 @@ if '{namespace}' == 'mdb':
     assert Project('installed-project').graph().verify().ok
     resumed = reopened.resume('smoke', GenericJSONAdapter(specification))
     assert resumed.session.read('value') == 2
+elif '{namespace}' == 'mdb':
+    import saturn_pub
+    assert pathlib.Path(saturn_pub.__file__).is_relative_to(pathlib.Path(sys.prefix))
+    from mdb.core.address import parse
+    assert parse('t3.L1.p') is not None
+    from mdb.cli import main
+    assert main(['version']) == 0
+    assert main(['lanes']) == 2
+    assert 'mdb_lanes' not in sys.modules
 else:
     from saturn_pub import Act, Session, StateCut
 """
@@ -170,12 +179,15 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--saturn-dist", type=Path, default=repository / "dist/saturn")
     parser.add_argument("--mdb-dist", type=Path, default=repository / "packages/mdb/dist")
+    parser.add_argument("--lanes-dist", type=Path, default=repository / "packages/mdb-lanes/dist")
     args = parser.parse_args()
     wheels = [
         check_artifacts(args.saturn_dist, "saturn_pub", "mdb"),
         check_artifacts(args.mdb_dist, "mdb", "saturn_pub"),
     ]
     check_installed(wheels)
+    lanes = check_artifacts(args.lanes_dist, "mdb_lanes", "mdb")
+    check_installed([*wheels, lanes], with_lanes=True)
 
 
 if __name__ == "__main__":
