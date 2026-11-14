@@ -28,7 +28,7 @@ def capture_info(paths):
     return out
 
 
-def carriers(panel, sweep, correct):
+def carriers(panel, sweep, correct, fixed=None):
     """item carrier (argmax of -dM above floor), model carrier (modal (layer, kv) over correct base
     items), carrier_at_item row (argmin dM over span rows at the model carrier's (layer, kv))."""
     item = {}
@@ -42,7 +42,10 @@ def carriers(panel, sweep, correct):
     base_ok = [it["id"] for it in panel["items"] if it["block"] == "base" and correct[it["id"]]
                and item[it["id"]]["above_floor"]]
     cnt = collections.Counter(tuple(item[i]["cell"][:2]) for i in base_ok)
-    (lc, kc), n = cnt.most_common(1)[0]
+    if fixed is not None:          # supplement panel: the model carrier frozen from the main panel
+        (lc, kc), n = tuple(fixed), cnt.get(tuple(fixed), 0)
+    else:
+        (lc, kc), n = cnt.most_common(1)[0]
     at = {}
     for it in panel["items"]:
         s = sweep[it["id"]]

@@ -25,7 +25,7 @@ G = H // KV
 final = getattr(ad.backbone, ad.spec.final_norm)
 gamma, eps_f = final.weight.double(), float(final.variance_epsilon)
 W_U = ad.model.lm_head.weight
-P = json.load(open("panel.json"))
+P = json.load(open(__import__("os").environ.get("PANEL", "panel.json")))
 items = P["items"]
 by_id = {i["id"]: i for i in items}
 B1T = json.load(open("b1_sets.json"))["truths"]
@@ -34,17 +34,18 @@ RO = {k: gamma[None, :] * W_U[v].double() for k, v in SETS.items()}
 capinfo = sc.capture_info(CINF.split(","))
 correct = sc.correct_map(P, capinfo)
 sweep = sc.load_sweep(SWP.split(","))
-car = sc.carriers(P, sweep, correct)
+_fix = __import__("os").environ.get("CARRIER")
+car = sc.carriers(P, sweep, correct, fixed=[int(x) for x in _fix.split(",")] if _fix else None)
 LC, KC = car["L_c"], car["kv_c"]
 fc_t, fc_j = {}, {}
-for p in FCP.split(","):
+for p in ([] if FCP == "none" else FCP.split(",")):
     fc_t.update(torch.load(p + ".pt", weights_only=False))
     fc_j.update(json.load(open(p + ".json")))
 sw_j = {}
 for p in SWP.split(","):
     sw_j.update(json.load(open(p + ".json")))
 arms = {}
-for p in ARMS.split(","):
+for p in ([] if ARMS == "none" else ARMS.split(",")):
     d = json.load(open(p))
     for k, v in d["items"].items():
         arms.setdefault(k, {}).update(v)

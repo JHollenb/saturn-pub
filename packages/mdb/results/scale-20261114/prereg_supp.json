@@ -1,0 +1,18 @@
+{
+  "name": "Scale study supplement: d5/d6 chains and native-name cities (addendum to prereg_scale.json)",
+  "sealed": "2026-11-14, before any capture of panel_supp.json",
+  "why": "the coordinator asked for depth to 5-6 hops and non-English descriptors; the memo's 128-item panel stops at d4, so these run as a separate panel and never enter the main panel's verdicts",
+  "panel": "panel_supp.json (panel_supp.py): d5 28, d6 25, d5-short 16 (verified chains where an earlier entity already shares the final country or capital), native-city 28, english-city 28 (the same cities by English name); facts from fact_pools_draft.json, second-reader verified (fact_pools_verified.json: 0 wrong hops; only 'pass' items used)",
+  "jobs": "per model: Job C capture (capture.py, PANEL=panel_supp.json) and A1 sweep (sweep.py) only; no forecasts and no A2 arms; scored by score.py with CARRIER fixed to the model carrier found on the main panel (L_c, kv_c)",
+  "predictions_builder_asserted": {
+    "S1_depth_collapse": "per model, accuracy(d5) <= accuracy(d4-work on the main panel) and accuracy(d6) <= accuracy(d5); judged where n >= 8",
+    "S2_shortcut": "accuracy(d5-short) > accuracy(d5) on every model (skipping a hop still answers)",
+    "S3_readable_errors": "B4 extended: in every d5/d6 cell with accuracy < 0.5 the readable-error share of wrong items is >= 0.60",
+    "S4_L_first": "median L_first over correct items at d5 and d6 is not earlier than at d4 (same statistic and chance guard as prereg_hopbudget.json; reported as chance-dominated where the guard fires)",
+    "S5_native_names": "accuracy(native-city) < accuracy(english-city) on every model, and on native-city wrong items the carrier names a wrong country or ranks the true one > 3 on >= 0.70 (recall failure, the obsc reading); on items correct in both, the carrier names the country on >= 0.80 in both"
+  },
+  "falsifiers": {
+    "S1": "d6 accuracy above d4 by >= 0.15 on any model",
+    "S5": "native-city wrong items with the carrier naming the true country on >= 0.50 (the error is downstream of the cell)"
+  }
+}

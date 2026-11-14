@@ -25,7 +25,7 @@ torch.set_grad_enabled(False)
 dbg = _load(Path(MODEL), "bf16", "cuda", True, None)
 ad = dbg.adapter
 L, KV = ad.layers, ad.num_kv_heads
-P = json.load(open("panel.json"))
+P = json.load(open(__import__("os").environ.get("PANEL", "panel.json")))
 items = P["items"]
 if PICK:
     items = items[int(PICK.split("-")[0]):int(PICK.split("-")[1])]
