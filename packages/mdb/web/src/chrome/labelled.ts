@@ -110,6 +110,15 @@ export function seekable(addr: string): string | null {
   return `t${m[1]}.${stop}`;
 }
 
+/** An edit's full address: the port plus its selection (`t17.L22.A` and `h6` give
+ *  `t17.L22.A[h6]`). An address that already carries a selector (a state cell,
+ *  `cache.L1.v[row=2]`) is kept as it is; no selection is the whole port. */
+export function editAddress(address: string, selection: unknown): string {
+  const sel = typeof selection === 'string' ? selection.trim() : '';
+  if (!sel || address.includes('[')) return address;
+  return `${address}[${sel}]`;
+}
+
 /** `(row, layer)` of an address (`t3.L1.A[h0]` -> [3, 1]); layer null for a global stop. */
 export function cellOf(addr: string): [number, number | null] | null {
   const m = /^t(\d+)\.(?:L(\d+)\.)?/.exec(addr);

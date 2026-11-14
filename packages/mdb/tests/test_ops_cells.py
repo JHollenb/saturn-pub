@@ -17,6 +17,7 @@ from mdb.engine.ports import tensor_digest  # noqa: E402
 from mdb.ops import BadArgs, Refused, dispatch  # noqa: E402
 from mdb.ops.debugger import open_tiny  # noqa: E402
 from mdb.ops.predict import build_edit, parse_assignment, session_digest  # noqa: E402
+from mdb.repl.render import render  # noqa: E402
 from mdb.repl.shell import _compare_args, _set_args  # noqa: E402
 
 PROMPT, DONOR = [1, 5, 9, 3], [1, 7, 9, 3]
@@ -242,3 +243,36 @@ def test_whatif_of_a_cell_rewinds_when_the_consumer_is_computed(debugger):
     with pytest.raises(Refused, match="cannot reach it|not downstream"):
         dispatch(ctx, "whatif", {"target": "cache.L1.v[row=3]", "value": 0.0,
                                  "consumer": "M[4,9]"})
+
+
+# --- seek switches runs (M9) -------------------------------------------------------------------
+
+
+def test_seek_with_a_run_name_switches_to_that_run_and_moves_it(debugger):
+    ctx = _ctx(debugger)
+    donor = debugger.runs["boiling"]
+    assert ctx.run is not donor
+    start = donor.where
+    result = dispatch(ctx, "seek", {"target": "boiling:t3.L0.p"})
+    assert ctx.run is donor and result["run"] == "boiling" and result["via"] == "run"
+    assert donor.where == "t3.L0.p" != start and result["where"] == "t3.L0.p"
+    # a named run seeks backwards too, and switching back finds the other run where it was
+    dispatch(ctx, "seek", {"target": "boiling:t3.L0.h"})
+    assert ctx.run.where == "t3.L0.h"
+    with pytest.raises(Refused, match=r"no run named 'nobody'.*have: .*boiling"):
+        dispatch(ctx, "seek", {"target": "nobody:t3.L0.p"})
+    assert ctx.run is donor
+
+
+def test_info_edits_says_how_many_cell_edits_it_left_out(debugger):
+    ctx = _ctx(debugger)
+    dispatch(ctx, "set", {"target": A, "value": f"boiling:{A}"})
+    dispatch(ctx, "set", {"target": B, "value": f"boiling:{B}"})
+    info = dispatch(ctx, "info", {"subject": "edits", "limit": 1})
+    assert len(info["cells"]["staged"]) == 1 and info["cells"]["staged_total"] == 2
+    assert info["cells"]["omitted"] == {"staged": 1}
+    full = dispatch(ctx, "info", {"subject": "edits", "limit": 2})
+    assert "omitted" not in full["cells"] and unlabelled(info) == []
+    shown = render(info).splitlines()
+    assert "staged cell: +1 more of 2 (use limit= for the rest)" in shown
+    assert not any("more of" in line for line in render(full).splitlines())

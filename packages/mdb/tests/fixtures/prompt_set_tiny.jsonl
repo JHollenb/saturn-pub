@@ -1,0 +1,5 @@
+# a tiny recall-shaped set for tiny qwen2 (vocab 32): roles name rows, vars name tokens
+{"name": "a", "tokens": [1, 5, 9, 3], "roles": {"subject": 1}, "vars": {"answer": 4, "foil": 9}, "pair": "b"}
+{"name": "b", "tokens": [1, 7, 9, 3], "roles": {"subject": 1}, "vars": {"answer": 4, "foil": 9}, "pair": "a"}
+{"name": "c", "tokens": [2, 6, 10, 4, 8], "roles": {"subject": 2}, "vars": {"answer": 6, "foil": 7}, "pair": "a"}
+{"name": "d", "tokens": [3, 11, 5], "vars": {"answer": 4, "foil": 9}}

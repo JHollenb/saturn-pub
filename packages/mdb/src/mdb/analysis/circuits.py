@@ -25,23 +25,25 @@ or staged edit that wrote the native value there (``Run.read_info``) is its own 
 part of a remainder. At every node the children sum to the node by construction; ``closure``
 checks only the float64 summation, and ``remainders_within`` is the rounding check.
 
-``test(run, circuit, tolerance)`` ablates natively (``analysis.compare.measure``; masked
-``replace 0`` edits at ``o``, ``m``, a head's block of ``A``, a neuron of ``f``, a source of
-``p``): the retained leaves, and separately everything except them (every ``+N more`` group).
-The embedding is in neither set: zeroing ``L0.h`` removes the input of every other node. Both measured changes are reported beside the direct-path prediction (minus
-the ablated contributions, ``rho`` and later layers frozen: ``derived-local``). The circuit is
-``sufficient at this dose`` when ablating everything else moves the consumer by at most
-``tolerance`` times its base size.
+``test(run, circuit, reference)`` (``analysis.circuit_test``) patches the circuit's components
+natively from a REFERENCE run (or a prompt set's per-component mean) at the consumer's row:
+only the circuit (knock-out) and everything but the circuit (keep-only), and reports the
+measured margins with ``(keep - ref) / (base - ref)`` and ``(base - ko) / (base - ref)``.
+Zero-ablation is not offered (issue M4).
 """
 
 from __future__ import annotations
 
+import hashlib
 import weakref
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any, NamedTuple
 
-from mdb.core.kinds import CIRCUIT
+from mdb.core import circuit_pages as pages_mod
+from mdb.core.bounded import json_bytes, load_json, put_json
+from mdb.core.circuit_pages import PAGE_BYTES, PAGE_SCHEMA, PAGE_VALUES  # noqa: F401
+from mdb.core.kinds import CIRCUIT, procedure
 from mdb.core.pointers import RecordError, check_bounded
 from mdb.core.records import num, seal_record
 
@@ -108,6 +110,7 @@ class Node:
     note: str | None = None
     bound: Any = None
     ref: str | None = None
+    unexamined: int = 0   # ``more`` only: members dropped whose own subtree was never built
     grow: Callable[[], list[Node]] | None = field(default=None, repr=False)
 
     @property
@@ -128,6 +131,9 @@ class Node:
             out["within"] = self.within
         if self.note:
             out["note"] = self.note
+        if self.unexamined:
+            out["unexamined"] = True
+            out["unexamined_count"] = num(self.unexamined, EXACT)
         if self.children:
             out["children"] = [child.view(ids) for child in self.children]
         return out
@@ -144,6 +150,9 @@ class Circuit:
     where: str
     tests: list[dict[str, Any]] = field(default_factory=list)
     complement: Any = None  # minus the members' summed contributions (the embedding aside)
+    pages: dict[str, Any] = field(default_factory=dict, repr=False)
+    """Child pages by sha256 when there was no project store to put them in (they travel with
+    the circuit, so one carried to a later run still resolves)."""
 
 
 _LEDGERS: weakref.WeakKeyDictionary = weakref.WeakKeyDictionary()
@@ -163,7 +172,9 @@ def _group(children: list[Any], top: int, parent: str,
            promote: Callable[[Member], Node] | None = None) -> list[Node]:
     """Keep the ``top`` largest exact children; the rest become one ``+N more`` node holding
     them as ``Member`` tuples. A kept ``Member`` becomes its ``Node`` (``promote``) and a kept
-    node's subtree is built now: nothing is built for a child that is not kept."""
+    node's subtree is built now: nothing is built for a child that is not kept. A dropped child
+    that has a subtree at this depth is counted in the group's ``unexamined``: a refusal its
+    expansion would raise (a premise failing, a port not computed) was never seen."""
     exact = [c for c in children if c.kind not in _FIXED]
     fixed = [c for c in children if c.kind in _FIXED]
     exact.sort(key=lambda c: -size(c.value))
@@ -176,9 +187,13 @@ def _group(children: list[Any], top: int, parent: str,
         total = sum((c.value for c in rest[1:]), rest[0].value)
         members = [c if isinstance(c, Member) else Member(c.name, c.kind, c.port, c.index,
                                                             c.value) for c in rest]
+        expands = getattr(promote, "expands", False)
+        skipped = sum(1 for c in rest if (c.grow is not None if isinstance(c, Node) else expands))
+        note = f"+{len(rest)} more, sum of their exact contributions"
+        if skipped:
+            note += f"; {skipped} have subtrees that were not expanded (not examined)"
         kept.append(Node(f"+{len(rest)} more", "more", f"{parent} (unlisted)", total, EXACT,
-                         members=members,
-                         note=f"+{len(rest)} more, sum of their exact contributions"))
+                         members=members, note=note, unexamined=skipped))
     return kept + fixed
 
 
@@ -201,6 +216,7 @@ def _promoter(proof: str, grow: Callable[[Member], Any] | None = None
                     proof, port=m.port, index=m.index,
                     grow=None if grow is None else (lambda: grow(m)))
 
+    promote.expands = grow is not None  # type: ignore[attr-defined]
     return promote
 
 
@@ -475,11 +491,54 @@ def top_gap(run: Any, reader: Any, gap: Any) -> list[Node]:
     return nodes
 
 
+# --------------------------------------------------------------------------- paging
+
+
+def load_page(circuit: Circuit, pointer: dict[str, Any], *, store: Any = None
+              ) -> dict[str, Any]:
+    """The child page ``pointer`` names, checked: from ``store`` when it is stored, else from the
+    circuit's own held pages; its sha256 must match the pointer's and its schema be a circuit
+    page, else ``Refusal``."""
+    try:
+        if pointer.get("state") == "stored":
+            from mdb.core.pointers import tensor_pointer
+
+            tensor = tensor_pointer(pointer["ref"], sha256=pointer["tensor_sha256"],
+                                    shape=[int(pointer["bytes"]["value"])], dtype="uint8")
+            found = load_json({"state": "stored", "sha256": pointer["sha256"]}, store=store,
+                              tensor=tensor)
+        else:
+            found = circuit.pages.get(pointer.get("sha256"))
+            if found is None:
+                raise ValueError("the page is not held: " + str(pointer.get("reason", "absent")))
+        if hashlib.sha256(json_bytes(found)).hexdigest() != pointer.get("sha256"):
+            raise ValueError("the page differs from the pointer's sha256")
+    except Exception as error:  # noqa: BLE001 - a missing or changed page is a refusal
+        raise Refusal(f"circuit {circuit.id}: page refused ({error})") from None
+    if not isinstance(found, dict) or found.get("schema") != PAGE_SCHEMA:
+        raise Refusal(f"circuit {circuit.id}: the stored page is not a circuit page")
+    return found
+
+
+def page(circuit: Circuit, node_id: str, *, store: Any = None) -> dict[str, Any]:
+    """The page of node ``node_id`` (``n12``): its subtree, with every group that does not fit
+    again as a pointer. ``Refusal`` for an unknown id or a page that is missing or changed."""
+    body = circuit.record["body"]
+    try:
+        return pages_mod.locate(body["root"], int(body["count"]), node_id,
+                                lambda pointer: load_page(circuit, pointer, store=store))
+    except pages_mod.PageError as error:
+        raise Refusal(f"circuit {circuit.id}: {error}") from None
+
+
 def build(run: Any, consumer: Any, *, top: int = 4, depth: int = 2,
-          session_id: str | None = None) -> Circuit:
+          session_id: str | None = None, store: Any = None) -> Circuit:
     """Decompose ``consumer`` at the cursor's row, seal the circuit record (kind ``circuit``)
     and add it to the run's ledger. ``Refusal`` when the consumer is not computed or has no
-    exact additive decomposition."""
+    exact additive decomposition. A tree that does not fit one page (``PAGE_BYTES``) is paged:
+    the record keeps the root and the first levels, and each group that does not fit is a
+    pointer to a child page (a sha256-checked JSON blob in ``store`` or, with none, held on
+    the circuit); the record's ``count`` is every node, paged ones included."""
     if not 1 <= top <= 8:
         raise Refusal("top must be in 1..8")
     if not 1 <= depth <= 3:
@@ -503,9 +562,26 @@ def build(run: Any, consumer: Any, *, top: int = 4, depth: int = 2,
     ident = max(entries, default=0) + 1
     ids = [0]
     tree = root.view(ids)
+    pages: dict[str, Any] = {}
+
+    def put(obj: dict[str, Any]) -> dict[str, Any]:
+        held = put_json(obj, store=store)
+        if held["state"] != "stored":
+            pages[held["sha256"]] = obj
+            return {"state": "absent", "sha256": held["sha256"], "reason": held["reason"]}
+        return {"state": "stored", "ref": held["ref"], "sha256": held["sha256"],
+                "tensor_sha256": held["tensor"]["sha256"], "bytes": num(held["bytes"], EXACT)}
+
+    try:
+        pages_mod.paginate(tree, put, {"consumer": reader.text,
+                                       "ledger_id": num(ident, EXACT)})
+    except pages_mod.PageError as error:
+        raise Refusal(str(error)) from None
     remainders = _remainders(root)
-    body = {"schema": SCHEMA, "consumer": reader.text, "kind": reader.kind,
-            "where": run.where, "k": top, "depth": depth, "count": ids[0], "root": tree,
+    unexamined = sum(g.unexamined for g in _groups(root))
+    body = {"schema": SCHEMA, "ledger_id": num(ident, EXACT), "consumer": reader.text,
+            "kind": reader.kind, "where": run.where, "k": top, "depth": depth,
+            "count": ids[0], "root": tree,
             "closure": {"value": claim(closure, EXACT, "P19" if reader.scalar else "P14"),
                         "bound": num(float(64 * 2.0 ** -53 * scale), "bound"),
                         "within": bool(size(closure) <= 64 * 2.0 ** -53 * scale),
@@ -513,12 +589,17 @@ def build(run: Any, consumer: Any, *, top: int = 4, depth: int = 2,
                         "meaning": "native consumer minus the sum of the depth-1 nodes: zero "
                                    "by construction (the remainders are defined as native "
                                    "minus the listed terms), so this checks float64 summation "
-                                   "only; remainders_within is the rounding check"},
-            "remainders_within": (None if any(n.within is None for n in remainders)
-                                  else all(n.within for n in remainders)),
+                                   "only; remainders_within is the rounding check"
+                                   + ("; subtrees under the unexamined `+N more` groups were "
+                                      "never expanded, so nothing here covers them"
+                                      if unexamined else "")},
+            "remainders_within": _within(remainders, unexamined),
+            "unexamined": unexamined > 0,
+            "unexamined_count": num(unexamined, EXACT),
             "edits": {"count": sum(1 for n in _walk(root) if n.kind == "edit"),
                       "meaning": "edit nodes: displacements edits wrote, never in a remainder"},
             "premises": reader.premises}
+    body["procedure"] = procedure(run)
     try:
         check_bounded(body, "circuit record")
         record = seal_record(session_id=session_id or run_session_id(run), kind="circuit",
@@ -528,9 +609,19 @@ def build(run: Any, consumer: Any, *, top: int = 4, depth: int = 2,
         raise Refusal(f"the circuit record does not fit one record ({error}); lower top or "
                       "depth") from None
     circuit = Circuit(ident, record, root, reader.target, run.where,
-                      complement=_fold_members(root))
+                      complement=_fold_members(root), pages=pages)
     entries[ident] = circuit
     return circuit
+
+
+def _within(remainders: list[Node], unexamined: int) -> bool | None:
+    """Every examined remainder within its bound: False if one is outside, None when a bound is
+    refused or a dropped subtree was never expanded (its remainders were not looked at)."""
+    if any(n.within is False for n in remainders):
+        return False
+    if unexamined or any(n.within is None for n in remainders):
+        return None
+    return True
 
 
 def _fold_members(root: Node) -> Any:
@@ -574,116 +665,26 @@ def _groups(node: Node) -> list[Node]:
     return found
 
 
-def _mask(run: Any, port: str, kind: str, indices: list[tuple[int, ...]]) -> Any:
-    """One bool mask over ``port`` selecting every index in ``indices`` (a neuron of ``f``, a
-    head's block of ``A``, a source of ``p``)."""
-    torch = _torch()
-    mask = torch.zeros(tuple(run.address_shape(port)), dtype=torch.bool)
-    if kind == "neuron":
-        mask[..., [i for (i,) in indices]] = True
-    elif kind == "head":
-        dh = run.adapter.head_dim
-        for (h,) in indices:
-            mask[..., h * dh:(h + 1) * dh] = True
-    else:
-        for h, s in indices:
-            mask[0, h, 0, s] = True
-    return mask
+def test(run: Any, circuit: Circuit, reference: Any = None, *, name: str | None = None,
+         prompts: list[tuple[str, list[int]]] | None = None, session_id: str | None = None,
+         store: Any = None) -> dict[str, Any]:
+    """Patch the circuit natively from ``reference`` (another ``Run``) or, with ``prompts``,
+    from the mean over a prompt set ``name`` (``analysis.circuit_test.test``); the result is
+    kept on the circuit (``tests``). Returns ``{result, record}``."""
+    from . import circuit_test
 
-
-def _ablations(run: Any, items: list[Any]) -> list[Edit]:
-    """The ``replace 0`` edits that ablate ``items`` (nodes or members), one per port in
-    first-use order: a port used once gets its item's own edit; several items at one port share
-    one mask (their union) with their selections joined by ``|``, or the whole port when one of
-    them is the whole port. An item with no index (the embedding) is not ablatable."""
-    ports: dict[str, list[Any]] = {}
-    for item in items:
-        if item.index is not None:
-            ports.setdefault(item.port, []).append(item)
-    edits = []
-    for port, group in ports.items():
-        if len(group) == 1 and group[0].index == ():
-            edits.append(Edit(port, 0.0, "replace"))
-        elif len(group) == 1:
-            item = group[0]
-            edits.append(Edit(port, 0.0, "replace", _mask(run, port, item.kind, [item.index]),
-                              _selection(item.kind, item.index)))
-        elif any(item.index == () for item in group):
-            edits.append(Edit(port, 0.0, "replace", None, None, "ablation"))
-        else:
-            edits.append(Edit(port, 0.0, "replace",
-                              _mask(run, port, group[0].kind, [item.index for item in group]),
-                              "|".join(_selection(item.kind, item.index) for item in group),
-                              "ablation"))
-    return edits
-
-
-def test(run: Any, circuit: Circuit, *, tolerance: float = 0.1) -> dict[str, Any]:
-    """Ablate the retained leaves, and separately everything except them, natively; report the
-    measured changes beside the direct-path predictions and the sufficiency verdict."""
-    from .compare import measure
-
-    if run.where != circuit.where:
-        raise Refusal(f"circuit {circuit.id} was built at {circuit.where}; the cursor is at "
-                      f"{run.where} (restart there to test it)")
-    if not 0 <= tolerance:
-        raise Refusal("tolerance must be >= 0")
-    leaves = _leaves(circuit.root)
-    groups = _groups(circuit.root)
-    members = [(group, m) for group in groups for m in group.members]
-    skipped = ([(n.ref, n.port) for n in leaves if n.kind == "embedding"]
-               + [(f"{m.name} (in {group.ref})", m.port) for group, m in members
-                  if m.kind == "embedding"])
-    retained = [n for n in leaves if n.kind != "embedding"]
-    others = [m for _, m in members if m.kind != "embedding"]
-    base = measure(run, [], circuit.consumer)
-    out: dict[str, Any] = {"id": circuit.id, "record": circuit.record["id"],
-                           "consumer": circuit.record["body"]["consumer"],
-                           "base": claim(base["value"], base["authority"]),
-                           "tolerance": num(float(tolerance), SUPPLIED)}
-    if skipped:
-        out["excluded"] = {"nodes": [ref for ref, _ in skipped],
-                           "reason": "the embedding is ablated in neither set: zeroing "
-                                     f"{skipped[0][1]} removes the input of every other "
-                                     "node, not its direct path"}
-    deltas = {}
-    refs = {"retained": [n.ref for n in retained], "complement": [g.ref for g in groups]}
-    predictions = {"retained": (-sum((n.value for n in retained[1:]), retained[0].value)
-                                if retained else None),
-                   "complement": circuit.complement}
-    for name, nodes in (("retained", retained), ("complement", others)):
-        edits = _ablations(run, nodes)
-        if not edits:
-            out[name] = {"state": "unresolved", "reason": f"no ablatable {name} node"}
-            continue
-        found = measure(run, edits, circuit.consumer)
-        delta = found["value"] - base["value"]
-        deltas[name] = delta
-        predicted = predictions[name]
-        out[name] = {"count": len(nodes), "nodes": refs[name][:64],
-                     "edits": [e.address + (f"[{e.selection}]" if e.selection else "")
-                               for e in edits][:16],
-                     "measured": claim(found["value"], found["authority"]),
-                     "delta": claim(delta, MEASURED),
-                     "predicted_delta": claim(predicted, LOCAL),
-                     "prediction": "minus the ablated contributions (direct path; rho and "
-                                   "later layers frozen)"}
-    if "complement" in deltas:
-        limit = tolerance * size(base["value"])
-        ok = size(deltas["complement"]) <= limit
-        out["verdict"] = "sufficient at this dose" if ok else "not sufficient at this dose"
-        out["rule"] = ("|consumer change with everything but the retained set ablated| <= "
-                       "tolerance x |base|")
-    else:
-        out["verdict"] = "unresolved"
-        out["rule"] = "nothing outside the retained set to ablate"
-    circuit.tests.append(out)
-    return out
+    if reference is None and prompts is None:
+        raise Refusal("circuit test needs a reference: another run of this model (or a prompt "
+                      "set's mean); zero-ablation is not offered (issue M4)")
+    found = circuit_test.test(run, circuit, reference, name=name, prompts=prompts,
+                              session_id=session_id, store=store)
+    circuit.tests.append(found["result"])
+    return found
 
 
 # Old private names, kept for one commit: symbols.py imported them.
 _terms = terms
 _top_gap = top_gap
 
-__all__ = ["CIRCUIT", "Circuit", "KINDS", "Node", "SCHEMA", "build", "ledger", "terms", "test",
-           "top_gap"]
+__all__ = ["CIRCUIT", "Circuit", "KINDS", "Node", "PAGE_SCHEMA", "SCHEMA", "build", "ledger",
+           "load_page", "page", "terms", "test", "top_gap"]

@@ -3,7 +3,7 @@ t3.L0.h  h = layer input (residual stream)  {P01}
 (mdb) until L0.q
 t3.L0.q  q = W_q a + b_q (pre-RoPE, flat)  {P04}
 (mdb) checkpoint pre
-checkpoint pre at t3.L0.q (736 bytes)
+checkpoint pre at t3.L0.q (750 bytes)
 (mdb) set L0.q[h1] = 2.0
 staged at t3.L0.q[h1]: q replace 2 [supplied] (realised exactly as bfloat16) on [h1] (8 elements) changed 0.5 [measured]  (1 staged)
   realised as one masked replace on the selected elements

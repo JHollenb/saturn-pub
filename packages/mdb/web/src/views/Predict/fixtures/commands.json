@@ -1206,6 +1206,38 @@
       },
       "server": "mdb serve --tiny qwen2 (in-process: create_app + LiveSession, seed 113)"
     },
+    "whatif_head": {
+      "ops_before": [
+        {
+          "args": {
+            "prompt": [
+              1,
+              5,
+              9,
+              3
+            ]
+          },
+          "op": "start"
+        },
+        {
+          "args": {
+            "target": "t3.logits"
+          },
+          "op": "until"
+        }
+      ],
+      "request": {
+        "args": {
+          "consumer": "M[4,9]",
+          "op": "scale",
+          "target": "L1.A[h0]",
+          "value": 0
+        },
+        "op": "whatif",
+        "route": "POST op"
+      },
+      "server": "python -m mdb serve --project <tmp> --tiny qwen2 (separate process; round 6, M19)"
+    },
     "whatif_interrupted": {
       "ops_before": [
         {

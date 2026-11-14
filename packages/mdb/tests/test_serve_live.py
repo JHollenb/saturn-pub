@@ -104,7 +104,15 @@ SCRIPT = [
     ("seek", "seek", {}),
     ("export", "export", {}),
     ("restart pre", "restart", {"name": "pre"}),
+    ("start name=c prefill=2 1 7 9 3", "start", {"prompt": [1, 7, 9, 3], "name": "c",
+                                                 "prefill": 2}),
+    ("until t3.logits", "until", {"target": "t3.logits"}),
+    ("frame main:", "frame", {"address": "main:"}),
+    ("sweep h rows=3 = c --consumer t3.M[0,1]", "sweep",
+     {"port": "h", "rows": "3", "origin": "c", "consumer": "t3.M[0,1]"}),
     ("where", "where", {}),
+    ("promptset list", "promptset", {"action": "list"}),
+    ("each recall: print", "each", {"set": "recall", "line": "print"}),
     ("run 1 5 9 3 budget=2", "run", {"prompt": PROMPT, "budget": 2}),
 ]
 FAMILIES = ("qwen2", "qwen3")
@@ -178,9 +186,17 @@ def test_every_op_returns_what_the_repl_prints(family, tmp_path, capsys):
     server = _server_transcript(tmp_path, family)
     repl = _repl_transcript(tmp_path, family, capsys)
     assert len(repl) == len(SCRIPT) == len(server)
+    def timeless(value):
+        """The result without wall-clock fields (`seconds`): two runs never agree on those."""
+        if isinstance(value, dict):
+            return {k: timeless(v) for k, v in value.items() if k != "seconds"}
+        if isinstance(value, list):
+            return [timeless(v) for v in value]
+        return value
+
     mismatched = [(line, canonical(a).decode()[:300], canonical(b).decode()[:300])
                   for (line, _, _), a, b in zip(SCRIPT, server, repl)
-                  if canonical(a) != canonical(b)]
+                  if canonical(timeless(a)) != canonical(timeless(b))]
     assert not mismatched, mismatched[:3]
     # the script really moves: most lines are resolved op results, not errors
     assert sum("error" not in r for r in server) >= len(SCRIPT) - 14
@@ -217,6 +233,31 @@ def test_the_console_refuses_file_commands(live):
     for line in ("source /etc/passwd", "sou /etc/passwd", "record /tmp/x", "quit"):
         text = c.post(f"/api/v1/s/{live.sid}/console", json={"line": line}).json()["data"]["text"]
         assert "not available from the web console" in text, line
+
+
+def test_promptset_load_is_refused_on_the_console_and_the_op_route_but_inline_works(live):
+    c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
+    sid = live.sid
+    for line in ("promptset load s /etc/hosts", "set load s /etc/hosts"):
+        text = c.post(f"/api/v1/s/{sid}/console", json={"line": line}).json()["data"]["text"]
+        assert "send the set inline" in text and "No such file" not in text, line
+    response = c.post(f"/api/v1/s/{sid}/op", json={
+        "op": "promptset", "request_id": "r1",
+        "args": {"action": "load", "name": "s", "arg": "/nonexistent/x.jsonl"}})
+    body = response.json()
+    assert response.status_code == 409 and "send the set inline" in json.dumps(body)
+    assert "No such file" not in json.dumps(body)
+    items = json.dumps([{"name": "a", "tokens": PROMPT}, {"name": "b", "tokens": [2, 6, 10]}])
+    response = c.post(f"/api/v1/s/{sid}/op", json={
+        "op": "promptset", "request_id": "r2",
+        "args": {"action": "define", "name": "s", "arg": items}})
+    assert response.status_code == 200 and response.json()["data"]["result"]["total"] == 2
+    for args in ({"action": "show", "name": "s"}, {"action": "list"}):
+        assert c.post(f"/api/v1/s/{sid}/op", json={"op": "promptset", "request_id": "r3",
+                                                   "args": args}).status_code == 200
+    each = c.post(f"/api/v1/s/{sid}/op", json={
+        "op": "each", "request_id": "r4", "args": {"set": "s", "line": "print"}})
+    assert each.status_code == 200, each.text
 
 
 # --------------------------------------------------------------------------- one thread
@@ -563,6 +604,24 @@ def test_live_frame_and_timeline_follow_the_cursor(live):
     assert [r["token"] for r in block["rows"]] == PROMPT
 
 
+def test_the_clock_marks_and_upstream_edits_keep_the_selector(live):
+    """M19: an edit limited by a selector (``L0.A[h1]``) is shown with it on the clock's row
+    marks (committed and staged); upstream entries carry the selection field."""
+    c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
+    _op(c, live.sid, "start", {"prompt": PROMPT})
+    _op(c, live.sid, "set", {"target": "L0.A[h1]", "value": 0.5, "op": "scale"})
+    _op(c, live.sid, "until", {"target": "L1.h"})
+    _op(c, live.sid, "set", {"target": "L1.A[h0]", "value": 0, "op": "scale"})
+    block = c.get(f"/api/v1/s/{live.sid}/live/timeline").json()["data"]
+    assert block["rows"][3]["edits"] == ["L0.A[h1]", "L1.A[h0] (staged)"]
+    frame = c.get(f"/api/v1/s/{live.sid}/live").json()["data"]
+    schema.LiveFrame.model_validate(frame)
+    assert [e["selection"] for e in frame["edits"]["committed"]] == ["h1"]
+    upstream = [u for p in frame["ports"] if p["edit"] for u in p["edit"]["upstream"]]
+    assert upstream and all("selection" in u for u in upstream)
+    assert {u["selection"] for u in upstream if u["port"] == "A"} >= {"h1"}  # M37: the value
+
+
 def test_events_push_one_op_event_per_completed_op(live):
     app = create_app(live.debugger.project.root, port=PORT, live=live, heartbeat=5.0)
     c = _client(app)
@@ -610,6 +669,19 @@ def test_live_cli_flags_warn_twice_with_allow_remote(tmp_path, capsys, monkeypat
     assert serve_main.main(["--project", str(tmp_path / "p"), "--model",
                             str(tmp_path / "nowhere")]) == 1
     assert "cannot attach the live model" in capsys.readouterr().err
+
+
+def test_serve_tiny_takes_every_engine_tiny_family(tmp_path, monkeypatch):
+    from mdb.engine.models import TINY_FAMILIES
+    from mdb.serve import __main__ as serve_main
+
+    assert serve_main.TINY_FAMILIES == TINY_FAMILIES
+    seen = []
+    monkeypatch.setitem(__import__("sys").modules, "uvicorn", type("U", (), {
+        "run": staticmethod(lambda app, **kwargs: seen.append(app.state.live.sid))}))
+    for family in ("llama", "mistral"):
+        assert serve_main.main(["--project", str(tmp_path / family), "--tiny", family]) == 0
+    assert [sid.split("-")[0] for sid in seen] == ["llama", "mistral"]
 
 
 # --------------------------------------------------------------------------- fix round (audit)
@@ -734,22 +806,36 @@ def test_every_computed_port_reduces_live_and_nothing_is_written(live, history):
         files = [p for p in root.rglob("*") if p.is_file()]
         return len(files), sum(p.stat().st_size for p in files)
 
+    def reduce_op(address, op, params=None):
+        response = c.post(f"/api/v1/s/{sid}/reduce", json={
+            "pointer": {"kind": "occurrence", "address": address}, "op": op,
+            "params": params or {}})
+        assert response.status_code == 200, (address, response.text[:300])
+        return response.json()["data"]
+
+    # Only the reductions are bracketed: under committed edits the `print` op mints an
+    # occurrence pointer and stores the edit recipe (M8), a write of `print`, not of a reduce.
+    # `print` is only the reference the reduction's label is compared with.
     before = size()
     ports = [p for p in _frame(c, sid)["data"]["ports"] if p["computed"]]
     assert ports
+    reduced = {}
     for port in ports:
-        for op, params in (("stats", {}), ("topk", {"k": 3})):
-            response = c.post(f"/api/v1/s/{sid}/reduce", json={
-                "pointer": {"kind": "occurrence", "address": port["addr"]}, "op": op,
-                "params": params})
-            assert response.status_code == 200, (port["addr"], response.text[:300])
+        reduce_op(port["addr"], "stats")
+        reduce_op(port["addr"], "topk", {"k": 3})
+        reduced[port["addr"]] = reduce_op(port["addr"], "stats")
+    assert size() == before
+    for port in ports:
         printed = _op(c, sid, "print", {"address": port["addr"]}).json()["data"]["result"]
-        stats = c.post(f"/api/v1/s/{sid}/reduce", json={
-            "pointer": {"kind": "occurrence", "address": port["addr"]}, "op": "stats"}
-        ).json()["data"]
+        stats = reduced[port["addr"]]
         if printed["shape"] == stats["shape"] and "stats" in printed:  # same value, same label
             assert stats["max"]["ev"] == printed["stats"]["max"]["authority"]
-    assert size() == before
+    # the recipe `print` stored is the same row on a second print: that read adds nothing
+    after_print = size()
+    for port in ports:
+        _op(c, sid, "print", {"address": port["addr"]})
+        reduce_op(port["addr"], "stats")
+    assert size() == after_print
 
 
 def test_interrupt_cancels_every_queued_job_and_says_how_many(live):
@@ -841,9 +927,9 @@ def test_refusals_name_the_project_relatively_never_its_absolute_path(live):
     c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
     body = _op(c, live.sid, "restart", {"name": "nope"}).json()
     reason = body["data"]["result"]["reason"]
-    assert root not in json.dumps(body) and "<project>" in reason, reason
+    assert root not in json.dumps(body) and "this project" in reason, reason  # no path at all
     text = c.post(f"/api/v1/s/{live.sid}/console", json={"line": "restart nope"}).json()
-    assert root not in text["data"]["text"] and "<project>" in text["data"]["text"]
+    assert root not in text["data"]["text"] and "this project" in text["data"]["text"]
 
 
 def test_the_recorded_frame_of_the_live_session_says_it_is_live(live):
@@ -877,24 +963,32 @@ def test_the_ledger_lists_the_circuits_forecasts_and_symbols_the_ops_made(live):
     empty = _ledger(c, sid)["data"]
     assert (empty["where"], empty["circuits"], empty["forecasts"], empty["symbols"]) == (
         None, [], [], [])
+    _op(c, sid, "start", {"prompt": [1, 7, 9, 3], "name": "clean"})
+    _op(c, sid, "until", {"target": "t3.logits"})
     _op(c, sid, "start", {"prompt": PROMPT})
     _op(c, sid, "forecast", {"target": "L0.p"})
     _op(c, sid, "until", {"target": "t3.logits"})
     _op(c, sid, "verify", {})
-    built = _op(c, sid, "circuit", {"target": "L1.o", "top": 1, "depth": 2}).json()
-    refused = _op(c, sid, "circuit", {"target": "test", "id": built["data"]["result"]["id"]}).json()
-    assert "circuit test is disabled" in json.dumps(refused) and "issue M4" in json.dumps(refused)
+    built = _op(c, sid, "circuit", {"target": "M[4,9]", "top": 1, "depth": 2}).json()
+    ident = built["data"]["result"]["id"]
+    refused = _op(c, sid, "circuit", {"target": "test", "id": ident}).json()
+    assert "needs a reference" in json.dumps(refused) and "issue M4" in json.dumps(refused)
+    tested = _op(c, sid, "circuit", {"target": "test", "id": ident, "ref": "clean"}).json()
+    ratios = tested["data"]["result"]["test"]["ratios"]
     _op(c, sid, "symbol", {"name": "ctx", "addresses": "t1"})
     data = _ledger(c, sid)["data"]
     run = live.ctx.run
     assert data["where"] == run.where and data["seq"] == live.seq and data["more"] == []
+    assert data["runs"] == ["clean"]       # the references a circuit test can take
     (circuit,) = data["circuits"]
     entry = circuits.ledger(run)[circuit["id"]]
     body = entry.record["body"]
+    summary = (f"ref clean: faithfulness {ratios['faithfulness']['value']:.4g}, knock-out share "
+               f"{ratios['knockout_share']['value']:.4g} [measured]")
     assert circuit == {"id": entry.id, "consumer": body["consumer"], "k": 1, "depth": 2,
                        "count": body["count"], "where": body["where"],
-                       "record": entry.record["id"], "tests": 0,
-                       "verdict": None}
+                       "record": entry.record["id"], "tests": 1,
+                       "verdict": summary, "from_previous_run": False}
     (sealed,) = data["forecasts"]
     view = forecast.view(forecast.ledger(run)[sealed["id"]])
     assert sealed["target"] == view["target"] == "t3.L0.p"
@@ -903,6 +997,25 @@ def test_the_ledger_lists_the_circuits_forecasts_and_symbols_the_ops_made(live):
     assert "premises" not in sealed["bound"] and sealed["bound"]["max"] == view["bound"]["max"]
     assert data["symbols"] == [{"name": "ctx", "definitions": ["t1"], "rows": [1]}]
     assert set(symbols.declared(run)) == {"ctx"}
+
+
+def test_the_ledger_marks_circuits_carried_from_a_previous_run(live):
+    """M12 keeps the circuit ledger across ``start``: a circuit built by the replaced run is
+    listed with ``from_previous_run`` (as ``circuit show`` marks it); a new one is not."""
+    c = _client(create_app(live.debugger.project.root, port=PORT, live=live))
+    sid = live.sid
+    _op(c, sid, "start", {"prompt": PROMPT})
+    _op(c, sid, "until", {"target": "t3.logits"})
+    first = _op(c, sid, "circuit", {"target": "M[4,9]", "top": 1, "depth": 1}).json()
+    assert [r["from_previous_run"] for r in _ledger(c, sid)["data"]["circuits"]] == [False]
+    _op(c, sid, "start", {"prompt": [1, 7, 9, 3]})
+    _op(c, sid, "until", {"target": "t3.logits"})
+    _op(c, sid, "circuit", {"target": "M[4,9]", "top": 1, "depth": 1})
+    rows = _ledger(c, sid)["data"]["circuits"]
+    assert [(r["id"], r["from_previous_run"]) for r in rows] == [
+        (first["data"]["result"]["id"], True), (first["data"]["result"]["id"] + 1, False)]
+    shown = _op(c, sid, "circuit", {"target": "show", "id": rows[0]["id"]}).json()
+    assert shown["data"]["result"]["from_previous_run"] is True
 
 
 def test_the_ledger_fits_the_cap_and_names_what_it_left_out(live):

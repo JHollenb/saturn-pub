@@ -1,0 +1,529 @@
+{
+  "frame": {
+    "bytes": 5329,
+    "data": {
+      "breakpoints": [],
+      "checkpoints": [],
+      "checks": null,
+      "displays": [],
+      "edits": {
+        "committed": [
+          {
+            "cast_exact": true,
+            "cast_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "changed_fraction": {
+              "authority": "measured",
+              "value": 0.5
+            },
+            "kind": "scalar",
+            "labels": {
+              "cast_max_abs_error": "measured",
+              "changed_fraction": "measured",
+              "realised_max_abs_error": "measured"
+            },
+            "layer": 0,
+            "mask_count": 8,
+            "mask_sha256": "25c9aef83e7b6c3fd2cb8918c725bac9c46f6ce469488731479d790b7fc2c372",
+            "mask_shape": [
+              1,
+              1,
+              16
+            ],
+            "op": "scale",
+            "port": "A",
+            "realised_dtype": "torch.bfloat16",
+            "realised_exact": true,
+            "realised_max_abs_error": {
+              "authority": "measured",
+              "value": 0.0
+            },
+            "realised_sha256": "0cd65a74756f9fd49c3a50100f647a91d9446331e7cc93bc83c0b9ca7e9856ab",
+            "row": 3,
+            "selection": "h1",
+            "transition": 1,
+            "value": {
+              "authority": "supplied",
+              "value": 0.5
+            }
+          }
+        ],
+        "committed_total": 1,
+        "staged": [
+          {
+            "fired": false,
+            "kind": "scalar",
+            "layer": 1,
+            "mask_count": 8,
+            "mask_sha256": "3cda893eb18b58e6bf19bae09cd9cdd08450668b0d367b909b527ddadab7232c",
+            "mask_shape": [
+              1,
+              1,
+              16
+            ],
+            "op": "scale",
+            "port": "A",
+            "selection": "h0",
+            "value": {
+              "authority": "supplied",
+              "value": 0.0
+            }
+          }
+        ],
+        "staged_total": 1,
+        "where": "t3.L1.h"
+      },
+      "family": "qwen2",
+      "layer": 1,
+      "limits": {
+        "heads": 2,
+        "kv_heads": 1,
+        "layers": 2,
+        "max_positions": 256
+      },
+      "live": {
+        "frontier": [],
+        "state": "paused"
+      },
+      "more": [],
+      "ports": [
+        {
+          "addr": "t3.L1.h",
+          "computed": true,
+          "cursor": true,
+          "edit": {
+            "authority": "measured",
+            "by": null,
+            "edited": false,
+            "kind": "native",
+            "reason": null,
+            "state": "resolved",
+            "upstream": [
+              {
+                "layer": 0,
+                "op": "scale",
+                "port": "A",
+                "row": 3,
+                "selection": null,
+                "staged": false
+              }
+            ],
+            "upstream_total": 1
+          },
+          "editable": true,
+          "focus": false,
+          "operator": "h = layer input (residual stream)",
+          "port": "h",
+          "proofs": [
+            "P01"
+          ],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L1.a",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "a = RMSNorm(h) * w_in",
+          "port": "a",
+          "proofs": [
+            "P02",
+            "P03"
+          ],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L1.q",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "q = W_q a + b_q (pre-RoPE, flat)",
+          "port": "q",
+          "proofs": [
+            "P04"
+          ],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L1.k",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "k = W_k a + b_k (pre-RoPE, flat)",
+          "port": "k",
+          "proofs": [
+            "P04"
+          ],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L1.v",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "v = W_v a + b_v (flat)",
+          "port": "v",
+          "proofs": [
+            "P04"
+          ],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L1.qr",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "qr = RoPE(q) (query argument of eager attention)",
+          "port": "qr",
+          "proofs": [
+            "P04"
+          ],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L1.kr",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": false,
+          "focus": false,
+          "operator": "kr = [cache; RoPE(k)] (key argument of eager attention, cached rows included)",
+          "port": "kr",
+          "proofs": [
+            "P04"
+          ],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L1.s",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "s = scaling * qr repeat_kv(kr)^T + mask (replica of the native expression)",
+          "port": "s",
+          "proofs": [
+            "P05",
+            "P07",
+            "P08",
+            "P09"
+          ],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L1.p",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "p = softmax(s, float32).to(dtype) (native attention weights)",
+          "port": "p",
+          "proofs": [
+            "P05",
+            "P06",
+            "P07",
+            "P08",
+            "P09"
+          ],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L1.A",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "A = concat_heads(p repeat_kv([cache; v])) (o_proj input)",
+          "port": "A",
+          "proofs": [
+            "P06",
+            "P07"
+          ],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L1.o",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "o = W_o A",
+          "port": "o",
+          "proofs": [
+            "P06",
+            "P07"
+          ],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L1.r",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "r = h + o",
+          "port": "r",
+          "proofs": [
+            "P06",
+            "P07",
+            "P14"
+          ],
+          "sublayer": "attn"
+        },
+        {
+          "addr": "t3.L1.n",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "n = RMSNorm(r) * w_post (mlp input)",
+          "port": "n",
+          "proofs": [
+            "P02",
+            "P03"
+          ],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L1.g",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "g = W_gate n",
+          "port": "g",
+          "proofs": [
+            "P10",
+            "P15"
+          ],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L1.sg",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "sg = silu(g)",
+          "port": "sg",
+          "proofs": [
+            "P10",
+            "P15"
+          ],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L1.u",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "u = W_up n",
+          "port": "u",
+          "proofs": [
+            "P10",
+            "P15"
+          ],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L1.f",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "f = sg * u (down_proj input)",
+          "port": "f",
+          "proofs": [
+            "P10",
+            "P15"
+          ],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L1.m",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "m = W_down f",
+          "port": "m",
+          "proofs": [
+            "P14"
+          ],
+          "sublayer": "mlp"
+        },
+        {
+          "addr": "t3.L1.h_out",
+          "computed": false,
+          "cursor": false,
+          "edit": null,
+          "editable": true,
+          "focus": false,
+          "operator": "h_out = r + m (layer output)",
+          "port": "h_out",
+          "proofs": [
+            "P14"
+          ],
+          "sublayer": "mlp"
+        }
+      ],
+      "row": 3,
+      "seq": 7,
+      "session": "qwen2-872f0e348e89",
+      "stop": {
+        "address": "t3.L1.h",
+        "layer": 1,
+        "operator": "h = layer input (residual stream)",
+        "port": "h",
+        "proofs": [
+          "P01"
+        ],
+        "row": 3,
+        "sublayer": "attn"
+      },
+      "tokens": [
+        {
+          "id": 1
+        },
+        {
+          "id": 5
+        },
+        {
+          "id": 9
+        },
+        {
+          "id": 3
+        }
+      ],
+      "where": "t3.L1.h"
+    },
+    "digest": "b5ada77a5700908e276c3110a3a41f3ca826affa2005d82d8a0921a1551dbc5d",
+    "schema": "mdb-view-live-v1",
+    "state": "resolved"
+  },
+  "recorded": "python -m mdb serve --project <tmp> --tiny qwen2; start 1 5 9 3; set L0.A[h1] = 0.5 scale; until L1.h; set L1.A[h0] = 0 scale; GET live, live/timeline (round 6, M19)",
+  "timeline": {
+    "bytes": 743,
+    "data": {
+      "cursor": {
+        "index": 21,
+        "label": "L1.h",
+        "row": 3
+      },
+      "limits": {
+        "heads": 2,
+        "kv_heads": 1,
+        "layers": 2,
+        "max_positions": 256
+      },
+      "root": {
+        "index": 0,
+        "label": "start",
+        "row": 3
+      },
+      "rows": [
+        {
+          "count": null,
+          "edits": [],
+          "row": 0,
+          "token": 1
+        },
+        {
+          "count": null,
+          "edits": [],
+          "row": 1,
+          "token": 5
+        },
+        {
+          "count": null,
+          "edits": [],
+          "row": 2,
+          "token": 9
+        },
+        {
+          "count": 22,
+          "edits": [
+            "L0.A[h1]",
+            "L1.A[h0] (staged)"
+          ],
+          "row": 3,
+          "token": 3
+        }
+      ],
+      "session": "qwen2-872f0e348e89",
+      "stops": [
+        "start",
+        "emb",
+        "L0.h",
+        "L0.a",
+        "L0.q",
+        "L0.k",
+        "L0.v",
+        "L0.qr",
+        "L0.kr",
+        "L0.s",
+        "L0.p",
+        "L0.A",
+        "L0.o",
+        "L0.r",
+        "L0.n",
+        "L0.g",
+        "L0.sg",
+        "L0.u",
+        "L0.f",
+        "L0.m",
+        "L0.h_out",
+        "L1.h",
+        "L1.a",
+        "L1.q",
+        "L1.k",
+        "L1.v",
+        "L1.qr",
+        "L1.kr",
+        "L1.s",
+        "L1.p",
+        "L1.A",
+        "L1.o",
+        "L1.r",
+        "L1.n",
+        "L1.g",
+        "L1.sg",
+        "L1.u",
+        "L1.f",
+        "L1.m",
+        "L1.h_out",
+        "fn",
+        "logits",
+        "sample"
+      ],
+      "where": "t3.L1.h"
+    },
+    "digest": "120eb59da517a56141f8d81df4966ca034be16a5b75445c22ee42401ecfba59c",
+    "schema": "mdb-view-live-timeline-v1",
+    "state": "resolved"
+  }
+}

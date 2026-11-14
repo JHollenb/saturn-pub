@@ -39,6 +39,7 @@ INTEGER_KEYS = frozenset({
     "total", "limit", "omitted", "hits_total", "nan", "posinf", "neginf", "edits_total",
     "deleted_total", "mask_count", "mask_shape", "under_edits_total", "staged_total", "committed_total", "depth", "line", "lines",
     "kv", "d", "staged_at", "staged_cells", "committed_cells", "realised_in_layer",
+    "prefill", "first_row", "prompt_rows",       # a record's procedure (prefill split, M54)
 })
 
 

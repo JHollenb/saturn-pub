@@ -425,11 +425,21 @@
 }
 
 .arch-partial {
-  background: linear-gradient(90deg, color-mix(in srgb, var(--ink) 28%, var(--panel)) 50%, var(--panel) 50%);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--ink) 28%, var(--panel)) 50%,
+    var(--panel) 50%
+  );
 }
 
 .arch-cache {
-  background: repeating-linear-gradient(45deg, var(--panel), var(--panel) 2px, var(--rule) 2px, var(--rule) 4px);
+  background: repeating-linear-gradient(
+    45deg,
+    var(--panel),
+    var(--panel) 2px,
+    var(--rule) 2px,
+    var(--rule) 4px
+  );
 }
 
 .arch-empty {
@@ -524,7 +534,13 @@
 }
 
 .life-below {
-  background: repeating-linear-gradient(90deg, var(--panel), var(--panel) 2px, var(--rule) 2px, var(--rule) 3px);
+  background: repeating-linear-gradient(
+    90deg,
+    var(--panel),
+    var(--panel) 2px,
+    var(--rule) 2px,
+    var(--rule) 3px
+  );
 }
 
 .life-pending {
@@ -765,7 +781,9 @@ th.n {
 
 .reader-lines {
   display: grid;
-  grid-template-columns: minmax(8em, max-content) minmax(7em, max-content) minmax(8em, max-content) minmax(0, 1fr);
+  grid-template-columns:
+    minmax(8em, max-content) minmax(7em, max-content) minmax(8em, max-content)
+    minmax(0, 1fr);
   column-gap: 14px;
   margin-bottom: 4px;
 }
@@ -805,6 +823,8 @@ th.n {
 
 /* Circuit graph: fit / zoom controls, and a visible cue when it scrolls. */
 .circuit-zoom {
+  /* revealing the graph scrolls this bar to the top of the panel, below its sticky heading */
+  scroll-margin-top: 40px;
   display: flex;
   flex-wrap: wrap;
   gap: 4px;
@@ -908,4 +928,44 @@ th.n {
 /* A summary in a number column: one line per part (max_abs, norm), right-aligned. */
 td.n .op-summary > span {
   display: block;
+}
+
+/* a forecast the measured residual did not confirm (verify, M29) */
+.verdict-not {
+  color: var(--sign-neg);
+}
+
+/* A recorded session with no retained cuts: the symbol table (records) gets the room the
+   timeline would have had; the timeline is one line saying why it is empty. */
+.app.app-records {
+  grid-template-columns: minmax(360px, 3fr) minmax(0, 3fr) minmax(170px, 0.6fr);
+}
+
+.app-centre-records {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.app-left-stack,
+.app-centre-stack {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: var(--gap);
+  min-height: 0;
+  overflow: auto;
+}
+
+.recorded-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.recorded-picker select {
+  max-width: 100%;
+}
+
+.recorded-origin {
+  margin-bottom: 4px;
 }

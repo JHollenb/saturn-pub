@@ -41,6 +41,9 @@ STRUCTURAL_KEYS = (
     "nodes", "own_tokens", "query_head", "receiver_row", "repeated_argument_groups", "row", "size",
     "source_row", "src", "steps", "stride", "token_id", "token_ids", "tokens",
     "torch_num_threads", "transition", "n",
+    # engine record bodies (circuit, symbol-table) drawn by the recorded views: a circuit's depth,
+    # a table's head count, page offset and limit, and how many readers a binding left out
+    "depth", "heads", "offset", "limit", "omitted",
 )
 State = Literal["resolved", "unresolved", "refused"]
 Verdict = Literal["supported", "set_only", "not_supported", "unresolved", "control_missing",
@@ -566,6 +569,28 @@ class RecordDetail(Model):
     links: list[Link]
 
 
+class StoredBody(Model):
+    """The whole sealed body of one engine record a recorded view draws (kind ``circuit`` or
+    ``symbol-table``): the op's own JSON as it was sealed, so the recorded page draws it with the
+    Live view's components. Numbers are labelled as the Records drawer labels them: a stored
+    ``{value, authority}`` keeps its class (and proof, unit); any other number is ``supplied``;
+    a stored ``{v, ev}`` look-alike is never passed through. ``consumer`` and ``where`` are the
+    body's own (the consumer and the cursor the op ran at). A circuit record is paged: ``body`` is
+    its root page, a group that did not fit is a node whose ``paged`` holds a pointer to a child
+    page, and ``node`` set asks for that node's page instead (``body`` is then the page,
+    ``{schema, node: <subtree>}``). ``ledger_id`` is the ``circuit N`` number the REPL printed
+    when the record was built (None for a record from before it was stored)."""
+    id: str
+    kind: str
+    record_schema: str
+    authority: str
+    consumer: str | None
+    where: str | None
+    body: dict[str, Any]
+    ledger_id: int | None = None
+    node: str | None = None
+
+
 # --------------------------------------------------------------------------- reduce / ops / events
 
 ReduceOp = Literal["stats", "topk", "slice", "histogram", "tile", "project"]
@@ -703,11 +728,14 @@ class Interrupt(Model):
 
 
 class LiveUpstream(Model):
+    """One edit upstream of a value: ``selection`` is the selector text that limits it (``h6``
+    for ``L22.A[h6]``, ``row=2`` for a state cell), None for the whole port."""
     row: int
     layer: int
     port: str
     op: str
     staged: bool
+    selection: str | None = None
 
 
 class LiveEdit(Model):
@@ -790,7 +818,8 @@ class LiveItems(Model):
 
 class LiveRow(Model):
     """One token row: ``token`` its id; ``count`` stops computed in it (all for a finished row,
-    None for a prefilled row whose ports were never stepped); ``edits`` ports edited there."""
+    None for a prefilled row whose ports were never stepped); ``edits`` ports edited there,
+    each with its selector (``L22.A[h6]``)."""
     row: int
     token: int | None
     count: int | None
@@ -820,7 +849,10 @@ class LiveTimeline(Model):
 class LiveCircuit(Model):
     """One circuit of the run's ledger (the ``circuit`` op): its id, consumer, ``k`` (top) and
     ``depth``, node ``count``, the cursor it was built at, its sealed record id, how many times
-    it was tested and the verdict text of the last test (None: never tested)."""
+    it was tested and ``verdict``: the last ``circuit test`` in one line, its two measured ratios
+    against the reference or why they were refused (None: never tested; there is no pass/fail).
+    ``from_previous_run``: built by an earlier run that ``start``/``restart`` replaced (the ledger
+    is kept across runs; its ``where`` and source rows are that run's, not this one's)."""
     id: int
     consumer: str
     k: int
@@ -830,6 +862,7 @@ class LiveCircuit(Model):
     record: str
     tests: int
     verdict: str | None
+    from_previous_run: bool = False
 
 
 class LiveForecast(Model):
@@ -866,6 +899,8 @@ class LiveLedger(Model):
     forecasts: list[LiveForecast]
     symbols: list[LiveSymbol]
     more: list[Omitted]
+    runs: list[str] = []
+    """The debugger's other named runs: the references ``circuit test ID ref=NAME`` can take."""
 
 
 class Event(Model):
@@ -890,6 +925,7 @@ VIEWS = {
     "graph": GraphView,
     "records": RecordPage,
     "record": RecordDetail,
+    "stored": StoredBody,
     "reduce": None,  # ReduceResult union
     "op": OpResult,
     "console": ConsoleResult,
@@ -909,8 +945,9 @@ EXPORTED = [Num, NumList, Omitted, Refused, AxisTick, ClockAxis, OccAddr, SlotPo
             TimelineBlock, BranchNode, BranchInfo, BranchTree, ReadSourceView, ReaderView,
             ReadEdge, LifePoint, Lifetime, UseView, SymbolRow, SymbolPage, SymbolDetail,
             GraphNode, GraphEdge, PrunedGroup, CircuitOverlay, SliceRef, GraphView, NamedNum,
-            RecordSummary, RecordPage, ArmRow, Link, RecordDetail, ReduceRequest, StatsResult,
-            TopkEntry, TopkResult, SliceResult, HistogramResult, TileResult, ProjectResult,
+            RecordSummary, RecordPage, ArmRow, Link, RecordDetail, StoredBody, ReduceRequest,
+            StatsResult, TopkEntry, TopkResult, SliceResult, HistogramResult, TileResult,
+            ProjectResult,
             OpRequest, OpResult, ConsoleRequest, ConsoleResult, Interrupt, LiveUpstream, LiveEdit,
             LivePort, LiveCheckpoint, LiveFrame, LiveItems, LiveRow, LiveStop, LiveTimeline,
             LiveCircuit, LiveForecast, LiveSymbol, LiveLedger, Event]

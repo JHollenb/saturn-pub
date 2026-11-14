@@ -18,6 +18,13 @@ mdb capabilities
 mdb verify --root /path/to/export
 ```
 
+Of these commands only `mdb version`, `mdb engine` and `mdb serve` belong to the engine
+distribution installed here. `mdb debug`, `mdb doctor`, `mdb help`, `mdb capabilities` and
+`mdb verify` are lane-era commands that need the separate `mdb-lanes` plug-in; without it
+`mdb` answers "the mdb-lanes plug-in is not installed" and exits (checked with
+`python -m mdb help` on the engine alone). With the plug-in installed, run them as
+`mdb lanes VERB`; a bare `mdb VERB` still works after a notice on stderr.
+
 The base package has no model-library dependencies. For a caller-owned language
 model or the tiny CPU Qwen console, install `.[autoregressive]` and run
 `mdb debug --tiny qwen2`. The default `mdb debug` is a pure-Python Counter demo.

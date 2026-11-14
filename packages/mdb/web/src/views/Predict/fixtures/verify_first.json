@@ -1,5 +1,5 @@
 {
-  "bytes": 1536,
+  "bytes": 1909,
   "data": {
     "op": "verify",
     "request_id": "verify",
@@ -7,9 +7,17 @@
       "count": 4,
       "forecasts": [
         {
+          "basis": "measured residual, P20",
           "bound_max": {
             "authority": "bound",
             "value": 0.016106113765349046
+          },
+          "criterion": "confirmed when max |native - predicted| <= floor = 4 x dtype spacing at the magnitude of the consumer; not confirmed otherwise; P20: residual = native - predicted",
+          "dtype": "bfloat16",
+          "floor": {
+            "authority": "measured",
+            "proof": "P20",
+            "value": 0.0625
           },
           "id": 1,
           "native": {
@@ -23,7 +31,7 @@
             }
           },
           "order": {
-            "current_cut": "a5caf85c892915ba136c619f1fb2c9a4b45fb60ef254a2f078778dcb70a39de3",
+            "current_cut": "439f61729c7514675a515419333e839cca66dce84875e706d166ad574c693447",
             "descends": true,
             "receipts_after_seal": {
               "count": 0
@@ -34,27 +42,33 @@
               "row": 3
             },
             "sealed_before_target": true,
-            "sealed_cut": "a5caf85c892915ba136c619f1fb2c9a4b45fb60ef254a2f078778dcb70a39de3",
+            "sealed_cut": "439f61729c7514675a515419333e839cca66dce84875e706d166ad574c693447",
             "target": {
               "index": 3,
               "row": 3
             }
           },
-          "record": "db5ed1366ed7e565e2949f06fcb029716f88056dc02250348b0ad45f2e6a08a9",
+          "record": "f5ff4bc2d08606da4e6347973c02b438f0e9904932fd856d73720ad8a3cf31bc",
           "residual_max_abs": {
             "authority": "measured",
             "value": 0.005299224032836225
           },
           "sealed_at": "t3.L0.h",
+          "spacing": {
+            "authority": "measured",
+            "proof": "P20",
+            "value": 0.015625
+          },
+          "state": "resolved",
           "status": "closed",
           "target": "t3.L0.a",
-          "verdict": "within-bound",
+          "verdict": "confirmed",
           "within_bound": true
         },
         {
           "id": 2,
           "reason": "target not reached (cursor t3.L0.a)",
-          "record": "6a5b7ce96f898a514847a794cad90c2ea4d6bc6e43fd4c658973131dbc1d5308",
+          "record": "8267ec1f7e9f6f515c3d3428c02f910d0b76274f2c6468e9cd74325212fecf15",
           "sealed_at": "t3.L0.h",
           "status": "open",
           "target": "t3.L0.p",
@@ -63,7 +77,7 @@
         {
           "id": 3,
           "reason": "target not reached (cursor t3.L0.a)",
-          "record": "f76fa16799dffe05ba7779e873a9ed9fc2f2449f07e55f0f07ebb08e17bce192",
+          "record": "376ac2947ba92b3a7c69e8cc5724bd754ddd62846c80cca268a772208561fd09",
           "sealed_at": "t3.L0.h",
           "status": "open",
           "target": "t3.M[4,9]",
@@ -72,7 +86,7 @@
         {
           "id": 4,
           "reason": "target not reached (cursor t3.L0.a)",
-          "record": "3e5d253dcf9cbe0d514d657725252a3cb2e36989d98c8980c8ce1c7a22ed00fe",
+          "record": "460a87f365a5006482011db61d8a20249384ab3ab202566a492a4bb77007ea3e",
           "sealed_at": "t3.L0.h",
           "status": "open",
           "target": "t3.L1.m",
@@ -86,7 +100,7 @@
     "seq": 7,
     "where": "t3.L0.a"
   },
-  "digest": "28bb0c56fa8a7103d967db4b101cc1ef4ad27d7cc2e61cc0270124ad76bafaf6",
+  "digest": "6df6c2b693f84ea7bb10a6c0d00d923010ff16ef2a2ce4994b3c2515544d4b33",
   "schema": "mdb-view-op-v1",
   "state": "resolved"
 }

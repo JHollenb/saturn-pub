@@ -7,6 +7,8 @@ symbol appears and takes its rows out of the token rows; with a project the seal
 round-trip through ``mdb.core.index`` and reopen in a fresh ``Project``.
 """
 
+import re
+
 import pytest
 import torch
 
@@ -26,7 +28,7 @@ from mdb.ops import dispatch  # noqa: E402
 from mdb.ops.debugger import open_tiny  # noqa: E402
 
 PROMPT = [1, 5, 9, 3]
-CONFIGS = [("qwen2", "bf16"), ("qwen3", "fp32")]
+CONFIGS = [("qwen2", "bf16"), ("qwen3", "fp32"), ("llama", "bf16"), ("mistral", "fp32")]
 
 
 @pytest.fixture(scope="module", params=CONFIGS, ids=lambda c: "-".join(c))
@@ -282,3 +284,57 @@ def test_hop_edge_input_linearity_is_one_for_a_tiny_edit(debugger):
     assert lin["cos_dn"]["value"] > 0.99 and abs(lin["norm_ratio_dn"]["value"] - 1) < 0.02
     assert edge["mlp"][0]["linear"]["value"] == pytest.approx(edge["mlp"][0]["exact"]["value"],
                                                              rel=0.05)
+
+
+class _Tok:
+    """A fake tokenizer: token text with a leading space, a newline, a wide character."""
+    TEXT = {1: " freezing", 5: "\n", 9: "\u51b7", 3: "Temperature"}
+
+    def decode(self, ids):
+        return self.TEXT[ids[0]]
+
+
+def _symbols_text(tokenizer):
+    from mdb.repl.render import render
+
+    dbg = open_tiny("qwen2", "fp32")
+    run = dbg.run(PROMPT)
+    run.until("t3.logits")
+    ctx = dbg.ops(run)
+    dbg.tokenizer = tokenizer
+    result = dispatch(ctx, "symbols", {"consumer": "M[4,9]"})
+    return render(result).splitlines(), result
+
+
+def _column(lines, key):
+    rows = [ln for ln in lines if ln.startswith("  ") and key in ln and " mass " in ln]
+    from mdb.repl.render import _display_width
+
+    return {_display_width(ln.split(key)[0]) for ln in rows}
+
+
+def test_symbols_names_are_quoted_and_padded_by_display_width():
+    lines, _ = _symbols_text(_Tok())
+    text = "\n".join(lines)
+    assert '"\\n"' in text and '" freezing"' in text and '"\u51b7"' in text
+    from mdb.repl.render import _display_width
+
+    rows = [ln for ln in lines if re.match(r"  (t\d|Unbound) ", ln) and " mass " in ln]
+    assert len(rows) == 5
+    # a binding row has a 7-wide status after the name; Unbound has none
+    starts = {_display_width(ln[:ln.index(" mass ") + 1]) - (0 if "Unbound" in ln else 7)
+              for ln in rows}
+    assert len(starts) == 1, starts
+    ids, _ = _symbols_text(None)
+    assert any("t0 (id 1)" in ln for ln in ids)
+    rows = [ln for ln in ids if ln.startswith("  t") and " mass " in ln]
+    assert len({ln.index("read ") for ln in rows}) == 1
+
+
+def test_unbound_remainder_is_the_measured_value_and_the_bound_is_labelled():
+    lines, result = _symbols_text(None)
+    remainder = result["unbound"]["parts"]["remainder"]
+    row = next(ln for ln in lines if "+ remainder" in ln)
+    value, bound = f"{remainder['value']['value']:.5g}", "bound "
+    assert f"remainder {value}" in row.replace("+ remainder ", "+ remainder ") or "remainder" in row
+    assert ", bound " in row and "[bound]: within" in row

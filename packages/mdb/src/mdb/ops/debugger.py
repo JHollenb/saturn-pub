@@ -18,7 +18,9 @@ value row 2 wrote at ``v``; ``kr`` works too) resolves the origin as a live name
 project session id or durable checkpoint name (restored from its stored cut, else replayed
 from the token ids), refuses another model identity, another numeric scope or a row the donor
 has not computed, and returns the selected block ``(1, kv, rows, d)`` with its pointer (names
-and digests, never the array).
+and digests, never the array). A port edit takes ``ORIGIN:ADDR`` the same way (``set
+L0.A[h1] = clean:L0.A[h1]``, the clean-to-corrupted activation patch): both go through
+``origin_value``.
 
 This module lives in ``mdb.ops`` (the lowest layer that may know the operation registry);
 ``mdb.attach`` / ``mdb.open_tiny`` / ``mdb.Debugger`` resolve here lazily.
@@ -46,7 +48,7 @@ from mdb.core.address import (
 from mdb.core.errors import Refused
 from mdb.core.pointers import RecordError, Unresolved, occurrence_pointer
 from mdb.engine.edits import CELL_AXES
-from mdb.engine.ports import PROGRAMS, program_for, tensor_digest
+from mdb.engine.ports import PROGRAMS, config_refusal, program_for, tensor_digest
 from mdb.engine.run import ReplayMismatch, Run
 
 from .context import Context
@@ -70,6 +72,7 @@ class Debugger:
         self.live: Run | None = None
         self.runs: dict[str, Run] = {}
         self.run_checkpoints: dict[str, dict[str, Any]] = {}  # in-memory, of runs not shown
+        self.carried_circuits: dict[int, Any] = {}   # id -> circuit, built by an earlier run
 
     @property
     def family(self) -> str:
@@ -115,33 +118,38 @@ class Debugger:
         retain_rows: int | None = None,
         lookahead: str | None = None,
         name: str | None = None,
+        prefill: int | None = None,
     ) -> Run:
-        """Prefill all but the last token; the cursor starts where the ``start`` op leaves it,
-        at ``t<last>.L0.<first port>`` (this is the one implementation of ``start``).
+        """Prefill all but the last token (``prefill=K``: the first ``K``; the later prompt
+        rows are stepped with their tokens forced); the cursor starts where the ``start`` op
+        leaves it, at ``t<first stepped row>.L0.<first port>`` (this is the one implementation
+        of ``start``). The session is built once, under that split.
 
         ``lookahead`` (``"none"``, the engine default, or ``"layer"``) is passed to ``Run``.
         ``name`` (a branch name, default ``main``) keeps the run in ``runs`` under that name,
         replacing an earlier run of the same name; other values can then name it as an origin.
         """
         name = run_name(name)
-        options: dict[str, Any] = {"retain_rows": retain_rows}
+        options: dict[str, Any] = {"retain_rows": retain_rows, "prefill": prefill}
         if lookahead is not None:
             options["lookahead"] = lookahead
         run = Run(self.adapter, self.tokens(prompt), **options)
         run.until(f"L0.{run.program.names[0]}")
         run.name = name
+        self._carry_circuits(run)
         self.runs[name] = run
         self.live = run
         return run
 
     # --- values from another run ----------------------------------------------------------
 
-    def _donor(self, branch: str) -> tuple[Run, str, str | None]:
+    def _donor(self, branch: str, *, replay: bool = False) -> tuple[Run, str, str | None]:
         """``(run, via, recipe id)`` standing for origin ``branch``: the live run of that name
         (``via`` ``live``), else the project's latest recipe for that session id or checkpoint
         name, restored from its stored boundary cut (``cut``) or replayed from the token ids
-        (``replay``)."""
-        if branch in self.runs:
+        (``replay``; always with ``replay=True``: a replayed run holds the transitions before
+        its cursor, a run restored from the cut starts at it)."""
+        if branch in self.runs and not replay:
             return self.runs[branch], "live", None
         if self.project is None:
             raise Refused(f"unknown origin {branch!r}: no run of that name (info runs) and no "
@@ -156,7 +164,7 @@ class Debugger:
         recipes.check_binding(recipe, model_identity=self.adapter.model_identity,
                               numeric_scope=self._numeric_scope())
         checkpoint = recipes.to_checkpoint(recipe)
-        for session in self.project.sessions():
+        for session in () if replay else self.project.sessions():
             sid = session["session_id"]
             if recipe["cut"] in self.project.cut_ids(sid):
                 root = self.project.load_cut(sid, recipe["cut"])
@@ -181,13 +189,33 @@ class Debugger:
                           "or a checkpoint name)")
         if origin.edits:
             raise Refused("an origin with edits (@cut+edit) is not a run; name a run")
-        donor, via, recipe = self._donor(origin.branch)
-        _same_binding(donor, run, origin.branch)
-        block = cell_block(donor, address, label=origin.branch)
-        pointer = {"origin": origin.branch, "via": via,
-                   "address": format_address(address), "sha256": tensor_digest(block),
-                   "shape": list(block.shape), "dtype": str(block.dtype).removeprefix("torch."),
-                   "where": donor.where, "cut": donor.checkpoint()["cut"], "recipe": recipe}
+        return self.origin_value(origin.branch, format_address(address), run=run,
+                                 pick=lambda donor: cell_block(donor, address,
+                                                               label=origin.branch))
+
+    def origin_value(self, branch: str, address: str, *, run: Run, pick: Any
+                     ) -> tuple[Any, dict[str, Any]]:
+        """The one fetch of a value from another run (cell and port edits both use it):
+        ``pick(donor)`` reads the selected tensor from the run origin ``branch`` stands for
+        (``_donor``: a live named run, else a project session or checkpoint restored from its
+        cut or replayed), after refusing another model identity or numeric scope than ``run``'s.
+        Reading leaves the donor's cursor and state as they were. Returns the tensor and its
+        pointer ``{origin, via, address, sha256, shape, dtype, where, cut, recipe}``."""
+        donor, via, recipe = self._donor(branch)
+        _same_binding(donor, run, branch)
+        try:
+            block = pick(donor)
+        except NotHeld:
+            if via != "cut":
+                raise
+            # restored from its cut, the donor starts at its cursor: replay it from the token
+            # ids, which computes the transitions before the cursor too
+            donor, via, recipe = self._donor(branch, replay=True)
+            block = pick(donor)
+        pointer = {"origin": branch, "via": via, "address": address,
+                   "sha256": tensor_digest(block), "shape": list(block.shape),
+                   "dtype": str(block.dtype).removeprefix("torch."), "where": donor.where,
+                   "cut": donor.checkpoint(pin=False)["cut"], "recipe": recipe}
         return block, pointer
 
     # --- durable checkpoints (project=) ---------------------------------------------------
@@ -247,10 +275,25 @@ class Debugger:
         project = self._project("restart")
         found = recipes.find_checkpoint(project, name, session_id=self.session_id)
         if found is None:
-            raise Refused(f"no durable checkpoint {name!r} in {project.root}")
+            raise Refused(f"no durable checkpoint {name!r} in this project "
+                          f"(session {self.session_id})")
         run = self.replay(recipes.load(project, found["body"]["recipe"]))
+        self._carry_circuits(run)
         self.live = run
         return run
+
+    def _carry_circuits(self, run: Run) -> None:
+        """Keep the circuit ledger across a new run: the circuits of the run this one replaces
+        (the live one) join ``run``'s ledger, so ``circuit show ID`` still reads them and new
+        ids continue after them; ``carried_circuits`` holds the ones that belong to an earlier
+        run (a circuit record is sealed and independent of the run that built it)."""
+        from mdb.analysis import circuits
+
+        if self.live is None or self.live is run:
+            return
+        earlier = circuits.ledger(self.live)
+        circuits.ledger(run).update(earlier)
+        self.carried_circuits.update(earlier)
 
     def replay(self, recipe: dict[str, Any]) -> Run:
         """A new run restored to a replay recipe of this project (``RecipeError`` refusals:
@@ -353,11 +396,33 @@ class Debugger:
         """A context for ``mdb.ops.dispatch`` bound to this model (and ``run``, if given)."""
         return Context(self, run)
 
+    def each(self, prompts: Any, line: str, *, at: str | None = None, keep: bool = False,
+             ctx: Context | None = None, prefill: int | str | None = None) -> Any:
+        """Run one op line on every prompt of a set (``mdb.ops.sets``): ``prompts`` is the name
+        of a loaded set, a JSONL path (a ``str`` ending in ``.jsonl``) or a list of item dicts
+        (kept as the set ``inline``). ``prefill``: each item's split (``K`` or ``"@ROLE"``,
+        bound per item). Returns ``EachResult(summary, results, statistics)``; the live run
+        and its cursor are left as they were."""
+        from .sets import define, load, run_each
+
+        if isinstance(prompts, str) and prompts.endswith(".jsonl"):
+            prompts = load(self, "file", prompts).name
+        elif not isinstance(prompts, str):
+            prompts = define(self, "inline", list(prompts)).name
+        return run_each(ctx if ctx is not None else self.ops(self.live), prompts, line, at=at,
+                        keep=keep, prefill=None if prefill is None else str(prefill))
+
     def repl(self, run: Run | None = None, **options: Any) -> int:
         """Interactive gdb-style REPL on this model; returns when the user quits."""
         from mdb.repl.shell import Shell  # sanctioned upward import: Debugger.repl convenience
 
         return Shell(self.ops(run), **options).loop()
+
+
+class NotHeld(Refused):
+    """A value the donor run does not hold at its cursor (not computed yet, or before the
+    transitions it holds); ``Debugger.origin_value`` retries a donor restored from its cut by
+    replay before refusing."""
 
 
 def run_name(name: str | None) -> str:
@@ -414,7 +479,7 @@ def cell_block(run: Run, address: Any, *, label: str | None = None) -> Any:
         try:
             found = run.read(target)
         except ValueError as error:
-            raise Refused(f"{label} has not computed {target}: {error}") from None
+            raise NotHeld(f"{label} has not computed {target}: {error}") from None
         kv_heads = run.adapter.num_kv_heads
         if address.port == "v":
             value = found.reshape(1, 1, kv_heads, head_dim).transpose(1, 2)
@@ -442,7 +507,8 @@ def cell_block(run: Run, address: Any, *, label: str | None = None) -> Any:
 def attach(
     model: Any, tokenizer: Any = None, *, project: Any = None, session: str | None = None
 ) -> Debugger:
-    """Attach to a loaded Hugging Face causal LM (Qwen2/Qwen3, eager attention, eval mode).
+    """Attach to a loaded Hugging Face causal LM (a family of ``engine.ports.FAMILIES``: Qwen2,
+    Qwen3, Llama, Mistral; eager attention, eval mode).
 
     ``project`` (a path, or an ``mdb.core.project.Project``) makes the debugger durable: the
     project is created or reopened and the session ``session`` is opened, bound to the model
@@ -457,6 +523,9 @@ def attach(
         raise Refused(
             f"no port program for model_type {family!r}; supported: {', '.join(sorted(PROGRAMS))}"
         )
+    refusal = config_refusal(family, config)
+    if refusal is not None:
+        raise Refused(f"cannot attach: {refusal}")
     implementation = getattr(config, "_attn_implementation", None)
     if implementation != "eager":
         raise Refused(

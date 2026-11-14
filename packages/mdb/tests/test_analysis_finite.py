@@ -22,7 +22,8 @@ from mdb.analysis import finite  # noqa: E402
 from mdb.analysis.explain import capture_row  # noqa: E402
 from mdb.engine.ports import PortEdit  # noqa: E402
 
-CASES = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("qwen3", "fp32")]
+CASES = [(family, dtype) for family in ("qwen2", "qwen3", "llama", "mistral")
+         for dtype in ("bf16", "fp32")]
 DTYPES = {"bf16": torch.bfloat16, "fp32": torch.float32}
 ETA_REL = {"bf16": 5e-2, "fp32": 1e-4}
 CLOSURE = 1e-9
@@ -34,7 +35,16 @@ SUMMARY: dict = {}
 
 def tiny(family, dtype, seed=5):
     """Random 3-layer GQA model (4 query heads, 2 KV groups) with non-trivial gains and biases."""
-    from transformers import Qwen2Config, Qwen2ForCausalLM, Qwen3Config, Qwen3ForCausalLM
+    from transformers import (
+        LlamaConfig,
+        LlamaForCausalLM,
+        MistralConfig,
+        MistralForCausalLM,
+        Qwen2Config,
+        Qwen2ForCausalLM,
+        Qwen3Config,
+        Qwen3ForCausalLM,
+    )
 
     torch.manual_seed(seed)
     common = dict(vocab_size=48, hidden_size=32, intermediate_size=64, num_hidden_layers=3,
@@ -42,6 +52,11 @@ def tiny(family, dtype, seed=5):
                   attn_implementation="eager")
     if family == "qwen2":
         model = Qwen2ForCausalLM(Qwen2Config(**common))
+    elif family == "llama":  # no q/k/v/o or MLP biases: the absent bias is a zero term
+        model = LlamaForCausalLM(LlamaConfig(head_dim=8, **common))
+    elif family == "mistral":  # windowed mask path (window 32 > every context); own weights
+        torch.manual_seed(seed + 2)  # (llama's shape and seed would give llama's very weights)
+        model = MistralForCausalLM(MistralConfig(head_dim=8, sliding_window=32, **common))
     else:
         model = Qwen3ForCausalLM(Qwen3Config(head_dim=8, **common))
     with torch.no_grad():
@@ -483,11 +498,14 @@ def _one_source(adapter, c0, c1, index, head):
 
 def test_p08_one_source_closed_form_inside_its_assumptions(bundle):
     case, adapter = bundle["case"], bundle["adapter"]
+    deltas = []
     for head in range(adapter.num_heads):
         res = _one_source(adapter, bundle["base"], bundle["one"], 0, head)
         assert res.extras["assumptions"]["holds"], res.extras["assumptions"]
         exact(case, res)
-        assert abs(res.extras["delta"]) > 0.05
+        deltas.append(abs(res.extras["delta"]))
+    # non-degenerate: every head moves, one by more than 0.05 (tiny llama's head 1 moves 0.011)
+    assert min(deltas) > 5e-3 and max(deltas) > 0.05, deltas
 
 
 def test_p08_one_source_closed_form_fails_outside_its_assumptions(bundle):

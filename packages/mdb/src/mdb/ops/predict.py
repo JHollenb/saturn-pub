@@ -12,8 +12,8 @@ torch-free; each op imports the analysis layer when it runs.
   native values (``analysis.forecast.verify``).
 - ``whatif ADDR=EXPR [replace|add|scale|mix DOSE] consumer=C``: predicted, then natively
   measured change of a consumer under one edit, the session left exactly where it was
-  (``analysis.propagate.whatif``). ADDR may be a state cell ``cache.L<i>.k|v[kv,row,d]`` and
-  EXPR then ``ORIGIN:ADDR`` (a value of another run).
+  (``analysis.propagate.whatif``). ADDR may be a state cell ``cache.L<i>.k|v[kv,row,d]``; EXPR
+  may be ``ORIGIN:ADDR`` (a value of another run) for a port and a cell alike.
 
 Assignments (``parse_assignment``, no ``eval``): ``ADDR = EXPR``, ``ADDR += X`` (add X),
 ``ADDR -= X`` (add -X), ``ADDR *= X`` (scale X), ``ADDR /= X`` (scale by the float64 1/X, which
@@ -31,13 +31,7 @@ from typing import Any
 
 from mdb.core.pointers import seal_digest
 
-from .builtin import (
-    cell_request,
-    finite_limit,
-    resolve_target,
-    selector_mask,
-    value_source,
-)
+from .builtin import cell_request, port_request, resolve_target
 from .errors import BadArgs, Refused
 from .registry import Arg, Op, register
 
@@ -124,6 +118,10 @@ def _explain(ctx, address):
                       f"t{target_row}.logits` first (cursor {run.where})")
     if margin is not None:
         result = explain_mod.explain_margin(run, margin.a, margin.b)
+        project = getattr(ctx.debugger, "project", None)
+        explain_mod.bound_terms(
+            result, run=run,
+            store=project.store if project is not None and not project.read_only else None)
         result["tokens"] = {side: {"token": token} for side, token in result["tokens"].items()}
         result["edits"] = [{"layer": int(layer), "edits": records}
                            for layer, records in sorted(result["edits"].items())]
@@ -149,7 +147,9 @@ def _forecast(ctx, target):
     else:
         chosen = _margin(ctx, target) or _whole_stop(ctx, target, "forecast")
     try:
-        view = forecast.seal(ctx.run, chosen)
+        project = getattr(ctx.debugger, "project", None)
+        store = project.store if project is not None and not project.read_only else None
+        view = forecast.seal(ctx.run, chosen, store=store)
     except forecast.Refusal as error:
         raise Refused(str(error)) from None
     entry = forecast.ledger(ctx.run)[view["id"]]
@@ -185,15 +185,12 @@ def session_digest(ctx) -> str:
 
 
 def build_edit(ctx, target: str, value: Any, op: str, dose: float | None = None):
-    """The requested edit as ``propagate.Edit``. A port: a selector becomes a mask over it, a
-    value is a scalar or the value at another computed address of this run. A state cell
-    (``cache.L<i>.k|v[...]``): ``builtin.cell_request`` (ops ``replace|add|scale|mix``, values
-    also ``ORIGIN:ADDR``)."""
-    import torch
-
+    """The requested edit as ``propagate.Edit``. A port: ``builtin.port_request`` (a selector
+    becomes a mask over it; a value is a scalar, the value at another computed address of this
+    run, or ``ORIGIN:ADDR``, a value of another run). A state cell (``cache.L<i>.k|v[...]``):
+    ``builtin.cell_request`` (ops ``replace|add|scale|mix``, values also ``ORIGIN:ADDR``)."""
     from mdb.analysis.propagate import Edit
 
-    run = ctx.run
     found = resolve_target(ctx, target)
     if found.cell is not None:
         request = cell_request(ctx, found, value, op, dose)
@@ -204,28 +201,9 @@ def build_edit(ctx, target: str, value: Any, op: str, dose: float | None = None)
         raise Refused(f"edits apply to layer ports or state cells, not {found.text}")
     if op == "mix" or dose is not None:
         raise Refused("mix DOSE applies to state cells (cache.L<i>.k|v)")
-    if isinstance(value, str) and ":" in value.partition("[")[0]:
-        raise Refused(f"{value}: a value from another run goes into a state cell "
-                      "(cache.L<i>.k|v); a port takes a number or an address of this run")
-    value, source = value_source(ctx, value, found)
-    finite_limit(run, value)
-    mask = selection = None
-    if found.selector:
-        from mdb.engine import breakpoints as bp
-
-        shape = tuple(run.port_shape(found.layer_port[1]))
-        axes = bp.stop_axes(run.program, found.label)
-        mask, index, chosen = selector_mask(
-            axes, shape, found.selector, head_dim=run.adapter.head_dim,
-            row=found.row if "row" in axes else None, tokenizer=ctx.tokenizer, text=found.text)
-        if isinstance(value, torch.Tensor):
-            if torch.broadcast_shapes(value.shape, chosen) != chosen:
-                raise BadArgs(f"{source} does not broadcast to the selection {list(chosen)}")
-            full = torch.zeros(shape, dtype=run.adapter.dtype)
-            full[index] = value.to(run.adapter.dtype).expand(chosen)
-            value = full
-        selection = found.text.partition("[")[2].rstrip("]")
-    return Edit(found.run_target, value, op, mask, selection, source)
+    request = port_request(ctx, found, value)
+    return Edit(found.run_target, request["value"], op, request["mask"], request["selection"],
+                request["source"], origin=request["origin"])
 
 
 def parse_consumer(ctx, text: str):
@@ -325,8 +303,10 @@ def _whatif(ctx, target, value, op, consumer, dose=None):
     edit = build_edit(ctx, address, value, op, dose)
     chosen = parse_consumer(ctx, consumer)
     before = session_digest(ctx)
+    project = getattr(ctx.debugger, "project", None)
+    store = project.store if project is not None and not project.read_only else None
     try:
-        result = propagate.whatif(ctx.run, edit, chosen)
+        result = propagate.whatif(ctx.run, edit, chosen, store=store)
     except forecast.Refusal as error:
         raise Refused(str(error)) from None
     after = session_digest(ctx)
@@ -349,7 +329,8 @@ register(Op("forecast", "Seal a prediction of the next stop (or a later stop of 
             (Arg("target", "address"),), "mutate", True, _forecast,
             usage="forecast [ADDR|M[a,b]]"), replace=True)
 register(Op("verify", "Compare open forecasts whose target the cursor has passed with the "
-            "native values (residual, bound, order)",
+            "native values (confirmed, not confirmed or unresolved: native against the sealed "
+            "emulated prediction, floor 1 dtype spacing; rounding effect against exact; order)",
             (Arg("ids", "ints"),), "mutate", True, _verify, usage="verify [ID ...]"),
          replace=True)
 register(Op("whatif", "Predicted, then natively measured change of a consumer under one edit; "

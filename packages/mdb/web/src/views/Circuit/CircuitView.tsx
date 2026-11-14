@@ -1,7 +1,8 @@
 // The circuit walk (the `circuit` op): build a circuit for a consumer, draw it as a layered
 // graph (consumer left, then layer components, heads, source rows), walk it with the keyboard
 // (up/down siblings, left/right along an edge, Enter asks to seek to the node), test it by
-// native ablation, and list the circuits this run already built. Pure: actions go through `act`.
+// native patching from a reference run (`circuit test ID ref=NAME`), and list the circuits this
+// run already built. Pure: actions go through `act`.
 import { useEffect, useMemo, useRef, useState, type KeyboardEvent } from 'react';
 import type { LiveCircuit } from '../../api/types.gen';
 import { EvidenceMark } from '../../chrome/EvidenceMark';
@@ -19,18 +20,21 @@ import {
   ROW_H,
   familyOf,
   layoutCircuit,
+  rootScroll,
   scaleFor,
   walk,
   type CircuitLayout,
   type Placed,
   type WalkKey,
 } from './layout';
+import { pagedCounts, spliceBody, usePages, type PageSource } from './paging';
 
 export interface CircuitActions {
   build(consumer: string, top: number, depth: number): void;
   /** Select a circuit; one this page has not seen is fetched with `circuit show ID`. */
   select(id: number): void;
-  test(id: number): void;
+  /** `circuit test ID ref=REF`: a run name of the debugger, or `set:NAME`. */
+  test(id: number, ref: string): void;
   node(id: string | null): void;
   seek(target: string, from: string): void;
   overlay(on: boolean): void;
@@ -39,6 +43,8 @@ export interface CircuitActions {
 
 export interface CircuitViewProps {
   ledger: LiveCircuit[];
+  /** The debugger's other named runs: the references a test can take (`ledger.runs`). */
+  runs?: string[];
   circuits: ReadonlyMap<number, CircuitEntry>;
   selected: number | null;
   node: string | null;
@@ -67,7 +73,7 @@ export function CircuitView(props: CircuitViewProps) {
       {entry ? (
         <>
           <CircuitHead entry={entry} />
-          <Graph entry={entry} {...props} />
+          <Graph key={entry.id} entry={entry} source={{ kind: 'live', id: entry.id }} {...props} />
           <TestPanel entry={entry} {...props} />
         </>
       ) : (
@@ -77,6 +83,56 @@ export function CircuitView(props: CircuitViewProps) {
           </div>
         )
       )}
+    </div>
+  );
+}
+
+/** A circuit record's sealed body drawn read-only (recorded mode): the head, the same layered
+ *  graph and keyboard walk as the Live tab, no seek, no test. */
+export function StoredCircuit({
+  id,
+  body,
+  source = null,
+}: {
+  id: number;
+  body: Rec;
+  /** Where its child pages are read from (`/stored/{record}?node=`); None: the body is whole. */
+  source?: PageSource | null;
+}) {
+  const [node, setNode] = useState<string | null>(null);
+  const entry: CircuitEntry = useMemo(() => ({ id, body, test: null, ablated: null }), [id, body]);
+  const circuits = useMemo(() => new Map([[id, entry]]), [id, entry]);
+  const act: CircuitActions = useMemo(
+    () => ({
+      build: () => undefined,
+      select: () => undefined,
+      test: () => undefined,
+      node: setNode,
+      seek: () => undefined,
+      overlay: () => undefined,
+      interrupt: () => undefined,
+    }),
+    [],
+  );
+  return (
+    <div className="circuit-view" data-testid="stored-circuit">
+      <CircuitHead entry={entry} />
+      <Graph
+        key={`${id}:${source?.kind === 'stored' ? source.record : ''}`}
+        entry={entry}
+        source={source}
+        ledger={[]}
+        circuits={circuits}
+        selected={id}
+        node={node}
+        focus={null}
+        slot={{ state: 'idle' }}
+        testSlot={{ state: 'idle' }}
+        busy={false}
+        overlay={false}
+        act={act}
+        readOnly
+      />
     </div>
   );
 }
@@ -172,7 +228,21 @@ function Ledger({ ledger, circuits, selected, busy, overlay, act }: CircuitViewP
                   <td>
                     <Count n={c.id} />
                   </td>
-                  <td className="mono">{c.consumer}</td>
+                  <td className="mono">
+                    {c.consumer}
+                    {c.from_previous_run && (
+                      <>
+                        {' '}
+                        <span
+                          className="chip faint"
+                          data-testid="previous-run"
+                          title="built by an earlier run (before start/restart): its cursor and source rows are that run's prompt, not this one's"
+                        >
+                          previous run
+                        </span>
+                      </>
+                    )}
+                  </td>
                   <td>
                     <Count n={c.k} />
                   </td>
@@ -210,11 +280,7 @@ function Ledger({ ledger, circuits, selected, busy, overlay, act }: CircuitViewP
         <div className="faint">none yet</div>
       )}
       <label className="muted">
-        <input
-          type="checkbox"
-          checked={overlay}
-          onChange={(e) => act.overlay(e.target.checked)}
-        />{' '}
+        <input type="checkbox" checked={overlay} onChange={(e) => act.overlay(e.target.checked)} />{' '}
         highlight the selected circuit's nodes on the pipeline and the architecture strip
       </label>
     </section>
@@ -232,7 +298,11 @@ function CircuitHead({ entry }: { entry: CircuitEntry }) {
       <div>
         closure <OpValue value={at(closure, 'value')} what="closure" />{' '}
         <span className="faint">within</span> <OpValue value={at(closure, 'bound')} what="bound" />
-        {at(closure, 'within') === true ? ' within' : at(closure, 'within') === false ? ' OUTSIDE' : ''}
+        {at(closure, 'within') === true
+          ? ' within'
+          : at(closure, 'within') === false
+            ? ' OUTSIDE'
+            : ''}
         {str(at(closure, 'meaning')) && (
           <span className="faint"> ({str(at(closure, 'meaning'))})</span>
         )}
@@ -244,7 +314,15 @@ function CircuitHead({ entry }: { entry: CircuitEntry }) {
             ? 'all within their rounding bounds'
             : b.remainders_within === false
               ? 'NOT all within their rounding bounds'
-              : 'within: not stated'}
+              : b.unexamined === true
+                ? 'not all checked: the subtrees under the +N more groups were never expanded'
+                : 'within: not stated (a bound was refused)'}
+          {b.unexamined === true && b.unexamined_count !== undefined && (
+            <>
+              {' '}
+              (<OpValue value={b.unexamined_count} what="unexamined_count" compact /> unexamined)
+            </>
+          )}
         </div>
       )}
       {isRec(b.edits) && (
@@ -258,7 +336,11 @@ function CircuitHead({ entry }: { entry: CircuitEntry }) {
 }
 
 /** Where a read the Symbols view pointed at sits in the selected circuit. */
-function readNodes(entry: CircuitEntry | null, focus: FocusRead | null, layout: CircuitLayout | null) {
+function readNodes(
+  entry: CircuitEntry | null,
+  focus: FocusRead | null,
+  layout: CircuitLayout | null,
+) {
   if (!entry || !focus || !layout) return new Set<string>();
   const m = /^t(\d+)\.L(\d+)\.h(\d+)$/.exec(focus.reader);
   if (!m) return new Set<string>();
@@ -282,13 +364,17 @@ function FocusLine({ focus, entry }: { focus: FocusRead; entry: CircuitEntry | n
       read <code>{focus.reader}</code> of <code>{focus.binding}</code> (rows{' '}
       {focus.rows.map((r) => `t${r}`).join(', ')}):{' '}
       {!entry ? (
-        <span className="faint">no circuit shown; build one for the consumer to place this read.</span>
+        <span className="faint">
+          no circuit shown; build one for the consumer to place this read.
+        </span>
       ) : found.size ? (
-        <span>highlighted in circuit {entry.id} ({found.size} node{found.size === 1 ? '' : 's'}).</span>
+        <span>
+          highlighted in circuit {entry.id} ({found.size} node{found.size === 1 ? '' : 's'}).
+        </span>
       ) : (
         <span className="faint">
-          not among circuit {entry.id}'s listed nodes (it may sit in a +N more group, or need depth
-          3 or a larger K).
+          not among circuit {entry.id}'s listed nodes (it may sit in a +N more group or a paged
+          group not expanded, or need depth 3 or a larger K).
         </span>
       )}
     </div>
@@ -311,13 +397,23 @@ function Graph({
   focus,
   busy,
   act,
-}: { entry: CircuitEntry } & CircuitViewProps) {
+  readOnly = false,
+  source,
+}: {
+  entry: CircuitEntry;
+  readOnly?: boolean;
+  /** Where child pages are fetched from; null: this body has none to fetch. */
+  source: PageSource | null;
+} & CircuitViewProps) {
   const consumer = str(entry.body.consumer);
+  const paging = usePages(source ?? { kind: 'live', id: entry.id });
+  const body = useMemo(() => spliceBody(entry.body, paging.pages), [entry.body, paging.pages]);
   const family = useMemo(
-    () => familyOf([...circuits.values()], consumer).map((c) => c.body),
-    [circuits, consumer],
+    () =>
+      familyOf([...circuits.values()], consumer).map((c) => (c.id === entry.id ? body : c.body)),
+    [circuits, consumer, entry.id, body],
   );
-  const layout = useMemo(() => layoutCircuit(entry.body, family), [entry.body, family]);
+  const layout = useMemo(() => layoutCircuit(body, family), [body, family]);
   const ablated = useMemo(() => ablatedIds(entry), [entry]);
   const reads = readNodes(entry, focus, layout);
   const box = useRef<HTMLDivElement>(null);
@@ -350,14 +446,40 @@ function Graph({
     else if (right > x + el.clientWidth) x = right - el.clientWidth;
     if (top < y) y = top;
     else if (bottom > y + el.clientHeight) y = bottom - el.clientHeight;
-    if (x !== el.scrollLeft || y !== el.scrollTop) el.scrollTo({ left: Math.max(0, x), top: Math.max(0, y) });
+    if (x !== el.scrollLeft || y !== el.scrollTop)
+      el.scrollTo({ left: Math.max(0, x), top: Math.max(0, y) });
   }, [current, scale]);
+  // Show (a new circuit in this pane) and fit bring the consumer into view: the pane is one DOM
+  // element reused across circuits, so without this a circuit opens where the previous one was
+  // scrolled (often its tail), and a zoom keeps a scroll offset that no longer holds the root.
+  const [reveal, setReveal] = useState(0);
+  const bar = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = box.current;
+    if (!el || typeof el.scrollTo !== 'function') return;
+    el.scrollTo(rootScroll(layout, scale));
+    // and when the pane's scroll parent (the Live tab) has the root off screen, it scrolls the
+    // graph's zoom bar to its top: the root sits just under it
+    const root = el.querySelector('[data-kind="consumer"]');
+    const outer = scrollParent(el.parentElement);
+    if (root && outer && bar.current && typeof bar.current.scrollIntoView === 'function') {
+      const r = root.getBoundingClientRect();
+      const o = outer.getBoundingClientRect();
+      const top = Math.max(o.top, 0);
+      const bottom = Math.min(o.bottom, window.innerHeight);
+      if (r.top < top || r.bottom > bottom) bar.current.scrollIntoView({ block: 'start' });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- on show and on fit/zoom only
+  }, [entry.id, reveal]);
   const onKey = (e: KeyboardEvent<HTMLDivElement>) => {
     const key = KEYS[e.key];
     if (key) {
       e.preventDefault();
+      // walking into a paged group fetches its page (its children were examined, stored apart)
+      if (key === 'right' && current?.node.paged && !current.node.children.length && source)
+        void paging.load(current.node.id);
       act.node(walk(layout, node, key));
-    } else if (e.key === 'Enter' && current) {
+    } else if (e.key === 'Enter' && current && !readOnly) {
       e.preventDefault();
       const target = seekable(current.node.address);
       if (target && !busy) act.seek(target, `circuit ${entry.id} node ${current.node.name}`);
@@ -365,12 +487,16 @@ function Graph({
       act.node(null);
     }
   };
-  const step = (by: number) =>
-    setZoom(Math.round(Math.max(0.4, Math.min(2, scale + by)) * 10) / 10);
+  // a zoom step keeps the walked node in view (the walk effect above); with none, the root
+  const zoomTo = (to: 'fit' | number) => {
+    setZoom(to);
+    if (to === 'fit' || !current) setReveal((n) => n + 1);
+  };
+  const step = (by: number) => zoomTo(Math.round(Math.max(0.4, Math.min(2, scale + by)) * 10) / 10);
   return (
     <div className="circuit-graph-wrap">
-      <div className="circuit-zoom" role="group" aria-label="graph zoom">
-        <button type="button" aria-pressed={zoom === 'fit'} onClick={() => setZoom('fit')}>
+      <div ref={bar} className="circuit-zoom" role="group" aria-label="graph zoom">
+        <button type="button" aria-pressed={zoom === 'fit'} onClick={() => zoomTo('fit')}>
           fit
         </button>
         <button type="button" onClick={() => step(-0.1)} aria-label="zoom out">
@@ -379,7 +505,7 @@ function Graph({
         <button type="button" onClick={() => step(0.1)} aria-label="zoom in">
           +
         </button>
-        <button type="button" aria-pressed={zoom === 1} onClick={() => setZoom(1)}>
+        <button type="button" aria-pressed={zoom === 1} onClick={() => zoomTo(1)}>
           100%
         </button>
         <span className="faint" data-testid="graph-scale">
@@ -400,7 +526,7 @@ function Graph({
         tabIndex={0}
         data-own-keys=""
         role="tree"
-        aria-label={`circuit ${entry.id} for ${consumer ?? '?'}: arrows walk, Enter asks to seek`}
+        aria-label={`circuit ${entry.id} for ${consumer ?? '?'}: arrows walk${readOnly ? '' : ', Enter asks to seek'}`}
         aria-activedescendant={current ? `cnode-${entry.id}-${current.node.id}` : undefined}
         onKeyDown={onKey}
         onFocus={() => {
@@ -426,15 +552,34 @@ function Graph({
               selected={p.node.id === node}
               read={reads.has(p.node.id)}
               ablated={ablated.get(p.node.id) ?? null}
+              paged={p.node.paged !== null && p.node.children.length === 0}
               onSelect={() => act.node(p.node.id)}
             />
           ))}
         </svg>
       </div>
-      <GraphLegend />
-      {current && <NodeLine p={current} entry={entry} busy={busy} act={act} />}
+      <GraphLegend readOnly={readOnly} />
+      {current && (
+        <NodeLine
+          p={current}
+          entry={entry}
+          busy={busy}
+          act={act}
+          readOnly={readOnly}
+          paging={source ? paging : null}
+        />
+      )}
     </div>
   );
+}
+
+/** The nearest ancestor that scrolls vertically (or the document's scrolling element). */
+function scrollParent(el: HTMLElement | null): HTMLElement | null {
+  for (let at = el; at; at = at.parentElement) {
+    const y = getComputedStyle(at).overflowY;
+    if ((y === 'auto' || y === 'scroll') && at.scrollHeight > at.clientHeight) return at;
+  }
+  return (document.scrollingElement as HTMLElement | null) ?? null;
 }
 
 /** The set the last test ablated each node in (the op's `ablated` node ids), and the nodes it
@@ -486,6 +631,7 @@ function NodeMark({
   selected,
   read,
   ablated,
+  paged,
   onSelect,
 }: {
   id: string;
@@ -493,11 +639,14 @@ function NodeMark({
   selected: boolean;
   read: boolean;
   ablated: string | null;
+  /** Children examined but stored as a page, not fetched yet. */
+  paged: boolean;
   onSelect: () => void;
 }) {
   const { node, x, y } = p;
   const val = valOf(node.value);
-  const ev = val.kind === 'num' ? val.n.ev : val.kind === 'summary' ? val.parts[0]![1].ev : val.n.ev;
+  const ev =
+    val.kind === 'num' ? val.n.ev : val.kind === 'summary' ? val.parts[0]![1].ev : val.n.ev;
   const hollowKind = node.kind === 'more' || node.kind === 'remainder';
   const style = hollowKind ? 'hollow' : markStyle(ev);
   const fill = style === 'solid' ? 'var(--ink-2)' : 'var(--panel)';
@@ -520,7 +669,7 @@ function NodeMark({
       onClick={onSelect}
       style={{ cursor: 'pointer' }}
     >
-      <title>{`${node.name} · ${node.kind} · ${node.address}${node.note ? `\n${node.note}` : ''}`}</title>
+      <title>{`${node.name} · ${node.kind} · ${node.address}${node.note ? `\n${node.note}` : ''}${paged ? '\nchildren examined, stored as a page: walk right or expand to fetch it' : ''}`}</title>
       {(read || ablated) && (
         <rect
           x={x - NODE_R - 4}
@@ -565,6 +714,17 @@ function NodeMark({
       ) : (
         <circle cx={x} cy={y} r={NODE_R} {...common} />
       )}
+      {paged && (
+        <text
+          x={x - 4}
+          y={y + NODE_R + 9}
+          fontSize={9}
+          fill="var(--ink-2)"
+          data-testid="paged-mark"
+        >
+          ▸
+        </text>
+      )}
       <text
         x={x + LABEL_X}
         y={y - 3}
@@ -579,14 +739,20 @@ function NodeMark({
       <foreignObject x={x + LABEL_X - 2} y={y} width={LABEL_W} height={14}>
         <span className="cnode-value">
           <OpValue value={node.value} what="value" compact showReason={false} />
-          {ablated === 'retained' ? ' ✕R' : ablated === 'complement' ? ' ✕C' : ablated ? ' excl.' : ''}
+          {ablated === 'retained'
+            ? ' ✕R'
+            : ablated === 'complement'
+              ? ' ✕C'
+              : ablated
+                ? ' excl.'
+                : ''}
         </span>
       </foreignObject>
     </g>
   );
 }
 
-function GraphLegend() {
+function GraphLegend({ readOnly = false }: { readOnly?: boolean }) {
   return (
     <div className="faint circuit-legend" data-testid="circuit-legend">
       <span>
@@ -611,8 +777,11 @@ function GraphLegend() {
       </span>{' '}
       · width ∝ |exact contribution| · <EvidenceMark ev="measured" /> measured{' '}
       <EvidenceMark ev="derived-exact" /> derived · rounded box: +N more (their Σ) · diamond:
-      remainder (measured, with its bound; never dropped) · square: consumer · after a test: ✕R
-      ablated with the retained set, ✕C with the complement · arrows walk, Enter asks to seek
+      remainder (measured, with its bound; never dropped) · ▸ paged: children examined, stored as
+      a page (fetched on expand; not +N more, which is a sum never expanded) · square: consumer
+      {readOnly
+        ? ' · arrows walk (recorded: no seek, no test)'
+        : ' · after a test: ✕R patched from the reference in the knock-out (circuit), ✕C in the keep-only (complement) · arrows walk, Enter asks to seek'}
     </div>
   );
 }
@@ -622,13 +791,19 @@ function NodeLine({
   entry,
   busy,
   act,
+  readOnly = false,
+  paging,
 }: {
   p: Placed;
   entry: CircuitEntry;
   busy: boolean;
   act: CircuitActions;
+  readOnly?: boolean;
+  paging: ReturnType<typeof usePages> | null;
 }) {
-  const target = seekable(p.node.address);
+  const target = readOnly ? null : seekable(p.node.address);
+  const counts = p.node.children.length === 0 ? pagedCounts(p.node.paged) : null;
+  const state = paging?.status.get(p.node.id);
   return (
     <div className="circuit-node-line" data-testid="circuit-node-line">
       <strong>{p.node.name}</strong> <span className="faint">{p.node.kind}</span>{' '}
@@ -641,6 +816,29 @@ function NodeLine({
         </>
       )}
       {p.node.note && <span className="faint"> · {p.node.note}</span>}{' '}
+      {counts && (
+        <span data-testid="paged-node">
+          <span className="chip">paged</span>{' '}
+          <span className="faint">
+            {counts.children} children examined ({counts.descendants} nodes below), stored as a
+            page, not listed here
+          </span>{' '}
+          {paging && (
+            <button
+              type="button"
+              disabled={state?.state === 'loading'}
+              onClick={() => void paging.load(p.node.id)}
+            >
+              {state?.state === 'loading' ? 'fetching…' : 'expand'}
+            </button>
+          )}{' '}
+          {state?.state === 'failed' && (
+            <span className="na" data-testid="paged-failed">
+              page refused: {state.reason}
+            </span>
+          )}
+        </span>
+      )}{' '}
       {target ? (
         <button
           type="button"
@@ -649,50 +847,96 @@ function NodeLine({
         >
           seek {target}…
         </button>
+      ) : readOnly ? (
+        <span className="faint">(recorded: no session to seek)</span>
       ) : (
         <span className="faint">(no occurrence to seek)</span>
       )}{' '}
-      <span className="faint">full record in the Inspector</span>
+      {!readOnly && <span className="faint">full record in the Inspector</span>}
     </div>
   );
 }
 
 // --------------------------------------------------------------------------- test
 
-const SETS = ['retained', 'complement'] as const;
+const MARGINS = ['base', 'ref', 'ko', 'keep', 'full'] as const;
+const RATIOS = [
+  ['faithfulness', 'faithfulness'],
+  ['knockout_share', 'knock-out share'],
+] as const;
+const COUNTS = ['total', 'circuit', 'complement', 'from_groups', 'unexamined'] as const;
 const TEST_KNOWN = new Set([
-  'excluded',
-  'base',
-  'retained',
-  'complement',
-  'consumer',
+  'schema',
   'id',
+  'circuit',
+  'consumer',
+  'where',
+  'reference',
+  'components',
+  'nodes',
+  'margins',
+  'meaning',
+  'resolution',
+  'ratios',
+  'reading',
+  'full_equals_ref',
+  'full_meaning',
+  'cost',
+  'session',
   'record',
-  'rule',
-  'tolerance',
-  'verdict',
 ]);
 
-const CIRCUIT_TEST_DISABLED =
-  'circuit test is disabled: zero-ablating the complement says nothing on a real model (issue M4)';
+export const NEEDS_REF =
+  'circuit test patches the circuit from a reference run (zero-ablation is not offered, issue M4): pick another run of this debugger, or type set:NAME for a prompt set mean';
 
-function TestPanel({ entry, testSlot, act }: { entry: CircuitEntry } & CircuitViewProps) {
+function TestPanel({ entry, testSlot, act, busy, runs = [] }: { entry: CircuitEntry } & CircuitViewProps) {
   const running = testSlot.state === 'running';
   const test = entry.test;
+  const [ref, setRef] = useState<string>(runs[0] ?? '');
+  useEffect(() => {
+    if (!ref && runs.length) setRef(runs[0] ?? '');
+  }, [ref, runs]);
+  const listed = new Set(runs);
   return (
     <section className="circuit-test" aria-label="circuit test">
       <div>
+        <label>
+          reference{' '}
+          <select
+            value={listed.has(ref) ? ref : ''}
+            onChange={(e) => setRef(e.target.value)}
+            data-testid="test-ref-picker"
+            aria-label="reference run"
+          >
+            <option value="">{runs.length ? '(pick a run)' : '(no other run)'}</option>
+            {runs.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+        </label>{' '}
+        <input
+          type="text"
+          value={ref}
+          placeholder="run name or set:NAME"
+          onChange={(e) => setRef(e.target.value.trim())}
+          aria-label="reference (run name or set:NAME)"
+          size={14}
+        />{' '}
         <button
           type="button"
-          disabled
-          onClick={() => act.test(entry.id)}
-          title={CIRCUIT_TEST_DISABLED}
+          disabled={busy || !ref}
+          onClick={() => act.test(entry.id, ref)}
+          title={ref ? `circuit test ${entry.id} ref=${ref}` : NEEDS_REF}
         >
           circuit test {entry.id}
         </button>{' '}
-        <span className="faint" data-testid="test-disabled">
-          {CIRCUIT_TEST_DISABLED}
-        </span>
+        {!ref && (
+          <span className="faint" data-testid="test-needs-ref">
+            {NEEDS_REF}
+          </span>
+        )}
       </div>
       {(testSlot.state !== 'idle' || running) && (
         <SlotState slot={testSlot} what="test" onInterrupt={act.interrupt} idle="" />
@@ -702,80 +946,88 @@ function TestPanel({ entry, testSlot, act }: { entry: CircuitEntry } & CircuitVi
   );
 }
 
+/** One `circuit test` result: the reference, the component counts, the five measured margins
+ *  with what each patched, the two ratios (or why they are refused) and the one-spacing
+ *  readings. No pass/fail: the op gives none. */
 export function TestResult({ test }: { test: Rec }) {
   const notes = Object.entries(test).filter(
     ([k, v]) => !TEST_KNOWN.has(k) && (typeof v === 'string' || isRec(v)),
   );
+  const ref = isRec(test.reference) ? test.reference : {};
+  const comp = isRec(test.components) ? test.components : {};
+  const margins = isRec(test.margins) ? test.margins : {};
+  const meaning = isRec(test.meaning) ? test.meaning : {};
+  const ratios = isRec(test.ratios) ? test.ratios : {};
+  const reading = isRec(test.reading) ? test.reading : {};
+  const count = (k: string) => int(at(comp, k, 'value'));
   return (
     <div className="test-result" data-testid="test-result">
-      <div>
-        base <OpValue value={test.base} what="base" /> · tolerance{' '}
-        <OpValue value={test.tolerance} what="tolerance" />
+      <div data-testid="test-reference">
+        reference <code>{str(ref.name) ?? '?'}</code>{' '}
+        <span className="faint">
+          {str(ref.kind) === 'set-mean'
+            ? `(per-component mean over ${int(at(ref, 'items', 'value')) ?? '?'} items at their @last)`
+            : `(run, row t${int(at(ref, 'row', 'value')) ?? '?'})`}
+        </span>
+      </div>
+      <div data-testid="test-components">
+        components{' '}
+        {COUNTS.map((k) => (
+          <span key={k} data-count={k}>
+            {k.replace('_', ' ')} {count(k) !== null ? <Count n={count(k)!} /> : '?'}{' '}
+          </span>
+        ))}
+        <span className="faint">[derived-exact]</span>
+        {str(comp.definition) && <div className="faint">{str(comp.definition)}</div>}
+        {str(comp.rows) && <div className="faint">{str(comp.rows)}</div>}
       </div>
       <div className="table-scroll">
         <table>
           <thead>
             <tr>
-              <th>ablate</th>
-              <th className="n">nodes</th>
-              <th className="n">predicted Δ</th>
-              <th className="n">measured Δ</th>
-              <th className="n">consumer after</th>
-              <th>edits</th>
+              <th>margin</th>
+              <th className="n">value</th>
+              <th>what was patched</th>
             </tr>
           </thead>
           <tbody>
-            {SETS.map((set) => {
-              const s = isRec(test[set]) ? (test[set] as Rec) : null;
-              if (!s) {
-                return (
-                  <tr key={set}>
-                    <td>{set}</td>
-                    <td colSpan={5}>
-                      <OpValue value={undefined} what={`${set} ablation`} />
-                    </td>
-                  </tr>
-                );
-              }
-              return (
-                <tr key={set} data-set={set}>
-                  <td>{set}</td>
-                  <td className="n">{int(s.count) !== null ? <Count n={int(s.count)!} /> : '?'}</td>
-                  <td className="n" title={str(s.prediction) ?? undefined}>
-                    <OpValue value={s.predicted_delta} what="predicted_delta" />
-                  </td>
-                  <td className="n">
-                    <OpValue value={s.delta} what="delta" />
-                  </td>
-                  <td className="n">
-                    <OpValue value={s.measured} what="measured" />
-                  </td>
-                  <td className="mono faint edits">{strs(s.edits).join(', ')}</td>
-                </tr>
-              );
-            })}
+            {MARGINS.map((k) => (
+              <tr key={k} data-margin={k}>
+                <td>{k}</td>
+                <td className="n">
+                  <OpValue value={margins[k]} what={k} />
+                </td>
+                <td className="faint">
+                  {str(meaning[k]) ?? ''}
+                  {k === 'full' && typeof test.full_equals_ref === 'boolean'
+                    ? test.full_equals_ref
+                      ? ' (= ref bit for bit)'
+                      : ' (differs from ref)'
+                    : ''}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
-      {[...new Set(SETS.map((set) => str(at(test, set, 'prediction'))).filter((p) => p !== null))].map(
-        (p) => (
-          <div key={p} className="faint" data-testid="test-prediction">
-            predicted Δ: {p}
-          </div>
-        ),
-      )}
-      {isRec(test.excluded) && (
-        <div data-testid="test-excluded">
-          excluded from both sets: {strs(test.excluded.nodes).join(', ') || 'none'}
-          {str(test.excluded.reason) && <span className="faint"> — {str(test.excluded.reason)}</span>}
+      {str(ratios.state) ? (
+        <div data-testid="test-ratios-refused">
+          ratios {str(ratios.state)}: {str(ratios.reason) ?? ''}
         </div>
+      ) : (
+        RATIOS.map(([k, label]) => (
+          <div key={k} data-ratio={k}>
+            {label} <code>{str(at(ratios, 'formulas', k)) ?? ''}</code> ={' '}
+            <OpValue value={ratios[k]} what={k} />{' '}
+            <span className="faint">{str(at(ratios, 'meaning', k)) ?? ''}</span>
+          </div>
+        ))
       )}
-      <div>
-        verdict:{' '}
-        <span className="chip verdict-chip" data-testid="test-verdict">
-          {str(test.verdict) ?? 'no verdict given'}
-        </span>{' '}
-        {str(test.rule) && <span className="faint">({str(test.rule)})</span>}
+      <div data-testid="test-reading">
+        reading: knock-out {str(reading.knockout) ?? '?'}; {str(reading.keep_vs_base) ?? '?'};{' '}
+        {str(reading.keep_vs_ref) ?? '?'} <span className="faint">(one spacing{' '}
+        <OpValue value={at(test, 'resolution', 'spacing')} what="spacing" />{' '}
+        {str(at(test, 'resolution', 'dtype')) ?? ''}; {str(reading.rule) ?? ''})</span>
       </div>
       {notes.map(([k, v]) => (
         <div key={k} className="faint" data-field={k}>

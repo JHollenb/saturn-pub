@@ -18,7 +18,8 @@ from mdb.core.pointers import check_bounded  # noqa: E402
 from mdb.ops.debugger import open_tiny  # noqa: E402
 
 PROMPT = [1, 5, 9, 3]
-CONFIGS = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("qwen3", "fp32")]
+CONFIGS = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("qwen3", "fp32"),
+           ("llama", "bf16"), ("llama", "fp32"), ("mistral", "bf16"), ("mistral", "fp32")]
 MARGIN = Margin(3, 4, 9)
 A = [Edit("t3.L1.m", 0.5, "add")]
 B = [Edit("t3.L0.v", 0.25, "add")]

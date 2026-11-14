@@ -75,7 +75,12 @@ export function LiveSymbols(props: LiveSymbolsProps) {
 type ConsumerKind = 'none' | 'margin' | 'logit' | 'port';
 
 /** The `consumer=` argument the form builds: `M[a,b]`, `logits[i]` or a port address. */
-export function consumerText(kind: ConsumerKind, a: string, b: string, port: string): string | null {
+export function consumerText(
+  kind: ConsumerKind,
+  a: string,
+  b: string,
+  port: string,
+): string | null {
   if (kind === 'margin') return a.trim() && b.trim() ? `M[${a.trim()},${b.trim()}]` : null;
   if (kind === 'logit') return a.trim() ? `logits[${a.trim()}]` : null;
   if (kind === 'port') return port.trim() || null;
@@ -179,6 +184,33 @@ function verdicts(reads: Slot, row: number, consumer: string | null): Map<string
   return out;
 }
 
+const NO_ACT: SymbolsActions = {
+  run: () => undefined,
+  declare: () => undefined,
+  measure: () => undefined,
+  openRead: () => undefined,
+  seek: () => undefined,
+  interrupt: () => undefined,
+};
+
+/** A stored symbol table (a `symbol-table` record's body) drawn read-only: the same table as
+ *  the Live tab, with no seek, no verdict measurement and no paging (the record is one page). */
+export function StoredSymbolTable({ result }: { result: Rec }) {
+  return (
+    <Table
+      result={result}
+      slot={{ state: 'idle' }}
+      reads={{ state: 'idle' }}
+      args={{}}
+      where={null}
+      busy={false}
+      declared={[]}
+      act={NO_ACT}
+      readOnly
+    />
+  );
+}
+
 function Table({
   result,
   reads,
@@ -186,7 +218,8 @@ function Table({
   busy,
   act,
   args,
-}: { result: Rec } & LiveSymbolsProps) {
+  readOnly = false,
+}: { result: Rec; readOnly?: boolean } & LiveSymbolsProps) {
   const bindings = recs(result.bindings);
   const consumer = str(result.consumer);
   const here = cellOf(str(result.where) ?? where ?? '');
@@ -214,7 +247,8 @@ function Table({
         · min_mass <OpValue value={result.min_mass} what="min_mass" />
         {stale && (
           <span className="chip" data-testid="symbols-stale" title="the cursor moved since">
-            cursor moved to {where}: <button
+            cursor moved to {where}:{' '}
+            <button
               type="button"
               className="linklike"
               disabled={busy}
@@ -266,6 +300,7 @@ function Table({
                   consumer={consumer}
                   busy={busy}
                   act={act}
+                  readOnly={readOnly}
                 />
               );
             })}
@@ -275,10 +310,16 @@ function Table({
       </div>
       <Legend legend={legend} fromOp={legends !== null} />
       <Accounting accounting={result.accounting} />
-      {total !== null && (
+      {total !== null && readOnly && (
         <div className="symbols-page">
-          bindings <Count n={total === 0 ? 0 : offset + 1} />–<Count n={offset + bindings.length} /> of{' '}
-          <Count n={total} />{' '}
+          bindings <Count n={total === 0 ? 0 : offset + 1} />–<Count n={offset + bindings.length} />{' '}
+          of <Count n={total} /> <span className="faint">(as recorded: one page)</span>
+        </div>
+      )}
+      {total !== null && !readOnly && (
+        <div className="symbols-page">
+          bindings <Count n={total === 0 ? 0 : offset + 1} />–<Count n={offset + bindings.length} />{' '}
+          of <Count n={total} />{' '}
           <button
             type="button"
             disabled={busy || offset <= 0}
@@ -349,6 +390,7 @@ function BindingRows({
   consumer,
   busy,
   act,
+  readOnly,
 }: {
   b: Rec;
   open: boolean;
@@ -359,6 +401,7 @@ function BindingRows({
   consumer: string | null;
   busy: boolean;
   act: SymbolsActions;
+  readOnly: boolean;
 }) {
   const name = str(b.symbol) ?? '?';
   const rows = rowsOf(b);
@@ -371,7 +414,12 @@ function BindingRows({
   const sub = `symbol-sub-${name.replace(/[^A-Za-z0-9_-]/g, '_')}`;
   return (
     <>
-      <tr className="symbol-row" data-symbol={name} data-status={status} data-open={open ? 'yes' : 'no'}>
+      <tr
+        className="symbol-row"
+        data-symbol={name}
+        data-status={status}
+        data-open={open ? 'yes' : 'no'}
+      >
         <td className="symbol-name">
           <button
             type="button"
@@ -430,7 +478,7 @@ function BindingRows({
             <div className="sub-line">
               <span className="faint">defined at</span>{' '}
               {strs(b.definitions).map((site) => {
-                const target = siteTarget(site);
+                const target = readOnly ? null : siteTarget(site);
                 return target ? (
                   <button
                     key={site}
@@ -474,16 +522,27 @@ function BindingRows({
                 const reader = str(r.name) ?? '?';
                 const causal = measured.get(reader);
                 return (
-                  <div className="reader-line" role="row" key={`${reader}-${i}`} data-reader={reader}>
+                  <div
+                    className="reader-line"
+                    role="row"
+                    key={`${reader}-${i}`}
+                    data-reader={reader}
+                  >
                     <span role="cell">
-                      <button
-                        type="button"
-                        className="linklike mono"
-                        title={`${reader}: open this read in the Circuits view`}
-                        onClick={() => act.openRead({ reader, binding: name, rows })}
-                      >
-                        {midTrunc(reader, 24)}
-                      </button>
+                      {readOnly ? (
+                        <span className="mono" title={reader}>
+                          {midTrunc(reader, 24)}
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          className="linklike mono"
+                          title={`${reader}: open this read in the Circuits view`}
+                          onClick={() => act.openRead({ reader, binding: name, rows })}
+                        >
+                          {midTrunc(reader, 24)}
+                        </button>
+                      )}
                     </span>
                     <span role="cell" className="n">
                       <OpValue value={r.mass} what="mass" />
@@ -495,7 +554,14 @@ function BindingRows({
                       {causal ? (
                         <Verdict causal={causal} />
                       ) : (
-                        <span className="faint" title="press measure verdicts for a native verdict">
+                        <span
+                          className="faint"
+                          title={
+                            readOnly
+                              ? 'a native verdict needs the live model'
+                              : 'press measure verdicts for a native verdict'
+                          }
+                        >
                           not measured
                         </span>
                       )}
@@ -511,7 +577,11 @@ function BindingRows({
                 </div>
               )}
             </div>
-            {rows.length === 1 ? (
+            {readOnly ? (
+              <span className="faint">
+                recorded: causal verdicts need the live model (<code>reads t{rows[0] ?? '?'}</code>)
+              </span>
+            ) : rows.length === 1 ? (
               <button
                 type="button"
                 disabled={busy}
@@ -647,7 +717,8 @@ function UnboundRows({ unbound }: { unbound: unknown }) {
             <span className="unbound-parts">
               {listed.map(([k, v]) => (
                 <span key={k} data-part={k} className="unbound-part">
-                  <span className="faint">{k.replace(/_/g, ' ')}</span> <OpValue value={v} what={k} />
+                  <span className="faint">{k.replace(/_/g, ' ')}</span>{' '}
+                  <OpValue value={v} what={k} />
                   {isRec(v) && v.bound !== undefined && (
                     <>
                       {' '}
@@ -681,7 +752,11 @@ function Accounting({ accounting }: { accounting: unknown }) {
       <OpValue value={accounting.listed_mass} what="listed_mass" /> · max |Σp − 1|{' '}
       <OpValue value={accounting.max_head_deviation} what="max_head_deviation" /> ≤{' '}
       <OpValue value={accounting.deviation_bound} what="deviation_bound" />{' '}
-      {accounting.within_bound === true ? 'within bound' : accounting.within_bound === false ? 'OUTSIDE bound' : ''}
+      {accounting.within_bound === true
+        ? 'within bound'
+        : accounting.within_bound === false
+          ? 'OUTSIDE bound'
+          : ''}
     </div>
   );
 }

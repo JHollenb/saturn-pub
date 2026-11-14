@@ -18,7 +18,8 @@ from mdb.engine.ports import (  # noqa: E402
     program_for,
 )
 
-CASES = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("qwen3", "fp32")]
+CASES = [(family, dtype) for family in ("qwen2", "qwen3", "llama", "mistral")
+         for dtype in ("bf16", "fp32")]
 PROMPT = [3, 17, 5, 29, 11, 42, 8]  # 7 tokens
 DTYPES = {"bf16": torch.bfloat16, "fp32": torch.float32}
 
@@ -40,6 +41,14 @@ def build_model(family, dtype, seed=1234):
         from transformers import Qwen2Config, Qwen2ForCausalLM
 
         model = Qwen2ForCausalLM(Qwen2Config(**common)).eval()
+    elif family == "llama":  # q/k/v/o biases on: the "config" bias column, present
+        from transformers import LlamaConfig, LlamaForCausalLM
+
+        model = LlamaForCausalLM(LlamaConfig(attention_bias=True, **common)).eval()
+    elif family == "mistral":  # no biases; the sliding-window mask path (window > context)
+        from transformers import MistralConfig, MistralForCausalLM
+
+        model = MistralForCausalLM(MistralConfig(sliding_window=64, **common)).eval()
     else:
         from transformers import Qwen3Config, Qwen3ForCausalLM
 
@@ -577,9 +586,13 @@ def _selfcheck(tmp_path, *args):
     return code, json.loads(out.read_text())
 
 
-def test_selfcheck_tiny_with_prompt_runs_and_passes(tmp_path):
-    code, report = _selfcheck(tmp_path, "--tiny", "qwen2", "--prompt", "port stepping", "--tokens", "1")
+@pytest.mark.parametrize("family", ["qwen2", "llama", "mistral"])
+@pytest.mark.parametrize("dtype", ["bf16", "fp32"])
+def test_selfcheck_tiny_with_prompt_runs_and_passes(tmp_path, family, dtype):
+    code, report = _selfcheck(tmp_path, "--tiny", family, "--dtype", dtype,
+                              "--prompt", "port stepping", "--tokens", "1")
     assert code == 0 and report["passed"] is True
+    assert report["environment"]["family"] == family
     assert report["prompt_tokens"] == len("port stepping")
     assert "bytes modulo" in report["prompt_encoding"]
     probes = report["probe_consistency"]
@@ -936,8 +949,37 @@ def test_tiny_model_builder_takes_layers():
 
     assert tiny_model("qwen3", torch.float32, layers=3).config.num_hidden_layers == 3
     assert selfcheck.tiny_model is tiny_model
-    with pytest.raises(ValueError, match="qwen2 or qwen3"):
-        tiny_model("llama")
+    assert tiny_model("llama").config.model_type == "llama"
+    assert tiny_model("mistral").config.model_type == "mistral"
+    with pytest.raises(ValueError, match="must be one of qwen2, qwen3, llama, mistral"):
+        tiny_model("gemma")
+
+
+@pytest.mark.parametrize("family,name,value", [
+    ("llama", "hidden_act", "gelu"),
+    ("mistral", "hidden_act", "relu"),
+    ("qwen2", "hidden_act", "gelu"),
+    ("llama", "mlp_bias", True),
+])
+def test_a_config_outside_the_family_row_is_refused_not_stepped(family, name, value):
+    """The port table's premises: an activation or bias the operator texts do not describe is
+    refused by program_for(adapter), attach and trace (it was silently mislabelled before)."""
+    from mdb.core.errors import Refused
+    from mdb.engine.models import tiny_model
+    from mdb.engine.ports import config_refusal
+    from mdb.engine.trace import Trace
+    from mdb.ops.debugger import attach
+
+    model = tiny_model(family, "fp32")
+    assert config_refusal(family, model.config) is None
+    setattr(model.config, name, value)
+    assert f"config.{name} = {value!r}" in config_refusal(family, model.config)
+    with pytest.raises(ValueError, match=f"config.{name}"):
+        program_for(DecoderAdapter(model, granularity="operation"))
+    with pytest.raises(Refused, match=f"config.{name}"):
+        attach(model)
+    with pytest.raises(Refused, match=f"config.{name}"):
+        Trace(model, ["L0.m"])
 
 
 def test_selfcheck_model_path_goes_through_load_local(tmp_path, monkeypatch):

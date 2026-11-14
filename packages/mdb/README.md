@@ -1,7 +1,7 @@
 # mdb
 
 mdb is a debugger for language models, in the spirit of gdb. It runs a loaded Hugging Face
-decoder (Qwen2 or Qwen3) and stops inside each native layer at named values called ports, where
+decoder (Qwen2, Qwen3, Llama or Mistral; gemma is not supported, M32) and stops inside each native layer at named values called ports, where
 you can read them, edit them, checkpoint and rewind. Every number it shows carries a label that
 says how the number was obtained.
 
@@ -57,13 +57,195 @@ staged at t3.L1.p: none
 ```
 
 `start` prefills all tokens but the last; the last token (row 3) is the one you step through.
+`start prefill=K` batches only the first K rows and steps the rest one row at a time, so their
+ports are stops too (see [Prefill split and position patching](#prefill-split-and-position-patching)).
 `mdb engine MODEL [PROMPT]` names what to debug, as `gdb PROGRAM` does. `MODEL` is a checkpoint
 directory, the name of a model in the local Hugging Face cache (`mdb engine qwen2.5-1.5b
 "Weather: freezing"`; the name lookup was run against a real cache, the model was not loaded
-here), `tiny:qwen2` or `tiny:qwen3`, or the address of a running `mdb serve` (see
+here), `tiny:qwen2`, `tiny:qwen3`, `tiny:llama` or `tiny:mistral` (the same four as `--tiny` of `mdb engine` and `mdb serve`), or the address of a running `mdb serve` (see
 [Live and remote sessions](#live-and-remote-sessions-mdb-serve)). Nothing is ever downloaded; a
 name that matches no cached model, or several, is refused with the candidates. `--project DIR`
 attaches a project, which makes checkpoints durable.
+
+## Coming from TransformerLens or nnsight
+
+mdb uses its own words for things you already know. Left: the usual term. Right: mdb's. Port names
+are the Qwen2 ones in the [Ports](#ports) table; `L<L>` is the layer number. "Roughly" means the
+tensor has another shape or sits at another position, so do not swap them blindly.
+
+| TransformerLens / nnsight / pyvene | mdb |
+|---|---|
+| hook point, module hook | port: a named value inside one decoder layer, address `L<L>.<port>` |
+| `blocks.L.hook_resid_pre` | `L<L>.h` (layer input) |
+| `blocks.L.hook_resid_post` | `L<L>.h_out` (layer output) |
+| `blocks.L.hook_resid_mid` | `L<L>.r` (`h + o`) |
+| `blocks.L.attn.hook_pattern` | `L<L>.p` (per head, `p[h5]`; native attention weights) |
+| `blocks.L.attn.hook_z` | roughly `L<L>.A`: `hook_z` is per head, before `W_O`; `A` is the heads concatenated, at the `o_proj` input (`A[h5]` selects one head's slice) |
+| `blocks.L.hook_attn_out` | `L<L>.o` (after `o_proj`) |
+| `blocks.L.attn.hook_q` / `hook_k` / `hook_v` | roughly `L<L>.q` / `k` / `v`: mdb's are flat, `[batch, row, head*head_dim]`, `q` and `k` before RoPE |
+| `blocks.L.attn.hook_attn_scores` | `L<L>.s` (a replica checked against `p`, see Ports) |
+| `blocks.L.mlp.hook_post` | `L<L>.f` (`down_proj` input) |
+| `blocks.L.hook_mlp_out` | `L<L>.m` |
+| activation cache (`run_with_cache`, `trace`) | reading ports with `print` / `x` at a stop, or `mdb.trace` in Python; one prompt, one row at a time |
+| activation patching | `set ADDR = OTHERRUN:ADDR` for ports (`set L0.A[h1] = clean:L0.A[h1]`, see the example) and state cells; `whatif` and `compare` take the same value and measure the edit natively, then restore; at earlier positions after `start prefill=K`; the position x layer sweep is `sweep PORT = OTHERRUN --consumer C` |
+| head or path ablation | `set L<L>.A[h5] *= 0` (selector `[h5]`); `whatif` for the effect without leaving the stop |
+| direct logit attribution | `explain M[a,b]` (exact split of a margin, with a measured remainder) |
+| KV cache | state cells `cache.L<L>.k` / `v[kv0,row=2]`; readable, editable, and takeable from another run |
+| a dataset of prompts, `run_with_cache` over a batch | a prompt set: `each SET: OP LINE` runs any verb on every prompt, one run per prompt, with a summary (see [Prompt sets](#prompt-sets)); no batched forward (the engine is batch 1) |
+| SAE features, dictionary units | none (issue M23) |
+
+Example: patch one head's output from a clean run into a corrupted run and read a logit
+difference. TransformerLens style, not run (patched at the last position: an mdb port edit acts
+on the cursor's row; by default the earlier prompt rows are prefilled and live in the cache
+cells, and `start prefill=K` makes them stepped rows with ports, see below):
+
+```python
+# pseudocode, not run
+_, clean_cache = model.run_with_cache(clean_tokens)
+def patch(z, hook):              # z: [batch, pos, head, d_head]
+    z[:, -1, 1] = clean_cache[hook.name][:, -1, 1]
+    return z
+patched = model.run_with_hooks(corrupt_tokens, fwd_hooks=[("blocks.0.attn.hook_z", patch)])
+diff = patched[0, -1, 6] - patched[0, -1, 7]
+```
+
+mdb, on the tiny Qwen2 (clean prompt `1 7 9 3`, corrupted `1 5 9 3`, only row 1 differs; the
+logit difference is token 6 minus token 7 at the last row, bf16), real output with the long
+lines cut:
+
+```
+$ python -m mdb engine tiny:qwen2 --tokens "1 5 9 3" --script FILE
+(mdb) start name=corrupt 1 5 9 3
+(mdb) checkpoint s0
+(mdb) run name=clean 1 7 9 3
+(mdb) until logits
+(mdb) x logits 2 6
+t3.logits  [6:8] of 32: -0.14355 -0.12451 [measured]
+(mdb) frame corrupt:
+(mdb) until logits
+(mdb) x logits 2 6
+t3.logits  [6:8] of 32: -0.16699 -0.15332 [measured]
+(mdb) restart s0
+(mdb) set L0.A[h1] = clean:L0.A[h1]
+staged at t3.L0.A[h1]: A replace tensor [1, 1, 16] bfloat16 sha256 f111ca510505 from clean:t3.L0.A[h1] (live) on [h1] (8 elements) (not fired yet)  (1 staged)
+  value from clean:t3.L0.A[h1]
+  realised as one masked replace on the selected elements
+(mdb) until logits
+(mdb) x logits 2 6
+t3.logits  [6:8] of 32: -0.1709 -0.14844 [measured, under edit t3.L0.A]
+(mdb) whatif L1.m = clean:L1.m --consumer M[6,7]
+whatif t3.L1.m replace tensor 7b16b2586286 from clean:t3.L1.m -> t3.M[6,7]  (mode rewind, ...)
+  sealed  linear ΔM = -0.00021868 [derived-local P14]   exact ΔM = -0.00021847 [derived-exact]  ...
+  native  ΔM = -0.00097656 [measured]   (base -0.022461 [measured] -> edited -0.023438 [measured])
+  ...
+(mdb) set L0.A[h1] = clean:L0.A[h0:2]
+error (refused): clean:t3.L0.A[h=0:2] selects shape [1, 1, 16]; t3.L0.A[h1] selects [1, 1, 8]; select the same block on both sides (the same port kind, heads and row length)
+```
+
+Logit difference (token 6 minus token 7, from the printed values): clean -0.0190, corrupted
+-0.0137, head 1 of L0 patched -0.0225. The patch moves it away from the clean value here; this is
+a random tiny model, so the numbers only show the mechanics. The value of another run can name
+another row or layer (`set L0.m = clean:t3.L1.m`); a missing row is the cursor's row, as for an
+address of this run. Both selections must have the same shape. The edit records where its value
+came from (`origin`: run, address, payload sha256, the clean run's cut) in its manifest, the
+receipt and `info edits`; fetching it leaves the clean run where it was. With a project attached
+the value is stored as a blob with the edited run's recipe, so a pointer to a value read under
+the patch still resolves after the clean run is gone; without one such a pointer is refused and
+says to attach with `project=`. A whole-residual patch reproduces the clean run bit for bit:
+when only the last row differs, `set L1.h = clean:L1.h` gives the clean logits; when an earlier
+row differs, add its cache cells (`set cache.L<l>.k|v[row=0:3] = clean:cache.L<l>.k|v[row=0:3]`
+for every layer), as `tests/test_ops_port_origin.py` checks.
+
+### Prefill split and position patching
+
+`start prefill=K` (and `run prefill=K`, `Run(adapter, prompt, prefill=K)`) computes prompt rows
+`0..K-1` in one batched call and steps rows `K..` one row at a time through the same transitions
+a generated row takes, with the prompt's next token forced at `sample` instead of the argmax.
+`prefill=0` steps every row; the default is all rows but the last. A stepped prompt row has
+every port, so `until t1.L0.m`, `print`, `set tR.L.PORT = clean:tR.L.PORT`, `whatif` and
+`compare` work there; on a row that was prefilled they are refused with a message that names
+`start ... prefill=K` for a `K` no larger than the row.
+
+The split is part of the procedure (issue M26): a batched and a stepped row can differ in the
+last bits of their cached K/V (measured on the tiny fp32 Qwen2: logits differ by 3e-8 between
+`prefill=0` and the default; M5 measured it on Qwen2.5-1.5B), so the checkpoint, the replay
+recipe and every restore carry `prefill`; `where` and `info runs` show it when it is not the
+default. A recipe written before the field existed reads as the default split.
+
+`sweep PORT [rows=R0:R1] [layers=L0:L1] = ORIGIN --consumer C [top=K]` patches `PORT` from the
+run `ORIGIN` at each (row, layer), runs natively to the consumer (a margin or one logit),
+reads it and moves on; the session is restored once at the end and checked unchanged. The
+result is one record: the layers x rows table of deltas (`measured`), the top cells by |Δ|,
+and the native call counts. A table too large for the record is stored as a sha256-checked
+blob with the top cells kept inline. Cells are visited from the latest layer entry back, each
+from a trail mark below it, so no cell replays from row 0: a cell `(r, l)` with the consumer
+in row `c` of an `L`-layer model costs `(L - l) + L(c - r)` layer calls; the edit is staged
+without a probe and the return to the held trail is a snapshot rollback, which costs none.
+Before running, `sweep` prints its plan (`sweep plan: N cells ..., P layer calls planned`) and
+refuses a plan above 50000 layer calls (about 5 minutes on Qwen2.5-1.5B at 5.2 ms per layer)
+unless `max_calls=N` raises the cap. With a project open the result is also stored as a
+`sweep` record (the table as a checked blob pointer when it is large) and its id is printed.
+In a prompt set, `each SET: sweep h rows=@last = @pair:h --consumer M[$answer,$foil]` takes the
+origin from each item's pair; a pair of another length is a per-item refusal. `each SET
+prefill=@ROLE: ...` (or `prefill=K`) starts every item, and its pair, with that split; `@ROLE`
+binds to the item's own role row, and an item whose prompt is shorter than the split is
+refused. Analysis records (`forecast`, `whatif`, `circuit`, `circuit test`, symbol tables,
+`sweep`) carry the split as `procedure: {prefill, first_row, prompt_rows}`.
+
+Tiny Qwen2 (bf16), clean `1 7 9 3 6 2`, corrupted `1 5 9 3 6 2` (row 1 differs), both stepped
+from row 0, real output (`tests/repl_golden/prompt_rows.mdb`):
+
+```
+(mdb) start name=clean prefill=0 1 7 9 3 6 2
+(mdb) until t5.logits
+(mdb) start prefill=0 1 5 9 3 6 2
+prefill=0: no row batched, rows 0..5 stepped (tokens forced)
+t0.L0.h  h = layer input (residual stream)  {P01}
+(mdb) until t2.L1.h
+(mdb) print t1.L0.m
+t1.L0.m  bfloat16 [1, 1, 16]  (batch, row, d_model)
+  norm 0.0017112 min -0.0005455 max 0.0007515 mean 0.00010715 abs_max 0.0007515 [measured]
+(mdb) until t5.logits
+(mdb) sweep h = clean --consumer t5.M[4,9]
+sweep plan: 12 cells (6 rows x 2 layers), 78 layer calls planned (base 0, cells 78; cap 50000)
+sweep h = clean:h -> t5.M[4,9]  (12 cells; base -0.038208 [measured])
+  prefill=0: no row batched, rows 0..5 stepped (tokens forced)
+     t0 t1 t2 t3 t4 t5
+L0    0 -8  0  0  0  0
+L1    0 -9 -2 -1 -1 +5
+cell: tenths of max |Δ| 0.014893 [measured] (9 caps); '.' < 1/20, '0' exact
+  top |Δ|: t1.L1 -0.014893 [measured], t1.L0 -0.011353 [measured], t5.L1 0.0081177 [measured], ...
+  cost: 78 layer calls (planned 78), 11 probes, 174 other transitions [measured] (wall time in the record)
+  session unchanged at t5.logits
+```
+
+Row 0 is the same token in both runs, so its cells are exactly 0; at `L0` only the differing
+row 1 moves the margin (the other rows' layer inputs are the same embeddings). `whatif t1.L1.h
+= clean:t1.L1.h --consumer t5.M[4,9]` measures the same -0.014893 natively, with an exact
+prediction across rows. Patching the whole residual `tR.L2.h` from clean at every stepped row
+of one layer gives the clean logits bit for bit when both runs use the same split
+(`tests/test_engine_prefill.py`). Memory (measured, `Run.held_bytes()` at the last logits of a
+12-layer tiny Qwen2, 24-token prompt): 31480 bytes in 407 trail marks with every row stepped
+against 19136 bytes in 16 marks with the default split; a sweep leaves it unchanged. Time
+(measured, same model, laptop CPU): a sweep of 4 rows x 12 layers made 1224 layer calls in
+8.0 s; one row x 12 layers 20 rows before the consumer made 3210 in 18.8 s, so the cost is the
+rows between the cell and the consumer. After M54 (measured, 12-layer tiny Qwen2, 8-token
+prompts): rows 4:8 x 12 layers 1176 layer calls and 0 run probes (1224 and 96 before), rows
+1:8 3570 and 0 (3654 and 168); the planned count equals the measured one.
+
+A sealed `bound` is the worst-case interval of the dtype's rounding through the chain. Each
+forecast stop between the cursor and the consumer widens it, and each RMSNorm scales an
+interval by about `1/rms` of its input, so on the random tiny models (residual rms near
+0.016) a bound sealed a few layers before a cross-row consumer reaches 1e4 to 1e5 while the
+native and emulated deltas agree bit for bit. When the bound is at least `|exact|` the line
+says `(worst case, >= |exact|: no sign)`; the record keeps `bound_scope` and
+`wider_than_value`.
+
+mdb adds, and the others do not: a prediction sealed before the native measurement with the gap
+split by cause (`forecast`, `verify`), an authority label and state on every number, and
+reversible stepping inside a layer (`reverse-step`, `restart`). It lacks a batched forward
+(prompt sets run one prompt at a time), model families beyond Qwen2, Qwen3, Llama and Mistral (gemma: M32), and dictionary
+features (M23).
 
 ## Embedding
 
@@ -128,9 +310,11 @@ in which case it lands after the read; the reply says which. `mix DOSE` is
 (`mix 1` is the exact copy, `mix 0` leaves the cell).
 `run name=boiling 1 7 9 3` starts a second run (`start` takes `name=` too); `frame boiling:` and
 `frame main:` switch; `info runs` lists them. `ORIGIN:ADDR` takes a value from another run, a
-checkpoint or a stored session of the same model and numeric scope, as `v` or `kr` occurrences
-or cache cells; `k`/`kn` occurrences are refused (before RoPE). `seek` does not switch runs
-(use `frame NAME:`), and a target without a row (`seek L20.p`) is on the cursor's row.
+checkpoint or a stored session of the same model and numeric scope: into a cell, as `v` or `kr`
+occurrences or cache cells (`k`/`kn` occurrences are refused, before RoPE); into a port, as any
+occurrence of the same selected shape (the activation patching example above). `seek b:t3.L1.p`
+makes run `b` current, as `frame b:` does, and moves it there (a run name needs the full
+occurrence, `b:t3.L1.p`, not `b:L1.p`); a target without a row (`seek L20.p`) is on the cursor's row.
 
 ```
 (mdb) info runs
@@ -152,7 +336,7 @@ edits come from one cached full-layer probe (64 layers kept), not a rebuild per 
 
 One line per port, in native execution order, generated from the port program
 (`mdb.engine.ports.program_for`); `info ports` and `list` print the same. The tables here are kept by hand. Proof IDs refer to
-`obsidian/model-math/` (P01-P33). On Qwen3, `qr` and `kr` take `qn` and `kn`.
+`obsidian/model-math/` (P01-P33). On Qwen3, `qr` and `kr` take `qn` and `kn`. Llama and Mistral have the Qwen2 list (`info program` on `tiny:llama`: `h a q k v qr kr s p A o r n g sg u f m h_out`); a projection without bias contributes no bias term, and a config outside a family's premises (a non-silu activation, Llama `mlp_bias`) is refused by `attach`, `trace` and `program_for`. The families come from one table, `mdb.engine.ports.FAMILIES`.
 | Port | Read at | Operator | Proofs |
 |---|---|---|---|
 | `h` | decoder layer input | h = layer input (residual stream) | P01 |
@@ -193,7 +377,7 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `break` | `break PATTERN [if CONDITION]` | mutate | Set a breakpoint on an address pattern (L*.p, t5.L1.o, logits, cache.L0.v[row=2]); cache cells are evaluated at boundary stops only |
 | `checkpoint` | `checkpoint [NAME]` | mutate | Name the cursor position (about 1 KB of plain data) |
 | `checkpoints` | `checkpoints [offset=N] [limit=N]` | read | List named checkpoints (paged: offset=, limit=) |
-| `circuit` | `circuit CONSUMER [top=K] [depth=D] \| circuit show ID` | mutate | Circuit records: build from the exact decomposition (nodes, edges, remainder), show as a walk; `circuit test ID` is disabled (issue M4) |
+| `circuit` | `circuit CONSUMER [top=K] [depth=D] \| circuit test ID ref=NAME\|set:NAME \| circuit show ID [node=NODEID]` | mutate | Circuit records: build from the exact decomposition (nodes, edges, remainder), test by native patching from a reference run (knock-out and keep-only margins, two measured ratios; a `circuit-test` record), show as a walk (`node=` opens one stored page of a circuit that did not fit one record) |
 | `commit` | `commit` | mutate | Commit the pending layer with its staged edits (cursor to its h_out) |
 | `compare` | `compare A B [consumer=C]  (A, B: ADDR=VALUE [op] or a checkpoint name)` | navigate | Compare branches: base, A, B and A+B measured natively, effects and the interaction |
 | `condition` | `condition N [EXPR]` | mutate | Set the condition of breakpoint N (a watch's predicate); no expression removes it |
@@ -202,9 +386,10 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `disable` | `disable [ID ...]` | mutate | Disable breakpoints and watches without deleting them (all when no ids) |
 | `display` | `display [ADDR]` | mutate | Show an address after every stop (no address: list displays) |
 | `down` | `down [N]` | navigate | Move the focus back toward its consumer, N times |
+| `each` | `each SET [at=ADDR] [keep]: OP LINE [; OP LINE ...]` | native | Run one op line on every prompt of a set (one run per prompt): one result per prompt and a summary (n, mean, min, max, sign agreement, verdict counts) |
 | `enable` | `enable [ID ...]` | mutate | Enable breakpoints and watches (all when no ids are given) |
 | `explain` | `explain M[a,b]\|ADDR` | read | Exact accounting of a margin M[a,b] or of one port, with proof IDs and the measured remainder (cursor at the row's logits/sample) |
-| `export` | `export` | not built yet (B1) | Export a walkthrough bundle of records and pointers |
+| `export` | `export` | not built yet | Export a walkthrough bundle of records and pointers |
 | `feature` | `feature ID layer=L [sae=NAME] [top=K]` | read | Life of one SAE feature along the cursor's row: its encoder probe at every residual port (h, r, h_out), where it first crosses the site's top-k threshold, and which attention/MLP (heads, neurons) write it |
 | `features` | `features ADDR [top=K] [sae=NAME] [consumer=M[a,b]] [lens=N] [circuit=true] [match=UNIT] \| features L*.h_out consumer=M[a,b]` | navigate | SAE features at a residual port with the error row; with a consumer, each feature's, the bias's and the error's exact direct effect and the closure (L*.h_out: per-layer profile of what the SAE drops) |
 | `finish` | `finish` | navigate | From a port inside a layer: run to that layer's h_out. From h_out or a token-level stop: run to this row's sample |
@@ -214,26 +399,28 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `info` | `info ports\|breakpoints\|watch\|display\|checkpoints\|edits\|program\|runs [offset=N] [limit=N]` | read | Show debugger tables or the program (lists are paged: offset=, limit=) |
 | `list` | `list [LAYER]` | read | The layer's port program: operator text, proof IDs, cursor marked |
 | `next` | `next [N]` | navigate | Step to the last port of the sublayer (r, then h_out) |
-| `print` | `print [ADDR] [top=K] [slice=N]` | read | Reduce a value: shape, dtype, stats, top-k by \|value\|, pointer |
+| `print` | `print [ADDR] [top=K] [slice=N]` | read | Reduce a value: shape, dtype, stats, top-k by \|value\|, pointer; `print M[a,b]` (also `x`, `display`) is the measured logit difference, refused before the logits stop |
+| `promptset` | `set load NAME FILE \| set define NAME ITEMS \| set show NAME \| promptset list \| promptset result ID [ITEM]` | mutate | Prompt sets: load a JSONL file (not from the web), define a set inline, show or list sets, read a stored each result (the REPL's set load / set show) |
 | `reads` | `reads SOURCE [rows=R\|A:B\|all] [consumer=C] [top=K] [causal=false]` | navigate | Who reads a value: attention reads of a source row with mass, exact contribution and a native causal verdict |
 | `restart` | `restart NAME` | navigate | Return to a named checkpoint (rewinds or replays) |
 | `reverse-continue` | `reverse-continue` | navigate | Run backwards to the previous breakpoint or watch hit |
 | `reverse-finish` | `reverse-finish` | navigate | Step back to the boundary before the pending layer (its input) |
 | `reverse-next` | `reverse-next [N]` | navigate | Step back to the previous sublayer end |
 | `reverse-step` | `reverse-step [N] [unit] [budget=ROWS]` | navigate | Step back one port (or N units; layer/token units enter at most `budget` rows) |
-| `run` | `run [name=NAME] [TEXT \| ID ID ...] [budget=N]` | native | Like start, then continue to the first armed breakpoint or watch |
+| `run` | `run [name=NAME] [prefill=K] [TEXT \| ID ID ...] [budget=N]` | native | Like start, then continue to the first armed breakpoint or watch |
 | `seek` | `seek ADDR \| seek ORIGIN:ADDR \| seek POINTER-JSON` | navigate | Move the session to an occurrence: forward, backward, or by replaying a stored recipe (ORIGIN:ADDR or an occurrence pointer) |
 | `sae` | `sae load NAME PATH [layers=A:B] [k=K] [cache=N] [verify=true] \| sae list \| sae drop NAME` | mutate | Load, list or drop SAE feature bases (per-layer residual SAEs) |
 | `set` | `set ADDR = VALUE\|ADDR\|ORIGIN:ADDR [replace\|add\|scale\|mix DOSE]` | mutate | Stage an edit at a port of the pending layer, or of a state cell (cache.L<i>.k\|v[kv,row,d]): set ADDR = VALUE [op] |
-| `start` | `start [name=NAME] [TEXT \| ID ID ...]` | native | Prefill a prompt and stop at the pending token's first port (L0.h) |
+| `start` | `start [name=NAME] [prefill=K] [TEXT \| ID ID ...]` | native | Prefill a prompt and stop at the first stepped row's first port (L0.h) |
 | `step` | `step [N] [port\|sublayer\|layer\|token] [budget=ROWS]` | navigate | Step one port (or N units; layer/token units enter at most `budget` rows) |
+| `sweep` | `sweep PORT [rows=R0:R1] [layers=L0:L1] = ORIGIN --consumer C [top=K]` | navigate | Patch PORT from another run at every (row, layer) of a range, measure the consumer natively for each, restore: one table of deltas (activation patching) |
 | `symbol` | `symbol NAME = ADDR[,ADDR...]` | mutate | Declare a user symbol over cache rows: symbol NAME = ADDR[,ADDR...] |
 | `symbols` | `symbols [consumer=C] [rows=R\|A:B\|all] [min_mass=X] [offset=N] [limit=N]` | mutate | Symbol table at the cursor: bindings with definition sites, lifetimes, readers, status and an Unbound row (stored as records with a project) |
 | `tbreak` | `tbreak PATTERN [if CONDITION]` | mutate | Set a breakpoint that deletes itself after its first hit |
 | `undisplay` | `undisplay [ID ...]` | mutate | Remove displays (all when no ids are given) |
 | `until` | `until ADDR [budget=ROWS]` | navigate | Run to an address, stopping earlier at an armed breakpoint or watch |
 | `up` | `up [N] [PORT]` | navigate | Move the focus to a producer (toward the layer input), N times; `up PORT` picks the producer by name, the result lists the alternatives |
-| `verify` | `verify [ID ...]` | mutate | Compare open forecasts whose target the cursor has passed with the native values (residual, bound, order) |
+| `verify` | `verify [ID ...]` | mutate | Compare open forecasts whose target the cursor has passed with the native values: native against the emulated prediction in dtype spacings, `confirmed` / `not confirmed` / `unresolved`, the rounding effect against exact, and the order proof (the op's own help text still describes the removed 3 x sqrt(n) floor, see Known limits) |
 | `watch` | `watch ADDR [change\|level\|edge] [if PREDICATE]` | mutate | Watch an address: stop when it changes (or a predicate holds: level/edge); cache cells (cache.L<i>.k\|v) are evaluated at boundary stops only |
 | `whatif` | `whatif ADDR=EXPR [replace\|add\|scale\|mix DOSE] consumer=M[a,b]\|logits[i]\|ADDR` | navigate | Predicted, then natively measured change of a consumer under one edit; the session is left exactly where it was |
 | `where` | `where` | read | Show the cursor, its operator and the context tokens |
@@ -264,7 +451,7 @@ means the same in both.
 ```python
 import torch, mdb
 
-model = mdb.open_tiny("qwen2").model         # any loaded Qwen2/Qwen3 causal LM
+model = mdb.open_tiny("qwen2").model         # any loaded Qwen2/Qwen3/Llama/Mistral causal LM
 batch = torch.tensor([[1, 5, 9, 3], [2, 6, 10, 4]])
 with mdb.trace(model, ports=["L1.p", "L1.s", "L1.m", "L0.h"]) as t, torch.no_grad():
     model(batch)                             # the experiment's own forward
@@ -290,17 +477,56 @@ print({k: t.info("L1.s")[k] for k in ("state", "authority", "kind", "replica_equ
 
 ## Predictions: `forecast`, `verify`, `whatif`
 
-`forecast` seals a prediction from values at the cursor, before native code runs; `verify`
-compares it with what native code then produced (`tests/repl_golden/predict_forecast.out`):
+`forecast` seals two predictions from values at the cursor, before native code runs, and
+`verify` compares them with what native code then produced
+(`tests/repl_golden/predict_forecast.out`):
+
+- `exact`: the float64 chain of the port program's identities (`derived-exact`, real
+  arithmetic on the captured operands), with its per-element worst-case rounding `bound`;
+- `emulated`: the same chain with the run's dtype rounding at every point where eager HF
+  rounds, each step run as eager HF writes it with the backend's own kernels at the native
+  call's batch-1 shapes (`derived-exact` under the premise "rounding points of eager HF
+  attention/MLP on this backend"; the premise list is in the record, `emulated.premises`).
+
+Both sha256s are sealed (`digests`). The verdict is decided on native - emulated: `confirmed`
+when every element is within the floor, `1 x spacing` (`supplied`), `spacing` being the dtype's
+gap at the consumer's magnitude (a margin, a difference of two rounded logits: the sum of their
+two spacings). The floor does not widen with depth. Measured: emulated equals native bit for bit
+at every stop from the sealing stop to the logits on tiny Qwen2/Qwen3/Llama/Mistral (BF16 and
+FP32, 2 to 28 layers) and on Qwen2.5-1.5B (CUDA, BF16 28 layers and an FP32 2-layer cut, 3
+prompts). Above the floor `verify` says where emulation and native part: `not confirmed` when the
+prediction is not the emulated chain of the sealed operands (an operand or the held prediction
+differs from its sealed digest) or when a stage from that stop to the target does not reproduce
+its native value from its native operands within the worst-case bound of its identity;
+otherwise `unresolved` (rounding drift between stages, each stage being the native step), with
+the parting stop and any native top-score tie the emulated softmax splits differently.
+`rounding_effect` is native - exact (`measured`), and the sealed `rounding_origin` names the
+first stop where exact and emulated part by more than a spacing; on Qwen2.5-1.5B BF16 that is
+an L0 score (`t22.L0.s[h3]: score spacing 64 at |s| 1.51e+04`), and the exact chain is 35 to 78
+spacings off at L0.m because rounded scores tie and the native softmax is not the softmax of the
+real scores (M42). The worst-case bound against `exact` is printed only when finite
+(information):
 
 ```
 (mdb) forecast L0.p
-forecast 1  t3.L0.p  sealed at t3.L0.h  record f8059f3549dad257
-  predicted max_abs 0.25152 [derived-exact] norm 0.70712 [derived-exact]  sha256 cb1cc1226f21049d  bound 0.0026798 [bound] per element
+forecast 1  t3.L0.p  sealed at t3.L0.h  record 96acb5fd3797bace
+  method 7 identities t3.L0.a .. t3.L0.p (last softmax P05); chain not stored (no project)
+  predicted max_abs 0.25152 [derived-exact] norm 0.70712 [derived-exact]  sha256 a8cee3618668d88c  bound 0.0026798 [bound] per element
+(mdb) forecast M[4,9]
+forecast 2  t3.M[4,9]  sealed at t3.L0.h  record 6d61cae9d3fa30fb
+  method 39 identities t3.L0.a .. t3.logits (last readout_logits P19); chain not stored (no project)
+  predicted -0.11452 [derived-exact P19]  bound 16.825 [bound]
 (mdb) until t3.logits
 t3.logits  logits = lm_head(fn)
 (mdb) verify
-forecast 1 t3.L0.p: within-bound  native max_abs 0.25195 [measured] norm 0.70781 [measured]  residual 0.00091062 [measured] <= bound 0.0026798 [bound]
+forecast 1 t3.L0.p: confirmed  native max_abs 0.25195 [measured] norm 0.70781 [measured]  residual vs emulated 0 [measured] = 0 spacings <= floor 0.0019531 [supplied P20] = 1 bfloat16 spacing (supplied)  [P20, resolved]
+  rounding effect native - exact 0.00091062 [measured] = 0.466 spacings; worst-case bound 0.0026798 [bound] (holds, information)
+  rounding origin (sealed): exact and emulated agree within one spacing at every stop of the chain
+  order: sealed at t3.L0.h (stop 2) before the target (stop 10); cut descends through 4 receipts
+forecast 2 t3.M[4,9]: confirmed  native -0.11401 [measured]  residual vs emulated 0 [measured] = 0 spacings <= floor 0.00073242 [supplied P20] = 1 bfloat16 spacing (supplied)  [P20, resolved]
+  rounding effect native - exact 0.00050802 [measured] = 0.694 spacings; worst-case bound 16.825 [bound] (holds, information)
+  rounding origin (sealed): t3.L0.f: exact and emulated part by 1.83 spacings at |x| 0.00723
+  order: sealed at t3.L0.h (stop 2) before the target (stop 41); cut descends through 4 receipts
 ```
 
 `whatif` seals the predicted change of a consumer under one edit, measures it natively on a
@@ -308,25 +534,62 @@ private branch, and restores the session (`tests/repl_golden/predict_whatif.out`
 
 ```
 (mdb) whatif L1.m = 0.5 add --consumer M[4,9]
-whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 5d511215876ce57d)
-  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  bound 0.07029 [bound]
+whatif t3.L1.m add 0.5 [supplied] -> t3.M[4,9]  (mode pending, record 44035dcd7864d219)
+  sealed  linear ΔM = 1.4572 [derived-local P14]   exact ΔM = 0.16513 [derived-exact]  bound 0.07029 [bound]  (operands forecast from t3.L1.a)   emulated ΔM = 0.16449 [derived-exact]
   native  ΔM = 0.16449 [measured]   (base -0.11401 [measured] -> edited 0.050476 [measured])
-  error split (P20): linear 1.4572 [derived-local P14] + nonlinear -1.2921 [derived-exact P20] + realisation -4.4976e-05 [derived-exact P20] + rounding -0.00059161 [measured P20] (within bound 0.061091 [bound])
-  verdict (P20): effect  native ΔM 0.16449 [measured P20], exact ΔM 0.16508 [derived-exact P20], residual -0.00059161 [measured P20]; floor 0.00097656 [measured P20] = max(|residual|, 2 x spacing 0.00048828 [measured P20])
+  error split (P20): linear 1.4572 [derived-local P14] + nonlinear -1.2921 [derived-exact P20] + operands 4.2358e-05 [derived-exact P20] + realisation -4.5182e-05 [derived-exact P20] + rounding effect -0.00063376 [derived-exact P20] (within bound 0.01905 [bound]) + residual 0 [measured P20]
+  verdict (P20): effect  native ΔM 0.16449 [measured P20], emulated ΔM 0.16449 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) 0.16512 [derived-exact P20]; floor 0.00048828 [supplied P20] = 1 bfloat16 spacing (supplied)
   session unchanged at t3.L1.a  (5 moves, restored)
 ```
 
+The exact change is `F(x1) - F(x0)` (P09 section 1): the base and the edited chains hold the
+edited port at its value `x0` or write the edit there, and recompute the same stops (those the
+edit reaches) in float64 from the same operands; the base is never the native value, which
+would put the base run's rounding into the exact change (with a no-op edit `L1.m *= 1` the
+exact change is 0, at any cursor). The sealed value uses the operands at the cursor. When the
+consumer is ahead of the cursor, the stops past it exist only as the chain's own float64 values,
+and the sealed line says `(operands forecast from t3.L1.a)` (`prediction.exact.operands` in the
+result; the label stays `derived-exact`: an exact identity on the operands captured at the
+cursor, not a linearisation). After the native run the chain is evaluated again at the consumer
+on the measured operands of the unedited run (`exact` in the result, `requested` and `written`;
+computed after the seal and never shown as sealed); the split gains `operands` (that value minus
+the sealed one) and `realisation` is taken on the measured operands. That exact number is the
+same wherever the cursor was (tested at three cursors for a port, a head-selected and a cross-run
+edit, to `spacing / 2^20`). Beside the exact change the seal holds the emulated one (`emulated`:
+the forecast's `EmulatedRowModel` chains, the dtype's rounding where eager HF rounds, the edit
+written by the engine's own arithmetic), which predicts the native change itself: the split ends
+in `rounding effect` (emulated - exact, `derived-exact` under the emulation premises) and
+`residual` (native - emulated, `measured`), and the verdict holds native against emulated.
+Measured on the tiny models: the residual is 0 bit for bit for port, cross-run, head-selected and
+cache-cell edits at cursors ahead of the edit, between edit and consumer and past the consumer,
+and on a model whose rounded L0 scores tie (where exact is tens of spacings off).
+
 ### Verdicts (P20)
 
-`whatif`, `reads` and `compare` judge an effect from the P20 accounting
-(`mdb.analysis.verdict`): native change = exact change (float64 chain, `derived-exact`) +
-residual (`measured`). The floor is `max(|residual|, 2 x spacing)`, spacing being the gap between
-adjacent values of the consumer's dtype at its magnitude. A change is an `effect` when the
-native change is above the floor and the exact change has its sign and exceeds the residual;
-`no effect above the noise floor` when both are within the floor; otherwise `unresolved`, with
-the numbers. With no exact chain (as in `compare`) the native change is held against `2 x
-spacing` alone and the line says so. Worst-case rounding bounds are still shown where they are
-finite (`bound` label) and never decide a verdict.
+`whatif` and `reads` judge an effect from the P20 accounting (`mdb.analysis.verdict`): native
+change = exact change (float64 chain on the measured operands, written value) + rounding effect
+(emulated - exact, both `derived-exact`) + residual (native - emulated, `measured`). The floor is
+one spacing of the consumer's dtype at its magnitude (`supplied`, `FLOOR_SPACINGS = 1`, the same
+constant `verify` uses). The rule, on the native and emulated changes:
+
+- `effect`: native and emulated agree within the floor and the native change is not zero at the
+  dtype's resolution. When the exact change is 0 or has the other sign, a note says the native
+  change is the dtype's rounding.
+- `no effect`: they agree and the native change is zero: the dtype cannot show the change. The
+  note gives the exact change the dtype cannot show (`no change at bfloat16 resolution (spacing
+  0.125); exact Δ 0.33, which the dtype cannot show`); `reads` prints this as `not causal at this
+  dose` with that note as its reason.
+- beyond the floor, `verify`'s rule: `not confirmed` when a stage of the edited or the base run
+  lies outside the bound of its identity on its native operands (the stop named), else
+  `unresolved` (rounding drift; a chain over several rows is not stage-checked and says so).
+
+The exact change is reported beside the verdict and never decides it. With no emulated change
+(the emulated chains refused, e.g. a staged edit ahead of the cursor, or `compare`, which has no
+chain) the verdict is native only: `effect` when the native edited and base values differ, else
+`no effect`, and the line says so. Worst-case rounding bounds are still shown where they are
+finite (`bound` label) and never decide a verdict. `verify` holds native against the emulated
+prediction the same way: `confirmed` within one spacing, else `not confirmed` or `unresolved` by
+where emulation and native part.
 
 ## Following a value: `reads`, `symbols`, `circuit`, `compare`
 
@@ -340,7 +603,7 @@ who reads it), always with an `Unbound` row so the table sums to the whole. Curs
 (mdb) reads t1 --consumer M[4,9] top=3
 reads t1 at t3.logits  rows t3  consumer t3.M[4,9]  (4 reads)
   t3.L1.h0   mass 0.24902 [measured]  effect 0.011455 [derived-exact P19]
-    causal: Δ -0.015137 [measured], predicted -0.01456 [derived-exact], residual -0.00057636 [measured P20]; floor 0.00097656 [measured P20]
+    causal: Δ -0.015137 [measured], emulated -0.015137 [derived-exact], residual 0 [measured P20] = 0 spacings; exact -0.014201 [derived-exact]; floor 0.00048828 [supplied P20]
 ...
 (mdb) symbol ctx = t1, cache.L1.v[row=2]
 symbol ctx = t1, cache.L1.v[row=2]  (declared: ctx)
@@ -358,8 +621,40 @@ Mass is summed over the heads and layers that read the binding, so it can exceed
 verdicts follow the rule in [Verdicts](#verdicts-p20).
 
 `circuit CONSUMER` builds a record of exact contributions that closes on the consumer;
-whatever is not listed stays in the record as `+N more` and `remainder` nodes. `circuit test` is
-disabled for now (issue M4). `compare` measures two edits separately and together:
+whatever is not listed stays in the record as `+N more` and `remainder` nodes; a subtree that was
+dropped without expanding is recorded as not examined, and one that does not fit one record is a
+`paged` pointer to a sha256-checked child page (`circuit show ID node=NODEID`).
+
+`circuit test ID ref=NAME` checks a circuit against a reference run NAME (another run of the
+debugger, e.g. the opposite-answer prompt; `ref=set:NAME` uses the per-component mean over a
+prompt set's items at their `@last` rows). Components are what the engine patches at the
+consumer's row: the row input `L0.h`, each head's block of `L<l>.A` and each layer's `m` (or each
+neuron of `f` where the circuit expanded that MLP); a source-row node counts as its head;
+`+N more` groups and their unexamined members are the complement. Earlier rows stay this run's.
+Each of these is one native pass from layer 0 with every edit staged, the session restored:
+`ko` patches only the circuit's components from the reference, `keep` every other component,
+`full` all of them (equal to the reference's own margin bit for bit). The result prints the
+margins `base`, `ref`, `ko`, `keep`, `full` and `faithfulness = (keep - ref) / (base - ref)`,
+`knock-out share = (base - ko) / (base - ref)`, all `measured`; the ratios are refused when
+`|base - ref|` is under one spacing of the consumer's dtype. There is no pass/fail bar; the only
+words are one-spacing comparisons. Zero-ablation is not offered (M4: on Qwen2.5-1.5B zeroing the
+26,924-node complement moved the margin by 27.75 against a circuit effect of 1.81). The result
+is a `circuit-test` record (stored with a project; the component list is a sha256-checked blob):
+
+```
+(mdb) circuit test 1 ref=clean
+circuit 1 test  t3.M[4,9]  ref clean (run, row t3)
+  components [derived-exact] 7: circuit 3, complement 4 (4 from +N more groups, 4 of them never expanded); 4 source node(s) counted as their head
+  base  -0.11401 [measured]  this run, nothing patched
+  ref   -0.13965 [measured]  the consumer read in the reference run at its @last row
+  ko    -0.14478 [measured]  knock-out: only the circuit's components patched from the reference
+  keep  -0.10986 [measured]  keep-only: every component outside the circuit patched from the reference; the circuit's components computed natively
+  full  -0.13965 [measured]  every component patched from the reference  (= ref bit for bit)
+  faithfulness (keep - ref) / (base - ref) = 1.1619 [measured]: ...
+  knock-out share (base - ko) / (base - ref) = 1.2 [measured]: ...
+```
+
+`compare` measures two edits separately and together:
 
 ```
 (mdb) circuit M[4,9] top=2 depth=3
@@ -375,7 +670,7 @@ circuit 1  t3.M[4,9]  top 2 depth 3  (16 nodes, record 0b1ad30b3f694bac)
 compare A: L1.m=0.5 add  B: L0.v=0.25 add  -> t3.M[4,9]
   base -0.11401 [measured]  A 0.050476 [measured]  B -0.068237 [measured]  A+B 0.052124 [measured]
   effects A 0.16449 [measured]  B 0.045776 [measured]  A+B 0.16614 [measured]
-  verdicts (P20 floor = 2 x dtype spacing; native only, no exact chain): A effect (floor 0.00097656 [measured P20])  B effect (floor 0.00097656 [measured P20])  A+B effect (floor 0.00097656 [measured P20])
+  verdicts (native only, no exact or emulated chain: effect when edited and base differ): A effect  B effect  A+B effect
   interaction (A+B) - A - B + base = -0.044128 [measured]
   order: A+B stages both sides' edits layer by layer; at one port A's edit is applied before B's (where both edit one port, the ops commute)
   session unchanged at t3.logits
@@ -383,6 +678,91 @@ compare A: L1.m=0.5 add  B: L0.v=0.25 add  -> t3.M[4,9]
 
 `seek ADDR` moves the session to an occurrence: forward, backward, or by replaying a stored
 recipe when a project is attached.
+
+## Prompt sets
+
+Every verb above answers for one prompt. `each SET: OP LINE` runs one op line on every prompt of
+a set and adds a summary. The engine stays batch 1: each prompt gets its own run (`start`, then
+`until AT`, by default `t@last.logits`), the line goes through the same op registry as when you
+type it, and the run is released (`keep` holds the runs as `SET-ITEM`, for `frame recall-a:`).
+A set is a JSONL file of items (`tests/fixtures/prompt_set_tiny.jsonl`):
+
+```
+{"name": "a", "tokens": [1, 5, 9, 3], "roles": {"subject": 1}, "vars": {"answer": 4, "foil": 9}, "pair": "b"}
+```
+
+`prompt` (text, needs a tokenizer) or `tokens`; `roles` name rows (`@last` is always defined);
+`vars` name tokens (an id or a one-token text); `pair` names another item. A line uses them as a
+template, bound per item before dispatch, so each item's result holds plain addresses:
+`t@subject.L1.A[h1]` -> `t1.L1.A[h1]`, `[row=@subject]` and `rows=@subject` -> the row,
+`M[$answer,$foil]` -> `M[4,9]`, and `@pair:ADDR` -> the value at ADDR (roles of the paired item)
+in a clean run of the paired prompt at the same stop, the `ORIGIN:ADDR` of
+[State cells and other runs](#state-cells-and-other-runs). A pair address with no row
+(`@pair:L20.A[h5]`) means the paired item's last row whatever the two lengths, and the item's
+row names the donor address used (`donor`); `t@ROLE` names the pair's own role row. An item whose template does not bind
+(here `d` has no `subject`) or whose op is refused is listed with its reason and left out of the
+statistics; the others run. Real output on the tiny Qwen2 (`tests/repl_golden/prompt_set.out`):
+
+```
+(mdb) set load recall tests/fixtures/prompt_set_tiny.jsonl
+set recall: 4 items  (tests/fixtures/prompt_set_tiny.jsonl)
+  a         1 5 9 3  @subject=1 $answer=4 $foil=9 pair b
+...
+(mdb) each recall: whatif L1.A[h1] *= 0 --consumer M[$answer,$foil]
+each recall: whatif L1.A[h1] *= 0 --consumer M[$answer,$foil]
+  4 items at t@last.logits; runs released; result each2
+  item  native      exact       verdict
+  a     -0.0083008  -0.0074347  effect
+  b     0.0065918   0.0061747   effect
+  c     0.034058    0.034368    effect
+  d     0.024658    0.024872    effect
+  labels: native measured, exact derived-exact
+summary: none refused; statistics over all 4 items
+  measured.delta  [measured]
+    n 4  mean 0.014252  min -0.0083008  max 0.034058  sign + 3/4
+  prediction.exact.value  [derived-exact]
+    n 4  mean 0.014495  min -0.0074347  max 0.034368  sign + 3/4
+  effect.verdict: effect 4
+  +41 more in the record (promptset result each2 [ITEM])
+(mdb) each recall: reads t@subject --consumer M[$answer,$foil] top=2
+...
+  item  read      mass     effect      causal     verdict
+  a     t3.L1.h0  0.24902  0.011455    -0.015137  causal
+  b     t3.L1.h1  0.25195  -0.0082406  0.012207   causal
+  c     t4.L1.h1  0.19922  -0.0073077  0.0064697  causal
+  d     refused: no role 'subject' (roles: last)
+  labels: mass measured, effect derived-exact, causal measured
+summary: 1 of 4 items refused (d) and excluded; statistics over the 3 others
+...
+(mdb) each recall: whatif cache.L0.v[row=@subject] = @pair:cache.L0.v[row=@subject] --consumer M[$answer,$foil]
+...
+  a     0.0041504   0.0046219   effect
+```
+
+The result of `each` is one summary record (at most 64 KiB): a row per item (its key numbers,
+verdict, the sha256 of its result, the op's own record id when it seals one, the bytes its run
+held) and statistics for every labelled number found at the same result path in all items that
+ran: n, mean, min, max and how many share the most common sign, plus a count per value of every
+verdict and state field. A statistic keeps its inputs' label when all share it; inputs with
+different labels are summarised per label, never merged. The statistics are arithmetic on these
+items only. Each item's full result is kept in memory: `promptset result each2 a` prints it. With
+a writable project it is also a sha256-checked JSON blob in the project store (the item's row
+has its `blob` pointer; without a project the row says the result is held in memory only), so
+`promptset result RECORD a`, with RECORD the summary's `stored` id, reads it back in a new
+process and refuses a changed blob. `promptset load` reads a file on the server, so the web
+console and the `/op` route refuse it; send the set inline with `promptset define NAME ITEMS`
+(items as a JSON list or JSONL). A
+path such as `reads.0.mass` is "the first listed read", which can be a different head in each
+item. With a project attached the summary is also stored as a `prompt-set` record. After `each`
+the current run, its cursor, the run table and the session digest are what they were. From
+Python: `dbg.each("recall", "reads t@subject --consumer M[$answer,$foil]")` (a loaded set, a
+`.jsonl` path or a list of item dicts) returns `summary`, `results` (item -> result) and the
+uncapped `statistics`.
+
+Measured on the tiny Qwen2 (CPU, one process): a run holds 600 to 872 bytes at its logits, 1.4
+to 1.8 KB after `whatif` and 1.8 to 2.1 KB after `reads` (`Run.held_bytes()`); one item takes
+about 0.07 s for `whatif` or `reads`, 0.016 s for `print`; 40 items of `reads` took 3.7 s and
+gave a 27.7 KB summary.
 
 ## Durable checkpoints
 
@@ -422,8 +802,9 @@ Evidence on Qwen3-1.7B-Base: `results/sae-integration-20261113/`.
 torch (it needs the `serve` extra). The browser at `/` shows the project's sessions with an
 address bar and a command line, and these views: Timeline (token by layer, with a branch
 rail), Graph, Symbols, Records and an Inspector whose reductions (`POST /api/v1/s/SID/reduce`)
-never send a whole tensor. Every response is at most 64 KiB. The recorded browser still reads
-lane-era projects; an engine-native recorded fixture is not built (issue M14).
+never send a whole tensor. Every response is at most 64 KiB. The recorded browser reads lane-era
+projects and engine-native ones (circuit and symbol-table records, no state cuts; the fixture
+is built by `tests/test_serve_recorded.py`, issue M20).
 
 With `--tiny FAMILY` or `--model DIR` the server also holds one live debugger, attached with
 that project. The page gets a Live view with four tabs and an architecture strip:
@@ -432,7 +813,8 @@ that project. The page gets a Live view with four tabs and an architecture strip
 - Symbols: one row per binding (definition sites, lifetime strip, readers with mass and exact
   effect, verdicts on request), an Unbound row, a consumer selector and a declare form.
 - Circuits: build, list and show circuits as a layered graph with `+N more` and remainder
-  nodes, a keyboard walk and seek on Enter (the `circuit test` control follows the op: disabled).
+  nodes, a keyboard walk and seek on Enter; `circuit test` with a reference-run picker (the
+  debugger's other runs, or `set:NAME`) shows the five margins and the two ratios with labels.
 - Predict: a forecast column (hollow until verified), `whatif` with the sealed prediction and
   error split, and `compare`. Nothing stages an edit except an explicit button.
 - Arch strip (above the tabs): layers as rows with the current layer's ports, computed ports,
@@ -465,7 +847,10 @@ remote prompt `quit` ends the client and leaves the session as it is, `source FI
 client's file, and Ctrl-C interrupts the op the server is running. From Python:
 `mdb.repl.remote.Remote(url).op("print", address="p")` returns the JSON that `--json` prints.
 The server has no authentication and binds loopback; use a tunnel (`ssh -L 8799:127.0.0.1:8799
-host`). `--allow-remote` and `--allow-host` exist but add no authentication.
+host`). `--allow-remote` and `--allow-host` exist but add no authentication. One SIGTERM ends `mdb serve`
+even with a browser's events socket open (`tests/test_serve_sigterm.py`). `--tiny` takes the same
+four families as `mdb engine`. The `/op` route refuses `promptset load` (it reads a file on the
+server); send a set with `promptset define`.
 
 ## Lanes
 
@@ -490,15 +875,91 @@ cd $W/packages/mdb && env PYTHONPATH=$W/src:$W/packages/mdb/src OMP_NUM_THREADS=
 layers (`core`, `engine`, `analysis`, `ops`, `repl`, `serve`) import only downward; `import mdb`
 loads no torch. Every automated test uses a random tiny CPU model (issue M15).
 
+Run the test files of the module you touched, not the whole suite (it is large and loads many
+tiny models; on a small laptop keep to one Python process at a time). Examples:
+`tests/test_ops_registry.py` (the op table), `tests/test_engine_run.py` (the stepper),
+`tests/test_analysis_whatif_modes.py` (whatif at any cursor), `tests/test_repl_golden.py` (the
+transcripts in `tests/repl_golden/`; after an intended change regenerate one with
+`MDB_UPDATE_GOLDEN=1 ... pytest tests/test_repl_golden.py -k NAME` and read the diff).
+`tests/test_deep_models.py` runs every analysis op on a 40-layer and a 70-layer tiny model (M40:
+no op result may exceed the record bound). The serve tests (`tests/test_serve_*.py`) need the
+environment of the common harness (`fastapi`, `httpx`) and skip with `importorskip` elsewhere,
+so a pass in the plain venv says nothing about the server. The tests of `saturn_pub` live in
+`$W/tests` (run them from `$W` with `PYTHONPATH=$W/src`).
+
 ## Measured on a real model
 
 Qwen2.5-1.5B, bf16, CUDA, eager attention, RTX 4080, torch 2.13.0+cu130, transformers 5.13.1,
-engine commit `b440ac6`, via mrun (job-301fd6de7034, job-2c1cebccd74d). All numbers measured.
+through mrun; one prompt family (`Description: icy / Temperature: cold / ... / Temperature:`, 22
+tokens, margin `M[" hot"," cold"]`). Every number is measured; logs are under
+`results/engine-r5-20261113/` and `results/engine-r6-20261113/` (local, not tracked).
 
-- port step 2.8 ms; layer commit 5.2 ms; restore 4.8 ms; checkpoint 631 bytes; token 189 ms
-  plain, 213 ms stepped; peak host memory 3.9 GB (the model load)
+Cost and size (round 4, engine commit `b440ac6`, job-301fd6de7034, job-2c1cebccd74d; the
+checkpoint size is from round 5, job-5e7d47663d29, revision 3472a33 plus the round-5 working tree):
+
+- port step 2.8 ms; layer commit 5.2 ms; restore 4.8 ms; checkpoint 739 bytes (earlier 631);
+  token 189 ms plain, 213 ms stepped; peak host memory 3.9 GB (the model load)
 - `explain` 0.28 s; `symbols` 0.40 s; `whatif` 1.9 s; `circuit` depth 2 / 3: 0.61 s / 0.46 s;
-  `reads` 0.20 s, or 5.4 s with causal verdicts (issue M6)
+  `reads` 0.20 s, or 5.4 s with causal verdicts (round 4; M6 later made the verdicts share one
+  excursion, measured on a tiny model only)
+- round 5, job-5e7d47663d29 (the session timings the job printed; the log does not name the
+  device): load + attach 3.74 s, `checkpoint` 0.29 s, `restart` 0.01 s, `explain M[a,b]` 0.26 s,
+  `reads t18 ... causal=false` 0.52 s, `whatif` of a cache cell 2.25 s (2.19 s with `mix 0.5`)
+- round 6, job-c5130b0aaf7e: `verify` took 0.00 to 0.01 s per forecast, per its log lines
+
+Rounding: exact math is not what the dtype computes (round 6, M42, job-c5130b0aaf7e, engine
+revision `df7d715` plus working-tree `forecast.py`, `verdict.py`, `kinds.py`; 3 prompts, `forecast`
+sealed at `L0.h` and at `L14.h`, then `verify`; bf16 28 layers and an fp32 2-layer cut of the same
+model):
+
+- the emulated prediction is bit-equal to native at every stop checked: 0.0 spacings in every
+  `mdb` seal/verify pair of the log (all `confirmed`), bf16 and fp32
+- the exact (float64) chain of the same operands is far off at `L0.m`: bf16 34.7, 48.4 and 78.0
+  spacings for the three prompts (fp32 cut: 30.9 to 39.4); at the logits 1.4 to 1.6 spacings (bf16,
+  sealed at `L0.h`)
+- origin, bf16 prompt 0 (t21): `t21.L0.s[h3]`, a score of spacing 64 at |s| 1.51e+04; rounding ties
+  the top scores, so the native softmax is not the softmax of the real scores. Prompt 1 names
+  `t11.L0.p[h1]` (spacing 64 at |s| 9.47e+03)
+- a float64 chain rounded once per sum is not enough (0 to 8 spacings off in bf16, 1 to 35 in fp32,
+  M42 resolution)
+
+Cross-run head patch (M43, job-59cba8de26fc, revision `f0a483a`): `whatif L20.A[h5] =
+clean:L20.A[h5] --consumer M[" hot"," cold"]`, with the clean run on `boiling` and the edited run
+on `freezing`, moves the margin from -4.75 to -0.375 (native dM 4.375, exact 4.2303, residual
+0.14467, floor 0.25, `effect`). Before the fix this failed on the real model with "Expected all
+tensors to be on the same device, but found at least two devices, cuda:0 and cpu" (job-176bc5bdcee7;
+the donor block was on the GPU, the index on the host).
+
+Whatif exact is the same at both cursors (job-c772b1dfb576, revision `8cc8e55`): `whatif L20.m =
+clean:L20.m` sealed at `L0.h` (mode ahead) and again after `until logits` (mode rewind) both give
+exact dM 0.5074 on measured operands (0.50742 in the verdict line of each) and `whatif L20.A[h5]
+= clean:L20.A[h5]` gives 4.2145 at both; a no-op `L20.m *= 1` gives exact 0, native 0.
+
+Prompt set (job-c772b1dfb576): six temperature prompts (freezing, boiling, frosty, scorching,
+chilly, burning), margin `M[$answer,$foil]` 3.75 to 6.375, mean 4.7708, 6/6 positive. `each temp:
+whatif L20.A[h5] *= 0` gives a mean delta of -1.6042 (min -2, max -0.9375), 6/6 negative, all six
+`effect`. `each temp: whatif L20.A[h5] = @pair:L20.A[h5]` (head output from the opposite prompt)
+gives a mean delta of -4.6719 (min -5.1875, max -4.375), 4/4 negative; the other two items
+(frosty, scorching, prompts of 23 and 24 tokens) were refused because the pair address named a
+prompt row; M53 (851c41a) changed that to the paired item's last row, and it was not rerun on the
+real model. `each temp: reads t@last` found reads that are `unresolved` at the noise level (M51).
+
+Emulated verdicts (M51, job-a0deb81ce182, revision `4049b06` plus the M51 files): the three
+what-ifs above at both cursors (ahead and rewind) give emulated dM equal to native dM, residual 0
+spacings: `L20.m = clean:L20.m` native 0.625, emulated 0.625, exact 0.50742 (rounding effect
+0.11758), `effect`; `L20.A[h5] = clean:L20.A[h5]` native 4.375, emulated 4.375, exact 4.2145,
+`effect`; `L20.m *= 1` native 0, emulated 0, exact 0, `no effect`. `each temp: reads t@last
+--consumer M[$answer,$foil] top=3`: the top read of every prompt is `causal` (6/6; native deltas
+-0.25, 0.25, -0.3125, 0.125, -0.25, 0.25, each agreeing with the emulated delta within one
+spacing) where the old floor gave 3 `not causal at this dose`, 2 `unresolved`, 1 `causal`; the
+second reads are `causal` 6/6 (old: `not causal at this dose` 6/6). Cost (same job, medians):
+a what-if 6.90 s with the emulated chains vs 6.95 s without at `L0.h` and 2.43 s vs 2.40 s at
+`logits`; `reads t21 top=3` 6.39 s vs 6.12 s (sharing the emulated base: 6.12 s unshared, within
+the run-to-run spread of about 0.5 s).
+
+Other models: SmolLM2-360M (Llama family), bf16 CUDA on Beast, job-d16ba4fd134b (M24 resolution):
+the selfcheck passed with 576 stop probes and 0 mismatches, port step 3.0 ms, stepped against the
+full forward max |dlogit| 0.28. A real Mistral checkpoint was not run.
 
 The stepped run is bitwise equal to Hugging Face's incremental program (prefill plus one
 token). Against one full forward over the whole prompt the largest logit difference is 0.25
@@ -509,8 +970,10 @@ token). Against one full forward over the whole prompt the largest logit differe
 Open issues and their evidence are in [`issues.jsonl`](issues.jsonl); ids below are its `issue`.
 
 - `attach` needs eager attention, one sequence (batch 1) and frozen weights in eval mode;
-  `trace` has none of these limits but cannot step or edit. Port programs exist for Qwen2 and
-  Qwen3 only, and Qwen3 at real size is not run (M14).
+  `trace` has none of these limits but cannot step or edit. Port programs exist for Qwen2,
+  Qwen3, Llama and Mistral (`mdb.engine.ports.FAMILIES`); not gemma or gemma2 (M32). Real
+  models run so far: Qwen2.5-1.5B and SmolLM2-360M (Llama). Qwen3 at real size and a real
+  Mistral checkpoint are not run (M14, M24).
 - A checkpoint is bound to its numeric scope (thread count, determinism flag, matmul
   precision, CUDA reduced-precision reduction flags); restoring under another scope is refused.
 - Memory: trail marks share the state a step did not change, so a mark costs about what its step wrote (one layer's new K/V row, the hidden carrier, the logits); `Run.held_bytes()` measures it, and `retain_rows` bounds it further.
@@ -519,15 +982,45 @@ Open issues and their evidence are in [`issues.jsonl`](issues.jsonl); ids below 
   makes 26, but native code then has computed ports past the cursor
   (`run.status()["computed_past_cursor"]`).
 - A stepped run equals Hugging Face's incremental program, not one full forward (M10).
-- `circuit test` is disabled for now (issue M4).
-- Open items are in `issues.jsonl`: M6, M9, M11-M17 (and any later ids), M7 deferred, M10 a
-  known limit.
+- `circuit test` (M4) patches components at the consumer's row only: earlier rows (the cache)
+  stay this run's, there is no `rows=all`, a source-row node counts as its head (`p` is not
+  patched), and a vector consumer is refused (the ratios need a scalar).
 - Running on mrun's native kernels is not supported; Hugging Face models are the supported
-  path (issue M7).
+  path (M7, deferred; the proxy over the store seam was measured feasible, see the ledger).
+- A port edit acts on the cursor's row only, and prompt rows prefilled in one call have no
+  ports (M35); a replayed (batched-prefill) and a token-by-token run of the same prompt can
+  differ by one bf16 step (M26, same cause class as the M5 answer). `prefill=K` and `sweep`
+  address these, see [Prefill split and position patching](#prefill-split-and-position-patching);
+  the ledger states whether the two issues are closed.
+- A cell `whatif` is refused (prediction only; the native measurement runs) when the first
+  affected row has not started at the cursor (M9).
+- Verdicts: `whatif` and `reads` hold native against the emulated change (M51); the emulated
+  chains are refused when a staged edit lies ahead of the cursor (the verdict is then native
+  only), and a what-if whose chain spans several rows is not stage-checked when native and
+  emulated part (`unresolved`, said so). The
+  accumulation premise is conservative: on bf16 CUDA every bound for sums of 256 or more terms is
+  `bound refused`, although a measurement on an RTX 4080 found the linear stages bitwise equal with
+  the flag on and off (M50). Bounds never decide a verdict.
+- On MPS (no float64) `whatif` fails with `a numeric claim needs a finite number` (M44); CPU and
+  CUDA are the tested devices.
+- No dictionary or interpretable unit (M23, by choice: a candidate is a reader role declared
+  from a transplant result). Two circuit systems exist, the lane-era `discover_circuit` (ranks by
+  write norm, picks the attention sink) and the engine's `circuit`; use the engine's (M25).
+- The help text of two ops lags the code: `verify` still describes the removed 3 x sqrt(n) floor
+  and `circuit` still says "test by native ablation" (`ops/predict.py`, `ops/inspect.py`; not in
+  the ledger yet).
+- Package hygiene (M13: `experiments/`, `examples/`, `results/`, `docs/` of the lane era still
+  live in `packages/mdb`; bare `mdb run|open|attach` still dispatch to lanes), savings left out of
+  the cast round because they change float64 digits (M16), and only tiny-model tests in the
+  repository (M15: the three real-model faults of the last rounds, the 48 s per-port rebuild, the
+  17.6 GB float64 weight copy and the rounded RoPE buffer, were visible only on a real model; the
+  device mix, the op-result cap and the verify floor of rounds 5 and 6 as well).
 
 ## Not built yet
 
 - `trace(project=)`.
-- `export` (B1), an engine-native recorded fixture for `mdb serve`, and `mdb serve --model` as
-  an mrun job with the REPL on a tunnel (B5); port programs for Qwen3 at real size and
-  FLUX.2 Klein (all M14).
+- `export` (a walkthrough bundle of records and pointers): the verb answers "not built yet".
+- `mdb serve --model` as an mrun job with the REPL connected through a tunnel (no remote parity
+  run on the GPU machine yet), port programs for Qwen3 at real size and FLUX.2
+  Klein (M14).
+- gemma and gemma2 port programs (M32); named units (M23).

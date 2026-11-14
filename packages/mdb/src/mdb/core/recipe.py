@@ -3,8 +3,14 @@
 ::
 
     {schema: "mdb-replay-recipe-v2", name, model_identity, layers, tokens, prompt_sha256,
-     numeric_scope, lookahead, transitions: [{transition, layer, edits}], staged: [edit],
-     target: {where, transitions, port}, cut, fingerprint}
+     prefill, numeric_scope, lookahead, transitions: [{transition, layer, edits}],
+     staged: [edit], target: {where, transitions, port}, cut, fingerprint}
+
+``prefill`` is the procedure (M26): the number of prompt rows the run computed in one batched
+call before stepping the rest row by row (``Run(prefill=K)``). A batched and a stepped row can
+differ by a rounding step in their cached K/V bits, so a replay must use the same split; every
+recipe written now carries it (a default run's too, so recipe fingerprints changed when it was
+added). A recipe written before it reads as the default split, all prompt rows but the last.
 
 It is ``Run.checkpoint()`` one to one (``from_checkpoint`` / ``to_checkpoint``): ``transitions``
 are its ``path_edits`` (the edits committed with each native transition, in order), ``staged``
@@ -15,9 +21,10 @@ What a checkpoint holds as a tensor digest the recipe holds as a ``tensor`` poin
 edit is ``{port, op, value, mask?, mask_count?, selection?}`` with ``value`` either a tensor
 pointer or ``{kind: "scalar", value: num(x, "supplied")}``. A state-cell edit
 (``mdb.engine.edits.CellEdit``) adds ``cell`` ``{layer, tensor, rows, kv, d, timing,
-staged_at}``, ``dose`` (``mix`` only, a supplied number) and ``origin`` (the pointer of a value
-taken from another run: names and digests, never the array; the value itself is the edit's
-tensor pointer). Recipes written before cells existed read unchanged. Token ids are inline up to
+staged_at}`` and ``dose`` (``mix`` only, a supplied number). Any edit, port or cell, may carry
+``origin`` (the pointer of a value taken from another run: names and digests, never the array;
+the value itself is the edit's tensor pointer, a blob, so the recipe replays after the other run
+is gone). Recipes written before cells existed read unchanged. Token ids are inline up to
 ``MAX_INLINE_ITEMS`` and a tensor pointer (int64) beyond. Arrays are never inline: the recipe
 passes ``check_bounded`` (no array, at most 64 KiB) before it is sealed and again when read.
 
@@ -61,8 +68,9 @@ from .records import check_num, declare_kind, num, seal_record
 
 SCHEMA = "mdb-replay-recipe-v2"
 CHECKPOINT_SCHEMA = "mdb-engine-checkpoint-v1"   # mdb.engine.run.CHECKPOINT_SCHEMA
-FIELDS = ("schema", "name", "model_identity", "layers", "tokens", "prompt_sha256",
+FIELDS = ("schema", "name", "model_identity", "layers", "tokens", "prompt_sha256", "prefill",
           "numeric_scope", "lookahead", "transitions", "staged", "target", "cut", "fingerprint")
+_OPTIONAL = ("prefill",)   # absent in recipes written before the prefill split was recorded
 CODES = ("model-identity", "numeric-scope", "missing-blob", "corrupt-blob", "malformed",
            "fingerprint", "origin-edits")
 _EDIT_KEYS = {"port", "op", "value", "mask", "mask_count", "selection", "cell", "dose", "origin"}
@@ -135,6 +143,9 @@ def from_checkpoint(checkpoint, *, tokens, layers, tensors, store):
     tokens = [int(t) for t in tokens]
     if digest(tokens) != checkpoint["prompt_sha256"]:
         raise _malformed("the token ids are not the checkpoint's prompt")
+    prefill = checkpoint.get("prefill", len(tokens) - 1)
+    if type(prefill) is not int or not 0 <= prefill < len(tokens):
+        raise _malformed(f"prefill {prefill!r} is not a row count in 0..{len(tokens) - 1}")
     if len(tokens) > MAX_INLINE_ITEMS:
         import numpy as np
 
@@ -148,6 +159,7 @@ def from_checkpoint(checkpoint, *, tokens, layers, tensors, store):
         "layers": int(layers),
         "tokens": tokens,
         "prompt_sha256": checkpoint["prompt_sha256"],
+        "prefill": prefill,
         "numeric_scope": dict(checkpoint.get("numeric_scope") or {}),
         "lookahead": checkpoint["lookahead"],
         "transitions": [{"transition": int(entry["transition"]), "layer": int(entry["layer"]),
@@ -177,8 +189,8 @@ def _check_edit(edit, label):
     if "cell" in edit and (not isinstance(edit["cell"], Mapping)
                            or set(edit["cell"]) != _CELL_KEYS):
         raise _malformed(f"{label} cell is {{{', '.join(sorted(_CELL_KEYS))}}}")
-    if ("dose" in edit or "origin" in edit) and "cell" not in edit:
-        raise _malformed(f"{label}: dose and origin belong to a state-cell edit")
+    if "dose" in edit and "cell" not in edit:
+        raise _malformed(f"{label}: a dose belongs to a state-cell edit")
     if "dose" in edit and check_num(edit["dose"], f"{label} dose")["authority"] != "supplied":
         raise _malformed(f"{label} dose is a supplied number")
     if "origin" in edit and not isinstance(edit["origin"], Mapping):
@@ -202,10 +214,13 @@ def _check_edit(edit, label):
 
 def verify(recipe):
     """Check a recipe's fields, bounds, seal and edits; returns it or raises ``RecipeError``."""
-    if not isinstance(recipe, Mapping) or set(recipe) != set(FIELDS):
+    if not isinstance(recipe, Mapping) or not (
+            set(FIELDS) - set(_OPTIONAL) <= set(recipe) <= set(FIELDS)):
         raise _malformed("fields are " + ", ".join(FIELDS))
     if recipe["schema"] != SCHEMA:
         raise _malformed(f"schema must be {SCHEMA!r}")
+    if "prefill" in recipe and (type(recipe["prefill"]) is not int or recipe["prefill"] < 0):
+        raise _malformed("prefill is a nonnegative row count")
     try:
         bounded = check_bounded(dict(recipe), "replay recipe", max_bytes=MAX_RECORD_BYTES)
         body = {k: v for k, v in bounded.items() if k != "fingerprint"}
@@ -256,7 +271,7 @@ def to_checkpoint(recipe):
     """The ``Run.checkpoint()`` dict the recipe was sealed from (``Run.restore`` input)."""
     recipe = verify(recipe)
     target = recipe["target"]
-    return {
+    out = {
         "schema": CHECKPOINT_SCHEMA, "name": recipe["name"],
         "model_identity": recipe["model_identity"], "prompt_sha256": recipe["prompt_sha256"],
         "where": target["where"], "cut": recipe["cut"], "transitions": target["transitions"],
@@ -267,6 +282,9 @@ def to_checkpoint(recipe):
                         "edits": [_manifest(e) for e in t["edits"]]}
                        for t in recipe["transitions"]],
     }
+    if "prefill" in recipe:   # absent: an older recipe, the default split
+        out["prefill"] = recipe["prefill"]
+    return out
 
 
 def tensor_pointers(recipe):

@@ -15,7 +15,8 @@ def test_lazy_exports_resolve_to_the_engine():
         assert name in mdb.__all__
 
 
-@pytest.mark.parametrize("family,dtype", [("qwen2", "bf16"), ("qwen3", "fp32")])
+@pytest.mark.parametrize("family,dtype", [("qwen2", "bf16"), ("qwen3", "fp32"),
+                                          ("llama", "bf16"), ("mistral", "fp32")])
 def test_attach_run_ops_in_three_lines(family, dtype):
     dbg = mdb.attach(tiny_model(family, dtype=dtype))
     run = dbg.run([1, 5, 9, 3])

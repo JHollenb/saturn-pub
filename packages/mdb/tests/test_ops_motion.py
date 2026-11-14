@@ -14,7 +14,8 @@ from mdb.ops import (  # noqa: E402
 
 PROMPT = [1, 5, 9, 3]
 ROW = len(PROMPT) - 1
-CASES = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16")]
+CASES = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("llama", "bf16"),
+         ("mistral", "fp32")]
 
 
 @pytest.fixture(scope="module", params=CASES, ids=lambda c: "-".join(c))
@@ -52,7 +53,7 @@ def test_step_next_finish_until_units(debugger):
         assert dispatch(ctx, "until", {"target": target})["where"] == where
     with pytest.raises(BadArgs, match="bad address"):
         dispatch(ctx, "until", {"target": "L0.nope"})
-    with pytest.raises(Refused, match="origins"):
+    with pytest.raises(Refused, match="cannot be read with this verb"):
         dispatch(ctx, "print", {"address": "boiling:t3.L0.h"})
 
 
@@ -118,7 +119,7 @@ def test_backtrace_follows_program_edges(debugger):
             assert producer in rhs or producer.removesuffix("n") in rhs
     assert {"A", "p", "v", "s", "qr", "kr", "q", "k", "a"} <= set(level)
     assert "r" not in level and "m" not in level
-    if program.family == "qwen2":
+    if "qn" not in program.names:
         assert result["chain"] == "o <- A <- v,p <- s <- qr,kr <- q,k <- a <- h"
     else:
         assert result["chain"] == "o <- A <- v,p <- s <- qr,kr <- qn,kn <- q,k <- a <- h"
@@ -704,3 +705,17 @@ def test_values_at_a_later_row_stay_under_edits_committed_in_an_earlier_row(debu
             dispatch(ctx, "until", {"target": target})
         prov = _prov(dispatch(ctx, "print", {"address": target}))
         assert [u["address"] for u in prov["under_edits"]] == [f"t{ROW}.L0.v"], target
+
+
+def test_info_edits_counts_the_edits_of_a_layer_it_cannot_list():
+    """70 committed edits in one layer: ``limit`` (at most 64) lists that many and says how many
+    were left out and how many there are."""
+    dbg = open_tiny("qwen2", "fp32")
+    run = dbg.run([1, 5, 9, 3])
+    run.until("t3.L0.h")
+    for i in range(70):
+        run.set("t3.L0.h_out", 0.01 * (i + 1), "add")
+    run.until("t3.L1.h")
+    info = dispatch(dbg.ops(run), "info", {"subject": "edits", "limit": 64})
+    (layer,) = info["committed"]
+    assert layer["edits_total"] == 70 and len(layer["edits"]) == 64 and layer["omitted"] == 6

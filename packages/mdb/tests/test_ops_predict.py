@@ -20,7 +20,8 @@ from mdb.ops.debugger import open_tiny  # noqa: E402
 from mdb.ops.predict import _session_digest  # noqa: E402
 
 PROMPT = [1, 5, 9, 3]
-CONFIGS = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("qwen3", "fp32")]
+CONFIGS = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("qwen3", "fp32"),
+           ("llama", "bf16"), ("llama", "fp32"), ("mistral", "bf16"), ("mistral", "fp32")]
 
 # (name, cursor, edit address, value, op, consumer, staged edit kept during the what-if)
 SITES = [
@@ -115,16 +116,32 @@ def test_whatif_measures_a_fresh_committed_run_bitwise_and_leaves_the_session(de
     prediction = report["prediction"]
     assert prediction["state"] == "resolved"
     assert prediction["exact"]["value"]  # the exact term exists on every site here
-    rounding = report["split"]["terms"][-1]
-    assert rounding["name"] == "rounding" and rounding["value"]
-    if rounding.get("within_bound") is not None:
-        assert rounding["within_bound"] is True
-    # the split adds up to the native change, element by element
     tensors = result.tensors
     exact, at_realised = tensors["exact"], tensors["at_realised"]
     native = tensors["native_delta"].reshape(exact.shape)
-    assert torch.allclose(exact + (at_realised - exact) + (native - at_realised), native,
-                          rtol=0, atol=1e-12)
+    if staged is not None:
+        # a staged edit ahead of the cursor: the emulated chains are refused, native decides
+        assert prediction["emulated"]["state"] == "refused"
+        assert "staged edit(s) at t3.L0.q" in prediction["emulated"]["reason"]
+        assert report["effect"]["basis"].startswith("native only")
+        assert report["split"]["terms"][-1]["name"] == "rounding"
+        return
+    rounding, residual = report["split"]["terms"][-2:]
+
+    def label(claim):       # a scalar's claim, or a vector's {max_abs, norm}
+        return claim.get("authority") or claim["max_abs"]["authority"]
+
+    assert rounding["name"] == "rounding effect" and label(rounding["value"]) == "derived-exact"
+    if rounding.get("within_bound") is not None:
+        assert rounding["within_bound"] is True
+    # M51: the emulated change is the native change, bit for bit, at every site and cursor
+    assert residual["name"] == "residual" and label(residual["value"]) == "measured"
+    assert torch.equal(tensors["emulated"].reshape(exact.shape), native)
+    assert report["effect"]["residual_spacings"]["value"] == 0.0
+    # the split adds up to the native change, element by element
+    emulated = tensors["emulated"].reshape(exact.shape)
+    assert torch.allclose(exact + (at_realised - exact) + (emulated - at_realised)
+                          + (native - emulated), native, rtol=0, atol=1e-12)
 
 
 def test_linear_term_matches_the_finite_difference_slope(debugger):
@@ -197,7 +214,7 @@ def test_ops_results_are_labelled_and_whatif_keeps_the_debugger_session(debugger
                                             "consumer": "t3.L1.h_out"}))
     assert _session_digest(ctx) == before
     assert results[-1]["edit"]["mask_count"] == 4 and results[-1]["edit"]["source"]
-    with pytest.raises(Refused, match="goes into a state cell"):  # A7: cells take origins
+    with pytest.raises(Refused, match="unknown origin 'boiling'"):  # M28: ports take origins
         dispatch(ctx, "whatif", {"target": "L1.o=boiling:L1.o", "consumer": "M[4,9]"})
     with pytest.raises(Refused, match="not downstream"):
         dispatch(ctx, "whatif", {"target": "L1.m=0.5", "consumer": "L0.o"})
@@ -214,7 +231,7 @@ def test_ops_results_are_labelled_and_whatif_keeps_the_debugger_session(debugger
         assert unlabelled(result) == [], (result["op"], unlabelled(result))
     verdicts = [item["verdict"] for item in results[4]["forecasts"]]
     # L0.a is computed before the L0.q edit; the margin is downstream of it
-    assert verdicts == ["within-bound", "edited"]
+    assert verdicts == ["confirmed", "edited"]
 
 
 def test_an_interrupt_at_any_session_restore_of_a_whatif_leaves_the_session(debugger, monkeypatch):
@@ -252,3 +269,44 @@ def test_an_interrupt_at_any_session_restore_of_a_whatif_leaves_the_session(debu
             break  # past the what-if's last native restore
         interrupted_at.append(nth)
     assert len(interrupted_at) >= 2, interrupted_at
+
+
+@pytest.mark.parametrize("where", ["restore-call", "finally-entry"])
+def test_an_interrupt_before_the_final_restore_starts_still_restores_the_session(
+        debugger, monkeypatch, where):
+    """Ctrl-C landing before the what-if's final restore has done anything (at the entry of
+    the ``finally`` that restores, or at the call): the restore still completes, the edit
+    measured is not left staged, and the interrupt is raised afterwards."""
+    from mdb.engine.run import Run
+
+    _, cursor, address, value, op, consumer, _ = SITES[3]
+    run = debugger.run(PROMPT)
+    run.until(cursor)
+    before = state_digest(run)
+    fired = []
+    if where == "restore-call":
+        original = Run.restore
+
+        def restore(self, checkpoint, *, defer_interrupt=False):
+            if defer_interrupt and not fired:
+                fired.append(1)
+                raise KeyboardInterrupt     # before the restore ran
+            return original(self, checkpoint, defer_interrupt=defer_interrupt)
+
+        monkeypatch.setattr(Run, "restore", restore)
+    else:
+        original = propagate._complete_restore
+
+        def complete(run_, checkpoint, state):
+            if not fired:
+                fired.append(1)
+                raise KeyboardInterrupt     # the interrupt lands before the restore starts
+            return original(run_, checkpoint, state)
+
+        monkeypatch.setattr(propagate, "_complete_restore", complete)
+    with pytest.raises(KeyboardInterrupt):
+        whatif(run, Edit(address, value, op), consumer)
+    monkeypatch.undo()
+    assert fired
+    assert state_digest(run) == before
+    assert run.edits == [] and run.where == cursor

@@ -1,5 +1,5 @@
 {
-  "bytes": 2613,
+  "bytes": 2988,
   "data": {
     "circuits": [],
     "forecasts": [
@@ -27,15 +27,23 @@
             16
           ]
         },
-        "record": "db5ed1366ed7e565e2949f06fcb029716f88056dc02250348b0ad45f2e6a08a9",
+        "record": "f5ff4bc2d08606da4e6347973c02b438f0e9904932fd856d73720ad8a3cf31bc",
         "sealed_at": "t3.L0.h",
         "status": "closed",
         "steps": 1,
         "target": "t3.L0.a",
         "verdict": {
+          "basis": "measured residual, P20",
           "bound_max": {
             "authority": "bound",
             "value": 0.016106113765349046
+          },
+          "criterion": "confirmed when max |native - predicted| <= floor = 4 x dtype spacing at the magnitude of the consumer; not confirmed otherwise; P20: residual = native - predicted",
+          "dtype": "bfloat16",
+          "floor": {
+            "authority": "measured",
+            "proof": "P20",
+            "value": 0.0625
           },
           "native": {
             "max_abs": {
@@ -48,7 +56,7 @@
             }
           },
           "order": {
-            "current_cut": "a5caf85c892915ba136c619f1fb2c9a4b45fb60ef254a2f078778dcb70a39de3",
+            "current_cut": "439f61729c7514675a515419333e839cca66dce84875e706d166ad574c693447",
             "descends": true,
             "receipts_after_seal": {
               "count": 0
@@ -59,7 +67,7 @@
               "row": 3
             },
             "sealed_before_target": true,
-            "sealed_cut": "a5caf85c892915ba136c619f1fb2c9a4b45fb60ef254a2f078778dcb70a39de3",
+            "sealed_cut": "439f61729c7514675a515419333e839cca66dce84875e706d166ad574c693447",
             "target": {
               "index": 3,
               "row": 3
@@ -69,7 +77,13 @@
             "authority": "measured",
             "value": 0.005299224032836225
           },
-          "verdict": "within-bound",
+          "spacing": {
+            "authority": "measured",
+            "proof": "P20",
+            "value": 0.015625
+          },
+          "state": "resolved",
+          "verdict": "confirmed",
           "within_bound": true
         }
       },
@@ -78,7 +92,7 @@
           "elementwise": true,
           "max": {
             "authority": "bound",
-            "value": 0.0026798018788218043
+            "value": 0.0026798062274879146
           }
         },
         "id": 2,
@@ -86,19 +100,19 @@
           "dtype": "float64",
           "max_abs": {
             "authority": "derived-exact",
-            "value": 0.2515246078866365
+            "value": 0.25152444329974266
           },
           "norm": {
             "authority": "derived-exact",
-            "value": 0.7071158538274008
+            "value": 0.7071158540972974
           },
-          "sha256": "a37f6e74c9373a0ebf208cb5b8e1048ce99373ecfea129e0139909f05ed588a1",
+          "sha256": "cb1cc1226f21049d09afc9e5fc126253790365c39ee25401232724d0970e98a5",
           "shape": [
             2,
             4
           ]
         },
-        "record": "6a5b7ce96f898a514847a794cad90c2ea4d6bc6e43fd4c658973131dbc1d5308",
+        "record": "8267ec1f7e9f6f515c3d3428c02f910d0b76274f2c6468e9cd74325212fecf15",
         "sealed_at": "t3.L0.h",
         "status": "open",
         "steps": 7,
@@ -110,7 +124,7 @@
           "elementwise": true,
           "max": {
             "authority": "bound",
-            "value": 16.825123307594925
+            "value": 16.825425490715915
           }
         },
         "id": 3,
@@ -119,10 +133,10 @@
           "value": {
             "authority": "derived-exact",
             "proof": "P19",
-            "value": -0.11452182620307177
+            "value": -0.11452169292217187
           }
         },
-        "record": "f76fa16799dffe05ba7779e873a9ed9fc2f2449f07e55f0f07ebb08e17bce192",
+        "record": "376ac2947ba92b3a7c69e8cc5724bd754ddd62846c80cca268a772208561fd09",
         "sealed_at": "t3.L0.h",
         "status": "open",
         "steps": 39,
@@ -134,7 +148,7 @@
           "elementwise": true,
           "max": {
             "authority": "bound",
-            "value": 0.021311659537551687
+            "value": 0.021311697762868894
           }
         },
         "id": 4,
@@ -142,18 +156,18 @@
           "dtype": "float64",
           "max_abs": {
             "authority": "derived-exact",
-            "value": 0.000519650786726456
+            "value": 0.0005196506748530023
           },
           "norm": {
             "authority": "derived-exact",
-            "value": 0.0007882494432613616
+            "value": 0.0007882493822337447
           },
-          "sha256": "af68c878180ad25b68a45678a65e8198a7974f279d63bfcbd38f63c50ba2d294",
+          "sha256": "4e96ef75ffb0c469a3f25fc9077cb8ecc8bb073860c71718405b75087d2f8a33",
           "shape": [
             16
           ]
         },
-        "record": "3e5d253dcf9cbe0d514d657725252a3cb2e36989d98c8980c8ce1c7a22ed00fe",
+        "record": "460a87f365a5006482011db61d8a20249384ab3ab202566a492a4bb77007ea3e",
         "sealed_at": "t3.L0.h",
         "status": "open",
         "steps": 36,
@@ -163,11 +177,11 @@
     ],
     "more": [],
     "seq": 7,
-    "session": "qwen2-8a16dcab78be",
+    "session": "qwen2-872f0e348e89",
     "symbols": [],
     "where": "t3.L0.a"
   },
-  "digest": "1daf43797224ac97facb133932976faebecfdf095c63db7045457d948455ff87",
+  "digest": "822a7231e128d63e0b7d4a201f54080cfb6ff1ca46fb981d175b8caa7a8902f5",
   "schema": "mdb-view-live-ledger-v1",
   "state": "resolved"
 }

@@ -18,7 +18,8 @@ from mdb.engine import Run  # noqa: E402
 from mdb.engine.ports import tensor_digest  # noqa: E402
 from mdb.engine.selfcheck import tiny_model  # noqa: E402
 
-CASES = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("qwen3", "fp32")]
+CASES = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("qwen3", "fp32"),
+         ("llama", "bf16"), ("llama", "fp32"), ("mistral", "bf16"), ("mistral", "fp32")]
 ROW = len(PROMPT) - 1  # the first generated row's index; addresses read t{ROW}.<stop>
 NEXT = ROW + 1
 
@@ -432,8 +433,8 @@ def test_train_mode_refused_at_probe(mode):
     if mode == "none":  # lookahead="layer" serves the next port from its cache: no probe runs
         with pytest.raises(ValueError, match="eval-mode"):
             run.step()
-    with pytest.raises(ValueError, match="eval-mode"):
-        run.set("L0.g", 1.0, "scale")
+    with pytest.raises(ValueError, match="eval-mode"):   # check=True probes an edit the
+        run.set("L0.h", 1.0, "scale", check=True)        # cursor's captures see (M54)
     assert run.edits == [] and len(run.session.receipts) == 1
     model.eval()
     run.until("L0.q")
@@ -662,6 +663,26 @@ def test_read_info_r_edit_realisation_and_replicas(adapter, mode):
     assert _info_at(plain, "L1.A")["kind"] == "native"
 
 
+def test_upstream_edits_carry_the_selection_staged_and_committed(adapter, mode):
+    """M37: an upstream entry names the edit's selector (``h0``), None for a whole port."""
+    run = Run_(adapter, mode)
+    run.until("L0.h")
+    heads = torch.zeros(run.port_shape("a"), dtype=torch.bool)
+    heads[..., :4] = True
+    run.set("L0.a", 0.5, "scale", mask=heads, selection="h0")
+    assert [e["selection"] for e in _info_at(run, "L0.n")["upstream_edits"]] == ["h0"]  # staged
+    run.finish()
+    run.until("L2.q")
+    ups = run.read_info()["upstream_edits"]
+    assert [(e["port"], e["staged"], e["selection"]) for e in ups] == [("a", False, "h0")]
+    run.set("L2.m", 0.25, "add")  # a whole-port edit has no selection
+    run.finish()
+    run.step("token")
+    run.until("L0.q")
+    assert [(e["port"], e["selection"]) for e in run.read_info()["upstream_edits"]] == [
+        ("a", "h0"), ("m", None)]
+
+
 def test_read_info_n_under_an_a_edit_and_committed_upstream_edits(adapter, mode):
     run = Run_(adapter, mode)
     run.until("L0.h")
@@ -673,7 +694,8 @@ def test_read_info_n_under_an_a_edit_and_committed_upstream_edits(adapter, mode)
     run.until("L2.q")
     q = run.read_info()
     assert q["kind"] == "native" and q["authority"] == "measured"
-    assert q["upstream_edits"] == [{"row": ROW, "layer": 0, "port": "a", "op": "scale", "staged": False}]
+    assert q["upstream_edits"] == [{"row": ROW, "layer": 0, "port": "a", "op": "scale", "staged": False,
+                                    "selection": None}]
     # committed layer-0 value re-probed after the fact still lists its own edit's position
     assert run.read_info("L0.m")["upstream_edits"][0]["staged"] is False
     run.set("L2.m", 0.25, "add")
@@ -802,8 +824,9 @@ def test_set_is_atomic_when_the_probe_fails(adapter, mode, failure, monkeypatch)
         raise failure
 
     monkeypatch.setattr(Run, "_ensure_cache", failing)
-    with pytest.raises(type(failure)):
-        run.set("L1.q", 0.5, "scale", mask=torch.ones(run.port_shape("q"), dtype=torch.bool))
+    with pytest.raises(type(failure)):     # check=True: probed now, so a failure un-stages
+        run.set("L1.q", 0.5, "scale", mask=torch.ones(run.port_shape("q"), dtype=torch.bool),
+                check=True)
     monkeypatch.setattr(Run, "_ensure_cache", original)
     assert run.edits == edits and run._cache is cache
     assert run.edit_mask("L1.q") is None and len(run.staged_info()) == 1
@@ -963,7 +986,7 @@ def test_plain_forward_with_staged_edits_is_unhooked(adapter, mode):
     run = Run_(adapter, mode)
     run.until("L1.a")
     run.set("L1.m", 0.0, "scale")
-    run.set("L1.p", torch.full(run.port_shape("p"), 0.125).to(adapter.dtype))
+    run.set("L1.p", torch.full(run.port_shape("p"), 0.125).to(adapter.dtype), check=True)
     cache, order = run._cache, list(run._cache.order)
     with torch.inference_mode():
         again = adapter.model(ids).logits
@@ -1509,12 +1532,18 @@ def _excursion(adapter, mode, replay):
     """A run away from a checkpoint (``t{ROW}.L1.v``: L0 committed with an edit, an edit staged
     at L1.v) and that checkpoint. Rewind: the run took the checkpoint, then moved on to the next
     row. Replay: a second run over the same tokens (holding the edit tensors) that never reached
-    the checkpoint's cut, so restoring it replays the committed path."""
+    the checkpoint's cut, so restoring it replays the committed path. A replay starts at the
+    deepest mark the two paths share (before ``L0``), so the checkpoint is a row on from there
+    (L1's edit committed, one staged at the next row's ``L0.v``): the replay takes more than one
+    transition."""
     run = Run_(adapter, mode)
     run.until("L0.v")
     run.set("L0.v", 0.5, "add")
     run.until("L1.v")
     run.set("L1.v", 2.0, "scale")
+    if replay:
+        run.until(f"t{len(run.tokens)}.L0.v")
+        run.set("L0.v", 0.5, "add")
     checkpoint = run.checkpoint("here")
     if replay:
         other = Run_(adapter, mode)
@@ -1550,7 +1579,7 @@ def test_a_deferred_interrupt_completes_the_restore_then_raises(adapter, mode, m
     FIRED.add((method, nth, after, replay, state["fired"]))
     assert run.where == checkpoint["where"] == twin.where
     assert [e["port"] for e in run.edits] == [e["port"] for e in twin.edits] == ["v"]
-    assert len(run.committed_edits()) == 1
+    assert len(run.committed_edits()) == (2 if replay else 1)
     assert run.committed_edits() == twin.committed_edits()
     assert _in_sync(run)
     assert torch.equal(run.read(), twin.read())
