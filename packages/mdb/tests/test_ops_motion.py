@@ -14,7 +14,8 @@ from mdb.ops import (  # noqa: E402
 
 PROMPT = [1, 5, 9, 3]
 ROW = len(PROMPT) - 1
-CASES = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16")]
+CASES = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("llama", "bf16"),
+         ("mistral", "fp32")]
 
 
 @pytest.fixture(scope="module", params=CASES, ids=lambda c: "-".join(c))
@@ -118,7 +119,7 @@ def test_backtrace_follows_program_edges(debugger):
             assert producer in rhs or producer.removesuffix("n") in rhs
     assert {"A", "p", "v", "s", "qr", "kr", "q", "k", "a"} <= set(level)
     assert "r" not in level and "m" not in level
-    if program.family == "qwen2":
+    if "qn" not in program.names:
         assert result["chain"] == "o <- A <- v,p <- s <- qr,kr <- q,k <- a <- h"
     else:
         assert result["chain"] == "o <- A <- v,p <- s <- qr,kr <- qn,kn <- q,k <- a <- h"

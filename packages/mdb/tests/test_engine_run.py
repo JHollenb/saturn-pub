@@ -18,7 +18,8 @@ from mdb.engine import Run  # noqa: E402
 from mdb.engine.ports import tensor_digest  # noqa: E402
 from mdb.engine.selfcheck import tiny_model  # noqa: E402
 
-CASES = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("qwen3", "fp32")]
+CASES = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("qwen3", "fp32"),
+         ("llama", "bf16"), ("llama", "fp32"), ("mistral", "bf16"), ("mistral", "fp32")]
 ROW = len(PROMPT) - 1  # the first generated row's index; addresses read t{ROW}.<stop>
 NEXT = ROW + 1
 

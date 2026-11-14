@@ -57,7 +57,7 @@ import torch
 from mdb.core.errors import BadArgs, Refused
 from mdb.core.pointers import RecordError, check_bounded, seal_digest
 
-from .ports import _acquire, _equality, _release, program_for, tensor_digest
+from .ports import _acquire, _equality, _release, config_refusal, program_for, tensor_digest
 
 DEFAULT_MAX_BYTES = 1 << 30
 SCHEMA = "mdb-trace-v1"
@@ -143,6 +143,9 @@ class Trace:
             self.program = program_for(getattr(config, "model_type", None))
         except ValueError as error:
             raise Refused(str(error)) from None
+        refusal = config_refusal(self.program.family, config)
+        if refusal is not None:
+            raise Refused(refusal)
         if isinstance(ports, str):
             raise BadArgs("ports is a list of addresses, e.g. ['L0.m']")
         self.model = model

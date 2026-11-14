@@ -19,7 +19,7 @@ from test_engine_ports import PROMPT, build_model  # noqa: E402
 
 from mdb.engine import Run  # noqa: E402
 
-CASES = [("qwen2", "bf16"), ("qwen3", "fp32")]
+CASES = [("qwen2", "bf16"), ("qwen3", "fp32"), ("llama", "fp32"), ("mistral", "bf16")]
 
 
 @pytest.fixture(scope="module", params=CASES, ids=lambda case: "-".join(case))

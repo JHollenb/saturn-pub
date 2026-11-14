@@ -1,10 +1,11 @@
 """Exactness, probe-consistency and rewind checks for port stepping, with per-operation timings.
 
-    python -m mdb.engine.selfcheck --tiny qwen2|qwen3 [--dtype bf16|fp32] --tokens N --json OUT
+    python -m mdb.engine.selfcheck --tiny qwen2|qwen3|llama|mistral [--dtype bf16|fp32] \
+        --tokens N --json OUT
     python -m mdb.engine.selfcheck --model PATH [--dtype bf16|fp32] [--device cpu|cuda] \
         [--prompt TEXT | --token-ids 1,2,3] --tokens N --json OUT
 
-Works on any registered Qwen2/Qwen3 checkpoint; nothing assumes tiny sizes. Numbers are
+Works on any checkpoint of a family in ``ports.FAMILIES``; nothing assumes tiny sizes. Numbers are
 measured in this process unless the report's ``labels`` map says otherwise (the expected layer
 count is derived-exact from the layer count and token count; ``generated`` and
 ``prompt_tokens`` are supplied).
@@ -23,7 +24,7 @@ from typing import Any
 
 import torch
 
-from .models import DTYPES, load_local, tiny_model  # noqa: E402,F401
+from .models import DTYPES, TINY_FAMILIES, load_local, tiny_model  # noqa: E402,F401
 
 
 def _sync(device: torch.device) -> None:
@@ -222,7 +223,7 @@ def environment(adapter: Any) -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(prog="python -m mdb.engine.selfcheck")
     source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument("--tiny", choices=("qwen2", "qwen3"))
+    source.add_argument("--tiny", choices=TINY_FAMILIES)
     source.add_argument("--model", help="local Hugging Face checkpoint directory")
     parser.add_argument("--dtype", choices=tuple(DTYPES), default="bf16")
     parser.add_argument("--device", default="cpu")

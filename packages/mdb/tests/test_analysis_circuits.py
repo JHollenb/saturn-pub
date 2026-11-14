@@ -19,7 +19,8 @@ from mdb.core.records import verify_record  # noqa: E402
 from mdb.ops.debugger import open_tiny  # noqa: E402
 
 PROMPT = [1, 5, 9, 3]
-CONFIGS = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("qwen3", "fp32")]
+CONFIGS = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("qwen3", "fp32"),
+           ("llama", "bf16"), ("llama", "fp32"), ("mistral", "bf16"), ("mistral", "fp32")]
 
 
 @pytest.fixture(scope="module", params=CONFIGS, ids=lambda c: "-".join(c))

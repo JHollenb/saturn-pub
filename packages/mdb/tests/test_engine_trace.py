@@ -13,7 +13,8 @@ from mdb.engine.models import tiny_model  # noqa: E402
 from mdb.engine.ports import program_for, tensor_digest  # noqa: E402
 from mdb.engine.trace import DEFAULT_MAX_BYTES  # noqa: E402
 
-CASES = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("qwen3", "fp32")]
+CASES = [("qwen2", "bf16"), ("qwen2", "fp32"), ("qwen3", "bf16"), ("qwen3", "fp32"),
+         ("llama", "bf16"), ("llama", "fp32"), ("mistral", "bf16"), ("mistral", "fp32")]
 TOKENS = [3, 17, 5, 29, 11]
 BATCH = torch.tensor([[3, 17, 5, 29, 11], [8, 2, 30, 1, 19], [4, 4, 22, 13, 7]])
 
@@ -74,7 +75,7 @@ def test_captured_values_equal_the_stepping_debugger_bit_for_bit(family, dtype):
                                                       ["batch", "head", "row", "src"])
 
 
-@pytest.mark.parametrize("family", ["qwen2", "qwen3"])
+@pytest.mark.parametrize("family", ["qwen2", "qwen3", "llama", "mistral"])
 def test_sdpa_refuses_the_eager_ports_and_stays_bitwise_passive(family):
     model = tiny_model(family, "fp32")
     model.set_attn_implementation("sdpa")

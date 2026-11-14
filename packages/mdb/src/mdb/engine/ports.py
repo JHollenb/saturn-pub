@@ -1,4 +1,5 @@
-"""Port programs for native Qwen2/Qwen3 decoder layers and the controller that drives them.
+"""Port programs for native pre-norm SwiGLU decoder layers (Qwen2, Qwen3, Llama, Mistral) and
+the controller that drives them.
 
 A port is a named value produced inside one native decoder-layer call. The controller
 captures ports with forward hooks plus an intercept of the family's module-level
@@ -175,7 +176,59 @@ def _proj(
     )
 
 
-def _qwen_program(family: str, *, qk_norm: bool) -> PortProgram:
+@dataclass(frozen=True)
+class Family:
+    """One row of the family table. Every registered family runs the same native block shape:
+    ``h -> input_layernorm (RMSNorm) -> q/k/v_proj [-> q_norm/k_norm] -> RoPE -> eager attention
+    -> o_proj -> + h -> post_attention_layernorm (RMSNorm) -> act_fn(gate_proj) * up_proj ->
+    down_proj -> + r``, with the same module names, so one port program serves all of them. The
+    columns are what differs.
+
+    ``qk_norm``: per-head RMSNorm on q and k before RoPE (ports ``qn``/``kn``). ``qkv_bias``:
+    the q/k/v projections always carry a bias (``"always"``), or carry one only under
+    ``config.attention_bias`` (``"config"``); the analysis reads ``Linear.bias`` of the loaded
+    module either way, so an absent bias is an absent (exactly zero) term, never a guess.
+    ``premises``: ``(config attribute, allowed values, why)``; a loaded config outside them is
+    refused at attach (``config_refusal``) instead of being stepped under a wrong operator text.
+    """
+
+    name: str
+    qk_norm: bool = False
+    qkv_bias: str = "config"
+    premises: tuple[tuple[str, tuple[Any, ...], str], ...] = ()
+
+
+_SILU = ("hidden_act", ("silu",), "the MLP port program is sg = silu(g)")
+_NO_MLP_BIAS = ("mlp_bias", (False, None),
+                "the MLP port program (g = W_gate n, u = W_up n, m = W_down f) is bias-free")
+
+FAMILIES: dict[str, Family] = {
+    row.name: row
+    for row in (
+        Family("qwen2", qkv_bias="always", premises=(_SILU,)),
+        Family("qwen3", qk_norm=True, premises=(_SILU,)),
+        Family("llama", premises=(_SILU, _NO_MLP_BIAS)),
+        Family("mistral", premises=(_SILU,)),
+    )
+}
+
+
+def config_refusal(family: str, config: Any) -> str | None:
+    """Why a loaded ``config`` falls outside its family row's premises (None when it does not)."""
+    row = FAMILIES.get(family)
+    if row is None:
+        return f"no port program for model_type {family!r}; supported: {', '.join(FAMILIES)}"
+    for name, allowed, why in row.premises:
+        value = getattr(config, name, allowed[0])
+        if value not in allowed:
+            return (f"{family} config.{name} = {value!r} is outside the port table "
+                    f"({name} must be one of {list(allowed)}: {why})")
+    return None
+
+
+def _decoder_program(row: Family) -> PortProgram:
+    family, qk_norm = row.name, row.qk_norm
+    bias = {"always": " + b_{}", "config": " (+ b_{} when attention_bias)"}[row.qkv_bias]
     head = ("batch", "row", "head", "head_dim")
     kv_head = ("batch", "row", "kv_head", "head_dim")
     q_src, k_src = ("qn", "kn") if qk_norm else ("q", "k")
@@ -204,7 +257,9 @@ def _qwen_program(family: str, *, qk_norm: bool) -> PortProgram:
             "input_layernorm output replaced; reaches q/k/v only, the skip path keeps h",
             inputs=("h",),
         ),
-        _proj("q", "self_attn.q_proj", _QF, "q = W_q a + b_q (pre-RoPE, flat)", ("a",)),
+        _proj(
+            "q", "self_attn.q_proj", _QF, f"q = W_q a{bias.format('q')} (pre-RoPE, flat)", ("a",)
+        ),
     ]
     if qk_norm:
         attention.append(
@@ -226,7 +281,7 @@ def _qwen_program(family: str, *, qk_norm: bool) -> PortProgram:
             "k",
             "self_attn.k_proj",
             _KF,
-            "k = W_k a + b_k (pre-RoPE, flat)",
+            f"k = W_k a{bias.format('k')} (pre-RoPE, flat)",
             ("a",),
             "; flows through RoPE into the cache row this transition writes",
         )
@@ -251,7 +306,7 @@ def _qwen_program(family: str, *, qk_norm: bool) -> PortProgram:
             "v",
             "self_attn.v_proj",
             _KF,
-            "v = W_v a + b_v (flat)",
+            f"v = W_v a{bias.format('v')} (flat)",
             ("a",),
             "; enters the cache row this transition writes",
         ),
@@ -438,22 +493,26 @@ def _qwen_program(family: str, *, qk_norm: bool) -> PortProgram:
     )
 
 
-PROGRAMS: dict[str, PortProgram] = {
-    "qwen2": _qwen_program("qwen2", qk_norm=False),
-    "qwen3": _qwen_program("qwen3", qk_norm=True),
-}
+PROGRAMS: dict[str, PortProgram] = {name: _decoder_program(row) for name, row in FAMILIES.items()}
 
 
 def program_for(adapter_or_family: Any) -> PortProgram:
+    """The port program of a family name, or of an adapter (whose loaded config must then lie
+    inside the family row's premises)."""
     family = adapter_or_family
     if not isinstance(family, str):
         family = adapter_or_family.spec.model_type
     try:
-        return PROGRAMS[family]
+        program = PROGRAMS[family]
     except KeyError:
         raise ValueError(
             f"no port program for {family!r}; registered: {', '.join(sorted(PROGRAMS))}"
         ) from None
+    config = getattr(getattr(adapter_or_family, "model", None), "config", None)
+    refusal = None if config is None else config_refusal(family, config)
+    if refusal is not None:
+        raise ValueError(refusal)
+    return program
 
 
 def check_deterministic(module: Any) -> None:

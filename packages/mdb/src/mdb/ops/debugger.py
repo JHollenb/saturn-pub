@@ -46,7 +46,7 @@ from mdb.core.address import (
 from mdb.core.errors import Refused
 from mdb.core.pointers import RecordError, Unresolved, occurrence_pointer
 from mdb.engine.edits import CELL_AXES
-from mdb.engine.ports import PROGRAMS, program_for, tensor_digest
+from mdb.engine.ports import PROGRAMS, config_refusal, program_for, tensor_digest
 from mdb.engine.run import ReplayMismatch, Run
 
 from .context import Context
@@ -459,7 +459,8 @@ def cell_block(run: Run, address: Any, *, label: str | None = None) -> Any:
 def attach(
     model: Any, tokenizer: Any = None, *, project: Any = None, session: str | None = None
 ) -> Debugger:
-    """Attach to a loaded Hugging Face causal LM (Qwen2/Qwen3, eager attention, eval mode).
+    """Attach to a loaded Hugging Face causal LM (a family of ``engine.ports.FAMILIES``: Qwen2,
+    Qwen3, Llama, Mistral; eager attention, eval mode).
 
     ``project`` (a path, or an ``mdb.core.project.Project``) makes the debugger durable: the
     project is created or reopened and the session ``session`` is opened, bound to the model
@@ -488,6 +489,9 @@ def attach(
         )
     from saturn_pub.adapters.decoder import DecoderAdapter
 
+    refusal = config_refusal(family, config)
+    if refusal is not None:
+        raise Refused(f"cannot attach: {refusal}")
     try:
         adapter = DecoderAdapter(model, granularity="operation")
     except ValueError as error:

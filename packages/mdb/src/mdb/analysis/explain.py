@@ -728,18 +728,20 @@ def consumer_gradient(session: Any, token: int, contrast: int) -> tuple[float, A
     The same computation as the lane function ``circuit_native.consumer_gradient`` restricted to
     what ``_first_order`` reads (the primal and the hidden adjoint): the adapter's own layer
     executor under autograd, the past KV fixed (detached clones of the captured cache), final norm,
-    LM head and logit softcap; no argmax/rounding derivative. Resident Qwen2/Qwen3
-    ``DecoderAdapter`` with one pending token, batch one, only.
+    LM head and logit softcap; no argmax/rounding derivative. Resident ``DecoderAdapter`` of a
+    family with a port program (``engine.ports.FAMILIES``), one pending token, batch one, only.
     """
     import torch
     from saturn_pub.adapters.decoder import DecoderAdapter
 
+    from mdb.engine.ports import PROGRAMS
+
     adapter = session.adapter
     if (not isinstance(adapter, DecoderAdapter)
-            or adapter.spec.model_type not in {"qwen2", "qwen3"}
+            or adapter.spec.model_type not in PROGRAMS
             or adapter.execution.get("residency", "resident") != "resident"):
-        raise ValueError("native circuit expansion currently supports resident public "
-                         "Qwen2/Qwen3 DecoderAdapter")
+        raise ValueError("native circuit expansion supports a resident public DecoderAdapter "
+                         f"of a port-program family ({', '.join(PROGRAMS)})")
     adapter.validate_execution()
     state = session.capture(retain=False).payload
     index = state["layer"]
@@ -869,14 +871,15 @@ def explain_port(source: Any, layer: int, port: str) -> dict[str, Any]:
 
     caps = _as_capture(source)
     adapter = caps.adapter
-    spec = program_for(adapter).spec(port)
+    spec_program = program_for(adapter)
+    spec = spec_program.spec(port)
     module = _layer_module(adapter, layer)
     attn = module.self_attn
     ports = caps.ports[layer]
     heads, kv_heads, d_h = adapter.num_heads, adapter.num_kv_heads, adapter.head_dim
     t = caps.position
     kappa = finite.gqa_kappa(heads, kv_heads)
-    qwen3 = caps.family == "qwen3"
+    q_src, k_src = spec_program.spec("qr").inputs[0], spec_program.spec("kr").inputs[0]
     notes: list[str] = []
     producers = _PRODUCERS.get(port, ())
     native = ports[port]
@@ -915,12 +918,12 @@ def explain_port(source: Any, layer: int, port: str) -> dict[str, Any]:
         source_port = port[0]
         res = norm(ports[source_port], getattr(attn, f"{source_port}_norm"), native, width=d_h)
     elif port == "qr":
-        producers = ("qn",) if qwen3 else ("q",)
+        producers = (q_src,)
         qbar = f64(ports[producers[0]]).reshape(heads, d_h)
         res = finite.rope_rotate(qbar, t, _theta(adapter.model.config),
                                  native=native[0, :, 0, :])
     elif port == "kr":
-        producers = ("kn",) if qwen3 else ("k",)
+        producers = (k_src,)
         kbar = f64(ports[producers[0]]).reshape(kv_heads, d_h)
         res = finite.rope_rotate(kbar, t, _theta(adapter.model.config),
                                  native=native[0, :, t, :])

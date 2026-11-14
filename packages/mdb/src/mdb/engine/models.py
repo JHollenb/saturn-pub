@@ -10,6 +10,7 @@ from typing import Any
 import torch
 
 DTYPES = {"bf16": torch.bfloat16, "fp32": torch.float32}
+TINY_FAMILIES = ("qwen2", "qwen3", "llama", "mistral")
 
 
 def _dtype(dtype: Any) -> torch.dtype:
@@ -45,7 +46,9 @@ def tiny_model(
 
     ``qwen2``: hidden 16, 2 heads, 1 KV head, ff 32. ``qwen3``: hidden 32, 4 heads, 2 KV heads,
     head_dim 8, ff 64. The defaults reproduce the weights the legacy flat-module tiny builders
-    produced for the same seed.
+    produced for the same seed. ``llama``: hidden 32, 4 heads, 2 KV heads, head_dim 8, ff 64, no
+    attention or MLP bias. ``mistral``: hidden 32, 4 heads, 1 KV head (MQA), head_dim 8, ff 64,
+    a 128-position sliding window (the windowed mask path, as in Mistral-7B-v0.1).
     """
     target = _dtype(dtype)
     if family == "qwen2":
@@ -79,7 +82,42 @@ def tiny_model(
             attn_implementation="eager",
         )
         return cast_weights(Qwen3ForCausalLM(config).eval(), target)
-    raise ValueError("tiny family must be qwen2 or qwen3")
+    if family == "llama":
+        from transformers import LlamaConfig, LlamaForCausalLM
+
+        torch.manual_seed(seed)
+        config = LlamaConfig(
+            vocab_size=vocab_size,
+            hidden_size=32,
+            intermediate_size=64,
+            num_hidden_layers=layers,
+            num_attention_heads=4,
+            num_key_value_heads=2,
+            head_dim=8,
+            max_position_embeddings=256,
+            attention_bias=False,
+            mlp_bias=False,
+            attn_implementation="eager",
+        )
+        return cast_weights(LlamaForCausalLM(config).eval(), target)
+    if family == "mistral":
+        from transformers import MistralConfig, MistralForCausalLM
+
+        torch.manual_seed(seed)
+        config = MistralConfig(
+            vocab_size=vocab_size,
+            hidden_size=32,
+            intermediate_size=64,
+            num_hidden_layers=layers,
+            num_attention_heads=4,
+            num_key_value_heads=1,
+            head_dim=8,
+            max_position_embeddings=256,
+            sliding_window=128,
+            attn_implementation="eager",
+        )
+        return cast_weights(MistralForCausalLM(config).eval(), target)
+    raise ValueError(f"tiny family must be one of {', '.join(TINY_FAMILIES)}")
 
 
 def load_local(path: str, *, dtype: Any = "bf16", device: Any = "cpu") -> Any:

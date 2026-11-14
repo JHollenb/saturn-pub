@@ -1,4 +1,4 @@
-"""P19 margin explanation and per-port reconstruction on tiny GQA Qwen2/Qwen3 models.
+"""P19 margin explanation and per-port reconstruction on tiny GQA Qwen2/Qwen3/Llama/Mistral.
 
 Run with ``-s`` to print the measured maxima (closure in float64, eta against native).
 """
@@ -488,7 +488,8 @@ def lm_head_with_bias(family, dtype, seed=5):
     return model
 
 
-@pytest.mark.parametrize("family,dtype", [("qwen2", "fp32"), ("qwen3", "bf16")])
+@pytest.mark.parametrize("family,dtype", [("qwen2", "fp32"), ("qwen3", "bf16"), ("llama", "bf16"),
+                                          ("mistral", "fp32")])
 def test_head_bias_is_a_listed_term(family, dtype):
     torch.set_num_threads(1)
     adapter = DecoderAdapter(lm_head_with_bias(family, dtype), granularity="operation")
@@ -642,7 +643,7 @@ def test_run_edits_are_keyed_by_row_and_layer(bundle):
 FD_TOLERANCE = 5e-4  # measured worst |first_order - native FD|: 2.2e-4 (audit kit), 1.6e-4 (here)
 
 
-@pytest.mark.parametrize("family", ["qwen2", "qwen3"])
+@pytest.mark.parametrize("family", ["qwen2", "qwen3", "llama", "mistral"])
 def test_first_order_column_matches_native_central_finite_differences(family):
     """lambda^T xi vs d/de M(port *= 1 + e) at e = 0 on the native model (fixed past KV).
 

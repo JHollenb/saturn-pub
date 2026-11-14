@@ -1,4 +1,5 @@
-"""REPL transcripts on tiny Qwen2 (BF16, seed 113), compared with checked-in files.
+"""REPL transcripts on tiny Qwen2 (BF16, seed 113), compared with checked-in files. A script
+named ``<family>_*.mdb`` for another tiny family (``llama_*``, ``mistral_*``) runs on that family.
 
 Regenerate after an intended change: MDB_UPDATE_GOLDEN=1 pytest tests/test_repl_golden.py
 """
@@ -21,6 +22,12 @@ from mdb.repl.shell import Shell, split  # noqa: E402
 GOLDEN = Path(__file__).parent / "repl_golden"
 SCRIPTS = sorted(path.stem for path in GOLDEN.glob("*.mdb"))
 ARGS = ["--tiny", "qwen2", "--dtype", "bf16", "--tokens", "1 5 9 3"]
+OTHER_FAMILIES = ("llama", "mistral")
+
+
+def _args(name: str) -> list[str]:
+    family = name.split("_", 1)[0]
+    return [*ARGS[:1], family, *ARGS[2:]] if family in OTHER_FAMILIES else ARGS
 
 
 _HEX = re.compile(r"\b[0-9a-f]{12,64}\b")
@@ -49,7 +56,7 @@ def test_normalize_masks_digests_and_rounds_floats_but_keeps_pinned_text():
 
 @pytest.mark.parametrize("name", SCRIPTS)
 def test_golden_transcript(name, capsys):
-    assert main([*ARGS, "--script", str(GOLDEN / f"{name}.mdb")]) == 0
+    assert main([*_args(name), "--script", str(GOLDEN / f"{name}.mdb")]) == 0
     text = capsys.readouterr().out
     expected = GOLDEN / f"{name}.out"
     if os.environ.get("MDB_UPDATE_GOLDEN") == "1":
