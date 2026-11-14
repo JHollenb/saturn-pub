@@ -35,6 +35,8 @@ correct = sc.correct_map(P, capinfo)
 sweep = sc.load_sweep(SWP.split(","))
 car = sc.carriers(P, sweep, correct)
 LC, KC = car["L_c"], car["kv_c"]
+_pick = __import__("os").environ.get("A2_PICK", "")
+ITEMS = [P["items"][int(i)] for i in _pick.split(",")] if _pick else P["items"]
 res = {"L_c": LC, "kv_c": KC, "part": PART, "items": {}}
 print(f"load {time.monotonic() - T0:.1f}s", flush=True)
 
@@ -49,7 +51,7 @@ def logits_at(run, last, toks):
 
 
 if PART == "split":
-    for it in P["items"]:
+    for it in ITEMS:
         if it["block"] != "base" or not correct[it["id"]]:
             continue
         t = time.monotonic()
@@ -101,7 +103,7 @@ else:
             msum[it["block"]] = msum.get(it["block"], 0) + mcache[it["id"]]
             mcnt[it["block"]] = mcnt.get(it["block"], 0) + 1
     SETK = {"base": "cities", "depth": "languages"}
-    for it in P["items"]:
+    for it in ITEMS:
         t = time.monotonic()
         iid, ids, last = it["id"], it["ids"], len(it["ids"]) - 1
         don = by_id[it["donor"]]
