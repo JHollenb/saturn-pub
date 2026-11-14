@@ -59,7 +59,7 @@ For every test set, and for every item, the read generator emits:
 2. Its **floor arms**. Each no-renormalisation cut gets `/sham_recompute` (the recompute sham of exactly its cells) and `/cut_recompute` (the recompute twin). Each renormalising cut gets `/sham`. These are built with `attention_port.floor_arms`, so the panel and the port agree on what a floor is. Every cut gets them, controls and references included, and they run in every context: every (prompt, seed), not only the first.
 3. **Keep arms** for `keep_sets`: `z:keep-<set>:<item>` cuts in every unit outside the set.
 4. **Matched random controls for both cut and keep.** `attention_ranking.matched_control_sets` matches each draw on per-stratum counts and on the number of distinct blocks. Mass matching and disjointness are optional. The random keep arm is the complement of the matched random set. Each draw's report is stored in `panel.controls["<item>:<set>"]`, with its `mass_relation`. Each draw has its own seed, `draw_seed(seed, item, set name, kind)` (sha256 of the four values; recorded as `draw_seed` with `seed_derivation`), so draws for different items, sets and cut/keep are independent and still deterministic in `RandomControls.seed`. Before 2026-11-12 every draw used `seed` itself, and two items with same-shaped sets got the identical draw (MEASURED in `test_random_draws_are_independent_per_item_set_and_kind_yet_deterministic`). Saved plans keep their hash: a loaded plan is never re-drawn; only a plan regenerated from its spec changes. A mass-matched draw that is not disjoint and overlaps the target by more than the chance mean + `overlap_sd` sd (default 3, a `RandomControls` parameter recorded in the plan) is `matched_by_reuse`: it shares the identity it should vary, so it does not rule out mass. `panel.identity["<item>:<set>"]` says whether the draws separate identity from mass.
-5. An **other-item control**: the same units applied to another item's rows (`z:<set>@rows-<other>:<item>`). By default the other item is the next item, cycling. For a cut claim it rules out `generic_damage` ("cutting these units damages any word"). It does **not** hold mass fixed (the other item's mass through these units differs), so it does not separate identity from mass. For a keep claim it is a reported reference only.
+5. An **other-item control**: the same units applied to another item's rows (`z:<set>@rows-<other>:<item>`). By default the other item is the next item, cycling. For a cut claim it rules out `generic_damage` ("cutting these units damages any word") when it removes at least `other_item_min_share` of the target's mass (its mass relation and share are computed at verdict time; an unknown share rules nothing out). It does **not** hold mass fixed (the other item's mass through these units differs), so it does not separate identity from mass. For a keep claim it is a reported reference only.
 6. **Nested-size arms**: `<big>-minus-<small>`, the added units alone. They are treated as test sets with the same controls.
 7. **References** (`native`, `iso:<item>`, `del:<item>`, `z:none:<item>`, `m:none:<item>`) with floors.
 8. `external_controls={"rand120": "own120"}` for hand-drawn control sets. They inherit the target set's cut types, have `mass_relation="unknown"` and rule nothing out: they can refute a claim but never support one.
@@ -126,7 +126,7 @@ A read plan carries an `execution` block that is part of its sha256:
 
 `arm_effects(panel, results, floor_factor=1.0)` gives each cut arm's effect, its floor and the floor's parts per context, plus `inside_floor`, `floor_incomplete` and the `floor_factor` used.
 
-`verdicts(panel, results, judgements=None, floor_factor=1.0, recovery_threshold=0.7, twin_gap_waiver=None, floor_factor_waiver=None)` returns one record per (item, unit set, claim):
+`verdicts(panel, results, judgements=None, floor_factor=1.0, recovery_threshold=None, twin_gap_waiver=None, floor_factor_waiver=None, min_effect_fraction=None, mass_rel_tolerance=None, mass_abs_floor=None, other_item_min_share=None, item_mass=None, exclude_named_draws=True)` returns one record per (item, unit set, claim). A parameter left `None` comes from the plan (`execution["verdict_parameters"]`, set through `ReadPanelSpec`) or else from the module default (see "Verdict parameters" below); `thresholds["parameter_sources"]` records which. `item_mass` (`{item: {unit: mass}}`, or flat full-grid vectors) gives the per-item mass an other-item control needs when the plan's stored draw reports cannot (they can when the items share the same sets, as in the Qwen plan):
 
 | key | meaning |
 |---|---|
@@ -135,10 +135,11 @@ A read plan carries an `execution` block that is part of its sha256:
 | `claim_scope`, `claim_statement` | for `supported`: `identity`; for `set_only`: `needed_set` (cut) or `sufficient_set` (keep), with a statement that begins `WEAKER CLAIM` and names what is not shown; `None` otherwise |
 | `ruled_out`, `remaining_alternatives` | alternatives ruled out in every context of both cut types, and those still open |
 | `refuted_by` | (cut type, context, control) for every refuting control |
-| `findings` | e.g. `low_recovery`, `any_same_size_set_suffices` |
+| `findings` | e.g. `low_recovery`, `any_same_size_set_suffices`, `effect_below_min_fraction` |
+| `effect_fraction` | `min`, `max` and per (cut type, context) values of the effect as a fraction of the all-cut effect (necessity: `effect / all_cut_effect`; sufficiency: the recovery), with its `definition`; `None` where the all-cut is missing or inside its floor |
 | `floor_incomplete`, `twin_gap_waiver` | whether any floor used a lower-bound twin gap; the written waiver, if any |
-| `thresholds` | `floor_factor`, `floor_factor_waiver`, the refute rule, `overlap_sd`, `mass_tolerance`, and for keep claims `recovery_threshold` |
-| `cut_types` | per type: status, per-context rows (effect, floor, floor parts, every control's effect, margin, floor, `refutes`, `rules_out`, `confounded_with_mass`), `ruled_out`, `refuting_controls`, `mass_confounded_controls`, `separating_controls` |
+| `thresholds` | `floor_factor`, `floor_factor_waiver`, the refute rule, `overlap_sd`, `mass_tolerance` (the plan's search tolerance), `mass_rel_tolerance`, `mass_abs_floor`, `other_item_min_share`, `exclude_named_draws`, `parameter_sources`, and `min_effect_fraction` (cut claims) or `recovery_threshold` (keep claims) |
+| `cut_types` | per type: status, per-context rows (effect, floor, floor parts, all-cut effect, `effect_fraction`, every control's effect, margin, floor, `refutes`, `rules_out`, `confounded_with_mass`, `mass_relation` and `mass_relation_stored`, `other_item_share`, `excluded`, `duplicate_of`, `named_overlap`), `ruled_out`, `refuting_controls`, `mass_confounded_controls`, `separating_controls`, `excluded_controls` |
 | `cut_types_agree`, `missing_cut_types`, `waivers`, `identity` | as named |
 | `picture`, `overridden_by_picture`, `picture_blocked_by`, `picture_capped` | the picture judgement and what it could and could not change |
 
@@ -150,10 +151,12 @@ A verdict answers one claim about one unit set for one item. It never says more 
 
 | control | rules out | does not rule out |
 |---|---|---|
-| random set, mass matched within tolerance (`matched`) | `set_size` (any same-size, stratum- and block-matched set), `mass` (any set with this much of the item's mass) | `generic_damage` |
+| random set, mass matched (`matched`: within `max(mass_rel_tolerance × target mass, mass_abs_floor)`) | `set_size` (any same-size, stratum- and block-matched set), `mass` (any set with this much of the item's mass) | `generic_damage` |
 | random set, heavier than the target (`more`) | `set_size`, `mass` (a heavier set did less damage) | `generic_damage` |
 | random set, less mass (`less`), mass unknown (`unknown`) or matched only by reusing target units (`matched_by_reuse`) | `set_size` | `mass` (recorded `confounded_with_mass`), `generic_damage` |
-| other-item control (cut claims) | `generic_damage` (cutting these units damages any word) | `mass`, `set_size` |
+| other-item control (cut claims), mass share ≥ `other_item_min_share` | `generic_damage` (cutting these units damages any word) | `mass`, `set_size` |
+| other-item control (cut claims), share below `other_item_min_share` or unknown | nothing (a near-empty cut, or one of unknown size, is no test of generic damage); it can still refute unless heavier (`more`) | |
+| random draw that contains a unit of another named test set of the item, or repeats an earlier draw | nothing, and it cannot refute: listed under `excluded_controls` | |
 | other-item control (keep claims) | nothing: reported reference only | |
 | external (hand-drawn) control | nothing (can only refute) | |
 
@@ -162,16 +165,29 @@ A verdict answers one claim about one unit set for one item. It never says more 
 1. The test effect must exceed its floor; otherwise `unresolved`.
 2. **Refutation, whatever the confounds.** If any control whose mass is not known to exceed the target's (random `matched`/`matched_by_reuse`/`less`/`unknown`, other-item, external) has an effect not smaller than the test's by more than the floor (`control effect ≥ test effect − floor`), the claim is `not_supported` and the control is listed in `refuted_by`. A heavier random set (`more`) that does as much damage neither refutes nor supports, since its extra mass explains it.
 3. If a twin gap was not measured (no direct delta-vs-recompute pair distance), the floor is a lower bound: `unresolved`, reason `twin_gap_not_measured`, and the record carries `floor_incomplete: true`. Only `twin_gap_waiver="written reason"` lets the lower bound stand; the waiver is recorded and `floor_incomplete` stays true.
-4. At least one beaten control must rule out a generic-damage explanation (`set_size` or `generic_damage`); otherwise `control_missing`.
+4. At least one valid beaten control must rule out a generic-damage explanation (`set_size` or `generic_damage`); otherwise `control_missing`. Excluded random draws and other-item controls below `other_item_min_share` do not count, so a record whose only controls are those is `control_missing`, never `set_only`.
 5. Then, with `ruled_out` the alternatives ruled out in every context of both cut types: `supported` (scope `identity`) if `set_size`, `mass` and `generic_damage` are all ruled out; otherwise `set_only` (scope `needed_set`), with `remaining_alternatives` listing what is open.
+6. **Effect size.** A record that passes 1-5 but whose effect is below `min_effect_fraction` of the all-cut effect in any cut type and context is `unresolved` with finding `effect_below_min_fraction`: the controls were beaten, but a set that moves the outcome by a few percent of the all-cut is not reported as a bare "needed set". `effect_fraction` is on every record. The bar is relative: an item whose all-cut itself barely moves the outcome is not caught by it (Qwen `icy`, see `QWEN-PANELS.md`).
 
 **Sufficiency (keep): "these units alone carry the item".** Per cut type and context:
 
 1. The all-cut arm's effect must exceed its own floor (there is something to recover); otherwise `unresolved`.
-2. `recovery = 1 − keep_effect / all_cut_effect` must reach `recovery_threshold` (default .7, recorded); otherwise `not_supported` with finding `low_recovery`.
-3. A matched random **keep** control of the same size must recover clearly less: `random keep effect − keep effect > floor`. If one recovers as much, `not_supported` with finding `any_same_size_set_suffices` (any same-size set carries the item, which is itself a result about the model). No random keep control with outcome and floor: `control_missing`. The other-item keep control is reported under `references` and never counted.
+2. `recovery = 1 − keep_effect / all_cut_effect` must reach `recovery_threshold` (default .7, recorded with its source); otherwise `not_supported` with finding `low_recovery`. The .7 is a choice that is not in any plan sealed before 2026-11-13; a verdict on such a plan that is `not_supported` only through it should be reported with the status it would have without it (the FLUX report does this).
+3. A matched random **keep** control of the same size must recover clearly less: `random keep effect − keep effect > floor`. If one recovers as much, `not_supported` with finding `any_same_size_set_suffices` (any same-size set carries the item, which is itself a result about the model). No valid random keep control with outcome and floor (excluded draws do not count): `control_missing`. The other-item keep control is reported under `references` and never counted.
 4. Incomplete floors: as for necessity.
 5. `supported` (scope `identity`) needs `mass` ruled out too (a `matched` or `more` random keep beaten); otherwise `set_only` (scope `sufficient_set`).
+
+**Verdict parameters (CHOICES; defaults set in the 2026-11-13 fix pass after the audit `AUDIT-three-lanes-20261113.md`, so post hoc for every plan sealed before then).** Each can be set per plan (`ReadPanelSpec(...)` → `execution["verdict_parameters"]`, hashed only when set, so older plans keep their hash) or per call; the record says which source was used.
+
+| parameter | default | meaning |
+|---|---|---|
+| `mass_rel_tolerance` | 0.10 (`MASS_REL_TOLERANCE`) | a control's mass is `matched` when `|control − target| ≤ max(mass_rel_tolerance × target, mass_abs_floor)`; otherwise `less` or `more`. Replaces the absolute tolerance (0.02 called a control with 11× a 0.0015 target "matched"). Every stored draw is re-labelled with it at verdict time (`mass_relation_stored` keeps the old label). |
+| `mass_abs_floor` | 0.001 (`MASS_ABS_FLOOR`), in the plan's mass units | keeps a near-zero target from demanding an exact zero |
+| `other_item_min_share` | 0.10 (`OTHER_ITEM_MIN_SHARE`) | an other-item cut rules out generic damage only if it removes at least this share of the target's mass (other item's mass through the units / the item's) |
+| `min_effect_fraction` | 0.05 (`DEFAULT_MIN_EFFECT_FRACTION`) | necessity: passing records below this fraction of the all-cut effect become `unresolved` |
+| `recovery_threshold` | 0.7 (`DEFAULT_RECOVERY`) | sufficiency: minimum recovery |
+
+**Random-draw validity.** `RandomControls(exclude_named=True)` (default) never draws a unit of any named test set of the panel (all items; cut, keep and nested sets), and identical draws are flagged (`duplicates`, `independent_draws`) and emitted once. `RandomControls(mass_rel_tolerance=...)` searches with the relative tolerance; the older absolute `mass_tolerance` still builds, but the label is always relative. For plans drawn before this, `verdicts` excludes (`exclude_named_draws=True`) any draw that contains a unit of another named test set of the same item, and any repeat of an earlier draw. `exclude_named_draws=False` keeps the named-unit check as a flag (`named_overlap`) for sensitivity reporting. Caveat (MEASURED on FLUX): when an item's named sets cover a large part of the universe, every uniform draw overlaps them at about chance, and the rule then removes every random control.
 
 **Across contexts and cut types.** Within a cut type the worst context wins (control_missing > not_supported > unresolved > set_only > supported). Both cut types must be present (`control_missing` otherwise, even when waived) and both must pass; if one refutes and the other passes, the result is `not_supported`.
 

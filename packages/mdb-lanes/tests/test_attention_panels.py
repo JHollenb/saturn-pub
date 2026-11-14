@@ -438,9 +438,15 @@ def pairs(panel, outcomes, context="c0"):
     return {context: rows}
 
 
-def verdict(panel, outcomes, *, measured_twins=True, **kw):
+# Per-item mass for the other-item relation: equal mass everywhere, so an other-item control cuts
+# as much of the other word's mass as the test cuts of its own (share 1). Since the 2026-11-13 fix
+# an other-item control of UNKNOWN mass share rules nothing out (test_other_item_share_...).
+EQUAL_ITEM_MASS = {"red": {u: 1.0 for u in UNIVERSE}, "ball": {u: 1.0 for u in UNIVERSE}}
+
+
+def verdict(panel, outcomes, *, measured_twins=True, item_mass=EQUAL_ITEM_MASS, **kw):
     rec = P.results_record(panel, {"c0": outcomes}, pair_distances=pairs(panel, outcomes) if measured_twins else None)
-    return {(v["item"], v["unit_set"]): v for v in P.verdicts(panel, rec, **kw)}
+    return {(v["item"], v["unit_set"]): v for v in P.verdicts(panel, rec, item_mass=item_mass, **kw)}
 
 
 def test_verdict_scope_not_supported_unresolved():
@@ -916,3 +922,177 @@ def test_random_mass_per_item_and_value_panel_port_block():
     lane = P.value_panel(LATE_CELLS, label="late", port={"dtype": "float32"})
     assert lane.port == {"dtype": "float32"} and lane.sha256() != plain.sha256()
     assert P.Panel.from_json(json.loads(lane.canonical())).sha256() == lane.sha256()
+
+
+# ------------------------------------------------------- audit 2026-11-13 fix pass (findings 1-3, 7)
+
+def shared_panel(*, exclude_named=True, n=2, rel=0.2, abs_tol=None, sets=None):
+    """Two items reading different rows with the SAME head sets (the Qwen layout): set a = (0,0),
+    set b = (0,1). Strata = block, so a's random draw must come from block 0, and mass matching
+    pulls it to the heaviest free head of block 0, which is b's head (0,1) unless named units are
+    excluded."""
+    mass = {u: 0.01 for u in UNIVERSE}
+    mass.update({(0, 0): 1.0, (0, 1): 0.9})
+    vec = tuple(mass[u] for u in UNIVERSE)
+    sets = sets or {"a": [(0, 0)], "b": [(0, 1)]}
+    rc = (P.RandomControls(n=n, strata=tuple(b for b, _ in UNIVERSE), mass=vec, mass_tolerance=abs_tol, disjoint=True,
+                           seed=0, exclude_named=exclude_named) if abs_tol is not None else
+          P.RandomControls(n=n, strata=tuple(b for b, _ in UNIVERSE), mass=vec, mass_rel_tolerance=rel,
+                           disjoint=True, seed=0, exclude_named=exclude_named))
+    return P.read_panel(P.ReadPanelSpec(items=("red", "ball"), universe=UNIVERSE, sets={"red": sets, "ball": sets},
+                                        contexts=("c0",), cut_sets=tuple(sets), random=rc,
+                                        references=("condition", "all_cut")))
+
+
+def test_duplicate_draws_are_flagged_and_count_once():
+    from mdb_lanes.attention_ranking import matched_control_sets
+    target, n = [0], 12
+    mass = [1.0, 0.9] + [0.01] * 10
+    strata = [b for b, _ in UNIVERSE]
+    drawn = matched_control_sets(target, n, strata=strata, mass=mass, mass_rel_tolerance=0.2, disjoint=True,
+                                 seed=0, n_sets=3)
+    assert [d["report"]["duplicate_of"] for d in drawn] == [None, 0, 0]    # mass pulls every draw to unit 1
+    panel = shared_panel(exclude_named=False, n=3)
+    entry = panel.controls["red:a"]
+    assert entry["independent_draws"] == 1 and [d["duplicate_of"] for d in entry["duplicates"]] == [0, 0]
+    ids = panel.by_id()
+    assert "z:rand0-a:red" in ids and "z:rand1-a:red" not in ids and "z:rand2-a:red" not in ids
+    # an OLD plan that emitted both identical draws: the second is excluded at verdict time
+    d = json.loads(panel.canonical())
+    rand0 = [a for a in d["arms"] if a["unit_set"] in ("rand0-a",) and a["item"] == "red"]
+    for a in rand0:
+        twin = dict(a, arm=a["arm"].replace("rand0", "rand1"), unit_set="rand1-a",
+                    twin=None if a["twin"] is None else a["twin"].replace("rand0", "rand1"),
+                    floor_of=None if a.get("floor_of") is None else a["floor_of"].replace("rand0", "rand1"),
+                    bundle=a["bundle"])
+        d["arms"].insert(d["arms"].index(a) + 1, twin)
+    old = P.Panel.from_json(d)
+    out = fill(old, "red", effect=0.5, control=0.05)
+    v = verdict(old, out, exclude_named_draws=False)[("red", "a")]
+    ctl = {c["control"]: c for c in v["cut_types"]["zero"]["contexts"][0]["controls"]}
+    assert ctl["z:rand1-a:red"]["duplicate_of"] == 0 and "counts once" in ctl["z:rand1-a:red"]["excluded"]
+    assert not ctl["z:rand1-a:red"]["refutes"] and ctl["z:rand1-a:red"]["rules_out"] == []
+
+
+def test_random_draws_exclude_every_named_test_unit_and_old_draws_with_named_units_are_excluded():
+    # generation: with exclusion the draw for a avoids b's head (0,1) and takes (0,2)
+    panel = shared_panel()
+    assert panel.controls["red:a"]["sets"][0] == [[0, 2]] and panel.controls["red:a"]["excluded_named_units"] == 1
+    assert panel.by_id()["z:rand0-a:red"].mass_relation == "less"           # 0.01 vs 1.0: not matched
+    # without exclusion (what the sealed Qwen plan did) the "random" control for a IS set b
+    old = shared_panel(exclude_named=False)
+    assert old.controls["red:a"]["sets"][0] == [[0, 1]]
+    assert old.by_id()["z:rand0-a:red"].mass_relation == "matched"           # 0.9 vs 1.0, within 20%
+    item_mass = {"red": {u: (1.0 if u == (0, 0) else 0.9 if u == (0, 1) else 0.01) for u in UNIVERSE},
+                 "ball": {u: (0.6 if u == (0, 0) else 0.5 if u == (0, 1) else 0.01) for u in UNIVERSE}}
+    out = fill(old, "red", effect=0.5, control=0.05)
+    v = verdict(old, out, item_mass=item_mass)[("red", "a")]
+    zero = v["cut_types"]["zero"]
+    assert "z:rand0-a:red" in zero["excluded_controls"] and "named test sets" in zero["excluded_controls"]["z:rand0-a:red"]
+    # the excluded random control rules nothing out; the other item (share 0.6) rules out generic damage only
+    assert v["status"] == "set_only" and v["ruled_out"] == ["generic_damage"]
+    assert v["remaining_alternatives"] == ["mass", "set_size"]
+    # ... and it cannot refute either, even when it does as much damage as the test
+    w = verdict(old, fill(old, "red", effect=0.5, control=0.9, other=0.05), item_mass=item_mass)[("red", "a")]
+    assert w["status"] == "set_only" and not w["refuted_by"]
+    # the named-unit check can be turned into a flag only (sensitivity reporting)
+    f = verdict(old, out, item_mass=item_mass, exclude_named_draws=False)[("red", "a")]
+    c = f["cut_types"]["zero"]["contexts"][0]["controls"]
+    assert f["status"] == "supported" and any(x.get("named_overlap") == [[0, 1]] for x in c)
+
+
+def test_no_valid_control_means_control_missing_never_set_only():
+    old = shared_panel(exclude_named=False)
+    # other item carries a near-empty share of the target's mass through head (0,0): 0.0005 / 1.0
+    item_mass = {"red": {u: (1.0 if u == (0, 0) else 0.01) for u in UNIVERSE},
+                 "ball": {u: (0.0005 if u == (0, 0) else 0.01) for u in UNIVERSE}}
+    v = verdict(old, fill(old, "red", effect=0.5, control=0.05), item_mass=item_mass)[("red", "a")]
+    assert v["status"] == "control_missing" and v["ruled_out"] == []
+    row = v["cut_types"]["zero"]["contexts"][0]
+    other = next(c for c in row["controls"] if c["kind"] == "other_item")
+    assert other["other_item_share"] == pytest.approx(0.0005) and other["rules_out"] == []
+    assert v["thresholds"]["other_item_min_share"] == P.OTHER_ITEM_MIN_SHARE
+    # unknown other-item mass (no item_mass, sets not stored per item): rules nothing out either
+    panel = small_panel(random=None, waive={"random_cut": "pilot"})
+    u = verdict(panel, fill(panel, "red", effect=0.5, control=0.05), item_mass=None)[("red", "s")]
+    assert u["status"] == "control_missing"
+    unk = next(c for c in u["cut_types"]["zero"]["contexts"][0]["controls"] if c["kind"] == "other_item")
+    assert unk["other_item_share"] is None and unk["mass_relation"] == "unknown"
+    # a heavier other-item cut (share 40x) that does as much damage cannot refute; beaten, it rules out
+    heavy = {"red": {u: (0.01 if u == (0, 0) else 0.01) for u in UNIVERSE},
+             "ball": {u: (0.4 if u == (0, 0) else 0.01) for u in UNIVERSE}}
+    h = verdict(old, fill(old, "red", effect=0.5, control=0.05, other=0.9), item_mass=heavy)[("red", "a")]
+    assert not h["refuted_by"] and h["status"] == "control_missing"     # random excluded, other not beaten
+    h = verdict(old, fill(old, "red", effect=0.5, control=0.05, other=0.05), item_mass=heavy)[("red", "a")]
+    assert h["status"] == "set_only" and h["ruled_out"] == ["generic_damage"]
+
+
+def test_mass_relation_is_relative_with_an_absolute_floor():
+    assert P.mass_relation(0.0169, 0.0015) == "more"                 # the FLUX own240-minus-own60 case
+    assert P.mass_relation(1.09, 1.0) == "matched" and P.mass_relation(1.11, 1.0) == "more"
+    assert P.mass_relation(0.89, 1.0) == "less"
+    assert P.mass_relation(0.0009, 0.0) == "matched"                 # floor: near-zero target
+    assert P.mass_relation(0.002, 0.0) == "more"
+    assert P.mass_relation(1.2, 1.0, rel_tolerance=0.25) == "matched"
+    assert P.mass_relation(None, 1.0) == "unknown"
+    # generation: an absolute search tolerance of 0.02 no longer labels an 11x control "matched"
+    big = [(b, h) for b in range(4) for h in range(3)]
+    mass = tuple(0.0015 if u == (0, 0) else 0.0169 for u in big)
+    sets = {"red": {"s": [(0, 0)]}, "ball": {"s": [(1, 1)]}}
+    p = P.read_panel(P.ReadPanelSpec(items=("red", "ball"), universe=big, sets=sets, contexts=("c0",), cut_sets=("s",),
+                                     random=P.RandomControls(n=1, mass=mass, mass_tolerance=0.02, disjoint=True, seed=0),
+                                     references=("condition", "all_cut")))
+    report = p.controls["red:s"]["reports"][0]["mass"]
+    assert report["matched"] is True                                    # the absolute search said matched ...
+    assert p.by_id()["z:rand0-s:red"].mass_relation == "more"           # ... the label says more
+    assert p.identity["red:s"]["random_cut"]["separable"] is False
+    # an old plan that stored "matched": re-labelled at verdict time, so it cannot refute as matched
+    d = json.loads(p.canonical())
+    for a in d["arms"]:
+        if a.get("control") == "random":
+            a["mass_relation"], a["rules_out"], a["separates_identity"] = "matched", ["mass", "set_size"], True
+    old = P.Panel.from_json(d)
+    rec = P.results_record(old, {"c0": fill(old, "red", effect=0.5, control=0.9, other=0.05)})
+    rec["pair_distances"] = pairs(old, rec["outcomes"]["c0"])
+    v = {(x["item"], x["unit_set"]): x for x in P.verdicts(old, rec, item_mass=EQUAL_ITEM_MASS_BIG)}[("red", "s")]
+    c = next(x for x in v["cut_types"]["zero"]["contexts"][0]["controls"] if x["kind"] == "random")
+    assert c["mass_relation_stored"] == "matched" and c["mass_relation"] == "more" and not c["refutes"]
+    assert "mass" not in v["ruled_out"]
+
+
+EQUAL_ITEM_MASS_BIG = {"red": {(b, h): 1.0 for b in range(4) for h in range(3)},
+                       "ball": {(b, h): 1.0 for b in range(4) for h in range(3)}}
+
+
+def test_effect_fraction_is_reported_and_min_fraction_is_a_named_parameter():
+    panel = small_panel()
+    v = verdict(panel, fill(panel, "red", effect=0.5, control=0.05, allcut=1.0))[("red", "s")]
+    assert v["status"] == "set_only" and v["effect_fraction"]["min"] == pytest.approx(0.5)
+    assert v["thresholds"]["min_effect_fraction"] == P.DEFAULT_MIN_EFFECT_FRACTION
+    assert v["thresholds"]["parameter_sources"]["min_effect_fraction"] == P.DEFAULT_SOURCE
+    # beaten controls, but 2% of the all-cut effect: not reported as a bare needed set
+    small = fill(panel, "red", effect=0.02, control=0.001, floor=0.001, allcut=1.0)
+    s = verdict(panel, small)[("red", "s")]
+    assert s["status"] == "unresolved" and "effect_below_min_fraction" in s["findings"]
+    assert s["effect_fraction"]["min"] == pytest.approx(0.02) and "below min_effect_fraction" in s["why"]
+    assert s["claim_scope"] is None
+    # the bar is a parameter: per call ...
+    a = verdict(panel, small, min_effect_fraction=0.01)[("red", "s")]
+    assert a["status"] == "set_only" and a["thresholds"]["parameter_sources"]["min_effect_fraction"] == "argument"
+    # ... or per plan (hashed only when set, so plans without it keep their hash)
+    assert "verdict_parameters" not in panel.execution
+    planned = small_panel(min_effect_fraction=0.01, recovery_threshold=0.5)
+    assert planned.execution["verdict_parameters"] == {"min_effect_fraction": 0.01, "recovery_threshold": 0.5}
+    assert planned.sha256() != panel.sha256()
+    p = verdict(planned, fill(planned, "red", effect=0.02, control=0.001, floor=0.001, allcut=1.0))[("red", "s")]
+    assert p["status"] == "set_only" and p["thresholds"]["parameter_sources"]["min_effect_fraction"] == "plan"
+    # a picture judgement cannot repair a small effect
+    j = verdict(panel, small, judgements={("red", "s", "necessary"): {"status": "supported", "by": "a"}})[("red", "s")]
+    assert "effect_below_min_fraction" in j["picture_blocked_by"] and j["status"] == "unresolved"
+    # keep claims: the fraction is the recovery
+    kp = keep_panel()
+    k = verdict(kp, fill(kp, "red", 0, 0, keep=0.1, keep_random=0.8, allcut=1.0))[("red", "keep-s")]
+    assert k["effect_fraction"]["min"] == pytest.approx(0.9) and "recovery" in k["effect_fraction"]["definition"]
+    assert k["thresholds"]["parameter_sources"]["recovery_threshold"] == P.DEFAULT_SOURCE
+    with pytest.raises(P.PanelError):
+        small_panel(recovery_threshold=1.5)
