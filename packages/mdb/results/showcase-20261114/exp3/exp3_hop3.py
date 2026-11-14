@@ -227,8 +227,8 @@ for item in (pool if SHARD is None else pool[:3] if SHARD == "smoke" else pool[S
                 "reread": edge["totals"]["reread"]["value"], "norm": edge["norm"]["value"],
                 "rounding": edge["rounding"]["value"],
                 "mlp_by_layer": [[e["layer"], e["captured"]["value"]] for e in edge["mlp"]],
-                "neurons": ([[e["layer"], [[n_.get("neuron"), n_.get("effect", {}).get("value")]
-                                            for n_ in e.get("neurons", {}).get("top", [])]]
+                "neurons": ([[e["layer"], e["nonlinear"]["value"], e["linear"]["value"],
+                              [[n_["name"], n_["effect"]["value"]] for n_ in e.get("neurons", [])]]
                              for e in edge["mlp"]] if neurons else None)}
         except Exception as e:  # noqa: BLE001
             arms["joint"]["edge"] = {"refused": f"{type(e).__name__}: {str(e)[:200]}"}
