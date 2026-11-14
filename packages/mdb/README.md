@@ -92,7 +92,7 @@ tensor has another shape or sits at another position, so do not swap them blindl
 | direct logit attribution | `explain M[a,b]` (exact split of a margin, with a measured remainder) |
 | KV cache | state cells `cache.L<L>.k` / `v[kv0,row=2]`; readable, editable, and takeable from another run |
 | a dataset of prompts, `run_with_cache` over a batch | a prompt set: `each SET: OP LINE` runs any verb on every prompt, one run per prompt, with a summary (see [Prompt sets](#prompt-sets)); no batched forward (the engine is batch 1) |
-| SAE features, dictionary units | none (issue M23) |
+| SAE features, dictionary units | none; a named symbol is declared from a transplant instead (`symbol NAME = whatif`, see [Named symbols](#named-symbols-from-a-transplant)) |
 
 Example: patch one head's output from a clean run into a corrupted run and read a logit
 difference. TransformerLens style, not run (patched at the last position: an mdb port edit acts
@@ -245,7 +245,7 @@ mdb adds, and the others do not: a prediction sealed before the native measureme
 split by cause (`forecast`, `verify`), an authority label and state on every number, and
 reversible stepping inside a layer (`reverse-step`, `restart`). It lacks a batched forward
 (prompt sets run one prompt at a time), model families beyond Qwen2, Qwen3, Llama and Mistral (gemma: M32), and dictionary
-features (M23).
+features (by choice: named symbols come from transplants, M23).
 
 ## Embedding
 
@@ -411,7 +411,7 @@ authority if they differ. The REPL, `--json` mode, the server's `POST /api/v1/s/
 | `start` | `start [name=NAME] [prefill=K] [TEXT \| ID ID ...]` | native | Prefill a prompt and stop at the first stepped row's first port (L0.h) |
 | `step` | `step [N] [port\|sublayer\|layer\|token] [budget=ROWS]` | navigate | Step one port (or N units; layer/token units enter at most `budget` rows) |
 | `sweep` | `sweep PORT [rows=R0:R1] [layers=L0:L1] = ORIGIN --consumer C [top=K]` | navigate | Patch PORT from another run at every (row, layer) of a range, measure the consumer natively for each, restore: one table of deltas (activation patching) |
-| `symbol` | `symbol NAME = ADDR[,ADDR...]` | mutate | Declare a user symbol over cache rows: symbol NAME = ADDR[,ADDR...] |
+| `symbol` | `symbol NAME = ADDR[,ADDR...] \| symbol NAME = whatif\|compare.a\|compare.b\|EACH:ITEM [role=R] [readers=K] [causal=false] \| symbol show\|delete NAME` | mutate | Declare a user symbol over cache rows, or a named symbol from a transplant result (role, source row, readers, measured effect), usable as an address |
 | `symbols` | `symbols [consumer=C] [rows=R\|A:B\|all] [min_mass=X] [offset=N] [limit=N]` | mutate | Symbol table at the cursor: bindings with definition sites, lifetimes, readers, status and an Unbound row (stored as records with a project) |
 | `tbreak` | `tbreak PATTERN [if CONDITION]` | mutate | Set a breakpoint that deletes itself after its first hit |
 | `undisplay` | `undisplay [ID ...]` | mutate | Remove displays (all when no ids are given) |
@@ -617,6 +617,57 @@ symbols at t3.logits  consumer t3.M[4,9] = -0.11401 [measured]  min_mass 0.1 [su
 Mass is summed over the heads and layers that read the binding, so it can exceed 1. Causal
 verdicts follow the rule in [Verdicts](#verdicts-p20).
 
+### Named symbols from a transplant
+
+A transplant (`whatif` or `compare` writing another run's value, `ORIGIN:ADDR`, or another
+address's value at one source occurrence) can be named (issue M23): `symbol NAME = whatif` takes
+the last `whatif` of the session, `symbol NAME = compare.a` (or `.b`) a side of the last
+`compare`, `symbol NAME = each3:freezing` one item's `whatif` of an `each` result. The `symbol`
+record (`core.kinds.SYMBOL`) is a schema plus bindings:
+
+- role: the writer without its row (`L1.v[kv0]`: port, selector, layer; or a cache cell
+  `cache.L1.v[kv0,row=@]`) and its readers, the reads of the source at the consumer's row as
+  `reads` reports them (mass `measured`, effect `derived-exact P19`, causal verdict `measured`;
+  `readers=K`, `causal=false`); a port that attention does not read (`A`, `m`, ...) or a released
+  run gives readers `unresolved` with the reason;
+- row: role-relative (`t@subject`) when the run's prompt is an item of a loaded prompt set with
+  a role at that row (`role=R` picks one, or supplies it), otherwise absolute, with the sha256 of
+  the prompt and of the tokens before the row;
+- consumer and evidence: base, edited and delta `measured`, the verdict; origin: the donor value
+  (run, address, sha256, cut), the run, its prefill split and its edits.
+
+Only a result with verdict `effect` is declared; `no effect`, `unresolved` or a scalar edit
+(an ablation, not a transplant) is refused and no record is made. The name stands for its address
+where an address is expected (`print`, `x`, `whatif`, `set`, `compare`, `break`, `reads`,
+`until`, ...); the result lists each use under `symbol_uses`. On a run the row binds through the
+declaring prompt, a set item with the same tokens and the role, or the same tokens before the row;
+otherwise the use is refused with the reason. `break NAME` sets the breakpoint at the address
+bound now. Inside `each`, a role symbol binds through each item's role and `@pair:NAME` through
+the pair's; an item without the role is refused. `symbol show NAME` prints the record and its
+binding here, `symbols` lists named symbols under its table (`named`), `symbol delete NAME`
+removes it from the session (a record stored in a project stays). Tiny Qwen2
+(`tests/repl_golden/symbol_named.out`), cut:
+
+```
+(mdb) whatif t1.L1.v[kv0] = clean:t1.L1.v[kv0] --consumer M[4,9]
+...
+(mdb) symbol subj = whatif
+symbol subj = t@subject.L1.v[kv0]  (record 31a630421b6afd3d)
+  role    writer L1.v[kv0] (occurrence, L1 v)
+  row     t1 (id 5): role @subject (set item pairs/a); prompt 6 rows sha256 6cc0862f50c8
+  readers of cache.L1.v[kv0,row=1] at t5 (2 of 2 listed, at t5.logits):
+    t5.L1.h0  mass 0.16699 [measured]  effect 0.01116 [derived-exact P19]  causal (Δ -0.011108 [measured])
+    t5.L1.h1  mass 0.16602 [measured]  effect -0.0017376 [derived-exact P19]  causal (Δ 0.0024414 [measured])
+  effect  whatif t1.L1.v[kv0] = clean:t1.L1.v[kv0] -> t5.M[4,9]: base -0.038208 [measured] -> edited -0.052734 [measured], Δ -0.014526 [measured], verdict effect
+  origin  the last whatif; donor clean:t1.L1.v[kv0] sha256 e8298c9893e5; run main; prefill=0: no row batched, first stepped row t0
+(mdb) each pairs prefill=@subject: whatif subj = @pair:subj --consumer t@last.M[$answer,$foil]
+...
+  a     -0.014526  -0.014033  effect
+  b     0.013977   0.014417   effect
+  c     0.0041504  0.0045585  effect
+  d     refused: no role 'subject' (roles: last)
+```
+
 `circuit CONSUMER` builds a record of exact contributions that closes on the consumer;
 whatever is not listed stays in the record as `+N more` and `remainder` nodes; a subtree that was
 dropped without expanding is recorded as not examined, and one that does not fit one record is a
@@ -788,7 +839,8 @@ that project. The page gets a Live view with four tabs and an architecture strip
 
 - Pipeline: the current layer's ports, motion controls, breakpoints, edits, checkpoints, console.
 - Symbols: one row per binding (definition sites, lifetime strip, readers with mass and exact
-  effect, verdicts on request), an Unbound row, a consumer selector and a declare form.
+  effect, verdicts on request), an Unbound row, a consumer selector, a declare form and the
+  named symbols (source, measured Δ, binding here).
 - Circuits: build, list and show circuits as a layered graph with `+N more` and remainder
   nodes, a keyboard walk and seek on Enter; `circuit test` with a reference-run picker (the
   debugger's other runs, or `set:NAME`) shows the five margins and the two ratios with labels.
@@ -980,8 +1032,9 @@ Open issues and their evidence are in [`issues.jsonl`](issues.jsonl); ids below 
   the flag on and off (M50). Bounds never decide a verdict.
 - On MPS (no float64) `whatif` fails with `a numeric claim needs a finite number` (M44); CPU and
   CUDA are the tested devices.
-- No dictionary or interpretable unit (M23, by choice: a candidate is a reader role declared
-  from a transplant result). Two circuit systems exist, the lane-era `discover_circuit` (ranks by
+- No dictionary unit (by choice); the unit is a named symbol declared from a transplant result
+  (M23, see [Named symbols](#named-symbols-from-a-transplant)). Named symbols live in the
+  session: a record stored in a project is not loaded back by name in a new process. Two circuit systems exist, the lane-era `discover_circuit` (ranks by
   write norm, picks the attention sink) and the engine's `circuit`; use the engine's (M25).
 - The help text of two ops lags the code: `verify` still describes the removed 3 x sqrt(n) floor
   and `circuit` still says "test by native ablation" (`ops/predict.py`, `ops/inspect.py`; not in
@@ -1000,4 +1053,4 @@ Open issues and their evidence are in [`issues.jsonl`](issues.jsonl); ids below 
 - `mdb serve --model` as an mrun job with the REPL connected through a tunnel (no remote parity
   run on the GPU machine yet), port programs for Qwen3 at real size and FLUX.2
   Klein (M14).
-- gemma and gemma2 port programs (M32); named units (M23).
+- gemma and gemma2 port programs (M32); loading a stored named symbol into a new session.

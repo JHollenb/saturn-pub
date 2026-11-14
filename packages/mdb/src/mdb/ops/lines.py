@@ -343,10 +343,21 @@ def _compare_args(text: str) -> dict[str, Any]:
 
 
 def _symbol_args(text: str) -> dict[str, Any]:
-    """``symbol NAME = ADDR[,ADDR...]``."""
+    """``symbol NAME = ADDR[,ADDR...]``; ``symbol NAME = whatif|compare.a|compare.b|EACH:ITEM
+    [role=R] [readers=K] [causal=false]`` (a named symbol from a transplant result, M23);
+    ``symbol show|delete NAME``."""
+    from . import named
+
+    words = text.split()
+    if len(words) == 2 and words[0] in ("show", "delete"):
+        return {"action": words[0], "name": words[1]}
     name, equals, addresses = text.partition("=")
     if not equals or not name.strip() or not addresses.strip():
-        raise BadArgs("write symbol NAME = ADDR[,ADDR...]")
+        raise BadArgs("write symbol NAME = ADDR[,ADDR...], symbol NAME = whatif|compare.a|"
+                      "compare.b|EACH:ITEM, or symbol show|delete NAME")
+    first, _, rest = addresses.strip().partition(" ")
+    if named.is_reference(first):
+        return {"name": name.strip(), "result": first, **named.parse_args(rest)}
     return {"name": name.strip(), "addresses": addresses.strip()}
 
 

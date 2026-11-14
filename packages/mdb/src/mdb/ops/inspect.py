@@ -8,7 +8,9 @@ torch-free; each op imports the analysis layer when it runs.
   ``cache.L1.v[row=2]``) at the cursor's row (``rows=`` for later rows), with mass, exact
   contribution and a native causal verdict (``analysis.reads``).
 - ``symbols``: the symbol table at the cursor (``analysis.symbols``); ``symbol NAME =
-  ADDR[,ADDR...]`` declares a user symbol over cache rows.
+  ADDR[,ADDR...]`` declares a user symbol over cache rows; ``symbol NAME = whatif`` (or
+  ``compare.a|b``, ``EACH:ITEM``) a named symbol from a transplant result (``ops.named``),
+  listed under ``named`` by ``symbols``, shown by ``symbol show NAME``.
 - ``circuit CONSUMER [top=K] [depth=D]`` builds a circuit record; ``circuit test ID ref=NAME``
   patches it natively from a reference run (``ref=set:NAME``: a prompt set's per-component
   mean) and seals a ``circuit-test`` record; ``circuit show ID`` prints it as a walk
@@ -34,6 +36,7 @@ import weakref
 from collections import Counter
 from typing import Any
 
+from . import named
 from .builtin import GLOBALS, moved, project_of
 from .errors import BadArgs, Refused
 from .predict import build_edit, parse_assignment, parse_consumer, record_view, session_digest
@@ -136,12 +139,30 @@ def _symbols(ctx, consumer, rows, min_mass, readers, offset, limit):
     report = dict(found.report)
     if stored:
         report["stored"] = stored
+    listed = named.listing(ctx)
+    if listed:
+        report["named"] = listed     # transplant symbols (M23); not part of the table record
     return report
 
 
-def _symbol(ctx, name, addresses):
+def _symbol(ctx, name, addresses=None, result=None, action="declare", role=None, readers=6,
+            causal=True):
     from mdb.analysis import symbols
 
+    if action == "show":
+        return named.show(ctx, name)
+    if action == "delete":
+        return named.delete(ctx, name)
+    if (addresses is None) == (result is None):
+        raise BadArgs("write symbol NAME = ADDR[,ADDR...] (cache cells) or symbol NAME = "
+                      "whatif|compare.a|compare.b|EACH:ITEM (a transplant result)")
+    if ctx.run is None and result is None:
+        raise Refused("symbol needs a live run; start one with `start`")
+    if result is not None:
+        return named.declare(ctx, name, result, role=role, readers=readers, causal=causal)
+    if name in named.store(ctx.debugger):
+        raise Refused(f"{name} is a named symbol (symbol show {name}); delete it or choose "
+                      "another name")
     parts = [part.strip() for part in addresses.split(",") if part.strip()]
     _bind_declared(ctx)
     try:
@@ -584,9 +605,27 @@ register(Op("symbols", "Symbol table at the cursor: bindings with definition sit
             "mutate", True, _symbols,
             usage="symbols [consumer=C] [rows=R|A:B|all] [min_mass=X] [offset=N] [limit=N]"),
          replace=True)
-register(Op("symbol", "Declare a user symbol over cache rows: symbol NAME = ADDR[,ADDR...]",
-            (Arg("name", "str", required=True), Arg("addresses", "str", required=True)),
-            "mutate", True, _symbol, usage="symbol NAME = ADDR[,ADDR...]"), replace=True)
+register(Op("symbol", "Declare a user symbol over cache rows (symbol NAME = ADDR[,ADDR...]), or a "
+            "named symbol from a transplant result (symbol NAME = whatif|compare.a|compare.b|"
+            "EACH:ITEM): its role, source row, readers and measured effect, usable as an "
+            "address; symbol show|delete NAME",
+            (Arg("name", "str", required=True),
+             Arg("addresses", "str", positional=False, help="cache cells: ADDR[,ADDR...]"),
+             Arg("result", "str", positional=False,
+                 help="whatif, compare.a, compare.b (the last of this session) or EACH:ITEM "
+                      "(an each result's item)"),
+             Arg("action", "choice", default="declare", choices=("declare", "show", "delete"),
+                 positional=False),
+             Arg("role", "str", positional=False,
+                 help="the source row's role when several (or none) name it"),
+             Arg("readers", "int", default=6, minimum=1, maximum=named.MAX_READERS,
+                 positional=False, help="readers listed from reads (top K)"),
+             Arg("causal", "bool", default=True, positional=False,
+                 help="measure each listed reader's causal verdict natively")),
+            "mutate", False, _symbol,
+            usage="symbol NAME = ADDR[,ADDR...] | symbol NAME = whatif|compare.a|compare.b|"
+                  "EACH:ITEM [role=R] [readers=K] [causal=false] | symbol show|delete NAME"),
+         replace=True)
 register(Op("circuit", "Circuit records: build from the exact decomposition (nodes, edges, "
             "remainder), test by native patching from a reference run, show as a walk",
             (Arg("target", "str", required=True, help="a consumer, or test / show"),

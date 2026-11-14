@@ -1,0 +1,90 @@
+(mdb) start 1 5 9 3
+t3.L0.h  h = layer input (residual stream)  {P01}
+(mdb) start name=clean prefill=0 1 7 9 3 6 2
+run clean
+prefill=0: no row batched, rows 0..5 stepped (tokens forced)
+t0.L0.h  h = layer input (residual stream)  {P01}
+(mdb) until t5.logits
+t5.logits  logits = lm_head(fn)
+(mdb) start name=main prefill=0 1 5 9 3 6 2
+prefill=0: no row batched, rows 0..5 stepped (tokens forced)
+t0.L0.h  h = layer input (residual stream)  {P01}
+(mdb) until t5.logits
+t5.logits  logits = lm_head(fn)
+(mdb) set define pairs [{"name": "a", "tokens": [1, 5, 9, 3, 6, 2], "roles": {"subject": 1}, "vars": {"answer": 4, "foil": 9}, "pair": "b"}, {"name": "b", "tokens": [1, 7, 9, 3, 6, 2], "roles": {"subject": 1}, "vars": {"answer": 4, "foil": 9}, "pair": "a"}, {"name": "c", "tokens": [2, 6, 10, 4, 8], "roles": {"subject": 2}, "vars": {"answer": 6, "foil": 7}, "pair": "a"}, {"name": "d", "tokens": [3, 11, 5, 4], "vars": {"answer": 4, "foil": 9}, "pair": "a"}]
+set pairs: 4 items  (inline)
+  a         1 5 9 3 6 2  @subject=1 $answer=4 $foil=9 pair b
+  b         1 7 9 3 6 2  @subject=1 $answer=4 $foil=9 pair a
+  c         2 6 10 4 8  @subject=2 $answer=6 $foil=7 pair a
+  d         3 11 5 4   $answer=4 $foil=9 pair a
+(mdb) whatif t1.L1.v[kv0] = clean:t1.L1.v[kv0] --consumer M[4,9]
+whatif t1.L1.v[kv0] replace tensor e8298c9893e5 from clean:t1.L1.v[kv0] -> t5.M[4,9]  (mode rewind, record 1b644b7ee1545371)
+  sealed  linear ΔM = -0.014724 [derived-local P14]   exact ΔM = -0.014033 [derived-exact]  bound 0.094232 [bound] (worst case, >= |exact|: no sign)   emulated ΔM = -0.014526 [derived-exact]
+  native  ΔM = -0.014526 [measured]   (base -0.038208 [measured] -> edited -0.052734 [measured])
+  error split (P20): linear -0.014724 [derived-local P14] + nonlinear 0.00069021 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect -0.00049304 [derived-exact P20] (within bound 0.091995 [bound]) + residual 0 [measured P20]
+  verdict (P20): effect  native ΔM -0.014526 [measured P20], emulated ΔM -0.014526 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) -0.014033 [derived-exact P20]; floor 0.00024414 [supplied P20] = 1 bfloat16 spacing (supplied)
+  session unchanged at t5.logits  (5 moves, restored)
+(mdb) symbol subj = whatif
+symbol subj = t@subject.L1.v[kv0]  (record 31a630421b6afd3d)
+  role    writer L1.v[kv0] (occurrence, L1 v)
+  row     t1 (id 5): role @subject (set item pairs/a); prompt 6 rows sha256 6cc0862f50c8
+  readers of cache.L1.v[kv0,row=1] at t5 (2 of 2 listed, at t5.logits):
+    t5.L1.h0  mass 0.16699 [measured]  effect 0.01116 [derived-exact P19]  causal (Δ -0.011108 [measured])
+    t5.L1.h1  mass 0.16602 [measured]  effect -0.0017376 [derived-exact P19]  causal (Δ 0.0024414 [measured])
+  effect  whatif t1.L1.v[kv0] = clean:t1.L1.v[kv0] -> t5.M[4,9]: base -0.038208 [measured] -> edited -0.052734 [measured], Δ -0.014526 [measured], verdict effect
+  origin  the last whatif; donor clean:t1.L1.v[kv0] sha256 e8298c9893e5; run main; prefill=0: no row batched, first stepped row t0
+(mdb) symbol show subj
+symbol subj = t@subject.L1.v[kv0]  (record 31a630421b6afd3d)
+  role    writer L1.v[kv0] (occurrence, L1 v)
+  row     t1 (id 5): role @subject (set item pairs/a); prompt 6 rows sha256 6cc0862f50c8
+  readers of cache.L1.v[kv0,row=1] at t5 (2 of 2 listed, at t5.logits):
+    t5.L1.h0  mass 0.16699 [measured]  effect 0.01116 [derived-exact P19]  causal (Δ -0.011108 [measured])
+    t5.L1.h1  mass 0.16602 [measured]  effect -0.0017376 [derived-exact P19]  causal (Δ 0.0024414 [measured])
+  effect  whatif t1.L1.v[kv0] = clean:t1.L1.v[kv0] -> t5.M[4,9]: base -0.038208 [measured] -> edited -0.052734 [measured], Δ -0.014526 [measured], verdict effect
+  origin  the last whatif; donor clean:t1.L1.v[kv0] sha256 e8298c9893e5; run main; prefill=0: no row batched, first stepped row t0
+  here: t1.L1.v[kv0] (row 1: its declaring prompt)
+(mdb) print subj
+t1.L1.v[kv0]  bfloat16 [1, 1, 8]  (batch, row, kv_head*head_dim)
+  norm 0.22216 min -0.16699 max 0.094727 mean -0.020842 abs_max 0.16699 [measured]
+  top |v|: [0,0,7] -0.16699, [0,0,0] 0.094727, [0,0,5] -0.07373, [0,0,6] 0.061523, [0,0,1] -0.050781 [measured]
+  pointer occurrence ~stepped sha256 7158d3c78d6c35fd
+  symbol subj = t1.L1.v[kv0]  (row 1: its declaring prompt)
+(mdb) whatif subj = clean:subj --consumer M[4,9]
+whatif t1.L1.v[kv0] replace tensor e8298c9893e5 from clean:t1.L1.v[kv0] -> t5.M[4,9]  (mode rewind, record 1b644b7ee1545371)
+  sealed  linear ΔM = -0.014724 [derived-local P14]   exact ΔM = -0.014033 [derived-exact]  bound 0.094232 [bound] (worst case, >= |exact|: no sign)   emulated ΔM = -0.014526 [derived-exact]
+  native  ΔM = -0.014526 [measured]   (base -0.038208 [measured] -> edited -0.052734 [measured])
+  error split (P20): linear -0.014724 [derived-local P14] + nonlinear 0.00069021 [derived-exact P20] + realisation 0 [derived-exact P20] + rounding effect -0.00049304 [derived-exact P20] (within bound 0.091995 [bound]) + residual 0 [measured P20]
+  verdict (P20): effect  native ΔM -0.014526 [measured P20], emulated ΔM -0.014526 [derived-exact P20], residual 0 [measured P20] = 0 spacings; exact ΔM (written value, measured operands) -0.014033 [derived-exact P20]; floor 0.00024414 [supplied P20] = 1 bfloat16 spacing (supplied)
+  session unchanged at t5.logits  (5 moves, restored)
+  symbol subj = t1.L1.v[kv0]  (row 1: its declaring prompt)
+  symbol subj = clean:t1.L1.v[kv0]  (row 1: role @subject of pairs/b)
+(mdb) each pairs prefill=@subject: whatif subj = @pair:subj --consumer t@last.M[$answer,$foil]
+each pairs: whatif subj = @pair:subj --consumer t@last.M[$answer,$foil]
+  4 items at t@last.logits prefill=@subject; runs released; result each1
+  item  native     exact      verdict
+  a     -0.014526  -0.014033  effect
+  b     0.013977   0.014417   effect
+  c     0.0041504  0.0045585  effect
+  d     refused: no role 'subject' (roles: last)
+  labels: native measured, exact derived-exact
+summary: 1 of 4 items refused (d) and excluded; statistics over the 3 others
+  measured.delta  [measured]
+    n 3  mean 0.0012004  min -0.014526  max 0.013977  sign + 2/3
+  prediction.exact.value  [derived-exact]
+    n 3  mean 0.0016475  min -0.014033  max 0.014417  sign + 2/3
+  effect.verdict: effect 3
+  +39 more in the record (promptset result each1 [ITEM])
+(mdb) symbols consumer=M[4,9] limit=1
+symbols at t5.logits  consumer t5.M[4,9] = -0.038208 [measured]  min_mass 0.1 [supplied]
+  mass: a sum over the heads and layers that read the binding (n reads, mean per read)
+  life: # read with mass at or above min_mass  . read below min_mass  - no value cell of this binding at that layer  ? not computed
+  t0 (id 1) read   mass 0.66895 [derived-exact] over 4 reads (mean 0.16724 [derived-exact])  to_consumer 0.0075659 [derived-exact P19]  life t5:## (t5.L0..t5.L1)
+    defined t0.L*.k, t0.L*.v
+    readers t5.L1.h0 mass 0.16797 [measured] effect 0.013298 [derived-exact P19]; t5.L0.h0 mass 0.16699 [measured] effect -0.010302 [derived-exact P19]; t5.L1.h1 mass 0.16699 [measured] effect 0.0088695 [derived-exact P19] (+1 more)
+  named subj = t@subject.L1.v[kv0] -> t5.M[4,9]  Δ -0.014526 [measured] effect  here t1.L1.v[kv0] (row 1: its declaring prompt)
+  Unbound   mass 3.3311 [derived-exact]  readout -0.045774 [measured]
+    = embedding+mlp -0.07502 [derived-exact P19] + attention not listed 0.029181 [derived-exact P19] + remainder 6.5928e-05 [measured], bound 0.0096257 [bound]: within
+  accounting: 4 heads, listed mass 0.66895 [derived-exact], max |sum p - 1| 0 [measured] <= 0.023438 [bound], partition gap 0 [derived-exact]
+  (bindings 1-1 of 6)
+(mdb) symbol delete subj
+symbol subj deleted (record 31a630421b6afd3d); removed from this session; a record stored in a project stays there

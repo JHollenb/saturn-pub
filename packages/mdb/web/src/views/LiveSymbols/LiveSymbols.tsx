@@ -310,6 +310,7 @@ function Table({
       </div>
       <Legend legend={legend} fromOp={legends !== null} />
       <Accounting accounting={result.accounting} />
+      <NamedSymbols named={result.named} />
       {total !== null && readOnly && (
         <div className="symbols-page">
           bindings <Count n={total === 0 ? 0 : offset + 1} />–<Count n={offset + bindings.length} />{' '}
@@ -757,6 +758,38 @@ function Accounting({ accounting }: { accounting: unknown }) {
         : accounting.within_bound === false
           ? 'OUTSIDE bound'
           : ''}
+    </div>
+  );
+}
+
+/** Named symbols declared from a transplant result (`symbol NAME = whatif`, M23): the source as
+ * a role template, the consumer, the measured Δ and verdict, and where the name binds here. */
+function NamedSymbols({ named }: { named: unknown }) {
+  const items = recs(named);
+  if (items.length === 0) return null;
+  return (
+    <div className="symbols-named" data-testid="symbols-named">
+      named (from transplants):
+      <ul>
+        {items.map((n, i) => {
+          const here = isRec(n.here) ? n.here : {};
+          const bound = str(here.address);
+          return (
+            <li key={str(n.symbol) ?? i} data-named={str(n.symbol) ?? ''}>
+              <strong>{str(n.symbol) ?? '?'}</strong> = <code>{str(n.source) ?? '?'}</code> →{' '}
+              <code>{str(n.consumer) ?? '?'}</code> · Δ <OpValue value={n.delta} what="delta" />{' '}
+              {str(n.verdict) ?? ''} · here{' '}
+              {bound !== null ? (
+                <code>{bound}</code>
+              ) : (
+                <span className="faint">
+                  {str(here.state) ?? 'refused'}: {str(here.reason) ?? ''}
+                </span>
+              )}
+            </li>
+          );
+        })}
+      </ul>
     </div>
   );
 }

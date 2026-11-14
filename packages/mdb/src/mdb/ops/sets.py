@@ -299,13 +299,24 @@ def bind_text(text: str, item: Bound, pair: Bound | None = None,
     ``$NAME`` replaced for ``item`` (``Unbound`` when one does not resolve)."""
     out, last = [], 0
     for match in _PAIR.finditer(text):
-        out.append(_bind_plain(text[last:match.start()], item))
+        out.append(_bind_plain(_named(text[last:match.start()], item), item))
         if pair is None or pair_run is None:
             raise Unbound(f"@pair: item {item.item.name} has no pair")
-        out.append(f"{pair_run}:{_pair_address(match['addr'], pair)}")
+        out.append(f"{pair_run}:{_pair_address(_named(match['addr'], pair), pair)}")
         last = match.end()
-    out.append(_bind_plain(text[last:], item))
+    out.append(_bind_plain(_named(text[last:], item), item))
     return "".join(out)
+
+
+def _named(text: str, item: Bound) -> str:
+    """Named symbols (M23) in ``text`` for ``item``: a role symbol becomes ``t@ROLE...`` (bound
+    by the item's roles next), an absolute one its row when the item's prefix matches."""
+    from . import named
+
+    try:
+        return named.expand_for_item(item.debugger, text, item.tokens)
+    except Refused as error:
+        raise Unbound(_reason(error)) from None
 
 
 def bind_prefill(text: str | None, item: Bound) -> int | None:

@@ -394,6 +394,10 @@ def _frame(stop: dict[str, Any]) -> str:
 def render(result: dict[str, Any]) -> str:
     """Compact text of one op result; a result whose state is not ``resolved`` says so."""
     text = _render(result)
+    for use in result.get("symbol_uses", ()):
+        token = f" {json.dumps(use['text'], ensure_ascii=False)}" if "text" in use else ""
+        text += f"\n  symbol {use['symbol']} = {use['address']}  (row {use['row']}{token}: " \
+                f"{use['how']})"
     if result.get("state", "resolved") != "resolved":
         text += f"\nstate: {result['state']}"
     return text
@@ -858,6 +862,10 @@ def _symbols_lines(result: dict[str, Any]) -> list[str]:
     for item in result.get("unresolved_symbols", ()):
         lines.append(f"  {_pad(item['symbol'], width)}unresolved  defined {', '.join(item['definitions'])}"
                      f"  ({item['reason']})")
+    for item in result.get("named", ()):
+        lines.append(f"  named {item['symbol']} = {item['source']} -> {item['consumer']}  Δ "
+                     f"{_claimed(item['delta'])} {item['verdict']}  here "
+                     f"{_named_here(item['here'])}")
     unbound = result["unbound"]
     lines.append(f"  {_pad('Unbound', width)}mass {_short(unbound['mass'])}  readout "
                  f"{_short(unbound['readout'])}")
@@ -1035,8 +1043,78 @@ def _compare_lines(result: dict[str, Any]) -> list[str]:
 
 
 def _symbol_lines(result: dict[str, Any]) -> list[str]:
+    action = result.get("action")
+    if action == "delete":
+        return [f"symbol {result['symbol']} deleted (record {result['record'][:16]}); "
+                f"{result['note']}"]
+    if action in ("declare", "show"):
+        body = result["body"] if action == "declare" else result["record"]["body"]
+        record = result["record"] if action == "declare" else result["record"]["id"]
+        lines = [f"symbol {result['symbol']} = {body['row']['address']}  (record {record[:16]}"
+                 + (f", stored {result['stored'][0][:16]}" if result.get("stored") else "")
+                 + ")"]
+        lines += _named_symbol_lines(body)
+        if action == "show":
+            lines.append("  here: " + _named_here(result["here"]))
+        return lines
     return [f"symbol {result['symbol']} = {', '.join(result['definitions'])}  (declared: "
             f"{', '.join(result['declared'])})"]
+
+
+def _named_here(here: dict[str, Any]) -> str:
+    if here.get("state"):
+        return f"{here['state']} ({here['reason']})"
+    return f"{here['address']} (row {here['row']}: {here['how']})"
+
+
+def _named_symbol_lines(body: dict[str, Any]) -> list[str]:
+    """A named symbol (M23) as schema plus bindings: role, row, readers, evidence, origin."""
+    row, role, evidence = body["row"], body["role"], body["evidence"]
+    writer = role["writer"]
+    token = ""
+    if "text" in row:
+        token = f" {json.dumps(row['text'], ensure_ascii=False)}"
+    elif "token" in row:
+        token = f" (id {row['token']})"
+    how = (f"role @{row['role']} ({row['role_source']})" if row["rule"] == "role"
+           else "absolute (no role names this row)")
+    lines = [f"  role    writer {writer['address']} ({writer['form']}, L{writer['layer']} "
+             f"{writer['port']})",
+             f"  row     t{row['row']}{token}: {how}; prompt {row['prompt_rows']} rows sha256 "
+             f"{row['prompt_sha256'][:12]}"]
+    readers = role["readers"]
+    if readers.get("state") != "resolved":
+        lines.append(f"  readers {readers['state']} ({readers['reason']})")
+    else:
+        lines.append(f"  readers of {readers['source']} at t{readers['rows'][0]} "
+                     f"({len(readers['listed'])} of {readers['count']} listed, at "
+                     f"{readers['at']}):")
+        for read in readers["listed"]:
+            causal = read.get("causal") or {}
+            verdict = (f"  {causal['verdict']} (Δ {_claimed(causal['delta'])})"
+                       if "delta" in causal else
+                       f"  causal {causal['verdict']} ({causal.get('reason')})" if causal
+                       else "  causal not measured")
+            lines.append(f"    {read['name']}  mass {_claimed(read['mass'])}  effect "
+                         f"{_claimed(read['effect'])}{verdict}")
+    lines.append(f"  effect  {evidence['op']} {evidence['edit']} -> {body['consumer']['address']}"
+                 f": base {_claimed(evidence['base'])} -> edited {_claimed(evidence['edited'])},"
+                 f" Δ {_claimed(evidence['delta'])}, verdict {evidence['verdict']}")
+    origin = body["origin"]
+    donor = origin.get("donor", {})
+    text = f"  origin  {origin['from']}; donor {donor.get('address', '?')}"
+    if donor.get("sha256"):
+        text += f" sha256 {donor['sha256'][:12]}"
+    if origin.get("run"):
+        text += f"; run {origin['run']}"
+    if body.get("procedure"):
+        text += f"; {body['procedure']['text']}"
+    lines.append(text)
+    edits = origin.get("edits") or {}
+    if edits.get("committed") or edits.get("staged"):
+        lines.append(f"  edits   committed {', '.join(edits.get('committed') or ['none'])}; "
+                     f"staged {', '.join(edits.get('staged') or ['none'])}")
+    return lines
 
 
 def _seek_lines(result: dict[str, Any]) -> list[str]:

@@ -77,6 +77,19 @@ SYMBOL_TABLE = declare_kind(
                    "accounting.heads", *PROCEDURE),
 )
 
+# ``symbol NAME = whatif|compare.a|EACH:ITEM`` (M23): a named symbol declared from a transplant
+# result: the writer without its row (role), the source row (role-relative or absolute, with the
+# prompt's and prefix's sha256), the readers as ``reads`` lists them, the consumer and the
+# measured effect, the donor and the run. Labelled numbers and pointers only.
+SYMBOL = declare_kind(
+    "symbol",
+    required=("schema", "name", "role", "row", "consumer", "evidence", "origin"),
+    plain_numeric=("role.writer.layer", "role.readers.rows", "role.readers.count",
+                   "role.readers.listed.*.row", "role.readers.listed.*.layer", "row.row",
+                   "row.token", "row.prompt_rows", "consumer.row", "consumer.indices",
+                   *PROCEDURE),
+)
+
 # ``sweep PORT rows= layers= = ORIGIN --consumer C``: the position x layer patching table (M35,
 # M54). The table itself is a sha256-checked JSON blob (``table``, a ``core.bounded`` pointer);
 # the record keeps the base, the top cells, the cost and the procedure of both runs.
@@ -88,5 +101,5 @@ SWEEP = declare_kind(
                    *(p.replace("procedure", "origin_procedure") for p in PROCEDURE)),
 )
 
-__all__ = ["CIRCUIT", "CIRCUIT_TEST", "FORECAST", "PROCEDURE", "SWEEP", "SYMBOL_TABLE", "WHATIF",
-           "procedure"]
+__all__ = ["CIRCUIT", "CIRCUIT_TEST", "FORECAST", "PROCEDURE", "SWEEP", "SYMBOL", "SYMBOL_TABLE",
+           "WHATIF", "procedure"]
