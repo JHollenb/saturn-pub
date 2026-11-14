@@ -1,0 +1,1492 @@
+{
+ "prereg": "prereg_hopbudget.json",
+ "L_c": 20,
+ "table": {
+  "d1": {
+   "n": 22,
+   "n_correct": 22,
+   "med_correct": 0.0,
+   "med_wrong": null,
+   "med_all": 0.0,
+   "med_fake_correct": 4.5,
+   "med_stable_correct": 18.0,
+   "med_stable_wrong": null,
+   "absent_correct": 0,
+   "absent_wrong": 0
+  },
+  "d2": {
+   "n": 22,
+   "n_correct": 22,
+   "med_correct": 0.0,
+   "med_wrong": null,
+   "med_all": 0.0,
+   "med_fake_correct": 4.5,
+   "med_stable_correct": 20.0,
+   "med_stable_wrong": null,
+   "absent_correct": 0,
+   "absent_wrong": 0
+  },
+  "d3-lm": {
+   "n": 43,
+   "n_correct": 39,
+   "med_correct": 5,
+   "med_wrong": 2.0,
+   "med_all": 5,
+   "med_fake_correct": 4,
+   "med_stable_correct": 20,
+   "med_stable_wrong": 21.0,
+   "absent_correct": 0,
+   "absent_wrong": 1
+  },
+  "d3-per": {
+   "n": 38,
+   "n_correct": 32,
+   "med_correct": 1.0,
+   "med_wrong": 5.0,
+   "med_all": 2.0,
+   "med_fake_correct": 2.5,
+   "med_stable_correct": 20.0,
+   "med_stable_wrong": 20.5,
+   "absent_correct": 0,
+   "absent_wrong": 1
+  },
+  "d4-work": {
+   "n": 29,
+   "n_correct": 12,
+   "med_correct": 3.0,
+   "med_wrong": 6,
+   "med_all": 3,
+   "med_fake_correct": 4.0,
+   "med_stable_correct": 20.0,
+   "med_stable_wrong": 21,
+   "absent_correct": 0,
+   "absent_wrong": 1
+  },
+  "d3": {
+   "n": 81,
+   "n_correct": 71,
+   "med_correct": 3,
+   "med_wrong": 2.5,
+   "med_all": 3,
+   "med_fake_correct": 3,
+   "med_stable_correct": 20,
+   "med_stable_wrong": 21.0,
+   "absent_correct": 0,
+   "absent_wrong": 2
+  }
+ },
+ "B1": {
+  "med_d2": 0.0,
+  "med_d3": 3,
+  "med_d4_correct": 3.0,
+  "step_23": 3.0,
+  "step_34": 0.0,
+  "pass": false,
+  "falsified_flat": false,
+  "chance_dominated": {
+   "d2": false,
+   "d3": true,
+   "d4-work": true
+  }
+ },
+ "B2": {
+  "med_correct": 3,
+  "med_wrong": 6,
+  "locus_gap": 3,
+  "locus_pass": true,
+  "auc_slack": 0.5995091477019188,
+  "auc_pass": false,
+  "falsified": true,
+  "n_correct": 83,
+  "n_wrong": 27,
+  "auc_slack_stable_secondary": 0.7956269522534583
+ },
+ "per_item": {
+  "d1:Austria": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d1:Denmark": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 16,
+   "truth_in_set": true
+  },
+  "d1:Egypt": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 5,
+   "truth_in_set": true
+  },
+  "d1:Finland": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 3,
+   "truth_in_set": true
+  },
+  "d1:France": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d1:Germany": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 19,
+   "L_first_fake": 12,
+   "truth_in_set": true
+  },
+  "d1:Greece": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 8,
+   "truth_in_set": true
+  },
+  "d1:Hungary": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 3,
+   "truth_in_set": true
+  },
+  "d1:Italy": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 4,
+   "truth_in_set": true
+  },
+  "d1:Japan": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 11,
+   "truth_in_set": true
+  },
+  "d1:Norway": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 19,
+   "L_first_fake": null,
+   "truth_in_set": true
+  },
+  "d1:Poland": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 19,
+   "L_first_fake": 16,
+   "truth_in_set": true
+  },
+  "d1:Portugal": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d1:Russia": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 3,
+   "truth_in_set": true
+  },
+  "d1:South Korea": {
+   "family": "d1",
+   "correct": true,
+   "row": 36,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 4,
+   "truth_in_set": true
+  },
+  "d1:Spain": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 17,
+   "L_first_fake": 5,
+   "truth_in_set": true
+  },
+  "d1:Sweden": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 1,
+   "L_first_stable": 18,
+   "L_first_fake": 1,
+   "truth_in_set": true
+  },
+  "d1:Thailand": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 17,
+   "L_first_fake": 14,
+   "truth_in_set": true
+  },
+  "d1:Turkey": {
+   "family": "d1",
+   "correct": true,
+   "row": 35,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 16,
+   "truth_in_set": true
+  },
+  "d1:the Czech Republic": {
+   "family": "d1",
+   "correct": true,
+   "row": 36,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 4,
+   "truth_in_set": true
+  },
+  "d1:the Netherlands": {
+   "family": "d1",
+   "correct": true,
+   "row": 36,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 3,
+   "truth_in_set": true
+  },
+  "d1:the United Kingdom": {
+   "family": "d1",
+   "correct": true,
+   "row": 37,
+   "L_first": 3,
+   "L_first_stable": 18,
+   "L_first_fake": null,
+   "truth_in_set": true
+  },
+  "d2:Amsterdam": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 9,
+   "truth_in_set": true
+  },
+  "d2:Ankara": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d2:Athens": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 4,
+   "truth_in_set": true
+  },
+  "d2:Bangkok": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d2:Berlin": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 8,
+   "truth_in_set": true
+  },
+  "d2:Budapest": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d2:Cairo": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 3,
+   "truth_in_set": true
+  },
+  "d2:Copenhagen": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": null,
+   "truth_in_set": true
+  },
+  "d2:Helsinki": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 1,
+   "truth_in_set": true
+  },
+  "d2:Lisbon": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": null,
+   "truth_in_set": true
+  },
+  "d2:London": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 4,
+   "truth_in_set": true
+  },
+  "d2:Madrid": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 5,
+   "truth_in_set": true
+  },
+  "d2:Moscow": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d2:Oslo": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 0,
+   "L_first_stable": 19,
+   "L_first_fake": 11,
+   "truth_in_set": true
+  },
+  "d2:Paris": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 12,
+   "truth_in_set": true
+  },
+  "d2:Prague": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 16,
+   "truth_in_set": true
+  },
+  "d2:Rome": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d2:Seoul": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d2:Stockholm": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 1,
+   "L_first_stable": 18,
+   "L_first_fake": null,
+   "truth_in_set": true
+  },
+  "d2:Tokyo": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 11,
+   "truth_in_set": true
+  },
+  "d2:Vienna": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": null,
+   "truth_in_set": true
+  },
+  "d2:Warsaw": {
+   "family": "d2",
+   "correct": true,
+   "row": 40,
+   "L_first": 0,
+   "L_first_stable": 19,
+   "L_first_fake": 1,
+   "truth_in_set": true
+  },
+  "d3-lm:Anitkabir": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 46,
+   "L_first": 10,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-lm:Big Ben": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 43,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 1,
+   "truth_in_set": true
+  },
+  "d3-lm:Buckingham Palace": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 43,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 6,
+   "truth_in_set": true
+  },
+  "d3-lm:Fisherman's Bastion": {
+   "family": "d3-lm",
+   "correct": false,
+   "row": 43,
+   "L_first": 3,
+   "L_first_stable": null,
+   "L_first_fake": 1,
+   "truth_in_set": true
+  },
+  "d3-lm:Gyeongbokgung Palace": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 46,
+   "L_first": 5,
+   "L_first_stable": 20,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d3-lm:Notre-Dame Cathedral": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 5,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-lm:Red Square": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 43,
+   "L_first": 8,
+   "L_first_stable": 20,
+   "L_first_fake": 5,
+   "truth_in_set": true
+  },
+  "d3-lm:Retiro Park": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 43,
+   "L_first": 6,
+   "L_first_stable": null,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-lm:Saint Basil's Cathedral": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 45,
+   "L_first": 9,
+   "L_first_stable": 20,
+   "L_first_fake": 1,
+   "truth_in_set": true
+  },
+  "d3-lm:Schonbrunn Palace": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 45,
+   "L_first": 2,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-lm:Shibuya Crossing": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 43,
+   "L_first": 2,
+   "L_first_stable": 20,
+   "L_first_fake": 12,
+   "truth_in_set": true
+  },
+  "d3-lm:St. Stephen's Cathedral": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 46,
+   "L_first": 8,
+   "L_first_stable": 20,
+   "L_first_fake": 4,
+   "truth_in_set": true
+  },
+  "d3-lm:Suomenlinna fortress": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 43,
+   "L_first": 10,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-lm:Tivoli Gardens": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 11,
+   "truth_in_set": true
+  },
+  "d3-lm:Tower Bridge": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 43,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 15,
+   "truth_in_set": true
+  },
+  "d3-lm:Wat Arun": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 8,
+   "L_first_stable": 20,
+   "L_first_fake": 14,
+   "truth_in_set": true
+  },
+  "d3-lm:the Acropolis": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 3,
+   "L_first_stable": 20,
+   "L_first_fake": null,
+   "truth_in_set": true
+  },
+  "d3-lm:the Anne Frank House": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 6,
+   "L_first_stable": 20,
+   "L_first_fake": 4,
+   "truth_in_set": true
+  },
+  "d3-lm:the Astronomical Clock of the Old Town": {
+   "family": "d3-lm",
+   "correct": false,
+   "row": 46,
+   "L_first": 1,
+   "L_first_stable": null,
+   "L_first_fake": 3,
+   "truth_in_set": true
+  },
+  "d3-lm:the Belem Tower": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 8,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-lm:the Belvedere palace": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 45,
+   "L_first": 6,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-lm:the Brandenburg Gate": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 45,
+   "L_first": 9,
+   "L_first_stable": 20,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d3-lm:the Charles Bridge": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 1,
+   "L_first_stable": 18,
+   "L_first_fake": 6,
+   "truth_in_set": true
+  },
+  "d3-lm:the Colosseum": {
+   "family": "d3-lm",
+   "correct": false,
+   "row": 46,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 6,
+   "truth_in_set": true
+  },
+  "d3-lm:the Eiffel Tower": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 2,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-lm:the Grand Palace": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 10,
+   "L_first_stable": 20,
+   "L_first_fake": 9,
+   "truth_in_set": true
+  },
+  "d3-lm:the Jeronimos Monastery": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 45,
+   "L_first": 5,
+   "L_first_stable": 20,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d3-lm:the Khan el-Khalili bazaar": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 47,
+   "L_first": 14,
+   "L_first_stable": 20,
+   "L_first_fake": 20,
+   "truth_in_set": true
+  },
+  "d3-lm:the Kremlin": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 43,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 11,
+   "truth_in_set": true
+  },
+  "d3-lm:the Little Mermaid statue": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 4,
+   "L_first_stable": 20,
+   "L_first_fake": 6,
+   "truth_in_set": true
+  },
+  "d3-lm:the Louvre": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": null,
+   "truth_in_set": true
+  },
+  "d3-lm:the Meiji Shrine": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 0,
+   "L_first_stable": 18,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-lm:the Palace of Culture and Science": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 47,
+   "L_first": 12,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-lm:the Pantheon": {
+   "family": "d3-lm",
+   "correct": false,
+   "row": 44,
+   "L_first": null,
+   "L_first_stable": null,
+   "L_first_fake": 3,
+   "truth_in_set": true
+  },
+  "d3-lm:the Parthenon": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 45,
+   "L_first": 6,
+   "L_first_stable": 20,
+   "L_first_fake": 12,
+   "truth_in_set": true
+  },
+  "d3-lm:the Prado Museum": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d3-lm:the Reichstag building": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 12,
+   "L_first_stable": 20,
+   "L_first_fake": null,
+   "truth_in_set": true
+  },
+  "d3-lm:the Rijksmuseum": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 45,
+   "L_first": 5,
+   "L_first_stable": 13,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d3-lm:the Senso-ji temple": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 46,
+   "L_first": 1,
+   "L_first_stable": 17,
+   "L_first_fake": null,
+   "truth_in_set": true
+  },
+  "d3-lm:the Szechenyi thermal bath": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 46,
+   "L_first": 8,
+   "L_first_stable": 20,
+   "L_first_fake": 3,
+   "truth_in_set": true
+  },
+  "d3-lm:the Trevi Fountain": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 1,
+   "L_first_stable": 18,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-lm:the Vasa Museum": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 3,
+   "L_first_stable": 20,
+   "L_first_fake": 4,
+   "truth_in_set": true
+  },
+  "d3-lm:the Vigeland sculpture park": {
+   "family": "d3-lm",
+   "correct": true,
+   "row": 44,
+   "L_first": 3,
+   "L_first_stable": 20,
+   "L_first_fake": 16,
+   "truth_in_set": true
+  },
+  "d3-per:Alexander Pushkin": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 46,
+   "L_first": 4,
+   "L_first_stable": 20,
+   "L_first_fake": 20,
+   "truth_in_set": true
+  },
+  "d3-per:Alexander von Humboldt": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 47,
+   "L_first": 6,
+   "L_first_stable": null,
+   "L_first_fake": 4,
+   "truth_in_set": true
+  },
+  "d3-per:August Strindberg": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 47,
+   "L_first": 8,
+   "L_first_stable": 17,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-per:Baruch Spinoza": {
+   "family": "d3-per",
+   "correct": false,
+   "row": 48,
+   "L_first": 8,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-per:Charlie Chaplin": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 46,
+   "L_first": 5,
+   "L_first_stable": 18,
+   "L_first_fake": 17,
+   "truth_in_set": true
+  },
+  "d3-per:Claude Monet": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 46,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-per:Edith Piaf": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 48,
+   "L_first": 6,
+   "L_first_stable": 18,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-per:Ennio Morricone": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 48,
+   "L_first": 1,
+   "L_first_stable": null,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d3-per:Erno Rubik": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 47,
+   "L_first": 7,
+   "L_first_stable": 20,
+   "L_first_fake": 1,
+   "truth_in_set": true
+  },
+  "d3-per:Fernando Pessoa": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 45,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 6,
+   "truth_in_set": true
+  },
+  "d3-per:Franz Kafka": {
+   "family": "d3-per",
+   "correct": false,
+   "row": 45,
+   "L_first": 2,
+   "L_first_stable": 20,
+   "L_first_fake": 11,
+   "truth_in_set": true
+  },
+  "d3-per:Franz Schubert": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 47,
+   "L_first": 1,
+   "L_first_stable": 18,
+   "L_first_fake": 3,
+   "truth_in_set": true
+  },
+  "d3-per:Fyodor Dostoevsky": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 51,
+   "L_first": 10,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-per:Georges Bizet": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 46,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 5,
+   "truth_in_set": true
+  },
+  "d3-per:Greta Garbo": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 47,
+   "L_first": 5,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-per:Harry Houdini": {
+   "family": "d3-per",
+   "correct": false,
+   "row": 47,
+   "L_first": 20,
+   "L_first_stable": 20,
+   "L_first_fake": 11,
+   "truth_in_set": true
+  },
+  "d3-per:Hokusai": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 46,
+   "L_first": 1,
+   "L_first_stable": 18,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d3-per:Johann Strauss II": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 45,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 3,
+   "truth_in_set": true
+  },
+  "d3-per:John Keats": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 46,
+   "L_first": 3,
+   "L_first_stable": 20,
+   "L_first_fake": 1,
+   "truth_in_set": true
+  },
+  "d3-per:Julius Caesar": {
+   "family": "d3-per",
+   "correct": false,
+   "row": 45,
+   "L_first": null,
+   "L_first_stable": null,
+   "L_first_fake": 16,
+   "truth_in_set": true
+  },
+  "d3-per:Lope de Vega": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 47,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": null,
+   "truth_in_set": true
+  },
+  "d3-per:Ludwig Wittgenstein": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 47,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-per:Marie Curie": {
+   "family": "d3-per",
+   "correct": false,
+   "row": 46,
+   "L_first": 2,
+   "L_first_stable": null,
+   "L_first_fake": 3,
+   "truth_in_set": true
+  },
+  "d3-per:Marlene Dietrich": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 47,
+   "L_first": 18,
+   "L_first_stable": 20,
+   "L_first_fake": 11,
+   "truth_in_set": true
+  },
+  "d3-per:Mikhail Lermontov": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 48,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 14,
+   "truth_in_set": true
+  },
+  "d3-per:Naguib Mahfouz": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 49,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-per:Natsume Soseki": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 48,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 1,
+   "truth_in_set": true
+  },
+  "d3-per:Niels Bohr": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 47,
+   "L_first": 7,
+   "L_first_stable": 20,
+   "L_first_fake": 5,
+   "truth_in_set": true
+  },
+  "d3-per:Pedro Calderon de la Barca": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 50,
+   "L_first": 1,
+   "L_first_stable": 18,
+   "L_first_fake": 9,
+   "truth_in_set": true
+  },
+  "d3-per:Pericles": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 45,
+   "L_first": 6,
+   "L_first_stable": 20,
+   "L_first_fake": 9,
+   "truth_in_set": true
+  },
+  "d3-per:Plato": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 44,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 1,
+   "truth_in_set": true
+  },
+  "d3-per:Rainer Maria Rilke": {
+   "family": "d3-per",
+   "correct": false,
+   "row": 49,
+   "L_first": 0,
+   "L_first_stable": null,
+   "L_first_fake": 5,
+   "truth_in_set": true
+  },
+  "d3-per:Sophia Loren": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 45,
+   "L_first": 3,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-per:Soren Kierkegaard": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 49,
+   "L_first": 0,
+   "L_first_stable": null,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d3-per:Virginia Woolf": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 46,
+   "L_first": 2,
+   "L_first_stable": 20,
+   "L_first_fake": 5,
+   "truth_in_set": true
+  },
+  "d3-per:Voltaire": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 45,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d3-per:Walter Benjamin": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 45,
+   "L_first": 11,
+   "L_first_stable": 20,
+   "L_first_fake": 5,
+   "truth_in_set": true
+  },
+  "d3-per:Yukio Mishima": {
+   "family": "d3-per",
+   "correct": true,
+   "row": 47,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 6,
+   "truth_in_set": true
+  },
+  "d4-work:Candide": {
+   "family": "d4-work",
+   "correct": true,
+   "row": 48,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 4,
+   "truth_in_set": true
+  },
+  "d4-work:Eugene Onegin": {
+   "family": "d4-work",
+   "correct": true,
+   "row": 49,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d4-work:The Arcades Project": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 49,
+   "L_first": null,
+   "L_first_stable": null,
+   "L_first_fake": null,
+   "truth_in_set": true
+  },
+  "d4-work:The Blue Danube waltz": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 50,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 17,
+   "truth_in_set": true
+  },
+  "d4-work:The Book of Disquiet": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 51,
+   "L_first": 10,
+   "L_first_stable": 20,
+   "L_first_fake": 18,
+   "truth_in_set": true
+  },
+  "d4-work:The Great Wave off Kanagawa": {
+   "family": "d4-work",
+   "correct": true,
+   "row": 49,
+   "L_first": 3,
+   "L_first_stable": 16,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d4-work:The Metamorphosis": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 51,
+   "L_first": 6,
+   "L_first_stable": null,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d4-work:The Republic": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 48,
+   "L_first": 7,
+   "L_first_stable": 19,
+   "L_first_fake": 12,
+   "truth_in_set": true
+  },
+  "d4-work:the Commentaries on the Gallic War": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 54,
+   "L_first": 6,
+   "L_first_stable": null,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d4-work:the Duino Elegies": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 49,
+   "L_first": 8,
+   "L_first_stable": null,
+   "L_first_fake": 13,
+   "truth_in_set": true
+  },
+  "d4-work:the Rubik's Cube": {
+   "family": "d4-work",
+   "correct": true,
+   "row": 49,
+   "L_first": 4,
+   "L_first_stable": 20,
+   "L_first_fake": 7,
+   "truth_in_set": true
+  },
+  "d4-work:the Tractatus Logico-Philosophicus": {
+   "family": "d4-work",
+   "correct": true,
+   "row": 50,
+   "L_first": 8,
+   "L_first_stable": 20,
+   "L_first_fake": 3,
+   "truth_in_set": true
+  },
+  "d4-work:the Unfinished Symphony": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 50,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 16,
+   "truth_in_set": true
+  },
+  "d4-work:the book Either/Or": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 51,
+   "L_first": 7,
+   "L_first_stable": null,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d4-work:the book Fear and Trembling": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 52,
+   "L_first": 0,
+   "L_first_stable": null,
+   "L_first_fake": null,
+   "truth_in_set": true
+  },
+  "d4-work:the film The Great Dictator": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 52,
+   "L_first": 2,
+   "L_first_stable": 19,
+   "L_first_fake": 6,
+   "truth_in_set": true
+  },
+  "d4-work:the novel A Hero of Our Time": {
+   "family": "d4-work",
+   "correct": true,
+   "row": 53,
+   "L_first": 3,
+   "L_first_stable": 20,
+   "L_first_fake": 1,
+   "truth_in_set": true
+  },
+  "d4-work:the novel Crime and Punishment": {
+   "family": "d4-work",
+   "correct": true,
+   "row": 52,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 6,
+   "truth_in_set": true
+  },
+  "d4-work:the novel Kokoro": {
+   "family": "d4-work",
+   "correct": true,
+   "row": 50,
+   "L_first": 3,
+   "L_first_stable": 20,
+   "L_first_fake": 5,
+   "truth_in_set": true
+  },
+  "d4-work:the novel Mrs Dalloway": {
+   "family": "d4-work",
+   "correct": true,
+   "row": 52,
+   "L_first": 4,
+   "L_first_stable": 18,
+   "L_first_fake": 1,
+   "truth_in_set": true
+  },
+  "d4-work:the novel Palace Walk": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 50,
+   "L_first": 7,
+   "L_first_stable": null,
+   "L_first_fake": null,
+   "truth_in_set": true
+  },
+  "d4-work:the novel The Sound of Waves": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 52,
+   "L_first": 7,
+   "L_first_stable": 20,
+   "L_first_fake": 5,
+   "truth_in_set": true
+  },
+  "d4-work:the novel The Trial": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 50,
+   "L_first": 6,
+   "L_first_stable": null,
+   "L_first_fake": 2,
+   "truth_in_set": true
+  },
+  "d4-work:the opera Carmen": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 49,
+   "L_first": 7,
+   "L_first_stable": null,
+   "L_first_fake": 3,
+   "truth_in_set": true
+  },
+  "d4-work:the painting Impression, Sunrise": {
+   "family": "d4-work",
+   "correct": true,
+   "row": 50,
+   "L_first": 0,
+   "L_first_stable": 20,
+   "L_first_fake": 4,
+   "truth_in_set": true
+  },
+  "d4-work:the play Fuenteovejuna": {
+   "family": "d4-work",
+   "correct": true,
+   "row": 50,
+   "L_first": 1,
+   "L_first_stable": 20,
+   "L_first_fake": 12,
+   "truth_in_set": true
+  },
+  "d4-work:the play Life Is a Dream": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 52,
+   "L_first": 1,
+   "L_first_stable": null,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d4-work:the play Miss Julie": {
+   "family": "d4-work",
+   "correct": false,
+   "row": 50,
+   "L_first": 2,
+   "L_first_stable": null,
+   "L_first_fake": 0,
+   "truth_in_set": true
+  },
+  "d4-work:the poem Ode to a Nightingale": {
+   "family": "d4-work",
+   "correct": true,
+   "row": 55,
+   "L_first": 3,
+   "L_first_stable": 20,
+   "L_first_fake": 9,
+   "truth_in_set": true
+  }
+ }
+}
