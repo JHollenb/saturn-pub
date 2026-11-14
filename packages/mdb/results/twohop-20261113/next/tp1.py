@@ -60,11 +60,13 @@ prompts = json.load(open("tp1_prompts.json"))["prompts"]
 import os  # noqa: E402
 if os.environ.get("TP1_N"):
     prompts = prompts[:int(os.environ["TP1_N"])]
+PART = os.environ.get("TP1_PART", "main")       # main: all but ablations; abl: one ablation shard
+SHARD, NSHARD = int(os.environ.get("TP1_SHARD", 0)), int(os.environ.get("TP1_NSHARD", 1))
 mark("load")
 
 # ------------------------------------------------------------------ nnsight forward + backward
 summary, h_mid, gnorm_mid = [], {}, {}
-for k, pr in enumerate(prompts):
+for k, pr in enumerate(prompts if PART == "main" else []):
     ids = tok(pr["text"], add_special_tokens=False)["input_ids"]
     n = len(ids)
     x = torch.tensor([ids], device="cuda")
@@ -112,11 +114,16 @@ for k, pr in enumerate(prompts):
     gnorm_mid[k] = gstack[MID].norm(dim=-1).cpu()
     summary.append(rec)
     del hstack, gstack, att, grads, hs_s, vs, ps
+if PART == "main":
+    torch.save({"h_mid": h_mid, "gnorm_mid": gnorm_mid, "summary": summary}, OUT / "mid.pt")
+else:
+    st_ = torch.load(OUT / "mid.pt", weights_only=False)
+    h_mid, gnorm_mid, summary = st_["h_mid"], st_["gnorm_mid"], st_["summary"]
 mark("nnsight forward/backward")
 
 # ------------------------------------------------------------------ mdb Jacobian check (2 items)
 checks = []
-for k in (0, 1):
+for k in ((0, 1) if PART == "main" else ()):
     s = summary[k]
     ids, j = s["ids"], len(s["ids"]) - 1
     g20 = torch.load(OUT / f"p{k:03d}.pt", weights_only=False)["grad"][20, j].float()
@@ -161,8 +168,10 @@ def ablate(ids, row, vec, t1, t2):
 
 
 abl = []
-for tag, rows in (("top1pct", top), ("median", med)):
-    for nrm, k, r in rows:
+work = [(tag, x) for tag, rows in (("top1pct", top), ("median", med)) for x in rows]
+work = [w for n_, w in enumerate(work) if PART == "abl" and n_ % NSHARD == SHARD]
+for tag, (nrm, k, r) in work:
+    if True:
         s = summary[k]
         rec = {"set": tag, "prompt": k, "row": r, "token": s["ids"][r], "token_text": tok.decode([s["ids"][r]]),
                "norm": nrm, "M0": s["M"], "grad_norm": float(gnorm_mid[k][r])}
@@ -179,6 +188,8 @@ mark("mdb ablations")
 # ------------------------------------------------------------------ SAELens reconstruction error
 sae_out = {"layers": list(SAE_LAYERS), "per_prompt": {}, "check": []}
 try:
+    if PART != "main":
+        raise RuntimeError("not run in this part")
     from sae_lens.saes.topk_sae import TopKSAE, TopKSAEConfig
     mset = msae.open_set("qwen-scope", SAEDIR)
     for layer in SAE_LAYERS:
@@ -214,6 +225,8 @@ mark("SAELens")
 # ------------------------------------------------------------------ TransformerLens centring arm
 tl_out = {}
 try:
+    if PART != "main":
+        raise RuntimeError("not run in this part")
     from transformers import AutoModelForCausalLM
 
     from mdb_interop import tl as itl
@@ -245,5 +258,5 @@ mark("TransformerLens")
 
 json.dump({"summary": summary, "checks": checks, "ablations": abl, "sae": sae_out, "tl": tl_out,
            "timing": timing, "versions": {"nnsight": inn.version()}},
-          open("tp1-results.json", "w"))
+          open("tp1-results.json" if PART == "main" else f"tp1-abl-{SHARD}.json", "w"))
 print(f"TOTAL {time.monotonic() - T0:.1f}s", flush=True)
