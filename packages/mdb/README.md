@@ -65,6 +65,81 @@ here), `tiny:qwen2` or `tiny:qwen3`, or the address of a running `mdb serve` (se
 name that matches no cached model, or several, is refused with the candidates. `--project DIR`
 attaches a project, which makes checkpoints durable.
 
+## Coming from TransformerLens or nnsight
+
+mdb uses its own words for things you already know. Left: the usual term. Right: mdb's. Port names
+are the Qwen2 ones in the [Ports](#ports) table; `L<L>` is the layer number. "Roughly" means the
+tensor has another shape or sits at another position, so do not swap them blindly.
+
+| TransformerLens / nnsight / pyvene | mdb |
+|---|---|
+| hook point, module hook | port: a named value inside one decoder layer, address `L<L>.<port>` |
+| `blocks.L.hook_resid_pre` | `L<L>.h` (layer input) |
+| `blocks.L.hook_resid_post` | `L<L>.h_out` (layer output) |
+| `blocks.L.hook_resid_mid` | `L<L>.r` (`h + o`) |
+| `blocks.L.attn.hook_pattern` | `L<L>.p` (per head, `p[h5]`; native attention weights) |
+| `blocks.L.attn.hook_z` | roughly `L<L>.A`: `hook_z` is per head, before `W_O`; `A` is the heads concatenated, at the `o_proj` input (`A[h5]` selects one head's slice) |
+| `blocks.L.hook_attn_out` | `L<L>.o` (after `o_proj`) |
+| `blocks.L.attn.hook_q` / `hook_k` / `hook_v` | roughly `L<L>.q` / `k` / `v`: mdb's are flat, `[batch, row, head*head_dim]`, `q` and `k` before RoPE |
+| `blocks.L.attn.hook_attn_scores` | `L<L>.s` (a replica checked against `p`, see Ports) |
+| `blocks.L.mlp.hook_post` | `L<L>.f` (`down_proj` input) |
+| `blocks.L.hook_mlp_out` | `L<L>.m` |
+| activation cache (`run_with_cache`, `trace`) | reading ports with `print` / `x` at a stop, or `mdb.trace` in Python; one prompt, one row at a time |
+| activation patching | `set ADDR = OTHERRUN:ADDR` for state cells only (see the example); `whatif` and `compare` measure an edit natively and restore. A port of another run is refused: a port takes a number or an address of this run |
+| head or path ablation | `set L<L>.A[h5] *= 0` (selector `[h5]`); `whatif` for the effect without leaving the stop |
+| direct logit attribution | `explain M[a,b]` (exact split of a margin, with a measured remainder) |
+| KV cache | state cells `cache.L<L>.k` / `v[kv0,row=2]`; readable, editable, and takeable from another run |
+| `run_with_cache` over a batch, batched forward | not available: batch 1 (issue M22) |
+| SAE features, dictionary units | none (issue M23) |
+
+Example: patch one value cell from a clean run into a corrupted run and read a logit difference.
+Cross-run patching works on cache cells, not on `A[h1]` (the first attempt, `set L0.A[h1] =
+clean:L0.A[h1]`, was refused with the message above), so the closest mdb has to "patch one head's
+output" is to patch the value vector that head reads at the one differing row. TransformerLens
+style, not run:
+
+```python
+# pseudocode, not run
+_, clean_cache = model.run_with_cache(clean_tokens)
+def patch(z, hook):              # z: [batch, pos, head, d_head]
+    z[:, :, 1] = clean_cache[hook.name][:, :, 1]
+    return z
+patched = model.run_with_hooks(corrupt_tokens, fwd_hooks=[("blocks.0.attn.hook_z", patch)])
+diff = patched[0, -1, 6] - patched[0, -1, 7]
+```
+
+mdb, on the tiny Qwen2 (clean prompt `1 7 9 3`, corrupted `1 5 9 3`, only row 1 differs; the
+logit difference is token 6 minus token 7 at the last row, bf16), real output with the long
+lines cut:
+
+```
+$ python -m mdb engine tiny:qwen2 --tokens "1 5 9 3" --script FILE
+(mdb) start name=corrupt 1 5 9 3
+(mdb) checkpoint s0
+(mdb) run name=clean 1 7 9 3
+(mdb) until logits
+(mdb) x logits 2 6
+t3.logits  [6:8] of 32: -0.14355 -0.12451 [measured]
+(mdb) frame corrupt:
+(mdb) until logits
+(mdb) x logits 2 6
+t3.logits  [6:8] of 32: -0.16699 -0.15332 [measured]
+(mdb) restart s0
+(mdb) set cache.L0.v[kv0,row=1] = clean:cache.L0.v[kv0,row=1]
+staged cell cache.L0.v[kv0,row=1]: cache.L0.v replace tensor [1, 1, 1, 8] bfloat16 ...
+  realised before L0.A reads it (boundary L0.p); reads already made are not recomputed
+(mdb) until logits
+(mdb) x logits 2 6
+t3.logits  [6:8] of 32: -0.16895 -0.13672 [measured, under edit cache.L0.v[kv0,row=1]]
+```
+
+Logit difference (token 6 minus token 7, from the printed values): clean -0.0190, corrupted -0.0137, patched -0.0322. The patch moves it away from the clean value here; this is a random tiny model, so the numbers only show the mechanics.
+
+mdb adds, and the others do not: a prediction sealed before the native measurement with the gap
+split by cause (`forecast`, `verify`), an authority label and state on every number, and
+reversible stepping inside a layer (`reverse-step`, `restart`). It lacks batching (M22), model
+families beyond Qwen2 and Qwen3, and dictionary features (M23).
+
 ## Embedding
 
 ```python
