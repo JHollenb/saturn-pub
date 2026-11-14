@@ -641,14 +641,24 @@ def _switch(ctx, run) -> None:
     debugger.live = run
 
 
-def _start(ctx, prompt, name: str | None = None) -> None:
+def _start(ctx, prompt, name: str | None = None, prefill: int | None = None) -> None:
     if ctx.debugger is None:
         raise Refused("no model attached; use mdb.attach(model) or --tiny")
     if prompt is None:
         if ctx.run is None:
             raise BadArgs("start needs a prompt (text or token ids)")
         prompt = list(ctx.run.tokens)
+    if prefill is not None:
+        count = len(ctx.debugger.tokens(prompt))
+        if prefill > count - 1:
+            raise Refused(f"prefill={prefill} is past the prompt: it has {count} tokens, so "
+                          f"prefill is 0..{count - 1} (the row after the prefilled ones is the "
+                          "first stepped row)")
     run = ctx.debugger.run(prompt, name=name)  # the one start: cursor at t<last>.L0.h
+    if prefill is not None and prefill != run.prefill:
+        # the prompt rows from `prefill` on are stepped one row at a time, tokens forced
+        run.reroot(prefill)
+        run.until(f"L0.{run.program.names[0]}")
     getattr(ctx.debugger, "run_checkpoints", {}).pop(run.name, None)  # a new run of that name
     _switch(ctx, run)
 
@@ -657,26 +667,41 @@ _PROMPT = Arg("prompt", "prompt", help="prompt text (needs a tokenizer) or token
               "omitted = the current run's prompt")
 _NAME = Arg("name", "str", positional=False,
             help="name of the run (default main): other runs take values from it as NAME:ADDR")
+_PREFILL = Arg("prefill", "int", minimum=0, positional=False,
+               help="prompt rows computed in one batched call (default all but the last); the "
+                    "rest are stepped one row at a time with their tokens forced, so their "
+                    "ports are stops (0 steps every row)")
+
+
+def procedure_json(run) -> dict[str, Any]:
+    """The run's prefill split as op JSON: ``rows`` (prompt rows batched), ``text`` and
+    ``default`` (all prompt rows but the last batched, the procedure of ``start`` without
+    ``prefill=``)."""
+    procedure = run.procedure
+    return {"rows": procedure["prefill"], "text": procedure["text"],
+            "default": procedure["prefill"] == procedure["prompt_rows"] - 1}
 
 
 def _started(ctx) -> dict[str, Any]:
-    return {"prompt_tokens": len(ctx.run.tokens), "run": ctx.run.name}
+    return {"prompt_tokens": len(ctx.run.tokens), "run": ctx.run.name,
+            "prefill": procedure_json(ctx.run)}
 
 
-@op("start", "Prefill a prompt and stop at the pending token's first port (L0.h)", _PROMPT,
-    _NAME, effect="native", needs_live=False, usage="start [name=NAME] [TEXT | ID ID ...]")
-def _op_start(ctx, prompt, name):
-    _start(ctx, prompt, name)
+@op("start", "Prefill a prompt and stop at the first stepped row's first port (L0.h)",
+    _PROMPT, _NAME, _PREFILL, effect="native", needs_live=False,
+    usage="start [name=NAME] [prefill=K] [TEXT | ID ID ...]")
+def _op_start(ctx, prompt, name, prefill):
+    _start(ctx, prompt, name, prefill)
     return moved(ctx, _started(ctx))
 
 
 @op("run", "Like start, then continue to the first armed breakpoint or watch", _PROMPT,
     Arg("budget", "int", default=8, minimum=0, maximum=STEP_CAP, positional=False,
-        help="token rows continue may enter (minimum 1, at most 4096)"), _NAME,
+        help="token rows continue may enter (minimum 1, at most 4096)"), _NAME, _PREFILL,
     effect="native", needs_live=False,
-    usage="run [name=NAME] [TEXT | ID ID ...] [budget=N]")
-def _op_run(ctx, prompt, budget, name):
-    _start(ctx, prompt, name)
+    usage="run [name=NAME] [prefill=K] [TEXT | ID ID ...] [budget=N]")
+def _op_run(ctx, prompt, budget, name, prefill):
+    _start(ctx, prompt, name, prefill)
     if not ctx.table.armed():
         return moved(ctx, {**_started(ctx), "reason": "no-breakpoints"})
     return _continue(ctx, budget=budget, extra=None, more=_started(ctx))
@@ -689,7 +714,7 @@ def _op_run(ctx, prompt, budget, name):
 def _op_where(ctx):
     run = ctx.run
     out = {"where": run.where, "stop": _stop(ctx), "staged": len(run.edits),
-           "lookahead": getattr(run, "lookahead", None)}
+           "lookahead": getattr(run, "lookahead", None), "prefill": procedure_json(run)}
     if getattr(run, "cells", None):
         out["staged_cells"] = len(run.cells)
     if getattr(run, "name", None) is not None:
@@ -750,7 +775,7 @@ def _walk(run, unit: str, n: int, *, reverse: bool) -> tuple[int, int]:
     stops = run.stops()
     size = len(stops)
     key = run.parse(run.where)
-    root = (len(run.tokens) - 1, 0)
+    root = run.parse(run.root)
     for _ in range(n):
         while True:
             row, index = key
@@ -839,6 +864,8 @@ def _run_to(ctx, target: str, budget: int, *, name: str) -> dict[str, Any]:
     key, here = run.parse(found.run_target), run.parse(run.where)
     if key == here and name == "until":
         return moved(ctx)
+    if key[0] < getattr(run, "first_row", 0):
+        raise Refused(f"{found.run_target}: {run.prefilled_reason(key[0])}")
     if key <= here:
         raise Refused(f"{found.run_target} is "
                       + ("behind the cursor " if name == "until" else "not ahead of the cursor ")
@@ -1304,9 +1331,10 @@ def origin_port_value(ctx, text: str):
                 raise NotHeld(f"{branch} has not computed {source.run_target} (it is at "
                               f"{donor.where}): run it there first (frame {branch}: then "
                               f"until {source.run_target})") from None
-            raise NotHeld(f"{label}: {error} (a prompt row before the first stop is prefilled "
-                          "in one call and holds no ports; its keys and values are the cache "
-                          "cells cache.L<i>.k|v[row=N], which a cell edit takes)") from None
+            raise NotHeld(f"{label}: {error} (start {branch} with `start name={branch} "
+                          "prefill=K ...` to step that row; the keys and values of a prefilled "
+                          "row are the cache cells cache.L<i>.k|v[row=N], which a cell edit "
+                          "takes)") from None
         block = _select(ctx, source, tensor).value
         # one move: the selected block to this run's device and dtype together (a donor of
         # another device is moved, never mixed with this run's tensors)
@@ -1671,6 +1699,7 @@ def _op_info(ctx, subject, offset, limit):
         runs = getattr(ctx.debugger, "runs", {}) if ctx.debugger is not None else {}
         items = [{"name": name, "where": run.where, "prompt_tokens": len(run.tokens),
                   "staged": len(run.edits), "staged_cells": len(run.cells),
+                  "prefill": procedure_json(run),
                   "current": run is ctx.run} for name, run in runs.items()]
         shown, meta = _page(items, offset, limit)
         return {"subject": subject, "runs": shown, **meta}

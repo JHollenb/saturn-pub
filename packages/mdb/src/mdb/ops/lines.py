@@ -143,10 +143,10 @@ def _prompt_args(text: str) -> dict[str, Any]:
     rest = []
     for word, _, _ in words:
         match = _KEYWORD.fullmatch(word)
-        if match and match["key"] == "budget":
+        if match and match["key"] in ("budget", "prefill"):
             if not _INT.fullmatch(match["value"]):
-                raise BadArgs(f"budget must be an integer, got {match['value']!r}")
-            args["budget"] = int(match["value"])
+                raise BadArgs(f"{match['key']} must be an integer, got {match['value']!r}")
+            args[match["key"]] = int(match["value"])
         elif match and match["key"] == "name" and not rest:
             args["name"] = match["value"]
         else:

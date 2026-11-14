@@ -926,32 +926,62 @@ class DecoderAdapter(Adapter):
     # --- session / grammar --------------------------------------------------------------
 
     @torch.no_grad()
-    def session(self, token_ids: Sequence[int]) -> Session:
+    def session(self, token_ids: Sequence[int], *, prefill: int | None = None) -> Session:
+        """A session over the prompt ``token_ids``: the first ``prefill`` rows are computed in
+        one batched native call (default: all but the last), the next row is pending.
+
+        With ``prefill`` below ``len(token_ids) - 1`` the remaining prompt rows are stepped one
+        row at a time by the same transitions as generated rows: the state then holds the whole
+        prompt in the ``prompt`` slot and the ``sample`` transition of a prompt row writes the
+        prompt's next token (``forced_token``) instead of the argmax. The default procedure has
+        no ``prompt`` slot, so its states, cuts and fingerprints are those of before the slot
+        existed. The split is part of the cut: a batched and a stepped row can differ in their
+        cached K/V bits, and the root cut of each procedure is a different state."""
         self.validate_execution()
         tokens = torch.tensor([list(token_ids)], dtype=torch.long, device=self.device)
         if tokens.shape[-1] < 1:
             raise ValueError("at least one pending token is required")
-        self._guard_window(tokens.shape[-1])
+        count = tokens.shape[-1]
+        if prefill is None:
+            prefill = count - 1
+        if isinstance(prefill, bool) or not isinstance(prefill, int) or not 0 <= prefill < count:
+            raise ValueError(f"prefill must be an integer in 0..{count - 1} (the prompt has "
+                             f"{count} tokens; the row after the prefilled ones is pending)")
+        self._guard_window(count)
+        prompt = tokens
+        tokens = tokens[:, : prefill + 1].clone()
         cache = DynamicCache(config=self.model.config)
-        if tokens.shape[-1] > 1:
+        if prefill > 0:
             if self._residency.mode == "streamed":
                 cache = self._streamed_backbone(tokens[:, :-1])[1]
             else:
                 cache = self.model(tokens[:, :-1], use_cache=True).past_key_values
         keys, values = self._cache_values(cache)
-        return Session(
-            self,
-            {
-                "tokens": tokens,
-                "keys": keys,
-                "values": values,
-                "layer": 0,
-                "phase": "embed",
-                "hidden": None,
-                "logits": None,
-                "sampled_token": None,
-            },
-        )
+        state = {
+            "tokens": tokens,
+            "keys": keys,
+            "values": values,
+            "layer": 0,
+            "phase": "embed",
+            "hidden": None,
+            "logits": None,
+            "sampled_token": None,
+        }
+        if prefill < count - 1:
+            state["prompt"] = prompt
+        return Session(self, state)
+
+    @staticmethod
+    def _forced(state: Mapping[str, Any]) -> torch.Tensor | None:
+        """The prompt token the pending row's ``sample`` writes (``[1, 1]``), or None when the
+        row is the prompt's last (or past it) and ``sample`` is the native argmax."""
+        prompt = state.get("prompt")
+        if prompt is None:
+            return None
+        row = state["tokens"].shape[1]
+        if row >= prompt.shape[1]:
+            return None
+        return prompt[:, row : row + 1].clone()
 
     def _guard_window(self, count: int) -> None:
         if self.sliding_window is not None and count > self.sliding_window:
@@ -976,7 +1006,7 @@ class DecoderAdapter(Adapter):
             "embed": f"{self.spec.backbone}.{self.spec.embed}",
             "normalization": f"{self.spec.backbone}.{self.spec.final_norm}",
             "readout": "lm_head",
-            "sample": "greedy_argmax",
+            "sample": "greedy_argmax" if self._forced(state) is None else "forced_token",
             "commit": "token_commit",
         }.get(
             phase,
@@ -1008,14 +1038,15 @@ class DecoderAdapter(Adapter):
             reads, writes = {
                 "normalization": (("hidden",), ("hidden", "phase")),
                 "readout": (("hidden",), ("logits", "phase")),
-                "sample": (("logits",), ("sampled_token", "phase")),
+                "sample": (("logits",) if self._forced(state) is None else ("tokens", "prompt"),
+                           ("sampled_token", "phase")),
                 "commit": (
                     ("tokens", "sampled_token"),
                     ("tokens", "hidden", "sampled_token", "layer", "phase"),
                 ),
             }[phase]
         else:
-            reads = ("hidden", "tokens")
+            reads = ("hidden", "tokens") + (("prompt",) if "prompt" in state else ())
             writes = ("logits", "tokens", "hidden", "layer", "phase")
         return TransitionSpec(
             self.point(state).next_operation,
@@ -1101,6 +1132,16 @@ class DecoderAdapter(Adapter):
                 },
             ),
         )
+        if "prompt" in state:  # a stepped prompt: the tokens its sample transitions force
+            slots += (
+                SlotSpec(
+                    "prompt",
+                    role="decision",
+                    producer="prefill",
+                    consumer="forced_token",
+                    schema=tensor_schema(state["prompt"]),
+                ),
+            )
         return SurfaceManifest(
             slots=slots,
             state_schema=f"saturn-pub-decoder-{self.spec.model_type}-state-v1",
@@ -1146,6 +1187,8 @@ class DecoderAdapter(Adapter):
             "logits",
             "sampled_token",
         }
+        if "prompt" in state:
+            expected_keys.add("prompt")
         if set(state) != expected_keys:
             raise ValueError("decoder state schema keys differ from the execution contract")
         tokens = state["tokens"]
@@ -1226,15 +1269,37 @@ class DecoderAdapter(Adapter):
             raise ValueError("invalid sampled token")
         if (phase == "commit") != (sampled is not None):
             raise ValueError("sampled token exists only at the commit boundary")
+        prompt = state.get("prompt")
+        if prompt is not None:
+            if (
+                prompt.ndim != 2
+                or prompt.shape[0] != 1
+                or prompt.dtype != torch.long
+                or prompt.device != self.device
+                or prompt.shape[1] < 2
+            ):
+                raise ValueError("a stepped prompt is batch-one integer tokens, two or more")
+            shared = min(tokens.shape[1], prompt.shape[1])
+            if not torch.equal(tokens[:, :shared], prompt[:, :shared]):
+                raise ValueError("the tokens differ from the stepped prompt they follow")
+            forced = self._forced(state)
+            if sampled is not None and forced is not None and not torch.equal(sampled, forced):
+                raise ValueError("a prompt row's sampled token must be the prompt's next token")
 
     def read(self, state: Mapping[str, Any], address: str) -> Any:
         """Read a listed address, or one of the cache/decision slots that exist in the state.
 
         ``keys`` and ``values`` (per-layer cache tensors) are always present; ``sampled_token``
-        only at the operation-granularity commit boundary. They are readable here but are not in
-        ``addresses()``, so frames, cuts and receipts are unchanged.
+        only at the operation-granularity commit boundary; ``prompt`` only in a session whose
+        prompt rows are stepped (``session(..., prefill=K)``). They are readable here but are
+        not in ``addresses()``, so frames, cuts and receipts are unchanged.
         """
         if address in ("keys", "values"):
+            return clone(state[address])
+        if address == "prompt":
+            if state.get("prompt") is None:
+                raise ValueError(f"unsupported address at {self.boundary(state)}: {address} "
+                                 "(this session prefilled its prompt)")
             return clone(state[address])
         if address == "sampled_token":
             if state["sampled_token"] is None:
@@ -1347,7 +1412,9 @@ class DecoderAdapter(Adapter):
             )
             out["phase"] = "sample"
         elif self.granularity == "operation" and out["phase"] == "sample":
-            out["sampled_token"] = out["logits"].argmax(-1, keepdim=True)
+            forced = self._forced(out)  # a stepped prompt row: the prompt's next token
+            out["sampled_token"] = (out["logits"].argmax(-1, keepdim=True) if forced is None
+                                    else forced)
             out["phase"] = "commit"
         elif self.granularity == "operation" and out["phase"] == "commit":
             out["tokens"] = torch.cat((tokens, out["sampled_token"]), dim=-1)
@@ -1363,7 +1430,9 @@ class DecoderAdapter(Adapter):
                 run(self.model.lm_head, run(final_norm, hidden))[:, -1]
             )
             out["logits"] = logits
-            out["tokens"] = torch.cat((tokens, logits.argmax(-1, keepdim=True)), dim=-1)
+            forced = self._forced(out)
+            chosen = logits.argmax(-1, keepdim=True) if forced is None else forced
+            out["tokens"] = torch.cat((tokens, chosen), dim=-1)
             seal_append(out["tokens"], tokens, 1)  # cuts hold the new token only
             out["hidden"] = None
             out["layer"] = 0

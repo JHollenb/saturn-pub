@@ -1531,12 +1531,18 @@ def _excursion(adapter, mode, replay):
     """A run away from a checkpoint (``t{ROW}.L1.v``: L0 committed with an edit, an edit staged
     at L1.v) and that checkpoint. Rewind: the run took the checkpoint, then moved on to the next
     row. Replay: a second run over the same tokens (holding the edit tensors) that never reached
-    the checkpoint's cut, so restoring it replays the committed path."""
+    the checkpoint's cut, so restoring it replays the committed path. A replay starts at the
+    deepest mark the two paths share (before ``L0``), so the checkpoint is a row on from there
+    (L1's edit committed, one staged at the next row's ``L0.v``): the replay takes more than one
+    transition."""
     run = Run_(adapter, mode)
     run.until("L0.v")
     run.set("L0.v", 0.5, "add")
     run.until("L1.v")
     run.set("L1.v", 2.0, "scale")
+    if replay:
+        run.until(f"t{len(run.tokens)}.L0.v")
+        run.set("L0.v", 0.5, "add")
     checkpoint = run.checkpoint("here")
     if replay:
         other = Run_(adapter, mode)
@@ -1572,7 +1578,7 @@ def test_a_deferred_interrupt_completes_the_restore_then_raises(adapter, mode, m
     FIRED.add((method, nth, after, replay, state["fired"]))
     assert run.where == checkpoint["where"] == twin.where
     assert [e["port"] for e in run.edits] == [e["port"] for e in twin.edits] == ["v"]
-    assert len(run.committed_edits()) == 1
+    assert len(run.committed_edits()) == (2 if replay else 1)
     assert run.committed_edits() == twin.committed_edits()
     assert _in_sync(run)
     assert torch.equal(run.read(), twin.read())
