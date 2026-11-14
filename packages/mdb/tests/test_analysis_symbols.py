@@ -265,3 +265,20 @@ def test_hop_edge_ladder_closes_and_its_parts_match_hand_computations(debugger):
     assert view["hop"]["edge"]["mlp"][0]["layer"] == 0
     assert len(view["hop"]["edge"]["reread"]) == run.adapter.layers - 1
     check_bounded(table.report)
+
+
+def test_hop_edge_input_linearity_is_one_for_a_tiny_edit(debugger):
+    run = debugger.run(PROMPT)
+    run.until("t3.logits")
+    if run.adapter.model.lm_head.weight.dtype != torch.float32:
+        pytest.skip("needs fp32 to resolve a tiny edit")
+    reader = readout(run, Margin(3, 4, 9))
+    value = run.read_cache(0, "v", staged=False).clone()[:, 0:1, 1:2]
+    edited = debugger.run(PROMPT)
+    edited.set_cell(0, "v", value * 1.001, rows=[1], kv=[0])
+    edited.until("t3.logits")
+    edge = symbols.hop_edge(run, edited, reader, cell_layer=0)
+    lin = edge["mlp"][0]["input_linearity"]
+    assert lin["cos_dn"]["value"] > 0.99 and abs(lin["norm_ratio_dn"]["value"] - 1) < 0.02
+    assert edge["mlp"][0]["linear"]["value"] == pytest.approx(edge["mlp"][0]["exact"]["value"],
+                                                             rel=0.05)

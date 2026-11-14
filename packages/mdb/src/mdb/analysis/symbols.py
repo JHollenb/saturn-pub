@@ -337,6 +337,10 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
         dn_lin = gamma_l * (rho0 * dr - (rho0 ** 3 / dr.numel()) * float(r0 @ dr) * r0)
         da_lin, db_lin = gate @ dn_lin, up @ dn_lin
         linear = float((cd * (b0 * _silu_prime(g0) * da_lin + s0 * db_lin)).sum())
+        dn_true = port(edited, layer, "n") - port(run, layer, "n")
+        den = float(dn_true.norm() * dn_lin.norm())
+        da_true = g1 - g0
+        da_den = float(da_true.norm() * da_lin.norm())
         order = effect.abs().argsort(descending=True)
         top = order[:top_neurons]
         rest = order[top_neurons:]
@@ -353,13 +357,20 @@ def hop_edge(run: Any, edited: Any, reader: Any, *, cell_layer: int, top_neurons
                  "linear": num(linear, "derived-local", "P14"),
                  "nonlinear": num(exact - linear, EXACT),
                  "shared_gate": num(float((g1 - g0).mean()), EXACT),
+                 "input_linearity": {
+                     "cos_dn": num(float(dn_true @ dn_lin) / den if den else 0.0, EXACT),
+                     "norm_ratio_dn": num(float(dn_lin.norm() / dn_true.norm())
+                                          if float(dn_true.norm()) else 0.0, EXACT),
+                     "cos_da": num(float(da_true @ da_lin) / da_den if da_den else 0.0, EXACT),
+                     "meaning": "the Jacobian input change (J_RMS Delta r, G J_RMS Delta r) "
+                                "against the captured Delta n and Delta a"},
                  "neurons": neurons,
                  "omitted": {"count": int(rest.numel()),
                              "effect": num(float(effect[rest].sum()), EXACT, "P15")},
                  "top_share": num(float(effect[top].abs().sum() / effect.abs().sum())
                                   if float(effect.abs().sum()) else 0.0, EXACT)}
         if spectral:
-            dn = port(edited, layer, "n") - port(run, layer, "n")
+            dn = dn_true
             wabs = effect.abs()
             gw, perm, pgw = spectra(layer, gate)
             parts = _rfft_parts(gate, dn, gw)                        # (d_ff, bins)
